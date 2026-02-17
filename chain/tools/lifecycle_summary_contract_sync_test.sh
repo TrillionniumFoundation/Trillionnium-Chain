@@ -17,7 +17,7 @@ extract_backtick_tokens() {
 		$0 == from {in_block=1; next}
 		$0 == to {in_block=0}
 		in_block && $0 ~ /^[[:space:]]*-[[:space:]]/ {print}
-	' "$CONTRACT_MD" | grep -o '`[^`]*`' | tr -d '`' || true
+	' "$CONTRACT_MD" | grep -o "\`[^\`]*\`" | tr -d "\`" || true
 }
 
 v2_doc_tokens="$({
