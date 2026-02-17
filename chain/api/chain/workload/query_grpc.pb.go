@@ -19,11 +19,13 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Query_Params_FullMethodName    = "/chain.workload.Query/Params"
-	Query_Task_FullMethodName      = "/chain.workload.Query/Task"
-	Query_TaskAll_FullMethodName   = "/chain.workload.Query/TaskAll"
-	Query_Worker_FullMethodName    = "/chain.workload.Query/Worker"
-	Query_WorkerAll_FullMethodName = "/chain.workload.Query/WorkerAll"
+	Query_Params_FullMethodName       = "/chain.workload.Query/Params"
+	Query_Task_FullMethodName         = "/chain.workload.Query/Task"
+	Query_TaskAll_FullMethodName      = "/chain.workload.Query/TaskAll"
+	Query_Worker_FullMethodName       = "/chain.workload.Query/Worker"
+	Query_WorkerAll_FullMethodName    = "/chain.workload.Query/WorkerAll"
+	Query_Unbonding_FullMethodName    = "/chain.workload.Query/Unbonding"
+	Query_UnbondingAll_FullMethodName = "/chain.workload.Query/UnbondingAll"
 )
 
 // QueryClient is the client API for Query service.
@@ -38,6 +40,9 @@ type QueryClient interface {
 	// Queries a list of Worker items.
 	Worker(ctx context.Context, in *QueryGetWorkerRequest, opts ...grpc.CallOption) (*QueryGetWorkerResponse, error)
 	WorkerAll(ctx context.Context, in *QueryAllWorkerRequest, opts ...grpc.CallOption) (*QueryAllWorkerResponse, error)
+	// Queries a list of Unbonding items.
+	Unbonding(ctx context.Context, in *QueryGetUnbondingRequest, opts ...grpc.CallOption) (*QueryGetUnbondingResponse, error)
+	UnbondingAll(ctx context.Context, in *QueryAllUnbondingRequest, opts ...grpc.CallOption) (*QueryAllUnbondingResponse, error)
 }
 
 type queryClient struct {
@@ -93,6 +98,24 @@ func (c *queryClient) WorkerAll(ctx context.Context, in *QueryAllWorkerRequest, 
 	return out, nil
 }
 
+func (c *queryClient) Unbonding(ctx context.Context, in *QueryGetUnbondingRequest, opts ...grpc.CallOption) (*QueryGetUnbondingResponse, error) {
+	out := new(QueryGetUnbondingResponse)
+	err := c.cc.Invoke(ctx, Query_Unbonding_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) UnbondingAll(ctx context.Context, in *QueryAllUnbondingRequest, opts ...grpc.CallOption) (*QueryAllUnbondingResponse, error) {
+	out := new(QueryAllUnbondingResponse)
+	err := c.cc.Invoke(ctx, Query_UnbondingAll_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // QueryServer is the server API for Query service.
 // All implementations must embed UnimplementedQueryServer
 // for forward compatibility
@@ -105,6 +128,9 @@ type QueryServer interface {
 	// Queries a list of Worker items.
 	Worker(context.Context, *QueryGetWorkerRequest) (*QueryGetWorkerResponse, error)
 	WorkerAll(context.Context, *QueryAllWorkerRequest) (*QueryAllWorkerResponse, error)
+	// Queries a list of Unbonding items.
+	Unbonding(context.Context, *QueryGetUnbondingRequest) (*QueryGetUnbondingResponse, error)
+	UnbondingAll(context.Context, *QueryAllUnbondingRequest) (*QueryAllUnbondingResponse, error)
 	mustEmbedUnimplementedQueryServer()
 }
 
@@ -126,6 +152,12 @@ func (UnimplementedQueryServer) Worker(context.Context, *QueryGetWorkerRequest) 
 }
 func (UnimplementedQueryServer) WorkerAll(context.Context, *QueryAllWorkerRequest) (*QueryAllWorkerResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method WorkerAll not implemented")
+}
+func (UnimplementedQueryServer) Unbonding(context.Context, *QueryGetUnbondingRequest) (*QueryGetUnbondingResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Unbonding not implemented")
+}
+func (UnimplementedQueryServer) UnbondingAll(context.Context, *QueryAllUnbondingRequest) (*QueryAllUnbondingResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UnbondingAll not implemented")
 }
 func (UnimplementedQueryServer) mustEmbedUnimplementedQueryServer() {}
 
@@ -230,6 +262,42 @@ func _Query_WorkerAll_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Query_Unbonding_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryGetUnbondingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).Unbonding(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Query_Unbonding_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).Unbonding(ctx, req.(*QueryGetUnbondingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_UnbondingAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryAllUnbondingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).UnbondingAll(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Query_UnbondingAll_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).UnbondingAll(ctx, req.(*QueryAllUnbondingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Query_ServiceDesc is the grpc.ServiceDesc for Query service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -256,6 +324,14 @@ var Query_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "WorkerAll",
 			Handler:    _Query_WorkerAll_Handler,
+		},
+		{
+			MethodName: "Unbonding",
+			Handler:    _Query_Unbonding_Handler,
+		},
+		{
+			MethodName: "UnbondingAll",
+			Handler:    _Query_UnbondingAll_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

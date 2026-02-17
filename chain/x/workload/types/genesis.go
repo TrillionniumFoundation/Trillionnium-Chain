@@ -10,8 +10,9 @@ const DefaultIndex uint64 = 1
 // DefaultGenesis returns the default genesis state
 func DefaultGenesis() *GenesisState {
 	return &GenesisState{
-		TaskList:   []Task{},
-		WorkerList: []Worker{},
+		TaskList:      []Task{},
+		WorkerList:    []Worker{},
+		UnbondingList: []Unbonding{},
 		// this line is used by starport scaffolding # genesis/types/default
 		Params: DefaultParams(),
 	}
@@ -41,6 +42,16 @@ func (gs GenesisState) Validate() error {
 			return fmt.Errorf("duplicated index for worker")
 		}
 		workerIndexMap[index] = struct{}{}
+	}
+	// Check for duplicated index in unbonding
+	unbondingIndexMap := make(map[string]struct{})
+
+	for _, elem := range gs.UnbondingList {
+		index := string(UnbondingKey(elem.Creator))
+		if _, ok := unbondingIndexMap[index]; ok {
+			return fmt.Errorf("duplicated index for unbonding")
+		}
+		unbondingIndexMap[index] = struct{}{}
 	}
 	// this line is used by starport scaffolding # genesis/types/validate
 

@@ -6487,6 +6487,1558 @@ func (x *fastReflection_MsgUnregisterWorkerResponse) ProtoMethods() *protoiface.
 	}
 }
 
+var (
+	md_MsgRequestUnbonding         protoreflect.MessageDescriptor
+	fd_MsgRequestUnbonding_creator protoreflect.FieldDescriptor
+)
+
+func init() {
+	file_chain_workload_tx_proto_init()
+	md_MsgRequestUnbonding = File_chain_workload_tx_proto.Messages().ByName("MsgRequestUnbonding")
+	fd_MsgRequestUnbonding_creator = md_MsgRequestUnbonding.Fields().ByName("creator")
+}
+
+var _ protoreflect.Message = (*fastReflection_MsgRequestUnbonding)(nil)
+
+type fastReflection_MsgRequestUnbonding MsgRequestUnbonding
+
+func (x *MsgRequestUnbonding) ProtoReflect() protoreflect.Message {
+	return (*fastReflection_MsgRequestUnbonding)(x)
+}
+
+func (x *MsgRequestUnbonding) slowProtoReflect() protoreflect.Message {
+	mi := &file_chain_workload_tx_proto_msgTypes[14]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+var _fastReflection_MsgRequestUnbonding_messageType fastReflection_MsgRequestUnbonding_messageType
+var _ protoreflect.MessageType = fastReflection_MsgRequestUnbonding_messageType{}
+
+type fastReflection_MsgRequestUnbonding_messageType struct{}
+
+func (x fastReflection_MsgRequestUnbonding_messageType) Zero() protoreflect.Message {
+	return (*fastReflection_MsgRequestUnbonding)(nil)
+}
+func (x fastReflection_MsgRequestUnbonding_messageType) New() protoreflect.Message {
+	return new(fastReflection_MsgRequestUnbonding)
+}
+func (x fastReflection_MsgRequestUnbonding_messageType) Descriptor() protoreflect.MessageDescriptor {
+	return md_MsgRequestUnbonding
+}
+
+// Descriptor returns message descriptor, which contains only the protobuf
+// type information for the message.
+func (x *fastReflection_MsgRequestUnbonding) Descriptor() protoreflect.MessageDescriptor {
+	return md_MsgRequestUnbonding
+}
+
+// Type returns the message type, which encapsulates both Go and protobuf
+// type information. If the Go type information is not needed,
+// it is recommended that the message descriptor be used instead.
+func (x *fastReflection_MsgRequestUnbonding) Type() protoreflect.MessageType {
+	return _fastReflection_MsgRequestUnbonding_messageType
+}
+
+// New returns a newly allocated and mutable empty message.
+func (x *fastReflection_MsgRequestUnbonding) New() protoreflect.Message {
+	return new(fastReflection_MsgRequestUnbonding)
+}
+
+// Interface unwraps the message reflection interface and
+// returns the underlying ProtoMessage interface.
+func (x *fastReflection_MsgRequestUnbonding) Interface() protoreflect.ProtoMessage {
+	return (*MsgRequestUnbonding)(x)
+}
+
+// Range iterates over every populated field in an undefined order,
+// calling f for each field descriptor and value encountered.
+// Range returns immediately if f returns false.
+// While iterating, mutating operations may only be performed
+// on the current field descriptor.
+func (x *fastReflection_MsgRequestUnbonding) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+	if x.Creator != "" {
+		value := protoreflect.ValueOfString(x.Creator)
+		if !f(fd_MsgRequestUnbonding_creator, value) {
+			return
+		}
+	}
+}
+
+// Has reports whether a field is populated.
+//
+// Some fields have the property of nullability where it is possible to
+// distinguish between the default value of a field and whether the field
+// was explicitly populated with the default value. Singular message fields,
+// member fields of a oneof, and proto2 scalar fields are nullable. Such
+// fields are populated only if explicitly set.
+//
+// In other cases (aside from the nullable cases above),
+// a proto3 scalar field is populated if it contains a non-zero value, and
+// a repeated field is populated if it is non-empty.
+func (x *fastReflection_MsgRequestUnbonding) Has(fd protoreflect.FieldDescriptor) bool {
+	switch fd.FullName() {
+	case "chain.workload.MsgRequestUnbonding.creator":
+		return x.Creator != ""
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.workload.MsgRequestUnbonding"))
+		}
+		panic(fmt.Errorf("message chain.workload.MsgRequestUnbonding does not contain field %s", fd.FullName()))
+	}
+}
+
+// Clear clears the field such that a subsequent Has call reports false.
+//
+// Clearing an extension field clears both the extension type and value
+// associated with the given field number.
+//
+// Clear is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgRequestUnbonding) Clear(fd protoreflect.FieldDescriptor) {
+	switch fd.FullName() {
+	case "chain.workload.MsgRequestUnbonding.creator":
+		x.Creator = ""
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.workload.MsgRequestUnbonding"))
+		}
+		panic(fmt.Errorf("message chain.workload.MsgRequestUnbonding does not contain field %s", fd.FullName()))
+	}
+}
+
+// Get retrieves the value for a field.
+//
+// For unpopulated scalars, it returns the default value, where
+// the default value of a bytes scalar is guaranteed to be a copy.
+// For unpopulated composite types, it returns an empty, read-only view
+// of the value; to obtain a mutable reference, use Mutable.
+func (x *fastReflection_MsgRequestUnbonding) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
+	switch descriptor.FullName() {
+	case "chain.workload.MsgRequestUnbonding.creator":
+		value := x.Creator
+		return protoreflect.ValueOfString(value)
+	default:
+		if descriptor.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.workload.MsgRequestUnbonding"))
+		}
+		panic(fmt.Errorf("message chain.workload.MsgRequestUnbonding does not contain field %s", descriptor.FullName()))
+	}
+}
+
+// Set stores the value for a field.
+//
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType.
+// When setting a composite type, it is unspecified whether the stored value
+// aliases the source's memory in any way. If the composite value is an
+// empty, read-only value, then it panics.
+//
+// Set is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgRequestUnbonding) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
+	switch fd.FullName() {
+	case "chain.workload.MsgRequestUnbonding.creator":
+		x.Creator = value.Interface().(string)
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.workload.MsgRequestUnbonding"))
+		}
+		panic(fmt.Errorf("message chain.workload.MsgRequestUnbonding does not contain field %s", fd.FullName()))
+	}
+}
+
+// Mutable returns a mutable reference to a composite type.
+//
+// If the field is unpopulated, it may allocate a composite value.
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType
+// if not already stored.
+// It panics if the field does not contain a composite type.
+//
+// Mutable is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgRequestUnbonding) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "chain.workload.MsgRequestUnbonding.creator":
+		panic(fmt.Errorf("field creator of message chain.workload.MsgRequestUnbonding is not mutable"))
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.workload.MsgRequestUnbonding"))
+		}
+		panic(fmt.Errorf("message chain.workload.MsgRequestUnbonding does not contain field %s", fd.FullName()))
+	}
+}
+
+// NewField returns a new value that is assignable to the field
+// for the given descriptor. For scalars, this returns the default value.
+// For lists, maps, and messages, this returns a new, empty, mutable value.
+func (x *fastReflection_MsgRequestUnbonding) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "chain.workload.MsgRequestUnbonding.creator":
+		return protoreflect.ValueOfString("")
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.workload.MsgRequestUnbonding"))
+		}
+		panic(fmt.Errorf("message chain.workload.MsgRequestUnbonding does not contain field %s", fd.FullName()))
+	}
+}
+
+// WhichOneof reports which field within the oneof is populated,
+// returning nil if none are populated.
+// It panics if the oneof descriptor does not belong to this message.
+func (x *fastReflection_MsgRequestUnbonding) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
+	switch d.FullName() {
+	default:
+		panic(fmt.Errorf("%s is not a oneof field in chain.workload.MsgRequestUnbonding", d.FullName()))
+	}
+	panic("unreachable")
+}
+
+// GetUnknown retrieves the entire list of unknown fields.
+// The caller may only mutate the contents of the RawFields
+// if the mutated bytes are stored back into the message with SetUnknown.
+func (x *fastReflection_MsgRequestUnbonding) GetUnknown() protoreflect.RawFields {
+	return x.unknownFields
+}
+
+// SetUnknown stores an entire list of unknown fields.
+// The raw fields must be syntactically valid according to the wire format.
+// An implementation may panic if this is not the case.
+// Once stored, the caller must not mutate the content of the RawFields.
+// An empty RawFields may be passed to clear the fields.
+//
+// SetUnknown is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgRequestUnbonding) SetUnknown(fields protoreflect.RawFields) {
+	x.unknownFields = fields
+}
+
+// IsValid reports whether the message is valid.
+//
+// An invalid message is an empty, read-only value.
+//
+// An invalid message often corresponds to a nil pointer of the concrete
+// message type, but the details are implementation dependent.
+// Validity is not part of the protobuf data model, and may not
+// be preserved in marshaling or other operations.
+func (x *fastReflection_MsgRequestUnbonding) IsValid() bool {
+	return x != nil
+}
+
+// ProtoMethods returns optional fastReflectionFeature-path implementations of various operations.
+// This method may return nil.
+//
+// The returned methods type is identical to
+// "google.golang.org/protobuf/runtime/protoiface".Methods.
+// Consult the protoiface package documentation for details.
+func (x *fastReflection_MsgRequestUnbonding) ProtoMethods() *protoiface.Methods {
+	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
+		x := input.Message.Interface().(*MsgRequestUnbonding)
+		if x == nil {
+			return protoiface.SizeOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Size:              0,
+			}
+		}
+		options := runtime.SizeInputToOptions(input)
+		_ = options
+		var n int
+		var l int
+		_ = l
+		l = len(x.Creator)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.unknownFields != nil {
+			n += len(x.unknownFields)
+		}
+		return protoiface.SizeOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Size:              n,
+		}
+	}
+
+	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
+		x := input.Message.Interface().(*MsgRequestUnbonding)
+		if x == nil {
+			return protoiface.MarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Buf:               input.Buf,
+			}, nil
+		}
+		options := runtime.MarshalInputToOptions(input)
+		_ = options
+		size := options.Size(x)
+		dAtA := make([]byte, size)
+		i := len(dAtA)
+		_ = i
+		var l int
+		_ = l
+		if x.unknownFields != nil {
+			i -= len(x.unknownFields)
+			copy(dAtA[i:], x.unknownFields)
+		}
+		if len(x.Creator) > 0 {
+			i -= len(x.Creator)
+			copy(dAtA[i:], x.Creator)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.Creator)))
+			i--
+			dAtA[i] = 0xa
+		}
+		if input.Buf != nil {
+			input.Buf = append(input.Buf, dAtA...)
+		} else {
+			input.Buf = dAtA
+		}
+		return protoiface.MarshalOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Buf:               input.Buf,
+		}, nil
+	}
+	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
+		x := input.Message.Interface().(*MsgRequestUnbonding)
+		if x == nil {
+			return protoiface.UnmarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Flags:             input.Flags,
+			}, nil
+		}
+		options := runtime.UnmarshalInputToOptions(input)
+		_ = options
+		dAtA := input.Buf
+		l := len(dAtA)
+		iNdEx := 0
+		for iNdEx < l {
+			preIndex := iNdEx
+			var wire uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+				}
+				if iNdEx >= l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				wire |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			fieldNum := int32(wire >> 3)
+			wireType := int(wire & 0x7)
+			if wireType == 4 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgRequestUnbonding: wiretype end group for non-group")
+			}
+			if fieldNum <= 0 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgRequestUnbonding: illegal tag %d (wire type %d)", fieldNum, wire)
+			}
+			switch fieldNum {
+			case 1:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.Creator = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			default:
+				iNdEx = preIndex
+				skippy, err := runtime.Skip(dAtA[iNdEx:])
+				if err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				if (skippy < 0) || (iNdEx+skippy) < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if (iNdEx + skippy) > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if !options.DiscardUnknown {
+					x.unknownFields = append(x.unknownFields, dAtA[iNdEx:iNdEx+skippy]...)
+				}
+				iNdEx += skippy
+			}
+		}
+
+		if iNdEx > l {
+			return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+		}
+		return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, nil
+	}
+	return &protoiface.Methods{
+		NoUnkeyedLiterals: struct{}{},
+		Flags:             protoiface.SupportMarshalDeterministic | protoiface.SupportUnmarshalDiscardUnknown,
+		Size:              size,
+		Marshal:           marshal,
+		Unmarshal:         unmarshal,
+		Merge:             nil,
+		CheckInitialized:  nil,
+	}
+}
+
+var (
+	md_MsgRequestUnbondingResponse protoreflect.MessageDescriptor
+)
+
+func init() {
+	file_chain_workload_tx_proto_init()
+	md_MsgRequestUnbondingResponse = File_chain_workload_tx_proto.Messages().ByName("MsgRequestUnbondingResponse")
+}
+
+var _ protoreflect.Message = (*fastReflection_MsgRequestUnbondingResponse)(nil)
+
+type fastReflection_MsgRequestUnbondingResponse MsgRequestUnbondingResponse
+
+func (x *MsgRequestUnbondingResponse) ProtoReflect() protoreflect.Message {
+	return (*fastReflection_MsgRequestUnbondingResponse)(x)
+}
+
+func (x *MsgRequestUnbondingResponse) slowProtoReflect() protoreflect.Message {
+	mi := &file_chain_workload_tx_proto_msgTypes[15]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+var _fastReflection_MsgRequestUnbondingResponse_messageType fastReflection_MsgRequestUnbondingResponse_messageType
+var _ protoreflect.MessageType = fastReflection_MsgRequestUnbondingResponse_messageType{}
+
+type fastReflection_MsgRequestUnbondingResponse_messageType struct{}
+
+func (x fastReflection_MsgRequestUnbondingResponse_messageType) Zero() protoreflect.Message {
+	return (*fastReflection_MsgRequestUnbondingResponse)(nil)
+}
+func (x fastReflection_MsgRequestUnbondingResponse_messageType) New() protoreflect.Message {
+	return new(fastReflection_MsgRequestUnbondingResponse)
+}
+func (x fastReflection_MsgRequestUnbondingResponse_messageType) Descriptor() protoreflect.MessageDescriptor {
+	return md_MsgRequestUnbondingResponse
+}
+
+// Descriptor returns message descriptor, which contains only the protobuf
+// type information for the message.
+func (x *fastReflection_MsgRequestUnbondingResponse) Descriptor() protoreflect.MessageDescriptor {
+	return md_MsgRequestUnbondingResponse
+}
+
+// Type returns the message type, which encapsulates both Go and protobuf
+// type information. If the Go type information is not needed,
+// it is recommended that the message descriptor be used instead.
+func (x *fastReflection_MsgRequestUnbondingResponse) Type() protoreflect.MessageType {
+	return _fastReflection_MsgRequestUnbondingResponse_messageType
+}
+
+// New returns a newly allocated and mutable empty message.
+func (x *fastReflection_MsgRequestUnbondingResponse) New() protoreflect.Message {
+	return new(fastReflection_MsgRequestUnbondingResponse)
+}
+
+// Interface unwraps the message reflection interface and
+// returns the underlying ProtoMessage interface.
+func (x *fastReflection_MsgRequestUnbondingResponse) Interface() protoreflect.ProtoMessage {
+	return (*MsgRequestUnbondingResponse)(x)
+}
+
+// Range iterates over every populated field in an undefined order,
+// calling f for each field descriptor and value encountered.
+// Range returns immediately if f returns false.
+// While iterating, mutating operations may only be performed
+// on the current field descriptor.
+func (x *fastReflection_MsgRequestUnbondingResponse) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+}
+
+// Has reports whether a field is populated.
+//
+// Some fields have the property of nullability where it is possible to
+// distinguish between the default value of a field and whether the field
+// was explicitly populated with the default value. Singular message fields,
+// member fields of a oneof, and proto2 scalar fields are nullable. Such
+// fields are populated only if explicitly set.
+//
+// In other cases (aside from the nullable cases above),
+// a proto3 scalar field is populated if it contains a non-zero value, and
+// a repeated field is populated if it is non-empty.
+func (x *fastReflection_MsgRequestUnbondingResponse) Has(fd protoreflect.FieldDescriptor) bool {
+	switch fd.FullName() {
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.workload.MsgRequestUnbondingResponse"))
+		}
+		panic(fmt.Errorf("message chain.workload.MsgRequestUnbondingResponse does not contain field %s", fd.FullName()))
+	}
+}
+
+// Clear clears the field such that a subsequent Has call reports false.
+//
+// Clearing an extension field clears both the extension type and value
+// associated with the given field number.
+//
+// Clear is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgRequestUnbondingResponse) Clear(fd protoreflect.FieldDescriptor) {
+	switch fd.FullName() {
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.workload.MsgRequestUnbondingResponse"))
+		}
+		panic(fmt.Errorf("message chain.workload.MsgRequestUnbondingResponse does not contain field %s", fd.FullName()))
+	}
+}
+
+// Get retrieves the value for a field.
+//
+// For unpopulated scalars, it returns the default value, where
+// the default value of a bytes scalar is guaranteed to be a copy.
+// For unpopulated composite types, it returns an empty, read-only view
+// of the value; to obtain a mutable reference, use Mutable.
+func (x *fastReflection_MsgRequestUnbondingResponse) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
+	switch descriptor.FullName() {
+	default:
+		if descriptor.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.workload.MsgRequestUnbondingResponse"))
+		}
+		panic(fmt.Errorf("message chain.workload.MsgRequestUnbondingResponse does not contain field %s", descriptor.FullName()))
+	}
+}
+
+// Set stores the value for a field.
+//
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType.
+// When setting a composite type, it is unspecified whether the stored value
+// aliases the source's memory in any way. If the composite value is an
+// empty, read-only value, then it panics.
+//
+// Set is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgRequestUnbondingResponse) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
+	switch fd.FullName() {
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.workload.MsgRequestUnbondingResponse"))
+		}
+		panic(fmt.Errorf("message chain.workload.MsgRequestUnbondingResponse does not contain field %s", fd.FullName()))
+	}
+}
+
+// Mutable returns a mutable reference to a composite type.
+//
+// If the field is unpopulated, it may allocate a composite value.
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType
+// if not already stored.
+// It panics if the field does not contain a composite type.
+//
+// Mutable is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgRequestUnbondingResponse) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.workload.MsgRequestUnbondingResponse"))
+		}
+		panic(fmt.Errorf("message chain.workload.MsgRequestUnbondingResponse does not contain field %s", fd.FullName()))
+	}
+}
+
+// NewField returns a new value that is assignable to the field
+// for the given descriptor. For scalars, this returns the default value.
+// For lists, maps, and messages, this returns a new, empty, mutable value.
+func (x *fastReflection_MsgRequestUnbondingResponse) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.workload.MsgRequestUnbondingResponse"))
+		}
+		panic(fmt.Errorf("message chain.workload.MsgRequestUnbondingResponse does not contain field %s", fd.FullName()))
+	}
+}
+
+// WhichOneof reports which field within the oneof is populated,
+// returning nil if none are populated.
+// It panics if the oneof descriptor does not belong to this message.
+func (x *fastReflection_MsgRequestUnbondingResponse) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
+	switch d.FullName() {
+	default:
+		panic(fmt.Errorf("%s is not a oneof field in chain.workload.MsgRequestUnbondingResponse", d.FullName()))
+	}
+	panic("unreachable")
+}
+
+// GetUnknown retrieves the entire list of unknown fields.
+// The caller may only mutate the contents of the RawFields
+// if the mutated bytes are stored back into the message with SetUnknown.
+func (x *fastReflection_MsgRequestUnbondingResponse) GetUnknown() protoreflect.RawFields {
+	return x.unknownFields
+}
+
+// SetUnknown stores an entire list of unknown fields.
+// The raw fields must be syntactically valid according to the wire format.
+// An implementation may panic if this is not the case.
+// Once stored, the caller must not mutate the content of the RawFields.
+// An empty RawFields may be passed to clear the fields.
+//
+// SetUnknown is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgRequestUnbondingResponse) SetUnknown(fields protoreflect.RawFields) {
+	x.unknownFields = fields
+}
+
+// IsValid reports whether the message is valid.
+//
+// An invalid message is an empty, read-only value.
+//
+// An invalid message often corresponds to a nil pointer of the concrete
+// message type, but the details are implementation dependent.
+// Validity is not part of the protobuf data model, and may not
+// be preserved in marshaling or other operations.
+func (x *fastReflection_MsgRequestUnbondingResponse) IsValid() bool {
+	return x != nil
+}
+
+// ProtoMethods returns optional fastReflectionFeature-path implementations of various operations.
+// This method may return nil.
+//
+// The returned methods type is identical to
+// "google.golang.org/protobuf/runtime/protoiface".Methods.
+// Consult the protoiface package documentation for details.
+func (x *fastReflection_MsgRequestUnbondingResponse) ProtoMethods() *protoiface.Methods {
+	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
+		x := input.Message.Interface().(*MsgRequestUnbondingResponse)
+		if x == nil {
+			return protoiface.SizeOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Size:              0,
+			}
+		}
+		options := runtime.SizeInputToOptions(input)
+		_ = options
+		var n int
+		var l int
+		_ = l
+		if x.unknownFields != nil {
+			n += len(x.unknownFields)
+		}
+		return protoiface.SizeOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Size:              n,
+		}
+	}
+
+	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
+		x := input.Message.Interface().(*MsgRequestUnbondingResponse)
+		if x == nil {
+			return protoiface.MarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Buf:               input.Buf,
+			}, nil
+		}
+		options := runtime.MarshalInputToOptions(input)
+		_ = options
+		size := options.Size(x)
+		dAtA := make([]byte, size)
+		i := len(dAtA)
+		_ = i
+		var l int
+		_ = l
+		if x.unknownFields != nil {
+			i -= len(x.unknownFields)
+			copy(dAtA[i:], x.unknownFields)
+		}
+		if input.Buf != nil {
+			input.Buf = append(input.Buf, dAtA...)
+		} else {
+			input.Buf = dAtA
+		}
+		return protoiface.MarshalOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Buf:               input.Buf,
+		}, nil
+	}
+	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
+		x := input.Message.Interface().(*MsgRequestUnbondingResponse)
+		if x == nil {
+			return protoiface.UnmarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Flags:             input.Flags,
+			}, nil
+		}
+		options := runtime.UnmarshalInputToOptions(input)
+		_ = options
+		dAtA := input.Buf
+		l := len(dAtA)
+		iNdEx := 0
+		for iNdEx < l {
+			preIndex := iNdEx
+			var wire uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+				}
+				if iNdEx >= l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				wire |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			fieldNum := int32(wire >> 3)
+			wireType := int(wire & 0x7)
+			if wireType == 4 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgRequestUnbondingResponse: wiretype end group for non-group")
+			}
+			if fieldNum <= 0 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgRequestUnbondingResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			}
+			switch fieldNum {
+			default:
+				iNdEx = preIndex
+				skippy, err := runtime.Skip(dAtA[iNdEx:])
+				if err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				if (skippy < 0) || (iNdEx+skippy) < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if (iNdEx + skippy) > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if !options.DiscardUnknown {
+					x.unknownFields = append(x.unknownFields, dAtA[iNdEx:iNdEx+skippy]...)
+				}
+				iNdEx += skippy
+			}
+		}
+
+		if iNdEx > l {
+			return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+		}
+		return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, nil
+	}
+	return &protoiface.Methods{
+		NoUnkeyedLiterals: struct{}{},
+		Flags:             protoiface.SupportMarshalDeterministic | protoiface.SupportUnmarshalDiscardUnknown,
+		Size:              size,
+		Marshal:           marshal,
+		Unmarshal:         unmarshal,
+		Merge:             nil,
+		CheckInitialized:  nil,
+	}
+}
+
+var (
+	md_MsgFinalizeUnbonding         protoreflect.MessageDescriptor
+	fd_MsgFinalizeUnbonding_creator protoreflect.FieldDescriptor
+)
+
+func init() {
+	file_chain_workload_tx_proto_init()
+	md_MsgFinalizeUnbonding = File_chain_workload_tx_proto.Messages().ByName("MsgFinalizeUnbonding")
+	fd_MsgFinalizeUnbonding_creator = md_MsgFinalizeUnbonding.Fields().ByName("creator")
+}
+
+var _ protoreflect.Message = (*fastReflection_MsgFinalizeUnbonding)(nil)
+
+type fastReflection_MsgFinalizeUnbonding MsgFinalizeUnbonding
+
+func (x *MsgFinalizeUnbonding) ProtoReflect() protoreflect.Message {
+	return (*fastReflection_MsgFinalizeUnbonding)(x)
+}
+
+func (x *MsgFinalizeUnbonding) slowProtoReflect() protoreflect.Message {
+	mi := &file_chain_workload_tx_proto_msgTypes[16]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+var _fastReflection_MsgFinalizeUnbonding_messageType fastReflection_MsgFinalizeUnbonding_messageType
+var _ protoreflect.MessageType = fastReflection_MsgFinalizeUnbonding_messageType{}
+
+type fastReflection_MsgFinalizeUnbonding_messageType struct{}
+
+func (x fastReflection_MsgFinalizeUnbonding_messageType) Zero() protoreflect.Message {
+	return (*fastReflection_MsgFinalizeUnbonding)(nil)
+}
+func (x fastReflection_MsgFinalizeUnbonding_messageType) New() protoreflect.Message {
+	return new(fastReflection_MsgFinalizeUnbonding)
+}
+func (x fastReflection_MsgFinalizeUnbonding_messageType) Descriptor() protoreflect.MessageDescriptor {
+	return md_MsgFinalizeUnbonding
+}
+
+// Descriptor returns message descriptor, which contains only the protobuf
+// type information for the message.
+func (x *fastReflection_MsgFinalizeUnbonding) Descriptor() protoreflect.MessageDescriptor {
+	return md_MsgFinalizeUnbonding
+}
+
+// Type returns the message type, which encapsulates both Go and protobuf
+// type information. If the Go type information is not needed,
+// it is recommended that the message descriptor be used instead.
+func (x *fastReflection_MsgFinalizeUnbonding) Type() protoreflect.MessageType {
+	return _fastReflection_MsgFinalizeUnbonding_messageType
+}
+
+// New returns a newly allocated and mutable empty message.
+func (x *fastReflection_MsgFinalizeUnbonding) New() protoreflect.Message {
+	return new(fastReflection_MsgFinalizeUnbonding)
+}
+
+// Interface unwraps the message reflection interface and
+// returns the underlying ProtoMessage interface.
+func (x *fastReflection_MsgFinalizeUnbonding) Interface() protoreflect.ProtoMessage {
+	return (*MsgFinalizeUnbonding)(x)
+}
+
+// Range iterates over every populated field in an undefined order,
+// calling f for each field descriptor and value encountered.
+// Range returns immediately if f returns false.
+// While iterating, mutating operations may only be performed
+// on the current field descriptor.
+func (x *fastReflection_MsgFinalizeUnbonding) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+	if x.Creator != "" {
+		value := protoreflect.ValueOfString(x.Creator)
+		if !f(fd_MsgFinalizeUnbonding_creator, value) {
+			return
+		}
+	}
+}
+
+// Has reports whether a field is populated.
+//
+// Some fields have the property of nullability where it is possible to
+// distinguish between the default value of a field and whether the field
+// was explicitly populated with the default value. Singular message fields,
+// member fields of a oneof, and proto2 scalar fields are nullable. Such
+// fields are populated only if explicitly set.
+//
+// In other cases (aside from the nullable cases above),
+// a proto3 scalar field is populated if it contains a non-zero value, and
+// a repeated field is populated if it is non-empty.
+func (x *fastReflection_MsgFinalizeUnbonding) Has(fd protoreflect.FieldDescriptor) bool {
+	switch fd.FullName() {
+	case "chain.workload.MsgFinalizeUnbonding.creator":
+		return x.Creator != ""
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.workload.MsgFinalizeUnbonding"))
+		}
+		panic(fmt.Errorf("message chain.workload.MsgFinalizeUnbonding does not contain field %s", fd.FullName()))
+	}
+}
+
+// Clear clears the field such that a subsequent Has call reports false.
+//
+// Clearing an extension field clears both the extension type and value
+// associated with the given field number.
+//
+// Clear is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgFinalizeUnbonding) Clear(fd protoreflect.FieldDescriptor) {
+	switch fd.FullName() {
+	case "chain.workload.MsgFinalizeUnbonding.creator":
+		x.Creator = ""
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.workload.MsgFinalizeUnbonding"))
+		}
+		panic(fmt.Errorf("message chain.workload.MsgFinalizeUnbonding does not contain field %s", fd.FullName()))
+	}
+}
+
+// Get retrieves the value for a field.
+//
+// For unpopulated scalars, it returns the default value, where
+// the default value of a bytes scalar is guaranteed to be a copy.
+// For unpopulated composite types, it returns an empty, read-only view
+// of the value; to obtain a mutable reference, use Mutable.
+func (x *fastReflection_MsgFinalizeUnbonding) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
+	switch descriptor.FullName() {
+	case "chain.workload.MsgFinalizeUnbonding.creator":
+		value := x.Creator
+		return protoreflect.ValueOfString(value)
+	default:
+		if descriptor.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.workload.MsgFinalizeUnbonding"))
+		}
+		panic(fmt.Errorf("message chain.workload.MsgFinalizeUnbonding does not contain field %s", descriptor.FullName()))
+	}
+}
+
+// Set stores the value for a field.
+//
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType.
+// When setting a composite type, it is unspecified whether the stored value
+// aliases the source's memory in any way. If the composite value is an
+// empty, read-only value, then it panics.
+//
+// Set is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgFinalizeUnbonding) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
+	switch fd.FullName() {
+	case "chain.workload.MsgFinalizeUnbonding.creator":
+		x.Creator = value.Interface().(string)
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.workload.MsgFinalizeUnbonding"))
+		}
+		panic(fmt.Errorf("message chain.workload.MsgFinalizeUnbonding does not contain field %s", fd.FullName()))
+	}
+}
+
+// Mutable returns a mutable reference to a composite type.
+//
+// If the field is unpopulated, it may allocate a composite value.
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType
+// if not already stored.
+// It panics if the field does not contain a composite type.
+//
+// Mutable is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgFinalizeUnbonding) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "chain.workload.MsgFinalizeUnbonding.creator":
+		panic(fmt.Errorf("field creator of message chain.workload.MsgFinalizeUnbonding is not mutable"))
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.workload.MsgFinalizeUnbonding"))
+		}
+		panic(fmt.Errorf("message chain.workload.MsgFinalizeUnbonding does not contain field %s", fd.FullName()))
+	}
+}
+
+// NewField returns a new value that is assignable to the field
+// for the given descriptor. For scalars, this returns the default value.
+// For lists, maps, and messages, this returns a new, empty, mutable value.
+func (x *fastReflection_MsgFinalizeUnbonding) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "chain.workload.MsgFinalizeUnbonding.creator":
+		return protoreflect.ValueOfString("")
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.workload.MsgFinalizeUnbonding"))
+		}
+		panic(fmt.Errorf("message chain.workload.MsgFinalizeUnbonding does not contain field %s", fd.FullName()))
+	}
+}
+
+// WhichOneof reports which field within the oneof is populated,
+// returning nil if none are populated.
+// It panics if the oneof descriptor does not belong to this message.
+func (x *fastReflection_MsgFinalizeUnbonding) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
+	switch d.FullName() {
+	default:
+		panic(fmt.Errorf("%s is not a oneof field in chain.workload.MsgFinalizeUnbonding", d.FullName()))
+	}
+	panic("unreachable")
+}
+
+// GetUnknown retrieves the entire list of unknown fields.
+// The caller may only mutate the contents of the RawFields
+// if the mutated bytes are stored back into the message with SetUnknown.
+func (x *fastReflection_MsgFinalizeUnbonding) GetUnknown() protoreflect.RawFields {
+	return x.unknownFields
+}
+
+// SetUnknown stores an entire list of unknown fields.
+// The raw fields must be syntactically valid according to the wire format.
+// An implementation may panic if this is not the case.
+// Once stored, the caller must not mutate the content of the RawFields.
+// An empty RawFields may be passed to clear the fields.
+//
+// SetUnknown is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgFinalizeUnbonding) SetUnknown(fields protoreflect.RawFields) {
+	x.unknownFields = fields
+}
+
+// IsValid reports whether the message is valid.
+//
+// An invalid message is an empty, read-only value.
+//
+// An invalid message often corresponds to a nil pointer of the concrete
+// message type, but the details are implementation dependent.
+// Validity is not part of the protobuf data model, and may not
+// be preserved in marshaling or other operations.
+func (x *fastReflection_MsgFinalizeUnbonding) IsValid() bool {
+	return x != nil
+}
+
+// ProtoMethods returns optional fastReflectionFeature-path implementations of various operations.
+// This method may return nil.
+//
+// The returned methods type is identical to
+// "google.golang.org/protobuf/runtime/protoiface".Methods.
+// Consult the protoiface package documentation for details.
+func (x *fastReflection_MsgFinalizeUnbonding) ProtoMethods() *protoiface.Methods {
+	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
+		x := input.Message.Interface().(*MsgFinalizeUnbonding)
+		if x == nil {
+			return protoiface.SizeOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Size:              0,
+			}
+		}
+		options := runtime.SizeInputToOptions(input)
+		_ = options
+		var n int
+		var l int
+		_ = l
+		l = len(x.Creator)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.unknownFields != nil {
+			n += len(x.unknownFields)
+		}
+		return protoiface.SizeOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Size:              n,
+		}
+	}
+
+	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
+		x := input.Message.Interface().(*MsgFinalizeUnbonding)
+		if x == nil {
+			return protoiface.MarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Buf:               input.Buf,
+			}, nil
+		}
+		options := runtime.MarshalInputToOptions(input)
+		_ = options
+		size := options.Size(x)
+		dAtA := make([]byte, size)
+		i := len(dAtA)
+		_ = i
+		var l int
+		_ = l
+		if x.unknownFields != nil {
+			i -= len(x.unknownFields)
+			copy(dAtA[i:], x.unknownFields)
+		}
+		if len(x.Creator) > 0 {
+			i -= len(x.Creator)
+			copy(dAtA[i:], x.Creator)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.Creator)))
+			i--
+			dAtA[i] = 0xa
+		}
+		if input.Buf != nil {
+			input.Buf = append(input.Buf, dAtA...)
+		} else {
+			input.Buf = dAtA
+		}
+		return protoiface.MarshalOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Buf:               input.Buf,
+		}, nil
+	}
+	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
+		x := input.Message.Interface().(*MsgFinalizeUnbonding)
+		if x == nil {
+			return protoiface.UnmarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Flags:             input.Flags,
+			}, nil
+		}
+		options := runtime.UnmarshalInputToOptions(input)
+		_ = options
+		dAtA := input.Buf
+		l := len(dAtA)
+		iNdEx := 0
+		for iNdEx < l {
+			preIndex := iNdEx
+			var wire uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+				}
+				if iNdEx >= l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				wire |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			fieldNum := int32(wire >> 3)
+			wireType := int(wire & 0x7)
+			if wireType == 4 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgFinalizeUnbonding: wiretype end group for non-group")
+			}
+			if fieldNum <= 0 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgFinalizeUnbonding: illegal tag %d (wire type %d)", fieldNum, wire)
+			}
+			switch fieldNum {
+			case 1:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.Creator = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			default:
+				iNdEx = preIndex
+				skippy, err := runtime.Skip(dAtA[iNdEx:])
+				if err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				if (skippy < 0) || (iNdEx+skippy) < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if (iNdEx + skippy) > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if !options.DiscardUnknown {
+					x.unknownFields = append(x.unknownFields, dAtA[iNdEx:iNdEx+skippy]...)
+				}
+				iNdEx += skippy
+			}
+		}
+
+		if iNdEx > l {
+			return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+		}
+		return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, nil
+	}
+	return &protoiface.Methods{
+		NoUnkeyedLiterals: struct{}{},
+		Flags:             protoiface.SupportMarshalDeterministic | protoiface.SupportUnmarshalDiscardUnknown,
+		Size:              size,
+		Marshal:           marshal,
+		Unmarshal:         unmarshal,
+		Merge:             nil,
+		CheckInitialized:  nil,
+	}
+}
+
+var (
+	md_MsgFinalizeUnbondingResponse protoreflect.MessageDescriptor
+)
+
+func init() {
+	file_chain_workload_tx_proto_init()
+	md_MsgFinalizeUnbondingResponse = File_chain_workload_tx_proto.Messages().ByName("MsgFinalizeUnbondingResponse")
+}
+
+var _ protoreflect.Message = (*fastReflection_MsgFinalizeUnbondingResponse)(nil)
+
+type fastReflection_MsgFinalizeUnbondingResponse MsgFinalizeUnbondingResponse
+
+func (x *MsgFinalizeUnbondingResponse) ProtoReflect() protoreflect.Message {
+	return (*fastReflection_MsgFinalizeUnbondingResponse)(x)
+}
+
+func (x *MsgFinalizeUnbondingResponse) slowProtoReflect() protoreflect.Message {
+	mi := &file_chain_workload_tx_proto_msgTypes[17]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+var _fastReflection_MsgFinalizeUnbondingResponse_messageType fastReflection_MsgFinalizeUnbondingResponse_messageType
+var _ protoreflect.MessageType = fastReflection_MsgFinalizeUnbondingResponse_messageType{}
+
+type fastReflection_MsgFinalizeUnbondingResponse_messageType struct{}
+
+func (x fastReflection_MsgFinalizeUnbondingResponse_messageType) Zero() protoreflect.Message {
+	return (*fastReflection_MsgFinalizeUnbondingResponse)(nil)
+}
+func (x fastReflection_MsgFinalizeUnbondingResponse_messageType) New() protoreflect.Message {
+	return new(fastReflection_MsgFinalizeUnbondingResponse)
+}
+func (x fastReflection_MsgFinalizeUnbondingResponse_messageType) Descriptor() protoreflect.MessageDescriptor {
+	return md_MsgFinalizeUnbondingResponse
+}
+
+// Descriptor returns message descriptor, which contains only the protobuf
+// type information for the message.
+func (x *fastReflection_MsgFinalizeUnbondingResponse) Descriptor() protoreflect.MessageDescriptor {
+	return md_MsgFinalizeUnbondingResponse
+}
+
+// Type returns the message type, which encapsulates both Go and protobuf
+// type information. If the Go type information is not needed,
+// it is recommended that the message descriptor be used instead.
+func (x *fastReflection_MsgFinalizeUnbondingResponse) Type() protoreflect.MessageType {
+	return _fastReflection_MsgFinalizeUnbondingResponse_messageType
+}
+
+// New returns a newly allocated and mutable empty message.
+func (x *fastReflection_MsgFinalizeUnbondingResponse) New() protoreflect.Message {
+	return new(fastReflection_MsgFinalizeUnbondingResponse)
+}
+
+// Interface unwraps the message reflection interface and
+// returns the underlying ProtoMessage interface.
+func (x *fastReflection_MsgFinalizeUnbondingResponse) Interface() protoreflect.ProtoMessage {
+	return (*MsgFinalizeUnbondingResponse)(x)
+}
+
+// Range iterates over every populated field in an undefined order,
+// calling f for each field descriptor and value encountered.
+// Range returns immediately if f returns false.
+// While iterating, mutating operations may only be performed
+// on the current field descriptor.
+func (x *fastReflection_MsgFinalizeUnbondingResponse) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+}
+
+// Has reports whether a field is populated.
+//
+// Some fields have the property of nullability where it is possible to
+// distinguish between the default value of a field and whether the field
+// was explicitly populated with the default value. Singular message fields,
+// member fields of a oneof, and proto2 scalar fields are nullable. Such
+// fields are populated only if explicitly set.
+//
+// In other cases (aside from the nullable cases above),
+// a proto3 scalar field is populated if it contains a non-zero value, and
+// a repeated field is populated if it is non-empty.
+func (x *fastReflection_MsgFinalizeUnbondingResponse) Has(fd protoreflect.FieldDescriptor) bool {
+	switch fd.FullName() {
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.workload.MsgFinalizeUnbondingResponse"))
+		}
+		panic(fmt.Errorf("message chain.workload.MsgFinalizeUnbondingResponse does not contain field %s", fd.FullName()))
+	}
+}
+
+// Clear clears the field such that a subsequent Has call reports false.
+//
+// Clearing an extension field clears both the extension type and value
+// associated with the given field number.
+//
+// Clear is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgFinalizeUnbondingResponse) Clear(fd protoreflect.FieldDescriptor) {
+	switch fd.FullName() {
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.workload.MsgFinalizeUnbondingResponse"))
+		}
+		panic(fmt.Errorf("message chain.workload.MsgFinalizeUnbondingResponse does not contain field %s", fd.FullName()))
+	}
+}
+
+// Get retrieves the value for a field.
+//
+// For unpopulated scalars, it returns the default value, where
+// the default value of a bytes scalar is guaranteed to be a copy.
+// For unpopulated composite types, it returns an empty, read-only view
+// of the value; to obtain a mutable reference, use Mutable.
+func (x *fastReflection_MsgFinalizeUnbondingResponse) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
+	switch descriptor.FullName() {
+	default:
+		if descriptor.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.workload.MsgFinalizeUnbondingResponse"))
+		}
+		panic(fmt.Errorf("message chain.workload.MsgFinalizeUnbondingResponse does not contain field %s", descriptor.FullName()))
+	}
+}
+
+// Set stores the value for a field.
+//
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType.
+// When setting a composite type, it is unspecified whether the stored value
+// aliases the source's memory in any way. If the composite value is an
+// empty, read-only value, then it panics.
+//
+// Set is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgFinalizeUnbondingResponse) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
+	switch fd.FullName() {
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.workload.MsgFinalizeUnbondingResponse"))
+		}
+		panic(fmt.Errorf("message chain.workload.MsgFinalizeUnbondingResponse does not contain field %s", fd.FullName()))
+	}
+}
+
+// Mutable returns a mutable reference to a composite type.
+//
+// If the field is unpopulated, it may allocate a composite value.
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType
+// if not already stored.
+// It panics if the field does not contain a composite type.
+//
+// Mutable is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgFinalizeUnbondingResponse) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.workload.MsgFinalizeUnbondingResponse"))
+		}
+		panic(fmt.Errorf("message chain.workload.MsgFinalizeUnbondingResponse does not contain field %s", fd.FullName()))
+	}
+}
+
+// NewField returns a new value that is assignable to the field
+// for the given descriptor. For scalars, this returns the default value.
+// For lists, maps, and messages, this returns a new, empty, mutable value.
+func (x *fastReflection_MsgFinalizeUnbondingResponse) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.workload.MsgFinalizeUnbondingResponse"))
+		}
+		panic(fmt.Errorf("message chain.workload.MsgFinalizeUnbondingResponse does not contain field %s", fd.FullName()))
+	}
+}
+
+// WhichOneof reports which field within the oneof is populated,
+// returning nil if none are populated.
+// It panics if the oneof descriptor does not belong to this message.
+func (x *fastReflection_MsgFinalizeUnbondingResponse) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
+	switch d.FullName() {
+	default:
+		panic(fmt.Errorf("%s is not a oneof field in chain.workload.MsgFinalizeUnbondingResponse", d.FullName()))
+	}
+	panic("unreachable")
+}
+
+// GetUnknown retrieves the entire list of unknown fields.
+// The caller may only mutate the contents of the RawFields
+// if the mutated bytes are stored back into the message with SetUnknown.
+func (x *fastReflection_MsgFinalizeUnbondingResponse) GetUnknown() protoreflect.RawFields {
+	return x.unknownFields
+}
+
+// SetUnknown stores an entire list of unknown fields.
+// The raw fields must be syntactically valid according to the wire format.
+// An implementation may panic if this is not the case.
+// Once stored, the caller must not mutate the content of the RawFields.
+// An empty RawFields may be passed to clear the fields.
+//
+// SetUnknown is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgFinalizeUnbondingResponse) SetUnknown(fields protoreflect.RawFields) {
+	x.unknownFields = fields
+}
+
+// IsValid reports whether the message is valid.
+//
+// An invalid message is an empty, read-only value.
+//
+// An invalid message often corresponds to a nil pointer of the concrete
+// message type, but the details are implementation dependent.
+// Validity is not part of the protobuf data model, and may not
+// be preserved in marshaling or other operations.
+func (x *fastReflection_MsgFinalizeUnbondingResponse) IsValid() bool {
+	return x != nil
+}
+
+// ProtoMethods returns optional fastReflectionFeature-path implementations of various operations.
+// This method may return nil.
+//
+// The returned methods type is identical to
+// "google.golang.org/protobuf/runtime/protoiface".Methods.
+// Consult the protoiface package documentation for details.
+func (x *fastReflection_MsgFinalizeUnbondingResponse) ProtoMethods() *protoiface.Methods {
+	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
+		x := input.Message.Interface().(*MsgFinalizeUnbondingResponse)
+		if x == nil {
+			return protoiface.SizeOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Size:              0,
+			}
+		}
+		options := runtime.SizeInputToOptions(input)
+		_ = options
+		var n int
+		var l int
+		_ = l
+		if x.unknownFields != nil {
+			n += len(x.unknownFields)
+		}
+		return protoiface.SizeOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Size:              n,
+		}
+	}
+
+	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
+		x := input.Message.Interface().(*MsgFinalizeUnbondingResponse)
+		if x == nil {
+			return protoiface.MarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Buf:               input.Buf,
+			}, nil
+		}
+		options := runtime.MarshalInputToOptions(input)
+		_ = options
+		size := options.Size(x)
+		dAtA := make([]byte, size)
+		i := len(dAtA)
+		_ = i
+		var l int
+		_ = l
+		if x.unknownFields != nil {
+			i -= len(x.unknownFields)
+			copy(dAtA[i:], x.unknownFields)
+		}
+		if input.Buf != nil {
+			input.Buf = append(input.Buf, dAtA...)
+		} else {
+			input.Buf = dAtA
+		}
+		return protoiface.MarshalOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Buf:               input.Buf,
+		}, nil
+	}
+	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
+		x := input.Message.Interface().(*MsgFinalizeUnbondingResponse)
+		if x == nil {
+			return protoiface.UnmarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Flags:             input.Flags,
+			}, nil
+		}
+		options := runtime.UnmarshalInputToOptions(input)
+		_ = options
+		dAtA := input.Buf
+		l := len(dAtA)
+		iNdEx := 0
+		for iNdEx < l {
+			preIndex := iNdEx
+			var wire uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+				}
+				if iNdEx >= l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				wire |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			fieldNum := int32(wire >> 3)
+			wireType := int(wire & 0x7)
+			if wireType == 4 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgFinalizeUnbondingResponse: wiretype end group for non-group")
+			}
+			if fieldNum <= 0 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgFinalizeUnbondingResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			}
+			switch fieldNum {
+			default:
+				iNdEx = preIndex
+				skippy, err := runtime.Skip(dAtA[iNdEx:])
+				if err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				if (skippy < 0) || (iNdEx+skippy) < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if (iNdEx + skippy) > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if !options.DiscardUnknown {
+					x.unknownFields = append(x.unknownFields, dAtA[iNdEx:iNdEx+skippy]...)
+				}
+				iNdEx += skippy
+			}
+		}
+
+		if iNdEx > l {
+			return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+		}
+		return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, nil
+	}
+	return &protoiface.Methods{
+		NoUnkeyedLiterals: struct{}{},
+		Flags:             protoiface.SupportMarshalDeterministic | protoiface.SupportUnmarshalDiscardUnknown,
+		Size:              size,
+		Marshal:           marshal,
+		Unmarshal:         unmarshal,
+		Merge:             nil,
+		CheckInitialized:  nil,
+	}
+}
+
 // Code generated by protoc-gen-go. DO NOT EDIT.
 // versions:
 // 	protoc-gen-go v1.27.0
@@ -7077,6 +8629,128 @@ func (*MsgUnregisterWorkerResponse) Descriptor() ([]byte, []int) {
 	return file_chain_workload_tx_proto_rawDescGZIP(), []int{13}
 }
 
+type MsgRequestUnbonding struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Creator string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
+}
+
+func (x *MsgRequestUnbonding) Reset() {
+	*x = MsgRequestUnbonding{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_chain_workload_tx_proto_msgTypes[14]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *MsgRequestUnbonding) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MsgRequestUnbonding) ProtoMessage() {}
+
+// Deprecated: Use MsgRequestUnbonding.ProtoReflect.Descriptor instead.
+func (*MsgRequestUnbonding) Descriptor() ([]byte, []int) {
+	return file_chain_workload_tx_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *MsgRequestUnbonding) GetCreator() string {
+	if x != nil {
+		return x.Creator
+	}
+	return ""
+}
+
+type MsgRequestUnbondingResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *MsgRequestUnbondingResponse) Reset() {
+	*x = MsgRequestUnbondingResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_chain_workload_tx_proto_msgTypes[15]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *MsgRequestUnbondingResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MsgRequestUnbondingResponse) ProtoMessage() {}
+
+// Deprecated: Use MsgRequestUnbondingResponse.ProtoReflect.Descriptor instead.
+func (*MsgRequestUnbondingResponse) Descriptor() ([]byte, []int) {
+	return file_chain_workload_tx_proto_rawDescGZIP(), []int{15}
+}
+
+type MsgFinalizeUnbonding struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Creator string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
+}
+
+func (x *MsgFinalizeUnbonding) Reset() {
+	*x = MsgFinalizeUnbonding{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_chain_workload_tx_proto_msgTypes[16]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *MsgFinalizeUnbonding) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MsgFinalizeUnbonding) ProtoMessage() {}
+
+// Deprecated: Use MsgFinalizeUnbonding.ProtoReflect.Descriptor instead.
+func (*MsgFinalizeUnbonding) Descriptor() ([]byte, []int) {
+	return file_chain_workload_tx_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *MsgFinalizeUnbonding) GetCreator() string {
+	if x != nil {
+		return x.Creator
+	}
+	return ""
+}
+
+type MsgFinalizeUnbondingResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *MsgFinalizeUnbondingResponse) Reset() {
+	*x = MsgFinalizeUnbondingResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_chain_workload_tx_proto_msgTypes[17]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *MsgFinalizeUnbondingResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MsgFinalizeUnbondingResponse) ProtoMessage() {}
+
+// Deprecated: Use MsgFinalizeUnbondingResponse.ProtoReflect.Descriptor instead.
+func (*MsgFinalizeUnbondingResponse) Descriptor() ([]byte, []int) {
+	return file_chain_workload_tx_proto_rawDescGZIP(), []int{17}
+}
+
 var File_chain_workload_tx_proto protoreflect.FileDescriptor
 
 var file_chain_workload_tx_proto_rawDesc = []byte{
@@ -7164,57 +8838,82 @@ var file_chain_workload_tx_proto_rawDesc = []byte{
 	0x61, 0x74, 0x6f, 0x72, 0x3a, 0x0c, 0x82, 0xe7, 0xb0, 0x2a, 0x07, 0x63, 0x72, 0x65, 0x61, 0x74,
 	0x6f, 0x72, 0x22, 0x1d, 0x0a, 0x1b, 0x4d, 0x73, 0x67, 0x55, 0x6e, 0x72, 0x65, 0x67, 0x69, 0x73,
 	0x74, 0x65, 0x72, 0x57, 0x6f, 0x72, 0x6b, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
-	0x65, 0x32, 0xff, 0x04, 0x0a, 0x03, 0x4d, 0x73, 0x67, 0x12, 0x58, 0x0a, 0x0c, 0x55, 0x70, 0x64,
-	0x61, 0x74, 0x65, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x12, 0x1f, 0x2e, 0x63, 0x68, 0x61, 0x69,
-	0x6e, 0x2e, 0x77, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0x2e, 0x4d, 0x73, 0x67, 0x55, 0x70,
-	0x64, 0x61, 0x74, 0x65, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x1a, 0x27, 0x2e, 0x63, 0x68, 0x61,
-	0x69, 0x6e, 0x2e, 0x77, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0x2e, 0x4d, 0x73, 0x67, 0x55,
-	0x70, 0x64, 0x61, 0x74, 0x65, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f,
-	0x6e, 0x73, 0x65, 0x12, 0x52, 0x0a, 0x0a, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x54, 0x61, 0x73,
-	0x6b, 0x12, 0x1d, 0x2e, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2e, 0x77, 0x6f, 0x72, 0x6b, 0x6c, 0x6f,
-	0x61, 0x64, 0x2e, 0x4d, 0x73, 0x67, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x54, 0x61, 0x73, 0x6b,
-	0x1a, 0x25, 0x2e, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2e, 0x77, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61,
-	0x64, 0x2e, 0x4d, 0x73, 0x67, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x54, 0x61, 0x73, 0x6b, 0x52,
-	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x52, 0x0a, 0x0a, 0x55, 0x70, 0x64, 0x61, 0x74,
-	0x65, 0x54, 0x61, 0x73, 0x6b, 0x12, 0x1d, 0x2e, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2e, 0x77, 0x6f,
-	0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0x2e, 0x4d, 0x73, 0x67, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65,
-	0x54, 0x61, 0x73, 0x6b, 0x1a, 0x25, 0x2e, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2e, 0x77, 0x6f, 0x72,
-	0x6b, 0x6c, 0x6f, 0x61, 0x64, 0x2e, 0x4d, 0x73, 0x67, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x54,
-	0x61, 0x73, 0x6b, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x52, 0x0a, 0x0a, 0x44,
-	0x65, 0x6c, 0x65, 0x74, 0x65, 0x54, 0x61, 0x73, 0x6b, 0x12, 0x1d, 0x2e, 0x63, 0x68, 0x61, 0x69,
-	0x6e, 0x2e, 0x77, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0x2e, 0x4d, 0x73, 0x67, 0x44, 0x65,
-	0x6c, 0x65, 0x74, 0x65, 0x54, 0x61, 0x73, 0x6b, 0x1a, 0x25, 0x2e, 0x63, 0x68, 0x61, 0x69, 0x6e,
-	0x2e, 0x77, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0x2e, 0x4d, 0x73, 0x67, 0x44, 0x65, 0x6c,
-	0x65, 0x74, 0x65, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12,
-	0x5e, 0x0a, 0x0e, 0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x57, 0x6f, 0x72, 0x6b, 0x65,
-	0x72, 0x12, 0x21, 0x2e, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2e, 0x77, 0x6f, 0x72, 0x6b, 0x6c, 0x6f,
-	0x61, 0x64, 0x2e, 0x4d, 0x73, 0x67, 0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x57, 0x6f,
-	0x72, 0x6b, 0x65, 0x72, 0x1a, 0x29, 0x2e, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2e, 0x77, 0x6f, 0x72,
-	0x6b, 0x6c, 0x6f, 0x61, 0x64, 0x2e, 0x4d, 0x73, 0x67, 0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65,
-	0x72, 0x57, 0x6f, 0x72, 0x6b, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12,
-	0x55, 0x0a, 0x0b, 0x53, 0x6c, 0x61, 0x73, 0x68, 0x57, 0x6f, 0x72, 0x6b, 0x65, 0x72, 0x12, 0x1e,
+	0x65, 0x22, 0x3d, 0x0a, 0x13, 0x4d, 0x73, 0x67, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x55,
+	0x6e, 0x62, 0x6f, 0x6e, 0x64, 0x69, 0x6e, 0x67, 0x12, 0x18, 0x0a, 0x07, 0x63, 0x72, 0x65, 0x61,
+	0x74, 0x6f, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x63, 0x72, 0x65, 0x61, 0x74,
+	0x6f, 0x72, 0x3a, 0x0c, 0x82, 0xe7, 0xb0, 0x2a, 0x07, 0x63, 0x72, 0x65, 0x61, 0x74, 0x6f, 0x72,
+	0x22, 0x1d, 0x0a, 0x1b, 0x4d, 0x73, 0x67, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x55, 0x6e,
+	0x62, 0x6f, 0x6e, 0x64, 0x69, 0x6e, 0x67, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22,
+	0x3e, 0x0a, 0x14, 0x4d, 0x73, 0x67, 0x46, 0x69, 0x6e, 0x61, 0x6c, 0x69, 0x7a, 0x65, 0x55, 0x6e,
+	0x62, 0x6f, 0x6e, 0x64, 0x69, 0x6e, 0x67, 0x12, 0x18, 0x0a, 0x07, 0x63, 0x72, 0x65, 0x61, 0x74,
+	0x6f, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x63, 0x72, 0x65, 0x61, 0x74, 0x6f,
+	0x72, 0x3a, 0x0c, 0x82, 0xe7, 0xb0, 0x2a, 0x07, 0x63, 0x72, 0x65, 0x61, 0x74, 0x6f, 0x72, 0x22,
+	0x1e, 0x0a, 0x1c, 0x4d, 0x73, 0x67, 0x46, 0x69, 0x6e, 0x61, 0x6c, 0x69, 0x7a, 0x65, 0x55, 0x6e,
+	0x62, 0x6f, 0x6e, 0x64, 0x69, 0x6e, 0x67, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x32,
+	0xce, 0x06, 0x0a, 0x03, 0x4d, 0x73, 0x67, 0x12, 0x58, 0x0a, 0x0c, 0x55, 0x70, 0x64, 0x61, 0x74,
+	0x65, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x12, 0x1f, 0x2e, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2e,
+	0x77, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0x2e, 0x4d, 0x73, 0x67, 0x55, 0x70, 0x64, 0x61,
+	0x74, 0x65, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x1a, 0x27, 0x2e, 0x63, 0x68, 0x61, 0x69, 0x6e,
+	0x2e, 0x77, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0x2e, 0x4d, 0x73, 0x67, 0x55, 0x70, 0x64,
+	0x61, 0x74, 0x65, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
+	0x65, 0x12, 0x52, 0x0a, 0x0a, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x54, 0x61, 0x73, 0x6b, 0x12,
+	0x1d, 0x2e, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2e, 0x77, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64,
+	0x2e, 0x4d, 0x73, 0x67, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x54, 0x61, 0x73, 0x6b, 0x1a, 0x25,
 	0x2e, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2e, 0x77, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0x2e,
-	0x4d, 0x73, 0x67, 0x53, 0x6c, 0x61, 0x73, 0x68, 0x57, 0x6f, 0x72, 0x6b, 0x65, 0x72, 0x1a, 0x26,
+	0x4d, 0x73, 0x67, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x73,
+	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x52, 0x0a, 0x0a, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x54,
+	0x61, 0x73, 0x6b, 0x12, 0x1d, 0x2e, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2e, 0x77, 0x6f, 0x72, 0x6b,
+	0x6c, 0x6f, 0x61, 0x64, 0x2e, 0x4d, 0x73, 0x67, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x54, 0x61,
+	0x73, 0x6b, 0x1a, 0x25, 0x2e, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2e, 0x77, 0x6f, 0x72, 0x6b, 0x6c,
+	0x6f, 0x61, 0x64, 0x2e, 0x4d, 0x73, 0x67, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x54, 0x61, 0x73,
+	0x6b, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x52, 0x0a, 0x0a, 0x44, 0x65, 0x6c,
+	0x65, 0x74, 0x65, 0x54, 0x61, 0x73, 0x6b, 0x12, 0x1d, 0x2e, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2e,
+	0x77, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0x2e, 0x4d, 0x73, 0x67, 0x44, 0x65, 0x6c, 0x65,
+	0x74, 0x65, 0x54, 0x61, 0x73, 0x6b, 0x1a, 0x25, 0x2e, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2e, 0x77,
+	0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0x2e, 0x4d, 0x73, 0x67, 0x44, 0x65, 0x6c, 0x65, 0x74,
+	0x65, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x5e, 0x0a,
+	0x0e, 0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x57, 0x6f, 0x72, 0x6b, 0x65, 0x72, 0x12,
+	0x21, 0x2e, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2e, 0x77, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64,
+	0x2e, 0x4d, 0x73, 0x67, 0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x57, 0x6f, 0x72, 0x6b,
+	0x65, 0x72, 0x1a, 0x29, 0x2e, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2e, 0x77, 0x6f, 0x72, 0x6b, 0x6c,
+	0x6f, 0x61, 0x64, 0x2e, 0x4d, 0x73, 0x67, 0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x57,
+	0x6f, 0x72, 0x6b, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x55, 0x0a,
+	0x0b, 0x53, 0x6c, 0x61, 0x73, 0x68, 0x57, 0x6f, 0x72, 0x6b, 0x65, 0x72, 0x12, 0x1e, 0x2e, 0x63,
+	0x68, 0x61, 0x69, 0x6e, 0x2e, 0x77, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0x2e, 0x4d, 0x73,
+	0x67, 0x53, 0x6c, 0x61, 0x73, 0x68, 0x57, 0x6f, 0x72, 0x6b, 0x65, 0x72, 0x1a, 0x26, 0x2e, 0x63,
+	0x68, 0x61, 0x69, 0x6e, 0x2e, 0x77, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0x2e, 0x4d, 0x73,
+	0x67, 0x53, 0x6c, 0x61, 0x73, 0x68, 0x57, 0x6f, 0x72, 0x6b, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70,
+	0x6f, 0x6e, 0x73, 0x65, 0x12, 0x64, 0x0a, 0x10, 0x55, 0x6e, 0x72, 0x65, 0x67, 0x69, 0x73, 0x74,
+	0x65, 0x72, 0x57, 0x6f, 0x72, 0x6b, 0x65, 0x72, 0x12, 0x23, 0x2e, 0x63, 0x68, 0x61, 0x69, 0x6e,
+	0x2e, 0x77, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0x2e, 0x4d, 0x73, 0x67, 0x55, 0x6e, 0x72,
+	0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x57, 0x6f, 0x72, 0x6b, 0x65, 0x72, 0x1a, 0x2b, 0x2e,
+	0x63, 0x68, 0x61, 0x69, 0x6e, 0x2e, 0x77, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0x2e, 0x4d,
+	0x73, 0x67, 0x55, 0x6e, 0x72, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x57, 0x6f, 0x72, 0x6b,
+	0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x64, 0x0a, 0x10, 0x52, 0x65,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x55, 0x6e, 0x62, 0x6f, 0x6e, 0x64, 0x69, 0x6e, 0x67, 0x12, 0x23,
 	0x2e, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2e, 0x77, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0x2e,
-	0x4d, 0x73, 0x67, 0x53, 0x6c, 0x61, 0x73, 0x68, 0x57, 0x6f, 0x72, 0x6b, 0x65, 0x72, 0x52, 0x65,
-	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x64, 0x0a, 0x10, 0x55, 0x6e, 0x72, 0x65, 0x67, 0x69,
-	0x73, 0x74, 0x65, 0x72, 0x57, 0x6f, 0x72, 0x6b, 0x65, 0x72, 0x12, 0x23, 0x2e, 0x63, 0x68, 0x61,
-	0x69, 0x6e, 0x2e, 0x77, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0x2e, 0x4d, 0x73, 0x67, 0x55,
-	0x6e, 0x72, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x57, 0x6f, 0x72, 0x6b, 0x65, 0x72, 0x1a,
-	0x2b, 0x2e, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2e, 0x77, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64,
-	0x2e, 0x4d, 0x73, 0x67, 0x55, 0x6e, 0x72, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x57, 0x6f,
-	0x72, 0x6b, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x1a, 0x05, 0x80, 0xe7,
-	0xb0, 0x2a, 0x01, 0x42, 0x97, 0x01, 0x0a, 0x12, 0x63, 0x6f, 0x6d, 0x2e, 0x63, 0x68, 0x61, 0x69,
-	0x6e, 0x2e, 0x77, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0x42, 0x07, 0x54, 0x78, 0x50, 0x72,
-	0x6f, 0x74, 0x6f, 0x50, 0x01, 0x5a, 0x1f, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x73, 0x64, 0x6b,
-	0x2e, 0x69, 0x6f, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2f, 0x77, 0x6f,
-	0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0xa2, 0x02, 0x03, 0x43, 0x57, 0x58, 0xaa, 0x02, 0x0e, 0x43,
-	0x68, 0x61, 0x69, 0x6e, 0x2e, 0x57, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0xca, 0x02, 0x0e,
-	0x43, 0x68, 0x61, 0x69, 0x6e, 0x5c, 0x57, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0xe2, 0x02,
-	0x1a, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x5c, 0x57, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0x5c,
-	0x47, 0x50, 0x42, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0xea, 0x02, 0x0f, 0x43, 0x68,
-	0x61, 0x69, 0x6e, 0x3a, 0x3a, 0x57, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0x62, 0x06, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x4d, 0x73, 0x67, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x55, 0x6e, 0x62, 0x6f, 0x6e, 0x64,
+	0x69, 0x6e, 0x67, 0x1a, 0x2b, 0x2e, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2e, 0x77, 0x6f, 0x72, 0x6b,
+	0x6c, 0x6f, 0x61, 0x64, 0x2e, 0x4d, 0x73, 0x67, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x55,
+	0x6e, 0x62, 0x6f, 0x6e, 0x64, 0x69, 0x6e, 0x67, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
+	0x12, 0x67, 0x0a, 0x11, 0x46, 0x69, 0x6e, 0x61, 0x6c, 0x69, 0x7a, 0x65, 0x55, 0x6e, 0x62, 0x6f,
+	0x6e, 0x64, 0x69, 0x6e, 0x67, 0x12, 0x24, 0x2e, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2e, 0x77, 0x6f,
+	0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0x2e, 0x4d, 0x73, 0x67, 0x46, 0x69, 0x6e, 0x61, 0x6c, 0x69,
+	0x7a, 0x65, 0x55, 0x6e, 0x62, 0x6f, 0x6e, 0x64, 0x69, 0x6e, 0x67, 0x1a, 0x2c, 0x2e, 0x63, 0x68,
+	0x61, 0x69, 0x6e, 0x2e, 0x77, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0x2e, 0x4d, 0x73, 0x67,
+	0x46, 0x69, 0x6e, 0x61, 0x6c, 0x69, 0x7a, 0x65, 0x55, 0x6e, 0x62, 0x6f, 0x6e, 0x64, 0x69, 0x6e,
+	0x67, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x1a, 0x05, 0x80, 0xe7, 0xb0, 0x2a, 0x01,
+	0x42, 0x97, 0x01, 0x0a, 0x12, 0x63, 0x6f, 0x6d, 0x2e, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2e, 0x77,
+	0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0x42, 0x07, 0x54, 0x78, 0x50, 0x72, 0x6f, 0x74, 0x6f,
+	0x50, 0x01, 0x5a, 0x1f, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x73, 0x64, 0x6b, 0x2e, 0x69, 0x6f,
+	0x2f, 0x61, 0x70, 0x69, 0x2f, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2f, 0x77, 0x6f, 0x72, 0x6b, 0x6c,
+	0x6f, 0x61, 0x64, 0xa2, 0x02, 0x03, 0x43, 0x57, 0x58, 0xaa, 0x02, 0x0e, 0x43, 0x68, 0x61, 0x69,
+	0x6e, 0x2e, 0x57, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0xca, 0x02, 0x0e, 0x43, 0x68, 0x61,
+	0x69, 0x6e, 0x5c, 0x57, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0xe2, 0x02, 0x1a, 0x43, 0x68,
+	0x61, 0x69, 0x6e, 0x5c, 0x57, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0x5c, 0x47, 0x50, 0x42,
+	0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0xea, 0x02, 0x0f, 0x43, 0x68, 0x61, 0x69, 0x6e,
+	0x3a, 0x3a, 0x57, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x33,
 }
 
 var (
@@ -7229,26 +8928,30 @@ func file_chain_workload_tx_proto_rawDescGZIP() []byte {
 	return file_chain_workload_tx_proto_rawDescData
 }
 
-var file_chain_workload_tx_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
+var file_chain_workload_tx_proto_msgTypes = make([]protoimpl.MessageInfo, 18)
 var file_chain_workload_tx_proto_goTypes = []interface{}{
-	(*MsgUpdateParams)(nil),             // 0: chain.workload.MsgUpdateParams
-	(*MsgUpdateParamsResponse)(nil),     // 1: chain.workload.MsgUpdateParamsResponse
-	(*MsgCreateTask)(nil),               // 2: chain.workload.MsgCreateTask
-	(*MsgCreateTaskResponse)(nil),       // 3: chain.workload.MsgCreateTaskResponse
-	(*MsgUpdateTask)(nil),               // 4: chain.workload.MsgUpdateTask
-	(*MsgUpdateTaskResponse)(nil),       // 5: chain.workload.MsgUpdateTaskResponse
-	(*MsgDeleteTask)(nil),               // 6: chain.workload.MsgDeleteTask
-	(*MsgDeleteTaskResponse)(nil),       // 7: chain.workload.MsgDeleteTaskResponse
-	(*MsgRegisterWorker)(nil),           // 8: chain.workload.MsgRegisterWorker
-	(*MsgRegisterWorkerResponse)(nil),   // 9: chain.workload.MsgRegisterWorkerResponse
-	(*MsgSlashWorker)(nil),              // 10: chain.workload.MsgSlashWorker
-	(*MsgSlashWorkerResponse)(nil),      // 11: chain.workload.MsgSlashWorkerResponse
-	(*MsgUnregisterWorker)(nil),         // 12: chain.workload.MsgUnregisterWorker
-	(*MsgUnregisterWorkerResponse)(nil), // 13: chain.workload.MsgUnregisterWorkerResponse
-	(*Params)(nil),                      // 14: chain.workload.Params
+	(*MsgUpdateParams)(nil),              // 0: chain.workload.MsgUpdateParams
+	(*MsgUpdateParamsResponse)(nil),      // 1: chain.workload.MsgUpdateParamsResponse
+	(*MsgCreateTask)(nil),                // 2: chain.workload.MsgCreateTask
+	(*MsgCreateTaskResponse)(nil),        // 3: chain.workload.MsgCreateTaskResponse
+	(*MsgUpdateTask)(nil),                // 4: chain.workload.MsgUpdateTask
+	(*MsgUpdateTaskResponse)(nil),        // 5: chain.workload.MsgUpdateTaskResponse
+	(*MsgDeleteTask)(nil),                // 6: chain.workload.MsgDeleteTask
+	(*MsgDeleteTaskResponse)(nil),        // 7: chain.workload.MsgDeleteTaskResponse
+	(*MsgRegisterWorker)(nil),            // 8: chain.workload.MsgRegisterWorker
+	(*MsgRegisterWorkerResponse)(nil),    // 9: chain.workload.MsgRegisterWorkerResponse
+	(*MsgSlashWorker)(nil),               // 10: chain.workload.MsgSlashWorker
+	(*MsgSlashWorkerResponse)(nil),       // 11: chain.workload.MsgSlashWorkerResponse
+	(*MsgUnregisterWorker)(nil),          // 12: chain.workload.MsgUnregisterWorker
+	(*MsgUnregisterWorkerResponse)(nil),  // 13: chain.workload.MsgUnregisterWorkerResponse
+	(*MsgRequestUnbonding)(nil),          // 14: chain.workload.MsgRequestUnbonding
+	(*MsgRequestUnbondingResponse)(nil),  // 15: chain.workload.MsgRequestUnbondingResponse
+	(*MsgFinalizeUnbonding)(nil),         // 16: chain.workload.MsgFinalizeUnbonding
+	(*MsgFinalizeUnbondingResponse)(nil), // 17: chain.workload.MsgFinalizeUnbondingResponse
+	(*Params)(nil),                       // 18: chain.workload.Params
 }
 var file_chain_workload_tx_proto_depIdxs = []int32{
-	14, // 0: chain.workload.MsgUpdateParams.params:type_name -> chain.workload.Params
+	18, // 0: chain.workload.MsgUpdateParams.params:type_name -> chain.workload.Params
 	0,  // 1: chain.workload.Msg.UpdateParams:input_type -> chain.workload.MsgUpdateParams
 	2,  // 2: chain.workload.Msg.CreateTask:input_type -> chain.workload.MsgCreateTask
 	4,  // 3: chain.workload.Msg.UpdateTask:input_type -> chain.workload.MsgUpdateTask
@@ -7256,15 +8959,19 @@ var file_chain_workload_tx_proto_depIdxs = []int32{
 	8,  // 5: chain.workload.Msg.RegisterWorker:input_type -> chain.workload.MsgRegisterWorker
 	10, // 6: chain.workload.Msg.SlashWorker:input_type -> chain.workload.MsgSlashWorker
 	12, // 7: chain.workload.Msg.UnregisterWorker:input_type -> chain.workload.MsgUnregisterWorker
-	1,  // 8: chain.workload.Msg.UpdateParams:output_type -> chain.workload.MsgUpdateParamsResponse
-	3,  // 9: chain.workload.Msg.CreateTask:output_type -> chain.workload.MsgCreateTaskResponse
-	5,  // 10: chain.workload.Msg.UpdateTask:output_type -> chain.workload.MsgUpdateTaskResponse
-	7,  // 11: chain.workload.Msg.DeleteTask:output_type -> chain.workload.MsgDeleteTaskResponse
-	9,  // 12: chain.workload.Msg.RegisterWorker:output_type -> chain.workload.MsgRegisterWorkerResponse
-	11, // 13: chain.workload.Msg.SlashWorker:output_type -> chain.workload.MsgSlashWorkerResponse
-	13, // 14: chain.workload.Msg.UnregisterWorker:output_type -> chain.workload.MsgUnregisterWorkerResponse
-	8,  // [8:15] is the sub-list for method output_type
-	1,  // [1:8] is the sub-list for method input_type
+	14, // 8: chain.workload.Msg.RequestUnbonding:input_type -> chain.workload.MsgRequestUnbonding
+	16, // 9: chain.workload.Msg.FinalizeUnbonding:input_type -> chain.workload.MsgFinalizeUnbonding
+	1,  // 10: chain.workload.Msg.UpdateParams:output_type -> chain.workload.MsgUpdateParamsResponse
+	3,  // 11: chain.workload.Msg.CreateTask:output_type -> chain.workload.MsgCreateTaskResponse
+	5,  // 12: chain.workload.Msg.UpdateTask:output_type -> chain.workload.MsgUpdateTaskResponse
+	7,  // 13: chain.workload.Msg.DeleteTask:output_type -> chain.workload.MsgDeleteTaskResponse
+	9,  // 14: chain.workload.Msg.RegisterWorker:output_type -> chain.workload.MsgRegisterWorkerResponse
+	11, // 15: chain.workload.Msg.SlashWorker:output_type -> chain.workload.MsgSlashWorkerResponse
+	13, // 16: chain.workload.Msg.UnregisterWorker:output_type -> chain.workload.MsgUnregisterWorkerResponse
+	15, // 17: chain.workload.Msg.RequestUnbonding:output_type -> chain.workload.MsgRequestUnbondingResponse
+	17, // 18: chain.workload.Msg.FinalizeUnbonding:output_type -> chain.workload.MsgFinalizeUnbondingResponse
+	10, // [10:19] is the sub-list for method output_type
+	1,  // [1:10] is the sub-list for method input_type
 	1,  // [1:1] is the sub-list for extension type_name
 	1,  // [1:1] is the sub-list for extension extendee
 	0,  // [0:1] is the sub-list for field type_name
@@ -7446,6 +9153,54 @@ func file_chain_workload_tx_proto_init() {
 				return nil
 			}
 		}
+		file_chain_workload_tx_proto_msgTypes[14].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*MsgRequestUnbonding); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_chain_workload_tx_proto_msgTypes[15].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*MsgRequestUnbondingResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_chain_workload_tx_proto_msgTypes[16].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*MsgFinalizeUnbonding); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_chain_workload_tx_proto_msgTypes[17].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*MsgFinalizeUnbondingResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -7453,7 +9208,7 @@ func file_chain_workload_tx_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_chain_workload_tx_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   14,
+			NumMessages:   18,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

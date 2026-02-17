@@ -19,13 +19,15 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Msg_UpdateParams_FullMethodName     = "/chain.workload.Msg/UpdateParams"
-	Msg_CreateTask_FullMethodName       = "/chain.workload.Msg/CreateTask"
-	Msg_UpdateTask_FullMethodName       = "/chain.workload.Msg/UpdateTask"
-	Msg_DeleteTask_FullMethodName       = "/chain.workload.Msg/DeleteTask"
-	Msg_RegisterWorker_FullMethodName   = "/chain.workload.Msg/RegisterWorker"
-	Msg_SlashWorker_FullMethodName      = "/chain.workload.Msg/SlashWorker"
-	Msg_UnregisterWorker_FullMethodName = "/chain.workload.Msg/UnregisterWorker"
+	Msg_UpdateParams_FullMethodName      = "/chain.workload.Msg/UpdateParams"
+	Msg_CreateTask_FullMethodName        = "/chain.workload.Msg/CreateTask"
+	Msg_UpdateTask_FullMethodName        = "/chain.workload.Msg/UpdateTask"
+	Msg_DeleteTask_FullMethodName        = "/chain.workload.Msg/DeleteTask"
+	Msg_RegisterWorker_FullMethodName    = "/chain.workload.Msg/RegisterWorker"
+	Msg_SlashWorker_FullMethodName       = "/chain.workload.Msg/SlashWorker"
+	Msg_UnregisterWorker_FullMethodName  = "/chain.workload.Msg/UnregisterWorker"
+	Msg_RequestUnbonding_FullMethodName  = "/chain.workload.Msg/RequestUnbonding"
+	Msg_FinalizeUnbonding_FullMethodName = "/chain.workload.Msg/FinalizeUnbonding"
 )
 
 // MsgClient is the client API for Msg service.
@@ -41,6 +43,8 @@ type MsgClient interface {
 	RegisterWorker(ctx context.Context, in *MsgRegisterWorker, opts ...grpc.CallOption) (*MsgRegisterWorkerResponse, error)
 	SlashWorker(ctx context.Context, in *MsgSlashWorker, opts ...grpc.CallOption) (*MsgSlashWorkerResponse, error)
 	UnregisterWorker(ctx context.Context, in *MsgUnregisterWorker, opts ...grpc.CallOption) (*MsgUnregisterWorkerResponse, error)
+	RequestUnbonding(ctx context.Context, in *MsgRequestUnbonding, opts ...grpc.CallOption) (*MsgRequestUnbondingResponse, error)
+	FinalizeUnbonding(ctx context.Context, in *MsgFinalizeUnbonding, opts ...grpc.CallOption) (*MsgFinalizeUnbondingResponse, error)
 }
 
 type msgClient struct {
@@ -114,6 +118,24 @@ func (c *msgClient) UnregisterWorker(ctx context.Context, in *MsgUnregisterWorke
 	return out, nil
 }
 
+func (c *msgClient) RequestUnbonding(ctx context.Context, in *MsgRequestUnbonding, opts ...grpc.CallOption) (*MsgRequestUnbondingResponse, error) {
+	out := new(MsgRequestUnbondingResponse)
+	err := c.cc.Invoke(ctx, Msg_RequestUnbonding_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) FinalizeUnbonding(ctx context.Context, in *MsgFinalizeUnbonding, opts ...grpc.CallOption) (*MsgFinalizeUnbondingResponse, error) {
+	out := new(MsgFinalizeUnbondingResponse)
+	err := c.cc.Invoke(ctx, Msg_FinalizeUnbonding_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MsgServer is the server API for Msg service.
 // All implementations must embed UnimplementedMsgServer
 // for forward compatibility
@@ -127,6 +149,8 @@ type MsgServer interface {
 	RegisterWorker(context.Context, *MsgRegisterWorker) (*MsgRegisterWorkerResponse, error)
 	SlashWorker(context.Context, *MsgSlashWorker) (*MsgSlashWorkerResponse, error)
 	UnregisterWorker(context.Context, *MsgUnregisterWorker) (*MsgUnregisterWorkerResponse, error)
+	RequestUnbonding(context.Context, *MsgRequestUnbonding) (*MsgRequestUnbondingResponse, error)
+	FinalizeUnbonding(context.Context, *MsgFinalizeUnbonding) (*MsgFinalizeUnbondingResponse, error)
 	mustEmbedUnimplementedMsgServer()
 }
 
@@ -154,6 +178,12 @@ func (UnimplementedMsgServer) SlashWorker(context.Context, *MsgSlashWorker) (*Ms
 }
 func (UnimplementedMsgServer) UnregisterWorker(context.Context, *MsgUnregisterWorker) (*MsgUnregisterWorkerResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UnregisterWorker not implemented")
+}
+func (UnimplementedMsgServer) RequestUnbonding(context.Context, *MsgRequestUnbonding) (*MsgRequestUnbondingResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RequestUnbonding not implemented")
+}
+func (UnimplementedMsgServer) FinalizeUnbonding(context.Context, *MsgFinalizeUnbonding) (*MsgFinalizeUnbondingResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FinalizeUnbonding not implemented")
 }
 func (UnimplementedMsgServer) mustEmbedUnimplementedMsgServer() {}
 
@@ -294,6 +324,42 @@ func _Msg_UnregisterWorker_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Msg_RequestUnbonding_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgRequestUnbonding)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).RequestUnbonding(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Msg_RequestUnbonding_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).RequestUnbonding(ctx, req.(*MsgRequestUnbonding))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_FinalizeUnbonding_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgFinalizeUnbonding)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).FinalizeUnbonding(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Msg_FinalizeUnbonding_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).FinalizeUnbonding(ctx, req.(*MsgFinalizeUnbonding))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Msg_ServiceDesc is the grpc.ServiceDesc for Msg service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -328,6 +394,14 @@ var Msg_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UnregisterWorker",
 			Handler:    _Msg_UnregisterWorker_Handler,
+		},
+		{
+			MethodName: "RequestUnbonding",
+			Handler:    _Msg_RequestUnbonding_Handler,
+		},
+		{
+			MethodName: "FinalizeUnbonding",
+			Handler:    _Msg_FinalizeUnbonding_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

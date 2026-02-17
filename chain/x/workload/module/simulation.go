@@ -47,6 +47,14 @@ const (
 	// TODO: Determine the simulation weight value
 	defaultWeightMsgUnregisterWorker int = 100
 
+	opWeightMsgRequestUnbonding = "op_weight_msg_request_unbonding"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgRequestUnbonding int = 100
+
+	opWeightMsgFinalizeUnbonding = "op_weight_msg_finalize_unbonding"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgFinalizeUnbonding int = 100
+
 	// this line is used by starport scaffolding # simapp/module/const
 )
 
@@ -152,6 +160,28 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 		workloadsimulation.SimulateMsgUnregisterWorker(am.accountKeeper, am.bankKeeper, am.keeper),
 	))
 
+	var weightMsgRequestUnbonding int
+	simState.AppParams.GetOrGenerate(opWeightMsgRequestUnbonding, &weightMsgRequestUnbonding, nil,
+		func(_ *rand.Rand) {
+			weightMsgRequestUnbonding = defaultWeightMsgRequestUnbonding
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgRequestUnbonding,
+		workloadsimulation.SimulateMsgRequestUnbonding(am.accountKeeper, am.bankKeeper, am.keeper),
+	))
+
+	var weightMsgFinalizeUnbonding int
+	simState.AppParams.GetOrGenerate(opWeightMsgFinalizeUnbonding, &weightMsgFinalizeUnbonding, nil,
+		func(_ *rand.Rand) {
+			weightMsgFinalizeUnbonding = defaultWeightMsgFinalizeUnbonding
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgFinalizeUnbonding,
+		workloadsimulation.SimulateMsgFinalizeUnbonding(am.accountKeeper, am.bankKeeper, am.keeper),
+	))
+
 	// this line is used by starport scaffolding # simapp/module/operation
 
 	return operations
@@ -205,6 +235,22 @@ func (am AppModule) ProposalMsgs(simState module.SimulationState) []simtypes.Wei
 			defaultWeightMsgUnregisterWorker,
 			func(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account) sdk.Msg {
 				workloadsimulation.SimulateMsgUnregisterWorker(am.accountKeeper, am.bankKeeper, am.keeper)
+				return nil
+			},
+		),
+		simulation.NewWeightedProposalMsg(
+			opWeightMsgRequestUnbonding,
+			defaultWeightMsgRequestUnbonding,
+			func(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account) sdk.Msg {
+				workloadsimulation.SimulateMsgRequestUnbonding(am.accountKeeper, am.bankKeeper, am.keeper)
+				return nil
+			},
+		),
+		simulation.NewWeightedProposalMsg(
+			opWeightMsgFinalizeUnbonding,
+			defaultWeightMsgFinalizeUnbonding,
+			func(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account) sdk.Msg {
+				workloadsimulation.SimulateMsgFinalizeUnbonding(am.accountKeeper, am.bankKeeper, am.keeper)
 				return nil
 			},
 		),

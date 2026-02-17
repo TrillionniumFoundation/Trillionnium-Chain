@@ -31,6 +31,14 @@ func TestGenesis(t *testing.T) {
 				Creator: "1",
 			},
 		},
+		UnbondingList: []types.Unbonding{
+			{
+				Creator: "0",
+			},
+			{
+				Creator: "1",
+			},
+		},
 		// this line is used by starport scaffolding # genesis/test/state
 	}
 
@@ -45,5 +53,6 @@ func TestGenesis(t *testing.T) {
 	require.ElementsMatch(t, genesisState.TaskList, got.TaskList)
 	require.Equal(t, genesisState.TaskCount, got.TaskCount)
 	require.ElementsMatch(t, genesisState.WorkerList, got.WorkerList)
+	require.ElementsMatch(t, genesisState.UnbondingList, got.UnbondingList)
 	// this line is used by starport scaffolding # genesis/test/assert
 }

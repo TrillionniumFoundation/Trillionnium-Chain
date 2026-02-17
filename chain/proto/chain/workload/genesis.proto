@@ -7,6 +7,7 @@ import "gogoproto/gogo.proto";
 import "chain/workload/params.proto";
 import "chain/workload/task.proto";
 import "chain/workload/worker.proto";
+import "chain/workload/unbonding.proto";
 
 option go_package = "chain/x/workload/types";
 
@@ -14,9 +15,10 @@ option go_package = "chain/x/workload/types";
 message GenesisState {
   
   // params defines all the parameters of the module.
-           Params params     = 1 [(gogoproto.nullable) = false, (amino.dont_omitempty) = true];
-  repeated Task   taskList   = 2 [(gogoproto.nullable) = false] ;
-           uint64 taskCount  = 3;
-  repeated Worker workerList = 4 [(gogoproto.nullable) = false] ;
+           Params    params        = 1 [(gogoproto.nullable) = false, (amino.dont_omitempty) = true];
+  repeated Task      taskList      = 2 [(gogoproto.nullable) = false] ;
+           uint64    taskCount     = 3;
+  repeated Worker    workerList    = 4 [(gogoproto.nullable) = false] ;
+  repeated Unbonding unbondingList = 5 [(gogoproto.nullable) = false] ;
 }
 

@@ -17,13 +17,15 @@ service Msg {
   
   // UpdateParams defines a (governance) operation for updating the module
   // parameters. The authority defaults to the x/gov module account.
-  rpc UpdateParams     (MsgUpdateParams    ) returns (MsgUpdateParamsResponse    );
-  rpc CreateTask       (MsgCreateTask      ) returns (MsgCreateTaskResponse      );
-  rpc UpdateTask       (MsgUpdateTask      ) returns (MsgUpdateTaskResponse      );
-  rpc DeleteTask       (MsgDeleteTask      ) returns (MsgDeleteTaskResponse      );
-  rpc RegisterWorker   (MsgRegisterWorker  ) returns (MsgRegisterWorkerResponse  );
-  rpc SlashWorker      (MsgSlashWorker     ) returns (MsgSlashWorkerResponse     );
-  rpc UnregisterWorker (MsgUnregisterWorker) returns (MsgUnregisterWorkerResponse);
+  rpc UpdateParams      (MsgUpdateParams     ) returns (MsgUpdateParamsResponse     );
+  rpc CreateTask        (MsgCreateTask       ) returns (MsgCreateTaskResponse       );
+  rpc UpdateTask        (MsgUpdateTask       ) returns (MsgUpdateTaskResponse       );
+  rpc DeleteTask        (MsgDeleteTask       ) returns (MsgDeleteTaskResponse       );
+  rpc RegisterWorker    (MsgRegisterWorker   ) returns (MsgRegisterWorkerResponse   );
+  rpc SlashWorker       (MsgSlashWorker      ) returns (MsgSlashWorkerResponse      );
+  rpc UnregisterWorker  (MsgUnregisterWorker ) returns (MsgUnregisterWorkerResponse );
+  rpc RequestUnbonding  (MsgRequestUnbonding ) returns (MsgRequestUnbondingResponse );
+  rpc FinalizeUnbonding (MsgFinalizeUnbonding) returns (MsgFinalizeUnbondingResponse);
 }
 // MsgUpdateParams is the Msg/UpdateParams request type.
 message MsgUpdateParams {
@@ -102,4 +104,18 @@ message MsgUnregisterWorker {
 }
 
 message MsgUnregisterWorkerResponse {}
+
+message MsgRequestUnbonding {
+  option (cosmos.msg.v1.signer) = "creator";
+  string creator = 1;
+}
+
+message MsgRequestUnbondingResponse {}
+
+message MsgFinalizeUnbonding {
+  option (cosmos.msg.v1.signer) = "creator";
+  string creator = 1;
+}
+
+message MsgFinalizeUnbondingResponse {}
 

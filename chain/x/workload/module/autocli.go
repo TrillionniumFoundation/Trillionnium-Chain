@@ -39,6 +39,17 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					Short:          "Shows a worker",
 					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "creator"}},
 				},
+				{
+					RpcMethod: "UnbondingAll",
+					Use:       "list-unbonding",
+					Short:     "List all unbonding",
+				},
+				{
+					RpcMethod:      "Unbonding",
+					Use:            "show-unbonding [id]",
+					Short:          "Shows a unbonding",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "creator"}},
+				},
 				// this line is used by ignite scaffolding # autocli/query
 			},
 		},
@@ -83,6 +94,18 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					RpcMethod:      "UnregisterWorker",
 					Use:            "unregister-worker",
 					Short:          "Send a unregister-worker tx",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{},
+				},
+				{
+					RpcMethod:      "RequestUnbonding",
+					Use:            "request-unbonding",
+					Short:          "Send a request-unbonding tx",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{},
+				},
+				{
+					RpcMethod:      "FinalizeUnbonding",
+					Use:            "finalize-unbonding",
+					Short:          "Send a finalize-unbonding tx",
 					PositionalArgs: []*autocliv1.PositionalArgDescriptor{},
 				},
 				// this line is used by ignite scaffolding # autocli/tx

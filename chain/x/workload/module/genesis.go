@@ -20,6 +20,10 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) 
 	for _, elem := range genState.WorkerList {
 		k.SetWorker(ctx, elem)
 	}
+	// Set all the unbonding
+	for _, elem := range genState.UnbondingList {
+		k.SetUnbonding(ctx, elem)
+	}
 	// this line is used by starport scaffolding # genesis/module/init
 	k.SetParams(ctx, genState.Params)
 }
@@ -32,6 +36,7 @@ func ExportGenesis(ctx sdk.Context, k keeper.Keeper) *types.GenesisState {
 	genesis.TaskList = k.GetAllTask(ctx)
 	genesis.TaskCount = k.GetTaskCount(ctx)
 	genesis.WorkerList = k.GetAllWorker(ctx)
+	genesis.UnbondingList = k.GetAllUnbonding(ctx)
 	// this line is used by starport scaffolding # genesis/module/export
 
 	return genesis
