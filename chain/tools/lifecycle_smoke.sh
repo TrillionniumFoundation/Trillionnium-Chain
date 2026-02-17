@@ -11,21 +11,77 @@ BIN="${BIN:-chaind}"
 FEES="${FEES:-200stake}"
 SLEEP_SECONDS="${SLEEP_SECONDS:-2}"
 MAX_WAIT_BLOCKS="${MAX_WAIT_BLOCKS:-300}"
+TX_WAIT_SECONDS="${TX_WAIT_SECONDS:-30}"
 
-wait_tx() {
-  local txhash="$1"
-  for _ in {1..30}; do
-    if "$BIN" q tx "$txhash" --node "$NODE" -o json >/dev/null 2>&1; then
-      return 0
-    fi
-    sleep 1
-  done
-  echo "[ERR] tx not found in time: $txhash" >&2
-  return 1
+log() {
+  printf '[%s] %s\n' "$(date '+%H:%M:%S')" "$*"
+}
+
+die() {
+  log "[ERR] $*" >&2
+  exit 1
 }
 
 latest_height() {
   "$BIN" status --node "$NODE" 2>/dev/null | jq -r '.SyncInfo.latest_block_height | tonumber'
+}
+
+node_syncing() {
+  "$BIN" status --node "$NODE" 2>/dev/null | jq -r '.SyncInfo.catching_up'
+}
+
+check_dependencies() {
+  command -v "$BIN" >/dev/null 2>&1 || die "binary not found: $BIN"
+  command -v jq >/dev/null 2>&1 || die "jq not found"
+}
+
+check_node_reachable() {
+  local h
+  if ! h="$(latest_height)"; then
+    die "cannot query node status from $NODE"
+  fi
+  log "node reachable: height=$h catching_up=$(node_syncing)"
+}
+
+broadcast_txhash() {
+  local label="$1"
+  shift
+
+  local raw txhash code rawlog
+  raw="$($@ -o json)"
+  txhash="$(echo "$raw" | jq -r '.txhash // empty')"
+  code="$(echo "$raw" | jq -r '.code // 0')"
+  rawlog="$(echo "$raw" | jq -r '.raw_log // empty')"
+
+  [[ -n "$txhash" ]] || die "$label broadcast returned empty txhash. response=$raw"
+  if [[ "$code" != "0" ]]; then
+    die "$label broadcast failed: txhash=$txhash code=$code raw_log=${rawlog:-<empty>}"
+  fi
+
+  echo "$txhash"
+}
+
+wait_tx() {
+  local txhash="$1"
+  local waited=0
+
+  while (( waited < TX_WAIT_SECONDS )); do
+    if "$BIN" q tx "$txhash" --node "$NODE" -o json >/dev/null 2>&1; then
+      return 0
+    fi
+
+    local h
+    h="$(latest_height || echo '?')"
+    log "  waiting tx inclusion... tx=$txhash waited=${waited}s height=$h"
+
+    sleep 1
+    waited=$(( waited + 1 ))
+  done
+
+  local h sync
+  h="$(latest_height || echo '?')"
+  sync="$(node_syncing || echo '?')"
+  die "tx not found in time: tx=$txhash waited=${waited}s height=$h catching_up=$sync"
 }
 
 expect_event_attr() {
@@ -40,64 +96,71 @@ expect_event_attr() {
   ' | tail -n1)"
 
   if [[ "$got" != "$expected" ]]; then
-    echo "[ERR] event validation failed for tx=$txhash event=$event_type key=$key expected=$expected got=${got:-<empty>}" >&2
-    return 1
+    die "event validation failed for tx=$txhash event=$event_type key=$key expected=$expected got=${got:-<empty>}"
   fi
 
-  echo "  event_ok: $event_type.$key=$expected"
+  log "  event_ok: $event_type.$key=$expected"
 }
 
 wait_for_release_height() {
   local release_height="$1"
   local current
   local waited=0
+  local stagnant=0
 
   current="$(latest_height)"
   while (( current < release_height )); do
     if (( waited >= MAX_WAIT_BLOCKS )); then
-      echo "[ERR] cooldown wait timeout: current=$current release=$release_height waited_blocks=$waited" >&2
-      return 1
+      die "cooldown wait timeout: current=$current release=$release_height waited_blocks=$waited stagnant_rounds=$stagnant catching_up=$(node_syncing || echo '?')"
     fi
 
     local remaining=$(( release_height - current ))
-    echo "  waiting cooldown... current=$current target=$release_height remaining=$remaining"
+    log "  waiting cooldown... current=$current target=$release_height remaining=$remaining"
     sleep "$SLEEP_SECONDS"
 
     local next
     next="$(latest_height)"
     if (( next > current )); then
       waited=$(( waited + (next - current) ))
+      stagnant=0
+    else
+      stagnant=$(( stagnant + 1 ))
+      if (( stagnant % 5 == 0 )); then
+        log "  cooldown stall diagnose: height=$next catching_up=$(node_syncing || echo '?') stagnant_rounds=$stagnant"
+      fi
     fi
     current="$next"
   done
 
-  echo "  cooldown reached at height=$current (target=$release_height)"
+  log "  cooldown reached at height=$current (target=$release_height)"
 }
 
+check_dependencies
+check_node_reachable
 WORKER_ADDR="$($BIN keys show "$FROM" -a)"
 
-echo "[1/6] register-worker"
-TX_REGISTER="$($BIN tx workload register-worker \
+log "[1/6] register-worker"
+TX_REGISTER="$(broadcast_txhash register-worker "$BIN" tx workload register-worker \
   --node-id smoke-node \
   --ipfs-addr /ip4/127.0.0.1/tcp/4001 \
   --from "$FROM" \
   --chain-id "$CHAIN_ID" \
   --fees "$FEES" \
   --node "$NODE" \
-  --yes -o json | jq -r '.txhash')"
+  --yes)"
 wait_tx "$TX_REGISTER"
-echo "  tx_register=$TX_REGISTER"
+log "  tx_register=$TX_REGISTER"
 expect_event_attr "$TX_REGISTER" "workload_register_worker" "worker" "$WORKER_ADDR"
 
-echo "[2/6] request-unbonding"
-TX_REQ="$($BIN tx workload request-unbonding \
+log "[2/6] request-unbonding"
+TX_REQ="$(broadcast_txhash request-unbonding "$BIN" tx workload request-unbonding \
   --from "$FROM" \
   --chain-id "$CHAIN_ID" \
   --fees "$FEES" \
   --node "$NODE" \
-  --yes -o json | jq -r '.txhash')"
+  --yes)"
 wait_tx "$TX_REQ"
-echo "  tx_request_unbonding=$TX_REQ"
+log "  tx_request_unbonding=$TX_REQ"
 expect_event_attr "$TX_REQ" "workload_request_unbonding" "worker" "$WORKER_ADDR"
 
 AMOUNT="$("$BIN" q tx "$TX_REQ" --node "$NODE" -o json | jq -r '
@@ -105,28 +168,27 @@ AMOUNT="$("$BIN" q tx "$TX_REQ" --node "$NODE" -o json | jq -r '
 ' | tail -n1)"
 RELEASE_HEIGHT="$("$BIN" q workload show-unbonding "$WORKER_ADDR" --node "$NODE" -o json | jq -r '.unbonding.releaseHeight | tonumber')"
 
-echo "[3/6] query unbonding"
+log "[3/6] query unbonding"
 "$BIN" q workload show-unbonding "$WORKER_ADDR" --node "$NODE" -o json
 
-echo "[4/6] wait cooldown until release height"
+log "[4/6] wait cooldown until release height"
 wait_for_release_height "$RELEASE_HEIGHT"
 
-echo "[5/6] finalize-unbonding"
-TX_FINALIZE="$($BIN tx workload finalize-unbonding \
+log "[5/6] finalize-unbonding"
+TX_FINALIZE="$(broadcast_txhash finalize-unbonding "$BIN" tx workload finalize-unbonding \
   --from "$FROM" \
   --chain-id "$CHAIN_ID" \
   --fees "$FEES" \
   --node "$NODE" \
-  --yes -o json | jq -r '.txhash')"
+  --yes)"
 wait_tx "$TX_FINALIZE"
-echo "  tx_finalize_unbonding=$TX_FINALIZE"
+log "  tx_finalize_unbonding=$TX_FINALIZE"
 expect_event_attr "$TX_FINALIZE" "workload_finalize_unbonding" "worker" "$WORKER_ADDR"
 expect_event_attr "$TX_FINALIZE" "workload_finalize_unbonding" "amount" "$AMOUNT"
 
-echo "[6/6] verify unbonding removed"
+log "[6/6] verify unbonding removed"
 if "$BIN" q workload show-unbonding "$WORKER_ADDR" --node "$NODE" -o json >/dev/null 2>&1; then
-  echo "[ERR] unbonding still exists after finalize" >&2
-  exit 1
+  die "unbonding still exists after finalize"
 fi
 
-echo "OK: lifecycle smoke completed with cooldown wait + finalize + event checks."
+log "OK: lifecycle smoke completed with cooldown wait + finalize + event checks."
