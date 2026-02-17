@@ -67,24 +67,19 @@ func (k msgServer) UpdateTask(goCtx context.Context, msg *types.MsgUpdateTask) (
 		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "task already completed")
 	}
 
-	// 3. Payout Logic
-	// If status is changing to COMPLETED (2), pay the worker
+	// 3. Settlement Logic (TRNM policy)
+	// If status is changing to COMPLETED (2), burn 100% of escrowed task fee.
 	if msg.Status == 2 {
-		workerAddr, err := sdk.AccAddressFromBech32(msg.Creator) // The msg sender is the worker
-		if err != nil {
-			return nil, err
-		}
-
 		bountyCoin := sdk.NewCoin("token", math.NewIntFromUint64(val.Bounty))
 		coins := sdk.NewCoins(bountyCoin)
 
-		// Transfer from Module -> Worker
-		err = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, workerAddr, coins)
+		// Burn from module account (100% task fee burn policy)
+		err := k.bankKeeper.BurnCoins(ctx, types.ModuleName, coins)
 		if err != nil {
 			return nil, err
 		}
-		
-		// Update Worker field to the sender
+
+		// Track who submitted the final result
 		val.Worker = msg.Creator
 	}
 

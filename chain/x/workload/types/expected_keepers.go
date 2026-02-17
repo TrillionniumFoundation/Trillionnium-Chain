@@ -26,6 +26,7 @@ type BankKeeper interface {
 	SpendableCoins(context.Context, sdk.AccAddress) sdk.Coins
 	SendCoinsFromAccountToModule(context.Context, sdk.AccAddress, string, sdk.Coins) error
 	SendCoinsFromModuleToAccount(context.Context, string, sdk.AccAddress, sdk.Coins) error
+	BurnCoins(context.Context, string, sdk.Coins) error
 }
 
 // ParamSubspace defines the expected Subspace interface for parameters.
