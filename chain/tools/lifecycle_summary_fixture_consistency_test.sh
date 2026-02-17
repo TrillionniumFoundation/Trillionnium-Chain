@@ -14,6 +14,9 @@ done
 
 CONTRACT_JSON="$ROOT_DIR/tools/lifecycle_summary_schema_contract.json"
 flat_required="$(jq -c '.flat_required' "$CONTRACT_JSON")"
+v3_phase_required="$(jq -c '.v3_nested.phase_txs' "$CONTRACT_JSON")"
+v3_timing_required="$(jq -c '.v3_nested.timing' "$CONTRACT_JSON")"
+v3_node_required="$(jq -c '.v3_nested.node' "$CONTRACT_JSON")"
 
 jq -e --argjson req "$flat_required" '
   .schema_version == 2 and
@@ -25,12 +28,22 @@ jq -e --argjson req "$flat_required" '
   (has("node") | not)
 ' "$v2_ok" >/dev/null
 
-jq -e --argjson req "$flat_required" '
+jq -e \
+  --argjson req "$flat_required" \
+  --argjson phase_req "$v3_phase_required" \
+  --argjson timing_req "$v3_timing_required" \
+  --argjson node_req "$v3_node_required" '
   .schema_version == 3 and
   (($req - keys) | length) == 0 and
   (.phase_txs | type == "object") and
   (.timing | type == "object") and
   (.node | type == "object") and
+  ((.phase_txs | keys) - $phase_req | length) == 0 and
+  (($phase_req - (.phase_txs | keys)) | length) == 0 and
+  ((.timing | keys) - $timing_req | length) == 0 and
+  (($timing_req - (.timing | keys)) | length) == 0 and
+  ((.node | keys) - $node_req | length) == 0 and
+  (($node_req - (.node | keys)) | length) == 0 and
   .phase_txs.register == .tx_register and
   .phase_txs.request_unbonding == .tx_request_unbonding and
   .phase_txs.finalize_unbonding == .tx_finalize_unbonding and

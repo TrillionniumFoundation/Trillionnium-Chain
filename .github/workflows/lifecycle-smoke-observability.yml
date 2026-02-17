@@ -60,12 +60,6 @@ jobs:
       - name: Lifecycle parser examples
         run: bash chain/tools/lifecycle_summary_parser_examples_test.sh
 
-      - name: Lifecycle fixture consistency
-        run: bash chain/tools/lifecycle_summary_fixture_consistency_test.sh
-
-      - name: Lifecycle schema contract sync
-        run: bash chain/tools/lifecycle_summary_contract_sync_test.sh
-
       - name: Lifecycle schema contract/fixture guard
         run: bash chain/tools/lifecycle_schema_contract_guard.sh
 
