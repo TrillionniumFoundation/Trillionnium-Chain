@@ -70,6 +70,20 @@ func TestExtendUnbonding_Edges(t *testing.T) {
 	})
 }
 
+func hasEventAttribute(events sdk.Events, eventType, key, expected string) bool {
+	for _, event := range events {
+		if event.Type != eventType {
+			continue
+		}
+		for _, attr := range event.Attributes {
+			if string(attr.Key) == key && string(attr.Value) == expected {
+				return true
+			}
+		}
+	}
+	return false
+}
+
 func TestFinalizeUnbonding_HeightEdges(t *testing.T) {
 	k, srv, ctx := setupMsgServer(t)
 	worker := sample.AccAddress()
@@ -87,6 +101,9 @@ func TestFinalizeUnbonding_HeightEdges(t *testing.T) {
 	sdkCtx = sdkCtx.WithBlockHeight(int64(keeper.UnbondingPeriodBlocks))
 	_, err = srv.FinalizeUnbonding(sdkCtx, &types.MsgFinalizeUnbonding{Creator: worker})
 	require.NoError(t, err)
+
+	require.True(t, hasEventAttribute(sdkCtx.EventManager().Events(), "workload_finalize_unbonding", "worker", worker))
+	require.True(t, hasEventAttribute(sdkCtx.EventManager().Events(), "workload_finalize_unbonding", "amount", "100000"))
 
 	_, found := k.GetUnbonding(sdkCtx, worker)
 	require.False(t, found)
