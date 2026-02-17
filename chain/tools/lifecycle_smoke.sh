@@ -153,7 +153,7 @@ broadcast_txhash() {
 	LAST_LABEL="$label"
 
 	local raw txhash code rawlog
-	raw="$($@ -o json)"
+	raw="$("$@" -o json)"
 	txhash="$(echo "$raw" | jq -r '.txhash // empty')"
 	code="$(echo "$raw" | jq -r '.code // 0')"
 	rawlog="$(echo "$raw" | jq -r '.raw_log // empty')"
@@ -237,8 +237,6 @@ assert_finalize_amount_denom_linked_to_params() {
 	log "  params_link_ok: finalize amount=$amount_raw denom=$params_denom"
 }
 
-COOLDOWN_FINAL_HEIGHT=0
-
 wait_for_release_height() {
 	local release_height="$1"
 	local current
@@ -250,7 +248,6 @@ wait_for_release_height() {
 		if ((waited >= MAX_WAIT_BLOCKS)); then
 			COOLDOWN_WAITED_BLOCKS="$waited"
 			COOLDOWN_STAGNANT_ROUNDS="$stagnant"
-			COOLDOWN_FINAL_HEIGHT="$current"
 			die "cooldown wait timeout: current=$current release=$release_height waited_blocks=$waited stagnant_rounds=$stagnant catching_up=$(node_syncing || echo '?')"
 		fi
 
@@ -274,7 +271,6 @@ wait_for_release_height() {
 
 	COOLDOWN_WAITED_BLOCKS="$waited"
 	COOLDOWN_STAGNANT_ROUNDS="$stagnant"
-	COOLDOWN_FINAL_HEIGHT="$current"
 	log "  cooldown reached at height=$current (target=$release_height)"
 }
 
