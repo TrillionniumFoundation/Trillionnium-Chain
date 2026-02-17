@@ -5,13 +5,19 @@ import (
 	"strconv"
 
 	"chain/x/workload/types"
+	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
 const UnbondingPeriodBlocks uint64 = 100
 const maxSafeUnbondingStartHeight int64 = int64(^uint64(0)>>1) - int64(UnbondingPeriodBlocks)
 
 func (k msgServer) RequestUnbonding(goCtx context.Context, msg *types.MsgRequestUnbonding) (*types.MsgRequestUnbondingResponse, error) {
+	if msg == nil {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "request cannot be nil")
+	}
+
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	worker, found := k.GetWorker(ctx, msg.Creator)

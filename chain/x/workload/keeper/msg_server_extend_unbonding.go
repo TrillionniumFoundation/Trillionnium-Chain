@@ -5,12 +5,18 @@ import (
 	"strconv"
 
 	"chain/x/workload/types"
+	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
 const MaxExtraUnbondingBlocks uint64 = 10000
 
 func (k msgServer) ExtendUnbonding(goCtx context.Context, msg *types.MsgExtendUnbonding) (*types.MsgExtendUnbondingResponse, error) {
+	if msg == nil {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "request cannot be nil")
+	}
+
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// governance-only control: only authority can extend cooldown windows

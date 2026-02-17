@@ -8,9 +8,14 @@ import (
 	errorsmod "cosmossdk.io/errors"
 	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
 func (k msgServer) FinalizeUnbonding(goCtx context.Context, msg *types.MsgFinalizeUnbonding) (*types.MsgFinalizeUnbondingResponse, error) {
+	if msg == nil {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "request cannot be nil")
+	}
+
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	unbonding, found := k.GetUnbonding(ctx, msg.Creator)

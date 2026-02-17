@@ -11,6 +11,7 @@ import (
 	"chain/x/workload/types"
 	sdkerrors "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdktypeerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
 )
 
@@ -32,6 +33,27 @@ func (m failingBankKeeper) BurnCoins(context.Context, string, sdk.Coins) error {
 func setupMsgServerWithBankKeeper(t testing.TB, bankKeeper types.BankKeeper) (keeper.Keeper, types.MsgServer, context.Context) {
 	k, ctx := keepertest.WorkloadKeeperWithBankKeeper(t, bankKeeper)
 	return k, keeper.NewMsgServerImpl(k), ctx
+}
+
+func TestLifecycleUnbonding_NilRequestsRejected(t *testing.T) {
+	_, srv, ctx := setupMsgServer(t)
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+
+	_, err := srv.RequestUnbonding(sdkCtx, nil)
+	require.ErrorIs(t, err, sdktypeerrors.ErrInvalidRequest)
+	require.Contains(t, err.Error(), "request cannot be nil")
+
+	_, err = srv.ExtendUnbonding(sdkCtx, nil)
+	require.ErrorIs(t, err, sdktypeerrors.ErrInvalidRequest)
+	require.Contains(t, err.Error(), "request cannot be nil")
+
+	_, err = srv.FinalizeUnbonding(sdkCtx, nil)
+	require.ErrorIs(t, err, sdktypeerrors.ErrInvalidRequest)
+	require.Contains(t, err.Error(), "request cannot be nil")
+
+	require.Equal(t, 0, countEvents(sdkCtx.EventManager().Events(), "workload_request_unbonding"))
+	require.Equal(t, 0, countEvents(sdkCtx.EventManager().Events(), "workload_extend_unbonding"))
+	require.Equal(t, 0, countEvents(sdkCtx.EventManager().Events(), "workload_finalize_unbonding"))
 }
 
 func TestExtendUnbonding_Edges(t *testing.T) {
