@@ -165,7 +165,22 @@ Optional env knobs:
 - `SLEEP_SECONDS` (default `2`): polling interval during cooldown wait
 - `MAX_WAIT_BLOCKS` (default `300`): guardrail to fail fast when chain stalls
 - `TX_WAIT_SECONDS` (default `30`): tx inclusion timeout per step
-- `SUMMARY_JSON` (default `0`): print one-line machine-readable JSON summary (`SUMMARY_JSON: {...}`) for CI collection
+- `SUMMARY_JSON` (default `0`): print one-line machine-readable JSON summary (`SUMMARY_JSON: {...}`) for CI collection (success + failure snapshots)
+
+### 9.1 CI parse `SUMMARY_JSON` example
+```bash
+cd chain
+LOG_FILE="/tmp/lifecycle_smoke.log"
+SUMMARY_JSON=1 ./tools/lifecycle_smoke.sh chain alice http://127.0.0.1:26657 | tee "$LOG_FILE"
+
+# Extract the latest SUMMARY_JSON payload and parse fields for CI annotations.
+SUMMARY_LINE="$(grep 'SUMMARY_JSON:' "$LOG_FILE" | tail -n1)"
+SUMMARY_PAYLOAD="${SUMMARY_LINE#*SUMMARY_JSON: }"
+
+echo "$SUMMARY_PAYLOAD" | jq -r '.status // "ok"'
+echo "$SUMMARY_PAYLOAD" | jq -r '.tx_finalize_unbonding // .last_tx // ""'
+echo "$SUMMARY_PAYLOAD" | jq -r '"waited_blocks=\(.cooldown_waited_blocks // 0) stagnant_rounds=\(.cooldown_stagnant_rounds // 0)"'
+```
 
 ## 10) Troubleshooting (Lifecycle Smoke)
 ### 10.1 `tx not found in time`

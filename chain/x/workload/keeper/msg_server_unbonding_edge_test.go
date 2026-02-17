@@ -6,6 +6,7 @@ import (
 	"chain/testutil/sample"
 	"chain/x/workload/keeper"
 	"chain/x/workload/types"
+	sdkerrors "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 )
@@ -84,6 +85,24 @@ func hasEventAttribute(events sdk.Events, eventType, key, expected string) bool 
 	return false
 }
 
+func countEvents(events sdk.Events, eventType string) int {
+	count := 0
+	for _, event := range events {
+		if event.Type == eventType {
+			count++
+		}
+	}
+	return count
+}
+
+func assertABCIErrorCode(t *testing.T, err error, expected *sdkerrors.Error) {
+	t.Helper()
+	require.ErrorIs(t, err, expected)
+	codespace, code, _ := sdkerrors.ABCIInfo(err, false)
+	require.Equal(t, expected.Codespace(), codespace)
+	require.Equal(t, expected.ABCICode(), code)
+}
+
 func TestFinalizeUnbonding_HeightEdges(t *testing.T) {
 	k, srv, ctx := setupMsgServer(t)
 	worker := sample.AccAddress()
@@ -96,18 +115,22 @@ func TestFinalizeUnbonding_HeightEdges(t *testing.T) {
 	})
 
 	_, err := srv.FinalizeUnbonding(sdkCtx, &types.MsgFinalizeUnbonding{Creator: worker})
-	require.ErrorIs(t, err, types.ErrUnbondingCooldownNotReached)
+	assertABCIErrorCode(t, err, types.ErrUnbondingCooldownNotReached)
+	require.Equal(t, 0, countEvents(sdkCtx.EventManager().Events(), "workload_finalize_unbonding"))
 
 	sdkCtx = sdkCtx.WithBlockHeight(int64(keeper.UnbondingPeriodBlocks))
 	_, err = srv.FinalizeUnbonding(sdkCtx, &types.MsgFinalizeUnbonding{Creator: worker})
 	require.NoError(t, err)
-
+	require.Equal(t, 1, countEvents(sdkCtx.EventManager().Events(), "workload_finalize_unbonding"))
 	require.True(t, hasEventAttribute(sdkCtx.EventManager().Events(), "workload_finalize_unbonding", "worker", worker))
 	require.True(t, hasEventAttribute(sdkCtx.EventManager().Events(), "workload_finalize_unbonding", "amount", "100000"))
 
 	_, found := k.GetUnbonding(sdkCtx, worker)
 	require.False(t, found)
 
+	before := countEvents(sdkCtx.EventManager().Events(), "workload_finalize_unbonding")
 	_, err = srv.FinalizeUnbonding(sdkCtx, &types.MsgFinalizeUnbonding{Creator: worker})
-	require.ErrorIs(t, err, types.ErrUnbondingNotFound)
+	assertABCIErrorCode(t, err, types.ErrUnbondingNotFound)
+	after := countEvents(sdkCtx.EventManager().Events(), "workload_finalize_unbonding")
+	require.Equal(t, before, after)
 }

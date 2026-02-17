@@ -13,13 +13,60 @@ SLEEP_SECONDS="${SLEEP_SECONDS:-2}"
 MAX_WAIT_BLOCKS="${MAX_WAIT_BLOCKS:-300}"
 TX_WAIT_SECONDS="${TX_WAIT_SECONDS:-30}"
 SUMMARY_JSON="${SUMMARY_JSON:-0}"
+FAIL_SNAPSHOT_LINES="${FAIL_SNAPSHOT_LINES:-40}"
+
+LAST_LABEL=""
+LAST_TXHASH=""
 
 log() {
   printf '[%s] %s\n' "$(date '+%H:%M:%S')" "$*"
 }
 
+emit_failure_snapshot() {
+  local reason="$1"
+  local snap_height="?"
+  local snap_sync="?"
+  local unbonding="<unavailable>"
+  local tx_json="<unavailable>"
+
+  snap_height="$(latest_height 2>/dev/null || echo '?')"
+  snap_sync="$(node_syncing 2>/dev/null || echo '?')"
+
+  if [[ -n "${WORKER_ADDR:-}" ]]; then
+    unbonding="$("$BIN" q workload show-unbonding "$WORKER_ADDR" --node "$NODE" -o json 2>/dev/null | jq -c '.' 2>/dev/null || echo '<not-found-or-query-failed>')"
+  fi
+
+  if [[ -n "$LAST_TXHASH" ]]; then
+    tx_json="$("$BIN" q tx "$LAST_TXHASH" --node "$NODE" -o json 2>/dev/null | jq -c --argjson n "$FAIL_SNAPSHOT_LINES" '{txhash:(.txhash // ""), code:(.code // 0), raw_log:(.raw_log // ""), events:((.events // [])[:$n])}' 2>/dev/null || echo '<tx-query-failed>')"
+  fi
+
+  log "failure_snapshot: reason=$reason"
+  log "failure_snapshot: node height=$snap_height catching_up=$snap_sync"
+  log "failure_snapshot: worker=${WORKER_ADDR:-<unknown>} release_height=${RELEASE_HEIGHT:-<unknown>} waited_blocks=${COOLDOWN_WAITED_BLOCKS:-0} stagnant_rounds=${COOLDOWN_STAGNANT_ROUNDS:-0}"
+  log "failure_snapshot: last_step=${LAST_LABEL:-<unknown>} last_tx=${LAST_TXHASH:-<none>}"
+  log "failure_snapshot: unbonding=$unbonding"
+  log "failure_snapshot: tx=$tx_json"
+
+  if [[ "$SUMMARY_JSON" == "1" ]]; then
+    log "SUMMARY_JSON: $(jq -cn \
+      --arg status "failed" \
+      --arg reason "$reason" \
+      --arg worker "${WORKER_ADDR:-}" \
+      --arg last_step "${LAST_LABEL:-}" \
+      --arg last_tx "${LAST_TXHASH:-}" \
+      --argjson release_height "${RELEASE_HEIGHT:-0}" \
+      --argjson waited_blocks "${COOLDOWN_WAITED_BLOCKS:-0}" \
+      --argjson stagnant_rounds "${COOLDOWN_STAGNANT_ROUNDS:-0}" \
+      --arg node_height "$snap_height" \
+      --arg catching_up "$snap_sync" \
+      '{status:$status,reason:$reason,worker:$worker,last_step:$last_step,last_tx:$last_tx,release_height:$release_height,cooldown_waited_blocks:$waited_blocks,cooldown_stagnant_rounds:$stagnant_rounds,node_height:$node_height,catching_up:$catching_up}')"
+  fi
+}
+
 die() {
-  log "[ERR] $*" >&2
+  local reason="$*"
+  log "[ERR] $reason" >&2
+  emit_failure_snapshot "$reason" >&2 || true
   exit 1
 }
 
@@ -52,11 +99,14 @@ broadcast_txhash() {
   local label="$1"
   shift
 
+  LAST_LABEL="$label"
+
   local raw txhash code rawlog
   raw="$($@ -o json)"
   txhash="$(echo "$raw" | jq -r '.txhash // empty')"
   code="$(echo "$raw" | jq -r '.code // 0')"
   rawlog="$(echo "$raw" | jq -r '.raw_log // empty')"
+  LAST_TXHASH="$txhash"
 
   [[ -n "$txhash" ]] || die "$label broadcast returned empty txhash. response=$raw"
   if [[ "$code" != "0" ]]; then

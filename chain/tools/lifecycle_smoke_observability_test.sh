@@ -42,6 +42,10 @@ if [[ "$cmd" == "tx" && "${2:-}" == "workload" && "${3:-}" == "request-unbonding
   exit 0
 fi
 if [[ "$cmd" == "tx" && "${2:-}" == "workload" && "${3:-}" == "finalize-unbonding" ]]; then
+  if [[ "${MOCK_FAIL_FINALIZE:-0}" == "1" ]]; then
+    echo '{"txhash":"txfin","code":1106,"raw_log":"mock cooldown not reached"}'
+    exit 0
+  fi
   echo 1 >"$FINALIZED_FILE"
   echo '{"txhash":"txfin","code":0}'
   exit 0
@@ -99,5 +103,19 @@ grep -q "summary: duration_s=" "$OUT_FILE"
 grep -q "SUMMARY_JSON:" "$OUT_FILE"
 grep -q "tx_register=txreg" "$OUT_FILE"
 grep -q "OK: lifecycle smoke completed" "$OUT_FILE"
+
+# failure path: ensure key diagnostics snapshot is emitted for CI triage
+echo 100 >"$TMP_DIR/height"
+echo 0 >"$TMP_DIR/finalized"
+OUT_FAIL_FILE="$TMP_DIR/out_fail.log"
+set +e
+MOCK_STATE_DIR="$TMP_DIR" MOCK_FAIL_FINALIZE=1 BIN="$TMP_DIR/chaind" SLEEP_SECONDS=0 MAX_WAIT_BLOCKS=20 TX_WAIT_SECONDS=2 SUMMARY_JSON=1 \
+  "$SCRIPT" chain alice http://127.0.0.1:26657 >"$OUT_FAIL_FILE" 2>&1
+rc=$?
+set -e
+[[ $rc -ne 0 ]]
+grep -q "failure_snapshot: reason=finalize-unbonding broadcast failed" "$OUT_FAIL_FILE"
+grep -q '"status":"failed"' "$OUT_FAIL_FILE"
+grep -q '"last_step":"finalize-unbonding"' "$OUT_FAIL_FILE"
 
 echo "PASS: lifecycle_smoke observability regression"
