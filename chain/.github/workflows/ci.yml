@@ -1,23 +1,19 @@
 name: CI
 
+x-workload-ci-paths: &workload_ci_paths
+  - 'chain/x/workload/keeper/**'
+  - 'chain/x/workload/types/**'
+  - 'chain/testutil/keeper/**'
+  - 'chain/go.mod'
+  - 'chain/go.sum'
+  - 'chain/.github/workflows/ci.yml'
+
 on:
   pull_request:
-    paths:
-      - 'chain/x/workload/keeper/**'
-      - 'chain/x/workload/types/**'
-      - 'chain/testutil/keeper/**'
-      - 'chain/go.mod'
-      - 'chain/go.sum'
-      - 'chain/.github/workflows/ci.yml'
+    paths: *workload_ci_paths
   push:
     branches: [main]
-    paths:
-      - 'chain/x/workload/keeper/**'
-      - 'chain/x/workload/types/**'
-      - 'chain/testutil/keeper/**'
-      - 'chain/go.mod'
-      - 'chain/go.sum'
-      - 'chain/.github/workflows/ci.yml'
+    paths: *workload_ci_paths
 
 jobs:
   workload-lifecycle-regressions:

@@ -75,6 +75,46 @@ func TestExtendUnbonding_Edges(t *testing.T) {
 		require.ErrorIs(t, err, types.ErrUnbondingNotFound)
 	})
 
+	t.Run("unauthorized does not mutate", func(t *testing.T) {
+		k, srv, ctx := setupMsgServer(t)
+		wctx := sdk.UnwrapSDKContext(ctx)
+		worker := sample.AccAddress()
+		k.SetUnbonding(wctx, types.Unbonding{Creator: worker, ReleaseHeight: 100, Amount: 100000})
+
+		beforeEvents := countEvents(wctx.EventManager().Events(), "workload_extend_unbonding")
+		_, err := srv.ExtendUnbonding(wctx, &types.MsgExtendUnbonding{
+			Creator:     sample.AccAddress(),
+			Worker:      worker,
+			ExtraBlocks: 25,
+		})
+		require.ErrorIs(t, err, types.ErrUnauthorizedUnbondingExtend)
+
+		u, found := k.GetUnbonding(wctx, worker)
+		require.True(t, found)
+		require.Equal(t, uint64(100), u.ReleaseHeight)
+		require.Equal(t, beforeEvents, countEvents(wctx.EventManager().Events(), "workload_extend_unbonding"))
+	})
+
+	t.Run("release height overflow rejected", func(t *testing.T) {
+		k, srv, ctx := setupMsgServer(t)
+		wctx := sdk.UnwrapSDKContext(ctx)
+		worker := sample.AccAddress()
+		k.SetUnbonding(wctx, types.Unbonding{Creator: worker, ReleaseHeight: ^uint64(0) - 5, Amount: 100000})
+
+		beforeEvents := countEvents(wctx.EventManager().Events(), "workload_extend_unbonding")
+		_, err := srv.ExtendUnbonding(wctx, &types.MsgExtendUnbonding{
+			Creator:     k.GetAuthority(),
+			Worker:      worker,
+			ExtraBlocks: 10,
+		})
+		require.ErrorIs(t, err, types.ErrInvalidExtraBlocks)
+
+		u, found := k.GetUnbonding(wctx, worker)
+		require.True(t, found)
+		require.Equal(t, ^uint64(0)-5, u.ReleaseHeight)
+		require.Equal(t, beforeEvents, countEvents(wctx.EventManager().Events(), "workload_extend_unbonding"))
+	})
+
 	t.Run("success", func(t *testing.T) {
 		k, srv, ctx := setupMsgServer(t)
 		wctx := sdk.UnwrapSDKContext(ctx)

@@ -27,6 +27,10 @@ func (k msgServer) ExtendUnbonding(goCtx context.Context, msg *types.MsgExtendUn
 		return nil, types.ErrUnbondingNotFound
 	}
 
+	if unbonding.ReleaseHeight > ^uint64(0)-msg.ExtraBlocks {
+		return nil, types.ErrInvalidExtraBlocks
+	}
+
 	unbonding.ReleaseHeight += msg.ExtraBlocks
 	k.SetUnbonding(ctx, unbonding)
 

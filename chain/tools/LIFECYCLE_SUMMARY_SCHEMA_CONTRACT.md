@@ -82,6 +82,7 @@ Example payloads are checked in and intended for downstream parser fixtures:
 - v3 nested groups and value linkage
 - consumer fallback behavior for tx extraction across versions
 
-`chain/tools/lifecycle_summary_parser_examples_test.sh` validates committed fixture samples and parser fallback examples.
+`chain/tools/lifecycle_summary_parser_examples_test.sh` validates parser fallback examples.
+`chain/tools/lifecycle_summary_fixture_consistency_test.sh` validates committed fixtures stay internally consistent with the contract (flat keys, nested linkage for v3, status semantics).
 
 This document is a contract baseline for future schema bumps.
