@@ -24,4 +24,5 @@ var (
 	ErrDirectUnregisterDisabled    = sdkerrors.Register(ModuleName, 1112, "direct unregister disabled; use request-unbonding then finalize-unbonding")
 	ErrInvalidExtraBlocks          = sdkerrors.Register(ModuleName, 1113, "invalid extraBlocks value")
 	ErrInvalidWorkloadDenom        = sdkerrors.Register(ModuleName, 1114, "invalid workload denom")
+	ErrInvalidBlockHeight          = sdkerrors.Register(ModuleName, 1115, "invalid block height")
 )

@@ -23,6 +23,11 @@ jobs:
 
       - name: Ensure jq
         run: |
+          if command -v jq >/dev/null 2>&1; then
+            jq --version
+            exit 0
+          fi
+
           sudo apt-get update
           sudo apt-get install -y jq
           jq --version

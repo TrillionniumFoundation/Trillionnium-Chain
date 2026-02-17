@@ -22,6 +22,10 @@ func (k msgServer) RequestUnbonding(goCtx context.Context, msg *types.MsgRequest
 		return nil, types.ErrUnbondingAlreadyRequested
 	}
 
+	if ctx.BlockHeight() < 0 {
+		return nil, types.ErrInvalidBlockHeight
+	}
+
 	releaseHeight := uint64(ctx.BlockHeight()) + UnbondingPeriodBlocks
 	k.SetUnbonding(ctx, types.Unbonding{
 		Creator:       msg.Creator,

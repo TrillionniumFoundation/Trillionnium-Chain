@@ -60,3 +60,22 @@ func TestRequestUnbonding_AlreadyRequested(t *testing.T) {
 	_, err := srv.RequestUnbonding(sdkCtx, &types.MsgRequestUnbonding{Creator: worker})
 	require.ErrorIs(t, err, types.ErrUnbondingAlreadyRequested)
 }
+
+func TestRequestUnbonding_NegativeHeightRejected(t *testing.T) {
+	k, srv, ctx := setupMsgServer(t)
+	sdkCtx := sdk.UnwrapSDKContext(ctx).WithBlockHeight(-1)
+	worker := sample.AccAddress()
+
+	k.SetWorker(sdkCtx, types.Worker{Creator: worker, Stake: 100000})
+
+	before := countEvents(sdkCtx.EventManager().Events(), "workload_request_unbonding")
+	_, err := srv.RequestUnbonding(sdkCtx, &types.MsgRequestUnbonding{Creator: worker})
+	require.ErrorIs(t, err, types.ErrInvalidBlockHeight)
+	require.Equal(t, before, countEvents(sdkCtx.EventManager().Events(), "workload_request_unbonding"))
+
+	_, workerStillExists := k.GetWorker(sdkCtx, worker)
+	require.True(t, workerStillExists)
+
+	_, found := k.GetUnbonding(sdkCtx, worker)
+	require.False(t, found)
+}
