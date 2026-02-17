@@ -92,4 +92,90 @@ func TestSlashWorker_Edges(t *testing.T) {
 		require.True(t, found)
 		require.Equal(t, uint64(50000), w.Stake)
 	})
+
+	t.Run("repeated slash until limit", func(t *testing.T) {
+		k, srv, ctx := setupMsgServer(t)
+		wctx := sdk.UnwrapSDKContext(ctx)
+
+		// Start with enough stake: 10,000
+		workerAddr := sample.AccAddress()
+		k.SetWorker(wctx, types.Worker{
+			Creator: workerAddr,
+			Stake:   10000,
+		})
+
+		// 1. First slash 50% -> 5,000 left
+		_, err := srv.SlashWorker(wctx, &types.MsgSlashWorker{
+			Creator:      k.GetAuthority(),
+			Worker:       workerAddr,
+			SlashPercent: 50,
+		})
+		require.NoError(t, err)
+
+		w, _ := k.GetWorker(wctx, workerAddr)
+		require.Equal(t, uint64(5000), w.Stake)
+
+		// 2. Second slash 50% -> 2,500 left
+		_, err = srv.SlashWorker(wctx, &types.MsgSlashWorker{
+			Creator:      k.GetAuthority(),
+			Worker:       workerAddr,
+			SlashPercent: 50,
+		})
+		require.NoError(t, err)
+
+		w, _ = k.GetWorker(wctx, workerAddr)
+		require.Equal(t, uint64(2500), w.Stake)
+
+		// 3. Third slash 50% -> 1,250 left
+		_, err = srv.SlashWorker(wctx, &types.MsgSlashWorker{
+			Creator:      k.GetAuthority(),
+			Worker:       workerAddr,
+			SlashPercent: 50,
+		})
+		require.NoError(t, err)
+
+		w, _ = k.GetWorker(wctx, workerAddr)
+		require.Equal(t, uint64(1250), w.Stake)
+
+		// 4. Fourth slash 50% -> 625 left (Violation of Min 1000)
+		_, err = srv.SlashWorker(wctx, &types.MsgSlashWorker{
+			Creator:      k.GetAuthority(),
+			Worker:       workerAddr,
+			SlashPercent: 50,
+		})
+		require.ErrorIs(t, err, types.ErrMinRemainingStakeViolation)
+
+		// Verify stake didn't change after failure
+		w, _ = k.GetWorker(wctx, workerAddr)
+		require.Equal(t, uint64(1250), w.Stake)
+	})
+
+	t.Run("slash zero or low stake worker", func(t *testing.T) {
+		k, srv, ctx := setupMsgServer(t)
+		wctx := sdk.UnwrapSDKContext(ctx)
+
+		// Case A: Worker has exactly Min stake (1000)
+		worker1 := sample.AccAddress()
+		k.SetWorker(wctx, types.Worker{Creator: worker1, Stake: 1000})
+
+		_, err := srv.SlashWorker(wctx, &types.MsgSlashWorker{
+			Creator:      k.GetAuthority(),
+			Worker:       worker1,
+			SlashPercent: 10,
+		})
+		// 1000 - 100 = 900 < 1000 -> Error
+		require.ErrorIs(t, err, types.ErrMinRemainingStakeViolation)
+
+		// Case B: Worker has 0 stake (if theoretically possible in state)
+		worker2 := sample.AccAddress()
+		k.SetWorker(wctx, types.Worker{Creator: worker2, Stake: 0})
+
+		_, err = srv.SlashWorker(wctx, &types.MsgSlashWorker{
+			Creator:      k.GetAuthority(),
+			Worker:       worker2,
+			SlashPercent: 10,
+		})
+		// 0 * 10% = 0 -> Invalid Slash Amount
+		require.ErrorIs(t, err, types.ErrInvalidSlashAmount)
+	})
 }
