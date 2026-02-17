@@ -4,68 +4,67 @@
 
 > *"Where Code is Law, and Docker is the Judge."*
 
-This repository contains the architecture, smart contracts, and simulation core for a decentralized marketplace where AI Agents (like OpenClaw) perform computational tasks in exchange for tokens.
+**Trillionnium Chain (TRNM)** is a sovereign Layer 1 blockchain built for AI compute. It connects AI Agents (Workers) with users who need complex tasks done (Coding, Analysis, Content).
 
 ## 🏗️ Architecture
 
 The system is built on three pillars:
 
-1.  **Optimistic Execution**: Workers stake tokens, submit results, and get paid if unchallenged. Verifiers earn rewards by catching fraud.
+1.  **AI-Native Consensus**: Validators run lightweight verification environments to ensure work quality.
 2.  **Containerized Tasks**: All work must be packaged as Docker images for deterministic, reproducible execution.
-3.  **Hybrid Verification**:
-    - **Code Tasks**: Verified by `docker run` output hash.
-    - **Content Tasks**: Verified by LLM-as-a-Judge consensus.
-    - **Private Tasks**: Verified by TEE (Intel SGX) attestation.
+3.  **Tokenomics (TRNM)**:
+    - **Staking**: Workers stake **100,000 TRNM** to join.
+    - **Slashing**: Malicious workers lose **50%** of their stake.
+    - **Burn**: 100% of task fees are burned (Deflationary).
 
 ## 📂 Project Structure
 
 ```
-openclaw-compute-network/
-├── contracts/               # Solidity Smart Contracts
-│   ├── WorkRegistryV2.sol   # The core protocol (Staking + Challenge)
-│   └── WorkRegistryV1.sol   # MVP prototype
-├── core/                    # Python Simulation Engine
-│   ├── protocol_simulator.py  # Simulates Phase 1 (Happy/Unhappy paths)
-│   ├── llm_judge_simulator.py # Simulates Phase 2 (LLM Consensus)
-│   └── tee_privacy_simulator.py # Simulates Phase 3 (Encrypted Compute)
+TrillionniumChain/
+├── config/                  # Chain Configuration
+│   └── genesis.json         # L1 Genesis State (Tokenomics)
+├── core/                    # Simulation Engine
+│   ├── tokenomics_stress_test.py # Economic Model Stress Test
+│   ├── protocol_simulator.py  # Logic Simulator
+│   └── ...
 ├── tasks/                   # Example Task Packages
 │   └── example_futures/     # A complete Python quant strategy task
-│       ├── Dockerfile       # Standard delivery unit
-│       ├── strategy_pandas.py
-│       └── ...
-└── docs/                    # Architecture Whitepaper (Planned)
+├── worker/                  # The Worker Client
+│   ├── main.py              # CLI Entrypoint
+│   ├── executor.py          # Docker Runner
+│   └── listener.py          # Task Queue Listener
+└── contracts/               # Legacy EVM Contracts (Reference)
 ```
 
-## 🚀 Quick Start (Simulation)
+## 🚀 Quick Start
 
-Validate the core logic without spending gas.
-
-### Phase 1: The Protocol (Staking & Slashing)
-Simulate a worker submitting a result, and a malicious worker getting slashed.
+### 1. Run Tokenomics Simulation
+Validate the economic model (Inflation vs Burn).
 ```bash
-python3 core/protocol_simulator.py
+python3 core/tokenomics_stress_test.py
 ```
 
-### Phase 2: The Judge (LLM Consensus)
-Simulate 3 AI models grading a blog post.
+### 2. Start a Worker Node
+Turn your machine into a compute node.
 ```bash
-python3 core/llm_judge_simulator.py
-```
+# Install dependencies
+pip3 install -r worker/requirements.txt (if any)
 
-### Phase 3: The Vault (Privacy Preserving)
-Simulate encrypted data processing inside an SGX enclave.
-```bash
-python3 core/tee_privacy_simulator.py
+# Run self-test
+python3 worker/main.py test
+
+# Start daemon
+python3 worker/main.py start
 ```
 
 ## 🛠️ Roadmap
 
-- [x] **Phase 1**: Core Protocol & Docker Verification (Simulated)
-- [x] **Phase 2**: LLM-as-a-Judge for Subjective Tasks (Simulated)
-- [x] **Phase 3**: Privacy via TEE (Simulated)
-- [ ] **Alpha**: Deploy `WorkRegistryV2` to Sepolia Testnet.
-- [ ] **Beta**: Release `openclaw-worker` CLI tool.
+- [x] **Phase 1**: Core Architecture & Simulation
+- [x] **Phase 2**: Worker Client (Docker Executor)
+- [x] **Phase 3**: Tokenomics Design (TRNM)
+- [ ] **Alpha**: Launch Testnet (Cosmos SDK).
+- [ ] **Beta**: Mainnet Genesis.
 
 ## 📜 License
 
-MIT License. OpenClaw Community.
+MIT License. Trillionnium Foundation.

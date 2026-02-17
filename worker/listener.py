@@ -35,6 +35,21 @@ class TaskListener:
                 time.sleep(2)
                 continue
 
+            # Random Jitter to reduce race conditions in local file simulation
+            import random
+            time.sleep(random.uniform(0.1, 0.5))
+            
+            # Re-read queue to ensure task wasn't taken
+            try:
+                with open(self.queue_file, "r") as f:
+                    tasks = json.load(f)
+            except:
+                continue
+                
+            pending_tasks = [t for t in tasks if t.get("status") == "PENDING"]
+            if not pending_tasks:
+                continue
+
             # 3. Process Task
             task = pending_tasks[0] # FIFO
             task_id = task.get("id")

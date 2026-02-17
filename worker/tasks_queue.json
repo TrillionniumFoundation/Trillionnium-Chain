@@ -1,0 +1,62 @@
+[
+    {
+        "id": "batch-task-1",
+        "source_path": "tasks/example_futures",
+        "status": "PENDING",
+        "created_at": 1771305540.039666
+    },
+    {
+        "id": "batch-task-2",
+        "source_path": "tasks/example_futures",
+        "status": "PENDING",
+        "created_at": 1771305540.039666
+    },
+    {
+        "id": "batch-task-3",
+        "source_path": "tasks/example_futures",
+        "status": "PENDING",
+        "created_at": 1771305540.039667
+    },
+    {
+        "id": "batch-task-4",
+        "source_path": "tasks/example_futures",
+        "status": "PENDING",
+        "created_at": 1771305540.039667
+    },
+    {
+        "id": "batch-task-5",
+        "source_path": "tasks/example_futures",
+        "status": "PENDING",
+        "created_at": 1771305540.039668
+    },
+    {
+        "id": "batch-task-1",
+        "source_path": "tasks/example_futures",
+        "status": "PENDING",
+        "created_at": 1771305586.262343
+    },
+    {
+        "id": "batch-task-2",
+        "source_path": "tasks/example_futures",
+        "status": "PENDING",
+        "created_at": 1771305586.262343
+    },
+    {
+        "id": "batch-task-3",
+        "source_path": "tasks/example_futures",
+        "status": "PENDING",
+        "created_at": 1771305586.262344
+    },
+    {
+        "id": "batch-task-4",
+        "source_path": "tasks/example_futures",
+        "status": "PENDING",
+        "created_at": 1771305586.262344
+    },
+    {
+        "id": "batch-task-5",
+        "source_path": "tasks/example_futures",
+        "status": "PENDING",
+        "created_at": 1771305586.262344
+    }
+]
