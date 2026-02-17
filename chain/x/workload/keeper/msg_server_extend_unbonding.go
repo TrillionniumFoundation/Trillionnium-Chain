@@ -8,6 +8,8 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
+const MaxExtraUnbondingBlocks uint64 = 10000
+
 func (k msgServer) ExtendUnbonding(goCtx context.Context, msg *types.MsgExtendUnbonding) (*types.MsgExtendUnbondingResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -18,6 +20,9 @@ func (k msgServer) ExtendUnbonding(goCtx context.Context, msg *types.MsgExtendUn
 
 	if msg.ExtraBlocks == 0 {
 		return nil, sdkerrors.ErrInvalidRequest.Wrap("extraBlocks must be > 0")
+	}
+	if msg.ExtraBlocks > MaxExtraUnbondingBlocks {
+		return nil, sdkerrors.ErrInvalidRequest.Wrap("extraBlocks exceeds max extension limit")
 	}
 
 	unbonding, found := k.GetUnbonding(ctx, msg.Worker)
