@@ -7,7 +7,6 @@ import (
 	"chain/x/workload/types"
 	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
 func (k msgServer) FinalizeUnbonding(goCtx context.Context, msg *types.MsgFinalizeUnbonding) (*types.MsgFinalizeUnbondingResponse, error) {
@@ -15,11 +14,11 @@ func (k msgServer) FinalizeUnbonding(goCtx context.Context, msg *types.MsgFinali
 
 	unbonding, found := k.GetUnbonding(ctx, msg.Creator)
 	if !found {
-		return nil, sdkerrors.ErrKeyNotFound.Wrap("unbonding request not found")
+		return nil, types.ErrUnbondingNotFound
 	}
 
 	if uint64(ctx.BlockHeight()) < unbonding.ReleaseHeight {
-		return nil, sdkerrors.ErrInvalidRequest.Wrap("unbonding cooldown not reached")
+		return nil, types.ErrUnbondingCooldownNotReached
 	}
 
 	creator, err := sdk.AccAddressFromBech32(msg.Creator)

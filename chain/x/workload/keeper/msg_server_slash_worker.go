@@ -7,7 +7,6 @@ import (
 	"chain/x/workload/types"
 	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
 const MinWorkerStakeAfterSlash uint64 = 1000
@@ -17,27 +16,27 @@ func (k msgServer) SlashWorker(goCtx context.Context, msg *types.MsgSlashWorker)
 
 	// governance-only slashing: only module authority can trigger slashing
 	if msg.Creator != k.GetAuthority() {
-		return nil, sdkerrors.ErrUnauthorized.Wrap("only authority can slash worker")
+		return nil, types.ErrUnauthorizedSlash
 	}
 
 	// only active workers can be slashed
 	worker, found := k.GetWorker(ctx, msg.Worker)
 	if !found {
-		return nil, sdkerrors.ErrKeyNotFound.Wrap("active worker not found")
+		return nil, types.ErrWorkerNotFound
 	}
 
 	if msg.SlashPercent == 0 || msg.SlashPercent > 50 {
-		return nil, sdkerrors.ErrInvalidRequest.Wrap("slash percent must be between 1 and 50")
+		return nil, types.ErrInvalidSlashPercent
 	}
 
 	slashAmount := worker.Stake * msg.SlashPercent / 100
 	if slashAmount == 0 {
-		return nil, sdkerrors.ErrInvalidRequest.Wrap("slash amount is zero")
+		return nil, types.ErrInvalidSlashAmount
 	}
 
 	remaining := worker.Stake - slashAmount
 	if remaining < MinWorkerStakeAfterSlash {
-		return nil, sdkerrors.ErrInvalidRequest.Wrap("slash would violate minimum remaining worker stake")
+		return nil, types.ErrMinRemainingStakeViolation
 	}
 
 	coins := sdk.NewCoins(sdk.NewCoin("stake", math.NewIntFromUint64(slashAmount)))

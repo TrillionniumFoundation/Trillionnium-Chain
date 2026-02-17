@@ -7,7 +7,6 @@ import (
 	"chain/x/workload/types"
 	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
 const MinWorkerStake uint64 = 100000
@@ -16,7 +15,7 @@ func (k msgServer) RegisterWorker(goCtx context.Context, msg *types.MsgRegisterW
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	if _, found := k.GetWorker(ctx, msg.Creator); found {
-		return nil, sdkerrors.ErrUnauthorized.Wrap("worker already registered")
+		return nil, types.ErrWorkerAlreadyRegistered
 	}
 
 	creator, err := sdk.AccAddressFromBech32(msg.Creator)
