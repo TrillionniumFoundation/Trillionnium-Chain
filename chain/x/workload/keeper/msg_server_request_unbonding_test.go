@@ -116,3 +116,16 @@ func TestRequestUnbonding_ReleaseHeightBeyondInt64Rejected(t *testing.T) {
 		require.Equal(t, uint64(math.MaxInt64), u.ReleaseHeight)
 	})
 }
+
+func TestRequestUnbonding_NoStake_Fails(t *testing.T) {
+	k, srv, ctx := setupMsgServer(t)
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	worker := sample.AccAddress()
+
+	// Case: Worker found but Stake is 0
+	k.SetWorker(sdkCtx, types.Worker{Creator: worker, Stake: 0})
+
+	_, err := srv.RequestUnbonding(sdkCtx, &types.MsgRequestUnbonding{Creator: worker})
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "worker has no stake to unbond")
+}

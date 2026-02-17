@@ -29,6 +29,10 @@ func (k msgServer) RequestUnbonding(goCtx context.Context, msg *types.MsgRequest
 		return nil, types.ErrWorkerNotFound
 	}
 
+	if worker.Stake == 0 {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "worker has no stake to unbond")
+	}
+
 	if _, found := k.GetUnbonding(ctx, msg.Creator); found {
 		return nil, types.ErrUnbondingAlreadyRequested
 	}
