@@ -32,3 +32,28 @@ func TestFinalizeUnbonding_NotFound(t *testing.T) {
 	_, found = k.GetUnbonding(wctx, randomUser)
 	require.False(t, found, "State should remain unchanged (unbonding not created)")
 }
+
+func TestFinalizeUnbonding_NoRequest_Fails(t *testing.T) {
+	k, srv, ctx := setupMsgServer(t)
+	wctx := sdk.UnwrapSDKContext(ctx)
+
+	// Random user who has not made any unbonding request
+	user := sample.AccAddress()
+
+	// Pre-check: Ensure no unbonding record exists
+	_, found := k.GetUnbonding(wctx, user)
+	require.False(t, found, "Unbonding record should not exist initially")
+
+	// Action: Attempt to finalize unbonding
+	msg := &types.MsgFinalizeUnbonding{
+		Creator: user,
+	}
+	_, err := srv.FinalizeUnbonding(wctx, msg)
+
+	// Assertion: Should return ErrUnbondingNotFound
+	require.ErrorIs(t, err, types.ErrUnbondingNotFound, "Expected ErrUnbondingNotFound when finalizing without request")
+
+	// Post-check: Ensure state is unchanged (still no record)
+	_, found = k.GetUnbonding(wctx, user)
+	require.False(t, found, "Unbonding record should still not exist")
+}

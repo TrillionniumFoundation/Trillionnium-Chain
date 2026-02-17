@@ -26,12 +26,12 @@ Cases covered:
 - **Tiny Slash (Zero Amount)**: Ensures attempts to slash amounts that round down to 0 are rejected.
 
 ## Unbonding Safety Testing
-We have added a defensive test for `FinalizeUnbonding` in `x/workload/keeper/msg_server_finalize_unbonding_test.go`.
+We have added defensive tests for `FinalizeUnbonding` in `x/workload/keeper/msg_server_finalize_unbonding_test.go`.
 
-Run it with:
+Run them with:
 ```bash
 cd chain
-go test ./x/workload/keeper -run TestFinalizeUnbonding_NotFound -v
+go test ./x/workload/keeper -run TestFinalizeUnbonding -v
 ```
 
-This test ensures that attempting to finalize an unbonding that does not exist returns `ErrUnbondingNotFound` and does not alter state.
+These tests ensure that attempting to finalize an unbonding that does not exist (including `TestFinalizeUnbonding_NoRequest_Fails`) returns `ErrUnbondingNotFound` and does not alter state.
