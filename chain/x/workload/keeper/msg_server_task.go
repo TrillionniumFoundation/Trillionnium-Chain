@@ -14,9 +14,8 @@ import (
 func (k msgServer) CreateTask(goCtx context.Context, msg *types.MsgCreateTask) (*types.MsgCreateTaskResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// 1. Convert Bounty to Coins (Assume denom is "utrnm")
-	// For simplicity, we hardcode denom here. In production, pass it in params.
-	bountyCoin := sdk.NewCoin("token", math.NewIntFromUint64(msg.Bounty))
+	// 1. Convert bounty to TRNM denomination coin
+	bountyCoin := sdk.NewCoin(WorkloadDenom, math.NewIntFromUint64(msg.Bounty))
 	coins := sdk.NewCoins(bountyCoin)
 
 	// 2. Get Creator Address
@@ -70,7 +69,7 @@ func (k msgServer) UpdateTask(goCtx context.Context, msg *types.MsgUpdateTask) (
 	// 3. Settlement Logic (TRNM policy)
 	// If status is changing to COMPLETED (2), burn 100% of escrowed task fee.
 	if msg.Status == 2 {
-		bountyCoin := sdk.NewCoin("token", math.NewIntFromUint64(val.Bounty))
+		bountyCoin := sdk.NewCoin(WorkloadDenom, math.NewIntFromUint64(val.Bounty))
 		coins := sdk.NewCoins(bountyCoin)
 
 		// Burn from module account (100% task fee burn policy)

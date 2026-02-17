@@ -39,7 +39,7 @@ func (k msgServer) SlashWorker(goCtx context.Context, msg *types.MsgSlashWorker)
 		return nil, types.ErrMinRemainingStakeViolation
 	}
 
-	coins := sdk.NewCoins(sdk.NewCoin("stake", math.NewIntFromUint64(slashAmount)))
+	coins := sdk.NewCoins(sdk.NewCoin(WorkloadDenom, math.NewIntFromUint64(slashAmount)))
 	if err := k.bankKeeper.BurnCoins(ctx, types.ModuleName, coins); err != nil {
 		return nil, err
 	}
