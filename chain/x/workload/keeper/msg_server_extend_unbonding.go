@@ -28,6 +28,10 @@ func (k msgServer) ExtendUnbonding(goCtx context.Context, msg *types.MsgExtendUn
 		return nil, types.ErrInvalidExtraBlocks
 	}
 
+	if _, err := sdk.AccAddressFromBech32(msg.Worker); err != nil {
+		return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidAddress, "invalid worker address: %v", err)
+	}
+
 	unbonding, found := k.GetUnbonding(ctx, msg.Worker)
 	if !found {
 		return nil, types.ErrUnbondingNotFound

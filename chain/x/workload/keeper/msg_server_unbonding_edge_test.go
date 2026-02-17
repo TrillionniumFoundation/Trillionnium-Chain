@@ -56,6 +56,31 @@ func TestLifecycleUnbonding_NilRequestsRejected(t *testing.T) {
 	require.Equal(t, 0, countEvents(sdkCtx.EventManager().Events(), "workload_finalize_unbonding"))
 }
 
+func TestLifecycleUnbonding_InvalidAddressRejected(t *testing.T) {
+	k, srv, ctx := setupMsgServer(t)
+	sdkCtx := sdk.UnwrapSDKContext(ctx).WithBlockHeight(int64(keeper.UnbondingPeriodBlocks))
+	worker := sample.AccAddress()
+	k.SetWorker(sdkCtx, types.Worker{Creator: worker, Stake: 100000})
+	k.SetUnbonding(sdkCtx, types.Unbonding{Creator: worker, ReleaseHeight: keeper.UnbondingPeriodBlocks, Amount: 100000})
+
+	_, err := srv.RequestUnbonding(sdkCtx, &types.MsgRequestUnbonding{Creator: "bad"})
+	require.ErrorIs(t, err, sdktypeerrors.ErrInvalidAddress)
+
+	_, err = srv.ExtendUnbonding(sdkCtx, &types.MsgExtendUnbonding{
+		Creator:     k.GetAuthority(),
+		Worker:      "bad",
+		ExtraBlocks: 10,
+	})
+	require.ErrorIs(t, err, sdktypeerrors.ErrInvalidAddress)
+
+	_, err = srv.FinalizeUnbonding(sdkCtx, &types.MsgFinalizeUnbonding{Creator: "bad"})
+	require.ErrorIs(t, err, sdktypeerrors.ErrInvalidAddress)
+
+	require.Equal(t, 0, countEvents(sdkCtx.EventManager().Events(), "workload_request_unbonding"))
+	require.Equal(t, 0, countEvents(sdkCtx.EventManager().Events(), "workload_extend_unbonding"))
+	require.Equal(t, 0, countEvents(sdkCtx.EventManager().Events(), "workload_finalize_unbonding"))
+}
+
 func TestExtendUnbonding_Edges(t *testing.T) {
 	t.Run("extra blocks zero", func(t *testing.T) {
 		k, srv, ctx := setupMsgServer(t)

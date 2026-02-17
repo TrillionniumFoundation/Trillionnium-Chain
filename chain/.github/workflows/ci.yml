@@ -15,6 +15,10 @@ on:
     branches: [main]
     paths: *workload_ci_paths
 
+concurrency:
+  group: workload-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   workload-lifecycle-regressions:
     runs-on: ubuntu-latest

@@ -18,6 +18,11 @@ func (k msgServer) FinalizeUnbonding(goCtx context.Context, msg *types.MsgFinali
 
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address: %v", err)
+	}
+
 	unbonding, found := k.GetUnbonding(ctx, msg.Creator)
 	if !found {
 		return nil, types.ErrUnbondingNotFound
@@ -28,11 +33,6 @@ func (k msgServer) FinalizeUnbonding(goCtx context.Context, msg *types.MsgFinali
 	}
 	if uint64(ctx.BlockHeight()) < unbonding.ReleaseHeight {
 		return nil, types.ErrUnbondingCooldownNotReached
-	}
-
-	creator, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		return nil, err
 	}
 
 	denom := k.workloadDenom(ctx)

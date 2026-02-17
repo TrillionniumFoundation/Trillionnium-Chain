@@ -20,6 +20,10 @@ func (k msgServer) RequestUnbonding(goCtx context.Context, msg *types.MsgRequest
 
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	if _, err := sdk.AccAddressFromBech32(msg.Creator); err != nil {
+		return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address: %v", err)
+	}
+
 	worker, found := k.GetWorker(ctx, msg.Creator)
 	if !found {
 		return nil, types.ErrWorkerNotFound

@@ -3,7 +3,7 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 
-bash "$ROOT_DIR/tools/lifecycle_summary_contract_sync_test.sh"
-bash "$ROOT_DIR/tools/lifecycle_summary_fixture_consistency_test.sh"
+cd "$ROOT_DIR"
+go test ./tools -run TestLifecycleSummaryContractAndFixtures -count=1
 
 echo "PASS: lifecycle schema contract guard"

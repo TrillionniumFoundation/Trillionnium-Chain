@@ -17,6 +17,10 @@ on:
       - 'chain/tools/lifecycle_summary_schema_contract.json'
       - '.github/workflows/lifecycle-smoke-observability.yml'
 
+concurrency:
+  group: lifecycle-observability-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   shell-observability:
     runs-on: ubuntu-latest
