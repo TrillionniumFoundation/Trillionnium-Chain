@@ -153,6 +153,7 @@ cd chain
 - parse `releaseHeight` and wait until cooldown is reached
 - finalize unbonding
 - verify `workload_request_unbonding` / `workload_finalize_unbonding` event attributes
+- assert request/finalize amount denom is linked to live `q workload params` denom
 - verify unbonding record is removed
 
 Example:

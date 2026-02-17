@@ -1,0 +1,22 @@
+name: lifecycle-smoke-observability
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'chain/tools/lifecycle_smoke.sh'
+      - 'chain/tools/lifecycle_smoke_observability_test.sh'
+      - '.github/workflows/lifecycle-smoke-observability.yml'
+  pull_request:
+    paths:
+      - 'chain/tools/lifecycle_smoke.sh'
+      - 'chain/tools/lifecycle_smoke_observability_test.sh'
+      - '.github/workflows/lifecycle-smoke-observability.yml'
+
+jobs:
+  observability-regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run lifecycle smoke observability regression
+        run: bash chain/tools/lifecycle_smoke_observability_test.sh

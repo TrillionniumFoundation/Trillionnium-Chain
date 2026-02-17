@@ -66,13 +66,21 @@ JSON
       ;;
     txfin)
       cat <<JSON
-{"events":[{"type":"workload_finalize_unbonding","attributes":[{"key":"worker","value":"cosmos1workeraddr"},{"key":"amount","value":"100stake"}]}]}
+{"events":[{"type":"workload_finalize_unbonding","attributes":[{"key":"worker","value":"cosmos1workeraddr"},{"key":"amount","value":"100stake"},{"key":"denom","value":"stake"}]}]}
 JSON
       ;;
     *)
       exit 1
       ;;
   esac
+  exit 0
+fi
+
+if [[ "$cmd" == "q" && "${2:-}" == "workload" && "${3:-}" == "params" ]]; then
+  denom="${MOCK_WORKLOAD_DENOM:-stake}"
+  cat <<JSON
+{"params":{"workloadDenom":"$denom"}}
+JSON
   exit 0
 fi
 
@@ -128,6 +136,29 @@ echo "$SUCCESS_SUMMARY_JSON" | jq -e '
   (.cooldown_waited_blocks | type) == "number" and
   (.cooldown_stagnant_rounds | type) == "number"
 ' >/dev/null
+
+# compatibility path: SUMMARY_SCHEMA_VERSION should be transparently passed through.
+echo 100 >"$TMP_DIR/height"
+echo 0 >"$TMP_DIR/finalized"
+OUT_V2_FILE="$TMP_DIR/out_v2.log"
+MOCK_STATE_DIR="$TMP_DIR" BIN="$TMP_DIR/chaind" SLEEP_SECONDS=0 MAX_WAIT_BLOCKS=20 TX_WAIT_SECONDS=2 SUMMARY_JSON=1 SUMMARY_SCHEMA_VERSION=2 \
+  "$SCRIPT" chain alice http://127.0.0.1:26657 >"$OUT_V2_FILE" 2>&1
+V2_SUMMARY_LINE="$(grep 'SUMMARY_JSON:' "$OUT_V2_FILE" | tail -n1)"
+V2_SUMMARY_JSON="${V2_SUMMARY_LINE#*SUMMARY_JSON: }"
+echo "$V2_SUMMARY_JSON" | jq -e '.status == "ok" and .schema_version == 2' >/dev/null
+
+# params linkage: finalize amount/denom must align with workload params denom.
+echo 100 >"$TMP_DIR/height"
+echo 0 >"$TMP_DIR/finalized"
+OUT_PARAM_FAIL_FILE="$TMP_DIR/out_param_fail.log"
+set +e
+MOCK_STATE_DIR="$TMP_DIR" MOCK_WORKLOAD_DENOM=ufoo BIN="$TMP_DIR/chaind" SLEEP_SECONDS=0 MAX_WAIT_BLOCKS=20 TX_WAIT_SECONDS=2 SUMMARY_JSON=1 \
+  "$SCRIPT" chain alice http://127.0.0.1:26657 >"$OUT_PARAM_FAIL_FILE" 2>&1
+rc=$?
+set -e
+[[ $rc -ne 0 ]]
+grep -q "request-unbonding amount/params mismatch" "$OUT_PARAM_FAIL_FILE"
+grep -q '"status":"failed"' "$OUT_PARAM_FAIL_FILE"
 
 # failure path: ensure key diagnostics snapshot is emitted for CI triage
 echo 100 >"$TMP_DIR/height"

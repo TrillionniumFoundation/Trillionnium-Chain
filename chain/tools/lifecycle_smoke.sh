@@ -23,6 +23,9 @@ RELEASE_HEIGHT=0
 TX_REGISTER=""
 TX_REQ=""
 TX_FINALIZE=""
+WORKLOAD_DENOM=""
+UNBOND_AMOUNT_RAW=""
+UNBOND_AMOUNT_VALUE=""
 COOLDOWN_WAITED_BLOCKS=0
 COOLDOWN_STAGNANT_ROUNDS=0
 
@@ -164,6 +167,16 @@ wait_tx() {
   die "tx not found in time: tx=$txhash waited=${waited}s height=$h catching_up=$sync"
 }
 
+event_attr() {
+  local txhash="$1"
+  local event_type="$2"
+  local key="$3"
+
+  "$BIN" q tx "$txhash" --node "$NODE" -o json | jq -r --arg et "$event_type" --arg k "$key" '
+    .events[] | select(.type == $et) | .attributes[] | select(.key == $k) | .value
+  ' | tail -n1
+}
+
 expect_event_attr() {
   local txhash="$1"
   local event_type="$2"
@@ -171,15 +184,34 @@ expect_event_attr() {
   local expected="$4"
 
   local got
-  got="$("$BIN" q tx "$txhash" --node "$NODE" -o json | jq -r --arg et "$event_type" --arg k "$key" '
-    .events[] | select(.type == $et) | .attributes[] | select(.key == $k) | .value
-  ' | tail -n1)"
+  got="$(event_attr "$txhash" "$event_type" "$key")"
 
   if [[ "$got" != "$expected" ]]; then
     die "event validation failed for tx=$txhash event=$event_type key=$key expected=$expected got=${got:-<empty>}"
   fi
 
   log "  event_ok: $event_type.$key=$expected"
+}
+
+assert_finalize_amount_denom_linked_to_params() {
+  local amount_raw="$1"
+  local params_denom="$2"
+  local denom_from_amount denom_attr amount_num
+
+  denom_from_amount="$(echo "$amount_raw" | sed -E 's/^[0-9]+//')"
+  amount_num="$(echo "$amount_raw" | sed -E 's/[^0-9].*$//')"
+
+  [[ -n "$amount_num" ]] || die "invalid finalize amount format: amount=$amount_raw"
+  [[ -n "$denom_from_amount" ]] || die "invalid finalize amount format: amount=$amount_raw"
+  [[ "$denom_from_amount" == "$params_denom" ]] || die "finalize amount denom mismatch: amount=$amount_raw parsed_denom=$denom_from_amount params_denom=$params_denom"
+
+  denom_attr="$(event_attr "$TX_FINALIZE" "workload_finalize_unbonding" "denom" || true)"
+  if [[ -n "$denom_attr" && "$denom_attr" != "null" ]]; then
+    [[ "$denom_attr" == "$params_denom" ]] || die "finalize denom attr mismatch: event_denom=$denom_attr params_denom=$params_denom"
+    [[ "$amount_raw" == "${amount_num}${denom_attr}" ]] || die "finalize amount/denom mismatch: amount=$amount_raw amount_num=$amount_num denom=$denom_attr"
+  fi
+
+  log "  params_link_ok: finalize amount=$amount_raw denom=$params_denom"
 }
 
 COOLDOWN_FINAL_HEIGHT=0
@@ -253,9 +285,12 @@ wait_tx "$TX_REQ"
 log "  tx_request_unbonding=$TX_REQ"
 expect_event_attr "$TX_REQ" "workload_request_unbonding" "worker" "$WORKER_ADDR"
 
-AMOUNT="$("$BIN" q tx "$TX_REQ" --node "$NODE" -o json | jq -r '
-  .events[] | select(.type=="workload_request_unbonding") | .attributes[] | select(.key=="amount") | .value
-' | tail -n1)"
+UNBOND_AMOUNT_RAW="$(event_attr "$TX_REQ" "workload_request_unbonding" "amount")"
+UNBOND_AMOUNT_VALUE="$(echo "$UNBOND_AMOUNT_RAW" | sed -E 's/[^0-9].*$//')"
+WORKLOAD_DENOM="$("$BIN" q workload params --node "$NODE" -o json | jq -r '.params.workloadDenom // .params.workload_denom // empty')"
+[[ -n "$WORKLOAD_DENOM" ]] || die "cannot resolve workload denom from params"
+[[ -n "$UNBOND_AMOUNT_VALUE" ]] || die "invalid request-unbonding amount: amount=$UNBOND_AMOUNT_RAW"
+[[ "$UNBOND_AMOUNT_RAW" == "${UNBOND_AMOUNT_VALUE}${WORKLOAD_DENOM}" ]] || die "request-unbonding amount/params mismatch: amount=$UNBOND_AMOUNT_RAW params_denom=$WORKLOAD_DENOM"
 RELEASE_HEIGHT="$("$BIN" q workload show-unbonding "$WORKER_ADDR" --node "$NODE" -o json | jq -r '.unbonding.releaseHeight | tonumber')"
 
 log "[3/6] query unbonding"
@@ -274,7 +309,8 @@ TX_FINALIZE="$(broadcast_txhash finalize-unbonding "$BIN" tx workload finalize-u
 wait_tx "$TX_FINALIZE"
 log "  tx_finalize_unbonding=$TX_FINALIZE"
 expect_event_attr "$TX_FINALIZE" "workload_finalize_unbonding" "worker" "$WORKER_ADDR"
-expect_event_attr "$TX_FINALIZE" "workload_finalize_unbonding" "amount" "$AMOUNT"
+expect_event_attr "$TX_FINALIZE" "workload_finalize_unbonding" "amount" "$UNBOND_AMOUNT_RAW"
+assert_finalize_amount_denom_linked_to_params "$UNBOND_AMOUNT_RAW" "$WORKLOAD_DENOM"
 
 log "[6/6] verify unbonding removed"
 if "$BIN" q workload show-unbonding "$WORKER_ADDR" --node "$NODE" -o json >/dev/null 2>&1; then
