@@ -57,6 +57,25 @@ python3 worker/main.py test
 python3 worker/main.py start
 ```
 
+## ⚙️ Chain Ops: Governance Param Demo (workload_denom)
+
+`x/workload` now supports governance-configurable economic denom via params (`workload_denom`).
+
+Run demo flow:
+
+```bash
+cd chain
+./tools/demo_denom_governance_flow.sh
+```
+
+What it demonstrates:
+- query current params
+- update `workload_denom` (authority path)
+- create/complete task
+- observe task lifecycle events carrying the active denom
+
+> Note: script assumes local dev chain (`ignite chain serve`) and local key `alice`.
+
 ## 🛠️ Roadmap
 
 - [x] **Phase 1**: Core Architecture & Simulation
