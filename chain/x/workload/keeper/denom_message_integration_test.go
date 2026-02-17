@@ -118,23 +118,15 @@ func TestDenomParamUsedInFinalizeUnbonding(t *testing.T) {
 	require.True(t, hasEventAttribute(sdkCtx.EventManager().Events(), "workload_finalize_unbonding", "denom", "ufoo"))
 }
 
-func TestFinalizeUnbonding_EmptyDenomFallsBackToDefault(t *testing.T) {
-	k, srv, ctx, bank := setupMsgServerWithSpyBank(t)
+func TestSetParams_EmptyDenomRejected(t *testing.T) {
+	k, _, ctx, _ := setupMsgServerWithSpyBank(t)
 
 	params := k.GetParams(ctx)
 	params.WorkloadDenom = ""
-	require.NoError(t, k.SetParams(ctx, params))
-
-	worker := sample.AccAddress()
-	k.SetUnbonding(ctx, types.Unbonding{Creator: worker, ReleaseHeight: 10, Amount: 77})
-
-	sdkCtx := ctx.WithBlockHeight(11)
-	_, err := srv.FinalizeUnbonding(sdk.WrapSDKContext(sdkCtx), &types.MsgFinalizeUnbonding{Creator: worker})
-	require.NoError(t, err)
-	require.Len(t, bank.lastSendModuleToAccount, 1)
-	require.Equal(t, "utrnm", bank.lastSendModuleToAccount[0].Denom)
-	require.Equal(t, int64(77), bank.lastSendModuleToAccount[0].Amount.Int64())
-	require.True(t, hasEventAttribute(sdkCtx.EventManager().Events(), "workload_finalize_unbonding", "denom", "utrnm"))
+	err := k.SetParams(ctx, params)
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "workload denom cannot be empty")
+	require.Equal(t, "utrnm", k.GetParams(ctx).WorkloadDenom)
 }
 
 func TestFinalizeUnbonding_ZeroAmountSkipsBankTransfer(t *testing.T) {

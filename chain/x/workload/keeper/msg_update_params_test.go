@@ -32,12 +32,13 @@ func TestMsgUpdateParams(t *testing.T) {
 			expErrMsg: "invalid authority",
 		},
 		{
-			name: "send enabled param",
+			name: "invalid empty workload denom",
 			input: &types.MsgUpdateParams{
 				Authority: k.GetAuthority(),
 				Params:    types.Params{},
 			},
-			expErr: false,
+			expErr:    true,
+			expErrMsg: "workload denom cannot be empty",
 		},
 		{
 			name: "all good",

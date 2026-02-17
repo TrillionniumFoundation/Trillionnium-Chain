@@ -16,3 +16,11 @@ func TestGetParams(t *testing.T) {
 	require.NoError(t, k.SetParams(ctx, params))
 	require.EqualValues(t, params, k.GetParams(ctx))
 }
+
+func TestSetParams_Validate(t *testing.T) {
+	k, ctx := keepertest.WorkloadKeeper(t)
+
+	err := k.SetParams(ctx, types.Params{WorkloadDenom: ""})
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "workload denom cannot be empty")
+}

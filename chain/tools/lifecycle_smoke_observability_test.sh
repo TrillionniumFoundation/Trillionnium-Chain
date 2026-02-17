@@ -6,7 +6,7 @@ SCRIPT="$ROOT_DIR/tools/lifecycle_smoke.sh"
 
 TMP_DIR="$(mktemp -d)"
 cleanup() {
-  rm -rf "$TMP_DIR"
+	rm -rf "$TMP_DIR"
 }
 trap cleanup EXIT
 
@@ -105,7 +105,7 @@ echo 0 >"$TMP_DIR/finalized"
 
 OUT_FILE="$TMP_DIR/out.log"
 MOCK_STATE_DIR="$TMP_DIR" BIN="$TMP_DIR/chaind" SLEEP_SECONDS=0 MAX_WAIT_BLOCKS=20 TX_WAIT_SECONDS=2 SUMMARY_JSON=1 \
-  "$SCRIPT" chain alice http://127.0.0.1:26657 >"$OUT_FILE" 2>&1
+	"$SCRIPT" chain alice http://127.0.0.1:26657 >"$OUT_FILE" 2>&1
 
 grep -q "summary: duration_s=" "$OUT_FILE"
 grep -q "SUMMARY_JSON:" "$OUT_FILE"
@@ -142,7 +142,7 @@ echo 100 >"$TMP_DIR/height"
 echo 0 >"$TMP_DIR/finalized"
 OUT_V2_FILE="$TMP_DIR/out_v2.log"
 MOCK_STATE_DIR="$TMP_DIR" BIN="$TMP_DIR/chaind" SLEEP_SECONDS=0 MAX_WAIT_BLOCKS=20 TX_WAIT_SECONDS=2 SUMMARY_JSON=1 SUMMARY_SCHEMA_VERSION=2 \
-  "$SCRIPT" chain alice http://127.0.0.1:26657 >"$OUT_V2_FILE" 2>&1
+	"$SCRIPT" chain alice http://127.0.0.1:26657 >"$OUT_V2_FILE" 2>&1
 V2_SUMMARY_LINE="$(grep 'SUMMARY_JSON:' "$OUT_V2_FILE" | tail -n1)"
 V2_SUMMARY_JSON="${V2_SUMMARY_LINE#*SUMMARY_JSON: }"
 echo "$V2_SUMMARY_JSON" | jq -e '.status == "ok" and .schema_version == 2 and has("phase_txs") | not' >/dev/null
@@ -151,7 +151,7 @@ echo 100 >"$TMP_DIR/height"
 echo 0 >"$TMP_DIR/finalized"
 OUT_V3_FILE="$TMP_DIR/out_v3.log"
 MOCK_STATE_DIR="$TMP_DIR" BIN="$TMP_DIR/chaind" SLEEP_SECONDS=0 MAX_WAIT_BLOCKS=20 TX_WAIT_SECONDS=2 SUMMARY_JSON=1 SUMMARY_SCHEMA_VERSION=3 \
-  "$SCRIPT" chain alice http://127.0.0.1:26657 >"$OUT_V3_FILE" 2>&1
+	"$SCRIPT" chain alice http://127.0.0.1:26657 >"$OUT_V3_FILE" 2>&1
 V3_SUMMARY_LINE="$(grep 'SUMMARY_JSON:' "$OUT_V3_FILE" | tail -n1)"
 V3_SUMMARY_JSON="${V3_SUMMARY_LINE#*SUMMARY_JSON: }"
 echo "$V3_SUMMARY_JSON" | jq -e '
@@ -175,7 +175,7 @@ echo 0 >"$TMP_DIR/finalized"
 OUT_PARAM_FAIL_FILE="$TMP_DIR/out_param_fail.log"
 set +e
 MOCK_STATE_DIR="$TMP_DIR" MOCK_WORKLOAD_DENOM=ufoo BIN="$TMP_DIR/chaind" SLEEP_SECONDS=0 MAX_WAIT_BLOCKS=20 TX_WAIT_SECONDS=2 SUMMARY_JSON=1 \
-  "$SCRIPT" chain alice http://127.0.0.1:26657 >"$OUT_PARAM_FAIL_FILE" 2>&1
+	"$SCRIPT" chain alice http://127.0.0.1:26657 >"$OUT_PARAM_FAIL_FILE" 2>&1
 rc=$?
 set -e
 [[ $rc -ne 0 ]]
@@ -206,7 +206,7 @@ echo 0 >"$TMP_DIR/finalized"
 OUT_FAIL_FILE="$TMP_DIR/out_fail.log"
 set +e
 MOCK_STATE_DIR="$TMP_DIR" MOCK_FAIL_FINALIZE=1 BIN="$TMP_DIR/chaind" SLEEP_SECONDS=0 MAX_WAIT_BLOCKS=20 TX_WAIT_SECONDS=2 SUMMARY_JSON=1 \
-  "$SCRIPT" chain alice http://127.0.0.1:26657 >"$OUT_FAIL_FILE" 2>&1
+	"$SCRIPT" chain alice http://127.0.0.1:26657 >"$OUT_FAIL_FILE" 2>&1
 rc=$?
 set -e
 [[ $rc -ne 0 ]]
