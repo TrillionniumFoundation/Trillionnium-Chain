@@ -12,6 +12,11 @@ import (
 func (k msgServer) SlashWorker(goCtx context.Context, msg *types.MsgSlashWorker) (*types.MsgSlashWorkerResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	// governance-only slashing: only module authority can trigger slashing
+	if msg.Creator != k.GetAuthority() {
+		return nil, sdkerrors.ErrUnauthorized.Wrap("only authority can slash worker")
+	}
+
 	worker, found := k.GetWorker(ctx, msg.Worker)
 	if !found {
 		return nil, sdkerrors.ErrKeyNotFound.Wrap("worker not found")
