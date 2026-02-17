@@ -33,7 +33,8 @@ TrillionniumChain/
 │   ├── main.py              # CLI Entrypoint
 │   ├── executor.py          # Docker Runner
 │   └── listener.py          # Task Queue Listener
-└── contracts/               # Legacy EVM Contracts (Reference)
+└── legacy/
+    └── evm-contracts/       # Legacy EVM Contracts (Reference Only)
 ```
 
 ## 🚀 Quick Start
