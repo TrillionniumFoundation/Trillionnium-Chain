@@ -21,11 +21,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Ensure jq
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq
+          jq --version
+
       - name: Shellcheck tools
         run: |
           shellcheck chain/tools/lifecycle_smoke.sh \
             chain/tools/lifecycle_smoke_observability_test.sh \
             chain/tools/lifecycle_summary_parser_examples_test.sh \
+            chain/tools/lifecycle_summary_fixture_consistency_test.sh \
             chain/tools/demo_denom_governance_flow.sh
 
       - name: Bash syntax checks
@@ -33,6 +40,7 @@ jobs:
           bash -n chain/tools/lifecycle_smoke.sh
           bash -n chain/tools/lifecycle_smoke_observability_test.sh
           bash -n chain/tools/lifecycle_summary_parser_examples_test.sh
+          bash -n chain/tools/lifecycle_summary_fixture_consistency_test.sh
           bash -n chain/tools/demo_denom_governance_flow.sh
 
       - name: Lifecycle schema contract self-check (quick)
@@ -40,6 +48,9 @@ jobs:
 
       - name: Lifecycle parser examples
         run: bash chain/tools/lifecycle_summary_parser_examples_test.sh
+
+      - name: Lifecycle fixture consistency
+        run: bash chain/tools/lifecycle_summary_fixture_consistency_test.sh
 
       - name: Lifecycle observability regression (full)
         if: github.event_name == 'push'
