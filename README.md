@@ -89,7 +89,8 @@ Lifecycle smoke observability guardrail:
 - `chain/tools/lifecycle_smoke.sh` emits `SUMMARY_JSON` on both success/failure (`SUMMARY_JSON=1`)
 - `chain/tools/lifecycle_smoke_observability_test.sh` enforces snapshot field consistency and failure diagnostics
 - Schema contract: `chain/tools/LIFECYCLE_SUMMARY_SCHEMA_CONTRACT.md` (v2/v3 compatibility + parser fallback)
-- CI workflow `.github/workflows/lifecycle-smoke-observability.yml` runs shellcheck + regression test
+- CI workflow `.github/workflows/lifecycle-smoke-observability.yml` runs shellcheck + parser/fixture/contract checks + regression test
+- `x/workload` unbonding request path now rejects unsafe block-height boundaries (negative and int64-unreachable release height)
 
 ## 🛠️ Roadmap
 

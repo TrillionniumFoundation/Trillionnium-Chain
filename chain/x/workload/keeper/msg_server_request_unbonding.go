@@ -9,6 +9,7 @@ import (
 )
 
 const UnbondingPeriodBlocks uint64 = 100
+const maxSafeUnbondingStartHeight int64 = int64(^uint64(0)>>1) - int64(UnbondingPeriodBlocks)
 
 func (k msgServer) RequestUnbonding(goCtx context.Context, msg *types.MsgRequestUnbonding) (*types.MsgRequestUnbondingResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
@@ -22,7 +23,7 @@ func (k msgServer) RequestUnbonding(goCtx context.Context, msg *types.MsgRequest
 		return nil, types.ErrUnbondingAlreadyRequested
 	}
 
-	if ctx.BlockHeight() < 0 {
+	if ctx.BlockHeight() < 0 || ctx.BlockHeight() > maxSafeUnbondingStartHeight {
 		return nil, types.ErrInvalidBlockHeight
 	}
 

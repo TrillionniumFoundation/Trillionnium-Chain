@@ -1,6 +1,7 @@
 package keeper_test
 
 import (
+	"math"
 	"strconv"
 	"testing"
 
@@ -78,4 +79,40 @@ func TestRequestUnbonding_NegativeHeightRejected(t *testing.T) {
 
 	_, found := k.GetUnbonding(sdkCtx, worker)
 	require.False(t, found)
+}
+
+func TestRequestUnbonding_ReleaseHeightBeyondInt64Rejected(t *testing.T) {
+	t.Run("rejects unreachable release height", func(t *testing.T) {
+		k, srv, ctx := setupMsgServer(t)
+		sdkCtx := sdk.UnwrapSDKContext(ctx).WithBlockHeight(math.MaxInt64 - int64(keeper.UnbondingPeriodBlocks) + 1)
+		worker := sample.AccAddress()
+
+		k.SetWorker(sdkCtx, types.Worker{Creator: worker, Stake: 100000})
+
+		before := countEvents(sdkCtx.EventManager().Events(), "workload_request_unbonding")
+		_, err := srv.RequestUnbonding(sdkCtx, &types.MsgRequestUnbonding{Creator: worker})
+		require.ErrorIs(t, err, types.ErrInvalidBlockHeight)
+		require.Equal(t, before, countEvents(sdkCtx.EventManager().Events(), "workload_request_unbonding"))
+
+		_, workerStillExists := k.GetWorker(sdkCtx, worker)
+		require.True(t, workerStillExists)
+
+		_, found := k.GetUnbonding(sdkCtx, worker)
+		require.False(t, found)
+	})
+
+	t.Run("allows max safe height", func(t *testing.T) {
+		k, srv, ctx := setupMsgServer(t)
+		sdkCtx := sdk.UnwrapSDKContext(ctx).WithBlockHeight(math.MaxInt64 - int64(keeper.UnbondingPeriodBlocks))
+		worker := sample.AccAddress()
+
+		k.SetWorker(sdkCtx, types.Worker{Creator: worker, Stake: 100000})
+
+		_, err := srv.RequestUnbonding(sdkCtx, &types.MsgRequestUnbonding{Creator: worker})
+		require.NoError(t, err)
+
+		u, found := k.GetUnbonding(sdkCtx, worker)
+		require.True(t, found)
+		require.Equal(t, uint64(math.MaxInt64), u.ReleaseHeight)
+	})
 }
