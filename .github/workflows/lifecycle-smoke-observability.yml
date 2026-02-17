@@ -7,12 +7,14 @@ on:
       - 'chain/tools/*.sh'
       - 'chain/tools/examples/*.json'
       - 'chain/tools/LIFECYCLE_SUMMARY_SCHEMA_CONTRACT.md'
+      - 'chain/tools/lifecycle_summary_schema_contract.json'
       - '.github/workflows/lifecycle-smoke-observability.yml'
   pull_request:
     paths:
       - 'chain/tools/*.sh'
       - 'chain/tools/examples/*.json'
       - 'chain/tools/LIFECYCLE_SUMMARY_SCHEMA_CONTRACT.md'
+      - 'chain/tools/lifecycle_summary_schema_contract.json'
       - '.github/workflows/lifecycle-smoke-observability.yml'
 
 jobs:
@@ -39,6 +41,7 @@ jobs:
             chain/tools/lifecycle_summary_parser_examples_test.sh \
             chain/tools/lifecycle_summary_fixture_consistency_test.sh \
             chain/tools/lifecycle_summary_contract_sync_test.sh \
+            chain/tools/lifecycle_schema_contract_guard.sh \
             chain/tools/demo_denom_governance_flow.sh
 
       - name: Bash syntax checks
@@ -48,6 +51,7 @@ jobs:
           bash -n chain/tools/lifecycle_summary_parser_examples_test.sh
           bash -n chain/tools/lifecycle_summary_fixture_consistency_test.sh
           bash -n chain/tools/lifecycle_summary_contract_sync_test.sh
+          bash -n chain/tools/lifecycle_schema_contract_guard.sh
           bash -n chain/tools/demo_denom_governance_flow.sh
 
       - name: Lifecycle schema contract self-check (quick)
@@ -56,11 +60,8 @@ jobs:
       - name: Lifecycle parser examples
         run: bash chain/tools/lifecycle_summary_parser_examples_test.sh
 
-      - name: Lifecycle fixture consistency
-        run: bash chain/tools/lifecycle_summary_fixture_consistency_test.sh
-
-      - name: Lifecycle contract markdown/json sync
-        run: bash chain/tools/lifecycle_summary_contract_sync_test.sh
+      - name: Lifecycle schema contract/fixture guard
+        run: bash chain/tools/lifecycle_schema_contract_guard.sh
 
       - name: Lifecycle observability regression (full)
         if: github.event_name == 'push'
