@@ -34,14 +34,14 @@ func (k msgServer) SlashWorker(goCtx context.Context, msg *types.MsgSlashWorker)
 		return nil, sdkerrors.ErrInvalidRequest.Wrap("slash amount is zero")
 	}
 
-	coins := sdk.NewCoins(sdk.NewCoin("stake", math.NewIntFromUint64(slashAmount)))
-	if err := k.bankKeeper.BurnCoins(ctx, types.ModuleName, coins); err != nil {
-		return nil, err
-	}
-
 	remaining := worker.Stake - slashAmount
 	if remaining < MinWorkerStakeAfterSlash {
 		return nil, sdkerrors.ErrInvalidRequest.Wrap("slash would violate minimum remaining worker stake")
+	}
+
+	coins := sdk.NewCoins(sdk.NewCoin("stake", math.NewIntFromUint64(slashAmount)))
+	if err := k.bankKeeper.BurnCoins(ctx, types.ModuleName, coins); err != nil {
+		return nil, err
 	}
 
 	worker.Stake = remaining
