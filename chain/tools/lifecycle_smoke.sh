@@ -12,6 +12,7 @@ FEES="${FEES:-200stake}"
 SLEEP_SECONDS="${SLEEP_SECONDS:-2}"
 MAX_WAIT_BLOCKS="${MAX_WAIT_BLOCKS:-300}"
 TX_WAIT_SECONDS="${TX_WAIT_SECONDS:-30}"
+SUMMARY_JSON="${SUMMARY_JSON:-0}"
 
 log() {
   printf '[%s] %s\n' "$(date '+%H:%M:%S')" "$*"
@@ -20,6 +21,10 @@ log() {
 die() {
   log "[ERR] $*" >&2
   exit 1
+}
+
+now_epoch() {
+  date +%s
 }
 
 latest_height() {
@@ -102,6 +107,10 @@ expect_event_attr() {
   log "  event_ok: $event_type.$key=$expected"
 }
 
+COOLDOWN_WAITED_BLOCKS=0
+COOLDOWN_STAGNANT_ROUNDS=0
+COOLDOWN_FINAL_HEIGHT=0
+
 wait_for_release_height() {
   local release_height="$1"
   local current
@@ -111,6 +120,9 @@ wait_for_release_height() {
   current="$(latest_height)"
   while (( current < release_height )); do
     if (( waited >= MAX_WAIT_BLOCKS )); then
+      COOLDOWN_WAITED_BLOCKS="$waited"
+      COOLDOWN_STAGNANT_ROUNDS="$stagnant"
+      COOLDOWN_FINAL_HEIGHT="$current"
       die "cooldown wait timeout: current=$current release=$release_height waited_blocks=$waited stagnant_rounds=$stagnant catching_up=$(node_syncing || echo '?')"
     fi
 
@@ -132,11 +144,16 @@ wait_for_release_height() {
     current="$next"
   done
 
+  COOLDOWN_WAITED_BLOCKS="$waited"
+  COOLDOWN_STAGNANT_ROUNDS="$stagnant"
+  COOLDOWN_FINAL_HEIGHT="$current"
   log "  cooldown reached at height=$current (target=$release_height)"
 }
 
 check_dependencies
 check_node_reachable
+START_TS="$(now_epoch)"
+START_HEIGHT="$(latest_height)"
 WORKER_ADDR="$($BIN keys show "$FROM" -a)"
 
 log "[1/6] register-worker"
@@ -189,6 +206,28 @@ expect_event_attr "$TX_FINALIZE" "workload_finalize_unbonding" "amount" "$AMOUNT
 log "[6/6] verify unbonding removed"
 if "$BIN" q workload show-unbonding "$WORKER_ADDR" --node "$NODE" -o json >/dev/null 2>&1; then
   die "unbonding still exists after finalize"
+fi
+
+END_TS="$(now_epoch)"
+END_HEIGHT="$(latest_height)"
+DURATION_S=$(( END_TS - START_TS ))
+HEIGHT_DELTA=$(( END_HEIGHT - START_HEIGHT ))
+
+log "summary: duration_s=$DURATION_S start_height=$START_HEIGHT end_height=$END_HEIGHT height_delta=$HEIGHT_DELTA waited_blocks=$COOLDOWN_WAITED_BLOCKS stagnant_rounds=$COOLDOWN_STAGNANT_ROUNDS tx_register=$TX_REGISTER tx_request_unbonding=$TX_REQ tx_finalize_unbonding=$TX_FINALIZE"
+if [[ "$SUMMARY_JSON" == "1" ]]; then
+  log "SUMMARY_JSON: $(jq -cn \
+    --arg worker "$WORKER_ADDR" \
+    --arg tx_register "$TX_REGISTER" \
+    --arg tx_request_unbonding "$TX_REQ" \
+    --arg tx_finalize_unbonding "$TX_FINALIZE" \
+    --argjson start_height "$START_HEIGHT" \
+    --argjson end_height "$END_HEIGHT" \
+    --argjson height_delta "$HEIGHT_DELTA" \
+    --argjson duration_s "$DURATION_S" \
+    --argjson release_height "$RELEASE_HEIGHT" \
+    --argjson cooldown_waited_blocks "$COOLDOWN_WAITED_BLOCKS" \
+    --argjson cooldown_stagnant_rounds "$COOLDOWN_STAGNANT_ROUNDS" \
+    '{worker:$worker,tx_register:$tx_register,tx_request_unbonding:$tx_request_unbonding,tx_finalize_unbonding:$tx_finalize_unbonding,start_height:$start_height,end_height:$end_height,height_delta:$height_delta,duration_s:$duration_s,release_height:$release_height,cooldown_waited_blocks:$cooldown_waited_blocks,cooldown_stagnant_rounds:$cooldown_stagnant_rounds}')"
 fi
 
 log "OK: lifecycle smoke completed with cooldown wait + finalize + event checks."

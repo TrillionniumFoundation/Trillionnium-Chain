@@ -1,0 +1,103 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+SCRIPT="$ROOT_DIR/tools/lifecycle_smoke.sh"
+
+TMP_DIR="$(mktemp -d)"
+cleanup() {
+  rm -rf "$TMP_DIR"
+}
+trap cleanup EXIT
+
+cat >"$TMP_DIR/chaind" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+
+STATE_DIR="${MOCK_STATE_DIR:?}"
+HEIGHT_FILE="$STATE_DIR/height"
+FINALIZED_FILE="$STATE_DIR/finalized"
+
+cmd="${1:-}"
+if [[ "$cmd" == "status" ]]; then
+  h="$(cat "$HEIGHT_FILE")"
+  echo $((h + 1)) >"$HEIGHT_FILE"
+  cat <<JSON
+{"SyncInfo":{"latest_block_height":"$h","catching_up":false}}
+JSON
+  exit 0
+fi
+
+if [[ "$cmd" == "keys" && "${2:-}" == "show" ]]; then
+  echo "cosmos1workeraddr"
+  exit 0
+fi
+
+if [[ "$cmd" == "tx" && "${2:-}" == "workload" && "${3:-}" == "register-worker" ]]; then
+  echo '{"txhash":"txreg","code":0}'
+  exit 0
+fi
+if [[ "$cmd" == "tx" && "${2:-}" == "workload" && "${3:-}" == "request-unbonding" ]]; then
+  echo '{"txhash":"txreq","code":0}'
+  exit 0
+fi
+if [[ "$cmd" == "tx" && "${2:-}" == "workload" && "${3:-}" == "finalize-unbonding" ]]; then
+  echo 1 >"$FINALIZED_FILE"
+  echo '{"txhash":"txfin","code":0}'
+  exit 0
+fi
+
+if [[ "$cmd" == "q" && "${2:-}" == "tx" ]]; then
+  tx="${3:-}"
+  case "$tx" in
+    txreg)
+      cat <<JSON
+{"events":[{"type":"workload_register_worker","attributes":[{"key":"worker","value":"cosmos1workeraddr"}]}]}
+JSON
+      ;;
+    txreq)
+      cat <<JSON
+{"events":[{"type":"workload_request_unbonding","attributes":[{"key":"worker","value":"cosmos1workeraddr"},{"key":"amount","value":"100stake"}]}]}
+JSON
+      ;;
+    txfin)
+      cat <<JSON
+{"events":[{"type":"workload_finalize_unbonding","attributes":[{"key":"worker","value":"cosmos1workeraddr"},{"key":"amount","value":"100stake"}]}]}
+JSON
+      ;;
+    *)
+      exit 1
+      ;;
+  esac
+  exit 0
+fi
+
+if [[ "$cmd" == "q" && "${2:-}" == "workload" && "${3:-}" == "show-unbonding" ]]; then
+  finalized="$(cat "$FINALIZED_FILE")"
+  if [[ "$finalized" == "1" ]]; then
+    exit 1
+  fi
+  cat <<JSON
+{"unbonding":{"releaseHeight":"103"}}
+JSON
+  exit 0
+fi
+
+echo "unsupported mock command: $*" >&2
+exit 1
+EOF
+chmod +x "$TMP_DIR/chaind"
+
+echo 100 >"$TMP_DIR/height"
+echo 0 >"$TMP_DIR/finalized"
+
+OUT_FILE="$TMP_DIR/out.log"
+MOCK_STATE_DIR="$TMP_DIR" BIN="$TMP_DIR/chaind" SLEEP_SECONDS=0 MAX_WAIT_BLOCKS=20 TX_WAIT_SECONDS=2 SUMMARY_JSON=1 \
+  "$SCRIPT" chain alice http://127.0.0.1:26657 >"$OUT_FILE" 2>&1
+
+grep -q "summary: duration_s=" "$OUT_FILE"
+grep -q "SUMMARY_JSON:" "$OUT_FILE"
+grep -q "tx_register=txreg" "$OUT_FILE"
+grep -q "OK: lifecycle smoke completed" "$OUT_FILE"
+
+echo "PASS: lifecycle_smoke observability regression"

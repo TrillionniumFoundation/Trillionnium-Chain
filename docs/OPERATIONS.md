@@ -165,6 +165,7 @@ Optional env knobs:
 - `SLEEP_SECONDS` (default `2`): polling interval during cooldown wait
 - `MAX_WAIT_BLOCKS` (default `300`): guardrail to fail fast when chain stalls
 - `TX_WAIT_SECONDS` (default `30`): tx inclusion timeout per step
+- `SUMMARY_JSON` (default `0`): print one-line machine-readable JSON summary (`SUMMARY_JSON: {...}`) for CI collection
 
 ## 10) Troubleshooting (Lifecycle Smoke)
 ### 10.1 `tx not found in time`
@@ -214,5 +215,12 @@ Typical causes:
 ### 10.4 Fast rerun recipe
 ```bash
 cd chain
-SLEEP_SECONDS=1 MAX_WAIT_BLOCKS=500 TX_WAIT_SECONDS=60 ./tools/lifecycle_smoke.sh chain alice http://127.0.0.1:26657
+SLEEP_SECONDS=1 MAX_WAIT_BLOCKS=500 TX_WAIT_SECONDS=60 SUMMARY_JSON=1 ./tools/lifecycle_smoke.sh chain alice http://127.0.0.1:26657
 ```
+
+### 10.5 Ops regression (mocked smoke observability)
+```bash
+cd chain
+./tools/lifecycle_smoke_observability_test.sh
+```
+This regression uses a mocked `chaind` to verify lifecycle smoke summary fields and JSON output format stay stable for CI/automation consumers.
