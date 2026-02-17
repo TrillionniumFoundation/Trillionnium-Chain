@@ -17,12 +17,13 @@ service Msg {
   
   // UpdateParams defines a (governance) operation for updating the module
   // parameters. The authority defaults to the x/gov module account.
-  rpc UpdateParams   (MsgUpdateParams  ) returns (MsgUpdateParamsResponse  );
-  rpc CreateTask     (MsgCreateTask    ) returns (MsgCreateTaskResponse    );
-  rpc UpdateTask     (MsgUpdateTask    ) returns (MsgUpdateTaskResponse    );
-  rpc DeleteTask     (MsgDeleteTask    ) returns (MsgDeleteTaskResponse    );
-  rpc RegisterWorker (MsgRegisterWorker) returns (MsgRegisterWorkerResponse);
-  rpc SlashWorker    (MsgSlashWorker   ) returns (MsgSlashWorkerResponse   );
+  rpc UpdateParams     (MsgUpdateParams    ) returns (MsgUpdateParamsResponse    );
+  rpc CreateTask       (MsgCreateTask      ) returns (MsgCreateTaskResponse      );
+  rpc UpdateTask       (MsgUpdateTask      ) returns (MsgUpdateTaskResponse      );
+  rpc DeleteTask       (MsgDeleteTask      ) returns (MsgDeleteTaskResponse      );
+  rpc RegisterWorker   (MsgRegisterWorker  ) returns (MsgRegisterWorkerResponse  );
+  rpc SlashWorker      (MsgSlashWorker     ) returns (MsgSlashWorkerResponse     );
+  rpc UnregisterWorker (MsgUnregisterWorker) returns (MsgUnregisterWorkerResponse);
 }
 // MsgUpdateParams is the Msg/UpdateParams request type.
 message MsgUpdateParams {
@@ -94,4 +95,11 @@ message MsgSlashWorker {
 }
 
 message MsgSlashWorkerResponse {}
+
+message MsgUnregisterWorker {
+  option (cosmos.msg.v1.signer) = "creator";
+  string creator = 1;
+}
+
+message MsgUnregisterWorkerResponse {}
 
