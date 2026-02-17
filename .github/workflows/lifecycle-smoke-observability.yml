@@ -33,6 +33,7 @@ jobs:
             chain/tools/lifecycle_smoke_observability_test.sh \
             chain/tools/lifecycle_summary_parser_examples_test.sh \
             chain/tools/lifecycle_summary_fixture_consistency_test.sh \
+            chain/tools/lifecycle_summary_contract_sync_test.sh \
             chain/tools/demo_denom_governance_flow.sh
 
       - name: Bash syntax checks
@@ -41,6 +42,7 @@ jobs:
           bash -n chain/tools/lifecycle_smoke_observability_test.sh
           bash -n chain/tools/lifecycle_summary_parser_examples_test.sh
           bash -n chain/tools/lifecycle_summary_fixture_consistency_test.sh
+          bash -n chain/tools/lifecycle_summary_contract_sync_test.sh
           bash -n chain/tools/demo_denom_governance_flow.sh
 
       - name: Lifecycle schema contract self-check (quick)
@@ -51,6 +53,9 @@ jobs:
 
       - name: Lifecycle fixture consistency
         run: bash chain/tools/lifecycle_summary_fixture_consistency_test.sh
+
+      - name: Lifecycle contract markdown/json sync
+        run: bash chain/tools/lifecycle_summary_contract_sync_test.sh
 
       - name: Lifecycle observability regression (full)
         if: github.event_name == 'push'

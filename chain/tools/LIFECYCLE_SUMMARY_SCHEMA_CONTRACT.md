@@ -85,4 +85,13 @@ Example payloads are checked in and intended for downstream parser fixtures:
 `chain/tools/lifecycle_summary_parser_examples_test.sh` validates parser fallback examples.
 `chain/tools/lifecycle_summary_fixture_consistency_test.sh` validates committed fixtures stay internally consistent with the contract (flat keys, nested linkage for v3, status semantics).
 
+Machine-readable source of truth:
+
+- `chain/tools/lifecycle_summary_schema_contract.json`
+
+Automation:
+
+- `chain/tools/lifecycle_summary_contract_sync_test.sh` verifies markdown sections and JSON contract stay synchronized.
+- `chain/tools/lifecycle_summary_fixture_consistency_test.sh` reads required flat keys from JSON contract to validate fixtures.
+
 This document is a contract baseline for future schema bumps.

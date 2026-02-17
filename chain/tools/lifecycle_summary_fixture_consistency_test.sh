@@ -12,13 +12,8 @@ for f in "$v1_fail" "$v2_ok" "$v3_ok"; do
 	jq -e . "$f" >/dev/null
 done
 
-flat_required='[
-  "schema_version","status","reason","worker","last_step","last_tx",
-  "tx_register","tx_request_unbonding","tx_finalize_unbonding",
-  "start_height","end_height","height_delta","duration_s",
-  "release_height","cooldown_waited_blocks","cooldown_stagnant_rounds",
-  "node_height","catching_up"
-]'
+CONTRACT_JSON="$ROOT_DIR/tools/lifecycle_summary_schema_contract.json"
+flat_required="$(jq -c '.flat_required' "$CONTRACT_JSON")"
 
 jq -e --argjson req "$flat_required" '
   .schema_version == 2 and
