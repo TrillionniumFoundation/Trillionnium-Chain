@@ -1,0 +1,8 @@
+{
+    "initial_capital": 100000.0,
+    "final_capital": 142336.82158360127,
+    "pnl": 42336.82158360127,
+    "roi_percent": 42.33682158360127,
+    "status": "success",
+    "trades_count": 5
+}
