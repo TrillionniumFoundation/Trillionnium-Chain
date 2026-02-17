@@ -1,4 +1,4 @@
-# OpenClaw Compute Network
+# Trillionnium Chain
 
 **Decentralized AI Work Platform: Proof of Useful Work (PoUW)**
 
