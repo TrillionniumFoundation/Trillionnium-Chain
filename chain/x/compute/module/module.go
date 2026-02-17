@@ -23,6 +23,7 @@ import (
 	modulev1 "chain/api/chain/compute/module"
 	"chain/x/compute/keeper"
 	"chain/x/compute/types"
+	workloadkeeper "chain/x/workload/keeper"
 )
 
 var (
@@ -190,6 +191,8 @@ type ModuleInputs struct {
 	AccountKeeper types.AccountKeeper
 	BankKeeper    types.BankKeeper
 	StakingKeeper types.StakingKeeper
+
+	WorkloadKeeper workloadkeeper.Keeper
 }
 
 type ModuleOutputs struct {
@@ -212,6 +215,7 @@ func ProvideModule(in ModuleInputs) ModuleOutputs {
 		authority.String(),
 		in.BankKeeper,
 		in.StakingKeeper,
+		in.WorkloadKeeper,
 	)
 	m := NewAppModule(
 		in.Cdc,

@@ -3,20 +3,26 @@ package keeper_test
 import (
 	"testing"
 
-	"chain/x/compute/keeper"
-	workloadkeeper "chain/x/workload/keeper"
 	"github.com/stretchr/testify/require"
+
+	keepertest "chain/testutil/keeper"
+	workloadtypes "chain/x/workload/types"
 )
 
-// TestComputeKeeperDependency verifies that x/compute can import x/workload/keeper
-// This is a placeholder test for future integration.
 func TestComputeKeeperDependency(t *testing.T) {
-	// Verify we can reference the workload keeper type
-	var _ *workloadkeeper.Keeper = nil
-	
-	// Verify we can reference the compute keeper type
-	var _ *keeper.Keeper = nil
+	k, workloadK, ctx := keepertest.ComputeKeeperWithWorkload(t)
 
-	// If we can compile this file, it means the dependencies are resolved.
-	require.True(t, true)
+	// Set workload params via workload keeper
+	defaultParams := workloadtypes.DefaultParams()
+	// Let's modify a field if possible to ensure we are reading the same data, 
+	// but DefaultParams fields might be empty or basic.
+	// Assuming Params has fields we can check.
+	err := workloadK.SetParams(ctx, defaultParams)
+	require.NoError(t, err)
+
+	// Read workload params via compute keeper
+	retrievedParams := k.GetWorkloadParams(ctx)
+
+	// Verify they are the same
+	require.Equal(t, defaultParams, retrievedParams)
 }

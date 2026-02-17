@@ -19,19 +19,36 @@ import (
 
 	"chain/x/compute/keeper"
 	"chain/x/compute/types"
+	workloadkeeper "chain/x/workload/keeper"
 )
 
 func ComputeKeeper(t testing.TB) (keeper.Keeper, sdk.Context) {
+	k, _, ctx := ComputeKeeperWithWorkload(t)
+	return k, ctx
+}
+
+func ComputeKeeperWithWorkload(t testing.TB) (keeper.Keeper, workloadkeeper.Keeper, sdk.Context) {
 	storeKey := storetypes.NewKVStoreKey(types.StoreKey)
+	workloadStoreKey := storetypes.NewKVStoreKey("workload")
 
 	db := dbm.NewMemDB()
 	stateStore := store.NewCommitMultiStore(db, log.NewNopLogger(), metrics.NewNoOpMetrics())
 	stateStore.MountStoreWithDB(storeKey, storetypes.StoreTypeIAVL, db)
+	stateStore.MountStoreWithDB(workloadStoreKey, storetypes.StoreTypeIAVL, db)
 	require.NoError(t, stateStore.LoadLatestVersion())
 
 	registry := codectypes.NewInterfaceRegistry()
 	cdc := codec.NewProtoCodec(registry)
 	authority := authtypes.NewModuleAddress(govtypes.ModuleName)
+
+	workloadK := workloadkeeper.NewKeeper(
+		cdc,
+		runtime.NewKVStoreService(workloadStoreKey),
+		log.NewNopLogger(),
+		authority.String(),
+		nil,
+		nil,
+	)
 
 	k := keeper.NewKeeper(
 		cdc,
@@ -40,6 +57,7 @@ func ComputeKeeper(t testing.TB) (keeper.Keeper, sdk.Context) {
 		authority.String(),
 		nil,
 		nil,
+		workloadK,
 	)
 
 	ctx := sdk.NewContext(stateStore, cmtproto.Header{}, false, log.NewNopLogger())
@@ -47,5 +65,5 @@ func ComputeKeeper(t testing.TB) (keeper.Keeper, sdk.Context) {
 	// Initialize params
 	k.SetParams(ctx, types.DefaultParams())
 
-	return k, ctx
+	return k, workloadK, ctx
 }

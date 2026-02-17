@@ -1,6 +1,7 @@
 package keeper
 
 import (
+	"context"
 	"fmt"
 
 	"cosmossdk.io/core/store"
@@ -9,6 +10,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"chain/x/compute/types"
+	workloadkeeper "chain/x/workload/keeper"
+	workloadtypes "chain/x/workload/types"
 )
 
 type (
@@ -21,8 +24,9 @@ type (
 		// should be the x/gov module account.
 		authority string
 
-		bankKeeper    types.BankKeeper
-		stakingKeeper types.StakingKeeper
+		bankKeeper     types.BankKeeper
+		stakingKeeper  types.StakingKeeper
+		workloadKeeper workloadkeeper.Keeper
 	}
 )
 
@@ -34,6 +38,7 @@ func NewKeeper(
 
 	bankKeeper types.BankKeeper,
 	stakingKeeper types.StakingKeeper,
+	workloadKeeper workloadkeeper.Keeper,
 ) Keeper {
 	if _, err := sdk.AccAddressFromBech32(authority); err != nil {
 		panic(fmt.Sprintf("invalid authority address: %s", authority))
@@ -45,8 +50,9 @@ func NewKeeper(
 		authority:    authority,
 		logger:       logger,
 
-		bankKeeper:    bankKeeper,
-		stakingKeeper: stakingKeeper,
+		bankKeeper:     bankKeeper,
+		stakingKeeper:  stakingKeeper,
+		workloadKeeper: workloadKeeper,
 	}
 }
 
@@ -58,4 +64,9 @@ func (k Keeper) GetAuthority() string {
 // Logger returns a module-specific logger.
 func (k Keeper) Logger() log.Logger {
 	return k.logger.With("module", fmt.Sprintf("x/%s", types.ModuleName))
+}
+
+// GetWorkloadParams returns the parameters of the workload module.
+func (k Keeper) GetWorkloadParams(ctx context.Context) workloadtypes.Params {
+	return k.workloadKeeper.GetParams(ctx)
 }
