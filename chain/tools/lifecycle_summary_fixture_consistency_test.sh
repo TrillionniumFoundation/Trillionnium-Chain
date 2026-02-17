@@ -17,7 +17,7 @@ flat_required="$(jq -c '.flat_required' "$CONTRACT_JSON")"
 v3_phase_required="$(jq -c '.v3_nested.phase_txs' "$CONTRACT_JSON")"
 v3_timing_required="$(jq -c '.v3_nested.timing' "$CONTRACT_JSON")"
 v3_node_required="$(jq -c '.v3_nested.node' "$CONTRACT_JSON")"
-v3_nested_required='["phase_txs","timing","node"]'
+v3_nested_required="$(jq -c '.v3_nested | keys' "$CONTRACT_JSON")"
 
 jq -e --argjson req "$flat_required" '
   .schema_version == 2 and
