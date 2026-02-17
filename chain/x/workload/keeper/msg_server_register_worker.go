@@ -5,13 +5,19 @@ import (
 	"strconv"
 
 	"chain/x/workload/types"
+	errorsmod "cosmossdk.io/errors"
 	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
 const MinWorkerStake uint64 = 100000
 
 func (k msgServer) RegisterWorker(goCtx context.Context, msg *types.MsgRegisterWorker) (*types.MsgRegisterWorkerResponse, error) {
+	if msg == nil {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "request cannot be nil")
+	}
+
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	if _, found := k.GetWorker(ctx, msg.Creator); found {

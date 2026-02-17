@@ -23,6 +23,12 @@ func TestMsgUpdateParams(t *testing.T) {
 		expErrMsg string
 	}{
 		{
+			name:      "nil request",
+			input:     nil,
+			expErr:    true,
+			expErrMsg: "request cannot be nil",
+		},
+		{
 			name: "invalid authority",
 			input: &types.MsgUpdateParams{
 				Authority: "invalid",

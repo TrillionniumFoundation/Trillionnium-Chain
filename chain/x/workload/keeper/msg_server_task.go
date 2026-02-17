@@ -13,6 +13,10 @@ import (
 )
 
 func (k msgServer) CreateTask(goCtx context.Context, msg *types.MsgCreateTask) (*types.MsgCreateTaskResponse, error) {
+	if msg == nil {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "request cannot be nil")
+	}
+
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	denom := k.workloadDenom(ctx)
@@ -63,6 +67,10 @@ func (k msgServer) CreateTask(goCtx context.Context, msg *types.MsgCreateTask) (
 }
 
 func (k msgServer) UpdateTask(goCtx context.Context, msg *types.MsgUpdateTask) (*types.MsgUpdateTaskResponse, error) {
+	if msg == nil {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "request cannot be nil")
+	}
+
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	denom := k.workloadDenom(ctx)
@@ -119,6 +127,10 @@ func (k msgServer) UpdateTask(goCtx context.Context, msg *types.MsgUpdateTask) (
 }
 
 func (k msgServer) DeleteTask(goCtx context.Context, msg *types.MsgDeleteTask) (*types.MsgDeleteTaskResponse, error) {
+	if msg == nil {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "request cannot be nil")
+	}
+
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Checks that the element exists
