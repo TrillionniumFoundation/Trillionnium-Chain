@@ -167,7 +167,38 @@ Optional env knobs:
 - `TX_WAIT_SECONDS` (default `30`): tx inclusion timeout per step
 - `SUMMARY_JSON` (default `0`): print one-line machine-readable JSON summary (`SUMMARY_JSON: {...}`) for CI collection (success + failure snapshots)
 
-### 9.1 CI parse `SUMMARY_JSON` example
+### 9.1 `SUMMARY_JSON` schema (stabilized for CI)
+When `SUMMARY_JSON=1`, the script always emits the same top-level fields (both success and failure), so downstream parsers can rely on a fixed schema.
+
+```json
+{
+  "status": "ok|failed",
+  "reason": "",
+  "worker": "cosmos1...",
+  "last_step": "finalize-unbonding",
+  "last_tx": "<txhash>",
+  "tx_register": "<txhash>",
+  "tx_request_unbonding": "<txhash>",
+  "tx_finalize_unbonding": "<txhash>",
+  "start_height": 100,
+  "end_height": 120,
+  "height_delta": 20,
+  "duration_s": 18,
+  "release_height": 115,
+  "cooldown_waited_blocks": 15,
+  "cooldown_stagnant_rounds": 0,
+  "node_height": "120",
+  "catching_up": "false"
+}
+```
+
+Notes:
+- `status="ok"` on success, `status="failed"` on failure snapshots.
+- `reason` is empty on success and contains the failure reason on errors.
+- Numeric fields stay numeric even on failures (defaulting to `0` when unavailable early).
+- Schema regressions are guarded by `tools/lifecycle_smoke_observability_test.sh`.
+
+### 9.2 CI parse `SUMMARY_JSON` example
 ```bash
 cd chain
 LOG_FILE="/tmp/lifecycle_smoke.log"

@@ -118,6 +118,20 @@ func TestFinalizeUnbonding_HeightEdges(t *testing.T) {
 	assertABCIErrorCode(t, err, types.ErrUnbondingCooldownNotReached)
 	require.Equal(t, 0, countEvents(sdkCtx.EventManager().Events(), "workload_finalize_unbonding"))
 
+	pending, found := k.GetUnbonding(sdkCtx, worker)
+	require.True(t, found)
+	require.Equal(t, uint64(100000), pending.Amount)
+	require.Equal(t, uint64(keeper.UnbondingPeriodBlocks), pending.ReleaseHeight)
+
+	sdkCtx = sdkCtx.WithBlockHeight(int64(keeper.UnbondingPeriodBlocks - 1))
+	_, err = srv.FinalizeUnbonding(sdkCtx, &types.MsgFinalizeUnbonding{Creator: worker})
+	assertABCIErrorCode(t, err, types.ErrUnbondingCooldownNotReached)
+
+	pending, found = k.GetUnbonding(sdkCtx, worker)
+	require.True(t, found)
+	require.Equal(t, uint64(100000), pending.Amount)
+	require.Equal(t, uint64(keeper.UnbondingPeriodBlocks), pending.ReleaseHeight)
+
 	sdkCtx = sdkCtx.WithBlockHeight(int64(keeper.UnbondingPeriodBlocks))
 	_, err = srv.FinalizeUnbonding(sdkCtx, &types.MsgFinalizeUnbonding{Creator: worker})
 	require.NoError(t, err)
@@ -125,7 +139,7 @@ func TestFinalizeUnbonding_HeightEdges(t *testing.T) {
 	require.True(t, hasEventAttribute(sdkCtx.EventManager().Events(), "workload_finalize_unbonding", "worker", worker))
 	require.True(t, hasEventAttribute(sdkCtx.EventManager().Events(), "workload_finalize_unbonding", "amount", "100000"))
 
-	_, found := k.GetUnbonding(sdkCtx, worker)
+	_, found = k.GetUnbonding(sdkCtx, worker)
 	require.False(t, found)
 
 	before := countEvents(sdkCtx.EventManager().Events(), "workload_finalize_unbonding")

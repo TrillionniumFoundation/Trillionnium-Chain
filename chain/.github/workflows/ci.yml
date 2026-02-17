@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  workload-lifecycle-regressions:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: chain
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: chain/go.mod
+
+      - name: Keeper edge tests
+        run: go test ./x/workload/keeper -run 'TestFinalizeUnbonding_HeightEdges|TestExtendUnbonding_Edges' -count=1
+
+      - name: Lifecycle smoke observability regression
+        run: bash ./tools/lifecycle_smoke_observability_test.sh

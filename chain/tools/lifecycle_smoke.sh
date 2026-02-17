@@ -17,9 +17,43 @@ FAIL_SNAPSHOT_LINES="${FAIL_SNAPSHOT_LINES:-40}"
 
 LAST_LABEL=""
 LAST_TXHASH=""
+START_HEIGHT=0
+RELEASE_HEIGHT=0
+TX_REGISTER=""
+TX_REQ=""
+TX_FINALIZE=""
+COOLDOWN_WAITED_BLOCKS=0
+COOLDOWN_STAGNANT_ROUNDS=0
 
 log() {
   printf '[%s] %s\n' "$(date '+%H:%M:%S')" "$*"
+}
+
+emit_summary_json() {
+  local status="$1"
+  local reason="$2"
+  local node_height="$3"
+  local catching_up="$4"
+
+  log "SUMMARY_JSON: $(jq -cn \
+    --arg status "$status" \
+    --arg reason "$reason" \
+    --arg worker "${WORKER_ADDR:-}" \
+    --arg last_step "${LAST_LABEL:-}" \
+    --arg last_tx "${LAST_TXHASH:-}" \
+    --arg tx_register "${TX_REGISTER:-}" \
+    --arg tx_request_unbonding "${TX_REQ:-}" \
+    --arg tx_finalize_unbonding "${TX_FINALIZE:-}" \
+    --argjson start_height "${START_HEIGHT:-0}" \
+    --argjson end_height "${END_HEIGHT:-0}" \
+    --argjson height_delta "${HEIGHT_DELTA:-0}" \
+    --argjson duration_s "${DURATION_S:-0}" \
+    --argjson release_height "${RELEASE_HEIGHT:-0}" \
+    --argjson cooldown_waited_blocks "${COOLDOWN_WAITED_BLOCKS:-0}" \
+    --argjson cooldown_stagnant_rounds "${COOLDOWN_STAGNANT_ROUNDS:-0}" \
+    --arg node_height "$node_height" \
+    --arg catching_up "$catching_up" \
+    '{status:$status,reason:$reason,worker:$worker,last_step:$last_step,last_tx:$last_tx,tx_register:$tx_register,tx_request_unbonding:$tx_request_unbonding,tx_finalize_unbonding:$tx_finalize_unbonding,start_height:$start_height,end_height:$end_height,height_delta:$height_delta,duration_s:$duration_s,release_height:$release_height,cooldown_waited_blocks:$cooldown_waited_blocks,cooldown_stagnant_rounds:$cooldown_stagnant_rounds,node_height:$node_height,catching_up:$catching_up}')"
 }
 
 emit_failure_snapshot() {
@@ -48,18 +82,7 @@ emit_failure_snapshot() {
   log "failure_snapshot: tx=$tx_json"
 
   if [[ "$SUMMARY_JSON" == "1" ]]; then
-    log "SUMMARY_JSON: $(jq -cn \
-      --arg status "failed" \
-      --arg reason "$reason" \
-      --arg worker "${WORKER_ADDR:-}" \
-      --arg last_step "${LAST_LABEL:-}" \
-      --arg last_tx "${LAST_TXHASH:-}" \
-      --argjson release_height "${RELEASE_HEIGHT:-0}" \
-      --argjson waited_blocks "${COOLDOWN_WAITED_BLOCKS:-0}" \
-      --argjson stagnant_rounds "${COOLDOWN_STAGNANT_ROUNDS:-0}" \
-      --arg node_height "$snap_height" \
-      --arg catching_up "$snap_sync" \
-      '{status:$status,reason:$reason,worker:$worker,last_step:$last_step,last_tx:$last_tx,release_height:$release_height,cooldown_waited_blocks:$waited_blocks,cooldown_stagnant_rounds:$stagnant_rounds,node_height:$node_height,catching_up:$catching_up}')"
+    emit_summary_json "failed" "$reason" "$snap_height" "$snap_sync"
   fi
 }
 
@@ -157,8 +180,6 @@ expect_event_attr() {
   log "  event_ok: $event_type.$key=$expected"
 }
 
-COOLDOWN_WAITED_BLOCKS=0
-COOLDOWN_STAGNANT_ROUNDS=0
 COOLDOWN_FINAL_HEIGHT=0
 
 wait_for_release_height() {
@@ -265,19 +286,7 @@ HEIGHT_DELTA=$(( END_HEIGHT - START_HEIGHT ))
 
 log "summary: duration_s=$DURATION_S start_height=$START_HEIGHT end_height=$END_HEIGHT height_delta=$HEIGHT_DELTA waited_blocks=$COOLDOWN_WAITED_BLOCKS stagnant_rounds=$COOLDOWN_STAGNANT_ROUNDS tx_register=$TX_REGISTER tx_request_unbonding=$TX_REQ tx_finalize_unbonding=$TX_FINALIZE"
 if [[ "$SUMMARY_JSON" == "1" ]]; then
-  log "SUMMARY_JSON: $(jq -cn \
-    --arg worker "$WORKER_ADDR" \
-    --arg tx_register "$TX_REGISTER" \
-    --arg tx_request_unbonding "$TX_REQ" \
-    --arg tx_finalize_unbonding "$TX_FINALIZE" \
-    --argjson start_height "$START_HEIGHT" \
-    --argjson end_height "$END_HEIGHT" \
-    --argjson height_delta "$HEIGHT_DELTA" \
-    --argjson duration_s "$DURATION_S" \
-    --argjson release_height "$RELEASE_HEIGHT" \
-    --argjson cooldown_waited_blocks "$COOLDOWN_WAITED_BLOCKS" \
-    --argjson cooldown_stagnant_rounds "$COOLDOWN_STAGNANT_ROUNDS" \
-    '{worker:$worker,tx_register:$tx_register,tx_request_unbonding:$tx_request_unbonding,tx_finalize_unbonding:$tx_finalize_unbonding,start_height:$start_height,end_height:$end_height,height_delta:$height_delta,duration_s:$duration_s,release_height:$release_height,cooldown_waited_blocks:$cooldown_waited_blocks,cooldown_stagnant_rounds:$cooldown_stagnant_rounds}')"
+  emit_summary_json "ok" "" "$(latest_height || echo '?')" "$(node_syncing || echo '?')"
 fi
 
 log "OK: lifecycle smoke completed with cooldown wait + finalize + event checks."
