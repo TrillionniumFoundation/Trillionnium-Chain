@@ -69,7 +69,7 @@ Run demo flow:
 
 ```bash
 cd chain
-./tools/demo_denom_governance_flow.sh
+./tools/demo_denom_governance_flow.sh chain alice http://127.0.0.1:26657 ufoo
 ```
 
 What it demonstrates:

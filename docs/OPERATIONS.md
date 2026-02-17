@@ -140,8 +140,8 @@ chaind q tx <TX_HASH> -o json | jq '.events'
 ```
 
 ## 8) Fast Demo Script
-One-command denom governance demo:
+One-command denom governance demo (with tx hash output + event verification):
 ```bash
 cd chain
-./tools/demo_denom_governance_flow.sh
+./tools/demo_denom_governance_flow.sh chain alice http://127.0.0.1:26657 ufoo
 ```
