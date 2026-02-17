@@ -28,6 +28,7 @@ const (
 	Msg_UnregisterWorker_FullMethodName  = "/chain.workload.Msg/UnregisterWorker"
 	Msg_RequestUnbonding_FullMethodName  = "/chain.workload.Msg/RequestUnbonding"
 	Msg_FinalizeUnbonding_FullMethodName = "/chain.workload.Msg/FinalizeUnbonding"
+	Msg_ExtendUnbonding_FullMethodName   = "/chain.workload.Msg/ExtendUnbonding"
 )
 
 // MsgClient is the client API for Msg service.
@@ -45,6 +46,7 @@ type MsgClient interface {
 	UnregisterWorker(ctx context.Context, in *MsgUnregisterWorker, opts ...grpc.CallOption) (*MsgUnregisterWorkerResponse, error)
 	RequestUnbonding(ctx context.Context, in *MsgRequestUnbonding, opts ...grpc.CallOption) (*MsgRequestUnbondingResponse, error)
 	FinalizeUnbonding(ctx context.Context, in *MsgFinalizeUnbonding, opts ...grpc.CallOption) (*MsgFinalizeUnbondingResponse, error)
+	ExtendUnbonding(ctx context.Context, in *MsgExtendUnbonding, opts ...grpc.CallOption) (*MsgExtendUnbondingResponse, error)
 }
 
 type msgClient struct {
@@ -136,6 +138,15 @@ func (c *msgClient) FinalizeUnbonding(ctx context.Context, in *MsgFinalizeUnbond
 	return out, nil
 }
 
+func (c *msgClient) ExtendUnbonding(ctx context.Context, in *MsgExtendUnbonding, opts ...grpc.CallOption) (*MsgExtendUnbondingResponse, error) {
+	out := new(MsgExtendUnbondingResponse)
+	err := c.cc.Invoke(ctx, Msg_ExtendUnbonding_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MsgServer is the server API for Msg service.
 // All implementations must embed UnimplementedMsgServer
 // for forward compatibility
@@ -151,6 +162,7 @@ type MsgServer interface {
 	UnregisterWorker(context.Context, *MsgUnregisterWorker) (*MsgUnregisterWorkerResponse, error)
 	RequestUnbonding(context.Context, *MsgRequestUnbonding) (*MsgRequestUnbondingResponse, error)
 	FinalizeUnbonding(context.Context, *MsgFinalizeUnbonding) (*MsgFinalizeUnbondingResponse, error)
+	ExtendUnbonding(context.Context, *MsgExtendUnbonding) (*MsgExtendUnbondingResponse, error)
 	mustEmbedUnimplementedMsgServer()
 }
 
@@ -184,6 +196,9 @@ func (UnimplementedMsgServer) RequestUnbonding(context.Context, *MsgRequestUnbon
 }
 func (UnimplementedMsgServer) FinalizeUnbonding(context.Context, *MsgFinalizeUnbonding) (*MsgFinalizeUnbondingResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FinalizeUnbonding not implemented")
+}
+func (UnimplementedMsgServer) ExtendUnbonding(context.Context, *MsgExtendUnbonding) (*MsgExtendUnbondingResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ExtendUnbonding not implemented")
 }
 func (UnimplementedMsgServer) mustEmbedUnimplementedMsgServer() {}
 
@@ -360,6 +375,24 @@ func _Msg_FinalizeUnbonding_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Msg_ExtendUnbonding_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgExtendUnbonding)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).ExtendUnbonding(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Msg_ExtendUnbonding_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).ExtendUnbonding(ctx, req.(*MsgExtendUnbonding))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Msg_ServiceDesc is the grpc.ServiceDesc for Msg service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -402,6 +435,10 @@ var Msg_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "FinalizeUnbonding",
 			Handler:    _Msg_FinalizeUnbonding_Handler,
+		},
+		{
+			MethodName: "ExtendUnbonding",
+			Handler:    _Msg_ExtendUnbonding_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

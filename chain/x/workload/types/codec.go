@@ -28,6 +28,9 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgFinalizeUnbonding{},
 	)
+	registry.RegisterImplementations((*sdk.Msg)(nil),
+		&MsgExtendUnbonding{},
+	)
 	// this line is used by starport scaffolding # 3
 
 	registry.RegisterImplementations((*sdk.Msg)(nil),

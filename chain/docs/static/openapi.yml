@@ -729,6 +729,48 @@ paths:
                 format: uint64
       tags:
         - Msg
+  /chain.workload.Msg/ExtendUnbonding:
+    post:
+      operationId: ChainWorkloadMsg_ExtendUnbonding
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              creator:
+                type: string
+              worker:
+                type: string
+              extraBlocks:
+                type: string
+                format: uint64
+      tags:
+        - Msg
   /chain.workload.Msg/FinalizeUnbonding:
     post:
       operationId: ChainWorkloadMsg_FinalizeUnbonding
@@ -20936,6 +20978,18 @@ definitions:
         type: string
         format: uint64
   chain.workload.MsgDeleteTaskResponse:
+    type: object
+  chain.workload.MsgExtendUnbonding:
+    type: object
+    properties:
+      creator:
+        type: string
+      worker:
+        type: string
+      extraBlocks:
+        type: string
+        format: uint64
+  chain.workload.MsgExtendUnbondingResponse:
     type: object
   chain.workload.MsgFinalizeUnbonding:
     type: object

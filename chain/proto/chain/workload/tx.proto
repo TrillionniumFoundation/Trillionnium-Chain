@@ -26,6 +26,7 @@ service Msg {
   rpc UnregisterWorker  (MsgUnregisterWorker ) returns (MsgUnregisterWorkerResponse );
   rpc RequestUnbonding  (MsgRequestUnbonding ) returns (MsgRequestUnbondingResponse );
   rpc FinalizeUnbonding (MsgFinalizeUnbonding) returns (MsgFinalizeUnbondingResponse);
+  rpc ExtendUnbonding   (MsgExtendUnbonding  ) returns (MsgExtendUnbondingResponse  );
 }
 // MsgUpdateParams is the Msg/UpdateParams request type.
 message MsgUpdateParams {
@@ -118,4 +119,13 @@ message MsgFinalizeUnbonding {
 }
 
 message MsgFinalizeUnbondingResponse {}
+
+message MsgExtendUnbonding {
+  option (cosmos.msg.v1.signer) = "creator";
+  string creator     = 1;
+  string worker      = 2;
+  uint64 extraBlocks = 3;
+}
+
+message MsgExtendUnbondingResponse {}
 

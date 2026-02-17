@@ -55,6 +55,10 @@ const (
 	// TODO: Determine the simulation weight value
 	defaultWeightMsgFinalizeUnbonding int = 100
 
+	opWeightMsgExtendUnbonding = "op_weight_msg_extend_unbonding"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgExtendUnbonding int = 100
+
 	// this line is used by starport scaffolding # simapp/module/const
 )
 
@@ -182,6 +186,17 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 		workloadsimulation.SimulateMsgFinalizeUnbonding(am.accountKeeper, am.bankKeeper, am.keeper),
 	))
 
+	var weightMsgExtendUnbonding int
+	simState.AppParams.GetOrGenerate(opWeightMsgExtendUnbonding, &weightMsgExtendUnbonding, nil,
+		func(_ *rand.Rand) {
+			weightMsgExtendUnbonding = defaultWeightMsgExtendUnbonding
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgExtendUnbonding,
+		workloadsimulation.SimulateMsgExtendUnbonding(am.accountKeeper, am.bankKeeper, am.keeper),
+	))
+
 	// this line is used by starport scaffolding # simapp/module/operation
 
 	return operations
@@ -251,6 +266,14 @@ func (am AppModule) ProposalMsgs(simState module.SimulationState) []simtypes.Wei
 			defaultWeightMsgFinalizeUnbonding,
 			func(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account) sdk.Msg {
 				workloadsimulation.SimulateMsgFinalizeUnbonding(am.accountKeeper, am.bankKeeper, am.keeper)
+				return nil
+			},
+		),
+		simulation.NewWeightedProposalMsg(
+			opWeightMsgExtendUnbonding,
+			defaultWeightMsgExtendUnbonding,
+			func(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account) sdk.Msg {
+				workloadsimulation.SimulateMsgExtendUnbonding(am.accountKeeper, am.bankKeeper, am.keeper)
 				return nil
 			},
 		),

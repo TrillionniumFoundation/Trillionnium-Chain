@@ -108,6 +108,12 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					Short:          "Send a finalize-unbonding tx",
 					PositionalArgs: []*autocliv1.PositionalArgDescriptor{},
 				},
+				{
+					RpcMethod:      "ExtendUnbonding",
+					Use:            "extend-unbonding [worker] [extra-blocks]",
+					Short:          "Send a extend-unbonding tx",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "worker"}, {ProtoField: "extraBlocks"}},
+				},
 				// this line is used by ignite scaffolding # autocli/tx
 			},
 		},
