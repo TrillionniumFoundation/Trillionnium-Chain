@@ -145,3 +145,22 @@ One-command denom governance demo (with tx hash output + event verification):
 cd chain
 ./tools/demo_denom_governance_flow.sh chain alice http://127.0.0.1:26657 ufoo
 ```
+
+## 9) Worker Lifecycle Smoke (cooldown + finalize + event checks)
+`tools/lifecycle_smoke.sh` now performs end-to-end lifecycle automation:
+- register worker
+- request unbonding
+- parse `releaseHeight` and wait until cooldown is reached
+- finalize unbonding
+- verify `workload_request_unbonding` / `workload_finalize_unbonding` event attributes
+- verify unbonding record is removed
+
+Example:
+```bash
+cd chain
+./tools/lifecycle_smoke.sh chain alice http://127.0.0.1:26657
+```
+
+Optional env knobs:
+- `SLEEP_SECONDS` (default `2`): polling interval during cooldown wait
+- `MAX_WAIT_BLOCKS` (default `300`): guardrail to fail fast when chain stalls
