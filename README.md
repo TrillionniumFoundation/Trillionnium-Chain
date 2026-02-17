@@ -80,6 +80,11 @@ What it demonstrates:
 
 > Note: script assumes local dev chain (`ignite chain serve`) and local key `alice`.
 
+## 📘 Operations Runbook
+
+For chain operators and testing flows, see:
+- `docs/OPERATIONS.md`
+
 ## 🛠️ Roadmap
 
 - [x] **Phase 1**: Core Architecture & Simulation
