@@ -155,6 +155,11 @@ func TestSetParams_InvalidDenom_Rejected(t *testing.T) {
 	err := k.SetParams(sdkCtx, types.Params{WorkloadDenom: ""})
 	require.Error(t, err)
 	require.Contains(t, err.Error(), "workload denom cannot be empty")
+
+	err = k.SetParams(sdkCtx, types.Params{WorkloadDenom: "1bad"})
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "invalid workload denom")
+
 	require.Equal(t, "utrnm", k.GetParams(sdkCtx).WorkloadDenom)
 }
 

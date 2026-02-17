@@ -3,6 +3,7 @@ package types
 import (
 	"fmt"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 )
 
@@ -41,6 +42,9 @@ func validateWorkloadDenom(i interface{}) error {
 	}
 	if v == "" {
 		return fmt.Errorf("workload denom cannot be empty")
+	}
+	if err := sdk.ValidateDenom(v); err != nil {
+		return fmt.Errorf("invalid workload denom %q: %w", v, err)
 	}
 	return nil
 }

@@ -12,33 +12,22 @@ on:
       - '.github/workflows/lifecycle-smoke-observability.yml'
 
 jobs:
-  shell-lint:
+  shell-observability:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        script:
-          - chain/tools/lifecycle_smoke.sh
-          - chain/tools/lifecycle_smoke_observability_test.sh
-          - chain/tools/demo_denom_governance_flow.sh
     steps:
       - uses: actions/checkout@v4
-      - name: Shellcheck ${{ matrix.script }}
-        run: shellcheck "${{ matrix.script }}"
 
-  shell-smoke:
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        check:
-          - name: lifecycle-observability-regression
-            command: bash chain/tools/lifecycle_smoke_observability_test.sh
-          - name: lifecycle-smoke-syntax
-            command: bash -n chain/tools/lifecycle_smoke.sh
-          - name: demo-denom-flow-syntax
-            command: bash -n chain/tools/demo_denom_governance_flow.sh
-    steps:
-      - uses: actions/checkout@v4
-      - name: ${{ matrix.check.name }}
-        run: ${{ matrix.check.command }}
+      - name: Shellcheck tools
+        run: |
+          shellcheck chain/tools/lifecycle_smoke.sh \
+            chain/tools/lifecycle_smoke_observability_test.sh \
+            chain/tools/demo_denom_governance_flow.sh
+
+      - name: Bash syntax checks
+        run: |
+          bash -n chain/tools/lifecycle_smoke.sh
+          bash -n chain/tools/lifecycle_smoke_observability_test.sh
+          bash -n chain/tools/demo_denom_governance_flow.sh
+
+      - name: Lifecycle observability regression
+        run: bash chain/tools/lifecycle_smoke_observability_test.sh

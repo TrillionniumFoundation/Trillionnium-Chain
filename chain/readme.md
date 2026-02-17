@@ -42,6 +42,10 @@ curl https://get.ignite.com/username/chain@latest! | sudo bash
 ```
 `username/chain` should match the `username` and `repo_name` of the Github repository to which the source code was pushed. Learn more about [the install process](https://github.com/allinbits/starport-installer).
 
+## Chain Tools Docs
+
+- Lifecycle summary schema contract: `tools/LIFECYCLE_SUMMARY_SCHEMA_CONTRACT.md`
+
 ## Learn more
 
 - [Ignite CLI](https://ignite.com/cli)

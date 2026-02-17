@@ -24,9 +24,28 @@ func TestWorkloadDenomFromParams(t *testing.T) {
 }
 
 func TestParamsValidateWorkloadDenom(t *testing.T) {
-	p := types.DefaultParams()
-	require.NoError(t, p.Validate())
+	t.Run("default valid", func(t *testing.T) {
+		p := types.DefaultParams()
+		require.NoError(t, p.Validate())
+	})
 
-	p.WorkloadDenom = ""
-	require.Error(t, p.Validate())
+	t.Run("empty invalid", func(t *testing.T) {
+		p := types.DefaultParams()
+		p.WorkloadDenom = ""
+		require.Error(t, p.Validate())
+	})
+
+	t.Run("sdk-invalid denom rejected", func(t *testing.T) {
+		p := types.DefaultParams()
+		p.WorkloadDenom = "1bad"
+		err := p.Validate()
+		require.Error(t, err)
+		require.Contains(t, err.Error(), "invalid workload denom")
+	})
+
+	t.Run("sdk-valid ibc denom remains compatible", func(t *testing.T) {
+		p := types.DefaultParams()
+		p.WorkloadDenom = "ibc/1234567890ABCDEF"
+		require.NoError(t, p.Validate())
+	})
 }
