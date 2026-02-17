@@ -3,6 +3,7 @@ package keeper
 import (
 	"context"
 	"fmt"
+	"strconv"
 
 	"chain/x/workload/types"
 	errorsmod "cosmossdk.io/errors"
@@ -45,6 +46,15 @@ func (k msgServer) CreateTask(goCtx context.Context, msg *types.MsgCreateTask) (
 		task,
 	)
 
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent("workload_create_task",
+			sdk.NewAttribute("task_id", strconv.FormatUint(id, 10)),
+			sdk.NewAttribute("creator", msg.Creator),
+			sdk.NewAttribute("bounty", strconv.FormatUint(msg.Bounty, 10)),
+			sdk.NewAttribute("denom", WorkloadDenom),
+		),
+	)
+
 	return &types.MsgCreateTaskResponse{
 		Id: id,
 	}, nil
@@ -66,6 +76,7 @@ func (k msgServer) UpdateTask(goCtx context.Context, msg *types.MsgUpdateTask) (
 		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "task already completed")
 	}
 
+	burned := uint64(0)
 	// 3. Settlement Logic (TRNM policy)
 	// If status is changing to COMPLETED (2), burn 100% of escrowed task fee.
 	if msg.Status == 2 {
@@ -78,6 +89,7 @@ func (k msgServer) UpdateTask(goCtx context.Context, msg *types.MsgUpdateTask) (
 			return nil, err
 		}
 
+		burned = val.Bounty
 		// Track who submitted the final result
 		val.Worker = msg.Creator
 	}
@@ -88,6 +100,16 @@ func (k msgServer) UpdateTask(goCtx context.Context, msg *types.MsgUpdateTask) (
 	val.ResultHash = msg.ResultHash
 
 	k.SetTask(ctx, val)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent("workload_update_task",
+			sdk.NewAttribute("task_id", strconv.FormatUint(msg.Id, 10)),
+			sdk.NewAttribute("status", strconv.FormatUint(msg.Status, 10)),
+			sdk.NewAttribute("worker", val.Worker),
+			sdk.NewAttribute("burned", strconv.FormatUint(burned, 10)),
+			sdk.NewAttribute("denom", WorkloadDenom),
+		),
+	)
 
 	return &types.MsgUpdateTaskResponse{}, nil
 }
