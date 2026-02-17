@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"strconv"
 
 	"chain/x/workload/types"
 	"cosmossdk.io/math"
@@ -46,6 +47,15 @@ func (k msgServer) SlashWorker(goCtx context.Context, msg *types.MsgSlashWorker)
 
 	worker.Stake = remaining
 	k.SetWorker(ctx, worker)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent("workload_slash_worker",
+			sdk.NewAttribute("worker", msg.Worker),
+			sdk.NewAttribute("slash_percent", strconv.FormatUint(msg.SlashPercent, 10)),
+			sdk.NewAttribute("slash_amount", strconv.FormatUint(slashAmount, 10)),
+			sdk.NewAttribute("remaining_stake", strconv.FormatUint(remaining, 10)),
+		),
+	)
 
 	return &types.MsgSlashWorkerResponse{}, nil
 }

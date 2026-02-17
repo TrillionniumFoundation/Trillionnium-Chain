@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"strconv"
 
 	"chain/x/workload/types"
 	"cosmossdk.io/math"
@@ -34,6 +35,13 @@ func (k msgServer) FinalizeUnbonding(goCtx context.Context, msg *types.MsgFinali
 	}
 
 	k.RemoveUnbonding(ctx, msg.Creator)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent("workload_finalize_unbonding",
+			sdk.NewAttribute("worker", msg.Creator),
+			sdk.NewAttribute("amount", strconv.FormatUint(unbonding.Amount, 10)),
+		),
+	)
 
 	return &types.MsgFinalizeUnbondingResponse{}, nil
 }

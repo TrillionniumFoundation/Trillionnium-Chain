@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"strconv"
 
 	"chain/x/workload/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -31,6 +32,14 @@ func (k msgServer) RequestUnbonding(goCtx context.Context, msg *types.MsgRequest
 
 	// worker exits active set immediately; stake can be withdrawn after cooldown
 	k.RemoveWorker(ctx, msg.Creator)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent("workload_request_unbonding",
+			sdk.NewAttribute("worker", msg.Creator),
+			sdk.NewAttribute("release_height", strconv.FormatUint(releaseHeight, 10)),
+			sdk.NewAttribute("amount", strconv.FormatUint(worker.Stake, 10)),
+		),
+	)
 
 	return &types.MsgRequestUnbondingResponse{}, nil
 }

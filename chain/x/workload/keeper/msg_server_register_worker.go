@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"strconv"
 
 	"chain/x/workload/types"
 	"cosmossdk.io/math"
@@ -37,6 +38,14 @@ func (k msgServer) RegisterWorker(goCtx context.Context, msg *types.MsgRegisterW
 		IpfsAddr: msg.IpfsAddr,
 		Stake:    MinWorkerStake,
 	})
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent("workload_register_worker",
+			sdk.NewAttribute("worker", msg.Creator),
+			sdk.NewAttribute("node_id", msg.NodeId),
+			sdk.NewAttribute("stake", strconv.FormatUint(MinWorkerStake, 10)),
+		),
+	)
 
 	return &types.MsgRegisterWorkerResponse{}, nil
 }
