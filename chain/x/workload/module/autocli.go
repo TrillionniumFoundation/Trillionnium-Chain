@@ -17,6 +17,17 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					Use:       "params",
 					Short:     "Shows the parameters of the module",
 				},
+				{
+					RpcMethod: "TaskAll",
+					Use:       "list-task",
+					Short:     "List all task",
+				},
+				{
+					RpcMethod:      "Task",
+					Use:            "show-task [id]",
+					Short:          "Shows a task by id",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "id"}},
+				},
 				// this line is used by ignite scaffolding # autocli/query
 			},
 		},
@@ -27,6 +38,23 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 				{
 					RpcMethod: "UpdateParams",
 					Skip:      true, // skipped because authority gated
+				},
+				{
+					RpcMethod:      "CreateTask",
+					Use:            "create-task",
+					Short:          "Create task",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "ipfsHash"}, {ProtoField: "bounty"}, {ProtoField: "status"}, {ProtoField: "worker"}, {ProtoField: "resultHash"}},
+				},
+				{
+					RpcMethod:      "UpdateTask",
+					Use:            "update-task",
+					Short:          "Update task",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "ipfsHash"}, {ProtoField: "bounty"}, {ProtoField: "status"}, {ProtoField: "worker"}, {ProtoField: "resultHash"}},
+				},
+				{
+					RpcMethod: "DeleteTask",
+					Use:       "delete-task",
+					Short:     "Delete task",
 				},
 				// this line is used by ignite scaffolding # autocli/tx
 			},
