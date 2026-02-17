@@ -24,3 +24,14 @@ Cases covered:
 - **Just Below Minimum Stake**: Verifies behavior around the 1000 stake threshold.
 - **Multiple Slashes**: Ensures sequential slashes work correctly until minimum is hit.
 - **Tiny Slash (Zero Amount)**: Ensures attempts to slash amounts that round down to 0 are rejected.
+
+## Unbonding Safety Testing
+We have added a defensive test for `FinalizeUnbonding` in `x/workload/keeper/msg_server_finalize_unbonding_test.go`.
+
+Run it with:
+```bash
+cd chain
+go test ./x/workload/keeper -run TestFinalizeUnbonding_NotFound -v
+```
+
+This test ensures that attempting to finalize an unbonding that does not exist returns `ErrUnbondingNotFound` and does not alter state.

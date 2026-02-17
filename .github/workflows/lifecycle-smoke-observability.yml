@@ -70,3 +70,17 @@ jobs:
       - name: Lifecycle observability regression (full)
         if: github.event_name == 'push'
         run: bash chain/tools/lifecycle_smoke_observability_test.sh
+
+  go-schema-observability:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+          cache: true
+          cache-dependency-path: chain/go.sum
+      - name: Run Schema Contract Go Test
+        run: |
+          cd chain
+          go test -v ./tools/lifecycle_schema_contract_test.go
