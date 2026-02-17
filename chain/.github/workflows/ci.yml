@@ -2,8 +2,22 @@ name: CI
 
 on:
   pull_request:
+    paths:
+      - 'chain/x/workload/keeper/**'
+      - 'chain/x/workload/types/**'
+      - 'chain/testutil/keeper/**'
+      - 'chain/go.mod'
+      - 'chain/go.sum'
+      - 'chain/.github/workflows/ci.yml'
   push:
     branches: [main]
+    paths:
+      - 'chain/x/workload/keeper/**'
+      - 'chain/x/workload/types/**'
+      - 'chain/testutil/keeper/**'
+      - 'chain/go.mod'
+      - 'chain/go.sum'
+      - 'chain/.github/workflows/ci.yml'
 
 jobs:
   workload-lifecycle-regressions:

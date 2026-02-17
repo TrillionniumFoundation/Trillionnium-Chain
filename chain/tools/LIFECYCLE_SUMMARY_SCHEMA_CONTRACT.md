@@ -60,6 +60,20 @@ Required top-level fields (same as v1):
 - `status="failed"`: script aborted; summary contains last known diagnostics.
 - `reason`: empty on success, failure reason on error.
 
+## Contract Examples
+
+Example payloads are checked in and intended for downstream parser fixtures:
+
+- `chain/tools/examples/lifecycle_summary_v1_failed.json`
+- `chain/tools/examples/lifecycle_summary_v2_ok.json`
+- `chain/tools/examples/lifecycle_summary_v3_ok.json`
+
+`chain/tools/lifecycle_summary_parser_examples_test.sh` demonstrates parser fallback extraction for:
+
+- finalize tx hash (`phase_txs.finalize_unbonding -> tx_finalize_unbonding -> last_tx`)
+- release height (`timing.release_height -> release_height`)
+- node height (`node.height -> node_height`)
+
 ## CI Coverage
 
 `chain/tools/lifecycle_smoke_observability_test.sh` validates:
@@ -67,5 +81,7 @@ Required top-level fields (same as v1):
 - v2 compatibility (`schema_version == 2`, no required nested keys)
 - v3 nested groups and value linkage
 - consumer fallback behavior for tx extraction across versions
+
+`chain/tools/lifecycle_summary_parser_examples_test.sh` validates committed fixture samples and parser fallback examples.
 
 This document is a contract baseline for future schema bumps.

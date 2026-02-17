@@ -192,6 +192,14 @@ func TestFinalizeUnbonding_HeightEdges(t *testing.T) {
 	require.Equal(t, uint64(100000), pending.Amount)
 	require.Equal(t, uint64(keeper.UnbondingPeriodBlocks), pending.ReleaseHeight)
 
+	negativeHeightCtx := sdkCtx.WithBlockHeight(-1)
+	_, err = srv.FinalizeUnbonding(negativeHeightCtx, &types.MsgFinalizeUnbonding{Creator: worker})
+	assertABCIErrorCode(t, err, types.ErrUnbondingCooldownNotReached)
+	pending, found = k.GetUnbonding(negativeHeightCtx, worker)
+	require.True(t, found)
+	require.Equal(t, uint64(100000), pending.Amount)
+	require.Equal(t, uint64(keeper.UnbondingPeriodBlocks), pending.ReleaseHeight)
+
 	sdkCtx = sdkCtx.WithBlockHeight(int64(keeper.UnbondingPeriodBlocks))
 	_, err = srv.FinalizeUnbonding(sdkCtx, &types.MsgFinalizeUnbonding{Creator: worker})
 	require.NoError(t, err)

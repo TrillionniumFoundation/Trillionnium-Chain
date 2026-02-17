@@ -18,6 +18,9 @@ func (k msgServer) FinalizeUnbonding(goCtx context.Context, msg *types.MsgFinali
 		return nil, types.ErrUnbondingNotFound
 	}
 
+	if ctx.BlockHeight() < 0 {
+		return nil, types.ErrUnbondingCooldownNotReached
+	}
 	if uint64(ctx.BlockHeight()) < unbonding.ReleaseHeight {
 		return nil, types.ErrUnbondingCooldownNotReached
 	}

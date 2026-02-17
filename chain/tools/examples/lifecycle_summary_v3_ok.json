@@ -1,0 +1,38 @@
+{
+  "schema_version": 3,
+  "status": "ok",
+  "reason": "",
+  "worker": "cosmos1workeraddr",
+  "last_step": "finalize-unbonding",
+  "last_tx": "txfin",
+  "tx_register": "txreg",
+  "tx_request_unbonding": "txreq",
+  "tx_finalize_unbonding": "txfin",
+  "start_height": 100,
+  "end_height": 110,
+  "height_delta": 10,
+  "duration_s": 12,
+  "release_height": 103,
+  "cooldown_waited_blocks": 3,
+  "cooldown_stagnant_rounds": 0,
+  "node_height": "110",
+  "catching_up": "false",
+  "phase_txs": {
+    "register": "txreg",
+    "request_unbonding": "txreq",
+    "finalize_unbonding": "txfin"
+  },
+  "timing": {
+    "start_height": 100,
+    "end_height": 110,
+    "height_delta": 10,
+    "duration_s": 12,
+    "release_height": 103,
+    "cooldown_waited_blocks": 3,
+    "cooldown_stagnant_rounds": 0
+  },
+  "node": {
+    "height": "110",
+    "catching_up": "false"
+  }
+}
