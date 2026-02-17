@@ -2,8 +2,8 @@
 set -euo pipefail
 
 command -v jq >/dev/null 2>&1 || {
-  echo "[ERR] jq not found in PATH" >&2
-  exit 1
+	echo "[ERR] jq not found in PATH" >&2
+	exit 1
 }
 
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
