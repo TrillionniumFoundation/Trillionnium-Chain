@@ -9,6 +9,8 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
+const MinWorkerStakeAfterSlash uint64 = 1000
+
 func (k msgServer) SlashWorker(goCtx context.Context, msg *types.MsgSlashWorker) (*types.MsgSlashWorkerResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -17,9 +19,10 @@ func (k msgServer) SlashWorker(goCtx context.Context, msg *types.MsgSlashWorker)
 		return nil, sdkerrors.ErrUnauthorized.Wrap("only authority can slash worker")
 	}
 
+	// only active workers can be slashed
 	worker, found := k.GetWorker(ctx, msg.Worker)
 	if !found {
-		return nil, sdkerrors.ErrKeyNotFound.Wrap("worker not found")
+		return nil, sdkerrors.ErrKeyNotFound.Wrap("active worker not found")
 	}
 
 	if msg.SlashPercent == 0 || msg.SlashPercent > 50 {
@@ -36,7 +39,12 @@ func (k msgServer) SlashWorker(goCtx context.Context, msg *types.MsgSlashWorker)
 		return nil, err
 	}
 
-	worker.Stake -= slashAmount
+	remaining := worker.Stake - slashAmount
+	if remaining < MinWorkerStakeAfterSlash {
+		return nil, sdkerrors.ErrInvalidRequest.Wrap("slash would violate minimum remaining worker stake")
+	}
+
+	worker.Stake = remaining
 	k.SetWorker(ctx, worker)
 
 	return &types.MsgSlashWorkerResponse{}, nil
