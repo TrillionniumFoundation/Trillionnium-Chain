@@ -58,7 +58,28 @@ emit_summary_json() {
     --argjson cooldown_stagnant_rounds "${COOLDOWN_STAGNANT_ROUNDS:-0}" \
     --arg node_height "$node_height" \
     --arg catching_up "$catching_up" \
-    '{schema_version:$schema_version,status:$status,reason:$reason,worker:$worker,last_step:$last_step,last_tx:$last_tx,tx_register:$tx_register,tx_request_unbonding:$tx_request_unbonding,tx_finalize_unbonding:$tx_finalize_unbonding,start_height:$start_height,end_height:$end_height,height_delta:$height_delta,duration_s:$duration_s,release_height:$release_height,cooldown_waited_blocks:$cooldown_waited_blocks,cooldown_stagnant_rounds:$cooldown_stagnant_rounds,node_height:$node_height,catching_up:$catching_up}')"
+    '(
+      {schema_version:$schema_version,status:$status,reason:$reason,worker:$worker,last_step:$last_step,last_tx:$last_tx,tx_register:$tx_register,tx_request_unbonding:$tx_request_unbonding,tx_finalize_unbonding:$tx_finalize_unbonding,start_height:$start_height,end_height:$end_height,height_delta:$height_delta,duration_s:$duration_s,release_height:$release_height,cooldown_waited_blocks:$cooldown_waited_blocks,cooldown_stagnant_rounds:$cooldown_stagnant_rounds,node_height:$node_height,catching_up:$catching_up}
+      ) + (if $schema_version >= 3 then {
+        phase_txs: {
+          register: $tx_register,
+          request_unbonding: $tx_request_unbonding,
+          finalize_unbonding: $tx_finalize_unbonding
+        },
+        timing: {
+          start_height: $start_height,
+          end_height: $end_height,
+          height_delta: $height_delta,
+          duration_s: $duration_s,
+          release_height: $release_height,
+          cooldown_waited_blocks: $cooldown_waited_blocks,
+          cooldown_stagnant_rounds: $cooldown_stagnant_rounds
+        },
+        node: {
+          height: $node_height,
+          catching_up: $catching_up
+        }
+      } else {} end)')"
 }
 
 emit_failure_snapshot() {

@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"chain/x/workload/types"
+	errorsmod "cosmossdk.io/errors"
 	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -27,6 +28,10 @@ func (k msgServer) FinalizeUnbonding(goCtx context.Context, msg *types.MsgFinali
 	}
 
 	denom := k.workloadDenom(ctx)
+	if err := sdk.ValidateDenom(denom); err != nil {
+		return nil, errorsmod.Wrapf(types.ErrInvalidWorkloadDenom, "stored denom %q is invalid: %v", denom, err)
+	}
+
 	if unbonding.Amount > 0 {
 		coins := sdk.NewCoins(sdk.NewCoin(denom, math.NewIntFromUint64(unbonding.Amount)))
 		if err := k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, creator, coins); err != nil {

@@ -148,6 +148,29 @@ func TestFinalizeUnbonding_BankTransferError_NoFinalizeEvent(t *testing.T) {
 	require.Equal(t, uint64(keeper.UnbondingPeriodBlocks), pending.ReleaseHeight)
 }
 
+func TestFinalizeUnbonding_InvalidStoredDenom_DefensiveError(t *testing.T) {
+	k, srv, ctx := setupMsgServer(t)
+	sdkCtx := sdk.UnwrapSDKContext(ctx).WithBlockHeight(int64(keeper.UnbondingPeriodBlocks))
+	worker := sample.AccAddress()
+
+	require.NoError(t, k.SetParams(sdkCtx, types.Params{WorkloadDenom: "bad denom"}))
+	k.SetUnbonding(sdkCtx, types.Unbonding{
+		Creator:       worker,
+		ReleaseHeight: keeper.UnbondingPeriodBlocks,
+		Amount:        100000,
+	})
+
+	_, err := srv.FinalizeUnbonding(sdkCtx, &types.MsgFinalizeUnbonding{Creator: worker})
+	require.ErrorIs(t, err, types.ErrInvalidWorkloadDenom)
+	require.Contains(t, err.Error(), "stored denom")
+	require.Equal(t, 0, countEvents(sdkCtx.EventManager().Events(), "workload_finalize_unbonding"))
+
+	pending, found := k.GetUnbonding(sdkCtx, worker)
+	require.True(t, found)
+	require.Equal(t, uint64(100000), pending.Amount)
+	require.Equal(t, uint64(keeper.UnbondingPeriodBlocks), pending.ReleaseHeight)
+}
+
 func TestFinalizeUnbonding_HeightEdges(t *testing.T) {
 	k, srv, ctx := setupMsgServer(t)
 	worker := sample.AccAddress()

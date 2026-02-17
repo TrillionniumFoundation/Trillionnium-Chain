@@ -137,7 +137,7 @@ echo "$SUCCESS_SUMMARY_JSON" | jq -e '
   (.cooldown_stagnant_rounds | type) == "number"
 ' >/dev/null
 
-# compatibility path: SUMMARY_SCHEMA_VERSION should be transparently passed through.
+# compatibility path: schema version passthrough + v3 nested groups for migration preflight.
 echo 100 >"$TMP_DIR/height"
 echo 0 >"$TMP_DIR/finalized"
 OUT_V2_FILE="$TMP_DIR/out_v2.log"
@@ -145,7 +145,29 @@ MOCK_STATE_DIR="$TMP_DIR" BIN="$TMP_DIR/chaind" SLEEP_SECONDS=0 MAX_WAIT_BLOCKS=
   "$SCRIPT" chain alice http://127.0.0.1:26657 >"$OUT_V2_FILE" 2>&1
 V2_SUMMARY_LINE="$(grep 'SUMMARY_JSON:' "$OUT_V2_FILE" | tail -n1)"
 V2_SUMMARY_JSON="${V2_SUMMARY_LINE#*SUMMARY_JSON: }"
-echo "$V2_SUMMARY_JSON" | jq -e '.status == "ok" and .schema_version == 2' >/dev/null
+echo "$V2_SUMMARY_JSON" | jq -e '.status == "ok" and .schema_version == 2 and has("phase_txs") | not' >/dev/null
+
+echo 100 >"$TMP_DIR/height"
+echo 0 >"$TMP_DIR/finalized"
+OUT_V3_FILE="$TMP_DIR/out_v3.log"
+MOCK_STATE_DIR="$TMP_DIR" BIN="$TMP_DIR/chaind" SLEEP_SECONDS=0 MAX_WAIT_BLOCKS=20 TX_WAIT_SECONDS=2 SUMMARY_JSON=1 SUMMARY_SCHEMA_VERSION=3 \
+  "$SCRIPT" chain alice http://127.0.0.1:26657 >"$OUT_V3_FILE" 2>&1
+V3_SUMMARY_LINE="$(grep 'SUMMARY_JSON:' "$OUT_V3_FILE" | tail -n1)"
+V3_SUMMARY_JSON="${V3_SUMMARY_LINE#*SUMMARY_JSON: }"
+echo "$V3_SUMMARY_JSON" | jq -e '
+  .status == "ok" and
+  .schema_version == 3 and
+  .phase_txs.register == "txreg" and
+  .phase_txs.request_unbonding == "txreq" and
+  .phase_txs.finalize_unbonding == "txfin" and
+  .timing.release_height == 103 and
+  .node.height != ""
+' >/dev/null
+
+# consumer compatibility parser: read nested v3 first, fallback to flat v1/v2 keys.
+extract_finalize_tx='(.phase_txs.finalize_unbonding // .tx_finalize_unbonding // .last_tx // "")'
+[[ "$(echo "$V2_SUMMARY_JSON" | jq -r "$extract_finalize_tx")" == "txfin" ]]
+[[ "$(echo "$V3_SUMMARY_JSON" | jq -r "$extract_finalize_tx")" == "txfin" ]]
 
 # params linkage: finalize amount/denom must align with workload params denom.
 echo 100 >"$TMP_DIR/height"

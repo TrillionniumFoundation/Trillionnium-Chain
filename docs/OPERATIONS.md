@@ -167,7 +167,7 @@ Optional env knobs:
 - `MAX_WAIT_BLOCKS` (default `300`): guardrail to fail fast when chain stalls
 - `TX_WAIT_SECONDS` (default `30`): tx inclusion timeout per step
 - `SUMMARY_JSON` (default `0`): print one-line machine-readable JSON summary (`SUMMARY_JSON: {...}`) for CI collection (success + failure snapshots)
-- `SUMMARY_SCHEMA_VERSION` (default `1`): explicit schema version embedded in summary payload for parser compatibility
+- `SUMMARY_SCHEMA_VERSION` (default `1`): explicit schema version embedded in summary payload for parser compatibility (`>=3` enables grouped fields for migration preflight)
 
 ### 9.1 `SUMMARY_JSON` schema (stabilized for CI)
 When `SUMMARY_JSON=1`, the script always emits the same top-level fields (both success and failure), so downstream parsers can rely on a fixed schema.
@@ -196,11 +196,15 @@ When `SUMMARY_JSON=1`, the script always emits the same top-level fields (both s
 ```
 
 Notes:
-- `schema_version` is currently `1`; bump only when introducing breaking schema changes.
+- `schema_version=1/2`: flat stable payload (legacy parsers).
+- `schema_version>=3`: keeps all flat keys **and** adds grouped fields for migration:
+  - `phase_txs.{register,request_unbonding,finalize_unbonding}`
+  - `timing.{start_height,end_height,height_delta,duration_s,release_height,cooldown_waited_blocks,cooldown_stagnant_rounds}`
+  - `node.{height,catching_up}`
 - `status="ok"` on success, `status="failed"` on failure snapshots.
 - `reason` is empty on success and contains the failure reason on errors.
 - Numeric fields stay numeric even on failures (defaulting to `0` when unavailable early).
-- Schema regressions are guarded by `tools/lifecycle_smoke_observability_test.sh`.
+- Schema regressions are guarded by `tools/lifecycle_smoke_observability_test.sh` (includes v2 passthrough + v3 preflight compatibility checks).
 - Failure snapshots are also validated for field consistency (`last_step`/`last_tx` textual snapshot lines vs `SUMMARY_JSON` payload), including early failures (e.g. request-denom mismatch) and finalize broadcast failures.
 
 ### 9.2 CI parse `SUMMARY_JSON` example
@@ -214,8 +218,9 @@ SUMMARY_LINE="$(grep 'SUMMARY_JSON:' "$LOG_FILE" | tail -n1)"
 SUMMARY_PAYLOAD="${SUMMARY_LINE#*SUMMARY_JSON: }"
 
 echo "$SUMMARY_PAYLOAD" | jq -r '.status // "ok"'
-echo "$SUMMARY_PAYLOAD" | jq -r '.tx_finalize_unbonding // .last_tx // ""'
-echo "$SUMMARY_PAYLOAD" | jq -r '"waited_blocks=\(.cooldown_waited_blocks // 0) stagnant_rounds=\(.cooldown_stagnant_rounds // 0)"'
+# v3-first, fallback to v1/v2 flat keys
+echo "$SUMMARY_PAYLOAD" | jq -r '.phase_txs.finalize_unbonding // .tx_finalize_unbonding // .last_tx // ""'
+echo "$SUMMARY_PAYLOAD" | jq -r '"waited_blocks=\(.timing.cooldown_waited_blocks // .cooldown_waited_blocks // 0) stagnant_rounds=\(.timing.cooldown_stagnant_rounds // .cooldown_stagnant_rounds // 0)"'
 ```
 
 ## 10) Troubleshooting (Lifecycle Smoke)
