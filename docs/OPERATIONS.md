@@ -164,3 +164,55 @@ cd chain
 Optional env knobs:
 - `SLEEP_SECONDS` (default `2`): polling interval during cooldown wait
 - `MAX_WAIT_BLOCKS` (default `300`): guardrail to fail fast when chain stalls
+- `TX_WAIT_SECONDS` (default `30`): tx inclusion timeout per step
+
+## 10) Troubleshooting (Lifecycle Smoke)
+### 10.1 `tx not found in time`
+Symptom from script:
+- `tx not found in time: tx=<hash> waited=<s> height=<h> catching_up=<bool>`
+
+Checks:
+```bash
+chaind status --node http://127.0.0.1:26657 | jq '.SyncInfo'
+chaind q tx <TX_HASH> --node http://127.0.0.1:26657 -o json
+```
+
+Actions:
+- If `catching_up=true`, wait for node to finish syncing before re-running.
+- Increase `TX_WAIT_SECONDS` for slower local environments.
+
+### 10.2 Cooldown wait timeout / stall
+Symptom from script:
+- `cooldown wait timeout: current=<h> release=<h> waited_blocks=<n> ...`
+- periodic `cooldown stall diagnose` lines every 5 stagnant polls
+
+Checks:
+```bash
+chaind status --node http://127.0.0.1:26657 | jq '.SyncInfo'
+chaind q workload show-unbonding <WORKER_ADDR> --node http://127.0.0.1:26657 -o json
+```
+
+Actions:
+- Confirm chain is producing blocks (`latest_block_height` increasing).
+- Increase `MAX_WAIT_BLOCKS` when block time is intentionally high.
+- Reduce `SLEEP_SECONDS` when testing in very short epochs.
+
+### 10.3 Broadcast failed (`code != 0`)
+Symptom from script:
+- `<label> broadcast failed: txhash=<hash> code=<code> raw_log=<log>`
+
+Checks:
+```bash
+chaind q tx <TX_HASH> --node http://127.0.0.1:26657 -o json | jq '.raw_log,.events'
+```
+
+Typical causes:
+- worker already registered
+- insufficient fees / balance
+- finalize called before cooldown release height
+
+### 10.4 Fast rerun recipe
+```bash
+cd chain
+SLEEP_SECONDS=1 MAX_WAIT_BLOCKS=500 TX_WAIT_SECONDS=60 ./tools/lifecycle_smoke.sh chain alice http://127.0.0.1:26657
+```
