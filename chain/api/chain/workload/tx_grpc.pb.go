@@ -19,10 +19,11 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Msg_UpdateParams_FullMethodName = "/chain.workload.Msg/UpdateParams"
-	Msg_CreateTask_FullMethodName   = "/chain.workload.Msg/CreateTask"
-	Msg_UpdateTask_FullMethodName   = "/chain.workload.Msg/UpdateTask"
-	Msg_DeleteTask_FullMethodName   = "/chain.workload.Msg/DeleteTask"
+	Msg_UpdateParams_FullMethodName   = "/chain.workload.Msg/UpdateParams"
+	Msg_CreateTask_FullMethodName     = "/chain.workload.Msg/CreateTask"
+	Msg_UpdateTask_FullMethodName     = "/chain.workload.Msg/UpdateTask"
+	Msg_DeleteTask_FullMethodName     = "/chain.workload.Msg/DeleteTask"
+	Msg_RegisterWorker_FullMethodName = "/chain.workload.Msg/RegisterWorker"
 )
 
 // MsgClient is the client API for Msg service.
@@ -35,6 +36,7 @@ type MsgClient interface {
 	CreateTask(ctx context.Context, in *MsgCreateTask, opts ...grpc.CallOption) (*MsgCreateTaskResponse, error)
 	UpdateTask(ctx context.Context, in *MsgUpdateTask, opts ...grpc.CallOption) (*MsgUpdateTaskResponse, error)
 	DeleteTask(ctx context.Context, in *MsgDeleteTask, opts ...grpc.CallOption) (*MsgDeleteTaskResponse, error)
+	RegisterWorker(ctx context.Context, in *MsgRegisterWorker, opts ...grpc.CallOption) (*MsgRegisterWorkerResponse, error)
 }
 
 type msgClient struct {
@@ -81,6 +83,15 @@ func (c *msgClient) DeleteTask(ctx context.Context, in *MsgDeleteTask, opts ...g
 	return out, nil
 }
 
+func (c *msgClient) RegisterWorker(ctx context.Context, in *MsgRegisterWorker, opts ...grpc.CallOption) (*MsgRegisterWorkerResponse, error) {
+	out := new(MsgRegisterWorkerResponse)
+	err := c.cc.Invoke(ctx, Msg_RegisterWorker_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MsgServer is the server API for Msg service.
 // All implementations must embed UnimplementedMsgServer
 // for forward compatibility
@@ -91,6 +102,7 @@ type MsgServer interface {
 	CreateTask(context.Context, *MsgCreateTask) (*MsgCreateTaskResponse, error)
 	UpdateTask(context.Context, *MsgUpdateTask) (*MsgUpdateTaskResponse, error)
 	DeleteTask(context.Context, *MsgDeleteTask) (*MsgDeleteTaskResponse, error)
+	RegisterWorker(context.Context, *MsgRegisterWorker) (*MsgRegisterWorkerResponse, error)
 	mustEmbedUnimplementedMsgServer()
 }
 
@@ -109,6 +121,9 @@ func (UnimplementedMsgServer) UpdateTask(context.Context, *MsgUpdateTask) (*MsgU
 }
 func (UnimplementedMsgServer) DeleteTask(context.Context, *MsgDeleteTask) (*MsgDeleteTaskResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteTask not implemented")
+}
+func (UnimplementedMsgServer) RegisterWorker(context.Context, *MsgRegisterWorker) (*MsgRegisterWorkerResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RegisterWorker not implemented")
 }
 func (UnimplementedMsgServer) mustEmbedUnimplementedMsgServer() {}
 
@@ -195,6 +210,24 @@ func _Msg_DeleteTask_Handler(srv interface{}, ctx context.Context, dec func(inte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Msg_RegisterWorker_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgRegisterWorker)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).RegisterWorker(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Msg_RegisterWorker_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).RegisterWorker(ctx, req.(*MsgRegisterWorker))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Msg_ServiceDesc is the grpc.ServiceDesc for Msg service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -217,6 +250,10 @@ var Msg_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteTask",
 			Handler:    _Msg_DeleteTask_Handler,
+		},
+		{
+			MethodName: "RegisterWorker",
+			Handler:    _Msg_RegisterWorker_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

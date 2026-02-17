@@ -28,6 +28,17 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					Short:          "Shows a task by id",
 					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "id"}},
 				},
+				{
+					RpcMethod: "WorkerAll",
+					Use:       "list-worker",
+					Short:     "List all worker",
+				},
+				{
+					RpcMethod:      "Worker",
+					Use:            "show-worker [id]",
+					Short:          "Shows a worker",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "creator"}},
+				},
 				// this line is used by ignite scaffolding # autocli/query
 			},
 		},
@@ -55,6 +66,12 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					RpcMethod: "DeleteTask",
 					Use:       "delete-task",
 					Short:     "Delete task",
+				},
+				{
+					RpcMethod:      "RegisterWorker",
+					Use:            "register-worker [node-id] [ipfs-addr]",
+					Short:          "Send a register-worker tx",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "nodeId"}, {ProtoField: "ipfsAddr"}},
 				},
 				// this line is used by ignite scaffolding # autocli/tx
 			},

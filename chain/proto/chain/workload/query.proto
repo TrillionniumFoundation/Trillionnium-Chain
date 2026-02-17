@@ -8,6 +8,7 @@ import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "chain/workload/params.proto";
 import "chain/workload/task.proto";
+import "chain/workload/worker.proto";
 
 option go_package = "chain/x/workload/types";
 
@@ -27,6 +28,16 @@ service Query {
   }
   rpc TaskAll (QueryAllTaskRequest) returns (QueryAllTaskResponse) {
     option (google.api.http).get = "/chain/workload/task";
+  
+  }
+  
+  // Queries a list of Worker items.
+  rpc Worker    (QueryGetWorkerRequest) returns (QueryGetWorkerResponse) {
+    option (google.api.http).get = "/chain/workload/worker/{creator}";
+  
+  }
+  rpc WorkerAll (QueryAllWorkerRequest) returns (QueryAllWorkerResponse) {
+    option (google.api.http).get = "/chain/workload/worker";
   
   }
 }
@@ -54,6 +65,23 @@ message QueryAllTaskRequest {
 
 message QueryAllTaskResponse {
   repeated Task                                   Task       = 1 [(gogoproto.nullable) = false];
+           cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetWorkerRequest {
+  string creator = 1;
+}
+
+message QueryGetWorkerResponse {
+  Worker worker = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllWorkerRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllWorkerResponse {
+  repeated Worker                                 worker     = 1 [(gogoproto.nullable) = false];
            cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 

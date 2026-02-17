@@ -10,7 +10,8 @@ const DefaultIndex uint64 = 1
 // DefaultGenesis returns the default genesis state
 func DefaultGenesis() *GenesisState {
 	return &GenesisState{
-		TaskList: []Task{},
+		TaskList:   []Task{},
+		WorkerList: []Worker{},
 		// this line is used by starport scaffolding # genesis/types/default
 		Params: DefaultParams(),
 	}
@@ -30,6 +31,16 @@ func (gs GenesisState) Validate() error {
 			return fmt.Errorf("task id should be lower or equal than the last id")
 		}
 		taskIdMap[elem.Id] = true
+	}
+	// Check for duplicated index in worker
+	workerIndexMap := make(map[string]struct{})
+
+	for _, elem := range gs.WorkerList {
+		index := string(WorkerKey(elem.Creator))
+		if _, ok := workerIndexMap[index]; ok {
+			return fmt.Errorf("duplicated index for worker")
+		}
+		workerIndexMap[index] = struct{}{}
 	}
 	// this line is used by starport scaffolding # genesis/types/validate
 

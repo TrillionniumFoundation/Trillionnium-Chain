@@ -35,6 +35,10 @@ const (
 	// TODO: Determine the simulation weight value
 	defaultWeightMsgDeleteTask int = 100
 
+	opWeightMsgRegisterWorker = "op_weight_msg_register_worker"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgRegisterWorker int = 100
+
 	// this line is used by starport scaffolding # simapp/module/const
 )
 
@@ -107,6 +111,17 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 		workloadsimulation.SimulateMsgDeleteTask(am.accountKeeper, am.bankKeeper, am.keeper),
 	))
 
+	var weightMsgRegisterWorker int
+	simState.AppParams.GetOrGenerate(opWeightMsgRegisterWorker, &weightMsgRegisterWorker, nil,
+		func(_ *rand.Rand) {
+			weightMsgRegisterWorker = defaultWeightMsgRegisterWorker
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgRegisterWorker,
+		workloadsimulation.SimulateMsgRegisterWorker(am.accountKeeper, am.bankKeeper, am.keeper),
+	))
+
 	// this line is used by starport scaffolding # simapp/module/operation
 
 	return operations
@@ -136,6 +151,14 @@ func (am AppModule) ProposalMsgs(simState module.SimulationState) []simtypes.Wei
 			defaultWeightMsgDeleteTask,
 			func(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account) sdk.Msg {
 				workloadsimulation.SimulateMsgDeleteTask(am.accountKeeper, am.bankKeeper, am.keeper)
+				return nil
+			},
+		),
+		simulation.NewWeightedProposalMsg(
+			opWeightMsgRegisterWorker,
+			defaultWeightMsgRegisterWorker,
+			func(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account) sdk.Msg {
+				workloadsimulation.SimulateMsgRegisterWorker(am.accountKeeper, am.bankKeeper, am.keeper)
 				return nil
 			},
 		),

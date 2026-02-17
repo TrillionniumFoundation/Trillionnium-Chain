@@ -31,6 +31,14 @@ func TestGenesisState_Validate(t *testing.T) {
 					},
 				},
 				TaskCount: 2,
+				WorkerList: []types.Worker{
+					{
+						Creator: "0",
+					},
+					{
+						Creator: "1",
+					},
+				},
 				// this line is used by starport scaffolding # types/genesis/validField
 			},
 			valid: true,
@@ -58,6 +66,20 @@ func TestGenesisState_Validate(t *testing.T) {
 					},
 				},
 				TaskCount: 0,
+			},
+			valid: false,
+		},
+		{
+			desc: "duplicated worker",
+			genState: &types.GenesisState{
+				WorkerList: []types.Worker{
+					{
+						Creator: "0",
+					},
+					{
+						Creator: "0",
+					},
+				},
 			},
 			valid: false,
 		},

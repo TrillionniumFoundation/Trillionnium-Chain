@@ -19,9 +19,11 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Query_Params_FullMethodName  = "/chain.workload.Query/Params"
-	Query_Task_FullMethodName    = "/chain.workload.Query/Task"
-	Query_TaskAll_FullMethodName = "/chain.workload.Query/TaskAll"
+	Query_Params_FullMethodName    = "/chain.workload.Query/Params"
+	Query_Task_FullMethodName      = "/chain.workload.Query/Task"
+	Query_TaskAll_FullMethodName   = "/chain.workload.Query/TaskAll"
+	Query_Worker_FullMethodName    = "/chain.workload.Query/Worker"
+	Query_WorkerAll_FullMethodName = "/chain.workload.Query/WorkerAll"
 )
 
 // QueryClient is the client API for Query service.
@@ -33,6 +35,9 @@ type QueryClient interface {
 	// Queries a list of Task items.
 	Task(ctx context.Context, in *QueryGetTaskRequest, opts ...grpc.CallOption) (*QueryGetTaskResponse, error)
 	TaskAll(ctx context.Context, in *QueryAllTaskRequest, opts ...grpc.CallOption) (*QueryAllTaskResponse, error)
+	// Queries a list of Worker items.
+	Worker(ctx context.Context, in *QueryGetWorkerRequest, opts ...grpc.CallOption) (*QueryGetWorkerResponse, error)
+	WorkerAll(ctx context.Context, in *QueryAllWorkerRequest, opts ...grpc.CallOption) (*QueryAllWorkerResponse, error)
 }
 
 type queryClient struct {
@@ -70,6 +75,24 @@ func (c *queryClient) TaskAll(ctx context.Context, in *QueryAllTaskRequest, opts
 	return out, nil
 }
 
+func (c *queryClient) Worker(ctx context.Context, in *QueryGetWorkerRequest, opts ...grpc.CallOption) (*QueryGetWorkerResponse, error) {
+	out := new(QueryGetWorkerResponse)
+	err := c.cc.Invoke(ctx, Query_Worker_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) WorkerAll(ctx context.Context, in *QueryAllWorkerRequest, opts ...grpc.CallOption) (*QueryAllWorkerResponse, error) {
+	out := new(QueryAllWorkerResponse)
+	err := c.cc.Invoke(ctx, Query_WorkerAll_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // QueryServer is the server API for Query service.
 // All implementations must embed UnimplementedQueryServer
 // for forward compatibility
@@ -79,6 +102,9 @@ type QueryServer interface {
 	// Queries a list of Task items.
 	Task(context.Context, *QueryGetTaskRequest) (*QueryGetTaskResponse, error)
 	TaskAll(context.Context, *QueryAllTaskRequest) (*QueryAllTaskResponse, error)
+	// Queries a list of Worker items.
+	Worker(context.Context, *QueryGetWorkerRequest) (*QueryGetWorkerResponse, error)
+	WorkerAll(context.Context, *QueryAllWorkerRequest) (*QueryAllWorkerResponse, error)
 	mustEmbedUnimplementedQueryServer()
 }
 
@@ -94,6 +120,12 @@ func (UnimplementedQueryServer) Task(context.Context, *QueryGetTaskRequest) (*Qu
 }
 func (UnimplementedQueryServer) TaskAll(context.Context, *QueryAllTaskRequest) (*QueryAllTaskResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method TaskAll not implemented")
+}
+func (UnimplementedQueryServer) Worker(context.Context, *QueryGetWorkerRequest) (*QueryGetWorkerResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Worker not implemented")
+}
+func (UnimplementedQueryServer) WorkerAll(context.Context, *QueryAllWorkerRequest) (*QueryAllWorkerResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method WorkerAll not implemented")
 }
 func (UnimplementedQueryServer) mustEmbedUnimplementedQueryServer() {}
 
@@ -162,6 +194,42 @@ func _Query_TaskAll_Handler(srv interface{}, ctx context.Context, dec func(inter
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Query_Worker_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryGetWorkerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).Worker(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Query_Worker_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).Worker(ctx, req.(*QueryGetWorkerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_WorkerAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryAllWorkerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).WorkerAll(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Query_WorkerAll_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).WorkerAll(ctx, req.(*QueryAllWorkerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Query_ServiceDesc is the grpc.ServiceDesc for Query service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -180,6 +248,14 @@ var Query_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "TaskAll",
 			Handler:    _Query_TaskAll_Handler,
+		},
+		{
+			MethodName: "Worker",
+			Handler:    _Query_Worker_Handler,
+		},
+		{
+			MethodName: "WorkerAll",
+			Handler:    _Query_WorkerAll_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
