@@ -26,8 +26,9 @@ func (k msgServer) FinalizeUnbonding(goCtx context.Context, msg *types.MsgFinali
 		return nil, err
 	}
 
+	denom := k.workloadDenom(ctx)
 	if unbonding.Amount > 0 {
-		coins := sdk.NewCoins(sdk.NewCoin(k.workloadDenom(ctx), math.NewIntFromUint64(unbonding.Amount)))
+		coins := sdk.NewCoins(sdk.NewCoin(denom, math.NewIntFromUint64(unbonding.Amount)))
 		if err := k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, creator, coins); err != nil {
 			return nil, err
 		}
@@ -39,6 +40,7 @@ func (k msgServer) FinalizeUnbonding(goCtx context.Context, msg *types.MsgFinali
 		sdk.NewEvent("workload_finalize_unbonding",
 			sdk.NewAttribute("worker", msg.Creator),
 			sdk.NewAttribute("amount", strconv.FormatUint(unbonding.Amount, 10)),
+			sdk.NewAttribute("denom", denom),
 		),
 	)
 

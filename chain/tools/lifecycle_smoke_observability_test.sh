@@ -160,6 +160,24 @@ set -e
 grep -q "request-unbonding amount/params mismatch" "$OUT_PARAM_FAIL_FILE"
 grep -q '"status":"failed"' "$OUT_PARAM_FAIL_FILE"
 
+PARAM_FAIL_SUMMARY_LINE="$(grep 'SUMMARY_JSON:' "$OUT_PARAM_FAIL_FILE" | tail -n1)"
+PARAM_FAIL_SUMMARY_JSON="${PARAM_FAIL_SUMMARY_LINE#*SUMMARY_JSON: }"
+
+echo "$PARAM_FAIL_SUMMARY_JSON" | jq -e '
+  (keys | sort) == [
+    "catching_up","cooldown_stagnant_rounds","cooldown_waited_blocks","duration_s","end_height",
+    "height_delta","last_step","last_tx","node_height","reason","release_height","schema_version","start_height",
+    "status","tx_finalize_unbonding","tx_register","tx_request_unbonding","worker"
+  ] and
+  .status == "failed" and
+  (.reason | startswith("request-unbonding amount/params mismatch")) and
+  .last_step == "request-unbonding" and
+  .last_tx == "txreq" and
+  .tx_register == "txreg" and
+  .tx_request_unbonding == "txreq" and
+  .tx_finalize_unbonding == ""
+' >/dev/null
+
 # failure path: ensure key diagnostics snapshot is emitted for CI triage
 echo 100 >"$TMP_DIR/height"
 echo 0 >"$TMP_DIR/finalized"
@@ -173,6 +191,9 @@ set -e
 grep -q "failure_snapshot: reason=finalize-unbonding broadcast failed" "$OUT_FAIL_FILE"
 grep -q '"status":"failed"' "$OUT_FAIL_FILE"
 grep -q '"last_step":"finalize-unbonding"' "$OUT_FAIL_FILE"
+grep -q "failure_snapshot: node height=" "$OUT_FAIL_FILE"
+grep -q "failure_snapshot: worker=cosmos1workeraddr" "$OUT_FAIL_FILE"
+grep -q "failure_snapshot: tx=" "$OUT_FAIL_FILE"
 
 FAIL_SUMMARY_LINE="$(grep 'SUMMARY_JSON:' "$OUT_FAIL_FILE" | tail -n1)"
 FAIL_SUMMARY_JSON="${FAIL_SUMMARY_LINE#*SUMMARY_JSON: }"
@@ -188,6 +209,9 @@ echo "$FAIL_SUMMARY_JSON" | jq -e '
   (.reason | startswith("finalize-unbonding broadcast failed")) and
   .last_step == "finalize-unbonding" and
   .last_tx == "txfin" and
+  .tx_register == "txreg" and
+  .tx_request_unbonding == "txreq" and
+  .tx_finalize_unbonding == "" and
   .worker == "cosmos1workeraddr" and
   (.start_height | type) == "number" and
   (.release_height | type) == "number"

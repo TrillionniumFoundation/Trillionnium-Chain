@@ -123,6 +123,8 @@ check_node_reachable() {
   log "node reachable: height=$h catching_up=$(node_syncing)"
 }
 
+BROADCAST_TXHASH=""
+
 broadcast_txhash() {
   local label="$1"
   shift
@@ -141,7 +143,7 @@ broadcast_txhash() {
     die "$label broadcast failed: txhash=$txhash code=$code raw_log=${rawlog:-<empty>}"
   fi
 
-  echo "$txhash"
+  BROADCAST_TXHASH="$txhash"
 }
 
 wait_tx() {
@@ -262,25 +264,27 @@ START_HEIGHT="$(latest_height)"
 WORKER_ADDR="$($BIN keys show "$FROM" -a)"
 
 log "[1/6] register-worker"
-TX_REGISTER="$(broadcast_txhash register-worker "$BIN" tx workload register-worker \
+broadcast_txhash register-worker "$BIN" tx workload register-worker \
   --node-id smoke-node \
   --ipfs-addr /ip4/127.0.0.1/tcp/4001 \
   --from "$FROM" \
   --chain-id "$CHAIN_ID" \
   --fees "$FEES" \
   --node "$NODE" \
-  --yes)"
+  --yes
+TX_REGISTER="$BROADCAST_TXHASH"
 wait_tx "$TX_REGISTER"
 log "  tx_register=$TX_REGISTER"
 expect_event_attr "$TX_REGISTER" "workload_register_worker" "worker" "$WORKER_ADDR"
 
 log "[2/6] request-unbonding"
-TX_REQ="$(broadcast_txhash request-unbonding "$BIN" tx workload request-unbonding \
+broadcast_txhash request-unbonding "$BIN" tx workload request-unbonding \
   --from "$FROM" \
   --chain-id "$CHAIN_ID" \
   --fees "$FEES" \
   --node "$NODE" \
-  --yes)"
+  --yes
+TX_REQ="$BROADCAST_TXHASH"
 wait_tx "$TX_REQ"
 log "  tx_request_unbonding=$TX_REQ"
 expect_event_attr "$TX_REQ" "workload_request_unbonding" "worker" "$WORKER_ADDR"
@@ -300,12 +304,13 @@ log "[4/6] wait cooldown until release height"
 wait_for_release_height "$RELEASE_HEIGHT"
 
 log "[5/6] finalize-unbonding"
-TX_FINALIZE="$(broadcast_txhash finalize-unbonding "$BIN" tx workload finalize-unbonding \
+broadcast_txhash finalize-unbonding "$BIN" tx workload finalize-unbonding \
   --from "$FROM" \
   --chain-id "$CHAIN_ID" \
   --fees "$FEES" \
   --node "$NODE" \
-  --yes)"
+  --yes
+TX_FINALIZE="$BROADCAST_TXHASH"
 wait_tx "$TX_FINALIZE"
 log "  tx_finalize_unbonding=$TX_FINALIZE"
 expect_event_attr "$TX_FINALIZE" "workload_finalize_unbonding" "worker" "$WORKER_ADDR"

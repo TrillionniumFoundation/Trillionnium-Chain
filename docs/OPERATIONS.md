@@ -201,6 +201,7 @@ Notes:
 - `reason` is empty on success and contains the failure reason on errors.
 - Numeric fields stay numeric even on failures (defaulting to `0` when unavailable early).
 - Schema regressions are guarded by `tools/lifecycle_smoke_observability_test.sh`.
+- Failure snapshots are also validated for field consistency (`last_step`/`last_tx` textual snapshot lines vs `SUMMARY_JSON` payload), including early failures (e.g. request-denom mismatch) and finalize broadcast failures.
 
 ### 9.2 CI parse `SUMMARY_JSON` example
 ```bash

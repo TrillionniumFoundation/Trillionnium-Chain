@@ -183,6 +183,7 @@ func TestFinalizeUnbonding_HeightEdges(t *testing.T) {
 	require.Equal(t, 1, countEvents(sdkCtx.EventManager().Events(), "workload_finalize_unbonding"))
 	require.True(t, hasEventAttribute(sdkCtx.EventManager().Events(), "workload_finalize_unbonding", "worker", worker))
 	require.True(t, hasEventAttribute(sdkCtx.EventManager().Events(), "workload_finalize_unbonding", "amount", "100000"))
+	require.True(t, hasEventAttribute(sdkCtx.EventManager().Events(), "workload_finalize_unbonding", "denom", "utrnm"))
 
 	_, found = k.GetUnbonding(sdkCtx, worker)
 	require.False(t, found)

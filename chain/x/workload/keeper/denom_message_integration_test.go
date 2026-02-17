@@ -28,7 +28,9 @@ type spyBankKeeper struct {
 	lastBurn                sdk.Coins
 }
 
-func (s *spyBankKeeper) SpendableCoins(context.Context, sdk.AccAddress) sdk.Coins { return sdk.NewCoins() }
+func (s *spyBankKeeper) SpendableCoins(context.Context, sdk.AccAddress) sdk.Coins {
+	return sdk.NewCoins()
+}
 func (s *spyBankKeeper) SendCoinsFromAccountToModule(_ context.Context, _ sdk.AccAddress, _ string, coins sdk.Coins) error {
 	s.lastSendAccountToModule = coins
 	return nil
@@ -113,4 +115,65 @@ func TestDenomParamUsedInFinalizeUnbonding(t *testing.T) {
 	require.Len(t, bank.lastSendModuleToAccount, 1)
 	require.Equal(t, "ufoo", bank.lastSendModuleToAccount[0].Denom)
 	require.Equal(t, int64(8888), bank.lastSendModuleToAccount[0].Amount.Int64())
+	require.True(t, hasEventAttribute(sdkCtx.EventManager().Events(), "workload_finalize_unbonding", "denom", "ufoo"))
+}
+
+func TestFinalizeUnbonding_EmptyDenomFallsBackToDefault(t *testing.T) {
+	k, srv, ctx, bank := setupMsgServerWithSpyBank(t)
+
+	params := k.GetParams(ctx)
+	params.WorkloadDenom = ""
+	require.NoError(t, k.SetParams(ctx, params))
+
+	worker := sample.AccAddress()
+	k.SetUnbonding(ctx, types.Unbonding{Creator: worker, ReleaseHeight: 10, Amount: 77})
+
+	sdkCtx := ctx.WithBlockHeight(11)
+	_, err := srv.FinalizeUnbonding(sdk.WrapSDKContext(sdkCtx), &types.MsgFinalizeUnbonding{Creator: worker})
+	require.NoError(t, err)
+	require.Len(t, bank.lastSendModuleToAccount, 1)
+	require.Equal(t, "utrnm", bank.lastSendModuleToAccount[0].Denom)
+	require.Equal(t, int64(77), bank.lastSendModuleToAccount[0].Amount.Int64())
+	require.True(t, hasEventAttribute(sdkCtx.EventManager().Events(), "workload_finalize_unbonding", "denom", "utrnm"))
+}
+
+func TestFinalizeUnbonding_ZeroAmountSkipsBankTransfer(t *testing.T) {
+	k, srv, ctx, bank := setupMsgServerWithSpyBank(t)
+
+	params := k.GetParams(ctx)
+	params.WorkloadDenom = "ufoo"
+	require.NoError(t, k.SetParams(ctx, params))
+
+	worker := sample.AccAddress()
+	k.SetUnbonding(ctx, types.Unbonding{Creator: worker, ReleaseHeight: 10, Amount: 0})
+
+	sdkCtx := ctx.WithBlockHeight(11)
+	_, err := srv.FinalizeUnbonding(sdk.WrapSDKContext(sdkCtx), &types.MsgFinalizeUnbonding{Creator: worker})
+	require.NoError(t, err)
+	require.Empty(t, bank.lastSendModuleToAccount)
+	require.True(t, hasEventAttribute(sdkCtx.EventManager().Events(), "workload_finalize_unbonding", "denom", "ufoo"))
+
+	_, found := k.GetUnbonding(sdkCtx, worker)
+	require.False(t, found)
+}
+
+func TestFinalizeUnbonding_UsesLatestDenomAtFinalizeBoundary(t *testing.T) {
+	k, srv, ctx, bank := setupMsgServerWithSpyBank(t)
+
+	params := k.GetParams(ctx)
+	params.WorkloadDenom = "ufoo"
+	require.NoError(t, k.SetParams(ctx, params))
+
+	worker := sample.AccAddress()
+	k.SetUnbonding(ctx, types.Unbonding{Creator: worker, ReleaseHeight: 10, Amount: 42})
+
+	params.WorkloadDenom = "ubar"
+	require.NoError(t, k.SetParams(ctx, params))
+
+	sdkCtx := ctx.WithBlockHeight(10)
+	_, err := srv.FinalizeUnbonding(sdk.WrapSDKContext(sdkCtx), &types.MsgFinalizeUnbonding{Creator: worker})
+	require.NoError(t, err)
+	require.Len(t, bank.lastSendModuleToAccount, 1)
+	require.Equal(t, "ubar", bank.lastSendModuleToAccount[0].Denom)
+	require.True(t, hasEventAttribute(sdkCtx.EventManager().Events(), "workload_finalize_unbonding", "denom", "ubar"))
 }

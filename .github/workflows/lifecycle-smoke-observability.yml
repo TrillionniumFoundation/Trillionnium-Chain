@@ -18,5 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Shellcheck lifecycle scripts
+        run: shellcheck chain/tools/lifecycle_smoke.sh chain/tools/lifecycle_smoke_observability_test.sh
       - name: Run lifecycle smoke observability regression
         run: bash chain/tools/lifecycle_smoke_observability_test.sh
