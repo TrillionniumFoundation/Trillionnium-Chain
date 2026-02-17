@@ -39,6 +39,10 @@ const (
 	// TODO: Determine the simulation weight value
 	defaultWeightMsgRegisterWorker int = 100
 
+	opWeightMsgSlashWorker = "op_weight_msg_slash_worker"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgSlashWorker int = 100
+
 	// this line is used by starport scaffolding # simapp/module/const
 )
 
@@ -122,6 +126,17 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 		workloadsimulation.SimulateMsgRegisterWorker(am.accountKeeper, am.bankKeeper, am.keeper),
 	))
 
+	var weightMsgSlashWorker int
+	simState.AppParams.GetOrGenerate(opWeightMsgSlashWorker, &weightMsgSlashWorker, nil,
+		func(_ *rand.Rand) {
+			weightMsgSlashWorker = defaultWeightMsgSlashWorker
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgSlashWorker,
+		workloadsimulation.SimulateMsgSlashWorker(am.accountKeeper, am.bankKeeper, am.keeper),
+	))
+
 	// this line is used by starport scaffolding # simapp/module/operation
 
 	return operations
@@ -159,6 +174,14 @@ func (am AppModule) ProposalMsgs(simState module.SimulationState) []simtypes.Wei
 			defaultWeightMsgRegisterWorker,
 			func(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account) sdk.Msg {
 				workloadsimulation.SimulateMsgRegisterWorker(am.accountKeeper, am.bankKeeper, am.keeper)
+				return nil
+			},
+		),
+		simulation.NewWeightedProposalMsg(
+			opWeightMsgSlashWorker,
+			defaultWeightMsgSlashWorker,
+			func(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account) sdk.Msg {
+				workloadsimulation.SimulateMsgSlashWorker(am.accountKeeper, am.bankKeeper, am.keeper)
 				return nil
 			},
 		),

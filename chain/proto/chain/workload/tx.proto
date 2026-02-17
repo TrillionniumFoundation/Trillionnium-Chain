@@ -22,6 +22,7 @@ service Msg {
   rpc UpdateTask     (MsgUpdateTask    ) returns (MsgUpdateTaskResponse    );
   rpc DeleteTask     (MsgDeleteTask    ) returns (MsgDeleteTaskResponse    );
   rpc RegisterWorker (MsgRegisterWorker) returns (MsgRegisterWorkerResponse);
+  rpc SlashWorker    (MsgSlashWorker   ) returns (MsgSlashWorkerResponse   );
 }
 // MsgUpdateParams is the Msg/UpdateParams request type.
 message MsgUpdateParams {
@@ -84,4 +85,13 @@ message MsgRegisterWorker {
 }
 
 message MsgRegisterWorkerResponse {}
+
+message MsgSlashWorker {
+  option (cosmos.msg.v1.signer) = "creator";
+  string creator      = 1;
+  string worker       = 2;
+  uint64 slashPercent = 3;
+}
+
+message MsgSlashWorkerResponse {}
 

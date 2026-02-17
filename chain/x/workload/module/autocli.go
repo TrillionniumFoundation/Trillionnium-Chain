@@ -73,6 +73,12 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					Short:          "Send a register-worker tx",
 					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "nodeId"}, {ProtoField: "ipfsAddr"}},
 				},
+				{
+					RpcMethod:      "SlashWorker",
+					Use:            "slash-worker [worker] [slash-percent]",
+					Short:          "Send a slash-worker tx",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "worker"}, {ProtoField: "slashPercent"}},
+				},
 				// this line is used by ignite scaffolding # autocli/tx
 			},
 		},

@@ -24,6 +24,7 @@ const (
 	Msg_UpdateTask_FullMethodName     = "/chain.workload.Msg/UpdateTask"
 	Msg_DeleteTask_FullMethodName     = "/chain.workload.Msg/DeleteTask"
 	Msg_RegisterWorker_FullMethodName = "/chain.workload.Msg/RegisterWorker"
+	Msg_SlashWorker_FullMethodName    = "/chain.workload.Msg/SlashWorker"
 )
 
 // MsgClient is the client API for Msg service.
@@ -37,6 +38,7 @@ type MsgClient interface {
 	UpdateTask(ctx context.Context, in *MsgUpdateTask, opts ...grpc.CallOption) (*MsgUpdateTaskResponse, error)
 	DeleteTask(ctx context.Context, in *MsgDeleteTask, opts ...grpc.CallOption) (*MsgDeleteTaskResponse, error)
 	RegisterWorker(ctx context.Context, in *MsgRegisterWorker, opts ...grpc.CallOption) (*MsgRegisterWorkerResponse, error)
+	SlashWorker(ctx context.Context, in *MsgSlashWorker, opts ...grpc.CallOption) (*MsgSlashWorkerResponse, error)
 }
 
 type msgClient struct {
@@ -92,6 +94,15 @@ func (c *msgClient) RegisterWorker(ctx context.Context, in *MsgRegisterWorker, o
 	return out, nil
 }
 
+func (c *msgClient) SlashWorker(ctx context.Context, in *MsgSlashWorker, opts ...grpc.CallOption) (*MsgSlashWorkerResponse, error) {
+	out := new(MsgSlashWorkerResponse)
+	err := c.cc.Invoke(ctx, Msg_SlashWorker_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MsgServer is the server API for Msg service.
 // All implementations must embed UnimplementedMsgServer
 // for forward compatibility
@@ -103,6 +114,7 @@ type MsgServer interface {
 	UpdateTask(context.Context, *MsgUpdateTask) (*MsgUpdateTaskResponse, error)
 	DeleteTask(context.Context, *MsgDeleteTask) (*MsgDeleteTaskResponse, error)
 	RegisterWorker(context.Context, *MsgRegisterWorker) (*MsgRegisterWorkerResponse, error)
+	SlashWorker(context.Context, *MsgSlashWorker) (*MsgSlashWorkerResponse, error)
 	mustEmbedUnimplementedMsgServer()
 }
 
@@ -124,6 +136,9 @@ func (UnimplementedMsgServer) DeleteTask(context.Context, *MsgDeleteTask) (*MsgD
 }
 func (UnimplementedMsgServer) RegisterWorker(context.Context, *MsgRegisterWorker) (*MsgRegisterWorkerResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RegisterWorker not implemented")
+}
+func (UnimplementedMsgServer) SlashWorker(context.Context, *MsgSlashWorker) (*MsgSlashWorkerResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SlashWorker not implemented")
 }
 func (UnimplementedMsgServer) mustEmbedUnimplementedMsgServer() {}
 
@@ -228,6 +243,24 @@ func _Msg_RegisterWorker_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Msg_SlashWorker_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgSlashWorker)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).SlashWorker(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Msg_SlashWorker_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).SlashWorker(ctx, req.(*MsgSlashWorker))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Msg_ServiceDesc is the grpc.ServiceDesc for Msg service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -254,6 +287,10 @@ var Msg_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RegisterWorker",
 			Handler:    _Msg_RegisterWorker_Handler,
+		},
+		{
+			MethodName: "SlashWorker",
+			Handler:    _Msg_SlashWorker_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
