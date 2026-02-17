@@ -30,11 +30,11 @@ jq -e --argjson req "$flat_required" '
 ' "$v2_ok" >/dev/null
 
 jq -e \
-  --argjson req "$flat_required" \
-  --argjson nested_req "$v3_nested_required" \
-  --argjson phase_req "$v3_phase_required" \
-  --argjson timing_req "$v3_timing_required" \
-  --argjson node_req "$v3_node_required" '
+	--argjson req "$flat_required" \
+	--argjson nested_req "$v3_nested_required" \
+	--argjson phase_req "$v3_phase_required" \
+	--argjson timing_req "$v3_timing_required" \
+	--argjson node_req "$v3_node_required" '
   .schema_version == 3 and
   (($req - keys) | length) == 0 and
   ((keys - ($req + $nested_req)) | length) == 0 and
