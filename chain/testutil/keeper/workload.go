@@ -1,6 +1,7 @@
 package keeper
 
 import (
+	"context"
 	"testing"
 
 	"cosmossdk.io/log"
@@ -21,6 +22,17 @@ import (
 	"chain/x/workload/types"
 )
 
+type mockBankKeeper struct{}
+
+func (m mockBankKeeper) SpendableCoins(context.Context, sdk.AccAddress) sdk.Coins { return sdk.NewCoins() }
+func (m mockBankKeeper) SendCoinsFromAccountToModule(context.Context, sdk.AccAddress, string, sdk.Coins) error {
+	return nil
+}
+func (m mockBankKeeper) SendCoinsFromModuleToAccount(context.Context, string, sdk.AccAddress, sdk.Coins) error {
+	return nil
+}
+func (m mockBankKeeper) BurnCoins(context.Context, string, sdk.Coins) error { return nil }
+
 func WorkloadKeeper(t testing.TB) (keeper.Keeper, sdk.Context) {
 	storeKey := storetypes.NewKVStoreKey(types.StoreKey)
 
@@ -38,7 +50,7 @@ func WorkloadKeeper(t testing.TB) (keeper.Keeper, sdk.Context) {
 		runtime.NewKVStoreService(storeKey),
 		log.NewNopLogger(),
 		authority.String(),
-		nil,
+		mockBankKeeper{},
 		nil,
 	)
 
