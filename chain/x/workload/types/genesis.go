@@ -55,5 +55,9 @@ func (gs GenesisState) Validate() error {
 	}
 	// this line is used by starport scaffolding # genesis/types/validate
 
-	return gs.Params.Validate()
+	params := gs.Params
+	if params.WorkloadDenom == "" {
+		params = DefaultParams()
+	}
+	return params.Validate()
 }

@@ -27,7 +27,7 @@ func (k msgServer) FinalizeUnbonding(goCtx context.Context, msg *types.MsgFinali
 	}
 
 	if unbonding.Amount > 0 {
-		coins := sdk.NewCoins(sdk.NewCoin(WorkloadDenom, math.NewIntFromUint64(unbonding.Amount)))
+		coins := sdk.NewCoins(sdk.NewCoin(k.workloadDenom(ctx), math.NewIntFromUint64(unbonding.Amount)))
 		if err := k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, creator, coins); err != nil {
 			return nil, err
 		}

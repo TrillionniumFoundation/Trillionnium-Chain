@@ -11,5 +11,5 @@ message Params {
   option (amino.name) = "chain/x/workload/Params";
   option (gogoproto.equal) = true;
 
-  
+  string workload_denom = 1;
 }

@@ -15,8 +15,10 @@ import (
 func (k msgServer) CreateTask(goCtx context.Context, msg *types.MsgCreateTask) (*types.MsgCreateTaskResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	denom := k.workloadDenom(ctx)
+
 	// 1. Convert bounty to TRNM denomination coin
-	bountyCoin := sdk.NewCoin(WorkloadDenom, math.NewIntFromUint64(msg.Bounty))
+	bountyCoin := sdk.NewCoin(denom, math.NewIntFromUint64(msg.Bounty))
 	coins := sdk.NewCoins(bountyCoin)
 
 	// 2. Get Creator Address
@@ -51,7 +53,7 @@ func (k msgServer) CreateTask(goCtx context.Context, msg *types.MsgCreateTask) (
 			sdk.NewAttribute("task_id", strconv.FormatUint(id, 10)),
 			sdk.NewAttribute("creator", msg.Creator),
 			sdk.NewAttribute("bounty", strconv.FormatUint(msg.Bounty, 10)),
-			sdk.NewAttribute("denom", WorkloadDenom),
+			sdk.NewAttribute("denom", denom),
 		),
 	)
 
@@ -62,6 +64,8 @@ func (k msgServer) CreateTask(goCtx context.Context, msg *types.MsgCreateTask) (
 
 func (k msgServer) UpdateTask(goCtx context.Context, msg *types.MsgUpdateTask) (*types.MsgUpdateTaskResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	denom := k.workloadDenom(ctx)
 
 	// 1. Get Existing Task
 	val, found := k.GetTask(ctx, msg.Id)
@@ -80,7 +84,7 @@ func (k msgServer) UpdateTask(goCtx context.Context, msg *types.MsgUpdateTask) (
 	// 3. Settlement Logic (TRNM policy)
 	// If status is changing to COMPLETED (2), burn 100% of escrowed task fee.
 	if msg.Status == 2 {
-		bountyCoin := sdk.NewCoin(WorkloadDenom, math.NewIntFromUint64(val.Bounty))
+		bountyCoin := sdk.NewCoin(denom, math.NewIntFromUint64(val.Bounty))
 		coins := sdk.NewCoins(bountyCoin)
 
 		// Burn from module account (100% task fee burn policy)
@@ -107,7 +111,7 @@ func (k msgServer) UpdateTask(goCtx context.Context, msg *types.MsgUpdateTask) (
 			sdk.NewAttribute("status", strconv.FormatUint(msg.Status, 10)),
 			sdk.NewAttribute("worker", val.Worker),
 			sdk.NewAttribute("burned", strconv.FormatUint(burned, 10)),
-			sdk.NewAttribute("denom", WorkloadDenom),
+			sdk.NewAttribute("denom", denom),
 		),
 	)
 

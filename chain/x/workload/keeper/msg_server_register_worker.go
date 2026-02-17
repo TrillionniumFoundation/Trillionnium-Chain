@@ -23,7 +23,7 @@ func (k msgServer) RegisterWorker(goCtx context.Context, msg *types.MsgRegisterW
 		return nil, err
 	}
 
-	stakeCoin := sdk.NewCoin(WorkloadDenom, math.NewIntFromUint64(MinWorkerStake))
+	stakeCoin := sdk.NewCoin(k.workloadDenom(ctx), math.NewIntFromUint64(MinWorkerStake))
 	stakeCoins := sdk.NewCoins(stakeCoin)
 
 	// lock worker stake in module account
