@@ -110,9 +110,10 @@ SUCCESS_SUMMARY_JSON="${SUCCESS_SUMMARY_LINE#*SUMMARY_JSON: }"
 echo "$SUCCESS_SUMMARY_JSON" | jq -e '
   (keys | sort) == [
     "catching_up","cooldown_stagnant_rounds","cooldown_waited_blocks","duration_s","end_height",
-    "height_delta","last_step","last_tx","node_height","reason","release_height","start_height",
+    "height_delta","last_step","last_tx","node_height","reason","release_height","schema_version","start_height",
     "status","tx_finalize_unbonding","tx_register","tx_request_unbonding","worker"
   ] and
+  .schema_version == 1 and
   .status == "ok" and
   .reason == "" and
   .worker == "cosmos1workeraddr" and
@@ -148,9 +149,10 @@ FAIL_SUMMARY_JSON="${FAIL_SUMMARY_LINE#*SUMMARY_JSON: }"
 echo "$FAIL_SUMMARY_JSON" | jq -e '
   (keys | sort) == [
     "catching_up","cooldown_stagnant_rounds","cooldown_waited_blocks","duration_s","end_height",
-    "height_delta","last_step","last_tx","node_height","reason","release_height","start_height",
+    "height_delta","last_step","last_tx","node_height","reason","release_height","schema_version","start_height",
     "status","tx_finalize_unbonding","tx_register","tx_request_unbonding","worker"
   ] and
+  .schema_version == 1 and
   .status == "failed" and
   (.reason | startswith("finalize-unbonding broadcast failed")) and
   .last_step == "finalize-unbonding" and

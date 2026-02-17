@@ -20,8 +20,8 @@ jobs:
         with:
           go-version-file: chain/go.mod
 
-      - name: Keeper edge tests
-        run: go test ./x/workload/keeper -run 'TestFinalizeUnbonding_HeightEdges|TestExtendUnbonding_Edges' -count=1
+      - name: Keeper edge tests (expanded)
+        run: go test ./x/workload/keeper -run 'TestFinalizeUnbonding_HeightEdges|TestFinalizeUnbonding_BankTransferError_NoFinalizeEvent|TestExtendUnbonding_Edges|TestRequestUnbonding_.*|TestSlashWorker_Edges|TestDenomParamUsedInFinalizeUnbonding' -count=1
 
       - name: Lifecycle smoke observability regression
         run: bash ./tools/lifecycle_smoke_observability_test.sh

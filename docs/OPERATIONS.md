@@ -166,12 +166,14 @@ Optional env knobs:
 - `MAX_WAIT_BLOCKS` (default `300`): guardrail to fail fast when chain stalls
 - `TX_WAIT_SECONDS` (default `30`): tx inclusion timeout per step
 - `SUMMARY_JSON` (default `0`): print one-line machine-readable JSON summary (`SUMMARY_JSON: {...}`) for CI collection (success + failure snapshots)
+- `SUMMARY_SCHEMA_VERSION` (default `1`): explicit schema version embedded in summary payload for parser compatibility
 
 ### 9.1 `SUMMARY_JSON` schema (stabilized for CI)
 When `SUMMARY_JSON=1`, the script always emits the same top-level fields (both success and failure), so downstream parsers can rely on a fixed schema.
 
 ```json
 {
+  "schema_version": 1,
   "status": "ok|failed",
   "reason": "",
   "worker": "cosmos1...",
@@ -193,6 +195,7 @@ When `SUMMARY_JSON=1`, the script always emits the same top-level fields (both s
 ```
 
 Notes:
+- `schema_version` is currently `1`; bump only when introducing breaking schema changes.
 - `status="ok"` on success, `status="failed"` on failure snapshots.
 - `reason` is empty on success and contains the failure reason on errors.
 - Numeric fields stay numeric even on failures (defaulting to `0` when unavailable early).

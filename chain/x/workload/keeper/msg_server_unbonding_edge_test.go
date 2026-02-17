@@ -1,8 +1,11 @@
 package keeper_test
 
 import (
+	"context"
+	"errors"
 	"testing"
 
+	keepertest "chain/testutil/keeper"
 	"chain/testutil/sample"
 	"chain/x/workload/keeper"
 	"chain/x/workload/types"
@@ -10,6 +13,26 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 )
+
+type failingBankKeeper struct {
+	err error
+}
+
+func (m failingBankKeeper) SpendableCoins(context.Context, sdk.AccAddress) sdk.Coins {
+	return sdk.NewCoins()
+}
+func (m failingBankKeeper) SendCoinsFromAccountToModule(context.Context, sdk.AccAddress, string, sdk.Coins) error {
+	return nil
+}
+func (m failingBankKeeper) SendCoinsFromModuleToAccount(context.Context, string, sdk.AccAddress, sdk.Coins) error {
+	return m.err
+}
+func (m failingBankKeeper) BurnCoins(context.Context, string, sdk.Coins) error { return nil }
+
+func setupMsgServerWithBankKeeper(t testing.TB, bankKeeper types.BankKeeper) (keeper.Keeper, types.MsgServer, context.Context) {
+	k, ctx := keepertest.WorkloadKeeperWithBankKeeper(t, bankKeeper)
+	return k, keeper.NewMsgServerImpl(k), ctx
+}
 
 func TestExtendUnbonding_Edges(t *testing.T) {
 	t.Run("extra blocks zero", func(t *testing.T) {
@@ -101,6 +124,28 @@ func assertABCIErrorCode(t *testing.T, err error, expected *sdkerrors.Error) {
 	codespace, code, _ := sdkerrors.ABCIInfo(err, false)
 	require.Equal(t, expected.Codespace(), codespace)
 	require.Equal(t, expected.ABCICode(), code)
+}
+
+func TestFinalizeUnbonding_BankTransferError_NoFinalizeEvent(t *testing.T) {
+	bankErr := errors.New("mock bank send failure")
+	k, srv, ctx := setupMsgServerWithBankKeeper(t, failingBankKeeper{err: bankErr})
+	sdkCtx := sdk.UnwrapSDKContext(ctx).WithBlockHeight(int64(keeper.UnbondingPeriodBlocks))
+	worker := sample.AccAddress()
+
+	k.SetUnbonding(sdkCtx, types.Unbonding{
+		Creator:       worker,
+		ReleaseHeight: keeper.UnbondingPeriodBlocks,
+		Amount:        100000,
+	})
+
+	_, err := srv.FinalizeUnbonding(sdkCtx, &types.MsgFinalizeUnbonding{Creator: worker})
+	require.ErrorIs(t, err, bankErr)
+	require.Equal(t, 0, countEvents(sdkCtx.EventManager().Events(), "workload_finalize_unbonding"))
+
+	pending, found := k.GetUnbonding(sdkCtx, worker)
+	require.True(t, found)
+	require.Equal(t, uint64(100000), pending.Amount)
+	require.Equal(t, uint64(keeper.UnbondingPeriodBlocks), pending.ReleaseHeight)
 }
 
 func TestFinalizeUnbonding_HeightEdges(t *testing.T) {

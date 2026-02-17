@@ -24,7 +24,9 @@ import (
 
 type mockBankKeeper struct{}
 
-func (m mockBankKeeper) SpendableCoins(context.Context, sdk.AccAddress) sdk.Coins { return sdk.NewCoins() }
+func (m mockBankKeeper) SpendableCoins(context.Context, sdk.AccAddress) sdk.Coins {
+	return sdk.NewCoins()
+}
 func (m mockBankKeeper) SendCoinsFromAccountToModule(context.Context, sdk.AccAddress, string, sdk.Coins) error {
 	return nil
 }
@@ -34,6 +36,10 @@ func (m mockBankKeeper) SendCoinsFromModuleToAccount(context.Context, string, sd
 func (m mockBankKeeper) BurnCoins(context.Context, string, sdk.Coins) error { return nil }
 
 func WorkloadKeeper(t testing.TB) (keeper.Keeper, sdk.Context) {
+	return WorkloadKeeperWithBankKeeper(t, mockBankKeeper{})
+}
+
+func WorkloadKeeperWithBankKeeper(t testing.TB, bankKeeper types.BankKeeper) (keeper.Keeper, sdk.Context) {
 	storeKey := storetypes.NewKVStoreKey(types.StoreKey)
 
 	db := dbm.NewMemDB()
@@ -50,7 +56,7 @@ func WorkloadKeeper(t testing.TB) (keeper.Keeper, sdk.Context) {
 		runtime.NewKVStoreService(storeKey),
 		log.NewNopLogger(),
 		authority.String(),
-		mockBankKeeper{},
+		bankKeeper,
 		nil,
 	)
 

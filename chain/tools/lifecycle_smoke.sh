@@ -13,6 +13,7 @@ SLEEP_SECONDS="${SLEEP_SECONDS:-2}"
 MAX_WAIT_BLOCKS="${MAX_WAIT_BLOCKS:-300}"
 TX_WAIT_SECONDS="${TX_WAIT_SECONDS:-30}"
 SUMMARY_JSON="${SUMMARY_JSON:-0}"
+SUMMARY_SCHEMA_VERSION="${SUMMARY_SCHEMA_VERSION:-1}"
 FAIL_SNAPSHOT_LINES="${FAIL_SNAPSHOT_LINES:-40}"
 
 LAST_LABEL=""
@@ -36,6 +37,7 @@ emit_summary_json() {
   local catching_up="$4"
 
   log "SUMMARY_JSON: $(jq -cn \
+    --argjson schema_version "${SUMMARY_SCHEMA_VERSION:-1}" \
     --arg status "$status" \
     --arg reason "$reason" \
     --arg worker "${WORKER_ADDR:-}" \
@@ -53,7 +55,7 @@ emit_summary_json() {
     --argjson cooldown_stagnant_rounds "${COOLDOWN_STAGNANT_ROUNDS:-0}" \
     --arg node_height "$node_height" \
     --arg catching_up "$catching_up" \
-    '{status:$status,reason:$reason,worker:$worker,last_step:$last_step,last_tx:$last_tx,tx_register:$tx_register,tx_request_unbonding:$tx_request_unbonding,tx_finalize_unbonding:$tx_finalize_unbonding,start_height:$start_height,end_height:$end_height,height_delta:$height_delta,duration_s:$duration_s,release_height:$release_height,cooldown_waited_blocks:$cooldown_waited_blocks,cooldown_stagnant_rounds:$cooldown_stagnant_rounds,node_height:$node_height,catching_up:$catching_up}')"
+    '{schema_version:$schema_version,status:$status,reason:$reason,worker:$worker,last_step:$last_step,last_tx:$last_tx,tx_register:$tx_register,tx_request_unbonding:$tx_request_unbonding,tx_finalize_unbonding:$tx_finalize_unbonding,start_height:$start_height,end_height:$end_height,height_delta:$height_delta,duration_s:$duration_s,release_height:$release_height,cooldown_waited_blocks:$cooldown_waited_blocks,cooldown_stagnant_rounds:$cooldown_stagnant_rounds,node_height:$node_height,catching_up:$catching_up}')"
 }
 
 emit_failure_snapshot() {
