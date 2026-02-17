@@ -6,6 +6,7 @@ import (
 
 	"chain/x/workload/types"
 	errorsmod "cosmossdk.io/errors"
+	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
@@ -15,7 +16,7 @@ func (k msgServer) CreateTask(goCtx context.Context, msg *types.MsgCreateTask) (
 
 	// 1. Convert Bounty to Coins (Assume denom is "utrnm")
 	// For simplicity, we hardcode denom here. In production, pass it in params.
-	bountyCoin := sdk.NewCoin("utrnm", sdk.NewIntFromUint64(msg.Bounty))
+	bountyCoin := sdk.NewCoin("token", math.NewIntFromUint64(msg.Bounty))
 	coins := sdk.NewCoins(bountyCoin)
 
 	// 2. Get Creator Address
@@ -26,7 +27,7 @@ func (k msgServer) CreateTask(goCtx context.Context, msg *types.MsgCreateTask) (
 
 	// 3. Transfer Bounty from Creator to Module Account
 	// This locks the funds until task completion
-	err = k.bank.SendCoinsFromAccountToModule(ctx, creator, types.ModuleName, coins)
+	err = k.bankKeeper.SendCoinsFromAccountToModule(ctx, creator, types.ModuleName, coins)
 	if err != nil {
 		return nil, err
 	}
@@ -74,11 +75,11 @@ func (k msgServer) UpdateTask(goCtx context.Context, msg *types.MsgUpdateTask) (
 			return nil, err
 		}
 
-		bountyCoin := sdk.NewCoin("utrnm", sdk.NewIntFromUint64(val.Bounty))
+		bountyCoin := sdk.NewCoin("token", math.NewIntFromUint64(val.Bounty))
 		coins := sdk.NewCoins(bountyCoin)
 
 		// Transfer from Module -> Worker
-		err = k.bank.SendCoinsFromModuleToAccount(ctx, types.ModuleName, workerAddr, coins)
+		err = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, workerAddr, coins)
 		if err != nil {
 			return nil, err
 		}
