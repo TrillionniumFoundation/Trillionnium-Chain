@@ -29,5 +29,9 @@ jobs:
           bash -n chain/tools/lifecycle_smoke_observability_test.sh
           bash -n chain/tools/demo_denom_governance_flow.sh
 
-      - name: Lifecycle observability regression
+      - name: Lifecycle schema contract self-check (quick)
+        run: SELF_CHECK_MODE=schema-contract bash chain/tools/lifecycle_smoke_observability_test.sh
+
+      - name: Lifecycle observability regression (full)
+        if: github.event_name == 'push'
         run: bash chain/tools/lifecycle_smoke_observability_test.sh

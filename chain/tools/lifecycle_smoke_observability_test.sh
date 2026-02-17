@@ -3,6 +3,14 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 SCRIPT="$ROOT_DIR/tools/lifecycle_smoke.sh"
+SELF_CHECK_MODE="${SELF_CHECK_MODE:-full}"
+SCHEMA_ONLY=0
+if [[ "$SELF_CHECK_MODE" == "schema-contract" ]]; then
+	SCHEMA_ONLY=1
+elif [[ "$SELF_CHECK_MODE" != "full" ]]; then
+	echo "unsupported SELF_CHECK_MODE: $SELF_CHECK_MODE (expected: full|schema-contract)" >&2
+	exit 2
+fi
 
 TMP_DIR="$(mktemp -d)"
 cleanup() {
@@ -168,6 +176,11 @@ echo "$V3_SUMMARY_JSON" | jq -e '
 extract_finalize_tx='(.phase_txs.finalize_unbonding // .tx_finalize_unbonding // .last_tx // "")'
 [[ "$(echo "$V2_SUMMARY_JSON" | jq -r "$extract_finalize_tx")" == "txfin" ]]
 [[ "$(echo "$V3_SUMMARY_JSON" | jq -r "$extract_finalize_tx")" == "txfin" ]]
+
+if [[ "$SCHEMA_ONLY" == "1" ]]; then
+	echo "PASS: lifecycle_smoke schema contract self-check"
+	exit 0
+fi
 
 # params linkage: finalize amount/denom must align with workload params denom.
 echo 100 >"$TMP_DIR/height"
