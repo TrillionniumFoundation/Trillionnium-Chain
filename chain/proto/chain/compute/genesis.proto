@@ -4,6 +4,7 @@ package chain.compute;
 import "amino/amino.proto";
 import "gogoproto/gogo.proto";
 import "chain/compute/params.proto";
+import "chain/compute/job.proto";
 
 option go_package = "chain/x/compute/types";
 
@@ -14,4 +15,9 @@ message GenesisState {
     (gogoproto.nullable) = false,
     (amino.dont_omitempty) = true
   ];
+  repeated Job job_list = 2 [
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
+  ];
+  uint64 job_count = 3;
 }
