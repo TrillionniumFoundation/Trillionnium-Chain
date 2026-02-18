@@ -24,6 +24,7 @@ func TestMsgCreateComputeJob_ValidateBasic(t *testing.T) {
 			name: "valid address",
 			msg: MsgCreateComputeJob{
 				Creator: sample.AccAddress(),
+				Payload: "ipfs://valid-payload",
 			},
 		},
 	}

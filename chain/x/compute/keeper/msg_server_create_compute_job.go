@@ -25,9 +25,21 @@ func (k msgServer) CreateComputeJob(goCtx context.Context, msg *types.MsgCreateC
 	}
 
 	// AppendTask returns the ID of the new task
-	id := k.workloadKeeper.AppendTask(ctx, task)
+	taskId := k.workloadKeeper.AppendTask(ctx, task)
+
+	// Create and append the Compute Job
+	job := types.Job{
+		TaskId:       taskId,
+		Creator:      msg.Creator,
+		Requirements: msg.Requirements,
+		Payload:      msg.Payload,
+		Status:       "Created",
+	}
+
+	// AppendJob returns the ID of the new job
+	jobId := k.AppendJob(ctx, job)
 
 	return &types.MsgCreateComputeJobResponse{
-		JobId: id,
+		JobId: jobId,
 	}, nil
 }

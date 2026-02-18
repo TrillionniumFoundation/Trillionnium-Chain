@@ -35,18 +35,23 @@ func TestCreateComputeJob_Integration(t *testing.T) {
 		resp, err := msgServer.CreateComputeJob(goCtx, msg)
 		require.NoError(t, err)
 		require.NotNil(t, resp)
-		// Usually IDs start at 0, so checking >= 0 is better, but since it's uint64, it's always >= 0.
-		// Let's just check if we can retrieve it.
+		
+		// 3. Verify Compute Job Exists
+		job, found := k.GetJob(ctx, resp.JobId)
+		require.True(t, found, "Compute Job should exist")
+		require.Equal(t, msg.Creator, job.Creator)
+		require.Equal(t, msg.Requirements, job.Requirements)
+		require.Equal(t, msg.Payload, job.Payload)
+		require.Equal(t, "Created", job.Status)
 
-		// 3. Verify Side Effects in Workload Module
-		// Query the task using the returned ID.
-		task, found := workloadK.GetTask(ctx, resp.JobId)
-		require.True(t, found, "Task should exist in workload module")
-		require.Equal(t, msg.Payload, task.IpfsHash, "Payload should match IpfsHash")
-		require.Equal(t, msg.Creator, task.Creator, "Creator should match")
+		// 4. Verify Workload Task Exists via TaskId from Job
+		task, found := workloadK.GetTask(ctx, job.TaskId)
+		require.True(t, found, "Workload Task should exist")
+		require.Equal(t, msg.Payload, task.IpfsHash)
+		require.Equal(t, msg.Creator, task.Creator)
 	})
 
-	// 4. Test Case: Validation Error (Empty Payload)
+	// 5. Test Case: Validation Error (Empty Payload)
 	t.Run("Fail_EmptyPayload", func(t *testing.T) {
 		msg := &types.MsgCreateComputeJob{
 			Creator:      creator,
