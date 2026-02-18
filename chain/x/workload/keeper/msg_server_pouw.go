@@ -65,8 +65,11 @@ func (k msgServer) ChallengeResult(goCtx context.Context, msg *types.MsgChalleng
 	if err := ensureTaskStatus(task, types.TaskStatusResultSubmitted, "task is not in result-submitted status"); err != nil {
 		return nil, err
 	}
+	if task.ChallengeDeadlineHeight == 0 {
+		return nil, errorsmod.Wrap(types.ErrChallengeWindowNotStarted, "challenge window not started")
+	}
 	if uint64(ctx.BlockHeight()) > task.ChallengeDeadlineHeight {
-		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "challenge window expired")
+		return nil, errorsmod.Wrap(types.ErrChallengeWindowExpired, "challenge window expired")
 	}
 
 	params := k.GetParams(ctx)

@@ -25,4 +25,8 @@ var (
 	ErrInvalidExtraBlocks          = sdkerrors.Register(ModuleName, 1113, "invalid extraBlocks value")
 	ErrInvalidWorkloadDenom        = sdkerrors.Register(ModuleName, 1114, "invalid workload denom")
 	ErrInvalidBlockHeight          = sdkerrors.Register(ModuleName, 1115, "invalid block height")
+	ErrInvalidTaskStateTransition  = sdkerrors.Register(ModuleName, 1116, "invalid task state transition")
+	ErrWorkerMismatch              = sdkerrors.Register(ModuleName, 1117, "worker mismatch")
+	ErrChallengeWindowNotStarted   = sdkerrors.Register(ModuleName, 1118, "challenge window not started")
+	ErrChallengeWindowExpired      = sdkerrors.Register(ModuleName, 1119, "challenge window expired")
 )

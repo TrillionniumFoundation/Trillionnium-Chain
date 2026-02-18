@@ -82,7 +82,7 @@ func TestCommitRejectsNonAssignedWorker(t *testing.T) {
 	require.NoError(t, err)
 
 	_, err = srv.CommitResult(wctx, &types.MsgCommitResult{Creator: otherWorker, TaskId: 0, CommitHash: "abc"})
-	require.ErrorIs(t, err, sdkerrors.ErrUnauthorized)
+	require.ErrorIs(t, err, types.ErrWorkerMismatch)
 }
 
 func testCommitHash(taskID uint64, resultHash, revealSalt, worker string) string {

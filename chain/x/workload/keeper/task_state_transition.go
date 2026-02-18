@@ -5,7 +5,6 @@ import (
 
 	"chain/x/workload/types"
 	errorsmod "cosmossdk.io/errors"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
 var allowedTaskTransitions = map[uint64]map[uint64]bool{
@@ -32,7 +31,7 @@ func ensureTaskStatus(task types.Task, expected uint64, msg string) error {
 		if msg == "" {
 			msg = fmt.Sprintf("invalid task status: expected=%d got=%d", expected, task.Status)
 		}
-		return errorsmod.Wrap(sdkerrors.ErrInvalidRequest, msg)
+		return errorsmod.Wrap(types.ErrInvalidTaskStateTransition, msg)
 	}
 	return nil
 }
@@ -41,5 +40,5 @@ func ensureTaskTransition(from, to uint64) error {
 	if allowedTaskTransitions[from][to] {
 		return nil
 	}
-	return errorsmod.Wrapf(sdkerrors.ErrInvalidRequest, "invalid task status transition: %d -> %d", from, to)
+	return errorsmod.Wrapf(types.ErrInvalidTaskStateTransition, "invalid task status transition: %d -> %d", from, to)
 }

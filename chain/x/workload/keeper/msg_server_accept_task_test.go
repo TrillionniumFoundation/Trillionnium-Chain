@@ -6,7 +6,6 @@ import (
 	"chain/testutil/sample"
 	"chain/x/workload/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
 )
 
@@ -57,5 +56,5 @@ func TestAcceptTask_RejectsNonOpenTask(t *testing.T) {
 	k.SetTask(wctx, task)
 
 	_, err = srv.AcceptTask(wctx, &types.MsgAcceptTask{Creator: worker, TaskId: 0})
-	require.ErrorIs(t, err, sdkerrors.ErrInvalidRequest)
+	require.ErrorIs(t, err, types.ErrInvalidTaskStateTransition)
 }

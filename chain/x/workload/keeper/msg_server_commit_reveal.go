@@ -30,7 +30,7 @@ func (k msgServer) CommitResult(goCtx context.Context, msg *types.MsgCommitResul
 		return nil, err
 	}
 	if task.Worker != msg.Creator {
-		return nil, errorsmod.Wrap(sdkerrors.ErrUnauthorized, "only assigned worker can commit")
+		return nil, errorsmod.Wrap(types.ErrWorkerMismatch, "only assigned worker can commit")
 	}
 	if task.CommitHash != "" {
 		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "task already committed")
@@ -72,13 +72,13 @@ func (k msgServer) RevealResult(goCtx context.Context, msg *types.MsgRevealResul
 		return nil, err
 	}
 	if task.Worker != msg.Creator {
-		return nil, errorsmod.Wrap(sdkerrors.ErrUnauthorized, "only committed worker can reveal")
+		return nil, errorsmod.Wrap(types.ErrWorkerMismatch, "only committed worker can reveal")
 	}
 	if task.CommitHash == "" {
 		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "missing commit hash")
 	}
 	if uint64(ctx.BlockHeight()) > task.RevealDeadlineHeight {
-		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "reveal window expired")
+		return nil, errorsmod.Wrap(types.ErrChallengeWindowExpired, "reveal window expired")
 	}
 
 	expected := calculateCommitHash(msg.TaskId, msg.ResultHash, msg.RevealSalt, msg.Creator)

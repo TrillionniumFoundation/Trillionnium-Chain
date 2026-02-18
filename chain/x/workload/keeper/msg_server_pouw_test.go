@@ -6,7 +6,6 @@ import (
 	"chain/testutil/sample"
 	"chain/x/workload/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
 )
 
@@ -73,7 +72,7 @@ func TestChallengeAfterDeadlineFails(t *testing.T) {
 
 	lateCtx := sdk.WrapSDKContext(sdk.UnwrapSDKContext(wctx).WithBlockHeight(1000))
 	_, err = srv.ChallengeResult(lateCtx, &types.MsgChallengeResult{Creator: sample.AccAddress(), TaskId: 0})
-	require.ErrorIs(t, err, sdkerrors.ErrInvalidRequest)
+	require.ErrorIs(t, err, types.ErrChallengeWindowExpired)
 }
 
 func TestChallengeResult_SecondChallengeRejectedEvenWhenFirstChallengeIDIsZero(t *testing.T) {
@@ -100,7 +99,7 @@ func TestChallengeResult_SecondChallengeRejectedEvenWhenFirstChallengeIDIsZero(t
 	require.Equal(t, uint64(0), task.ChallengeId) // first challenge id can be zero
 
 	_, err = srv.ChallengeResult(wctx, &types.MsgChallengeResult{Creator: challenger2, TaskId: 0})
-	require.ErrorIs(t, err, sdkerrors.ErrInvalidRequest)
+	require.ErrorIs(t, err, types.ErrInvalidTaskStateTransition)
 }
 
 func TestResolveChallengeUnauthorized(t *testing.T) {
