@@ -33,7 +33,7 @@ func (k msgServer) CreateComputeJob(goCtx context.Context, msg *types.MsgCreateC
 		Creator:      msg.Creator,
 		Requirements: msg.Requirements,
 		Payload:      msg.Payload,
-		Status:       "Created",
+		Status:       types.JobStatus_JOB_STATUS_CREATED,
 	}
 
 	// AppendJob returns the ID of the new job

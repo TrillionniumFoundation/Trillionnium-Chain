@@ -14,13 +14,14 @@ import (
 )
 
 var (
-	md_Job              protoreflect.MessageDescriptor
-	fd_Job_id           protoreflect.FieldDescriptor
-	fd_Job_task_id      protoreflect.FieldDescriptor
-	fd_Job_creator      protoreflect.FieldDescriptor
-	fd_Job_requirements protoreflect.FieldDescriptor
-	fd_Job_status       protoreflect.FieldDescriptor
-	fd_Job_payload      protoreflect.FieldDescriptor
+	md_Job                 protoreflect.MessageDescriptor
+	fd_Job_id              protoreflect.FieldDescriptor
+	fd_Job_task_id         protoreflect.FieldDescriptor
+	fd_Job_creator         protoreflect.FieldDescriptor
+	fd_Job_requirements    protoreflect.FieldDescriptor
+	fd_Job_status          protoreflect.FieldDescriptor
+	fd_Job_payload         protoreflect.FieldDescriptor
+	fd_Job_assigned_worker protoreflect.FieldDescriptor
 )
 
 func init() {
@@ -32,6 +33,7 @@ func init() {
 	fd_Job_requirements = md_Job.Fields().ByName("requirements")
 	fd_Job_status = md_Job.Fields().ByName("status")
 	fd_Job_payload = md_Job.Fields().ByName("payload")
+	fd_Job_assigned_worker = md_Job.Fields().ByName("assigned_worker")
 }
 
 var _ protoreflect.Message = (*fastReflection_Job)(nil)
@@ -123,8 +125,8 @@ func (x *fastReflection_Job) Range(f func(protoreflect.FieldDescriptor, protoref
 			return
 		}
 	}
-	if x.Status != "" {
-		value := protoreflect.ValueOfString(x.Status)
+	if x.Status != 0 {
+		value := protoreflect.ValueOfEnum((protoreflect.EnumNumber)(x.Status))
 		if !f(fd_Job_status, value) {
 			return
 		}
@@ -132,6 +134,12 @@ func (x *fastReflection_Job) Range(f func(protoreflect.FieldDescriptor, protoref
 	if x.Payload != "" {
 		value := protoreflect.ValueOfString(x.Payload)
 		if !f(fd_Job_payload, value) {
+			return
+		}
+	}
+	if x.AssignedWorker != "" {
+		value := protoreflect.ValueOfString(x.AssignedWorker)
+		if !f(fd_Job_assigned_worker, value) {
 			return
 		}
 	}
@@ -159,9 +167,11 @@ func (x *fastReflection_Job) Has(fd protoreflect.FieldDescriptor) bool {
 	case "chain.compute.Job.requirements":
 		return x.Requirements != ""
 	case "chain.compute.Job.status":
-		return x.Status != ""
+		return x.Status != 0
 	case "chain.compute.Job.payload":
 		return x.Payload != ""
+	case "chain.compute.Job.assigned_worker":
+		return x.AssignedWorker != ""
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.compute.Job"))
@@ -187,9 +197,11 @@ func (x *fastReflection_Job) Clear(fd protoreflect.FieldDescriptor) {
 	case "chain.compute.Job.requirements":
 		x.Requirements = ""
 	case "chain.compute.Job.status":
-		x.Status = ""
+		x.Status = 0
 	case "chain.compute.Job.payload":
 		x.Payload = ""
+	case "chain.compute.Job.assigned_worker":
+		x.AssignedWorker = ""
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.compute.Job"))
@@ -220,9 +232,12 @@ func (x *fastReflection_Job) Get(descriptor protoreflect.FieldDescriptor) protor
 		return protoreflect.ValueOfString(value)
 	case "chain.compute.Job.status":
 		value := x.Status
-		return protoreflect.ValueOfString(value)
+		return protoreflect.ValueOfEnum((protoreflect.EnumNumber)(value))
 	case "chain.compute.Job.payload":
 		value := x.Payload
+		return protoreflect.ValueOfString(value)
+	case "chain.compute.Job.assigned_worker":
+		value := x.AssignedWorker
 		return protoreflect.ValueOfString(value)
 	default:
 		if descriptor.IsExtension() {
@@ -253,9 +268,11 @@ func (x *fastReflection_Job) Set(fd protoreflect.FieldDescriptor, value protoref
 	case "chain.compute.Job.requirements":
 		x.Requirements = value.Interface().(string)
 	case "chain.compute.Job.status":
-		x.Status = value.Interface().(string)
+		x.Status = (JobStatus)(value.Enum())
 	case "chain.compute.Job.payload":
 		x.Payload = value.Interface().(string)
+	case "chain.compute.Job.assigned_worker":
+		x.AssignedWorker = value.Interface().(string)
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.compute.Job"))
@@ -288,6 +305,8 @@ func (x *fastReflection_Job) Mutable(fd protoreflect.FieldDescriptor) protorefle
 		panic(fmt.Errorf("field status of message chain.compute.Job is not mutable"))
 	case "chain.compute.Job.payload":
 		panic(fmt.Errorf("field payload of message chain.compute.Job is not mutable"))
+	case "chain.compute.Job.assigned_worker":
+		panic(fmt.Errorf("field assigned_worker of message chain.compute.Job is not mutable"))
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.compute.Job"))
@@ -310,8 +329,10 @@ func (x *fastReflection_Job) NewField(fd protoreflect.FieldDescriptor) protorefl
 	case "chain.compute.Job.requirements":
 		return protoreflect.ValueOfString("")
 	case "chain.compute.Job.status":
-		return protoreflect.ValueOfString("")
+		return protoreflect.ValueOfEnum(0)
 	case "chain.compute.Job.payload":
+		return protoreflect.ValueOfString("")
+	case "chain.compute.Job.assigned_worker":
 		return protoreflect.ValueOfString("")
 	default:
 		if fd.IsExtension() {
@@ -396,11 +417,14 @@ func (x *fastReflection_Job) ProtoMethods() *protoiface.Methods {
 		if l > 0 {
 			n += 1 + l + runtime.Sov(uint64(l))
 		}
-		l = len(x.Status)
+		if x.Status != 0 {
+			n += 1 + runtime.Sov(uint64(x.Status))
+		}
+		l = len(x.Payload)
 		if l > 0 {
 			n += 1 + l + runtime.Sov(uint64(l))
 		}
-		l = len(x.Payload)
+		l = len(x.AssignedWorker)
 		if l > 0 {
 			n += 1 + l + runtime.Sov(uint64(l))
 		}
@@ -433,6 +457,13 @@ func (x *fastReflection_Job) ProtoMethods() *protoiface.Methods {
 			i -= len(x.unknownFields)
 			copy(dAtA[i:], x.unknownFields)
 		}
+		if len(x.AssignedWorker) > 0 {
+			i -= len(x.AssignedWorker)
+			copy(dAtA[i:], x.AssignedWorker)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.AssignedWorker)))
+			i--
+			dAtA[i] = 0x3a
+		}
 		if len(x.Payload) > 0 {
 			i -= len(x.Payload)
 			copy(dAtA[i:], x.Payload)
@@ -440,12 +471,10 @@ func (x *fastReflection_Job) ProtoMethods() *protoiface.Methods {
 			i--
 			dAtA[i] = 0x32
 		}
-		if len(x.Status) > 0 {
-			i -= len(x.Status)
-			copy(dAtA[i:], x.Status)
-			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.Status)))
+		if x.Status != 0 {
+			i = runtime.EncodeVarint(dAtA, i, uint64(x.Status))
 			i--
-			dAtA[i] = 0x2a
+			dAtA[i] = 0x28
 		}
 		if len(x.Requirements) > 0 {
 			i -= len(x.Requirements)
@@ -623,10 +652,10 @@ func (x *fastReflection_Job) ProtoMethods() *protoiface.Methods {
 				x.Requirements = string(dAtA[iNdEx:postIndex])
 				iNdEx = postIndex
 			case 5:
-				if wireType != 2 {
+				if wireType != 0 {
 					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Status", wireType)
 				}
-				var stringLen uint64
+				x.Status = 0
 				for shift := uint(0); ; shift += 7 {
 					if shift >= 64 {
 						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
@@ -636,24 +665,11 @@ func (x *fastReflection_Job) ProtoMethods() *protoiface.Methods {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					stringLen |= uint64(b&0x7F) << shift
+					x.Status |= JobStatus(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
 				}
-				intStringLen := int(stringLen)
-				if intStringLen < 0 {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
-				}
-				postIndex := iNdEx + intStringLen
-				if postIndex < 0 {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
-				}
-				if postIndex > l {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
-				}
-				x.Status = string(dAtA[iNdEx:postIndex])
-				iNdEx = postIndex
 			case 6:
 				if wireType != 2 {
 					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Payload", wireType)
@@ -685,6 +701,38 @@ func (x *fastReflection_Job) ProtoMethods() *protoiface.Methods {
 					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
 				}
 				x.Payload = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 7:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field AssignedWorker", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.AssignedWorker = string(dAtA[iNdEx:postIndex])
 				iNdEx = postIndex
 			default:
 				iNdEx = preIndex
@@ -734,17 +782,73 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type JobStatus int32
+
+const (
+	JobStatus_JOB_STATUS_UNSPECIFIED JobStatus = 0
+	JobStatus_JOB_STATUS_CREATED     JobStatus = 1
+	JobStatus_JOB_STATUS_RUNNING     JobStatus = 2
+	JobStatus_JOB_STATUS_COMPLETED   JobStatus = 3
+	JobStatus_JOB_STATUS_FAILED      JobStatus = 4
+)
+
+// Enum value maps for JobStatus.
+var (
+	JobStatus_name = map[int32]string{
+		0: "JOB_STATUS_UNSPECIFIED",
+		1: "JOB_STATUS_CREATED",
+		2: "JOB_STATUS_RUNNING",
+		3: "JOB_STATUS_COMPLETED",
+		4: "JOB_STATUS_FAILED",
+	}
+	JobStatus_value = map[string]int32{
+		"JOB_STATUS_UNSPECIFIED": 0,
+		"JOB_STATUS_CREATED":     1,
+		"JOB_STATUS_RUNNING":     2,
+		"JOB_STATUS_COMPLETED":   3,
+		"JOB_STATUS_FAILED":      4,
+	}
+)
+
+func (x JobStatus) Enum() *JobStatus {
+	p := new(JobStatus)
+	*p = x
+	return p
+}
+
+func (x JobStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (JobStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_chain_compute_job_proto_enumTypes[0].Descriptor()
+}
+
+func (JobStatus) Type() protoreflect.EnumType {
+	return &file_chain_compute_job_proto_enumTypes[0]
+}
+
+func (x JobStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use JobStatus.Descriptor instead.
+func (JobStatus) EnumDescriptor() ([]byte, []int) {
+	return file_chain_compute_job_proto_rawDescGZIP(), []int{0}
+}
+
 type Job struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id           uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	TaskId       uint64 `protobuf:"varint,2,opt,name=task_id,json=taskId,proto3" json:"task_id,omitempty"`
-	Creator      string `protobuf:"bytes,3,opt,name=creator,proto3" json:"creator,omitempty"`
-	Requirements string `protobuf:"bytes,4,opt,name=requirements,proto3" json:"requirements,omitempty"`
-	Status       string `protobuf:"bytes,5,opt,name=status,proto3" json:"status,omitempty"`
-	Payload      string `protobuf:"bytes,6,opt,name=payload,proto3" json:"payload,omitempty"`
+	Id             uint64    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	TaskId         uint64    `protobuf:"varint,2,opt,name=task_id,json=taskId,proto3" json:"task_id,omitempty"`
+	Creator        string    `protobuf:"bytes,3,opt,name=creator,proto3" json:"creator,omitempty"`
+	Requirements   string    `protobuf:"bytes,4,opt,name=requirements,proto3" json:"requirements,omitempty"`
+	Status         JobStatus `protobuf:"varint,5,opt,name=status,proto3,enum=chain.compute.JobStatus" json:"status,omitempty"`
+	Payload        string    `protobuf:"bytes,6,opt,name=payload,proto3" json:"payload,omitempty"`
+	AssignedWorker string    `protobuf:"bytes,7,opt,name=assigned_worker,json=assignedWorker,proto3" json:"assigned_worker,omitempty"`
 }
 
 func (x *Job) Reset() {
@@ -795,16 +899,23 @@ func (x *Job) GetRequirements() string {
 	return ""
 }
 
-func (x *Job) GetStatus() string {
+func (x *Job) GetStatus() JobStatus {
 	if x != nil {
 		return x.Status
 	}
-	return ""
+	return JobStatus_JOB_STATUS_UNSPECIFIED
 }
 
 func (x *Job) GetPayload() string {
 	if x != nil {
 		return x.Payload
+	}
+	return ""
+}
+
+func (x *Job) GetAssignedWorker() string {
+	if x != nil {
+		return x.AssignedWorker
 	}
 	return ""
 }
@@ -815,27 +926,40 @@ var file_chain_compute_job_proto_rawDesc = []byte{
 	0x0a, 0x17, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2f, 0x63, 0x6f, 0x6d, 0x70, 0x75, 0x74, 0x65, 0x2f,
 	0x6a, 0x6f, 0x62, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x0d, 0x63, 0x68, 0x61, 0x69, 0x6e,
 	0x2e, 0x63, 0x6f, 0x6d, 0x70, 0x75, 0x74, 0x65, 0x1a, 0x14, 0x67, 0x6f, 0x67, 0x6f, 0x70, 0x72,
-	0x6f, 0x74, 0x6f, 0x2f, 0x67, 0x6f, 0x67, 0x6f, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x9e,
+	0x6f, 0x74, 0x6f, 0x2f, 0x67, 0x6f, 0x67, 0x6f, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0xe1,
 	0x01, 0x0a, 0x03, 0x4a, 0x6f, 0x62, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01,
 	0x28, 0x04, 0x52, 0x02, 0x69, 0x64, 0x12, 0x17, 0x0a, 0x07, 0x74, 0x61, 0x73, 0x6b, 0x5f, 0x69,
 	0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x04, 0x52, 0x06, 0x74, 0x61, 0x73, 0x6b, 0x49, 0x64, 0x12,
 	0x18, 0x0a, 0x07, 0x63, 0x72, 0x65, 0x61, 0x74, 0x6f, 0x72, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09,
 	0x52, 0x07, 0x63, 0x72, 0x65, 0x61, 0x74, 0x6f, 0x72, 0x12, 0x22, 0x0a, 0x0c, 0x72, 0x65, 0x71,
 	0x75, 0x69, 0x72, 0x65, 0x6d, 0x65, 0x6e, 0x74, 0x73, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52,
-	0x0c, 0x72, 0x65, 0x71, 0x75, 0x69, 0x72, 0x65, 0x6d, 0x65, 0x6e, 0x74, 0x73, 0x12, 0x16, 0x0a,
-	0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x18, 0x05, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x73,
-	0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x18, 0x0a, 0x07, 0x70, 0x61, 0x79, 0x6c, 0x6f, 0x61, 0x64,
-	0x18, 0x06, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x70, 0x61, 0x79, 0x6c, 0x6f, 0x61, 0x64, 0x42,
-	0x92, 0x01, 0x0a, 0x11, 0x63, 0x6f, 0x6d, 0x2e, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2e, 0x63, 0x6f,
-	0x6d, 0x70, 0x75, 0x74, 0x65, 0x42, 0x08, 0x4a, 0x6f, 0x62, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x50,
-	0x01, 0x5a, 0x1e, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x73, 0x64, 0x6b, 0x2e, 0x69, 0x6f, 0x2f,
-	0x61, 0x70, 0x69, 0x2f, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2f, 0x63, 0x6f, 0x6d, 0x70, 0x75, 0x74,
-	0x65, 0xa2, 0x02, 0x03, 0x43, 0x43, 0x58, 0xaa, 0x02, 0x0d, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x2e,
-	0x43, 0x6f, 0x6d, 0x70, 0x75, 0x74, 0x65, 0xca, 0x02, 0x0d, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x5c,
-	0x43, 0x6f, 0x6d, 0x70, 0x75, 0x74, 0x65, 0xe2, 0x02, 0x19, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x5c,
-	0x43, 0x6f, 0x6d, 0x70, 0x75, 0x74, 0x65, 0x5c, 0x47, 0x50, 0x42, 0x4d, 0x65, 0x74, 0x61, 0x64,
-	0x61, 0x74, 0x61, 0xea, 0x02, 0x0e, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x3a, 0x3a, 0x43, 0x6f, 0x6d,
-	0x70, 0x75, 0x74, 0x65, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x0c, 0x72, 0x65, 0x71, 0x75, 0x69, 0x72, 0x65, 0x6d, 0x65, 0x6e, 0x74, 0x73, 0x12, 0x30, 0x0a,
+	0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x18, 0x05, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x18, 0x2e,
+	0x63, 0x68, 0x61, 0x69, 0x6e, 0x2e, 0x63, 0x6f, 0x6d, 0x70, 0x75, 0x74, 0x65, 0x2e, 0x4a, 0x6f,
+	0x62, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x52, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12,
+	0x18, 0x0a, 0x07, 0x70, 0x61, 0x79, 0x6c, 0x6f, 0x61, 0x64, 0x18, 0x06, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x07, 0x70, 0x61, 0x79, 0x6c, 0x6f, 0x61, 0x64, 0x12, 0x27, 0x0a, 0x0f, 0x61, 0x73, 0x73,
+	0x69, 0x67, 0x6e, 0x65, 0x64, 0x5f, 0x77, 0x6f, 0x72, 0x6b, 0x65, 0x72, 0x18, 0x07, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x0e, 0x61, 0x73, 0x73, 0x69, 0x67, 0x6e, 0x65, 0x64, 0x57, 0x6f, 0x72, 0x6b,
+	0x65, 0x72, 0x2a, 0x88, 0x01, 0x0a, 0x09, 0x4a, 0x6f, 0x62, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73,
+	0x12, 0x1a, 0x0a, 0x16, 0x4a, 0x4f, 0x42, 0x5f, 0x53, 0x54, 0x41, 0x54, 0x55, 0x53, 0x5f, 0x55,
+	0x4e, 0x53, 0x50, 0x45, 0x43, 0x49, 0x46, 0x49, 0x45, 0x44, 0x10, 0x00, 0x12, 0x16, 0x0a, 0x12,
+	0x4a, 0x4f, 0x42, 0x5f, 0x53, 0x54, 0x41, 0x54, 0x55, 0x53, 0x5f, 0x43, 0x52, 0x45, 0x41, 0x54,
+	0x45, 0x44, 0x10, 0x01, 0x12, 0x16, 0x0a, 0x12, 0x4a, 0x4f, 0x42, 0x5f, 0x53, 0x54, 0x41, 0x54,
+	0x55, 0x53, 0x5f, 0x52, 0x55, 0x4e, 0x4e, 0x49, 0x4e, 0x47, 0x10, 0x02, 0x12, 0x18, 0x0a, 0x14,
+	0x4a, 0x4f, 0x42, 0x5f, 0x53, 0x54, 0x41, 0x54, 0x55, 0x53, 0x5f, 0x43, 0x4f, 0x4d, 0x50, 0x4c,
+	0x45, 0x54, 0x45, 0x44, 0x10, 0x03, 0x12, 0x15, 0x0a, 0x11, 0x4a, 0x4f, 0x42, 0x5f, 0x53, 0x54,
+	0x41, 0x54, 0x55, 0x53, 0x5f, 0x46, 0x41, 0x49, 0x4c, 0x45, 0x44, 0x10, 0x04, 0x42, 0x92, 0x01,
+	0x0a, 0x11, 0x63, 0x6f, 0x6d, 0x2e, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2e, 0x63, 0x6f, 0x6d, 0x70,
+	0x75, 0x74, 0x65, 0x42, 0x08, 0x4a, 0x6f, 0x62, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x50, 0x01, 0x5a,
+	0x1e, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x73, 0x64, 0x6b, 0x2e, 0x69, 0x6f, 0x2f, 0x61, 0x70,
+	0x69, 0x2f, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2f, 0x63, 0x6f, 0x6d, 0x70, 0x75, 0x74, 0x65, 0xa2,
+	0x02, 0x03, 0x43, 0x43, 0x58, 0xaa, 0x02, 0x0d, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x2e, 0x43, 0x6f,
+	0x6d, 0x70, 0x75, 0x74, 0x65, 0xca, 0x02, 0x0d, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x5c, 0x43, 0x6f,
+	0x6d, 0x70, 0x75, 0x74, 0x65, 0xe2, 0x02, 0x19, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x5c, 0x43, 0x6f,
+	0x6d, 0x70, 0x75, 0x74, 0x65, 0x5c, 0x47, 0x50, 0x42, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74,
+	0x61, 0xea, 0x02, 0x0e, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x3a, 0x3a, 0x43, 0x6f, 0x6d, 0x70, 0x75,
+	0x74, 0x65, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -850,16 +974,19 @@ func file_chain_compute_job_proto_rawDescGZIP() []byte {
 	return file_chain_compute_job_proto_rawDescData
 }
 
+var file_chain_compute_job_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_chain_compute_job_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_chain_compute_job_proto_goTypes = []interface{}{
-	(*Job)(nil), // 0: chain.compute.Job
+	(JobStatus)(0), // 0: chain.compute.JobStatus
+	(*Job)(nil),    // 1: chain.compute.Job
 }
 var file_chain_compute_job_proto_depIdxs = []int32{
-	0, // [0:0] is the sub-list for method output_type
-	0, // [0:0] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	0, // 0: chain.compute.Job.status:type_name -> chain.compute.JobStatus
+	1, // [1:1] is the sub-list for method output_type
+	1, // [1:1] is the sub-list for method input_type
+	1, // [1:1] is the sub-list for extension type_name
+	1, // [1:1] is the sub-list for extension extendee
+	0, // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_chain_compute_job_proto_init() }
@@ -886,13 +1013,14 @@ func file_chain_compute_job_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_chain_compute_job_proto_rawDesc,
-			NumEnums:      0,
+			NumEnums:      1,
 			NumMessages:   1,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
 		GoTypes:           file_chain_compute_job_proto_goTypes,
 		DependencyIndexes: file_chain_compute_job_proto_depIdxs,
+		EnumInfos:         file_chain_compute_job_proto_enumTypes,
 		MessageInfos:      file_chain_compute_job_proto_msgTypes,
 	}.Build()
 	File_chain_compute_job_proto = out.File

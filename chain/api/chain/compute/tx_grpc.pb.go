@@ -19,8 +19,9 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Msg_UpdateParams_FullMethodName     = "/chain.compute.Msg/UpdateParams"
-	Msg_CreateComputeJob_FullMethodName = "/chain.compute.Msg/CreateComputeJob"
+	Msg_UpdateParams_FullMethodName        = "/chain.compute.Msg/UpdateParams"
+	Msg_CreateComputeJob_FullMethodName    = "/chain.compute.Msg/CreateComputeJob"
+	Msg_RequestJobExecution_FullMethodName = "/chain.compute.Msg/RequestJobExecution"
 )
 
 // MsgClient is the client API for Msg service.
@@ -31,6 +32,7 @@ type MsgClient interface {
 	// parameters. The authority defaults to the x/gov module account.
 	UpdateParams(ctx context.Context, in *MsgUpdateParams, opts ...grpc.CallOption) (*MsgUpdateParamsResponse, error)
 	CreateComputeJob(ctx context.Context, in *MsgCreateComputeJob, opts ...grpc.CallOption) (*MsgCreateComputeJobResponse, error)
+	RequestJobExecution(ctx context.Context, in *MsgRequestJobExecution, opts ...grpc.CallOption) (*MsgRequestJobExecutionResponse, error)
 }
 
 type msgClient struct {
@@ -59,6 +61,15 @@ func (c *msgClient) CreateComputeJob(ctx context.Context, in *MsgCreateComputeJo
 	return out, nil
 }
 
+func (c *msgClient) RequestJobExecution(ctx context.Context, in *MsgRequestJobExecution, opts ...grpc.CallOption) (*MsgRequestJobExecutionResponse, error) {
+	out := new(MsgRequestJobExecutionResponse)
+	err := c.cc.Invoke(ctx, Msg_RequestJobExecution_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MsgServer is the server API for Msg service.
 // All implementations must embed UnimplementedMsgServer
 // for forward compatibility
@@ -67,6 +78,7 @@ type MsgServer interface {
 	// parameters. The authority defaults to the x/gov module account.
 	UpdateParams(context.Context, *MsgUpdateParams) (*MsgUpdateParamsResponse, error)
 	CreateComputeJob(context.Context, *MsgCreateComputeJob) (*MsgCreateComputeJobResponse, error)
+	RequestJobExecution(context.Context, *MsgRequestJobExecution) (*MsgRequestJobExecutionResponse, error)
 	mustEmbedUnimplementedMsgServer()
 }
 
@@ -79,6 +91,9 @@ func (UnimplementedMsgServer) UpdateParams(context.Context, *MsgUpdateParams) (*
 }
 func (UnimplementedMsgServer) CreateComputeJob(context.Context, *MsgCreateComputeJob) (*MsgCreateComputeJobResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateComputeJob not implemented")
+}
+func (UnimplementedMsgServer) RequestJobExecution(context.Context, *MsgRequestJobExecution) (*MsgRequestJobExecutionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RequestJobExecution not implemented")
 }
 func (UnimplementedMsgServer) mustEmbedUnimplementedMsgServer() {}
 
@@ -129,6 +144,24 @@ func _Msg_CreateComputeJob_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Msg_RequestJobExecution_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgRequestJobExecution)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).RequestJobExecution(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Msg_RequestJobExecution_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).RequestJobExecution(ctx, req.(*MsgRequestJobExecution))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Msg_ServiceDesc is the grpc.ServiceDesc for Msg service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -143,6 +176,10 @@ var Msg_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateComputeJob",
 			Handler:    _Msg_CreateComputeJob_Handler,
+		},
+		{
+			MethodName: "RequestJobExecution",
+			Handler:    _Msg_RequestJobExecution_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

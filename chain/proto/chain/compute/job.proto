@@ -5,11 +5,20 @@ import "gogoproto/gogo.proto";
 
 option go_package = "chain/x/compute/types";
 
+enum JobStatus {
+  JOB_STATUS_UNSPECIFIED = 0;
+  JOB_STATUS_CREATED     = 1;
+  JOB_STATUS_RUNNING     = 2;
+  JOB_STATUS_COMPLETED   = 3;
+  JOB_STATUS_FAILED      = 4;
+}
+
 message Job {
   uint64 id = 1; 
   uint64 task_id = 2;
   string creator = 3; 
   string requirements = 4;
-  string status = 5; 
+  JobStatus status = 5; 
   string payload = 6;
+  string assigned_worker = 7;
 }

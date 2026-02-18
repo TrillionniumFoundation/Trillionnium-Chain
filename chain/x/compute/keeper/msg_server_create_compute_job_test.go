@@ -42,7 +42,7 @@ func TestCreateComputeJob_Integration(t *testing.T) {
 		require.Equal(t, msg.Creator, job.Creator)
 		require.Equal(t, msg.Requirements, job.Requirements)
 		require.Equal(t, msg.Payload, job.Payload)
-		require.Equal(t, "Created", job.Status)
+		require.Equal(t, types.JobStatus_JOB_STATUS_CREATED, job.Status)
 
 		// 4. Verify Workload Task Exists via TaskId from Job
 		task, found := workloadK.GetTask(ctx, job.TaskId)
