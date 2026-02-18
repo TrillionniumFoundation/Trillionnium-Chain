@@ -35,3 +35,32 @@ go test ./x/workload/keeper -run TestFinalizeUnbonding -v
 ```
 
 These tests ensure that attempting to finalize an unbonding that does not exist (including `TestFinalizeUnbonding_NoRequest_Fails`) returns `ErrUnbondingNotFound` and does not alter state.
+
+## Compute Lifecycle Smoke (Request -> Complete -> Task Sync)
+For an existing `job_id` (typically CREATED state), run:
+
+```bash
+cd chain
+SUMMARY_JSON=1 ./tools/compute_lifecycle_smoke.sh <JOB_ID> alice chain http://127.0.0.1:26657
+```
+
+What it checks:
+- `tx compute request-job-execution` succeeds (`CREATED -> RUNNING`)
+- `tx compute complete-job` succeeds (`RUNNING -> COMPLETED`)
+- emits `compute_complete_job` event with `task_id`/`worker`
+- `q workload task <task_id>` shows:
+  - `status == 2`
+  - `worker` matches sender
+  - `result_hash` matches submitted result
+
+Set `RESULT_HASH=<value>` to control deterministic replay assertions.
+
+Diagnostics:
+- on failure, script emits `failure_snapshot` logs (last step, node sync info, last tx excerpt, current task snapshot)
+- tune tx excerpt size with `FAIL_SNAPSHOT_LINES=<N>`
+
+Summary contract self-check:
+```bash
+cd chain
+bash tools/compute_lifecycle_summary_contract_test.sh
+```

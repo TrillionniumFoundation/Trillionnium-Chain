@@ -41,6 +41,8 @@ jobs:
       - name: Shellcheck tools
         run: |
           shellcheck chain/tools/lifecycle_smoke.sh \
+            chain/tools/compute_lifecycle_smoke.sh \
+            chain/tools/compute_lifecycle_summary_contract_test.sh \
             chain/tools/lifecycle_smoke_observability_test.sh \
             chain/tools/lifecycle_summary_parser_examples_test.sh \
             chain/tools/lifecycle_summary_fixture_consistency_test.sh \
@@ -51,6 +53,8 @@ jobs:
       - name: Bash syntax checks
         run: |
           bash -n chain/tools/lifecycle_smoke.sh
+          bash -n chain/tools/compute_lifecycle_smoke.sh
+          bash -n chain/tools/compute_lifecycle_summary_contract_test.sh
           bash -n chain/tools/lifecycle_smoke_observability_test.sh
           bash -n chain/tools/lifecycle_summary_parser_examples_test.sh
           bash -n chain/tools/lifecycle_summary_fixture_consistency_test.sh
@@ -63,6 +67,9 @@ jobs:
 
       - name: Lifecycle parser examples
         run: bash chain/tools/lifecycle_summary_parser_examples_test.sh
+
+      - name: Compute lifecycle summary contract test
+        run: bash chain/tools/compute_lifecycle_summary_contract_test.sh
 
       - name: Lifecycle schema contract/fixture guard
         run: bash chain/tools/lifecycle_schema_contract_guard.sh
