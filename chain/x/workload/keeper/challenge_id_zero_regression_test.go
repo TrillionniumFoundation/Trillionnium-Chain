@@ -30,7 +30,7 @@ func TestChallengeIDZero_IsValidChallenge(t *testing.T) {
 
 	task, found := k.GetTask(wctx, 0)
 	require.True(t, found)
-	require.Equal(t, uint64(3), task.Status) // challenged
+	require.Equal(t, types.TaskStatusChallenged, task.Status)
 	require.Equal(t, uint64(0), task.ChallengeId)
 
 	// Auto finalize should not finalize challenged task even when deadline has passed.
@@ -40,5 +40,5 @@ func TestChallengeIDZero_IsValidChallenge(t *testing.T) {
 
 	taskAfter, found := k.GetTask(futureCtx, 0)
 	require.True(t, found)
-	require.Equal(t, uint64(3), taskAfter.Status)
+	require.Equal(t, types.TaskStatusChallenged, taskAfter.Status)
 }

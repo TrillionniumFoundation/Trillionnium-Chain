@@ -11,19 +11,22 @@ func TestTaskStateTransitionMatrix(t *testing.T) {
 	states := []uint64{
 		types.TaskStatusOpen,
 		types.TaskStatusAssigned,
-		types.TaskStatusResultSubmitted,
+		types.TaskStatusCommitted,
+		types.TaskStatusRevealed,
 		types.TaskStatusChallenged,
 		types.TaskStatusCompleted,
 		types.TaskStatusSlashed,
 	}
 
 	allowed := map[[2]uint64]bool{
-		{types.TaskStatusOpen, types.TaskStatusAssigned}:        true,
-		{types.TaskStatusOpen, types.TaskStatusResultSubmitted}: true, // legacy submit_result
-		{types.TaskStatusAssigned, types.TaskStatusResultSubmitted}: true,
-		{types.TaskStatusAssigned, types.TaskStatusOpen}:            true, // commit timeout recovery
-		{types.TaskStatusResultSubmitted, types.TaskStatusChallenged}: true,
-		{types.TaskStatusResultSubmitted, types.TaskStatusCompleted}:  true,
+		{types.TaskStatusOpen, types.TaskStatusAssigned}: true,
+		{types.TaskStatusOpen, types.TaskStatusRevealed}: true, // legacy submit_result
+		{types.TaskStatusOpen, types.TaskStatusCompleted}: true, // privileged complete path
+		{types.TaskStatusAssigned, types.TaskStatusCommitted}: true,
+		{types.TaskStatusCommitted, types.TaskStatusRevealed}: true,
+		{types.TaskStatusCommitted, types.TaskStatusOpen}:     true, // commit timeout recovery
+		{types.TaskStatusRevealed, types.TaskStatusChallenged}: true,
+		{types.TaskStatusRevealed, types.TaskStatusCompleted}:  true,
 		{types.TaskStatusChallenged, types.TaskStatusCompleted}: true,
 		{types.TaskStatusChallenged, types.TaskStatusSlashed}:   true,
 	}

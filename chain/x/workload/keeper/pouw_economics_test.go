@@ -51,7 +51,7 @@ func TestResolveChallenge_Failed_BurnsPenaltyRefundsAndCompletes(t *testing.T) {
 
 	task, found := k.GetTask(wctx, 0)
 	require.True(t, found)
-	require.Equal(t, uint64(2), task.Status)
+	require.Equal(t, types.TaskStatusCompleted, task.Status)
 
 	params := k.GetParams(ctx)
 	penalty := params.ChallengeDeposit * params.ChallengerSlashPercent / 100
@@ -72,7 +72,7 @@ func TestAutoFinalizeSubmittedTasks(t *testing.T) {
 	taskID := k.AppendTask(ctx, types.Task{
 		Creator:                 sample.AccAddress(),
 		Bounty:                  55,
-		Status:                  1,
+		Status:                  types.TaskStatusRevealed,
 		Worker:                  sample.AccAddress(),
 		ResultHash:              "h-auto",
 		ChallengeDeadlineHeight: 10,
@@ -84,5 +84,5 @@ func TestAutoFinalizeSubmittedTasks(t *testing.T) {
 
 	task, found := k.GetTask(futureCtx, taskID)
 	require.True(t, found)
-	require.Equal(t, uint64(2), task.Status)
+	require.Equal(t, types.TaskStatusCompleted, task.Status)
 }

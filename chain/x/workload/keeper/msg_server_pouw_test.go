@@ -28,7 +28,7 @@ func TestPoUWSubmitChallengeResolve(t *testing.T) {
 
 	task, found := k.GetTask(wctx, 0)
 	require.True(t, found)
-	require.Equal(t, uint64(1), task.Status)
+	require.Equal(t, types.TaskStatusRevealed, task.Status)
 	require.Equal(t, uint64(10)+k.GetParams(wctx).ChallengeWindowBlocks, task.ChallengeDeadlineHeight)
 
 	_, err = srv.ChallengeResult(wctx, &types.MsgChallengeResult{Creator: challenger, TaskId: 0, Reason: "bad"})
@@ -36,7 +36,7 @@ func TestPoUWSubmitChallengeResolve(t *testing.T) {
 
 	task, found = k.GetTask(wctx, 0)
 	require.True(t, found)
-	require.Equal(t, uint64(3), task.Status)
+	require.Equal(t, types.TaskStatusChallenged, task.Status)
 
 	ch, found := k.GetChallenge(wctx, task.ChallengeId)
 	require.True(t, found)
@@ -51,7 +51,7 @@ func TestPoUWSubmitChallengeResolve(t *testing.T) {
 	require.NoError(t, err)
 
 	task, _ = k.GetTask(wctx, 0)
-	require.Equal(t, uint64(4), task.Status)
+	require.Equal(t, types.TaskStatusSlashed, task.Status)
 	ch, _ = k.GetChallenge(wctx, task.ChallengeId)
 	require.Equal(t, uint64(1), ch.Status)
 }
@@ -95,7 +95,7 @@ func TestChallengeResult_SecondChallengeRejectedEvenWhenFirstChallengeIDIsZero(t
 
 	task, found := k.GetTask(wctx, 0)
 	require.True(t, found)
-	require.Equal(t, uint64(3), task.Status)
+	require.Equal(t, types.TaskStatusChallenged, task.Status)
 	require.Equal(t, uint64(0), task.ChallengeId) // first challenge id can be zero
 
 	_, err = srv.ChallengeResult(wctx, &types.MsgChallengeResult{Creator: challenger2, TaskId: 0})

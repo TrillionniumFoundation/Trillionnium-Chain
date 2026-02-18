@@ -29,13 +29,13 @@ func (k msgServer) SubmitResult(goCtx context.Context, msg *types.MsgSubmitResul
 	if err := ensureTaskStatus(task, types.TaskStatusOpen, "task is not open"); err != nil {
 		return nil, err
 	}
-	if err := ensureTaskTransition(task.Status, types.TaskStatusResultSubmitted); err != nil {
+	if err := ensureTaskTransition(task.Status, types.TaskStatusRevealed); err != nil {
 		return nil, err
 	}
 
 	task.Worker = msg.Creator
 	task.ResultHash = msg.ResultHash
-	task.Status = types.TaskStatusResultSubmitted
+	task.Status = types.TaskStatusRevealed
 	task.ChallengeDeadlineHeight = uint64(ctx.BlockHeight()) + params.ChallengeWindowBlocks
 	k.SetTask(ctx, task)
 
@@ -62,7 +62,7 @@ func (k msgServer) ChallengeResult(goCtx context.Context, msg *types.MsgChalleng
 	if !found {
 		return nil, errorsmod.Wrapf(sdkerrors.ErrKeyNotFound, "task %d not found", msg.TaskId)
 	}
-	if err := ensureTaskStatus(task, types.TaskStatusResultSubmitted, "task is not in result-submitted status"); err != nil {
+	if err := ensureTaskStatus(task, types.TaskStatusRevealed, "task is not in revealed status"); err != nil {
 		return nil, err
 	}
 	if task.ChallengeDeadlineHeight == 0 {

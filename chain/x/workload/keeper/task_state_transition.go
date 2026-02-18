@@ -9,14 +9,18 @@ import (
 
 var allowedTaskTransitions = map[uint64]map[uint64]bool{
 	types.TaskStatusOpen: {
-		types.TaskStatusAssigned:        true,
-		types.TaskStatusResultSubmitted: true, // legacy submit_result path
+		types.TaskStatusAssigned: true,
+		types.TaskStatusRevealed: true, // legacy submit_result path
+		types.TaskStatusCompleted: true, // privileged complete path from x/compute
 	},
 	types.TaskStatusAssigned: {
-		types.TaskStatusResultSubmitted: true,
-		types.TaskStatusOpen:            true, // expired commit recovery
+		types.TaskStatusCommitted: true,
 	},
-	types.TaskStatusResultSubmitted: {
+	types.TaskStatusCommitted: {
+		types.TaskStatusRevealed: true,
+		types.TaskStatusOpen:     true, // expired commit recovery
+	},
+	types.TaskStatusRevealed: {
 		types.TaskStatusChallenged: true,
 		types.TaskStatusCompleted:  true, // auto finalize
 	},

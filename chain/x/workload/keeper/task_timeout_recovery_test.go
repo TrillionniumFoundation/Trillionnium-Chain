@@ -24,7 +24,7 @@ func TestAutoRecoverExpiredCommits(t *testing.T) {
 	task.CommitHash = "stale-commit"
 	task.CommitHeight = 100
 	task.RevealDeadlineHeight = 120
-	task.Status = types.TaskStatusAssigned
+	task.Status = types.TaskStatusCommitted
 	k.SetTask(wctx, task)
 
 	err = k.AutoRecoverExpiredCommits(sdk.UnwrapSDKContext(wctx).WithBlockHeight(121))

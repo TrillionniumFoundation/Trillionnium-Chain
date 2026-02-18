@@ -56,7 +56,7 @@ func TestCompleteJob_Integration(t *testing.T) {
 
 		task, found := workloadK.GetTask(ctx, job.TaskId)
 		require.True(t, found)
-		require.EqualValues(t, 2, task.Status)
+		require.EqualValues(t, workloadtypes.TaskStatusCompleted, task.Status)
 		require.Equal(t, worker, task.Worker)
 		require.Equal(t, "sha256:result-hash", task.ResultHash)
 	})

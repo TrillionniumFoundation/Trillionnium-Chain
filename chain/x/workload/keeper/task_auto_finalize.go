@@ -18,7 +18,7 @@ func (k Keeper) AutoFinalizeSubmittedTasks(ctx context.Context) error {
 	}
 
 	for _, task := range tasks {
-		if task.Status != types.TaskStatusResultSubmitted {
+		if task.Status != types.TaskStatusRevealed {
 			continue
 		}
 		if currentHeight <= task.ChallengeDeadlineHeight {
@@ -45,7 +45,7 @@ func (k Keeper) AutoRecoverExpiredCommits(ctx context.Context) error {
 	}
 
 	for _, task := range tasks {
-		if task.Status != types.TaskStatusAssigned {
+		if task.Status != types.TaskStatusCommitted {
 			continue
 		}
 		if task.CommitHash == "" || task.RevealDeadlineHeight == 0 {

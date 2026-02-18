@@ -37,10 +37,14 @@ func (k msgServer) CommitResult(goCtx context.Context, msg *types.MsgCommitResul
 	}
 
 	params := k.GetParams(ctx)
+	if err := ensureTaskTransition(task.Status, types.TaskStatusCommitted); err != nil {
+		return nil, err
+	}
 	task.Worker = msg.Creator
 	task.CommitHash = msg.CommitHash
 	task.CommitHeight = uint64(ctx.BlockHeight())
 	task.RevealDeadlineHeight = uint64(ctx.BlockHeight()) + params.RevealWindowBlocks
+	task.Status = types.TaskStatusCommitted
 	k.SetTask(ctx, task)
 
 	ctx.EventManager().EmitEvent(
@@ -68,7 +72,7 @@ func (k msgServer) RevealResult(goCtx context.Context, msg *types.MsgRevealResul
 	if !found {
 		return nil, errorsmod.Wrapf(sdkerrors.ErrKeyNotFound, "task %d not found", msg.TaskId)
 	}
-	if err := ensureTaskStatus(task, types.TaskStatusAssigned, "task is not assigned for reveal"); err != nil {
+	if err := ensureTaskStatus(task, types.TaskStatusCommitted, "task is not committed for reveal"); err != nil {
 		return nil, err
 	}
 	if task.Worker != msg.Creator {
@@ -87,12 +91,12 @@ func (k msgServer) RevealResult(goCtx context.Context, msg *types.MsgRevealResul
 	}
 
 	params := k.GetParams(ctx)
-	if err := ensureTaskTransition(task.Status, types.TaskStatusResultSubmitted); err != nil {
+	if err := ensureTaskTransition(task.Status, types.TaskStatusRevealed); err != nil {
 		return nil, err
 	}
 	task.ResultHash = msg.ResultHash
 	task.ResultUri = msg.ResultUri
-	task.Status = types.TaskStatusResultSubmitted
+	task.Status = types.TaskStatusRevealed
 	task.ChallengeDeadlineHeight = uint64(ctx.BlockHeight()) + params.ChallengeWindowBlocks
 	k.SetTask(ctx, task)
 
