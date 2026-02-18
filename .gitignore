@@ -22,3 +22,4 @@
 /chain/proto/buf.gen.local.*.yaml
 /chain/third_party/
 /chain/vendor/
+/chain/_proto_vendor_backup/

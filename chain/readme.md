@@ -42,6 +42,12 @@ curl https://get.ignite.com/username/chain@latest! | sudo bash
 ```
 `username/chain` should match the `username` and `repo_name` of the Github repository to which the source code was pushed. Learn more about [the install process](https://github.com/allinbits/starport-installer).
 
+## Proto dependency migration note
+
+- Temporary local backup: `chain/_proto_vendor_backup/` (gitignored).
+- Keep it for 24-48h until CI and at least one clean-machine `ignite generate proto-go` pass.
+- Safe to delete after validation.
+
 ## PoUW V1 Docs
 
 - Design + interface draft: `docs/pouw-settlement-v1.md`
