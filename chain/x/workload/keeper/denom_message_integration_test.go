@@ -91,7 +91,7 @@ func TestDenomParamUsedInTaskAndSlash(t *testing.T) {
 	_, err := srv.CreateTask(wctx, &types.MsgCreateTask{Creator: creator, Bounty: 123})
 	require.NoError(t, err)
 
-	_, err = srv.UpdateTask(wctx, &types.MsgUpdateTask{Creator: worker, Id: 0, Status: 2})
+	_, err = srv.UpdateTask(wctx, &types.MsgUpdateTask{Creator: k.GetAuthority(), Id: 0, Status: 2})
 	require.NoError(t, err)
 	require.Len(t, bank.lastBurn, 1)
 	require.Equal(t, "ufoo", bank.lastBurn[0].Denom)

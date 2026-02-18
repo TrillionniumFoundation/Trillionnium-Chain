@@ -74,6 +74,9 @@ func (k msgServer) UpdateTask(goCtx context.Context, msg *types.MsgUpdateTask) (
 	}
 
 	ctx := sdk.UnwrapSDKContext(goCtx)
+	if msg.Creator != k.GetAuthority() {
+		return nil, errorsmod.Wrap(types.ErrUnauthorizedSlash, "update-task is deprecated and restricted to module authority")
+	}
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent("workload_deprecated_path",
 			sdk.NewAttribute("method", "UpdateTask"),

@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"chain/testutil/sample"
+	"chain/x/workload/keeper"
 	"chain/x/workload/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -26,7 +27,7 @@ func TestTaskMsgServerUpdate(t *testing.T) {
 	creator := sample.AccAddress()
 	other := sample.AccAddress()
 
-	t.Run("Completed", func(t *testing.T) {
+	t.Run("AuthorityOnly", func(t *testing.T) {
 		_, srv, ctx := setupMsgServer(t)
 		wctx := sdk.UnwrapSDKContext(ctx)
 
@@ -34,14 +35,27 @@ func TestTaskMsgServerUpdate(t *testing.T) {
 		require.NoError(t, err)
 
 		_, err = srv.UpdateTask(wctx, &types.MsgUpdateTask{Creator: other, Id: 0, Status: 1})
+		require.ErrorIs(t, err, types.ErrUnauthorizedSlash)
+	})
+
+	t.Run("AuthorityCanUpdate", func(t *testing.T) {
+		k, _, ctx := setupMsgServer(t)
+		srv := keeper.NewMsgServerImpl(k)
+		wctx := sdk.UnwrapSDKContext(ctx)
+
+		_, err := srv.CreateTask(wctx, &types.MsgCreateTask{Creator: creator, Bounty: 1})
+		require.NoError(t, err)
+
+		_, err = srv.UpdateTask(wctx, &types.MsgUpdateTask{Creator: k.GetAuthority(), Id: 0, Status: 1})
 		require.NoError(t, err)
 	})
 
 	t.Run("KeyNotFound", func(t *testing.T) {
-		_, srv, ctx := setupMsgServer(t)
+		k, _, ctx := setupMsgServer(t)
+		srv := keeper.NewMsgServerImpl(k)
 		wctx := sdk.UnwrapSDKContext(ctx)
 
-		_, err := srv.UpdateTask(wctx, &types.MsgUpdateTask{Creator: creator, Id: 99, Status: 1})
+		_, err := srv.UpdateTask(wctx, &types.MsgUpdateTask{Creator: k.GetAuthority(), Id: 99, Status: 1})
 		require.ErrorIs(t, err, sdkerrors.ErrKeyNotFound)
 	})
 }
