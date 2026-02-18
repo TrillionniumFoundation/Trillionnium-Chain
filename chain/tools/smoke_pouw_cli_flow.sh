@@ -13,6 +13,7 @@ need_cmd() {
 
 need_cmd jq
 need_cmd curl
+need_cmd shasum
 [ -x "$BIN" ] || { echo "[ERR] chaind not found at $BIN" >&2; exit 1; }
 
 assert_tx_ok() {
@@ -50,10 +51,10 @@ wait_tx_commit() {
   exit 1
 }
 
-echo "[1/9] Reset chain"
+echo "[1/11] Reset chain"
 "$BIN" tendermint unsafe-reset-all --home "$HOME_DIR" >/dev/null
 
-echo "[2/9] Start node"
+echo "[2/11] Start node"
 "$BIN" start --home "$HOME_DIR" --minimum-gas-prices 0stake >/tmp/trnm-smoke-cli-node.log 2>&1 &
 NODE_PID=$!
 trap 'kill $NODE_PID >/dev/null 2>&1 || true' EXIT
@@ -78,14 +79,14 @@ done
 ALICE="$($BIN keys show alice -a --keyring-backend test --home "$HOME_DIR")"
 BOB="$($BIN keys show bob -a --keyring-backend test --home "$HOME_DIR")"
 
-echo "[3/9] Register worker (bob)"
+echo "[3/11] Register worker (bob)"
 "$BIN" tx workload register-worker node-bob ipfs://bob \
   --from bob --chain-id "$CHAIN_ID" --home "$HOME_DIR" --keyring-backend test \
   --yes --broadcast-mode sync --fees "$FEE" -o json >/tmp/trnm-smoke-cli-register.json
 assert_tx_ok /tmp/trnm-smoke-cli-register.json
 wait_tx_commit /tmp/trnm-smoke-cli-register.json
 
-echo "[4/9] Create task (alice)"
+echo "[4/11] Create task (alice)"
 "$BIN" tx workload create-task ipfs://task-cli 500 0 none none \
   --from alice --chain-id "$CHAIN_ID" --home "$HOME_DIR" --keyring-backend test \
   --yes --broadcast-mode sync --fees "$FEE" -o json >/tmp/trnm-smoke-cli-create.json
@@ -94,21 +95,39 @@ wait_tx_commit /tmp/trnm-smoke-cli-create.json
 TASK_TOTAL="$($BIN query workload list-task --home "$HOME_DIR" -o json | jq -r '((.Task // .task // [])|length)')"
 TASK_ID=$((TASK_TOTAL - 1))
 
-echo "[5/9] Submit result (bob)"
-"$BIN" tx workload submit-result "$TASK_ID" result://ok ipfs://result-cli \
+echo "[5/11] Accept task (bob)"
+"$BIN" tx workload accept-task "$TASK_ID" \
   --from bob --chain-id "$CHAIN_ID" --home "$HOME_DIR" --keyring-backend test \
-  --yes --broadcast-mode sync --fees "$FEE" -o json >/tmp/trnm-smoke-cli-submit.json
-assert_tx_ok /tmp/trnm-smoke-cli-submit.json
-wait_tx_commit /tmp/trnm-smoke-cli-submit.json
+  --yes --broadcast-mode sync --fees "$FEE" -o json >/tmp/trnm-smoke-cli-accept.json
+assert_tx_ok /tmp/trnm-smoke-cli-accept.json
+wait_tx_commit /tmp/trnm-smoke-cli-accept.json
 
-echo "[6/9] Challenge result (alice)"
+RESULT_HASH="result://ok"
+REVEAL_SALT="salt-cli"
+COMMIT_HASH="$(printf "%s" "${TASK_ID}|${RESULT_HASH}|${REVEAL_SALT}|${BOB}" | shasum -a 256 | awk '{print $1}')"
+
+echo "[6/11] Commit result (bob)"
+"$BIN" tx workload commit-result "$TASK_ID" "$COMMIT_HASH" \
+  --from bob --chain-id "$CHAIN_ID" --home "$HOME_DIR" --keyring-backend test \
+  --yes --broadcast-mode sync --fees "$FEE" -o json >/tmp/trnm-smoke-cli-commit.json
+assert_tx_ok /tmp/trnm-smoke-cli-commit.json
+wait_tx_commit /tmp/trnm-smoke-cli-commit.json
+
+echo "[7/11] Reveal result (bob)"
+"$BIN" tx workload reveal-result "$TASK_ID" "$RESULT_HASH" ipfs://result-cli "$REVEAL_SALT" \
+  --from bob --chain-id "$CHAIN_ID" --home "$HOME_DIR" --keyring-backend test \
+  --yes --broadcast-mode sync --fees "$FEE" -o json >/tmp/trnm-smoke-cli-reveal.json
+assert_tx_ok /tmp/trnm-smoke-cli-reveal.json
+wait_tx_commit /tmp/trnm-smoke-cli-reveal.json
+
+echo "[8/11] Challenge result (alice)"
 "$BIN" tx workload challenge-result "$TASK_ID" "challenge-cli" ipfs://evidence-cli \
   --from alice --chain-id "$CHAIN_ID" --home "$HOME_DIR" --keyring-backend test \
   --yes --broadcast-mode sync --fees "$FEE" -o json >/tmp/trnm-smoke-cli-challenge.json
 assert_tx_ok /tmp/trnm-smoke-cli-challenge.json
 wait_tx_commit /tmp/trnm-smoke-cli-challenge.json
 
-echo "[7/9] Query task/challenge"
+echo "[9/11] Query task/challenge"
 TASK_JSON="$($BIN query workload show-task "$TASK_ID" --home "$HOME_DIR" -o json)"
 STATUS="$(echo "$TASK_JSON" | jq -r '(.Task.status // .task.status // 0)')"
 CHALLENGE_LIST_JSON="$($BIN query workload list-challenge --home "$HOME_DIR" -o json)"
@@ -116,11 +135,11 @@ CHALLENGE_COUNT="$(echo "$CHALLENGE_LIST_JSON" | jq -r '((.challenge // .Challen
 CHALLENGE_ID="$(echo "$CHALLENGE_LIST_JSON" | jq -r '((.challenge // .Challenge // [])[0].id // 0)')"
 CHALLENGER="$(echo "$CHALLENGE_LIST_JSON" | jq -r '((.challenge // .Challenge // [])[0].challenger // "")')"
 
-[ "$STATUS" = "3" ] || { echo "[ERR] expected challenged status=3 got=$STATUS" >&2; exit 1; }
+[ "$STATUS" = "4" ] || { echo "[ERR] expected challenged status=4 got=$STATUS" >&2; exit 1; }
 [ "$CHALLENGE_COUNT" -gt 0 ] || { echo "[ERR] no challenge found in list-challenge" >&2; exit 1; }
 [ "$CHALLENGER" = "$ALICE" ] || { echo "[ERR] challenger mismatch" >&2; exit 1; }
 
-echo "[8/9] Resolve attempt by non-authority (expected fail)"
+echo "[10/11] Resolve attempt by non-authority (expected fail)"
 "$BIN" tx workload resolve-challenge "$TASK_ID" true result://final "manual" \
   --from alice --chain-id "$CHAIN_ID" --home "$HOME_DIR" --keyring-backend test \
   --yes --broadcast-mode sync --fees "$FEE" -o json >/tmp/trnm-smoke-cli-resolve.json
@@ -143,7 +162,7 @@ if [ "$RESOLVE_CODE" = "0" ]; then
   exit 1
 fi
 
-echo "[9/9] PASS"
+echo "[11/11] PASS"
 echo "    task_id=$TASK_ID status=$STATUS challenge_id=$CHALLENGE_ID"
 echo "    resolve non-authority rejected as expected"
 echo "    node log: /tmp/trnm-smoke-cli-node.log"

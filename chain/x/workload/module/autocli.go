@@ -96,6 +96,12 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "nodeId"}, {ProtoField: "ipfsAddr"}},
 				},
 				{
+					RpcMethod:      "AcceptTask",
+					Use:            "accept-task [task-id]",
+					Short:          "Accept and assign a task to worker",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "taskId"}},
+				},
+				{
 					RpcMethod:      "SlashWorker",
 					Use:            "slash-worker [worker] [slash-percent]",
 					Short:          "Send a slash-worker tx",
@@ -126,9 +132,21 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "worker"}, {ProtoField: "extraBlocks"}},
 				},
 				{
+					RpcMethod:      "CommitResult",
+					Use:            "commit-result [task-id] [commit-hash]",
+					Short:          "Commit result hash preimage",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "taskId"}, {ProtoField: "commitHash"}},
+				},
+				{
+					RpcMethod:      "RevealResult",
+					Use:            "reveal-result [task-id] [result-hash] [result-uri] [reveal-salt]",
+					Short:          "Reveal committed result",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "taskId"}, {ProtoField: "resultHash"}, {ProtoField: "resultUri"}, {ProtoField: "revealSalt"}},
+				},
+				{
 					RpcMethod:      "SubmitResult",
 					Use:            "submit-result [task-id] [result-hash] [result-uri]",
-					Short:          "Submit task result and open challenge window",
+					Short:          "(legacy) submit task result and open challenge window",
 					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "taskId"}, {ProtoField: "resultHash"}, {ProtoField: "resultUri"}},
 				},
 				{
