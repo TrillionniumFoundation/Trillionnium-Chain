@@ -2,7 +2,7 @@ version: 1
 accounts:
 - name: alice
   coins:
-  - 20000utrnm
+  - 200000utrnm
   - 200000000stake
 - name: bob
   coins:
@@ -19,3 +19,5 @@ faucet:
 validators:
 - name: alice
   bonded: 100000000stake
+build:
+  main: ./cmd/chaind
