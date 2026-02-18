@@ -12,11 +12,11 @@ REQS="${REQS:-cpu}"
 
 log() { printf "\n[%s] %s\n" "$(date +%H:%M:%S)" "$*"; }
 
-latest_task_id() {
-  local attempt=0 out
-  while (( attempt < 6 )); do
+workload_stats() {
+  local attempt=0 out rc
+  while (( attempt < 10 )); do
     set +e
-    out="$($BIN query workload list-task -o json --node "$NODE" --home "$HOME_DIR" 2>/dev/null | python3 -c 'import json,sys; obj=json.load(sys.stdin); ids=[int(t.get("id",0)) for t in obj.get("Task",[]) if str(t.get("id","0")).isdigit()]; print(max(ids) if ids else 0)')"
+    out="$($BIN query workload list-task -o json --node "$NODE" --home "$HOME_DIR" 2>/dev/null | python3 -c 'import json,sys; obj=json.load(sys.stdin); ids=[int(t.get("id",0)) for t in obj.get("Task",[]) if str(t.get("id","0")).isdigit()]; total=int(obj.get("pagination",{}).get("total",0)); print(f"{max(ids) if ids else 0} {total}")')"
     rc=$?
     set -e
     if [[ $rc -eq 0 && -n "$out" ]]; then
@@ -24,9 +24,17 @@ latest_task_id() {
       return 0
     fi
     ((attempt++))
-    sleep 0.6
+    sleep 0.8
   done
   return 1
+}
+
+latest_task_id() {
+  workload_stats | awk '{print $1}'
+}
+
+latest_task_total() {
+  workload_stats | awk '{print $2}'
 }
 
 task_status() {
@@ -51,7 +59,8 @@ pkill -f "main.py start" >/dev/null 2>&1 || true
 rm -f "$ROOT/worker/.worker.lock"
 
 before_id=$(latest_task_id)
-log "Latest task id before submit: $before_id"
+before_total=$(latest_task_total)
+log "Latest task before submit: id=$before_id total=$before_total"
 
 set +e
 SUBMIT_OUT="$($BIN tx workload create-task "$TASK_PATH" 0 0 "" "" \
@@ -65,15 +74,17 @@ if [[ $SUBMIT_RC -ne 0 ]] || ! grep -q '"code":0' <<<"${SUBMIT_OUT// /}"; then
 fi
 
 after_id="$before_id"
-for _ in 1 2 3 4 5; do
-  sleep 0.8
+after_total="$before_total"
+for _ in 1 2 3 4 5 6 7 8; do
+  sleep 0.9
+  after_total=$(latest_task_total || echo "$before_total")
   after_id=$(latest_task_id || echo "$before_id")
-  if [[ "$after_id" -gt "$before_id" ]]; then
+  if [[ "$after_total" -gt "$before_total" || "$after_id" -gt "$before_id" ]]; then
     break
   fi
 done
-if [[ "$after_id" -le "$before_id" ]]; then
-  echo "❌ No new task detected after submit"
+if [[ "$after_total" -le "$before_total" && "$after_id" -le "$before_id" ]]; then
+  echo "❌ No new task detected after submit (id=$after_id total=$after_total)"
   exit 1
 fi
 
