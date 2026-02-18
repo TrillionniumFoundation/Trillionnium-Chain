@@ -1,0 +1,24 @@
+# macOS
+.DS_Store
+
+# Build artifacts
+/build/
+/dist/
+
+# Runtime logs
+*.log
+
+# Local runtime data
+/data/
+
+# Worker local state
+/worker/.worker.lock
+/worker/config.yaml
+/worker/proto_out/
+/worker/worker.log
+/worker/worker_state.json
+
+# Local chain proto/codegen artifacts
+/chain/proto/buf.gen.local.*.yaml
+/chain/third_party/
+/chain/vendor/
