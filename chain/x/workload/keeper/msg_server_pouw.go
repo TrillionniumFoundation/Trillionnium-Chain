@@ -134,9 +134,22 @@ func (k msgServer) ResolveChallenge(goCtx context.Context, msg *types.MsgResolve
 		return nil, err
 	}
 
-	if msg.ChallengeSucceeded {
-		task.Status = types.TaskStatusSlashed
-		challenge.Status = types.ChallengeStatusSucceeded
+	resolveOut, err := k.disputeResolver.Resolve(ctx, types.DisputeResolveInput{
+		Task:               task,
+		Challenge:          challenge,
+		ChallengeSucceeded: msg.ChallengeSucceeded,
+		FinalResultHash:    msg.FinalResultHash,
+		Memo:               msg.Memo,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	challenge.Status = resolveOut.ChallengeStatus
+	challenge.ResolvedHeight = uint64(ctx.BlockHeight())
+
+	if resolveOut.TaskStatus == types.TaskStatusSlashed {
+		task.Status = resolveOut.TaskStatus
 		if task.Worker != "" {
 			_, err := k.SlashWorker(goCtx, &types.MsgSlashWorker{
 				Creator:      msg.Creator,
@@ -153,14 +166,10 @@ func (k msgServer) ResolveChallenge(goCtx context.Context, msg *types.MsgResolve
 				return nil, err
 			}
 		}
-		if msg.FinalResultHash != "" {
-			task.ResultHash = msg.FinalResultHash
-		}
-		challenge.ResolvedHeight = uint64(ctx.BlockHeight())
-		k.SetChallenge(ctx, challenge)
+		task.ResultHash = resolveOut.FinalResultHash
 		k.SetTask(ctx, task)
+		k.SetChallenge(ctx, challenge)
 	} else {
-		challenge.Status = types.ChallengeStatusRejected
 		if challenge.Deposit > 0 {
 			penalty := challenge.Deposit * params.ChallengerSlashPercent / 100
 			refund := challenge.Deposit - penalty
@@ -179,14 +188,9 @@ func (k msgServer) ResolveChallenge(goCtx context.Context, msg *types.MsgResolve
 			}
 		}
 
-		finalHash := task.ResultHash
-		if msg.FinalResultHash != "" {
-			finalHash = msg.FinalResultHash
-		}
-		if err := k.CompleteTask(ctx, task.Id, task.Worker, finalHash); err != nil {
+		if err := k.CompleteTask(ctx, task.Id, task.Worker, resolveOut.FinalResultHash); err != nil {
 			return nil, err
 		}
-		challenge.ResolvedHeight = uint64(ctx.BlockHeight())
 		k.SetChallenge(ctx, challenge)
 	}
 	ctx.EventManager().EmitEvent(

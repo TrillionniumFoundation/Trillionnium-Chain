@@ -21,8 +21,9 @@ type (
 		// should be the x/gov module account.
 		authority string
 
-		bankKeeper    types.BankKeeper
-		stakingKeeper types.StakingKeeper
+		bankKeeper      types.BankKeeper
+		stakingKeeper   types.StakingKeeper
+		disputeResolver types.DisputeResolver
 	}
 )
 
@@ -40,13 +41,13 @@ func NewKeeper(
 	}
 
 	return Keeper{
-		cdc:          cdc,
-		storeService: storeService,
-		authority:    authority,
-		logger:       logger,
-
-		bankKeeper:    bankKeeper,
-		stakingKeeper: stakingKeeper,
+		cdc:             cdc,
+		storeService:    storeService,
+		authority:       authority,
+		logger:          logger,
+		bankKeeper:      bankKeeper,
+		stakingKeeper:   stakingKeeper,
+		disputeResolver: authorityResolver{},
 	}
 }
 
@@ -58,4 +59,12 @@ func (k Keeper) GetAuthority() string {
 // Logger returns a module-specific logger.
 func (k Keeper) Logger() log.Logger {
 	return k.logger.With("module", fmt.Sprintf("x/%s", types.ModuleName))
+}
+
+func (k *Keeper) SetDisputeResolver(resolver types.DisputeResolver) {
+	if resolver == nil {
+		k.disputeResolver = authorityResolver{}
+		return
+	}
+	k.disputeResolver = resolver
 }
