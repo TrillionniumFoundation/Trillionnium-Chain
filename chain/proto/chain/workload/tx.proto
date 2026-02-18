@@ -28,6 +28,8 @@ service Msg {
   rpc RequestUnbonding  (MsgRequestUnbonding ) returns (MsgRequestUnbondingResponse );
   rpc FinalizeUnbonding (MsgFinalizeUnbonding) returns (MsgFinalizeUnbondingResponse);
   rpc ExtendUnbonding   (MsgExtendUnbonding  ) returns (MsgExtendUnbondingResponse  );
+  rpc CommitResult      (MsgCommitResult     ) returns (MsgCommitResultResponse     );
+  rpc RevealResult      (MsgRevealResult     ) returns (MsgRevealResultResponse     );
   rpc SubmitResult      (MsgSubmitResult     ) returns (MsgSubmitResultResponse     );
   rpc ChallengeResult   (MsgChallengeResult  ) returns (MsgChallengeResultResponse  );
   rpc ResolveChallenge  (MsgResolveChallenge ) returns (MsgResolveChallengeResponse );
@@ -132,6 +134,26 @@ message MsgExtendUnbonding {
 }
 
 message MsgExtendUnbondingResponse {}
+
+message MsgCommitResult {
+  option (cosmos.msg.v1.signer) = "creator";
+  string creator = 1;
+  uint64 taskId = 2;
+  string commitHash = 3;
+}
+
+message MsgCommitResultResponse {}
+
+message MsgRevealResult {
+  option (cosmos.msg.v1.signer) = "creator";
+  string creator = 1;
+  uint64 taskId = 2;
+  string resultHash = 3;
+  string resultUri = 4;
+  string revealSalt = 5;
+}
+
+message MsgRevealResultResponse {}
 
 message MsgSubmitResult {
   option (cosmos.msg.v1.signer) = "creator";

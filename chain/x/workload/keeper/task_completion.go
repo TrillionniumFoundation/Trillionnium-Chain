@@ -23,7 +23,7 @@ func (k Keeper) CompleteTask(ctx context.Context, taskID uint64, workerAddress s
 		return errorsmod.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("task %d not found", taskID))
 	}
 
-	if val.Status == 2 { // 2 = COMPLETED
+	if val.Status == types.TaskStatusCompleted {
 		return errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "task already completed")
 	}
 
@@ -39,7 +39,7 @@ func (k Keeper) CompleteTask(ctx context.Context, taskID uint64, workerAddress s
 		}
 	}
 
-	val.Status = 2 // COMPLETED
+	val.Status = types.TaskStatusCompleted
 	val.Worker = workerAddress
 	val.ResultHash = resultHash
 	k.SetTask(ctx, val)

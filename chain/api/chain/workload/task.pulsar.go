@@ -13,14 +13,21 @@ import (
 )
 
 var (
-	md_Task            protoreflect.MessageDescriptor
-	fd_Task_id         protoreflect.FieldDescriptor
-	fd_Task_ipfsHash   protoreflect.FieldDescriptor
-	fd_Task_bounty     protoreflect.FieldDescriptor
-	fd_Task_status     protoreflect.FieldDescriptor
-	fd_Task_worker     protoreflect.FieldDescriptor
-	fd_Task_resultHash protoreflect.FieldDescriptor
-	fd_Task_creator    protoreflect.FieldDescriptor
+	md_Task                         protoreflect.MessageDescriptor
+	fd_Task_id                      protoreflect.FieldDescriptor
+	fd_Task_ipfsHash                protoreflect.FieldDescriptor
+	fd_Task_bounty                  protoreflect.FieldDescriptor
+	fd_Task_status                  protoreflect.FieldDescriptor
+	fd_Task_worker                  protoreflect.FieldDescriptor
+	fd_Task_resultHash              protoreflect.FieldDescriptor
+	fd_Task_creator                 protoreflect.FieldDescriptor
+	fd_Task_challengeDeadlineHeight protoreflect.FieldDescriptor
+	fd_Task_challenger              protoreflect.FieldDescriptor
+	fd_Task_challengeId             protoreflect.FieldDescriptor
+	fd_Task_commitHash              protoreflect.FieldDescriptor
+	fd_Task_commitHeight            protoreflect.FieldDescriptor
+	fd_Task_revealDeadlineHeight    protoreflect.FieldDescriptor
+	fd_Task_resultUri               protoreflect.FieldDescriptor
 )
 
 func init() {
@@ -33,6 +40,13 @@ func init() {
 	fd_Task_worker = md_Task.Fields().ByName("worker")
 	fd_Task_resultHash = md_Task.Fields().ByName("resultHash")
 	fd_Task_creator = md_Task.Fields().ByName("creator")
+	fd_Task_challengeDeadlineHeight = md_Task.Fields().ByName("challengeDeadlineHeight")
+	fd_Task_challenger = md_Task.Fields().ByName("challenger")
+	fd_Task_challengeId = md_Task.Fields().ByName("challengeId")
+	fd_Task_commitHash = md_Task.Fields().ByName("commitHash")
+	fd_Task_commitHeight = md_Task.Fields().ByName("commitHeight")
+	fd_Task_revealDeadlineHeight = md_Task.Fields().ByName("revealDeadlineHeight")
+	fd_Task_resultUri = md_Task.Fields().ByName("resultUri")
 }
 
 var _ protoreflect.Message = (*fastReflection_Task)(nil)
@@ -142,6 +156,48 @@ func (x *fastReflection_Task) Range(f func(protoreflect.FieldDescriptor, protore
 			return
 		}
 	}
+	if x.ChallengeDeadlineHeight != uint64(0) {
+		value := protoreflect.ValueOfUint64(x.ChallengeDeadlineHeight)
+		if !f(fd_Task_challengeDeadlineHeight, value) {
+			return
+		}
+	}
+	if x.Challenger != "" {
+		value := protoreflect.ValueOfString(x.Challenger)
+		if !f(fd_Task_challenger, value) {
+			return
+		}
+	}
+	if x.ChallengeId != uint64(0) {
+		value := protoreflect.ValueOfUint64(x.ChallengeId)
+		if !f(fd_Task_challengeId, value) {
+			return
+		}
+	}
+	if x.CommitHash != "" {
+		value := protoreflect.ValueOfString(x.CommitHash)
+		if !f(fd_Task_commitHash, value) {
+			return
+		}
+	}
+	if x.CommitHeight != uint64(0) {
+		value := protoreflect.ValueOfUint64(x.CommitHeight)
+		if !f(fd_Task_commitHeight, value) {
+			return
+		}
+	}
+	if x.RevealDeadlineHeight != uint64(0) {
+		value := protoreflect.ValueOfUint64(x.RevealDeadlineHeight)
+		if !f(fd_Task_revealDeadlineHeight, value) {
+			return
+		}
+	}
+	if x.ResultUri != "" {
+		value := protoreflect.ValueOfString(x.ResultUri)
+		if !f(fd_Task_resultUri, value) {
+			return
+		}
+	}
 }
 
 // Has reports whether a field is populated.
@@ -171,6 +227,20 @@ func (x *fastReflection_Task) Has(fd protoreflect.FieldDescriptor) bool {
 		return x.ResultHash != ""
 	case "chain.workload.Task.creator":
 		return x.Creator != ""
+	case "chain.workload.Task.challengeDeadlineHeight":
+		return x.ChallengeDeadlineHeight != uint64(0)
+	case "chain.workload.Task.challenger":
+		return x.Challenger != ""
+	case "chain.workload.Task.challengeId":
+		return x.ChallengeId != uint64(0)
+	case "chain.workload.Task.commitHash":
+		return x.CommitHash != ""
+	case "chain.workload.Task.commitHeight":
+		return x.CommitHeight != uint64(0)
+	case "chain.workload.Task.revealDeadlineHeight":
+		return x.RevealDeadlineHeight != uint64(0)
+	case "chain.workload.Task.resultUri":
+		return x.ResultUri != ""
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.workload.Task"))
@@ -201,6 +271,20 @@ func (x *fastReflection_Task) Clear(fd protoreflect.FieldDescriptor) {
 		x.ResultHash = ""
 	case "chain.workload.Task.creator":
 		x.Creator = ""
+	case "chain.workload.Task.challengeDeadlineHeight":
+		x.ChallengeDeadlineHeight = uint64(0)
+	case "chain.workload.Task.challenger":
+		x.Challenger = ""
+	case "chain.workload.Task.challengeId":
+		x.ChallengeId = uint64(0)
+	case "chain.workload.Task.commitHash":
+		x.CommitHash = ""
+	case "chain.workload.Task.commitHeight":
+		x.CommitHeight = uint64(0)
+	case "chain.workload.Task.revealDeadlineHeight":
+		x.RevealDeadlineHeight = uint64(0)
+	case "chain.workload.Task.resultUri":
+		x.ResultUri = ""
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.workload.Task"))
@@ -238,6 +322,27 @@ func (x *fastReflection_Task) Get(descriptor protoreflect.FieldDescriptor) proto
 	case "chain.workload.Task.creator":
 		value := x.Creator
 		return protoreflect.ValueOfString(value)
+	case "chain.workload.Task.challengeDeadlineHeight":
+		value := x.ChallengeDeadlineHeight
+		return protoreflect.ValueOfUint64(value)
+	case "chain.workload.Task.challenger":
+		value := x.Challenger
+		return protoreflect.ValueOfString(value)
+	case "chain.workload.Task.challengeId":
+		value := x.ChallengeId
+		return protoreflect.ValueOfUint64(value)
+	case "chain.workload.Task.commitHash":
+		value := x.CommitHash
+		return protoreflect.ValueOfString(value)
+	case "chain.workload.Task.commitHeight":
+		value := x.CommitHeight
+		return protoreflect.ValueOfUint64(value)
+	case "chain.workload.Task.revealDeadlineHeight":
+		value := x.RevealDeadlineHeight
+		return protoreflect.ValueOfUint64(value)
+	case "chain.workload.Task.resultUri":
+		value := x.ResultUri
+		return protoreflect.ValueOfString(value)
 	default:
 		if descriptor.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.workload.Task"))
@@ -272,6 +377,20 @@ func (x *fastReflection_Task) Set(fd protoreflect.FieldDescriptor, value protore
 		x.ResultHash = value.Interface().(string)
 	case "chain.workload.Task.creator":
 		x.Creator = value.Interface().(string)
+	case "chain.workload.Task.challengeDeadlineHeight":
+		x.ChallengeDeadlineHeight = value.Uint()
+	case "chain.workload.Task.challenger":
+		x.Challenger = value.Interface().(string)
+	case "chain.workload.Task.challengeId":
+		x.ChallengeId = value.Uint()
+	case "chain.workload.Task.commitHash":
+		x.CommitHash = value.Interface().(string)
+	case "chain.workload.Task.commitHeight":
+		x.CommitHeight = value.Uint()
+	case "chain.workload.Task.revealDeadlineHeight":
+		x.RevealDeadlineHeight = value.Uint()
+	case "chain.workload.Task.resultUri":
+		x.ResultUri = value.Interface().(string)
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.workload.Task"))
@@ -306,6 +425,20 @@ func (x *fastReflection_Task) Mutable(fd protoreflect.FieldDescriptor) protorefl
 		panic(fmt.Errorf("field resultHash of message chain.workload.Task is not mutable"))
 	case "chain.workload.Task.creator":
 		panic(fmt.Errorf("field creator of message chain.workload.Task is not mutable"))
+	case "chain.workload.Task.challengeDeadlineHeight":
+		panic(fmt.Errorf("field challengeDeadlineHeight of message chain.workload.Task is not mutable"))
+	case "chain.workload.Task.challenger":
+		panic(fmt.Errorf("field challenger of message chain.workload.Task is not mutable"))
+	case "chain.workload.Task.challengeId":
+		panic(fmt.Errorf("field challengeId of message chain.workload.Task is not mutable"))
+	case "chain.workload.Task.commitHash":
+		panic(fmt.Errorf("field commitHash of message chain.workload.Task is not mutable"))
+	case "chain.workload.Task.commitHeight":
+		panic(fmt.Errorf("field commitHeight of message chain.workload.Task is not mutable"))
+	case "chain.workload.Task.revealDeadlineHeight":
+		panic(fmt.Errorf("field revealDeadlineHeight of message chain.workload.Task is not mutable"))
+	case "chain.workload.Task.resultUri":
+		panic(fmt.Errorf("field resultUri of message chain.workload.Task is not mutable"))
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.workload.Task"))
@@ -332,6 +465,20 @@ func (x *fastReflection_Task) NewField(fd protoreflect.FieldDescriptor) protoref
 	case "chain.workload.Task.resultHash":
 		return protoreflect.ValueOfString("")
 	case "chain.workload.Task.creator":
+		return protoreflect.ValueOfString("")
+	case "chain.workload.Task.challengeDeadlineHeight":
+		return protoreflect.ValueOfUint64(uint64(0))
+	case "chain.workload.Task.challenger":
+		return protoreflect.ValueOfString("")
+	case "chain.workload.Task.challengeId":
+		return protoreflect.ValueOfUint64(uint64(0))
+	case "chain.workload.Task.commitHash":
+		return protoreflect.ValueOfString("")
+	case "chain.workload.Task.commitHeight":
+		return protoreflect.ValueOfUint64(uint64(0))
+	case "chain.workload.Task.revealDeadlineHeight":
+		return protoreflect.ValueOfUint64(uint64(0))
+	case "chain.workload.Task.resultUri":
 		return protoreflect.ValueOfString("")
 	default:
 		if fd.IsExtension() {
@@ -427,6 +574,30 @@ func (x *fastReflection_Task) ProtoMethods() *protoiface.Methods {
 		if l > 0 {
 			n += 1 + l + runtime.Sov(uint64(l))
 		}
+		if x.ChallengeDeadlineHeight != 0 {
+			n += 1 + runtime.Sov(uint64(x.ChallengeDeadlineHeight))
+		}
+		l = len(x.Challenger)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.ChallengeId != 0 {
+			n += 1 + runtime.Sov(uint64(x.ChallengeId))
+		}
+		l = len(x.CommitHash)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.CommitHeight != 0 {
+			n += 1 + runtime.Sov(uint64(x.CommitHeight))
+		}
+		if x.RevealDeadlineHeight != 0 {
+			n += 1 + runtime.Sov(uint64(x.RevealDeadlineHeight))
+		}
+		l = len(x.ResultUri)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
 		if x.unknownFields != nil {
 			n += len(x.unknownFields)
 		}
@@ -455,6 +626,47 @@ func (x *fastReflection_Task) ProtoMethods() *protoiface.Methods {
 		if x.unknownFields != nil {
 			i -= len(x.unknownFields)
 			copy(dAtA[i:], x.unknownFields)
+		}
+		if len(x.ResultUri) > 0 {
+			i -= len(x.ResultUri)
+			copy(dAtA[i:], x.ResultUri)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.ResultUri)))
+			i--
+			dAtA[i] = 0x72
+		}
+		if x.RevealDeadlineHeight != 0 {
+			i = runtime.EncodeVarint(dAtA, i, uint64(x.RevealDeadlineHeight))
+			i--
+			dAtA[i] = 0x68
+		}
+		if x.CommitHeight != 0 {
+			i = runtime.EncodeVarint(dAtA, i, uint64(x.CommitHeight))
+			i--
+			dAtA[i] = 0x60
+		}
+		if len(x.CommitHash) > 0 {
+			i -= len(x.CommitHash)
+			copy(dAtA[i:], x.CommitHash)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.CommitHash)))
+			i--
+			dAtA[i] = 0x5a
+		}
+		if x.ChallengeId != 0 {
+			i = runtime.EncodeVarint(dAtA, i, uint64(x.ChallengeId))
+			i--
+			dAtA[i] = 0x50
+		}
+		if len(x.Challenger) > 0 {
+			i -= len(x.Challenger)
+			copy(dAtA[i:], x.Challenger)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.Challenger)))
+			i--
+			dAtA[i] = 0x4a
+		}
+		if x.ChallengeDeadlineHeight != 0 {
+			i = runtime.EncodeVarint(dAtA, i, uint64(x.ChallengeDeadlineHeight))
+			i--
+			dAtA[i] = 0x40
 		}
 		if len(x.Creator) > 0 {
 			i -= len(x.Creator)
@@ -733,6 +945,178 @@ func (x *fastReflection_Task) ProtoMethods() *protoiface.Methods {
 				}
 				x.Creator = string(dAtA[iNdEx:postIndex])
 				iNdEx = postIndex
+			case 8:
+				if wireType != 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field ChallengeDeadlineHeight", wireType)
+				}
+				x.ChallengeDeadlineHeight = 0
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					x.ChallengeDeadlineHeight |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+			case 9:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Challenger", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.Challenger = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 10:
+				if wireType != 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field ChallengeId", wireType)
+				}
+				x.ChallengeId = 0
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					x.ChallengeId |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+			case 11:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field CommitHash", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.CommitHash = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 12:
+				if wireType != 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field CommitHeight", wireType)
+				}
+				x.CommitHeight = 0
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					x.CommitHeight |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+			case 13:
+				if wireType != 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field RevealDeadlineHeight", wireType)
+				}
+				x.RevealDeadlineHeight = 0
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					x.RevealDeadlineHeight |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+			case 14:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field ResultUri", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.ResultUri = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
 			default:
 				iNdEx = preIndex
 				skippy, err := runtime.Skip(dAtA[iNdEx:])
@@ -786,13 +1170,20 @@ type Task struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id         uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	IpfsHash   string `protobuf:"bytes,2,opt,name=ipfsHash,proto3" json:"ipfsHash,omitempty"`
-	Bounty     uint64 `protobuf:"varint,3,opt,name=bounty,proto3" json:"bounty,omitempty"`
-	Status     uint64 `protobuf:"varint,4,opt,name=status,proto3" json:"status,omitempty"`
-	Worker     string `protobuf:"bytes,5,opt,name=worker,proto3" json:"worker,omitempty"`
-	ResultHash string `protobuf:"bytes,6,opt,name=resultHash,proto3" json:"resultHash,omitempty"`
-	Creator    string `protobuf:"bytes,7,opt,name=creator,proto3" json:"creator,omitempty"`
+	Id                      uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	IpfsHash                string `protobuf:"bytes,2,opt,name=ipfsHash,proto3" json:"ipfsHash,omitempty"`
+	Bounty                  uint64 `protobuf:"varint,3,opt,name=bounty,proto3" json:"bounty,omitempty"`
+	Status                  uint64 `protobuf:"varint,4,opt,name=status,proto3" json:"status,omitempty"`
+	Worker                  string `protobuf:"bytes,5,opt,name=worker,proto3" json:"worker,omitempty"`
+	ResultHash              string `protobuf:"bytes,6,opt,name=resultHash,proto3" json:"resultHash,omitempty"`
+	Creator                 string `protobuf:"bytes,7,opt,name=creator,proto3" json:"creator,omitempty"`
+	ChallengeDeadlineHeight uint64 `protobuf:"varint,8,opt,name=challengeDeadlineHeight,proto3" json:"challengeDeadlineHeight,omitempty"`
+	Challenger              string `protobuf:"bytes,9,opt,name=challenger,proto3" json:"challenger,omitempty"`
+	ChallengeId             uint64 `protobuf:"varint,10,opt,name=challengeId,proto3" json:"challengeId,omitempty"`
+	CommitHash              string `protobuf:"bytes,11,opt,name=commitHash,proto3" json:"commitHash,omitempty"`
+	CommitHeight            uint64 `protobuf:"varint,12,opt,name=commitHeight,proto3" json:"commitHeight,omitempty"`
+	RevealDeadlineHeight    uint64 `protobuf:"varint,13,opt,name=revealDeadlineHeight,proto3" json:"revealDeadlineHeight,omitempty"`
+	ResultUri               string `protobuf:"bytes,14,opt,name=resultUri,proto3" json:"resultUri,omitempty"`
 }
 
 func (x *Task) Reset() {
@@ -864,12 +1255,61 @@ func (x *Task) GetCreator() string {
 	return ""
 }
 
+func (x *Task) GetChallengeDeadlineHeight() uint64 {
+	if x != nil {
+		return x.ChallengeDeadlineHeight
+	}
+	return 0
+}
+
+func (x *Task) GetChallenger() string {
+	if x != nil {
+		return x.Challenger
+	}
+	return ""
+}
+
+func (x *Task) GetChallengeId() uint64 {
+	if x != nil {
+		return x.ChallengeId
+	}
+	return 0
+}
+
+func (x *Task) GetCommitHash() string {
+	if x != nil {
+		return x.CommitHash
+	}
+	return ""
+}
+
+func (x *Task) GetCommitHeight() uint64 {
+	if x != nil {
+		return x.CommitHeight
+	}
+	return 0
+}
+
+func (x *Task) GetRevealDeadlineHeight() uint64 {
+	if x != nil {
+		return x.RevealDeadlineHeight
+	}
+	return 0
+}
+
+func (x *Task) GetResultUri() string {
+	if x != nil {
+		return x.ResultUri
+	}
+	return ""
+}
+
 var File_chain_workload_task_proto protoreflect.FileDescriptor
 
 var file_chain_workload_task_proto_rawDesc = []byte{
 	0x0a, 0x19, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2f, 0x77, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64,
 	0x2f, 0x74, 0x61, 0x73, 0x6b, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x0e, 0x63, 0x68, 0x61,
-	0x69, 0x6e, 0x2e, 0x77, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0x22, 0xb4, 0x01, 0x0a, 0x04,
+	0x69, 0x6e, 0x2e, 0x77, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0x22, 0xc6, 0x03, 0x0a, 0x04,
 	0x54, 0x61, 0x73, 0x6b, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04,
 	0x52, 0x02, 0x69, 0x64, 0x12, 0x1a, 0x0a, 0x08, 0x69, 0x70, 0x66, 0x73, 0x48, 0x61, 0x73, 0x68,
 	0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x69, 0x70, 0x66, 0x73, 0x48, 0x61, 0x73, 0x68,
@@ -881,17 +1321,34 @@ var file_chain_workload_task_proto_rawDesc = []byte{
 	0x6c, 0x74, 0x48, 0x61, 0x73, 0x68, 0x18, 0x06, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0a, 0x72, 0x65,
 	0x73, 0x75, 0x6c, 0x74, 0x48, 0x61, 0x73, 0x68, 0x12, 0x18, 0x0a, 0x07, 0x63, 0x72, 0x65, 0x61,
 	0x74, 0x6f, 0x72, 0x18, 0x07, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x63, 0x72, 0x65, 0x61, 0x74,
-	0x6f, 0x72, 0x42, 0x99, 0x01, 0x0a, 0x12, 0x63, 0x6f, 0x6d, 0x2e, 0x63, 0x68, 0x61, 0x69, 0x6e,
-	0x2e, 0x77, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0x42, 0x09, 0x54, 0x61, 0x73, 0x6b, 0x50,
-	0x72, 0x6f, 0x74, 0x6f, 0x50, 0x01, 0x5a, 0x1f, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x73, 0x64,
-	0x6b, 0x2e, 0x69, 0x6f, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2f, 0x77,
-	0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0xa2, 0x02, 0x03, 0x43, 0x57, 0x58, 0xaa, 0x02, 0x0e,
-	0x43, 0x68, 0x61, 0x69, 0x6e, 0x2e, 0x57, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0xca, 0x02,
-	0x0e, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x5c, 0x57, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0xe2,
-	0x02, 0x1a, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x5c, 0x57, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64,
-	0x5c, 0x47, 0x50, 0x42, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0xea, 0x02, 0x0f, 0x43,
-	0x68, 0x61, 0x69, 0x6e, 0x3a, 0x3a, 0x57, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0x62, 0x06,
-	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x6f, 0x72, 0x12, 0x38, 0x0a, 0x17, 0x63, 0x68, 0x61, 0x6c, 0x6c, 0x65, 0x6e, 0x67, 0x65, 0x44,
+	0x65, 0x61, 0x64, 0x6c, 0x69, 0x6e, 0x65, 0x48, 0x65, 0x69, 0x67, 0x68, 0x74, 0x18, 0x08, 0x20,
+	0x01, 0x28, 0x04, 0x52, 0x17, 0x63, 0x68, 0x61, 0x6c, 0x6c, 0x65, 0x6e, 0x67, 0x65, 0x44, 0x65,
+	0x61, 0x64, 0x6c, 0x69, 0x6e, 0x65, 0x48, 0x65, 0x69, 0x67, 0x68, 0x74, 0x12, 0x1e, 0x0a, 0x0a,
+	0x63, 0x68, 0x61, 0x6c, 0x6c, 0x65, 0x6e, 0x67, 0x65, 0x72, 0x18, 0x09, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x0a, 0x63, 0x68, 0x61, 0x6c, 0x6c, 0x65, 0x6e, 0x67, 0x65, 0x72, 0x12, 0x20, 0x0a, 0x0b,
+	0x63, 0x68, 0x61, 0x6c, 0x6c, 0x65, 0x6e, 0x67, 0x65, 0x49, 0x64, 0x18, 0x0a, 0x20, 0x01, 0x28,
+	0x04, 0x52, 0x0b, 0x63, 0x68, 0x61, 0x6c, 0x6c, 0x65, 0x6e, 0x67, 0x65, 0x49, 0x64, 0x12, 0x1e,
+	0x0a, 0x0a, 0x63, 0x6f, 0x6d, 0x6d, 0x69, 0x74, 0x48, 0x61, 0x73, 0x68, 0x18, 0x0b, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x0a, 0x63, 0x6f, 0x6d, 0x6d, 0x69, 0x74, 0x48, 0x61, 0x73, 0x68, 0x12, 0x22,
+	0x0a, 0x0c, 0x63, 0x6f, 0x6d, 0x6d, 0x69, 0x74, 0x48, 0x65, 0x69, 0x67, 0x68, 0x74, 0x18, 0x0c,
+	0x20, 0x01, 0x28, 0x04, 0x52, 0x0c, 0x63, 0x6f, 0x6d, 0x6d, 0x69, 0x74, 0x48, 0x65, 0x69, 0x67,
+	0x68, 0x74, 0x12, 0x32, 0x0a, 0x14, 0x72, 0x65, 0x76, 0x65, 0x61, 0x6c, 0x44, 0x65, 0x61, 0x64,
+	0x6c, 0x69, 0x6e, 0x65, 0x48, 0x65, 0x69, 0x67, 0x68, 0x74, 0x18, 0x0d, 0x20, 0x01, 0x28, 0x04,
+	0x52, 0x14, 0x72, 0x65, 0x76, 0x65, 0x61, 0x6c, 0x44, 0x65, 0x61, 0x64, 0x6c, 0x69, 0x6e, 0x65,
+	0x48, 0x65, 0x69, 0x67, 0x68, 0x74, 0x12, 0x1c, 0x0a, 0x09, 0x72, 0x65, 0x73, 0x75, 0x6c, 0x74,
+	0x55, 0x72, 0x69, 0x18, 0x0e, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x72, 0x65, 0x73, 0x75, 0x6c,
+	0x74, 0x55, 0x72, 0x69, 0x42, 0x99, 0x01, 0x0a, 0x12, 0x63, 0x6f, 0x6d, 0x2e, 0x63, 0x68, 0x61,
+	0x69, 0x6e, 0x2e, 0x77, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0x42, 0x09, 0x54, 0x61, 0x73,
+	0x6b, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x50, 0x01, 0x5a, 0x1f, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73,
+	0x73, 0x64, 0x6b, 0x2e, 0x69, 0x6f, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x63, 0x68, 0x61, 0x69, 0x6e,
+	0x2f, 0x77, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0xa2, 0x02, 0x03, 0x43, 0x57, 0x58, 0xaa,
+	0x02, 0x0e, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x2e, 0x57, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64,
+	0xca, 0x02, 0x0e, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x5c, 0x57, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61,
+	0x64, 0xe2, 0x02, 0x1a, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x5c, 0x57, 0x6f, 0x72, 0x6b, 0x6c, 0x6f,
+	0x61, 0x64, 0x5c, 0x47, 0x50, 0x42, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0xea, 0x02,
+	0x0f, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x3a, 0x3a, 0x57, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64,
+	0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (

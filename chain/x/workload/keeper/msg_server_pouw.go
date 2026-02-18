@@ -11,32 +11,28 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
-const (
-	taskStatusOpen            uint64 = 0
-	taskStatusResultSubmitted uint64 = 1
-	taskStatusCompleted       uint64 = 2
-	taskStatusChallenged      uint64 = 3
-)
-
 func (k msgServer) SubmitResult(goCtx context.Context, msg *types.MsgSubmitResult) (*types.MsgSubmitResultResponse, error) {
 	if msg == nil {
 		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "request cannot be nil")
 	}
 
 	ctx := sdk.UnwrapSDKContext(goCtx)
+	params := k.GetParams(ctx)
+	if !params.AllowLegacySubmitResult {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "legacy submit_result is disabled; use commit_result + reveal_result")
+	}
 
 	task, found := k.GetTask(ctx, msg.TaskId)
 	if !found {
 		return nil, errorsmod.Wrapf(sdkerrors.ErrKeyNotFound, "task %d not found", msg.TaskId)
 	}
-	if task.Status != taskStatusOpen {
+	if task.Status != types.TaskStatusOpen {
 		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "task is not open")
 	}
 
-	params := k.GetParams(ctx)
 	task.Worker = msg.Creator
 	task.ResultHash = msg.ResultHash
-	task.Status = taskStatusResultSubmitted
+	task.Status = types.TaskStatusResultSubmitted
 	task.ChallengeDeadlineHeight = uint64(ctx.BlockHeight()) + params.ChallengeWindowBlocks
 	k.SetTask(ctx, task)
 
@@ -63,7 +59,7 @@ func (k msgServer) ChallengeResult(goCtx context.Context, msg *types.MsgChalleng
 	if !found {
 		return nil, errorsmod.Wrapf(sdkerrors.ErrKeyNotFound, "task %d not found", msg.TaskId)
 	}
-	if task.Status != taskStatusResultSubmitted {
+	if task.Status != types.TaskStatusResultSubmitted {
 		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "task is not in result-submitted status")
 	}
 	if uint64(ctx.BlockHeight()) > task.ChallengeDeadlineHeight {
@@ -86,7 +82,7 @@ func (k msgServer) ChallengeResult(goCtx context.Context, msg *types.MsgChalleng
 		TaskId:        task.Id,
 		Challenger:    msg.Creator,
 		Worker:        task.Worker,
-		Status:        0,
+		Status:        types.ChallengeStatusOpen,
 		Deposit:       params.ChallengeDeposit,
 		Reason:        msg.Reason,
 		EvidenceUri:   msg.EvidenceUri,
@@ -94,7 +90,7 @@ func (k msgServer) ChallengeResult(goCtx context.Context, msg *types.MsgChalleng
 	}
 	challengeID := k.AppendChallenge(ctx, challenge)
 
-	task.Status = taskStatusChallenged
+	task.Status = types.TaskStatusChallenged
 	task.Challenger = msg.Creator
 	task.ChallengeId = challengeID
 	k.SetTask(ctx, task)
@@ -123,7 +119,7 @@ func (k msgServer) ResolveChallenge(goCtx context.Context, msg *types.MsgResolve
 	if !found {
 		return nil, errorsmod.Wrapf(sdkerrors.ErrKeyNotFound, "task %d not found", msg.TaskId)
 	}
-	if task.Status != taskStatusChallenged {
+	if task.Status != types.TaskStatusChallenged {
 		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "task is not challenged")
 	}
 
@@ -139,8 +135,8 @@ func (k msgServer) ResolveChallenge(goCtx context.Context, msg *types.MsgResolve
 	}
 
 	if msg.ChallengeSucceeded {
-		task.Status = 4 // SLASHED
-		challenge.Status = 1
+		task.Status = types.TaskStatusSlashed
+		challenge.Status = types.ChallengeStatusSucceeded
 		if task.Worker != "" {
 			_, err := k.SlashWorker(goCtx, &types.MsgSlashWorker{
 				Creator:      msg.Creator,
@@ -164,7 +160,7 @@ func (k msgServer) ResolveChallenge(goCtx context.Context, msg *types.MsgResolve
 		k.SetChallenge(ctx, challenge)
 		k.SetTask(ctx, task)
 	} else {
-		challenge.Status = 2
+		challenge.Status = types.ChallengeStatusRejected
 		if challenge.Deposit > 0 {
 			penalty := challenge.Deposit * params.ChallengerSlashPercent / 100
 			refund := challenge.Deposit - penalty

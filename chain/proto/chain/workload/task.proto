@@ -14,4 +14,8 @@ message Task {
   uint64 challengeDeadlineHeight = 8;
   string challenger = 9;
   uint64 challengeId = 10;
+  string commitHash = 11;
+  uint64 commitHeight = 12;
+  uint64 revealDeadlineHeight = 13;
+  string resultUri = 14;
 }

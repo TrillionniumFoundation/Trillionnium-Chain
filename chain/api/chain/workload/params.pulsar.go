@@ -15,14 +15,26 @@ import (
 )
 
 var (
-	md_Params                protoreflect.MessageDescriptor
-	fd_Params_workload_denom protoreflect.FieldDescriptor
+	md_Params                                    protoreflect.MessageDescriptor
+	fd_Params_workload_denom                     protoreflect.FieldDescriptor
+	fd_Params_challenge_window_blocks            protoreflect.FieldDescriptor
+	fd_Params_challenge_deposit                  protoreflect.FieldDescriptor
+	fd_Params_challenger_slash_percent           protoreflect.FieldDescriptor
+	fd_Params_worker_slash_percent_on_bad_result protoreflect.FieldDescriptor
+	fd_Params_reveal_window_blocks               protoreflect.FieldDescriptor
+	fd_Params_allow_legacy_submit_result         protoreflect.FieldDescriptor
 )
 
 func init() {
 	file_chain_workload_params_proto_init()
 	md_Params = File_chain_workload_params_proto.Messages().ByName("Params")
 	fd_Params_workload_denom = md_Params.Fields().ByName("workload_denom")
+	fd_Params_challenge_window_blocks = md_Params.Fields().ByName("challenge_window_blocks")
+	fd_Params_challenge_deposit = md_Params.Fields().ByName("challenge_deposit")
+	fd_Params_challenger_slash_percent = md_Params.Fields().ByName("challenger_slash_percent")
+	fd_Params_worker_slash_percent_on_bad_result = md_Params.Fields().ByName("worker_slash_percent_on_bad_result")
+	fd_Params_reveal_window_blocks = md_Params.Fields().ByName("reveal_window_blocks")
+	fd_Params_allow_legacy_submit_result = md_Params.Fields().ByName("allow_legacy_submit_result")
 }
 
 var _ protoreflect.Message = (*fastReflection_Params)(nil)
@@ -96,6 +108,42 @@ func (x *fastReflection_Params) Range(f func(protoreflect.FieldDescriptor, proto
 			return
 		}
 	}
+	if x.ChallengeWindowBlocks != uint64(0) {
+		value := protoreflect.ValueOfUint64(x.ChallengeWindowBlocks)
+		if !f(fd_Params_challenge_window_blocks, value) {
+			return
+		}
+	}
+	if x.ChallengeDeposit != uint64(0) {
+		value := protoreflect.ValueOfUint64(x.ChallengeDeposit)
+		if !f(fd_Params_challenge_deposit, value) {
+			return
+		}
+	}
+	if x.ChallengerSlashPercent != uint64(0) {
+		value := protoreflect.ValueOfUint64(x.ChallengerSlashPercent)
+		if !f(fd_Params_challenger_slash_percent, value) {
+			return
+		}
+	}
+	if x.WorkerSlashPercentOnBadResult != uint64(0) {
+		value := protoreflect.ValueOfUint64(x.WorkerSlashPercentOnBadResult)
+		if !f(fd_Params_worker_slash_percent_on_bad_result, value) {
+			return
+		}
+	}
+	if x.RevealWindowBlocks != uint64(0) {
+		value := protoreflect.ValueOfUint64(x.RevealWindowBlocks)
+		if !f(fd_Params_reveal_window_blocks, value) {
+			return
+		}
+	}
+	if x.AllowLegacySubmitResult != false {
+		value := protoreflect.ValueOfBool(x.AllowLegacySubmitResult)
+		if !f(fd_Params_allow_legacy_submit_result, value) {
+			return
+		}
+	}
 }
 
 // Has reports whether a field is populated.
@@ -113,6 +161,18 @@ func (x *fastReflection_Params) Has(fd protoreflect.FieldDescriptor) bool {
 	switch fd.FullName() {
 	case "chain.workload.Params.workload_denom":
 		return x.WorkloadDenom != ""
+	case "chain.workload.Params.challenge_window_blocks":
+		return x.ChallengeWindowBlocks != uint64(0)
+	case "chain.workload.Params.challenge_deposit":
+		return x.ChallengeDeposit != uint64(0)
+	case "chain.workload.Params.challenger_slash_percent":
+		return x.ChallengerSlashPercent != uint64(0)
+	case "chain.workload.Params.worker_slash_percent_on_bad_result":
+		return x.WorkerSlashPercentOnBadResult != uint64(0)
+	case "chain.workload.Params.reveal_window_blocks":
+		return x.RevealWindowBlocks != uint64(0)
+	case "chain.workload.Params.allow_legacy_submit_result":
+		return x.AllowLegacySubmitResult != false
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.workload.Params"))
@@ -131,6 +191,18 @@ func (x *fastReflection_Params) Clear(fd protoreflect.FieldDescriptor) {
 	switch fd.FullName() {
 	case "chain.workload.Params.workload_denom":
 		x.WorkloadDenom = ""
+	case "chain.workload.Params.challenge_window_blocks":
+		x.ChallengeWindowBlocks = uint64(0)
+	case "chain.workload.Params.challenge_deposit":
+		x.ChallengeDeposit = uint64(0)
+	case "chain.workload.Params.challenger_slash_percent":
+		x.ChallengerSlashPercent = uint64(0)
+	case "chain.workload.Params.worker_slash_percent_on_bad_result":
+		x.WorkerSlashPercentOnBadResult = uint64(0)
+	case "chain.workload.Params.reveal_window_blocks":
+		x.RevealWindowBlocks = uint64(0)
+	case "chain.workload.Params.allow_legacy_submit_result":
+		x.AllowLegacySubmitResult = false
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.workload.Params"))
@@ -150,6 +222,24 @@ func (x *fastReflection_Params) Get(descriptor protoreflect.FieldDescriptor) pro
 	case "chain.workload.Params.workload_denom":
 		value := x.WorkloadDenom
 		return protoreflect.ValueOfString(value)
+	case "chain.workload.Params.challenge_window_blocks":
+		value := x.ChallengeWindowBlocks
+		return protoreflect.ValueOfUint64(value)
+	case "chain.workload.Params.challenge_deposit":
+		value := x.ChallengeDeposit
+		return protoreflect.ValueOfUint64(value)
+	case "chain.workload.Params.challenger_slash_percent":
+		value := x.ChallengerSlashPercent
+		return protoreflect.ValueOfUint64(value)
+	case "chain.workload.Params.worker_slash_percent_on_bad_result":
+		value := x.WorkerSlashPercentOnBadResult
+		return protoreflect.ValueOfUint64(value)
+	case "chain.workload.Params.reveal_window_blocks":
+		value := x.RevealWindowBlocks
+		return protoreflect.ValueOfUint64(value)
+	case "chain.workload.Params.allow_legacy_submit_result":
+		value := x.AllowLegacySubmitResult
+		return protoreflect.ValueOfBool(value)
 	default:
 		if descriptor.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.workload.Params"))
@@ -172,6 +262,18 @@ func (x *fastReflection_Params) Set(fd protoreflect.FieldDescriptor, value proto
 	switch fd.FullName() {
 	case "chain.workload.Params.workload_denom":
 		x.WorkloadDenom = value.Interface().(string)
+	case "chain.workload.Params.challenge_window_blocks":
+		x.ChallengeWindowBlocks = value.Uint()
+	case "chain.workload.Params.challenge_deposit":
+		x.ChallengeDeposit = value.Uint()
+	case "chain.workload.Params.challenger_slash_percent":
+		x.ChallengerSlashPercent = value.Uint()
+	case "chain.workload.Params.worker_slash_percent_on_bad_result":
+		x.WorkerSlashPercentOnBadResult = value.Uint()
+	case "chain.workload.Params.reveal_window_blocks":
+		x.RevealWindowBlocks = value.Uint()
+	case "chain.workload.Params.allow_legacy_submit_result":
+		x.AllowLegacySubmitResult = value.Bool()
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.workload.Params"))
@@ -194,6 +296,18 @@ func (x *fastReflection_Params) Mutable(fd protoreflect.FieldDescriptor) protore
 	switch fd.FullName() {
 	case "chain.workload.Params.workload_denom":
 		panic(fmt.Errorf("field workload_denom of message chain.workload.Params is not mutable"))
+	case "chain.workload.Params.challenge_window_blocks":
+		panic(fmt.Errorf("field challenge_window_blocks of message chain.workload.Params is not mutable"))
+	case "chain.workload.Params.challenge_deposit":
+		panic(fmt.Errorf("field challenge_deposit of message chain.workload.Params is not mutable"))
+	case "chain.workload.Params.challenger_slash_percent":
+		panic(fmt.Errorf("field challenger_slash_percent of message chain.workload.Params is not mutable"))
+	case "chain.workload.Params.worker_slash_percent_on_bad_result":
+		panic(fmt.Errorf("field worker_slash_percent_on_bad_result of message chain.workload.Params is not mutable"))
+	case "chain.workload.Params.reveal_window_blocks":
+		panic(fmt.Errorf("field reveal_window_blocks of message chain.workload.Params is not mutable"))
+	case "chain.workload.Params.allow_legacy_submit_result":
+		panic(fmt.Errorf("field allow_legacy_submit_result of message chain.workload.Params is not mutable"))
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.workload.Params"))
@@ -209,6 +323,18 @@ func (x *fastReflection_Params) NewField(fd protoreflect.FieldDescriptor) protor
 	switch fd.FullName() {
 	case "chain.workload.Params.workload_denom":
 		return protoreflect.ValueOfString("")
+	case "chain.workload.Params.challenge_window_blocks":
+		return protoreflect.ValueOfUint64(uint64(0))
+	case "chain.workload.Params.challenge_deposit":
+		return protoreflect.ValueOfUint64(uint64(0))
+	case "chain.workload.Params.challenger_slash_percent":
+		return protoreflect.ValueOfUint64(uint64(0))
+	case "chain.workload.Params.worker_slash_percent_on_bad_result":
+		return protoreflect.ValueOfUint64(uint64(0))
+	case "chain.workload.Params.reveal_window_blocks":
+		return protoreflect.ValueOfUint64(uint64(0))
+	case "chain.workload.Params.allow_legacy_submit_result":
+		return protoreflect.ValueOfBool(false)
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.workload.Params"))
@@ -282,6 +408,24 @@ func (x *fastReflection_Params) ProtoMethods() *protoiface.Methods {
 		if l > 0 {
 			n += 1 + l + runtime.Sov(uint64(l))
 		}
+		if x.ChallengeWindowBlocks != 0 {
+			n += 1 + runtime.Sov(uint64(x.ChallengeWindowBlocks))
+		}
+		if x.ChallengeDeposit != 0 {
+			n += 1 + runtime.Sov(uint64(x.ChallengeDeposit))
+		}
+		if x.ChallengerSlashPercent != 0 {
+			n += 1 + runtime.Sov(uint64(x.ChallengerSlashPercent))
+		}
+		if x.WorkerSlashPercentOnBadResult != 0 {
+			n += 1 + runtime.Sov(uint64(x.WorkerSlashPercentOnBadResult))
+		}
+		if x.RevealWindowBlocks != 0 {
+			n += 1 + runtime.Sov(uint64(x.RevealWindowBlocks))
+		}
+		if x.AllowLegacySubmitResult {
+			n += 2
+		}
 		if x.unknownFields != nil {
 			n += len(x.unknownFields)
 		}
@@ -310,6 +454,41 @@ func (x *fastReflection_Params) ProtoMethods() *protoiface.Methods {
 		if x.unknownFields != nil {
 			i -= len(x.unknownFields)
 			copy(dAtA[i:], x.unknownFields)
+		}
+		if x.AllowLegacySubmitResult {
+			i--
+			if x.AllowLegacySubmitResult {
+				dAtA[i] = 1
+			} else {
+				dAtA[i] = 0
+			}
+			i--
+			dAtA[i] = 0x38
+		}
+		if x.RevealWindowBlocks != 0 {
+			i = runtime.EncodeVarint(dAtA, i, uint64(x.RevealWindowBlocks))
+			i--
+			dAtA[i] = 0x30
+		}
+		if x.WorkerSlashPercentOnBadResult != 0 {
+			i = runtime.EncodeVarint(dAtA, i, uint64(x.WorkerSlashPercentOnBadResult))
+			i--
+			dAtA[i] = 0x28
+		}
+		if x.ChallengerSlashPercent != 0 {
+			i = runtime.EncodeVarint(dAtA, i, uint64(x.ChallengerSlashPercent))
+			i--
+			dAtA[i] = 0x20
+		}
+		if x.ChallengeDeposit != 0 {
+			i = runtime.EncodeVarint(dAtA, i, uint64(x.ChallengeDeposit))
+			i--
+			dAtA[i] = 0x18
+		}
+		if x.ChallengeWindowBlocks != 0 {
+			i = runtime.EncodeVarint(dAtA, i, uint64(x.ChallengeWindowBlocks))
+			i--
+			dAtA[i] = 0x10
 		}
 		if len(x.WorkloadDenom) > 0 {
 			i -= len(x.WorkloadDenom)
@@ -399,6 +578,121 @@ func (x *fastReflection_Params) ProtoMethods() *protoiface.Methods {
 				}
 				x.WorkloadDenom = string(dAtA[iNdEx:postIndex])
 				iNdEx = postIndex
+			case 2:
+				if wireType != 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field ChallengeWindowBlocks", wireType)
+				}
+				x.ChallengeWindowBlocks = 0
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					x.ChallengeWindowBlocks |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+			case 3:
+				if wireType != 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field ChallengeDeposit", wireType)
+				}
+				x.ChallengeDeposit = 0
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					x.ChallengeDeposit |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+			case 4:
+				if wireType != 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field ChallengerSlashPercent", wireType)
+				}
+				x.ChallengerSlashPercent = 0
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					x.ChallengerSlashPercent |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+			case 5:
+				if wireType != 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field WorkerSlashPercentOnBadResult", wireType)
+				}
+				x.WorkerSlashPercentOnBadResult = 0
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					x.WorkerSlashPercentOnBadResult |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+			case 6:
+				if wireType != 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field RevealWindowBlocks", wireType)
+				}
+				x.RevealWindowBlocks = 0
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					x.RevealWindowBlocks |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+			case 7:
+				if wireType != 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field AllowLegacySubmitResult", wireType)
+				}
+				var v int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					v |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				x.AllowLegacySubmitResult = bool(v != 0)
 			default:
 				iNdEx = preIndex
 				skippy, err := runtime.Skip(dAtA[iNdEx:])
@@ -453,7 +747,13 @@ type Params struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	WorkloadDenom string `protobuf:"bytes,1,opt,name=workload_denom,json=workloadDenom,proto3" json:"workload_denom,omitempty"`
+	WorkloadDenom                 string `protobuf:"bytes,1,opt,name=workload_denom,json=workloadDenom,proto3" json:"workload_denom,omitempty"`
+	ChallengeWindowBlocks         uint64 `protobuf:"varint,2,opt,name=challenge_window_blocks,json=challengeWindowBlocks,proto3" json:"challenge_window_blocks,omitempty"`
+	ChallengeDeposit              uint64 `protobuf:"varint,3,opt,name=challenge_deposit,json=challengeDeposit,proto3" json:"challenge_deposit,omitempty"`
+	ChallengerSlashPercent        uint64 `protobuf:"varint,4,opt,name=challenger_slash_percent,json=challengerSlashPercent,proto3" json:"challenger_slash_percent,omitempty"`
+	WorkerSlashPercentOnBadResult uint64 `protobuf:"varint,5,opt,name=worker_slash_percent_on_bad_result,json=workerSlashPercentOnBadResult,proto3" json:"worker_slash_percent_on_bad_result,omitempty"`
+	RevealWindowBlocks            uint64 `protobuf:"varint,6,opt,name=reveal_window_blocks,json=revealWindowBlocks,proto3" json:"reveal_window_blocks,omitempty"`
+	AllowLegacySubmitResult       bool   `protobuf:"varint,7,opt,name=allow_legacy_submit_result,json=allowLegacySubmitResult,proto3" json:"allow_legacy_submit_result,omitempty"`
 }
 
 func (x *Params) Reset() {
@@ -483,6 +783,48 @@ func (x *Params) GetWorkloadDenom() string {
 	return ""
 }
 
+func (x *Params) GetChallengeWindowBlocks() uint64 {
+	if x != nil {
+		return x.ChallengeWindowBlocks
+	}
+	return 0
+}
+
+func (x *Params) GetChallengeDeposit() uint64 {
+	if x != nil {
+		return x.ChallengeDeposit
+	}
+	return 0
+}
+
+func (x *Params) GetChallengerSlashPercent() uint64 {
+	if x != nil {
+		return x.ChallengerSlashPercent
+	}
+	return 0
+}
+
+func (x *Params) GetWorkerSlashPercentOnBadResult() uint64 {
+	if x != nil {
+		return x.WorkerSlashPercentOnBadResult
+	}
+	return 0
+}
+
+func (x *Params) GetRevealWindowBlocks() uint64 {
+	if x != nil {
+		return x.RevealWindowBlocks
+	}
+	return 0
+}
+
+func (x *Params) GetAllowLegacySubmitResult() bool {
+	if x != nil {
+		return x.AllowLegacySubmitResult
+	}
+	return false
+}
+
 var File_chain_workload_params_proto protoreflect.FileDescriptor
 
 var file_chain_workload_params_proto_rawDesc = []byte{
@@ -491,22 +833,44 @@ var file_chain_workload_params_proto_rawDesc = []byte{
 	0x68, 0x61, 0x69, 0x6e, 0x2e, 0x77, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0x1a, 0x11, 0x61,
 	0x6d, 0x69, 0x6e, 0x6f, 0x2f, 0x61, 0x6d, 0x69, 0x6e, 0x6f, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
 	0x1a, 0x14, 0x67, 0x6f, 0x67, 0x6f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x67, 0x6f, 0x67, 0x6f,
-	0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x51, 0x0a, 0x06, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73,
-	0x12, 0x25, 0x0a, 0x0e, 0x77, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0x5f, 0x64, 0x65, 0x6e,
-	0x6f, 0x6d, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0d, 0x77, 0x6f, 0x72, 0x6b, 0x6c, 0x6f,
-	0x61, 0x64, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x3a, 0x20, 0xe8, 0xa0, 0x1f, 0x01, 0x8a, 0xe7, 0xb0,
-	0x2a, 0x17, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2f, 0x78, 0x2f, 0x77, 0x6f, 0x72, 0x6b, 0x6c, 0x6f,
-	0x61, 0x64, 0x2f, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x42, 0x9b, 0x01, 0x0a, 0x12, 0x63, 0x6f,
-	0x6d, 0x2e, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2e, 0x77, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64,
-	0x42, 0x0b, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x50, 0x01, 0x5a,
-	0x1f, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x73, 0x64, 0x6b, 0x2e, 0x69, 0x6f, 0x2f, 0x61, 0x70,
-	0x69, 0x2f, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2f, 0x77, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64,
-	0xa2, 0x02, 0x03, 0x43, 0x57, 0x58, 0xaa, 0x02, 0x0e, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x2e, 0x57,
-	0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0xca, 0x02, 0x0e, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x5c,
-	0x57, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0xe2, 0x02, 0x1a, 0x43, 0x68, 0x61, 0x69, 0x6e,
-	0x5c, 0x57, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0x5c, 0x47, 0x50, 0x42, 0x4d, 0x65, 0x74,
-	0x61, 0x64, 0x61, 0x74, 0x61, 0xea, 0x02, 0x0f, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x3a, 0x3a, 0x57,
-	0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0xaa, 0x03, 0x0a, 0x06, 0x50, 0x61, 0x72, 0x61, 0x6d,
+	0x73, 0x12, 0x25, 0x0a, 0x0e, 0x77, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0x5f, 0x64, 0x65,
+	0x6e, 0x6f, 0x6d, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0d, 0x77, 0x6f, 0x72, 0x6b, 0x6c,
+	0x6f, 0x61, 0x64, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x12, 0x36, 0x0a, 0x17, 0x63, 0x68, 0x61, 0x6c,
+	0x6c, 0x65, 0x6e, 0x67, 0x65, 0x5f, 0x77, 0x69, 0x6e, 0x64, 0x6f, 0x77, 0x5f, 0x62, 0x6c, 0x6f,
+	0x63, 0x6b, 0x73, 0x18, 0x02, 0x20, 0x01, 0x28, 0x04, 0x52, 0x15, 0x63, 0x68, 0x61, 0x6c, 0x6c,
+	0x65, 0x6e, 0x67, 0x65, 0x57, 0x69, 0x6e, 0x64, 0x6f, 0x77, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x73,
+	0x12, 0x2b, 0x0a, 0x11, 0x63, 0x68, 0x61, 0x6c, 0x6c, 0x65, 0x6e, 0x67, 0x65, 0x5f, 0x64, 0x65,
+	0x70, 0x6f, 0x73, 0x69, 0x74, 0x18, 0x03, 0x20, 0x01, 0x28, 0x04, 0x52, 0x10, 0x63, 0x68, 0x61,
+	0x6c, 0x6c, 0x65, 0x6e, 0x67, 0x65, 0x44, 0x65, 0x70, 0x6f, 0x73, 0x69, 0x74, 0x12, 0x38, 0x0a,
+	0x18, 0x63, 0x68, 0x61, 0x6c, 0x6c, 0x65, 0x6e, 0x67, 0x65, 0x72, 0x5f, 0x73, 0x6c, 0x61, 0x73,
+	0x68, 0x5f, 0x70, 0x65, 0x72, 0x63, 0x65, 0x6e, 0x74, 0x18, 0x04, 0x20, 0x01, 0x28, 0x04, 0x52,
+	0x16, 0x63, 0x68, 0x61, 0x6c, 0x6c, 0x65, 0x6e, 0x67, 0x65, 0x72, 0x53, 0x6c, 0x61, 0x73, 0x68,
+	0x50, 0x65, 0x72, 0x63, 0x65, 0x6e, 0x74, 0x12, 0x49, 0x0a, 0x22, 0x77, 0x6f, 0x72, 0x6b, 0x65,
+	0x72, 0x5f, 0x73, 0x6c, 0x61, 0x73, 0x68, 0x5f, 0x70, 0x65, 0x72, 0x63, 0x65, 0x6e, 0x74, 0x5f,
+	0x6f, 0x6e, 0x5f, 0x62, 0x61, 0x64, 0x5f, 0x72, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x18, 0x05, 0x20,
+	0x01, 0x28, 0x04, 0x52, 0x1d, 0x77, 0x6f, 0x72, 0x6b, 0x65, 0x72, 0x53, 0x6c, 0x61, 0x73, 0x68,
+	0x50, 0x65, 0x72, 0x63, 0x65, 0x6e, 0x74, 0x4f, 0x6e, 0x42, 0x61, 0x64, 0x52, 0x65, 0x73, 0x75,
+	0x6c, 0x74, 0x12, 0x30, 0x0a, 0x14, 0x72, 0x65, 0x76, 0x65, 0x61, 0x6c, 0x5f, 0x77, 0x69, 0x6e,
+	0x64, 0x6f, 0x77, 0x5f, 0x62, 0x6c, 0x6f, 0x63, 0x6b, 0x73, 0x18, 0x06, 0x20, 0x01, 0x28, 0x04,
+	0x52, 0x12, 0x72, 0x65, 0x76, 0x65, 0x61, 0x6c, 0x57, 0x69, 0x6e, 0x64, 0x6f, 0x77, 0x42, 0x6c,
+	0x6f, 0x63, 0x6b, 0x73, 0x12, 0x3b, 0x0a, 0x1a, 0x61, 0x6c, 0x6c, 0x6f, 0x77, 0x5f, 0x6c, 0x65,
+	0x67, 0x61, 0x63, 0x79, 0x5f, 0x73, 0x75, 0x62, 0x6d, 0x69, 0x74, 0x5f, 0x72, 0x65, 0x73, 0x75,
+	0x6c, 0x74, 0x18, 0x07, 0x20, 0x01, 0x28, 0x08, 0x52, 0x17, 0x61, 0x6c, 0x6c, 0x6f, 0x77, 0x4c,
+	0x65, 0x67, 0x61, 0x63, 0x79, 0x53, 0x75, 0x62, 0x6d, 0x69, 0x74, 0x52, 0x65, 0x73, 0x75, 0x6c,
+	0x74, 0x3a, 0x20, 0xe8, 0xa0, 0x1f, 0x01, 0x8a, 0xe7, 0xb0, 0x2a, 0x17, 0x63, 0x68, 0x61, 0x69,
+	0x6e, 0x2f, 0x78, 0x2f, 0x77, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0x2f, 0x50, 0x61, 0x72,
+	0x61, 0x6d, 0x73, 0x42, 0x9b, 0x01, 0x0a, 0x12, 0x63, 0x6f, 0x6d, 0x2e, 0x63, 0x68, 0x61, 0x69,
+	0x6e, 0x2e, 0x77, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0x42, 0x0b, 0x50, 0x61, 0x72, 0x61,
+	0x6d, 0x73, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x50, 0x01, 0x5a, 0x1f, 0x63, 0x6f, 0x73, 0x6d, 0x6f,
+	0x73, 0x73, 0x64, 0x6b, 0x2e, 0x69, 0x6f, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x63, 0x68, 0x61, 0x69,
+	0x6e, 0x2f, 0x77, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0xa2, 0x02, 0x03, 0x43, 0x57, 0x58,
+	0xaa, 0x02, 0x0e, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x2e, 0x57, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61,
+	0x64, 0xca, 0x02, 0x0e, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x5c, 0x57, 0x6f, 0x72, 0x6b, 0x6c, 0x6f,
+	0x61, 0x64, 0xe2, 0x02, 0x1a, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x5c, 0x57, 0x6f, 0x72, 0x6b, 0x6c,
+	0x6f, 0x61, 0x64, 0x5c, 0x47, 0x50, 0x42, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0xea,
+	0x02, 0x0f, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x3a, 0x3a, 0x57, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61,
+	0x64, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (

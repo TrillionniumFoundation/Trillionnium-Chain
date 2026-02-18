@@ -29,6 +29,8 @@ const (
 	Msg_RequestUnbonding_FullMethodName  = "/chain.workload.Msg/RequestUnbonding"
 	Msg_FinalizeUnbonding_FullMethodName = "/chain.workload.Msg/FinalizeUnbonding"
 	Msg_ExtendUnbonding_FullMethodName   = "/chain.workload.Msg/ExtendUnbonding"
+	Msg_CommitResult_FullMethodName      = "/chain.workload.Msg/CommitResult"
+	Msg_RevealResult_FullMethodName      = "/chain.workload.Msg/RevealResult"
 	Msg_SubmitResult_FullMethodName      = "/chain.workload.Msg/SubmitResult"
 	Msg_ChallengeResult_FullMethodName   = "/chain.workload.Msg/ChallengeResult"
 	Msg_ResolveChallenge_FullMethodName  = "/chain.workload.Msg/ResolveChallenge"
@@ -50,6 +52,8 @@ type MsgClient interface {
 	RequestUnbonding(ctx context.Context, in *MsgRequestUnbonding, opts ...grpc.CallOption) (*MsgRequestUnbondingResponse, error)
 	FinalizeUnbonding(ctx context.Context, in *MsgFinalizeUnbonding, opts ...grpc.CallOption) (*MsgFinalizeUnbondingResponse, error)
 	ExtendUnbonding(ctx context.Context, in *MsgExtendUnbonding, opts ...grpc.CallOption) (*MsgExtendUnbondingResponse, error)
+	CommitResult(ctx context.Context, in *MsgCommitResult, opts ...grpc.CallOption) (*MsgCommitResultResponse, error)
+	RevealResult(ctx context.Context, in *MsgRevealResult, opts ...grpc.CallOption) (*MsgRevealResultResponse, error)
 	SubmitResult(ctx context.Context, in *MsgSubmitResult, opts ...grpc.CallOption) (*MsgSubmitResultResponse, error)
 	ChallengeResult(ctx context.Context, in *MsgChallengeResult, opts ...grpc.CallOption) (*MsgChallengeResultResponse, error)
 	ResolveChallenge(ctx context.Context, in *MsgResolveChallenge, opts ...grpc.CallOption) (*MsgResolveChallengeResponse, error)
@@ -153,6 +157,24 @@ func (c *msgClient) ExtendUnbonding(ctx context.Context, in *MsgExtendUnbonding,
 	return out, nil
 }
 
+func (c *msgClient) CommitResult(ctx context.Context, in *MsgCommitResult, opts ...grpc.CallOption) (*MsgCommitResultResponse, error) {
+	out := new(MsgCommitResultResponse)
+	err := c.cc.Invoke(ctx, Msg_CommitResult_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) RevealResult(ctx context.Context, in *MsgRevealResult, opts ...grpc.CallOption) (*MsgRevealResultResponse, error) {
+	out := new(MsgRevealResultResponse)
+	err := c.cc.Invoke(ctx, Msg_RevealResult_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *msgClient) SubmitResult(ctx context.Context, in *MsgSubmitResult, opts ...grpc.CallOption) (*MsgSubmitResultResponse, error) {
 	out := new(MsgSubmitResultResponse)
 	err := c.cc.Invoke(ctx, Msg_SubmitResult_FullMethodName, in, out, opts...)
@@ -196,6 +218,8 @@ type MsgServer interface {
 	RequestUnbonding(context.Context, *MsgRequestUnbonding) (*MsgRequestUnbondingResponse, error)
 	FinalizeUnbonding(context.Context, *MsgFinalizeUnbonding) (*MsgFinalizeUnbondingResponse, error)
 	ExtendUnbonding(context.Context, *MsgExtendUnbonding) (*MsgExtendUnbondingResponse, error)
+	CommitResult(context.Context, *MsgCommitResult) (*MsgCommitResultResponse, error)
+	RevealResult(context.Context, *MsgRevealResult) (*MsgRevealResultResponse, error)
 	SubmitResult(context.Context, *MsgSubmitResult) (*MsgSubmitResultResponse, error)
 	ChallengeResult(context.Context, *MsgChallengeResult) (*MsgChallengeResultResponse, error)
 	ResolveChallenge(context.Context, *MsgResolveChallenge) (*MsgResolveChallengeResponse, error)
@@ -235,6 +259,12 @@ func (UnimplementedMsgServer) FinalizeUnbonding(context.Context, *MsgFinalizeUnb
 }
 func (UnimplementedMsgServer) ExtendUnbonding(context.Context, *MsgExtendUnbonding) (*MsgExtendUnbondingResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ExtendUnbonding not implemented")
+}
+func (UnimplementedMsgServer) CommitResult(context.Context, *MsgCommitResult) (*MsgCommitResultResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CommitResult not implemented")
+}
+func (UnimplementedMsgServer) RevealResult(context.Context, *MsgRevealResult) (*MsgRevealResultResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RevealResult not implemented")
 }
 func (UnimplementedMsgServer) SubmitResult(context.Context, *MsgSubmitResult) (*MsgSubmitResultResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SubmitResult not implemented")
@@ -438,6 +468,42 @@ func _Msg_ExtendUnbonding_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Msg_CommitResult_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgCommitResult)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).CommitResult(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Msg_CommitResult_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).CommitResult(ctx, req.(*MsgCommitResult))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_RevealResult_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgRevealResult)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).RevealResult(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Msg_RevealResult_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).RevealResult(ctx, req.(*MsgRevealResult))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Msg_SubmitResult_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(MsgSubmitResult)
 	if err := dec(in); err != nil {
@@ -538,6 +604,14 @@ var Msg_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ExtendUnbonding",
 			Handler:    _Msg_ExtendUnbonding_Handler,
+		},
+		{
+			MethodName: "CommitResult",
+			Handler:    _Msg_CommitResult_Handler,
+		},
+		{
+			MethodName: "RevealResult",
+			Handler:    _Msg_RevealResult_Handler,
 		},
 		{
 			MethodName: "SubmitResult",

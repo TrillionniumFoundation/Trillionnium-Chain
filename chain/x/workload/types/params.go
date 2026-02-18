@@ -20,6 +20,8 @@ var (
 	KeyChallengeDeposit              = []byte("ChallengeDeposit")
 	KeyChallengerSlashPercent        = []byte("ChallengerSlashPercent")
 	KeyWorkerSlashPercentOnBadResult = []byte("WorkerSlashPercentOnBadResult")
+	KeyRevealWindowBlocks            = []byte("RevealWindowBlocks")
+	KeyAllowLegacySubmitResult       = []byte("AllowLegacySubmitResult")
 )
 
 // NewParams creates a new Params instance
@@ -29,6 +31,8 @@ func NewParams(
 	challengeDeposit uint64,
 	challengerSlashPercent uint64,
 	workerSlashPercentOnBadResult uint64,
+	revealWindowBlocks uint64,
+	allowLegacySubmitResult bool,
 ) Params {
 	return Params{
 		WorkloadDenom:                 workloadDenom,
@@ -36,12 +40,14 @@ func NewParams(
 		ChallengeDeposit:              challengeDeposit,
 		ChallengerSlashPercent:        challengerSlashPercent,
 		WorkerSlashPercentOnBadResult: workerSlashPercentOnBadResult,
+		RevealWindowBlocks:            revealWindowBlocks,
+		AllowLegacySubmitResult:       allowLegacySubmitResult,
 	}
 }
 
 // DefaultParams returns a default set of parameters
 func DefaultParams() Params {
-	return NewParams("utrnm", 100, 1_000_000, 10, 20)
+	return NewParams("utrnm", 100, 1_000_000, 10, 20, 50, true)
 }
 
 // ParamSetPairs get the params.ParamSet
@@ -52,6 +58,8 @@ func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 		paramtypes.NewParamSetPair(KeyChallengeDeposit, &p.ChallengeDeposit, validateNonZeroUint64("challenge deposit")),
 		paramtypes.NewParamSetPair(KeyChallengerSlashPercent, &p.ChallengerSlashPercent, validatePercent("challenger slash percent")),
 		paramtypes.NewParamSetPair(KeyWorkerSlashPercentOnBadResult, &p.WorkerSlashPercentOnBadResult, validatePercent("worker slash percent on bad result")),
+		paramtypes.NewParamSetPair(KeyRevealWindowBlocks, &p.RevealWindowBlocks, validateNonZeroUint64("reveal window blocks")),
+		paramtypes.NewParamSetPair(KeyAllowLegacySubmitResult, &p.AllowLegacySubmitResult, validateBool("allow legacy submit result")),
 	}
 }
 
@@ -95,6 +103,15 @@ func validatePercent(name string) func(interface{}) error {
 	}
 }
 
+func validateBool(name string) func(interface{}) error {
+	return func(i interface{}) error {
+		if _, ok := i.(bool); !ok {
+			return fmt.Errorf("invalid parameter type for %s: %T", name, i)
+		}
+		return nil
+	}
+}
+
 // Validate validates the set of params
 func (p Params) Validate() error {
 	if err := validateWorkloadDenom(p.WorkloadDenom); err != nil {
@@ -110,6 +127,12 @@ func (p Params) Validate() error {
 		return err
 	}
 	if err := validatePercent("worker slash percent on bad result")(p.WorkerSlashPercentOnBadResult); err != nil {
+		return err
+	}
+	if err := validateNonZeroUint64("reveal window blocks")(p.RevealWindowBlocks); err != nil {
+		return err
+	}
+	if err := validateBool("allow legacy submit result")(p.AllowLegacySubmitResult); err != nil {
 		return err
 	}
 	return nil

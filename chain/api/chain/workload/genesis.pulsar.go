@@ -167,13 +167,66 @@ func (x *_GenesisState_5_list) IsValid() bool {
 	return x.list != nil
 }
 
+var _ protoreflect.List = (*_GenesisState_6_list)(nil)
+
+type _GenesisState_6_list struct {
+	list *[]*Challenge
+}
+
+func (x *_GenesisState_6_list) Len() int {
+	if x.list == nil {
+		return 0
+	}
+	return len(*x.list)
+}
+
+func (x *_GenesisState_6_list) Get(i int) protoreflect.Value {
+	return protoreflect.ValueOfMessage((*x.list)[i].ProtoReflect())
+}
+
+func (x *_GenesisState_6_list) Set(i int, value protoreflect.Value) {
+	valueUnwrapped := value.Message()
+	concreteValue := valueUnwrapped.Interface().(*Challenge)
+	(*x.list)[i] = concreteValue
+}
+
+func (x *_GenesisState_6_list) Append(value protoreflect.Value) {
+	valueUnwrapped := value.Message()
+	concreteValue := valueUnwrapped.Interface().(*Challenge)
+	*x.list = append(*x.list, concreteValue)
+}
+
+func (x *_GenesisState_6_list) AppendMutable() protoreflect.Value {
+	v := new(Challenge)
+	*x.list = append(*x.list, v)
+	return protoreflect.ValueOfMessage(v.ProtoReflect())
+}
+
+func (x *_GenesisState_6_list) Truncate(n int) {
+	for i := n; i < len(*x.list); i++ {
+		(*x.list)[i] = nil
+	}
+	*x.list = (*x.list)[:n]
+}
+
+func (x *_GenesisState_6_list) NewElement() protoreflect.Value {
+	v := new(Challenge)
+	return protoreflect.ValueOfMessage(v.ProtoReflect())
+}
+
+func (x *_GenesisState_6_list) IsValid() bool {
+	return x.list != nil
+}
+
 var (
-	md_GenesisState               protoreflect.MessageDescriptor
-	fd_GenesisState_params        protoreflect.FieldDescriptor
-	fd_GenesisState_taskList      protoreflect.FieldDescriptor
-	fd_GenesisState_taskCount     protoreflect.FieldDescriptor
-	fd_GenesisState_workerList    protoreflect.FieldDescriptor
-	fd_GenesisState_unbondingList protoreflect.FieldDescriptor
+	md_GenesisState                protoreflect.MessageDescriptor
+	fd_GenesisState_params         protoreflect.FieldDescriptor
+	fd_GenesisState_taskList       protoreflect.FieldDescriptor
+	fd_GenesisState_taskCount      protoreflect.FieldDescriptor
+	fd_GenesisState_workerList     protoreflect.FieldDescriptor
+	fd_GenesisState_unbondingList  protoreflect.FieldDescriptor
+	fd_GenesisState_challengeList  protoreflect.FieldDescriptor
+	fd_GenesisState_challengeCount protoreflect.FieldDescriptor
 )
 
 func init() {
@@ -184,6 +237,8 @@ func init() {
 	fd_GenesisState_taskCount = md_GenesisState.Fields().ByName("taskCount")
 	fd_GenesisState_workerList = md_GenesisState.Fields().ByName("workerList")
 	fd_GenesisState_unbondingList = md_GenesisState.Fields().ByName("unbondingList")
+	fd_GenesisState_challengeList = md_GenesisState.Fields().ByName("challengeList")
+	fd_GenesisState_challengeCount = md_GenesisState.Fields().ByName("challengeCount")
 }
 
 var _ protoreflect.Message = (*fastReflection_GenesisState)(nil)
@@ -281,6 +336,18 @@ func (x *fastReflection_GenesisState) Range(f func(protoreflect.FieldDescriptor,
 			return
 		}
 	}
+	if len(x.ChallengeList) != 0 {
+		value := protoreflect.ValueOfList(&_GenesisState_6_list{list: &x.ChallengeList})
+		if !f(fd_GenesisState_challengeList, value) {
+			return
+		}
+	}
+	if x.ChallengeCount != uint64(0) {
+		value := protoreflect.ValueOfUint64(x.ChallengeCount)
+		if !f(fd_GenesisState_challengeCount, value) {
+			return
+		}
+	}
 }
 
 // Has reports whether a field is populated.
@@ -306,6 +373,10 @@ func (x *fastReflection_GenesisState) Has(fd protoreflect.FieldDescriptor) bool 
 		return len(x.WorkerList) != 0
 	case "chain.workload.GenesisState.unbondingList":
 		return len(x.UnbondingList) != 0
+	case "chain.workload.GenesisState.challengeList":
+		return len(x.ChallengeList) != 0
+	case "chain.workload.GenesisState.challengeCount":
+		return x.ChallengeCount != uint64(0)
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.workload.GenesisState"))
@@ -332,6 +403,10 @@ func (x *fastReflection_GenesisState) Clear(fd protoreflect.FieldDescriptor) {
 		x.WorkerList = nil
 	case "chain.workload.GenesisState.unbondingList":
 		x.UnbondingList = nil
+	case "chain.workload.GenesisState.challengeList":
+		x.ChallengeList = nil
+	case "chain.workload.GenesisState.challengeCount":
+		x.ChallengeCount = uint64(0)
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.workload.GenesisState"))
@@ -372,6 +447,15 @@ func (x *fastReflection_GenesisState) Get(descriptor protoreflect.FieldDescripto
 		}
 		listValue := &_GenesisState_5_list{list: &x.UnbondingList}
 		return protoreflect.ValueOfList(listValue)
+	case "chain.workload.GenesisState.challengeList":
+		if len(x.ChallengeList) == 0 {
+			return protoreflect.ValueOfList(&_GenesisState_6_list{})
+		}
+		listValue := &_GenesisState_6_list{list: &x.ChallengeList}
+		return protoreflect.ValueOfList(listValue)
+	case "chain.workload.GenesisState.challengeCount":
+		value := x.ChallengeCount
+		return protoreflect.ValueOfUint64(value)
 	default:
 		if descriptor.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.workload.GenesisState"))
@@ -408,6 +492,12 @@ func (x *fastReflection_GenesisState) Set(fd protoreflect.FieldDescriptor, value
 		lv := value.List()
 		clv := lv.(*_GenesisState_5_list)
 		x.UnbondingList = *clv.list
+	case "chain.workload.GenesisState.challengeList":
+		lv := value.List()
+		clv := lv.(*_GenesisState_6_list)
+		x.ChallengeList = *clv.list
+	case "chain.workload.GenesisState.challengeCount":
+		x.ChallengeCount = value.Uint()
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.workload.GenesisState"))
@@ -451,8 +541,16 @@ func (x *fastReflection_GenesisState) Mutable(fd protoreflect.FieldDescriptor) p
 		}
 		value := &_GenesisState_5_list{list: &x.UnbondingList}
 		return protoreflect.ValueOfList(value)
+	case "chain.workload.GenesisState.challengeList":
+		if x.ChallengeList == nil {
+			x.ChallengeList = []*Challenge{}
+		}
+		value := &_GenesisState_6_list{list: &x.ChallengeList}
+		return protoreflect.ValueOfList(value)
 	case "chain.workload.GenesisState.taskCount":
 		panic(fmt.Errorf("field taskCount of message chain.workload.GenesisState is not mutable"))
+	case "chain.workload.GenesisState.challengeCount":
+		panic(fmt.Errorf("field challengeCount of message chain.workload.GenesisState is not mutable"))
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.workload.GenesisState"))
@@ -480,6 +578,11 @@ func (x *fastReflection_GenesisState) NewField(fd protoreflect.FieldDescriptor) 
 	case "chain.workload.GenesisState.unbondingList":
 		list := []*Unbonding{}
 		return protoreflect.ValueOfList(&_GenesisState_5_list{list: &list})
+	case "chain.workload.GenesisState.challengeList":
+		list := []*Challenge{}
+		return protoreflect.ValueOfList(&_GenesisState_6_list{list: &list})
+	case "chain.workload.GenesisState.challengeCount":
+		return protoreflect.ValueOfUint64(uint64(0))
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.workload.GenesisState"))
@@ -574,6 +677,15 @@ func (x *fastReflection_GenesisState) ProtoMethods() *protoiface.Methods {
 				n += 1 + l + runtime.Sov(uint64(l))
 			}
 		}
+		if len(x.ChallengeList) > 0 {
+			for _, e := range x.ChallengeList {
+				l = options.Size(e)
+				n += 1 + l + runtime.Sov(uint64(l))
+			}
+		}
+		if x.ChallengeCount != 0 {
+			n += 1 + runtime.Sov(uint64(x.ChallengeCount))
+		}
 		if x.unknownFields != nil {
 			n += len(x.unknownFields)
 		}
@@ -602,6 +714,27 @@ func (x *fastReflection_GenesisState) ProtoMethods() *protoiface.Methods {
 		if x.unknownFields != nil {
 			i -= len(x.unknownFields)
 			copy(dAtA[i:], x.unknownFields)
+		}
+		if x.ChallengeCount != 0 {
+			i = runtime.EncodeVarint(dAtA, i, uint64(x.ChallengeCount))
+			i--
+			dAtA[i] = 0x38
+		}
+		if len(x.ChallengeList) > 0 {
+			for iNdEx := len(x.ChallengeList) - 1; iNdEx >= 0; iNdEx-- {
+				encoded, err := options.Marshal(x.ChallengeList[iNdEx])
+				if err != nil {
+					return protoiface.MarshalOutput{
+						NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+						Buf:               input.Buf,
+					}, err
+				}
+				i -= len(encoded)
+				copy(dAtA[i:], encoded)
+				i = runtime.EncodeVarint(dAtA, i, uint64(len(encoded)))
+				i--
+				dAtA[i] = 0x32
+			}
 		}
 		if len(x.UnbondingList) > 0 {
 			for iNdEx := len(x.UnbondingList) - 1; iNdEx >= 0; iNdEx-- {
@@ -876,6 +1009,59 @@ func (x *fastReflection_GenesisState) ProtoMethods() *protoiface.Methods {
 					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
 				}
 				iNdEx = postIndex
+			case 6:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field ChallengeList", wireType)
+				}
+				var msglen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					msglen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if msglen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + msglen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.ChallengeList = append(x.ChallengeList, &Challenge{})
+				if err := options.Unmarshal(dAtA[iNdEx:postIndex], x.ChallengeList[len(x.ChallengeList)-1]); err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				iNdEx = postIndex
+			case 7:
+				if wireType != 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field ChallengeCount", wireType)
+				}
+				x.ChallengeCount = 0
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					x.ChallengeCount |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
 			default:
 				iNdEx = preIndex
 				skippy, err := runtime.Skip(dAtA[iNdEx:])
@@ -931,11 +1117,13 @@ type GenesisState struct {
 	unknownFields protoimpl.UnknownFields
 
 	// params defines all the parameters of the module.
-	Params        *Params      `protobuf:"bytes,1,opt,name=params,proto3" json:"params,omitempty"`
-	TaskList      []*Task      `protobuf:"bytes,2,rep,name=taskList,proto3" json:"taskList,omitempty"`
-	TaskCount     uint64       `protobuf:"varint,3,opt,name=taskCount,proto3" json:"taskCount,omitempty"`
-	WorkerList    []*Worker    `protobuf:"bytes,4,rep,name=workerList,proto3" json:"workerList,omitempty"`
-	UnbondingList []*Unbonding `protobuf:"bytes,5,rep,name=unbondingList,proto3" json:"unbondingList,omitempty"`
+	Params         *Params      `protobuf:"bytes,1,opt,name=params,proto3" json:"params,omitempty"`
+	TaskList       []*Task      `protobuf:"bytes,2,rep,name=taskList,proto3" json:"taskList,omitempty"`
+	TaskCount      uint64       `protobuf:"varint,3,opt,name=taskCount,proto3" json:"taskCount,omitempty"`
+	WorkerList     []*Worker    `protobuf:"bytes,4,rep,name=workerList,proto3" json:"workerList,omitempty"`
+	UnbondingList  []*Unbonding `protobuf:"bytes,5,rep,name=unbondingList,proto3" json:"unbondingList,omitempty"`
+	ChallengeList  []*Challenge `protobuf:"bytes,6,rep,name=challengeList,proto3" json:"challengeList,omitempty"`
+	ChallengeCount uint64       `protobuf:"varint,7,opt,name=challengeCount,proto3" json:"challengeCount,omitempty"`
 }
 
 func (x *GenesisState) Reset() {
@@ -993,6 +1181,20 @@ func (x *GenesisState) GetUnbondingList() []*Unbonding {
 	return nil
 }
 
+func (x *GenesisState) GetChallengeList() []*Challenge {
+	if x != nil {
+		return x.ChallengeList
+	}
+	return nil
+}
+
+func (x *GenesisState) GetChallengeCount() uint64 {
+	if x != nil {
+		return x.ChallengeCount
+	}
+	return 0
+}
+
 var File_chain_workload_genesis_proto protoreflect.FileDescriptor
 
 var file_chain_workload_genesis_proto_rawDesc = []byte{
@@ -1008,7 +1210,9 @@ var file_chain_workload_genesis_proto_rawDesc = []byte{
 	0x1b, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2f, 0x77, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0x2f,
 	0x77, 0x6f, 0x72, 0x6b, 0x65, 0x72, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x1e, 0x63, 0x68,
 	0x61, 0x69, 0x6e, 0x2f, 0x77, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0x2f, 0x75, 0x6e, 0x62,
-	0x6f, 0x6e, 0x64, 0x69, 0x6e, 0x67, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0xa4, 0x02, 0x0a,
+	0x6f, 0x6e, 0x64, 0x69, 0x6e, 0x67, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x1e, 0x63, 0x68,
+	0x61, 0x69, 0x6e, 0x2f, 0x77, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0x2f, 0x63, 0x68, 0x61,
+	0x6c, 0x6c, 0x65, 0x6e, 0x67, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x93, 0x03, 0x0a,
 	0x0c, 0x47, 0x65, 0x6e, 0x65, 0x73, 0x69, 0x73, 0x53, 0x74, 0x61, 0x74, 0x65, 0x12, 0x39, 0x0a,
 	0x06, 0x70, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x16, 0x2e,
 	0x63, 0x68, 0x61, 0x69, 0x6e, 0x2e, 0x77, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0x2e, 0x50,
@@ -1027,17 +1231,24 @@ var file_chain_workload_genesis_proto_rawDesc = []byte{
 	0x03, 0x28, 0x0b, 0x32, 0x19, 0x2e, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2e, 0x77, 0x6f, 0x72, 0x6b,
 	0x6c, 0x6f, 0x61, 0x64, 0x2e, 0x55, 0x6e, 0x62, 0x6f, 0x6e, 0x64, 0x69, 0x6e, 0x67, 0x42, 0x04,
 	0xc8, 0xde, 0x1f, 0x00, 0x52, 0x0d, 0x75, 0x6e, 0x62, 0x6f, 0x6e, 0x64, 0x69, 0x6e, 0x67, 0x4c,
-	0x69, 0x73, 0x74, 0x42, 0x9c, 0x01, 0x0a, 0x12, 0x63, 0x6f, 0x6d, 0x2e, 0x63, 0x68, 0x61, 0x69,
-	0x6e, 0x2e, 0x77, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0x42, 0x0c, 0x47, 0x65, 0x6e, 0x65,
-	0x73, 0x69, 0x73, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x50, 0x01, 0x5a, 0x1f, 0x63, 0x6f, 0x73, 0x6d,
-	0x6f, 0x73, 0x73, 0x64, 0x6b, 0x2e, 0x69, 0x6f, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x63, 0x68, 0x61,
-	0x69, 0x6e, 0x2f, 0x77, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0xa2, 0x02, 0x03, 0x43, 0x57,
-	0x58, 0xaa, 0x02, 0x0e, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x2e, 0x57, 0x6f, 0x72, 0x6b, 0x6c, 0x6f,
-	0x61, 0x64, 0xca, 0x02, 0x0e, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x5c, 0x57, 0x6f, 0x72, 0x6b, 0x6c,
-	0x6f, 0x61, 0x64, 0xe2, 0x02, 0x1a, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x5c, 0x57, 0x6f, 0x72, 0x6b,
-	0x6c, 0x6f, 0x61, 0x64, 0x5c, 0x47, 0x50, 0x42, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61,
-	0xea, 0x02, 0x0f, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x3a, 0x3a, 0x57, 0x6f, 0x72, 0x6b, 0x6c, 0x6f,
-	0x61, 0x64, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x69, 0x73, 0x74, 0x12, 0x45, 0x0a, 0x0d, 0x63, 0x68, 0x61, 0x6c, 0x6c, 0x65, 0x6e, 0x67, 0x65,
+	0x4c, 0x69, 0x73, 0x74, 0x18, 0x06, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x19, 0x2e, 0x63, 0x68, 0x61,
+	0x69, 0x6e, 0x2e, 0x77, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0x2e, 0x43, 0x68, 0x61, 0x6c,
+	0x6c, 0x65, 0x6e, 0x67, 0x65, 0x42, 0x04, 0xc8, 0xde, 0x1f, 0x00, 0x52, 0x0d, 0x63, 0x68, 0x61,
+	0x6c, 0x6c, 0x65, 0x6e, 0x67, 0x65, 0x4c, 0x69, 0x73, 0x74, 0x12, 0x26, 0x0a, 0x0e, 0x63, 0x68,
+	0x61, 0x6c, 0x6c, 0x65, 0x6e, 0x67, 0x65, 0x43, 0x6f, 0x75, 0x6e, 0x74, 0x18, 0x07, 0x20, 0x01,
+	0x28, 0x04, 0x52, 0x0e, 0x63, 0x68, 0x61, 0x6c, 0x6c, 0x65, 0x6e, 0x67, 0x65, 0x43, 0x6f, 0x75,
+	0x6e, 0x74, 0x42, 0x9c, 0x01, 0x0a, 0x12, 0x63, 0x6f, 0x6d, 0x2e, 0x63, 0x68, 0x61, 0x69, 0x6e,
+	0x2e, 0x77, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0x42, 0x0c, 0x47, 0x65, 0x6e, 0x65, 0x73,
+	0x69, 0x73, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x50, 0x01, 0x5a, 0x1f, 0x63, 0x6f, 0x73, 0x6d, 0x6f,
+	0x73, 0x73, 0x64, 0x6b, 0x2e, 0x69, 0x6f, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x63, 0x68, 0x61, 0x69,
+	0x6e, 0x2f, 0x77, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61, 0x64, 0xa2, 0x02, 0x03, 0x43, 0x57, 0x58,
+	0xaa, 0x02, 0x0e, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x2e, 0x57, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61,
+	0x64, 0xca, 0x02, 0x0e, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x5c, 0x57, 0x6f, 0x72, 0x6b, 0x6c, 0x6f,
+	0x61, 0x64, 0xe2, 0x02, 0x1a, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x5c, 0x57, 0x6f, 0x72, 0x6b, 0x6c,
+	0x6f, 0x61, 0x64, 0x5c, 0x47, 0x50, 0x42, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0xea,
+	0x02, 0x0f, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x3a, 0x3a, 0x57, 0x6f, 0x72, 0x6b, 0x6c, 0x6f, 0x61,
+	0x64, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -1059,17 +1270,19 @@ var file_chain_workload_genesis_proto_goTypes = []interface{}{
 	(*Task)(nil),         // 2: chain.workload.Task
 	(*Worker)(nil),       // 3: chain.workload.Worker
 	(*Unbonding)(nil),    // 4: chain.workload.Unbonding
+	(*Challenge)(nil),    // 5: chain.workload.Challenge
 }
 var file_chain_workload_genesis_proto_depIdxs = []int32{
 	1, // 0: chain.workload.GenesisState.params:type_name -> chain.workload.Params
 	2, // 1: chain.workload.GenesisState.taskList:type_name -> chain.workload.Task
 	3, // 2: chain.workload.GenesisState.workerList:type_name -> chain.workload.Worker
 	4, // 3: chain.workload.GenesisState.unbondingList:type_name -> chain.workload.Unbonding
-	4, // [4:4] is the sub-list for method output_type
-	4, // [4:4] is the sub-list for method input_type
-	4, // [4:4] is the sub-list for extension type_name
-	4, // [4:4] is the sub-list for extension extendee
-	0, // [0:4] is the sub-list for field type_name
+	5, // 4: chain.workload.GenesisState.challengeList:type_name -> chain.workload.Challenge
+	5, // [5:5] is the sub-list for method output_type
+	5, // [5:5] is the sub-list for method input_type
+	5, // [5:5] is the sub-list for extension type_name
+	5, // [5:5] is the sub-list for extension extendee
+	0, // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_chain_workload_genesis_proto_init() }
@@ -1081,6 +1294,7 @@ func file_chain_workload_genesis_proto_init() {
 	file_chain_workload_task_proto_init()
 	file_chain_workload_worker_proto_init()
 	file_chain_workload_unbonding_proto_init()
+	file_chain_workload_challenge_proto_init()
 	if !protoimpl.UnsafeEnabled {
 		file_chain_workload_genesis_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GenesisState); i {

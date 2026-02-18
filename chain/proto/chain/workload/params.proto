@@ -16,4 +16,6 @@ message Params {
   uint64 challenge_deposit = 3;
   uint64 challenger_slash_percent = 4;
   uint64 worker_slash_percent_on_bad_result = 5;
+  uint64 reveal_window_blocks = 6;
+  bool allow_legacy_submit_result = 7;
 }
