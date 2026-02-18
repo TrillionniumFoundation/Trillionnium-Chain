@@ -64,3 +64,14 @@ Summary contract self-check:
 cd chain
 bash tools/compute_lifecycle_summary_contract_test.sh
 ```
+
+Preflight (before smoke run):
+```bash
+cd chain
+BIN=./chaind bash tools/compute_lifecycle_preflight.sh <JOB_ID> alice http://127.0.0.1:26657
+```
+Checks:
+- node reachable
+- signer has enough stake-denom balance for worker threshold
+- worker already registered
+- target job/task id exists (if provided)

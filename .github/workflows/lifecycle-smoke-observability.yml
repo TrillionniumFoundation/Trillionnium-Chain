@@ -42,6 +42,7 @@ jobs:
         run: |
           shellcheck chain/tools/lifecycle_smoke.sh \
             chain/tools/compute_lifecycle_smoke.sh \
+            chain/tools/compute_lifecycle_preflight.sh \
             chain/tools/compute_lifecycle_summary_contract_test.sh \
             chain/tools/lifecycle_smoke_observability_test.sh \
             chain/tools/lifecycle_summary_parser_examples_test.sh \
@@ -54,6 +55,7 @@ jobs:
         run: |
           bash -n chain/tools/lifecycle_smoke.sh
           bash -n chain/tools/compute_lifecycle_smoke.sh
+          bash -n chain/tools/compute_lifecycle_preflight.sh
           bash -n chain/tools/compute_lifecycle_summary_contract_test.sh
           bash -n chain/tools/lifecycle_smoke_observability_test.sh
           bash -n chain/tools/lifecycle_summary_parser_examples_test.sh
