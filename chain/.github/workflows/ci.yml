@@ -6,6 +6,8 @@ x-workload-ci-paths: &workload_ci_paths
   - 'chain/testutil/keeper/**'
   - 'chain/go.mod'
   - 'chain/go.sum'
+  - 'chain/tools/**'
+  - 'chain/docs/**'
   - 'chain/.github/workflows/ci.yml'
 
 on:
@@ -41,3 +43,37 @@ jobs:
         run: go test ./x/workload/keeper -run 'TestFinalizeUnbonding_HeightEdges|TestFinalizeUnbonding_BankTransferError_NoFinalizeEvent|TestExtendUnbonding_Edges|TestRequestUnbonding_.*|TestSlashWorker_Edges|TestMsgServer_NilRequestsRejected|TestDenomParamUsedInFinalizeUnbonding|TestFinalizeUnbonding_EmptyDenomFallsBackToDefault|TestFinalizeUnbonding_ZeroAmountSkipsBankTransfer' -count=1
 
       # shell observability regression is covered in .github/workflows/lifecycle-smoke-observability.yml
+
+  workload-smoke-e2e:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: chain
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: chain/go.mod
+          cache-dependency-path: |
+            chain/go.sum
+            chain/go.mod
+
+      - name: Install Ignite CLI
+        run: |
+          curl https://get.ignite.com/cli! | bash
+          sudo mv ignite /usr/local/bin/
+
+      - name: Build chaind
+        run: make build
+
+      - name: Run smoke test (task flow e2e)
+        run: make smoke
+
+      - name: Run PoUW keeper regression bundle
+        run: make smoke-pouw-e2e
+
+      - name: Check PoUW command hooks (non-fatal)
+        run: make check-pouw-cmds

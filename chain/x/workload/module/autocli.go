@@ -50,6 +50,17 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					Short:          "Shows a unbonding",
 					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "creator"}},
 				},
+				{
+					RpcMethod: "ChallengeAll",
+					Use:       "list-challenge",
+					Short:     "List all challenge",
+				},
+				{
+					RpcMethod:      "Challenge",
+					Use:            "show-challenge [id]",
+					Short:          "Shows a challenge by id",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "id"}},
+				},
 				// this line is used by ignite scaffolding # autocli/query
 			},
 		},
@@ -113,6 +124,24 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					Use:            "extend-unbonding [worker] [extra-blocks]",
 					Short:          "Send a extend-unbonding tx",
 					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "worker"}, {ProtoField: "extraBlocks"}},
+				},
+				{
+					RpcMethod:      "SubmitResult",
+					Use:            "submit-result [task-id] [result-hash] [result-uri]",
+					Short:          "Submit task result and open challenge window",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "taskId"}, {ProtoField: "resultHash"}, {ProtoField: "resultUri"}},
+				},
+				{
+					RpcMethod:      "ChallengeResult",
+					Use:            "challenge-result [task-id] [reason] [evidence-uri]",
+					Short:          "Challenge a submitted result",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "taskId"}, {ProtoField: "reason"}, {ProtoField: "evidenceUri"}},
+				},
+				{
+					RpcMethod:      "ResolveChallenge",
+					Use:            "resolve-challenge [task-id] [challenge-succeeded] [final-result-hash] [memo]",
+					Short:          "Resolve challenge (authority only)",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "taskId"}, {ProtoField: "challengeSucceeded"}, {ProtoField: "finalResultHash"}, {ProtoField: "memo"}},
 				},
 				// this line is used by ignite scaffolding # autocli/tx
 			},

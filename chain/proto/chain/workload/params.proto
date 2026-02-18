@@ -12,4 +12,8 @@ message Params {
   option (gogoproto.equal) = true;
 
   string workload_denom = 1;
+  uint64 challenge_window_blocks = 2;
+  uint64 challenge_deposit = 3;
+  uint64 challenger_slash_percent = 4;
+  uint64 worker_slash_percent_on_bad_result = 5;
 }

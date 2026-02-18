@@ -29,6 +29,9 @@ const (
 	Msg_RequestUnbonding_FullMethodName  = "/chain.workload.Msg/RequestUnbonding"
 	Msg_FinalizeUnbonding_FullMethodName = "/chain.workload.Msg/FinalizeUnbonding"
 	Msg_ExtendUnbonding_FullMethodName   = "/chain.workload.Msg/ExtendUnbonding"
+	Msg_SubmitResult_FullMethodName      = "/chain.workload.Msg/SubmitResult"
+	Msg_ChallengeResult_FullMethodName   = "/chain.workload.Msg/ChallengeResult"
+	Msg_ResolveChallenge_FullMethodName  = "/chain.workload.Msg/ResolveChallenge"
 )
 
 // MsgClient is the client API for Msg service.
@@ -47,6 +50,9 @@ type MsgClient interface {
 	RequestUnbonding(ctx context.Context, in *MsgRequestUnbonding, opts ...grpc.CallOption) (*MsgRequestUnbondingResponse, error)
 	FinalizeUnbonding(ctx context.Context, in *MsgFinalizeUnbonding, opts ...grpc.CallOption) (*MsgFinalizeUnbondingResponse, error)
 	ExtendUnbonding(ctx context.Context, in *MsgExtendUnbonding, opts ...grpc.CallOption) (*MsgExtendUnbondingResponse, error)
+	SubmitResult(ctx context.Context, in *MsgSubmitResult, opts ...grpc.CallOption) (*MsgSubmitResultResponse, error)
+	ChallengeResult(ctx context.Context, in *MsgChallengeResult, opts ...grpc.CallOption) (*MsgChallengeResultResponse, error)
+	ResolveChallenge(ctx context.Context, in *MsgResolveChallenge, opts ...grpc.CallOption) (*MsgResolveChallengeResponse, error)
 }
 
 type msgClient struct {
@@ -147,6 +153,33 @@ func (c *msgClient) ExtendUnbonding(ctx context.Context, in *MsgExtendUnbonding,
 	return out, nil
 }
 
+func (c *msgClient) SubmitResult(ctx context.Context, in *MsgSubmitResult, opts ...grpc.CallOption) (*MsgSubmitResultResponse, error) {
+	out := new(MsgSubmitResultResponse)
+	err := c.cc.Invoke(ctx, Msg_SubmitResult_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) ChallengeResult(ctx context.Context, in *MsgChallengeResult, opts ...grpc.CallOption) (*MsgChallengeResultResponse, error) {
+	out := new(MsgChallengeResultResponse)
+	err := c.cc.Invoke(ctx, Msg_ChallengeResult_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) ResolveChallenge(ctx context.Context, in *MsgResolveChallenge, opts ...grpc.CallOption) (*MsgResolveChallengeResponse, error) {
+	out := new(MsgResolveChallengeResponse)
+	err := c.cc.Invoke(ctx, Msg_ResolveChallenge_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MsgServer is the server API for Msg service.
 // All implementations must embed UnimplementedMsgServer
 // for forward compatibility
@@ -163,6 +196,9 @@ type MsgServer interface {
 	RequestUnbonding(context.Context, *MsgRequestUnbonding) (*MsgRequestUnbondingResponse, error)
 	FinalizeUnbonding(context.Context, *MsgFinalizeUnbonding) (*MsgFinalizeUnbondingResponse, error)
 	ExtendUnbonding(context.Context, *MsgExtendUnbonding) (*MsgExtendUnbondingResponse, error)
+	SubmitResult(context.Context, *MsgSubmitResult) (*MsgSubmitResultResponse, error)
+	ChallengeResult(context.Context, *MsgChallengeResult) (*MsgChallengeResultResponse, error)
+	ResolveChallenge(context.Context, *MsgResolveChallenge) (*MsgResolveChallengeResponse, error)
 	mustEmbedUnimplementedMsgServer()
 }
 
@@ -199,6 +235,15 @@ func (UnimplementedMsgServer) FinalizeUnbonding(context.Context, *MsgFinalizeUnb
 }
 func (UnimplementedMsgServer) ExtendUnbonding(context.Context, *MsgExtendUnbonding) (*MsgExtendUnbondingResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ExtendUnbonding not implemented")
+}
+func (UnimplementedMsgServer) SubmitResult(context.Context, *MsgSubmitResult) (*MsgSubmitResultResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SubmitResult not implemented")
+}
+func (UnimplementedMsgServer) ChallengeResult(context.Context, *MsgChallengeResult) (*MsgChallengeResultResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ChallengeResult not implemented")
+}
+func (UnimplementedMsgServer) ResolveChallenge(context.Context, *MsgResolveChallenge) (*MsgResolveChallengeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ResolveChallenge not implemented")
 }
 func (UnimplementedMsgServer) mustEmbedUnimplementedMsgServer() {}
 
@@ -393,6 +438,60 @@ func _Msg_ExtendUnbonding_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Msg_SubmitResult_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgSubmitResult)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).SubmitResult(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Msg_SubmitResult_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).SubmitResult(ctx, req.(*MsgSubmitResult))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_ChallengeResult_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgChallengeResult)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).ChallengeResult(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Msg_ChallengeResult_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).ChallengeResult(ctx, req.(*MsgChallengeResult))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_ResolveChallenge_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgResolveChallenge)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).ResolveChallenge(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Msg_ResolveChallenge_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).ResolveChallenge(ctx, req.(*MsgResolveChallenge))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Msg_ServiceDesc is the grpc.ServiceDesc for Msg service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -439,6 +538,18 @@ var Msg_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ExtendUnbonding",
 			Handler:    _Msg_ExtendUnbonding_Handler,
+		},
+		{
+			MethodName: "SubmitResult",
+			Handler:    _Msg_SubmitResult_Handler,
+		},
+		{
+			MethodName: "ChallengeResult",
+			Handler:    _Msg_ChallengeResult_Handler,
+		},
+		{
+			MethodName: "ResolveChallenge",
+			Handler:    _Msg_ResolveChallenge_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

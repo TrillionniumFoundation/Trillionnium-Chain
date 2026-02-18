@@ -26,6 +26,8 @@ const (
 	Query_WorkerAll_FullMethodName    = "/chain.workload.Query/WorkerAll"
 	Query_Unbonding_FullMethodName    = "/chain.workload.Query/Unbonding"
 	Query_UnbondingAll_FullMethodName = "/chain.workload.Query/UnbondingAll"
+	Query_Challenge_FullMethodName    = "/chain.workload.Query/Challenge"
+	Query_ChallengeAll_FullMethodName = "/chain.workload.Query/ChallengeAll"
 )
 
 // QueryClient is the client API for Query service.
@@ -43,6 +45,9 @@ type QueryClient interface {
 	// Queries a list of Unbonding items.
 	Unbonding(ctx context.Context, in *QueryGetUnbondingRequest, opts ...grpc.CallOption) (*QueryGetUnbondingResponse, error)
 	UnbondingAll(ctx context.Context, in *QueryAllUnbondingRequest, opts ...grpc.CallOption) (*QueryAllUnbondingResponse, error)
+	// Queries a list of Challenge items.
+	Challenge(ctx context.Context, in *QueryGetChallengeRequest, opts ...grpc.CallOption) (*QueryGetChallengeResponse, error)
+	ChallengeAll(ctx context.Context, in *QueryAllChallengeRequest, opts ...grpc.CallOption) (*QueryAllChallengeResponse, error)
 }
 
 type queryClient struct {
@@ -116,6 +121,24 @@ func (c *queryClient) UnbondingAll(ctx context.Context, in *QueryAllUnbondingReq
 	return out, nil
 }
 
+func (c *queryClient) Challenge(ctx context.Context, in *QueryGetChallengeRequest, opts ...grpc.CallOption) (*QueryGetChallengeResponse, error) {
+	out := new(QueryGetChallengeResponse)
+	err := c.cc.Invoke(ctx, Query_Challenge_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) ChallengeAll(ctx context.Context, in *QueryAllChallengeRequest, opts ...grpc.CallOption) (*QueryAllChallengeResponse, error) {
+	out := new(QueryAllChallengeResponse)
+	err := c.cc.Invoke(ctx, Query_ChallengeAll_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // QueryServer is the server API for Query service.
 // All implementations must embed UnimplementedQueryServer
 // for forward compatibility
@@ -131,6 +154,9 @@ type QueryServer interface {
 	// Queries a list of Unbonding items.
 	Unbonding(context.Context, *QueryGetUnbondingRequest) (*QueryGetUnbondingResponse, error)
 	UnbondingAll(context.Context, *QueryAllUnbondingRequest) (*QueryAllUnbondingResponse, error)
+	// Queries a list of Challenge items.
+	Challenge(context.Context, *QueryGetChallengeRequest) (*QueryGetChallengeResponse, error)
+	ChallengeAll(context.Context, *QueryAllChallengeRequest) (*QueryAllChallengeResponse, error)
 	mustEmbedUnimplementedQueryServer()
 }
 
@@ -158,6 +184,12 @@ func (UnimplementedQueryServer) Unbonding(context.Context, *QueryGetUnbondingReq
 }
 func (UnimplementedQueryServer) UnbondingAll(context.Context, *QueryAllUnbondingRequest) (*QueryAllUnbondingResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UnbondingAll not implemented")
+}
+func (UnimplementedQueryServer) Challenge(context.Context, *QueryGetChallengeRequest) (*QueryGetChallengeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Challenge not implemented")
+}
+func (UnimplementedQueryServer) ChallengeAll(context.Context, *QueryAllChallengeRequest) (*QueryAllChallengeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ChallengeAll not implemented")
 }
 func (UnimplementedQueryServer) mustEmbedUnimplementedQueryServer() {}
 
@@ -298,6 +330,42 @@ func _Query_UnbondingAll_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Query_Challenge_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryGetChallengeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).Challenge(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Query_Challenge_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).Challenge(ctx, req.(*QueryGetChallengeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_ChallengeAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryAllChallengeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).ChallengeAll(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Query_ChallengeAll_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).ChallengeAll(ctx, req.(*QueryAllChallengeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Query_ServiceDesc is the grpc.ServiceDesc for Query service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -332,6 +400,14 @@ var Query_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UnbondingAll",
 			Handler:    _Query_UnbondingAll_Handler,
+		},
+		{
+			MethodName: "Challenge",
+			Handler:    _Query_Challenge_Handler,
+		},
+		{
+			MethodName: "ChallengeAll",
+			Handler:    _Query_ChallengeAll_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

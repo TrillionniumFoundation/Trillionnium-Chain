@@ -10,6 +10,7 @@ import "chain/workload/params.proto";
 import "chain/workload/task.proto";
 import "chain/workload/worker.proto";
 import "chain/workload/unbonding.proto";
+import "chain/workload/challenge.proto";
 
 option go_package = "chain/x/workload/types";
 
@@ -49,6 +50,16 @@ service Query {
   }
   rpc UnbondingAll (QueryAllUnbondingRequest) returns (QueryAllUnbondingResponse) {
     option (google.api.http).get = "/chain/workload/unbonding";
+  
+  }
+
+  // Queries a list of Challenge items.
+  rpc Challenge    (QueryGetChallengeRequest) returns (QueryGetChallengeResponse) {
+    option (google.api.http).get = "/chain/workload/challenge/{id}";
+  
+  }
+  rpc ChallengeAll (QueryAllChallengeRequest) returns (QueryAllChallengeResponse) {
+    option (google.api.http).get = "/chain/workload/challenge";
   
   }
 }
@@ -110,6 +121,23 @@ message QueryAllUnbondingRequest {
 
 message QueryAllUnbondingResponse {
   repeated Unbonding                              unbonding  = 1 [(gogoproto.nullable) = false];
+           cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetChallengeRequest {
+  uint64 id = 1;
+}
+
+message QueryGetChallengeResponse {
+  Challenge challenge = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllChallengeRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllChallengeResponse {
+  repeated Challenge                              challenge  = 1 [(gogoproto.nullable) = false];
            cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 

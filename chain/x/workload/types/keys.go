@@ -20,6 +20,8 @@ func KeyPrefix(p string) []byte {
 }
 
 const (
-	TaskKey      = "Task/value/"
-	TaskCountKey = "Task/count/"
+	TaskKey           = "Task/value/"
+	TaskCountKey      = "Task/count/"
+	ChallengeKey      = "Challenge/value/"
+	ChallengeCountKey = "Challenge/count/"
 )

@@ -13,6 +13,7 @@ func DefaultGenesis() *GenesisState {
 		TaskList:      []Task{},
 		WorkerList:    []Worker{},
 		UnbondingList: []Unbonding{},
+		ChallengeList: []Challenge{},
 		// this line is used by starport scaffolding # genesis/types/default
 		Params: DefaultParams(),
 	}
@@ -53,6 +54,19 @@ func (gs GenesisState) Validate() error {
 		}
 		unbondingIndexMap[index] = struct{}{}
 	}
+	// Check for duplicated ID in challenge
+	challengeIDMap := make(map[uint64]bool)
+	challengeCount := gs.GetChallengeCount()
+	for _, elem := range gs.ChallengeList {
+		if _, ok := challengeIDMap[elem.Id]; ok {
+			return fmt.Errorf("duplicated id for challenge")
+		}
+		if elem.Id >= challengeCount {
+			return fmt.Errorf("challenge id should be lower or equal than the last id")
+		}
+		challengeIDMap[elem.Id] = true
+	}
+
 	// this line is used by starport scaffolding # genesis/types/validate
 
 	params := gs.Params

@@ -8,6 +8,7 @@ import "chain/workload/params.proto";
 import "chain/workload/task.proto";
 import "chain/workload/worker.proto";
 import "chain/workload/unbonding.proto";
+import "chain/workload/challenge.proto";
 
 option go_package = "chain/x/workload/types";
 
@@ -20,5 +21,7 @@ message GenesisState {
            uint64    taskCount     = 3;
   repeated Worker    workerList    = 4 [(gogoproto.nullable) = false] ;
   repeated Unbonding unbondingList = 5 [(gogoproto.nullable) = false] ;
+  repeated Challenge challengeList = 6 [(gogoproto.nullable) = false] ;
+  uint64 challengeCount = 7;
 }
 

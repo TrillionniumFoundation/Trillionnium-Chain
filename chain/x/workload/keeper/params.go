@@ -13,10 +13,30 @@ func (k Keeper) GetParams(ctx context.Context) (params types.Params) {
 	store := runtime.KVStoreAdapter(k.storeService.OpenKVStore(ctx))
 	bz := store.Get(types.ParamsKey)
 	if bz == nil {
-		return params
+		return types.DefaultParams()
 	}
 
 	k.cdc.MustUnmarshal(bz, &params)
+	return normalizeParams(params)
+}
+
+func normalizeParams(params types.Params) types.Params {
+	defaults := types.DefaultParams()
+	if params.WorkloadDenom == "" {
+		params.WorkloadDenom = defaults.WorkloadDenom
+	}
+	if params.ChallengeWindowBlocks == 0 {
+		params.ChallengeWindowBlocks = defaults.ChallengeWindowBlocks
+	}
+	if params.ChallengeDeposit == 0 {
+		params.ChallengeDeposit = defaults.ChallengeDeposit
+	}
+	if params.ChallengerSlashPercent == 0 {
+		params.ChallengerSlashPercent = defaults.ChallengerSlashPercent
+	}
+	if params.WorkerSlashPercentOnBadResult == 0 {
+		params.WorkerSlashPercentOnBadResult = defaults.WorkerSlashPercentOnBadResult
+	}
 	return params
 }
 

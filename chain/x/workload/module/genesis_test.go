@@ -39,6 +39,11 @@ func TestGenesis(t *testing.T) {
 				Creator: "1",
 			},
 		},
+		ChallengeList: []types.Challenge{
+			{Id: 0, TaskId: 0},
+			{Id: 1, TaskId: 1},
+		},
+		ChallengeCount: 2,
 		// this line is used by starport scaffolding # genesis/test/state
 	}
 
@@ -54,5 +59,7 @@ func TestGenesis(t *testing.T) {
 	require.Equal(t, genesisState.TaskCount, got.TaskCount)
 	require.ElementsMatch(t, genesisState.WorkerList, got.WorkerList)
 	require.ElementsMatch(t, genesisState.UnbondingList, got.UnbondingList)
+	require.ElementsMatch(t, genesisState.ChallengeList, got.ChallengeList)
+	require.Equal(t, genesisState.ChallengeCount, got.ChallengeCount)
 	// this line is used by starport scaffolding # genesis/test/assert
 }

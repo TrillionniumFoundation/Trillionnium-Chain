@@ -69,7 +69,7 @@ func TestValidateWorkloadDenom(t *testing.T) {
 
 func TestParamsValidate_ErrorMessageContainsDenom(t *testing.T) {
 	invalid := "1bad"
-	err := NewParams(invalid).Validate()
+	err := NewParams(invalid, 100, 1_000_000, 10, 20).Validate()
 	require.Error(t, err)
 	require.Contains(t, err.Error(), fmt.Sprintf("invalid workload denom %q", invalid))
 }

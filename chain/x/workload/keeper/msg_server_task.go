@@ -72,6 +72,12 @@ func (k msgServer) UpdateTask(goCtx context.Context, msg *types.MsgUpdateTask) (
 	}
 
 	ctx := sdk.UnwrapSDKContext(goCtx)
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent("workload_deprecated_path",
+			sdk.NewAttribute("method", "UpdateTask"),
+			sdk.NewAttribute("message", "update-task is deprecated, use submit-result/challenge-result/resolve-challenge flow"),
+		),
+	)
 
 	denom := k.workloadDenom(ctx)
 

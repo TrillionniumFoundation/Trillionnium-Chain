@@ -8,6 +8,7 @@ import "cosmos_proto/cosmos.proto";
 import "gogoproto/gogo.proto";
 import "chain/workload/params.proto";
 import "chain/workload/task.proto";
+import "chain/workload/challenge.proto";
 
 option go_package = "chain/x/workload/types";
 
@@ -27,6 +28,9 @@ service Msg {
   rpc RequestUnbonding  (MsgRequestUnbonding ) returns (MsgRequestUnbondingResponse );
   rpc FinalizeUnbonding (MsgFinalizeUnbonding) returns (MsgFinalizeUnbondingResponse);
   rpc ExtendUnbonding   (MsgExtendUnbonding  ) returns (MsgExtendUnbondingResponse  );
+  rpc SubmitResult      (MsgSubmitResult     ) returns (MsgSubmitResultResponse     );
+  rpc ChallengeResult   (MsgChallengeResult  ) returns (MsgChallengeResultResponse  );
+  rpc ResolveChallenge  (MsgResolveChallenge ) returns (MsgResolveChallengeResponse );
 }
 // MsgUpdateParams is the Msg/UpdateParams request type.
 message MsgUpdateParams {
@@ -128,4 +132,35 @@ message MsgExtendUnbonding {
 }
 
 message MsgExtendUnbondingResponse {}
+
+message MsgSubmitResult {
+  option (cosmos.msg.v1.signer) = "creator";
+  string creator = 1;
+  uint64 taskId = 2;
+  string resultHash = 3;
+  string resultUri = 4;
+}
+
+message MsgSubmitResultResponse {}
+
+message MsgChallengeResult {
+  option (cosmos.msg.v1.signer) = "creator";
+  string creator = 1;
+  uint64 taskId = 2;
+  string reason = 3;
+  string evidenceUri = 4;
+}
+
+message MsgChallengeResultResponse {}
+
+message MsgResolveChallenge {
+  option (cosmos.msg.v1.signer) = "creator";
+  string creator = 1;
+  uint64 taskId = 2;
+  bool challengeSucceeded = 3;
+  string finalResultHash = 4;
+  string memo = 5;
+}
+
+message MsgResolveChallengeResponse {}
 

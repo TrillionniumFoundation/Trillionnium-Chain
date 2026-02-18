@@ -26,6 +26,9 @@ type spyBankKeeper struct {
 	lastSendAccountToModule sdk.Coins
 	lastSendModuleToAccount sdk.Coins
 	lastBurn                sdk.Coins
+	sendAccountToModuleOps  []sdk.Coins
+	sendModuleToAccountOps  []sdk.Coins
+	burnOps                 []sdk.Coins
 }
 
 func (s *spyBankKeeper) SpendableCoins(context.Context, sdk.AccAddress) sdk.Coins {
@@ -33,14 +36,17 @@ func (s *spyBankKeeper) SpendableCoins(context.Context, sdk.AccAddress) sdk.Coin
 }
 func (s *spyBankKeeper) SendCoinsFromAccountToModule(_ context.Context, _ sdk.AccAddress, _ string, coins sdk.Coins) error {
 	s.lastSendAccountToModule = coins
+	s.sendAccountToModuleOps = append(s.sendAccountToModuleOps, coins)
 	return nil
 }
 func (s *spyBankKeeper) SendCoinsFromModuleToAccount(_ context.Context, _ string, _ sdk.AccAddress, coins sdk.Coins) error {
 	s.lastSendModuleToAccount = coins
+	s.sendModuleToAccountOps = append(s.sendModuleToAccountOps, coins)
 	return nil
 }
 func (s *spyBankKeeper) BurnCoins(_ context.Context, _ string, coins sdk.Coins) error {
 	s.lastBurn = coins
+	s.burnOps = append(s.burnOps, coins)
 	return nil
 }
 

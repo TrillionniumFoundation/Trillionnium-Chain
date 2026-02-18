@@ -42,6 +42,20 @@ curl https://get.ignite.com/username/chain@latest! | sudo bash
 ```
 `username/chain` should match the `username` and `repo_name` of the Github repository to which the source code was pushed. Learn more about [the install process](https://github.com/allinbits/starport-installer).
 
+## PoUW V1 Docs
+
+- Design + interface draft: `docs/pouw-settlement-v1.md`
+- Release notes: `docs/RELEASE_NOTES_POUW_V1.md`
+- Migration guide: `docs/MIGRATION_POUW_V1.md`
+- Operator checklist: `docs/OPERATOR_CHECKLIST_POUW_V1.md`
+
+## Validation shortcuts
+
+- Keeper-level PoUW regression bundle: `make smoke-pouw-e2e`
+- CLI scenario smoke: `./tools/smoke_pouw_cli_flow.sh`
+- Non-fatal command hook checker: `make check-pouw-cmds`
+- Pre-release gate (automatable): `make release-gate`
+
 ## Chain Tools Docs
 
 - Lifecycle summary schema contract: `tools/LIFECYCLE_SUMMARY_SCHEMA_CONTRACT.md`
