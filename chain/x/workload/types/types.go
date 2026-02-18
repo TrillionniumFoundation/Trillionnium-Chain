@@ -6,6 +6,7 @@ const (
 	TaskStatusCompleted
 	TaskStatusChallenged
 	TaskStatusSlashed
+	TaskStatusAssigned
 )
 
 const (

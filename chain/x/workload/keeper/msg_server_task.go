@@ -42,7 +42,7 @@ func (k msgServer) CreateTask(goCtx context.Context, msg *types.MsgCreateTask) (
 		Creator:    msg.Creator,
 		IpfsHash:   msg.IpfsHash,
 		Bounty:     msg.Bounty,
-		Status:     0, // 0 = OPEN
+		Status:     types.TaskStatusOpen,
 		Worker:     "",
 		ResultHash: "",
 	}

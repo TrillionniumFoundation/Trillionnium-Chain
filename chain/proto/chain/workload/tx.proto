@@ -20,6 +20,7 @@ service Msg {
   // parameters. The authority defaults to the x/gov module account.
   rpc UpdateParams      (MsgUpdateParams     ) returns (MsgUpdateParamsResponse     );
   rpc CreateTask        (MsgCreateTask       ) returns (MsgCreateTaskResponse       );
+  rpc AcceptTask        (MsgAcceptTask       ) returns (MsgAcceptTaskResponse       );
   rpc UpdateTask        (MsgUpdateTask       ) returns (MsgUpdateTaskResponse       );
   rpc DeleteTask        (MsgDeleteTask       ) returns (MsgDeleteTaskResponse       );
   rpc RegisterWorker    (MsgRegisterWorker   ) returns (MsgRegisterWorkerResponse   );
@@ -65,6 +66,14 @@ message MsgCreateTask {
 message MsgCreateTaskResponse {
   uint64 id = 1;
 }
+
+message MsgAcceptTask {
+  option (cosmos.msg.v1.signer) = "creator";
+  string creator = 1;
+  uint64 taskId = 2;
+}
+
+message MsgAcceptTaskResponse {}
 
 message MsgUpdateTask {
   option (cosmos.msg.v1.signer) = "creator";

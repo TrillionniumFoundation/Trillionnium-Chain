@@ -21,6 +21,7 @@ const _ = grpc.SupportPackageIsVersion7
 const (
 	Msg_UpdateParams_FullMethodName      = "/chain.workload.Msg/UpdateParams"
 	Msg_CreateTask_FullMethodName        = "/chain.workload.Msg/CreateTask"
+	Msg_AcceptTask_FullMethodName        = "/chain.workload.Msg/AcceptTask"
 	Msg_UpdateTask_FullMethodName        = "/chain.workload.Msg/UpdateTask"
 	Msg_DeleteTask_FullMethodName        = "/chain.workload.Msg/DeleteTask"
 	Msg_RegisterWorker_FullMethodName    = "/chain.workload.Msg/RegisterWorker"
@@ -44,6 +45,7 @@ type MsgClient interface {
 	// parameters. The authority defaults to the x/gov module account.
 	UpdateParams(ctx context.Context, in *MsgUpdateParams, opts ...grpc.CallOption) (*MsgUpdateParamsResponse, error)
 	CreateTask(ctx context.Context, in *MsgCreateTask, opts ...grpc.CallOption) (*MsgCreateTaskResponse, error)
+	AcceptTask(ctx context.Context, in *MsgAcceptTask, opts ...grpc.CallOption) (*MsgAcceptTaskResponse, error)
 	UpdateTask(ctx context.Context, in *MsgUpdateTask, opts ...grpc.CallOption) (*MsgUpdateTaskResponse, error)
 	DeleteTask(ctx context.Context, in *MsgDeleteTask, opts ...grpc.CallOption) (*MsgDeleteTaskResponse, error)
 	RegisterWorker(ctx context.Context, in *MsgRegisterWorker, opts ...grpc.CallOption) (*MsgRegisterWorkerResponse, error)
@@ -79,6 +81,15 @@ func (c *msgClient) UpdateParams(ctx context.Context, in *MsgUpdateParams, opts 
 func (c *msgClient) CreateTask(ctx context.Context, in *MsgCreateTask, opts ...grpc.CallOption) (*MsgCreateTaskResponse, error) {
 	out := new(MsgCreateTaskResponse)
 	err := c.cc.Invoke(ctx, Msg_CreateTask_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) AcceptTask(ctx context.Context, in *MsgAcceptTask, opts ...grpc.CallOption) (*MsgAcceptTaskResponse, error) {
+	out := new(MsgAcceptTaskResponse)
+	err := c.cc.Invoke(ctx, Msg_AcceptTask_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -210,6 +221,7 @@ type MsgServer interface {
 	// parameters. The authority defaults to the x/gov module account.
 	UpdateParams(context.Context, *MsgUpdateParams) (*MsgUpdateParamsResponse, error)
 	CreateTask(context.Context, *MsgCreateTask) (*MsgCreateTaskResponse, error)
+	AcceptTask(context.Context, *MsgAcceptTask) (*MsgAcceptTaskResponse, error)
 	UpdateTask(context.Context, *MsgUpdateTask) (*MsgUpdateTaskResponse, error)
 	DeleteTask(context.Context, *MsgDeleteTask) (*MsgDeleteTaskResponse, error)
 	RegisterWorker(context.Context, *MsgRegisterWorker) (*MsgRegisterWorkerResponse, error)
@@ -235,6 +247,9 @@ func (UnimplementedMsgServer) UpdateParams(context.Context, *MsgUpdateParams) (*
 }
 func (UnimplementedMsgServer) CreateTask(context.Context, *MsgCreateTask) (*MsgCreateTaskResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateTask not implemented")
+}
+func (UnimplementedMsgServer) AcceptTask(context.Context, *MsgAcceptTask) (*MsgAcceptTaskResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AcceptTask not implemented")
 }
 func (UnimplementedMsgServer) UpdateTask(context.Context, *MsgUpdateTask) (*MsgUpdateTaskResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateTask not implemented")
@@ -320,6 +335,24 @@ func _Msg_CreateTask_Handler(srv interface{}, ctx context.Context, dec func(inte
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MsgServer).CreateTask(ctx, req.(*MsgCreateTask))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_AcceptTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgAcceptTask)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).AcceptTask(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Msg_AcceptTask_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).AcceptTask(ctx, req.(*MsgAcceptTask))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -572,6 +605,10 @@ var Msg_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateTask",
 			Handler:    _Msg_CreateTask_Handler,
+		},
+		{
+			MethodName: "AcceptTask",
+			Handler:    _Msg_AcceptTask_Handler,
 		},
 		{
 			MethodName: "UpdateTask",

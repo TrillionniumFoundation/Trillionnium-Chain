@@ -26,10 +26,10 @@ func (k msgServer) CommitResult(goCtx context.Context, msg *types.MsgCommitResul
 	if !found {
 		return nil, errorsmod.Wrapf(sdkerrors.ErrKeyNotFound, "task %d not found", msg.TaskId)
 	}
-	if task.Status != types.TaskStatusOpen {
-		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "task is not open")
+	if task.Status != types.TaskStatusAssigned {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "task is not assigned")
 	}
-	if task.Worker != "" && task.Worker != msg.Creator {
+	if task.Worker != msg.Creator {
 		return nil, errorsmod.Wrap(sdkerrors.ErrUnauthorized, "only assigned worker can commit")
 	}
 	if task.CommitHash != "" {
@@ -68,8 +68,8 @@ func (k msgServer) RevealResult(goCtx context.Context, msg *types.MsgRevealResul
 	if !found {
 		return nil, errorsmod.Wrapf(sdkerrors.ErrKeyNotFound, "task %d not found", msg.TaskId)
 	}
-	if task.Status != types.TaskStatusOpen {
-		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "task is not open for reveal")
+	if task.Status != types.TaskStatusAssigned {
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "task is not assigned for reveal")
 	}
 	if task.Worker != msg.Creator {
 		return nil, errorsmod.Wrap(sdkerrors.ErrUnauthorized, "only committed worker can reveal")

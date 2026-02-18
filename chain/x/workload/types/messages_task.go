@@ -27,6 +27,23 @@ func (msg *MsgCreateTask) ValidateBasic() error {
 	return nil
 }
 
+var _ sdk.Msg = &MsgAcceptTask{}
+
+func NewMsgAcceptTask(creator string, taskID uint64) *MsgAcceptTask {
+	return &MsgAcceptTask{
+		Creator: creator,
+		TaskId:  taskID,
+	}
+}
+
+func (msg *MsgAcceptTask) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return errorsmod.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	return nil
+}
+
 var _ sdk.Msg = &MsgUpdateTask{}
 
 func NewMsgUpdateTask(creator string, id uint64, ipfsHash string, bounty uint64, status uint64, worker string, resultHash string) *MsgUpdateTask {
