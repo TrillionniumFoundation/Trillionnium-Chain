@@ -46,5 +46,17 @@ if [[ $RC -eq 0 ]] && grep -q "code: 0" <<<"$OUT"; then
   exit 0
 fi
 
+if grep -qi "unable to resolve type URL" <<<"$OUT"; then
+  cat <<'EOF'
+⚠️  CLI command is present, but running node binary doesn't recognize MsgChallengeResult yet.
+Likely node is still on an older build.
+
+Action:
+1) restart local chain with latest ./build/chaind
+2) retry: TASK_ID=<id> CHALLENGER=<key> ./scripts/scenario_C_challenge.sh
+EOF
+  exit 1
+fi
+
 echo "❌ Challenge submission failed"
 exit 1
