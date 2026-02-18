@@ -26,8 +26,8 @@ func (k msgServer) CommitResult(goCtx context.Context, msg *types.MsgCommitResul
 	if !found {
 		return nil, errorsmod.Wrapf(sdkerrors.ErrKeyNotFound, "task %d not found", msg.TaskId)
 	}
-	if task.Status != types.TaskStatusAssigned {
-		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "task is not assigned")
+	if err := ensureTaskStatus(task, types.TaskStatusAssigned, "task is not assigned"); err != nil {
+		return nil, err
 	}
 	if task.Worker != msg.Creator {
 		return nil, errorsmod.Wrap(sdkerrors.ErrUnauthorized, "only assigned worker can commit")
@@ -68,8 +68,8 @@ func (k msgServer) RevealResult(goCtx context.Context, msg *types.MsgRevealResul
 	if !found {
 		return nil, errorsmod.Wrapf(sdkerrors.ErrKeyNotFound, "task %d not found", msg.TaskId)
 	}
-	if task.Status != types.TaskStatusAssigned {
-		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "task is not assigned for reveal")
+	if err := ensureTaskStatus(task, types.TaskStatusAssigned, "task is not assigned for reveal"); err != nil {
+		return nil, err
 	}
 	if task.Worker != msg.Creator {
 		return nil, errorsmod.Wrap(sdkerrors.ErrUnauthorized, "only committed worker can reveal")
@@ -87,6 +87,9 @@ func (k msgServer) RevealResult(goCtx context.Context, msg *types.MsgRevealResul
 	}
 
 	params := k.GetParams(ctx)
+	if err := ensureTaskTransition(task.Status, types.TaskStatusResultSubmitted); err != nil {
+		return nil, err
+	}
 	task.ResultHash = msg.ResultHash
 	task.ResultUri = msg.ResultUri
 	task.Status = types.TaskStatusResultSubmitted

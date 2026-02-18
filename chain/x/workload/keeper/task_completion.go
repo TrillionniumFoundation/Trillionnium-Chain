@@ -40,6 +40,9 @@ func (k Keeper) CompleteTask(ctx context.Context, taskID uint64, workerAddress s
 		emitFundFlowEvent(sdk.UnwrapSDKContext(ctx), taskID, types.ModuleName, "burn", val.Bounty, denom, "task_burn")
 	}
 
+	if err := ensureTaskTransition(val.Status, types.TaskStatusCompleted); err != nil {
+		return err
+	}
 	val.Status = types.TaskStatusCompleted
 	val.Worker = workerAddress
 	val.ResultHash = resultHash

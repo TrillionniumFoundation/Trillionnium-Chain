@@ -20,8 +20,8 @@ func (k msgServer) AcceptTask(goCtx context.Context, msg *types.MsgAcceptTask) (
 	if !found {
 		return nil, errorsmod.Wrapf(sdkerrors.ErrKeyNotFound, "task %d not found", msg.TaskId)
 	}
-	if task.Status != types.TaskStatusOpen {
-		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "task is not open")
+	if err := ensureTaskStatus(task, types.TaskStatusOpen, "task is not open"); err != nil {
+		return nil, err
 	}
 	if task.Worker != "" && task.Worker != msg.Creator {
 		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "task already assigned")
@@ -31,6 +31,9 @@ func (k msgServer) AcceptTask(goCtx context.Context, msg *types.MsgAcceptTask) (
 		return nil, errorsmod.Wrap(types.ErrWorkerNotFound, "worker must be registered before accepting task")
 	}
 
+	if err := ensureTaskTransition(task.Status, types.TaskStatusAssigned); err != nil {
+		return nil, err
+	}
 	task.Worker = msg.Creator
 	task.Status = types.TaskStatusAssigned
 	k.SetTask(ctx, task)

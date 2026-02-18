@@ -45,7 +45,7 @@ func (k Keeper) AutoRecoverExpiredCommits(ctx context.Context) error {
 	}
 
 	for _, task := range tasks {
-		if task.Status != types.TaskStatusOpen {
+		if task.Status != types.TaskStatusAssigned {
 			continue
 		}
 		if task.CommitHash == "" || task.RevealDeadlineHeight == 0 {
@@ -55,10 +55,14 @@ func (k Keeper) AutoRecoverExpiredCommits(ctx context.Context) error {
 			continue
 		}
 
+		if err := ensureTaskTransition(task.Status, types.TaskStatusOpen); err != nil {
+			return err
+		}
 		task.CommitHash = ""
 		task.CommitHeight = 0
 		task.RevealDeadlineHeight = 0
 		task.Worker = ""
+		task.Status = types.TaskStatusOpen
 		k.SetTask(ctx, task)
 
 		sdkCtx.EventManager().EmitEvent(

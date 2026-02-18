@@ -26,8 +26,11 @@ func (k msgServer) SubmitResult(goCtx context.Context, msg *types.MsgSubmitResul
 	if !found {
 		return nil, errorsmod.Wrapf(sdkerrors.ErrKeyNotFound, "task %d not found", msg.TaskId)
 	}
-	if task.Status != types.TaskStatusOpen {
-		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "task is not open")
+	if err := ensureTaskStatus(task, types.TaskStatusOpen, "task is not open"); err != nil {
+		return nil, err
+	}
+	if err := ensureTaskTransition(task.Status, types.TaskStatusResultSubmitted); err != nil {
+		return nil, err
 	}
 
 	task.Worker = msg.Creator
@@ -59,8 +62,8 @@ func (k msgServer) ChallengeResult(goCtx context.Context, msg *types.MsgChalleng
 	if !found {
 		return nil, errorsmod.Wrapf(sdkerrors.ErrKeyNotFound, "task %d not found", msg.TaskId)
 	}
-	if task.Status != types.TaskStatusResultSubmitted {
-		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "task is not in result-submitted status")
+	if err := ensureTaskStatus(task, types.TaskStatusResultSubmitted, "task is not in result-submitted status"); err != nil {
+		return nil, err
 	}
 	if uint64(ctx.BlockHeight()) > task.ChallengeDeadlineHeight {
 		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "challenge window expired")
@@ -92,6 +95,9 @@ func (k msgServer) ChallengeResult(goCtx context.Context, msg *types.MsgChalleng
 	}
 	challengeID := k.AppendChallenge(ctx, challenge)
 
+	if err := ensureTaskTransition(task.Status, types.TaskStatusChallenged); err != nil {
+		return nil, err
+	}
 	task.Status = types.TaskStatusChallenged
 	task.Challenger = msg.Creator
 	task.ChallengeId = challengeID
@@ -121,8 +127,8 @@ func (k msgServer) ResolveChallenge(goCtx context.Context, msg *types.MsgResolve
 	if !found {
 		return nil, errorsmod.Wrapf(sdkerrors.ErrKeyNotFound, "task %d not found", msg.TaskId)
 	}
-	if task.Status != types.TaskStatusChallenged {
-		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "task is not challenged")
+	if err := ensureTaskStatus(task, types.TaskStatusChallenged, "task is not challenged"); err != nil {
+		return nil, err
 	}
 
 	challenge, found := k.GetChallenge(ctx, task.ChallengeId)
@@ -149,6 +155,10 @@ func (k msgServer) ResolveChallenge(goCtx context.Context, msg *types.MsgResolve
 
 	challenge.Status = resolveOut.ChallengeStatus
 	challenge.ResolvedHeight = uint64(ctx.BlockHeight())
+
+	if err := ensureTaskTransition(task.Status, resolveOut.TaskStatus); err != nil {
+		return nil, err
+	}
 
 	if resolveOut.TaskStatus == types.TaskStatusSlashed {
 		task.Status = resolveOut.TaskStatus
