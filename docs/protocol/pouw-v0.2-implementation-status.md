@@ -5,8 +5,8 @@
 ## 总览
 
 - ✅ 已实现（核心闭环）：状态常量收敛、`AcceptTask` 接单、commit/reveal、挑战与裁决、资金流审计事件、可替换 DisputeResolver、状态迁移守卫、细粒度错误码、关键测试。
-- 🟡 部分实现：任务状态机语义已增强，但尚未引入独立 `COMMITTED/REVEALED` 枚举状态值（当前以字段驱动）。
-- ⏳ 待实现：状态机矩阵测试补完、迁移脚本与升级文档、文档与实现字段完全一致化。
+- ✅ 已实现：任务状态机语义已增强并引入独立 `COMMITTED/REVEALED` 状态值。
+- ⏳ 待实现：迁移脚本与升级文档、文档与实现字段完全一致化。
 
 ---
 
@@ -15,7 +15,7 @@
 | 项目 | 目标 | 当前状态 | 备注 |
 |---|---|---|---|
 | 去裸数字状态 | 统一常量 | ✅ 已实现 | `types.TaskStatus*`, `types.ChallengeStatus*` 已接管 keeper 逻辑 |
-| 扩展完整状态机 | `OPEN -> ASSIGNED -> COMMITTED -> REVEALED -> CHALLENGED -> FINALIZED` | 🟡 部分实现 | 当前已引入 `ASSIGNED`；仍用 `RESULT_SUBMITTED` 承载 reveal 后状态 |
+| 扩展完整状态机 | `OPEN -> ASSIGNED -> COMMITTED -> REVEALED -> CHALLENGED -> FINALIZED` | ✅ 已实现（语义层） | 已引入 `COMMITTED/REVEALED`，并保留 `RESULT_SUBMITTED` 兼容别名 |
 | 状态迁移守卫 | 全迁移可校验 | ✅ 已实现 | 已有集中守卫与迁移白名单（keeper 统一校验） |
 
 ---
@@ -79,9 +79,9 @@
 ## 7) 未完成项（建议优先级）
 
 ### P0（建议下一迭代）
-1. 将 commit/reveal 对应到独立状态值（或完善注释规范）
-2. 增加状态机矩阵测试（覆盖所有非法迁移）
-3. 把 deprecated `UpdateTask` 限制为更窄内部用途
+1. 把 deprecated `UpdateTask` 进一步收敛为 internal-only（或移除外部命令入口）
+2. 增加端到端 smoke：`create -> accept -> commit -> reveal -> challenge -> resolve`
+3. 在 API/CLI 帮助中明确 legacy `submit-result` 的兼容策略与退役时间线
 
 ### P1
 1. 迁移脚本与升级说明
