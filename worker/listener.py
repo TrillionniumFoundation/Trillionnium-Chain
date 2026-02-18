@@ -36,11 +36,13 @@ class ChainListener:
         self.wallet_addr = config['node'].get('address', 'worker-addr-not-set')
         self.key_name = config['node'].get('key_name', 'alice')
         self.chain_bin = config['node'].get('chain_binary', '/Users/qianqi/.openclaw/workspace/TrillionniumChain/build/chaind')
+        self.home = config['node'].get('home', '/Users/qianqi/.chain')
         logger.info(f"Worker wallet configured: {self.wallet_addr} (key={self.key_name})")
 
         self.last_height = 0
         self.state_file = Path(os.path.join(os.path.dirname(__file__), "worker_state.json"))
         self.seen_jobs = set()
+        self.in_flight_jobs = set()
         self.sequence = None
         self._load_state()
 
@@ -48,6 +50,9 @@ class ChainListener:
         """Polls the chain for new compute jobs."""
         logger.info(f"🚀 Worker Listener started. Connected to {self.chain_id} via {self.rpc_endpoint}")
         
+        # Ensure worker identity is registered in workload module (idempotent)
+        self.ensure_worker_registered()
+
         # Get current height to start listening from "now"
         try:
             self.last_height = self._rpc_height()
@@ -105,6 +110,7 @@ class ChainListener:
         cmd = [
             self.chain_bin, "query", "auth", "account", self.wallet_addr,
             "--output", "json",
+            "--home", self.home,
         ]
         r = subprocess.run(cmd, capture_output=True, text=True)
         if r.returncode != 0:
@@ -114,6 +120,23 @@ class ChainListener:
         self.sequence = seq
         self._save_state()
         return seq
+
+    def ensure_worker_registered(self):
+        """Idempotently register worker in workload module so compute claim won't fail with worker-not-found."""
+        try:
+            ok = self._run_chain_tx([
+                "tx", "workload", "register-worker",
+                self.key_name,
+                f"ipfs://worker-{self.key_name}",
+                "--from", self.key_name,
+                "--keyring-backend", "test",
+                "--chain-id", self.chain_id,
+                "--yes", "--gas", "auto", "--gas-adjustment", "1.5",
+            ])
+            if ok:
+                logger.info("Worker registration ensured")
+        except Exception as e:
+            logger.warning(f"ensure_worker_registered skipped: {e}")
 
     def process_block(self, height):
         """Fetches block results and looks for 'new_compute_job' events."""
@@ -149,21 +172,22 @@ class ChainListener:
         digits = ''.join(ch for ch in jid if ch.isdigit())
         job_id = digits if digits else jid
 
-        if job_id in self.seen_jobs:
+        if job_id in self.seen_jobs or job_id in self.in_flight_jobs:
             return
-        self.seen_jobs.add(job_id)
-        self._save_state()
+        self.in_flight_jobs.add(job_id)
 
         logger.info(f"🔔 New Job Detected! ID: {job_id} | Payload: {payload}")
         
         # Validate requirements (Mock check)
         if "gpu" in requirements and "gpu" not in self.config['worker']['capabilities']:
             logger.warning(f"Skipping Job {job_id}: Missing GPU capability.")
+            self.in_flight_jobs.discard(job_id)
             return
 
         # Claim job on-chain first (set status=RUNNING and assigned_worker)
         if not self.request_job_execution(job_id):
             logger.warning(f"Skip Job {job_id}: failed to claim execution rights")
+            self.in_flight_jobs.discard(job_id)
             return
 
         # Trigger Execution
@@ -193,20 +217,34 @@ class ChainListener:
             logger.info(f"Task succeeded. Result: {stdout[:50]}...")
             # wait a couple blocks so RUNNING-state tx is committed before complete-job
             time.sleep(3)
-            self.submit_result(job_id, stdout)
+            committed = self.submit_result(job_id, stdout)
+            if committed:
+                self.seen_jobs.add(job_id)
+                self._save_state()
         else:
             logger.error(f"Task failed. Code: {code}")
             # Optionally submit failure report
 
+        self.in_flight_jobs.discard(job_id)
+
     def _run_chain_tx(self, args):
         def run_once():
-            cmd = [self.chain_bin] + args + ["--broadcast-mode", "sync"]
+            cmd = [self.chain_bin] + args + ["--home", self.home, "--broadcast-mode", "sync"]
             r = subprocess.run(cmd, capture_output=True, text=True)
             out = (r.stdout or "") + (r.stderr or "")
             ok = (r.returncode == 0) and (
                 "code: 0" in out or '"code":0' in out or '"code": 0' in out
             )
             return ok, r, out, cmd
+
+        benign_markers = [
+            "already registered",
+            "not in CREATED state",
+            "not found in workload module",
+        ]
+        quiet_benign_markers = [
+            "worker already registered",
+        ]
 
         for attempt in range(6):
             ok, r, out, cmd = run_once()
@@ -215,6 +253,12 @@ class ChainListener:
             if "account sequence mismatch" in out:
                 time.sleep(0.8 + attempt * 0.3)
                 continue
+            if any(m in out for m in benign_markers):
+                if any(m in out for m in quiet_benign_markers):
+                    logger.debug("Worker already registered; skip re-register")
+                else:
+                    logger.info(f"Benign tx skip: {' '.join(cmd)}\n{out.strip()}")
+                return False
             break
 
         logger.error(f"TX failed rc={r.returncode}: {' '.join(cmd)}\n{out}")
@@ -246,6 +290,9 @@ class ChainListener:
             ])
             if ok:
                 logger.info(f"✅ Job {job_id} result committed on-chain")
+                return True
+            return False
         except Exception as e:
             logger.error(f"Failed to submit result: {e}")
+            return False
 
