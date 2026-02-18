@@ -44,6 +44,8 @@ jobs:
             chain/tools/compute_lifecycle_smoke.sh \
             chain/tools/compute_lifecycle_preflight.sh \
             chain/tools/compute_lifecycle_summary_contract_test.sh \
+            chain/tools/alpha_stability_runner.sh \
+            chain/tools/alpha_report.sh \
             chain/tools/lifecycle_smoke_observability_test.sh \
             chain/tools/lifecycle_summary_parser_examples_test.sh \
             chain/tools/lifecycle_summary_fixture_consistency_test.sh \
@@ -57,6 +59,8 @@ jobs:
           bash -n chain/tools/compute_lifecycle_smoke.sh
           bash -n chain/tools/compute_lifecycle_preflight.sh
           bash -n chain/tools/compute_lifecycle_summary_contract_test.sh
+          bash -n chain/tools/alpha_stability_runner.sh
+          bash -n chain/tools/alpha_report.sh
           bash -n chain/tools/lifecycle_smoke_observability_test.sh
           bash -n chain/tools/lifecycle_summary_parser_examples_test.sh
           bash -n chain/tools/lifecycle_summary_fixture_consistency_test.sh

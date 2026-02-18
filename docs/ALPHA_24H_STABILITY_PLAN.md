@@ -28,7 +28,11 @@ Run continuous workload lifecycle traffic for 24h and capture reliability SLOs.
 1. Preflight: `tools/compute_lifecycle_preflight.sh`
 2. Lifecycle smoke: `tools/compute_lifecycle_smoke.sh`
 3. Persist logs to `docs/alpha-runs/<timestamp>.log`
-4. Summarize SLOs at end of window
+4. Summarize SLOs at end of window:
+   ```bash
+   cd chain
+   bash tools/alpha_report.sh ../docs/alpha-runs/<timestamp>
+   ```
 
 ## Exit Criteria
 - SLOs met for full 24h window
