@@ -52,5 +52,21 @@ The `FinalizeUnbonding` message allows a user to claim their unbonded tokens aft
 
 ## Compute Module
 
-### Integration Preparation
-*   A placeholder test `x/compute/keeper/keeper_test.go` has been added to verify that `x/compute` can import `x/workload/keeper`. This confirms that future cross-module interactions (e.g., Compute module querying Workload state) are feasible.
+### CreateComputeJob
+
+The `CreateComputeJob` message allows a user to submit a compute job which creates a task in the Workload module.
+
+#### Business Logic
+1.  **Validation**:
+    *   Checks if the payload is empty (`ErrInvalidPayload`).
+    *   Verifies the creator address format.
+
+2.  **Execution**:
+    *   Creates a `Task` in the Workload module with the provided payload as `IpfsHash`.
+    *   Returns the new `JobId` (which corresponds to the Task ID in Workload module).
+
+### Integration Test
+*   `TestCreateComputeJob_Integration`:
+    *   Verifies that calling `CreateComputeJob` creates a corresponding task in `Workload` module.
+    *   Queries the task using the returned `JobId` to confirm side effects.
+    *   Validates error handling for empty payload.

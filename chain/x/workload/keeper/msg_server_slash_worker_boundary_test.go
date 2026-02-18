@@ -43,7 +43,7 @@ func TestSlashWorker_Boundary(t *testing.T) {
 		k, srv, ctx := setupMsgServer(t)
 		wctx := sdk.UnwrapSDKContext(ctx)
 
-		// Start with 1999, slash 50% -> 999. 
+		// Start with 1999, slash 50% -> 999.
 		// Remaining = 1999 - 999 = 1000. This is EXACTLY the minimum.
 		// So this should SUCCEED, not fail.
 		worker := sample.AccAddress()
@@ -55,7 +55,7 @@ func TestSlashWorker_Boundary(t *testing.T) {
 			SlashPercent: 50,
 		})
 		require.NoError(t, err)
-		
+
 		w, _ := k.GetWorker(wctx, worker)
 		require.Equal(t, uint64(1000), w.Stake)
 
@@ -109,15 +109,15 @@ func TestSlashWorker_Boundary(t *testing.T) {
 		// Let's try to get 0. Need stake < 100 for 1% slash to be 0.
 		// But stake must remain >= 1000.
 		// So if stake is 1005, slash 1% -> amount 10. Remaining 995. Fail.
-		
+
 		// If we set stake to say 500 (already below min, maybe from genesis or bug), and try to slash 1% -> 5. Remaining 495. Fail.
-		
+
 		// What if we try to slash 0%? No, validation catches that.
 		// What if we slash such a small amount that integer math makes it 0?
 		// e.g. Stake 10000. 0.001%? Field is uint64, so min is 1%.
 		// So min slash amount for stake 1000 is 10.
 		// Min slash amount for stake 1 is 0.
-		
+
 		// So if stake is < 100, 1% slash is 0.
 		// But if stake is < 100, it's already below 1000.
 		// Let's force a worker with 90 stake.

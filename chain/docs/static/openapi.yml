@@ -4,6 +4,83 @@ info:
   name: ''
   description: ''
 paths:
+  /chain/compute/params:
+    get:
+      summary: Parameters queries the parameters of the module.
+      operationId: ChainComputeQuery_Params
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              params:
+                description: params holds all the parameters of this module.
+                type: object
+            description: >-
+              QueryParamsResponse is response type for the Query/Params RPC
+              method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      tags:
+        - Query
+  /chain.compute.Msg/CreateComputeJob:
+    post:
+      operationId: ChainComputeMsg_CreateComputeJob
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              creator:
+                type: string
+              payload:
+                type: string
+              requirements:
+                type: string
+      tags:
+        - Msg
   /chain.compute.Msg/UpdateParams:
     post:
       summary: |-
@@ -52,12 +129,446 @@ paths:
                   authority is the address that controls the module (defaults to
                   x/gov unless overwritten).
               params:
-                description: |-
-                  params defines the module parameters to update.
-
-                  NOTE: All parameters must be supplied.
+                description: 'NOTE: All parameters must be supplied.'
                 type: object
             description: MsgUpdateParams is the Msg/UpdateParams request type.
+      tags:
+        - Msg
+  /chain.workload.Msg/CreateTask:
+    post:
+      operationId: ChainWorkloadMsg_CreateTask
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uint64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              creator:
+                type: string
+              ipfsHash:
+                type: string
+              bounty:
+                type: string
+                format: uint64
+              status:
+                type: string
+                format: uint64
+              worker:
+                type: string
+              resultHash:
+                type: string
+      tags:
+        - Msg
+  /chain.workload.Msg/DeleteTask:
+    post:
+      operationId: ChainWorkloadMsg_DeleteTask
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              creator:
+                type: string
+              id:
+                type: string
+                format: uint64
+      tags:
+        - Msg
+  /chain.workload.Msg/ExtendUnbonding:
+    post:
+      operationId: ChainWorkloadMsg_ExtendUnbonding
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              creator:
+                type: string
+              worker:
+                type: string
+              extraBlocks:
+                type: string
+                format: uint64
+      tags:
+        - Msg
+  /chain.workload.Msg/FinalizeUnbonding:
+    post:
+      operationId: ChainWorkloadMsg_FinalizeUnbonding
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              creator:
+                type: string
+      tags:
+        - Msg
+  /chain.workload.Msg/RegisterWorker:
+    post:
+      operationId: ChainWorkloadMsg_RegisterWorker
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              creator:
+                type: string
+              nodeId:
+                type: string
+              ipfsAddr:
+                type: string
+      tags:
+        - Msg
+  /chain.workload.Msg/RequestUnbonding:
+    post:
+      operationId: ChainWorkloadMsg_RequestUnbonding
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              creator:
+                type: string
+      tags:
+        - Msg
+  /chain.workload.Msg/SlashWorker:
+    post:
+      operationId: ChainWorkloadMsg_SlashWorker
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              creator:
+                type: string
+              worker:
+                type: string
+              slashPercent:
+                type: string
+                format: uint64
+      tags:
+        - Msg
+  /chain.workload.Msg/UnregisterWorker:
+    post:
+      operationId: ChainWorkloadMsg_UnregisterWorker
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              creator:
+                type: string
+      tags:
+        - Msg
+  /chain.workload.Msg/UpdateParams:
+    post:
+      summary: |-
+        UpdateParams defines a (governance) operation for updating the module
+        parameters. The authority defaults to the x/gov module account.
+      operationId: ChainWorkloadMsg_UpdateParams
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            description: >-
+              MsgUpdateParamsResponse defines the response structure for
+              executing a
+
+              MsgUpdateParams message.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: body
+          description: MsgUpdateParams is the Msg/UpdateParams request type.
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              authority:
+                type: string
+                description: >-
+                  authority is the address that controls the module (defaults to
+                  x/gov unless overwritten).
+              params:
+                description: 'NOTE: All parameters must be supplied.'
+                type: object
+                properties:
+                  workload_denom:
+                    type: string
+            description: MsgUpdateParams is the Msg/UpdateParams request type.
+      tags:
+        - Msg
+  /chain.workload.Msg/UpdateTask:
+    post:
+      operationId: ChainWorkloadMsg_UpdateTask
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              creator:
+                type: string
+              id:
+                type: string
+                format: uint64
+              ipfsHash:
+                type: string
+              bounty:
+                type: string
+                format: uint64
+              status:
+                type: string
+                format: uint64
+              worker:
+                type: string
+              resultHash:
+                type: string
       tags:
         - Msg
   /chain/workload/params:
@@ -73,6 +584,9 @@ paths:
               params:
                 description: params holds all the parameters of this module.
                 type: object
+                properties:
+                  workload_denom:
+                    type: string
             description: >-
               QueryParamsResponse is response type for the Query/Params RPC
               method.
@@ -636,440 +1150,6 @@ paths:
           type: string
       tags:
         - Query
-  /chain.workload.Msg/CreateTask:
-    post:
-      operationId: ChainWorkloadMsg_CreateTask
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              id:
-                type: string
-                format: uint64
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: body
-          in: body
-          required: true
-          schema:
-            type: object
-            properties:
-              creator:
-                type: string
-              ipfsHash:
-                type: string
-              bounty:
-                type: string
-                format: uint64
-              status:
-                type: string
-                format: uint64
-              worker:
-                type: string
-              resultHash:
-                type: string
-      tags:
-        - Msg
-  /chain.workload.Msg/DeleteTask:
-    post:
-      operationId: ChainWorkloadMsg_DeleteTask
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: body
-          in: body
-          required: true
-          schema:
-            type: object
-            properties:
-              creator:
-                type: string
-              id:
-                type: string
-                format: uint64
-      tags:
-        - Msg
-  /chain.workload.Msg/ExtendUnbonding:
-    post:
-      operationId: ChainWorkloadMsg_ExtendUnbonding
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: body
-          in: body
-          required: true
-          schema:
-            type: object
-            properties:
-              creator:
-                type: string
-              worker:
-                type: string
-              extraBlocks:
-                type: string
-                format: uint64
-      tags:
-        - Msg
-  /chain.workload.Msg/FinalizeUnbonding:
-    post:
-      operationId: ChainWorkloadMsg_FinalizeUnbonding
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: body
-          in: body
-          required: true
-          schema:
-            type: object
-            properties:
-              creator:
-                type: string
-      tags:
-        - Msg
-  /chain.workload.Msg/RegisterWorker:
-    post:
-      operationId: ChainWorkloadMsg_RegisterWorker
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: body
-          in: body
-          required: true
-          schema:
-            type: object
-            properties:
-              creator:
-                type: string
-              nodeId:
-                type: string
-              ipfsAddr:
-                type: string
-      tags:
-        - Msg
-  /chain.workload.Msg/RequestUnbonding:
-    post:
-      operationId: ChainWorkloadMsg_RequestUnbonding
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: body
-          in: body
-          required: true
-          schema:
-            type: object
-            properties:
-              creator:
-                type: string
-      tags:
-        - Msg
-  /chain.workload.Msg/SlashWorker:
-    post:
-      operationId: ChainWorkloadMsg_SlashWorker
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: body
-          in: body
-          required: true
-          schema:
-            type: object
-            properties:
-              creator:
-                type: string
-              worker:
-                type: string
-              slashPercent:
-                type: string
-                format: uint64
-      tags:
-        - Msg
-  /chain.workload.Msg/UnregisterWorker:
-    post:
-      operationId: ChainWorkloadMsg_UnregisterWorker
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: body
-          in: body
-          required: true
-          schema:
-            type: object
-            properties:
-              creator:
-                type: string
-      tags:
-        - Msg
-  /chain.workload.Msg/UpdateParams:
-    post:
-      summary: |-
-        UpdateParams defines a (governance) operation for updating the module
-        parameters. The authority defaults to the x/gov module account.
-      operationId: ChainWorkloadMsg_UpdateParams
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            description: >-
-              MsgUpdateParamsResponse defines the response structure for
-              executing a
-
-              MsgUpdateParams message.
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: body
-          description: MsgUpdateParams is the Msg/UpdateParams request type.
-          in: body
-          required: true
-          schema:
-            type: object
-            properties:
-              authority:
-                type: string
-                description: >-
-                  authority is the address that controls the module (defaults to
-                  x/gov unless overwritten).
-              params:
-                description: 'NOTE: All parameters must be supplied.'
-                type: object
-            description: MsgUpdateParams is the Msg/UpdateParams request type.
-      tags:
-        - Msg
-  /chain.workload.Msg/UpdateTask:
-    post:
-      operationId: ChainWorkloadMsg_UpdateTask
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: body
-          in: body
-          required: true
-          schema:
-            type: object
-            properties:
-              creator:
-                type: string
-              id:
-                type: string
-                format: uint64
-              ipfsHash:
-                type: string
-              bounty:
-                type: string
-                format: uint64
-              status:
-                type: string
-                format: uint64
-              worker:
-                type: string
-              resultHash:
-                type: string
-      tags:
-        - Msg
   /cosmos.auth.v1beta1.Msg/UpdateParams:
     post:
       summary: >-
@@ -20270,29 +20350,6 @@ paths:
       tags:
         - Msg
 definitions:
-  chain.compute.MsgUpdateParams:
-    type: object
-    properties:
-      authority:
-        type: string
-        description: >-
-          authority is the address that controls the module (defaults to x/gov
-          unless overwritten).
-      params:
-        description: |-
-          params defines the module parameters to update.
-
-          NOTE: All parameters must be supplied.
-        type: object
-    description: MsgUpdateParams is the Msg/UpdateParams request type.
-  chain.compute.MsgUpdateParamsResponse:
-    type: object
-    description: |-
-      MsgUpdateParamsResponse defines the response structure for executing a
-      MsgUpdateParams message.
-  chain.compute.Params:
-    type: object
-    description: Params defines the parameters for the module.
   google.protobuf.Any:
     type: object
     properties:
@@ -20628,8 +20685,180 @@ definitions:
                   "@type": "type.googleapis.com/google.protobuf.Duration",
                   "value": "1.212s"
                 }
+  chain.compute.Params:
+    type: object
+    description: Params defines the parameters for the module.
+  chain.compute.QueryParamsResponse:
+    type: object
+    properties:
+      params:
+        description: params holds all the parameters of this module.
+        type: object
+    description: QueryParamsResponse is response type for the Query/Params RPC method.
+  chain.compute.MsgCreateComputeJob:
+    type: object
+    properties:
+      creator:
+        type: string
+      payload:
+        type: string
+      requirements:
+        type: string
+  chain.compute.MsgCreateComputeJobResponse:
+    type: object
+  chain.compute.MsgUpdateParams:
+    type: object
+    properties:
+      authority:
+        type: string
+        description: >-
+          authority is the address that controls the module (defaults to x/gov
+          unless overwritten).
+      params:
+        description: 'NOTE: All parameters must be supplied.'
+        type: object
+    description: MsgUpdateParams is the Msg/UpdateParams request type.
+  chain.compute.MsgUpdateParamsResponse:
+    type: object
+    description: |-
+      MsgUpdateParamsResponse defines the response structure for executing a
+      MsgUpdateParams message.
+  chain.workload.MsgCreateTask:
+    type: object
+    properties:
+      creator:
+        type: string
+      ipfsHash:
+        type: string
+      bounty:
+        type: string
+        format: uint64
+      status:
+        type: string
+        format: uint64
+      worker:
+        type: string
+      resultHash:
+        type: string
+  chain.workload.MsgCreateTaskResponse:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uint64
+  chain.workload.MsgDeleteTask:
+    type: object
+    properties:
+      creator:
+        type: string
+      id:
+        type: string
+        format: uint64
+  chain.workload.MsgDeleteTaskResponse:
+    type: object
+  chain.workload.MsgExtendUnbonding:
+    type: object
+    properties:
+      creator:
+        type: string
+      worker:
+        type: string
+      extraBlocks:
+        type: string
+        format: uint64
+  chain.workload.MsgExtendUnbondingResponse:
+    type: object
+  chain.workload.MsgFinalizeUnbonding:
+    type: object
+    properties:
+      creator:
+        type: string
+  chain.workload.MsgFinalizeUnbondingResponse:
+    type: object
+  chain.workload.MsgRegisterWorker:
+    type: object
+    properties:
+      creator:
+        type: string
+      nodeId:
+        type: string
+      ipfsAddr:
+        type: string
+  chain.workload.MsgRegisterWorkerResponse:
+    type: object
+  chain.workload.MsgRequestUnbonding:
+    type: object
+    properties:
+      creator:
+        type: string
+  chain.workload.MsgRequestUnbondingResponse:
+    type: object
+  chain.workload.MsgSlashWorker:
+    type: object
+    properties:
+      creator:
+        type: string
+      worker:
+        type: string
+      slashPercent:
+        type: string
+        format: uint64
+  chain.workload.MsgSlashWorkerResponse:
+    type: object
+  chain.workload.MsgUnregisterWorker:
+    type: object
+    properties:
+      creator:
+        type: string
+  chain.workload.MsgUnregisterWorkerResponse:
+    type: object
+  chain.workload.MsgUpdateParams:
+    type: object
+    properties:
+      authority:
+        type: string
+        description: >-
+          authority is the address that controls the module (defaults to x/gov
+          unless overwritten).
+      params:
+        description: 'NOTE: All parameters must be supplied.'
+        type: object
+        properties:
+          workload_denom:
+            type: string
+    description: MsgUpdateParams is the Msg/UpdateParams request type.
+  chain.workload.MsgUpdateParamsResponse:
+    type: object
+    description: |-
+      MsgUpdateParamsResponse defines the response structure for executing a
+      MsgUpdateParams message.
+  chain.workload.MsgUpdateTask:
+    type: object
+    properties:
+      creator:
+        type: string
+      id:
+        type: string
+        format: uint64
+      ipfsHash:
+        type: string
+      bounty:
+        type: string
+        format: uint64
+      status:
+        type: string
+        format: uint64
+      worker:
+        type: string
+      resultHash:
+        type: string
+  chain.workload.MsgUpdateTaskResponse:
+    type: object
   chain.workload.Params:
     type: object
+    properties:
+      workload_denom:
+        type: string
     description: Params defines the parameters for the module.
   chain.workload.QueryAllTaskResponse:
     type: object
@@ -20825,6 +21054,9 @@ definitions:
       params:
         description: params holds all the parameters of this module.
         type: object
+        properties:
+          workload_denom:
+            type: string
     description: QueryParamsResponse is response type for the Query/Params RPC method.
   chain.workload.Task:
     type: object
@@ -20946,134 +21178,6 @@ definitions:
                repeated Bar results = 1;
                PageResponse page = 2;
        }
-  chain.workload.MsgCreateTask:
-    type: object
-    properties:
-      creator:
-        type: string
-      ipfsHash:
-        type: string
-      bounty:
-        type: string
-        format: uint64
-      status:
-        type: string
-        format: uint64
-      worker:
-        type: string
-      resultHash:
-        type: string
-  chain.workload.MsgCreateTaskResponse:
-    type: object
-    properties:
-      id:
-        type: string
-        format: uint64
-  chain.workload.MsgDeleteTask:
-    type: object
-    properties:
-      creator:
-        type: string
-      id:
-        type: string
-        format: uint64
-  chain.workload.MsgDeleteTaskResponse:
-    type: object
-  chain.workload.MsgExtendUnbonding:
-    type: object
-    properties:
-      creator:
-        type: string
-      worker:
-        type: string
-      extraBlocks:
-        type: string
-        format: uint64
-  chain.workload.MsgExtendUnbondingResponse:
-    type: object
-  chain.workload.MsgFinalizeUnbonding:
-    type: object
-    properties:
-      creator:
-        type: string
-  chain.workload.MsgFinalizeUnbondingResponse:
-    type: object
-  chain.workload.MsgRegisterWorker:
-    type: object
-    properties:
-      creator:
-        type: string
-      nodeId:
-        type: string
-      ipfsAddr:
-        type: string
-  chain.workload.MsgRegisterWorkerResponse:
-    type: object
-  chain.workload.MsgRequestUnbonding:
-    type: object
-    properties:
-      creator:
-        type: string
-  chain.workload.MsgRequestUnbondingResponse:
-    type: object
-  chain.workload.MsgSlashWorker:
-    type: object
-    properties:
-      creator:
-        type: string
-      worker:
-        type: string
-      slashPercent:
-        type: string
-        format: uint64
-  chain.workload.MsgSlashWorkerResponse:
-    type: object
-  chain.workload.MsgUnregisterWorker:
-    type: object
-    properties:
-      creator:
-        type: string
-  chain.workload.MsgUnregisterWorkerResponse:
-    type: object
-  chain.workload.MsgUpdateParams:
-    type: object
-    properties:
-      authority:
-        type: string
-        description: >-
-          authority is the address that controls the module (defaults to x/gov
-          unless overwritten).
-      params:
-        description: 'NOTE: All parameters must be supplied.'
-        type: object
-    description: MsgUpdateParams is the Msg/UpdateParams request type.
-  chain.workload.MsgUpdateParamsResponse:
-    type: object
-    description: |-
-      MsgUpdateParamsResponse defines the response structure for executing a
-      MsgUpdateParams message.
-  chain.workload.MsgUpdateTask:
-    type: object
-    properties:
-      creator:
-        type: string
-      id:
-        type: string
-        format: uint64
-      ipfsHash:
-        type: string
-      bounty:
-        type: string
-        format: uint64
-      status:
-        type: string
-        format: uint64
-      worker:
-        type: string
-      resultHash:
-        type: string
-  chain.workload.MsgUpdateTaskResponse:
-    type: object
   cosmos.auth.v1beta1.MsgUpdateParams:
     type: object
     properties:

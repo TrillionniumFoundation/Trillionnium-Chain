@@ -14,7 +14,7 @@ func TestComputeKeeperDependency(t *testing.T) {
 
 	// Set workload params via workload keeper
 	defaultParams := workloadtypes.DefaultParams()
-	// Let's modify a field if possible to ensure we are reading the same data, 
+	// Let's modify a field if possible to ensure we are reading the same data,
 	// but DefaultParams fields might be empty or basic.
 	// Assuming Params has fields we can check.
 	err := workloadK.SetParams(ctx, defaultParams)

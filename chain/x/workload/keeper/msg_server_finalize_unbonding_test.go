@@ -77,7 +77,7 @@ func TestFinalizeUnbonding_NotFound(t *testing.T) {
 
 	// Assertions
 	require.ErrorIs(t, err, types.ErrUnbondingNotFound, "Should return ErrUnbondingNotFound when no unbonding exists")
-	
+
 	// Double check state remains unchanged (still not found)
 	_, found = k.GetUnbonding(wctx, randomUser)
 	require.False(t, found, "State should remain unchanged (unbonding not created)")

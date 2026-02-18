@@ -28,6 +28,12 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					RpcMethod: "UpdateParams",
 					Skip:      true, // skipped because authority gated
 				},
+				{
+					RpcMethod:      "CreateComputeJob",
+					Use:            "create-compute-job [payload] [requirements]",
+					Short:          "Send a create-compute-job tx",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "payload"}, {ProtoField: "requirements"}},
+				},
 				// this line is used by ignite scaffolding # autocli/tx
 			},
 		},

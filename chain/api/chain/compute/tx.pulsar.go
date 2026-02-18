@@ -871,6 +871,958 @@ func (x *fastReflection_MsgUpdateParamsResponse) ProtoMethods() *protoiface.Meth
 	}
 }
 
+var (
+	md_MsgCreateComputeJob              protoreflect.MessageDescriptor
+	fd_MsgCreateComputeJob_creator      protoreflect.FieldDescriptor
+	fd_MsgCreateComputeJob_payload      protoreflect.FieldDescriptor
+	fd_MsgCreateComputeJob_requirements protoreflect.FieldDescriptor
+)
+
+func init() {
+	file_chain_compute_tx_proto_init()
+	md_MsgCreateComputeJob = File_chain_compute_tx_proto.Messages().ByName("MsgCreateComputeJob")
+	fd_MsgCreateComputeJob_creator = md_MsgCreateComputeJob.Fields().ByName("creator")
+	fd_MsgCreateComputeJob_payload = md_MsgCreateComputeJob.Fields().ByName("payload")
+	fd_MsgCreateComputeJob_requirements = md_MsgCreateComputeJob.Fields().ByName("requirements")
+}
+
+var _ protoreflect.Message = (*fastReflection_MsgCreateComputeJob)(nil)
+
+type fastReflection_MsgCreateComputeJob MsgCreateComputeJob
+
+func (x *MsgCreateComputeJob) ProtoReflect() protoreflect.Message {
+	return (*fastReflection_MsgCreateComputeJob)(x)
+}
+
+func (x *MsgCreateComputeJob) slowProtoReflect() protoreflect.Message {
+	mi := &file_chain_compute_tx_proto_msgTypes[2]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+var _fastReflection_MsgCreateComputeJob_messageType fastReflection_MsgCreateComputeJob_messageType
+var _ protoreflect.MessageType = fastReflection_MsgCreateComputeJob_messageType{}
+
+type fastReflection_MsgCreateComputeJob_messageType struct{}
+
+func (x fastReflection_MsgCreateComputeJob_messageType) Zero() protoreflect.Message {
+	return (*fastReflection_MsgCreateComputeJob)(nil)
+}
+func (x fastReflection_MsgCreateComputeJob_messageType) New() protoreflect.Message {
+	return new(fastReflection_MsgCreateComputeJob)
+}
+func (x fastReflection_MsgCreateComputeJob_messageType) Descriptor() protoreflect.MessageDescriptor {
+	return md_MsgCreateComputeJob
+}
+
+// Descriptor returns message descriptor, which contains only the protobuf
+// type information for the message.
+func (x *fastReflection_MsgCreateComputeJob) Descriptor() protoreflect.MessageDescriptor {
+	return md_MsgCreateComputeJob
+}
+
+// Type returns the message type, which encapsulates both Go and protobuf
+// type information. If the Go type information is not needed,
+// it is recommended that the message descriptor be used instead.
+func (x *fastReflection_MsgCreateComputeJob) Type() protoreflect.MessageType {
+	return _fastReflection_MsgCreateComputeJob_messageType
+}
+
+// New returns a newly allocated and mutable empty message.
+func (x *fastReflection_MsgCreateComputeJob) New() protoreflect.Message {
+	return new(fastReflection_MsgCreateComputeJob)
+}
+
+// Interface unwraps the message reflection interface and
+// returns the underlying ProtoMessage interface.
+func (x *fastReflection_MsgCreateComputeJob) Interface() protoreflect.ProtoMessage {
+	return (*MsgCreateComputeJob)(x)
+}
+
+// Range iterates over every populated field in an undefined order,
+// calling f for each field descriptor and value encountered.
+// Range returns immediately if f returns false.
+// While iterating, mutating operations may only be performed
+// on the current field descriptor.
+func (x *fastReflection_MsgCreateComputeJob) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+	if x.Creator != "" {
+		value := protoreflect.ValueOfString(x.Creator)
+		if !f(fd_MsgCreateComputeJob_creator, value) {
+			return
+		}
+	}
+	if x.Payload != "" {
+		value := protoreflect.ValueOfString(x.Payload)
+		if !f(fd_MsgCreateComputeJob_payload, value) {
+			return
+		}
+	}
+	if x.Requirements != "" {
+		value := protoreflect.ValueOfString(x.Requirements)
+		if !f(fd_MsgCreateComputeJob_requirements, value) {
+			return
+		}
+	}
+}
+
+// Has reports whether a field is populated.
+//
+// Some fields have the property of nullability where it is possible to
+// distinguish between the default value of a field and whether the field
+// was explicitly populated with the default value. Singular message fields,
+// member fields of a oneof, and proto2 scalar fields are nullable. Such
+// fields are populated only if explicitly set.
+//
+// In other cases (aside from the nullable cases above),
+// a proto3 scalar field is populated if it contains a non-zero value, and
+// a repeated field is populated if it is non-empty.
+func (x *fastReflection_MsgCreateComputeJob) Has(fd protoreflect.FieldDescriptor) bool {
+	switch fd.FullName() {
+	case "chain.compute.MsgCreateComputeJob.creator":
+		return x.Creator != ""
+	case "chain.compute.MsgCreateComputeJob.payload":
+		return x.Payload != ""
+	case "chain.compute.MsgCreateComputeJob.requirements":
+		return x.Requirements != ""
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.compute.MsgCreateComputeJob"))
+		}
+		panic(fmt.Errorf("message chain.compute.MsgCreateComputeJob does not contain field %s", fd.FullName()))
+	}
+}
+
+// Clear clears the field such that a subsequent Has call reports false.
+//
+// Clearing an extension field clears both the extension type and value
+// associated with the given field number.
+//
+// Clear is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgCreateComputeJob) Clear(fd protoreflect.FieldDescriptor) {
+	switch fd.FullName() {
+	case "chain.compute.MsgCreateComputeJob.creator":
+		x.Creator = ""
+	case "chain.compute.MsgCreateComputeJob.payload":
+		x.Payload = ""
+	case "chain.compute.MsgCreateComputeJob.requirements":
+		x.Requirements = ""
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.compute.MsgCreateComputeJob"))
+		}
+		panic(fmt.Errorf("message chain.compute.MsgCreateComputeJob does not contain field %s", fd.FullName()))
+	}
+}
+
+// Get retrieves the value for a field.
+//
+// For unpopulated scalars, it returns the default value, where
+// the default value of a bytes scalar is guaranteed to be a copy.
+// For unpopulated composite types, it returns an empty, read-only view
+// of the value; to obtain a mutable reference, use Mutable.
+func (x *fastReflection_MsgCreateComputeJob) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
+	switch descriptor.FullName() {
+	case "chain.compute.MsgCreateComputeJob.creator":
+		value := x.Creator
+		return protoreflect.ValueOfString(value)
+	case "chain.compute.MsgCreateComputeJob.payload":
+		value := x.Payload
+		return protoreflect.ValueOfString(value)
+	case "chain.compute.MsgCreateComputeJob.requirements":
+		value := x.Requirements
+		return protoreflect.ValueOfString(value)
+	default:
+		if descriptor.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.compute.MsgCreateComputeJob"))
+		}
+		panic(fmt.Errorf("message chain.compute.MsgCreateComputeJob does not contain field %s", descriptor.FullName()))
+	}
+}
+
+// Set stores the value for a field.
+//
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType.
+// When setting a composite type, it is unspecified whether the stored value
+// aliases the source's memory in any way. If the composite value is an
+// empty, read-only value, then it panics.
+//
+// Set is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgCreateComputeJob) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
+	switch fd.FullName() {
+	case "chain.compute.MsgCreateComputeJob.creator":
+		x.Creator = value.Interface().(string)
+	case "chain.compute.MsgCreateComputeJob.payload":
+		x.Payload = value.Interface().(string)
+	case "chain.compute.MsgCreateComputeJob.requirements":
+		x.Requirements = value.Interface().(string)
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.compute.MsgCreateComputeJob"))
+		}
+		panic(fmt.Errorf("message chain.compute.MsgCreateComputeJob does not contain field %s", fd.FullName()))
+	}
+}
+
+// Mutable returns a mutable reference to a composite type.
+//
+// If the field is unpopulated, it may allocate a composite value.
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType
+// if not already stored.
+// It panics if the field does not contain a composite type.
+//
+// Mutable is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgCreateComputeJob) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "chain.compute.MsgCreateComputeJob.creator":
+		panic(fmt.Errorf("field creator of message chain.compute.MsgCreateComputeJob is not mutable"))
+	case "chain.compute.MsgCreateComputeJob.payload":
+		panic(fmt.Errorf("field payload of message chain.compute.MsgCreateComputeJob is not mutable"))
+	case "chain.compute.MsgCreateComputeJob.requirements":
+		panic(fmt.Errorf("field requirements of message chain.compute.MsgCreateComputeJob is not mutable"))
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.compute.MsgCreateComputeJob"))
+		}
+		panic(fmt.Errorf("message chain.compute.MsgCreateComputeJob does not contain field %s", fd.FullName()))
+	}
+}
+
+// NewField returns a new value that is assignable to the field
+// for the given descriptor. For scalars, this returns the default value.
+// For lists, maps, and messages, this returns a new, empty, mutable value.
+func (x *fastReflection_MsgCreateComputeJob) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "chain.compute.MsgCreateComputeJob.creator":
+		return protoreflect.ValueOfString("")
+	case "chain.compute.MsgCreateComputeJob.payload":
+		return protoreflect.ValueOfString("")
+	case "chain.compute.MsgCreateComputeJob.requirements":
+		return protoreflect.ValueOfString("")
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.compute.MsgCreateComputeJob"))
+		}
+		panic(fmt.Errorf("message chain.compute.MsgCreateComputeJob does not contain field %s", fd.FullName()))
+	}
+}
+
+// WhichOneof reports which field within the oneof is populated,
+// returning nil if none are populated.
+// It panics if the oneof descriptor does not belong to this message.
+func (x *fastReflection_MsgCreateComputeJob) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
+	switch d.FullName() {
+	default:
+		panic(fmt.Errorf("%s is not a oneof field in chain.compute.MsgCreateComputeJob", d.FullName()))
+	}
+	panic("unreachable")
+}
+
+// GetUnknown retrieves the entire list of unknown fields.
+// The caller may only mutate the contents of the RawFields
+// if the mutated bytes are stored back into the message with SetUnknown.
+func (x *fastReflection_MsgCreateComputeJob) GetUnknown() protoreflect.RawFields {
+	return x.unknownFields
+}
+
+// SetUnknown stores an entire list of unknown fields.
+// The raw fields must be syntactically valid according to the wire format.
+// An implementation may panic if this is not the case.
+// Once stored, the caller must not mutate the content of the RawFields.
+// An empty RawFields may be passed to clear the fields.
+//
+// SetUnknown is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgCreateComputeJob) SetUnknown(fields protoreflect.RawFields) {
+	x.unknownFields = fields
+}
+
+// IsValid reports whether the message is valid.
+//
+// An invalid message is an empty, read-only value.
+//
+// An invalid message often corresponds to a nil pointer of the concrete
+// message type, but the details are implementation dependent.
+// Validity is not part of the protobuf data model, and may not
+// be preserved in marshaling or other operations.
+func (x *fastReflection_MsgCreateComputeJob) IsValid() bool {
+	return x != nil
+}
+
+// ProtoMethods returns optional fastReflectionFeature-path implementations of various operations.
+// This method may return nil.
+//
+// The returned methods type is identical to
+// "google.golang.org/protobuf/runtime/protoiface".Methods.
+// Consult the protoiface package documentation for details.
+func (x *fastReflection_MsgCreateComputeJob) ProtoMethods() *protoiface.Methods {
+	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
+		x := input.Message.Interface().(*MsgCreateComputeJob)
+		if x == nil {
+			return protoiface.SizeOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Size:              0,
+			}
+		}
+		options := runtime.SizeInputToOptions(input)
+		_ = options
+		var n int
+		var l int
+		_ = l
+		l = len(x.Creator)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		l = len(x.Payload)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		l = len(x.Requirements)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.unknownFields != nil {
+			n += len(x.unknownFields)
+		}
+		return protoiface.SizeOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Size:              n,
+		}
+	}
+
+	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
+		x := input.Message.Interface().(*MsgCreateComputeJob)
+		if x == nil {
+			return protoiface.MarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Buf:               input.Buf,
+			}, nil
+		}
+		options := runtime.MarshalInputToOptions(input)
+		_ = options
+		size := options.Size(x)
+		dAtA := make([]byte, size)
+		i := len(dAtA)
+		_ = i
+		var l int
+		_ = l
+		if x.unknownFields != nil {
+			i -= len(x.unknownFields)
+			copy(dAtA[i:], x.unknownFields)
+		}
+		if len(x.Requirements) > 0 {
+			i -= len(x.Requirements)
+			copy(dAtA[i:], x.Requirements)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.Requirements)))
+			i--
+			dAtA[i] = 0x1a
+		}
+		if len(x.Payload) > 0 {
+			i -= len(x.Payload)
+			copy(dAtA[i:], x.Payload)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.Payload)))
+			i--
+			dAtA[i] = 0x12
+		}
+		if len(x.Creator) > 0 {
+			i -= len(x.Creator)
+			copy(dAtA[i:], x.Creator)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.Creator)))
+			i--
+			dAtA[i] = 0xa
+		}
+		if input.Buf != nil {
+			input.Buf = append(input.Buf, dAtA...)
+		} else {
+			input.Buf = dAtA
+		}
+		return protoiface.MarshalOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Buf:               input.Buf,
+		}, nil
+	}
+	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
+		x := input.Message.Interface().(*MsgCreateComputeJob)
+		if x == nil {
+			return protoiface.UnmarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Flags:             input.Flags,
+			}, nil
+		}
+		options := runtime.UnmarshalInputToOptions(input)
+		_ = options
+		dAtA := input.Buf
+		l := len(dAtA)
+		iNdEx := 0
+		for iNdEx < l {
+			preIndex := iNdEx
+			var wire uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+				}
+				if iNdEx >= l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				wire |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			fieldNum := int32(wire >> 3)
+			wireType := int(wire & 0x7)
+			if wireType == 4 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgCreateComputeJob: wiretype end group for non-group")
+			}
+			if fieldNum <= 0 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgCreateComputeJob: illegal tag %d (wire type %d)", fieldNum, wire)
+			}
+			switch fieldNum {
+			case 1:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.Creator = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 2:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Payload", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.Payload = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 3:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Requirements", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.Requirements = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			default:
+				iNdEx = preIndex
+				skippy, err := runtime.Skip(dAtA[iNdEx:])
+				if err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				if (skippy < 0) || (iNdEx+skippy) < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if (iNdEx + skippy) > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if !options.DiscardUnknown {
+					x.unknownFields = append(x.unknownFields, dAtA[iNdEx:iNdEx+skippy]...)
+				}
+				iNdEx += skippy
+			}
+		}
+
+		if iNdEx > l {
+			return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+		}
+		return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, nil
+	}
+	return &protoiface.Methods{
+		NoUnkeyedLiterals: struct{}{},
+		Flags:             protoiface.SupportMarshalDeterministic | protoiface.SupportUnmarshalDiscardUnknown,
+		Size:              size,
+		Marshal:           marshal,
+		Unmarshal:         unmarshal,
+		Merge:             nil,
+		CheckInitialized:  nil,
+	}
+}
+
+var (
+	md_MsgCreateComputeJobResponse       protoreflect.MessageDescriptor
+	fd_MsgCreateComputeJobResponse_jobId protoreflect.FieldDescriptor
+)
+
+func init() {
+	file_chain_compute_tx_proto_init()
+	md_MsgCreateComputeJobResponse = File_chain_compute_tx_proto.Messages().ByName("MsgCreateComputeJobResponse")
+	fd_MsgCreateComputeJobResponse_jobId = md_MsgCreateComputeJobResponse.Fields().ByName("jobId")
+}
+
+var _ protoreflect.Message = (*fastReflection_MsgCreateComputeJobResponse)(nil)
+
+type fastReflection_MsgCreateComputeJobResponse MsgCreateComputeJobResponse
+
+func (x *MsgCreateComputeJobResponse) ProtoReflect() protoreflect.Message {
+	return (*fastReflection_MsgCreateComputeJobResponse)(x)
+}
+
+func (x *MsgCreateComputeJobResponse) slowProtoReflect() protoreflect.Message {
+	mi := &file_chain_compute_tx_proto_msgTypes[3]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+var _fastReflection_MsgCreateComputeJobResponse_messageType fastReflection_MsgCreateComputeJobResponse_messageType
+var _ protoreflect.MessageType = fastReflection_MsgCreateComputeJobResponse_messageType{}
+
+type fastReflection_MsgCreateComputeJobResponse_messageType struct{}
+
+func (x fastReflection_MsgCreateComputeJobResponse_messageType) Zero() protoreflect.Message {
+	return (*fastReflection_MsgCreateComputeJobResponse)(nil)
+}
+func (x fastReflection_MsgCreateComputeJobResponse_messageType) New() protoreflect.Message {
+	return new(fastReflection_MsgCreateComputeJobResponse)
+}
+func (x fastReflection_MsgCreateComputeJobResponse_messageType) Descriptor() protoreflect.MessageDescriptor {
+	return md_MsgCreateComputeJobResponse
+}
+
+// Descriptor returns message descriptor, which contains only the protobuf
+// type information for the message.
+func (x *fastReflection_MsgCreateComputeJobResponse) Descriptor() protoreflect.MessageDescriptor {
+	return md_MsgCreateComputeJobResponse
+}
+
+// Type returns the message type, which encapsulates both Go and protobuf
+// type information. If the Go type information is not needed,
+// it is recommended that the message descriptor be used instead.
+func (x *fastReflection_MsgCreateComputeJobResponse) Type() protoreflect.MessageType {
+	return _fastReflection_MsgCreateComputeJobResponse_messageType
+}
+
+// New returns a newly allocated and mutable empty message.
+func (x *fastReflection_MsgCreateComputeJobResponse) New() protoreflect.Message {
+	return new(fastReflection_MsgCreateComputeJobResponse)
+}
+
+// Interface unwraps the message reflection interface and
+// returns the underlying ProtoMessage interface.
+func (x *fastReflection_MsgCreateComputeJobResponse) Interface() protoreflect.ProtoMessage {
+	return (*MsgCreateComputeJobResponse)(x)
+}
+
+// Range iterates over every populated field in an undefined order,
+// calling f for each field descriptor and value encountered.
+// Range returns immediately if f returns false.
+// While iterating, mutating operations may only be performed
+// on the current field descriptor.
+func (x *fastReflection_MsgCreateComputeJobResponse) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+	if x.JobId != uint64(0) {
+		value := protoreflect.ValueOfUint64(x.JobId)
+		if !f(fd_MsgCreateComputeJobResponse_jobId, value) {
+			return
+		}
+	}
+}
+
+// Has reports whether a field is populated.
+//
+// Some fields have the property of nullability where it is possible to
+// distinguish between the default value of a field and whether the field
+// was explicitly populated with the default value. Singular message fields,
+// member fields of a oneof, and proto2 scalar fields are nullable. Such
+// fields are populated only if explicitly set.
+//
+// In other cases (aside from the nullable cases above),
+// a proto3 scalar field is populated if it contains a non-zero value, and
+// a repeated field is populated if it is non-empty.
+func (x *fastReflection_MsgCreateComputeJobResponse) Has(fd protoreflect.FieldDescriptor) bool {
+	switch fd.FullName() {
+	case "chain.compute.MsgCreateComputeJobResponse.jobId":
+		return x.JobId != uint64(0)
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.compute.MsgCreateComputeJobResponse"))
+		}
+		panic(fmt.Errorf("message chain.compute.MsgCreateComputeJobResponse does not contain field %s", fd.FullName()))
+	}
+}
+
+// Clear clears the field such that a subsequent Has call reports false.
+//
+// Clearing an extension field clears both the extension type and value
+// associated with the given field number.
+//
+// Clear is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgCreateComputeJobResponse) Clear(fd protoreflect.FieldDescriptor) {
+	switch fd.FullName() {
+	case "chain.compute.MsgCreateComputeJobResponse.jobId":
+		x.JobId = uint64(0)
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.compute.MsgCreateComputeJobResponse"))
+		}
+		panic(fmt.Errorf("message chain.compute.MsgCreateComputeJobResponse does not contain field %s", fd.FullName()))
+	}
+}
+
+// Get retrieves the value for a field.
+//
+// For unpopulated scalars, it returns the default value, where
+// the default value of a bytes scalar is guaranteed to be a copy.
+// For unpopulated composite types, it returns an empty, read-only view
+// of the value; to obtain a mutable reference, use Mutable.
+func (x *fastReflection_MsgCreateComputeJobResponse) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
+	switch descriptor.FullName() {
+	case "chain.compute.MsgCreateComputeJobResponse.jobId":
+		value := x.JobId
+		return protoreflect.ValueOfUint64(value)
+	default:
+		if descriptor.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.compute.MsgCreateComputeJobResponse"))
+		}
+		panic(fmt.Errorf("message chain.compute.MsgCreateComputeJobResponse does not contain field %s", descriptor.FullName()))
+	}
+}
+
+// Set stores the value for a field.
+//
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType.
+// When setting a composite type, it is unspecified whether the stored value
+// aliases the source's memory in any way. If the composite value is an
+// empty, read-only value, then it panics.
+//
+// Set is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgCreateComputeJobResponse) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
+	switch fd.FullName() {
+	case "chain.compute.MsgCreateComputeJobResponse.jobId":
+		x.JobId = value.Uint()
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.compute.MsgCreateComputeJobResponse"))
+		}
+		panic(fmt.Errorf("message chain.compute.MsgCreateComputeJobResponse does not contain field %s", fd.FullName()))
+	}
+}
+
+// Mutable returns a mutable reference to a composite type.
+//
+// If the field is unpopulated, it may allocate a composite value.
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType
+// if not already stored.
+// It panics if the field does not contain a composite type.
+//
+// Mutable is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgCreateComputeJobResponse) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "chain.compute.MsgCreateComputeJobResponse.jobId":
+		panic(fmt.Errorf("field jobId of message chain.compute.MsgCreateComputeJobResponse is not mutable"))
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.compute.MsgCreateComputeJobResponse"))
+		}
+		panic(fmt.Errorf("message chain.compute.MsgCreateComputeJobResponse does not contain field %s", fd.FullName()))
+	}
+}
+
+// NewField returns a new value that is assignable to the field
+// for the given descriptor. For scalars, this returns the default value.
+// For lists, maps, and messages, this returns a new, empty, mutable value.
+func (x *fastReflection_MsgCreateComputeJobResponse) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "chain.compute.MsgCreateComputeJobResponse.jobId":
+		return protoreflect.ValueOfUint64(uint64(0))
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: chain.compute.MsgCreateComputeJobResponse"))
+		}
+		panic(fmt.Errorf("message chain.compute.MsgCreateComputeJobResponse does not contain field %s", fd.FullName()))
+	}
+}
+
+// WhichOneof reports which field within the oneof is populated,
+// returning nil if none are populated.
+// It panics if the oneof descriptor does not belong to this message.
+func (x *fastReflection_MsgCreateComputeJobResponse) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
+	switch d.FullName() {
+	default:
+		panic(fmt.Errorf("%s is not a oneof field in chain.compute.MsgCreateComputeJobResponse", d.FullName()))
+	}
+	panic("unreachable")
+}
+
+// GetUnknown retrieves the entire list of unknown fields.
+// The caller may only mutate the contents of the RawFields
+// if the mutated bytes are stored back into the message with SetUnknown.
+func (x *fastReflection_MsgCreateComputeJobResponse) GetUnknown() protoreflect.RawFields {
+	return x.unknownFields
+}
+
+// SetUnknown stores an entire list of unknown fields.
+// The raw fields must be syntactically valid according to the wire format.
+// An implementation may panic if this is not the case.
+// Once stored, the caller must not mutate the content of the RawFields.
+// An empty RawFields may be passed to clear the fields.
+//
+// SetUnknown is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgCreateComputeJobResponse) SetUnknown(fields protoreflect.RawFields) {
+	x.unknownFields = fields
+}
+
+// IsValid reports whether the message is valid.
+//
+// An invalid message is an empty, read-only value.
+//
+// An invalid message often corresponds to a nil pointer of the concrete
+// message type, but the details are implementation dependent.
+// Validity is not part of the protobuf data model, and may not
+// be preserved in marshaling or other operations.
+func (x *fastReflection_MsgCreateComputeJobResponse) IsValid() bool {
+	return x != nil
+}
+
+// ProtoMethods returns optional fastReflectionFeature-path implementations of various operations.
+// This method may return nil.
+//
+// The returned methods type is identical to
+// "google.golang.org/protobuf/runtime/protoiface".Methods.
+// Consult the protoiface package documentation for details.
+func (x *fastReflection_MsgCreateComputeJobResponse) ProtoMethods() *protoiface.Methods {
+	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
+		x := input.Message.Interface().(*MsgCreateComputeJobResponse)
+		if x == nil {
+			return protoiface.SizeOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Size:              0,
+			}
+		}
+		options := runtime.SizeInputToOptions(input)
+		_ = options
+		var n int
+		var l int
+		_ = l
+		if x.JobId != 0 {
+			n += 1 + runtime.Sov(uint64(x.JobId))
+		}
+		if x.unknownFields != nil {
+			n += len(x.unknownFields)
+		}
+		return protoiface.SizeOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Size:              n,
+		}
+	}
+
+	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
+		x := input.Message.Interface().(*MsgCreateComputeJobResponse)
+		if x == nil {
+			return protoiface.MarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Buf:               input.Buf,
+			}, nil
+		}
+		options := runtime.MarshalInputToOptions(input)
+		_ = options
+		size := options.Size(x)
+		dAtA := make([]byte, size)
+		i := len(dAtA)
+		_ = i
+		var l int
+		_ = l
+		if x.unknownFields != nil {
+			i -= len(x.unknownFields)
+			copy(dAtA[i:], x.unknownFields)
+		}
+		if x.JobId != 0 {
+			i = runtime.EncodeVarint(dAtA, i, uint64(x.JobId))
+			i--
+			dAtA[i] = 0x8
+		}
+		if input.Buf != nil {
+			input.Buf = append(input.Buf, dAtA...)
+		} else {
+			input.Buf = dAtA
+		}
+		return protoiface.MarshalOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Buf:               input.Buf,
+		}, nil
+	}
+	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
+		x := input.Message.Interface().(*MsgCreateComputeJobResponse)
+		if x == nil {
+			return protoiface.UnmarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Flags:             input.Flags,
+			}, nil
+		}
+		options := runtime.UnmarshalInputToOptions(input)
+		_ = options
+		dAtA := input.Buf
+		l := len(dAtA)
+		iNdEx := 0
+		for iNdEx < l {
+			preIndex := iNdEx
+			var wire uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+				}
+				if iNdEx >= l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				wire |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			fieldNum := int32(wire >> 3)
+			wireType := int(wire & 0x7)
+			if wireType == 4 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgCreateComputeJobResponse: wiretype end group for non-group")
+			}
+			if fieldNum <= 0 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgCreateComputeJobResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			}
+			switch fieldNum {
+			case 1:
+				if wireType != 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field JobId", wireType)
+				}
+				x.JobId = 0
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					x.JobId |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+			default:
+				iNdEx = preIndex
+				skippy, err := runtime.Skip(dAtA[iNdEx:])
+				if err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				if (skippy < 0) || (iNdEx+skippy) < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if (iNdEx + skippy) > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if !options.DiscardUnknown {
+					x.unknownFields = append(x.unknownFields, dAtA[iNdEx:iNdEx+skippy]...)
+				}
+				iNdEx += skippy
+			}
+		}
+
+		if iNdEx > l {
+			return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+		}
+		return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, nil
+	}
+	return &protoiface.Methods{
+		NoUnkeyedLiterals: struct{}{},
+		Flags:             protoiface.SupportMarshalDeterministic | protoiface.SupportUnmarshalDiscardUnknown,
+		Size:              size,
+		Marshal:           marshal,
+		Unmarshal:         unmarshal,
+		Merge:             nil,
+		CheckInitialized:  nil,
+	}
+}
+
 // Code generated by protoc-gen-go. DO NOT EDIT.
 // versions:
 // 	protoc-gen-go v1.27.0
@@ -892,8 +1844,6 @@ type MsgUpdateParams struct {
 
 	// authority is the address that controls the module (defaults to x/gov unless overwritten).
 	Authority string `protobuf:"bytes,1,opt,name=authority,proto3" json:"authority,omitempty"`
-	// params defines the module parameters to update.
-	//
 	// NOTE: All parameters must be supplied.
 	Params *Params `protobuf:"bytes,2,opt,name=params,proto3" json:"params,omitempty"`
 }
@@ -960,6 +1910,92 @@ func (*MsgUpdateParamsResponse) Descriptor() ([]byte, []int) {
 	return file_chain_compute_tx_proto_rawDescGZIP(), []int{1}
 }
 
+type MsgCreateComputeJob struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Creator      string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
+	Payload      string `protobuf:"bytes,2,opt,name=payload,proto3" json:"payload,omitempty"`
+	Requirements string `protobuf:"bytes,3,opt,name=requirements,proto3" json:"requirements,omitempty"`
+}
+
+func (x *MsgCreateComputeJob) Reset() {
+	*x = MsgCreateComputeJob{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_chain_compute_tx_proto_msgTypes[2]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *MsgCreateComputeJob) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MsgCreateComputeJob) ProtoMessage() {}
+
+// Deprecated: Use MsgCreateComputeJob.ProtoReflect.Descriptor instead.
+func (*MsgCreateComputeJob) Descriptor() ([]byte, []int) {
+	return file_chain_compute_tx_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *MsgCreateComputeJob) GetCreator() string {
+	if x != nil {
+		return x.Creator
+	}
+	return ""
+}
+
+func (x *MsgCreateComputeJob) GetPayload() string {
+	if x != nil {
+		return x.Payload
+	}
+	return ""
+}
+
+func (x *MsgCreateComputeJob) GetRequirements() string {
+	if x != nil {
+		return x.Requirements
+	}
+	return ""
+}
+
+type MsgCreateComputeJobResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	JobId uint64 `protobuf:"varint,1,opt,name=jobId,proto3" json:"jobId,omitempty"`
+}
+
+func (x *MsgCreateComputeJobResponse) Reset() {
+	*x = MsgCreateComputeJobResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_chain_compute_tx_proto_msgTypes[3]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *MsgCreateComputeJobResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MsgCreateComputeJobResponse) ProtoMessage() {}
+
+// Deprecated: Use MsgCreateComputeJobResponse.ProtoReflect.Descriptor instead.
+func (*MsgCreateComputeJobResponse) Descriptor() ([]byte, []int) {
+	return file_chain_compute_tx_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *MsgCreateComputeJobResponse) GetJobId() uint64 {
+	if x != nil {
+		return x.JobId
+	}
+	return 0
+}
+
 var File_chain_compute_tx_proto protoreflect.FileDescriptor
 
 var file_chain_compute_tx_proto_rawDesc = []byte{
@@ -986,23 +2022,40 @@ var file_chain_compute_tx_proto_rawDesc = []byte{
 	0x2f, 0x78, 0x2f, 0x63, 0x6f, 0x6d, 0x70, 0x75, 0x74, 0x65, 0x2f, 0x4d, 0x73, 0x67, 0x55, 0x70,
 	0x64, 0x61, 0x74, 0x65, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x22, 0x19, 0x0a, 0x17, 0x4d, 0x73,
 	0x67, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x52, 0x65, 0x73,
-	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x32, 0x64, 0x0a, 0x03, 0x4d, 0x73, 0x67, 0x12, 0x56, 0x0a, 0x0c,
-	0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x12, 0x1e, 0x2e, 0x63,
-	0x68, 0x61, 0x69, 0x6e, 0x2e, 0x63, 0x6f, 0x6d, 0x70, 0x75, 0x74, 0x65, 0x2e, 0x4d, 0x73, 0x67,
-	0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x1a, 0x26, 0x2e, 0x63,
-	0x68, 0x61, 0x69, 0x6e, 0x2e, 0x63, 0x6f, 0x6d, 0x70, 0x75, 0x74, 0x65, 0x2e, 0x4d, 0x73, 0x67,
-	0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x52, 0x65, 0x73, 0x70,
-	0x6f, 0x6e, 0x73, 0x65, 0x1a, 0x05, 0x80, 0xe7, 0xb0, 0x2a, 0x01, 0x42, 0x91, 0x01, 0x0a, 0x11,
-	0x63, 0x6f, 0x6d, 0x2e, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2e, 0x63, 0x6f, 0x6d, 0x70, 0x75, 0x74,
-	0x65, 0x42, 0x07, 0x54, 0x78, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x50, 0x01, 0x5a, 0x1e, 0x63, 0x6f,
-	0x73, 0x6d, 0x6f, 0x73, 0x73, 0x64, 0x6b, 0x2e, 0x69, 0x6f, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x63,
-	0x68, 0x61, 0x69, 0x6e, 0x2f, 0x63, 0x6f, 0x6d, 0x70, 0x75, 0x74, 0x65, 0xa2, 0x02, 0x03, 0x43,
-	0x43, 0x58, 0xaa, 0x02, 0x0d, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x2e, 0x43, 0x6f, 0x6d, 0x70, 0x75,
-	0x74, 0x65, 0xca, 0x02, 0x0d, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x5c, 0x43, 0x6f, 0x6d, 0x70, 0x75,
-	0x74, 0x65, 0xe2, 0x02, 0x19, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x5c, 0x43, 0x6f, 0x6d, 0x70, 0x75,
-	0x74, 0x65, 0x5c, 0x47, 0x50, 0x42, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0xea, 0x02,
-	0x0e, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x3a, 0x3a, 0x43, 0x6f, 0x6d, 0x70, 0x75, 0x74, 0x65, 0x62,
-	0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x7b, 0x0a, 0x13, 0x4d, 0x73, 0x67, 0x43, 0x72, 0x65, 0x61,
+	0x74, 0x65, 0x43, 0x6f, 0x6d, 0x70, 0x75, 0x74, 0x65, 0x4a, 0x6f, 0x62, 0x12, 0x18, 0x0a, 0x07,
+	0x63, 0x72, 0x65, 0x61, 0x74, 0x6f, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x63,
+	0x72, 0x65, 0x61, 0x74, 0x6f, 0x72, 0x12, 0x18, 0x0a, 0x07, 0x70, 0x61, 0x79, 0x6c, 0x6f, 0x61,
+	0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x70, 0x61, 0x79, 0x6c, 0x6f, 0x61, 0x64,
+	0x12, 0x22, 0x0a, 0x0c, 0x72, 0x65, 0x71, 0x75, 0x69, 0x72, 0x65, 0x6d, 0x65, 0x6e, 0x74, 0x73,
+	0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0c, 0x72, 0x65, 0x71, 0x75, 0x69, 0x72, 0x65, 0x6d,
+	0x65, 0x6e, 0x74, 0x73, 0x3a, 0x0c, 0x82, 0xe7, 0xb0, 0x2a, 0x07, 0x63, 0x72, 0x65, 0x61, 0x74,
+	0x6f, 0x72, 0x22, 0x33, 0x0a, 0x1b, 0x4d, 0x73, 0x67, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x43,
+	0x6f, 0x6d, 0x70, 0x75, 0x74, 0x65, 0x4a, 0x6f, 0x62, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
+	0x65, 0x12, 0x14, 0x0a, 0x05, 0x6a, 0x6f, 0x62, 0x49, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04,
+	0x52, 0x05, 0x6a, 0x6f, 0x62, 0x49, 0x64, 0x32, 0xc8, 0x01, 0x0a, 0x03, 0x4d, 0x73, 0x67, 0x12,
+	0x56, 0x0a, 0x0c, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x12,
+	0x1e, 0x2e, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2e, 0x63, 0x6f, 0x6d, 0x70, 0x75, 0x74, 0x65, 0x2e,
+	0x4d, 0x73, 0x67, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x1a,
+	0x26, 0x2e, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2e, 0x63, 0x6f, 0x6d, 0x70, 0x75, 0x74, 0x65, 0x2e,
+	0x4d, 0x73, 0x67, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x52,
+	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x62, 0x0a, 0x10, 0x43, 0x72, 0x65, 0x61, 0x74,
+	0x65, 0x43, 0x6f, 0x6d, 0x70, 0x75, 0x74, 0x65, 0x4a, 0x6f, 0x62, 0x12, 0x22, 0x2e, 0x63, 0x68,
+	0x61, 0x69, 0x6e, 0x2e, 0x63, 0x6f, 0x6d, 0x70, 0x75, 0x74, 0x65, 0x2e, 0x4d, 0x73, 0x67, 0x43,
+	0x72, 0x65, 0x61, 0x74, 0x65, 0x43, 0x6f, 0x6d, 0x70, 0x75, 0x74, 0x65, 0x4a, 0x6f, 0x62, 0x1a,
+	0x2a, 0x2e, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2e, 0x63, 0x6f, 0x6d, 0x70, 0x75, 0x74, 0x65, 0x2e,
+	0x4d, 0x73, 0x67, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x43, 0x6f, 0x6d, 0x70, 0x75, 0x74, 0x65,
+	0x4a, 0x6f, 0x62, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x1a, 0x05, 0x80, 0xe7, 0xb0,
+	0x2a, 0x01, 0x42, 0x91, 0x01, 0x0a, 0x11, 0x63, 0x6f, 0x6d, 0x2e, 0x63, 0x68, 0x61, 0x69, 0x6e,
+	0x2e, 0x63, 0x6f, 0x6d, 0x70, 0x75, 0x74, 0x65, 0x42, 0x07, 0x54, 0x78, 0x50, 0x72, 0x6f, 0x74,
+	0x6f, 0x50, 0x01, 0x5a, 0x1e, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x73, 0x64, 0x6b, 0x2e, 0x69,
+	0x6f, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2f, 0x63, 0x6f, 0x6d, 0x70,
+	0x75, 0x74, 0x65, 0xa2, 0x02, 0x03, 0x43, 0x43, 0x58, 0xaa, 0x02, 0x0d, 0x43, 0x68, 0x61, 0x69,
+	0x6e, 0x2e, 0x43, 0x6f, 0x6d, 0x70, 0x75, 0x74, 0x65, 0xca, 0x02, 0x0d, 0x43, 0x68, 0x61, 0x69,
+	0x6e, 0x5c, 0x43, 0x6f, 0x6d, 0x70, 0x75, 0x74, 0x65, 0xe2, 0x02, 0x19, 0x43, 0x68, 0x61, 0x69,
+	0x6e, 0x5c, 0x43, 0x6f, 0x6d, 0x70, 0x75, 0x74, 0x65, 0x5c, 0x47, 0x50, 0x42, 0x4d, 0x65, 0x74,
+	0x61, 0x64, 0x61, 0x74, 0x61, 0xea, 0x02, 0x0e, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x3a, 0x3a, 0x43,
+	0x6f, 0x6d, 0x70, 0x75, 0x74, 0x65, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -1017,18 +2070,22 @@ func file_chain_compute_tx_proto_rawDescGZIP() []byte {
 	return file_chain_compute_tx_proto_rawDescData
 }
 
-var file_chain_compute_tx_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_chain_compute_tx_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_chain_compute_tx_proto_goTypes = []interface{}{
-	(*MsgUpdateParams)(nil),         // 0: chain.compute.MsgUpdateParams
-	(*MsgUpdateParamsResponse)(nil), // 1: chain.compute.MsgUpdateParamsResponse
-	(*Params)(nil),                  // 2: chain.compute.Params
+	(*MsgUpdateParams)(nil),             // 0: chain.compute.MsgUpdateParams
+	(*MsgUpdateParamsResponse)(nil),     // 1: chain.compute.MsgUpdateParamsResponse
+	(*MsgCreateComputeJob)(nil),         // 2: chain.compute.MsgCreateComputeJob
+	(*MsgCreateComputeJobResponse)(nil), // 3: chain.compute.MsgCreateComputeJobResponse
+	(*Params)(nil),                      // 4: chain.compute.Params
 }
 var file_chain_compute_tx_proto_depIdxs = []int32{
-	2, // 0: chain.compute.MsgUpdateParams.params:type_name -> chain.compute.Params
+	4, // 0: chain.compute.MsgUpdateParams.params:type_name -> chain.compute.Params
 	0, // 1: chain.compute.Msg.UpdateParams:input_type -> chain.compute.MsgUpdateParams
-	1, // 2: chain.compute.Msg.UpdateParams:output_type -> chain.compute.MsgUpdateParamsResponse
-	2, // [2:3] is the sub-list for method output_type
-	1, // [1:2] is the sub-list for method input_type
+	2, // 2: chain.compute.Msg.CreateComputeJob:input_type -> chain.compute.MsgCreateComputeJob
+	1, // 3: chain.compute.Msg.UpdateParams:output_type -> chain.compute.MsgUpdateParamsResponse
+	3, // 4: chain.compute.Msg.CreateComputeJob:output_type -> chain.compute.MsgCreateComputeJobResponse
+	3, // [3:5] is the sub-list for method output_type
+	1, // [1:3] is the sub-list for method input_type
 	1, // [1:1] is the sub-list for extension type_name
 	1, // [1:1] is the sub-list for extension extendee
 	0, // [0:1] is the sub-list for field type_name
@@ -1065,6 +2122,30 @@ func file_chain_compute_tx_proto_init() {
 				return nil
 			}
 		}
+		file_chain_compute_tx_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*MsgCreateComputeJob); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_chain_compute_tx_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*MsgCreateComputeJobResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -1072,7 +2153,7 @@ func file_chain_compute_tx_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_chain_compute_tx_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
