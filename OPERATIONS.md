@@ -70,3 +70,37 @@ The `CreateComputeJob` message allows a user to submit a compute job which creat
     *   Verifies that calling `CreateComputeJob` creates a corresponding task in `Workload` module.
     *   Queries the task using the returned `JobId` to confirm side effects.
     *   Validates error handling for empty payload.
+
+## E2E Worker Runbook (Job -> Execute -> Commit)
+
+### Prerequisites
+- Local chain is running (`chaind status` returns latest height)
+- Docker daemon is running
+- Worker config exists at `worker/config.yaml`
+
+### 1) Batch submit jobs (with sequence-mismatch retry)
+```bash
+cd /Users/qianqi/.openclaw/workspace/TrillionniumChain
+./scripts/submit_jobs.sh ./tasks/example_futures cpu 3
+```
+
+### 2) One-command end-to-end smoke
+```bash
+cd /Users/qianqi/.openclaw/workspace/TrillionniumChain
+./scripts/e2e_smoke.sh 2
+```
+
+The smoke script automatically:
+1. checks chain availability
+2. ensures a single worker instance
+3. submits N jobs
+4. waits for processing
+5. verifies `result committed on-chain` appears N times in `worker/worker.log`
+
+### 3) Pass criteria
+- script exits with code `0`
+- terminal prints `SMOKE PASS ✅`
+- worker log contains entries like:
+  - `Submitting MsgCompleteJob for Job <id>...`
+  - `✅ Job <id> result committed on-chain`
+

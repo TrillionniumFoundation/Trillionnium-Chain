@@ -224,7 +224,38 @@ echo "$SUMMARY_PAYLOAD" | jq -r '.phase_txs.finalize_unbonding // .tx_finalize_u
 echo "$SUMMARY_PAYLOAD" | jq -r '"waited_blocks=\(.timing.cooldown_waited_blocks // .cooldown_waited_blocks // 0) stagnant_rounds=\(.timing.cooldown_stagnant_rounds // .cooldown_stagnant_rounds // 0)"'
 ```
 
-## 10) Troubleshooting (Lifecycle Smoke)
+## 10) E2E Worker Automation (Job -> Execute -> Commit)
+
+### 10.1 Batch job submitter
+```bash
+cd /Users/qianqi/.openclaw/workspace/TrillionniumChain
+./scripts/submit_jobs.sh ./tasks/example_futures cpu 3
+```
+
+Notes:
+- Handles `account sequence mismatch` with retry/backoff.
+- Default sender key: `bob` (editable in script).
+
+### 10.2 One-command E2E smoke
+```bash
+cd /Users/qianqi/.openclaw/workspace/TrillionniumChain
+./scripts/e2e_smoke.sh 2
+```
+
+What it does:
+1. checks chain is running
+2. enforces single worker instance
+3. submits N jobs
+4. waits processing window
+5. verifies `result committed on-chain` count in `worker/worker.log`
+
+### 10.3 Expected pass signal
+- Script exits 0 and prints: `SMOKE PASS ✅`
+- Worker log contains at least N lines with:
+  - `Submitting MsgCompleteJob ...`
+  - `✅ Job <id> result committed on-chain`
+
+## 11) Troubleshooting (Lifecycle Smoke)
 ### 10.1 `tx not found in time`
 Symptom from script:
 - `tx not found in time: tx=<hash> waited=<s> height=<h> catching_up=<bool>`

@@ -4,8 +4,9 @@ import os
 import time
 import logging
 import yaml
+import fcntl
 from executor import DockerExecutor
-from listener import TaskListener
+from listener import ChainListener
 from ipfs_client import IPFSClient
 
 # Configure Logging
@@ -13,24 +14,13 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(level
 logger = logging.getLogger("TrillionniumWorker")
 
 # Configuration Path
-CONFIG_PATH = os.path.expanduser("~/.trillionnium/config.yaml")
+CONFIG_PATH = "config.yaml"
 
 def load_config():
     """Loads configuration from YAML."""
     if not os.path.exists(CONFIG_PATH):
-        # Default config
-        config = {
-            "node_name": "worker-1",
-            "private_key": "", # To be filled by user
-            "ipfs_gateway": "https://ipfs.io/ipfs/",
-            "rpc_endpoint": "https://rpc.sepolia.org",
-            "tasks_queue": "tasks_queue.json" # MVP local queue
-        }
-        os.makedirs(os.path.dirname(CONFIG_PATH), exist_ok=True)
-        with open(CONFIG_PATH, "w") as f:
-            yaml.dump(config, f)
-        logger.info(f"Created default config at {CONFIG_PATH}")
-        return config
+        logger.error(f"Config file not found at {CONFIG_PATH}. Please ensure config.yaml exists.")
+        sys.exit(1)
     
     with open(CONFIG_PATH, "r") as f:
         return yaml.safe_load(f)
@@ -38,15 +28,20 @@ def load_config():
 def run_worker():
     """Starts the worker daemon."""
     config = load_config()
-    
-    logger.info(f"Starting Trillionnium Worker [{config['node_name']}]...")
-    logger.info(f"Connected to Gateway: {config['ipfs_gateway']}")
-    
-    # Initialize components
-    # For MVP, listener uses local queue. In Phase 2, it uses Web3 Contract Events.
-    listener = TaskListener(queue_file=config["tasks_queue"])
-    
-    # Run the loop
+
+    lock_path = os.path.join(os.path.dirname(__file__), ".worker.lock")
+    lock_fp = open(lock_path, "w")
+    try:
+        fcntl.flock(lock_fp.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except OSError:
+        logger.error("Another worker instance is already running. Exiting.")
+        sys.exit(1)
+
+    logger.info(f"Starting Trillionnium Worker [{config['node']['name']}]...")
+    logger.info(f"Connecting to Chain: {config['node']['chain_id']}")
+
+    listener = ChainListener(config)
+
     try:
         listener.listen_loop()
     except KeyboardInterrupt:

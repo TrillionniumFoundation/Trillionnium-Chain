@@ -85,6 +85,24 @@ What it demonstrates:
 For chain operators and testing flows, see:
 - `docs/OPERATIONS.md`
 
+### E2E Worker Smoke (new)
+From repo root:
+
+```bash
+# Submit 3 jobs with retry-safe sequence handling
+./scripts/submit_jobs.sh ./tasks/example_futures cpu 3
+
+# Full smoke: restart single worker, submit jobs, verify on-chain result commits in logs
+./scripts/e2e_smoke.sh 2
+```
+
+What this validates:
+- chain receives `create-compute-job`
+- worker listens `new_compute_job` events
+- docker task executes successfully
+- worker sends `request-job-execution` + `complete-job`
+- logs contain `result committed on-chain`
+
 Lifecycle smoke observability guardrail:
 - `chain/tools/lifecycle_smoke.sh` emits `SUMMARY_JSON` on both success/failure (`SUMMARY_JSON=1`)
 - `chain/tools/lifecycle_smoke_observability_test.sh` enforces snapshot field consistency and failure diagnostics

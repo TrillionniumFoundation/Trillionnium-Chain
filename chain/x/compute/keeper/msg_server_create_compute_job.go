@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"strconv"
 
 	"chain/x/compute/types"
 	workloadtypes "chain/x/workload/types"
@@ -38,6 +39,16 @@ func (k msgServer) CreateComputeJob(goCtx context.Context, msg *types.MsgCreateC
 
 	// AppendJob returns the ID of the new job
 	jobId := k.AppendJob(ctx, job)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent("new_compute_job",
+			sdk.NewAttribute("job_id", strconv.FormatUint(jobId, 10)),
+			sdk.NewAttribute("task_id", strconv.FormatUint(taskId, 10)),
+			sdk.NewAttribute("creator", msg.Creator),
+			sdk.NewAttribute("payload", msg.Payload),
+			sdk.NewAttribute("requirements", msg.Requirements),
+		),
+	)
 
 	return &types.MsgCreateComputeJobResponse{
 		JobId: jobId,

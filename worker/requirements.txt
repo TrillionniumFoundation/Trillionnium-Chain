@@ -1,0 +1,4 @@
+cosmpy
+docker
+requests
+pyyaml
