@@ -38,11 +38,11 @@ log() {
 }
 
 node_height() {
-  "$BIN" status --node "$NODE" 2>/dev/null | jq -r '.SyncInfo.latest_block_height // "?"'
+  "$BIN" status --node "$NODE" 2>/dev/null | jq -r '.SyncInfo.latest_block_height // .sync_info.latest_block_height // "?"'
 }
 
 node_syncing() {
-  "$BIN" status --node "$NODE" 2>/dev/null | jq -r '.SyncInfo.catching_up // "?"'
+  "$BIN" status --node "$NODE" 2>/dev/null | jq -r '.SyncInfo.catching_up // .sync_info.catching_up // "?"'
 }
 
 emit_failure_snapshot() {
@@ -94,8 +94,8 @@ check_node_reachable() {
   fi
 
   local h s
-  h="$(echo "$status_json" | jq -r '.SyncInfo.latest_block_height // empty')"
-  s="$(echo "$status_json" | jq -r '.SyncInfo.catching_up // empty')"
+  h="$(echo "$status_json" | jq -r '.SyncInfo.latest_block_height // .sync_info.latest_block_height // empty')"
+  s="$(echo "$status_json" | jq -r 'if .SyncInfo.catching_up != null then (.SyncInfo.catching_up|tostring) elif .sync_info.catching_up != null then (.sync_info.catching_up|tostring) else empty end')"
 
   [[ -n "$h" ]] || die "node status missing latest_block_height at $NODE"
   [[ -n "$s" ]] || die "node status missing catching_up at $NODE"
@@ -131,6 +131,13 @@ wait_tx() {
   LAST_STEP="wait-tx"
   while (( waited < TX_WAIT_SECONDS )); do
     if "$BIN" q tx "$txhash" --node "$NODE" -o json >/dev/null 2>&1; then
+      local txj code raw
+      txj="$($BIN q tx "$txhash" --node "$NODE" -o json)"
+      code="$(echo "$txj" | jq -r '.code // 0')"
+      raw="$(echo "$txj" | jq -r '.raw_log // ""')"
+      if [[ "$code" != "0" ]]; then
+        die "tx execution failed: tx=$txhash code=$code raw_log=${raw:-<empty>}"
+      fi
       return 0
     fi
     sleep 1
