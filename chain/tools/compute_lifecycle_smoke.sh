@@ -87,6 +87,22 @@ check_dependencies() {
   command -v jq >/dev/null 2>&1 || die "jq not found"
 }
 
+check_node_reachable() {
+  local status_json
+  if ! status_json="$($BIN status --node "$NODE" 2>/dev/null)"; then
+    die "node unreachable at $NODE (start chain first, e.g. ignite chain serve)"
+  fi
+
+  local h s
+  h="$(echo "$status_json" | jq -r '.SyncInfo.latest_block_height // empty')"
+  s="$(echo "$status_json" | jq -r '.SyncInfo.catching_up // empty')"
+
+  [[ -n "$h" ]] || die "node status missing latest_block_height at $NODE"
+  [[ -n "$s" ]] || die "node status missing catching_up at $NODE"
+
+  log "node reachable: height=$h catching_up=$s"
+}
+
 broadcast_tx() {
   local label="$1"
   shift
@@ -131,6 +147,7 @@ event_attr() {
 }
 
 check_dependencies
+check_node_reachable
 log "node height=$(node_height) catching_up=$(node_syncing)"
 
 broadcast_tx "[1/3] request-job-execution" \
