@@ -52,6 +52,8 @@ func (k msgServer) CreateTask(goCtx context.Context, msg *types.MsgCreateTask) (
 		task,
 	)
 
+	emitFundFlowEvent(ctx, id, msg.Creator, types.ModuleName, msg.Bounty, denom, "bounty_lock")
+
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent("workload_create_task",
 			sdk.NewAttribute("task_id", strconv.FormatUint(id, 10)),
@@ -108,6 +110,7 @@ func (k msgServer) UpdateTask(goCtx context.Context, msg *types.MsgUpdateTask) (
 		}
 
 		burned = val.Bounty
+		emitFundFlowEvent(ctx, msg.Id, types.ModuleName, "burn", burned, denom, "task_burn")
 		// Track who submitted the final result
 		val.Worker = msg.Creator
 	}

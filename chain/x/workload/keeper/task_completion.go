@@ -37,6 +37,7 @@ func (k Keeper) CompleteTask(ctx context.Context, taskID uint64, workerAddress s
 		if err := k.bankKeeper.BurnCoins(ctx, types.ModuleName, coins); err != nil {
 			return err
 		}
+		emitFundFlowEvent(sdk.UnwrapSDKContext(ctx), taskID, types.ModuleName, "burn", val.Bounty, denom, "task_burn")
 	}
 
 	val.Status = types.TaskStatusCompleted

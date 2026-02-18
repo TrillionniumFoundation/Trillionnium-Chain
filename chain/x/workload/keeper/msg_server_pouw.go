@@ -72,10 +72,12 @@ func (k msgServer) ChallengeResult(goCtx context.Context, msg *types.MsgChalleng
 		return nil, err
 	}
 	if params.ChallengeDeposit > 0 {
-		depositCoins := sdk.NewCoins(sdk.NewCoin(k.workloadDenom(ctx), math.NewIntFromUint64(params.ChallengeDeposit)))
+		denom := k.workloadDenom(ctx)
+		depositCoins := sdk.NewCoins(sdk.NewCoin(denom, math.NewIntFromUint64(params.ChallengeDeposit)))
 		if err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, challengerAddr, types.ModuleName, depositCoins); err != nil {
 			return nil, err
 		}
+		emitFundFlowEvent(ctx, task.Id, msg.Creator, types.ModuleName, params.ChallengeDeposit, denom, "challenge_deposit")
 	}
 
 	challenge := types.Challenge{
@@ -161,30 +163,35 @@ func (k msgServer) ResolveChallenge(goCtx context.Context, msg *types.MsgResolve
 			}
 		}
 		if challenge.Deposit > 0 {
-			depositCoins := sdk.NewCoins(sdk.NewCoin(k.workloadDenom(ctx), math.NewIntFromUint64(challenge.Deposit)))
+			denom := k.workloadDenom(ctx)
+			depositCoins := sdk.NewCoins(sdk.NewCoin(denom, math.NewIntFromUint64(challenge.Deposit)))
 			if err := k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, challengerAddr, depositCoins); err != nil {
 				return nil, err
 			}
+			emitFundFlowEvent(ctx, task.Id, types.ModuleName, challenge.Challenger, challenge.Deposit, denom, "challenge_refund")
 		}
 		task.ResultHash = resolveOut.FinalResultHash
 		k.SetTask(ctx, task)
 		k.SetChallenge(ctx, challenge)
 	} else {
 		if challenge.Deposit > 0 {
+			denom := k.workloadDenom(ctx)
 			penalty := challenge.Deposit * params.ChallengerSlashPercent / 100
 			refund := challenge.Deposit - penalty
 
 			if penalty > 0 {
-				penaltyCoins := sdk.NewCoins(sdk.NewCoin(k.workloadDenom(ctx), math.NewIntFromUint64(penalty)))
+				penaltyCoins := sdk.NewCoins(sdk.NewCoin(denom, math.NewIntFromUint64(penalty)))
 				if err := k.bankKeeper.BurnCoins(ctx, types.ModuleName, penaltyCoins); err != nil {
 					return nil, err
 				}
+				emitFundFlowEvent(ctx, task.Id, types.ModuleName, "burn", penalty, denom, "challenge_burn")
 			}
 			if refund > 0 {
-				refundCoins := sdk.NewCoins(sdk.NewCoin(k.workloadDenom(ctx), math.NewIntFromUint64(refund)))
+				refundCoins := sdk.NewCoins(sdk.NewCoin(denom, math.NewIntFromUint64(refund)))
 				if err := k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, challengerAddr, refundCoins); err != nil {
 					return nil, err
 				}
+				emitFundFlowEvent(ctx, task.Id, types.ModuleName, challenge.Challenger, refund, denom, "challenge_refund")
 			}
 		}
 

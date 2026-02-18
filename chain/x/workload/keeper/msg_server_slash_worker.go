@@ -52,6 +52,7 @@ func (k msgServer) SlashWorker(goCtx context.Context, msg *types.MsgSlashWorker)
 
 	worker.Stake = remaining
 	k.SetWorker(ctx, worker)
+	emitFundFlowEvent(ctx, 0, msg.Worker, "burn", slashAmount, k.workloadDenom(ctx), "worker_slash")
 
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent("workload_slash_worker",
