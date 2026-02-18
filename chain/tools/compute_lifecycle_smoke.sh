@@ -12,7 +12,14 @@ FROM="${2:-alice}"
 CHAIN_ID="${3:-chain}"
 NODE="${4:-http://127.0.0.1:26657}"
 
-BIN="${BIN:-chaind}"
+BIN="${BIN:-}"
+if [[ -z "$BIN" ]]; then
+  if [[ -x "./chaind" ]]; then
+    BIN="./chaind"
+  else
+    BIN="chaind"
+  fi
+fi
 FEES="${FEES:-200stake}"
 TX_WAIT_SECONDS="${TX_WAIT_SECONDS:-30}"
 SUMMARY_JSON="${SUMMARY_JSON:-0}"
@@ -49,7 +56,7 @@ emit_failure_snapshot() {
   fi
 
   if [[ -n "$TASK_ID" ]]; then
-    task="$($BIN q workload task "$TASK_ID" --node "$NODE" -o json 2>/dev/null | jq -c '.' 2>/dev/null || echo '<task-query-failed>')"
+    task="$($BIN q workload show-task "$TASK_ID" --node "$NODE" -o json 2>/dev/null | jq -c '.' 2>/dev/null || echo '<task-query-failed>')"
   fi
 
   log "failure_snapshot: reason=$reason"
@@ -127,7 +134,8 @@ check_dependencies
 log "node height=$(node_height) catching_up=$(node_syncing)"
 
 broadcast_tx "[1/3] request-job-execution" \
-  "$BIN" tx compute request-job-execution "$JOB_ID" \
+  "$BIN" tx compute request-job-execution \
+  --job-id "$JOB_ID" \
   --from "$FROM" \
   --chain-id "$CHAIN_ID" \
   --fees "$FEES" \
@@ -136,7 +144,9 @@ broadcast_tx "[1/3] request-job-execution" \
 wait_tx "$LAST_TX"
 
 broadcast_tx "[2/3] complete-job" \
-  "$BIN" tx compute complete-job "$JOB_ID" "$RESULT_HASH" \
+  "$BIN" tx compute complete-job \
+  --job-id "$JOB_ID" \
+  --result "$RESULT_HASH" \
   --from "$FROM" \
   --chain-id "$CHAIN_ID" \
   --fees "$FEES" \
@@ -154,7 +164,7 @@ WORKER_EVENT="$(event_attr "$LAST_TX" "compute_complete_job" "worker")"
 
 LAST_STEP="[3/3] verify workload task state"
 log "$LAST_STEP"
-TASK_JSON="$($BIN q workload task "$TASK_ID" --node "$NODE" -o json)"
+TASK_JSON="$($BIN q workload show-task "$TASK_ID" --node "$NODE" -o json)"
 TASK_STATUS="$(echo "$TASK_JSON" | jq -r '.Task.status // .task.status // empty')"
 TASK_WORKER="$(echo "$TASK_JSON" | jq -r '.Task.worker // .task.worker // empty')"
 TASK_RESULT="$(echo "$TASK_JSON" | jq -r '.Task.resultHash // .Task.result_hash // .task.resultHash // .task.result_hash // empty')"
