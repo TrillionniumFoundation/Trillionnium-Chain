@@ -7,7 +7,7 @@ import "cosmos/msg/v1/msg.proto";
 import "cosmos_proto/cosmos.proto";
 import "gogoproto/gogo.proto";
 import "chain/compute/params.proto";
-import "chain/compute/job.proto"; // Import JobStatus
+import "chain/compute/job.proto"; 
 
 option go_package = "chain/x/compute/types";
 
@@ -20,6 +20,7 @@ service Msg {
   rpc UpdateParams        (MsgUpdateParams       ) returns (MsgUpdateParamsResponse       );
   rpc CreateComputeJob    (MsgCreateComputeJob   ) returns (MsgCreateComputeJobResponse   );
   rpc RequestJobExecution (MsgRequestJobExecution) returns (MsgRequestJobExecutionResponse);
+  rpc CompleteJob         (MsgCompleteJob        ) returns (MsgCompleteJobResponse        );
 }
 
 // MsgUpdateParams is the Msg/UpdateParams request type.
@@ -59,4 +60,16 @@ message MsgRequestJobExecution {
 
 message MsgRequestJobExecutionResponse {
   JobStatus status = 1;
+}
+
+message MsgCompleteJob {
+  option (cosmos.msg.v1.signer) = "creator";
+  string creator = 1;
+  uint64 job_id  = 2;
+  string result  = 3; // hash or data
+}
+
+message MsgCompleteJobResponse {
+  uint64    job_id = 1;
+  JobStatus status = 2;
 }
