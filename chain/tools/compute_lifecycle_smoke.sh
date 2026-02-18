@@ -110,7 +110,7 @@ broadcast_tx() {
   LAST_STEP="$label"
   log "$label"
   local raw txhash code rawlog
-  raw="$($@ -o json)"
+  raw="$("$@" -o json)"
   txhash="$(echo "$raw" | jq -r '.txhash // empty')"
   code="$(echo "$raw" | jq -r '.code // 0')"
   rawlog="$(echo "$raw" | jq -r '.raw_log // empty')"
