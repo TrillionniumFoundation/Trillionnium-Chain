@@ -1,0 +1,44 @@
+package keeper
+
+import (
+	"testing"
+
+	"chain/x/workload/types"
+	"github.com/stretchr/testify/require"
+)
+
+func TestTaskStateTransitionMatrix(t *testing.T) {
+	states := []uint64{
+		types.TaskStatusOpen,
+		types.TaskStatusAssigned,
+		types.TaskStatusResultSubmitted,
+		types.TaskStatusChallenged,
+		types.TaskStatusCompleted,
+		types.TaskStatusSlashed,
+	}
+
+	allowed := map[[2]uint64]bool{
+		{types.TaskStatusOpen, types.TaskStatusAssigned}:        true,
+		{types.TaskStatusOpen, types.TaskStatusResultSubmitted}: true, // legacy submit_result
+		{types.TaskStatusAssigned, types.TaskStatusResultSubmitted}: true,
+		{types.TaskStatusAssigned, types.TaskStatusOpen}:            true, // commit timeout recovery
+		{types.TaskStatusResultSubmitted, types.TaskStatusChallenged}: true,
+		{types.TaskStatusResultSubmitted, types.TaskStatusCompleted}:  true,
+		{types.TaskStatusChallenged, types.TaskStatusCompleted}: true,
+		{types.TaskStatusChallenged, types.TaskStatusSlashed}:   true,
+	}
+
+	for _, from := range states {
+		for _, to := range states {
+			if from == to {
+				continue
+			}
+			err := ensureTaskTransition(from, to)
+			if allowed[[2]uint64{from, to}] {
+				require.NoError(t, err, "expected transition %d -> %d to be allowed", from, to)
+			} else {
+				require.ErrorIs(t, err, types.ErrInvalidTaskStateTransition, "expected transition %d -> %d to be rejected", from, to)
+			}
+		}
+	}
+}
