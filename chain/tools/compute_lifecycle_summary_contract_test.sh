@@ -1,14 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SMOKE_SCRIPT="$SCRIPT_DIR/compute_lifecycle_smoke.sh"
-
 command -v jq >/dev/null 2>&1 || { echo "[ERR] jq not found" >&2; exit 1; }
-
-extract_summary() {
-  sed -n 's/^SUMMARY_JSON=//p' | tail -n1
-}
 
 ok='{"status":"ok","job_id":"1","task_id":"2","tx_complete":"ABC","worker":"w","result_hash":"r","duration_s":3}'
 failed='{"status":"failed","reason":"x","job_id":"1","last_tx":"ABC","task_id":"2"}'

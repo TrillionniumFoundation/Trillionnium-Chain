@@ -30,7 +30,8 @@ SUMMARY_FILE="$RUN_DIR/summary.jsonl"
 REPORT_FILE="$RUN_DIR/report.txt"
 
 log() {
-  local msg="[$(date '+%Y-%m-%d %H:%M:%S')] $*"
+  local msg
+  msg="[$(date '+%Y-%m-%d %H:%M:%S')] $*"
   echo "$msg" | tee -a "$LOG_FILE"
 }
 
