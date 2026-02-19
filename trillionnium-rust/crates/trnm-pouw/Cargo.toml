@@ -1,0 +1,11 @@
+[package]
+name = "trnm-pouw"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+thiserror = "1"
+sha2 = "0.10"
+hex = "0.4"
+trnm-state = { path = "../trnm-state" }
+trnm-types = { path = "../trnm-types" }
