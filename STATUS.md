@@ -403,6 +403,20 @@
 - 结果：`parallel_sanity_streak=20/20`（全部通过）
 - 产物：`trillionnium-rust/run/parallel-sanity-flaky-*.log`
 
+## 31) Rust L1 后续动作-12（一键门禁脚本 + merge gates 接入，2026-02-19 23:40~23:44 CST）
+
+- 新增一键门禁脚本：`trillionnium-rust/scripts/run_v1_protocol_gates.sh`
+  - `cargo test --workspace`
+  - `check_event_fields.sh`
+  - `check_event_replay_smoke.sh`
+  - 并行路径 sanity（`apply_error/rollback` 硬失败）
+- 已本地实跑：`[OK] run_v1_protocol_gates passed`。
+- `trnm-merge-gates.yml` 已接入步骤 `Rust L1 v1 protocol gates`，并补充 artifacts：
+  - `parallel-sanity.log`
+  - `event-field-check.log`
+  - `event-replay-smoke.log`
+- 新增执行看板：`docs/strategy/trnm-90d-week1-execution-board.md`（10 项执行项与验收口径）。
+
 ## 6) P1-1 Dry-run 演练结果（2026-02-19 16:44 CST）
 
 - 演练目录：`data/upgrade-runs/20260219-164421`

@@ -54,6 +54,11 @@ jobs:
           test "$fail_count" = "0"
           test "$skip_count" = "0"
 
+      - name: Rust L1 v1 protocol gates
+        run: |
+          cd trillionnium-rust
+          ./scripts/run_v1_protocol_gates.sh
+
       - name: Upload gate artifacts
         if: always()
         uses: actions/upload-artifact@v4
@@ -62,4 +67,7 @@ jobs:
           path: |
             data/p0-acceptance/**
             data/p1-negative/**
+            trillionnium-rust/run/parallel-sanity.log
+            trillionnium-rust/run/event-field-check.log
+            trillionnium-rust/run/event-replay-smoke.log
           if-no-files-found: warn
