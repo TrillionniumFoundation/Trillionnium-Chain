@@ -83,10 +83,10 @@ jobs:
           # 2) bench elapsed thresholds
           # warning: emit ::warning:: for visibility
           # hard: fail job
-          BENCH_WARN_MS=${BENCH_WARN_MS:-1200}
-          BENCH_MAX_MS=${BENCH_MAX_MS:-2000}
-          BENCH_MIXED_WARN_MS=${BENCH_MIXED_WARN_MS:-1200}
-          BENCH_MIXED_MAX_MS=${BENCH_MIXED_MAX_MS:-2000}
+          BENCH_WARN_MS=${BENCH_WARN_MS:-300}
+          BENCH_MAX_MS=${BENCH_MAX_MS:-600}
+          BENCH_MIXED_WARN_MS=${BENCH_MIXED_WARN_MS:-300}
+          BENCH_MIXED_MAX_MS=${BENCH_MIXED_MAX_MS:-600}
           latest_bench=$(ls -1dt run/bench/bench-matrix-*.txt | head -n 1)
           latest_mixed=$(ls -1dt run/bench/bench-mixed-matrix-*.txt | head -n 1)
           echo "Using bench report: $latest_bench"

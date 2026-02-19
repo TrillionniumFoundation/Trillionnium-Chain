@@ -30,6 +30,13 @@ Prevent alpha/dev-only behaviors from leaking into non-local deployments.
 Latest secure-default report:
 - `data/alpha-acceptance/report-20260219-092526.txt`
 
+## Rust L1 RC Gate (P2.2)
+For Rust L1 release candidate tagging, all of the following are required:
+1. `rust-l1-nightly-health` is **success** for the latest run.
+2. `rust-l1-nightly-health` has **3 consecutive success runs** on `main`.
+3. Nightly threshold checks pass for both classic + mixed benches.
+4. state-root audit remains `ok=true mismatch=0 missing=0`.
+
 ## Ops note
 If you must run D positive locally:
 - start node with `TRNM_ENABLE_DEV_RESOLVE=1`
