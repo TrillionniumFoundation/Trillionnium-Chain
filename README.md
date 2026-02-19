@@ -110,6 +110,21 @@ Lifecycle smoke observability guardrail:
 - CI workflow `.github/workflows/lifecycle-smoke-observability.yml` runs shellcheck + parser/fixture/contract checks + regression test
 - `x/workload` unbonding request path now rejects unsafe block-height boundaries (negative and int64-unreachable release height)
 
+### P0 Acceptance (one command)
+
+From repo root:
+
+```bash
+./scripts/p0_acceptance.sh
+# or quick mode (skip full alpha acceptance)
+./scripts/p0_acceptance.sh --quick
+```
+
+Artifacts:
+- `data/p0-acceptance/<timestamp>/summary.txt`
+- `data/p0-acceptance/<timestamp>/summary.json`
+- per-step logs in the same folder
+
 ## 🛠️ Roadmap
 
 - [x] **Phase 1**: Core Architecture & Simulation
