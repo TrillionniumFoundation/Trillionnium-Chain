@@ -2,7 +2,13 @@ use anyhow::{Context, Result};
 use clap::Parser;
 use serde::Deserialize;
 use sha2::{Digest, Sha256};
-use std::{collections::VecDeque, fs, sync::mpsc, thread, time::Duration};
+use std::{
+    collections::VecDeque,
+    fs,
+    sync::mpsc,
+    thread,
+    time::{Duration, SystemTime, UNIX_EPOCH},
+};
 use trnm_executor::build_parallel_groups;
 use trnm_pouw::{
     apply_challenge, apply_commit_result, apply_create_task, apply_resolve, apply_reveal_result,
@@ -103,6 +109,97 @@ fn build_demo_mempool(demo_tasks: u64, _demo_keys: u64) -> VecDeque<MockTx> {
 fn task_ref(st: &StateStore, task_id: u64) -> Result<ObjectRef> {
     st.get_ref(task_id)
         .with_context(|| format!("task_ref missing for task_id={}", task_id))
+}
+
+fn task_id_of(tx: &MockTx) -> u64 {
+    match tx {
+        MockTx::CreateTask { task_id, .. }
+        | MockTx::Commit { task_id, .. }
+        | MockTx::Reveal { task_id, .. }
+        | MockTx::Challenge { task_id }
+        | MockTx::Resolve { task_id, .. } => *task_id,
+    }
+}
+
+fn event_type_of(tx: &MockTx) -> &'static str {
+    match tx {
+        MockTx::CreateTask { .. } => "create",
+        MockTx::Commit { .. } => "commit",
+        MockTx::Reveal { .. } => "reveal",
+        MockTx::Challenge { .. } => "challenge",
+        MockTx::Resolve { .. } => "resolve",
+    }
+}
+
+fn actor_of(tx: &MockTx) -> String {
+    match tx {
+        MockTx::CreateTask { creator, .. } => creator.clone(),
+        MockTx::Commit { worker, .. } => worker.clone(),
+        MockTx::Reveal { task_id, .. } => format!("worker{}", task_id),
+        MockTx::Challenge { .. } => "challenger".to_string(),
+        MockTx::Resolve { .. } => "authority".to_string(),
+    }
+}
+
+fn status_name(st: &StateStore, task_id: u64) -> String {
+    st.get_task(task_id)
+        .map(|t| format!("{:?}", t.status))
+        .unwrap_or_else(|| "NONE".to_string())
+}
+
+fn now_unix_ms() -> u128 {
+    SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .map(|d| d.as_millis())
+        .unwrap_or(0)
+}
+
+fn emit_event(
+    tx: &MockTx,
+    tx_id: u64,
+    block_height: u64,
+    from_status: &str,
+    to_status: &str,
+    state_root: &str,
+) {
+    let task_id = task_id_of(tx);
+    let event_type = event_type_of(tx);
+    let actor = actor_of(tx);
+    let ts_unix_ms = now_unix_ms();
+
+    match tx {
+        MockTx::Resolve { slash_worker, .. } => {
+            let resolution_code = if *slash_worker { "slashed" } else { "completed" };
+            println!(
+                "[event] event_type={} task_id={} from_status={} to_status={} actor={} tx_id={} block_height={} state_root={} ts_unix_ms={} slash_worker={} resolution_code={}",
+                event_type,
+                task_id,
+                from_status,
+                to_status,
+                actor,
+                tx_id,
+                block_height,
+                state_root,
+                ts_unix_ms,
+                slash_worker,
+                resolution_code
+            );
+        }
+        _ => {
+            println!(
+                "[event] event_type={} task_id={} from_status={} to_status={} actor={} tx_id={} block_height={} state_root={} ts_unix_ms={}",
+                event_type,
+                task_id,
+                from_status,
+                to_status,
+                actor,
+                tx_id,
+                block_height,
+                state_root,
+                ts_unix_ms
+            );
+        }
+    }
 }
 
 fn apply_one(st: &mut StateStore, tx: MockTx) -> Result<()> {
@@ -261,12 +358,19 @@ fn main() -> Result<()> {
 
             for id in ordered_ids {
                 let idx = (id - 1) as usize;
+                let tx = picked[idx].clone();
+                let task_id = task_id_of(&tx);
+                let from_status = status_name(&state, task_id);
+
                 let before = state.clone();
-                if let Err(e) = apply_one(&mut state, picked[idx].clone()) {
+                if let Err(e) = apply_one(&mut state, tx.clone()) {
                     state = before; // rollback on failed commit
                     println!("[tx] apply_error height={} tx_id={} err={} rollback=true", height, id, e);
                 } else {
                     applied += 1;
+                    let to_status = status_name(&state, task_id);
+                    let root = hex::encode(state.state_root());
+                    emit_event(&tx, id, height, &from_status, &to_status, &root);
                 }
             }
         }
