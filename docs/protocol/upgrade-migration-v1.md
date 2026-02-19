@@ -20,7 +20,7 @@
 - To: `v0.3.0`（迁移治理与参数基线版本）  
 - Upgrade Height: `治理提案确定（TBD）`
 - 破坏性变更：
-  - 计划关闭 legacy submit-result（`allow_legacy_submit_result: true -> false`）
+  - 关闭 legacy submit-result（`allow_legacy_submit_result: true -> false`，已在代码默认值执行）
   - challenge 相关参数在 dev/prod-like profile 区分管理
 
 ## 3. 迁移原则
@@ -74,7 +74,7 @@
 - challenger_slash_percent: `10`
 - worker_slash_percent_on_bad_result: `20`
 - reveal_window_blocks: `50`
-- allow_legacy_submit_result: `true`
+- allow_legacy_submit_result: `false`
 
 | Param | Old | New(v0.3.0 目标) | 策略 | 风险 |
 |---|---:|---:|---|---|
@@ -83,7 +83,7 @@
 | challenge_window_blocks | 100 | 100 | 保持不变 | 低 |
 | worker_slash_percent_on_bad_result | 20 | 20 | 保持不变（后续治理再调） | 中 |
 | challenger_slash_percent | 10 | 10 | 保持不变 | 低 |
-| allow_legacy_submit_result | true | false | 升级后一次性切换 | 兼容路径退役风险 |
+| allow_legacy_submit_result | false | false | 已完成切换（维持关闭） | 兼容路径退役风险 |
 
 ## 7. 数据迁移策略（模板）
 

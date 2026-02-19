@@ -38,11 +38,11 @@
 - [ ] `worker_slash` 可观测
 - [ ] `task_burn` 可观测
 
-## E. Compatibility
+## E. Compatibility (Legacy SubmitResult Retirement)
 
-- [ ] `allow_legacy_submit_result=true` 时 legacy 提交可用
-- [ ] `allow_legacy_submit_result=false` 时 legacy 提交被拒绝
-- [ ] 文档与链上行为一致
+- [ ] 默认参数下（`allow_legacy_submit_result=false`）legacy `SubmitResult` 被拒绝
+- [ ] 仅在兼容性测试中显式设置 `allow_legacy_submit_result=true` 时，legacy `SubmitResult` 可用
+- [ ] 文档与链上行为一致（升级迁移文档/治理模板/release checklist）
 
 ## F. Go / No-Go
 
