@@ -122,6 +122,9 @@ From repo root:
 ./scripts/p0_acceptance.sh --with-p1
 # include challenge re-exec resolve-template smoke
 ./scripts/p0_acceptance.sh --with-reexec
+
+# challenge re-execution e2e demo (creates challenged task + emits resolve template)
+./scripts/challenge_reexec_e2e_demo.sh mismatch
 ```
 
 Artifacts:
