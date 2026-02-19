@@ -77,7 +77,13 @@
   - P0：`data/p0-acceptance/20260219-170905/summary.json`（5/5）
   - P1：`data/p1-negative/20260219-171027/summary.json`（6/6，skip=0）
 
-## 7) Definition of Done（本轮）
+## 7) 临时门禁策略（方案 B，已执行）
+
+- 已新增：`docs/MANUAL_MERGE_GATE_CHECKLIST.md`
+- 适用条件：私有仓库当前无法启用 GitHub required checks（平台套餐限制）。
+- 执行要求：合并前必须附 P0/P1 summary 证据（P0 fail=0；P1 fail=0 & skip=0）+ quick gate 通过记录。
+
+## 8) Definition of Done（本轮）
 
 - [ ] 所有 P0 项均有 owner 与截止时间
 - [ ] 关键测试可一键复现（命令固定）
