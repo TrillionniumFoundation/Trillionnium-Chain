@@ -68,8 +68,9 @@ tx_create_with_retry() {
     rc=$?
     set -e
 
-    if [[ $rc -eq 0 ]] && grep -q '"txhash"' <<<"$out"; then
-      echo "$out" >/tmp/trnm-reconcile-create.json
+    json_out="$(printf '%s\n' "$out" | sed -n '/^{/,$p')"
+    if [[ $rc -eq 0 ]] && [[ -n "$json_out" ]] && grep -q '"txhash"' <<<"$json_out"; then
+      echo "$json_out" >/tmp/trnm-reconcile-create.json
       return 0
     fi
 
