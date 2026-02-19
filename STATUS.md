@@ -83,7 +83,15 @@
 - 适用条件：私有仓库当前无法启用 GitHub required checks（平台套餐限制）。
 - 执行要求：合并前必须附 P0/P1 summary 证据（P0 fail=0；P1 fail=0 & skip=0）+ quick gate 通过记录。
 
-## 8) Definition of Done（本轮）
+## 8) Rust 旁路 PoC（新增）
+
+- 新增 `rust/verifier`：commitment 校验 sidecar（输入 task_id/result_hash/reveal_salt/worker_address/committed_hash）。
+- 新增 fixtures：`match.json` / `mismatch.json`。
+- 新增本地入口：`scripts/run_rust_verifier_poc.sh`。
+- 新增 CI：`.github/workflows/rust-verifier-poc.yml`（build + test + fixture verification）。
+- 文档：`docs/protocol/rust-verifier-poc.md`。
+
+## 9) Definition of Done（本轮）
 
 - [ ] 所有 P0 项均有 owner 与截止时间
 - [ ] 关键测试可一键复现（命令固定）

@@ -1,0 +1,8 @@
+{
+  "task_id": 42,
+  "result_hash": "result://ok",
+  "reveal_salt": "salt-42",
+  "worker_address": "trnm1workerxyz",
+  "committed_hash": "deadbeef4ec661499e772755410c147d5e25059ff6c958310b05eb58f2330339",
+  "trace_id": "fixture-mismatch"
+}
