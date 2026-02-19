@@ -18,7 +18,7 @@ tx_ok() {
   local out rc attempt=0
   while (( attempt < 6 )); do
     set +e
-    out="$($@ 2>&1)"
+    out="$("$@" 2>&1)"
     rc=$?
     set -e
 
