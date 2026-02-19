@@ -65,6 +65,13 @@ jobs:
           cd trillionnium-rust
           ./scripts/check_event_fields.sh
 
+      - name: Validate parallel flaky streak (hard gate)
+        run: |
+          set -euo pipefail
+          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+          cd trillionnium-rust
+          RUNS=${PARALLEL_FLAKY_RUNS:-5} ./scripts/check_parallel_flaky.sh
+
       - name: Validate v1 event replay order (hard gate)
         run: |
           set -euo pipefail
@@ -189,4 +196,5 @@ jobs:
             trillionnium-rust/run/parallel-sanity.log
             trillionnium-rust/run/event-field-check.log
             trillionnium-rust/run/event-replay-smoke.log
+            trillionnium-rust/run/parallel-sanity-flaky-*.log
           if-no-files-found: warn

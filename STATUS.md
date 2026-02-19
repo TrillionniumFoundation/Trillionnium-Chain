@@ -417,6 +417,16 @@
   - `event-replay-smoke.log`
 - 新增执行看板：`docs/strategy/trnm-90d-week1-execution-board.md`（10 项执行项与验收口径）。
 
+## 32) Rust L1 后续动作-13（nightly 加入并行抖动门禁，2026-02-19 23:44~23:48 CST）
+
+- 新增脚本：`trillionnium-rust/scripts/check_parallel_flaky.sh`
+  - 默认连跑 `RUNS=5`（可通过 `PARALLEL_FLAKY_RUNS` 覆盖）
+  - 任一 run 出现 `apply_error` 或 `rollback=true` 直接 fail
+- 本地实跑：`RUNS=5`，结果 `parallel flaky streak=5/5`。
+- `rust-l1-nightly-health.yml` 已接入硬门禁：
+  - `Validate parallel flaky streak (hard gate)`
+- artifacts 新增：`run/parallel-sanity-flaky-*.log`
+
 ## 6) P1-1 Dry-run 演练结果（2026-02-19 16:44 CST）
 
 - 演练目录：`data/upgrade-runs/20260219-164421`
