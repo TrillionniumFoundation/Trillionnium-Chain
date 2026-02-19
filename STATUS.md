@@ -383,6 +383,17 @@
   - 脚本适配 `accept` 引入后的节奏：`max-blocks=3`，resolve 匹配规则更新
 - 稳定性快验：`check_event_fields.sh` 连跑 `10/10` 全通过。
 
+## 29) Rust L1 后续动作-10（事件回放一致性门禁，2026-02-19 23:22~23:26 CST）
+
+- 新增脚本：`trillionnium-rust/scripts/check_event_replay_smoke.sh`
+  - 用单任务链路校验事件顺序：
+    - `create -> accept -> commit -> reveal -> challenge -> resolve`
+  - 输出：`run/event-replay-smoke.log`
+- Nightly health workflow 已接入硬门禁：
+  - 新增步骤 `Validate v1 event replay order (hard gate)`
+  - artifacts 新增 `event-replay-smoke.log`
+- 本地实跑通过：`event replay ok`。
+
 ## 6) P1-1 Dry-run 演练结果（2026-02-19 16:44 CST）
 
 - 演练目录：`data/upgrade-runs/20260219-164421`

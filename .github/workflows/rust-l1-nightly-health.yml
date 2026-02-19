@@ -65,6 +65,13 @@ jobs:
           cd trillionnium-rust
           ./scripts/check_event_fields.sh
 
+      - name: Validate v1 event replay order (hard gate)
+        run: |
+          set -euo pipefail
+          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+          cd trillionnium-rust
+          ./scripts/check_event_replay_smoke.sh
+
       - name: Executor spot-check regression gate (Original strategy)
         run: |
           set -euo pipefail
@@ -181,4 +188,5 @@ jobs:
             trillionnium-rust/run/node*.log
             trillionnium-rust/run/parallel-sanity.log
             trillionnium-rust/run/event-field-check.log
+            trillionnium-rust/run/event-replay-smoke.log
           if-no-files-found: warn
