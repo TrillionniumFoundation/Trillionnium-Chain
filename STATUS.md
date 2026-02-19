@@ -394,6 +394,15 @@
   - artifacts 新增 `event-replay-smoke.log`
 - 本地实跑通过：`event replay ok`。
 
+## 30) Rust L1 后续动作-11（并行路径 flaky 快验，2026-02-19 23:27~23:31 CST）
+
+- 对并行路径做了快速稳定性压测：
+  - 命令：`trnm-node --parallel-workers 4 --block-ms 1 --max-blocks 3 --demo-tasks 2 --demo-keys 2`
+  - 连跑 `20` 轮
+- 检查口径：日志不得出现 `apply_error` 或 `rollback=true`
+- 结果：`parallel_sanity_streak=20/20`（全部通过）
+- 产物：`trillionnium-rust/run/parallel-sanity-flaky-*.log`
+
 ## 6) P1-1 Dry-run 演练结果（2026-02-19 16:44 CST）
 
 - 演练目录：`data/upgrade-runs/20260219-164421`
