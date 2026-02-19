@@ -36,11 +36,37 @@ Owner: TRNM Rust L1
 3. 双分支对比
    - 使用同 seed 参数跑矩阵，记录 A/B 相对提升
 
+### Day3-A/Day3-B 实测结论（2026-02-19 晚）
+- 已新增策略：`footprint-desc` / `write-first` / `write-last` / `hot-bucket-interleave`。
+- 对比脚本：`trillionnium-rust/scripts/run_bench_strategy_compare.sh`
+- 报告样本：`trillionnium-rust/run/bench/bench-strategy-compare-20260219-211113.txt`
+- 结论：
+  - `footprint-desc/write-first/write-last` 对当前 mixed 样本几乎无结构性改善（与 original 基本持平）。
+  - `hot-bucket-interleave` 在中低冲突（keys=5000/2000/500）有明显降组数（如 200→95, 482→389），
+    但在极高冲突（keys=100）组数反而上升（1202→1744），且 elapsed_ms 增加（约 +7~9ms）。
+- 决策：保持 `original` 为默认；`hot-bucket-interleave` 作为实验分支保留，进入 Day4 收敛评估。
+
 ## Day4
 1. 收敛最佳方案
    - 合并最优实验路径
 2. 回归保障
    - 运行 nightly health 等效子集（tests + state_root audit + bench）
+
+### Day4 实跑结果（2026-02-19 晚）
+- 收敛决策：
+  - 默认策略保持 `original`（综合稳定性最好，且高冲突场景无退化）。
+  - `hot-bucket-interleave` 继续保留为实验策略，不进入默认路径。
+- Nightly 等效子集执行：
+  1. `cargo test --workspace` ✅
+  2. `./scripts/devnet_up.sh && sleep 12 && ./scripts/devnet_down.sh && ./scripts/audit_state_roots.sh` ✅
+     - 报告：`trillionnium-rust/run/audit/state-root-audit-20260219-211304.txt`（`ok=true mismatch=0 missing=0`）
+  3. `TXS=5000 ./scripts/run_bench_matrix.sh` ✅
+     - 报告：`trillionnium-rust/run/bench/bench-matrix-20260219-211313.txt`
+  4. `TXS=5000 ./scripts/run_bench_mixed_matrix.sh` ✅
+     - 报告：`trillionnium-rust/run/bench/bench-mixed-matrix-20260219-211319.txt`
+  5. `./scripts/executor_profile_report.py` ✅
+     - 报告：`trillionnium-rust/run/bench/executor-profile-summary-20260219-211329.txt`
+- 结论：Day4 收敛和回归门禁通过，可进入 Day5 RC 收口。
 
 ## Day5
 1. RC 产出

@@ -28,6 +28,15 @@ P2（高吞吐与并发执行）已完成首轮 RC：
 
 ## Validation Evidence
 
+### Day5 RC close-out (latest)
+- RC package: `trillionnium-rust/release/rc-20260219-211609/`
+- Manifest: `trillionnium-rust/release/rc-20260219-211609/manifest.txt`
+- Workspace tests: pass (`cargo test --workspace`)
+- State root audit: pass (`trillionnium-rust/run/audit/state-root-audit-20260219-211304.txt`, `ok=true mismatch=0 missing=0`)
+- Classic matrix (TXS=5000): `trillionnium-rust/run/bench/bench-matrix-20260219-211313.txt`
+- Mixed matrix (TXS=5000): `trillionnium-rust/run/bench/bench-mixed-matrix-20260219-211319.txt`
+- Executor profile summary: `trillionnium-rust/run/bench/executor-profile-summary-20260219-211329.txt`
+
 ### Baseline (Day1)
 ```bash
 TXS=20000 ./scripts/run_bench_matrix.sh

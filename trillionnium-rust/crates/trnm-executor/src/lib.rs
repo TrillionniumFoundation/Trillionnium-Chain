@@ -1,6 +1,15 @@
 use std::collections::HashMap;
 use trnm_types::{ObjectRef, Tx};
 
+#[derive(Debug, Clone, Copy)]
+pub enum GroupingStrategy {
+    Original,
+    FootprintDesc,
+    WriteFirst,
+    WriteLast,
+    HotBucketInterleave,
+}
+
 #[derive(Debug, Clone)]
 pub struct GroupingProfile {
     pub tx_count: usize,
@@ -31,6 +40,16 @@ pub fn build_parallel_groups(txs: &[Tx]) -> Vec<Vec<Tx>> {
 }
 
 pub fn build_parallel_groups_profile(txs: &[Tx]) -> (Vec<Vec<Tx>>, GroupingProfile) {
+    build_parallel_groups_profile_with_strategy(txs, GroupingStrategy::Original)
+}
+
+pub fn build_parallel_groups_profile_with_strategy(
+    txs: &[Tx],
+    strategy: GroupingStrategy,
+) -> (Vec<Vec<Tx>>, GroupingProfile) {
+    let mut ordered: Vec<Tx> = txs.to_vec();
+    reorder_for_strategy(&mut ordered, strategy);
+
     let mut groups: Vec<Vec<Tx>> = Vec::new();
 
     // object -> latest group that has a writer touching this object
@@ -42,7 +61,7 @@ pub fn build_parallel_groups_profile(txs: &[Tx]) -> (Vec<Vec<Tx>>, GroupingProfi
     let mut conflict_checks = 0usize;
     let mut conflict_hits = 0usize;
 
-    for tx in txs.iter().cloned() {
+    for tx in ordered.iter().cloned() {
         // minimal group index forced by previous conflicting accesses
         let mut required_group = 0usize;
 
@@ -107,6 +126,63 @@ pub fn build_parallel_groups_profile(txs: &[Tx]) -> (Vec<Vec<Tx>>, GroupingProfi
     )
 }
 
+fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
+    match strategy {
+        GroupingStrategy::Original => {}
+        GroupingStrategy::FootprintDesc => {
+            txs.sort_by_key(|tx| {
+                let footprint = tx.read_set.len() + tx.write_set.len();
+                (std::cmp::Reverse(footprint), tx.id)
+            });
+        }
+        GroupingStrategy::WriteFirst => {
+            txs.sort_by_key(|tx| {
+                (
+                    std::cmp::Reverse(tx.write_set.len()),
+                    std::cmp::Reverse(tx.read_set.len()),
+                    tx.id,
+                )
+            });
+        }
+        GroupingStrategy::WriteLast => {
+            txs.sort_by_key(|tx| (tx.write_set.len(), std::cmp::Reverse(tx.read_set.len()), tx.id));
+        }
+        GroupingStrategy::HotBucketInterleave => {
+            // Heuristic: shard txs by a stable "hot key" hint, then interleave buckets.
+            // Goal is to avoid long same-key streaks in input order.
+            const BUCKETS: usize = 16;
+            let mut buckets: Vec<Vec<Tx>> = vec![Vec::new(); BUCKETS];
+            for tx in txs.iter().cloned() {
+                let key = tx
+                    .write_set
+                    .first()
+                    .or_else(|| tx.read_set.first())
+                    .map(|o| o.id as usize)
+                    .unwrap_or(0);
+                buckets[key % BUCKETS].push(tx);
+            }
+            for b in &mut buckets {
+                b.sort_by_key(|tx| tx.id);
+            }
+            let mut merged = Vec::with_capacity(txs.len());
+            loop {
+                let mut moved = false;
+                for b in &mut buckets {
+                    if let Some(tx) = b.pop() {
+                        merged.push(tx);
+                        moved = true;
+                    }
+                }
+                if !moved {
+                    break;
+                }
+            }
+            merged.reverse();
+            txs.clone_from_slice(&merged);
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -158,5 +234,21 @@ mod tests {
         assert_eq!(g.iter().map(|x| x.len()).sum::<usize>(), 3);
         // first group can contain tx1+tx2 (non-conflict), tx3 should be separate
         assert!(g.iter().any(|grp| grp.iter().any(|t| t.id == 3) && grp.len() == 1));
+    }
+
+    #[test]
+    fn strategy_preserves_tx_count() {
+        let txs = vec![
+            tx(1, vec![o(1)], vec![o(2)]),
+            tx(2, vec![o(2)], vec![o(3)]),
+            tx(3, vec![o(4)], vec![]),
+        ];
+        let (g1, _) = build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::Original);
+        let (g2, _) =
+            build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::FootprintDesc);
+        let c1: usize = g1.iter().map(|g| g.len()).sum();
+        let c2: usize = g2.iter().map(|g| g.len()).sum();
+        assert_eq!(c1, txs.len());
+        assert_eq!(c2, txs.len());
     }
 }

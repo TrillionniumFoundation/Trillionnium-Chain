@@ -1,0 +1,43 @@
+name: rust-l1-testnet-preflight
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'trillionnium-rust/**'
+      - '.github/workflows/rust-l1-testnet-preflight.yml'
+
+concurrency:
+  group: rust-l1-testnet-preflight-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  preflight:
+    runs-on: macos-latest
+    timeout-minutes: 60
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Run testnet preflight
+        run: |
+          set -euo pipefail
+          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+          cd trillionnium-rust
+          ./scripts/testnet_preflight.sh
+
+      - name: Upload preflight artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rust-l1-testnet-preflight-${{ github.run_id }}
+          path: |
+            trillionnium-rust/run/preflight/**
+            trillionnium-rust/run/audit/**
+            trillionnium-rust/run/bench/**
+            trillionnium-rust/run/node*.log
+            trillionnium-rust/run/parallel-sanity.log
+          if-no-files-found: warn

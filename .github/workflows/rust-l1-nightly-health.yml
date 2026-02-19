@@ -70,6 +70,12 @@ jobs:
           cd trillionnium-rust
           TXS=5000 ./scripts/run_bench_mixed_matrix.sh
 
+      - name: Build executor profiling summary
+        run: |
+          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+          cd trillionnium-rust
+          ./scripts/executor_profile_report.py
+
       - name: Enforce CI thresholds (warning + hard fail)
         run: |
           set -euo pipefail

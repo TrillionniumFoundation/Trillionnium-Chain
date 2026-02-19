@@ -1,12 +1,33 @@
 use clap::Parser;
 use std::time::Instant;
-use trnm_executor::build_parallel_groups_profile;
+use trnm_executor::{build_parallel_groups_profile_with_strategy, GroupingStrategy};
 use trnm_types::{ObjectRef, Tx};
 
 #[derive(Debug, Clone, Copy, clap::ValueEnum)]
 enum Workload {
     Classic,
     Mixed,
+}
+
+#[derive(Debug, Clone, Copy, clap::ValueEnum)]
+enum StrategyArg {
+    Original,
+    FootprintDesc,
+    WriteFirst,
+    WriteLast,
+    HotBucketInterleave,
+}
+
+impl From<StrategyArg> for GroupingStrategy {
+    fn from(v: StrategyArg) -> Self {
+        match v {
+            StrategyArg::Original => GroupingStrategy::Original,
+            StrategyArg::FootprintDesc => GroupingStrategy::FootprintDesc,
+            StrategyArg::WriteFirst => GroupingStrategy::WriteFirst,
+            StrategyArg::WriteLast => GroupingStrategy::WriteLast,
+            StrategyArg::HotBucketInterleave => GroupingStrategy::HotBucketInterleave,
+        }
+    }
 }
 
 #[derive(Debug, Parser)]
@@ -23,6 +44,10 @@ struct Args {
     /// Workload model
     #[arg(long, value_enum, default_value_t = Workload::Classic)]
     workload: Workload,
+
+    /// Grouping strategy
+    #[arg(long, value_enum, default_value_t = StrategyArg::Original)]
+    strategy: StrategyArg,
 
     /// Read-set fanout for mixed workload
     #[arg(long, default_value_t = 3)]
@@ -44,11 +69,13 @@ fn main() {
 
     let txs = match args.workload {
         Workload::Classic => build_classic_txs(n, keys),
-        Workload::Mixed => build_mixed_txs(n, keys, args.read_fanout.max(1), args.write_every.max(1)),
+        Workload::Mixed => {
+            build_mixed_txs(n, keys, args.read_fanout.max(1), args.write_every.max(1))
+        }
     };
 
     let t0 = Instant::now();
-    let (groups, profile) = build_parallel_groups_profile(&txs);
+    let (groups, profile) = build_parallel_groups_profile_with_strategy(&txs, args.strategy.into());
     let dt = t0.elapsed();
 
     let grouped: usize = groups.iter().map(|g| g.len()).sum();
@@ -56,6 +83,7 @@ fn main() {
 
     println!("bench_parallel_grouping");
     println!("workload={:?}", args.workload);
+    println!("strategy={:?}", args.strategy);
     println!("txs={}", n);
     println!("keys={}", keys);
     println!("estimated_conflict_rate={:.4}", conflict_rate);
