@@ -58,6 +58,13 @@ jobs:
             exit 2
           fi
 
+      - name: Validate v1 event field freeze (hard gate)
+        run: |
+          set -euo pipefail
+          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+          cd trillionnium-rust
+          ./scripts/check_event_fields.sh
+
       - name: Executor spot-check regression gate (Original strategy)
         run: |
           set -euo pipefail
@@ -173,4 +180,5 @@ jobs:
             trillionnium-rust/run/bench/**
             trillionnium-rust/run/node*.log
             trillionnium-rust/run/parallel-sanity.log
+            trillionnium-rust/run/event-field-check.log
           if-no-files-found: warn
