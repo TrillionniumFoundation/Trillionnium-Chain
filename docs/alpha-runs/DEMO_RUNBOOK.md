@@ -58,6 +58,15 @@ MODE=unbonding ./scripts/demo_e2e.sh
 
 ## 6. 与验收矩阵对应关系
 - 场景 A：正常完成 → `MODE=happy`
+- 场景 B：超时未提交 → `./scripts/scenario_B_timeout.sh`
+- 场景 C：无效结果挑战 → `./scripts/scenario_C_challenge.sh`
+- 场景 D：权限防护（未授权 resolve/slash 拒绝）→ `./scripts/scenario_D_slash.sh`
 - 场景 E：解质押冷却与提现（前半段：冷却前拒绝）→ `MODE=unbonding`
+
+一键批量回归：
+
+```bash
+./scripts/run_alpha_acceptance.sh
+```
 
 完整 5 场景矩阵见：`docs/alpha-runs/TEST_ACCEPTANCE_MATRIX.md`
