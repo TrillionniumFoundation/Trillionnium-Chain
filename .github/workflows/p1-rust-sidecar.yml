@@ -1,0 +1,87 @@
+name: p1-rust-sidecar
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'scripts/p1_negative_suite.sh'
+      - 'scripts/export_verifier_inputs.sh'
+      - 'scripts/run_rust_verifier_poc.sh'
+      - 'scripts/scenario_C_challenge.sh'
+      - 'scripts/scenario_F_forged_reveal.sh'
+      - 'scripts/scenario_G_duplicate_reveal.sh'
+      - 'rust/verifier/**'
+      - '.github/workflows/p1-rust-sidecar.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/p1_negative_suite.sh'
+      - 'scripts/export_verifier_inputs.sh'
+      - 'scripts/run_rust_verifier_poc.sh'
+      - 'scripts/scenario_C_challenge.sh'
+      - 'scripts/scenario_F_forged_reveal.sh'
+      - 'scripts/scenario_G_duplicate_reveal.sh'
+      - 'rust/verifier/**'
+      - '.github/workflows/p1-rust-sidecar.yml'
+
+concurrency:
+  group: p1-rust-sidecar-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  p1-with-rust-sidecar:
+    # Requires a self-hosted runner with local Trillionnium dev chain environment.
+    runs-on: [self-hosted, macOS]
+    timeout-minutes: 45
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Ensure jq
+        run: |
+          command -v jq >/dev/null 2>&1 || brew install jq
+          jq --version
+
+      - name: Preflight - chain RPC must be reachable
+        run: |
+          curl -sf http://127.0.0.1:26657/status >/dev/null
+
+      - name: Run P1 negative suite + Rust sidecar (non-blocking)
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+          HOME_DIR="$HOME/.chain" NODE="tcp://127.0.0.1:26657" WITH_RUST_VERIFY=1 ./scripts/p1_negative_suite.sh
+
+      - name: Summarize sidecar result (advisory)
+        if: always()
+        run: |
+          set -euo pipefail
+          latest_dir=$(ls -1dt data/p1-negative/* | head -n 1)
+          summary_json="$latest_dir/summary.json"
+          echo "Using summary: $summary_json"
+
+          fail_count=$(jq -r '.fail' "$summary_json")
+          skip_count=$(jq -r '.skip' "$summary_json")
+          rust_rc=$(jq -r '.rust_verify_rc // -1' "$summary_json")
+          rust_matched=$(jq -r '.rust_verify_matched // -1' "$summary_json")
+          rust_mismatch=$(jq -r '.rust_verify_mismatch // -1' "$summary_json")
+          rust_output_dir=$(jq -r '.rust_verify_output_dir // ""' "$summary_json")
+
+          echo "P1: fail=$fail_count skip=$skip_count"
+          echo "RUST_SIDEcar: rc=$rust_rc matched=$rust_matched mismatch=$rust_mismatch output=$rust_output_dir"
+
+          if [ "$rust_rc" != "0" ] || [ "$rust_mismatch" != "0" ]; then
+            echo "::warning::Rust sidecar mismatch/rc anomaly detected (advisory). See artifacts for details."
+          fi
+
+      - name: Upload P1 + sidecar artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: p1-rust-sidecar-artifacts-${{ github.run_id }}
+          path: |
+            data/p1-negative/**
+            data/verifier-input/**
+            data/rust-verifier-local/**
+          if-no-files-found: warn

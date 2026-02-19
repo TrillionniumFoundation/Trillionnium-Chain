@@ -48,19 +48,25 @@ find scripts -type f -name '*.sh' -print0 | while IFS= read -r -d '' f; do shell
 ./scripts/p0_merge_gate.sh
 ```
 
-- [ ] 运行 P1：
+- [ ] 运行 P1（建议开启 Rust sidecar）：
 
 ```bash
-./scripts/p1_negative_suite.sh
+WITH_RUST_VERIFY=1 ./scripts/p1_negative_suite.sh
 ```
 
 - [ ] 验收阈值：
   - P0: `fail=0`
   - P1: `fail=0 && skip=0`
+  - Rust sidecar（若启用）: `rust_verify_rc=0 && rust_verify_mismatch=0`
 
 - [ ] 记录证据路径：
   - P0 summary: `data/p0-acceptance/<ts>/summary.json`
   - P1 summary: `data/p1-negative/<ts>/summary.json`
+  - Rust output（若启用）: `data/rust-verifier-local/<ts>/`
+
+- [ ] CI 证据（建议附上，advisory）
+  - workflow: `.github/workflows/p1-rust-sidecar.yml`
+  - run artifact: `p1-rust-sidecar-artifacts-<run_id>`
 
 ---
 

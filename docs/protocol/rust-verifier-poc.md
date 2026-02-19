@@ -52,8 +52,34 @@ export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
 INPUT_DIR=data/verifier-input/<ts> OUT_DIR=data/rust-verifier-local/<ts> ./scripts/run_rust_verifier_poc.sh
 ```
 
-## 下一步接入建议
+## 最新运行样本（2026-02-19 晚间）
 
-1. 在 `p1_negative_suite.sh` 增加可选开关（如 `WITH_RUST_VERIFY=1`）自动串起导出+复验
-2. 在 summary.json 增加 verifier 汇总字段（matched_total / mismatch_total）
-3. 在 CI 增加“链下重验一致性”检查（旁路，不阻断链执行）
+- 触发来源：`sharp-cr` 完成后导出输入
+- 输入目录：`data/verifier-input/20260219-185212`
+- 输出目录：`data/rust-verifier-local/20260219-185212`
+- 批量执行结果：`processed=3`
+- 对齐统计：`matched=3`, `mismatch=0`
+- 样本文件：`scenario_C.json`, `scenario_F.json`, `scenario_G.json`
+
+字段级 diff（input vs rust output）结论：
+- 共同字段（如 `task_id` / `trace_id` / `committed_hash`）无值差异
+- 输入侧独有：`result_hash`, `reveal_salt`, `worker_address`
+- 输出侧独有：`expected_hash`, `matched`, `reason`
+
+## 接入现状（更新）
+
+1. ✅ `p1_negative_suite.sh` 已支持 `WITH_RUST_VERIFY=1`（导出+复验自动串联）
+2. ✅ `summary.json` 已包含 Rust 复验字段：
+   - `with_rust_verify`
+   - `rust_verify_rc`
+   - `rust_verify_export_dir`
+   - `rust_verify_output_dir`
+   - `rust_verify_matched`
+   - `rust_verify_mismatch`
+3. ✅ CI 已包含 Rust verifier PoC workflow（build/test/fixture verification）
+
+## 下一步收敛建议
+
+1. 在 CI 增加“P1 负向套件 + Rust sidecar”联动作业（旁路不阻断主执行）
+2. 增加失败样本归档模板（自动保存 mismatch 输入/输出对）
+3. 固化统一 evidence 索引（将 `summary.json` 与 `rust-verifier-local/<ts>` 建立可追溯映射）
