@@ -23,6 +23,23 @@ pub enum PouwError {
     InsufficientStake,
 }
 
+impl PouwError {
+    /// Stable external error code for protocol-facing surfaces.
+    pub fn stable_code(&self) -> &'static str {
+        match self {
+            PouwError::InvalidTransition => "InvalidTransition",
+            PouwError::VersionConflict => "VersionConflict",
+            PouwError::MissingWorker => "MissingWorker",
+            PouwError::MissingCommitment => "MissingCommitment",
+            PouwError::CommitmentMismatch => "CommitmentMismatch",
+            PouwError::Unauthorized => "Unauthorized",
+            PouwError::InsufficientStake => "InsufficientStake",
+            // Internal-only state storage errors are not protocol-stable.
+            PouwError::State(_) => "StateInternal",
+        }
+    }
+}
+
 fn map_state_err(err: String) -> PouwError {
     if err.contains("version conflict") {
         PouwError::VersionConflict
@@ -286,6 +303,41 @@ mod tests {
             apply_resolve(&mut st, r5, false).unwrap_err(),
             PouwError::InvalidTransition
         ));
+    }
+
+    #[test]
+    fn stable_error_code_mapping() {
+        assert_eq!(PouwError::InvalidTransition.stable_code(), "InvalidTransition");
+        assert_eq!(PouwError::VersionConflict.stable_code(), "VersionConflict");
+        assert_eq!(PouwError::MissingWorker.stable_code(), "MissingWorker");
+        assert_eq!(PouwError::MissingCommitment.stable_code(), "MissingCommitment");
+        assert_eq!(PouwError::CommitmentMismatch.stable_code(), "CommitmentMismatch");
+        assert_eq!(PouwError::Unauthorized.stable_code(), "Unauthorized");
+        assert_eq!(PouwError::InsufficientStake.stable_code(), "InsufficientStake");
+        assert_eq!(PouwError::State("x".into()).stable_code(), "StateInternal");
+    }
+
+    #[test]
+    fn reveal_missing_worker_is_mapped() {
+        let mut st = StateStore::new();
+        let r1 = apply_create_task(&mut st, 77, "alice".into(), 10).unwrap();
+
+        // Forge an Assigned+Committed task with worker=None to exercise defensive mapping.
+        let bad_task = TaskObject {
+            task_id: 77,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Committed,
+            worker: None,
+            committed_hash: Some([1u8; 32]),
+            result_hash: None,
+            reveal_salt: None,
+            version: 1,
+        };
+        let r2 = st.update_task(r1, bad_task).unwrap();
+
+        let err = apply_reveal_result(&mut st, r2, [2u8; 32], [3u8; 32]).unwrap_err();
+        assert!(matches!(err, PouwError::MissingWorker));
     }
 
     #[test]

@@ -368,6 +368,21 @@
   - `state-root-audit` 全绿：`run/audit/state-root-audit-20260219-230451.txt`（`ok=true mismatch=0 missing=0`）
 - 结论：v1 冻结文档中 `accept_task` 与 `ASSIGNED -> COMMITTED` 关键语义已与实现对齐。
 
+## 28) Rust L1 后续动作-9（错误码映射+事件schema收口，2026-02-19 23:10~23:22 CST）
+
+- `trnm-pouw` 增加稳定错误码映射接口：`PouwError::stable_code()`
+  - v1 稳定集合：`InvalidTransition/VersionConflict/MissingWorker/MissingCommitment/CommitmentMismatch/Unauthorized/InsufficientStake`
+  - 内部态错误保留为 `StateInternal`（避免误当协议稳定语义）
+- 新增测试覆盖：
+  - `stable_error_code_mapping`
+  - `reveal_missing_worker_is_mapped`
+- 新增文档：`docs/protocol/pouw-v1-error-mapping.md`
+- 事件输出增加 schema 标识：`event_schema=v1`
+  - `trnm-node` 所有 `[event]` 行已附带 schema
+  - `scripts/check_event_fields.sh` 已将 `event_schema=v1` 纳入必检项
+  - 脚本适配 `accept` 引入后的节奏：`max-blocks=3`，resolve 匹配规则更新
+- 稳定性快验：`check_event_fields.sh` 连跑 `10/10` 全通过。
+
 ## 6) P1-1 Dry-run 演练结果（2026-02-19 16:44 CST）
 
 - 演练目录：`data/upgrade-runs/20260219-164421`

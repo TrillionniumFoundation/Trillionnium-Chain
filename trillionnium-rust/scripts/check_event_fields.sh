@@ -11,12 +11,13 @@ OUT="run/event-field-check.log"
 cargo run -q -p trnm-node -- \
   --config configs/node1.toml \
   --block-ms 1 \
-  --max-blocks 2 \
+  --max-blocks 3 \
   --demo-tasks 1 \
   --demo-keys 1 \
   --parallel-workers 2 > "$OUT"
 
 required_common=(
+  "event_schema=v1"
   "event_type="
   "task_id="
   "from_status="
@@ -41,7 +42,7 @@ for token in "${required_common[@]}"; do
   fi
 done
 
-resolve_line=$(grep '^\[event\] event_type=resolve ' "$OUT" | head -n 1 || true)
+resolve_line=$(grep '^\[event\] .*event_type=resolve ' "$OUT" | head -n 1 || true)
 if [[ -z "$resolve_line" ]]; then
   echo "no resolve event line found in $OUT" >&2
   exit 4

@@ -180,7 +180,7 @@ fn emit_event(
         MockTx::Resolve { slash_worker, .. } => {
             let resolution_code = if *slash_worker { "slashed" } else { "completed" };
             println!(
-                "[event] event_type={} task_id={} from_status={} to_status={} actor={} tx_id={} block_height={} state_root={} ts_unix_ms={} slash_worker={} resolution_code={}",
+                "[event] event_schema=v1 event_type={} task_id={} from_status={} to_status={} actor={} tx_id={} block_height={} state_root={} ts_unix_ms={} slash_worker={} resolution_code={}",
                 event_type,
                 task_id,
                 from_status,
@@ -196,7 +196,7 @@ fn emit_event(
         }
         _ => {
             println!(
-                "[event] event_type={} task_id={} from_status={} to_status={} actor={} tx_id={} block_height={} state_root={} ts_unix_ms={}",
+                "[event] event_schema=v1 event_type={} task_id={} from_status={} to_status={} actor={} tx_id={} block_height={} state_root={} ts_unix_ms={}",
                 event_type,
                 task_id,
                 from_status,
