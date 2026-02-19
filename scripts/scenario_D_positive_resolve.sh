@@ -50,9 +50,16 @@ stake_before="$($BIN query workload show-worker "$worker_addr" -o json --node "$
 slash_percent="$($BIN query workload params -o json --node "$NODE" --home "$HOME_DIR" | python3 -c 'import json,sys;o=json.load(sys.stdin);print(int(o.get("params",{}).get("worker_slash_percent_on_bad_result",20)))')"
 
 log "Scenario D+ resolving challenged task_id=$TASK_ID via local dev resolver ($RESOLVER_KEY)"
+set +e
 TXH=$(tx_ok "$BIN" tx workload resolve-challenge "$TASK_ID" true "badresult123" "dev resolve" \
   --from "$RESOLVER_KEY" --keyring-backend "$KEYRING" --chain-id "$CHAIN_ID" \
   --node "$NODE" --home "$HOME_DIR" --yes --gas auto --gas-adjustment 1.5)
+RC=$?
+set -e
+if [[ $RC -ne 0 ]]; then
+  echo "❌ resolve-challenge failed. If this is a local dev run, restart node with TRNM_ENABLE_DEV_RESOLVE=1"
+  exit 1
+fi
 
 if [[ -n "${TXH:-}" ]]; then
   for _ in {1..20}; do

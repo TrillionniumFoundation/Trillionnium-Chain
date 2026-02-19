@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"os"
 	"strconv"
 
 	"chain/x/workload/types"
@@ -136,10 +137,11 @@ func (k msgServer) ResolveChallenge(goCtx context.Context, msg *types.MsgResolve
 		return nil, errorsmod.Wrapf(sdkerrors.ErrKeyNotFound, "challenge %d not found", task.ChallengeId)
 	}
 
-	// DEV escape hatch for local chain automation only.
-	// Allows challenger to resolve on the local "trillionnium" chain so acceptance tests
-	// can validate the full challenge->slash path without governance proposal wiring.
-	isDevLocalResolve := ctx.ChainID() == "trillionnium" && msg.Creator == challenge.Challenger
+	// DEV escape hatch for local chain automation only (default OFF).
+	// Enable explicitly with TRNM_ENABLE_DEV_RESOLVE=1 on the node process.
+	isDevLocalResolve := os.Getenv("TRNM_ENABLE_DEV_RESOLVE") == "1" &&
+		ctx.ChainID() == "trillionnium" &&
+		msg.Creator == challenge.Challenger
 	if msg.Creator != k.authority && !isDevLocalResolve {
 		return nil, errorsmod.Wrap(types.ErrUnauthorizedSlash, "only authority can resolve challenge")
 	}
