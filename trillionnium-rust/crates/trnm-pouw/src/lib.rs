@@ -64,6 +64,22 @@ pub fn apply_create_task(
     st.put_task_new(task).map_err(map_state_err)
 }
 
+pub fn apply_accept_task(
+    st: &mut StateStore,
+    task_ref: ObjectRef,
+    worker: String,
+) -> Result<ObjectRef, PouwError> {
+    let mut task = st
+        .get_task(task_ref.id)
+        .ok_or_else(|| PouwError::State("task not found".into()))?;
+    if task.status != TaskStatus::Open {
+        return Err(PouwError::InvalidTransition);
+    }
+    task.status = TaskStatus::Assigned;
+    task.worker = Some(worker);
+    st.update_task(task_ref, task).map_err(map_state_err)
+}
+
 pub fn apply_commit_result(
     st: &mut StateStore,
     task_ref: ObjectRef,
@@ -73,11 +89,16 @@ pub fn apply_commit_result(
     let mut task = st
         .get_task(task_ref.id)
         .ok_or_else(|| PouwError::State("task not found".into()))?;
-    if task.status != TaskStatus::Open && task.status != TaskStatus::Assigned {
+    if task.status != TaskStatus::Assigned {
         return Err(PouwError::InvalidTransition);
     }
+
+    let assigned_worker = task.worker.clone().ok_or(PouwError::MissingWorker)?;
+    if assigned_worker != worker {
+        return Err(PouwError::Unauthorized);
+    }
+
     task.status = TaskStatus::Committed;
-    task.worker = Some(worker);
     task.committed_hash = Some(committed_hash);
     st.update_task(task_ref, task).map_err(map_state_err)
 }
@@ -148,12 +169,13 @@ mod tests {
         let reveal_salt = [9u8; 32];
         let committed = compute_commitment(42, &result_hash, &reveal_salt, "worker1");
 
-        let r2 = apply_commit_result(&mut st, r1, "worker1".into(), committed).unwrap();
-        let r3 = apply_reveal_result(&mut st, r2, result_hash, reveal_salt).unwrap();
-        let r4 = apply_challenge(&mut st, r3).unwrap();
-        let r5 = apply_resolve(&mut st, r4, false).unwrap();
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt).unwrap();
+        let r5 = apply_challenge(&mut st, r4).unwrap();
+        let r6 = apply_resolve(&mut st, r5, false).unwrap();
 
-        let task = st.get_task(r5.id).unwrap();
+        let task = st.get_task(r6.id).unwrap();
         assert_eq!(task.status, TaskStatus::Completed);
     }
 
@@ -166,9 +188,10 @@ mod tests {
         let reveal_salt = [2u8; 32];
         let committed = compute_commitment(1, &result_hash, &reveal_salt, "worker1");
 
-        let r2 = apply_commit_result(&mut st, r1, "worker1".into(), committed).unwrap();
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
 
-        let bad_reveal = apply_reveal_result(&mut st, r2, [3u8; 32], reveal_salt).unwrap_err();
+        let bad_reveal = apply_reveal_result(&mut st, r3, [3u8; 32], reveal_salt).unwrap_err();
         assert!(matches!(bad_reveal, PouwError::CommitmentMismatch));
     }
 
@@ -178,6 +201,23 @@ mod tests {
         let r1 = apply_create_task(&mut st, 9, "alice".into(), 10).unwrap();
         let err = apply_challenge(&mut st, r1).unwrap_err();
         assert!(matches!(err, PouwError::InvalidTransition));
+    }
+
+    #[test]
+    fn commit_requires_assigned() {
+        let mut st = StateStore::new();
+        let r1 = apply_create_task(&mut st, 11, "alice".into(), 10).unwrap();
+        let err = apply_commit_result(&mut st, r1, "worker1".into(), [1u8; 32]).unwrap_err();
+        assert!(matches!(err, PouwError::InvalidTransition));
+    }
+
+    #[test]
+    fn commit_worker_must_match_assigned_worker() {
+        let mut st = StateStore::new();
+        let r1 = apply_create_task(&mut st, 12, "alice".into(), 10).unwrap();
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let err = apply_commit_result(&mut st, r2, "worker2".into(), [1u8; 32]).unwrap_err();
+        assert!(matches!(err, PouwError::Unauthorized));
     }
 
     #[test]

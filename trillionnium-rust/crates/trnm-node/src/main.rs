@@ -11,7 +11,8 @@ use std::{
 };
 use trnm_executor::build_parallel_groups;
 use trnm_pouw::{
-    apply_challenge, apply_commit_result, apply_create_task, apply_resolve, apply_reveal_result,
+    apply_accept_task, apply_challenge, apply_commit_result, apply_create_task, apply_resolve,
+    apply_reveal_result,
 };
 use trnm_state::StateStore;
 use trnm_types::{Hash32, ObjectRef, Tx};
@@ -46,6 +47,7 @@ struct NodeConfig {
 #[derive(Debug, Clone)]
 enum MockTx {
     CreateTask { task_id: u64, creator: String, bounty: u128 },
+    AcceptTask { task_id: u64, worker: String },
     Commit { task_id: u64, worker: String, committed_hash: Hash32 },
     Reveal { task_id: u64, result_hash: Hash32, reveal_salt: [u8; 32] },
     Challenge { task_id: u64 },
@@ -86,6 +88,10 @@ fn build_demo_mempool(demo_tasks: u64, _demo_keys: u64) -> VecDeque<MockTx> {
             creator: "alice".to_string(),
             bounty: 100,
         });
+        q.push_back(MockTx::AcceptTask {
+            task_id,
+            worker: worker.clone(),
+        });
         q.push_back(MockTx::Commit {
             task_id,
             worker,
@@ -114,6 +120,7 @@ fn task_ref(st: &StateStore, task_id: u64) -> Result<ObjectRef> {
 fn task_id_of(tx: &MockTx) -> u64 {
     match tx {
         MockTx::CreateTask { task_id, .. }
+        | MockTx::AcceptTask { task_id, .. }
         | MockTx::Commit { task_id, .. }
         | MockTx::Reveal { task_id, .. }
         | MockTx::Challenge { task_id }
@@ -124,6 +131,7 @@ fn task_id_of(tx: &MockTx) -> u64 {
 fn event_type_of(tx: &MockTx) -> &'static str {
     match tx {
         MockTx::CreateTask { .. } => "create",
+        MockTx::AcceptTask { .. } => "accept",
         MockTx::Commit { .. } => "commit",
         MockTx::Reveal { .. } => "reveal",
         MockTx::Challenge { .. } => "challenge",
@@ -134,6 +142,7 @@ fn event_type_of(tx: &MockTx) -> &'static str {
 fn actor_of(tx: &MockTx) -> String {
     match tx {
         MockTx::CreateTask { creator, .. } => creator.clone(),
+        MockTx::AcceptTask { worker, .. } => worker.clone(),
         MockTx::Commit { worker, .. } => worker.clone(),
         MockTx::Reveal { task_id, .. } => format!("worker{}", task_id),
         MockTx::Challenge { .. } => "challenger".to_string(),
@@ -211,6 +220,10 @@ fn apply_one(st: &mut StateStore, tx: MockTx) -> Result<()> {
         } => {
             let _ = apply_create_task(st, task_id, creator, bounty)?;
         }
+        MockTx::AcceptTask { task_id, worker } => {
+            let r = task_ref(st, task_id)?;
+            let _ = apply_accept_task(st, r, worker)?;
+        }
         MockTx::Commit {
             task_id,
             worker,
@@ -245,6 +258,7 @@ fn apply_one(st: &mut StateStore, tx: MockTx) -> Result<()> {
 fn read_write_decl(tx: &MockTx, tx_id: u64, demo_keys: u64) -> Tx {
     let task_id = match tx {
         MockTx::CreateTask { task_id, .. } => *task_id,
+        MockTx::AcceptTask { task_id, .. } => *task_id,
         MockTx::Commit { task_id, .. } => *task_id,
         MockTx::Reveal { task_id, .. } => *task_id,
         MockTx::Challenge { task_id } => *task_id,
