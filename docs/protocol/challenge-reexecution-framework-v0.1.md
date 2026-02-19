@@ -33,7 +33,7 @@ resolve memo 推荐包含：
 - `reexec_report_uri=`
 - `reexec_engine=`
 - `reexec_version=`
-- `reexec_trace_id=`
+- `trace_id=`（用于 worker log / chain event / reexec artifact 串联）
 
 ## v0.2 演进方向
 - 引入标准化重执行报告 schema（JSON）

@@ -9,6 +9,7 @@ CHAIN_ID="${CHAIN_ID:-trillionnium}"
 OUTCOME="${1:-mismatch}" # match|mismatch
 OUT_DIR="${OUT_DIR:-$ROOT/data/reexec-demo}"
 TS="$(date +%Y%m%d-%H%M%S)"
+TRACE_ID="trnm-reexec-$TS"
 RUN_DIR="$OUT_DIR/$TS"
 mkdir -p "$RUN_DIR"
 
@@ -111,13 +112,14 @@ REEXEC_HASH="$RESULT_HASH"
 if [[ "$OUTCOME" == "mismatch" ]]; then
   REEXEC_HASH="result://demo-mismatch"
 fi
-"$ROOT/scripts/challenge_reexec_resolve_template.sh" "$TASK_ID" "$OUTCOME" "$REEXEC_HASH" "ipfs://reexec-report-$TASK_ID" > "$RUN_DIR/resolve-template.txt"
+"$ROOT/scripts/challenge_reexec_resolve_template.sh" "$TASK_ID" "$OUTCOME" "$REEXEC_HASH" "ipfs://reexec-report-$TASK_ID" "$TRACE_ID" > "$RUN_DIR/resolve-template.txt"
 
 STATUS="$($BIN query workload show-task "$TASK_ID" --home "$HOME_DIR" --node "$NODE" -o json | jq -r '.Task.status // .task.status // 0')"
 
 cat > "$RUN_DIR/summary.json" <<EOF
 {
   "task_id": $TASK_ID,
+  "trace_id": "$TRACE_ID",
   "outcome": "$OUTCOME",
   "status_before_resolve": $STATUS,
   "template": "$RUN_DIR/resolve-template.txt",

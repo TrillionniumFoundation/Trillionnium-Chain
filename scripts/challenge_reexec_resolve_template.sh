@@ -7,8 +7,8 @@ HOME_DIR="${HOME_DIR:-/Users/qianqi/.chain}"
 NODE="${NODE:-tcp://127.0.0.1:26657}"
 
 if [[ $# -lt 2 ]]; then
-  echo "Usage: $0 <task-id> <match|mismatch> [reexec-result-hash] [report-uri]"
-  echo "Example: $0 12 mismatch sha256:abc ipfs://report-12"
+  echo "Usage: $0 <task-id> <match|mismatch> [reexec-result-hash] [report-uri] [trace-id]"
+  echo "Example: $0 12 mismatch sha256:abc ipfs://report-12 trnm-reexec-12"
   exit 1
 fi
 
@@ -16,6 +16,7 @@ TASK_ID="$1"
 OUTCOME="$2"
 REEXEC_HASH="${3:-}"
 REPORT_URI="${4:-}"
+TRACE_ID="${5:-}"
 
 NODE_PID=""
 if ! "$BIN" status --home "$HOME_DIR" --node "$NODE" >/dev/null 2>&1; then
@@ -54,12 +55,18 @@ MEMO="reexec_v0.1"
 if [[ -n "$REPORT_URI" ]]; then
   MEMO="$MEMO report=$REPORT_URI"
 fi
+if [[ -n "$TRACE_ID" ]]; then
+  MEMO="$MEMO trace_id=$TRACE_ID"
+fi
 
 echo "# Re-execution resolve template"
 echo "task_id=$TASK_ID"
 echo "task_hash=$TASK_HASH"
 echo "reexec_hash=$REEXEC_HASH"
 echo "challenge_succeeded=$SUCCEEDED"
+if [[ -n "$TRACE_ID" ]]; then
+  echo "trace_id=$TRACE_ID"
+fi
 echo ""
 echo "Run (authority):"
 echo "$BIN tx workload resolve-challenge $TASK_ID $SUCCEEDED $REEXEC_HASH \"$MEMO\" --from <authority> --chain-id trillionnium --keyring-backend test --home $HOME_DIR --node $NODE --yes --fees 500stake"
