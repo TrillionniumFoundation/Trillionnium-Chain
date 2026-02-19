@@ -22,6 +22,7 @@ func TestSubmitResultLegacyDisabledByDefault(t *testing.T) {
 	_, err = srv.SubmitResult(wctx, &types.MsgSubmitResult{Creator: worker, TaskId: 0, ResultHash: "h1"})
 	require.Error(t, err)
 	require.Contains(t, err.Error(), "legacy submit_result is disabled")
+	require.True(t, hasLegacySubmitObserveEvent(sdk.UnwrapSDKContext(wctx).EventManager().Events(), "rejected", "legacy_disabled"))
 }
 
 func TestPoUWSubmitChallengeResolve(t *testing.T) {
@@ -43,6 +44,7 @@ func TestPoUWSubmitChallengeResolve(t *testing.T) {
 
 	_, err = srv.SubmitResult(wctx, &types.MsgSubmitResult{Creator: worker, TaskId: 0, ResultHash: "h1"})
 	require.NoError(t, err)
+	require.True(t, hasLegacySubmitObserveEvent(sdk.UnwrapSDKContext(wctx).EventManager().Events(), "accepted", "legacy_enabled"))
 
 	task, found := k.GetTask(wctx, 0)
 	require.True(t, found)
@@ -143,4 +145,26 @@ func TestResolveChallengeUnauthorized(t *testing.T) {
 
 	_, err := srv.ResolveChallenge(wctx, &types.MsgResolveChallenge{Creator: sample.AccAddress(), TaskId: 0})
 	require.ErrorIs(t, err, types.ErrUnauthorizedSlash)
+}
+
+func hasLegacySubmitObserveEvent(events sdk.Events, result, reason string) bool {
+	for _, ev := range events {
+		if ev.Type != "workload_legacy_submit_observe" {
+			continue
+		}
+		gotResult := ""
+		gotReason := ""
+		for _, attr := range ev.Attributes {
+			if string(attr.Key) == "result" {
+				gotResult = string(attr.Value)
+			}
+			if string(attr.Key) == "reason" {
+				gotReason = string(attr.Value)
+			}
+		}
+		if gotResult == result && gotReason == reason {
+			return true
+		}
+	}
+	return false
 }

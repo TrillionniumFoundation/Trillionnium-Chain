@@ -25,6 +25,18 @@ func extractTraceID(memo string) string {
 	return ""
 }
 
+func emitLegacySubmitObserveEvent(ctx sdk.Context, msg *types.MsgSubmitResult, result, reason string) {
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent("workload_legacy_submit_observe",
+			sdk.NewAttribute("task_id", strconv.FormatUint(msg.TaskId, 10)),
+			sdk.NewAttribute("worker", msg.Creator),
+			sdk.NewAttribute("height", strconv.FormatInt(ctx.BlockHeight(), 10)),
+			sdk.NewAttribute("result", result),
+			sdk.NewAttribute("reason", reason),
+		),
+	)
+}
+
 func (k msgServer) SubmitResult(goCtx context.Context, msg *types.MsgSubmitResult) (*types.MsgSubmitResultResponse, error) {
 	if msg == nil {
 		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "request cannot be nil")
@@ -33,6 +45,7 @@ func (k msgServer) SubmitResult(goCtx context.Context, msg *types.MsgSubmitResul
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	params := k.GetParams(ctx)
 	if !params.AllowLegacySubmitResult {
+		emitLegacySubmitObserveEvent(ctx, msg, "rejected", "legacy_disabled")
 		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "legacy submit_result is disabled; use commit_result + reveal_result")
 	}
 
@@ -61,6 +74,7 @@ func (k msgServer) SubmitResult(goCtx context.Context, msg *types.MsgSubmitResul
 			sdk.NewAttribute("challenge_deadline_height", strconv.FormatUint(task.ChallengeDeadlineHeight, 10)),
 		),
 	)
+	emitLegacySubmitObserveEvent(ctx, msg, "accepted", "legacy_enabled")
 
 	return &types.MsgSubmitResultResponse{}, nil
 }
