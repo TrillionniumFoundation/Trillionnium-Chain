@@ -101,6 +101,9 @@
   - 最新导出：`data/verifier-input/20260219-180016`（3 条）
 - 已完成 Rust 批量复验：`data/rust-verifier-local/20260219-180016`
   - `scenario_C/F/G` 均 `matched=true`
+- 已将 Rust 旁路串入 P1 套件（可选）：`WITH_RUST_VERIFY=1 ./scripts/p1_negative_suite.sh`
+  - 最新样本：`data/p1-negative/20260219-180412/summary.json`
+  - 结果：`pass=6 fail=0 skip=0`，`rust_verify_matched=3 mismatch=0`
 
 ## 10) Definition of Done（本轮）
 
