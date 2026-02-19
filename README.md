@@ -120,6 +120,8 @@ From repo root:
 ./scripts/p0_acceptance.sh --quick
 # include P1 worker restart-reconcile smoke
 ./scripts/p0_acceptance.sh --with-p1
+# include challenge re-exec resolve-template smoke
+./scripts/p0_acceptance.sh --with-reexec
 ```
 
 Artifacts:

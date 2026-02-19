@@ -17,6 +17,26 @@ OUTCOME="$2"
 REEXEC_HASH="${3:-}"
 REPORT_URI="${4:-}"
 
+NODE_PID=""
+if ! "$BIN" status --home "$HOME_DIR" --node "$NODE" >/dev/null 2>&1; then
+  "$BIN" start --home "$HOME_DIR" --minimum-gas-prices 0stake >/tmp/trnm-reexec-node.log 2>&1 &
+  NODE_PID=$!
+  for _ in $(seq 1 40); do
+    if "$BIN" status --home "$HOME_DIR" --node "$NODE" >/dev/null 2>&1; then
+      break
+    fi
+    sleep 1
+  done
+fi
+
+cleanup() {
+  if [[ -n "$NODE_PID" ]]; then
+    kill "$NODE_PID" >/dev/null 2>&1 || true
+    wait "$NODE_PID" >/dev/null 2>&1 || true
+  fi
+}
+trap cleanup EXIT
+
 TASK_JSON="$($BIN query workload show-task "$TASK_ID" --home "$HOME_DIR" --node "$NODE" -o json)"
 TASK_HASH="$(echo "$TASK_JSON" | jq -r '.Task.resultHash // .task.resultHash // ""')"
 
