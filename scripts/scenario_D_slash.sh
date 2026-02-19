@@ -9,6 +9,7 @@ NODE="${NODE:-tcp://127.0.0.1:26657}"
 KEYRING="${KEYRING:-test}"
 TARGET_WORKER_KEY="${TARGET_WORKER_KEY:-alice}"
 UNAUTH_KEY="${UNAUTH_KEY:-bob}"
+RESOLVE_UNAUTH_KEY="${RESOLVE_UNAUTH_KEY:-alice}"
 SLASH_PERCENT="${SLASH_PERCENT:-10}"
 TASK_ID="${TASK_ID:-}"
 
@@ -24,7 +25,7 @@ if [[ "$TASK_ID" -gt 0 ]] && "$BIN" tx workload --help | grep -q "resolve-challe
   log "Scenario D (Resolve auth): verify unauthorized resolve-challenge is blocked (task_id=$TASK_ID)"
   set +e
   RESOLVE_OUT="$($BIN tx workload resolve-challenge "$TASK_ID" true "" "unauth-resolve-test" \
-    --from "$UNAUTH_KEY" --keyring-backend "$KEYRING" --chain-id "$CHAIN_ID" \
+    --from "$RESOLVE_UNAUTH_KEY" --keyring-backend "$KEYRING" --chain-id "$CHAIN_ID" \
     --node "$NODE" --home "$HOME_DIR" --yes --gas auto --gas-adjustment 1.5 2>&1)"
   RESOLVE_RC=$?
   set -e

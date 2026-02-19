@@ -29,6 +29,17 @@ task_status() {
     | python3 -c 'import json,sys;o=json.load(sys.stdin);t=o.get("task") or o.get("Task") or {};print(int(t.get("status",0)))'
 }
 
+ensure_worker_registered() {
+  local worker_addr
+  worker_addr="$($BIN keys show "$WORKER_KEY" -a --keyring-backend "$KEYRING" --home "$HOME_DIR")"
+  if $BIN query workload show-worker "$worker_addr" --node "$NODE" --home "$HOME_DIR" >/dev/null 2>&1; then
+    return 0
+  fi
+  tx_ok "$BIN" tx workload register-worker "$WORKER_KEY" "ipfs://worker-$WORKER_KEY" \
+    --from "$WORKER_KEY" --keyring-backend "$KEYRING" --chain-id "$CHAIN_ID" \
+    --node "$NODE" --home "$HOME_DIR" --yes --gas auto --gas-adjustment 1.5
+}
+
 tx_ok() {
   local out rc tries=0
   while (( tries < 8 )); do
@@ -79,6 +90,7 @@ if [[ "$id" -le "$before" && "$after_total" -le "$before_total" ]]; then
 fi
 if [[ "$id" -le "$before" ]]; then id=$((before+1)); fi
 
+ensure_worker_registered
 tx_ok "$BIN" tx workload accept-task "$id" --from "$WORKER_KEY" --keyring-backend "$KEYRING" --chain-id "$CHAIN_ID" --node "$NODE" --home "$HOME_DIR" --yes --gas auto --gas-adjustment 1.5
 worker_addr="$($BIN keys show "$WORKER_KEY" -a --keyring-backend "$KEYRING" --home "$HOME_DIR")"
 ch="$(commit_hash "$id" "$RESULT_HASH" "$REVEAL_SALT" "$worker_addr")"

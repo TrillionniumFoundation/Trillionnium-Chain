@@ -29,6 +29,7 @@ run_step "A_happy_path" "cd '$ROOT' && ./scripts/scenario_A_happy.sh"
 run_step "B_timeout" "cd '$ROOT' && WAIT_SEC=8 ./scripts/scenario_B_timeout.sh"
 run_step "C_challenge" "cd '$ROOT' && ./scripts/scenario_C_challenge.sh"
 run_step "D_auth_guards" "cd '$ROOT' && ./scripts/scenario_D_slash.sh"
+run_step "D_positive_resolve" "cd '$ROOT' && ./scripts/scenario_D_positive_resolve.sh"
 run_step "E_unbonding" "cd '$ROOT' && MODE=unbonding ./scripts/demo_e2e.sh"
 
 echo "\nNotes:" | tee -a "$REPORT"
