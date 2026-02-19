@@ -74,28 +74,34 @@ run_unbonding_guard_check() {
   # If an old unbonding exists, first probe finalize behavior.
   if $BIN query workload show-unbonding "$worker_addr" --node "$NODE" --home "$HOME_DIR" >/dev/null 2>&1; then
     log "Existing unbonding found; probing finalize behavior"
-    set +e
-    probe_out="$($BIN tx workload finalize-unbonding \
-      --from "$WORKER_KEY" --keyring-backend "$KEYRING" --chain-id "$CHAIN_ID" \
-      --node "$NODE" --home "$HOME_DIR" --yes --gas auto --gas-adjustment 1.5 2>&1)"
-    probe_rc=$?
-    set -e
+    local probe_out probe_rc probe_try=0
+    while (( probe_try < 6 )); do
+      set +e
+      probe_out="$($BIN tx workload finalize-unbonding \
+        --from "$WORKER_KEY" --keyring-backend "$KEYRING" --chain-id "$CHAIN_ID" \
+        --node "$NODE" --home "$HOME_DIR" --yes --gas auto --gas-adjustment 1.5 2>&1)"
+      probe_rc=$?
+      set -e
 
-    if [[ $probe_rc -eq 0 ]] && grep -q "code: 0" <<<"$probe_out"; then
-      echo "$probe_out" | sed -n '1,80p'
-      log "Existing unbonding finalized; creating a fresh unbonding for cooldown test"
-      ensure_worker_registered
-    else
+      if [[ $probe_rc -eq 0 ]] && grep -q "code: 0" <<<"$probe_out"; then
+        echo "$probe_out" | sed -n '1,80p'
+        log "Existing unbonding finalized; creating a fresh unbonding for cooldown test"
+        ensure_worker_registered
+        break
+      fi
       if grep -Eqi "cooldown not reached|unbonding cooldown not reached" <<<"$probe_out"; then
         echo "$probe_out" | sed -n '1,120p'
         echo "✅ Cooldown guard works: finalize-unbonding rejected during active cooldown"
         return 0
       fi
-      if ! grep -qi "account sequence mismatch" <<<"$probe_out"; then
-        echo "$probe_out"
-        return 1
+      if grep -qi "account sequence mismatch" <<<"$probe_out"; then
+        ((probe_try++))
+        sleep 0.8
+        continue
       fi
-    fi
+      echo "$probe_out"
+      return 1
+    done
   fi
 
   ensure_worker_registered

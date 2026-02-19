@@ -61,7 +61,7 @@ log "Scenario A: deterministic happy path"
 before=$(latest_task_id)
 before_total=$(latest_task_total)
 
-tx_ok "$BIN" tx workload create-task "$TASK_PATH" 0 0 "" "" --from "$CREATOR_KEY" --keyring-backend "$KEYRING" --chain-id "$CHAIN_ID" --node "$NODE" --home "$HOME_DIR" --yes --gas auto --gas-adjustment 1.5 >/dev/null
+tx_ok "$BIN" tx workload create-task "$TASK_PATH" 0 0 "" "" --from "$CREATOR_KEY" --keyring-backend "$KEYRING" --chain-id "$CHAIN_ID" --node "$NODE" --home "$HOME_DIR" --yes --gas auto --gas-adjustment 1.5
 sleep 1
 id="$before"
 after_total="$before_total"
@@ -79,12 +79,12 @@ if [[ "$id" -le "$before" && "$after_total" -le "$before_total" ]]; then
 fi
 if [[ "$id" -le "$before" ]]; then id=$((before+1)); fi
 
-tx_ok "$BIN" tx workload accept-task "$id" --from "$WORKER_KEY" --keyring-backend "$KEYRING" --chain-id "$CHAIN_ID" --node "$NODE" --home "$HOME_DIR" --yes --gas auto --gas-adjustment 1.5 >/dev/null
+tx_ok "$BIN" tx workload accept-task "$id" --from "$WORKER_KEY" --keyring-backend "$KEYRING" --chain-id "$CHAIN_ID" --node "$NODE" --home "$HOME_DIR" --yes --gas auto --gas-adjustment 1.5
 worker_addr="$($BIN keys show "$WORKER_KEY" -a --keyring-backend "$KEYRING" --home "$HOME_DIR")"
 ch="$(commit_hash "$id" "$RESULT_HASH" "$REVEAL_SALT" "$worker_addr")"
 
-tx_ok "$BIN" tx workload commit-result "$id" "$ch" --from "$WORKER_KEY" --keyring-backend "$KEYRING" --chain-id "$CHAIN_ID" --node "$NODE" --home "$HOME_DIR" --yes --gas auto --gas-adjustment 1.5 >/dev/null
-tx_ok "$BIN" tx workload reveal-result "$id" "$RESULT_HASH" "$RESULT_URI" "$REVEAL_SALT" --from "$WORKER_KEY" --keyring-backend "$KEYRING" --chain-id "$CHAIN_ID" --node "$NODE" --home "$HOME_DIR" --yes --gas auto --gas-adjustment 1.5 >/dev/null
+tx_ok "$BIN" tx workload commit-result "$id" "$ch" --from "$WORKER_KEY" --keyring-backend "$KEYRING" --chain-id "$CHAIN_ID" --node "$NODE" --home "$HOME_DIR" --yes --gas auto --gas-adjustment 1.5
+tx_ok "$BIN" tx workload reveal-result "$id" "$RESULT_HASH" "$RESULT_URI" "$REVEAL_SALT" --from "$WORKER_KEY" --keyring-backend "$KEYRING" --chain-id "$CHAIN_ID" --node "$NODE" --home "$HOME_DIR" --yes --gas auto --gas-adjustment 1.5
 
 s=0
 for _ in {1..20}; do
