@@ -35,7 +35,8 @@ jobs:
           set -euo pipefail
           cd trillionnium-rust
           ./scripts/devnet_up.sh
-          sleep 3
+          # allow initial cargo startup + block production on CI runners
+          sleep ${DEVNET_AUDIT_WAIT_SECONDS:-12}
           ./scripts/devnet_down.sh || true
           ./scripts/audit_state_roots.sh
 

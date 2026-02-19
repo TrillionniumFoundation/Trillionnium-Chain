@@ -23,7 +23,7 @@ cargo test --workspace | tee "$OUT/cargo-test.log"
 
 # 2) state-root audit
 ./scripts/devnet_up.sh
-sleep 3
+sleep ${DEVNET_AUDIT_WAIT_SECONDS:-12}
 ./scripts/devnet_down.sh || true
 ./scripts/audit_state_roots.sh | tee "$OUT/state-root-audit.log"
 
