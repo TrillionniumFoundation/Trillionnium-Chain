@@ -59,9 +59,27 @@
 2. 将当前 14 commits 做逻辑分组后推送（保持可审阅）。
 3. 冻结 v1 闭环接口约束：Task 状态、权限边界、事件字段。
 
-## 5) Definition of Done（本轮）
+## 5) Dry-run 演练结果（2026-02-19 16:44~16:49）
+
+- 演练目录：`data/upgrade-runs/20260219-164421`
+- 首轮（chain down）：`pre p0=0/p1=1`，`post p0=0/p1=1`
+- 修复动作：启动本地链（`./build/chaind start --home ~/.chain --minimum-gas-prices 0stake`）
+- 复跑结果：`pre_p1=0`、`snapshot_diff=0`、`post_p1=0`（见 `rerun-summary.txt`）
+- 结论：P1-1 升级演练流程已具备可执行样本，可进入“发布前标准门禁”阶段。
+
+## 6) Definition of Done（本轮）
 
 - [ ] 所有 P0 项均有 owner 与截止时间
 - [ ] 关键测试可一键复现（命令固定）
 - [ ] `main` 与 `origin/main` 对齐（或仅保留明确的待审 PR）
 - [ ] v1 闭环接口冻结并文档化
+
+## 6) P1-1 Dry-run 演练结果（2026-02-19 16:44 CST）
+
+- 演练目录：`data/upgrade-runs/20260219-164421`
+- Checklist 流程已执行：run_id 初始化、pre/post 快照采集、gate 复跑、diff 归档。
+- gate 结果：
+  - pre: `p0_rc=0`, `p1_rc=1`
+  - post: `post_p0_rc=0`, `post_p1_rc=1`
+- 阻塞原因：本地链未启动（`127.0.0.1:26657 connection refused`），`p1_negative_suite` 在 preflight 主动终止，避免误报。
+- 结论：流程脚手架可用；待链恢复后需补一次“全绿 dry-run（含 p1=0）”以达成 P1-1 验收。
