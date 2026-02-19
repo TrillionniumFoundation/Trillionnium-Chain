@@ -57,7 +57,7 @@ MODE=unbonding ./scripts/demo_e2e.sh
    - 说明冷却参数或逻辑异常，应立刻复核 keeper 逻辑和参数
 
 ## 6. 与验收矩阵对应关系
-- 场景 A：正常完成 → `MODE=happy`
+- 场景 A：正常完成 → `./scripts/scenario_A_happy.sh`
 - 场景 B：超时未提交 → `./scripts/scenario_B_timeout.sh`
 - 场景 C：无效结果挑战 → `./scripts/scenario_C_challenge.sh`
 - 场景 D：权限防护（未授权 resolve/slash 拒绝）→ `./scripts/scenario_D_slash.sh`

@@ -1,0 +1,104 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+BIN="${BIN:-$ROOT/build/chaind}"
+CHAIN_ID="${CHAIN_ID:-trillionnium}"
+HOME_DIR="${HOME_DIR:-/Users/qianqi/.chain}"
+NODE="${NODE:-tcp://127.0.0.1:26657}"
+KEYRING="${KEYRING:-test}"
+CREATOR_KEY="${CREATOR_KEY:-bob}"
+WORKER_KEY="${WORKER_KEY:-alice}"
+TASK_PATH="${TASK_PATH:-$ROOT/tasks/example_futures}"
+RESULT_HASH="${RESULT_HASH:-okresult123}"
+RESULT_URI="${RESULT_URI:-ipfs://result-ok}"
+REVEAL_SALT="${REVEAL_SALT:-happy-salt}"
+
+log() { printf "\n[%s] %s\n" "$(date +%H:%M:%S)" "$*"; }
+
+workload_stats() {
+  "$BIN" query workload list-task -o json --node "$NODE" --home "$HOME_DIR" \
+    | python3 -c 'import json,sys;o=json.load(sys.stdin);ids=[int(t.get("id",0)) for t in o.get("Task",[]) if str(t.get("id","0")).isdigit()];total=int(o.get("pagination",{}).get("total",0));print(f"{max(ids) if ids else 0} {total}")'
+}
+latest_task_id() { workload_stats | awk '{print $1}'; }
+latest_task_total() { workload_stats | awk '{print $2}'; }
+
+task_status() {
+  local id="$1"
+  "$BIN" query workload show-task "$id" -o json --node "$NODE" --home "$HOME_DIR" \
+    | python3 -c 'import json,sys;o=json.load(sys.stdin);t=o.get("task") or o.get("Task") or {};print(int(t.get("status",0)))'
+}
+
+tx_ok() {
+  local out rc tries=0
+  while (( tries < 8 )); do
+    set +e
+    out="$("$@" 2>&1)"
+    rc=$?
+    set -e
+    if [[ $rc -eq 0 ]] && { grep -q '"code":0' <<<"${out// /}" || grep -q 'code: 0' <<<"$out"; }; then
+      return 0
+    fi
+    if grep -qi "account sequence mismatch" <<<"$out"; then
+      ((tries++)); sleep 0.8; continue
+    fi
+    echo "$out"
+    return 1
+  done
+  echo "$out"
+  return 1
+}
+
+commit_hash() {
+  local task_id="$1" result_hash="$2" salt="$3" worker_addr="$4"
+  python3 - <<PY
+import hashlib
+print(hashlib.sha256(f"{int('$task_id')}|{'$result_hash'}|{'$salt'}|{'$worker_addr'}".encode()).hexdigest())
+PY
+}
+
+log "Scenario A: deterministic happy path"
+before=$(latest_task_id)
+before_total=$(latest_task_total)
+
+tx_ok "$BIN" tx workload create-task "$TASK_PATH" 0 0 "" "" --from "$CREATOR_KEY" --keyring-backend "$KEYRING" --chain-id "$CHAIN_ID" --node "$NODE" --home "$HOME_DIR" --yes --gas auto --gas-adjustment 1.5 >/dev/null
+sleep 1
+id="$before"
+after_total="$before_total"
+for _ in {1..8}; do
+  id=$(latest_task_id || echo "$before")
+  after_total=$(latest_task_total || echo "$before_total")
+  if [[ "$id" -gt "$before" || "$after_total" -gt "$before_total" ]]; then
+    break
+  fi
+  sleep 0.8
+done
+if [[ "$id" -le "$before" && "$after_total" -le "$before_total" ]]; then
+  echo "❌ create-task did not produce new id"
+  exit 1
+fi
+if [[ "$id" -le "$before" ]]; then id=$((before+1)); fi
+
+tx_ok "$BIN" tx workload accept-task "$id" --from "$WORKER_KEY" --keyring-backend "$KEYRING" --chain-id "$CHAIN_ID" --node "$NODE" --home "$HOME_DIR" --yes --gas auto --gas-adjustment 1.5 >/dev/null
+worker_addr="$($BIN keys show "$WORKER_KEY" -a --keyring-backend "$KEYRING" --home "$HOME_DIR")"
+ch="$(commit_hash "$id" "$RESULT_HASH" "$REVEAL_SALT" "$worker_addr")"
+
+tx_ok "$BIN" tx workload commit-result "$id" "$ch" --from "$WORKER_KEY" --keyring-backend "$KEYRING" --chain-id "$CHAIN_ID" --node "$NODE" --home "$HOME_DIR" --yes --gas auto --gas-adjustment 1.5 >/dev/null
+tx_ok "$BIN" tx workload reveal-result "$id" "$RESULT_HASH" "$RESULT_URI" "$REVEAL_SALT" --from "$WORKER_KEY" --keyring-backend "$KEYRING" --chain-id "$CHAIN_ID" --node "$NODE" --home "$HOME_DIR" --yes --gas auto --gas-adjustment 1.5 >/dev/null
+
+s=0
+for _ in {1..20}; do
+  s=$(task_status "$id" 2>/dev/null || echo 0)
+  if [[ "$s" -ge 3 ]]; then
+    break
+  fi
+  sleep 0.8
+done
+
+echo "task_id=$id status=$s"
+if [[ "$s" -lt 3 ]]; then
+  echo "❌ happy path failed: expected status >=3 (REVEALED)"
+  exit 1
+fi
+
+echo "✅ Scenario A passed: task progressed to REVEALED (task_id=$id)"

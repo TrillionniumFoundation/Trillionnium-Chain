@@ -62,13 +62,26 @@ before_id=$(latest_task_id)
 before_total=$(latest_task_total)
 log "Latest task before submit: id=$before_id total=$before_total"
 
-set +e
-SUBMIT_OUT="$($BIN tx workload create-task "$TASK_PATH" 0 0 "" "" \
-  --from bob --keyring-backend test --chain-id "$CHAIN_ID" \
-  --node "$NODE" --home "$HOME_DIR" --yes --gas auto --gas-adjustment 1.5 -o json 2>&1)"
-SUBMIT_RC=$?
-set -e
-if [[ $SUBMIT_RC -ne 0 ]] || ! grep -q '"code":0' <<<"${SUBMIT_OUT// /}"; then
+submit_ok=0
+for _ in {1..8}; do
+  set +e
+  SUBMIT_OUT="$($BIN tx workload create-task "$TASK_PATH" 0 0 "" "" \
+    --from bob --keyring-backend test --chain-id "$CHAIN_ID" \
+    --node "$NODE" --home "$HOME_DIR" --yes --gas auto --gas-adjustment 1.5 -o json 2>&1)"
+  SUBMIT_RC=$?
+  set -e
+  if [[ $SUBMIT_RC -eq 0 ]] && grep -q '"code":0' <<<"${SUBMIT_OUT// /}"; then
+    submit_ok=1
+    break
+  fi
+  if grep -qi "account sequence mismatch" <<<"$SUBMIT_OUT"; then
+    sleep 0.9
+    continue
+  fi
+  echo "$SUBMIT_OUT"
+  exit 1
+done
+if [[ $submit_ok -ne 1 ]]; then
   echo "$SUBMIT_OUT"
   exit 1
 fi

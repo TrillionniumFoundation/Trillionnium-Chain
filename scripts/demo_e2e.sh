@@ -113,7 +113,7 @@ run_unbonding_guard_check() {
 
   log "Attempting immediate finalize-unbonding (must fail due to cooldown)"
   local attempts=0 out rc
-  while (( attempts < 6 )); do
+  while (( attempts < 12 )); do
     set +e
     out="$($BIN tx workload finalize-unbonding \
       --from "$WORKER_KEY" --keyring-backend "$KEYRING" --chain-id "$CHAIN_ID" \
