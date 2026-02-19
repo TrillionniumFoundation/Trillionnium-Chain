@@ -68,6 +68,37 @@ run_happy_path() {
 
 run_unbonding_guard_check() {
   log "Running unbonding guard check (request unbonding + early finalize should fail)"
+  local worker_addr
+  worker_addr="$($BIN keys show "$WORKER_KEY" -a --keyring-backend "$KEYRING" --home "$HOME_DIR")"
+
+  # If an old unbonding exists, first probe finalize behavior.
+  if $BIN query workload show-unbonding "$worker_addr" --node "$NODE" --home "$HOME_DIR" >/dev/null 2>&1; then
+    log "Existing unbonding found; probing finalize behavior"
+    set +e
+    probe_out="$($BIN tx workload finalize-unbonding \
+      --from "$WORKER_KEY" --keyring-backend "$KEYRING" --chain-id "$CHAIN_ID" \
+      --node "$NODE" --home "$HOME_DIR" --yes --gas auto --gas-adjustment 1.5 2>&1)"
+    probe_rc=$?
+    set -e
+
+    if [[ $probe_rc -eq 0 ]] && grep -q "code: 0" <<<"$probe_out"; then
+      echo "$probe_out" | sed -n '1,80p'
+      log "Existing unbonding finalized; creating a fresh unbonding for cooldown test"
+      ensure_worker_registered
+    else
+      if grep -Eqi "cooldown not reached|unbonding cooldown not reached" <<<"$probe_out"; then
+        echo "$probe_out" | sed -n '1,120p'
+        echo "✅ Cooldown guard works: finalize-unbonding rejected during active cooldown"
+        return 0
+      fi
+      if ! grep -qi "account sequence mismatch" <<<"$probe_out"; then
+        echo "$probe_out"
+        return 1
+      fi
+    fi
+  fi
+
+  ensure_worker_registered
 
   set +e
   req_out=$(tx_ok "$BIN" tx workload request-unbonding \
@@ -76,20 +107,13 @@ run_unbonding_guard_check() {
   req_rc=$?
   set -e
   if [[ $req_rc -ne 0 ]]; then
-    if grep -qi "unbonding already requested" <<<"$req_out"; then
-      echo "unbonding already requested, continuing to cooldown guard check"
-    else
-      echo "$req_out"
-      return 1
-    fi
-  else
     echo "$req_out"
+    return 1
   fi
 
-  log "Attempting early finalize-unbonding (expected to fail during cooldown)"
-  local attempts=0
-  local out rc
-  while (( attempts < 5 )); do
+  log "Attempting immediate finalize-unbonding (must fail due to cooldown)"
+  local attempts=0 out rc
+  while (( attempts < 6 )); do
     set +e
     out="$($BIN tx workload finalize-unbonding \
       --from "$WORKER_KEY" --keyring-backend "$KEYRING" --chain-id "$CHAIN_ID" \
@@ -99,7 +123,7 @@ run_unbonding_guard_check() {
 
     if [[ $rc -eq 0 ]] && grep -q "code: 0" <<<"$out"; then
       echo "$out"
-      echo "❌ Unexpected success: finalize-unbonding passed before cooldown"
+      echo "❌ Unexpected success: finalize-unbonding passed immediately after request"
       return 1
     fi
 
@@ -109,9 +133,14 @@ run_unbonding_guard_check() {
       continue
     fi
 
-    echo "$out" | sed -n '1,120p'
-    echo "✅ Cooldown guard works: early finalize-unbonding rejected"
-    return 0
+    if grep -Eqi "cooldown not reached|unbonding cooldown not reached" <<<"$out"; then
+      echo "$out" | sed -n '1,120p'
+      echo "✅ Cooldown guard works: immediate finalize-unbonding rejected"
+      return 0
+    fi
+
+    echo "$out"
+    return 1
   done
 
   echo "❌ Inconclusive: finalize-unbonding kept failing with sequence mismatch"

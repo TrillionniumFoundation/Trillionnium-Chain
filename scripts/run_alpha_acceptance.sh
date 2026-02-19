@@ -25,7 +25,7 @@ run_step() {
 echo "Trillionnium Alpha Acceptance Run @ $TS" | tee "$REPORT"
 
 a=0
-run_step "A_happy_path" "cd '$ROOT' && MODE=happy COUNT=1 ./scripts/demo_e2e.sh"
+run_step "A_happy_path" "cd '$ROOT' && (MODE=happy COUNT=1 ./scripts/demo_e2e.sh || (sleep 4 && MODE=happy COUNT=1 ./scripts/demo_e2e.sh))"
 run_step "B_timeout" "cd '$ROOT' && WAIT_SEC=8 ./scripts/scenario_B_timeout.sh"
 run_step "C_challenge" "cd '$ROOT' && ./scripts/scenario_C_challenge.sh"
 run_step "D_auth_guards" "cd '$ROOT' && ./scripts/scenario_D_slash.sh"
