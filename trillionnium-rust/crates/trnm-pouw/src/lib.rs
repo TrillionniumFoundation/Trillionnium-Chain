@@ -5,18 +5,30 @@ use trnm_types::{Hash32, ObjectRef, TaskObject, TaskStatus};
 
 #[derive(Debug, Error)]
 pub enum PouwError {
-    #[error("not implemented")]
-    NotImplemented,
     #[error("state error: {0}")]
     State(String),
     #[error("invalid transition")]
     InvalidTransition,
+    #[error("version conflict")]
+    VersionConflict,
     #[error("missing worker")]
     MissingWorker,
     #[error("missing commitment")]
     MissingCommitment,
     #[error("commitment mismatch")]
     CommitmentMismatch,
+    #[error("unauthorized")]
+    Unauthorized,
+    #[error("insufficient stake")]
+    InsufficientStake,
+}
+
+fn map_state_err(err: String) -> PouwError {
+    if err.contains("version conflict") {
+        PouwError::VersionConflict
+    } else {
+        PouwError::State(err)
+    }
 }
 
 fn compute_commitment(task_id: u64, result_hash: &Hash32, reveal_salt: &[u8; 32], worker: &str) -> Hash32 {
@@ -49,7 +61,7 @@ pub fn apply_create_task(
         reveal_salt: None,
         version: 1,
     };
-    st.put_task_new(task).map_err(PouwError::State)
+    st.put_task_new(task).map_err(map_state_err)
 }
 
 pub fn apply_commit_result(
@@ -67,7 +79,7 @@ pub fn apply_commit_result(
     task.status = TaskStatus::Committed;
     task.worker = Some(worker);
     task.committed_hash = Some(committed_hash);
-    st.update_task(task_ref, task).map_err(PouwError::State)
+    st.update_task(task_ref, task).map_err(map_state_err)
 }
 
 pub fn apply_reveal_result(
@@ -94,7 +106,7 @@ pub fn apply_reveal_result(
     task.status = TaskStatus::Revealed;
     task.result_hash = Some(result_hash);
     task.reveal_salt = Some(reveal_salt);
-    st.update_task(task_ref, task).map_err(PouwError::State)
+    st.update_task(task_ref, task).map_err(map_state_err)
 }
 
 pub fn apply_challenge(st: &mut StateStore, task_ref: ObjectRef) -> Result<ObjectRef, PouwError> {
@@ -105,7 +117,7 @@ pub fn apply_challenge(st: &mut StateStore, task_ref: ObjectRef) -> Result<Objec
         return Err(PouwError::InvalidTransition);
     }
     task.status = TaskStatus::Challenged;
-    st.update_task(task_ref, task).map_err(PouwError::State)
+    st.update_task(task_ref, task).map_err(map_state_err)
 }
 
 pub fn apply_resolve(st: &mut StateStore, task_ref: ObjectRef, slash_worker: bool) -> Result<ObjectRef, PouwError> {
@@ -120,7 +132,7 @@ pub fn apply_resolve(st: &mut StateStore, task_ref: ObjectRef, slash_worker: boo
     } else {
         TaskStatus::Completed
     };
-    st.update_task(task_ref, task).map_err(PouwError::State)
+    st.update_task(task_ref, task).map_err(map_state_err)
 }
 
 #[cfg(test)]
@@ -166,5 +178,14 @@ mod tests {
         let r1 = apply_create_task(&mut st, 9, "alice".into(), 10).unwrap();
         let err = apply_challenge(&mut st, r1).unwrap_err();
         assert!(matches!(err, PouwError::InvalidTransition));
+    }
+
+    #[test]
+    fn state_error_mapping_version_conflict() {
+        let err = map_state_err("version conflict".to_string());
+        assert!(matches!(err, PouwError::VersionConflict));
+
+        let err2 = map_state_err("object not found".to_string());
+        assert!(matches!(err2, PouwError::State(_)));
     }
 }
