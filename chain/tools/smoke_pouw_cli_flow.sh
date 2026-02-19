@@ -52,12 +52,14 @@ wait_tx_commit() {
 }
 
 echo "[1/11] Reset chain"
+pkill -f "$BIN start --home $HOME_DIR" >/dev/null 2>&1 || true
+sleep 1
 "$BIN" tendermint unsafe-reset-all --home "$HOME_DIR" >/dev/null
 
 echo "[2/11] Start node"
 "$BIN" start --home "$HOME_DIR" --minimum-gas-prices 0stake >/tmp/trnm-smoke-cli-node.log 2>&1 &
 NODE_PID=$!
-trap 'kill $NODE_PID >/dev/null 2>&1 || true' EXIT
+trap 'kill $NODE_PID >/dev/null 2>&1 || true; wait $NODE_PID >/dev/null 2>&1 || true' EXIT
 
 for _ in $(seq 1 40); do
   if curl -sf "$RPC/status" >/dev/null; then
