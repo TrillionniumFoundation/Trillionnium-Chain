@@ -58,6 +58,48 @@ jobs:
             exit 2
           fi
 
+      - name: Executor spot-check regression gate (Original strategy)
+        run: |
+          set -euo pipefail
+          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+          cd trillionnium-rust
+
+          OUT_DIR="run/bench"
+          mkdir -p "$OUT_DIR"
+          SPOT="$OUT_DIR/executor-spotcheck-${GITHUB_RUN_ID:-local}.txt"
+
+          echo "[spotcheck] classic (txs=20000, keys=1000, strategy=original)" | tee "$SPOT"
+          cargo run -q -p trnm-bench -- \
+            --txs 20000 --keys 1000 --strategy original --profile | tee -a "$SPOT"
+
+          echo "[spotcheck] mixed (txs=20000, keys=2000, read_fanout=4, write_every=2, strategy=original)" | tee -a "$SPOT"
+          cargo run -q -p trnm-bench -- \
+            --txs 20000 --keys 2000 --workload mixed --read-fanout 4 --write-every 2 --strategy original --profile | tee -a "$SPOT"
+
+          CLASSIC_HARD_MS=${SPOTCHECK_CLASSIC_HARD_MS:-180}
+          MIXED_HARD_MS=${SPOTCHECK_MIXED_HARD_MS:-220}
+
+          classic_elapsed=$(awk '/\[spotcheck\] classic/{flag=1; next} flag && /^elapsed_ms=/{print $2; exit}' FS='=' "$SPOT")
+          mixed_elapsed=$(awk '/\[spotcheck\] mixed/{flag=1; next} flag && /^elapsed_ms=/{print $2; exit}' FS='=' "$SPOT")
+
+          echo "spotcheck.classic_elapsed_ms=${classic_elapsed}"
+          echo "spotcheck.mixed_elapsed_ms=${mixed_elapsed}"
+
+          if [ -z "${classic_elapsed}" ] || [ -z "${mixed_elapsed}" ]; then
+            echo "failed to parse spotcheck elapsed_ms" >&2
+            exit 3
+          fi
+
+          if [ "${classic_elapsed}" -gt "${CLASSIC_HARD_MS}" ]; then
+            echo "classic spotcheck regression: ${classic_elapsed}ms > ${CLASSIC_HARD_MS}ms" >&2
+            exit 4
+          fi
+
+          if [ "${mixed_elapsed}" -gt "${MIXED_HARD_MS}" ]; then
+            echo "mixed spotcheck regression: ${mixed_elapsed}ms > ${MIXED_HARD_MS}ms" >&2
+            exit 5
+          fi
+
       - name: Run bench matrix
         run: |
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
