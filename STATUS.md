@@ -352,6 +352,22 @@
   - P1 命令更新为 `WITH_RUST_VERIFY=1`
   - 增加 Rust 阈值（`rust_verify_rc=0 && rust_verify_mismatch=0`）与 artifacts 证据项
 
+## 27) Rust L1 后续动作-8（v1 状态机冻结对齐收口，2026-02-19 22:50~23:05 CST）
+
+- 已完成 `accept_task` 路径落地并接入主流程：
+  - `trnm-pouw` 新增：`apply_accept_task(OPEN -> ASSIGNED)`
+  - `trnm-node` demo mempool 已插入 `AcceptTask` 交易，事件输出新增 `event_type=accept`
+- 已收紧 `commit_result` 迁移约束：
+  - 由此前兼容路径（`OPEN|ASSIGNED -> COMMITTED`）收敛为冻结语义：`ASSIGNED -> COMMITTED`
+  - 增加 worker 绑定校验：`commit.worker` 必须等于 `accept_task` 绑定 worker，否则 `Unauthorized`
+- 测试与回归：
+  - `cargo test -p trnm-pouw` 全绿（6/6）
+  - `cargo test --workspace` 全绿
+  - `parallel sanity` 全绿（无 `apply_error` / `rollback=true`）
+  - `check_event_fields.sh` 全绿
+  - `state-root-audit` 全绿：`run/audit/state-root-audit-20260219-230451.txt`（`ok=true mismatch=0 missing=0`）
+- 结论：v1 冻结文档中 `accept_task` 与 `ASSIGNED -> COMMITTED` 关键语义已与实现对齐。
+
 ## 6) P1-1 Dry-run 演练结果（2026-02-19 16:44 CST）
 
 - 演练目录：`data/upgrade-runs/20260219-164421`
