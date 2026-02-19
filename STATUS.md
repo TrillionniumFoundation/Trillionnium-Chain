@@ -104,6 +104,8 @@
 - 已将 Rust 旁路串入 P1 套件（可选）：`WITH_RUST_VERIFY=1 ./scripts/p1_negative_suite.sh`
   - 最新样本：`data/p1-negative/20260219-180412/summary.json`
   - 结果：`pass=6 fail=0 skip=0`，`rust_verify_matched=3 mismatch=0`
+- 已将 `p0_merge_gate.sh` 默认接入 Rust 旁路链路（默认 `WITH_RUST_VERIFY=1` 后置执行 P1+verifier）。
+  - 备注：当前 P0 前置阶段存在本地序列/提交竞态（`smoke_pouw_cli_flow`、`worker_reconcile_smoke`），导致 gate 在进入 P1 前失败，需先修复稳定性。
 
 ## 10) Definition of Done（本轮）
 
