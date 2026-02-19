@@ -91,7 +91,18 @@
 - 新增 CI：`.github/workflows/rust-verifier-poc.yml`（build + test + fixture verification）。
 - 文档：`docs/protocol/rust-verifier-poc.md`。
 
-## 9) Definition of Done（本轮）
+## 9) Rust 旁路接入进展（执行中）
+
+- 已在场景脚本输出结构化标记：`[VERIFIER_INPUT] {...}`
+  - `scripts/scenario_C_challenge.sh`
+  - `scripts/scenario_F_forged_reveal.sh`
+  - `scripts/scenario_G_duplicate_reveal.sh`
+- 新增导出脚本：`scripts/export_verifier_inputs.sh`
+  - 最新导出：`data/verifier-input/20260219-180016`（3 条）
+- 已完成 Rust 批量复验：`data/rust-verifier-local/20260219-180016`
+  - `scenario_C/F/G` 均 `matched=true`
+
+## 10) Definition of Done（本轮）
 
 - [ ] 所有 P0 项均有 owner 与截止时间
 - [ ] 关键测试可一键复现（命令固定）

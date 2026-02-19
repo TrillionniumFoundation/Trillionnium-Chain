@@ -35,8 +35,25 @@ cargo run -- verify --input fixtures/match.json --output ../../data/rust-verifie
 cargo run -- batch --input-dir fixtures --output-dir ../../data/rust-verifier-local
 ```
 
+## 接入现状（已落地）
+
+- 场景脚本已输出结构化标记：`[VERIFIER_INPUT] {...}`（C/F/G）
+- 导出脚本：`scripts/export_verifier_inputs.sh`
+
+```bash
+# 1) 先跑 P1 套件
+./scripts/p1_negative_suite.sh
+
+# 2) 导出 verifier 输入
+./scripts/export_verifier_inputs.sh
+
+# 3) 执行 Rust 批量复验
+export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+INPUT_DIR=data/verifier-input/<ts> OUT_DIR=data/rust-verifier-local/<ts> ./scripts/run_rust_verifier_poc.sh
+```
+
 ## 下一步接入建议
 
-1. 从 `data/p1-negative/*` 增加可结构化导出（commit/reveal 元数据）
-2. 将导出作为 verifier 批处理输入
+1. 在 `p1_negative_suite.sh` 增加可选开关（如 `WITH_RUST_VERIFY=1`）自动串起导出+复验
+2. 在 summary.json 增加 verifier 汇总字段（matched_total / mismatch_total）
 3. 在 CI 增加“链下重验一致性”检查（旁路，不阻断链执行）

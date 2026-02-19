@@ -118,4 +118,5 @@ if [[ $RC -eq 0 ]] && { grep -q '"code":0' <<<"${OUT// /}" || grep -q 'code: 0' 
   exit 1
 fi
 
+echo "[VERIFIER_INPUT] {\"task_id\":$id,\"result_hash\":\"$RESULT_HASH\",\"reveal_salt\":\"$REVEAL_SALT\",\"worker_address\":\"$worker_addr\",\"committed_hash\":\"$ch\",\"trace_id\":\"scenario_G\"}"
 echo "✅ Scenario G passed: duplicate reveal rejected"

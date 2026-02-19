@@ -234,4 +234,5 @@ fi
 log "Challenge accepted on-chain; task snapshot"
 "$BIN" query workload show-task "$TASK_ID" -o json --node "$NODE" --home "$HOME_DIR" | sed -n '1,140p'
 
+echo "[VERIFIER_INPUT] {\"task_id\":$TASK_ID,\"result_hash\":\"$RESULT_HASH\",\"reveal_salt\":\"$REVEAL_SALT\",\"worker_address\":\"$WORKER_ADDR\",\"committed_hash\":\"$COMMIT_HASH\",\"trace_id\":\"scenario_C\"}"
 echo "✅ Scenario C passed: task challenged successfully (task_id=$TASK_ID)"
