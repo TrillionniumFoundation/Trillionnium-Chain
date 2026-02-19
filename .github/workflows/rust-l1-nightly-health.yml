@@ -1,0 +1,125 @@
+name: rust-l1-nightly-health
+
+on:
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+  push:
+    paths:
+      - 'trillionnium-rust/**'
+      - '.github/workflows/rust-l1-nightly-health.yml'
+
+concurrency:
+  group: rust-l1-nightly-health-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  rust-l1-health:
+    runs-on: [self-hosted, macOS]
+    timeout-minutes: 45
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Rust workspace tests
+        run: |
+          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+          cd trillionnium-rust
+          cargo test --workspace
+
+      - name: Run devnet + state root audit (baseline)
+        run: |
+          set -euo pipefail
+          cd trillionnium-rust
+          ./scripts/devnet_up.sh
+          sleep 3
+          ./scripts/devnet_down.sh || true
+          ./scripts/audit_state_roots.sh
+
+      - name: Run parallel mode sanity (hard gate)
+        run: |
+          set -euo pipefail
+          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+          cd trillionnium-rust
+          cargo run -q -p trnm-node -- \
+            --config configs/node1.toml \
+            --block-ms 5 \
+            --max-blocks 6 \
+            --demo-tasks 8 \
+            --demo-keys 3 \
+            --parallel-workers 4 | tee run/parallel-sanity.log
+
+          # hard fail if parallel path shows runtime apply error or rollback
+          if grep -E '\[tx\] apply_error|rollback=true' run/parallel-sanity.log; then
+            echo "parallel sanity detected apply_error/rollback" >&2
+            exit 2
+          fi
+
+      - name: Run bench matrix
+        run: |
+          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+          cd trillionnium-rust
+          TXS=5000 ./scripts/run_bench_matrix.sh
+
+      - name: Run mixed workload matrix
+        run: |
+          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+          cd trillionnium-rust
+          TXS=5000 ./scripts/run_bench_mixed_matrix.sh
+
+      - name: Enforce CI thresholds (warning + hard fail)
+        run: |
+          set -euo pipefail
+          cd trillionnium-rust
+
+          # 1) state-root audit must be OK
+          latest_audit=$(ls -1dt run/audit/state-root-audit-*.txt | head -n 1)
+          echo "Using audit report: $latest_audit"
+          grep -q 'summary ok=true mismatch=0 missing=0' "$latest_audit"
+
+          # 2) bench elapsed thresholds
+          # warning: emit ::warning:: for visibility
+          # hard: fail job
+          BENCH_WARN_MS=${BENCH_WARN_MS:-1200}
+          BENCH_MAX_MS=${BENCH_MAX_MS:-2000}
+          BENCH_MIXED_WARN_MS=${BENCH_MIXED_WARN_MS:-1200}
+          BENCH_MIXED_MAX_MS=${BENCH_MIXED_MAX_MS:-2000}
+          latest_bench=$(ls -1dt run/bench/bench-matrix-*.txt | head -n 1)
+          latest_mixed=$(ls -1dt run/bench/bench-mixed-matrix-*.txt | head -n 1)
+          echo "Using bench report: $latest_bench"
+          echo "Using mixed bench report: $latest_mixed"
+
+          check_elapsed_file() {
+            local file="$1"
+            local label="$2"
+            local warn="$3"
+            local hard="$4"
+            awk -F= -v warn="$warn" -v hard="$hard" -v label="$label" '
+              /^elapsed_ms=/ {
+                v=$2+0
+                if (v > warn) {
+                  printf("::warning::%s elapsed above warn threshold: %dms (warn=%d, hard=%d)\n", label, v, warn, hard)
+                }
+                if (v > hard) {
+                  printf("%s elapsed above hard threshold: %dms (hard=%d)\n", label, v, hard)
+                  bad=1
+                }
+              }
+              END{ exit bad }
+            ' "$file"
+          }
+
+          check_elapsed_file "$latest_bench" "bench" "$BENCH_WARN_MS" "$BENCH_MAX_MS"
+          check_elapsed_file "$latest_mixed" "bench_mixed" "$BENCH_MIXED_WARN_MS" "$BENCH_MIXED_MAX_MS"
+
+      - name: Upload nightly health artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rust-l1-nightly-health-${{ github.run_id }}
+          path: |
+            trillionnium-rust/run/audit/**
+            trillionnium-rust/run/bench/**
+            trillionnium-rust/run/node*.log
+            trillionnium-rust/run/parallel-sanity.log
+          if-no-files-found: warn
