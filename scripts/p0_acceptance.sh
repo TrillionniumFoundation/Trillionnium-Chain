@@ -12,7 +12,7 @@ SUMMARY_JSON="$RUN_DIR/summary.json"
 
 if [[ "${1:-}" == "--help" ]]; then
   cat <<EOF
-Usage: ./scripts/p0_acceptance.sh [--quick]
+Usage: ./scripts/p0_acceptance.sh [--quick] [--with-p1]
 
 Runs a standardized P0 acceptance bundle and emits:
 - summary.txt (human readable)
@@ -20,15 +20,20 @@ Runs a standardized P0 acceptance bundle and emits:
 - step logs under data/p0-acceptance/<timestamp>/
 
 Options:
-  --quick   skip full alpha acceptance suite
+  --quick     skip full alpha acceptance suite
+  --with-p1   include P1 worker reconcile smoke step
 EOF
   exit 0
 fi
 
 QUICK=0
-if [[ "${1:-}" == "--quick" ]]; then
-  QUICK=1
-fi
+WITH_P1=0
+for arg in "$@"; do
+  case "$arg" in
+    --quick) QUICK=1 ;;
+    --with-p1) WITH_P1=1 ;;
+  esac
+done
 
 steps=(
   "check_pouw_commands|cd '$ROOT/chain' && ./tools/check_pouw_commands.sh"
@@ -37,6 +42,10 @@ steps=(
 
 if [[ "$QUICK" -eq 0 ]]; then
   steps+=("alpha_acceptance|cd '$ROOT' && ./scripts/run_alpha_acceptance.sh")
+fi
+
+if [[ "$WITH_P1" -eq 1 ]]; then
+  steps+=("worker_reconcile_smoke|cd '$ROOT' && ./scripts/worker_reconcile_smoke.sh")
 fi
 
 pass=0
@@ -48,6 +57,7 @@ echo "output_dir=$RUN_DIR" | tee -a "$SUMMARY_TXT"
 echo "{" > "$SUMMARY_JSON"
 echo "  \"timestamp\": \"$TS\"," >> "$SUMMARY_JSON"
 echo "  \"quick\": $QUICK," >> "$SUMMARY_JSON"
+echo "  \"with_p1\": $WITH_P1," >> "$SUMMARY_JSON"
 echo "  \"steps\": [" >> "$SUMMARY_JSON"
 
 for i in "${!steps[@]}"; do

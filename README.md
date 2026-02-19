@@ -116,8 +116,10 @@ From repo root:
 
 ```bash
 ./scripts/p0_acceptance.sh
-# or quick mode (skip full alpha acceptance)
+# quick mode (skip full alpha acceptance)
 ./scripts/p0_acceptance.sh --quick
+# include P1 worker restart-reconcile smoke
+./scripts/p0_acceptance.sh --with-p1
 ```
 
 Artifacts:
