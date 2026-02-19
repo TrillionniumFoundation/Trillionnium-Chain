@@ -1,13 +1,13 @@
 # TrillionniumChain STATUS
 
-更新日期：2026-02-19（14:10 CST）
+更新日期：2026-02-19（22:12 CST）
 负责人：齐教授 / 发发
 
 ## 1) 当前状态（可发布基线视角）
 
 ### 仓库状态
 - 分支：`main`
-- 相对远端：`ahead 14`（本地领先 14 个提交，尚未推送）
+- 相对远端：`aligned`（`main` 与 `origin/main` 已对齐）
 - 最新提交主题集中在：
   - PoUW v0.2 状态机与 CLI 闭环
   - Alpha 场景稳定性与验收脚本
@@ -107,12 +107,250 @@
 - 已将 `p0_merge_gate.sh` 默认接入 Rust 旁路链路（默认 `WITH_RUST_VERIFY=1` 后置执行 P1+verifier）。
   - 备注：当前 P0 前置阶段存在本地序列/提交竞态（`smoke_pouw_cli_flow`、`worker_reconcile_smoke`），导致 gate 在进入 P1 前失败，需先修复稳定性。
 
+## 13) Rust L1（全 Rust 主线）启动决策（2026-02-19 晚）
+
+- 决策更新：允许 break change，优先高吞吐任务流，目标 1 周压缩交付。
+- 新增文档：
+  - `docs/protocol/rust-l1-rfc-001.md`
+  - `docs/architecture/rust-l1-repo-layout.md`
+  - `docs/protocol/rust-l1-day1-tasklist.md`
+- 执行策略：先冻结架构与并发语义，再推进 Day-1 workspace/类型/冲突检测原型。
+
+## 14) Rust L1 Day-2 进展（2026-02-19 夜）
+
+- `trnm-state` 已实现 versioned object store 原型：
+  - `put_task_new`（新建对象）
+  - `update_task(expected_ref, ...)`（基于版本乐观并发控制）
+  - `state_root()`（SHA-256 聚合根）
+- `trnm-types` 已扩展对象化核心类型：`TaskObject` + `TaskStatus`（`repr(u8)`）
+- `trnm-pouw` 已接入状态层并落地首条真实状态转移：
+  - `apply_create_task`
+  - `apply_commit_result`
+- 单测与工作区验证：`cargo test --workspace` 全绿。
+
+## 15) Rust L1 Day-3 进展（2026-02-19 夜）
+
+- `trnm-pouw` 已补齐核心链路：
+  - `apply_reveal_result`
+  - `apply_challenge`
+  - `apply_resolve(slash_worker: bool)`
+- 已接入 commitment 校验公式：
+  - `sha256("{task_id}|{hex(result_hash)}|{hex(reveal_salt)}|{worker}")`
+- 新增错误类型与防护：
+  - `MissingWorker` / `MissingCommitment` / `CommitmentMismatch` / `InvalidTransition`
+- 新增回归单测：
+  - 全路径 happy case（最终 `Completed`）
+  - forged reveal 拒绝（`CommitmentMismatch`）
+  - 非 `Revealed` 状态 challenge 拒绝
+- 验证结果：`cargo test -p trnm-pouw` 与 `cargo test --workspace` 全绿。
+
+## 16) Rust L1 Day-4 进展（2026-02-19 夜）
+
+- `trnm-node` 已接入配置解析（TOML）与 CLI 参数：
+  - `--config`
+  - `--block-ms`
+  - `--max-blocks`
+- 已实现 mock 共识出块循环（内存态）：
+  - 周期性产出 `[block]` 日志（height 递增）
+  - `max_blocks` 到达后优雅退出
+- 已补齐 3 节点配置：
+  - `trillionnium-rust/configs/node1.toml`
+  - `trillionnium-rust/configs/node2.toml`
+  - `trillionnium-rust/configs/node3.toml`
+- 已新增 devnet 脚本：
+  - `trillionnium-rust/scripts/devnet_up.sh`
+  - `trillionnium-rust/scripts/devnet_down.sh`
+- 验证：`cargo check --workspace` 通过，`cargo run -p trnm-node -- --config configs/node1.toml --block-ms 50 --max-blocks 3` 成功出块并退出。
+
+## 17) Rust L1 Day-5 进展（2026-02-19 夜）
+
+- `trnm-node` 已接入真实执行路径（内存态）：
+  - 接入 `trnm-state`（状态存储 + state_root）
+  - 接入 `trnm-pouw`（create/commit/reveal/challenge/resolve）
+- 新增 demo mempool（队列）与按块执行：
+  - 每块执行固定批量交易（当前 `txs_per_block=2`）
+  - 执行后输出 `state_root`（hex）
+- 已完成端到端演示交易流：
+  - `CreateTask -> Commit -> Reveal -> Challenge -> Resolve`
+- 验证命令：
+  - `cargo check --workspace`
+  - `cargo run -p trnm-node -- --config configs/node1.toml --block-ms 50 --max-blocks 10`
+- 运行结果：连续出块并执行交易，mempool 清空后自动退出（示例 3 个 block，tx 2/2/1）。
+
+## 18) Rust L1 Day-6 进展（2026-02-19 夜）
+
+- 已将并发调度接入出块执行路径（planning 层）：
+  - `trnm-executor` 新增 `build_parallel_groups(txs)`
+  - 语义：组内无冲突（可并行），组间按序执行
+- `trnm-node` 已在每个 block 中执行：
+  1. 从 mempool 取批次
+  2. 生成读写集声明（`Tx`）
+  3. 用 `build_parallel_groups` 分组
+  4. 按组应用交易（当前为串行执行，保留并行执行 TODO）
+- demo mempool 扩展为 2 个 task 流，验证跨 task 并发可分组。
+- 新增压测入口：
+  - `trillionnium-rust/crates/trnm-bench`（并发分组基准）
+  - `trillionnium-rust/scripts/run_bench.sh`
+- 运行样本：
+  - node：`height=1..3`，`groups=3/2/2`，mempool 清空退出
+  - bench：`txs=20000 groups=10 elapsed_ms=8604`
+- 验证：`cargo test --workspace` 全绿。
+
+## 19) Rust L1 Day-7 进展（2026-02-19 夜）
+
+- 已新增 RC 与演示交付脚本：
+  - `trillionnium-rust/scripts/demo_day7.sh`
+  - `trillionnium-rust/scripts/release_rc.sh`
+- 已新增文档：
+  - `docs/protocol/rust-l1-week1-rc.md`
+  - `docs/runbooks/rust-l1-rollback-runbook.md`
+- 演示脚本已实跑：
+  - node demo 输出：`trillionnium-rust/run/day7/node-demo.log`
+  - bench 输出：`trillionnium-rust/run/day7/bench.log`
+  - bench 样本：`txs=20000 groups=10 elapsed_ms=8624`
+- RC 打包已实跑：
+  - 输出目录：`trillionnium-rust/release/rc-20260219-194509`
+  - 产物包含：`cargo-test.log` / `cargo-build.log` / `manifest.txt` / node configs
+
+## 20) Rust L1 后续动作-1（状态根对账，2026-02-19 夜）
+
+- 新增脚本：`trillionnium-rust/scripts/audit_state_roots.sh`
+  - 输入：`run/node1.log` / `run/node2.log` / `run/node3.log`
+  - 输出：`run/audit/state-root-audit-<ts>.txt`
+  - 逻辑：按 `height` 对齐三节点 `state_root`，标记 `OK/MISSING/MISMATCH`
+- 已完成一次实跑：
+  - 报告：`trillionnium-rust/run/audit/state-root-audit-20260219-194739.txt`
+  - 结果：`ok=true mismatch=0 missing=0 heights=3`
+
+## 21) Rust L1 后续动作-2（可注入负载与冲突率压测，2026-02-19 夜）
+
+- `trnm-bench` 已支持可配置负载参数：
+  - `--txs`（交易数）
+  - `--keys`（热点键数，越小冲突率越高）
+- `run_bench.sh` 已支持环境变量：
+  - `TXS=<n> KEYS=<k> ./scripts/run_bench.sh`
+- 新增矩阵压测脚本：
+  - `trillionnium-rust/scripts/run_bench_matrix.sh`
+  - 输出：`trillionnium-rust/run/bench/bench-matrix-<ts>.txt`
+- `trnm-node` 已支持注入式 demo 负载参数：
+  - `--demo-tasks`（任务流数量）
+  - `--demo-keys`（并发规划冲突键空间）
+- 样本结果：
+  - `TXS=5000 ./scripts/run_bench_matrix.sh` 已生成报告
+  - `cargo run -p trnm-node -- --demo-tasks 6 --demo-keys 3` 连续执行 8 个 block 至 mempool 清空（无状态机异常）
+
+## 22) Rust L1 后续动作-3（Nightly 健康检查 CI，2026-02-19 夜）
+
+- 新增 workflow：`.github/workflows/rust-l1-nightly-health.yml`
+- 触发：
+  - 每日定时（cron）
+  - `workflow_dispatch`
+  - `trillionnium-rust/**` 相关 push
+- 作业内容：
+  1. `cargo test --workspace`
+  2. `devnet_up/down + audit_state_roots.sh`
+  3. `TXS=5000 ./scripts/run_bench_matrix.sh`
+- artifacts：
+  - `trillionnium-rust/run/audit/**`
+  - `trillionnium-rust/run/bench/**`
+  - `trillionnium-rust/run/node*.log`
+- 同步更新 RC 文档：`docs/protocol/rust-l1-week1-rc.md`（新增自动化健康检查章节）。
+
+## 23) Rust L1 后续动作-4（并行执行器接线首版，2026-02-19 夜）
+
+- `trnm-node` 新增参数：`--parallel-workers`（默认 4）
+- 出块执行链路升级：
+  - 对每个并发分组先进行组内并行 pre-execution（多 worker 线程）
+  - 然后按 `tx_id` 排序进行确定性合并/应用（保证结果可重放）
+- 当前策略：并行阶段用于预执行计算，状态提交仍保持确定性顺序 apply。
+- 验证命令：
+  - `cargo check --workspace`
+  - `cargo run -p trnm-node -- --config configs/node1.toml --block-ms 10 --max-blocks 4 --demo-tasks 6 --demo-keys 3 --parallel-workers 4`
+- 结果：连续出块成功，状态根稳定演进。
+
+## 24) Rust L1 后续动作-5（并行 apply + 回滚首版，2026-02-19 夜）
+
+- `trnm-state::StateStore` 新增 `Clone`，用于事务级快照与回滚。
+- `trnm-node` 组内执行升级：
+  - 并行 pre-execution 不再是空计算，改为在快照状态上真实试执行 `apply_one`。
+  - pre-exec 失败交易会被提前剔除并记录 `[preexec] ... rejected`。
+- 提交阶段新增回滚：
+  - 每笔交易提交前保存 `before` 快照
+  - 提交失败时恢复 `state = before`，并输出 `rollback=true`
+- 保持确定性：
+  - 组内先并行试执行
+  - 再按 `tx_id` 排序做确定性提交
+- 验证：
+  - `cargo test --workspace` 全绿
+  - `cargo run -p trnm-node -- --parallel-workers 4 ...` 连续出块成功，状态根稳定。
+
+## 25) Rust L1 后续动作-6（并行模式纳入 Nightly 强门禁，2026-02-19 夜）
+
+- 已更新 `.github/workflows/rust-l1-nightly-health.yml`：
+  - 新增步骤 `Run parallel mode sanity (hard gate)`
+  - 执行 `trnm-node --parallel-workers 4` 的并行路径实跑
+  - 若日志出现 `apply_error` 或 `rollback=true`，直接 fail job
+- artifacts 新增：`trillionnium-rust/run/parallel-sanity.log`
+- RC 文档已同步：`docs/protocol/rust-l1-week1-rc.md`
+  - Nightly 覆盖项增加“并行模式硬门禁”
+
+## 26) Rust L1 后续动作-7（执行器热路径优化 + 实验策略，2026-02-19 22:00~22:10 CST）
+
+- 已完成 `trnm-executor` 热路径优化（保持语义不变）：
+  - `Original` 路径将每 tx 读写集去重由 `HashSet` 改为轻量 `Vec` 去重，降低热路径分配与哈希开销。
+  - 冲突判定与分组语义保持不变（并发安全约束未放松）。
+- 新增实验策略：`AggressiveGreedy`（非默认）
+  - 已在 `trnm-bench` 暴露 `--strategy aggressive-greedy`。
+  - 用于后续探索更激进并发装箱，不影响默认执行路径。
+- 测试验证：`cargo test -p trnm-executor` 全绿（6/6）。
+- Spot-check 性能（`txs=20000`）：
+  - Classic `keys=1000`：`47ms -> 31ms`
+  - Mixed `keys=2000 read_fanout=4 write_every=2`：`77ms -> 53ms`
+- 代码提交与同步：
+  - commit：`7d7c76e`
+  - push：`origin/main` 已完成。
+
 ## 10) Definition of Done（本轮）
 
 - [ ] 所有 P0 项均有 owner 与截止时间
 - [ ] 关键测试可一键复现（命令固定）
-- [ ] `main` 与 `origin/main` 对齐（或仅保留明确的待审 PR）
+- [x] `main` 与 `origin/main` 对齐（或仅保留明确的待审 PR）
 - [ ] v1 闭环接口冻结并文档化
+
+## 11) Rust 旁路复验补充记录（2026-02-19 18:52~18:56 CST）
+
+- 触发来源：`sharp-cr` 执行完成（code=0），导出 verifier 输入目录：
+  - `data/verifier-input/20260219-185212`
+- 本地 Rust 复验执行：
+  - `INPUT_DIR=data/verifier-input/20260219-185212`
+  - `OUT_DIR=data/rust-verifier-local/20260219-185212`
+  - 结果：`processed=3`
+- 复验产物：
+  - `data/rust-verifier-local/20260219-185212/scenario_C.json`
+  - `data/rust-verifier-local/20260219-185212/scenario_F.json`
+  - `data/rust-verifier-local/20260219-185212/scenario_G.json`
+- 统计结论：
+  - `matched=3, mismatch=0`
+- 字段级 diff（input vs rust output）：
+  - 共同字段（如 `task_id` / `trace_id` / `committed_hash`）无值差异
+  - 输入侧独有：`result_hash`, `reveal_salt`, `worker_address`
+  - 输出侧独有：`expected_hash`, `matched`, `reason`
+- 结论：Rust verifier 输出形态稳定，符合“输入子集 + 校验增强字段”预期，可作为 P1 负向套件旁路证据链样本。
+
+## 12) CI 联动作业草案（P1 + Rust sidecar）
+
+- 新增 workflow：`.github/workflows/p1-rust-sidecar.yml`
+- 触发：`pull_request` / `push(main)` / `workflow_dispatch`
+- 运行环境：`self-hosted, macOS`（依赖本地链 RPC）
+- 核心流程：
+  1. preflight 检查 `127.0.0.1:26657`
+  2. 执行 `WITH_RUST_VERIFY=1 ./scripts/p1_negative_suite.sh`
+  3. 读取最新 `data/p1-negative/*/summary.json` 做 advisory 汇总
+  4. 上传 `p1-negative` + `verifier-input` + `rust-verifier-local` artifacts
+- 策略：sidecar 检查目前为 **advisory/non-blocking**（异常以 warning 暴露，不阻断主执行）。
+- 已同步门禁文档：`docs/MANUAL_MERGE_GATE_CHECKLIST.md`
+  - P1 命令更新为 `WITH_RUST_VERIFY=1`
+  - 增加 Rust 阈值（`rust_verify_rc=0 && rust_verify_mismatch=0`）与 artifacts 证据项
 
 ## 6) P1-1 Dry-run 演练结果（2026-02-19 16:44 CST）
 
