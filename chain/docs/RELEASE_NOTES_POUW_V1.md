@@ -4,27 +4,37 @@ Date: 2026-02-18
 
 ## Summary
 
-PoUW (Proof of Useful Work) task settlement flow is now implemented as a challengeable lifecycle:
+PoUW (Proof of Useful Work) task settlement flow is now implemented as a challengeable lifecycle (canonical):
 
-1. `submit-result` (worker submits deterministic result hash)
-2. `challenge-result` (challenger opens dispute within window)
-3. `resolve-challenge` (authority resolves success/fail)
+1. `accept-task` (bind worker)
+2. `commit-result` (commit hash)
+3. `reveal-result` (reveal deterministic result hash)
+4. `challenge-result` (challenger opens dispute within window)
+5. `resolve-challenge` (authority resolves success/fail) or EndBlock auto-finalize after window expiry
 
 This replaces the previous one-shot `update-task` completion behavior for normal operations.
+
+Compatibility:
+- `submit-result` remains available as a legacy path for older integrations.
 
 ---
 
 ## New Tx Messages
 
-- `MsgSubmitResult`
+- `MsgAcceptTask`
+- `MsgCommitResult`
+- `MsgRevealResult`
 - `MsgChallengeResult`
 - `MsgResolveChallenge`
 
 CLI tx commands now include:
 
-- `chaind tx workload submit-result [task-id] [result-hash] [result-uri]`
+- `chaind tx workload accept-task [task-id]`
+- `chaind tx workload commit-result [task-id] [commit-hash]`
+- `chaind tx workload reveal-result [task-id] [result-hash] [result-uri] [reveal-salt]`
 - `chaind tx workload challenge-result [task-id] [reason] [evidence-uri]`
 - `chaind tx workload resolve-challenge [task-id] [challenge-succeeded] [final-result-hash] [memo]`
+- `chaind tx workload submit-result [task-id] [result-hash] [result-uri]` (legacy compatibility)
 
 ## New Query APIs
 
@@ -60,11 +70,13 @@ CLI query commands now include:
 - Task finalized as completed and task bounty burn policy applied.
 
 ### Auto finalize
-- In EndBlock, tasks in `RESULT_SUBMITTED` status are auto-finalized once challenge window expires.
+- In EndBlock, tasks in `REVEALED` status are auto-finalized once challenge window expires.
+- `RESULT_SUBMITTED` is retained only as a legacy alias name in source compatibility.
 
 ## Deprecation
 
 - `update-task` remains available for compatibility but is deprecated for normal PoUW settlement.
+- `submit-result` remains available as legacy compatibility path; canonical production flow is commit/reveal.
 - Deprecated path now emits deprecation event to encourage migration.
 
 ## Reliability Fixes Included

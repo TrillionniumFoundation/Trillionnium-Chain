@@ -8,16 +8,19 @@ Use this checklist before deploying PoUW V1 to shared environments.
 - [ ] `make smoke-pouw-e2e` passes
 - [ ] `./tools/smoke_pouw_cli_flow.sh` passes
 - [ ] `make check-pouw-cmds` returns `[ok] command hooks found`
-- [ ] `chaind tx workload --help` shows `submit-result/challenge-result/resolve-challenge`
+- [ ] `chaind tx workload --help` shows `accept-task/commit-result/reveal-result/challenge-result/resolve-challenge`
+- [ ] `submit-result` is marked legacy in help/output
 - [ ] `chaind query workload --help` shows `list-challenge/show-challenge`
 
 ## B. Protocol & State Semantics
 
-- [ ] `submit-result` moves task to RESULT_SUBMITTED
-- [ ] `challenge-result` moves task to CHALLENGED and stores challenge object
+- [ ] `accept-task` moves task `OPEN -> ASSIGNED`
+- [ ] `commit-result` moves task `ASSIGNED -> COMMITTED`
+- [ ] `reveal-result` moves task `COMMITTED -> REVEALED` (aka legacy RESULT_SUBMITTED alias)
+- [ ] `challenge-result` moves task `REVEALED -> CHALLENGED` and stores challenge object
 - [ ] `resolve-challenge(true)` slashes worker and refunds challenger deposit
 - [ ] `resolve-challenge(false)` applies challenger penalty+refund and completes task
-- [ ] EndBlock auto-finalizes RESULT_SUBMITTED tasks after challenge window expiry
+- [ ] EndBlock auto-finalizes `REVEALED` tasks after challenge window expiry
 - [ ] Logic does not rely on `challenge_id != 0` to detect challenged state
 
 ## C. Economics Parameters (initial baseline)
@@ -39,6 +42,7 @@ Use this checklist before deploying PoUW V1 to shared environments.
 - [ ] Release notes reviewed: `docs/RELEASE_NOTES_POUW_V1.md`
 - [ ] Migration guide reviewed: `docs/MIGRATION_POUW_V1.md`
 - [ ] Team notified that `update-task` is deprecated for production settlement flow
+- [ ] Legacy `submit-result` compatibility window and deprecation timeline are documented
 - [ ] Rollback plan documented (binary/version/config)
 
 ## F. Observability
