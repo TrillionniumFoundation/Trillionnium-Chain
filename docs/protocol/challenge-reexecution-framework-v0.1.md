@@ -35,6 +35,8 @@ resolve memo 推荐包含：
 - `reexec_version=`
 - `trace_id=`（用于 worker log / chain event / reexec artifact 串联）
 
+当前实现：`resolve-challenge` 事件会从 memo 解析 `trace_id=` 并写入事件属性。
+
 ## v0.2 演进方向
 - 引入标准化重执行报告 schema（JSON）
 - 对 resolver 增加 report digest 校验

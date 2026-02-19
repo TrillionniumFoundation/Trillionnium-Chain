@@ -4,6 +4,7 @@ import (
 	"context"
 	"os"
 	"strconv"
+	"strings"
 
 	"chain/x/workload/types"
 	errorsmod "cosmossdk.io/errors"
@@ -11,6 +12,18 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
+
+func extractTraceID(memo string) string {
+	if memo == "" {
+		return ""
+	}
+	for _, tok := range strings.Fields(memo) {
+		if strings.HasPrefix(tok, "trace_id=") {
+			return strings.TrimPrefix(tok, "trace_id=")
+		}
+	}
+	return ""
+}
 
 func (k msgServer) SubmitResult(goCtx context.Context, msg *types.MsgSubmitResult) (*types.MsgSubmitResultResponse, error) {
 	if msg == nil {
@@ -220,12 +233,14 @@ func (k msgServer) ResolveChallenge(goCtx context.Context, msg *types.MsgResolve
 		}
 		k.SetChallenge(ctx, challenge)
 	}
-	ctx.EventManager().EmitEvent(
-		sdk.NewEvent("workload_resolve_challenge",
-			sdk.NewAttribute("task_id", strconv.FormatUint(msg.TaskId, 10)),
-			sdk.NewAttribute("challenge_succeeded", strconv.FormatBool(msg.ChallengeSucceeded)),
-		),
-	)
+	attrs := []sdk.Attribute{
+		sdk.NewAttribute("task_id", strconv.FormatUint(msg.TaskId, 10)),
+		sdk.NewAttribute("challenge_succeeded", strconv.FormatBool(msg.ChallengeSucceeded)),
+	}
+	if traceID := extractTraceID(msg.Memo); traceID != "" {
+		attrs = append(attrs, sdk.NewAttribute("trace_id", traceID))
+	}
+	ctx.EventManager().EmitEvent(sdk.NewEvent("workload_resolve_challenge", attrs...))
 
 	return &types.MsgResolveChallengeResponse{}, nil
 }
