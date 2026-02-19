@@ -4,9 +4,14 @@
 # Build artifacts
 /build/
 /dist/
+/trillionnium-rust/target/
+/trillionnium-rust/run/
+/trillionnium-rust/release/
 
 # Runtime logs
 *.log
+!legacy/**/chain.log
+!legacy/**/worker.log
 
 # Local runtime data
 /data/
@@ -23,3 +28,6 @@
 /chain/third_party/
 /chain/vendor/
 /chain/_proto_vendor_backup/
+
+# Local legacy archive (kept outside git history)
+/legacy/
