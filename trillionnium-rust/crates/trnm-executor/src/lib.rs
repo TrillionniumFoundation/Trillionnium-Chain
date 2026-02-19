@@ -36,10 +36,23 @@ fn access_key(obj: &ObjectRef) -> (u64, u64) {
 
 #[inline]
 fn dedup_access_keys(objs: &[ObjectRef]) -> Vec<(u64, u64)> {
+    // Small-set fast path avoids HashSet allocation for common tiny access lists.
+    if objs.len() <= 8 {
+        let mut out: Vec<(u64, u64)> = Vec::with_capacity(objs.len());
+        for obj in objs {
+            let key = access_key(obj);
+            if !out.contains(&key) {
+                out.push(key);
+            }
+        }
+        return out;
+    }
+
+    let mut seen: HashSet<(u64, u64)> = HashSet::with_capacity(objs.len());
     let mut out: Vec<(u64, u64)> = Vec::with_capacity(objs.len());
     for obj in objs {
         let key = access_key(obj);
-        if !out.contains(&key) {
+        if seen.insert(key) {
             out.push(key);
         }
     }
@@ -54,6 +67,15 @@ fn intersects(x: &[ObjectRef], y: &[ObjectRef]) -> bool {
     let (small, large) = if x.len() <= y.len() { (x, y) } else { (y, x) };
     let seen: HashSet<(u64, u64)> = small.iter().map(access_key).collect();
     large.iter().any(|obj| seen.contains(&access_key(obj)))
+}
+
+#[inline]
+fn hashset_intersects(a: &HashSet<(u64, u64)>, b: &HashSet<(u64, u64)>) -> bool {
+    if a.is_empty() || b.is_empty() {
+        return false;
+    }
+    let (small, large) = if a.len() <= b.len() { (a, b) } else { (b, a) };
+    small.iter().any(|k| large.contains(k))
 }
 
 /// Build parallel-safe groups:
@@ -80,16 +102,18 @@ pub fn build_parallel_groups_profile_with_strategy(
 
     let mut groups: Vec<Vec<Tx>> = Vec::new();
 
+    // Pre-size maps to reduce rehashing on large workloads.
+    let map_cap = (txs.len() / 2).max(64);
     // object(id,version) -> latest group that has a writer touching this object
-    let mut latest_writer_group: HashMap<(u64, u64), usize> = HashMap::new();
+    let mut latest_writer_group: HashMap<(u64, u64), usize> = HashMap::with_capacity(map_cap);
     // object(id,version) -> latest group that has a reader touching this object
-    let mut latest_reader_group: HashMap<(u64, u64), usize> = HashMap::new();
+    let mut latest_reader_group: HashMap<(u64, u64), usize> = HashMap::with_capacity(map_cap);
 
     // Profiling counters (lightweight approximation instead of pairwise O(n^2) scans)
     let mut conflict_checks = 0usize;
     let mut conflict_hits = 0usize;
 
-    for tx in ordered.iter().cloned() {
+    for tx in ordered {
         // minimal group index forced by previous conflicting accesses
         let mut required_group = 0usize;
 
@@ -123,7 +147,7 @@ pub fn build_parallel_groups_profile_with_strategy(
         if groups.len() <= required_group {
             groups.resize_with(required_group + 1, Vec::new);
         }
-        groups[required_group].push(tx.clone());
+        groups[required_group].push(tx);
 
         for key in read_keys {
             latest_reader_group.insert(key, required_group);
@@ -168,8 +192,9 @@ fn build_parallel_groups_aggressive_profile(
 
     // Lower-bound index hints (same semantics as Original strategy):
     // a tx cannot be placed before the latest conflicting writer/reader + 1.
-    let mut latest_writer_group: HashMap<(u64, u64), usize> = HashMap::new();
-    let mut latest_reader_group: HashMap<(u64, u64), usize> = HashMap::new();
+    let map_cap = (original_txs.len() / 2).max(64);
+    let mut latest_writer_group: HashMap<(u64, u64), usize> = HashMap::with_capacity(map_cap);
+    let mut latest_reader_group: HashMap<(u64, u64), usize> = HashMap::with_capacity(map_cap);
 
     let mut conflict_checks = 0usize;
     let mut conflict_hits = 0usize;
@@ -198,12 +223,18 @@ fn build_parallel_groups_aggressive_profile(
         for idx in min_group..groups.len() {
             conflict_checks += 1;
 
-            // Read conflicts with prior writes in the same group.
-            let rw_conflict = read_keys.iter().any(|k| group_write_keys[idx].contains(k));
-            // Write conflicts with prior reads/writes in the same group.
-            let ww_conflict = write_keys.iter().any(|k| group_write_keys[idx].contains(k));
-            let wr_conflict = write_keys.iter().any(|k| group_read_keys[idx].contains(k));
-            if rw_conflict || ww_conflict || wr_conflict {
+            // Write-vs-write tends to be hottest; short-circuit early on conflict.
+            if hashset_intersects(&write_keys, &group_write_keys[idx]) {
+                conflict_hits += 1;
+                continue;
+            }
+            // Then write-vs-read.
+            if hashset_intersects(&write_keys, &group_read_keys[idx]) {
+                conflict_hits += 1;
+                continue;
+            }
+            // Finally read-vs-write.
+            if hashset_intersects(&read_keys, &group_write_keys[idx]) {
                 conflict_hits += 1;
                 continue;
             }
