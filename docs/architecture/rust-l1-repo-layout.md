@@ -51,3 +51,9 @@ trillionnium-rust/
 
 - 新分支：`feat/rust-l1-week1`
 - 每天一里程碑 tag：`rust-l1-d1` ... `rust-l1-d7`
+
+## 架构文档导航
+
+- 仓库结构（本文）：`docs/architecture/rust-l1-repo-layout.md`
+- PoUW 端到端时序（create → resolve）：`docs/architecture/rust-l1-pouw-sequence.md`
+- 协议冻结基线（v1）：`docs/protocol/rust-l1-v1-interface-freeze.md`

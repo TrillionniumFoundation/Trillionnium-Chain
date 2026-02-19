@@ -92,7 +92,7 @@ Result: `ok=true mismatch=0 missing=0 heights=3`
 - 快速路径：
   1) `./scripts/devnet_down.sh`
   2) 归档 `run/` 证据
-  3) 切回 Go/Cosmos 主线并做健康检查
+  3) 切回稳定分支并做健康检查
   4) 重跑 P0/P1 门禁确认恢复
 
 ## Next Recommended Step (Post-P2 RC)
