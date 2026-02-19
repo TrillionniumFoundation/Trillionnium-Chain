@@ -44,6 +44,7 @@ class ChainListener:
         self.seen_jobs = set()
         self.in_flight_jobs = set()
         self.sequence = None
+        self.job_phases = {}
         self._load_state()
 
     def listen_loop(self):
@@ -88,6 +89,7 @@ class ChainListener:
                 data = json.loads(self.state_file.read_text())
                 self.seen_jobs = set(data.get("seen_jobs", []))
                 self.sequence = data.get("sequence")
+                self.job_phases = data.get("job_phases", {})
         except Exception:
             self.seen_jobs = set()
             self.sequence = None
@@ -97,6 +99,7 @@ class ChainListener:
             self.state_file.write_text(json.dumps({
                 "seen_jobs": sorted(list(self.seen_jobs)),
                 "sequence": self.sequence,
+                "job_phases": self.job_phases,
             }, ensure_ascii=False, indent=2))
         except Exception as e:
             logger.warning(f"Failed to save state: {e}")
@@ -120,6 +123,33 @@ class ChainListener:
         self.sequence = seq
         self._save_state()
         return seq
+
+    def _set_job_phase(self, job_id, phase):
+        self.job_phases[str(job_id)] = phase
+        self._save_state()
+
+    def _wait_tx_commit(self, txhash, timeout_sec=60):
+        for _ in range(timeout_sec):
+            cmd = [
+                self.chain_bin, "query", "tx", txhash,
+                "--home", self.home,
+                "-o", "json",
+            ]
+            r = subprocess.run(cmd, capture_output=True, text=True)
+            if r.returncode == 0:
+                try:
+                    data = json.loads(r.stdout)
+                except Exception:
+                    data = {}
+                code = data.get("code")
+                if code is None and isinstance(data.get("tx_response"), dict):
+                    code = data["tx_response"].get("code", 0)
+                if int(code or 0) == 0:
+                    return True, ""
+                raw = data.get("raw_log") or (data.get("tx_response") or {}).get("raw_log", "")
+                return False, raw or f"tx committed with code={code}"
+            time.sleep(1)
+        return False, f"tx not committed in {timeout_sec}s: {txhash}"
 
     def ensure_worker_registered(self):
         """Idempotently register worker in workload module so compute claim won't fail with worker-not-found."""
@@ -175,6 +205,7 @@ class ChainListener:
         if job_id in self.seen_jobs or job_id in self.in_flight_jobs:
             return
         self.in_flight_jobs.add(job_id)
+        self._set_job_phase(job_id, "detected")
 
         logger.info(f"🔔 New Job Detected! ID: {job_id} | Payload: {payload}")
         
@@ -187,8 +218,10 @@ class ChainListener:
         # Claim job on-chain first (set status=RUNNING and assigned_worker)
         if not self.request_job_execution(job_id):
             logger.warning(f"Skip Job {job_id}: failed to claim execution rights")
+            self._set_job_phase(job_id, "claim_failed")
             self.in_flight_jobs.discard(job_id)
             return
+        self._set_job_phase(job_id, "accepted")
 
         # Trigger Execution
         logger.info(f"⚙️ Starting execution for Job {job_id}...")
@@ -211,7 +244,8 @@ class ChainListener:
         
         # 2. Execute
         stdout, code = self.executor.execute_task(payload)
-        
+        self._set_job_phase(job_id, "executed")
+
         # 3. Submit Result
         if code == 0:
             logger.info(f"Task succeeded. Result: {stdout[:50]}...")
@@ -220,46 +254,59 @@ class ChainListener:
             committed = self.submit_result(job_id, stdout)
             if committed:
                 self.seen_jobs.add(job_id)
+                self._set_job_phase(job_id, "finalized")
                 self._save_state()
+            else:
+                self._set_job_phase(job_id, "submit_failed")
         else:
             logger.error(f"Task failed. Code: {code}")
+            self._set_job_phase(job_id, "execute_failed")
             # Optionally submit failure report
 
         self.in_flight_jobs.discard(job_id)
 
     def _run_chain_tx(self, args):
         def run_once():
-            cmd = [self.chain_bin] + args + ["--home", self.home, "--broadcast-mode", "sync"]
+            cmd = [self.chain_bin] + args + ["--home", self.home, "--broadcast-mode", "sync", "-o", "json"]
             r = subprocess.run(cmd, capture_output=True, text=True)
             out = (r.stdout or "") + (r.stderr or "")
-            ok = (r.returncode == 0) and (
-                "code: 0" in out or '"code":0' in out or '"code": 0' in out
-            )
-            return ok, r, out, cmd
+            txhash = None
+            code = None
+            raw_log = ""
+            try:
+                data = json.loads(r.stdout or "{}")
+                txhash = data.get("txhash")
+                code = data.get("code", 0)
+                raw_log = data.get("raw_log", "")
+            except Exception:
+                pass
+            ok_sync = (r.returncode == 0) and (int(code or 0) == 0)
+            return ok_sync, r, out, cmd, txhash, raw_log
 
         benign_markers = [
             "already registered",
             "not in CREATED state",
             "not found in workload module",
         ]
-        quiet_benign_markers = [
-            "worker already registered",
-        ]
 
         for attempt in range(6):
-            ok, r, out, cmd = run_once()
-            if ok:
-                return True
+            ok_sync, r, out, cmd, txhash, raw_log = run_once()
+            if ok_sync and txhash:
+                committed, err = self._wait_tx_commit(txhash)
+                if committed:
+                    return True
+                out = f"{out}\ncommit-check: {err}"
             if "account sequence mismatch" in out:
+                try:
+                    self._query_sequence()
+                except Exception:
+                    pass
                 time.sleep(0.8 + attempt * 0.3)
                 continue
             if any(m in out for m in benign_markers):
-                if any(m in out for m in quiet_benign_markers):
-                    logger.debug("Worker already registered; skip re-register")
-                else:
-                    logger.info(f"Benign tx skip: {' '.join(cmd)}\n{out.strip()}")
+                logger.info(f"Benign tx skip: {' '.join(cmd)}\n{(raw_log or out).strip()}")
                 return False
-            break
+            time.sleep(0.5)
 
         logger.error(f"TX failed rc={r.returncode}: {' '.join(cmd)}\n{out}")
         return False
@@ -289,6 +336,7 @@ class ChainListener:
                 "--yes", "--gas", "auto", "--gas-adjustment", "1.5",
             ])
             if ok:
+                self._set_job_phase(job_id, "committed")
                 logger.info(f"✅ Job {job_id} result committed on-chain")
                 return True
             return False
