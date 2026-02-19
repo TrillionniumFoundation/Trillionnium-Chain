@@ -66,6 +66,16 @@ Decision hint:
 - `data/observability/legacy-submit/YYYY-MM-DD.txt`
 - `data/observability/legacy-submit/weekly-summary-YYYY-WW.md`
 
+生成脚本（新增）：
+- `scripts/legacy_submit_daily_report.sh`
+
+示例：
+```bash
+bash scripts/legacy_submit_daily_report.sh
+# 或
+DATE_TAG=2026-02-19 OUT_DIR=data/observability/legacy-submit bash scripts/legacy_submit_daily_report.sh
+```
+
 ## 7. 删除门槛建议（与 P3 对齐）
 
 - 连续 14 天 `legacy_submit_total == 0`
