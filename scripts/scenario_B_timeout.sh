@@ -62,12 +62,26 @@ before_id=$(latest_task_id)
 before_total=$(latest_task_total)
 log "Latest task before submit: id=$before_id total=$before_total"
 
+current_seq() {
+  local addr
+  addr="$($BIN keys show bob -a --keyring-backend test --home "$HOME_DIR")"
+  "$BIN" query auth account "$addr" -o json --node "$NODE" --home "$HOME_DIR" \
+    | python3 -c 'import json,sys;o=json.load(sys.stdin);a=o.get("account",{});print(a.get("sequence") or a.get("base_account",{}).get("sequence") or 0)'
+}
+
 submit_ok=0
-for _ in {1..8}; do
+seq_override=""
+for _ in {1..20}; do
+  if [[ -n "$seq_override" ]]; then
+    seq="$seq_override"
+  else
+    seq="$(current_seq || echo 0)"
+  fi
+
   set +e
   SUBMIT_OUT="$($BIN tx workload create-task "$TASK_PATH" 0 0 "" "" \
     --from bob --keyring-backend test --chain-id "$CHAIN_ID" \
-    --node "$NODE" --home "$HOME_DIR" --yes --gas auto --gas-adjustment 1.5 -o json 2>&1)"
+    --node "$NODE" --home "$HOME_DIR" --sequence "$seq" --yes --gas auto --gas-adjustment 1.5 -o json 2>&1)"
   SUBMIT_RC=$?
   set -e
   if [[ $SUBMIT_RC -eq 0 ]] && grep -q '"code":0' <<<"${SUBMIT_OUT// /}"; then
@@ -75,7 +89,8 @@ for _ in {1..8}; do
     break
   fi
   if grep -qi "account sequence mismatch" <<<"$SUBMIT_OUT"; then
-    sleep 0.9
+    seq_override="$(echo "$SUBMIT_OUT" | sed -n 's/.*expected \([0-9][0-9]*\), got.*/\1/p' | head -n1)"
+    sleep 1.2
     continue
   fi
   echo "$SUBMIT_OUT"
