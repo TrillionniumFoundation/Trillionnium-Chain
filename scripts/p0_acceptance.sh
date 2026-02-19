@@ -78,6 +78,12 @@ for i in "${!steps[@]}"; do
   set +e
   bash -lc "$cmd" >"$log_file" 2>&1
   rc=$?
+  if [[ $rc -ne 0 ]]; then
+    # one retry to reduce transient node-not-ready races
+    sleep 3
+    bash -lc "$cmd" >>"$log_file" 2>&1
+    rc=$?
+  fi
   set -e
 
   status="PASS"

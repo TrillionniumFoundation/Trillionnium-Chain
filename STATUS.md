@@ -72,6 +72,10 @@
 - CI：已新增 `trnm-merge-gates` 与 `trnm-gate-quick-check`；quick-check 已调整为 `shellcheck -S error`，避免非阻塞告警导致红灯。
 - 升级演练：`data/upgrade-runs/20260219-164421` 已形成可审计样本。
 - 治理收口：新增 `docs/protocol/legacy-submit-result-deprecation-plan-v0.3.0.md`（announce/canary/full + 硬回滚阈值）。
+- 稳定性收敛：`scripts/p0_acceptance.sh` 增加一步重试（3s backoff）以降低链启动瞬时竞态误报。
+- 最新回归样本：
+  - P0：`data/p0-acceptance/20260219-170905/summary.json`（5/5）
+  - P1：`data/p1-negative/20260219-171027/summary.json`（6/6，skip=0）
 
 ## 7) Definition of Done（本轮）
 
