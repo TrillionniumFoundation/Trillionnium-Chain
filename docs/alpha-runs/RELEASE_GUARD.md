@@ -19,9 +19,16 @@ Prevent alpha/dev-only behaviors from leaking into non-local deployments.
 
 ## Pre-release checklist
 1. `TRNM_ENABLE_DEV_RESOLVE` is **unset** on node service.
-2. `run_alpha_acceptance.sh` passes with production-safe scenarios.
+2. `run_alpha_acceptance.sh` in secure-default mode has expected result:
+   - PASS: A / B / C / D_auth_guards / E
+   - FAIL: D_positive_resolve (by design)
 3. Authority challenge resolution uses governance/module-authority route.
-4. Tag baseline used for comparison: `alpha-e2e-green`.
+4. Baseline tags:
+   - functional baseline: `alpha-e2e-green`
+   - secure-default baseline: `alpha-secure-default`
+
+Latest secure-default report:
+- `data/alpha-acceptance/report-20260219-092526.txt`
 
 ## Ops note
 If you must run D positive locally:
