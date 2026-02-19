@@ -11,6 +11,9 @@ import (
 
 func TestChallengeResult_LocksChallengeDeposit(t *testing.T) {
 	k, srv, ctx, bank := setupMsgServerWithSpyBank(t)
+	params := k.GetParams(ctx)
+	params.AllowLegacySubmitResult = true
+	require.NoError(t, k.SetParams(ctx, params))
 	wctx := sdk.WrapSDKContext(ctx.WithBlockHeight(10))
 
 	creator := sample.AccAddress()
@@ -26,12 +29,15 @@ func TestChallengeResult_LocksChallengeDeposit(t *testing.T) {
 	require.NoError(t, err)
 
 	require.NotEmpty(t, bank.sendAccountToModuleOps)
-	params := k.GetParams(ctx)
-	require.Equal(t, int64(params.ChallengeDeposit), bank.lastSendAccountToModule.AmountOf(params.WorkloadDenom).Int64())
+	paramsNow := k.GetParams(ctx)
+	require.Equal(t, int64(paramsNow.ChallengeDeposit), bank.lastSendAccountToModule.AmountOf(paramsNow.WorkloadDenom).Int64())
 }
 
 func TestResolveChallenge_Failed_BurnsPenaltyRefundsAndCompletes(t *testing.T) {
 	k, srv, ctx, bank := setupMsgServerWithSpyBank(t)
+	params := k.GetParams(ctx)
+	params.AllowLegacySubmitResult = true
+	require.NoError(t, k.SetParams(ctx, params))
 	sdkCtx := ctx.WithBlockHeight(20)
 	wctx := sdk.WrapSDKContext(sdkCtx)
 
@@ -53,17 +59,17 @@ func TestResolveChallenge_Failed_BurnsPenaltyRefundsAndCompletes(t *testing.T) {
 	require.True(t, found)
 	require.Equal(t, types.TaskStatusCompleted, task.Status)
 
-	params := k.GetParams(ctx)
-	penalty := params.ChallengeDeposit * params.ChallengerSlashPercent / 100
-	refund := params.ChallengeDeposit - penalty
+	paramsNow := k.GetParams(ctx)
+	penalty := paramsNow.ChallengeDeposit * paramsNow.ChallengerSlashPercent / 100
+	refund := paramsNow.ChallengeDeposit - penalty
 
 	require.NotEmpty(t, bank.sendModuleToAccountOps)
-	require.Equal(t, int64(refund), bank.lastSendModuleToAccount.AmountOf(params.WorkloadDenom).Int64())
+	require.Equal(t, int64(refund), bank.lastSendModuleToAccount.AmountOf(paramsNow.WorkloadDenom).Int64())
 
 	// burnOps should include challenge penalty burn and task bounty burn
 	require.GreaterOrEqual(t, len(bank.burnOps), 2)
-	require.Equal(t, int64(penalty), bank.burnOps[len(bank.burnOps)-2].AmountOf(params.WorkloadDenom).Int64())
-	require.Equal(t, int64(100), bank.burnOps[len(bank.burnOps)-1].AmountOf(params.WorkloadDenom).Int64())
+	require.Equal(t, int64(penalty), bank.burnOps[len(bank.burnOps)-2].AmountOf(paramsNow.WorkloadDenom).Int64())
+	require.Equal(t, int64(100), bank.burnOps[len(bank.burnOps)-1].AmountOf(paramsNow.WorkloadDenom).Int64())
 }
 
 func TestAutoFinalizeSubmittedTasks(t *testing.T) {
