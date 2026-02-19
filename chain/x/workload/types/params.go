@@ -47,7 +47,7 @@ func NewParams(
 
 // DefaultParams returns a default set of parameters
 func DefaultParams() Params {
-	return NewParams("utrnm", 100, 1_000_000, 10, 20, 50, true)
+	return NewParams("utrnm", 100, 1_000_000, 10, 20, 50, false)
 }
 
 // ParamSetPairs get the params.ParamSet

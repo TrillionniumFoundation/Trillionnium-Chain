@@ -11,6 +11,9 @@ import (
 
 func TestFundFlowEvent_BountyLockAndChallengeDepositAndRefund(t *testing.T) {
 	k, srv, ctx := setupMsgServer(t)
+	params := k.GetParams(ctx)
+	params.AllowLegacySubmitResult = true
+	require.NoError(t, k.SetParams(ctx, params))
 	creator := sample.AccAddress()
 	worker := sample.AccAddress()
 	challenger := sample.AccAddress()
@@ -37,6 +40,9 @@ func TestFundFlowEvent_BountyLockAndChallengeDepositAndRefund(t *testing.T) {
 
 func TestFundFlowEvent_ChallengeBurnAndTaskBurn(t *testing.T) {
 	k, srv, ctx := setupMsgServer(t)
+	params := k.GetParams(ctx)
+	params.AllowLegacySubmitResult = true
+	require.NoError(t, k.SetParams(ctx, params))
 	creator := sample.AccAddress()
 	worker := sample.AccAddress()
 	challenger := sample.AccAddress()

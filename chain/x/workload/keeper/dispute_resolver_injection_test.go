@@ -22,6 +22,9 @@ func (r fixedResolver) Resolve(_ context.Context, _ types.DisputeResolveInput) (
 
 func TestResolveChallenge_UsesInjectedDisputeResolver(t *testing.T) {
 	k, srv, ctx := setupMsgServer(t)
+	params := k.GetParams(ctx)
+	params.AllowLegacySubmitResult = true
+	require.NoError(t, k.SetParams(ctx, params))
 	creator := sample.AccAddress()
 	worker := sample.AccAddress()
 	challenger := sample.AccAddress()
@@ -63,6 +66,9 @@ func TestResolveChallenge_UsesInjectedDisputeResolver(t *testing.T) {
 
 func TestSetDisputeResolver_NilFallsBackToDefault(t *testing.T) {
 	k, srv, ctx := setupMsgServer(t)
+	params := k.GetParams(ctx)
+	params.AllowLegacySubmitResult = true
+	require.NoError(t, k.SetParams(ctx, params))
 	creator := sample.AccAddress()
 	worker := sample.AccAddress()
 	challenger := sample.AccAddress()

@@ -21,7 +21,7 @@ log() { printf "\n[%s] %s\n" "$(date +%H:%M:%S)" "$*"; }
 
 tx_ok() {
   local out rc tries=0
-  while (( tries < 8 )); do
+  while (( tries < 20 )); do
     set +e
     out="$("$@" 2>&1)"
     rc=$?
@@ -34,7 +34,7 @@ tx_ok() {
 
     if grep -qi "account sequence mismatch" <<<"$out"; then
       ((tries++))
-      sleep 0.9
+      sleep 1.2
       continue
     fi
 

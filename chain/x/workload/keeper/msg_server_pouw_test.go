@@ -9,8 +9,26 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func TestSubmitResultLegacyDisabledByDefault(t *testing.T) {
+	k, srv, ctx := setupMsgServer(t)
+	creator := sample.AccAddress()
+	worker := sample.AccAddress()
+
+	wctx := sdk.WrapSDKContext(sdk.UnwrapSDKContext(ctx).WithBlockHeight(10))
+	_, err := srv.CreateTask(wctx, &types.MsgCreateTask{Creator: creator, Bounty: 1})
+	require.NoError(t, err)
+	k.SetWorker(wctx, types.Worker{Creator: worker, Stake: 100000})
+
+	_, err = srv.SubmitResult(wctx, &types.MsgSubmitResult{Creator: worker, TaskId: 0, ResultHash: "h1"})
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "legacy submit_result is disabled")
+}
+
 func TestPoUWSubmitChallengeResolve(t *testing.T) {
 	k, srv, ctx := setupMsgServer(t)
+	params := k.GetParams(ctx)
+	params.AllowLegacySubmitResult = true
+	require.NoError(t, k.SetParams(ctx, params))
 	creator := sample.AccAddress()
 	challenger := sample.AccAddress()
 	worker := sample.AccAddress()
@@ -58,6 +76,9 @@ func TestPoUWSubmitChallengeResolve(t *testing.T) {
 
 func TestChallengeAfterDeadlineFails(t *testing.T) {
 	k, srv, ctx := setupMsgServer(t)
+	params := k.GetParams(ctx)
+	params.AllowLegacySubmitResult = true
+	require.NoError(t, k.SetParams(ctx, params))
 	creator := sample.AccAddress()
 	worker := sample.AccAddress()
 
@@ -77,6 +98,9 @@ func TestChallengeAfterDeadlineFails(t *testing.T) {
 
 func TestChallengeResult_SecondChallengeRejectedEvenWhenFirstChallengeIDIsZero(t *testing.T) {
 	k, srv, ctx := setupMsgServer(t)
+	params := k.GetParams(ctx)
+	params.AllowLegacySubmitResult = true
+	require.NoError(t, k.SetParams(ctx, params))
 	creator := sample.AccAddress()
 	worker := sample.AccAddress()
 	challenger1 := sample.AccAddress()
@@ -104,6 +128,9 @@ func TestChallengeResult_SecondChallengeRejectedEvenWhenFirstChallengeIDIsZero(t
 
 func TestResolveChallengeUnauthorized(t *testing.T) {
 	k, srv, ctx := setupMsgServer(t)
+	params := k.GetParams(ctx)
+	params.AllowLegacySubmitResult = true
+	require.NoError(t, k.SetParams(ctx, params))
 	creator := sample.AccAddress()
 	worker := sample.AccAddress()
 	challenger := sample.AccAddress()

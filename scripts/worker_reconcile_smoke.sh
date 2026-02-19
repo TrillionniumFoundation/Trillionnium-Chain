@@ -58,13 +58,41 @@ cleanup() {
 }
 trap cleanup EXIT
 
+tx_create_with_retry() {
+  local out rc tries=0
+  while (( tries < 20 )); do
+    set +e
+    out="$($BIN tx workload create-task ipfs://reconcile-smoke 500 0 none none \
+      --from alice --keyring-backend test --chain-id "$CHAIN_ID" --home "$HOME_DIR" --node "$NODE" \
+      --yes --broadcast-mode sync --gas auto --gas-adjustment 1.5 -o json 2>&1)"
+    rc=$?
+    set -e
+
+    json_out="$(printf '%s\n' "$out" | sed -n '/^{/,$p')"
+    if [[ $rc -eq 0 ]] && [[ -n "$json_out" ]] && grep -q '"txhash"' <<<"$json_out"; then
+      echo "$json_out" >/tmp/trnm-reconcile-create.json
+      return 0
+    fi
+
+    if grep -qi "account sequence mismatch" <<<"$out"; then
+      ((tries++))
+      sleep 1.2
+      continue
+    fi
+
+    echo "$out"
+    return 1
+  done
+
+  echo "$out"
+  return 1
+}
+
 echo "[2/6] create one tx for reconcile probe"
-"$BIN" tx workload create-task ipfs://reconcile-smoke 500 0 none none \
-  --from alice --keyring-backend test --chain-id "$CHAIN_ID" --home "$HOME_DIR" --node "$NODE" \
-  --yes --broadcast-mode sync --fees 500stake -o json >/tmp/trnm-reconcile-create.json
+tx_create_with_retry
 
 TXH="$(jq -r '.txhash // empty' /tmp/trnm-reconcile-create.json)"
-[[ -n "$TXH" ]] || { echo "[ERR] no txhash from create-task"; exit 1; }
+[[ -n "$TXH" ]] || { echo "[ERR] no txhash from create-task"; cat /tmp/trnm-reconcile-create.json; exit 1; }
 wait_tx_commit "$TXH"
 
 echo "[3/6] seed worker_state with committed phase"

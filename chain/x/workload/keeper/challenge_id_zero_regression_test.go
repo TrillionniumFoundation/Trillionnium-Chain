@@ -12,6 +12,9 @@ import (
 // Regression: first appended challenge has id=0 and must still be treated as an existing challenge.
 func TestChallengeIDZero_IsValidChallenge(t *testing.T) {
 	k, srv, ctx := setupMsgServer(t)
+	params := k.GetParams(ctx)
+	params.AllowLegacySubmitResult = true
+	require.NoError(t, k.SetParams(ctx, params))
 	creator := sample.AccAddress()
 	worker := sample.AccAddress()
 	challenger := sample.AccAddress()
