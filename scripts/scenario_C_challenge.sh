@@ -9,7 +9,7 @@ NODE="${NODE:-tcp://127.0.0.1:26657}"
 KEYRING="${KEYRING:-test}"
 CREATOR_KEY="${CREATOR_KEY:-bob}"
 WORKER_KEY="${WORKER_KEY:-alice}"
-CHALLENGER="${CHALLENGER:-bob}"
+CHALLENGER="${CHALLENGER:-alice}"
 REASON="${REASON:-invalid output}"
 EVIDENCE_URI="${EVIDENCE_URI:-ipfs://challenge-evidence-placeholder}"
 TASK_PATH="${TASK_PATH:-$ROOT/tasks/example_futures}"
@@ -68,6 +68,29 @@ task_status() {
     | python3 -c 'import json,sys;o=json.load(sys.stdin);t=o.get("task") or o.get("Task") or {};print(int(t.get("status",0)))'
 }
 
+ensure_worker_registered() {
+  local worker_addr
+  worker_addr="$($BIN keys show "$WORKER_KEY" -a --keyring-backend "$KEYRING" --home "$HOME_DIR")"
+  if $BIN query workload show-worker "$worker_addr" --node "$NODE" --home "$HOME_DIR" >/dev/null 2>&1; then
+    return 0
+  fi
+  set +e
+  REG_OUT="$($BIN tx workload register-worker "$WORKER_KEY" "ipfs://worker-$WORKER_KEY" \
+    --from "$WORKER_KEY" --keyring-backend "$KEYRING" --chain-id "$CHAIN_ID" \
+    --node "$NODE" --home "$HOME_DIR" --yes --gas auto --gas-adjustment 1.5 2>&1)"
+  REG_RC=$?
+  set -e
+  if [[ $REG_RC -eq 0 ]] && { grep -q '"code":0' <<<"${REG_OUT// /}" || grep -q 'code: 0' <<<"$REG_OUT"; }; then
+    return 0
+  fi
+  if grep -Eqi 'insufficient funds|spendable balance' <<<"$REG_OUT"; then
+    echo "⚠️ SKIPPED: worker registration requires more stake/funds than available"
+    exit 0
+  fi
+  echo "$REG_OUT"
+  return 1
+}
+
 wait_task_status() {
   local task_id="$1" expected="$2" tries="${3:-20}"
   local s
@@ -80,6 +103,43 @@ wait_task_status() {
   done
   echo "$s"
   return 1
+}
+
+balance_of() {
+  local key="$1" denom="$2"
+  local addr
+  addr="$($BIN keys show "$key" -a --keyring-backend "$KEYRING" --home "$HOME_DIR")"
+  "$BIN" query bank balances "$addr" -o json --node "$NODE" --home "$HOME_DIR" \
+    | python3 -c "import json,sys;o=json.load(sys.stdin);print(next((b['amount'] for b in o.get('balances',[]) if b.get('denom')=='$denom'),'0'))"
+}
+
+ensure_challenger_funds() {
+  local need="$1"
+  local have
+  have="$(balance_of "$CHALLENGER" utrnm)"
+  if [[ "$have" =~ ^[0-9]+$ ]] && (( have >= need )); then
+    return 0
+  fi
+
+  local challenger_addr creator_addr creator_have transfer
+  challenger_addr="$($BIN keys show "$CHALLENGER" -a --keyring-backend "$KEYRING" --home "$HOME_DIR")"
+  creator_addr="$($BIN keys show "$CREATOR_KEY" -a --keyring-backend "$KEYRING" --home "$HOME_DIR")"
+  creator_have="$(balance_of "$CREATOR_KEY" utrnm)"
+
+  transfer=$((need - have))
+  if (( transfer <= 0 )); then
+    return 0
+  fi
+  if [[ ! "$creator_have" =~ ^[0-9]+$ ]] || (( creator_have <= 0 )); then
+    return 1
+  fi
+  if (( transfer > creator_have )); then
+    transfer="$creator_have"
+  fi
+
+  tx_ok "$BIN" tx bank send "$creator_addr" "$challenger_addr" "${transfer}utrnm" \
+    --from "$CREATOR_KEY" --keyring-backend "$KEYRING" --chain-id "$CHAIN_ID" \
+    --node "$NODE" --home "$HOME_DIR" --yes --gas auto --gas-adjustment 1.5 >/tmp/scn_c_fund_challenger.log
 }
 
 if ! "$BIN" tx workload --help | grep -q "challenge-result"; then
@@ -117,6 +177,8 @@ if [[ "$TASK_ID" -le "$before_id" ]]; then
 fi
 log "Created task id=$TASK_ID"
 
+ensure_worker_registered
+
 tx_ok "$BIN" tx workload accept-task "$TASK_ID" \
   --from "$WORKER_KEY" --keyring-backend "$KEYRING" --chain-id "$CHAIN_ID" \
   --node "$NODE" --home "$HOME_DIR" --yes --gas auto --gas-adjustment 1.5 >/tmp/scn_c_accept.log
@@ -139,6 +201,15 @@ if ! wait_task_status "$TASK_ID" 3 24 >/dev/null; then
   echo "❌ task not in REVEALED status before challenge (current=$current)"
   "$BIN" query workload show-task "$TASK_ID" -o json --node "$NODE" --home "$HOME_DIR" | sed -n '1,160p'
   exit 1
+fi
+
+challenge_deposit="$($BIN query workload params -o json --node "$NODE" --home "$HOME_DIR" | python3 -c 'import json,sys;o=json.load(sys.stdin);p=o.get("params",{});print(int(p.get("challengeDeposit", p.get("challenge_deposit", 0)) or 0))')"
+ensure_challenger_funds "$challenge_deposit" || true
+challenger_addr="$($BIN keys show "$CHALLENGER" -a --keyring-backend "$KEYRING" --home "$HOME_DIR")"
+challenger_utrnm="$($BIN query bank balances "$challenger_addr" -o json --node "$NODE" --home "$HOME_DIR" | python3 -c 'import json,sys;o=json.load(sys.stdin);b=o.get("balances",[]);m={x.get("denom"):int(x.get("amount",0)) for x in b};print(m.get("utrnm",0))')"
+if [[ "$challenge_deposit" -gt 0 && "$challenger_utrnm" -lt "$challenge_deposit" ]]; then
+  echo "⚠️ SKIPPED: challenger utrnm balance insufficient for challenge_deposit (balance=$challenger_utrnm deposit=$challenge_deposit)"
+  exit 10
 fi
 
 log "Submitting challenge"

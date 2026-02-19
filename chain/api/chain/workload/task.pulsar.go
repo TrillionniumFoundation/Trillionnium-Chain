@@ -1170,9 +1170,17 @@ type Task struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id                      uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	IpfsHash                string `protobuf:"bytes,2,opt,name=ipfsHash,proto3" json:"ipfsHash,omitempty"`
-	Bounty                  uint64 `protobuf:"varint,3,opt,name=bounty,proto3" json:"bounty,omitempty"`
+	Id       uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	IpfsHash string `protobuf:"bytes,2,opt,name=ipfsHash,proto3" json:"ipfsHash,omitempty"`
+	Bounty   uint64 `protobuf:"varint,3,opt,name=bounty,proto3" json:"bounty,omitempty"`
+	// Task status (canonical semantics):
+	// 0 OPEN
+	// 1 ASSIGNED
+	// 2 COMMITTED
+	// 3 REVEALED (legacy alias: RESULT_SUBMITTED)
+	// 4 CHALLENGED
+	// 5 COMPLETED
+	// 6 SLASHED
 	Status                  uint64 `protobuf:"varint,4,opt,name=status,proto3" json:"status,omitempty"`
 	Worker                  string `protobuf:"bytes,5,opt,name=worker,proto3" json:"worker,omitempty"`
 	ResultHash              string `protobuf:"bytes,6,opt,name=resultHash,proto3" json:"resultHash,omitempty"`

@@ -123,8 +123,14 @@ From repo root:
 # include challenge re-exec resolve-template smoke
 ./scripts/p0_acceptance.sh --with-reexec
 
+# mainline merge gate (full P0 + P1 + reexec; non-zero exit blocks merge)
+./scripts/p0_merge_gate.sh
+
 # challenge re-execution e2e demo (creates challenged task + emits resolve template)
 ./scripts/challenge_reexec_e2e_demo.sh mismatch
+
+# P1 negative/adversarial regression suite
+./scripts/p1_negative_suite.sh
 ```
 
 Artifacts:

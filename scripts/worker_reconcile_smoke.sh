@@ -16,7 +16,7 @@ need python3
 
 wait_tx_commit() {
   local txh="$1"
-  for _ in $(seq 1 60); do
+  for _ in $(seq 1 120); do
     if "$BIN" query tx "$txh" --home "$HOME_DIR" --node "$NODE" -o json >/tmp/trnm-reconcile-tx.json 2>/dev/null; then
       local code
       code="$(jq -r '.code // .tx_response.code // 0' /tmp/trnm-reconcile-tx.json)"

@@ -40,6 +40,62 @@ paths:
                   additionalProperties: {}
       tags:
         - Query
+  /chain.compute.Msg/CompleteJob:
+    post:
+      operationId: ChainComputeMsg_CompleteJob
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              job_id:
+                type: string
+                format: uint64
+              status:
+                type: string
+                enum:
+                  - JOB_STATUS_UNSPECIFIED
+                  - JOB_STATUS_CREATED
+                  - JOB_STATUS_RUNNING
+                  - JOB_STATUS_COMPLETED
+                  - JOB_STATUS_FAILED
+                default: JOB_STATUS_UNSPECIFIED
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              creator:
+                type: string
+              job_id:
+                type: string
+                format: uint64
+              result:
+                type: string
+                title: hash or data
+      tags:
+        - Msg
   /chain.compute.Msg/CreateComputeJob:
     post:
       operationId: ChainComputeMsg_CreateComputeJob
@@ -186,6 +242,1582 @@ paths:
                 description: 'NOTE: All parameters must be supplied.'
                 type: object
             description: MsgUpdateParams is the Msg/UpdateParams request type.
+      tags:
+        - Msg
+  /chain/workload/challenge:
+    get:
+      operationId: ChainWorkloadQuery_ChallengeAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              challenge:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      format: uint64
+                    taskId:
+                      type: string
+                      format: uint64
+                    challenger:
+                      type: string
+                    worker:
+                      type: string
+                    status:
+                      type: string
+                      format: uint64
+                    deposit:
+                      type: string
+                      format: uint64
+                    reason:
+                      type: string
+                    evidenceUri:
+                      type: string
+                    createdHeight:
+                      type: string
+                      format: uint64
+                    resolvedHeight:
+                      type: string
+                      format: uint64
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    description: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /chain/workload/challenge/{id}:
+    get:
+      summary: Queries a list of Challenge items.
+      operationId: ChainWorkloadQuery_Challenge
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              challenge:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uint64
+                  taskId:
+                    type: string
+                    format: uint64
+                  challenger:
+                    type: string
+                  worker:
+                    type: string
+                  status:
+                    type: string
+                    format: uint64
+                  deposit:
+                    type: string
+                    format: uint64
+                  reason:
+                    type: string
+                  evidenceUri:
+                    type: string
+                  createdHeight:
+                    type: string
+                    format: uint64
+                  resolvedHeight:
+                    type: string
+                    format: uint64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+          format: uint64
+      tags:
+        - Query
+  /chain/workload/params:
+    get:
+      summary: Parameters queries the parameters of the module.
+      operationId: ChainWorkloadQuery_Params
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              params:
+                description: params holds all the parameters of this module.
+                type: object
+                properties:
+                  workload_denom:
+                    type: string
+                  challenge_window_blocks:
+                    type: string
+                    format: uint64
+                  challenge_deposit:
+                    type: string
+                    format: uint64
+                  challenger_slash_percent:
+                    type: string
+                    format: uint64
+                  worker_slash_percent_on_bad_result:
+                    type: string
+                    format: uint64
+                  reveal_window_blocks:
+                    type: string
+                    format: uint64
+                  allow_legacy_submit_result:
+                    type: boolean
+            description: >-
+              QueryParamsResponse is response type for the Query/Params RPC
+              method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      tags:
+        - Query
+  /chain/workload/task:
+    get:
+      operationId: ChainWorkloadQuery_TaskAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              Task:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      format: uint64
+                    ipfsHash:
+                      type: string
+                    bounty:
+                      type: string
+                      format: uint64
+                    status:
+                      type: string
+                      format: uint64
+                      title: |-
+                        Task status (canonical semantics):
+                        0 OPEN
+                        1 ASSIGNED
+                        2 COMMITTED
+                        3 REVEALED (legacy alias: RESULT_SUBMITTED)
+                        4 CHALLENGED
+                        5 COMPLETED
+                        6 SLASHED
+                    worker:
+                      type: string
+                    resultHash:
+                      type: string
+                    creator:
+                      type: string
+                    challengeDeadlineHeight:
+                      type: string
+                      format: uint64
+                    challenger:
+                      type: string
+                    challengeId:
+                      type: string
+                      format: uint64
+                    commitHash:
+                      type: string
+                    commitHeight:
+                      type: string
+                      format: uint64
+                    revealDeadlineHeight:
+                      type: string
+                      format: uint64
+                    resultUri:
+                      type: string
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    description: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /chain/workload/task/{id}:
+    get:
+      summary: Queries a list of Task items.
+      operationId: ChainWorkloadQuery_Task
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              Task:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uint64
+                  ipfsHash:
+                    type: string
+                  bounty:
+                    type: string
+                    format: uint64
+                  status:
+                    type: string
+                    format: uint64
+                    title: |-
+                      Task status (canonical semantics):
+                      0 OPEN
+                      1 ASSIGNED
+                      2 COMMITTED
+                      3 REVEALED (legacy alias: RESULT_SUBMITTED)
+                      4 CHALLENGED
+                      5 COMPLETED
+                      6 SLASHED
+                  worker:
+                    type: string
+                  resultHash:
+                    type: string
+                  creator:
+                    type: string
+                  challengeDeadlineHeight:
+                    type: string
+                    format: uint64
+                  challenger:
+                    type: string
+                  challengeId:
+                    type: string
+                    format: uint64
+                  commitHash:
+                    type: string
+                  commitHeight:
+                    type: string
+                    format: uint64
+                  revealDeadlineHeight:
+                    type: string
+                    format: uint64
+                  resultUri:
+                    type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+          format: uint64
+      tags:
+        - Query
+  /chain/workload/unbonding:
+    get:
+      operationId: ChainWorkloadQuery_UnbondingAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              unbonding:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    creator:
+                      type: string
+                    releaseHeight:
+                      type: string
+                      format: uint64
+                    amount:
+                      type: string
+                      format: uint64
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    description: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /chain/workload/unbonding/{creator}:
+    get:
+      summary: Queries a list of Unbonding items.
+      operationId: ChainWorkloadQuery_Unbonding
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              unbonding:
+                type: object
+                properties:
+                  creator:
+                    type: string
+                  releaseHeight:
+                    type: string
+                    format: uint64
+                  amount:
+                    type: string
+                    format: uint64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: creator
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /chain/workload/worker:
+    get:
+      operationId: ChainWorkloadQuery_WorkerAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              worker:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    creator:
+                      type: string
+                    nodeId:
+                      type: string
+                    ipfsAddr:
+                      type: string
+                    stake:
+                      type: string
+                      format: uint64
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    description: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /chain/workload/worker/{creator}:
+    get:
+      summary: Queries a list of Worker items.
+      operationId: ChainWorkloadQuery_Worker
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              worker:
+                type: object
+                properties:
+                  creator:
+                    type: string
+                  nodeId:
+                    type: string
+                  ipfsAddr:
+                    type: string
+                  stake:
+                    type: string
+                    format: uint64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: creator
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /chain.workload.Msg/AcceptTask:
+    post:
+      operationId: ChainWorkloadMsg_AcceptTask
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              creator:
+                type: string
+              taskId:
+                type: string
+                format: uint64
+      tags:
+        - Msg
+  /chain.workload.Msg/ChallengeResult:
+    post:
+      operationId: ChainWorkloadMsg_ChallengeResult
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              creator:
+                type: string
+              taskId:
+                type: string
+                format: uint64
+              reason:
+                type: string
+              evidenceUri:
+                type: string
+      tags:
+        - Msg
+  /chain.workload.Msg/CommitResult:
+    post:
+      operationId: ChainWorkloadMsg_CommitResult
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              creator:
+                type: string
+              taskId:
+                type: string
+                format: uint64
+              commitHash:
+                type: string
+      tags:
+        - Msg
+  /chain.workload.Msg/CreateTask:
+    post:
+      operationId: ChainWorkloadMsg_CreateTask
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uint64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              creator:
+                type: string
+              ipfsHash:
+                type: string
+              bounty:
+                type: string
+                format: uint64
+              status:
+                type: string
+                format: uint64
+              worker:
+                type: string
+              resultHash:
+                type: string
+      tags:
+        - Msg
+  /chain.workload.Msg/DeleteTask:
+    post:
+      operationId: ChainWorkloadMsg_DeleteTask
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              creator:
+                type: string
+              id:
+                type: string
+                format: uint64
+      tags:
+        - Msg
+  /chain.workload.Msg/ExtendUnbonding:
+    post:
+      operationId: ChainWorkloadMsg_ExtendUnbonding
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              creator:
+                type: string
+              worker:
+                type: string
+              extraBlocks:
+                type: string
+                format: uint64
+      tags:
+        - Msg
+  /chain.workload.Msg/FinalizeUnbonding:
+    post:
+      operationId: ChainWorkloadMsg_FinalizeUnbonding
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              creator:
+                type: string
+      tags:
+        - Msg
+  /chain.workload.Msg/RegisterWorker:
+    post:
+      operationId: ChainWorkloadMsg_RegisterWorker
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              creator:
+                type: string
+              nodeId:
+                type: string
+              ipfsAddr:
+                type: string
+      tags:
+        - Msg
+  /chain.workload.Msg/RequestUnbonding:
+    post:
+      operationId: ChainWorkloadMsg_RequestUnbonding
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              creator:
+                type: string
+      tags:
+        - Msg
+  /chain.workload.Msg/ResolveChallenge:
+    post:
+      operationId: ChainWorkloadMsg_ResolveChallenge
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              creator:
+                type: string
+              taskId:
+                type: string
+                format: uint64
+              challengeSucceeded:
+                type: boolean
+              finalResultHash:
+                type: string
+              memo:
+                type: string
+      tags:
+        - Msg
+  /chain.workload.Msg/RevealResult:
+    post:
+      operationId: ChainWorkloadMsg_RevealResult
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              creator:
+                type: string
+              taskId:
+                type: string
+                format: uint64
+              resultHash:
+                type: string
+              resultUri:
+                type: string
+              revealSalt:
+                type: string
+      tags:
+        - Msg
+  /chain.workload.Msg/SlashWorker:
+    post:
+      operationId: ChainWorkloadMsg_SlashWorker
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              creator:
+                type: string
+              worker:
+                type: string
+              slashPercent:
+                type: string
+                format: uint64
+      tags:
+        - Msg
+  /chain.workload.Msg/SubmitResult:
+    post:
+      operationId: ChainWorkloadMsg_SubmitResult
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              creator:
+                type: string
+              taskId:
+                type: string
+                format: uint64
+              resultHash:
+                type: string
+              resultUri:
+                type: string
+      tags:
+        - Msg
+  /chain.workload.Msg/UnregisterWorker:
+    post:
+      operationId: ChainWorkloadMsg_UnregisterWorker
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              creator:
+                type: string
+      tags:
+        - Msg
+  /chain.workload.Msg/UpdateParams:
+    post:
+      summary: |-
+        UpdateParams defines a (governance) operation for updating the module
+        parameters. The authority defaults to the x/gov module account.
+      operationId: ChainWorkloadMsg_UpdateParams
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            description: >-
+              MsgUpdateParamsResponse defines the response structure for
+              executing a
+
+              MsgUpdateParams message.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: body
+          description: MsgUpdateParams is the Msg/UpdateParams request type.
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              authority:
+                type: string
+                description: >-
+                  authority is the address that controls the module (defaults to
+                  x/gov unless overwritten).
+              params:
+                description: 'NOTE: All parameters must be supplied.'
+                type: object
+                properties:
+                  workload_denom:
+                    type: string
+                  challenge_window_blocks:
+                    type: string
+                    format: uint64
+                  challenge_deposit:
+                    type: string
+                    format: uint64
+                  challenger_slash_percent:
+                    type: string
+                    format: uint64
+                  worker_slash_percent_on_bad_result:
+                    type: string
+                    format: uint64
+                  reveal_window_blocks:
+                    type: string
+                    format: uint64
+                  allow_legacy_submit_result:
+                    type: boolean
+            description: MsgUpdateParams is the Msg/UpdateParams request type.
+      tags:
+        - Msg
+  /chain.workload.Msg/UpdateTask:
+    post:
+      operationId: ChainWorkloadMsg_UpdateTask
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              creator:
+                type: string
+              id:
+                type: string
+                format: uint64
+              ipfsHash:
+                type: string
+              bounty:
+                type: string
+                format: uint64
+              status:
+                type: string
+                format: uint64
+              worker:
+                type: string
+              resultHash:
+                type: string
       tags:
         - Msg
   /cosmos.auth.v1beta1.Msg/UpdateParams:
@@ -19742,6 +21374,32 @@ definitions:
       - JOB_STATUS_COMPLETED
       - JOB_STATUS_FAILED
     default: JOB_STATUS_UNSPECIFIED
+  chain.compute.MsgCompleteJob:
+    type: object
+    properties:
+      creator:
+        type: string
+      job_id:
+        type: string
+        format: uint64
+      result:
+        type: string
+        title: hash or data
+  chain.compute.MsgCompleteJobResponse:
+    type: object
+    properties:
+      job_id:
+        type: string
+        format: uint64
+      status:
+        type: string
+        enum:
+          - JOB_STATUS_UNSPECIFIED
+          - JOB_STATUS_CREATED
+          - JOB_STATUS_RUNNING
+          - JOB_STATUS_COMPLETED
+          - JOB_STATUS_FAILED
+        default: JOB_STATUS_UNSPECIFIED
   chain.compute.MsgCreateComputeJob:
     type: object
     properties:
@@ -19794,6 +21452,796 @@ definitions:
     description: |-
       MsgUpdateParamsResponse defines the response structure for executing a
       MsgUpdateParams message.
+  chain.workload.Challenge:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uint64
+      taskId:
+        type: string
+        format: uint64
+      challenger:
+        type: string
+      worker:
+        type: string
+      status:
+        type: string
+        format: uint64
+      deposit:
+        type: string
+        format: uint64
+      reason:
+        type: string
+      evidenceUri:
+        type: string
+      createdHeight:
+        type: string
+        format: uint64
+      resolvedHeight:
+        type: string
+        format: uint64
+  chain.workload.Params:
+    type: object
+    properties:
+      workload_denom:
+        type: string
+      challenge_window_blocks:
+        type: string
+        format: uint64
+      challenge_deposit:
+        type: string
+        format: uint64
+      challenger_slash_percent:
+        type: string
+        format: uint64
+      worker_slash_percent_on_bad_result:
+        type: string
+        format: uint64
+      reveal_window_blocks:
+        type: string
+        format: uint64
+      allow_legacy_submit_result:
+        type: boolean
+    description: Params defines the parameters for the module.
+  chain.workload.QueryAllChallengeResponse:
+    type: object
+    properties:
+      challenge:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uint64
+            taskId:
+              type: string
+              format: uint64
+            challenger:
+              type: string
+            worker:
+              type: string
+            status:
+              type: string
+              format: uint64
+            deposit:
+              type: string
+              format: uint64
+            reason:
+              type: string
+            evidenceUri:
+              type: string
+            createdHeight:
+              type: string
+              format: uint64
+            resolvedHeight:
+              type: string
+              format: uint64
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            description: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently. It will be empty if
+              there are no more results.
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+  chain.workload.QueryAllTaskResponse:
+    type: object
+    properties:
+      Task:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uint64
+            ipfsHash:
+              type: string
+            bounty:
+              type: string
+              format: uint64
+            status:
+              type: string
+              format: uint64
+              title: |-
+                Task status (canonical semantics):
+                0 OPEN
+                1 ASSIGNED
+                2 COMMITTED
+                3 REVEALED (legacy alias: RESULT_SUBMITTED)
+                4 CHALLENGED
+                5 COMPLETED
+                6 SLASHED
+            worker:
+              type: string
+            resultHash:
+              type: string
+            creator:
+              type: string
+            challengeDeadlineHeight:
+              type: string
+              format: uint64
+            challenger:
+              type: string
+            challengeId:
+              type: string
+              format: uint64
+            commitHash:
+              type: string
+            commitHeight:
+              type: string
+              format: uint64
+            revealDeadlineHeight:
+              type: string
+              format: uint64
+            resultUri:
+              type: string
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            description: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently. It will be empty if
+              there are no more results.
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+  chain.workload.QueryAllUnbondingResponse:
+    type: object
+    properties:
+      unbonding:
+        type: array
+        items:
+          type: object
+          properties:
+            creator:
+              type: string
+            releaseHeight:
+              type: string
+              format: uint64
+            amount:
+              type: string
+              format: uint64
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            description: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently. It will be empty if
+              there are no more results.
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+  chain.workload.QueryAllWorkerResponse:
+    type: object
+    properties:
+      worker:
+        type: array
+        items:
+          type: object
+          properties:
+            creator:
+              type: string
+            nodeId:
+              type: string
+            ipfsAddr:
+              type: string
+            stake:
+              type: string
+              format: uint64
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            description: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently. It will be empty if
+              there are no more results.
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+  chain.workload.QueryGetChallengeResponse:
+    type: object
+    properties:
+      challenge:
+        type: object
+        properties:
+          id:
+            type: string
+            format: uint64
+          taskId:
+            type: string
+            format: uint64
+          challenger:
+            type: string
+          worker:
+            type: string
+          status:
+            type: string
+            format: uint64
+          deposit:
+            type: string
+            format: uint64
+          reason:
+            type: string
+          evidenceUri:
+            type: string
+          createdHeight:
+            type: string
+            format: uint64
+          resolvedHeight:
+            type: string
+            format: uint64
+  chain.workload.QueryGetTaskResponse:
+    type: object
+    properties:
+      Task:
+        type: object
+        properties:
+          id:
+            type: string
+            format: uint64
+          ipfsHash:
+            type: string
+          bounty:
+            type: string
+            format: uint64
+          status:
+            type: string
+            format: uint64
+            title: |-
+              Task status (canonical semantics):
+              0 OPEN
+              1 ASSIGNED
+              2 COMMITTED
+              3 REVEALED (legacy alias: RESULT_SUBMITTED)
+              4 CHALLENGED
+              5 COMPLETED
+              6 SLASHED
+          worker:
+            type: string
+          resultHash:
+            type: string
+          creator:
+            type: string
+          challengeDeadlineHeight:
+            type: string
+            format: uint64
+          challenger:
+            type: string
+          challengeId:
+            type: string
+            format: uint64
+          commitHash:
+            type: string
+          commitHeight:
+            type: string
+            format: uint64
+          revealDeadlineHeight:
+            type: string
+            format: uint64
+          resultUri:
+            type: string
+  chain.workload.QueryGetUnbondingResponse:
+    type: object
+    properties:
+      unbonding:
+        type: object
+        properties:
+          creator:
+            type: string
+          releaseHeight:
+            type: string
+            format: uint64
+          amount:
+            type: string
+            format: uint64
+  chain.workload.QueryGetWorkerResponse:
+    type: object
+    properties:
+      worker:
+        type: object
+        properties:
+          creator:
+            type: string
+          nodeId:
+            type: string
+          ipfsAddr:
+            type: string
+          stake:
+            type: string
+            format: uint64
+  chain.workload.QueryParamsResponse:
+    type: object
+    properties:
+      params:
+        description: params holds all the parameters of this module.
+        type: object
+        properties:
+          workload_denom:
+            type: string
+          challenge_window_blocks:
+            type: string
+            format: uint64
+          challenge_deposit:
+            type: string
+            format: uint64
+          challenger_slash_percent:
+            type: string
+            format: uint64
+          worker_slash_percent_on_bad_result:
+            type: string
+            format: uint64
+          reveal_window_blocks:
+            type: string
+            format: uint64
+          allow_legacy_submit_result:
+            type: boolean
+    description: QueryParamsResponse is response type for the Query/Params RPC method.
+  chain.workload.Task:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uint64
+      ipfsHash:
+        type: string
+      bounty:
+        type: string
+        format: uint64
+      status:
+        type: string
+        format: uint64
+        title: |-
+          Task status (canonical semantics):
+          0 OPEN
+          1 ASSIGNED
+          2 COMMITTED
+          3 REVEALED (legacy alias: RESULT_SUBMITTED)
+          4 CHALLENGED
+          5 COMPLETED
+          6 SLASHED
+      worker:
+        type: string
+      resultHash:
+        type: string
+      creator:
+        type: string
+      challengeDeadlineHeight:
+        type: string
+        format: uint64
+      challenger:
+        type: string
+      challengeId:
+        type: string
+        format: uint64
+      commitHash:
+        type: string
+      commitHeight:
+        type: string
+        format: uint64
+      revealDeadlineHeight:
+        type: string
+        format: uint64
+      resultUri:
+        type: string
+  chain.workload.Unbonding:
+    type: object
+    properties:
+      creator:
+        type: string
+      releaseHeight:
+        type: string
+        format: uint64
+      amount:
+        type: string
+        format: uint64
+  chain.workload.Worker:
+    type: object
+    properties:
+      creator:
+        type: string
+      nodeId:
+        type: string
+      ipfsAddr:
+        type: string
+      stake:
+        type: string
+        format: uint64
+  cosmos.base.query.v1beta1.PageRequest:
+    type: object
+    properties:
+      key:
+        type: string
+        format: byte
+        description: |-
+          key is a value returned in PageResponse.next_key to begin
+          querying the next page most efficiently. Only one of offset or key
+          should be set.
+      offset:
+        type: string
+        format: uint64
+        description: |-
+          offset is a numeric offset that can be used when key is unavailable.
+          It is less efficient than using key. Only one of offset or key should
+          be set.
+      limit:
+        type: string
+        format: uint64
+        description: >-
+          limit is the total number of results to be returned in the result
+          page.
+
+          If left empty it will default to a value to be set by each app.
+      count_total:
+        type: boolean
+        description: >-
+          count_total is set to true  to indicate that the result set should
+          include
+
+          a count of the total number of items available for pagination in UIs.
+
+          count_total is only respected when offset is used. It is ignored when
+          key
+
+          is set.
+      reverse:
+        type: boolean
+        description: >-
+          reverse is set to true if results are to be returned in the descending
+          order.
+
+
+          Since: cosmos-sdk 0.43
+    description: |-
+      message SomeRequest {
+               Foo some_parameter = 1;
+               PageRequest pagination = 2;
+       }
+    title: |-
+      PageRequest is to be embedded in gRPC request messages for efficient
+      pagination. Ex:
+  cosmos.base.query.v1beta1.PageResponse:
+    type: object
+    properties:
+      next_key:
+        type: string
+        format: byte
+        description: |-
+          next_key is the key to be passed to PageRequest.key to
+          query the next page most efficiently. It will be empty if
+          there are no more results.
+      total:
+        type: string
+        format: uint64
+        title: |-
+          total is total number of results available if PageRequest.count_total
+          was set, its value is undefined otherwise
+    description: |-
+      PageResponse is to be embedded in gRPC response messages where the
+      corresponding request message has used PageRequest.
+
+       message SomeResponse {
+               repeated Bar results = 1;
+               PageResponse page = 2;
+       }
+  chain.workload.MsgAcceptTask:
+    type: object
+    properties:
+      creator:
+        type: string
+      taskId:
+        type: string
+        format: uint64
+  chain.workload.MsgAcceptTaskResponse:
+    type: object
+  chain.workload.MsgChallengeResult:
+    type: object
+    properties:
+      creator:
+        type: string
+      taskId:
+        type: string
+        format: uint64
+      reason:
+        type: string
+      evidenceUri:
+        type: string
+  chain.workload.MsgChallengeResultResponse:
+    type: object
+  chain.workload.MsgCommitResult:
+    type: object
+    properties:
+      creator:
+        type: string
+      taskId:
+        type: string
+        format: uint64
+      commitHash:
+        type: string
+  chain.workload.MsgCommitResultResponse:
+    type: object
+  chain.workload.MsgCreateTask:
+    type: object
+    properties:
+      creator:
+        type: string
+      ipfsHash:
+        type: string
+      bounty:
+        type: string
+        format: uint64
+      status:
+        type: string
+        format: uint64
+      worker:
+        type: string
+      resultHash:
+        type: string
+  chain.workload.MsgCreateTaskResponse:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uint64
+  chain.workload.MsgDeleteTask:
+    type: object
+    properties:
+      creator:
+        type: string
+      id:
+        type: string
+        format: uint64
+  chain.workload.MsgDeleteTaskResponse:
+    type: object
+  chain.workload.MsgExtendUnbonding:
+    type: object
+    properties:
+      creator:
+        type: string
+      worker:
+        type: string
+      extraBlocks:
+        type: string
+        format: uint64
+  chain.workload.MsgExtendUnbondingResponse:
+    type: object
+  chain.workload.MsgFinalizeUnbonding:
+    type: object
+    properties:
+      creator:
+        type: string
+  chain.workload.MsgFinalizeUnbondingResponse:
+    type: object
+  chain.workload.MsgRegisterWorker:
+    type: object
+    properties:
+      creator:
+        type: string
+      nodeId:
+        type: string
+      ipfsAddr:
+        type: string
+  chain.workload.MsgRegisterWorkerResponse:
+    type: object
+  chain.workload.MsgRequestUnbonding:
+    type: object
+    properties:
+      creator:
+        type: string
+  chain.workload.MsgRequestUnbondingResponse:
+    type: object
+  chain.workload.MsgResolveChallenge:
+    type: object
+    properties:
+      creator:
+        type: string
+      taskId:
+        type: string
+        format: uint64
+      challengeSucceeded:
+        type: boolean
+      finalResultHash:
+        type: string
+      memo:
+        type: string
+  chain.workload.MsgResolveChallengeResponse:
+    type: object
+  chain.workload.MsgRevealResult:
+    type: object
+    properties:
+      creator:
+        type: string
+      taskId:
+        type: string
+        format: uint64
+      resultHash:
+        type: string
+      resultUri:
+        type: string
+      revealSalt:
+        type: string
+  chain.workload.MsgRevealResultResponse:
+    type: object
+  chain.workload.MsgSlashWorker:
+    type: object
+    properties:
+      creator:
+        type: string
+      worker:
+        type: string
+      slashPercent:
+        type: string
+        format: uint64
+  chain.workload.MsgSlashWorkerResponse:
+    type: object
+  chain.workload.MsgSubmitResult:
+    type: object
+    properties:
+      creator:
+        type: string
+      taskId:
+        type: string
+        format: uint64
+      resultHash:
+        type: string
+      resultUri:
+        type: string
+  chain.workload.MsgSubmitResultResponse:
+    type: object
+  chain.workload.MsgUnregisterWorker:
+    type: object
+    properties:
+      creator:
+        type: string
+  chain.workload.MsgUnregisterWorkerResponse:
+    type: object
+  chain.workload.MsgUpdateParams:
+    type: object
+    properties:
+      authority:
+        type: string
+        description: >-
+          authority is the address that controls the module (defaults to x/gov
+          unless overwritten).
+      params:
+        description: 'NOTE: All parameters must be supplied.'
+        type: object
+        properties:
+          workload_denom:
+            type: string
+          challenge_window_blocks:
+            type: string
+            format: uint64
+          challenge_deposit:
+            type: string
+            format: uint64
+          challenger_slash_percent:
+            type: string
+            format: uint64
+          worker_slash_percent_on_bad_result:
+            type: string
+            format: uint64
+          reveal_window_blocks:
+            type: string
+            format: uint64
+          allow_legacy_submit_result:
+            type: boolean
+    description: MsgUpdateParams is the Msg/UpdateParams request type.
+  chain.workload.MsgUpdateParamsResponse:
+    type: object
+    description: |-
+      MsgUpdateParamsResponse defines the response structure for executing a
+      MsgUpdateParams message.
+  chain.workload.MsgUpdateTask:
+    type: object
+    properties:
+      creator:
+        type: string
+      id:
+        type: string
+        format: uint64
+      ipfsHash:
+        type: string
+      bounty:
+        type: string
+        format: uint64
+      status:
+        type: string
+        format: uint64
+      worker:
+        type: string
+      resultHash:
+        type: string
+  chain.workload.MsgUpdateTaskResponse:
+    type: object
   cosmos.auth.v1beta1.MsgUpdateParams:
     type: object
     properties:

@@ -32,6 +32,15 @@
 
 ## P1（重要但不阻塞本轮基线）
 
+### P1-0 负向回归套件固化 ✅（已完成 2026-02-19）
+- 描述：落地 `scripts/p1_negative_suite.sh`，并引入 PASS/FAIL/SKIP 统计语义，覆盖关键对抗路径。
+- 产出：
+  - `scripts/p1_negative_suite.sh`
+  - `docs/P1_NEGATIVE_COVERAGE.md`
+  - 新增脚本：`scenario_F_forged_reveal.sh`、`scenario_G_duplicate_reveal.sh`
+- 最新结果：`total=6 pass=6 fail=0 skip=0`（`data/p1-negative/20260219-140336/summary.json`）
+- Owner：发发
+
 ### P1-1 Upgrade/Migration 文档与脚本
 - 描述：补齐测试网前升级迁移路径。
 - 验收：
@@ -69,7 +78,7 @@
 ---
 
 ## 本周执行顺序（建议）
-1. P0-1 提交整理与推送
-2. P0-2 v1 接口冻结
-3. P0-3 一键验收入口
-4. 启动 P1-2（并行预研）
+1. P1-1 Upgrade/Migration 文档与脚本
+2. P1-2 Worker 生产级对接规范冻结
+3. P1-3 Challenge 重执行框架完善（从模板到可执行闭环）
+4. CI 接入 P0/P1 gate（含 fail=0 & critical skip=0）
