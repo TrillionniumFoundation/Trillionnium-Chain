@@ -67,7 +67,13 @@
 - 复跑结果：`pre_p1=0`、`snapshot_diff=0`、`post_p1=0`（见 `rerun-summary.txt`）
 - 结论：P1-1 升级演练流程已具备可执行样本，可进入“发布前标准门禁”阶段。
 
-## 6) Definition of Done（本轮）
+## 6) 今日压缩推进（2026-02-19 晚间）
+
+- CI：已新增 `trnm-merge-gates` 与 `trnm-gate-quick-check`；quick-check 已调整为 `shellcheck -S error`，避免非阻塞告警导致红灯。
+- 升级演练：`data/upgrade-runs/20260219-164421` 已形成可审计样本。
+- 治理收口：新增 `docs/protocol/legacy-submit-result-deprecation-plan-v0.3.0.md`（announce/canary/full + 硬回滚阈值）。
+
+## 7) Definition of Done（本轮）
 
 - [ ] 所有 P0 项均有 owner 与截止时间
 - [ ] 关键测试可一键复现（命令固定）
