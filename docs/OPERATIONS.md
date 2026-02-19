@@ -2,6 +2,10 @@
 
 Practical operator runbook for Trillionnium Chain (`chain/`) mainline.
 
+Related:
+- Upgrade/Migration Runbook: `docs/protocol/upgrade-migration-v1.md`
+- Upgrade/Migration Checklist: `docs/UPGRADE_MIGRATION_CHECKLIST.md`
+
 ## 0) Prerequisites
 - Ignite CLI installed
 - `jq` installed

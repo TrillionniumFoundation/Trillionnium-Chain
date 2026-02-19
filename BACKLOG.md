@@ -41,8 +41,11 @@
 - 最新结果：`total=6 pass=6 fail=0 skip=0`（`data/p1-negative/20260219-140336/summary.json`）
 - Owner：发发
 
-### P1-1 Upgrade/Migration 文档与脚本
+### P1-1 Upgrade/Migration 文档与脚本（进行中）
 - 描述：补齐测试网前升级迁移路径。
+- 产出：
+  - `docs/protocol/upgrade-migration-v1.md`（已完成首版参数迁移草案）
+  - `docs/UPGRADE_MIGRATION_CHECKLIST.md`（可执行 checklist）
 - 验收：
   - 有明确 upgrade checklist
   - 参数迁移和兼容策略可执行
