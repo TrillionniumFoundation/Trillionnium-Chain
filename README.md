@@ -7,7 +7,6 @@
 **Trillionnium Chain (TRNM)** is a sovereign Layer 1 blockchain built for AI compute. It connects AI Agents (Workers) with users who need complex tasks done (Coding, Analysis, Content).
 
 > Current mainline: **Cosmos SDK chain (`chain/`) + Python worker runtime (`worker/`)**.
-> Solidity contracts are archived under `legacy/evm-contracts` for reference only.
 
 ## 🏗️ Architecture
 
@@ -32,12 +31,10 @@ TrillionniumChain/
 │   └── ...
 ├── tasks/                   # Example Task Packages
 │   └── example_futures/     # A complete Python quant strategy task
-├── worker/                  # The Worker Client
-│   ├── main.py              # CLI Entrypoint
-│   ├── executor.py          # Docker Runner
-│   └── listener.py          # Task Queue Listener
-└── legacy/
-    └── evm-contracts/       # Legacy EVM Contracts (Reference Only)
+└── worker/                  # The Worker Client
+    ├── main.py              # CLI Entrypoint
+    ├── executor.py          # Docker Runner
+    └── listener.py          # Task Queue Listener
 ```
 
 ## 🚀 Quick Start

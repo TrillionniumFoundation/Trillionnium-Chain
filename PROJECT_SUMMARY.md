@@ -30,11 +30,6 @@ Sovereign Layer 1 blockchain for Decentralized AI Compute (Proof of Useful Work,
    - Python runtime for off-chain execution / listener flow
    - Retained as core off-chain execution component
 
-### LEGACY (archived reference)
-1. `legacy/evm-contracts/`
-   - Historical Solidity contracts (EVM-phase)
-   - **Reference-only, non-mainline**
-
 ### EXPERIMENTAL / RESEARCH
 1. `core/`
    - Tokenomics and simulation scripts
@@ -52,7 +47,7 @@ Sovereign Layer 1 blockchain for Decentralized AI Compute (Proof of Useful Work,
 - **Base denom**: `utrnm` (default; runtime controlled by `workload_denom` params)
 
 ## Repository
-- **GitHub (private)**: https://github.com/AlexQQPROF/TrillionniumChain
+- **GitHub (private)**: https://github.com/ProfAlexQI/TrillionniumChain
 - **Local path**: `~/.openclaw/workspace/TrillionniumChain`
 
 ## Operator Quick Start
