@@ -1,3 +1,0 @@
-backtrader==1.9.78.123
-pandas>=2.0.0
-matplotlib>=3.0.0
