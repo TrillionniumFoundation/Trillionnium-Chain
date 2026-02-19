@@ -45,8 +45,9 @@
   - 失败路径可重放
   - 日志字段可用于定位
 
-### P1-3 Challenge 重执行框架（简版）
+### P1-3 Challenge 重执行框架（简版，进行中）
 - 描述：实现挑战后的最小重执行闭环。
+- 产出：`docs/protocol/challenge-reexecution-framework-v0.1.md`、`scripts/challenge_reexec_resolve_template.sh`
 - 验收：
   - 挑战入口可触发
   - 重执行结果可回写裁决
