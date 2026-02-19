@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use trnm_types::{ObjectRef, Tx};
 
 #[derive(Debug, Clone, Copy)]
@@ -8,6 +8,7 @@ pub enum GroupingStrategy {
     WriteFirst,
     WriteLast,
     HotBucketInterleave,
+    AggressiveGreedy,
 }
 
 #[derive(Debug, Clone)]
@@ -28,8 +29,31 @@ pub fn detect_conflict(a: &Tx, b: &Tx) -> bool {
         || intersects(&a.read_set, &b.write_set)
 }
 
+#[inline]
+fn access_key(obj: &ObjectRef) -> (u64, u64) {
+    (obj.id, obj.version)
+}
+
+#[inline]
+fn dedup_access_keys(objs: &[ObjectRef]) -> Vec<(u64, u64)> {
+    let mut out: Vec<(u64, u64)> = Vec::with_capacity(objs.len());
+    for obj in objs {
+        let key = access_key(obj);
+        if !out.contains(&key) {
+            out.push(key);
+        }
+    }
+    out
+}
+
 fn intersects(x: &[ObjectRef], y: &[ObjectRef]) -> bool {
-    x.iter().any(|i| y.iter().any(|j| i == j))
+    if x.is_empty() || y.is_empty() {
+        return false;
+    }
+    // Build a set from the smaller side to reduce comparisons.
+    let (small, large) = if x.len() <= y.len() { (x, y) } else { (y, x) };
+    let seen: HashSet<(u64, u64)> = small.iter().map(access_key).collect();
+    large.iter().any(|obj| seen.contains(&access_key(obj)))
 }
 
 /// Build parallel-safe groups:
@@ -50,12 +74,16 @@ pub fn build_parallel_groups_profile_with_strategy(
     let mut ordered: Vec<Tx> = txs.to_vec();
     reorder_for_strategy(&mut ordered, strategy);
 
+    if matches!(strategy, GroupingStrategy::AggressiveGreedy) {
+        return build_parallel_groups_aggressive_profile(txs, ordered);
+    }
+
     let mut groups: Vec<Vec<Tx>> = Vec::new();
 
-    // object -> latest group that has a writer touching this object
-    let mut latest_writer_group: HashMap<ObjectRef, usize> = HashMap::new();
-    // object -> latest group that has a reader touching this object
-    let mut latest_reader_group: HashMap<ObjectRef, usize> = HashMap::new();
+    // object(id,version) -> latest group that has a writer touching this object
+    let mut latest_writer_group: HashMap<(u64, u64), usize> = HashMap::new();
+    // object(id,version) -> latest group that has a reader touching this object
+    let mut latest_reader_group: HashMap<(u64, u64), usize> = HashMap::new();
 
     // Profiling counters (lightweight approximation instead of pairwise O(n^2) scans)
     let mut conflict_checks = 0usize;
@@ -65,24 +93,28 @@ pub fn build_parallel_groups_profile_with_strategy(
         // minimal group index forced by previous conflicting accesses
         let mut required_group = 0usize;
 
+        // Deduplicate per-tx access keys while avoiding HashSet allocation in hot path.
+        let read_keys = dedup_access_keys(&tx.read_set);
+        let write_keys = dedup_access_keys(&tx.write_set);
+
         // read conflicts with previous writers on the same object
-        for obj in &tx.read_set {
+        for key in &read_keys {
             conflict_checks += 1;
-            if let Some(&g) = latest_writer_group.get(obj) {
+            if let Some(&g) = latest_writer_group.get(key) {
                 conflict_hits += 1;
                 required_group = required_group.max(g + 1);
             }
         }
 
         // write conflicts with previous writers and readers on the same object
-        for obj in &tx.write_set {
+        for key in &write_keys {
             conflict_checks += 1;
-            if let Some(&g) = latest_writer_group.get(obj) {
+            if let Some(&g) = latest_writer_group.get(key) {
                 conflict_hits += 1;
                 required_group = required_group.max(g + 1);
             }
             conflict_checks += 1;
-            if let Some(&g) = latest_reader_group.get(obj) {
+            if let Some(&g) = latest_reader_group.get(key) {
                 conflict_hits += 1;
                 required_group = required_group.max(g + 1);
             }
@@ -93,11 +125,11 @@ pub fn build_parallel_groups_profile_with_strategy(
         }
         groups[required_group].push(tx.clone());
 
-        for obj in &tx.read_set {
-            latest_reader_group.insert(obj.clone(), required_group);
+        for key in read_keys {
+            latest_reader_group.insert(key, required_group);
         }
-        for obj in &tx.write_set {
-            latest_writer_group.insert(obj.clone(), required_group);
+        for key in write_keys {
+            latest_writer_group.insert(key, required_group);
         }
     }
 
@@ -115,6 +147,111 @@ pub fn build_parallel_groups_profile_with_strategy(
         groups,
         GroupingProfile {
             tx_count: txs.len(),
+            group_count,
+            grouped_count,
+            max_group_size,
+            min_group_size,
+            avg_group_size,
+            conflict_checks,
+            conflict_hits,
+        },
+    )
+}
+
+fn build_parallel_groups_aggressive_profile(
+    original_txs: &[Tx],
+    ordered: Vec<Tx>,
+) -> (Vec<Vec<Tx>>, GroupingProfile) {
+    let mut groups: Vec<Vec<Tx>> = Vec::new();
+    let mut group_read_keys: Vec<HashSet<(u64, u64)>> = Vec::new();
+    let mut group_write_keys: Vec<HashSet<(u64, u64)>> = Vec::new();
+
+    // Lower-bound index hints (same semantics as Original strategy):
+    // a tx cannot be placed before the latest conflicting writer/reader + 1.
+    let mut latest_writer_group: HashMap<(u64, u64), usize> = HashMap::new();
+    let mut latest_reader_group: HashMap<(u64, u64), usize> = HashMap::new();
+
+    let mut conflict_checks = 0usize;
+    let mut conflict_hits = 0usize;
+
+    for tx in ordered {
+        let read_keys: HashSet<(u64, u64)> = tx.read_set.iter().map(access_key).collect();
+        let write_keys: HashSet<(u64, u64)> = tx.write_set.iter().map(access_key).collect();
+
+        // Compute a safe lower-bound to prune candidate groups.
+        let mut min_group = 0usize;
+        for key in &read_keys {
+            if let Some(&g) = latest_writer_group.get(key) {
+                min_group = min_group.max(g + 1);
+            }
+        }
+        for key in &write_keys {
+            if let Some(&g) = latest_writer_group.get(key) {
+                min_group = min_group.max(g + 1);
+            }
+            if let Some(&g) = latest_reader_group.get(key) {
+                min_group = min_group.max(g + 1);
+            }
+        }
+
+        let mut placed = false;
+        for idx in min_group..groups.len() {
+            conflict_checks += 1;
+
+            // Read conflicts with prior writes in the same group.
+            let rw_conflict = read_keys.iter().any(|k| group_write_keys[idx].contains(k));
+            // Write conflicts with prior reads/writes in the same group.
+            let ww_conflict = write_keys.iter().any(|k| group_write_keys[idx].contains(k));
+            let wr_conflict = write_keys.iter().any(|k| group_read_keys[idx].contains(k));
+            if rw_conflict || ww_conflict || wr_conflict {
+                conflict_hits += 1;
+                continue;
+            }
+
+            groups[idx].push(tx.clone());
+            group_read_keys[idx].extend(read_keys.iter().copied());
+            group_write_keys[idx].extend(write_keys.iter().copied());
+
+            for key in &read_keys {
+                latest_reader_group.insert(*key, idx);
+            }
+            for key in &write_keys {
+                latest_writer_group.insert(*key, idx);
+            }
+
+            placed = true;
+            break;
+        }
+
+        if !placed {
+            let idx = groups.len();
+            groups.push(vec![tx]);
+            group_read_keys.push(read_keys.clone());
+            group_write_keys.push(write_keys.clone());
+
+            for key in &read_keys {
+                latest_reader_group.insert(*key, idx);
+            }
+            for key in &write_keys {
+                latest_writer_group.insert(*key, idx);
+            }
+        }
+    }
+
+    let group_count = groups.len();
+    let grouped_count: usize = groups.iter().map(|g| g.len()).sum();
+    let max_group_size = groups.iter().map(|g| g.len()).max().unwrap_or(0);
+    let min_group_size = groups.iter().map(|g| g.len()).min().unwrap_or(0);
+    let avg_group_size = if group_count == 0 {
+        0.0
+    } else {
+        grouped_count as f64 / group_count as f64
+    };
+
+    (
+        groups,
+        GroupingProfile {
+            tx_count: original_txs.len(),
             group_count,
             grouped_count,
             max_group_size,
@@ -179,6 +316,9 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
             }
             merged.reverse();
             txs.clone_from_slice(&merged);
+        }
+        GroupingStrategy::AggressiveGreedy => {
+            // Keep original order by default; aggressive placement logic handles packing.
         }
     }
 }
@@ -246,9 +386,34 @@ mod tests {
         let (g1, _) = build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::Original);
         let (g2, _) =
             build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::FootprintDesc);
+        let (g3, _) =
+            build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::AggressiveGreedy);
         let c1: usize = g1.iter().map(|g| g.len()).sum();
         let c2: usize = g2.iter().map(|g| g.len()).sum();
+        let c3: usize = g3.iter().map(|g| g.len()).sum();
         assert_eq!(c1, txs.len());
         assert_eq!(c2, txs.len());
+        assert_eq!(c3, txs.len());
+    }
+
+    #[test]
+    fn aggressive_groups_are_pairwise_non_conflicting() {
+        let txs = vec![
+            tx(1, vec![o(1)], vec![o(2)]),
+            tx(2, vec![o(3)], vec![o(4)]),
+            tx(3, vec![o(2)], vec![]),
+            tx(4, vec![o(5)], vec![o(1)]),
+            tx(5, vec![o(9)], vec![o(10)]),
+        ];
+        let (groups, _) =
+            build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::AggressiveGreedy);
+
+        for grp in groups {
+            for i in 0..grp.len() {
+                for j in (i + 1)..grp.len() {
+                    assert!(!detect_conflict(&grp[i], &grp[j]));
+                }
+            }
+        }
     }
 }

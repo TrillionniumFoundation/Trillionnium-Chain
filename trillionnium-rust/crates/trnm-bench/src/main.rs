@@ -16,6 +16,7 @@ enum StrategyArg {
     WriteFirst,
     WriteLast,
     HotBucketInterleave,
+    AggressiveGreedy,
 }
 
 impl From<StrategyArg> for GroupingStrategy {
@@ -26,6 +27,7 @@ impl From<StrategyArg> for GroupingStrategy {
             StrategyArg::WriteFirst => GroupingStrategy::WriteFirst,
             StrategyArg::WriteLast => GroupingStrategy::WriteLast,
             StrategyArg::HotBucketInterleave => GroupingStrategy::HotBucketInterleave,
+            StrategyArg::AggressiveGreedy => GroupingStrategy::AggressiveGreedy,
         }
     }
 }
