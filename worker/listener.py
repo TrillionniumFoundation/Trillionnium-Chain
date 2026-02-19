@@ -45,6 +45,7 @@ class ChainListener:
         self.in_flight_jobs = set()
         self.sequence = None
         self.job_phases = {}
+        self.job_txs = {}
         self._load_state()
 
     def listen_loop(self):
@@ -53,6 +54,9 @@ class ChainListener:
         
         # Ensure worker identity is registered in workload module (idempotent)
         self.ensure_worker_registered()
+
+        # Reconcile persisted local phases to avoid duplicate settlement after restart
+        self.reconcile_local_state()
 
         # Get current height to start listening from "now"
         try:
@@ -90,6 +94,7 @@ class ChainListener:
                 self.seen_jobs = set(data.get("seen_jobs", []))
                 self.sequence = data.get("sequence")
                 self.job_phases = data.get("job_phases", {})
+                self.job_txs = data.get("job_txs", {})
         except Exception:
             self.seen_jobs = set()
             self.sequence = None
@@ -100,6 +105,7 @@ class ChainListener:
                 "seen_jobs": sorted(list(self.seen_jobs)),
                 "sequence": self.sequence,
                 "job_phases": self.job_phases,
+                "job_txs": self.job_txs,
             }, ensure_ascii=False, indent=2))
         except Exception as e:
             logger.warning(f"Failed to save state: {e}")
@@ -128,28 +134,57 @@ class ChainListener:
         self.job_phases[str(job_id)] = phase
         self._save_state()
 
+    def _query_tx_code(self, txhash):
+        cmd = [
+            self.chain_bin, "query", "tx", txhash,
+            "--home", self.home,
+            "-o", "json",
+        ]
+        r = subprocess.run(cmd, capture_output=True, text=True)
+        if r.returncode != 0:
+            return None, "not_found"
+        try:
+            data = json.loads(r.stdout)
+        except Exception:
+            return None, "decode_error"
+        code = data.get("code")
+        if code is None and isinstance(data.get("tx_response"), dict):
+            code = data["tx_response"].get("code", 0)
+        raw = data.get("raw_log") or (data.get("tx_response") or {}).get("raw_log", "")
+        return int(code or 0), raw
+
     def _wait_tx_commit(self, txhash, timeout_sec=60):
         for _ in range(timeout_sec):
-            cmd = [
-                self.chain_bin, "query", "tx", txhash,
-                "--home", self.home,
-                "-o", "json",
-            ]
-            r = subprocess.run(cmd, capture_output=True, text=True)
-            if r.returncode == 0:
-                try:
-                    data = json.loads(r.stdout)
-                except Exception:
-                    data = {}
-                code = data.get("code")
-                if code is None and isinstance(data.get("tx_response"), dict):
-                    code = data["tx_response"].get("code", 0)
-                if int(code or 0) == 0:
-                    return True, ""
-                raw = data.get("raw_log") or (data.get("tx_response") or {}).get("raw_log", "")
-                return False, raw or f"tx committed with code={code}"
-            time.sleep(1)
+            code, raw = self._query_tx_code(txhash)
+            if code is None:
+                time.sleep(1)
+                continue
+            if code == 0:
+                return True, ""
+            return False, raw or f"tx committed with code={code}"
         return False, f"tx not committed in {timeout_sec}s: {txhash}"
+
+    def reconcile_local_state(self):
+        if not self.job_phases:
+            return
+        logger.info("Reconciling local worker phases...")
+        for job_id, phase in list(self.job_phases.items()):
+            if job_id in self.seen_jobs and phase != "finalized":
+                self.job_phases[job_id] = "finalized"
+                continue
+            txh = self.job_txs.get(job_id)
+            if not txh:
+                continue
+            code, raw = self._query_tx_code(txh)
+            if code is None:
+                continue
+            if code == 0 and phase in ("committed", "submit_failed"):
+                self.seen_jobs.add(job_id)
+                self.job_phases[job_id] = "finalized"
+            elif code != 0 and phase in ("committed", "submit_failed"):
+                self.job_phases[job_id] = "accepted"
+                logger.warning(f"Job {job_id} tx replay needed (tx={txh}, code={code}): {raw}")
+        self._save_state()
 
     def ensure_worker_registered(self):
         """Idempotently register worker in workload module so compute claim won't fail with worker-not-found."""
@@ -289,8 +324,17 @@ class ChainListener:
             "not found in workload module",
         ]
 
+        job_id = None
+        for i, token in enumerate(args):
+            if token == "--job-id" and i + 1 < len(args):
+                job_id = str(args[i + 1])
+                break
+
         for attempt in range(6):
             ok_sync, r, out, cmd, txhash, raw_log = run_once()
+            if txhash and job_id:
+                self.job_txs[job_id] = txhash
+                self._save_state()
             if ok_sync and txhash:
                 committed, err = self._wait_tx_commit(txhash)
                 if committed:
