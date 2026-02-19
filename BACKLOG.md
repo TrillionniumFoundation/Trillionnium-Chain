@@ -58,7 +58,7 @@
 
 ### P2-1 观测增强（进行中）
 - 描述：按 task_id / trace_id 聚合资金流与状态演进，提升排障效率。
-- 当前进展：reexec 模板与 e2e summary 已引入 trace_id 贯穿字段。
+- 当前进展：reexec 模板与 e2e summary 已引入 trace_id 贯穿字段；worker listener 提交链路日志已输出 trace_id。
 
 ### P2-2 经济参数边界回归
 - 描述：补足 challenger/worker 参数边界测试（压力与极值）。

@@ -130,6 +130,9 @@ class ChainListener:
         self._save_state()
         return seq
 
+    def _trace_id(self, job_id):
+        return f"job-{job_id}"
+
     def _set_job_phase(self, job_id, phase):
         self.job_phases[str(job_id)] = phase
         self._save_state()
@@ -242,7 +245,8 @@ class ChainListener:
         self.in_flight_jobs.add(job_id)
         self._set_job_phase(job_id, "detected")
 
-        logger.info(f"🔔 New Job Detected! ID: {job_id} | Payload: {payload}")
+        trace_id = self._trace_id(job_id)
+        logger.info(f"🔔 New Job Detected! ID: {job_id} trace_id={trace_id} | Payload: {payload}")
         
         # Validate requirements (Mock check)
         if "gpu" in requirements and "gpu" not in self.config['worker']['capabilities']:
@@ -252,14 +256,14 @@ class ChainListener:
 
         # Claim job on-chain first (set status=RUNNING and assigned_worker)
         if not self.request_job_execution(job_id):
-            logger.warning(f"Skip Job {job_id}: failed to claim execution rights")
+            logger.warning(f"Skip Job {job_id}: failed to claim execution rights trace_id={trace_id}")
             self._set_job_phase(job_id, "claim_failed")
             self.in_flight_jobs.discard(job_id)
             return
         self._set_job_phase(job_id, "accepted")
 
         # Trigger Execution
-        logger.info(f"⚙️ Starting execution for Job {job_id}...")
+        logger.info(f"⚙️ Starting execution for Job {job_id} trace_id={trace_id}...")
         
         # Here we would download the payload from IPFS
         # source_path = self.download_payload(payload) 
@@ -271,7 +275,7 @@ class ChainListener:
         # Execute
         # stdout, code = self.executor.execute_task(source_path)
         
-        logger.info(f"✅ Job {job_id} processing started.")
+        logger.info(f"✅ Job {job_id} processing started trace_id={trace_id}.")
         
         # 1. Download payload (Mock: assume it's a local path or simple script)
         # If payload starts with 'ipfs://', download it.
@@ -286,7 +290,7 @@ class ChainListener:
             logger.info(f"Task succeeded. Result: {stdout[:50]}...")
             # wait a couple blocks so RUNNING-state tx is committed before complete-job
             time.sleep(3)
-            committed = self.submit_result(job_id, stdout)
+            committed = self.submit_result(job_id, stdout, trace_id=trace_id)
             if committed:
                 self.seen_jobs.add(job_id)
                 self._set_job_phase(job_id, "finalized")
@@ -330,11 +334,14 @@ class ChainListener:
                 job_id = str(args[i + 1])
                 break
 
+        trace_id = self._trace_id(job_id) if job_id else "n/a"
+
         for attempt in range(6):
             ok_sync, r, out, cmd, txhash, raw_log = run_once()
             if txhash and job_id:
                 self.job_txs[job_id] = txhash
                 self._save_state()
+                logger.info(f"TX sent trace_id={trace_id} txhash={txhash} attempt={attempt+1}")
             if ok_sync and txhash:
                 committed, err = self._wait_tx_commit(txhash)
                 if committed:
@@ -352,7 +359,7 @@ class ChainListener:
                 return False
             time.sleep(0.5)
 
-        logger.error(f"TX failed rc={r.returncode}: {' '.join(cmd)}\n{out}")
+        logger.error(f"TX failed trace_id={trace_id} rc={r.returncode}: {' '.join(cmd)}\n{out}")
         return False
 
     def request_job_execution(self, job_id):
@@ -365,11 +372,12 @@ class ChainListener:
             "--yes", "--gas", "auto", "--gas-adjustment", "1.5",
         ])
 
-    def submit_result(self, job_id, result):
+    def submit_result(self, job_id, result, trace_id=None):
         """Broadcast MsgCompleteJob via chaind CLI."""
         try:
+            trace_id = trace_id or self._trace_id(job_id)
             result_hash = hashlib.sha256((result or "").encode()).hexdigest()
-            logger.info(f"Submitting MsgCompleteJob for Job {job_id} result_hash={result_hash[:16]}...")
+            logger.info(f"Submitting MsgCompleteJob for Job {job_id} trace_id={trace_id} result_hash={result_hash[:16]}...")
             ok = self._run_chain_tx([
                 "tx", "compute", "complete-job",
                 "--job-id", str(job_id),
@@ -381,7 +389,7 @@ class ChainListener:
             ])
             if ok:
                 self._set_job_phase(job_id, "committed")
-                logger.info(f"✅ Job {job_id} result committed on-chain")
+                logger.info(f"✅ Job {job_id} result committed on-chain trace_id={trace_id}")
                 return True
             return False
         except Exception as e:
