@@ -15,11 +15,14 @@ concurrency:
 
 jobs:
   rust-l1-health:
-    runs-on: [self-hosted, macOS]
+    runs-on: macos-latest
     timeout-minutes: 45
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
 
       - name: Rust workspace tests
         run: |
