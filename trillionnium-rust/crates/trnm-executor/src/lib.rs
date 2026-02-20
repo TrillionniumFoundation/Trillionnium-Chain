@@ -304,6 +304,14 @@ fn build_parallel_groups_aggressive_profile(
     )
 }
 
+fn auto_hot_streak_threshold() -> f64 {
+    std::env::var("TRNM_AUTO_HOT_STREAK_RATIO")
+        .ok()
+        .and_then(|v| v.parse::<f64>().ok())
+        .map(|v| v.clamp(0.0, 1.0))
+        .unwrap_or(0.22)
+}
+
 fn should_use_hot_bucket_interleave(txs: &[Tx]) -> bool {
     if txs.len() < 512 {
         return false;
@@ -338,7 +346,7 @@ fn should_use_hot_bucket_interleave(txs: &[Tx]) -> bool {
 
     let streak_ratio = same_key_streak_hits as f64 / total_pairs as f64;
     // Empirical heuristic: enable hot-bucket only when streak pressure is clearly present.
-    streak_ratio >= 0.22
+    streak_ratio >= auto_hot_streak_threshold()
 }
 
 fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
