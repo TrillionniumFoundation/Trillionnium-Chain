@@ -341,6 +341,14 @@ fn auto_reorder_min_hot_key_share() -> f64 {
         .unwrap_or(0.0075)
 }
 
+fn hot_bucket_count() -> usize {
+    std::env::var("TRNM_HOT_BUCKETS")
+        .ok()
+        .and_then(|v| v.parse::<usize>().ok())
+        .map(|v| v.clamp(4, 64))
+        .unwrap_or(8)
+}
+
 pub fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
     let threshold = auto_hot_streak_threshold();
     let min_margin = auto_reorder_min_margin();
@@ -449,8 +457,8 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
             // Heuristic reorder; see should_use_hot_bucket_interleave for adaptive trigger.
             // Heuristic: shard txs by a stable access-key hint, then round-robin buckets.
             // Goal is to avoid long same-key streaks in input order under hotspot workloads.
-            const BUCKETS: usize = 16;
-            let mut buckets: Vec<Vec<Tx>> = vec![Vec::new(); BUCKETS];
+            let buckets_n = hot_bucket_count();
+            let mut buckets: Vec<Vec<Tx>> = vec![Vec::new(); buckets_n];
 
             for tx in txs.iter().cloned() {
                 // Prefer write-set as stronger conflict signal; fold a second key when present
@@ -467,7 +475,7 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
                     .or_else(|| tx.read_set.get(1))
                     .map(|o| o.id as usize)
                     .unwrap_or(0);
-                let bucket = (key_a ^ key_b.rotate_left(7)) % BUCKETS;
+                let bucket = (key_a ^ key_b.rotate_left(7)) % buckets_n;
                 buckets[bucket].push(tx);
             }
 
