@@ -134,6 +134,12 @@ jobs:
           cd trillionnium-rust
           TXS=5000 ./scripts/run_bench_mixed_matrix.sh
 
+      - name: Run executor strategy experiment (mixed, non-gate)
+        run: |
+          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+          cd trillionnium-rust
+          TXS=10000 KEYS=2000 READ_FANOUT=4 WRITE_EVERY=2 ./scripts/run_executor_strategy_experiment.sh
+
       - name: Build executor profiling summary
         run: |
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"

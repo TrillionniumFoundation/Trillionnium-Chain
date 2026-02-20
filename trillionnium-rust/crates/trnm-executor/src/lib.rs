@@ -316,28 +316,44 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
             txs.sort_by_key(|tx| (tx.write_set.len(), std::cmp::Reverse(tx.read_set.len()), tx.id));
         }
         GroupingStrategy::HotBucketInterleave => {
-            // Heuristic: shard txs by a stable "hot key" hint, then interleave buckets.
-            // Goal is to avoid long same-key streaks in input order.
+            // Heuristic: shard txs by a stable access-key hint, then round-robin buckets.
+            // Goal is to avoid long same-key streaks in input order under hotspot workloads.
             const BUCKETS: usize = 16;
             let mut buckets: Vec<Vec<Tx>> = vec![Vec::new(); BUCKETS];
+
             for tx in txs.iter().cloned() {
-                let key = tx
+                // Prefer write-set as stronger conflict signal; fold a second key when present
+                // to reduce bucket skew for mixed workloads.
+                let key_a = tx
                     .write_set
                     .first()
                     .or_else(|| tx.read_set.first())
                     .map(|o| o.id as usize)
                     .unwrap_or(0);
-                buckets[key % BUCKETS].push(tx);
+                let key_b = tx
+                    .write_set
+                    .get(1)
+                    .or_else(|| tx.read_set.get(1))
+                    .map(|o| o.id as usize)
+                    .unwrap_or(0);
+                let bucket = (key_a ^ key_b.rotate_left(7)) % BUCKETS;
+                buckets[bucket].push(tx);
             }
+
             for b in &mut buckets {
                 b.sort_by_key(|tx| tx.id);
             }
+
+            // Stable round-robin without reverse/pop tricks.
+            let mut cursor = vec![0usize; BUCKETS];
             let mut merged = Vec::with_capacity(txs.len());
             loop {
                 let mut moved = false;
-                for b in &mut buckets {
-                    if let Some(tx) = b.pop() {
-                        merged.push(tx);
+                for i in 0..BUCKETS {
+                    let c = cursor[i];
+                    if c < buckets[i].len() {
+                        merged.push(buckets[i][c].clone());
+                        cursor[i] += 1;
                         moved = true;
                     }
                 }
@@ -345,7 +361,7 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
                     break;
                 }
             }
-            merged.reverse();
+
             txs.clone_from_slice(&merged);
         }
         GroupingStrategy::AggressiveGreedy => {
