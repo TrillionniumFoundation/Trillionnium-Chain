@@ -338,7 +338,7 @@ fn auto_reorder_min_hot_key_share() -> f64 {
         .ok()
         .and_then(|v| v.parse::<f64>().ok())
         .map(|v| v.clamp(0.0, 1.0))
-        .unwrap_or(0.06)
+        .unwrap_or(0.0075)
 }
 
 pub fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
