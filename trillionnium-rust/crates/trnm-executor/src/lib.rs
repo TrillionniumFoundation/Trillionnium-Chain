@@ -344,16 +344,15 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
                 b.sort_by_key(|tx| tx.id);
             }
 
-            // Stable round-robin without reverse/pop tricks.
-            let mut cursor = vec![0usize; BUCKETS];
+            // Stable round-robin with move semantics (avoid per-tx clone cost).
+            let mut iters: Vec<std::vec::IntoIter<Tx>> =
+                buckets.into_iter().map(|b| b.into_iter()).collect();
             let mut merged = Vec::with_capacity(txs.len());
             loop {
                 let mut moved = false;
-                for i in 0..BUCKETS {
-                    let c = cursor[i];
-                    if c < buckets[i].len() {
-                        merged.push(buckets[i][c].clone());
-                        cursor[i] += 1;
+                for it in &mut iters {
+                    if let Some(tx) = it.next() {
+                        merged.push(tx);
                         moved = true;
                     }
                 }
