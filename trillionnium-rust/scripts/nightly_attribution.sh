@@ -31,6 +31,8 @@ mkdir -p "$OUT_DIR"
 latest_audit="$(ls -1dt run/audit/state-root-audit-*.txt 2>/dev/null | head -n 1 || true)"
 latest_bench="$(ls -1dt run/bench/bench-matrix-*.txt 2>/dev/null | head -n 1 || true)"
 latest_mixed="$(ls -1dt run/bench/bench-mixed-matrix-*.txt 2>/dev/null | head -n 1 || true)"
+latest_strategy_exp="$(ls -1dt run/bench/executor-strategy-exp-*.txt 2>/dev/null | head -n 1 || true)"
+latest_hotspot_exp="$(ls -1dt run/bench/executor-hotspot-exp-*.txt 2>/dev/null | head -n 1 || true)"
 
 label_semantic=0
 label_perf=0
@@ -69,6 +71,36 @@ max_elapsed() {
   awk -F= '/^elapsed_ms=/{if ($2+0>m) m=$2+0} END{if (m=="") m=0; print m}' "$file"
 }
 
+extract_auto_reason() {
+  local file="$1"
+  if [[ -z "$file" || ! -f "$file" ]]; then
+    echo "none"
+    return 0
+  fi
+
+  awk '
+    /--- strategy=auto-adaptive ---/ {in_auto=1; next}
+    /^--- strategy=/ {if (in_auto) exit; in_auto=0}
+    in_auto && /^profile.auto.reason=/ {sub(/^profile.auto.reason=/, "", $0); print; found=1; exit}
+    END {if (!found) print "unknown"}
+  ' "$file"
+}
+
+extract_auto_use_hot_bucket() {
+  local file="$1"
+  if [[ -z "$file" || ! -f "$file" ]]; then
+    echo "none"
+    return 0
+  fi
+
+  awk '
+    /--- strategy=auto-adaptive ---/ {in_auto=1; next}
+    /^--- strategy=/ {if (in_auto) exit; in_auto=0}
+    in_auto && /^profile.auto.use_hot_bucket=/ {sub(/^profile.auto.use_hot_bucket=/, "", $0); print; found=1; exit}
+    END {if (!found) print "unknown"}
+  ' "$file"
+}
+
 if [[ -n "$latest_bench" ]]; then
   classic_max="$(max_elapsed "$latest_bench")"
   if [[ "$classic_max" -gt "$CLASSIC_HARD_MS" ]]; then
@@ -85,6 +117,11 @@ if [[ -n "$latest_mixed" ]]; then
   fi
 fi
 
+auto_reason_mixed="$(extract_auto_reason "$latest_strategy_exp")"
+auto_used_mixed="$(extract_auto_use_hot_bucket "$latest_strategy_exp")"
+auto_reason_hotspot="$(extract_auto_reason "$latest_hotspot_exp")"
+auto_used_hotspot="$(extract_auto_use_hot_bucket "$latest_hotspot_exp")"
+
 labels=()
 [[ $label_semantic -eq 1 ]] && labels+=("semantic-regression")
 [[ $label_perf -eq 1 ]] && labels+=("performance-regression")
@@ -100,9 +137,15 @@ fi
   echo "audit.file=${latest_audit:-none}"
   echo "bench.file=${latest_bench:-none}"
   echo "mixed.file=${latest_mixed:-none}"
+  echo "strategy_exp.file=${latest_strategy_exp:-none}"
+  echo "hotspot_exp.file=${latest_hotspot_exp:-none}"
+  echo "strategy_exp.auto.use_hot_bucket=${auto_used_mixed}"
+  echo "strategy_exp.auto.reason=${auto_reason_mixed}"
+  echo "hotspot_exp.auto.use_hot_bucket=${auto_used_hotspot}"
+  echo "hotspot_exp.auto.reason=${auto_reason_hotspot}"
   echo "threshold.classic.hard_ms=$CLASSIC_HARD_MS"
   echo "threshold.mixed.hard_ms=$MIXED_HARD_MS"
 } | tee "$OUT"
 
-echo "::notice title=nightly-attribution::labels=$(IFS=,; echo "${labels[*]}")"
+echo "::notice title=nightly-attribution::labels=$(IFS=,; echo "${labels[*]}") auto_mixed=${auto_reason_mixed} auto_hotspot=${auto_reason_hotspot}"
 echo "[OK] nightly attribution: $OUT"
