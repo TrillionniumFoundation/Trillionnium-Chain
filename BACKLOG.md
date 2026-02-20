@@ -58,6 +58,7 @@
   - 日志字段可用于定位
 
 ### P1-3 Challenge 重执行框架（简版，进行中）
+- 最新进展（2026-02-20）：补齐可执行模板脚本 `scripts/challenge_reexec_resolve_template.sh` 与 smoke `scripts/challenge_reexec_template_smoke.sh`，可一键生成 authority 回写命令模板。
 - 描述：实现挑战后的最小重执行闭环。
 - 产出：`docs/protocol/challenge-reexecution-framework-v0.1.md`、`scripts/challenge_reexec_resolve_template.sh`
 - 验收：
