@@ -153,6 +153,21 @@ jobs:
           cd trillionnium-rust
           TXS=${REGRESSION_MATRIX_TXS:-10000} ./scripts/run_bench_regression_matrix.sh
 
+      - name: Build aggressive profiling summary
+        if: always()
+        run: |
+          set -euo pipefail
+          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+          cd trillionnium-rust
+
+          ./scripts/summarize_aggressive_profile.py
+          latest_summary=$(ls -1t run/bench/aggressive-profile-summary-*.md | head -n 1)
+          echo "aggressive_profile_summary=${latest_summary}"
+
+          if [ -n "${GITHUB_STEP_SUMMARY:-}" ] && [ -f "${latest_summary}" ]; then
+            cat "${latest_summary}" >> "${GITHUB_STEP_SUMMARY}"
+          fi
+
       - name: Check aggressive regression ratio (hard gate)
         run: |
           set -euo pipefail
@@ -211,6 +226,21 @@ jobs:
           cd trillionnium-rust
 
           ./scripts/render_nightly_summary.py
+
+      - name: Append nightly summary to GitHub Step Summary
+        if: always()
+        run: |
+          set -euo pipefail
+          cd trillionnium-rust
+
+          latest_summary=$(ls -1t run/health/nightly-summary-*.md | head -n 1)
+          if [ -n "${GITHUB_STEP_SUMMARY:-}" ] && [ -f "${latest_summary}" ]; then
+            {
+              echo "## Nightly Health (Rendered)"
+              echo
+              cat "${latest_summary}"
+            } >> "${GITHUB_STEP_SUMMARY}"
+          fi
 
       - name: Upload nightly health artifacts
         if: always()
