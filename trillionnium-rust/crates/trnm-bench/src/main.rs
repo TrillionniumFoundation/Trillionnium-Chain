@@ -7,6 +7,7 @@ use trnm_types::{ObjectRef, Tx};
 enum Workload {
     Classic,
     Mixed,
+    HotStreak,
 }
 
 #[derive(Debug, Clone, Copy, clap::ValueEnum)]
@@ -76,6 +77,7 @@ fn main() {
         Workload::Mixed => {
             build_mixed_txs(n, keys, args.read_fanout.max(1), args.write_every.max(1))
         }
+        Workload::HotStreak => build_hot_streak_txs(n, keys, args.read_fanout.max(1), args.write_every.max(1)),
     };
 
     let t0 = Instant::now();
@@ -143,6 +145,41 @@ fn build_mixed_txs(n: usize, keys: usize, read_fanout: usize, write_every: usize
         let write_set = if i % write_every == 0 {
             let id = ((i * 13 + 3) % keys) as u64;
             vec![ObjectRef { id, version: 1 }]
+        } else {
+            vec![]
+        };
+
+        txs.push(Tx {
+            id: i as u64,
+            read_set,
+            write_set,
+            payload: vec![],
+        });
+    }
+    txs
+}
+
+fn build_hot_streak_txs(n: usize, keys: usize, read_fanout: usize, write_every: usize) -> Vec<Tx> {
+    let mut txs = Vec::with_capacity(n);
+    let streak = 16usize;
+    for i in 0..n {
+        let hot = ((i / streak) % keys) as u64;
+        let mut read_set = Vec::with_capacity(read_fanout);
+        read_set.push(ObjectRef {
+            id: hot,
+            version: 1,
+        });
+
+        for j in 1..read_fanout {
+            let side = ((i + j * 11) % keys) as u64;
+            read_set.push(ObjectRef { id: side, version: 1 });
+        }
+
+        let write_set = if i % write_every == 0 {
+            vec![ObjectRef {
+                id: hot,
+                version: 1,
+            }]
         } else {
             vec![]
         };

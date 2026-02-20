@@ -140,6 +140,12 @@ jobs:
           cd trillionnium-rust
           TXS=10000 KEYS=2000 READ_FANOUT=4 WRITE_EVERY=2 ./scripts/run_executor_strategy_experiment.sh
 
+      - name: Run executor strategy experiment (hotspot, non-gate)
+        run: |
+          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+          cd trillionnium-rust
+          TXS=10000 KEYS=256 READ_FANOUT=4 WRITE_EVERY=1 ./scripts/run_executor_hotspot_experiment.sh
+
       - name: Run auto-adaptive threshold sweep (non-gate)
         run: |
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
