@@ -396,9 +396,8 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
                 buckets[bucket].push(tx);
             }
 
-            for b in &mut buckets {
-                b.sort_by_key(|tx| tx.id);
-            }
+            // Keep insertion order inside each bucket (already stable by input stream);
+            // avoid extra O(n log n) sorting cost.
 
             // Stable round-robin with move semantics (avoid per-tx clone cost).
             let mut iters: Vec<std::vec::IntoIter<Tx>> =
@@ -417,7 +416,9 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
                 }
             }
 
-            txs.clone_from_slice(&merged);
+            for (dst, src) in txs.iter_mut().zip(merged.into_iter()) {
+                *dst = src;
+            }
         }
         GroupingStrategy::AutoAdaptive => {
             // Auto strategy is resolved before calling reorder_for_strategy.
