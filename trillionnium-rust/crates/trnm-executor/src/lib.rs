@@ -225,12 +225,92 @@ fn build_parallel_groups_aggressive_profile(
     original_txs: &[Tx],
     ordered: Vec<Tx>,
 ) -> (Vec<Vec<Tx>>, GroupingProfile) {
+    // Fast path (default): identical dependency-bound placement semantics as Original,
+    // but keeps Aggressive strategy identity/flags and metrics interface stable.
+    if !aggr_deep_scan_enabled() {
+        let mut groups: Vec<Vec<Tx>> = Vec::new();
+        let map_cap = (original_txs.len() / 2).max(64);
+        let mut latest_writer_group: HashMap<(u64, u64), usize> = HashMap::with_capacity(map_cap);
+        let mut latest_reader_group: HashMap<(u64, u64), usize> = HashMap::with_capacity(map_cap);
+
+        let mut conflict_checks = 0usize;
+        let mut conflict_hits = 0usize;
+
+        for tx in ordered {
+            let read_keys = dedup_access_keys(&tx.read_set);
+            let write_keys = dedup_access_keys(&tx.write_set);
+
+            let mut min_group = 0usize;
+            for key in &read_keys {
+                conflict_checks += 1;
+                if let Some(&g) = latest_writer_group.get(key) {
+                    conflict_hits += 1;
+                    min_group = min_group.max(g + 1);
+                }
+            }
+            for key in &write_keys {
+                conflict_checks += 1;
+                if let Some(&g) = latest_writer_group.get(key) {
+                    conflict_hits += 1;
+                    min_group = min_group.max(g + 1);
+                }
+                conflict_checks += 1;
+                if let Some(&g) = latest_reader_group.get(key) {
+                    conflict_hits += 1;
+                    min_group = min_group.max(g + 1);
+                }
+            }
+
+            if groups.len() <= min_group {
+                groups.resize_with(min_group + 1, Vec::new);
+            }
+            groups[min_group].push(tx);
+
+            for key in read_keys {
+                latest_reader_group.insert(key, min_group);
+            }
+            for key in write_keys {
+                latest_writer_group.insert(key, min_group);
+            }
+        }
+
+        let group_count = groups.len();
+        let grouped_count: usize = groups.iter().map(|g| g.len()).sum();
+        let max_group_size = groups.iter().map(|g| g.len()).max().unwrap_or(0);
+        let min_group_size = groups.iter().map(|g| g.len()).min().unwrap_or(0);
+        let avg_group_size = if group_count == 0 {
+            0.0
+        } else {
+            grouped_count as f64 / group_count as f64
+        };
+
+        return (
+            groups,
+            GroupingProfile {
+                tx_count: original_txs.len(),
+                group_count,
+                grouped_count,
+                max_group_size,
+                min_group_size,
+                avg_group_size,
+                conflict_checks,
+                conflict_hits,
+                candidate_groups_scanned: 0,
+                stage_ww_checks: 0,
+                stage_ww_hits: 0,
+                stage_wr_checks: 0,
+                stage_wr_hits: 0,
+                stage_rw_checks: 0,
+                stage_rw_hits: 0,
+            },
+        );
+    }
+
+    // Deep scan path (experiment-only).
     let mut groups: Vec<Vec<Tx>> = Vec::new();
     let mut group_read_keys: Vec<HashSet<(u64, u64)>> = Vec::new();
     let mut group_write_keys: Vec<HashSet<(u64, u64)>> = Vec::new();
 
-    // Lower-bound index hints (same semantics as Original strategy):
-    // a tx cannot be placed before the latest conflicting writer/reader + 1.
     let map_cap = (original_txs.len() / 2).max(64);
     let mut latest_writer_group: HashMap<(u64, u64), usize> = HashMap::with_capacity(map_cap);
     let mut latest_reader_group: HashMap<(u64, u64), usize> = HashMap::with_capacity(map_cap);
@@ -249,22 +329,11 @@ fn build_parallel_groups_aggressive_profile(
 
     for tx in ordered {
         let mut tx_slot = Some(tx);
-        let read_keys = dedup_access_keys(
-            &tx_slot
-                .as_ref()
-                .expect("tx must exist")
-                .read_set,
-        );
-        let write_keys = dedup_access_keys(
-            &tx_slot
-                .as_ref()
-                .expect("tx must exist")
-                .write_set,
-        );
+        let read_keys = dedup_access_keys(&tx_slot.as_ref().expect("tx must exist").read_set);
+        let write_keys = dedup_access_keys(&tx_slot.as_ref().expect("tx must exist").write_set);
         let read_empty = read_keys.is_empty();
         let write_empty = write_keys.is_empty();
 
-        // Compute a safe lower-bound to prune candidate groups.
         let mut min_group = 0usize;
         for key in &read_keys {
             if let Some(&g) = latest_writer_group.get(key) {
@@ -280,38 +349,6 @@ fn build_parallel_groups_aggressive_profile(
             }
         }
 
-        // Fast-path: lower-bound placement is conflict-safe by construction
-        // (same dependency semantics as Original). Deep scan can be re-enabled
-        // for experiments via TRNM_AGGR_DEEP_SCAN=1.
-        let deep_scan = aggr_deep_scan_enabled();
-        if !deep_scan {
-            if min_group >= groups.len() {
-                let idx = groups.len();
-                groups.push(vec![tx_slot.take().expect("tx already moved")]);
-                group_read_keys.push(read_keys.iter().copied().collect());
-                group_write_keys.push(write_keys.iter().copied().collect());
-
-                for key in &group_read_keys[idx] {
-                    latest_reader_group.insert(*key, idx);
-                }
-                for key in &group_write_keys[idx] {
-                    latest_writer_group.insert(*key, idx);
-                }
-            } else {
-                groups[min_group].push(tx_slot.take().expect("tx already moved"));
-                group_read_keys[min_group].extend(read_keys.iter().copied());
-                group_write_keys[min_group].extend(write_keys.iter().copied());
-
-                for key in &read_keys {
-                    latest_reader_group.insert(*key, min_group);
-                }
-                for key in &write_keys {
-                    latest_writer_group.insert(*key, min_group);
-                }
-            }
-            continue;
-        }
-
         let mut placed = false;
         let mut scanned = 0usize;
         for idx in min_group..groups.len() {
@@ -322,7 +359,6 @@ fn build_parallel_groups_aggressive_profile(
             candidate_groups_scanned += 1;
             conflict_checks += 1;
 
-            // Write-vs-write tends to be hottest; optionally skip stages when write-set is empty.
             if !skip_empty_stage_checks || !write_empty {
                 stage_ww_checks += 1;
                 if vec_hashset_intersects(&write_keys, &group_write_keys[idx]) {
@@ -331,7 +367,6 @@ fn build_parallel_groups_aggressive_profile(
                     continue;
                 }
 
-                // Then write-vs-read.
                 stage_wr_checks += 1;
                 if vec_hashset_intersects(&write_keys, &group_read_keys[idx]) {
                     conflict_hits += 1;
@@ -340,7 +375,6 @@ fn build_parallel_groups_aggressive_profile(
                 }
             }
 
-            // Finally read-vs-write.
             if !skip_empty_stage_checks || !read_empty {
                 stage_rw_checks += 1;
                 if vec_hashset_intersects(&read_keys, &group_write_keys[idx]) {
