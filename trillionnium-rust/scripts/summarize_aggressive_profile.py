@@ -7,12 +7,13 @@ import re
 import sys
 from datetime import datetime
 from pathlib import Path
+from typing import Optional
 
 SECTION_RE = re.compile(r"^---\s+strategy=(.+?)\s+---$")
 KV_RE = re.compile(r"^([a-zA-Z0-9_\.-]+)=(.+)$")
 
 
-def pick_latest(root: Path, pattern: str) -> str | None:
+def pick_latest(root: Path, pattern: str) -> Optional[str]:
     files = sorted(glob.glob(str(root / pattern)), key=os.path.getmtime, reverse=True)
     return files[0] if files else None
 
