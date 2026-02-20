@@ -75,7 +75,7 @@
 
 ---
 
-## D5（周五）回归门禁接入 + 周报
+## D5（周五）回归门禁接入 + 周报 ✅（已完成）
 
 ### 任务
 1. 接入 Week1 指标到 nightly 产物和阈值检查。
@@ -86,8 +86,17 @@
 - `docs/perf/aggressive-round3-week1-report.md`
 
 ### 验收
-- CI 能阻断明显回归。
-- Week1 结论清晰：Go/No-Go + 下周行动项。
+- CI 能阻断明显回归。✅
+- Week1 结论清晰：Go/No-Go + 下周行动项。✅
+
+### Week2 执行结论（补记）
+- Day1~Day3 已完成 deep-scan / hotspot 专项 A/B。
+- 结论均为 No-Go（实验策略不进入默认路径），默认快路径继续冻结。
+- 参考：
+  - `docs/perf/aggressive-week2-day1-plan.md`
+  - `docs/perf/aggressive-week2-day2-findings.md`
+  - `docs/perf/aggressive-week2-day3-hotspot-findings.md`
+  - `docs/perf/aggressive-week2-day4-decision-memo.md`
 
 ---
 
