@@ -33,6 +33,25 @@ pub struct TaskObject {
     pub version: u64,
 }
 
+#[repr(u8)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum GovProposalStatus {
+    Draft = 0,
+    Voting = 1,
+    Passed = 2,
+    Rejected = 3,
+    Executed = 4,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct GovProposalObject {
+    pub proposal_id: u64,
+    pub title: String,
+    pub proposer: String,
+    pub status: GovProposalStatus,
+    pub version: u64,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Tx {
     pub id: u64,
@@ -55,5 +74,6 @@ mod tests {
         };
         assert_eq!(tx.id, 1);
         assert_eq!(TaskStatus::Open, TaskStatus::Open);
+        assert_eq!(GovProposalStatus::Draft, GovProposalStatus::Draft);
     }
 }
