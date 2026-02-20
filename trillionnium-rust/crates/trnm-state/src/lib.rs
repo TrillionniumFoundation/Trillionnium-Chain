@@ -1,11 +1,12 @@
 use sha2::{Digest, Sha256};
 use std::collections::BTreeMap;
-use trnm_types::{GovProposalObject, GovProposalStatus, Hash32, ObjectRef, TaskObject};
+use trnm_types::{GovParamObject, GovProposalObject, GovProposalStatus, Hash32, ObjectRef, TaskObject};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ObjectValue {
     Task(TaskObject),
     GovProposal(GovProposalObject),
+    GovParam(GovParamObject),
 }
 
 #[derive(Debug, Default, Clone)]
@@ -38,6 +39,13 @@ impl StateStore {
     pub fn get_proposal(&self, id: u64) -> Option<GovProposalObject> {
         self.objects.get(&id).and_then(|v| match &v.value {
             ObjectValue::GovProposal(p) => Some(p.clone()),
+            _ => None,
+        })
+    }
+
+    pub fn get_param(&self, id: u64) -> Option<GovParamObject> {
+        self.objects.get(&id).and_then(|v| match &v.value {
+            ObjectValue::GovParam(p) => Some(p.clone()),
             _ => None,
         })
     }
@@ -149,6 +157,58 @@ impl StateStore {
         self.update_proposal(expected, proposal)
     }
 
+    pub fn set_gov_param(
+        &mut self,
+        key_id: u64,
+        key: String,
+        value: String,
+    ) -> Result<ObjectRef, String> {
+        // Governance MVP whitelist.
+        const ALLOWED_KEYS: &[&str] = &[
+            "max_block_ms",
+            "max_parallel_workers",
+            "min_worker_stake",
+            "challenge_window_blocks",
+        ];
+        if !ALLOWED_KEYS.contains(&key.as_str()) {
+            return Err(format!("governance key not allowed: {}", key));
+        }
+
+        if let Some(current) = self.objects.get(&key_id) {
+            let new_version = current.version + 1;
+            self.objects.insert(
+                key_id,
+                VersionedObject {
+                    version: new_version,
+                    value: ObjectValue::GovParam(GovParamObject {
+                        key_id,
+                        key,
+                        value,
+                        version: new_version,
+                    }),
+                },
+            );
+            Ok(ObjectRef {
+                id: key_id,
+                version: new_version,
+            })
+        } else {
+            self.objects.insert(
+                key_id,
+                VersionedObject {
+                    version: 1,
+                    value: ObjectValue::GovParam(GovParamObject {
+                        key_id,
+                        key,
+                        value,
+                        version: 1,
+                    }),
+                },
+            );
+            Ok(ObjectRef { id: key_id, version: 1 })
+        }
+    }
+
     pub fn state_root(&self) -> Hash32 {
         let mut hasher = Sha256::new();
         for (id, v) in &self.objects {
@@ -166,6 +226,11 @@ impl StateStore {
                     hasher.update(p.title.as_bytes());
                     hasher.update(p.proposer.as_bytes());
                     hasher.update((p.status as u8).to_le_bytes());
+                }
+                ObjectValue::GovParam(p) => {
+                    hasher.update(b"gov_param");
+                    hasher.update(p.key.as_bytes());
+                    hasher.update(p.value.as_bytes());
                 }
             }
         }
@@ -262,5 +327,23 @@ mod tests {
             .transition_proposal_status(r1, GovProposalStatus::Passed)
             .unwrap_err();
         assert!(err.contains("invalid governance transition"));
+    }
+
+    #[test]
+    fn governance_param_whitelist_enforced() {
+        let mut st = StateStore::new();
+        let ok = st
+            .set_gov_param(7001, "max_block_ms".into(), "10".into())
+            .unwrap();
+        assert_eq!(ok.version, 1);
+
+        let cur = st.get_param(7001).unwrap();
+        assert_eq!(cur.key, "max_block_ms");
+        assert_eq!(cur.value, "10");
+
+        let err = st
+            .set_gov_param(7002, "forbidden_key".into(), "1".into())
+            .unwrap_err();
+        assert!(err.contains("not allowed"));
     }
 }

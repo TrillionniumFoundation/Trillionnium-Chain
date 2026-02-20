@@ -53,6 +53,14 @@ pub struct GovProposalObject {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct GovParamObject {
+    pub key_id: u64,
+    pub key: String,
+    pub value: String,
+    pub version: u64,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Tx {
     pub id: u64,
     pub read_set: Vec<ObjectRef>,
