@@ -41,10 +41,10 @@ A1 实码实现（非 scaffold）：
 - 在 `testnet_preflight.sh` 增加指标存在性 gate
 - 增加最小测试用例 + 文档字段对齐
 
-### Next-2（优先级 P1）
-A2 从脚手架升级到可执行 fault matrix：
-- 至少 3 类故障场景（重启/延迟/抖动）
-- 产出结构化报告
+### Next-2（优先级 P1）✅ 已完成
+A2 已从脚手架升级到可执行 fault matrix：
+- 已覆盖 3 类场景（baseline / slow_block / restart_recovery）
+- 已产出结构化报告：`trillionnium-rust/run/health/consensus-fault-matrix-20260221-074329.txt`
 
 ### Next-3（优先级 P1）
 B1 治理状态机最小闭环：
