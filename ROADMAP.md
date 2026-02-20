@@ -1,7 +1,11 @@
 # TrillionniumChain ROADMAP（两周冲刺）
 
-更新日期：2026-02-19
+更新日期：2026-02-20
 策略：先稳内核，再接外设。
+
+> 注：本文件保留为前一阶段（W1/W2）记录。下一阶段（P3→P5）执行路线见：
+> - `docs/strategy/rust-l1-p3-p5-competitive-roadmap.md`
+> - `docs/strategy/p3-week1-execution-plan.md`
 
 ---
 
