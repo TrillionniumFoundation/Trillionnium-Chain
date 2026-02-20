@@ -33,6 +33,7 @@ latest_bench="$(ls -1dt run/bench/bench-matrix-*.txt 2>/dev/null | head -n 1 || 
 latest_mixed="$(ls -1dt run/bench/bench-mixed-matrix-*.txt 2>/dev/null | head -n 1 || true)"
 latest_strategy_exp="$(ls -1dt run/bench/executor-strategy-exp-*.txt 2>/dev/null | head -n 1 || true)"
 latest_hotspot_exp="$(ls -1dt run/bench/executor-hotspot-exp-*.txt 2>/dev/null | head -n 1 || true)"
+latest_suggest="$(ls -1dt run/health/auto-adaptive-threshold-suggestion-*.txt 2>/dev/null | head -n 1 || true)"
 
 label_semantic=0
 label_perf=0
@@ -139,10 +140,16 @@ auto_reason_hotspot="$(extract_auto_reason "$latest_hotspot_exp")"
 auto_used_hotspot="$(extract_auto_use_hot_bucket "$latest_hotspot_exp")"
 
 strategy_mismatch=0
+tuning_recommended=0
 orig_elapsed_mixed="$(extract_elapsed_for_strategy "$latest_strategy_exp" "original")"
 auto_elapsed_mixed="$(extract_elapsed_for_strategy "$latest_strategy_exp" "auto-adaptive")"
 orig_elapsed_hotspot="$(extract_elapsed_for_strategy "$latest_hotspot_exp" "original")"
 auto_elapsed_hotspot="$(extract_elapsed_for_strategy "$latest_hotspot_exp" "auto-adaptive")"
+
+if [[ -n "$latest_suggest" ]] && grep -q '^suggest.recommended=true' "$latest_suggest"; then
+  tuning_recommended=1
+  reasons+=("auto_threshold_tuning_recommended")
+fi
 
 if [[ "$auto_used_mixed" == "true" && -n "$orig_elapsed_mixed" && -n "$auto_elapsed_mixed" ]]; then
   if [[ "$auto_elapsed_mixed" -gt "$orig_elapsed_mixed" ]]; then
@@ -163,6 +170,7 @@ labels=()
 [[ $label_perf -eq 1 ]] && labels+=("performance-regression")
 [[ $label_env -eq 1 ]] && labels+=("environment-flaky")
 [[ $strategy_mismatch -eq 1 ]] && labels+=("strategy-mismatch")
+[[ $tuning_recommended -eq 1 ]] && labels+=("tuning-recommended")
 if [[ ${#labels[@]} -eq 0 ]]; then
   labels+=("healthy")
 fi
@@ -176,6 +184,7 @@ fi
   echo "mixed.file=${latest_mixed:-none}"
   echo "strategy_exp.file=${latest_strategy_exp:-none}"
   echo "hotspot_exp.file=${latest_hotspot_exp:-none}"
+  echo "threshold_suggest.file=${latest_suggest:-none}"
   echo "strategy_exp.auto.use_hot_bucket=${auto_used_mixed}"
   echo "strategy_exp.auto.reason=${auto_reason_mixed}"
   echo "strategy_exp.elapsed.original_ms=${orig_elapsed_mixed:-none}"
@@ -191,5 +200,8 @@ fi
 echo "::notice title=nightly-attribution::labels=$(IFS=,; echo "${labels[*]}") auto_mixed=${auto_reason_mixed} auto_hotspot=${auto_reason_hotspot}"
 if [[ $strategy_mismatch -eq 1 ]]; then
   echo "::warning title=nightly-strategy-mismatch::auto-adaptive slower than original on latest experiment"
+fi
+if [[ $tuning_recommended -eq 1 ]]; then
+  echo "::notice title=nightly-tuning-recommended::auto-adaptive thresholds differ from current recommended baseline"
 fi
 echo "[OK] nightly attribution: $OUT"
