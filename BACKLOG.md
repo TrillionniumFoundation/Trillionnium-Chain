@@ -53,6 +53,7 @@
 ### P1-2 Worker 生产级对接规范（进行中）
 - 描述：冻结 worker 提交协议（重试、幂等、失败恢复）。
 - 产出：`docs/protocol/worker-onchain-integration-v1.md`
+- 最新进展（2026-02-20）：新增 `scripts/worker_onchain_contract_smoke.sh`，对 state/log 最小字段契约做可执行校验（幂等/可观测核心字段）。
 - 验收：
   - 失败路径可重放
   - 日志字段可用于定位

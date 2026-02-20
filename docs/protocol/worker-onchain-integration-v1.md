@@ -1,7 +1,7 @@
 # Worker ↔ Chain 对接规范 v1（生产级）
 
 更新日期：2026-02-19  
-状态：Draft v1（用于实现冻结）
+状态：Draft v1（用于实现冻结，已补充 contract smoke）
 
 ## 1. 目标
 
@@ -128,3 +128,11 @@ Worker 日志必须结构化至少包含：
 3. 接入 commit/reveal 主路径
 4. 加入故障注入测试（sequence/rpc timeout）
 5. 回归到 `scripts/p0_acceptance.sh` 之后作为 P1 smoke
+
+### 当前可执行检查（最小）
+
+```bash
+./scripts/worker_onchain_contract_smoke.sh
+```
+
+通过标准：输出 `[OK] worker onchain contract smoke passed`。
