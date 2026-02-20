@@ -7,9 +7,10 @@ import os
 from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
+from typing import Optional, List
 
 
-def latest(pattern: str) -> str | None:
+def latest(pattern: str) -> Optional[str]:
     files = sorted(glob.glob(pattern), key=os.path.getmtime, reverse=True)
     return files[0] if files else None
 
@@ -28,7 +29,7 @@ def fv(v: str, default=0.0) -> float:
         return default
 
 
-def pearson(xs: list[float], ys: list[float]) -> float | None:
+def pearson(xs: list[float], ys: list[float]) -> Optional[float]:
     if len(xs) != len(ys) or len(xs) < 2:
         return None
     mx = sum(xs) / len(xs)
