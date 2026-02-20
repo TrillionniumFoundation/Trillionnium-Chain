@@ -225,8 +225,21 @@ fn build_parallel_groups_aggressive_profile(
     let mut conflict_hits = 0usize;
 
     for tx in ordered {
-        let read_keys: HashSet<(u64, u64)> = tx.read_set.iter().map(access_key).collect();
-        let write_keys: HashSet<(u64, u64)> = tx.write_set.iter().map(access_key).collect();
+        let mut tx_slot = Some(tx);
+        let read_keys: HashSet<(u64, u64)> = tx_slot
+            .as_ref()
+            .expect("tx must exist")
+            .read_set
+            .iter()
+            .map(access_key)
+            .collect();
+        let write_keys: HashSet<(u64, u64)> = tx_slot
+            .as_ref()
+            .expect("tx must exist")
+            .write_set
+            .iter()
+            .map(access_key)
+            .collect();
 
         // Compute a safe lower-bound to prune candidate groups.
         let mut min_group = 0usize;
@@ -264,7 +277,7 @@ fn build_parallel_groups_aggressive_profile(
                 continue;
             }
 
-            groups[idx].push(tx.clone());
+            groups[idx].push(tx_slot.take().expect("tx already moved"));
             group_read_keys[idx].extend(read_keys.iter().copied());
             group_write_keys[idx].extend(write_keys.iter().copied());
 
@@ -281,14 +294,14 @@ fn build_parallel_groups_aggressive_profile(
 
         if !placed {
             let idx = groups.len();
-            groups.push(vec![tx]);
-            group_read_keys.push(read_keys.clone());
-            group_write_keys.push(write_keys.clone());
+            groups.push(vec![tx_slot.take().expect("tx already moved")]);
+            group_read_keys.push(read_keys);
+            group_write_keys.push(write_keys);
 
-            for key in &read_keys {
+            for key in &group_read_keys[idx] {
                 latest_reader_group.insert(*key, idx);
             }
-            for key in &write_keys {
+            for key in &group_write_keys[idx] {
                 latest_writer_group.insert(*key, idx);
             }
         }
