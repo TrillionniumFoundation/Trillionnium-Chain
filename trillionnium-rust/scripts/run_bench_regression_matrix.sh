@@ -5,7 +5,6 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
 
-TXS="${TXS:-20000}"
 OUT_DIR="${OUT_DIR:-$ROOT/run/bench}"
 TS="$(date +%Y%m%d-%H%M%S)"
 OUT="${OUT_DIR}/bench-regression-matrix-${TS}.csv"
@@ -13,7 +12,21 @@ mkdir -p "$OUT_DIR"
 
 WORKLOADS=(classic mixed hot-streak)
 STRATEGIES=(original aggressive-greedy)
-KEYS_LIST=(2000 1000 500 200 100)
+
+# Backward-compatible defaults
+TXS_DEFAULT="${TXS:-20000}"
+TXS_LIST_STR="${TXS_LIST:-$TXS_DEFAULT}"
+KEYS_LIST_STR="${KEYS_LIST:-2000 1000 500 200 100}"
+
+# Optional preset for P2.3.1 high-variance sampling
+if [ "${HIGH_VARIANCE_PRESET:-0}" = "1" ]; then
+  TXS_LIST_STR="${TXS_LIST:-10000 20000 40000}"
+  KEYS_LIST_STR="${KEYS_LIST:-64 128 256 512 1024 4096}"
+fi
+
+read -r -a TXS_LIST <<< "$TXS_LIST_STR"
+read -r -a KEYS_LIST <<< "$KEYS_LIST_STR"
+
 READ_FANOUT="${READ_FANOUT:-3}"
 WRITE_EVERY="${WRITE_EVERY:-2}"
 
@@ -21,21 +34,22 @@ printf "workload,txs,keys,strategy,groups,elapsed_ms,candidate_groups_scanned,st
 
 run_case() {
   local workload="$1"
-  local keys="$2"
-  local strategy="$3"
+  local txs="$2"
+  local keys="$3"
+  local strategy="$4"
   local raw
 
   if [ "$workload" = "classic" ]; then
     raw=$(cargo run -q -p trnm-bench -- \
       --workload "$workload" \
-      --txs "$TXS" \
+      --txs "$txs" \
       --keys "$keys" \
       --strategy "$strategy" \
       --profile)
   else
     raw=$(cargo run -q -p trnm-bench -- \
       --workload "$workload" \
-      --txs "$TXS" \
+      --txs "$txs" \
       --keys "$keys" \
       --read-fanout "$READ_FANOUT" \
       --write-every "$WRITE_EVERY" \
@@ -55,23 +69,25 @@ run_case() {
   stage_rw_hits=$(printf "%s\n" "$raw" | awk -F= '/^profile.stage_rw_hits=/{print $2; exit}')
 
   if [ -z "$groups" ] || [ -z "$elapsed" ]; then
-    echo "failed to parse bench output for workload=$workload keys=$keys strategy=$strategy" >&2
+    echo "failed to parse bench output for workload=$workload txs=$txs keys=$keys strategy=$strategy" >&2
     printf "%s\n" "$raw" >&2
     exit 21
   fi
 
   printf "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n" \
-    "$workload" "$TXS" "$keys" "$strategy" "$groups" "$elapsed" \
+    "$workload" "$txs" "$keys" "$strategy" "$groups" "$elapsed" \
     "${candidate:-0}" "${stage_ww_checks:-0}" "${stage_ww_hits:-0}" \
     "${stage_wr_checks:-0}" "${stage_wr_hits:-0}" "${stage_rw_checks:-0}" "${stage_rw_hits:-0}" >> "$OUT"
 }
 
-echo "[bench-regression] txs=$TXS keys=${KEYS_LIST[*]} workloads=${WORKLOADS[*]} strategies=${STRATEGIES[*]}"
+echo "[bench-regression] txs=${TXS_LIST[*]} keys=${KEYS_LIST[*]} workloads=${WORKLOADS[*]} strategies=${STRATEGIES[*]}"
 for workload in "${WORKLOADS[@]}"; do
-  for keys in "${KEYS_LIST[@]}"; do
-    for strategy in "${STRATEGIES[@]}"; do
-      echo "  -> workload=$workload keys=$keys strategy=$strategy"
-      run_case "$workload" "$keys" "$strategy"
+  for txs in "${TXS_LIST[@]}"; do
+    for keys in "${KEYS_LIST[@]}"; do
+      for strategy in "${STRATEGIES[@]}"; do
+        echo "  -> workload=$workload txs=$txs keys=$keys strategy=$strategy"
+        run_case "$workload" "$txs" "$keys" "$strategy"
+      done
     done
   done
 done
