@@ -12,9 +12,9 @@ GA requires all of:
 ## Current Evaluation
 
 ### 1) Stage2 nightly observation
-- Status: **PENDING**
+- Status: **PASS (owner override)**
 - Signal: currently green on multiple consecutive runs (latest includes `22213079988`).
-- Gap: >=24h observation window not yet formally closed.
+- Note: >=24h formal window closure deferred by explicit go-ahead.
 
 ### 2) Testnet preflight consecutive success
 - Status: **PASS**
@@ -27,11 +27,11 @@ GA requires all of:
 - Reference: Post-RC clean-environment verification remained pass.
 
 ## Decision
-**NO-GO (temporary)**
+**GO**
 
 Rationale:
-- Only one blocking item remains: stage2 >=24h observation window closure.
-- All other release-gate signals are currently pass.
+- Decision owner override: proceed to GA now.
+- Stage2 nightly and testnet preflight are continuously green with no hard-fail signal in recent runs.
 
 ## Release Risk Snapshot
 - Functional risk: low (hard gates green).

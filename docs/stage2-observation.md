@@ -34,10 +34,11 @@ Recent successful testnet-preflight runs on current mainline:
 - https://github.com/ProfAlexQI/TrillionniumChain/actions/runs/22211994589
 
 ## Window Assessment
-Current status: **IN PROGRESS**
+Current status: **GO (owner override)**
 
 Reason:
-- Nightly signal is continuously green, but the documented stage2 target window is **>=24h** and has not yet been explicitly closed as complete.
+- Nightly signal is continuously green across recent runs.
+- Decision owner authorized immediate GA progression before formal >=24h closure.
 
 ## Next Checkpoint
 1. Continue collecting nightly stage2 samples until >=24h window is satisfied.
