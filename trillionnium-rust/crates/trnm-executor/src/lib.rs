@@ -312,6 +312,22 @@ fn auto_hot_streak_threshold() -> f64 {
         .unwrap_or(0.22)
 }
 
+fn auto_reorder_min_margin() -> f64 {
+    std::env::var("TRNM_AUTO_REORDER_MIN_MARGIN")
+        .ok()
+        .and_then(|v| v.parse::<f64>().ok())
+        .map(|v| v.clamp(0.0, 1.0))
+        .unwrap_or(0.04)
+}
+
+fn auto_reorder_min_hot_key_share() -> f64 {
+    std::env::var("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE")
+        .ok()
+        .and_then(|v| v.parse::<f64>().ok())
+        .map(|v| v.clamp(0.0, 1.0))
+        .unwrap_or(0.06)
+}
+
 fn should_use_hot_bucket_interleave(txs: &[Tx]) -> bool {
     if txs.len() < 512 {
         return false;
@@ -322,6 +338,8 @@ fn should_use_hot_bucket_interleave(txs: &[Tx]) -> bool {
     let mut same_key_streak_hits = 0usize;
     let mut total_pairs = 0usize;
     let mut prev_key: Option<u64> = None;
+    let mut key_hist: HashMap<u64, usize> = HashMap::new();
+    let mut observed = 0usize;
 
     for tx in txs.iter().take(sample_len) {
         let key = tx
@@ -330,6 +348,8 @@ fn should_use_hot_bucket_interleave(txs: &[Tx]) -> bool {
             .or_else(|| tx.read_set.first())
             .map(|o| o.id);
         if let Some(k) = key {
+            observed += 1;
+            *key_hist.entry(k).or_insert(0) += 1;
             if let Some(pk) = prev_key {
                 total_pairs += 1;
                 if pk == k {
@@ -340,13 +360,20 @@ fn should_use_hot_bucket_interleave(txs: &[Tx]) -> bool {
         }
     }
 
-    if total_pairs == 0 {
+    if total_pairs == 0 || observed == 0 {
         return false;
     }
 
     let streak_ratio = same_key_streak_hits as f64 / total_pairs as f64;
-    // Empirical heuristic: enable hot-bucket only when streak pressure is clearly present.
-    streak_ratio >= auto_hot_streak_threshold()
+    let threshold = auto_hot_streak_threshold();
+
+    // Reorder budget guard: require a minimum hotspot concentration and threshold margin
+    // to justify reorder overhead.
+    let max_key_count = key_hist.values().copied().max().unwrap_or(0);
+    let hot_key_share = max_key_count as f64 / observed as f64;
+
+    streak_ratio >= threshold + auto_reorder_min_margin()
+        && hot_key_share >= auto_reorder_min_hot_key_share()
 }
 
 fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
