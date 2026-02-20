@@ -149,6 +149,15 @@ jobs:
           # stage2 observation window enabled
           THRESHOLD_PROFILE=${THRESHOLD_PROFILE:-stage2} ./scripts/enforce_ci_thresholds.sh
 
+      - name: Nightly auto-attribution labels (always)
+        if: always()
+        run: |
+          set -euo pipefail
+          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+          cd trillionnium-rust
+
+          THRESHOLD_PROFILE=${THRESHOLD_PROFILE:-stage2} ./scripts/nightly_attribution.sh
+
       - name: Upload nightly health artifacts
         if: always()
         uses: actions/upload-artifact@v4
@@ -157,6 +166,7 @@ jobs:
           path: |
             trillionnium-rust/run/audit/**
             trillionnium-rust/run/bench/**
+            trillionnium-rust/run/health/**
             trillionnium-rust/run/node*.log
             trillionnium-rust/run/parallel-sanity.log
             trillionnium-rust/run/event-field-check.log
