@@ -108,6 +108,7 @@ fn main() {
         println!("profile.avg_group_size={:.4}", profile.avg_group_size);
         println!("profile.conflict_checks={}", profile.conflict_checks);
         println!("profile.conflict_hits={}", profile.conflict_hits);
+        println!("profile.candidate_groups_scanned={}", profile.candidate_groups_scanned);
         let hit_rate = if profile.conflict_checks == 0 {
             0.0
         } else {

@@ -22,6 +22,7 @@ pub struct GroupingProfile {
     pub avg_group_size: f64,
     pub conflict_checks: usize,
     pub conflict_hits: usize,
+    pub candidate_groups_scanned: usize,
 }
 
 #[derive(Debug, Clone)]
@@ -202,6 +203,7 @@ pub fn build_parallel_groups_profile_with_strategy(
             avg_group_size,
             conflict_checks,
             conflict_hits,
+            candidate_groups_scanned: 0,
         },
     )
 }
@@ -325,6 +327,7 @@ fn build_parallel_groups_aggressive_profile(
             avg_group_size,
             conflict_checks,
             conflict_hits,
+            candidate_groups_scanned: conflict_checks,
         },
     )
 }
