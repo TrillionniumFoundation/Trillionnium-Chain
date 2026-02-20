@@ -27,8 +27,13 @@
 - Kept semantics unchanged; tests pass.
 
 ## Post-change spot check
-- Original: ~36-37ms (unchanged)
-- AggressiveGreedy: ~113-115ms (small improvement, still ~3x slower)
+- Round 1 (clone removal):
+  - Original: ~36-37ms (unchanged)
+  - AggressiveGreedy: ~113-115ms (small improvement, still ~3x slower)
+- Round 2 (keyset allocation/intersection hot-path reduction):
+  - Original: ~37ms
+  - AggressiveGreedy: ~84-85ms
+  - Improvement vs prior aggressive baseline: ~25%
 
 ## Next optimization backlog (priority)
 1. **Replace HashSet keys with sorted small-vec / compact vec**
