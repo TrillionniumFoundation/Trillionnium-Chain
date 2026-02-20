@@ -174,9 +174,9 @@ jobs:
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           cd trillionnium-rust
           MODE=${AGGRESSIVE_REGRESSION_MODE:-hard} \
-          AGGRESSIVE_MAX_RATIO_CLASSIC=${AGGRESSIVE_MAX_RATIO_CLASSIC:-4.75} \
-          AGGRESSIVE_MAX_RATIO_MIXED=${AGGRESSIVE_MAX_RATIO_MIXED:-3.75} \
-          AGGRESSIVE_MAX_RATIO_HOT_STREAK=${AGGRESSIVE_MAX_RATIO_HOT_STREAK:-3.75} \
+          AGGRESSIVE_MAX_RATIO_CLASSIC=${AGGRESSIVE_MAX_RATIO_CLASSIC:-2.20} \
+          AGGRESSIVE_MAX_RATIO_MIXED=${AGGRESSIVE_MAX_RATIO_MIXED:-2.00} \
+          AGGRESSIVE_MAX_RATIO_HOT_STREAK=${AGGRESSIVE_MAX_RATIO_HOT_STREAK:-2.10} \
           ./scripts/check_aggressive_regression.sh
 
       - name: Run auto-adaptive threshold sweep (non-gate)
