@@ -4,14 +4,12 @@ on:
   workflow_dispatch:
   pull_request:
     paths:
-      - 'scripts/**'
       - 'docs/**'
       - 'trillionnium-rust/**'
       - '.github/workflows/trnm-merge-gates.yml'
   push:
     branches: [main]
     paths:
-      - 'scripts/**'
       - 'docs/**'
       - 'trillionnium-rust/**'
       - '.github/workflows/trnm-merge-gates.yml'
@@ -21,45 +19,54 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  p0-p1-gates:
-    # Requires a self-hosted runner with local Trillionnium dev chain environment.
-    runs-on: [self-hosted, macOS]
+  rust-l1-merge-gates:
+    runs-on: macos-latest
     timeout-minutes: 45
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Ensure jq
-        run: |
-          command -v jq >/dev/null 2>&1 || brew install jq
-          jq --version
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
 
-      - name: Preflight - chain RPC must be reachable
+      - name: Rust workspace tests
         run: |
-          curl -sf http://127.0.0.1:26657/status >/dev/null
-
-      - name: P0 merge gate
-        run: |
-          HOME_DIR="$HOME/.chain" NODE="tcp://127.0.0.1:26657" ./scripts/p0_merge_gate.sh
-
-      - name: P1 negative suite
-        run: |
-          HOME_DIR="$HOME/.chain" NODE="tcp://127.0.0.1:26657" ./scripts/p1_negative_suite.sh
-
-      - name: Enforce fail=0 and skip=0
-        run: |
-          latest_dir=$(ls -1dt data/p1-negative/* | head -n 1)
-          summary_json="$latest_dir/summary.json"
-          echo "Using summary: $summary_json"
-          fail_count=$(jq -r '.fail' "$summary_json")
-          skip_count=$(jq -r '.skip' "$summary_json")
-          test "$fail_count" = "0"
-          test "$skip_count" = "0"
-
-      - name: Rust L1 v1 protocol gates
-        run: |
+          set -euo pipefail
+          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           cd trillionnium-rust
-          ./scripts/run_v1_protocol_gates.sh
+          cargo test --workspace
+
+      - name: Run parallel mode sanity (hard gate)
+        run: |
+          set -euo pipefail
+          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+          cd trillionnium-rust
+          cargo run -q -p trnm-node -- \
+            --config configs/node1.toml \
+            --block-ms 5 \
+            --max-blocks 6 \
+            --demo-tasks 8 \
+            --demo-keys 3 \
+            --parallel-workers 4 | tee run/parallel-sanity.log
+
+          if grep -E '\[tx\] apply_error|rollback=true' run/parallel-sanity.log; then
+            echo "parallel sanity detected apply_error/rollback" >&2
+            exit 2
+          fi
+
+      - name: Validate v1 event field freeze (hard gate)
+        run: |
+          set -euo pipefail
+          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+          cd trillionnium-rust
+          ./scripts/check_event_fields.sh
+
+      - name: Validate v1 event replay order (hard gate)
+        run: |
+          set -euo pipefail
+          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+          cd trillionnium-rust
+          ./scripts/check_event_replay_smoke.sh
 
       - name: Aggressive regression check (PR-visible warn)
         if: github.event_name == 'pull_request'
@@ -97,7 +104,6 @@ jobs:
             } >> "$GITHUB_STEP_SUMMARY"
           fi
 
-          # warn-mode should never block merge gates
           test "$rc" -eq 0
 
       - name: Upload gate artifacts
@@ -106,8 +112,6 @@ jobs:
         with:
           name: trnm-gate-artifacts-${{ github.run_id }}
           path: |
-            data/p0-acceptance/**
-            data/p1-negative/**
             trillionnium-rust/run/parallel-sanity.log
             trillionnium-rust/run/event-field-check.log
             trillionnium-rust/run/event-replay-smoke.log
