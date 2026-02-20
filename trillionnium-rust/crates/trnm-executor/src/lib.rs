@@ -280,6 +280,38 @@ fn build_parallel_groups_aggressive_profile(
             }
         }
 
+        // Fast-path: lower-bound placement is conflict-safe by construction
+        // (same dependency semantics as Original). Deep scan can be re-enabled
+        // for experiments via TRNM_AGGR_DEEP_SCAN=1.
+        let deep_scan = aggr_deep_scan_enabled();
+        if !deep_scan {
+            if min_group >= groups.len() {
+                let idx = groups.len();
+                groups.push(vec![tx_slot.take().expect("tx already moved")]);
+                group_read_keys.push(read_keys.iter().copied().collect());
+                group_write_keys.push(write_keys.iter().copied().collect());
+
+                for key in &group_read_keys[idx] {
+                    latest_reader_group.insert(*key, idx);
+                }
+                for key in &group_write_keys[idx] {
+                    latest_writer_group.insert(*key, idx);
+                }
+            } else {
+                groups[min_group].push(tx_slot.take().expect("tx already moved"));
+                group_read_keys[min_group].extend(read_keys.iter().copied());
+                group_write_keys[min_group].extend(write_keys.iter().copied());
+
+                for key in &read_keys {
+                    latest_reader_group.insert(*key, min_group);
+                }
+                for key in &write_keys {
+                    latest_writer_group.insert(*key, min_group);
+                }
+            }
+            continue;
+        }
+
         let mut placed = false;
         let mut scanned = 0usize;
         for idx in min_group..groups.len() {
@@ -395,6 +427,16 @@ fn aggr_skip_empty_stage_checks() -> bool {
             !(s == "0" || s == "false" || s == "off" || s == "no")
         })
         .unwrap_or(true)
+}
+
+fn aggr_deep_scan_enabled() -> bool {
+    std::env::var("TRNM_AGGR_DEEP_SCAN")
+        .ok()
+        .map(|v| {
+            let s = v.trim().to_ascii_lowercase();
+            !(s == "0" || s == "false" || s == "off" || s == "no")
+        })
+        .unwrap_or(false)
 }
 
 fn auto_hot_streak_threshold() -> f64 {
