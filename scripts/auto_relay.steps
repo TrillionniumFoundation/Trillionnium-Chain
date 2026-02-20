@@ -1,0 +1,4 @@
+# one command per line; empty/# lines ignored
+bash ./scripts/challenge_reexec_template_smoke.sh
+bash ./scripts/worker_onchain_contract_smoke.sh
+bash ./scripts/demo_storyline.sh
