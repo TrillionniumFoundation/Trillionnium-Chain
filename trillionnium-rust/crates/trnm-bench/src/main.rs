@@ -1,6 +1,8 @@
 use clap::Parser;
 use std::time::Instant;
-use trnm_executor::{build_parallel_groups_profile_with_strategy, GroupingStrategy};
+use trnm_executor::{
+    auto_adaptive_decision, build_parallel_groups_profile_with_strategy, GroupingStrategy,
+};
 use trnm_types::{ObjectRef, Tx};
 
 #[derive(Debug, Clone, Copy, clap::ValueEnum)]
@@ -112,6 +114,18 @@ fn main() {
             profile.conflict_hits as f64 / profile.conflict_checks as f64
         };
         println!("profile.conflict_hit_rate={:.4}", hit_rate);
+
+        if matches!(args.strategy, StrategyArg::AutoAdaptive) {
+            let d = auto_adaptive_decision(&txs);
+            println!("profile.auto.use_hot_bucket={}", d.use_hot_bucket);
+            println!("profile.auto.reason={}", d.reason);
+            println!("profile.auto.sample_len={}", d.sample_len);
+            println!("profile.auto.streak_ratio={:.4}", d.streak_ratio);
+            println!("profile.auto.streak_threshold={:.4}", d.streak_threshold);
+            println!("profile.auto.min_margin={:.4}", d.min_margin);
+            println!("profile.auto.hot_key_share={:.4}", d.hot_key_share);
+            println!("profile.auto.min_hot_key_share={:.4}", d.min_hot_key_share);
+        }
     }
 }
 

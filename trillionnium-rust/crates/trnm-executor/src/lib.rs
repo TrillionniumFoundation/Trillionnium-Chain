@@ -24,6 +24,18 @@ pub struct GroupingProfile {
     pub conflict_hits: usize,
 }
 
+#[derive(Debug, Clone)]
+pub struct AutoAdaptiveDecision {
+    pub use_hot_bucket: bool,
+    pub reason: &'static str,
+    pub sample_len: usize,
+    pub streak_ratio: f64,
+    pub streak_threshold: f64,
+    pub min_margin: f64,
+    pub hot_key_share: f64,
+    pub min_hot_key_share: f64,
+}
+
 pub fn detect_conflict(a: &Tx, b: &Tx) -> bool {
     intersects(&a.write_set, &b.write_set)
         || intersects(&a.write_set, &b.read_set)
@@ -96,7 +108,8 @@ pub fn build_parallel_groups_profile_with_strategy(
 ) -> (Vec<Vec<Tx>>, GroupingProfile) {
     let mut selected = strategy;
     if matches!(selected, GroupingStrategy::AutoAdaptive) {
-        selected = if should_use_hot_bucket_interleave(txs) {
+        let d = auto_adaptive_decision(txs);
+        selected = if d.use_hot_bucket {
             GroupingStrategy::HotBucketInterleave
         } else {
             GroupingStrategy::Original
@@ -328,9 +341,22 @@ fn auto_reorder_min_hot_key_share() -> f64 {
         .unwrap_or(0.06)
 }
 
-fn should_use_hot_bucket_interleave(txs: &[Tx]) -> bool {
+pub fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
+    let threshold = auto_hot_streak_threshold();
+    let min_margin = auto_reorder_min_margin();
+    let min_hot_key_share = auto_reorder_min_hot_key_share();
+
     if txs.len() < 512 {
-        return false;
+        return AutoAdaptiveDecision {
+            use_hot_bucket: false,
+            reason: "small_batch",
+            sample_len: txs.len(),
+            streak_ratio: 0.0,
+            streak_threshold: threshold,
+            min_margin,
+            hot_key_share: 0.0,
+            min_hot_key_share,
+        };
     }
 
     // Sample first window to estimate hot-key streak pressure.
@@ -361,19 +387,41 @@ fn should_use_hot_bucket_interleave(txs: &[Tx]) -> bool {
     }
 
     if total_pairs == 0 || observed == 0 {
-        return false;
+        return AutoAdaptiveDecision {
+            use_hot_bucket: false,
+            reason: "insufficient_sample",
+            sample_len,
+            streak_ratio: 0.0,
+            streak_threshold: threshold,
+            min_margin,
+            hot_key_share: 0.0,
+            min_hot_key_share,
+        };
     }
 
     let streak_ratio = same_key_streak_hits as f64 / total_pairs as f64;
-    let threshold = auto_hot_streak_threshold();
-
-    // Reorder budget guard: require a minimum hotspot concentration and threshold margin
-    // to justify reorder overhead.
     let max_key_count = key_hist.values().copied().max().unwrap_or(0);
     let hot_key_share = max_key_count as f64 / observed as f64;
 
-    streak_ratio >= threshold + auto_reorder_min_margin()
-        && hot_key_share >= auto_reorder_min_hot_key_share()
+    let use_hot_bucket = streak_ratio >= threshold + min_margin && hot_key_share >= min_hot_key_share;
+    let reason = if use_hot_bucket {
+        "hotspot_detected"
+    } else if hot_key_share < min_hot_key_share {
+        "low_hot_key_share"
+    } else {
+        "below_streak_budget"
+    };
+
+    AutoAdaptiveDecision {
+        use_hot_bucket,
+        reason,
+        sample_len,
+        streak_ratio,
+        streak_threshold: threshold,
+        min_margin,
+        hot_key_share,
+        min_hot_key_share,
+    }
 }
 
 fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
