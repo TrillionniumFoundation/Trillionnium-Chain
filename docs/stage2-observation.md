@@ -10,6 +10,7 @@ Confirm a stable observation window before GA promotion:
 
 ## Evidence Collected (current)
 Recent successful nightly runs:
+- https://github.com/ProfAlexQI/TrillionniumChain/actions/runs/22217009176
 - https://github.com/ProfAlexQI/TrillionniumChain/actions/runs/22213079988
 - https://github.com/ProfAlexQI/TrillionniumChain/actions/runs/22212857297
 - https://github.com/ProfAlexQI/TrillionniumChain/actions/runs/22212698732
@@ -22,9 +23,11 @@ Recent successful nightly runs:
 Observed signal:
 - Hard gates passed (workspace tests / state-root audit / parallel sanity / v1 event freeze / regression gate).
 - Non-blocking annotation observed: `tuning-recommended` (advisory only, not a release blocker).
+- One overlapping manual nightly dispatch was auto-cancelled (`22217007203`), while the latest nightly run (`22217009176`) completed successfully.
 
 ## Testnet Preflight (supporting signal)
 Recent successful testnet-preflight runs on current mainline:
+- https://github.com/ProfAlexQI/TrillionniumChain/actions/runs/22217011583
 - https://github.com/ProfAlexQI/TrillionniumChain/actions/runs/22213082298
 - https://github.com/ProfAlexQI/TrillionniumChain/actions/runs/22212856463
 - https://github.com/ProfAlexQI/TrillionniumChain/actions/runs/22212698755

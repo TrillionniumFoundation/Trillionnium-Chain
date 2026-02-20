@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import csv
 import glob
 import os
 from datetime import datetime
@@ -26,10 +27,58 @@ def parse_kv(path: str):
                 out[k.strip()] = v.strip()
     return out
 
+
+def iv(v):
+    try:
+        return int(float(v))
+    except Exception:
+        return 0
+
+
+def parse_aggr_stage_stats(path: str):
+    if not path or not os.path.exists(path):
+        return {}
+
+    by_workload = {}
+    with open(path, "r", encoding="utf-8", errors="ignore") as f:
+        reader = csv.DictReader(f)
+        for r in reader:
+            if r.get("strategy") != "aggressive-greedy":
+                continue
+            wl = r.get("workload", "unknown")
+            d = by_workload.setdefault(
+                wl,
+                {
+                    "rows": 0,
+                    "ww_checks": 0,
+                    "ww_hits": 0,
+                    "wr_checks": 0,
+                    "wr_hits": 0,
+                    "rw_checks": 0,
+                    "rw_hits": 0,
+                },
+            )
+            d["rows"] += 1
+            d["ww_checks"] += iv(r.get("stage_ww_checks", 0))
+            d["ww_hits"] += iv(r.get("stage_ww_hits", 0))
+            d["wr_checks"] += iv(r.get("stage_wr_checks", 0))
+            d["wr_hits"] += iv(r.get("stage_wr_hits", 0))
+            d["rw_checks"] += iv(r.get("stage_rw_checks", 0))
+            d["rw_hits"] += iv(r.get("stage_rw_hits", 0))
+
+    return by_workload
+
+
+def rate(hits, checks):
+    return 0.0 if checks <= 0 else hits / checks
+
+
 attrib_file = latest(os.path.join(HEALTH, "nightly-attribution-*.txt"))
 suggest_file = latest(os.path.join(HEALTH, "auto-adaptive-threshold-suggestion-*.txt"))
+regression_csv = latest(os.path.join(ROOT, "run", "bench", "bench-regression-matrix-*.csv"))
 a = parse_kv(attrib_file)
 s = parse_kv(suggest_file)
+stage_stats = parse_aggr_stage_stats(regression_csv)
 
 labels = a.get("attribution.labels", "unknown")
 reasons = a.get("attribution.reasons", "none")
@@ -53,6 +102,31 @@ if s:
     lines.append(f"- Suggest: streak={s.get('suggest.streak_ratio', 'n/a')}, margin={s.get('suggest.min_margin', 'n/a')}, hot_share={s.get('suggest.min_hot_key_share', 'n/a')}")
 else:
     lines.append("- No suggestion artifact found")
+
+lines.append("")
+lines.append("## Aggressive stage hit-rate snapshot")
+if stage_stats:
+    if regression_csv:
+        lines.append(f"- Source: `{regression_csv}`")
+    for wl in sorted(stage_stats.keys()):
+        d = stage_stats[wl]
+        lines.append(
+            "- {} (rows={}): WW={:.4f} ({}/{}), WR={:.4f} ({}/{}), RW={:.4f} ({}/{})".format(
+                wl,
+                d["rows"],
+                rate(d["ww_hits"], d["ww_checks"]),
+                d["ww_hits"],
+                d["ww_checks"],
+                rate(d["wr_hits"], d["wr_checks"]),
+                d["wr_hits"],
+                d["wr_checks"],
+                rate(d["rw_hits"], d["rw_checks"]),
+                d["rw_hits"],
+                d["rw_checks"],
+            )
+        )
+else:
+    lines.append("- No regression matrix with stage counters found")
 
 with open(OUT, "w", encoding="utf-8") as f:
     f.write("\n".join(lines) + "\n")
