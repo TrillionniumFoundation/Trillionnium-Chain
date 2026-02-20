@@ -1,7 +1,15 @@
 # GA Release Checklist (Rust L1 P2.2)
 
 Date: 2026-02-20
-Status: PREPARED (do not execute until stage2 >=24h window is closed as GO)
+Status: EXECUTED (owner override GO)
+
+## Execution Record
+- Release published: `rust-l1-p2.2-ga-20260220`
+- URL: https://github.com/ProfAlexQI/TrillionniumChain/releases/tag/rust-l1-p2.2-ga-20260220
+- Post-merge mainline checks green:
+  - nightly: https://github.com/ProfAlexQI/TrillionniumChain/actions/runs/22217929438
+  - preflight: https://github.com/ProfAlexQI/TrillionniumChain/actions/runs/22217930662
+  - merge-gates: https://github.com/ProfAlexQI/TrillionniumChain/actions/runs/22218059479
 
 ## 0) Preconditions (must all be true)
 - [ ] `docs/GA_GO_NO_GO.md` decision = `GO`
