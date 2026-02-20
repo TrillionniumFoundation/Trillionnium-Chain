@@ -85,12 +85,11 @@ fn intersects(x: &[ObjectRef], y: &[ObjectRef]) -> bool {
 }
 
 #[inline]
-fn hashset_intersects(a: &HashSet<(u64, u64)>, b: &HashSet<(u64, u64)>) -> bool {
+fn vec_hashset_intersects(a: &[(u64, u64)], b: &HashSet<(u64, u64)>) -> bool {
     if a.is_empty() || b.is_empty() {
         return false;
     }
-    let (small, large) = if a.len() <= b.len() { (a, b) } else { (b, a) };
-    small.iter().any(|k| large.contains(k))
+    a.iter().any(|k| b.contains(k))
 }
 
 /// Build parallel-safe groups:
@@ -226,20 +225,18 @@ fn build_parallel_groups_aggressive_profile(
 
     for tx in ordered {
         let mut tx_slot = Some(tx);
-        let read_keys: HashSet<(u64, u64)> = tx_slot
-            .as_ref()
-            .expect("tx must exist")
-            .read_set
-            .iter()
-            .map(access_key)
-            .collect();
-        let write_keys: HashSet<(u64, u64)> = tx_slot
-            .as_ref()
-            .expect("tx must exist")
-            .write_set
-            .iter()
-            .map(access_key)
-            .collect();
+        let read_keys = dedup_access_keys(
+            &tx_slot
+                .as_ref()
+                .expect("tx must exist")
+                .read_set,
+        );
+        let write_keys = dedup_access_keys(
+            &tx_slot
+                .as_ref()
+                .expect("tx must exist")
+                .write_set,
+        );
 
         // Compute a safe lower-bound to prune candidate groups.
         let mut min_group = 0usize;
@@ -262,17 +259,17 @@ fn build_parallel_groups_aggressive_profile(
             conflict_checks += 1;
 
             // Write-vs-write tends to be hottest; short-circuit early on conflict.
-            if hashset_intersects(&write_keys, &group_write_keys[idx]) {
+            if vec_hashset_intersects(&write_keys, &group_write_keys[idx]) {
                 conflict_hits += 1;
                 continue;
             }
             // Then write-vs-read.
-            if hashset_intersects(&write_keys, &group_read_keys[idx]) {
+            if vec_hashset_intersects(&write_keys, &group_read_keys[idx]) {
                 conflict_hits += 1;
                 continue;
             }
             // Finally read-vs-write.
-            if hashset_intersects(&read_keys, &group_write_keys[idx]) {
+            if vec_hashset_intersects(&read_keys, &group_write_keys[idx]) {
                 conflict_hits += 1;
                 continue;
             }
@@ -295,8 +292,8 @@ fn build_parallel_groups_aggressive_profile(
         if !placed {
             let idx = groups.len();
             groups.push(vec![tx_slot.take().expect("tx already moved")]);
-            group_read_keys.push(read_keys);
-            group_write_keys.push(write_keys);
+            group_read_keys.push(read_keys.iter().copied().collect());
+            group_write_keys.push(write_keys.iter().copied().collect());
 
             for key in &group_read_keys[idx] {
                 latest_reader_group.insert(*key, idx);
