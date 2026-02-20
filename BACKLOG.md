@@ -68,10 +68,13 @@
 
 ## P2（增强项）
 
-### P2-1 观测增强（进行中）
+### P2-1 观测增强 ✅（已完成 2026-02-20）
 - 描述：按 task_id / trace_id 聚合资金流与状态演进，提升排障效率。
-- 当前进展：reexec 模板与 e2e summary 已引入 trace_id 贯穿字段；worker listener 提交链路日志已输出 trace_id。
-- 新增待办（2026-02-20）：nightly summary 增加“strategy_source=default|experiment”标签，避免实验结果与默认口径混淆。
+- 完成项：
+  - reexec 模板与 e2e summary 已引入 trace_id 贯穿字段；worker listener 提交链路日志已输出 trace_id。
+  - nightly regression matrix 新增 `strategy_source=default|experiment` 标注。
+  - nightly summary 输出 `strategy_source` 聚合标签，避免实验结果与默认口径混淆。
+- 验收：default / experiment 双口径 regression matrix 已分别产出并完成 summary 渲染。
 
 ### P2-2 经济参数边界回归
 - 描述：补足 challenger/worker 参数边界测试（压力与极值）。
