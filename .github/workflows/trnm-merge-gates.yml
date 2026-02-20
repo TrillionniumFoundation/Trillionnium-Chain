@@ -88,6 +88,11 @@ jobs:
           rc=${PIPESTATUS[0]}
           set -e
 
+          python3 scripts/summarize_aggressive_profile.py
+          python3 scripts/analyze_aggressive_scan_correlation.py
+          PROFILE_SUMMARY=$(ls -1t run/bench/aggressive-profile-summary-*.md | head -n 1)
+          CORR_SUMMARY=$(ls -1t run/bench/aggressive-scan-correlation-*.md | head -n 1)
+
           if grep -q "regression ratio above threshold" "$REPORT"; then
             echo "::warning title=Aggressive regression warning::One or more aggressive/original ratios exceeded threshold. See workflow summary + artifact report."
           fi
@@ -102,6 +107,14 @@ jobs:
               echo '```text'
               cat "$REPORT"
               echo '```'
+              echo
+              echo "## Aggressive Profile Summary"
+              echo
+              cat "$PROFILE_SUMMARY"
+              echo
+              echo "## Aggressive Scan Correlation"
+              echo
+              cat "$CORR_SUMMARY"
             } >> "$GITHUB_STEP_SUMMARY"
           fi
 
@@ -118,4 +131,6 @@ jobs:
             trillionnium-rust/run/event-replay-smoke.log
             trillionnium-rust/run/bench/aggressive-regression-pr-*.txt
             trillionnium-rust/run/bench/bench-regression-matrix-*.csv
+            trillionnium-rust/run/bench/aggressive-profile-summary-*.md
+            trillionnium-rust/run/bench/aggressive-scan-correlation-*.md
           if-no-files-found: warn
