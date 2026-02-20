@@ -8,6 +8,7 @@ pub enum GroupingStrategy {
     WriteFirst,
     WriteLast,
     HotBucketInterleave,
+    AutoAdaptive,
     AggressiveGreedy,
 }
 
@@ -93,10 +94,19 @@ pub fn build_parallel_groups_profile_with_strategy(
     txs: &[Tx],
     strategy: GroupingStrategy,
 ) -> (Vec<Vec<Tx>>, GroupingProfile) {
-    let mut ordered: Vec<Tx> = txs.to_vec();
-    reorder_for_strategy(&mut ordered, strategy);
+    let mut selected = strategy;
+    if matches!(selected, GroupingStrategy::AutoAdaptive) {
+        selected = if should_use_hot_bucket_interleave(txs) {
+            GroupingStrategy::HotBucketInterleave
+        } else {
+            GroupingStrategy::Original
+        };
+    }
 
-    if matches!(strategy, GroupingStrategy::AggressiveGreedy) {
+    let mut ordered: Vec<Tx> = txs.to_vec();
+    reorder_for_strategy(&mut ordered, selected);
+
+    if matches!(selected, GroupingStrategy::AggressiveGreedy) {
         return build_parallel_groups_aggressive_profile(txs, ordered);
     }
 
@@ -294,6 +304,43 @@ fn build_parallel_groups_aggressive_profile(
     )
 }
 
+fn should_use_hot_bucket_interleave(txs: &[Tx]) -> bool {
+    if txs.len() < 512 {
+        return false;
+    }
+
+    // Sample first window to estimate hot-key streak pressure.
+    let sample_len = txs.len().min(2048);
+    let mut same_key_streak_hits = 0usize;
+    let mut total_pairs = 0usize;
+    let mut prev_key: Option<u64> = None;
+
+    for tx in txs.iter().take(sample_len) {
+        let key = tx
+            .write_set
+            .first()
+            .or_else(|| tx.read_set.first())
+            .map(|o| o.id);
+        if let Some(k) = key {
+            if let Some(pk) = prev_key {
+                total_pairs += 1;
+                if pk == k {
+                    same_key_streak_hits += 1;
+                }
+            }
+            prev_key = Some(k);
+        }
+    }
+
+    if total_pairs == 0 {
+        return false;
+    }
+
+    let streak_ratio = same_key_streak_hits as f64 / total_pairs as f64;
+    // Empirical heuristic: enable hot-bucket only when streak pressure is clearly present.
+    streak_ratio >= 0.22
+}
+
 fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
     match strategy {
         GroupingStrategy::Original => {}
@@ -316,6 +363,7 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
             txs.sort_by_key(|tx| (tx.write_set.len(), std::cmp::Reverse(tx.read_set.len()), tx.id));
         }
         GroupingStrategy::HotBucketInterleave => {
+            // Heuristic reorder; see should_use_hot_bucket_interleave for adaptive trigger.
             // Heuristic: shard txs by a stable access-key hint, then round-robin buckets.
             // Goal is to avoid long same-key streaks in input order under hotspot workloads.
             const BUCKETS: usize = 16;
@@ -362,6 +410,9 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
             }
 
             txs.clone_from_slice(&merged);
+        }
+        GroupingStrategy::AutoAdaptive => {
+            // Auto strategy is resolved before calling reorder_for_strategy.
         }
         GroupingStrategy::AggressiveGreedy => {
             // Keep original order by default; aggressive placement logic handles packing.
@@ -433,13 +484,17 @@ mod tests {
         let (g2, _) =
             build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::FootprintDesc);
         let (g3, _) =
+            build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::AutoAdaptive);
+        let (g4, _) =
             build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::AggressiveGreedy);
         let c1: usize = g1.iter().map(|g| g.len()).sum();
         let c2: usize = g2.iter().map(|g| g.len()).sum();
         let c3: usize = g3.iter().map(|g| g.len()).sum();
+        let c4: usize = g4.iter().map(|g| g.len()).sum();
         assert_eq!(c1, txs.len());
         assert_eq!(c2, txs.len());
         assert_eq!(c3, txs.len());
+        assert_eq!(c4, txs.len());
     }
 
     #[test]

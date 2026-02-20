@@ -14,7 +14,7 @@ TS="$(date +%Y%m%d-%H%M%S)"
 OUT="$OUT_DIR/executor-strategy-exp-$TS.txt"
 mkdir -p "$OUT_DIR"
 
-strategies=(original hot-bucket-interleave aggressive-greedy)
+strategies=(original hot-bucket-interleave auto-adaptive aggressive-greedy)
 
 echo "executor_strategy_experiment" | tee "$OUT"
 echo "workload=mixed" | tee -a "$OUT"
