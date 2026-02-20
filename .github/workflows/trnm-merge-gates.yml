@@ -41,6 +41,7 @@ jobs:
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           cd trillionnium-rust
+          mkdir -p run run/bench
           cargo run -q -p trnm-node -- \
             --config configs/node1.toml \
             --block-ms 5 \
