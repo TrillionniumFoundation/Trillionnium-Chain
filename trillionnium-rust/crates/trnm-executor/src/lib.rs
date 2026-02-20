@@ -23,6 +23,13 @@ pub struct GroupingProfile {
     pub conflict_checks: usize,
     pub conflict_hits: usize,
     pub candidate_groups_scanned: usize,
+    // Aggressive-only stage attribution counters.
+    pub stage_ww_checks: usize,
+    pub stage_ww_hits: usize,
+    pub stage_wr_checks: usize,
+    pub stage_wr_hits: usize,
+    pub stage_rw_checks: usize,
+    pub stage_rw_hits: usize,
 }
 
 #[derive(Debug, Clone)]
@@ -204,6 +211,12 @@ pub fn build_parallel_groups_profile_with_strategy(
             conflict_checks,
             conflict_hits,
             candidate_groups_scanned: 0,
+            stage_ww_checks: 0,
+            stage_ww_hits: 0,
+            stage_wr_checks: 0,
+            stage_wr_hits: 0,
+            stage_rw_checks: 0,
+            stage_rw_hits: 0,
         },
     )
 }
@@ -225,7 +238,14 @@ fn build_parallel_groups_aggressive_profile(
     let mut conflict_checks = 0usize;
     let mut conflict_hits = 0usize;
     let mut candidate_groups_scanned = 0usize;
+    let mut stage_ww_checks = 0usize;
+    let mut stage_ww_hits = 0usize;
+    let mut stage_wr_checks = 0usize;
+    let mut stage_wr_hits = 0usize;
+    let mut stage_rw_checks = 0usize;
+    let mut stage_rw_hits = 0usize;
     let scan_window = aggr_scan_window();
+    let skip_empty_stage_checks = aggr_skip_empty_stage_checks();
 
     for tx in ordered {
         let mut tx_slot = Some(tx);
@@ -241,6 +261,8 @@ fn build_parallel_groups_aggressive_profile(
                 .expect("tx must exist")
                 .write_set,
         );
+        let read_empty = read_keys.is_empty();
+        let write_empty = write_keys.is_empty();
 
         // Compute a safe lower-bound to prune candidate groups.
         let mut min_group = 0usize;
@@ -268,20 +290,32 @@ fn build_parallel_groups_aggressive_profile(
             candidate_groups_scanned += 1;
             conflict_checks += 1;
 
-            // Write-vs-write tends to be hottest; short-circuit early on conflict.
-            if vec_hashset_intersects(&write_keys, &group_write_keys[idx]) {
-                conflict_hits += 1;
-                continue;
+            // Write-vs-write tends to be hottest; optionally skip stages when write-set is empty.
+            if !skip_empty_stage_checks || !write_empty {
+                stage_ww_checks += 1;
+                if vec_hashset_intersects(&write_keys, &group_write_keys[idx]) {
+                    conflict_hits += 1;
+                    stage_ww_hits += 1;
+                    continue;
+                }
+
+                // Then write-vs-read.
+                stage_wr_checks += 1;
+                if vec_hashset_intersects(&write_keys, &group_read_keys[idx]) {
+                    conflict_hits += 1;
+                    stage_wr_hits += 1;
+                    continue;
+                }
             }
-            // Then write-vs-read.
-            if vec_hashset_intersects(&write_keys, &group_read_keys[idx]) {
-                conflict_hits += 1;
-                continue;
-            }
+
             // Finally read-vs-write.
-            if vec_hashset_intersects(&read_keys, &group_write_keys[idx]) {
-                conflict_hits += 1;
-                continue;
+            if !skip_empty_stage_checks || !read_empty {
+                stage_rw_checks += 1;
+                if vec_hashset_intersects(&read_keys, &group_write_keys[idx]) {
+                    conflict_hits += 1;
+                    stage_rw_hits += 1;
+                    continue;
+                }
             }
 
             groups[idx].push(tx_slot.take().expect("tx already moved"));
@@ -336,6 +370,12 @@ fn build_parallel_groups_aggressive_profile(
             conflict_checks,
             conflict_hits,
             candidate_groups_scanned,
+            stage_ww_checks,
+            stage_ww_hits,
+            stage_wr_checks,
+            stage_wr_hits,
+            stage_rw_checks,
+            stage_rw_hits,
         },
     )
 }
@@ -345,6 +385,16 @@ fn aggr_scan_window() -> usize {
         .ok()
         .and_then(|v| v.parse::<usize>().ok())
         .unwrap_or(0)
+}
+
+fn aggr_skip_empty_stage_checks() -> bool {
+    std::env::var("TRNM_AGGR_SKIP_EMPTY_STAGE_CHECKS")
+        .ok()
+        .map(|v| {
+            let s = v.trim().to_ascii_lowercase();
+            !(s == "0" || s == "false" || s == "off" || s == "no")
+        })
+        .unwrap_or(true)
 }
 
 fn auto_hot_streak_threshold() -> f64 {
