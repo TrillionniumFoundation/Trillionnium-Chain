@@ -13,7 +13,7 @@ GA requires all of:
 
 ### 1) Stage2 nightly observation
 - Status: **PENDING**
-- Signal: currently green on multiple consecutive runs.
+- Signal: currently green on multiple consecutive runs (latest includes `22213079988`).
 - Gap: >=24h observation window not yet formally closed.
 
 ### 2) Testnet preflight consecutive success

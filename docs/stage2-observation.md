@@ -10,6 +10,7 @@ Confirm a stable observation window before GA promotion:
 
 ## Evidence Collected (current)
 Recent successful nightly runs:
+- https://github.com/ProfAlexQI/TrillionniumChain/actions/runs/22213079988
 - https://github.com/ProfAlexQI/TrillionniumChain/actions/runs/22212857297
 - https://github.com/ProfAlexQI/TrillionniumChain/actions/runs/22212698732
 - https://github.com/ProfAlexQI/TrillionniumChain/actions/runs/22212430161
@@ -24,6 +25,7 @@ Observed signal:
 
 ## Testnet Preflight (supporting signal)
 Recent successful testnet-preflight runs on current mainline:
+- https://github.com/ProfAlexQI/TrillionniumChain/actions/runs/22213082298
 - https://github.com/ProfAlexQI/TrillionniumChain/actions/runs/22212856463
 - https://github.com/ProfAlexQI/TrillionniumChain/actions/runs/22212698755
 - https://github.com/ProfAlexQI/TrillionniumChain/actions/runs/22212429718
