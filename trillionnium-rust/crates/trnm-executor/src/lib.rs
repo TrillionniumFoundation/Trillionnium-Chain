@@ -224,6 +224,8 @@ fn build_parallel_groups_aggressive_profile(
 
     let mut conflict_checks = 0usize;
     let mut conflict_hits = 0usize;
+    let mut candidate_groups_scanned = 0usize;
+    let scan_window = aggr_scan_window();
 
     for tx in ordered {
         let mut tx_slot = Some(tx);
@@ -257,7 +259,13 @@ fn build_parallel_groups_aggressive_profile(
         }
 
         let mut placed = false;
+        let mut scanned = 0usize;
         for idx in min_group..groups.len() {
+            if scan_window > 0 && scanned >= scan_window {
+                break;
+            }
+            scanned += 1;
+            candidate_groups_scanned += 1;
             conflict_checks += 1;
 
             // Write-vs-write tends to be hottest; short-circuit early on conflict.
@@ -327,9 +335,16 @@ fn build_parallel_groups_aggressive_profile(
             avg_group_size,
             conflict_checks,
             conflict_hits,
-            candidate_groups_scanned: conflict_checks,
+            candidate_groups_scanned,
         },
     )
+}
+
+fn aggr_scan_window() -> usize {
+    std::env::var("TRNM_AGGR_SCAN_WINDOW")
+        .ok()
+        .and_then(|v| v.parse::<usize>().ok())
+        .unwrap_or(0)
 }
 
 fn auto_hot_streak_threshold() -> f64 {
