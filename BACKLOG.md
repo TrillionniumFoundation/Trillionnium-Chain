@@ -81,8 +81,9 @@
 ### P2-2 经济参数边界回归
 - 描述：补足 challenger/worker 参数边界测试（压力与极值）。
 
-### P2-3 Demo 资产整理
+### P2-3 Demo 资产整理（进行中）
 - 描述：对外演示脚本、话术、样例任务模板标准化。
+- 最新进展（2026-02-20）：新增 `scripts/demo_storyline.sh` 与 `docs/demo/rust-l1-demo-runbook-v1.md`，形成可重复的一键演示流程。
 
 ### P2-4 Aggressive 实验治理收口 ✅（已完成 2026-02-20）
 - 描述：完成 Aggressive Round3 的 Week1~Week2 实验收口与治理闭环。
