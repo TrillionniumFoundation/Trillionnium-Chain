@@ -6,12 +6,14 @@ on:
     paths:
       - 'scripts/**'
       - 'docs/**'
+      - 'trillionnium-rust/**'
       - '.github/workflows/trnm-merge-gates.yml'
   push:
     branches: [main]
     paths:
       - 'scripts/**'
       - 'docs/**'
+      - 'trillionnium-rust/**'
       - '.github/workflows/trnm-merge-gates.yml'
 
 concurrency:
