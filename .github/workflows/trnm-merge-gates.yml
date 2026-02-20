@@ -61,6 +61,45 @@ jobs:
           cd trillionnium-rust
           ./scripts/run_v1_protocol_gates.sh
 
+      - name: Aggressive regression check (PR-visible warn)
+        if: github.event_name == 'pull_request'
+        run: |
+          set -euo pipefail
+          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+          cd trillionnium-rust
+
+          TXS=${PR_REGRESSION_MATRIX_TXS:-5000} ./scripts/run_bench_regression_matrix.sh
+
+          REPORT="run/bench/aggressive-regression-pr-${GITHUB_RUN_ID:-local}.txt"
+          set +e
+          MODE=warn \
+          AGGRESSIVE_MAX_RATIO_CLASSIC=${AGGRESSIVE_MAX_RATIO_CLASSIC:-4.75} \
+          AGGRESSIVE_MAX_RATIO_MIXED=${AGGRESSIVE_MAX_RATIO_MIXED:-3.75} \
+          AGGRESSIVE_MAX_RATIO_HOT_STREAK=${AGGRESSIVE_MAX_RATIO_HOT_STREAK:-3.75} \
+          ./scripts/check_aggressive_regression.sh 2>&1 | tee "$REPORT"
+          rc=${PIPESTATUS[0]}
+          set -e
+
+          if grep -q "regression ratio above threshold" "$REPORT"; then
+            echo "::warning title=Aggressive regression warning::One or more aggressive/original ratios exceeded threshold. See workflow summary + artifact report."
+          fi
+
+          if [ -n "${GITHUB_STEP_SUMMARY:-}" ] && [ -f "$REPORT" ]; then
+            {
+              echo "## Aggressive Regression (PR Warn Mode)"
+              echo
+              echo "- mode: warn"
+              echo "- txs: ${PR_REGRESSION_MATRIX_TXS:-5000}"
+              echo
+              echo '```text'
+              cat "$REPORT"
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+          # warn-mode should never block merge gates
+          test "$rc" -eq 0
+
       - name: Upload gate artifacts
         if: always()
         uses: actions/upload-artifact@v4
@@ -72,4 +111,6 @@ jobs:
             trillionnium-rust/run/parallel-sanity.log
             trillionnium-rust/run/event-field-check.log
             trillionnium-rust/run/event-replay-smoke.log
+            trillionnium-rust/run/bench/aggressive-regression-pr-*.txt
+            trillionnium-rust/run/bench/bench-regression-matrix-*.csv
           if-no-files-found: warn
