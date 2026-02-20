@@ -7,7 +7,7 @@ use std::{
     fs,
     sync::mpsc,
     thread,
-    time::{Duration, SystemTime, UNIX_EPOCH},
+    time::{Duration, Instant, SystemTime, UNIX_EPOCH},
 };
 use trnm_executor::build_parallel_groups;
 use trnm_pouw::{
@@ -163,6 +163,15 @@ fn now_unix_ms() -> u128 {
         .unwrap_or(0)
 }
 
+fn percentile(mut vals: Vec<u128>, p: f64) -> u128 {
+    if vals.is_empty() {
+        return 0;
+    }
+    vals.sort_unstable();
+    let idx = ((vals.len() - 1) as f64 * p).round() as usize;
+    vals[idx.min(vals.len() - 1)]
+}
+
 fn emit_event(
     tx: &MockTx,
     tx_id: u64,
@@ -280,9 +289,9 @@ fn pre_execute_group_parallel(
     group_ids: Vec<u64>,
     picked: &[MockTx],
     workers: usize,
-) -> Vec<u64> {
+) -> (Vec<u64>, u64) {
     if group_ids.is_empty() {
-        return vec![];
+        return (vec![], 0);
     }
     let workers = workers.max(1).min(group_ids.len());
     let (tx, rx) = mpsc::channel::<(u64, bool, String)>();
@@ -322,16 +331,18 @@ fn pre_execute_group_parallel(
     }
 
     let mut ok_ids = Vec::new();
+    let mut rejected = 0u64;
     for (id, ok, err) in rx {
         if ok {
             ok_ids.push(id);
         } else {
+            rejected += 1;
             println!("[preexec] tx_id={} rejected err={}", id, err);
         }
     }
 
     ok_ids.sort_unstable();
-    ok_ids
+    (ok_ids, rejected)
 }
 
 fn main() -> Result<()> {
@@ -348,7 +359,13 @@ fn main() -> Result<()> {
     let mut mempool = build_demo_mempool(args.demo_tasks, args.demo_keys);
 
     let mut height: u64 = 1;
+    let mut finality_samples_ms: Vec<u128> = Vec::new();
+    let mut preexec_reject_total: u64 = 0;
+    let mut apply_error_total: u64 = 0;
+    let mut rollback_total: u64 = 0;
+
     loop {
+        let block_start = Instant::now();
         let txs_per_block = 4usize;
         let mut picked: Vec<MockTx> = Vec::new();
         for _ in 0..txs_per_block {
@@ -368,7 +385,8 @@ fn main() -> Result<()> {
         let mut applied = 0u64;
         for g in groups {
             let group_ids: Vec<u64> = g.iter().map(|t| t.id).collect();
-            let ordered_ids = pre_execute_group_parallel(&state, group_ids, &picked, args.parallel_workers);
+            let (ordered_ids, rejected) = pre_execute_group_parallel(&state, group_ids, &picked, args.parallel_workers);
+            preexec_reject_total += rejected;
 
             for id in ordered_ids {
                 let idx = (id - 1) as usize;
@@ -379,6 +397,8 @@ fn main() -> Result<()> {
                 let before = state.clone();
                 if let Err(e) = apply_one(&mut state, tx.clone()) {
                     state = before; // rollback on failed commit
+                    apply_error_total += 1;
+                    rollback_total += 1;
                     println!("[tx] apply_error height={} tx_id={} err={} rollback=true", height, id, e);
                 } else {
                     applied += 1;
@@ -390,7 +410,9 @@ fn main() -> Result<()> {
         }
 
         let root = hex::encode(state.state_root());
-        println!("[block] node={} height={} txs={} groups={} state_root={}", cfg.node_id, height, applied, group_count, root);
+        let elapsed_ms = block_start.elapsed().as_millis();
+        finality_samples_ms.push(elapsed_ms);
+        println!("[block] node={} height={} txs={} groups={} state_root={} elapsed_ms={}", cfg.node_id, height, applied, group_count, root, elapsed_ms);
 
         if args.max_blocks > 0 && height >= args.max_blocks {
             println!("[node] reached max_blocks={}, exiting", args.max_blocks);
@@ -404,6 +426,23 @@ fn main() -> Result<()> {
         height += 1;
         thread::sleep(Duration::from_millis(args.block_ms));
     }
+
+    let finality_p50 = percentile(finality_samples_ms.clone(), 0.50);
+    let finality_p95 = percentile(finality_samples_ms.clone(), 0.95);
+    let recovery_error_rate = if finality_samples_ms.is_empty() {
+        0.0
+    } else {
+        apply_error_total as f64 / finality_samples_ms.len() as f64
+    };
+    println!(
+        "[consensus] finality_p50_ms={} finality_p95_ms={} preexec_reject_total={} apply_error_total={} rollback_total={} recovery_error_rate={:.6}",
+        finality_p50,
+        finality_p95,
+        preexec_reject_total,
+        apply_error_total,
+        rollback_total,
+        recovery_error_rate
+    );
 
     Ok(())
 }

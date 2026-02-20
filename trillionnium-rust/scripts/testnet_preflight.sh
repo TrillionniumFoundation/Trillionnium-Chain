@@ -41,6 +41,11 @@ if grep -E '\[tx\] apply_error|rollback=true' "$ROOT/run/parallel-sanity.log" >/
   exit 2
 fi
 
+if ! grep -q '^\[consensus\] finality_p50_ms=' "$ROOT/run/parallel-sanity.log"; then
+  log "parallel sanity failed: missing consensus finality/recovery metrics"
+  exit 3
+fi
+
 log "devnet + audit"
 ./scripts/devnet_up.sh | tee -a "$LOG"
 sleep 12
