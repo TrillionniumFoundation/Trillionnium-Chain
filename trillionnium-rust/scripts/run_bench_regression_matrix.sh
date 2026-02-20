@@ -30,7 +30,16 @@ read -r -a KEYS_LIST <<< "$KEYS_LIST_STR"
 READ_FANOUT="${READ_FANOUT:-3}"
 WRITE_EVERY="${WRITE_EVERY:-2}"
 
-printf "workload,txs,keys,strategy,groups,elapsed_ms,candidate_groups_scanned,stage_ww_checks,stage_ww_hits,stage_wr_checks,stage_wr_hits,stage_rw_checks,stage_rw_hits\n" > "$OUT"
+# Label the result source to avoid mixing default-path and experiment-path numbers.
+if [ -n "${STRATEGY_SOURCE:-}" ]; then
+  STRATEGY_SOURCE_VAL="$STRATEGY_SOURCE"
+elif [ "${TRNM_AGGR_DEEP_SCAN:-0}" = "1" ] || [ -n "${TRNM_AGGR_SCAN_WINDOW:-}" ]; then
+  STRATEGY_SOURCE_VAL="experiment"
+else
+  STRATEGY_SOURCE_VAL="default"
+fi
+
+printf "workload,txs,keys,strategy,strategy_source,groups,elapsed_ms,candidate_groups_scanned,stage_ww_checks,stage_ww_hits,stage_wr_checks,stage_wr_hits,stage_rw_checks,stage_rw_hits\n" > "$OUT"
 
 run_case() {
   local workload="$1"
@@ -74,8 +83,8 @@ run_case() {
     exit 21
   fi
 
-  printf "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n" \
-    "$workload" "$txs" "$keys" "$strategy" "$groups" "$elapsed" \
+  printf "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n" \
+    "$workload" "$txs" "$keys" "$strategy" "$STRATEGY_SOURCE_VAL" "$groups" "$elapsed" \
     "${candidate:-0}" "${stage_ww_checks:-0}" "${stage_ww_hits:-0}" \
     "${stage_wr_checks:-0}" "${stage_wr_hits:-0}" "${stage_rw_checks:-0}" "${stage_rw_hits:-0}" >> "$OUT"
 }

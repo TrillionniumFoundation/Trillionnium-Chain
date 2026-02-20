@@ -37,14 +37,17 @@ def iv(v):
 
 def parse_aggr_stage_stats(path: str):
     if not path or not os.path.exists(path):
-        return {}
+        return {}, set()
 
     by_workload = {}
+    strategy_sources = set()
     with open(path, "r", encoding="utf-8", errors="ignore") as f:
         reader = csv.DictReader(f)
         for r in reader:
             if r.get("strategy") != "aggressive-greedy":
                 continue
+            src = (r.get("strategy_source") or "unknown").strip()
+            strategy_sources.add(src)
             wl = r.get("workload", "unknown")
             d = by_workload.setdefault(
                 wl,
@@ -66,7 +69,7 @@ def parse_aggr_stage_stats(path: str):
             d["rw_checks"] += iv(r.get("stage_rw_checks", 0))
             d["rw_hits"] += iv(r.get("stage_rw_hits", 0))
 
-    return by_workload
+    return by_workload, strategy_sources
 
 
 def rate(hits, checks):
@@ -78,7 +81,7 @@ suggest_file = latest(os.path.join(HEALTH, "auto-adaptive-threshold-suggestion-*
 regression_csv = latest(os.path.join(ROOT, "run", "bench", "bench-regression-matrix-*.csv"))
 a = parse_kv(attrib_file)
 s = parse_kv(suggest_file)
-stage_stats = parse_aggr_stage_stats(regression_csv)
+stage_stats, strategy_sources = parse_aggr_stage_stats(regression_csv)
 
 labels = a.get("attribution.labels", "unknown")
 reasons = a.get("attribution.reasons", "none")
@@ -108,6 +111,8 @@ lines.append("## Aggressive stage hit-rate snapshot")
 if stage_stats:
     if regression_csv:
         lines.append(f"- Source: `{regression_csv}`")
+    if strategy_sources:
+        lines.append(f"- strategy_source: `{','.join(sorted(strategy_sources))}`")
     for wl in sorted(stage_stats.keys()):
         d = stage_stats[wl]
         lines.append(
