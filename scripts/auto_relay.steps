@@ -3,7 +3,7 @@
 
 # A) 语义与协议一致性（ correctness first ）
 bash -lc 'cd trillionnium-rust && ./scripts/run_v1_protocol_gates.sh'
-bash -lc 'cd trillionnium-rust && cargo test --workspace --quiet'
+bash -lc 'export PATH="/opt/homebrew/opt/rustup/bin:$PATH"; cd trillionnium-rust && cargo test --workspace --quiet'
 bash -lc 'cd trillionnium-rust && ./scripts/check_event_fields.sh'
 bash -lc 'cd trillionnium-rust && ./scripts/check_event_replay_smoke.sh'
 
