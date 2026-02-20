@@ -185,6 +185,15 @@ jobs:
 
           THRESHOLD_PROFILE=${THRESHOLD_PROFILE:-stage2} ./scripts/nightly_attribution.sh
 
+      - name: Render nightly summary (non-gate)
+        if: always()
+        run: |
+          set -euo pipefail
+          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+          cd trillionnium-rust
+
+          ./scripts/render_nightly_summary.py
+
       - name: Upload nightly health artifacts
         if: always()
         uses: actions/upload-artifact@v4
