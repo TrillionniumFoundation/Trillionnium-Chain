@@ -101,6 +101,22 @@ extract_auto_use_hot_bucket() {
   ' "$file"
 }
 
+extract_elapsed_for_strategy() {
+  local file="$1"
+  local strategy="$2"
+  if [[ -z "$file" || ! -f "$file" ]]; then
+    echo ""
+    return 0
+  fi
+
+  awk -v s="$strategy" '
+    $0 ~ "--- strategy=" s " ---" {in_s=1; next}
+    /^--- strategy=/ {if (in_s) exit; in_s=0}
+    in_s && /^elapsed_ms=/ {sub(/^elapsed_ms=/, "", $0); print; found=1; exit}
+    END {if (!found) print ""}
+  ' "$file"
+}
+
 if [[ -n "$latest_bench" ]]; then
   classic_max="$(max_elapsed "$latest_bench")"
   if [[ "$classic_max" -gt "$CLASSIC_HARD_MS" ]]; then
@@ -122,10 +138,31 @@ auto_used_mixed="$(extract_auto_use_hot_bucket "$latest_strategy_exp")"
 auto_reason_hotspot="$(extract_auto_reason "$latest_hotspot_exp")"
 auto_used_hotspot="$(extract_auto_use_hot_bucket "$latest_hotspot_exp")"
 
+strategy_mismatch=0
+orig_elapsed_mixed="$(extract_elapsed_for_strategy "$latest_strategy_exp" "original")"
+auto_elapsed_mixed="$(extract_elapsed_for_strategy "$latest_strategy_exp" "auto-adaptive")"
+orig_elapsed_hotspot="$(extract_elapsed_for_strategy "$latest_hotspot_exp" "original")"
+auto_elapsed_hotspot="$(extract_elapsed_for_strategy "$latest_hotspot_exp" "auto-adaptive")"
+
+if [[ "$auto_used_mixed" == "true" && -n "$orig_elapsed_mixed" && -n "$auto_elapsed_mixed" ]]; then
+  if [[ "$auto_elapsed_mixed" -gt "$orig_elapsed_mixed" ]]; then
+    strategy_mismatch=1
+    reasons+=("auto_strategy_mismatch_mixed(${auto_elapsed_mixed}>${orig_elapsed_mixed})")
+  fi
+fi
+
+if [[ "$auto_used_hotspot" == "true" && -n "$orig_elapsed_hotspot" && -n "$auto_elapsed_hotspot" ]]; then
+  if [[ "$auto_elapsed_hotspot" -gt "$orig_elapsed_hotspot" ]]; then
+    strategy_mismatch=1
+    reasons+=("auto_strategy_mismatch_hotspot(${auto_elapsed_hotspot}>${orig_elapsed_hotspot})")
+  fi
+fi
+
 labels=()
 [[ $label_semantic -eq 1 ]] && labels+=("semantic-regression")
 [[ $label_perf -eq 1 ]] && labels+=("performance-regression")
 [[ $label_env -eq 1 ]] && labels+=("environment-flaky")
+[[ $strategy_mismatch -eq 1 ]] && labels+=("strategy-mismatch")
 if [[ ${#labels[@]} -eq 0 ]]; then
   labels+=("healthy")
 fi
@@ -141,11 +178,18 @@ fi
   echo "hotspot_exp.file=${latest_hotspot_exp:-none}"
   echo "strategy_exp.auto.use_hot_bucket=${auto_used_mixed}"
   echo "strategy_exp.auto.reason=${auto_reason_mixed}"
+  echo "strategy_exp.elapsed.original_ms=${orig_elapsed_mixed:-none}"
+  echo "strategy_exp.elapsed.auto_ms=${auto_elapsed_mixed:-none}"
   echo "hotspot_exp.auto.use_hot_bucket=${auto_used_hotspot}"
   echo "hotspot_exp.auto.reason=${auto_reason_hotspot}"
+  echo "hotspot_exp.elapsed.original_ms=${orig_elapsed_hotspot:-none}"
+  echo "hotspot_exp.elapsed.auto_ms=${auto_elapsed_hotspot:-none}"
   echo "threshold.classic.hard_ms=$CLASSIC_HARD_MS"
   echo "threshold.mixed.hard_ms=$MIXED_HARD_MS"
 } | tee "$OUT"
 
 echo "::notice title=nightly-attribution::labels=$(IFS=,; echo "${labels[*]}") auto_mixed=${auto_reason_mixed} auto_hotspot=${auto_reason_hotspot}"
+if [[ $strategy_mismatch -eq 1 ]]; then
+  echo "::warning title=nightly-strategy-mismatch::auto-adaptive slower than original on latest experiment"
+fi
 echo "[OK] nightly attribution: $OUT"
