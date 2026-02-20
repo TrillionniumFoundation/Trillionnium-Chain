@@ -34,6 +34,8 @@ pub struct AutoAdaptiveDecision {
     pub min_margin: f64,
     pub hot_key_share: f64,
     pub min_hot_key_share: f64,
+    pub expected_gain_score: f64,
+    pub min_expected_gain_score: f64,
 }
 
 pub fn detect_conflict(a: &Tx, b: &Tx) -> bool {
@@ -349,10 +351,19 @@ fn hot_bucket_count() -> usize {
         .unwrap_or(8)
 }
 
+fn auto_min_expected_gain_score() -> f64 {
+    std::env::var("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE")
+        .ok()
+        .and_then(|v| v.parse::<f64>().ok())
+        .map(|v| v.clamp(0.0, 1.0))
+        .unwrap_or(0.01)
+}
+
 pub fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
     let threshold = auto_hot_streak_threshold();
     let min_margin = auto_reorder_min_margin();
     let min_hot_key_share = auto_reorder_min_hot_key_share();
+    let min_expected_gain_score = auto_min_expected_gain_score();
 
     if txs.len() < 512 {
         return AutoAdaptiveDecision {
@@ -364,6 +375,8 @@ pub fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
             min_margin,
             hot_key_share: 0.0,
             min_hot_key_share,
+            expected_gain_score: 0.0,
+            min_expected_gain_score,
         };
     }
 
@@ -404,6 +417,8 @@ pub fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
             min_margin,
             hot_key_share: 0.0,
             min_hot_key_share,
+            expected_gain_score: 0.0,
+            min_expected_gain_score,
         };
     }
 
@@ -411,11 +426,16 @@ pub fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
     let max_key_count = key_hist.values().copied().max().unwrap_or(0);
     let hot_key_share = max_key_count as f64 / observed as f64;
 
-    let use_hot_bucket = streak_ratio >= threshold + min_margin && hot_key_share >= min_hot_key_share;
+    let expected_gain_score = streak_ratio * hot_key_share;
+    let use_hot_bucket = streak_ratio >= threshold + min_margin
+        && hot_key_share >= min_hot_key_share
+        && expected_gain_score >= min_expected_gain_score;
     let reason = if use_hot_bucket {
         "hotspot_detected"
     } else if hot_key_share < min_hot_key_share {
         "low_hot_key_share"
+    } else if expected_gain_score < min_expected_gain_score {
+        "low_expected_gain"
     } else {
         "below_streak_budget"
     };
@@ -429,6 +449,8 @@ pub fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
         min_margin,
         hot_key_share,
         min_hot_key_share,
+        expected_gain_score,
+        min_expected_gain_score,
     }
 }
 
