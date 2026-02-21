@@ -52,6 +52,10 @@ TRNM_TX_CLI=./trillionnium-rust/target/debug/trnm-cli \
 cd TrillionniumChain
 TRNM_TX_CLI=./trillionnium-rust/target/debug/trnm-cli AGENTS=3 \
   ./scripts/v2/worker_agent_mining_onboard.sh
+
+# 并发提交模式（默认开启）
+TRNM_TX_CLI=./trillionnium-rust/target/debug/trnm-cli AGENTS=8 PARALLEL_SUBMIT=1 MAX_PARALLEL=4 \
+  ./scripts/v2/worker_agent_mining_onboard.sh
 ```
 
 可选：
@@ -71,6 +75,10 @@ SKIP_GATES=1 AGENTS=5 ./scripts/v2/worker_agent_mining_onboard.sh
 通过标准：
 - `summary.json` 中 `ok=true`
 - `failed=0` 且 `terminal(accepted+rejected) >= AGENTS`
+- 吞吐字段存在：
+  - `throughput.submit_tasks_per_sec`
+  - `throughput.flush_acks_per_sec`
+  - `throughput.end2end_tasks_per_sec`
 
 ---
 
