@@ -24,3 +24,8 @@ E2E smoke:
 ```bash
 ./scripts/v2/worker_agent_e2e_demo.sh
 ```
+
+Submission relay dry-run:
+```bash
+cargo run -q -p trnm-worker-agent -- flush-submissions --submit-log /tmp/trnm-worker-agent-submits.jsonl --dry-run
+```

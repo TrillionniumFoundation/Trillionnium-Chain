@@ -2,7 +2,7 @@ use anyhow::Result;
 use clap::{Parser, Subcommand};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
-use std::{fs, path::PathBuf, time::{SystemTime, UNIX_EPOCH}};
+use std::{fs, path::PathBuf, process::Command as ProcCommand, time::{SystemTime, UNIX_EPOCH}};
 
 #[derive(Debug, Parser)]
 #[command(name = "trnm-worker-agent", version, about = "Trillionnium PoUW worker-agent (MVP skeleton)")]
@@ -51,6 +51,12 @@ enum Command {
         #[arg(long, default_value = "/tmp/trnm-worker-agent-submissions.jsonl")]
         submit_log: PathBuf,
     },
+    FlushSubmissions {
+        #[arg(long, default_value = "/tmp/trnm-worker-agent-submissions.jsonl")]
+        submit_log: PathBuf,
+        #[arg(long, default_value_t = true)]
+        dry_run: bool,
+    },
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -69,7 +75,7 @@ struct RunOnceOutput {
     template_reveal: String,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize)]
 struct SubmissionRecord {
     ts_unix_ms: u128,
     task_id: u64,
@@ -215,6 +221,32 @@ fn main() -> Result<()> {
             if submit {
                 println!("submitted=true submit_log={}", submit_log.display());
             }
+        }
+        Command::FlushSubmissions { submit_log, dry_run } => {
+            if !submit_log.exists() {
+                println!("[agent] no submit log found: {}", submit_log.display());
+                return Ok(());
+            }
+            let raw = fs::read_to_string(&submit_log)?;
+            let mut n = 0usize;
+            for line in raw.lines().filter(|l| !l.trim().is_empty()) {
+                let rec: SubmissionRecord = serde_json::from_str(line)?;
+                n += 1;
+                if dry_run {
+                    println!("[dry-run] {}", rec.commit_cmd);
+                    println!("[dry-run] {}", rec.reveal_cmd);
+                } else {
+                    let c1 = ProcCommand::new("sh").arg("-lc").arg(&rec.commit_cmd).status()?;
+                    let c2 = ProcCommand::new("sh").arg("-lc").arg(&rec.reveal_cmd).status()?;
+                    println!(
+                        "[submitted] task_id={} commit_ok={} reveal_ok={}",
+                        rec.task_id,
+                        c1.success(),
+                        c2.success()
+                    );
+                }
+            }
+            println!("[agent] flushed_records={} dry_run={}", n, dry_run);
         }
     }
     Ok(())
