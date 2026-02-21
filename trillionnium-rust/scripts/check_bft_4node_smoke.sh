@@ -34,6 +34,7 @@ for n in 1 2 3 4; do
   log="$OUT_DIR/bft4-node${n}-${TS}.log"
   grep -q '^\[bft\].*step=Commit' "$log"
   grep -q '^\[consensus\].*bft_committed_heights=' "$log"
+  grep -q '^\[bft-slash\] event=double_vote' "$log"
   if grep -E '\[tx\] apply_error|rollback=true' "$log" >/dev/null; then
     echo "[FAIL] apply_error/rollback found: $log" >&2
     exit 2

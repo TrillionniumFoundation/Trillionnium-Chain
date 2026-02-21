@@ -74,7 +74,7 @@ enum RoundStep {
     Commit,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 enum VoteType {
     Prevote,
     Precommit,
@@ -86,6 +86,8 @@ struct BftVote {
     vote_type: VoteType,
     block_hash: String,
     byzantine: bool,
+    height: u64,
+    round: u64,
 }
 
 #[derive(Debug, Clone)]
@@ -95,6 +97,7 @@ struct BftHeightResult {
     round_changes: u64,
     prevote_count: usize,
     precommit_count: usize,
+    double_vote_events: usize,
 }
 
 fn quorum_threshold(n: usize) -> usize {
@@ -115,6 +118,26 @@ fn aggregate_votes(votes: &[BftVote], vote_type: VoteType) -> HashMap<String, us
     m
 }
 
+fn detect_double_votes(votes: &[BftVote], vote_type: VoteType) -> usize {
+    let mut seen: HashMap<(String, u64, u64, VoteType), String> = HashMap::new();
+    let mut events = 0usize;
+    for v in votes.iter().filter(|v| v.vote_type == vote_type) {
+        let k = (v.validator.clone(), v.height, v.round, v.vote_type);
+        if let Some(prev_hash) = seen.get(&k) {
+            if prev_hash != &v.block_hash {
+                events += 1;
+                println!(
+                    "[bft-slash] event=double_vote validator={} height={} round={} vote_type={:?} first_hash={} second_hash={}",
+                    v.validator, v.height, v.round, v.vote_type, prev_hash, v.block_hash
+                );
+            }
+        } else {
+            seen.insert(k, v.block_hash.clone());
+        }
+    }
+    events
+}
+
 fn simulate_bft_round(
     height: u64,
     round: u64,
@@ -122,7 +145,7 @@ fn simulate_bft_round(
     locked_hash: Option<&str>,
     validators: usize,
     byzantine: usize,
-) -> (bool, usize, usize, Option<String>) {
+) -> (bool, usize, usize, Option<String>, usize) {
     let n = validators.max(1);
     let b = byzantine.min(n.saturating_sub(1));
     let q = quorum_threshold(n);
@@ -138,7 +161,11 @@ fn simulate_bft_round(
         let vid = format!("v{}", i + 1);
         let is_bad = i < b;
         let vh = if is_bad { bad_hash.clone() } else { round_hash.clone() };
-        votes.push(BftVote { validator: vid, vote_type: VoteType::Prevote, block_hash: vh, byzantine: is_bad });
+        votes.push(BftVote { validator: vid.clone(), vote_type: VoteType::Prevote, block_hash: vh, byzantine: is_bad, height, round });
+        // Byzantine equivocation sample: same validator emits conflicting prevote.
+        if is_bad {
+            votes.push(BftVote { validator: vid, vote_type: VoteType::Prevote, block_hash: round_hash.clone(), byzantine: true, height, round });
+        }
     }
     println!("[bft] height={} round={} step={:?}", height, round, RoundStep::Prevote);
 
@@ -150,7 +177,10 @@ fn simulate_bft_round(
         let vid = format!("v{}", i + 1);
         let is_bad = i < b;
         let vote_hash = if prevote_count >= q && !is_bad { round_hash.clone() } else { bad_hash.clone() };
-        votes.push(BftVote { validator: vid, vote_type: VoteType::Precommit, block_hash: vote_hash, byzantine: is_bad });
+        votes.push(BftVote { validator: vid.clone(), vote_type: VoteType::Precommit, block_hash: vote_hash, byzantine: is_bad, height, round });
+        if is_bad {
+            votes.push(BftVote { validator: vid, vote_type: VoteType::Precommit, block_hash: round_hash.clone(), byzantine: true, height, round });
+        }
     }
     println!("[bft] height={} round={} step={:?}", height, round, RoundStep::Precommit);
 
@@ -158,14 +188,16 @@ fn simulate_bft_round(
     let precommit_count = *precommit_tally.get(&round_hash).unwrap_or(&0);
     let unique_voters: HashSet<String> = votes.iter().map(|v| v.validator.clone()).collect();
     let byzantine_votes = votes.iter().filter(|v| v.byzantine).count();
+    let double_vote_events = detect_double_votes(&votes, VoteType::Prevote)
+        + detect_double_votes(&votes, VoteType::Precommit);
     let committed = precommit_count >= q;
     if committed {
-        println!("[bft] height={} round={} step={:?} block_hash={} precommit={}/{} unique_voters={} byzantine_votes={}", height, round, RoundStep::Commit, round_hash, precommit_count, n, unique_voters.len(), byzantine_votes);
+        println!("[bft] height={} round={} step={:?} block_hash={} precommit={}/{} unique_voters={} byzantine_votes={} double_vote_events={}", height, round, RoundStep::Commit, round_hash, precommit_count, n, unique_voters.len(), byzantine_votes, double_vote_events);
     } else {
-        println!("[bft] height={} round={} step=RoundChange reason=no_quorum precommit={}/{} unique_voters={} byzantine_votes={}", height, round, precommit_count, n, unique_voters.len(), byzantine_votes);
+        println!("[bft] height={} round={} step=RoundChange reason=no_quorum precommit={}/{} unique_voters={} byzantine_votes={} double_vote_events={}", height, round, precommit_count, n, unique_voters.len(), byzantine_votes, double_vote_events);
     }
 
-    (committed, prevote_count, precommit_count, new_lock)
+    (committed, prevote_count, precommit_count, new_lock, double_vote_events)
 }
 
 fn simulate_bft_height(
@@ -180,10 +212,11 @@ fn simulate_bft_height(
     let mut round_changes = 0u64;
     let mut last_prevote = 0usize;
     let mut last_precommit = 0usize;
+    let mut total_double_vote_events = 0usize;
 
     for round in 0..max_rounds.max(1) {
         let effective_byz = if round < fault_rounds { validators.saturating_sub(1) } else { byzantine };
-        let (committed, pv, pc, new_lock) = simulate_bft_round(
+        let (committed, pv, pc, new_lock, dv) = simulate_bft_round(
             height,
             round,
             proposal_hash,
@@ -193,6 +226,7 @@ fn simulate_bft_height(
         );
         last_prevote = pv;
         last_precommit = pc;
+        total_double_vote_events += dv;
         if new_lock.is_some() {
             locked = new_lock;
         }
@@ -203,6 +237,7 @@ fn simulate_bft_height(
                 round_changes,
                 prevote_count: pv,
                 precommit_count: pc,
+                double_vote_events: total_double_vote_events,
             };
         }
         round_changes += 1;
@@ -214,6 +249,7 @@ fn simulate_bft_height(
         round_changes,
         prevote_count: last_prevote,
         precommit_count: last_precommit,
+        double_vote_events: total_double_vote_events,
     }
 }
 
@@ -546,6 +582,7 @@ fn main() -> Result<()> {
     let mut rollback_total: u64 = 0;
     let mut bft_committed_heights: u64 = 0;
     let mut bft_round_change_total: u64 = 0;
+    let mut bft_double_vote_total: u64 = 0;
 
     loop {
         let block_start = Instant::now();
@@ -568,6 +605,7 @@ fn main() -> Result<()> {
         );
         if !bft.committed {
             bft_round_change_total += bft.round_changes;
+            bft_double_vote_total += bft.double_vote_events as u64;
             println!(
                 "[block] node={} height={} skipped reason=bft_no_commit proposal_hash={} prevote={} precommit={} rounds={}",
                 cfg.node_id,
@@ -586,9 +624,10 @@ fn main() -> Result<()> {
             continue;
         }
         bft_round_change_total += bft.round_changes;
+        bft_double_vote_total += bft.double_vote_events as u64;
         println!(
-            "[bft] height={} committed_round={} prevote={} precommit={} round_changes={}",
-            height, bft.committed_round, bft.prevote_count, bft.precommit_count, bft.round_changes
+            "[bft] height={} committed_round={} prevote={} precommit={} round_changes={} double_vote_events={}",
+            height, bft.committed_round, bft.prevote_count, bft.precommit_count, bft.round_changes, bft.double_vote_events
         );
         bft_committed_heights += 1;
 
@@ -663,7 +702,7 @@ fn main() -> Result<()> {
         apply_error_total as f64 / finality_samples_ms.len() as f64
     };
     println!(
-        "[consensus] finality_p50_ms={} finality_p95_ms={} preexec_reject_total={} apply_error_total={} rollback_total={} recovery_error_rate={:.6} bft_committed_heights={} bft_round_change_total={}",
+        "[consensus] finality_p50_ms={} finality_p95_ms={} preexec_reject_total={} apply_error_total={} rollback_total={} recovery_error_rate={:.6} bft_committed_heights={} bft_round_change_total={} bft_double_vote_total={}",
         finality_p50,
         finality_p95,
         preexec_reject_total,
@@ -671,7 +710,8 @@ fn main() -> Result<()> {
         rollback_total,
         recovery_error_rate,
         bft_committed_heights,
-        bft_round_change_total
+        bft_round_change_total,
+        bft_double_vote_total
     );
 
     Ok(())
