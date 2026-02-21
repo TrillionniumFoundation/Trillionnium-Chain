@@ -36,17 +36,17 @@
 ## 待执行（Next Up）
 
 ### Next-1（优先级 P0）
-A1 实码实现（非 scaffold）：
-- 在 `trnm-node` 增加 finality/recovery 指标输出结构
-- 在 `testnet_preflight.sh` 增加指标存在性 gate
-- 增加最小测试用例 + 文档字段对齐
+C1/C2/C3 已完成，下一批进入：
+- 参数治理执行链路与回滚（B2 深化）
+- 紧急刹车 authority/gov 权限边界细化（B3 深化）
+- RPC 与真实状态存储绑定（从 mock query 到 state-backed query）
 
 ### Next-2（优先级 P1）✅ 已完成
 A2 已从脚手架升级到可执行 fault matrix：
 - 已覆盖 3 类场景（baseline / slow_block / restart_recovery）
 - 已产出结构化报告：`trillionnium-rust/run/health/consensus-fault-matrix-20260221-074329.txt`
 
-### Next-3（优先级 P1）
+### Next-3（优先级 P1）✅ 已完成
 B1 治理状态机最小闭环：
 - proposal -> voting -> passed/rejected -> executed
 - 非法迁移稳定错误码
