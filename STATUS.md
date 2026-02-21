@@ -436,3 +436,34 @@
   - post: `post_p0_rc=0`, `post_p1_rc=1`
 - 阻塞原因：本地链未启动（`127.0.0.1:26657 connection refused`），`p1_negative_suite` 在 preflight 主动终止，避免误报。
 - 结论：流程脚手架可用；待链恢复后需补一次“全绿 dry-run（含 p1=0）”以达成 P1-1 验收。
+
+## 33) Worker 回执硬门禁闭环（2026-02-21 11:30~12:55 CST）
+
+- `trnm-worker-agent` 提交流程增强：
+  - adapter 执行结果结构化（`ok/rc/tx_hash/terminal`）
+  - `rc=9/10`（replay/nonce_rejected）按终态处理（不盲重试）
+  - ack 记录新增 `commit_tx_hash` / `reveal_tx_hash`
+- verify 门禁增强：
+  - `scripts/v2/worker_agent_verify_with_rpc.sh` 新增 hard-check：
+    - 必须存在 `accepted` ack
+    - commit/reveal `tx_hash` 必须非空
+- full loop 默认策略收敛：
+  - `scripts/v2/worker_agent_full_loop.sh` 默认 `TRNM_TX_ADAPTER_MODE=command`
+  - `TRNM_TX_CLI` 优先 `trnm-node`，不存在时回退 `echo`
+- 新增失败回执门禁：
+  - `scripts/v2/worker_failed_receipt_test.sh`
+  - 断言失败场景写入 `status=failed` 且保留 `commit_tx_hash`
+
+## 34) 门禁与流水线接入（2026-02-21）
+
+- CI 硬门禁同步：
+  - `.github/workflows/rust-l1-nightly-health.yml`
+  - `.github/workflows/trnm-merge-gates.yml`
+  - 已新增 `Worker-agent tx-hash receipt hard gate`，并接入 failed-receipt test
+- codegen relay 步骤扩展为 21 步：
+  - `scripts/auto_relay_codegen.steps` 纳入 `worker_failed_receipt_test.sh`
+- 实跑结果：
+  - `relay-20260221-125141-77886`：`ok=21 fail=0`
+  - 报告：`docs/reports/codegen-pipeline-run-20260221-round3.md`
+- 对应提交：
+  - `6f469e2` / `64f2694` / `d0d7c4a` / `e6fb46c` / `c22fae5`
