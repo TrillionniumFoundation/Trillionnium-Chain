@@ -73,9 +73,7 @@ jobs:
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-          ./scripts/v2/worker_agent_full_loop.sh
-          ./scripts/v2/worker_replay_guard_test.sh
-          ./scripts/v2/worker_failed_receipt_test.sh
+          ./scripts/v2/run_worker_receipt_gates.sh
 
       - name: Aggressive regression check (PR-visible warn)
         if: github.event_name == 'pull_request'
