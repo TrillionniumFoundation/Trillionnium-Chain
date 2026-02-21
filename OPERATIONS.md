@@ -104,3 +104,18 @@ The smoke script automatically:
   - `Submitting MsgCompleteJob for Job <id>...`
   - `✅ Job <id> result committed on-chain`
 
+## Rust Worker Receipt Gate（唯一入口）
+
+在仓库根目录执行：
+
+```bash
+./scripts/v2/run_worker_receipt_gates.sh
+```
+
+说明：
+- 这是 worker 回执门禁的唯一入口命令（与 CI / relay 一致）。
+- 内部包含：
+  1. `worker_agent_full_loop.sh`
+  2. `worker_replay_guard_test.sh`
+  3. `worker_failed_receipt_test.sh`
+

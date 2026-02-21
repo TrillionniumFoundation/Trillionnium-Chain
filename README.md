@@ -91,6 +91,19 @@ What it demonstrates:
 For chain operators and testing flows, see:
 - `docs/OPERATIONS.md`
 
+### Worker Receipt Gates (single entry)
+
+From repo root:
+
+```bash
+./scripts/v2/run_worker_receipt_gates.sh
+```
+
+This is the canonical gate entry (used by CI + relay), covering:
+- full loop tx_hash hard-check
+- replay guard (rc=9)
+- failed receipt semantics (`status=failed` + `commit_tx_hash`)
+
 ### E2E Worker Smoke (new)
 From repo root:
 

@@ -148,15 +148,15 @@ Worker ack 记录（`ack_log`）必须包含：
 4. 加入故障注入测试（sequence/rpc timeout）
 5. 回归到 `scripts/p0_acceptance.sh` 之后作为 P1 smoke
 
-### 当前可执行检查（门禁最小集合）
+### 当前可执行检查（门禁唯一入口）
 
 ```bash
-./scripts/v2/worker_agent_full_loop.sh
-./scripts/v2/worker_replay_guard_test.sh
-./scripts/v2/worker_failed_receipt_test.sh
+./scripts/v2/run_worker_receipt_gates.sh
 ```
 
 通过标准：
-- full loop 输出 `rpc verification passed + tx_hash hard-check passed`
-- replay guard 输出 `rc=9`
-- failed receipt test 输出 `status=failed` 且包含 `commit_tx_hash`
+- 输出 `[OK] worker receipt gates passed`
+- 内部三项子门禁全部通过：
+  - full loop：`rpc verification passed + tx_hash hard-check passed`
+  - replay guard：`rc=9`
+  - failed receipt：`status=failed` 且包含 `commit_tx_hash`
