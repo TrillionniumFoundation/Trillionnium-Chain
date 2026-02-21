@@ -18,6 +18,7 @@ bash -lc 'cd trillionnium-rust && ./scripts/run_v1_protocol_gates.sh'
 bash ./scripts/codegen/run_codegen_task.sh C1
 bash ./scripts/codegen/run_codegen_task.sh C2
 bash ./scripts/codegen/run_codegen_task.sh C3
+bash ./scripts/v2/worker_real_cli_readiness.sh
 bash ./scripts/v2/run_worker_receipt_gates.sh
 bash ./scripts/v2/post_vote_verification.sh
 bash ./scripts/v2/emergency_pause_drill.sh
