@@ -27,5 +27,10 @@ E2E smoke:
 
 Submission relay dry-run:
 ```bash
-cargo run -q -p trnm-worker-agent -- flush-submissions --submit-log /tmp/trnm-worker-agent-submits.jsonl --dry-run
+cargo run -q -p trnm-worker-agent -- flush-submissions --submit-log /tmp/trnm-worker-agent-submits.jsonl --adapter-cmd "./scripts/worker_tx_adapter.sh"
+```
+
+Submission relay execute (local adapter):
+```bash
+cargo run -q -p trnm-worker-agent -- flush-submissions --submit-log /tmp/trnm-worker-agent-submits.jsonl --execute --adapter-cmd "./scripts/worker_tx_adapter.sh"
 ```

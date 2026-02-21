@@ -54,8 +54,10 @@ enum Command {
     FlushSubmissions {
         #[arg(long, default_value = "/tmp/trnm-worker-agent-submissions.jsonl")]
         submit_log: PathBuf,
-        #[arg(long, default_value_t = true)]
-        dry_run: bool,
+        #[arg(long, default_value_t = false)]
+        execute: bool,
+        #[arg(long, default_value = "./scripts/worker_tx_adapter.sh")]
+        adapter_cmd: String,
     },
 }
 
@@ -222,7 +224,11 @@ fn main() -> Result<()> {
                 println!("submitted=true submit_log={}", submit_log.display());
             }
         }
-        Command::FlushSubmissions { submit_log, dry_run } => {
+        Command::FlushSubmissions {
+            submit_log,
+            execute,
+            adapter_cmd,
+        } => {
             if !submit_log.exists() {
                 println!("[agent] no submit log found: {}", submit_log.display());
                 return Ok(());
@@ -232,21 +238,28 @@ fn main() -> Result<()> {
             for line in raw.lines().filter(|l| !l.trim().is_empty()) {
                 let rec: SubmissionRecord = serde_json::from_str(line)?;
                 n += 1;
-                if dry_run {
-                    println!("[dry-run] {}", rec.commit_cmd);
-                    println!("[dry-run] {}", rec.reveal_cmd);
+                if !execute {
+                    println!("[dry-run] adapter={} commit {} {} {}", adapter_cmd, rec.task_id, rec.worker, rec.commit_hash);
+                    println!("[dry-run] adapter={} reveal {} {} {}", adapter_cmd, rec.task_id, rec.result_hash, rec.salt_hex);
                 } else {
-                    let c1 = ProcCommand::new("sh").arg("-lc").arg(&rec.commit_cmd).status()?;
-                    let c2 = ProcCommand::new("sh").arg("-lc").arg(&rec.reveal_cmd).status()?;
+                    let c1 = ProcCommand::new("sh")
+                        .arg("-lc")
+                        .arg(format!("{} commit {} {} {}", adapter_cmd, rec.task_id, rec.worker, rec.commit_hash))
+                        .status()?;
+                    let c2 = ProcCommand::new("sh")
+                        .arg("-lc")
+                        .arg(format!("{} reveal {} {} {}", adapter_cmd, rec.task_id, rec.result_hash, rec.salt_hex))
+                        .status()?;
                     println!(
-                        "[submitted] task_id={} commit_ok={} reveal_ok={}",
+                        "[submitted] task_id={} commit_ok={} reveal_ok={} adapter={}",
                         rec.task_id,
                         c1.success(),
-                        c2.success()
+                        c2.success(),
+                        adapter_cmd
                     );
                 }
             }
-            println!("[agent] flushed_records={} dry_run={}", n, dry_run);
+            println!("[agent] flushed_records={} execute={}", n, execute);
         }
     }
     Ok(())
