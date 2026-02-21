@@ -136,3 +136,7 @@ TRNM_TX_CLI=<your-real-tx-cli> ./scripts/v2/run_worker_receipt_gates_real_cli.sh
 TRNM_TX_CLI=./scripts/v2/trnm_tx_cli_wrapper.sh ./scripts/v2/run_worker_receipt_gates_real_cli.sh
 ```
 
+真实适配模板与规范：
+- 规范：`docs/protocol/worker-real-tx-cli-adapter-spec.md`
+- 模板：`scripts/v2/trnm_tx_cli_real_adapter.template.sh`
+
