@@ -13,6 +13,9 @@
 !legacy/**/chain.log
 !legacy/**/worker.log
 
+# Root runtime outputs
+/run/
+
 # Local runtime data
 /data/
 
