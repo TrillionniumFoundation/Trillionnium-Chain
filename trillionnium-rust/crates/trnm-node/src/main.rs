@@ -1,10 +1,11 @@
 use anyhow::{Context, Result};
 use clap::Parser;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::{
     collections::{HashMap, HashSet, VecDeque},
     fs,
+    path::{Path, PathBuf},
     sync::mpsc,
     thread,
     time::{Duration, Instant, SystemTime, UNIX_EPOCH},
@@ -47,6 +48,9 @@ struct Args {
     /// Inject no-quorum faulty rounds at beginning of each height
     #[arg(long, default_value_t = 0)]
     bft_fault_rounds: u64,
+    /// Consensus WAL directory for restart recovery
+    #[arg(long, default_value = "run/consensus-wal")]
+    bft_wal_dir: String,
 }
 
 #[derive(Debug, Deserialize)]
@@ -98,6 +102,35 @@ struct BftHeightResult {
     prevote_count: usize,
     precommit_count: usize,
     double_vote_events: usize,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct ConsensusWal {
+    next_height: u64,
+    last_round: u64,
+    locked_block_hash: Option<String>,
+}
+
+fn wal_file(wal_dir: &Path) -> PathBuf {
+    wal_dir.join("consensus-wal.toml")
+}
+
+fn load_consensus_wal(wal_dir: &Path) -> Result<Option<ConsensusWal>> {
+    let f = wal_file(wal_dir);
+    if !f.exists() {
+        return Ok(None);
+    }
+    let raw = fs::read_to_string(&f).with_context(|| format!("read wal failed: {}", f.display()))?;
+    let wal: ConsensusWal = toml::from_str(&raw).with_context(|| format!("parse wal failed: {}", f.display()))?;
+    Ok(Some(wal))
+}
+
+fn persist_consensus_wal(wal_dir: &Path, wal: &ConsensusWal) -> Result<()> {
+    fs::create_dir_all(wal_dir)?;
+    let f = wal_file(wal_dir);
+    let raw = toml::to_string(wal)?;
+    fs::write(&f, raw).with_context(|| format!("write wal failed: {}", f.display()))?;
+    Ok(())
 }
 
 fn quorum_threshold(n: usize) -> usize {
@@ -207,8 +240,9 @@ fn simulate_bft_height(
     byzantine: usize,
     max_rounds: u64,
     fault_rounds: u64,
+    initial_lock: Option<String>,
 ) -> BftHeightResult {
-    let mut locked: Option<String> = None;
+    let mut locked: Option<String> = initial_lock;
     let mut round_changes = 0u64;
     let mut last_prevote = 0usize;
     let mut last_precommit = 0usize;
@@ -570,12 +604,24 @@ fn main() -> Result<()> {
     println!("[node] block_ms={} max_blocks={}", args.block_ms, args.max_blocks);
     println!("[node] load demo_tasks={} demo_keys={}", args.demo_tasks, args.demo_keys);
     println!("[node] parallel_workers={}", args.parallel_workers);
-    println!("[node] bft validators={} byzantine={} max_rounds={} fault_rounds={}", args.validators, args.byzantine, args.bft_max_rounds, args.bft_fault_rounds);
+    println!("[node] bft validators={} byzantine={} max_rounds={} fault_rounds={} wal_dir={}", args.validators, args.byzantine, args.bft_max_rounds, args.bft_fault_rounds, args.bft_wal_dir);
+
+    let wal_dir = PathBuf::from(&args.bft_wal_dir);
+    let mut restored_lock: Option<String> = None;
+    let mut height: u64 = 1;
+    if let Some(wal) = load_consensus_wal(&wal_dir)? {
+        height = wal.next_height.max(1);
+        restored_lock = wal.locked_block_hash.clone();
+        println!(
+            "[bft-recover] restored height={} round={} lock={}",
+            wal.next_height,
+            wal.last_round,
+            wal.locked_block_hash.unwrap_or_else(|| "none".to_string())
+        );
+    }
 
     let mut state = StateStore::new();
     let mut mempool = build_demo_mempool(args.demo_tasks, args.demo_keys);
-
-    let mut height: u64 = 1;
     let mut finality_samples_ms: Vec<u128> = Vec::new();
     let mut preexec_reject_total: u64 = 0;
     let mut apply_error_total: u64 = 0;
@@ -602,6 +648,7 @@ fn main() -> Result<()> {
             args.byzantine,
             args.bft_max_rounds,
             args.bft_fault_rounds,
+            restored_lock.take(),
         );
         if !bft.committed {
             bft_round_change_total += bft.round_changes;
@@ -615,6 +662,14 @@ fn main() -> Result<()> {
                 bft.precommit_count,
                 args.bft_max_rounds
             );
+            persist_consensus_wal(
+                &wal_dir,
+                &ConsensusWal {
+                    next_height: height + 1,
+                    last_round: bft.committed_round,
+                    locked_block_hash: Some(proposal_hash.clone()),
+                },
+            )?;
             if args.max_blocks > 0 && height >= args.max_blocks {
                 println!("[node] reached max_blocks={}, exiting", args.max_blocks);
                 break;
@@ -680,6 +735,15 @@ fn main() -> Result<()> {
         let elapsed_ms = block_start.elapsed().as_millis();
         finality_samples_ms.push(elapsed_ms);
         println!("[block] node={} height={} txs={} groups={} state_root={} elapsed_ms={}", cfg.node_id, height, applied, group_count, root, elapsed_ms);
+
+        persist_consensus_wal(
+            &wal_dir,
+            &ConsensusWal {
+                next_height: height + 1,
+                last_round: bft.committed_round,
+                locked_block_hash: Some(proposal_hash.clone()),
+            },
+        )?;
 
         if args.max_blocks > 0 && height >= args.max_blocks {
             println!("[node] reached max_blocks={}, exiting", args.max_blocks);
