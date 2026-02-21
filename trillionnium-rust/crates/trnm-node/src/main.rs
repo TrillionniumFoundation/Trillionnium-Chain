@@ -355,7 +355,7 @@ fn simulate_bft_round(
 
             // equivocation with higher nonce (passes auth, should be slashed)
             let eq_vote = BftVote {
-                validator: vid,
+                validator: vid.clone(),
                 vote_type: VoteType::Prevote,
                 block_hash: bad_vote_hash,
                 byzantine: true,
@@ -369,6 +369,28 @@ fn simulate_bft_round(
                     vote: eq_vote,
                     nonce: eq_nonce,
                     signature: eq_sig,
+                },
+                &mut auth_nonce,
+                &mut votes,
+                &mut reject_stats,
+            );
+
+            // stale nonce sample (must be rejected)
+            let stale_vote = BftVote {
+                validator: vid,
+                vote_type: VoteType::Prevote,
+                block_hash: canonical_hash,
+                byzantine: true,
+                height,
+                round,
+            };
+            let stale_nonce = nonce + 1; // lower than accepted eq_nonce
+            let stale_sig = vote_signature(&stale_vote, stale_nonce);
+            accept_signed_vote(
+                SignedVote {
+                    vote: stale_vote,
+                    nonce: stale_nonce,
+                    signature: stale_sig,
                 },
                 &mut auth_nonce,
                 &mut votes,
@@ -455,9 +477,9 @@ fn simulate_bft_round(
             );
 
             let eq_vote = BftVote {
-                validator: vid,
+                validator: vid.clone(),
                 vote_type: VoteType::Precommit,
-                block_hash: canonical_hash,
+                block_hash: canonical_hash.clone(),
                 byzantine: true,
                 height,
                 round,
@@ -469,6 +491,27 @@ fn simulate_bft_round(
                     vote: eq_vote,
                     nonce: eq_nonce,
                     signature: eq_sig,
+                },
+                &mut auth_nonce,
+                &mut votes,
+                &mut reject_stats,
+            );
+
+            let stale_vote = BftVote {
+                validator: vid,
+                vote_type: VoteType::Precommit,
+                block_hash: canonical_hash,
+                byzantine: true,
+                height,
+                round,
+            };
+            let stale_nonce = nonce + 1;
+            let stale_sig = vote_signature(&stale_vote, stale_nonce);
+            accept_signed_vote(
+                SignedVote {
+                    vote: stale_vote,
+                    nonce: stale_nonce,
+                    signature: stale_sig,
                 },
                 &mut auth_nonce,
                 &mut votes,
