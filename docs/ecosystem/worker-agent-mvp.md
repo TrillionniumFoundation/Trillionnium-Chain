@@ -15,6 +15,9 @@ cargo run -q -p trnm-worker-agent -- commit-reveal --task-id 1001 --worker worke
 
 # one-shot JSON output (recommended)
 cargo run -q -p trnm-worker-agent -- run-once --state /tmp/worker-state.json --worker worker1 --payload "hello"
+
+# optional submit mode (append submission records)
+cargo run -q -p trnm-worker-agent -- run-once --state /tmp/worker-state.json --worker worker1 --payload "hello" --submit --submit-log /tmp/trnm-submits.jsonl
 ```
 
 E2E smoke:

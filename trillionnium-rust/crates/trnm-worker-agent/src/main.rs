@@ -2,7 +2,7 @@ use anyhow::Result;
 use clap::{Parser, Subcommand};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
-use std::{fs, path::PathBuf};
+use std::{fs, path::PathBuf, time::{SystemTime, UNIX_EPOCH}};
 
 #[derive(Debug, Parser)]
 #[command(name = "trnm-worker-agent", version, about = "Trillionnium PoUW worker-agent (MVP skeleton)")]
@@ -34,6 +34,10 @@ enum Command {
         result_hash: String,
         #[arg(long)]
         salt_hex: String,
+        #[arg(long, default_value_t = false)]
+        submit: bool,
+        #[arg(long, default_value = "/tmp/trnm-worker-agent-submissions.jsonl")]
+        submit_log: PathBuf,
     },
     RunOnce {
         #[arg(long, default_value = "worker-state.json")]
@@ -42,6 +46,10 @@ enum Command {
         worker: String,
         #[arg(long, default_value = "demo-result")]
         payload: String,
+        #[arg(long, default_value_t = false)]
+        submit: bool,
+        #[arg(long, default_value = "/tmp/trnm-worker-agent-submissions.jsonl")]
+        submit_log: PathBuf,
     },
 }
 
@@ -59,6 +67,18 @@ struct RunOnceOutput {
     commit_hash: String,
     template_commit: String,
     template_reveal: String,
+}
+
+#[derive(Debug, Serialize)]
+struct SubmissionRecord {
+    ts_unix_ms: u128,
+    task_id: u64,
+    worker: String,
+    commit_hash: String,
+    result_hash: String,
+    salt_hex: String,
+    commit_cmd: String,
+    reveal_cmd: String,
 }
 
 fn commitment(task_id: u64, result_hash_hex: &str, salt_hex: &str, worker: &str) -> String {
@@ -87,6 +107,41 @@ fn execute_payload(payload: &str, task_id: u64) -> (String, String) {
     (result_hash, salt_hex)
 }
 
+fn now_ms() -> u128 {
+    SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .map(|d| d.as_millis())
+        .unwrap_or(0)
+}
+
+fn append_submission(
+    submit_log: &PathBuf,
+    task_id: u64,
+    worker: &str,
+    commit_hash: &str,
+    result_hash: &str,
+    salt_hex: &str,
+) -> Result<()> {
+    let commit_cmd = format!("trnm-node tx commit-result {} {} {}", task_id, worker, commit_hash);
+    let reveal_cmd = format!("trnm-node tx reveal-result {} {} {}", task_id, result_hash, salt_hex);
+    let rec = SubmissionRecord {
+        ts_unix_ms: now_ms(),
+        task_id,
+        worker: worker.to_string(),
+        commit_hash: commit_hash.to_string(),
+        result_hash: result_hash.to_string(),
+        salt_hex: salt_hex.to_string(),
+        commit_cmd,
+        reveal_cmd,
+    };
+    let line = serde_json::to_string(&rec)?;
+    let mut old = if submit_log.exists() { fs::read_to_string(submit_log)? } else { String::new() };
+    old.push_str(&line);
+    old.push('\n');
+    fs::write(submit_log, old)?;
+    Ok(())
+}
+
 fn main() -> Result<()> {
     let args = Args::parse();
     match args.cmd {
@@ -109,6 +164,8 @@ fn main() -> Result<()> {
             worker,
             result_hash,
             salt_hex,
+            submit,
+            submit_log,
         } => {
             let c = commitment(task_id, &result_hash, &salt_hex, &worker);
             println!("[agent] task_id={} worker={}", task_id, worker);
@@ -121,15 +178,24 @@ fn main() -> Result<()> {
                 "template_reveal=trnm-node tx reveal-result {} {} {}",
                 task_id, result_hash, salt_hex
             );
+            if submit {
+                append_submission(&submit_log, task_id, &worker, &c, &result_hash, &salt_hex)?;
+                println!("submitted=true submit_log={}", submit_log.display());
+            }
         }
         Command::RunOnce {
             state,
             worker,
             payload,
+            submit,
+            submit_log,
         } => {
             let task_id = next_task_id(&state)?;
             let (result_hash, salt_hex) = execute_payload(&payload, task_id);
             let commit_hash = commitment(task_id, &result_hash, &salt_hex, &worker);
+            if submit {
+                append_submission(&submit_log, task_id, &worker, &commit_hash, &result_hash, &salt_hex)?;
+            }
             let out = RunOnceOutput {
                 task_id,
                 worker: worker.clone(),
@@ -146,6 +212,9 @@ fn main() -> Result<()> {
                 ),
             };
             println!("{}", serde_json::to_string_pretty(&out)?);
+            if submit {
+                println!("submitted=true submit_log={}", submit_log.display());
+            }
         }
     }
     Ok(())
