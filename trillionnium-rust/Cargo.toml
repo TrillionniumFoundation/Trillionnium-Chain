@@ -8,6 +8,7 @@ members = [
   "crates/trnm-mempool",
   "crates/trnm-rpc",
   "crates/trnm-bench",
+  "crates/trnm-worker-agent",
 ]
 resolver = "2"
 
