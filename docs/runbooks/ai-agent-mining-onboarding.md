@@ -16,8 +16,31 @@
 - 已具备 Rust 工具链（若 PATH 无 `cargo`，脚本会走 rustup 路径）
 - 建议先确保 tx CLI 可用：
   - `./trillionnium-rust/target/debug/trnm-cli tx --help`
+- 建议先初始化一个本地钱包（MVP）：
+  - `./trillionnium-rust/target/debug/trnm-cli wallet generate --name dev`
+  - `./trillionnium-rust/target/debug/trnm-cli wallet address --name dev`
 
 ---
+
+## Wallet 连接（当前 MVP）
+
+当前通过 `trnm-cli wallet` 做本地 key 管理（文件钱包）：
+
+```bash
+# 生成钱包
+./trillionnium-rust/target/debug/trnm-cli wallet generate --name dev
+
+# 导入钱包（32-byte hex 私钥）
+./trillionnium-rust/target/debug/trnm-cli wallet import --name dev2 --private-key-hex <hex>
+
+# 查看地址
+./trillionnium-rust/target/debug/trnm-cli wallet address --name dev
+
+# 对消息签名
+./trillionnium-rust/target/debug/trnm-cli wallet sign --name dev --message "hello"
+```
+
+> 注意：这是开发期 MVP 钱包（本地文件存储），用于联调；生产环境需接入 HSM/远程签名或标准 keyring。
 
 ## 1) 单机最小接入（标准）
 
