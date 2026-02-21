@@ -4,6 +4,7 @@
 - `pull-task`：拉取任务（本地状态模拟）
 - `execute`：执行任务并产出 `result_hash` / `salt`
 - `commit-reveal`：生成 commit/reveal 上链命令模板
+- `run-once`：一键完成 pull+execute+commit/reveal 模板输出（JSON）
 
 ## Quick run
 ```bash
@@ -11,4 +12,12 @@ cd trillionnium-rust
 cargo run -q -p trnm-worker-agent -- pull-task --state worker-state.json
 cargo run -q -p trnm-worker-agent -- execute --task-id 1001 --worker worker1 --payload "hello"
 cargo run -q -p trnm-worker-agent -- commit-reveal --task-id 1001 --worker worker1 --result-hash <hash> --salt-hex <salt>
+
+# one-shot JSON output (recommended)
+cargo run -q -p trnm-worker-agent -- run-once --state /tmp/worker-state.json --worker worker1 --payload "hello"
+```
+
+E2E smoke:
+```bash
+./scripts/v2/worker_agent_e2e_demo.sh
 ```
