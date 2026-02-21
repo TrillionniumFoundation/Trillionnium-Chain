@@ -75,14 +75,14 @@ jobs:
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           ./scripts/v2/run_worker_receipt_gates.sh
 
-      - name: Worker-agent strict real-cli gate (optional)
+      - name: Worker-agent strict real-cli gate (default-on)
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-          if [[ "${REQUIRE_REAL_TX_CLI:-0}" == "1" ]]; then
+          if [[ "${REQUIRE_REAL_TX_CLI:-1}" == "1" ]]; then
             TRNM_TX_CLI="${TRNM_TX_CLI:-./scripts/v2/trnm_tx_cli_wrapper.sh}" ./scripts/v2/run_worker_receipt_gates_real_cli.sh
           else
-            echo "[skip] strict real-cli gate disabled (REQUIRE_REAL_TX_CLI=${REQUIRE_REAL_TX_CLI:-0})"
+            echo "[skip] strict real-cli gate disabled (REQUIRE_REAL_TX_CLI=${REQUIRE_REAL_TX_CLI:-1})"
           fi
 
       - name: Aggressive regression check (PR-visible warn)

@@ -26,6 +26,12 @@ if [[ -z "${TRNM_TX_CLI:-}" ]]; then
     TRNM_TX_CLI="echo"
   fi
 fi
+
+# normalize local relative script path to absolute to survive cwd switches
+if [[ "$TRNM_TX_CLI" == ./* || "$TRNM_TX_CLI" == scripts/* ]]; then
+  TRNM_TX_CLI="$ROOT/${TRNM_TX_CLI#./}"
+fi
+
 export TRNM_TX_ADAPTER_MODE TRNM_TX_CLI
 
 OUT_JSON="/tmp/trnm-worker-runonce.json"
