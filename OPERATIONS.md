@@ -132,5 +132,7 @@ REQUIRE_REAL_TX_CLI=1 ./scripts/v2/worker_real_cli_readiness.sh
 
 ```bash
 TRNM_TX_CLI=<your-real-tx-cli> ./scripts/v2/run_worker_receipt_gates_real_cli.sh
+# 本地最小示例（wrapper）
+TRNM_TX_CLI=./scripts/v2/trnm_tx_cli_wrapper.sh ./scripts/v2/run_worker_receipt_gates_real_cli.sh
 ```
 
