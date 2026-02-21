@@ -21,7 +21,6 @@ PY
 )
 
 cd "$ROOT"
-# Current RPC demo store exposes canonical sample task_id=42.
-./scripts/v2/worker_agent_verify_with_rpc.sh 42
+./scripts/v2/worker_agent_verify_with_rpc.sh "$TASK_ID"
 
-echo "[OK] worker-agent full loop completed generated_task_id=$TASK_ID rpc_verified_task_id=42"
+echo "[OK] worker-agent full loop completed task_id=$TASK_ID"
