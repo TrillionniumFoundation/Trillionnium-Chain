@@ -71,6 +71,10 @@ enum Command {
         backoff_ms: u64,
         #[arg(long, default_value = "/tmp/trnm-worker-agent-acks.jsonl")]
         ack_log: PathBuf,
+        #[arg(long, default_value = "/tmp/trnm-worker-agent-events.jsonl")]
+        event_log: PathBuf,
+        #[arg(long, default_value = "/tmp/trnm-worker-agent-progress.jsonl")]
+        progress_log: PathBuf,
     },
 }
 
@@ -110,6 +114,31 @@ struct AckRecord {
     status: String,
     commit_tx_hash: Option<String>,
     reveal_tx_hash: Option<String>,
+    #[serde(default)]
+    reason_code: Option<String>,
+    #[serde(default)]
+    run_id: Option<String>,
+}
+
+#[derive(Debug, Serialize)]
+struct WorkerEvent {
+    ts_unix_ms: u128,
+    run_id: String,
+    event_type: String,
+    task_id: u64,
+    status: String,
+    reason_code: String,
+    commit_rc: i32,
+    reveal_rc: i32,
+}
+
+#[derive(Debug, Serialize)]
+struct ProgressRecord {
+    ts_unix_ms: u128,
+    run_id: String,
+    task_id: u64,
+    state: String,
+    note: String,
 }
 
 #[derive(Debug)]
@@ -206,6 +235,8 @@ fn append_ack(
     status: &str,
     commit_tx_hash: Option<String>,
     reveal_tx_hash: Option<String>,
+    reason_code: Option<String>,
+    run_id: Option<String>,
 ) -> Result<()> {
     let rec = AckRecord {
         ts_unix_ms: now_ms(),
@@ -213,12 +244,32 @@ fn append_ack(
         status: status.to_string(),
         commit_tx_hash,
         reveal_tx_hash,
+        reason_code,
+        run_id,
     };
     let line = serde_json::to_string(&rec)?;
     let mut old = if ack_log.exists() { fs::read_to_string(ack_log)? } else { String::new() };
     old.push_str(&line);
     old.push('\n');
     fs::write(ack_log, old)?;
+    Ok(())
+}
+
+fn append_event(event_log: &PathBuf, event: &WorkerEvent) -> Result<()> {
+    let line = serde_json::to_string(event)?;
+    let mut old = if event_log.exists() { fs::read_to_string(event_log)? } else { String::new() };
+    old.push_str(&line);
+    old.push('\n');
+    fs::write(event_log, old)?;
+    Ok(())
+}
+
+fn append_progress(progress_log: &PathBuf, rec: &ProgressRecord) -> Result<()> {
+    let line = serde_json::to_string(rec)?;
+    let mut old = if progress_log.exists() { fs::read_to_string(progress_log)? } else { String::new() };
+    old.push_str(&line);
+    old.push('\n');
+    fs::write(progress_log, old)?;
     Ok(())
 }
 
@@ -398,6 +449,8 @@ fn main() -> Result<()> {
             max_retries,
             backoff_ms,
             ack_log,
+            event_log,
+            progress_log,
         } => {
             if !submit_log.exists() {
                 println!("[agent] no submit log found: {}", submit_log.display());
@@ -407,20 +460,51 @@ fn main() -> Result<()> {
             let mut n = 0usize;
             let mut skipped = 0usize;
             let mut acked = load_acked(&ack_log);
+            let run_id = format!("flush-{}-{}", now_ms(), std::process::id());
             for line in raw.lines().filter(|l| !l.trim().is_empty()) {
                 let rec: SubmissionRecord = serde_json::from_str(line)?;
                 n += 1;
 
                 if acked.contains(&rec.task_id) {
                     skipped += 1;
+                    append_progress(
+                        &progress_log,
+                        &ProgressRecord {
+                            ts_unix_ms: now_ms(),
+                            run_id: run_id.clone(),
+                            task_id: rec.task_id,
+                            state: "done".to_string(),
+                            note: "already_acked_skip".to_string(),
+                        },
+                    )?;
                     println!("[skip] task_id={} already_acked=true", rec.task_id);
                     continue;
                 }
 
                 if !execute {
+                    append_progress(
+                        &progress_log,
+                        &ProgressRecord {
+                            ts_unix_ms: now_ms(),
+                            run_id: run_id.clone(),
+                            task_id: rec.task_id,
+                            state: "pending".to_string(),
+                            note: "dry_run_only".to_string(),
+                        },
+                    )?;
                     println!("[dry-run] adapter={} commit {} {} {}", adapter_cmd, rec.task_id, rec.worker, rec.commit_hash);
                     println!("[dry-run] adapter={} reveal {} {} {}", adapter_cmd, rec.task_id, rec.result_hash, rec.salt_hex);
                 } else {
+                    append_progress(
+                        &progress_log,
+                        &ProgressRecord {
+                            ts_unix_ms: now_ms(),
+                            run_id: run_id.clone(),
+                            task_id: rec.task_id,
+                            state: "processing".to_string(),
+                            note: format!("adapter={} retries={} backoff_ms={}", adapter_cmd, max_retries, backoff_ms),
+                        },
+                    )?;
                     let nonce = rec.nonce.unwrap_or(rec.task_id);
                     let cmd1 = format!("{} commit {} {} {} {}", adapter_cmd, rec.task_id, rec.worker, rec.commit_hash, nonce);
                     let cmd2 = format!("{} reveal {} {} {}", adapter_cmd, rec.task_id, rec.result_hash, rec.salt_hex);
@@ -445,20 +529,64 @@ fn main() -> Result<()> {
                     let commit_idempotent_ok = commit_res.ok || is_idempotent_duplicate_ok(commit_res.rc);
                     let reveal_idempotent_ok = reveal_res.ok || is_idempotent_duplicate_ok(reveal_res.rc);
 
-                    let (ack_status, ack_reason) = if commit_idempotent_ok && reveal_idempotent_ok {
-                        ("accepted", format!("idempotent-ok commit_rc={} reveal_rc={}", commit_res.rc, reveal_res.rc))
+                    let (ack_status, reason_code, ack_reason) = if commit_idempotent_ok && reveal_idempotent_ok {
+                        (
+                            "accepted",
+                            "idempotent_ok",
+                            format!("idempotent-ok commit_rc={} reveal_rc={}", commit_res.rc, reveal_res.rc),
+                        )
                     } else if commit_res.terminal || reveal_res.terminal {
-                        ("rejected", format!("deterministic-rejection commit_rc={} reveal_rc={}", commit_res.rc, reveal_res.rc))
+                        (
+                            "rejected",
+                            "deterministic_rejection",
+                            format!("deterministic-rejection commit_rc={} reveal_rc={}", commit_res.rc, reveal_res.rc),
+                        )
                     } else {
-                        ("failed", format!("transient-or-exhausted-retries commit_rc={} reveal_rc={}", commit_res.rc, reveal_res.rc))
+                        (
+                            "failed",
+                            "retry_exhausted_or_transient",
+                            format!("transient-or-exhausted-retries commit_rc={} reveal_rc={}", commit_res.rc, reveal_res.rc),
+                        )
                     };
 
                     append_ack(
                         &ack_log,
                         rec.task_id,
                         ack_status,
-                        commit_res.tx_hash,
-                        reveal_res.tx_hash,
+                        commit_res.tx_hash.clone(),
+                        reveal_res.tx_hash.clone(),
+                        Some(reason_code.to_string()),
+                        Some(run_id.clone()),
+                    )?;
+
+                    append_event(
+                        &event_log,
+                        &WorkerEvent {
+                            ts_unix_ms: now_ms(),
+                            run_id: run_id.clone(),
+                            event_type: "ack_written".to_string(),
+                            task_id: rec.task_id,
+                            status: ack_status.to_string(),
+                            reason_code: reason_code.to_string(),
+                            commit_rc: commit_res.rc,
+                            reveal_rc: reveal_res.rc,
+                        },
+                    )?;
+
+                    let progress_state = match ack_status {
+                        "accepted" => "done",
+                        "rejected" => "rejected",
+                        _ => "failed",
+                    };
+                    append_progress(
+                        &progress_log,
+                        &ProgressRecord {
+                            ts_unix_ms: now_ms(),
+                            run_id: run_id.clone(),
+                            task_id: rec.task_id,
+                            state: progress_state.to_string(),
+                            note: reason_code.to_string(),
+                        },
                     )?;
 
                     if ack_status == "accepted" {
@@ -466,12 +594,12 @@ fn main() -> Result<()> {
                     }
 
                     println!(
-                        "[ack] task_id={} status={} reason={}",
-                        rec.task_id, ack_status, ack_reason
+                        "[ack] run_id={} task_id={} status={} reason={} reason_code={}",
+                        run_id, rec.task_id, ack_status, ack_reason, reason_code
                     );
                 }
             }
-            println!("[agent] flushed_records={} skipped={} execute={} ack_log={}", n, skipped, execute, ack_log.display());
+            println!("[agent] flushed_records={} skipped={} execute={} ack_log={} event_log={} progress_log={} run_id={}", n, skipped, execute, ack_log.display(), event_log.display(), progress_log.display(), run_id);
         }
     }
     Ok(())

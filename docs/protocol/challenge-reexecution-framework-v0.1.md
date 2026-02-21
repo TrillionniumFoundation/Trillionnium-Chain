@@ -37,6 +37,17 @@ resolve memo 推荐包含：
 
 当前实现：`resolve-challenge` 事件会从 memo 解析 `trace_id=` 并写入事件属性。
 
+## 一键产物（v0.1 实操）
+
+可直接生成最小仲裁证据包（`decision.json + resolve-template.txt + summary.md`）：
+
+```bash
+cd TrillionniumChain
+./scripts/challenge_reexec_bundle.sh <task_id> <match|mismatch> [reexec_hash] [orig_hash]
+```
+
+输出目录：`data/reexec-bundles/<timestamp>-<task_id>/`
+
 ## v0.2 演进方向
 - 引入标准化重执行报告 schema（JSON）
 - 对 resolver 增加 report digest 校验

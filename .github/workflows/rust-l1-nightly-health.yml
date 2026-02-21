@@ -80,6 +80,12 @@ jobs:
           cd trillionnium-rust
           ./scripts/check_event_replay_smoke.sh
 
+      - name: Challenge reexec bundle smoke (hard gate)
+        run: |
+          set -euo pipefail
+          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+          ./scripts/challenge_reexec_template_smoke.sh
+
       - name: Worker-agent tx-hash receipt hard gate
         run: |
           set -euo pipefail
@@ -272,4 +278,6 @@ jobs:
             trillionnium-rust/run/event-field-check.log
             trillionnium-rust/run/event-replay-smoke.log
             trillionnium-rust/run/parallel-sanity-flaky-*.log
+            data/reexec-smoke/**
+            data/reexec-bundles/**
           if-no-files-found: warn
