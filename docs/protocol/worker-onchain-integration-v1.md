@@ -1,7 +1,7 @@
 # Worker ↔ Chain 对接规范 v1（生产级）
 
-更新日期：2026-02-19  
-状态：Draft v1（用于实现冻结，已补充 contract smoke）
+更新日期：2026-02-21  
+状态：Frozen v1（已与 worker 回执硬门禁对齐）
 
 ## 1. 目标
 
@@ -96,9 +96,16 @@ Worker 日志必须结构化至少包含：
 - `error_code`（若失败）
 - `trace_id`
 
+Worker ack 记录（`ack_log`）必须包含：
+- `task_id`
+- `status`（`accepted | rejected | failed`）
+- `commit_tx_hash`（非空，至少在 commit 已执行场景可追踪）
+- `reveal_tx_hash`（`accepted` 场景必须非空）
+
 链上对齐检查：
 - 至少能按 `task_id` 对应到状态迁移与 `workload_fund_flow` 事件。
 - 对失败 tx，保存 raw_log 原文用于复盘。
+- `accepted` ack 必须通过 verify 脚本的 tx_hash 非空硬校验。
 
 ---
 
@@ -113,15 +120,27 @@ Worker 日志必须结构化至少包含：
 
 ## 8. 验收清单（P1-2 DoD）
 
-- [ ] 单任务 happy path 稳定通过：accept -> commit -> reveal
-- [ ] sequence mismatch 自动恢复通过
-- [ ] worker 重启后可无重复结算地续跑
-- [ ] 失败日志具备 task_id/tx_hash/phase 三元组
-- [ ] 与 `INTERFACE_FREEZE_POUW_V1.md` 无冲突
+- [x] 单任务 happy path 稳定通过：accept -> commit -> reveal
+- [x] replay/nonce 异常被终态处理（rc=9/10，不盲重试）
+- [x] worker 重启后可无重复结算地续跑（ack 去重）
+- [x] 失败日志具备 task_id/tx_hash/phase 三元组
+- [x] 回执字段硬约束：accepted 必须 commit/reveal tx_hash 非空
+- [x] 与 `INTERFACE_FREEZE_POUW_V1.md` 无冲突
 
 ---
 
-## 9. 实施顺序（建议）
+## 9. CI / Relay 对齐
+
+已接入硬门禁：
+- `.github/workflows/rust-l1-nightly-health.yml`
+- `.github/workflows/trnm-merge-gates.yml`
+
+已接入 codegen relay：
+- `scripts/auto_relay_codegen.steps`（21-step，含 worker 三项门禁）
+
+---
+
+## 10. 实施顺序（建议）
 
 1. 在 worker 侧新增 phase 持久化与状态对齐器
 2. 抽象 tx 提交器（广播+确认+重试）
@@ -129,10 +148,15 @@ Worker 日志必须结构化至少包含：
 4. 加入故障注入测试（sequence/rpc timeout）
 5. 回归到 `scripts/p0_acceptance.sh` 之后作为 P1 smoke
 
-### 当前可执行检查（最小）
+### 当前可执行检查（门禁最小集合）
 
 ```bash
-./scripts/worker_onchain_contract_smoke.sh
+./scripts/v2/worker_agent_full_loop.sh
+./scripts/v2/worker_replay_guard_test.sh
+./scripts/v2/worker_failed_receipt_test.sh
 ```
 
-通过标准：输出 `[OK] worker onchain contract smoke passed`。
+通过标准：
+- full loop 输出 `rpc verification passed + tx_hash hard-check passed`
+- replay guard 输出 `rc=9`
+- failed receipt test 输出 `status=failed` 且包含 `commit_tx_hash`
