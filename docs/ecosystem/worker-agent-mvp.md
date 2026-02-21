@@ -30,9 +30,9 @@ Submission relay dry-run:
 cargo run -q -p trnm-worker-agent -- flush-submissions --submit-log /tmp/trnm-worker-agent-submits.jsonl --adapter-cmd "./scripts/worker_tx_adapter.sh"
 ```
 
-Submission relay execute (local adapter):
+Submission relay execute (local adapter, with retry + ack dedupe):
 ```bash
-cargo run -q -p trnm-worker-agent -- flush-submissions --submit-log /tmp/trnm-worker-agent-submits.jsonl --execute --adapter-cmd "./scripts/worker_tx_adapter.sh"
+cargo run -q -p trnm-worker-agent -- flush-submissions --submit-log /tmp/trnm-worker-agent-submits.jsonl --execute --adapter-cmd "./scripts/worker_tx_adapter.sh" --max-retries 3 --backoff-ms 200 --ack-log /tmp/trnm-worker-agent-acks.jsonl
 ```
 
 RPC verification:

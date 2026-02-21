@@ -2,7 +2,7 @@ use anyhow::Result;
 use clap::{Parser, Subcommand};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
-use std::{fs, path::PathBuf, process::Command as ProcCommand, time::{SystemTime, UNIX_EPOCH}};
+use std::{collections::HashSet, fs, path::PathBuf, process::Command as ProcCommand, thread, time::{Duration, SystemTime, UNIX_EPOCH}};
 
 #[derive(Debug, Parser)]
 #[command(name = "trnm-worker-agent", version, about = "Trillionnium PoUW worker-agent (MVP skeleton)")]
@@ -58,6 +58,12 @@ enum Command {
         execute: bool,
         #[arg(long, default_value = "./scripts/worker_tx_adapter.sh")]
         adapter_cmd: String,
+        #[arg(long, default_value_t = 3)]
+        max_retries: u32,
+        #[arg(long, default_value_t = 200)]
+        backoff_ms: u64,
+        #[arg(long, default_value = "/tmp/trnm-worker-agent-acks.jsonl")]
+        ack_log: PathBuf,
     },
 }
 
@@ -87,6 +93,13 @@ struct SubmissionRecord {
     salt_hex: String,
     commit_cmd: String,
     reveal_cmd: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+struct AckRecord {
+    ts_unix_ms: u128,
+    task_id: u64,
+    status: String,
 }
 
 fn commitment(task_id: u64, result_hash_hex: &str, salt_hex: &str, worker: &str) -> String {
@@ -148,6 +161,50 @@ fn append_submission(
     old.push('\n');
     fs::write(submit_log, old)?;
     Ok(())
+}
+
+fn load_acked(ack_log: &PathBuf) -> HashSet<u64> {
+    let mut set = HashSet::new();
+    if !ack_log.exists() {
+        return set;
+    }
+    if let Ok(raw) = fs::read_to_string(ack_log) {
+        for line in raw.lines().filter(|l| !l.trim().is_empty()) {
+            if let Ok(rec) = serde_json::from_str::<AckRecord>(line) {
+                if rec.status == "accepted" {
+                    set.insert(rec.task_id);
+                }
+            }
+        }
+    }
+    set
+}
+
+fn append_ack(ack_log: &PathBuf, task_id: u64, status: &str) -> Result<()> {
+    let rec = AckRecord {
+        ts_unix_ms: now_ms(),
+        task_id,
+        status: status.to_string(),
+    };
+    let line = serde_json::to_string(&rec)?;
+    let mut old = if ack_log.exists() { fs::read_to_string(ack_log)? } else { String::new() };
+    old.push_str(&line);
+    old.push('\n');
+    fs::write(ack_log, old)?;
+    Ok(())
+}
+
+fn run_adapter_with_retry(cmd: &str, max_retries: u32, backoff_ms: u64) -> Result<bool> {
+    for attempt in 0..=max_retries {
+        let ok = ProcCommand::new("sh").arg("-lc").arg(cmd).status()?.success();
+        if ok {
+            return Ok(true);
+        }
+        if attempt < max_retries {
+            thread::sleep(Duration::from_millis(backoff_ms * (attempt as u64 + 1)));
+        }
+    }
+    Ok(false)
 }
 
 fn main() -> Result<()> {
@@ -228,6 +285,9 @@ fn main() -> Result<()> {
             submit_log,
             execute,
             adapter_cmd,
+            max_retries,
+            backoff_ms,
+            ack_log,
         } => {
             if !submit_log.exists() {
                 println!("[agent] no submit log found: {}", submit_log.display());
@@ -235,31 +295,45 @@ fn main() -> Result<()> {
             }
             let raw = fs::read_to_string(&submit_log)?;
             let mut n = 0usize;
+            let mut skipped = 0usize;
+            let mut acked = load_acked(&ack_log);
             for line in raw.lines().filter(|l| !l.trim().is_empty()) {
                 let rec: SubmissionRecord = serde_json::from_str(line)?;
                 n += 1;
+
+                if acked.contains(&rec.task_id) {
+                    skipped += 1;
+                    println!("[skip] task_id={} already_acked=true", rec.task_id);
+                    continue;
+                }
+
                 if !execute {
                     println!("[dry-run] adapter={} commit {} {} {}", adapter_cmd, rec.task_id, rec.worker, rec.commit_hash);
                     println!("[dry-run] adapter={} reveal {} {} {}", adapter_cmd, rec.task_id, rec.result_hash, rec.salt_hex);
                 } else {
-                    let c1 = ProcCommand::new("sh")
-                        .arg("-lc")
-                        .arg(format!("{} commit {} {} {}", adapter_cmd, rec.task_id, rec.worker, rec.commit_hash))
-                        .status()?;
-                    let c2 = ProcCommand::new("sh")
-                        .arg("-lc")
-                        .arg(format!("{} reveal {} {} {}", adapter_cmd, rec.task_id, rec.result_hash, rec.salt_hex))
-                        .status()?;
+                    let cmd1 = format!("{} commit {} {} {}", adapter_cmd, rec.task_id, rec.worker, rec.commit_hash);
+                    let cmd2 = format!("{} reveal {} {} {}", adapter_cmd, rec.task_id, rec.result_hash, rec.salt_hex);
+
+                    let commit_ok = run_adapter_with_retry(&cmd1, max_retries, backoff_ms)?;
+                    let reveal_ok = run_adapter_with_retry(&cmd2, max_retries, backoff_ms)?;
+
                     println!(
-                        "[submitted] task_id={} commit_ok={} reveal_ok={} adapter={}",
+                        "[submitted] task_id={} commit_ok={} reveal_ok={} adapter={} retries={} backoff_ms={}",
                         rec.task_id,
-                        c1.success(),
-                        c2.success(),
-                        adapter_cmd
+                        commit_ok,
+                        reveal_ok,
+                        adapter_cmd,
+                        max_retries,
+                        backoff_ms
                     );
+
+                    if commit_ok && reveal_ok {
+                        append_ack(&ack_log, rec.task_id, "accepted")?;
+                        acked.insert(rec.task_id);
+                    }
                 }
             }
-            println!("[agent] flushed_records={} execute={}", n, execute);
+            println!("[agent] flushed_records={} skipped={} execute={} ack_log={}", n, skipped, execute, ack_log.display());
         }
     }
     Ok(())
