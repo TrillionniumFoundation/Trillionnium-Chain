@@ -20,7 +20,9 @@ for n in 1 2 3 4; do
     --demo-keys 3 \
     --parallel-workers 4 \
     --validators 4 \
-    --byzantine 1 >"$log" 2>&1 &
+    --byzantine 1 \
+    --bft-max-rounds 3 \
+    --bft-fault-rounds 1 >"$log" 2>&1 &
   pids+=("$!")
 done
 

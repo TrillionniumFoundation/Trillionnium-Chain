@@ -41,6 +41,12 @@ struct Args {
     /// Byzantine validators simulated in BFT vote aggregation
     #[arg(long, default_value_t = 0)]
     byzantine: usize,
+    /// Max rounds per height before giving up commit (round-change path)
+    #[arg(long, default_value_t = 3)]
+    bft_max_rounds: u64,
+    /// Inject no-quorum faulty rounds at beginning of each height
+    #[arg(long, default_value_t = 0)]
+    bft_fault_rounds: u64,
 }
 
 #[derive(Debug, Deserialize)]
@@ -82,6 +88,15 @@ struct BftVote {
     byzantine: bool,
 }
 
+#[derive(Debug, Clone)]
+struct BftHeightResult {
+    committed: bool,
+    committed_round: u64,
+    round_changes: u64,
+    prevote_count: usize,
+    precommit_count: usize,
+}
+
 fn quorum_threshold(n: usize) -> usize {
     // 2f+1 where f = floor((n-1)/3)
     let f = n.saturating_sub(1) / 3;
@@ -100,48 +115,106 @@ fn aggregate_votes(votes: &[BftVote], vote_type: VoteType) -> HashMap<String, us
     m
 }
 
-fn simulate_bft_round(height: u64, round: u64, block_hash: &str, validators: usize, byzantine: usize) -> (bool, usize, usize) {
+fn simulate_bft_round(
+    height: u64,
+    round: u64,
+    proposal_hash: &str,
+    locked_hash: Option<&str>,
+    validators: usize,
+    byzantine: usize,
+) -> (bool, usize, usize, Option<String>) {
     let n = validators.max(1);
     let b = byzantine.min(n.saturating_sub(1));
     let q = quorum_threshold(n);
     let proposer_idx = proposer(height, round, n);
     let proposer_id = format!("v{}", proposer_idx + 1);
+    let round_hash = locked_hash.unwrap_or(proposal_hash).to_string();
 
-    println!("[bft] height={} round={} step={:?} proposer={} validators={} byzantine={} quorum={}", height, round, RoundStep::Propose, proposer_id, n, b, q);
+    println!("[bft] height={} round={} step={:?} proposer={} validators={} byzantine={} quorum={} locked={}", height, round, RoundStep::Propose, proposer_id, n, b, q, locked_hash.is_some());
 
     let mut votes = Vec::new();
-    let bad_hash = hash32_hex(&[b"byzantine", block_hash.as_bytes()].concat());
+    let bad_hash = hash32_hex(&[b"byzantine", round_hash.as_bytes()].concat());
     for i in 0..n {
         let vid = format!("v{}", i + 1);
         let is_bad = i < b;
-        let vh = if is_bad { bad_hash.clone() } else { block_hash.to_string() };
+        let vh = if is_bad { bad_hash.clone() } else { round_hash.clone() };
         votes.push(BftVote { validator: vid, vote_type: VoteType::Prevote, block_hash: vh, byzantine: is_bad });
     }
     println!("[bft] height={} round={} step={:?}", height, round, RoundStep::Prevote);
 
     let prevote_tally = aggregate_votes(&votes, VoteType::Prevote);
-    let prevote_count = *prevote_tally.get(block_hash).unwrap_or(&0);
+    let prevote_count = *prevote_tally.get(&round_hash).unwrap_or(&0);
+    let new_lock = if prevote_count >= q { Some(round_hash.clone()) } else { None };
 
     for i in 0..n {
         let vid = format!("v{}", i + 1);
         let is_bad = i < b;
-        let vote_hash = if prevote_count >= q && !is_bad { block_hash.to_string() } else { bad_hash.clone() };
+        let vote_hash = if prevote_count >= q && !is_bad { round_hash.clone() } else { bad_hash.clone() };
         votes.push(BftVote { validator: vid, vote_type: VoteType::Precommit, block_hash: vote_hash, byzantine: is_bad });
     }
     println!("[bft] height={} round={} step={:?}", height, round, RoundStep::Precommit);
 
     let precommit_tally = aggregate_votes(&votes, VoteType::Precommit);
-    let precommit_count = *precommit_tally.get(block_hash).unwrap_or(&0);
+    let precommit_count = *precommit_tally.get(&round_hash).unwrap_or(&0);
     let unique_voters: HashSet<String> = votes.iter().map(|v| v.validator.clone()).collect();
     let byzantine_votes = votes.iter().filter(|v| v.byzantine).count();
     let committed = precommit_count >= q;
     if committed {
-        println!("[bft] height={} round={} step={:?} block_hash={} precommit={}/{} unique_voters={} byzantine_votes={}", height, round, RoundStep::Commit, block_hash, precommit_count, n, unique_voters.len(), byzantine_votes);
+        println!("[bft] height={} round={} step={:?} block_hash={} precommit={}/{} unique_voters={} byzantine_votes={}", height, round, RoundStep::Commit, round_hash, precommit_count, n, unique_voters.len(), byzantine_votes);
     } else {
         println!("[bft] height={} round={} step=RoundChange reason=no_quorum precommit={}/{} unique_voters={} byzantine_votes={}", height, round, precommit_count, n, unique_voters.len(), byzantine_votes);
     }
 
-    (committed, prevote_count, precommit_count)
+    (committed, prevote_count, precommit_count, new_lock)
+}
+
+fn simulate_bft_height(
+    height: u64,
+    proposal_hash: &str,
+    validators: usize,
+    byzantine: usize,
+    max_rounds: u64,
+    fault_rounds: u64,
+) -> BftHeightResult {
+    let mut locked: Option<String> = None;
+    let mut round_changes = 0u64;
+    let mut last_prevote = 0usize;
+    let mut last_precommit = 0usize;
+
+    for round in 0..max_rounds.max(1) {
+        let effective_byz = if round < fault_rounds { validators.saturating_sub(1) } else { byzantine };
+        let (committed, pv, pc, new_lock) = simulate_bft_round(
+            height,
+            round,
+            proposal_hash,
+            locked.as_deref(),
+            validators,
+            effective_byz,
+        );
+        last_prevote = pv;
+        last_precommit = pc;
+        if new_lock.is_some() {
+            locked = new_lock;
+        }
+        if committed {
+            return BftHeightResult {
+                committed: true,
+                committed_round: round,
+                round_changes,
+                prevote_count: pv,
+                precommit_count: pc,
+            };
+        }
+        round_changes += 1;
+    }
+
+    BftHeightResult {
+        committed: false,
+        committed_round: max_rounds.saturating_sub(1),
+        round_changes,
+        prevote_count: last_prevote,
+        precommit_count: last_precommit,
+    }
 }
 
 fn hash32_hex(data: &[u8]) -> String {
@@ -461,7 +534,7 @@ fn main() -> Result<()> {
     println!("[node] block_ms={} max_blocks={}", args.block_ms, args.max_blocks);
     println!("[node] load demo_tasks={} demo_keys={}", args.demo_tasks, args.demo_keys);
     println!("[node] parallel_workers={}", args.parallel_workers);
-    println!("[node] bft validators={} byzantine={}", args.validators, args.byzantine);
+    println!("[node] bft validators={} byzantine={} max_rounds={} fault_rounds={}", args.validators, args.byzantine, args.bft_max_rounds, args.bft_fault_rounds);
 
     let mut state = StateStore::new();
     let mut mempool = build_demo_mempool(args.demo_tasks, args.demo_keys);
@@ -485,10 +558,25 @@ fn main() -> Result<()> {
         }
 
         let proposal_hash = hash32_hex(format!("h:{}:txs:{}", height, picked.len()).as_bytes());
-        let (bft_committed, _pv, _pc) = simulate_bft_round(height, 0, &proposal_hash, args.validators, args.byzantine);
-        if !bft_committed {
-            bft_round_change_total += 1;
-            println!("[block] node={} height={} skipped reason=bft_no_commit proposal_hash={}", cfg.node_id, height, proposal_hash);
+        let bft = simulate_bft_height(
+            height,
+            &proposal_hash,
+            args.validators,
+            args.byzantine,
+            args.bft_max_rounds,
+            args.bft_fault_rounds,
+        );
+        if !bft.committed {
+            bft_round_change_total += bft.round_changes;
+            println!(
+                "[block] node={} height={} skipped reason=bft_no_commit proposal_hash={} prevote={} precommit={} rounds={}",
+                cfg.node_id,
+                height,
+                proposal_hash,
+                bft.prevote_count,
+                bft.precommit_count,
+                args.bft_max_rounds
+            );
             if args.max_blocks > 0 && height >= args.max_blocks {
                 println!("[node] reached max_blocks={}, exiting", args.max_blocks);
                 break;
@@ -497,6 +585,11 @@ fn main() -> Result<()> {
             thread::sleep(Duration::from_millis(args.block_ms));
             continue;
         }
+        bft_round_change_total += bft.round_changes;
+        println!(
+            "[bft] height={} committed_round={} prevote={} precommit={} round_changes={}",
+            height, bft.committed_round, bft.prevote_count, bft.precommit_count, bft.round_changes
+        );
         bft_committed_heights += 1;
 
         let plan: Vec<Tx> = picked
