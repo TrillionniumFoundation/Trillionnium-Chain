@@ -20,6 +20,16 @@ fi
 
 ts=$(date +%s)
 
+is_replay() {
+  local k="$1"
+  local t="$2"
+  if [[ -f "$OUT_LOG" ]]; then
+    grep -q '"kind":"'"$k"'".*"task_id":'"$t"'.*"status":"accepted"' "$OUT_LOG"
+  else
+    return 1
+  fi
+}
+
 receipt_hash() {
   local payload="$1"
   printf "%s" "$payload" | shasum -a 256 | awk '{print $1}'
@@ -30,6 +40,13 @@ if [[ "$kind" == "commit" ]]; then
   worker="${3:-}"
   commit_hash="${4:-}"
   [[ -n "$task_id" && -n "$worker" && -n "$commit_hash" ]] || { echo "invalid commit args" >&2; exit 2; }
+
+  if is_replay "commit" "$task_id"; then
+    printf '{"ts":%s,"mode":"%s","kind":"commit","task_id":%s,"worker":"%s","commit_hash":"%s","status":"duplicate","rc":9}\n' \
+      "$ts" "$MODE" "$task_id" "$worker" "$commit_hash" >> "$OUT_LOG"
+    echo "[adapter] commit replay rejected task_id=$task_id" >&2
+    exit 9
+  fi
 
   cmd="${TX_CLI:-echo} tx commit-result $task_id $worker $commit_hash"
 
@@ -60,6 +77,13 @@ else
   result_hash="${3:-}"
   salt_hex="${4:-}"
   [[ -n "$task_id" && -n "$result_hash" && -n "$salt_hex" ]] || { echo "invalid reveal args" >&2; exit 2; }
+
+  if is_replay "reveal" "$task_id"; then
+    printf '{"ts":%s,"mode":"%s","kind":"reveal","task_id":%s,"result_hash":"%s","salt_hex":"%s","status":"duplicate","rc":9}\n' \
+      "$ts" "$MODE" "$task_id" "$result_hash" "$salt_hex" >> "$OUT_LOG"
+    echo "[adapter] reveal replay rejected task_id=$task_id" >&2
+    exit 9
+  fi
 
   cmd="${TX_CLI:-echo} tx reveal-result $task_id $result_hash $salt_hex"
 
