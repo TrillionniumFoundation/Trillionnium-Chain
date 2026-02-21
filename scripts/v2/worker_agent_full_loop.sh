@@ -13,8 +13,15 @@ export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
 # Gate default: prefer command-mode adapter path (closer to real tx flow).
 : "${TRNM_TX_ADAPTER_MODE:=command}"
 if [[ -z "${TRNM_TX_CLI:-}" ]]; then
+  CANDIDATE=""
   if command -v trnm-node >/dev/null 2>&1; then
-    TRNM_TX_CLI="trnm-node"
+    CANDIDATE="trnm-node"
+  elif [[ -x "$ROOT/trillionnium-rust/target/debug/trnm-node" ]]; then
+    CANDIDATE="$ROOT/trillionnium-rust/target/debug/trnm-node"
+  fi
+
+  if [[ -n "$CANDIDATE" ]] && "$CANDIDATE" tx --help >/dev/null 2>&1; then
+    TRNM_TX_CLI="$CANDIDATE"
   else
     TRNM_TX_CLI="echo"
   fi

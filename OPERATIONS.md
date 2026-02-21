@@ -120,3 +120,9 @@ The smoke script automatically:
   3. `worker_failed_receipt_test.sh`
   4. `worker_resume_no_duplicate_test.sh`
 
+真实 CLI 就绪度检查（接入前建议先跑）：
+
+```bash
+./scripts/v2/worker_real_cli_readiness.sh
+```
+
