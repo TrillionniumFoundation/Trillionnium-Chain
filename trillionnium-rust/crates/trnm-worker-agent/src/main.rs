@@ -410,6 +410,14 @@ fn main() -> Result<()> {
                             commit_res.tx_hash,
                             reveal_res.tx_hash,
                         )?;
+                    } else {
+                        append_ack(
+                            &ack_log,
+                            rec.task_id,
+                            "failed",
+                            commit_res.tx_hash,
+                            reveal_res.tx_hash,
+                        )?;
                     }
                 }
             }

@@ -86,6 +86,7 @@ jobs:
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           ./scripts/v2/worker_agent_full_loop.sh
           ./scripts/v2/worker_replay_guard_test.sh
+          ./scripts/v2/worker_failed_receipt_test.sh
 
       - name: Executor spot-check regression gate (Original strategy)
         run: |

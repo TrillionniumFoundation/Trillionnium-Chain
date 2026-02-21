@@ -12,7 +12,13 @@ export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
 
 # Gate default: prefer command-mode adapter path (closer to real tx flow).
 : "${TRNM_TX_ADAPTER_MODE:=command}"
-: "${TRNM_TX_CLI:=echo}"
+if [[ -z "${TRNM_TX_CLI:-}" ]]; then
+  if command -v trnm-node >/dev/null 2>&1; then
+    TRNM_TX_CLI="trnm-node"
+  else
+    TRNM_TX_CLI="echo"
+  fi
+fi
 export TRNM_TX_ADAPTER_MODE TRNM_TX_CLI
 
 OUT_JSON="/tmp/trnm-worker-runonce.json"
