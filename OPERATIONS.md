@@ -138,6 +138,15 @@ TRNM_TX_CLI=./scripts/v2/trnm_tx_cli_wrapper.sh ./scripts/v2/run_worker_receipt_
 TRNM_TX_CLI=./scripts/v2/trnm_tx_cli_real_adapter.sh ./scripts/v2/run_worker_receipt_gates_real_cli.sh
 ```
 
+推荐先用环境模板：
+
+```bash
+cp scripts/v2/worker_real_cli.env.example /tmp/worker_real_cli.env
+# 编辑 /tmp/worker_real_cli.env 中的 TRNM_TX_COMMIT_CMD / TRNM_TX_REVEAL_CMD
+source /tmp/worker_real_cli.env
+TRNM_TX_CLI=./scripts/v2/trnm_tx_cli_real_adapter.sh ./scripts/v2/run_worker_receipt_gates_real_cli.sh
+```
+
 真实适配模板与规范：
 - 规范：`docs/protocol/worker-real-tx-cli-adapter-spec.md`
 - 模板：`scripts/v2/trnm_tx_cli_real_adapter.template.sh`
