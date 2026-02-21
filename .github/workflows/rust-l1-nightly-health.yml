@@ -102,6 +102,14 @@ jobs:
             echo "[skip] strict real-cli gate disabled (REQUIRE_REAL_TX_CLI=${REQUIRE_REAL_TX_CLI:-1})"
           fi
 
+      - name: Worker-agent multi-agent onboarding smoke (hard gate)
+        run: |
+          set -euo pipefail
+          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+          TRNM_TX_CLI="${TRNM_TX_CLI:-./scripts/v2/trnm_tx_cli_wrapper.sh}" \
+          SKIP_GATES=1 AGENTS=${WORKER_MULTI_AGENTS:-5} \
+            ./scripts/v2/worker_agent_mining_onboard.sh
+
       - name: Executor spot-check regression gate (Original strategy)
         run: |
           set -euo pipefail
@@ -280,4 +288,5 @@ jobs:
             trillionnium-rust/run/parallel-sanity-flaky-*.log
             data/reexec-smoke/**
             data/reexec-bundles/**
+            data/worker-onboard/**
           if-no-files-found: warn
