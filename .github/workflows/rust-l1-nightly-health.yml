@@ -94,6 +94,13 @@ jobs:
           cd trillionnium-rust
           RUNS=${BFT_RECOVERY_RUNS:-20} ./scripts/check_bft_restart_recovery.sh
 
+      - name: BFT message auth anti-replay (hard gate)
+        run: |
+          set -euo pipefail
+          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+          cd trillionnium-rust
+          ./scripts/check_bft_message_auth.sh
+
       - name: Challenge reexec bundle smoke (hard gate)
         run: |
           set -euo pipefail

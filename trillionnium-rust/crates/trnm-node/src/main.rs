@@ -95,6 +95,20 @@ struct BftVote {
 }
 
 #[derive(Debug, Clone)]
+struct SignedVote {
+    vote: BftVote,
+    nonce: u64,
+    signature: String,
+}
+
+#[derive(Debug, Clone, Default)]
+struct AuthRejectStats {
+    bad_sig: usize,
+    replay: usize,
+    stale_nonce: usize,
+}
+
+#[derive(Debug, Clone)]
 struct BftHeightResult {
     committed: bool,
     committed_round: u64,
@@ -102,6 +116,9 @@ struct BftHeightResult {
     prevote_count: usize,
     precommit_count: usize,
     double_vote_events: usize,
+    auth_reject_bad_sig: usize,
+    auth_reject_replay: usize,
+    auth_reject_stale_nonce: usize,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -151,6 +168,81 @@ fn aggregate_votes(votes: &[BftVote], vote_type: VoteType) -> HashMap<String, us
     m
 }
 
+fn vote_type_name(v: VoteType) -> &'static str {
+    match v {
+        VoteType::Prevote => "prevote",
+        VoteType::Precommit => "precommit",
+    }
+}
+
+fn vote_signature(vote: &BftVote, nonce: u64) -> String {
+    hash32_hex(
+        format!(
+            "sig|{}|{}|{}|{}|{}|{}",
+            vote.validator,
+            vote.height,
+            vote.round,
+            vote_type_name(vote.vote_type),
+            vote.block_hash,
+            nonce
+        )
+        .as_bytes(),
+    )
+}
+
+fn accept_signed_vote(
+    msg: SignedVote,
+    last_nonce: &mut HashMap<(String, VoteType), u64>,
+    accepted: &mut Vec<BftVote>,
+    reject_stats: &mut AuthRejectStats,
+) {
+    let expected = vote_signature(&msg.vote, msg.nonce);
+    if msg.signature != expected {
+        reject_stats.bad_sig += 1;
+        println!(
+            "[bft-net] reject reason=bad_sig validator={} height={} round={} vote_type={} nonce={}",
+            msg.vote.validator,
+            msg.vote.height,
+            msg.vote.round,
+            vote_type_name(msg.vote.vote_type),
+            msg.nonce
+        );
+        return;
+    }
+
+    let key = (msg.vote.validator.clone(), msg.vote.vote_type);
+    if let Some(prev) = last_nonce.get(&key) {
+        if msg.nonce == *prev {
+            reject_stats.replay += 1;
+            println!(
+                "[bft-net] reject reason=replay validator={} height={} round={} vote_type={} nonce={}",
+                msg.vote.validator,
+                msg.vote.height,
+                msg.vote.round,
+                vote_type_name(msg.vote.vote_type),
+                msg.nonce
+            );
+            return;
+        }
+        if msg.nonce < *prev {
+            reject_stats.stale_nonce += 1;
+            println!(
+                "[bft-net] reject reason=stale_nonce validator={} height={} round={} vote_type={} nonce={} last_nonce={}",
+                msg.vote.validator,
+                msg.vote.height,
+                msg.vote.round,
+                vote_type_name(msg.vote.vote_type),
+                msg.nonce,
+                prev
+            );
+            return;
+        }
+    }
+
+    last_nonce.insert(key, msg.nonce);
+    accepted.push(msg.vote);
+}
+
 fn detect_double_votes(votes: &[BftVote], vote_type: VoteType) -> usize {
     let mut seen: HashMap<(String, u64, u64, VoteType), String> = HashMap::new();
     let mut events = 0usize;
@@ -178,7 +270,7 @@ fn simulate_bft_round(
     locked_hash: Option<&str>,
     validators: usize,
     byzantine: usize,
-) -> (bool, usize, usize, Option<String>, usize) {
+) -> (bool, usize, usize, Option<String>, usize, AuthRejectStats) {
     let n = validators.max(1);
     let b = byzantine.min(n.saturating_sub(1));
     let q = quorum_threshold(n);
@@ -189,15 +281,99 @@ fn simulate_bft_round(
     println!("[bft] height={} round={} step={:?} proposer={} validators={} byzantine={} quorum={} locked={}", height, round, RoundStep::Propose, proposer_id, n, b, q, locked_hash.is_some());
 
     let mut votes = Vec::new();
+    let mut auth_nonce: HashMap<(String, VoteType), u64> = HashMap::new();
+    let mut reject_stats = AuthRejectStats::default();
     let bad_hash = hash32_hex(&[b"byzantine", round_hash.as_bytes()].concat());
     for i in 0..n {
         let vid = format!("v{}", i + 1);
         let is_bad = i < b;
-        let vh = if is_bad { bad_hash.clone() } else { round_hash.clone() };
-        votes.push(BftVote { validator: vid.clone(), vote_type: VoteType::Prevote, block_hash: vh, byzantine: is_bad, height, round });
-        // Byzantine equivocation sample: same validator emits conflicting prevote.
+        let nonce = height * 10_000 + round * 100 + i as u64;
+        let canonical_hash = round_hash.clone();
+        let bad_vote_hash = bad_hash.clone();
+
+        let good_vote = BftVote {
+            validator: vid.clone(),
+            vote_type: VoteType::Prevote,
+            block_hash: canonical_hash.clone(),
+            byzantine: is_bad,
+            height,
+            round,
+        };
+        let good_sig = vote_signature(&good_vote, nonce);
+        accept_signed_vote(
+            SignedVote {
+                vote: good_vote,
+                nonce,
+                signature: good_sig,
+            },
+            &mut auth_nonce,
+            &mut votes,
+            &mut reject_stats,
+        );
+
         if is_bad {
-            votes.push(BftVote { validator: vid, vote_type: VoteType::Prevote, block_hash: round_hash.clone(), byzantine: true, height, round });
+            // bad signature sample
+            let bad_sig_vote = BftVote {
+                validator: vid.clone(),
+                vote_type: VoteType::Prevote,
+                block_hash: bad_vote_hash.clone(),
+                byzantine: true,
+                height,
+                round,
+            };
+            accept_signed_vote(
+                SignedVote {
+                    vote: bad_sig_vote,
+                    nonce: nonce + 1,
+                    signature: "bad_signature".to_string(),
+                },
+                &mut auth_nonce,
+                &mut votes,
+                &mut reject_stats,
+            );
+
+            // replay sample (same nonce as accepted good vote)
+            let replay_vote = BftVote {
+                validator: vid.clone(),
+                vote_type: VoteType::Prevote,
+                block_hash: canonical_hash.clone(),
+                byzantine: true,
+                height,
+                round,
+            };
+            let replay_sig = vote_signature(&replay_vote, nonce);
+            accept_signed_vote(
+                SignedVote {
+                    vote: replay_vote,
+                    nonce,
+                    signature: replay_sig,
+                },
+                &mut auth_nonce,
+                &mut votes,
+                &mut reject_stats,
+            );
+
+            // equivocation with higher nonce (passes auth, should be slashed)
+            let eq_vote = BftVote {
+                validator: vid,
+                vote_type: VoteType::Prevote,
+                block_hash: bad_vote_hash,
+                byzantine: true,
+                height,
+                round,
+            };
+            let eq_nonce = nonce + 2;
+            let eq_sig = vote_signature(&eq_vote, eq_nonce);
+            accept_signed_vote(
+                SignedVote {
+                    vote: eq_vote,
+                    nonce: eq_nonce,
+                    signature: eq_sig,
+                },
+                &mut auth_nonce,
+                &mut votes,
+                &mut reject_stats,
+            );
         }
     }
     println!("[bft] height={} round={} step={:?}", height, round, RoundStep::Prevote);
@@ -209,10 +385,95 @@ fn simulate_bft_round(
     for i in 0..n {
         let vid = format!("v{}", i + 1);
         let is_bad = i < b;
-        let vote_hash = if prevote_count >= q && !is_bad { round_hash.clone() } else { bad_hash.clone() };
-        votes.push(BftVote { validator: vid.clone(), vote_type: VoteType::Precommit, block_hash: vote_hash, byzantine: is_bad, height, round });
+        let nonce = height * 10_000 + round * 100 + i as u64 + 50;
+        let canonical_hash = round_hash.clone();
+        let bad_vote_hash = bad_hash.clone();
+        let vote_hash = if prevote_count >= q && !is_bad {
+            canonical_hash.clone()
+        } else {
+            bad_vote_hash.clone()
+        };
+
+        let good_vote = BftVote {
+            validator: vid.clone(),
+            vote_type: VoteType::Precommit,
+            block_hash: vote_hash,
+            byzantine: is_bad,
+            height,
+            round,
+        };
+        let good_sig = vote_signature(&good_vote, nonce);
+        accept_signed_vote(
+            SignedVote {
+                vote: good_vote,
+                nonce,
+                signature: good_sig,
+            },
+            &mut auth_nonce,
+            &mut votes,
+            &mut reject_stats,
+        );
+
         if is_bad {
-            votes.push(BftVote { validator: vid, vote_type: VoteType::Precommit, block_hash: round_hash.clone(), byzantine: true, height, round });
+            let bad_sig_vote = BftVote {
+                validator: vid.clone(),
+                vote_type: VoteType::Precommit,
+                block_hash: bad_vote_hash.clone(),
+                byzantine: true,
+                height,
+                round,
+            };
+            accept_signed_vote(
+                SignedVote {
+                    vote: bad_sig_vote,
+                    nonce: nonce + 1,
+                    signature: "bad_signature".to_string(),
+                },
+                &mut auth_nonce,
+                &mut votes,
+                &mut reject_stats,
+            );
+
+            let replay_vote = BftVote {
+                validator: vid.clone(),
+                vote_type: VoteType::Precommit,
+                block_hash: canonical_hash.clone(),
+                byzantine: true,
+                height,
+                round,
+            };
+            let replay_sig = vote_signature(&replay_vote, nonce);
+            accept_signed_vote(
+                SignedVote {
+                    vote: replay_vote,
+                    nonce,
+                    signature: replay_sig,
+                },
+                &mut auth_nonce,
+                &mut votes,
+                &mut reject_stats,
+            );
+
+            let eq_vote = BftVote {
+                validator: vid,
+                vote_type: VoteType::Precommit,
+                block_hash: canonical_hash,
+                byzantine: true,
+                height,
+                round,
+            };
+            let eq_nonce = nonce + 2;
+            let eq_sig = vote_signature(&eq_vote, eq_nonce);
+            accept_signed_vote(
+                SignedVote {
+                    vote: eq_vote,
+                    nonce: eq_nonce,
+                    signature: eq_sig,
+                },
+                &mut auth_nonce,
+                &mut votes,
+                &mut reject_stats,
+            );
         }
     }
     println!("[bft] height={} round={} step={:?}", height, round, RoundStep::Precommit);
@@ -225,12 +486,12 @@ fn simulate_bft_round(
         + detect_double_votes(&votes, VoteType::Precommit);
     let committed = precommit_count >= q;
     if committed {
-        println!("[bft] height={} round={} step={:?} block_hash={} precommit={}/{} unique_voters={} byzantine_votes={} double_vote_events={}", height, round, RoundStep::Commit, round_hash, precommit_count, n, unique_voters.len(), byzantine_votes, double_vote_events);
+        println!("[bft] height={} round={} step={:?} block_hash={} precommit={}/{} unique_voters={} byzantine_votes={} double_vote_events={} auth_reject_bad_sig={} auth_reject_replay={} auth_reject_stale={}", height, round, RoundStep::Commit, round_hash, precommit_count, n, unique_voters.len(), byzantine_votes, double_vote_events, reject_stats.bad_sig, reject_stats.replay, reject_stats.stale_nonce);
     } else {
-        println!("[bft] height={} round={} step=RoundChange reason=no_quorum precommit={}/{} unique_voters={} byzantine_votes={} double_vote_events={}", height, round, precommit_count, n, unique_voters.len(), byzantine_votes, double_vote_events);
+        println!("[bft] height={} round={} step=RoundChange reason=no_quorum precommit={}/{} unique_voters={} byzantine_votes={} double_vote_events={} auth_reject_bad_sig={} auth_reject_replay={} auth_reject_stale={}", height, round, precommit_count, n, unique_voters.len(), byzantine_votes, double_vote_events, reject_stats.bad_sig, reject_stats.replay, reject_stats.stale_nonce);
     }
 
-    (committed, prevote_count, precommit_count, new_lock, double_vote_events)
+    (committed, prevote_count, precommit_count, new_lock, double_vote_events, reject_stats)
 }
 
 fn simulate_bft_height(
@@ -247,10 +508,13 @@ fn simulate_bft_height(
     let mut last_prevote = 0usize;
     let mut last_precommit = 0usize;
     let mut total_double_vote_events = 0usize;
+    let mut total_auth_reject_bad_sig = 0usize;
+    let mut total_auth_reject_replay = 0usize;
+    let mut total_auth_reject_stale_nonce = 0usize;
 
     for round in 0..max_rounds.max(1) {
         let effective_byz = if round < fault_rounds { validators.saturating_sub(1) } else { byzantine };
-        let (committed, pv, pc, new_lock, dv) = simulate_bft_round(
+        let (committed, pv, pc, new_lock, dv, auth) = simulate_bft_round(
             height,
             round,
             proposal_hash,
@@ -261,6 +525,9 @@ fn simulate_bft_height(
         last_prevote = pv;
         last_precommit = pc;
         total_double_vote_events += dv;
+        total_auth_reject_bad_sig += auth.bad_sig;
+        total_auth_reject_replay += auth.replay;
+        total_auth_reject_stale_nonce += auth.stale_nonce;
         if new_lock.is_some() {
             locked = new_lock;
         }
@@ -272,6 +539,9 @@ fn simulate_bft_height(
                 prevote_count: pv,
                 precommit_count: pc,
                 double_vote_events: total_double_vote_events,
+                auth_reject_bad_sig: total_auth_reject_bad_sig,
+                auth_reject_replay: total_auth_reject_replay,
+                auth_reject_stale_nonce: total_auth_reject_stale_nonce,
             };
         }
         round_changes += 1;
@@ -284,6 +554,9 @@ fn simulate_bft_height(
         prevote_count: last_prevote,
         precommit_count: last_precommit,
         double_vote_events: total_double_vote_events,
+        auth_reject_bad_sig: total_auth_reject_bad_sig,
+        auth_reject_replay: total_auth_reject_replay,
+        auth_reject_stale_nonce: total_auth_reject_stale_nonce,
     }
 }
 
@@ -629,6 +902,9 @@ fn main() -> Result<()> {
     let mut bft_committed_heights: u64 = 0;
     let mut bft_round_change_total: u64 = 0;
     let mut bft_double_vote_total: u64 = 0;
+    let mut bft_auth_reject_bad_sig_total: u64 = 0;
+    let mut bft_auth_reject_replay_total: u64 = 0;
+    let mut bft_auth_reject_stale_nonce_total: u64 = 0;
 
     loop {
         let block_start = Instant::now();
@@ -653,6 +929,9 @@ fn main() -> Result<()> {
         if !bft.committed {
             bft_round_change_total += bft.round_changes;
             bft_double_vote_total += bft.double_vote_events as u64;
+            bft_auth_reject_bad_sig_total += bft.auth_reject_bad_sig as u64;
+            bft_auth_reject_replay_total += bft.auth_reject_replay as u64;
+            bft_auth_reject_stale_nonce_total += bft.auth_reject_stale_nonce as u64;
             println!(
                 "[block] node={} height={} skipped reason=bft_no_commit proposal_hash={} prevote={} precommit={} rounds={}",
                 cfg.node_id,
@@ -680,9 +959,20 @@ fn main() -> Result<()> {
         }
         bft_round_change_total += bft.round_changes;
         bft_double_vote_total += bft.double_vote_events as u64;
+        bft_auth_reject_bad_sig_total += bft.auth_reject_bad_sig as u64;
+        bft_auth_reject_replay_total += bft.auth_reject_replay as u64;
+        bft_auth_reject_stale_nonce_total += bft.auth_reject_stale_nonce as u64;
         println!(
-            "[bft] height={} committed_round={} prevote={} precommit={} round_changes={} double_vote_events={}",
-            height, bft.committed_round, bft.prevote_count, bft.precommit_count, bft.round_changes, bft.double_vote_events
+            "[bft] height={} committed_round={} prevote={} precommit={} round_changes={} double_vote_events={} auth_reject_bad_sig={} auth_reject_replay={} auth_reject_stale_nonce={}",
+            height,
+            bft.committed_round,
+            bft.prevote_count,
+            bft.precommit_count,
+            bft.round_changes,
+            bft.double_vote_events,
+            bft.auth_reject_bad_sig,
+            bft.auth_reject_replay,
+            bft.auth_reject_stale_nonce
         );
         bft_committed_heights += 1;
 
@@ -766,7 +1056,7 @@ fn main() -> Result<()> {
         apply_error_total as f64 / finality_samples_ms.len() as f64
     };
     println!(
-        "[consensus] finality_p50_ms={} finality_p95_ms={} preexec_reject_total={} apply_error_total={} rollback_total={} recovery_error_rate={:.6} bft_committed_heights={} bft_round_change_total={} bft_double_vote_total={}",
+        "[consensus] finality_p50_ms={} finality_p95_ms={} preexec_reject_total={} apply_error_total={} rollback_total={} recovery_error_rate={:.6} bft_committed_heights={} bft_round_change_total={} bft_double_vote_total={} bft_auth_reject_bad_sig_total={} bft_auth_reject_replay_total={} bft_auth_reject_stale_nonce_total={}",
         finality_p50,
         finality_p95,
         preexec_reject_total,
@@ -775,7 +1065,10 @@ fn main() -> Result<()> {
         recovery_error_rate,
         bft_committed_heights,
         bft_round_change_total,
-        bft_double_vote_total
+        bft_double_vote_total,
+        bft_auth_reject_bad_sig_total,
+        bft_auth_reject_replay_total,
+        bft_auth_reject_stale_nonce_total
     );
 
     Ok(())
