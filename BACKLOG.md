@@ -50,13 +50,21 @@
   - 有明确 upgrade checklist
   - 参数迁移和兼容策略可执行
 
-### P1-2 Worker 生产级对接规范（进行中）
+### P1-2 Worker 生产级对接规范 ✅（已完成 2026-02-21）
 - 描述：冻结 worker 提交协议（重试、幂等、失败恢复）。
 - 产出：`docs/protocol/worker-onchain-integration-v1.md`
-- 最新进展（2026-02-20）：新增 `scripts/worker_onchain_contract_smoke.sh`，对 state/log 最小字段契约做可执行校验（幂等/可观测核心字段）。
+- 最新进展（2026-02-21）：
+  - `trnm-worker-agent` ack 记录新增 `commit_tx_hash/reveal_tx_hash`。
+  - `scripts/v2/worker_agent_verify_with_rpc.sh` 新增 tx_hash 非空 hard-check。
+  - `scripts/v2/worker_agent_full_loop.sh` 透传 `ACK_LOG` 并纳入 tx_hash 验证。
+  - CI 硬门禁已接入：
+    - `.github/workflows/rust-l1-nightly-health.yml`
+    - `.github/workflows/trnm-merge-gates.yml`
+  - codegen relay 20-step 实跑全绿（含 `worker_agent_full_loop` / `worker_replay_guard_test`）。
 - 验收：
   - 失败路径可重放
   - 日志字段可用于定位
+  - 回执 tx_hash 字段可追踪且为门禁必检
 
 ### P1-3 Challenge 重执行框架（简版，进行中）
 - 最新进展（2026-02-20）：补齐可执行模板脚本 `scripts/challenge_reexec_resolve_template.sh` 与 smoke `scripts/challenge_reexec_template_smoke.sh`，可一键生成 authority 回写命令模板。
