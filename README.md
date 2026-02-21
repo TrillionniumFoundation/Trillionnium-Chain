@@ -105,6 +105,11 @@ This is the canonical gate entry (used by CI + relay), covering:
 - failed receipt semantics (`status=failed` + `commit_tx_hash`)
 - resume no-duplicate convergence (restart after partial failure)
 
+For real tx environments, run the strict gate:
+```bash
+TRNM_TX_CLI=<your-real-tx-cli> ./scripts/v2/run_worker_receipt_gates_real_cli.sh
+```
+
 ### E2E Worker Smoke (new)
 From repo root:
 

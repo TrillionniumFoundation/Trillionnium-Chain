@@ -128,3 +128,9 @@ The smoke script automatically:
 REQUIRE_REAL_TX_CLI=1 ./scripts/v2/worker_real_cli_readiness.sh
 ```
 
+真实 CLI 全量门禁（readiness + receipt gates 一键）：
+
+```bash
+TRNM_TX_CLI=<your-real-tx-cli> ./scripts/v2/run_worker_receipt_gates_real_cli.sh
+```
+
