@@ -14,7 +14,11 @@ export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
 : "${TRNM_TX_ADAPTER_MODE:=command}"
 if [[ -z "${TRNM_TX_CLI:-}" ]]; then
   CANDIDATE=""
-  if command -v trnm-node >/dev/null 2>&1; then
+  if command -v trnm-cli >/dev/null 2>&1; then
+    CANDIDATE="trnm-cli"
+  elif [[ -x "$ROOT/trillionnium-rust/target/debug/trnm-cli" ]]; then
+    CANDIDATE="$ROOT/trillionnium-rust/target/debug/trnm-cli"
+  elif command -v trnm-node >/dev/null 2>&1; then
     CANDIDATE="trnm-node"
   elif [[ -x "$ROOT/trillionnium-rust/target/debug/trnm-node" ]]; then
     CANDIDATE="$ROOT/trillionnium-rust/target/debug/trnm-node"

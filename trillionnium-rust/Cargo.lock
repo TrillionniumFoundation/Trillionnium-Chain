@@ -391,6 +391,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "trnm-cli"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "clap",
+ "sha2",
+]
+
+[[package]]
 name = "trnm-executor"
 version = "0.1.0"
 dependencies = [

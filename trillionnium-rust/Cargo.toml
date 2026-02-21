@@ -9,6 +9,7 @@ members = [
   "crates/trnm-rpc",
   "crates/trnm-bench",
   "crates/trnm-worker-agent",
+  "crates/trnm-cli",
 ]
 resolver = "2"
 

@@ -4,7 +4,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 cd "$ROOT"
 
-TX_CLI="${TRNM_TX_CLI:-trnm-node}"
+TX_CLI="${TRNM_TX_CLI:-trnm-cli}"
 REQUIRE_REAL_TX_CLI="${REQUIRE_REAL_TX_CLI:-0}"
 OUT_DIR="${OUT_DIR:-$ROOT/data/worker-cli-readiness}"
 mkdir -p "$OUT_DIR"

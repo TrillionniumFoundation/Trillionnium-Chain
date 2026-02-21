@@ -108,6 +108,8 @@ This is the canonical gate entry (used by CI + relay), covering:
 For real tx environments, run the strict gate:
 ```bash
 TRNM_TX_CLI=<your-real-tx-cli> ./scripts/v2/run_worker_receipt_gates_real_cli.sh
+# Rust-native CLI (recommended)
+TRNM_TX_CLI=./trillionnium-rust/target/debug/trnm-cli ./scripts/v2/run_worker_receipt_gates_real_cli.sh
 ```
 
 ### E2E Worker Smoke (new)
