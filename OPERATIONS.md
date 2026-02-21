@@ -124,5 +124,7 @@ The smoke script automatically:
 
 ```bash
 ./scripts/v2/worker_real_cli_readiness.sh
+# 强制模式：未就绪则直接非 0 退出
+REQUIRE_REAL_TX_CLI=1 ./scripts/v2/worker_real_cli_readiness.sh
 ```
 
