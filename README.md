@@ -103,6 +103,7 @@ This is the canonical gate entry (used by CI + relay), covering:
 - full loop tx_hash hard-check
 - replay guard (rc=9)
 - failed receipt semantics (`status=failed` + `commit_tx_hash`)
+- resume no-duplicate convergence (restart after partial failure)
 
 ### E2E Worker Smoke (new)
 From repo root:

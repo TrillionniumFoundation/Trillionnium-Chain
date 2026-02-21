@@ -156,7 +156,8 @@ Worker ack 记录（`ack_log`）必须包含：
 
 通过标准：
 - 输出 `[OK] worker receipt gates passed`
-- 内部三项子门禁全部通过：
+- 内部四项子门禁全部通过：
   - full loop：`rpc verification passed + tx_hash hard-check passed`
   - replay guard：`rc=9`
   - failed receipt：`status=failed` 且包含 `commit_tx_hash`
+  - resume no-duplicate：中断恢复后收敛到 `accepted`（允许中间 `rejected/failed`）

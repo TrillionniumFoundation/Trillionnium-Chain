@@ -393,7 +393,10 @@ fn main() -> Result<()> {
                         backoff_ms
                     );
 
-                    if commit_res.ok && reveal_res.ok {
+                    let commit_idempotent_ok = commit_res.ok || commit_res.rc == 9;
+                    let reveal_idempotent_ok = reveal_res.ok || reveal_res.rc == 9;
+
+                    if commit_idempotent_ok && reveal_idempotent_ok {
                         append_ack(
                             &ack_log,
                             rec.task_id,

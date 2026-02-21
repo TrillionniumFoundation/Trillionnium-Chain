@@ -118,4 +118,5 @@ The smoke script automatically:
   1. `worker_agent_full_loop.sh`
   2. `worker_replay_guard_test.sh`
   3. `worker_failed_receipt_test.sh`
+  4. `worker_resume_no_duplicate_test.sh`
 

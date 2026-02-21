@@ -3,7 +3,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 OUT_DIR="$ROOT/run/worker-agent"
-OUT_LOG="$OUT_DIR/tx-adapter-$(date +%Y%m%d).jsonl"
+OUT_LOG="${TRNM_TX_ADAPTER_OUT_LOG:-$OUT_DIR/tx-adapter-$(date +%Y%m%d).jsonl}"
 mkdir -p "$OUT_DIR"
 
 # mode:
