@@ -10,6 +10,11 @@ ACK_LOG="${ACK_LOG:-/tmp/trnm-worker-agent-acks.jsonl}"
 cd "$ROOT/trillionnium-rust"
 export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
 
+# Gate default: prefer command-mode adapter path (closer to real tx flow).
+: "${TRNM_TX_ADAPTER_MODE:=command}"
+: "${TRNM_TX_CLI:=echo}"
+export TRNM_TX_ADAPTER_MODE TRNM_TX_CLI
+
 OUT_JSON="/tmp/trnm-worker-runonce.json"
 cargo run -q -p trnm-worker-agent -- run-once --state "$STATE" --worker worker1 --payload "demo-payload" --submit --submit-log "$SUBMIT_LOG" > "$OUT_JSON"
 
