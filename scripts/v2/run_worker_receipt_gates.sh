@@ -17,5 +17,6 @@ rm -f "$STATE" "$SUBMIT_LOG" "$ACK_LOG"
 ./scripts/v2/worker_replay_guard_test.sh
 ./scripts/v2/worker_failed_receipt_test.sh
 ./scripts/v2/worker_resume_no_duplicate_test.sh
+./scripts/v2/worker_retry_nonce_boundary_test.sh
 
 echo "[OK] worker receipt gates passed out_log=$TRNM_TX_ADAPTER_OUT_LOG run_tag=$RUN_TAG"
