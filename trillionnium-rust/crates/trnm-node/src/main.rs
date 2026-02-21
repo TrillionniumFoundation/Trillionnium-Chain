@@ -3,7 +3,7 @@ use clap::Parser;
 use serde::Deserialize;
 use sha2::{Digest, Sha256};
 use std::{
-    collections::VecDeque,
+    collections::{HashMap, HashSet, VecDeque},
     fs,
     sync::mpsc,
     thread,
@@ -35,6 +35,12 @@ struct Args {
     /// Worker count used for group parallel pre-execution
     #[arg(long, default_value_t = 4)]
     parallel_workers: usize,
+    /// Validator set size for BFT round simulation
+    #[arg(long, default_value_t = 4)]
+    validators: usize,
+    /// Byzantine validators simulated in BFT vote aggregation
+    #[arg(long, default_value_t = 0)]
+    byzantine: usize,
 }
 
 #[derive(Debug, Deserialize)]
@@ -52,6 +58,96 @@ enum MockTx {
     Reveal { task_id: u64, result_hash: Hash32, reveal_salt: [u8; 32] },
     Challenge { task_id: u64 },
     Resolve { task_id: u64, slash_worker: bool },
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum RoundStep {
+    Propose,
+    Prevote,
+    Precommit,
+    Commit,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum VoteType {
+    Prevote,
+    Precommit,
+}
+
+#[derive(Debug, Clone)]
+struct BftVote {
+    validator: String,
+    vote_type: VoteType,
+    block_hash: String,
+    byzantine: bool,
+}
+
+fn quorum_threshold(n: usize) -> usize {
+    // 2f+1 where f = floor((n-1)/3)
+    let f = n.saturating_sub(1) / 3;
+    2 * f + 1
+}
+
+fn proposer(height: u64, round: u64, n: usize) -> usize {
+    ((height + round) as usize) % n.max(1)
+}
+
+fn aggregate_votes(votes: &[BftVote], vote_type: VoteType) -> HashMap<String, usize> {
+    let mut m = HashMap::new();
+    for v in votes.iter().filter(|v| v.vote_type == vote_type) {
+        *m.entry(v.block_hash.clone()).or_insert(0) += 1;
+    }
+    m
+}
+
+fn simulate_bft_round(height: u64, round: u64, block_hash: &str, validators: usize, byzantine: usize) -> (bool, usize, usize) {
+    let n = validators.max(1);
+    let b = byzantine.min(n.saturating_sub(1));
+    let q = quorum_threshold(n);
+    let proposer_idx = proposer(height, round, n);
+    let proposer_id = format!("v{}", proposer_idx + 1);
+
+    println!("[bft] height={} round={} step={:?} proposer={} validators={} byzantine={} quorum={}", height, round, RoundStep::Propose, proposer_id, n, b, q);
+
+    let mut votes = Vec::new();
+    let bad_hash = hash32_hex(&[b"byzantine", block_hash.as_bytes()].concat());
+    for i in 0..n {
+        let vid = format!("v{}", i + 1);
+        let is_bad = i < b;
+        let vh = if is_bad { bad_hash.clone() } else { block_hash.to_string() };
+        votes.push(BftVote { validator: vid, vote_type: VoteType::Prevote, block_hash: vh, byzantine: is_bad });
+    }
+    println!("[bft] height={} round={} step={:?}", height, round, RoundStep::Prevote);
+
+    let prevote_tally = aggregate_votes(&votes, VoteType::Prevote);
+    let prevote_count = *prevote_tally.get(block_hash).unwrap_or(&0);
+
+    for i in 0..n {
+        let vid = format!("v{}", i + 1);
+        let is_bad = i < b;
+        let vote_hash = if prevote_count >= q && !is_bad { block_hash.to_string() } else { bad_hash.clone() };
+        votes.push(BftVote { validator: vid, vote_type: VoteType::Precommit, block_hash: vote_hash, byzantine: is_bad });
+    }
+    println!("[bft] height={} round={} step={:?}", height, round, RoundStep::Precommit);
+
+    let precommit_tally = aggregate_votes(&votes, VoteType::Precommit);
+    let precommit_count = *precommit_tally.get(block_hash).unwrap_or(&0);
+    let unique_voters: HashSet<String> = votes.iter().map(|v| v.validator.clone()).collect();
+    let byzantine_votes = votes.iter().filter(|v| v.byzantine).count();
+    let committed = precommit_count >= q;
+    if committed {
+        println!("[bft] height={} round={} step={:?} block_hash={} precommit={}/{} unique_voters={} byzantine_votes={}", height, round, RoundStep::Commit, block_hash, precommit_count, n, unique_voters.len(), byzantine_votes);
+    } else {
+        println!("[bft] height={} round={} step=RoundChange reason=no_quorum precommit={}/{} unique_voters={} byzantine_votes={}", height, round, precommit_count, n, unique_voters.len(), byzantine_votes);
+    }
+
+    (committed, prevote_count, precommit_count)
+}
+
+fn hash32_hex(data: &[u8]) -> String {
+    let mut hasher = Sha256::new();
+    hasher.update(data);
+    hex::encode(hasher.finalize())
 }
 
 fn load_config(path: &str) -> Result<NodeConfig> {
@@ -365,6 +461,7 @@ fn main() -> Result<()> {
     println!("[node] block_ms={} max_blocks={}", args.block_ms, args.max_blocks);
     println!("[node] load demo_tasks={} demo_keys={}", args.demo_tasks, args.demo_keys);
     println!("[node] parallel_workers={}", args.parallel_workers);
+    println!("[node] bft validators={} byzantine={}", args.validators, args.byzantine);
 
     let mut state = StateStore::new();
     let mut mempool = build_demo_mempool(args.demo_tasks, args.demo_keys);
@@ -374,6 +471,8 @@ fn main() -> Result<()> {
     let mut preexec_reject_total: u64 = 0;
     let mut apply_error_total: u64 = 0;
     let mut rollback_total: u64 = 0;
+    let mut bft_committed_heights: u64 = 0;
+    let mut bft_round_change_total: u64 = 0;
 
     loop {
         let block_start = Instant::now();
@@ -384,6 +483,21 @@ fn main() -> Result<()> {
                 picked.push(tx);
             }
         }
+
+        let proposal_hash = hash32_hex(format!("h:{}:txs:{}", height, picked.len()).as_bytes());
+        let (bft_committed, _pv, _pc) = simulate_bft_round(height, 0, &proposal_hash, args.validators, args.byzantine);
+        if !bft_committed {
+            bft_round_change_total += 1;
+            println!("[block] node={} height={} skipped reason=bft_no_commit proposal_hash={}", cfg.node_id, height, proposal_hash);
+            if args.max_blocks > 0 && height >= args.max_blocks {
+                println!("[node] reached max_blocks={}, exiting", args.max_blocks);
+                break;
+            }
+            height += 1;
+            thread::sleep(Duration::from_millis(args.block_ms));
+            continue;
+        }
+        bft_committed_heights += 1;
 
         let plan: Vec<Tx> = picked
             .iter()
@@ -456,13 +570,15 @@ fn main() -> Result<()> {
         apply_error_total as f64 / finality_samples_ms.len() as f64
     };
     println!(
-        "[consensus] finality_p50_ms={} finality_p95_ms={} preexec_reject_total={} apply_error_total={} rollback_total={} recovery_error_rate={:.6}",
+        "[consensus] finality_p50_ms={} finality_p95_ms={} preexec_reject_total={} apply_error_total={} rollback_total={} recovery_error_rate={:.6} bft_committed_heights={} bft_round_change_total={}",
         finality_p50,
         finality_p95,
         preexec_reject_total,
         apply_error_total,
         rollback_total,
-        recovery_error_rate
+        recovery_error_rate,
+        bft_committed_heights,
+        bft_round_change_total
     );
 
     Ok(())

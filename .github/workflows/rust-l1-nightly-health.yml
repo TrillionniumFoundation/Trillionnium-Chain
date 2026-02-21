@@ -80,6 +80,13 @@ jobs:
           cd trillionnium-rust
           ./scripts/check_event_replay_smoke.sh
 
+      - name: BFT 4-node consensus smoke (hard gate)
+        run: |
+          set -euo pipefail
+          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+          cd trillionnium-rust
+          ./scripts/check_bft_4node_smoke.sh
+
       - name: Challenge reexec bundle smoke (hard gate)
         run: |
           set -euo pipefail
@@ -286,6 +293,8 @@ jobs:
             trillionnium-rust/run/event-field-check.log
             trillionnium-rust/run/event-replay-smoke.log
             trillionnium-rust/run/parallel-sanity-flaky-*.log
+            trillionnium-rust/run/bft4-*.txt
+            trillionnium-rust/run/bft4-node*.log
             data/reexec-smoke/**
             data/reexec-bundles/**
             data/worker-onboard/**
