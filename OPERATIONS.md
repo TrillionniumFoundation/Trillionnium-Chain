@@ -134,6 +134,8 @@ REQUIRE_REAL_TX_CLI=1 ./scripts/v2/worker_real_cli_readiness.sh
 TRNM_TX_CLI=<your-real-tx-cli> ./scripts/v2/run_worker_receipt_gates_real_cli.sh
 # 本地最小示例（wrapper）
 TRNM_TX_CLI=./scripts/v2/trnm_tx_cli_wrapper.sh ./scripts/v2/run_worker_receipt_gates_real_cli.sh
+# Rust-native CLI（先 build）
+TRNM_TX_CLI=./trillionnium-rust/target/debug/trnm-cli ./scripts/v2/run_worker_receipt_gates_real_cli.sh
 # 真实链适配器（按环境变量配置真实 tx 命令）
 TRNM_TX_CLI=./scripts/v2/trnm_tx_cli_real_adapter.sh ./scripts/v2/run_worker_receipt_gates_real_cli.sh
 ```

@@ -3,7 +3,7 @@ use clap::{Parser, Subcommand};
 use sha2::{Digest, Sha256};
 
 #[derive(Debug, Parser)]
-#[command(name = "trnm-cli", version, about = "Trillionnium Rust-native CLI")]
+#[command(name = "trnm-cli", version, about = "Trillionnium native CLI (tx MVP)")]
 struct Args {
     #[command(subcommand)]
     cmd: Command,
@@ -13,7 +13,7 @@ struct Args {
 enum Command {
     Tx {
         #[command(subcommand)]
-        cmd: TxCommand,
+        tx: TxCommand,
     },
 }
 
@@ -32,29 +32,28 @@ enum TxCommand {
     },
 }
 
-fn digest(parts: &[String]) -> String {
-    let payload = parts.join("|");
+fn hash(parts: &[&str]) -> String {
     let mut h = Sha256::new();
-    h.update(payload.as_bytes());
-    format!("{:x}", h.finalize())
+    h.update(parts.join("|").as_bytes());
+    hex::encode(h.finalize())
 }
 
 fn main() -> Result<()> {
     let args = Args::parse();
     match args.cmd {
-        Command::Tx { cmd } => match cmd {
+        Command::Tx { tx } => match tx {
             TxCommand::CommitResult {
                 task_id,
                 worker,
                 commit_hash,
                 nonce,
             } => {
-                let tx_hash = digest(&[
-                    "commit-result".to_string(),
-                    task_id.to_string(),
-                    worker,
-                    commit_hash,
-                    nonce.to_string(),
+                let tx_hash = hash(&[
+                    "commit-result",
+                    &task_id.to_string(),
+                    &worker,
+                    &commit_hash,
+                    &nonce.to_string(),
                 ]);
                 println!("tx_hash={}", tx_hash);
             }
@@ -63,11 +62,11 @@ fn main() -> Result<()> {
                 result_hash,
                 salt_hex,
             } => {
-                let tx_hash = digest(&[
-                    "reveal-result".to_string(),
-                    task_id.to_string(),
-                    result_hash,
-                    salt_hex,
+                let tx_hash = hash(&[
+                    "reveal-result",
+                    &task_id.to_string(),
+                    &result_hash,
+                    &salt_hex,
                 ]);
                 println!("tx_hash={}", tx_hash);
             }
