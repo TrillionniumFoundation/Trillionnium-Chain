@@ -220,6 +220,17 @@ fn emit_event(
     }
 }
 
+fn is_high_risk_tx(tx: &MockTx) -> bool {
+    matches!(
+        tx,
+        MockTx::CreateTask { .. }
+            | MockTx::AcceptTask { .. }
+            | MockTx::Commit { .. }
+            | MockTx::Reveal { .. }
+            | MockTx::Challenge { .. }
+    )
+}
+
 fn apply_one(st: &mut StateStore, tx: MockTx) -> Result<()> {
     match tx {
         MockTx::CreateTask {
@@ -393,6 +404,16 @@ fn main() -> Result<()> {
                 let tx = picked[idx].clone();
                 let task_id = task_id_of(&tx);
                 let from_status = status_name(&state, task_id);
+
+                if state.is_emergency_paused() && is_high_risk_tx(&tx) {
+                    println!(
+                        "[tx] rejected_by_pause height={} tx_id={} event_type={} emergency_pause=true",
+                        height,
+                        id,
+                        event_type_of(&tx)
+                    );
+                    continue;
+                }
 
                 let before = state.clone();
                 if let Err(e) = apply_one(&mut state, tx.clone()) {

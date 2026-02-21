@@ -169,6 +169,7 @@ impl StateStore {
             "max_parallel_workers",
             "min_worker_stake",
             "challenge_window_blocks",
+            "emergency_pause",
         ];
         if !ALLOWED_KEYS.contains(&key.as_str()) {
             return Err(format!("governance key not allowed: {}", key));
@@ -207,6 +208,13 @@ impl StateStore {
             );
             Ok(ObjectRef { id: key_id, version: 1 })
         }
+    }
+
+    pub fn is_emergency_paused(&self) -> bool {
+        self.objects.values().any(|v| match &v.value {
+            ObjectValue::GovParam(p) => p.key == "emergency_pause" && p.value == "true",
+            _ => false,
+        })
     }
 
     pub fn state_root(&self) -> Hash32 {
@@ -345,5 +353,19 @@ mod tests {
             .set_gov_param(7002, "forbidden_key".into(), "1".into())
             .unwrap_err();
         assert!(err.contains("not allowed"));
+    }
+
+    #[test]
+    fn emergency_pause_flag_works() {
+        let mut st = StateStore::new();
+        assert!(!st.is_emergency_paused());
+
+        st.set_gov_param(7999, "emergency_pause".into(), "true".into())
+            .unwrap();
+        assert!(st.is_emergency_paused());
+
+        st.set_gov_param(7999, "emergency_pause".into(), "false".into())
+            .unwrap();
+        assert!(!st.is_emergency_paused());
     }
 }
