@@ -101,6 +101,16 @@ struct AckRecord {
     ts_unix_ms: u128,
     task_id: u64,
     status: String,
+    commit_tx_hash: Option<String>,
+    reveal_tx_hash: Option<String>,
+}
+
+#[derive(Debug)]
+struct AdapterExecResult {
+    ok: bool,
+    rc: i32,
+    tx_hash: Option<String>,
+    terminal: bool,
 }
 
 fn commitment(task_id: u64, result_hash_hex: &str, salt_hex: &str, worker: &str) -> String {
@@ -183,11 +193,19 @@ fn load_acked(ack_log: &PathBuf) -> HashSet<u64> {
     set
 }
 
-fn append_ack(ack_log: &PathBuf, task_id: u64, status: &str) -> Result<()> {
+fn append_ack(
+    ack_log: &PathBuf,
+    task_id: u64,
+    status: &str,
+    commit_tx_hash: Option<String>,
+    reveal_tx_hash: Option<String>,
+) -> Result<()> {
     let rec = AckRecord {
         ts_unix_ms: now_ms(),
         task_id,
         status: status.to_string(),
+        commit_tx_hash,
+        reveal_tx_hash,
     };
     let line = serde_json::to_string(&rec)?;
     let mut old = if ack_log.exists() { fs::read_to_string(ack_log)? } else { String::new() };
@@ -197,17 +215,57 @@ fn append_ack(ack_log: &PathBuf, task_id: u64, status: &str) -> Result<()> {
     Ok(())
 }
 
-fn run_adapter_with_retry(cmd: &str, max_retries: u32, backoff_ms: u64) -> Result<bool> {
+fn parse_tx_hash(text: &str) -> Option<String> {
+    text.split_whitespace()
+        .find_map(|w| w.strip_prefix("tx_hash=").map(|s| s.to_string()))
+}
+
+fn run_adapter_with_retry(cmd: &str, max_retries: u32, backoff_ms: u64) -> Result<AdapterExecResult> {
+    let mut last_rc = 1;
+    let mut last_tx_hash: Option<String> = None;
+
     for attempt in 0..=max_retries {
-        let ok = ProcCommand::new("sh").arg("-lc").arg(cmd).status()?.success();
-        if ok {
-            return Ok(true);
+        let out = ProcCommand::new("sh").arg("-lc").arg(cmd).output()?;
+        let rc = out.status.code().unwrap_or(1);
+        let stdout = String::from_utf8_lossy(&out.stdout);
+        let stderr = String::from_utf8_lossy(&out.stderr);
+        let tx_hash = parse_tx_hash(&stdout).or_else(|| parse_tx_hash(&stderr));
+
+        if out.status.success() {
+            return Ok(AdapterExecResult {
+                ok: true,
+                rc,
+                tx_hash,
+                terminal: true,
+            });
         }
+
+        last_rc = rc;
+        if tx_hash.is_some() {
+            last_tx_hash = tx_hash;
+        }
+
+        // duplicate(9) / nonce_rejected(10) are deterministic rejections, no retry.
+        if rc == 9 || rc == 10 {
+            return Ok(AdapterExecResult {
+                ok: false,
+                rc,
+                tx_hash: last_tx_hash,
+                terminal: true,
+            });
+        }
+
         if attempt < max_retries {
             thread::sleep(Duration::from_millis(backoff_ms * (attempt as u64 + 1)));
         }
     }
-    Ok(false)
+
+    Ok(AdapterExecResult {
+        ok: false,
+        rc: last_rc,
+        tx_hash: last_tx_hash,
+        terminal: false,
+    })
 }
 
 fn main() -> Result<()> {
@@ -318,22 +376,40 @@ fn main() -> Result<()> {
                     let cmd1 = format!("{} commit {} {} {} {}", adapter_cmd, rec.task_id, rec.worker, rec.commit_hash, nonce);
                     let cmd2 = format!("{} reveal {} {} {}", adapter_cmd, rec.task_id, rec.result_hash, rec.salt_hex);
 
-                    let commit_ok = run_adapter_with_retry(&cmd1, max_retries, backoff_ms)?;
-                    let reveal_ok = run_adapter_with_retry(&cmd2, max_retries, backoff_ms)?;
+                    let commit_res = run_adapter_with_retry(&cmd1, max_retries, backoff_ms)?;
+                    let reveal_res = run_adapter_with_retry(&cmd2, max_retries, backoff_ms)?;
 
                     println!(
-                        "[submitted] task_id={} commit_ok={} reveal_ok={} adapter={} retries={} backoff_ms={}",
+                        "[submitted] task_id={} commit_ok={} reveal_ok={} commit_rc={} reveal_rc={} commit_tx_hash={} reveal_tx_hash={} adapter={} retries={} backoff_ms={}",
                         rec.task_id,
-                        commit_ok,
-                        reveal_ok,
+                        commit_res.ok,
+                        reveal_res.ok,
+                        commit_res.rc,
+                        reveal_res.rc,
+                        commit_res.tx_hash.as_deref().unwrap_or("-"),
+                        reveal_res.tx_hash.as_deref().unwrap_or("-"),
                         adapter_cmd,
                         max_retries,
                         backoff_ms
                     );
 
-                    if commit_ok && reveal_ok {
-                        append_ack(&ack_log, rec.task_id, "accepted")?;
+                    if commit_res.ok && reveal_res.ok {
+                        append_ack(
+                            &ack_log,
+                            rec.task_id,
+                            "accepted",
+                            commit_res.tx_hash,
+                            reveal_res.tx_hash,
+                        )?;
                         acked.insert(rec.task_id);
+                    } else if commit_res.terminal || reveal_res.terminal {
+                        append_ack(
+                            &ack_log,
+                            rec.task_id,
+                            "rejected",
+                            commit_res.tx_hash,
+                            reveal_res.tx_hash,
+                        )?;
                     }
                 }
             }

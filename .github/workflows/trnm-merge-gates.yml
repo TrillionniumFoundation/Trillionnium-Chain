@@ -69,6 +69,13 @@ jobs:
           cd trillionnium-rust
           ./scripts/check_event_replay_smoke.sh
 
+      - name: Worker-agent tx-hash receipt hard gate
+        run: |
+          set -euo pipefail
+          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+          ./scripts/v2/worker_agent_full_loop.sh
+          ./scripts/v2/worker_replay_guard_test.sh
+
       - name: Aggressive regression check (PR-visible warn)
         if: github.event_name == 'pull_request'
         run: |
