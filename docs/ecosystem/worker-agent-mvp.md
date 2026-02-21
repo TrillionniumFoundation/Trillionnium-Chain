@@ -35,6 +35,16 @@ Submission relay execute (local adapter, with retry + ack dedupe):
 cargo run -q -p trnm-worker-agent -- flush-submissions --submit-log /tmp/trnm-worker-agent-submits.jsonl --execute --adapter-cmd "./scripts/worker_tx_adapter.sh" --max-retries 3 --backoff-ms 200 --ack-log /tmp/trnm-worker-agent-acks.jsonl
 ```
 
+Adapter modes:
+- `TRNM_TX_ADAPTER_MODE=mock`（默认，本地 receipt）
+- `TRNM_TX_ADAPTER_MODE=command`（调用外部 tx cli）
+- `TRNM_TX_CLI=<your_cli>`（例如先用 `echo` 演练）
+
+示例：
+```bash
+TRNM_TX_ADAPTER_MODE=command TRNM_TX_CLI=echo ./scripts/v2/worker_agent_full_loop.sh
+```
+
 RPC verification:
 ```bash
 ./scripts/v2/worker_agent_verify_with_rpc.sh 42
