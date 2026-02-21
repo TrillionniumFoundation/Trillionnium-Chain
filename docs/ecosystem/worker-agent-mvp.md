@@ -34,3 +34,13 @@ Submission relay execute (local adapter):
 ```bash
 cargo run -q -p trnm-worker-agent -- flush-submissions --submit-log /tmp/trnm-worker-agent-submits.jsonl --execute --adapter-cmd "./scripts/worker_tx_adapter.sh"
 ```
+
+RPC verification:
+```bash
+./scripts/v2/worker_agent_verify_with_rpc.sh 42
+```
+
+Full loop (run-once -> submit -> relay execute -> rpc verify):
+```bash
+./scripts/v2/worker_agent_full_loop.sh
+```

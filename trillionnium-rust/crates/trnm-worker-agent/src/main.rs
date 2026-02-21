@@ -221,7 +221,7 @@ fn main() -> Result<()> {
             };
             println!("{}", serde_json::to_string_pretty(&out)?);
             if submit {
-                println!("submitted=true submit_log={}", submit_log.display());
+                eprintln!("submitted=true submit_log={}", submit_log.display());
             }
         }
         Command::FlushSubmissions {
