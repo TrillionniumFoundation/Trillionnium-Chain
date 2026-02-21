@@ -88,6 +88,7 @@ struct SubmissionRecord {
     ts_unix_ms: u128,
     task_id: u64,
     worker: String,
+    nonce: Option<u64>,
     commit_hash: String,
     result_hash: String,
     salt_hex: String,
@@ -143,12 +144,14 @@ fn append_submission(
     result_hash: &str,
     salt_hex: &str,
 ) -> Result<()> {
-    let commit_cmd = format!("trnm-node tx commit-result {} {} {}", task_id, worker, commit_hash);
+    let nonce = task_id;
+    let commit_cmd = format!("trnm-node tx commit-result {} {} {} {}", task_id, worker, commit_hash, nonce);
     let reveal_cmd = format!("trnm-node tx reveal-result {} {} {}", task_id, result_hash, salt_hex);
     let rec = SubmissionRecord {
         ts_unix_ms: now_ms(),
         task_id,
         worker: worker.to_string(),
+        nonce: Some(nonce),
         commit_hash: commit_hash.to_string(),
         result_hash: result_hash.to_string(),
         salt_hex: salt_hex.to_string(),
@@ -236,8 +239,8 @@ fn main() -> Result<()> {
             println!("[agent] task_id={} worker={}", task_id, worker);
             println!("commit_hash={}", c);
             println!(
-                "template_commit=trnm-node tx commit-result {} {} {}",
-                task_id, worker, c
+                "template_commit=trnm-node tx commit-result {} {} {} {}",
+                task_id, worker, c, task_id
             );
             println!(
                 "template_reveal=trnm-node tx reveal-result {} {} {}",
@@ -268,8 +271,8 @@ fn main() -> Result<()> {
                 salt_hex: salt_hex.clone(),
                 commit_hash: commit_hash.clone(),
                 template_commit: format!(
-                    "trnm-node tx commit-result {} {} {}",
-                    task_id, worker, commit_hash
+                    "trnm-node tx commit-result {} {} {} {}",
+                    task_id, worker, commit_hash, task_id
                 ),
                 template_reveal: format!(
                     "trnm-node tx reveal-result {} {} {}",
@@ -311,7 +314,8 @@ fn main() -> Result<()> {
                     println!("[dry-run] adapter={} commit {} {} {}", adapter_cmd, rec.task_id, rec.worker, rec.commit_hash);
                     println!("[dry-run] adapter={} reveal {} {} {}", adapter_cmd, rec.task_id, rec.result_hash, rec.salt_hex);
                 } else {
-                    let cmd1 = format!("{} commit {} {} {}", adapter_cmd, rec.task_id, rec.worker, rec.commit_hash);
+                    let nonce = rec.nonce.unwrap_or(rec.task_id);
+                    let cmd1 = format!("{} commit {} {} {} {}", adapter_cmd, rec.task_id, rec.worker, rec.commit_hash, nonce);
                     let cmd2 = format!("{} reveal {} {} {}", adapter_cmd, rec.task_id, rec.result_hash, rec.salt_hex);
 
                     let commit_ok = run_adapter_with_retry(&cmd1, max_retries, backoff_ms)?;

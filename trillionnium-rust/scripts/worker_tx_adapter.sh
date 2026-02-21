@@ -39,16 +39,25 @@ if [[ "$kind" == "commit" ]]; then
   task_id="${2:-}"
   worker="${3:-}"
   commit_hash="${4:-}"
-  [[ -n "$task_id" && -n "$worker" && -n "$commit_hash" ]] || { echo "invalid commit args" >&2; exit 2; }
+  nonce="${5:-$task_id}"
+  [[ -n "$task_id" && -n "$worker" && -n "$commit_hash" && -n "$nonce" ]] || { echo "invalid commit args" >&2; exit 2; }
 
   if is_replay "commit" "$task_id"; then
-    printf '{"ts":%s,"mode":"%s","kind":"commit","task_id":%s,"worker":"%s","commit_hash":"%s","status":"duplicate","rc":9}\n' \
-      "$ts" "$MODE" "$task_id" "$worker" "$commit_hash" >> "$OUT_LOG"
+    printf '{"ts":%s,"mode":"%s","kind":"commit","task_id":%s,"worker":"%s","commit_hash":"%s","nonce":%s,"status":"duplicate","rc":9}\n' \
+      "$ts" "$MODE" "$task_id" "$worker" "$commit_hash" "$nonce" >> "$OUT_LOG"
     echo "[adapter] commit replay rejected task_id=$task_id" >&2
     exit 9
   fi
 
-  cmd="${TX_CLI:-echo} tx commit-result $task_id $worker $commit_hash"
+  last_nonce=$(grep '"kind":"commit"' "$OUT_LOG" 2>/dev/null | grep '"worker":"'"$worker"'"' | grep '"status":"accepted"' | sed -n 's/.*"nonce":\([0-9]*\).*/\1/p' | tail -n1 || true)
+  if [[ -n "$last_nonce" ]] && [[ "$nonce" -le "$last_nonce" ]]; then
+    printf '{"ts":%s,"mode":"%s","kind":"commit","task_id":%s,"worker":"%s","commit_hash":"%s","nonce":%s,"status":"nonce_rejected","rc":10}\n' \
+      "$ts" "$MODE" "$task_id" "$worker" "$commit_hash" "$nonce" >> "$OUT_LOG"
+    echo "[adapter] commit nonce rejected task_id=$task_id nonce=$nonce last_nonce=$last_nonce" >&2
+    exit 10
+  fi
+
+  cmd="${TX_CLI:-echo} tx commit-result $task_id $worker $commit_hash $nonce"
 
   if [[ "$MODE" == "command" ]]; then
     set +e
@@ -58,8 +67,8 @@ if [[ "$kind" == "commit" ]]; then
     status="failed"
     [[ $rc -eq 0 ]] && status="accepted"
     tx_hash=$(receipt_hash "$kind|$task_id|$worker|$commit_hash|$ts|$output")
-    printf '{"ts":%s,"mode":"%s","kind":"commit","task_id":%s,"worker":"%s","commit_hash":"%s","tx_hash":"%s","status":"%s","rc":%s}\n' \
-      "$ts" "$MODE" "$task_id" "$worker" "$commit_hash" "$tx_hash" "$status" "$rc" >> "$OUT_LOG"
+    printf '{"ts":%s,"mode":"%s","kind":"commit","task_id":%s,"worker":"%s","commit_hash":"%s","nonce":%s,"tx_hash":"%s","status":"%s","rc":%s}\n' \
+      "$ts" "$MODE" "$task_id" "$worker" "$commit_hash" "$nonce" "$tx_hash" "$status" "$rc" >> "$OUT_LOG"
     if [[ $rc -ne 0 ]]; then
       echo "[adapter] commit failed task_id=$task_id rc=$rc" >&2
       echo "$output" >&2
@@ -68,8 +77,8 @@ if [[ "$kind" == "commit" ]]; then
     echo "[adapter] commit accepted task_id=$task_id worker=$worker tx_hash=$tx_hash"
   else
     tx_hash=$(receipt_hash "$kind|$task_id|$worker|$commit_hash|$ts")
-    printf '{"ts":%s,"mode":"%s","kind":"commit","task_id":%s,"worker":"%s","commit_hash":"%s","tx_hash":"%s","status":"accepted","rc":0}\n' \
-      "$ts" "$MODE" "$task_id" "$worker" "$commit_hash" "$tx_hash" >> "$OUT_LOG"
+    printf '{"ts":%s,"mode":"%s","kind":"commit","task_id":%s,"worker":"%s","commit_hash":"%s","nonce":%s,"tx_hash":"%s","status":"accepted","rc":0}\n' \
+      "$ts" "$MODE" "$task_id" "$worker" "$commit_hash" "$nonce" "$tx_hash" >> "$OUT_LOG"
     echo "[adapter] commit accepted task_id=$task_id worker=$worker tx_hash=$tx_hash"
   fi
 else

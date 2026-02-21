@@ -40,6 +40,11 @@ Adapter modes:
 - `TRNM_TX_ADAPTER_MODE=command`（调用外部 tx cli）
 - `TRNM_TX_CLI=<your_cli>`（例如先用 `echo` 演练）
 
+安全约束（当前版本）：
+- adapter 级重放拒绝（同 task 的重复 commit/reveal）
+- commit nonce 单调递增检查（按 worker）
+- flush 阶段 ack 去重 + retry/backoff
+
 示例：
 ```bash
 TRNM_TX_ADAPTER_MODE=command TRNM_TX_CLI=echo ./scripts/v2/worker_agent_full_loop.sh
