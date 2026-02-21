@@ -4,6 +4,13 @@ use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::{collections::HashSet, fs, path::PathBuf, process::Command as ProcCommand, thread, time::{Duration, SystemTime, UNIX_EPOCH}};
 
+const DEFAULT_MAX_RETRIES: u32 = 3;
+const DEFAULT_BACKOFF_MS: u64 = 200;
+
+const RC_OK: i32 = 0;
+const RC_DUPLICATE: i32 = 9;
+const RC_NONCE_REJECTED: i32 = 10;
+
 #[derive(Debug, Parser)]
 #[command(name = "trnm-worker-agent", version, about = "Trillionnium PoUW worker-agent (MVP skeleton)")]
 struct Args {
@@ -58,9 +65,9 @@ enum Command {
         execute: bool,
         #[arg(long, default_value = "./scripts/worker_tx_adapter.sh")]
         adapter_cmd: String,
-        #[arg(long, default_value_t = 3)]
+        #[arg(long, default_value_t = DEFAULT_MAX_RETRIES)]
         max_retries: u32,
-        #[arg(long, default_value_t = 200)]
+        #[arg(long, default_value_t = DEFAULT_BACKOFF_MS)]
         backoff_ms: u64,
         #[arg(long, default_value = "/tmp/trnm-worker-agent-acks.jsonl")]
         ack_log: PathBuf,
@@ -220,6 +227,18 @@ fn parse_tx_hash(text: &str) -> Option<String> {
         .find_map(|w| w.strip_prefix("tx_hash=").map(|s| s.to_string()))
 }
 
+fn is_deterministic_rejection(rc: i32) -> bool {
+    matches!(rc, RC_DUPLICATE | RC_NONCE_REJECTED)
+}
+
+fn is_idempotent_duplicate_ok(rc: i32) -> bool {
+    rc == RC_DUPLICATE
+}
+
+fn backoff_delay_ms(base_ms: u64, attempt: u32) -> u64 {
+    base_ms.saturating_mul(attempt as u64 + 1)
+}
+
 fn run_adapter_with_retry(cmd: &str, max_retries: u32, backoff_ms: u64) -> Result<AdapterExecResult> {
     let mut last_rc = 1;
     let mut last_tx_hash: Option<String> = None;
@@ -234,7 +253,7 @@ fn run_adapter_with_retry(cmd: &str, max_retries: u32, backoff_ms: u64) -> Resul
         if out.status.success() {
             return Ok(AdapterExecResult {
                 ok: true,
-                rc,
+                rc: RC_OK,
                 tx_hash,
                 terminal: true,
             });
@@ -245,8 +264,8 @@ fn run_adapter_with_retry(cmd: &str, max_retries: u32, backoff_ms: u64) -> Resul
             last_tx_hash = tx_hash;
         }
 
-        // duplicate(9) / nonce_rejected(10) are deterministic rejections, no retry.
-        if rc == 9 || rc == 10 {
+        // deterministic rejections (duplicate/nonce_rejected) should not retry.
+        if is_deterministic_rejection(rc) {
             return Ok(AdapterExecResult {
                 ok: false,
                 rc,
@@ -256,7 +275,7 @@ fn run_adapter_with_retry(cmd: &str, max_retries: u32, backoff_ms: u64) -> Resul
         }
 
         if attempt < max_retries {
-            thread::sleep(Duration::from_millis(backoff_ms * (attempt as u64 + 1)));
+            thread::sleep(Duration::from_millis(backoff_delay_ms(backoff_ms, attempt)));
         }
     }
 
@@ -266,6 +285,36 @@ fn run_adapter_with_retry(cmd: &str, max_retries: u32, backoff_ms: u64) -> Resul
         tx_hash: last_tx_hash,
         terminal: false,
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn deterministic_rejection_codes_are_stable() {
+        assert!(is_deterministic_rejection(RC_DUPLICATE));
+        assert!(is_deterministic_rejection(RC_NONCE_REJECTED));
+        assert!(!is_deterministic_rejection(RC_OK));
+        assert!(!is_deterministic_rejection(42));
+    }
+
+    #[test]
+    fn idempotent_only_accepts_duplicate() {
+        assert!(is_idempotent_duplicate_ok(RC_DUPLICATE));
+        assert!(!is_idempotent_duplicate_ok(RC_NONCE_REJECTED));
+        assert!(!is_idempotent_duplicate_ok(RC_OK));
+    }
+
+    #[test]
+    fn backoff_delay_is_linear_and_saturating() {
+        assert_eq!(backoff_delay_ms(200, 0), 200);
+        assert_eq!(backoff_delay_ms(200, 1), 400);
+        assert_eq!(backoff_delay_ms(200, 2), 600);
+
+        // saturation guard (no overflow panic/wrap)
+        assert_eq!(backoff_delay_ms(u64::MAX, 1), u64::MAX);
+    }
 }
 
 fn main() -> Result<()> {
@@ -393,35 +442,33 @@ fn main() -> Result<()> {
                         backoff_ms
                     );
 
-                    let commit_idempotent_ok = commit_res.ok || commit_res.rc == 9;
-                    let reveal_idempotent_ok = reveal_res.ok || reveal_res.rc == 9;
+                    let commit_idempotent_ok = commit_res.ok || is_idempotent_duplicate_ok(commit_res.rc);
+                    let reveal_idempotent_ok = reveal_res.ok || is_idempotent_duplicate_ok(reveal_res.rc);
 
-                    if commit_idempotent_ok && reveal_idempotent_ok {
-                        append_ack(
-                            &ack_log,
-                            rec.task_id,
-                            "accepted",
-                            commit_res.tx_hash,
-                            reveal_res.tx_hash,
-                        )?;
-                        acked.insert(rec.task_id);
+                    let (ack_status, ack_reason) = if commit_idempotent_ok && reveal_idempotent_ok {
+                        ("accepted", format!("idempotent-ok commit_rc={} reveal_rc={}", commit_res.rc, reveal_res.rc))
                     } else if commit_res.terminal || reveal_res.terminal {
-                        append_ack(
-                            &ack_log,
-                            rec.task_id,
-                            "rejected",
-                            commit_res.tx_hash,
-                            reveal_res.tx_hash,
-                        )?;
+                        ("rejected", format!("deterministic-rejection commit_rc={} reveal_rc={}", commit_res.rc, reveal_res.rc))
                     } else {
-                        append_ack(
-                            &ack_log,
-                            rec.task_id,
-                            "failed",
-                            commit_res.tx_hash,
-                            reveal_res.tx_hash,
-                        )?;
+                        ("failed", format!("transient-or-exhausted-retries commit_rc={} reveal_rc={}", commit_res.rc, reveal_res.rc))
+                    };
+
+                    append_ack(
+                        &ack_log,
+                        rec.task_id,
+                        ack_status,
+                        commit_res.tx_hash,
+                        reveal_res.tx_hash,
+                    )?;
+
+                    if ack_status == "accepted" {
+                        acked.insert(rec.task_id);
                     }
+
+                    println!(
+                        "[ack] task_id={} status={} reason={}",
+                        rec.task_id, ack_status, ack_reason
+                    );
                 }
             }
             println!("[agent] flushed_records={} skipped={} execute={} ack_log={}", n, skipped, execute, ack_log.display());

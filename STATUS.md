@@ -1,7 +1,9 @@
 # TrillionniumChain STATUS
 
-更新日期：2026-02-19（22:12 CST）
+更新日期：2026-02-21（17:22 CST）
 负责人：齐教授 / 发发
+
+> 2026-02-21 增量对外摘要见：`docs/reports/changelog-and-next-milestones-20260221.md`
 
 ## 1) 当前状态（可发布基线视角）
 
@@ -467,3 +469,19 @@
   - 报告：`docs/reports/codegen-pipeline-run-20260221-round3.md`
 - 对应提交：
   - `6f469e2` / `64f2694` / `d0d7c4a` / `e6fb46c` / `c22fae5`
+
+## 35) Worker 回执边界门禁补强（2026-02-21 17:25~17:33 CST）
+
+- 新增门禁脚本：`scripts/v2/worker_retry_nonce_boundary_test.sh`
+  - 注入 2 次 commit 瞬时失败，验证 retry/backoff 后可收敛成功。
+  - 验证 replay guard：`rc=9`。
+  - 验证 nonce monotonic guard：`rc=10`。
+- 主门禁入口已接入：`scripts/v2/run_worker_receipt_gates.sh`
+  - 当前覆盖：full-loop / replay / failed-receipt / resume-no-duplicate / retry+nonce-boundary。
+- `trnm-worker-agent` 小重构：
+  - 错误码与默认重试参数常量化（去除 magic number）。
+  - 新增 ack 语义日志：`accepted|rejected|failed + reason(commit_rc/reveal_rc)`。
+  - 新增 crate 内单测 3 项（错误码分类 + idempotent 语义 + backoff 线性/饱和）。
+- 本地验证：
+  - `cargo test -p trnm-worker-agent` 全绿（3/3）。
+  - `./scripts/v2/run_worker_receipt_gates.sh` 全绿。

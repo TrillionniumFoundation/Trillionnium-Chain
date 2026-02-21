@@ -102,6 +102,8 @@ From repo root:
 This is the canonical gate entry (used by CI + relay), covering:
 - full loop tx_hash hard-check
 - replay guard (rc=9)
+- nonce monotonic guard (rc=10)
+- retry/backoff boundary (transient failures then converge)
 - failed receipt semantics (`status=failed` + `commit_tx_hash`)
 - resume no-duplicate convergence (restart after partial failure)
 
@@ -110,6 +112,11 @@ For real tx environments, run the strict gate:
 TRNM_TX_CLI=<your-real-tx-cli> ./scripts/v2/run_worker_receipt_gates_real_cli.sh
 # Rust-native CLI (recommended)
 TRNM_TX_CLI=./trillionnium-rust/target/debug/trnm-cli ./scripts/v2/run_worker_receipt_gates_real_cli.sh
+```
+
+Boundary test can also be run standalone:
+```bash
+./scripts/v2/worker_retry_nonce_boundary_test.sh
 ```
 
 ### E2E Worker Smoke (new)
