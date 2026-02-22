@@ -695,6 +695,8 @@ dependencies = [
 name = "trnm-state"
 version = "0.1.0"
 dependencies = [
+ "hex",
+ "serde",
  "sha2",
  "trnm-types",
 ]

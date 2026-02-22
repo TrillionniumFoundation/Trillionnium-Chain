@@ -1,3 +1,4 @@
+use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::collections::BTreeMap;
 use trnm_types::{
@@ -20,6 +21,40 @@ pub struct StateStore {
 struct VersionedObject {
     version: u64,
     value: ObjectValue,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct CheckpointMeta {
+    pub height: u64,
+    pub state_root_hex: String,
+    pub wal_entry_hash_hex: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct WalMeta {
+    pub height: u64,
+    pub round: u64,
+    pub proposal_hash: String,
+    pub committed: bool,
+    pub state_root_hex: String,
+    pub prev_hash_hex: Option<String>,
+}
+
+impl WalMeta {
+    pub fn content_hash_hex(&self) -> String {
+        let mut hasher = Sha256::new();
+        hasher.update(self.height.to_le_bytes());
+        hasher.update(self.round.to_le_bytes());
+        hasher.update(self.proposal_hash.as_bytes());
+        hasher.update([self.committed as u8]);
+        hasher.update(self.state_root_hex.as_bytes());
+        if let Some(prev) = &self.prev_hash_hex {
+            hasher.update(prev.as_bytes());
+        } else {
+            hasher.update(b"genesis");
+        }
+        hex::encode(hasher.finalize())
+    }
 }
 
 impl StateStore {
@@ -267,6 +302,32 @@ impl StateStore {
     }
 }
 
+pub fn verify_wal_and_find_checkpoint(
+    checkpoints: &[CheckpointMeta],
+    wal_entries: &[WalMeta],
+) -> Result<Option<CheckpointMeta>, String> {
+    let mut prev_hash: Option<String> = None;
+    let mut valid_checkpoints: Vec<CheckpointMeta> = Vec::new();
+
+    for e in wal_entries {
+        if e.prev_hash_hex != prev_hash {
+            return Ok(valid_checkpoints.pop());
+        }
+        let cur_hash = e.content_hash_hex();
+        prev_hash = Some(cur_hash.clone());
+
+        for cp in checkpoints.iter().filter(|cp| cp.height == e.height) {
+            if cp.state_root_hex == e.state_root_hex
+                && cur_hash.as_str() == cp.wal_entry_hash_hex.as_str()
+            {
+                valid_checkpoints.push(cp.clone());
+            }
+        }
+    }
+
+    Ok(valid_checkpoints.pop())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -388,5 +449,84 @@ mod tests {
         st.set_gov_param(7999, "emergency_pause".into(), "false".into())
             .unwrap();
         assert!(!st.is_emergency_paused());
+    }
+
+    #[test]
+    fn wal_checkpoint_verification_picks_latest_valid() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: 2,
+            round: 1,
+            proposal_hash: "p2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1.clone()),
+        };
+        let h2 = e2.content_hash_hex();
+
+        let checkpoints = vec![
+            CheckpointMeta {
+                height: 1,
+                state_root_hex: "r1".into(),
+                wal_entry_hash_hex: h1,
+            },
+            CheckpointMeta {
+                height: 2,
+                state_root_hex: "r2".into(),
+                wal_entry_hash_hex: h2,
+            },
+        ];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2])
+            .unwrap()
+            .expect("checkpoint");
+        assert_eq!(got.height, 2);
+    }
+
+    #[test]
+    fn wal_checkpoint_verification_falls_back_on_chain_break() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: 2,
+            round: 1,
+            proposal_hash: "p2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some("wrong-prev".into()),
+        };
+
+        let checkpoints = vec![
+            CheckpointMeta {
+                height: 1,
+                state_root_hex: "r1".into(),
+                wal_entry_hash_hex: h1,
+            },
+            CheckpointMeta {
+                height: 2,
+                state_root_hex: "r2".into(),
+                wal_entry_hash_hex: e2.content_hash_hex(),
+            },
+        ];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2])
+            .unwrap()
+            .expect("checkpoint");
+        assert_eq!(got.height, 1);
     }
 }
