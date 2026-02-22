@@ -8,6 +8,9 @@ export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
 mkdir -p run
 OUT="run/event-replay-smoke.log"
 
+# Ensure smoke check starts from a clean consensus replay baseline.
+rm -rf run/consensus-wal
+
 cargo run -q -p trnm-node -- \
   --config configs/node1.toml \
   --block-ms 1 \
