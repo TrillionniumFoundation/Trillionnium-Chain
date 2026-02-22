@@ -7,9 +7,14 @@ on:
       - 'trillionnium-rust/crates/trnm-rpc/**'
       - 'trillionnium-rust/crates/trnm-worker-agent/**'
       - 'trillionnium-rust/scripts/run_agent_user_phasea_gate.sh'
+      - 'trillionnium-rust/scripts/run_phasea_fault_injection_suite.sh'
+      - 'trillionnium-rust/scripts/run_phasea_soak_gate.sh'
+      - 'scripts/v2/reliability_soak_harness.py'
+      - 'scripts/v2/run_reliability_soak.sh'
       - 'docs/protocol/agent-user-p2p-communication-min-spec-v0.1.md'
       - 'docs/protocol/agent-user-p2p-phaseA-ops.md'
       - 'docs/OPERATIONS.md'
+      - 'OPERATIONS.md'
       - '.github/workflows/agent-user-phasea-gate.yml'
   push:
     branches: [main]
@@ -17,9 +22,14 @@ on:
       - 'trillionnium-rust/crates/trnm-rpc/**'
       - 'trillionnium-rust/crates/trnm-worker-agent/**'
       - 'trillionnium-rust/scripts/run_agent_user_phasea_gate.sh'
+      - 'trillionnium-rust/scripts/run_phasea_fault_injection_suite.sh'
+      - 'trillionnium-rust/scripts/run_phasea_soak_gate.sh'
+      - 'scripts/v2/reliability_soak_harness.py'
+      - 'scripts/v2/run_reliability_soak.sh'
       - 'docs/protocol/agent-user-p2p-communication-min-spec-v0.1.md'
       - 'docs/protocol/agent-user-p2p-phaseA-ops.md'
       - 'docs/OPERATIONS.md'
+      - 'OPERATIONS.md'
       - '.github/workflows/agent-user-phasea-gate.yml'
 
 concurrency:
@@ -43,6 +53,25 @@ jobs:
           cd trillionnium-rust
           ./scripts/run_agent_user_phasea_gate.sh
 
+      - name: Run reliability soak smoke (short)
+        run: |
+          set -euo pipefail
+          ./scripts/v2/run_reliability_soak.sh --duration 1m --clean
+
+      - name: Run phaseA fault injection suite (smoke)
+        run: |
+          set -euo pipefail
+          cd trillionnium-rust
+          OUT_DIR=run/health/phasea-fault-suite-ci RUNS=1 ./scripts/run_phasea_fault_injection_suite.sh
+
+      - name: Run phaseA soak SLO gate
+        run: |
+          set -euo pipefail
+          cd trillionnium-rust
+          SOAK_RESULT="$(ls -1t ../run/health/reliability-soak-*.json | head -n1)" \
+          FAULT_RESULT=run/health/phasea-fault-suite-ci/summary.txt \
+          ./scripts/run_phasea_soak_gate.sh
+
       - name: Upload phaseA artifacts
         if: always()
         uses: actions/upload-artifact@v4
@@ -50,4 +79,9 @@ jobs:
           name: agent-user-phasea-gate-${{ github.run_id }}
           path: |
             trillionnium-rust/run/health/agent-user-phasea-gate-*.txt
+            trillionnium-rust/run/health/phasea-soak-gate-*.txt
+            trillionnium-rust/run/health/phasea-fault-suite-ci/**
+            run/health/reliability-soak-*.json
+            run/health/reliability-soak-*.txt
+            run/health/reliability-soak-*.audit.jsonl
           if-no-files-found: warn
