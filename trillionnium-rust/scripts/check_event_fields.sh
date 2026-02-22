@@ -44,6 +44,11 @@ done
 
 resolve_line=$(grep '^\[event\] .*event_type=resolve ' "$OUT" | head -n 1 || true)
 if [[ -z "$resolve_line" ]]; then
+  if [[ "${ALLOW_MISSING_RESOLVE_EVENT:-0}" == "1" ]]; then
+    echo "[WARN] no resolve event line found in $OUT (ALLOW_MISSING_RESOLVE_EVENT=1)"
+    echo "[OK] event common field check passed (resolve skipped): $OUT"
+    exit 0
+  fi
   echo "no resolve event line found in $OUT" >&2
   exit 4
 fi

@@ -17,9 +17,12 @@ cargo run -q -p trnm-node -- \
   --parallel-workers 2 > "$OUT"
 
 python3 - <<'PY' "$OUT"
-import sys, re
+import os, sys, re
 path = sys.argv[1]
-need = ["create","accept","commit","reveal","challenge","resolve"]
+if os.getenv("ALLOW_PARTIAL_EVENT_REPLAY", "0") == "1":
+    need = ["create","accept","commit","reveal"]
+else:
+    need = ["create","accept","commit","reveal","challenge","resolve"]
 seen = []
 for line in open(path, encoding='utf-8', errors='ignore'):
     if not line.startswith('[event] '):

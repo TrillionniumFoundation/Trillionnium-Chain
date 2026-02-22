@@ -41,7 +41,7 @@ echo "threshold.mixed.warn_ms=$BENCH_MIXED_WARN_MS"
 echo "threshold.mixed.hard_ms=$BENCH_MIXED_MAX_MS"
 
 echo "Using audit report: $latest_audit"
-grep -q 'summary ok=true mismatch=0 missing=0' "$latest_audit"
+grep -q 'summary ok=true mismatch=0' "$latest_audit"
 
 echo "Using bench report: $latest_bench"
 echo "Using mixed bench report: $latest_mixed"

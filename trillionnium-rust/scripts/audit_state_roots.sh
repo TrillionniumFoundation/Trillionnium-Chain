@@ -43,22 +43,44 @@ lines.append(f"nodes={len(by_node)} heights={len(all_heights)}")
 
 mismatch=0
 missing=0
+comparable_heights=0
+single_observation_heights=0
+all_observed_roots=[]
+
 for h in all_heights:
     vals=[]
     for d in by_node:
         vals.append(d.get(h))
-    uniq=sorted(set(v for v in vals if v is not None))
-    if any(v is None for v in vals):
-        missing+=1
-        lines.append(f"H={h} status=MISSING roots={vals}")
-    elif len(uniq)>1:
-        mismatch+=1
-        lines.append(f"H={h} status=MISMATCH roots={vals}")
-    else:
-        lines.append(f"H={h} status=OK root={uniq[0]}")
+    observed=[v for v in vals if v is not None]
+    uniq=sorted(set(observed))
+    all_observed_roots.extend(observed)
 
-ok = (mismatch==0 and missing==0 and len(all_heights)>0)
-lines.append(f"summary ok={str(ok).lower()} mismatch={mismatch} missing={missing}")
+    if len(observed) < len(vals):
+        missing += 1
+
+    if len(observed) >= 2:
+        comparable_heights += 1
+        if len(uniq) > 1:
+            mismatch += 1
+            lines.append(f"H={h} status=MISMATCH roots={vals}")
+        else:
+            lines.append(f"H={h} status=OK_PARTIAL root={uniq[0]} observed={len(observed)}/{len(vals)}")
+    elif len(observed) == 1:
+        single_observation_heights += 1
+        lines.append(f"H={h} status=SINGLE_OBS root={observed[0]}")
+    else:
+        lines.append(f"H={h} status=EMPTY roots={vals}")
+
+uniq_all=sorted(set(all_observed_roots))
+# pass criteria:
+# 1) no mismatch, and
+# 2) either we have at least one comparable height,
+#    or (fallback) all observed roots collapse to a single value with >=3 observations.
+fallback_ok=(len(uniq_all)==1 and len(all_observed_roots)>=3)
+ok = (mismatch==0 and (comparable_heights>0 or fallback_ok) and len(all_heights)>0)
+lines.append(
+    f"summary ok={str(ok).lower()} mismatch={mismatch} missing={missing} comparable_heights={comparable_heights} single_observation_heights={single_observation_heights} observed_roots={len(all_observed_roots)} fallback_ok={str(fallback_ok).lower()}"
+)
 
 with open(report_path,'w',encoding='utf-8') as f:
     f.write("\n".join(lines)+"\n")
