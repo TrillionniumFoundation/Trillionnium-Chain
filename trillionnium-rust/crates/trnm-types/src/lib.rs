@@ -10,8 +10,9 @@ pub use relay::{
 };
 pub use request_status::{RequestStateError, RequestStatus};
 pub use transcript::{
-    relay_auth_envelope_hash, transcript_segment_proof, transcript_segment_root, verify_proof,
-    MerkleDirection, TranscriptError, TranscriptProof,
+    relay_auth_envelope_hash, transcript_segment_proof, transcript_segment_proofs,
+    transcript_segment_root, transcript_segment_tree, verify_proof, MerkleDirection,
+    TranscriptError, TranscriptMerkleTree, TranscriptProof,
 };
 
 pub type Hash32 = [u8; 32];

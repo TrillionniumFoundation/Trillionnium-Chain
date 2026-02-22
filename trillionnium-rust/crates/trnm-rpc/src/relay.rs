@@ -1,4 +1,64 @@
 use anyhow::{anyhow, bail, Result};
+
+const MAX_RELAY_QUERY_LIMIT: usize = 1_000;
+const MAX_PROOF_QUERY_SPAN: u64 = 10_000;
+
+fn bad_request(code: &str, detail: impl Into<String>) -> anyhow::Error {
+    anyhow!("bad_request/{code}: {}", detail.into())
+}
+
+fn not_found(code: &str, detail: impl Into<String>) -> anyhow::Error {
+    anyhow!("not_found/{code}: {}", detail.into())
+}
+
+fn validate_session_id(session_id: &str, field: &str) -> Result<()> {
+    if session_id.trim().is_empty() {
+        return Err(bad_request("empty_session", format!("{field} must be non-empty")));
+    }
+    Ok(())
+}
+
+fn validate_route(route: &str) -> Result<()> {
+    if route.trim().is_empty() {
+        return Err(bad_request("invalid_route", "route must be non-empty"));
+    }
+    if !route.starts_with("relay.") {
+        return Err(bad_request(
+            "invalid_route_type",
+            format!("route must start with relay.: {route}"),
+        ));
+    }
+    if !route
+        .chars()
+        .all(|c| c.is_ascii_alphanumeric() || c == '.' || c == '_' || c == '-')
+    {
+        return Err(bad_request(
+            "invalid_route",
+            format!("route contains unsupported chars: {route}"),
+        ));
+    }
+    Ok(())
+}
+
+fn validate_proof_query_range(from_seq: u64, to_seq: u64) -> Result<()> {
+    if from_seq == 0 {
+        return Err(bad_request("invalid_range", "from_seq must be >= 1"));
+    }
+    if to_seq < from_seq {
+        return Err(bad_request(
+            "invalid_range",
+            format!("from_seq({from_seq}) must be <= to_seq({to_seq})"),
+        ));
+    }
+    let span = to_seq.saturating_sub(from_seq).saturating_add(1);
+    if span > MAX_PROOF_QUERY_SPAN {
+        return Err(bad_request(
+            "range_out_of_bounds",
+            format!("requested span {span} exceeds max {MAX_PROOF_QUERY_SPAN}"),
+        ));
+    }
+    Ok(())
+}
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::collections::{BTreeSet, HashMap, HashSet, VecDeque};
@@ -213,6 +273,8 @@ struct RelaySessionState {
     session: RelaySession,
     next_sequence: u64,
     queue: VecDeque<RelayEnvelope>,
+    /// Cache of envelope hash by sequence index (sequence starts from 1).
+    envelope_hashes: Vec<[u8; 32]>,
     acked_ids: BTreeSet<u64>,
 }
 
@@ -227,14 +289,25 @@ impl RelaySessionState {
             },
             next_sequence: 1,
             queue: VecDeque::new(),
+            envelope_hashes: Vec::new(),
             acked_ids: BTreeSet::new(),
         }
     }
 
     fn ensure_open(&self) -> Result<()> {
         if self.session.status == RelaySessionStatus::Closed {
-            bail!("relay session closed: {}", self.session.session_id);
+            return Err(bad_request(
+                "session_closed",
+                format!("relay session closed: {}", self.session.session_id),
+            ));
         }
+        Ok(())
+    }
+
+    fn append_envelope(&mut self, envelope: RelayEnvelope) -> Result<()> {
+        let hash = hash_envelope(&envelope)?;
+        self.queue.push_back(envelope);
+        self.envelope_hashes.push(hash);
         Ok(())
     }
 }
@@ -255,6 +328,8 @@ impl RelayService {
     }
 
     pub fn open(&self, req: RelayOpenRequest) -> Result<RelayOpenResponse> {
+        validate_session_id(&req.session_id, "session_id")?;
+        // TODO(metrics): relay_open_total += 1
         let mut g = self
             .sessions
             .lock()
@@ -272,8 +347,14 @@ impl RelayService {
     }
 
     pub fn send(&self, req: RelaySendRequest) -> Result<RelaySendResponse> {
+        validate_session_id(&req.session_id, "session_id")?;
+        validate_route(&req.route)?;
         if !self.router.has_route(&req.route) {
-            bail!("route not registered: {}", req.route);
+            // TODO(metrics): relay_send_rejected_total{reason="route_not_registered"} += 1
+            return Err(bad_request(
+                "invalid_route",
+                format!("route not registered: {}", req.route),
+            ));
         }
 
         let mut g = self
@@ -281,7 +362,10 @@ impl RelayService {
             .lock()
             .map_err(|_| anyhow!("relay lock poisoned"))?;
         let Some(state) = g.get_mut(&req.session_id) else {
-            bail!("relay session not found: {}", req.session_id);
+            return Err(not_found(
+                "session_not_found",
+                format!("relay session not found: {}", req.session_id),
+            ));
         };
         state.ensure_open()?;
 
@@ -296,7 +380,7 @@ impl RelayService {
             created_at_unix_ms: now_ms(),
         };
         state.next_sequence += 1;
-        state.queue.push_back(envelope.clone());
+        state.append_envelope(envelope.clone())?;
 
         for mut routed in self.router.dispatch(&envelope)? {
             routed.session_id = envelope.session_id.clone();
@@ -308,22 +392,27 @@ impl RelayService {
                 routed.created_at_unix_ms = now_ms();
             }
             state.next_sequence += 1;
-            state.queue.push_back(routed);
+            state.append_envelope(routed)?;
         }
 
         Ok(RelaySendResponse { envelope })
     }
 
     pub fn poll(&self, req: RelayPollRequest) -> Result<RelayPollResponse> {
+        validate_session_id(&req.session_id, "session_id")?;
         let g = self
             .sessions
             .lock()
             .map_err(|_| anyhow!("relay lock poisoned"))?;
         let Some(state) = g.get(&req.session_id) else {
-            bail!("relay session not found: {}", req.session_id);
+            return Err(not_found(
+                "session_not_found",
+                format!("relay session not found: {}", req.session_id),
+            ));
         };
 
-        let limit = req.limit.max(1);
+        let limit = req.limit.clamp(1, MAX_RELAY_QUERY_LIMIT);
+        // TODO(metrics): relay_poll_total += 1
         let envelopes = state
             .queue
             .iter()
@@ -338,12 +427,16 @@ impl RelayService {
     }
 
     pub fn ack(&self, req: RelayAckRequest) -> Result<RelayAckResponse> {
+        validate_session_id(&req.session_id, "session_id")?;
         let mut g = self
             .sessions
             .lock()
             .map_err(|_| anyhow!("relay lock poisoned"))?;
         let Some(state) = g.get_mut(&req.session_id) else {
-            bail!("relay session not found: {}", req.session_id);
+            return Err(not_found(
+                "session_not_found",
+                format!("relay session not found: {}", req.session_id),
+            ));
         };
 
         let before = state.acked_ids.len();
@@ -375,20 +468,28 @@ impl RelayService {
         &self,
         req: RelaySessionProofQuery,
     ) -> Result<RelaySessionProofResponse> {
-        if req.from_seq == 0 {
-            bail!("from_seq must be >= 1");
-        }
-        if req.to_seq < req.from_seq {
-            bail!("invalid seq range: from_seq={} to_seq={}", req.from_seq, req.to_seq);
-        }
+        validate_session_id(&req.session_id, "session_id")?;
+        validate_proof_query_range(req.from_seq, req.to_seq)?;
 
         let g = self
             .sessions
             .lock()
             .map_err(|_| anyhow!("relay lock poisoned"))?;
         let Some(state) = g.get(&req.session_id) else {
-            bail!("relay session not found: {}", req.session_id);
+            return Err(not_found(
+                "session_not_found",
+                format!("relay session not found: {}", req.session_id),
+            ));
         };
+
+        let max_seq = state.next_sequence.saturating_sub(1);
+        if req.to_seq > max_seq {
+            // TODO(metrics): relay_proof_query_rejected_total{reason="range_out_of_bounds"} += 1
+            return Err(bad_request(
+                "range_out_of_bounds",
+                format!("to_seq({}) exceeds max sequence({max_seq})", req.to_seq),
+            ));
+        }
 
         let messages: Vec<RelayEnvelope> = state
             .queue
@@ -397,21 +498,29 @@ impl RelayService {
             .cloned()
             .collect();
 
-        let mut leaf_hashes = Vec::with_capacity(messages.len());
-        for msg in &messages {
-            leaf_hashes.push(hash_envelope(msg)?);
+        let start_idx = (req.from_seq - 1) as usize;
+        let end_exclusive = req.to_seq as usize;
+        if end_exclusive > state.envelope_hashes.len() {
+            bail!(
+                "session hash cache missing for requested range: to_seq={} available={}",
+                req.to_seq,
+                state.envelope_hashes.len()
+            );
         }
-        let (root, proofs) = merkle_root_and_proofs(&leaf_hashes);
+        let leaf_hashes: Vec<[u8; 32]> = state.envelope_hashes[start_idx..end_exclusive].to_vec();
+        let (root, proof_paths) = merkle_root_and_proofs(&leaf_hashes);
 
         let proofs = messages
             .iter()
             .cloned()
+            .zip(leaf_hashes.iter())
+            .zip(proof_paths.into_iter())
             .enumerate()
-            .map(|(i, env)| RelayEnvelopeProof {
+            .map(|(i, ((env, leaf_hash), proof))| RelayEnvelopeProof {
                 envelope: env,
-                leaf_hash_hex: hex::encode(leaf_hashes[i]),
+                leaf_hash_hex: hex::encode(leaf_hash),
                 leaf_index: i,
-                proof: proofs[i].clone(),
+                proof,
             })
             .collect();
 
@@ -427,12 +536,16 @@ impl RelayService {
     }
 
     pub fn close(&self, req: RelayCloseRequest) -> Result<RelayCloseResponse> {
+        validate_session_id(&req.session_id, "session_id")?;
         let mut g = self
             .sessions
             .lock()
             .map_err(|_| anyhow!("relay lock poisoned"))?;
         let Some(state) = g.get_mut(&req.session_id) else {
-            bail!("relay session not found: {}", req.session_id);
+            return Err(not_found(
+                "session_not_found",
+                format!("relay session not found: {}", req.session_id),
+            ));
         };
         state.session.status = RelaySessionStatus::Closed;
         state.session.closed_at_unix_ms = Some(now_ms());
@@ -644,6 +757,36 @@ mod tests {
     }
 
     #[test]
+    fn relay_session_hash_cache_matches_queue_hashes() {
+        let mut router = RelayRouter::new();
+        router.register("relay.echo", EchoHandler);
+        let relay = RelayService::new(router);
+        relay
+            .open(RelayOpenRequest {
+                session_id: "sp-cache-check".into(),
+            })
+            .unwrap();
+
+        relay
+            .send(RelaySendRequest {
+                session_id: "sp-cache-check".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"p1".to_vec(),
+            })
+            .unwrap();
+
+        let g = relay.sessions.lock().unwrap();
+        let state = g.get("sp-cache-check").unwrap();
+        assert_eq!(state.queue.len(), state.envelope_hashes.len());
+        for (i, env) in state.queue.iter().enumerate() {
+            let h = hash_envelope(env).unwrap();
+            assert_eq!(h, state.envelope_hashes[i]);
+        }
+    }
+
+    #[test]
     fn relay_query_session_proof_returns_messages_root_and_proofs() {
         let mut router = RelayRouter::new();
         router.register("relay.echo", EchoHandler);
@@ -743,31 +886,138 @@ mod tests {
             })
             .unwrap();
 
-        // smoke: baseline proof verifies
         verify_session_proof(&proof).unwrap();
 
-        // tamper-1: 缺片段（删掉一个 message + proof）
         let mut missing_segment = proof.clone();
         missing_segment.messages.remove(1);
         missing_segment.proofs.remove(1);
         assert!(verify_session_proof(&missing_segment).is_err());
 
-        // tamper-2: 顺序错乱（交换消息次序）
         let mut out_of_order = proof.clone();
         out_of_order.messages.swap(1, 2);
         out_of_order.proofs.swap(1, 2);
         assert!(verify_session_proof(&out_of_order).is_err());
 
-        // tamper-3: 内容篡改（payload 改写）
         let mut content_tampered = proof.clone();
         content_tampered.messages[0].payload = b"tampered".to_vec();
         content_tampered.proofs[0].envelope.payload = b"tampered".to_vec();
         assert!(verify_session_proof(&content_tampered).is_err());
 
-        // tamper-4: root 不匹配
         let mut root_mismatch = proof.clone();
         root_mismatch.segment_root_hex = "00".repeat(32);
         assert!(verify_session_proof(&root_mismatch).is_err());
     }
 
+    #[test]
+    fn relay_open_rejects_empty_session() {
+        let relay = RelayService::new(RelayRouter::new());
+        let err = relay.open(RelayOpenRequest { session_id: "   ".into() }).unwrap_err();
+        assert!(err.to_string().contains("bad_request/empty_session"));
+    }
+
+    #[test]
+    fn relay_send_rejects_invalid_route_type() {
+        let mut router = RelayRouter::new();
+        router.register("relay.echo", EchoHandler);
+        let relay = RelayService::new(router);
+        relay.open(RelayOpenRequest { session_id: "s-route".into() }).unwrap();
+
+        let err = relay.send(RelaySendRequest {
+            session_id: "s-route".into(),
+            route: "foo/bar".into(),
+            from: "alice".into(),
+            to: Some("bob".into()),
+            payload: b"x".to_vec(),
+        }).unwrap_err();
+        assert!(err.to_string().contains("bad_request/invalid_route_type"));
+    }
+
+    #[test]
+    fn relay_proof_query_rejects_empty_session() {
+        let relay = RelayService::new(RelayRouter::new());
+        let err = relay.query_session_proof(RelaySessionProofQuery {
+            task_id: 1,
+            session_id: "".into(),
+            from_seq: 1,
+            to_seq: 1,
+        }).unwrap_err();
+        assert!(err.to_string().contains("bad_request/empty_session"));
+    }
+
+    #[test]
+    fn relay_proof_query_rejects_reversed_range() {
+        let mut router = RelayRouter::new();
+        router.register("relay.echo", EchoHandler);
+        let relay = RelayService::new(router);
+        relay.open(RelayOpenRequest { session_id: "sp-range".into() }).unwrap();
+
+        let err = relay.query_session_proof(RelaySessionProofQuery {
+            task_id: 1,
+            session_id: "sp-range".into(),
+            from_seq: 4,
+            to_seq: 2,
+        }).unwrap_err();
+        assert!(err.to_string().contains("bad_request/invalid_range"));
+    }
+
+    #[test]
+    fn relay_proof_query_rejects_span_overflow() {
+        let mut router = RelayRouter::new();
+        router.register("relay.echo", EchoHandler);
+        let relay = RelayService::new(router);
+        relay.open(RelayOpenRequest { session_id: "sp-span".into() }).unwrap();
+
+        let err = relay.query_session_proof(RelaySessionProofQuery {
+            task_id: 1,
+            session_id: "sp-span".into(),
+            from_seq: 1,
+            to_seq: MAX_PROOF_QUERY_SPAN + 1,
+        }).unwrap_err();
+        assert!(err.to_string().contains("bad_request/range_out_of_bounds"));
+    }
+
+    #[test]
+    fn relay_proof_query_rejects_to_seq_out_of_bounds() {
+        let mut router = RelayRouter::new();
+        router.register("relay.echo", EchoHandler);
+        let relay = RelayService::new(router);
+        relay.open(RelayOpenRequest { session_id: "sp-oob".into() }).unwrap();
+        relay.send(RelaySendRequest {
+            session_id: "sp-oob".into(),
+            route: "relay.echo".into(),
+            from: "alice".into(),
+            to: Some("bob".into()),
+            payload: b"x".to_vec(),
+        }).unwrap();
+
+        let err = relay.query_session_proof(RelaySessionProofQuery {
+            task_id: 1,
+            session_id: "sp-oob".into(),
+            from_seq: 1,
+            to_seq: 9,
+        }).unwrap_err();
+        assert!(err.to_string().contains("bad_request/range_out_of_bounds"));
+    }
+
+    #[test]
+    fn relay_poll_clamps_limit() {
+        let mut router = RelayRouter::new();
+        router.register("relay.echo", EchoHandler);
+        let relay = RelayService::new(router);
+        relay.open(RelayOpenRequest { session_id: "sp-limit".into() }).unwrap();
+        for _ in 0..3 {
+            relay.send(RelaySendRequest {
+                session_id: "sp-limit".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"x".to_vec(),
+            }).unwrap();
+        }
+
+        let out = relay.poll(RelayPollRequest { session_id: "sp-limit".into(), limit: usize::MAX }).unwrap();
+        assert_eq!(out.envelopes.len(), 6);
+    }
+
 }
+

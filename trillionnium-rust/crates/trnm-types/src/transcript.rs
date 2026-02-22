@@ -36,6 +36,60 @@ pub enum TranscriptError {
     },
 }
 
+/// Built Merkle layers for a transcript segment. levels[0] is leaf layer,
+/// levels[last][0] is root.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct TranscriptMerkleTree {
+    levels: Vec<Vec<Hash32>>,
+}
+
+impl TranscriptMerkleTree {
+    pub fn root(&self) -> Hash32 {
+        self.levels
+            .last()
+            .and_then(|l| l.first().copied())
+            .unwrap_or([0u8; 32])
+    }
+
+    pub fn leaf_count(&self) -> usize {
+        self.levels.first().map_or(0, Vec::len)
+    }
+
+    pub fn proof(&self, target_index: usize) -> Option<TranscriptProof> {
+        let leaves = self.levels.first()?;
+        if target_index >= leaves.len() {
+            return None;
+        }
+
+        let mut idx = target_index;
+        let mut path = Vec::with_capacity(self.levels.len().saturating_sub(1));
+        let mut directions = Vec::with_capacity(self.levels.len().saturating_sub(1));
+
+        for level in self.levels.iter().take(self.levels.len().saturating_sub(1)) {
+            let sibling_idx = if idx % 2 == 0 { idx + 1 } else { idx - 1 };
+            let sibling = if sibling_idx < level.len() {
+                level[sibling_idx]
+            } else {
+                level[idx]
+            };
+
+            path.push(sibling);
+            directions.push(if idx % 2 == 0 {
+                MerkleDirection::Right
+            } else {
+                MerkleDirection::Left
+            });
+            idx /= 2;
+        }
+
+        Some(TranscriptProof {
+            leaf: leaves[target_index],
+            path,
+            directions,
+        })
+    }
+}
+
 pub fn relay_auth_envelope_hash(env: &RelayAuthEnvelope) -> Hash32 {
     let mut hasher = Sha256::new();
     hasher.update(env.version.as_bytes());
@@ -67,8 +121,8 @@ pub fn transcript_segment_root(
     start_seq: u64,
     end_seq: u64,
 ) -> Result<Hash32, TranscriptError> {
-    let hashes = collect_segment_hashes(envelopes, start_seq, end_seq)?;
-    Ok(merkle_root(&hashes))
+    let tree = transcript_segment_tree(envelopes, start_seq, end_seq)?;
+    Ok(tree.root())
 }
 
 pub fn transcript_segment_proof(
@@ -77,17 +131,51 @@ pub fn transcript_segment_proof(
     end_seq: u64,
     target_seq: u64,
 ) -> Result<(Hash32, TranscriptProof), TranscriptError> {
-    if target_seq < start_seq || target_seq > end_seq {
-        return Err(TranscriptError::TargetOutOfRange {
+    let (root, mut proofs) = transcript_segment_proofs(envelopes, start_seq, end_seq, &[target_seq])?;
+    Ok((root, proofs.remove(0)))
+}
+
+/// Batch API: build Merkle layers once, then generate proofs for multiple targets.
+pub fn transcript_segment_proofs(
+    envelopes: &[RelayAuthEnvelope],
+    start_seq: u64,
+    end_seq: u64,
+    target_seqs: &[u64],
+) -> Result<(Hash32, Vec<TranscriptProof>), TranscriptError> {
+    let tree = transcript_segment_tree(envelopes, start_seq, end_seq)?;
+    let root = tree.root();
+
+    let mut out = Vec::with_capacity(target_seqs.len());
+    for &target_seq in target_seqs {
+        if target_seq < start_seq || target_seq > end_seq {
+            return Err(TranscriptError::TargetOutOfRange {
+                target_seq,
+                start_seq,
+                end_seq,
+            });
+        }
+        let idx = (target_seq - start_seq) as usize;
+        let proof = tree.proof(idx).ok_or(TranscriptError::TargetOutOfRange {
             target_seq,
             start_seq,
             end_seq,
-        });
+        })?;
+        out.push(proof);
     }
+
+    Ok((root, out))
+}
+
+/// Build a transcript segment Merkle tree. Useful when caller needs root + many proofs.
+pub fn transcript_segment_tree(
+    envelopes: &[RelayAuthEnvelope],
+    start_seq: u64,
+    end_seq: u64,
+) -> Result<TranscriptMerkleTree, TranscriptError> {
     let hashes = collect_segment_hashes(envelopes, start_seq, end_seq)?;
-    let target_index = (target_seq - start_seq) as usize;
-    let (root, proof) = merkle_proof(&hashes, target_index);
-    Ok((root, proof))
+    Ok(TranscriptMerkleTree {
+        levels: build_merkle_levels(hashes),
+    })
 }
 
 pub fn verify_proof(root: &Hash32, proof: &TranscriptProof) -> bool {
@@ -145,78 +233,26 @@ fn collect_segment_hashes(
     Ok(hashes)
 }
 
-fn merkle_root(leaves: &[Hash32]) -> Hash32 {
+fn build_merkle_levels(leaves: Vec<Hash32>) -> Vec<Vec<Hash32>> {
     if leaves.is_empty() {
-        return [0u8; 32];
+        return vec![vec![[0u8; 32]]];
     }
 
-    let mut level = leaves.to_vec();
-    while level.len() > 1 {
-        let mut next = Vec::with_capacity(level.len().div_ceil(2));
+    let mut levels = vec![leaves];
+    while levels.last().is_some_and(|l| l.len() > 1) {
+        let prev = levels.last().expect("level exists");
+        let mut next = Vec::with_capacity(prev.len().div_ceil(2));
         let mut i = 0;
-        while i < level.len() {
-            let left = level[i];
-            let right = if i + 1 < level.len() {
-                level[i + 1]
-            } else {
-                left
-            };
+        while i < prev.len() {
+            let left = prev[i];
+            let right = if i + 1 < prev.len() { prev[i + 1] } else { left };
             next.push(hash_pair(&left, &right));
             i += 2;
         }
-        level = next;
+        levels.push(next);
     }
 
-    level[0]
-}
-
-fn merkle_proof(leaves: &[Hash32], target_index: usize) -> (Hash32, TranscriptProof) {
-    let mut level = leaves.to_vec();
-    let mut idx = target_index;
-    let mut path = Vec::new();
-    let mut directions = Vec::new();
-
-    while level.len() > 1 {
-        let sibling_idx = if idx % 2 == 0 { idx + 1 } else { idx - 1 };
-        let sibling = if sibling_idx < level.len() {
-            level[sibling_idx]
-        } else {
-            level[idx]
-        };
-
-        if idx % 2 == 0 {
-            path.push(sibling);
-            directions.push(MerkleDirection::Right);
-        } else {
-            path.push(sibling);
-            directions.push(MerkleDirection::Left);
-        }
-
-        let mut next = Vec::with_capacity(level.len().div_ceil(2));
-        let mut i = 0;
-        while i < level.len() {
-            let left = level[i];
-            let right = if i + 1 < level.len() {
-                level[i + 1]
-            } else {
-                left
-            };
-            next.push(hash_pair(&left, &right));
-            i += 2;
-        }
-
-        idx /= 2;
-        level = next;
-    }
-
-    (
-        level[0],
-        TranscriptProof {
-            leaf: leaves[target_index],
-            path,
-            directions,
-        },
-    )
+    levels
 }
 
 fn hash_pair(left: &Hash32, right: &Hash32) -> Hash32 {
@@ -291,5 +327,38 @@ mod tests {
         let h2 = relay_auth_envelope_hash(&altered);
 
         assert_ne!(h1, h2);
+    }
+
+    #[test]
+    fn transcript_batch_proofs_match_single_proof_api() {
+        let envs = vec![
+            sample_env(1, "n1"),
+            sample_env(2, "n2"),
+            sample_env(3, "n3"),
+            sample_env(4, "n4"),
+            sample_env(5, "n5"),
+        ];
+
+        let targets = [1, 3, 5];
+        let (batch_root, batch_proofs) = transcript_segment_proofs(&envs, 1, 5, &targets).unwrap();
+        for (i, seq) in targets.iter().enumerate() {
+            let (single_root, single_proof) = transcript_segment_proof(&envs, 1, 5, *seq).unwrap();
+            assert_eq!(batch_root, single_root);
+            assert_eq!(batch_proofs[i], single_proof);
+        }
+    }
+
+    #[test]
+    fn transcript_batch_proof_hash_pair_count_estimate_is_lower() {
+        // 近似性能对比：重复单点 proof 需要重复构建树层。
+        let leaf_count = 64usize;
+        let proof_count = 8usize;
+        let levels = (leaf_count as f64).log2().ceil() as usize;
+        let pair_hashes_per_build = leaf_count - 1;
+
+        let old_total = pair_hashes_per_build * proof_count;
+        let batch_total = pair_hashes_per_build + proof_count * levels;
+
+        assert!(batch_total < old_total);
     }
 }
