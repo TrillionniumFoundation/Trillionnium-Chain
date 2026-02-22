@@ -1,21 +1,16 @@
-use std::env;
-use std::path::PathBuf;
-
 use trnm_rpc::reliability::{
-    AckCode, ReliabilityEngine, ReliableMessage, RetryConfig, SqliteReliabilityStore,
+    default_reliability_db_path, AckCode, ReliabilityEngine, ReliabilityStoreMode, ReliableMessage,
+    RetryConfig, SqliteReliabilityStore,
 };
 
 #[test]
 fn reliability_persistent_store_smoke() {
-    let store_kind = env::var("RELIABILITY_STORE").unwrap_or_else(|_| "memory".to_string());
-    if store_kind != "sqlite" {
-        eprintln!("[skip] RELIABILITY_STORE={store_kind}, skip sqlite smoke");
+    if ReliabilityStoreMode::from_env() == ReliabilityStoreMode::Memory {
+        eprintln!("[skip] RELIABILITY_STORE=memory, skip sqlite smoke");
         return;
     }
 
-    let db_path = env::var("RELIABILITY_DB_PATH")
-        .map(PathBuf::from)
-        .unwrap_or_else(|_| PathBuf::from("/tmp/trnm-reliability-phasea-smoke.sqlite"));
+    let db_path = default_reliability_db_path();
 
     if let Some(parent) = db_path.parent() {
         std::fs::create_dir_all(parent).expect("create db parent");

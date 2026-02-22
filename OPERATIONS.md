@@ -166,11 +166,11 @@ cd trillionnium-rust
 ./scripts/run_agent_user_phasea_gate.sh
 ```
 
-可选：启用持久化 reliability store（sqlite smoke）
+默认：启用 sqlite 持久化 reliability store（可用 `RELIABILITY_STORE=memory` 显式切回内存模式）
 
 ```bash
 cd trillionnium-rust
-RELIABILITY_STORE=sqlite \
+# 可覆盖默认 DB 路径
 RELIABILITY_DB_PATH=run/health/reliability-phasea.sqlite \
 ./scripts/run_agent_user_phasea_gate.sh
 ```
@@ -200,4 +200,27 @@ cd trillionnium-rust
 - relay proof smoke + tamper 用例通过（缺片段/顺序错乱/内容篡改/root 不匹配）
 - submit/dispatch/consume/query 最小闭环通过
 - `query-request-full` 满足：`status=COMMIT_QUEUED` 且 `verifier_status=accepted`
+
+### Phase A 一键回滚（commit/tag）
+
+从仓库根目录执行：
+
+```bash
+./scripts/rollback_phasea.sh <commit-or-tag>
+# 跳过交互确认
+./scripts/rollback_phasea.sh <commit-or-tag> --yes
+```
+
+脚本行为（失败即退出）：
+1. 校验目标 commit/tag 可解析
+2. 安全确认（默认要求输入 `ROLLBACK`）
+3. 切换到目标版本（`git checkout --detach`）
+4. 清理运行态（devnet_down + 常见本地进程 + 临时文件）
+5. 执行最小验证：`trillionnium-rust/scripts/run_agent_user_phasea_gate.sh`
+
+安全防护：
+- 默认要求工作区干净；如确需覆盖可显式设置 `ALLOW_DIRTY=1`
+- 失败会打印日志路径，默认输出到：
+  - `run/rollback-phasea/<timestamp>/rollback.log`
+  - `run/rollback-phasea/<timestamp>/agent-user-phasea/`
 

@@ -1,6 +1,7 @@
 use rusqlite::Connection;
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, HashMap};
+use std::path::PathBuf;
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub struct DedupKey {
@@ -470,11 +471,7 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
         let removed = session.pending.remove(ack_id).is_some();
         if session.pending.is_empty() && self.store.should_remove_empty_session_immediately() {
             self.store.remove_session(session_id);
-        } else if self
-            .store
-            .try_upsert_session_with_ts(session, 0)
-            .is_err()
-        {
+        } else if self.store.try_upsert_session_with_ts(session, 0).is_err() {
             return false;
         }
         removed
@@ -551,7 +548,9 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
             self.circuit_state = CircuitState::Open { until_unix_ms };
             eprintln!(
                 "[reliability] circuit open exhausted={} threshold={} until={}",
-                self.consecutive_retry_exhausted, self.retry.circuit_breaker_threshold, until_unix_ms
+                self.consecutive_retry_exhausted,
+                self.retry.circuit_breaker_threshold,
+                until_unix_ms
             );
             // TODO(metrics): reliability_circuit_open_total += 1
         }
@@ -585,6 +584,55 @@ fn exp_backoff_ms(base: u64, max: u64, attempts: u32) -> u64 {
     base.saturating_mul(factor).min(max)
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ReliabilityStoreMode {
+    Sqlite,
+    Memory,
+}
+
+impl ReliabilityStoreMode {
+    pub fn from_env() -> Self {
+        match std::env::var("RELIABILITY_STORE")
+            .unwrap_or_else(|_| "sqlite".to_string())
+            .trim()
+            .to_ascii_lowercase()
+            .as_str()
+        {
+            "memory" => Self::Memory,
+            _ => Self::Sqlite,
+        }
+    }
+}
+
+pub fn default_reliability_db_path() -> PathBuf {
+    if let Ok(path) = std::env::var("RELIABILITY_DB_PATH") {
+        let trimmed = path.trim();
+        if !trimmed.is_empty() {
+            return PathBuf::from(trimmed);
+        }
+    }
+
+    if let Ok(xdg_state_home) = std::env::var("XDG_STATE_HOME") {
+        let trimmed = xdg_state_home.trim();
+        if !trimmed.is_empty() {
+            return PathBuf::from(trimmed)
+                .join("trillionnium")
+                .join("reliability.sqlite");
+        }
+    }
+
+    if let Ok(home) = std::env::var("HOME") {
+        let trimmed = home.trim();
+        if !trimmed.is_empty() {
+            return PathBuf::from(trimmed)
+                .join(".trillionnium")
+                .join("reliability.sqlite");
+        }
+    }
+
+    PathBuf::from("run/reliability/reliability.sqlite")
+}
+
 #[derive(Debug)]
 pub struct SqliteReliabilityStore {
     conn: Connection,
@@ -608,9 +656,11 @@ impl SqliteReliabilityStore {
         })?;
 
         let current: i64 = conn
-            .query_row("SELECT COALESCE(MAX(version),0) FROM schema_migrations", [], |r| {
-                r.get(0)
-            })
+            .query_row(
+                "SELECT COALESCE(MAX(version),0) FROM schema_migrations",
+                [],
+                |r| r.get(0),
+            )
             .map_err(|e| ReliabilityStoreError::InvalidState {
                 detail: format!("read migration version failed: {e}"),
             })?;
@@ -729,13 +779,17 @@ impl ReliabilityStore for SqliteReliabilityStore {
         session: SessionState,
         now_unix_ms: u128,
     ) -> Result<(), ReliabilityStoreError> {
-        let payload = serde_json::to_string(&session).map_err(|e| ReliabilityStoreError::InvalidState {
-            detail: format!("serialize session failed: {e}"),
-        })?;
+        let payload =
+            serde_json::to_string(&session).map_err(|e| ReliabilityStoreError::InvalidState {
+                detail: format!("serialize session failed: {e}"),
+            })?;
         let ts = i64::try_from(now_unix_ms).unwrap_or(i64::MAX);
-        let tx = self.conn.transaction().map_err(|e| ReliabilityStoreError::InvalidState {
-            detail: format!("begin tx failed: {e}"),
-        })?;
+        let tx = self
+            .conn
+            .transaction()
+            .map_err(|e| ReliabilityStoreError::InvalidState {
+                detail: format!("begin tx failed: {e}"),
+            })?;
         tx.execute(
             "INSERT INTO reliability_sessions(session_id, session_json, updated_at_unix_ms)
              VALUES(?1, ?2, ?3)
@@ -747,9 +801,10 @@ impl ReliabilityStore for SqliteReliabilityStore {
         .map_err(|e| ReliabilityStoreError::InvalidState {
             detail: format!("upsert session failed: {e}"),
         })?;
-        tx.commit().map_err(|e| ReliabilityStoreError::InvalidState {
-            detail: format!("commit tx failed: {e}"),
-        })?;
+        tx.commit()
+            .map_err(|e| ReliabilityStoreError::InvalidState {
+                detail: format!("commit tx failed: {e}"),
+            })?;
         Ok(())
     }
 
@@ -766,8 +821,13 @@ impl ReliabilityStore for SqliteReliabilityStore {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::sync::{Arc, Mutex};
+    use std::sync::{Arc, Mutex, OnceLock};
     use std::thread;
+
+    fn env_lock() -> &'static Mutex<()> {
+        static LOCK: OnceLock<Mutex<()>> = OnceLock::new();
+        LOCK.get_or_init(|| Mutex::new(()))
+    }
 
     fn mk_msg(from: &str, session_id: &str, seq: u64) -> ReliableMessage {
         ReliableMessage {
@@ -791,7 +851,11 @@ mod tests {
         assert_eq!(a2.code, AckCode::Duplicate);
 
         let a3 = engine.receive(mk_msg("bob", "s1", 7), 1_020);
-        assert_eq!(a3.code, AckCode::Accepted, "different from should not dedup");
+        assert_eq!(
+            a3.code,
+            AckCode::Accepted,
+            "different from should not dedup"
+        );
     }
 
     #[test]
@@ -849,7 +913,10 @@ mod tests {
 
         let store = engine.into_store();
         let session = store.get_session("s1");
-        assert!(session.is_none(), "pending item should be dropped after max attempts");
+        assert!(
+            session.is_none(),
+            "pending item should be dropped after max attempts"
+        );
 
         assert_eq!(ack.ack_id, "ack_alice_1");
     }
@@ -952,8 +1019,15 @@ mod tests {
         assert_eq!(due.len(), 2, "before ttl cutoff both should stay");
 
         let due_after_cleanup = engine.collect_due_retries(1_600);
-        assert_eq!(due_after_cleanup.len(), 1, "expired pending must be removed");
-        assert_eq!(due_after_cleanup[0].ack_id, fresh.ack_id, "fresh item must remain");
+        assert_eq!(
+            due_after_cleanup.len(),
+            1,
+            "expired pending must be removed"
+        );
+        assert_eq!(
+            due_after_cleanup[0].ack_id, fresh.ack_id,
+            "fresh item must remain"
+        );
         assert_ne!(due_after_cleanup[0].ack_id, old.ack_id);
     }
 
@@ -1028,5 +1102,41 @@ mod tests {
 
         assert_eq!(accepted, 1);
         assert_eq!(duplicate, 15);
+    }
+
+    #[test]
+    fn reliability_store_mode_defaults_to_sqlite_and_keeps_memory_override() {
+        let _guard = env_lock().lock().expect("env lock");
+        std::env::remove_var("RELIABILITY_STORE");
+        assert_eq!(
+            ReliabilityStoreMode::from_env(),
+            ReliabilityStoreMode::Sqlite
+        );
+
+        std::env::set_var("RELIABILITY_STORE", "memory");
+        assert_eq!(
+            ReliabilityStoreMode::from_env(),
+            ReliabilityStoreMode::Memory
+        );
+
+        std::env::remove_var("RELIABILITY_STORE");
+    }
+
+    #[test]
+    fn reliability_db_path_prefers_explicit_env_and_has_stable_fallback() {
+        let _guard = env_lock().lock().expect("env lock");
+        std::env::set_var("RELIABILITY_DB_PATH", "/tmp/explicit-reliability.sqlite");
+        assert_eq!(
+            default_reliability_db_path(),
+            PathBuf::from("/tmp/explicit-reliability.sqlite")
+        );
+
+        std::env::remove_var("RELIABILITY_DB_PATH");
+        std::env::remove_var("XDG_STATE_HOME");
+        std::env::remove_var("HOME");
+        assert_eq!(
+            default_reliability_db_path(),
+            PathBuf::from("run/reliability/reliability.sqlite")
+        );
     }
 }

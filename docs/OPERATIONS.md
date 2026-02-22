@@ -45,12 +45,12 @@
 2. 检查是否达到 `max_attempts`（达到后 pending 会被清理）。
 3. 核对当前时间戳与 `next_retry_at_unix_ms`、`circuit_open_ms`。
 
-## 持久化 store（可选）
+## 持久化 store（生产默认）
 
-Phase A gate 支持可选持久化可靠性 store（用于重启后去重 smoke）：
+Phase A gate 默认使用 sqlite 持久化 reliability store（用于重启后去重 smoke）：
 
-- `RELIABILITY_STORE`：`memory`（默认）或 `sqlite`
-- `RELIABILITY_DB_PATH`：当 `RELIABILITY_STORE=sqlite` 时使用的 DB 路径（默认写到 gate 输出目录）
+- `RELIABILITY_STORE`：`sqlite`（默认）或 `memory`（显式兼容模式）
+- `RELIABILITY_DB_PATH`：sqlite DB 路径覆盖项；未设置时默认顺序为：`$XDG_STATE_HOME/trillionnium/reliability.sqlite` → `$HOME/.trillionnium/reliability.sqlite` → `run/reliability/reliability.sqlite`
 
 示例：
 
@@ -63,9 +63,9 @@ RELIABILITY_DB_PATH=run/health/reliability-phasea.sqlite \
 
 排障：
 - 现象：sqlite smoke 未执行
-  - 检查 `RELIABILITY_STORE` 是否为 `sqlite`
+  - 检查是否显式设置了 `RELIABILITY_STORE=memory`（该模式下会跳过 sqlite smoke）
 - 现象：报错 `expected sqlite db created`
-  - 检查 `RELIABILITY_DB_PATH` 目录是否可写
+  - 检查 `RELIABILITY_DB_PATH`（若设置）目录是否可写
   - 检查 gate 报告里是否出现 `reliability_db_path=...`
 
 ## 门禁与 CI 纳管
@@ -77,3 +77,25 @@ RELIABILITY_DB_PATH=run/health/reliability-phasea.sqlite \
 - `reliability_persistent_store_smoke`（当 `RELIABILITY_STORE=sqlite` 时执行）
 
 CI workflow：`.github/workflows/agent-user-phasea-gate.yml`（调用上述 gate 脚本）。
+
+## 一键回滚（Phase A）
+
+仓库根目录提供回滚脚本：`scripts/rollback_phasea.sh`
+
+```bash
+./scripts/rollback_phasea.sh <commit-or-tag>
+# 跳过确认（CI/自动化场景）
+./scripts/rollback_phasea.sh <commit-or-tag> --yes
+```
+
+行为：
+1. 解析并校验目标 commit/tag
+2. 交互确认（默认需输入 `ROLLBACK`）
+3. `git checkout --detach <target>` 切换代码
+4. 运行态清理（devnet 关闭、常见进程清理、phaseA 临时文件清理）
+5. 执行最小验证：`trillionnium-rust/scripts/run_agent_user_phasea_gate.sh`
+
+安全约束：
+- 默认拒绝脏工作区（可用 `ALLOW_DIRTY=1` 显式覆盖）
+- 任一步骤失败即退出（`set -euo pipefail`）
+- 回滚日志与 gate 产物路径：`run/rollback-phasea/<timestamp>/`

@@ -10,11 +10,11 @@ OUT_DIR="${OUT_DIR:-$ROOT/run/health}"
 OUT="$OUT_DIR/agent-user-phasea-gate-$TS.txt"
 mkdir -p "$OUT_DIR" "$ROOT/run/message-gateway"
 
-# Optional reliability store selection for gate smoke.
-# RELIABILITY_STORE: memory (default) | sqlite
-# RELIABILITY_DB_PATH: sqlite file path used when RELIABILITY_STORE=sqlite
-RELIABILITY_STORE="${RELIABILITY_STORE:-memory}"
-RELIABILITY_DB_PATH="${RELIABILITY_DB_PATH:-$OUT_DIR/reliability-phasea-$TS.sqlite}"
+# Reliability store selection for gate smoke.
+# RELIABILITY_STORE: sqlite (default, production) | memory
+# RELIABILITY_DB_PATH: sqlite file path override when RELIABILITY_STORE=sqlite
+RELIABILITY_STORE="${RELIABILITY_STORE:-sqlite}"
+RELIABILITY_DB_PATH="${RELIABILITY_DB_PATH:-$OUT_DIR/reliability-phasea.sqlite}"
 
 INGRESS="$ROOT/run/message-gateway/requests.jsonl"
 BACKUP="$ROOT/run/message-gateway/requests.backup-$TS.jsonl"
