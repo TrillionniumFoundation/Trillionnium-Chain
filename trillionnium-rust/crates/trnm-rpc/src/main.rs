@@ -81,6 +81,10 @@ struct MessageIngressRecord {
     verifier_status: Option<String>,
     #[serde(default)]
     resolution_code: Option<String>,
+    #[serde(default)]
+    commit_tx_hash: Option<String>,
+    #[serde(default)]
+    reveal_tx_hash: Option<String>,
 }
 
 #[derive(Debug, Clone)]
@@ -415,6 +419,8 @@ fn main() -> Result<()> {
                 result_hash: None,
                 verifier_status: None,
                 resolution_code: None,
+                commit_tx_hash: None,
+                reveal_tx_hash: None,
             };
 
             let path = ingress_file();
@@ -499,6 +505,8 @@ fn main() -> Result<()> {
                 verifier_status: rec.verifier_status,
                 resolution_code: rec.resolution_code,
                 result_hash: rec.result_hash,
+                commit_tx_hash: rec.commit_tx_hash,
+                reveal_tx_hash: rec.reveal_tx_hash,
                 events,
             };
             println!("{}", serde_json::to_string_pretty(&out)?);

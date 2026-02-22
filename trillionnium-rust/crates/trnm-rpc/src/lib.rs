@@ -59,6 +59,8 @@ pub struct RequestFullQueryResponse {
     pub verifier_status: Option<String>,
     pub resolution_code: Option<String>,
     pub result_hash: Option<String>,
+    pub commit_tx_hash: Option<String>,
+    pub reveal_tx_hash: Option<String>,
     pub events: Vec<EventQueryResponse>,
 }
 

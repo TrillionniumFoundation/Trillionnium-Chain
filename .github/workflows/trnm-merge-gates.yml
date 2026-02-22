@@ -117,6 +117,13 @@ jobs:
           cd trillionnium-rust
           ./scripts/run_request_fault_injection.sh
 
+      - name: Request tx-hash binding (hard gate)
+        run: |
+          set -euo pipefail
+          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+          cd trillionnium-rust
+          ./scripts/check_request_tx_binding.sh
+
       - name: Challenge reexec bundle smoke (hard gate)
         run: |
           set -euo pipefail

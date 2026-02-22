@@ -77,6 +77,10 @@ enum Command {
     FlushSubmissions {
         #[arg(long, default_value = "/tmp/trnm-worker-agent-submissions.jsonl")]
         submit_log: PathBuf,
+        #[arg(long, default_value = "run/message-gateway/requests.jsonl")]
+        ingress_file: PathBuf,
+        #[arg(long, default_value_t = true)]
+        update_ingress: bool,
         #[arg(long, default_value_t = false)]
         execute: bool,
         #[arg(long, default_value = "./scripts/worker_tx_adapter.sh")]
@@ -146,6 +150,10 @@ struct MessageIngressRecord {
     verifier_status: Option<String>,
     #[serde(default)]
     resolution_code: Option<String>,
+    #[serde(default)]
+    commit_tx_hash: Option<String>,
+    #[serde(default)]
+    reveal_tx_hash: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -613,6 +621,8 @@ fn main() -> Result<()> {
         }
         Command::FlushSubmissions {
             submit_log,
+            ingress_file,
+            update_ingress,
             execute,
             adapter_cmd,
             max_retries,
@@ -727,6 +737,28 @@ fn main() -> Result<()> {
                         Some(reason_code.to_string()),
                         Some(run_id.clone()),
                     )?;
+
+                    if update_ingress {
+                        let mut ingress = load_ingress_records(&ingress_file)?;
+                        let mut changed = false;
+                        for ir in ingress.iter_mut() {
+                            if ir.task_id == rec.task_id {
+                                ir.commit_tx_hash = commit_res.tx_hash.clone();
+                                ir.reveal_tx_hash = reveal_res.tx_hash.clone();
+                                ir.resolution_code = Some(reason_code.to_string());
+                                ir.verifier_status = Some(if ack_status == "accepted" { "accepted".to_string() } else { "rejected".to_string() });
+                                ir.status = match ack_status {
+                                    "accepted" => "REVEAL_SUBMITTED".to_string(),
+                                    "rejected" => "REJECTED".to_string(),
+                                    _ => "FAILED_SUBMISSION".to_string(),
+                                };
+                                changed = true;
+                            }
+                        }
+                        if changed {
+                            save_ingress_records(&ingress_file, &ingress)?;
+                        }
+                    }
 
                     append_event(
                         &event_log,
