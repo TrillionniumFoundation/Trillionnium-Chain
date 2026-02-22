@@ -1,8 +1,18 @@
+mod relay;
 mod request_status;
+mod transcript;
 
 use serde::{Deserialize, Serialize};
 
+pub use relay::{
+    RelayAuthEnvelope, RelayAuthError, RelayAuthVerifier, RelayEnvelope, RelaySession,
+    RelaySessionStatus,
+};
 pub use request_status::{RequestStateError, RequestStatus};
+pub use transcript::{
+    relay_auth_envelope_hash, transcript_segment_proof, transcript_segment_root, verify_proof,
+    MerkleDirection, TranscriptError, TranscriptProof,
+};
 
 pub type Hash32 = [u8; 32];
 
