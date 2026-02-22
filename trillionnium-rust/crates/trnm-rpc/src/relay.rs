@@ -11,9 +11,16 @@ fn not_found(code: &str, detail: impl Into<String>) -> anyhow::Error {
     anyhow!("not_found/{code}: {}", detail.into())
 }
 
+fn too_many_requests(code: &str, detail: impl Into<String>) -> anyhow::Error {
+    anyhow!("too_many_requests/{code}: {}", detail.into())
+}
+
 fn validate_session_id(session_id: &str, field: &str) -> Result<()> {
     if session_id.trim().is_empty() {
-        return Err(bad_request("empty_session", format!("{field} must be non-empty")));
+        return Err(bad_request(
+            "empty_session",
+            format!("{field} must be non-empty"),
+        ));
     }
     Ok(())
 }
@@ -108,7 +115,11 @@ fn merkle_root_and_proofs(leaves: &[[u8; 32]]) -> ([u8; 32], Vec<Vec<RelayProofS
         let mut i = 0usize;
         while i < level.len() {
             let left = level[i];
-            let right = if i + 1 < level.len() { level[i + 1] } else { left };
+            let right = if i + 1 < level.len() {
+                level[i + 1]
+            } else {
+                left
+            };
 
             for &leaf_idx in &indexes[i] {
                 proofs[leaf_idx].push(RelayProofStep {
@@ -158,6 +169,9 @@ pub struct RelaySendRequest {
     pub from: String,
     pub to: Option<String>,
     pub payload: Vec<u8>,
+    /// Source identity for risk control (e.g. user_id/ip/device).
+    /// Defaults to "anon" when omitted.
+    pub source: Option<String>,
 }
 
 #[derive(Debug, Clone)]
@@ -208,6 +222,10 @@ pub struct RelaySessionProofQuery {
     pub session_id: String,
     pub from_seq: u64,
     pub to_seq: u64,
+    /// Source identity for risk control (e.g. user_id/ip/device).
+    /// Defaults to "anon" when omitted.
+    #[serde(default)]
+    pub source: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -233,6 +251,139 @@ pub struct RelaySessionProofResponse {
     pub segment_root_hex: String,
     pub messages: Vec<RelayEnvelope>,
     pub proofs: Vec<RelayEnvelopeProof>,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+enum RiskDomain {
+    Relay,
+    Proof,
+    Challenge,
+}
+
+impl RiskDomain {
+    fn as_str(self) -> &'static str {
+        match self {
+            RiskDomain::Relay => "relay",
+            RiskDomain::Proof => "proof",
+            RiskDomain::Challenge => "challenge",
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct RiskQuotaConfig {
+    pub window_ms: u128,
+    pub per_session_limit: u32,
+    pub per_source_limit: u32,
+}
+
+impl Default for RiskQuotaConfig {
+    fn default() -> Self {
+        Self {
+            window_ms: 1_000,
+            per_session_limit: 64,
+            per_source_limit: 64,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Default)]
+struct WindowCounter {
+    window_start_ms: u128,
+    used: u32,
+}
+
+#[derive(Debug, Clone, Default)]
+struct RiskQuotaState {
+    by_session: HashMap<(RiskDomain, String), WindowCounter>,
+    by_source: HashMap<(RiskDomain, String), WindowCounter>,
+}
+
+impl RiskQuotaState {
+    fn consume(
+        &mut self,
+        now_ms: u128,
+        domain: RiskDomain,
+        session_id: &str,
+        source: &str,
+        cfg: &RiskQuotaConfig,
+    ) -> Result<()> {
+        Self::consume_bucket(
+            &mut self.by_session,
+            now_ms,
+            domain,
+            session_id,
+            cfg.window_ms,
+            cfg.per_session_limit,
+            "session",
+        )?;
+
+        if let Err(e) = Self::consume_bucket(
+            &mut self.by_source,
+            now_ms,
+            domain,
+            source,
+            cfg.window_ms,
+            cfg.per_source_limit,
+            "source",
+        ) {
+            // rollback session consumption so two dimensions stay atomic for one request
+            Self::rollback_bucket(&mut self.by_session, domain, session_id);
+            return Err(e);
+        }
+
+        Ok(())
+    }
+
+    fn consume_bucket(
+        buckets: &mut HashMap<(RiskDomain, String), WindowCounter>,
+        now_ms: u128,
+        domain: RiskDomain,
+        key: &str,
+        window_ms: u128,
+        limit: u32,
+        dim: &str,
+    ) -> Result<()> {
+        let bucket = buckets
+            .entry((domain, key.to_string()))
+            .or_insert_with(|| WindowCounter {
+                window_start_ms: now_ms,
+                used: 0,
+            });
+
+        if now_ms.saturating_sub(bucket.window_start_ms) >= window_ms {
+            bucket.window_start_ms = now_ms;
+            bucket.used = 0;
+        }
+
+        if bucket.used >= limit {
+            return Err(too_many_requests(
+                "quota_exceeded",
+                format!(
+                    "domain={} dim={} key={} limit={} window_ms={}",
+                    domain.as_str(),
+                    dim,
+                    key,
+                    limit,
+                    window_ms
+                ),
+            ));
+        }
+        bucket.used += 1;
+        Ok(())
+    }
+
+    fn rollback_bucket(
+        buckets: &mut HashMap<(RiskDomain, String), WindowCounter>,
+        domain: RiskDomain,
+        key: &str,
+    ) {
+        if let Some(bucket) = buckets.get_mut(&(domain, key.to_string())) {
+            if bucket.used > 0 {
+                bucket.used -= 1;
+            }
+        }
+    }
 }
 
 pub trait RelayHandler: Send + Sync {
@@ -316,6 +467,8 @@ pub struct RelayService {
     sessions: Mutex<HashMap<String, RelaySessionState>>,
     router: RelayRouter,
     envelope_id: AtomicU64,
+    risk_quota: Mutex<RiskQuotaState>,
+    risk_quota_cfg: RiskQuotaConfig,
 }
 
 impl RelayService {
@@ -324,7 +477,34 @@ impl RelayService {
             sessions: Mutex::new(HashMap::new()),
             router,
             envelope_id: AtomicU64::new(1),
+            risk_quota: Mutex::new(RiskQuotaState::default()),
+            risk_quota_cfg: RiskQuotaConfig::default(),
         }
+    }
+
+    pub fn with_risk_quota_config(router: RelayRouter, risk_quota_cfg: RiskQuotaConfig) -> Self {
+        Self {
+            sessions: Mutex::new(HashMap::new()),
+            router,
+            envelope_id: AtomicU64::new(1),
+            risk_quota: Mutex::new(RiskQuotaState::default()),
+            risk_quota_cfg,
+        }
+    }
+
+    fn consume_risk_quota(
+        &self,
+        domain: RiskDomain,
+        session_id: &str,
+        source: Option<&str>,
+    ) -> Result<()> {
+        let source = source.unwrap_or("anon").trim();
+        let source = if source.is_empty() { "anon" } else { source };
+        let mut q = self
+            .risk_quota
+            .lock()
+            .map_err(|_| anyhow!("relay risk quota lock poisoned"))?;
+        q.consume(now_ms(), domain, session_id, source, &self.risk_quota_cfg)
     }
 
     pub fn open(&self, req: RelayOpenRequest) -> Result<RelayOpenResponse> {
@@ -349,6 +529,7 @@ impl RelayService {
     pub fn send(&self, req: RelaySendRequest) -> Result<RelaySendResponse> {
         validate_session_id(&req.session_id, "session_id")?;
         validate_route(&req.route)?;
+        self.consume_risk_quota(RiskDomain::Relay, &req.session_id, req.source.as_deref())?;
         if !self.router.has_route(&req.route) {
             // TODO(metrics): relay_send_rejected_total{reason="route_not_registered"} += 1
             return Err(bad_request(
@@ -470,6 +651,7 @@ impl RelayService {
     ) -> Result<RelaySessionProofResponse> {
         validate_session_id(&req.session_id, "session_id")?;
         validate_proof_query_range(req.from_seq, req.to_seq)?;
+        self.consume_risk_quota(RiskDomain::Proof, &req.session_id, req.source.as_deref())?;
 
         let g = self
             .sessions
@@ -535,6 +717,11 @@ impl RelayService {
         })
     }
 
+    pub fn check_challenge_quota(&self, session_id: &str, source: Option<&str>) -> Result<()> {
+        validate_session_id(session_id, "session_id")?;
+        self.consume_risk_quota(RiskDomain::Challenge, session_id, source)
+    }
+
     pub fn close(&self, req: RelayCloseRequest) -> Result<RelayCloseResponse> {
         validate_session_id(&req.session_id, "session_id")?;
         let mut g = self
@@ -581,13 +768,22 @@ pub fn verify_session_proof(resp: &RelaySessionProofResponse) -> Result<()> {
     for (i, (msg, p)) in resp.messages.iter().zip(resp.proofs.iter()).enumerate() {
         let expected_seq = resp.from_seq + i as u64;
         if msg.sequence != expected_seq {
-            bail!("message sequence mismatch at index {}: got {}, expected {}", i, msg.sequence, expected_seq);
+            bail!(
+                "message sequence mismatch at index {}: got {}, expected {}",
+                i,
+                msg.sequence,
+                expected_seq
+            );
         }
         if p.envelope != *msg {
             bail!("proof envelope mismatch at index {}", i);
         }
         if p.leaf_index != i {
-            bail!("proof leaf index mismatch at index {}: got {}", i, p.leaf_index);
+            bail!(
+                "proof leaf index mismatch at index {}: got {}",
+                i,
+                p.leaf_index
+            );
         }
 
         let leaf_hash = hash_envelope(msg)?;
@@ -618,7 +814,6 @@ pub fn verify_session_proof(resp: &RelaySessionProofResponse) -> Result<()> {
 
     Ok(())
 }
-
 
 pub struct EchoHandler;
 
@@ -661,6 +856,7 @@ mod tests {
                 from: "alice".to_string(),
                 to: Some("bob".to_string()),
                 payload: b"ping".to_vec(),
+                source: None,
             })
             .expect("send");
         assert_eq!(sent.envelope.sequence, 1);
@@ -703,56 +899,84 @@ mod tests {
         let mut router = RelayRouter::new();
         router.register("relay.echo", EchoHandler);
         let relay = RelayService::new(router);
-        relay.open(RelayOpenRequest { session_id: "s2".into() }).unwrap();
+        relay
+            .open(RelayOpenRequest {
+                session_id: "s2".into(),
+            })
+            .unwrap();
 
-        relay.send(RelaySendRequest {
-            session_id: "s2".into(),
-            route: "relay.echo".into(),
-            from: "alice".into(),
-            to: Some("bob".into()),
-            payload: b"m1".to_vec(),
-        }).unwrap();
-        relay.send(RelaySendRequest {
-            session_id: "s2".into(),
-            route: "relay.echo".into(),
-            from: "alice".into(),
-            to: Some("bob".into()),
-            payload: b"m2".to_vec(),
-        }).unwrap();
+        relay
+            .send(RelaySendRequest {
+                session_id: "s2".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"m1".to_vec(),
+                source: None,
+            })
+            .unwrap();
+        relay
+            .send(RelaySendRequest {
+                session_id: "s2".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"m2".to_vec(),
+                source: None,
+            })
+            .unwrap();
 
         // 2 sends + echo => 4 envelopes (seq 1..=4)
-        let all = relay.poll(RelayPollRequest { session_id: "s2".into(), limit: 10 }).unwrap();
+        let all = relay
+            .poll(RelayPollRequest {
+                session_id: "s2".into(),
+                limit: 10,
+            })
+            .unwrap();
         assert_eq!(all.envelopes.len(), 4);
 
-        let empty_range = relay.ack(RelayAckRequest {
-            session_id: "s2".into(),
-            envelope_ids: vec![],
-            upto_seq: Some(0),
-        }).unwrap();
+        let empty_range = relay
+            .ack(RelayAckRequest {
+                session_id: "s2".into(),
+                envelope_ids: vec![],
+                upto_seq: Some(0),
+            })
+            .unwrap();
         assert_eq!(empty_range.acked, 0);
 
-        let first_batch = relay.ack(RelayAckRequest {
-            session_id: "s2".into(),
-            envelope_ids: vec![],
-            upto_seq: Some(2),
-        }).unwrap();
+        let first_batch = relay
+            .ack(RelayAckRequest {
+                session_id: "s2".into(),
+                envelope_ids: vec![],
+                upto_seq: Some(2),
+            })
+            .unwrap();
         assert_eq!(first_batch.acked, 2);
 
-        let repeat = relay.ack(RelayAckRequest {
-            session_id: "s2".into(),
-            envelope_ids: vec![],
-            upto_seq: Some(2),
-        }).unwrap();
+        let repeat = relay
+            .ack(RelayAckRequest {
+                session_id: "s2".into(),
+                envelope_ids: vec![],
+                upto_seq: Some(2),
+            })
+            .unwrap();
         assert_eq!(repeat.acked, 0);
 
-        let overflow = relay.ack(RelayAckRequest {
-            session_id: "s2".into(),
-            envelope_ids: vec![],
-            upto_seq: Some(u64::MAX),
-        }).unwrap();
+        let overflow = relay
+            .ack(RelayAckRequest {
+                session_id: "s2".into(),
+                envelope_ids: vec![],
+                upto_seq: Some(u64::MAX),
+            })
+            .unwrap();
         assert_eq!(overflow.acked, 2);
 
-        let none_left = relay.poll(RelayPollRequest { session_id: "s2".into(), limit: 10 }).unwrap();
+        let none_left = relay
+            .poll(RelayPollRequest {
+                session_id: "s2".into(),
+                limit: 10,
+            })
+            .unwrap();
         assert!(none_left.envelopes.is_empty());
     }
 
@@ -774,6 +998,7 @@ mod tests {
                 from: "alice".into(),
                 to: Some("bob".into()),
                 payload: b"p1".to_vec(),
+                source: None,
             })
             .unwrap();
 
@@ -804,6 +1029,7 @@ mod tests {
                 from: "alice".into(),
                 to: Some("bob".into()),
                 payload: b"p1".to_vec(),
+                source: None,
             })
             .unwrap();
         relay
@@ -813,6 +1039,7 @@ mod tests {
                 from: "alice".into(),
                 to: Some("bob".into()),
                 payload: b"p2".to_vec(),
+                source: None,
             })
             .unwrap();
 
@@ -822,6 +1049,7 @@ mod tests {
                 session_id: "sp1".into(),
                 from_seq: 2,
                 to_seq: 4,
+                source: None,
             })
             .unwrap();
 
@@ -865,6 +1093,7 @@ mod tests {
                 from: "alice".into(),
                 to: Some("bob".into()),
                 payload: b"m1".to_vec(),
+                source: None,
             })
             .unwrap();
         relay
@@ -874,6 +1103,7 @@ mod tests {
                 from: "alice".into(),
                 to: Some("bob".into()),
                 payload: b"m2".to_vec(),
+                source: None,
             })
             .unwrap();
 
@@ -883,6 +1113,7 @@ mod tests {
                 session_id: "sp2".into(),
                 from_seq: 1,
                 to_seq: 4,
+                source: None,
             })
             .unwrap();
 
@@ -911,7 +1142,11 @@ mod tests {
     #[test]
     fn relay_open_rejects_empty_session() {
         let relay = RelayService::new(RelayRouter::new());
-        let err = relay.open(RelayOpenRequest { session_id: "   ".into() }).unwrap_err();
+        let err = relay
+            .open(RelayOpenRequest {
+                session_id: "   ".into(),
+            })
+            .unwrap_err();
         assert!(err.to_string().contains("bad_request/empty_session"));
     }
 
@@ -920,27 +1155,37 @@ mod tests {
         let mut router = RelayRouter::new();
         router.register("relay.echo", EchoHandler);
         let relay = RelayService::new(router);
-        relay.open(RelayOpenRequest { session_id: "s-route".into() }).unwrap();
+        relay
+            .open(RelayOpenRequest {
+                session_id: "s-route".into(),
+            })
+            .unwrap();
 
-        let err = relay.send(RelaySendRequest {
-            session_id: "s-route".into(),
-            route: "foo/bar".into(),
-            from: "alice".into(),
-            to: Some("bob".into()),
-            payload: b"x".to_vec(),
-        }).unwrap_err();
+        let err = relay
+            .send(RelaySendRequest {
+                session_id: "s-route".into(),
+                route: "foo/bar".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"x".to_vec(),
+                source: None,
+            })
+            .unwrap_err();
         assert!(err.to_string().contains("bad_request/invalid_route_type"));
     }
 
     #[test]
     fn relay_proof_query_rejects_empty_session() {
         let relay = RelayService::new(RelayRouter::new());
-        let err = relay.query_session_proof(RelaySessionProofQuery {
-            task_id: 1,
-            session_id: "".into(),
-            from_seq: 1,
-            to_seq: 1,
-        }).unwrap_err();
+        let err = relay
+            .query_session_proof(RelaySessionProofQuery {
+                task_id: 1,
+                session_id: "".into(),
+                from_seq: 1,
+                to_seq: 1,
+                source: None,
+            })
+            .unwrap_err();
         assert!(err.to_string().contains("bad_request/empty_session"));
     }
 
@@ -949,14 +1194,21 @@ mod tests {
         let mut router = RelayRouter::new();
         router.register("relay.echo", EchoHandler);
         let relay = RelayService::new(router);
-        relay.open(RelayOpenRequest { session_id: "sp-range".into() }).unwrap();
+        relay
+            .open(RelayOpenRequest {
+                session_id: "sp-range".into(),
+            })
+            .unwrap();
 
-        let err = relay.query_session_proof(RelaySessionProofQuery {
-            task_id: 1,
-            session_id: "sp-range".into(),
-            from_seq: 4,
-            to_seq: 2,
-        }).unwrap_err();
+        let err = relay
+            .query_session_proof(RelaySessionProofQuery {
+                task_id: 1,
+                session_id: "sp-range".into(),
+                from_seq: 4,
+                to_seq: 2,
+                source: None,
+            })
+            .unwrap_err();
         assert!(err.to_string().contains("bad_request/invalid_range"));
     }
 
@@ -965,14 +1217,21 @@ mod tests {
         let mut router = RelayRouter::new();
         router.register("relay.echo", EchoHandler);
         let relay = RelayService::new(router);
-        relay.open(RelayOpenRequest { session_id: "sp-span".into() }).unwrap();
+        relay
+            .open(RelayOpenRequest {
+                session_id: "sp-span".into(),
+            })
+            .unwrap();
 
-        let err = relay.query_session_proof(RelaySessionProofQuery {
-            task_id: 1,
-            session_id: "sp-span".into(),
-            from_seq: 1,
-            to_seq: MAX_PROOF_QUERY_SPAN + 1,
-        }).unwrap_err();
+        let err = relay
+            .query_session_proof(RelaySessionProofQuery {
+                task_id: 1,
+                session_id: "sp-span".into(),
+                from_seq: 1,
+                to_seq: MAX_PROOF_QUERY_SPAN + 1,
+                source: None,
+            })
+            .unwrap_err();
         assert!(err.to_string().contains("bad_request/range_out_of_bounds"));
     }
 
@@ -981,21 +1240,31 @@ mod tests {
         let mut router = RelayRouter::new();
         router.register("relay.echo", EchoHandler);
         let relay = RelayService::new(router);
-        relay.open(RelayOpenRequest { session_id: "sp-oob".into() }).unwrap();
-        relay.send(RelaySendRequest {
-            session_id: "sp-oob".into(),
-            route: "relay.echo".into(),
-            from: "alice".into(),
-            to: Some("bob".into()),
-            payload: b"x".to_vec(),
-        }).unwrap();
+        relay
+            .open(RelayOpenRequest {
+                session_id: "sp-oob".into(),
+            })
+            .unwrap();
+        relay
+            .send(RelaySendRequest {
+                session_id: "sp-oob".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"x".to_vec(),
+                source: None,
+            })
+            .unwrap();
 
-        let err = relay.query_session_proof(RelaySessionProofQuery {
-            task_id: 1,
-            session_id: "sp-oob".into(),
-            from_seq: 1,
-            to_seq: 9,
-        }).unwrap_err();
+        let err = relay
+            .query_session_proof(RelaySessionProofQuery {
+                task_id: 1,
+                session_id: "sp-oob".into(),
+                from_seq: 1,
+                to_seq: 9,
+                source: None,
+            })
+            .unwrap_err();
         assert!(err.to_string().contains("bad_request/range_out_of_bounds"));
     }
 
@@ -1004,20 +1273,232 @@ mod tests {
         let mut router = RelayRouter::new();
         router.register("relay.echo", EchoHandler);
         let relay = RelayService::new(router);
-        relay.open(RelayOpenRequest { session_id: "sp-limit".into() }).unwrap();
-        for _ in 0..3 {
-            relay.send(RelaySendRequest {
+        relay
+            .open(RelayOpenRequest {
                 session_id: "sp-limit".into(),
+            })
+            .unwrap();
+        for _ in 0..3 {
+            relay
+                .send(RelaySendRequest {
+                    session_id: "sp-limit".into(),
+                    route: "relay.echo".into(),
+                    from: "alice".into(),
+                    to: Some("bob".into()),
+                    payload: b"x".to_vec(),
+                    source: None,
+                })
+                .unwrap();
+        }
+
+        let out = relay
+            .poll(RelayPollRequest {
+                session_id: "sp-limit".into(),
+                limit: usize::MAX,
+            })
+            .unwrap();
+        assert_eq!(out.envelopes.len(), 6);
+    }
+
+    fn tiny_quota_relay() -> RelayService {
+        let mut router = RelayRouter::new();
+        router.register("relay.echo", EchoHandler);
+        let relay = RelayService::with_risk_quota_config(
+            router,
+            RiskQuotaConfig {
+                window_ms: 50,
+                per_session_limit: 2,
+                per_source_limit: 2,
+            },
+        );
+        relay
+            .open(RelayOpenRequest {
+                session_id: "rq-s1".into(),
+            })
+            .unwrap();
+        relay
+            .open(RelayOpenRequest {
+                session_id: "rq-s2".into(),
+            })
+            .unwrap();
+        relay
+    }
+
+    #[test]
+    fn relay_quota_exceeded_returns_unified_error_code() {
+        let relay = tiny_quota_relay();
+        for _ in 0..2 {
+            relay
+                .send(RelaySendRequest {
+                    session_id: "rq-s1".into(),
+                    route: "relay.echo".into(),
+                    from: "alice".into(),
+                    to: Some("bob".into()),
+                    payload: b"x".to_vec(),
+                    source: Some("src-a".into()),
+                })
+                .unwrap();
+        }
+        let err = relay
+            .send(RelaySendRequest {
+                session_id: "rq-s1".into(),
                 route: "relay.echo".into(),
                 from: "alice".into(),
                 to: Some("bob".into()),
                 payload: b"x".to_vec(),
-            }).unwrap();
-        }
-
-        let out = relay.poll(RelayPollRequest { session_id: "sp-limit".into(), limit: usize::MAX }).unwrap();
-        assert_eq!(out.envelopes.len(), 6);
+                source: Some("src-a".into()),
+            })
+            .unwrap_err();
+        assert!(err.to_string().contains("too_many_requests/quota_exceeded"));
     }
 
-}
+    #[test]
+    fn relay_quota_resets_after_window() {
+        let relay = tiny_quota_relay();
+        for _ in 0..2 {
+            relay
+                .send(RelaySendRequest {
+                    session_id: "rq-s1".into(),
+                    route: "relay.echo".into(),
+                    from: "alice".into(),
+                    to: Some("bob".into()),
+                    payload: b"x".to_vec(),
+                    source: Some("src-b".into()),
+                })
+                .unwrap();
+        }
+        std::thread::sleep(std::time::Duration::from_millis(60));
+        relay
+            .send(RelaySendRequest {
+                session_id: "rq-s1".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"x".to_vec(),
+                source: Some("src-b".into()),
+            })
+            .unwrap();
+    }
 
+    #[test]
+    fn relay_quota_isolated_across_sessions() {
+        let relay = tiny_quota_relay();
+        for _ in 0..2 {
+            relay
+                .send(RelaySendRequest {
+                    session_id: "rq-s1".into(),
+                    route: "relay.echo".into(),
+                    from: "alice".into(),
+                    to: Some("bob".into()),
+                    payload: b"x".to_vec(),
+                    source: Some("src-c".into()),
+                })
+                .unwrap();
+        }
+        relay
+            .send(RelaySendRequest {
+                session_id: "rq-s2".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"x".to_vec(),
+                source: Some("src-d".into()),
+            })
+            .unwrap();
+    }
+
+    #[test]
+    fn relay_quota_isolated_across_sources() {
+        let relay = tiny_quota_relay();
+        relay
+            .send(RelaySendRequest {
+                session_id: "rq-s1".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"x".to_vec(),
+                source: Some("src-e1".into()),
+            })
+            .unwrap();
+        relay
+            .send(RelaySendRequest {
+                session_id: "rq-s2".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"x".to_vec(),
+                source: Some("src-e2".into()),
+            })
+            .unwrap();
+    }
+
+    #[test]
+    fn proof_quota_exceeded_has_same_error_code() {
+        let mut router = RelayRouter::new();
+        router.register("relay.echo", EchoHandler);
+        let relay = RelayService::with_risk_quota_config(
+            router,
+            RiskQuotaConfig {
+                window_ms: 1_000,
+                per_session_limit: 2,
+                per_source_limit: 2,
+            },
+        );
+        relay
+            .open(RelayOpenRequest {
+                session_id: "proof-s1".into(),
+            })
+            .unwrap();
+        relay
+            .send(RelaySendRequest {
+                session_id: "proof-s1".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"x".to_vec(),
+                source: Some("proof-src".into()),
+            })
+            .unwrap();
+
+        for _ in 0..2 {
+            relay
+                .query_session_proof(RelaySessionProofQuery {
+                    task_id: 1,
+                    session_id: "proof-s1".into(),
+                    from_seq: 1,
+                    to_seq: 1,
+                    source: Some("proof-src".into()),
+                })
+                .unwrap();
+        }
+        let err = relay
+            .query_session_proof(RelaySessionProofQuery {
+                task_id: 1,
+                session_id: "proof-s1".into(),
+                from_seq: 1,
+                to_seq: 1,
+                source: Some("proof-src".into()),
+            })
+            .unwrap_err();
+        assert!(err.to_string().contains("too_many_requests/quota_exceeded"));
+    }
+
+    #[test]
+    fn challenge_quota_uses_same_limiter_and_error_code() {
+        let relay = RelayService::with_risk_quota_config(
+            RelayRouter::new(),
+            RiskQuotaConfig {
+                window_ms: 1_000,
+                per_session_limit: 1,
+                per_source_limit: 1,
+            },
+        );
+        relay
+            .check_challenge_quota("c-s1", Some("challenger-a"))
+            .unwrap();
+        let err = relay
+            .check_challenge_quota("c-s1", Some("challenger-a"))
+            .unwrap_err();
+        assert!(err.to_string().contains("too_many_requests/quota_exceeded"));
+    }
+}
