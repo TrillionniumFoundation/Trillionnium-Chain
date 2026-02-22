@@ -7,6 +7,8 @@ export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
 
 mkdir -p run
 OUT="run/event-field-check.log"
+WAL_DIR="run/event-field-check-wal"
+rm -rf "$WAL_DIR"
 
 cargo run -q -p trnm-node -- \
   --config configs/node1.toml \
@@ -14,7 +16,8 @@ cargo run -q -p trnm-node -- \
   --max-blocks 3 \
   --demo-tasks 1 \
   --demo-keys 1 \
-  --parallel-workers 2 > "$OUT"
+  --parallel-workers 2 \
+  --bft-wal-dir "$WAL_DIR" > "$OUT"
 
 required_common=(
   "event_schema=v1"
