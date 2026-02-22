@@ -5,7 +5,7 @@ use sha2::{Digest, Sha256};
 use std::{collections::BTreeMap, fs, path::PathBuf, time::{SystemTime, UNIX_EPOCH}};
 use trnm_rpc::{EventQueryResponse, GovParamQueryResponse, GovProposalQueryResponse, MessageRequestQueryResponse, RequestFullQueryResponse, TaskQueryResponse};
 use trnm_state::StateStore;
-use trnm_types::{GovParamObject, GovProposalObject, GovProposalStatus, TaskStatus};
+use trnm_types::{GovParamObject, GovProposalObject, GovProposalStatus, RequestStatus, TaskStatus};
 
 #[derive(Debug, Parser)]
 #[command(name = "trnm-rpc", version, about = "Trillionnium RPC (state-backed query schema)")]
@@ -249,6 +249,15 @@ fn save_ingress_records(records: &[MessageIngressRecord]) -> Result<()> {
     Ok(())
 }
 
+fn transition_request_status(current: &str, to: RequestStatus) -> Result<String> {
+    let from = RequestStatus::parse(current)
+        .map_err(|e| anyhow::anyhow!("{}", e))?;
+    let next = from
+        .transition(to)
+        .map_err(|e| anyhow::anyhow!("{}", e))?;
+    Ok(next.as_str().to_string())
+}
+
 fn main() -> Result<()> {
     let args = Args::parse();
     let st = governance_state();
@@ -411,7 +420,7 @@ fn main() -> Result<()> {
                 session_id,
                 text,
                 idempotency_key,
-                status: "OPEN".into(),
+                status: RequestStatus::Open.as_str().into(),
                 created_at_unix_ms: ts,
                 assigned_worker: None,
                 assigned_at_unix_ms: None,
@@ -520,8 +529,8 @@ fn main() -> Result<()> {
                 if n >= limit {
                     break;
                 }
-                if rec.status == "OPEN" {
-                    rec.status = "ASSIGNED".into();
+                if rec.status == RequestStatus::Open.as_str() {
+                    rec.status = transition_request_status(&rec.status, RequestStatus::Assigned)?;
                     rec.assigned_worker = Some(worker_id.clone());
                     rec.assigned_at_unix_ms = Some(ts);
                     assigned.push(MessageRequestQueryResponse {

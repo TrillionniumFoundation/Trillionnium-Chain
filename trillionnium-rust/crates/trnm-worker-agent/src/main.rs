@@ -2,10 +2,14 @@ use anyhow::Result;
 use clap::{Parser, Subcommand};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
-use std::{collections::HashSet, fs, path::PathBuf, process::Command as ProcCommand, thread, time::{Duration, SystemTime, UNIX_EPOCH}};
+use std::{collections::HashSet, env, fs, path::PathBuf, process::{Command as ProcCommand, Output, Stdio}, thread, time::{Duration, SystemTime, UNIX_EPOCH}};
+use trnm_types::RequestStatus;
+use wait_timeout::ChildExt;
 
 const DEFAULT_MAX_RETRIES: u32 = 3;
 const DEFAULT_BACKOFF_MS: u64 = 200;
+const DEFAULT_LLM_ADAPTER_TIMEOUT_MS: u64 = 10_000;
+const LLM_ADAPTER_TIMEOUT_ENV: &str = "TRNM_LLM_ADAPTER_TIMEOUT_MS";
 
 const RC_OK: i32 = 0;
 const RC_DUPLICATE: i32 = 9;
@@ -73,6 +77,10 @@ enum Command {
         llm_adapter_cmd: String,
         #[arg(long, default_value_t = 4000)]
         verifier_max_output_chars: usize,
+        #[arg(long, default_value_t = 2)]
+        llm_adapter_max_retries: u32,
+        #[arg(long, default_value_t = 200)]
+        llm_adapter_backoff_ms: u64,
     },
     FlushSubmissions {
         #[arg(long, default_value = "/tmp/trnm-worker-agent-submissions.jsonl")]
@@ -154,6 +162,8 @@ struct MessageIngressRecord {
     commit_tx_hash: Option<String>,
     #[serde(default)]
     reveal_tx_hash: Option<String>,
+    #[serde(default)]
+    adapter_error: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -303,6 +313,15 @@ fn save_ingress_records(path: &PathBuf, records: &[MessageIngressRecord]) -> Res
     Ok(())
 }
 
+fn transition_request_status(current: &str, to: RequestStatus) -> Result<String> {
+    let from = RequestStatus::parse(current)
+        .map_err(|e| anyhow::anyhow!("{}", e))?;
+    let next = from
+        .transition(to)
+        .map_err(|e| anyhow::anyhow!("{}", e))?;
+    Ok(next.as_str().to_string())
+}
+
 fn append_ack(
     ack_log: &PathBuf,
     task_id: u64,
@@ -419,17 +438,94 @@ struct LlmAdapterResponse {
     provider_request_id: Option<String>,
 }
 
-fn run_llm_adapter(adapter_cmd: &str, prompt: &str) -> Result<LlmAdapterResponse> {
+fn parse_llm_adapter_timeout_ms(raw: Option<&str>) -> u64 {
+    raw.and_then(|s| s.parse::<u64>().ok())
+        .filter(|v| *v > 0)
+        .unwrap_or(DEFAULT_LLM_ADAPTER_TIMEOUT_MS)
+}
+
+fn llm_adapter_timeout() -> Duration {
+    let timeout_ms = parse_llm_adapter_timeout_ms(env::var(LLM_ADAPTER_TIMEOUT_ENV).ok().as_deref());
+    Duration::from_millis(timeout_ms)
+}
+
+fn run_shell_with_timeout(cmd: &str, timeout: Duration) -> Result<Output> {
+    let mut child = ProcCommand::new("sh")
+        .arg("-lc")
+        .arg(cmd)
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()?;
+
+    match child.wait_timeout(timeout)? {
+        Some(_) => Ok(child.wait_with_output()?),
+        None => {
+            let _ = child.kill();
+            let _ = child.wait();
+            anyhow::bail!("llm adapter timeout after {}ms", timeout.as_millis());
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum AdapterErrorKind {
+    Retriable,
+    NonRetriable,
+}
+
+#[derive(Debug, Clone)]
+struct AdapterError {
+    kind: AdapterErrorKind,
+    context: String,
+}
+
+fn exp_backoff_delay_ms(base_ms: u64, attempt: u32) -> u64 {
+    base_ms.saturating_mul(1u64.checked_shl(attempt.min(62)).unwrap_or(u64::MAX))
+}
+
+fn run_llm_adapter_once(adapter_cmd: &str, prompt: &str) -> std::result::Result<LlmAdapterResponse, AdapterError> {
     let cmd = format!("{} {}", adapter_cmd, shell_escape::escape(prompt.into()));
-    let out = ProcCommand::new("sh").arg("-lc").arg(cmd).output()?;
+    let timeout = llm_adapter_timeout();
+    let out = run_shell_with_timeout(&cmd, timeout).map_err(|e| AdapterError {
+        kind: AdapterErrorKind::Retriable,
+        context: e.to_string(),
+    })?;
     let stdout = String::from_utf8_lossy(&out.stdout).trim().to_string();
     let stderr = String::from_utf8_lossy(&out.stderr).trim().to_string();
     if !out.status.success() {
-        anyhow::bail!("llm adapter failed rc={:?} stderr={}", out.status.code(), stderr);
+        return Err(AdapterError {
+            kind: AdapterErrorKind::Retriable,
+            context: format!("llm adapter failed rc={:?} stderr={}", out.status.code(), stderr),
+        });
     }
-    let resp: LlmAdapterResponse = serde_json::from_str(&stdout)
-        .map_err(|e| anyhow::anyhow!("llm adapter invalid json: {} raw={}", e, stdout))?;
+    let resp: LlmAdapterResponse = serde_json::from_str(&stdout).map_err(|e| AdapterError {
+        kind: AdapterErrorKind::NonRetriable,
+        context: format!("llm adapter invalid json: {} raw={}", e, stdout),
+    })?;
     Ok(resp)
+}
+
+fn run_llm_adapter_with_retry(adapter_cmd: &str, prompt: &str, max_retries: u32, backoff_ms: u64) -> std::result::Result<LlmAdapterResponse, AdapterError> {
+    let mut last_error: Option<AdapterError> = None;
+    for attempt in 0..=max_retries {
+        match run_llm_adapter_once(adapter_cmd, prompt) {
+            Ok(resp) => return Ok(resp),
+            Err(err) => {
+                let should_retry = err.kind == AdapterErrorKind::Retriable && attempt < max_retries;
+                last_error = Some(err);
+                if should_retry {
+                    thread::sleep(Duration::from_millis(exp_backoff_delay_ms(backoff_ms, attempt)));
+                    continue;
+                }
+                break;
+            }
+        }
+    }
+
+    Err(last_error.unwrap_or(AdapterError {
+        kind: AdapterErrorKind::Retriable,
+        context: "llm adapter failed: unknown error".to_string(),
+    }))
 }
 
 fn verify_model_output(output: &str, max_chars: usize) -> (&'static str, &'static str) {
@@ -440,6 +536,16 @@ fn verify_model_output(output: &str, max_chars: usize) -> (&'static str, &'stati
         return ("rejected", "output_too_long");
     }
     ("accepted", "ok")
+}
+
+fn classify_adapter_error(err: &AdapterError) -> (&'static str, &'static str) {
+    if err.context.contains("timeout") {
+        return ("timeout", "timeout");
+    }
+    match err.kind {
+        AdapterErrorKind::Retriable => ("adapter_error", "retry_exhausted"),
+        AdapterErrorKind::NonRetriable => ("adapter_error", "non_retriable"),
+    }
 }
 
 #[cfg(test)]
@@ -469,6 +575,46 @@ mod tests {
 
         // saturation guard (no overflow panic/wrap)
         assert_eq!(backoff_delay_ms(u64::MAX, 1), u64::MAX);
+    }
+
+    #[test]
+    fn llm_adapter_timeout_triggers() {
+        let cmd = "sleep 0.2; echo '{\"output_text\":\"late\"}'";
+        let err = run_shell_with_timeout(cmd, Duration::from_millis(30)).unwrap_err();
+        assert!(err.to_string().contains("timeout"));
+    }
+
+    #[test]
+    fn llm_adapter_timeout_config_applies() {
+        assert_eq!(parse_llm_adapter_timeout_ms(Some("3000")), 3000);
+        assert_eq!(parse_llm_adapter_timeout_ms(Some("10000")), 10000);
+        assert_eq!(parse_llm_adapter_timeout_ms(Some("0")), DEFAULT_LLM_ADAPTER_TIMEOUT_MS);
+        assert_eq!(parse_llm_adapter_timeout_ms(Some("bad")), DEFAULT_LLM_ADAPTER_TIMEOUT_MS);
+    }
+
+    #[test]
+    fn llm_adapter_non_timeout_path_is_ok() {
+        let cmd = "echo '{\"output_text\":\"ok\",\"provider_request_id\":\"r1\"}'";
+        let out = run_shell_with_timeout(cmd, Duration::from_secs(1)).unwrap();
+        assert!(out.status.success());
+        let stdout = String::from_utf8_lossy(&out.stdout).trim().to_string();
+        let parsed: LlmAdapterResponse = serde_json::from_str(&stdout).unwrap();
+        assert_eq!(parsed.output_text, "ok");
+        assert_eq!(parsed.provider_request_id.as_deref(), Some("r1"));
+    }
+
+    #[test]
+    fn adapter_error_classification_keeps_timeout_consistent() {
+        let timeout_err = AdapterError {
+            kind: AdapterErrorKind::Retriable,
+            context: "llm adapter timeout after 3000ms".to_string(),
+        };
+        let other_err = AdapterError {
+            kind: AdapterErrorKind::Retriable,
+            context: "llm adapter failed rc=Some(1)".to_string(),
+        };
+        assert_eq!(classify_adapter_error(&timeout_err), ("timeout", "timeout"));
+        assert_eq!(classify_adapter_error(&other_err), ("adapter_error", "retry_exhausted"));
     }
 }
 
@@ -554,6 +700,8 @@ fn main() -> Result<()> {
             submit_log,
             llm_adapter_cmd,
             verifier_max_output_chars,
+            llm_adapter_max_retries,
+            llm_adapter_backoff_ms,
         } => {
             let mut records = load_ingress_records(&ingress_file)?;
             let mut n = 0usize;
@@ -561,23 +709,30 @@ fn main() -> Result<()> {
                 if n >= limit {
                     break;
                 }
-                if rec.status != "ASSIGNED" {
+                if rec.status != RequestStatus::Assigned.as_str() {
                     continue;
                 }
                 if rec.assigned_worker.as_deref() != Some(worker.as_str()) {
                     continue;
                 }
 
-                let llm = match run_llm_adapter(&llm_adapter_cmd, &rec.text) {
+                let llm = match run_llm_adapter_with_retry(&llm_adapter_cmd, &rec.text, llm_adapter_max_retries, llm_adapter_backoff_ms) {
                     Ok(v) => v,
                     Err(e) => {
-                        rec.status = "FAILED_ADAPTER".to_string();
+                        let (resolution_code, failure_tag) = classify_adapter_error(&e);
+                        rec.status = transition_request_status(&rec.status, RequestStatus::FailedAdapter)?;
                         rec.verifier_status = Some("rejected".to_string());
-                        rec.resolution_code = Some("adapter_error".to_string());
+                        rec.resolution_code = Some(resolution_code.to_string());
+                        rec.adapter_error = Some(e.context.clone());
                         n += 1;
                         println!(
-                            "[assigned] request_id={} task_id={} worker={} status=FAILED_ADAPTER error={}",
-                            rec.request_id, rec.task_id, worker, e
+                            "[assigned] request_id={} task_id={} worker={} status=FAILED_ADAPTER({}) retryable={} error={}",
+                            rec.request_id,
+                            rec.task_id,
+                            worker,
+                            failure_tag,
+                            matches!(e.kind, AdapterErrorKind::Retriable),
+                            e.context
                         );
                         continue;
                     }
@@ -588,7 +743,7 @@ fn main() -> Result<()> {
                 rec.resolution_code = Some(resolution_code.to_string());
 
                 if v_status != "accepted" {
-                    rec.status = "REJECTED".to_string();
+                    rec.status = transition_request_status(&rec.status, RequestStatus::Rejected)?;
                     n += 1;
                     println!(
                         "[assigned] request_id={} task_id={} worker={} verifier_status={} resolution_code={}",
@@ -604,7 +759,7 @@ fn main() -> Result<()> {
                 if submit {
                     append_submission(&submit_log, rec.task_id, &worker, &commit_hash, &result_hash, &salt_hex)?;
                 }
-                rec.status = "COMMIT_QUEUED".to_string();
+                rec.status = transition_request_status(&rec.status, RequestStatus::CommitQueued)?;
                 n += 1;
                 println!(
                     "[assigned] request_id={} task_id={} worker={} result_hash={} submit={} provider_request_id={}",
@@ -748,9 +903,9 @@ fn main() -> Result<()> {
                                 ir.resolution_code = Some(reason_code.to_string());
                                 ir.verifier_status = Some(if ack_status == "accepted" { "accepted".to_string() } else { "rejected".to_string() });
                                 ir.status = match ack_status {
-                                    "accepted" => "REVEAL_SUBMITTED".to_string(),
-                                    "rejected" => "REJECTED".to_string(),
-                                    _ => "FAILED_SUBMISSION".to_string(),
+                                    "accepted" => transition_request_status(&ir.status, RequestStatus::RevealSubmitted)?,
+                                    "rejected" => transition_request_status(&ir.status, RequestStatus::Rejected)?,
+                                    _ => transition_request_status(&ir.status, RequestStatus::FailedSubmission)?,
                                 };
                                 changed = true;
                             }

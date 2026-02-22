@@ -1,4 +1,8 @@
+mod request_status;
+
 use serde::{Deserialize, Serialize};
+
+pub use request_status::{RequestStateError, RequestStatus};
 
 pub type Hash32 = [u8; 32];
 
