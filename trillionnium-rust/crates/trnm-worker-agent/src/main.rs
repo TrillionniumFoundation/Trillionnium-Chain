@@ -2,13 +2,27 @@ use anyhow::Result;
 use clap::{Parser, Subcommand};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
-use std::{collections::HashSet, env, fs, path::PathBuf, process::{Command as ProcCommand, Output, Stdio}, thread, time::{Duration, SystemTime, UNIX_EPOCH}};
+use std::{
+    collections::HashSet,
+    env, fs,
+    path::PathBuf,
+    process::{Command as ProcCommand, Output, Stdio},
+    thread,
+    time::{Duration, SystemTime, UNIX_EPOCH},
+};
 use trnm_types::RequestStatus;
 use wait_timeout::ChildExt;
 
-const DEFAULT_MAX_RETRIES: u32 = 3;
-const DEFAULT_BACKOFF_MS: u64 = 200;
+const DEFAULT_TX_ADAPTER_MAX_RETRIES: u32 = 3;
+const DEFAULT_TX_ADAPTER_BACKOFF_MS: u64 = 200;
+const DEFAULT_LLM_ADAPTER_MAX_RETRIES: u32 = 2;
+const DEFAULT_LLM_ADAPTER_BACKOFF_MS: u64 = 200;
 const DEFAULT_LLM_ADAPTER_TIMEOUT_MS: u64 = 10_000;
+
+const TX_ADAPTER_MAX_RETRIES_ENV: &str = "TRNM_TX_ADAPTER_MAX_RETRIES";
+const TX_ADAPTER_BACKOFF_MS_ENV: &str = "TRNM_TX_ADAPTER_BACKOFF_MS";
+const LLM_ADAPTER_MAX_RETRIES_ENV: &str = "TRNM_LLM_ADAPTER_MAX_RETRIES";
+const LLM_ADAPTER_BACKOFF_MS_ENV: &str = "TRNM_LLM_ADAPTER_BACKOFF_MS";
 const LLM_ADAPTER_TIMEOUT_ENV: &str = "TRNM_LLM_ADAPTER_TIMEOUT_MS";
 
 const RC_OK: i32 = 0;
@@ -16,7 +30,11 @@ const RC_DUPLICATE: i32 = 9;
 const RC_NONCE_REJECTED: i32 = 10;
 
 #[derive(Debug, Parser)]
-#[command(name = "trnm-worker-agent", version, about = "Trillionnium PoUW worker-agent (MVP skeleton)")]
+#[command(
+    name = "trnm-worker-agent",
+    version,
+    about = "Trillionnium PoUW worker-agent (MVP skeleton)"
+)]
 struct Args {
     #[command(subcommand)]
     cmd: Command,
@@ -77,10 +95,12 @@ enum Command {
         llm_adapter_cmd: String,
         #[arg(long, default_value_t = 4000)]
         verifier_max_output_chars: usize,
-        #[arg(long, default_value_t = 2)]
-        llm_adapter_max_retries: u32,
-        #[arg(long, default_value_t = 200)]
-        llm_adapter_backoff_ms: u64,
+        #[arg(long)]
+        llm_adapter_max_retries: Option<u32>,
+        #[arg(long)]
+        llm_adapter_backoff_ms: Option<u64>,
+        #[arg(long)]
+        llm_adapter_timeout_ms: Option<u64>,
     },
     FlushSubmissions {
         #[arg(long, default_value = "/tmp/trnm-worker-agent-submissions.jsonl")]
@@ -93,10 +113,10 @@ enum Command {
         execute: bool,
         #[arg(long, default_value = "./scripts/worker_tx_adapter.sh")]
         adapter_cmd: String,
-        #[arg(long, default_value_t = DEFAULT_MAX_RETRIES)]
-        max_retries: u32,
-        #[arg(long, default_value_t = DEFAULT_BACKOFF_MS)]
-        backoff_ms: u64,
+        #[arg(long)]
+        max_retries: Option<u32>,
+        #[arg(long)]
+        backoff_ms: Option<u64>,
         #[arg(long, default_value = "/tmp/trnm-worker-agent-acks.jsonl")]
         ack_log: PathBuf,
         #[arg(long, default_value = "/tmp/trnm-worker-agent-events.jsonl")]
@@ -208,6 +228,18 @@ struct AdapterExecResult {
     terminal: bool,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+struct RetryPolicy {
+    max_retries: u32,
+    backoff_ms: u64,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+struct LlmAdapterPolicy {
+    retry: RetryPolicy,
+    timeout_ms: u64,
+}
+
 fn commitment(task_id: u64, result_hash_hex: &str, salt_hex: &str, worker: &str) -> String {
     let payload = format!("{}|{}|{}|{}", task_id, result_hash_hex, salt_hex, worker);
     let mut h = Sha256::new();
@@ -250,8 +282,14 @@ fn append_submission(
     salt_hex: &str,
 ) -> Result<()> {
     let nonce = task_id;
-    let commit_cmd = format!("trnm-node tx commit-result {} {} {} {}", task_id, worker, commit_hash, nonce);
-    let reveal_cmd = format!("trnm-node tx reveal-result {} {} {}", task_id, result_hash, salt_hex);
+    let commit_cmd = format!(
+        "trnm-node tx commit-result {} {} {} {}",
+        task_id, worker, commit_hash, nonce
+    );
+    let reveal_cmd = format!(
+        "trnm-node tx reveal-result {} {} {}",
+        task_id, result_hash, salt_hex
+    );
     let rec = SubmissionRecord {
         ts_unix_ms: now_ms(),
         task_id,
@@ -264,7 +302,11 @@ fn append_submission(
         reveal_cmd,
     };
     let line = serde_json::to_string(&rec)?;
-    let mut old = if submit_log.exists() { fs::read_to_string(submit_log)? } else { String::new() };
+    let mut old = if submit_log.exists() {
+        fs::read_to_string(submit_log)?
+    } else {
+        String::new()
+    };
     old.push_str(&line);
     old.push('\n');
     fs::write(submit_log, old)?;
@@ -314,11 +356,8 @@ fn save_ingress_records(path: &PathBuf, records: &[MessageIngressRecord]) -> Res
 }
 
 fn transition_request_status(current: &str, to: RequestStatus) -> Result<String> {
-    let from = RequestStatus::parse(current)
-        .map_err(|e| anyhow::anyhow!("{}", e))?;
-    let next = from
-        .transition(to)
-        .map_err(|e| anyhow::anyhow!("{}", e))?;
+    let from = RequestStatus::parse(current).map_err(|e| anyhow::anyhow!("{}", e))?;
+    let next = from.transition(to).map_err(|e| anyhow::anyhow!("{}", e))?;
     Ok(next.as_str().to_string())
 }
 
@@ -341,7 +380,11 @@ fn append_ack(
         run_id,
     };
     let line = serde_json::to_string(&rec)?;
-    let mut old = if ack_log.exists() { fs::read_to_string(ack_log)? } else { String::new() };
+    let mut old = if ack_log.exists() {
+        fs::read_to_string(ack_log)?
+    } else {
+        String::new()
+    };
     old.push_str(&line);
     old.push('\n');
     fs::write(ack_log, old)?;
@@ -350,7 +393,11 @@ fn append_ack(
 
 fn append_event(event_log: &PathBuf, event: &WorkerEvent) -> Result<()> {
     let line = serde_json::to_string(event)?;
-    let mut old = if event_log.exists() { fs::read_to_string(event_log)? } else { String::new() };
+    let mut old = if event_log.exists() {
+        fs::read_to_string(event_log)?
+    } else {
+        String::new()
+    };
     old.push_str(&line);
     old.push('\n');
     fs::write(event_log, old)?;
@@ -359,7 +406,11 @@ fn append_event(event_log: &PathBuf, event: &WorkerEvent) -> Result<()> {
 
 fn append_progress(progress_log: &PathBuf, rec: &ProgressRecord) -> Result<()> {
     let line = serde_json::to_string(rec)?;
-    let mut old = if progress_log.exists() { fs::read_to_string(progress_log)? } else { String::new() };
+    let mut old = if progress_log.exists() {
+        fs::read_to_string(progress_log)?
+    } else {
+        String::new()
+    };
     old.push_str(&line);
     old.push('\n');
     fs::write(progress_log, old)?;
@@ -383,7 +434,11 @@ fn backoff_delay_ms(base_ms: u64, attempt: u32) -> u64 {
     base_ms.saturating_mul(attempt as u64 + 1)
 }
 
-fn run_adapter_with_retry(cmd: &str, max_retries: u32, backoff_ms: u64) -> Result<AdapterExecResult> {
+fn run_adapter_with_retry(
+    cmd: &str,
+    max_retries: u32,
+    backoff_ms: u64,
+) -> Result<AdapterExecResult> {
     let mut last_rc = 1;
     let mut last_tx_hash: Option<String> = None;
 
@@ -438,15 +493,75 @@ struct LlmAdapterResponse {
     provider_request_id: Option<String>,
 }
 
-fn parse_llm_adapter_timeout_ms(raw: Option<&str>) -> u64 {
-    raw.and_then(|s| s.parse::<u64>().ok())
-        .filter(|v| *v > 0)
-        .unwrap_or(DEFAULT_LLM_ADAPTER_TIMEOUT_MS)
+fn parse_u32_with_min(raw: Option<&str>, default: u32, min: u32) -> u32 {
+    raw.and_then(|s| s.parse::<u32>().ok())
+        .filter(|v| *v >= min)
+        .unwrap_or(default)
 }
 
-fn llm_adapter_timeout() -> Duration {
-    let timeout_ms = parse_llm_adapter_timeout_ms(env::var(LLM_ADAPTER_TIMEOUT_ENV).ok().as_deref());
-    Duration::from_millis(timeout_ms)
+fn parse_u64_with_min(raw: Option<&str>, default: u64, min: u64) -> u64 {
+    raw.and_then(|s| s.parse::<u64>().ok())
+        .filter(|v| *v >= min)
+        .unwrap_or(default)
+}
+
+fn resolve_u32(cli: Option<u32>, env_raw: Option<&str>, default: u32, min: u32) -> u32 {
+    cli.filter(|v| *v >= min)
+        .unwrap_or_else(|| parse_u32_with_min(env_raw, default, min))
+}
+
+fn resolve_u64(cli: Option<u64>, env_raw: Option<&str>, default: u64, min: u64) -> u64 {
+    cli.filter(|v| *v >= min)
+        .unwrap_or_else(|| parse_u64_with_min(env_raw, default, min))
+}
+
+fn resolve_tx_retry_policy(
+    max_retries_cli: Option<u32>,
+    backoff_ms_cli: Option<u64>,
+) -> RetryPolicy {
+    RetryPolicy {
+        max_retries: resolve_u32(
+            max_retries_cli,
+            env::var(TX_ADAPTER_MAX_RETRIES_ENV).ok().as_deref(),
+            DEFAULT_TX_ADAPTER_MAX_RETRIES,
+            0,
+        ),
+        backoff_ms: resolve_u64(
+            backoff_ms_cli,
+            env::var(TX_ADAPTER_BACKOFF_MS_ENV).ok().as_deref(),
+            DEFAULT_TX_ADAPTER_BACKOFF_MS,
+            0,
+        ),
+    }
+}
+
+fn resolve_llm_adapter_policy(
+    max_retries_cli: Option<u32>,
+    backoff_ms_cli: Option<u64>,
+    timeout_ms_cli: Option<u64>,
+) -> LlmAdapterPolicy {
+    LlmAdapterPolicy {
+        retry: RetryPolicy {
+            max_retries: resolve_u32(
+                max_retries_cli,
+                env::var(LLM_ADAPTER_MAX_RETRIES_ENV).ok().as_deref(),
+                DEFAULT_LLM_ADAPTER_MAX_RETRIES,
+                0,
+            ),
+            backoff_ms: resolve_u64(
+                backoff_ms_cli,
+                env::var(LLM_ADAPTER_BACKOFF_MS_ENV).ok().as_deref(),
+                DEFAULT_LLM_ADAPTER_BACKOFF_MS,
+                0,
+            ),
+        },
+        timeout_ms: resolve_u64(
+            timeout_ms_cli,
+            env::var(LLM_ADAPTER_TIMEOUT_ENV).ok().as_deref(),
+            DEFAULT_LLM_ADAPTER_TIMEOUT_MS,
+            1,
+        ),
+    }
 }
 
 fn run_shell_with_timeout(cmd: &str, timeout: Duration) -> Result<Output> {
@@ -483,9 +598,12 @@ fn exp_backoff_delay_ms(base_ms: u64, attempt: u32) -> u64 {
     base_ms.saturating_mul(1u64.checked_shl(attempt.min(62)).unwrap_or(u64::MAX))
 }
 
-fn run_llm_adapter_once(adapter_cmd: &str, prompt: &str) -> std::result::Result<LlmAdapterResponse, AdapterError> {
+fn run_llm_adapter_once(
+    adapter_cmd: &str,
+    prompt: &str,
+    timeout: Duration,
+) -> std::result::Result<LlmAdapterResponse, AdapterError> {
     let cmd = format!("{} {}", adapter_cmd, shell_escape::escape(prompt.into()));
-    let timeout = llm_adapter_timeout();
     let out = run_shell_with_timeout(&cmd, timeout).map_err(|e| AdapterError {
         kind: AdapterErrorKind::Retriable,
         context: e.to_string(),
@@ -495,7 +613,11 @@ fn run_llm_adapter_once(adapter_cmd: &str, prompt: &str) -> std::result::Result<
     if !out.status.success() {
         return Err(AdapterError {
             kind: AdapterErrorKind::Retriable,
-            context: format!("llm adapter failed rc={:?} stderr={}", out.status.code(), stderr),
+            context: format!(
+                "llm adapter failed rc={:?} stderr={}",
+                out.status.code(),
+                stderr
+            ),
         });
     }
     let resp: LlmAdapterResponse = serde_json::from_str(&stdout).map_err(|e| AdapterError {
@@ -523,7 +645,9 @@ where
                 let should_retry = err.kind == AdapterErrorKind::Retriable && attempt < max_retries;
                 last_error = Some(err);
                 if should_retry {
-                    sleeper(Duration::from_millis(exp_backoff_delay_ms(backoff_ms, attempt)));
+                    sleeper(Duration::from_millis(exp_backoff_delay_ms(
+                        backoff_ms, attempt,
+                    )));
                     continue;
                 }
                 break;
@@ -537,11 +661,16 @@ where
     }))
 }
 
-fn run_llm_adapter_with_retry(adapter_cmd: &str, prompt: &str, max_retries: u32, backoff_ms: u64) -> std::result::Result<LlmAdapterResponse, AdapterError> {
+fn run_llm_adapter_with_retry(
+    adapter_cmd: &str,
+    prompt: &str,
+    retry: RetryPolicy,
+    timeout: Duration,
+) -> std::result::Result<LlmAdapterResponse, AdapterError> {
     run_llm_adapter_with_retry_inner(
-        max_retries,
-        backoff_ms,
-        || run_llm_adapter_once(adapter_cmd, prompt),
+        retry.max_retries,
+        retry.backoff_ms,
+        || run_llm_adapter_once(adapter_cmd, prompt, timeout),
         thread::sleep,
     )
 }
@@ -600,11 +729,44 @@ mod tests {
     }
 
     #[test]
-    fn llm_adapter_timeout_config_applies() {
-        assert_eq!(parse_llm_adapter_timeout_ms(Some("3000")), 3000);
-        assert_eq!(parse_llm_adapter_timeout_ms(Some("10000")), 10000);
-        assert_eq!(parse_llm_adapter_timeout_ms(Some("0")), DEFAULT_LLM_ADAPTER_TIMEOUT_MS);
-        assert_eq!(parse_llm_adapter_timeout_ms(Some("bad")), DEFAULT_LLM_ADAPTER_TIMEOUT_MS);
+    fn config_defaults_apply_when_cli_and_env_missing() {
+        let llm = LlmAdapterPolicy {
+            retry: RetryPolicy {
+                max_retries: resolve_u32(None, None, DEFAULT_LLM_ADAPTER_MAX_RETRIES, 0),
+                backoff_ms: resolve_u64(None, None, DEFAULT_LLM_ADAPTER_BACKOFF_MS, 0),
+            },
+            timeout_ms: resolve_u64(None, None, DEFAULT_LLM_ADAPTER_TIMEOUT_MS, 1),
+        };
+        let tx = RetryPolicy {
+            max_retries: resolve_u32(None, None, DEFAULT_TX_ADAPTER_MAX_RETRIES, 0),
+            backoff_ms: resolve_u64(None, None, DEFAULT_TX_ADAPTER_BACKOFF_MS, 0),
+        };
+
+        assert_eq!(llm.retry.max_retries, DEFAULT_LLM_ADAPTER_MAX_RETRIES);
+        assert_eq!(llm.retry.backoff_ms, DEFAULT_LLM_ADAPTER_BACKOFF_MS);
+        assert_eq!(llm.timeout_ms, DEFAULT_LLM_ADAPTER_TIMEOUT_MS);
+        assert_eq!(tx.max_retries, DEFAULT_TX_ADAPTER_MAX_RETRIES);
+        assert_eq!(tx.backoff_ms, DEFAULT_TX_ADAPTER_BACKOFF_MS);
+    }
+
+    #[test]
+    fn config_invalid_values_fallback_to_default() {
+        assert_eq!(
+            resolve_u32(None, Some("bad"), DEFAULT_LLM_ADAPTER_MAX_RETRIES, 0),
+            DEFAULT_LLM_ADAPTER_MAX_RETRIES
+        );
+        assert_eq!(
+            resolve_u64(None, Some("bad"), DEFAULT_LLM_ADAPTER_BACKOFF_MS, 0),
+            DEFAULT_LLM_ADAPTER_BACKOFF_MS
+        );
+        assert_eq!(
+            resolve_u64(None, Some("0"), DEFAULT_LLM_ADAPTER_TIMEOUT_MS, 1),
+            DEFAULT_LLM_ADAPTER_TIMEOUT_MS
+        );
+        assert_eq!(
+            resolve_u64(Some(0), Some("8000"), DEFAULT_LLM_ADAPTER_TIMEOUT_MS, 1),
+            8000
+        );
     }
 
     #[test]
@@ -628,8 +790,14 @@ mod tests {
             kind: AdapterErrorKind::NonRetriable,
             context: "llm adapter invalid json".to_string(),
         };
-        assert_eq!(classify_adapter_error(&retry_exhausted), ("adapter_error", "retry_exhausted"));
-        assert_eq!(classify_adapter_error(&non_retriable), ("adapter_error", "non_retriable"));
+        assert_eq!(
+            classify_adapter_error(&retry_exhausted),
+            ("adapter_error", "retry_exhausted")
+        );
+        assert_eq!(
+            classify_adapter_error(&non_retriable),
+            ("adapter_error", "non_retriable")
+        );
     }
 
     #[test]
@@ -711,7 +879,6 @@ mod tests {
     }
 }
 
-
 fn main() -> Result<()> {
     let args = Args::parse();
     match args.cmd {
@@ -764,7 +931,14 @@ fn main() -> Result<()> {
             let (result_hash, salt_hex) = execute_payload(&payload, task_id);
             let commit_hash = commitment(task_id, &result_hash, &salt_hex, &worker);
             if submit {
-                append_submission(&submit_log, task_id, &worker, &commit_hash, &result_hash, &salt_hex)?;
+                append_submission(
+                    &submit_log,
+                    task_id,
+                    &worker,
+                    &commit_hash,
+                    &result_hash,
+                    &salt_hex,
+                )?;
             }
             let out = RunOnceOutput {
                 task_id,
@@ -796,7 +970,13 @@ fn main() -> Result<()> {
             verifier_max_output_chars,
             llm_adapter_max_retries,
             llm_adapter_backoff_ms,
+            llm_adapter_timeout_ms,
         } => {
+            let llm_policy = resolve_llm_adapter_policy(
+                llm_adapter_max_retries,
+                llm_adapter_backoff_ms,
+                llm_adapter_timeout_ms,
+            );
             let mut records = load_ingress_records(&ingress_file)?;
             let mut n = 0usize;
             for rec in records.iter_mut() {
@@ -810,11 +990,17 @@ fn main() -> Result<()> {
                     continue;
                 }
 
-                let llm = match run_llm_adapter_with_retry(&llm_adapter_cmd, &rec.text, llm_adapter_max_retries, llm_adapter_backoff_ms) {
+                let llm = match run_llm_adapter_with_retry(
+                    &llm_adapter_cmd,
+                    &rec.text,
+                    llm_policy.retry,
+                    Duration::from_millis(llm_policy.timeout_ms),
+                ) {
                     Ok(v) => v,
                     Err(e) => {
                         let (resolution_code, failure_tag) = classify_adapter_error(&e);
-                        rec.status = transition_request_status(&rec.status, RequestStatus::FailedAdapter)?;
+                        rec.status =
+                            transition_request_status(&rec.status, RequestStatus::FailedAdapter)?;
                         rec.verifier_status = Some("rejected".to_string());
                         rec.resolution_code = Some(resolution_code.to_string());
                         rec.adapter_error = Some(e.context.clone());
@@ -831,7 +1017,8 @@ fn main() -> Result<()> {
                         continue;
                     }
                 };
-                let (v_status, resolution_code) = verify_model_output(&llm.output_text, verifier_max_output_chars);
+                let (v_status, resolution_code) =
+                    verify_model_output(&llm.output_text, verifier_max_output_chars);
                 rec.model_output = Some(llm.output_text.clone());
                 rec.verifier_status = Some(v_status.to_string());
                 rec.resolution_code = Some(resolution_code.to_string());
@@ -851,7 +1038,14 @@ fn main() -> Result<()> {
                 let commit_hash = commitment(rec.task_id, &result_hash, &salt_hex, &worker);
                 rec.result_hash = Some(result_hash.clone());
                 if submit {
-                    append_submission(&submit_log, rec.task_id, &worker, &commit_hash, &result_hash, &salt_hex)?;
+                    append_submission(
+                        &submit_log,
+                        rec.task_id,
+                        &worker,
+                        &commit_hash,
+                        &result_hash,
+                        &salt_hex,
+                    )?;
                 }
                 rec.status = transition_request_status(&rec.status, RequestStatus::CommitQueued)?;
                 n += 1;
@@ -866,7 +1060,16 @@ fn main() -> Result<()> {
                 );
             }
             save_ingress_records(&ingress_file, &records)?;
-            println!("[agent] run-assigned processed={} ingress={} submit_log={} adapter={} adapter_retries={} adapter_backoff_ms={}", n, ingress_file.display(), submit_log.display(), llm_adapter_cmd, llm_adapter_max_retries, llm_adapter_backoff_ms);
+            println!(
+                "[agent] run-assigned processed={} ingress={} submit_log={} adapter={} adapter_retries={} adapter_backoff_ms={} adapter_timeout_ms={}",
+                n,
+                ingress_file.display(),
+                submit_log.display(),
+                llm_adapter_cmd,
+                llm_policy.retry.max_retries,
+                llm_policy.retry.backoff_ms,
+                llm_policy.timeout_ms
+            );
         }
         Command::FlushSubmissions {
             submit_log,
@@ -880,6 +1083,7 @@ fn main() -> Result<()> {
             event_log,
             progress_log,
         } => {
+            let tx_retry = resolve_tx_retry_policy(max_retries, backoff_ms);
             if !submit_log.exists() {
                 println!("[agent] no submit log found: {}", submit_log.display());
                 return Ok(());
@@ -920,8 +1124,14 @@ fn main() -> Result<()> {
                             note: "dry_run_only".to_string(),
                         },
                     )?;
-                    println!("[dry-run] adapter={} commit {} {} {}", adapter_cmd, rec.task_id, rec.worker, rec.commit_hash);
-                    println!("[dry-run] adapter={} reveal {} {} {}", adapter_cmd, rec.task_id, rec.result_hash, rec.salt_hex);
+                    println!(
+                        "[dry-run] adapter={} commit {} {} {}",
+                        adapter_cmd, rec.task_id, rec.worker, rec.commit_hash
+                    );
+                    println!(
+                        "[dry-run] adapter={} reveal {} {} {}",
+                        adapter_cmd, rec.task_id, rec.result_hash, rec.salt_hex
+                    );
                 } else {
                     append_progress(
                         &progress_log,
@@ -930,15 +1140,26 @@ fn main() -> Result<()> {
                             run_id: run_id.clone(),
                             task_id: rec.task_id,
                             state: "processing".to_string(),
-                            note: format!("adapter={} retries={} backoff_ms={}", adapter_cmd, max_retries, backoff_ms),
+                            note: format!(
+                                "adapter={} retries={} backoff_ms={}",
+                                adapter_cmd, tx_retry.max_retries, tx_retry.backoff_ms
+                            ),
                         },
                     )?;
                     let nonce = rec.nonce.unwrap_or(rec.task_id);
-                    let cmd1 = format!("{} commit {} {} {} {}", adapter_cmd, rec.task_id, rec.worker, rec.commit_hash, nonce);
-                    let cmd2 = format!("{} reveal {} {} {}", adapter_cmd, rec.task_id, rec.result_hash, rec.salt_hex);
+                    let cmd1 = format!(
+                        "{} commit {} {} {} {}",
+                        adapter_cmd, rec.task_id, rec.worker, rec.commit_hash, nonce
+                    );
+                    let cmd2 = format!(
+                        "{} reveal {} {} {}",
+                        adapter_cmd, rec.task_id, rec.result_hash, rec.salt_hex
+                    );
 
-                    let commit_res = run_adapter_with_retry(&cmd1, max_retries, backoff_ms)?;
-                    let reveal_res = run_adapter_with_retry(&cmd2, max_retries, backoff_ms)?;
+                    let commit_res =
+                        run_adapter_with_retry(&cmd1, tx_retry.max_retries, tx_retry.backoff_ms)?;
+                    let reveal_res =
+                        run_adapter_with_retry(&cmd2, tx_retry.max_retries, tx_retry.backoff_ms)?;
 
                     println!(
                         "[submitted] task_id={} commit_ok={} reveal_ok={} commit_rc={} reveal_rc={} commit_tx_hash={} reveal_tx_hash={} adapter={} retries={} backoff_ms={}",
@@ -950,32 +1171,44 @@ fn main() -> Result<()> {
                         commit_res.tx_hash.as_deref().unwrap_or("-"),
                         reveal_res.tx_hash.as_deref().unwrap_or("-"),
                         adapter_cmd,
-                        max_retries,
-                        backoff_ms
+                        tx_retry.max_retries,
+                        tx_retry.backoff_ms
                     );
 
-                    let commit_idempotent_ok = commit_res.ok || is_idempotent_duplicate_ok(commit_res.rc);
-                    let reveal_idempotent_ok = reveal_res.ok || is_idempotent_duplicate_ok(reveal_res.rc);
+                    let commit_idempotent_ok =
+                        commit_res.ok || is_idempotent_duplicate_ok(commit_res.rc);
+                    let reveal_idempotent_ok =
+                        reveal_res.ok || is_idempotent_duplicate_ok(reveal_res.rc);
 
-                    let (ack_status, reason_code, ack_reason) = if commit_idempotent_ok && reveal_idempotent_ok {
-                        (
-                            "accepted",
-                            "idempotent_ok",
-                            format!("idempotent-ok commit_rc={} reveal_rc={}", commit_res.rc, reveal_res.rc),
-                        )
-                    } else if commit_res.terminal || reveal_res.terminal {
-                        (
-                            "rejected",
-                            "deterministic_rejection",
-                            format!("deterministic-rejection commit_rc={} reveal_rc={}", commit_res.rc, reveal_res.rc),
-                        )
-                    } else {
-                        (
-                            "failed",
-                            "retry_exhausted_or_transient",
-                            format!("transient-or-exhausted-retries commit_rc={} reveal_rc={}", commit_res.rc, reveal_res.rc),
-                        )
-                    };
+                    let (ack_status, reason_code, ack_reason) =
+                        if commit_idempotent_ok && reveal_idempotent_ok {
+                            (
+                                "accepted",
+                                "idempotent_ok",
+                                format!(
+                                    "idempotent-ok commit_rc={} reveal_rc={}",
+                                    commit_res.rc, reveal_res.rc
+                                ),
+                            )
+                        } else if commit_res.terminal || reveal_res.terminal {
+                            (
+                                "rejected",
+                                "deterministic_rejection",
+                                format!(
+                                    "deterministic-rejection commit_rc={} reveal_rc={}",
+                                    commit_res.rc, reveal_res.rc
+                                ),
+                            )
+                        } else {
+                            (
+                                "failed",
+                                "retry_exhausted_or_transient",
+                                format!(
+                                    "transient-or-exhausted-retries commit_rc={} reveal_rc={}",
+                                    commit_res.rc, reveal_res.rc
+                                ),
+                            )
+                        };
 
                     append_ack(
                         &ack_log,
@@ -995,11 +1228,24 @@ fn main() -> Result<()> {
                                 ir.commit_tx_hash = commit_res.tx_hash.clone();
                                 ir.reveal_tx_hash = reveal_res.tx_hash.clone();
                                 ir.resolution_code = Some(reason_code.to_string());
-                                ir.verifier_status = Some(if ack_status == "accepted" { "accepted".to_string() } else { "rejected".to_string() });
+                                ir.verifier_status = Some(if ack_status == "accepted" {
+                                    "accepted".to_string()
+                                } else {
+                                    "rejected".to_string()
+                                });
                                 ir.status = match ack_status {
-                                    "accepted" => transition_request_status(&ir.status, RequestStatus::RevealSubmitted)?,
-                                    "rejected" => transition_request_status(&ir.status, RequestStatus::Rejected)?,
-                                    _ => transition_request_status(&ir.status, RequestStatus::FailedSubmission)?,
+                                    "accepted" => transition_request_status(
+                                        &ir.status,
+                                        RequestStatus::RevealSubmitted,
+                                    )?,
+                                    "rejected" => transition_request_status(
+                                        &ir.status,
+                                        RequestStatus::Rejected,
+                                    )?,
+                                    _ => transition_request_status(
+                                        &ir.status,
+                                        RequestStatus::FailedSubmission,
+                                    )?,
                                 };
                                 changed = true;
                             }
