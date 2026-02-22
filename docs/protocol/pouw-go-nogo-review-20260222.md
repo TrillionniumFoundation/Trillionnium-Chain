@@ -27,7 +27,18 @@
 - 重启恢复：`trillionnium-rust/run/health/drill-restart-recovery-20260222-160218/summary.txt`
 - 强制中断补充：`trillionnium-rust/run/health/drill-restart-interrupt-fix-20260222-160301/`
 
-### 2.3 运维文档
+### 2.3 长跑与SLO
+- 2h soak：
+  - `run/health/reliability-soak-20260222-211132.json`
+  - `run/health/reliability-soak-20260222-211132.txt`
+  - `run/health/reliability-soak-20260222-211132.audit.jsonl`
+- SLO gate：`trillionnium-rust/run/health/phasea-soak-gate-20260222-231806.txt`
+  - `commit_queued_pct=100%`
+  - `proof_verify_fail=0`
+  - `store_rejected=0`
+  - `retry_exhausted=0`
+
+### 2.4 运维文档
 - `docs/protocol/pouw-release-runbook-v0.1.md`
 
 ## 3) 发布范围确认
@@ -41,8 +52,8 @@
 
 ## 4) 风险与观察项（非阻断）
 
-1. in-memory 方案仍存在重启状态丢失边界（已通过演练，但长期需持久化 store）。
-2. 熔断与容量参数默认值需结合生产流量继续调优。
+1. reliability 已默认切到 sqlite 持久化，但数据库容量与I/O阈值仍需持续调优。
+2. 熔断与容量参数默认值需结合生产流量继续校准。
 3. proof endpoint 当前为最小可用，后续应补更细粒度查询与性能优化。
 
 ## 5) 发布后 24h 观察指标
