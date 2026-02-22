@@ -13,7 +13,7 @@
 1. `cargo test`（关键包：`trnm-node` / `trnm-worker-agent` / `trnm-rpc` / `trnm-pouw` / `trnm-state`）
 2. `scripts/check_request_tx_binding.sh`
 3. `scripts/run_request_fault_injection.sh`
-4. challenge reexec 入口（若 `scripts/` 下存在 `*challenge*reexec*.sh`）
+4. challenge reexec 入口（必跑；若未找到 `*challenge*reexec*.sh` 则直接记为 FAIL）
 
 输出目录统一为：
 

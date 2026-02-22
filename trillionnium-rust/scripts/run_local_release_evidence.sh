@@ -107,8 +107,9 @@ run_step "run_request_fault_injection" "OUT_DIR='$EVIDENCE_DIR' ./scripts/run_re
 if CHALLENGE_REEXEC_ENTRY="$(find_challenge_reexec_entry)"; then
   run_step "challenge_reexec" "OUT_DIR='$EVIDENCE_DIR' bash '$CHALLENGE_REEXEC_ENTRY'"
 else
-  echo "challenge_reexec=SKIP(not_found)" >> "$SUMMARY"
-  log "SKIP challenge_reexec (entry not found)"
+  FAIL_COUNT=$((FAIL_COUNT + 1))
+  echo "challenge_reexec=FAIL(entry_not_found)" >> "$SUMMARY"
+  log "FAIL  challenge_reexec (entry not found)"
 fi
 
 {
