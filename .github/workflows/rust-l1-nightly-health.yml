@@ -121,6 +121,13 @@ jobs:
           RESTART_RECOVERY_MAX_ROUND_CHANGE_TOTAL=${RESTART_RECOVERY_MAX_ROUND_CHANGE_TOTAL:-8} \
           ./scripts/run_consensus_fault_matrix.sh
 
+      - name: Request fault injection (MVP hard gate)
+        run: |
+          set -euo pipefail
+          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+          cd trillionnium-rust
+          ./scripts/run_request_fault_injection.sh
+
       - name: Challenge reexec bundle smoke (hard gate)
         run: |
           set -euo pipefail
