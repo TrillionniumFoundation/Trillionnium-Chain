@@ -68,6 +68,44 @@ RELIABILITY_DB_PATH=run/health/reliability-phasea.sqlite \
   - 检查 `RELIABILITY_DB_PATH`（若设置）目录是否可写
   - 检查 gate 报告里是否出现 `reliability_db_path=...`
 
+## Soak SLO 门禁（Phase A）
+
+新增脚本：`trillionnium-rust/scripts/run_phasea_soak_gate.sh`
+
+用途：读取 soak / fault 报告并按阈值做自动判定，默认阈值：
+
+- `COMMIT_QUEUED >= 99%`
+- `proof_verify_fail = 0`
+- `store_rejected <= 0`（可配）
+- `retry_exhausted <= 0`（可配）
+
+默认输入文件（可被环境变量覆盖）：
+
+- `SOAK_RESULT`：默认优先匹配 `run/health/phasea-soak-*`，其次 `run/health/*phasea*soak*`
+- `FAULT_RESULT`：默认优先匹配 `run/health/request-fault-injection-*`
+
+阈值环境变量：
+
+- `MIN_COMMIT_QUEUED_PCT`（默认 `99`）
+- `MAX_PROOF_VERIFY_FAIL`（默认 `0`）
+- `MAX_STORE_REJECTED`（默认 `0`）
+- `MAX_RETRY_EXHAUSTED`（默认 `0`）
+
+输出：`run/health/phasea-soak-gate-<timestamp>.txt`
+
+示例：
+
+```bash
+cd trillionnium-rust
+SOAK_RESULT=run/health/phasea-soak-20260222-200000.txt \
+FAULT_RESULT=run/health/request-fault-injection-20260222-200010.txt \
+MAX_STORE_REJECTED=2 \
+MAX_RETRY_EXHAUSTED=1 \
+./scripts/run_phasea_soak_gate.sh
+```
+
+失败判定：任一指标越阈值即非 0 退出，并在报告中写入 `phasea_soak_gate.fail=...`。
+
 ## 门禁与 CI 纳管
 
 已纳入 `run_agent_user_phasea_gate.sh` 的显式检查：

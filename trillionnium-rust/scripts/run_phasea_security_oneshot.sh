@@ -8,6 +8,7 @@ TS="$(date +%Y%m%d-%H%M%S)"
 RUN_ROOT="${RUN_ROOT:-$ROOT/run/health/gate-oneshot-$TS}"
 CONS_OUT="$RUN_ROOT/consensus-security"
 PHASEA_OUT_DIR="$RUN_ROOT/agent-user-phasea"
+FAULT_OUT_DIR="$RUN_ROOT/phasea-fault-suite"
 
 mkdir -p "$RUN_ROOT"
 
@@ -23,8 +24,12 @@ cargo test -q -p trnm-rpc relay_session_proof_smoke_and_tamper_matrix | tee "$PR
 echo "[one-shot] step3: agent-user phaseA gate"
 OUT_DIR="$PHASEA_OUT_DIR" ./scripts/run_agent_user_phasea_gate.sh
 
+echo "[one-shot] step4: phaseA fault injection suite"
+OUT_DIR="$FAULT_OUT_DIR" ./scripts/run_phasea_fault_injection_suite.sh
+
 echo "[one-shot][OK] all gates passed"
 echo "[one-shot] consensus_summary=$CONS_OUT/summary.txt"
 echo "[one-shot] proof_log=$PROOF_LOG"
 echo "[one-shot] phasea_report_dir=$PHASEA_OUT_DIR"
+echo "[one-shot] phasea_fault_summary=$FAULT_OUT_DIR/summary.txt"
 echo "[one-shot] run_root=$RUN_ROOT"

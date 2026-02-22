@@ -175,6 +175,30 @@ RELIABILITY_DB_PATH=run/health/reliability-phasea.sqlite \
 ./scripts/run_agent_user_phasea_gate.sh
 ```
 
+### 2h Soak 压测 Harness（submit/dispatch/worker/query 持续闭环）
+
+从仓库根目录执行（默认 2 小时）：
+
+```bash
+./scripts/v2/run_reliability_soak.sh
+```
+
+快速 smoke（例如 5 分钟）：
+
+```bash
+./scripts/v2/run_reliability_soak.sh --duration 5m --clean
+```
+
+产物（可审计）：
+- `run/health/reliability-soak-<ts>.json`：完整指标与参数
+- `run/health/reliability-soak-<ts>.txt`：人类可读摘要
+- `run/health/reliability-soak-<ts>.audit.jsonl`：逐周期事件审计轨迹
+
+默认行为：
+- `RELIABILITY_STORE=sqlite`（未显式设置时）
+- 持续执行 submit → dispatch-open → run-assigned → flush-submissions → query-request-full
+- 汇总吞吐（submit/terminal TPS）与成功率（提交成功率、终态成功率）
+
 一键串联门禁（失败即停，先共识安全矩阵，再 proof 检查，再 Phase A）：
 
 ```bash
