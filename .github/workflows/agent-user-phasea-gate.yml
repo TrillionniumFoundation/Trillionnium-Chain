@@ -1,0 +1,53 @@
+name: agent-user-phasea-gate
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'trillionnium-rust/crates/trnm-rpc/**'
+      - 'trillionnium-rust/crates/trnm-worker-agent/**'
+      - 'trillionnium-rust/scripts/run_agent_user_phasea_gate.sh'
+      - 'docs/protocol/agent-user-p2p-communication-min-spec-v0.1.md'
+      - 'docs/protocol/agent-user-p2p-phaseA-ops.md'
+      - 'docs/OPERATIONS.md'
+      - '.github/workflows/agent-user-phasea-gate.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'trillionnium-rust/crates/trnm-rpc/**'
+      - 'trillionnium-rust/crates/trnm-worker-agent/**'
+      - 'trillionnium-rust/scripts/run_agent_user_phasea_gate.sh'
+      - 'docs/protocol/agent-user-p2p-communication-min-spec-v0.1.md'
+      - 'docs/protocol/agent-user-p2p-phaseA-ops.md'
+      - 'docs/OPERATIONS.md'
+      - '.github/workflows/agent-user-phasea-gate.yml'
+
+concurrency:
+  group: agent-user-phasea-gate-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  phasea-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Run Agent↔User Phase A gate
+        run: |
+          set -euo pipefail
+          cd trillionnium-rust
+          ./scripts/run_agent_user_phasea_gate.sh
+
+      - name: Upload phaseA artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: agent-user-phasea-gate-${{ github.run_id }}
+          path: |
+            trillionnium-rust/run/health/agent-user-phasea-gate-*.txt
+          if-no-files-found: warn

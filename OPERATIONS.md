@@ -153,3 +153,42 @@ TRNM_TX_CLI=./scripts/v2/trnm_tx_cli_real_adapter.sh ./scripts/v2/run_worker_rec
 - 规范：`docs/protocol/worker-real-tx-cli-adapter-spec.md`
 - 模板：`scripts/v2/trnm_tx_cli_real_adapter.template.sh`
 
+## Agent↔User P2P Phase A（MVP）
+
+文档入口：`docs/protocol/agent-user-p2p-phaseA-ops.md`
+
+补充运维文档（ack 批量 / retry 熔断参数与排障）：`docs/OPERATIONS.md`
+
+最小门禁命令：
+
+```bash
+cd trillionnium-rust
+./scripts/run_agent_user_phasea_gate.sh
+```
+
+一键串联门禁（失败即停，先共识安全矩阵，再 proof 检查，再 Phase A）：
+
+```bash
+cd trillionnium-rust
+./scripts/run_phasea_security_oneshot.sh
+# 可选：自定义产物根目录
+# RUN_ROOT=/tmp/trnm-gate-oneshot ./scripts/run_phasea_security_oneshot.sh
+```
+
+结果解读（one-shot）：
+- 第一步（共识安全矩阵）摘要：`<RUN_ROOT>/consensus-security/summary.txt`
+  - `result=PASS`：矩阵全通过
+  - `result=FAIL`：至少一个子项失败（查看同目录 `*.log`）
+- 第二步（proof smoke + tamper）日志：`<RUN_ROOT>/proof-gate.log`
+  - 用例：`relay_session_proof_smoke_and_tamper_matrix`
+  - 覆盖：缺片段 / 顺序错乱 / 内容篡改 / root 不匹配
+- 第三步（Phase A）报告目录：`<RUN_ROOT>/agent-user-phasea/`
+  - 报告文件：`agent-user-phasea-gate-<ts>.txt`
+  - 关键字段应包含：`status=COMMIT_QUEUED`、`verifier_status=accepted`、`status=PASS`
+
+门禁断言：
+- `trnm-rpc` 与 `trnm-worker-agent` 构建测试通过
+- relay proof smoke + tamper 用例通过（缺片段/顺序错乱/内容篡改/root 不匹配）
+- submit/dispatch/consume/query 最小闭环通过
+- `query-request-full` 满足：`status=COMMIT_QUEUED` 且 `verifier_status=accepted`
+

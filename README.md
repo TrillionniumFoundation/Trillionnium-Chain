@@ -16,6 +16,7 @@
 - 仓库布局：`docs/architecture/rust-l1-repo-layout.md`
 - PoUW 时序（create → resolve）：`docs/architecture/rust-l1-pouw-sequence.md`
 - v1 接口冻结基线：`docs/protocol/rust-l1-v1-interface-freeze.md`
+- Agent↔User P2P Phase A 运行说明与门禁：`docs/protocol/agent-user-p2p-phaseA-ops.md`
 
 ## 🏗️ Architecture
 

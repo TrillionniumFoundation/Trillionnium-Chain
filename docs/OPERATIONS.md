@@ -1,0 +1,55 @@
+# Operations（Agent↔User Phase A 补充）
+
+> 适用范围：`trillionnium-rust/crates/trnm-rpc` Phase A 可靠性与 relay 语义。
+
+## 新增参数
+
+### 1) 批量 ACK（relay）
+
+`RelayAckRequest` 新增：
+
+- `upto_seq: Option<u64>`：按 session 内消息序号做“前缀批量 ACK”（`sequence <= upto_seq` 全部确认）。
+- `envelope_ids: Vec<u64>` 仍保留，兼容单条/批量按 ID ACK。
+
+建议：
+- 实时消费端优先用 `upto_seq`，可减少 ACK 请求数量与去重复杂度。
+- 对跨会话 ACK 无效（仅作用于当前 `session_id`）。
+
+### 2) Retry 熔断（reliability）
+
+`RetryConfig` 参数：
+
+- `base_backoff_ms`：重试基础退避
+- `max_backoff_ms`：重试退避上限
+- `max_attempts`：单消息最大重试次数（超限后丢弃 pending）
+- `circuit_breaker_threshold`：触发熔断阈值（连续失败计数）
+- `circuit_open_ms`：熔断打开窗口（窗口内暂停重试发放）
+
+## 排障方法
+
+### A. ACK 批量异常
+
+现象：`poll` 仍返回已处理消息。
+
+排查：
+1. 确认 ACK 请求 `session_id` 与消息一致。
+2. 使用 `upto_seq` 时，确认阈值序号覆盖到目标消息（`sequence <= upto_seq`）。
+3. 混用 `envelope_ids` 与 `upto_seq` 时，以服务端返回 `acked` 数量核对预期。
+
+### B. Retry 无重放 / 重试突然停止
+
+现象：`collect_due_retries` 返回空，但存在 pending。
+
+排查：
+1. 检查是否触发熔断窗口（circuit open）。
+2. 检查是否达到 `max_attempts`（达到后 pending 会被清理）。
+3. 核对当前时间戳与 `next_retry_at_unix_ms`、`circuit_open_ms`。
+
+## 门禁与 CI 纳管
+
+已纳入 `run_agent_user_phasea_gate.sh` 的显式检查：
+
+- `relay_ack_upto_seq_batch_and_boundaries`
+- `circuit_breaker_opens_and_recovers_after_window`
+
+CI workflow：`.github/workflows/agent-user-phasea-gate.yml`（调用上述 gate 脚本）。
