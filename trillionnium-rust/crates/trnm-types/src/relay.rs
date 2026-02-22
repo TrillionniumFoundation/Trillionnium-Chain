@@ -33,6 +33,8 @@ pub struct RelaySession {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct RelayAuthEnvelope {
     pub version: String,
+    #[serde(default)]
+    pub chain_id: String,
     pub task_id: String,
     pub session_id: String,
     pub seq: u64,
@@ -47,7 +49,9 @@ pub struct RelayAuthEnvelope {
 }
 
 impl RelayAuthEnvelope {
-    pub const SPEC_VERSION: &'static str = "p2p-v0.1";
+    pub const SPEC_VERSION: &'static str = "p2p-v0.2";
+    pub const LEGACY_SPEC_VERSION: &'static str = "p2p-v0.1";
+    pub const SIGNING_DOMAIN_V1: &'static str = "TRNM_P2P_V1";
 
     pub fn envelope_hash(&self) -> crate::Hash32 {
         crate::relay_auth_envelope_hash(self)
@@ -60,6 +64,24 @@ impl RelayAuthEnvelope {
     }
 
     pub fn signing_message(&self) -> String {
+        format!(
+            "{}|{}|{}|{}|{}|{}|{}|{}|{}|{}|{}|{}",
+            Self::SIGNING_DOMAIN_V1,
+            self.chain_id,
+            self.msg_type,
+            self.version,
+            self.task_id,
+            self.session_id,
+            self.seq,
+            self.timestamp_ms,
+            self.from,
+            self.to,
+            self.nonce,
+            self.payload_hash
+        )
+    }
+
+    pub fn signing_message_legacy_v0(&self) -> String {
         format!(
             "{}|{}|{}|{}|{}|{}|{}|{}|{}|{}",
             self.version,
@@ -88,6 +110,13 @@ impl RelayAuthEnvelope {
         )
     }
 
+    pub fn requires_routing_fields(&self) -> bool {
+        matches!(
+            self.msg_type.as_str(),
+            "TASK_ACCEPT" | "INPUT_CHUNK" | "RESULT_META" | "RESULT_POINTER" | "ACK" | "ERROR" | "CLOSE"
+        )
+    }
+
     /// Skeleton signer for local testing and integration bring-up.
     pub fn sign_for_test(&self, key_material: &str) -> String {
         let mut hasher = Sha256::new();
@@ -95,6 +124,20 @@ impl RelayAuthEnvelope {
         hasher.update(b"|");
         hasher.update(key_material.as_bytes());
         lower_hex(&hasher.finalize())
+    }
+
+    pub fn sign_for_test_legacy_v0(&self, key_material: &str) -> String {
+        let mut hasher = Sha256::new();
+        hasher.update(self.signing_message_legacy_v0().as_bytes());
+        hasher.update(b"|");
+        hasher.update(key_material.as_bytes());
+        lower_hex(&hasher.finalize())
+    }
+
+    pub fn verify_test_sig_compat(&self, key_material: &str) -> bool {
+        self.sign_for_test(key_material) == self.sig
+            || (self.version == Self::LEGACY_SPEC_VERSION
+                && self.sign_for_test_legacy_v0(key_material) == self.sig)
     }
 }
 
@@ -125,6 +168,9 @@ pub enum RelayAuthError {
     UnsupportedType {
         got: String,
     },
+    MissingRequiredField {
+        field: &'static str,
+    },
 }
 
 impl RelayAuthError {
@@ -138,6 +184,7 @@ impl RelayAuthError {
             RelayAuthError::PayloadHashMismatch => "PayloadHashMismatch",
             RelayAuthError::BadVersion { .. } => "BadVersion",
             RelayAuthError::UnsupportedType { .. } => "UnsupportedType",
+            RelayAuthError::MissingRequiredField { .. } => "MissingRequiredField",
         }
     }
 }
@@ -198,6 +245,12 @@ impl fmt::Display for RelayAuthError {
             RelayAuthError::UnsupportedType { got } => {
                 write!(f, "unsupported type: {} (code={})", got, self.stable_code())
             }
+            RelayAuthError::MissingRequiredField { field } => write!(
+                f,
+                "missing required field: {} (code={})",
+                field,
+                self.stable_code()
+            ),
         }
     }
 }
@@ -207,14 +260,25 @@ impl std::error::Error for RelayAuthError {}
 #[derive(Debug, Clone)]
 pub struct RelayAuthVerifier {
     max_skew_ms: u128,
-    last_seq: HashMap<(String, String, String), u64>,
-    seen_nonce: HashSet<(String, String)>,
+    allow_legacy_v0: bool,
+    last_seq: HashMap<(String, String, String, String), u64>,
+    seen_nonce: HashSet<(String, String, String)>,
 }
 
 impl RelayAuthVerifier {
     pub fn new(max_skew_ms: u128) -> Self {
         Self {
             max_skew_ms,
+            allow_legacy_v0: true,
+            last_seq: HashMap::new(),
+            seen_nonce: HashSet::new(),
+        }
+    }
+
+    pub fn strict(max_skew_ms: u128) -> Self {
+        Self {
+            max_skew_ms,
+            allow_legacy_v0: false,
             last_seq: HashMap::new(),
             seen_nonce: HashSet::new(),
         }
@@ -225,9 +289,19 @@ impl RelayAuthVerifier {
         env: &RelayAuthEnvelope,
         verify_signature: impl Fn(&RelayAuthEnvelope) -> bool,
     ) -> Result<(), RelayAuthError> {
-        if env.version != RelayAuthEnvelope::SPEC_VERSION {
+        let is_current = env.version == RelayAuthEnvelope::SPEC_VERSION;
+        let is_legacy = env.version == RelayAuthEnvelope::LEGACY_SPEC_VERSION;
+        if !(is_current || (self.allow_legacy_v0 && is_legacy)) {
             return Err(RelayAuthError::BadVersion {
-                expected: RelayAuthEnvelope::SPEC_VERSION.to_string(),
+                expected: if self.allow_legacy_v0 {
+                    format!(
+                        "{}|{}",
+                        RelayAuthEnvelope::SPEC_VERSION,
+                        RelayAuthEnvelope::LEGACY_SPEC_VERSION
+                    )
+                } else {
+                    RelayAuthEnvelope::SPEC_VERSION.to_string()
+                },
                 got: env.version.clone(),
             });
         }
@@ -236,6 +310,18 @@ impl RelayAuthVerifier {
             return Err(RelayAuthError::UnsupportedType {
                 got: env.msg_type.clone(),
             });
+        }
+
+        if env.requires_routing_fields() {
+            if env.chain_id.trim().is_empty() && is_current {
+                return Err(RelayAuthError::MissingRequiredField { field: "chain_id" });
+            }
+            if env.session_id.trim().is_empty() {
+                return Err(RelayAuthError::MissingRequiredField { field: "session_id" });
+            }
+            if env.seq == 0 {
+                return Err(RelayAuthError::MissingRequiredField { field: "seq" });
+            }
         }
 
         let computed_payload_hash = RelayAuthEnvelope::payload_hash_hex(&env.payload);
@@ -275,6 +361,7 @@ impl RelayAuthVerifier {
         }
 
         let seq_key = (
+            env.chain_id.clone(),
             env.task_id.clone(),
             env.session_id.clone(),
             env.from.clone(),
@@ -295,7 +382,7 @@ impl RelayAuthVerifier {
             }
         }
 
-        let nonce_key = (env.session_id.clone(), env.nonce.clone());
+        let nonce_key = (env.chain_id.clone(), env.session_id.clone(), env.nonce.clone());
         if self.seen_nonce.contains(&nonce_key) {
             return Err(RelayAuthError::Replay {
                 nonce: env.nonce.clone(),
@@ -343,6 +430,7 @@ mod tests {
         let payload_hash = RelayAuthEnvelope::payload_hash_hex(&payload);
         let mut env = RelayAuthEnvelope {
             version: RelayAuthEnvelope::SPEC_VERSION.to_string(),
+            chain_id: "trnm-mainnet".to_string(),
             task_id: "task-1".to_string(),
             session_id: "sess-1".to_string(),
             seq,
@@ -562,5 +650,80 @@ mod tests {
                 .unwrap_err();
             assert_eq!(err.stable_code(), want_code, "case={name}");
         }
+    }
+
+    #[test]
+    fn relay_auth_legacy_v0_compat_allowed_by_default() {
+        let key = "sender-key";
+        let mut verifier = RelayAuthVerifier::new(120_000);
+        let mut env = sample_env(1, "nonce-legacy-1", 1_730_000_000_000, key);
+        env.version = RelayAuthEnvelope::LEGACY_SPEC_VERSION.to_string();
+        env.chain_id.clear();
+        env.sig = env.sign_for_test_legacy_v0(key);
+
+        let ok = verifier.verify(&env, 1_730_000_000_050, |e| e.verify_test_sig_compat(key));
+        assert!(ok.is_ok());
+    }
+
+    #[test]
+    fn relay_auth_legacy_v0_rejected_in_strict_mode() {
+        let key = "sender-key";
+        let mut verifier = RelayAuthVerifier::strict(120_000);
+        let mut env = sample_env(1, "nonce-legacy-2", 1_730_000_000_000, key);
+        env.version = RelayAuthEnvelope::LEGACY_SPEC_VERSION.to_string();
+        env.chain_id.clear();
+        env.sig = env.sign_for_test_legacy_v0(key);
+
+        let err = verifier
+            .verify(&env, 1_730_000_000_050, |e| e.verify_test_sig_compat(key))
+            .unwrap_err();
+        assert_eq!(err.stable_code(), "BadVersion");
+    }
+
+    #[test]
+    fn relay_auth_cross_chain_replay_rejected_by_domain_signature() {
+        let key = "sender-key";
+        let mut verifier = RelayAuthVerifier::new(120_000);
+        let mut env = sample_env(1, "nonce-cross-chain", 1_730_000_000_000, key);
+        env.chain_id = "trnm-otherchain".to_string();
+
+        let err = verifier
+            .verify(&env, 1_730_000_000_050, |e| e.sign_for_test(key) == e.sig)
+            .unwrap_err();
+        assert_eq!(err.stable_code(), "BadSig");
+    }
+
+    #[test]
+    fn relay_auth_missing_required_fields_rejected() {
+        let key = "sender-key";
+        let mut verifier = RelayAuthVerifier::new(120_000);
+
+        let mut missing_chain = sample_env(1, "nonce-miss-1", 1_730_000_000_000, key);
+        missing_chain.chain_id.clear();
+        missing_chain.sig = missing_chain.sign_for_test(key);
+        let err = verifier
+            .verify(&missing_chain, 1_730_000_000_050, |e| e.sign_for_test(key) == e.sig)
+            .unwrap_err();
+        assert_eq!(err.stable_code(), "MissingRequiredField");
+
+        let mut missing_seq = sample_env(0, "nonce-miss-2", 1_730_000_000_000, key);
+        missing_seq.sig = missing_seq.sign_for_test(key);
+        let err = verifier
+            .verify(&missing_seq, 1_730_000_000_050, |e| e.sign_for_test(key) == e.sig)
+            .unwrap_err();
+        assert_eq!(err.stable_code(), "MissingRequiredField");
+    }
+
+    #[test]
+    fn relay_auth_wrong_domain_signature_rejected() {
+        let key = "sender-key";
+        let mut verifier = RelayAuthVerifier::new(120_000);
+        let mut env = sample_env(1, "nonce-domain-1", 1_730_000_000_000, key);
+        env.sig = env.sign_for_test_legacy_v0(key);
+
+        let err = verifier
+            .verify(&env, 1_730_000_000_050, |e| e.sign_for_test(key) == e.sig)
+            .unwrap_err();
+        assert_eq!(err.stable_code(), "BadSig");
     }
 }

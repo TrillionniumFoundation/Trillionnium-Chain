@@ -15,9 +15,11 @@ fn phase_a_flow_ack_retry_and_idempotency() {
 
     let msg = ReliableMessage {
         from: "user-42".to_string(),
+        chain_id: "trnm-mainnet".to_string(),
         session_id: "sess-a".to_string(),
         seq: Some(1),
         nonce: None,
+        msg_type: "INPUT_CHUNK".to_string(),
         payload: "ping".to_string(),
     };
 

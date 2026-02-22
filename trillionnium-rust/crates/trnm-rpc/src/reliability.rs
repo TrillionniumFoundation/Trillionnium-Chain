@@ -12,13 +12,23 @@ pub struct DedupKey {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ReliableMessage {
     pub from: String,
+    #[serde(default)]
+    pub chain_id: String,
     pub session_id: String,
     pub seq: Option<u64>,
     pub nonce: Option<u64>,
+    #[serde(default)]
+    pub msg_type: String,
     pub payload: String,
 }
 
 impl ReliableMessage {
+    fn requires_strict_fields(&self) -> bool {
+        matches!(
+            self.msg_type.as_str(),
+            "TASK_ACCEPT" | "INPUT_CHUNK" | "RESULT_META" | "RESULT_POINTER" | "ACK" | "ERROR" | "CLOSE"
+        )
+    }
     pub fn dedup_key(&self) -> Option<DedupKey> {
         self.seq.or(self.nonce).map(|v| DedupKey {
             from: self.from.clone(),
@@ -400,6 +410,28 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
 
     pub fn receive(&mut self, msg: ReliableMessage, now_unix_ms: u128) -> Ack {
         self.maybe_cleanup(now_unix_ms);
+
+        if msg.chain_id.trim().is_empty() {
+            return Ack {
+                code: AckCode::BadRequest,
+                ack_id: "ack_invalid".to_string(),
+                detail: "missing chain_id".to_string(),
+            };
+        }
+        if msg.session_id.trim().is_empty() {
+            return Ack {
+                code: AckCode::BadRequest,
+                ack_id: "ack_invalid".to_string(),
+                detail: "missing session_id".to_string(),
+            };
+        }
+        if msg.requires_strict_fields() && msg.seq.is_none() {
+            return Ack {
+                code: AckCode::BadRequest,
+                ack_id: "ack_invalid".to_string(),
+                detail: "missing seq".to_string(),
+            };
+        }
 
         let Some(dedup_key) = msg.dedup_key() else {
             return Ack {
@@ -832,9 +864,11 @@ mod tests {
     fn mk_msg(from: &str, session_id: &str, seq: u64) -> ReliableMessage {
         ReliableMessage {
             from: from.to_string(),
+            chain_id: "trnm-mainnet".to_string(),
             session_id: session_id.to_string(),
             seq: Some(seq),
             nonce: None,
+            msg_type: "INPUT_CHUNK".to_string(),
             payload: "hello".to_string(),
         }
     }
@@ -856,6 +890,43 @@ mod tests {
             AckCode::Accepted,
             "different from should not dedup"
         );
+    }
+
+    #[test]
+    fn reject_missing_chain_id_or_seq_for_critical_message() {
+        let store = InMemoryReliabilityStore::default();
+        let mut engine = ReliabilityEngine::new(store, RetryConfig::default());
+
+        let mut missing_chain = mk_msg("alice", "s1", 1);
+        missing_chain.chain_id.clear();
+        let ack = engine.receive(missing_chain, 1_000);
+        assert_eq!(ack.code, AckCode::BadRequest);
+        assert!(ack.detail.contains("missing chain_id"));
+
+        let mut missing_seq = mk_msg("alice", "s1", 1);
+        missing_seq.seq = None;
+        missing_seq.nonce = Some(99);
+        let ack = engine.receive(missing_seq, 1_000);
+        assert_eq!(ack.code, AckCode::BadRequest);
+        assert!(ack.detail.contains("missing seq"));
+    }
+
+    #[test]
+    fn legacy_message_without_msg_type_allows_nonce_path() {
+        let store = InMemoryReliabilityStore::default();
+        let mut engine = ReliabilityEngine::new(store, RetryConfig::default());
+
+        let msg = ReliableMessage {
+            from: "legacy-sender".to_string(),
+            chain_id: "trnm-mainnet".to_string(),
+            session_id: "legacy-session".to_string(),
+            seq: None,
+            nonce: Some(7),
+            msg_type: String::new(),
+            payload: "legacy".to_string(),
+        };
+        let ack = engine.receive(msg, 1_000);
+        assert_eq!(ack.code, AckCode::Accepted);
     }
 
     #[test]

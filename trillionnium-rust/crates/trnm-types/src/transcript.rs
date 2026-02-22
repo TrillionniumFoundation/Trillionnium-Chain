@@ -92,6 +92,12 @@ impl TranscriptMerkleTree {
 
 pub fn relay_auth_envelope_hash(env: &RelayAuthEnvelope) -> Hash32 {
     let mut hasher = Sha256::new();
+    hasher.update(RelayAuthEnvelope::SIGNING_DOMAIN_V1.as_bytes());
+    hasher.update(b"|");
+    hasher.update(env.chain_id.as_bytes());
+    hasher.update(b"|");
+    hasher.update(env.msg_type.as_bytes());
+    hasher.update(b"|");
     hasher.update(env.version.as_bytes());
     hasher.update(b"|");
     hasher.update(env.task_id.as_bytes());
@@ -101,8 +107,6 @@ pub fn relay_auth_envelope_hash(env: &RelayAuthEnvelope) -> Hash32 {
     hasher.update(env.seq.to_string().as_bytes());
     hasher.update(b"|");
     hasher.update(env.timestamp_ms.to_string().as_bytes());
-    hasher.update(b"|");
-    hasher.update(env.msg_type.as_bytes());
     hasher.update(b"|");
     hasher.update(env.from.as_bytes());
     hasher.update(b"|");
@@ -269,6 +273,7 @@ mod tests {
     fn sample_env(seq: u64, nonce: &str) -> RelayAuthEnvelope {
         RelayAuthEnvelope {
             version: RelayAuthEnvelope::SPEC_VERSION.to_string(),
+            chain_id: "trnm-mainnet".to_string(),
             task_id: "task-1".to_string(),
             session_id: "sess-1".to_string(),
             seq,
