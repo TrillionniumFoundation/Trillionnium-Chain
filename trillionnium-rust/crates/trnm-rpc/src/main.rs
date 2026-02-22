@@ -1,8 +1,9 @@
 use anyhow::{bail, Result};
 use clap::{Parser, Subcommand};
-use serde::Deserialize;
-use std::{collections::BTreeMap, fs, path::PathBuf};
-use trnm_rpc::{EventQueryResponse, GovParamQueryResponse, GovProposalQueryResponse, TaskQueryResponse};
+use serde::{Deserialize, Serialize};
+use sha2::{Digest, Sha256};
+use std::{collections::BTreeMap, fs, path::PathBuf, time::{SystemTime, UNIX_EPOCH}};
+use trnm_rpc::{EventQueryResponse, GovParamQueryResponse, GovProposalQueryResponse, MessageRequestQueryResponse, RequestFullQueryResponse, TaskQueryResponse};
 use trnm_state::StateStore;
 use trnm_types::{GovParamObject, GovProposalObject, GovProposalStatus, TaskStatus};
 
@@ -19,6 +20,32 @@ enum Command {
     QueryProposal { proposal_id: u64 },
     QueryParam { key: String },
     QueryEvents { task_id: u64 },
+    SubmitMessage {
+        #[arg(long)]
+        channel: String,
+        #[arg(long)]
+        user_id: String,
+        #[arg(long)]
+        session_id: String,
+        #[arg(long)]
+        text: String,
+        #[arg(long)]
+        idempotency_key: String,
+    },
+    QueryRequest {
+        #[arg(long)]
+        request_id: String,
+    },
+    QueryRequestFull {
+        #[arg(long)]
+        request_id: String,
+    },
+    DispatchOpen {
+        #[arg(long, default_value = "worker-1")]
+        worker_id: String,
+        #[arg(long, default_value_t = 10)]
+        limit: usize,
+    },
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -29,6 +56,31 @@ struct AdapterRecord {
     worker: Option<String>,
     result_hash: Option<String>,
     status: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct MessageIngressRecord {
+    request_id: String,
+    task_id: u64,
+    channel: String,
+    user_id: String,
+    session_id: String,
+    text: String,
+    idempotency_key: String,
+    status: String,
+    created_at_unix_ms: u128,
+    #[serde(default)]
+    assigned_worker: Option<String>,
+    #[serde(default)]
+    assigned_at_unix_ms: Option<u128>,
+    #[serde(default)]
+    model_output: Option<String>,
+    #[serde(default)]
+    result_hash: Option<String>,
+    #[serde(default)]
+    verifier_status: Option<String>,
+    #[serde(default)]
+    resolution_code: Option<String>,
 }
 
 #[derive(Debug, Clone)]
@@ -142,6 +194,55 @@ fn governance_state() -> StateStore {
     let _ = st.set_gov_param(7001, "max_block_ms".into(), "10".into());
     let _ = st.set_gov_param(7999, "emergency_pause".into(), "false".into());
     st
+}
+
+fn run_root() -> PathBuf {
+    PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .and_then(|p| p.parent())
+        .map(|p| p.to_path_buf())
+        .unwrap_or_else(|| PathBuf::from("."))
+}
+
+fn now_ms() -> u128 {
+    SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .map(|d| d.as_millis())
+        .unwrap_or(0)
+}
+
+fn make_request_id(channel: &str, user_id: &str, session_id: &str, idempotency_key: &str, ts: u128) -> String {
+    let mut h = Sha256::new();
+    h.update(format!("{}|{}|{}|{}|{}", channel, user_id, session_id, idempotency_key, ts).as_bytes());
+    let digest = hex::encode(h.finalize());
+    format!("req_{}", &digest[..16])
+}
+
+fn ingress_file() -> PathBuf {
+    run_root().join("run/message-gateway/requests.jsonl")
+}
+
+fn load_ingress_records() -> Vec<MessageIngressRecord> {
+    let path = ingress_file();
+    let Ok(raw) = fs::read_to_string(path) else { return vec![]; };
+    raw.lines()
+        .filter(|l| !l.trim().is_empty())
+        .filter_map(|l| serde_json::from_str::<MessageIngressRecord>(l).ok())
+        .collect()
+}
+
+fn save_ingress_records(records: &[MessageIngressRecord]) -> Result<()> {
+    let path = ingress_file();
+    if let Some(parent) = path.parent() {
+        fs::create_dir_all(parent)?;
+    }
+    let mut out = String::new();
+    for rec in records {
+        out.push_str(&serde_json::to_string(rec)?);
+        out.push('\n');
+    }
+    fs::write(path, out)?;
+    Ok(())
 }
 
 fn main() -> Result<()> {
@@ -287,6 +388,150 @@ fn main() -> Result<()> {
                 bail!("events not found for task_id={}", task_id);
             }
             println!("{}", serde_json::to_string_pretty(&events)?);
+        }
+        Command::SubmitMessage { channel, user_id, session_id, text, idempotency_key } => {
+            let records = load_ingress_records();
+            if let Some(found) = records.iter().find(|r| r.idempotency_key == idempotency_key && r.session_id == session_id) {
+                println!("{}", serde_json::to_string_pretty(found)?);
+                return Ok(());
+            }
+
+            let ts = now_ms();
+            let request_id = make_request_id(&channel, &user_id, &session_id, &idempotency_key, ts);
+            let task_id = 10_000 + records.len() as u64 + 1;
+            let rec = MessageIngressRecord {
+                request_id,
+                task_id,
+                channel,
+                user_id,
+                session_id,
+                text,
+                idempotency_key,
+                status: "OPEN".into(),
+                created_at_unix_ms: ts,
+                assigned_worker: None,
+                assigned_at_unix_ms: None,
+                model_output: None,
+                result_hash: None,
+                verifier_status: None,
+                resolution_code: None,
+            };
+
+            let path = ingress_file();
+            if let Some(parent) = path.parent() {
+                fs::create_dir_all(parent)?;
+            }
+            let mut buf = String::new();
+            if let Ok(existing) = fs::read_to_string(&path) {
+                buf.push_str(&existing);
+                if !existing.ends_with('\n') {
+                    buf.push('\n');
+                }
+            }
+            buf.push_str(&serde_json::to_string(&rec)?);
+            buf.push('\n');
+            fs::write(&path, buf)?;
+
+            let out = MessageRequestQueryResponse {
+                request_id: rec.request_id,
+                task_id: rec.task_id,
+                channel: rec.channel,
+                user_id: rec.user_id,
+                session_id: rec.session_id,
+                text: rec.text,
+                idempotency_key: rec.idempotency_key,
+                status: rec.status,
+                created_at_unix_ms: rec.created_at_unix_ms,
+            };
+            println!("{}", serde_json::to_string_pretty(&out)?);
+        }
+        Command::QueryRequest { request_id } => {
+            let records = load_ingress_records();
+            let Some(rec) = records.into_iter().rev().find(|r| r.request_id == request_id) else {
+                bail!("request not found: {}", request_id);
+            };
+            let out = MessageRequestQueryResponse {
+                request_id: rec.request_id,
+                task_id: rec.task_id,
+                channel: rec.channel,
+                user_id: rec.user_id,
+                session_id: rec.session_id,
+                text: rec.text,
+                idempotency_key: rec.idempotency_key,
+                status: rec.status,
+                created_at_unix_ms: rec.created_at_unix_ms,
+            };
+            println!("{}", serde_json::to_string_pretty(&out)?);
+        }
+        Command::QueryRequestFull { request_id } => {
+            let records = load_ingress_records();
+            let Some(rec) = records.into_iter().rev().find(|r| r.request_id == request_id) else {
+                bail!("request not found: {}", request_id);
+            };
+
+            let mut events = Vec::new();
+            for e in node_events.iter().filter(|e| e.task_id == rec.task_id) {
+                events.push(EventQueryResponse {
+                    event_type: e.event_type.clone(),
+                    task_id: rec.task_id,
+                    from_status: e.from_status.clone(),
+                    to_status: e.to_status.clone(),
+                    actor: e.actor.clone(),
+                    tx_id: e.tx_id,
+                    block_height: e.block_height,
+                    state_root: e.state_root.clone(),
+                    ts_unix_ms: e.ts_unix_ms,
+                });
+            }
+
+            let out = RequestFullQueryResponse {
+                request: MessageRequestQueryResponse {
+                    request_id: rec.request_id,
+                    task_id: rec.task_id,
+                    channel: rec.channel,
+                    user_id: rec.user_id,
+                    session_id: rec.session_id,
+                    text: rec.text,
+                    idempotency_key: rec.idempotency_key,
+                    status: rec.status,
+                    created_at_unix_ms: rec.created_at_unix_ms,
+                },
+                verifier_status: rec.verifier_status,
+                resolution_code: rec.resolution_code,
+                result_hash: rec.result_hash,
+                events,
+            };
+            println!("{}", serde_json::to_string_pretty(&out)?);
+        }
+        Command::DispatchOpen { worker_id, limit } => {
+            let mut records = load_ingress_records();
+            let mut assigned = Vec::<MessageRequestQueryResponse>::new();
+            let ts = now_ms();
+            let mut n = 0usize;
+            for rec in records.iter_mut() {
+                if n >= limit {
+                    break;
+                }
+                if rec.status == "OPEN" {
+                    rec.status = "ASSIGNED".into();
+                    rec.assigned_worker = Some(worker_id.clone());
+                    rec.assigned_at_unix_ms = Some(ts);
+                    assigned.push(MessageRequestQueryResponse {
+                        request_id: rec.request_id.clone(),
+                        task_id: rec.task_id,
+                        channel: rec.channel.clone(),
+                        user_id: rec.user_id.clone(),
+                        session_id: rec.session_id.clone(),
+                        text: rec.text.clone(),
+                        idempotency_key: rec.idempotency_key.clone(),
+                        status: rec.status.clone(),
+                        created_at_unix_ms: rec.created_at_unix_ms,
+                    });
+                    n += 1;
+                }
+            }
+            save_ingress_records(&records)?;
+            println!("{}", serde_json::to_string_pretty(&assigned)?);
         }
     }
 

@@ -58,6 +58,22 @@ enum Command {
         #[arg(long, default_value = "/tmp/trnm-worker-agent-submissions.jsonl")]
         submit_log: PathBuf,
     },
+    RunAssigned {
+        #[arg(long)]
+        worker: String,
+        #[arg(long, default_value = "run/message-gateway/requests.jsonl")]
+        ingress_file: PathBuf,
+        #[arg(long, default_value_t = 10)]
+        limit: usize,
+        #[arg(long, default_value_t = true)]
+        submit: bool,
+        #[arg(long, default_value = "/tmp/trnm-worker-agent-submissions.jsonl")]
+        submit_log: PathBuf,
+        #[arg(long, default_value = "./scripts/llm_adapter_mock.sh")]
+        llm_adapter_cmd: String,
+        #[arg(long, default_value_t = 4000)]
+        verifier_max_output_chars: usize,
+    },
     FlushSubmissions {
         #[arg(long, default_value = "/tmp/trnm-worker-agent-submissions.jsonl")]
         submit_log: PathBuf,
@@ -105,6 +121,31 @@ struct SubmissionRecord {
     salt_hex: String,
     commit_cmd: String,
     reveal_cmd: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct MessageIngressRecord {
+    request_id: String,
+    task_id: u64,
+    channel: String,
+    user_id: String,
+    session_id: String,
+    text: String,
+    idempotency_key: String,
+    status: String,
+    created_at_unix_ms: u128,
+    #[serde(default)]
+    assigned_worker: Option<String>,
+    #[serde(default)]
+    assigned_at_unix_ms: Option<u128>,
+    #[serde(default)]
+    model_output: Option<String>,
+    #[serde(default)]
+    result_hash: Option<String>,
+    #[serde(default)]
+    verifier_status: Option<String>,
+    #[serde(default)]
+    resolution_code: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -229,6 +270,31 @@ fn load_acked(ack_log: &PathBuf) -> HashSet<u64> {
     set
 }
 
+fn load_ingress_records(path: &PathBuf) -> Result<Vec<MessageIngressRecord>> {
+    if !path.exists() {
+        return Ok(vec![]);
+    }
+    let raw = fs::read_to_string(path)?;
+    Ok(raw
+        .lines()
+        .filter(|l| !l.trim().is_empty())
+        .filter_map(|l| serde_json::from_str::<MessageIngressRecord>(l).ok())
+        .collect())
+}
+
+fn save_ingress_records(path: &PathBuf, records: &[MessageIngressRecord]) -> Result<()> {
+    if let Some(parent) = path.parent() {
+        fs::create_dir_all(parent)?;
+    }
+    let mut out = String::new();
+    for rec in records {
+        out.push_str(&serde_json::to_string(rec)?);
+        out.push('\n');
+    }
+    fs::write(path, out)?;
+    Ok(())
+}
+
 fn append_ack(
     ack_log: &PathBuf,
     task_id: u64,
@@ -338,6 +404,36 @@ fn run_adapter_with_retry(cmd: &str, max_retries: u32, backoff_ms: u64) -> Resul
     })
 }
 
+#[derive(Debug, Deserialize)]
+struct LlmAdapterResponse {
+    output_text: String,
+    #[serde(default)]
+    provider_request_id: Option<String>,
+}
+
+fn run_llm_adapter(adapter_cmd: &str, prompt: &str) -> Result<LlmAdapterResponse> {
+    let cmd = format!("{} {}", adapter_cmd, shell_escape::escape(prompt.into()));
+    let out = ProcCommand::new("sh").arg("-lc").arg(cmd).output()?;
+    let stdout = String::from_utf8_lossy(&out.stdout).trim().to_string();
+    let stderr = String::from_utf8_lossy(&out.stderr).trim().to_string();
+    if !out.status.success() {
+        anyhow::bail!("llm adapter failed rc={:?} stderr={}", out.status.code(), stderr);
+    }
+    let resp: LlmAdapterResponse = serde_json::from_str(&stdout)
+        .map_err(|e| anyhow::anyhow!("llm adapter invalid json: {} raw={}", e, stdout))?;
+    Ok(resp)
+}
+
+fn verify_model_output(output: &str, max_chars: usize) -> (&'static str, &'static str) {
+    if output.trim().is_empty() {
+        return ("rejected", "empty_output");
+    }
+    if output.chars().count() > max_chars {
+        return ("rejected", "output_too_long");
+    }
+    ("accepted", "ok")
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -441,6 +537,79 @@ fn main() -> Result<()> {
             if submit {
                 eprintln!("submitted=true submit_log={}", submit_log.display());
             }
+        }
+        Command::RunAssigned {
+            worker,
+            ingress_file,
+            limit,
+            submit,
+            submit_log,
+            llm_adapter_cmd,
+            verifier_max_output_chars,
+        } => {
+            let mut records = load_ingress_records(&ingress_file)?;
+            let mut n = 0usize;
+            for rec in records.iter_mut() {
+                if n >= limit {
+                    break;
+                }
+                if rec.status != "ASSIGNED" {
+                    continue;
+                }
+                if rec.assigned_worker.as_deref() != Some(worker.as_str()) {
+                    continue;
+                }
+
+                let llm = match run_llm_adapter(&llm_adapter_cmd, &rec.text) {
+                    Ok(v) => v,
+                    Err(e) => {
+                        rec.status = "FAILED_ADAPTER".to_string();
+                        rec.verifier_status = Some("rejected".to_string());
+                        rec.resolution_code = Some("adapter_error".to_string());
+                        n += 1;
+                        println!(
+                            "[assigned] request_id={} task_id={} worker={} status=FAILED_ADAPTER error={}",
+                            rec.request_id, rec.task_id, worker, e
+                        );
+                        continue;
+                    }
+                };
+                let (v_status, resolution_code) = verify_model_output(&llm.output_text, verifier_max_output_chars);
+                rec.model_output = Some(llm.output_text.clone());
+                rec.verifier_status = Some(v_status.to_string());
+                rec.resolution_code = Some(resolution_code.to_string());
+
+                if v_status != "accepted" {
+                    rec.status = "REJECTED".to_string();
+                    n += 1;
+                    println!(
+                        "[assigned] request_id={} task_id={} worker={} verifier_status={} resolution_code={}",
+                        rec.request_id, rec.task_id, worker, v_status, resolution_code
+                    );
+                    continue;
+                }
+
+                let payload = llm.output_text;
+                let (result_hash, salt_hex) = execute_payload(&payload, rec.task_id);
+                let commit_hash = commitment(rec.task_id, &result_hash, &salt_hex, &worker);
+                rec.result_hash = Some(result_hash.clone());
+                if submit {
+                    append_submission(&submit_log, rec.task_id, &worker, &commit_hash, &result_hash, &salt_hex)?;
+                }
+                rec.status = "COMMIT_QUEUED".to_string();
+                n += 1;
+                println!(
+                    "[assigned] request_id={} task_id={} worker={} result_hash={} submit={} provider_request_id={}",
+                    rec.request_id,
+                    rec.task_id,
+                    worker,
+                    result_hash,
+                    submit,
+                    llm.provider_request_id.unwrap_or_else(|| "-".to_string())
+                );
+            }
+            save_ingress_records(&ingress_file, &records)?;
+            println!("[agent] run-assigned processed={} ingress={} submit_log={} adapter={}", n, ingress_file.display(), submit_log.display(), llm_adapter_cmd);
         }
         Command::FlushSubmissions {
             submit_log,

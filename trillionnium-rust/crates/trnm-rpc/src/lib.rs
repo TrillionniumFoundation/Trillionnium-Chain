@@ -40,6 +40,28 @@ pub struct EventQueryResponse {
     pub ts_unix_ms: u128,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct MessageRequestQueryResponse {
+    pub request_id: String,
+    pub task_id: u64,
+    pub channel: String,
+    pub user_id: String,
+    pub session_id: String,
+    pub text: String,
+    pub idempotency_key: String,
+    pub status: String,
+    pub created_at_unix_ms: u128,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct RequestFullQueryResponse {
+    pub request: MessageRequestQueryResponse,
+    pub verifier_status: Option<String>,
+    pub resolution_code: Option<String>,
+    pub result_hash: Option<String>,
+    pub events: Vec<EventQueryResponse>,
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
