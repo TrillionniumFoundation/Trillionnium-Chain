@@ -505,16 +505,25 @@ fn run_llm_adapter_once(adapter_cmd: &str, prompt: &str) -> std::result::Result<
     Ok(resp)
 }
 
-fn run_llm_adapter_with_retry(adapter_cmd: &str, prompt: &str, max_retries: u32, backoff_ms: u64) -> std::result::Result<LlmAdapterResponse, AdapterError> {
+fn run_llm_adapter_with_retry_inner<F, S>(
+    max_retries: u32,
+    backoff_ms: u64,
+    mut op: F,
+    mut sleeper: S,
+) -> std::result::Result<LlmAdapterResponse, AdapterError>
+where
+    F: FnMut() -> std::result::Result<LlmAdapterResponse, AdapterError>,
+    S: FnMut(Duration),
+{
     let mut last_error: Option<AdapterError> = None;
     for attempt in 0..=max_retries {
-        match run_llm_adapter_once(adapter_cmd, prompt) {
+        match op() {
             Ok(resp) => return Ok(resp),
             Err(err) => {
                 let should_retry = err.kind == AdapterErrorKind::Retriable && attempt < max_retries;
                 last_error = Some(err);
                 if should_retry {
-                    thread::sleep(Duration::from_millis(exp_backoff_delay_ms(backoff_ms, attempt)));
+                    sleeper(Duration::from_millis(exp_backoff_delay_ms(backoff_ms, attempt)));
                     continue;
                 }
                 break;
@@ -526,6 +535,15 @@ fn run_llm_adapter_with_retry(adapter_cmd: &str, prompt: &str, max_retries: u32,
         kind: AdapterErrorKind::Retriable,
         context: "llm adapter failed: unknown error".to_string(),
     }))
+}
+
+fn run_llm_adapter_with_retry(adapter_cmd: &str, prompt: &str, max_retries: u32, backoff_ms: u64) -> std::result::Result<LlmAdapterResponse, AdapterError> {
+    run_llm_adapter_with_retry_inner(
+        max_retries,
+        backoff_ms,
+        || run_llm_adapter_once(adapter_cmd, prompt),
+        thread::sleep,
+    )
 }
 
 fn verify_model_output(output: &str, max_chars: usize) -> (&'static str, &'static str) {
@@ -604,19 +622,98 @@ mod tests {
     }
 
     #[test]
-    fn adapter_error_classification_keeps_timeout_consistent() {
-        let timeout_err = AdapterError {
+    fn adapter_error_classification_is_unified_failed_adapter() {
+        let retry_exhausted = AdapterError {
             kind: AdapterErrorKind::Retriable,
             context: "llm adapter timeout after 3000ms".to_string(),
         };
-        let other_err = AdapterError {
-            kind: AdapterErrorKind::Retriable,
-            context: "llm adapter failed rc=Some(1)".to_string(),
+        let non_retriable = AdapterError {
+            kind: AdapterErrorKind::NonRetriable,
+            context: "llm adapter invalid json".to_string(),
         };
-        assert_eq!(classify_adapter_error(&timeout_err), ("timeout", "timeout"));
-        assert_eq!(classify_adapter_error(&other_err), ("adapter_error", "retry_exhausted"));
+        assert_eq!(classify_adapter_error(&retry_exhausted), ("adapter_error", "retry_exhausted"));
+        assert_eq!(classify_adapter_error(&non_retriable), ("adapter_error", "non_retriable"));
+    }
+
+    #[test]
+    fn llm_adapter_retry_succeeds_within_budget() {
+        let mut attempt = 0u32;
+        let mut slept = vec![];
+        let res = run_llm_adapter_with_retry_inner(
+            2,
+            50,
+            || {
+                attempt += 1;
+                if attempt < 3 {
+                    Err(AdapterError {
+                        kind: AdapterErrorKind::Retriable,
+                        context: format!("transient-{}", attempt),
+                    })
+                } else {
+                    Ok(LlmAdapterResponse {
+                        output_text: "ok".to_string(),
+                        provider_request_id: None,
+                    })
+                }
+            },
+            |d| slept.push(d.as_millis() as u64),
+        )
+        .unwrap();
+
+        assert_eq!(res.output_text, "ok");
+        assert_eq!(attempt, 3);
+        assert_eq!(slept, vec![50, 100]);
+    }
+
+    #[test]
+    fn llm_adapter_retry_budget_exhausted_returns_last_error() {
+        let mut attempt = 0u32;
+        let mut slept = vec![];
+        let err = run_llm_adapter_with_retry_inner(
+            2,
+            20,
+            || {
+                attempt += 1;
+                Err(AdapterError {
+                    kind: AdapterErrorKind::Retriable,
+                    context: format!("timeout-{}", attempt),
+                })
+            },
+            |d| slept.push(d.as_millis() as u64),
+        )
+        .unwrap_err();
+
+        assert_eq!(attempt, 3);
+        assert_eq!(slept, vec![20, 40]);
+        assert_eq!(err.kind, AdapterErrorKind::Retriable);
+        assert_eq!(err.context, "timeout-3");
+    }
+
+    #[test]
+    fn llm_adapter_non_retriable_fails_fast() {
+        let mut attempt = 0u32;
+        let mut slept = vec![];
+        let err = run_llm_adapter_with_retry_inner(
+            5,
+            20,
+            || {
+                attempt += 1;
+                Err(AdapterError {
+                    kind: AdapterErrorKind::NonRetriable,
+                    context: "invalid-json".to_string(),
+                })
+            },
+            |d| slept.push(d.as_millis() as u64),
+        )
+        .unwrap_err();
+
+        assert_eq!(attempt, 1);
+        assert!(slept.is_empty());
+        assert_eq!(err.kind, AdapterErrorKind::NonRetriable);
+        assert_eq!(err.context, "invalid-json");
     }
 }
+
 
 fn main() -> Result<()> {
     let args = Args::parse();
@@ -772,7 +869,7 @@ fn main() -> Result<()> {
                 );
             }
             save_ingress_records(&ingress_file, &records)?;
-            println!("[agent] run-assigned processed={} ingress={} submit_log={} adapter={}", n, ingress_file.display(), submit_log.display(), llm_adapter_cmd);
+            println!("[agent] run-assigned processed={} ingress={} submit_log={} adapter={} adapter_retries={} adapter_backoff_ms={}", n, ingress_file.display(), submit_log.display(), llm_adapter_cmd, llm_adapter_max_retries, llm_adapter_backoff_ms);
         }
         Command::FlushSubmissions {
             submit_log,
