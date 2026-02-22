@@ -1,5 +1,11 @@
+pub mod reliability;
+
+mod relay;
+
 use serde::{Deserialize, Serialize};
 use trnm_types::{GovProposalStatus, TaskStatus};
+
+pub use relay::*;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TaskQueryResponse {
