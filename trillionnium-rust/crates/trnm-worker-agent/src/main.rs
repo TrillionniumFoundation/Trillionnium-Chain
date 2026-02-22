@@ -557,9 +557,6 @@ fn verify_model_output(output: &str, max_chars: usize) -> (&'static str, &'stati
 }
 
 fn classify_adapter_error(err: &AdapterError) -> (&'static str, &'static str) {
-    if err.context.contains("timeout") {
-        return ("timeout", "timeout");
-    }
     match err.kind {
         AdapterErrorKind::Retriable => ("adapter_error", "retry_exhausted"),
         AdapterErrorKind::NonRetriable => ("adapter_error", "non_retriable"),
