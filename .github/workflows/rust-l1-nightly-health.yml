@@ -101,6 +101,26 @@ jobs:
           cd trillionnium-rust
           ./scripts/check_bft_message_auth.sh
 
+      - name: BFT round-change + recovery liveness (hard gate)
+        run: |
+          set -euo pipefail
+          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+          cd trillionnium-rust
+          ./scripts/check_bft_round_change.sh
+
+      - name: Consensus fault matrix (hard gate)
+        run: |
+          set -euo pipefail
+          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+          cd trillionnium-rust
+          BASELINE_MAX_FINALITY_P95_MS=${BASELINE_MAX_FINALITY_P95_MS:-100} \
+          SLOW_BLOCK_MAX_FINALITY_P95_MS=${SLOW_BLOCK_MAX_FINALITY_P95_MS:-300} \
+          RESTART_RECOVERY_MAX_FINALITY_P95_MS=${RESTART_RECOVERY_MAX_FINALITY_P95_MS:-200} \
+          BASELINE_MAX_ROUND_CHANGE_TOTAL=${BASELINE_MAX_ROUND_CHANGE_TOTAL:-8} \
+          SLOW_BLOCK_MAX_ROUND_CHANGE_TOTAL=${SLOW_BLOCK_MAX_ROUND_CHANGE_TOTAL:-8} \
+          RESTART_RECOVERY_MAX_ROUND_CHANGE_TOTAL=${RESTART_RECOVERY_MAX_ROUND_CHANGE_TOTAL:-8} \
+          ./scripts/run_consensus_fault_matrix.sh
+
       - name: Challenge reexec bundle smoke (hard gate)
         run: |
           set -euo pipefail

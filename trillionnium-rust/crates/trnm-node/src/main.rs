@@ -270,6 +270,7 @@ fn simulate_bft_round(
     locked_hash: Option<&str>,
     validators: usize,
     byzantine: usize,
+    force_no_quorum: bool,
 ) -> (bool, usize, usize, Option<String>, usize, AuthRejectStats) {
     let n = validators.max(1);
     let b = byzantine.min(n.saturating_sub(1));
@@ -294,7 +295,7 @@ fn simulate_bft_round(
         let good_vote = BftVote {
             validator: vid.clone(),
             vote_type: VoteType::Prevote,
-            block_hash: canonical_hash.clone(),
+            block_hash: if force_no_quorum { bad_vote_hash.clone() } else { canonical_hash.clone() },
             byzantine: is_bad,
             height,
             round,
@@ -556,7 +557,8 @@ fn simulate_bft_height(
     let mut total_auth_reject_stale_nonce = 0usize;
 
     for round in 0..max_rounds.max(1) {
-        let effective_byz = if round < fault_rounds { validators.saturating_sub(1) } else { byzantine };
+        let force_no_quorum = round < fault_rounds;
+        let effective_byz = if force_no_quorum { 0 } else { byzantine };
         let (committed, pv, pc, new_lock, dv, auth) = simulate_bft_round(
             height,
             round,
@@ -564,6 +566,7 @@ fn simulate_bft_height(
             locked.as_deref(),
             validators,
             effective_byz,
+            force_no_quorum,
         );
         last_prevote = pv;
         last_precommit = pc;
