@@ -113,10 +113,7 @@ fn main() {
         println!("profile.avg_group_size={:.4}", profile.avg_group_size);
         println!("profile.conflict_checks={}", profile.conflict_checks);
         println!("profile.conflict_hits={}", profile.conflict_hits);
-        println!(
-            "profile.candidate_groups_scanned={}",
-            profile.candidate_groups_scanned
-        );
+        println!("profile.candidate_groups_scanned={}", profile.candidate_groups_scanned);
         println!("profile.stage_ww_checks={}", profile.stage_ww_checks);
         println!("profile.stage_ww_hits={}", profile.stage_ww_hits);
         println!("profile.stage_wr_checks={}", profile.stage_wr_checks);

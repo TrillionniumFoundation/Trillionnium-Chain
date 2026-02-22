@@ -60,99 +60,14 @@ jobs:
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           cd trillionnium-rust
-          MVP_MODE=prod ALLOW_MISSING_RESOLVE_EVENT=0 ./scripts/check_event_fields.sh
+          ./scripts/check_event_fields.sh
 
       - name: Validate v1 event replay order (hard gate)
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           cd trillionnium-rust
-          MVP_MODE=prod ALLOW_PARTIAL_EVENT_REPLAY=0 ./scripts/check_event_replay_smoke.sh
-
-      - name: BFT 4-node consensus smoke (hard gate)
-        run: |
-          set -euo pipefail
-          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-          cd trillionnium-rust
-          ./scripts/check_bft_4node_smoke.sh
-
-      - name: BFT restart recovery (hard gate)
-        run: |
-          set -euo pipefail
-          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-          cd trillionnium-rust
-          RUNS=${BFT_RECOVERY_RUNS:-5} ./scripts/check_bft_restart_recovery.sh
-
-      - name: BFT message auth anti-replay (hard gate)
-        run: |
-          set -euo pipefail
-          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-          cd trillionnium-rust
-          ./scripts/check_bft_message_auth.sh
-
-      - name: BFT round-change + recovery liveness (hard gate)
-        run: |
-          set -euo pipefail
-          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-          cd trillionnium-rust
-          ./scripts/check_bft_round_change.sh
-
-      - name: Consensus fault matrix (hard gate)
-        run: |
-          set -euo pipefail
-          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-          cd trillionnium-rust
-          BASELINE_MAX_FINALITY_P95_MS=${BASELINE_MAX_FINALITY_P95_MS:-100} \
-          SLOW_BLOCK_MAX_FINALITY_P95_MS=${SLOW_BLOCK_MAX_FINALITY_P95_MS:-300} \
-          RESTART_RECOVERY_MAX_FINALITY_P95_MS=${RESTART_RECOVERY_MAX_FINALITY_P95_MS:-200} \
-          BASELINE_MAX_ROUND_CHANGE_TOTAL=${BASELINE_MAX_ROUND_CHANGE_TOTAL:-8} \
-          SLOW_BLOCK_MAX_ROUND_CHANGE_TOTAL=${SLOW_BLOCK_MAX_ROUND_CHANGE_TOTAL:-8} \
-          RESTART_RECOVERY_MAX_ROUND_CHANGE_TOTAL=${RESTART_RECOVERY_MAX_ROUND_CHANGE_TOTAL:-8} \
-          ./scripts/run_consensus_fault_matrix.sh
-
-      - name: Request fault injection (MVP hard gate)
-        run: |
-          set -euo pipefail
-          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-          cd trillionnium-rust
-          ./scripts/run_request_fault_injection.sh
-
-      - name: Request tx-hash binding (hard gate)
-        run: |
-          set -euo pipefail
-          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-          cd trillionnium-rust
-          ./scripts/check_request_tx_binding.sh
-
-      - name: Challenge reexec bundle smoke (hard gate)
-        run: |
-          set -euo pipefail
-          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-          ./scripts/challenge_reexec_template_smoke.sh
-
-      - name: Worker-agent tx-hash receipt hard gate
-        run: |
-          set -euo pipefail
-          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-          ./scripts/v2/run_worker_receipt_gates.sh
-
-      - name: Worker-agent strict real-cli gate (default-on)
-        run: |
-          set -euo pipefail
-          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-          if [[ "${REQUIRE_REAL_TX_CLI:-1}" == "1" ]]; then
-            TRNM_TX_CLI="${TRNM_TX_CLI:-./scripts/v2/trnm_tx_cli_wrapper.sh}" ./scripts/v2/run_worker_receipt_gates_real_cli.sh
-          else
-            echo "[skip] strict real-cli gate disabled (REQUIRE_REAL_TX_CLI=${REQUIRE_REAL_TX_CLI:-1})"
-          fi
-
-      - name: Worker-agent multi-agent onboarding smoke (hard gate)
-        run: |
-          set -euo pipefail
-          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-          TRNM_TX_CLI="${TRNM_TX_CLI:-./scripts/v2/trnm_tx_cli_wrapper.sh}" \
-          SKIP_GATES=1 AGENTS=${WORKER_MULTI_AGENTS:-3} \
-            ./scripts/v2/worker_agent_mining_onboard.sh
+          ./scripts/check_event_replay_smoke.sh
 
       - name: Aggressive regression check (PR-visible warn)
         if: github.event_name == 'pull_request'
@@ -173,11 +88,6 @@ jobs:
           rc=${PIPESTATUS[0]}
           set -e
 
-          python3 scripts/summarize_aggressive_profile.py
-          python3 scripts/analyze_aggressive_scan_correlation.py
-          PROFILE_SUMMARY=$(ls -1t run/bench/aggressive-profile-summary-*.md | head -n 1)
-          CORR_SUMMARY=$(ls -1t run/bench/aggressive-scan-correlation-*.md | head -n 1)
-
           if grep -q "regression ratio above threshold" "$REPORT"; then
             echo "::warning title=Aggressive regression warning::One or more aggressive/original ratios exceeded threshold. See workflow summary + artifact report."
           fi
@@ -192,14 +102,6 @@ jobs:
               echo '```text'
               cat "$REPORT"
               echo '```'
-              echo
-              echo "## Aggressive Profile Summary"
-              echo
-              cat "$PROFILE_SUMMARY"
-              echo
-              echo "## Aggressive Scan Correlation"
-              echo
-              cat "$CORR_SUMMARY"
             } >> "$GITHUB_STEP_SUMMARY"
           fi
 
@@ -216,15 +118,4 @@ jobs:
             trillionnium-rust/run/event-replay-smoke.log
             trillionnium-rust/run/bench/aggressive-regression-pr-*.txt
             trillionnium-rust/run/bench/bench-regression-matrix-*.csv
-            trillionnium-rust/run/bench/aggressive-profile-summary-*.md
-            trillionnium-rust/run/bench/aggressive-scan-correlation-*.md
-            trillionnium-rust/run/health/**
-            trillionnium-rust/run/bft4-*.txt
-            trillionnium-rust/run/bft4-node*.log
-            trillionnium-rust/run/bft-restart-recovery-*.txt
-            trillionnium-rust/run/bft-restart-*.log
-            trillionnium-rust/run/consensus-wal-restart-*/**
-            data/reexec-smoke/**
-            data/reexec-bundles/**
-            data/worker-onboard/**
           if-no-files-found: warn

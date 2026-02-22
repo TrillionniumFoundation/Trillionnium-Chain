@@ -80,11 +80,8 @@
 
 ### P2-1 观测增强 ✅（已完成 2026-02-20）
 - 描述：按 task_id / trace_id 聚合资金流与状态演进，提升排障效率。
-- 完成项：
-  - reexec 模板与 e2e summary 已引入 trace_id 贯穿字段；worker listener 提交链路日志已输出 trace_id。
-  - nightly regression matrix 新增 `strategy_source=default|experiment` 标注。
-  - nightly summary 输出 `strategy_source` 聚合标签，避免实验结果与默认口径混淆。
-- 验收：default / experiment 双口径 regression matrix 已分别产出并完成 summary 渲染。
+- 当前进展：reexec 模板与 e2e summary 已引入 trace_id 贯穿字段；worker listener 提交链路日志已输出 trace_id。
+- 新增待办（2026-02-20）：nightly summary 增加“strategy_source=default|experiment”标签，避免实验结果与默认口径混淆。
 
 ### P2-2 经济参数边界回归
 - 描述：补足 challenger/worker 参数边界测试（压力与极值）。
@@ -92,6 +89,17 @@
 ### P2-3 Demo 资产整理（进行中）
 - 描述：对外演示脚本、话术、样例任务模板标准化。
 - 最新进展（2026-02-20）：新增 `scripts/demo_storyline.sh` 与 `docs/demo/rust-l1-demo-runbook-v1.md`，形成可重复的一键演示流程。
+
+### P2-4 Aggressive 实验治理收口 ✅（已完成 2026-02-20）
+- 描述：完成 Aggressive Round3 的 Week1~Week2 实验收口与治理闭环。
+- 结果：
+  - 默认快路径稳定（与 Original 收敛，代表场景约 0.97x~1.00x）。
+  - deep-scan / hotspot 重排结论均为 No-Go，保留实验态隔离。
+  - nightly 回归阈值已收紧并通过本地验证。
+- 参考文档：
+  - `docs/perf/aggressive-round3-week1-report.md`
+  - `docs/perf/aggressive-week2-day4-decision-memo.md`
+  - `docs/perf/aggressive-week2-day5-summary.md`
 
 ### P2-4 Aggressive 实验治理收口 ✅（已完成 2026-02-20）
 - 描述：完成 Aggressive Round3 的 Week1~Week2 实验收口与治理闭环。
