@@ -38,7 +38,10 @@ impl From<StrategyArg> for GroupingStrategy {
 }
 
 #[derive(Debug, Parser)]
-#[command(name = "trnm-bench", about = "TRNM load bench with configurable conflict rate")]
+#[command(
+    name = "trnm-bench",
+    about = "TRNM load bench with configurable conflict rate"
+)]
 struct Args {
     /// Number of transactions
     #[arg(long, default_value_t = 20_000)]
@@ -79,7 +82,9 @@ fn main() {
         Workload::Mixed => {
             build_mixed_txs(n, keys, args.read_fanout.max(1), args.write_every.max(1))
         }
-        Workload::HotStreak => build_hot_streak_txs(n, keys, args.read_fanout.max(1), args.write_every.max(1)),
+        Workload::HotStreak => {
+            build_hot_streak_txs(n, keys, args.read_fanout.max(1), args.write_every.max(1))
+        }
     };
 
     let t0 = Instant::now();
@@ -108,7 +113,10 @@ fn main() {
         println!("profile.avg_group_size={:.4}", profile.avg_group_size);
         println!("profile.conflict_checks={}", profile.conflict_checks);
         println!("profile.conflict_hits={}", profile.conflict_hits);
-        println!("profile.candidate_groups_scanned={}", profile.candidate_groups_scanned);
+        println!(
+            "profile.candidate_groups_scanned={}",
+            profile.candidate_groups_scanned
+        );
         println!("profile.stage_ww_checks={}", profile.stage_ww_checks);
         println!("profile.stage_ww_hits={}", profile.stage_ww_hits);
         println!("profile.stage_wr_checks={}", profile.stage_wr_checks);
@@ -132,8 +140,14 @@ fn main() {
             println!("profile.auto.min_margin={:.4}", d.min_margin);
             println!("profile.auto.hot_key_share={:.4}", d.hot_key_share);
             println!("profile.auto.min_hot_key_share={:.4}", d.min_hot_key_share);
-            println!("profile.auto.expected_gain_score={:.4}", d.expected_gain_score);
-            println!("profile.auto.min_expected_gain_score={:.4}", d.min_expected_gain_score);
+            println!(
+                "profile.auto.expected_gain_score={:.4}",
+                d.expected_gain_score
+            );
+            println!(
+                "profile.auto.min_expected_gain_score={:.4}",
+                d.min_expected_gain_score
+            );
         }
     }
 }
@@ -195,7 +209,10 @@ fn build_hot_streak_txs(n: usize, keys: usize, read_fanout: usize, write_every: 
 
         for j in 1..read_fanout {
             let side = ((i + j * 11) % keys) as u64;
-            read_set.push(ObjectRef { id: side, version: 1 });
+            read_set.push(ObjectRef {
+                id: side,
+                version: 1,
+            });
         }
 
         let write_set = if i % write_every == 0 {

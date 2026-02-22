@@ -2,13 +2,25 @@ use anyhow::{bail, Result};
 use clap::{Parser, Subcommand};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
-use std::{collections::BTreeMap, fs, path::PathBuf, time::{SystemTime, UNIX_EPOCH}};
-use trnm_rpc::{EventQueryResponse, GovParamQueryResponse, GovProposalQueryResponse, MessageRequestQueryResponse, RequestFullQueryResponse, TaskQueryResponse};
+use std::{
+    collections::BTreeMap,
+    fs,
+    path::PathBuf,
+    time::{SystemTime, UNIX_EPOCH},
+};
+use trnm_rpc::{
+    EventQueryResponse, GovParamQueryResponse, GovProposalQueryResponse,
+    MessageRequestQueryResponse, RequestFullQueryResponse, TaskQueryResponse,
+};
 use trnm_state::StateStore;
 use trnm_types::{GovParamObject, GovProposalObject, GovProposalStatus, RequestStatus, TaskStatus};
 
 #[derive(Debug, Parser)]
-#[command(name = "trnm-rpc", version, about = "Trillionnium RPC (state-backed query schema)")]
+#[command(
+    name = "trnm-rpc",
+    version,
+    about = "Trillionnium RPC (state-backed query schema)"
+)]
 struct Args {
     #[command(subcommand)]
     cmd: Command,
@@ -16,10 +28,18 @@ struct Args {
 
 #[derive(Debug, Subcommand)]
 enum Command {
-    QueryTask { task_id: u64 },
-    QueryProposal { proposal_id: u64 },
-    QueryParam { key: String },
-    QueryEvents { task_id: u64 },
+    QueryTask {
+        task_id: u64,
+    },
+    QueryProposal {
+        proposal_id: u64,
+    },
+    QueryParam {
+        key: String,
+    },
+    QueryEvents {
+        task_id: u64,
+    },
     SubmitMessage {
         #[arg(long)]
         channel: String,
@@ -114,7 +134,12 @@ fn load_latest_adapter_records() -> Vec<AdapterRecord> {
     let mut files: Vec<PathBuf> = entries
         .flatten()
         .map(|e| e.path())
-        .filter(|p| p.file_name().and_then(|n| n.to_str()).map(|s| s.starts_with("tx-adapter-") && s.ends_with(".jsonl")).unwrap_or(false))
+        .filter(|p| {
+            p.file_name()
+                .and_then(|n| n.to_str())
+                .map(|s| s.starts_with("tx-adapter-") && s.ends_with(".jsonl"))
+                .unwrap_or(false)
+        })
         .collect();
     files.sort();
     let Some(latest) = files.last() else {
@@ -163,23 +188,41 @@ fn load_latest_node_events() -> Vec<NodeEventRecord> {
             }
         }
 
-        let Some(task_id) = kv.get("task_id").and_then(|s| s.parse::<u64>().ok()) else { continue; };
-        let Some(tx_id) = kv.get("tx_id").and_then(|s| s.parse::<u64>().ok()) else { continue; };
-        let Some(block_height) = kv.get("block_height").and_then(|s| s.parse::<u64>().ok()) else { continue; };
+        let Some(task_id) = kv.get("task_id").and_then(|s| s.parse::<u64>().ok()) else {
+            continue;
+        };
+        let Some(tx_id) = kv.get("tx_id").and_then(|s| s.parse::<u64>().ok()) else {
+            continue;
+        };
+        let Some(block_height) = kv.get("block_height").and_then(|s| s.parse::<u64>().ok()) else {
+            continue;
+        };
         let ts_unix_ms = kv
             .get("ts_unix_ms")
             .and_then(|s| s.parse::<u128>().ok())
             .unwrap_or(0);
 
         out.push(NodeEventRecord {
-            event_type: kv.get("event_type").cloned().unwrap_or_else(|| "unknown".into()),
+            event_type: kv
+                .get("event_type")
+                .cloned()
+                .unwrap_or_else(|| "unknown".into()),
             task_id,
-            from_status: kv.get("from_status").cloned().unwrap_or_else(|| "NONE".into()),
-            to_status: kv.get("to_status").cloned().unwrap_or_else(|| "NONE".into()),
+            from_status: kv
+                .get("from_status")
+                .cloned()
+                .unwrap_or_else(|| "NONE".into()),
+            to_status: kv
+                .get("to_status")
+                .cloned()
+                .unwrap_or_else(|| "NONE".into()),
             actor: kv.get("actor").cloned().unwrap_or_else(|| "unknown".into()),
             tx_id,
             block_height,
-            state_root: kv.get("state_root").cloned().unwrap_or_else(|| "unknown".into()),
+            state_root: kv
+                .get("state_root")
+                .cloned()
+                .unwrap_or_else(|| "unknown".into()),
             ts_unix_ms,
         });
     }
@@ -215,9 +258,21 @@ fn now_ms() -> u128 {
         .unwrap_or(0)
 }
 
-fn make_request_id(channel: &str, user_id: &str, session_id: &str, idempotency_key: &str, ts: u128) -> String {
+fn make_request_id(
+    channel: &str,
+    user_id: &str,
+    session_id: &str,
+    idempotency_key: &str,
+    ts: u128,
+) -> String {
     let mut h = Sha256::new();
-    h.update(format!("{}|{}|{}|{}|{}", channel, user_id, session_id, idempotency_key, ts).as_bytes());
+    h.update(
+        format!(
+            "{}|{}|{}|{}|{}",
+            channel, user_id, session_id, idempotency_key, ts
+        )
+        .as_bytes(),
+    );
     let digest = hex::encode(h.finalize());
     format!("req_{}", &digest[..16])
 }
@@ -228,7 +283,9 @@ fn ingress_file() -> PathBuf {
 
 fn load_ingress_records() -> Vec<MessageIngressRecord> {
     let path = ingress_file();
-    let Ok(raw) = fs::read_to_string(path) else { return vec![]; };
+    let Ok(raw) = fs::read_to_string(path) else {
+        return vec![];
+    };
     raw.lines()
         .filter(|l| !l.trim().is_empty())
         .filter_map(|l| serde_json::from_str::<MessageIngressRecord>(l).ok())
@@ -250,11 +307,8 @@ fn save_ingress_records(records: &[MessageIngressRecord]) -> Result<()> {
 }
 
 fn transition_request_status(current: &str, to: RequestStatus) -> Result<String> {
-    let from = RequestStatus::parse(current)
-        .map_err(|e| anyhow::anyhow!("{}", e))?;
-    let next = from
-        .transition(to)
-        .map_err(|e| anyhow::anyhow!("{}", e))?;
+    let from = RequestStatus::parse(current).map_err(|e| anyhow::anyhow!("{}", e))?;
+    let next = from.transition(to).map_err(|e| anyhow::anyhow!("{}", e))?;
     Ok(next.as_str().to_string())
 }
 
@@ -266,7 +320,10 @@ fn main() -> Result<()> {
 
     match args.cmd {
         Command::QueryTask { task_id } => {
-            let node_task_events: Vec<&NodeEventRecord> = node_events.iter().filter(|e| e.task_id == task_id).collect();
+            let node_task_events: Vec<&NodeEventRecord> = node_events
+                .iter()
+                .filter(|e| e.task_id == task_id)
+                .collect();
             if !node_task_events.is_empty() {
                 let latest = node_task_events.last().unwrap();
                 let status = match latest.to_status.as_str() {
@@ -285,7 +342,11 @@ fn main() -> Result<()> {
                     worker: node_task_events
                         .iter()
                         .rev()
-                        .find(|e| e.event_type == "accept" || e.event_type == "commit" || e.event_type == "reveal")
+                        .find(|e| {
+                            e.event_type == "accept"
+                                || e.event_type == "commit"
+                                || e.event_type == "reveal"
+                        })
                         .map(|e| e.actor.clone()),
                     bounty: 100,
                     result_hash_hex: None,
@@ -295,7 +356,10 @@ fn main() -> Result<()> {
                 return Ok(());
             }
 
-            let task_recs: Vec<&AdapterRecord> = recs.iter().filter(|r| r.task_id == task_id && r.status == "accepted").collect();
+            let task_recs: Vec<&AdapterRecord> = recs
+                .iter()
+                .filter(|r| r.task_id == task_id && r.status == "accepted")
+                .collect();
             if task_recs.is_empty() {
                 bail!("task not found: {}", task_id);
             }
@@ -309,10 +373,13 @@ fn main() -> Result<()> {
                 TaskStatus::Open
             };
             let worker = task_recs.iter().find_map(|r| r.worker.clone());
-            let result_hash_hex = task_recs
-                .iter()
-                .rev()
-                .find_map(|r| if r.kind == "reveal" { r.result_hash.clone() } else { None });
+            let result_hash_hex = task_recs.iter().rev().find_map(|r| {
+                if r.kind == "reveal" {
+                    r.result_hash.clone()
+                } else {
+                    None
+                }
+            });
             let out = TaskQueryResponse {
                 task_id,
                 status,
@@ -376,11 +443,22 @@ fn main() -> Result<()> {
 
             if events.is_empty() {
                 let mut tx_id = 1u64;
-                for r in recs.into_iter().filter(|r| r.task_id == task_id && r.status == "accepted") {
+                for r in recs
+                    .into_iter()
+                    .filter(|r| r.task_id == task_id && r.status == "accepted")
+                {
                     let (from_status, to_status, actor) = if r.kind == "commit" {
-                        ("Assigned".to_string(), "Committed".to_string(), r.worker.clone().unwrap_or_else(|| "worker".into()))
+                        (
+                            "Assigned".to_string(),
+                            "Committed".to_string(),
+                            r.worker.clone().unwrap_or_else(|| "worker".into()),
+                        )
                     } else {
-                        ("Committed".to_string(), "Revealed".to_string(), "worker".to_string())
+                        (
+                            "Committed".to_string(),
+                            "Revealed".to_string(),
+                            "worker".to_string(),
+                        )
                     };
                     events.push(EventQueryResponse {
                         event_type: r.kind,
@@ -402,9 +480,18 @@ fn main() -> Result<()> {
             }
             println!("{}", serde_json::to_string_pretty(&events)?);
         }
-        Command::SubmitMessage { channel, user_id, session_id, text, idempotency_key } => {
+        Command::SubmitMessage {
+            channel,
+            user_id,
+            session_id,
+            text,
+            idempotency_key,
+        } => {
             let records = load_ingress_records();
-            if let Some(found) = records.iter().find(|r| r.idempotency_key == idempotency_key && r.session_id == session_id) {
+            if let Some(found) = records
+                .iter()
+                .find(|r| r.idempotency_key == idempotency_key && r.session_id == session_id)
+            {
                 println!("{}", serde_json::to_string_pretty(found)?);
                 return Ok(());
             }
@@ -462,7 +549,11 @@ fn main() -> Result<()> {
         }
         Command::QueryRequest { request_id } => {
             let records = load_ingress_records();
-            let Some(rec) = records.into_iter().rev().find(|r| r.request_id == request_id) else {
+            let Some(rec) = records
+                .into_iter()
+                .rev()
+                .find(|r| r.request_id == request_id)
+            else {
                 bail!("request not found: {}", request_id);
             };
             let out = MessageRequestQueryResponse {
@@ -480,7 +571,11 @@ fn main() -> Result<()> {
         }
         Command::QueryRequestFull { request_id } => {
             let records = load_ingress_records();
-            let Some(rec) = records.into_iter().rev().find(|r| r.request_id == request_id) else {
+            let Some(rec) = records
+                .into_iter()
+                .rev()
+                .find(|r| r.request_id == request_id)
+            else {
                 bail!("request not found: {}", request_id);
             };
 

@@ -1,6 +1,8 @@
 use sha2::{Digest, Sha256};
 use std::collections::BTreeMap;
-use trnm_types::{GovParamObject, GovProposalObject, GovProposalStatus, Hash32, ObjectRef, TaskObject};
+use trnm_types::{
+    GovParamObject, GovProposalObject, GovProposalStatus, Hash32, ObjectRef, TaskObject,
+};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ObjectValue {
@@ -26,7 +28,10 @@ impl StateStore {
     }
 
     pub fn get_ref(&self, id: u64) -> Option<ObjectRef> {
-        self.objects.get(&id).map(|v| ObjectRef { id, version: v.version })
+        self.objects.get(&id).map(|v| ObjectRef {
+            id,
+            version: v.version,
+        })
     }
 
     pub fn get_task(&self, id: u64) -> Option<TaskObject> {
@@ -65,7 +70,11 @@ impl StateStore {
         Ok(ObjectRef { id, version: 1 })
     }
 
-    pub fn update_task(&mut self, expected: ObjectRef, mut task: TaskObject) -> Result<ObjectRef, String> {
+    pub fn update_task(
+        &mut self,
+        expected: ObjectRef,
+        mut task: TaskObject,
+    ) -> Result<ObjectRef, String> {
         let current = self
             .objects
             .get(&expected.id)
@@ -82,7 +91,10 @@ impl StateStore {
                 value: ObjectValue::Task(task),
             },
         );
-        Ok(ObjectRef { id: expected.id, version: new_version })
+        Ok(ObjectRef {
+            id: expected.id,
+            version: new_version,
+        })
     }
 
     pub fn put_proposal_new(&mut self, proposal: GovProposalObject) -> Result<ObjectRef, String> {
@@ -121,7 +133,10 @@ impl StateStore {
                 value: ObjectValue::GovProposal(proposal),
             },
         );
-        Ok(ObjectRef { id: expected.id, version: new_version })
+        Ok(ObjectRef {
+            id: expected.id,
+            version: new_version,
+        })
     }
 
     pub fn transition_proposal_status(
@@ -150,7 +165,10 @@ impl StateStore {
                 | (GovProposalStatus::Passed, GovProposalStatus::Executed)
         );
         if !valid {
-            return Err(format!("invalid governance transition: {:?}->{:?}", from, to));
+            return Err(format!(
+                "invalid governance transition: {:?}->{:?}",
+                from, to
+            ));
         }
 
         proposal.status = to;
@@ -206,7 +224,10 @@ impl StateStore {
                     }),
                 },
             );
-            Ok(ObjectRef { id: key_id, version: 1 })
+            Ok(ObjectRef {
+                id: key_id,
+                version: 1,
+            })
         }
     }
 

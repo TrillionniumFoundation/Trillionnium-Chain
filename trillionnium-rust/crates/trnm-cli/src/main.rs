@@ -9,7 +9,11 @@ use std::{
 };
 
 #[derive(Debug, Parser)]
-#[command(name = "trnm-cli", version, about = "Trillionnium native CLI (tx + wallet MVP)")]
+#[command(
+    name = "trnm-cli",
+    version,
+    about = "Trillionnium native CLI (tx + wallet MVP)"
+)]
 struct Args {
     #[command(subcommand)]
     cmd: Command,
@@ -172,7 +176,11 @@ fn run_template(cmd: &str) -> Result<String> {
     let merged = format!("{}\n{}", stdout, stderr);
 
     if !out.status.success() {
-        bail!("tx command failed rc={}: {}", out.status.code().unwrap_or(1), merged);
+        bail!(
+            "tx command failed rc={}: {}",
+            out.status.code().unwrap_or(1),
+            merged
+        );
     }
 
     if let Some(txh) = extract_tx_hash(&merged) {

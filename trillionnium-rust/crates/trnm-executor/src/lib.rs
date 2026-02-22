@@ -627,7 +627,13 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
             });
         }
         GroupingStrategy::WriteLast => {
-            txs.sort_by_key(|tx| (tx.write_set.len(), std::cmp::Reverse(tx.read_set.len()), tx.id));
+            txs.sort_by_key(|tx| {
+                (
+                    tx.write_set.len(),
+                    std::cmp::Reverse(tx.read_set.len()),
+                    tx.id,
+                )
+            });
         }
         GroupingStrategy::HotBucketInterleave => {
             // Heuristic reorder; see should_use_hot_bucket_interleave for adaptive trigger.
@@ -738,7 +744,9 @@ mod tests {
         assert_eq!(g.len(), 2);
         assert_eq!(g.iter().map(|x| x.len()).sum::<usize>(), 3);
         // first group can contain tx1+tx2 (non-conflict), tx3 should be separate
-        assert!(g.iter().any(|grp| grp.iter().any(|t| t.id == 3) && grp.len() == 1));
+        assert!(g
+            .iter()
+            .any(|grp| grp.iter().any(|t| t.id == 3) && grp.len() == 1));
     }
 
     #[test]

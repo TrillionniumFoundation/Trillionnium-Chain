@@ -81,7 +81,14 @@ mod tests {
         };
         let v = serde_json::to_value(task).unwrap();
         let obj = v.as_object().unwrap();
-        for k in ["task_id", "status", "worker", "bounty", "result_hash_hex", "version"] {
+        for k in [
+            "task_id",
+            "status",
+            "worker",
+            "bounty",
+            "result_hash_hex",
+            "version",
+        ] {
             assert!(obj.contains_key(k), "missing key: {}", k);
         }
     }

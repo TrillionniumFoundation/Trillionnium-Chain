@@ -48,7 +48,12 @@ fn map_state_err(err: String) -> PouwError {
     }
 }
 
-fn compute_commitment(task_id: u64, result_hash: &Hash32, reveal_salt: &[u8; 32], worker: &str) -> Hash32 {
+fn compute_commitment(
+    task_id: u64,
+    result_hash: &Hash32,
+    reveal_salt: &[u8; 32],
+    worker: &str,
+) -> Hash32 {
     let payload = format!(
         "{}|{}|{}|{}",
         task_id,
@@ -158,7 +163,11 @@ pub fn apply_challenge(st: &mut StateStore, task_ref: ObjectRef) -> Result<Objec
     st.update_task(task_ref, task).map_err(map_state_err)
 }
 
-pub fn apply_resolve(st: &mut StateStore, task_ref: ObjectRef, slash_worker: bool) -> Result<ObjectRef, PouwError> {
+pub fn apply_resolve(
+    st: &mut StateStore,
+    task_ref: ObjectRef,
+    slash_worker: bool,
+) -> Result<ObjectRef, PouwError> {
     let mut task = st
         .get_task(task_ref.id)
         .ok_or_else(|| PouwError::State("task not found".into()))?;
@@ -307,13 +316,25 @@ mod tests {
 
     #[test]
     fn stable_error_code_mapping() {
-        assert_eq!(PouwError::InvalidTransition.stable_code(), "InvalidTransition");
+        assert_eq!(
+            PouwError::InvalidTransition.stable_code(),
+            "InvalidTransition"
+        );
         assert_eq!(PouwError::VersionConflict.stable_code(), "VersionConflict");
         assert_eq!(PouwError::MissingWorker.stable_code(), "MissingWorker");
-        assert_eq!(PouwError::MissingCommitment.stable_code(), "MissingCommitment");
-        assert_eq!(PouwError::CommitmentMismatch.stable_code(), "CommitmentMismatch");
+        assert_eq!(
+            PouwError::MissingCommitment.stable_code(),
+            "MissingCommitment"
+        );
+        assert_eq!(
+            PouwError::CommitmentMismatch.stable_code(),
+            "CommitmentMismatch"
+        );
         assert_eq!(PouwError::Unauthorized.stable_code(), "Unauthorized");
-        assert_eq!(PouwError::InsufficientStake.stable_code(), "InsufficientStake");
+        assert_eq!(
+            PouwError::InsufficientStake.stable_code(),
+            "InsufficientStake"
+        );
         assert_eq!(PouwError::State("x".into()).stable_code(), "StateInternal");
     }
 

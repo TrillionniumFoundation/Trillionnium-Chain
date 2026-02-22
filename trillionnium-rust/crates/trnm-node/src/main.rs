@@ -19,7 +19,11 @@ use trnm_state::StateStore;
 use trnm_types::{Hash32, ObjectRef, Tx};
 
 #[derive(Debug, Parser)]
-#[command(name = "trnm-node", version, about = "Trillionnium Rust node (mock execution loop)")]
+#[command(
+    name = "trnm-node",
+    version,
+    about = "Trillionnium Rust node (mock execution loop)"
+)]
 struct Args {
     #[arg(long, default_value = "configs/node1.toml")]
     config: String,
@@ -62,12 +66,32 @@ struct NodeConfig {
 
 #[derive(Debug, Clone)]
 enum MockTx {
-    CreateTask { task_id: u64, creator: String, bounty: u128 },
-    AcceptTask { task_id: u64, worker: String },
-    Commit { task_id: u64, worker: String, committed_hash: Hash32 },
-    Reveal { task_id: u64, result_hash: Hash32, reveal_salt: [u8; 32] },
-    Challenge { task_id: u64 },
-    Resolve { task_id: u64, slash_worker: bool },
+    CreateTask {
+        task_id: u64,
+        creator: String,
+        bounty: u128,
+    },
+    AcceptTask {
+        task_id: u64,
+        worker: String,
+    },
+    Commit {
+        task_id: u64,
+        worker: String,
+        committed_hash: Hash32,
+    },
+    Reveal {
+        task_id: u64,
+        result_hash: Hash32,
+        reveal_salt: [u8; 32],
+    },
+    Challenge {
+        task_id: u64,
+    },
+    Resolve {
+        task_id: u64,
+        slash_worker: bool,
+    },
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -137,8 +161,10 @@ fn load_consensus_wal(wal_dir: &Path) -> Result<Option<ConsensusWal>> {
     if !f.exists() {
         return Ok(None);
     }
-    let raw = fs::read_to_string(&f).with_context(|| format!("read wal failed: {}", f.display()))?;
-    let wal: ConsensusWal = toml::from_str(&raw).with_context(|| format!("parse wal failed: {}", f.display()))?;
+    let raw =
+        fs::read_to_string(&f).with_context(|| format!("read wal failed: {}", f.display()))?;
+    let wal: ConsensusWal =
+        toml::from_str(&raw).with_context(|| format!("parse wal failed: {}", f.display()))?;
     Ok(Some(wal))
 }
 
@@ -295,7 +321,11 @@ fn simulate_bft_round(
         let good_vote = BftVote {
             validator: vid.clone(),
             vote_type: VoteType::Prevote,
-            block_hash: if force_no_quorum { bad_vote_hash.clone() } else { canonical_hash.clone() },
+            block_hash: if force_no_quorum {
+                bad_vote_hash.clone()
+            } else {
+                canonical_hash.clone()
+            },
             byzantine: is_bad,
             height,
             round,
@@ -399,11 +429,20 @@ fn simulate_bft_round(
             );
         }
     }
-    println!("[bft] height={} round={} step={:?}", height, round, RoundStep::Prevote);
+    println!(
+        "[bft] height={} round={} step={:?}",
+        height,
+        round,
+        RoundStep::Prevote
+    );
 
     let prevote_tally = aggregate_votes(&votes, VoteType::Prevote);
     let prevote_count = *prevote_tally.get(&round_hash).unwrap_or(&0);
-    let new_lock = if prevote_count >= q { Some(round_hash.clone()) } else { None };
+    let new_lock = if prevote_count >= q {
+        Some(round_hash.clone())
+    } else {
+        None
+    };
 
     for i in 0..n {
         let vid = format!("v{}", i + 1);
@@ -520,7 +559,12 @@ fn simulate_bft_round(
             );
         }
     }
-    println!("[bft] height={} round={} step={:?}", height, round, RoundStep::Precommit);
+    println!(
+        "[bft] height={} round={} step={:?}",
+        height,
+        round,
+        RoundStep::Precommit
+    );
 
     let precommit_tally = aggregate_votes(&votes, VoteType::Precommit);
     let precommit_count = *precommit_tally.get(&round_hash).unwrap_or(&0);
@@ -535,7 +579,14 @@ fn simulate_bft_round(
         println!("[bft] height={} round={} step=RoundChange reason=no_quorum precommit={}/{} unique_voters={} byzantine_votes={} double_vote_events={} auth_reject_bad_sig={} auth_reject_replay={} auth_reject_stale={}", height, round, precommit_count, n, unique_voters.len(), byzantine_votes, double_vote_events, reject_stats.bad_sig, reject_stats.replay, reject_stats.stale_nonce);
     }
 
-    (committed, prevote_count, precommit_count, new_lock, double_vote_events, reject_stats)
+    (
+        committed,
+        prevote_count,
+        precommit_count,
+        new_lock,
+        double_vote_events,
+        reject_stats,
+    )
 }
 
 fn simulate_bft_height(
@@ -614,11 +665,17 @@ fn hash32_hex(data: &[u8]) -> String {
 
 fn load_config(path: &str) -> Result<NodeConfig> {
     let raw = fs::read_to_string(path).with_context(|| format!("read config failed: {}", path))?;
-    let cfg: NodeConfig = toml::from_str(&raw).with_context(|| format!("parse toml failed: {}", path))?;
+    let cfg: NodeConfig =
+        toml::from_str(&raw).with_context(|| format!("parse toml failed: {}", path))?;
     Ok(cfg)
 }
 
-fn compute_commitment(task_id: u64, result_hash: &Hash32, reveal_salt: &[u8; 32], worker: &str) -> Hash32 {
+fn compute_commitment(
+    task_id: u64,
+    result_hash: &Hash32,
+    reveal_salt: &[u8; 32],
+    worker: &str,
+) -> Hash32 {
     let payload = format!(
         "{}|{}|{}|{}",
         task_id,
@@ -745,7 +802,11 @@ fn emit_event(
 
     match tx {
         MockTx::Resolve { slash_worker, .. } => {
-            let resolution_code = if *slash_worker { "slashed" } else { "completed" };
+            let resolution_code = if *slash_worker {
+                "slashed"
+            } else {
+                "completed"
+            };
             println!(
                 "[event] event_schema=v1 event_type={} task_id={} from_status={} to_status={} actor={} tx_id={} block_height={} state_root={} ts_unix_ms={} slash_worker={} resolution_code={}",
                 event_type,
@@ -843,7 +904,10 @@ fn read_write_decl(tx: &MockTx, tx_id: u64, demo_keys: u64) -> Tx {
         MockTx::Resolve { task_id, .. } => *task_id,
     };
     let key = task_id % demo_keys.max(1);
-    let write_obj = ObjectRef { id: key, version: 1 };
+    let write_obj = ObjectRef {
+        id: key,
+        version: 1,
+    };
 
     Tx {
         id: tx_id,
@@ -919,11 +983,27 @@ fn main() -> Result<()> {
     let cfg = load_config(&args.config)?;
 
     println!("[node] start");
-    println!("[node] id={} rpc={} p2p={}", cfg.node_id, cfg.rpc_addr, cfg.p2p_addr);
-    println!("[node] block_ms={} max_blocks={}", args.block_ms, args.max_blocks);
-    println!("[node] load demo_tasks={} demo_keys={}", args.demo_tasks, args.demo_keys);
+    println!(
+        "[node] id={} rpc={} p2p={}",
+        cfg.node_id, cfg.rpc_addr, cfg.p2p_addr
+    );
+    println!(
+        "[node] block_ms={} max_blocks={}",
+        args.block_ms, args.max_blocks
+    );
+    println!(
+        "[node] load demo_tasks={} demo_keys={}",
+        args.demo_tasks, args.demo_keys
+    );
     println!("[node] parallel_workers={}", args.parallel_workers);
-    println!("[node] bft validators={} byzantine={} max_rounds={} fault_rounds={} wal_dir={}", args.validators, args.byzantine, args.bft_max_rounds, args.bft_fault_rounds, args.bft_wal_dir);
+    println!(
+        "[node] bft validators={} byzantine={} max_rounds={} fault_rounds={} wal_dir={}",
+        args.validators,
+        args.byzantine,
+        args.bft_max_rounds,
+        args.bft_fault_rounds,
+        args.bft_wal_dir
+    );
 
     let wal_dir = PathBuf::from(&args.bft_wal_dir);
     let mut restored_lock: Option<String> = None;
@@ -1033,7 +1113,8 @@ fn main() -> Result<()> {
         let mut applied = 0u64;
         for g in groups {
             let group_ids: Vec<u64> = g.iter().map(|t| t.id).collect();
-            let (ordered_ids, rejected) = pre_execute_group_parallel(&state, group_ids, &picked, args.parallel_workers);
+            let (ordered_ids, rejected) =
+                pre_execute_group_parallel(&state, group_ids, &picked, args.parallel_workers);
             preexec_reject_total += rejected;
 
             for id in ordered_ids {
@@ -1057,7 +1138,10 @@ fn main() -> Result<()> {
                     state = before; // rollback on failed commit
                     apply_error_total += 1;
                     rollback_total += 1;
-                    println!("[tx] apply_error height={} tx_id={} err={} rollback=true", height, id, e);
+                    println!(
+                        "[tx] apply_error height={} tx_id={} err={} rollback=true",
+                        height, id, e
+                    );
                 } else {
                     applied += 1;
                     let to_status = status_name(&state, task_id);
@@ -1070,7 +1154,10 @@ fn main() -> Result<()> {
         let root = hex::encode(state.state_root());
         let elapsed_ms = block_start.elapsed().as_millis();
         finality_samples_ms.push(elapsed_ms);
-        println!("[block] node={} height={} txs={} groups={} state_root={} elapsed_ms={}", cfg.node_id, height, applied, group_count, root, elapsed_ms);
+        println!(
+            "[block] node={} height={} txs={} groups={} state_root={} elapsed_ms={}",
+            cfg.node_id, height, applied, group_count, root, elapsed_ms
+        );
 
         persist_consensus_wal(
             &wal_dir,
