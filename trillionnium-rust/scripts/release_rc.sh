@@ -62,8 +62,26 @@ if grep -E '\[tx\] apply_error|rollback=true' "$OUT/parallel-sanity.log"; then
 fi
 
 # 4) protocol freeze checks
-ALLOW_MISSING_RESOLVE_EVENT=${ALLOW_MISSING_RESOLVE_EVENT:-1} ./scripts/check_event_fields.sh | tee "$OUT/event-field-check.log"
-ALLOW_PARTIAL_EVENT_REPLAY=${ALLOW_PARTIAL_EVENT_REPLAY:-1} ./scripts/check_event_replay_smoke.sh | tee "$OUT/event-replay-smoke.log"
+MVP_MODE=${MVP_MODE:-prod}
+case "$MVP_MODE" in
+  dev|beta)
+    : "${ALLOW_MISSING_RESOLVE_EVENT:=1}"
+    : "${ALLOW_PARTIAL_EVENT_REPLAY:=1}"
+    ;;
+  prod)
+    : "${ALLOW_MISSING_RESOLVE_EVENT:=0}"
+    : "${ALLOW_PARTIAL_EVENT_REPLAY:=0}"
+    ;;
+  *)
+    echo "unknown MVP_MODE=$MVP_MODE (expected dev|beta|prod)" >&2
+    exit 12
+    ;;
+esac
+
+echo "[rc] validation_mode=$MVP_MODE allow_missing_resolve=$ALLOW_MISSING_RESOLVE_EVENT allow_partial_replay=$ALLOW_PARTIAL_EVENT_REPLAY" | tee "$OUT/validation-mode.log"
+
+ALLOW_MISSING_RESOLVE_EVENT="$ALLOW_MISSING_RESOLVE_EVENT" ./scripts/check_event_fields.sh | tee "$OUT/event-field-check.log"
+ALLOW_PARTIAL_EVENT_REPLAY="$ALLOW_PARTIAL_EVENT_REPLAY" ./scripts/check_event_replay_smoke.sh | tee "$OUT/event-replay-smoke.log"
 
 # 5) perf evidence
 TXS=${TXS:-5000} ./scripts/run_bench_matrix.sh | tee "$OUT/bench-matrix.log"
