@@ -45,11 +45,35 @@
 2. 检查是否达到 `max_attempts`（达到后 pending 会被清理）。
 3. 核对当前时间戳与 `next_retry_at_unix_ms`、`circuit_open_ms`。
 
+## 持久化 store（可选）
+
+Phase A gate 支持可选持久化可靠性 store（用于重启后去重 smoke）：
+
+- `RELIABILITY_STORE`：`memory`（默认）或 `sqlite`
+- `RELIABILITY_DB_PATH`：当 `RELIABILITY_STORE=sqlite` 时使用的 DB 路径（默认写到 gate 输出目录）
+
+示例：
+
+```bash
+cd trillionnium-rust
+RELIABILITY_STORE=sqlite \
+RELIABILITY_DB_PATH=run/health/reliability-phasea.sqlite \
+./scripts/run_agent_user_phasea_gate.sh
+```
+
+排障：
+- 现象：sqlite smoke 未执行
+  - 检查 `RELIABILITY_STORE` 是否为 `sqlite`
+- 现象：报错 `expected sqlite db created`
+  - 检查 `RELIABILITY_DB_PATH` 目录是否可写
+  - 检查 gate 报告里是否出现 `reliability_db_path=...`
+
 ## 门禁与 CI 纳管
 
 已纳入 `run_agent_user_phasea_gate.sh` 的显式检查：
 
 - `relay_ack_upto_seq_batch_and_boundaries`
 - `circuit_breaker_opens_and_recovers_after_window`
+- `reliability_persistent_store_smoke`（当 `RELIABILITY_STORE=sqlite` 时执行）
 
 CI workflow：`.github/workflows/agent-user-phasea-gate.yml`（调用上述 gate 脚本）。

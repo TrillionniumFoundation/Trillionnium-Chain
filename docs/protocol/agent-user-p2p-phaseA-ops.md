@@ -88,6 +88,9 @@ cargo run -q -p trnm-worker-agent -- flush-submissions \
   - `max_attempts`
   - `circuit_breaker_threshold`
   - `circuit_open_ms`
+- Phase A gate 持久化 smoke（可选）：
+  - `RELIABILITY_STORE=sqlite` 启用 sqlite 持久化 store
+  - `RELIABILITY_DB_PATH=<path>` 指定 sqlite 文件路径
 
 详见：`docs/OPERATIONS.md`
 
@@ -126,8 +129,10 @@ cd trillionnium-rust
 
 校验内容：
 1. `trnm-rpc + trnm-worker-agent` 构建测试（`cargo test -p ...`）
-2. submit/dispatch/consume/query 最小闭环
-3. 断言 `status=COMMIT_QUEUED` 且 `verifier_status=accepted`
+2. relay ack/retry/proof 基础门禁
+3. （可选）`RELIABILITY_STORE=sqlite` 时执行持久化去重 smoke
+4. submit/dispatch/consume/query 最小闭环
+5. 断言 `status=COMMIT_QUEUED` 且 `verifier_status=accepted`
 
 输出：
 - `trillionnium-rust/run/health/agent-user-phasea-gate-<ts>.txt`

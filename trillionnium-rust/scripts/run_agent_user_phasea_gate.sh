@@ -10,6 +10,12 @@ OUT_DIR="${OUT_DIR:-$ROOT/run/health}"
 OUT="$OUT_DIR/agent-user-phasea-gate-$TS.txt"
 mkdir -p "$OUT_DIR" "$ROOT/run/message-gateway"
 
+# Optional reliability store selection for gate smoke.
+# RELIABILITY_STORE: memory (default) | sqlite
+# RELIABILITY_DB_PATH: sqlite file path used when RELIABILITY_STORE=sqlite
+RELIABILITY_STORE="${RELIABILITY_STORE:-memory}"
+RELIABILITY_DB_PATH="${RELIABILITY_DB_PATH:-$OUT_DIR/reliability-phasea-$TS.sqlite}"
+
 INGRESS="$ROOT/run/message-gateway/requests.jsonl"
 BACKUP="$ROOT/run/message-gateway/requests.backup-$TS.jsonl"
 SUBMIT_LOG="/tmp/trnm-worker-agent-submissions-phasea-$TS.jsonl"
@@ -41,6 +47,21 @@ chmod +x ./scripts/llm_adapter_mock.sh
 
   echo "[phaseA] gate: relay proof smoke + tamper matrix"
   cargo test -q -p trnm-rpc relay_session_proof_smoke_and_tamper_matrix
+
+  if [[ "$RELIABILITY_STORE" == "sqlite" ]]; then
+    rm -f "$RELIABILITY_DB_PATH"
+    echo "[phaseA] gate: reliability persistent sqlite smoke"
+    RELIABILITY_STORE=sqlite RELIABILITY_DB_PATH="$RELIABILITY_DB_PATH" \
+      cargo test -q -p trnm-rpc reliability_persistent_store_smoke -- --nocapture
+    if [[ ! -f "$RELIABILITY_DB_PATH" ]]; then
+      echo "[FAIL] expected sqlite db created at $RELIABILITY_DB_PATH" >&2
+      exit 4
+    fi
+    echo "reliability_store=sqlite"
+    echo "reliability_db_path=$RELIABILITY_DB_PATH"
+  else
+    echo "[phaseA] gate: reliability persistent sqlite smoke (skip, RELIABILITY_STORE=$RELIABILITY_STORE)"
+  fi
 
   echo "[phaseA] rpc submit-message"
   submit_json="$(cargo run -q -p trnm-rpc -- submit-message \

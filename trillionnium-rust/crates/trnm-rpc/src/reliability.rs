@@ -1,3 +1,4 @@
+use rusqlite::Connection;
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, HashMap};
 
@@ -582,6 +583,184 @@ fn exp_backoff_ms(base: u64, max: u64, attempts: u32) -> u64 {
     let shift = attempts.saturating_sub(1).min(20);
     let factor = 1u64 << shift;
     base.saturating_mul(factor).min(max)
+}
+
+#[derive(Debug)]
+pub struct SqliteReliabilityStore {
+    conn: Connection,
+}
+
+impl SqliteReliabilityStore {
+    pub fn open(path: impl AsRef<std::path::Path>) -> Result<Self, ReliabilityStoreError> {
+        let conn = Connection::open(path).map_err(|e| ReliabilityStoreError::InvalidState {
+            detail: format!("open sqlite failed: {e}"),
+        })?;
+        Self::apply_migrations(&conn)?;
+        Ok(Self { conn })
+    }
+
+    fn apply_migrations(conn: &Connection) -> Result<(), ReliabilityStoreError> {
+        conn.execute_batch(
+            "CREATE TABLE IF NOT EXISTS schema_migrations(version INTEGER PRIMARY KEY);",
+        )
+        .map_err(|e| ReliabilityStoreError::InvalidState {
+            detail: format!("init migration table failed: {e}"),
+        })?;
+
+        let current: i64 = conn
+            .query_row("SELECT COALESCE(MAX(version),0) FROM schema_migrations", [], |r| {
+                r.get(0)
+            })
+            .map_err(|e| ReliabilityStoreError::InvalidState {
+                detail: format!("read migration version failed: {e}"),
+            })?;
+
+        if current < 1 {
+            conn.execute_batch(
+                "
+                CREATE TABLE IF NOT EXISTS reliability_sessions (
+                    session_id TEXT PRIMARY KEY,
+                    session_json TEXT NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS reliability_dedup (
+                    from_addr TEXT NOT NULL,
+                    seq_or_nonce INTEGER NOT NULL,
+                    seen_at_unix_ms INTEGER NOT NULL,
+                    PRIMARY KEY(from_addr, seq_or_nonce)
+                );
+                INSERT INTO schema_migrations(version) VALUES(1);
+                ",
+            )
+            .map_err(|e| ReliabilityStoreError::InvalidState {
+                detail: format!("apply migration v1 failed: {e}"),
+            })?;
+        }
+
+        if current < 2 {
+            let _ = conn.execute(
+                "ALTER TABLE reliability_sessions ADD COLUMN updated_at_unix_ms INTEGER NOT NULL DEFAULT 0",
+                [],
+            );
+            conn.execute(
+                "INSERT OR IGNORE INTO schema_migrations(version) VALUES(2)",
+                [],
+            )
+            .map_err(|e| ReliabilityStoreError::InvalidState {
+                detail: format!("apply migration v2 failed: {e}"),
+            })?;
+        }
+
+        Ok(())
+    }
+}
+
+impl ReliabilityStore for SqliteReliabilityStore {
+    fn get_session(&self, session_id: &str) -> Option<SessionState> {
+        let payload: String = self
+            .conn
+            .query_row(
+                "SELECT session_json FROM reliability_sessions WHERE session_id=?1",
+                [session_id],
+                |r| r.get(0),
+            )
+            .ok()?;
+        serde_json::from_str::<SessionState>(&payload).ok()
+    }
+
+    fn upsert_session(&mut self, session: SessionState) {
+        let _ = self.try_upsert_session_with_ts(session, 0);
+    }
+
+    fn remove_session(&mut self, session_id: &str) {
+        let _ = self.conn.execute(
+            "DELETE FROM reliability_sessions WHERE session_id=?1",
+            [session_id],
+        );
+    }
+
+    fn list_session_ids(&self) -> Vec<String> {
+        let mut stmt = match self
+            .conn
+            .prepare("SELECT session_id FROM reliability_sessions ORDER BY session_id")
+        {
+            Ok(v) => v,
+            Err(_) => return Vec::new(),
+        };
+        let rows = match stmt.query_map([], |r| r.get::<_, String>(0)) {
+            Ok(v) => v,
+            Err(_) => return Vec::new(),
+        };
+        rows.filter_map(Result::ok).collect()
+    }
+
+    fn contains_dedup_key(&self, key: &DedupKey) -> bool {
+        self.conn
+            .query_row(
+                "SELECT COUNT(1) FROM reliability_dedup WHERE from_addr=?1 AND seq_or_nonce=?2",
+                rusqlite::params![key.from, key.seq_or_nonce],
+                |r| r.get::<_, i64>(0),
+            )
+            .map(|n| n > 0)
+            .unwrap_or(false)
+    }
+
+    fn remember_dedup_key(&mut self, key: DedupKey) {
+        self.remember_dedup_key_with_ts(key, 0);
+    }
+
+    fn remember_dedup_key_with_ts(&mut self, key: DedupKey, now_unix_ms: u128) {
+        let seen = i64::try_from(now_unix_ms).unwrap_or(i64::MAX);
+        let _ = self.conn.execute(
+            "INSERT OR REPLACE INTO reliability_dedup(from_addr, seq_or_nonce, seen_at_unix_ms)
+             VALUES(?1, ?2, ?3)",
+            rusqlite::params![key.from, key.seq_or_nonce, seen],
+        );
+    }
+
+    fn forget_dedup_key(&mut self, key: &DedupKey) {
+        let _ = self.conn.execute(
+            "DELETE FROM reliability_dedup WHERE from_addr=?1 AND seq_or_nonce=?2",
+            rusqlite::params![key.from, key.seq_or_nonce],
+        );
+    }
+
+    fn try_upsert_session_with_ts(
+        &mut self,
+        session: SessionState,
+        now_unix_ms: u128,
+    ) -> Result<(), ReliabilityStoreError> {
+        let payload = serde_json::to_string(&session).map_err(|e| ReliabilityStoreError::InvalidState {
+            detail: format!("serialize session failed: {e}"),
+        })?;
+        let ts = i64::try_from(now_unix_ms).unwrap_or(i64::MAX);
+        let tx = self.conn.transaction().map_err(|e| ReliabilityStoreError::InvalidState {
+            detail: format!("begin tx failed: {e}"),
+        })?;
+        tx.execute(
+            "INSERT INTO reliability_sessions(session_id, session_json, updated_at_unix_ms)
+             VALUES(?1, ?2, ?3)
+             ON CONFLICT(session_id) DO UPDATE SET
+               session_json=excluded.session_json,
+               updated_at_unix_ms=excluded.updated_at_unix_ms",
+            rusqlite::params![session.session_id, payload, ts],
+        )
+        .map_err(|e| ReliabilityStoreError::InvalidState {
+            detail: format!("upsert session failed: {e}"),
+        })?;
+        tx.commit().map_err(|e| ReliabilityStoreError::InvalidState {
+            detail: format!("commit tx failed: {e}"),
+        })?;
+        Ok(())
+    }
+
+    fn cleanup_expired(&mut self, now_unix_ms: u128, retention: &RetentionConfig) {
+        let cutoff = now_unix_ms.saturating_sub(retention.dedup_ttl_ms as u128);
+        let cutoff_i64 = i64::try_from(cutoff).unwrap_or(i64::MAX);
+        let _ = self.conn.execute(
+            "DELETE FROM reliability_dedup WHERE seen_at_unix_ms < ?1",
+            [cutoff_i64],
+        );
+    }
 }
 
 #[cfg(test)]

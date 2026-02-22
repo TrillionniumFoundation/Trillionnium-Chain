@@ -12,5 +12,9 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 hex = "0.4"
 sha2 = "0.10"
+rusqlite = { version = "0.32", features = ["bundled"] }
 trnm-types = { path = "../trnm-types" }
 trnm-state = { path = "../trnm-state" }
+
+[dev-dependencies]
+tempfile = "3"

@@ -166,6 +166,15 @@ cd trillionnium-rust
 ./scripts/run_agent_user_phasea_gate.sh
 ```
 
+可选：启用持久化 reliability store（sqlite smoke）
+
+```bash
+cd trillionnium-rust
+RELIABILITY_STORE=sqlite \
+RELIABILITY_DB_PATH=run/health/reliability-phasea.sqlite \
+./scripts/run_agent_user_phasea_gate.sh
+```
+
 一键串联门禁（失败即停，先共识安全矩阵，再 proof 检查，再 Phase A）：
 
 ```bash
