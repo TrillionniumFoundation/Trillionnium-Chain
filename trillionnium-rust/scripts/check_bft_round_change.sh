@@ -21,18 +21,24 @@ cargo run -q -p trnm-node -- \
   --demo-keys 3 \
   --validators 4 \
   --byzantine 1 \
-  --bft-max-rounds 3 \
+  --bft-max-rounds 4 \
   --bft-fault-rounds 2 \
+  --bft-missed-proposal-threshold 1 \
+  --bft-leader-penalty-rounds 2 \
+  --bft-round-change-backoff-ms 5 \
+  --bft-round-change-backoff-max-ms 20 \
   --bft-wal-dir "$WAL_DIR" >"$LOG" 2>&1
 
 grep -q '^\[bft\].*step=RoundChange' "$LOG"
+grep -q '^\[bft\].*step=RoundBackoff' "$LOG"
 grep -q '^\[bft\].*step=Commit' "$LOG"
 grep -q '^\[consensus\].*bft_round_change_total=' "$LOG"
 
 a=$(grep '^\[consensus\]' "$LOG" | sed -n 's/.*bft_round_change_total=\([0-9]*\).*/\1/p' | tail -n1)
 b=$(grep '^\[consensus\]' "$LOG" | sed -n 's/.*bft_committed_heights=\([0-9]*\).*/\1/p' | tail -n1)
+c=$(grep '^\[consensus\]' "$LOG" | sed -n 's/.*bft_round_change_backoff_total_ms=\([0-9]*\).*/\1/p' | tail -n1)
 
-if [[ -z "$a" || -z "$b" ]]; then
+if [[ -z "$a" || -z "$b" || -z "$c" ]]; then
   echo "[FAIL] failed to parse consensus summary" >&2
   exit 2
 fi
@@ -47,10 +53,17 @@ if [[ "$b" -le 0 ]]; then
   exit 4
 fi
 
+if [[ "$c" -le 0 ]]; then
+  echo "[FAIL] expected bft_round_change_backoff_total_ms > 0, got $c" >&2
+  exit 5
+fi
+
 {
   echo "log=$LOG"
   echo "bft_round_change_total=$a"
   echo "bft_committed_heights=$b"
+  echo "bft_round_change_backoff_total_ms=$c"
+  echo "note=thresholds: missed_threshold=1 penalty_rounds=2 backoff_ms=5 backoff_cap_ms=20"
   echo "status=PASS"
 } > "$REPORT"
 

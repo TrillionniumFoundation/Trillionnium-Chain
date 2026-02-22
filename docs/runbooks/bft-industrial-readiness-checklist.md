@@ -23,7 +23,7 @@
 - [x] 事件重放顺序校验
 
 ### 3) 观测与追责
-- [x] 共识指标输出：`finality_p50/p95`、`bft_round_change_total`、`bft_committed_heights`
+- [x] 共识指标输出：`finality_p50/p95`、`bft_round_change_total`、`bft_round_change_backoff_total_ms`、`bft_leader_missed_proposals`、`bft_committed_heights`
 - [ ] Prometheus/Grafana 面板与报警基线
 - [ ] SLO 文档化（例如 p95 finality、recovery MTTR）
 

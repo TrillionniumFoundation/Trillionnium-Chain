@@ -15,7 +15,7 @@ use trnm_pouw::{
     apply_accept_task, apply_challenge, apply_commit_result, apply_create_task, apply_resolve,
     apply_reveal_result,
 };
-use trnm_state::StateStore;
+use trnm_state::{verify_wal_and_find_checkpoint, CheckpointMeta, StateStore, WalMeta};
 use trnm_types::{Hash32, ObjectRef, Tx};
 
 #[derive(Debug, Parser)]
@@ -52,9 +52,24 @@ struct Args {
     /// Inject no-quorum faulty rounds at beginning of each height
     #[arg(long, default_value_t = 0)]
     bft_fault_rounds: u64,
+    /// Missed proposal threshold before leader is de-weighted/skipped
+    #[arg(long, default_value_t = 2)]
+    bft_missed_proposal_threshold: u64,
+    /// Rounds to penalize leader after crossing missed proposal threshold
+    #[arg(long, default_value_t = 2)]
+    bft_leader_penalty_rounds: u64,
+    /// Base backoff milliseconds applied on each round-change
+    #[arg(long, default_value_t = 5)]
+    bft_round_change_backoff_ms: u64,
+    /// Max cap for round-change backoff milliseconds
+    #[arg(long, default_value_t = 40)]
+    bft_round_change_backoff_max_ms: u64,
     /// Consensus WAL directory for restart recovery
     #[arg(long, default_value = "run/consensus-wal")]
     bft_wal_dir: String,
+    /// Write one checkpoint metadata every N committed blocks
+    #[arg(long, default_value_t = 5)]
+    bft_checkpoint_interval: u64,
 }
 
 #[derive(Debug, Deserialize)]
@@ -132,6 +147,21 @@ struct AuthRejectStats {
     stale_nonce: usize,
 }
 
+#[derive(Debug, Clone, Default)]
+struct LeaderHealth {
+    missed_proposals: u64,
+    penalty_until_round: u64,
+}
+
+#[derive(Debug, Clone)]
+struct BftJitterControl {
+    missed_threshold: u64,
+    penalty_rounds: u64,
+    round_change_backoff_ms: u64,
+    round_change_backoff_cap_ms: u64,
+    leader_health: Vec<LeaderHealth>,
+}
+
 #[derive(Debug, Clone)]
 struct BftHeightResult {
     committed: bool,
@@ -143,6 +173,8 @@ struct BftHeightResult {
     auth_reject_bad_sig: usize,
     auth_reject_replay: usize,
     auth_reject_stale_nonce: usize,
+    round_change_backoff_total_ms: u64,
+    leader_missed_snapshot: Vec<u64>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -152,20 +184,79 @@ struct ConsensusWal {
     locked_block_hash: Option<String>,
 }
 
+#[derive(Debug, Clone)]
+struct RecoveredWalState {
+    next_height: u64,
+    restored_lock: Option<String>,
+    last_checkpoint: Option<CheckpointMeta>,
+    truncated: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+struct WalMetaList {
+    entries: Vec<WalMeta>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+struct CheckpointMetaList {
+    checkpoints: Vec<CheckpointMeta>,
+}
+
 fn wal_file(wal_dir: &Path) -> PathBuf {
     wal_dir.join("consensus-wal.toml")
 }
 
-fn load_consensus_wal(wal_dir: &Path) -> Result<Option<ConsensusWal>> {
-    let f = wal_file(wal_dir);
+fn wal_meta_file(wal_dir: &Path) -> PathBuf {
+    wal_dir.join("consensus-wal-meta.toml")
+}
+
+fn checkpoint_file(wal_dir: &Path) -> PathBuf {
+    wal_dir.join("consensus-checkpoints.toml")
+}
+
+fn load_wal_meta_entries(wal_dir: &Path) -> Result<Vec<WalMeta>> {
+    let f = wal_meta_file(wal_dir);
     if !f.exists() {
-        return Ok(None);
+        return Ok(vec![]);
     }
-    let raw =
-        fs::read_to_string(&f).with_context(|| format!("read wal failed: {}", f.display()))?;
-    let wal: ConsensusWal =
-        toml::from_str(&raw).with_context(|| format!("parse wal failed: {}", f.display()))?;
-    Ok(Some(wal))
+    let raw = fs::read_to_string(&f)
+        .with_context(|| format!("read wal meta failed: {}", f.display()))?;
+    let list: WalMetaList = toml::from_str(&raw)
+        .with_context(|| format!("parse wal meta failed: {}", f.display()))?;
+    Ok(list.entries)
+}
+
+fn persist_wal_meta_entries(wal_dir: &Path, entries: &[WalMeta]) -> Result<()> {
+    fs::create_dir_all(wal_dir)?;
+    let f = wal_meta_file(wal_dir);
+    let raw = toml::to_string(&WalMetaList {
+        entries: entries.to_vec(),
+    })?;
+    fs::write(&f, raw).with_context(|| format!("write wal meta failed: {}", f.display()))?;
+    Ok(())
+}
+
+fn load_checkpoint_meta(wal_dir: &Path) -> Result<Vec<CheckpointMeta>> {
+    let f = checkpoint_file(wal_dir);
+    if !f.exists() {
+        return Ok(vec![]);
+    }
+    let raw = fs::read_to_string(&f)
+        .with_context(|| format!("read checkpoint failed: {}", f.display()))?;
+    let mut list: CheckpointMetaList = toml::from_str(&raw)
+        .with_context(|| format!("parse checkpoint failed: {}", f.display()))?;
+    list.checkpoints.sort_by_key(|cp| cp.height);
+    Ok(list.checkpoints)
+}
+
+fn persist_checkpoint_meta(wal_dir: &Path, checkpoints: &[CheckpointMeta]) -> Result<()> {
+    fs::create_dir_all(wal_dir)?;
+    let f = checkpoint_file(wal_dir);
+    let raw = toml::to_string(&CheckpointMetaList {
+        checkpoints: checkpoints.to_vec(),
+    })?;
+    fs::write(&f, raw).with_context(|| format!("write checkpoint failed: {}", f.display()))?;
+    Ok(())
 }
 
 fn persist_consensus_wal(wal_dir: &Path, wal: &ConsensusWal) -> Result<()> {
@@ -176,6 +267,75 @@ fn persist_consensus_wal(wal_dir: &Path, wal: &ConsensusWal) -> Result<()> {
     Ok(())
 }
 
+fn recover_wal_state(wal_dir: &Path) -> Result<RecoveredWalState> {
+    let entries = load_wal_meta_entries(wal_dir)?;
+    let checkpoints = load_checkpoint_meta(wal_dir)?;
+    let last_checkpoint = verify_wal_and_find_checkpoint(&checkpoints, &entries)
+        .map_err(anyhow::Error::msg)?;
+
+    let mut truncated = false;
+    if !entries.is_empty() && last_checkpoint.is_none() {
+        truncated = true;
+        persist_wal_meta_entries(wal_dir, &[])?;
+        persist_checkpoint_meta(wal_dir, &[])?;
+        persist_consensus_wal(
+            wal_dir,
+            &ConsensusWal {
+                next_height: 1,
+                last_round: 0,
+                locked_block_hash: None,
+            },
+        )?;
+        return Ok(RecoveredWalState {
+            next_height: 1,
+            restored_lock: None,
+            last_checkpoint: None,
+            truncated,
+        });
+    }
+
+    let mut valid_entries = entries.clone();
+    if let Some(cp) = &last_checkpoint {
+        if let Some(idx) = entries.iter().position(|e| e.height == cp.height && e.content_hash_hex() == cp.wal_entry_hash_hex) {
+            if idx + 1 < entries.len() {
+                valid_entries.truncate(idx + 1);
+                persist_wal_meta_entries(wal_dir, &valid_entries)?;
+                let valid_checkpoints: Vec<CheckpointMeta> = checkpoints
+                    .iter()
+                    .filter(|c| c.height <= cp.height)
+                    .cloned()
+                    .collect();
+                persist_checkpoint_meta(wal_dir, &valid_checkpoints)?;
+                truncated = true;
+            }
+        }
+    }
+
+    if let Some(last) = valid_entries.last() {
+        persist_consensus_wal(
+            wal_dir,
+            &ConsensusWal {
+                next_height: last.height + 1,
+                last_round: last.round,
+                locked_block_hash: Some(last.proposal_hash.clone()),
+            },
+        )?;
+        return Ok(RecoveredWalState {
+            next_height: last.height + 1,
+            restored_lock: Some(last.proposal_hash.clone()),
+            last_checkpoint,
+            truncated,
+        });
+    }
+
+    Ok(RecoveredWalState {
+        next_height: 1,
+        restored_lock: None,
+        last_checkpoint,
+        truncated,
+    })
+}
+
 fn quorum_threshold(n: usize) -> usize {
     // 2f+1 where f = floor((n-1)/3)
     let f = n.saturating_sub(1) / 3;
@@ -184,6 +344,33 @@ fn quorum_threshold(n: usize) -> usize {
 
 fn proposer(height: u64, round: u64, n: usize) -> usize {
     ((height + round) as usize) % n.max(1)
+}
+
+fn select_proposer(height: u64, round: u64, control: &BftJitterControl, n: usize) -> (usize, bool) {
+    let n = n.max(1);
+    let base = proposer(height, round, n);
+    if control.missed_threshold == 0 {
+        return (base, false);
+    }
+    for offset in 0..n {
+        let idx = (base + offset) % n;
+        let health = control.leader_health.get(idx).cloned().unwrap_or_default();
+        let penalized = round < health.penalty_until_round;
+        let too_many_misses = health.missed_proposals >= control.missed_threshold;
+        if !penalized && !too_many_misses {
+            return (idx, offset > 0);
+        }
+    }
+    (base, false)
+}
+
+fn round_change_backoff_ms(round_changes: u64, base_ms: u64, cap_ms: u64) -> u64 {
+    if round_changes == 0 || base_ms == 0 {
+        return 0;
+    }
+    let shift = (round_changes - 1).min(20);
+    let factor = 1u64 << shift;
+    base_ms.saturating_mul(factor).min(cap_ms)
 }
 
 fn aggregate_votes(votes: &[BftVote], vote_type: VoteType) -> HashMap<String, usize> {
@@ -297,15 +484,16 @@ fn simulate_bft_round(
     validators: usize,
     byzantine: usize,
     force_no_quorum: bool,
+    proposer_idx: usize,
+    proposer_shifted: bool,
 ) -> (bool, usize, usize, Option<String>, usize, AuthRejectStats) {
     let n = validators.max(1);
     let b = byzantine.min(n.saturating_sub(1));
     let q = quorum_threshold(n);
-    let proposer_idx = proposer(height, round, n);
     let proposer_id = format!("v{}", proposer_idx + 1);
     let round_hash = locked_hash.unwrap_or(proposal_hash).to_string();
 
-    println!("[bft] height={} round={} step={:?} proposer={} validators={} byzantine={} quorum={} locked={}", height, round, RoundStep::Propose, proposer_id, n, b, q, locked_hash.is_some());
+    println!("[bft] height={} round={} step={:?} proposer={} shifted={} validators={} byzantine={} quorum={} locked={}", height, round, RoundStep::Propose, proposer_id, proposer_shifted, n, b, q, locked_hash.is_some());
 
     let mut votes = Vec::new();
     let mut auth_nonce: HashMap<(String, VoteType), u64> = HashMap::new();
@@ -597,6 +785,7 @@ fn simulate_bft_height(
     max_rounds: u64,
     fault_rounds: u64,
     initial_lock: Option<String>,
+    control: &mut BftJitterControl,
 ) -> BftHeightResult {
     let mut locked: Option<String> = initial_lock;
     let mut round_changes = 0u64;
@@ -606,10 +795,16 @@ fn simulate_bft_height(
     let mut total_auth_reject_bad_sig = 0usize;
     let mut total_auth_reject_replay = 0usize;
     let mut total_auth_reject_stale_nonce = 0usize;
+    let mut round_change_backoff_total_ms = 0u64;
+    let n = validators.max(1);
+    if control.leader_health.len() != n {
+        control.leader_health = vec![LeaderHealth::default(); n];
+    }
 
     for round in 0..max_rounds.max(1) {
         let force_no_quorum = round < fault_rounds;
         let effective_byz = if force_no_quorum { 0 } else { byzantine };
+        let (proposer_idx, proposer_shifted) = select_proposer(height, round, control, n);
         let (committed, pv, pc, new_lock, dv, auth) = simulate_bft_round(
             height,
             round,
@@ -618,6 +813,8 @@ fn simulate_bft_height(
             validators,
             effective_byz,
             force_no_quorum,
+            proposer_idx,
+            proposer_shifted,
         );
         last_prevote = pv;
         last_precommit = pc;
@@ -629,6 +826,7 @@ fn simulate_bft_height(
             locked = new_lock;
         }
         if committed {
+            control.leader_health[proposer_idx].missed_proposals = 0;
             return BftHeightResult {
                 committed: true,
                 committed_round: round,
@@ -639,9 +837,36 @@ fn simulate_bft_height(
                 auth_reject_bad_sig: total_auth_reject_bad_sig,
                 auth_reject_replay: total_auth_reject_replay,
                 auth_reject_stale_nonce: total_auth_reject_stale_nonce,
+                round_change_backoff_total_ms,
+                leader_missed_snapshot: control
+                    .leader_health
+                    .iter()
+                    .map(|h| h.missed_proposals)
+                    .collect(),
             };
         }
         round_changes += 1;
+        let health = &mut control.leader_health[proposer_idx];
+        health.missed_proposals = health.missed_proposals.saturating_add(1);
+        if control.missed_threshold > 0 && health.missed_proposals >= control.missed_threshold {
+            health.penalty_until_round = round.saturating_add(1 + control.penalty_rounds);
+        }
+        let backoff_ms = round_change_backoff_ms(
+            round_changes,
+            control.round_change_backoff_ms,
+            control.round_change_backoff_cap_ms,
+        );
+        round_change_backoff_total_ms = round_change_backoff_total_ms.saturating_add(backoff_ms);
+        println!(
+            "[bft] height={} round={} step=RoundBackoff delay_ms={} cap_ms={} proposer=v{} missed_proposals={} penalty_until_round={}",
+            height,
+            round,
+            backoff_ms,
+            control.round_change_backoff_cap_ms,
+            proposer_idx + 1,
+            health.missed_proposals,
+            health.penalty_until_round
+        );
     }
 
     BftHeightResult {
@@ -654,6 +879,12 @@ fn simulate_bft_height(
         auth_reject_bad_sig: total_auth_reject_bad_sig,
         auth_reject_replay: total_auth_reject_replay,
         auth_reject_stale_nonce: total_auth_reject_stale_nonce,
+        round_change_backoff_total_ms,
+        leader_missed_snapshot: control
+            .leader_health
+            .iter()
+            .map(|h| h.missed_proposals)
+            .collect(),
     }
 }
 
@@ -978,6 +1209,113 @@ fn pre_execute_group_parallel(
     (ok_ids, rejected)
 }
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn backoff_is_capped() {
+        assert_eq!(round_change_backoff_ms(0, 5, 40), 0);
+        assert_eq!(round_change_backoff_ms(1, 5, 40), 5);
+        assert_eq!(round_change_backoff_ms(2, 5, 40), 10);
+        assert_eq!(round_change_backoff_ms(3, 5, 40), 20);
+        assert_eq!(round_change_backoff_ms(4, 5, 40), 40);
+        assert_eq!(round_change_backoff_ms(10, 5, 40), 40);
+    }
+
+    #[test]
+    fn proposer_selection_skips_penalized_or_missed_leader() {
+        let control = BftJitterControl {
+            missed_threshold: 2,
+            penalty_rounds: 2,
+            round_change_backoff_ms: 5,
+            round_change_backoff_cap_ms: 40,
+            leader_health: vec![
+                LeaderHealth {
+                    missed_proposals: 3,
+                    penalty_until_round: 5,
+                },
+                LeaderHealth::default(),
+                LeaderHealth::default(),
+                LeaderHealth::default(),
+            ],
+        };
+
+        let (idx, shifted) = select_proposer(1, 1, &control, 4); // base proposer is v3(index=2)
+        assert_eq!(idx, 2);
+        assert!(!shifted);
+
+        let (idx2, shifted2) = select_proposer(4, 0, &control, 4); // base proposer is v1(index=0), should be skipped
+        assert_eq!(idx2, 1);
+        assert!(shifted2);
+    }
+
+    fn temp_wal_dir(name: &str) -> PathBuf {
+        let mut p = std::env::temp_dir();
+        p.push(format!("trnm-node-{}-{}", name, now_unix_ms()));
+        p
+    }
+
+    #[test]
+    fn recover_truncates_to_latest_valid_checkpoint() {
+        let wal_dir = temp_wal_dir("recover");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "h1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "h2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1.clone()),
+        };
+        let h2 = e2.content_hash_hex();
+        let e3_bad = WalMeta {
+            height: 3,
+            round: 1,
+            proposal_hash: "h3".into(),
+            committed: true,
+            state_root_hex: "r3".into(),
+            prev_hash_hex: Some("broken".into()),
+        };
+        persist_wal_meta_entries(&wal_dir, &[e1, e2, e3_bad]).unwrap();
+        persist_checkpoint_meta(
+            &wal_dir,
+            &[
+                CheckpointMeta {
+                    height: 1,
+                    state_root_hex: "r1".into(),
+                    wal_entry_hash_hex: h1,
+                },
+                CheckpointMeta {
+                    height: 2,
+                    state_root_hex: "r2".into(),
+                    wal_entry_hash_hex: h2,
+                },
+            ],
+        )
+        .unwrap();
+
+        let recovered = recover_wal_state(&wal_dir).unwrap();
+        assert_eq!(recovered.next_height, 3);
+        assert!(recovered.truncated);
+
+        let entries = load_wal_meta_entries(&wal_dir).unwrap();
+        assert_eq!(entries.len(), 2);
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+}
+
 fn main() -> Result<()> {
     let args = Args::parse();
     let cfg = load_config(&args.config)?;
@@ -997,27 +1335,34 @@ fn main() -> Result<()> {
     );
     println!("[node] parallel_workers={}", args.parallel_workers);
     println!(
-        "[node] bft validators={} byzantine={} max_rounds={} fault_rounds={} wal_dir={}",
+        "[node] bft validators={} byzantine={} max_rounds={} fault_rounds={} missed_threshold={} penalty_rounds={} rc_backoff_ms={} rc_backoff_cap_ms={} wal_dir={} checkpoint_interval={}",
         args.validators,
         args.byzantine,
         args.bft_max_rounds,
         args.bft_fault_rounds,
-        args.bft_wal_dir
+        args.bft_missed_proposal_threshold,
+        args.bft_leader_penalty_rounds,
+        args.bft_round_change_backoff_ms,
+        args.bft_round_change_backoff_max_ms,
+        args.bft_wal_dir,
+        args.bft_checkpoint_interval
     );
 
     let wal_dir = PathBuf::from(&args.bft_wal_dir);
-    let mut restored_lock: Option<String> = None;
-    let mut height: u64 = 1;
-    if let Some(wal) = load_consensus_wal(&wal_dir)? {
-        height = wal.next_height.max(1);
-        restored_lock = wal.locked_block_hash.clone();
-        println!(
-            "[bft-recover] restored height={} round={} lock={}",
-            wal.next_height,
-            wal.last_round,
-            wal.locked_block_hash.unwrap_or_else(|| "none".to_string())
-        );
-    }
+    let recovered = recover_wal_state(&wal_dir)?;
+    let mut restored_lock: Option<String> = recovered.restored_lock;
+    let mut height: u64 = recovered.next_height.max(1);
+    println!(
+        "[bft-recover] restored height={} lock={} checkpoint={} truncated={}",
+        height,
+        restored_lock.clone().unwrap_or_else(|| "none".to_string()),
+        recovered
+            .last_checkpoint
+            .as_ref()
+            .map(|cp| cp.height.to_string())
+            .unwrap_or_else(|| "none".to_string()),
+        recovered.truncated
+    );
 
     let mut state = StateStore::new();
     let mut mempool = build_demo_mempool(args.demo_tasks, args.demo_keys);
@@ -1031,6 +1376,16 @@ fn main() -> Result<()> {
     let mut bft_auth_reject_bad_sig_total: u64 = 0;
     let mut bft_auth_reject_replay_total: u64 = 0;
     let mut bft_auth_reject_stale_nonce_total: u64 = 0;
+    let mut bft_round_change_backoff_total_ms: u64 = 0;
+    let mut wal_entries = load_wal_meta_entries(&wal_dir)?;
+    let mut checkpoints = load_checkpoint_meta(&wal_dir)?;
+    let mut bft_jitter = BftJitterControl {
+        missed_threshold: args.bft_missed_proposal_threshold,
+        penalty_rounds: args.bft_leader_penalty_rounds,
+        round_change_backoff_ms: args.bft_round_change_backoff_ms,
+        round_change_backoff_cap_ms: args.bft_round_change_backoff_max_ms,
+        leader_health: vec![LeaderHealth::default(); args.validators.max(1)],
+    };
 
     loop {
         let block_start = Instant::now();
@@ -1051,6 +1406,7 @@ fn main() -> Result<()> {
             args.bft_max_rounds,
             args.bft_fault_rounds,
             restored_lock.take(),
+            &mut bft_jitter,
         );
         if !bft.committed {
             bft_round_change_total += bft.round_changes;
@@ -1058,15 +1414,28 @@ fn main() -> Result<()> {
             bft_auth_reject_bad_sig_total += bft.auth_reject_bad_sig as u64;
             bft_auth_reject_replay_total += bft.auth_reject_replay as u64;
             bft_auth_reject_stale_nonce_total += bft.auth_reject_stale_nonce as u64;
+            bft_round_change_backoff_total_ms += bft.round_change_backoff_total_ms;
             println!(
-                "[block] node={} height={} skipped reason=bft_no_commit proposal_hash={} prevote={} precommit={} rounds={}",
+                "[block] node={} height={} skipped reason=bft_no_commit proposal_hash={} prevote={} precommit={} rounds={} round_backoff_ms={} leader_missed={:?}",
                 cfg.node_id,
                 height,
                 proposal_hash,
                 bft.prevote_count,
                 bft.precommit_count,
-                args.bft_max_rounds
+                args.bft_max_rounds,
+                bft.round_change_backoff_total_ms,
+                bft.leader_missed_snapshot
             );
+            let wal_entry = WalMeta {
+                height,
+                round: bft.committed_round,
+                proposal_hash: proposal_hash.clone(),
+                committed: false,
+                state_root_hex: hex::encode(state.state_root()),
+                prev_hash_hex: wal_entries.last().map(|e| e.content_hash_hex()),
+            };
+            wal_entries.push(wal_entry);
+            persist_wal_meta_entries(&wal_dir, &wal_entries)?;
             persist_consensus_wal(
                 &wal_dir,
                 &ConsensusWal {
@@ -1088,13 +1457,16 @@ fn main() -> Result<()> {
         bft_auth_reject_bad_sig_total += bft.auth_reject_bad_sig as u64;
         bft_auth_reject_replay_total += bft.auth_reject_replay as u64;
         bft_auth_reject_stale_nonce_total += bft.auth_reject_stale_nonce as u64;
+        bft_round_change_backoff_total_ms += bft.round_change_backoff_total_ms;
         println!(
-            "[bft] height={} committed_round={} prevote={} precommit={} round_changes={} double_vote_events={} auth_reject_bad_sig={} auth_reject_replay={} auth_reject_stale_nonce={}",
+            "[bft] height={} committed_round={} prevote={} precommit={} round_changes={} round_backoff_ms={} leader_missed={:?} double_vote_events={} auth_reject_bad_sig={} auth_reject_replay={} auth_reject_stale_nonce={}",
             height,
             bft.committed_round,
             bft.prevote_count,
             bft.precommit_count,
             bft.round_changes,
+            bft.round_change_backoff_total_ms,
+            bft.leader_missed_snapshot,
             bft.double_vote_events,
             bft.auth_reject_bad_sig,
             bft.auth_reject_replay,
@@ -1159,6 +1531,28 @@ fn main() -> Result<()> {
             cfg.node_id, height, applied, group_count, root, elapsed_ms
         );
 
+        let wal_entry = WalMeta {
+            height,
+            round: bft.committed_round,
+            proposal_hash: proposal_hash.clone(),
+            committed: true,
+            state_root_hex: root.clone(),
+            prev_hash_hex: wal_entries.last().map(|e| e.content_hash_hex()),
+        };
+        let wal_hash = wal_entry.content_hash_hex();
+        wal_entries.push(wal_entry);
+        persist_wal_meta_entries(&wal_dir, &wal_entries)?;
+
+        if args.bft_checkpoint_interval > 0 && height % args.bft_checkpoint_interval == 0 {
+            checkpoints.push(CheckpointMeta {
+                height,
+                state_root_hex: root.clone(),
+                wal_entry_hash_hex: wal_hash,
+            });
+            persist_checkpoint_meta(&wal_dir, &checkpoints)?;
+            println!("[bft-checkpoint] height={} state_root={}", height, root);
+        }
+
         persist_consensus_wal(
             &wal_dir,
             &ConsensusWal {
@@ -1188,8 +1582,13 @@ fn main() -> Result<()> {
     } else {
         apply_error_total as f64 / finality_samples_ms.len() as f64
     };
+    let leader_missed_final: Vec<u64> = bft_jitter
+        .leader_health
+        .iter()
+        .map(|h| h.missed_proposals)
+        .collect();
     println!(
-        "[consensus] finality_p50_ms={} finality_p95_ms={} preexec_reject_total={} apply_error_total={} rollback_total={} recovery_error_rate={:.6} bft_committed_heights={} bft_round_change_total={} bft_double_vote_total={} bft_auth_reject_bad_sig_total={} bft_auth_reject_replay_total={} bft_auth_reject_stale_nonce_total={}",
+        "[consensus] finality_p50_ms={} finality_p95_ms={} preexec_reject_total={} apply_error_total={} rollback_total={} recovery_error_rate={:.6} bft_committed_heights={} bft_round_change_total={} bft_round_change_backoff_total_ms={} bft_leader_missed_proposals={:?} bft_double_vote_total={} bft_auth_reject_bad_sig_total={} bft_auth_reject_replay_total={} bft_auth_reject_stale_nonce_total={}",
         finality_p50,
         finality_p95,
         preexec_reject_total,
@@ -1198,6 +1597,8 @@ fn main() -> Result<()> {
         recovery_error_rate,
         bft_committed_heights,
         bft_round_change_total,
+        bft_round_change_backoff_total_ms,
+        leader_missed_final,
         bft_double_vote_total,
         bft_auth_reject_bad_sig_total,
         bft_auth_reject_replay_total,
@@ -1206,3 +1607,4 @@ fn main() -> Result<()> {
 
     Ok(())
 }
+
