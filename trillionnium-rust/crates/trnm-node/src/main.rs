@@ -102,6 +102,7 @@ enum MockTx {
     },
     Challenge {
         task_id: u64,
+        bond: u128,
     },
     Resolve {
         task_id: u64,
@@ -948,7 +949,7 @@ fn build_demo_mempool(demo_tasks: u64, _demo_keys: u64) -> VecDeque<MockTx> {
             result_hash,
             reveal_salt,
         });
-        q.push_back(MockTx::Challenge { task_id });
+        q.push_back(MockTx::Challenge { task_id, bond: 10 });
         q.push_back(MockTx::Resolve {
             task_id,
             slash_worker: false,
@@ -969,7 +970,7 @@ fn task_id_of(tx: &MockTx) -> u64 {
         | MockTx::AcceptTask { task_id, .. }
         | MockTx::Commit { task_id, .. }
         | MockTx::Reveal { task_id, .. }
-        | MockTx::Challenge { task_id }
+        | MockTx::Challenge { task_id, .. }
         | MockTx::Resolve { task_id, .. } => *task_id,
     }
 }
@@ -1110,9 +1111,9 @@ fn apply_one(st: &mut StateStore, tx: MockTx) -> Result<()> {
             let r = task_ref(st, task_id)?;
             let _ = apply_reveal_result(st, r, result_hash, reveal_salt)?;
         }
-        MockTx::Challenge { task_id } => {
+        MockTx::Challenge { task_id, bond } => {
             let r = task_ref(st, task_id)?;
-            let _ = apply_challenge(st, r)?;
+            let _ = apply_challenge(st, r, bond)?;
         }
         MockTx::Resolve {
             task_id,
@@ -1131,7 +1132,7 @@ fn read_write_decl(tx: &MockTx, tx_id: u64, demo_keys: u64) -> Tx {
         MockTx::AcceptTask { task_id, .. } => *task_id,
         MockTx::Commit { task_id, .. } => *task_id,
         MockTx::Reveal { task_id, .. } => *task_id,
-        MockTx::Challenge { task_id } => *task_id,
+        MockTx::Challenge { task_id, .. } => *task_id,
         MockTx::Resolve { task_id, .. } => *task_id,
     };
     let key = task_id % demo_keys.max(1);

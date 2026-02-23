@@ -95,6 +95,10 @@ fn validate_gov_param_value(key: &str, value: &str) -> Result<(), String> {
             let _ = parse_u64_in_range(key, value, 1, 1_000_000_000_000)?;
             Ok(())
         }
+        "challenge_min_bond" => {
+            let _ = parse_u64_in_range(key, value, 1, 1_000_000_000_000)?;
+            Ok(())
+        }
         "emergency_pause" => {
             let _ = parse_bool_strict(key, value)?;
             Ok(())
@@ -267,6 +271,7 @@ impl StateStore {
             "max_block_ms",
             "max_parallel_workers",
             "min_worker_stake",
+            "challenge_min_bond",
             "challenge_window_blocks",
             "emergency_pause",
         ];
@@ -318,6 +323,20 @@ impl StateStore {
         self.objects.values().any(|v| match &v.value {
             ObjectValue::GovParam(p) => p.key == "emergency_pause" && p.value == "true",
             _ => false,
+        })
+    }
+
+    pub fn gov_param_u64(&self, key: &str) -> Option<u64> {
+        self.objects.values().find_map(|v| match &v.value {
+            ObjectValue::GovParam(p) if p.key == key => p.value.parse::<u64>().ok(),
+            _ => None,
+        })
+    }
+
+    pub fn gov_param_u128(&self, key: &str) -> Option<u128> {
+        self.objects.values().find_map(|v| match &v.value {
+            ObjectValue::GovParam(p) if p.key == key => p.value.parse::<u128>().ok(),
+            _ => None,
         })
     }
 
@@ -393,6 +412,12 @@ mod tests {
             committed_hash: None,
             result_hash: None,
             reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenge_bond_forfeited: None,
             version: 1,
         };
         let r1 = st.put_task_new(t.clone()).unwrap();
@@ -416,6 +441,12 @@ mod tests {
             committed_hash: None,
             result_hash: None,
             reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenge_bond_forfeited: None,
             version: 1,
         };
         let r1 = st.put_task_new(t.clone()).unwrap();
@@ -501,6 +532,11 @@ mod tests {
 
         let err = st
             .set_gov_param(7103, "min_worker_stake".into(), "0".into())
+            .unwrap_err();
+        assert!(err.contains("out of range"));
+
+        let err = st
+            .set_gov_param(7104, "challenge_min_bond".into(), "0".into())
             .unwrap_err();
         assert!(err.contains("out of range"));
     }

@@ -263,6 +263,30 @@ TRNM_TX_CLI=./scripts/v2/trnm_tx_cli_real_adapter.sh ./scripts/v2/run_worker_rec
 
 建议将以上三项与 `run_worker_receipt_gates_real_cli.sh` 组合为 PR-1 最小验收集。
 
+### PR-2 安全补丁配套门禁（Timeout + Challenge Bond）
+
+在仓库根目录执行：
+
+```bash
+./scripts/v2/pouw_commit_timeout_migration_test.sh
+./scripts/v2/pouw_challenge_timeout_migration_test.sh
+./scripts/v2/challenge_bond_enforcement_test.sh
+```
+
+门禁说明：
+- `pouw_commit_timeout_migration_test.sh`：扫描并执行 `commit -> timeout` 迁移相关测试（关键词：`commit + timeout + migration`）。
+- `pouw_challenge_timeout_migration_test.sh`：扫描并执行 `challenge -> timeout` 迁移相关测试（关键词：`challenge + timeout + migration`）。
+- `challenge_bond_enforcement_test.sh`：扫描并执行 challenge bond 强制校验相关测试（关键词：`challenge + bond + enforce/min`）。
+
+验收清单（PR-2）：
+- [ ] 三个脚本均成功退出（exit code = 0）
+- [ ] 输出中至少命中并执行了目标测试（不是 0 tests）
+- [ ] commit 阶段超时迁移路径覆盖
+- [ ] challenge 阶段超时迁移路径覆盖
+- [ ] challenge 最小 bond / bond enforcement 拒绝路径覆盖
+
+> 说明：脚本会先从 `cargo test -- --list` 中按关键词发现测试；若未发现对应测试，会直接 `FAIL`，用于防止“脚本通过但用例缺失”的假阳性。
+
 ## Agent↔User P2P Phase A（MVP）
 
 文档入口：`docs/protocol/agent-user-p2p-phaseA-ops.md`

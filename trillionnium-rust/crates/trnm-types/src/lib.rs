@@ -47,6 +47,13 @@ pub struct TaskObject {
     pub committed_hash: Option<Hash32>,
     pub result_hash: Option<Hash32>,
     pub reveal_salt: Option<[u8; 32]>,
+    pub committed_at_height: Option<u64>,
+    pub reveal_deadline_height: Option<u64>,
+    pub challenged_at_height: Option<u64>,
+    pub resolve_deadline_height: Option<u64>,
+    pub challenge_bond: Option<u128>,
+    /// true = challenger bond forfeited/slashed; false = refunded
+    pub challenge_bond_forfeited: Option<bool>,
     pub version: u64,
 }
 
