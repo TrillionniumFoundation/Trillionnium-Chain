@@ -1,5 +1,6 @@
 use anyhow::{anyhow, bail, Result};
 use clap::{Parser, Subcommand};
+use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::{
     fs,
@@ -12,7 +13,7 @@ use std::{
 #[command(
     name = "trnm-cli",
     version,
-    about = "Trillionnium native CLI (tx + wallet MVP)"
+    about = "Trillionnium native CLI (wallet/query/tx MVP)"
 )]
 struct Args {
     #[command(subcommand)]
@@ -21,42 +22,72 @@ struct Args {
 
 #[derive(Debug, Subcommand)]
 enum Command {
+    /// Transaction related commands
     Tx {
         #[command(subcommand)]
         tx: TxCommand,
     },
+    /// Wallet related commands
     Wallet {
         #[command(subcommand)]
         wallet: WalletCommand,
+    },
+    /// Query commands (RPC/model-facing)
+    Query {
+        #[command(subcommand)]
+        query: QueryCommand,
     },
 }
 
 #[derive(Debug, Subcommand)]
 enum TxCommand {
+    /// Legacy commit-result tx (kept for compatibility)
     CommitResult {
         task_id: u64,
         worker: String,
         commit_hash: String,
         nonce: u64,
     },
+    /// Legacy reveal-result tx (kept for compatibility)
     RevealResult {
         task_id: u64,
         result_hash: String,
         salt_hex: String,
     },
-    Query {
-        tx_hash: String,
+    /// Query legacy tx status by hash
+    Query { tx_hash: String },
+    /// Transfer balance from one wallet to another
+    Transfer {
+        #[arg(long, default_value = "default")]
+        from: String,
+        #[arg(long)]
+        to: String,
+        #[arg(long)]
+        amount: u128,
+        #[arg(long, default_value = "trnm")]
+        denom: String,
+        #[arg(long)]
+        store: Option<PathBuf>,
     },
 }
 
 #[derive(Debug, Subcommand)]
 enum WalletCommand {
+    /// Create a new local wallet (MVP placeholder)
+    Create {
+        #[arg(long, default_value = "default")]
+        name: String,
+        #[arg(long)]
+        out: Option<PathBuf>,
+    },
+    /// Alias of wallet create (backward compatible)
     Generate {
         #[arg(long, default_value = "default")]
         name: String,
         #[arg(long)]
         out: Option<PathBuf>,
     },
+    /// Import private key hex into local wallet store
     Import {
         #[arg(long, default_value = "default")]
         name: String,
@@ -65,12 +96,14 @@ enum WalletCommand {
         #[arg(long)]
         out: Option<PathBuf>,
     },
+    /// Print derived address from local wallet
     Address {
         #[arg(long, default_value = "default")]
         name: String,
         #[arg(long)]
         store: Option<PathBuf>,
     },
+    /// Sign arbitrary text (MVP deterministic signature)
     Sign {
         #[arg(long, default_value = "default")]
         name: String,
@@ -79,6 +112,42 @@ enum WalletCommand {
         #[arg(long)]
         store: Option<PathBuf>,
     },
+}
+
+#[derive(Debug, Subcommand)]
+enum QueryCommand {
+    /// Query account balance via new RPC/model contract
+    Balance {
+        #[arg(long)]
+        address: Option<String>,
+        #[arg(long)]
+        name: Option<String>,
+        #[arg(long)]
+        store: Option<PathBuf>,
+        #[arg(long, default_value = "trnm")]
+        denom: String,
+    },
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct BalanceQueryResponse {
+    address: String,
+    balance: String,
+    denom: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct TransferTxRequest {
+    from: String,
+    to: String,
+    amount: String,
+    denom: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct TransferTxResponse {
+    tx_hash: String,
+    status: String,
 }
 
 fn hash(parts: &[&str]) -> String {
@@ -150,19 +219,12 @@ fn extract_tx_hash(text: &str) -> Option<String> {
         return Some(v);
     }
 
-    if let Some(i) = text.find("\"txhash\"") {
-        let tail = &text[i..];
-        if let Some(q1) = tail.find('"') {
-            let tail2 = &tail[q1 + 1..];
-            if let Some(q2) = tail2.find('"') {
-                let tail3 = &tail2[q2 + 1..];
-                if let Some(q3) = tail3.find('"') {
-                    let tail4 = &tail3[q3 + 1..];
-                    if let Some(q4) = tail4.find('"') {
-                        return Some(tail4[..q4].to_string());
-                    }
-                }
-            }
+    if let Ok(v) = serde_json::from_str::<serde_json::Value>(text) {
+        if let Some(h) = v.get("tx_hash").and_then(|x| x.as_str()) {
+            return Some(h.to_string());
+        }
+        if let Some(h) = v.get("txhash").and_then(|x| x.as_str()) {
+            return Some(h.to_string());
         }
     }
 
@@ -190,9 +252,50 @@ fn run_template(cmd: &str) -> Result<String> {
     Ok(hash(&["fallback", &merged]))
 }
 
+fn run_template_raw(cmd: &str) -> Result<String> {
+    let out = ProcCommand::new("sh").arg("-lc").arg(cmd).output()?;
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    if !out.status.success() {
+        bail!(
+            "query command failed rc={}: {}{}",
+            out.status.code().unwrap_or(1),
+            stdout,
+            stderr
+        );
+    }
+    Ok(stdout.to_string())
+}
+
 fn tpl(mut s: String, key: &str, val: &str) -> String {
     s = s.replace(&format!("{{{}}}", key), val);
     s
+}
+
+fn wallet_create(name: String, out: Option<PathBuf>) -> Result<()> {
+    let store = out.unwrap_or_else(default_wallet_store);
+    let priv_hex = random_priv_hex()?;
+    let path = write_key(&store, &name, &priv_hex)?;
+    let addr = derive_address_from_priv_hex(&priv_hex)?;
+    println!("wallet_name={}", name);
+    println!("wallet_path={}", path.display());
+    println!("address={}", addr);
+    println!("public_key_hint={}", sha256_hex(priv_hex.as_bytes()));
+    Ok(())
+}
+
+fn resolve_address_for_query(
+    address: Option<String>,
+    name: Option<String>,
+    store: Option<PathBuf>,
+) -> Result<String> {
+    if let Some(a) = address {
+        return Ok(a);
+    }
+    let wallet_name = name.unwrap_or_else(|| "default".to_string());
+    let s = store.unwrap_or_else(default_wallet_store);
+    let priv_hex = read_key(&s, &wallet_name)?;
+    derive_address_from_priv_hex(&priv_hex)
 }
 
 fn main() -> Result<()> {
@@ -257,17 +360,54 @@ fn main() -> Result<()> {
                     println!("status=unknown");
                 }
             }
+            TxCommand::Transfer {
+                from,
+                to,
+                amount,
+                denom,
+                store,
+            } => {
+                let s = store.unwrap_or_else(default_wallet_store);
+                let from_priv_hex = read_key(&s, &from)?;
+                let from_addr = derive_address_from_priv_hex(&from_priv_hex)?;
+                let req = TransferTxRequest {
+                    from: from_addr,
+                    to,
+                    amount: amount.to_string(),
+                    denom,
+                };
+
+                if let Ok(template) = std::env::var("TRNM_TX_TRANSFER_CMD") {
+                    let mut cmd = template;
+                    cmd = tpl(cmd, "from", &req.from);
+                    cmd = tpl(cmd, "to", &req.to);
+                    cmd = tpl(cmd, "amount", &req.amount);
+                    cmd = tpl(cmd, "denom", &req.denom);
+                    let tx_hash = run_template(&cmd)?;
+                    let out = TransferTxResponse {
+                        tx_hash,
+                        status: "submitted".into(),
+                    };
+                    println!("{}", serde_json::to_string_pretty(&out)?);
+                } else {
+                    let tx_hash = hash(&[
+                        "transfer",
+                        &req.from,
+                        &req.to,
+                        &req.amount,
+                        &req.denom,
+                    ]);
+                    let out = TransferTxResponse {
+                        tx_hash,
+                        status: "simulated".into(),
+                    };
+                    println!("{}", serde_json::to_string_pretty(&out)?);
+                }
+            }
         },
         Command::Wallet { wallet } => match wallet {
-            WalletCommand::Generate { name, out } => {
-                let store = out.unwrap_or_else(default_wallet_store);
-                let priv_hex = random_priv_hex()?;
-                let path = write_key(&store, &name, &priv_hex)?;
-                let addr = derive_address_from_priv_hex(&priv_hex)?;
-                println!("wallet_name={}", name);
-                println!("wallet_path={}", path.display());
-                println!("address={}", addr);
-                println!("public_key_hint={}", sha256_hex(priv_hex.as_bytes()));
+            WalletCommand::Create { name, out } | WalletCommand::Generate { name, out } => {
+                wallet_create(name, out)?;
             }
             WalletCommand::Import {
                 name,
@@ -304,6 +444,75 @@ fn main() -> Result<()> {
                 println!("signature={}", sig);
             }
         },
+        Command::Query { query } => match query {
+            QueryCommand::Balance {
+                address,
+                name,
+                store,
+                denom,
+            } => {
+                let addr = resolve_address_for_query(address, name, store)?;
+
+                if let Ok(template) = std::env::var("TRNM_QUERY_BALANCE_CMD") {
+                    let mut cmd = template;
+                    cmd = tpl(cmd, "address", &addr);
+                    cmd = tpl(cmd, "denom", &denom);
+                    let raw = run_template_raw(&cmd)?;
+                    if let Ok(resp) = serde_json::from_str::<BalanceQueryResponse>(&raw) {
+                        println!("{}", serde_json::to_string_pretty(&resp)?);
+                    } else {
+                        let out = BalanceQueryResponse {
+                            address: addr,
+                            balance: raw.trim().to_string(),
+                            denom,
+                        };
+                        println!("{}", serde_json::to_string_pretty(&out)?);
+                    }
+                } else {
+                    let seeded = hash(&["balance", &addr, &denom]);
+                    let pseudo = u128::from_str_radix(&seeded[..16], 16).unwrap_or(0) % 1_000_000;
+                    let out = BalanceQueryResponse {
+                        address: addr,
+                        balance: pseudo.to_string(),
+                        denom,
+                    };
+                    println!("{}", serde_json::to_string_pretty(&out)?);
+                }
+            }
+        },
     }
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn wallet_import_hex_check() {
+        let ok = ensure_hex_32_bytes("0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+            .unwrap();
+        assert_eq!(ok.len(), 64);
+        assert!(ensure_hex_32_bytes("0x1234").is_err());
+    }
+
+    #[test]
+    fn extract_tx_hash_supports_json_and_kv() {
+        assert_eq!(
+            extract_tx_hash("tx_hash=abc123").as_deref(),
+            Some("abc123")
+        );
+        assert_eq!(
+            extract_tx_hash("{\"tx_hash\":\"deadbeef\",\"status\":\"ok\"}").as_deref(),
+            Some("deadbeef")
+        );
+    }
+
+    #[test]
+    fn tpl_replacement_works() {
+        let got = tpl("send {from} {to} {amount}".to_string(), "from", "alice");
+        let got = tpl(got, "to", "bob");
+        let got = tpl(got, "amount", "7");
+        assert_eq!(got, "send alice bob 7");
+    }
 }
