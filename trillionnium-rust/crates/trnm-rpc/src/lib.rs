@@ -99,6 +99,21 @@ pub struct AccountNonceQueryResponse {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct FaucetRequestResponse {
+    pub ok: bool,
+    pub code: String,
+    pub message: String,
+    pub address: String,
+    pub requested_amount: u128,
+    pub granted_amount: u128,
+    pub balance: Option<u128>,
+    pub nonce: Option<u64>,
+    pub window_seconds: u64,
+    pub next_allowed_unix_ms: u128,
+    pub version: u64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct RpcErrorResponse {
     pub code: &'static str,
     pub message: String,

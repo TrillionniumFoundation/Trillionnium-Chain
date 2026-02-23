@@ -9,10 +9,11 @@ use std::{
     time::{SystemTime, UNIX_EPOCH},
 };
 use trnm_rpc::{
-    get_tx, query_account_state, submit_tx, AccountBalanceQueryResponse, AccountNonceQueryResponse,
-    AccountState, EventQueryResponse, GetTxError, GovParamQueryResponse, GovProposalQueryResponse,
-    InMemoryTransferLedger, MessageRequestQueryResponse, RequestFullQueryResponse, RpcErrorResponse,
-    TaskQueryResponse, TxLifecycleRecord,
+    get_tx, query_account_state, submit_tx, validate_trnm_address, AccountBalanceQueryResponse,
+    AccountNonceQueryResponse, AccountState, EventQueryResponse, FaucetRequestResponse, GetTxError,
+    GovParamQueryResponse, GovProposalQueryResponse, InMemoryTransferLedger,
+    MessageRequestQueryResponse, RequestFullQueryResponse, RpcErrorResponse, TaskQueryResponse,
+    TxLifecycleRecord,
 };
 use trnm_state::StateStore;
 use trnm_types::{
@@ -67,6 +68,12 @@ enum Command {
     GetTx {
         #[arg(long)]
         tx_hash: String,
+    },
+    FaucetRequest {
+        #[arg(long)]
+        address: String,
+        #[arg(long, default_value_t = 1000)]
+        amount: u128,
     },
     SubmitMessage {
         #[arg(long)]
@@ -280,6 +287,11 @@ fn run_root() -> PathBuf {
 }
 
 fn now_ms() -> u128 {
+    if let Ok(v) = std::env::var("TRNM_RPC_NOW_MS") {
+        if let Ok(parsed) = v.parse::<u128>() {
+            return parsed;
+        }
+    }
     SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .map(|d| d.as_millis())
@@ -367,6 +379,34 @@ fn tx_lifecycle_file() -> PathBuf {
         return PathBuf::from(path);
     }
     run_root().join("run/rpc/txs.json")
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+struct FaucetRateEntry {
+    window_start_unix_ms: u128,
+    count_in_window: u32,
+}
+
+fn faucet_limits_file() -> PathBuf {
+    if let Ok(path) = std::env::var("TRNM_RPC_FAUCET_LIMITS_FILE") {
+        return PathBuf::from(path);
+    }
+    run_root().join("run/rpc/faucet_limits.json")
+}
+
+fn load_faucet_limits(path: &Path) -> BTreeMap<String, FaucetRateEntry> {
+    let Ok(raw) = fs::read_to_string(path) else {
+        return BTreeMap::new();
+    };
+    serde_json::from_str::<BTreeMap<String, FaucetRateEntry>>(&raw).unwrap_or_default()
+}
+
+fn save_faucet_limits(path: &Path, limits: &BTreeMap<String, FaucetRateEntry>) -> Result<()> {
+    if let Some(parent) = path.parent() {
+        fs::create_dir_all(parent)?;
+    }
+    fs::write(path, serde_json::to_string_pretty(limits)?)?;
+    Ok(())
 }
 
 fn load_tx_lifecycle(path: &Path) -> BTreeMap<String, TxLifecycleRecord> {
@@ -635,6 +675,107 @@ fn main() -> Result<()> {
             ledger_to_accounts(&ledger, &mut accounts);
             save_tx_lifecycle(&tx_path, &txs)?;
             save_account_state(&account_path, &accounts)?;
+            println!("{}", serde_json::to_string_pretty(&out)?);
+        }
+        Command::FaucetRequest { address, amount } => {
+            let window_seconds = std::env::var("TRNM_RPC_FAUCET_WINDOW_SECONDS")
+                .ok()
+                .and_then(|v| v.parse::<u64>().ok())
+                .unwrap_or(60);
+            let max_requests_in_window = std::env::var("TRNM_RPC_FAUCET_MAX_REQUESTS")
+                .ok()
+                .and_then(|v| v.parse::<u32>().ok())
+                .unwrap_or(1);
+            let now = now_ms();
+
+            if validate_trnm_address(&address).is_err() {
+                let out = FaucetRequestResponse {
+                    ok: false,
+                    code: "INVALID_ADDRESS".into(),
+                    message: format!("invalid address format: {}", address),
+                    address,
+                    requested_amount: amount,
+                    granted_amount: 0,
+                    balance: None,
+                    nonce: None,
+                    window_seconds,
+                    next_allowed_unix_ms: now,
+                    version: 1,
+                };
+                println!("{}", serde_json::to_string_pretty(&out)?);
+                return Ok(());
+            }
+
+            let limits_path = faucet_limits_file();
+            let mut limits = load_faucet_limits(&limits_path);
+            let window_ms = (window_seconds as u128) * 1000;
+            let next_allowed_unix_ms;
+            let mut allowed = true;
+
+            {
+                let entry = limits.entry(address.clone()).or_default();
+                if entry.window_start_unix_ms == 0 || now.saturating_sub(entry.window_start_unix_ms) >= window_ms {
+                    entry.window_start_unix_ms = now;
+                    entry.count_in_window = 0;
+                }
+                if entry.count_in_window >= max_requests_in_window {
+                    allowed = false;
+                }
+                next_allowed_unix_ms = entry.window_start_unix_ms + window_ms;
+            }
+
+            let account_path = account_state_file();
+            let mut accounts = load_account_state(&account_path);
+
+            if !allowed {
+                let acct = accounts.get(&address).cloned();
+                let out = FaucetRequestResponse {
+                    ok: false,
+                    code: "RATE_LIMITED".into(),
+                    message: "faucet rate limit exceeded".into(),
+                    address,
+                    requested_amount: amount,
+                    granted_amount: 0,
+                    balance: acct.as_ref().map(|a| a.balance),
+                    nonce: acct.as_ref().map(|a| a.nonce),
+                    window_seconds,
+                    next_allowed_unix_ms,
+                    version: 1,
+                };
+                println!("{}", serde_json::to_string_pretty(&out)?);
+                return Ok(());
+            }
+
+            let (new_balance, nonce) = {
+                let acct = accounts.entry(address.clone()).or_insert(AccountState {
+                    address: address.clone(),
+                    balance: 0,
+                    nonce: 0,
+                });
+                acct.balance = acct.balance.saturating_add(amount);
+                (acct.balance, acct.nonce)
+            };
+
+            if let Some(entry) = limits.get_mut(&address) {
+                entry.count_in_window = entry.count_in_window.saturating_add(1);
+            }
+
+            save_account_state(&account_path, &accounts)?;
+            save_faucet_limits(&limits_path, &limits)?;
+
+            let out = FaucetRequestResponse {
+                ok: true,
+                code: "OK".into(),
+                message: "faucet granted".into(),
+                address,
+                requested_amount: amount,
+                granted_amount: amount,
+                balance: Some(new_balance),
+                nonce: Some(nonce),
+                window_seconds,
+                next_allowed_unix_ms,
+                version: 1,
+            };
             println!("{}", serde_json::to_string_pretty(&out)?);
         }
         Command::SubmitMessage {
