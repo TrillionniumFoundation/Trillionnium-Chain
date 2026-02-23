@@ -140,6 +140,26 @@ CI workflow：`.github/workflows/agent-user-phasea-gate.yml`（调用上述 gate
 - `tx_hash=...`
 - `status=...`
 
+## RPC 服务化（P2-1 第一步）
+
+最小常驻服务（health endpoint）：
+
+```bash
+./scripts/v2/rpc_service_up.sh
+curl -sS http://127.0.0.1:8545/health
+./scripts/v2/rpc_service_down.sh
+```
+
+默认文件：
+- PID: `run/rpc-service.pid`
+- Log: `run/rpc-service.log`
+
+可配置环境变量：
+- `HOST`（默认 `127.0.0.1`）
+- `PORT`（默认 `8545`）
+- `PID_FILE`
+- `LOG_FILE`
+
 ## P1-4 集成门禁（sdk 示例 + product smoke + rpc_contract_v1）
 
 新增串联脚本：`scripts/v2/run_p1_integration_gate.sh`

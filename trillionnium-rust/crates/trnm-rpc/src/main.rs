@@ -5,6 +5,8 @@ use sha2::{Digest, Sha256};
 use std::{
     collections::BTreeMap,
     fs,
+    io::{Read, Write},
+    net::TcpListener,
     path::{Path, PathBuf},
     time::{SystemTime, UNIX_EPOCH},
 };
@@ -100,6 +102,13 @@ enum Command {
         worker_id: String,
         #[arg(long, default_value_t = 10)]
         limit: usize,
+    },
+    /// Run minimal RPC health server for service mode
+    Serve {
+        #[arg(long, default_value = "127.0.0.1")]
+        host: String,
+        #[arg(long, default_value_t = 8545)]
+        port: u16,
     },
 }
 
@@ -443,6 +452,50 @@ fn rpc_fail(err: RpcErrorResponse) -> anyhow::Error {
     let body = serde_json::to_string_pretty(&err)
         .unwrap_or_else(|_| format!("{{\"code\":\"{}\",\"message\":\"{}\"}}", err.code, err.message));
     anyhow::anyhow!(body)
+}
+
+fn serve_health(host: &str, port: u16) -> Result<()> {
+    let addr = format!("{}:{}", host, port);
+    let listener = TcpListener::bind(&addr)?;
+    eprintln!("[trnm-rpc] service listening on http://{addr}");
+
+    for stream in listener.incoming() {
+        let mut stream = match stream {
+            Ok(s) => s,
+            Err(_) => continue,
+        };
+
+        let mut buf = [0u8; 2048];
+        let n = stream.read(&mut buf).unwrap_or(0);
+        let req = String::from_utf8_lossy(&buf[..n]);
+        let first = req.lines().next().unwrap_or("");
+
+        if first.starts_with("GET /health") {
+            let body = serde_json::json!({
+                "ok": true,
+                "service": "trnm-rpc",
+                "ts_unix_ms": now_ms(),
+                "version": 1
+            })
+            .to_string();
+            let resp = format!(
+                "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{}",
+                body.len(),
+                body
+            );
+            let _ = stream.write_all(resp.as_bytes());
+        } else {
+            let body = "{\"ok\":false,\"code\":\"NOT_FOUND\"}";
+            let resp = format!(
+                "HTTP/1.1 404 Not Found\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{}",
+                body.len(),
+                body
+            );
+            let _ = stream.write_all(resp.as_bytes());
+        }
+    }
+
+    Ok(())
 }
 
 fn main() -> Result<()> {
@@ -942,6 +995,9 @@ fn main() -> Result<()> {
             }
             save_ingress_records(&records)?;
             println!("{}", serde_json::to_string_pretty(&assigned)?);
+        }
+        Command::Serve { host, port } => {
+            serve_health(&host, port)?;
         }
     }
 
