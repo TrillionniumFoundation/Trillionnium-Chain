@@ -333,6 +333,26 @@ nightly 在流程末尾自动生成日报：
 
 Runbook：`docs/runbooks/pr6-nightly-security-summary.md`
 
+## PR-9 Weekly Alert Governance（每周告警治理）
+
+每周治理报告（非阻断）聚合以下指标：告警总量、抑制率、失败率、TopN异常、阈值建议变更。
+
+执行：
+
+```bash
+python3 ./scripts/v2/pr9_weekly_alert_governance.py
+```
+
+默认输出：
+- `run/pr9/weekly-alert-governance.md`
+
+nightly 接入建议：
+- workflow step 使用 `continue-on-error: true`
+- 上传 `run/pr9/**` 到 artifacts
+- Step Summary 增加 `PR-9 Weekly Alert Governance`
+
+Runbook：`docs/runbooks/pr9-weekly-alert-governance.md`
+
 ## 一键回滚（Phase A）
 
 仓库根目录提供回滚脚本：`scripts/rollback_phasea.sh`

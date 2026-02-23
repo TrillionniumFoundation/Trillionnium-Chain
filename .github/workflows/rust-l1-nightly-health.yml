@@ -360,6 +360,13 @@ jobs:
           set -euo pipefail
           python3 ./scripts/v2/pr6_daily_security_summary.py
 
+      - name: Build PR-9 weekly alert governance (non-gate)
+        if: always()
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          python3 ./scripts/v2/pr9_weekly_alert_governance.py
+
       - name: Append PR-6 daily security summary to GitHub Step Summary
         if: always()
         continue-on-error: true
@@ -369,6 +376,20 @@ jobs:
           if [ -n "${GITHUB_STEP_SUMMARY:-}" ] && [ -f "${summary_file}" ]; then
             {
               echo "## PR-6 Daily Security Ops"
+              echo
+              cat "${summary_file}"
+            } >> "${GITHUB_STEP_SUMMARY}"
+          fi
+
+      - name: Append PR-9 weekly alert governance to GitHub Step Summary
+        if: always()
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          summary_file="run/pr9/weekly-alert-governance.md"
+          if [ -n "${GITHUB_STEP_SUMMARY:-}" ] && [ -f "${summary_file}" ]; then
+            {
+              echo "## PR-9 Weekly Alert Governance"
               echo
               cat "${summary_file}"
             } >> "${GITHUB_STEP_SUMMARY}"
@@ -396,6 +417,7 @@ jobs:
             run/pr5-reconcile/**
             run/pr6-ops/**
             run/pr7-topn/**
+            run/pr9/**
             data/reexec-smoke/**
             data/reexec-bundles/**
             data/worker-onboard/**
