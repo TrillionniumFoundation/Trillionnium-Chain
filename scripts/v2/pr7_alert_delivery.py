@@ -337,6 +337,28 @@ def append_dead_letter(path: Path, record: dict) -> None:
         f.write(json.dumps(record, ensure_ascii=False) + "\n")
 
 
+def append_audit(path: Path, record: dict) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("a", encoding="utf-8") as f:
+        f.write(json.dumps(record, ensure_ascii=False) + "\n")
+
+
+def parse_channels_csv(raw: str) -> set[str]:
+    out: set[str] = set()
+    for x in raw.split(","):
+        c = x.strip().lower()
+        if c:
+            out.add(c)
+    return out
+
+
+def route_targets(level: str, primary: str, backup: str | None) -> list[str]:
+    targets = [primary]
+    if level == "CRITICAL" and backup and backup != primary:
+        targets.append(backup)
+    return targets
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description="PR-7 alert delivery bridge")
     ap.add_argument("--report", required=True, help="PR6 summary.txt path")
@@ -357,6 +379,9 @@ def main() -> int:
         default=(int(os.environ["ALERT_NOTIFY_COOLDOWN_CRITICAL"]) if "ALERT_NOTIFY_COOLDOWN_CRITICAL" in os.environ else None),
     )
     ap.add_argument("--channel", default=os.environ.get("ALERT_NOTIFY_CHANNEL", "slack"), choices=["slack", "telegram", "imessage"])
+    ap.add_argument("--primary-channel", choices=["slack", "telegram", "imessage"], default=os.environ.get("ALERT_NOTIFY_PRIMARY_CHANNEL", ""))
+    ap.add_argument("--backup-channel", choices=["slack", "telegram", "imessage"], default=os.environ.get("ALERT_NOTIFY_BACKUP_CHANNEL", ""))
+    ap.add_argument("--audit-file", default=os.environ.get("ALERT_NOTIFY_AUDIT_FILE", "run/pr7-alert-delivery/audit.jsonl"))
     ap.add_argument("--max-retries", type=int, default=int(os.environ.get("ALERT_NOTIFY_MAX_RETRIES", "3")))
     ap.add_argument("--base-backoff-ms", type=int, default=int(os.environ.get("ALERT_NOTIFY_BASE_BACKOFF_MS", "500")))
     ap.add_argument("--max-backoff-ms", type=int, default=int(os.environ.get("ALERT_NOTIFY_MAX_BACKOFF_MS", "8000")))
@@ -372,6 +397,11 @@ def main() -> int:
         type=int,
         default=int(os.environ.get("ALERT_NOTIFY_DRY_RUN_SIMULATE_FAILURES", "0")),
         help="only in dry-run mode: inject N failures before success",
+    )
+    ap.add_argument(
+        "--dry-run-fail-channels",
+        default=os.environ.get("ALERT_NOTIFY_DRY_RUN_FAIL_CHANNELS", ""),
+        help="comma-separated channels to force fail in dry-run, e.g. 'imessage,slack'",
     )
     args = ap.parse_args()
 
@@ -391,6 +421,10 @@ def main() -> int:
     except ValueError as e:
         print(f"[PR7][FAIL] {e}", file=sys.stderr)
         return 2
+
+    primary_channel = (args.primary_channel or args.channel).strip().lower()
+    backup_channel = (args.backup_channel or "").strip().lower() or None
+    dry_run_fail_channels = parse_channels_csv(args.dry_run_fail_channels)
 
     state_path = Path(args.state_file)
     state = load_state(state_path)
@@ -468,7 +502,7 @@ def main() -> int:
             state,
             event="suppressed",
             reason=f"exact_dedup_{cooldown}s",
-            channel=args.channel,
+            channel=primary_channel,
             report_status=report.get("status", "UNKNOWN"),
             fingerprint=exact_fp,
             report_path=report_path,
@@ -485,7 +519,7 @@ def main() -> int:
             state,
             event="suppressed",
             reason=f"class_dedup_{cooldown}s",
-            channel=args.channel,
+            channel=primary_channel,
             report_status=report.get("status", "UNKNOWN"),
             fingerprint=class_fp,
             report_path=report_path,
@@ -506,15 +540,63 @@ def main() -> int:
         warn_escalate_count=warn_escalate_count,
     )
 
-    ok, attempts, err = send_with_retry(
-        channel=args.channel,
-        text=text,
-        dry_run=args.dry_run,
-        max_retries=max(0, args.max_retries),
-        base_backoff_ms=max(1, args.base_backoff_ms),
-        max_backoff_ms=max(1, args.max_backoff_ms),
-        dry_run_simulate_failures=max(0, args.dry_run_simulate_failures),
-    )
+    planned_targets = route_targets(level, primary_channel, backup_channel)
+    route_results: list[dict] = []
+    success_channels: set[str] = set()
+
+    def deliver_to_channel(ch: str, reason: str, simulate_failures: int) -> tuple[bool, int, str]:
+        ok0, attempts0, err0 = send_with_retry(
+            channel=ch,
+            text=text,
+            dry_run=args.dry_run,
+            max_retries=max(0, args.max_retries),
+            base_backoff_ms=max(1, args.base_backoff_ms),
+            max_backoff_ms=max(1, args.max_backoff_ms),
+            dry_run_simulate_failures=((simulate_failures if simulate_failures > 0 else (max(0, args.max_retries) + 1)) if (args.dry_run and ch in dry_run_fail_channels) else 0),
+        )
+        route_results.append(
+            {
+                "channel": ch,
+                "reason": reason,
+                "ok": ok0,
+                "attempts": attempts0,
+                "error": err0,
+            }
+        )
+        append_audit(
+            Path(args.audit_file),
+            {
+                "at_utc": now_iso,
+                "fingerprint": exact_fp,
+                "class_fingerprint": class_fp,
+                "level": level,
+                "report_path": str(report_path),
+                "channel": ch,
+                "reason": reason,
+                "ok": ok0,
+                "attempts": attempts0,
+                "error": err0,
+                "dry_run": args.dry_run,
+            },
+        )
+        return ok0, attempts0, err0
+
+    for target in planned_targets:
+        ok0, _attempts0, _err0 = deliver_to_channel(target, "planned_route", max(0, args.dry_run_simulate_failures))
+        if ok0:
+            success_channels.add(target)
+
+    primary_ok = any(r["channel"] == primary_channel and r["ok"] for r in route_results)
+    if level != "CRITICAL" and (not primary_ok) and backup_channel and backup_channel != primary_channel and backup_channel not in planned_targets:
+        ok0, _attempts0, _err0 = deliver_to_channel(backup_channel, "fallback_after_primary_failure", max(0, args.dry_run_simulate_failures))
+        if ok0:
+            success_channels.add(backup_channel)
+
+    required_success = len(planned_targets)
+    ok = len(success_channels) >= required_success
+    attempts = sum(int(r.get("attempts", 0) or 0) for r in route_results)
+    failed_items = [r for r in route_results if not r.get("ok")]
+    err = "; ".join(str(x.get("error", "")) for x in failed_items if x.get("error"))
 
     if not ok:
         dead_letter = {
@@ -538,7 +620,7 @@ def main() -> int:
             state,
             event="failed",
             reason=err,
-            channel=args.channel,
+            channel=primary_channel,
             report_status=report.get("status", "UNKNOWN"),
             fingerprint=exact_fp,
             report_path=report_path,
@@ -562,7 +644,7 @@ def main() -> int:
         state,
         event="sent",
         reason="ok",
-        channel=args.channel,
+        channel=primary_channel,
         report_status=report.get("status", "UNKNOWN"),
         fingerprint=exact_fp,
         report_path=report_path,
@@ -571,9 +653,9 @@ def main() -> int:
 
     mode = "DRY_RUN" if args.dry_run else "LIVE"
     print(
-        f"[PR7] sent mode={mode} level={level} channel={args.channel} "
+        f"[PR7] sent mode={mode} level={level} primary={primary_channel} backup={backup_channel or '-'} "
         f"exact={exact_fp} class={class_fp} aggregate_count={aggregate_count} attempts={attempts} "
-        f"escalated_from_warn={escalated_from_warn} warn_streak={warn_streak_count}"
+        f"escalated_from_warn={escalated_from_warn} warn_streak={warn_streak_count} route_results={route_results}"
     )
     return 0
 

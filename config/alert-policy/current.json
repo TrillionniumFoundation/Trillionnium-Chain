@@ -1,0 +1,85 @@
+{
+  "schema_version": "1.0",
+  "policy_id": "trnm-alert-policy",
+  "version": "2026.02.23.1",
+  "effective_from_utc": "2026-02-23T00:00:00Z",
+  "owner": "TRNM SRE",
+  "profiles": {
+    "default": {
+      "thresholds": {
+        "unresolved_challenges": { "warn": 4, "fail": 6 },
+        "forfeits_daily_increase": { "warn": 80, "fail": 120 },
+        "escrow_nonzero_hours": { "warn": 18.0, "fail": 24.0 }
+      },
+      "delivery": {
+        "min_level": "WARN",
+        "channel_route": {
+          "info": "imessage",
+          "warn": "imessage",
+          "critical": "telegram"
+        },
+        "dedup_seconds": 1800,
+        "aggregate_seconds": 1800,
+        "retries": {
+          "max_retries": 3,
+          "base_backoff_ms": 500,
+          "max_backoff_ms": 8000
+        },
+        "cooldown": {
+          "info": 1800,
+          "warn": 1800,
+          "critical": 300
+        },
+        "quiet_hours": {
+          "enabled": true,
+          "start": "23:00",
+          "end": "08:00",
+          "tz": "Asia/Shanghai",
+          "critical_bypass": true
+        },
+        "escalation": {
+          "warn_escalate_count": 3,
+          "warn_escalate_window_seconds": 3600
+        }
+      }
+    },
+    "staging": {
+      "thresholds": {
+        "unresolved_challenges": { "warn": 2, "fail": 4 },
+        "forfeits_daily_increase": { "warn": 40, "fail": 80 },
+        "escrow_nonzero_hours": { "warn": 12.0, "fail": 24.0 }
+      },
+      "delivery": {
+        "min_level": "WARN",
+        "channel_route": {
+          "info": "imessage",
+          "warn": "imessage",
+          "critical": "imessage"
+        },
+        "dedup_seconds": 600,
+        "aggregate_seconds": 600,
+        "retries": {
+          "max_retries": 1,
+          "base_backoff_ms": 300,
+          "max_backoff_ms": 1500
+        },
+        "cooldown": {
+          "info": 300,
+          "warn": 300,
+          "critical": 120
+        },
+        "quiet_hours": {
+          "enabled": false,
+          "start": "23:00",
+          "end": "08:00",
+          "tz": "Asia/Shanghai",
+          "critical_bypass": true
+        },
+        "escalation": {
+          "warn_escalate_count": 2,
+          "warn_escalate_window_seconds": 1800
+        }
+      }
+    }
+  }
+}

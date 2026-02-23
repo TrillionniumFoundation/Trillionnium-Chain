@@ -1,0 +1,96 @@
+{
+  "generated_at_utc": "2026-02-23 12:09:41Z",
+  "lookback_days": 7,
+  "sources": {
+    "pr7_delivery_state": "/Users/qianqi/.openclaw/workspace/TrillionniumChain/run/pr7-alert-delivery/state.json",
+    "pr7_dead_letter": "/Users/qianqi/.openclaw/workspace/TrillionniumChain/run/pr7-alert-delivery/dead-letter.jsonl",
+    "pr7_topn_latest": "/Users/qianqi/.openclaw/workspace/TrillionniumChain/run/pr7-topn/20260223-185854/topn-anomaly-summary.md",
+    "pr7_threshold_advice_latest": "/Users/qianqi/.openclaw/workspace/TrillionniumChain/run/pr7-threshold-advisor/20260223-105854/threshold-advice.json",
+    "pr9_env_current": "/Users/qianqi/.openclaw/workspace/TrillionniumChain/run/pr9/alert-thresholds.env",
+    "pr9_env_previous": "/Users/qianqi/.openclaw/workspace/TrillionniumChain/run/pr9/alert-thresholds.previous.env"
+  },
+  "metrics": {
+    "alerts_total": 4,
+    "alerts_sent": 1,
+    "alerts_suppressed": 2,
+    "alerts_failed": 1,
+    "suppression_rate_pct": 50.0,
+    "failure_rate_pct": 25.0,
+    "dead_letter_entries": 2
+  },
+  "topn": {
+    "unresolved": [
+      "✅ no unresolved task found in current event window"
+    ],
+    "forfeit": [
+      "day_utc=`2026-02-23` | forfeit_bond=`10` | forfeit_events=`1`"
+    ],
+    "escrow": [
+      "✅ no lingering escrow found in current event window"
+    ]
+  },
+  "threshold": {
+    "changed_keys": [],
+    "advisor_suggestions": {
+      "unresolved_challenges": {
+        "warn": 3.0,
+        "fail": 5.0,
+        "mode": "conservative_default",
+        "reason": "insufficient_data: samples=1 < min_days=3",
+        "stats": {
+          "count": 1
+        }
+      },
+      "forfeits_daily_increase": {
+        "warn": 70.0,
+        "fail": 100.0,
+        "mode": "conservative_default",
+        "reason": "insufficient_data: samples=0 < min_days=2",
+        "stats": {
+          "count": 0
+        }
+      },
+      "escrow_nonzero_hours": {
+        "warn": 16.0,
+        "fail": 24.0,
+        "mode": "conservative_default",
+        "reason": "insufficient_data: samples=1 < min_days=3",
+        "stats": {
+          "count": 1
+        }
+      }
+    }
+  },
+  "week_over_week": {
+    "available": false,
+    "baseline_json": null,
+    "alerts_total_delta": null,
+    "suppression_rate_pct_delta": null,
+    "failure_rate_pct_delta": null,
+    "topn": {
+      "unresolved": {
+        "entered": [],
+        "exited": [],
+        "rank_shift": []
+      },
+      "forfeit": {
+        "entered": [],
+        "exited": [],
+        "rank_shift": []
+      },
+      "escrow": {
+        "entered": [],
+        "exited": [],
+        "rank_shift": []
+      }
+    },
+    "threshold_changed_keys_delta": null,
+    "threshold_new_keys_vs_last_week": [],
+    "threshold_removed_keys_vs_last_week": []
+  },
+  "degraded": {
+    "missing_previous_week_baseline": true,
+    "missing_topn_source": false,
+    "missing_threshold_advice_source": false
+  }
+}

@@ -8,6 +8,20 @@ mkdir -p "$RUN_DIR"
 EVENT_LOG="${EVENT_LOG:-$ROOT/trillionnium-rust/run/event-field-check.log}"
 REPORT="$RUN_DIR/summary.txt"
 
+# Optional: resolve versioned policy config (without overriding explicit env)
+POLICY_FILE="${ALERT_POLICY_FILE:-$ROOT/config/alert-policy/current.json}"
+if [[ -f "$POLICY_FILE" ]]; then
+  POLICY_ENV="$RUN_DIR/policy.env"
+  python3 "$ROOT/scripts/v2/alert_policy_resolve.py" \
+    --policy "$POLICY_FILE" \
+    --profile "${ALERT_POLICY_PROFILE:-default}" \
+    --out-env "$POLICY_ENV" \
+    --only-missing \
+    --audit
+  # shellcheck disable=SC1090
+  source "$POLICY_ENV"
+fi
+
 CI_WARN_ARG=()
 if [[ "${CI_HARD_FAIL_ON_WARN:-0}" == "1" ]]; then
   CI_WARN_ARG=(--ci-hard-fail-on-warn)

@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://trillionnium.local/schemas/alert-policy.schema.v1.json",
+  "title": "TRNM Alert Policy",
+  "type": "object",
+  "required": ["schema_version", "policy_id", "version", "profiles"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "policy_id": { "type": "string", "minLength": 1 },
+    "version": { "type": "string", "minLength": 1 },
+    "effective_from_utc": { "type": "string" },
+    "owner": { "type": "string" },
+    "profiles": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "required": ["thresholds", "delivery"],
+        "properties": {
+          "thresholds": {
+            "type": "object",
+            "required": ["unresolved_challenges", "forfeits_daily_increase", "escrow_nonzero_hours"],
+            "properties": {
+              "unresolved_challenges": { "$ref": "#/$defs/thresholdInt" },
+              "forfeits_daily_increase": { "$ref": "#/$defs/thresholdInt" },
+              "escrow_nonzero_hours": { "$ref": "#/$defs/thresholdNum" }
+            }
+          },
+          "delivery": {
+            "type": "object",
+            "required": ["min_level", "channel_route", "dedup_seconds", "aggregate_seconds", "retries", "cooldown", "quiet_hours", "escalation"],
+            "properties": {
+              "min_level": { "enum": ["INFO", "WARN", "CRITICAL"] },
+              "channel_route": {
+                "type": "object",
+                "required": ["info", "warn", "critical"],
+                "properties": {
+                  "info": { "enum": ["slack", "telegram", "imessage"] },
+                  "warn": { "enum": ["slack", "telegram", "imessage"] },
+                  "critical": { "enum": ["slack", "telegram", "imessage"] }
+                }
+              },
+              "dedup_seconds": { "type": "integer", "minimum": 0 },
+              "aggregate_seconds": { "type": "integer", "minimum": 0 },
+              "retries": {
+                "type": "object",
+                "required": ["max_retries", "base_backoff_ms", "max_backoff_ms"],
+                "properties": {
+                  "max_retries": { "type": "integer", "minimum": 0 },
+                  "base_backoff_ms": { "type": "integer", "minimum": 0 },
+                  "max_backoff_ms": { "type": "integer", "minimum": 0 }
+                }
+              },
+              "cooldown": {
+                "type": "object",
+                "required": ["info", "warn", "critical"],
+                "properties": {
+                  "info": { "type": "integer", "minimum": 0 },
+                  "warn": { "type": "integer", "minimum": 0 },
+                  "critical": { "type": "integer", "minimum": 0 }
+                }
+              },
+              "quiet_hours": {
+                "type": "object",
+                "required": ["enabled", "start", "end", "tz", "critical_bypass"],
+                "properties": {
+                  "enabled": { "type": "boolean" },
+                  "start": { "type": "string", "pattern": "^[0-2][0-9]:[0-5][0-9]$" },
+                  "end": { "type": "string", "pattern": "^[0-2][0-9]:[0-5][0-9]$" },
+                  "tz": { "type": "string", "minLength": 1 },
+                  "critical_bypass": { "type": "boolean" }
+                }
+              },
+              "escalation": {
+                "type": "object",
+                "required": ["warn_escalate_count", "warn_escalate_window_seconds"],
+                "properties": {
+                  "warn_escalate_count": { "type": "integer", "minimum": 0 },
+                  "warn_escalate_window_seconds": { "type": "integer", "minimum": 1 }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "thresholdInt": {
+      "type": "object",
+      "required": ["warn", "fail"],
+      "properties": {
+        "warn": { "type": "integer", "minimum": 0 },
+        "fail": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "thresholdNum": {
+      "type": "object",
+      "required": ["warn", "fail"],
+      "properties": {
+        "warn": { "type": "number", "minimum": 0 },
+        "fail": { "type": "number", "minimum": 0 }
+      }
+    }
+  }
+}

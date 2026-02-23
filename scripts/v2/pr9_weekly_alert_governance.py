@@ -1,14 +1,17 @@
 #!/usr/bin/env python3
-"""PR9: generate weekly alert governance report (markdown).
+"""PR9: generate weekly alert governance report (markdown + json).
 
 Data sources (best effort):
 - run/pr7-alert-delivery/state.json / dead-letter.jsonl
 - run/pr7-topn/*/topn-anomaly-summary.md
 - run/pr7-threshold-advisor/*/threshold-advice.json
 - run/pr9/alert-thresholds.env and run/pr9/alert-thresholds.previous.env
+- run/pr9/history/weekly-alert-governance-*.json (for week-over-week diff)
 
-Output:
+Outputs:
 - run/pr9/weekly-alert-governance.md
+- run/pr9/weekly-alert-governance.json
+- run/pr9/history/weekly-alert-governance-YYYYMMDDTHHMMSSZ.json (snapshot)
 """
 
 from __future__ import annotations
@@ -18,12 +21,13 @@ import datetime as dt
 import json
 import re
 from pathlib import Path
+from typing import Any
 
 
 ENV_RE = re.compile(r"^([A-Z0-9_]+)=(.*)$")
 
 
-def safe_json(path: Path) -> dict:
+def safe_json(path: Path) -> dict[str, Any]:
     if not path.exists():
         return {}
     try:
@@ -53,11 +57,11 @@ def latest_file(pattern: str) -> Path | None:
     return matches[-1] if matches else None
 
 
-def read_dead_letters(path: Path, lookback_days: int) -> list[dict]:
+def read_dead_letters(path: Path, lookback_days: int) -> list[dict[str, Any]]:
     if not path.exists():
         return []
     cutoff = dt.datetime.now(dt.timezone.utc) - dt.timedelta(days=max(1, lookback_days))
-    rows: list[dict] = []
+    rows: list[dict[str, Any]] = []
     for raw in path.read_text(encoding="utf-8", errors="ignore").splitlines():
         s = raw.strip()
         if not s:
@@ -106,19 +110,88 @@ def extract_topn_sections(md_path: Path) -> dict[str, list[str]]:
             mode = ""
             continue
         if mode and line.strip() and (line.lstrip().startswith("-") or line.lstrip()[0:1].isdigit()):
-            sections[mode].append(line.strip())
+            sections[mode].append(clean_topn_line(line))
     return sections
 
 
+def clean_topn_line(line: str) -> str:
+    cleaned = line.strip()
+    cleaned = re.sub(r"^\d+\.\s*", "", cleaned)
+    cleaned = re.sub(r"^-\s*", "", cleaned)
+    return cleaned
+
+
+def pct(numer: int, denom: int) -> float:
+    return (numer / denom * 100.0) if denom > 0 else 0.0
+
+
+def pct_delta(curr: float, prev: float) -> float:
+    return curr - prev
+
+
+def delta(curr: int | float, prev: int | float) -> int | float:
+    return curr - prev
+
+
+def fmt_delta(v: int | float, unit: str = "") -> str:
+    if isinstance(v, float):
+        sign = "+" if v >= 0 else ""
+        return f"{sign}{v:.2f}{unit}"
+    sign = "+" if v >= 0 else ""
+    return f"{sign}{v}{unit}"
+
+
+def index_map(rows: list[str]) -> dict[str, int]:
+    return {clean_topn_line(r): i + 1 for i, r in enumerate(rows)}
+
+
+def topn_diff(curr: list[str], prev: list[str]) -> dict[str, Any]:
+    c_map = index_map(curr)
+    p_map = index_map(prev)
+    c_keys = set(c_map)
+    p_keys = set(p_map)
+    entered = sorted(c_keys - p_keys)
+    exited = sorted(p_keys - c_keys)
+    rank_shift = []
+    for k in sorted(c_keys & p_keys):
+        move = p_map[k] - c_map[k]
+        if move != 0:
+            rank_shift.append(
+                {
+                    "item": k,
+                    "from": p_map[k],
+                    "to": c_map[k],
+                    "delta_rank": move,
+                }
+            )
+    return {
+        "entered": entered,
+        "exited": exited,
+        "rank_shift": rank_shift,
+    }
+
+
+def find_previous_week_json(history_dir: Path, current_json_out: Path) -> Path | None:
+    if not history_dir.exists():
+        return None
+    files = sorted(history_dir.glob("weekly-alert-governance-*.json"))
+    files = [p for p in files if p.resolve() != current_json_out.resolve()]
+    return files[-1] if files else None
+
+
 def main() -> int:
-    ap = argparse.ArgumentParser(description="Generate PR9 weekly alert governance markdown")
+    ap = argparse.ArgumentParser(description="Generate PR9 weekly alert governance markdown+json")
     ap.add_argument("--lookback-days", type=int, default=7)
     ap.add_argument("--top-n", type=int, default=5)
     ap.add_argument("--out", default="run/pr9/weekly-alert-governance.md")
+    ap.add_argument("--json-out", default="run/pr9/weekly-alert-governance.json")
+    ap.add_argument("--history-dir", default="run/pr9/history")
     args = ap.parse_args()
 
     root = Path.cwd()
-    out_path = root / args.out
+    out_md = root / args.out
+    out_json = root / args.json_out
+    history_dir = root / args.history_dir
 
     state_path = root / "run/pr7-alert-delivery/state.json"
     dead_letter_path = root / "run/pr7-alert-delivery/dead-letter.jsonl"
@@ -134,25 +207,94 @@ def main() -> int:
     failed = int(stats.get("alerts_failed", 0) or 0)
     total = max(0, sent + suppressed + failed)
 
-    suppression_rate = (suppressed / total * 100.0) if total > 0 else 0.0
-    failure_rate = (failed / total * 100.0) if total > 0 else 0.0
+    suppression_rate = pct(suppressed, total)
+    failure_rate = pct(failed, total)
 
     dead_letters = read_dead_letters(dead_letter_path, lookback_days=args.lookback_days)
     dead_letters_week = len(dead_letters)
 
-    sections = extract_topn_sections(latest_topn) if latest_topn else {"unresolved": [], "forfeit": [], "escrow": []}
+    sections_raw = extract_topn_sections(latest_topn) if latest_topn else {"unresolved": [], "forfeit": [], "escrow": []}
+    sections = {
+        "unresolved": [clean_topn_line(x) for x in sections_raw.get("unresolved", [])][: max(1, args.top_n)],
+        "forfeit": [clean_topn_line(x) for x in sections_raw.get("forfeit", [])][: max(1, args.top_n)],
+        "escrow": [clean_topn_line(x) for x in sections_raw.get("escrow", [])][: max(1, args.top_n)],
+    }
 
     advice = safe_json(latest_advice) if latest_advice else {}
     sug = advice.get("suggestions", {}) if isinstance(advice.get("suggestions", {}), dict) else {}
 
     env_now = parse_env(env_now_path)
     env_prev = parse_env(env_prev_path)
-    changed_keys = []
+    changed_keys: list[dict[str, str]] = []
     for k in sorted(set(env_now.keys()) | set(env_prev.keys())):
         if env_now.get(k) != env_prev.get(k):
-            changed_keys.append((k, env_prev.get(k, "(missing)"), env_now.get(k, "(missing)")))
+            changed_keys.append({"key": k, "old": env_prev.get(k, "(missing)"), "new": env_now.get(k, "(missing)")})
 
-    now_utc = dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%d %H:%M:%SZ")
+    # Week-over-week baseline from history json.
+    prev_week_json_path = find_previous_week_json(history_dir, out_json)
+    prev_week = safe_json(prev_week_json_path) if prev_week_json_path else {}
+    prev_metrics = prev_week.get("metrics", {}) if isinstance(prev_week.get("metrics", {}), dict) else {}
+    prev_topn = prev_week.get("topn", {}) if isinstance(prev_week.get("topn", {}), dict) else {}
+    prev_threshold_changes = prev_week.get("threshold", {}).get("changed_keys", []) if isinstance(prev_week.get("threshold", {}), dict) else []
+    prev_threshold_keys = {x.get("key") for x in prev_threshold_changes if isinstance(x, dict) and x.get("key")}
+
+    has_prev = bool(prev_week_json_path and prev_metrics)
+    prev_total = int(prev_metrics.get("alerts_total", 0) or 0) if has_prev else 0
+    prev_suppression_rate = float(prev_metrics.get("suppression_rate_pct", 0.0) or 0.0) if has_prev else 0.0
+    prev_failure_rate = float(prev_metrics.get("failure_rate_pct", 0.0) or 0.0) if has_prev else 0.0
+
+    wow = {
+        "available": has_prev,
+        "baseline_json": str(prev_week_json_path) if prev_week_json_path else None,
+        "alerts_total_delta": delta(total, prev_total) if has_prev else None,
+        "suppression_rate_pct_delta": pct_delta(suppression_rate, prev_suppression_rate) if has_prev else None,
+        "failure_rate_pct_delta": pct_delta(failure_rate, prev_failure_rate) if has_prev else None,
+        "topn": {
+            "unresolved": topn_diff(sections["unresolved"], prev_topn.get("unresolved", []) if isinstance(prev_topn.get("unresolved", []), list) else []) if has_prev else {"entered": [], "exited": [], "rank_shift": []},
+            "forfeit": topn_diff(sections["forfeit"], prev_topn.get("forfeit", []) if isinstance(prev_topn.get("forfeit", []), list) else []) if has_prev else {"entered": [], "exited": [], "rank_shift": []},
+            "escrow": topn_diff(sections["escrow"], prev_topn.get("escrow", []) if isinstance(prev_topn.get("escrow", []), list) else []) if has_prev else {"entered": [], "exited": [], "rank_shift": []},
+        },
+        "threshold_changed_keys_delta": (len(changed_keys) - len(prev_threshold_keys)) if has_prev else None,
+        "threshold_new_keys_vs_last_week": sorted({x["key"] for x in changed_keys} - prev_threshold_keys) if has_prev else [],
+        "threshold_removed_keys_vs_last_week": sorted(prev_threshold_keys - {x["key"] for x in changed_keys}) if has_prev else [],
+    }
+
+    now_dt = dt.datetime.now(dt.timezone.utc)
+    now_utc = now_dt.strftime("%Y-%m-%d %H:%M:%SZ")
+
+    payload: dict[str, Any] = {
+        "generated_at_utc": now_utc,
+        "lookback_days": args.lookback_days,
+        "sources": {
+            "pr7_delivery_state": str(state_path) if state_path.exists() else None,
+            "pr7_dead_letter": str(dead_letter_path) if dead_letter_path.exists() else None,
+            "pr7_topn_latest": str(latest_topn) if latest_topn else None,
+            "pr7_threshold_advice_latest": str(latest_advice) if latest_advice else None,
+            "pr9_env_current": str(env_now_path) if env_now_path.exists() else None,
+            "pr9_env_previous": str(env_prev_path) if env_prev_path.exists() else None,
+        },
+        "metrics": {
+            "alerts_total": total,
+            "alerts_sent": sent,
+            "alerts_suppressed": suppressed,
+            "alerts_failed": failed,
+            "suppression_rate_pct": round(suppression_rate, 4),
+            "failure_rate_pct": round(failure_rate, 4),
+            "dead_letter_entries": dead_letters_week,
+        },
+        "topn": sections,
+        "threshold": {
+            "changed_keys": changed_keys,
+            "advisor_suggestions": sug,
+        },
+        "week_over_week": wow,
+        "degraded": {
+            "missing_previous_week_baseline": not has_prev,
+            "missing_topn_source": latest_topn is None,
+            "missing_threshold_advice_source": latest_advice is None,
+        },
+    }
+
     lines: list[str] = []
     lines.append("# PR9 Weekly Alert Governance Report")
     lines.append("")
@@ -174,15 +316,24 @@ def main() -> int:
     lines.append(f"- dead_letter_entries_last_{args.lookback_days}d: `{dead_letters_week}`")
     lines.append("")
 
-    lines.append(f"## 2) TopN Anomalies (latest PR7, top_n={max(1, args.top_n)})")
+    lines.append("## 2) Week-over-Week Diff (vs last baseline)")
+    if has_prev:
+        lines.append(f"- baseline_json: `{prev_week_json_path}`")
+        lines.append(f"- alerts.total Δ: `{fmt_delta(wow['alerts_total_delta'])}`")
+        lines.append(f"- suppression_rate Δ: `{fmt_delta(float(wow['suppression_rate_pct_delta']), 'pp')}`")
+        lines.append(f"- failure_rate Δ: `{fmt_delta(float(wow['failure_rate_pct_delta']), 'pp')}`")
+        lines.append(f"- threshold_changed_keys Δ: `{fmt_delta(int(wow['threshold_changed_keys_delta']))}`")
+    else:
+        lines.append("- baseline unavailable: no previous weekly JSON snapshot found (`run/pr9/history/weekly-alert-governance-*.json`).")
+    lines.append("")
+
+    lines.append(f"## 3) TopN Anomalies (latest PR7, top_n={max(1, args.top_n)})")
 
     def emit_top(title: str, rows: list[str]) -> None:
         lines.append(f"### {title}")
         if rows:
             for i, r in enumerate(rows[: max(1, args.top_n)], 1):
-                cleaned = re.sub(r"^\d+\.\s*", "", r)
-                cleaned = re.sub(r"^-\s*", "", cleaned)
-                lines.append(f"{i}. {cleaned}")
+                lines.append(f"{i}. {r}")
         else:
             lines.append("- no data / section empty")
         lines.append("")
@@ -191,14 +342,59 @@ def main() -> int:
     emit_top("Forfeit Spikes", sections.get("forfeit", []))
     emit_top("Escrow Lingering", sections.get("escrow", []))
 
-    lines.append("## 3) Threshold Suggestion Changes")
+    lines.append("## 4) TopN Changes vs Last Week")
+
+    def emit_topn_diff(label: str, diff_obj: dict[str, Any]) -> None:
+        lines.append(f"### {label}")
+        if not has_prev:
+            lines.append("- baseline unavailable")
+            lines.append("")
+            return
+        entered = diff_obj.get("entered", [])
+        exited = diff_obj.get("exited", [])
+        rank_shift = diff_obj.get("rank_shift", [])
+        if not entered and not exited and not rank_shift:
+            lines.append("- no changes")
+            lines.append("")
+            return
+        if entered:
+            lines.append("- entered:")
+            for x in entered:
+                lines.append(f"  - {x}")
+        if exited:
+            lines.append("- exited:")
+            for x in exited:
+                lines.append(f"  - {x}")
+        if rank_shift:
+            lines.append("- rank_shift:")
+            for x in rank_shift:
+                lines.append(f"  - {x['item']}: {x['from']} -> {x['to']} (Δrank={x['delta_rank']:+d})")
+        lines.append("")
+
+    emit_topn_diff("Unresolved Tasks", wow["topn"]["unresolved"])
+    emit_topn_diff("Forfeit Spikes", wow["topn"]["forfeit"])
+    emit_topn_diff("Escrow Lingering", wow["topn"]["escrow"])
+
+    lines.append("## 5) Threshold Suggestion Changes")
     if changed_keys:
         lines.append("### env diff (previous -> current)")
-        for k, old, new in changed_keys:
-            lines.append(f"- `{k}`: `{old}` -> `{new}`")
+        for item in changed_keys:
+            lines.append(f"- `{item['key']}`: `{item['old']}` -> `{item['new']}`")
     else:
         lines.append("- no env value changed vs run/pr9/alert-thresholds.previous.env")
     lines.append("")
+
+    if has_prev:
+        new_keys = wow.get("threshold_new_keys_vs_last_week", [])
+        removed_keys = wow.get("threshold_removed_keys_vs_last_week", [])
+        lines.append("### changed keys vs last week")
+        lines.append(f"- newly_changed_keys: `{len(new_keys)}`")
+        for k in new_keys:
+            lines.append(f"  - {k}")
+        lines.append(f"- no_longer_changed_keys: `{len(removed_keys)}`")
+        for k in removed_keys:
+            lines.append(f"  - {k}")
+        lines.append("")
 
     if sug:
         lines.append("### advisor suggestions")
@@ -213,23 +409,34 @@ def main() -> int:
         lines.append("- threshold-advice unavailable")
     lines.append("")
 
-    lines.append("## 4) Nightly Integration (non-blocking)")
+    lines.append("## 6) Nightly Integration (non-blocking)")
     lines.append("- Recommended workflow step: run this script with `continue-on-error: true` after PR7/PR6 summary steps.")
-    lines.append("- Artifact path: `run/pr9/**` (upload with nightly artifacts).")
+    lines.append("- Artifact paths: `run/pr9/**`, including both `.md` and `.json`.")
     lines.append("- Optional Step Summary append: embed `run/pr9/weekly-alert-governance.md` for operator visibility.")
     lines.append("")
 
-    lines.append("## 5) Repro Commands")
+    lines.append("## 7) Repro Commands")
     lines.append("```bash")
     lines.append("python3 scripts/v2/pr9_weekly_alert_governance.py \\")
     lines.append("  --lookback-days 7 \\")
     lines.append("  --top-n 5 \\")
-    lines.append("  --out run/pr9/weekly-alert-governance.md")
+    lines.append("  --out run/pr9/weekly-alert-governance.md \\")
+    lines.append("  --json-out run/pr9/weekly-alert-governance.json")
     lines.append("```")
 
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-    out_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
-    print(f"[OK] wrote {out_path}")
+    out_md.parent.mkdir(parents=True, exist_ok=True)
+    out_md.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+    out_json.parent.mkdir(parents=True, exist_ok=True)
+    out_json.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+    history_dir.mkdir(parents=True, exist_ok=True)
+    snapshot_name = f"weekly-alert-governance-{now_dt.strftime('%Y%m%dT%H%M%SZ')}.json"
+    (history_dir / snapshot_name).write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+    print(f"[OK] wrote {out_md}")
+    print(f"[OK] wrote {out_json}")
+    print(f"[OK] wrote {history_dir / snapshot_name}")
     return 0
 
 

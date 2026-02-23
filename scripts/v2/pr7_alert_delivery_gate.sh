@@ -5,6 +5,20 @@ ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 RUN_DIR="${RUN_DIR:-$ROOT/run/pr6-alerts/$(date +%Y%m%d-%H%M%S)}"
 mkdir -p "$RUN_DIR"
 
+# Optional: resolve versioned policy config (without overriding explicit env)
+POLICY_FILE="${ALERT_POLICY_FILE:-$ROOT/config/alert-policy/current.json}"
+if [[ -f "$POLICY_FILE" ]]; then
+  POLICY_ENV="$RUN_DIR/policy.env"
+  python3 "$ROOT/scripts/v2/alert_policy_resolve.py" \
+    --policy "$POLICY_FILE" \
+    --profile "${ALERT_POLICY_PROFILE:-default}" \
+    --out-env "$POLICY_ENV" \
+    --only-missing \
+    --audit
+  # shellcheck disable=SC1090
+  source "$POLICY_ENV"
+fi
+
 # 1) Generate PR6 report first (do not stop immediately on WARN/FAIL exit code)
 set +e
 RUN_DIR="$RUN_DIR" "$ROOT/scripts/v2/pr6_alert_rules_gate.sh"
@@ -28,10 +42,29 @@ if [[ "${ALERT_NOTIFY_QUIET_HOURS_ENABLED:-0}" == "1" ]]; then
   QUIET_HOURS_ARG=(--quiet-hours-enabled)
 fi
 
+# Backward-compatible routing:
+# - if ALERT_NOTIFY_CHANNEL is explicitly set, use it
+# - else derive channel from min-level route
+if [[ -z "${ALERT_NOTIFY_CHANNEL:-}" ]]; then
+  case "${ALERT_NOTIFY_MIN_LEVEL:-WARN}" in
+    CRITICAL) ALERT_NOTIFY_CHANNEL="${ALERT_NOTIFY_CHANNEL_CRITICAL:-imessage}" ;;
+    WARN) ALERT_NOTIFY_CHANNEL="${ALERT_NOTIFY_CHANNEL_WARN:-imessage}" ;;
+    *) ALERT_NOTIFY_CHANNEL="${ALERT_NOTIFY_CHANNEL_INFO:-imessage}" ;;
+  esac
+fi
+
+BACKUP_CHANNEL_ARG=()
+if [[ -n "${ALERT_NOTIFY_BACKUP_CHANNEL:-}" ]]; then
+  BACKUP_CHANNEL_ARG=(--backup-channel "$ALERT_NOTIFY_BACKUP_CHANNEL")
+fi
+
 IMESSAGE_TO="${IMESSAGE_TO:-qiqianpkugsm@gmail.com}" \
 python3 "$ROOT/scripts/v2/pr7_alert_delivery.py" \
   --report "$REPORT" \
   --channel "${ALERT_NOTIFY_CHANNEL:-imessage}" \
+  --primary-channel "${ALERT_NOTIFY_PRIMARY_CHANNEL:-${ALERT_NOTIFY_CHANNEL:-imessage}}" \
+  "${BACKUP_CHANNEL_ARG[@]}" \
+  --audit-file "${ALERT_NOTIFY_AUDIT_FILE:-$ROOT/run/pr7-alert-delivery/audit.jsonl}" \
   --state-file "${ALERT_NOTIFY_STATE_FILE:-$ROOT/run/pr7-alert-delivery/state.json}" \
   --dead-letter-file "${ALERT_NOTIFY_DEAD_LETTER_FILE:-$ROOT/run/pr7-alert-delivery/dead-letter.jsonl}" \
   --min-level "${ALERT_NOTIFY_MIN_LEVEL:-WARN}" \
