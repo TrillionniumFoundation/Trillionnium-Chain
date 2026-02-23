@@ -367,6 +367,13 @@ jobs:
           set -euo pipefail
           python3 ./scripts/v2/pr9_weekly_alert_governance.py
 
+      - name: Build P11 policy rollback guard (dry-run, non-gate)
+        if: always()
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          ./scripts/v2/p11_policy_rollback_guard.sh
+
       - name: Append PR-6 daily security summary to GitHub Step Summary
         if: always()
         continue-on-error: true
@@ -418,6 +425,7 @@ jobs:
             run/pr6-ops/**
             run/pr7-topn/**
             run/pr9/**
+            run/pr11/**
             data/reexec-smoke/**
             data/reexec-bundles/**
             data/worker-onboard/**
