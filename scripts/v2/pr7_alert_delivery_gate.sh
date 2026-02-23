@@ -23,9 +23,10 @@ if [[ "${DRY_RUN:-0}" == "1" ]]; then
   DRY_RUN_ARG=(--dry-run)
 fi
 
+IMESSAGE_TO="${IMESSAGE_TO:-qiqianpkugsm@gmail.com}" \
 python3 "$ROOT/scripts/v2/pr7_alert_delivery.py" \
   --report "$REPORT" \
-  --channel "${ALERT_NOTIFY_CHANNEL:-slack}" \
+  --channel "${ALERT_NOTIFY_CHANNEL:-imessage}" \
   --state-file "${ALERT_NOTIFY_STATE_FILE:-$ROOT/run/pr7-alert-delivery/state.json}" \
   --dedup-seconds "${ALERT_NOTIFY_DEDUP_SECONDS:-1800}" \
   --min-level "${ALERT_NOTIFY_MIN_LEVEL:-WARN}" \
