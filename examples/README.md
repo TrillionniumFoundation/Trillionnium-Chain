@@ -17,3 +17,15 @@ cargo run -q -p trnm-rpc -- query-proposal 9001
 cd trillionnium-rust
 cargo run -q -p trnm-rpc -- query-events 42
 ```
+
+## 4) SDK quickstart (JavaScript)
+
+10 分钟接入流程：`create wallet -> faucet -> sendTx -> getTx`
+
+```bash
+cd examples/sdk-js
+npm install
+npm start
+```
+
+详情见：`examples/sdk-js/README.md`
