@@ -9,6 +9,7 @@ const FAUCET_AMOUNT = BigInt(process.env.FAUCET_AMOUNT || '1000000');
 const TRANSFER_AMOUNT = BigInt(process.env.TRANSFER_AMOUNT || '1000');
 const POLL_MS = Number(process.env.POLL_MS || '800');
 const POLL_MAX = Number(process.env.POLL_MAX || '20');
+const POLL_TIMEOUT_MS = Number(process.env.POLL_TIMEOUT_MS || String(POLL_MS * POLL_MAX));
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -75,15 +76,27 @@ async function callFaucet(address, amount) {
 
 async function pollTx(txHash) {
   let last = null;
+  const startedAt = Date.now();
   for (let i = 0; i < POLL_MAX; i += 1) {
     last = await rpc('getTx', { txHash }, 100 + i);
     const status = String(last.status || '').toLowerCase();
-    if (['committed', 'success', 'fail', 'failed'].includes(status)) {
+
+    if (status === 'committed' || status === 'fail') {
       return last;
+    }
+
+    if (status !== 'pending') {
+      throw new Error(`getTx returned unexpected status='${status}' for txHash=${txHash}, raw=${JSON.stringify(last)}`);
+    }
+
+    if (Date.now() - startedAt >= POLL_TIMEOUT_MS) {
+      break;
     }
     await sleep(POLL_MS);
   }
-  throw new Error(`getTx timeout after ${POLL_MAX} polls, last=${JSON.stringify(last)}`);
+  throw new Error(
+    `getTx timeout waiting terminal status (expect committed/fail, got pending). txHash=${txHash}, pollMax=${POLL_MAX}, pollMs=${POLL_MS}, timeoutMs=${POLL_TIMEOUT_MS}, last=${JSON.stringify(last)}`,
+  );
 }
 
 async function main() {
@@ -124,7 +137,15 @@ async function main() {
   if (!txHash) throw new Error(`sendTx missing tx hash: ${JSON.stringify(sendRes)}`);
 
   const receipt = await pollTx(txHash);
-  console.log('[4/4] getTx final');
+  const finalStatus = String(receipt.status || '').toLowerCase();
+  if (finalStatus === 'pending') {
+    throw new Error(`tx should be terminal but still pending, txHash=${txHash}, receipt=${JSON.stringify(receipt)}`);
+  }
+  if (!['committed', 'fail'].includes(finalStatus)) {
+    throw new Error(`tx final status must be committed/fail, got='${finalStatus}', txHash=${txHash}`);
+  }
+
+  console.log('[4/4] getTx final (terminal)');
   console.log(JSON.stringify(receipt, null, 2));
 
   console.log('DONE: create wallet -> faucet -> sendTx -> getTx');

@@ -145,8 +145,9 @@ CI workflow：`.github/workflows/agent-user-phasea-gate.yml`（调用上述 gate
 新增串联脚本：`scripts/v2/run_p1_integration_gate.sh`
 
 执行顺序（失败即停）：
-1. `scripts/v2/ecosystem_examples_smoke.sh`（sdk 示例 smoke）
+1. `examples/sdk-js/quickstart.js` 语法与示例文件校验（sdk 示例 smoke）
 2. `scripts/v2/product_layer_smoke.sh`（产品层最小 API smoke）
+   - gate 会额外强制断言 `status` 为终态，且必须是 `committed/fail`（不允许 `pending`）
 3. `cargo test -p trnm-rpc --test rpc_contract_v1`（RPC 合约回归）
 
 本地执行：

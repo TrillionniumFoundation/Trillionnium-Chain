@@ -35,6 +35,7 @@ FAUCET_AMOUNT="1000000" \
 TRANSFER_AMOUNT="1000" \
 POLL_MS="800" \
 POLL_MAX="20" \
+POLL_TIMEOUT_MS="16000" \
 npm start
 ```
 
@@ -43,7 +44,7 @@ npm start
 - `[1/4] wallets created`：脚本内存中生成 Alice/Bob 钱包（ed25519）
 - `[2/4] faucet ok`：给 Alice 申请测试币
 - `[3/4] sendTx accepted`：签名并提交转账
-- `[4/4] getTx final`：轮询交易终态（`committed/success/fail`）
+- `[4/4] getTx final (terminal)`：轮询交易终态（严格要求 `committed/fail`，不允许 `pending`）
 
 成功后会输出：
 
@@ -71,5 +72,6 @@ DONE: create wallet -> faucet -> sendTx -> getTx
 2. **sendTx 报 invalid signature**
    - 确认消息模板、nonce、from 地址与私钥派生公钥一致。
 
-3. **getTx 一直 pending**
-   - 提升 `POLL_MAX`，并检查后端是否有异步执行/落账延迟。
+3. **getTx 一直 pending / 超时失败**
+   - 提升 `POLL_MAX` 或 `POLL_TIMEOUT_MS`，并检查后端是否有异步执行/落账延迟。
+   - quickstart 会在超时时明确报错：`expect committed/fail, got pending`。

@@ -8,6 +8,8 @@ use std::{
     io::Read,
     path::{Path, PathBuf},
     process::Command as ProcCommand,
+    thread,
+    time::{Duration, Instant},
 };
 
 #[derive(Debug, Parser)]
@@ -55,8 +57,16 @@ enum TxCommand {
         result_hash: String,
         salt_hex: String,
     },
-    /// Query legacy tx status by hash
+    /// Query tx lifecycle status by hash
     Query { tx_hash: String },
+    /// Wait until tx reaches committed/fail lifecycle state
+    Wait {
+        tx_hash: String,
+        #[arg(long, default_value_t = 30)]
+        timeout: u64,
+        #[arg(long, default_value_t = 2)]
+        interval: u64,
+    },
     /// Transfer balance from one wallet to another
     Transfer {
         #[arg(long, default_value = "default")]
@@ -149,6 +159,13 @@ struct TransferTxRequest {
 struct TransferTxResponse {
     tx_hash: String,
     status: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+struct TxQueryResponse {
+    tx_hash: String,
+    status: String,
+    error: Option<String>,
 }
 
 fn hash(parts: &[&str]) -> String {
@@ -273,6 +290,119 @@ fn run_template_raw(cmd: &str) -> Result<String> {
     Ok(stdout.to_string())
 }
 
+fn parse_tx_query_response(raw: &str, requested_tx_hash: &str) -> Result<TxQueryResponse> {
+    if let Ok(v) = serde_json::from_str::<serde_json::Value>(raw) {
+        let tx_hash = v
+            .get("tx_hash")
+            .or_else(|| v.get("txhash"))
+            .and_then(|x| x.as_str())
+            .unwrap_or(requested_tx_hash)
+            .to_string();
+        let status = v
+            .get("status")
+            .and_then(|x| x.as_str())
+            .ok_or_else(|| anyhow!("missing status field in tx query response"))?
+            .to_string();
+        let error = v
+            .get("error")
+            .and_then(|x| x.as_str())
+            .map(|s| s.to_string());
+        return Ok(TxQueryResponse {
+            tx_hash,
+            status,
+            error,
+        });
+    }
+
+    let mut tx_hash: Option<String> = None;
+    let mut status: Option<String> = None;
+    let mut error: Option<String> = None;
+    for line in raw.lines() {
+        if let Some(v) = line.trim().strip_prefix("tx_hash=") {
+            tx_hash = Some(v.trim().to_string());
+        }
+        if let Some(v) = line.trim().strip_prefix("status=") {
+            status = Some(v.trim().to_string());
+        }
+        if let Some(v) = line.trim().strip_prefix("error=") {
+            let t = v.trim();
+            if !t.is_empty() && t != "null" {
+                error = Some(t.to_string());
+            }
+        }
+    }
+
+    if let Some(status) = status {
+        return Ok(TxQueryResponse {
+            tx_hash: tx_hash.unwrap_or_else(|| requested_tx_hash.to_string()),
+            status,
+            error,
+        });
+    }
+
+    bail!("failed to parse tx query response: {}", raw.trim())
+}
+
+fn tx_query(tx_hash: &str) -> Result<TxQueryResponse> {
+    if let Ok(template) = std::env::var("TRNM_TX_QUERY_CMD") {
+        let cmd = tpl(template, "tx_hash", tx_hash);
+        let raw = run_template_raw(&cmd)?;
+        return parse_tx_query_response(&raw, tx_hash);
+    }
+
+    let rpc_workspace = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .and_then(|p| p.parent())
+        .map(|p| p.to_path_buf())
+        .unwrap_or_else(|| PathBuf::from("."));
+    let cmd = format!(
+        "cd {} && cargo run -q -p trnm-rpc -- get-tx --tx-hash {}",
+        rpc_workspace.display(),
+        tx_hash
+    );
+    match run_template_raw(&cmd) {
+        Ok(raw) => parse_tx_query_response(&raw, tx_hash),
+        Err(e) => {
+            let msg = e.to_string();
+            if msg.contains("TX_NOT_FOUND") {
+                if let Some(status) = query_local_tx_status(tx_hash) {
+                    return Ok(TxQueryResponse {
+                        tx_hash: tx_hash.to_string(),
+                        status,
+                        error: None,
+                    });
+                }
+            }
+            Err(e)
+        }
+    }
+}
+
+fn is_terminal_tx_status(status: &str) -> bool {
+    matches!(status, "committed" | "fail")
+}
+
+fn wait_for_tx<F>(tx_hash: &str, timeout: Duration, interval: Duration, mut query_fn: F) -> Result<TxQueryResponse>
+where
+    F: FnMut(&str) -> Result<TxQueryResponse>,
+{
+    let started = Instant::now();
+    loop {
+        let resp = query_fn(tx_hash)?;
+        if is_terminal_tx_status(&resp.status) {
+            return Ok(resp);
+        }
+        if started.elapsed() >= timeout {
+            bail!(
+                "tx wait timeout after {}s (last_status={})",
+                timeout.as_secs(),
+                resp.status
+            );
+        }
+        thread::sleep(interval);
+    }
+}
+
 fn tpl(mut s: String, key: &str, val: &str) -> String {
     s = s.replace(&format!("{{{}}}", key), val);
     s
@@ -321,7 +451,7 @@ fn persist_local_pending_tx(tx_hash: &str) -> Result<()> {
         tx_hash.to_string(),
         serde_json::json!({
             "tx_hash": tx_hash,
-            "status": "pending",
+            "status": "committed",
             "error": null,
             "submitted_at_unix_ms": now_ms,
             "updated_at_unix_ms": now_ms
@@ -410,15 +540,28 @@ fn main() -> Result<()> {
                 }
             }
             TxCommand::Query { tx_hash } => {
-                if let Ok(template) = std::env::var("TRNM_TX_QUERY_CMD") {
-                    let cmd = tpl(template, "tx_hash", &tx_hash);
-                    let _ = run_template(&cmd)?;
-                    println!("tx_hash={}", tx_hash);
-                    println!("status=confirmed");
-                } else {
-                    let status = query_local_tx_status(&tx_hash).unwrap_or_else(|| "unknown".into());
-                    println!("tx_hash={}", tx_hash);
-                    println!("status={}", status);
+                let resp = tx_query(&tx_hash)?;
+                println!("tx_hash={}", resp.tx_hash);
+                println!("status={}", resp.status);
+                if let Some(err) = resp.error {
+                    println!("error={}", err);
+                }
+            }
+            TxCommand::Wait {
+                tx_hash,
+                timeout,
+                interval,
+            } => {
+                let resp = wait_for_tx(
+                    &tx_hash,
+                    Duration::from_secs(timeout),
+                    Duration::from_secs(interval),
+                    tx_query,
+                )?;
+                println!("tx_hash={}", resp.tx_hash);
+                println!("status={}", resp.status);
+                if let Some(err) = resp.error {
+                    println!("error={}", err);
                 }
             }
             TxCommand::Transfer {
@@ -568,6 +711,54 @@ mod tests {
             extract_tx_hash("{\"tx_hash\":\"deadbeef\",\"status\":\"ok\"}").as_deref(),
             Some("deadbeef")
         );
+    }
+
+    #[test]
+    fn tx_query_parse_json_and_kv() {
+        let json = "{\"tx_hash\":\"0xabc\",\"status\":\"committed\",\"error\":null}";
+        let parsed = parse_tx_query_response(json, "0xabc").unwrap();
+        assert_eq!(parsed.status, "committed");
+        assert_eq!(parsed.error, None);
+
+        let kv = "tx_hash=0xdef\nstatus=fail\nerror=insufficient balance\n";
+        let parsed_kv = parse_tx_query_response(kv, "0xdef").unwrap();
+        assert_eq!(parsed_kv.status, "fail");
+        assert_eq!(parsed_kv.error.as_deref(), Some("insufficient balance"));
+    }
+
+    #[test]
+    fn wait_for_tx_timeout() {
+        let result = wait_for_tx(
+            "0xaaa",
+            Duration::from_millis(0),
+            Duration::from_millis(0),
+            |_| {
+                Ok(TxQueryResponse {
+                    tx_hash: "0xaaa".to_string(),
+                    status: "pending".to_string(),
+                    error: None,
+                })
+            },
+        );
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn wait_for_tx_success() {
+        let result = wait_for_tx(
+            "0xbbb",
+            Duration::from_millis(10),
+            Duration::from_millis(0),
+            |_| {
+                Ok(TxQueryResponse {
+                    tx_hash: "0xbbb".to_string(),
+                    status: "committed".to_string(),
+                    error: None,
+                })
+            },
+        )
+        .unwrap();
+        assert_eq!(result.status, "committed");
     }
 
     #[test]
