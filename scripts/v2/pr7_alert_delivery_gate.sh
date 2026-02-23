@@ -23,17 +23,32 @@ if [[ "${DRY_RUN:-0}" == "1" ]]; then
   DRY_RUN_ARG=(--dry-run)
 fi
 
+QUIET_HOURS_ARG=()
+if [[ "${ALERT_NOTIFY_QUIET_HOURS_ENABLED:-0}" == "1" ]]; then
+  QUIET_HOURS_ARG=(--quiet-hours-enabled)
+fi
+
 IMESSAGE_TO="${IMESSAGE_TO:-qiqianpkugsm@gmail.com}" \
 python3 "$ROOT/scripts/v2/pr7_alert_delivery.py" \
   --report "$REPORT" \
   --channel "${ALERT_NOTIFY_CHANNEL:-imessage}" \
   --state-file "${ALERT_NOTIFY_STATE_FILE:-$ROOT/run/pr7-alert-delivery/state.json}" \
   --dead-letter-file "${ALERT_NOTIFY_DEAD_LETTER_FILE:-$ROOT/run/pr7-alert-delivery/dead-letter.jsonl}" \
-  --dedup-seconds "${ALERT_NOTIFY_DEDUP_SECONDS:-1800}" \
   --min-level "${ALERT_NOTIFY_MIN_LEVEL:-WARN}" \
+  --dedup-seconds "${ALERT_NOTIFY_DEDUP_SECONDS:-1800}" \
+  --aggregate-seconds "${ALERT_NOTIFY_AGGREGATE_SECONDS:-${ALERT_NOTIFY_DEDUP_SECONDS:-1800}}" \
   --max-retries "${ALERT_NOTIFY_MAX_RETRIES:-3}" \
   --base-backoff-ms "${ALERT_NOTIFY_BASE_BACKOFF_MS:-500}" \
   --max-backoff-ms "${ALERT_NOTIFY_MAX_BACKOFF_MS:-8000}" \
+  --cooldown-info "${ALERT_NOTIFY_COOLDOWN_INFO:-${ALERT_NOTIFY_DEDUP_SECONDS:-1800}}" \
+  --cooldown-warn "${ALERT_NOTIFY_COOLDOWN_WARN:-${ALERT_NOTIFY_DEDUP_SECONDS:-1800}}" \
+  --cooldown-critical "${ALERT_NOTIFY_COOLDOWN_CRITICAL:-300}" \
+  --warn-escalate-count "${ALERT_NOTIFY_WARN_ESCALATE_COUNT:-0}" \
+  --warn-escalate-window-seconds "${ALERT_NOTIFY_WARN_ESCALATE_WINDOW_SECONDS:-3600}" \
+  --quiet-hours-start "${ALERT_NOTIFY_QUIET_HOURS_START:-23:00}" \
+  --quiet-hours-end "${ALERT_NOTIFY_QUIET_HOURS_END:-08:00}" \
+  --quiet-hours-tz "${ALERT_NOTIFY_QUIET_HOURS_TZ:-Asia/Shanghai}" \
+  "${QUIET_HOURS_ARG[@]}" \
   "${DRY_RUN_ARG[@]}"
 pr7_rc=$?
 
