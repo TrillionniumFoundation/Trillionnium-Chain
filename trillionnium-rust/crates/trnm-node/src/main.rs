@@ -1393,9 +1393,8 @@ mod tests {
         let r7 =
             trnm_pouw::apply_reveal_result_at_height(&mut st, r6, result_hash, reveal_salt, 110)
                 .unwrap();
-        let _r8 =
-            trnm_pouw::apply_challenge_at_height(&mut st, r7, "challenger".into(), 10, 120)
-                .unwrap();
+        let _r8 = trnm_pouw::apply_challenge_at_height(&mut st, r7, "challenger".into(), 10, 120)
+            .unwrap();
 
         let known: HashSet<u64> = [7001u64, 7002u64].into_iter().collect();
         let migrated = scan_and_apply_timeouts(&mut st, &known, 10_000);
@@ -1673,7 +1672,8 @@ fn main() -> Result<()> {
                     known_task_ids.insert(task_id);
                     let to_status = status_name(&state, task_id);
                     let root = hex::encode(state.state_root());
-                    let challenge_bond_before = before.get_task(task_id).and_then(|t| t.challenge_bond);
+                    let challenge_bond_before =
+                        before.get_task(task_id).and_then(|t| t.challenge_bond);
                     emit_event(
                         &tx,
                         id,

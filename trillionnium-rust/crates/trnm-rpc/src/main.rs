@@ -1,5 +1,5 @@
-use anyhow::{bail, Result};
-use clap::{Parser, Subcommand};
+use anyhow::{anyhow, bail, Result};
+use clap::{Parser, Subcommand, ValueEnum};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::{
@@ -64,6 +64,18 @@ enum Command {
     QueryChallengeTreasury {
         #[arg(long, default_value_t = CHALLENGE_TREASURY_EVENTS_LIMIT_DEFAULT)]
         limit: usize,
+        /// Rolling window preset for ops summary (24h / 7d / custom)
+        #[arg(long, value_enum)]
+        window: Option<OpsWindowArg>,
+        /// Start unix timestamp (ms), required when --window custom
+        #[arg(long)]
+        from_unix_ms: Option<u128>,
+        /// End unix timestamp (ms), required when --window custom
+        #[arg(long)]
+        to_unix_ms: Option<u128>,
+        /// Force JSON output (backward-compatible no-op, kept for dashboard scripts)
+        #[arg(long, default_value_t = false)]
+        json: bool,
     },
     QueryBalance {
         address: String,
@@ -207,6 +219,31 @@ struct ChallengeTreasuryEventView {
     forfeits_delta: u128,
 }
 
+#[derive(Debug, Clone, Copy, ValueEnum)]
+enum OpsWindowArg {
+    #[value(name = "24h")]
+    H24,
+    #[value(name = "7d")]
+    D7,
+    #[value(name = "custom")]
+    Custom,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct ChallengeDailySummary {
+    posted: usize,
+    refunded: usize,
+    forfeited: usize,
+    unresolved: usize,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct ChallengeWindowView {
+    mode: String,
+    from_unix_ms: u128,
+    to_unix_ms: u128,
+}
+
 #[derive(Debug, Clone, Serialize)]
 struct ChallengeTreasuryQueryResponse {
     challenge_escrow_account: String,
@@ -216,6 +253,8 @@ struct ChallengeTreasuryQueryResponse {
     cumulative_forfeited: u128,
     events_total: usize,
     events: Vec<ChallengeTreasuryEventView>,
+    daily_summary: Option<ChallengeDailySummary>,
+    window: Option<ChallengeWindowView>,
 }
 
 fn load_latest_adapter_records() -> Vec<AdapterRecord> {
@@ -336,7 +375,9 @@ fn load_latest_node_events() -> Vec<NodeEventRecord> {
             challenger: normalize_opt("challenger"),
             tx_hash: normalize_opt("tx_hash"),
             resolution_code: normalize_opt("resolution_code"),
-            treasury_delta: kv.get("treasury_delta").and_then(|v| v.parse::<i128>().ok()),
+            treasury_delta: kv
+                .get("treasury_delta")
+                .and_then(|v| v.parse::<i128>().ok()),
             challenger_delta: kv
                 .get("challenger_delta")
                 .and_then(|v| v.parse::<i128>().ok()),
@@ -552,31 +593,76 @@ fn clamp_limit(op: &str, requested: usize, default_limit: usize, max_limit: usiz
     requested
 }
 
+fn resolve_ops_window(
+    window: Option<OpsWindowArg>,
+    from_unix_ms: Option<u128>,
+    to_unix_ms: Option<u128>,
+    now_unix_ms: u128,
+) -> Result<Option<(u128, u128, String)>> {
+    match window {
+        None => Ok(None),
+        Some(OpsWindowArg::H24) => Ok(Some((
+            now_unix_ms.saturating_sub(24 * 60 * 60 * 1000),
+            now_unix_ms,
+            "24h".to_string(),
+        ))),
+        Some(OpsWindowArg::D7) => Ok(Some((
+            now_unix_ms.saturating_sub(7 * 24 * 60 * 60 * 1000),
+            now_unix_ms,
+            "7d".to_string(),
+        ))),
+        Some(OpsWindowArg::Custom) => {
+            let from = from_unix_ms
+                .ok_or_else(|| anyhow!("--from-unix-ms is required when --window custom"))?;
+            let to = to_unix_ms
+                .ok_or_else(|| anyhow!("--to-unix-ms is required when --window custom"))?;
+            if from > to {
+                bail!("invalid custom window: from_unix_ms ({from}) must be <= to_unix_ms ({to})");
+            }
+            Ok(Some((from, to, "custom".to_string())))
+        }
+    }
+}
+
 fn summarize_challenge_treasury(
     node_events: &[NodeEventRecord],
     limit: usize,
+    summary_window: Option<(u128, u128, String)>,
 ) -> ChallengeTreasuryQueryResponse {
     let mut related: Vec<&NodeEventRecord> = node_events
         .iter()
         .filter(|e| {
             e.event_type == "challenge"
                 || (e.event_type == "resolve"
-                    && matches!(e.bond_disposition.as_deref(), Some("forfeited") | Some("refunded")))
+                    && matches!(
+                        e.bond_disposition.as_deref(),
+                        Some("forfeited") | Some("refunded")
+                    ))
         })
         .collect();
 
     related.sort_by_key(|e| (e.block_height, e.tx_id, e.ts_unix_ms));
 
     let mut posted_by_task = BTreeMap::<u64, u128>::new();
+    let mut posted_open_in_window = BTreeMap::<u64, ()>::new();
     let mut escrow_balance: u128 = 0;
     let mut forfeits_balance: u128 = 0;
     let mut cumulative_forfeited: u128 = 0;
+
+    let mut summary_posted: usize = 0;
+    let mut summary_refunded: usize = 0;
+    let mut summary_forfeited: usize = 0;
 
     let mut views = Vec::new();
     for e in &related {
         let mut bond_amount: u128 = 0;
         let mut escrow_delta: i128 = 0;
         let mut forfeits_delta: u128 = 0;
+
+        let in_window = summary_window
+            .as_ref()
+            .map(|(from, to, _)| e.ts_unix_ms >= *from && e.ts_unix_ms <= *to)
+            .unwrap_or(false);
 
         match e.event_type.as_str() {
             "challenge" => {
@@ -587,6 +673,10 @@ fn summarize_challenge_treasury(
                 posted_by_task.insert(e.task_id, bond_amount);
                 escrow_balance = escrow_balance.saturating_add(bond_amount);
                 escrow_delta = i128::try_from(bond_amount).ok().unwrap_or(i128::MAX);
+                if in_window {
+                    summary_posted = summary_posted.saturating_add(1);
+                    posted_open_in_window.insert(e.task_id, ());
+                }
             }
             "resolve" => {
                 let maybe_bond = posted_by_task.remove(&e.task_id).unwrap_or(0);
@@ -598,10 +688,18 @@ fn summarize_challenge_treasury(
                         cumulative_forfeited = cumulative_forfeited.saturating_add(maybe_bond);
                         escrow_delta = -i128::try_from(maybe_bond).ok().unwrap_or(i128::MAX);
                         forfeits_delta = maybe_bond;
+                        if in_window {
+                            summary_forfeited = summary_forfeited.saturating_add(1);
+                        }
+                        posted_open_in_window.remove(&e.task_id);
                     }
                     Some("refunded") => {
                         escrow_balance = escrow_balance.saturating_sub(maybe_bond);
                         escrow_delta = -i128::try_from(maybe_bond).ok().unwrap_or(i128::MAX);
+                        if in_window {
+                            summary_refunded = summary_refunded.saturating_add(1);
+                        }
+                        posted_open_in_window.remove(&e.task_id);
                     }
                     _ => {}
                 }
@@ -629,6 +727,19 @@ fn summarize_challenge_treasury(
         views = views.split_off(keep_from);
     }
 
+    let daily_summary = summary_window.as_ref().map(|_| ChallengeDailySummary {
+        posted: summary_posted,
+        refunded: summary_refunded,
+        forfeited: summary_forfeited,
+        unresolved: posted_open_in_window.len(),
+    });
+
+    let window = summary_window.map(|(from, to, mode)| ChallengeWindowView {
+        mode,
+        from_unix_ms: from,
+        to_unix_ms: to,
+    });
+
     ChallengeTreasuryQueryResponse {
         challenge_escrow_account: CHALLENGE_ESCROW_ACCOUNT.to_string(),
         challenge_forfeits_account: CHALLENGE_FORFEIT_TREASURY_ACCOUNT.to_string(),
@@ -637,6 +748,8 @@ fn summarize_challenge_treasury(
         cumulative_forfeited,
         events_total,
         events: views,
+        daily_summary,
+        window,
     }
 }
 
@@ -878,15 +991,27 @@ fn main() -> Result<()> {
             }
             println!("{}", serde_json::to_string_pretty(&events)?);
         }
-        Command::QueryChallengeTreasury { limit } => {
+        Command::QueryChallengeTreasury {
+            limit,
+            window,
+            from_unix_ms,
+            to_unix_ms,
+            json,
+        } => {
             let limit = clamp_limit(
                 "QueryChallengeTreasury",
                 limit,
                 CHALLENGE_TREASURY_EVENTS_LIMIT_DEFAULT,
                 CHALLENGE_TREASURY_EVENTS_LIMIT_MAX,
             );
-            let out = summarize_challenge_treasury(&node_events, limit);
-            println!("{}", serde_json::to_string_pretty(&out)?);
+            let summary_window = resolve_ops_window(window, from_unix_ms, to_unix_ms, now_ms())?;
+            let out = summarize_challenge_treasury(&node_events, limit, summary_window);
+            if json {
+                println!("{}", serde_json::to_string_pretty(&out)?);
+            } else {
+                // Keep backward compatibility: default remains JSON output.
+                println!("{}", serde_json::to_string_pretty(&out)?);
+            }
         }
         Command::QueryBalance { address } => {
             let accounts = load_account_state(&account_state_file());
@@ -1378,7 +1503,7 @@ mod tests {
             },
         ];
 
-        let out = summarize_challenge_treasury(&events, 10);
+        let out = summarize_challenge_treasury(&events, 10, None);
         assert_eq!(out.current_escrow_balance, 0);
         assert_eq!(out.current_forfeits_balance, 10);
         assert_eq!(out.cumulative_forfeited, 10);
@@ -1429,10 +1554,112 @@ mod tests {
             },
         ];
 
-        let out = summarize_challenge_treasury(&events, 1);
+        let out = summarize_challenge_treasury(&events, 1, None);
         assert_eq!(out.events_total, 2);
         assert_eq!(out.events.len(), 1);
         assert_eq!(out.events[0].task_id, 2);
         assert_eq!(out.current_escrow_balance, 7);
+        assert!(out.daily_summary.is_none());
+        assert!(out.window.is_none());
+    }
+
+    #[test]
+    fn summarize_challenge_treasury_window_daily_summary_counts() {
+        let events = vec![
+            NodeEventRecord {
+                event_type: "challenge".into(),
+                task_id: 11,
+                from_status: "Revealed".into(),
+                to_status: "Challenged".into(),
+                actor: "c11".into(),
+                tx_id: 1,
+                block_height: 1,
+                state_root: "a".into(),
+                ts_unix_ms: 1_000,
+                signer: None,
+                challenger: Some("c11".into()),
+                tx_hash: None,
+                resolution_code: None,
+                treasury_delta: Some(0),
+                challenger_delta: Some(-5),
+                bond_disposition: Some("posted".into()),
+            },
+            NodeEventRecord {
+                event_type: "resolve".into(),
+                task_id: 11,
+                from_status: "Challenged".into(),
+                to_status: "Completed".into(),
+                actor: "v".into(),
+                tx_id: 2,
+                block_height: 2,
+                state_root: "b".into(),
+                ts_unix_ms: 2_000,
+                signer: None,
+                challenger: Some("c11".into()),
+                tx_hash: None,
+                resolution_code: Some("completed".into()),
+                treasury_delta: Some(0),
+                challenger_delta: Some(0),
+                bond_disposition: Some("refunded".into()),
+            },
+            NodeEventRecord {
+                event_type: "challenge".into(),
+                task_id: 12,
+                from_status: "Revealed".into(),
+                to_status: "Challenged".into(),
+                actor: "c12".into(),
+                tx_id: 3,
+                block_height: 3,
+                state_root: "c".into(),
+                ts_unix_ms: 3_000,
+                signer: None,
+                challenger: Some("c12".into()),
+                tx_hash: None,
+                resolution_code: None,
+                treasury_delta: Some(0),
+                challenger_delta: Some(-8),
+                bond_disposition: Some("posted".into()),
+            },
+            NodeEventRecord {
+                event_type: "resolve".into(),
+                task_id: 99,
+                from_status: "Challenged".into(),
+                to_status: "Completed".into(),
+                actor: "v".into(),
+                tx_id: 4,
+                block_height: 4,
+                state_root: "d".into(),
+                ts_unix_ms: 4_000,
+                signer: None,
+                challenger: Some("c99".into()),
+                tx_hash: None,
+                resolution_code: Some("completed".into()),
+                treasury_delta: Some(0),
+                challenger_delta: Some(0),
+                bond_disposition: Some("forfeited".into()),
+            },
+        ];
+
+        let out =
+            summarize_challenge_treasury(&events, 10, Some((500, 3_500, "custom".to_string())));
+
+        let summary = out.daily_summary.expect("summary expected");
+        assert_eq!(summary.posted, 2);
+        assert_eq!(summary.refunded, 1);
+        assert_eq!(summary.forfeited, 0);
+        assert_eq!(summary.unresolved, 1);
+        assert_eq!(out.window.expect("window expected").mode, "custom");
+    }
+
+    #[test]
+    fn resolve_ops_window_custom_validation() {
+        assert!(resolve_ops_window(Some(OpsWindowArg::Custom), None, Some(1), 10).is_err());
+        assert!(resolve_ops_window(Some(OpsWindowArg::Custom), Some(2), Some(1), 10).is_err());
+
+        let got = resolve_ops_window(Some(OpsWindowArg::H24), None, None, 1_000).unwrap();
+        let (from, to, mode) = got.expect("window expected");
+        assert_eq!(to, 1_000);
+        assert_eq!(mode, "24h");
+        assert!(from <= to);
     }
 }
