@@ -304,16 +304,19 @@ Runbook：`docs/runbooks/pr6-alert-rules.md`
 
 ## PR-7 Alert Delivery（告警投递）
 
-将 PR-6 `WARN/FAIL` 告警投递到消息通道（Slack webhook 或 Telegram bot），并提供窗口去重防抖。
+将 PR-6 `WARN/FAIL` 告警投递到消息通道（iMessage / Slack webhook / Telegram bot），并提供窗口去重防抖与主备路由 fallback。
 
 执行（推荐串联）：
 
 ```bash
-DRY_RUN=1 ALERT_NOTIFY_CHANNEL=slack ./scripts/v2/pr7_alert_delivery_gate.sh
+DRY_RUN=1 ALERT_NOTIFY_CHANNEL=imessage ALERT_NOTIFY_BACKUP_CHANNEL=telegram ./scripts/v2/pr7_alert_delivery_gate.sh
 ```
 
 常用环境变量：
-- `ALERT_NOTIFY_CHANNEL=slack|telegram`
+- `ALERT_NOTIFY_CHANNEL=imessage|slack|telegram`
+- `ALERT_NOTIFY_PRIMARY_CHANNEL`（默认继承 ALERT_NOTIFY_CHANNEL）
+- `ALERT_NOTIFY_BACKUP_CHANNEL`（可选）
+- `ALERT_NOTIFY_AUDIT_FILE=run/pr7-alert-delivery/audit.jsonl`
 - `ALERT_NOTIFY_MIN_LEVEL=WARN|FAIL`
 - `ALERT_NOTIFY_DEDUP_SECONDS=1800`
 - `ALERT_NOTIFY_STATE_FILE=run/pr7-alert-delivery/state.json`

@@ -1,6 +1,6 @@
 # PR7 告警通知投递（alert-delivery）
 
-目标：将 PR6 `summary.txt` 里的 `WARN/FAIL` 告警投递到消息通道（支持 iMessage / Slack Webhook / Telegram Bot），并提供去重防抖、失败重试、死信落盘与重放；同时支持告警治理策略（quiet-hours + WARN 自动升级 CRITICAL）。
+目标：将 PR6 `summary.txt` 里的 `WARN/FAIL` 告警投递到消息通道（支持 iMessage / Slack Webhook / Telegram Bot），并提供去重防抖、失败重试、死信落盘与重放；同时支持告警治理策略（quiet-hours + WARN 自动升级 CRITICAL）以及多通道路由（主/备 + 失败自动切备 + 审计）。
 
 ## 脚本
 
@@ -14,6 +14,10 @@
 - 默认 `ALERT_NOTIFY_MIN_LEVEL=WARN`
   - `PASS`：不发送
   - `WARN/FAIL`：发送
+- 路由策略：
+  - `WARN`：发送到主通道（`primary-channel`）
+  - `CRITICAL`：发送到主通道 + 备通道（若已配置）
+  - 若 `WARN` 主通道投递失败，自动切到备通道重试（fallback）
 - 去重指纹由核心字段生成（status + 各 rule status/value）
 - 在 `ALERT_NOTIFY_DEDUP_SECONDS` 窗口内，相同指纹不重复发送
 
@@ -44,7 +48,10 @@
 
 ### 通用
 
-- `ALERT_NOTIFY_CHANNEL`：`imessage` / `slack` / `telegram`
+- `ALERT_NOTIFY_CHANNEL`：默认通道（兼容旧配置），`imessage` / `slack` / `telegram`
+- `ALERT_NOTIFY_PRIMARY_CHANNEL`：主通道（默认继承 `ALERT_NOTIFY_CHANNEL`）
+- `ALERT_NOTIFY_BACKUP_CHANNEL`：备通道（可选，`imessage|slack|telegram`）
+- `ALERT_NOTIFY_AUDIT_FILE`：路由审计日志（jsonl），默认 `run/pr7-alert-delivery/audit.jsonl`
 - `ALERT_NOTIFY_MIN_LEVEL`：`WARN`（默认）或 `FAIL`
 - `ALERT_NOTIFY_DEDUP_SECONDS`：基础去重窗口秒数，默认 `1800`
 - `ALERT_NOTIFY_AGGREGATE_SECONDS`：同类告警聚合窗口，默认继承 `ALERT_NOTIFY_DEDUP_SECONDS`
@@ -64,6 +71,7 @@
 - `ALERT_NOTIFY_WARN_ESCALATE_WINDOW_SECONDS`：WARN 连续计数窗口，默认 `3600`
 - `DRY_RUN=1`：演示模式，不真实发消息
 - `ALERT_NOTIFY_DRY_RUN_SIMULATE_FAILURES`：仅 dry-run 生效，前 N 次尝试注入失败（用于演示 dead-letter）
+- `ALERT_NOTIFY_DRY_RUN_FAIL_CHANNELS`：仅 dry-run 生效，逗号分隔强制失败通道（例：`imessage,slack`）
 
 ### iMessage
 
@@ -150,6 +158,50 @@ python3 scripts/v2/pr7_dead_letter_replay.py \
 
 # 期望为空文件（或 remaining=0）
 cat /tmp/pr7-dead-letter.jsonl
+```
+
+## Dry-run 演示：主备路由 + fallback + 审计
+
+```bash
+# WARN：主通道 iMessage 失败后自动切备 Telegram；写入 audit.jsonl
+DRY_RUN=1 \
+ALERT_NOTIFY_DRY_RUN_FAIL_CHANNELS=imessage \
+python3 scripts/v2/pr7_alert_delivery.py \
+  --report /tmp/pr6-summary-warn.txt \
+  --primary-channel imessage \
+  --backup-channel telegram \
+  --state-file /tmp/pr7-state-route.json \
+  --dead-letter-file /tmp/pr7-dead-letter-route.jsonl \
+  --audit-file /tmp/pr7-audit-route.jsonl \
+  --max-retries 1
+
+cat /tmp/pr7-audit-route.jsonl
+# 期望: 先记录 imessage planned_route fail，再记录 telegram fallback_after_primary_failure ok
+```
+
+```bash
+# CRITICAL：主+备都执行（升级通知）
+cat > /tmp/pr6-summary-critical.txt <<'EOF'
+status=FAIL
+alert_code=PR6_ALERT_RULES
+alert_message=[PR6][FAIL] challenge risk snapshot critical
+generated_at_utc=2026-02-23T10:00:00+00:00
+rule.unresolved_challenges.status=FAIL
+rule.unresolved_challenges.value=7
+rule.forfeits_daily_increase.status=FAIL
+rule.forfeits_daily_increase.value=101
+rule.escrow_nonzero_hours.status=FAIL
+rule.escrow_nonzero_hours.value=24.10
+EOF
+
+DRY_RUN=1 python3 scripts/v2/pr7_alert_delivery.py \
+  --report /tmp/pr6-summary-critical.txt \
+  --primary-channel imessage \
+  --backup-channel telegram \
+  --state-file /tmp/pr7-state-route.json \
+  --audit-file /tmp/pr7-audit-route.jsonl
+
+# 期望: route_results 包含 imessage+telegram 均为 planned_route
 ```
 
 ## Dry-run 演示：quiet-hours + WARN 自动升级
