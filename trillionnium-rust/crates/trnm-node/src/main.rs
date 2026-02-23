@@ -1055,6 +1055,7 @@ fn emit_event(
     from_status: &str,
     to_status: &str,
     state_root: &str,
+    challenge_bond_before: Option<u128>,
 ) {
     let task_id = task_id_of(tx);
     let event_type = event_type_of(tx);
@@ -1064,6 +1065,31 @@ fn emit_event(
     let tx_hash = tx_hash_of(tx_id);
     let ts_unix_ms = now_unix_ms();
 
+    let (treasury_delta, challenger_delta, bond_disposition) = match tx {
+        MockTx::Challenge { bond, .. } => (
+            Some(0i128),
+            i128::try_from(*bond).ok().map(|v| -v),
+            Some("posted"),
+        ),
+        MockTx::Resolve { slash_worker, .. } => {
+            let bond_i128 = challenge_bond_before.and_then(|v| i128::try_from(v).ok());
+            if *slash_worker {
+                (Some(0i128), bond_i128, Some("refunded"))
+            } else {
+                (Some(0i128), Some(0i128), Some("forfeited"))
+            }
+        }
+        _ => (None, None, None),
+    };
+
+    let treasury_delta_str = treasury_delta
+        .map(|v| v.to_string())
+        .unwrap_or_else(|| "-".to_string());
+    let challenger_delta_str = challenger_delta
+        .map(|v| v.to_string())
+        .unwrap_or_else(|| "-".to_string());
+    let bond_disposition_str = bond_disposition.unwrap_or("-");
+
     match tx {
         MockTx::Resolve { slash_worker, .. } => {
             let resolution_code = if *slash_worker {
@@ -1072,7 +1098,7 @@ fn emit_event(
                 "completed"
             };
             println!(
-                "[event] event_schema=v1 event_type={} task_id={} from_status={} to_status={} actor={} signer={} challenger={} tx_hash={} tx_id={} block_height={} state_root={} ts_unix_ms={} slash_worker={} resolution_code={}",
+                "[event] event_schema=v1 event_type={} task_id={} from_status={} to_status={} actor={} signer={} challenger={} tx_hash={} tx_id={} block_height={} state_root={} ts_unix_ms={} slash_worker={} resolution_code={} treasury_delta={} challenger_delta={} bond_disposition={}",
                 event_type,
                 task_id,
                 from_status,
@@ -1086,12 +1112,15 @@ fn emit_event(
                 state_root,
                 ts_unix_ms,
                 slash_worker,
-                resolution_code
+                resolution_code,
+                treasury_delta_str,
+                challenger_delta_str,
+                bond_disposition_str,
             );
         }
         _ => {
             println!(
-                "[event] event_schema=v1 event_type={} task_id={} from_status={} to_status={} actor={} signer={} challenger={} tx_hash={} tx_id={} block_height={} state_root={} ts_unix_ms={}",
+                "[event] event_schema=v1 event_type={} task_id={} from_status={} to_status={} actor={} signer={} challenger={} tx_hash={} tx_id={} block_height={} state_root={} ts_unix_ms={} treasury_delta={} challenger_delta={} bond_disposition={}",
                 event_type,
                 task_id,
                 from_status,
@@ -1103,7 +1132,10 @@ fn emit_event(
                 tx_id,
                 block_height,
                 state_root,
-                ts_unix_ms
+                ts_unix_ms,
+                treasury_delta_str,
+                challenger_delta_str,
+                bond_disposition_str,
             );
         }
     }
@@ -1641,7 +1673,16 @@ fn main() -> Result<()> {
                     known_task_ids.insert(task_id);
                     let to_status = status_name(&state, task_id);
                     let root = hex::encode(state.state_root());
-                    emit_event(&tx, id, height, &from_status, &to_status, &root);
+                    let challenge_bond_before = before.get_task(task_id).and_then(|t| t.challenge_bond);
+                    emit_event(
+                        &tx,
+                        id,
+                        height,
+                        &from_status,
+                        &to_status,
+                        &root,
+                        challenge_bond_before,
+                    );
                 }
             }
         }

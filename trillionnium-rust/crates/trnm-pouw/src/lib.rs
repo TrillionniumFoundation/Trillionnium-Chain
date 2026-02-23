@@ -54,6 +54,8 @@ fn map_state_err(err: String) -> PouwError {
 const DEFAULT_REVEAL_WINDOW_BLOCKS: u64 = 20;
 const DEFAULT_CHALLENGE_WINDOW_BLOCKS: u64 = 20;
 const DEFAULT_CHALLENGE_MIN_BOND: u128 = 10;
+const CHALLENGE_ESCROW_ACCOUNT: &str = "treasury.challenge_escrow";
+const CHALLENGE_FORFEIT_TREASURY_ACCOUNT: &str = "treasury.challenge_forfeits";
 
 fn compute_commitment(
     task_id: u64,
@@ -229,6 +231,7 @@ pub fn apply_challenge_at_height(
 
     st.debit_balance(&challenger, challenge_bond)
         .map_err(|_| PouwError::InsufficientStake)?;
+    st.credit_balance(CHALLENGE_ESCROW_ACCOUNT, challenge_bond);
 
     task.status = TaskStatus::Challenged;
     task.challenged_at_height = Some(current_height);
@@ -270,12 +273,17 @@ pub fn apply_resolve_at_height(
         TaskStatus::Completed
     };
     if let Some(bond) = task.challenge_bond {
-        // slash_worker=true => challenge succeeds => bond refunded (not forfeited)
-        // slash_worker=false => challenge fails => bond forfeited (locked/burned in MVP)
+        // Funds always flow out of escrow at resolve for auditability.
+        st.debit_balance(CHALLENGE_ESCROW_ACCOUNT, bond)
+            .map_err(PouwError::State)?;
         if slash_worker {
+            // Challenge succeeds: return challenger bond.
             if let Some(challenger) = task.challenger.clone() {
                 st.credit_balance(&challenger, bond);
             }
+        } else {
+            // Challenge fails: forfeit bond into treasury pool.
+            st.credit_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, bond);
         }
         task.challenge_bond_forfeited = Some(!slash_worker);
     }
@@ -309,7 +317,10 @@ pub fn apply_timeout(
                 return Err(PouwError::InvalidTransition);
             }
             task.status = TaskStatus::Completed;
-            if task.challenge_bond.is_some() {
+            if let Some(bond) = task.challenge_bond {
+                st.debit_balance(CHALLENGE_ESCROW_ACCOUNT, bond)
+                    .map_err(PouwError::State)?;
+                st.credit_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, bond);
                 task.challenge_bond_forfeited = Some(true);
             }
         }
@@ -546,6 +557,7 @@ mod tests {
             apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 10).unwrap();
         let r4 = apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, 20).unwrap();
         let r5 = apply_challenge_at_height(&mut st, r4, "challenger".into(), 10, 30).unwrap();
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), 10);
 
         let before = apply_timeout(&mut st, r5.clone(), 50).unwrap_err();
         assert!(matches!(before, PouwError::InvalidTransition));
@@ -553,6 +565,8 @@ mod tests {
         let r6 = apply_timeout(&mut st, r5, 51).unwrap();
         let task = st.get_task(r6.id).unwrap();
         assert_eq!(task.status, TaskStatus::Completed);
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), 0);
+        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), 10);
     }
 
     #[test]
@@ -622,11 +636,14 @@ mod tests {
         let challenged = st.get_task(r5.id).unwrap();
         assert_eq!(challenged.resolve_deadline_height, Some(243));
         assert_eq!(st.balance_of("challenger"), 90);
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), 10);
 
         let r6 = apply_resolve(&mut st, r5, false).unwrap();
         let resolved = st.get_task(r6.id).unwrap();
         assert_eq!(resolved.challenge_bond_forfeited, Some(true));
         assert_eq!(st.balance_of("challenger"), 90);
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), 0);
+        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), 10);
     }
 
     #[test]
@@ -644,12 +661,15 @@ mod tests {
         let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt).unwrap();
         let r5 = apply_challenge(&mut st, r4, "challenger".into(), 10).unwrap();
         assert_eq!(st.balance_of("challenger"), 90);
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), 10);
         let r6 = apply_resolve(&mut st, r5, true).unwrap();
 
         let resolved = st.get_task(r6.id).unwrap();
         assert_eq!(resolved.status, TaskStatus::Slashed);
         assert_eq!(resolved.challenge_bond_forfeited, Some(false));
         assert_eq!(st.balance_of("challenger"), 100);
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), 0);
+        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), 0);
     }
 
     #[test]
@@ -669,6 +689,8 @@ mod tests {
         let err = apply_challenge(&mut st, r4, "challenger".into(), 10).unwrap_err();
         assert!(matches!(err, PouwError::InsufficientStake));
         assert_eq!(st.balance_of("challenger"), 5);
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), 0);
+        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), 0);
     }
 
     #[test]

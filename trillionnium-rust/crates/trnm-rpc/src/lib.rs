@@ -59,6 +59,12 @@ pub struct EventQueryResponse {
     pub tx_hash: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub resolution_code: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub treasury_delta: Option<i128>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub challenger_delta: Option<i128>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub bond_disposition: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -239,6 +245,9 @@ mod tests {
             challenger: None,
             tx_hash: None,
             resolution_code: None,
+            treasury_delta: None,
+            challenger_delta: None,
+            bond_disposition: None,
         };
         let v = serde_json::to_value(evt).unwrap();
         assert_eq!(

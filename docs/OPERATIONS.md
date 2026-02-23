@@ -203,6 +203,38 @@ CI：
 - `.github/workflows/trnm-merge-gates.yml` 已加入 `P1-4 integration gate` hard gate step
 - 任一步骤失败将直接中止该 workflow job
 
+## PR-4 门禁（罚没资金流向 + 审计字段可见）
+
+在仓库根目录执行：
+
+```bash
+./scripts/v2/pr4_challenge_fundflow_audit_gate.sh
+```
+
+执行顺序（失败即停）：
+1. `bond_forfeiture_flow_test`：`trnm-pouw` challenge 失败 → bond 罚没路径。
+2. `bond_refund_flow_test`：`trnm-pouw` challenge 成功（worker slashed）→ bond 返还路径。
+3. `event_audit_fields_visibility`：运行 `trillionnium-rust/scripts/check_event_fields.sh`，并强制检查 resolve 事件审计字段。
+
+强制字段（resolve event）：
+- `signer=`
+- `challenger=`
+- `tx_hash=`
+- `slash_worker=`
+- `resolution_code=`
+
+产物目录：
+- 默认：`run/pr4-gates/<timestamp>/`
+- 汇总：`summary.txt`
+- 日志：`*.log`
+
+验收 checklist（PR-4）：
+- [ ] gate 脚本退出码 = 0
+- [ ] `summary.txt` 包含 `status=PASS`
+- [ ] 罚没路径测试通过（forfeiture）
+- [ ] 返还路径测试通过（refund）
+- [ ] resolve 事件审计字段全部可见
+
 ## 一键回滚（Phase A）
 
 仓库根目录提供回滚脚本：`scripts/rollback_phasea.sh`

@@ -287,6 +287,31 @@ TRNM_TX_CLI=./scripts/v2/trnm_tx_cli_real_adapter.sh ./scripts/v2/run_worker_rec
 
 > 说明：脚本会先从 `cargo test -- --list` 中按关键词发现测试；若未发现对应测试，会直接 `FAIL`，用于防止“脚本通过但用例缺失”的假阳性。
 
+### PR-4 门禁（罚没资金流向 + 审计字段可见）
+
+在仓库根目录执行：
+
+```bash
+./scripts/v2/pr4_challenge_fundflow_audit_gate.sh
+```
+
+门禁说明：
+- `bond_forfeiture_flow_test`：验证 challenge 失败后 bond 罚没路径（`challenge_bond_forfeited=true`）。
+- `bond_refund_flow_test`：验证 challenge 成功且 worker 被 slash 时 challenger bond 返还路径（`challenge_bond_forfeited=false`）。
+- `event_audit_fields_visibility`：验证 resolve 事件审计字段可见（至少包含 `signer/challenger/tx_hash/slash_worker/resolution_code`）。
+
+产物目录：
+- 默认写入 `run/pr4-gates/<timestamp>/`
+- 汇总文件：`summary.txt`
+- 各步骤日志：`bond_forfeiture_flow_test.log` / `bond_refund_flow_test.log` / `event_audit_fields_visibility.log`
+
+验收 checklist（PR-4）：
+- [ ] 脚本退出码为 0
+- [ ] `summary.txt` 中 `status=PASS`
+- [ ] 罚没路径测试通过（forfeiture）
+- [ ] 返还路径测试通过（refund）
+- [ ] resolve 事件包含 `signer/challenger/tx_hash/slash_worker/resolution_code`
+
 ## Agent↔User P2P Phase A（MVP）
 
 文档入口：`docs/protocol/agent-user-p2p-phaseA-ops.md`

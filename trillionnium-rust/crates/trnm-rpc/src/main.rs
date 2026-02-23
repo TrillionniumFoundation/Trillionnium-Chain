@@ -179,6 +179,9 @@ struct NodeEventRecord {
     challenger: Option<String>,
     tx_hash: Option<String>,
     resolution_code: Option<String>,
+    treasury_delta: Option<i128>,
+    challenger_delta: Option<i128>,
+    bond_disposition: Option<String>,
 }
 
 fn load_latest_adapter_records() -> Vec<AdapterRecord> {
@@ -299,6 +302,11 @@ fn load_latest_node_events() -> Vec<NodeEventRecord> {
             challenger: normalize_opt("challenger"),
             tx_hash: normalize_opt("tx_hash"),
             resolution_code: normalize_opt("resolution_code"),
+            treasury_delta: kv.get("treasury_delta").and_then(|v| v.parse::<i128>().ok()),
+            challenger_delta: kv
+                .get("challenger_delta")
+                .and_then(|v| v.parse::<i128>().ok()),
+            bond_disposition: normalize_opt("bond_disposition"),
         });
     }
     out
@@ -690,6 +698,9 @@ fn main() -> Result<()> {
                     challenger: e.challenger.clone(),
                     tx_hash: e.tx_hash.clone(),
                     resolution_code: e.resolution_code.clone(),
+                    treasury_delta: e.treasury_delta,
+                    challenger_delta: e.challenger_delta,
+                    bond_disposition: e.bond_disposition.clone(),
                 });
             }
 
@@ -728,6 +739,9 @@ fn main() -> Result<()> {
                         challenger: None,
                         tx_hash,
                         resolution_code: None,
+                        treasury_delta: None,
+                        challenger_delta: None,
+                        bond_disposition: None,
                     });
                     tx_id += 1;
                 }
@@ -1042,6 +1056,9 @@ fn main() -> Result<()> {
                     challenger: e.challenger.clone(),
                     tx_hash,
                     resolution_code,
+                    treasury_delta: e.treasury_delta,
+                    challenger_delta: e.challenger_delta,
+                    bond_disposition: e.bond_disposition.clone(),
                 });
             }
 

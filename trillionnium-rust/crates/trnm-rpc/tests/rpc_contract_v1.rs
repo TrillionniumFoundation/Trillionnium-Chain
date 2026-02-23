@@ -66,6 +66,9 @@ fn contract_event_shape_backward_compatible_when_audit_fields_absent() {
         challenger: None,
         tx_hash: None,
         resolution_code: None,
+        treasury_delta: None,
+        challenger_delta: None,
+        bond_disposition: None,
     })
     .unwrap();
     assert_eq!(
@@ -100,6 +103,9 @@ fn contract_event_shape_includes_audit_fields_when_present() {
         challenger: Some("challenger-a".into()),
         tx_hash: Some("0x123".into()),
         resolution_code: Some("completed".into()),
+        treasury_delta: Some(0),
+        challenger_delta: Some(0),
+        bond_disposition: Some("forfeited".into()),
     })
     .unwrap();
     assert_eq!(
@@ -117,7 +123,10 @@ fn contract_event_shape_includes_audit_fields_when_present() {
             "signer":"authority",
             "challenger":"challenger-a",
             "tx_hash":"0x123",
-            "resolution_code":"completed"
+            "resolution_code":"completed",
+            "treasury_delta":0,
+            "challenger_delta":0,
+            "bond_disposition":"forfeited"
         })
     );
 }
