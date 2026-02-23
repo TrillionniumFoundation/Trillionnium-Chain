@@ -116,6 +116,18 @@ MAX_RETRY_EXHAUSTED=1 \
 
 CI workflow：`.github/workflows/agent-user-phasea-gate.yml`（调用上述 gate 脚本）。
 
+## 产品层最小 API 测试步骤（Create Account -> Balance -> Transfer -> GetTx）
+
+建议按固定顺序执行（与脚本化联调一致）：
+
+1. 创建/准备测试账户（`ALICE_ADDR`、`BOB_ADDR`）
+2. `balance(ALICE_ADDR)` 确认初始余额
+3. `nonce(ALICE_ADDR)` 获取下一 nonce
+4. `sendTx(from,to,amount,nonce,signature)` 发起转账
+5. `getTx(txHash)` 轮询至终态（`committed/success`）
+
+可直接复用仓库根目录 `OPERATIONS.md` 中同名章节示例命令。
+
 ## 一键回滚（Phase A）
 
 仓库根目录提供回滚脚本：`scripts/rollback_phasea.sh`

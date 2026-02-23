@@ -92,6 +92,62 @@ What it demonstrates:
 For chain operators and testing flows, see:
 - `docs/OPERATIONS.md`
 
+## 🧩 产品层最小 API（balance / nonce / sendTx / getTx）
+
+为前端、Bot、自动化脚本提供统一最小接口（JSON-RPC 风格）：
+
+- `balance(address)`：查询账户余额
+- `nonce(address)`：查询账户下一可用 nonce
+- `sendTx(from,to,amount,nonce,signature)`：发送转账交易
+- `getTx(txHash)`：查询交易状态与回执
+
+示例（`curl`）：
+
+```bash
+RPC_URL=${RPC_URL:-http://127.0.0.1:8545}
+
+# 1) balance
+curl -sS "$RPC_URL" -H 'content-type: application/json' -d '{
+  "jsonrpc":"2.0",
+  "id":1,
+  "method":"balance",
+  "params":{"address":"trnm1alice..."}
+}'
+
+# 2) nonce
+curl -sS "$RPC_URL" -H 'content-type: application/json' -d '{
+  "jsonrpc":"2.0",
+  "id":2,
+  "method":"nonce",
+  "params":{"address":"trnm1alice..."}
+}'
+
+# 3) sendTx
+curl -sS "$RPC_URL" -H 'content-type: application/json' -d '{
+  "jsonrpc":"2.0",
+  "id":3,
+  "method":"sendTx",
+  "params":{
+    "from":"trnm1alice...",
+    "to":"trnm1bob...",
+    "amount":"1000000",
+    "denom":"utrnm",
+    "nonce":12,
+    "signature":"0x..."
+  }
+}'
+
+# 4) getTx
+curl -sS "$RPC_URL" -H 'content-type: application/json' -d '{
+  "jsonrpc":"2.0",
+  "id":4,
+  "method":"getTx",
+  "params":{"txHash":"0xabc123..."}
+}'
+```
+
+建议调用顺序：`balance -> nonce -> sendTx -> getTx`。
+
 ### Worker Receipt Gates (single entry)
 
 From repo root:

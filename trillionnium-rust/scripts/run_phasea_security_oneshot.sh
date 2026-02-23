@@ -32,4 +32,16 @@ echo "[one-shot] consensus_summary=$CONS_OUT/summary.txt"
 echo "[one-shot] proof_log=$PROOF_LOG"
 echo "[one-shot] phasea_report_dir=$PHASEA_OUT_DIR"
 echo "[one-shot] phasea_fault_summary=$FAULT_OUT_DIR/summary.txt"
+
+# Emit block-level SHA256 state roots from consensus logs for quick visibility.
+BASELINE_LOG="$(ls -1t "$CONS_OUT"/consensus-fault-baseline-*.log 2>/dev/null | head -n1 || true)"
+if [[ -n "$BASELINE_LOG" && -f "$BASELINE_LOG" ]]; then
+  HASH_OUT="$RUN_ROOT/block-state-roots.txt"
+  grep '^\[block\].*state_root=' "$BASELINE_LOG" | grep -oE 'state_root=[0-9a-f]{64}' | sed 's/^state_root=//' > "$HASH_OUT" || true
+  if [[ -s "$HASH_OUT" ]]; then
+    echo "[one-shot] block_state_roots_file=$HASH_OUT"
+    echo "[one-shot] block_state_roots_preview=$(head -n 5 "$HASH_OUT" | paste -sd, -)"
+  fi
+fi
+
 echo "[one-shot] run_root=$RUN_ROOT"

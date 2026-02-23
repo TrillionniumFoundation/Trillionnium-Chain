@@ -71,6 +71,80 @@ The `CreateComputeJob` message allows a user to submit a compute job which creat
     *   Queries the task using the returned `JobId` to confirm side effects.
     *   Validates error handling for empty payload.
 
+## 产品层最小 API 联调（Create Account -> Balance -> Transfer -> GetTx）
+
+> 目标：用一套可脚本化步骤，验证产品层最小交易闭环。
+
+### 前置
+- RPC endpoint 可用（默认 `http://127.0.0.1:8545`）
+- 测试账户已注资（本地 dev/faucet 均可）
+
+### 1) 创建账户（示例）
+
+```bash
+# 示例：本地生成一对测试地址；也可替换为你现有的钱包地址
+ALICE_ADDR=${ALICE_ADDR:-trnm1alice...}
+BOB_ADDR=${BOB_ADDR:-trnm1bob...}
+RPC_URL=${RPC_URL:-http://127.0.0.1:8545}
+```
+
+### 2) 查询余额（balance）
+
+```bash
+curl -sS "$RPC_URL" -H 'content-type: application/json' -d "{
+  \"jsonrpc\":\"2.0\",
+  \"id\":1,
+  \"method\":\"balance\",
+  \"params\":{\"address\":\"$ALICE_ADDR\"}
+}"
+```
+
+### 3) 转账（nonce + sendTx）
+
+```bash
+# 先取 nonce
+NONCE=$(curl -sS "$RPC_URL" -H 'content-type: application/json' -d "{
+  \"jsonrpc\":\"2.0\",
+  \"id\":2,
+  \"method\":\"nonce\",
+  \"params\":{\"address\":\"$ALICE_ADDR\"}
+}" | jq -r '.result.nonce')
+
+# 发交易（signature 按你的 signer/钱包实现替换）
+TX_HASH=$(curl -sS "$RPC_URL" -H 'content-type: application/json' -d "{
+  \"jsonrpc\":\"2.0\",
+  \"id\":3,
+  \"method\":\"sendTx\",
+  \"params\":{
+    \"from\":\"$ALICE_ADDR\",
+    \"to\":\"$BOB_ADDR\",
+    \"amount\":\"1000000\",
+    \"denom\":\"utrnm\",
+    \"nonce\":$NONCE,
+    \"signature\":\"0x...\"
+  }
+}" | jq -r '.result.txHash')
+
+echo "tx_hash=$TX_HASH"
+```
+
+### 4) 查询交易（getTx）
+
+```bash
+curl -sS "$RPC_URL" -H 'content-type: application/json' -d "{
+  \"jsonrpc\":\"2.0\",
+  \"id\":4,
+  \"method\":\"getTx\",
+  \"params\":{\"txHash\":\"$TX_HASH\"}
+}"
+```
+
+### 通过标准
+- `balance` 返回账户与 `utrnm` 余额字段
+- `nonce` 返回可用 nonce 且为非负整数
+- `sendTx` 返回 `txHash`
+- `getTx` 最终状态为 `committed` / `success`（以实现返回字段为准）
+
 ## E2E Worker Runbook (Job -> Execute -> Commit)
 
 ### Prerequisites
