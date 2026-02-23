@@ -148,6 +148,16 @@ curl -sS "$RPC_URL" -H 'content-type: application/json' -d '{
 
 建议调用顺序：`balance -> nonce -> sendTx -> getTx`。
 
+## 🔎 Minimal Explorer（P1-4 #2）
+
+已提供本地最小浏览器（地址页/交易页/区块页）：
+
+```bash
+python3 scripts/min_explorer.py --host 127.0.0.1 --port 8090
+```
+
+使用说明见：`docs/product/min-explorer.md`
+
 ### Worker Receipt Gates (single entry)
 
 From repo root:
