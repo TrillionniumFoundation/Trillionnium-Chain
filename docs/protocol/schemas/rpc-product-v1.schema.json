@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "trnm/rpc-product-v1",
+  "title": "TRNM Product RPC v1",
+  "type": "object",
+  "definitions": {
+    "BalanceResponse": {
+      "type": "object",
+      "required": ["address", "balance", "version"],
+      "properties": {
+        "address": {"type": "string"},
+        "balance": {"type": "integer", "minimum": 0},
+        "version": {"type": "integer", "minimum": 1}
+      }
+    },
+    "NonceResponse": {
+      "type": "object",
+      "required": ["address", "nonce", "version"],
+      "properties": {
+        "address": {"type": "string"},
+        "nonce": {"type": "integer", "minimum": 0},
+        "version": {"type": "integer", "minimum": 1}
+      }
+    },
+    "SendTxResponse": {
+      "type": "object",
+      "required": ["tx_hash", "status"],
+      "properties": {
+        "tx_hash": {"type": "string"},
+        "status": {"type": "string", "enum": ["pending", "committed", "fail"]}
+      }
+    },
+    "GetTxResponse": {
+      "type": "object",
+      "required": ["tx_hash", "status", "error"],
+      "properties": {
+        "tx_hash": {"type": "string"},
+        "status": {"type": "string", "enum": ["pending", "committed", "fail"]},
+        "error": {"type": ["string", "null"]}
+      }
+    },
+    "RpcError": {
+      "type": "object",
+      "required": ["code", "message"],
+      "properties": {
+        "code": {"type": "string", "enum": ["INVALID_ADDRESS", "ACCOUNT_NOT_FOUND", "TX_NOT_FOUND"]},
+        "message": {"type": "string"}
+      }
+    }
+  }
+}
