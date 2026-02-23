@@ -240,6 +240,37 @@ done
 # 期望: 第3次出现 level=CRITICAL 且 escalated_from_warn=True
 ```
 
+## P11：Notification SLO 报表（24h / 7d）
+
+脚本：`scripts/v2/p11_notification_slo_report.py`
+
+产物：
+- `run/pr11/notification-slo.md`
+- `run/pr11/notification-slo.json`
+
+指标（每个窗口都输出）：
+- `sent_rate`
+- `suppressed_rate`
+- `failed_rate`
+- `p95_delivery_attempts`
+- `channel_split`（imessage/slack/telegram）
+
+执行：
+
+```bash
+python3 scripts/v2/p11_notification_slo_report.py \
+  --audit-file run/pr7-alert-delivery/audit.jsonl \
+  --dead-letter-file run/pr7-alert-delivery/dead-letter.jsonl \
+  --state-file run/pr7-alert-delivery/state.json \
+  --out run/pr11/notification-slo.md \
+  --json-out run/pr11/notification-slo.json
+```
+
+数据不足降级策略：
+- 优先使用 `audit.jsonl` + `dead-letter.jsonl` 计算 24h/7d 窗口。
+- 若窗口内无时间戳事件，但 `state.json` 有累计计数，则回退为累计计数（非窗口化），并在报告中标记 `degraded=true` 与 note。
+- 若缺少 attempts/成功投递样本，则 `p95_delivery_attempts` 或 `channel_split` 会显示不可用并附带 note。
+
 ## 排障
 
 - 出现 `dedup suppressed`：同指纹告警仍在去重窗口内，属预期
