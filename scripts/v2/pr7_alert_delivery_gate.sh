@@ -28,8 +28,12 @@ python3 "$ROOT/scripts/v2/pr7_alert_delivery.py" \
   --report "$REPORT" \
   --channel "${ALERT_NOTIFY_CHANNEL:-imessage}" \
   --state-file "${ALERT_NOTIFY_STATE_FILE:-$ROOT/run/pr7-alert-delivery/state.json}" \
+  --dead-letter-file "${ALERT_NOTIFY_DEAD_LETTER_FILE:-$ROOT/run/pr7-alert-delivery/dead-letter.jsonl}" \
   --dedup-seconds "${ALERT_NOTIFY_DEDUP_SECONDS:-1800}" \
   --min-level "${ALERT_NOTIFY_MIN_LEVEL:-WARN}" \
+  --max-retries "${ALERT_NOTIFY_MAX_RETRIES:-3}" \
+  --base-backoff-ms "${ALERT_NOTIFY_BASE_BACKOFF_MS:-500}" \
+  --max-backoff-ms "${ALERT_NOTIFY_MAX_BACKOFF_MS:-8000}" \
   "${DRY_RUN_ARG[@]}"
 pr7_rc=$?
 
