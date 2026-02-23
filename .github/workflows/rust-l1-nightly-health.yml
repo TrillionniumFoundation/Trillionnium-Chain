@@ -66,6 +66,19 @@ jobs:
           cd trillionnium-rust
           MVP_MODE=prod ALLOW_MISSING_RESOLVE_EVENT=0 ./scripts/check_event_fields.sh
 
+      - name: Validate PoUW timeout migration gates (hard gate)
+        run: |
+          set -euo pipefail
+          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+          ./scripts/v2/pouw_commit_timeout_migration_test.sh
+          ./scripts/v2/pouw_challenge_timeout_migration_test.sh
+
+      - name: Validate challenge bond enforcement gate (hard gate)
+        run: |
+          set -euo pipefail
+          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+          ./scripts/v2/challenge_bond_enforcement_test.sh
+
       - name: Validate parallel flaky streak (hard gate)
         run: |
           set -euo pipefail
