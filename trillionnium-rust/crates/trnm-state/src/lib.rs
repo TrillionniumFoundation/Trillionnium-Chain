@@ -57,6 +57,52 @@ impl WalMeta {
     }
 }
 
+fn parse_u64_in_range(key: &str, value: &str, min: u64, max: u64) -> Result<u64, String> {
+    let parsed = value
+        .parse::<u64>()
+        .map_err(|_| format!("invalid governance value for {}: expected u64, got '{}'", key, value))?;
+    if parsed < min || parsed > max {
+        return Err(format!(
+            "invalid governance value for {}: out of range [{}..={}], got {}",
+            key, min, max, parsed
+        ));
+    }
+    Ok(parsed)
+}
+
+fn parse_bool_strict(key: &str, value: &str) -> Result<bool, String> {
+    match value {
+        "true" => Ok(true),
+        "false" => Ok(false),
+        _ => Err(format!(
+            "invalid governance value for {}: expected strict bool 'true' or 'false', got '{}'",
+            key, value
+        )),
+    }
+}
+
+fn validate_gov_param_value(key: &str, value: &str) -> Result<(), String> {
+    match key {
+        "max_block_ms" => {
+            let _ = parse_u64_in_range(key, value, 10, 120_000)?;
+            Ok(())
+        }
+        "challenge_window_blocks" => {
+            let _ = parse_u64_in_range(key, value, 100, 600)?;
+            Ok(())
+        }
+        "min_worker_stake" => {
+            let _ = parse_u64_in_range(key, value, 1, 1_000_000_000_000)?;
+            Ok(())
+        }
+        "emergency_pause" => {
+            let _ = parse_bool_strict(key, value)?;
+            Ok(())
+        }
+        _ => Ok(()),
+    }
+}
+
 impl StateStore {
     pub fn new() -> Self {
         Self::default()
@@ -227,6 +273,8 @@ impl StateStore {
         if !ALLOWED_KEYS.contains(&key.as_str()) {
             return Err(format!("governance key not allowed: {}", key));
         }
+
+        validate_gov_param_value(&key, &value)?;
 
         if let Some(current) = self.objects.get(&key_id) {
             let new_version = current.version + 1;
@@ -435,6 +483,46 @@ mod tests {
             .set_gov_param(7002, "forbidden_key".into(), "1".into())
             .unwrap_err();
         assert!(err.contains("not allowed"));
+    }
+
+    #[test]
+    fn governance_param_schema_rejects_invalid_u64_values() {
+        let mut st = StateStore::new();
+
+        let err = st
+            .set_gov_param(7101, "max_block_ms".into(), "abc".into())
+            .unwrap_err();
+        assert!(err.contains("expected u64"));
+
+        let err = st
+            .set_gov_param(7102, "challenge_window_blocks".into(), "99".into())
+            .unwrap_err();
+        assert!(err.contains("out of range"));
+
+        let err = st
+            .set_gov_param(7103, "min_worker_stake".into(), "0".into())
+            .unwrap_err();
+        assert!(err.contains("out of range"));
+    }
+
+    #[test]
+    fn emergency_pause_requires_strict_bool_literal() {
+        let mut st = StateStore::new();
+
+        for bad in ["TRUE", "False", "1", "yes"] {
+            let err = st
+                .set_gov_param(7200, "emergency_pause".into(), bad.into())
+                .unwrap_err();
+            assert!(err.contains("strict bool"));
+        }
+
+        st.set_gov_param(7200, "emergency_pause".into(), "true".into())
+            .unwrap();
+        assert!(st.is_emergency_paused());
+
+        st.set_gov_param(7200, "emergency_pause".into(), "false".into())
+            .unwrap();
+        assert!(!st.is_emergency_paused());
     }
 
     #[test]

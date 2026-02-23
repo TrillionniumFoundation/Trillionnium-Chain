@@ -246,6 +246,23 @@ TRNM_TX_CLI=./scripts/v2/trnm_tx_cli_real_adapter.sh ./scripts/v2/run_worker_rec
 - 规范：`docs/protocol/worker-real-tx-cli-adapter-spec.md`
 - 模板：`scripts/v2/trnm_tx_cli_real_adapter.template.sh`
 
+### PR-1 安全补丁配套门禁（Tests-Docs）
+
+在仓库根目录执行：
+
+```bash
+./scripts/v2/rpc_query_hardcap_enforcement_test.sh
+./scripts/v2/governance_value_schema_reject_test.sh
+./scripts/v2/worker_real_cli_fake_wrapper_block_test.sh
+```
+
+门禁说明：
+- `rpc_query_hardcap_enforcement_test.sh`：验证 RPC 查询 hard cap 的 clamp 逻辑（超限被截断、0 回落默认值）。
+- `governance_value_schema_reject_test.sh`：验证治理参数 value schema（非法 u64 / 非严格 bool）会被拒绝。
+- `worker_real_cli_fake_wrapper_block_test.sh`：验证 fake wrapper 在 strict real-cli gate 下会被拦截（必须非 0 退出）。
+
+建议将以上三项与 `run_worker_receipt_gates_real_cli.sh` 组合为 PR-1 最小验收集。
+
 ## Agent↔User P2P Phase A（MVP）
 
 文档入口：`docs/protocol/agent-user-p2p-phaseA-ops.md`

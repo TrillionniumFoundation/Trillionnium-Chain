@@ -20,7 +20,8 @@ TX_BIN="${TRNM_TX_BIN:-chaind}"
 # Optional full command overrides (recommended when chain module path differs):
 # - TRNM_TX_COMMIT_CMD
 # - TRNM_TX_REVEAL_CMD
-# Placeholders supported: {task_id} {worker} {commit_hash} {nonce} {result_hash} {salt_hex}
+# - TRNM_TX_QUERY_CMD
+# Placeholders supported: {task_id} {worker} {commit_hash} {nonce} {result_hash} {salt_hex} {tx_hash}
 
 usage() {
   cat <<'EOF'
@@ -30,11 +31,12 @@ Usage:
   tx --help
   tx commit-result <task_id> <worker> <commit_hash> <nonce>
   tx reveal-result <task_id> <result_hash> <salt_hex>
+  tx query <tx_hash>
 
 Env:
   TRNM_TX_BIN, TRNM_RPC, TRNM_CHAIN_ID, TRNM_KEY_NAME, TRNM_KEYRING_BACKEND
   TRNM_GAS, TRNM_GAS_ADJUSTMENT, TRNM_FEES, TRNM_BROADCAST_MODE
-  TRNM_TX_COMMIT_CMD, TRNM_TX_REVEAL_CMD
+  TRNM_TX_COMMIT_CMD, TRNM_TX_REVEAL_CMD, TRNM_TX_QUERY_CMD
 EOF
 }
 
@@ -116,6 +118,38 @@ case "$sub" in
       cmd="$TX_BIN tx pouw reveal-result $task_id $result_hash $salt_hex --from $KEY_NAME --keyring-backend $KEYRING --chain-id $CHAIN_ID --node $RPC --gas $GAS --gas-adjustment $GAS_ADJ --fees $FEES --broadcast-mode $BROADCAST_MODE -y"
     fi
     run_cmd "$cmd"
+    ;;
+  query)
+    tx_hash="${3:-}"
+    [[ -n "$tx_hash" ]] || { echo "invalid args" >&2; exit 2; }
+
+    if [[ -n "${TRNM_TX_QUERY_CMD:-}" ]]; then
+      cmd="$TRNM_TX_QUERY_CMD"
+      cmd="${cmd//\{tx_hash\}/$tx_hash}"
+    else
+      cmd="$TX_BIN query tx $tx_hash --node $RPC --output json"
+    fi
+
+    set +e
+    out=$(bash -lc "$cmd" 2>&1)
+    rc=$?
+    set -e
+    if [[ $rc -ne 0 ]]; then
+      echo "$out" >&2
+      exit $rc
+    fi
+
+    seen_hash=$(printf "%s" "$out" | sed -n 's/.*"txhash"[[:space:]]*:[[:space:]]*"\([0-9A-Fa-f]\{16,128\}\)".*/\1/p' | head -n1 || true)
+    if [[ -z "$seen_hash" ]]; then
+      seen_hash=$(printf "%s" "$out" | sed -n 's/.*tx_hash[[:space:]]*[:=][[:space:]]*\([0-9A-Fa-f]\{16,128\}\).*/\1/p' | head -n1 || true)
+    fi
+    status=$(printf "%s" "$out" | sed -n 's/.*"status"[[:space:]]*:[[:space:]]*"\([^"]\+\)".*/\1/p' | head -n1 || true)
+    if [[ -z "$status" ]]; then
+      status="committed"
+    fi
+
+    echo "tx_hash=${seen_hash:-$tx_hash}"
+    echo "status=$status"
     ;;
   *)
     echo "unknown tx subcommand: $sub" >&2

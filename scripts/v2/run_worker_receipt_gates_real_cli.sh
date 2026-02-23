@@ -4,7 +4,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 cd "$ROOT"
 
-: "${TRNM_TX_CLI:=trnm-node}"
+: "${TRNM_TX_CLI:=trnm-cli}"
 
 # normalize local relative script path to absolute to survive cwd switches in sub-scripts
 if [[ "$TRNM_TX_CLI" == ./* || "$TRNM_TX_CLI" == scripts/* ]]; then

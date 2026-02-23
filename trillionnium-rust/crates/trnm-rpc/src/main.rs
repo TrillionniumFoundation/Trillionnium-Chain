@@ -22,6 +22,13 @@ use trnm_types::{
     GovParamObject, GovProposalObject, GovProposalStatus, RequestStatus, TaskStatus, TransferTx,
 };
 
+const QUERY_EVENTS_LIMIT_DEFAULT: usize = 100;
+const QUERY_EVENTS_LIMIT_MAX: usize = 500;
+const QUERY_FULL_LIMIT_DEFAULT: usize = 50;
+const QUERY_FULL_LIMIT_MAX: usize = 200;
+const DISPATCH_OPEN_LIMIT_DEFAULT: usize = 20;
+const DISPATCH_OPEN_LIMIT_MAX: usize = 100;
+
 #[derive(Debug, Parser)]
 #[command(
     name = "trnm-rpc",
@@ -46,6 +53,8 @@ enum Command {
     },
     QueryEvents {
         task_id: u64,
+        #[arg(long, default_value_t = QUERY_EVENTS_LIMIT_DEFAULT)]
+        limit: usize,
     },
     QueryBalance {
         address: String,
@@ -96,11 +105,13 @@ enum Command {
     QueryRequestFull {
         #[arg(long)]
         request_id: String,
+        #[arg(long, default_value_t = QUERY_FULL_LIMIT_DEFAULT)]
+        limit: usize,
     },
     DispatchOpen {
         #[arg(long, default_value = "worker-1")]
         worker_id: String,
-        #[arg(long, default_value_t = 10)]
+        #[arg(long, default_value_t = DISPATCH_OPEN_LIMIT_DEFAULT)]
         limit: usize,
     },
     /// Run minimal RPC health server for service mode
@@ -454,6 +465,24 @@ fn rpc_fail(err: RpcErrorResponse) -> anyhow::Error {
     anyhow::anyhow!(body)
 }
 
+fn clamp_limit(op: &str, requested: usize, default_limit: usize, max_limit: usize) -> usize {
+    if requested == 0 {
+        eprintln!(
+            "[trnm-rpc][warn][RPC_CAP] op={} requested_limit=0 fallback_default={} max={}",
+            op, default_limit, max_limit
+        );
+        return default_limit;
+    }
+    if requested > max_limit {
+        eprintln!(
+            "[trnm-rpc][warn][RPC_CAP] op={} requested_limit={} clamped_limit={} max={}",
+            op, requested, max_limit, max_limit
+        );
+        return max_limit;
+    }
+    requested
+}
+
 fn serve_health(host: &str, port: u16) -> Result<()> {
     let addr = format!("{}:{}", host, port);
     let listener = TcpListener::bind(&addr)?;
@@ -610,7 +639,13 @@ fn main() -> Result<()> {
             };
             println!("{}", serde_json::to_string_pretty(&out)?);
         }
-        Command::QueryEvents { task_id } => {
+        Command::QueryEvents { task_id, limit } => {
+            let limit = clamp_limit(
+                "QueryEvents",
+                limit,
+                QUERY_EVENTS_LIMIT_DEFAULT,
+                QUERY_EVENTS_LIMIT_MAX,
+            );
             let mut events = Vec::new();
 
             for e in node_events.iter().filter(|e| e.task_id == task_id) {
@@ -663,6 +698,10 @@ fn main() -> Result<()> {
 
             if events.is_empty() {
                 bail!("events not found for task_id={}", task_id);
+            }
+            if events.len() > limit {
+                let keep_from = events.len() - limit;
+                events = events.split_off(keep_from);
             }
             println!("{}", serde_json::to_string_pretty(&events)?);
         }
@@ -920,7 +959,13 @@ fn main() -> Result<()> {
             };
             println!("{}", serde_json::to_string_pretty(&out)?);
         }
-        Command::QueryRequestFull { request_id } => {
+        Command::QueryRequestFull { request_id, limit } => {
+            let limit = clamp_limit(
+                "QueryRequestFull",
+                limit,
+                QUERY_FULL_LIMIT_DEFAULT,
+                QUERY_FULL_LIMIT_MAX,
+            );
             let records = load_ingress_records();
             let Some(rec) = records
                 .into_iter()
@@ -945,6 +990,11 @@ fn main() -> Result<()> {
                 });
             }
 
+            if events.len() > limit {
+                let keep_from = events.len() - limit;
+                events = events.split_off(keep_from);
+            }
+
             let out = RequestFullQueryResponse {
                 request: MessageRequestQueryResponse {
                     request_id: rec.request_id,
@@ -967,6 +1017,12 @@ fn main() -> Result<()> {
             println!("{}", serde_json::to_string_pretty(&out)?);
         }
         Command::DispatchOpen { worker_id, limit } => {
+            let limit = clamp_limit(
+                "DispatchOpen",
+                limit,
+                DISPATCH_OPEN_LIMIT_DEFAULT,
+                DISPATCH_OPEN_LIMIT_MAX,
+            );
             let mut records = load_ingress_records();
             let mut assigned = Vec::<MessageRequestQueryResponse>::new();
             let ts = now_ms();
@@ -1002,4 +1058,42 @@ fn main() -> Result<()> {
     }
 
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn clamp_limit_enforces_max() {
+        let got = clamp_limit(
+            "QueryEvents",
+            QUERY_EVENTS_LIMIT_MAX + 1,
+            QUERY_EVENTS_LIMIT_DEFAULT,
+            QUERY_EVENTS_LIMIT_MAX,
+        );
+        assert_eq!(got, QUERY_EVENTS_LIMIT_MAX);
+    }
+
+    #[test]
+    fn clamp_limit_uses_default_when_zero() {
+        let got = clamp_limit(
+            "DispatchOpen",
+            0,
+            DISPATCH_OPEN_LIMIT_DEFAULT,
+            DISPATCH_OPEN_LIMIT_MAX,
+        );
+        assert_eq!(got, DISPATCH_OPEN_LIMIT_DEFAULT);
+    }
+
+    #[test]
+    fn clamp_limit_keeps_in_range_value() {
+        let got = clamp_limit(
+            "QueryRequestFull",
+            17,
+            QUERY_FULL_LIMIT_DEFAULT,
+            QUERY_FULL_LIMIT_MAX,
+        );
+        assert_eq!(got, 17);
+    }
 }
