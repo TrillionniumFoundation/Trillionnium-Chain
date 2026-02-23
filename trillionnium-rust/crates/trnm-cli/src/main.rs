@@ -278,6 +278,60 @@ fn tpl(mut s: String, key: &str, val: &str) -> String {
     s
 }
 
+fn default_tx_state_file() -> PathBuf {
+    if let Ok(path) = std::env::var("TRNM_RPC_TX_FILE") {
+        return PathBuf::from(path);
+    }
+    PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .and_then(|p| p.parent())
+        .map(|p| p.join("run/rpc/txs.json"))
+        .unwrap_or_else(|| PathBuf::from("run/rpc/txs.json"))
+}
+
+fn query_local_tx_status(tx_hash: &str) -> Option<String> {
+    let path = default_tx_state_file();
+    let raw = fs::read_to_string(path).ok()?;
+    let v: serde_json::Value = serde_json::from_str(&raw).ok()?;
+    let rec = v.get(tx_hash)?;
+    rec.get("status")
+        .and_then(|s| s.as_str())
+        .map(|s| s.to_string())
+}
+
+fn persist_local_pending_tx(tx_hash: &str) -> Result<()> {
+    let path = default_tx_state_file();
+    if let Some(parent) = path.parent() {
+        fs::create_dir_all(parent)?;
+    }
+
+    let mut root: serde_json::Map<String, serde_json::Value> =
+        if let Ok(raw) = fs::read_to_string(&path) {
+            serde_json::from_str(&raw).unwrap_or_default()
+        } else {
+            serde_json::Map::new()
+        };
+
+    let now_ms = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map(|d| d.as_millis())
+        .unwrap_or(0);
+
+    root.insert(
+        tx_hash.to_string(),
+        serde_json::json!({
+            "tx_hash": tx_hash,
+            "status": "pending",
+            "error": null,
+            "submitted_at_unix_ms": now_ms,
+            "updated_at_unix_ms": now_ms
+        }),
+    );
+
+    fs::write(path, serde_json::to_string_pretty(&root)?)?;
+    Ok(())
+}
+
 fn wallet_create(name: String, out: Option<PathBuf>) -> Result<()> {
     let store = out.unwrap_or_else(default_wallet_store);
     let priv_hex = random_priv_hex()?;
@@ -362,8 +416,9 @@ fn main() -> Result<()> {
                     println!("tx_hash={}", tx_hash);
                     println!("status=confirmed");
                 } else {
+                    let status = query_local_tx_status(&tx_hash).unwrap_or_else(|| "unknown".into());
                     println!("tx_hash={}", tx_hash);
-                    println!("status=unknown");
+                    println!("status={}", status);
                 }
             }
             TxCommand::Transfer {
@@ -403,9 +458,10 @@ fn main() -> Result<()> {
                         &req.amount,
                         &req.denom,
                     ]);
+                    persist_local_pending_tx(&tx_hash)?;
                     let out = TransferTxResponse {
                         tx_hash,
-                        status: "simulated".into(),
+                        status: "pending".into(),
                     };
                     println!("{}", serde_json::to_string_pretty(&out)?);
                 }
