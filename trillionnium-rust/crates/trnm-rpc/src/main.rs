@@ -28,6 +28,10 @@ const QUERY_FULL_LIMIT_DEFAULT: usize = 50;
 const QUERY_FULL_LIMIT_MAX: usize = 200;
 const DISPATCH_OPEN_LIMIT_DEFAULT: usize = 20;
 const DISPATCH_OPEN_LIMIT_MAX: usize = 100;
+const CHALLENGE_TREASURY_EVENTS_LIMIT_DEFAULT: usize = 20;
+const CHALLENGE_TREASURY_EVENTS_LIMIT_MAX: usize = 200;
+const CHALLENGE_ESCROW_ACCOUNT: &str = "treasury.challenge_escrow";
+const CHALLENGE_FORFEIT_TREASURY_ACCOUNT: &str = "treasury.challenge_forfeits";
 
 #[derive(Debug, Parser)]
 #[command(
@@ -54,6 +58,11 @@ enum Command {
     QueryEvents {
         task_id: u64,
         #[arg(long, default_value_t = QUERY_EVENTS_LIMIT_DEFAULT)]
+        limit: usize,
+    },
+    /// Query challenge treasury/forfeits current summary and recent related events
+    QueryChallengeTreasury {
+        #[arg(long, default_value_t = CHALLENGE_TREASURY_EVENTS_LIMIT_DEFAULT)]
         limit: usize,
     },
     QueryBalance {
@@ -182,6 +191,31 @@ struct NodeEventRecord {
     treasury_delta: Option<i128>,
     challenger_delta: Option<i128>,
     bond_disposition: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct ChallengeTreasuryEventView {
+    event_type: String,
+    task_id: u64,
+    tx_id: u64,
+    block_height: u64,
+    ts_unix_ms: u128,
+    challenger: Option<String>,
+    bond_disposition: Option<String>,
+    bond_amount: u128,
+    escrow_delta: i128,
+    forfeits_delta: u128,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct ChallengeTreasuryQueryResponse {
+    challenge_escrow_account: String,
+    challenge_forfeits_account: String,
+    current_escrow_balance: u128,
+    current_forfeits_balance: u128,
+    cumulative_forfeited: u128,
+    events_total: usize,
+    events: Vec<ChallengeTreasuryEventView>,
 }
 
 fn load_latest_adapter_records() -> Vec<AdapterRecord> {
@@ -518,6 +552,94 @@ fn clamp_limit(op: &str, requested: usize, default_limit: usize, max_limit: usiz
     requested
 }
 
+fn summarize_challenge_treasury(
+    node_events: &[NodeEventRecord],
+    limit: usize,
+) -> ChallengeTreasuryQueryResponse {
+    let mut related: Vec<&NodeEventRecord> = node_events
+        .iter()
+        .filter(|e| {
+            e.event_type == "challenge"
+                || (e.event_type == "resolve"
+                    && matches!(e.bond_disposition.as_deref(), Some("forfeited") | Some("refunded")))
+        })
+        .collect();
+
+    related.sort_by_key(|e| (e.block_height, e.tx_id, e.ts_unix_ms));
+
+    let mut posted_by_task = BTreeMap::<u64, u128>::new();
+    let mut escrow_balance: u128 = 0;
+    let mut forfeits_balance: u128 = 0;
+    let mut cumulative_forfeited: u128 = 0;
+
+    let mut views = Vec::new();
+    for e in &related {
+        let mut bond_amount: u128 = 0;
+        let mut escrow_delta: i128 = 0;
+        let mut forfeits_delta: u128 = 0;
+
+        match e.event_type.as_str() {
+            "challenge" => {
+                bond_amount = e
+                    .challenger_delta
+                    .and_then(|v| u128::try_from(v.saturating_abs()).ok())
+                    .unwrap_or(0);
+                posted_by_task.insert(e.task_id, bond_amount);
+                escrow_balance = escrow_balance.saturating_add(bond_amount);
+                escrow_delta = i128::try_from(bond_amount).ok().unwrap_or(i128::MAX);
+            }
+            "resolve" => {
+                let maybe_bond = posted_by_task.remove(&e.task_id).unwrap_or(0);
+                bond_amount = maybe_bond;
+                match e.bond_disposition.as_deref() {
+                    Some("forfeited") => {
+                        escrow_balance = escrow_balance.saturating_sub(maybe_bond);
+                        forfeits_balance = forfeits_balance.saturating_add(maybe_bond);
+                        cumulative_forfeited = cumulative_forfeited.saturating_add(maybe_bond);
+                        escrow_delta = -i128::try_from(maybe_bond).ok().unwrap_or(i128::MAX);
+                        forfeits_delta = maybe_bond;
+                    }
+                    Some("refunded") => {
+                        escrow_balance = escrow_balance.saturating_sub(maybe_bond);
+                        escrow_delta = -i128::try_from(maybe_bond).ok().unwrap_or(i128::MAX);
+                    }
+                    _ => {}
+                }
+            }
+            _ => {}
+        }
+
+        views.push(ChallengeTreasuryEventView {
+            event_type: e.event_type.clone(),
+            task_id: e.task_id,
+            tx_id: e.tx_id,
+            block_height: e.block_height,
+            ts_unix_ms: e.ts_unix_ms,
+            challenger: e.challenger.clone(),
+            bond_disposition: e.bond_disposition.clone(),
+            bond_amount,
+            escrow_delta,
+            forfeits_delta,
+        });
+    }
+
+    let events_total = views.len();
+    if views.len() > limit {
+        let keep_from = views.len() - limit;
+        views = views.split_off(keep_from);
+    }
+
+    ChallengeTreasuryQueryResponse {
+        challenge_escrow_account: CHALLENGE_ESCROW_ACCOUNT.to_string(),
+        challenge_forfeits_account: CHALLENGE_FORFEIT_TREASURY_ACCOUNT.to_string(),
+        current_escrow_balance: escrow_balance,
+        current_forfeits_balance: forfeits_balance,
+        cumulative_forfeited,
+        events_total,
+        events: views,
+    }
+}
+
 fn serve_health(host: &str, port: u16) -> Result<()> {
     let addr = format!("{}:{}", host, port);
     let listener = TcpListener::bind(&addr)?;
@@ -755,6 +877,16 @@ fn main() -> Result<()> {
                 events = events.split_off(keep_from);
             }
             println!("{}", serde_json::to_string_pretty(&events)?);
+        }
+        Command::QueryChallengeTreasury { limit } => {
+            let limit = clamp_limit(
+                "QueryChallengeTreasury",
+                limit,
+                CHALLENGE_TREASURY_EVENTS_LIMIT_DEFAULT,
+                CHALLENGE_TREASURY_EVENTS_LIMIT_MAX,
+            );
+            let out = summarize_challenge_treasury(&node_events, limit);
+            println!("{}", serde_json::to_string_pretty(&out)?);
         }
         Command::QueryBalance { address } => {
             let accounts = load_account_state(&account_state_file());
@@ -1167,5 +1299,140 @@ mod tests {
             QUERY_FULL_LIMIT_MAX,
         );
         assert_eq!(got, 17);
+    }
+
+    #[test]
+    fn summarize_challenge_treasury_tracks_balances_and_forfeits() {
+        let events = vec![
+            NodeEventRecord {
+                event_type: "challenge".into(),
+                task_id: 1001,
+                from_status: "Revealed".into(),
+                to_status: "Challenged".into(),
+                actor: "challenger-a".into(),
+                tx_id: 1,
+                block_height: 10,
+                state_root: "s1".into(),
+                ts_unix_ms: 100,
+                signer: Some("challenger-a".into()),
+                challenger: Some("challenger-a".into()),
+                tx_hash: Some("0x01".into()),
+                resolution_code: None,
+                treasury_delta: Some(0),
+                challenger_delta: Some(-10),
+                bond_disposition: Some("posted".into()),
+            },
+            NodeEventRecord {
+                event_type: "resolve".into(),
+                task_id: 1001,
+                from_status: "Challenged".into(),
+                to_status: "Completed".into(),
+                actor: "validator".into(),
+                tx_id: 2,
+                block_height: 11,
+                state_root: "s2".into(),
+                ts_unix_ms: 120,
+                signer: Some("validator".into()),
+                challenger: Some("challenger-a".into()),
+                tx_hash: Some("0x02".into()),
+                resolution_code: Some("completed".into()),
+                treasury_delta: Some(0),
+                challenger_delta: Some(0),
+                bond_disposition: Some("forfeited".into()),
+            },
+            NodeEventRecord {
+                event_type: "challenge".into(),
+                task_id: 1002,
+                from_status: "Revealed".into(),
+                to_status: "Challenged".into(),
+                actor: "challenger-b".into(),
+                tx_id: 3,
+                block_height: 12,
+                state_root: "s3".into(),
+                ts_unix_ms: 140,
+                signer: Some("challenger-b".into()),
+                challenger: Some("challenger-b".into()),
+                tx_hash: Some("0x03".into()),
+                resolution_code: None,
+                treasury_delta: Some(0),
+                challenger_delta: Some(-7),
+                bond_disposition: Some("posted".into()),
+            },
+            NodeEventRecord {
+                event_type: "resolve".into(),
+                task_id: 1002,
+                from_status: "Challenged".into(),
+                to_status: "Slashed".into(),
+                actor: "validator".into(),
+                tx_id: 4,
+                block_height: 13,
+                state_root: "s4".into(),
+                ts_unix_ms: 160,
+                signer: Some("validator".into()),
+                challenger: Some("challenger-b".into()),
+                tx_hash: Some("0x04".into()),
+                resolution_code: Some("slashed".into()),
+                treasury_delta: Some(0),
+                challenger_delta: Some(7),
+                bond_disposition: Some("refunded".into()),
+            },
+        ];
+
+        let out = summarize_challenge_treasury(&events, 10);
+        assert_eq!(out.current_escrow_balance, 0);
+        assert_eq!(out.current_forfeits_balance, 10);
+        assert_eq!(out.cumulative_forfeited, 10);
+        assert_eq!(out.events_total, 4);
+        assert_eq!(out.events.len(), 4);
+        assert_eq!(out.events[1].forfeits_delta, 10);
+        assert_eq!(out.events[3].forfeits_delta, 0);
+    }
+
+    #[test]
+    fn summarize_challenge_treasury_limit_keeps_recent() {
+        let events = vec![
+            NodeEventRecord {
+                event_type: "challenge".into(),
+                task_id: 1,
+                from_status: "Revealed".into(),
+                to_status: "Challenged".into(),
+                actor: "c1".into(),
+                tx_id: 1,
+                block_height: 1,
+                state_root: "a".into(),
+                ts_unix_ms: 1,
+                signer: None,
+                challenger: Some("c1".into()),
+                tx_hash: None,
+                resolution_code: None,
+                treasury_delta: Some(0),
+                challenger_delta: Some(-3),
+                bond_disposition: Some("posted".into()),
+            },
+            NodeEventRecord {
+                event_type: "challenge".into(),
+                task_id: 2,
+                from_status: "Revealed".into(),
+                to_status: "Challenged".into(),
+                actor: "c2".into(),
+                tx_id: 2,
+                block_height: 2,
+                state_root: "b".into(),
+                ts_unix_ms: 2,
+                signer: None,
+                challenger: Some("c2".into()),
+                tx_hash: None,
+                resolution_code: None,
+                treasury_delta: Some(0),
+                challenger_delta: Some(-4),
+                bond_disposition: Some("posted".into()),
+            },
+        ];
+
+        let out = summarize_challenge_treasury(&events, 1);
+        assert_eq!(out.events_total, 2);
+        assert_eq!(out.events.len(), 1);
+        assert_eq!(out.events[0].task_id, 2);
+        assert_eq!(out.current_escrow_balance, 7);
     }
 }

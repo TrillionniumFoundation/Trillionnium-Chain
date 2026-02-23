@@ -64,6 +64,12 @@ jobs:
           cd trillionnium-rust
           MVP_MODE=prod ALLOW_MISSING_RESOLVE_EVENT=0 ./scripts/check_event_fields.sh
 
+      - name: Challenge escrow/forfeit reconcile (hard gate)
+        run: |
+          set -euo pipefail
+          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+          ./scripts/v2/pr5_challenge_reconcile_gate.sh
+
       - name: Validate PoUW timeout migration gates (hard gate)
         run: |
           set -euo pipefail

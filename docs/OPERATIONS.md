@@ -235,6 +235,53 @@ CI：
 - [ ] 返还路径测试通过（refund）
 - [ ] resolve 事件审计字段全部可见
 
+## PR-5 运维查询与对账（Challenge Treasury / Forfeits）
+
+### 1) 快速查询（按 task）
+
+在 `trillionnium-rust/` 下执行：
+
+```bash
+cargo run -q -p trnm-rpc -- query-events --task-id <TASK_ID> --limit 100
+```
+
+重点关注字段：
+- `event_type`（challenge / resolve）
+- `treasury_delta`
+- `challenger_delta`
+- `bond_disposition`（posted / forfeited / refunded）
+- `resolution_code`
+
+### 2) 每日对账（日志聚合）
+
+在仓库根目录执行：
+
+```bash
+./scripts/v2/pr5_treasury_reconcile_report.sh
+```
+
+默认输入优先级：
+1. `trillionnium-rust/run/event-field-check.log`
+2. `trillionnium-rust/run/parallel-sanity.log`
+3. `trillionnium-rust/run/node1.log` / `node2.log` / `node3.log`
+
+输出：
+- `run/pr5-reconcile/<timestamp>/summary.txt`
+- `run/pr5-reconcile/<timestamp>/reconcile.json`
+
+可选环境变量：
+- `SOURCE_LOG=<path>`：指定输入日志
+- `OUT_DIR=<path>`：指定输出目录
+
+### 3) PR-5 验收清单
+
+- [ ] `query-events` 可查到 `challenge/resolve` 事件
+- [ ] 事件返回包含 `treasury_delta/challenger_delta/bond_disposition`
+- [ ] 对账脚本成功输出 `summary.txt`
+- [ ] `summary.txt` 中 `status=PASS`
+
+Runbook：`docs/runbooks/pr5-challenge-treasury-reconcile.md`
+
 ## 一键回滚（Phase A）
 
 仓库根目录提供回滚脚本：`scripts/rollback_phasea.sh`

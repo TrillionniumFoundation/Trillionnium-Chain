@@ -13,3 +13,4 @@
 - Repo layout: `architecture/rust-l1-repo-layout.md`
 - PoUW sequence: `architecture/rust-l1-pouw-sequence.md`
 - v1 interface freeze: `protocol/rust-l1-v1-interface-freeze.md`
+- PR-5 challenge treasury 对账 runbook: `runbooks/pr5-challenge-treasury-reconcile.md`

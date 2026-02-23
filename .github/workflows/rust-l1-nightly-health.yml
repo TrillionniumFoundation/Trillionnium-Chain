@@ -340,6 +340,13 @@ jobs:
             } >> "${GITHUB_STEP_SUMMARY}"
           fi
 
+      - name: PR-5 treasury reconcile report (non-gate)
+        if: always()
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          ./scripts/v2/pr5_treasury_reconcile_report.sh
+
       - name: Upload nightly health artifacts
         if: always()
         uses: actions/upload-artifact@v4
@@ -359,6 +366,7 @@ jobs:
             trillionnium-rust/run/bft-restart-recovery-*.txt
             trillionnium-rust/run/bft-restart-*.log
             trillionnium-rust/run/consensus-wal-restart-*/**
+            run/pr5-reconcile/**
             data/reexec-smoke/**
             data/reexec-bundles/**
             data/worker-onboard/**
