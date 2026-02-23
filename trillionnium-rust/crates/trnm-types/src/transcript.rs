@@ -135,7 +135,8 @@ pub fn transcript_segment_proof(
     end_seq: u64,
     target_seq: u64,
 ) -> Result<(Hash32, TranscriptProof), TranscriptError> {
-    let (root, mut proofs) = transcript_segment_proofs(envelopes, start_seq, end_seq, &[target_seq])?;
+    let (root, mut proofs) =
+        transcript_segment_proofs(envelopes, start_seq, end_seq, &[target_seq])?;
     Ok((root, proofs.remove(0)))
 }
 
@@ -249,7 +250,11 @@ fn build_merkle_levels(leaves: Vec<Hash32>) -> Vec<Vec<Hash32>> {
         let mut i = 0;
         while i < prev.len() {
             let left = prev[i];
-            let right = if i + 1 < prev.len() { prev[i + 1] } else { left };
+            let right = if i + 1 < prev.len() {
+                prev[i + 1]
+            } else {
+                left
+            };
             next.push(hash_pair(&left, &right));
             i += 2;
         }

@@ -13,10 +13,10 @@ use std::{
 use trnm_executor::build_parallel_groups;
 use trnm_pouw::{
     apply_accept_task, apply_challenge, apply_commit_result, apply_create_task, apply_resolve,
-    apply_reveal_result,
+    apply_reveal_result, apply_timeout,
 };
 use trnm_state::{verify_wal_and_find_checkpoint, CheckpointMeta, StateStore, WalMeta};
-use trnm_types::{Hash32, ObjectRef, Tx};
+use trnm_types::{Hash32, ObjectRef, TaskStatus, Tx};
 
 #[derive(Debug, Parser)]
 #[command(
@@ -70,6 +70,12 @@ struct Args {
     /// Write one checkpoint metadata every N committed blocks
     #[arg(long, default_value_t = 5)]
     bft_checkpoint_interval: u64,
+    /// Enable PoUW timeout scanner in block loop (rollback switch)
+    #[arg(long, default_value_t = true)]
+    pouw_timeout_scan: bool,
+    /// Run timeout scanner every N committed blocks (1 = every block)
+    #[arg(long, default_value_t = 1)]
+    pouw_timeout_scan_every_blocks: u64,
 }
 
 #[derive(Debug, Deserialize)]
@@ -102,6 +108,7 @@ enum MockTx {
     },
     Challenge {
         task_id: u64,
+        challenger: String,
         bond: u128,
     },
     Resolve {
@@ -220,10 +227,10 @@ fn load_wal_meta_entries(wal_dir: &Path) -> Result<Vec<WalMeta>> {
     if !f.exists() {
         return Ok(vec![]);
     }
-    let raw = fs::read_to_string(&f)
-        .with_context(|| format!("read wal meta failed: {}", f.display()))?;
-    let list: WalMetaList = toml::from_str(&raw)
-        .with_context(|| format!("parse wal meta failed: {}", f.display()))?;
+    let raw =
+        fs::read_to_string(&f).with_context(|| format!("read wal meta failed: {}", f.display()))?;
+    let list: WalMetaList =
+        toml::from_str(&raw).with_context(|| format!("parse wal meta failed: {}", f.display()))?;
     Ok(list.entries)
 }
 
@@ -271,8 +278,8 @@ fn persist_consensus_wal(wal_dir: &Path, wal: &ConsensusWal) -> Result<()> {
 fn recover_wal_state(wal_dir: &Path) -> Result<RecoveredWalState> {
     let entries = load_wal_meta_entries(wal_dir)?;
     let checkpoints = load_checkpoint_meta(wal_dir)?;
-    let last_checkpoint = verify_wal_and_find_checkpoint(&checkpoints, &entries)
-        .map_err(anyhow::Error::msg)?;
+    let last_checkpoint =
+        verify_wal_and_find_checkpoint(&checkpoints, &entries).map_err(anyhow::Error::msg)?;
 
     let mut truncated = false;
     if !entries.is_empty() && last_checkpoint.is_none() {
@@ -297,7 +304,10 @@ fn recover_wal_state(wal_dir: &Path) -> Result<RecoveredWalState> {
 
     let mut valid_entries = entries.clone();
     if let Some(cp) = &last_checkpoint {
-        if let Some(idx) = entries.iter().position(|e| e.height == cp.height && e.content_hash_hex() == cp.wal_entry_hash_hex) {
+        if let Some(idx) = entries
+            .iter()
+            .position(|e| e.height == cp.height && e.content_hash_hex() == cp.wal_entry_hash_hex)
+        {
             if idx + 1 < entries.len() {
                 valid_entries.truncate(idx + 1);
                 persist_wal_meta_entries(wal_dir, &valid_entries)?;
@@ -949,7 +959,11 @@ fn build_demo_mempool(demo_tasks: u64, _demo_keys: u64) -> VecDeque<MockTx> {
             result_hash,
             reveal_salt,
         });
-        q.push_back(MockTx::Challenge { task_id, bond: 10 });
+        q.push_back(MockTx::Challenge {
+            task_id,
+            challenger: "challenger".into(),
+            bond: 10,
+        });
         q.push_back(MockTx::Resolve {
             task_id,
             slash_worker: false,
@@ -997,6 +1011,21 @@ fn actor_of(tx: &MockTx) -> String {
     }
 }
 
+fn signer_of(tx: &MockTx) -> String {
+    actor_of(tx)
+}
+
+fn challenger_of(tx: &MockTx) -> Option<String> {
+    match tx {
+        MockTx::Challenge { .. } => Some("challenger".to_string()),
+        _ => None,
+    }
+}
+
+fn tx_hash_of(tx_id: u64) -> String {
+    format!("0xmock{:016x}", tx_id)
+}
+
 fn status_name(st: &StateStore, task_id: u64) -> String {
     st.get_task(task_id)
         .map(|t| format!("{:?}", t.status))
@@ -1030,6 +1059,9 @@ fn emit_event(
     let task_id = task_id_of(tx);
     let event_type = event_type_of(tx);
     let actor = actor_of(tx);
+    let signer = signer_of(tx);
+    let challenger = challenger_of(tx).unwrap_or_else(|| "-".to_string());
+    let tx_hash = tx_hash_of(tx_id);
     let ts_unix_ms = now_unix_ms();
 
     match tx {
@@ -1040,12 +1072,15 @@ fn emit_event(
                 "completed"
             };
             println!(
-                "[event] event_schema=v1 event_type={} task_id={} from_status={} to_status={} actor={} tx_id={} block_height={} state_root={} ts_unix_ms={} slash_worker={} resolution_code={}",
+                "[event] event_schema=v1 event_type={} task_id={} from_status={} to_status={} actor={} signer={} challenger={} tx_hash={} tx_id={} block_height={} state_root={} ts_unix_ms={} slash_worker={} resolution_code={}",
                 event_type,
                 task_id,
                 from_status,
                 to_status,
                 actor,
+                signer,
+                challenger,
+                tx_hash,
                 tx_id,
                 block_height,
                 state_root,
@@ -1056,12 +1091,15 @@ fn emit_event(
         }
         _ => {
             println!(
-                "[event] event_schema=v1 event_type={} task_id={} from_status={} to_status={} actor={} tx_id={} block_height={} state_root={} ts_unix_ms={}",
+                "[event] event_schema=v1 event_type={} task_id={} from_status={} to_status={} actor={} signer={} challenger={} tx_hash={} tx_id={} block_height={} state_root={} ts_unix_ms={}",
                 event_type,
                 task_id,
                 from_status,
                 to_status,
                 actor,
+                signer,
+                challenger,
+                tx_hash,
                 tx_id,
                 block_height,
                 state_root,
@@ -1111,9 +1149,13 @@ fn apply_one(st: &mut StateStore, tx: MockTx) -> Result<()> {
             let r = task_ref(st, task_id)?;
             let _ = apply_reveal_result(st, r, result_hash, reveal_salt)?;
         }
-        MockTx::Challenge { task_id, bond } => {
+        MockTx::Challenge {
+            task_id,
+            challenger,
+            bond,
+        } => {
             let r = task_ref(st, task_id)?;
-            let _ = apply_challenge(st, r, bond)?;
+            let _ = apply_challenge(st, r, challenger, bond)?;
         }
         MockTx::Resolve {
             task_id,
@@ -1124,6 +1166,35 @@ fn apply_one(st: &mut StateStore, tx: MockTx) -> Result<()> {
         }
     }
     Ok(())
+}
+
+fn scan_and_apply_timeouts(
+    st: &mut StateStore,
+    known_task_ids: &HashSet<u64>,
+    current_height: u64,
+) -> u64 {
+    let mut migrated = 0u64;
+    for task_id in known_task_ids.iter().copied() {
+        let Some(task) = st.get_task(task_id) else {
+            continue;
+        };
+        if !matches!(task.status, TaskStatus::Committed | TaskStatus::Challenged) {
+            continue;
+        }
+        let from_status = format!("{:?}", task.status);
+        let Some(task_ref) = st.get_ref(task_id) else {
+            continue;
+        };
+        if apply_timeout(st, task_ref, current_height).is_ok() {
+            migrated += 1;
+            let to_status = status_name(st, task_id);
+            println!(
+                "[timeout] height={} task_id={} from_status={} to_status={} source=auto_scan",
+                current_height, task_id, from_status, to_status
+            );
+        }
+    }
+    migrated
 }
 
 fn read_write_decl(tx: &MockTx, tx_id: u64, demo_keys: u64) -> Tx {
@@ -1258,6 +1329,51 @@ mod tests {
     }
 
     #[test]
+    fn timeout_scan_auto_migrates_committed_and_challenged() {
+        let mut st = StateStore::new();
+        st.set_balance("challenger", 1_000_000);
+
+        let r1 = apply_create_task(&mut st, 7001, "alice".into(), 100).unwrap();
+        let result_hash = [7u8; 32];
+        let reveal_salt = [9u8; 32];
+        let committed = compute_commitment(7001, &result_hash, &reveal_salt, "worker7001");
+        let r2 = apply_accept_task(&mut st, r1, "worker7001".into()).unwrap();
+        let _r3 = trnm_pouw::apply_commit_result_at_height(
+            &mut st,
+            r2,
+            "worker7001".into(),
+            committed,
+            100,
+        )
+        .unwrap();
+
+        let r4 = apply_create_task(&mut st, 7002, "alice".into(), 100).unwrap();
+        let committed2 = compute_commitment(7002, &result_hash, &reveal_salt, "worker7002");
+        let r5 = apply_accept_task(&mut st, r4, "worker7002".into()).unwrap();
+        let r6 = trnm_pouw::apply_commit_result_at_height(
+            &mut st,
+            r5,
+            "worker7002".into(),
+            committed2,
+            100,
+        )
+        .unwrap();
+        let r7 =
+            trnm_pouw::apply_reveal_result_at_height(&mut st, r6, result_hash, reveal_salt, 110)
+                .unwrap();
+        let _r8 =
+            trnm_pouw::apply_challenge_at_height(&mut st, r7, "challenger".into(), 10, 120)
+                .unwrap();
+
+        let known: HashSet<u64> = [7001u64, 7002u64].into_iter().collect();
+        let migrated = scan_and_apply_timeouts(&mut st, &known, 10_000);
+
+        assert_eq!(migrated, 2);
+        assert_eq!(st.get_task(7001).unwrap().status, TaskStatus::Slashed);
+        assert_eq!(st.get_task(7002).unwrap().status, TaskStatus::Completed);
+    }
+
+    #[test]
     fn recover_truncates_to_latest_valid_checkpoint() {
         let wal_dir = temp_wal_dir("recover");
         fs::create_dir_all(&wal_dir).unwrap();
@@ -1336,7 +1452,7 @@ fn main() -> Result<()> {
     );
     println!("[node] parallel_workers={}", args.parallel_workers);
     println!(
-        "[node] bft validators={} byzantine={} max_rounds={} fault_rounds={} missed_threshold={} penalty_rounds={} rc_backoff_ms={} rc_backoff_cap_ms={} wal_dir={} checkpoint_interval={}",
+        "[node] bft validators={} byzantine={} max_rounds={} fault_rounds={} missed_threshold={} penalty_rounds={} rc_backoff_ms={} rc_backoff_cap_ms={} wal_dir={} checkpoint_interval={} timeout_scan={} timeout_scan_every_blocks={}",
         args.validators,
         args.byzantine,
         args.bft_max_rounds,
@@ -1346,7 +1462,9 @@ fn main() -> Result<()> {
         args.bft_round_change_backoff_ms,
         args.bft_round_change_backoff_max_ms,
         args.bft_wal_dir,
-        args.bft_checkpoint_interval
+        args.bft_checkpoint_interval,
+        args.pouw_timeout_scan,
+        args.pouw_timeout_scan_every_blocks
     );
 
     let wal_dir = PathBuf::from(&args.bft_wal_dir);
@@ -1366,11 +1484,14 @@ fn main() -> Result<()> {
     );
 
     let mut state = StateStore::new();
+    state.set_balance("challenger", 1_000_000);
     let mut mempool = build_demo_mempool(args.demo_tasks, args.demo_keys);
+    let mut known_task_ids: HashSet<u64> = HashSet::new();
     let mut finality_samples_ms: Vec<u128> = Vec::new();
     let mut preexec_reject_total: u64 = 0;
     let mut apply_error_total: u64 = 0;
     let mut rollback_total: u64 = 0;
+    let mut timeout_migrated_total: u64 = 0;
     let mut bft_committed_heights: u64 = 0;
     let mut bft_round_change_total: u64 = 0;
     let mut bft_double_vote_total: u64 = 0;
@@ -1517,10 +1638,23 @@ fn main() -> Result<()> {
                     );
                 } else {
                     applied += 1;
+                    known_task_ids.insert(task_id);
                     let to_status = status_name(&state, task_id);
                     let root = hex::encode(state.state_root());
                     emit_event(&tx, id, height, &from_status, &to_status, &root);
                 }
+            }
+        }
+
+        let scan_every = args.pouw_timeout_scan_every_blocks.max(1);
+        if args.pouw_timeout_scan && height % scan_every == 0 {
+            let migrated = scan_and_apply_timeouts(&mut state, &known_task_ids, height);
+            timeout_migrated_total += migrated;
+            if migrated > 0 {
+                println!(
+                    "[timeout] height={} migrated={} cumulative_migrated={}",
+                    height, migrated, timeout_migrated_total
+                );
             }
         }
 
@@ -1589,12 +1723,13 @@ fn main() -> Result<()> {
         .map(|h| h.missed_proposals)
         .collect();
     println!(
-        "[consensus] finality_p50_ms={} finality_p95_ms={} preexec_reject_total={} apply_error_total={} rollback_total={} recovery_error_rate={:.6} bft_committed_heights={} bft_round_change_total={} bft_round_change_backoff_total_ms={} bft_leader_missed_proposals={:?} bft_double_vote_total={} bft_auth_reject_bad_sig_total={} bft_auth_reject_replay_total={} bft_auth_reject_stale_nonce_total={}",
+        "[consensus] finality_p50_ms={} finality_p95_ms={} preexec_reject_total={} apply_error_total={} rollback_total={} timeout_migrated_total={} recovery_error_rate={:.6} bft_committed_heights={} bft_round_change_total={} bft_round_change_backoff_total_ms={} bft_leader_missed_proposals={:?} bft_double_vote_total={} bft_auth_reject_bad_sig_total={} bft_auth_reject_replay_total={} bft_auth_reject_stale_nonce_total={}",
         finality_p50,
         finality_p95,
         preexec_reject_total,
         apply_error_total,
         rollback_total,
+        timeout_migrated_total,
         recovery_error_rate,
         bft_committed_heights,
         bft_round_change_total,
@@ -1608,4 +1743,3 @@ fn main() -> Result<()> {
 
     Ok(())
 }
-

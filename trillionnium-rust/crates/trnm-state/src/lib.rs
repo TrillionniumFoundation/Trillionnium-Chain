@@ -15,6 +15,7 @@ pub enum ObjectValue {
 #[derive(Debug, Default, Clone)]
 pub struct StateStore {
     objects: BTreeMap<u64, VersionedObject>,
+    balances: BTreeMap<String, u128>,
 }
 
 #[derive(Debug, Clone)]
@@ -58,9 +59,12 @@ impl WalMeta {
 }
 
 fn parse_u64_in_range(key: &str, value: &str, min: u64, max: u64) -> Result<u64, String> {
-    let parsed = value
-        .parse::<u64>()
-        .map_err(|_| format!("invalid governance value for {}: expected u64, got '{}'", key, value))?;
+    let parsed = value.parse::<u64>().map_err(|_| {
+        format!(
+            "invalid governance value for {}: expected u64, got '{}'",
+            key, value
+        )
+    })?;
     if parsed < min || parsed > max {
         return Err(format!(
             "invalid governance value for {}: out of range [{}..={}], got {}",
@@ -340,6 +344,32 @@ impl StateStore {
         })
     }
 
+    pub fn set_balance(&mut self, address: impl Into<String>, amount: u128) {
+        self.balances.insert(address.into(), amount);
+    }
+
+    pub fn balance_of(&self, address: &str) -> u128 {
+        self.balances.get(address).copied().unwrap_or(0)
+    }
+
+    pub fn debit_balance(&mut self, address: &str, amount: u128) -> Result<(), String> {
+        let cur = self.balance_of(address);
+        if cur < amount {
+            return Err(format!(
+                "insufficient balance: address={}, have={}, need={}",
+                address, cur, amount
+            ));
+        }
+        self.balances.insert(address.to_string(), cur - amount);
+        Ok(())
+    }
+
+    pub fn credit_balance(&mut self, address: &str, amount: u128) {
+        let cur = self.balance_of(address);
+        self.balances
+            .insert(address.to_string(), cur.saturating_add(amount));
+    }
+
     pub fn state_root(&self) -> Hash32 {
         let mut hasher = Sha256::new();
         for (id, v) in &self.objects {
@@ -364,6 +394,11 @@ impl StateStore {
                     hasher.update(p.value.as_bytes());
                 }
             }
+        }
+        for (addr, bal) in &self.balances {
+            hasher.update(b"balance");
+            hasher.update(addr.as_bytes());
+            hasher.update(bal.to_le_bytes());
         }
         hasher.finalize().into()
     }
@@ -417,6 +452,7 @@ mod tests {
             challenged_at_height: None,
             resolve_deadline_height: None,
             challenge_bond: None,
+            challenger: None,
             challenge_bond_forfeited: None,
             version: 1,
         };
@@ -446,6 +482,7 @@ mod tests {
             challenged_at_height: None,
             resolve_deadline_height: None,
             challenge_bond: None,
+            challenger: None,
             challenge_bond_forfeited: None,
             version: 1,
         };
@@ -573,6 +610,22 @@ mod tests {
         st.set_gov_param(7999, "emergency_pause".into(), "false".into())
             .unwrap();
         assert!(!st.is_emergency_paused());
+    }
+
+    #[test]
+    fn balance_debit_credit_works() {
+        let mut st = StateStore::new();
+        st.set_balance("challenger", 15);
+        assert_eq!(st.balance_of("challenger"), 15);
+
+        st.debit_balance("challenger", 10).unwrap();
+        assert_eq!(st.balance_of("challenger"), 5);
+
+        let err = st.debit_balance("challenger", 6).unwrap_err();
+        assert!(err.contains("insufficient balance"));
+
+        st.credit_balance("challenger", 7);
+        assert_eq!(st.balance_of("challenger"), 12);
     }
 
     #[test]

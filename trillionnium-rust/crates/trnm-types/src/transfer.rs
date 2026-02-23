@@ -52,8 +52,12 @@ impl TransferTx {
         format!("trnm1{}", addr_hex)
     }
 
-    pub fn sign_with_private_key_hex(&self, private_key_hex: &str) -> Result<String, TransferTxValidationError> {
-        let secret = hex::decode(private_key_hex).map_err(|_| TransferTxValidationError::InvalidSignature)?;
+    pub fn sign_with_private_key_hex(
+        &self,
+        private_key_hex: &str,
+    ) -> Result<String, TransferTxValidationError> {
+        let secret = hex::decode(private_key_hex)
+            .map_err(|_| TransferTxValidationError::InvalidSignature)?;
         let secret_bytes: [u8; 32] = secret
             .as_slice()
             .try_into()
@@ -87,14 +91,21 @@ impl TransferTx {
         }
 
         let mut parts = self.signature.split(':');
-        let algo = parts.next().ok_or(TransferTxValidationError::InvalidSignature)?;
-        let pubkey_hex = parts.next().ok_or(TransferTxValidationError::InvalidSignature)?;
-        let sig_hex = parts.next().ok_or(TransferTxValidationError::InvalidSignature)?;
+        let algo = parts
+            .next()
+            .ok_or(TransferTxValidationError::InvalidSignature)?;
+        let pubkey_hex = parts
+            .next()
+            .ok_or(TransferTxValidationError::InvalidSignature)?;
+        let sig_hex = parts
+            .next()
+            .ok_or(TransferTxValidationError::InvalidSignature)?;
         if parts.next().is_some() || algo != "ed25519" {
             return Err(TransferTxValidationError::InvalidSignature);
         }
 
-        let pubkey = hex::decode(pubkey_hex).map_err(|_| TransferTxValidationError::InvalidSignature)?;
+        let pubkey =
+            hex::decode(pubkey_hex).map_err(|_| TransferTxValidationError::InvalidSignature)?;
         let pubkey_bytes: [u8; 32] = pubkey
             .as_slice()
             .try_into()
@@ -104,7 +115,8 @@ impl TransferTx {
             return Err(TransferTxValidationError::InvalidSignature);
         }
 
-        let sig_raw = hex::decode(sig_hex).map_err(|_| TransferTxValidationError::InvalidSignature)?;
+        let sig_raw =
+            hex::decode(sig_hex).map_err(|_| TransferTxValidationError::InvalidSignature)?;
         let sig_bytes: [u8; 64] = sig_raw
             .as_slice()
             .try_into()

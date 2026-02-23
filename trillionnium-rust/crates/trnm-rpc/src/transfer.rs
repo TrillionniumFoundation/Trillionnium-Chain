@@ -28,10 +28,18 @@ impl std::fmt::Display for TransferApplyError {
         match self {
             Self::Basic(e) => write!(f, "{}", e),
             Self::NonceRollback { expected, got } => {
-                write!(f, "nonce rollback/replay: expected {}, got {}", expected, got)
+                write!(
+                    f,
+                    "nonce rollback/replay: expected {}, got {}",
+                    expected, got
+                )
             }
             Self::InsufficientBalance { balance, needed } => {
-                write!(f, "insufficient balance: balance {}, needed {}", balance, needed)
+                write!(
+                    f,
+                    "insufficient balance: balance {}, needed {}",
+                    balance, needed
+                )
             }
         }
     }
@@ -405,7 +413,11 @@ mod tests {
         ledger.set_account(bob.clone(), 0, 0);
         let mut txs = BTreeMap::new();
 
-        let submit = submit_tx(&mut txs, transfer_tx(&alice, &bob, 10, 1, 0, ALICE_SK_HEX), 100);
+        let submit = submit_tx(
+            &mut txs,
+            transfer_tx(&alice, &bob, 10, 1, 0, ALICE_SK_HEX),
+            100,
+        );
         assert_eq!(submit.status, TxStatus::Pending);
 
         let got = get_tx(&mut txs, &mut ledger, &submit.tx_hash, 120).unwrap();
@@ -423,15 +435,18 @@ mod tests {
         ledger.set_account(bob.clone(), 0, 0);
         let mut txs = BTreeMap::new();
 
-        let submit = submit_tx(&mut txs, transfer_tx(&alice, &bob, 10, 1, 0, ALICE_SK_HEX), 100);
+        let submit = submit_tx(
+            &mut txs,
+            transfer_tx(&alice, &bob, 10, 1, 0, ALICE_SK_HEX),
+            100,
+        );
         let got = get_tx(&mut txs, &mut ledger, &submit.tx_hash, 120).unwrap();
         assert_eq!(got.status, TxStatus::Fail);
-        assert!(
-            got.error
-                .as_deref()
-                .unwrap_or_default()
-                .contains("nonce rollback/replay")
-        );
+        assert!(got
+            .error
+            .as_deref()
+            .unwrap_or_default()
+            .contains("nonce rollback/replay"));
     }
 
     #[test]

@@ -131,6 +131,8 @@ struct AdapterRecord {
     worker: Option<String>,
     result_hash: Option<String>,
     status: String,
+    #[serde(default)]
+    tx_hash: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -173,6 +175,10 @@ struct NodeEventRecord {
     block_height: u64,
     state_root: String,
     ts_unix_ms: u128,
+    signer: Option<String>,
+    challenger: Option<String>,
+    tx_hash: Option<String>,
+    resolution_code: Option<String>,
 }
 
 fn load_latest_adapter_records() -> Vec<AdapterRecord> {
@@ -257,6 +263,16 @@ fn load_latest_node_events() -> Vec<NodeEventRecord> {
             .and_then(|s| s.parse::<u128>().ok())
             .unwrap_or(0);
 
+        let normalize_opt = |k: &str| {
+            kv.get(k).and_then(|v| {
+                if v.is_empty() || v == "-" {
+                    None
+                } else {
+                    Some(v.clone())
+                }
+            })
+        };
+
         out.push(NodeEventRecord {
             event_type: kv
                 .get("event_type")
@@ -279,6 +295,10 @@ fn load_latest_node_events() -> Vec<NodeEventRecord> {
                 .cloned()
                 .unwrap_or_else(|| "unknown".into()),
             ts_unix_ms,
+            signer: normalize_opt("signer"),
+            challenger: normalize_opt("challenger"),
+            tx_hash: normalize_opt("tx_hash"),
+            resolution_code: normalize_opt("resolution_code"),
         });
     }
     out
@@ -452,7 +472,10 @@ fn accounts_to_ledger(accounts: &BTreeMap<String, AccountState>) -> InMemoryTran
     ledger
 }
 
-fn ledger_to_accounts(ledger: &InMemoryTransferLedger, accounts: &mut BTreeMap<String, AccountState>) {
+fn ledger_to_accounts(
+    ledger: &InMemoryTransferLedger,
+    accounts: &mut BTreeMap<String, AccountState>,
+) {
     for account in accounts.values_mut() {
         account.balance = ledger.balance_of(&account.address);
         account.nonce = ledger.next_nonce_of(&account.address);
@@ -460,8 +483,12 @@ fn ledger_to_accounts(ledger: &InMemoryTransferLedger, accounts: &mut BTreeMap<S
 }
 
 fn rpc_fail(err: RpcErrorResponse) -> anyhow::Error {
-    let body = serde_json::to_string_pretty(&err)
-        .unwrap_or_else(|_| format!("{{\"code\":\"{}\",\"message\":\"{}\"}}", err.code, err.message));
+    let body = serde_json::to_string_pretty(&err).unwrap_or_else(|_| {
+        format!(
+            "{{\"code\":\"{}\",\"message\":\"{}\"}}",
+            err.code, err.message
+        )
+    });
     anyhow::anyhow!(body)
 }
 
@@ -659,6 +686,10 @@ fn main() -> Result<()> {
                     block_height: e.block_height,
                     state_root: e.state_root.clone(),
                     ts_unix_ms: e.ts_unix_ms,
+                    signer: e.signer.clone().or_else(|| Some(e.actor.clone())),
+                    challenger: e.challenger.clone(),
+                    tx_hash: e.tx_hash.clone(),
+                    resolution_code: e.resolution_code.clone(),
                 });
             }
 
@@ -681,6 +712,8 @@ fn main() -> Result<()> {
                             "worker".to_string(),
                         )
                     };
+                    let signer = Some(actor.clone());
+                    let tx_hash = r.tx_hash;
                     events.push(EventQueryResponse {
                         event_type: r.kind,
                         task_id,
@@ -691,6 +724,10 @@ fn main() -> Result<()> {
                         block_height: tx_id,
                         state_root: "adapter_state".into(),
                         ts_unix_ms: r.ts as u128,
+                        signer,
+                        challenger: None,
+                        tx_hash,
+                        resolution_code: None,
                     });
                     tx_id += 1;
                 }
@@ -707,8 +744,8 @@ fn main() -> Result<()> {
         }
         Command::QueryBalance { address } => {
             let accounts = load_account_state(&account_state_file());
-            let account = query_account_state(&accounts, &address)
-                .map_err(|e| rpc_fail(e.to_rpc_error()))?;
+            let account =
+                query_account_state(&accounts, &address).map_err(|e| rpc_fail(e.to_rpc_error()))?;
             let out = AccountBalanceQueryResponse {
                 address: account.address,
                 balance: account.balance,
@@ -718,8 +755,8 @@ fn main() -> Result<()> {
         }
         Command::QueryNonce { address } => {
             let accounts = load_account_state(&account_state_file());
-            let account = query_account_state(&accounts, &address)
-                .map_err(|e| rpc_fail(e.to_rpc_error()))?;
+            let account =
+                query_account_state(&accounts, &address).map_err(|e| rpc_fail(e.to_rpc_error()))?;
             let out = AccountNonceQueryResponse {
                 address: account.address,
                 nonce: account.nonce,
@@ -806,7 +843,9 @@ fn main() -> Result<()> {
 
             {
                 let entry = limits.entry(address.clone()).or_default();
-                if entry.window_start_unix_ms == 0 || now.saturating_sub(entry.window_start_unix_ms) >= window_ms {
+                if entry.window_start_unix_ms == 0
+                    || now.saturating_sub(entry.window_start_unix_ms) >= window_ms
+                {
                     entry.window_start_unix_ms = now;
                     entry.count_in_window = 0;
                 }
@@ -977,6 +1016,18 @@ fn main() -> Result<()> {
 
             let mut events = Vec::new();
             for e in node_events.iter().filter(|e| e.task_id == rec.task_id) {
+                let tx_hash = match e.event_type.as_str() {
+                    "commit" => rec.commit_tx_hash.clone().or_else(|| e.tx_hash.clone()),
+                    "reveal" => rec.reveal_tx_hash.clone().or_else(|| e.tx_hash.clone()),
+                    _ => e.tx_hash.clone(),
+                };
+                let resolution_code = if e.event_type == "resolve" {
+                    rec.resolution_code
+                        .clone()
+                        .or_else(|| e.resolution_code.clone())
+                } else {
+                    e.resolution_code.clone()
+                };
                 events.push(EventQueryResponse {
                     event_type: e.event_type.clone(),
                     task_id: rec.task_id,
@@ -987,6 +1038,10 @@ fn main() -> Result<()> {
                     block_height: e.block_height,
                     state_root: e.state_root.clone(),
                     ts_unix_ms: e.ts_unix_ms,
+                    signer: e.signer.clone().or_else(|| Some(e.actor.clone())),
+                    challenger: e.challenger.clone(),
+                    tx_hash,
+                    resolution_code,
                 });
             }
 

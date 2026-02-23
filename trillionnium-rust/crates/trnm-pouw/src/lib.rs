@@ -93,6 +93,7 @@ pub fn apply_create_task(
         challenged_at_height: None,
         resolve_deadline_height: None,
         challenge_bond: None,
+        challenger: None,
         challenge_bond_forfeited: None,
         version: 1,
     };
@@ -195,14 +196,16 @@ pub fn apply_reveal_result_at_height(
 pub fn apply_challenge(
     st: &mut StateStore,
     task_ref: ObjectRef,
+    challenger: String,
     challenge_bond: u128,
 ) -> Result<ObjectRef, PouwError> {
-    apply_challenge_at_height(st, task_ref, challenge_bond, 0)
+    apply_challenge_at_height(st, task_ref, challenger, challenge_bond, 0)
 }
 
 pub fn apply_challenge_at_height(
     st: &mut StateStore,
     task_ref: ObjectRef,
+    challenger: String,
     challenge_bond: u128,
     current_height: u64,
 ) -> Result<ObjectRef, PouwError> {
@@ -224,10 +227,14 @@ pub fn apply_challenge_at_height(
         .gov_param_u64("challenge_window_blocks")
         .unwrap_or(DEFAULT_CHALLENGE_WINDOW_BLOCKS);
 
+    st.debit_balance(&challenger, challenge_bond)
+        .map_err(|_| PouwError::InsufficientStake)?;
+
     task.status = TaskStatus::Challenged;
     task.challenged_at_height = Some(current_height);
     task.resolve_deadline_height = Some(current_height.saturating_add(challenge_window_blocks));
     task.challenge_bond = Some(challenge_bond);
+    task.challenger = Some(challenger);
     task.challenge_bond_forfeited = None;
     st.update_task(task_ref, task).map_err(map_state_err)
 }
@@ -262,9 +269,14 @@ pub fn apply_resolve_at_height(
     } else {
         TaskStatus::Completed
     };
-    if task.challenge_bond.is_some() {
+    if let Some(bond) = task.challenge_bond {
         // slash_worker=true => challenge succeeds => bond refunded (not forfeited)
-        // slash_worker=false => challenge fails => bond forfeited
+        // slash_worker=false => challenge fails => bond forfeited (locked/burned in MVP)
+        if slash_worker {
+            if let Some(challenger) = task.challenger.clone() {
+                st.credit_balance(&challenger, bond);
+            }
+        }
         task.challenge_bond_forfeited = Some(!slash_worker);
     }
     st.update_task(task_ref, task).map_err(map_state_err)
@@ -281,14 +293,18 @@ pub fn apply_timeout(
 
     match task.status {
         TaskStatus::Committed => {
-            let deadline = task.reveal_deadline_height.ok_or(PouwError::InvalidTransition)?;
+            let deadline = task
+                .reveal_deadline_height
+                .ok_or(PouwError::InvalidTransition)?;
             if current_height <= deadline {
                 return Err(PouwError::InvalidTransition);
             }
             task.status = TaskStatus::Slashed;
         }
         TaskStatus::Challenged => {
-            let deadline = task.resolve_deadline_height.ok_or(PouwError::InvalidTransition)?;
+            let deadline = task
+                .resolve_deadline_height
+                .ok_or(PouwError::InvalidTransition)?;
             if current_height <= deadline {
                 return Err(PouwError::InvalidTransition);
             }
@@ -310,6 +326,7 @@ mod tests {
     #[test]
     fn full_happy_path_to_completed() {
         let mut st = StateStore::new();
+        st.set_balance("challenger", 100);
         let r1 = apply_create_task(&mut st, 42, "alice".into(), 100).unwrap();
 
         let result_hash = [7u8; 32];
@@ -319,7 +336,7 @@ mod tests {
         let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
         let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
         let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt).unwrap();
-        let r5 = apply_challenge(&mut st, r4, 10).unwrap();
+        let r5 = apply_challenge(&mut st, r4, "challenger".into(), 10).unwrap();
         let r6 = apply_resolve(&mut st, r5, false).unwrap();
 
         let task = st.get_task(r6.id).unwrap();
@@ -346,7 +363,7 @@ mod tests {
     fn challenge_requires_revealed() {
         let mut st = StateStore::new();
         let r1 = apply_create_task(&mut st, 9, "alice".into(), 10).unwrap();
-        let err = apply_challenge(&mut st, r1, 10).unwrap_err();
+        let err = apply_challenge(&mut st, r1, "challenger".into(), 10).unwrap_err();
         assert!(matches!(err, PouwError::InvalidTransition));
     }
 
@@ -370,6 +387,7 @@ mod tests {
     #[test]
     fn invalid_transition_matrix_smoke() {
         let mut st = StateStore::new();
+        st.set_balance("challenger", 100);
         let r1 = apply_create_task(&mut st, 99, "alice".into(), 10).unwrap();
 
         // OPEN: only accept is valid.
@@ -378,7 +396,7 @@ mod tests {
             PouwError::InvalidTransition
         ));
         assert!(matches!(
-            apply_challenge(&mut st, r1.clone(), 10).unwrap_err(),
+            apply_challenge(&mut st, r1.clone(), "challenger".into(), 10).unwrap_err(),
             PouwError::InvalidTransition
         ));
         assert!(matches!(
@@ -394,7 +412,7 @@ mod tests {
             PouwError::InvalidTransition
         ));
         assert!(matches!(
-            apply_challenge(&mut st, r2.clone(), 10).unwrap_err(),
+            apply_challenge(&mut st, r2.clone(), "challenger".into(), 10).unwrap_err(),
             PouwError::InvalidTransition
         ));
         assert!(matches!(
@@ -409,7 +427,7 @@ mod tests {
 
         // COMMITTED: challenge/resolve invalid before reveal.
         assert!(matches!(
-            apply_challenge(&mut st, r3.clone(), 10).unwrap_err(),
+            apply_challenge(&mut st, r3.clone(), "challenger".into(), 10).unwrap_err(),
             PouwError::InvalidTransition
         ));
         assert!(matches!(
@@ -425,7 +443,7 @@ mod tests {
             PouwError::InvalidTransition
         ));
 
-        let r5 = apply_challenge(&mut st, r4, 10).unwrap();
+        let r5 = apply_challenge(&mut st, r4, "challenger".into(), 10).unwrap();
         let _r6 = apply_resolve(&mut st, r5.clone(), false).unwrap();
 
         // FINAL: further resolve is invalid.
@@ -456,7 +474,10 @@ mod tests {
             PouwError::InsufficientStake.stable_code(),
             "InsufficientStake"
         );
-        assert_eq!(PouwError::DeadlineExceeded.stable_code(), "DeadlineExceeded");
+        assert_eq!(
+            PouwError::DeadlineExceeded.stable_code(),
+            "DeadlineExceeded"
+        );
         assert_eq!(PouwError::State("x".into()).stable_code(), "StateInternal");
     }
 
@@ -480,6 +501,7 @@ mod tests {
             challenged_at_height: None,
             resolve_deadline_height: None,
             challenge_bond: None,
+            challenger: None,
             challenge_bond_forfeited: None,
             version: 1,
         };
@@ -498,7 +520,8 @@ mod tests {
         let result_hash = [7u8; 32];
         let reveal_salt = [9u8; 32];
         let committed = compute_commitment(501, &result_hash, &reveal_salt, "worker1");
-        let r3 = apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
+        let r3 =
+            apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
 
         let before = apply_timeout(&mut st, r3.clone(), 120).unwrap_err();
         assert!(matches!(before, PouwError::InvalidTransition));
@@ -511,6 +534,7 @@ mod tests {
     #[test]
     fn challenged_timeout_transitions_to_completed() {
         let mut st = StateStore::new();
+        st.set_balance("challenger", 100);
         let r1 = apply_create_task(&mut st, 777, "alice".into(), 10).unwrap();
 
         let result_hash = [1u8; 32];
@@ -518,9 +542,10 @@ mod tests {
         let committed = compute_commitment(777, &result_hash, &reveal_salt, "worker1");
 
         let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
-        let r3 = apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 10).unwrap();
+        let r3 =
+            apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 10).unwrap();
         let r4 = apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, 20).unwrap();
-        let r5 = apply_challenge_at_height(&mut st, r4, 10, 30).unwrap();
+        let r5 = apply_challenge_at_height(&mut st, r4, "challenger".into(), 10, 30).unwrap();
 
         let before = apply_timeout(&mut st, r5.clone(), 50).unwrap_err();
         assert!(matches!(before, PouwError::InvalidTransition));
@@ -533,6 +558,7 @@ mod tests {
     #[test]
     fn challenge_requires_min_bond_from_governance() {
         let mut st = StateStore::new();
+        st.set_balance("challenger", 100);
         st.set_gov_param(9001, "challenge_min_bond".into(), "50".into())
             .unwrap();
 
@@ -545,10 +571,10 @@ mod tests {
         let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
         let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt).unwrap();
 
-        let err = apply_challenge(&mut st, r4.clone(), 49).unwrap_err();
+        let err = apply_challenge(&mut st, r4.clone(), "challenger".into(), 49).unwrap_err();
         assert!(matches!(err, PouwError::InsufficientStake));
 
-        let r5 = apply_challenge(&mut st, r4, 50).unwrap();
+        let r5 = apply_challenge(&mut st, r4, "challenger".into(), 50).unwrap();
         let task = st.get_task(r5.id).unwrap();
         assert_eq!(task.challenge_bond, Some(50));
     }
@@ -556,6 +582,7 @@ mod tests {
     #[test]
     fn challenge_requires_min_bond_default_when_governance_absent() {
         let mut st = StateStore::new();
+        st.set_balance("challenger", 100);
 
         let r1 = apply_create_task(&mut st, 890, "alice".into(), 10).unwrap();
         let result_hash = [1u8; 32];
@@ -566,10 +593,10 @@ mod tests {
         let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
         let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt).unwrap();
 
-        let err = apply_challenge(&mut st, r4.clone(), 9).unwrap_err();
+        let err = apply_challenge(&mut st, r4.clone(), "challenger".into(), 9).unwrap_err();
         assert!(matches!(err, PouwError::InsufficientStake));
 
-        let r5 = apply_challenge(&mut st, r4, 10).unwrap();
+        let r5 = apply_challenge(&mut st, r4, "challenger".into(), 10).unwrap();
         let task = st.get_task(r5.id).unwrap();
         assert_eq!(task.challenge_bond, Some(10));
     }
@@ -577,6 +604,7 @@ mod tests {
     #[test]
     fn challenge_uses_governance_window_and_resolve_marks_bond_outcome() {
         let mut st = StateStore::new();
+        st.set_balance("challenger", 100);
         st.set_gov_param(9002, "challenge_window_blocks".into(), "123".into())
             .unwrap();
 
@@ -586,21 +614,25 @@ mod tests {
         let committed = compute_commitment(889, &result_hash, &reveal_salt, "worker1");
 
         let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
-        let r3 = apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
+        let r3 =
+            apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
         let r4 = apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, 110).unwrap();
-        let r5 = apply_challenge_at_height(&mut st, r4, 10, 120).unwrap();
+        let r5 = apply_challenge_at_height(&mut st, r4, "challenger".into(), 10, 120).unwrap();
 
         let challenged = st.get_task(r5.id).unwrap();
         assert_eq!(challenged.resolve_deadline_height, Some(243));
+        assert_eq!(st.balance_of("challenger"), 90);
 
         let r6 = apply_resolve(&mut st, r5, false).unwrap();
         let resolved = st.get_task(r6.id).unwrap();
         assert_eq!(resolved.challenge_bond_forfeited, Some(true));
+        assert_eq!(st.balance_of("challenger"), 90);
     }
 
     #[test]
     fn resolve_refunds_challenge_bond_when_worker_slashed() {
         let mut st = StateStore::new();
+        st.set_balance("challenger", 100);
 
         let r1 = apply_create_task(&mut st, 891, "alice".into(), 10).unwrap();
         let result_hash = [1u8; 32];
@@ -610,12 +642,33 @@ mod tests {
         let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
         let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
         let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt).unwrap();
-        let r5 = apply_challenge(&mut st, r4, 10).unwrap();
+        let r5 = apply_challenge(&mut st, r4, "challenger".into(), 10).unwrap();
+        assert_eq!(st.balance_of("challenger"), 90);
         let r6 = apply_resolve(&mut st, r5, true).unwrap();
 
         let resolved = st.get_task(r6.id).unwrap();
         assert_eq!(resolved.status, TaskStatus::Slashed);
         assert_eq!(resolved.challenge_bond_forfeited, Some(false));
+        assert_eq!(st.balance_of("challenger"), 100);
+    }
+
+    #[test]
+    fn challenge_rejects_when_challenger_balance_insufficient() {
+        let mut st = StateStore::new();
+        st.set_balance("challenger", 5);
+
+        let r1 = apply_create_task(&mut st, 892, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(892, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt).unwrap();
+
+        let err = apply_challenge(&mut st, r4, "challenger".into(), 10).unwrap_err();
+        assert!(matches!(err, PouwError::InsufficientStake));
+        assert_eq!(st.balance_of("challenger"), 5);
     }
 
     #[test]

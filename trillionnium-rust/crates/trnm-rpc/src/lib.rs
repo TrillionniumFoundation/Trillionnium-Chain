@@ -51,6 +51,14 @@ pub struct EventQueryResponse {
     pub block_height: u64,
     pub state_root: String,
     pub ts_unix_ms: u128,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub signer: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub challenger: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub tx_hash: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub resolution_code: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -165,7 +173,10 @@ pub fn validate_trnm_address(address: &str) -> Result<(), AccountQueryError> {
     if hex_part.len() != 40 {
         return Err(AccountQueryError::InvalidAddressFormat(address.to_string()));
     }
-    if !hex_part.chars().all(|c| c.is_ascii_hexdigit() || c.is_ascii_lowercase() || c.is_ascii_digit()) {
+    if !hex_part
+        .chars()
+        .all(|c| c.is_ascii_hexdigit() || c.is_ascii_lowercase() || c.is_ascii_digit())
+    {
         return Err(AccountQueryError::InvalidAddressFormat(address.to_string()));
     }
     Ok(())
@@ -224,6 +235,10 @@ mod tests {
             block_height: 2,
             state_root: "abc".into(),
             ts_unix_ms: 1,
+            signer: None,
+            challenger: None,
+            tx_hash: None,
+            resolution_code: None,
         };
         let v = serde_json::to_value(evt).unwrap();
         assert_eq!(

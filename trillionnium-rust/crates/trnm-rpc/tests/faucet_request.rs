@@ -86,7 +86,13 @@ fn faucet_request_invalid_address() {
 
     let (ok, out, err) = run_rpc(
         &temp,
-        &["faucet-request", "--address", "invalid-address", "--amount", "88"],
+        &[
+            "faucet-request",
+            "--address",
+            "invalid-address",
+            "--amount",
+            "88",
+        ],
         9_000,
     );
     assert!(ok, "faucet-request failed: {err}");

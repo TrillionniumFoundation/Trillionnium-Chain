@@ -52,6 +52,7 @@ pub struct TaskObject {
     pub challenged_at_height: Option<u64>,
     pub resolve_deadline_height: Option<u64>,
     pub challenge_bond: Option<u128>,
+    pub challenger: Option<String>,
     /// true = challenger bond forfeited/slashed; false = refunded
     pub challenge_bond_forfeited: Option<bool>,
     pub version: u64,

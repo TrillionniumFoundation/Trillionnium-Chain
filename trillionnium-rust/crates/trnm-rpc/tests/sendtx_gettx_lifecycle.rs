@@ -120,7 +120,10 @@ fn sendtx_gettx_fail_insufficient_balance() {
     assert!(ok, "get-tx failed: {err}");
     let v: Value = serde_json::from_str(&out).unwrap();
     assert_eq!(v["status"], "fail");
-    assert!(v["error"].as_str().unwrap().contains("insufficient balance"));
+    assert!(v["error"]
+        .as_str()
+        .unwrap()
+        .contains("insufficient balance"));
 }
 
 #[test]
@@ -134,12 +137,10 @@ fn sendtx_gettx_fail_nonce_conflict() {
     assert!(ok, "get-tx failed: {err}");
     let v: Value = serde_json::from_str(&out).unwrap();
     assert_eq!(v["status"], "fail");
-    assert!(
-        v["error"]
-            .as_str()
-            .unwrap()
-            .contains("nonce rollback/replay")
-    );
+    assert!(v["error"]
+        .as_str()
+        .unwrap()
+        .contains("nonce rollback/replay"));
 }
 
 #[test]

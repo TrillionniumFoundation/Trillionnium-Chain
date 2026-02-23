@@ -382,7 +382,12 @@ fn is_terminal_tx_status(status: &str) -> bool {
     matches!(status, "committed" | "fail")
 }
 
-fn wait_for_tx<F>(tx_hash: &str, timeout: Duration, interval: Duration, mut query_fn: F) -> Result<TxQueryResponse>
+fn wait_for_tx<F>(
+    tx_hash: &str,
+    timeout: Duration,
+    interval: Duration,
+    mut query_fn: F,
+) -> Result<TxQueryResponse>
 where
     F: FnMut(&str) -> Result<TxQueryResponse>,
 {
@@ -594,13 +599,7 @@ fn main() -> Result<()> {
                     };
                     println!("{}", serde_json::to_string_pretty(&out)?);
                 } else {
-                    let tx_hash = hash(&[
-                        "transfer",
-                        &req.from,
-                        &req.to,
-                        &req.amount,
-                        &req.denom,
-                    ]);
+                    let tx_hash = hash(&["transfer", &req.from, &req.to, &req.amount, &req.denom]);
                     persist_local_pending_tx(&tx_hash)?;
                     let out = TransferTxResponse {
                         tx_hash,
@@ -695,18 +694,17 @@ mod tests {
 
     #[test]
     fn wallet_import_hex_check() {
-        let ok = ensure_hex_32_bytes("0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
-            .unwrap();
+        let ok = ensure_hex_32_bytes(
+            "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        )
+        .unwrap();
         assert_eq!(ok.len(), 64);
         assert!(ensure_hex_32_bytes("0x1234").is_err());
     }
 
     #[test]
     fn extract_tx_hash_supports_json_and_kv() {
-        assert_eq!(
-            extract_tx_hash("tx_hash=abc123").as_deref(),
-            Some("abc123")
-        );
+        assert_eq!(extract_tx_hash("tx_hash=abc123").as_deref(), Some("abc123"));
         assert_eq!(
             extract_tx_hash("{\"tx_hash\":\"deadbeef\",\"status\":\"ok\"}").as_deref(),
             Some("deadbeef")

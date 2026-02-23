@@ -113,7 +113,13 @@ impl RelayAuthEnvelope {
     pub fn requires_routing_fields(&self) -> bool {
         matches!(
             self.msg_type.as_str(),
-            "TASK_ACCEPT" | "INPUT_CHUNK" | "RESULT_META" | "RESULT_POINTER" | "ACK" | "ERROR" | "CLOSE"
+            "TASK_ACCEPT"
+                | "INPUT_CHUNK"
+                | "RESULT_META"
+                | "RESULT_POINTER"
+                | "ACK"
+                | "ERROR"
+                | "CLOSE"
         )
     }
 
@@ -317,7 +323,9 @@ impl RelayAuthVerifier {
                 return Err(RelayAuthError::MissingRequiredField { field: "chain_id" });
             }
             if env.session_id.trim().is_empty() {
-                return Err(RelayAuthError::MissingRequiredField { field: "session_id" });
+                return Err(RelayAuthError::MissingRequiredField {
+                    field: "session_id",
+                });
             }
             if env.seq == 0 {
                 return Err(RelayAuthError::MissingRequiredField { field: "seq" });
@@ -382,7 +390,11 @@ impl RelayAuthVerifier {
             }
         }
 
-        let nonce_key = (env.chain_id.clone(), env.session_id.clone(), env.nonce.clone());
+        let nonce_key = (
+            env.chain_id.clone(),
+            env.session_id.clone(),
+            env.nonce.clone(),
+        );
         if self.seen_nonce.contains(&nonce_key) {
             return Err(RelayAuthError::Replay {
                 nonce: env.nonce.clone(),
@@ -702,14 +714,18 @@ mod tests {
         missing_chain.chain_id.clear();
         missing_chain.sig = missing_chain.sign_for_test(key);
         let err = verifier
-            .verify(&missing_chain, 1_730_000_000_050, |e| e.sign_for_test(key) == e.sig)
+            .verify(&missing_chain, 1_730_000_000_050, |e| {
+                e.sign_for_test(key) == e.sig
+            })
             .unwrap_err();
         assert_eq!(err.stable_code(), "MissingRequiredField");
 
         let mut missing_seq = sample_env(0, "nonce-miss-2", 1_730_000_000_000, key);
         missing_seq.sig = missing_seq.sign_for_test(key);
         let err = verifier
-            .verify(&missing_seq, 1_730_000_000_050, |e| e.sign_for_test(key) == e.sig)
+            .verify(&missing_seq, 1_730_000_000_050, |e| {
+                e.sign_for_test(key) == e.sig
+            })
             .unwrap_err();
         assert_eq!(err.stable_code(), "MissingRequiredField");
     }

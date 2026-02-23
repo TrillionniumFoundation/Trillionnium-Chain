@@ -26,7 +26,13 @@ impl ReliableMessage {
     fn requires_strict_fields(&self) -> bool {
         matches!(
             self.msg_type.as_str(),
-            "TASK_ACCEPT" | "INPUT_CHUNK" | "RESULT_META" | "RESULT_POINTER" | "ACK" | "ERROR" | "CLOSE"
+            "TASK_ACCEPT"
+                | "INPUT_CHUNK"
+                | "RESULT_META"
+                | "RESULT_POINTER"
+                | "ACK"
+                | "ERROR"
+                | "CLOSE"
         )
     }
     pub fn dedup_key(&self) -> Option<DedupKey> {
