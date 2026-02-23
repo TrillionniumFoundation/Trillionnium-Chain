@@ -1,0 +1,79 @@
+{
+  "status": "PASS",
+  "advisor": "PR7_THRESHOLD_ADVISOR",
+  "generated_at_utc": "2026-02-23T10:54:30.794582+00:00",
+  "window": {
+    "lookback_days": 7,
+    "start_day_utc": "2026-02-17",
+    "end_day_utc": "2026-02-23"
+  },
+  "inputs": {
+    "pr5_root": "/Users/qianqi/.openclaw/workspace/TrillionniumChain/run/pr5-reconcile",
+    "pr6_ops_root": "/Users/qianqi/.openclaw/workspace/TrillionniumChain/run/pr6-ops",
+    "pr5_days_found": [
+      "2026-02-23"
+    ],
+    "pr6_gate_source": "/Users/qianqi/.openclaw/workspace/TrillionniumChain/run/pr6-ops/pr6-alert-rules-gate.txt"
+  },
+  "observed": {
+    "unresolved_daily": [
+      {
+        "day": "2026-02-23",
+        "value": 0.0
+      }
+    ],
+    "forfeits_total_daily": [
+      {
+        "day": "2026-02-23",
+        "value": 10.0
+      }
+    ],
+    "forfeits_daily_increase": [],
+    "escrow_nonzero_hours_samples": [
+      0.0
+    ]
+  },
+  "baseline_thresholds": {
+    "unresolved": {
+      "warn": 3,
+      "fail": 5
+    },
+    "forfeits_daily_increase": {
+      "warn": 70,
+      "fail": 100
+    },
+    "escrow_nonzero_hours": {
+      "warn": 16.0,
+      "fail": 24.0
+    }
+  },
+  "suggestions": {
+    "unresolved_challenges": {
+      "warn": 3.0,
+      "fail": 5.0,
+      "mode": "conservative_default",
+      "reason": "insufficient_data: samples=1 < min_days=3",
+      "stats": {
+        "count": 1
+      }
+    },
+    "forfeits_daily_increase": {
+      "warn": 70.0,
+      "fail": 100.0,
+      "mode": "conservative_default",
+      "reason": "insufficient_data: samples=0 < min_days=2",
+      "stats": {
+        "count": 0
+      }
+    },
+    "escrow_nonzero_hours": {
+      "warn": 16.0,
+      "fail": 24.0,
+      "mode": "conservative_default",
+      "reason": "insufficient_data: samples=1 < min_days=3",
+      "stats": {
+        "count": 1
+      }
+    }
+  }
+}

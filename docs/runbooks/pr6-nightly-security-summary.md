@@ -5,11 +5,16 @@
 ## 1) 产物与位置
 
 - 主报告：`run/pr6-ops/daily-security-summary.md`
+- TopN 异常摘要：`run/pr7-topn/<timestamp>/topn-anomaly-summary.md`
 - 触发方式：
   - GitHub Actions：`rust-l1-nightly-health`（自动）
   - 本地手动：
 
 ```bash
+# 先产出 TopN 异常摘要（最小门禁）
+./scripts/v2/pr7_topn_summary_gate.sh
+
+# 再聚合到 daily security summary
 python3 ./scripts/v2/pr6_daily_security_summary.py
 ```
 
@@ -27,6 +32,10 @@ python3 ./scripts/v2/pr6_daily_security_summary.py
   - `challenge_events/resolve_events`
   - `forfeited/refunded`
   - `treasury_delta_sum/challenger_delta_sum`
+- `run/pr7-topn/*/topn-anomaly-summary.md`
+  - TopN unresolved tasks
+  - TopN forfeit spikes (day)
+  - TopN escrow lingering
 
 ## 3) 告警规则（当前版本）
 
@@ -34,7 +43,7 @@ python3 ./scripts/v2/pr6_daily_security_summary.py
 
 - nightly attribution label 非 `green/healthy/unknown`
 - PR-5 对账 `status != PASS`
-- 缺失关键产物：nightly attribution / nightly summary / PR-5 summary
+- 缺失关键产物：nightly attribution / nightly summary / PR-5 summary / PR-7 TopN summary
 
 ## 4) 与 workflow summary/artifacts 的集成
 
@@ -54,5 +63,6 @@ python3 ./scripts/v2/pr6_daily_security_summary.py
 
 - [ ] nightly 结束后存在 `run/pr6-ops/daily-security-summary.md`
 - [ ] 报告包含 Key Metrics + Alerts + Artifact Pointers
+- [ ] TopN 摘要存在：`run/pr7-topn/<timestamp>/topn-anomaly-summary.md`
 - [ ] Step Summary 出现 `PR-6 Daily Security Ops` 小节
-- [ ] nightly artifact 包含 `run/pr6-ops/**`
+- [ ] nightly artifact 包含 `run/pr6-ops/**` 与 `run/pr7-topn/**`

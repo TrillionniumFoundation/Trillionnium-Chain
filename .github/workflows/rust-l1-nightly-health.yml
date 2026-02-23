@@ -347,6 +347,12 @@ jobs:
           set -euo pipefail
           ./scripts/v2/pr5_treasury_reconcile_report.sh
 
+      - name: PR-7 TopN anomaly summary gate
+        if: always()
+        run: |
+          set -euo pipefail
+          ./scripts/v2/pr7_topn_summary_gate.sh
+
       - name: Build PR-6 daily security summary (non-gate)
         if: always()
         continue-on-error: true
@@ -389,6 +395,7 @@ jobs:
             trillionnium-rust/run/consensus-wal-restart-*/**
             run/pr5-reconcile/**
             run/pr6-ops/**
+            run/pr7-topn/**
             data/reexec-smoke/**
             data/reexec-bundles/**
             data/worker-onboard/**

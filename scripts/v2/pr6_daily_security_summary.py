@@ -19,6 +19,7 @@ RUST_ROOT = os.path.join(ROOT, "trillionnium-rust")
 RUST_HEALTH = os.path.join(RUST_ROOT, "run", "health")
 RUST_BENCH = os.path.join(RUST_ROOT, "run", "bench")
 PR5_ROOT = os.path.join(ROOT, "run", "pr5-reconcile")
+PR7_ROOT = os.path.join(ROOT, "run", "pr7-topn")
 
 
 def latest(pattern: str) -> str | None:
@@ -69,6 +70,7 @@ nightly_summary = latest(os.path.join(RUST_HEALTH, "nightly-summary-*.md"))
 suggest_file = latest(os.path.join(RUST_HEALTH, "auto-adaptive-threshold-suggestion-*.txt"))
 aggr_profile = latest(os.path.join(RUST_BENCH, "aggressive-profile-summary-*.md"))
 pr5_summary_file = latest(os.path.join(PR5_ROOT, "*", "summary.txt"))
+pr7_topn_summary = latest(os.path.join(PR7_ROOT, "*", "topn-anomaly-summary.md"))
 
 attrib = parse_kv(attrib_file)
 suggest = parse_kv(suggest_file)
@@ -88,6 +90,8 @@ if not attrib_file:
     alerts.append("missing nightly attribution artifact")
 if not nightly_summary:
     alerts.append("missing rendered nightly summary artifact")
+if not pr7_topn_summary:
+    alerts.append("missing PR-7 TopN anomaly summary artifact")
 
 now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%SZ")
 os.makedirs(OUT_DIR, exist_ok=True)
@@ -113,6 +117,7 @@ lines.append(f"- pr5.reconcile.forfeited: `{pr5.get('forfeited', 'n/a')}`")
 lines.append(f"- pr5.reconcile.refunded: `{pr5.get('refunded', 'n/a')}`")
 lines.append(f"- pr5.reconcile.treasury_delta_sum: `{pr5.get('treasury_delta_sum', 'n/a')}`")
 lines.append(f"- pr5.reconcile.challenger_delta_sum: `{pr5.get('challenger_delta_sum', 'n/a')}`")
+lines.append(f"- pr7.topn.summary.present: `{str(bool(pr7_topn_summary)).lower()}`")
 lines.append("")
 lines.append("## Alerts")
 if alerts:
@@ -140,6 +145,8 @@ lines.append(f"- threshold_suggestion: `{suggest_file or 'MISSING'}`")
 lines.append(f"- aggressive_profile_summary: `{aggr_profile or 'MISSING'}`")
 lines.append(f"- pr5_reconcile_summary: `{pr5_summary_file or 'MISSING'}`")
 lines.append(f"- pr5_reconcile_runs_total: `{file_count(os.path.join(PR5_ROOT, '*', 'summary.txt'))}`")
+lines.append(f"- pr7_topn_anomaly_summary: `{pr7_topn_summary or 'MISSING'}`")
+lines.append(f"- pr7_topn_runs_total: `{file_count(os.path.join(PR7_ROOT, '*', 'topn-anomaly-summary.md'))}`")
 
 with open(OUT_MD, "w", encoding="utf-8") as f:
     f.write("\n".join(lines) + "\n")

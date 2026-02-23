@@ -302,6 +302,27 @@ Runbook：`docs/runbooks/pr5-challenge-treasury-reconcile.md`
 
 Runbook：`docs/runbooks/pr6-alert-rules.md`
 
+## PR-7 Alert Delivery（告警投递）
+
+将 PR-6 `WARN/FAIL` 告警投递到消息通道（Slack webhook 或 Telegram bot），并提供窗口去重防抖。
+
+执行（推荐串联）：
+
+```bash
+DRY_RUN=1 ALERT_NOTIFY_CHANNEL=slack ./scripts/v2/pr7_alert_delivery_gate.sh
+```
+
+常用环境变量：
+- `ALERT_NOTIFY_CHANNEL=slack|telegram`
+- `ALERT_NOTIFY_MIN_LEVEL=WARN|FAIL`
+- `ALERT_NOTIFY_DEDUP_SECONDS=1800`
+- `ALERT_NOTIFY_STATE_FILE=run/pr7-alert-delivery/state.json`
+- `DRY_RUN=1`（本地演示，不依赖真实密钥）
+- Slack: `SLACK_WEBHOOK_URL`
+- Telegram: `TELEGRAM_BOT_TOKEN` + `TELEGRAM_CHAT_ID`
+
+Runbook：`docs/runbooks/pr7-alert-delivery.md`
+
 ## PR-6 Nightly Security 日报（自动化）
 
 nightly 在流程末尾自动生成日报：

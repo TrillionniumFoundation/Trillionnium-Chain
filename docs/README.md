@@ -16,3 +16,4 @@
 - PR-5 challenge treasury 对账 runbook: `runbooks/pr5-challenge-treasury-reconcile.md`
 - PR-6 alert rules runbook: `runbooks/pr6-alert-rules.md`
 - PR-6 nightly security summary runbook: `runbooks/pr6-nightly-security-summary.md`
+- PR-7 alert delivery runbook: `runbooks/pr7-alert-delivery.md`
