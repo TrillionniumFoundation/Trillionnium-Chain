@@ -128,6 +128,18 @@ CI workflow：`.github/workflows/agent-user-phasea-gate.yml`（调用上述 gate
 
 可直接复用仓库根目录 `OPERATIONS.md` 中同名章节示例命令。
 
+一键脚本（推荐）：
+
+```bash
+./scripts/v2/product_layer_smoke.sh
+```
+
+脚本会按 `wallet create -> query balance -> tx transfer -> getTx` 顺序执行，并输出统一结果：
+- `[SMOKE][PASS] ...` / `[SMOKE][FAIL] ...`
+- `address=...`
+- `tx_hash=...`
+- `status=...`
+
 ## 一键回滚（Phase A）
 
 仓库根目录提供回滚脚本：`scripts/rollback_phasea.sh`

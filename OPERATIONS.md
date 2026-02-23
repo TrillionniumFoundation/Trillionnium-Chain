@@ -139,11 +139,30 @@ curl -sS "$RPC_URL" -H 'content-type: application/json' -d "{
 }"
 ```
 
+### 一键 smoke（推荐）
+
+```bash
+cd /Users/qianqi/.openclaw/workspace/TrillionniumChain
+./scripts/v2/product_layer_smoke.sh
+```
+
+标准输出会打印清晰的 PASS/FAIL 以及关键字段：
+- `address`
+- `tx_hash`
+- `status`
+
+可选环境变量：
+- `CLI_BIN`（默认 `cargo run -q -p trnm-cli --`）
+- `WALLET_STORE` / `RUN_DIR`
+- `ALICE_NAME` / `BOB_NAME`
+- `TRANSFER_AMOUNT` / `DENOM`
+
 ### 通过标准
-- `balance` 返回账户与 `utrnm` 余额字段
-- `nonce` 返回可用 nonce 且为非负整数
-- `sendTx` 返回 `txHash`
-- `getTx` 最终状态为 `committed` / `success`（以实现返回字段为准）
+- `wallet create` 成功并产出 `address`
+- `query balance` 成功返回 `address/balance`
+- `tx transfer` 成功返回 `tx_hash`
+- `getTx` 返回 `status`
+- 脚本结尾输出 `[SMOKE][PASS] product-layer smoke`
 
 ## E2E Worker Runbook (Job -> Execute -> Commit)
 
