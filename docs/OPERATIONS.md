@@ -140,6 +140,29 @@ CI workflow：`.github/workflows/agent-user-phasea-gate.yml`（调用上述 gate
 - `tx_hash=...`
 - `status=...`
 
+## P1-4 集成门禁（sdk 示例 + product smoke + rpc_contract_v1）
+
+新增串联脚本：`scripts/v2/run_p1_integration_gate.sh`
+
+执行顺序（失败即停）：
+1. `scripts/v2/ecosystem_examples_smoke.sh`（sdk 示例 smoke）
+2. `scripts/v2/product_layer_smoke.sh`（产品层最小 API smoke）
+3. `cargo test -p trnm-rpc --test rpc_contract_v1`（RPC 合约回归）
+
+本地执行：
+
+```bash
+./scripts/v2/run_p1_integration_gate.sh
+```
+
+产物目录：
+- 默认写入 `run/p1-integration-gate/<timestamp>/`
+- 每一步分别输出 `<step>.log`
+
+CI：
+- `.github/workflows/trnm-merge-gates.yml` 已加入 `P1-4 integration gate` hard gate step
+- 任一步骤失败将直接中止该 workflow job
+
 ## 一键回滚（Phase A）
 
 仓库根目录提供回滚脚本：`scripts/rollback_phasea.sh`

@@ -7,12 +7,14 @@ on:
       - 'docs/**'
       - 'trillionnium-rust/**'
       - '.github/workflows/trnm-merge-gates.yml'
+      - 'scripts/v2/run_p1_integration_gate.sh'
   push:
     branches: [main]
     paths:
       - 'docs/**'
       - 'trillionnium-rust/**'
       - '.github/workflows/trnm-merge-gates.yml'
+      - 'scripts/v2/run_p1_integration_gate.sh'
 
 concurrency:
   group: trnm-merge-gates-${{ github.workflow }}-${{ github.ref }}
@@ -154,6 +156,12 @@ jobs:
           SKIP_GATES=1 AGENTS=${WORKER_MULTI_AGENTS:-3} \
             ./scripts/v2/worker_agent_mining_onboard.sh
 
+      - name: P1-4 integration gate (sdk examples + product smoke + rpc contract v1)
+        run: |
+          set -euo pipefail
+          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+          ./scripts/v2/run_p1_integration_gate.sh
+
       - name: Aggressive regression check (PR-visible warn)
         if: github.event_name == 'pull_request'
         run: |
@@ -227,4 +235,5 @@ jobs:
             data/reexec-smoke/**
             data/reexec-bundles/**
             data/worker-onboard/**
+            run/p1-integration-gate/**
           if-no-files-found: warn
