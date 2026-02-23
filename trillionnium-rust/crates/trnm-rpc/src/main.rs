@@ -9,12 +9,15 @@ use std::{
     time::{SystemTime, UNIX_EPOCH},
 };
 use trnm_rpc::{
-    query_account_state, AccountBalanceQueryResponse, AccountNonceQueryResponse, AccountState,
-    EventQueryResponse, GovParamQueryResponse, GovProposalQueryResponse, MessageRequestQueryResponse,
-    RequestFullQueryResponse, RpcErrorResponse, TaskQueryResponse,
+    get_tx, query_account_state, submit_tx, AccountBalanceQueryResponse, AccountNonceQueryResponse,
+    AccountState, EventQueryResponse, GetTxError, GovParamQueryResponse, GovProposalQueryResponse,
+    InMemoryTransferLedger, MessageRequestQueryResponse, RequestFullQueryResponse, RpcErrorResponse,
+    TaskQueryResponse, TxLifecycleRecord,
 };
 use trnm_state::StateStore;
-use trnm_types::{GovParamObject, GovProposalObject, GovProposalStatus, RequestStatus, TaskStatus};
+use trnm_types::{
+    GovParamObject, GovProposalObject, GovProposalStatus, RequestStatus, TaskStatus, TransferTx,
+};
 
 #[derive(Debug, Parser)]
 #[command(
@@ -46,6 +49,24 @@ enum Command {
     },
     QueryNonce {
         address: String,
+    },
+    SendTx {
+        #[arg(long)]
+        from: String,
+        #[arg(long)]
+        to: String,
+        #[arg(long)]
+        amount: u128,
+        #[arg(long, default_value_t = 0)]
+        fee: u128,
+        #[arg(long)]
+        nonce: u64,
+        #[arg(long)]
+        signature: String,
+    },
+    GetTx {
+        #[arg(long)]
+        tx_hash: String,
     },
     SubmitMessage {
         #[arg(long)]
@@ -333,6 +354,51 @@ fn load_account_state(path: &Path) -> BTreeMap<String, AccountState> {
     serde_json::from_str::<BTreeMap<String, AccountState>>(&raw).unwrap_or_default()
 }
 
+fn save_account_state(path: &Path, accounts: &BTreeMap<String, AccountState>) -> Result<()> {
+    if let Some(parent) = path.parent() {
+        fs::create_dir_all(parent)?;
+    }
+    fs::write(path, serde_json::to_string_pretty(accounts)?)?;
+    Ok(())
+}
+
+fn tx_lifecycle_file() -> PathBuf {
+    if let Ok(path) = std::env::var("TRNM_RPC_TX_FILE") {
+        return PathBuf::from(path);
+    }
+    run_root().join("run/rpc/txs.json")
+}
+
+fn load_tx_lifecycle(path: &Path) -> BTreeMap<String, TxLifecycleRecord> {
+    let Ok(raw) = fs::read_to_string(path) else {
+        return BTreeMap::new();
+    };
+    serde_json::from_str::<BTreeMap<String, TxLifecycleRecord>>(&raw).unwrap_or_default()
+}
+
+fn save_tx_lifecycle(path: &Path, txs: &BTreeMap<String, TxLifecycleRecord>) -> Result<()> {
+    if let Some(parent) = path.parent() {
+        fs::create_dir_all(parent)?;
+    }
+    fs::write(path, serde_json::to_string_pretty(txs)?)?;
+    Ok(())
+}
+
+fn accounts_to_ledger(accounts: &BTreeMap<String, AccountState>) -> InMemoryTransferLedger {
+    let mut ledger = InMemoryTransferLedger::new();
+    for account in accounts.values() {
+        ledger.set_account(account.address.clone(), account.balance, account.nonce);
+    }
+    ledger
+}
+
+fn ledger_to_accounts(ledger: &InMemoryTransferLedger, accounts: &mut BTreeMap<String, AccountState>) {
+    for account in accounts.values_mut() {
+        account.balance = ledger.balance_of(&account.address);
+        account.nonce = ledger.next_nonce_of(&account.address);
+    }
+}
+
 fn rpc_fail(err: RpcErrorResponse) -> anyhow::Error {
     let body = serde_json::to_string_pretty(&err)
         .unwrap_or_else(|_| format!("{{\"code\":\"{}\",\"message\":\"{}\"}}", err.code, err.message));
@@ -527,6 +593,48 @@ fn main() -> Result<()> {
                 nonce: account.nonce,
                 version: 1,
             };
+            println!("{}", serde_json::to_string_pretty(&out)?);
+        }
+        Command::SendTx {
+            from,
+            to,
+            amount,
+            fee,
+            nonce,
+            signature,
+        } => {
+            let tx_path = tx_lifecycle_file();
+            let mut txs = load_tx_lifecycle(&tx_path);
+            let tx = TransferTx {
+                from,
+                to,
+                amount,
+                fee,
+                nonce,
+                signature,
+            };
+            let out = submit_tx(&mut txs, tx, now_ms());
+            save_tx_lifecycle(&tx_path, &txs)?;
+            println!("{}", serde_json::to_string_pretty(&out)?);
+        }
+        Command::GetTx { tx_hash } => {
+            let tx_path = tx_lifecycle_file();
+            let mut txs = load_tx_lifecycle(&tx_path);
+
+            let account_path = account_state_file();
+            let mut accounts = load_account_state(&account_path);
+            let mut ledger = accounts_to_ledger(&accounts);
+
+            let out = get_tx(&mut txs, &mut ledger, &tx_hash, now_ms()).map_err(|e| match e {
+                GetTxError::NotFound(tx_hash) => rpc_fail(RpcErrorResponse {
+                    code: "TX_NOT_FOUND",
+                    message: format!("tx not found: {}", tx_hash),
+                }),
+            })?;
+
+            ledger_to_accounts(&ledger, &mut accounts);
+            save_tx_lifecycle(&tx_path, &txs)?;
+            save_account_state(&account_path, &accounts)?;
             println!("{}", serde_json::to_string_pretty(&out)?);
         }
         Command::SubmitMessage {

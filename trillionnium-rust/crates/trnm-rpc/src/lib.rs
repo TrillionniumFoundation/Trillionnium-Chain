@@ -9,7 +9,9 @@ use trnm_types::{GovProposalStatus, TaskStatus};
 
 pub use relay::*;
 pub use transfer::{
-    InMemoryTransferLedger, SubmitTransferRequest, SubmitTransferResponse, TransferApplyError,
+    compute_tx_hash, get_tx, submit_tx, GetTxError, GetTxResponse, InMemoryTransferLedger,
+    SendTxResponse, SubmitTransferRequest, SubmitTransferResponse, TransferApplyError,
+    TxLifecycleRecord, TxStatus,
 };
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

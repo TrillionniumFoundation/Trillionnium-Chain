@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use sha2::{Digest, Sha256};
 use std::collections::BTreeMap;
 use trnm_types::{TransferTx, TransferTxValidationError};
 
@@ -63,7 +64,10 @@ impl InMemoryTransferLedger {
         self.nonces.get(addr).copied().unwrap_or(0)
     }
 
-    pub fn apply_transfer(&mut self, req: SubmitTransferRequest) -> Result<SubmitTransferResponse, TransferApplyError> {
+    pub fn apply_transfer(
+        &mut self,
+        req: SubmitTransferRequest,
+    ) -> Result<SubmitTransferResponse, TransferApplyError> {
         let tx = req.tx;
         tx.validate_basic().map_err(TransferApplyError::Basic)?;
 
@@ -101,46 +105,198 @@ impl InMemoryTransferLedger {
     }
 }
 
+pub fn compute_tx_hash(tx: &TransferTx) -> String {
+    let mut h = Sha256::new();
+    h.update(tx.from.as_bytes());
+    h.update([0]);
+    h.update(tx.to.as_bytes());
+    h.update([0]);
+    h.update(tx.amount.to_le_bytes());
+    h.update(tx.fee.to_le_bytes());
+    h.update(tx.nonce.to_le_bytes());
+    h.update(tx.signature.as_bytes());
+    format!("0x{}", hex::encode(h.finalize()))
+}
+
+pub fn submit_tx(
+    txs: &mut BTreeMap<String, TxLifecycleRecord>,
+    tx: TransferTx,
+    now_unix_ms: u128,
+) -> SendTxResponse {
+    let tx_hash = compute_tx_hash(&tx);
+    if !txs.contains_key(&tx_hash) {
+        txs.insert(
+            tx_hash.clone(),
+            TxLifecycleRecord {
+                tx_hash: tx_hash.clone(),
+                tx,
+                status: TxStatus::Pending,
+                error: None,
+                submitted_at_unix_ms: now_unix_ms,
+                updated_at_unix_ms: now_unix_ms,
+            },
+        );
+    }
+    SendTxResponse {
+        tx_hash,
+        status: TxStatus::Pending,
+    }
+}
+
+pub fn get_tx(
+    txs: &mut BTreeMap<String, TxLifecycleRecord>,
+    ledger: &mut InMemoryTransferLedger,
+    tx_hash: &str,
+    now_unix_ms: u128,
+) -> Result<GetTxResponse, GetTxError> {
+    let Some(rec) = txs.get_mut(tx_hash) else {
+        return Err(GetTxError::NotFound(tx_hash.to_string()));
+    };
+
+    if rec.status == TxStatus::Pending {
+        let req = SubmitTransferRequest { tx: rec.tx.clone() };
+        match ledger.apply_transfer(req) {
+            Ok(_) => {
+                rec.status = TxStatus::Committed;
+                rec.error = None;
+                rec.updated_at_unix_ms = now_unix_ms;
+            }
+            Err(err) => {
+                rec.status = TxStatus::Fail;
+                rec.error = Some(err.to_string());
+                rec.updated_at_unix_ms = now_unix_ms;
+            }
+        }
+    }
+
+    Ok(GetTxResponse {
+        tx_hash: rec.tx_hash.clone(),
+        status: rec.status.clone(),
+        error: rec.error.clone(),
+    })
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum TxStatus {
+    Pending,
+    Committed,
+    Fail,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SendTxResponse {
+    pub tx_hash: String,
+    pub status: TxStatus,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct GetTxResponse {
+    pub tx_hash: String,
+    pub status: TxStatus,
+    pub error: Option<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum GetTxError {
+    NotFound(String),
+}
+
+impl std::fmt::Display for GetTxError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::NotFound(h) => write!(f, "tx not found: {}", h),
+        }
+    }
+}
+
+impl std::error::Error for GetTxError {}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct TxLifecycleRecord {
+    pub tx_hash: String,
+    pub tx: TransferTx,
+    pub status: TxStatus,
+    pub error: Option<String>,
+    pub submitted_at_unix_ms: u128,
+    pub updated_at_unix_ms: u128,
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+    use ed25519_dalek::SigningKey;
 
-    fn tx(from: &str, to: &str, amount: u128, fee: u128, nonce: u64, signature: &str) -> SubmitTransferRequest {
-        SubmitTransferRequest {
-            tx: TransferTx {
-                from: from.into(),
-                to: to.into(),
-                amount,
-                fee,
-                nonce,
-                signature: signature.into(),
-            },
-        }
+    const ALICE_SK_HEX: &str = "1111111111111111111111111111111111111111111111111111111111111111";
+    const BOB_SK_HEX: &str = "2222222222222222222222222222222222222222222222222222222222222222";
+
+    fn address_from_secret_hex(secret_hex: &str) -> String {
+        let bytes = hex::decode(secret_hex).unwrap();
+        let key_bytes: [u8; 32] = bytes.as_slice().try_into().unwrap();
+        let sk = SigningKey::from_bytes(&key_bytes);
+        TransferTx::derive_address_from_ed25519_pubkey(sk.verifying_key().as_bytes())
+    }
+
+    fn tx(
+        from: &str,
+        to: &str,
+        amount: u128,
+        fee: u128,
+        nonce: u64,
+        signer_secret_hex: &str,
+    ) -> SubmitTransferRequest {
+        let mut inner = TransferTx {
+            from: from.into(),
+            to: to.into(),
+            amount,
+            fee,
+            nonce,
+            signature: String::new(),
+        };
+        inner.signature = inner.sign_with_private_key_hex(signer_secret_hex).unwrap();
+        SubmitTransferRequest { tx: inner }
+    }
+
+    fn transfer_tx(
+        from: &str,
+        to: &str,
+        amount: u128,
+        fee: u128,
+        nonce: u64,
+        signer_secret_hex: &str,
+    ) -> TransferTx {
+        tx(from, to, amount, fee, nonce, signer_secret_hex).tx
     }
 
     #[test]
     fn apply_transfer_success() {
+        let alice = address_from_secret_hex(ALICE_SK_HEX);
+        let bob = address_from_secret_hex(BOB_SK_HEX);
+
         let mut ledger = InMemoryTransferLedger::new();
-        ledger.set_account("alice", 100, 0);
-        ledger.set_account("bob", 5, 0);
+        ledger.set_account(alice.clone(), 100, 0);
+        ledger.set_account(bob.clone(), 5, 0);
 
         let out = ledger
-            .apply_transfer(tx("alice", "bob", 10, 1, 0, "sig:alice:0"))
+            .apply_transfer(tx(&alice, &bob, 10, 1, 0, ALICE_SK_HEX))
             .unwrap();
 
         assert!(out.accepted);
-        assert_eq!(ledger.balance_of("alice"), 89);
-        assert_eq!(ledger.balance_of("bob"), 15);
-        assert_eq!(ledger.next_nonce_of("alice"), 1);
+        assert_eq!(ledger.balance_of(&alice), 89);
+        assert_eq!(ledger.balance_of(&bob), 15);
+        assert_eq!(ledger.next_nonce_of(&alice), 1);
     }
 
     #[test]
     fn reject_nonce_rollback() {
+        let alice = address_from_secret_hex(ALICE_SK_HEX);
+        let bob = address_from_secret_hex(BOB_SK_HEX);
+
         let mut ledger = InMemoryTransferLedger::new();
-        ledger.set_account("alice", 100, 1);
+        ledger.set_account(alice.clone(), 100, 1);
 
         let err = ledger
-            .apply_transfer(tx("alice", "bob", 10, 1, 0, "sig:alice:0"))
+            .apply_transfer(tx(&alice, &bob, 10, 1, 0, ALICE_SK_HEX))
             .unwrap_err();
         assert_eq!(
             err,
@@ -153,11 +309,14 @@ mod tests {
 
     #[test]
     fn reject_insufficient_balance() {
+        let alice = address_from_secret_hex(ALICE_SK_HEX);
+        let bob = address_from_secret_hex(BOB_SK_HEX);
+
         let mut ledger = InMemoryTransferLedger::new();
-        ledger.set_account("alice", 10, 0);
+        ledger.set_account(alice.clone(), 10, 0);
 
         let err = ledger
-            .apply_transfer(tx("alice", "bob", 10, 1, 0, "sig:alice:0"))
+            .apply_transfer(tx(&alice, &bob, 10, 1, 0, ALICE_SK_HEX))
             .unwrap_err();
         assert_eq!(
             err,
@@ -170,11 +329,23 @@ mod tests {
 
     #[test]
     fn reject_missing_signature() {
+        let alice = address_from_secret_hex(ALICE_SK_HEX);
+        let bob = address_from_secret_hex(BOB_SK_HEX);
+
         let mut ledger = InMemoryTransferLedger::new();
-        ledger.set_account("alice", 100, 0);
+        ledger.set_account(alice.clone(), 100, 0);
 
         let err = ledger
-            .apply_transfer(tx("alice", "bob", 1, 0, 0, ""))
+            .apply_transfer(SubmitTransferRequest {
+                tx: TransferTx {
+                    from: alice,
+                    to: bob,
+                    amount: 1,
+                    fee: 0,
+                    nonce: 0,
+                    signature: String::new(),
+                },
+            })
             .unwrap_err();
         assert_eq!(
             err,
@@ -184,15 +355,90 @@ mod tests {
 
     #[test]
     fn reject_invalid_signature() {
+        let alice = address_from_secret_hex(ALICE_SK_HEX);
+        let bob = address_from_secret_hex(BOB_SK_HEX);
+
         let mut ledger = InMemoryTransferLedger::new();
-        ledger.set_account("alice", 100, 0);
+        ledger.set_account(alice.clone(), 100, 0);
 
         let err = ledger
-            .apply_transfer(tx("alice", "bob", 1, 0, 0, "sig:mallory:0"))
+            .apply_transfer(tx(&alice, &bob, 1, 0, 0, BOB_SK_HEX))
             .unwrap_err();
         assert_eq!(
             err,
             TransferApplyError::Basic(TransferTxValidationError::InvalidSignature)
         );
+    }
+
+    #[test]
+    fn reject_replay_nonce_even_with_valid_signature() {
+        let alice = address_from_secret_hex(ALICE_SK_HEX);
+        let bob = address_from_secret_hex(BOB_SK_HEX);
+
+        let mut ledger = InMemoryTransferLedger::new();
+        ledger.set_account(alice.clone(), 100, 0);
+        ledger.set_account(bob.clone(), 0, 0);
+
+        ledger
+            .apply_transfer(tx(&alice, &bob, 10, 1, 0, ALICE_SK_HEX))
+            .unwrap();
+
+        let replay_err = ledger
+            .apply_transfer(tx(&alice, &bob, 10, 1, 0, ALICE_SK_HEX))
+            .unwrap_err();
+        assert_eq!(
+            replay_err,
+            TransferApplyError::NonceRollback {
+                expected: 1,
+                got: 0
+            }
+        );
+    }
+
+    #[test]
+    fn tx_lifecycle_pending_to_committed() {
+        let alice = address_from_secret_hex(ALICE_SK_HEX);
+        let bob = address_from_secret_hex(BOB_SK_HEX);
+
+        let mut ledger = InMemoryTransferLedger::new();
+        ledger.set_account(alice.clone(), 100, 0);
+        ledger.set_account(bob.clone(), 0, 0);
+        let mut txs = BTreeMap::new();
+
+        let submit = submit_tx(&mut txs, transfer_tx(&alice, &bob, 10, 1, 0, ALICE_SK_HEX), 100);
+        assert_eq!(submit.status, TxStatus::Pending);
+
+        let got = get_tx(&mut txs, &mut ledger, &submit.tx_hash, 120).unwrap();
+        assert_eq!(got.status, TxStatus::Committed);
+        assert!(got.error.is_none());
+    }
+
+    #[test]
+    fn tx_lifecycle_pending_to_fail_nonce_conflict() {
+        let alice = address_from_secret_hex(ALICE_SK_HEX);
+        let bob = address_from_secret_hex(BOB_SK_HEX);
+
+        let mut ledger = InMemoryTransferLedger::new();
+        ledger.set_account(alice.clone(), 100, 1);
+        ledger.set_account(bob.clone(), 0, 0);
+        let mut txs = BTreeMap::new();
+
+        let submit = submit_tx(&mut txs, transfer_tx(&alice, &bob, 10, 1, 0, ALICE_SK_HEX), 100);
+        let got = get_tx(&mut txs, &mut ledger, &submit.tx_hash, 120).unwrap();
+        assert_eq!(got.status, TxStatus::Fail);
+        assert!(
+            got.error
+                .as_deref()
+                .unwrap_or_default()
+                .contains("nonce rollback/replay")
+        );
+    }
+
+    #[test]
+    fn get_tx_not_found() {
+        let mut ledger = InMemoryTransferLedger::new();
+        let mut txs = BTreeMap::new();
+        let err = get_tx(&mut txs, &mut ledger, "0x404", 100).unwrap_err();
+        assert_eq!(err, GetTxError::NotFound("0x404".to_string()));
     }
 }
