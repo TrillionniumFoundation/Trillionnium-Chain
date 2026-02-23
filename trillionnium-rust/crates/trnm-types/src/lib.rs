@@ -1,6 +1,7 @@
 mod relay;
 mod request_status;
 mod transcript;
+mod transfer;
 
 use serde::{Deserialize, Serialize};
 
@@ -14,6 +15,7 @@ pub use transcript::{
     transcript_segment_root, transcript_segment_tree, verify_proof, MerkleDirection,
     TranscriptError, TranscriptMerkleTree, TranscriptProof,
 };
+pub use transfer::{TransferTx, TransferTxValidationError};
 
 pub type Hash32 = [u8; 32];
 

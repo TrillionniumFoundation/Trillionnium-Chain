@@ -634,6 +634,8 @@ dependencies = [
  "anyhow",
  "clap",
  "hex",
+ "serde",
+ "serde_json",
  "sha2",
 ]
 

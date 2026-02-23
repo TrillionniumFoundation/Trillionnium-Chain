@@ -1,11 +1,16 @@
 pub mod reliability;
 
 mod relay;
+mod transfer;
 
 use serde::{Deserialize, Serialize};
+use std::collections::BTreeMap;
 use trnm_types::{GovProposalStatus, TaskStatus};
 
 pub use relay::*;
+pub use transfer::{
+    InMemoryTransferLedger, SubmitTransferRequest, SubmitTransferResponse, TransferApplyError,
+};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TaskQueryResponse {
@@ -70,10 +75,101 @@ pub struct RequestFullQueryResponse {
     pub events: Vec<EventQueryResponse>,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct AccountState {
+    pub address: String,
+    pub balance: u128,
+    pub nonce: u64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct AccountBalanceQueryResponse {
+    pub address: String,
+    pub balance: u128,
+    pub version: u64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct AccountNonceQueryResponse {
+    pub address: String,
+    pub nonce: u64,
+    pub version: u64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct RpcErrorResponse {
+    pub code: &'static str,
+    pub message: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum AccountQueryError {
+    InvalidAddressFormat(String),
+    AccountNotFound(String),
+}
+
+impl AccountQueryError {
+    pub fn code(&self) -> &'static str {
+        match self {
+            Self::InvalidAddressFormat(_) => "INVALID_ADDRESS",
+            Self::AccountNotFound(_) => "ACCOUNT_NOT_FOUND",
+        }
+    }
+
+    pub fn message(&self) -> String {
+        match self {
+            Self::InvalidAddressFormat(addr) => {
+                format!("invalid address format: {}", addr)
+            }
+            Self::AccountNotFound(addr) => format!("account not found: {}", addr),
+        }
+    }
+
+    pub fn to_rpc_error(&self) -> RpcErrorResponse {
+        RpcErrorResponse {
+            code: self.code(),
+            message: self.message(),
+        }
+    }
+}
+
+impl std::fmt::Display for AccountQueryError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}: {}", self.code(), self.message())
+    }
+}
+
+impl std::error::Error for AccountQueryError {}
+
+pub fn validate_trnm_address(address: &str) -> Result<(), AccountQueryError> {
+    let Some(hex_part) = address.strip_prefix("trnm1") else {
+        return Err(AccountQueryError::InvalidAddressFormat(address.to_string()));
+    };
+    if hex_part.len() != 40 {
+        return Err(AccountQueryError::InvalidAddressFormat(address.to_string()));
+    }
+    if !hex_part.chars().all(|c| c.is_ascii_hexdigit() || c.is_ascii_lowercase() || c.is_ascii_digit()) {
+        return Err(AccountQueryError::InvalidAddressFormat(address.to_string()));
+    }
+    Ok(())
+}
+
+pub fn query_account_state(
+    accounts: &BTreeMap<String, AccountState>,
+    address: &str,
+) -> Result<AccountState, AccountQueryError> {
+    validate_trnm_address(address)?;
+    accounts
+        .get(address)
+        .cloned()
+        .ok_or_else(|| AccountQueryError::AccountNotFound(address.to_string()))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
     use serde_json::json;
+    use std::collections::BTreeMap;
 
     #[test]
     fn rpc_schema_smoke_task_fields_stable() {
@@ -127,5 +223,38 @@ mod tests {
                 "ts_unix_ms":1
             })
         );
+    }
+
+    #[test]
+    fn query_account_state_ok() {
+        let address = format!("trnm1{}", "1".repeat(40));
+        let mut accounts = BTreeMap::new();
+        accounts.insert(
+            address.clone(),
+            AccountState {
+                address: address.clone(),
+                balance: 42,
+                nonce: 7,
+            },
+        );
+
+        let got = query_account_state(&accounts, &address).unwrap();
+        assert_eq!(got.balance, 42);
+        assert_eq!(got.nonce, 7);
+    }
+
+    #[test]
+    fn query_account_state_address_not_found() {
+        let accounts = BTreeMap::new();
+        let addr = &format!("trnm1{}", "2".repeat(40));
+        let err = query_account_state(&accounts, addr).unwrap_err();
+        assert_eq!(err.code(), "ACCOUNT_NOT_FOUND");
+    }
+
+    #[test]
+    fn query_account_state_invalid_input() {
+        let accounts = BTreeMap::new();
+        let err = query_account_state(&accounts, "not-an-address").unwrap_err();
+        assert_eq!(err.code(), "INVALID_ADDRESS");
     }
 }

@@ -5,12 +5,13 @@ use sha2::{Digest, Sha256};
 use std::{
     collections::BTreeMap,
     fs,
-    path::PathBuf,
+    path::{Path, PathBuf},
     time::{SystemTime, UNIX_EPOCH},
 };
 use trnm_rpc::{
-    EventQueryResponse, GovParamQueryResponse, GovProposalQueryResponse,
-    MessageRequestQueryResponse, RequestFullQueryResponse, TaskQueryResponse,
+    query_account_state, AccountBalanceQueryResponse, AccountNonceQueryResponse, AccountState,
+    EventQueryResponse, GovParamQueryResponse, GovProposalQueryResponse, MessageRequestQueryResponse,
+    RequestFullQueryResponse, RpcErrorResponse, TaskQueryResponse,
 };
 use trnm_state::StateStore;
 use trnm_types::{GovParamObject, GovProposalObject, GovProposalStatus, RequestStatus, TaskStatus};
@@ -39,6 +40,12 @@ enum Command {
     },
     QueryEvents {
         task_id: u64,
+    },
+    QueryBalance {
+        address: String,
+    },
+    QueryNonce {
+        address: String,
     },
     SubmitMessage {
         #[arg(long)]
@@ -312,6 +319,26 @@ fn transition_request_status(current: &str, to: RequestStatus) -> Result<String>
     Ok(next.as_str().to_string())
 }
 
+fn account_state_file() -> PathBuf {
+    if let Ok(path) = std::env::var("TRNM_RPC_ACCOUNTS_FILE") {
+        return PathBuf::from(path);
+    }
+    run_root().join("run/rpc/accounts.json")
+}
+
+fn load_account_state(path: &Path) -> BTreeMap<String, AccountState> {
+    let Ok(raw) = fs::read_to_string(path) else {
+        return BTreeMap::new();
+    };
+    serde_json::from_str::<BTreeMap<String, AccountState>>(&raw).unwrap_or_default()
+}
+
+fn rpc_fail(err: RpcErrorResponse) -> anyhow::Error {
+    let body = serde_json::to_string_pretty(&err)
+        .unwrap_or_else(|_| format!("{{\"code\":\"{}\",\"message\":\"{}\"}}", err.code, err.message));
+    anyhow::anyhow!(body)
+}
+
 fn main() -> Result<()> {
     let args = Args::parse();
     let st = governance_state();
@@ -479,6 +506,28 @@ fn main() -> Result<()> {
                 bail!("events not found for task_id={}", task_id);
             }
             println!("{}", serde_json::to_string_pretty(&events)?);
+        }
+        Command::QueryBalance { address } => {
+            let accounts = load_account_state(&account_state_file());
+            let account = query_account_state(&accounts, &address)
+                .map_err(|e| rpc_fail(e.to_rpc_error()))?;
+            let out = AccountBalanceQueryResponse {
+                address: account.address,
+                balance: account.balance,
+                version: 1,
+            };
+            println!("{}", serde_json::to_string_pretty(&out)?);
+        }
+        Command::QueryNonce { address } => {
+            let accounts = load_account_state(&account_state_file());
+            let account = query_account_state(&accounts, &address)
+                .map_err(|e| rpc_fail(e.to_rpc_error()))?;
+            let out = AccountNonceQueryResponse {
+                address: account.address,
+                nonce: account.nonce,
+                version: 1,
+            };
+            println!("{}", serde_json::to_string_pretty(&out)?);
         }
         Command::SubmitMessage {
             channel,

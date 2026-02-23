@@ -1,6 +1,6 @@
 use trnm_rpc::reliability::{
-    default_reliability_db_path, AckCode, ReliabilityEngine, ReliabilityStoreMode, ReliableMessage,
-    RetryConfig, SqliteReliabilityStore,
+    AckCode, ReliabilityEngine, ReliabilityStoreMode, ReliableMessage, RetryConfig,
+    SqliteReliabilityStore,
 };
 
 #[test]
@@ -10,14 +10,8 @@ fn reliability_persistent_store_smoke() {
         return;
     }
 
-    let db_path = default_reliability_db_path();
-
-    if let Some(parent) = db_path.parent() {
-        std::fs::create_dir_all(parent).expect("create db parent");
-    }
-    if db_path.exists() {
-        std::fs::remove_file(&db_path).expect("remove stale db");
-    }
+    let tmp = tempfile::tempdir().expect("tempdir");
+    let db_path = tmp.path().join("reliability-smoke.db");
 
     // First engine instance writes accepted record.
     let mut engine = ReliabilityEngine::new(
