@@ -16,6 +16,7 @@ import datetime as dt
 import hashlib
 import json
 import os
+import subprocess
 import sys
 import urllib.error
 import urllib.parse
@@ -117,13 +118,21 @@ def send_telegram(bot_token: str, chat_id: str, text: str) -> None:
         raise RuntimeError(f"telegram send failed status={code} body={body[:200]}")
 
 
+def send_imessage(to: str, text: str) -> None:
+    cmd = ["imsg", "send", "--to", to, "--service", "imessage", "--text", text]
+    proc = subprocess.run(cmd, capture_output=True, text=True)
+    if proc.returncode != 0:
+        err = (proc.stderr or proc.stdout or "").strip()
+        raise RuntimeError(f"imessage send failed rc={proc.returncode}: {err[:300]}")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description="PR-7 alert delivery bridge")
     ap.add_argument("--report", required=True, help="PR6 summary.txt path")
     ap.add_argument("--state-file", default=os.environ.get("ALERT_NOTIFY_STATE_FILE", "run/pr7-alert-delivery/state.json"))
     ap.add_argument("--min-level", default=os.environ.get("ALERT_NOTIFY_MIN_LEVEL", "WARN"), choices=["WARN", "FAIL"])
     ap.add_argument("--dedup-seconds", type=int, default=int(os.environ.get("ALERT_NOTIFY_DEDUP_SECONDS", "1800")))
-    ap.add_argument("--channel", default=os.environ.get("ALERT_NOTIFY_CHANNEL", "slack"), choices=["slack", "telegram"])
+    ap.add_argument("--channel", default=os.environ.get("ALERT_NOTIFY_CHANNEL", "slack"), choices=["slack", "telegram", "imessage"])
     ap.add_argument("--dry-run", action="store_true", default=os.environ.get("DRY_RUN", "0") == "1")
     args = ap.parse_args()
 
@@ -163,12 +172,17 @@ def main() -> int:
                 if not webhook:
                     raise RuntimeError("SLACK_WEBHOOK_URL is required for channel=slack")
                 send_slack(webhook, text)
-            else:
+            elif args.channel == "telegram":
                 token = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip()
                 chat_id = os.environ.get("TELEGRAM_CHAT_ID", "").strip()
                 if not token or not chat_id:
                     raise RuntimeError("TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID are required for channel=telegram")
                 send_telegram(token, chat_id, text)
+            else:
+                to = os.environ.get("IMESSAGE_TO", "").strip()
+                if not to:
+                    raise RuntimeError("IMESSAGE_TO is required for channel=imessage")
+                send_imessage(to, text)
         except (RuntimeError, urllib.error.URLError) as e:
             print(f"[PR7][FAIL] notify delivery failed: {e}", file=sys.stderr)
             return 3
