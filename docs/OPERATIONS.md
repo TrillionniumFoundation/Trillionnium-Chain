@@ -160,6 +160,25 @@ curl -sS http://127.0.0.1:8545/health
 - `PID_FILE`
 - `LOG_FILE`
 
+## Dev Stack 启停（P2-1）
+
+一键拉起：
+
+```bash
+./scripts/v2/dev_stack_up.sh
+```
+
+一键停止：
+
+```bash
+./scripts/v2/dev_stack_down.sh
+```
+
+默认服务：
+- RPC health: `http://127.0.0.1:8545/health`
+- Faucet health: `http://127.0.0.1:8546/health`
+- Explorer: `http://127.0.0.1:8090`
+
 ## P1-4 集成门禁（sdk 示例 + product smoke + rpc_contract_v1）
 
 新增串联脚本：`scripts/v2/run_p1_integration_gate.sh`

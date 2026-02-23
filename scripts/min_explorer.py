@@ -228,12 +228,15 @@ class Handler(BaseHTTPRequestHandler):
                 "</tr>"
             )
 
+        empty_row = "<tr><td colspan='6' class='muted'>No tx found for this address.</td></tr>"
+        rows_html = ''.join(rows) if rows else empty_row
+
         body = (
             f"<h2>Address</h2><p><code>{html.escape(addr)}</code></p>"
             f"<div class='card'><b>balance:</b> {html.escape(str(acc.get('balance')))}<br /><b>nonce:</b> {html.escape(str(acc.get('nonce')))}</div>"
             "<h3>Recent Transactions</h3>"
             "<table><thead><tr><th>tx_hash</th><th>status</th><th>from/to</th><th>amount</th><th>nonce</th><th>error</th></tr></thead>"
-            f"<tbody>{''.join(rows) if rows else '<tr><td colspan="6" class="muted">No tx found for this address.</td></tr>'}</tbody></table>"
+            f"<tbody>{rows_html}</tbody></table>"
         )
         self._send_html(200, f"Address {addr}", body)
 
