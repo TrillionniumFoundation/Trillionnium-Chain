@@ -355,6 +355,26 @@ cargo run -q -p trnm-rpc -- query-events --task-id <TASK_ID> --limit 100
 
 更多操作细节：`docs/runbooks/pr5-challenge-treasury-reconcile.md`
 
+## PR-6 Alert Rules（Challenge Treasury 异常告警）
+
+执行：
+
+```bash
+./scripts/v2/pr6_alert_rules_gate.sh
+```
+
+默认输出：
+- `run/pr6-alerts/<timestamp>/summary.txt`
+- 机器可解析字段：`status=PASS|WARN|FAIL` + `rule.*`
+
+阈值参数（环境变量）：
+- `FAIL_UNRESOLVED_CHALLENGES` / `WARN_UNRESOLVED_CHALLENGES`
+- `FAIL_FORFEITS_DAILY_INCREASE` / `WARN_FORFEITS_DAILY_INCREASE`
+- `FAIL_ESCROW_NONZERO_HOURS` / `WARN_ESCROW_NONZERO_HOURS`
+- `CI_HARD_FAIL_ON_WARN=1`（WARN 也返回非 0）
+
+Runbook：`docs/runbooks/pr6-alert-rules.md`
+
 ## PR-6 Nightly Security 日报（自动化）
 
 nightly 在流程末尾自动生成日报：

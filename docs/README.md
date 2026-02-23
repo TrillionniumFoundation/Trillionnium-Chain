@@ -14,3 +14,5 @@
 - PoUW sequence: `architecture/rust-l1-pouw-sequence.md`
 - v1 interface freeze: `protocol/rust-l1-v1-interface-freeze.md`
 - PR-5 challenge treasury 对账 runbook: `runbooks/pr5-challenge-treasury-reconcile.md`
+- PR-6 alert rules runbook: `runbooks/pr6-alert-rules.md`
+- PR-6 nightly security summary runbook: `runbooks/pr6-nightly-security-summary.md`

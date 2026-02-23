@@ -349,12 +349,14 @@ jobs:
 
       - name: Build PR-6 daily security summary (non-gate)
         if: always()
+        continue-on-error: true
         run: |
           set -euo pipefail
           python3 ./scripts/v2/pr6_daily_security_summary.py
 
       - name: Append PR-6 daily security summary to GitHub Step Summary
         if: always()
+        continue-on-error: true
         run: |
           set -euo pipefail
           summary_file="run/pr6-ops/daily-security-summary.md"
