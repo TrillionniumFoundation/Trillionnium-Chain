@@ -36,6 +36,11 @@ python3 ./scripts/v2/pr6_daily_security_summary.py
   - TopN unresolved tasks
   - TopN forfeit spikes (day)
   - TopN escrow lingering
+- `run/pr7-alert-delivery/state.json`（或 `ALERT_NOTIFY_STATE_FILE`）
+  - `stats.alerts_sent`
+  - `stats.alerts_suppressed`
+  - `stats.alerts_failed`
+  - `last_delivery.event/reason/channel/report_status/at_utc`
 
 ## 3) 告警规则（当前版本）
 
@@ -62,7 +67,7 @@ python3 ./scripts/v2/pr6_daily_security_summary.py
 ## 6) 验收清单（PR-6）
 
 - [ ] nightly 结束后存在 `run/pr6-ops/daily-security-summary.md`
-- [ ] 报告包含 Key Metrics + Alerts + Artifact Pointers
+- [ ] 报告包含 Key Metrics + Alerts + Latest Alert Delivery + Artifact Pointers
 - [ ] TopN 摘要存在：`run/pr7-topn/<timestamp>/topn-anomaly-summary.md`
 - [ ] Step Summary 出现 `PR-6 Daily Security Ops` 小节
 - [ ] nightly artifact 包含 `run/pr6-ops/**` 与 `run/pr7-topn/**`

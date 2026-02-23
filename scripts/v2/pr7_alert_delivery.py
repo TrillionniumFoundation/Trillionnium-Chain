@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 """PR-7 alert delivery bridge for PR-6 report output.
 
-Minimal reliable path:
+Reliable path:
 - Read PR-6 summary.txt (key=value lines)
-- Trigger delivery on WARN/FAIL (configurable)
-- Channel config from env (Slack webhook or Telegram bot)
-- Dedup window to avoid repeated alert storms
-- Supports DRY_RUN=1 without real secrets
+- Trigger delivery on severity thresholds
+- Channel config from env (Slack webhook / Telegram bot / iMessage)
+- Alert-noise controls: level mapping, same-class aggregation, per-level cooldown
+- Exponential backoff retry on delivery failures
+- Dead-letter on retry exhaustion
+- Supports DRY_RUN=1 and failure simulation for tests
 """
 
 from __future__ import annotations
@@ -18,12 +20,13 @@ import json
 import os
 import subprocess
 import sys
+import time
 import urllib.error
-import urllib.parse
 import urllib.request
 from pathlib import Path
 
-SEVERITY = {"PASS": 0, "WARN": 1, "FAIL": 2}
+SEVERITY = {"INFO": 0, "WARN": 1, "CRITICAL": 2}
+STATUS_TO_LEVEL = {"PASS": "INFO", "WARN": "WARN", "FAIL": "CRITICAL"}
 
 
 def parse_report(path: Path) -> dict[str, str]:
@@ -40,14 +43,38 @@ def parse_report(path: Path) -> dict[str, str]:
     return kv
 
 
-def should_trigger(status: str, min_level: str) -> bool:
-    return SEVERITY.get(status, -1) >= SEVERITY.get(min_level, 1)
+def normalize_level(report: dict[str, str]) -> str:
+    alert_level = report.get("alert_level", "").strip().upper()
+    if alert_level in SEVERITY:
+        return alert_level
+
+    status = report.get("status", "").strip().upper()
+    level = STATUS_TO_LEVEL.get(status)
+    if level:
+        return level
+
+    raise ValueError(f"invalid status/alert_level in report: status={status!r} alert_level={alert_level!r}")
 
 
-def mk_fingerprint(report: dict[str, str]) -> str:
+def normalize_min_level(raw: str) -> str:
+    v = raw.strip().upper()
+    if v == "FAIL":
+        return "CRITICAL"
+    if v == "PASS":
+        return "INFO"
+    if v in SEVERITY:
+        return v
+    raise ValueError(f"invalid min level: {raw}")
+
+
+def should_trigger(level: str, min_level: str) -> bool:
+    return SEVERITY[level] >= SEVERITY[min_level]
+
+
+def mk_exact_fingerprint(report: dict[str, str], level: str) -> str:
     key_fields = [
         report.get("alert_code", "PR6_ALERT_RULES"),
-        report.get("status", "UNKNOWN"),
+        level,
         report.get("rule.unresolved_challenges.status", ""),
         report.get("rule.forfeits_daily_increase.status", ""),
         report.get("rule.escrow_nonzero_hours.status", ""),
@@ -59,11 +86,24 @@ def mk_fingerprint(report: dict[str, str]) -> str:
     return digest[:24]
 
 
+def mk_class_fingerprint(report: dict[str, str], level: str) -> str:
+    key_fields = [
+        report.get("alert_code", "PR6_ALERT_RULES"),
+        level,
+        report.get("rule.unresolved_challenges.status", ""),
+        report.get("rule.forfeits_daily_increase.status", ""),
+        report.get("rule.escrow_nonzero_hours.status", ""),
+    ]
+    digest = hashlib.sha256("|".join(key_fields).encode("utf-8")).hexdigest()
+    return digest[:24]
+
+
 def load_state(path: Path) -> dict:
     if not path.exists():
         return {}
     try:
-        return json.loads(path.read_text(encoding="utf-8"))
+        data = json.loads(path.read_text(encoding="utf-8"))
+        return data if isinstance(data, dict) else {}
     except json.JSONDecodeError:
         return {}
 
@@ -73,14 +113,61 @@ def save_state(path: Path, state: dict) -> None:
     path.write_text(json.dumps(state, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
-def in_dedup_window(state: dict, fingerprint: str, now_ts: int, dedup_seconds: int) -> bool:
-    last = state.get("last_sent", {}).get(fingerprint)
-    if not isinstance(last, int):
+def ensure_stats(state: dict) -> dict:
+    stats = state.setdefault("stats", {})
+    stats.setdefault("alerts_sent", 0)
+    stats.setdefault("alerts_suppressed", 0)
+    stats.setdefault("alerts_failed", 0)
+    return stats
+
+
+def record_delivery(state: dict, *, event: str, reason: str, channel: str, report_status: str, fingerprint: str, report_path: Path) -> None:
+    state["last_delivery"] = {
+        "event": event,
+        "reason": reason,
+        "channel": channel,
+        "report_status": report_status,
+        "fingerprint": fingerprint,
+        "report": str(report_path),
+        "at_utc": dt.datetime.now(dt.timezone.utc).isoformat(),
+    }
+
+
+def in_window(last_ts: int | None, now_ts: int, window_seconds: int) -> bool:
+    if not isinstance(last_ts, int):
         return False
-    return now_ts - last < dedup_seconds
+    return now_ts - last_ts < max(0, window_seconds)
 
 
-def build_message(report: dict[str, str], report_path: Path) -> str:
+def level_cooldowns_from_args(args: argparse.Namespace) -> dict[str, int]:
+    # Backward compatibility: if per-level cooldown not provided, fallback to ALERT_NOTIFY_DEDUP_SECONDS.
+    base = max(0, args.dedup_seconds)
+    return {
+        "INFO": max(0, args.cooldown_info if args.cooldown_info is not None else base),
+        "WARN": max(0, args.cooldown_warn if args.cooldown_warn is not None else base),
+        "CRITICAL": max(0, args.cooldown_critical if args.cooldown_critical is not None else min(300, base)),
+    }
+
+
+def update_group(groups: dict, class_fp: str, now_ts: int, aggregate_seconds: int) -> int:
+    group = groups.get(class_fp)
+    if not isinstance(group, dict):
+        group = {"count": 0, "first_ts": now_ts, "last_ts": now_ts}
+
+    if not isinstance(group.get("last_ts"), int) or now_ts - int(group["last_ts"]) >= max(0, aggregate_seconds):
+        group = {"count": 0, "first_ts": now_ts, "last_ts": now_ts}
+
+    group["count"] = int(group.get("count", 0)) + 1
+    group["last_ts"] = now_ts
+    groups[class_fp] = group
+    return int(group["count"])
+
+
+def clear_group(groups: dict, class_fp: str, now_ts: int) -> None:
+    groups[class_fp] = {"count": 0, "first_ts": now_ts, "last_ts": now_ts}
+
+
+def build_message(report: dict[str, str], report_path: Path, level: str, aggregate_count: int, aggregate_seconds: int) -> str:
     status = report.get("status", "UNKNOWN")
     code = report.get("alert_code", "PR6_ALERT_RULES")
     msg = report.get("alert_message", "")
@@ -88,10 +175,15 @@ def build_message(report: dict[str, str], report_path: Path) -> str:
     unresolved = report.get("rule.unresolved_challenges.value", "?")
     forfeits = report.get("rule.forfeits_daily_increase.value", "?")
     escrow_h = report.get("rule.escrow_nonzero_hours.value", "?")
+
+    agg_line = ""
+    if aggregate_count > 1:
+        agg_line = f"\n- aggregated={aggregate_count} similar alerts within {aggregate_seconds}s"
+
     return (
-        f"[{code}][{status}] {msg}\n"
-        f"- unresolved={unresolved}, forfeits_daily_increase={forfeits}, escrow_nonzero_hours={escrow_h}\n"
-        f"- generated_at_utc={ts}\n"
+        f"[{code}][{level}] {msg}\n"
+        f"- source_status={status}, unresolved={unresolved}, forfeits_daily_increase={forfeits}, escrow_nonzero_hours={escrow_h}\n"
+        f"- generated_at_utc={ts}{agg_line}\n"
         f"- report={report_path}"
     )
 
@@ -126,14 +218,94 @@ def send_imessage(to: str, text: str) -> None:
         raise RuntimeError(f"imessage send failed rc={proc.returncode}: {err[:300]}")
 
 
+def deliver_once(channel: str, text: str) -> None:
+    if channel == "slack":
+        webhook = os.environ.get("SLACK_WEBHOOK_URL", "").strip()
+        if not webhook:
+            raise RuntimeError("SLACK_WEBHOOK_URL is required for channel=slack")
+        send_slack(webhook, text)
+    elif channel == "telegram":
+        token = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip()
+        chat_id = os.environ.get("TELEGRAM_CHAT_ID", "").strip()
+        if not token or not chat_id:
+            raise RuntimeError("TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID are required for channel=telegram")
+        send_telegram(token, chat_id, text)
+    elif channel == "imessage":
+        to = os.environ.get("IMESSAGE_TO", "").strip()
+        if not to:
+            raise RuntimeError("IMESSAGE_TO is required for channel=imessage")
+        send_imessage(to, text)
+    else:
+        raise RuntimeError(f"unsupported channel: {channel}")
+
+
+def send_with_retry(
+    *,
+    channel: str,
+    text: str,
+    dry_run: bool,
+    max_retries: int,
+    base_backoff_ms: int,
+    max_backoff_ms: int,
+    dry_run_simulate_failures: int = 0,
+) -> tuple[bool, int, str]:
+    attempt = 0
+    while True:
+        attempt += 1
+        try:
+            if dry_run and attempt <= dry_run_simulate_failures:
+                raise RuntimeError(f"dry-run injected failure at attempt={attempt}")
+            if not dry_run:
+                deliver_once(channel, text)
+            return True, attempt, ""
+        except (RuntimeError, urllib.error.URLError) as e:
+            if attempt > max_retries:
+                return False, attempt, str(e)
+            backoff_ms = min(max_backoff_ms, base_backoff_ms * (2 ** (attempt - 1)))
+            print(
+                f"[PR7][RETRY] channel={channel} attempt={attempt}/{max_retries + 1} "
+                f"backoff_ms={backoff_ms} err={e}",
+                file=sys.stderr,
+            )
+            time.sleep(backoff_ms / 1000.0)
+
+
+def append_dead_letter(path: Path, record: dict) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("a", encoding="utf-8") as f:
+        f.write(json.dumps(record, ensure_ascii=False) + "\n")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description="PR-7 alert delivery bridge")
     ap.add_argument("--report", required=True, help="PR6 summary.txt path")
     ap.add_argument("--state-file", default=os.environ.get("ALERT_NOTIFY_STATE_FILE", "run/pr7-alert-delivery/state.json"))
-    ap.add_argument("--min-level", default=os.environ.get("ALERT_NOTIFY_MIN_LEVEL", "WARN"), choices=["WARN", "FAIL"])
+    ap.add_argument("--dead-letter-file", default=os.environ.get("ALERT_NOTIFY_DEAD_LETTER_FILE", "run/pr7-alert-delivery/dead-letter.jsonl"))
+    ap.add_argument("--min-level", default=os.environ.get("ALERT_NOTIFY_MIN_LEVEL", "WARN"))
     ap.add_argument("--dedup-seconds", type=int, default=int(os.environ.get("ALERT_NOTIFY_DEDUP_SECONDS", "1800")))
+    ap.add_argument(
+        "--aggregate-seconds",
+        type=int,
+        default=int(os.environ.get("ALERT_NOTIFY_AGGREGATE_SECONDS", os.environ.get("ALERT_NOTIFY_DEDUP_SECONDS", "1800"))),
+    )
+    ap.add_argument("--cooldown-info", type=int, default=(int(os.environ["ALERT_NOTIFY_COOLDOWN_INFO"]) if "ALERT_NOTIFY_COOLDOWN_INFO" in os.environ else None))
+    ap.add_argument("--cooldown-warn", type=int, default=(int(os.environ["ALERT_NOTIFY_COOLDOWN_WARN"]) if "ALERT_NOTIFY_COOLDOWN_WARN" in os.environ else None))
+    ap.add_argument(
+        "--cooldown-critical",
+        type=int,
+        default=(int(os.environ["ALERT_NOTIFY_COOLDOWN_CRITICAL"]) if "ALERT_NOTIFY_COOLDOWN_CRITICAL" in os.environ else None),
+    )
     ap.add_argument("--channel", default=os.environ.get("ALERT_NOTIFY_CHANNEL", "slack"), choices=["slack", "telegram", "imessage"])
+    ap.add_argument("--max-retries", type=int, default=int(os.environ.get("ALERT_NOTIFY_MAX_RETRIES", "3")))
+    ap.add_argument("--base-backoff-ms", type=int, default=int(os.environ.get("ALERT_NOTIFY_BASE_BACKOFF_MS", "500")))
+    ap.add_argument("--max-backoff-ms", type=int, default=int(os.environ.get("ALERT_NOTIFY_MAX_BACKOFF_MS", "8000")))
     ap.add_argument("--dry-run", action="store_true", default=os.environ.get("DRY_RUN", "0") == "1")
+    ap.add_argument(
+        "--dry-run-simulate-failures",
+        type=int,
+        default=int(os.environ.get("ALERT_NOTIFY_DRY_RUN_SIMULATE_FAILURES", "0")),
+        help="only in dry-run mode: inject N failures before success",
+    )
     args = ap.parse_args()
 
     report_path = Path(args.report)
@@ -142,54 +314,142 @@ def main() -> int:
         return 2
 
     report = parse_report(report_path)
-    status = report.get("status", "UNKNOWN")
-    if status not in SEVERITY:
-        print(f"[PR7][FAIL] invalid status in report: {status}", file=sys.stderr)
+    try:
+        level = normalize_level(report)
+        min_level = normalize_min_level(args.min_level)
+    except ValueError as e:
+        print(f"[PR7][FAIL] {e}", file=sys.stderr)
         return 2
 
-    if not should_trigger(status, args.min_level):
-        print(f"[PR7] skip: status={status} below min_level={args.min_level}")
+    if not should_trigger(level, min_level):
+        print(f"[PR7] skip: level={level} below min_level={min_level}")
         return 0
 
     now_ts = int(dt.datetime.now(dt.timezone.utc).timestamp())
-    fingerprint = mk_fingerprint(report)
+    now_iso = dt.datetime.now(dt.timezone.utc).isoformat()
+
+    exact_fp = mk_exact_fingerprint(report, level)
+    class_fp = mk_class_fingerprint(report, level)
+
     state_path = Path(args.state_file)
     state = load_state(state_path)
+    state.setdefault("last_sent", {})  # backward compatible exact dedup store
+    state.setdefault("last_sent_exact", {})
+    state.setdefault("last_sent_class", {})
+    state.setdefault("groups", {})
+    stats = ensure_stats(state)
 
-    if in_dedup_window(state, fingerprint, now_ts, args.dedup_seconds):
-        print(f"[PR7] dedup suppressed: fingerprint={fingerprint} window={args.dedup_seconds}s")
+    cooldowns = level_cooldowns_from_args(args)
+    cooldown = cooldowns[level]
+
+    # backward compatibility: old last_sent also works as exact dedup source
+    last_exact_ts = state["last_sent_exact"].get(exact_fp)
+    if not isinstance(last_exact_ts, int):
+        last_exact_ts = state["last_sent"].get(exact_fp)
+
+    # strict dedup for identical event
+    if in_window(last_exact_ts, now_ts, cooldown):
+        count = update_group(state["groups"], class_fp, now_ts, args.aggregate_seconds)
+        stats["alerts_suppressed"] += 1
+        record_delivery(
+            state,
+            event="suppressed",
+            reason=f"exact_dedup_{cooldown}s",
+            channel=args.channel,
+            report_status=report.get("status", "UNKNOWN"),
+            fingerprint=exact_fp,
+            report_path=report_path,
+        )
+        save_state(state_path, state)
+        print(f"[PR7] dedup suppressed(exact): level={level} fingerprint={exact_fp} count={count} window={cooldown}s")
         return 0
 
-    text = build_message(report, report_path)
+    # same-class aggregation suppression (CRITICAL bypasses this by design)
+    if level != "CRITICAL" and in_window(state["last_sent_class"].get(class_fp), now_ts, cooldown):
+        count = update_group(state["groups"], class_fp, now_ts, args.aggregate_seconds)
+        stats["alerts_suppressed"] += 1
+        record_delivery(
+            state,
+            event="suppressed",
+            reason=f"class_dedup_{cooldown}s",
+            channel=args.channel,
+            report_status=report.get("status", "UNKNOWN"),
+            fingerprint=class_fp,
+            report_path=report_path,
+        )
+        save_state(state_path, state)
+        print(f"[PR7] dedup suppressed(class): level={level} class={class_fp} count={count} cooldown={cooldown}s")
+        return 0
 
-    if args.dry_run:
-        print("[PR7] DRY_RUN=1, would send alert:")
-        print(text)
-    else:
-        try:
-            if args.channel == "slack":
-                webhook = os.environ.get("SLACK_WEBHOOK_URL", "").strip()
-                if not webhook:
-                    raise RuntimeError("SLACK_WEBHOOK_URL is required for channel=slack")
-                send_slack(webhook, text)
-            elif args.channel == "telegram":
-                token = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip()
-                chat_id = os.environ.get("TELEGRAM_CHAT_ID", "").strip()
-                if not token or not chat_id:
-                    raise RuntimeError("TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID are required for channel=telegram")
-                send_telegram(token, chat_id, text)
-            else:
-                to = os.environ.get("IMESSAGE_TO", "").strip()
-                if not to:
-                    raise RuntimeError("IMESSAGE_TO is required for channel=imessage")
-                send_imessage(to, text)
-        except (RuntimeError, urllib.error.URLError) as e:
-            print(f"[PR7][FAIL] notify delivery failed: {e}", file=sys.stderr)
-            return 3
+    aggregate_count = update_group(state["groups"], class_fp, now_ts, args.aggregate_seconds)
+    text = build_message(report, report_path, level, aggregate_count, args.aggregate_seconds)
 
-    state.setdefault("last_sent", {})[fingerprint] = now_ts
+    ok, attempts, err = send_with_retry(
+        channel=args.channel,
+        text=text,
+        dry_run=args.dry_run,
+        max_retries=max(0, args.max_retries),
+        base_backoff_ms=max(1, args.base_backoff_ms),
+        max_backoff_ms=max(1, args.max_backoff_ms),
+        dry_run_simulate_failures=max(0, args.dry_run_simulate_failures),
+    )
+
+    if not ok:
+        dead_letter = {
+            "created_at_utc": now_iso,
+            "source": "pr7_alert_delivery",
+            "channel": args.channel,
+            "report_path": str(report_path),
+            "fingerprint": exact_fp,
+            "class_fingerprint": class_fp,
+            "level": level,
+            "status": report.get("status", "UNKNOWN"),
+            "message": text,
+            "attempts": attempts,
+            "max_retries": args.max_retries,
+            "last_error": err,
+            "dry_run": args.dry_run,
+        }
+        append_dead_letter(Path(args.dead_letter_file), dead_letter)
+        stats["alerts_failed"] += 1
+        record_delivery(
+            state,
+            event="failed",
+            reason=err,
+            channel=args.channel,
+            report_status=report.get("status", "UNKNOWN"),
+            fingerprint=exact_fp,
+            report_path=report_path,
+        )
+        save_state(state_path, state)
+        print(
+            f"[PR7][FAIL] notify delivery exhausted retries; dead-letter appended "
+            f"file={args.dead_letter_file} fingerprint={exact_fp} attempts={attempts} err={err}",
+            file=sys.stderr,
+        )
+        return 3
+
+    stats["alerts_sent"] += 1
+    state["last_sent"][exact_fp] = now_ts
+    state["last_sent_exact"][exact_fp] = now_ts
+    state["last_sent_class"][class_fp] = now_ts
+    clear_group(state["groups"], class_fp, now_ts)
+    record_delivery(
+        state,
+        event="sent",
+        reason="ok",
+        channel=args.channel,
+        report_status=report.get("status", "UNKNOWN"),
+        fingerprint=exact_fp,
+        report_path=report_path,
+    )
     save_state(state_path, state)
-    print(f"[PR7] sent status={status} channel={args.channel} fingerprint={fingerprint}")
+
+    mode = "DRY_RUN" if args.dry_run else "LIVE"
+    print(
+        f"[PR7] sent mode={mode} level={level} channel={args.channel} "
+        f"exact={exact_fp} class={class_fp} aggregate_count={aggregate_count} attempts={attempts}"
+    )
     return 0
 
 

@@ -8,6 +8,7 @@ Output:
 from __future__ import annotations
 
 import glob
+import json
 import os
 from datetime import datetime, timezone
 
@@ -19,7 +20,8 @@ RUST_ROOT = os.path.join(ROOT, "trillionnium-rust")
 RUST_HEALTH = os.path.join(RUST_ROOT, "run", "health")
 RUST_BENCH = os.path.join(RUST_ROOT, "run", "bench")
 PR5_ROOT = os.path.join(ROOT, "run", "pr5-reconcile")
-PR7_ROOT = os.path.join(ROOT, "run", "pr7-topn")
+PR7_TOPN_ROOT = os.path.join(ROOT, "run", "pr7-topn")
+PR7_ALERT_STATE = os.environ.get("ALERT_NOTIFY_STATE_FILE", os.path.join(ROOT, "run", "pr7-alert-delivery", "state.json"))
 
 
 def latest(pattern: str) -> str | None:
@@ -38,6 +40,16 @@ def parse_kv(path: str | None) -> dict[str, str]:
                 k, v = line.split("=", 1)
                 out[k.strip()] = v.strip()
     return out
+
+
+def parse_json(path: str | None) -> dict:
+    if not path or not os.path.exists(path):
+        return {}
+    try:
+        with open(path, "r", encoding="utf-8", errors="ignore") as f:
+            return json.load(f)
+    except json.JSONDecodeError:
+        return {}
 
 
 def parse_pr5_summary(path: str | None) -> dict[str, str]:
@@ -70,11 +82,14 @@ nightly_summary = latest(os.path.join(RUST_HEALTH, "nightly-summary-*.md"))
 suggest_file = latest(os.path.join(RUST_HEALTH, "auto-adaptive-threshold-suggestion-*.txt"))
 aggr_profile = latest(os.path.join(RUST_BENCH, "aggressive-profile-summary-*.md"))
 pr5_summary_file = latest(os.path.join(PR5_ROOT, "*", "summary.txt"))
-pr7_topn_summary = latest(os.path.join(PR7_ROOT, "*", "topn-anomaly-summary.md"))
+pr7_topn_summary = latest(os.path.join(PR7_TOPN_ROOT, "*", "topn-anomaly-summary.md"))
 
 attrib = parse_kv(attrib_file)
 suggest = parse_kv(suggest_file)
 pr5 = parse_pr5_summary(pr5_summary_file)
+alert_state = parse_json(PR7_ALERT_STATE)
+alert_stats = alert_state.get("stats", {}) if isinstance(alert_state, dict) else {}
+last_delivery = alert_state.get("last_delivery", {}) if isinstance(alert_state, dict) else {}
 
 labels = attrib.get("attribution.labels", "unknown")
 reasons = attrib.get("attribution.reasons", "n/a")
@@ -118,6 +133,9 @@ lines.append(f"- pr5.reconcile.refunded: `{pr5.get('refunded', 'n/a')}`")
 lines.append(f"- pr5.reconcile.treasury_delta_sum: `{pr5.get('treasury_delta_sum', 'n/a')}`")
 lines.append(f"- pr5.reconcile.challenger_delta_sum: `{pr5.get('challenger_delta_sum', 'n/a')}`")
 lines.append(f"- pr7.topn.summary.present: `{str(bool(pr7_topn_summary)).lower()}`")
+lines.append(f"- pr7.alert_delivery.alerts_sent: `{alert_stats.get('alerts_sent', 0)}`")
+lines.append(f"- pr7.alert_delivery.alerts_suppressed: `{alert_stats.get('alerts_suppressed', 0)}`")
+lines.append(f"- pr7.alert_delivery.alerts_failed: `{alert_stats.get('alerts_failed', 0)}`")
 lines.append("")
 lines.append("## Alerts")
 if alerts:
@@ -125,6 +143,18 @@ if alerts:
         lines.append(f"- ⚠️ {a}")
 else:
     lines.append("- ✅ no critical alert detected in summary scope")
+
+lines.append("")
+lines.append("## Latest Alert Delivery")
+if isinstance(last_delivery, dict) and last_delivery:
+    lines.append(f"- last_delivery.event: `{last_delivery.get('event', 'n/a')}`")
+    lines.append(f"- last_delivery.reason: `{last_delivery.get('reason', 'n/a')}`")
+    lines.append(f"- last_delivery.channel: `{last_delivery.get('channel', 'n/a')}`")
+    lines.append(f"- last_delivery.report_status: `{last_delivery.get('report_status', 'n/a')}`")
+    lines.append(f"- last_delivery.at_utc: `{last_delivery.get('at_utc', 'n/a')}`")
+else:
+    lines.append("- last_delivery.event: `n/a`")
+    lines.append("- last_delivery.reason: `n/a`")
 
 if suggest:
     lines.append("")
@@ -146,7 +176,8 @@ lines.append(f"- aggressive_profile_summary: `{aggr_profile or 'MISSING'}`")
 lines.append(f"- pr5_reconcile_summary: `{pr5_summary_file or 'MISSING'}`")
 lines.append(f"- pr5_reconcile_runs_total: `{file_count(os.path.join(PR5_ROOT, '*', 'summary.txt'))}`")
 lines.append(f"- pr7_topn_anomaly_summary: `{pr7_topn_summary or 'MISSING'}`")
-lines.append(f"- pr7_topn_runs_total: `{file_count(os.path.join(PR7_ROOT, '*', 'topn-anomaly-summary.md'))}`")
+lines.append(f"- pr7_topn_runs_total: `{file_count(os.path.join(PR7_TOPN_ROOT, '*', 'topn-anomaly-summary.md'))}`")
+lines.append(f"- pr7_alert_delivery_state: `{PR7_ALERT_STATE if os.path.exists(PR7_ALERT_STATE) else 'MISSING'}`")
 
 with open(OUT_MD, "w", encoding="utf-8") as f:
     f.write("\n".join(lines) + "\n")
