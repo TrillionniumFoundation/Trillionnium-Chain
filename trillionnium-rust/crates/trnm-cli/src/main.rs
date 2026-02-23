@@ -1,5 +1,6 @@
 use anyhow::{anyhow, bail, Result};
 use clap::{Parser, Subcommand};
+use ed25519_dalek::SigningKey;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::{
@@ -199,7 +200,12 @@ fn read_key(store: &Path, name: &str) -> Result<String> {
 
 fn derive_address_from_priv_hex(priv_hex: &str) -> Result<String> {
     let key = hex::decode(priv_hex)?;
-    let digest = Sha256::digest(&key);
+    let key_bytes: [u8; 32] = key
+        .as_slice()
+        .try_into()
+        .map_err(|_| anyhow!("private key hex must be 32 bytes (64 hex chars)"))?;
+    let signing_key = SigningKey::from_bytes(&key_bytes);
+    let digest = Sha256::digest(signing_key.verifying_key().as_bytes());
     let addr_hex = hex::encode(&digest[..20]);
     Ok(format!("trnm1{}", addr_hex))
 }
