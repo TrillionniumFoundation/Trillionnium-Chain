@@ -347,6 +347,25 @@ jobs:
           set -euo pipefail
           ./scripts/v2/pr5_treasury_reconcile_report.sh
 
+      - name: Build PR-6 daily security summary (non-gate)
+        if: always()
+        run: |
+          set -euo pipefail
+          python3 ./scripts/v2/pr6_daily_security_summary.py
+
+      - name: Append PR-6 daily security summary to GitHub Step Summary
+        if: always()
+        run: |
+          set -euo pipefail
+          summary_file="run/pr6-ops/daily-security-summary.md"
+          if [ -n "${GITHUB_STEP_SUMMARY:-}" ] && [ -f "${summary_file}" ]; then
+            {
+              echo "## PR-6 Daily Security Ops"
+              echo
+              cat "${summary_file}"
+            } >> "${GITHUB_STEP_SUMMARY}"
+          fi
+
       - name: Upload nightly health artifacts
         if: always()
         uses: actions/upload-artifact@v4
@@ -367,6 +386,7 @@ jobs:
             trillionnium-rust/run/bft-restart-*.log
             trillionnium-rust/run/consensus-wal-restart-*/**
             run/pr5-reconcile/**
+            run/pr6-ops/**
             data/reexec-smoke/**
             data/reexec-bundles/**
             data/worker-onboard/**

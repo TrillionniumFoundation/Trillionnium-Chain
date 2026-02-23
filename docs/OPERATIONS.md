@@ -282,6 +282,16 @@ cargo run -q -p trnm-rpc -- query-events --task-id <TASK_ID> --limit 100
 
 Runbook：`docs/runbooks/pr5-challenge-treasury-reconcile.md`
 
+## PR-6 Nightly Security 日报（自动化）
+
+nightly 在流程末尾自动生成日报：
+
+- 产物：`run/pr6-ops/daily-security-summary.md`
+- 本地手动重跑：`python3 ./scripts/v2/pr6_daily_security_summary.py`
+- Workflow Summary 小节：`PR-6 Daily Security Ops`
+
+Runbook：`docs/runbooks/pr6-nightly-security-summary.md`
+
 ## 一键回滚（Phase A）
 
 仓库根目录提供回滚脚本：`scripts/rollback_phasea.sh`

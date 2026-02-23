@@ -355,6 +355,16 @@ cargo run -q -p trnm-rpc -- query-events --task-id <TASK_ID> --limit 100
 
 更多操作细节：`docs/runbooks/pr5-challenge-treasury-reconcile.md`
 
+## PR-6 Nightly Security 日报（自动化）
+
+nightly 在流程末尾自动生成日报：
+
+- 产物：`run/pr6-ops/daily-security-summary.md`
+- 本地手动重跑：`python3 ./scripts/v2/pr6_daily_security_summary.py`
+- Workflow Summary 小节：`PR-6 Daily Security Ops`
+
+Runbook：`docs/runbooks/pr6-nightly-security-summary.md`
+
 ## Agent↔User P2P Phase A（MVP）
 
 文档入口：`docs/protocol/agent-user-p2p-phaseA-ops.md`
