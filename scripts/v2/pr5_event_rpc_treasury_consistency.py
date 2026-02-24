@@ -48,20 +48,33 @@ def parse_summary(path: Path) -> dict:
     return out
 
 
+def _safe_int(payload: dict, key: str, default: int = 0) -> tuple[int, bool]:
+    raw = payload.get(key, default)
+    try:
+        return int(raw), True
+    except (TypeError, ValueError):
+        return default, False
+
+
 def parse_rpc_treasury(path: Path) -> dict:
     payload = json.loads(path.read_text(encoding="utf-8"))
     events = payload.get("events", []) if isinstance(payload, dict) else []
     anomalies = payload.get("anomalies", []) if isinstance(payload, dict) else []
-    anomaly_codes = [str(a.get("code", "")) for a in anomalies if isinstance(a, dict)]
+    anomaly_codes = [str(a.get("code", "")).strip() for a in anomalies if isinstance(a, dict)]
+    forfeits_balance, ok_balance = _safe_int(payload, "current_forfeits_balance", 0)
+    cumulative_forfeited, ok_cumulative = _safe_int(payload, "cumulative_forfeited", 0)
+    anomaly_count, ok_anomaly_count = _safe_int(payload, "anomaly_count", len(anomalies))
     return {
         "payload": payload,
         "events": events,
         "challenge_count": sum(1 for e in events if e.get("event_type") == "challenge"),
         "resolve_count": sum(1 for e in events if e.get("event_type") == "resolve"),
-        "forfeits_balance": int(payload.get("current_forfeits_balance", 0)),
-        "cumulative_forfeited": int(payload.get("cumulative_forfeited", 0)),
-        "anomaly_count": int(payload.get("anomaly_count", len(anomalies)) or 0),
+        "forfeits_balance": forfeits_balance,
+        "cumulative_forfeited": cumulative_forfeited,
+        "anomaly_count": anomaly_count,
         "anomaly_codes": anomaly_codes,
+        "anomaly_entries_count": len(anomalies) if isinstance(anomalies, list) else 0,
+        "numeric_parse_ok": ok_balance and ok_cumulative and ok_anomaly_count,
     }
 
 
@@ -103,6 +116,15 @@ def main() -> int:
             f"(note: current_forfeits_balance is a stock value and may be lower after burns/spends)"
         )
 
+    if not rpc["numeric_parse_ok"]:
+        details.append("rpc treasury payload has malformed numeric field(s)")
+
+    if rpc["anomaly_count"] != rpc["anomaly_entries_count"]:
+        details.append(
+            "rpc anomaly count mismatch: "
+            f"anomaly_count={rpc['anomaly_count']} anomalies_len={rpc['anomaly_entries_count']}"
+        )
+
     unknown_anomaly_codes = sorted({c for c in rpc["anomaly_codes"] if c and c not in known_anomaly_codes})
     missing_anomaly_code_count = 0
     if rpc["anomaly_count"] > 0:
@@ -117,7 +139,7 @@ def main() -> int:
         details.append("rpc anomaly contains unknown semantic(s): " + "; ".join(parts))
     elif rpc["anomaly_count"] > 0:
         details.append(
-            "rpc anomaly observed with known code(s): " + ",".join(sorted(set(rpc["anomaly_codes"])))
+            "rpc anomaly observed with known code(s): " + ",".join(sorted({c for c in rpc["anomaly_codes"] if c}))
         )
 
     if details:
@@ -128,6 +150,7 @@ def main() -> int:
             "incomplete",
             "below event-derived",
             "unknown semantic",
+            "malformed numeric",
         )
         if any(any(k in d for k in fail_keywords) for d in details):
             status = "FAIL"
@@ -147,7 +170,9 @@ def main() -> int:
         f"rpc.cumulative_forfeited={rpc['cumulative_forfeited']}",
         f"rpc.current_forfeits_balance={rpc['forfeits_balance']}",
         f"rpc.anomaly_count={rpc['anomaly_count']}",
+        f"rpc.anomaly_entries_count={rpc['anomaly_entries_count']}",
         f"rpc.anomaly_codes={','.join(rpc['anomaly_codes'])}",
+        f"rpc.numeric_parse_ok={str(rpc['numeric_parse_ok']).lower()}",
         f"detail_count={len(details)}",
     ]
     report_lines.extend(f"detail.{i+1}={d}" for i, d in enumerate(details))
