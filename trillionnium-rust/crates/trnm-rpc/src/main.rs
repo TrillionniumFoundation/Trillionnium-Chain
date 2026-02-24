@@ -735,12 +735,26 @@ fn summarize_challenge_treasury(
                     .and_then(|v| u128::try_from(v.saturating_abs()).ok())
                     .unwrap_or(0);
                 if bond_amount > 0 {
-                    posted_by_task.insert(e.task_id, bond_amount);
-                    escrow_balance = escrow_balance.saturating_add(bond_amount);
-                    escrow_delta = i128::try_from(bond_amount).ok().unwrap_or(i128::MAX);
-                    if in_window {
-                        summary_posted = summary_posted.saturating_add(1);
-                        posted_open_in_window.insert(e.task_id, ());
+                    if let Some(existing_bond) = posted_by_task.get(&e.task_id).copied() {
+                        anomalies.push(ChallengeTreasuryAnomaly {
+                            event_type: e.event_type.clone(),
+                            task_id: e.task_id,
+                            tx_id: e.tx_id,
+                            code: "duplicate_open_challenge".to_string(),
+                            detail: format!(
+                                "challenge ignored because task already has unresolved posted bond {}",
+                                existing_bond
+                            ),
+                        });
+                        bond_amount = 0;
+                    } else {
+                        posted_by_task.insert(e.task_id, bond_amount);
+                        escrow_balance = escrow_balance.saturating_add(bond_amount);
+                        escrow_delta = i128::try_from(bond_amount).ok().unwrap_or(i128::MAX);
+                        if in_window {
+                            summary_posted = summary_posted.saturating_add(1);
+                            posted_open_in_window.insert(e.task_id, ());
+                        }
                     }
                 } else if e.challenger_delta.unwrap_or(0) != 0 {
                     anomalies.push(ChallengeTreasuryAnomaly {
@@ -1817,6 +1831,79 @@ mod tests {
         assert_eq!(summary.refunded, 0);
         assert_eq!(out.anomaly_count, 1);
         assert_eq!(out.anomalies[0].code, "resolve_without_posted_bond");
+    }
+
+    #[test]
+    fn summarize_challenge_treasury_ignores_duplicate_open_challenge_for_same_task() {
+        let events = vec![
+            NodeEventRecord {
+                event_type: "challenge".into(),
+                task_id: 55,
+                from_status: "Revealed".into(),
+                to_status: "Challenged".into(),
+                actor: "c55".into(),
+                tx_id: 1,
+                block_height: 10,
+                state_root: "a".into(),
+                ts_unix_ms: 1_000,
+                signer: None,
+                challenger: Some("c55".into()),
+                tx_hash: None,
+                resolution_code: None,
+                treasury_delta: Some(0),
+                challenger_delta: Some(-9),
+                bond_disposition: Some("posted".into()),
+            },
+            NodeEventRecord {
+                event_type: "challenge".into(),
+                task_id: 55,
+                from_status: "Revealed".into(),
+                to_status: "Challenged".into(),
+                actor: "c55".into(),
+                tx_id: 2,
+                block_height: 11,
+                state_root: "b".into(),
+                ts_unix_ms: 2_000,
+                signer: None,
+                challenger: Some("c55".into()),
+                tx_hash: None,
+                resolution_code: None,
+                treasury_delta: Some(0),
+                challenger_delta: Some(-4),
+                bond_disposition: Some("posted".into()),
+            },
+            NodeEventRecord {
+                event_type: "resolve".into(),
+                task_id: 55,
+                from_status: "Challenged".into(),
+                to_status: "Completed".into(),
+                actor: "validator".into(),
+                tx_id: 3,
+                block_height: 12,
+                state_root: "c".into(),
+                ts_unix_ms: 3_000,
+                signer: None,
+                challenger: Some("c55".into()),
+                tx_hash: None,
+                resolution_code: Some("completed".into()),
+                treasury_delta: Some(0),
+                challenger_delta: Some(0),
+                bond_disposition: Some("forfeited".into()),
+            },
+        ];
+
+        let out = summarize_challenge_treasury(&events, 10, Some((500, 3_500, "custom".into())));
+        assert_eq!(out.current_escrow_balance, 0);
+        assert_eq!(out.current_forfeits_balance, 9);
+        assert_eq!(out.cumulative_forfeited, 9);
+        assert_eq!(out.events[0].bond_amount, 9);
+        assert_eq!(out.events[1].bond_amount, 0);
+        let summary = out.daily_summary.expect("summary expected");
+        assert_eq!(summary.posted, 1);
+        assert_eq!(summary.forfeited, 1);
+        assert_eq!(summary.unresolved, 0);
+        assert_eq!(out.anomaly_count, 1);
+        assert_eq!(out.anomalies[0].code, "duplicate_open_challenge");
     }
 
     #[test]
