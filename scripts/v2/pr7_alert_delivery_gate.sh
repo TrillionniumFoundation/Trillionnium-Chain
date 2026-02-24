@@ -2,8 +2,18 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
-RUN_DIR="${RUN_DIR:-$ROOT/run/pr6-alerts/$(date +%Y%m%d-%H%M%S)}"
+if [[ -z "${RUN_DIR:-}" ]]; then
+  TS="$(date +%Y%m%d-%H%M%S)"
+  RUN_DIR="$ROOT/run/pr6-alerts/${TS}-pid$$-$RANDOM"
+fi
 mkdir -p "$RUN_DIR"
+
+PR6_GATE_CMD="${PR6_GATE_CMD:-$ROOT/scripts/v2/pr6_alert_rules_gate.sh}"
+PR7_DELIVERY_CMD="${PR7_DELIVERY_CMD:-python3 $ROOT/scripts/v2/pr7_alert_delivery.py}"
+PR7_DELIVERY_FAIL_MODE="${PR7_DELIVERY_FAIL_MODE:-ignore}" # ignore|warn|escalate
+STATUS_FILE="${PR7_STATUS_FILE:-$RUN_DIR/pr7-delivery-status.env}"
+LOCK_DIR="${PR7_GATE_LOCK_DIR:-$ROOT/run/pr7-alert-delivery/.gate-lock}"
+LOCK_WAIT_SECONDS="${PR7_GATE_LOCK_WAIT_SECONDS:-30}"
 
 # Optional: resolve versioned policy config (without overriding explicit env)
 POLICY_FILE="${ALERT_POLICY_FILE:-$ROOT/config/alert-policy/current.json}"
@@ -19,9 +29,35 @@ if [[ -f "$POLICY_FILE" ]]; then
   source "$POLICY_ENV"
 fi
 
+acquire_lock() {
+  local start now elapsed jitter
+  mkdir -p "$(dirname "$LOCK_DIR")"
+  start="$(date +%s)"
+  while ! mkdir "$LOCK_DIR" 2>/dev/null; do
+    now="$(date +%s)"
+    elapsed=$(( now - start ))
+    if (( elapsed >= LOCK_WAIT_SECONDS )); then
+      echo "[PR7][FAIL] lock timeout after ${LOCK_WAIT_SECONDS}s lock_dir=$LOCK_DIR" >&2
+      return 1
+    fi
+    jitter=$(( (RANDOM % 200) + 100 ))
+    sleep "0.$jitter"
+  done
+  echo "$$" >"$LOCK_DIR/pid"
+}
+
+release_lock() {
+  rm -rf "$LOCK_DIR" || true
+}
+
+if ! acquire_lock; then
+  exit 5
+fi
+trap release_lock EXIT
+
 # 1) Generate PR6 report first (do not stop immediately on WARN/FAIL exit code)
 set +e
-RUN_DIR="$RUN_DIR" "$ROOT/scripts/v2/pr6_alert_rules_gate.sh"
+RUN_DIR="$RUN_DIR" "$PR6_GATE_CMD"
 pr6_rc=$?
 set -e
 
@@ -58,8 +94,10 @@ if [[ -n "${ALERT_NOTIFY_BACKUP_CHANNEL:-}" ]]; then
   BACKUP_CHANNEL_ARG=(--backup-channel "$ALERT_NOTIFY_BACKUP_CHANNEL")
 fi
 
+read -r -a PR7_DELIVERY_CMD_ARR <<<"$PR7_DELIVERY_CMD"
+set +e
 IMESSAGE_TO="${IMESSAGE_TO:-qiqianpkugsm@gmail.com}" \
-python3 "$ROOT/scripts/v2/pr7_alert_delivery.py" \
+  "${PR7_DELIVERY_CMD_ARR[@]}" \
   --report "$REPORT" \
   --channel "${ALERT_NOTIFY_CHANNEL:-imessage}" \
   --primary-channel "${ALERT_NOTIFY_PRIMARY_CHANNEL:-${ALERT_NOTIFY_CHANNEL:-imessage}}" \
@@ -84,9 +122,34 @@ python3 "$ROOT/scripts/v2/pr7_alert_delivery.py" \
   "${QUIET_HOURS_ARG[@]}" \
   "${DRY_RUN_ARG[@]}"
 pr7_rc=$?
+set -e
 
 status="$(sed -n 's/^status=//p' "$REPORT" | head -n1)"
-echo "[PR7][alert-delivery] status=$status pr6_rc=$pr6_rc pr7_rc=$pr7_rc report=$REPORT"
 
-# Keep upstream gate semantics
-exit "$pr6_rc"
+final_rc="$pr6_rc"
+if [[ "$PR7_DELIVERY_FAIL_MODE" == "escalate" && "$pr7_rc" -ne 0 ]]; then
+  final_rc=4
+elif [[ "$PR7_DELIVERY_FAIL_MODE" == "warn" && "$pr7_rc" -ne 0 ]]; then
+  echo "[PR7][WARN] delivery failed with rc=$pr7_rc (mode=warn, preserving pr6 rc=$pr6_rc)" >&2
+fi
+
+cat >"$STATUS_FILE" <<EOF
+status=${status}
+pr6_rc=${pr6_rc}
+pr7_rc=${pr7_rc}
+final_rc=${final_rc}
+fail_mode=${PR7_DELIVERY_FAIL_MODE}
+report=${REPORT}
+generated_at_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+EOF
+
+echo "[PR7][alert-delivery] status=$status pr6_rc=$pr6_rc pr7_rc=$pr7_rc final_rc=$final_rc fail_mode=$PR7_DELIVERY_FAIL_MODE report=$REPORT status_file=$STATUS_FILE"
+
+# Optional non-blocking regression self-test for quiet-hours + WARN escalation bypass.
+if [[ "${ALERT_NOTIFY_SELFTEST_QUIET_HOURS:-0}" == "1" ]]; then
+  if ! "$ROOT/scripts/v2/pr7_quiet_hours_warn_escalation_bypass_test.sh"; then
+    echo "[PR7][WARN] quiet-hours self-test failed (non-blocking)" >&2
+  fi
+fi
+
+exit "$final_rc"
