@@ -15,6 +15,32 @@ STATUS_FILE="${PR7_STATUS_FILE:-$RUN_DIR/pr7-delivery-status.env}"
 LOCK_DIR="${PR7_GATE_LOCK_DIR:-$ROOT/run/pr7-alert-delivery/.gate-lock}"
 LOCK_WAIT_SECONDS="${PR7_GATE_LOCK_WAIT_SECONDS:-30}"
 
+require_non_negative_integer() {
+  local name="$1"
+  local value="$2"
+  if [[ ! "$value" =~ ^[0-9]+$ ]]; then
+    echo "[PR7][FAIL] invalid $name='$value' (expect non-negative integer)" >&2
+    exit 2
+  fi
+}
+
+require_enum() {
+  local name="$1"
+  local value="$2"
+  shift 2
+  local candidate
+  for candidate in "$@"; do
+    if [[ "$value" == "$candidate" ]]; then
+      return 0
+    fi
+  done
+  echo "[PR7][FAIL] invalid $name='$value' (allowed: $*)" >&2
+  exit 2
+}
+
+require_non_negative_integer "PR7_GATE_LOCK_WAIT_SECONDS" "$LOCK_WAIT_SECONDS"
+require_enum "PR7_DELIVERY_FAIL_MODE" "$PR7_DELIVERY_FAIL_MODE" ignore warn escalate
+
 # Optional: resolve versioned policy config (without overriding explicit env)
 POLICY_FILE="${ALERT_POLICY_FILE:-$ROOT/config/alert-policy/current.json}"
 if [[ -f "$POLICY_FILE" ]]; then

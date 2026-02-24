@@ -13,6 +13,7 @@
 - 默认且强制要求 `P11_APPROVAL_SHARED_SECRET`（legacy bypass 已关闭）
 - `--dry-run` 仅做校验与候选生成，不写 `profiles/`、snapshot、audit log（无文件副作用）
 - direct 调用 `p11_policy_promote.sh` 未携带完整审批参数会返回 `3` 且输出 `[P11][BLOCKED]`
+- `p11_policy_promote_gate.sh` / `p11_policy_promote.sh` 对带值参数做显式校验（缺值或未知参数返回 `rc=2`，并打印 `[P11][FAIL] ...`）
 
 示例：
 

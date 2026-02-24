@@ -60,6 +60,7 @@ python3 scripts/v2/pr6_challenge_alert_rules.py \
 - `FAIL_FORFEITS_DAILY_INCREASE` / `WARN_FORFEITS_DAILY_INCREASE`
 - `FAIL_ESCROW_NONZERO_HOURS` / `WARN_ESCROW_NONZERO_HOURS`
 - `CI_HARD_FAIL_ON_WARN=1`（启用后 WARN 也返回 exit 1）
+- 参数健壮性：gate 会在执行前校验关键阈值参数（非法值返回 `rc=2`，并打印 `[PR6][FAIL] invalid ...`）
 - 兼容性说明：`pr6_alert_rules_gate.sh` 已兼容 macOS 默认 bash（`set -u` 下可正常运行，无需额外 workaround）
 
 ---

@@ -79,7 +79,8 @@
 - `ALERT_NOTIFY_DRY_RUN_SIMULATE_FAILURES`：仅 dry-run 生效，前 N 次尝试注入失败（用于演示 dead-letter）
 - `ALERT_NOTIFY_DRY_RUN_FAIL_CHANNELS`：仅 dry-run 生效，逗号分隔强制失败通道（例：`imessage,slack`）
 - `PR7_GATE_LOCK_DIR`：`pr7_alert_delivery_gate.sh` 并发互斥锁目录（默认 `run/pr7-alert-delivery/.gate-lock`）
-- `PR7_GATE_LOCK_WAIT_SECONDS`：等待锁超时秒数（默认 `30`，超时返回 `rc=5`）
+- `PR7_GATE_LOCK_WAIT_SECONDS`：等待锁超时秒数（默认 `30`，超时返回 `rc=5`；非法值返回 `rc=2`）
+- `PR7_DELIVERY_FAIL_MODE`：`ignore|warn|escalate`（非法值返回 `rc=2`）
 - `RUN_DIR`：可显式指定产物目录；未指定时脚本自动生成 `run/pr6-alerts/<ts>-pid<pid>-<rand>`，避免并发覆盖
 
 ### iMessage

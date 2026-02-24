@@ -31,24 +31,45 @@ Security mode:
 EOF
 }
 
+require_arg_value() {
+  local flag="$1"
+  if [[ $# -lt 2 || -z "${2:-}" || "${2:-}" == --* ]]; then
+    echo "[P11][FAIL] missing value for $flag" >&2
+    usage
+    exit 2
+  fi
+}
+
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --from)
-      FROM="${2:-}"; shift 2 ;;
+      require_arg_value "$1" "${2:-}"
+      FROM="$2"
+      shift 2 ;;
     --to)
-      TO="${2:-}"; shift 2 ;;
+      require_arg_value "$1" "${2:-}"
+      TO="$2"
+      shift 2 ;;
     --dry-run)
       DRY_RUN=1; shift ;;
     --approve|--yes)
       APPROVED=1; shift ;;
     --policy)
-      POLICY_FILE="${2:-}"; shift 2 ;;
+      require_arg_value "$1" "${2:-}"
+      POLICY_FILE="$2"
+      shift 2 ;;
     --approval-code)
-      APPROVAL_CODE="${2:-}"; shift 2 ;;
+      require_arg_value "$1" "${2:-}"
+      APPROVAL_CODE="$2"
+      shift 2 ;;
     --approved-by)
-      APPROVED_BY="${2:-}"; shift 2 ;;
+      require_arg_value "$1" "${2:-}"
+      APPROVED_BY="$2"
+      shift 2 ;;
     --reviewed-by)
-      REVIEWED_BY="${2:-}"; shift 2 ;;
+      require_arg_value "$1" "${2:-}"
+      REVIEWED_BY="$2"
+      shift 2 ;;
     -h|--help)
       usage; exit 0 ;;
     *)
