@@ -2,9 +2,12 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+now_utc_compact() {
+  date -u +%Y%m%d-%H%M%S
+}
 if [[ -z "${RUN_DIR:-}" ]]; then
-  TS="$(date +%Y%m%d-%H%M%S)"
-  RUN_DIR="$ROOT/run/pr6-alerts/${TS}-pid$$-$RANDOM"
+  TS="$(now_utc_compact)"
+  RUN_DIR="$ROOT/run/pr7-alerts/${TS}-pid$$"
 fi
 mkdir -p "$RUN_DIR"
 
@@ -40,6 +43,14 @@ require_enum() {
 
 require_non_negative_integer "PR7_GATE_LOCK_WAIT_SECONDS" "$LOCK_WAIT_SECONDS"
 require_enum "PR7_DELIVERY_FAIL_MODE" "$PR7_DELIVERY_FAIL_MODE" ignore warn escalate
+if [[ ! -x "$PR6_GATE_CMD" ]]; then
+  echo "[PR7][FAIL] PR6_GATE_CMD not executable: $PR6_GATE_CMD" >&2
+  exit 2
+fi
+if [[ -z "${PR7_DELIVERY_CMD// }" ]]; then
+  echo "[PR7][FAIL] PR7_DELIVERY_CMD is empty" >&2
+  exit 2
+fi
 
 # Optional: resolve versioned policy config (without overriding explicit env)
 POLICY_FILE="${ALERT_POLICY_FILE:-$ROOT/config/alert-policy/current.json}"
@@ -151,6 +162,10 @@ pr7_rc=$?
 set -e
 
 status="$(sed -n 's/^status=//p' "$REPORT" | head -n1)"
+if [[ -z "$status" ]]; then
+  status="UNKNOWN"
+  echo "[PR7][WARN] missing status field in report: $REPORT" >&2
+fi
 
 final_rc="$pr6_rc"
 if [[ "$PR7_DELIVERY_FAIL_MODE" == "escalate" && "$pr7_rc" -ne 0 ]]; then
@@ -165,6 +180,8 @@ pr6_rc=${pr6_rc}
 pr7_rc=${pr7_rc}
 final_rc=${final_rc}
 fail_mode=${PR7_DELIVERY_FAIL_MODE}
+run_dir=${RUN_DIR}
+lock_dir=${LOCK_DIR}
 report=${REPORT}
 generated_at_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 EOF

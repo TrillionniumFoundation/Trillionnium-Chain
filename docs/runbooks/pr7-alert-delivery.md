@@ -81,7 +81,8 @@
 - `PR7_GATE_LOCK_DIR`：`pr7_alert_delivery_gate.sh` 并发互斥锁目录（默认 `run/pr7-alert-delivery/.gate-lock`）
 - `PR7_GATE_LOCK_WAIT_SECONDS`：等待锁超时秒数（默认 `30`，超时返回 `rc=5`；非法值返回 `rc=2`）
 - `PR7_DELIVERY_FAIL_MODE`：`ignore|warn|escalate`（非法值返回 `rc=2`）
-- `RUN_DIR`：可显式指定产物目录；未指定时脚本自动生成 `run/pr6-alerts/<ts>-pid<pid>-<rand>`，避免并发覆盖
+- `PR7_STATUS_FILE`：gate 状态输出文件路径（默认 `$RUN_DIR/pr7-delivery-status.env`）
+- `RUN_DIR`：可显式指定产物目录；未指定时脚本自动生成 `run/pr7-alerts/<ts>-pid<pid>`（UTC 时间戳），避免并发覆盖
 
 ### iMessage
 
