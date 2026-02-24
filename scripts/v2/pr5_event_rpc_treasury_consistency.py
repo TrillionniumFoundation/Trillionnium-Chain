@@ -99,7 +99,15 @@ def main() -> int:
     if pr5.get("conservation.gap") not in {"0", "0.0"}:
         details.append(f"pr5 conservation gap !=0: {pr5.get('conservation.gap')}")
 
-    pr5_record_count = int(pr5.get("record_count", "0") or 0)
+    pr5_record_count_raw = pr5.get("record_count", "0")
+    try:
+        pr5_record_count = int(pr5_record_count_raw or 0)
+        pr5_record_count_ok = True
+    except (TypeError, ValueError):
+        pr5_record_count = 0
+        pr5_record_count_ok = False
+        details.append(f"pr5 record_count malformed: raw={pr5_record_count_raw!r}")
+
     if pr5_record_count != len(ev["rows"]):
         details.append(f"event/pr5 record_count mismatch: event={len(ev['rows'])} pr5={pr5_record_count}")
 
@@ -151,6 +159,7 @@ def main() -> int:
             "below event-derived",
             "unknown semantic",
             "malformed numeric",
+            "record_count malformed",
         )
         if any(any(k in d for k in fail_keywords) for d in details):
             status = "FAIL"
@@ -162,6 +171,7 @@ def main() -> int:
         f"rpc_treasury_json={args.rpc_treasury_json}",
         f"event.record_count={len(ev['rows'])}",
         f"pr5.record_count={pr5_record_count}",
+        f"pr5.record_count_parse_ok={str(pr5_record_count_ok).lower()}",
         f"event.challenge_count={ev['challenge_count']}",
         f"event.resolve_count={ev['resolve_count']}",
         f"rpc.challenge_count={rpc['challenge_count']}",

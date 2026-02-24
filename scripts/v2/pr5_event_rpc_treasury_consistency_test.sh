@@ -15,6 +15,7 @@ RPC_UNKNOWN_ANOMALY_BAD="$TMP_DIR/rpc-unknown-anomaly-bad.json"
 RPC_MISSING_ANOMALY_CODE_BAD="$TMP_DIR/rpc-missing-anomaly-code-bad.json"
 RPC_ANOMALY_COUNT_MISMATCH_BAD="$TMP_DIR/rpc-anomaly-count-mismatch-bad.json"
 RPC_MALFORMED_NUMERIC_BAD="$TMP_DIR/rpc-malformed-numeric-bad.json"
+PR5_SUMMARY_BAD_RECORD_COUNT="$TMP_DIR/summary-bad-record-count.txt"
 
 cat >"$EVENT_LOG" <<'EOF'
 [event] event_type=challenge task_id=1 tx_hash=0x1 treasury_delta=0 challenger_delta=-10 bond_disposition=posted
@@ -26,6 +27,12 @@ EOF
 cat >"$PR5_SUMMARY" <<'EOF'
 status=PASS
 record_count=4
+conservation.gap=0
+EOF
+
+cat >"$PR5_SUMMARY_BAD_RECORD_COUNT" <<'EOF'
+status=PASS
+record_count=n/a
 conservation.gap=0
 EOF
 
@@ -174,6 +181,26 @@ fi
 if ! grep -q '^status=FAIL$' "$TMP_DIR/out-malformed-numeric-bad.txt"; then
   echo "[TEST][FAIL] expected FAIL status for malformed numeric fields"
   cat "$TMP_DIR/out-malformed-numeric-bad.txt"
+  exit 1
+fi
+
+set +e
+python3 "$ROOT/scripts/v2/pr5_event_rpc_treasury_consistency.py" \
+  --event-log "$EVENT_LOG" \
+  --pr5-summary "$PR5_SUMMARY_BAD_RECORD_COUNT" \
+  --rpc-treasury-json "$RPC_OK" \
+  --report "$TMP_DIR/out-bad-record-count.txt" >/dev/null
+rc_bad_record_count=$?
+set -e
+if [[ "$rc_bad_record_count" -eq 0 ]]; then
+  echo "[TEST][FAIL] expected FAIL when pr5 record_count is malformed"
+  cat "$TMP_DIR/out-bad-record-count.txt"
+  exit 1
+fi
+
+if ! grep -q '^status=FAIL$' "$TMP_DIR/out-bad-record-count.txt"; then
+  echo "[TEST][FAIL] expected FAIL status for malformed pr5 record_count"
+  cat "$TMP_DIR/out-bad-record-count.txt"
   exit 1
 fi
 
