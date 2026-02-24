@@ -201,6 +201,7 @@ curl -sS http://127.0.0.1:8545/health
 
 CI：
 - `.github/workflows/trnm-merge-gates.yml` 已加入 `P1-4 integration gate` hard gate step
+- workflow 路径过滤已覆盖 `scripts/v2/**`，避免仅改动其它 v2 gate 脚本时漏触发
 - 任一步骤失败将直接中止该 workflow job
 
 ## PR-4 门禁（罚没资金流向 + 审计字段可见）
