@@ -51,6 +51,8 @@ def parse_summary(path: Path) -> dict:
 def parse_rpc_treasury(path: Path) -> dict:
     payload = json.loads(path.read_text(encoding="utf-8"))
     events = payload.get("events", []) if isinstance(payload, dict) else []
+    anomalies = payload.get("anomalies", []) if isinstance(payload, dict) else []
+    anomaly_codes = [str(a.get("code", "")) for a in anomalies if isinstance(a, dict)]
     return {
         "payload": payload,
         "events": events,
@@ -58,6 +60,8 @@ def parse_rpc_treasury(path: Path) -> dict:
         "resolve_count": sum(1 for e in events if e.get("event_type") == "resolve"),
         "forfeits_balance": int(payload.get("current_forfeits_balance", 0)),
         "cumulative_forfeited": int(payload.get("cumulative_forfeited", 0)),
+        "anomaly_count": int(payload.get("anomaly_count", len(anomalies)) or 0),
+        "anomaly_codes": anomaly_codes,
     }
 
 
@@ -75,6 +79,7 @@ def main() -> int:
 
     details = []
     status = "PASS"
+    known_anomaly_codes = {"duplicate_event_replay", "resolve_without_posted_bond"}
 
     if pr5.get("status") != "PASS":
         details.append(f"pr5 summary not PASS: status={pr5.get('status')}")
@@ -98,8 +103,27 @@ def main() -> int:
             f"(note: current_forfeits_balance is a stock value and may be lower after burns/spends)"
         )
 
+    unknown_anomaly_codes = sorted({c for c in rpc["anomaly_codes"] if c and c not in known_anomaly_codes})
+    if unknown_anomaly_codes:
+        details.append(
+            "rpc anomaly contains unknown code(s): " + ",".join(unknown_anomaly_codes)
+        )
+    elif rpc["anomaly_count"] > 0:
+        details.append(
+            "rpc anomaly observed with known code(s): " + ",".join(sorted(set(rpc["anomaly_codes"])) or ["(missing-code)"])
+        )
+
     if details:
-        status = "FAIL"
+        fail_keywords = (
+            "not PASS",
+            "gap !=0",
+            "mismatch",
+            "incomplete",
+            "below event-derived",
+            "unknown code",
+        )
+        if any(any(k in d for k in fail_keywords) for d in details):
+            status = "FAIL"
 
     report_lines = [
         f"status={status}",
@@ -115,6 +139,8 @@ def main() -> int:
         f"event.forfeited_total={ev['forfeited_total']}",
         f"rpc.cumulative_forfeited={rpc['cumulative_forfeited']}",
         f"rpc.current_forfeits_balance={rpc['forfeits_balance']}",
+        f"rpc.anomaly_count={rpc['anomaly_count']}",
+        f"rpc.anomaly_codes={','.join(rpc['anomaly_codes'])}",
         f"detail_count={len(details)}",
     ]
     report_lines.extend(f"detail.{i+1}={d}" for i, d in enumerate(details))
