@@ -12,6 +12,7 @@ RPC_BALANCE_SPENT_OK="$TMP_DIR/rpc-balance-spent-ok.json"
 RPC_BAD="$TMP_DIR/rpc-bad.json"
 RPC_KNOWN_ANOMALY_OK="$TMP_DIR/rpc-known-anomaly-ok.json"
 RPC_UNKNOWN_ANOMALY_BAD="$TMP_DIR/rpc-unknown-anomaly-bad.json"
+RPC_MISSING_ANOMALY_CODE_BAD="$TMP_DIR/rpc-missing-anomaly-code-bad.json"
 
 cat >"$EVENT_LOG" <<'EOF'
 [event] event_type=challenge task_id=1 tx_hash=0x1 treasury_delta=0 challenger_delta=-10 bond_disposition=posted
@@ -44,6 +45,10 @@ EOF
 
 cat >"$RPC_UNKNOWN_ANOMALY_BAD" <<'EOF'
 {"current_forfeits_balance":5,"cumulative_forfeited":5,"anomaly_count":1,"anomalies":[{"code":"unexpected_semantic_drift"}],"events":[{"event_type":"challenge"},{"event_type":"resolve"},{"event_type":"challenge"},{"event_type":"resolve"}]}
+EOF
+
+cat >"$RPC_MISSING_ANOMALY_CODE_BAD" <<'EOF'
+{"current_forfeits_balance":5,"cumulative_forfeited":5,"anomaly_count":1,"anomalies":[{}],"events":[{"event_type":"challenge"},{"event_type":"resolve"},{"event_type":"challenge"},{"event_type":"resolve"}]}
 EOF
 
 python3 "$ROOT/scripts/v2/pr5_event_rpc_treasury_consistency.py" \
@@ -99,6 +104,26 @@ fi
 if ! grep -q '^status=FAIL$' "$TMP_DIR/out-unknown-anomaly-bad.txt"; then
   echo "[TEST][FAIL] expected FAIL status for unknown anomaly"
   cat "$TMP_DIR/out-unknown-anomaly-bad.txt"
+  exit 1
+fi
+
+set +e
+python3 "$ROOT/scripts/v2/pr5_event_rpc_treasury_consistency.py" \
+  --event-log "$EVENT_LOG" \
+  --pr5-summary "$PR5_SUMMARY" \
+  --rpc-treasury-json "$RPC_MISSING_ANOMALY_CODE_BAD" \
+  --report "$TMP_DIR/out-missing-anomaly-code-bad.txt" >/dev/null
+rc_missing_code=$?
+set -e
+if [[ "$rc_missing_code" -eq 0 ]]; then
+  echo "[TEST][FAIL] expected FAIL when anomaly_count>0 but code is missing"
+  cat "$TMP_DIR/out-missing-anomaly-code-bad.txt"
+  exit 1
+fi
+
+if ! grep -q '^status=FAIL$' "$TMP_DIR/out-missing-anomaly-code-bad.txt"; then
+  echo "[TEST][FAIL] expected FAIL status for missing anomaly code"
+  cat "$TMP_DIR/out-missing-anomaly-code-bad.txt"
   exit 1
 fi
 

@@ -104,13 +104,20 @@ def main() -> int:
         )
 
     unknown_anomaly_codes = sorted({c for c in rpc["anomaly_codes"] if c and c not in known_anomaly_codes})
-    if unknown_anomaly_codes:
-        details.append(
-            "rpc anomaly contains unknown code(s): " + ",".join(unknown_anomaly_codes)
-        )
+    missing_anomaly_code_count = 0
+    if rpc["anomaly_count"] > 0:
+        missing_anomaly_code_count = max(0, rpc["anomaly_count"] - len([c for c in rpc["anomaly_codes"] if c]))
+
+    if unknown_anomaly_codes or missing_anomaly_code_count > 0:
+        parts = []
+        if unknown_anomaly_codes:
+            parts.append("unknown=" + ",".join(unknown_anomaly_codes))
+        if missing_anomaly_code_count > 0:
+            parts.append(f"missing_code_count={missing_anomaly_code_count}")
+        details.append("rpc anomaly contains unknown semantic(s): " + "; ".join(parts))
     elif rpc["anomaly_count"] > 0:
         details.append(
-            "rpc anomaly observed with known code(s): " + ",".join(sorted(set(rpc["anomaly_codes"])) or ["(missing-code)"])
+            "rpc anomaly observed with known code(s): " + ",".join(sorted(set(rpc["anomaly_codes"])))
         )
 
     if details:
@@ -120,7 +127,7 @@ def main() -> int:
             "mismatch",
             "incomplete",
             "below event-derived",
-            "unknown code",
+            "unknown semantic",
         )
         if any(any(k in d for k in fail_keywords) for d in details):
             status = "FAIL"
