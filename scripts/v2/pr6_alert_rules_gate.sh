@@ -2,7 +2,10 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
-RUN_DIR="${RUN_DIR:-$ROOT/run/pr6-alerts/$(date +%Y%m%d-%H%M%S)}"
+now_utc_compact() {
+  date -u +%Y%m%d-%H%M%S
+}
+RUN_DIR="${RUN_DIR:-$ROOT/run/pr6-alerts/$(now_utc_compact)}"
 mkdir -p "$RUN_DIR"
 
 readonly RC_INVALID_ARG=2

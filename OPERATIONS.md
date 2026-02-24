@@ -301,8 +301,8 @@ TRNM_TX_CLI=./scripts/v2/trnm_tx_cli_real_adapter.sh ./scripts/v2/run_worker_rec
 - `event_audit_fields_visibility`：验证 resolve 事件审计字段可见（至少包含 `signer/challenger/tx_hash/slash_worker/resolution_code`）。
 
 产物目录：
-- 默认写入 `run/pr4-gates/<timestamp>/`
-- 汇总文件：`summary.txt`
+- 默认写入 `run/pr4-gates/<timestamp>/`（UTC 时间戳）
+- 汇总文件：`summary.txt`（包含 `generated_at_utc`）
 - 各步骤日志：`bond_forfeiture_flow_test.log` / `bond_refund_flow_test.log` / `event_audit_fields_visibility.log`
 
 验收 checklist（PR-4）：
@@ -364,7 +364,7 @@ cargo run -q -p trnm-rpc -- query-events --task-id <TASK_ID> --limit 100
 ```
 
 默认输出：
-- `run/pr6-alerts/<timestamp>/summary.txt`
+- `run/pr6-alerts/<timestamp>/summary.txt`（UTC 时间戳目录）
 - 机器可解析字段：`status=PASS|WARN|FAIL` + `rule.*`
 
 阈值参数（环境变量）：
