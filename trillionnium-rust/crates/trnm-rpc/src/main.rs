@@ -3,7 +3,7 @@ use clap::{Parser, Subcommand, ValueEnum};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::{
-    collections::BTreeMap,
+    collections::{BTreeMap, HashSet},
     fs,
     io::{Read, Seek, SeekFrom, Write},
     net::TcpListener,
@@ -717,6 +717,7 @@ fn summarize_challenge_treasury(
 
     let mut views = Vec::new();
     let mut anomalies = Vec::new();
+    let mut seen_event_fingerprints = HashSet::<(String, u64, u64, Option<String>, Option<String>, Option<i128>)>::new();
     for e in &related {
         let mut bond_amount: u128 = 0;
         let mut escrow_delta: i128 = 0;
@@ -726,6 +727,37 @@ fn summarize_challenge_treasury(
             .as_ref()
             .map(|(from, to, _)| e.ts_unix_ms >= *from && e.ts_unix_ms <= *to)
             .unwrap_or(false);
+
+        let fingerprint = (
+            e.event_type.clone(),
+            e.task_id,
+            e.tx_id,
+            e.bond_disposition.clone(),
+            e.resolution_code.clone(),
+            e.challenger_delta,
+        );
+        if !seen_event_fingerprints.insert(fingerprint) {
+            anomalies.push(ChallengeTreasuryAnomaly {
+                event_type: e.event_type.clone(),
+                task_id: e.task_id,
+                tx_id: e.tx_id,
+                code: "duplicate_event_replay".to_string(),
+                detail: "event replay ignored because an equivalent challenge treasury event was already applied".to_string(),
+            });
+            views.push(ChallengeTreasuryEventView {
+                event_type: e.event_type.clone(),
+                task_id: e.task_id,
+                tx_id: e.tx_id,
+                block_height: e.block_height,
+                ts_unix_ms: e.ts_unix_ms,
+                challenger: e.challenger.clone(),
+                bond_disposition: e.bond_disposition.clone(),
+                bond_amount: 0,
+                escrow_delta: 0,
+                forfeits_delta: 0,
+            });
+            continue;
+        }
 
         match e.event_type.as_str() {
             "challenge" => {
@@ -1907,7 +1939,7 @@ mod tests {
     }
 
     #[test]
-    fn summarize_challenge_treasury_duplicate_resolve_replay_keeps_single_forfeit() {
+    fn summarize_challenge_treasury_duplicate_resolve_replay_marks_replay_anomaly() {
         let events = vec![
             NodeEventRecord {
                 event_type: "challenge".into(),
@@ -1951,7 +1983,7 @@ mod tests {
                 from_status: "Challenged".into(),
                 to_status: "Completed".into(),
                 actor: "validator".into(),
-                tx_id: 3,
+                tx_id: 2,
                 block_height: 12,
                 state_root: "c".into(),
                 ts_unix_ms: 2_100,
@@ -1974,7 +2006,7 @@ mod tests {
         assert_eq!(summary.forfeited, 1);
         assert_eq!(summary.unresolved, 0);
         assert_eq!(out.anomaly_count, 1);
-        assert_eq!(out.anomalies[0].code, "resolve_without_posted_bond");
+        assert_eq!(out.anomalies[0].code, "duplicate_event_replay");
     }
 
     #[test]
