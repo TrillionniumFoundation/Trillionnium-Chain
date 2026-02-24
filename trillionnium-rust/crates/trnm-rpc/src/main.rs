@@ -248,6 +248,15 @@ struct ChallengeWindowView {
 }
 
 #[derive(Debug, Clone, Serialize)]
+struct ChallengeTreasuryAnomaly {
+    event_type: String,
+    task_id: u64,
+    tx_id: u64,
+    code: String,
+    detail: String,
+}
+
+#[derive(Debug, Clone, Serialize)]
 struct ChallengeTreasuryQueryResponse {
     challenge_escrow_account: String,
     challenge_forfeits_account: String,
@@ -256,6 +265,8 @@ struct ChallengeTreasuryQueryResponse {
     cumulative_forfeited: u128,
     events_total: usize,
     events: Vec<ChallengeTreasuryEventView>,
+    anomaly_count: usize,
+    anomalies: Vec<ChallengeTreasuryAnomaly>,
     daily_summary: Option<ChallengeDailySummary>,
     window: Option<ChallengeWindowView>,
 }
@@ -705,6 +716,7 @@ fn summarize_challenge_treasury(
     let mut summary_forfeited: usize = 0;
 
     let mut views = Vec::new();
+    let mut anomalies = Vec::new();
     for e in &related {
         let mut bond_amount: u128 = 0;
         let mut escrow_delta: i128 = 0;
@@ -730,6 +742,17 @@ fn summarize_challenge_treasury(
                         summary_posted = summary_posted.saturating_add(1);
                         posted_open_in_window.insert(e.task_id, ());
                     }
+                } else if e.challenger_delta.unwrap_or(0) != 0 {
+                    anomalies.push(ChallengeTreasuryAnomaly {
+                        event_type: e.event_type.clone(),
+                        task_id: e.task_id,
+                        tx_id: e.tx_id,
+                        code: "invalid_challenge_delta_sign".to_string(),
+                        detail: format!(
+                            "challenge ignored because challenger_delta must be negative, got {}",
+                            e.challenger_delta.unwrap_or(0)
+                        ),
+                    });
                 }
             }
             "resolve" => {
@@ -746,6 +769,14 @@ fn summarize_challenge_treasury(
                             if in_window {
                                 summary_forfeited = summary_forfeited.saturating_add(1);
                             }
+                        } else {
+                            anomalies.push(ChallengeTreasuryAnomaly {
+                                event_type: e.event_type.clone(),
+                                task_id: e.task_id,
+                                tx_id: e.tx_id,
+                                code: "resolve_without_posted_bond".to_string(),
+                                detail: "forfeited resolve ignored because no prior posted challenge bond found".to_string(),
+                            });
                         }
                         posted_open_in_window.remove(&e.task_id);
                     }
@@ -756,6 +787,14 @@ fn summarize_challenge_treasury(
                             if in_window {
                                 summary_refunded = summary_refunded.saturating_add(1);
                             }
+                        } else {
+                            anomalies.push(ChallengeTreasuryAnomaly {
+                                event_type: e.event_type.clone(),
+                                task_id: e.task_id,
+                                tx_id: e.tx_id,
+                                code: "resolve_without_posted_bond".to_string(),
+                                detail: "refunded resolve ignored because no prior posted challenge bond found".to_string(),
+                            });
                         }
                         posted_open_in_window.remove(&e.task_id);
                     }
@@ -806,6 +845,8 @@ fn summarize_challenge_treasury(
         cumulative_forfeited,
         events_total,
         events: views,
+        anomaly_count: anomalies.len(),
+        anomalies,
         daily_summary,
         window,
     }
@@ -1739,6 +1780,8 @@ mod tests {
         let summary = out.daily_summary.expect("summary expected");
         assert_eq!(summary.posted, 0);
         assert_eq!(summary.unresolved, 0);
+        assert_eq!(out.anomaly_count, 1);
+        assert_eq!(out.anomalies[0].code, "invalid_challenge_delta_sign");
     }
 
     #[test]
@@ -1772,6 +1815,8 @@ mod tests {
         let summary = out.daily_summary.expect("summary expected");
         assert_eq!(summary.forfeited, 0);
         assert_eq!(summary.refunded, 0);
+        assert_eq!(out.anomaly_count, 1);
+        assert_eq!(out.anomalies[0].code, "resolve_without_posted_bond");
     }
 
     #[test]
