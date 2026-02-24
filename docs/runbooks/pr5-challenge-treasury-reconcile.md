@@ -136,6 +136,15 @@ PR5_RECONCILE_SOFT_FAIL=1 ./scripts/v2/pr5_treasury_reconcile_report.sh
   1. 拉大查询窗口（`--limit`）
   2. 在 node 日志中按 `task_id` 搜索全链路
 
+### 场景 C：RPC 异常重放（duplicate resolve）
+
+- 现象：`query-challenge-treasury` 出现 `anomaly.code=resolve_without_posted_bond`，同一 `task_id` 有重复 `resolve(forfeited/refunded)`。
+- 判定：若 `current_forfeits_balance`/`cumulative_forfeited` 未重复增加，且 `daily_summary.forfeited/refunded` 未双计，可判定为重放噪声而非资金异常。
+- 处理：
+  1. 以首次 `resolve` 为准，按 `task_id` + `tx_id` 回查 node 日志确认重复来源
+  2. 保留 anomaly 证据（`run/pr5-reconcile/*/rpc-challenge-treasury.json`）供后续 RPC 去重修复
+  3. 若发现余额或计数被双计，升级为 P1 并阻断 triad gate
+
 ## Red Team 复验命令
 
 ```bash
