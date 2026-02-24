@@ -374,6 +374,22 @@ jobs:
           set -euo pipefail
           ./scripts/v2/p11_policy_rollback_guard.sh
 
+      - name: PR-7 alert delivery gate (non-gate, observable)
+        if: always()
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          PR7_GATE_LOCK_DIR=run/pr7-alert-delivery/.nightly-gate-lock \
+          PR7_GATE_LOCK_WAIT_SECONDS=120 \
+          PR7_DELIVERY_FAIL_MODE=escalate DRY_RUN=1 ./scripts/v2/pr7_alert_delivery_gate.sh
+
+      - name: PR-7 delivery end-to-end replay gate (hard)
+        if: always()
+        run: |
+          set -euo pipefail
+          ./scripts/v2/pr7_delivery_e2e_gate.sh
+          ./scripts/v2/pr7_global_retry_budget_storm_test.sh
+
       - name: Append PR-6 daily security summary to GitHub Step Summary
         if: always()
         continue-on-error: true
@@ -402,6 +418,20 @@ jobs:
             } >> "${GITHUB_STEP_SUMMARY}"
           fi
 
+      - name: Append PR-7 alert delivery gate status to GitHub Step Summary
+        if: always()
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          status_file=$(ls -1t run/pr6-alerts/*/pr7-delivery-status.env 2>/dev/null | head -n 1 || true)
+          if [ -n "${GITHUB_STEP_SUMMARY:-}" ] && [ -n "${status_file}" ] && [ -f "${status_file}" ]; then
+            {
+              echo "## PR-7 Alert Delivery Gate Status"
+              echo
+              cat "${status_file}"
+            } >> "${GITHUB_STEP_SUMMARY}"
+          fi
+
       - name: Upload nightly health artifacts
         if: always()
         uses: actions/upload-artifact@v4
@@ -424,6 +454,7 @@ jobs:
             run/pr5-reconcile/**
             run/pr6-ops/**
             run/pr7-topn/**
+            run/pr6-alerts/**
             run/pr9/**
             run/pr11/**
             data/reexec-smoke/**

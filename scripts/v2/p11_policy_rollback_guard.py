@@ -65,15 +65,28 @@ def safe_read_jsonl(path: Path) -> list[dict[str, Any]]:
 def parse_audit_events(path: Path, since_ts: int) -> list[tuple[int, bool]]:
     """Return (ts, success) sorted by time asc.
 
-    success := ok=true in audit record.
+    Prefer PR7 `record_type=delivery_summary` rows when present (per-alert outcome).
+    Fallback to legacy per-channel rows for backward compatibility.
+    Excludes policy rejections (`rejected=true`) and non-delivery records (`attempts<=0`).
     """
-    events: list[tuple[int, bool]] = []
+    summary_events: list[tuple[int, bool]] = []
+    legacy_events: list[tuple[int, bool]] = []
     for rec in safe_read_jsonl(path):
         ts = parse_utc_ts(str(rec.get("at_utc", "")))
         if ts is None or ts < since_ts:
             continue
+        if bool(rec.get("rejected", False)):
+            continue
+        if "attempts" in rec:
+            attempts = int(rec.get("attempts", 0) or 0)
+            if attempts <= 0:
+                continue
         ok = bool(rec.get("ok", False))
-        events.append((ts, ok))
+        if str(rec.get("record_type", "")).strip() == "delivery_summary":
+            summary_events.append((ts, ok))
+        else:
+            legacy_events.append((ts, ok))
+    events = summary_events if summary_events else legacy_events
     events.sort(key=lambda x: x[0])
     return events
 
@@ -117,15 +130,11 @@ def main() -> int:
     dead = safe_read_jsonl(dead_path)
 
     stats = state.get("stats", {}) if isinstance(state.get("stats"), dict) else {}
-    sent = int(stats.get("alerts_sent", 0) or 0)
-    failed = int(stats.get("alerts_failed", 0) or 0)
-    suppressed = int(stats.get("alerts_suppressed", 0) or 0)
+    sent_state = int(stats.get("alerts_sent", 0) or 0)
+    failed_state = int(stats.get("alerts_failed", 0) or 0)
+    suppressed_state = int(stats.get("alerts_suppressed", 0) or 0)
 
-    # Primary rate: use state counters when available (consistent with PR9 metrics).
-    total = sent + failed + suppressed
-    failed_rate_pct = (100.0 * failed / total) if total > 0 else 0.0
-
-    # Windowed dead-letter sample (1h) for critical failure count.
+    # Windowed dead-letter sample (1h) for critical failure count and rate fallback.
     dead_1h = []
     for rec in dead:
         ts = parse_utc_ts(str(rec.get("created_at_utc", "")))
@@ -141,19 +150,41 @@ def main() -> int:
         if level == "CRITICAL" or status == "FAIL" or "[CRITICAL]" in msg:
             critical_failed_1h += 1
 
+    # failed_rate guard must use lookback-window samples (not lifetime cumulative counters),
+    # otherwise old history can dilute recent incident spikes.
+    audit_events_1h = parse_audit_events(audit_path, since_ts)
+    audit_total_1h = len(audit_events_1h)
+    audit_failed_1h = sum(1 for _ts, ok in audit_events_1h if not ok)
+
+    failed_rate_basis = "audit_window"
+    failed_samples_total = audit_total_1h
+    failed_samples_failed = audit_failed_1h
+
+    if failed_samples_total == 0 and len(dead_1h) > 0:
+        # Conservative fallback: if no audit stream, dead-letter in window implies failed attempts.
+        failed_rate_basis = "dead_letter_window_fallback"
+        failed_samples_total = len(dead_1h)
+        failed_samples_failed = len(dead_1h)
+
+    failed_rate_pct = (
+        100.0 * failed_samples_failed / failed_samples_total if failed_samples_total > 0 else 0.0
+    )
+
     consecutive_failures = consecutive_failures_from_audit(audit_path, since_ts)
     degraded_notes: list[str] = []
     if consecutive_failures is None:
         # Fallback when no audit stream exists: dead-letter consecutive in lookback.
         consecutive_failures = len(dead_1h)
         degraded_notes.append("audit file missing; consecutive_failures approximated from dead-letter count in window")
+    if failed_rate_basis != "audit_window":
+        degraded_notes.append("audit window samples missing; failed_rate derived from dead-letter window fallback")
 
     reasons_fail: list[str] = []
     reasons_warn: list[str] = []
 
     if failed_rate_pct > args.failed_rate_threshold_pct:
         reasons_fail.append(
-            f"failed_rate={failed_rate_pct:.2f}% > {args.failed_rate_threshold_pct:.2f}% (window=state_counters)"
+            f"failed_rate={failed_rate_pct:.2f}% > {args.failed_rate_threshold_pct:.2f}% (basis={failed_rate_basis})"
         )
     if consecutive_failures > args.consecutive_failures_threshold:
         reasons_fail.append(
@@ -162,8 +193,8 @@ def main() -> int:
     if critical_failed_1h > 0:
         reasons_fail.append(f"critical_alerts_failed_1h={critical_failed_1h} > 0")
 
-    if total == 0:
-        reasons_warn.append("no delivery samples in state counters")
+    if failed_samples_total == 0:
+        reasons_warn.append("no delivery samples in lookback window")
     if not state_path.exists():
         reasons_warn.append(f"state file missing: {state_path}")
     if not dead_path.exists():
@@ -190,14 +221,17 @@ def main() -> int:
     lines.append("mode=dry-run")
     lines.append(f"lookback_seconds={args.lookback_seconds}")
     lines.append(f"failed_rate_pct={failed_rate_pct:.2f}")
+    lines.append(f"failed_rate_basis={failed_rate_basis}")
     lines.append(f"failed_rate_threshold_pct={args.failed_rate_threshold_pct:.2f}")
     lines.append(f"consecutive_failures={consecutive_failures}")
     lines.append(f"consecutive_failures_threshold={args.consecutive_failures_threshold}")
     lines.append(f"critical_alerts_failed_1h={critical_failed_1h}")
-    lines.append(f"samples_total={total}")
-    lines.append(f"samples_sent={sent}")
-    lines.append(f"samples_suppressed={suppressed}")
-    lines.append(f"samples_failed={failed}")
+    lines.append(f"samples_total={failed_samples_total}")
+    lines.append(f"samples_failed={failed_samples_failed}")
+    lines.append(f"samples_state_sent={sent_state}")
+    lines.append(f"samples_state_suppressed={suppressed_state}")
+    lines.append(f"samples_state_failed={failed_state}")
+    lines.append(f"audit_events_1h={audit_total_1h}")
     lines.append(f"dead_letter_events_1h={len(dead_1h)}")
     lines.append(rollback_text)
 
@@ -228,6 +262,7 @@ def main() -> int:
         "rules": {
             "failed_rate": {
                 "value_pct": round(failed_rate_pct, 4),
+                "basis": failed_rate_basis,
                 "threshold_pct": args.failed_rate_threshold_pct,
                 "triggered": failed_rate_pct > args.failed_rate_threshold_pct,
             },
@@ -243,11 +278,13 @@ def main() -> int:
             },
         },
         "samples": {
-            "total": total,
-            "sent": sent,
-            "suppressed": suppressed,
-            "failed": failed,
+            "total": failed_samples_total,
+            "failed": failed_samples_failed,
+            "audit_1h": audit_total_1h,
             "dead_letter_1h": len(dead_1h),
+            "state_sent": sent_state,
+            "state_suppressed": suppressed_state,
+            "state_failed": failed_state,
         },
         "reasons": {
             "fail": reasons_fail,

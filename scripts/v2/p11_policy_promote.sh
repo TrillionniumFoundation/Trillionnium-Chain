@@ -6,17 +6,28 @@ POLICY_FILE="$ROOT/config/alert-policy/current.json"
 FROM=""
 TO=""
 DRY_RUN=0
+APPROVED=0
+APPROVAL_CODE=""
+APPROVED_BY=""
+REVIEWED_BY=""
 
 usage() {
   cat <<'EOF'
 Usage:
-  scripts/v2/p11_policy_promote.sh --from staging --to prod [--dry-run] [--policy <path>]
+  scripts/v2/p11_policy_promote.sh --from staging --to prod [--dry-run] [--approve --approval-code <code> --approved-by <id> --reviewed-by <id>] [--policy <path>]
 
 Options:
   --from <name>   source profile (must be staging)
   --to <name>     target profile (must be prod)
   --dry-run       do not overwrite current policy
+  --approve|--yes required for non-dry-run promotion
+  --approval-code <code> content-bound manual approval code (required for non-dry-run)
+  --approved-by <id> primary approver identity for immutable audit entry (required for non-dry-run)
+  --reviewed-by <id> second approver identity, must differ from approved-by (required for non-dry-run)
   --policy <path> policy json path (default: config/alert-policy/current.json)
+
+Security mode:
+  - Non-dry-run requires env P11_APPROVAL_SHARED_SECRET (legacy bypass removed).
 EOF
 }
 
@@ -28,8 +39,16 @@ while [[ $# -gt 0 ]]; do
       TO="${2:-}"; shift 2 ;;
     --dry-run)
       DRY_RUN=1; shift ;;
+    --approve|--yes)
+      APPROVED=1; shift ;;
     --policy)
       POLICY_FILE="${2:-}"; shift 2 ;;
+    --approval-code)
+      APPROVAL_CODE="${2:-}"; shift 2 ;;
+    --approved-by)
+      APPROVED_BY="${2:-}"; shift 2 ;;
+    --reviewed-by)
+      REVIEWED_BY="${2:-}"; shift 2 ;;
     -h|--help)
       usage; exit 0 ;;
     *)
@@ -53,15 +72,21 @@ if [[ ! -f "$POLICY_FILE" ]]; then
   exit 2
 fi
 
+TS_UTC="$(date -u +%Y%m%d-%H%M%S)"
 RUN_DIR="$ROOT/run/pr11"
 SNAPSHOT_DIR="$RUN_DIR/policy-snapshots"
 PROFILE_DIR="$ROOT/config/alert-policy/profiles"
-mkdir -p "$RUN_DIR" "$SNAPSHOT_DIR" "$PROFILE_DIR"
-
-TS_UTC="$(date -u +%Y%m%d-%H%M%S)"
-BEFORE_SNAPSHOT="$SNAPSHOT_DIR/${TS_UTC}-before.json"
-AFTER_SNAPSHOT="$SNAPSHOT_DIR/${TS_UTC}-after.json"
-TMP_PROMOTED="$SNAPSHOT_DIR/${TS_UTC}-promoted.tmp.json"
+if [[ "$DRY_RUN" -eq 1 ]]; then
+  TMP_PROMOTED="$(mktemp)"
+  BEFORE_SNAPSHOT=""
+  AFTER_SNAPSHOT=""
+else
+  mkdir -p "$RUN_DIR" "$SNAPSHOT_DIR" "$PROFILE_DIR"
+  BEFORE_SNAPSHOT="$SNAPSHOT_DIR/${TS_UTC}-before.json"
+  AFTER_SNAPSHOT="$SNAPSHOT_DIR/${TS_UTC}-after.json"
+  TMP_PROMOTED="$SNAPSHOT_DIR/${TS_UTC}-promoted.tmp.json"
+fi
+trap '[[ "$DRY_RUN" -eq 1 ]] && rm -f "$TMP_PROMOTED"' EXIT
 
 # 1) Lint before promote (required)
 python3 "$ROOT/scripts/v2/alert_policy_lint.py" --policy "$POLICY_FILE"
@@ -116,14 +141,57 @@ p = Path(sys.argv[1])
 print(json.loads(p.read_text(encoding='utf-8')).get('version', 'unknown'))
 PY
 )"
+POLICY_SHA256="$(python3 - "$POLICY_FILE" <<'PY'
+import hashlib, sys
+from pathlib import Path
+print(hashlib.sha256(Path(sys.argv[1]).read_bytes()).hexdigest())
+PY
+)"
+
+APPROVAL_SECRET_MODE="shared-secret"
+
+EXPECTED_APPROVAL_CODE="$(python3 - "$POLICY_SHA256" "$FROM" "$TO" "$OLD_VERSION" "$NEW_VERSION" "$APPROVED_BY" "$REVIEWED_BY" "${P11_APPROVAL_SHARED_SECRET:-}" <<'PY'
+import hashlib, sys
+raw = f"{sys.argv[1]}|{sys.argv[2]}|{sys.argv[3]}|{sys.argv[4]}|{sys.argv[5]}|{sys.argv[6]}|{sys.argv[7]}|{sys.argv[8]}"
+print(hashlib.sha256(raw.encode('utf-8')).hexdigest()[:16])
+PY
+)"
+
+if [[ "$DRY_RUN" -eq 0 ]]; then
+  if [[ "$APPROVED" -ne 1 ]]; then
+    echo "[P11][BLOCKED] missing approval for non-dry-run. Re-run with --approve --approval-code <code> --approved-by <id>" >&2
+    exit 3
+  fi
+  if [[ -z "$APPROVED_BY" ]]; then
+    echo "[P11][BLOCKED] missing --approved-by for non-dry-run" >&2
+    exit 3
+  fi
+  if [[ -z "$REVIEWED_BY" ]]; then
+    echo "[P11][BLOCKED] missing --reviewed-by for non-dry-run" >&2
+    exit 3
+  fi
+  if [[ "$APPROVED_BY" == "$REVIEWED_BY" ]]; then
+    echo "[P11][BLOCKED] approver identities must be distinct (--approved-by != --reviewed-by)" >&2
+    exit 3
+  fi
+  if [[ -z "${P11_APPROVAL_SHARED_SECRET:-}" ]]; then
+    echo "[P11][BLOCKED] secure approval mode required: set P11_APPROVAL_SHARED_SECRET" >&2
+    exit 3
+  fi
+  if [[ "$APPROVAL_CODE" != "$EXPECTED_APPROVAL_CODE" ]]; then
+    echo "[P11][BLOCKED] invalid approval code" >&2
+    exit 3
+  fi
+fi
 
 # 3) Lint promoted candidate
 python3 "$ROOT/scripts/v2/alert_policy_lint.py" --policy "$TMP_PROMOTED"
 
-# 4) Snapshot + apply
-cp "$POLICY_FILE" "$BEFORE_SNAPSHOT"
-cp "$TMP_PROMOTED" "$AFTER_SNAPSHOT"
-python3 - "$TMP_PROMOTED" "$PROFILE_DIR/staging.json" "$PROFILE_DIR/prod.json" <<'PY'
+# 4) Snapshot + apply (non-dry-run only)
+if [[ "$DRY_RUN" -eq 0 ]]; then
+  cp "$POLICY_FILE" "$BEFORE_SNAPSHOT"
+  cp "$TMP_PROMOTED" "$AFTER_SNAPSHOT"
+  python3 - "$TMP_PROMOTED" "$PROFILE_DIR/staging.json" "$PROFILE_DIR/prod.json" <<'PY'
 from __future__ import annotations
 import json
 import sys
@@ -143,13 +211,10 @@ prod_payload = {**base, "profile": "prod", "profile_config": profiles.get("prod"
 staging_out.write_text(json.dumps(staging_payload, ensure_ascii=False, indent=2) + "\n", encoding='utf-8')
 prod_out.write_text(json.dumps(prod_payload, ensure_ascii=False, indent=2) + "\n", encoding='utf-8')
 PY
-
-if [[ "$DRY_RUN" -eq 0 ]]; then
   cp "$TMP_PROMOTED" "$POLICY_FILE"
-fi
 
-# 5) Immutable-style append-only audit log
-python3 - "$RUN_DIR/policy-promotions.log" "$TS_UTC" "$FROM" "$TO" "$DRY_RUN" "$OLD_VERSION" "$NEW_VERSION" "$POLICY_FILE" "$BEFORE_SNAPSHOT" "$AFTER_SNAPSHOT" <<'PY'
+  # 5) Immutable-style append-only audit log
+  python3 - "$RUN_DIR/policy-promotions.log" "$TS_UTC" "$FROM" "$TO" "$DRY_RUN" "$OLD_VERSION" "$NEW_VERSION" "$POLICY_FILE" "$BEFORE_SNAPSHOT" "$AFTER_SNAPSHOT" "$APPROVED_BY" "$REVIEWED_BY" "$APPROVAL_SECRET_MODE" "$POLICY_SHA256" <<'PY'
 from __future__ import annotations
 import hashlib
 import json
@@ -170,6 +235,10 @@ entry = {
   "policy_file": sys.argv[8],
   "before_snapshot": sys.argv[9],
   "after_snapshot": sys.argv[10],
+  "approved_by": sys.argv[11],
+  "reviewed_by": sys.argv[12],
+  "approval_secret_mode": sys.argv[13],
+  "policy_sha256": sys.argv[14],
 }
 line = json.dumps(entry, ensure_ascii=False, sort_keys=True)
 entry["sha256"] = hashlib.sha256(line.encode("utf-8")).hexdigest()
@@ -178,13 +247,15 @@ with log_path.open("a", encoding="utf-8") as f:
     f.write(json.dumps(entry, ensure_ascii=False) + "\n")
 print(log_path)
 PY
-
-if [[ "$DRY_RUN" -eq 1 ]]; then
-  echo "[P11][DRY-RUN] validated + generated promoted candidate"
-else
   echo "[P11][OK] promoted $FROM -> $TO, version $OLD_VERSION -> $NEW_VERSION"
+  echo "[P11] policy=$POLICY_FILE"
+  echo "[P11] snapshots: before=$BEFORE_SNAPSHOT after=$AFTER_SNAPSHOT"
+  echo "[P11] audit log: $RUN_DIR/policy-promotions.log"
+else
+  echo "[P11][DRY-RUN] validated + generated promoted candidate (no file write side effects)"
+  echo "[P11][DRY-RUN] approval challenge digest: policy_sha256=$POLICY_SHA256 from=$FROM to=$TO old=$OLD_VERSION new=$NEW_VERSION"
+  echo "[P11][DRY-RUN] secure mode: set P11_APPROVAL_SHARED_SECRET and compute code with two identities:"
+  echo "[P11][DRY-RUN] python3 - <<'PY'"
+  echo "import hashlib; raw='${POLICY_SHA256}|${FROM}|${TO}|${OLD_VERSION}|${NEW_VERSION}|<APPROVED_BY>|<REVIEWED_BY>|<SECRET>'; print(hashlib.sha256(raw.encode()).hexdigest()[:16])"
+  echo "PY"
 fi
-
-echo "[P11] policy=$POLICY_FILE"
-echo "[P11] snapshots: before=$BEFORE_SNAPSHOT after=$AFTER_SNAPSHOT"
-echo "[P11] audit log: $RUN_DIR/policy-promotions.log"
