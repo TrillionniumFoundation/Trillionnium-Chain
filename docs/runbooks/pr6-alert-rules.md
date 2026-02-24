@@ -60,7 +60,9 @@ python3 scripts/v2/pr6_challenge_alert_rules.py \
 - `FAIL_FORFEITS_DAILY_INCREASE` / `WARN_FORFEITS_DAILY_INCREASE`
 - `FAIL_ESCROW_NONZERO_HOURS` / `WARN_ESCROW_NONZERO_HOURS`
 - `CI_HARD_FAIL_ON_WARN=1`（启用后 WARN 也返回 exit 1）
-- 参数健壮性：gate 会在执行前校验关键阈值参数（非法值返回 `rc=2`，并打印 `[PR6][FAIL] invalid ...`）
+- 参数健壮性：gate 会在执行前校验关键阈值参数（非法值返回 `rc=2`，并打印 `[PR6][FAIL] rc=2 invalid ...`）
+- 输入可观测：`EVENT_LOG` 缺失或不可读返回 `rc=3`，并打印 `[PR6][FAIL] rc=3 ...`
+- 报告可观测：若 `summary.txt` 缺失/为空或无 `status=` 字段，返回 `rc=4` 并打印 `[PR6][FAIL] rc=4 ...`
 - 兼容性说明：`pr6_alert_rules_gate.sh` 已兼容 macOS 默认 bash（`set -u` 下可正常运行，无需额外 workaround）
 
 ---
@@ -72,6 +74,14 @@ python3 scripts/v2/pr6_challenge_alert_rules.py \
 ```bash
 ./scripts/v2/pr6_alert_rules_gate.sh
 ```
+
+### Exit Code 约定
+
+- `rc=0`：规则执行成功（PASS/WARN，且未启用 `CI_HARD_FAIL_ON_WARN=1`）
+- `rc=1`：规则判定 FAIL，或启用 `CI_HARD_FAIL_ON_WARN=1` 且结果为 WARN
+- `rc=2`：输入阈值参数非法（如非数字）
+- `rc=3`：`EVENT_LOG` 不存在或不可读
+- `rc=4`：规则脚本成功返回但 gate 未拿到可解析 `summary/status`
 
 ### 示例 2：nightly（WARN 也视为失败）
 

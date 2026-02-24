@@ -5,6 +5,10 @@ ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 RUN_DIR="${RUN_DIR:-$ROOT/run/pr6-alerts/$(date +%Y%m%d-%H%M%S)}"
 mkdir -p "$RUN_DIR"
 
+readonly RC_INVALID_ARG=2
+readonly RC_INPUT_MISSING=3
+readonly RC_REPORT_INVALID=4
+
 EVENT_LOG="${EVENT_LOG:-$ROOT/trillionnium-rust/run/event-field-check.log}"
 REPORT="$RUN_DIR/summary.txt"
 
@@ -12,8 +16,8 @@ require_non_negative_integer() {
   local name="$1"
   local value="$2"
   if [[ ! "$value" =~ ^[0-9]+$ ]]; then
-    echo "[PR6][FAIL] invalid $name='$value' (expect non-negative integer)" >&2
-    exit 2
+    echo "[PR6][FAIL] rc=${RC_INVALID_ARG} invalid $name='$value' (expect non-negative integer)" >&2
+    exit "$RC_INVALID_ARG"
   fi
 }
 
@@ -24,8 +28,8 @@ require_number_or_auto() {
     return 0
   fi
   if [[ ! "$value" =~ ^[0-9]+([.][0-9]+)?$ ]]; then
-    echo "[PR6][FAIL] invalid $name='$value' (expect number or -1 for auto)" >&2
-    exit 2
+    echo "[PR6][FAIL] rc=${RC_INVALID_ARG} invalid $name='$value' (expect number or -1 for auto)" >&2
+    exit "$RC_INVALID_ARG"
   fi
 }
 
@@ -64,6 +68,15 @@ if [[ "${CI_HARD_FAIL_ON_WARN:-0}" == "1" ]]; then
   CI_WARN_ARG="--ci-hard-fail-on-warn"
 fi
 
+if [[ ! -f "$EVENT_LOG" ]]; then
+  echo "[PR6][FAIL] rc=${RC_INPUT_MISSING} event log not found: $EVENT_LOG" >&2
+  exit "$RC_INPUT_MISSING"
+fi
+if [[ ! -r "$EVENT_LOG" ]]; then
+  echo "[PR6][FAIL] rc=${RC_INPUT_MISSING} event log not readable: $EVENT_LOG" >&2
+  exit "$RC_INPUT_MISSING"
+fi
+
 python3 "$ROOT/scripts/v2/pr6_challenge_alert_rules.py" \
   --event-log "$EVENT_LOG" \
   --window-hours "$WINDOW_HOURS_VAL" \
@@ -76,5 +89,15 @@ python3 "$ROOT/scripts/v2/pr6_challenge_alert_rules.py" \
   ${CI_WARN_ARG:+$CI_WARN_ARG} \
   --report "$REPORT"
 
+if [[ ! -s "$REPORT" ]]; then
+  echo "[PR6][FAIL] rc=${RC_REPORT_INVALID} missing/empty report: $REPORT" >&2
+  exit "$RC_REPORT_INVALID"
+fi
+
 status="$(sed -n 's/^status=//p' "$REPORT" | head -n1)"
+if [[ -z "$status" ]]; then
+  echo "[PR6][FAIL] rc=${RC_REPORT_INVALID} report missing status= field: $REPORT" >&2
+  exit "$RC_REPORT_INVALID"
+fi
+
 echo "[PR6][alert-rules] status=$status report=$REPORT"
