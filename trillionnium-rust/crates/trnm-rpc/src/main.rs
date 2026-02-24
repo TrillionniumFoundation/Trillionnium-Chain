@@ -5,7 +5,7 @@ use sha2::{Digest, Sha256};
 use std::{
     collections::BTreeMap,
     fs,
-    io::{Read, Write},
+    io::{Read, Seek, SeekFrom, Write},
     net::TcpListener,
     path::{Path, PathBuf},
     time::{SystemTime, UNIX_EPOCH},
@@ -32,6 +32,9 @@ const CHALLENGE_TREASURY_EVENTS_LIMIT_DEFAULT: usize = 20;
 const CHALLENGE_TREASURY_EVENTS_LIMIT_MAX: usize = 200;
 const CHALLENGE_ESCROW_ACCOUNT: &str = "treasury.challenge_escrow";
 const CHALLENGE_FORFEIT_TREASURY_ACCOUNT: &str = "treasury.challenge_forfeits";
+const NODE_EVENT_LOG_TAIL_BYTES_DEFAULT: u64 = 4 * 1024 * 1024;
+const NODE_EVENT_LOG_TAIL_BYTES_MAX: u64 = 16 * 1024 * 1024;
+const OPS_WINDOW_CUSTOM_MAX_MS: u128 = 31 * 24 * 60 * 60 * 1000;
 
 #[derive(Debug, Parser)]
 #[command(
@@ -292,6 +295,46 @@ fn load_latest_adapter_records() -> Vec<AdapterRecord> {
         .collect()
 }
 
+fn node_event_log_tail_bytes() -> u64 {
+    std::env::var("TRNM_RPC_NODE_EVENT_LOG_TAIL_BYTES")
+        .ok()
+        .and_then(|v| v.parse::<u64>().ok())
+        .map(|v| v.min(NODE_EVENT_LOG_TAIL_BYTES_MAX))
+        .filter(|v| *v > 0)
+        .unwrap_or(NODE_EVENT_LOG_TAIL_BYTES_DEFAULT)
+}
+
+fn read_log_tail(path: &Path, tail_bytes: u64) -> Option<String> {
+    let mut file = fs::File::open(path).ok()?;
+    let size = file.metadata().ok()?.len();
+    let start = size.saturating_sub(tail_bytes);
+    let mut started_mid_line = false;
+    if start > 0 {
+        if file.seek(SeekFrom::Start(start.saturating_sub(1))).is_err() {
+            return None;
+        }
+        let mut prev = [0u8; 1];
+        if file.read_exact(&mut prev).is_err() {
+            return None;
+        }
+        started_mid_line = prev[0] != b'\n';
+    }
+    if file.seek(SeekFrom::Start(start)).is_err() {
+        return None;
+    }
+    let mut buf = String::new();
+    if file.read_to_string(&mut buf).is_err() {
+        return None;
+    }
+    if start > 0 && started_mid_line {
+        if let Some(idx) = buf.find('\n') {
+            return Some(buf[idx + 1..].to_string());
+        }
+        return Some(String::new());
+    }
+    Some(buf)
+}
+
 fn load_latest_node_events() -> Vec<NodeEventRecord> {
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .parent()
@@ -300,15 +343,17 @@ fn load_latest_node_events() -> Vec<NodeEventRecord> {
         .unwrap_or_else(|| PathBuf::from("."));
 
     let candidates = [
+        root.join("run/event-field-check.log"),
         root.join("run/parallel-sanity.log"),
         root.join("run/node1.log"),
         root.join("run/node2.log"),
         root.join("run/node3.log"),
     ];
 
+    let tail_bytes = node_event_log_tail_bytes();
     let mut lines = Vec::new();
     for p in candidates {
-        if let Ok(raw) = fs::read_to_string(&p) {
+        if let Some(raw) = read_log_tail(&p, tail_bytes) {
             lines.extend(raw.lines().map(str::to_string));
         }
     }
@@ -618,6 +663,12 @@ fn resolve_ops_window(
                 .ok_or_else(|| anyhow!("--to-unix-ms is required when --window custom"))?;
             if from > to {
                 bail!("invalid custom window: from_unix_ms ({from}) must be <= to_unix_ms ({to})");
+            }
+            let span = to.saturating_sub(from);
+            if span > OPS_WINDOW_CUSTOM_MAX_MS {
+                bail!(
+                    "custom window too large: span_ms ({span}) exceeds max_ms ({OPS_WINDOW_CUSTOM_MAX_MS})"
+                );
             }
             Ok(Some((from, to, "custom".to_string())))
         }
@@ -1655,11 +1706,45 @@ mod tests {
     fn resolve_ops_window_custom_validation() {
         assert!(resolve_ops_window(Some(OpsWindowArg::Custom), None, Some(1), 10).is_err());
         assert!(resolve_ops_window(Some(OpsWindowArg::Custom), Some(2), Some(1), 10).is_err());
+        assert!(resolve_ops_window(
+            Some(OpsWindowArg::Custom),
+            Some(0),
+            Some(OPS_WINDOW_CUSTOM_MAX_MS + 1),
+            10
+        )
+        .is_err());
 
         let got = resolve_ops_window(Some(OpsWindowArg::H24), None, None, 1_000).unwrap();
         let (from, to, mode) = got.expect("window expected");
         assert_eq!(to, 1_000);
         assert_eq!(mode, "24h");
         assert!(from <= to);
+    }
+
+    #[test]
+    fn read_log_tail_returns_recent_lines() {
+        let tmp = std::env::temp_dir().join(format!("trnm-rpc-tail-test-{}.log", now_ms()));
+        fs::write(&tmp, "line1
+line2
+[event] event_type=commit task_id=1 tx_id=1 block_height=1
+")
+            .expect("write temp log");
+        let tail = read_log_tail(&tmp, 80).expect("tail text");
+        assert!(tail.contains("[event] event_type=commit"));
+        let _ = fs::remove_file(tmp);
+    }
+
+    #[test]
+    fn read_log_tail_keeps_first_line_when_tail_starts_on_newline_boundary() {
+        let tmp = std::env::temp_dir().join(format!("trnm-rpc-tail-boundary-{}.log", now_ms()));
+        let content = "line1\n[event] event_type=commit task_id=7 tx_id=11 block_height=3\n";
+        fs::write(&tmp, content).expect("write temp log");
+
+        let start = "line1\n".len() as u64;
+        let tail_bytes = content.len() as u64 - start;
+        let tail = read_log_tail(&tmp, tail_bytes).expect("tail text");
+
+        assert!(tail.starts_with("[event] event_type=commit"));
+        let _ = fs::remove_file(tmp);
     }
 }

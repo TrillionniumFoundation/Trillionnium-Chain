@@ -39,4 +39,7 @@ python3 "$ROOT/scripts/v2/challenge_fundflow_reconcile.py" \
   "${STRICT_ARGS[@]}" \
   --report "$REPORT"
 
-echo "[PR5][PASS] challenge reconcile gate report=$REPORT"
+TRIAD_RUN_DIR="$RUN_DIR/triad"
+RUN_DIR="$TRIAD_RUN_DIR" EVENT_LOG="$EVENT_LOG" "$ROOT/scripts/v2/pr5_event_rpc_treasury_consistency_gate.sh"
+
+echo "[PR5][PASS] challenge reconcile gate report=$REPORT triad_dir=$TRIAD_RUN_DIR"
