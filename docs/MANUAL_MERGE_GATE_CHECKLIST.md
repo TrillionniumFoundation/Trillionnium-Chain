@@ -26,8 +26,9 @@
 - [ ] 运行：
 
 ```bash
-find scripts -type f -name '*.sh' -print0 | while IFS= read -r -d '' f; do bash -n "$f"; done
-find scripts -type f -name '*.sh' -print0 | while IFS= read -r -d '' f; do shellcheck -S error "$f"; done
+./scripts/quick_gate_shell.sh scripts
+# 若本机未安装 shellcheck，可先做语法预检：
+# QUICK_GATE_SKIP_SHELLCHECK=1 ./scripts/quick_gate_shell.sh scripts
 ```
 
 - [ ] 结果：无 error
