@@ -15,6 +15,9 @@ RPC_UNKNOWN_ANOMALY_BAD="$TMP_DIR/rpc-unknown-anomaly-bad.json"
 RPC_MISSING_ANOMALY_CODE_BAD="$TMP_DIR/rpc-missing-anomaly-code-bad.json"
 RPC_ANOMALY_COUNT_MISMATCH_BAD="$TMP_DIR/rpc-anomaly-count-mismatch-bad.json"
 RPC_MALFORMED_NUMERIC_BAD="$TMP_DIR/rpc-malformed-numeric-bad.json"
+RPC_MALFORMED_EVENTS_STRUCTURE_BAD="$TMP_DIR/rpc-malformed-events-structure-bad.json"
+RPC_MALFORMED_ANOMALIES_STRUCTURE_BAD="$TMP_DIR/rpc-malformed-anomalies-structure-bad.json"
+RPC_NEGATIVE_ANOMALY_COUNT_BAD="$TMP_DIR/rpc-negative-anomaly-count-bad.json"
 PR5_SUMMARY_BAD_RECORD_COUNT="$TMP_DIR/summary-bad-record-count.txt"
 
 cat >"$EVENT_LOG" <<'EOF'
@@ -66,6 +69,18 @@ EOF
 
 cat >"$RPC_MALFORMED_NUMERIC_BAD" <<'EOF'
 {"current_forfeits_balance":"n/a","cumulative_forfeited":5,"anomaly_count":0,"events":[{"event_type":"challenge"},{"event_type":"resolve"},{"event_type":"challenge"},{"event_type":"resolve"}]}
+EOF
+
+cat >"$RPC_MALFORMED_EVENTS_STRUCTURE_BAD" <<'EOF'
+{"current_forfeits_balance":5,"cumulative_forfeited":5,"anomaly_count":0,"events":{"event_type":"challenge"}}
+EOF
+
+cat >"$RPC_MALFORMED_ANOMALIES_STRUCTURE_BAD" <<'EOF'
+{"current_forfeits_balance":5,"cumulative_forfeited":5,"anomaly_count":1,"anomalies":{"code":"duplicate_event_replay"},"events":[{"event_type":"challenge"},{"event_type":"resolve"},{"event_type":"challenge"},{"event_type":"resolve"}]}
+EOF
+
+cat >"$RPC_NEGATIVE_ANOMALY_COUNT_BAD" <<'EOF'
+{"current_forfeits_balance":5,"cumulative_forfeited":5,"anomaly_count":-1,"anomalies":[],"events":[{"event_type":"challenge"},{"event_type":"resolve"},{"event_type":"challenge"},{"event_type":"resolve"}]}
 EOF
 
 python3 "$ROOT/scripts/v2/pr5_event_rpc_treasury_consistency.py" \
@@ -181,6 +196,66 @@ fi
 if ! grep -q '^status=FAIL$' "$TMP_DIR/out-malformed-numeric-bad.txt"; then
   echo "[TEST][FAIL] expected FAIL status for malformed numeric fields"
   cat "$TMP_DIR/out-malformed-numeric-bad.txt"
+  exit 1
+fi
+
+set +e
+python3 "$ROOT/scripts/v2/pr5_event_rpc_treasury_consistency.py" \
+  --event-log "$EVENT_LOG" \
+  --pr5-summary "$PR5_SUMMARY" \
+  --rpc-treasury-json "$RPC_MALFORMED_EVENTS_STRUCTURE_BAD" \
+  --report "$TMP_DIR/out-malformed-events-structure-bad.txt" >/dev/null
+rc_malformed_events=$?
+set -e
+if [[ "$rc_malformed_events" -eq 0 ]]; then
+  echo "[TEST][FAIL] expected FAIL when rpc events structure is malformed"
+  cat "$TMP_DIR/out-malformed-events-structure-bad.txt"
+  exit 1
+fi
+
+if ! grep -q '^status=FAIL$' "$TMP_DIR/out-malformed-events-structure-bad.txt"; then
+  echo "[TEST][FAIL] expected FAIL status for malformed events structure"
+  cat "$TMP_DIR/out-malformed-events-structure-bad.txt"
+  exit 1
+fi
+
+set +e
+python3 "$ROOT/scripts/v2/pr5_event_rpc_treasury_consistency.py" \
+  --event-log "$EVENT_LOG" \
+  --pr5-summary "$PR5_SUMMARY" \
+  --rpc-treasury-json "$RPC_MALFORMED_ANOMALIES_STRUCTURE_BAD" \
+  --report "$TMP_DIR/out-malformed-anomalies-structure-bad.txt" >/dev/null
+rc_malformed_anomalies=$?
+set -e
+if [[ "$rc_malformed_anomalies" -eq 0 ]]; then
+  echo "[TEST][FAIL] expected FAIL when rpc anomalies structure is malformed"
+  cat "$TMP_DIR/out-malformed-anomalies-structure-bad.txt"
+  exit 1
+fi
+
+if ! grep -q '^status=FAIL$' "$TMP_DIR/out-malformed-anomalies-structure-bad.txt"; then
+  echo "[TEST][FAIL] expected FAIL status for malformed anomalies structure"
+  cat "$TMP_DIR/out-malformed-anomalies-structure-bad.txt"
+  exit 1
+fi
+
+set +e
+python3 "$ROOT/scripts/v2/pr5_event_rpc_treasury_consistency.py" \
+  --event-log "$EVENT_LOG" \
+  --pr5-summary "$PR5_SUMMARY" \
+  --rpc-treasury-json "$RPC_NEGATIVE_ANOMALY_COUNT_BAD" \
+  --report "$TMP_DIR/out-negative-anomaly-count-bad.txt" >/dev/null
+rc_negative_anomaly_count=$?
+set -e
+if [[ "$rc_negative_anomaly_count" -eq 0 ]]; then
+  echo "[TEST][FAIL] expected FAIL when rpc anomaly_count is negative"
+  cat "$TMP_DIR/out-negative-anomaly-count-bad.txt"
+  exit 1
+fi
+
+if ! grep -q '^status=FAIL$' "$TMP_DIR/out-negative-anomaly-count-bad.txt"; then
+  echo "[TEST][FAIL] expected FAIL status for negative anomaly_count"
+  cat "$TMP_DIR/out-negative-anomaly-count-bad.txt"
   exit 1
 fi
 

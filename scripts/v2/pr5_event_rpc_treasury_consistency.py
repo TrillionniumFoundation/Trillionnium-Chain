@@ -58,23 +58,37 @@ def _safe_int(payload: dict, key: str, default: int = 0) -> tuple[int, bool]:
 
 def parse_rpc_treasury(path: Path) -> dict:
     payload = json.loads(path.read_text(encoding="utf-8"))
-    events = payload.get("events", []) if isinstance(payload, dict) else []
-    anomalies = payload.get("anomalies", []) if isinstance(payload, dict) else []
+
+    events_raw = payload.get("events", []) if isinstance(payload, dict) else []
+    anomalies_raw = payload.get("anomalies", []) if isinstance(payload, dict) else []
+
+    events_is_list = isinstance(events_raw, list)
+    anomalies_is_list = isinstance(anomalies_raw, list)
+
+    events = events_raw if events_is_list else []
+    anomalies = anomalies_raw if anomalies_is_list else []
+
     anomaly_codes = [str(a.get("code", "")).strip() for a in anomalies if isinstance(a, dict)]
     forfeits_balance, ok_balance = _safe_int(payload, "current_forfeits_balance", 0)
     cumulative_forfeited, ok_cumulative = _safe_int(payload, "cumulative_forfeited", 0)
     anomaly_count, ok_anomaly_count = _safe_int(payload, "anomaly_count", len(anomalies))
+
+    anomaly_count_nonnegative = anomaly_count >= 0
+
     return {
         "payload": payload,
         "events": events,
-        "challenge_count": sum(1 for e in events if e.get("event_type") == "challenge"),
-        "resolve_count": sum(1 for e in events if e.get("event_type") == "resolve"),
+        "challenge_count": sum(1 for e in events if isinstance(e, dict) and e.get("event_type") == "challenge"),
+        "resolve_count": sum(1 for e in events if isinstance(e, dict) and e.get("event_type") == "resolve"),
         "forfeits_balance": forfeits_balance,
         "cumulative_forfeited": cumulative_forfeited,
         "anomaly_count": anomaly_count,
         "anomaly_codes": anomaly_codes,
-        "anomaly_entries_count": len(anomalies) if isinstance(anomalies, list) else 0,
+        "anomaly_entries_count": len(anomalies),
         "numeric_parse_ok": ok_balance and ok_cumulative and ok_anomaly_count,
+        "events_structure_ok": events_is_list,
+        "anomalies_structure_ok": anomalies_is_list,
+        "anomaly_count_nonnegative": anomaly_count_nonnegative,
     }
 
 
@@ -127,6 +141,15 @@ def main() -> int:
     if not rpc["numeric_parse_ok"]:
         details.append("rpc treasury payload has malformed numeric field(s)")
 
+    if not rpc["events_structure_ok"]:
+        details.append("rpc treasury payload has malformed events structure (expected list)")
+
+    if not rpc["anomalies_structure_ok"]:
+        details.append("rpc treasury payload has malformed anomalies structure (expected list)")
+
+    if not rpc["anomaly_count_nonnegative"]:
+        details.append(f"rpc anomaly_count must be >=0: anomaly_count={rpc['anomaly_count']}")
+
     if rpc["anomaly_count"] != rpc["anomaly_entries_count"]:
         details.append(
             "rpc anomaly count mismatch: "
@@ -160,6 +183,9 @@ def main() -> int:
             "unknown semantic",
             "malformed numeric",
             "record_count malformed",
+            "malformed events structure",
+            "malformed anomalies structure",
+            "must be >=0",
         )
         if any(any(k in d for k in fail_keywords) for d in details):
             status = "FAIL"
@@ -183,6 +209,9 @@ def main() -> int:
         f"rpc.anomaly_entries_count={rpc['anomaly_entries_count']}",
         f"rpc.anomaly_codes={','.join(rpc['anomaly_codes'])}",
         f"rpc.numeric_parse_ok={str(rpc['numeric_parse_ok']).lower()}",
+        f"rpc.events_structure_ok={str(rpc['events_structure_ok']).lower()}",
+        f"rpc.anomalies_structure_ok={str(rpc['anomalies_structure_ok']).lower()}",
+        f"rpc.anomaly_count_nonnegative={str(rpc['anomaly_count_nonnegative']).lower()}",
         f"detail_count={len(details)}",
     ]
     report_lines.extend(f"detail.{i+1}={d}" for i, d in enumerate(details))

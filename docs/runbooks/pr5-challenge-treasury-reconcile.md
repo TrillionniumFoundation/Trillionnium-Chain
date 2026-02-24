@@ -145,7 +145,8 @@ PR5_RECONCILE_SOFT_FAIL=1 ./scripts/v2/pr5_treasury_reconcile_report.sh
 - triad gate 语义：
   - `duplicate_event_replay` / `resolve_without_posted_bond` 被归类为已知异常码，仅记录在 `detail.*` 与 `rpc.anomaly_*` 字段，不单独触发 FAIL；
   - 未知 `anomaly.code` 或 `anomaly_count>0` 但缺失 code（不可归类）均视为语义漂移，triad gate 直接 FAIL（需人工确认是否新版本语义变更）；
-  - `anomaly_count` 与 `anomalies` 列表长度不一致，或数值字段（如 `current_forfeits_balance`）非整数时，判定为 RPC 语义/编码异常并 FAIL（避免静默吞错）。
+  - `anomaly_count` 与 `anomalies` 列表长度不一致、`anomaly_count<0`，或数值字段（如 `current_forfeits_balance`）非整数时，判定为 RPC 语义/编码异常并 FAIL（避免静默吞错）。
+  - `events` / `anomalies` 若不是 JSON 列表（list）结构，triad gate 直接 FAIL（避免结构漂移被静默忽略）。
   - PR5 `summary.txt` 中关键计数字段（如 `record_count`）若不可解析为整数，triad gate 直接 FAIL（避免脚本异常退出或隐式降级）。
 - 处理：
   1. 以首次有效事件为准，按 `task_id` + `tx_id` 回查 node 日志确认重复来源
