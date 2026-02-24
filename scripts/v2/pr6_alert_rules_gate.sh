@@ -22,9 +22,9 @@ if [[ -f "$POLICY_FILE" ]]; then
   source "$POLICY_ENV"
 fi
 
-CI_WARN_ARG=()
+CI_WARN_ARG=""
 if [[ "${CI_HARD_FAIL_ON_WARN:-0}" == "1" ]]; then
-  CI_WARN_ARG=(--ci-hard-fail-on-warn)
+  CI_WARN_ARG="--ci-hard-fail-on-warn"
 fi
 
 python3 "$ROOT/scripts/v2/pr6_challenge_alert_rules.py" \
@@ -36,7 +36,7 @@ python3 "$ROOT/scripts/v2/pr6_challenge_alert_rules.py" \
   --warn-forfeits-daily-increase "${WARN_FORFEITS_DAILY_INCREASE:--1}" \
   --fail-escrow-nonzero-hours "${FAIL_ESCROW_NONZERO_HOURS:-24}" \
   --warn-escrow-nonzero-hours "${WARN_ESCROW_NONZERO_HOURS:--1}" \
-  "${CI_WARN_ARG[@]}" \
+  ${CI_WARN_ARG:+$CI_WARN_ARG} \
   --report "$REPORT"
 
 status="$(sed -n 's/^status=//p' "$REPORT" | head -n1)"
