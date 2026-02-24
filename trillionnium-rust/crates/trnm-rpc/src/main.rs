@@ -719,14 +719,17 @@ fn summarize_challenge_treasury(
             "challenge" => {
                 bond_amount = e
                     .challenger_delta
+                    .filter(|v| *v < 0)
                     .and_then(|v| u128::try_from(v.saturating_abs()).ok())
                     .unwrap_or(0);
-                posted_by_task.insert(e.task_id, bond_amount);
-                escrow_balance = escrow_balance.saturating_add(bond_amount);
-                escrow_delta = i128::try_from(bond_amount).ok().unwrap_or(i128::MAX);
-                if in_window {
-                    summary_posted = summary_posted.saturating_add(1);
-                    posted_open_in_window.insert(e.task_id, ());
+                if bond_amount > 0 {
+                    posted_by_task.insert(e.task_id, bond_amount);
+                    escrow_balance = escrow_balance.saturating_add(bond_amount);
+                    escrow_delta = i128::try_from(bond_amount).ok().unwrap_or(i128::MAX);
+                    if in_window {
+                        summary_posted = summary_posted.saturating_add(1);
+                        posted_open_in_window.insert(e.task_id, ());
+                    }
                 }
             }
             "resolve" => {
@@ -734,21 +737,25 @@ fn summarize_challenge_treasury(
                 bond_amount = maybe_bond;
                 match e.bond_disposition.as_deref() {
                     Some("forfeited") => {
-                        escrow_balance = escrow_balance.saturating_sub(maybe_bond);
-                        forfeits_balance = forfeits_balance.saturating_add(maybe_bond);
-                        cumulative_forfeited = cumulative_forfeited.saturating_add(maybe_bond);
-                        escrow_delta = -i128::try_from(maybe_bond).ok().unwrap_or(i128::MAX);
-                        forfeits_delta = maybe_bond;
-                        if in_window {
-                            summary_forfeited = summary_forfeited.saturating_add(1);
+                        if maybe_bond > 0 {
+                            escrow_balance = escrow_balance.saturating_sub(maybe_bond);
+                            forfeits_balance = forfeits_balance.saturating_add(maybe_bond);
+                            cumulative_forfeited = cumulative_forfeited.saturating_add(maybe_bond);
+                            escrow_delta = -i128::try_from(maybe_bond).ok().unwrap_or(i128::MAX);
+                            forfeits_delta = maybe_bond;
+                            if in_window {
+                                summary_forfeited = summary_forfeited.saturating_add(1);
+                            }
                         }
                         posted_open_in_window.remove(&e.task_id);
                     }
                     Some("refunded") => {
-                        escrow_balance = escrow_balance.saturating_sub(maybe_bond);
-                        escrow_delta = -i128::try_from(maybe_bond).ok().unwrap_or(i128::MAX);
-                        if in_window {
-                            summary_refunded = summary_refunded.saturating_add(1);
+                        if maybe_bond > 0 {
+                            escrow_balance = escrow_balance.saturating_sub(maybe_bond);
+                            escrow_delta = -i128::try_from(maybe_bond).ok().unwrap_or(i128::MAX);
+                            if in_window {
+                                summary_refunded = summary_refunded.saturating_add(1);
+                            }
                         }
                         posted_open_in_window.remove(&e.task_id);
                     }
@@ -1700,6 +1707,71 @@ mod tests {
         assert_eq!(summary.forfeited, 0);
         assert_eq!(summary.unresolved, 1);
         assert_eq!(out.window.expect("window expected").mode, "custom");
+    }
+
+    #[test]
+    fn summarize_challenge_treasury_ignores_invalid_challenge_delta_sign() {
+        let events = vec![NodeEventRecord {
+            event_type: "challenge".into(),
+            task_id: 77,
+            from_status: "Revealed".into(),
+            to_status: "Challenged".into(),
+            actor: "c77".into(),
+            tx_id: 1,
+            block_height: 1,
+            state_root: "a".into(),
+            ts_unix_ms: 1_000,
+            signer: None,
+            challenger: Some("c77".into()),
+            tx_hash: None,
+            resolution_code: None,
+            treasury_delta: Some(0),
+            challenger_delta: Some(10),
+            bond_disposition: Some("posted".into()),
+        }];
+
+        let out = summarize_challenge_treasury(&events, 10, Some((500, 1_500, "custom".into())));
+        assert_eq!(out.current_escrow_balance, 0);
+        assert_eq!(out.current_forfeits_balance, 0);
+        assert_eq!(out.cumulative_forfeited, 0);
+        assert_eq!(out.events[0].bond_amount, 0);
+        assert_eq!(out.events[0].escrow_delta, 0);
+        let summary = out.daily_summary.expect("summary expected");
+        assert_eq!(summary.posted, 0);
+        assert_eq!(summary.unresolved, 0);
+    }
+
+    #[test]
+    fn summarize_challenge_treasury_does_not_count_or_move_missing_posted_bond() {
+        let events = vec![NodeEventRecord {
+            event_type: "resolve".into(),
+            task_id: 88,
+            from_status: "Challenged".into(),
+            to_status: "Completed".into(),
+            actor: "v".into(),
+            tx_id: 2,
+            block_height: 2,
+            state_root: "b".into(),
+            ts_unix_ms: 2_000,
+            signer: None,
+            challenger: Some("c88".into()),
+            tx_hash: None,
+            resolution_code: Some("completed".into()),
+            treasury_delta: Some(0),
+            challenger_delta: Some(0),
+            bond_disposition: Some("forfeited".into()),
+        }];
+
+        let out = summarize_challenge_treasury(&events, 10, Some((500, 3_000, "custom".into())));
+        assert_eq!(out.current_escrow_balance, 0);
+        assert_eq!(out.current_forfeits_balance, 0);
+        assert_eq!(out.cumulative_forfeited, 0);
+        assert_eq!(out.events[0].bond_amount, 0);
+        assert_eq!(out.events[0].escrow_delta, 0);
+        assert_eq!(out.events[0].forfeits_delta, 0);
+        let summary = out.daily_summary.expect("summary expected");
+        assert_eq!(summary.forfeited, 0);
+        assert_eq!(summary.refunded, 0);
     }
 
     #[test]
