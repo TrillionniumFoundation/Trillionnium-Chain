@@ -4,11 +4,13 @@ on:
   pull_request:
     paths:
       - 'scripts/**'
+      - 'trillionnium-rust/scripts/**'
       - '.github/workflows/trnm-gate-quick-check.yml'
   push:
     branches: [main]
     paths:
       - 'scripts/**'
+      - 'trillionnium-rust/scripts/**'
       - '.github/workflows/trnm-gate-quick-check.yml'
   workflow_dispatch:
 
@@ -26,4 +28,14 @@ jobs:
           sudo apt-get install -y shellcheck
 
       - name: Quick shell gate (bash -n + shellcheck)
-        run: ./scripts/quick_gate_shell.sh scripts
+        run: |
+          QUICK_GATE_SUMMARY_PATH=run/quick-gate/summary.json \
+          ./scripts/quick_gate_shell.sh scripts trillionnium-rust/scripts
+
+      - name: Upload quick gate summary
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: quick-gate-summary
+          path: run/quick-gate/summary.json
+          if-no-files-found: warn

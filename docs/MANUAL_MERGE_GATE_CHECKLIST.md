@@ -26,15 +26,16 @@
 - [ ] 运行：
 
 ```bash
-./scripts/quick_gate_shell.sh scripts
+./scripts/quick_gate_shell.sh scripts trillionnium-rust/scripts
 # 建议同时输出结构化摘要（便于留档/比对）：
-# QUICK_GATE_SUMMARY_PATH=run/quick-gate/summary.json ./scripts/quick_gate_shell.sh scripts
+# QUICK_GATE_SUMMARY_PATH=run/quick-gate/summary.json ./scripts/quick_gate_shell.sh scripts trillionnium-rust/scripts
 # 若本机未安装 shellcheck，可先做语法预检：
-# QUICK_GATE_SKIP_SHELLCHECK=1 ./scripts/quick_gate_shell.sh scripts
+# QUICK_GATE_SKIP_SHELLCHECK=1 ./scripts/quick_gate_shell.sh scripts trillionnium-rust/scripts
 ```
 
 - [ ] 结果：无 error
 - [ ] （可选）归档 Quick Gate 结构化摘要：`run/quick-gate/summary.json`
+  - 建议核对：`target_dir_count`、`script_count`、`file_manifest_sha256`（便于复盘同一批脚本是否一致）
 
 ---
 
