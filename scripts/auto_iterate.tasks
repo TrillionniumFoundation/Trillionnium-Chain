@@ -3,3 +3,10 @@
 
 bash ./scripts/v2/auto_iterate_task_add_pr5_skip_regression_gate.sh
 bash ./scripts/v2/auto_iterate_task_add_pr6_missing_event_log_gate.sh
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "PR7 rc observability regression" "./scripts/v2/pr7_alert_delivery_gate_rc_observability_test.sh" "ci(gate): add pr7 rc-observability regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "PR7 dead-letter idempotency regression" "./scripts/v2/pr7_dead_letter_replay_idempotency_test.sh" "ci(gate): add pr7 dead-letter idempotency regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "PR7 partial-success route regression" "./scripts/v2/pr7_partial_success_route_test.sh" "ci(gate): add pr7 partial-success route regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "PR6 missing event log guard regression" "./scripts/v2/pr6_alert_rules_gate_missing_event_log_test.sh" "ci(gate): add pr6 missing-event-log regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "RPC node events resource guard regression" "./scripts/v2/rpc_node_events_resource_guard_test.sh" "ci(gate): add rpc-node-events resource guard regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Governance value schema reject regression" "./scripts/v2/governance_value_schema_reject_test.sh" "ci(gate): add governance value-schema reject regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_json_escape_regression_gate.sh
