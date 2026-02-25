@@ -29,6 +29,8 @@ cat > "$PLIST_PATH" <<PLIST
     <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
     <key>MAX_APPEND</key>
     <string>20</string>
+    <key>MODE</key>
+    <string>dual</string>
   </dict>
   <key>RunAtLoad</key><true/>
   <key>StartInterval</key><integer>600</integer>
