@@ -24,3 +24,9 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: pr7
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: pr7-dead-letter-replay-idempotency-test" "./scripts/v2/pr7_dead_letter_replay_idempotency_test.sh" "ci(gate): add pr7-dead-letter-replay-idempotency-test regression to quick-check"
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: pr7-global-retry-budget-storm-test" "./scripts/v2/pr7_global_retry_budget_storm_test.sh" "ci(gate): add pr7-global-retry-budget-storm-test regression to quick-check"
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: pr7-partial-success-route-test" "./scripts/v2/pr7_partial_success_route_test.sh" "ci(gate): add pr7-partial-success-route-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: pr7-quiet-hours-status-alert-level-mismatch-test" "./scripts/v2/pr7_quiet_hours_status_alert_level_mismatch_test.sh" "ci(gate): add pr7-quiet-hours-status-alert-level-mismatch-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: pr7-quiet-hours-warn-escalation-bypass-test" "./scripts/v2/pr7_quiet_hours_warn_escalation_bypass_test.sh" "ci(gate): add pr7-quiet-hours-warn-escalation-bypass-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: pr7-topn-summary-gate" "./scripts/v2/pr7_topn_summary_gate.sh" "ci(gate): add pr7-topn-summary-gate regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: rpc-query-hardcap-enforcement-test" "./scripts/v2/rpc_query_hardcap_enforcement_test.sh" "ci(gate): add rpc-query-hardcap-enforcement-test regression to quick-check"
