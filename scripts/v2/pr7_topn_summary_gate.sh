@@ -10,6 +10,16 @@ TOP_N="${TOP_N:-5}"
 OUT_MD="$RUN_DIR/topn-anomaly-summary.md"
 GATE_REPORT="$RUN_DIR/summary.txt"
 
+if [[ ! "$TOP_N" =~ ^[1-9][0-9]*$ ]]; then
+  {
+    echo "status=FAIL"
+    echo "reason=invalid_top_n"
+    echo "top_n=$TOP_N"
+  } > "$GATE_REPORT"
+  cat "$GATE_REPORT"
+  exit 2
+fi
+
 latest_pr5_json="$(ls -1t "$ROOT"/run/pr5-reconcile/*/reconcile.json 2>/dev/null | head -n1 || true)"
 if [[ -z "$latest_pr5_json" ]]; then
   latest_pr5_json="$ROOT/run/pr5-reconcile/latest/reconcile.json"

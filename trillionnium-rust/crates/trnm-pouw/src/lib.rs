@@ -57,6 +57,17 @@ const DEFAULT_CHALLENGE_MIN_BOND: u128 = 10;
 const CHALLENGE_ESCROW_ACCOUNT: &str = "treasury.challenge_escrow";
 const CHALLENGE_FORFEIT_TREASURY_ACCOUNT: &str = "treasury.challenge_forfeits";
 
+fn ensure_balance_at_least(st: &StateStore, account: &str, amount: u128) -> Result<(), PouwError> {
+    let cur = st.balance_of(account);
+    if cur < amount {
+        return Err(PouwError::State(format!(
+            "insufficient balance: address={}, have={}, need={}",
+            account, cur, amount
+        )));
+    }
+    Ok(())
+}
+
 fn compute_commitment(
     task_id: u64,
     result_hash: &Hash32,
@@ -229,17 +240,24 @@ pub fn apply_challenge_at_height(
         .gov_param_u64("challenge_window_blocks")
         .unwrap_or(DEFAULT_CHALLENGE_WINDOW_BLOCKS);
 
-    st.debit_balance(&challenger, challenge_bond)
-        .map_err(|_| PouwError::InsufficientStake)?;
-    st.credit_balance(CHALLENGE_ESCROW_ACCOUNT, challenge_bond);
+    if st.balance_of(&challenger) < challenge_bond {
+        return Err(PouwError::InsufficientStake);
+    }
 
     task.status = TaskStatus::Challenged;
     task.challenged_at_height = Some(current_height);
     task.resolve_deadline_height = Some(current_height.saturating_add(challenge_window_blocks));
     task.challenge_bond = Some(challenge_bond);
-    task.challenger = Some(challenger);
+    task.challenger = Some(challenger.clone());
     task.challenge_bond_forfeited = None;
-    st.update_task(task_ref, task).map_err(map_state_err)
+    let next_ref = st.update_task(task_ref, task).map_err(map_state_err)?;
+
+    // Apply corresponding balance movement only after task object commit succeeds.
+    st.debit_balance(&challenger, challenge_bond)
+        .map_err(|_| PouwError::InsufficientStake)?;
+    st.credit_balance(CHALLENGE_ESCROW_ACCOUNT, challenge_bond);
+
+    Ok(next_ref)
 }
 
 pub fn apply_resolve(
@@ -273,21 +291,27 @@ pub fn apply_resolve_at_height(
         TaskStatus::Completed
     };
     if let Some(bond) = task.challenge_bond {
+        ensure_balance_at_least(st, CHALLENGE_ESCROW_ACCOUNT, bond)?;
+        task.challenge_bond_forfeited = Some(!slash_worker);
+    }
+    let next_ref = st.update_task(task_ref, task.clone()).map_err(map_state_err)?;
+
+    if let Some(bond) = task.challenge_bond {
         // Funds always flow out of escrow at resolve for auditability.
         st.debit_balance(CHALLENGE_ESCROW_ACCOUNT, bond)
             .map_err(PouwError::State)?;
         if slash_worker {
             // Challenge succeeds: return challenger bond.
-            if let Some(challenger) = task.challenger.clone() {
+            if let Some(challenger) = task.challenger {
                 st.credit_balance(&challenger, bond);
             }
         } else {
             // Challenge fails: forfeit bond into treasury pool.
             st.credit_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, bond);
         }
-        task.challenge_bond_forfeited = Some(!slash_worker);
     }
-    st.update_task(task_ref, task).map_err(map_state_err)
+
+    Ok(next_ref)
 }
 
 pub fn apply_timeout(
@@ -318,16 +342,24 @@ pub fn apply_timeout(
             }
             task.status = TaskStatus::Completed;
             if let Some(bond) = task.challenge_bond {
-                st.debit_balance(CHALLENGE_ESCROW_ACCOUNT, bond)
-                    .map_err(PouwError::State)?;
-                st.credit_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, bond);
+                ensure_balance_at_least(st, CHALLENGE_ESCROW_ACCOUNT, bond)?;
                 task.challenge_bond_forfeited = Some(true);
             }
         }
         _ => return Err(PouwError::InvalidTransition),
     }
 
-    st.update_task(task_ref, task).map_err(map_state_err)
+    let next_ref = st.update_task(task_ref, task.clone()).map_err(map_state_err)?;
+
+    if matches!(task.status, TaskStatus::Completed) {
+        if let Some(bond) = task.challenge_bond {
+            st.debit_balance(CHALLENGE_ESCROW_ACCOUNT, bond)
+                .map_err(PouwError::State)?;
+            st.credit_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, bond);
+        }
+    }
+
+    Ok(next_ref)
 }
 
 #[cfg(test)]
@@ -700,5 +732,79 @@ mod tests {
 
         let err2 = map_state_err("object not found".to_string());
         assert!(matches!(err2, PouwError::State(_)));
+    }
+
+    #[test]
+    fn challenge_version_conflict_does_not_move_funds() {
+        let mut st = StateStore::new();
+        st.set_balance("challenger", 100);
+
+        let r1 = apply_create_task(&mut st, 9901, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(9901, &result_hash, &reveal_salt, "worker1");
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt).unwrap();
+
+        let stale_ref = r4.clone();
+        let same_task = st.get_task(r4.id).unwrap();
+        let _fresh_ref = st.update_task(r4, same_task).unwrap();
+
+        let err = apply_challenge(&mut st, stale_ref, "challenger".into(), 10).unwrap_err();
+        assert!(matches!(err, PouwError::VersionConflict));
+        assert_eq!(st.balance_of("challenger"), 100);
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), 0);
+        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), 0);
+    }
+
+    #[test]
+    fn resolve_version_conflict_does_not_move_funds() {
+        let mut st = StateStore::new();
+        st.set_balance("challenger", 100);
+
+        let r1 = apply_create_task(&mut st, 9902, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(9902, &result_hash, &reveal_salt, "worker1");
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt).unwrap();
+        let r5 = apply_challenge(&mut st, r4, "challenger".into(), 10).unwrap();
+
+        let stale_ref = r5.clone();
+        let same_task = st.get_task(r5.id).unwrap();
+        let _fresh_ref = st.update_task(r5, same_task).unwrap();
+
+        let err = apply_resolve(&mut st, stale_ref, false).unwrap_err();
+        assert!(matches!(err, PouwError::VersionConflict));
+        assert_eq!(st.balance_of("challenger"), 90);
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), 10);
+        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), 0);
+    }
+
+    #[test]
+    fn timeout_version_conflict_does_not_move_funds() {
+        let mut st = StateStore::new();
+        st.set_balance("challenger", 100);
+
+        let r1 = apply_create_task(&mut st, 9903, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(9903, &result_hash, &reveal_salt, "worker1");
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt).unwrap();
+        let r5 = apply_challenge_at_height(&mut st, r4, "challenger".into(), 10, 30).unwrap();
+
+        let stale_ref = r5.clone();
+        let same_task = st.get_task(r5.id).unwrap();
+        let _fresh_ref = st.update_task(r5, same_task).unwrap();
+
+        let err = apply_timeout(&mut st, stale_ref, 51).unwrap_err();
+        assert!(matches!(err, PouwError::VersionConflict));
+        assert_eq!(st.balance_of("challenger"), 90);
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), 10);
+        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), 0);
     }
 }

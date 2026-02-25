@@ -26,6 +26,8 @@
 ### 1) Quiet Hours（夜间仅 CRITICAL）
 
 - 开启后，quiet-hours 窗口内仅允许 `CRITICAL` 投递；`INFO/WARN` 会被抑制并计入 `alerts_suppressed`
+- **安全约束（Round-3 修复）**：quiet-hours 判断基于原始告警级别执行（`status/alert_level`），在 quiet-hours 内即使命中 `WARN->CRITICAL` 升级阈值也不会绕过静默
+- **一致性约束（Round-3 Hotfix）**：若 `status` 与 `alert_level` 同时存在且映射不一致（例如 `status=WARN` + `alert_level=CRITICAL`），则直接拒绝发送并写入审计（`audit.jsonl` 中 `rejected=true`），防止通过字段冲突绕过 quiet-hours 与策略判断
 - 适用于值班降噪，避免夜间非关键告警打扰
 
 ### 2) 连续 WARN 自动升级 CRITICAL
@@ -40,8 +42,9 @@
   - 退避序列：`base_backoff_ms * 2^(attempt-1)`
   - 上限：`max_backoff_ms`
 - 当总尝试次数超过 `max_retries + 1` 仍失败：
-  - 记录到 `dead-letter.jsonl`
-  - 返回退出码 `3`
+  - 若**所有目标通道都失败**：记录到 `dead-letter.jsonl`，返回退出码 `3`
+  - 若主备路由出现**部分送达**（至少一个目标成功）：标记 `partial_success`，返回 `0`，不写 dead-letter（避免把“已部分送达”误记为主失败）
+  - `audit.jsonl` 除每通道记录外，会追加一条 `record_type=delivery_summary` 的汇总记录（`sent/partial_success/failed`），供 P11 guard 按“每次告警”口径统计失败率
 - 可通过重放脚本补发 dead-letter；成功后会从 dead-letter 文件移除
 
 ## 环境变量
@@ -63,6 +66,9 @@
 - `ALERT_NOTIFY_MAX_RETRIES`：失败后最大重试次数（不含首次），默认 `3`
 - `ALERT_NOTIFY_BASE_BACKOFF_MS`：基础退避毫秒，默认 `500`
 - `ALERT_NOTIFY_MAX_BACKOFF_MS`：最大退避毫秒，默认 `8000`
+- `ALERT_NOTIFY_GLOBAL_RETRY_BUDGET`：跨进程全局重试预算（窗口内可消费的 retry token 数，默认 `0`=关闭）
+- `ALERT_NOTIFY_GLOBAL_RETRY_WINDOW_SECONDS`：全局重试预算窗口秒数，默认 `300`
+- `ALERT_NOTIFY_GLOBAL_RETRY_BUDGET_STATE_FILE`：全局重试预算状态文件，默认 `run/pr7-alert-delivery/retry-budget-state.json`
 - `ALERT_NOTIFY_QUIET_HOURS_ENABLED`：`1|0`，是否开启 quiet-hours（默认 `0`）
 - `ALERT_NOTIFY_QUIET_HOURS_START`：quiet-hours 起始（`HH:MM`，默认 `23:00`）
 - `ALERT_NOTIFY_QUIET_HOURS_END`：quiet-hours 结束（`HH:MM`，默认 `08:00`）
@@ -72,6 +78,11 @@
 - `DRY_RUN=1`：演示模式，不真实发消息
 - `ALERT_NOTIFY_DRY_RUN_SIMULATE_FAILURES`：仅 dry-run 生效，前 N 次尝试注入失败（用于演示 dead-letter）
 - `ALERT_NOTIFY_DRY_RUN_FAIL_CHANNELS`：仅 dry-run 生效，逗号分隔强制失败通道（例：`imessage,slack`）
+- `PR7_GATE_LOCK_DIR`：`pr7_alert_delivery_gate.sh` 并发互斥锁目录（默认 `run/pr7-alert-delivery/.gate-lock`）
+- `PR7_GATE_LOCK_WAIT_SECONDS`：等待锁超时秒数（默认 `30`，超时返回 `rc=5`；非法值返回 `rc=2`）
+- `PR7_DELIVERY_FAIL_MODE`：`ignore|warn|escalate`（非法值返回 `rc=2`）
+- `PR7_STATUS_FILE`：gate 状态输出文件路径（默认 `$RUN_DIR/pr7-delivery-status.env`）
+- `RUN_DIR`：可显式指定产物目录；未指定时脚本自动生成 `run/pr7-alerts/<ts>-pid<pid>`（UTC 时间戳），避免并发覆盖
 
 ### iMessage
 
@@ -109,7 +120,7 @@ ALERT_NOTIFY_WARN_ESCALATE_WINDOW_SECONDS=3600 \
 ./scripts/v2/pr7_alert_delivery_gate.sh
 ```
 
-> `pr7_alert_delivery_gate.sh` 会先执行 PR6 gate 产出 `summary.txt`，再尝试投递；最终退出码保持 PR6 语义（用于 CI 兼容）。
+> `pr7_alert_delivery_gate.sh` 会先执行 PR6 gate 产出 `summary.txt`，再尝试投递；默认 `PR7_DELIVERY_FAIL_MODE=ignore` 保持 PR6 语义。若设置 `PR7_DELIVERY_FAIL_MODE=escalate`，当投递失败（`pr7_rc!=0`）会返回 `rc=4`，并写出 `pr7-delivery-status.env` 供 nightly 可观测。脚本内置 gate 级互斥锁，避免 non-gate 并发执行时状态文件覆盖与重试风暴。
 
 ## Dry-run 演示：失败入死信 + 重放清理
 
@@ -148,6 +159,10 @@ cat /tmp/pr7-dead-letter.jsonl
 
 ### 3) 重放 dead-letter（dry-run 成功补发并清理）
 
+> 回放脚本已增加并发锁 + 幂等回执：
+> - 锁文件默认：`<dead-letter-file>.lock`（已有回放在执行时返回 rc=4，避免并发重复发送）
+> - 幂等回执默认：`<dead-letter-file>.replayed.jsonl`（已成功补发的 replay_key 不再重复发送）
+
 ```bash
 python3 scripts/v2/pr7_dead_letter_replay.py \
   --dead-letter-file /tmp/pr7-dead-letter.jsonl \
@@ -158,6 +173,12 @@ python3 scripts/v2/pr7_dead_letter_replay.py \
 
 # 期望为空文件（或 remaining=0）
 cat /tmp/pr7-dead-letter.jsonl
+```
+
+回归脚本（锁/幂等）：
+
+```bash
+./scripts/v2/pr7_dead_letter_replay_idempotency_test.sh
 ```
 
 ## Dry-run 演示：主备路由 + fallback + 审计
@@ -270,6 +291,44 @@ python3 scripts/v2/p11_notification_slo_report.py \
 - 优先使用 `audit.jsonl` + `dead-letter.jsonl` 计算 24h/7d 窗口。
 - 若窗口内无时间戳事件，但 `state.json` 有累计计数，则回退为累计计数（非窗口化），并在报告中标记 `degraded=true` 与 note。
 - 若缺少 attempts/成功投递样本，则 `p95_delivery_attempts` 或 `channel_split` 会显示不可用并附带 note。
+
+## Nightly 端到端可达性（Round-11）
+
+新增 hard gate：
+
+```bash
+./scripts/v2/pr7_delivery_e2e_gate.sh
+```
+
+验证链路：`delivery failure -> dead-letter -> replay drain`，避免仅 dry-run 非门禁导致“流程不可达”盲区。
+
+并发风暴控制回归：
+
+```bash
+./scripts/v2/pr7_global_retry_budget_storm_test.sh
+```
+
+该测试验证跨进程共享重试预算在窗口内生效，避免多实例同时重试放大告警风暴。
+
+## 回归测试 / 门禁补充
+
+- 回归脚本：
+  - `scripts/v2/pr7_quiet_hours_warn_escalation_bypass_test.sh`（验证 quiet-hours 不会被 WARN 升级 CRITICAL 绕过）
+  - `scripts/v2/pr7_quiet_hours_status_alert_level_mismatch_test.sh`（验证 `status/alert_level` 不一致时拒绝发送并审计）
+  - `scripts/v2/pr7_partial_success_route_test.sh`（验证 CRITICAL 主备路由部分送达时标记 `partial_success` 且不写 dead-letter）
+- Gate 非阻断自测（可选）：设置 `ALERT_NOTIFY_SELFTEST_QUIET_HOURS=1` 后执行 `scripts/v2/pr7_alert_delivery_gate.sh`，若自测失败会打印 `[PR7][WARN]` 但不改变主退出码。
+- Nightly 可观测推荐：`PR7_DELIVERY_FAIL_MODE=escalate DRY_RUN=1 ./scripts/v2/pr7_alert_delivery_gate.sh`（workflow 使用 `continue-on-error: true`，失败会在 step/artifact 中可见）。
+
+### Red 复验命令
+
+```bash
+cd /Users/qianqi/.openclaw/workspace/TrillionniumChain
+./scripts/v2/pr7_quiet_hours_status_alert_level_mismatch_test.sh
+./scripts/v2/pr7_quiet_hours_warn_escalation_bypass_test.sh
+./scripts/v2/pr7_partial_success_route_test.sh
+./scripts/v2/pr7_delivery_e2e_gate.sh
+./scripts/v2/pr7_global_retry_budget_storm_test.sh
+```
 
 ## 排障
 

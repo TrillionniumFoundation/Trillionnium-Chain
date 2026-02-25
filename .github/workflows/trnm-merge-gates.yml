@@ -7,14 +7,14 @@ on:
       - 'docs/**'
       - 'trillionnium-rust/**'
       - '.github/workflows/trnm-merge-gates.yml'
-      - 'scripts/v2/run_p1_integration_gate.sh'
+      - 'scripts/v2/**'
   push:
     branches: [main]
     paths:
       - 'docs/**'
       - 'trillionnium-rust/**'
       - '.github/workflows/trnm-merge-gates.yml'
-      - 'scripts/v2/run_p1_integration_gate.sh'
+      - 'scripts/v2/**'
 
 concurrency:
   group: trnm-merge-gates-${{ github.workflow }}-${{ github.ref }}
@@ -68,7 +68,14 @@ jobs:
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+          ./scripts/v2/pr5_reconcile_conservation_test.sh
+          ./scripts/v2/pr5_event_rpc_treasury_consistency_test.sh
           ./scripts/v2/pr5_challenge_reconcile_gate.sh
+
+      - name: PR-7 retry budget storm control regression (hard gate)
+        run: |
+          set -euo pipefail
+          ./scripts/v2/pr7_global_retry_budget_storm_test.sh
 
       - name: Validate PoUW timeout migration gates (hard gate)
         run: |

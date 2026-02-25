@@ -3,7 +3,10 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 RUST_ROOT="$ROOT/trillionnium-rust"
-RUN_DIR="${RUN_DIR:-$ROOT/run/pr4-gates/$(date +%Y%m%d-%H%M%S)}"
+now_utc_compact() {
+  date -u +%Y%m%d-%H%M%S
+}
+RUN_DIR="${RUN_DIR:-$ROOT/run/pr4-gates/$(now_utc_compact)}"
 mkdir -p "$RUN_DIR"
 
 export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
@@ -58,6 +61,7 @@ SUMMARY="$RUN_DIR/summary.txt"
   echo "bond_refund_test=resolve_refunds_challenge_bond_when_worker_slashed"
   echo "event_log=$EVENT_LOG"
   echo "resolve_event=$RESOLVE_LINE"
+  echo "generated_at_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 } > "$SUMMARY"
 
 echo "[PR4][PASS] all checks passed"

@@ -4,7 +4,8 @@ use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::{
     collections::HashSet,
-    env, fs,
+    env,
+    fs::{self, OpenOptions},
     path::PathBuf,
     process::{Command as ProcCommand, Output, Stdio},
     thread,
@@ -328,6 +329,44 @@ fn load_acked(ack_log: &PathBuf) -> HashSet<u64> {
         }
     }
     set
+}
+
+struct TaskExecutionLock {
+    path: PathBuf,
+}
+
+impl Drop for TaskExecutionLock {
+    fn drop(&mut self) {
+        let _ = fs::remove_file(&self.path);
+    }
+}
+
+fn task_lock_path(ack_log: &PathBuf, task_id: u64) -> PathBuf {
+    let parent = ack_log
+        .parent()
+        .map(|p| p.to_path_buf())
+        .unwrap_or_else(|| PathBuf::from("."));
+    let base = ack_log
+        .file_name()
+        .and_then(|s| s.to_str())
+        .unwrap_or("trnm-worker-agent-acks.jsonl");
+    parent.join(format!(".{base}.task-{task_id}.lock"))
+}
+
+fn try_acquire_task_lock(ack_log: &PathBuf, task_id: u64) -> Result<Option<TaskExecutionLock>> {
+    let path = task_lock_path(ack_log, task_id);
+    if let Some(parent) = path.parent() {
+        fs::create_dir_all(parent)?;
+    }
+    match OpenOptions::new().write(true).create_new(true).open(&path) {
+        Ok(_) => Ok(Some(TaskExecutionLock { path })),
+        Err(e) if e.kind() == std::io::ErrorKind::AlreadyExists => Ok(None),
+        Err(e) => Err(e.into()),
+    }
+}
+
+fn is_task_acked(ack_log: &PathBuf, task_id: u64) -> bool {
+    load_acked(ack_log).contains(&task_id)
 }
 
 fn load_ingress_records(path: &PathBuf) -> Result<Vec<MessageIngressRecord>> {
@@ -877,6 +916,42 @@ mod tests {
         assert_eq!(err.kind, AdapterErrorKind::NonRetriable);
         assert_eq!(err.context, "invalid-json");
     }
+
+    #[test]
+    fn task_lock_prevents_parallel_replay_for_same_task() {
+        let ack_log = std::env::temp_dir().join(format!("trnm-worker-agent-ack-{}.jsonl", now_ms()));
+        let guard = try_acquire_task_lock(&ack_log, 42)
+            .expect("acquire lock")
+            .expect("first lock should succeed");
+        assert!(
+            try_acquire_task_lock(&ack_log, 42)
+                .expect("second lock call")
+                .is_none(),
+            "second lock should be blocked"
+        );
+        drop(guard);
+        assert!(
+            try_acquire_task_lock(&ack_log, 42)
+                .expect("third lock call")
+                .is_some(),
+            "lock should be released after drop"
+        );
+        let _ = fs::remove_file(&ack_log);
+    }
+
+    #[test]
+    fn is_task_acked_only_true_for_accepted_records() {
+        let ack_log = std::env::temp_dir().join(format!("trnm-worker-agent-ack-{}.jsonl", now_ms()));
+        fs::write(
+            &ack_log,
+            "{\"ts_unix_ms\":1,\"task_id\":1,\"status\":\"rejected\"}\n{\"ts_unix_ms\":2,\"task_id\":2,\"status\":\"accepted\"}\n",
+        )
+        .expect("write ack log");
+
+        assert!(!is_task_acked(&ack_log, 1));
+        assert!(is_task_acked(&ack_log, 2));
+        let _ = fs::remove_file(&ack_log);
+    }
 }
 
 fn main() -> Result<()> {
@@ -1133,6 +1208,39 @@ fn main() -> Result<()> {
                         adapter_cmd, rec.task_id, rec.result_hash, rec.salt_hex
                     );
                 } else {
+                    let Some(_task_lock) = try_acquire_task_lock(&ack_log, rec.task_id)? else {
+                        skipped += 1;
+                        append_progress(
+                            &progress_log,
+                            &ProgressRecord {
+                                ts_unix_ms: now_ms(),
+                                run_id: run_id.clone(),
+                                task_id: rec.task_id,
+                                state: "pending".to_string(),
+                                note: "concurrent_replay_skip".to_string(),
+                            },
+                        )?;
+                        println!("[skip] task_id={} concurrent_replay=true", rec.task_id);
+                        continue;
+                    };
+
+                    if is_task_acked(&ack_log, rec.task_id) {
+                        skipped += 1;
+                        acked.insert(rec.task_id);
+                        append_progress(
+                            &progress_log,
+                            &ProgressRecord {
+                                ts_unix_ms: now_ms(),
+                                run_id: run_id.clone(),
+                                task_id: rec.task_id,
+                                state: "done".to_string(),
+                                note: "already_acked_after_lock".to_string(),
+                            },
+                        )?;
+                        println!("[skip] task_id={} already_acked_after_lock=true", rec.task_id);
+                        continue;
+                    }
+
                     append_progress(
                         &progress_log,
                         &ProgressRecord {

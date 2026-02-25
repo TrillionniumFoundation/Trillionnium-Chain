@@ -25,6 +25,15 @@ Node 事件日志新增 kv：
 
 中透传到 `EventQueryResponse`。
 
+## Round-3 资源保护补丁（RPC）
+
+- `load_latest_node_events()` 改为按日志尾部读取，避免 `read_to_string` 全量加载导致内存/CPU 激增。
+- 默认每个候选日志最多读取 `4MiB` 尾部，可通过 `TRNM_RPC_NODE_EVENT_LOG_TAIL_BYTES` 调整（上限 `16MiB`）。
+- 边界修复：当 tail 起始位置恰好落在换行边界时，不再误丢弃首条完整事件行（避免 `query-events` / `query-request-full` 漏事件误判）。
+- `query-challenge-treasury --window custom` 增加窗口跨度上限（`31d`），超限返回错误，防止超大窗口查询放大资源消耗。
+
+> 兼容性：RPC JSON schema 不变；仅收紧读取策略与参数边界。
+
 ## Challenge 经济语义（当前实现）
 
 ### 1) `event_type=challenge`

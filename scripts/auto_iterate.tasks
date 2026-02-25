@@ -1,0 +1,97 @@
+# Local auto-iterate task list (round-robin)
+# Each task is low-risk and should self-verify before commit.
+
+bash ./scripts/v2/auto_iterate_task_add_pr5_skip_regression_gate.sh
+bash ./scripts/v2/auto_iterate_task_add_pr6_missing_event_log_gate.sh
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "RPC node events resource guard regression" "./scripts/v2/rpc_node_events_resource_guard_test.sh" "ci(gate): add rpc-node-events resource guard regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Governance value schema reject regression" "./scripts/v2/governance_value_schema_reject_test.sh" "ci(gate): add governance value-schema reject regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_json_escape_regression_gate.sh
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: pr5-challenge-reconcile-gate" "./scripts/v2/pr5_challenge_reconcile_gate.sh" "ci(gate): add pr5-challenge-reconcile-gate regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: pr5-event-rpc-treasury-consistency-gate" "./scripts/v2/pr5_event_rpc_treasury_consistency_gate.sh" "ci(gate): add pr5-event-rpc-treasury-consistency-gate regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: pr5-event-rpc-treasury-consistency-test" "./scripts/v2/pr5_event_rpc_treasury_consistency_test.sh" "ci(gate): add pr5-event-rpc-treasury-consistency-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: pr5-reconcile-conservation-test" "./scripts/v2/pr5_reconcile_conservation_test.sh" "ci(gate): add pr5-reconcile-conservation-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: pr5-treasury-reconcile-report" "./scripts/v2/pr5_treasury_reconcile_report.sh" "ci(gate): add pr5-treasury-reconcile-report regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: pr6-alert-rules-gate" "./scripts/v2/pr6_alert_rules_gate.sh" "ci(gate): add pr6-alert-rules-gate regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: pr7-alert-delivery-gate" "./scripts/v2/pr7_alert_delivery_gate.sh" "ci(gate): add pr7-alert-delivery-gate regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: pr7-alert-delivery-gate-concurrency-guard-test" "./scripts/v2/pr7_alert_delivery_gate_concurrency_guard_test.sh" "ci(gate): add pr7-alert-delivery-gate-concurrency-guard-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: pr7-dead-letter-replay-idempotency-test" "./scripts/v2/pr7_dead_letter_replay_idempotency_test.sh" "ci(gate): add pr7-dead-letter-replay-idempotency-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: pr7-global-retry-budget-storm-test" "./scripts/v2/pr7_global_retry_budget_storm_test.sh" "ci(gate): add pr7-global-retry-budget-storm-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: pr7-partial-success-route-test" "./scripts/v2/pr7_partial_success_route_test.sh" "ci(gate): add pr7-partial-success-route-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: pr7-quiet-hours-status-alert-level-mismatch-test" "./scripts/v2/pr7_quiet_hours_status_alert_level_mismatch_test.sh" "ci(gate): add pr7-quiet-hours-status-alert-level-mismatch-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: pr7-quiet-hours-warn-escalation-bypass-test" "./scripts/v2/pr7_quiet_hours_warn_escalation_bypass_test.sh" "ci(gate): add pr7-quiet-hours-warn-escalation-bypass-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: pr7-topn-summary-gate" "./scripts/v2/pr7_topn_summary_gate.sh" "ci(gate): add pr7-topn-summary-gate regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: rpc-query-hardcap-enforcement-test" "./scripts/v2/rpc_query_hardcap_enforcement_test.sh" "ci(gate): add rpc-query-hardcap-enforcement-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Challenge regression: pr4-challenge-fundflow-audit-gate" "./scripts/v2/pr4_challenge_fundflow_audit_gate.sh" "ci(gate): add challenge-derived pr4-challenge-fundflow-audit-gate regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Challenge regression: pr7-delivery-e2e-gate" "./scripts/v2/pr7_delivery_e2e_gate.sh" "ci(gate): add challenge-derived pr7-delivery-e2e-gate regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Challenge regression: quick-gate-summary-path-guard-test" "./scripts/v2/quick_gate_summary_path_guard_test.sh" "ci(gate): add challenge-derived quick-gate-summary-path-guard-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Challenge regression: quick-gate-summary-json-escape-test" "./scripts/v2/quick_gate_summary_json_escape_test.sh" "ci(gate): add challenge-derived quick-gate-summary-json-escape-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Backlog regression: pouw-commit-timeout-migration-test" "./scripts/v2/pouw_commit_timeout_migration_test.sh" "ci(gate): add backlog-driven pouw-commit-timeout-migration-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Backlog regression: pouw-challenge-timeout-migration-test" "./scripts/v2/pouw_challenge_timeout_migration_test.sh" "ci(gate): add backlog-driven pouw-challenge-timeout-migration-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Backlog regression: worker-replay-guard-test" "./scripts/v2/worker_replay_guard_test.sh" "ci(gate): add backlog-driven worker-replay-guard-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Backlog regression: worker-resume-no-duplicate-test" "./scripts/v2/worker_resume_no_duplicate_test.sh" "ci(gate): add backlog-driven worker-resume-no-duplicate-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: auto-iterate-task-add-json-escape-regression-gate" "./scripts/v2/auto_iterate_task_add_json_escape_regression_gate.sh" "ci(gate): add auto-iterate-task-add-json-escape-regression-gate regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: auto-iterate-task-add-pr5-skip-regression-gate" "./scripts/v2/auto_iterate_task_add_pr5_skip_regression_gate.sh" "ci(gate): add auto-iterate-task-add-pr5-skip-regression-gate regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: auto-iterate-task-add-pr6-missing-event-log-gate" "./scripts/v2/auto_iterate_task_add_pr6_missing_event_log_gate.sh" "ci(gate): add auto-iterate-task-add-pr6-missing-event-log-gate regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: auto-iterate-task-add-quickcheck-step" "./scripts/v2/auto_iterate_task_add_quickcheck_step.sh" "ci(gate): add auto-iterate-task-add-quickcheck-step regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: challenge-bond-enforcement-test" "./scripts/v2/challenge_bond_enforcement_test.sh" "ci(gate): add challenge-bond-enforcement-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: dev-stack-down" "./scripts/v2/dev_stack_down.sh" "ci(gate): add dev-stack-down regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: dev-stack-up" "./scripts/v2/dev_stack_up.sh" "ci(gate): add dev-stack-up regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: ecosystem-alpha-check" "./scripts/v2/ecosystem_alpha_check.sh" "ci(gate): add ecosystem-alpha-check regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: ecosystem-examples-smoke" "./scripts/v2/ecosystem_examples_smoke.sh" "ci(gate): add ecosystem-examples-smoke regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: ecosystem-feedback-add" "./scripts/v2/ecosystem_feedback_add.sh" "ci(gate): add ecosystem-feedback-add regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: emergency-pause-drill" "./scripts/v2/emergency_pause_drill.sh" "ci(gate): add emergency-pause-drill regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: explorer-service-down" "./scripts/v2/explorer_service_down.sh" "ci(gate): add explorer-service-down regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: explorer-service-up" "./scripts/v2/explorer_service_up.sh" "ci(gate): add explorer-service-up regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: faucet-service-down" "./scripts/v2/faucet_service_down.sh" "ci(gate): add faucet-service-down regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: faucet-service-up" "./scripts/v2/faucet_service_up.sh" "ci(gate): add faucet-service-up regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: generate-monthly-benchmark-report" "./scripts/v2/generate_monthly_benchmark_report.sh" "ci(gate): add generate-monthly-benchmark-report regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: gov-mvp-simulation" "./scripts/v2/gov_mvp_simulation.sh" "ci(gate): add gov-mvp-simulation regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: p11-partial-success-metric-consistency-test" "./scripts/v2/p11_partial_success_metric_consistency_test.sh" "ci(gate): add p11-partial-success-metric-consistency-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: p11-policy-promote" "./scripts/v2/p11_policy_promote.sh" "ci(gate): add p11-policy-promote regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: p11-policy-promote-approval-bypass-test" "./scripts/v2/p11_policy_promote_approval_bypass_test.sh" "ci(gate): add p11-policy-promote-approval-bypass-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: p11-policy-promote-gate" "./scripts/v2/p11_policy_promote_gate.sh" "ci(gate): add p11-policy-promote-gate regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: p11-policy-rollback-guard" "./scripts/v2/p11_policy_rollback_guard.sh" "ci(gate): add p11-policy-rollback-guard regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: p11-policy-rollback-guard-rejected-attempts0-test" "./scripts/v2/p11_policy_rollback_guard_rejected_attempts0_test.sh" "ci(gate): add p11-policy-rollback-guard-rejected-attempts0-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: p11-policy-rollback-guard-window-rate-test" "./scripts/v2/p11_policy_rollback_guard_window_rate_test.sh" "ci(gate): add p11-policy-rollback-guard-window-rate-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: post-vote-verification" "./scripts/v2/post_vote_verification.sh" "ci(gate): add post-vote-verification regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: pr9-apply-thresholds-dry-run" "./scripts/v2/pr9_apply_thresholds_dry_run.sh" "ci(gate): add pr9-apply-thresholds-dry-run regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: pr9-rollback-thresholds" "./scripts/v2/pr9_rollback_thresholds.sh" "ci(gate): add pr9-rollback-thresholds regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: product-layer-smoke" "./scripts/v2/product_layer_smoke.sh" "ci(gate): add product-layer-smoke regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: rpc-service-down" "./scripts/v2/rpc_service_down.sh" "ci(gate): add rpc-service-down regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: rpc-service-up" "./scripts/v2/rpc_service_up.sh" "ci(gate): add rpc-service-up regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: run-p1-integration-gate" "./scripts/v2/run_p1_integration_gate.sh" "ci(gate): add run-p1-integration-gate regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: run-reliability-soak" "./scripts/v2/run_reliability_soak.sh" "ci(gate): add run-reliability-soak regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: run-worker-receipt-gates" "./scripts/v2/run_worker_receipt_gates.sh" "ci(gate): add run-worker-receipt-gates regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: run-worker-receipt-gates-real-cli" "./scripts/v2/run_worker_receipt_gates_real_cli.sh" "ci(gate): add run-worker-receipt-gates-real-cli regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: soak-chunk" "./scripts/v2/soak_chunk.sh" "ci(gate): add soak-chunk regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: trnm-tx-cli-real-adapter" "./scripts/v2/trnm_tx_cli_real_adapter.sh" "ci(gate): add trnm-tx-cli-real-adapter regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: trnm-tx-cli-real-adapter.template" "./scripts/v2/trnm_tx_cli_real_adapter.template.sh" "ci(gate): add trnm-tx-cli-real-adapter.template regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: trnm-tx-cli-wrapper" "./scripts/v2/trnm_tx_cli_wrapper.sh" "ci(gate): add trnm-tx-cli-wrapper regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: worker-agent-e2e-demo" "./scripts/v2/worker_agent_e2e_demo.sh" "ci(gate): add worker-agent-e2e-demo regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: worker-agent-full-loop" "./scripts/v2/worker_agent_full_loop.sh" "ci(gate): add worker-agent-full-loop regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: worker-agent-mining-onboard" "./scripts/v2/worker_agent_mining_onboard.sh" "ci(gate): add worker-agent-mining-onboard regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: worker-agent-multi-onboard" "./scripts/v2/worker_agent_multi_onboard.sh" "ci(gate): add worker-agent-multi-onboard regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: worker-agent-onboard-mvp" "./scripts/v2/worker_agent_onboard_mvp.sh" "ci(gate): add worker-agent-onboard-mvp regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: worker-agent-verify-with-rpc" "./scripts/v2/worker_agent_verify_with_rpc.sh" "ci(gate): add worker-agent-verify-with-rpc regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: worker-failed-receipt-test" "./scripts/v2/worker_failed_receipt_test.sh" "ci(gate): add worker-failed-receipt-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: worker-real-cli-fake-wrapper-block-test" "./scripts/v2/worker_real_cli_fake_wrapper_block_test.sh" "ci(gate): add worker-real-cli-fake-wrapper-block-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: worker-real-cli-readiness" "./scripts/v2/worker_real_cli_readiness.sh" "ci(gate): add worker-real-cli-readiness regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: worker-retry-nonce-boundary-test" "./scripts/v2/worker_retry_nonce_boundary_test.sh" "ci(gate): add worker-retry-nonce-boundary-test regression to quick-check"

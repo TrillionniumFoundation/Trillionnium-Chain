@@ -3,9 +3,9 @@ use clap::{Parser, Subcommand, ValueEnum};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::{
-    collections::BTreeMap,
+    collections::{BTreeMap, HashSet},
     fs,
-    io::{Read, Write},
+    io::{Read, Seek, SeekFrom, Write},
     net::TcpListener,
     path::{Path, PathBuf},
     time::{SystemTime, UNIX_EPOCH},
@@ -32,6 +32,9 @@ const CHALLENGE_TREASURY_EVENTS_LIMIT_DEFAULT: usize = 20;
 const CHALLENGE_TREASURY_EVENTS_LIMIT_MAX: usize = 200;
 const CHALLENGE_ESCROW_ACCOUNT: &str = "treasury.challenge_escrow";
 const CHALLENGE_FORFEIT_TREASURY_ACCOUNT: &str = "treasury.challenge_forfeits";
+const NODE_EVENT_LOG_TAIL_BYTES_DEFAULT: u64 = 4 * 1024 * 1024;
+const NODE_EVENT_LOG_TAIL_BYTES_MAX: u64 = 16 * 1024 * 1024;
+const OPS_WINDOW_CUSTOM_MAX_MS: u128 = 31 * 24 * 60 * 60 * 1000;
 
 #[derive(Debug, Parser)]
 #[command(
@@ -245,6 +248,15 @@ struct ChallengeWindowView {
 }
 
 #[derive(Debug, Clone, Serialize)]
+struct ChallengeTreasuryAnomaly {
+    event_type: String,
+    task_id: u64,
+    tx_id: u64,
+    code: String,
+    detail: String,
+}
+
+#[derive(Debug, Clone, Serialize)]
 struct ChallengeTreasuryQueryResponse {
     challenge_escrow_account: String,
     challenge_forfeits_account: String,
@@ -253,6 +265,8 @@ struct ChallengeTreasuryQueryResponse {
     cumulative_forfeited: u128,
     events_total: usize,
     events: Vec<ChallengeTreasuryEventView>,
+    anomaly_count: usize,
+    anomalies: Vec<ChallengeTreasuryAnomaly>,
     daily_summary: Option<ChallengeDailySummary>,
     window: Option<ChallengeWindowView>,
 }
@@ -292,6 +306,46 @@ fn load_latest_adapter_records() -> Vec<AdapterRecord> {
         .collect()
 }
 
+fn node_event_log_tail_bytes() -> u64 {
+    std::env::var("TRNM_RPC_NODE_EVENT_LOG_TAIL_BYTES")
+        .ok()
+        .and_then(|v| v.parse::<u64>().ok())
+        .map(|v| v.min(NODE_EVENT_LOG_TAIL_BYTES_MAX))
+        .filter(|v| *v > 0)
+        .unwrap_or(NODE_EVENT_LOG_TAIL_BYTES_DEFAULT)
+}
+
+fn read_log_tail(path: &Path, tail_bytes: u64) -> Option<String> {
+    let mut file = fs::File::open(path).ok()?;
+    let size = file.metadata().ok()?.len();
+    let start = size.saturating_sub(tail_bytes);
+    let mut started_mid_line = false;
+    if start > 0 {
+        if file.seek(SeekFrom::Start(start.saturating_sub(1))).is_err() {
+            return None;
+        }
+        let mut prev = [0u8; 1];
+        if file.read_exact(&mut prev).is_err() {
+            return None;
+        }
+        started_mid_line = prev[0] != b'\n';
+    }
+    if file.seek(SeekFrom::Start(start)).is_err() {
+        return None;
+    }
+    let mut buf = String::new();
+    if file.read_to_string(&mut buf).is_err() {
+        return None;
+    }
+    if start > 0 && started_mid_line {
+        if let Some(idx) = buf.find('\n') {
+            return Some(buf[idx + 1..].to_string());
+        }
+        return Some(String::new());
+    }
+    Some(buf)
+}
+
 fn load_latest_node_events() -> Vec<NodeEventRecord> {
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .parent()
@@ -300,15 +354,17 @@ fn load_latest_node_events() -> Vec<NodeEventRecord> {
         .unwrap_or_else(|| PathBuf::from("."));
 
     let candidates = [
+        root.join("run/event-field-check.log"),
         root.join("run/parallel-sanity.log"),
         root.join("run/node1.log"),
         root.join("run/node2.log"),
         root.join("run/node3.log"),
     ];
 
+    let tail_bytes = node_event_log_tail_bytes();
     let mut lines = Vec::new();
     for p in candidates {
-        if let Ok(raw) = fs::read_to_string(&p) {
+        if let Some(raw) = read_log_tail(&p, tail_bytes) {
             lines.extend(raw.lines().map(str::to_string));
         }
     }
@@ -619,6 +675,12 @@ fn resolve_ops_window(
             if from > to {
                 bail!("invalid custom window: from_unix_ms ({from}) must be <= to_unix_ms ({to})");
             }
+            let span = to.saturating_sub(from);
+            if span > OPS_WINDOW_CUSTOM_MAX_MS {
+                bail!(
+                    "custom window too large: span_ms ({span}) exceeds max_ms ({OPS_WINDOW_CUSTOM_MAX_MS})"
+                );
+            }
             Ok(Some((from, to, "custom".to_string())))
         }
     }
@@ -654,6 +716,8 @@ fn summarize_challenge_treasury(
     let mut summary_forfeited: usize = 0;
 
     let mut views = Vec::new();
+    let mut anomalies = Vec::new();
+    let mut seen_event_fingerprints = HashSet::<(String, u64, u64, Option<String>, Option<String>, Option<i128>)>::new();
     for e in &related {
         let mut bond_amount: u128 = 0;
         let mut escrow_delta: i128 = 0;
@@ -664,18 +728,77 @@ fn summarize_challenge_treasury(
             .map(|(from, to, _)| e.ts_unix_ms >= *from && e.ts_unix_ms <= *to)
             .unwrap_or(false);
 
+        let fingerprint = (
+            e.event_type.clone(),
+            e.task_id,
+            e.tx_id,
+            e.bond_disposition.clone(),
+            e.resolution_code.clone(),
+            e.challenger_delta,
+        );
+        if !seen_event_fingerprints.insert(fingerprint) {
+            anomalies.push(ChallengeTreasuryAnomaly {
+                event_type: e.event_type.clone(),
+                task_id: e.task_id,
+                tx_id: e.tx_id,
+                code: "duplicate_event_replay".to_string(),
+                detail: "event replay ignored because an equivalent challenge treasury event was already applied".to_string(),
+            });
+            views.push(ChallengeTreasuryEventView {
+                event_type: e.event_type.clone(),
+                task_id: e.task_id,
+                tx_id: e.tx_id,
+                block_height: e.block_height,
+                ts_unix_ms: e.ts_unix_ms,
+                challenger: e.challenger.clone(),
+                bond_disposition: e.bond_disposition.clone(),
+                bond_amount: 0,
+                escrow_delta: 0,
+                forfeits_delta: 0,
+            });
+            continue;
+        }
+
         match e.event_type.as_str() {
             "challenge" => {
                 bond_amount = e
                     .challenger_delta
+                    .filter(|v| *v < 0)
                     .and_then(|v| u128::try_from(v.saturating_abs()).ok())
                     .unwrap_or(0);
-                posted_by_task.insert(e.task_id, bond_amount);
-                escrow_balance = escrow_balance.saturating_add(bond_amount);
-                escrow_delta = i128::try_from(bond_amount).ok().unwrap_or(i128::MAX);
-                if in_window {
-                    summary_posted = summary_posted.saturating_add(1);
-                    posted_open_in_window.insert(e.task_id, ());
+                if bond_amount > 0 {
+                    if let Some(existing_bond) = posted_by_task.get(&e.task_id).copied() {
+                        anomalies.push(ChallengeTreasuryAnomaly {
+                            event_type: e.event_type.clone(),
+                            task_id: e.task_id,
+                            tx_id: e.tx_id,
+                            code: "duplicate_open_challenge".to_string(),
+                            detail: format!(
+                                "challenge ignored because task already has unresolved posted bond {}",
+                                existing_bond
+                            ),
+                        });
+                        bond_amount = 0;
+                    } else {
+                        posted_by_task.insert(e.task_id, bond_amount);
+                        escrow_balance = escrow_balance.saturating_add(bond_amount);
+                        escrow_delta = i128::try_from(bond_amount).ok().unwrap_or(i128::MAX);
+                        if in_window {
+                            summary_posted = summary_posted.saturating_add(1);
+                            posted_open_in_window.insert(e.task_id, ());
+                        }
+                    }
+                } else if e.challenger_delta.unwrap_or(0) != 0 {
+                    anomalies.push(ChallengeTreasuryAnomaly {
+                        event_type: e.event_type.clone(),
+                        task_id: e.task_id,
+                        tx_id: e.tx_id,
+                        code: "invalid_challenge_delta_sign".to_string(),
+                        detail: format!(
+                            "challenge ignored because challenger_delta must be negative, got {}",
+                            e.challenger_delta.unwrap_or(0)
+                        ),
+                    });
                 }
             }
             "resolve" => {
@@ -683,21 +806,41 @@ fn summarize_challenge_treasury(
                 bond_amount = maybe_bond;
                 match e.bond_disposition.as_deref() {
                     Some("forfeited") => {
-                        escrow_balance = escrow_balance.saturating_sub(maybe_bond);
-                        forfeits_balance = forfeits_balance.saturating_add(maybe_bond);
-                        cumulative_forfeited = cumulative_forfeited.saturating_add(maybe_bond);
-                        escrow_delta = -i128::try_from(maybe_bond).ok().unwrap_or(i128::MAX);
-                        forfeits_delta = maybe_bond;
-                        if in_window {
-                            summary_forfeited = summary_forfeited.saturating_add(1);
+                        if maybe_bond > 0 {
+                            escrow_balance = escrow_balance.saturating_sub(maybe_bond);
+                            forfeits_balance = forfeits_balance.saturating_add(maybe_bond);
+                            cumulative_forfeited = cumulative_forfeited.saturating_add(maybe_bond);
+                            escrow_delta = -i128::try_from(maybe_bond).ok().unwrap_or(i128::MAX);
+                            forfeits_delta = maybe_bond;
+                            if in_window {
+                                summary_forfeited = summary_forfeited.saturating_add(1);
+                            }
+                        } else {
+                            anomalies.push(ChallengeTreasuryAnomaly {
+                                event_type: e.event_type.clone(),
+                                task_id: e.task_id,
+                                tx_id: e.tx_id,
+                                code: "resolve_without_posted_bond".to_string(),
+                                detail: "forfeited resolve ignored because no prior posted challenge bond found".to_string(),
+                            });
                         }
                         posted_open_in_window.remove(&e.task_id);
                     }
                     Some("refunded") => {
-                        escrow_balance = escrow_balance.saturating_sub(maybe_bond);
-                        escrow_delta = -i128::try_from(maybe_bond).ok().unwrap_or(i128::MAX);
-                        if in_window {
-                            summary_refunded = summary_refunded.saturating_add(1);
+                        if maybe_bond > 0 {
+                            escrow_balance = escrow_balance.saturating_sub(maybe_bond);
+                            escrow_delta = -i128::try_from(maybe_bond).ok().unwrap_or(i128::MAX);
+                            if in_window {
+                                summary_refunded = summary_refunded.saturating_add(1);
+                            }
+                        } else {
+                            anomalies.push(ChallengeTreasuryAnomaly {
+                                event_type: e.event_type.clone(),
+                                task_id: e.task_id,
+                                tx_id: e.tx_id,
+                                code: "resolve_without_posted_bond".to_string(),
+                                detail: "refunded resolve ignored because no prior posted challenge bond found".to_string(),
+                            });
                         }
                         posted_open_in_window.remove(&e.task_id);
                     }
@@ -748,6 +891,8 @@ fn summarize_challenge_treasury(
         cumulative_forfeited,
         events_total,
         events: views,
+        anomaly_count: anomalies.len(),
+        anomalies,
         daily_summary,
         window,
     }
@@ -1652,14 +1797,261 @@ mod tests {
     }
 
     #[test]
+    fn summarize_challenge_treasury_ignores_invalid_challenge_delta_sign() {
+        let events = vec![NodeEventRecord {
+            event_type: "challenge".into(),
+            task_id: 77,
+            from_status: "Revealed".into(),
+            to_status: "Challenged".into(),
+            actor: "c77".into(),
+            tx_id: 1,
+            block_height: 1,
+            state_root: "a".into(),
+            ts_unix_ms: 1_000,
+            signer: None,
+            challenger: Some("c77".into()),
+            tx_hash: None,
+            resolution_code: None,
+            treasury_delta: Some(0),
+            challenger_delta: Some(10),
+            bond_disposition: Some("posted".into()),
+        }];
+
+        let out = summarize_challenge_treasury(&events, 10, Some((500, 1_500, "custom".into())));
+        assert_eq!(out.current_escrow_balance, 0);
+        assert_eq!(out.current_forfeits_balance, 0);
+        assert_eq!(out.cumulative_forfeited, 0);
+        assert_eq!(out.events[0].bond_amount, 0);
+        assert_eq!(out.events[0].escrow_delta, 0);
+        let summary = out.daily_summary.expect("summary expected");
+        assert_eq!(summary.posted, 0);
+        assert_eq!(summary.unresolved, 0);
+        assert_eq!(out.anomaly_count, 1);
+        assert_eq!(out.anomalies[0].code, "invalid_challenge_delta_sign");
+    }
+
+    #[test]
+    fn summarize_challenge_treasury_does_not_count_or_move_missing_posted_bond() {
+        let events = vec![NodeEventRecord {
+            event_type: "resolve".into(),
+            task_id: 88,
+            from_status: "Challenged".into(),
+            to_status: "Completed".into(),
+            actor: "v".into(),
+            tx_id: 2,
+            block_height: 2,
+            state_root: "b".into(),
+            ts_unix_ms: 2_000,
+            signer: None,
+            challenger: Some("c88".into()),
+            tx_hash: None,
+            resolution_code: Some("completed".into()),
+            treasury_delta: Some(0),
+            challenger_delta: Some(0),
+            bond_disposition: Some("forfeited".into()),
+        }];
+
+        let out = summarize_challenge_treasury(&events, 10, Some((500, 3_000, "custom".into())));
+        assert_eq!(out.current_escrow_balance, 0);
+        assert_eq!(out.current_forfeits_balance, 0);
+        assert_eq!(out.cumulative_forfeited, 0);
+        assert_eq!(out.events[0].bond_amount, 0);
+        assert_eq!(out.events[0].escrow_delta, 0);
+        assert_eq!(out.events[0].forfeits_delta, 0);
+        let summary = out.daily_summary.expect("summary expected");
+        assert_eq!(summary.forfeited, 0);
+        assert_eq!(summary.refunded, 0);
+        assert_eq!(out.anomaly_count, 1);
+        assert_eq!(out.anomalies[0].code, "resolve_without_posted_bond");
+    }
+
+    #[test]
+    fn summarize_challenge_treasury_ignores_duplicate_open_challenge_for_same_task() {
+        let events = vec![
+            NodeEventRecord {
+                event_type: "challenge".into(),
+                task_id: 55,
+                from_status: "Revealed".into(),
+                to_status: "Challenged".into(),
+                actor: "c55".into(),
+                tx_id: 1,
+                block_height: 10,
+                state_root: "a".into(),
+                ts_unix_ms: 1_000,
+                signer: None,
+                challenger: Some("c55".into()),
+                tx_hash: None,
+                resolution_code: None,
+                treasury_delta: Some(0),
+                challenger_delta: Some(-9),
+                bond_disposition: Some("posted".into()),
+            },
+            NodeEventRecord {
+                event_type: "challenge".into(),
+                task_id: 55,
+                from_status: "Revealed".into(),
+                to_status: "Challenged".into(),
+                actor: "c55".into(),
+                tx_id: 2,
+                block_height: 11,
+                state_root: "b".into(),
+                ts_unix_ms: 2_000,
+                signer: None,
+                challenger: Some("c55".into()),
+                tx_hash: None,
+                resolution_code: None,
+                treasury_delta: Some(0),
+                challenger_delta: Some(-4),
+                bond_disposition: Some("posted".into()),
+            },
+            NodeEventRecord {
+                event_type: "resolve".into(),
+                task_id: 55,
+                from_status: "Challenged".into(),
+                to_status: "Completed".into(),
+                actor: "validator".into(),
+                tx_id: 3,
+                block_height: 12,
+                state_root: "c".into(),
+                ts_unix_ms: 3_000,
+                signer: None,
+                challenger: Some("c55".into()),
+                tx_hash: None,
+                resolution_code: Some("completed".into()),
+                treasury_delta: Some(0),
+                challenger_delta: Some(0),
+                bond_disposition: Some("forfeited".into()),
+            },
+        ];
+
+        let out = summarize_challenge_treasury(&events, 10, Some((500, 3_500, "custom".into())));
+        assert_eq!(out.current_escrow_balance, 0);
+        assert_eq!(out.current_forfeits_balance, 9);
+        assert_eq!(out.cumulative_forfeited, 9);
+        assert_eq!(out.events[0].bond_amount, 9);
+        assert_eq!(out.events[1].bond_amount, 0);
+        let summary = out.daily_summary.expect("summary expected");
+        assert_eq!(summary.posted, 1);
+        assert_eq!(summary.forfeited, 1);
+        assert_eq!(summary.unresolved, 0);
+        assert_eq!(out.anomaly_count, 1);
+        assert_eq!(out.anomalies[0].code, "duplicate_open_challenge");
+    }
+
+    #[test]
+    fn summarize_challenge_treasury_duplicate_resolve_replay_marks_replay_anomaly() {
+        let events = vec![
+            NodeEventRecord {
+                event_type: "challenge".into(),
+                task_id: 66,
+                from_status: "Revealed".into(),
+                to_status: "Challenged".into(),
+                actor: "c66".into(),
+                tx_id: 1,
+                block_height: 10,
+                state_root: "a".into(),
+                ts_unix_ms: 1_000,
+                signer: None,
+                challenger: Some("c66".into()),
+                tx_hash: None,
+                resolution_code: None,
+                treasury_delta: Some(0),
+                challenger_delta: Some(-6),
+                bond_disposition: Some("posted".into()),
+            },
+            NodeEventRecord {
+                event_type: "resolve".into(),
+                task_id: 66,
+                from_status: "Challenged".into(),
+                to_status: "Completed".into(),
+                actor: "validator".into(),
+                tx_id: 2,
+                block_height: 11,
+                state_root: "b".into(),
+                ts_unix_ms: 2_000,
+                signer: None,
+                challenger: Some("c66".into()),
+                tx_hash: None,
+                resolution_code: Some("completed".into()),
+                treasury_delta: Some(0),
+                challenger_delta: Some(0),
+                bond_disposition: Some("forfeited".into()),
+            },
+            NodeEventRecord {
+                event_type: "resolve".into(),
+                task_id: 66,
+                from_status: "Challenged".into(),
+                to_status: "Completed".into(),
+                actor: "validator".into(),
+                tx_id: 2,
+                block_height: 12,
+                state_root: "c".into(),
+                ts_unix_ms: 2_100,
+                signer: None,
+                challenger: Some("c66".into()),
+                tx_hash: None,
+                resolution_code: Some("completed".into()),
+                treasury_delta: Some(0),
+                challenger_delta: Some(0),
+                bond_disposition: Some("forfeited".into()),
+            },
+        ];
+
+        let out = summarize_challenge_treasury(&events, 10, Some((500, 3_000, "custom".into())));
+        assert_eq!(out.current_escrow_balance, 0);
+        assert_eq!(out.current_forfeits_balance, 6);
+        assert_eq!(out.cumulative_forfeited, 6);
+        let summary = out.daily_summary.expect("summary expected");
+        assert_eq!(summary.posted, 1);
+        assert_eq!(summary.forfeited, 1);
+        assert_eq!(summary.unresolved, 0);
+        assert_eq!(out.anomaly_count, 1);
+        assert_eq!(out.anomalies[0].code, "duplicate_event_replay");
+    }
+
+    #[test]
     fn resolve_ops_window_custom_validation() {
         assert!(resolve_ops_window(Some(OpsWindowArg::Custom), None, Some(1), 10).is_err());
         assert!(resolve_ops_window(Some(OpsWindowArg::Custom), Some(2), Some(1), 10).is_err());
+        assert!(resolve_ops_window(
+            Some(OpsWindowArg::Custom),
+            Some(0),
+            Some(OPS_WINDOW_CUSTOM_MAX_MS + 1),
+            10
+        )
+        .is_err());
 
         let got = resolve_ops_window(Some(OpsWindowArg::H24), None, None, 1_000).unwrap();
         let (from, to, mode) = got.expect("window expected");
         assert_eq!(to, 1_000);
         assert_eq!(mode, "24h");
         assert!(from <= to);
+    }
+
+    #[test]
+    fn read_log_tail_returns_recent_lines() {
+        let tmp = std::env::temp_dir().join(format!("trnm-rpc-tail-test-{}.log", now_ms()));
+        fs::write(&tmp, "line1
+line2
+[event] event_type=commit task_id=1 tx_id=1 block_height=1
+")
+            .expect("write temp log");
+        let tail = read_log_tail(&tmp, 80).expect("tail text");
+        assert!(tail.contains("[event] event_type=commit"));
+        let _ = fs::remove_file(tmp);
+    }
+
+    #[test]
+    fn read_log_tail_keeps_first_line_when_tail_starts_on_newline_boundary() {
+        let tmp = std::env::temp_dir().join(format!("trnm-rpc-tail-boundary-{}.log", now_ms()));
+        let content = "line1\n[event] event_type=commit task_id=7 tx_id=11 block_height=3\n";
+        fs::write(&tmp, content).expect("write temp log");
+
+        let start = "line1\n".len() as u64;
+        let tail_bytes = content.len() as u64 - start;
+        let tail = read_log_tail(&tmp, tail_bytes).expect("tail text");
+
+        assert!(tail.starts_with("[event] event_type=commit"));
+        let _ = fs::remove_file(tmp);
     }
 }

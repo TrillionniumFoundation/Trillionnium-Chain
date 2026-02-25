@@ -57,5 +57,8 @@ RUN_DIR=/tmp/trnm-pr4-gates ./scripts/v2/pr4_challenge_fundflow_audit_gate.sh
 cd /Users/qianqi/.openclaw/workspace/TrillionniumChain/trillionnium-rust
 cargo test -q -p trnm-pouw challenge_uses_governance_window_and_resolve_marks_bond_outcome -- --nocapture
 cargo test -q -p trnm-pouw resolve_refunds_challenge_bond_when_worker_slashed -- --nocapture
+cargo test -q -p trnm-pouw challenge_version_conflict_does_not_move_funds -- --nocapture
+cargo test -q -p trnm-pouw resolve_version_conflict_does_not_move_funds -- --nocapture
+cargo test -q -p trnm-pouw timeout_version_conflict_does_not_move_funds -- --nocapture
 ./scripts/check_event_fields.sh
 ```

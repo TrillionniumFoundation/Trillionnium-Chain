@@ -201,6 +201,7 @@ curl -sS http://127.0.0.1:8545/health
 
 CI：
 - `.github/workflows/trnm-merge-gates.yml` 已加入 `P1-4 integration gate` hard gate step
+- workflow 路径过滤已覆盖 `scripts/v2/**`，避免仅改动其它 v2 gate 脚本时漏触发
 - 任一步骤失败将直接中止该 workflow job
 
 ## PR-4 门禁（罚没资金流向 + 审计字段可见）
@@ -279,6 +280,7 @@ cargo run -q -p trnm-rpc -- query-events --task-id <TASK_ID> --limit 100
 - [ ] 事件返回包含 `treasury_delta/challenger_delta/bond_disposition`
 - [ ] 对账脚本成功输出 `summary.txt`
 - [ ] `summary.txt` 中 `status=PASS`
+- [ ] `summary.txt` 中 `conservation.gap=0`（守恒校验通过）
 
 Runbook：`docs/runbooks/pr5-challenge-treasury-reconcile.md`
 
@@ -310,6 +312,8 @@ Runbook：`docs/runbooks/pr6-alert-rules.md`
 
 ```bash
 DRY_RUN=1 ALERT_NOTIFY_CHANNEL=imessage ALERT_NOTIFY_BACKUP_CHANNEL=telegram ./scripts/v2/pr7_alert_delivery_gate.sh
+# nightly 可观测模式（投递失败升级为 rc=4，配合 continue-on-error）
+PR7_DELIVERY_FAIL_MODE=escalate DRY_RUN=1 ./scripts/v2/pr7_alert_delivery_gate.sh
 ```
 
 常用环境变量：

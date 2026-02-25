@@ -2,11 +2,32 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
-RUN_DIR="${RUN_DIR:-$ROOT/run/pr5-reconcile/$(date +%Y%m%d-%H%M%S)}"
+now_utc_compact() {
+  date -u +%Y%m%d-%H%M%S
+}
+RUN_DIR="${RUN_DIR:-$ROOT/run/pr5-reconcile/$(now_utc_compact)}"
 mkdir -p "$RUN_DIR"
 
 EVENT_LOG="${EVENT_LOG:-$ROOT/trillionnium-rust/run/event-field-check.log}"
 REPORT="$RUN_DIR/reconcile-report.txt"
+
+require_non_negative_integer() {
+  local name="$1"
+  local value="$2"
+  if [[ ! "$value" =~ ^[0-9]+$ ]]; then
+    echo "[PR5][FAIL] invalid $name='$value' (expect non-negative integer)" >&2
+    exit 2
+  fi
+}
+
+require_bool_01() {
+  local name="$1"
+  local value="$2"
+  if [[ "$value" != "0" && "$value" != "1" ]]; then
+    echo "[PR5][FAIL] invalid $name='$value' (expect 0 or 1)" >&2
+    exit 2
+  fi
+}
 
 if [[ ! -f "$EVENT_LOG" ]]; then
   echo "[PR5][INFO] event log not found, generating via check_event_fields.sh"
@@ -23,13 +44,18 @@ fi
 
 WINDOW_ARGS=()
 if [[ -n "${BLOCKS:-}" ]]; then
+  require_non_negative_integer "BLOCKS" "$BLOCKS"
   WINDOW_ARGS=(--blocks "$BLOCKS")
 else
-  WINDOW_ARGS=(--hours "${HOURS:-24}")
+  HOURS_VAL="${HOURS:-24}"
+  require_non_negative_integer "HOURS" "$HOURS_VAL"
+  WINDOW_ARGS=(--hours "$HOURS_VAL")
 fi
 
+STRICT_WINDOW_VAL="${STRICT_WINDOW:-1}"
+require_bool_01 "STRICT_WINDOW" "$STRICT_WINDOW_VAL"
 STRICT_ARGS=()
-if [[ "${STRICT_WINDOW:-1}" == "1" ]]; then
+if [[ "$STRICT_WINDOW_VAL" == "1" ]]; then
   STRICT_ARGS=(--strict-window)
 fi
 
@@ -39,4 +65,7 @@ python3 "$ROOT/scripts/v2/challenge_fundflow_reconcile.py" \
   "${STRICT_ARGS[@]}" \
   --report "$REPORT"
 
-echo "[PR5][PASS] challenge reconcile gate report=$REPORT"
+TRIAD_RUN_DIR="$RUN_DIR/triad"
+RUN_DIR="$TRIAD_RUN_DIR" EVENT_LOG="$EVENT_LOG" "$ROOT/scripts/v2/pr5_event_rpc_treasury_consistency_gate.sh"
+
+echo "[PR5][PASS] challenge reconcile gate report=$REPORT triad_dir=$TRIAD_RUN_DIR"

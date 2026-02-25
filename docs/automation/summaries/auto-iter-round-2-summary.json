@@ -1,0 +1,14 @@
+{
+  "ts_utc": "2026-02-25T01:11:19Z",
+  "target_dirs_csv": "scripts",
+  "target_dir_count": 1,
+  "script_count": 88,
+  "file_manifest_sha256": "1e27443ce5b4dbd104fb742283113c10ae0de56d872029716d111eaec49fa047",
+  "skip_shellcheck": 1,
+  "bash_n_elapsed_sec": 1,
+  "shellcheck_status": "skipped",
+  "shellcheck_version": "",
+  "shellcheck_elapsed_sec": 0,
+  "total_elapsed_sec": 1,
+  "status": "ok"
+}
