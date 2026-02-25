@@ -8,7 +8,7 @@ export PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:${PA
 
 LOG_DIR="$ROOT/run/auto-iterate"
 LOG_FILE="$LOG_DIR/project-challenge.log"
-MAX_APPEND="${MAX_APPEND:-6}"
+MAX_APPEND="${MAX_APPEND:-30}"
 PUSH_RETRIES="${PUSH_RETRIES:-6}"
 
 mkdir -p "$LOG_DIR"

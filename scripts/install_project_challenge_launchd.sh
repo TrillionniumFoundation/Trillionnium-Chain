@@ -24,7 +24,7 @@ cat > "$PLIST_PATH" <<PLIST
   <key>EnvironmentVariables</key>
   <dict>
     <key>PATH</key><string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
-    <key>MAX_APPEND</key><string>6</string>
+    <key>MAX_APPEND</key><string>30</string>
     <key>PUSH_RETRIES</key><string>6</string>
   </dict>
   <key>RunAtLoad</key><true/>

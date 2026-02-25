@@ -13,12 +13,9 @@ OUT.parent.mkdir(parents=True, exist_ok=True)
 wf_text = WF.read_text() if WF.exists() else ''
 existing = set(re.findall(r'\./scripts/v2/([\w\-]+\.sh)', wf_text))
 
-allow_prefix = (
-    'quick_gate_', 'pr5_', 'pr6_', 'pr7_', 'rpc_', 'governance_'
-)
-block_prefix = (
-    'dev_stack_', 'rpc_service_', 'faucet_service_', 'explorer_service_',
-    'run_reliability_soak', 'worker_agent_', 'trnm_tx_cli_'
+HIGH_RISK_KEYS = (
+    'e2e', 'soak', 'rollback', 'promote', 'emergency', 'dev_stack',
+    'service_up', 'service_down', 'real_cli', 'worker_agent', 'onboard'
 )
 
 flaky = set()
@@ -36,18 +33,16 @@ for p in sorted(V2.glob('*.sh')):
         continue
     if name in existing:
         continue
-    if not name.startswith(allow_prefix):
+    if name.startswith('auto_iterate_task_add_'):
         continue
-    if name.startswith(block_prefix):
-        continue
-    if 'e2e' in name or 'soak' in name:
-        continue
+
+    risk = 'high' if any(k in name for k in HIGH_RISK_KEYS) else 'low'
     title = name.replace('.sh','').replace('_','-')
     candidates.append({
         'script': f'./scripts/v2/{name}',
         'step_name': f'Auto regression: {title}',
         'commit_msg': f'ci(gate): add {title} regression to quick-check',
-        'risk': 'low'
+        'risk': risk
     })
 
 OUT.write_text(json.dumps({'count': len(candidates), 'candidates': candidates}, ensure_ascii=False, indent=2))
