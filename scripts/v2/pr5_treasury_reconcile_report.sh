@@ -33,6 +33,16 @@ EOF
   exit 0
 fi
 
+if ! command -v python3 >/dev/null 2>&1; then
+  cat >"$OUT_DIR/summary.txt" <<EOF
+status=SKIP
+reason=python3_missing
+hint=install_python3_or_run_on_python3_enabled_host
+EOF
+  echo "[PR5][reconcile] python3 not found; wrote $OUT_DIR/summary.txt"
+  exit 0
+fi
+
 python3 - "$SOURCE_LOG" "$OUT_DIR" <<'PY'
 import json
 import pathlib
