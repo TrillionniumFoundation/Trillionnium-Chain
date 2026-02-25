@@ -58,6 +58,14 @@ jobs:
         run: |
           ./scripts/v2/pr7_topn_summary_gate_invalid_topn_test.sh
 
+      - name: PR7 rc observability regression
+        run: |
+          ./scripts/v2/pr7_alert_delivery_gate_rc_observability_test.sh
+
+      - name: Governance value schema reject regression
+        run: |
+          ./scripts/v2/governance_value_schema_reject_test.sh
+
       - name: Upload quick gate summary
         if: always()
         uses: actions/upload-artifact@v4
