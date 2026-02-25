@@ -334,6 +334,10 @@ jobs:
         run: |
           ./scripts/v2/worker_failed_receipt_test.sh
 
+      - name: Auto regression: worker-real-cli-fake-wrapper-block-test
+        run: |
+          ./scripts/v2/worker_real_cli_fake_wrapper_block_test.sh
+
       - name: Upload quick gate summary
         if: always()
         uses: actions/upload-artifact@v4
