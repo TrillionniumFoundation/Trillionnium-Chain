@@ -29,6 +29,7 @@ read -r -a KEYS_LIST <<< "$KEYS_LIST_STR"
 
 READ_FANOUT="${READ_FANOUT:-3}"
 WRITE_EVERY="${WRITE_EVERY:-2}"
+PARALLELISM="${PARALLELISM:-1}"
 
 # Label the result source to avoid mixing default-path and experiment-path numbers.
 if [ -n "${STRATEGY_SOURCE:-}" ]; then
@@ -67,15 +68,22 @@ run_case() {
   fi
 
   local groups elapsed candidate stage_ww_checks stage_ww_hits stage_wr_checks stage_wr_hits stage_rw_checks stage_rw_hits
-  groups=$(printf "%s\n" "$raw" | awk -F= '/^groups=/{print $2; exit}')
-  elapsed=$(printf "%s\n" "$raw" | awk -F= '/^elapsed_ms=/{print $2; exit}')
-  candidate=$(printf "%s\n" "$raw" | awk -F= '/^profile.candidate_groups_scanned=/{print $2; exit}')
-  stage_ww_checks=$(printf "%s\n" "$raw" | awk -F= '/^profile.stage_ww_checks=/{print $2; exit}')
-  stage_ww_hits=$(printf "%s\n" "$raw" | awk -F= '/^profile.stage_ww_hits=/{print $2; exit}')
-  stage_wr_checks=$(printf "%s\n" "$raw" | awk -F= '/^profile.stage_wr_checks=/{print $2; exit}')
-  stage_wr_hits=$(printf "%s\n" "$raw" | awk -F= '/^profile.stage_wr_hits=/{print $2; exit}')
-  stage_rw_checks=$(printf "%s\n" "$raw" | awk -F= '/^profile.stage_rw_checks=/{print $2; exit}')
-  stage_rw_hits=$(printf "%s\n" "$raw" | awk -F= '/^profile.stage_rw_hits=/{print $2; exit}')
+  local parsed
+  parsed=$(printf "%s\n" "$raw" | awk -F= '
+    /^groups=/{groups=$2}
+    /^elapsed_ms=/{elapsed=$2}
+    /^profile.candidate_groups_scanned=/{candidate=$2}
+    /^profile.stage_ww_checks=/{stage_ww_checks=$2}
+    /^profile.stage_ww_hits=/{stage_ww_hits=$2}
+    /^profile.stage_wr_checks=/{stage_wr_checks=$2}
+    /^profile.stage_wr_hits=/{stage_wr_hits=$2}
+    /^profile.stage_rw_checks=/{stage_rw_checks=$2}
+    /^profile.stage_rw_hits=/{stage_rw_hits=$2}
+    END {
+      print groups "," elapsed "," candidate "," stage_ww_checks "," stage_ww_hits "," stage_wr_checks "," stage_wr_hits "," stage_rw_checks "," stage_rw_hits
+    }
+  ')
+  IFS=',' read -r groups elapsed candidate stage_ww_checks stage_ww_hits stage_wr_checks stage_wr_hits stage_rw_checks stage_rw_hits <<< "$parsed"
 
   if [ -z "$groups" ] || [ -z "$elapsed" ]; then
     echo "failed to parse bench output for workload=$workload txs=$txs keys=$keys strategy=$strategy" >&2
@@ -86,19 +94,64 @@ run_case() {
   printf "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n" \
     "$workload" "$txs" "$keys" "$strategy" "$STRATEGY_SOURCE_VAL" "$groups" "$elapsed" \
     "${candidate:-0}" "${stage_ww_checks:-0}" "${stage_ww_hits:-0}" \
-    "${stage_wr_checks:-0}" "${stage_wr_hits:-0}" "${stage_rw_checks:-0}" "${stage_rw_hits:-0}" >> "$OUT"
+    "${stage_wr_checks:-0}" "${stage_wr_hits:-0}" "${stage_rw_checks:-0}" "${stage_rw_hits:-0}"
 }
 
-echo "[bench-regression] txs=${TXS_LIST[*]} keys=${KEYS_LIST[*]} workloads=${WORKLOADS[*]} strategies=${STRATEGIES[*]}"
-for workload in "${WORKLOADS[@]}"; do
-  for txs in "${TXS_LIST[@]}"; do
-    for keys in "${KEYS_LIST[@]}"; do
-      for strategy in "${STRATEGIES[@]}"; do
-        echo "  -> workload=$workload txs=$txs keys=$keys strategy=$strategy"
-        run_case "$workload" "$txs" "$keys" "$strategy"
+echo "[bench-regression] txs=${TXS_LIST[*]} keys=${KEYS_LIST[*]} workloads=${WORKLOADS[*]} strategies=${STRATEGIES[*]} parallelism=$PARALLELISM"
+
+if [ "$PARALLELISM" -le 1 ]; then
+  for workload in "${WORKLOADS[@]}"; do
+    for txs in "${TXS_LIST[@]}"; do
+      for keys in "${KEYS_LIST[@]}"; do
+        for strategy in "${STRATEGIES[@]}"; do
+          echo "  -> workload=$workload txs=$txs keys=$keys strategy=$strategy"
+          run_case "$workload" "$txs" "$keys" "$strategy" >> "$OUT"
+        done
       done
     done
   done
-done
+else
+  tmp_dir="$(mktemp -d "${TMPDIR:-/tmp}/bench-reg-matrix.XXXXXX")"
+  pids=()
+  i=0
+
+  for workload in "${WORKLOADS[@]}"; do
+    for txs in "${TXS_LIST[@]}"; do
+      for keys in "${KEYS_LIST[@]}"; do
+        for strategy in "${STRATEGIES[@]}"; do
+          printf -v tag "%08d" "$i"
+          echo "  -> workload=$workload txs=$txs keys=$keys strategy=$strategy [job=$tag]"
+          (
+            run_case "$workload" "$txs" "$keys" "$strategy" > "$tmp_dir/$tag.csv"
+          ) &
+          pids+=("$!")
+          i=$((i + 1))
+
+          while [ "$(jobs -rp | wc -l | tr -d ' ')" -ge "$PARALLELISM" ]; do
+            wait -n
+          done
+        done
+      done
+    done
+  done
+
+  fail=0
+  for pid in "${pids[@]}"; do
+    if ! wait "$pid"; then
+      fail=1
+    fi
+  done
+
+  if [ "$fail" -ne 0 ]; then
+    rm -rf "$tmp_dir"
+    echo "parallel run had failures" >&2
+    exit 22
+  fi
+
+  for row in "$tmp_dir"/*.csv; do
+    cat "$row" >> "$OUT"
+  done
+  rm -rf "$tmp_dir"
+fi
 
 echo "[OK] regression matrix CSV: $OUT"
