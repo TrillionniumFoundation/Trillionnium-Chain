@@ -16,7 +16,13 @@ if [[ ! -f "$TASKS_FILE" ]]; then
   exit 2
 fi
 
-mapfile -t TASKS < <(grep -vE '^[[:space:]]*(#|$)' "$TASKS_FILE")
+TASKS=()
+while IFS= read -r line; do
+  [[ -z "${line// }" ]] && continue
+  [[ "$line" =~ ^[[:space:]]*# ]] && continue
+  TASKS+=("$line")
+done < "$TASKS_FILE"
+
 if [[ "${#TASKS[@]}" -eq 0 ]]; then
   echo "[round] no tasks configured" | tee -a "$LOG_FILE"
   exit 20

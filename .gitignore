@@ -34,3 +34,8 @@
 
 # Local legacy archive (kept outside git history)
 /legacy/
+
+# Local auto-iterate control files
+/.auto-iterate.lock
+/.auto-iterate.pause
+/.auto-iterate.stop
