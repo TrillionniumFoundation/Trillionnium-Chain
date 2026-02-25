@@ -12,3 +12,9 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: pr5
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: pr5-event-rpc-treasury-consistency-gate" "./scripts/v2/pr5_event_rpc_treasury_consistency_gate.sh" "ci(gate): add pr5-event-rpc-treasury-consistency-gate regression to quick-check"
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: pr5-event-rpc-treasury-consistency-test" "./scripts/v2/pr5_event_rpc_treasury_consistency_test.sh" "ci(gate): add pr5-event-rpc-treasury-consistency-test regression to quick-check"
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: pr5-reconcile-conservation-test" "./scripts/v2/pr5_reconcile_conservation_test.sh" "ci(gate): add pr5-reconcile-conservation-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: pr5-treasury-reconcile-report" "./scripts/v2/pr5_treasury_reconcile_report.sh" "ci(gate): add pr5-treasury-reconcile-report regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: pr6-alert-rules-gate" "./scripts/v2/pr6_alert_rules_gate.sh" "ci(gate): add pr6-alert-rules-gate regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: pr7-alert-delivery-gate" "./scripts/v2/pr7_alert_delivery_gate.sh" "ci(gate): add pr7-alert-delivery-gate regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: pr7-alert-delivery-gate-concurrency-guard-test" "./scripts/v2/pr7_alert_delivery_gate_concurrency_guard_test.sh" "ci(gate): add pr7-alert-delivery-gate-concurrency-guard-test regression to quick-check"
