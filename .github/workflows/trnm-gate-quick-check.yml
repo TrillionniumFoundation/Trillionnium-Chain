@@ -250,6 +250,10 @@ jobs:
         run: |
           ./scripts/v2/p11_policy_rollback_guard_window_rate_test.sh
 
+      - name: Auto regression: post-vote-verification
+        run: |
+          ./scripts/v2/post_vote_verification.sh
+
       - name: Upload quick gate summary
         if: always()
         uses: actions/upload-artifact@v4
