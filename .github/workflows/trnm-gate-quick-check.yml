@@ -142,6 +142,10 @@ jobs:
         run: |
           ./scripts/v2/pouw_commit_timeout_migration_test.sh
 
+      - name: Backlog regression: pouw-challenge-timeout-migration-test
+        run: |
+          ./scripts/v2/pouw_challenge_timeout_migration_test.sh
+
       - name: Upload quick gate summary
         if: always()
         uses: actions/upload-artifact@v4
