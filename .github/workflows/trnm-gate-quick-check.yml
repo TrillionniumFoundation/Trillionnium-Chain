@@ -242,6 +242,10 @@ jobs:
         run: |
           ./scripts/v2/p11_policy_rollback_guard.sh
 
+      - name: Auto regression: p11-policy-rollback-guard-rejected-attempts0-test
+        run: |
+          ./scripts/v2/p11_policy_rollback_guard_rejected_attempts0_test.sh
+
       - name: Upload quick gate summary
         if: always()
         uses: actions/upload-artifact@v4
