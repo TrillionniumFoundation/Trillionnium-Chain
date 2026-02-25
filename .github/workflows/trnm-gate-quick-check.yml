@@ -39,6 +39,10 @@ jobs:
           ./scripts/validate_workflow_script_refs.sh
 
       - name: Quick gate summary path guard regression
+      - name: PR5 reconcile skip-when-missing-log regression
+        run: |
+          ./scripts/v2/pr5_treasury_reconcile_skip_when_missing_log_test.sh
+
         run: |
           ./scripts/v2/quick_gate_summary_path_guard_test.sh
 
