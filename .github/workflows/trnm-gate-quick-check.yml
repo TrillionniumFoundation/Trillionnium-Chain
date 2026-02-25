@@ -166,6 +166,14 @@ jobs:
         run: |
           ./scripts/v2/auto_iterate_task_add_pr6_missing_event_log_gate.sh
 
+      - name: Auto regression: auto-iterate-task-add-quickcheck-step
+        run: |
+          ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh
+
+      - name: Auto regression: challenge-bond-enforcement-test
+        run: |
+          ./scripts/v2/challenge_bond_enforcement_test.sh
+
       - name: Upload quick gate summary
         if: always()
         uses: actions/upload-artifact@v4
