@@ -178,6 +178,10 @@ jobs:
         run: |
           ./scripts/v2/dev_stack_down.sh
 
+      - name: Auto regression: dev-stack-up
+        run: |
+          ./scripts/v2/dev_stack_up.sh
+
       - name: Upload quick gate summary
         if: always()
         uses: actions/upload-artifact@v4
