@@ -150,6 +150,10 @@ jobs:
         run: |
           ./scripts/v2/worker_replay_guard_test.sh
 
+      - name: Backlog regression: worker-resume-no-duplicate-test
+        run: |
+          ./scripts/v2/worker_resume_no_duplicate_test.sh
+
       - name: Upload quick gate summary
         if: always()
         uses: actions/upload-artifact@v4
