@@ -234,6 +234,14 @@ jobs:
         run: |
           ./scripts/v2/p11_policy_promote_approval_bypass_test.sh
 
+      - name: Auto regression: p11-policy-promote-gate
+        run: |
+          ./scripts/v2/p11_policy_promote_gate.sh
+
+      - name: Auto regression: p11-policy-rollback-guard
+        run: |
+          ./scripts/v2/p11_policy_rollback_guard.sh
+
       - name: Upload quick gate summary
         if: always()
         uses: actions/upload-artifact@v4
