@@ -39,12 +39,12 @@ jobs:
           ./scripts/validate_workflow_script_refs.sh
 
       - name: Quick gate summary path guard regression
+        run: |
+          ./scripts/v2/quick_gate_summary_path_guard_test.sh
+
       - name: PR5 reconcile skip-when-missing-log regression
         run: |
           ./scripts/v2/pr5_treasury_reconcile_skip_when_missing_log_test.sh
-
-        run: |
-          ./scripts/v2/quick_gate_summary_path_guard_test.sh
 
       - name: Quick gate summary JSON escape regression
         run: |
@@ -58,9 +58,9 @@ jobs:
         run: |
           ./scripts/v2/pr7_topn_summary_gate_invalid_topn_test.sh
 
-      - name: PR7 rc observability regression
+      - name: RPC node events resource guard regression
         run: |
-          ./scripts/v2/pr7_alert_delivery_gate_rc_observability_test.sh
+          ./scripts/v2/rpc_node_events_resource_guard_test.sh
 
       - name: Governance value schema reject regression
         run: |
