@@ -226,6 +226,14 @@ jobs:
         run: |
           ./scripts/v2/p11_partial_success_metric_consistency_test.sh
 
+      - name: Auto regression: p11-policy-promote
+        run: |
+          ./scripts/v2/p11_policy_promote.sh
+
+      - name: Auto regression: p11-policy-promote-approval-bypass-test
+        run: |
+          ./scripts/v2/p11_policy_promote_approval_bypass_test.sh
+
       - name: Upload quick gate summary
         if: always()
         uses: actions/upload-artifact@v4
