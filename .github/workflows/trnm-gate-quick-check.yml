@@ -322,6 +322,18 @@ jobs:
         run: |
           ./scripts/v2/worker_agent_multi_onboard.sh
 
+      - name: Auto regression: worker-agent-onboard-mvp
+        run: |
+          ./scripts/v2/worker_agent_onboard_mvp.sh
+
+      - name: Auto regression: worker-agent-verify-with-rpc
+        run: |
+          ./scripts/v2/worker_agent_verify_with_rpc.sh
+
+      - name: Auto regression: worker-failed-receipt-test
+        run: |
+          ./scripts/v2/worker_failed_receipt_test.sh
+
       - name: Upload quick gate summary
         if: always()
         uses: actions/upload-artifact@v4
