@@ -218,6 +218,10 @@ jobs:
         run: |
           ./scripts/v2/generate_monthly_benchmark_report.sh
 
+      - name: Auto regression: gov-mvp-simulation
+        run: |
+          ./scripts/v2/gov_mvp_simulation.sh
+
       - name: Upload quick gate summary
         if: always()
         uses: actions/upload-artifact@v4
