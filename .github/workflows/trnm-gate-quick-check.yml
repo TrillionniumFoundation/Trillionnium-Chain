@@ -278,6 +278,14 @@ jobs:
         run: |
           ./scripts/v2/run_p1_integration_gate.sh
 
+      - name: Auto regression: run-reliability-soak
+        run: |
+          ./scripts/v2/run_reliability_soak.sh
+
+      - name: Auto regression: run-worker-receipt-gates
+        run: |
+          ./scripts/v2/run_worker_receipt_gates.sh
+
       - name: Upload quick gate summary
         if: always()
         uses: actions/upload-artifact@v4
