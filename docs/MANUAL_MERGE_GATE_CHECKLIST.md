@@ -34,6 +34,8 @@ WORKFLOW_SCRIPT_REF_STRICT=0 ./scripts/validate_workflow_script_refs.sh
 # 注意：QUICK_GATE_SUMMARY_PATH 必须是“文件路径”，不能指向目录（例如 run/quick-gate）。
 # 若本机未安装 shellcheck，可先做语法预检：
 # QUICK_GATE_SKIP_SHELLCHECK=1 ./scripts/quick_gate_shell.sh scripts trillionnium-rust/scripts
+# 回归校验（推荐）：
+# ./scripts/v2/quick_gate_summary_path_guard_test.sh
 ```
 
 - [ ] 结果：无 error
