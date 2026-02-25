@@ -30,3 +30,9 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: pr7
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: pr7-quiet-hours-warn-escalation-bypass-test" "./scripts/v2/pr7_quiet_hours_warn_escalation_bypass_test.sh" "ci(gate): add pr7-quiet-hours-warn-escalation-bypass-test regression to quick-check"
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: pr7-topn-summary-gate" "./scripts/v2/pr7_topn_summary_gate.sh" "ci(gate): add pr7-topn-summary-gate regression to quick-check"
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: rpc-query-hardcap-enforcement-test" "./scripts/v2/rpc_query_hardcap_enforcement_test.sh" "ci(gate): add rpc-query-hardcap-enforcement-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Challenge regression: pr4-challenge-fundflow-audit-gate" "./scripts/v2/pr4_challenge_fundflow_audit_gate.sh" "ci(gate): add challenge-derived pr4-challenge-fundflow-audit-gate regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Challenge regression: pr7-delivery-e2e-gate" "./scripts/v2/pr7_delivery_e2e_gate.sh" "ci(gate): add challenge-derived pr7-delivery-e2e-gate regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Challenge regression: quick-gate-summary-path-guard-test" "./scripts/v2/quick_gate_summary_path_guard_test.sh" "ci(gate): add challenge-derived quick-gate-summary-path-guard-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Challenge regression: quick-gate-summary-json-escape-test" "./scripts/v2/quick_gate_summary_json_escape_test.sh" "ci(gate): add challenge-derived quick-gate-summary-json-escape-test regression to quick-check"
