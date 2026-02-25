@@ -270,6 +270,10 @@ jobs:
         run: |
           ./scripts/v2/rpc_service_down.sh
 
+      - name: Auto regression: rpc-service-up
+        run: |
+          ./scripts/v2/rpc_service_up.sh
+
       - name: Upload quick gate summary
         if: always()
         uses: actions/upload-artifact@v4
