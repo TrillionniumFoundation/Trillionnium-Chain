@@ -12,3 +12,4 @@
 | 5 | 2026-02-25T01:11:41Z | append round observability entry + quick gate summary artifact path \ | quick_gate_shell syntax gate passed | low | 0b79f4c |
 | 6 | 2026-02-25T01:13:31Z | append round observability entry + quick gate summary artifact path docs/automation/summaries/auto-iter-round-6-summary.json | quick_gate_shell syntax gate passed | low | 89ec4ee |
 | 7 | 2026-02-25T01:13:40Z | append round observability entry + quick gate summary artifact path docs/automation/summaries/auto-iter-round-7-summary.json | quick_gate_shell syntax gate passed | low | a129c95 |
+| 8 | 2026-02-25T01:13:55Z | append round observability entry + quick gate summary artifact path docs/automation/summaries/auto-iter-round-8-summary.json | quick_gate_shell syntax gate passed | low | ecc8a90 |
