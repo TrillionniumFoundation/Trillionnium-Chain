@@ -31,6 +31,7 @@ WORKFLOW_SCRIPT_REF_STRICT=0 ./scripts/validate_workflow_script_refs.sh
 # 建议同时输出结构化摘要（便于留档/比对）：
 # QUICK_GATE_SUMMARY_PATH=run/quick-gate/summary.json ./scripts/quick_gate_shell.sh scripts trillionnium-rust/scripts
 # WORKFLOW_SCRIPT_REF_STRICT=0 WORKFLOW_SCRIPT_REF_SUMMARY_PATH=run/quick-gate/workflow-script-refs-summary.json ./scripts/validate_workflow_script_refs.sh
+# 注意：QUICK_GATE_SUMMARY_PATH 必须是“文件路径”，不能指向目录（例如 run/quick-gate）。
 # 若本机未安装 shellcheck，可先做语法预检：
 # QUICK_GATE_SKIP_SHELLCHECK=1 ./scripts/quick_gate_shell.sh scripts trillionnium-rust/scripts
 ```
