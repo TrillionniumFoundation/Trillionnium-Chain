@@ -286,6 +286,66 @@ jobs:
         run: |
           ./scripts/v2/run_worker_receipt_gates.sh
 
+      - name: Auto regression: run-worker-receipt-gates-real-cli
+        run: |
+          ./scripts/v2/run_worker_receipt_gates_real_cli.sh
+
+      - name: Auto regression: soak-chunk
+        run: |
+          ./scripts/v2/soak_chunk.sh
+
+      - name: Auto regression: trnm-tx-cli-real-adapter
+        run: |
+          ./scripts/v2/trnm_tx_cli_real_adapter.sh
+
+      - name: Auto regression: trnm-tx-cli-real-adapter.template
+        run: |
+          ./scripts/v2/trnm_tx_cli_real_adapter.template.sh
+
+      - name: Auto regression: trnm-tx-cli-wrapper
+        run: |
+          ./scripts/v2/trnm_tx_cli_wrapper.sh
+
+      - name: Auto regression: worker-agent-e2e-demo
+        run: |
+          ./scripts/v2/worker_agent_e2e_demo.sh
+
+      - name: Auto regression: worker-agent-full-loop
+        run: |
+          ./scripts/v2/worker_agent_full_loop.sh
+
+      - name: Auto regression: worker-agent-mining-onboard
+        run: |
+          ./scripts/v2/worker_agent_mining_onboard.sh
+
+      - name: Auto regression: worker-agent-multi-onboard
+        run: |
+          ./scripts/v2/worker_agent_multi_onboard.sh
+
+      - name: Auto regression: worker-agent-onboard-mvp
+        run: |
+          ./scripts/v2/worker_agent_onboard_mvp.sh
+
+      - name: Auto regression: worker-agent-verify-with-rpc
+        run: |
+          ./scripts/v2/worker_agent_verify_with_rpc.sh
+
+      - name: Auto regression: worker-failed-receipt-test
+        run: |
+          ./scripts/v2/worker_failed_receipt_test.sh
+
+      - name: Auto regression: worker-real-cli-fake-wrapper-block-test
+        run: |
+          ./scripts/v2/worker_real_cli_fake_wrapper_block_test.sh
+
+      - name: Auto regression: worker-real-cli-readiness
+        run: |
+          ./scripts/v2/worker_real_cli_readiness.sh
+
+      - name: Auto regression: worker-retry-nonce-boundary-test
+        run: |
+          ./scripts/v2/worker_retry_nonce_boundary_test.sh
+
       - name: Upload quick gate summary
         if: always()
         uses: actions/upload-artifact@v4
