@@ -66,6 +66,18 @@ jobs:
         run: |
           ./scripts/v2/governance_value_schema_reject_test.sh
 
+      - name: Auto regression: pr5-challenge-reconcile-gate
+        run: |
+          ./scripts/v2/pr5_challenge_reconcile_gate.sh
+
+      - name: Auto regression: pr5-event-rpc-treasury-consistency-gate
+        run: |
+          ./scripts/v2/pr5_event_rpc_treasury_consistency_gate.sh
+
+      - name: Auto regression: pr5-event-rpc-treasury-consistency-test
+        run: |
+          ./scripts/v2/pr5_event_rpc_treasury_consistency_test.sh
+
       - name: Upload quick gate summary
         if: always()
         uses: actions/upload-artifact@v4
