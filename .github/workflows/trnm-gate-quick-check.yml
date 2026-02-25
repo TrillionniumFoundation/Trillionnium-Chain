@@ -46,6 +46,14 @@ jobs:
         run: |
           ./scripts/v2/quick_gate_summary_path_guard_test.sh
 
+      - name: Quick gate summary JSON escape regression
+        run: |
+          ./scripts/v2/quick_gate_summary_json_escape_test.sh
+
+      - name: PR6 missing event log guard regression
+        run: |
+          ./scripts/v2/pr6_alert_rules_gate_missing_event_log_test.sh
+
       - name: PR7 TOP_N input guard regression
         run: |
           ./scripts/v2/pr7_topn_summary_gate_invalid_topn_test.sh
