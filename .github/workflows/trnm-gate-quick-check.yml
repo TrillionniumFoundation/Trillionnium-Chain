@@ -262,6 +262,14 @@ jobs:
         run: |
           ./scripts/v2/pr9_rollback_thresholds.sh
 
+      - name: Auto regression: product-layer-smoke
+        run: |
+          ./scripts/v2/product_layer_smoke.sh
+
+      - name: Auto regression: rpc-service-down
+        run: |
+          ./scripts/v2/rpc_service_down.sh
+
       - name: Upload quick gate summary
         if: always()
         uses: actions/upload-artifact@v4
