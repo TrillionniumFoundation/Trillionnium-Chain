@@ -90,6 +90,22 @@ jobs:
         run: |
           ./scripts/v2/pr6_alert_rules_gate.sh
 
+      - name: Auto regression: pr7-alert-delivery-gate
+        run: |
+          ./scripts/v2/pr7_alert_delivery_gate.sh
+
+      - name: Auto regression: pr7-alert-delivery-gate-concurrency-guard-test
+        run: |
+          ./scripts/v2/pr7_alert_delivery_gate_concurrency_guard_test.sh
+
+      - name: Auto regression: pr7-alert-delivery-gate-rc-observability-test
+        run: |
+          ./scripts/v2/pr7_alert_delivery_gate_rc_observability_test.sh
+
+      - name: Auto regression: pr7-dead-letter-replay-idempotency-test
+        run: |
+          ./scripts/v2/pr7_dead_letter_replay_idempotency_test.sh
+
       - name: Upload quick gate summary
         if: always()
         uses: actions/upload-artifact@v4
