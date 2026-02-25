@@ -122,6 +122,10 @@ jobs:
         run: |
           ./scripts/v2/pr7_quiet_hours_warn_escalation_bypass_test.sh
 
+      - name: Auto regression: pr7-topn-summary-gate
+        run: |
+          ./scripts/v2/pr7_topn_summary_gate.sh
+
       - name: Upload quick gate summary
         if: always()
         uses: actions/upload-artifact@v4
