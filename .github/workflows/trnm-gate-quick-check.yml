@@ -154,6 +154,10 @@ jobs:
         run: |
           ./scripts/v2/worker_resume_no_duplicate_test.sh
 
+      - name: Auto regression: auto-iterate-task-add-json-escape-regression-gate
+        run: |
+          ./scripts/v2/auto_iterate_task_add_json_escape_regression_gate.sh
+
       - name: Upload quick gate summary
         if: always()
         uses: actions/upload-artifact@v4
