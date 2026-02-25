@@ -162,6 +162,10 @@ jobs:
         run: |
           ./scripts/v2/auto_iterate_task_add_pr5_skip_regression_gate.sh
 
+      - name: Auto regression: auto-iterate-task-add-pr6-missing-event-log-gate
+        run: |
+          ./scripts/v2/auto_iterate_task_add_pr6_missing_event_log_gate.sh
+
       - name: Upload quick gate summary
         if: always()
         uses: actions/upload-artifact@v4
