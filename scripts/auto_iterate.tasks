@@ -20,7 +20,6 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: pr7
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: pr7-alert-delivery-gate-concurrency-guard-test" "./scripts/v2/pr7_alert_delivery_gate_concurrency_guard_test.sh" "ci(gate): add pr7-alert-delivery-gate-concurrency-guard-test regression to quick-check"
 
 # Auto-filled by dual-subagent task pool
-bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: pr7-alert-delivery-gate-rc-observability-test" "./scripts/v2/pr7_alert_delivery_gate_rc_observability_test.sh" "ci(gate): add pr7-alert-delivery-gate-rc-observability-test regression to quick-check"
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: pr7-dead-letter-replay-idempotency-test" "./scripts/v2/pr7_dead_letter_replay_idempotency_test.sh" "ci(gate): add pr7-dead-letter-replay-idempotency-test regression to quick-check"
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: pr7-global-retry-budget-storm-test" "./scripts/v2/pr7_global_retry_budget_storm_test.sh" "ci(gate): add pr7-global-retry-budget-storm-test regression to quick-check"
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: pr7-partial-success-route-test" "./scripts/v2/pr7_partial_success_route_test.sh" "ci(gate): add pr7-partial-success-route-test regression to quick-check"
@@ -36,3 +35,9 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Challenge regression
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Challenge regression: pr7-delivery-e2e-gate" "./scripts/v2/pr7_delivery_e2e_gate.sh" "ci(gate): add challenge-derived pr7-delivery-e2e-gate regression to quick-check"
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Challenge regression: quick-gate-summary-path-guard-test" "./scripts/v2/quick_gate_summary_path_guard_test.sh" "ci(gate): add challenge-derived quick-gate-summary-path-guard-test regression to quick-check"
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Challenge regression: quick-gate-summary-json-escape-test" "./scripts/v2/quick_gate_summary_json_escape_test.sh" "ci(gate): add challenge-derived quick-gate-summary-json-escape-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Backlog regression: pouw-commit-timeout-migration-test" "./scripts/v2/pouw_commit_timeout_migration_test.sh" "ci(gate): add backlog-driven pouw-commit-timeout-migration-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Backlog regression: pouw-challenge-timeout-migration-test" "./scripts/v2/pouw_challenge_timeout_migration_test.sh" "ci(gate): add backlog-driven pouw-challenge-timeout-migration-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Backlog regression: worker-replay-guard-test" "./scripts/v2/worker_replay_guard_test.sh" "ci(gate): add backlog-driven worker-replay-guard-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Backlog regression: worker-resume-no-duplicate-test" "./scripts/v2/worker_resume_no_duplicate_test.sh" "ci(gate): add backlog-driven worker-resume-no-duplicate-test regression to quick-check"
