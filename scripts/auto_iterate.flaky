@@ -1,0 +1,2 @@
+# one scripts/v2 filename per line (without path) to suppress auto-refill
+pr7_alert_delivery_gate_rc_observability_test.sh

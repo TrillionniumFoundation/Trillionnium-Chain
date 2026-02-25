@@ -7,6 +7,7 @@ ROOT = Path(__file__).resolve().parents[1]
 WF = ROOT / '.github/workflows/trnm-gate-quick-check.yml'
 V2 = ROOT / 'scripts/v2'
 OUT = ROOT / 'run/auto-iterate/task-candidates.json'
+FLAKY = ROOT / 'scripts/auto_iterate.flaky'
 OUT.parent.mkdir(parents=True, exist_ok=True)
 
 wf_text = WF.read_text() if WF.exists() else ''
@@ -20,9 +21,19 @@ block_prefix = (
     'run_reliability_soak', 'worker_agent_', 'trnm_tx_cli_'
 )
 
+flaky = set()
+if FLAKY.exists():
+    for line in FLAKY.read_text().splitlines():
+        line = line.strip()
+        if not line or line.startswith('#'):
+            continue
+        flaky.add(line)
+
 candidates = []
 for p in sorted(V2.glob('*.sh')):
     name = p.name
+    if name in flaky:
+        continue
     if name in existing:
         continue
     if not name.startswith(allow_prefix):
