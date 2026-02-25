@@ -118,6 +118,10 @@ jobs:
         run: |
           ./scripts/v2/pr7_quiet_hours_status_alert_level_mismatch_test.sh
 
+      - name: Auto regression: pr7-quiet-hours-warn-escalation-bypass-test
+        run: |
+          ./scripts/v2/pr7_quiet_hours_warn_escalation_bypass_test.sh
+
       - name: Upload quick gate summary
         if: always()
         uses: actions/upload-artifact@v4
