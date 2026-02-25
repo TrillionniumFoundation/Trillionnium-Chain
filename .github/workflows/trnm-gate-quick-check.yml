@@ -222,6 +222,10 @@ jobs:
         run: |
           ./scripts/v2/gov_mvp_simulation.sh
 
+      - name: Auto regression: p11-partial-success-metric-consistency-test
+        run: |
+          ./scripts/v2/p11_partial_success_metric_consistency_test.sh
+
       - name: Upload quick gate summary
         if: always()
         uses: actions/upload-artifact@v4
