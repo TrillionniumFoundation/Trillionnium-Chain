@@ -286,6 +286,30 @@ jobs:
         run: |
           ./scripts/v2/run_worker_receipt_gates.sh
 
+      - name: Auto regression: run-worker-receipt-gates-real-cli
+        run: |
+          ./scripts/v2/run_worker_receipt_gates_real_cli.sh
+
+      - name: Auto regression: soak-chunk
+        run: |
+          ./scripts/v2/soak_chunk.sh
+
+      - name: Auto regression: trnm-tx-cli-real-adapter
+        run: |
+          ./scripts/v2/trnm_tx_cli_real_adapter.sh
+
+      - name: Auto regression: trnm-tx-cli-real-adapter.template
+        run: |
+          ./scripts/v2/trnm_tx_cli_real_adapter.template.sh
+
+      - name: Auto regression: trnm-tx-cli-wrapper
+        run: |
+          ./scripts/v2/trnm_tx_cli_wrapper.sh
+
+      - name: Auto regression: worker-agent-e2e-demo
+        run: |
+          ./scripts/v2/worker_agent_e2e_demo.sh
+
       - name: Upload quick gate summary
         if: always()
         uses: actions/upload-artifact@v4
