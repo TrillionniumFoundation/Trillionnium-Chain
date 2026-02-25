@@ -11,6 +11,16 @@ SKIP_SHELLCHECK="${QUICK_GATE_SKIP_SHELLCHECK:-0}"
 SUMMARY_PATH="${QUICK_GATE_SUMMARY_PATH:-}"
 START_EPOCH="$(date -u +%s)"
 
+json_escape() {
+  local s=${1-}
+  s=${s//\\/\\\\}
+  s=${s//"/\\"}
+  s=${s//$'\n'/\\n}
+  s=${s//$'\r'/\\r}
+  s=${s//$'\t'/\\t}
+  printf '%s' "$s"
+}
+
 if [[ "$SKIP_SHELLCHECK" != "0" && "$SKIP_SHELLCHECK" != "1" ]]; then
   echo "[quick-gate][FAIL] QUICK_GATE_SKIP_SHELLCHECK must be 0 or 1 (got: $SKIP_SHELLCHECK)" >&2
   exit 2
@@ -47,7 +57,7 @@ if [[ ${#FILES[@]} -eq 0 ]]; then
     mkdir -p "$(dirname "$SUMMARY_PATH")"
     cat >"$SUMMARY_PATH" <<EOF
 {
-  "target_dirs_csv": "$(IFS=,; echo "${NORMALIZED_TARGET_DIRS[*]}")",
+  "target_dirs_csv": "$(json_escape "$(IFS=,; printf '%s' "${NORMALIZED_TARGET_DIRS[*]}")")",
   "target_dir_count": ${#NORMALIZED_TARGET_DIRS[@]},
   "script_count": 0,
   "skip_shellcheck": ${SKIP_SHELLCHECK},
@@ -105,14 +115,14 @@ if [[ -n "$SUMMARY_PATH" ]]; then
   cat >"$SUMMARY_PATH" <<EOF
 {
   "ts_utc": "${audit_ts}",
-  "target_dirs_csv": "$(IFS=,; echo "${NORMALIZED_TARGET_DIRS[*]}")",
+  "target_dirs_csv": "$(json_escape "$(IFS=,; printf '%s' "${NORMALIZED_TARGET_DIRS[*]}")")",
   "target_dir_count": ${#NORMALIZED_TARGET_DIRS[@]},
   "script_count": ${#FILES[@]},
-  "file_manifest_sha256": "${manifest_sha256}",
+  "file_manifest_sha256": "$(json_escape "${manifest_sha256}")",
   "skip_shellcheck": ${SKIP_SHELLCHECK},
   "bash_n_elapsed_sec": $((bashn_end - bashn_start)),
-  "shellcheck_status": "${shellcheck_status}",
-  "shellcheck_version": "${shellcheck_version}",
+  "shellcheck_status": "$(json_escape "${shellcheck_status}")",
+  "shellcheck_version": "$(json_escape "${shellcheck_version}")",
   "shellcheck_elapsed_sec": ${shellcheck_elapsed},
   "total_elapsed_sec": ${total_elapsed},
   "status": "ok"
