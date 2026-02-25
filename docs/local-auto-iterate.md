@@ -5,6 +5,7 @@
 - 暂停/停止开关
 - 连续失败熔断（默认 2 次）
 - 网络抖动下 push 自动重试
+- 自动向 PR（默认 #17）追加轮次评论
 - 锁文件避免并发运行
 
 ## Scripts
@@ -48,6 +49,8 @@ touch .auto-iterate.stop
 - `SLEEP_SECONDS`：轮次间隔（默认 30）
 - `MAX_CONSEC_FAIL`：连续失败熔断阈值（默认 2）
 - `PUSH_RETRIES`：push 重试次数（默认 6）
+- `AUTO_PR_COMMENT`：是否自动 PR 评论（默认 1）
+- `PR_NUMBER`：目标 PR 编号（默认 17）
 - `ROUND_SCRIPT`：单轮执行脚本路径
 
 示例：

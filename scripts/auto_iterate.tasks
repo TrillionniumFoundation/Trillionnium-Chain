@@ -1,11 +1,5 @@
-# One command per line.
-# Each task MUST do: low-risk change + local verification + git commit.
-# If a task determines "nothing to do", it should exit 0 without commit; round runner will mark as noop.
-#
-# Example skeleton:
-# bash ./scripts/v2/your_task.sh
-#
-# Suggested convention for each task script:
-# 1) make one small deterministic change
-# 2) run a focused test/gate
-# 3) git add/commit with clear message
+# Local auto-iterate task list (round-robin)
+# Each task is low-risk and should self-verify before commit.
+
+bash ./scripts/v2/auto_iterate_task_add_pr5_skip_regression_gate.sh
+bash ./scripts/v2/auto_iterate_task_add_pr6_missing_event_log_gate.sh

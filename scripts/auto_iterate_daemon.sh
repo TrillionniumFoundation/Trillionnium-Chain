@@ -13,6 +13,11 @@ STOP_FILE="${STOP_FILE:-$ROOT/.auto-iterate.stop}"
 MAX_CONSEC_FAIL="${MAX_CONSEC_FAIL:-2}"
 SLEEP_SECONDS="${SLEEP_SECONDS:-30}"
 PUSH_RETRIES="${PUSH_RETRIES:-6}"
+AUTO_PR_COMMENT="${AUTO_PR_COMMENT:-1}"
+PR_NUMBER="${PR_NUMBER:-17}"
+
+# launchd default PATH is minimal; include common Homebrew locations.
+export PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:${PATH:-}"
 
 mkdir -p "$STATE_DIR"
 
@@ -28,6 +33,29 @@ round=0
 
 log() {
   echo "[$(date '+%F %T')] $*" | tee -a "$LOG_FILE"
+}
+
+comment_latest_commit_to_pr() {
+  [[ "$AUTO_PR_COMMENT" == "1" ]] || return 0
+
+  if ! command -v gh >/dev/null 2>&1; then
+    log "pr-comment-skip: gh not found in PATH"
+    return 0
+  fi
+
+  local branch repo latest_commit title body
+  branch="$(git branch --show-current)"
+  repo="$(git config --get remote.origin.url | sed -E 's#.*github.com[:/]([^/]+/[^/.]+)(\.git)?#\1#')"
+  latest_commit="$(git rev-parse --short HEAD)"
+  title="$(git log -1 --pretty=%s)"
+
+  body="Round update (local auto-iterate daemon)\n\n- Commit: \\`${latest_commit}\\`\n- Branch: \\`${branch}\\`\n- Change: ${title}\n- Validation: task-local verification passed before commit\n- Risk: low (automation/script/gate scope)\n"
+
+  if gh pr comment "$PR_NUMBER" --repo "$repo" --body "$body" >/dev/null 2>&1; then
+    log "pr-comment-ok: pr=#$PR_NUMBER commit=$latest_commit"
+  else
+    log "pr-comment-warn: failed to comment on pr=#$PR_NUMBER (non-fatal)"
+  fi
 }
 
 push_with_retry_if_needed() {
@@ -83,6 +111,7 @@ while true; do
         consec_fail=$((consec_fail + 1))
         log "round-fail: push retry exhausted (consec_fail=$consec_fail/$MAX_CONSEC_FAIL)"
       else
+        comment_latest_commit_to_pr
         log "round-ok: #$round"
       fi
       ;;
