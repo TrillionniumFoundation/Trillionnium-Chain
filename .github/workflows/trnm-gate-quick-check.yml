@@ -258,6 +258,10 @@ jobs:
         run: |
           ./scripts/v2/pr9_apply_thresholds_dry_run.sh
 
+      - name: Auto regression: pr9-rollback-thresholds
+        run: |
+          ./scripts/v2/pr9_rollback_thresholds.sh
+
       - name: Upload quick gate summary
         if: always()
         uses: actions/upload-artifact@v4
