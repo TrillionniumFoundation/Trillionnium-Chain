@@ -186,6 +186,18 @@ jobs:
         run: |
           ./scripts/v2/ecosystem_alpha_check.sh
 
+      - name: Auto regression: ecosystem-examples-smoke
+        run: |
+          ./scripts/v2/ecosystem_examples_smoke.sh
+
+      - name: Auto regression: ecosystem-feedback-add
+        run: |
+          ./scripts/v2/ecosystem_feedback_add.sh
+
+      - name: Auto regression: emergency-pause-drill
+        run: |
+          ./scripts/v2/emergency_pause_drill.sh
+
       - name: Upload quick gate summary
         if: always()
         uses: actions/upload-artifact@v4
