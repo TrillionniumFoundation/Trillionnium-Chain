@@ -198,6 +198,10 @@ jobs:
         run: |
           ./scripts/v2/emergency_pause_drill.sh
 
+      - name: Auto regression: explorer-service-down
+        run: |
+          ./scripts/v2/explorer_service_down.sh
+
       - name: Upload quick gate summary
         if: always()
         uses: actions/upload-artifact@v4
