@@ -106,6 +106,10 @@ jobs:
         run: |
           ./scripts/v2/pr7_dead_letter_replay_idempotency_test.sh
 
+      - name: Auto regression: pr7-global-retry-budget-storm-test
+        run: |
+          ./scripts/v2/pr7_global_retry_budget_storm_test.sh
+
       - name: Upload quick gate summary
         if: always()
         uses: actions/upload-artifact@v4
