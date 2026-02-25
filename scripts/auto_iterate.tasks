@@ -18,3 +18,9 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: pr5
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: pr6-alert-rules-gate" "./scripts/v2/pr6_alert_rules_gate.sh" "ci(gate): add pr6-alert-rules-gate regression to quick-check"
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: pr7-alert-delivery-gate" "./scripts/v2/pr7_alert_delivery_gate.sh" "ci(gate): add pr7-alert-delivery-gate regression to quick-check"
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: pr7-alert-delivery-gate-concurrency-guard-test" "./scripts/v2/pr7_alert_delivery_gate_concurrency_guard_test.sh" "ci(gate): add pr7-alert-delivery-gate-concurrency-guard-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: pr7-alert-delivery-gate-rc-observability-test" "./scripts/v2/pr7_alert_delivery_gate_rc_observability_test.sh" "ci(gate): add pr7-alert-delivery-gate-rc-observability-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: pr7-dead-letter-replay-idempotency-test" "./scripts/v2/pr7_dead_letter_replay_idempotency_test.sh" "ci(gate): add pr7-dead-letter-replay-idempotency-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: pr7-global-retry-budget-storm-test" "./scripts/v2/pr7_global_retry_budget_storm_test.sh" "ci(gate): add pr7-global-retry-budget-storm-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: pr7-partial-success-route-test" "./scripts/v2/pr7_partial_success_route_test.sh" "ci(gate): add pr7-partial-success-route-test regression to quick-check"
