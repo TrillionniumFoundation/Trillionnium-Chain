@@ -86,6 +86,10 @@ jobs:
         run: |
           ./scripts/v2/pr5_treasury_reconcile_report.sh
 
+      - name: Auto regression: pr6-alert-rules-gate
+        run: |
+          ./scripts/v2/pr6_alert_rules_gate.sh
+
       - name: Upload quick gate summary
         if: always()
         uses: actions/upload-artifact@v4
