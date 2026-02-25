@@ -310,6 +310,14 @@ jobs:
         run: |
           ./scripts/v2/worker_agent_e2e_demo.sh
 
+      - name: Auto regression: worker-agent-full-loop
+        run: |
+          ./scripts/v2/worker_agent_full_loop.sh
+
+      - name: Auto regression: worker-agent-mining-onboard
+        run: |
+          ./scripts/v2/worker_agent_mining_onboard.sh
+
       - name: Upload quick gate summary
         if: always()
         uses: actions/upload-artifact@v4
