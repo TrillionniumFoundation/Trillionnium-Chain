@@ -26,6 +26,11 @@ if [[ "$SKIP_SHELLCHECK" != "0" && "$SKIP_SHELLCHECK" != "1" ]]; then
   exit 2
 fi
 
+if [[ -n "$SUMMARY_PATH" && -d "$SUMMARY_PATH" ]]; then
+  echo "[quick-gate][FAIL] QUICK_GATE_SUMMARY_PATH points to a directory: $SUMMARY_PATH" >&2
+  exit 2
+fi
+
 if [[ "$SKIP_SHELLCHECK" != "1" ]] && ! command -v shellcheck >/dev/null 2>&1; then
   echo "[quick-gate][FAIL] shellcheck not found in PATH (set QUICK_GATE_SKIP_SHELLCHECK=1 for syntax-only local run)" >&2
   exit 2
