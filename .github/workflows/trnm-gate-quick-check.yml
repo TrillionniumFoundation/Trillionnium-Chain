@@ -134,6 +134,10 @@ jobs:
         run: |
           ./scripts/v2/pr4_challenge_fundflow_audit_gate.sh
 
+      - name: Challenge regression: pr7-delivery-e2e-gate
+        run: |
+          ./scripts/v2/pr7_delivery_e2e_gate.sh
+
       - name: Upload quick gate summary
         if: always()
         uses: actions/upload-artifact@v4
