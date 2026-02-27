@@ -2092,6 +2092,38 @@ mod tests {
     }
 
     #[test]
+    fn governance_state_merge_gate_emergency_pause_rejects_whitespace_bool_without_side_effects() {
+        let mut st = governance_state();
+
+        let err = st
+            .set_gov_param(
+                9_011,
+                EMERGENCY_PAUSE_KEY_ID,
+                "emergency_pause".into(),
+                "true ".into(),
+            )
+            .expect_err("bool literal with trailing whitespace must be rejected");
+        assert!(
+            err.contains("expected strict bool 'true' or 'false'"),
+            "{err}"
+        );
+
+        assert!(
+            !st.is_emergency_paused(),
+            "whitespace bool reject path must keep emergency_pause unpaused"
+        );
+        assert!(
+            st.pending_gov_update("emergency_pause").is_none(),
+            "whitespace bool reject path must not create pending timelock state"
+        );
+
+        let pause = st
+            .get_param(EMERGENCY_PAUSE_KEY_ID)
+            .expect("canonical emergency_pause param must remain readable");
+        assert_eq!(pause.value, "false");
+    }
+
+    #[test]
     fn governance_state_merge_gate_emergency_pause_cancel_skips_value_parse_but_stays_side_effect_free(
     ) {
         let mut st = governance_state();
