@@ -25,14 +25,14 @@ else
 fi
 
 pause_signal="absent"
-if [[ -f "$PAUSE_FILE" ]]; then
-  pause_signal="pause_file"
-elif [[ "$lane_b_paused_flag" == "true" ]]; then
+if [[ "$lane_b_paused_flag" == "true" ]]; then
   pause_signal="roadmap_flag"
+elif [[ -f "$PAUSE_FILE" ]]; then
+  pause_signal="pause_file"
 fi
 
-if [[ "$progress_pct" -lt 100 && "$pause_signal" == "absent" ]]; then
-  echo "[FAIL] laneB governance: roadmap progress ${progress_pct}% < 100%, require .auto-iterate.pause or laneB_paused_until_100=true in $ROADMAP_PROGRESS_FILE" >&2
+if [[ "$progress_pct" -lt 100 && "$lane_b_paused_flag" != "true" ]]; then
+  echo "[FAIL] laneB governance: roadmap progress ${progress_pct}% < 100%, require laneB_paused_until_100=true in $ROADMAP_PROGRESS_FILE (pause file alone is insufficient)" >&2
   exit 1
 fi
 
