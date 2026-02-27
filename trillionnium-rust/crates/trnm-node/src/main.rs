@@ -290,6 +290,10 @@ fn recover_wal_state(wal_dir: &Path) -> Result<RecoveredWalState> {
         verify_wal_and_find_checkpoint(&checkpoints, &entries).map_err(anyhow::Error::msg)?;
 
     let mut truncated = false;
+    if entries.is_empty() && !checkpoints.is_empty() {
+        persist_checkpoint_meta(wal_dir, &[])?;
+        truncated = true;
+    }
     if !entries.is_empty() && last_checkpoint.is_none() {
         truncated = true;
         persist_wal_meta_entries(wal_dir, &[])?;
@@ -2914,6 +2918,33 @@ mod tests {
         let delta = event_delta_from_balances(after, before);
         assert_eq!(delta.numeric, Some(-18));
         assert_eq!(delta.text, "-18");
+    }
+
+    #[test]
+    fn recover_clears_orphan_checkpoints_when_wal_is_empty() {
+        let wal_dir = temp_wal_dir("recover-orphan-checkpoints");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        persist_checkpoint_meta(
+            &wal_dir,
+            &[CheckpointMeta {
+                height: 7,
+                state_root_hex: "stale-root".into(),
+                wal_entry_hash_hex: "stale-hash".into(),
+            }],
+        )
+        .unwrap();
+
+        let recovered = recover_wal_state(&wal_dir).unwrap();
+        assert_eq!(recovered.next_height, 1);
+        assert!(recovered.restored_lock.is_none());
+        assert!(recovered.last_checkpoint.is_none());
+        assert!(recovered.truncated);
+
+        let checkpoints = load_checkpoint_meta(&wal_dir).unwrap();
+        assert!(checkpoints.is_empty());
+
+        let _ = fs::remove_dir_all(&wal_dir);
     }
 
     #[test]
