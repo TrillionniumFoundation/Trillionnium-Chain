@@ -1060,6 +1060,18 @@ mod tests {
     }
 
     #[test]
+    fn verify_model_output_enforces_trimmed_empty_and_char_limit_boundaries() {
+        assert_eq!(verify_model_output("   \n\t", 8), ("rejected", "empty_output"));
+
+        // Limit is measured in characters (not bytes) to keep verifier behavior predictable.
+        let within = "你好ab"; // 4 chars
+        assert_eq!(verify_model_output(within, 4), ("accepted", "ok"));
+
+        let over = "你好abc"; // 5 chars
+        assert_eq!(verify_model_output(over, 4), ("rejected", "output_too_long"));
+    }
+
+    #[test]
     fn llm_adapter_retry_succeeds_within_budget() {
         let mut attempt = 0u32;
         let mut slept = vec![];
