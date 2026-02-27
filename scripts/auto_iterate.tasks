@@ -101,3 +101,6 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: run
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: check-unchecked-gov-usage" "./scripts/v2/check_unchecked_gov_usage.sh" "ci(gate): add check-unchecked-gov-usage regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: consensus-security-matrix-message-auth-step-test" "./scripts/v2/consensus_security_matrix_message_auth_step_test.sh" "ci(gate): add consensus-security-matrix-message-auth-step-test regression to quick-check"
