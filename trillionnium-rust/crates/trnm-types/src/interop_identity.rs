@@ -1131,6 +1131,29 @@ mod tests {
     }
 
     #[test]
+    fn revoke_did_rejects_noncanonical_did_without_side_effects() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did(
+            "did:trnm:agent-2x".to_string(),
+            "org:lane2-admin".to_string(),
+            10,
+        )
+        .unwrap();
+
+        let audit_len_before = reg.audit_trail().len();
+        let err = reg
+            .revoke_did("org:lane2-admin".to_string(), " did:trnm:agent-2x ", 12)
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            InteropIdentityError::InvalidIdentityValue { field: "did", .. }
+        ));
+        assert_eq!(reg.did("did:trnm:agent-2x").unwrap().revoked_at, None);
+        assert_eq!(reg.audit_trail().len(), audit_len_before);
+    }
+
+    #[test]
     fn revoke_did_is_idempotent_for_audit_and_timestamp() {
         let mut reg = IdentityRegistry::default();
         reg.register_did(
