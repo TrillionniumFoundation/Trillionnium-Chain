@@ -667,4 +667,45 @@ mod tests {
         assert_eq!(reg.capability(token_id).unwrap().revoked_at, Some(30));
         assert_eq!(reg.audit_trail().len(), first_audit_len);
     }
+
+    #[test]
+    fn revoke_did_does_not_override_previously_revoked_capability() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did(
+            "did:trnm:agent-4".to_string(),
+            "org:lane2-admin".to_string(),
+            10,
+        )
+        .unwrap();
+
+        let token_id = reg
+            .issue_capability(
+                "org:lane2-admin".to_string(),
+                "did:trnm:agent-4".to_string(),
+                CapabilityScope::BridgeRevert,
+                12,
+                Some(88),
+            )
+            .unwrap();
+
+        reg.revoke_capability(
+            "org:lane2-admin".to_string(),
+            token_id,
+            20,
+            Some("manual_revoke_before_did_revoke".to_string()),
+        )
+        .unwrap();
+        let first_revoke_audit_len = reg.audit_trail().len();
+
+        reg.revoke_did("org:lane2-admin".to_string(), "did:trnm:agent-4", 40)
+            .unwrap();
+
+        assert_eq!(reg.did("did:trnm:agent-4").unwrap().revoked_at, Some(40));
+        assert_eq!(reg.capability(token_id).unwrap().revoked_at, Some(20));
+        assert_eq!(reg.audit_trail().len(), first_revoke_audit_len + 1);
+        assert_eq!(
+            reg.audit_trail().last().map(|e| e.action),
+            Some(AuditAction::DidRevoked)
+        );
+    }
 }
