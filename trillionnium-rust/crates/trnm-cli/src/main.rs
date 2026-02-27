@@ -410,7 +410,9 @@ fn normalize_tx_status(raw: &str) -> Option<String> {
         .to_ascii_lowercase();
     match cleaned.as_str() {
         "pending" => Some("pending".to_string()),
-        "committed" | "success" | "succeeded" | "ok" => Some("committed".to_string()),
+        "committed" | "confirmed" | "success" | "succeeded" | "ok" => {
+            Some("committed".to_string())
+        },
         "fail" | "failed" | "error" | "rejected" | "reverted" | "aborted" | "dropped"
         | "timeout" | "timed_out" | "timed-out" => Some("fail".to_string()),
         _ => None,
@@ -1093,6 +1095,10 @@ mod tests {
         let succeeded_alias = "tx_hash=0xeee1\nstatus=succeeded\n";
         let parsed_succeeded = parse_tx_query_response(succeeded_alias, "0xfallback").unwrap();
         assert_eq!(parsed_succeeded.status, "committed");
+
+        let confirmed_alias = "tx_hash=0xeee2\nstatus=confirmed\n";
+        let parsed_confirmed = parse_tx_query_response(confirmed_alias, "0xfallback").unwrap();
+        assert_eq!(parsed_confirmed.status, "committed");
 
         let single_quoted = "tx_hash=0xeff\nstatus='committed'\n";
         let parsed_single_quoted = parse_tx_query_response(single_quoted, "0xfallback").unwrap();
