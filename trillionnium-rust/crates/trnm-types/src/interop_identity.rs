@@ -246,6 +246,9 @@ impl IdentityRegistry {
                 .capabilities
                 .get_mut(&token_id)
                 .ok_or(InteropIdentityError::CapabilityNotFound { token_id })?;
+            if token.revoked_at.is_some() {
+                return Ok(());
+            }
             token.revoked_at = Some(at_height);
             token.subject_did.clone()
         };
@@ -621,6 +624,47 @@ mod tests {
 
         assert_eq!(reg.did("did:trnm:agent-2").unwrap().revoked_at, Some(40));
         assert_eq!(reg.capability(token_id).unwrap().revoked_at, Some(40));
+        assert_eq!(reg.audit_trail().len(), first_audit_len);
+    }
+
+    #[test]
+    fn revoke_capability_is_idempotent_for_audit_and_timestamp() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did(
+            "did:trnm:agent-3".to_string(),
+            "org:lane2-admin".to_string(),
+            10,
+        )
+        .unwrap();
+
+        let token_id = reg
+            .issue_capability(
+                "org:lane2-admin".to_string(),
+                "did:trnm:agent-3".to_string(),
+                CapabilityScope::AuditRead,
+                12,
+                None,
+            )
+            .unwrap();
+
+        reg.revoke_capability(
+            "org:lane2-admin".to_string(),
+            token_id,
+            30,
+            Some("security_rotate".to_string()),
+        )
+        .unwrap();
+        let first_audit_len = reg.audit_trail().len();
+
+        reg.revoke_capability(
+            "org:lane2-admin".to_string(),
+            token_id,
+            90,
+            Some("late_duplicate".to_string()),
+        )
+        .unwrap();
+
+        assert_eq!(reg.capability(token_id).unwrap().revoked_at, Some(30));
         assert_eq!(reg.audit_trail().len(), first_audit_len);
     }
 }
