@@ -33,12 +33,15 @@ grep -q '^\[bft\].*step=RoundChange' "$LOG"
 grep -q '^\[bft\].*step=RoundBackoff' "$LOG"
 grep -q '^\[bft\].*step=Commit' "$LOG"
 grep -q '^\[consensus\].*bft_round_change_total=' "$LOG"
+grep -q '^\[consensus\].*bft_double_vote_total=' "$LOG"
+grep -q '^\[consensus\].*bft_leader_missed_proposals=' "$LOG"
 
 a=$(grep '^\[consensus\]' "$LOG" | sed -n 's/.*bft_round_change_total=\([0-9]*\).*/\1/p' | tail -n1)
 b=$(grep '^\[consensus\]' "$LOG" | sed -n 's/.*bft_committed_heights=\([0-9]*\).*/\1/p' | tail -n1)
 c=$(grep '^\[consensus\]' "$LOG" | sed -n 's/.*bft_round_change_backoff_total_ms=\([0-9]*\).*/\1/p' | tail -n1)
+d=$(grep '^\[consensus\]' "$LOG" | sed -n 's/.*bft_double_vote_total=\([0-9]*\).*/\1/p' | tail -n1)
 
-if [[ -z "$a" || -z "$b" || -z "$c" ]]; then
+if [[ -z "$a" || -z "$b" || -z "$c" || -z "$d" ]]; then
   echo "[FAIL] failed to parse consensus summary" >&2
   exit 2
 fi
@@ -58,11 +61,17 @@ if [[ "$c" -le 0 ]]; then
   exit 5
 fi
 
+if [[ "$d" -lt 0 ]]; then
+  echo "[FAIL] expected bft_double_vote_total >= 0, got $d" >&2
+  exit 6
+fi
+
 {
   echo "log=$LOG"
   echo "bft_round_change_total=$a"
   echo "bft_committed_heights=$b"
   echo "bft_round_change_backoff_total_ms=$c"
+  echo "bft_double_vote_total=$d"
   echo "note=thresholds: missed_threshold=1 penalty_rounds=2 backoff_ms=5 backoff_cap_ms=20"
   echo "status=PASS"
 } > "$REPORT"
