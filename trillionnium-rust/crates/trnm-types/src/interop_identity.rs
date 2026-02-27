@@ -451,6 +451,58 @@ mod tests {
     }
 
     #[test]
+    fn settlement_revert_and_finalize_fields_are_mutually_exclusive() {
+        let route = BridgeRoute {
+            route_id: "eth->trnm".to_string(),
+            source_chain: "ethereum".to_string(),
+            target_chain: "trillionnium".to_string(),
+        };
+        let mut rec = SettlementRecord {
+            settlement_id: 9,
+            route,
+            status: SettlementStatus::Pending,
+            at_height: 100,
+            settlement_tx: None,
+            revert_reason: None,
+        };
+
+        rec.apply_status(
+            SettlementStatus::Reverted,
+            101,
+            Some("0xshould-be-ignored".to_string()),
+            Some("executor_sla_timeout".to_string()),
+        )
+        .unwrap();
+        assert_eq!(rec.status, SettlementStatus::Reverted);
+        assert_eq!(rec.revert_reason.as_deref(), Some("executor_sla_timeout"));
+        assert_eq!(rec.settlement_tx, None);
+
+        let mut rec2 = SettlementRecord {
+            settlement_id: 10,
+            route: BridgeRoute {
+                route_id: "eth->trnm".to_string(),
+                source_chain: "ethereum".to_string(),
+                target_chain: "trillionnium".to_string(),
+            },
+            status: SettlementStatus::Pending,
+            at_height: 200,
+            settlement_tx: Some("0xstale".to_string()),
+            revert_reason: Some("stale-reason".to_string()),
+        };
+
+        rec2.apply_status(
+            SettlementStatus::Finalized,
+            201,
+            Some("0xfinal".to_string()),
+            Some("should-be-cleared".to_string()),
+        )
+        .unwrap();
+        assert_eq!(rec2.status, SettlementStatus::Finalized);
+        assert_eq!(rec2.settlement_tx.as_deref(), Some("0xfinal"));
+        assert_eq!(rec2.revert_reason, None);
+    }
+
+    #[test]
     fn issue_capability_rejects_expiry_before_issue_height() {
         let mut reg = IdentityRegistry::default();
         reg.register_did(
