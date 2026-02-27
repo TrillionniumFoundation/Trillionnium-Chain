@@ -792,7 +792,9 @@ fn verify_model_output(output: &str, max_chars: usize) -> (&'static str, &'stati
     {
         return ("rejected", "empty_output");
     }
-    if trimmed.chars().count() > max_chars {
+
+    let normalized_char_count = trimmed.chars().filter(|c| !is_invisible_filler(*c)).count();
+    if normalized_char_count > max_chars {
         return ("rejected", "output_too_long");
     }
     ("accepted", "ok")
@@ -1192,6 +1194,9 @@ mod tests {
 
         // Mixed visible + zero-width should still count as meaningful content.
         assert_eq!(verify_model_output("\u{200B}ok\u{200D}", 4), ("accepted", "ok"));
+
+        // Invisible fillers should not inflate length checks for market verification.
+        assert_eq!(verify_model_output("\u{200B}ok\u{200D}", 2), ("accepted", "ok"));
     }
 
     #[test]
