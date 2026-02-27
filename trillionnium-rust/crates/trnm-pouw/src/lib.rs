@@ -1339,6 +1339,33 @@ mod tests {
     }
 
     #[test]
+    fn challenge_legacy_fallback_none_snapshot_uses_default_window_when_gov_missing() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+
+        let r1 = apply_create_task(&mut st, 91021, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(91021, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 =
+            apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
+        let r4 = apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, 110).unwrap();
+
+        // Simulate pre-snapshot legacy Revealed task persisted before rollout.
+        let mut legacy = st.get_task(r4.id).unwrap();
+        legacy.challenge_window_blocks_snapshot = None;
+        let r4 = st.update_task(r4, legacy).unwrap();
+
+        // Do not seed challenge_window_blocks governance: fallback should use default safely.
+        let r5 = apply_challenge_at_height(&mut st, r4, "challenger".into(), 10, "challenger".into(), 111).unwrap();
+        let task = st.get_task(r5.id).unwrap();
+        assert_eq!(task.challenge_window_blocks_snapshot, Some(DEFAULT_CHALLENGE_WINDOW_BLOCKS));
+        assert_eq!(task.resolve_deadline_height, Some(111 + DEFAULT_CHALLENGE_WINDOW_BLOCKS));
+    }
+
+    #[test]
     fn challenge_window_is_snapshotted_at_reveal_even_if_governance_changes_after() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
