@@ -393,6 +393,13 @@ pub fn apply_create_task(
     creator: String,
     bounty: u128,
 ) -> Result<ObjectRef, PouwError> {
+    // Boundary hardening: creator account id must be canonical and non-blank
+    // before task object is persisted into state.
+    let creator_trimmed = creator.trim();
+    if creator_trimmed.is_empty() || creator_trimmed != creator {
+        return Err(PouwError::Unauthorized);
+    }
+
     let task = TaskObject {
         task_id,
         creator,
@@ -969,9 +976,20 @@ mod tests {
     }
 
     #[test]
+    fn create_task_rejects_noncanonical_creator_identity() {
+        let mut st = seeded_state();
+
+        let blank = apply_create_task(&mut st, 209, "   ".into(), 10).unwrap_err();
+        assert!(matches!(blank, PouwError::Unauthorized));
+
+        let padded = apply_create_task(&mut st, 210, " alice ".into(), 10).unwrap_err();
+        assert!(matches!(padded, PouwError::Unauthorized));
+    }
+
+    #[test]
     fn accept_task_rejects_noncanonical_worker_identity() {
         let mut st = seeded_state();
-        let r1 = apply_create_task(&mut st, 210, "alice".into(), 10).unwrap();
+        let r1 = apply_create_task(&mut st, 211, "alice".into(), 10).unwrap();
 
         let blank = apply_accept_task(&mut st, r1.clone(), "   ".into()).unwrap_err();
         assert!(matches!(blank, PouwError::Unauthorized));
