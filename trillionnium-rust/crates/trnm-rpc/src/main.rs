@@ -710,7 +710,7 @@ fn clamp_limit(op: &str, requested: usize, default_limit: usize, max_limit: usiz
 
 fn normalize_tx_hash_lookup(raw: &str) -> String {
     let mut normalized = raw.trim_matches(|c: char| {
-        c.is_ascii_whitespace() || matches!(c, ',' | ';' | '(' | ')' | '[' | ']' | '{' | '}')
+        c.is_ascii_whitespace() || matches!(c, ',' | ';' | '.' | '(' | ')' | '[' | ']' | '{' | '}')
     });
 
     loop {
@@ -722,7 +722,7 @@ fn normalize_tx_hash_lookup(raw: &str) -> String {
         if is_wrapped {
             normalized = normalized[1..normalized.len() - 1].trim_matches(|c: char| {
                 c.is_ascii_whitespace()
-                    || matches!(c, ',' | ';' | '(' | ')' | '[' | ']' | '{' | '}')
+                    || matches!(c, ',' | ';' | '.' | '(' | ')' | '[' | ']' | '{' | '}')
             });
             continue;
         }
@@ -736,7 +736,7 @@ fn normalize_tx_hash_lookup(raw: &str) -> String {
             if key == "tx_hash" || key == "txhash" || key == "hash" {
                 let mut value = v.trim_matches(|c: char| {
                     c.is_ascii_whitespace()
-                        || matches!(c, ',' | ';' | '(' | ')' | '[' | ']' | '{' | '}')
+                        || matches!(c, ',' | ';' | '.' | '(' | ')' | '[' | ']' | '{' | '}')
                 });
                 loop {
                     let is_wrapped = value.len() >= 2
@@ -746,7 +746,7 @@ fn normalize_tx_hash_lookup(raw: &str) -> String {
                     if is_wrapped {
                         value = value[1..value.len() - 1].trim_matches(|c: char| {
                             c.is_ascii_whitespace()
-                                || matches!(c, ',' | ';' | '(' | ')' | '[' | ']' | '{' | '}')
+                                || matches!(c, ',' | ';' | '.' | '(' | ')' | '[' | ']' | '{' | '}')
                         });
                         continue;
                     }
@@ -1748,6 +1748,14 @@ mod tests {
     }
 
     #[test]
+    fn normalize_tx_hash_lookup_trims_sentence_period_after_hash_value() {
+        assert_eq!(
+            normalize_tx_hash_lookup("tx_hash=0xAbC123."),
+            "0xabc123"
+        );
+    }
+
+    #[test]
     fn is_hex_like_tx_hash_accepts_only_0x_prefixed_hex() {
         assert!(is_hex_like_tx_hash("0xabc123"));
         assert!(is_hex_like_tx_hash("0xA1B2"));
@@ -1889,6 +1897,8 @@ mod tests {
         let pause = st
             .get_param(EMERGENCY_PAUSE_KEY_ID)
             .expect("canonical emergency_pause param must remain readable");
+        assert_eq!(pause.key_id, EMERGENCY_PAUSE_KEY_ID);
+        assert_eq!(pause.version, 1);
         assert_eq!(pause.value, "false");
     }
 
