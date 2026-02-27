@@ -664,6 +664,53 @@ mod tests {
     }
 
     #[test]
+    fn settlement_terminal_payloads_are_trimmed_before_persisting() {
+        let route = BridgeRoute {
+            route_id: "eth->trnm".to_string(),
+            source_chain: "ethereum".to_string(),
+            target_chain: "trillionnium".to_string(),
+        };
+
+        let mut finalized = SettlementRecord {
+            settlement_id: 13,
+            route: route.clone(),
+            status: SettlementStatus::Pending,
+            at_height: 300,
+            settlement_tx: None,
+            revert_reason: None,
+        };
+        finalized
+            .apply_status(
+                SettlementStatus::Finalized,
+                301,
+                Some("  0xtrimmed  ".to_string()),
+                None,
+            )
+            .unwrap();
+        assert_eq!(finalized.settlement_tx.as_deref(), Some("0xtrimmed"));
+        assert_eq!(finalized.revert_reason, None);
+
+        let mut reverted = SettlementRecord {
+            settlement_id: 14,
+            route,
+            status: SettlementStatus::Pending,
+            at_height: 400,
+            settlement_tx: None,
+            revert_reason: None,
+        };
+        reverted
+            .apply_status(
+                SettlementStatus::Reverted,
+                401,
+                None,
+                Some("  manual_compensation  ".to_string()),
+            )
+            .unwrap();
+        assert_eq!(reverted.settlement_tx, None);
+        assert_eq!(reverted.revert_reason.as_deref(), Some("manual_compensation"));
+    }
+
+    #[test]
     fn issue_capability_rejects_expiry_before_issue_height() {
         let mut reg = IdentityRegistry::default();
         reg.register_did(
