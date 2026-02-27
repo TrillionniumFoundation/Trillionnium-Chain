@@ -176,6 +176,8 @@ struct MessageIngressRecord {
     #[serde(default)]
     model_output: Option<String>,
     #[serde(default)]
+    provider_request_id: Option<String>,
+    #[serde(default)]
     result_hash: Option<String>,
     #[serde(default)]
     verifier_status: Option<String>,
@@ -187,6 +189,8 @@ struct MessageIngressRecord {
     reveal_tx_hash: Option<String>,
     #[serde(default)]
     adapter_error: Option<String>,
+    #[serde(default)]
+    reputation_delta: Option<i32>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -760,10 +764,38 @@ fn verify_model_output(output: &str, max_chars: usize) -> (&'static str, &'stati
     ("accepted", "ok")
 }
 
+fn attach_llm_provenance(rec: &mut MessageIngressRecord, llm: &LlmAdapterResponse) {
+    rec.provider_request_id = llm.provider_request_id.clone();
+}
+
 fn classify_adapter_error(err: &AdapterError) -> (&'static str, &'static str) {
     match err.kind {
         AdapterErrorKind::Retriable => ("adapter_error", "retry_exhausted"),
         AdapterErrorKind::NonRetriable => ("adapter_error", "non_retriable"),
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum ReputationSignal {
+    Accepted,
+    VerifierRejected,
+    AdapterRetryExhausted,
+    AdapterNonRetriable,
+}
+
+fn reputation_delta(signal: ReputationSignal) -> i32 {
+    match signal {
+        ReputationSignal::Accepted => 3,
+        ReputationSignal::VerifierRejected => -2,
+        ReputationSignal::AdapterRetryExhausted => -1,
+        ReputationSignal::AdapterNonRetriable => -3,
+    }
+}
+
+fn adapter_error_signal(kind: AdapterErrorKind) -> ReputationSignal {
+    match kind {
+        AdapterErrorKind::Retriable => ReputationSignal::AdapterRetryExhausted,
+        AdapterErrorKind::NonRetriable => ReputationSignal::AdapterNonRetriable,
     }
 }
 
@@ -963,6 +995,26 @@ mod tests {
     }
 
     #[test]
+    fn reputation_delta_maps_market_penalty_and_reward_signals() {
+        assert_eq!(reputation_delta(ReputationSignal::Accepted), 3);
+        assert_eq!(reputation_delta(ReputationSignal::VerifierRejected), -2);
+        assert_eq!(reputation_delta(ReputationSignal::AdapterRetryExhausted), -1);
+        assert_eq!(reputation_delta(ReputationSignal::AdapterNonRetriable), -3);
+    }
+
+    #[test]
+    fn adapter_error_signal_maps_retryability_to_penalty_tier() {
+        assert_eq!(
+            adapter_error_signal(AdapterErrorKind::Retriable),
+            ReputationSignal::AdapterRetryExhausted
+        );
+        assert_eq!(
+            adapter_error_signal(AdapterErrorKind::NonRetriable),
+            ReputationSignal::AdapterNonRetriable
+        );
+    }
+
+    #[test]
     fn llm_adapter_retry_succeeds_within_budget() {
         let mut attempt = 0u32;
         let mut slept = vec![];
@@ -1076,6 +1128,47 @@ mod tests {
         assert!(!is_task_acked(&ack_log, 1));
         assert!(is_task_acked(&ack_log, 2));
         let _ = fs::remove_file(&ack_log);
+    }
+
+    #[test]
+    fn message_ingress_backward_compat_defaults_provider_request_id() {
+        let raw = r#"{"request_id":"r1","task_id":7,"channel":"telegram","user_id":"u1","session_id":"s1","text":"hello","idempotency_key":"ik1","status":"assigned","created_at_unix_ms":1}"#;
+        let rec: MessageIngressRecord = serde_json::from_str(raw).expect("parse ingress record");
+        assert_eq!(rec.provider_request_id, None);
+    }
+
+    #[test]
+    fn attach_llm_provenance_persists_provider_request_id() {
+        let mut rec = MessageIngressRecord {
+            request_id: "r1".to_string(),
+            task_id: 9,
+            channel: "telegram".to_string(),
+            user_id: "u1".to_string(),
+            session_id: "s1".to_string(),
+            text: "prompt".to_string(),
+            idempotency_key: "ik1".to_string(),
+            status: RequestStatus::Assigned.as_str().to_string(),
+            created_at_unix_ms: 1,
+            assigned_worker: Some("worker-1".to_string()),
+            assigned_at_unix_ms: Some(2),
+            model_output: None,
+            provider_request_id: None,
+            result_hash: None,
+            verifier_status: None,
+            resolution_code: None,
+            commit_tx_hash: None,
+            reveal_tx_hash: None,
+            adapter_error: None,
+            reputation_delta: None,
+        };
+        let llm = LlmAdapterResponse {
+            output_text: "ok".to_string(),
+            provider_request_id: Some("provider-123".to_string()),
+        };
+
+        attach_llm_provenance(&mut rec, &llm);
+
+        assert_eq!(rec.provider_request_id.as_deref(), Some("provider-123"));
     }
 }
 
@@ -1204,6 +1297,7 @@ fn main() -> Result<()> {
                         rec.verifier_status = Some("rejected".to_string());
                         rec.resolution_code = Some(resolution_code.to_string());
                         rec.adapter_error = Some(e.context.clone());
+                        rec.reputation_delta = Some(reputation_delta(adapter_error_signal(e.kind)));
                         n += 1;
                         println!(
                             "[assigned] request_id={} task_id={} worker={} status=FAILED_ADAPTER({}) retryable={} error={}",
@@ -1219,12 +1313,14 @@ fn main() -> Result<()> {
                 };
                 let (v_status, resolution_code) =
                     verify_model_output(&llm.output_text, verifier_max_output_chars);
+                attach_llm_provenance(rec, &llm);
                 rec.model_output = Some(llm.output_text.clone());
                 rec.verifier_status = Some(v_status.to_string());
                 rec.resolution_code = Some(resolution_code.to_string());
 
                 if v_status != "accepted" {
                     rec.status = transition_request_status(&rec.status, RequestStatus::Rejected)?;
+                    rec.reputation_delta = Some(reputation_delta(ReputationSignal::VerifierRejected));
                     n += 1;
                     println!(
                         "[assigned] request_id={} task_id={} worker={} verifier_status={} resolution_code={}",
@@ -1248,6 +1344,7 @@ fn main() -> Result<()> {
                     )?;
                 }
                 rec.status = transition_request_status(&rec.status, RequestStatus::CommitQueued)?;
+                rec.reputation_delta = Some(reputation_delta(ReputationSignal::Accepted));
                 n += 1;
                 println!(
                     "[assigned] request_id={} task_id={} worker={} result_hash={} submit={} provider_request_id={}",
@@ -1256,7 +1353,7 @@ fn main() -> Result<()> {
                     worker,
                     result_hash,
                     submit,
-                    llm.provider_request_id.unwrap_or_else(|| "-".to_string())
+                    rec.provider_request_id.as_deref().unwrap_or("-")
                 );
             }
             save_ingress_records(&ingress_file, &records)?;
