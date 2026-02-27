@@ -690,27 +690,46 @@ impl ReliabilityStoreMode {
     }
 }
 
+fn normalized_env_path(raw: &str) -> Option<&str> {
+    let trimmed = raw.trim();
+    if trimmed.is_empty() {
+        return None;
+    }
+
+    let stripped = if (trimmed.starts_with('"') && trimmed.ends_with('"'))
+        || (trimmed.starts_with('\'') && trimmed.ends_with('\''))
+    {
+        &trimmed[1..trimmed.len() - 1]
+    } else {
+        trimmed
+    }
+    .trim();
+
+    if stripped.is_empty() {
+        None
+    } else {
+        Some(stripped)
+    }
+}
+
 pub fn default_reliability_db_path() -> PathBuf {
     if let Ok(path) = std::env::var("RELIABILITY_DB_PATH") {
-        let trimmed = path.trim();
-        if !trimmed.is_empty() {
-            return PathBuf::from(trimmed);
+        if let Some(normalized) = normalized_env_path(&path) {
+            return PathBuf::from(normalized);
         }
     }
 
     if let Ok(xdg_state_home) = std::env::var("XDG_STATE_HOME") {
-        let trimmed = xdg_state_home.trim();
-        if !trimmed.is_empty() {
-            return PathBuf::from(trimmed)
+        if let Some(normalized) = normalized_env_path(&xdg_state_home) {
+            return PathBuf::from(normalized)
                 .join("trillionnium")
                 .join("reliability.sqlite");
         }
     }
 
     if let Ok(home) = std::env::var("HOME") {
-        let trimmed = home.trim();
-        if !trimmed.is_empty() {
-            return PathBuf::from(trimmed)
+        if let Some(normalized) = normalized_env_path(&home) {
+            return PathBuf::from(normalized)
                 .join(".trillionnium")
                 .join("reliability.sqlite");
         }
@@ -1362,6 +1381,12 @@ mod tests {
         assert_eq!(
             default_reliability_db_path(),
             PathBuf::from("/tmp/explicit-reliability.sqlite")
+        );
+
+        std::env::set_var("RELIABILITY_DB_PATH", "  \"/tmp/quoted-reliability.sqlite\"  ");
+        assert_eq!(
+            default_reliability_db_path(),
+            PathBuf::from("/tmp/quoted-reliability.sqlite")
         );
 
         std::env::remove_var("RELIABILITY_DB_PATH");
