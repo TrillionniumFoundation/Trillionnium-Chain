@@ -815,6 +815,37 @@ mod tests {
     }
 
     #[test]
+    fn register_did_rejects_duplicate_without_side_effects() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did(
+            "did:trnm:agent-dup".to_string(),
+            "org:lane2-admin".to_string(),
+            10,
+        )
+        .unwrap();
+
+        let audit_len_before = reg.audit_trail().len();
+        let err = reg
+            .register_did(
+                "did:trnm:agent-dup".to_string(),
+                "org:lane2-backup".to_string(),
+                20,
+            )
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            InteropIdentityError::DidAlreadyExists { did } if did == "did:trnm:agent-dup"
+        ));
+        assert_eq!(reg.audit_trail().len(), audit_len_before);
+
+        let did = reg.did("did:trnm:agent-dup").unwrap();
+        assert_eq!(did.controller, "org:lane2-admin");
+        assert_eq!(did.created_at, 10);
+        assert_eq!(did.revoked_at, None);
+    }
+
+    #[test]
     fn issue_capability_rejects_expiry_before_issue_height() {
         let mut reg = IdentityRegistry::default();
         reg.register_did(
