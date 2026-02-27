@@ -129,8 +129,10 @@ impl CapabilityToken {
             return false;
         }
 
-        if self.revoked_at.is_some() {
-            return false;
+        if let Some(revoked_at) = self.revoked_at {
+            if at_height >= revoked_at {
+                return false;
+            }
         }
 
         match self.expires_at {
@@ -646,6 +648,22 @@ mod tests {
         assert!(token.is_active_at(50));
         assert!(token.is_active_at(60));
         assert!(!token.is_active_at(61));
+    }
+
+    #[test]
+    fn capability_revocation_respects_historical_heights() {
+        let token = CapabilityToken {
+            token_id: 2,
+            subject_did: "did:trnm:agent-revoke-window".to_string(),
+            scope: CapabilityScope::AuditRead,
+            issued_at: 10,
+            expires_at: None,
+            revoked_at: Some(20),
+        };
+
+        assert!(token.is_active_at(19));
+        assert!(!token.is_active_at(20));
+        assert!(!token.is_active_at(21));
     }
 
     #[test]
