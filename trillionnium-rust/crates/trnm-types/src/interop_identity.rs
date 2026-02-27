@@ -399,18 +399,19 @@ impl IdentityRegistry {
             .collect();
 
         for token_id in to_revoke {
-            let subject = {
+            let (subject, cascade_revoke_height) = {
                 let Some(token) = self.capabilities.get_mut(&token_id) else {
                     continue;
                 };
-                token.revoked_at = Some(at_height);
-                token.subject_did.clone()
+                let cascade_revoke_height = at_height.max(token.issued_at);
+                token.revoked_at = Some(cascade_revoke_height);
+                (token.subject_did.clone(), cascade_revoke_height)
             };
             self.push_audit(
                 AuditAction::CapabilityRevoked,
                 "system:cascade".to_string(),
                 subject,
-                at_height,
+                cascade_revoke_height,
                 Some(format!("cascade_on_did_revoke token_id={}", token_id)),
             );
         }
@@ -1350,6 +1351,38 @@ mod tests {
             reg.audit_trail().last().map(|e| e.action),
             Some(AuditAction::DidRevoked)
         );
+    }
+
+    #[test]
+    fn revoke_did_cascade_does_not_backdate_capability_before_issue_height() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did(
+            "did:trnm:agent-4b".to_string(),
+            "org:lane2-admin".to_string(),
+            10,
+        )
+        .unwrap();
+
+        let token_id = reg
+            .issue_capability(
+                "org:lane2-admin".to_string(),
+                "did:trnm:agent-4b".to_string(),
+                CapabilityScope::BridgeSettle,
+                60,
+                Some(200),
+            )
+            .unwrap();
+
+        reg.revoke_did("org:lane2-admin".to_string(), "did:trnm:agent-4b", 40)
+            .unwrap();
+
+        assert_eq!(reg.did("did:trnm:agent-4b").unwrap().revoked_at, Some(40));
+        assert_eq!(reg.capability(token_id).unwrap().revoked_at, Some(60));
+
+        let last = reg.audit_trail().last().unwrap();
+        assert_eq!(last.action, AuditAction::CapabilityRevoked);
+        assert_eq!(last.actor, "system:cascade");
+        assert_eq!(last.at_height, 60);
     }
 
     #[test]
