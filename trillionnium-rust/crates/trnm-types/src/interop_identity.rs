@@ -1199,6 +1199,46 @@ mod tests {
     }
 
     #[test]
+    fn revoke_did_rejects_actor_that_is_not_did_controller_without_side_effects() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did(
+            "did:trnm:agent-2u".to_string(),
+            "org:lane2-admin".to_string(),
+            10,
+        )
+        .unwrap();
+
+        let token_id = reg
+            .issue_capability(
+                "org:lane2-admin".to_string(),
+                "did:trnm:agent-2u".to_string(),
+                CapabilityScope::AuditRead,
+                12,
+                Some(100),
+            )
+            .unwrap();
+        let audit_len_before = reg.audit_trail().len();
+
+        let err = reg
+            .revoke_did("org:lane2-backup".to_string(), "did:trnm:agent-2u", 40)
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            InteropIdentityError::UnauthorizedActor {
+                actor,
+                did,
+                controller,
+            } if actor == "org:lane2-backup"
+                && did == "did:trnm:agent-2u"
+                && controller == "org:lane2-admin"
+        ));
+        assert_eq!(reg.did("did:trnm:agent-2u").unwrap().revoked_at, None);
+        assert_eq!(reg.capability(token_id).unwrap().revoked_at, None);
+        assert_eq!(reg.audit_trail().len(), audit_len_before);
+    }
+
+    #[test]
     fn revoke_did_is_idempotent_for_audit_and_timestamp() {
         let mut reg = IdentityRegistry::default();
         reg.register_did(
