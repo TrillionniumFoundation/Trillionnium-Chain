@@ -789,11 +789,24 @@ fn verify_model_output(output: &str, max_chars: usize) -> (&'static str, &'stati
     ("accepted", "ok")
 }
 
-fn attach_llm_provenance(rec: &mut MessageIngressRecord, llm: &LlmAdapterResponse) {
-    rec.provider_request_id = llm.provider_request_id.clone();
+fn normalized_optional_field(value: Option<&str>) -> Option<String> {
+    value
+        .map(str::trim)
+        .filter(|v| !v.is_empty())
+        .map(ToOwned::to_owned)
+}
 
-    let has_v1_fields = llm.provider.is_some() || llm.model.is_some() || llm.adapter.is_some();
-    let has_v2_fields = llm.agent_protocol.is_some() || llm.compliance_profile.is_some();
+fn attach_llm_provenance(rec: &mut MessageIngressRecord, llm: &LlmAdapterResponse) {
+    rec.provider_request_id = normalized_optional_field(llm.provider_request_id.as_deref());
+
+    let provider = normalized_optional_field(llm.provider.as_deref());
+    let model = normalized_optional_field(llm.model.as_deref());
+    let adapter = normalized_optional_field(llm.adapter.as_deref());
+    let agent_protocol = normalized_optional_field(llm.agent_protocol.as_deref());
+    let compliance_profile = normalized_optional_field(llm.compliance_profile.as_deref());
+
+    let has_v1_fields = provider.is_some() || model.is_some() || adapter.is_some();
+    let has_v2_fields = agent_protocol.is_some() || compliance_profile.is_some();
     let has_structured_provenance = has_v1_fields || has_v2_fields;
 
     rec.provenance_schema_version = if has_v2_fields {
@@ -805,11 +818,11 @@ fn attach_llm_provenance(rec: &mut MessageIngressRecord, llm: &LlmAdapterRespons
     };
 
     rec.llm_provenance = has_structured_provenance.then(|| LlmProvenanceRecord {
-        provider: llm.provider.clone(),
-        model: llm.model.clone(),
-        adapter: llm.adapter.clone(),
-        agent_protocol: llm.agent_protocol.clone(),
-        compliance_profile: llm.compliance_profile.clone(),
+        provider,
+        model,
+        adapter,
+        agent_protocol,
+        compliance_profile,
     });
 }
 
@@ -1334,6 +1347,54 @@ mod tests {
         assert_eq!(rec.provenance_schema_version.as_deref(), Some("llm.v2"));
         let prov = rec.llm_provenance.as_ref().expect("provenance attached");
         assert_eq!(prov.agent_protocol.as_deref(), Some("a2a"));
+        assert_eq!(prov.compliance_profile.as_deref(), Some("cn-pii-restricted"));
+    }
+
+    #[test]
+    fn attach_llm_provenance_trims_whitespace_and_drops_empty_fields() {
+        let mut rec = MessageIngressRecord {
+            request_id: "r4".to_string(),
+            task_id: 12,
+            channel: "telegram".to_string(),
+            user_id: "u4".to_string(),
+            session_id: "s4".to_string(),
+            text: "prompt".to_string(),
+            idempotency_key: "ik4".to_string(),
+            status: RequestStatus::Assigned.as_str().to_string(),
+            created_at_unix_ms: 1,
+            assigned_worker: Some("worker-1".to_string()),
+            assigned_at_unix_ms: Some(2),
+            model_output: None,
+            provider_request_id: None,
+            provenance_schema_version: None,
+            llm_provenance: None,
+            result_hash: None,
+            verifier_status: None,
+            resolution_code: None,
+            commit_tx_hash: None,
+            reveal_tx_hash: None,
+            adapter_error: None,
+            reputation_delta: None,
+        };
+        let llm = LlmAdapterResponse {
+            output_text: "ok".to_string(),
+            provider_request_id: Some("  provider-444  ".to_string()),
+            provider: Some("  ".to_string()),
+            model: Some("gpt-5.3-codex".to_string()),
+            adapter: Some("mcp".to_string()),
+            agent_protocol: Some("   ".to_string()),
+            compliance_profile: Some("  cn-pii-restricted  ".to_string()),
+        };
+
+        attach_llm_provenance(&mut rec, &llm);
+
+        assert_eq!(rec.provider_request_id.as_deref(), Some("provider-444"));
+        assert_eq!(rec.provenance_schema_version.as_deref(), Some("llm.v2"));
+        let prov = rec.llm_provenance.as_ref().expect("provenance attached");
+        assert_eq!(prov.provider, None);
+        assert_eq!(prov.model.as_deref(), Some("gpt-5.3-codex"));
+        assert_eq!(prov.adapter.as_deref(), Some("mcp"));
+        assert_eq!(prov.agent_protocol, None);
         assert_eq!(prov.compliance_profile.as_deref(), Some("cn-pii-restricted"));
     }
 }
