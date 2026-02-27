@@ -918,6 +918,34 @@ mod tests {
             }
         ));
         assert!(reg.did("did:trnm:agent-ok").is_none());
+
+        let err = reg
+            .register_did(
+                "did:trnm:agent-ok".to_string(),
+                "org:lane2-admin ".to_string(),
+                10,
+            )
+            .unwrap_err();
+        assert!(matches!(
+            err,
+            InteropIdentityError::InvalidIdentityValue {
+                field: "controller",
+                ..
+            }
+        ));
+        assert!(reg.did("did:trnm:agent-ok").is_none());
+
+        let err = reg
+            .register_did("did:trnm:agent-ok".to_string(), "  ".to_string(), 10)
+            .unwrap_err();
+        assert!(matches!(
+            err,
+            InteropIdentityError::InvalidIdentityValue {
+                field: "controller",
+                ..
+            }
+        ));
+        assert!(reg.did("did:trnm:agent-ok").is_none());
         assert!(reg.audit_trail().is_empty());
     }
 
