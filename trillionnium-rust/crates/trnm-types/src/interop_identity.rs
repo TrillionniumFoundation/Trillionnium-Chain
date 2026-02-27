@@ -188,6 +188,15 @@ impl IdentityRegistry {
         at_height: u64,
         expires_at: Option<u64>,
     ) -> Result<u64, InteropIdentityError> {
+        if let Some(exp) = expires_at {
+            if exp < at_height {
+                return Err(InteropIdentityError::InvalidCapabilityExpiry {
+                    issued_at: at_height,
+                    expires_at: exp,
+                });
+            }
+        }
+
         match self.dids.get(&subject_did) {
             Some(did) if did.is_active() => {}
             Some(_) => {
@@ -349,6 +358,10 @@ pub enum InteropIdentityError {
     CapabilityNotFound {
         token_id: u64,
     },
+    InvalidCapabilityExpiry {
+        issued_at: u64,
+        expires_at: u64,
+    },
 }
 
 impl fmt::Display for InteropIdentityError {
@@ -368,6 +381,16 @@ impl fmt::Display for InteropIdentityError {
             }
             InteropIdentityError::CapabilityNotFound { token_id } => {
                 write!(f, "capability not found: {}", token_id)
+            }
+            InteropIdentityError::InvalidCapabilityExpiry {
+                issued_at,
+                expires_at,
+            } => {
+                write!(
+                    f,
+                    "invalid capability expiry: expires_at {} < issued_at {}",
+                    expires_at, issued_at
+                )
             }
         }
     }
@@ -418,6 +441,35 @@ mod tests {
             InteropIdentityError::InvalidSettlementTransition {
                 from: SettlementStatus::Finalized,
                 to: SettlementStatus::Reverted
+            }
+        ));
+    }
+
+    #[test]
+    fn issue_capability_rejects_expiry_before_issue_height() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did(
+            "did:trnm:agent-1".to_string(),
+            "org:lane2-admin".to_string(),
+            10,
+        )
+        .unwrap();
+
+        let err = reg
+            .issue_capability(
+                "org:lane2-admin".to_string(),
+                "did:trnm:agent-1".to_string(),
+                CapabilityScope::BridgeSettle,
+                20,
+                Some(19),
+            )
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            InteropIdentityError::InvalidCapabilityExpiry {
+                issued_at: 20,
+                expires_at: 19
             }
         ));
     }
