@@ -1207,6 +1207,10 @@ mod tests {
 
         // Invisible fillers should not inflate length checks for market verification.
         assert_eq!(verify_model_output("\u{200B}ok\u{200D}", 2), ("accepted", "ok"));
+
+        // ZWJ inside visible emoji sequences should stay deterministic for verifier limits.
+        assert_eq!(verify_model_output("👩\u{200D}💻", 2), ("accepted", "ok"));
+        assert_eq!(verify_model_output("👩\u{200D}💻", 1), ("rejected", "output_too_long"));
     }
 
     #[test]
