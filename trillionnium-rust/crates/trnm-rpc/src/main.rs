@@ -2884,8 +2884,21 @@ mod tests {
         assert_eq!(out.version, 2);
     }
 
+    fn faucet_env_test_lock() -> &'static std::sync::Mutex<()> {
+        static LOCK: std::sync::OnceLock<std::sync::Mutex<()>> = std::sync::OnceLock::new();
+        LOCK.get_or_init(|| std::sync::Mutex::new(()))
+    }
+
+    fn clear_faucet_env() {
+        std::env::remove_var("TRNM_RPC_FAUCET_WINDOW_SECONDS");
+        std::env::remove_var("TRNM_RPC_FAUCET_MAX_REQUESTS");
+    }
+
     #[test]
     fn faucet_env_parsing_enforces_minimums() {
+        let _guard = faucet_env_test_lock().lock().expect("faucet env lock");
+        clear_faucet_env();
+
         std::env::set_var("TRNM_RPC_FAUCET_WINDOW_SECONDS", "0");
         std::env::set_var("TRNM_RPC_FAUCET_MAX_REQUESTS", "0");
 
@@ -2903,12 +2916,14 @@ mod tests {
         assert_eq!(window, FAUCET_WINDOW_SECONDS_MIN);
         assert_eq!(max_requests, FAUCET_MAX_REQUESTS_MIN);
 
-        std::env::remove_var("TRNM_RPC_FAUCET_WINDOW_SECONDS");
-        std::env::remove_var("TRNM_RPC_FAUCET_MAX_REQUESTS");
+        clear_faucet_env();
     }
 
     #[test]
     fn faucet_env_parsing_uses_defaults_for_invalid_values() {
+        let _guard = faucet_env_test_lock().lock().expect("faucet env lock");
+        clear_faucet_env();
+
         std::env::set_var("TRNM_RPC_FAUCET_WINDOW_SECONDS", "bad");
         std::env::set_var("TRNM_RPC_FAUCET_MAX_REQUESTS", "bad");
 
@@ -2926,12 +2941,14 @@ mod tests {
         assert_eq!(window, FAUCET_WINDOW_SECONDS_DEFAULT);
         assert_eq!(max_requests, FAUCET_MAX_REQUESTS_DEFAULT);
 
-        std::env::remove_var("TRNM_RPC_FAUCET_WINDOW_SECONDS");
-        std::env::remove_var("TRNM_RPC_FAUCET_MAX_REQUESTS");
+        clear_faucet_env();
     }
 
     #[test]
     fn faucet_env_parsing_accepts_surrounding_whitespace() {
+        let _guard = faucet_env_test_lock().lock().expect("faucet env lock");
+        clear_faucet_env();
+
         std::env::set_var("TRNM_RPC_FAUCET_WINDOW_SECONDS", "  120  ");
         std::env::set_var("TRNM_RPC_FAUCET_MAX_REQUESTS", "\t9\n");
 
@@ -2949,8 +2966,7 @@ mod tests {
         assert_eq!(window, 120);
         assert_eq!(max_requests, 9);
 
-        std::env::remove_var("TRNM_RPC_FAUCET_WINDOW_SECONDS");
-        std::env::remove_var("TRNM_RPC_FAUCET_MAX_REQUESTS");
+        clear_faucet_env();
     }
 
     #[test]
