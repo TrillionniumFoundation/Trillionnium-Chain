@@ -1751,4 +1751,30 @@ mod tests {
         assert_eq!(reg.capability(token_id).unwrap().revoked_at, Some(30));
         assert_eq!(reg.audit_trail().len(), audit_len_before);
     }
+
+    #[test]
+    fn capability_expiry_is_inclusive_at_expiry_height() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did(
+            "did:trnm:agent-11".to_string(),
+            "org:lane2-admin".to_string(),
+            10,
+        )
+        .unwrap();
+
+        let token_id = reg
+            .issue_capability(
+                "org:lane2-admin".to_string(),
+                "did:trnm:agent-11".to_string(),
+                CapabilityScope::BridgeSettle,
+                20,
+                Some(25),
+            )
+            .unwrap();
+
+        let token = reg.capability(token_id).unwrap();
+        assert!(token.is_active_at(20));
+        assert!(token.is_active_at(25));
+        assert!(!token.is_active_at(26));
+    }
 }
