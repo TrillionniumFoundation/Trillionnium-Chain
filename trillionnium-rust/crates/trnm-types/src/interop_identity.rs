@@ -701,6 +701,48 @@ mod tests {
     }
 
     #[test]
+    fn settlement_terminal_idempotent_reapply_still_rejects_height_regression() {
+        let route = BridgeRoute {
+            route_id: "eth->trnm".to_string(),
+            source_chain: "ethereum".to_string(),
+            target_chain: "trillionnium".to_string(),
+        };
+
+        let mut rec = SettlementRecord {
+            settlement_id: 10,
+            route,
+            status: SettlementStatus::Pending,
+            at_height: 300,
+            settlement_tx: None,
+            revert_reason: None,
+        };
+
+        rec.apply_status(
+            SettlementStatus::Finalized,
+            305,
+            Some("0xdone".to_string()),
+            None,
+        )
+        .unwrap();
+
+        let err = rec
+            .apply_status(SettlementStatus::Finalized, 304, None, None)
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            InteropIdentityError::InvalidSettlementHeightRegression {
+                current_at: 305,
+                next_at: 304
+            }
+        ));
+        assert_eq!(rec.status, SettlementStatus::Finalized);
+        assert_eq!(rec.at_height, 305);
+        assert_eq!(rec.settlement_tx.as_deref(), Some("0xdone"));
+        assert_eq!(rec.revert_reason, None);
+    }
+
+    #[test]
     fn settlement_revert_and_finalize_fields_are_mutually_exclusive() {
         let route = BridgeRoute {
             route_id: "eth->trnm".to_string(),
