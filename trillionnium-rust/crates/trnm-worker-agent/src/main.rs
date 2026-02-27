@@ -780,7 +780,15 @@ fn run_llm_adapter_with_retry(
 }
 
 fn is_invisible_filler(c: char) -> bool {
-    matches!(c, '\u{200B}' | '\u{200C}' | '\u{200D}' | '\u{FEFF}')
+    matches!(
+        c,
+        '\u{200B}' // ZERO WIDTH SPACE
+            | '\u{200C}' // ZERO WIDTH NON-JOINER
+            | '\u{200D}' // ZERO WIDTH JOINER
+            | '\u{2060}' // WORD JOINER
+            | '\u{00AD}' // SOFT HYPHEN
+            | '\u{FEFF}' // ZERO WIDTH NO-BREAK SPACE / BOM
+    )
 }
 
 fn verify_model_output(output: &str, max_chars: usize) -> (&'static str, &'static str) {
@@ -844,11 +852,11 @@ fn normalized_compliance_profile(value: Option<&str>) -> Option<String> {
     let is_allowed = normalized
         .chars()
         .all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || c == '-' || c == '_');
-    let starts_and_ends_alnum = normalized
+    let starts_with_alpha_and_ends_alnum = normalized
         .chars()
         .next()
         .zip(normalized.chars().last())
-        .map(|(start, end)| start.is_ascii_alphanumeric() && end.is_ascii_alphanumeric())
+        .map(|(start, end)| start.is_ascii_lowercase() && end.is_ascii_alphanumeric())
         .unwrap_or(false);
     let has_adjacent_separators = normalized
         .chars()
@@ -1182,11 +1190,12 @@ mod tests {
     fn verify_model_output_enforces_trimmed_empty_and_char_limit_boundaries() {
         assert_eq!(verify_model_output("   \n\t", 8), ("rejected", "empty_output"));
 
-        // Zero-width fillers should not pass verifier checks as meaningful output.
+        // Zero-width/invisible fillers should not pass verifier checks as meaningful output.
         assert_eq!(
             verify_model_output("\u{200B}\u{200C}\u{FEFF}", 8),
             ("rejected", "empty_output")
         );
+        assert_eq!(verify_model_output("\u{2060}\u{00AD}", 8), ("rejected", "empty_output"));
 
         // Whitespace + zero-width-only payloads must also be rejected deterministically.
         assert_eq!(
