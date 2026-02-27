@@ -1456,7 +1456,7 @@ mod tests {
                 "resolver-v2".into(),
             )
             .unwrap_err();
-        assert!(err_id.contains("pending governance update key_id mismatch"));
+        assert!(err_id.contains("governance key id mismatch for resolve_authority"));
 
         let pending = st.pending_gov_update("resolve_authority").unwrap();
         assert_eq!(pending.key_id, 7312);
