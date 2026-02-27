@@ -867,7 +867,7 @@ fn normalized_compliance_profile(value: Option<&str>) -> Option<String> {
         .0;
     let has_alpha = normalized.chars().any(|c| c.is_ascii_lowercase());
     if is_allowed
-        && starts_and_ends_alnum
+        && starts_with_alpha_and_ends_alnum
         && !has_adjacent_separators
         && normalized.len() <= 64
         && has_alpha
@@ -2054,6 +2054,14 @@ mod tests {
             normalized_compliance_profile(Some("cn-202602"))
                 .as_deref(),
             Some("cn-202602")
+        );
+    }
+
+    #[test]
+    fn normalized_compliance_profile_rejects_values_starting_with_digit() {
+        assert_eq!(
+            normalized_compliance_profile(Some("1cn-pii-restricted")),
+            None
         );
     }
 
