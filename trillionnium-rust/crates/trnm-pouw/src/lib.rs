@@ -1578,6 +1578,44 @@ mod tests {
     }
 
     #[test]
+    fn challenge_requires_min_bond_from_worker_stake_floor() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        st.set_gov_param_unchecked(9000, "challenge_min_bond".into(), "1".into())
+            .unwrap();
+        st.set_gov_param_unchecked(9001, "challenge_min_bond_bounty_bps".into(), "1".into())
+            .unwrap();
+        st.set_gov_param_unchecked(9002, "min_worker_stake".into(), "80".into())
+            .unwrap();
+        st.set_gov_param_unchecked(
+            9003,
+            "challenge_min_bond_worker_stake_bps".into(),
+            "2500".into(),
+        )
+        .unwrap();
+
+        let r1 = apply_create_task(&mut st, 887, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(887, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt).unwrap();
+
+        // Worker stake floor = ceil(80 * 25%) = 20, which should dominate static/bounty floors.
+        let err =
+            apply_challenge(&mut st, r4.clone(), "challenger".into(), 19, "challenger".into())
+                .unwrap_err();
+        assert!(matches!(err, PouwError::InsufficientStake));
+
+        let r5 = apply_challenge(&mut st, r4, "challenger".into(), 20, "challenger".into())
+            .unwrap();
+        let task = st.get_task(r5.id).unwrap();
+        assert_eq!(task.challenge_bond, Some(20));
+    }
+
+    #[test]
     fn challenge_requires_min_bond_from_governance() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
