@@ -2,8 +2,43 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
-cd "$ROOT/trillionnium-rust"
+ROADMAP_PROGRESS_FILE="$ROOT/docs/development/roadmap-progress.json"
+PAUSE_FILE="$ROOT/.auto-iterate.pause"
 export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+
+if [[ -f "$ROADMAP_PROGRESS_FILE" ]]; then
+  read -r progress_pct lane_b_paused_flag <<<"$(python3 - "$ROADMAP_PROGRESS_FILE" <<'PY'
+import json,sys
+p=sys.argv[1]
+try:
+    obj=json.load(open(p,'r',encoding='utf-8'))
+    v=int(obj.get('development_doc_roadmap_progress_pct', 0))
+    paused=bool(obj.get('laneB_paused_until_100', False))
+    print(v, 'true' if paused else 'false')
+except Exception:
+    print(0, 'false')
+PY
+)"
+else
+  progress_pct=0
+  lane_b_paused_flag=false
+fi
+
+pause_signal="absent"
+if [[ -f "$PAUSE_FILE" ]]; then
+  pause_signal="pause_file"
+elif [[ "$lane_b_paused_flag" == "true" ]]; then
+  pause_signal="roadmap_flag"
+fi
+
+if [[ "$progress_pct" -lt 100 && "$pause_signal" == "absent" ]]; then
+  echo "[FAIL] laneB governance: roadmap progress ${progress_pct}% < 100%, require .auto-iterate.pause or laneB_paused_until_100=true in $ROADMAP_PROGRESS_FILE" >&2
+  exit 1
+fi
+
+echo "[GATE] laneB governance: roadmap progress=${progress_pct}% pause_signal=${pause_signal}"
+
+cd "$ROOT/trillionnium-rust"
 
 echo "[TEST] governance_value_schema_reject: invalid value should be rejected"
 cargo test -q -p trnm-state governance_param_schema_rejects_invalid_u64_values -- --nocapture
