@@ -46,22 +46,135 @@ cargo test --workspace
 
 ## 3. 架构与模块边界
 
-## 3.1 数据流（高层）
-1. RPC/CLI 接收请求
-2. Node 组块并调用 Executor 并行预执行
-3. PoUW 状态迁移执行
-4. State 落库 + 事件输出
-5. Worker-Agent 与 CLI 查询回读状态
+本节按“代码真实职责”拆分，不按概念图拆分。核心边界以 `trillionnium-rust/crates/*` 与 `trillionnium-rust/scripts/*` 为准。
 
-## 3.2 治理与紧急机制
-- `emergency_pause` 用于暂停高风险交易路径
-- 敏感治理参数支持更严格检查（timelock/replace/cancel 等路径需门禁保护）
-- 建议所有治理关键行为都有 merge-gate 对应测试
+## 3.1 模块边界总览（谁负责什么）
 
-## 3.3 共识/安全关键点
-- 身份 canonicalization（validator / signer / challenger）
-- replay/nonce/seq 保护
-- timeout/challenge/resolve 元数据不变量
+### trnm-node（编排层 + 区块循环）
+- 入口：`crates/trnm-node/src/main.rs`
+- 职责：
+  - 驱动区块循环（mempool 取交易、BFT 回合、提交/跳过区块）。
+  - 生成并维护执行计划：把交易映射成读写集合，交给 `trnm-executor::build_parallel_groups` 分组并行预执行。
+  - 在提交阶段调用 `trnm-pouw` 的状态迁移函数（`apply_*`）。
+  - 维护共识 WAL 与 checkpoint：
+    - `run/consensus-wal/consensus-wal-meta.toml`
+    - `run/consensus-wal/consensus-checkpoints.toml`
+    - `run/consensus-wal/consensus-wal.toml`
+  - 输出标准化事件日志 `[event] ...`（含 `event_type/task_id/state_root/tx_hash/treasury_delta/...`）。
+- 不做：
+  - 不定义业务状态机规则（由 `trnm-pouw` 定义）。
+  - 不持有底层对象版本语义实现（由 `trnm-state` 提供）。
+
+### trnm-pouw（业务状态机层）
+- 入口：`crates/trnm-pouw/src/lib.rs`
+- 职责：
+  - 定义 Task 全流程迁移：`apply_create_task/accept/commit/reveal/challenge/resolve/timeout`。
+  - 执行规则校验：状态合法性、deadline、承诺/揭示一致性、权限、stake/bond 约束。
+  - challenge/resolve/timeout 相关资金与惩罚逻辑（escrow/forfeit/slash 账户语义）。
+- 不做：
+  - 不负责 WAL/checkpoint 落盘。
+  - 不负责请求入口协议（RPC/CLI）。
+
+### trnm-state（状态存储与可验证落盘元数据）
+- 入口：`crates/trnm-state/src/lib.rs`
+- 职责：
+  - 维护对象与版本（`StateStore`，对象 optimistic version check）。
+  - 维护余额、治理参数、pending 治理更新。
+  - 计算 `state_root()`（对象+余额+pending 更新共同哈希）。
+  - 定义 WAL/Checkpoint 元数据结构：`WalMeta`、`CheckpointMeta`。
+  - 提供 `verify_wal_and_find_checkpoint()` 做重启恢复时的链式校验与回退锚点选择。
+- 不做：
+  - 不做 RPC 协议编排。
+  - 不跑区块循环。
+
+### trnm-rpc（查询/入口适配层，文件态后端）
+- 入口：`crates/trnm-rpc/src/main.rs` + `crates/trnm-rpc/src/lib.rs`
+- 职责：
+  - 提供查询命令：`query-task/query-events/query-request/query-request-full/query-challenge-treasury/...`。
+  - 提供消息入口与调度入口：`submit-message`、`dispatch-open`。
+  - 维护文件态存储：
+    - `run/message-gateway/requests.jsonl`（请求生命周期）
+    - `run/rpc/accounts.json`（账户余额/nonce）
+    - `run/rpc/txs.json`（转账 tx 生命周期）
+    - `run/rpc/faucet_limits.json`（faucet 限流）
+  - 从 node 日志回建事件视图（`run/node*.log`、`run/parallel-sanity.log` 等 tail 解析）。
+- 不做：
+  - 不直接执行业务状态迁移（不调用 `apply_*` 去修改链状态）。
+
+### trnm-cli（用户侧命令入口）
+- 入口：`crates/trnm-cli/src/main.rs`
+- 职责：
+  - 钱包管理（create/import/address/sign）。
+  - tx 命令封装（transfer、query、wait；支持 `TRNM_TX_*` 模板命令桥接）。
+  - query 命令封装（balance；支持 `TRNM_QUERY_BALANCE_CMD`）。
+- 边界：
+  - 主要是“协议适配器/壳层”，默认可走本地伪实现，生产可替换外部命令。
+
+### trnm-worker-agent（异步执行与回执编排）
+- 入口：`crates/trnm-worker-agent/src/main.rs`
+- 职责：
+  - 消费 `requests.jsonl` 中 `ASSIGNED` 请求（`run-assigned`）。
+  - 调用 LLM adapter（默认 `./scripts/llm_adapter_mock.sh`）产出 model output 并做本地 verifier。
+  - 对 accepted 请求产出 commit/reveal 提交记录（`/tmp/trnm-worker-agent-submissions.jsonl`）。
+  - 执行 flush：通过 `./scripts/worker_tx_adapter.sh` 发 commit/reveal，写 ack/event/progress 日志，并回填 ingress 记录状态。
+- 不做：
+  - 不直接修改 `StateStore`。
+  - 不直接成为共识节点。
+
+## 3.2 关键交互关系（跨模块）
+
+1. **Node ↔ PoUW ↔ State**
+   - `trnm-node` 是唯一的区块执行编排者；
+   - `trnm-pouw` 提供迁移规则；
+   - `trnm-state` 提供版本化对象存储与状态根计算。
+
+2. **RPC ↔ Worker-Agent**
+   - `trnm-rpc submit-message` 创建 `OPEN` 请求到 `requests.jsonl`；
+   - `trnm-rpc dispatch-open` 把请求变成 `ASSIGNED`；
+   - `trnm-worker-agent run-assigned/flush-submissions` 推进到 `COMMIT_QUEUED/REVEAL_SUBMITTED` 或失败终态。
+
+3. **Worker-Agent ↔ Node/CLI（通过脚本桥接）**
+   - 默认通过 `scripts/worker_tx_adapter.sh` 执行 commit/reveal；
+   - adapter 可 mock，也可 command 模式透传 `TRNM_TX_CLI`（例如转发到 `trnm-node tx ...` 或其他真实客户端）。
+
+4. **RPC ↔ Node（读侧耦合）**
+   - `trnm-rpc` 不直接连内存态 node，而是读取 run/ 日志与文件产物聚合查询视图；
+   - 这意味着查询一致性依赖日志写入与 tail 解析窗口（`TRNM_RPC_NODE_EVENT_LOG_TAIL_BYTES`）。
+
+## 3.3 治理与紧急机制边界
+
+- `emergency_pause` 存于 `trnm-state` 治理参数；`trnm-node` 在执行前用 `is_rejected_by_emergency_pause` 过滤高风险 tx（create/accept/commit/reveal/challenge），但 **resolve 保持可执行** 以清算存量挑战。
+- 敏感治理参数（如 `challenge_window_blocks/challenge_min_bond/...`）在 `trnm-state` 内执行 timelock + rate-limit + replace/cancel 语义。
+- `trnm-pouw` 读取治理参数快照驱动业务约束（如 bond floor、resolve authority）。
+
+## 3.4 “请求到状态落盘”时序（文字版）
+
+以消息请求驱动任务为例：
+
+1. 客户端调用 `trnm-rpc submit-message`，写入 `run/message-gateway/requests.jsonl`，状态为 `OPEN`。
+2. 调度调用 `trnm-rpc dispatch-open`，将请求状态转为 `ASSIGNED` 并绑定 worker。
+3. `trnm-worker-agent run-assigned` 读取 `ASSIGNED` 请求：
+   - 调 LLM adapter 生成输出；
+   - verifier 通过则生成 `result_hash/salt/commit_hash`，写 submission 日志并把请求推进到 `COMMIT_QUEUED`。
+4. `trnm-worker-agent flush-submissions --execute`：
+   - 通过 `worker_tx_adapter.sh` 发 `commit` 后发 `reveal`（含重试、幂等 RC 处理）；
+   - 写 ack/event/progress；
+   - 回填 ingress 记录为 `REVEAL_SUBMITTED`（或 `REJECTED/FAILED_SUBMISSION`）。
+5. `trnm-node` 在区块循环中：
+   - 从 mempool/输入取 tx，做并行预执行分组；
+   - 逐笔调用 `trnm-pouw apply_*` 变更 `trnm-state`；
+   - 成功后输出 `[event]` 日志并更新 `state_root`。
+6. 区块提交时 `trnm-node` 落盘：
+   - 追加 `WalMeta` 到 `consensus-wal-meta.toml`；
+   - 满足间隔时写 `CheckpointMeta` 到 `consensus-checkpoints.toml`；
+   - 更新 `consensus-wal.toml`（next_height/lock）。
+7. 读侧回查：`trnm-rpc query-*` 从 `requests.jsonl + node event log + rpc/*.json` 聚合返回最终状态视图。
+
+## 3.5 共识/安全关键点（实现对应）
+- 身份与签名路径：`trnm-node` 中 vote 签名/nonce/replay 拒绝统计，事件里写 `signer/challenger`。
+- 状态迁移 fail-closed：`trnm-pouw` 对非法状态、deadline、权限、bond/accounting 不变量直接拒绝。
+- 版本冲突保护：`trnm-state` 的 `version conflict` + node 失败回滚，避免脏写。
+- 恢复一致性：`trnm-state::verify_wal_and_find_checkpoint` + `trnm-node recover_wal_state` 防止损坏 WAL 继续前进。
 
 ---
 
