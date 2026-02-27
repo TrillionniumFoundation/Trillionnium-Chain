@@ -843,10 +843,12 @@ fn normalized_compliance_profile(value: Option<&str>) -> Option<String> {
             (found || (prev_sep && is_sep), is_sep)
         })
         .0;
+    let has_alpha = normalized.chars().any(|c| c.is_ascii_lowercase());
     if is_allowed
         && starts_and_ends_alnum
         && !has_adjacent_separators
         && normalized.len() <= 64
+        && has_alpha
     {
         Some(normalized)
     } else {
@@ -1914,6 +1916,20 @@ mod tests {
     fn normalized_compliance_profile_rejects_over_64_chars() {
         let profile = "a".repeat(65);
         assert_eq!(normalized_compliance_profile(Some(&profile)), None);
+    }
+
+    #[test]
+    fn normalized_compliance_profile_rejects_numeric_only_values() {
+        assert_eq!(normalized_compliance_profile(Some("202602")), None);
+    }
+
+    #[test]
+    fn normalized_compliance_profile_accepts_alphanumeric_when_contains_alpha() {
+        assert_eq!(
+            normalized_compliance_profile(Some("cn-202602"))
+                .as_deref(),
+            Some("cn-202602")
+        );
     }
 }
 
