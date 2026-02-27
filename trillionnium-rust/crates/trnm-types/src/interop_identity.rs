@@ -265,6 +265,12 @@ impl IdentityRegistry {
             if token.revoked_at.is_some() {
                 return Ok(());
             }
+            if at_height < token.issued_at {
+                return Err(InteropIdentityError::InvalidCapabilityRevocationHeight {
+                    issued_at: token.issued_at,
+                    revoked_at: at_height,
+                });
+            }
             token.revoked_at = Some(at_height);
             token.subject_did.clone()
         };
@@ -386,6 +392,10 @@ pub enum InteropIdentityError {
         issued_at: u64,
         expires_at: u64,
     },
+    InvalidCapabilityRevocationHeight {
+        issued_at: u64,
+        revoked_at: u64,
+    },
     MissingSettlementTx,
     MissingRevertReason,
 }
@@ -416,6 +426,16 @@ impl fmt::Display for InteropIdentityError {
                     f,
                     "invalid capability expiry: expires_at {} < issued_at {}",
                     expires_at, issued_at
+                )
+            }
+            InteropIdentityError::InvalidCapabilityRevocationHeight {
+                issued_at,
+                revoked_at,
+            } => {
+                write!(
+                    f,
+                    "invalid capability revocation height: revoked_at {} < issued_at {}",
+                    revoked_at, issued_at
                 )
             }
             InteropIdentityError::MissingSettlementTx => {
@@ -760,6 +780,47 @@ mod tests {
 
         assert_eq!(reg.capability(token_id).unwrap().revoked_at, Some(30));
         assert_eq!(reg.audit_trail().len(), first_audit_len);
+    }
+
+    #[test]
+    fn revoke_capability_rejects_height_before_issue_without_side_effects() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did(
+            "did:trnm:agent-3b".to_string(),
+            "org:lane2-admin".to_string(),
+            10,
+        )
+        .unwrap();
+
+        let token_id = reg
+            .issue_capability(
+                "org:lane2-admin".to_string(),
+                "did:trnm:agent-3b".to_string(),
+                CapabilityScope::AuditRead,
+                12,
+                None,
+            )
+            .unwrap();
+        let audit_len_before = reg.audit_trail().len();
+
+        let err = reg
+            .revoke_capability(
+                "org:lane2-admin".to_string(),
+                token_id,
+                11,
+                Some("time_travel_revoke".to_string()),
+            )
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            InteropIdentityError::InvalidCapabilityRevocationHeight {
+                issued_at: 12,
+                revoked_at: 11
+            }
+        ));
+        assert_eq!(reg.capability(token_id).unwrap().revoked_at, None);
+        assert_eq!(reg.audit_trail().len(), audit_len_before);
     }
 
     #[test]
