@@ -7,21 +7,25 @@ PAUSE_FILE="$ROOT/.auto-iterate.pause"
 export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
 
 if [[ -f "$ROADMAP_PROGRESS_FILE" ]]; then
-  read -r progress_pct lane_b_paused_flag <<<"$(python3 - "$ROADMAP_PROGRESS_FILE" <<'PY'
+  read -r progress_pct lane_b_paused_flag roadmap_updated_at roadmap_source <<<"$(python3 - "$ROADMAP_PROGRESS_FILE" <<'PY'
 import json,sys
 p=sys.argv[1]
 try:
     obj=json.load(open(p,'r',encoding='utf-8'))
     v=int(obj.get('development_doc_roadmap_progress_pct', 0))
     paused=bool(obj.get('laneB_paused_until_100', False))
-    print(v, 'true' if paused else 'false')
+    updated_at=str(obj.get('updated_at', '')).strip()
+    source=str(obj.get('source', '')).strip()
+    print(v, 'true' if paused else 'false', updated_at or '-', source or '-')
 except Exception:
-    print(0, 'false')
+    print(0, 'false', '-', '-')
 PY
 )"
 else
   progress_pct=0
   lane_b_paused_flag=false
+  roadmap_updated_at=-
+  roadmap_source=-
 fi
 
 pause_signal="absent"
@@ -36,7 +40,12 @@ if [[ "$progress_pct" -lt 100 && "$lane_b_paused_flag" != "true" ]]; then
   exit 1
 fi
 
-echo "[GATE] laneB governance: roadmap progress=${progress_pct}% pause_signal=${pause_signal}"
+if [[ "$roadmap_updated_at" == "-" || "$roadmap_source" == "-" ]]; then
+  echo "[FAIL] laneB governance: roadmap-progress metadata incomplete, require non-empty updated_at/source in $ROADMAP_PROGRESS_FILE" >&2
+  exit 1
+fi
+
+echo "[GATE] laneB governance: roadmap progress=${progress_pct}% pause_signal=${pause_signal} updated_at=${roadmap_updated_at} source=${roadmap_source}"
 
 cd "$ROOT/trillionnium-rust"
 
