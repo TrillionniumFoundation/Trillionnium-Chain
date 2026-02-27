@@ -457,6 +457,8 @@ fn is_canonical_validator_token(v: &str) -> bool {
             .as_bytes()
             .last()
             .is_some_and(|b| b.is_ascii_lowercase() || b.is_ascii_digit())
+        // Disallow repeated separators to avoid parser normalization ambiguity.
+        && !v.contains("--")
 }
 
 fn is_canonical_block_hash_token(v: &str) -> bool {
@@ -477,6 +479,8 @@ fn is_canonical_block_hash_token(v: &str) -> bool {
             .as_bytes()
             .last()
             .is_some_and(|b| b.is_ascii_lowercase() || b.is_ascii_digit())
+        // Disallow repeated separators to avoid parser normalization ambiguity.
+        && !v.contains("--")
 }
 
 fn accept_signed_vote(
@@ -1951,6 +1955,39 @@ mod tests {
     }
 
     #[test]
+    fn auth_rejects_consecutive_hyphen_validator_before_nonce_and_signature_checks() {
+        let vote = BftVote {
+            validator: "v1--worker".into(),
+            vote_type: VoteType::Prevote,
+            block_hash: "h1".into(),
+            byzantine: false,
+            height: 1,
+            round: 0,
+        };
+
+        let mut last_nonce = HashMap::new();
+        let mut accepted = Vec::new();
+        let mut reject_stats = AuthRejectStats::default();
+
+        accept_signed_vote(
+            SignedVote {
+                vote: vote.clone(),
+                nonce: 1,
+                signature: vote_signature(&vote, 1),
+            },
+            &mut last_nonce,
+            &mut accepted,
+            &mut reject_stats,
+        );
+
+        assert!(accepted.is_empty());
+        assert_eq!(reject_stats.bad_sig, 1);
+        assert_eq!(reject_stats.replay, 0);
+        assert_eq!(reject_stats.stale_nonce, 0);
+        assert!(last_nonce.is_empty());
+    }
+
+    #[test]
     fn auth_rejects_hyphen_only_block_hash_before_nonce_and_signature_checks() {
         let vote = BftVote {
             validator: "v1".into(),
@@ -2016,6 +2053,39 @@ mod tests {
             assert_eq!(reject_stats.stale_nonce, 0);
             assert!(last_nonce.is_empty());
         }
+    }
+
+    #[test]
+    fn auth_rejects_consecutive_hyphen_block_hash_before_nonce_and_signature_checks() {
+        let vote = BftVote {
+            validator: "v1".into(),
+            vote_type: VoteType::Prevote,
+            block_hash: "h1--fork".into(),
+            byzantine: false,
+            height: 1,
+            round: 0,
+        };
+
+        let mut last_nonce = HashMap::new();
+        let mut accepted = Vec::new();
+        let mut reject_stats = AuthRejectStats::default();
+
+        accept_signed_vote(
+            SignedVote {
+                vote: vote.clone(),
+                nonce: 1,
+                signature: vote_signature(&vote, 1),
+            },
+            &mut last_nonce,
+            &mut accepted,
+            &mut reject_stats,
+        );
+
+        assert!(accepted.is_empty());
+        assert_eq!(reject_stats.bad_sig, 1);
+        assert_eq!(reject_stats.replay, 0);
+        assert_eq!(reject_stats.stale_nonce, 0);
+        assert!(last_nonce.is_empty());
     }
 
     #[test]
