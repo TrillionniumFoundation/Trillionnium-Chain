@@ -28,5 +28,10 @@ cargo test -q -p trnm-state tests::governance_param_whitelist_enforced
 
 echo "pause_param_whitelist=pass" | tee -a "$OUT"
 
+# 4) node-level boolean gate formula must remain exact (paused => reject iff high risk)
+cargo test -q -p trnm-node tests::emergency_pause_rejection_formula_is_exact_boolean_gate
+
+echo "node_pause_formula=pass" | tee -a "$OUT"
+
 echo "status=PASS" | tee -a "$OUT"
 echo "[OK] emergency pause drill: $OUT"
