@@ -235,13 +235,7 @@ fn random_priv_hex() -> Result<String> {
 }
 
 fn normalize_tx_hash(raw: &str) -> Option<String> {
-    let mut cleaned = raw
-        .trim_matches(|c: char| {
-            c.is_ascii_whitespace()
-                || matches!(c, ',' | ';' | ':' | '(' | ')' | '[' | ']' | '{' | '}')
-        })
-        .trim()
-        .to_string();
+    let mut cleaned = raw.to_string();
 
     loop {
         let before = cleaned.len();
@@ -250,15 +244,21 @@ fn normalize_tx_hash(raw: &str) -> Option<String> {
                 c.is_ascii_whitespace()
                     || matches!(c, ',' | ';' | ':' | '(' | ')' | '[' | ']' | '{' | '}')
             })
-            .trim()
             .to_string();
+
         if cleaned.len() >= 2 {
-            let q = cleaned.as_bytes()[0] as char;
-            let last = cleaned.as_bytes()[cleaned.len() - 1] as char;
+            let q = cleaned.chars().next().unwrap();
+            let last = cleaned.chars().last().unwrap();
             if (q == '"' || q == '\'' || q == '`') && q == last {
                 cleaned = cleaned[1..cleaned.len() - 1].to_string();
                 continue;
             }
+            // Add check for mismatched quotes or remaining punctuation inside?
+            // The test case has (`"0xBEEF42"`,)
+            // parse_kv_line -> (`"0xBEEF42"`
+            // normalize -> "0xBEEF42" (trims parens)
+            // then quotes are stripped -> 0xBEEF42
+            // Seems correct?
         }
         if cleaned.len() == before {
             break;
@@ -363,11 +363,7 @@ fn parse_kv_line(line: &str) -> Option<(String, String)> {
 
     Some((
         key.to_ascii_lowercase(),
-        value
-            .trim_matches('"')
-            .trim_matches('\'')
-            .trim_matches('`')
-            .to_string(),
+        value.to_string(),
     ))
 }
 
@@ -501,10 +497,12 @@ fn parse_tx_query_response(raw: &str, requested_tx_hash: &str) -> Result<TxQuery
                     }
                 }
                 "error" => {
-                    if !is_nullish_kv_value(&value) {
+                    // Manual quote trimming since parse_kv_line no longer does it aggressively
+                    let cleaned = value.trim_matches(|c| matches!(c, '"' | '\'' | '`'));
+                    if !is_nullish_kv_value(cleaned) {
                         match &error {
-                            Some(existing) if existing.len() >= value.len() => {}
-                            _ => error = Some(value),
+                            Some(existing) if existing.len() >= cleaned.len() => {}
+                            _ => error = Some(cleaned.to_string()),
                         }
                     }
                 }
