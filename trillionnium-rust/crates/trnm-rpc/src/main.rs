@@ -1860,6 +1860,14 @@ mod tests {
             st.pending_gov_update("emergency_pause").is_none(),
             "pause=true must not enqueue timelock state"
         );
+        let paused_param = st
+            .get_param(EMERGENCY_PAUSE_KEY_ID)
+            .expect("paused emergency_pause param must remain readable");
+        assert_eq!(paused_param.value, "true");
+        assert_eq!(
+            paused_param.version, 2,
+            "pause=true immediate apply must bump emergency_pause version"
+        );
 
         let unpause = st
             .set_gov_param(
@@ -1880,6 +1888,14 @@ mod tests {
         assert!(
             st.pending_gov_update("emergency_pause").is_none(),
             "pause=false must not enqueue timelock state"
+        );
+        let unpaused_param = st
+            .get_param(EMERGENCY_PAUSE_KEY_ID)
+            .expect("unpaused emergency_pause param must remain readable");
+        assert_eq!(unpaused_param.value, "false");
+        assert_eq!(
+            unpaused_param.version, 3,
+            "pause=false immediate apply must bump emergency_pause version"
         );
     }
 
