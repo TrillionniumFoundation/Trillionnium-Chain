@@ -1210,6 +1210,47 @@ mod tests {
         assert_eq!(prov.model.as_deref(), Some("gpt-5.3-codex"));
         assert_eq!(prov.adapter.as_deref(), Some("mcp"));
     }
+
+    #[test]
+    fn attach_llm_provenance_keeps_schema_empty_without_structured_fields() {
+        let mut rec = MessageIngressRecord {
+            request_id: "r2".to_string(),
+            task_id: 10,
+            channel: "telegram".to_string(),
+            user_id: "u2".to_string(),
+            session_id: "s2".to_string(),
+            text: "prompt".to_string(),
+            idempotency_key: "ik2".to_string(),
+            status: RequestStatus::Assigned.as_str().to_string(),
+            created_at_unix_ms: 1,
+            assigned_worker: Some("worker-1".to_string()),
+            assigned_at_unix_ms: Some(2),
+            model_output: None,
+            provider_request_id: None,
+            provenance_schema_version: None,
+            llm_provenance: None,
+            result_hash: None,
+            verifier_status: None,
+            resolution_code: None,
+            commit_tx_hash: None,
+            reveal_tx_hash: None,
+            adapter_error: None,
+            reputation_delta: None,
+        };
+        let llm = LlmAdapterResponse {
+            output_text: "ok".to_string(),
+            provider_request_id: Some("provider-opaque-id".to_string()),
+            provider: None,
+            model: None,
+            adapter: None,
+        };
+
+        attach_llm_provenance(&mut rec, &llm);
+
+        assert_eq!(rec.provider_request_id.as_deref(), Some("provider-opaque-id"));
+        assert_eq!(rec.provenance_schema_version, None);
+        assert!(rec.llm_provenance.is_none());
+    }
 }
 
 fn main() -> Result<()> {
