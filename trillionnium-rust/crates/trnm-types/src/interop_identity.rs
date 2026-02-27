@@ -113,6 +113,10 @@ pub struct CapabilityToken {
 
 impl CapabilityToken {
     pub fn is_active_at(&self, at_height: u64) -> bool {
+        if at_height < self.issued_at {
+            return false;
+        }
+
         if self.revoked_at.is_some() {
             return false;
         }
@@ -532,6 +536,23 @@ mod tests {
                 expires_at: 19
             }
         ));
+    }
+
+    #[test]
+    fn capability_is_not_active_before_issue_height() {
+        let token = CapabilityToken {
+            token_id: 1,
+            subject_did: "did:trnm:agent-issue-window".to_string(),
+            scope: CapabilityScope::BridgeSettle,
+            issued_at: 50,
+            expires_at: Some(60),
+            revoked_at: None,
+        };
+
+        assert!(!token.is_active_at(49));
+        assert!(token.is_active_at(50));
+        assert!(token.is_active_at(60));
+        assert!(!token.is_active_at(61));
     }
 
     #[test]
