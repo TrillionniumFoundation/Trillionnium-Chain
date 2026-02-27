@@ -488,7 +488,10 @@ fn parse_tx_query_response(raw: &str, requested_tx_hash: &str) -> Result<TxQuery
                 }
                 "error" => {
                     if !is_nullish_kv_value(&value) {
-                        error = Some(value);
+                        match &error {
+                            Some(existing) if existing.len() >= value.len() => {}
+                            _ => error = Some(value),
+                        }
                     }
                 }
                 _ => {}
