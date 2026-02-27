@@ -60,20 +60,32 @@ impl SettlementRecord {
         settlement_tx: Option<String>,
         revert_reason: Option<String>,
     ) -> Result<(), InteropIdentityError> {
-        self.status = self.status.transition(to)?;
-        self.at_height = at_height;
+        let next_status = self.status.transition(to)?;
 
-        match to {
+        let (next_settlement_tx, next_revert_reason) = match to {
             SettlementStatus::Finalized => {
-                self.settlement_tx = settlement_tx;
-                self.revert_reason = None;
+                let tx = settlement_tx
+                    .as_deref()
+                    .map(str::trim)
+                    .filter(|v| !v.is_empty())
+                    .ok_or(InteropIdentityError::MissingSettlementTx)?;
+                (Some(tx.to_string()), None)
             }
             SettlementStatus::Reverted => {
-                self.revert_reason = revert_reason;
-                self.settlement_tx = None;
+                let reason = revert_reason
+                    .as_deref()
+                    .map(str::trim)
+                    .filter(|v| !v.is_empty())
+                    .ok_or(InteropIdentityError::MissingRevertReason)?;
+                (None, Some(reason.to_string()))
             }
-            SettlementStatus::Pending => {}
-        }
+            SettlementStatus::Pending => (self.settlement_tx.clone(), self.revert_reason.clone()),
+        };
+
+        self.status = next_status;
+        self.at_height = at_height;
+        self.settlement_tx = next_settlement_tx;
+        self.revert_reason = next_revert_reason;
 
         Ok(())
     }
@@ -374,6 +386,8 @@ pub enum InteropIdentityError {
         issued_at: u64,
         expires_at: u64,
     },
+    MissingSettlementTx,
+    MissingRevertReason,
 }
 
 impl fmt::Display for InteropIdentityError {
@@ -403,6 +417,12 @@ impl fmt::Display for InteropIdentityError {
                     "invalid capability expiry: expires_at {} < issued_at {}",
                     expires_at, issued_at
                 )
+            }
+            InteropIdentityError::MissingSettlementTx => {
+                write!(f, "finalized settlement requires non-empty settlement_tx")
+            }
+            InteropIdentityError::MissingRevertReason => {
+                write!(f, "reverted settlement requires non-empty revert_reason")
             }
         }
     }
@@ -507,6 +527,59 @@ mod tests {
         assert_eq!(rec2.status, SettlementStatus::Finalized);
         assert_eq!(rec2.settlement_tx.as_deref(), Some("0xfinal"));
         assert_eq!(rec2.revert_reason, None);
+    }
+
+    #[test]
+    fn settlement_finalize_requires_non_empty_settlement_tx() {
+        let route = BridgeRoute {
+            route_id: "eth->trnm".to_string(),
+            source_chain: "ethereum".to_string(),
+            target_chain: "trillionnium".to_string(),
+        };
+        let mut rec = SettlementRecord {
+            settlement_id: 11,
+            route,
+            status: SettlementStatus::Pending,
+            at_height: 100,
+            settlement_tx: None,
+            revert_reason: None,
+        };
+
+        let err = rec
+            .apply_status(SettlementStatus::Finalized, 101, Some("   ".to_string()), None)
+            .unwrap_err();
+
+        assert!(matches!(err, InteropIdentityError::MissingSettlementTx));
+        assert_eq!(rec.status, SettlementStatus::Pending);
+    }
+
+    #[test]
+    fn settlement_revert_requires_non_empty_reason() {
+        let route = BridgeRoute {
+            route_id: "eth->trnm".to_string(),
+            source_chain: "ethereum".to_string(),
+            target_chain: "trillionnium".to_string(),
+        };
+        let mut rec = SettlementRecord {
+            settlement_id: 12,
+            route,
+            status: SettlementStatus::Pending,
+            at_height: 200,
+            settlement_tx: None,
+            revert_reason: None,
+        };
+
+        let err = rec
+            .apply_status(
+                SettlementStatus::Reverted,
+                201,
+                None,
+                Some("\n\t".to_string()),
+            )
+            .unwrap_err();
+
+        assert!(matches!(err, InteropIdentityError::MissingRevertReason));
+        assert_eq!(rec.status, SettlementStatus::Pending);
     }
 
     #[test]
