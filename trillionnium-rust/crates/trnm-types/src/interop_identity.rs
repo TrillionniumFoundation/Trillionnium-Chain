@@ -181,36 +181,27 @@ pub struct IdentityRegistry {
 }
 
 impl IdentityRegistry {
+    fn validate_identity_field(
+        field: &'static str,
+        value: &str,
+    ) -> Result<(), InteropIdentityError> {
+        if value.trim().is_empty() || value.trim() != value {
+            return Err(InteropIdentityError::InvalidIdentityValue {
+                field,
+                value: value.to_string(),
+            });
+        }
+        Ok(())
+    }
+
     pub fn register_did(
         &mut self,
         did: String,
         controller: String,
         at_height: u64,
     ) -> Result<(), InteropIdentityError> {
-        if did.trim().is_empty() {
-            return Err(InteropIdentityError::InvalidIdentityValue {
-                field: "did",
-                value: did,
-            });
-        }
-        if did.trim() != did {
-            return Err(InteropIdentityError::InvalidIdentityValue {
-                field: "did",
-                value: did,
-            });
-        }
-        if controller.trim().is_empty() {
-            return Err(InteropIdentityError::InvalidIdentityValue {
-                field: "controller",
-                value: controller,
-            });
-        }
-        if controller.trim() != controller {
-            return Err(InteropIdentityError::InvalidIdentityValue {
-                field: "controller",
-                value: controller,
-            });
-        }
+        Self::validate_identity_field("did", &did)?;
+        Self::validate_identity_field("controller", &controller)?;
 
         if self.dids.contains_key(&did) {
             return Err(InteropIdentityError::DidAlreadyExists { did });
@@ -242,6 +233,9 @@ impl IdentityRegistry {
         at_height: u64,
         expires_at: Option<u64>,
     ) -> Result<u64, InteropIdentityError> {
+        Self::validate_identity_field("actor", &actor)?;
+        Self::validate_identity_field("subject_did", &subject_did)?;
+
         if let Some(exp) = expires_at {
             if exp < at_height {
                 return Err(InteropIdentityError::InvalidCapabilityExpiry {
@@ -303,6 +297,8 @@ impl IdentityRegistry {
         at_height: u64,
         note: Option<String>,
     ) -> Result<(), InteropIdentityError> {
+        Self::validate_identity_field("actor", &actor)?;
+
         let subject = {
             let token = self
                 .capabilities
@@ -336,6 +332,9 @@ impl IdentityRegistry {
         did: &str,
         at_height: u64,
     ) -> Result<(), InteropIdentityError> {
+        Self::validate_identity_field("actor", &actor)?;
+        Self::validate_identity_field("did", did)?;
+
         let did_rec = self
             .dids
             .get_mut(did)
@@ -1356,5 +1355,66 @@ mod tests {
         ));
         assert_eq!(reg.audit_trail().len(), audit_len_before);
         assert!(reg.capability(1).is_none());
+    }
+
+    #[test]
+    fn issue_capability_rejects_noncanonical_actor_identity_without_side_effects() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did(
+            "did:trnm:agent-6".to_string(),
+            "org:lane2-admin".to_string(),
+            10,
+        )
+        .unwrap();
+        let audit_len_before = reg.audit_trail().len();
+
+        let err = reg
+            .issue_capability(
+                " org:lane2-admin".to_string(),
+                "did:trnm:agent-6".to_string(),
+                CapabilityScope::AuditRead,
+                20,
+                None,
+            )
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            InteropIdentityError::InvalidIdentityValue { field: "actor", .. }
+        ));
+        assert_eq!(reg.audit_trail().len(), audit_len_before);
+        assert!(reg.capability(1).is_none());
+    }
+
+    #[test]
+    fn revoke_capability_rejects_blank_actor_without_side_effects() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did(
+            "did:trnm:agent-7".to_string(),
+            "org:lane2-admin".to_string(),
+            10,
+        )
+        .unwrap();
+        let token_id = reg
+            .issue_capability(
+                "org:lane2-admin".to_string(),
+                "did:trnm:agent-7".to_string(),
+                CapabilityScope::BridgeSettle,
+                20,
+                None,
+            )
+            .unwrap();
+        let audit_len_before = reg.audit_trail().len();
+
+        let err = reg
+            .revoke_capability("   ".to_string(), token_id, 30, Some("x".to_string()))
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            InteropIdentityError::InvalidIdentityValue { field: "actor", .. }
+        ));
+        assert_eq!(reg.audit_trail().len(), audit_len_before);
+        assert_eq!(reg.capability(token_id).unwrap().revoked_at, None);
     }
 }
