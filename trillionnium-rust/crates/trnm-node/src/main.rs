@@ -432,6 +432,8 @@ fn vote_signature(vote: &BftVote, nonce: u64) -> String {
 }
 
 const MAX_BFT_TOKEN_LEN: usize = 128;
+// Fail-closed nonce boundary to prevent namespace pinning via unbounded nonce jumps.
+const MAX_BFT_NONCE_FORWARD_JUMP: u64 = 1_000_000;
 
 fn is_canonical_validator_token(v: &str) -> bool {
     !v.is_empty()
@@ -602,6 +604,20 @@ fn accept_signed_vote(
                 vote_type_name(msg.vote.vote_type),
                 msg.nonce,
                 prev
+            );
+            return;
+        }
+        if msg.nonce > prev.saturating_add(MAX_BFT_NONCE_FORWARD_JUMP) {
+            reject_stats.stale_nonce += 1;
+            println!(
+                "[bft-net] reject reason=nonce_jump validator={} height={} round={} vote_type={} nonce={} last_nonce={} max_jump={}",
+                msg.vote.validator,
+                msg.vote.height,
+                msg.vote.round,
+                vote_type_name(msg.vote.vote_type),
+                msg.nonce,
+                prev,
+                MAX_BFT_NONCE_FORWARD_JUMP
             );
             return;
         }
@@ -2264,6 +2280,60 @@ mod tests {
         assert_eq!(reject_stats.bad_sig, 0);
         assert_eq!(reject_stats.replay, 0);
         assert_eq!(reject_stats.stale_nonce, 0);
+    }
+
+    #[test]
+    fn auth_rejects_excessive_forward_nonce_jump_within_same_round_domain() {
+        let mut last_nonce = HashMap::new();
+        let mut accepted = Vec::new();
+        let mut reject_stats = AuthRejectStats::default();
+
+        let vote1 = BftVote {
+            validator: "v1".into(),
+            vote_type: VoteType::Prevote,
+            block_hash: "h10-r0".into(),
+            byzantine: false,
+            height: 10,
+            round: 0,
+        };
+        accept_signed_vote(
+            SignedVote {
+                vote: vote1.clone(),
+                nonce: 10,
+                signature: vote_signature(&vote1, 10),
+            },
+            &mut last_nonce,
+            &mut accepted,
+            &mut reject_stats,
+        );
+
+        let vote2 = BftVote {
+            validator: "v1".into(),
+            vote_type: VoteType::Prevote,
+            block_hash: "h10-r0-alt".into(),
+            byzantine: false,
+            height: 10,
+            round: 0,
+        };
+        let jumped_nonce = 10 + MAX_BFT_NONCE_FORWARD_JUMP + 1;
+        accept_signed_vote(
+            SignedVote {
+                vote: vote2.clone(),
+                nonce: jumped_nonce,
+                signature: vote_signature(&vote2, jumped_nonce),
+            },
+            &mut last_nonce,
+            &mut accepted,
+            &mut reject_stats,
+        );
+
+        assert_eq!(accepted.len(), 1);
+        assert_eq!(reject_stats.bad_sig, 0);
+        assert_eq!(reject_stats.replay, 0);
+        assert_eq!(reject_stats.stale_nonce, 1);
+
+        let key = ("v1".to_string(), 10, 0, VoteType::Prevote);
+        assert_eq!(last_nonce.get(&key), Some(&10));
     }
 
     #[test]
