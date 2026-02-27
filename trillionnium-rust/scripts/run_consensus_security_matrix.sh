@@ -44,6 +44,7 @@ run_step "request_fault_injection" "OUT_DIR='$OUT_DIR' ./scripts/run_request_fau
 run_step "consensus_fault_matrix" "./scripts/run_consensus_fault_matrix.sh"
 run_step "bft_restart_recovery" "./scripts/check_bft_restart_recovery.sh"
 run_step "bft_round_change" "./scripts/check_bft_round_change.sh"
+run_step "bft_message_auth" "./scripts/check_bft_message_auth.sh"
 run_step "event_fields" "./scripts/check_event_fields.sh"
 run_step "event_replay_smoke" "./scripts/check_event_replay_smoke.sh"
 
