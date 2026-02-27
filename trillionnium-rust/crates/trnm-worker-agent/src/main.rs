@@ -806,12 +806,15 @@ fn verify_model_output(output: &str, max_chars: usize) -> (&'static str, &'stati
     if trimmed.is_empty()
         || !trimmed
             .chars()
-            .any(|c| !c.is_whitespace() && !is_invisible_filler(c))
+            .any(|c| !c.is_whitespace() && !c.is_control() && !is_invisible_filler(c))
     {
         return ("rejected", "empty_output");
     }
 
-    let normalized_char_count = trimmed.chars().filter(|c| !is_invisible_filler(*c)).count();
+    let normalized_char_count = trimmed
+        .chars()
+        .filter(|c| !c.is_control() && !is_invisible_filler(*c))
+        .count();
     if normalized_char_count > max_chars {
         return ("rejected", "output_too_long");
     }
@@ -1246,6 +1249,12 @@ mod tests {
             verify_model_output("\n\u{200B} \t\u{200D}\r\n", 8),
             ("rejected", "empty_output")
         );
+
+        // Control-only payloads should not pass market verification as meaningful content.
+        assert_eq!(verify_model_output("\u{0007}\u{001B}", 8), ("rejected", "empty_output"));
+
+        // Control bytes mixed around visible content should be ignored for length accounting.
+        assert_eq!(verify_model_output("\u{0007}ok\u{001B}", 2), ("accepted", "ok"));
 
         // Limit is measured in characters (not bytes) to keep verifier behavior predictable.
         let within = "你好ab"; // 4 chars
