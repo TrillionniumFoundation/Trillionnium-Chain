@@ -513,7 +513,7 @@ fn now_ms() -> u128 {
 fn env_u64_with_min(name: &str, default: u64, min: u64) -> u64 {
     std::env::var(name)
         .ok()
-        .and_then(|v| v.parse::<u64>().ok())
+        .and_then(|v| v.trim().parse::<u64>().ok())
         .map(|v| v.max(min))
         .unwrap_or(default.max(min))
 }
@@ -521,7 +521,7 @@ fn env_u64_with_min(name: &str, default: u64, min: u64) -> u64 {
 fn env_u32_with_min(name: &str, default: u32, min: u32) -> u32 {
     std::env::var(name)
         .ok()
-        .and_then(|v| v.parse::<u32>().ok())
+        .and_then(|v| v.trim().parse::<u32>().ok())
         .map(|v| v.max(min))
         .unwrap_or(default.max(min))
 }
@@ -2889,6 +2889,29 @@ mod tests {
 
         assert_eq!(window, FAUCET_WINDOW_SECONDS_DEFAULT);
         assert_eq!(max_requests, FAUCET_MAX_REQUESTS_DEFAULT);
+
+        std::env::remove_var("TRNM_RPC_FAUCET_WINDOW_SECONDS");
+        std::env::remove_var("TRNM_RPC_FAUCET_MAX_REQUESTS");
+    }
+
+    #[test]
+    fn faucet_env_parsing_accepts_surrounding_whitespace() {
+        std::env::set_var("TRNM_RPC_FAUCET_WINDOW_SECONDS", "  120  ");
+        std::env::set_var("TRNM_RPC_FAUCET_MAX_REQUESTS", "\t9\n");
+
+        let window = env_u64_with_min(
+            "TRNM_RPC_FAUCET_WINDOW_SECONDS",
+            FAUCET_WINDOW_SECONDS_DEFAULT,
+            FAUCET_WINDOW_SECONDS_MIN,
+        );
+        let max_requests = env_u32_with_min(
+            "TRNM_RPC_FAUCET_MAX_REQUESTS",
+            FAUCET_MAX_REQUESTS_DEFAULT,
+            FAUCET_MAX_REQUESTS_MIN,
+        );
+
+        assert_eq!(window, 120);
+        assert_eq!(max_requests, 9);
 
         std::env::remove_var("TRNM_RPC_FAUCET_WINDOW_SECONDS");
         std::env::remove_var("TRNM_RPC_FAUCET_MAX_REQUESTS");
