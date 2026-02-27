@@ -866,11 +866,15 @@ fn normalized_compliance_profile(value: Option<&str>) -> Option<String> {
         })
         .0;
     let has_alpha = normalized.chars().any(|c| c.is_ascii_lowercase());
+    let has_separator = normalized
+        .chars()
+        .any(|c| matches!(c, '-' | '_' | '.'));
     if is_allowed
         && starts_with_alpha_and_ends_alnum
         && !has_adjacent_separators
         && normalized.len() <= 64
         && has_alpha
+        && has_separator
     {
         Some(
             normalized
@@ -2035,7 +2039,8 @@ mod tests {
 
     #[test]
     fn normalized_compliance_profile_accepts_64_char_boundary() {
-        let profile = "a".repeat(64);
+        let profile = format!("{}-{}", "a".repeat(31), "b".repeat(32));
+        assert_eq!(profile.len(), 64);
         assert_eq!(
             normalized_compliance_profile(Some(&profile)).as_deref(),
             Some(profile.as_str())
@@ -2051,6 +2056,11 @@ mod tests {
     #[test]
     fn normalized_compliance_profile_rejects_numeric_only_values() {
         assert_eq!(normalized_compliance_profile(Some("202602")), None);
+    }
+
+    #[test]
+    fn normalized_compliance_profile_rejects_single_token_values() {
+        assert_eq!(normalized_compliance_profile(Some("restricted")), None);
     }
 
     #[test]
