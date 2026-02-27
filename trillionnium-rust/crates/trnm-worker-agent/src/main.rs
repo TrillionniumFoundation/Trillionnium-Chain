@@ -794,6 +794,8 @@ fn is_invisible_filler(c: char) -> bool {
             | '\u{2064}' // INVISIBLE PLUS
             | '\u{00AD}' // SOFT HYPHEN
             | '\u{180E}' // MONGOLIAN VOWEL SEPARATOR (historically zero-width)
+            | '\u{FE0E}' // VARIATION SELECTOR-15 (text presentation)
+            | '\u{FE0F}' // VARIATION SELECTOR-16 (emoji presentation)
             | '\u{FEFF}' // ZERO WIDTH NO-BREAK SPACE / BOM
     )
 }
@@ -1227,6 +1229,8 @@ mod tests {
         assert_eq!(verify_model_output("\u{2061}\u{2062}\u{2063}\u{2064}", 8), ("rejected", "empty_output"));
         assert_eq!(verify_model_output("\u{180E}", 8), ("rejected", "empty_output"));
         assert_eq!(verify_model_output("\u{200E}\u{200F}", 8), ("rejected", "empty_output"));
+        assert_eq!(verify_model_output("\u{FE0E}", 8), ("rejected", "empty_output"));
+        assert_eq!(verify_model_output("\u{FE0F}", 8), ("rejected", "empty_output"));
 
         // Whitespace + zero-width-only payloads must also be rejected deterministically.
         assert_eq!(
