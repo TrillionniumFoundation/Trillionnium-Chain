@@ -1097,6 +1097,22 @@ mod tests {
     }
 
     #[test]
+    fn verifier_rejection_penalty_sits_between_retryable_and_non_retriable_adapter_failures() {
+        let verifier_penalty = reputation_delta(ReputationSignal::VerifierRejected);
+        let retryable_penalty = reputation_delta(ReputationSignal::AdapterRetryExhausted);
+        let non_retriable_penalty = reputation_delta(ReputationSignal::AdapterNonRetriable);
+
+        assert!(
+            verifier_penalty < retryable_penalty,
+            "verifier rejection should be stricter than transient adapter exhaustion"
+        );
+        assert!(
+            verifier_penalty > non_retriable_penalty,
+            "verifier rejection should remain less severe than deterministic adapter failures"
+        );
+    }
+
+    #[test]
     fn adapter_error_signal_maps_retryability_to_penalty_tier() {
         assert_eq!(
             adapter_error_signal(AdapterErrorKind::Retriable),
