@@ -114,3 +114,6 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: con
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: consensus-fault-matrix-case-filter-unknown-reject-test" "./scripts/v2/consensus_fault_matrix_case_filter_unknown_reject_test.sh" "ci(gate): add consensus-fault-matrix-case-filter-unknown-reject-test regression to quick-check"
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: consensus-fault-matrix-case-filter-whitespace-test" "./scripts/v2/consensus_fault_matrix_case_filter_whitespace_test.sh" "ci(gate): add consensus-fault-matrix-case-filter-whitespace-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: consensus-fault-matrix-case-filter-duplicate-reject-test" "./scripts/v2/consensus_fault_matrix_case_filter_duplicate_reject_test.sh" "ci(gate): add consensus-fault-matrix-case-filter-duplicate-reject-test regression to quick-check"
