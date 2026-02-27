@@ -851,7 +851,7 @@ fn normalized_compliance_profile(value: Option<&str>) -> Option<String> {
     let normalized = normalized_optional_field(value)?.to_ascii_lowercase();
     let is_allowed = normalized
         .chars()
-        .all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || c == '-' || c == '_');
+        .all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || matches!(c, '-' | '_' | '.'));
     let starts_with_alpha_and_ends_alnum = normalized
         .chars()
         .next()
@@ -861,7 +861,7 @@ fn normalized_compliance_profile(value: Option<&str>) -> Option<String> {
     let has_adjacent_separators = normalized
         .chars()
         .fold((false, false), |(found, prev_sep), c| {
-            let is_sep = matches!(c, '-' | '_');
+            let is_sep = matches!(c, '-' | '_' | '.');
             (found || (prev_sep && is_sep), is_sep)
         })
         .0;
@@ -872,7 +872,12 @@ fn normalized_compliance_profile(value: Option<&str>) -> Option<String> {
         && normalized.len() <= 64
         && has_alpha
     {
-        Some(normalized.replace('_', "-"))
+        Some(
+            normalized
+                .chars()
+                .map(|c| if matches!(c, '_' | '.') { '-' } else { c })
+                .collect(),
+        )
     } else {
         None
     }
@@ -2054,6 +2059,22 @@ mod tests {
             normalized_compliance_profile(Some("cn-202602"))
                 .as_deref(),
             Some("cn-202602")
+        );
+    }
+
+    #[test]
+    fn normalized_compliance_profile_accepts_dot_separators_and_normalizes_to_hyphen() {
+        assert_eq!(
+            normalized_compliance_profile(Some("CN.PII.Restricted")).as_deref(),
+            Some("cn-pii-restricted")
+        );
+    }
+
+    #[test]
+    fn normalized_compliance_profile_rejects_adjacent_dot_separators() {
+        assert_eq!(
+            normalized_compliance_profile(Some("cn..pii.restricted")),
+            None
         );
     }
 
