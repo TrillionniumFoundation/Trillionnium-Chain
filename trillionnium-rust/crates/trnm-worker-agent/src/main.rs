@@ -850,7 +850,7 @@ fn normalized_compliance_profile(value: Option<&str>) -> Option<String> {
         && normalized.len() <= 64
         && has_alpha
     {
-        Some(normalized)
+        Some(normalized.replace('_', "-"))
     } else {
         None
     }
@@ -1935,6 +1935,14 @@ mod tests {
             normalized_compliance_profile(Some("cn-202602"))
                 .as_deref(),
             Some("cn-202602")
+        );
+    }
+
+    #[test]
+    fn normalized_compliance_profile_canonicalizes_underscore_to_hyphen() {
+        assert_eq!(
+            normalized_compliance_profile(Some("CN_PII_RESTRICTED")).as_deref(),
+            Some("cn-pii-restricted")
         );
     }
 }
