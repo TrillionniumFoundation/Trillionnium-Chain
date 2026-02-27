@@ -800,6 +800,10 @@ fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
     normalized_optional_field(value).map(|v| v.to_ascii_lowercase())
 }
 
+fn normalized_compliance_profile(value: Option<&str>) -> Option<String> {
+    normalized_optional_field(value).map(|v| v.to_ascii_lowercase())
+}
+
 fn attach_llm_provenance(rec: &mut MessageIngressRecord, llm: &LlmAdapterResponse) {
     rec.provider_request_id = normalized_optional_field(llm.provider_request_id.as_deref());
 
@@ -807,7 +811,8 @@ fn attach_llm_provenance(rec: &mut MessageIngressRecord, llm: &LlmAdapterRespons
     let model = normalized_optional_field(llm.model.as_deref());
     let adapter = normalized_optional_field(llm.adapter.as_deref());
     let agent_protocol = normalized_agent_protocol(llm.agent_protocol.as_deref());
-    let compliance_profile = normalized_optional_field(llm.compliance_profile.as_deref());
+    let compliance_profile =
+        normalized_compliance_profile(llm.compliance_profile.as_deref());
 
     let has_v1_fields = provider.is_some() || model.is_some() || adapter.is_some();
     let has_v2_fields = agent_protocol.is_some() || compliance_profile.is_some();
@@ -1443,6 +1448,52 @@ mod tests {
         assert_eq!(rec.provenance_schema_version.as_deref(), Some("llm.v2"));
         let prov = rec.llm_provenance.as_ref().expect("provenance attached");
         assert_eq!(prov.agent_protocol.as_deref(), Some("mcp"));
+    }
+
+    #[test]
+    fn attach_llm_provenance_normalizes_compliance_profile_casing() {
+        let mut rec = MessageIngressRecord {
+            request_id: "r6".to_string(),
+            task_id: 14,
+            channel: "telegram".to_string(),
+            user_id: "u6".to_string(),
+            session_id: "s6".to_string(),
+            text: "prompt".to_string(),
+            idempotency_key: "ik6".to_string(),
+            status: RequestStatus::Assigned.as_str().to_string(),
+            created_at_unix_ms: 1,
+            assigned_worker: Some("worker-1".to_string()),
+            assigned_at_unix_ms: Some(2),
+            model_output: None,
+            provider_request_id: None,
+            provenance_schema_version: None,
+            llm_provenance: None,
+            result_hash: None,
+            verifier_status: None,
+            resolution_code: None,
+            commit_tx_hash: None,
+            reveal_tx_hash: None,
+            adapter_error: None,
+            reputation_delta: None,
+        };
+        let llm = LlmAdapterResponse {
+            output_text: "ok".to_string(),
+            provider_request_id: None,
+            provider: None,
+            model: None,
+            adapter: None,
+            agent_protocol: None,
+            compliance_profile: Some("  CN-PII-Restricted  ".to_string()),
+        };
+
+        attach_llm_provenance(&mut rec, &llm);
+
+        assert_eq!(rec.provenance_schema_version.as_deref(), Some("llm.v2"));
+        let prov = rec.llm_provenance.as_ref().expect("provenance attached");
+        assert_eq!(
+            prov.compliance_profile.as_deref(),
+            Some("cn-pii-restricted")
+        );
     }
 }
 
