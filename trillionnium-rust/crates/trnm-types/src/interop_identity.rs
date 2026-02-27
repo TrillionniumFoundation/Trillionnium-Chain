@@ -187,6 +187,31 @@ impl IdentityRegistry {
         controller: String,
         at_height: u64,
     ) -> Result<(), InteropIdentityError> {
+        if did.trim().is_empty() {
+            return Err(InteropIdentityError::InvalidIdentityValue {
+                field: "did",
+                value: did,
+            });
+        }
+        if did.trim() != did {
+            return Err(InteropIdentityError::InvalidIdentityValue {
+                field: "did",
+                value: did,
+            });
+        }
+        if controller.trim().is_empty() {
+            return Err(InteropIdentityError::InvalidIdentityValue {
+                field: "controller",
+                value: controller,
+            });
+        }
+        if controller.trim() != controller {
+            return Err(InteropIdentityError::InvalidIdentityValue {
+                field: "controller",
+                value: controller,
+            });
+        }
+
         if self.dids.contains_key(&did) {
             return Err(InteropIdentityError::DidAlreadyExists { did });
         }
@@ -411,6 +436,10 @@ pub enum InteropIdentityError {
     DidAlreadyExists {
         did: String,
     },
+    InvalidIdentityValue {
+        field: &'static str,
+        value: String,
+    },
     DidNotFound {
         did: String,
     },
@@ -459,6 +488,9 @@ impl fmt::Display for InteropIdentityError {
             }
             InteropIdentityError::DidAlreadyExists { did } => {
                 write!(f, "did already exists: {}", did)
+            }
+            InteropIdentityError::InvalidIdentityValue { field, value } => {
+                write!(f, "invalid identity value for {}: {:?}", field, value)
             }
             InteropIdentityError::DidNotFound { did } => {
                 write!(f, "did not found: {}", did)
@@ -843,6 +875,50 @@ mod tests {
         assert_eq!(did.controller, "org:lane2-admin");
         assert_eq!(did.created_at, 10);
         assert_eq!(did.revoked_at, None);
+    }
+
+    #[test]
+    fn register_did_rejects_blank_or_noncanonical_identifiers_without_side_effects() {
+        let mut reg = IdentityRegistry::default();
+
+        let err = reg
+            .register_did("   ".to_string(), "org:lane2-admin".to_string(), 10)
+            .unwrap_err();
+        assert!(matches!(
+            err,
+            InteropIdentityError::InvalidIdentityValue { field: "did", .. }
+        ));
+        assert!(reg.audit_trail().is_empty());
+
+        let err = reg
+            .register_did(
+                "did:trnm:agent-space ".to_string(),
+                "org:lane2-admin".to_string(),
+                10,
+            )
+            .unwrap_err();
+        assert!(matches!(
+            err,
+            InteropIdentityError::InvalidIdentityValue { field: "did", .. }
+        ));
+        assert!(reg.did("did:trnm:agent-space").is_none());
+
+        let err = reg
+            .register_did(
+                "did:trnm:agent-ok".to_string(),
+                " org:lane2-admin".to_string(),
+                10,
+            )
+            .unwrap_err();
+        assert!(matches!(
+            err,
+            InteropIdentityError::InvalidIdentityValue {
+                field: "controller",
+                ..
+            }
+        ));
+        assert!(reg.did("did:trnm:agent-ok").is_none());
+        assert!(reg.audit_trail().is_empty());
     }
 
     #[test]
