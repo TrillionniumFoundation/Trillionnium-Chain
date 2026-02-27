@@ -849,7 +849,7 @@ fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
         .collect();
     match alias_key.as_str() {
         "mcp" | "modelcontextprotocol" => Some("mcp".to_string()),
-        "a2a" | "agent2agent" => Some("a2a".to_string()),
+        "a2a" | "agent2agent" | "agenttoagent" => Some("a2a".to_string()),
         _ => None,
     }
 }
@@ -1791,6 +1791,21 @@ mod tests {
             model: None,
             adapter: None,
             agent_protocol: Some("Agent/2/Agent".to_string()),
+            compliance_profile: None,
+        };
+
+        attach_llm_provenance(&mut rec, &llm);
+
+        let prov = rec.llm_provenance.as_ref().expect("provenance attached");
+        assert_eq!(prov.agent_protocol.as_deref(), Some("a2a"));
+
+        let llm = LlmAdapterResponse {
+            output_text: "ok".to_string(),
+            provider_request_id: None,
+            provider: None,
+            model: None,
+            adapter: None,
+            agent_protocol: Some("agent-to-agent".to_string()),
             compliance_profile: None,
         };
 
