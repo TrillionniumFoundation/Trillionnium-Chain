@@ -1,252 +1,88 @@
-# Trillionnium Chain
+# Trillionnium Chain (TRNM)
 
-**Decentralized AI Work Platform: Proof of Useful Work (PoUW)**
+Rust-native Layer 1 for Decentralized AI Compute（PoUW）。
 
-> *"Where Code is Law, and Docker is the Judge."*
+> 当前主线：`trillionnium-rust/`
+>  
+> 历史 Cosmos/早期代码：`legacy/`
 
-**Trillionnium Chain (TRNM)** is a sovereign Layer 1 blockchain built for AI compute. It connects AI Agents (Workers) with users who need complex tasks done (Coding, Analysis, Content).
-
-> Current mainline: **Rust-native L1 (`trillionnium-rust/`)**.
->
-> Legacy stack has been archived under `legacy/`.
-
-## 🧭 Rust L1 文档入口（推荐先读）
+## 快速导航
 
 - 架构总览：`docs/architecture/README.md`
-- 仓库布局：`docs/architecture/rust-l1-repo-layout.md`
-- PoUW 时序（create → resolve）：`docs/architecture/rust-l1-pouw-sequence.md`
-- v1 接口冻结基线：`docs/protocol/rust-l1-v1-interface-freeze.md`
-- Agent↔User P2P Phase A 运行说明与门禁：`docs/protocol/agent-user-p2p-phaseA-ops.md`
+- 代码地图（新增）：`docs/architecture/CODEBASE_MAP.md`
+- PoUW 时序：`docs/architecture/rust-l1-pouw-sequence.md`
+- v1 接口冻结：`docs/protocol/rust-l1-v1-interface-freeze.md`
+- 项目状态：`STATUS.md`
+- 运维手册：`OPERATIONS.md`
 
-## 🏗️ Architecture
+## 当前仓库结构（真实）
 
-The system is built on three pillars:
-
-1.  **AI-Native Consensus**: Validators run lightweight verification environments to ensure work quality.
-2.  **Containerized Tasks**: All work must be packaged as Docker images for deterministic, reproducible execution.
-3.  **Tokenomics (TRNM)**:
-    - **Staking**: Workers stake **100,000 TRNM** to join.
-    - **Slashing**: Malicious workers lose **50%** of their stake.
-    - **Burn**: 100% of task fees are burned (Deflationary).
-
-## 📂 Project Structure
-
-```
+```text
 TrillionniumChain/
-├── config/                  # Chain Configuration
-│   └── genesis.json         # L1 Genesis State (Tokenomics)
-├── core/                    # Simulation Engine
-│   ├── tokenomics_stress_test.py # Economic Model Stress Test
-│   ├── protocol_simulator.py  # Logic Simulator
-│   └── ...
-├── tasks/                   # Example Task Packages
-│   └── example_futures/     # A complete Python quant strategy task
-└── worker/                  # The Worker Client
-    ├── main.py              # CLI Entrypoint
-    ├── executor.py          # Docker Runner
-    └── listener.py          # Task Queue Listener
+├── trillionnium-rust/         # Rust workspace（核心代码）
+│   ├── crates/
+│   │   ├── trnm-node
+│   │   ├── trnm-state
+│   │   ├── trnm-pouw
+│   │   ├── trnm-executor
+│   │   ├── trnm-mempool
+│   │   ├── trnm-rpc
+│   │   ├── trnm-worker-agent
+│   │   ├── trnm-cli
+│   │   ├── trnm-bench
+│   │   └── trnm-types
+│   ├── configs/
+│   ├── scripts/
+│   └── run/
+├── scripts/                   # 仓库级自动化与 gate 编排
+├── docs/                      # 架构/协议/产品/runbook 文档
+├── data/                      # 各类运行产物（验收、回归、报告）
+├── run/                       # 仓库级运行日志与阶段输出
+├── config/                    # 策略与告警配置
+└── legacy/                    # 冻结归档
 ```
 
-## 🚀 Quick Start
+## 核心 crates（职责）
 
-### 1. Run Tokenomics Simulation
-Validate the economic model (Inflation vs Burn).
-```bash
-python3 core/tokenomics_stress_test.py
-```
+- `trnm-node`：节点主循环、执行接线、事件输出
+- `trnm-state`：版本化状态存储与 state root
+- `trnm-pouw`：PoUW 状态机（create/commit/reveal/challenge/resolve）
+- `trnm-executor`：冲突检测与并发分组
+- `trnm-rpc`：稳定查询接口与服务层
+- `trnm-worker-agent`：worker 任务执行与链上提交链路
+- `trnm-cli`：原生命令行（tx/query）
+- `trnm-bench`：性能基准
+- `trnm-types`：共享类型
+- `trnm-mempool`：交易池与打包策略
 
-### 2. Start a Worker Node
-Turn your machine into a compute node.
-```bash
-# Install dependencies
-pip3 install -r worker/requirements.txt (if any)
-
-# Run self-test
-python3 worker/main.py test
-
-# Start daemon
-python3 worker/main.py start
-```
-
-## ⚙️ Chain Ops: Governance Param Demo (workload_denom)
-
-`x/workload` now supports governance-configurable economic denom via params (`workload_denom`).
-
-Run demo flow:
+## 常用命令（仓库根目录）
 
 ```bash
-cd chain
-./tools/demo_denom_governance_flow.sh chain alice http://127.0.0.1:26657 ufoo
-```
+# 快速门禁检查
+./scripts/quick_gate_shell.sh
 
-What it demonstrates:
-- query current params
-- update `workload_denom` (authority path)
-- create/complete task
-- observe task lifecycle events carrying the active denom
+# 自动化流水线
+./scripts/run_100step_pipeline.sh
+./scripts/run_200step_pipeline.sh
+./scripts/run_200step_v2_pipeline.sh
+./scripts/run_codegen_pipeline.sh
 
-> Note: script assumes local dev chain (`ignite chain serve`) and local key `alice`.
-
-## 📘 Operations Runbook
-
-For chain operators and testing flows, see:
-- `docs/OPERATIONS.md`
-
-## 🧩 产品层最小 API（balance / nonce / sendTx / getTx）
-
-为前端、Bot、自动化脚本提供统一最小接口（JSON-RPC 风格）：
-
-- `balance(address)`：查询账户余额
-- `nonce(address)`：查询账户下一可用 nonce
-- `sendTx(from,to,amount,nonce,signature)`：发送转账交易
-- `getTx(txHash)`：查询交易状态与回执
-
-示例（`curl`）：
-
-```bash
-RPC_URL=${RPC_URL:-http://127.0.0.1:8545}
-
-# 1) balance
-curl -sS "$RPC_URL" -H 'content-type: application/json' -d '{
-  "jsonrpc":"2.0",
-  "id":1,
-  "method":"balance",
-  "params":{"address":"trnm1alice..."}
-}'
-
-# 2) nonce
-curl -sS "$RPC_URL" -H 'content-type: application/json' -d '{
-  "jsonrpc":"2.0",
-  "id":2,
-  "method":"nonce",
-  "params":{"address":"trnm1alice..."}
-}'
-
-# 3) sendTx
-curl -sS "$RPC_URL" -H 'content-type: application/json' -d '{
-  "jsonrpc":"2.0",
-  "id":3,
-  "method":"sendTx",
-  "params":{
-    "from":"trnm1alice...",
-    "to":"trnm1bob...",
-    "amount":"1000000",
-    "denom":"utrnm",
-    "nonce":12,
-    "signature":"0x..."
-  }
-}'
-
-# 4) getTx
-curl -sS "$RPC_URL" -H 'content-type: application/json' -d '{
-  "jsonrpc":"2.0",
-  "id":4,
-  "method":"getTx",
-  "params":{"txHash":"0xabc123..."}
-}'
-```
-
-建议调用顺序：`balance -> nonce -> sendTx -> getTx`。
-
-## 🔎 Minimal Explorer（P1-4 #2）
-
-已提供本地最小浏览器（地址页/交易页/区块页）：
-
-```bash
-python3 scripts/min_explorer.py --host 127.0.0.1 --port 8090
-```
-
-使用说明见：`docs/product/min-explorer.md`
-
-### Worker Receipt Gates (single entry)
-
-From repo root:
-
-```bash
+# Worker receipt gates
 ./scripts/v2/run_worker_receipt_gates.sh
+# strict real-cli
+TRNM_TX_CLI=./trillionnium-rust/target/debug/trnm-cli \
+  ./scripts/v2/run_worker_receipt_gates_real_cli.sh
+
+# Tokenomics regression gate (R1-R14, targeted fast set)
+./scripts/v2/run_tokenomics_r1_r14_regression_gate.sh
 ```
 
-This is the canonical gate entry (used by CI + relay), covering:
-- full loop tx_hash hard-check
-- replay guard (rc=9)
-- nonce monotonic guard (rc=10)
-- retry/backoff boundary (transient failures then converge)
-- failed receipt semantics (`status=failed` + `commit_tx_hash`)
-- resume no-duplicate convergence (restart after partial failure)
+## 代码整理说明
 
-For real tx environments, run the strict gate:
-```bash
-TRNM_TX_CLI=<your-real-tx-cli> ./scripts/v2/run_worker_receipt_gates_real_cli.sh
-# Rust-native CLI (recommended)
-TRNM_TX_CLI=./trillionnium-rust/target/debug/trnm-cli ./scripts/v2/run_worker_receipt_gates_real_cli.sh
-```
+本仓库已完成“Rust L1 主线收敛”：
+- 旧结构（`core/ tasks/ worker/ chain/`）不再作为主线入口；
+- 文档与脚本将以 `trillionnium-rust/ + scripts/v2` 为第一入口持续维护。
 
-Boundary test can also be run standalone:
-```bash
-./scripts/v2/worker_retry_nonce_boundary_test.sh
-```
+## License
 
-### E2E Worker Smoke (new)
-From repo root:
-
-```bash
-# Submit 3 jobs with retry-safe sequence handling
-./scripts/submit_jobs.sh ./tasks/example_futures cpu 3
-
-# Full smoke: restart single worker, submit jobs, verify on-chain result commits in logs
-./scripts/e2e_smoke.sh 2
-```
-
-What this validates:
-- chain receives `create-compute-job`
-- worker listens `new_compute_job` events
-- docker task executes successfully
-- worker sends `request-job-execution` + `complete-job`
-- logs contain `result committed on-chain`
-
-Lifecycle smoke observability guardrail:
-- `chain/tools/lifecycle_smoke.sh` emits `SUMMARY_JSON` on both success/failure (`SUMMARY_JSON=1`)
-- `chain/tools/lifecycle_smoke_observability_test.sh` enforces snapshot field consistency and failure diagnostics
-- Schema contract: `chain/tools/LIFECYCLE_SUMMARY_SCHEMA_CONTRACT.md` (v2/v3 compatibility + parser fallback)
-- CI workflow `.github/workflows/lifecycle-smoke-observability.yml` runs shellcheck + parser/fixture/contract checks + regression test
-- `x/workload` unbonding request path now rejects unsafe block-height boundaries (negative and int64-unreachable release height)
-
-### P0 Acceptance (one command)
-
-From repo root:
-
-```bash
-./scripts/p0_acceptance.sh
-# quick mode (skip full alpha acceptance)
-./scripts/p0_acceptance.sh --quick
-# include P1 worker restart-reconcile smoke
-./scripts/p0_acceptance.sh --with-p1
-# include challenge re-exec resolve-template smoke
-./scripts/p0_acceptance.sh --with-reexec
-
-# mainline merge gate (full P0 + P1 + reexec; non-zero exit blocks merge)
-./scripts/p0_merge_gate.sh
-
-# challenge re-execution e2e demo (creates challenged task + emits resolve template)
-./scripts/challenge_reexec_e2e_demo.sh mismatch
-
-# P1 negative/adversarial regression suite
-./scripts/p1_negative_suite.sh
-```
-
-Artifacts:
-- `data/p0-acceptance/<timestamp>/summary.txt`
-- `data/p0-acceptance/<timestamp>/summary.json`
-- per-step logs in the same folder
-
-## 🛠️ Roadmap
-
-- [x] **Phase 1**: Core Architecture & Simulation
-- [x] **Phase 2**: Worker Client (Docker Executor)
-- [x] **Phase 3**: Tokenomics Design (TRNM)
-- [ ] **Alpha**: Launch Rust L1 Testnet.
-- [ ] **Beta**: Mainnet Genesis.
-
-## 📜 License
-
-MIT License. Trillionnium Foundation.
+MIT

@@ -121,18 +121,92 @@ jobs:
           cd trillionnium-rust
           ./scripts/check_bft_round_change.sh
 
-      - name: Consensus fault matrix (hard gate)
+      - name: "Consensus fault matrix (hard gate: baseline/restart/byzantine)"
+        if: always()
+        id: consensus_fault_hard
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           cd trillionnium-rust
+          GATE_MODE=hard \
+          ALLOW_FAIL=0 \
+          EXPECTED_CASES=3 \
+          CASE_FILTER="baseline,restart_recovery,byzantine_rounds" \
           BASELINE_MAX_FINALITY_P95_MS=${BASELINE_MAX_FINALITY_P95_MS:-100} \
-          SLOW_BLOCK_MAX_FINALITY_P95_MS=${SLOW_BLOCK_MAX_FINALITY_P95_MS:-300} \
           RESTART_RECOVERY_MAX_FINALITY_P95_MS=${RESTART_RECOVERY_MAX_FINALITY_P95_MS:-200} \
+          BYZANTINE_ROUNDS_MAX_FINALITY_P95_MS=${BYZANTINE_ROUNDS_MAX_FINALITY_P95_MS:-220} \
           BASELINE_MAX_ROUND_CHANGE_TOTAL=${BASELINE_MAX_ROUND_CHANGE_TOTAL:-8} \
-          SLOW_BLOCK_MAX_ROUND_CHANGE_TOTAL=${SLOW_BLOCK_MAX_ROUND_CHANGE_TOTAL:-8} \
           RESTART_RECOVERY_MAX_ROUND_CHANGE_TOTAL=${RESTART_RECOVERY_MAX_ROUND_CHANGE_TOTAL:-8} \
+          BYZANTINE_ROUNDS_MAX_ROUND_CHANGE_TOTAL=${BYZANTINE_ROUNDS_MAX_ROUND_CHANGE_TOTAL:-10} \
           ./scripts/run_consensus_fault_matrix.sh
+
+          hard_report=$(ls -1t run/health/consensus-fault-matrix-*.txt | head -n 1)
+          echo "hard_report=${hard_report}" >> "$GITHUB_OUTPUT"
+
+      - name: "Consensus fault matrix (soft gate observe: 5 stress cases)"
+        if: always()
+        id: consensus_fault_soft
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+          cd trillionnium-rust
+          GATE_MODE=soft \
+          EXPECTED_CASES=5 \
+          CASE_FILTER="slow_block,faulty_round_backoff,leader_jitter,message_reorder,slow_validator" \
+          ALLOW_FAIL=1 \
+          SLOW_BLOCK_MAX_FINALITY_P95_MS=${SLOW_BLOCK_MAX_FINALITY_P95_MS:-300} \
+          FAULTY_ROUND_BACKOFF_MAX_FINALITY_P95_MS=${FAULTY_ROUND_BACKOFF_MAX_FINALITY_P95_MS:-320} \
+          LEADER_JITTER_MAX_FINALITY_P95_MS=${LEADER_JITTER_MAX_FINALITY_P95_MS:-320} \
+          MESSAGE_REORDER_MAX_FINALITY_P95_MS=${MESSAGE_REORDER_MAX_FINALITY_P95_MS:-350} \
+          SLOW_VALIDATOR_MAX_FINALITY_P95_MS=${SLOW_VALIDATOR_MAX_FINALITY_P95_MS:-320} \
+          ./scripts/run_consensus_fault_matrix.sh
+
+          soft_report=$(ls -1t run/health/consensus-fault-matrix-*.txt | head -n 1)
+          echo "soft_report=${soft_report}" >> "$GITHUB_OUTPUT"
+
+      - name: Append consensus fault matrix (hard/soft) to GitHub Step Summary
+        if: always()
+        run: |
+          set -euo pipefail
+          cd trillionnium-rust
+
+          hard_report="${{ steps.consensus_fault_hard.outputs.hard_report }}"
+          soft_report="${{ steps.consensus_fault_soft.outputs.soft_report }}"
+
+          if [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
+            {
+              echo "## Consensus Fault Matrix"
+              echo
+              if [ -n "$hard_report" ] && [ -f "$hard_report" ]; then
+                echo "### Hard gate (baseline/restart/byzantine)"
+                echo
+                echo "Report: \\`$hard_report\\`"
+                echo
+                sed -n '1,40p' "$hard_report"
+                echo
+              else
+                echo "### Hard gate"
+                echo
+                echo "Report not found."
+                echo
+              fi
+
+              if [ -n "$soft_report" ] && [ -f "$soft_report" ]; then
+                echo "### Soft observe (5 stress cases)"
+                echo
+                echo "Report: \\`$soft_report\\`"
+                echo
+                sed -n '1,60p' "$soft_report"
+                echo
+              else
+                echo "### Soft observe"
+                echo
+                echo "Report not found."
+                echo
+              fi
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
 
       - name: Request fault injection (MVP hard gate)
         run: |
@@ -245,11 +319,14 @@ jobs:
           TXS=10000 KEYS=256 READ_FANOUT=4 WRITE_EVERY=1 ./scripts/run_executor_hotspot_experiment.sh
 
       - name: Run aggressive-vs-original regression matrix
+        id: regression_matrix
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           cd trillionnium-rust
           TXS=${REGRESSION_MATRIX_TXS:-10000} ./scripts/run_bench_regression_matrix.sh
+          regression_csv=$(ls -1t run/bench/bench-regression-matrix-*.csv 2>/dev/null | head -n 1 || true)
+          echo "regression_csv=${regression_csv}" >> "$GITHUB_OUTPUT"
 
       - name: Build aggressive profiling summary
         if: always()
@@ -300,30 +377,43 @@ jobs:
 
       - name: Auto-adaptive threshold suggestion (non-gate)
         if: always()
+        id: auto_adaptive_suggestion
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           cd trillionnium-rust
 
           ./scripts/suggest_auto_adaptive_thresholds.py
+          suggestion_file=$(ls -1t run/health/auto-adaptive-threshold-suggestion-*.txt 2>/dev/null | head -n 1 || true)
+          echo "suggestion_file=${suggestion_file}" >> "$GITHUB_OUTPUT"
 
       - name: Nightly auto-attribution labels (always)
         if: always()
+        id: nightly_attribution
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           cd trillionnium-rust
 
           THRESHOLD_PROFILE=${THRESHOLD_PROFILE:-stage2} ./scripts/nightly_attribution.sh
+          attribution_file=$(ls -1t run/health/nightly-attribution-*.txt 2>/dev/null | head -n 1 || true)
+          echo "attribution_file=${attribution_file}" >> "$GITHUB_OUTPUT"
 
       - name: Render nightly summary (non-gate)
         if: always()
+        id: render_nightly_summary
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           cd trillionnium-rust
 
+          summary_out="run/health/nightly-summary-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}.md"
+          NIGHTLY_SUMMARY_OUT="${summary_out}" \
+          NIGHTLY_ATTRIBUTION_FILE="${{ steps.nightly_attribution.outputs.attribution_file }}" \
+          AUTO_ADAPTIVE_SUGGESTION_FILE="${{ steps.auto_adaptive_suggestion.outputs.suggestion_file }}" \
+          BENCH_REGRESSION_CSV="${{ steps.regression_matrix.outputs.regression_csv }}" \
           ./scripts/render_nightly_summary.py
+          echo "summary_file=${summary_out}" >> "$GITHUB_OUTPUT"
 
       - name: Append nightly summary to GitHub Step Summary
         if: always()
@@ -331,12 +421,12 @@ jobs:
           set -euo pipefail
           cd trillionnium-rust
 
-          latest_summary=$(ls -1t run/health/nightly-summary-*.md | head -n 1)
-          if [ -n "${GITHUB_STEP_SUMMARY:-}" ] && [ -f "${latest_summary}" ]; then
+          summary_file="${{ steps.render_nightly_summary.outputs.summary_file }}"
+          if [ -n "${GITHUB_STEP_SUMMARY:-}" ] && [ -f "${summary_file}" ]; then
             {
               echo "## Nightly Health (Rendered)"
               echo
-              cat "${latest_summary}"
+              cat "${summary_file}"
             } >> "${GITHUB_STEP_SUMMARY}"
           fi
 

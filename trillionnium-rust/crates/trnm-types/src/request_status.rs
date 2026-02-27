@@ -28,18 +28,42 @@ impl RequestStatus {
     }
 
     pub fn parse(s: &str) -> Result<Self, RequestStateError> {
-        match s {
-            "OPEN" => Ok(RequestStatus::Open),
-            "ASSIGNED" => Ok(RequestStatus::Assigned),
-            "COMMIT_QUEUED" => Ok(RequestStatus::CommitQueued),
-            "REVEAL_SUBMITTED" => Ok(RequestStatus::RevealSubmitted),
-            "REJECTED" => Ok(RequestStatus::Rejected),
-            "FAILED_ADAPTER" => Ok(RequestStatus::FailedAdapter),
-            "FAILED_SUBMISSION" => Ok(RequestStatus::FailedSubmission),
-            other => Err(RequestStateError::UnknownState {
-                input: other.to_string(),
-            }),
+        let normalized = s.trim();
+        // Accept common separator variants from external producers (hyphen/space)
+        // while still requiring exact token identity.
+        let canonical = normalized
+            .chars()
+            .map(|c| match c {
+                '-' | ' ' => '_',
+                _ => c,
+            })
+            .collect::<String>();
+
+        if canonical.eq_ignore_ascii_case("OPEN") {
+            return Ok(RequestStatus::Open);
         }
+        if canonical.eq_ignore_ascii_case("ASSIGNED") {
+            return Ok(RequestStatus::Assigned);
+        }
+        if canonical.eq_ignore_ascii_case("COMMIT_QUEUED") {
+            return Ok(RequestStatus::CommitQueued);
+        }
+        if canonical.eq_ignore_ascii_case("REVEAL_SUBMITTED") {
+            return Ok(RequestStatus::RevealSubmitted);
+        }
+        if canonical.eq_ignore_ascii_case("REJECTED") {
+            return Ok(RequestStatus::Rejected);
+        }
+        if canonical.eq_ignore_ascii_case("FAILED_ADAPTER") {
+            return Ok(RequestStatus::FailedAdapter);
+        }
+        if canonical.eq_ignore_ascii_case("FAILED_SUBMISSION") {
+            return Ok(RequestStatus::FailedSubmission);
+        }
+
+        Err(RequestStateError::UnknownState {
+            input: normalized.to_string(),
+        })
     }
 
     pub fn is_terminal(self) -> bool {
@@ -236,6 +260,27 @@ mod tests {
             err,
             RequestStateError::UnknownState { input } if input == "NOT_A_STATE"
         ));
+    }
+
+    #[test]
+    fn parse_accepts_case_insensitive_and_whitespace_wrapped_inputs() {
+        assert_eq!(RequestStatus::parse("open").unwrap(), RequestStatus::Open);
+        assert_eq!(
+            RequestStatus::parse("  commit_queued\n").unwrap(),
+            RequestStatus::CommitQueued
+        );
+        assert_eq!(
+            RequestStatus::parse("ReVeAl_Submitted").unwrap(),
+            RequestStatus::RevealSubmitted
+        );
+        assert_eq!(
+            RequestStatus::parse("reveal-submitted").unwrap(),
+            RequestStatus::RevealSubmitted
+        );
+        assert_eq!(
+            RequestStatus::parse("failed adapter").unwrap(),
+            RequestStatus::FailedAdapter
+        );
     }
 
     #[test]

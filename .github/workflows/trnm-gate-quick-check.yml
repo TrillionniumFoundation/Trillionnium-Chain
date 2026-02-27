@@ -17,7 +17,9 @@ on:
 jobs:
   shell-static-checks:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    # This workflow runs dozens of regression scripts; 10 minutes can truncate
+    # coverage and hide late-stage failures. Keep enough headroom for full sweep.
+    timeout-minutes: 45
 
     steps:
       - uses: actions/checkout@v4
@@ -34,7 +36,7 @@ jobs:
 
       - name: Validate workflow script refs (exist + executable)
         run: |
-          WORKFLOW_SCRIPT_REF_STRICT=0 \
+          WORKFLOW_SCRIPT_REF_STRICT=1 \
           WORKFLOW_SCRIPT_REF_SUMMARY_PATH=run/quick-gate/workflow-script-refs-summary.json \
           ./scripts/validate_workflow_script_refs.sh
 
@@ -345,6 +347,14 @@ jobs:
       - name: Auto regression: worker-retry-nonce-boundary-test
         run: |
           ./scripts/v2/worker_retry_nonce_boundary_test.sh
+
+      - name: Auto regression: run-tokenomics-r1-r14-regression-gate
+        run: |
+          ./scripts/v2/run_tokenomics_r1_r14_regression_gate.sh
+
+      - name: Auto regression: check-unchecked-gov-usage
+        run: |
+          ./scripts/v2/check_unchecked_gov_usage.sh
 
       - name: Upload quick gate summary
         if: always()

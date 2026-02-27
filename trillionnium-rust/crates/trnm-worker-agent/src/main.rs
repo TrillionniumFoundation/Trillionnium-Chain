@@ -6,6 +6,7 @@ use std::{
     collections::HashSet,
     env,
     fs::{self, OpenOptions},
+    io::Write,
     path::PathBuf,
     process::{Command as ProcCommand, Output, Stdio},
     thread,
@@ -29,6 +30,7 @@ const LLM_ADAPTER_TIMEOUT_ENV: &str = "TRNM_LLM_ADAPTER_TIMEOUT_MS";
 const RC_OK: i32 = 0;
 const RC_DUPLICATE: i32 = 9;
 const RC_NONCE_REJECTED: i32 = 10;
+const RC_SKIPPED: i32 = -1;
 
 #[derive(Debug, Parser)]
 #[command(
@@ -274,6 +276,17 @@ fn now_ms() -> u128 {
         .unwrap_or(0)
 }
 
+fn append_json_line(path: &PathBuf, line: &str) -> Result<()> {
+    if let Some(parent) = path.parent() {
+        fs::create_dir_all(parent)?;
+    }
+    let mut file = OpenOptions::new().create(true).append(true).open(path)?;
+    file.write_all(line.as_bytes())?;
+    file.write_all(b"\n")?;
+    file.flush()?;
+    Ok(())
+}
+
 fn append_submission(
     submit_log: &PathBuf,
     task_id: u64,
@@ -303,15 +316,7 @@ fn append_submission(
         reveal_cmd,
     };
     let line = serde_json::to_string(&rec)?;
-    let mut old = if submit_log.exists() {
-        fs::read_to_string(submit_log)?
-    } else {
-        String::new()
-    };
-    old.push_str(&line);
-    old.push('\n');
-    fs::write(submit_log, old)?;
-    Ok(())
+    append_json_line(submit_log, &line)
 }
 
 fn load_acked(ack_log: &PathBuf) -> HashSet<u64> {
@@ -419,46 +424,35 @@ fn append_ack(
         run_id,
     };
     let line = serde_json::to_string(&rec)?;
-    let mut old = if ack_log.exists() {
-        fs::read_to_string(ack_log)?
-    } else {
-        String::new()
-    };
-    old.push_str(&line);
-    old.push('\n');
-    fs::write(ack_log, old)?;
-    Ok(())
+    append_json_line(ack_log, &line)
 }
 
 fn append_event(event_log: &PathBuf, event: &WorkerEvent) -> Result<()> {
     let line = serde_json::to_string(event)?;
-    let mut old = if event_log.exists() {
-        fs::read_to_string(event_log)?
-    } else {
-        String::new()
-    };
-    old.push_str(&line);
-    old.push('\n');
-    fs::write(event_log, old)?;
-    Ok(())
+    append_json_line(event_log, &line)
 }
 
 fn append_progress(progress_log: &PathBuf, rec: &ProgressRecord) -> Result<()> {
     let line = serde_json::to_string(rec)?;
-    let mut old = if progress_log.exists() {
-        fs::read_to_string(progress_log)?
-    } else {
-        String::new()
-    };
-    old.push_str(&line);
-    old.push('\n');
-    fs::write(progress_log, old)?;
-    Ok(())
+    append_json_line(progress_log, &line)
 }
 
 fn parse_tx_hash(text: &str) -> Option<String> {
-    text.split_whitespace()
-        .find_map(|w| w.strip_prefix("tx_hash=").map(|s| s.to_string()))
+    text.split_whitespace().find_map(|w| {
+        let raw = w.strip_prefix("tx_hash=")?;
+        let cleaned = raw
+            .trim_matches(|c: char| matches!(c, '"' | '\'' | ',' | ';' | '.' | ':' | ')' | ']' | '}'))
+            .trim();
+
+        if cleaned.starts_with("0x")
+            && cleaned.len() == 66
+            && cleaned[2..].chars().all(|c| c.is_ascii_hexdigit())
+        {
+            Some(cleaned.to_ascii_lowercase())
+        } else {
+            None
+        }
+    })
 }
 
 fn is_deterministic_rejection(rc: i32) -> bool {
@@ -467,6 +461,10 @@ fn is_deterministic_rejection(rc: i32) -> bool {
 
 fn is_idempotent_duplicate_ok(rc: i32) -> bool {
     rc == RC_DUPLICATE
+}
+
+fn should_execute_reveal(commit_res: &AdapterExecResult) -> bool {
+    commit_res.ok || is_idempotent_duplicate_ok(commit_res.rc)
 }
 
 fn backoff_delay_ms(base_ms: u64, attempt: u32) -> u64 {
@@ -530,6 +528,15 @@ struct LlmAdapterResponse {
     output_text: String,
     #[serde(default)]
     provider_request_id: Option<String>,
+}
+
+fn truncate_for_error(raw: &str, max_chars: usize) -> String {
+    let total = raw.chars().count();
+    if total <= max_chars {
+        return raw.to_string();
+    }
+    let prefix: String = raw.chars().take(max_chars).collect();
+    format!("{}…(truncated, {} chars total)", prefix, total)
 }
 
 fn parse_u32_with_min(raw: Option<&str>, default: u32, min: u32) -> u32 {
@@ -655,14 +662,43 @@ fn run_llm_adapter_once(
             context: format!(
                 "llm adapter failed rc={:?} stderr={}",
                 out.status.code(),
-                stderr
+                truncate_for_error(&stderr, 512)
             ),
         });
     }
-    let resp: LlmAdapterResponse = serde_json::from_str(&stdout).map_err(|e| AdapterError {
-        kind: AdapterErrorKind::NonRetriable,
-        context: format!("llm adapter invalid json: {} raw={}", e, stdout),
-    })?;
+    let parse_whole = serde_json::from_str::<LlmAdapterResponse>(&stdout);
+    let resp = if let Ok(resp) = parse_whole {
+        resp
+    } else {
+        let fallback_line = stdout
+            .lines()
+            .rev()
+            .map(str::trim)
+            .find(|line| line.starts_with('{') && line.ends_with('}'));
+
+        match fallback_line {
+            Some(line) => serde_json::from_str::<LlmAdapterResponse>(line).map_err(|e| {
+                AdapterError {
+                    kind: AdapterErrorKind::NonRetriable,
+                    context: format!(
+                        "llm adapter invalid json: {} raw={}",
+                        e,
+                        truncate_for_error(&stdout, 512)
+                    ),
+                }
+            })?,
+            None => {
+                return Err(AdapterError {
+                    kind: AdapterErrorKind::NonRetriable,
+                    context: format!(
+                        "llm adapter invalid json: no-json-line raw={}",
+                        truncate_for_error(&stdout, 512)
+                    ),
+                });
+            }
+        }
+    };
+
     Ok(resp)
 }
 
@@ -736,6 +772,28 @@ mod tests {
     use super::*;
 
     #[test]
+    fn transition_request_status_accepts_benign_formatting_variants() {
+        let next = transition_request_status("  open ", RequestStatus::Assigned)
+            .expect("OPEN -> ASSIGNED should parse with whitespace/case drift");
+        assert_eq!(next, RequestStatus::Assigned.as_str());
+
+        let next = transition_request_status("aSsIgNeD", RequestStatus::CommitQueued)
+            .expect("ASSIGNED -> COMMIT_QUEUED should parse case-insensitively");
+        assert_eq!(next, RequestStatus::CommitQueued.as_str());
+    }
+
+    #[test]
+    fn transition_request_status_rejects_malformed_state_with_stable_diagnostic() {
+        let err = transition_request_status(" pending-ish ", RequestStatus::Assigned)
+            .expect_err("unknown states must be rejected");
+        assert!(
+            err.to_string().contains("unknown request state"),
+            "unexpected error text: {}",
+            err
+        );
+    }
+
+    #[test]
     fn deterministic_rejection_codes_are_stable() {
         assert!(is_deterministic_rejection(RC_DUPLICATE));
         assert!(is_deterministic_rejection(RC_NONCE_REJECTED));
@@ -751,6 +809,30 @@ mod tests {
     }
 
     #[test]
+    fn terminal_commit_reject_skips_reveal_execution_gate() {
+        let commit_res = AdapterExecResult {
+            ok: false,
+            rc: RC_NONCE_REJECTED,
+            tx_hash: None,
+            terminal: true,
+        };
+
+        assert!(!should_execute_reveal(&commit_res));
+    }
+
+    #[test]
+    fn duplicate_commit_still_executes_reveal_gate() {
+        let commit_res = AdapterExecResult {
+            ok: false,
+            rc: RC_DUPLICATE,
+            tx_hash: None,
+            terminal: true,
+        };
+
+        assert!(should_execute_reveal(&commit_res));
+    }
+
+    #[test]
     fn backoff_delay_is_linear_and_saturating() {
         assert_eq!(backoff_delay_ms(200, 0), 200);
         assert_eq!(backoff_delay_ms(200, 1), 400);
@@ -758,6 +840,30 @@ mod tests {
 
         // saturation guard (no overflow panic/wrap)
         assert_eq!(backoff_delay_ms(u64::MAX, 1), u64::MAX);
+    }
+
+    #[test]
+    fn parse_tx_hash_accepts_quoted_and_trailing_punctuated_tokens() {
+        let mixed_case = "tx_hash=\"0xABCDabcdABCDabcdABCDabcdABCDabcdABCDabcdABCDabcdABCDabcdABCDabcd\",";
+        let parsed = parse_tx_hash(mixed_case).expect("hash should parse");
+        assert_eq!(
+            parsed,
+            "0xabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd"
+        );
+
+        let sentence_tail = "submitted tx_hash=0xABCDabcdABCDabcdABCDabcdABCDabcdABCDabcdABCDabcdABCDabcdABCDabcd. next";
+        let parsed_tail = parse_tx_hash(sentence_tail).expect("hash with sentence punctuation should parse");
+        assert_eq!(
+            parsed_tail,
+            "0xabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd"
+        );
+    }
+
+    #[test]
+    fn parse_tx_hash_rejects_malformed_or_partial_values() {
+        assert!(parse_tx_hash("tx_hash=0xdeadbeef").is_none());
+        assert!(parse_tx_hash("tx_hash=not-a-hash").is_none());
+        assert!(parse_tx_hash("tx_hash=0xzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz").is_none());
     }
 
     #[test]
@@ -817,6 +923,23 @@ mod tests {
         let parsed: LlmAdapterResponse = serde_json::from_str(&stdout).unwrap();
         assert_eq!(parsed.output_text, "ok");
         assert_eq!(parsed.provider_request_id.as_deref(), Some("r1"));
+    }
+
+    #[test]
+    fn llm_adapter_accepts_last_json_line_when_stdout_has_noise() {
+        let cmd = "printf 'debug: adapter warmup\\n{\"output_text\":\"ok\",\"provider_request_id\":\"r1\"}\\n'";
+        let parsed = run_llm_adapter_once("sh -lc", cmd, Duration::from_secs(1)).unwrap();
+        assert_eq!(parsed.output_text, "ok");
+        assert_eq!(parsed.provider_request_id.as_deref(), Some("r1"));
+    }
+
+    #[test]
+    fn truncate_for_error_marks_truncated_payloads() {
+        let raw = "x".repeat(600);
+        let truncated = truncate_for_error(&raw, 32);
+        assert!(truncated.starts_with("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"));
+        assert!(truncated.contains("truncated"));
+        assert!(truncated.contains("600 chars total"));
     }
 
     #[test]
@@ -919,7 +1042,8 @@ mod tests {
 
     #[test]
     fn task_lock_prevents_parallel_replay_for_same_task() {
-        let ack_log = std::env::temp_dir().join(format!("trnm-worker-agent-ack-{}.jsonl", now_ms()));
+        let ack_log =
+            std::env::temp_dir().join(format!("trnm-worker-agent-ack-{}.jsonl", now_ms()));
         let guard = try_acquire_task_lock(&ack_log, 42)
             .expect("acquire lock")
             .expect("first lock should succeed");
@@ -941,7 +1065,8 @@ mod tests {
 
     #[test]
     fn is_task_acked_only_true_for_accepted_records() {
-        let ack_log = std::env::temp_dir().join(format!("trnm-worker-agent-ack-{}.jsonl", now_ms()));
+        let ack_log =
+            std::env::temp_dir().join(format!("trnm-worker-agent-ack-{}.jsonl", now_ms()));
         fs::write(
             &ack_log,
             "{\"ts_unix_ms\":1,\"task_id\":1,\"status\":\"rejected\"}\n{\"ts_unix_ms\":2,\"task_id\":2,\"status\":\"accepted\"}\n",
@@ -1237,7 +1362,10 @@ fn main() -> Result<()> {
                                 note: "already_acked_after_lock".to_string(),
                             },
                         )?;
-                        println!("[skip] task_id={} already_acked_after_lock=true", rec.task_id);
+                        println!(
+                            "[skip] task_id={} already_acked_after_lock=true",
+                            rec.task_id
+                        );
                         continue;
                     }
 
@@ -1266,14 +1394,24 @@ fn main() -> Result<()> {
 
                     let commit_res =
                         run_adapter_with_retry(&cmd1, tx_retry.max_retries, tx_retry.backoff_ms)?;
-                    let reveal_res =
-                        run_adapter_with_retry(&cmd2, tx_retry.max_retries, tx_retry.backoff_ms)?;
+                    let reveal_executed = should_execute_reveal(&commit_res);
+                    let reveal_res = if reveal_executed {
+                        run_adapter_with_retry(&cmd2, tx_retry.max_retries, tx_retry.backoff_ms)?
+                    } else {
+                        AdapterExecResult {
+                            ok: false,
+                            rc: RC_SKIPPED,
+                            tx_hash: None,
+                            terminal: true,
+                        }
+                    };
 
                     println!(
-                        "[submitted] task_id={} commit_ok={} reveal_ok={} commit_rc={} reveal_rc={} commit_tx_hash={} reveal_tx_hash={} adapter={} retries={} backoff_ms={}",
+                        "[submitted] task_id={} commit_ok={} reveal_ok={} reveal_executed={} commit_rc={} reveal_rc={} commit_tx_hash={} reveal_tx_hash={} adapter={} retries={} backoff_ms={}",
                         rec.task_id,
                         commit_res.ok,
                         reveal_res.ok,
+                        reveal_executed,
                         commit_res.rc,
                         reveal_res.rc,
                         commit_res.tx_hash.as_deref().unwrap_or("-"),
@@ -1283,40 +1421,49 @@ fn main() -> Result<()> {
                         tx_retry.backoff_ms
                     );
 
-                    let commit_idempotent_ok =
-                        commit_res.ok || is_idempotent_duplicate_ok(commit_res.rc);
+                    let commit_idempotent_ok = should_execute_reveal(&commit_res);
                     let reveal_idempotent_ok =
                         reveal_res.ok || is_idempotent_duplicate_ok(reveal_res.rc);
 
-                    let (ack_status, reason_code, ack_reason) =
-                        if commit_idempotent_ok && reveal_idempotent_ok {
-                            (
-                                "accepted",
-                                "idempotent_ok",
-                                format!(
-                                    "idempotent-ok commit_rc={} reveal_rc={}",
-                                    commit_res.rc, reveal_res.rc
-                                ),
-                            )
-                        } else if commit_res.terminal || reveal_res.terminal {
-                            (
+                    let (ack_status, reason_code, ack_reason) = if commit_idempotent_ok
+                        && reveal_idempotent_ok
+                    {
+                        (
+                            "accepted",
+                            "idempotent_ok",
+                            format!(
+                                "idempotent-ok commit_rc={} reveal_rc={}",
+                                commit_res.rc, reveal_res.rc
+                            ),
+                        )
+                    } else if !commit_idempotent_ok && commit_res.terminal {
+                        (
                                 "rejected",
-                                "deterministic_rejection",
+                                "commit_rejected_skip_reveal",
                                 format!(
-                                    "deterministic-rejection commit_rc={} reveal_rc={}",
+                                    "deterministic-commit-rejection-skip-reveal commit_rc={} reveal_rc={}",
                                     commit_res.rc, reveal_res.rc
                                 ),
                             )
-                        } else {
-                            (
-                                "failed",
-                                "retry_exhausted_or_transient",
-                                format!(
-                                    "transient-or-exhausted-retries commit_rc={} reveal_rc={}",
-                                    commit_res.rc, reveal_res.rc
-                                ),
-                            )
-                        };
+                    } else if commit_res.terminal || reveal_res.terminal {
+                        (
+                            "rejected",
+                            "deterministic_rejection",
+                            format!(
+                                "deterministic-rejection commit_rc={} reveal_rc={}",
+                                commit_res.rc, reveal_res.rc
+                            ),
+                        )
+                    } else {
+                        (
+                            "failed",
+                            "retry_exhausted_or_transient",
+                            format!(
+                                "transient-or-exhausted-retries commit_rc={} reveal_rc={}",
+                                commit_res.rc, reveal_res.rc
+                            ),
+                        )
+                    };
 
                     append_ack(
                         &ack_log,

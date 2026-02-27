@@ -90,6 +90,24 @@ jobs:
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           ./scripts/v2/challenge_bond_enforcement_test.sh
 
+      - name: Governance value schema reject gate (hard gate)
+        run: |
+          set -euo pipefail
+          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+          ./scripts/v2/governance_value_schema_reject_test.sh
+
+      - name: Emergency pause drill (hard gate)
+        run: |
+          set -euo pipefail
+          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+          ./scripts/v2/emergency_pause_drill.sh
+
+      - name: Tokenomics R1-R14 regression gate (hard gate)
+        run: |
+          set -euo pipefail
+          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+          ./scripts/v2/run_tokenomics_r1_r14_regression_gate.sh
+
       - name: Validate v1 event replay order (hard gate)
         run: |
           set -euo pipefail
@@ -163,6 +181,11 @@ jobs:
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           ./scripts/v2/run_worker_receipt_gates.sh
+
+      - name: Governance unchecked API usage guard (hard gate)
+        run: |
+          set -euo pipefail
+          ./scripts/v2/check_unchecked_gov_usage.sh
 
       - name: Worker-agent strict real-cli gate (default-on)
         run: |

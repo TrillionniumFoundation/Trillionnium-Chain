@@ -24,7 +24,9 @@ is_replay() {
   local k="$1"
   local t="$2"
   if [[ -f "$OUT_LOG" ]]; then
-    grep -q '"kind":"'"$k"'".*"task_id":'"$t"'.*"status":"accepted"' "$OUT_LOG"
+    grep -F '"kind":"'"$k"'"' "$OUT_LOG" \
+      | grep -F '"task_id":'"$t"',' \
+      | grep -F '"status":"accepted"' >/dev/null
   else
     return 1
   fi

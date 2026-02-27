@@ -91,6 +91,10 @@ fi
 
 case "$sub" in
   commit-result)
+    if [[ "$#" -ne 6 ]]; then
+      echo "invalid args for commit-result: expected 4 payload args" >&2
+      exit 2
+    fi
     task_id="${3:-}"; worker="${4:-}"; commit_hash="${5:-}"; nonce="${6:-}"
     [[ -n "$task_id" && -n "$worker" && -n "$commit_hash" && -n "$nonce" ]] || { echo "invalid args" >&2; exit 2; }
 
@@ -106,6 +110,10 @@ case "$sub" in
     run_cmd "$cmd"
     ;;
   reveal-result)
+    if [[ "$#" -ne 5 ]]; then
+      echo "invalid args for reveal-result: expected 3 payload args" >&2
+      exit 2
+    fi
     task_id="${3:-}"; result_hash="${4:-}"; salt_hex="${5:-}"
     [[ -n "$task_id" && -n "$result_hash" && -n "$salt_hex" ]] || { echo "invalid args" >&2; exit 2; }
 
@@ -120,6 +128,10 @@ case "$sub" in
     run_cmd "$cmd"
     ;;
   query)
+    if [[ "$#" -ne 3 ]]; then
+      echo "invalid args for query: expected tx_hash only" >&2
+      exit 2
+    fi
     tx_hash="${3:-}"
     [[ -n "$tx_hash" ]] || { echo "invalid args" >&2; exit 2; }
 

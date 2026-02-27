@@ -5,6 +5,9 @@
 ## 你应该先读什么
 
 ### 1) 想快速理解全貌（5 分钟）
+- `CODEBASE_MAP.md`
+  - 当前真实代码结构（含 crates/scripts/docs/data/run 分层）
+  - 推荐执行入口与维护约束
 - `rust-l1-repo-layout.md`
   - 仓库结构
   - 模块职责边界

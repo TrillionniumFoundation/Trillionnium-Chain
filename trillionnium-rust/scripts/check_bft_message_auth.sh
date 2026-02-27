@@ -32,6 +32,14 @@ auth_bad=$(grep '^\[consensus\]' "$LOG" | sed -n 's/.*bft_auth_reject_bad_sig_to
 auth_replay=$(grep '^\[consensus\]' "$LOG" | sed -n 's/.*bft_auth_reject_replay_total=\([0-9]*\).*/\1/p' | tail -n1)
 auth_stale=$(grep '^\[consensus\]' "$LOG" | sed -n 's/.*bft_auth_reject_stale_nonce_total=\([0-9]*\).*/\1/p' | tail -n1)
 
+for metric in auth_bad auth_replay auth_stale; do
+  value="${!metric:-}"
+  if [[ -z "$value" || ! "$value" =~ ^[0-9]+$ || "$value" -le 0 ]]; then
+    echo "[FAIL] expected ${metric} > 0, got '${value:-<empty>}' (log=$LOG)" >&2
+    exit 1
+  fi
+done
+
 {
   echo "log=$LOG"
   echo "auth_reject_bad_sig_total=${auth_bad:-0}"

@@ -5,13 +5,16 @@ ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 cd "$ROOT/trillionnium-rust"
 export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
 
-STATE="/tmp/trnm-worker-resume-state.json"
-SUBMIT_LOG="/tmp/trnm-worker-resume-submits.jsonl"
-ACK_LOG="/tmp/trnm-worker-resume-acks.jsonl"
-OUT_JSON="/tmp/trnm-worker-resume-runonce.json"
-ADAPTER_PARTIAL="/tmp/trnm-worker-partial-adapter.sh"
+RUN_TAG="${RUN_TAG:-$(date +%Y%m%d-%H%M%S)-$$}"
+STATE="${STATE:-/tmp/trnm-worker-resume-state-${RUN_TAG}.json}"
+SUBMIT_LOG="${SUBMIT_LOG:-/tmp/trnm-worker-resume-submits-${RUN_TAG}.jsonl}"
+ACK_LOG="${ACK_LOG:-/tmp/trnm-worker-resume-acks-${RUN_TAG}.jsonl}"
+OUT_JSON="${OUT_JSON:-/tmp/trnm-worker-resume-runonce-${RUN_TAG}.json}"
+ADAPTER_PARTIAL="${ADAPTER_PARTIAL:-/tmp/trnm-worker-partial-adapter-${RUN_TAG}.sh}"
+PASS1_OUT="${PASS1_OUT:-/tmp/trnm-worker-resume-pass1-${RUN_TAG}.out}"
+PASS2_OUT="${PASS2_OUT:-/tmp/trnm-worker-resume-pass2-${RUN_TAG}.out}"
 
-rm -f "$STATE" "$SUBMIT_LOG" "$ACK_LOG" "$OUT_JSON" "$ADAPTER_PARTIAL"
+rm -f "$STATE" "$SUBMIT_LOG" "$ACK_LOG" "$OUT_JSON" "$ADAPTER_PARTIAL" "$PASS1_OUT" "$PASS2_OUT"
 
 # avoid collision with historical adapter logs (replay check is task_id-based)
 START_ID=$(( $(date +%s%N) / 1000 ))
@@ -44,7 +47,7 @@ cargo run -q -p trnm-worker-agent -- flush-submissions \
   --execute \
   --adapter-cmd "$ADAPTER_PARTIAL" \
   --max-retries 0 \
-  --ack-log "$ACK_LOG" > /tmp/trnm-worker-resume-pass1.out
+  --ack-log "$ACK_LOG" > "$PASS1_OUT"
 
 # pass2: restart with normal adapter; commit replay(rc=9) + reveal accepted should converge to accepted
 cargo run -q -p trnm-worker-agent -- flush-submissions \
@@ -52,7 +55,7 @@ cargo run -q -p trnm-worker-agent -- flush-submissions \
   --execute \
   --adapter-cmd "./scripts/worker_tx_adapter.sh" \
   --max-retries 0 \
-  --ack-log "$ACK_LOG" > /tmp/trnm-worker-resume-pass2.out
+  --ack-log "$ACK_LOG" > "$PASS2_OUT"
 
 TASK_ID=$(python3 - <<'PY' "$OUT_JSON"
 import json,sys

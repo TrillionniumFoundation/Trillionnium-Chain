@@ -2,10 +2,11 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
-STATE="${STATE:-/tmp/trnm-worker-agent-state.json}"
-SUBMIT_LOG="${SUBMIT_LOG:-/tmp/trnm-worker-agent-submits.jsonl}"
-VERIFY_DIR="${VERIFY_DIR:-/tmp/trnm-worker-verify}"
-ACK_LOG="${ACK_LOG:-/tmp/trnm-worker-agent-acks.jsonl}"
+RUN_TAG="${RUN_TAG:-$(date +%Y%m%d-%H%M%S)-$$}"
+STATE="${STATE:-/tmp/trnm-worker-agent-state-${RUN_TAG}.json}"
+SUBMIT_LOG="${SUBMIT_LOG:-/tmp/trnm-worker-agent-submits-${RUN_TAG}.jsonl}"
+VERIFY_DIR="${VERIFY_DIR:-/tmp/trnm-worker-verify-${RUN_TAG}}"
+ACK_LOG="${ACK_LOG:-/tmp/trnm-worker-agent-acks-${RUN_TAG}.jsonl}"
 WORKER="${WORKER:-worker1}"
 PAYLOAD="${PAYLOAD:-demo-payload}"
 
@@ -40,7 +41,7 @@ fi
 
 export TRNM_TX_ADAPTER_MODE TRNM_TX_CLI
 
-OUT_JSON="/tmp/trnm-worker-runonce.json"
+OUT_JSON="${OUT_JSON:-/tmp/trnm-worker-runonce-${RUN_TAG}.json}"
 cargo run -q -p trnm-worker-agent -- run-once --state "$STATE" --worker "$WORKER" --payload "$PAYLOAD" --submit --submit-log "$SUBMIT_LOG" > "$OUT_JSON"
 
 cargo run -q -p trnm-worker-agent -- flush-submissions --submit-log "$SUBMIT_LOG" --execute --adapter-cmd "./scripts/worker_tx_adapter.sh" --ack-log "$ACK_LOG"
@@ -52,6 +53,6 @@ PY
 )
 
 cd "$ROOT"
-ACK_LOG="$ACK_LOG" ./scripts/v2/worker_agent_verify_with_rpc.sh "$TASK_ID"
+OUT_DIR="$VERIFY_DIR" ACK_LOG="$ACK_LOG" ./scripts/v2/worker_agent_verify_with_rpc.sh "$TASK_ID"
 
 echo "[OK] worker-agent full loop completed task_id=$TASK_ID"

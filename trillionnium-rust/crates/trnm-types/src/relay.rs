@@ -322,7 +322,15 @@ impl RelayAuthVerifier {
             if env.chain_id.trim().is_empty() && is_current {
                 return Err(RelayAuthError::MissingRequiredField { field: "chain_id" });
             }
+            if is_current && env.chain_id.trim() != env.chain_id {
+                return Err(RelayAuthError::MissingRequiredField { field: "chain_id" });
+            }
             if env.session_id.trim().is_empty() {
+                return Err(RelayAuthError::MissingRequiredField {
+                    field: "session_id",
+                });
+            }
+            if env.session_id.trim() != env.session_id {
                 return Err(RelayAuthError::MissingRequiredField {
                     field: "session_id",
                 });
@@ -330,6 +338,25 @@ impl RelayAuthVerifier {
             if env.seq == 0 {
                 return Err(RelayAuthError::MissingRequiredField { field: "seq" });
             }
+        }
+
+        // BFT auth hardening: signing_message is delimiter encoded; reject
+        // delimiter-injection and non-canonical actor identifiers up-front.
+        for (field, value) in [
+            ("task_id", env.task_id.as_str()),
+            ("session_id", env.session_id.as_str()),
+            ("msg_type", env.msg_type.as_str()),
+            ("from", env.from.as_str()),
+            ("to", env.to.as_str()),
+            ("nonce", env.nonce.as_str()),
+            ("payload_hash", env.payload_hash.as_str()),
+        ] {
+            if value.trim().is_empty() || value.trim() != value || value.contains('|') {
+                return Err(RelayAuthError::MissingRequiredField { field });
+            }
+        }
+        if is_current && env.chain_id.contains('|') {
+            return Err(RelayAuthError::MissingRequiredField { field: "chain_id" });
         }
 
         let computed_payload_hash = RelayAuthEnvelope::payload_hash_hex(&env.payload);
@@ -557,6 +584,34 @@ mod tests {
     }
 
     #[test]
+    fn relay_auth_verify_rejects_noncanonical_chain_id_whitespace() {
+        let key = "sender-key";
+        let mut verifier = RelayAuthVerifier::new(120_000);
+        let mut env = sample_env(1, "nonce-1", 1_730_000_000_000, key);
+        env.chain_id = " trnm-mainnet".to_string();
+        env.sig = env.sign_for_test(key);
+
+        let err = verifier
+            .verify(&env, 1_730_000_000_050, |e| e.sign_for_test(key) == e.sig)
+            .unwrap_err();
+        assert_eq!(err.stable_code(), "MissingRequiredField");
+    }
+
+    #[test]
+    fn relay_auth_verify_rejects_noncanonical_session_id_whitespace() {
+        let key = "sender-key";
+        let mut verifier = RelayAuthVerifier::new(120_000);
+        let mut env = sample_env(1, "nonce-1", 1_730_000_000_000, key);
+        env.session_id = "sess-1 ".to_string();
+        env.sig = env.sign_for_test(key);
+
+        let err = verifier
+            .verify(&env, 1_730_000_000_050, |e| e.sign_for_test(key) == e.sig)
+            .unwrap_err();
+        assert_eq!(err.stable_code(), "MissingRequiredField");
+    }
+
+    #[test]
     fn relay_auth_negative_matrix_min12_cases() {
         let key = "sender-key";
 
@@ -726,6 +781,19 @@ mod tests {
             .verify(&missing_seq, 1_730_000_000_050, |e| {
                 e.sign_for_test(key) == e.sig
             })
+            .unwrap_err();
+        assert_eq!(err.stable_code(), "MissingRequiredField");
+    }
+
+    #[test]
+    fn relay_auth_rejects_delimiter_injection_in_signed_fields() {
+        let key = "sender-key";
+        let mut verifier = RelayAuthVerifier::new(120_000);
+        let mut env = sample_env(1, "nonce|poison", 1_730_000_000_000, key);
+        env.sig = env.sign_for_test(key);
+
+        let err = verifier
+            .verify(&env, 1_730_000_000_050, |e| e.sign_for_test(key) == e.sig)
             .unwrap_err();
         assert_eq!(err.stable_code(), "MissingRequiredField");
     }

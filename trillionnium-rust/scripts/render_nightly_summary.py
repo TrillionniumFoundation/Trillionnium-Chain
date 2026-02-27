@@ -6,7 +6,9 @@ from datetime import datetime
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 HEALTH = os.path.join(ROOT, "run", "health")
-OUT = os.path.join(HEALTH, f"nightly-summary-{datetime.now().strftime('%Y%m%d-%H%M%S')}.md")
+OUT = os.environ.get("NIGHTLY_SUMMARY_OUT") or os.path.join(
+    HEALTH, f"nightly-summary-{datetime.now().strftime('%Y%m%d-%H%M%S')}.md"
+)
 os.makedirs(HEALTH, exist_ok=True)
 
 
@@ -76,9 +78,15 @@ def rate(hits, checks):
     return 0.0 if checks <= 0 else hits / checks
 
 
-attrib_file = latest(os.path.join(HEALTH, "nightly-attribution-*.txt"))
-suggest_file = latest(os.path.join(HEALTH, "auto-adaptive-threshold-suggestion-*.txt"))
-regression_csv = latest(os.path.join(ROOT, "run", "bench", "bench-regression-matrix-*.csv"))
+attrib_file = os.environ.get("NIGHTLY_ATTRIBUTION_FILE") or latest(
+    os.path.join(HEALTH, "nightly-attribution-*.txt")
+)
+suggest_file = os.environ.get("AUTO_ADAPTIVE_SUGGESTION_FILE") or latest(
+    os.path.join(HEALTH, "auto-adaptive-threshold-suggestion-*.txt")
+)
+regression_csv = os.environ.get("BENCH_REGRESSION_CSV") or latest(
+    os.path.join(ROOT, "run", "bench", "bench-regression-matrix-*.csv")
+)
 a = parse_kv(attrib_file)
 s = parse_kv(suggest_file)
 stage_stats, strategy_sources = parse_aggr_stage_stats(regression_csv)
@@ -91,6 +99,15 @@ lines.append("# Nightly Health Summary")
 lines.append("")
 lines.append(f"- Labels: `{labels}`")
 lines.append(f"- Reasons: `{reasons}`")
+lines.append(
+    f"- Attribution artifact: `{attrib_file or 'missing'}`"
+)
+lines.append(
+    f"- Suggestion artifact: `{suggest_file or 'missing'}`"
+)
+lines.append(
+    f"- Regression matrix artifact: `{regression_csv or 'missing'}`"
+)
 lines.append("")
 lines.append("## Auto-adaptive decision snapshot")
 lines.append(f"- Mixed: `{a.get('strategy_exp.auto.reason', 'unknown')}` (use_hot={a.get('strategy_exp.auto.use_hot_bucket', 'unknown')})")

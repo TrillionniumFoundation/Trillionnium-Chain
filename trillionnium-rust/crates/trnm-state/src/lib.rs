@@ -16,6 +16,8 @@ pub enum ObjectValue {
 pub struct StateStore {
     objects: BTreeMap<u64, VersionedObject>,
     balances: BTreeMap<String, u128>,
+    pending_gov_updates: BTreeMap<String, PendingGovParamUpdate>,
+    gov_param_key_index: BTreeMap<String, u64>,
 }
 
 #[derive(Debug, Clone)]
@@ -58,6 +60,69 @@ impl WalMeta {
     }
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct PendingGovParamUpdate {
+    pub key_id: u64,
+    pub key: String,
+    pub value: String,
+    pub activate_at_height: u64,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum GovParamUpdateOutcome {
+    Applied(ObjectRef),
+    Scheduled { activate_at_height: u64 },
+    Cancelled,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum GovPendingUpdateAction {
+    Enforce,
+    Replace,
+    Cancel,
+}
+
+const GOV_SENSITIVE_PARAM_TIMELOCK_BLOCKS: u64 = 20;
+const GOV_SENSITIVE_PARAM_MAX_CHANGE_BPS: u64 = 2_000;
+const EMERGENCY_PAUSE_KEY_ID: u64 = 7_999;
+const GOV_ALLOWED_KEYS: &[&str] = &[
+    "max_block_ms",
+    "max_parallel_workers",
+    "min_worker_stake",
+    "challenge_min_bond",
+    "challenge_min_bond_bounty_bps",
+    "challenge_min_bond_worker_stake_bps",
+    "challenge_window_blocks",
+    "challenge_success_bounty",
+    "resolve_authority",
+    "emergency_pause",
+];
+const GOV_SENSITIVE_KEYS: &[&str] = &[
+    "challenge_window_blocks",
+    "challenge_min_bond",
+    "challenge_success_bounty",
+    "min_worker_stake",
+    "challenge_min_bond_bounty_bps",
+    "challenge_min_bond_worker_stake_bps",
+    "resolve_authority",
+];
+
+fn is_sensitive_gov_param(key: &str) -> bool {
+    GOV_SENSITIVE_KEYS.contains(&key)
+}
+
+fn check_sensitive_rate_limit(key: &str, old: u64, new: u64) -> Result<(), String> {
+    let delta = ((old.saturating_mul(GOV_SENSITIVE_PARAM_MAX_CHANGE_BPS)) / 10_000).max(1);
+    let min_allowed = old.saturating_sub(delta);
+    let max_allowed = old.saturating_add(delta);
+    if new < min_allowed || new > max_allowed {
+        return Err(format!(
+            "governance rate-limit exceeded for {}: old={}, new={}, allowed=[{}..={}] (max_change_bps={})",
+            key, old, new, min_allowed, max_allowed, GOV_SENSITIVE_PARAM_MAX_CHANGE_BPS
+        ));
+    }
+    Ok(())
+}
 fn parse_u64_in_range(key: &str, value: &str, min: u64, max: u64) -> Result<u64, String> {
     let parsed = value.parse::<u64>().map_err(|_| {
         format!(
@@ -91,6 +156,10 @@ fn validate_gov_param_value(key: &str, value: &str) -> Result<(), String> {
             let _ = parse_u64_in_range(key, value, 10, 120_000)?;
             Ok(())
         }
+        "max_parallel_workers" => {
+            let _ = parse_u64_in_range(key, value, 1, 65_536)?;
+            Ok(())
+        }
         "challenge_window_blocks" => {
             let _ = parse_u64_in_range(key, value, 100, 600)?;
             Ok(())
@@ -101,6 +170,30 @@ fn validate_gov_param_value(key: &str, value: &str) -> Result<(), String> {
         }
         "challenge_min_bond" => {
             let _ = parse_u64_in_range(key, value, 1, 1_000_000_000_000)?;
+            Ok(())
+        }
+        "challenge_success_bounty" => {
+            let _ = parse_u64_in_range(key, value, 0, 1_000_000_000_000)?;
+            Ok(())
+        }
+        "challenge_min_bond_bounty_bps" | "challenge_min_bond_worker_stake_bps" => {
+            let _ = parse_u64_in_range(key, value, 0, 100_000)?;
+            Ok(())
+        }
+        "resolve_authority" => {
+            let trimmed = value.trim();
+            if trimmed.is_empty() {
+                return Err(format!(
+                    "invalid governance value for {}: must be non-empty",
+                    key
+                ));
+            }
+            if trimmed.len() > 128 {
+                return Err(format!(
+                    "invalid governance value for {}: exceeds max length 128",
+                    key
+                ));
+            }
             Ok(())
         }
         "emergency_pause" => {
@@ -264,29 +357,41 @@ impl StateStore {
         self.update_proposal(expected, proposal)
     }
 
-    pub fn set_gov_param(
+    fn upsert_gov_param_unchecked(
         &mut self,
         key_id: u64,
         key: String,
         value: String,
     ) -> Result<ObjectRef, String> {
-        // Governance MVP whitelist.
-        const ALLOWED_KEYS: &[&str] = &[
-            "max_block_ms",
-            "max_parallel_workers",
-            "min_worker_stake",
-            "challenge_min_bond",
-            "challenge_window_blocks",
-            "emergency_pause",
-        ];
-        if !ALLOWED_KEYS.contains(&key.as_str()) {
-            return Err(format!("governance key not allowed: {}", key));
+        if let Some(existing_id) = self.gov_param_key_index.get(&key).copied() {
+            if existing_id != key_id {
+                return Err(format!(
+                    "governance key id mismatch for {}: existing_id={}, attempted_id={}",
+                    key, existing_id, key_id
+                ));
+            }
         }
-
-        validate_gov_param_value(&key, &value)?;
 
         if let Some(current) = self.objects.get(&key_id) {
             let new_version = current.version + 1;
+            let old_key = match &current.value {
+                ObjectValue::GovParam(p) => p.key.clone(),
+                _ => {
+                    return Err(format!(
+                        "governance key_id collision: object {} exists and is not GovParam",
+                        key_id
+                    ));
+                }
+            };
+
+            if old_key != key {
+                return Err(format!(
+                    "governance key id mismatch for id {}: existing_key={}, attempted_key={}",
+                    key_id, old_key, key
+                ));
+            }
+
+            self.gov_param_key_index.insert(key.clone(), key_id);
             self.objects.insert(
                 key_id,
                 VersionedObject {
@@ -304,6 +409,7 @@ impl StateStore {
                 version: new_version,
             })
         } else {
+            self.gov_param_key_index.insert(key.clone(), key_id);
             self.objects.insert(
                 key_id,
                 VersionedObject {
@@ -323,25 +429,226 @@ impl StateStore {
         }
     }
 
+    pub fn set_gov_param_unchecked(
+        &mut self,
+        key_id: u64,
+        key: String,
+        value: String,
+    ) -> Result<ObjectRef, String> {
+        if !GOV_ALLOWED_KEYS.contains(&key.as_str()) {
+            return Err(format!("governance key not allowed: {}", key));
+        }
+        if key == "emergency_pause" && key_id != EMERGENCY_PAUSE_KEY_ID {
+            return Err(format!(
+                "governance key id mismatch for {}: expected_id={}, attempted_id={}",
+                key, EMERGENCY_PAUSE_KEY_ID, key_id
+            ));
+        }
+        validate_gov_param_value(&key, &value)?;
+        if !is_sensitive_gov_param(&key) {
+            // Defensive cleanup parity with checked writes: non-sensitive params must never
+            // retain pending timelock entries (including emergency_pause in legacy/corrupt state).
+            self.pending_gov_updates.remove(&key);
+        }
+        self.upsert_gov_param_unchecked(key_id, key, value)
+    }
+
+    pub fn set_gov_param(
+        &mut self,
+        current_height: u64,
+        key_id: u64,
+        key: String,
+        value: String,
+    ) -> Result<GovParamUpdateOutcome, String> {
+        self.set_gov_param_with_action(
+            current_height,
+            key_id,
+            key,
+            value,
+            GovPendingUpdateAction::Enforce,
+        )
+    }
+
+    pub fn set_gov_param_with_action(
+        &mut self,
+        current_height: u64,
+        key_id: u64,
+        key: String,
+        value: String,
+        action: GovPendingUpdateAction,
+    ) -> Result<GovParamUpdateOutcome, String> {
+        if !GOV_ALLOWED_KEYS.contains(&key.as_str()) {
+            return Err(format!("governance key not allowed: {}", key));
+        }
+        if key == "emergency_pause" && key_id != EMERGENCY_PAUSE_KEY_ID {
+            return Err(format!(
+                "governance key id mismatch for {}: expected_id={}, attempted_id={}",
+                key, EMERGENCY_PAUSE_KEY_ID, key_id
+            ));
+        }
+
+        if action != GovPendingUpdateAction::Cancel {
+            validate_gov_param_value(&key, &value)?;
+        }
+
+        if !is_sensitive_gov_param(&key) {
+            // Defensive cleanup: non-sensitive keys must not carry queued timelock state.
+            // This keeps emergency_pause and other immediate keys deterministic even if
+            // a legacy/corrupt snapshot left stale pending entries behind.
+            self.pending_gov_updates.remove(&key);
+            if action == GovPendingUpdateAction::Cancel {
+                return Err(format!(
+                    "governance cancel not supported for non-sensitive key {}",
+                    key
+                ));
+            }
+            // Idempotence guard: once stale pending state is scrubbed, re-applying the exact
+            // same value should not churn object versions.
+            if self.gov_param_value(&key) == Some(value.as_str()) {
+                if let Some(existing_ref) = self
+                    .gov_param_key_index
+                    .get(&key)
+                    .copied()
+                    .and_then(|id| self.get_ref(id))
+                {
+                    return Ok(GovParamUpdateOutcome::Applied(existing_ref));
+                }
+            }
+            let r = self.upsert_gov_param_unchecked(key_id, key, value)?;
+            return Ok(GovParamUpdateOutcome::Applied(r));
+        }
+
+        if action != GovPendingUpdateAction::Cancel {
+            if self.pending_gov_updates.get(&key).is_none()
+                && self.gov_param_value(&key) == Some(value.as_str())
+            {
+                if let Some(existing_ref) = self
+                    .gov_param_key_index
+                    .get(&key)
+                    .copied()
+                    .and_then(|id| self.get_ref(id))
+                {
+                    return Ok(GovParamUpdateOutcome::Applied(existing_ref));
+                }
+            }
+
+            if let Some(old_value) = self.gov_param_u64(&key) {
+                let new_value = value.parse::<u64>().map_err(|_| {
+                    format!(
+                        "invalid governance value for {}: expected u64, got '{}'",
+                        key, value
+                    )
+                })?;
+                check_sensitive_rate_limit(&key, old_value, new_value)?;
+            }
+        }
+
+        if let Some(pending) = self.pending_gov_updates.get(&key).cloned() {
+            if pending.key_id != key_id {
+                return Err(format!(
+                    "pending governance update key_id mismatch for {}: pending_key_id={}, attempted_key_id={}",
+                    key, pending.key_id, key_id
+                ));
+            }
+
+            if current_height < pending.activate_at_height {
+                match action {
+                    GovPendingUpdateAction::Cancel => {
+                        self.pending_gov_updates.remove(&key);
+                        return Ok(GovParamUpdateOutcome::Cancelled);
+                    }
+                    GovPendingUpdateAction::Replace => {
+                        let activate_at_height =
+                            current_height.saturating_add(GOV_SENSITIVE_PARAM_TIMELOCK_BLOCKS);
+                        self.pending_gov_updates.insert(
+                            key.clone(),
+                            PendingGovParamUpdate {
+                                key_id,
+                                key,
+                                value,
+                                activate_at_height,
+                            },
+                        );
+                        return Ok(GovParamUpdateOutcome::Scheduled { activate_at_height });
+                    }
+                    GovPendingUpdateAction::Enforce => {
+                        if pending.value != value {
+                            return Err(format!(
+                                "pending governance update exists for {} (activate_at_height={})",
+                                key, pending.activate_at_height
+                            ));
+                        }
+                        return Err(format!(
+                            "governance timelock active for {}: current_height={}, activate_at_height={}",
+                            key, current_height, pending.activate_at_height
+                        ));
+                    }
+                }
+            }
+
+            if action == GovPendingUpdateAction::Cancel || action == GovPendingUpdateAction::Replace
+            {
+                return Err(format!(
+                    "pending governance update for {} already active at height {} and must be applied",
+                    key, pending.activate_at_height
+                ));
+            }
+
+            if pending.value != value {
+                return Err(format!(
+                    "pending governance update exists for {} (activate_at_height={})",
+                    key, pending.activate_at_height
+                ));
+            }
+            self.pending_gov_updates.remove(&key);
+            let r = self.upsert_gov_param_unchecked(key_id, key, value)?;
+            return Ok(GovParamUpdateOutcome::Applied(r));
+        }
+
+        if action == GovPendingUpdateAction::Cancel {
+            return Err(format!("no pending governance update exists for {}", key));
+        }
+
+        let activate_at_height = current_height.saturating_add(GOV_SENSITIVE_PARAM_TIMELOCK_BLOCKS);
+        self.pending_gov_updates.insert(
+            key.clone(),
+            PendingGovParamUpdate {
+                key_id,
+                key,
+                value,
+                activate_at_height,
+            },
+        );
+        Ok(GovParamUpdateOutcome::Scheduled { activate_at_height })
+    }
+
+    pub fn pending_gov_update(&self, key: &str) -> Option<PendingGovParamUpdate> {
+        self.pending_gov_updates.get(key).cloned()
+    }
+
+    fn gov_param_value(&self, key: &str) -> Option<&str> {
+        let id = self.gov_param_key_index.get(key)?;
+        let object = self.objects.get(id)?;
+        match &object.value {
+            ObjectValue::GovParam(p) if p.key == key => Some(p.value.as_str()),
+            _ => None,
+        }
+    }
+
     pub fn is_emergency_paused(&self) -> bool {
-        self.objects.values().any(|v| match &v.value {
-            ObjectValue::GovParam(p) => p.key == "emergency_pause" && p.value == "true",
-            _ => false,
-        })
+        self.gov_param_value("emergency_pause") == Some("true")
     }
 
     pub fn gov_param_u64(&self, key: &str) -> Option<u64> {
-        self.objects.values().find_map(|v| match &v.value {
-            ObjectValue::GovParam(p) if p.key == key => p.value.parse::<u64>().ok(),
-            _ => None,
-        })
+        self.gov_param_value(key)?.parse::<u64>().ok()
     }
 
     pub fn gov_param_u128(&self, key: &str) -> Option<u128> {
-        self.objects.values().find_map(|v| match &v.value {
-            ObjectValue::GovParam(p) if p.key == key => p.value.parse::<u128>().ok(),
-            _ => None,
-        })
+        self.gov_param_value(key)?.parse::<u128>().ok()
+    }
+
+    pub fn gov_param_string(&self, key: &str) -> Option<String> {
+        Some(self.gov_param_value(key)?.to_string())
     }
 
     pub fn set_balance(&mut self, address: impl Into<String>, amount: u128) {
@@ -364,10 +671,16 @@ impl StateStore {
         Ok(())
     }
 
-    pub fn credit_balance(&mut self, address: &str, amount: u128) {
+    pub fn credit_balance(&mut self, address: &str, amount: u128) -> Result<(), String> {
         let cur = self.balance_of(address);
-        self.balances
-            .insert(address.to_string(), cur.saturating_add(amount));
+        let next = cur.checked_add(amount).ok_or_else(|| {
+            format!(
+                "balance overflow on credit: address={}, current={}, amount={}",
+                address, cur, amount
+            )
+        })?;
+        self.balances.insert(address.to_string(), next);
+        Ok(())
     }
 
     pub fn state_root(&self) -> Hash32 {
@@ -378,9 +691,104 @@ impl StateStore {
             match &v.value {
                 ObjectValue::Task(t) => {
                     hasher.update(b"task");
+                    hasher.update(t.task_id.to_le_bytes());
                     hasher.update(t.creator.as_bytes());
                     hasher.update(t.bounty.to_le_bytes());
                     hasher.update((t.status as u8).to_le_bytes());
+
+                    match &t.worker {
+                        Some(worker) => {
+                            hasher.update([1]);
+                            hasher.update(worker.as_bytes());
+                        }
+                        None => hasher.update([0]),
+                    }
+                    match &t.committed_hash {
+                        Some(h) => {
+                            hasher.update([1]);
+                            hasher.update(h);
+                        }
+                        None => hasher.update([0]),
+                    }
+                    match &t.result_hash {
+                        Some(h) => {
+                            hasher.update([1]);
+                            hasher.update(h);
+                        }
+                        None => hasher.update([0]),
+                    }
+                    match &t.reveal_salt {
+                        Some(salt) => {
+                            hasher.update([1]);
+                            hasher.update(salt);
+                        }
+                        None => hasher.update([0]),
+                    }
+
+                    match t.committed_at_height {
+                        Some(v) => {
+                            hasher.update([1]);
+                            hasher.update(v.to_le_bytes());
+                        }
+                        None => hasher.update([0]),
+                    }
+                    match t.reveal_deadline_height {
+                        Some(v) => {
+                            hasher.update([1]);
+                            hasher.update(v.to_le_bytes());
+                        }
+                        None => hasher.update([0]),
+                    }
+                    match t.challenge_deadline_height {
+                        Some(v) => {
+                            hasher.update([1]);
+                            hasher.update(v.to_le_bytes());
+                        }
+                        None => hasher.update([0]),
+                    }
+                    match t.challenge_window_blocks_snapshot {
+                        Some(v) => {
+                            hasher.update([1]);
+                            hasher.update(v.to_le_bytes());
+                        }
+                        None => hasher.update([0]),
+                    }
+                    match t.challenged_at_height {
+                        Some(v) => {
+                            hasher.update([1]);
+                            hasher.update(v.to_le_bytes());
+                        }
+                        None => hasher.update([0]),
+                    }
+                    match t.resolve_deadline_height {
+                        Some(v) => {
+                            hasher.update([1]);
+                            hasher.update(v.to_le_bytes());
+                        }
+                        None => hasher.update([0]),
+                    }
+                    match t.challenge_bond {
+                        Some(v) => {
+                            hasher.update([1]);
+                            hasher.update(v.to_le_bytes());
+                        }
+                        None => hasher.update([0]),
+                    }
+                    match &t.challenger {
+                        Some(challenger) => {
+                            hasher.update([1]);
+                            hasher.update(challenger.as_bytes());
+                        }
+                        None => hasher.update([0]),
+                    }
+                    match t.challenge_bond_forfeited {
+                        Some(v) => {
+                            hasher.update([1]);
+                            hasher.update([v as u8]);
+                        }
+                        None => hasher.update([0]),
+                    }
+                    hasher.update(t.version.to_le_bytes());
                 }
                 ObjectValue::GovProposal(p) => {
                     hasher.update(b"gov_proposal");
@@ -399,6 +807,13 @@ impl StateStore {
             hasher.update(b"balance");
             hasher.update(addr.as_bytes());
             hasher.update(bal.to_le_bytes());
+        }
+        for (key, pending) in &self.pending_gov_updates {
+            hasher.update(b"gov_pending");
+            hasher.update(key.as_bytes());
+            hasher.update(pending.key_id.to_le_bytes());
+            hasher.update(pending.value.as_bytes());
+            hasher.update(pending.activate_at_height.to_le_bytes());
         }
         hasher.finalize().into()
     }
@@ -449,6 +864,8 @@ mod tests {
             reveal_salt: None,
             committed_at_height: None,
             reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
             challenged_at_height: None,
             resolve_deadline_height: None,
             challenge_bond: None,
@@ -479,6 +896,8 @@ mod tests {
             reveal_salt: None,
             committed_at_height: None,
             reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
             challenged_at_height: None,
             resolve_deadline_height: None,
             challenge_bond: None,
@@ -536,10 +955,168 @@ mod tests {
     }
 
     #[test]
+    fn governance_pause_does_not_bypass_invalid_transition_guards() {
+        // Merge-gate guard: emergency pause must not weaken proposal transition checks.
+        let mut st = StateStore::new();
+
+        // Enter paused mode through the checked governance path.
+        let paused = st
+            .set_gov_param(9_200, 7_999, "emergency_pause".into(), "true".into())
+            .unwrap();
+        assert!(matches!(paused, GovParamUpdateOutcome::Applied(_)));
+        assert!(st.is_emergency_paused());
+
+        let proposal = GovProposalObject {
+            proposal_id: 9_201,
+            title: "paused invalid jump".into(),
+            proposer: "alice".into(),
+            status: GovProposalStatus::Draft,
+            version: 1,
+        };
+        let expected = st.put_proposal_new(proposal).unwrap();
+
+        let err = st
+            .transition_proposal_status(expected, GovProposalStatus::Passed)
+            .unwrap_err();
+        assert!(err.contains("invalid governance transition"));
+
+        // Proposal must remain unchanged after failed transition while paused.
+        let cur = st.get_proposal(9_201).unwrap();
+        assert_eq!(cur.status, GovProposalStatus::Draft);
+        assert_eq!(
+            cur.version, 1,
+            "failed transition while paused must not mutate proposal version"
+        );
+    }
+
+    #[test]
+    fn governance_pause_does_not_block_valid_transition_path() {
+        // Merge-gate guard: emergency pause is an execution-risk brake, not a governance
+        // proposal lifecycle freeze. Valid state-machine transitions must still work.
+        let mut st = StateStore::new();
+        st.set_gov_param(9_210, 7_999, "emergency_pause".into(), "true".into())
+            .unwrap();
+        assert!(st.is_emergency_paused());
+
+        let proposal = GovProposalObject {
+            proposal_id: 9_211,
+            title: "paused valid path".into(),
+            proposer: "alice".into(),
+            status: GovProposalStatus::Draft,
+            version: 1,
+        };
+        let mut expected = st.put_proposal_new(proposal).unwrap();
+
+        expected = st
+            .transition_proposal_status(expected, GovProposalStatus::Voting)
+            .expect("Draft->Voting must remain valid while paused");
+        expected = st
+            .transition_proposal_status(expected, GovProposalStatus::Passed)
+            .expect("Voting->Passed must remain valid while paused");
+        let _ = st
+            .transition_proposal_status(expected, GovProposalStatus::Executed)
+            .expect("Passed->Executed must remain valid while paused");
+
+        let cur = st.get_proposal(9_211).unwrap();
+        assert_eq!(cur.status, GovProposalStatus::Executed);
+    }
+
+    #[test]
+    fn governance_terminal_states_are_non_transitional() {
+        let mut st = StateStore::new();
+
+        let executed = GovProposalObject {
+            proposal_id: 9003,
+            title: "already executed".into(),
+            proposer: "alice".into(),
+            status: GovProposalStatus::Executed,
+            version: 1,
+        };
+        let executed_ref = st.put_proposal_new(executed).unwrap();
+        let err_executed = st
+            .transition_proposal_status(executed_ref, GovProposalStatus::Voting)
+            .unwrap_err();
+        assert!(err_executed.contains("invalid governance transition"));
+
+        let rejected = GovProposalObject {
+            proposal_id: 9004,
+            title: "already rejected".into(),
+            proposer: "alice".into(),
+            status: GovProposalStatus::Rejected,
+            version: 1,
+        };
+        let rejected_ref = st.put_proposal_new(rejected).unwrap();
+        let err_rejected = st
+            .transition_proposal_status(rejected_ref, GovProposalStatus::Voting)
+            .unwrap_err();
+        assert!(err_rejected.contains("invalid governance transition"));
+    }
+
+    #[test]
+    fn governance_transition_matrix_remains_strict_and_exhaustive() {
+        fn expected_transition_allowed(from: GovProposalStatus, to: GovProposalStatus) -> bool {
+            // Exhaustive merge-gate guard: adding/changing statuses requires updating this matrix.
+            match (from, to) {
+                (GovProposalStatus::Draft, GovProposalStatus::Voting)
+                | (GovProposalStatus::Voting, GovProposalStatus::Passed)
+                | (GovProposalStatus::Voting, GovProposalStatus::Rejected)
+                | (GovProposalStatus::Passed, GovProposalStatus::Executed) => true,
+                (GovProposalStatus::Draft, _)
+                | (GovProposalStatus::Voting, _)
+                | (GovProposalStatus::Passed, _)
+                | (GovProposalStatus::Rejected, _)
+                | (GovProposalStatus::Executed, _) => false,
+            }
+        }
+
+        let statuses = [
+            GovProposalStatus::Draft,
+            GovProposalStatus::Voting,
+            GovProposalStatus::Passed,
+            GovProposalStatus::Rejected,
+            GovProposalStatus::Executed,
+        ];
+
+        for &from in &statuses {
+            for &to in &statuses {
+                let mut st = StateStore::new();
+                let proposal_id = 95_000 + (from as u64) * 10 + (to as u64);
+                let proposal = GovProposalObject {
+                    proposal_id,
+                    title: "matrix".into(),
+                    proposer: "merge-gate".into(),
+                    status: from,
+                    version: 1,
+                };
+                let expected = st.put_proposal_new(proposal).unwrap();
+                let outcome = st.transition_proposal_status(expected, to);
+
+                if expected_transition_allowed(from, to) {
+                    assert!(
+                        outcome.is_ok(),
+                        "expected transition to succeed for {:?}->{:?}",
+                        from,
+                        to
+                    );
+                } else {
+                    let err = outcome.unwrap_err();
+                    assert!(
+                        err.contains("invalid governance transition"),
+                        "expected invalid transition for {:?}->{:?}, got: {}",
+                        from,
+                        to,
+                        err
+                    );
+                }
+            }
+        }
+    }
+
+    #[test]
     fn governance_param_whitelist_enforced() {
         let mut st = StateStore::new();
         let ok = st
-            .set_gov_param(7001, "max_block_ms".into(), "10".into())
+            .set_gov_param_unchecked(7001, "max_block_ms".into(), "10".into())
             .unwrap();
         assert_eq!(ok.version, 1);
 
@@ -547,8 +1124,13 @@ mod tests {
         assert_eq!(cur.key, "max_block_ms");
         assert_eq!(cur.value, "10");
 
+        let bounty_ok = st
+            .set_gov_param_unchecked(7003, "challenge_success_bounty".into(), "5".into())
+            .unwrap();
+        assert_eq!(bounty_ok.version, 1);
+
         let err = st
-            .set_gov_param(7002, "forbidden_key".into(), "1".into())
+            .set_gov_param_unchecked(7002, "forbidden_key".into(), "1".into())
             .unwrap_err();
         assert!(err.contains("not allowed"));
     }
@@ -558,42 +1140,528 @@ mod tests {
         let mut st = StateStore::new();
 
         let err = st
-            .set_gov_param(7101, "max_block_ms".into(), "abc".into())
+            .set_gov_param_unchecked(7101, "max_block_ms".into(), "abc".into())
             .unwrap_err();
         assert!(err.contains("expected u64"));
 
         let err = st
-            .set_gov_param(7102, "challenge_window_blocks".into(), "99".into())
+            .set_gov_param_unchecked(7101, "max_parallel_workers".into(), "0".into())
+            .unwrap_err();
+        assert!(err.contains("out of range"));
+
+        let ok = st
+            .set_gov_param_unchecked(7101, "max_parallel_workers".into(), "32".into())
+            .unwrap();
+        assert_eq!(ok.version, 1);
+
+        let err = st
+            .set_gov_param_unchecked(7102, "challenge_window_blocks".into(), "99".into())
             .unwrap_err();
         assert!(err.contains("out of range"));
 
         let err = st
-            .set_gov_param(7103, "min_worker_stake".into(), "0".into())
+            .set_gov_param_unchecked(7103, "min_worker_stake".into(), "0".into())
             .unwrap_err();
         assert!(err.contains("out of range"));
 
         let err = st
-            .set_gov_param(7104, "challenge_min_bond".into(), "0".into())
+            .set_gov_param_unchecked(7104, "challenge_min_bond".into(), "0".into())
             .unwrap_err();
         assert!(err.contains("out of range"));
+
+        let err = st
+            .set_gov_param_unchecked(7105, "challenge_success_bounty".into(), "-1".into())
+            .unwrap_err();
+        assert!(err.contains("expected u64"));
+
+        let err = st
+            .set_gov_param_unchecked(
+                7105,
+                "challenge_min_bond_bounty_bps".into(),
+                "100001".into(),
+            )
+            .unwrap_err();
+        assert!(err.contains("out of range"));
+
+        let ok = st
+            .set_gov_param_unchecked(
+                7106,
+                "challenge_min_bond_worker_stake_bps".into(),
+                "0".into(),
+            )
+            .unwrap();
+        assert_eq!(ok.version, 1);
+    }
+
+    #[test]
+    fn governance_key_id_collision_with_non_param_rejected() {
+        let mut st = StateStore::new();
+        let t = TaskObject {
+            task_id: 7400,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Open,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        };
+        st.put_task_new(t).unwrap();
+
+        let err = st
+            .set_gov_param_unchecked(7400, "max_block_ms".into(), "15".into())
+            .unwrap_err();
+        assert!(err.contains("not GovParam"));
+
+        let p = GovProposalObject {
+            proposal_id: 7405,
+            title: "change block time".into(),
+            proposer: "alice".into(),
+            status: GovProposalStatus::Draft,
+            version: 1,
+        };
+        st.put_proposal_new(p).unwrap();
+
+        let err = st
+            .set_gov_param_unchecked(7405, "max_block_ms".into(), "20".into())
+            .unwrap_err();
+        assert!(err.contains("not GovParam"));
+    }
+
+    #[test]
+    fn governance_same_key_different_id_shadow_attempt_rejected() {
+        let mut st = StateStore::new();
+        st.set_gov_param_unchecked(7401, "max_block_ms".into(), "15".into())
+            .unwrap();
+
+        let err = st
+            .set_gov_param_unchecked(7402, "max_block_ms".into(), "20".into())
+            .unwrap_err();
+        assert!(err.contains("key id mismatch"));
+    }
+
+    #[test]
+    fn governance_readers_use_deterministic_current_value() {
+        let mut st = StateStore::new();
+        st.set_gov_param_unchecked(7403, "max_block_ms".into(), "15".into())
+            .unwrap();
+        st.set_gov_param_unchecked(7403, "max_block_ms".into(), "20".into())
+            .unwrap();
+
+        assert_eq!(st.gov_param_u64("max_block_ms"), Some(20));
+        assert_eq!(st.gov_param_u128("max_block_ms"), Some(20));
+        assert_eq!(st.gov_param_string("max_block_ms"), Some("20".into()));
+    }
+
+    #[test]
+    fn governance_sensitive_update_rejected_before_timelock_expiry() {
+        let mut st = StateStore::new();
+        st.set_gov_param_unchecked(7300, "challenge_min_bond".into(), "100".into())
+            .unwrap();
+
+        let scheduled = st
+            .set_gov_param(1_000, 7300, "challenge_min_bond".into(), "120".into())
+            .unwrap();
+        let activate_at_height = match scheduled {
+            GovParamUpdateOutcome::Scheduled { activate_at_height } => activate_at_height,
+            GovParamUpdateOutcome::Applied(_) => panic!("expected schedule"),
+            GovParamUpdateOutcome::Cancelled => panic!("expected schedule"),
+        };
+        assert_eq!(activate_at_height, 1_020);
+
+        let err = st
+            .set_gov_param(1_019, 7300, "challenge_min_bond".into(), "120".into())
+            .unwrap_err();
+        assert!(err.contains("timelock active"));
+    }
+
+    #[test]
+    fn governance_sensitive_update_accepted_after_timelock() {
+        let mut st = StateStore::new();
+        st.set_gov_param_unchecked(7301, "challenge_min_bond".into(), "100".into())
+            .unwrap();
+
+        let _ = st
+            .set_gov_param(2_000, 7301, "challenge_min_bond".into(), "120".into())
+            .unwrap();
+
+        let applied = st
+            .set_gov_param(2_020, 7301, "challenge_min_bond".into(), "120".into())
+            .unwrap();
+        match applied {
+            GovParamUpdateOutcome::Applied(r) => assert!(r.version >= 2),
+            GovParamUpdateOutcome::Scheduled { .. } => panic!("expected applied"),
+            GovParamUpdateOutcome::Cancelled => panic!("expected applied"),
+        }
+
+        assert_eq!(st.gov_param_u64("challenge_min_bond"), Some(120));
+        assert!(st.pending_gov_update("challenge_min_bond").is_none());
+    }
+
+    #[test]
+    fn governance_sensitive_noop_update_is_immediate_without_timelock() {
+        let mut st = StateStore::new();
+        let seeded = st
+            .set_gov_param_unchecked(7306, "challenge_min_bond".into(), "100".into())
+            .unwrap();
+
+        let applied = st
+            .set_gov_param(2_500, 7306, "challenge_min_bond".into(), "100".into())
+            .unwrap();
+
+        match applied {
+            GovParamUpdateOutcome::Applied(r) => {
+                assert_eq!(r.id, seeded.id);
+                assert_eq!(r.version, seeded.version);
+            }
+            GovParamUpdateOutcome::Scheduled { .. } => panic!("expected immediate no-op apply"),
+            GovParamUpdateOutcome::Cancelled => panic!("expected immediate no-op apply"),
+        }
+
+        assert!(st.pending_gov_update("challenge_min_bond").is_none());
+        assert_eq!(st.gov_param_u64("challenge_min_bond"), Some(100));
+    }
+
+    #[test]
+    fn governance_resolve_authority_rejected_before_timelock_expiry() {
+        let mut st = StateStore::new();
+        st.set_gov_param_unchecked(7310, "resolve_authority".into(), "resolver-v1".into())
+            .unwrap();
+
+        let scheduled = st
+            .set_gov_param(
+                10_000,
+                7310,
+                "resolve_authority".into(),
+                "resolver-v2".into(),
+            )
+            .unwrap();
+        let activate_at_height = match scheduled {
+            GovParamUpdateOutcome::Scheduled { activate_at_height } => activate_at_height,
+            GovParamUpdateOutcome::Applied(_) => panic!("expected schedule"),
+            GovParamUpdateOutcome::Cancelled => panic!("expected schedule"),
+        };
+        assert_eq!(activate_at_height, 10_020);
+
+        let err = st
+            .set_gov_param(
+                10_019,
+                7310,
+                "resolve_authority".into(),
+                "resolver-v2".into(),
+            )
+            .unwrap_err();
+        assert!(err.contains("timelock active"));
+        assert_eq!(
+            st.gov_param_string("resolve_authority"),
+            Some("resolver-v1".into())
+        );
+    }
+
+    #[test]
+    fn governance_resolve_authority_applied_after_timelock() {
+        let mut st = StateStore::new();
+        st.set_gov_param_unchecked(7311, "resolve_authority".into(), "resolver-v1".into())
+            .unwrap();
+
+        let _ = st
+            .set_gov_param(
+                11_000,
+                7311,
+                "resolve_authority".into(),
+                "resolver-v2".into(),
+            )
+            .unwrap();
+
+        let applied = st
+            .set_gov_param(
+                11_020,
+                7311,
+                "resolve_authority".into(),
+                "resolver-v2".into(),
+            )
+            .unwrap();
+        assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+        assert_eq!(
+            st.gov_param_string("resolve_authority"),
+            Some("resolver-v2".into())
+        );
+        assert!(st.pending_gov_update("resolve_authority").is_none());
+    }
+
+    #[test]
+    fn governance_resolve_authority_pending_mismatch_behaves_like_sensitive_keys() {
+        let mut st = StateStore::new();
+        st.set_gov_param_unchecked(7312, "resolve_authority".into(), "resolver-v1".into())
+            .unwrap();
+
+        let scheduled = st
+            .set_gov_param(
+                12_000,
+                7312,
+                "resolve_authority".into(),
+                "resolver-v2".into(),
+            )
+            .unwrap();
+        assert!(matches!(
+            scheduled,
+            GovParamUpdateOutcome::Scheduled {
+                activate_at_height: 12_020
+            }
+        ));
+
+        let err_value = st
+            .set_gov_param(
+                12_005,
+                7312,
+                "resolve_authority".into(),
+                "resolver-v3".into(),
+            )
+            .unwrap_err();
+        assert!(err_value.contains("pending governance update exists"));
+
+        let err_id = st
+            .set_gov_param(
+                12_005,
+                9999,
+                "resolve_authority".into(),
+                "resolver-v2".into(),
+            )
+            .unwrap_err();
+        assert!(err_id.contains("pending governance update key_id mismatch"));
+
+        let pending = st.pending_gov_update("resolve_authority").unwrap();
+        assert_eq!(pending.key_id, 7312);
+        assert_eq!(pending.value, "resolver-v2");
+        assert_eq!(pending.activate_at_height, 12_020);
+    }
+
+    #[test]
+    fn governance_sensitive_pending_replace_before_activation_resets_timelock() {
+        let mut st = StateStore::new();
+        st.set_gov_param_unchecked(7320, "challenge_window_blocks".into(), "100".into())
+            .unwrap();
+
+        let first = st
+            .set_gov_param(20_000, 7320, "challenge_window_blocks".into(), "110".into())
+            .unwrap();
+        assert!(matches!(
+            first,
+            GovParamUpdateOutcome::Scheduled {
+                activate_at_height: 20_020
+            }
+        ));
+
+        let replaced = st
+            .set_gov_param_with_action(
+                20_005,
+                7320,
+                "challenge_window_blocks".into(),
+                "120".into(),
+                GovPendingUpdateAction::Replace,
+            )
+            .unwrap();
+        assert!(matches!(
+            replaced,
+            GovParamUpdateOutcome::Scheduled {
+                activate_at_height: 20_025
+            }
+        ));
+
+        let pending = st.pending_gov_update("challenge_window_blocks").unwrap();
+        assert_eq!(pending.value, "120");
+        assert_eq!(pending.activate_at_height, 20_025);
+
+        let err = st
+            .set_gov_param(20_020, 7320, "challenge_window_blocks".into(), "120".into())
+            .unwrap_err();
+        assert!(err.contains("timelock active"));
+
+        let applied = st
+            .set_gov_param(20_025, 7320, "challenge_window_blocks".into(), "120".into())
+            .unwrap();
+        assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+        assert_eq!(st.gov_param_u64("challenge_window_blocks"), Some(120));
+    }
+
+    #[test]
+    fn governance_sensitive_pending_cancel_before_activation_removes_pending() {
+        let mut st = StateStore::new();
+        st.set_gov_param_unchecked(7321, "challenge_min_bond".into(), "100".into())
+            .unwrap();
+
+        st.set_gov_param(21_000, 7321, "challenge_min_bond".into(), "120".into())
+            .unwrap();
+
+        let cancelled = st
+            .set_gov_param_with_action(
+                21_005,
+                7321,
+                "challenge_min_bond".into(),
+                "".into(),
+                GovPendingUpdateAction::Cancel,
+            )
+            .unwrap();
+        assert!(matches!(cancelled, GovParamUpdateOutcome::Cancelled));
+
+        assert!(st.pending_gov_update("challenge_min_bond").is_none());
+        assert_eq!(st.gov_param_u64("challenge_min_bond"), Some(100));
+    }
+
+    #[test]
+    fn governance_sensitive_apply_without_pending_is_unchanged() {
+        let mut st = StateStore::new();
+        st.set_gov_param_unchecked(7322, "challenge_min_bond".into(), "100".into())
+            .unwrap();
+
+        let scheduled = st
+            .set_gov_param(22_000, 7322, "challenge_min_bond".into(), "120".into())
+            .unwrap();
+        assert!(matches!(
+            scheduled,
+            GovParamUpdateOutcome::Scheduled {
+                activate_at_height: 22_020
+            }
+        ));
+    }
+
+    #[test]
+    fn governance_sensitive_rate_limit_still_enforced_after_replace() {
+        let mut st = StateStore::new();
+        st.set_gov_param_unchecked(7323, "challenge_window_blocks".into(), "100".into())
+            .unwrap();
+
+        st.set_gov_param(23_000, 7323, "challenge_window_blocks".into(), "120".into())
+            .unwrap();
+
+        st.set_gov_param_with_action(
+            23_005,
+            7323,
+            "challenge_window_blocks".into(),
+            "119".into(),
+            GovPendingUpdateAction::Replace,
+        )
+        .unwrap();
+
+        let err = st
+            .set_gov_param_with_action(
+                23_006,
+                7323,
+                "challenge_window_blocks".into(),
+                "130".into(),
+                GovPendingUpdateAction::Replace,
+            )
+            .unwrap_err();
+        assert!(err.contains("rate-limit exceeded"));
+    }
+
+    #[test]
+    fn governance_sensitive_update_excessive_step_change_rejected() {
+        let mut st = StateStore::new();
+        st.set_gov_param_unchecked(7302, "challenge_window_blocks".into(), "100".into())
+            .unwrap();
+
+        let err = st
+            .set_gov_param(3_000, 7302, "challenge_window_blocks".into(), "130".into())
+            .unwrap_err();
+        assert!(err.contains("rate-limit exceeded"));
+    }
+
+    #[test]
+    fn governance_sensitive_update_bounded_step_change_accepted() {
+        let mut st = StateStore::new();
+        st.set_gov_param_unchecked(7303, "challenge_window_blocks".into(), "100".into())
+            .unwrap();
+
+        let scheduled = st
+            .set_gov_param(4_000, 7303, "challenge_window_blocks".into(), "120".into())
+            .unwrap();
+        assert!(matches!(
+            scheduled,
+            GovParamUpdateOutcome::Scheduled {
+                activate_at_height: 4_020
+            }
+        ));
+
+        let applied = st
+            .set_gov_param(4_020, 7303, "challenge_window_blocks".into(), "120".into())
+            .unwrap();
+        assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+        assert_eq!(st.gov_param_u64("challenge_window_blocks"), Some(120));
+    }
+
+    #[test]
+    fn governance_challenge_success_bounty_is_sensitive_and_timelocked() {
+        let mut st = StateStore::new();
+        st.set_gov_param_unchecked(7350, "challenge_success_bounty".into(), "1".into())
+            .unwrap();
+
+        let scheduled = st
+            .set_gov_param(30_000, 7350, "challenge_success_bounty".into(), "2".into())
+            .unwrap();
+        assert!(matches!(
+            scheduled,
+            GovParamUpdateOutcome::Scheduled {
+                activate_at_height: 30_020
+            }
+        ));
+
+        let err = st
+            .set_gov_param(30_010, 7350, "challenge_success_bounty".into(), "2".into())
+            .unwrap_err();
+        assert!(err.contains("timelock active"));
+
+        let applied = st
+            .set_gov_param(30_020, 7350, "challenge_success_bounty".into(), "2".into())
+            .unwrap();
+        assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+        assert_eq!(st.gov_param_u64("challenge_success_bounty"), Some(2));
+    }
+
+    #[test]
+    fn governance_non_sensitive_param_unaffected_by_timelock() {
+        let mut st = StateStore::new();
+        let r1 = st
+            .set_gov_param(5_000, 7304, "max_block_ms".into(), "15".into())
+            .unwrap();
+        assert!(matches!(r1, GovParamUpdateOutcome::Applied(_)));
+
+        let r2 = st
+            .set_gov_param(5_001, 7304, "max_block_ms".into(), "20".into())
+            .unwrap();
+        assert!(matches!(r2, GovParamUpdateOutcome::Applied(_)));
+        assert_eq!(st.gov_param_u64("max_block_ms"), Some(20));
+        assert!(st.pending_gov_update("max_block_ms").is_none());
     }
 
     #[test]
     fn emergency_pause_requires_strict_bool_literal() {
         let mut st = StateStore::new();
 
-        for bad in ["TRUE", "False", "1", "yes"] {
+        for bad in [
+            "TRUE", "False", "1", "yes", " true", "false ", "\ttrue", "\ntrue", "false\n",
+        ] {
             let err = st
-                .set_gov_param(7200, "emergency_pause".into(), bad.into())
+                .set_gov_param_unchecked(7999, "emergency_pause".into(), bad.into())
                 .unwrap_err();
             assert!(err.contains("strict bool"));
         }
 
-        st.set_gov_param(7200, "emergency_pause".into(), "true".into())
+        st.set_gov_param_unchecked(7999, "emergency_pause".into(), "true".into())
             .unwrap();
         assert!(st.is_emergency_paused());
 
-        st.set_gov_param(7200, "emergency_pause".into(), "false".into())
+        st.set_gov_param_unchecked(7999, "emergency_pause".into(), "false".into())
             .unwrap();
         assert!(!st.is_emergency_paused());
     }
@@ -603,13 +1671,723 @@ mod tests {
         let mut st = StateStore::new();
         assert!(!st.is_emergency_paused());
 
-        st.set_gov_param(7999, "emergency_pause".into(), "true".into())
+        st.set_gov_param_unchecked(7999, "emergency_pause".into(), "true".into())
             .unwrap();
         assert!(st.is_emergency_paused());
 
-        st.set_gov_param(7999, "emergency_pause".into(), "false".into())
+        st.set_gov_param_unchecked(7999, "emergency_pause".into(), "false".into())
             .unwrap();
         assert!(!st.is_emergency_paused());
+    }
+
+    #[test]
+    fn emergency_pause_unchecked_path_rejects_non_canonical_key_id() {
+        // Merge-gate guard: even unchecked writes must keep emergency_pause pinned to 7999.
+        let mut st = StateStore::new();
+        let err = st
+            .set_gov_param_unchecked(8_000, "emergency_pause".into(), "true".into())
+            .expect_err("unchecked non-canonical emergency_pause key_id must be rejected");
+        assert!(err.contains("expected_id=7999"), "{err}");
+        assert!(!st.is_emergency_paused());
+    }
+
+    #[test]
+    fn emergency_pause_checked_path_rejects_non_canonical_key_id() {
+        // Merge-gate guard: emergency_pause must remain pinned to canonical key id.
+        let mut st = StateStore::new();
+        let err = st
+            .set_gov_param(8_050, 8_000, "emergency_pause".into(), "true".into())
+            .expect_err("non-canonical emergency_pause key_id must be rejected");
+        assert!(err.contains("expected_id=7999"), "{err}");
+        assert!(!st.is_emergency_paused());
+        assert!(st.pending_gov_update("emergency_pause").is_none());
+    }
+
+    #[test]
+    fn emergency_pause_checked_replace_rejects_non_canonical_key_id_without_side_effects() {
+        // Merge-gate guard: Replace action must enforce the same canonical key-id pinning.
+        let mut st = StateStore::new();
+
+        let err = st
+            .set_gov_param_with_action(
+                8_051,
+                8_000,
+                "emergency_pause".into(),
+                "true".into(),
+                GovPendingUpdateAction::Replace,
+            )
+            .expect_err("replace with non-canonical emergency_pause key_id must be rejected");
+
+        assert!(err.contains("expected_id=7999"), "{err}");
+        assert!(!st.is_emergency_paused());
+        assert!(st.pending_gov_update("emergency_pause").is_none());
+    }
+
+    #[test]
+    fn emergency_pause_checked_path_is_immediate_and_non_cancellable() {
+        let mut st = StateStore::new();
+
+        let applied = st
+            .set_gov_param(8_000, 7999, "emergency_pause".into(), "true".into())
+            .unwrap();
+        assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+        assert!(st.is_emergency_paused());
+        assert!(st.pending_gov_update("emergency_pause").is_none());
+
+        let cancel_err = st
+            .set_gov_param_with_action(
+                8_001,
+                7999,
+                "emergency_pause".into(),
+                "true".into(),
+                GovPendingUpdateAction::Cancel,
+            )
+            .unwrap_err();
+        assert!(cancel_err.contains("cancel not supported for non-sensitive key"));
+        // Failed cancel must be side-effect free on pause state and pending queues.
+        assert!(st.is_emergency_paused());
+        assert!(st.pending_gov_update("emergency_pause").is_none());
+
+        let applied_unpause = st
+            .set_gov_param(8_002, 7999, "emergency_pause".into(), "false".into())
+            .unwrap();
+        assert!(matches!(applied_unpause, GovParamUpdateOutcome::Applied(_)));
+        assert!(!st.is_emergency_paused());
+    }
+
+    #[test]
+    fn emergency_pause_checked_noop_update_is_idempotent_after_pause() {
+        // Merge-gate guard: repeated identical emergency_pause writes should be side-effect free.
+        let mut st = StateStore::new();
+
+        let first = st
+            .set_gov_param(8_010, 7_999, "emergency_pause".into(), "true".into())
+            .expect("initial pause=true write must succeed");
+        let first_ref = match first {
+            GovParamUpdateOutcome::Applied(r) => r,
+            _ => panic!("expected immediate apply"),
+        };
+
+        let second = st
+            .set_gov_param(8_011, 7_999, "emergency_pause".into(), "true".into())
+            .expect("noop pause=true write must succeed");
+        let second_ref = match second {
+            GovParamUpdateOutcome::Applied(r) => r,
+            _ => panic!("expected immediate apply"),
+        };
+
+        assert_eq!(first_ref, second_ref, "noop must not churn object version");
+        assert!(st.is_emergency_paused());
+        assert!(st.pending_gov_update("emergency_pause").is_none());
+    }
+
+
+    #[test]
+    fn emergency_pause_checked_replace_noop_is_idempotent() {
+        // Merge-gate guard: Replace action on a non-sensitive emergency_pause value should
+        // stay immediate and avoid version churn when value is unchanged.
+        let mut st = StateStore::new();
+
+        let first = st
+            .set_gov_param_with_action(
+                8_620,
+                7_999,
+                "emergency_pause".into(),
+                "true".into(),
+                GovPendingUpdateAction::Replace,
+            )
+            .expect("initial replace pause=true write must succeed");
+        let first_ref = match first {
+            GovParamUpdateOutcome::Applied(r) => r,
+            _ => panic!("expected immediate apply for non-sensitive replace"),
+        };
+
+        let second = st
+            .set_gov_param_with_action(
+                8_621,
+                7_999,
+                "emergency_pause".into(),
+                "true".into(),
+                GovPendingUpdateAction::Replace,
+            )
+            .expect("noop replace pause=true write must succeed");
+        let second_ref = match second {
+            GovParamUpdateOutcome::Applied(r) => r,
+            _ => panic!("expected immediate apply for non-sensitive replace"),
+        };
+
+        assert_eq!(
+            first_ref, second_ref,
+            "non-sensitive replace noop must not churn object version"
+        );
+        assert!(st.is_emergency_paused());
+        assert!(st.pending_gov_update("emergency_pause").is_none());
+    }
+
+    #[test]
+    fn emergency_pause_cancel_scrubs_stale_pending_entry_even_when_unsupported() {
+        let mut st = StateStore::new();
+
+        // Corrupt/legacy state simulation: non-sensitive emergency_pause should never have
+        // timelocked pending state; even unsupported Cancel attempts must scrub stale entries.
+        st.pending_gov_updates.insert(
+            "emergency_pause".into(),
+            PendingGovParamUpdate {
+                key_id: 7_999,
+                key: "emergency_pause".into(),
+                value: "true".into(),
+                activate_at_height: 77_777,
+            },
+        );
+
+        let cancel_err = st
+            .set_gov_param_with_action(
+                8_650,
+                7_999,
+                "emergency_pause".into(),
+                "true".into(),
+                GovPendingUpdateAction::Cancel,
+            )
+            .unwrap_err();
+        assert!(cancel_err.contains("cancel not supported for non-sensitive key"));
+        assert!(
+            st.pending_gov_update("emergency_pause").is_none(),
+            "unsupported cancel must still scrub stale pending emergency_pause entries"
+        );
+        assert!(!st.is_emergency_paused());
+    }
+
+    #[test]
+    fn emergency_pause_cancel_skips_value_validation_but_stays_side_effect_free() {
+        let mut st = StateStore::new();
+
+        // Merge-gate guard: Cancel keeps parser bypass semantics (no bool validation) but must
+        // remain side-effect free beyond stale pending cleanup.
+        st.pending_gov_updates.insert(
+            "emergency_pause".into(),
+            PendingGovParamUpdate {
+                key_id: 7_999,
+                key: "emergency_pause".into(),
+                value: "true".into(),
+                activate_at_height: 77_888,
+            },
+        );
+
+        let cancel_err = st
+            .set_gov_param_with_action(
+                8_651,
+                7_999,
+                "emergency_pause".into(),
+                "NOT_BOOL".into(),
+                GovPendingUpdateAction::Cancel,
+            )
+            .unwrap_err();
+        assert!(cancel_err.contains("cancel not supported for non-sensitive key"));
+        assert!(
+            !cancel_err.contains("invalid governance value"),
+            "cancel path must not attempt value parsing for emergency_pause"
+        );
+        assert!(st.pending_gov_update("emergency_pause").is_none());
+        assert!(!st.is_emergency_paused());
+    }
+
+    #[test]
+    fn emergency_pause_cancel_wrong_key_id_is_rejected_without_scrubbing_state() {
+        let mut st = StateStore::new();
+
+        // Merge-gate guard: key_id mismatch must fail before any state cleanup/mutation,
+        // even when legacy/corrupt pending emergency_pause data exists.
+        st.pending_gov_updates.insert(
+            "emergency_pause".into(),
+            PendingGovParamUpdate {
+                key_id: 7_999,
+                key: "emergency_pause".into(),
+                value: "true".into(),
+                activate_at_height: 77_777,
+            },
+        );
+
+        let cancel_err = st
+            .set_gov_param_with_action(
+                8_651,
+                8_000,
+                "emergency_pause".into(),
+                "true".into(),
+                GovPendingUpdateAction::Cancel,
+            )
+            .unwrap_err();
+        assert!(cancel_err.contains("expected_id=7999"), "{cancel_err}");
+
+        let pending = st
+            .pending_gov_update("emergency_pause")
+            .expect("mismatched key_id path must not mutate pending state");
+        assert_eq!(pending.key_id, 7_999);
+        assert_eq!(pending.activate_at_height, 77_777);
+        assert!(!st.is_emergency_paused());
+    }
+
+    #[test]
+    fn emergency_pause_checked_path_clears_stale_pending_entry_if_present() {
+        let mut st = StateStore::new();
+
+        // Corrupt/legacy state simulation: emergency_pause should never be timelocked,
+        // but if a stale pending entry exists, checked-path apply must scrub it.
+        st.pending_gov_updates.insert(
+            "emergency_pause".into(),
+            PendingGovParamUpdate {
+                key_id: 7_999,
+                key: "emergency_pause".into(),
+                value: "true".into(),
+                activate_at_height: 99_999,
+            },
+        );
+
+        let applied = st
+            .set_gov_param(8_700, 7_999, "emergency_pause".into(), "true".into())
+            .unwrap();
+        assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+        assert!(st.is_emergency_paused());
+        assert!(
+            st.pending_gov_update("emergency_pause").is_none(),
+            "stale pending entry must be removed for non-sensitive emergency_pause"
+        );
+    }
+
+    #[test]
+    fn emergency_pause_unchecked_path_clears_stale_pending_entry_if_present() {
+        let mut st = StateStore::new();
+
+        // Corrupt/legacy state simulation: emergency_pause should never be timelocked,
+        // and unchecked-path writes must still scrub stale pending entries.
+        st.pending_gov_updates.insert(
+            "emergency_pause".into(),
+            PendingGovParamUpdate {
+                key_id: 7_999,
+                key: "emergency_pause".into(),
+                value: "true".into(),
+                activate_at_height: 88_888,
+            },
+        );
+
+        st.set_gov_param_unchecked(7_999, "emergency_pause".into(), "true".into())
+            .unwrap();
+        assert!(st.is_emergency_paused());
+        assert!(
+            st.pending_gov_update("emergency_pause").is_none(),
+            "unchecked emergency_pause apply must remove stale pending entry"
+        );
+    }
+
+    #[test]
+    fn emergency_pause_does_not_mutate_other_sensitive_pending_updates() {
+        let mut st = StateStore::new();
+
+        st.set_gov_param_unchecked(8_500, "challenge_min_bond".into(), "100".into())
+            .unwrap();
+
+        let scheduled = st
+            .set_gov_param(8_600, 8_500, "challenge_min_bond".into(), "120".into())
+            .unwrap();
+        let activate_at_height = match scheduled {
+            GovParamUpdateOutcome::Scheduled { activate_at_height } => activate_at_height,
+            GovParamUpdateOutcome::Applied(_) => panic!("expected schedule"),
+            GovParamUpdateOutcome::Cancelled => panic!("expected schedule"),
+        };
+        assert_eq!(activate_at_height, 8_620);
+
+        let pause_outcome = st
+            .set_gov_param(8_601, 7_999, "emergency_pause".into(), "true".into())
+            .unwrap();
+        assert!(matches!(pause_outcome, GovParamUpdateOutcome::Applied(_)));
+        assert!(st.is_emergency_paused());
+
+        let pending = st
+            .pending_gov_update("challenge_min_bond")
+            .expect("challenge_min_bond pending update must remain");
+        assert_eq!(pending.key_id, 8_500);
+        assert_eq!(pending.value, "120");
+        assert_eq!(pending.activate_at_height, 8_620);
+        assert!(st.pending_gov_update("emergency_pause").is_none());
+    }
+
+    #[test]
+    fn emergency_pause_replace_action_remains_immediate_without_pending_state() {
+        let mut st = StateStore::new();
+
+        let applied = st
+            .set_gov_param_with_action(
+                9_000,
+                7999,
+                "emergency_pause".into(),
+                "true".into(),
+                GovPendingUpdateAction::Replace,
+            )
+            .unwrap();
+        assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+        assert!(st.is_emergency_paused());
+        assert!(st.pending_gov_update("emergency_pause").is_none());
+
+        // Replace action must remain immediate and non-scheduling in both directions.
+        let unapplied = st
+            .set_gov_param_with_action(
+                9_001,
+                7999,
+                "emergency_pause".into(),
+                "false".into(),
+                GovPendingUpdateAction::Replace,
+            )
+            .unwrap();
+        assert!(matches!(unapplied, GovParamUpdateOutcome::Applied(_)));
+        assert!(!st.is_emergency_paused());
+        assert!(st.pending_gov_update("emergency_pause").is_none());
+    }
+
+    #[test]
+    fn emergency_pause_replace_action_scrubs_stale_pending_entry() {
+        // Merge-gate guard: Replace action must stay on the immediate non-sensitive path,
+        // including cleanup of any legacy/corrupt queued emergency_pause timelock entry.
+        let mut st = StateStore::new();
+        st.pending_gov_updates.insert(
+            "emergency_pause".into(),
+            PendingGovParamUpdate {
+                key_id: 7_999,
+                key: "emergency_pause".into(),
+                value: "true".into(),
+                activate_at_height: 99_999,
+            },
+        );
+
+        let applied = st
+            .set_gov_param_with_action(
+                9_004,
+                7_999,
+                "emergency_pause".into(),
+                "true".into(),
+                GovPendingUpdateAction::Replace,
+            )
+            .expect("replace action should apply immediately for emergency_pause");
+
+        assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+        assert!(st.is_emergency_paused());
+        assert!(st.pending_gov_update("emergency_pause").is_none());
+    }
+
+    #[test]
+    fn emergency_pause_replace_action_still_enforces_strict_bool_schema() {
+        // Merge-gate guard: action variants must not bypass strict bool validation.
+        let mut st = StateStore::new();
+
+        let err = st
+            .set_gov_param_with_action(
+                9_005,
+                7_999,
+                "emergency_pause".into(),
+                "TRUE".into(),
+                GovPendingUpdateAction::Replace,
+            )
+            .expect_err("replace action must reject non-strict bool literal");
+        assert!(err.contains("expected strict bool"));
+        assert!(!st.is_emergency_paused());
+        assert!(st.pending_gov_update("emergency_pause").is_none());
+    }
+
+    #[test]
+    fn emergency_pause_replace_noop_is_idempotent_and_non_scheduling() {
+        // Merge-gate guard: Replace noop must stay immediate and avoid object-version churn.
+        let mut st = StateStore::new();
+
+        let first = st
+            .set_gov_param_with_action(
+                9_006,
+                7_999,
+                "emergency_pause".into(),
+                "true".into(),
+                GovPendingUpdateAction::Replace,
+            )
+            .expect("initial replace pause=true must apply immediately");
+        let first_ref = match first {
+            GovParamUpdateOutcome::Applied(r) => r,
+            _ => panic!("expected immediate apply"),
+        };
+
+        let second = st
+            .set_gov_param_with_action(
+                9_007,
+                7_999,
+                "emergency_pause".into(),
+                "true".into(),
+                GovPendingUpdateAction::Replace,
+            )
+            .expect("replace noop pause=true must remain immediate and idempotent");
+        let second_ref = match second {
+            GovParamUpdateOutcome::Applied(r) => r,
+            _ => panic!("expected immediate apply"),
+        };
+
+        assert_eq!(first_ref, second_ref, "replace noop must not churn object version");
+        assert!(st.is_emergency_paused());
+        assert!(st.pending_gov_update("emergency_pause").is_none());
+    }
+
+    #[test]
+    fn emergency_pause_enforce_action_remains_immediate_without_pending_state() {
+        // Merge-gate guard: explicit Enforce action must stay on the immediate path for
+        // emergency pause and never route through timelock scheduling.
+        let mut st = StateStore::new();
+
+        let applied = st
+            .set_gov_param_with_action(
+                9_010,
+                7999,
+                "emergency_pause".into(),
+                "true".into(),
+                GovPendingUpdateAction::Enforce,
+            )
+            .unwrap();
+        assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+        assert!(st.is_emergency_paused());
+        assert!(st.pending_gov_update("emergency_pause").is_none());
+
+        let unapplied = st
+            .set_gov_param_with_action(
+                9_011,
+                7999,
+                "emergency_pause".into(),
+                "false".into(),
+                GovPendingUpdateAction::Enforce,
+            )
+            .unwrap();
+        assert!(matches!(unapplied, GovParamUpdateOutcome::Applied(_)));
+        assert!(!st.is_emergency_paused());
+        assert!(st.pending_gov_update("emergency_pause").is_none());
+    }
+
+    #[test]
+    fn emergency_pause_enforce_noop_is_idempotent_and_non_scheduling() {
+        // Merge-gate guard: explicit Enforce noop must keep immediate semantics and avoid
+        // object-version churn for emergency_pause.
+        let mut st = StateStore::new();
+
+        let first = st
+            .set_gov_param_with_action(
+                9_011,
+                7_999,
+                "emergency_pause".into(),
+                "true".into(),
+                GovPendingUpdateAction::Enforce,
+            )
+            .expect("initial enforce pause=true must apply immediately");
+        let first_ref = match first {
+            GovParamUpdateOutcome::Applied(r) => r,
+            _ => panic!("expected immediate apply"),
+        };
+
+        let second = st
+            .set_gov_param_with_action(
+                9_012,
+                7_999,
+                "emergency_pause".into(),
+                "true".into(),
+                GovPendingUpdateAction::Enforce,
+            )
+            .expect("enforce noop pause=true must remain immediate and idempotent");
+        let second_ref = match second {
+            GovParamUpdateOutcome::Applied(r) => r,
+            _ => panic!("expected immediate apply"),
+        };
+
+        assert_eq!(first_ref, second_ref, "enforce noop must not churn object version");
+        assert!(st.is_emergency_paused());
+        assert!(st.pending_gov_update("emergency_pause").is_none());
+    }
+
+    #[test]
+    fn emergency_pause_does_not_bypass_sensitive_timelock_guards() {
+        // Merge-gate guard: paused mode must not allow sensitive governance params
+        // to skip the timelock state machine.
+        let mut st = StateStore::new();
+        st.set_gov_param_unchecked(8_500, "challenge_min_bond".into(), "100".into())
+            .unwrap();
+
+        let scheduled = st
+            .set_gov_param(9_200, 8_500, "challenge_min_bond".into(), "120".into())
+            .unwrap();
+        let activate_at_height = match scheduled {
+            GovParamUpdateOutcome::Scheduled { activate_at_height } => activate_at_height,
+            GovParamUpdateOutcome::Applied(_) => panic!("expected schedule"),
+            GovParamUpdateOutcome::Cancelled => panic!("expected schedule"),
+        };
+
+        st.set_gov_param(9_201, 7_999, "emergency_pause".into(), "true".into())
+            .unwrap();
+        assert!(st.is_emergency_paused());
+
+        let err = st
+            .set_gov_param(9_205, 8_500, "challenge_min_bond".into(), "120".into())
+            .expect_err("paused mode must not bypass sensitive timelock");
+        assert!(err.contains("timelock active"), "{err}");
+
+        let pending = st
+            .pending_gov_update("challenge_min_bond")
+            .expect("timelock pending update must remain intact while paused");
+        assert_eq!(pending.activate_at_height, activate_at_height);
+        assert_eq!(pending.value, "120");
+    }
+
+    #[test]
+    fn emergency_pause_checked_path_rejects_key_id_shadowing() {
+        let mut st = StateStore::new();
+        st.set_gov_param(9_100, 7999, "emergency_pause".into(), "true".into())
+            .unwrap();
+
+        let err = st
+            .set_gov_param(9_101, 8000, "emergency_pause".into(), "false".into())
+            .unwrap_err();
+        assert!(err.contains("key id mismatch"));
+
+        // Confirm canonical key id still controls pause state.
+        st.set_gov_param(9_102, 7999, "emergency_pause".into(), "false".into())
+            .unwrap();
+        assert!(!st.is_emergency_paused());
+    }
+
+    #[test]
+    fn governance_timelock_classification_merge_gate_keeps_emergency_pause_immediate() {
+        // Exhaustive merge-gate guard for timelock classification: changing this table means
+        // emergency pause semantics changed and tests/rollout should be reviewed explicitly.
+        let expected_sensitive = [
+            ("challenge_window_blocks", true),
+            ("challenge_min_bond", true),
+            ("challenge_success_bounty", true),
+            ("min_worker_stake", true),
+            ("challenge_min_bond_bounty_bps", true),
+            ("challenge_min_bond_worker_stake_bps", true),
+            ("resolve_authority", true),
+            ("emergency_pause", false),
+        ];
+
+        let expected_sensitive_count = expected_sensitive.iter().filter(|(_, v)| *v).count();
+        assert_eq!(
+            GOV_SENSITIVE_KEYS.len(),
+            expected_sensitive_count,
+            "sensitive-key list changed; update timelock classification merge gate"
+        );
+
+        for (key, expected) in expected_sensitive {
+            assert!(
+                GOV_ALLOWED_KEYS.contains(&key),
+                "timelock merge gate contains non-whitelisted key: {}",
+                key
+            );
+            assert_eq!(
+                is_sensitive_gov_param(key),
+                expected,
+                "governance sensitivity drifted for key: {}",
+                key
+            );
+        }
+
+        // Behavioral merge-gate: pause must remain immediate (never timelocked/scheduled).
+        let mut st = StateStore::new();
+        let outcome = st
+            .set_gov_param(96_100, 7_999, "emergency_pause".into(), "true".into())
+            .expect("pause update");
+        assert!(
+            matches!(outcome, GovParamUpdateOutcome::Applied(_)),
+            "emergency_pause must apply immediately"
+        );
+        assert!(st.pending_gov_update("emergency_pause").is_none());
+        assert!(st.is_emergency_paused());
+
+        let unpause_outcome = st
+            .set_gov_param(96_101, 7_999, "emergency_pause".into(), "false".into())
+            .expect("unpause update");
+        assert!(
+            matches!(unpause_outcome, GovParamUpdateOutcome::Applied(_)),
+            "emergency_pause=false must also apply immediately"
+        );
+        assert!(st.pending_gov_update("emergency_pause").is_none());
+        assert!(!st.is_emergency_paused());
+    }
+
+    #[test]
+    fn governance_allowed_keys_schema_merge_gate_is_explicit() {
+        // Exhaustive merge-gate guard for whitelist+schema safety. Any added/changed key
+        // must update this table with an invalid sample that is expected to fail.
+        let expected_invalid_samples = [
+            ("max_block_ms", "9"),
+            ("max_parallel_workers", "0"),
+            ("min_worker_stake", "0"),
+            ("challenge_min_bond", "0"),
+            ("challenge_min_bond_bounty_bps", "100001"),
+            ("challenge_min_bond_worker_stake_bps", "100001"),
+            ("challenge_window_blocks", "99"),
+            ("challenge_success_bounty", "-1"),
+            ("resolve_authority", "   "),
+            ("emergency_pause", "TRUE"),
+        ];
+
+        assert_eq!(
+            GOV_ALLOWED_KEYS.len(),
+            expected_invalid_samples.len(),
+            "governance allowed-key list changed; update schema merge gate"
+        );
+
+        let mut st = StateStore::new();
+        for (i, (key, bad_value)) in expected_invalid_samples.iter().enumerate() {
+            assert!(
+                GOV_ALLOWED_KEYS.contains(key),
+                "schema merge gate contains non-whitelisted key: {}",
+                key
+            );
+            let key_id = if *key == "emergency_pause" {
+                7_999
+            } else {
+                96_000 + i as u64
+            };
+            let err = st
+                .set_gov_param_unchecked(key_id, (*key).into(), (*bad_value).into())
+                .unwrap_err();
+            assert!(
+                err.contains("invalid governance value"),
+                "expected schema rejection for key={}, got: {}",
+                key,
+                err
+            );
+        }
+    }
+
+    #[test]
+    fn governance_keysets_merge_gate_are_unique_and_subset_safe() {
+        // Merge-gate: duplicate keys in static tables can silently weaken policy checks.
+        let allowed_unique: std::collections::BTreeSet<&str> =
+            GOV_ALLOWED_KEYS.iter().copied().collect();
+        assert_eq!(
+            allowed_unique.len(),
+            GOV_ALLOWED_KEYS.len(),
+            "GOV_ALLOWED_KEYS contains duplicate entries"
+        );
+
+        let sensitive_unique: std::collections::BTreeSet<&str> =
+            GOV_SENSITIVE_KEYS.iter().copied().collect();
+        assert_eq!(
+            sensitive_unique.len(),
+            GOV_SENSITIVE_KEYS.len(),
+            "GOV_SENSITIVE_KEYS contains duplicate entries"
+        );
+
+        for key in &sensitive_unique {
+            assert!(
+                allowed_unique.contains(key),
+                "sensitive key must also be whitelisted: {}",
+                key
+            );
+        }
+
+        assert!(
+            !sensitive_unique.contains("emergency_pause"),
+            "emergency_pause must remain immediate and never timelocked"
+        );
     }
 
     #[test]
@@ -624,8 +2402,53 @@ mod tests {
         let err = st.debit_balance("challenger", 6).unwrap_err();
         assert!(err.contains("insufficient balance"));
 
-        st.credit_balance("challenger", 7);
+        st.credit_balance("challenger", 7).unwrap();
         assert_eq!(st.balance_of("challenger"), 12);
+    }
+
+    #[test]
+    fn balance_credit_overflow_rejected() {
+        let mut st = StateStore::new();
+        st.set_balance("treasury", u128::MAX - 1);
+
+        let err = st.credit_balance("treasury", 2).unwrap_err();
+        assert!(err.contains("balance overflow on credit"));
+    }
+
+    #[test]
+    fn state_root_changes_when_task_security_fields_change() {
+        let mut st = StateStore::new();
+        let task = TaskObject {
+            task_id: 42,
+            creator: "alice".into(),
+            bounty: 100,
+            status: TaskStatus::Challenged,
+            worker: Some("worker-1".into()),
+            committed_hash: Some([1u8; 32]),
+            result_hash: Some([2u8; 32]),
+            reveal_salt: Some([3u8; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(40),
+            challenged_at_height: Some(25),
+            resolve_deadline_height: Some(35),
+            challenge_bond: Some(500),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: Some(false),
+            version: 1,
+        };
+
+        st.put_task_new(task.clone()).unwrap();
+        let root_before = st.state_root();
+
+        let mut changed = task;
+        changed.challenge_bond_forfeited = Some(true);
+        let current_ref = st.get_ref(42).unwrap();
+        st.update_task(current_ref, changed).unwrap();
+        let root_after = st.state_root();
+
+        assert_ne!(root_before, root_after);
     }
 
     #[test]

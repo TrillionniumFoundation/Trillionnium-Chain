@@ -234,20 +234,77 @@ fn random_priv_hex() -> Result<String> {
     Ok(hex::encode(b))
 }
 
+fn normalize_tx_hash(raw: &str) -> Option<String> {
+    let mut cleaned = raw
+        .trim_matches(|c: char| {
+            c.is_ascii_whitespace()
+                || matches!(c, ',' | ';' | ':' | '(' | ')' | '[' | ']' | '{' | '}')
+        })
+        .trim()
+        .to_string();
+
+    loop {
+        let before = cleaned.len();
+        cleaned = cleaned
+            .trim_matches(|c: char| {
+                c.is_ascii_whitespace()
+                    || matches!(c, ',' | ';' | ':' | '(' | ')' | '[' | ']' | '{' | '}')
+            })
+            .trim()
+            .to_string();
+        if cleaned.len() >= 2 {
+            let q = cleaned.as_bytes()[0] as char;
+            let last = cleaned.as_bytes()[cleaned.len() - 1] as char;
+            if (q == '"' || q == '\'' || q == '`') && q == last {
+                cleaned = cleaned[1..cleaned.len() - 1].to_string();
+                continue;
+            }
+        }
+        if cleaned.len() == before {
+            break;
+        }
+    }
+
+    cleaned = cleaned.to_ascii_lowercase();
+
+    if cleaned.starts_with("0x") && cleaned.len() > 2 {
+        let body = &cleaned[2..];
+        if body.chars().all(|c| c.is_ascii_hexdigit()) {
+            return Some(cleaned);
+        }
+        return None;
+    }
+
+    // Some adapters emit tx_hash without 0x prefix. Accept only plausible
+    // hex-like values to avoid false positives from generic words.
+    let is_hex_like = cleaned.chars().all(|c| c.is_ascii_hexdigit());
+    if is_hex_like && cleaned.len() >= 6 {
+        return Some(cleaned);
+    }
+
+    None
+}
+
 fn extract_tx_hash(text: &str) -> Option<String> {
-    if let Some(v) = text
-        .split_whitespace()
-        .find_map(|w| w.strip_prefix("tx_hash=").map(|s| s.to_string()))
-    {
+    if let Some(v) = text.split_whitespace().find_map(|w| {
+        let trimmed = w.trim_matches(|c: char| c.is_ascii_whitespace());
+        let (k, v) = trimmed
+            .split_once('=')
+            .or_else(|| trimmed.split_once(':'))?;
+        match k.trim().to_ascii_lowercase().as_str() {
+            "tx_hash" | "txhash" => normalize_tx_hash(v),
+            _ => None,
+        }
+    }) {
         return Some(v);
     }
 
     if let Ok(v) = serde_json::from_str::<serde_json::Value>(text) {
         if let Some(h) = v.get("tx_hash").and_then(|x| x.as_str()) {
-            return Some(h.to_string());
+            return normalize_tx_hash(h);
         }
         if let Some(h) = v.get("txhash").and_then(|x| x.as_str()) {
-            return Some(h.to_string());
+            return normalize_tx_hash(h);
         }
     }
 
@@ -290,23 +347,87 @@ fn run_template_raw(cmd: &str) -> Result<String> {
     Ok(stdout.to_string())
 }
 
+fn parse_kv_line(line: &str) -> Option<(String, String)> {
+    let trimmed = line.trim();
+    let (key, value) = if let Some((k, v)) = trimmed.split_once('=') {
+        (k.trim(), v.trim())
+    } else if let Some((k, v)) = trimmed.split_once(':') {
+        (k.trim(), v.trim())
+    } else {
+        return None;
+    };
+
+    if key.is_empty() {
+        return None;
+    }
+
+    Some((
+        key.to_ascii_lowercase(),
+        value.trim_matches('"').to_string(),
+    ))
+}
+
+fn normalize_tx_status(raw: &str) -> Option<String> {
+    let cleaned = raw
+        .trim()
+        .trim_matches('"')
+        .trim_matches('\'')
+        .trim_matches('`')
+        .trim_end_matches(|c: char| c.is_ascii_punctuation())
+        .to_ascii_lowercase();
+    match cleaned.as_str() {
+        "pending" => Some("pending".to_string()),
+        "committed" | "success" | "ok" => Some("committed".to_string()),
+        "fail" | "failed" | "error" | "rejected" | "reverted" | "aborted" | "dropped"
+        | "timeout" | "timed_out" | "timed-out" => Some("fail".to_string()),
+        _ => None,
+    }
+}
+
+fn is_nullish_kv_value(raw: &str) -> bool {
+    let cleaned = raw
+        .trim()
+        .trim_matches('"')
+        .trim_matches('\'')
+        .trim_matches('`')
+        .trim_end_matches(|c: char| c.is_ascii_punctuation())
+        .to_ascii_lowercase();
+    cleaned.is_empty() || cleaned == "null"
+}
+
+fn normalize_json_error(value: &serde_json::Value) -> Option<String> {
+    match value {
+        serde_json::Value::Null => None,
+        serde_json::Value::String(s) => {
+            if is_nullish_kv_value(s) {
+                None
+            } else {
+                Some(s.to_string())
+            }
+        }
+        other => Some(other.to_string()),
+    }
+}
+
 fn parse_tx_query_response(raw: &str, requested_tx_hash: &str) -> Result<TxQueryResponse> {
     if let Ok(v) = serde_json::from_str::<serde_json::Value>(raw) {
-        let tx_hash = v
+        let payload = v.get("result").unwrap_or(&v);
+        let raw_tx_hash = payload
             .get("tx_hash")
-            .or_else(|| v.get("txhash"))
-            .and_then(|x| x.as_str())
-            .unwrap_or(requested_tx_hash)
-            .to_string();
-        let status = v
+            .or_else(|| payload.get("txhash"))
+            .and_then(|x| x.as_str());
+        let tx_hash = match raw_tx_hash {
+            Some(raw_hash) => normalize_tx_hash(raw_hash)
+                .ok_or_else(|| anyhow!("invalid tx_hash field in tx query response"))?,
+            None => normalize_tx_hash(requested_tx_hash)
+                .unwrap_or_else(|| requested_tx_hash.to_string()),
+        };
+        let status = payload
             .get("status")
             .and_then(|x| x.as_str())
-            .ok_or_else(|| anyhow!("missing status field in tx query response"))?
-            .to_string();
-        let error = v
-            .get("error")
-            .and_then(|x| x.as_str())
-            .map(|s| s.to_string());
+            .and_then(normalize_tx_status)
+            .ok_or_else(|| anyhow!("missing/invalid status field in tx query response"))?;
+        let error = payload.get("error").and_then(normalize_json_error);
         return Ok(TxQueryResponse {
             tx_hash,
             status,
@@ -318,17 +439,25 @@ fn parse_tx_query_response(raw: &str, requested_tx_hash: &str) -> Result<TxQuery
     let mut status: Option<String> = None;
     let mut error: Option<String> = None;
     for line in raw.lines() {
-        if let Some(v) = line.trim().strip_prefix("tx_hash=") {
-            tx_hash = Some(v.trim().to_string());
-        }
-        if let Some(v) = line.trim().strip_prefix("status=") {
-            status = Some(v.trim().to_string());
-        }
-        if let Some(v) = line.trim().strip_prefix("error=") {
-            let t = v.trim();
-            if !t.is_empty() && t != "null" {
-                error = Some(t.to_string());
+        let Some((key, value)) = parse_kv_line(line) else {
+            continue;
+        };
+        match key.as_str() {
+            "tx_hash" | "txhash" => match normalize_tx_hash(&value) {
+                Some(normalized) => tx_hash = Some(normalized),
+                None => bail!("invalid tx_hash field in tx query response"),
+            },
+            "status" => {
+                if let Some(normalized) = normalize_tx_status(&value) {
+                    status = Some(normalized);
+                }
             }
+            "error" => {
+                if !is_nullish_kv_value(&value) {
+                    error = Some(value);
+                }
+            }
+            _ => {}
         }
     }
 
@@ -344,10 +473,23 @@ fn parse_tx_query_response(raw: &str, requested_tx_hash: &str) -> Result<TxQuery
 }
 
 fn tx_query(tx_hash: &str) -> Result<TxQueryResponse> {
+    let requested = normalize_tx_hash(tx_hash)
+        .ok_or_else(|| anyhow!("invalid tx hash for query (expected hex-like tx hash)"))?;
+
     if let Ok(template) = std::env::var("TRNM_TX_QUERY_CMD") {
-        let cmd = tpl(template, "tx_hash", tx_hash);
+        let cmd = tpl(template, "tx_hash", &requested);
         let raw = run_template_raw(&cmd)?;
-        return parse_tx_query_response(&raw, tx_hash);
+        let parsed = parse_tx_query_response(&raw, &requested)?;
+        if let Some(got) = normalize_tx_hash(&parsed.tx_hash) {
+            if requested != got {
+                bail!(
+                    "tx query response hash mismatch: requested={}, got={}",
+                    requested,
+                    got
+                );
+            }
+        }
+        return Ok(parsed);
     }
 
     let rpc_workspace = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
@@ -358,16 +500,28 @@ fn tx_query(tx_hash: &str) -> Result<TxQueryResponse> {
     let cmd = format!(
         "cd {} && cargo run -q -p trnm-rpc -- get-tx --tx-hash {}",
         rpc_workspace.display(),
-        tx_hash
+        requested
     );
     match run_template_raw(&cmd) {
-        Ok(raw) => parse_tx_query_response(&raw, tx_hash),
+        Ok(raw) => {
+            let parsed = parse_tx_query_response(&raw, &requested)?;
+            if let Some(got) = normalize_tx_hash(&parsed.tx_hash) {
+                if requested != got {
+                    bail!(
+                        "tx query response hash mismatch: requested={}, got={}",
+                        requested,
+                        got
+                    );
+                }
+            }
+            Ok(parsed)
+        }
         Err(e) => {
             let msg = e.to_string();
             if msg.contains("TX_NOT_FOUND") {
-                if let Some(status) = query_local_tx_status(tx_hash) {
+                if let Some(status) = query_local_tx_status(&requested) {
                     return Ok(TxQueryResponse {
-                        tx_hash: tx_hash.to_string(),
+                        tx_hash: requested,
                         status,
                         error: None,
                     });
@@ -431,7 +585,7 @@ fn query_local_tx_status(tx_hash: &str) -> Option<String> {
     let rec = v.get(tx_hash)?;
     rec.get("status")
         .and_then(|s| s.as_str())
-        .map(|s| s.to_string())
+        .and_then(normalize_tx_status)
 }
 
 fn persist_local_pending_tx(tx_hash: &str) -> Result<()> {
@@ -456,7 +610,7 @@ fn persist_local_pending_tx(tx_hash: &str) -> Result<()> {
         tx_hash.to_string(),
         serde_json::json!({
             "tx_hash": tx_hash,
-            "status": "committed",
+            "status": "pending",
             "error": null,
             "submitted_at_unix_ms": now_ms,
             "updated_at_unix_ms": now_ms
@@ -691,6 +845,9 @@ fn main() -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::sync::Mutex;
+
+    static ENV_LOCK: Mutex<()> = Mutex::new(());
 
     #[test]
     fn wallet_import_hex_check() {
@@ -712,6 +869,39 @@ mod tests {
     }
 
     #[test]
+    fn extract_tx_hash_trims_quotes_and_trailing_punctuation() {
+        assert_eq!(
+            extract_tx_hash("tx_hash=\"0xabc123\", status=submitted").as_deref(),
+            Some("0xabc123")
+        );
+        assert_eq!(
+            extract_tx_hash("{\"txhash\":\"0xdef456;\"}").as_deref(),
+            Some("0xdef456")
+        );
+    }
+
+    #[test]
+    fn extract_tx_hash_rejects_non_hex_prefixed_values() {
+        assert_eq!(extract_tx_hash("tx_hash=0xzz99").as_deref(), None);
+        assert_eq!(
+            extract_tx_hash("{\"tx_hash\":\"0xhash-not-hex\"}").as_deref(),
+            None
+        );
+    }
+
+    #[test]
+    fn extract_tx_hash_accepts_case_insensitive_keys_and_colon_separator() {
+        assert_eq!(
+            extract_tx_hash("INFO start TX_HASH:0xbeef01, done").as_deref(),
+            Some("0xbeef01")
+        );
+        assert_eq!(
+            extract_tx_hash("meta txHash=0xcafe02;").as_deref(),
+            Some("0xcafe02")
+        );
+    }
+
+    #[test]
     fn tx_query_parse_json_and_kv() {
         let json = "{\"tx_hash\":\"0xabc\",\"status\":\"committed\",\"error\":null}";
         let parsed = parse_tx_query_response(json, "0xabc").unwrap();
@@ -722,6 +912,162 @@ mod tests {
         let parsed_kv = parse_tx_query_response(kv, "0xdef").unwrap();
         assert_eq!(parsed_kv.status, "fail");
         assert_eq!(parsed_kv.error.as_deref(), Some("insufficient balance"));
+    }
+
+    #[test]
+    fn tx_query_parse_json_nested_result_payload() {
+        let json = "{\"result\":{\"tx_hash\":\"0xabc\",\"status\":\"success\",\"error\":null}}";
+        let parsed = parse_tx_query_response(json, "0xfallback").unwrap();
+        assert_eq!(parsed.tx_hash, "0xabc");
+        assert_eq!(parsed.status, "committed");
+        assert_eq!(parsed.error, None);
+    }
+
+    #[test]
+    fn tx_query_rejects_mismatched_tx_hash() {
+        std::env::set_var(
+            "TRNM_TX_QUERY_CMD",
+            "printf '{\"tx_hash\":\"0xaaaa\",\"status\":\"committed\"}'",
+        );
+        let got = tx_query("0xbbbb");
+        std::env::remove_var("TRNM_TX_QUERY_CMD");
+        assert!(got.is_err());
+    }
+
+    #[test]
+    fn tx_query_rejects_non_hex_like_tx_hash_before_shell_exec() {
+        std::env::set_var(
+            "TRNM_TX_QUERY_CMD",
+            "printf '{\"tx_hash\":\"0xaaaa\",\"status\":\"committed\"}'",
+        );
+        let got = tx_query("0xabc; touch /tmp/pwned");
+        std::env::remove_var("TRNM_TX_QUERY_CMD");
+        assert!(got.is_err());
+        let msg = got.err().unwrap().to_string();
+        assert!(msg.contains("invalid tx hash for query"), "unexpected: {msg}");
+    }
+
+    #[test]
+    fn tx_query_parse_kv_is_tolerant_to_case_and_separator() {
+        let kv = "TXHASH: 0x777\nSTATUS: committed\nERROR: null\n";
+        let parsed = parse_tx_query_response(kv, "0xfallback").unwrap();
+        assert_eq!(parsed.tx_hash, "0x777");
+        assert_eq!(parsed.status, "committed");
+        assert_eq!(parsed.error, None);
+    }
+
+    #[test]
+    fn tx_query_parse_kv_treats_nullish_error_variants_as_empty() {
+        let kv = "tx_hash=0x777\nstatus=committed\nerror='NULL,'\n";
+        let parsed = parse_tx_query_response(kv, "0xfallback").unwrap();
+        assert_eq!(parsed.tx_hash, "0x777");
+        assert_eq!(parsed.status, "committed");
+        assert_eq!(parsed.error, None);
+
+        let backtick_kv = "tx_hash=0x778\nstatus=`COMMITTED`\nerror=`null`,\n";
+        let parsed_backtick = parse_tx_query_response(backtick_kv, "0xfallback").unwrap();
+        assert_eq!(parsed_backtick.tx_hash, "0x778");
+        assert_eq!(parsed_backtick.status, "committed");
+        assert_eq!(parsed_backtick.error, None);
+    }
+
+    #[test]
+    fn tx_query_parse_json_treats_nullish_error_variants_as_empty() {
+        let json = "{\"tx_hash\":\"0x777\",\"status\":\"committed\",\"error\":\"NULL,\"}";
+        let parsed = parse_tx_query_response(json, "0xfallback").unwrap();
+        assert_eq!(parsed.tx_hash, "0x777");
+        assert_eq!(parsed.status, "committed");
+        assert_eq!(parsed.error, None);
+    }
+
+    #[test]
+    fn tx_query_parse_json_preserves_non_string_error_payloads() {
+        let json_numeric = "{\"tx_hash\":\"0x777\",\"status\":\"fail\",\"error\":404}";
+        let parsed_numeric = parse_tx_query_response(json_numeric, "0xfallback").unwrap();
+        assert_eq!(parsed_numeric.error.as_deref(), Some("404"));
+
+        let json_obj =
+            "{\"tx_hash\":\"0x777\",\"status\":\"fail\",\"error\":{\"code\":\"E_NONCE\"}}";
+        let parsed_obj = parse_tx_query_response(json_obj, "0xfallback").unwrap();
+        assert_eq!(parsed_obj.error.as_deref(), Some("{\"code\":\"E_NONCE\"}"));
+    }
+
+    #[test]
+    fn tx_query_parse_normalizes_status_aliases_and_punctuation() {
+        let kv = "txhash=0xabc\nstatus=FAILED,\n";
+        let parsed = parse_tx_query_response(kv, "0xfallback").unwrap();
+        assert_eq!(parsed.tx_hash, "0xabc");
+        assert_eq!(parsed.status, "fail");
+
+        let json = "{\"tx_hash\":\"0xdef\",\"status\":\"ok\"}";
+        let parsed_json = parse_tx_query_response(json, "0xfallback").unwrap();
+        assert_eq!(parsed_json.status, "committed");
+
+        let noisy_punct = "tx_hash=0xeee\nstatus=success!?\n";
+        let parsed_noisy = parse_tx_query_response(noisy_punct, "0xfallback").unwrap();
+        assert_eq!(parsed_noisy.status, "committed");
+
+        let single_quoted = "tx_hash=0xeff\nstatus='committed'\n";
+        let parsed_single_quoted = parse_tx_query_response(single_quoted, "0xfallback").unwrap();
+        assert_eq!(parsed_single_quoted.status, "committed");
+
+        let rejected_alias = "tx_hash=0xef0\nstatus=REJECTED\n";
+        let parsed_rejected = parse_tx_query_response(rejected_alias, "0xfallback").unwrap();
+        assert_eq!(parsed_rejected.status, "fail");
+
+        let timed_out_alias = "tx_hash=0xef1\nstatus=timed_out\n";
+        let parsed_timed_out = parse_tx_query_response(timed_out_alias, "0xfallback").unwrap();
+        assert_eq!(parsed_timed_out.status, "fail");
+
+        let timed_out_hyphen_alias = "tx_hash=0xef2\nstatus=timed-out\n";
+        let parsed_timed_out_hyphen =
+            parse_tx_query_response(timed_out_hyphen_alias, "0xfallback").unwrap();
+        assert_eq!(parsed_timed_out_hyphen.status, "fail");
+    }
+
+    #[test]
+    fn tx_query_parse_kv_ignores_noisy_lines_and_uses_valid_status() {
+        let noisy = "[rpc] connecting...\nrandom line without kv\ntx_hash=0x999\nINFO: still processing\nstatus=committed\n";
+        let parsed = parse_tx_query_response(noisy, "0xfallback").unwrap();
+        assert_eq!(parsed.tx_hash, "0x999");
+        assert_eq!(parsed.status, "committed");
+        assert_eq!(parsed.error, None);
+    }
+
+    #[test]
+    fn tx_query_parse_normalizes_quoted_or_punctuated_tx_hash() {
+        let kv = "tx_hash='0xABCD1234',\nstatus=committed\n";
+        let parsed = parse_tx_query_response(kv, "0xfallback").unwrap();
+        assert_eq!(parsed.tx_hash, "0xabcd1234");
+
+        let json = "{\"tx_hash\":\"0xDEADbeef,\",\"status\":\"committed\"}";
+        let parsed_json = parse_tx_query_response(json, "0xfallback").unwrap();
+        assert_eq!(parsed_json.tx_hash, "0xdeadbeef");
+
+        let nested_wrappers = "tx_hash=(`\"0xBEEF42\"`,)\nstatus=committed\n";
+        let parsed_nested = parse_tx_query_response(nested_wrappers, "0xfallback").unwrap();
+        assert_eq!(parsed_nested.tx_hash, "0xbeef42");
+    }
+
+    #[test]
+    fn tx_query_parse_rejects_invalid_tx_hash_if_field_is_present() {
+        let bad_json = "{\"tx_hash\":\"not-a-hash\",\"status\":\"committed\"}";
+        let err_json = parse_tx_query_response(bad_json, "0xabc").unwrap_err();
+        assert!(
+            err_json
+                .to_string()
+                .contains("invalid tx_hash field in tx query response"),
+            "unexpected: {err_json}"
+        );
+
+        let bad_kv = "tx_hash=not-a-hash\nstatus=committed\n";
+        let err_kv = parse_tx_query_response(bad_kv, "0xabc").unwrap_err();
+        assert!(
+            err_kv
+                .to_string()
+                .contains("invalid tx_hash field in tx query response"),
+            "unexpected: {err_kv}"
+        );
     }
 
     #[test]
@@ -765,5 +1111,62 @@ mod tests {
         let got = tpl(got, "to", "bob");
         let got = tpl(got, "amount", "7");
         assert_eq!(got, "send alice bob 7");
+    }
+
+    #[test]
+    fn persist_local_pending_tx_keeps_pending_state() {
+        let _guard = ENV_LOCK.lock().unwrap();
+        let unique = format!(
+            "trnm-cli-test-{}-{}.json",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        );
+        let path = std::env::temp_dir().join(unique);
+        std::env::set_var("TRNM_RPC_TX_FILE", &path);
+
+        let nonce = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos();
+        let tx_hash = format!("0x{:064x}", nonce);
+        persist_local_pending_tx(&tx_hash).unwrap();
+
+        let status = query_local_tx_status(&tx_hash).unwrap();
+        assert_eq!(status, "pending");
+
+        let _ = std::fs::remove_file(&path);
+        std::env::remove_var("TRNM_RPC_TX_FILE");
+    }
+
+    #[test]
+    fn query_local_tx_status_normalizes_aliases_and_rejects_unknown() {
+        let _guard = ENV_LOCK.lock().unwrap();
+        let unique = format!(
+            "trnm-cli-test-{}-{}.json",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        );
+        let path = std::env::temp_dir().join(unique);
+        std::env::set_var("TRNM_RPC_TX_FILE", &path);
+
+        let ok_hash = "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+        let bad_hash = "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
+        let payload = format!(
+            "{{\n  \"{}\": {{\"status\": \"success!\"}},\n  \"{}\": {{\"status\": \"done\"}}\n}}",
+            ok_hash, bad_hash
+        );
+        std::fs::write(&path, payload).unwrap();
+
+        assert_eq!(query_local_tx_status(ok_hash).as_deref(), Some("committed"));
+        assert_eq!(query_local_tx_status(bad_hash), None);
+
+        let _ = std::fs::remove_file(&path);
+        std::env::remove_var("TRNM_RPC_TX_FILE");
     }
 }

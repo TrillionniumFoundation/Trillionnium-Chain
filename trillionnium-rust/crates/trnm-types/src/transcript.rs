@@ -66,7 +66,7 @@ impl TranscriptMerkleTree {
         let mut directions = Vec::with_capacity(self.levels.len().saturating_sub(1));
 
         for level in self.levels.iter().take(self.levels.len().saturating_sub(1)) {
-            let sibling_idx = if idx % 2 == 0 { idx + 1 } else { idx - 1 };
+            let sibling_idx = if idx.is_multiple_of(2) { idx + 1 } else { idx - 1 };
             let sibling = if sibling_idx < level.len() {
                 level[sibling_idx]
             } else {
@@ -74,7 +74,7 @@ impl TranscriptMerkleTree {
             };
 
             path.push(sibling);
-            directions.push(if idx % 2 == 0 {
+            directions.push(if idx.is_multiple_of(2) {
                 MerkleDirection::Right
             } else {
                 MerkleDirection::Left

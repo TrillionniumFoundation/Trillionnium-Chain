@@ -13,7 +13,8 @@ rm -rf "$WAL_DIR"
 cargo run -q -p trnm-node -- \
   --config configs/node1.toml \
   --block-ms 1 \
-  --max-blocks 3 \
+  --max-blocks 8 \
+  --txs-per-block 1 \
   --demo-tasks 1 \
   --demo-keys 1 \
   --parallel-workers 2 \

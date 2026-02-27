@@ -49,6 +49,12 @@ pub struct TaskObject {
     pub reveal_salt: Option<[u8; 32]>,
     pub committed_at_height: Option<u64>,
     pub reveal_deadline_height: Option<u64>,
+    #[serde(default)]
+    pub challenge_deadline_height: Option<u64>,
+    /// Snapshot of challenge/resolve window semantics captured at reveal.
+    /// Kept optional for backward-compatible deserialization of pre-upgrade tasks.
+    #[serde(default)]
+    pub challenge_window_blocks_snapshot: Option<u64>,
     pub challenged_at_height: Option<u64>,
     pub resolve_deadline_height: Option<u64>,
     pub challenge_bond: Option<u128>,

@@ -7,9 +7,22 @@ cd "$ROOT"
 TMP_LOG="$(mktemp /tmp/trnm-fake-wrapper-block.XXXXXX.log)"
 trap 'rm -f "$TMP_LOG"' EXIT
 
-echo "[TEST] worker_real_cli_fake_wrapper_block: fake wrapper must fail strict gate"
+echo "[TEST] worker_real_cli_fake_wrapper_block: fake tx cli must fail strict gate"
+FAKE_CLI="$(mktemp /tmp/trnm-fake-cli.XXXXXX.sh)"
+cat >"$FAKE_CLI" <<'EOF'
+#!/usr/bin/env bash
+if [[ "${1:-}" == "tx" && "${2:-}" == "--help" ]]; then
+  exit 0
+fi
+# intentionally missing tx_hash/query contract
+echo "fake cli ok"
+exit 0
+EOF
+chmod +x "$FAKE_CLI"
+trap 'rm -f "$TMP_LOG" "$FAKE_CLI"' EXIT
+
 set +e
-TRNM_TX_CLI=./scripts/v2/trnm_tx_cli_wrapper.sh \
+TRNM_TX_CLI="$FAKE_CLI" \
   ./scripts/v2/run_worker_receipt_gates_real_cli.sh >"$TMP_LOG" 2>&1
 rc=$?
 set -e

@@ -53,15 +53,15 @@ pub fn detect_conflict(a: &Tx, b: &Tx) -> bool {
 }
 
 #[inline]
-fn access_key(obj: &ObjectRef) -> (u64, u64) {
-    (obj.id, obj.version)
+fn access_key(obj: &ObjectRef) -> u64 {
+    obj.id
 }
 
 #[inline]
-fn dedup_access_keys(objs: &[ObjectRef]) -> Vec<(u64, u64)> {
+fn dedup_access_keys(objs: &[ObjectRef]) -> Vec<u64> {
     // Small-set fast path avoids HashSet allocation for common tiny access lists.
     if objs.len() <= 8 {
-        let mut out: Vec<(u64, u64)> = Vec::with_capacity(objs.len());
+        let mut out: Vec<u64> = Vec::with_capacity(objs.len());
         for obj in objs {
             let key = access_key(obj);
             if !out.contains(&key) {
@@ -71,8 +71,8 @@ fn dedup_access_keys(objs: &[ObjectRef]) -> Vec<(u64, u64)> {
         return out;
     }
 
-    let mut seen: HashSet<(u64, u64)> = HashSet::with_capacity(objs.len());
-    let mut out: Vec<(u64, u64)> = Vec::with_capacity(objs.len());
+    let mut seen: HashSet<u64> = HashSet::with_capacity(objs.len());
+    let mut out: Vec<u64> = Vec::with_capacity(objs.len());
     for obj in objs {
         let key = access_key(obj);
         if seen.insert(key) {
@@ -88,12 +88,12 @@ fn intersects(x: &[ObjectRef], y: &[ObjectRef]) -> bool {
     }
     // Build a set from the smaller side to reduce comparisons.
     let (small, large) = if x.len() <= y.len() { (x, y) } else { (y, x) };
-    let seen: HashSet<(u64, u64)> = small.iter().map(access_key).collect();
+    let seen: HashSet<u64> = small.iter().map(access_key).collect();
     large.iter().any(|obj| seen.contains(&access_key(obj)))
 }
 
 #[inline]
-fn vec_hashset_intersects(a: &[(u64, u64)], b: &HashSet<(u64, u64)>) -> bool {
+fn vec_hashset_intersects(a: &[u64], b: &HashSet<u64>) -> bool {
     if a.is_empty() || b.is_empty() {
         return false;
     }
@@ -136,10 +136,10 @@ pub fn build_parallel_groups_profile_with_strategy(
 
     // Pre-size maps to reduce rehashing on large workloads.
     let map_cap = (txs.len() / 2).max(64);
-    // object(id,version) -> latest group that has a writer touching this object
-    let mut latest_writer_group: HashMap<(u64, u64), usize> = HashMap::with_capacity(map_cap);
-    // object(id,version) -> latest group that has a reader touching this object
-    let mut latest_reader_group: HashMap<(u64, u64), usize> = HashMap::with_capacity(map_cap);
+    // object(id) -> latest group that has a writer touching this object
+    let mut latest_writer_group: HashMap<u64, usize> = HashMap::with_capacity(map_cap);
+    // object(id) -> latest group that has a reader touching this object
+    let mut latest_reader_group: HashMap<u64, usize> = HashMap::with_capacity(map_cap);
 
     // Profiling counters (lightweight approximation instead of pairwise O(n^2) scans)
     let mut conflict_checks = 0usize;
@@ -230,8 +230,8 @@ fn build_parallel_groups_aggressive_profile(
     if !aggr_deep_scan_enabled() {
         let mut groups: Vec<Vec<Tx>> = Vec::new();
         let map_cap = (original_txs.len() / 2).max(64);
-        let mut latest_writer_group: HashMap<(u64, u64), usize> = HashMap::with_capacity(map_cap);
-        let mut latest_reader_group: HashMap<(u64, u64), usize> = HashMap::with_capacity(map_cap);
+        let mut latest_writer_group: HashMap<u64, usize> = HashMap::with_capacity(map_cap);
+        let mut latest_reader_group: HashMap<u64, usize> = HashMap::with_capacity(map_cap);
 
         let mut conflict_checks = 0usize;
         let mut conflict_hits = 0usize;
@@ -308,12 +308,12 @@ fn build_parallel_groups_aggressive_profile(
 
     // Deep scan path (experiment-only).
     let mut groups: Vec<Vec<Tx>> = Vec::new();
-    let mut group_read_keys: Vec<HashSet<(u64, u64)>> = Vec::new();
-    let mut group_write_keys: Vec<HashSet<(u64, u64)>> = Vec::new();
+    let mut group_read_keys: Vec<HashSet<u64>> = Vec::new();
+    let mut group_write_keys: Vec<HashSet<u64>> = Vec::new();
 
     let map_cap = (original_txs.len() / 2).max(64);
-    let mut latest_writer_group: HashMap<(u64, u64), usize> = HashMap::with_capacity(map_cap);
-    let mut latest_reader_group: HashMap<(u64, u64), usize> = HashMap::with_capacity(map_cap);
+    let mut latest_writer_group: HashMap<u64, usize> = HashMap::with_capacity(map_cap);
+    let mut latest_reader_group: HashMap<u64, usize> = HashMap::with_capacity(map_cap);
 
     let mut conflict_checks = 0usize;
     let mut conflict_hits = 0usize;

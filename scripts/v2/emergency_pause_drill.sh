@@ -18,10 +18,10 @@ fi
 
 echo "baseline=pass" | tee "$OUT"
 
-# 2) direct state drill: toggle emergency pause and verify flag behavior via unit tests
-cargo test -q -p trnm-state tests::emergency_pause_flag_works
+# 2) direct state drill: checked-path pause must be immediate and non-cancellable.
+cargo test -q -p trnm-state tests::emergency_pause_checked_path_is_immediate_and_non_cancellable
 
-echo "state_pause_toggle=pass" | tee -a "$OUT"
+echo "state_pause_checked_path=pass" | tee -a "$OUT"
 
 # 3) governance param whitelist includes emergency_pause
 cargo test -q -p trnm-state tests::governance_param_whitelist_enforced

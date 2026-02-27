@@ -24,8 +24,9 @@ pub struct ReliableMessage {
 
 impl ReliableMessage {
     fn requires_strict_fields(&self) -> bool {
+        let msg_type = self.msg_type.trim();
         matches!(
-            self.msg_type.as_str(),
+            msg_type,
             "TASK_ACCEPT"
                 | "INPUT_CHUNK"
                 | "RESULT_META"
@@ -424,6 +425,13 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
                 detail: "missing chain_id".to_string(),
             };
         }
+        if msg.from.trim().is_empty() {
+            return Ack {
+                code: AckCode::BadRequest,
+                ack_id: "ack_invalid".to_string(),
+                detail: "missing from".to_string(),
+            };
+        }
         if msg.session_id.trim().is_empty() {
             return Ack {
                 code: AckCode::BadRequest,
@@ -431,11 +439,44 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
                 detail: "missing session_id".to_string(),
             };
         }
+        // Replay/auth hardening: reject non-canonical identifiers with
+        // surrounding whitespace so equivalent principals/namespaces cannot
+        // bypass dedup domains by string-shape variance.
+        if msg.chain_id.trim() != msg.chain_id
+            || msg.from.trim() != msg.from
+            || msg.session_id.trim() != msg.session_id
+        {
+            return Ack {
+                code: AckCode::BadRequest,
+                ack_id: "ack_invalid".to_string(),
+                detail: "non-canonical identifier".to_string(),
+            };
+        }
+        // Gate hardening: preserve a single canonical msg_type namespace so
+        // strict-field routing and replay domains cannot diverge by padding
+        // or case-variant aliases.
+        if !msg.msg_type.is_empty()
+            && (msg.msg_type.trim() != msg.msg_type
+                || msg.msg_type != msg.msg_type.to_ascii_uppercase())
+        {
+            return Ack {
+                code: AckCode::BadRequest,
+                ack_id: "ack_invalid".to_string(),
+                detail: "non-canonical msg_type".to_string(),
+            };
+        }
         if msg.requires_strict_fields() && msg.seq.is_none() {
             return Ack {
                 code: AckCode::BadRequest,
                 ack_id: "ack_invalid".to_string(),
                 detail: "missing seq".to_string(),
+            };
+        }
+        if msg.seq.is_some() && msg.nonce.is_some() {
+            return Ack {
+                code: AckCode::BadRequest,
+                ack_id: "ack_invalid".to_string(),
+                detail: "ambiguous seq/nonce".to_string(),
             };
         }
 
@@ -446,6 +487,13 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
                 detail: "missing seq/nonce".to_string(),
             };
         };
+        if dedup_key.seq_or_nonce == 0 {
+            return Ack {
+                code: AckCode::BadRequest,
+                ack_id: "ack_invalid".to_string(),
+                detail: "invalid zero seq/nonce".to_string(),
+            };
+        }
 
         let ack_id = format!("ack_{}_{}", dedup_key.from, dedup_key.seq_or_nonce);
         if self.store.contains_dedup_key(&dedup_key) {
@@ -681,8 +729,22 @@ impl SqliteReliabilityStore {
         let conn = Connection::open(path).map_err(|e| ReliabilityStoreError::InvalidState {
             detail: format!("open sqlite failed: {e}"),
         })?;
+        Self::configure_connection(&conn)?;
         Self::apply_migrations(&conn)?;
         Ok(Self { conn })
+    }
+
+    fn configure_connection(conn: &Connection) -> Result<(), ReliabilityStoreError> {
+        conn.execute_batch(
+            "
+            PRAGMA journal_mode = WAL;
+            PRAGMA synchronous = NORMAL;
+            PRAGMA busy_timeout = 5000;
+            ",
+        )
+        .map_err(|e| ReliabilityStoreError::InvalidState {
+            detail: format!("configure sqlite pragmas failed: {e}"),
+        })
     }
 
     fn apply_migrations(conn: &Connection) -> Result<(), ReliabilityStoreError> {
@@ -784,11 +846,11 @@ impl ReliabilityStore for SqliteReliabilityStore {
     fn contains_dedup_key(&self, key: &DedupKey) -> bool {
         self.conn
             .query_row(
-                "SELECT COUNT(1) FROM reliability_dedup WHERE from_addr=?1 AND seq_or_nonce=?2",
+                "SELECT EXISTS(SELECT 1 FROM reliability_dedup WHERE from_addr=?1 AND seq_or_nonce=?2)",
                 rusqlite::params![key.from, key.seq_or_nonce],
                 |r| r.get::<_, i64>(0),
             )
-            .map(|n| n > 0)
+            .map(|exists| exists != 0)
             .unwrap_or(false)
     }
 
@@ -822,26 +884,17 @@ impl ReliabilityStore for SqliteReliabilityStore {
                 detail: format!("serialize session failed: {e}"),
             })?;
         let ts = i64::try_from(now_unix_ms).unwrap_or(i64::MAX);
-        let tx = self
-            .conn
-            .transaction()
+        self.conn
+            .execute(
+                "INSERT INTO reliability_sessions(session_id, session_json, updated_at_unix_ms)
+                 VALUES(?1, ?2, ?3)
+                 ON CONFLICT(session_id) DO UPDATE SET
+                   session_json=excluded.session_json,
+                   updated_at_unix_ms=excluded.updated_at_unix_ms",
+                rusqlite::params![session.session_id, payload, ts],
+            )
             .map_err(|e| ReliabilityStoreError::InvalidState {
-                detail: format!("begin tx failed: {e}"),
-            })?;
-        tx.execute(
-            "INSERT INTO reliability_sessions(session_id, session_json, updated_at_unix_ms)
-             VALUES(?1, ?2, ?3)
-             ON CONFLICT(session_id) DO UPDATE SET
-               session_json=excluded.session_json,
-               updated_at_unix_ms=excluded.updated_at_unix_ms",
-            rusqlite::params![session.session_id, payload, ts],
-        )
-        .map_err(|e| ReliabilityStoreError::InvalidState {
-            detail: format!("upsert session failed: {e}"),
-        })?;
-        tx.commit()
-            .map_err(|e| ReliabilityStoreError::InvalidState {
-                detail: format!("commit tx failed: {e}"),
+                detail: format!("upsert session failed: {e}"),
             })?;
         Ok(())
     }
@@ -909,12 +962,78 @@ mod tests {
         assert_eq!(ack.code, AckCode::BadRequest);
         assert!(ack.detail.contains("missing chain_id"));
 
+        let mut missing_from = mk_msg("alice", "s1", 1);
+        missing_from.from = "   ".to_string();
+        let ack = engine.receive(missing_from, 1_000);
+        assert_eq!(ack.code, AckCode::BadRequest);
+        assert!(ack.detail.contains("missing from"));
+
         let mut missing_seq = mk_msg("alice", "s1", 1);
         missing_seq.seq = None;
         missing_seq.nonce = Some(99);
         let ack = engine.receive(missing_seq, 1_000);
         assert_eq!(ack.code, AckCode::BadRequest);
         assert!(ack.detail.contains("missing seq"));
+    }
+
+    #[test]
+    fn rejects_non_canonical_whitespace_wrapped_msg_type() {
+        let store = InMemoryReliabilityStore::default();
+        let mut engine = ReliabilityEngine::new(store, RetryConfig::default());
+
+        let msg = ReliableMessage {
+            from: "alice".to_string(),
+            chain_id: "trnm-mainnet".to_string(),
+            session_id: "s1".to_string(),
+            seq: None,
+            nonce: Some(77),
+            msg_type: "  ACK  ".to_string(),
+            payload: "ok".to_string(),
+        };
+
+        let ack = engine.receive(msg, 1_000);
+        assert_eq!(ack.code, AckCode::BadRequest);
+        assert!(ack.detail.contains("non-canonical msg_type"));
+    }
+
+    #[test]
+    fn rejects_non_canonical_msg_type_case_variant_to_prevent_strict_field_bypass() {
+        let store = InMemoryReliabilityStore::default();
+        let mut engine = ReliabilityEngine::new(store, RetryConfig::default());
+
+        let msg = ReliableMessage {
+            from: "alice".to_string(),
+            chain_id: "trnm-mainnet".to_string(),
+            session_id: "s1".to_string(),
+            seq: None,
+            nonce: Some(77),
+            msg_type: "ack".to_string(),
+            payload: "ok".to_string(),
+        };
+
+        let ack = engine.receive(msg, 1_000);
+        assert_eq!(ack.code, AckCode::BadRequest);
+        assert!(ack.detail.contains("non-canonical msg_type"));
+    }
+
+    #[test]
+    fn rejects_non_canonical_identifier_whitespace_to_prevent_replay_namespace_bypass() {
+        let store = InMemoryReliabilityStore::default();
+        let mut engine = ReliabilityEngine::new(store, RetryConfig::default());
+
+        let msg = ReliableMessage {
+            from: " alice ".to_string(),
+            chain_id: "trnm-mainnet".to_string(),
+            session_id: "s1".to_string(),
+            seq: Some(1),
+            nonce: None,
+            msg_type: "INPUT_CHUNK".to_string(),
+            payload: "hello".to_string(),
+        };
+
+        let ack = engine.receive(msg, 1_000);
+        assert_eq!(ack.code, AckCode::BadRequest);
+        assert!(ack.detail.contains("non-canonical identifier"));
     }
 
     #[test]
@@ -933,6 +1052,43 @@ mod tests {
         };
         let ack = engine.receive(msg, 1_000);
         assert_eq!(ack.code, AckCode::Accepted);
+    }
+
+    #[test]
+    fn rejects_ambiguous_dual_seq_and_nonce_to_harden_replay_migration() {
+        let store = InMemoryReliabilityStore::default();
+        let mut engine = ReliabilityEngine::new(store, RetryConfig::default());
+
+        let msg = ReliableMessage {
+            from: "legacy-sender".to_string(),
+            chain_id: "trnm-mainnet".to_string(),
+            session_id: "legacy-session".to_string(),
+            seq: Some(7),
+            nonce: Some(7),
+            msg_type: String::new(),
+            payload: "legacy".to_string(),
+        };
+        let ack = engine.receive(msg, 1_000);
+        assert_eq!(ack.code, AckCode::BadRequest);
+        assert!(ack.detail.contains("ambiguous seq/nonce"));
+    }
+
+    #[test]
+    fn rejects_zero_seq_or_nonce_to_harden_replay_namespace() {
+        let store = InMemoryReliabilityStore::default();
+        let mut engine = ReliabilityEngine::new(store, RetryConfig::default());
+
+        let mut msg = mk_msg("alice", "s1", 0);
+        let ack = engine.receive(msg.clone(), 1_000);
+        assert_eq!(ack.code, AckCode::BadRequest);
+        assert!(ack.detail.contains("invalid zero seq/nonce"));
+
+        msg.seq = None;
+        msg.nonce = Some(0);
+        msg.msg_type = String::new();
+        let ack = engine.receive(msg, 1_001);
+        assert_eq!(ack.code, AckCode::BadRequest);
+        assert!(ack.detail.contains("invalid zero seq/nonce"));
     }
 
     #[test]
@@ -1215,5 +1371,37 @@ mod tests {
             default_reliability_db_path(),
             PathBuf::from("run/reliability/reliability.sqlite")
         );
+    }
+
+    #[test]
+    fn sqlite_store_open_applies_resilience_pragmas() {
+        let unique = format!(
+            "trnm-reliability-{}-{}.sqlite",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .expect("unix epoch")
+                .as_nanos()
+        );
+        let db_path = std::env::temp_dir().join(unique);
+
+        let store = SqliteReliabilityStore::open(&db_path).expect("open sqlite store");
+
+        let mode: String = store
+            .conn
+            .query_row("PRAGMA journal_mode", [], |r| r.get(0))
+            .expect("query journal_mode");
+        assert_eq!(mode.to_ascii_lowercase(), "wal");
+
+        let busy_timeout_ms: i64 = store
+            .conn
+            .query_row("PRAGMA busy_timeout", [], |r| r.get(0))
+            .expect("query busy_timeout");
+        assert_eq!(busy_timeout_ms, 5_000);
+
+        drop(store);
+        let _ = std::fs::remove_file(&db_path);
+        let _ = std::fs::remove_file(db_path.with_extension("sqlite-wal"));
+        let _ = std::fs::remove_file(db_path.with_extension("sqlite-shm"));
     }
 }

@@ -98,11 +98,17 @@ PY
   echo "reveal_tx_hash=$reveal_tx_hash"
 } > "$OUT"
 
-if [[ -z "$commit_tx_hash" || "$commit_tx_hash" == "None" ]]; then
+is_missing_hash() {
+  local v
+  v="$(printf '%s' "${1:-}" | tr -d '[:space:]' | tr '[:upper:]' '[:lower:]')"
+  [[ -z "$v" || "$v" == "none" || "$v" == "null" ]]
+}
+
+if is_missing_hash "$commit_tx_hash"; then
   echo "[FAIL] missing commit_tx_hash" >&2
   exit 2
 fi
-if [[ -z "$reveal_tx_hash" || "$reveal_tx_hash" == "None" ]]; then
+if is_missing_hash "$reveal_tx_hash"; then
   echo "[FAIL] missing reveal_tx_hash" >&2
   exit 3
 fi

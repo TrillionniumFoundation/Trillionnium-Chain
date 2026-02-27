@@ -23,20 +23,36 @@ commit_tx_hash=""
 
 extract_tx_hash() {
   local raw="$1"
-  local h
-  h=$(printf "%s\n" "$raw" | sed -n 's/.*tx_hash[[:space:]]*[:=][[:space:]]*\([0-9A-Fa-f]\{16,128\}\).*/\1/p' | head -n1 || true)
-  if [[ -z "$h" ]]; then
-    h=$(printf "%s\n" "$raw" | sed -n 's/.*txhash[[:space:]]*[:=][[:space:]]*\([0-9A-Fa-f]\{16,128\}\).*/\1/p' | head -n1 || true)
-  fi
+  local h=""
+  while IFS= read -r tok; do
+    tok="${tok#\"}"
+    tok="${tok%\"}"
+    tok="${tok#0x}"
+    tok="${tok#0X}"
+    if [[ "$tok" =~ ^[0-9A-Fa-f]{16,128}$ ]]; then
+      h="$tok"
+      break
+    fi
+  done < <(printf "%s\n" "$raw" | grep -Eo 'tx_hash"?[[:space:]]*[:=][[:space:]]*"?(0[xX])?[0-9A-Fa-f]{16,128}"?|txhash"?[[:space:]]*[:=][[:space:]]*"?(0[xX])?[0-9A-Fa-f]{16,128}"?|txHash"?[[:space:]]*[:=][[:space:]]*"?(0[xX])?[0-9A-Fa-f]{16,128}"?' | sed -E 's/.*[:=][[:space:]]*//')
   printf "%s" "$h"
 }
 
 extract_query_status() {
   local raw="$1"
   local s
-  s=$(printf "%s\n" "$raw" | sed -n 's/^status[[:space:]]*[:=][[:space:]]*\([^[:space:]]*\).*/\1/p' | head -n1 || true)
+  # Accept plain-text variants like: status=ok / tx_status: committed,
+  # including log-prefixed lines (e.g. "[info] status=committed").
+  s=$(printf "%s\n" "$raw" \
+    | grep -Eio '(^|[^A-Za-z0-9_])([Tt][Xx]_)?[Ss][Tt][Aa][Tt][Uu][Ss][[:space:]]*[:=][[:space:]]*[^[:space:]]+' \
+    | head -n1 \
+    | sed -E 's/.*[[:space:]:=]([^[:space:]]+).*/\1/' || true)
   if [[ -z "$s" ]]; then
-    s=$(printf "%s\n" "$raw" | sed -n 's/.*"status"[[:space:]]*:[[:space:]]*"\([^"]\+\)".*/\1/p' | head -n1 || true)
+    # Accept JSON variants with either "status" or "tx_status" key to avoid false negatives across adapters.
+    s=$(printf "%s\n" "$raw" | grep -Eio '"(tx_)?status"[[:space:]]*:[[:space:]]*"[^"]+"' | sed -E 's/.*:[[:space:]]*"([^"]+)"/\1/' | head -n1 || true)
+  fi
+  if [[ -z "$s" ]]; then
+    # Also accept non-string JSON scalar status values (number/bool), preserving guardrail against empty/null.
+    s=$(printf "%s\n" "$raw" | grep -Eio '"(tx_)?status"[[:space:]]*:[[:space:]]*(true|false|[0-9]+)' | sed -E 's/.*:[[:space:]]*(true|false|[0-9]+).*/\1/' | head -n1 || true)
   fi
   printf "%s" "$s"
 }
@@ -62,29 +78,44 @@ if command -v "$TX_CLI" >/dev/null 2>&1; then
       if [[ "$commit_tx_hash" =~ ^[0-9A-Fa-f]{16,128}$ ]]; then
         commit_ok="yes"
 
-        set +e
-        query_out=$("$TX_CLI" tx query "$commit_tx_hash" 2>&1)
-        query_rc=$?
-        set -e
+        query_retries="${TRNM_REALCLI_QUERY_RETRIES:-3}"
+        query_retry_sleep="${TRNM_REALCLI_QUERY_RETRY_SLEEP_SEC:-1}"
+        commit_tx_hash_lc="$(printf "%s" "$commit_tx_hash" | tr '[:upper:]' '[:lower:]')"
 
-        if [[ $query_rc -eq 0 ]]; then
-          query_ok="yes"
-          query_seen_hash="$(extract_tx_hash "$query_out")"
-          query_status="$(extract_query_status "$query_out")"
-          commit_tx_hash_lc="$(printf "%s" "$commit_tx_hash" | tr '[:upper:]' '[:lower:]')"
-          query_seen_hash_lc="$(printf "%s" "$query_seen_hash" | tr '[:upper:]' '[:lower:]')"
-          if [[ -n "$query_seen_hash" && "$query_seen_hash_lc" == "$commit_tx_hash_lc" ]]; then
-            query_hash_match="yes"
-          fi
-          if [[ "$query_hash_match" == "yes" && -n "$query_status" ]]; then
-            status="READY"
-            reason="tx lifecycle verified (commit + query visible)"
+        for ((attempt=1; attempt<=query_retries; attempt++)); do
+          set +e
+          query_out=$("$TX_CLI" tx query "$commit_tx_hash" 2>&1)
+          query_rc=$?
+          set -e
+
+          if [[ $query_rc -eq 0 ]]; then
+            query_ok="yes"
+            query_seen_hash="$(extract_tx_hash "$query_out")"
+            query_status="$(extract_query_status "$query_out")"
+            query_seen_hash_lc="$(printf "%s" "$query_seen_hash" | tr '[:upper:]' '[:lower:]')"
+            query_status_lc="$(printf "%s" "$query_status" | tr '[:upper:]' '[:lower:]')"
+
+            if [[ -n "$query_seen_hash" && "$query_seen_hash_lc" == "$commit_tx_hash_lc" ]]; then
+              query_hash_match="yes"
+            fi
+            # Guardrail: reject placeholder/negative status values to avoid false READY.
+            if [[ "$query_hash_match" == "yes" && -n "$query_status" \
+                  && "$query_status_lc" != "null" && "$query_status_lc" != "none" \
+                  && "$query_status_lc" != "unknown" && "$query_status_lc" != "false" \
+                  && "$query_status_lc" != "0" ]]; then
+              status="READY"
+              reason="tx lifecycle verified (commit + query visible)"
+              break
+            fi
+            reason="tx query output missing required fields (hash/status consistency + non-placeholder status)"
           else
-            reason="tx query output missing required fields (hash/status consistency)"
+            reason="tx query failed for submitted tx_hash=$commit_tx_hash"
           fi
-        else
-          reason="tx query failed for submitted tx_hash=$commit_tx_hash"
-        fi
+
+          if (( attempt < query_retries )); then
+            sleep "$query_retry_sleep"
+          fi
+        done
       else
         reason="commit-result output missing valid tx_hash"
       fi

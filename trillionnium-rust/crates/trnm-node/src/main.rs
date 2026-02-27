@@ -12,8 +12,9 @@ use std::{
 };
 use trnm_executor::build_parallel_groups;
 use trnm_pouw::{
-    apply_accept_task, apply_challenge, apply_commit_result, apply_create_task, apply_resolve,
-    apply_reveal_result, apply_timeout,
+    apply_accept_task, apply_accept_task_at_height, apply_challenge, apply_challenge_at_height,
+    apply_commit_result, apply_commit_result_at_height, apply_create_task, apply_resolve,
+    apply_resolve_at_height, apply_reveal_result, apply_reveal_result_at_height, apply_timeout,
 };
 use trnm_state::{verify_wal_and_find_checkpoint, CheckpointMeta, StateStore, WalMeta};
 use trnm_types::{Hash32, ObjectRef, TaskStatus, Tx};
@@ -40,6 +41,9 @@ struct Args {
     /// Worker count used for group parallel pre-execution
     #[arg(long, default_value_t = 4)]
     parallel_workers: usize,
+    /// Number of mempool txs attempted per committed block
+    #[arg(long, default_value_t = 4)]
+    txs_per_block: usize,
     /// Validator set size for BFT round simulation
     #[arg(long, default_value_t = 4)]
     validators: usize,
@@ -114,6 +118,7 @@ enum MockTx {
     Resolve {
         task_id: u64,
         slash_worker: bool,
+        resolver: String,
     },
 }
 
@@ -184,6 +189,9 @@ struct BftHeightResult {
     round_change_backoff_total_ms: u64,
     leader_missed_snapshot: Vec<u64>,
 }
+const CHALLENGE_ESCROW_ACCOUNT: &str = "treasury.challenge_escrow";
+const CHALLENGE_FORFEIT_TREASURY_ACCOUNT: &str = "treasury.challenge_forfeits";
+const WORKER_SLASH_TREASURY_ACCOUNT: &str = "treasury.worker_slashes";
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct ConsensusWal {
@@ -385,11 +393,20 @@ fn round_change_backoff_ms(round_changes: u64, base_ms: u64, cap_ms: u64) -> u64
 }
 
 fn aggregate_votes(votes: &[BftVote], vote_type: VoteType) -> HashMap<String, usize> {
-    let mut m = HashMap::new();
+    let mut voters_per_hash: HashMap<String, HashSet<String>> = HashMap::new();
     for v in votes.iter().filter(|v| v.vote_type == vote_type) {
-        *m.entry(v.block_hash.clone()).or_insert(0) += 1;
+        // Consensus safety: count each validator once per hash so
+        // nonce-bumped duplicates cannot inflate quorum tallies.
+        voters_per_hash
+            .entry(v.block_hash.clone())
+            .or_default()
+            .insert(v.validator.clone());
     }
-    m
+
+    voters_per_hash
+        .into_iter()
+        .map(|(hash, voters)| (hash, voters.len()))
+        .collect()
 }
 
 fn vote_type_name(v: VoteType) -> &'static str {
@@ -414,12 +431,131 @@ fn vote_signature(vote: &BftVote, nonce: u64) -> String {
     )
 }
 
+const MAX_BFT_TOKEN_LEN: usize = 128;
+
+fn is_canonical_validator_token(v: &str) -> bool {
+    !v.is_empty()
+        && v.len() <= MAX_BFT_TOKEN_LEN
+        && v
+            .bytes()
+            .all(|b| b.is_ascii_lowercase() || b.is_ascii_digit() || b == b'-')
+        // Gate hardening: separators-only ids (e.g. "---") are ambiguous and
+        // can create replay/auth namespace confusion in logs and tooling.
+        && v.bytes().any(|b| b.is_ascii_lowercase() || b.is_ascii_digit())
+        // Avoid edge separators that can collapse in parsers/log processors.
+        && v
+            .as_bytes()
+            .first()
+            .is_some_and(|b| b.is_ascii_lowercase() || b.is_ascii_digit())
+        && v
+            .as_bytes()
+            .last()
+            .is_some_and(|b| b.is_ascii_lowercase() || b.is_ascii_digit())
+}
+
+fn is_canonical_block_hash_token(v: &str) -> bool {
+    !v.is_empty()
+        && v.len() <= MAX_BFT_TOKEN_LEN
+        && v
+            .bytes()
+            .all(|b| b.is_ascii_lowercase() || b.is_ascii_digit() || b == b'-')
+        // Replay namespace hardening: require at least one alnum so hyphen-only
+        // placeholders cannot masquerade as canonical block hash identifiers.
+        && v.bytes().any(|b| b.is_ascii_lowercase() || b.is_ascii_digit())
+        // Avoid edge separators that can collapse in parsers/log processors.
+        && v
+            .as_bytes()
+            .first()
+            .is_some_and(|b| b.is_ascii_lowercase() || b.is_ascii_digit())
+        && v
+            .as_bytes()
+            .last()
+            .is_some_and(|b| b.is_ascii_lowercase() || b.is_ascii_digit())
+}
+
 fn accept_signed_vote(
     msg: SignedVote,
-    last_nonce: &mut HashMap<(String, VoteType), u64>,
+    last_nonce: &mut HashMap<(String, u64, u64, VoteType), u64>,
     accepted: &mut Vec<BftVote>,
     reject_stats: &mut AuthRejectStats,
 ) {
+    let validator_trimmed = msg.vote.validator.trim();
+    if validator_trimmed.is_empty() {
+        reject_stats.bad_sig += 1;
+        println!(
+            "[bft-net] reject reason=empty_validator height={} round={} vote_type={} nonce={}",
+            msg.vote.height,
+            msg.vote.round,
+            vote_type_name(msg.vote.vote_type),
+            msg.nonce
+        );
+        return;
+    }
+    if validator_trimmed != msg.vote.validator || !is_canonical_validator_token(&msg.vote.validator) {
+        reject_stats.bad_sig += 1;
+        println!(
+            "[bft-net] reject reason=noncanonical_validator validator={} height={} round={} vote_type={} nonce={}",
+            msg.vote.validator,
+            msg.vote.height,
+            msg.vote.round,
+            vote_type_name(msg.vote.vote_type),
+            msg.nonce
+        );
+        return;
+    }
+
+    let block_hash_trimmed = msg.vote.block_hash.trim();
+    if block_hash_trimmed.is_empty() {
+        reject_stats.bad_sig += 1;
+        println!(
+            "[bft-net] reject reason=empty_block_hash validator={} height={} round={} vote_type={} nonce={}",
+            msg.vote.validator,
+            msg.vote.height,
+            msg.vote.round,
+            vote_type_name(msg.vote.vote_type),
+            msg.nonce
+        );
+        return;
+    }
+    if block_hash_trimmed != msg.vote.block_hash || !is_canonical_block_hash_token(&msg.vote.block_hash) {
+        reject_stats.bad_sig += 1;
+        println!(
+            "[bft-net] reject reason=noncanonical_block_hash validator={} height={} round={} vote_type={} nonce={}",
+            msg.vote.validator,
+            msg.vote.height,
+            msg.vote.round,
+            vote_type_name(msg.vote.vote_type),
+            msg.nonce
+        );
+        return;
+    }
+
+    if msg.vote.height == 0 {
+        reject_stats.bad_sig += 1;
+        println!(
+            "[bft-net] reject reason=invalid_height validator={} height={} round={} vote_type={} nonce={}",
+            msg.vote.validator,
+            msg.vote.height,
+            msg.vote.round,
+            vote_type_name(msg.vote.vote_type),
+            msg.nonce
+        );
+        return;
+    }
+
+    if msg.nonce == 0 {
+        reject_stats.stale_nonce += 1;
+        println!(
+            "[bft-net] reject reason=zero_nonce validator={} height={} round={} vote_type={} nonce={}",
+            msg.vote.validator,
+            msg.vote.height,
+            msg.vote.round,
+            vote_type_name(msg.vote.vote_type),
+            msg.nonce
+        );
+        return;
+    }
+
     let expected = vote_signature(&msg.vote, msg.nonce);
     if msg.signature != expected {
         reject_stats.bad_sig += 1;
@@ -434,7 +570,15 @@ fn accept_signed_vote(
         return;
     }
 
-    let key = (msg.vote.validator.clone(), msg.vote.vote_type);
+    // Scope nonce monotonicity to (validator, height, round, vote_type) so
+    // replay/stale tracking cannot leak across rounds and suppress valid
+    // round-change votes that restart nonce sequencing.
+    let key = (
+        msg.vote.validator.clone(),
+        msg.vote.height,
+        msg.vote.round,
+        msg.vote.vote_type,
+    );
     if let Some(prev) = last_nonce.get(&key) {
         if msg.nonce == *prev {
             reject_stats.replay += 1;
@@ -507,7 +651,7 @@ fn simulate_bft_round(
     println!("[bft] height={} round={} step={:?} proposer={} shifted={} validators={} byzantine={} quorum={} locked={}", height, round, RoundStep::Propose, proposer_id, proposer_shifted, n, b, q, locked_hash.is_some());
 
     let mut votes = Vec::new();
-    let mut auth_nonce: HashMap<(String, VoteType), u64> = HashMap::new();
+    let mut auth_nonce: HashMap<(String, u64, u64, VoteType), u64> = HashMap::new();
     let mut reject_stats = AuthRejectStats::default();
     let bad_hash = hash32_hex(&[b"byzantine", round_hash.as_bytes()].concat());
     for i in 0..n {
@@ -930,12 +1074,16 @@ fn compute_commitment(
     hasher.finalize().into()
 }
 
+fn demo_worker_name(task_id: u64) -> String {
+    format!("worker{}", task_id)
+}
+
 fn build_demo_mempool(demo_tasks: u64, _demo_keys: u64) -> VecDeque<MockTx> {
     let mut q = VecDeque::new();
 
     for i in 0..demo_tasks.max(1) {
         let task_id = 1001u64 + i;
-        let worker = format!("worker{}", task_id);
+        let worker = demo_worker_name(task_id);
         let result_hash = [7u8; 32];
         let reveal_salt = [task_id as u8; 32];
         let committed_hash = compute_commitment(task_id, &result_hash, &reveal_salt, &worker);
@@ -967,6 +1115,7 @@ fn build_demo_mempool(demo_tasks: u64, _demo_keys: u64) -> VecDeque<MockTx> {
         q.push_back(MockTx::Resolve {
             task_id,
             slash_worker: false,
+            resolver: "governance.resolve_authority".into(),
         });
     }
 
@@ -1000,24 +1149,37 @@ fn event_type_of(tx: &MockTx) -> &'static str {
     }
 }
 
-fn actor_of(tx: &MockTx) -> String {
+fn actor_of(st: &StateStore, tx: &MockTx) -> String {
     match tx {
         MockTx::CreateTask { creator, .. } => creator.clone(),
         MockTx::AcceptTask { worker, .. } => worker.clone(),
         MockTx::Commit { worker, .. } => worker.clone(),
-        MockTx::Reveal { task_id, .. } => format!("worker{}", task_id),
-        MockTx::Challenge { .. } => "challenger".to_string(),
-        MockTx::Resolve { .. } => "authority".to_string(),
+        MockTx::Reveal { task_id, .. } => st
+            .get_task(*task_id)
+            .and_then(|t| t.worker)
+            .unwrap_or_else(|| format!("worker{}", task_id)),
+        MockTx::Challenge { challenger, .. } => challenger.clone(),
+        MockTx::Resolve { resolver, .. } => resolver.clone(),
     }
 }
 
-fn signer_of(tx: &MockTx) -> String {
-    actor_of(tx)
+fn verified_signer_of(st: &StateStore, tx: &MockTx) -> String {
+    match tx {
+        MockTx::Resolve { .. } => st
+            .gov_param_string("resolve_authority")
+            .unwrap_or_else(|| "governance.resolve_authority".to_string()),
+        MockTx::Reveal { task_id, .. } => st
+            .get_task(*task_id)
+            .and_then(|t| t.worker)
+            .unwrap_or_else(|| "unknown_worker".to_string()),
+        _ => actor_of(st, tx),
+    }
 }
 
 fn challenger_of(tx: &MockTx) -> Option<String> {
     match tx {
-        MockTx::Challenge { .. } => Some("challenger".to_string()),
+        MockTx::Challenge { challenger, .. } => Some(challenger.clone()),
+        MockTx::Resolve { resolver, .. } => Some(resolver.clone()),
         _ => None,
     }
 }
@@ -1048,46 +1210,124 @@ fn percentile(mut vals: Vec<u128>, p: f64) -> u128 {
     vals[idx.min(vals.len() - 1)]
 }
 
+fn treasury_total(st: &StateStore) -> u128 {
+    st.balance_of(CHALLENGE_ESCROW_ACCOUNT)
+        .saturating_add(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT))
+        .saturating_add(st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT))
+}
+
+fn diff_u128_to_i128(after: u128, before: u128) -> Option<i128> {
+    let after_i = i128::try_from(after).ok()?;
+    let before_i = i128::try_from(before).ok()?;
+    Some(after_i - before_i)
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct EventDelta {
+    numeric: Option<i128>,
+    text: String,
+}
+
+fn classify_apply_error(err: &anyhow::Error) -> &'static str {
+    if let Some(pouw) = err.downcast_ref::<trnm_pouw::PouwError>() {
+        return match pouw {
+            trnm_pouw::PouwError::VersionConflict => "version_conflict",
+            trnm_pouw::PouwError::InvalidTransition => "invalid_transition",
+            trnm_pouw::PouwError::DeadlineExceeded => "deadline_exceeded",
+            _ => "semantic_fail",
+        };
+    }
+
+    let e = err.to_string().to_ascii_lowercase();
+    if e.contains("version conflict") {
+        "version_conflict"
+    } else if e.contains("invalid transition") {
+        "invalid_transition"
+    } else if e.contains("deadline exceeded") {
+        "deadline_exceeded"
+    } else if e.contains("preexec") {
+        "preexec_conflict_miss"
+    } else {
+        "semantic_fail"
+    }
+}
+
+fn format_delta_fallback(after: u128, before: u128) -> String {
+    if after >= before {
+        format!("u128:+{}", after - before)
+    } else {
+        format!("u128:-{}", before - after)
+    }
+}
+
+fn event_delta_from_balances(after: u128, before: u128) -> EventDelta {
+    let numeric = diff_u128_to_i128(after, before);
+    let text = numeric
+        .map(|v| v.to_string())
+        .unwrap_or_else(|| format_delta_fallback(after, before));
+    EventDelta { numeric, text }
+}
+
+fn balance_deltas_for_transition(
+    before: &StateStore,
+    after: &StateStore,
+    task_id: u64,
+    challenger: Option<&str>,
+) -> (EventDelta, Option<EventDelta>) {
+    let treasury_delta = event_delta_from_balances(treasury_total(after), treasury_total(before));
+    let challenger_delta = challenger.map(|acct| {
+        let before_bal = before.balance_of(acct);
+        let after_bal = after.balance_of(acct);
+        event_delta_from_balances(after_bal, before_bal)
+    });
+
+    // task_id currently reserved for future richer per-task accounting; keep signature explicit.
+    let _ = task_id;
+    (treasury_delta, challenger_delta)
+}
+
 fn emit_event(
+    st: &StateStore,
     tx: &MockTx,
+    signer: &str,
     tx_id: u64,
     block_height: u64,
     from_status: &str,
     to_status: &str,
     state_root: &str,
-    challenge_bond_before: Option<u128>,
+    treasury_delta: &EventDelta,
+    challenger_delta: Option<&EventDelta>,
+    challenger: Option<&str>,
 ) {
     let task_id = task_id_of(tx);
     let event_type = event_type_of(tx);
-    let actor = actor_of(tx);
-    let signer = signer_of(tx);
-    let challenger = challenger_of(tx).unwrap_or_else(|| "-".to_string());
+    let actor = actor_of(st, tx);
+    let challenger = challenger
+        .map(|s| s.to_string())
+        .or_else(|| challenger_of(tx))
+        .unwrap_or_else(|| "-".to_string());
     let tx_hash = tx_hash_of(tx_id);
     let ts_unix_ms = now_unix_ms();
 
-    let (treasury_delta, challenger_delta, bond_disposition) = match tx {
-        MockTx::Challenge { bond, .. } => (
-            Some(0i128),
-            i128::try_from(*bond).ok().map(|v| -v),
-            Some("posted"),
-        ),
-        MockTx::Resolve { slash_worker, .. } => {
-            let bond_i128 = challenge_bond_before.and_then(|v| i128::try_from(v).ok());
-            if *slash_worker {
-                (Some(0i128), bond_i128, Some("refunded"))
-            } else {
-                (Some(0i128), Some(0i128), Some("forfeited"))
-            }
-        }
-        _ => (None, None, None),
+    let bond_disposition = match tx {
+        MockTx::Challenge { .. } => Some("posted"),
+        MockTx::Resolve { slash_worker, .. } => Some(if *slash_worker {
+            "refunded"
+        } else {
+            "forfeited"
+        }),
+        _ => None,
     };
 
-    let treasury_delta_str = treasury_delta
-        .map(|v| v.to_string())
-        .unwrap_or_else(|| "-".to_string());
+    let treasury_delta_str = match tx {
+        // PR5 reconcile contract treats challenge as escrow-only movement;
+        // event-level treasury_delta must stay neutral for challenge events.
+        MockTx::Challenge { .. } => "0",
+        _ => treasury_delta.text.as_str(),
+    };
     let challenger_delta_str = challenger_delta
-        .map(|v| v.to_string())
-        .unwrap_or_else(|| "-".to_string());
+        .map(|d| d.text.as_str())
+        .unwrap_or("-");
     let bond_disposition_str = bond_disposition.unwrap_or("-");
 
     match tx {
@@ -1141,18 +1381,69 @@ fn emit_event(
     }
 }
 
-fn is_high_risk_tx(tx: &MockTx) -> bool {
-    matches!(
-        tx,
-        MockTx::CreateTask { .. }
-            | MockTx::AcceptTask { .. }
-            | MockTx::Commit { .. }
-            | MockTx::Reveal { .. }
-            | MockTx::Challenge { .. }
-    )
+fn emit_timeout_event(
+    task_id: u64,
+    tx_id: u64,
+    block_height: u64,
+    from_status: &str,
+    to_status: &str,
+    state_root: &str,
+    treasury_delta: &EventDelta,
+    challenger_delta: Option<&EventDelta>,
+    challenger: Option<&str>,
+    bond_disposition: Option<&str>,
+) {
+    let tx_hash = tx_hash_of(tx_id);
+    let ts_unix_ms = now_unix_ms();
+    let treasury_delta_str = treasury_delta.text.as_str();
+    let challenger_delta_str = challenger_delta
+        .map(|d| d.text.as_str())
+        .unwrap_or("-");
+    let bond_disposition_str = bond_disposition.unwrap_or("-");
+    let resolution_code = if to_status == "Slashed" {
+        "slashed"
+    } else {
+        "completed"
+    };
+
+    println!(
+        "[event] event_schema=v1 event_type=timeout task_id={} from_status={} to_status={} actor=system signer=system challenger={} tx_hash={} tx_id={} block_height={} state_root={} ts_unix_ms={} resolution_code={} treasury_delta={} challenger_delta={} bond_disposition={}",
+        task_id,
+        from_status,
+        to_status,
+        challenger.unwrap_or("-"),
+        tx_hash,
+        tx_id,
+        block_height,
+        state_root,
+        ts_unix_ms,
+        resolution_code,
+        treasury_delta_str,
+        challenger_delta_str,
+        bond_disposition_str,
+    );
 }
 
-fn apply_one(st: &mut StateStore, tx: MockTx) -> Result<()> {
+fn is_high_risk_tx(tx: &MockTx) -> bool {
+    // Exhaustive merge-gate guard: introducing a new tx variant now requires
+    // an explicit pause-risk decision here at compile time.
+    match tx {
+        MockTx::CreateTask { .. }
+        | MockTx::AcceptTask { .. }
+        | MockTx::Commit { .. }
+        | MockTx::Reveal { .. }
+        | MockTx::Challenge { .. } => true,
+        // Resolve must remain callable during emergency pause to close out challenged tasks.
+        MockTx::Resolve { .. } => false,
+    }
+}
+
+fn is_rejected_by_emergency_pause(is_paused: bool, tx: &MockTx) -> bool {
+    is_paused && is_high_risk_tx(tx)
+}
+
+fn apply_one(st: &mut StateStore, tx: MockTx, current_height: u64) -> Result<()> {
+    let signer = verified_signer_of(st, &tx);
     match tx {
         MockTx::CreateTask {
             task_id,
@@ -1163,7 +1454,7 @@ fn apply_one(st: &mut StateStore, tx: MockTx) -> Result<()> {
         }
         MockTx::AcceptTask { task_id, worker } => {
             let r = task_ref(st, task_id)?;
-            let _ = apply_accept_task(st, r, worker)?;
+            let _ = apply_accept_task_at_height(st, r, worker, current_height)?;
         }
         MockTx::Commit {
             task_id,
@@ -1171,7 +1462,7 @@ fn apply_one(st: &mut StateStore, tx: MockTx) -> Result<()> {
             committed_hash,
         } => {
             let r = task_ref(st, task_id)?;
-            let _ = apply_commit_result(st, r, worker, committed_hash)?;
+            let _ = apply_commit_result_at_height(st, r, worker, committed_hash, current_height)?;
         }
         MockTx::Reveal {
             task_id,
@@ -1179,7 +1470,7 @@ fn apply_one(st: &mut StateStore, tx: MockTx) -> Result<()> {
             reveal_salt,
         } => {
             let r = task_ref(st, task_id)?;
-            let _ = apply_reveal_result(st, r, result_hash, reveal_salt)?;
+            let _ = apply_reveal_result_at_height(st, r, result_hash, reveal_salt, current_height)?;
         }
         MockTx::Challenge {
             task_id,
@@ -1187,14 +1478,15 @@ fn apply_one(st: &mut StateStore, tx: MockTx) -> Result<()> {
             bond,
         } => {
             let r = task_ref(st, task_id)?;
-            let _ = apply_challenge(st, r, challenger, bond)?;
+            let _ = apply_challenge_at_height(st, r, challenger, bond, signer, current_height)?;
         }
         MockTx::Resolve {
             task_id,
             slash_worker,
+            resolver,
         } => {
             let r = task_ref(st, task_id)?;
-            let _ = apply_resolve(st, r, slash_worker)?;
+            let _ = apply_resolve_at_height(st, r, slash_worker, resolver, signer, current_height)?;
         }
     }
     Ok(())
@@ -1204,22 +1496,51 @@ fn scan_and_apply_timeouts(
     st: &mut StateStore,
     known_task_ids: &HashSet<u64>,
     current_height: u64,
+    tx_id_seed: u64,
 ) -> u64 {
     let mut migrated = 0u64;
     for task_id in known_task_ids.iter().copied() {
         let Some(task) = st.get_task(task_id) else {
             continue;
         };
-        if !matches!(task.status, TaskStatus::Committed | TaskStatus::Challenged) {
+        if !matches!(
+            task.status,
+            TaskStatus::Assigned | TaskStatus::Committed | TaskStatus::Revealed | TaskStatus::Challenged
+        ) {
             continue;
         }
         let from_status = format!("{:?}", task.status);
+        let challenger = task.challenger.clone();
         let Some(task_ref) = st.get_ref(task_id) else {
             continue;
         };
+        let before = st.clone();
         if apply_timeout(st, task_ref, current_height).is_ok() {
             migrated += 1;
             let to_status = status_name(st, task_id);
+            let root = hex::encode(st.state_root());
+            let (treasury_delta, challenger_delta) =
+                balance_deltas_for_transition(&before, st, task_id, challenger.as_deref());
+            let bond_disposition = if from_status == "Challenged" {
+                st.get_task(task_id).and_then(|t| {
+                    t.challenge_bond_forfeited
+                        .map(|forfeited| if forfeited { "forfeited" } else { "refunded" })
+                })
+            } else {
+                None
+            };
+            emit_timeout_event(
+                task_id,
+                tx_id_seed.saturating_add(migrated),
+                current_height,
+                &from_status,
+                &to_status,
+                &root,
+                &treasury_delta,
+                challenger_delta.as_ref(),
+                challenger.as_deref(),
+                bond_disposition,
+            );
             println!(
                 "[timeout] height={} task_id={} from_status={} to_status={} source=auto_scan",
                 current_height, task_id, from_status, to_status
@@ -1229,25 +1550,106 @@ fn scan_and_apply_timeouts(
     migrated
 }
 
-fn read_write_decl(tx: &MockTx, tx_id: u64, demo_keys: u64) -> Tx {
+fn pseudo_object_id_for_account(account: &str) -> u64 {
+    let mut h = Sha256::new();
+    h.update(b"balance:");
+    h.update(account.as_bytes());
+    let digest = h.finalize();
+    let mut bytes = [0u8; 8];
+    bytes.copy_from_slice(&digest[..8]);
+    // keep account-derived ids in high range to avoid overlapping natural task ids
+    u64::from_le_bytes(bytes) | (1u64 << 63)
+}
+
+fn read_write_decl(st: &StateStore, tx: &MockTx, tx_id: u64) -> Tx {
     let task_id = match tx {
-        MockTx::CreateTask { task_id, .. } => *task_id,
-        MockTx::AcceptTask { task_id, .. } => *task_id,
-        MockTx::Commit { task_id, .. } => *task_id,
-        MockTx::Reveal { task_id, .. } => *task_id,
-        MockTx::Challenge { task_id, .. } => *task_id,
-        MockTx::Resolve { task_id, .. } => *task_id,
+        MockTx::CreateTask { task_id, .. }
+        | MockTx::AcceptTask { task_id, .. }
+        | MockTx::Commit { task_id, .. }
+        | MockTx::Reveal { task_id, .. }
+        | MockTx::Challenge { task_id, .. }
+        | MockTx::Resolve { task_id, .. } => *task_id,
     };
-    let key = task_id % demo_keys.max(1);
-    let write_obj = ObjectRef {
-        id: key,
+
+    let task_obj = ObjectRef {
+        id: task_id,
         version: 1,
     };
 
+    let mut read_set = vec![task_obj.clone()];
+    let mut write_set = vec![task_obj.clone()];
+
+    match tx {
+        MockTx::AcceptTask { worker, .. } => {
+            let worker_obj = ObjectRef {
+                id: pseudo_object_id_for_account(worker),
+                version: 1,
+            };
+            let lock_obj = ObjectRef {
+                id: pseudo_object_id_for_account(&format!("worker_stake_lock.{}", task_id)),
+                version: 1,
+            };
+            read_set.push(worker_obj.clone());
+            write_set.push(worker_obj);
+            read_set.push(lock_obj.clone());
+            write_set.push(lock_obj);
+        }
+        MockTx::Challenge { challenger, .. } => {
+            let challenger_obj = ObjectRef {
+                id: pseudo_object_id_for_account(challenger),
+                version: 1,
+            };
+            let escrow_obj = ObjectRef {
+                id: pseudo_object_id_for_account(CHALLENGE_ESCROW_ACCOUNT),
+                version: 1,
+            };
+            read_set.push(challenger_obj.clone());
+            write_set.push(challenger_obj);
+            read_set.push(escrow_obj.clone());
+            write_set.push(escrow_obj);
+        }
+        MockTx::Resolve { .. } => {
+            let escrow_obj = ObjectRef {
+                id: pseudo_object_id_for_account(CHALLENGE_ESCROW_ACCOUNT),
+                version: 1,
+            };
+            let forfeit_obj = ObjectRef {
+                id: pseudo_object_id_for_account(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+                version: 1,
+            };
+            let slash_obj = ObjectRef {
+                id: pseudo_object_id_for_account(WORKER_SLASH_TREASURY_ACCOUNT),
+                version: 1,
+            };
+            let lock_obj = ObjectRef {
+                id: pseudo_object_id_for_account(&format!("worker_stake_lock.{}", task_id)),
+                version: 1,
+            };
+            read_set.push(escrow_obj.clone());
+            write_set.push(escrow_obj);
+            read_set.push(forfeit_obj.clone());
+            write_set.push(forfeit_obj);
+            read_set.push(slash_obj.clone());
+            write_set.push(slash_obj);
+            read_set.push(lock_obj.clone());
+            write_set.push(lock_obj);
+
+            if let Some(challenger) = st.get_task(task_id).and_then(|t| t.challenger) {
+                let challenger_obj = ObjectRef {
+                    id: pseudo_object_id_for_account(&challenger),
+                    version: 1,
+                };
+                read_set.push(challenger_obj.clone());
+                write_set.push(challenger_obj);
+            }
+        }
+        _ => {}
+    }
+
     Tx {
         id: tx_id,
-        read_set: vec![write_obj.clone()],
-        write_set: vec![write_obj],
+        read_set,
+        write_set,
         payload: vec![],
     }
 }
@@ -1280,7 +1682,7 @@ fn pre_execute_group_parallel(
             for id in ids {
                 let idx = (id - 1) as usize;
                 let mut local_state = base.clone();
-                let res = apply_one(&mut local_state, local_picked[idx].clone());
+                let res = apply_one(&mut local_state, local_picked[idx].clone(), 0);
                 match res {
                     Ok(_) => {
                         let _ = txc.send((id, true, String::new()));
@@ -1328,6 +1730,795 @@ mod tests {
     }
 
     #[test]
+    fn auth_rejects_zero_height_before_nonce_and_signature_checks() {
+        let vote = BftVote {
+            validator: "v1".into(),
+            vote_type: VoteType::Prevote,
+            block_hash: "h1".into(),
+            byzantine: false,
+            height: 0,
+            round: 0,
+        };
+
+        let mut last_nonce = HashMap::new();
+        let mut accepted = Vec::new();
+        let mut reject_stats = AuthRejectStats::default();
+
+        accept_signed_vote(
+            SignedVote {
+                vote: vote.clone(),
+                nonce: 1,
+                signature: vote_signature(&vote, 1),
+            },
+            &mut last_nonce,
+            &mut accepted,
+            &mut reject_stats,
+        );
+
+        assert!(accepted.is_empty());
+        assert_eq!(reject_stats.bad_sig, 1);
+        assert_eq!(reject_stats.replay, 0);
+        assert_eq!(reject_stats.stale_nonce, 0);
+        assert!(last_nonce.is_empty());
+    }
+
+    #[test]
+    fn auth_rejects_empty_validator_before_nonce_and_signature_checks() {
+        let vote = BftVote {
+            validator: "   ".into(),
+            vote_type: VoteType::Prevote,
+            block_hash: "h1".into(),
+            byzantine: false,
+            height: 1,
+            round: 0,
+        };
+
+        let mut last_nonce = HashMap::new();
+        let mut accepted = Vec::new();
+        let mut reject_stats = AuthRejectStats::default();
+
+        accept_signed_vote(
+            SignedVote {
+                vote: vote.clone(),
+                nonce: 0,
+                // even with nonce=0 and matching signature, ingress must reject empty validator first
+                signature: vote_signature(&vote, 0),
+            },
+            &mut last_nonce,
+            &mut accepted,
+            &mut reject_stats,
+        );
+
+        assert!(accepted.is_empty());
+        assert_eq!(reject_stats.bad_sig, 1);
+        assert_eq!(reject_stats.replay, 0);
+        assert_eq!(reject_stats.stale_nonce, 0);
+        assert!(last_nonce.is_empty());
+    }
+
+    #[test]
+    fn auth_rejects_noncanonical_validator_before_nonce_and_signature_checks() {
+        let vote = BftVote {
+            validator: " v1 ".into(),
+            vote_type: VoteType::Prevote,
+            block_hash: "h1".into(),
+            byzantine: false,
+            height: 1,
+            round: 0,
+        };
+
+        let mut last_nonce = HashMap::new();
+        let mut accepted = Vec::new();
+        let mut reject_stats = AuthRejectStats::default();
+
+        accept_signed_vote(
+            SignedVote {
+                vote: vote.clone(),
+                nonce: 0,
+                signature: vote_signature(&vote, 0),
+            },
+            &mut last_nonce,
+            &mut accepted,
+            &mut reject_stats,
+        );
+
+        assert!(accepted.is_empty());
+        assert_eq!(reject_stats.bad_sig, 1);
+        assert_eq!(reject_stats.replay, 0);
+        assert_eq!(reject_stats.stale_nonce, 0);
+        assert!(last_nonce.is_empty());
+    }
+
+    #[test]
+    fn auth_rejects_uppercase_validator_before_nonce_and_signature_checks() {
+        let vote = BftVote {
+            validator: "V1".into(),
+            vote_type: VoteType::Prevote,
+            block_hash: "h1".into(),
+            byzantine: false,
+            height: 1,
+            round: 0,
+        };
+
+        let mut last_nonce = HashMap::new();
+        let mut accepted = Vec::new();
+        let mut reject_stats = AuthRejectStats::default();
+
+        accept_signed_vote(
+            SignedVote {
+                vote: vote.clone(),
+                nonce: 1,
+                signature: vote_signature(&vote, 1),
+            },
+            &mut last_nonce,
+            &mut accepted,
+            &mut reject_stats,
+        );
+
+        assert!(accepted.is_empty());
+        assert_eq!(reject_stats.bad_sig, 1);
+        assert_eq!(reject_stats.replay, 0);
+        assert_eq!(reject_stats.stale_nonce, 0);
+        assert!(last_nonce.is_empty());
+    }
+
+    #[test]
+    fn auth_rejects_hyphen_only_validator_before_nonce_and_signature_checks() {
+        let vote = BftVote {
+            validator: "---".into(),
+            vote_type: VoteType::Prevote,
+            block_hash: "h1".into(),
+            byzantine: false,
+            height: 1,
+            round: 0,
+        };
+
+        let mut last_nonce = HashMap::new();
+        let mut accepted = Vec::new();
+        let mut reject_stats = AuthRejectStats::default();
+
+        accept_signed_vote(
+            SignedVote {
+                vote: vote.clone(),
+                nonce: 1,
+                signature: vote_signature(&vote, 1),
+            },
+            &mut last_nonce,
+            &mut accepted,
+            &mut reject_stats,
+        );
+
+        assert!(accepted.is_empty());
+        assert_eq!(reject_stats.bad_sig, 1);
+        assert_eq!(reject_stats.replay, 0);
+        assert_eq!(reject_stats.stale_nonce, 0);
+        assert!(last_nonce.is_empty());
+    }
+
+    #[test]
+    fn auth_rejects_edge_hyphen_validator_before_nonce_and_signature_checks() {
+        for validator in ["-v1", "v1-"] {
+            let vote = BftVote {
+                validator: validator.into(),
+                vote_type: VoteType::Prevote,
+                block_hash: "h1".into(),
+                byzantine: false,
+                height: 1,
+                round: 0,
+            };
+
+            let mut last_nonce = HashMap::new();
+            let mut accepted = Vec::new();
+            let mut reject_stats = AuthRejectStats::default();
+
+            accept_signed_vote(
+                SignedVote {
+                    vote: vote.clone(),
+                    nonce: 1,
+                    signature: vote_signature(&vote, 1),
+                },
+                &mut last_nonce,
+                &mut accepted,
+                &mut reject_stats,
+            );
+
+            assert!(accepted.is_empty());
+            assert_eq!(reject_stats.bad_sig, 1);
+            assert_eq!(reject_stats.replay, 0);
+            assert_eq!(reject_stats.stale_nonce, 0);
+            assert!(last_nonce.is_empty());
+        }
+    }
+
+    #[test]
+    fn auth_rejects_hyphen_only_block_hash_before_nonce_and_signature_checks() {
+        let vote = BftVote {
+            validator: "v1".into(),
+            vote_type: VoteType::Prevote,
+            block_hash: "---".into(),
+            byzantine: false,
+            height: 1,
+            round: 0,
+        };
+
+        let mut last_nonce = HashMap::new();
+        let mut accepted = Vec::new();
+        let mut reject_stats = AuthRejectStats::default();
+
+        accept_signed_vote(
+            SignedVote {
+                vote: vote.clone(),
+                nonce: 1,
+                signature: vote_signature(&vote, 1),
+            },
+            &mut last_nonce,
+            &mut accepted,
+            &mut reject_stats,
+        );
+
+        assert!(accepted.is_empty());
+        assert_eq!(reject_stats.bad_sig, 1);
+        assert_eq!(reject_stats.replay, 0);
+        assert_eq!(reject_stats.stale_nonce, 0);
+        assert!(last_nonce.is_empty());
+    }
+
+    #[test]
+    fn auth_rejects_edge_hyphen_block_hash_before_nonce_and_signature_checks() {
+        for block_hash in ["-h1", "h1-"] {
+            let vote = BftVote {
+                validator: "v1".into(),
+                vote_type: VoteType::Prevote,
+                block_hash: block_hash.into(),
+                byzantine: false,
+                height: 1,
+                round: 0,
+            };
+
+            let mut last_nonce = HashMap::new();
+            let mut accepted = Vec::new();
+            let mut reject_stats = AuthRejectStats::default();
+
+            accept_signed_vote(
+                SignedVote {
+                    vote: vote.clone(),
+                    nonce: 1,
+                    signature: vote_signature(&vote, 1),
+                },
+                &mut last_nonce,
+                &mut accepted,
+                &mut reject_stats,
+            );
+
+            assert!(accepted.is_empty());
+            assert_eq!(reject_stats.bad_sig, 1);
+            assert_eq!(reject_stats.replay, 0);
+            assert_eq!(reject_stats.stale_nonce, 0);
+            assert!(last_nonce.is_empty());
+        }
+    }
+
+    #[test]
+    fn auth_rejects_overlong_validator_before_nonce_and_signature_checks() {
+        let vote = BftVote {
+            validator: "v".repeat(MAX_BFT_TOKEN_LEN + 1),
+            vote_type: VoteType::Prevote,
+            block_hash: "h1".into(),
+            byzantine: false,
+            height: 1,
+            round: 0,
+        };
+
+        let mut last_nonce = HashMap::new();
+        let mut accepted = Vec::new();
+        let mut reject_stats = AuthRejectStats::default();
+
+        accept_signed_vote(
+            SignedVote {
+                vote: vote.clone(),
+                nonce: 1,
+                signature: vote_signature(&vote, 1),
+            },
+            &mut last_nonce,
+            &mut accepted,
+            &mut reject_stats,
+        );
+
+        assert!(accepted.is_empty());
+        assert_eq!(reject_stats.bad_sig, 1);
+        assert_eq!(reject_stats.replay, 0);
+        assert_eq!(reject_stats.stale_nonce, 0);
+        assert!(last_nonce.is_empty());
+    }
+
+    #[test]
+    fn auth_rejects_overlong_block_hash_before_nonce_and_signature_checks() {
+        let vote = BftVote {
+            validator: "v1".into(),
+            vote_type: VoteType::Prevote,
+            block_hash: "h".repeat(MAX_BFT_TOKEN_LEN + 1),
+            byzantine: false,
+            height: 1,
+            round: 0,
+        };
+
+        let mut last_nonce = HashMap::new();
+        let mut accepted = Vec::new();
+        let mut reject_stats = AuthRejectStats::default();
+
+        accept_signed_vote(
+            SignedVote {
+                vote: vote.clone(),
+                nonce: 1,
+                signature: vote_signature(&vote, 1),
+            },
+            &mut last_nonce,
+            &mut accepted,
+            &mut reject_stats,
+        );
+
+        assert!(accepted.is_empty());
+        assert_eq!(reject_stats.bad_sig, 1);
+        assert_eq!(reject_stats.replay, 0);
+        assert_eq!(reject_stats.stale_nonce, 0);
+        assert!(last_nonce.is_empty());
+    }
+
+    #[test]
+    fn auth_rejects_zero_nonce_vote_before_signature_check() {
+        let vote = BftVote {
+            validator: "v1".into(),
+            vote_type: VoteType::Prevote,
+            block_hash: "h1".into(),
+            byzantine: false,
+            height: 1,
+            round: 0,
+        };
+
+        let mut last_nonce = HashMap::new();
+        let mut accepted = Vec::new();
+        let mut reject_stats = AuthRejectStats::default();
+
+        accept_signed_vote(
+            SignedVote {
+                vote: vote.clone(),
+                nonce: 0,
+                // even with a syntactically valid signature for nonce=0, ingress must reject
+                signature: vote_signature(&vote, 0),
+            },
+            &mut last_nonce,
+            &mut accepted,
+            &mut reject_stats,
+        );
+
+        assert!(accepted.is_empty());
+        assert_eq!(reject_stats.bad_sig, 0);
+        assert_eq!(reject_stats.replay, 0);
+        assert_eq!(reject_stats.stale_nonce, 1);
+        assert!(last_nonce.is_empty());
+    }
+
+    #[test]
+    fn auth_rejects_noncanonical_block_hash_before_nonce_and_signature_checks() {
+        let vote = BftVote {
+            validator: "v1".into(),
+            vote_type: VoteType::Prevote,
+            block_hash: " h1 ".into(),
+            byzantine: false,
+            height: 1,
+            round: 0,
+        };
+
+        let mut last_nonce = HashMap::new();
+        let mut accepted = Vec::new();
+        let mut reject_stats = AuthRejectStats::default();
+
+        accept_signed_vote(
+            SignedVote {
+                vote: vote.clone(),
+                nonce: 0,
+                // even with nonce=0 and matching signature, ingress must reject non-canonical hash first
+                signature: vote_signature(&vote, 0),
+            },
+            &mut last_nonce,
+            &mut accepted,
+            &mut reject_stats,
+        );
+
+        assert!(accepted.is_empty());
+        assert_eq!(reject_stats.bad_sig, 1);
+        assert_eq!(reject_stats.replay, 0);
+        assert_eq!(reject_stats.stale_nonce, 0);
+        assert!(last_nonce.is_empty());
+    }
+
+    #[test]
+    fn auth_rejects_uppercase_block_hash_before_nonce_and_signature_checks() {
+        let vote = BftVote {
+            validator: "v1".into(),
+            vote_type: VoteType::Prevote,
+            block_hash: "A1b2".into(),
+            byzantine: false,
+            height: 1,
+            round: 0,
+        };
+
+        let mut last_nonce = HashMap::new();
+        let mut accepted = Vec::new();
+        let mut reject_stats = AuthRejectStats::default();
+
+        accept_signed_vote(
+            SignedVote {
+                vote: vote.clone(),
+                nonce: 1,
+                // even with nonce>0 and matching signature, ingress must reject non-canonical hash first
+                signature: vote_signature(&vote, 1),
+            },
+            &mut last_nonce,
+            &mut accepted,
+            &mut reject_stats,
+        );
+
+        assert!(accepted.is_empty());
+        assert_eq!(reject_stats.bad_sig, 1);
+        assert_eq!(reject_stats.replay, 0);
+        assert_eq!(reject_stats.stale_nonce, 0);
+        assert!(last_nonce.is_empty());
+    }
+
+    #[test]
+    fn auth_nonce_tracking_is_scoped_per_height() {
+        let mut last_nonce = HashMap::new();
+        let mut accepted = Vec::new();
+        let mut reject_stats = AuthRejectStats::default();
+
+        let vote_h10 = BftVote {
+            validator: "v1".into(),
+            vote_type: VoteType::Prevote,
+            block_hash: "h10".into(),
+            byzantine: false,
+            height: 10,
+            round: 0,
+        };
+        accept_signed_vote(
+            SignedVote {
+                vote: vote_h10.clone(),
+                nonce: 9_999,
+                signature: vote_signature(&vote_h10, 9_999),
+            },
+            &mut last_nonce,
+            &mut accepted,
+            &mut reject_stats,
+        );
+
+        let vote_h11 = BftVote {
+            validator: "v1".into(),
+            vote_type: VoteType::Prevote,
+            block_hash: "h11".into(),
+            byzantine: false,
+            height: 11,
+            round: 0,
+        };
+        accept_signed_vote(
+            SignedVote {
+                vote: vote_h11.clone(),
+                nonce: 1,
+                signature: vote_signature(&vote_h11, 1),
+            },
+            &mut last_nonce,
+            &mut accepted,
+            &mut reject_stats,
+        );
+
+        assert_eq!(accepted.len(), 2);
+        assert_eq!(reject_stats.bad_sig, 0);
+        assert_eq!(reject_stats.replay, 0);
+        assert_eq!(reject_stats.stale_nonce, 0);
+    }
+
+    #[test]
+    fn auth_nonce_tracking_is_scoped_per_round() {
+        let mut last_nonce = HashMap::new();
+        let mut accepted = Vec::new();
+        let mut reject_stats = AuthRejectStats::default();
+
+        let vote_r0 = BftVote {
+            validator: "v1".into(),
+            vote_type: VoteType::Prevote,
+            block_hash: "h10-r0".into(),
+            byzantine: false,
+            height: 10,
+            round: 0,
+        };
+        accept_signed_vote(
+            SignedVote {
+                vote: vote_r0.clone(),
+                nonce: 9_999,
+                signature: vote_signature(&vote_r0, 9_999),
+            },
+            &mut last_nonce,
+            &mut accepted,
+            &mut reject_stats,
+        );
+
+        let vote_r1 = BftVote {
+            validator: "v1".into(),
+            vote_type: VoteType::Prevote,
+            block_hash: "h10-r1".into(),
+            byzantine: false,
+            height: 10,
+            round: 1,
+        };
+        accept_signed_vote(
+            SignedVote {
+                vote: vote_r1.clone(),
+                nonce: 1,
+                signature: vote_signature(&vote_r1, 1),
+            },
+            &mut last_nonce,
+            &mut accepted,
+            &mut reject_stats,
+        );
+
+        assert_eq!(accepted.len(), 2);
+        assert_eq!(reject_stats.bad_sig, 0);
+        assert_eq!(reject_stats.replay, 0);
+        assert_eq!(reject_stats.stale_nonce, 0);
+    }
+
+    #[test]
+    fn aggregate_votes_dedups_validator_duplicates_per_hash() {
+        let votes = vec![
+            BftVote {
+                validator: "v1".into(),
+                vote_type: VoteType::Prevote,
+                block_hash: "h1".into(),
+                byzantine: false,
+                height: 7,
+                round: 0,
+            },
+            // Same validator + same hash duplicate must not increase tally.
+            BftVote {
+                validator: "v1".into(),
+                vote_type: VoteType::Prevote,
+                block_hash: "h1".into(),
+                byzantine: false,
+                height: 7,
+                round: 0,
+            },
+            BftVote {
+                validator: "v2".into(),
+                vote_type: VoteType::Prevote,
+                block_hash: "h1".into(),
+                byzantine: false,
+                height: 7,
+                round: 0,
+            },
+        ];
+
+        let tally = aggregate_votes(&votes, VoteType::Prevote);
+        assert_eq!(tally.get("h1"), Some(&2));
+    }
+
+    #[test]
+    fn auth_nonce_tracking_is_scoped_per_vote_type() {
+        let mut last_nonce = HashMap::new();
+        let mut accepted = Vec::new();
+        let mut reject_stats = AuthRejectStats::default();
+
+        let prevote = BftVote {
+            validator: "v1".into(),
+            vote_type: VoteType::Prevote,
+            block_hash: "h10-r0".into(),
+            byzantine: false,
+            height: 10,
+            round: 0,
+        };
+        accept_signed_vote(
+            SignedVote {
+                vote: prevote.clone(),
+                nonce: 10,
+                signature: vote_signature(&prevote, 10),
+            },
+            &mut last_nonce,
+            &mut accepted,
+            &mut reject_stats,
+        );
+
+        let precommit = BftVote {
+            validator: "v1".into(),
+            vote_type: VoteType::Precommit,
+            block_hash: "h10-r0".into(),
+            byzantine: false,
+            height: 10,
+            round: 0,
+        };
+        // Reusing a lower nonce across vote types must be accepted: replay domain is
+        // (validator, height, round, vote_type), not a cross-type global counter.
+        accept_signed_vote(
+            SignedVote {
+                vote: precommit.clone(),
+                nonce: 1,
+                signature: vote_signature(&precommit, 1),
+            },
+            &mut last_nonce,
+            &mut accepted,
+            &mut reject_stats,
+        );
+
+        assert_eq!(accepted.len(), 2);
+        assert_eq!(reject_stats.bad_sig, 0);
+        assert_eq!(reject_stats.replay, 0);
+        assert_eq!(reject_stats.stale_nonce, 0);
+    }
+
+    fn expected_high_risk_tx_exhaustive(tx: &MockTx) -> bool {
+        // Exhaustive match intentionally used as a merge-gate guard:
+        // if a new tx variant is introduced, this test must be reviewed.
+        match tx {
+            MockTx::CreateTask { .. }
+            | MockTx::AcceptTask { .. }
+            | MockTx::Commit { .. }
+            | MockTx::Reveal { .. }
+            | MockTx::Challenge { .. } => true,
+            // Resolve must remain callable during emergency pause to close out challenged tasks.
+            MockTx::Resolve { .. } => false,
+        }
+    }
+
+    #[test]
+    fn emergency_pause_gates_only_high_risk_tx_when_paused() {
+        let result_hash = [7u8; 32];
+        let reveal_salt = [9u8; 32];
+        let committed_hash = compute_commitment(1, &result_hash, &reveal_salt, "worker");
+
+        let txs = [
+            MockTx::CreateTask {
+                task_id: 1,
+                creator: "alice".into(),
+                bounty: 100,
+            },
+            MockTx::AcceptTask {
+                task_id: 1,
+                worker: "worker".into(),
+            },
+            MockTx::Commit {
+                task_id: 1,
+                worker: "worker".into(),
+                committed_hash,
+            },
+            MockTx::Reveal {
+                task_id: 1,
+                result_hash,
+                reveal_salt,
+            },
+            MockTx::Challenge {
+                task_id: 1,
+                challenger: "challenger".into(),
+                bond: 10,
+            },
+            MockTx::Resolve {
+                task_id: 1,
+                slash_worker: true,
+                resolver: "governance.resolve_authority".into(),
+            },
+        ];
+
+        for tx in &txs {
+            assert_eq!(
+                is_rejected_by_emergency_pause(true, tx),
+                expected_high_risk_tx_exhaustive(tx),
+                "pause gate drifted for tx variant while paused: {:?}",
+                tx
+            );
+            assert!(
+                !is_rejected_by_emergency_pause(false, tx),
+                "pause gate unexpectedly active while unpaused for tx variant: {:?}",
+                tx
+            );
+        }
+    }
+
+    #[test]
+    fn emergency_pause_risk_gate_classification_is_stable() {
+        let result_hash = [7u8; 32];
+        let reveal_salt = [9u8; 32];
+        let committed_hash = compute_commitment(1, &result_hash, &reveal_salt, "worker");
+
+        let txs = [
+            MockTx::CreateTask {
+                task_id: 1,
+                creator: "alice".into(),
+                bounty: 100,
+            },
+            MockTx::AcceptTask {
+                task_id: 1,
+                worker: "worker".into(),
+            },
+            MockTx::Commit {
+                task_id: 1,
+                worker: "worker".into(),
+                committed_hash,
+            },
+            MockTx::Reveal {
+                task_id: 1,
+                result_hash,
+                reveal_salt,
+            },
+            MockTx::Challenge {
+                task_id: 1,
+                challenger: "challenger".into(),
+                bond: 10,
+            },
+            MockTx::Resolve {
+                task_id: 1,
+                slash_worker: true,
+                resolver: "governance.resolve_authority".into(),
+            },
+        ];
+
+        for tx in &txs {
+            assert_eq!(
+                is_high_risk_tx(tx),
+                expected_high_risk_tx_exhaustive(tx),
+                "pause risk gate drifted for tx variant: {:?}",
+                tx
+            );
+        }
+    }
+
+    #[test]
+    fn emergency_pause_rejection_formula_is_exact_boolean_gate() {
+        let result_hash = [7u8; 32];
+        let reveal_salt = [9u8; 32];
+        let committed_hash = compute_commitment(42, &result_hash, &reveal_salt, "worker");
+
+        let txs = [
+            MockTx::CreateTask {
+                task_id: 42,
+                creator: "alice".into(),
+                bounty: 100,
+            },
+            MockTx::AcceptTask {
+                task_id: 42,
+                worker: "worker".into(),
+            },
+            MockTx::Commit {
+                task_id: 42,
+                worker: "worker".into(),
+                committed_hash,
+            },
+            MockTx::Reveal {
+                task_id: 42,
+                result_hash,
+                reveal_salt,
+            },
+            MockTx::Challenge {
+                task_id: 42,
+                challenger: "challenger".into(),
+                bond: 10,
+            },
+            MockTx::Resolve {
+                task_id: 42,
+                slash_worker: false,
+                resolver: "governance.resolve_authority".into(),
+            },
+        ];
+
+        for tx in &txs {
+            for paused in [false, true] {
+                assert_eq!(
+                    is_rejected_by_emergency_pause(paused, tx),
+                    paused && is_high_risk_tx(tx),
+                    "emergency pause formula drifted: paused={} tx={:?}",
+                    paused,
+                    tx
+                );
+            }
+        }
+    }
+
+    #[test]
     fn proposer_selection_skips_penalized_or_missed_leader() {
         let control = BftJitterControl {
             missed_threshold: 2,
@@ -1361,9 +2552,12 @@ mod tests {
     }
 
     #[test]
-    fn timeout_scan_auto_migrates_committed_and_challenged() {
+    fn timeout_scan_auto_migrates_committed_revealed_and_challenged() {
         let mut st = StateStore::new();
         st.set_balance("challenger", 1_000_000);
+        st.set_balance("worker7001", 1_000);
+        st.set_balance("worker7002", 1_000);
+        st.set_balance("worker7003", 1_000);
 
         let r1 = apply_create_task(&mut st, 7001, "alice".into(), 100).unwrap();
         let result_hash = [7u8; 32];
@@ -1393,15 +2587,263 @@ mod tests {
         let r7 =
             trnm_pouw::apply_reveal_result_at_height(&mut st, r6, result_hash, reveal_salt, 110)
                 .unwrap();
-        let _r8 = trnm_pouw::apply_challenge_at_height(&mut st, r7, "challenger".into(), 10, 120)
+        let _r8 = trnm_pouw::apply_challenge_at_height(&mut st, r7, "challenger".into(), 10, "challenger".into(), 120)
             .unwrap();
 
-        let known: HashSet<u64> = [7001u64, 7002u64].into_iter().collect();
-        let migrated = scan_and_apply_timeouts(&mut st, &known, 10_000);
+        let r9 = apply_create_task(&mut st, 7003, "alice".into(), 100).unwrap();
+        let committed3 = compute_commitment(7003, &result_hash, &reveal_salt, "worker7003");
+        let r10 = apply_accept_task(&mut st, r9, "worker7003".into()).unwrap();
+        let r11 = trnm_pouw::apply_commit_result_at_height(
+            &mut st,
+            r10,
+            "worker7003".into(),
+            committed3,
+            100,
+        )
+        .unwrap();
+        let _r12 =
+            trnm_pouw::apply_reveal_result_at_height(&mut st, r11, result_hash, reveal_salt, 110)
+                .unwrap();
 
-        assert_eq!(migrated, 2);
+        let known: HashSet<u64> = [7001u64, 7002u64, 7003u64].into_iter().collect();
+        let migrated = scan_and_apply_timeouts(&mut st, &known, 10_000, 9_000_000);
+
+        assert_eq!(migrated, 3);
         assert_eq!(st.get_task(7001).unwrap().status, TaskStatus::Slashed);
         assert_eq!(st.get_task(7002).unwrap().status, TaskStatus::Completed);
+        assert_eq!(st.get_task(7003).unwrap().status, TaskStatus::Completed);
+    }
+
+    #[test]
+    fn timeout_scan_revealed_boundary_at_deadline_and_after() {
+        let mut st = StateStore::new();
+        st.set_balance("worker7004", 1_000);
+
+        let result_hash = [7u8; 32];
+        let reveal_salt = [9u8; 32];
+        let r1 = apply_create_task(&mut st, 7004, "alice".into(), 100).unwrap();
+        let committed = compute_commitment(7004, &result_hash, &reveal_salt, "worker7004");
+        let r2 = apply_accept_task(&mut st, r1, "worker7004".into()).unwrap();
+        let r3 = trnm_pouw::apply_commit_result_at_height(
+            &mut st,
+            r2,
+            "worker7004".into(),
+            committed,
+            100,
+        )
+        .unwrap();
+        let _r4 =
+            trnm_pouw::apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, 110)
+                .unwrap();
+
+        let challenge_deadline = st
+            .get_task(7004)
+            .and_then(|t| t.challenge_deadline_height)
+            .expect("challenge deadline must be present after reveal");
+
+        let known: HashSet<u64> = [7004u64].into_iter().collect();
+
+        let migrated_at_deadline =
+            scan_and_apply_timeouts(&mut st, &known, challenge_deadline, 9_100_000);
+        assert_eq!(migrated_at_deadline, 0);
+        assert_eq!(st.get_task(7004).unwrap().status, TaskStatus::Revealed);
+
+        let migrated_after_deadline = scan_and_apply_timeouts(
+            &mut st,
+            &known,
+            challenge_deadline.saturating_add(1),
+            9_100_100,
+        );
+        assert_eq!(migrated_after_deadline, 1);
+        assert_eq!(st.get_task(7004).unwrap().status, TaskStatus::Completed);
+    }
+
+    #[test]
+    fn event_deltas_match_balance_movements_on_revealed_timeout_complete() {
+        let mut st = StateStore::new();
+        st.set_balance("worker8100", 1_000);
+
+        let result_hash = [7u8; 32];
+        let reveal_salt = [9u8; 32];
+        let r1 = apply_create_task(&mut st, 8100, "alice".into(), 100).unwrap();
+        let committed = compute_commitment(8100, &result_hash, &reveal_salt, "worker8100");
+        let r2 = apply_accept_task(&mut st, r1, "worker8100".into()).unwrap();
+        let r3 = trnm_pouw::apply_commit_result_at_height(
+            &mut st,
+            r2,
+            "worker8100".into(),
+            committed,
+            1,
+        )
+        .unwrap();
+        let revealed =
+            trnm_pouw::apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, 2)
+                .unwrap();
+
+        let before = st.clone();
+        let _ = apply_timeout(&mut st, revealed, 1_000).unwrap();
+
+        let (treasury_delta, challenger_delta) =
+            balance_deltas_for_transition(&before, &st, 8100, None);
+
+        assert_eq!(st.get_task(8100).unwrap().status, TaskStatus::Completed);
+        assert_eq!(
+            treasury_delta.numeric,
+            diff_u128_to_i128(treasury_total(&st), treasury_total(&before))
+        );
+        assert_eq!(challenger_delta, None);
+        assert_eq!(treasury_delta.numeric, Some(0));
+    }
+
+    #[test]
+    fn event_deltas_match_balance_movements_on_resolve_slashed() {
+        let mut st = StateStore::new();
+        st.set_balance("challenger", 100);
+        st.set_balance("worker8101", 1_000);
+
+        let r1 = apply_create_task(&mut st, 8101, "alice".into(), 100).unwrap();
+        let result_hash = [7u8; 32];
+        let reveal_salt = [9u8; 32];
+        let committed = compute_commitment(8101, &result_hash, &reveal_salt, "worker8101");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker8101".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker8101".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt).unwrap();
+        let r5 = apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
+
+        let before = st.clone();
+        let challenger = before
+            .get_task(8101)
+            .and_then(|t| t.challenger)
+            .expect("challenger must exist");
+        st.set_gov_param_unchecked(18_101, "resolve_authority".into(), challenger.clone())
+            .unwrap();
+        let _r6 = apply_resolve(&mut st, r5, true, challenger.clone(), challenger.clone()).unwrap();
+
+        let (treasury_delta, challenger_delta) =
+            balance_deltas_for_transition(&before, &st, 8101, Some(challenger.as_str()));
+
+        assert_eq!(
+            treasury_delta.numeric,
+            diff_u128_to_i128(treasury_total(&st), treasury_total(&before))
+        );
+        assert_eq!(
+            challenger_delta.as_ref().and_then(|d| d.numeric),
+            diff_u128_to_i128(st.balance_of(&challenger), before.balance_of(&challenger))
+        );
+        assert!(challenger_delta.as_ref().and_then(|d| d.numeric).unwrap_or(0) > 0);
+    }
+
+    #[test]
+    fn event_deltas_match_balance_movements_on_resolve_forfeited() {
+        let mut st = StateStore::new();
+        st.set_balance("challenger", 100);
+        st.set_balance("worker8102", 1_000);
+
+        let r1 = apply_create_task(&mut st, 8102, "alice".into(), 100).unwrap();
+        let result_hash = [7u8; 32];
+        let reveal_salt = [9u8; 32];
+        let committed = compute_commitment(8102, &result_hash, &reveal_salt, "worker8102");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker8102".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker8102".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt).unwrap();
+        let r5 = apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
+
+        let before = st.clone();
+        let challenger = before
+            .get_task(8102)
+            .and_then(|t| t.challenger)
+            .expect("challenger must exist");
+        st.set_gov_param_unchecked(18_102, "resolve_authority".into(), challenger.clone())
+            .unwrap();
+        let _r6 =
+            apply_resolve(&mut st, r5, false, challenger.clone(), challenger.clone()).unwrap();
+
+        let (treasury_delta, challenger_delta) =
+            balance_deltas_for_transition(&before, &st, 8102, Some(challenger.as_str()));
+
+        assert_eq!(
+            treasury_delta.numeric,
+            diff_u128_to_i128(treasury_total(&st), treasury_total(&before))
+        );
+        assert_eq!(
+            challenger_delta.as_ref().and_then(|d| d.numeric),
+            diff_u128_to_i128(st.balance_of(&challenger), before.balance_of(&challenger))
+        );
+        assert_eq!(challenger_delta.as_ref().and_then(|d| d.numeric), Some(0));
+    }
+
+    #[test]
+    fn event_deltas_match_balance_movements_on_challenged_timeout_refund() {
+        let mut st = StateStore::new();
+        st.set_balance("challenger", 100);
+        st.set_balance("worker8103", 1_000);
+
+        let r1 = apply_create_task(&mut st, 8103, "alice".into(), 100).unwrap();
+        let result_hash = [7u8; 32];
+        let reveal_salt = [9u8; 32];
+        let committed = compute_commitment(8103, &result_hash, &reveal_salt, "worker8103");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker8103".into()).unwrap();
+        let r3 = trnm_pouw::apply_commit_result_at_height(
+            &mut st,
+            r2,
+            "worker8103".into(),
+            committed,
+            1,
+        )
+        .unwrap();
+        let r4 = trnm_pouw::apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, 2)
+            .unwrap();
+        let challenged =
+            trnm_pouw::apply_challenge_at_height(&mut st, r4, "challenger".into(), 10, "challenger".into(), 3).unwrap();
+
+        let before = st.clone();
+        let challenger = before
+            .get_task(8103)
+            .and_then(|t| t.challenger)
+            .expect("challenger must exist");
+        let _ = apply_timeout(&mut st, challenged, 1_000).unwrap();
+
+        let (treasury_delta, challenger_delta) =
+            balance_deltas_for_transition(&before, &st, 8103, Some(challenger.as_str()));
+
+        assert_eq!(
+            treasury_delta.numeric,
+            diff_u128_to_i128(treasury_total(&st), treasury_total(&before))
+        );
+        assert_eq!(
+            challenger_delta.as_ref().and_then(|d| d.numeric),
+            diff_u128_to_i128(st.balance_of(&challenger), before.balance_of(&challenger))
+        );
+        assert_eq!(challenger_delta.as_ref().and_then(|d| d.numeric), Some(10));
+        assert_eq!(st.get_task(8103).and_then(|t| t.challenge_bond_forfeited), Some(false));
+    }
+
+    #[test]
+    fn event_delta_fallback_is_deterministic_for_large_balances() {
+        let before = i128::MAX as u128 + 10;
+        let after = before + 25;
+
+        let delta = event_delta_from_balances(after, before);
+        assert_eq!(delta.numeric, None);
+        assert_eq!(delta.text, "u128:+25");
+        assert_ne!(delta.text, "-");
+
+        let reverse = event_delta_from_balances(before, after);
+        assert_eq!(reverse.numeric, None);
+        assert_eq!(reverse.text, "u128:-25");
+    }
+
+    #[test]
+    fn event_delta_normal_range_text_matches_previous_numeric_output() {
+        let before = 100u128;
+        let after = 82u128;
+
+        let delta = event_delta_from_balances(after, before);
+        assert_eq!(delta.numeric, Some(-18));
+        assert_eq!(delta.text, "-18");
     }
 
     #[test]
@@ -1517,10 +2959,19 @@ fn main() -> Result<()> {
     let mut state = StateStore::new();
     state.set_balance("challenger", 1_000_000);
     let mut mempool = build_demo_mempool(args.demo_tasks, args.demo_keys);
+    for i in 0..args.demo_tasks.max(1) {
+        let worker = demo_worker_name(1001u64 + i);
+        state.set_balance(&worker, 1_000_000);
+    }
     let mut known_task_ids: HashSet<u64> = HashSet::new();
     let mut finality_samples_ms: Vec<u128> = Vec::new();
     let mut preexec_reject_total: u64 = 0;
     let mut apply_error_total: u64 = 0;
+    let mut apply_error_preexec_conflict_miss_total: u64 = 0;
+    let mut apply_error_version_conflict_total: u64 = 0;
+    let mut apply_error_invalid_transition_total: u64 = 0;
+    let mut apply_error_deadline_exceeded_total: u64 = 0;
+    let mut apply_error_semantic_fail_total: u64 = 0;
     let mut rollback_total: u64 = 0;
     let mut timeout_migrated_total: u64 = 0;
     let mut bft_committed_heights: u64 = 0;
@@ -1542,7 +2993,7 @@ fn main() -> Result<()> {
 
     loop {
         let block_start = Instant::now();
-        let txs_per_block = 4usize;
+        let txs_per_block = args.txs_per_block.max(1);
         let mut picked: Vec<MockTx> = Vec::new();
         for _ in 0..txs_per_block {
             if let Some(tx) = mempool.pop_front() {
@@ -1630,7 +3081,7 @@ fn main() -> Result<()> {
         let plan: Vec<Tx> = picked
             .iter()
             .enumerate()
-            .map(|(i, tx)| read_write_decl(tx, (i as u64) + 1, args.demo_keys))
+            .map(|(i, tx)| read_write_decl(&state, tx, (i as u64) + 1))
             .collect();
         let groups = build_parallel_groups(&plan);
         let group_count = groups.len();
@@ -1648,7 +3099,7 @@ fn main() -> Result<()> {
                 let task_id = task_id_of(&tx);
                 let from_status = status_name(&state, task_id);
 
-                if state.is_emergency_paused() && is_high_risk_tx(&tx) {
+                if is_rejected_by_emergency_pause(state.is_emergency_paused(), &tx) {
                     println!(
                         "[tx] rejected_by_pause height={} tx_id={} event_type={} emergency_pause=true",
                         height,
@@ -1659,29 +3110,56 @@ fn main() -> Result<()> {
                 }
 
                 let before = state.clone();
-                if let Err(e) = apply_one(&mut state, tx.clone()) {
+                if let Err(e) = apply_one(&mut state, tx.clone(), height) {
+                    let err_kind = classify_apply_error(&e);
+                    let err_text = e.to_string();
                     state = before; // rollback on failed commit
                     apply_error_total += 1;
                     rollback_total += 1;
+                    match err_kind {
+                        "version_conflict" => apply_error_version_conflict_total += 1,
+                        "preexec_conflict_miss" => {
+                            apply_error_preexec_conflict_miss_total += 1
+                        }
+                        "invalid_transition" => apply_error_invalid_transition_total += 1,
+                        "deadline_exceeded" => apply_error_deadline_exceeded_total += 1,
+                        _ => apply_error_semantic_fail_total += 1,
+                    }
                     println!(
-                        "[tx] apply_error height={} tx_id={} err={} rollback=true",
-                        height, id, e
+                        "[tx] apply_error height={} tx_id={} err_kind={} err={} rollback=true",
+                        height, id, err_kind, err_text
                     );
                 } else {
                     applied += 1;
                     known_task_ids.insert(task_id);
                     let to_status = status_name(&state, task_id);
                     let root = hex::encode(state.state_root());
-                    let challenge_bond_before =
-                        before.get_task(task_id).and_then(|t| t.challenge_bond);
+                    let challenger_account: Option<String> = match &tx {
+                        MockTx::Challenge { challenger, .. } => Some(challenger.clone()),
+                        MockTx::Resolve { .. } => {
+                            before.get_task(task_id).and_then(|t| t.challenger)
+                        }
+                        _ => None,
+                    };
+                    let (treasury_delta, challenger_delta) = balance_deltas_for_transition(
+                        &before,
+                        &state,
+                        task_id,
+                        challenger_account.as_deref(),
+                    );
+                    let signer = verified_signer_of(&before, &tx);
                     emit_event(
+                        &state,
                         &tx,
+                        &signer,
                         id,
                         height,
                         &from_status,
                         &to_status,
                         &root,
-                        challenge_bond_before,
+                        &treasury_delta,
+                        challenger_delta.as_ref(),
+                        challenger_account.as_deref(),
                     );
                 }
             }
@@ -1689,7 +3167,7 @@ fn main() -> Result<()> {
 
         let scan_every = args.pouw_timeout_scan_every_blocks.max(1);
         if args.pouw_timeout_scan && height % scan_every == 0 {
-            let migrated = scan_and_apply_timeouts(&mut state, &known_task_ids, height);
+            let migrated = scan_and_apply_timeouts(&mut state, &known_task_ids, height, 9_000_000);
             timeout_migrated_total += migrated;
             if migrated > 0 {
                 println!(
@@ -1764,11 +3242,16 @@ fn main() -> Result<()> {
         .map(|h| h.missed_proposals)
         .collect();
     println!(
-        "[consensus] finality_p50_ms={} finality_p95_ms={} preexec_reject_total={} apply_error_total={} rollback_total={} timeout_migrated_total={} recovery_error_rate={:.6} bft_committed_heights={} bft_round_change_total={} bft_round_change_backoff_total_ms={} bft_leader_missed_proposals={:?} bft_double_vote_total={} bft_auth_reject_bad_sig_total={} bft_auth_reject_replay_total={} bft_auth_reject_stale_nonce_total={}",
+        "[consensus] finality_p50_ms={} finality_p95_ms={} preexec_reject_total={} apply_error_total={} apply_error_preexec_conflict_miss_total={} apply_error_version_conflict_total={} apply_error_invalid_transition_total={} apply_error_deadline_exceeded_total={} apply_error_semantic_fail_total={} rollback_total={} timeout_migrated_total={} recovery_error_rate={:.6} bft_committed_heights={} bft_round_change_total={} bft_round_change_backoff_total_ms={} bft_leader_missed_proposals={:?} bft_double_vote_total={} bft_auth_reject_bad_sig_total={} bft_auth_reject_replay_total={} bft_auth_reject_stale_nonce_total={}",
         finality_p50,
         finality_p95,
         preexec_reject_total,
         apply_error_total,
+        apply_error_preexec_conflict_miss_total,
+        apply_error_version_conflict_total,
+        apply_error_invalid_transition_total,
+        apply_error_deadline_exceeded_total,
+        apply_error_semantic_fail_total,
         rollback_total,
         timeout_migrated_total,
         recovery_error_rate,

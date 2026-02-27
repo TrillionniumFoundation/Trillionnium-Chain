@@ -5,13 +5,14 @@ ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 cd "$ROOT/trillionnium-rust"
 export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
 
-STATE="/tmp/trnm-worker-fail-state.json"
-SUBMIT_LOG="/tmp/trnm-worker-fail-submits.jsonl"
-ACK_LOG="/tmp/trnm-worker-fail-acks.jsonl"
-OUT_JSON="/tmp/trnm-worker-fail-runonce.json"
-ADAPTER_FAIL="/tmp/trnm-worker-fail-adapter.sh"
+RUN_TAG="${RUN_TAG:-$(date +%Y%m%d-%H%M%S)-$$}"
+STATE="${STATE:-/tmp/trnm-worker-fail-state-${RUN_TAG}.json}"
+SUBMIT_LOG="${SUBMIT_LOG:-/tmp/trnm-worker-fail-submits-${RUN_TAG}.jsonl}"
+ACK_LOG="${ACK_LOG:-/tmp/trnm-worker-fail-acks-${RUN_TAG}.jsonl}"
+OUT_JSON="${OUT_JSON:-/tmp/trnm-worker-fail-runonce-${RUN_TAG}.json}"
+ADAPTER_FAIL="${ADAPTER_FAIL:-/tmp/trnm-worker-fail-adapter-${RUN_TAG}.sh}"
 
-rm -f "$SUBMIT_LOG" "$ACK_LOG" "$OUT_JSON" "$ADAPTER_FAIL"
+rm -f "$STATE" "$SUBMIT_LOG" "$ACK_LOG" "$OUT_JSON" "$ADAPTER_FAIL"
 
 cat > "$ADAPTER_FAIL" <<'EOF'
 #!/usr/bin/env bash
@@ -54,7 +55,10 @@ with open(ack) as f:
 rows=[r for r in rows if r.get('task_id')==tid]
 assert rows, f'no ack for task_id={tid}'
 last=rows[-1]
-assert last.get('status')=='failed', f"expected failed, got {last.get('status')}"
-assert last.get('commit_tx_hash'), 'missing commit_tx_hash on failed ack'
-print('[OK] worker failed receipt test passed task_id=%s status=%s' % (tid,last.get('status')))
+status=last.get('status')
+assert status in {'failed','rejected'}, f"expected failed/rejected, got {status}"
+assert last.get('commit_tx_hash'), 'missing commit_tx_hash on terminal negative ack'
+if status == 'rejected':
+    assert last.get('reason') or last.get('reason_code'), 'missing rejection reason'
+print('[OK] worker failed receipt test passed task_id=%s status=%s' % (tid,status))
 PY

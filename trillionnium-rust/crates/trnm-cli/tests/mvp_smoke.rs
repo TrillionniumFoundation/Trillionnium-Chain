@@ -118,7 +118,7 @@ fn smoke_tx_transfer_template_path() {
     assert!(out.status.success());
 
     let out2 = Command::new(bin())
-        .env("TRNM_TX_TRANSFER_CMD", "echo tx_hash=tx_demo_123")
+        .env("TRNM_TX_TRANSFER_CMD", "echo tx_hash=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
         .args([
             "tx",
             "transfer",
@@ -135,6 +135,6 @@ fn smoke_tx_transfer_template_path() {
         .unwrap();
     assert!(out2.status.success());
     let s = String::from_utf8_lossy(&out2.stdout);
-    assert!(s.contains("tx_demo_123"));
+    assert!(s.contains("0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"));
     assert!(s.contains("submitted"));
 }

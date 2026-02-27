@@ -19,8 +19,23 @@ pub struct SubmitTransferResponse {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum TransferApplyError {
     Basic(TransferTxValidationError),
-    NonceRollback { expected: u64, got: u64 },
-    InsufficientBalance { balance: u128, needed: u128 },
+    NonceRollback {
+        expected: u64,
+        got: u64,
+    },
+    InsufficientBalance {
+        balance: u128,
+        needed: u128,
+    },
+    AmountFeeOverflow {
+        amount: u128,
+        fee: u128,
+    },
+    ReceiverBalanceOverflow {
+        receiver: String,
+        balance: u128,
+        amount: u128,
+    },
 }
 
 impl std::fmt::Display for TransferApplyError {
@@ -39,6 +54,20 @@ impl std::fmt::Display for TransferApplyError {
                     f,
                     "insufficient balance: balance {}, needed {}",
                     balance, needed
+                )
+            }
+            Self::AmountFeeOverflow { amount, fee } => {
+                write!(f, "amount+fee overflow: amount {}, fee {}", amount, fee)
+            }
+            Self::ReceiverBalanceOverflow {
+                receiver,
+                balance,
+                amount,
+            } => {
+                write!(
+                    f,
+                    "receiver balance overflow: receiver {}, balance {}, amount {}",
+                    receiver, balance, amount
                 )
             }
         }
@@ -87,7 +116,13 @@ impl InMemoryTransferLedger {
             });
         }
 
-        let needed = tx.amount.saturating_add(tx.fee);
+        let needed =
+            tx.amount
+                .checked_add(tx.fee)
+                .ok_or(TransferApplyError::AmountFeeOverflow {
+                    amount: tx.amount,
+                    fee: tx.fee,
+                })?;
         let from_balance = self.balance_of(&tx.from);
         if from_balance < needed {
             return Err(TransferApplyError::InsufficientBalance {
@@ -98,7 +133,13 @@ impl InMemoryTransferLedger {
 
         let to_balance = self.balance_of(&tx.to);
         let new_from = from_balance - needed;
-        let new_to = to_balance.saturating_add(tx.amount);
+        let new_to = to_balance.checked_add(tx.amount).ok_or_else(|| {
+            TransferApplyError::ReceiverBalanceOverflow {
+                receiver: tx.to.clone(),
+                balance: to_balance,
+                amount: tx.amount,
+            }
+        })?;
 
         self.balances.insert(tx.from.clone(), new_from);
         self.balances.insert(tx.to.clone(), new_to);
@@ -132,6 +173,15 @@ pub fn submit_tx(
     now_unix_ms: u128,
 ) -> SendTxResponse {
     let tx_hash = compute_tx_hash(&tx);
+
+    // Ingress hardening: reject obviously invalid txs before entering pending pool.
+    if tx.validate_basic().is_err() {
+        return SendTxResponse {
+            tx_hash,
+            status: TxStatus::Fail,
+        };
+    }
+
     if !txs.contains_key(&tx_hash) {
         txs.insert(
             tx_hash.clone(),
@@ -189,6 +239,7 @@ pub fn get_tx(
 pub enum TxStatus {
     Pending,
     Committed,
+    #[serde(alias = "failed", alias = "error")]
     Fail,
 }
 
@@ -336,6 +387,49 @@ mod tests {
     }
 
     #[test]
+    fn reject_amount_plus_fee_overflow() {
+        let alice = address_from_secret_hex(ALICE_SK_HEX);
+        let bob = address_from_secret_hex(BOB_SK_HEX);
+
+        let mut ledger = InMemoryTransferLedger::new();
+        ledger.set_account(alice.clone(), u128::MAX, 0);
+        ledger.set_account(bob.clone(), 0, 0);
+
+        let err = ledger
+            .apply_transfer(tx(&alice, &bob, u128::MAX, 1, 0, ALICE_SK_HEX))
+            .unwrap_err();
+        assert_eq!(
+            err,
+            TransferApplyError::AmountFeeOverflow {
+                amount: u128::MAX,
+                fee: 1
+            }
+        );
+    }
+
+    #[test]
+    fn reject_receiver_credit_overflow() {
+        let alice = address_from_secret_hex(ALICE_SK_HEX);
+        let bob = address_from_secret_hex(BOB_SK_HEX);
+
+        let mut ledger = InMemoryTransferLedger::new();
+        ledger.set_account(alice.clone(), 20, 0);
+        ledger.set_account(bob.clone(), u128::MAX, 0);
+
+        let err = ledger
+            .apply_transfer(tx(&alice, &bob, 1, 0, 0, ALICE_SK_HEX))
+            .unwrap_err();
+        assert_eq!(
+            err,
+            TransferApplyError::ReceiverBalanceOverflow {
+                receiver: bob,
+                balance: u128::MAX,
+                amount: 1
+            }
+        );
+    }
+
+    #[test]
     fn reject_missing_signature() {
         let alice = address_from_secret_hex(ALICE_SK_HEX);
         let bob = address_from_secret_hex(BOB_SK_HEX);
@@ -404,6 +498,29 @@ mod tests {
     }
 
     #[test]
+    fn submit_tx_rejects_invalid_signature_at_ingress() {
+        let alice = address_from_secret_hex(ALICE_SK_HEX);
+        let bob = address_from_secret_hex(BOB_SK_HEX);
+
+        let mut txs = BTreeMap::new();
+        let out = submit_tx(
+            &mut txs,
+            TransferTx {
+                from: alice,
+                to: bob,
+                amount: 1,
+                fee: 0,
+                nonce: 0,
+                signature: "not-a-valid-signature".into(),
+            },
+            100,
+        );
+
+        assert_eq!(out.status, TxStatus::Fail);
+        assert!(txs.is_empty());
+    }
+
+    #[test]
     fn tx_lifecycle_pending_to_committed() {
         let alice = address_from_secret_hex(ALICE_SK_HEX);
         let bob = address_from_secret_hex(BOB_SK_HEX);
@@ -455,5 +572,13 @@ mod tests {
         let mut txs = BTreeMap::new();
         let err = get_tx(&mut txs, &mut ledger, "0x404", 100).unwrap_err();
         assert_eq!(err, GetTxError::NotFound("0x404".to_string()));
+    }
+
+    #[test]
+    fn tx_status_parser_accepts_legacy_failed_aliases() {
+        let failed: TxStatus = serde_json::from_str("\"failed\"").unwrap();
+        let error: TxStatus = serde_json::from_str("\"error\"").unwrap();
+        assert_eq!(failed, TxStatus::Fail);
+        assert_eq!(error, TxStatus::Fail);
     }
 }

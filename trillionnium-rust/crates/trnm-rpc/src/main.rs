@@ -35,6 +35,11 @@ const CHALLENGE_FORFEIT_TREASURY_ACCOUNT: &str = "treasury.challenge_forfeits";
 const NODE_EVENT_LOG_TAIL_BYTES_DEFAULT: u64 = 4 * 1024 * 1024;
 const NODE_EVENT_LOG_TAIL_BYTES_MAX: u64 = 16 * 1024 * 1024;
 const OPS_WINDOW_CUSTOM_MAX_MS: u128 = 31 * 24 * 60 * 60 * 1000;
+const FAUCET_WINDOW_SECONDS_DEFAULT: u64 = 60;
+const FAUCET_WINDOW_SECONDS_MIN: u64 = 1;
+const FAUCET_MAX_REQUESTS_DEFAULT: u32 = 1;
+const FAUCET_MAX_REQUESTS_MIN: u32 = 1;
+const EMERGENCY_PAUSE_KEY_ID: u64 = 7_999;
 
 #[derive(Debug, Parser)]
 #[command(
@@ -333,10 +338,11 @@ fn read_log_tail(path: &Path, tail_bytes: u64) -> Option<String> {
     if file.seek(SeekFrom::Start(start)).is_err() {
         return None;
     }
-    let mut buf = String::new();
-    if file.read_to_string(&mut buf).is_err() {
+    let mut bytes = Vec::new();
+    if file.read_to_end(&mut bytes).is_err() {
         return None;
     }
+    let buf = String::from_utf8_lossy(&bytes).into_owned();
     if start > 0 && started_mid_line {
         if let Some(idx) = buf.find('\n') {
             return Some(buf[idx + 1..].to_string());
@@ -344,6 +350,24 @@ fn read_log_tail(path: &Path, tail_bytes: u64) -> Option<String> {
         return Some(String::new());
     }
     Some(buf)
+}
+
+fn trim_wrapped_log_numeric(raw: &str) -> &str {
+    raw.trim_matches(|c: char| {
+        c.is_ascii_whitespace()
+            || matches!(
+                c,
+                '"' | '\'' | '`' | ',' | ';' | '(' | ')' | '[' | ']' | '{' | '}'
+            )
+    })
+}
+
+fn parse_u64_kv_value(raw: &str) -> Option<u64> {
+    trim_wrapped_log_numeric(raw).parse::<u64>().ok()
+}
+
+fn parse_u128_kv_value(raw: &str) -> Option<u128> {
+    trim_wrapped_log_numeric(raw).parse::<u128>().ok()
 }
 
 fn load_latest_node_events() -> Vec<NodeEventRecord> {
@@ -381,18 +405,18 @@ fn load_latest_node_events() -> Vec<NodeEventRecord> {
             }
         }
 
-        let Some(task_id) = kv.get("task_id").and_then(|s| s.parse::<u64>().ok()) else {
+        let Some(task_id) = kv.get("task_id").and_then(|s| parse_u64_kv_value(s)) else {
             continue;
         };
-        let Some(tx_id) = kv.get("tx_id").and_then(|s| s.parse::<u64>().ok()) else {
+        let Some(tx_id) = kv.get("tx_id").and_then(|s| parse_u64_kv_value(s)) else {
             continue;
         };
-        let Some(block_height) = kv.get("block_height").and_then(|s| s.parse::<u64>().ok()) else {
+        let Some(block_height) = kv.get("block_height").and_then(|s| parse_u64_kv_value(s)) else {
             continue;
         };
         let ts_unix_ms = kv
             .get("ts_unix_ms")
-            .and_then(|s| s.parse::<u128>().ok())
+            .and_then(|s| parse_u128_kv_value(s))
             .unwrap_or(0);
 
         let normalize_opt = |k: &str| {
@@ -452,8 +476,13 @@ fn governance_state() -> StateStore {
         status: GovProposalStatus::Voting,
         version: 1,
     });
-    let _ = st.set_gov_param(7001, "max_block_ms".into(), "10".into());
-    let _ = st.set_gov_param(7999, "emergency_pause".into(), "false".into());
+    let _ = st.set_gov_param(0, 7001, "max_block_ms".into(), "10".into());
+    let _ = st.set_gov_param(
+        0,
+        EMERGENCY_PAUSE_KEY_ID,
+        "emergency_pause".into(),
+        "false".into(),
+    );
     st
 }
 
@@ -475,6 +504,22 @@ fn now_ms() -> u128 {
         .duration_since(UNIX_EPOCH)
         .map(|d| d.as_millis())
         .unwrap_or(0)
+}
+
+fn env_u64_with_min(name: &str, default: u64, min: u64) -> u64 {
+    std::env::var(name)
+        .ok()
+        .and_then(|v| v.parse::<u64>().ok())
+        .map(|v| v.max(min))
+        .unwrap_or(default.max(min))
+}
+
+fn env_u32_with_min(name: &str, default: u32, min: u32) -> u32 {
+    std::env::var(name)
+        .ok()
+        .and_then(|v| v.parse::<u32>().ok())
+        .map(|v| v.max(min))
+        .unwrap_or(default.max(min))
 }
 
 fn make_request_id(
@@ -592,7 +637,17 @@ fn load_tx_lifecycle(path: &Path) -> BTreeMap<String, TxLifecycleRecord> {
     let Ok(raw) = fs::read_to_string(path) else {
         return BTreeMap::new();
     };
-    serde_json::from_str::<BTreeMap<String, TxLifecycleRecord>>(&raw).unwrap_or_default()
+    match serde_json::from_str::<BTreeMap<String, TxLifecycleRecord>>(&raw) {
+        Ok(txs) => txs,
+        Err(err) => {
+            eprintln!(
+                "[trnm-rpc][warn][TX_LIFECYCLE_PARSE] path={} err={}",
+                path.display(),
+                err
+            );
+            BTreeMap::new()
+        }
+    }
 }
 
 fn save_tx_lifecycle(path: &Path, txs: &BTreeMap<String, TxLifecycleRecord>) -> Result<()> {
@@ -649,6 +704,64 @@ fn clamp_limit(op: &str, requested: usize, default_limit: usize, max_limit: usiz
     requested
 }
 
+fn normalize_tx_hash_lookup(raw: &str) -> String {
+    let mut normalized = raw.trim_matches(|c: char| {
+        c.is_ascii_whitespace() || matches!(c, ',' | ';' | '(' | ')' | '[' | ']' | '{' | '}')
+    });
+
+    loop {
+        let is_wrapped = normalized.len() >= 2
+            && ["\"", "'", "`"]
+                .iter()
+                .any(|q| normalized.starts_with(q) && normalized.ends_with(q));
+
+        if is_wrapped {
+            normalized = normalized[1..normalized.len() - 1].trim_matches(|c: char| {
+                c.is_ascii_whitespace()
+                    || matches!(c, ',' | ';' | '(' | ')' | '[' | ']' | '{' | '}')
+            });
+            continue;
+        }
+        break;
+    }
+
+    let normalized = normalized.to_ascii_lowercase();
+    for delimiter in ['=', ':'] {
+        if let Some((k, v)) = normalized.split_once(delimiter) {
+            let key = k.trim();
+            if key == "tx_hash" || key == "txhash" || key == "hash" {
+                let mut value = v.trim_matches(|c: char| {
+                    c.is_ascii_whitespace()
+                        || matches!(c, ',' | ';' | '(' | ')' | '[' | ']' | '{' | '}')
+                });
+                loop {
+                    let is_wrapped = value.len() >= 2
+                        && ["\"", "'", "`"]
+                            .iter()
+                            .any(|q| value.starts_with(q) && value.ends_with(q));
+                    if is_wrapped {
+                        value = value[1..value.len() - 1].trim_matches(|c: char| {
+                            c.is_ascii_whitespace()
+                                || matches!(c, ',' | ';' | '(' | ')' | '[' | ']' | '{' | '}')
+                        });
+                        continue;
+                    }
+                    break;
+                }
+                return value.to_string();
+            }
+        }
+    }
+
+    normalized
+}
+
+fn is_hex_like_tx_hash(raw: &str) -> bool {
+    raw.strip_prefix("0x")
+        .map(|rest| !rest.is_empty() && rest.chars().all(|c| c.is_ascii_hexdigit()))
+        .unwrap_or(false)
+}
+
 fn resolve_ops_window(
     window: Option<OpsWindowArg>,
     from_unix_ms: Option<u128>,
@@ -695,7 +808,7 @@ fn summarize_challenge_treasury(
         .iter()
         .filter(|e| {
             e.event_type == "challenge"
-                || (e.event_type == "resolve"
+                || ((e.event_type == "resolve" || e.event_type == "timeout")
                     && matches!(
                         e.bond_disposition.as_deref(),
                         Some("forfeited") | Some("refunded")
@@ -717,7 +830,14 @@ fn summarize_challenge_treasury(
 
     let mut views = Vec::new();
     let mut anomalies = Vec::new();
-    let mut seen_event_fingerprints = HashSet::<(String, u64, u64, Option<String>, Option<String>, Option<i128>)>::new();
+    let mut seen_event_fingerprints = HashSet::<(
+        String,
+        u64,
+        u64,
+        Option<String>,
+        Option<String>,
+        Option<i128>,
+    )>::new();
     for e in &related {
         let mut bond_amount: u128 = 0;
         let mut escrow_delta: i128 = 0;
@@ -801,7 +921,7 @@ fn summarize_challenge_treasury(
                     });
                 }
             }
-            "resolve" => {
+            "resolve" | "timeout" => {
                 let maybe_bond = posted_by_task.remove(&e.task_id).unwrap_or(0);
                 bond_amount = maybe_bond;
                 match e.bond_disposition.as_deref() {
@@ -942,6 +1062,50 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
     Ok(())
 }
 
+fn task_status_from_node_status(status: &str) -> Option<TaskStatus> {
+    match status {
+        "Open" => Some(TaskStatus::Open),
+        "Assigned" => Some(TaskStatus::Assigned),
+        "Committed" => Some(TaskStatus::Committed),
+        "Revealed" => Some(TaskStatus::Revealed),
+        "Challenged" => Some(TaskStatus::Challenged),
+        "Completed" => Some(TaskStatus::Completed),
+        "Slashed" => Some(TaskStatus::Slashed),
+        _ => None,
+    }
+}
+
+fn query_task_from_node_events(
+    task_id: u64,
+    node_events: &[NodeEventRecord],
+) -> Option<TaskQueryResponse> {
+    let mut version: u64 = 0;
+    let mut status: Option<TaskStatus> = None;
+    let mut worker: Option<String> = None;
+
+    for event in node_events.iter().filter(|e| e.task_id == task_id) {
+        version += 1;
+        if let Some(mapped) = task_status_from_node_status(event.to_status.as_str()) {
+            status = Some(mapped);
+        }
+        if event.event_type == "accept"
+            || event.event_type == "commit"
+            || event.event_type == "reveal"
+        {
+            worker = Some(event.actor.clone());
+        }
+    }
+
+    status.map(|status| TaskQueryResponse {
+        task_id,
+        status,
+        worker,
+        bounty: 100,
+        result_hash_hex: None,
+        version,
+    })
+}
+
 fn main() -> Result<()> {
     let args = Args::parse();
     let st = governance_state();
@@ -950,38 +1114,7 @@ fn main() -> Result<()> {
 
     match args.cmd {
         Command::QueryTask { task_id } => {
-            let node_task_events: Vec<&NodeEventRecord> = node_events
-                .iter()
-                .filter(|e| e.task_id == task_id)
-                .collect();
-            if !node_task_events.is_empty() {
-                let latest = node_task_events.last().unwrap();
-                let status = match latest.to_status.as_str() {
-                    "Open" => TaskStatus::Open,
-                    "Assigned" => TaskStatus::Assigned,
-                    "Committed" => TaskStatus::Committed,
-                    "Revealed" => TaskStatus::Revealed,
-                    "Challenged" => TaskStatus::Challenged,
-                    "Completed" => TaskStatus::Completed,
-                    "Slashed" => TaskStatus::Slashed,
-                    _ => TaskStatus::Open,
-                };
-                let out = TaskQueryResponse {
-                    task_id,
-                    status,
-                    worker: node_task_events
-                        .iter()
-                        .rev()
-                        .find(|e| {
-                            e.event_type == "accept"
-                                || e.event_type == "commit"
-                                || e.event_type == "reveal"
-                        })
-                        .map(|e| e.actor.clone()),
-                    bounty: 100,
-                    result_hash_hex: None,
-                    version: node_task_events.len() as u64,
-                };
+            if let Some(out) = query_task_from_node_events(task_id, &node_events) {
                 println!("{}", serde_json::to_string_pretty(&out)?);
                 return Ok(());
             }
@@ -1209,6 +1342,16 @@ fn main() -> Result<()> {
             let account_path = account_state_file();
             let mut accounts = load_account_state(&account_path);
             let mut ledger = accounts_to_ledger(&accounts);
+            let tx_hash = normalize_tx_hash_lookup(&tx_hash);
+            if !is_hex_like_tx_hash(&tx_hash) {
+                return Err(rpc_fail(RpcErrorResponse {
+                    code: "INVALID_ARGUMENT",
+                    message: format!(
+                        "invalid tx hash format: expected 0x-prefixed hexadecimal, got {}",
+                        tx_hash
+                    ),
+                }));
+            }
 
             let out = get_tx(&mut txs, &mut ledger, &tx_hash, now_ms()).map_err(|e| match e {
                 GetTxError::NotFound(tx_hash) => rpc_fail(RpcErrorResponse {
@@ -1223,14 +1366,16 @@ fn main() -> Result<()> {
             println!("{}", serde_json::to_string_pretty(&out)?);
         }
         Command::FaucetRequest { address, amount } => {
-            let window_seconds = std::env::var("TRNM_RPC_FAUCET_WINDOW_SECONDS")
-                .ok()
-                .and_then(|v| v.parse::<u64>().ok())
-                .unwrap_or(60);
-            let max_requests_in_window = std::env::var("TRNM_RPC_FAUCET_MAX_REQUESTS")
-                .ok()
-                .and_then(|v| v.parse::<u32>().ok())
-                .unwrap_or(1);
+            let window_seconds = env_u64_with_min(
+                "TRNM_RPC_FAUCET_WINDOW_SECONDS",
+                FAUCET_WINDOW_SECONDS_DEFAULT,
+                FAUCET_WINDOW_SECONDS_MIN,
+            );
+            let max_requests_in_window = env_u32_with_min(
+                "TRNM_RPC_FAUCET_MAX_REQUESTS",
+                FAUCET_MAX_REQUESTS_DEFAULT,
+                FAUCET_MAX_REQUESTS_MIN,
+            );
             let now = now_ms();
 
             if validate_trnm_address(&address).is_err() {
@@ -1572,6 +1717,419 @@ mod tests {
     }
 
     #[test]
+    fn normalize_tx_hash_lookup_tolerates_shell_wrapped_quotes() {
+        assert_eq!(normalize_tx_hash_lookup("  \"0xAbC123\"  "), "0xabc123");
+        assert_eq!(normalize_tx_hash_lookup(" '0xDeF456'\n"), "0xdef456");
+        assert_eq!(normalize_tx_hash_lookup("'\"0xA1B2\"'"), "0xa1b2");
+        assert_eq!(normalize_tx_hash_lookup(" `0xFf00` "), "0xff00");
+        assert_eq!(normalize_tx_hash_lookup("`\"0xBEEF\"`"), "0xbeef");
+    }
+
+    #[test]
+    fn normalize_tx_hash_lookup_tolerates_log_delimiter_wrapping() {
+        assert_eq!(normalize_tx_hash_lookup("\"0xAbC123\","), "0xabc123");
+        assert_eq!(normalize_tx_hash_lookup("(\"0xDeF456\")"), "0xdef456");
+        assert_eq!(normalize_tx_hash_lookup("{'0xA1B2'};"), "0xa1b2");
+        assert_eq!(normalize_tx_hash_lookup("[ `0xFf00` ]"), "0xff00");
+        assert_eq!(normalize_tx_hash_lookup("tx=0xBEEF"), "tx=0xbeef");
+    }
+
+    #[test]
+    fn normalize_tx_hash_lookup_accepts_common_key_value_forms() {
+        assert_eq!(normalize_tx_hash_lookup("tx_hash=0xAbC123"), "0xabc123");
+        assert_eq!(normalize_tx_hash_lookup("TxHash = \"0xDeF456\""), "0xdef456");
+        assert_eq!(normalize_tx_hash_lookup("hash= 0xA1B2"), "0xa1b2");
+        assert_eq!(normalize_tx_hash_lookup("tx_hash:0xC0FFEE"), "0xc0ffee");
+        assert_eq!(normalize_tx_hash_lookup("hash : `0xBEEF`"), "0xbeef");
+    }
+
+    #[test]
+    fn is_hex_like_tx_hash_accepts_only_0x_prefixed_hex() {
+        assert!(is_hex_like_tx_hash("0xabc123"));
+        assert!(is_hex_like_tx_hash("0xA1B2"));
+        assert!(!is_hex_like_tx_hash("abc123"));
+        assert!(!is_hex_like_tx_hash("0x"));
+        assert!(!is_hex_like_tx_hash("0xzz99"));
+        assert!(!is_hex_like_tx_hash("tx_hash=0xabc123"));
+    }
+
+    #[test]
+    fn parse_u64_kv_value_tolerates_log_token_wrapping() {
+        assert_eq!(parse_u64_kv_value("42"), Some(42));
+        assert_eq!(parse_u64_kv_value("\"42\","), Some(42));
+        assert_eq!(parse_u64_kv_value(" '42';"), Some(42));
+        assert_eq!(parse_u64_kv_value("`42`"), Some(42));
+        assert_eq!(parse_u64_kv_value("(42)"), Some(42));
+        assert_eq!(parse_u64_kv_value("[42]"), Some(42));
+        assert_eq!(parse_u64_kv_value("{42}"), Some(42));
+        assert_eq!(parse_u64_kv_value("bad42"), None);
+        assert_eq!(parse_u64_kv_value("42ms"), None);
+    }
+
+    #[test]
+    fn parse_u128_kv_value_tolerates_log_token_wrapping_without_suffix_false_positives() {
+        assert_eq!(
+            parse_u128_kv_value("1700000000123"),
+            Some(1_700_000_000_123)
+        );
+        assert_eq!(
+            parse_u128_kv_value("\"1700000000123\","),
+            Some(1_700_000_000_123)
+        );
+        assert_eq!(
+            parse_u128_kv_value("(1700000000123)"),
+            Some(1_700_000_000_123)
+        );
+        assert_eq!(parse_u128_kv_value("1700000000123ms"), None);
+        assert_eq!(parse_u128_kv_value("ts=1700000000123"), None);
+    }
+
+    #[test]
+    fn governance_state_merge_gate_keeps_emergency_pause_seeded_unpaused() {
+        let st = governance_state();
+
+        let pause = st
+            .get_param(EMERGENCY_PAUSE_KEY_ID)
+            .expect("governance_state must seed emergency_pause at canonical key id");
+        assert_eq!(
+            pause.key_id, EMERGENCY_PAUSE_KEY_ID,
+            "emergency_pause canonical key_id drifted"
+        );
+        assert_eq!(pause.key, "emergency_pause");
+        assert_eq!(pause.value, "false");
+        assert_eq!(pause.version, 1);
+        assert!(
+            !st.is_emergency_paused(),
+            "bootstrap governance_state must start unpaused"
+        );
+        assert!(
+            st.pending_gov_update("emergency_pause").is_none(),
+            "bootstrap governance_state must not leave emergency_pause queued"
+        );
+    }
+
+    #[test]
+    fn governance_state_merge_gate_emergency_pause_remains_immediate() {
+        let mut st = governance_state();
+
+        let pause = st
+            .set_gov_param(
+                9_001,
+                EMERGENCY_PAUSE_KEY_ID,
+                "emergency_pause".into(),
+                "true".into(),
+            )
+            .expect("pause update must succeed");
+        assert!(matches!(
+            pause,
+            trnm_state::GovParamUpdateOutcome::Applied(_)
+        ));
+        assert!(
+            st.is_emergency_paused(),
+            "pause=true must apply immediately"
+        );
+        assert!(
+            st.pending_gov_update("emergency_pause").is_none(),
+            "pause=true must not enqueue timelock state"
+        );
+
+        let unpause = st
+            .set_gov_param(
+                9_002,
+                EMERGENCY_PAUSE_KEY_ID,
+                "emergency_pause".into(),
+                "false".into(),
+            )
+            .expect("unpause update must succeed");
+        assert!(matches!(
+            unpause,
+            trnm_state::GovParamUpdateOutcome::Applied(_)
+        ));
+        assert!(
+            !st.is_emergency_paused(),
+            "pause=false must apply immediately"
+        );
+        assert!(
+            st.pending_gov_update("emergency_pause").is_none(),
+            "pause=false must not enqueue timelock state"
+        );
+    }
+
+    #[test]
+    fn governance_state_merge_gate_rejects_non_canonical_emergency_pause_key_id() {
+        let mut st = governance_state();
+
+        let err = st
+            .set_gov_param(9_003, 8_000, "emergency_pause".into(), "true".into())
+            .expect_err("non-canonical emergency_pause key id must be rejected");
+        assert!(err.contains("governance key id mismatch"));
+
+        // Reject path must be side-effect free on pause state and pending queues.
+        assert!(!st.is_emergency_paused());
+        assert!(st.pending_gov_update("emergency_pause").is_none());
+        let pause = st
+            .get_param(EMERGENCY_PAUSE_KEY_ID)
+            .expect("canonical emergency_pause param must remain readable");
+        assert_eq!(pause.value, "false");
+    }
+
+    #[test]
+    fn governance_state_merge_gate_emergency_pause_replace_action_stays_immediate() {
+        let mut st = governance_state();
+
+        let paused = st
+            .set_gov_param_with_action(
+                9_004,
+                EMERGENCY_PAUSE_KEY_ID,
+                "emergency_pause".into(),
+                "true".into(),
+                trnm_state::GovPendingUpdateAction::Replace,
+            )
+            .expect("pause replace action must still succeed for non-sensitive key");
+        assert!(matches!(
+            paused,
+            trnm_state::GovParamUpdateOutcome::Applied(_)
+        ));
+        assert!(st.is_emergency_paused());
+        assert!(
+            st.pending_gov_update("emergency_pause").is_none(),
+            "replace action must not queue emergency_pause timelock"
+        );
+
+        let unpaused = st
+            .set_gov_param_with_action(
+                9_005,
+                EMERGENCY_PAUSE_KEY_ID,
+                "emergency_pause".into(),
+                "false".into(),
+                trnm_state::GovPendingUpdateAction::Replace,
+            )
+            .expect("unpause replace action must still succeed for non-sensitive key");
+        assert!(matches!(
+            unpaused,
+            trnm_state::GovParamUpdateOutcome::Applied(_)
+        ));
+        assert!(!st.is_emergency_paused());
+        assert!(st.pending_gov_update("emergency_pause").is_none());
+    }
+
+    #[test]
+    fn governance_state_merge_gate_emergency_pause_enforce_action_stays_immediate() {
+        let mut st = governance_state();
+
+        let paused = st
+            .set_gov_param_with_action(
+                9_006,
+                EMERGENCY_PAUSE_KEY_ID,
+                "emergency_pause".into(),
+                "true".into(),
+                trnm_state::GovPendingUpdateAction::Enforce,
+            )
+            .expect("pause enforce action must still succeed for non-sensitive key");
+        assert!(matches!(
+            paused,
+            trnm_state::GovParamUpdateOutcome::Applied(_)
+        ));
+        assert!(st.is_emergency_paused());
+        assert!(
+            st.pending_gov_update("emergency_pause").is_none(),
+            "enforce action must not queue emergency_pause timelock"
+        );
+
+        let unpaused = st
+            .set_gov_param_with_action(
+                9_007,
+                EMERGENCY_PAUSE_KEY_ID,
+                "emergency_pause".into(),
+                "false".into(),
+                trnm_state::GovPendingUpdateAction::Enforce,
+            )
+            .expect("unpause enforce action must still succeed for non-sensitive key");
+        assert!(matches!(
+            unpaused,
+            trnm_state::GovParamUpdateOutcome::Applied(_)
+        ));
+        assert!(!st.is_emergency_paused());
+        assert!(st.pending_gov_update("emergency_pause").is_none());
+    }
+
+    #[test]
+    fn governance_state_merge_gate_emergency_pause_cancel_rejected_without_side_effects() {
+        let mut st = governance_state();
+
+        st.set_gov_param(
+            9_006,
+            EMERGENCY_PAUSE_KEY_ID,
+            "emergency_pause".into(),
+            "true".into(),
+        )
+        .expect("pause=true must apply immediately");
+        assert!(st.is_emergency_paused());
+        assert!(st.pending_gov_update("emergency_pause").is_none());
+
+        let err = st
+            .set_gov_param_with_action(
+                9_007,
+                EMERGENCY_PAUSE_KEY_ID,
+                "emergency_pause".into(),
+                "true".into(),
+                trnm_state::GovPendingUpdateAction::Cancel,
+            )
+            .expect_err("cancel must remain unsupported for non-sensitive emergency_pause");
+        assert!(
+            err.contains("cancel not supported for non-sensitive key"),
+            "{err}"
+        );
+
+        assert!(
+            st.is_emergency_paused(),
+            "cancel reject path must not flip emergency_pause"
+        );
+        assert!(
+            st.pending_gov_update("emergency_pause").is_none(),
+            "cancel reject path must not create pending timelock state"
+        );
+    }
+
+    #[test]
+    fn governance_state_merge_gate_emergency_pause_cancel_wrong_key_id_rejected_without_mutation() {
+        let mut st = governance_state();
+
+        st.set_gov_param(
+            9_007,
+            EMERGENCY_PAUSE_KEY_ID,
+            "emergency_pause".into(),
+            "true".into(),
+        )
+        .expect("pause=true must apply immediately");
+        assert!(st.is_emergency_paused());
+        assert!(st.pending_gov_update("emergency_pause").is_none());
+
+        let err = st
+            .set_gov_param_with_action(
+                9_008,
+                8_000,
+                "emergency_pause".into(),
+                "true".into(),
+                trnm_state::GovPendingUpdateAction::Cancel,
+            )
+            .expect_err("cancel with non-canonical key id must be rejected");
+        assert!(err.contains("governance key id mismatch"), "{err}");
+
+        // Reject path must be side-effect free.
+        assert!(st.is_emergency_paused());
+        assert!(st.pending_gov_update("emergency_pause").is_none());
+        let pause = st
+            .get_param(EMERGENCY_PAUSE_KEY_ID)
+            .expect("canonical emergency_pause param must remain readable");
+        assert_eq!(pause.value, "true");
+    }
+
+    #[test]
+    fn governance_state_merge_gate_emergency_pause_rejects_invalid_bool_without_side_effects() {
+        let mut st = governance_state();
+
+        let err = st
+            .set_gov_param(
+                9_008,
+                EMERGENCY_PAUSE_KEY_ID,
+                "emergency_pause".into(),
+                "TRUE".into(),
+            )
+            .expect_err("invalid bool literal must be rejected");
+        assert!(
+            err.contains("expected strict bool 'true' or 'false'"),
+            "{err}"
+        );
+
+        assert!(
+            !st.is_emergency_paused(),
+            "invalid bool reject path must keep emergency_pause unpaused"
+        );
+        assert!(
+            st.pending_gov_update("emergency_pause").is_none(),
+            "invalid bool reject path must not create pending timelock state"
+        );
+
+        let pause = st
+            .get_param(EMERGENCY_PAUSE_KEY_ID)
+            .expect("canonical emergency_pause param must remain readable");
+        assert_eq!(pause.value, "false");
+    }
+
+    #[test]
+    fn governance_state_merge_gate_emergency_pause_replace_rejects_invalid_bool_without_side_effects(
+    ) {
+        let mut st = governance_state();
+
+        let err = st
+            .set_gov_param_with_action(
+                9_009,
+                EMERGENCY_PAUSE_KEY_ID,
+                "emergency_pause".into(),
+                "TRUE".into(),
+                trnm_state::GovPendingUpdateAction::Replace,
+            )
+            .expect_err("replace action must reject non-strict bool literals");
+        assert!(
+            err.contains("expected strict bool 'true' or 'false'"),
+            "{err}"
+        );
+
+        assert!(
+            !st.is_emergency_paused(),
+            "replace invalid-bool reject path must keep emergency_pause unpaused"
+        );
+        assert!(
+            st.pending_gov_update("emergency_pause").is_none(),
+            "replace invalid-bool reject path must not create pending timelock state"
+        );
+
+        let pause = st
+            .get_param(EMERGENCY_PAUSE_KEY_ID)
+            .expect("canonical emergency_pause param must remain readable");
+        assert_eq!(pause.value, "false");
+    }
+
+    #[test]
+    fn governance_state_merge_gate_emergency_pause_cancel_skips_value_parse_but_stays_side_effect_free(
+    ) {
+        let mut st = governance_state();
+
+        let err = st
+            .set_gov_param_with_action(
+                9_010,
+                EMERGENCY_PAUSE_KEY_ID,
+                "emergency_pause".into(),
+                "NOT_BOOL".into(),
+                trnm_state::GovPendingUpdateAction::Cancel,
+            )
+            .expect_err("cancel must remain unsupported for non-sensitive emergency_pause");
+        assert!(
+            err.contains("cancel not supported for non-sensitive key"),
+            "{err}"
+        );
+        assert!(
+            !err.contains("invalid governance value"),
+            "cancel path must skip strict bool parsing"
+        );
+
+        assert!(
+            !st.is_emergency_paused(),
+            "cancel reject path with invalid value must keep emergency_pause unpaused"
+        );
+        assert!(
+            st.pending_gov_update("emergency_pause").is_none(),
+            "cancel reject path must not create pending timelock state"
+        );
+
+        let pause = st
+            .get_param(EMERGENCY_PAUSE_KEY_ID)
+            .expect("canonical emergency_pause param must remain readable");
+        assert_eq!(pause.value, "false");
+    }
+
+    #[test]
     fn summarize_challenge_treasury_tracks_balances_and_forfeits() {
         let events = vec![
             NodeEventRecord {
@@ -1656,6 +2214,60 @@ mod tests {
         assert_eq!(out.events.len(), 4);
         assert_eq!(out.events[1].forfeits_delta, 10);
         assert_eq!(out.events[3].forfeits_delta, 0);
+    }
+
+    #[test]
+    fn summarize_challenge_treasury_timeout_refund_is_non_forfeit() {
+        let events = vec![
+            NodeEventRecord {
+                event_type: "challenge".into(),
+                task_id: 2001,
+                from_status: "Revealed".into(),
+                to_status: "Challenged".into(),
+                actor: "challenger-a".into(),
+                tx_id: 1,
+                block_height: 10,
+                state_root: "s1".into(),
+                ts_unix_ms: 100,
+                signer: Some("challenger-a".into()),
+                challenger: Some("challenger-a".into()),
+                tx_hash: Some("0x01".into()),
+                resolution_code: None,
+                treasury_delta: Some(0),
+                challenger_delta: Some(-10),
+                bond_disposition: Some("posted".into()),
+            },
+            NodeEventRecord {
+                event_type: "timeout".into(),
+                task_id: 2001,
+                from_status: "Challenged".into(),
+                to_status: "Completed".into(),
+                actor: "system".into(),
+                tx_id: 2,
+                block_height: 11,
+                state_root: "s2".into(),
+                ts_unix_ms: 120,
+                signer: Some("system".into()),
+                challenger: Some("challenger-a".into()),
+                tx_hash: Some("0x02".into()),
+                resolution_code: Some("completed".into()),
+                treasury_delta: Some(0),
+                challenger_delta: Some(10),
+                bond_disposition: Some("refunded".into()),
+            },
+        ];
+
+        let out = summarize_challenge_treasury(&events, 10, Some((50, 200, "custom".into())));
+        assert_eq!(out.current_escrow_balance, 0);
+        assert_eq!(out.current_forfeits_balance, 0);
+        assert_eq!(out.cumulative_forfeited, 0);
+        assert_eq!(out.events_total, 2);
+        assert_eq!(out.events[1].forfeits_delta, 0);
+        let summary = out.daily_summary.expect("summary expected");
+        assert_eq!(summary.posted, 1);
+        assert_eq!(summary.refunded, 1);
+        assert_eq!(summary.forfeited, 0);
+        assert_eq!(summary.unresolved, 0);
     }
 
     #[test]
@@ -2029,13 +2641,219 @@ mod tests {
     }
 
     #[test]
+    fn transition_request_status_accepts_benign_formatting_variants() {
+        let next = transition_request_status("  open ", RequestStatus::Assigned)
+            .expect("OPEN -> ASSIGNED should parse with whitespace/case drift");
+        assert_eq!(next, RequestStatus::Assigned.as_str());
+
+        let next = transition_request_status("aSsIgNeD", RequestStatus::CommitQueued)
+            .expect("ASSIGNED -> COMMIT_QUEUED should parse case-insensitively");
+        assert_eq!(next, RequestStatus::CommitQueued.as_str());
+    }
+
+    #[test]
+    fn transition_request_status_rejects_malformed_state_with_stable_diagnostic() {
+        let err = transition_request_status(" pending-ish ", RequestStatus::Assigned)
+            .expect_err("unknown states must be rejected");
+        assert!(
+            err.to_string().contains("unknown request state"),
+            "unexpected error text: {}",
+            err
+        );
+    }
+
+    #[test]
+    fn query_task_from_node_events_uses_latest_status_and_worker() {
+        let events = vec![
+            NodeEventRecord {
+                event_type: "accept".into(),
+                task_id: 42,
+                from_status: "Open".into(),
+                to_status: "Assigned".into(),
+                actor: "worker-a".into(),
+                tx_id: 1,
+                block_height: 1,
+                state_root: "s1".into(),
+                ts_unix_ms: 1,
+                signer: None,
+                challenger: None,
+                tx_hash: None,
+                resolution_code: None,
+                treasury_delta: None,
+                challenger_delta: None,
+                bond_disposition: None,
+            },
+            NodeEventRecord {
+                event_type: "commit".into(),
+                task_id: 42,
+                from_status: "Assigned".into(),
+                to_status: "Committed".into(),
+                actor: "worker-b".into(),
+                tx_id: 2,
+                block_height: 2,
+                state_root: "s2".into(),
+                ts_unix_ms: 2,
+                signer: None,
+                challenger: None,
+                tx_hash: None,
+                resolution_code: None,
+                treasury_delta: None,
+                challenger_delta: None,
+                bond_disposition: None,
+            },
+            NodeEventRecord {
+                event_type: "challenge".into(),
+                task_id: 42,
+                from_status: "Revealed".into(),
+                to_status: "Challenged".into(),
+                actor: "challenger".into(),
+                tx_id: 3,
+                block_height: 3,
+                state_root: "s3".into(),
+                ts_unix_ms: 3,
+                signer: None,
+                challenger: Some("challenger".into()),
+                tx_hash: None,
+                resolution_code: None,
+                treasury_delta: None,
+                challenger_delta: None,
+                bond_disposition: None,
+            },
+        ];
+
+        let out = query_task_from_node_events(42, &events).expect("task expected");
+        assert_eq!(out.version, 3);
+        assert_eq!(out.status, TaskStatus::Challenged);
+        assert_eq!(out.worker.as_deref(), Some("worker-b"));
+    }
+
+    #[test]
+    fn query_task_from_node_events_none_for_missing_task() {
+        let events = vec![NodeEventRecord {
+            event_type: "accept".into(),
+            task_id: 10,
+            from_status: "Open".into(),
+            to_status: "Assigned".into(),
+            actor: "worker-a".into(),
+            tx_id: 1,
+            block_height: 1,
+            state_root: "s1".into(),
+            ts_unix_ms: 1,
+            signer: None,
+            challenger: None,
+            tx_hash: None,
+            resolution_code: None,
+            treasury_delta: None,
+            challenger_delta: None,
+            bond_disposition: None,
+        }];
+
+        assert!(query_task_from_node_events(999, &events).is_none());
+    }
+
+    #[test]
+    fn query_task_from_node_events_ignores_unknown_status_transition() {
+        let events = vec![
+            NodeEventRecord {
+                event_type: "accept".into(),
+                task_id: 7,
+                from_status: "Open".into(),
+                to_status: "Assigned".into(),
+                actor: "worker-a".into(),
+                tx_id: 1,
+                block_height: 1,
+                state_root: "s1".into(),
+                ts_unix_ms: 1,
+                signer: None,
+                challenger: None,
+                tx_hash: None,
+                resolution_code: None,
+                treasury_delta: None,
+                challenger_delta: None,
+                bond_disposition: None,
+            },
+            NodeEventRecord {
+                event_type: "mystery".into(),
+                task_id: 7,
+                from_status: "Assigned".into(),
+                to_status: "UNRECOGNIZED".into(),
+                actor: "system".into(),
+                tx_id: 2,
+                block_height: 2,
+                state_root: "s2".into(),
+                ts_unix_ms: 2,
+                signer: None,
+                challenger: None,
+                tx_hash: None,
+                resolution_code: None,
+                treasury_delta: None,
+                challenger_delta: None,
+                bond_disposition: None,
+            },
+        ];
+
+        let out = query_task_from_node_events(7, &events).expect("task expected");
+        assert_eq!(out.status, TaskStatus::Assigned);
+        assert_eq!(out.version, 2);
+    }
+
+    #[test]
+    fn faucet_env_parsing_enforces_minimums() {
+        std::env::set_var("TRNM_RPC_FAUCET_WINDOW_SECONDS", "0");
+        std::env::set_var("TRNM_RPC_FAUCET_MAX_REQUESTS", "0");
+
+        let window = env_u64_with_min(
+            "TRNM_RPC_FAUCET_WINDOW_SECONDS",
+            FAUCET_WINDOW_SECONDS_DEFAULT,
+            FAUCET_WINDOW_SECONDS_MIN,
+        );
+        let max_requests = env_u32_with_min(
+            "TRNM_RPC_FAUCET_MAX_REQUESTS",
+            FAUCET_MAX_REQUESTS_DEFAULT,
+            FAUCET_MAX_REQUESTS_MIN,
+        );
+
+        assert_eq!(window, FAUCET_WINDOW_SECONDS_MIN);
+        assert_eq!(max_requests, FAUCET_MAX_REQUESTS_MIN);
+
+        std::env::remove_var("TRNM_RPC_FAUCET_WINDOW_SECONDS");
+        std::env::remove_var("TRNM_RPC_FAUCET_MAX_REQUESTS");
+    }
+
+    #[test]
+    fn faucet_env_parsing_uses_defaults_for_invalid_values() {
+        std::env::set_var("TRNM_RPC_FAUCET_WINDOW_SECONDS", "bad");
+        std::env::set_var("TRNM_RPC_FAUCET_MAX_REQUESTS", "bad");
+
+        let window = env_u64_with_min(
+            "TRNM_RPC_FAUCET_WINDOW_SECONDS",
+            FAUCET_WINDOW_SECONDS_DEFAULT,
+            FAUCET_WINDOW_SECONDS_MIN,
+        );
+        let max_requests = env_u32_with_min(
+            "TRNM_RPC_FAUCET_MAX_REQUESTS",
+            FAUCET_MAX_REQUESTS_DEFAULT,
+            FAUCET_MAX_REQUESTS_MIN,
+        );
+
+        assert_eq!(window, FAUCET_WINDOW_SECONDS_DEFAULT);
+        assert_eq!(max_requests, FAUCET_MAX_REQUESTS_DEFAULT);
+
+        std::env::remove_var("TRNM_RPC_FAUCET_WINDOW_SECONDS");
+        std::env::remove_var("TRNM_RPC_FAUCET_MAX_REQUESTS");
+    }
+
+    #[test]
     fn read_log_tail_returns_recent_lines() {
         let tmp = std::env::temp_dir().join(format!("trnm-rpc-tail-test-{}.log", now_ms()));
-        fs::write(&tmp, "line1
+        fs::write(
+            &tmp,
+            "line1
 line2
 [event] event_type=commit task_id=1 tx_id=1 block_height=1
-")
-            .expect("write temp log");
+",
+        )
+        .expect("write temp log");
         let tail = read_log_tail(&tmp, 80).expect("tail text");
         assert!(tail.contains("[event] event_type=commit"));
         let _ = fs::remove_file(tmp);
@@ -2052,6 +2870,18 @@ line2
         let tail = read_log_tail(&tmp, tail_bytes).expect("tail text");
 
         assert!(tail.starts_with("[event] event_type=commit"));
+        let _ = fs::remove_file(tmp);
+    }
+
+    #[test]
+    fn read_log_tail_tolerates_non_utf8_bytes() {
+        let tmp = std::env::temp_dir().join(format!("trnm-rpc-tail-binary-{}.log", now_ms()));
+        let mut bytes = vec![0xff, 0xfe, b'\n'];
+        bytes.extend_from_slice(b"[event] event_type=commit task_id=9 tx_id=1 block_height=1\n");
+        fs::write(&tmp, bytes).expect("write temp binary log");
+
+        let tail = read_log_tail(&tmp, 1024).expect("tail text");
+        assert!(tail.contains("[event] event_type=commit task_id=9"));
         let _ = fs::remove_file(tmp);
     }
 }

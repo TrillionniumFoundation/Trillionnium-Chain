@@ -11,6 +11,9 @@ export STATE="/tmp/trnm-worker-state-${RUN_TAG}.json"
 export SUBMIT_LOG="/tmp/trnm-worker-submits-${RUN_TAG}.jsonl"
 export ACK_LOG="/tmp/trnm-worker-acks-${RUN_TAG}.jsonl"
 export VERIFY_DIR="/tmp/trnm-worker-verify-${RUN_TAG}"
+for p in "$STATE" "$SUBMIT_LOG" "$ACK_LOG" "$VERIFY_DIR"; do
+  [[ "$p" == *"$RUN_TAG"* ]] || { echo "[FAIL] non-isolated gate path: $p" >&2; exit 2; }
+done
 rm -f "$STATE" "$SUBMIT_LOG" "$ACK_LOG"
 
 ./scripts/v2/worker_agent_full_loop.sh
