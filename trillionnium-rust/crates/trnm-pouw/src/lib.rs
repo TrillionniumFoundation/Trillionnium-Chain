@@ -1643,6 +1643,44 @@ mod tests {
     }
 
     #[test]
+    fn challenge_requires_min_bond_as_max_of_governance_bounty_and_worker_stake_floors() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 200);
+        st.set_gov_param_unchecked(9004, "challenge_min_bond".into(), "30".into())
+            .unwrap();
+        st.set_gov_param_unchecked(9005, "challenge_min_bond_bounty_bps".into(), "5000".into())
+            .unwrap();
+        st.set_gov_param_unchecked(9006, "min_worker_stake".into(), "80".into())
+            .unwrap();
+        st.set_gov_param_unchecked(
+            9007,
+            "challenge_min_bond_worker_stake_bps".into(),
+            "7500".into(),
+        )
+        .unwrap();
+
+        let r1 = apply_create_task(&mut st, 886, "alice".into(), 100).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(886, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt).unwrap();
+
+        // Floors are: governance=30, bounty=50, worker-stake=60; effective min bond is max=60.
+        let err =
+            apply_challenge(&mut st, r4.clone(), "challenger".into(), 59, "challenger".into())
+                .unwrap_err();
+        assert!(matches!(err, PouwError::InsufficientStake));
+
+        let r5 = apply_challenge(&mut st, r4, "challenger".into(), 60, "challenger".into())
+            .unwrap();
+        let task = st.get_task(r5.id).unwrap();
+        assert_eq!(task.challenge_bond, Some(60));
+    }
+
+    #[test]
     fn challenge_requires_min_bond_from_governance() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
