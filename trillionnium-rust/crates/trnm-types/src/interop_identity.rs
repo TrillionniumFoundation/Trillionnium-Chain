@@ -60,6 +60,13 @@ impl SettlementRecord {
         settlement_tx: Option<String>,
         revert_reason: Option<String>,
     ) -> Result<(), InteropIdentityError> {
+        if at_height < self.at_height {
+            return Err(InteropIdentityError::InvalidSettlementHeightRegression {
+                current_at: self.at_height,
+                next_at: at_height,
+            });
+        }
+
         let next_status = self.status.transition(to)?;
 
         let (next_settlement_tx, next_revert_reason) = match to {
@@ -389,6 +396,10 @@ pub enum InteropIdentityError {
         from: SettlementStatus,
         to: SettlementStatus,
     },
+    InvalidSettlementHeightRegression {
+        current_at: u64,
+        next_at: u64,
+    },
     DidAlreadyExists {
         did: String,
     },
@@ -422,6 +433,16 @@ impl fmt::Display for InteropIdentityError {
         match self {
             InteropIdentityError::InvalidSettlementTransition { from, to } => {
                 write!(f, "illegal settlement transition: {:?} -> {:?}", from, to)
+            }
+            InteropIdentityError::InvalidSettlementHeightRegression {
+                current_at,
+                next_at,
+            } => {
+                write!(
+                    f,
+                    "invalid settlement height regression: next_at {} < current_at {}",
+                    next_at, current_at
+                )
             }
             InteropIdentityError::DidAlreadyExists { did } => {
                 write!(f, "did already exists: {}", did)
@@ -729,6 +750,44 @@ mod tests {
             .unwrap();
         assert_eq!(reverted.settlement_tx, None);
         assert_eq!(reverted.revert_reason.as_deref(), Some("manual_compensation"));
+    }
+
+    #[test]
+    fn settlement_status_update_rejects_height_regression_without_side_effects() {
+        let route = BridgeRoute {
+            route_id: "eth->trnm".to_string(),
+            source_chain: "ethereum".to_string(),
+            target_chain: "trillionnium".to_string(),
+        };
+        let mut rec = SettlementRecord {
+            settlement_id: 15,
+            route,
+            status: SettlementStatus::Pending,
+            at_height: 500,
+            settlement_tx: None,
+            revert_reason: None,
+        };
+
+        let err = rec
+            .apply_status(
+                SettlementStatus::Finalized,
+                499,
+                Some("0xlate".to_string()),
+                None,
+            )
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            InteropIdentityError::InvalidSettlementHeightRegression {
+                current_at: 500,
+                next_at: 499
+            }
+        ));
+        assert_eq!(rec.status, SettlementStatus::Pending);
+        assert_eq!(rec.at_height, 500);
+        assert_eq!(rec.settlement_tx, None);
+        assert_eq!(rec.revert_reason, None);
     }
 
     #[test]
