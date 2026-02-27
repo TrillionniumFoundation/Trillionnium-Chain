@@ -68,16 +68,20 @@ impl SettlementRecord {
                     .as_deref()
                     .map(str::trim)
                     .filter(|v| !v.is_empty())
+                    .map(str::to_string)
+                    .or_else(|| self.settlement_tx.clone())
                     .ok_or(InteropIdentityError::MissingSettlementTx)?;
-                (Some(tx.to_string()), None)
+                (Some(tx), None)
             }
             SettlementStatus::Reverted => {
                 let reason = revert_reason
                     .as_deref()
                     .map(str::trim)
                     .filter(|v| !v.is_empty())
+                    .map(str::to_string)
+                    .or_else(|| self.revert_reason.clone())
                     .ok_or(InteropIdentityError::MissingRevertReason)?;
-                (None, Some(reason.to_string()))
+                (None, Some(reason))
             }
             SettlementStatus::Pending => (self.settlement_tx.clone(), self.revert_reason.clone()),
         };
@@ -497,6 +501,61 @@ mod tests {
                 to: SettlementStatus::Reverted
             }
         ));
+    }
+
+    #[test]
+    fn settlement_reapply_same_terminal_status_is_idempotent() {
+        let route = BridgeRoute {
+            route_id: "eth->trnm".to_string(),
+            source_chain: "ethereum".to_string(),
+            target_chain: "trillionnium".to_string(),
+        };
+
+        let mut finalized = SettlementRecord {
+            settlement_id: 8,
+            route: route.clone(),
+            status: SettlementStatus::Pending,
+            at_height: 100,
+            settlement_tx: None,
+            revert_reason: None,
+        };
+        finalized
+            .apply_status(
+                SettlementStatus::Finalized,
+                101,
+                Some("0xabc".to_string()),
+                None,
+            )
+            .unwrap();
+        finalized
+            .apply_status(SettlementStatus::Finalized, 102, None, None)
+            .unwrap();
+        assert_eq!(finalized.status, SettlementStatus::Finalized);
+        assert_eq!(finalized.settlement_tx.as_deref(), Some("0xabc"));
+        assert_eq!(finalized.revert_reason, None);
+
+        let mut reverted = SettlementRecord {
+            settlement_id: 9,
+            route,
+            status: SettlementStatus::Pending,
+            at_height: 200,
+            settlement_tx: None,
+            revert_reason: None,
+        };
+        reverted
+            .apply_status(
+                SettlementStatus::Reverted,
+                201,
+                None,
+                Some("fraud-proof".to_string()),
+            )
+            .unwrap();
+        reverted
+            .apply_status(SettlementStatus::Reverted, 202, None, None)
+            .unwrap();
+        assert_eq!(reverted.status, SettlementStatus::Reverted);
+        assert_eq!(reverted.settlement_tx, None);
+        assert_eq!(reverted.revert_reason.as_deref(), Some("fraud-proof"));
     }
 
     #[test]
