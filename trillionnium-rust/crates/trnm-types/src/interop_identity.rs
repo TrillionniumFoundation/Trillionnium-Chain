@@ -280,17 +280,20 @@ impl IdentityRegistry {
             .collect();
 
         for token_id in to_revoke {
-            if let Some(token) = self.capabilities.get_mut(&token_id) {
+            let subject = {
+                let Some(token) = self.capabilities.get_mut(&token_id) else {
+                    continue;
+                };
                 token.revoked_at = Some(at_height);
-                let subject = token.subject_did.clone();
-                self.push_audit(
-                    AuditAction::CapabilityRevoked,
-                    "system:cascade".to_string(),
-                    subject,
-                    at_height,
-                    Some(format!("cascade_on_did_revoke token_id={}", token_id)),
-                );
-            }
+                token.subject_did.clone()
+            };
+            self.push_audit(
+                AuditAction::CapabilityRevoked,
+                "system:cascade".to_string(),
+                subject,
+                at_height,
+                Some(format!("cascade_on_did_revoke token_id={}", token_id)),
+            );
         }
 
         Ok(())
@@ -472,6 +475,7 @@ mod tests {
         assert_eq!(audit[3].action, AuditAction::CapabilityIssued);
         assert_eq!(audit[4].action, AuditAction::DidRevoked);
         assert_eq!(audit[5].action, AuditAction::CapabilityRevoked);
+        assert_eq!(audit[5].actor, "system:cascade");
         assert!(audit[5]
             .note
             .as_deref()
