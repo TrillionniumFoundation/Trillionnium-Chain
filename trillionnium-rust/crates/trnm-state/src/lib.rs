@@ -486,6 +486,14 @@ impl StateStore {
                 key, EMERGENCY_PAUSE_KEY_ID, key_id
             ));
         }
+        if let Some(existing_key_id) = self.gov_param_key_index.get(&key).copied() {
+            if existing_key_id != key_id {
+                return Err(format!(
+                    "governance key id mismatch for {}: existing_id={}, attempted_id={}",
+                    key, existing_key_id, key_id
+                ));
+            }
+        }
 
         if action != GovPendingUpdateAction::Cancel {
             validate_gov_param_value(&key, &value)?;
@@ -2277,6 +2285,32 @@ mod tests {
         st.set_gov_param(9_102, 7999, "emergency_pause".into(), "false".into())
             .unwrap();
         assert!(!st.is_emergency_paused());
+    }
+
+    #[test]
+    fn non_sensitive_governance_noop_rejects_mismatched_key_id() {
+        // Merge-gate guard: noop/idempotent path must not hide key-id drift for immediate keys.
+        let mut st = StateStore::new();
+
+        let first = st
+            .set_gov_param(9_300, 6_001, "max_block_ms".into(), "500".into())
+            .expect("seed max_block_ms must succeed");
+        let first_ref = match first {
+            GovParamUpdateOutcome::Applied(r) => r,
+            _ => panic!("max_block_ms must remain immediate"),
+        };
+
+        let err = st
+            .set_gov_param(9_301, 6_002, "max_block_ms".into(), "500".into())
+            .expect_err("mismatched key-id noop must be rejected");
+        assert!(err.contains("governance key id mismatch"), "{err}");
+
+        let preserved = st
+            .get_param(first_ref.id)
+            .expect("canonical max_block_ms entry must remain readable");
+        assert_eq!(preserved.key_id, 6_001);
+        assert_eq!(preserved.value, "500");
+        assert!(st.pending_gov_update("max_block_ms").is_none());
     }
 
     #[test]
