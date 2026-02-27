@@ -780,10 +780,11 @@ fn run_llm_adapter_with_retry(
 }
 
 fn verify_model_output(output: &str, max_chars: usize) -> (&'static str, &'static str) {
-    if output.trim().is_empty() {
+    let trimmed = output.trim();
+    if trimmed.is_empty() {
         return ("rejected", "empty_output");
     }
-    if output.chars().count() > max_chars {
+    if trimmed.chars().count() > max_chars {
         return ("rejected", "output_too_long");
     }
     ("accepted", "ok")
@@ -1091,6 +1092,9 @@ mod tests {
 
         let over = "你好abc"; // 5 chars
         assert_eq!(verify_model_output(over, 4), ("rejected", "output_too_long"));
+
+        // Leading/trailing transport whitespace should not cause false rejections.
+        assert_eq!(verify_model_output(" 你好ab \n", 4), ("accepted", "ok"));
     }
 
     #[test]
