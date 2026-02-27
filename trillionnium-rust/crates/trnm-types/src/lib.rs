@@ -1,3 +1,4 @@
+mod interop_identity;
 mod relay;
 mod request_status;
 mod transcript;
@@ -5,6 +6,10 @@ mod transfer;
 
 use serde::{Deserialize, Serialize};
 
+pub use interop_identity::{
+    AuditAction, AuditEvent, BridgeRoute, CapabilityScope, CapabilityToken, DidRecord,
+    IdentityRegistry, InteropIdentityError, SettlementRecord, SettlementStatus,
+};
 pub use relay::{
     RelayAuthEnvelope, RelayAuthError, RelayAuthVerifier, RelayEnvelope, RelaySession,
     RelaySessionStatus,
