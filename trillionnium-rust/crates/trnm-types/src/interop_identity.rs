@@ -227,7 +227,15 @@ impl IdentityRegistry {
         }
 
         match self.dids.get(&subject_did) {
-            Some(did) if did.is_active() => {}
+            Some(did) if did.is_active() => {
+                if at_height < did.created_at {
+                    return Err(InteropIdentityError::InvalidCapabilityIssueHeight {
+                        did: subject_did.clone(),
+                        created_at: did.created_at,
+                        issued_at: at_height,
+                    });
+                }
+            }
             Some(_) => {
                 return Err(InteropIdentityError::DidRevoked {
                     did: subject_did.clone(),
@@ -420,6 +428,11 @@ pub enum InteropIdentityError {
         issued_at: u64,
         revoked_at: u64,
     },
+    InvalidCapabilityIssueHeight {
+        did: String,
+        created_at: u64,
+        issued_at: u64,
+    },
     InvalidDidRevocationHeight {
         created_at: u64,
         revoked_at: u64,
@@ -474,6 +487,17 @@ impl fmt::Display for InteropIdentityError {
                     f,
                     "invalid capability revocation height: revoked_at {} < issued_at {}",
                     revoked_at, issued_at
+                )
+            }
+            InteropIdentityError::InvalidCapabilityIssueHeight {
+                did,
+                created_at,
+                issued_at,
+            } => {
+                write!(
+                    f,
+                    "invalid capability issue height for {}: issued_at {} < did created_at {}",
+                    did, issued_at, created_at
                 )
             }
             InteropIdentityError::InvalidDidRevocationHeight {
@@ -817,6 +841,39 @@ mod tests {
                 expires_at: 19
             }
         ));
+    }
+
+    #[test]
+    fn issue_capability_rejects_height_before_did_creation_without_side_effects() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did(
+            "did:trnm:agent-1b".to_string(),
+            "org:lane2-admin".to_string(),
+            10,
+        )
+        .unwrap();
+        let audit_len_before = reg.audit_trail().len();
+
+        let err = reg
+            .issue_capability(
+                "org:lane2-admin".to_string(),
+                "did:trnm:agent-1b".to_string(),
+                CapabilityScope::BridgeSettle,
+                9,
+                Some(90),
+            )
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            InteropIdentityError::InvalidCapabilityIssueHeight {
+                did,
+                created_at: 10,
+                issued_at: 9,
+            } if did == "did:trnm:agent-1b"
+        ));
+        assert_eq!(reg.audit_trail().len(), audit_len_before);
+        assert!(reg.capability(1).is_none());
     }
 
     #[test]
