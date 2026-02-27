@@ -788,6 +788,10 @@ fn is_invisible_filler(c: char) -> bool {
             | '\u{200E}' // LEFT-TO-RIGHT MARK
             | '\u{200F}' // RIGHT-TO-LEFT MARK
             | '\u{2060}' // WORD JOINER
+            | '\u{2061}' // FUNCTION APPLICATION (invisible operator)
+            | '\u{2062}' // INVISIBLE TIMES
+            | '\u{2063}' // INVISIBLE SEPARATOR
+            | '\u{2064}' // INVISIBLE PLUS
             | '\u{00AD}' // SOFT HYPHEN
             | '\u{180E}' // MONGOLIAN VOWEL SEPARATOR (historically zero-width)
             | '\u{FEFF}' // ZERO WIDTH NO-BREAK SPACE / BOM
@@ -1213,6 +1217,7 @@ mod tests {
             ("rejected", "empty_output")
         );
         assert_eq!(verify_model_output("\u{2060}\u{00AD}", 8), ("rejected", "empty_output"));
+        assert_eq!(verify_model_output("\u{2061}\u{2062}\u{2063}\u{2064}", 8), ("rejected", "empty_output"));
         assert_eq!(verify_model_output("\u{180E}", 8), ("rejected", "empty_output"));
         assert_eq!(verify_model_output("\u{200E}\u{200F}", 8), ("rejected", "empty_output"));
 
