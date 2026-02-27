@@ -357,7 +357,7 @@ fn trim_wrapped_log_numeric(raw: &str) -> &str {
         c.is_ascii_whitespace()
             || matches!(
                 c,
-                '"' | '\'' | '`' | ',' | ';' | '.' | '(' | ')' | '[' | ']' | '{' | '}'
+                '"' | '\'' | '`' | ',' | ';' | ':' | '.' | '(' | ')' | '[' | ']' | '{' | '}'
             )
     })
 }
@@ -1776,6 +1776,7 @@ mod tests {
         assert_eq!(parse_u64_kv_value("[42]"), Some(42));
         assert_eq!(parse_u64_kv_value("{42}"), Some(42));
         assert_eq!(parse_u64_kv_value("42."), Some(42));
+        assert_eq!(parse_u64_kv_value("42:"), Some(42));
         assert_eq!(parse_u64_kv_value("bad42"), None);
         assert_eq!(parse_u64_kv_value("42ms"), None);
     }
