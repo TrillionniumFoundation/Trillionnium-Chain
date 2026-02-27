@@ -194,6 +194,17 @@ impl IdentityRegistry {
         Ok(())
     }
 
+    fn ensure_actor_controls_did(actor: &str, did: &DidRecord) -> Result<(), InteropIdentityError> {
+        if did.controller != actor {
+            return Err(InteropIdentityError::UnauthorizedActor {
+                actor: actor.to_string(),
+                did: did.did.clone(),
+                controller: did.controller.clone(),
+            });
+        }
+        Ok(())
+    }
+
     pub fn register_did(
         &mut self,
         did: String,
@@ -247,6 +258,7 @@ impl IdentityRegistry {
 
         match self.dids.get(&subject_did) {
             Some(did) if did.is_active() => {
+                Self::ensure_actor_controls_did(&actor, did)?;
                 if at_height < did.created_at {
                     return Err(InteropIdentityError::InvalidCapabilityIssueHeight {
                         did: subject_did.clone(),
@@ -299,6 +311,20 @@ impl IdentityRegistry {
     ) -> Result<(), InteropIdentityError> {
         Self::validate_identity_field("actor", &actor)?;
 
+        let subject_did = self
+            .capabilities
+            .get(&token_id)
+            .ok_or(InteropIdentityError::CapabilityNotFound { token_id })?
+            .subject_did
+            .clone();
+        let did = self
+            .dids
+            .get(&subject_did)
+            .ok_or_else(|| InteropIdentityError::DidNotFound {
+                did: subject_did.clone(),
+            })?;
+        Self::ensure_actor_controls_did(&actor, did)?;
+
         let subject = {
             let token = self
                 .capabilities
@@ -341,6 +367,8 @@ impl IdentityRegistry {
             .ok_or_else(|| InteropIdentityError::DidNotFound {
                 did: did.to_string(),
             })?;
+
+        Self::ensure_actor_controls_did(&actor, did_rec)?;
 
         if did_rec.revoked_at.is_some() {
             return Ok(());
@@ -445,6 +473,11 @@ pub enum InteropIdentityError {
     DidRevoked {
         did: String,
     },
+    UnauthorizedActor {
+        actor: String,
+        did: String,
+        controller: String,
+    },
     CapabilityNotFound {
         token_id: u64,
     },
@@ -496,6 +529,17 @@ impl fmt::Display for InteropIdentityError {
             }
             InteropIdentityError::DidRevoked { did } => {
                 write!(f, "did revoked: {}", did)
+            }
+            InteropIdentityError::UnauthorizedActor {
+                actor,
+                did,
+                controller,
+            } => {
+                write!(
+                    f,
+                    "unauthorized actor {} for did {} (controller: {})",
+                    actor, did, controller
+                )
             }
             InteropIdentityError::CapabilityNotFound { token_id } => {
                 write!(f, "capability not found: {}", token_id)
@@ -1468,6 +1512,79 @@ mod tests {
         assert!(matches!(
             err,
             InteropIdentityError::InvalidIdentityValue { field: "actor", .. }
+        ));
+        assert_eq!(reg.audit_trail().len(), audit_len_before);
+        assert_eq!(reg.capability(token_id).unwrap().revoked_at, None);
+    }
+
+    #[test]
+    fn issue_capability_rejects_actor_that_is_not_did_controller_without_side_effects() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did(
+            "did:trnm:agent-8".to_string(),
+            "org:lane2-admin".to_string(),
+            10,
+        )
+        .unwrap();
+        let audit_len_before = reg.audit_trail().len();
+
+        let err = reg
+            .issue_capability(
+                "org:lane2-backup".to_string(),
+                "did:trnm:agent-8".to_string(),
+                CapabilityScope::BridgeSettle,
+                20,
+                None,
+            )
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            InteropIdentityError::UnauthorizedActor {
+                actor,
+                did,
+                controller,
+            } if actor == "org:lane2-backup"
+                && did == "did:trnm:agent-8"
+                && controller == "org:lane2-admin"
+        ));
+        assert_eq!(reg.audit_trail().len(), audit_len_before);
+        assert!(reg.capability(1).is_none());
+    }
+
+    #[test]
+    fn revoke_capability_rejects_actor_that_is_not_did_controller_without_side_effects() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did(
+            "did:trnm:agent-9".to_string(),
+            "org:lane2-admin".to_string(),
+            10,
+        )
+        .unwrap();
+        let token_id = reg
+            .issue_capability(
+                "org:lane2-admin".to_string(),
+                "did:trnm:agent-9".to_string(),
+                CapabilityScope::BridgeSettle,
+                20,
+                None,
+            )
+            .unwrap();
+        let audit_len_before = reg.audit_trail().len();
+
+        let err = reg
+            .revoke_capability("org:lane2-backup".to_string(), token_id, 30, None)
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            InteropIdentityError::UnauthorizedActor {
+                actor,
+                did,
+                controller,
+            } if actor == "org:lane2-backup"
+                && did == "did:trnm:agent-9"
+                && controller == "org:lane2-admin"
         ));
         assert_eq!(reg.audit_trail().len(), audit_len_before);
         assert_eq!(reg.capability(token_id).unwrap().revoked_at, None);
