@@ -793,6 +793,7 @@ fn is_invisible_filler(c: char) -> bool {
             | '\u{2063}' // INVISIBLE SEPARATOR
             | '\u{2064}' // INVISIBLE PLUS
             | '\u{00AD}' // SOFT HYPHEN
+            | '\u{034F}' // COMBINING GRAPHEME JOINER (non-rendering)
             | '\u{180E}' // MONGOLIAN VOWEL SEPARATOR (historically zero-width)
             | '\u{FE0E}' // VARIATION SELECTOR-15 (text presentation)
             | '\u{FE0F}' // VARIATION SELECTOR-16 (emoji presentation)
@@ -1234,6 +1235,7 @@ mod tests {
         );
         assert_eq!(verify_model_output("\u{2060}\u{00AD}", 8), ("rejected", "empty_output"));
         assert_eq!(verify_model_output("\u{2061}\u{2062}\u{2063}\u{2064}", 8), ("rejected", "empty_output"));
+        assert_eq!(verify_model_output("\u{034F}", 8), ("rejected", "empty_output"));
         assert_eq!(verify_model_output("\u{180E}", 8), ("rejected", "empty_output"));
         assert_eq!(verify_model_output("\u{200E}\u{200F}", 8), ("rejected", "empty_output"));
         assert_eq!(verify_model_output("\u{FE0E}", 8), ("rejected", "empty_output"));
@@ -1260,6 +1262,7 @@ mod tests {
 
         // Invisible fillers should not inflate length checks for market verification.
         assert_eq!(verify_model_output("\u{200B}ok\u{200D}", 2), ("accepted", "ok"));
+        assert_eq!(verify_model_output("o\u{034F}k", 2), ("accepted", "ok"));
 
         // ZWJ inside visible emoji sequences should stay deterministic for verifier limits.
         assert_eq!(verify_model_output("👩\u{200D}💻", 2), ("accepted", "ok"));
