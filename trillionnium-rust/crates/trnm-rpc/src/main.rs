@@ -370,6 +370,10 @@ fn parse_u128_kv_value(raw: &str) -> Option<u128> {
     trim_wrapped_log_numeric(raw).parse::<u128>().ok()
 }
 
+fn parse_i128_kv_value(raw: &str) -> Option<i128> {
+    trim_wrapped_log_numeric(raw).parse::<i128>().ok()
+}
+
 fn load_latest_node_events() -> Vec<NodeEventRecord> {
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .parent()
@@ -457,10 +461,10 @@ fn load_latest_node_events() -> Vec<NodeEventRecord> {
             resolution_code: normalize_opt("resolution_code"),
             treasury_delta: kv
                 .get("treasury_delta")
-                .and_then(|v| v.parse::<i128>().ok()),
+                .and_then(|v| parse_i128_kv_value(v)),
             challenger_delta: kv
                 .get("challenger_delta")
-                .and_then(|v| v.parse::<i128>().ok()),
+                .and_then(|v| parse_i128_kv_value(v)),
             bond_disposition: normalize_opt("bond_disposition"),
         });
     }
@@ -1782,6 +1786,15 @@ mod tests {
         );
         assert_eq!(parse_u128_kv_value("1700000000123ms"), None);
         assert_eq!(parse_u128_kv_value("ts=1700000000123"), None);
+    }
+
+    #[test]
+    fn parse_i128_kv_value_tolerates_signed_wrapping_without_suffix_false_positives() {
+        assert_eq!(parse_i128_kv_value("-42"), Some(-42));
+        assert_eq!(parse_i128_kv_value("\"-42\","), Some(-42));
+        assert_eq!(parse_i128_kv_value("(+7)"), Some(7));
+        assert_eq!(parse_i128_kv_value("-42ms"), None);
+        assert_eq!(parse_i128_kv_value("delta=-42"), None);
     }
 
     #[test]
