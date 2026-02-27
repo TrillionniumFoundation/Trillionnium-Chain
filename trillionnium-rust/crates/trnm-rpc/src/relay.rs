@@ -1143,6 +1143,10 @@ mod tests {
         content_tampered.proofs[0].envelope.payload = b"tampered".to_vec();
         assert!(verify_session_proof(&content_tampered).is_err());
 
+        let mut leaf_hash_tampered = proof.clone();
+        leaf_hash_tampered.proofs[0].leaf_hash_hex = "ff".repeat(32);
+        assert!(verify_session_proof(&leaf_hash_tampered).is_err());
+
         let mut root_mismatch = proof.clone();
         root_mismatch.segment_root_hex = "00".repeat(32);
         assert!(verify_session_proof(&root_mismatch).is_err());
