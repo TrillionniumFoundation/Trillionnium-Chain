@@ -441,6 +441,9 @@ fn parse_tx_query_response(raw: &str, requested_tx_hash: &str) -> Result<TxQuery
         let raw_tx_hash = payload
             .get("tx_hash")
             .or_else(|| payload.get("txhash"))
+            .or_else(|| payload.get("txHash"))
+            .or_else(|| payload.get("transaction_hash"))
+            .or_else(|| payload.get("transactionHash"))
             .and_then(|x| x.as_str());
         let tx_hash = match raw_tx_hash {
             Some(raw_hash) => normalize_tx_hash(raw_hash)
@@ -959,6 +962,19 @@ mod tests {
         assert_eq!(parsed.tx_hash, "0xabc");
         assert_eq!(parsed.status, "committed");
         assert_eq!(parsed.error, None);
+    }
+
+    #[test]
+    fn tx_query_parse_json_accepts_camel_and_transaction_hash_keys() {
+        let camel = "{\"result\":{\"txHash\":\"0xabc\",\"status\":\"success\"}}";
+        let parsed_camel = parse_tx_query_response(camel, "0xfallback").unwrap();
+        assert_eq!(parsed_camel.tx_hash, "0xabc");
+        assert_eq!(parsed_camel.status, "committed");
+
+        let transaction = "{\"transactionHash\":\"0xdef\",\"status\":\"committed\"}";
+        let parsed_transaction = parse_tx_query_response(transaction, "0xfallback").unwrap();
+        assert_eq!(parsed_transaction.tx_hash, "0xdef");
+        assert_eq!(parsed_transaction.status, "committed");
     }
 
     #[test]
