@@ -363,7 +363,11 @@ fn parse_kv_line(line: &str) -> Option<(String, String)> {
 
     Some((
         key.to_ascii_lowercase(),
-        value.trim_matches('"').to_string(),
+        value
+            .trim_matches('"')
+            .trim_matches('\'')
+            .trim_matches('`')
+            .to_string(),
     ))
 }
 
@@ -389,6 +393,9 @@ fn parse_inline_kv_token(token: &str) -> Option<(String, String)> {
             .trim_matches(|c: char| {
                 c.is_ascii_whitespace() || matches!(c, ',' | ';' | '{' | '}' | '[' | ']' | '(' | ')')
             })
+            .trim_matches('"')
+            .trim_matches('\'')
+            .trim_matches('`')
             .to_string(),
     ))
 }
@@ -1025,6 +1032,17 @@ mod tests {
         assert_eq!(parsed_backtick.tx_hash, "0x778");
         assert_eq!(parsed_backtick.status, "committed");
         assert_eq!(parsed_backtick.error, None);
+    }
+
+    #[test]
+    fn tx_query_parse_kv_unwraps_single_and_backtick_quoted_error_values() {
+        let single = "tx_hash=0x781\nstatus=fail\nerror='nonce mismatch'\n";
+        let parsed_single = parse_tx_query_response(single, "0xfallback").unwrap();
+        assert_eq!(parsed_single.error.as_deref(), Some("nonce mismatch"));
+
+        let backtick = "tx_hash=0x782\nstatus=fail\nerror=`signature invalid`\n";
+        let parsed_backtick = parse_tx_query_response(backtick, "0xfallback").unwrap();
+        assert_eq!(parsed_backtick.error.as_deref(), Some("signature invalid"));
     }
 
     #[test]
