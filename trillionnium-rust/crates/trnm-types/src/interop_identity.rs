@@ -271,6 +271,11 @@ impl IdentityRegistry {
             .ok_or_else(|| InteropIdentityError::DidNotFound {
                 did: did.to_string(),
             })?;
+
+        if did_rec.revoked_at.is_some() {
+            return Ok(());
+        }
+
         did_rec.revoked_at = Some(at_height);
         self.push_audit(
             AuditAction::DidRevoked,
@@ -533,5 +538,37 @@ mod tests {
             .as_deref()
             .unwrap_or_default()
             .contains("cascade_on_did_revoke"));
+    }
+
+    #[test]
+    fn revoke_did_is_idempotent_for_audit_and_timestamp() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did(
+            "did:trnm:agent-2".to_string(),
+            "org:lane2-admin".to_string(),
+            10,
+        )
+        .unwrap();
+
+        let token_id = reg
+            .issue_capability(
+                "org:lane2-admin".to_string(),
+                "did:trnm:agent-2".to_string(),
+                CapabilityScope::BridgeSettle,
+                12,
+                Some(100),
+            )
+            .unwrap();
+
+        reg.revoke_did("org:lane2-admin".to_string(), "did:trnm:agent-2", 40)
+            .unwrap();
+        let first_audit_len = reg.audit_trail().len();
+
+        reg.revoke_did("org:lane2-admin".to_string(), "did:trnm:agent-2", 99)
+            .unwrap();
+
+        assert_eq!(reg.did("did:trnm:agent-2").unwrap().revoked_at, Some(40));
+        assert_eq!(reg.capability(token_id).unwrap().revoked_at, Some(40));
+        assert_eq!(reg.audit_trail().len(), first_audit_len);
     }
 }
