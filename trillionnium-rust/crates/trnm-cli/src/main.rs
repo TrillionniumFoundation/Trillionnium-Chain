@@ -480,9 +480,11 @@ fn parse_tx_query_response(raw: &str, requested_tx_hash: &str) -> Result<TxQuery
 
         for (key, value) in pairs {
             match key.as_str() {
-                "tx_hash" | "txhash" => match normalize_tx_hash(&value) {
-                    Some(normalized) => tx_hash = Some(normalized),
-                    None => bail!("invalid tx_hash field in tx query response"),
+                "tx_hash" | "txhash" | "transaction_hash" | "transactionhash" => {
+                    match normalize_tx_hash(&value) {
+                        Some(normalized) => tx_hash = Some(normalized),
+                        None => bail!("invalid tx_hash field in tx query response"),
+                    }
                 },
                 "status" => {
                     if let Some(normalized) = normalize_tx_status(&value) {
@@ -1114,6 +1116,17 @@ mod tests {
         let nested_wrappers = "tx_hash=(`\"0xBEEF42\"`,)\nstatus=committed\n";
         let parsed_nested = parse_tx_query_response(nested_wrappers, "0xfallback").unwrap();
         assert_eq!(parsed_nested.tx_hash, "0xbeef42");
+    }
+
+    #[test]
+    fn tx_query_parse_kv_accepts_transaction_hash_aliases() {
+        let snake = "transaction_hash=0xabc123\nstatus=committed\n";
+        let parsed_snake = parse_tx_query_response(snake, "0xfallback").unwrap();
+        assert_eq!(parsed_snake.tx_hash, "0xabc123");
+
+        let compact = "transactionHash=0xdef456\nstatus=committed\n";
+        let parsed_compact = parse_tx_query_response(compact, "0xfallback").unwrap();
+        assert_eq!(parsed_compact.tx_hash, "0xdef456");
     }
 
     #[test]
