@@ -89,6 +89,38 @@ ALL_CASES=(
   faulty_round_backoff leader_jitter message_reorder slow_validator
 )
 
+known_case() {
+  local name="$1"
+  local c
+  for c in "${ALL_CASES[@]}"; do
+    if [[ "$c" == "$name" ]]; then
+      return 0
+    fi
+  done
+  return 1
+}
+
+validate_case_filter() {
+  if [[ "$CASE_FILTER" == "all" || -z "$CASE_FILTER" ]]; then
+    return 0
+  fi
+
+  local token
+  IFS=',' read -r -a _case_tokens <<< "$CASE_FILTER"
+  for token in "${_case_tokens[@]}"; do
+    if [[ -z "$token" ]]; then
+      echo "[FAIL] consensus fault matrix invalid empty case name in CASE_FILTER=$CASE_FILTER" >&2
+      exit 2
+    fi
+    if ! known_case "$token"; then
+      echo "[FAIL] consensus fault matrix unknown case '$token' in CASE_FILTER=$CASE_FILTER" >&2
+      exit 2
+    fi
+  done
+}
+
+validate_case_filter
+
 case_enabled() {
   local name="$1"
   if [[ "$CASE_FILTER" == "all" || -z "$CASE_FILTER" ]]; then
