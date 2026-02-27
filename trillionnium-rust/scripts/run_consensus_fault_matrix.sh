@@ -106,6 +106,7 @@ validate_case_filter() {
   fi
 
   local token
+  local seen_tokens=","
   IFS=',' read -r -a _case_tokens <<< "$CASE_FILTER"
   for token in "${_case_tokens[@]}"; do
     if [[ -z "$token" ]]; then
@@ -116,6 +117,11 @@ validate_case_filter() {
       echo "[FAIL] consensus fault matrix unknown case '$token' in CASE_FILTER=$CASE_FILTER" >&2
       exit 2
     fi
+    if [[ "$seen_tokens" == *",$token,"* ]]; then
+      echo "[FAIL] consensus fault matrix duplicate case '$token' in CASE_FILTER=$CASE_FILTER" >&2
+      exit 2
+    fi
+    seen_tokens+="$token,"
   done
 }
 
