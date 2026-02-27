@@ -766,6 +766,15 @@ pub fn verify_session_proof(resp: &RelaySessionProofResponse) -> Result<()> {
     }
 
     for (i, (msg, p)) in resp.messages.iter().zip(resp.proofs.iter()).enumerate() {
+        if msg.session_id != resp.session_id {
+            bail!(
+                "message session mismatch at index {}: got {}, expected {}",
+                i,
+                msg.session_id,
+                resp.session_id
+            );
+        }
+
         let expected_seq = resp.from_seq + i as u64;
         if msg.sequence != expected_seq {
             bail!(
@@ -1137,6 +1146,10 @@ mod tests {
         let mut root_mismatch = proof.clone();
         root_mismatch.segment_root_hex = "00".repeat(32);
         assert!(verify_session_proof(&root_mismatch).is_err());
+
+        let mut session_mismatch = proof.clone();
+        session_mismatch.session_id = "sp2-other".to_string();
+        assert!(verify_session_proof(&session_mismatch).is_err());
     }
 
     #[test]
