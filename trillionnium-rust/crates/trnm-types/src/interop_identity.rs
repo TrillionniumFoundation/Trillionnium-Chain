@@ -307,6 +307,13 @@ impl IdentityRegistry {
             return Ok(());
         }
 
+        if at_height < did_rec.created_at {
+            return Err(InteropIdentityError::InvalidDidRevocationHeight {
+                created_at: did_rec.created_at,
+                revoked_at: at_height,
+            });
+        }
+
         did_rec.revoked_at = Some(at_height);
         self.push_audit(
             AuditAction::DidRevoked,
@@ -402,6 +409,10 @@ pub enum InteropIdentityError {
         issued_at: u64,
         revoked_at: u64,
     },
+    InvalidDidRevocationHeight {
+        created_at: u64,
+        revoked_at: u64,
+    },
     MissingSettlementTx,
     MissingRevertReason,
 }
@@ -442,6 +453,16 @@ impl fmt::Display for InteropIdentityError {
                     f,
                     "invalid capability revocation height: revoked_at {} < issued_at {}",
                     revoked_at, issued_at
+                )
+            }
+            InteropIdentityError::InvalidDidRevocationHeight {
+                created_at,
+                revoked_at,
+            } => {
+                write!(
+                    f,
+                    "invalid did revocation height: revoked_at {} < created_at {}",
+                    revoked_at, created_at
                 )
             }
             InteropIdentityError::MissingSettlementTx => {
@@ -831,6 +852,32 @@ mod tests {
             .as_deref()
             .unwrap_or_default()
             .contains("cascade_on_did_revoke"));
+    }
+
+    #[test]
+    fn revoke_did_rejects_height_before_creation_without_side_effects() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did(
+            "did:trnm:agent-2".to_string(),
+            "org:lane2-admin".to_string(),
+            10,
+        )
+        .unwrap();
+
+        let audit_len_before = reg.audit_trail().len();
+        let err = reg
+            .revoke_did("org:lane2-admin".to_string(), "did:trnm:agent-2", 9)
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            InteropIdentityError::InvalidDidRevocationHeight {
+                created_at: 10,
+                revoked_at: 9
+            }
+        ));
+        assert_eq!(reg.did("did:trnm:agent-2").unwrap().revoked_at, None);
+        assert_eq!(reg.audit_trail().len(), audit_len_before);
     }
 
     #[test]
