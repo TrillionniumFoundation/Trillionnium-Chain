@@ -1704,6 +1704,24 @@ mod tests {
     }
 
     #[test]
+    fn emergency_pause_checked_path_key_id_validation_precedes_bool_schema_validation() {
+        // Merge-gate guard: key-id mismatch must fail before value schema parsing,
+        // so malformed values cannot alter error semantics.
+        let mut st = StateStore::new();
+
+        let err = st
+            .set_gov_param(8_051, 8_000, "emergency_pause".into(), "TRUE".into())
+            .expect_err("non-canonical emergency_pause key_id must be rejected first");
+        assert!(err.contains("expected_id=7999"), "{err}");
+        assert!(
+            !err.contains("strict bool"),
+            "key-id mismatch path must not leak value-schema errors: {err}"
+        );
+        assert!(!st.is_emergency_paused());
+        assert!(st.pending_gov_update("emergency_pause").is_none());
+    }
+
+    #[test]
     fn emergency_pause_checked_replace_rejects_non_canonical_key_id_without_side_effects() {
         // Merge-gate guard: Replace action must enforce the same canonical key-id pinning.
         let mut st = StateStore::new();
