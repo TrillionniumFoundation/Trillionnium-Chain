@@ -738,6 +738,12 @@ fn normalize_tx_hash_lookup(raw: &str) -> String {
                     c.is_ascii_whitespace()
                         || matches!(c, ',' | ';' | '.' | '(' | ')' | '[' | ']' | '{' | '}')
                 });
+                while let Some(stripped) = value.strip_prefix('=') {
+                    value = stripped.trim_start_matches(|c: char| c.is_ascii_whitespace());
+                }
+                while let Some(stripped) = value.strip_prefix(':') {
+                    value = stripped.trim_start_matches(|c: char| c.is_ascii_whitespace());
+                }
                 loop {
                     let is_wrapped = value.len() >= 2
                         && ["\"", "'", "`"]
@@ -1746,6 +1752,8 @@ mod tests {
         assert_eq!(normalize_tx_hash_lookup("tx_hash:0xC0FFEE"), "0xc0ffee");
         assert_eq!(normalize_tx_hash_lookup("hash : `0xBEEF`"), "0xbeef");
         assert_eq!(normalize_tx_hash_lookup("tx-hash=0xCAFE"), "0xcafe");
+        assert_eq!(normalize_tx_hash_lookup("tx_hash==0xFEED"), "0xfeed");
+        assert_eq!(normalize_tx_hash_lookup("hash:: 0xBADA55"), "0xbada55");
     }
 
     #[test]
