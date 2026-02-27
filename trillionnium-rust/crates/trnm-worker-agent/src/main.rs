@@ -178,6 +178,10 @@ struct MessageIngressRecord {
     #[serde(default)]
     provider_request_id: Option<String>,
     #[serde(default)]
+    provenance_schema_version: Option<String>,
+    #[serde(default)]
+    llm_provenance: Option<LlmProvenanceRecord>,
+    #[serde(default)]
     result_hash: Option<String>,
     #[serde(default)]
     verifier_status: Option<String>,
@@ -191,6 +195,13 @@ struct MessageIngressRecord {
     adapter_error: Option<String>,
     #[serde(default)]
     reputation_delta: Option<i32>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct LlmProvenanceRecord {
+    provider: Option<String>,
+    model: Option<String>,
+    adapter: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -532,6 +543,12 @@ struct LlmAdapterResponse {
     output_text: String,
     #[serde(default)]
     provider_request_id: Option<String>,
+    #[serde(default)]
+    provider: Option<String>,
+    #[serde(default)]
+    model: Option<String>,
+    #[serde(default)]
+    adapter: Option<String>,
 }
 
 fn truncate_for_error(raw: &str, max_chars: usize) -> String {
@@ -766,6 +783,14 @@ fn verify_model_output(output: &str, max_chars: usize) -> (&'static str, &'stati
 
 fn attach_llm_provenance(rec: &mut MessageIngressRecord, llm: &LlmAdapterResponse) {
     rec.provider_request_id = llm.provider_request_id.clone();
+
+    let has_structured_provenance = llm.provider.is_some() || llm.model.is_some() || llm.adapter.is_some();
+    rec.provenance_schema_version = has_structured_provenance.then(|| "llm.v1".to_string());
+    rec.llm_provenance = has_structured_provenance.then(|| LlmProvenanceRecord {
+        provider: llm.provider.clone(),
+        model: llm.model.clone(),
+        adapter: llm.adapter.clone(),
+    });
 }
 
 fn classify_adapter_error(err: &AdapterError) -> (&'static str, &'static str) {
@@ -1032,6 +1057,9 @@ mod tests {
                     Ok(LlmAdapterResponse {
                         output_text: "ok".to_string(),
                         provider_request_id: None,
+                        provider: None,
+                        model: None,
+                        adapter: None,
                     })
                 }
             },
@@ -1135,6 +1163,8 @@ mod tests {
         let raw = r#"{"request_id":"r1","task_id":7,"channel":"telegram","user_id":"u1","session_id":"s1","text":"hello","idempotency_key":"ik1","status":"assigned","created_at_unix_ms":1}"#;
         let rec: MessageIngressRecord = serde_json::from_str(raw).expect("parse ingress record");
         assert_eq!(rec.provider_request_id, None);
+        assert_eq!(rec.provenance_schema_version, None);
+        assert!(rec.llm_provenance.is_none());
     }
 
     #[test]
@@ -1153,6 +1183,8 @@ mod tests {
             assigned_at_unix_ms: Some(2),
             model_output: None,
             provider_request_id: None,
+            provenance_schema_version: None,
+            llm_provenance: None,
             result_hash: None,
             verifier_status: None,
             resolution_code: None,
@@ -1164,11 +1196,19 @@ mod tests {
         let llm = LlmAdapterResponse {
             output_text: "ok".to_string(),
             provider_request_id: Some("provider-123".to_string()),
+            provider: Some("openai".to_string()),
+            model: Some("gpt-5.3-codex".to_string()),
+            adapter: Some("mcp".to_string()),
         };
 
         attach_llm_provenance(&mut rec, &llm);
 
         assert_eq!(rec.provider_request_id.as_deref(), Some("provider-123"));
+        assert_eq!(rec.provenance_schema_version.as_deref(), Some("llm.v1"));
+        let prov = rec.llm_provenance.as_ref().expect("provenance attached");
+        assert_eq!(prov.provider.as_deref(), Some("openai"));
+        assert_eq!(prov.model.as_deref(), Some("gpt-5.3-codex"));
+        assert_eq!(prov.adapter.as_deref(), Some("mcp"));
     }
 }
 
