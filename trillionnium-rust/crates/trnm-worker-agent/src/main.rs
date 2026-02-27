@@ -1125,6 +1125,21 @@ mod tests {
     }
 
     #[test]
+    fn market_verification_reputation_tiers_remain_strictly_ordered() {
+        let accepted = reputation_delta(ReputationSignal::Accepted);
+        let retryable = reputation_delta(ReputationSignal::AdapterRetryExhausted);
+        let verifier_rejected = reputation_delta(ReputationSignal::VerifierRejected);
+        let non_retriable = reputation_delta(ReputationSignal::AdapterNonRetriable);
+
+        assert!(accepted > 0, "accepted work must remain net-positive");
+        assert!(retryable < 0, "retry exhaustion must remain a penalty");
+        assert!(
+            accepted > retryable && retryable > verifier_rejected && verifier_rejected > non_retriable,
+            "expected strict tiering: accepted > retryable > verifier_rejected > non_retriable"
+        );
+    }
+
+    #[test]
     fn adapter_error_signal_maps_retryability_to_penalty_tier() {
         assert_eq!(
             adapter_error_signal(AdapterErrorKind::Retriable),
