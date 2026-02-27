@@ -850,6 +850,13 @@ fn normalized_provenance_label(value: Option<&str>, max_len: usize) -> Option<St
 
 fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
     let normalized = normalized_optional_field(value)?.to_ascii_lowercase();
+    let has_disallowed_chars = normalized
+        .chars()
+        .any(|c| c.is_control() || is_invisible_filler(c) || !c.is_ascii());
+    if has_disallowed_chars {
+        return None;
+    }
+
     let alias_key: String = normalized
         .chars()
         .filter(|c| c.is_ascii_alphanumeric())
@@ -1846,6 +1853,60 @@ mod tests {
 
         let prov = rec.llm_provenance.as_ref().expect("provenance attached");
         assert_eq!(prov.agent_protocol.as_deref(), Some("a2a"));
+    }
+
+    #[test]
+    fn attach_llm_provenance_rejects_non_ascii_or_invisible_agent_protocol_aliases() {
+        let mut rec = MessageIngressRecord {
+            request_id: "r5aa".to_string(),
+            task_id: 1301,
+            channel: "telegram".to_string(),
+            user_id: "u5".to_string(),
+            session_id: "s5".to_string(),
+            text: "prompt".to_string(),
+            idempotency_key: "ik5aa".to_string(),
+            status: RequestStatus::Assigned.as_str().to_string(),
+            created_at_unix_ms: 1,
+            assigned_worker: Some("worker-1".to_string()),
+            assigned_at_unix_ms: Some(2),
+            model_output: None,
+            provider_request_id: None,
+            provenance_schema_version: None,
+            llm_provenance: None,
+            result_hash: None,
+            verifier_status: None,
+            resolution_code: None,
+            commit_tx_hash: None,
+            reveal_tx_hash: None,
+            adapter_error: None,
+            reputation_delta: None,
+        };
+
+        let llm = LlmAdapterResponse {
+            output_text: "ok".to_string(),
+            provider_request_id: None,
+            provider: None,
+            model: None,
+            adapter: None,
+            agent_protocol: Some("MCP🔥".to_string()),
+            compliance_profile: None,
+        };
+        attach_llm_provenance(&mut rec, &llm);
+        assert_eq!(rec.provenance_schema_version, None);
+        assert!(rec.llm_provenance.is_none());
+
+        let llm = LlmAdapterResponse {
+            output_text: "ok".to_string(),
+            provider_request_id: None,
+            provider: None,
+            model: None,
+            adapter: None,
+            agent_protocol: Some("a2a\u{200b}".to_string()),
+            compliance_profile: None,
+        };
+        attach_llm_provenance(&mut rec, &llm);
+        assert_eq!(rec.provenance_schema_version, None);
+        assert!(rec.llm_provenance.is_none());
     }
 
     #[test]
