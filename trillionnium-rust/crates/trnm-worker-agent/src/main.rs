@@ -785,6 +785,8 @@ fn is_invisible_filler(c: char) -> bool {
         '\u{200B}' // ZERO WIDTH SPACE
             | '\u{200C}' // ZERO WIDTH NON-JOINER
             | '\u{200D}' // ZERO WIDTH JOINER
+            | '\u{200E}' // LEFT-TO-RIGHT MARK
+            | '\u{200F}' // RIGHT-TO-LEFT MARK
             | '\u{2060}' // WORD JOINER
             | '\u{00AD}' // SOFT HYPHEN
             | '\u{FEFF}' // ZERO WIDTH NO-BREAK SPACE / BOM
@@ -1205,6 +1207,7 @@ mod tests {
             ("rejected", "empty_output")
         );
         assert_eq!(verify_model_output("\u{2060}\u{00AD}", 8), ("rejected", "empty_output"));
+        assert_eq!(verify_model_output("\u{200E}\u{200F}", 8), ("rejected", "empty_output"));
 
         // Whitespace + zero-width-only payloads must also be rejected deterministically.
         assert_eq!(
