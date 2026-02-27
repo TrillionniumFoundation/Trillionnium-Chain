@@ -805,6 +805,18 @@ fn normalized_optional_field(value: Option<&str>) -> Option<String> {
         .map(ToOwned::to_owned)
 }
 
+fn normalized_provider_request_id(value: Option<&str>) -> Option<String> {
+    let normalized = normalized_optional_field(value)?;
+    let is_allowed = normalized
+        .chars()
+        .all(|c| c.is_ascii_alphanumeric() || matches!(c, '-' | '_' | '.' | ':'));
+    if is_allowed && normalized.len() <= 128 {
+        Some(normalized)
+    } else {
+        None
+    }
+}
+
 fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
     let normalized = normalized_optional_field(value)?.to_ascii_lowercase();
     match normalized.as_str() {
@@ -832,7 +844,7 @@ fn normalized_compliance_profile(value: Option<&str>) -> Option<String> {
 }
 
 fn attach_llm_provenance(rec: &mut MessageIngressRecord, llm: &LlmAdapterResponse) {
-    rec.provider_request_id = normalized_optional_field(llm.provider_request_id.as_deref());
+    rec.provider_request_id = normalized_provider_request_id(llm.provider_request_id.as_deref());
 
     let provider = normalized_optional_field(llm.provider.as_deref());
     let model = normalized_optional_field(llm.model.as_deref());
@@ -1324,6 +1336,61 @@ mod tests {
         assert_eq!(prov.adapter.as_deref(), Some("mcp"));
         assert_eq!(prov.agent_protocol, None);
         assert_eq!(prov.compliance_profile, None);
+    }
+
+    #[test]
+    fn attach_llm_provenance_rejects_non_canonical_provider_request_id() {
+        let mut rec = MessageIngressRecord {
+            request_id: "r1b".to_string(),
+            task_id: 901,
+            channel: "telegram".to_string(),
+            user_id: "u1".to_string(),
+            session_id: "s1".to_string(),
+            text: "prompt".to_string(),
+            idempotency_key: "ik1".to_string(),
+            status: RequestStatus::Assigned.as_str().to_string(),
+            created_at_unix_ms: 1,
+            assigned_worker: Some("worker-1".to_string()),
+            assigned_at_unix_ms: Some(2),
+            model_output: None,
+            provider_request_id: None,
+            provenance_schema_version: None,
+            llm_provenance: None,
+            result_hash: None,
+            verifier_status: None,
+            resolution_code: None,
+            commit_tx_hash: None,
+            reveal_tx_hash: None,
+            adapter_error: None,
+            reputation_delta: None,
+        };
+        let llm = LlmAdapterResponse {
+            output_text: "ok".to_string(),
+            provider_request_id: Some("provider-123\nmal".to_string()),
+            provider: Some("openai".to_string()),
+            model: Some("gpt-5.3-codex".to_string()),
+            adapter: Some("mcp".to_string()),
+            agent_protocol: None,
+            compliance_profile: None,
+        };
+
+        attach_llm_provenance(&mut rec, &llm);
+
+        assert_eq!(rec.provider_request_id, None);
+        assert_eq!(rec.provenance_schema_version.as_deref(), Some("llm.v1"));
+        assert!(rec.llm_provenance.is_some());
+    }
+
+    #[test]
+    fn normalized_provider_request_id_accepts_boundary_and_rejects_overflow() {
+        let ok = "a".repeat(128);
+        assert_eq!(
+            normalized_provider_request_id(Some(&ok)).as_deref(),
+            Some(ok.as_str())
+        );
+
+        let overflow = "a".repeat(129);
+        assert_eq!(normalized_provider_request_id(Some(&overflow)), None);
     }
 
     #[test]
