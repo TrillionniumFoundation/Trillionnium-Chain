@@ -819,6 +819,16 @@ fn normalized_provider_request_id(value: Option<&str>) -> Option<String> {
     }
 }
 
+fn normalized_provenance_label(value: Option<&str>, max_len: usize) -> Option<String> {
+    let normalized = normalized_optional_field(value)?;
+    let has_control_chars = normalized.chars().any(|c| c.is_control());
+    if !has_control_chars && normalized.len() <= max_len {
+        Some(normalized)
+    } else {
+        None
+    }
+}
+
 fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
     let normalized = normalized_optional_field(value)?.to_ascii_lowercase();
     match normalized.as_str() {
@@ -861,9 +871,9 @@ fn normalized_compliance_profile(value: Option<&str>) -> Option<String> {
 fn attach_llm_provenance(rec: &mut MessageIngressRecord, llm: &LlmAdapterResponse) {
     rec.provider_request_id = normalized_provider_request_id(llm.provider_request_id.as_deref());
 
-    let provider = normalized_optional_field(llm.provider.as_deref());
-    let model = normalized_optional_field(llm.model.as_deref());
-    let adapter = normalized_optional_field(llm.adapter.as_deref());
+    let provider = normalized_provenance_label(llm.provider.as_deref(), 64);
+    let model = normalized_provenance_label(llm.model.as_deref(), 128);
+    let adapter = normalized_provenance_label(llm.adapter.as_deref(), 64);
     let agent_protocol = normalized_agent_protocol(llm.agent_protocol.as_deref());
     let compliance_profile =
         normalized_compliance_profile(llm.compliance_profile.as_deref());
@@ -1566,6 +1576,49 @@ mod tests {
         assert_eq!(prov.adapter.as_deref(), Some("mcp"));
         assert_eq!(prov.agent_protocol, None);
         assert_eq!(prov.compliance_profile.as_deref(), Some("cn-pii-restricted"));
+    }
+
+    #[test]
+    fn attach_llm_provenance_drops_overlong_and_controlled_v1_labels() {
+        let mut rec = MessageIngressRecord {
+            request_id: "r4b".to_string(),
+            task_id: 120,
+            channel: "telegram".to_string(),
+            user_id: "u4".to_string(),
+            session_id: "s4".to_string(),
+            text: "prompt".to_string(),
+            idempotency_key: "ik4b".to_string(),
+            status: RequestStatus::Assigned.as_str().to_string(),
+            created_at_unix_ms: 1,
+            assigned_worker: Some("worker-1".to_string()),
+            assigned_at_unix_ms: Some(2),
+            model_output: None,
+            provider_request_id: None,
+            provenance_schema_version: None,
+            llm_provenance: None,
+            result_hash: None,
+            verifier_status: None,
+            resolution_code: None,
+            commit_tx_hash: None,
+            reveal_tx_hash: None,
+            adapter_error: None,
+            reputation_delta: None,
+        };
+        let llm = LlmAdapterResponse {
+            output_text: "ok".to_string(),
+            provider_request_id: Some("provider-4b".to_string()),
+            provider: Some("p".repeat(65)),
+            model: Some(format!("model-{}", "x".repeat(140))),
+            adapter: Some("mcp\nrelay".to_string()),
+            agent_protocol: None,
+            compliance_profile: None,
+        };
+
+        attach_llm_provenance(&mut rec, &llm);
+
+        assert_eq!(rec.provider_request_id.as_deref(), Some("provider-4b"));
+        assert_eq!(rec.provenance_schema_version, None);
+        assert!(rec.llm_provenance.is_none());
     }
 
     #[test]
