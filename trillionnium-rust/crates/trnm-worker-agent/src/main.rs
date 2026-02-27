@@ -1174,6 +1174,12 @@ mod tests {
             ("rejected", "empty_output")
         );
 
+        // Whitespace + zero-width-only payloads must also be rejected deterministically.
+        assert_eq!(
+            verify_model_output("\n\u{200B} \t\u{200D}\r\n", 8),
+            ("rejected", "empty_output")
+        );
+
         // Limit is measured in characters (not bytes) to keep verifier behavior predictable.
         let within = "你好ab"; // 4 chars
         assert_eq!(verify_model_output(within, 4), ("accepted", "ok"));
