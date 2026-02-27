@@ -367,6 +367,32 @@ fn parse_kv_line(line: &str) -> Option<(String, String)> {
     ))
 }
 
+fn parse_inline_kv_token(token: &str) -> Option<(String, String)> {
+    let trimmed = token.trim_matches(|c: char| {
+        c.is_ascii_whitespace() || matches!(c, ',' | ';' | '{' | '}' | '[' | ']' | '(' | ')')
+    });
+    let (key, value) = if let Some((k, v)) = trimmed.split_once('=') {
+        (k.trim(), v.trim())
+    } else if let Some((k, v)) = trimmed.split_once(':') {
+        (k.trim(), v.trim())
+    } else {
+        return None;
+    };
+
+    if key.is_empty() || value.is_empty() {
+        return None;
+    }
+
+    Some((
+        key.to_ascii_lowercase(),
+        value
+            .trim_matches(|c: char| {
+                c.is_ascii_whitespace() || matches!(c, ',' | ';' | '{' | '}' | '[' | ']' | '(' | ')')
+            })
+            .to_string(),
+    ))
+}
+
 fn normalize_tx_status(raw: &str) -> Option<String> {
     let cleaned = raw
         .trim()
@@ -439,25 +465,34 @@ fn parse_tx_query_response(raw: &str, requested_tx_hash: &str) -> Result<TxQuery
     let mut status: Option<String> = None;
     let mut error: Option<String> = None;
     for line in raw.lines() {
-        let Some((key, value)) = parse_kv_line(line) else {
-            continue;
-        };
-        match key.as_str() {
-            "tx_hash" | "txhash" => match normalize_tx_hash(&value) {
-                Some(normalized) => tx_hash = Some(normalized),
-                None => bail!("invalid tx_hash field in tx query response"),
-            },
-            "status" => {
-                if let Some(normalized) = normalize_tx_status(&value) {
-                    status = Some(normalized);
-                }
+        let mut pairs = Vec::new();
+        if let Some(pair) = parse_kv_line(line) {
+            pairs.push(pair);
+        }
+        for token in line.split_whitespace() {
+            if let Some(pair) = parse_inline_kv_token(token) {
+                pairs.push(pair);
             }
-            "error" => {
-                if !is_nullish_kv_value(&value) {
-                    error = Some(value);
+        }
+
+        for (key, value) in pairs {
+            match key.as_str() {
+                "tx_hash" | "txhash" => match normalize_tx_hash(&value) {
+                    Some(normalized) => tx_hash = Some(normalized),
+                    None => bail!("invalid tx_hash field in tx query response"),
+                },
+                "status" => {
+                    if let Some(normalized) = normalize_tx_status(&value) {
+                        status = Some(normalized);
+                    }
                 }
+                "error" => {
+                    if !is_nullish_kv_value(&value) {
+                        error = Some(value);
+                    }
+                }
+                _ => {}
             }
-            _ => {}
         }
     }
 
@@ -969,6 +1004,15 @@ mod tests {
         assert_eq!(parsed_backtick.tx_hash, "0x778");
         assert_eq!(parsed_backtick.status, "committed");
         assert_eq!(parsed_backtick.error, None);
+    }
+
+    #[test]
+    fn tx_query_parse_kv_accepts_noisy_single_line_inline_tokens() {
+        let noisy = "[adapter] ts=1700000000 status=committed tx_hash=0x8badf00d, error=null";
+        let parsed = parse_tx_query_response(noisy, "0xfallback").unwrap();
+        assert_eq!(parsed.tx_hash, "0x8badf00d");
+        assert_eq!(parsed.status, "committed");
+        assert_eq!(parsed.error, None);
     }
 
     #[test]
