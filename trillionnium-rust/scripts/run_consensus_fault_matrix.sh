@@ -79,6 +79,8 @@ pass=0
 fail=0
 
 CASE_FILTER="${CASE_FILTER:-all}"   # all | comma-separated case names
+# Canonicalize filter (strip all whitespace) so values like "baseline, slow_block" work as expected.
+CASE_FILTER="$(printf '%s' "$CASE_FILTER" | tr -d '[:space:]')"
 ALLOW_FAIL="${ALLOW_FAIL:-0}"       # 1 => always exit 0 (for soft-gate observation)
 GATE_MODE="${GATE_MODE:-normal}"    # hard | soft | normal
 
