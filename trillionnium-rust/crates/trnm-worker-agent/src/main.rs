@@ -829,9 +829,9 @@ fn normalized_provider_request_id(value: Option<&str>) -> Option<String> {
 
 fn normalized_provenance_label(value: Option<&str>, max_len: usize) -> Option<String> {
     let normalized = normalized_optional_field(value)?;
-    let has_disallowed_chars = normalized
-        .chars()
-        .any(|c| c.is_control() || is_invisible_filler(c));
+    let has_disallowed_chars = normalized.chars().any(|c| {
+        c.is_control() || is_invisible_filler(c) || !c.is_ascii() || c.is_ascii_control()
+    });
     if !has_disallowed_chars && normalized.len() <= max_len {
         Some(normalized)
     } else {
@@ -2091,6 +2091,23 @@ mod tests {
         assert_eq!(
             normalized_compliance_profile(Some("CN_PII_RESTRICTED")).as_deref(),
             Some("cn-pii-restricted")
+        );
+    }
+
+    #[test]
+    fn normalized_provenance_label_accepts_ascii_audit_text() {
+        assert_eq!(
+            normalized_provenance_label(Some("openai gpt-5.3:preview"), 64).as_deref(),
+            Some("openai gpt-5.3:preview")
+        );
+    }
+
+    #[test]
+    fn normalized_provenance_label_rejects_non_ascii_homoglyphs() {
+        assert_eq!(
+            normalized_provenance_label(Some("оpenai"), 64),
+            None,
+            "non-ascii provenance labels should be rejected to avoid audit ambiguity"
         );
     }
 }
