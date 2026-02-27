@@ -779,9 +779,17 @@ fn run_llm_adapter_with_retry(
     )
 }
 
+fn is_invisible_filler(c: char) -> bool {
+    matches!(c, '\u{200B}' | '\u{200C}' | '\u{200D}' | '\u{FEFF}')
+}
+
 fn verify_model_output(output: &str, max_chars: usize) -> (&'static str, &'static str) {
     let trimmed = output.trim();
-    if trimmed.is_empty() {
+    if trimmed.is_empty()
+        || !trimmed
+            .chars()
+            .any(|c| !c.is_whitespace() && !is_invisible_filler(c))
+    {
         return ("rejected", "empty_output");
     }
     if trimmed.chars().count() > max_chars {
@@ -1098,6 +1106,12 @@ mod tests {
     fn verify_model_output_enforces_trimmed_empty_and_char_limit_boundaries() {
         assert_eq!(verify_model_output("   \n\t", 8), ("rejected", "empty_output"));
 
+        // Zero-width fillers should not pass verifier checks as meaningful output.
+        assert_eq!(
+            verify_model_output("\u{200B}\u{200C}\u{FEFF}", 8),
+            ("rejected", "empty_output")
+        );
+
         // Limit is measured in characters (not bytes) to keep verifier behavior predictable.
         let within = "你好ab"; // 4 chars
         assert_eq!(verify_model_output(within, 4), ("accepted", "ok"));
@@ -1107,6 +1121,9 @@ mod tests {
 
         // Leading/trailing transport whitespace should not cause false rejections.
         assert_eq!(verify_model_output(" 你好ab \n", 4), ("accepted", "ok"));
+
+        // Mixed visible + zero-width should still count as meaningful content.
+        assert_eq!(verify_model_output("\u{200B}ok\u{200D}", 4), ("accepted", "ok"));
     }
 
     #[test]
