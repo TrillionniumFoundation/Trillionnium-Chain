@@ -858,7 +858,7 @@ fn normalized_compliance_profile(value: Option<&str>) -> Option<String> {
     let normalized = normalized_optional_field(value)?.to_ascii_lowercase();
     let is_allowed = normalized
         .chars()
-        .all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || matches!(c, '-' | '_' | '.'));
+        .all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || matches!(c, '-' | '_' | '.' | '/'));
     let starts_with_alpha_and_ends_alnum = normalized
         .chars()
         .next()
@@ -868,14 +868,14 @@ fn normalized_compliance_profile(value: Option<&str>) -> Option<String> {
     let has_adjacent_separators = normalized
         .chars()
         .fold((false, false), |(found, prev_sep), c| {
-            let is_sep = matches!(c, '-' | '_' | '.');
+            let is_sep = matches!(c, '-' | '_' | '.' | '/');
             (found || (prev_sep && is_sep), is_sep)
         })
         .0;
     let has_alpha = normalized.chars().any(|c| c.is_ascii_lowercase());
     let has_separator = normalized
         .chars()
-        .any(|c| matches!(c, '-' | '_' | '.'));
+        .any(|c| matches!(c, '-' | '_' | '.' | '/'));
     if is_allowed
         && starts_with_alpha_and_ends_alnum
         && !has_adjacent_separators
@@ -886,7 +886,7 @@ fn normalized_compliance_profile(value: Option<&str>) -> Option<String> {
         Some(
             normalized
                 .chars()
-                .map(|c| if matches!(c, '_' | '.') { '-' } else { c })
+                .map(|c| if matches!(c, '_' | '.' | '/') { '-' } else { c })
                 .collect(),
         )
     } else {
@@ -1890,7 +1890,7 @@ mod tests {
             model: Some("gpt-5.3-codex".to_string()),
             adapter: Some("mcp".to_string()),
             agent_protocol: Some(" custom-proto ".to_string()),
-            compliance_profile: Some("CN/PII/Restricted".to_string()),
+            compliance_profile: Some("CN@PII@Restricted".to_string()),
         };
 
         attach_llm_provenance(&mut rec, &llm);
@@ -1983,7 +1983,7 @@ mod tests {
             model: None,
             adapter: None,
             agent_protocol: None,
-            compliance_profile: Some("CN/PII/Restricted".to_string()),
+            compliance_profile: Some("CN@PII@Restricted".to_string()),
         };
 
         attach_llm_provenance(&mut rec, &llm);
@@ -2157,6 +2157,14 @@ mod tests {
     fn normalized_compliance_profile_accepts_dot_separators_and_normalizes_to_hyphen() {
         assert_eq!(
             normalized_compliance_profile(Some("CN.PII.Restricted")).as_deref(),
+            Some("cn-pii-restricted")
+        );
+    }
+
+    #[test]
+    fn normalized_compliance_profile_accepts_slash_separators_and_normalizes_to_hyphen() {
+        assert_eq!(
+            normalized_compliance_profile(Some("CN/PII/Restricted")).as_deref(),
             Some("cn-pii-restricted")
         );
     }
