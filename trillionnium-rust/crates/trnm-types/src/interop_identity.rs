@@ -434,6 +434,13 @@ impl IdentityRegistry {
         &self.audit_trail
     }
 
+    fn normalize_note(note: Option<String>) -> Option<String> {
+        note.and_then(|v| {
+            let trimmed = v.trim();
+            (!trimmed.is_empty()).then(|| trimmed.to_string())
+        })
+    }
+
     fn push_audit(
         &mut self,
         action: AuditAction,
@@ -449,7 +456,7 @@ impl IdentityRegistry {
             actor,
             subject,
             at_height,
-            note,
+            note: Self::normalize_note(note),
         });
     }
 }
@@ -1447,6 +1454,72 @@ mod tests {
 
         assert_eq!(reg.capability(token_id).unwrap().revoked_at, Some(30));
         assert_eq!(reg.audit_trail().len(), first_audit_len);
+    }
+
+    #[test]
+    fn revoke_capability_trims_audit_note_for_compliance_provenance() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did(
+            "did:trnm:agent-3a".to_string(),
+            "org:lane2-admin".to_string(),
+            10,
+        )
+        .unwrap();
+
+        let token_id = reg
+            .issue_capability(
+                "org:lane2-admin".to_string(),
+                "did:trnm:agent-3a".to_string(),
+                CapabilityScope::AuditRead,
+                12,
+                None,
+            )
+            .unwrap();
+
+        reg.revoke_capability(
+            "org:lane2-admin".to_string(),
+            token_id,
+            30,
+            Some("  evidence:case-42  ".to_string()),
+        )
+        .unwrap();
+
+        let last = reg.audit_trail().last().unwrap();
+        assert_eq!(last.action, AuditAction::CapabilityRevoked);
+        assert_eq!(last.note.as_deref(), Some("evidence:case-42"));
+    }
+
+    #[test]
+    fn revoke_capability_blank_audit_note_is_normalized_to_none() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did(
+            "did:trnm:agent-3aa".to_string(),
+            "org:lane2-admin".to_string(),
+            10,
+        )
+        .unwrap();
+
+        let token_id = reg
+            .issue_capability(
+                "org:lane2-admin".to_string(),
+                "did:trnm:agent-3aa".to_string(),
+                CapabilityScope::AuditRead,
+                12,
+                None,
+            )
+            .unwrap();
+
+        reg.revoke_capability(
+            "org:lane2-admin".to_string(),
+            token_id,
+            30,
+            Some("   ".to_string()),
+        )
+        .unwrap();
+
+        let last = reg.audit_trail().last().unwrap();
+        assert_eq!(last.action, AuditAction::CapabilityRevoked);
+        assert_eq!(last.note, None);
     }
 
     #[test]
