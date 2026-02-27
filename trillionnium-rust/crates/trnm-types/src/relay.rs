@@ -268,7 +268,7 @@ pub struct RelayAuthVerifier {
     max_skew_ms: u128,
     allow_legacy_v0: bool,
     last_seq: HashMap<(String, String, String, String), u64>,
-    seen_nonce: HashSet<(String, String, String)>,
+    seen_nonce: HashSet<(String, String, String, String)>,
 }
 
 impl RelayAuthVerifier {
@@ -420,6 +420,7 @@ impl RelayAuthVerifier {
         let nonce_key = (
             env.chain_id.clone(),
             env.session_id.clone(),
+            env.from.clone(),
             env.nonce.clone(),
         );
         if self.seen_nonce.contains(&nonce_key) {
@@ -524,6 +525,25 @@ mod tests {
             .verify(&env2, 1_730_000_000_250, |e| e.sign_for_test(key) == e.sig)
             .unwrap_err();
         assert_eq!(err.stable_code(), "Replay");
+    }
+
+    #[test]
+    fn relay_auth_allows_same_nonce_for_different_senders() {
+        let key = "sender-key";
+        let mut verifier = RelayAuthVerifier::new(120_000);
+
+        let env1 = sample_env(1, "nonce-shared", 1_730_000_000_000, key);
+
+        let mut env2 = sample_env(1, "nonce-shared", 1_730_000_000_050, key);
+        env2.from = "trnm1from-peer".to_string();
+        env2.sig = env2.sign_for_test(key);
+
+        verifier
+            .verify(&env1, 1_730_000_000_100, |e| e.sign_for_test(key) == e.sig)
+            .expect("first sender accepted");
+
+        let ok = verifier.verify(&env2, 1_730_000_000_150, |e| e.sign_for_test(key) == e.sig);
+        assert!(ok.is_ok());
     }
 
     #[test]
