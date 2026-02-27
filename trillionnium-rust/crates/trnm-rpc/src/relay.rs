@@ -679,6 +679,16 @@ impl RelayService {
             .filter(|e| e.sequence >= req.from_seq && e.sequence <= req.to_seq)
             .cloned()
             .collect();
+        let expected_len = (req.to_seq - req.from_seq + 1) as usize;
+        if messages.len() != expected_len {
+            return Err(anyhow!(
+                "session message gap in requested range: expected={} actual={} from_seq={} to_seq={}",
+                expected_len,
+                messages.len(),
+                req.from_seq,
+                req.to_seq
+            ));
+        }
 
         let start_idx = (req.from_seq - 1) as usize;
         let end_exclusive = req.to_seq as usize;
@@ -1283,6 +1293,52 @@ mod tests {
             })
             .unwrap_err();
         assert!(err.to_string().contains("bad_request/range_out_of_bounds"));
+    }
+
+    #[test]
+    fn relay_proof_query_rejects_message_gap_in_requested_range() {
+        let mut router = RelayRouter::new();
+        router.register("relay.echo", EchoHandler);
+        let relay = RelayService::new(router);
+        relay
+            .open(RelayOpenRequest {
+                session_id: "sp-gap".into(),
+            })
+            .unwrap();
+
+        for payload in [b"a".as_slice(), b"b".as_slice(), b"c".as_slice()] {
+            relay
+                .send(RelaySendRequest {
+                    session_id: "sp-gap".into(),
+                    route: "relay.echo".into(),
+                    from: "alice".into(),
+                    to: Some("bob".into()),
+                    payload: payload.to_vec(),
+                    source: None,
+                })
+                .unwrap();
+        }
+
+        {
+            let mut sessions = relay.sessions.lock().expect("relay lock");
+            let state = sessions.get_mut("sp-gap").expect("session exists");
+            state.queue.retain(|env| env.sequence != 2);
+        }
+
+        let err = relay
+            .query_session_proof(RelaySessionProofQuery {
+                task_id: 1,
+                session_id: "sp-gap".into(),
+                from_seq: 1,
+                to_seq: 3,
+                source: None,
+            })
+            .unwrap_err();
+        assert!(
+            err.to_string()
+                .contains("session message gap in requested range: expected=3 actual=2"),
+            "unexpected err: {err}"
+        );
     }
 
     #[test]
