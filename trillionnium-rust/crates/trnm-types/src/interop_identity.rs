@@ -185,7 +185,10 @@ impl IdentityRegistry {
         field: &'static str,
         value: &str,
     ) -> Result<(), InteropIdentityError> {
-        if value.trim().is_empty() || value.trim() != value {
+        if value.trim().is_empty()
+            || value.trim() != value
+            || value.chars().any(char::is_control)
+        {
             return Err(InteropIdentityError::InvalidIdentityValue {
                 field,
                 value: value.to_string(),
@@ -1032,6 +1035,34 @@ mod tests {
             }
         ));
         assert!(reg.did("did:trnm:agent-ok").is_none());
+
+        let err = reg
+            .register_did(
+                "did:trnm:agent\nnewline".to_string(),
+                "org:lane2-admin".to_string(),
+                10,
+            )
+            .unwrap_err();
+        assert!(matches!(
+            err,
+            InteropIdentityError::InvalidIdentityValue { field: "did", .. }
+        ));
+
+        let err = reg
+            .register_did(
+                "did:trnm:agent-ok".to_string(),
+                "org:lane2\nadmin".to_string(),
+                10,
+            )
+            .unwrap_err();
+        assert!(matches!(
+            err,
+            InteropIdentityError::InvalidIdentityValue {
+                field: "controller",
+                ..
+            }
+        ));
+
         assert!(reg.audit_trail().is_empty());
     }
 
