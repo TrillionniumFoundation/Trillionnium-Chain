@@ -169,3 +169,6 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: x2-
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-uppercase-model-digest-test" "./scripts/v2/d1_task_model_metadata_schema_reject_uppercase_model_digest_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-uppercase-model-digest-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-model-id-overflow-test" "./scripts/v2/d1_task_model_metadata_schema_reject_model_id_overflow_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-model-id-overflow-test regression to quick-check"
