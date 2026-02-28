@@ -67,10 +67,6 @@ def validate(node, schema_node, prefix=""):
         if min_length is not None and len(node) < min_length:
             fail(f"{prefix} shorter than minLength={min_length}")
 
-        max_length = schema_node.get("maxLength")
-        if max_length is not None and len(node) > max_length:
-            fail(f"{prefix} longer than maxLength={max_length}")
-
         pattern = schema_node.get("pattern")
         if pattern is not None and re.fullmatch(pattern, node) is None:
             fail(f"{prefix} does not match pattern {pattern}")

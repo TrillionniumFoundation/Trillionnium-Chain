@@ -14,13 +14,11 @@
   "properties": {
     "task_id": {
       "type": "string",
-      "minLength": 1,
-      "maxLength": 128
+      "minLength": 1
     },
     "task_type": {
       "type": "string",
-      "minLength": 1,
-      "maxLength": 64
+      "minLength": 1
     },
     "input_hash": {
       "type": "string",
