@@ -19,6 +19,14 @@ pub enum SettlementStatus {
 }
 
 impl SettlementStatus {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            SettlementStatus::Pending => "pending",
+            SettlementStatus::Finalized => "finalized",
+            SettlementStatus::Reverted => "reverted",
+        }
+    }
+
     pub fn can_transition_to(self, to: Self) -> bool {
         if self == to {
             return true;
@@ -52,7 +60,33 @@ pub struct SettlementRecord {
     pub revert_reason: Option<String>,
 }
 
+fn normalize_revert_reason(reason: String) -> String {
+    let canonical = reason.to_ascii_lowercase().replace('_', "-");
+    match canonical.as_str() {
+        "fraud-proof" => "fraud-proof".to_string(),
+        "tee-receipt" | "tee-attestation" => "tee-receipt".to_string(),
+        "zk-receipt" | "zk-proof" => "zk-receipt".to_string(),
+        _ => reason,
+    }
+}
+
 impl SettlementRecord {
+    /// Stable PoC scaffold path for dual-chain settlement state-machine evidence.
+    ///
+    /// Format:
+    /// `settlements/<route_id>/<source_chain>/<target_chain>/<settlement_id>/<status>@<height>`
+    pub fn evidence_path(&self) -> String {
+        format!(
+            "settlements/{}/{}/{}/{}/{}@{}",
+            self.route.route_id,
+            self.route.source_chain,
+            self.route.target_chain,
+            self.settlement_id,
+            self.status.as_str(),
+            self.at_height
+        )
+    }
+
     pub fn apply_status(
         &mut self,
         to: SettlementStatus,
@@ -99,7 +133,8 @@ impl SettlementRecord {
                     .as_deref()
                     .map(str::trim)
                     .filter(|v| !v.is_empty())
-                    .map(str::to_string);
+                    .map(str::to_string)
+                    .map(normalize_revert_reason);
                 if self.status == SettlementStatus::Reverted {
                     if let (Some(existing), Some(provided)) =
                         (self.revert_reason.as_deref(), provided_reason.as_deref())
@@ -363,7 +398,13 @@ impl IdentityRegistry {
                 .capabilities
                 .get_mut(&token_id)
                 .ok_or(InteropIdentityError::CapabilityNotFound { token_id })?;
-            if token.revoked_at.is_some() {
+            if let Some(first_revoked_at) = token.revoked_at {
+                if at_height < first_revoked_at {
+                    return Err(InteropIdentityError::InvalidCapabilityRevocationHeight {
+                        issued_at: first_revoked_at,
+                        revoked_at: at_height,
+                    });
+                }
                 return Ok(());
             }
             if at_height < token.issued_at {
@@ -1245,6 +1286,81 @@ mod tests {
     }
 
     #[test]
+    fn settlement_evidence_path_encodes_dual_chain_route_and_state() {
+        let rec = SettlementRecord {
+            settlement_id: 42,
+            route: BridgeRoute {
+                route_id: "eth->trnm".to_string(),
+                source_chain: "ethereum".to_string(),
+                target_chain: "trillionnium".to_string(),
+            },
+            status: SettlementStatus::Pending,
+            at_height: 900,
+            settlement_tx: None,
+            revert_reason: None,
+        };
+
+        assert_eq!(
+            rec.evidence_path(),
+            "settlements/eth->trnm/ethereum/trillionnium/42/pending@900"
+        );
+    }
+
+    #[test]
+    fn settlement_evidence_path_tracks_terminal_state_machine_outcome() {
+        let mut rec = SettlementRecord {
+            settlement_id: 43,
+            route: BridgeRoute {
+                route_id: "eth->trnm".to_string(),
+                source_chain: "ethereum".to_string(),
+                target_chain: "trillionnium".to_string(),
+            },
+            status: SettlementStatus::Pending,
+            at_height: 1_000,
+            settlement_tx: None,
+            revert_reason: None,
+        };
+
+        rec.apply_status(
+            SettlementStatus::Finalized,
+            1_001,
+            Some("0xsettled".to_string()),
+            None,
+        )
+        .unwrap();
+        assert_eq!(
+            rec.evidence_path(),
+            "settlements/eth->trnm/ethereum/trillionnium/43/finalized@1001"
+        );
+
+        let mut rec_reverted = SettlementRecord {
+            settlement_id: 44,
+            route: BridgeRoute {
+                route_id: "eth->trnm".to_string(),
+                source_chain: "ethereum".to_string(),
+                target_chain: "trillionnium".to_string(),
+            },
+            status: SettlementStatus::Pending,
+            at_height: 2_000,
+            settlement_tx: None,
+            revert_reason: None,
+        };
+
+        rec_reverted
+            .apply_status(
+                SettlementStatus::Reverted,
+                2_001,
+                None,
+                Some("proof_mismatch".to_string()),
+            )
+            .unwrap();
+        assert_eq!(
+            rec_reverted.evidence_path(),
+            "settlements/eth->trnm/ethereum/trillionnium/44/reverted@2001"
+        );
+    }
+
+    #[test]
     fn register_did_rejects_duplicate_without_side_effects() {
         let mut reg = IdentityRegistry::default();
         reg.register_did(
@@ -1691,6 +1807,55 @@ mod tests {
 
         assert_eq!(reg.capability(token_id).unwrap().revoked_at, Some(30));
         assert_eq!(reg.audit_trail().len(), first_audit_len);
+    }
+
+    #[test]
+    fn revoke_capability_replay_with_older_height_is_rejected_without_side_effects() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did(
+            "did:trnm:agent-3r".to_string(),
+            "org:lane2-admin".to_string(),
+            10,
+        )
+        .unwrap();
+
+        let token_id = reg
+            .issue_capability(
+                "org:lane2-admin".to_string(),
+                "did:trnm:agent-3r".to_string(),
+                CapabilityScope::AuditRead,
+                12,
+                None,
+            )
+            .unwrap();
+
+        reg.revoke_capability(
+            "org:lane2-admin".to_string(),
+            token_id,
+            30,
+            Some("initial_revoke".to_string()),
+        )
+        .unwrap();
+        let audit_len_before = reg.audit_trail().len();
+
+        let err = reg
+            .revoke_capability(
+                "org:lane2-admin".to_string(),
+                token_id,
+                29,
+                Some("stale_replay".to_string()),
+            )
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            InteropIdentityError::InvalidCapabilityRevocationHeight {
+                issued_at: 30,
+                revoked_at: 29,
+            }
+        ));
+        assert_eq!(reg.capability(token_id).unwrap().revoked_at, Some(30));
+        assert_eq!(reg.audit_trail().len(), audit_len_before);
     }
 
     #[test]
