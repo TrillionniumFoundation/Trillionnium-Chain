@@ -589,6 +589,19 @@ fn accept_signed_vote(
         msg.vote.round,
         msg.vote.vote_type,
     );
+    if !last_nonce.contains_key(&key) && msg.nonce > MAX_BFT_NONCE_FORWARD_JUMP {
+        reject_stats.stale_nonce += 1;
+        println!(
+            "[bft-net] reject reason=nonce_bootstrap_jump validator={} height={} round={} vote_type={} nonce={} max_initial_nonce={}",
+            msg.vote.validator,
+            msg.vote.height,
+            msg.vote.round,
+            vote_type_name(msg.vote.vote_type),
+            msg.nonce,
+            MAX_BFT_NONCE_FORWARD_JUMP
+        );
+        return;
+    }
     if let Some(prev) = last_nonce.get(&key) {
         if msg.nonce == *prev {
             reject_stats.replay += 1;
@@ -2462,6 +2475,41 @@ mod tests {
 
         let key = ("v1".to_string(), 10, 0, VoteType::Prevote);
         assert_eq!(last_nonce.get(&key), Some(&boundary_nonce));
+    }
+
+    #[test]
+    fn auth_rejects_first_nonce_bootstrap_jump_without_prior_domain_nonce() {
+        let mut last_nonce = HashMap::new();
+        let mut accepted = Vec::new();
+        let mut reject_stats = AuthRejectStats::default();
+
+        let vote = BftVote {
+            validator: "v1".into(),
+            vote_type: VoteType::Prevote,
+            block_hash: "h11-r0".into(),
+            byzantine: false,
+            height: 11,
+            round: 0,
+        };
+        let jumped_nonce = MAX_BFT_NONCE_FORWARD_JUMP + 1;
+        accept_signed_vote(
+            SignedVote {
+                vote: vote.clone(),
+                nonce: jumped_nonce,
+                signature: vote_signature(&vote, jumped_nonce),
+            },
+            &mut last_nonce,
+            &mut accepted,
+            &mut reject_stats,
+        );
+
+        assert_eq!(accepted.len(), 0);
+        assert_eq!(reject_stats.bad_sig, 0);
+        assert_eq!(reject_stats.replay, 0);
+        assert_eq!(reject_stats.stale_nonce, 1);
+
+        let key = ("v1".to_string(), 11, 0, VoteType::Prevote);
+        assert_eq!(last_nonce.get(&key), None);
     }
 
     #[test]
