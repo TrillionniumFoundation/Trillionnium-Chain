@@ -72,6 +72,10 @@ jobs:
         run: |
           ./scripts/v2/d1_task_model_metadata_schema_missing_provenance_producer_did_test.sh
 
+      - name: D1 schema missing nested model.version regression
+        run: |
+          ./scripts/v2/d1_task_model_metadata_schema_missing_model_version_test.sh
+
       - name: Auto regression: pr5-challenge-reconcile-gate
         run: |
           ./scripts/v2/pr5_challenge_reconcile_gate.sh
