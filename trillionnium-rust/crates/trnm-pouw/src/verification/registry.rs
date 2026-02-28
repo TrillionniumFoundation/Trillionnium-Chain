@@ -68,6 +68,21 @@ mod tests {
         }
     }
 
+    struct TaggedVerifier {
+        kind: &'static str,
+        tag: &'static str,
+    }
+
+    impl ProofVerifier for TaggedVerifier {
+        fn proof_type(&self) -> &str {
+            self.kind
+        }
+
+        fn verify_proof(&self, _task: &TaskObject, _proof_data: &[u8]) -> VerificationResult {
+            VerificationResult::Invalid(self.tag.to_string())
+        }
+    }
+
     fn task_with_proof_type(proof_type: ProofType) -> TaskObject {
         TaskObject {
             task_id: 42,
@@ -120,6 +135,25 @@ mod tests {
         assert_eq!(
             registry.verify(&task, b"receipt"),
             VerificationResult::Indeterminate("no verifier registered for proof type: tee".into())
+        );
+    }
+
+    #[test]
+    fn registry_re_register_replaces_verifier_for_normalized_key() {
+        let mut registry = VerifierRegistry::new();
+        registry.register(Arc::new(TaggedVerifier {
+            kind: "TEE",
+            tag: "old",
+        }));
+        registry.register(Arc::new(TaggedVerifier {
+            kind: " tee ",
+            tag: "new",
+        }));
+
+        let task = task_with_proof_type(ProofType::Tee);
+        assert_eq!(
+            registry.verify(&task, b"receipt"),
+            VerificationResult::Invalid("new".to_string())
         );
     }
 
