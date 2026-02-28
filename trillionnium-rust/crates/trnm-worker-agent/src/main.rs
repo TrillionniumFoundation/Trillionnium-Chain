@@ -134,6 +134,12 @@ enum Command {
         #[arg(long, default_value = "audit-export.jsonl")]
         output_file: PathBuf,
     },
+    QueryAudit {
+        #[arg(long, default_value = "audit-export.jsonl")]
+        output_file: PathBuf,
+        #[arg(long)]
+        task_id: u64,
+    },
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -239,6 +245,13 @@ struct AuditExportIndex {
     by_provenance_fingerprint: BTreeMap<String, Vec<usize>>,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+struct AuditTaskQueryResult {
+    task_id: String,
+    hit_indexes: Vec<usize>,
+    records: Vec<EnterpriseAuditExportRecord>,
+}
+
 fn build_audit_export_index(exports: &[EnterpriseAuditExportRecord]) -> AuditExportIndex {
     let mut by_task_id = BTreeMap::<String, Vec<usize>>::new();
     let mut by_model = BTreeMap::<String, Vec<usize>>::new();
@@ -273,6 +286,39 @@ fn build_audit_export_index(exports: &[EnterpriseAuditExportRecord]) -> AuditExp
 
 fn audit_export_index_path(output_file: &Path) -> PathBuf {
     PathBuf::from(format!("{}.index.json", output_file.display()))
+}
+
+fn load_audit_exports_jsonl(path: &Path) -> Result<Vec<EnterpriseAuditExportRecord>> {
+    let raw = fs::read_to_string(path)?;
+    let mut rows = Vec::new();
+    for line in raw.lines() {
+        let trimmed = line.trim();
+        if trimmed.is_empty() {
+            continue;
+        }
+        let rec: EnterpriseAuditExportRecord = serde_json::from_str(trimmed)?;
+        rows.push(rec);
+    }
+    Ok(rows)
+}
+
+fn query_audit_by_task_id(
+    index: &AuditExportIndex,
+    exports: &[EnterpriseAuditExportRecord],
+    task_id: u64,
+) -> AuditTaskQueryResult {
+    let task_key = task_id.to_string();
+    let hit_indexes = index.by_task_id.get(&task_key).cloned().unwrap_or_default();
+    let records = hit_indexes
+        .iter()
+        .filter_map(|idx| exports.get(*idx).cloned())
+        .collect();
+
+    AuditTaskQueryResult {
+        task_id: task_key,
+        hit_indexes,
+        records,
+    }
 }
 
 fn build_provenance_fingerprint(
@@ -2045,6 +2091,68 @@ mod tests {
     }
 
     #[test]
+    fn query_audit_by_task_id_returns_hits_and_records() {
+        let rows = vec![
+            EnterpriseAuditExportRecord {
+                request_id: "r1".to_string(),
+                task_id: 7001,
+                status: "reveal_submitted".to_string(),
+                provider_request_id: Some("p1".to_string()),
+                provenance_schema_version: Some("llm.v2".to_string()),
+                provenance_fingerprint: Some("fp-abc".to_string()),
+                provider: Some("openai".to_string()),
+                model: Some("gpt-5.3-codex".to_string()),
+                adapter: Some("mcp".to_string()),
+                agent_protocol: Some("a2a".to_string()),
+                compliance_profile: Some("cn-moderate".to_string()),
+            },
+            EnterpriseAuditExportRecord {
+                request_id: "r2".to_string(),
+                task_id: 7002,
+                status: "rejected".to_string(),
+                provider_request_id: Some("p2".to_string()),
+                provenance_schema_version: Some("llm.v2".to_string()),
+                provenance_fingerprint: Some("fp-xyz".to_string()),
+                provider: Some("openai".to_string()),
+                model: Some("gpt-5.3-codex".to_string()),
+                adapter: Some("mcp".to_string()),
+                agent_protocol: Some("a2a".to_string()),
+                compliance_profile: Some("cn-moderate".to_string()),
+            },
+        ];
+        let index = build_audit_export_index(&rows);
+
+        let out = query_audit_by_task_id(&index, &rows, 7002);
+        assert_eq!(out.task_id, "7002");
+        assert_eq!(out.hit_indexes, vec![1]);
+        assert_eq!(out.records.len(), 1);
+        assert_eq!(out.records[0].request_id, "r2");
+    }
+
+    #[test]
+    fn query_audit_by_task_id_returns_empty_when_no_match() {
+        let rows = vec![EnterpriseAuditExportRecord {
+            request_id: "r1".to_string(),
+            task_id: 7001,
+            status: "reveal_submitted".to_string(),
+            provider_request_id: Some("p1".to_string()),
+            provenance_schema_version: Some("llm.v2".to_string()),
+            provenance_fingerprint: Some("fp-abc".to_string()),
+            provider: Some("openai".to_string()),
+            model: Some("gpt-5.3-codex".to_string()),
+            adapter: Some("mcp".to_string()),
+            agent_protocol: Some("a2a".to_string()),
+            compliance_profile: Some("cn-moderate".to_string()),
+        }];
+        let index = build_audit_export_index(&rows);
+
+        let out = query_audit_by_task_id(&index, &rows, 9999);
+        assert_eq!(out.task_id, "9999");
+        assert!(out.hit_indexes.is_empty());
+        assert!(out.records.is_empty());
+    }
+
+    #[test]
     fn attach_llm_provenance_persists_provider_request_id() {
         let mut rec = MessageIngressRecord {
             request_id: "r1".to_string(),
@@ -3608,6 +3716,16 @@ fn main() -> Result<()> {
                 index_file.display(),
                 detect_audit_export_format(&output_file)
             );
+        }
+        Command::QueryAudit {
+            output_file,
+            task_id,
+        } => {
+            let index_file = audit_export_index_path(&output_file);
+            let index: AuditExportIndex = serde_json::from_str(&fs::read_to_string(&index_file)?)?;
+            let exports = load_audit_exports_jsonl(&output_file)?;
+            let query = query_audit_by_task_id(&index, &exports, task_id);
+            println!("{}", serde_json::to_string_pretty(&query)?);
         }
     }
     Ok(())
