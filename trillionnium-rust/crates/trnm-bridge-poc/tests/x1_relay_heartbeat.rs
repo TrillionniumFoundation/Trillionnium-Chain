@@ -29,3 +29,20 @@ fn relay_heartbeat_retries_then_degrades() {
     let recovered = hb.record_success(200, 198, 8);
     assert!(!recovered.degraded);
 }
+
+#[test]
+fn relay_heartbeat_flap_after_recovery_restarts_retry_budget() {
+    let mut hb = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 2));
+
+    let first = hb.record_failure("transient rpc timeout");
+    assert!(first.should_retry);
+    assert!(!first.degraded);
+
+    let recovered = hb.record_success(210, 209, 6);
+    assert!(!recovered.degraded);
+    assert!(!recovered.should_retry);
+
+    let next = hb.record_failure("transient rpc timeout");
+    assert!(next.should_retry);
+    assert!(!next.degraded);
+}

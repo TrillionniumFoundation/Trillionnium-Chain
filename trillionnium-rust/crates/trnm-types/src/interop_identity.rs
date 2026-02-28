@@ -1942,6 +1942,42 @@ mod tests {
     }
 
     #[test]
+    fn revoke_did_replay_preserves_issue_height_floor_when_repairing_legacy_token() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did(
+            "did:trnm:agent-2rfloor".to_string(),
+            "org:lane2-admin".to_string(),
+            10,
+        )
+        .unwrap();
+
+        let token_id = reg
+            .issue_capability(
+                "org:lane2-admin".to_string(),
+                "did:trnm:agent-2rfloor".to_string(),
+                CapabilityScope::BridgeSettle,
+                60,
+                Some(120),
+            )
+            .unwrap();
+
+        reg.revoke_did("org:lane2-admin".to_string(), "did:trnm:agent-2rfloor", 40)
+            .unwrap();
+
+        // Simulate legacy/corrupt snapshot drift: replay should re-apply the cascade
+        // but keep the issue-height floor instead of backdating to DID revoke anchor.
+        reg.capabilities.get_mut(&token_id).unwrap().revoked_at = None;
+        let audit_len_before = reg.audit_trail().len();
+
+        reg.revoke_did("org:lane2-admin".to_string(), "did:trnm:agent-2rfloor", 99)
+            .unwrap();
+
+        assert_eq!(reg.did("did:trnm:agent-2rfloor").unwrap().revoked_at, Some(40));
+        assert_eq!(reg.capability(token_id).unwrap().revoked_at, Some(60));
+        assert_eq!(reg.audit_trail().len(), audit_len_before + 1);
+    }
+
+    #[test]
     fn revoke_did_replay_with_older_height_is_rejected_without_side_effects() {
         let mut reg = IdentityRegistry::default();
         reg.register_did(
