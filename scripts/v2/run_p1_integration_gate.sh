@@ -42,9 +42,18 @@ assert_tx_terminal_from_log() {
   echo "[GATE][PASS] tx terminal status asserted: $status"
 }
 
-step sdk_js_quickstart_smoke bash -lc "cd '$ROOT/examples/sdk-js' && node --check quickstart.js && test -f README.md && test -f package.json"
-step product_layer_smoke "$ROOT/scripts/v2/product_layer_smoke.sh"
-assert_tx_terminal_from_log "$RUN_DIR/product_layer_smoke.log"
-step rpc_contract_v1_test bash -lc "cd '$ROOT/trillionnium-rust' && cargo test -p trnm-rpc --test rpc_contract_v1"
+SDK_JS_QUICKSTART_CMD="${P1_GATE_SDK_JS_CMD:-cd '$ROOT/examples/sdk-js' && node --check quickstart.js && test -f README.md && test -f package.json}"
+PRODUCT_LAYER_SMOKE_CMD="${P1_GATE_PRODUCT_LAYER_CMD:-$ROOT/scripts/v2/product_layer_smoke.sh}"
+RPC_CONTRACT_V1_CMD="${P1_GATE_RPC_CONTRACT_CMD:-cd '$ROOT/trillionnium-rust' && cargo test -p trnm-rpc --test rpc_contract_v1}"
+X2_SETTLEMENT_GATE_CMD="${P1_GATE_X2_SETTLEMENT_CMD:-$ROOT/scripts/v2/x2_settlement_contract_gate.sh}"
+SKIP_TX_ASSERT="${P1_GATE_SKIP_TX_ASSERT:-0}"
+
+step sdk_js_quickstart_smoke bash -lc "$SDK_JS_QUICKSTART_CMD"
+step product_layer_smoke bash -lc "$PRODUCT_LAYER_SMOKE_CMD"
+if [[ "$SKIP_TX_ASSERT" != "1" ]]; then
+  assert_tx_terminal_from_log "$RUN_DIR/product_layer_smoke.log"
+fi
+step rpc_contract_v1_test bash -lc "$RPC_CONTRACT_V1_CMD"
+step x2_settlement_contract_gate bash -lc "$X2_SETTLEMENT_GATE_CMD"
 
 echo "[GATE][PASS] all checks passed"

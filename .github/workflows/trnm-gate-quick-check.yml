@@ -280,6 +280,10 @@ jobs:
         run: |
           ./scripts/v2/run_p1_integration_gate.sh
 
+      - name: Regression: run-p1-integration-gate invokes x2 settlement gate
+        run: |
+          ./scripts/v2/run_p1_integration_gate_x2_invocation_test.sh
+
       - name: Auto regression: run-reliability-soak
         run: |
           ./scripts/v2/run_reliability_soak.sh
