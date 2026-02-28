@@ -625,6 +625,37 @@ impl IdentityRegistry {
         &self.audit_trail
     }
 
+    /// Returns capability-scoped audit events so issue/renew/revoke can be
+    /// queried together by token id.
+    pub fn capability_audit_events(
+        &self,
+        token_id: u64,
+    ) -> Result<Vec<&AuditEvent>, InteropIdentityError> {
+        let token = self
+            .capabilities
+            .get(&token_id)
+            .ok_or(InteropIdentityError::CapabilityNotFound { token_id })?;
+
+        let events = self
+            .audit_trail
+            .iter()
+            .filter(|event| match event.action {
+                AuditAction::CapabilityIssued | AuditAction::CapabilityRenewed => {
+                    Self::token_id_from_audit_note(event.note.as_deref()) == Some(token_id)
+                }
+                AuditAction::CapabilityRevoked => {
+                    if Self::token_id_from_audit_note(event.note.as_deref()) == Some(token_id) {
+                        return true;
+                    }
+                    token.revoked_at == Some(event.at_height) && token.subject_did == event.subject
+                }
+                _ => false,
+            })
+            .collect();
+
+        Ok(events)
+    }
+
     pub fn content_hash(&self) -> [u8; 32] {
         use sha2::{Digest, Sha256};
         let mut hasher = Sha256::new();
@@ -689,6 +720,15 @@ impl IdentityRegistry {
         note.and_then(|v| {
             let trimmed = v.trim();
             (!trimmed.is_empty()).then(|| trimmed.to_string())
+        })
+    }
+
+    fn token_id_from_audit_note(note: Option<&str>) -> Option<u64> {
+        note.and_then(|raw| {
+            raw.split_whitespace().find_map(|part| {
+                part.strip_prefix("token_id=")
+                    .and_then(|v| v.parse::<u64>().ok())
+            })
         })
     }
 
@@ -2418,6 +2458,50 @@ mod tests {
         assert_eq!(last.subject, "did:trnm:agent-renew");
         assert_eq!(last.at_height, 25);
         assert_eq!(last.note.as_deref(), Some("token_id=1 expires_at=Some(45)"));
+    }
+
+    #[test]
+    fn capability_audit_events_links_issue_renew_revoke_for_token() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did(
+            "did:trnm:agent-auditq".to_string(),
+            "org:lane2-admin".to_string(),
+            10,
+        )
+        .unwrap();
+
+        let token_id = reg
+            .issue_capability(
+                "org:lane2-admin".to_string(),
+                "did:trnm:agent-auditq".to_string(),
+                CapabilityScope::AuditRead,
+                20,
+                Some(30),
+            )
+            .unwrap();
+        reg.renew_capability("org:lane2-admin".to_string(), token_id, 25, Some(40))
+            .unwrap();
+        reg.revoke_capability(
+            "org:lane2-admin".to_string(),
+            token_id,
+            28,
+            Some("manual_revoke".to_string()),
+        )
+        .unwrap();
+
+        let events = reg.capability_audit_events(token_id).unwrap();
+        let actions: Vec<AuditAction> = events.iter().map(|e| e.action).collect();
+        assert_eq!(
+            actions,
+            vec![
+                AuditAction::CapabilityIssued,
+                AuditAction::CapabilityRenewed,
+                AuditAction::CapabilityRevoked,
+            ]
+        );
+        assert_eq!(events[0].note.as_deref(), Some("token_id=1"));
+        assert_eq!(events[1].note.as_deref(), Some("token_id=1 expires_at=Some(40)"));
+        assert_eq!(events[2].note.as_deref(), Some("manual_revoke"));
     }
 
     #[test]
