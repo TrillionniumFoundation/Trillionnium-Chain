@@ -85,6 +85,18 @@ if any(r.get("task_id") != 7002 for r in records):
     print(q)
     sys.exit(6)
 
+required_fields = ("task_id", "proof_type", "settlement_status", "timestamp_unix_ms")
+for idx, rec in enumerate(records):
+    missing = [k for k in required_fields if k not in rec]
+    if missing:
+        print(f"record[{idx}] missing required fields: {missing}")
+        print(q)
+        sys.exit(12)
+    if rec.get("settlement_status") != rec.get("status"):
+        print(f"record[{idx}] settlement_status/status mismatch")
+        print(q)
+        sys.exit(13)
+
 with open(fp_query_path, "r", encoding="utf-8") as f:
     qfp = json.load(f)
 

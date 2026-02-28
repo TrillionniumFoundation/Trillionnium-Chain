@@ -236,6 +236,12 @@ struct EnterpriseAuditExportRecord {
     request_id: String,
     task_id: u64,
     status: String,
+    #[serde(default)]
+    proof_type: Option<String>,
+    #[serde(default)]
+    settlement_status: Option<String>,
+    #[serde(default)]
+    timestamp_unix_ms: Option<u128>,
     provider_request_id: Option<String>,
     provenance_schema_version: Option<String>,
     provenance_fingerprint: Option<String>,
@@ -427,10 +433,21 @@ fn to_enterprise_audit_export(rec: &MessageIngressRecord) -> EnterpriseAuditExpo
         compliance_profile.as_deref(),
     );
 
+    let proof_type = rec
+        .result_hash
+        .as_ref()
+        .or(rec.verifier_status.as_ref())
+        .map(|_| "fraud_proof".to_string());
+    let settlement_status = Some(rec.status.clone());
+    let timestamp_unix_ms = Some(rec.created_at_unix_ms);
+
     EnterpriseAuditExportRecord {
         request_id: rec.request_id.clone(),
         task_id: rec.task_id,
         status: rec.status.clone(),
+        proof_type,
+        settlement_status,
+        timestamp_unix_ms,
         provider_request_id: rec.provider_request_id.clone(),
         provenance_schema_version: schema_version,
         provenance_fingerprint,
@@ -470,18 +487,22 @@ fn markdown_escape(value: Option<&str>) -> String {
 
 fn render_enterprise_audit_markdown(exports: &[EnterpriseAuditExportRecord]) -> String {
     let mut out = String::from(
-        "| request_id | task_id | status | provider_request_id | provenance_schema_version | provenance_fingerprint | provider | model | adapter | agent_protocol | compliance_profile |\n",
+        "| request_id | task_id | status | proof_type | settlement_status | timestamp_unix_ms | provider_request_id | provenance_schema_version | provenance_fingerprint | provider | model | adapter | agent_protocol | compliance_profile |\n",
     );
     out.push_str(
-        "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n",
+        "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n",
     );
 
     for rec in exports {
+        let timestamp = rec.timestamp_unix_ms.map(|v| v.to_string());
         let row = format!(
-            "| {} | {} | {} | {} | {} | {} | {} | {} | {} | {} | {} |\n",
+            "| {} | {} | {} | {} | {} | {} | {} | {} | {} | {} | {} | {} | {} | {} |\n",
             markdown_escape(Some(rec.request_id.as_str())),
             rec.task_id,
             markdown_escape(Some(rec.status.as_str())),
+            markdown_escape(rec.proof_type.as_deref()),
+            markdown_escape(rec.settlement_status.as_deref()),
+            markdown_escape(timestamp.as_deref()),
             markdown_escape(rec.provider_request_id.as_deref()),
             markdown_escape(rec.provenance_schema_version.as_deref()),
             markdown_escape(rec.provenance_fingerprint.as_deref()),
@@ -2052,6 +2073,9 @@ mod tests {
             request_id: "r1".to_string(),
             task_id: 7,
             status: "reveal_submitted".to_string(),
+            proof_type: None,
+            settlement_status: None,
+            timestamp_unix_ms: None,
             provider_request_id: Some("req-1".to_string()),
             provenance_schema_version: Some("llm.v2".to_string()),
             provenance_fingerprint: Some("deadbeef".to_string()),
@@ -2073,6 +2097,9 @@ mod tests {
             request_id: "r\n1".to_string(),
             task_id: 8,
             status: "reveal\r\nsubmitted".to_string(),
+            proof_type: None,
+            settlement_status: None,
+            timestamp_unix_ms: None,
             provider_request_id: Some("req|2".to_string()),
             provenance_schema_version: Some("llm.v2".to_string()),
             provenance_fingerprint: Some("cafebabe".to_string()),
@@ -2097,6 +2124,9 @@ mod tests {
                 request_id: "r1".to_string(),
                 task_id: 7001,
                 status: "reveal_submitted".to_string(),
+                proof_type: None,
+                settlement_status: None,
+                timestamp_unix_ms: None,
                 provider_request_id: Some("p1".to_string()),
                 provenance_schema_version: Some("llm.v2".to_string()),
                 provenance_fingerprint: Some("fp-abc".to_string()),
@@ -2110,6 +2140,9 @@ mod tests {
                 request_id: "r2".to_string(),
                 task_id: 7002,
                 status: "rejected".to_string(),
+                proof_type: None,
+                settlement_status: None,
+                timestamp_unix_ms: None,
                 provider_request_id: Some("p2".to_string()),
                 provenance_schema_version: Some("llm.v2".to_string()),
                 provenance_fingerprint: Some("fp-abc".to_string()),
@@ -2136,6 +2169,9 @@ mod tests {
                 request_id: "r1".to_string(),
                 task_id: 7001,
                 status: "reveal_submitted".to_string(),
+                proof_type: None,
+                settlement_status: None,
+                timestamp_unix_ms: None,
                 provider_request_id: Some("p1".to_string()),
                 provenance_schema_version: Some("llm.v2".to_string()),
                 provenance_fingerprint: Some("fp-abc".to_string()),
@@ -2149,6 +2185,9 @@ mod tests {
                 request_id: "r2".to_string(),
                 task_id: 7002,
                 status: "rejected".to_string(),
+                proof_type: None,
+                settlement_status: None,
+                timestamp_unix_ms: None,
                 provider_request_id: Some("p2".to_string()),
                 provenance_schema_version: Some("llm.v2".to_string()),
                 provenance_fingerprint: Some("fp-xyz".to_string()),
@@ -2174,6 +2213,9 @@ mod tests {
             request_id: "r1".to_string(),
             task_id: 7001,
             status: "reveal_submitted".to_string(),
+            proof_type: None,
+            settlement_status: None,
+            timestamp_unix_ms: None,
             provider_request_id: Some("p1".to_string()),
             provenance_schema_version: Some("llm.v2".to_string()),
             provenance_fingerprint: Some("fp-abc".to_string()),
@@ -2198,6 +2240,9 @@ mod tests {
                 request_id: "r1".to_string(),
                 task_id: 7001,
                 status: "reveal_submitted".to_string(),
+                proof_type: None,
+                settlement_status: None,
+                timestamp_unix_ms: None,
                 provider_request_id: Some("p1".to_string()),
                 provenance_schema_version: Some("llm.v2".to_string()),
                 provenance_fingerprint: Some("fp-abc".to_string()),
@@ -2211,6 +2256,9 @@ mod tests {
                 request_id: "r2".to_string(),
                 task_id: 7002,
                 status: "rejected".to_string(),
+                proof_type: None,
+                settlement_status: None,
+                timestamp_unix_ms: None,
                 provider_request_id: Some("p2".to_string()),
                 provenance_schema_version: Some("llm.v2".to_string()),
                 provenance_fingerprint: Some("fp-xyz".to_string()),
@@ -2236,6 +2284,9 @@ mod tests {
             request_id: "r1".to_string(),
             task_id: 7001,
             status: "reveal_submitted".to_string(),
+            proof_type: None,
+            settlement_status: None,
+            timestamp_unix_ms: None,
             provider_request_id: Some("p1".to_string()),
             provenance_schema_version: Some("llm.v2".to_string()),
             provenance_fingerprint: Some("fp-abc".to_string()),
