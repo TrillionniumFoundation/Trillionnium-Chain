@@ -1506,6 +1506,95 @@ mod tests {
     }
 
     #[test]
+    fn source_attribution_is_canonicalized_for_quota_boundaries() {
+        let mut router = RelayRouter::new();
+        router.register("relay.echo", EchoHandler);
+        let relay = RelayService::with_risk_quota_config(
+            router,
+            RiskQuotaConfig {
+                window_ms: 1_000,
+                per_session_limit: 5,
+                per_source_limit: 2,
+            },
+        );
+        relay
+            .open(RelayOpenRequest {
+                session_id: "mv-src-s1".into(),
+            })
+            .unwrap();
+        relay
+            .send(RelaySendRequest {
+                session_id: "mv-src-s1".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"a".to_vec(),
+                source: Some("mv-src".into()),
+            })
+            .unwrap();
+
+        // Leading/trailing whitespace must not create a fresh source bucket.
+        relay
+            .send(RelaySendRequest {
+                session_id: "mv-src-s1".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"b".to_vec(),
+                source: Some("  mv-src  ".into()),
+            })
+            .unwrap();
+        let trimmed_alias_err = relay
+            .send(RelaySendRequest {
+                session_id: "mv-src-s1".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"c".to_vec(),
+                source: Some("mv-src".into()),
+            })
+            .unwrap_err();
+        assert!(trimmed_alias_err
+            .to_string()
+            .contains("too_many_requests/quota_exceeded"));
+
+        // Blank/whitespace-only attribution should collapse into anon and share one bucket.
+        relay
+            .send(RelaySendRequest {
+                session_id: "mv-src-s1".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"d".to_vec(),
+                source: None,
+            })
+            .unwrap();
+        relay
+            .send(RelaySendRequest {
+                session_id: "mv-src-s1".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"e".to_vec(),
+                source: Some("   \t\n".into()),
+            })
+            .unwrap();
+        let anon_alias_err = relay
+            .send(RelaySendRequest {
+                session_id: "mv-src-s1".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"f".to_vec(),
+                source: Some("".into()),
+            })
+            .unwrap_err();
+        assert!(anon_alias_err
+            .to_string()
+            .contains("too_many_requests/quota_exceeded"));
+    }
+
+    #[test]
     fn proof_quota_exceeded_has_same_error_code() {
         let mut router = RelayRouter::new();
         router.register("relay.echo", EchoHandler);
