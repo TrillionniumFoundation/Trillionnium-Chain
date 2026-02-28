@@ -216,5 +216,27 @@ mod tests {
         assert_eq!(registry.verify(&tee_task, b"TEE:quote"), VerificationResult::Valid);
         assert_eq!(registry.verify(&zk_task, b"ZK:payload!"), VerificationResult::Valid);
     }
+
+    #[test]
+    fn registry_with_builtin_verifiers_surfaces_envelope_validation_failures() {
+        let registry = VerifierRegistry::with_builtin_verifiers();
+
+        let fraud_task = task_with_proof_type(ProofType::Fraud);
+        let tee_task = task_with_proof_type(ProofType::Tee);
+        let zk_task = task_with_proof_type(ProofType::Zk);
+
+        assert!(matches!(
+            registry.verify(&fraud_task, b"FRAUD:   \n\t"),
+            VerificationResult::Invalid(msg) if msg.contains("Invalid fraud proof envelope")
+        ));
+        assert!(matches!(
+            registry.verify(&tee_task, b"TEE:   \n\t"),
+            VerificationResult::Invalid(msg) if msg.contains("Invalid TEE receipt envelope")
+        ));
+        assert!(matches!(
+            registry.verify(&zk_task, b"ZK:       "),
+            VerificationResult::Invalid(msg) if msg.contains("Invalid ZK proof envelope")
+        ));
+    }
 }
 
