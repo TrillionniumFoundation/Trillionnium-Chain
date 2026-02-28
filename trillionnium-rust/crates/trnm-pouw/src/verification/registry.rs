@@ -16,9 +16,19 @@ impl VerifierRegistry {
         }
     }
 
+    fn normalize_key(raw: &str) -> Option<String> {
+        let normalized = raw.trim().to_ascii_lowercase();
+        if normalized.is_empty() {
+            None
+        } else {
+            Some(normalized)
+        }
+    }
+
     pub fn register(&mut self, verifier: Arc<dyn ProofVerifier + Send + Sync>) {
-        self.verifiers
-            .insert(verifier.proof_type().trim().to_ascii_lowercase(), verifier);
+        if let Some(key) = Self::normalize_key(verifier.proof_type()) {
+            self.verifiers.insert(key, verifier);
+        }
     }
 
     pub fn verify(&self, task: &TaskObject, proof_data: &[u8]) -> VerificationResult {
@@ -99,6 +109,18 @@ mod tests {
 
         let task = task_with_proof_type(ProofType::Tee);
         assert_eq!(registry.verify(&task, b"receipt"), VerificationResult::Valid);
+    }
+
+    #[test]
+    fn registry_ignores_empty_verifier_key_after_normalization() {
+        let mut registry = VerifierRegistry::new();
+        registry.register(Arc::new(AlwaysValidVerifier { kind: "   " }));
+
+        let task = task_with_proof_type(ProofType::Tee);
+        assert_eq!(
+            registry.verify(&task, b"receipt"),
+            VerificationResult::Indeterminate("no verifier registered for proof type: tee".into())
+        );
     }
 
     #[test]
