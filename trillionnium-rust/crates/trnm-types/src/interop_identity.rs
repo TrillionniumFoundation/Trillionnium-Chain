@@ -2466,6 +2466,44 @@ mod tests {
     }
 
     #[test]
+    fn renew_capability_with_same_expiry_is_idempotent_but_still_audited() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did(
+            "did:trnm:agent-renew-same-expiry".to_string(),
+            "org:lane2-admin".to_string(),
+            10,
+        )
+        .unwrap();
+
+        let token_id = reg
+            .issue_capability(
+                "org:lane2-admin".to_string(),
+                "did:trnm:agent-renew-same-expiry".to_string(),
+                CapabilityScope::AuditRead,
+                20,
+                Some(40),
+            )
+            .unwrap();
+        let audit_len_before = reg.audit_trail().len();
+
+        reg.renew_capability("org:lane2-admin".to_string(), token_id, 30, Some(40))
+            .unwrap();
+
+        let token = reg.capability(token_id).unwrap();
+        assert_eq!(token.expires_at, Some(40));
+        assert_eq!(token.revoked_at, None);
+        assert_eq!(reg.audit_trail().len(), audit_len_before + 1);
+
+        let last = reg.audit_trail().last().unwrap();
+        assert_eq!(last.action, AuditAction::CapabilityRenewed);
+        assert_eq!(last.at_height, 30);
+        assert_eq!(
+            last.note.as_deref(),
+            Some("token_id=1 expires_at=Some(40)")
+        );
+    }
+
+    #[test]
     fn renew_capability_at_expiry_boundary_keeps_token_active_and_audited() {
         let mut reg = IdentityRegistry::default();
         reg.register_did(
