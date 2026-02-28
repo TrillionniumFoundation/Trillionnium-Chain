@@ -531,6 +531,45 @@ fn parse_i128_kv_value(raw: &str) -> Option<i128> {
     trim_wrapped_log_numeric(raw).parse::<i128>().ok()
 }
 
+fn normalize_optional_log_value(raw: &str) -> Option<String> {
+    let mut normalized = raw.trim_matches(|c: char| {
+        c.is_ascii_whitespace()
+            || matches!(c, ',' | ';' | ':' | '.' | '(' | ')' | '[' | ']' | '{' | '}')
+    });
+
+    loop {
+        let is_wrapped = normalized.len() >= 2
+            && ["\"", "'", "`"]
+                .iter()
+                .any(|q| normalized.starts_with(q) && normalized.ends_with(q));
+        if is_wrapped {
+            normalized = normalized[1..normalized.len() - 1].trim_matches(|c: char| {
+                c.is_ascii_whitespace()
+                    || matches!(c, ',' | ';' | ':' | '.' | '(' | ')' | '[' | ']' | '{' | '}')
+            });
+            continue;
+        }
+        break;
+    }
+
+    if normalized.is_empty() {
+        return None;
+    }
+
+    let lowered = normalized.to_ascii_lowercase();
+    if matches!(lowered.as_str(), "-" | "null" | "none" | "n/a" | "na") {
+        return None;
+    }
+
+    Some(normalized.to_string())
+}
+
+fn normalize_optional_tx_hash(raw: &str) -> Option<String> {
+    let token = normalize_optional_log_value(raw)?;
+    let normalized = normalize_tx_hash_lookup(&token);
+    is_hex_like_tx_hash(&normalized).then_some(normalized)
+}
+
 fn load_latest_node_events() -> Vec<NodeEventRecord> {
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .parent()
@@ -580,15 +619,7 @@ fn load_latest_node_events() -> Vec<NodeEventRecord> {
             .and_then(|s| parse_u128_kv_value(s))
             .unwrap_or(0);
 
-        let normalize_opt = |k: &str| {
-            kv.get(k).and_then(|v| {
-                if v.is_empty() || v == "-" {
-                    None
-                } else {
-                    Some(v.clone())
-                }
-            })
-        };
+        let normalize_opt = |k: &str| kv.get(k).and_then(|v| normalize_optional_log_value(v));
 
         out.push(NodeEventRecord {
             event_type: kv
@@ -614,7 +645,9 @@ fn load_latest_node_events() -> Vec<NodeEventRecord> {
             ts_unix_ms,
             signer: normalize_opt("signer"),
             challenger: normalize_opt("challenger"),
-            tx_hash: normalize_opt("tx_hash"),
+            tx_hash: kv
+                .get("tx_hash")
+                .and_then(|v| normalize_optional_tx_hash(v)),
             resolution_code: normalize_opt("resolution_code"),
             treasury_delta: kv
                 .get("treasury_delta")
@@ -2424,6 +2457,28 @@ mod tests {
         assert_eq!(parse_i128_kv_value("-42."), Some(-42));
         assert_eq!(parse_i128_kv_value("-42ms"), None);
         assert_eq!(parse_i128_kv_value("delta=-42"), None);
+    }
+
+    #[test]
+    fn normalize_optional_log_value_filters_empty_and_sentinel_noise() {
+        assert_eq!(normalize_optional_log_value(" \"alice\","), Some("alice".into()));
+        assert_eq!(normalize_optional_log_value(" [validator-7] "), Some("validator-7".into()));
+        assert_eq!(normalize_optional_log_value("-"), None);
+        assert_eq!(normalize_optional_log_value(" null "), None);
+        assert_eq!(normalize_optional_log_value("N/A"), None);
+        assert_eq!(normalize_optional_log_value("   "), None);
+    }
+
+    #[test]
+    fn normalize_optional_tx_hash_accepts_wrapped_hex_and_rejects_false_positive_noise() {
+        assert_eq!(
+            normalize_optional_tx_hash("tx_hash=\"0xAbC123\","),
+            Some("0xabc123".into())
+        );
+        assert_eq!(normalize_optional_tx_hash(" '0xDeF456' "), Some("0xdef456".into()));
+        assert_eq!(normalize_optional_tx_hash("-"), None);
+        assert_eq!(normalize_optional_tx_hash("tx_hash=not-a-hash"), None);
+        assert_eq!(normalize_optional_tx_hash("0xzz99"), None);
     }
 
     #[test]
