@@ -2466,6 +2466,41 @@ mod tests {
     }
 
     #[test]
+    fn renew_capability_at_expiry_boundary_keeps_token_active_and_audited() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did(
+            "did:trnm:agent-renew-boundary".to_string(),
+            "org:lane2-admin".to_string(),
+            10,
+        )
+        .unwrap();
+
+        let token_id = reg
+            .issue_capability(
+                "org:lane2-admin".to_string(),
+                "did:trnm:agent-renew-boundary".to_string(),
+                CapabilityScope::AuditRead,
+                20,
+                Some(30),
+            )
+            .unwrap();
+
+        reg.renew_capability("org:lane2-admin".to_string(), token_id, 30, Some(40))
+            .unwrap();
+
+        let token = reg.capability(token_id).unwrap();
+        assert_eq!(token.expires_at, Some(40));
+        assert!(token.is_active_at(40));
+
+        let last = reg.audit_trail().last().unwrap();
+        assert_eq!(last.action, AuditAction::CapabilityRenewed);
+        assert_eq!(last.actor, "org:lane2-admin");
+        assert_eq!(last.subject, "did:trnm:agent-renew-boundary");
+        assert_eq!(last.at_height, 30);
+        assert_eq!(last.note.as_deref(), Some("token_id=1 expires_at=Some(40)"));
+    }
+
+    #[test]
     fn renew_capability_allows_non_expiring_token_without_expiry_regression() {
         let mut reg = IdentityRegistry::default();
         reg.register_did(
