@@ -470,14 +470,16 @@ fn to_enterprise_audit_export(rec: &MessageIngressRecord) -> EnterpriseAuditExpo
     let schema_version = normalized_schema_version(rec.provenance_schema_version.as_deref());
     let is_v2 = schema_version.as_deref() == Some("llm.v2");
 
-    let provider = provenance.and_then(|p| p.provider.clone());
-    let model = provenance.and_then(|p| p.model.clone());
-    let adapter = provenance.and_then(|p| p.adapter.clone());
+    let provider = provenance.and_then(|p| normalized_provenance_label(p.provider.as_deref(), 64));
+    let model = provenance.and_then(|p| normalized_provenance_label(p.model.as_deref(), 128));
+    let adapter = provenance.and_then(|p| normalized_provenance_label(p.adapter.as_deref(), 64));
     let agent_protocol = is_v2
-        .then(|| provenance.and_then(|p| p.agent_protocol.clone()))
+        .then(|| provenance.and_then(|p| normalized_agent_protocol(p.agent_protocol.as_deref())))
         .flatten();
     let compliance_profile = is_v2
-        .then(|| provenance.and_then(|p| p.compliance_profile.clone()))
+        .then(|| {
+            provenance.and_then(|p| normalized_compliance_profile(p.compliance_profile.as_deref()))
+        })
         .flatten();
 
     let provenance_fingerprint = build_provenance_fingerprint(
@@ -1929,6 +1931,58 @@ mod tests {
             Some("openai"),
             Some("gpt-5.3-codex"),
             Some("mcp"),
+            Some("a2a"),
+            Some("cn-pii-restricted"),
+        );
+        assert_eq!(export.provenance_fingerprint, expected);
+    }
+
+    #[test]
+    fn enterprise_audit_export_normalizes_legacy_v2_label_drift_before_fingerprint() {
+        let rec = MessageIngressRecord {
+            request_id: "r-audit-v2-legacy-drift".to_string(),
+            task_id: 7012,
+            channel: "telegram".to_string(),
+            user_id: "u1".to_string(),
+            session_id: "s1".to_string(),
+            text: "hello".to_string(),
+            idempotency_key: "ik-audit-v2-legacy-drift".to_string(),
+            status: RequestStatus::Assigned.as_str().to_string(),
+            created_at_unix_ms: 1,
+            assigned_worker: Some("worker-1".to_string()),
+            assigned_at_unix_ms: Some(2),
+            model_output: None,
+            provider_request_id: Some("provider-7012".to_string()),
+            provenance_schema_version: Some("llm.v2".to_string()),
+            llm_provenance: Some(LlmProvenanceRecord {
+                provider: Some(" openai ".to_string()),
+                model: Some(" gpt-5.3-codex ".to_string()),
+                adapter: Some(" MCP ".to_string()),
+                agent_protocol: Some(" Agent2Agent V2 ".to_string()),
+                compliance_profile: Some(" CN PII Restricted ".to_string()),
+            }),
+            result_hash: None,
+            verifier_status: None,
+            resolution_code: None,
+            commit_tx_hash: None,
+            reveal_tx_hash: None,
+            adapter_error: None,
+            reputation_delta: None,
+        };
+
+        let export = to_enterprise_audit_export(&rec);
+        assert_eq!(export.provenance_schema_version.as_deref(), Some("llm.v2"));
+        assert_eq!(export.provider.as_deref(), Some("openai"));
+        assert_eq!(export.model.as_deref(), Some("gpt-5.3-codex"));
+        assert_eq!(export.adapter.as_deref(), Some("MCP"));
+        assert_eq!(export.agent_protocol.as_deref(), Some("a2a"));
+        assert_eq!(export.compliance_profile.as_deref(), Some("cn-pii-restricted"));
+
+        let expected = build_provenance_fingerprint(
+            Some("llm.v2"),
+            Some("openai"),
+            Some("gpt-5.3-codex"),
+            Some("MCP"),
             Some("a2a"),
             Some("cn-pii-restricted"),
         );
