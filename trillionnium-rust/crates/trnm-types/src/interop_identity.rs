@@ -463,6 +463,11 @@ impl IdentityRegistry {
             .ok_or_else(|| InteropIdentityError::DidNotFound {
                 did: subject_did.clone(),
             })?;
+        if !did.is_active_at(at_height) {
+            return Err(InteropIdentityError::DidRevoked {
+                did: subject_did.clone(),
+            });
+        }
         Self::ensure_actor_controls_did(&actor, did)?;
 
         {
@@ -2523,6 +2528,47 @@ mod tests {
         ));
         assert_eq!(reg.audit_trail().len(), audit_len_before);
         assert_eq!(reg.capability(token_id).unwrap(), &before);
+    }
+
+    #[test]
+    fn renew_capability_fail_closed_when_did_is_revoked_in_legacy_snapshot() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did(
+            "did:trnm:agent-renew-legacy".to_string(),
+            "org:lane2-admin".to_string(),
+            10,
+        )
+        .unwrap();
+
+        let token_id = reg
+            .issue_capability(
+                "org:lane2-admin".to_string(),
+                "did:trnm:agent-renew-legacy".to_string(),
+                CapabilityScope::AuditRead,
+                20,
+                Some(80),
+            )
+            .unwrap();
+
+        reg.dids
+            .get_mut("did:trnm:agent-renew-legacy")
+            .unwrap()
+            .revoked_at = Some(30);
+        reg.capabilities.get_mut(&token_id).unwrap().revoked_at = None;
+
+        let audit_len_before = reg.audit_trail().len();
+        let token_before = reg.capability(token_id).unwrap().clone();
+
+        let err = reg
+            .renew_capability("org:lane2-admin".to_string(), token_id, 35, Some(120))
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            InteropIdentityError::DidRevoked { did } if did == "did:trnm:agent-renew-legacy"
+        ));
+        assert_eq!(reg.audit_trail().len(), audit_len_before);
+        assert_eq!(reg.capability(token_id).unwrap(), &token_before);
     }
 
     #[test]
