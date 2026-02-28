@@ -29,7 +29,20 @@ fn x2_happy_path_heartbeat_ok_then_confirm_finalize() {
     )
     .unwrap();
 
-    assert_eq!(out, SettlementStep::Finalized { height: 121 });
+    assert_eq!(
+        out,
+        SettlementStep::Finalized {
+            height: 121,
+            event: trnm_bridge_poc::x2_settlement_loop::SettlementEvent {
+                phase: "settlement_confirmed",
+                heartbeat_source_height: Some(120),
+                heartbeat_target_height: Some(118),
+                heartbeat_latency_ms: Some(42),
+                confirm_height: Some(121),
+                confirm_reason: None,
+            },
+        }
+    );
     assert_eq!(current_status(&request), &BridgeStatus::Finalized(121));
 }
 
@@ -55,6 +68,16 @@ fn x2_failure_path_confirm_failed_triggers_compensation_revert() {
         out,
         SettlementStep::Compensated {
             reason: "settlement confirm failed: target chain receipt timeout".to_string(),
+            event: trnm_bridge_poc::x2_settlement_loop::SettlementEvent {
+                phase: "settlement_confirm_failed",
+                heartbeat_source_height: Some(220),
+                heartbeat_target_height: Some(219),
+                heartbeat_latency_ms: Some(38),
+                confirm_height: None,
+                confirm_reason: Some(
+                    "settlement confirm failed: target chain receipt timeout".to_string(),
+                ),
+            },
         }
     );
     assert_eq!(
