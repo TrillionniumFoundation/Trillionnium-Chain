@@ -19,10 +19,17 @@ impl VerifierRegistry {
     fn normalize_key(proof_type: &str) -> Option<String> {
         let normalized = proof_type.trim().to_ascii_lowercase();
         if normalized.is_empty() {
-            None
-        } else {
-            Some(normalized)
+            return None;
         }
+
+        let canonical = match normalized.as_str() {
+            "fraud_proof" | "fraud-proof" => "fraud",
+            "tee_receipt" | "tee-receipt" => "tee",
+            "zk_receipt" | "zk-receipt" => "zk",
+            _ => normalized.as_str(),
+        };
+
+        Some(canonical.to_string())
     }
 
     pub fn register(&mut self, verifier: Arc<dyn ProofVerifier + Send + Sync>) {
@@ -125,5 +132,24 @@ mod tests {
         assert!(registry.has_verifier("tee"));
         assert!(registry.has_verifier("  TEE  "));
         assert!(!registry.has_verifier("   "));
+    }
+
+    #[test]
+    fn registry_accepts_web4_receipt_aliases() {
+        let mut registry = VerifierRegistry::new();
+        registry.register(Arc::new(MockVerifier::new("tee_receipt", true)));
+
+        assert!(registry.has_verifier("tee"));
+        assert!(registry.has_verifier("tee_receipt"));
+        assert!(registry.has_verifier("TEE-RECEIPT"));
+    }
+
+    #[test]
+    fn verify_dispatches_from_alias_registration_to_canonical_proof_type() {
+        let mut registry = VerifierRegistry::new();
+        registry.register(Arc::new(MockVerifier::new("fraud_proof", true)));
+
+        let out = registry.verify(&mock_task(ProofType::Fraud), b"proof");
+        assert_eq!(out, VerificationResult::Valid);
     }
 }
