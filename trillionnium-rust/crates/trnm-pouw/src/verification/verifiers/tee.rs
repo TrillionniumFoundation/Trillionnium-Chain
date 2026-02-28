@@ -62,4 +62,24 @@ mod tests {
             VerificationResult::Invalid(msg) if msg.contains("too short")
         ));
     }
+
+    #[test]
+    fn tee_verifier_accepts_prefixed_receipts_when_length_is_sufficient() {
+        let verifier = TeeVerifier;
+        let task = mock_task();
+
+        assert_eq!(verifier.verify_proof(&task, b"TEE:quote"), VerificationResult::Valid);
+        assert_eq!(verifier.verify_proof(&task, b"TElegacy!"), VerificationResult::Valid);
+    }
+
+    #[test]
+    fn tee_verifier_rejects_unknown_prefix_even_if_receipt_is_long_enough() {
+        let verifier = TeeVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(&task, b"XXreceipt"),
+            VerificationResult::Invalid(msg) if msg.contains("prefix")
+        ));
+    }
 }
