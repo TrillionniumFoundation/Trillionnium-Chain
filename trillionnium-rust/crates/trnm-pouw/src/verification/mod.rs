@@ -181,4 +181,22 @@ mod tests {
         assert_eq!(receipt.verifier_id, "unknown-verifier");
         assert_eq!(receipt.timestamp_ms, 123);
     }
+
+    #[test]
+    fn verification_receipt_new_defaults_unknown_proof_type_when_blank() {
+        let receipt = VerificationReceipt::new(
+            9,
+            " \n\t ",
+            VerificationResult::Indeterminate("deferred".into()),
+            "tee-verifier-1",
+            456,
+        );
+
+        assert_eq!(receipt.proof_type, "unknown");
+        assert_eq!(receipt.verifier_id, "tee-verifier-1");
+        assert!(matches!(
+            receipt.result,
+            VerificationResult::Indeterminate(msg) if msg == "deferred"
+        ));
+    }
 }
