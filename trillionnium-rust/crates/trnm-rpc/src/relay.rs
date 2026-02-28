@@ -921,6 +921,47 @@ mod tests {
     }
 
     #[test]
+    fn relay_reopen_closed_session_clears_closed_at_and_accepts_send() {
+        let mut router = RelayRouter::new();
+        router.register("relay.echo", EchoHandler);
+        let relay = RelayService::new(router);
+
+        relay
+            .open(RelayOpenRequest {
+                session_id: "s1-reopen".to_string(),
+            })
+            .expect("open");
+
+        let closed = relay
+            .close(RelayCloseRequest {
+                session_id: "s1-reopen".to_string(),
+            })
+            .expect("close");
+        assert_eq!(closed.session.status, RelaySessionStatus::Closed);
+        assert!(closed.session.closed_at_unix_ms.is_some());
+
+        let reopened = relay
+            .open(RelayOpenRequest {
+                session_id: "s1-reopen".to_string(),
+            })
+            .expect("reopen");
+        assert_eq!(reopened.session.status, RelaySessionStatus::Open);
+        assert!(reopened.session.closed_at_unix_ms.is_none());
+
+        let sent = relay
+            .send(RelaySendRequest {
+                session_id: "s1-reopen".to_string(),
+                route: "relay.echo".to_string(),
+                from: "alice".to_string(),
+                to: Some("bob".to_string()),
+                payload: b"ping-reopen".to_vec(),
+                source: None,
+            })
+            .expect("send after reopen");
+        assert_eq!(sent.envelope.sequence, 1);
+    }
+
+    #[test]
     fn relay_ack_upto_seq_batch_and_boundaries() {
         let mut router = RelayRouter::new();
         router.register("relay.echo", EchoHandler);
