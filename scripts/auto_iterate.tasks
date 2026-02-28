@@ -135,3 +135,6 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: run
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: m2-policy-gate-nightly-signal-test" "./scripts/v2/m2_policy_gate_nightly_signal_test.sh" "ci(gate): add m2-policy-gate-nightly-signal-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: run-p1-integration-gate-i2-invocation-test" "./scripts/v2/run_p1_integration_gate_i2_invocation_test.sh" "ci(gate): add run-p1-integration-gate-i2-invocation-test regression to quick-check"
