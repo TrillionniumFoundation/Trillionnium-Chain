@@ -185,6 +185,31 @@ fn market_match_prefers_higher_reputation_when_weighted_score_is_better() {
     assert!(matched["score_weights"]["price"].is_u64());
     assert!(matched["score_weights"]["reputation"].is_u64());
     assert!(matched["score_weights"]["reputation_clamp"].is_i64());
+    let price = matched["price"].as_u64().expect("price");
+    let price_weight = matched["score_weights"]["price"].as_u64().expect("price weight");
+    let rep_weight = matched["score_weights"]["reputation"]
+        .as_u64()
+        .expect("reputation weight");
+    let rep_applied = matched["winner_reputation_applied"]
+        .as_i64()
+        .expect("winner_reputation_applied");
+
+    assert_eq!(
+        matched["score_breakdown"]["base_score"].as_u64(),
+        Some(price.saturating_mul(price_weight))
+    );
+    assert_eq!(
+        matched["score_breakdown"]["reputation_weight"].as_u64(),
+        Some(rep_weight)
+    );
+    assert_eq!(
+        matched["score_breakdown"]["penalty"].as_i64(),
+        Some(-(rep_applied.saturating_mul(rep_weight as i64)))
+    );
+    assert_eq!(
+        matched["score_breakdown"]["final_score"].as_u64(),
+        matched["effective_score"].as_u64()
+    );
 }
 
 #[test]

@@ -2107,12 +2107,18 @@ fn main() -> Result<()> {
             let winner_reputation = *reputation.get(&winner.worker).unwrap_or(&0);
             let (winner_score, winner_reputation_applied, gate) =
                 market_effective_score_details(winner.price, winner_reputation);
+            let base_score = winner.price.saturating_mul(gate.price_weight);
+            let score_penalty = if winner_reputation_applied >= 0 {
+                -((winner_reputation_applied as i128) * (gate.reputation_weight as i128))
+            } else {
+                (winner_reputation_applied.unsigned_abs() as i128) * (gate.reputation_weight as i128)
+            };
 
             task.status = "matched".into();
             save_market_tasks(&tasks)?;
 
             println!(
-                "{{\"task_id\":{},\"winner\":\"{}\",\"price\":{},\"status\":\"matched\",\"match_policy\":\"price_reputation_weighted\",\"winner_reputation\":{},\"winner_reputation_applied\":{},\"score_weights\":{{\"price\":{},\"reputation\":{},\"reputation_clamp\":{}}},\"effective_score\":{}}}",
+                "{{\"task_id\":{},\"winner\":\"{}\",\"price\":{},\"status\":\"matched\",\"match_policy\":\"price_reputation_weighted\",\"winner_reputation\":{},\"winner_reputation_applied\":{},\"score_weights\":{{\"price\":{},\"reputation\":{},\"reputation_clamp\":{}}},\"score_breakdown\":{{\"base_score\":{},\"reputation_weight\":{},\"penalty\":{},\"final_score\":{}}},\"effective_score\":{}}}",
                 task_id,
                 winner.worker,
                 winner.price,
@@ -2121,6 +2127,10 @@ fn main() -> Result<()> {
                 gate.price_weight,
                 gate.reputation_weight,
                 gate.reputation_clamp,
+                base_score,
+                gate.reputation_weight,
+                score_penalty,
+                winner_score,
                 winner_score
             );
         }
