@@ -27,6 +27,11 @@ def fail(msg: str):
 def validate_datetime(value: str) -> bool:
     if not isinstance(value, str):
         return False
+
+    has_timezone = value.endswith("Z") or bool(re.search(r"[+-]\d{2}:\d{2}$", value))
+    if not has_timezone:
+        return False
+
     try:
         if value.endswith("Z"):
             value = value[:-1] + "+00:00"
