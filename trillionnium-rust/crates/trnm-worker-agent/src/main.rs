@@ -1,4 +1,4 @@
-use anyhow::Result;
+use anyhow::{bail, Result};
 use clap::{Parser, Subcommand};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
@@ -137,8 +137,18 @@ enum Command {
     QueryAudit {
         #[arg(long, default_value = "audit-export.jsonl")]
         output_file: PathBuf,
-        #[arg(long)]
-        task_id: u64,
+        #[arg(
+            long,
+            conflicts_with = "provenance_fingerprint",
+            required_unless_present = "provenance_fingerprint"
+        )]
+        task_id: Option<u64>,
+        #[arg(
+            long,
+            conflicts_with = "task_id",
+            required_unless_present = "task_id"
+        )]
+        provenance_fingerprint: Option<String>,
     },
 }
 
@@ -252,6 +262,13 @@ struct AuditTaskQueryResult {
     records: Vec<EnterpriseAuditExportRecord>,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+struct AuditProvenanceFingerprintQueryResult {
+    provenance_fingerprint: String,
+    hit_indexes: Vec<usize>,
+    records: Vec<EnterpriseAuditExportRecord>,
+}
+
 fn build_audit_export_index(exports: &[EnterpriseAuditExportRecord]) -> AuditExportIndex {
     let mut by_task_id = BTreeMap::<String, Vec<usize>>::new();
     let mut by_model = BTreeMap::<String, Vec<usize>>::new();
@@ -316,6 +333,28 @@ fn query_audit_by_task_id(
 
     AuditTaskQueryResult {
         task_id: task_key,
+        hit_indexes,
+        records,
+    }
+}
+
+fn query_audit_by_provenance_fingerprint(
+    index: &AuditExportIndex,
+    exports: &[EnterpriseAuditExportRecord],
+    provenance_fingerprint: &str,
+) -> AuditProvenanceFingerprintQueryResult {
+    let hit_indexes = index
+        .by_provenance_fingerprint
+        .get(provenance_fingerprint)
+        .cloned()
+        .unwrap_or_default();
+    let records = hit_indexes
+        .iter()
+        .filter_map(|idx| exports.get(*idx).cloned())
+        .collect();
+
+    AuditProvenanceFingerprintQueryResult {
+        provenance_fingerprint: provenance_fingerprint.to_string(),
         hit_indexes,
         records,
     }
@@ -2153,6 +2192,68 @@ mod tests {
     }
 
     #[test]
+    fn query_audit_by_provenance_fingerprint_returns_hits_and_records() {
+        let rows = vec![
+            EnterpriseAuditExportRecord {
+                request_id: "r1".to_string(),
+                task_id: 7001,
+                status: "reveal_submitted".to_string(),
+                provider_request_id: Some("p1".to_string()),
+                provenance_schema_version: Some("llm.v2".to_string()),
+                provenance_fingerprint: Some("fp-abc".to_string()),
+                provider: Some("openai".to_string()),
+                model: Some("gpt-5.3-codex".to_string()),
+                adapter: Some("mcp".to_string()),
+                agent_protocol: Some("a2a".to_string()),
+                compliance_profile: Some("cn-moderate".to_string()),
+            },
+            EnterpriseAuditExportRecord {
+                request_id: "r2".to_string(),
+                task_id: 7002,
+                status: "rejected".to_string(),
+                provider_request_id: Some("p2".to_string()),
+                provenance_schema_version: Some("llm.v2".to_string()),
+                provenance_fingerprint: Some("fp-xyz".to_string()),
+                provider: Some("openai".to_string()),
+                model: Some("gpt-5.3-codex".to_string()),
+                adapter: Some("mcp".to_string()),
+                agent_protocol: Some("a2a".to_string()),
+                compliance_profile: Some("cn-moderate".to_string()),
+            },
+        ];
+        let index = build_audit_export_index(&rows);
+
+        let out = query_audit_by_provenance_fingerprint(&index, &rows, "fp-abc");
+        assert_eq!(out.provenance_fingerprint, "fp-abc");
+        assert_eq!(out.hit_indexes, vec![0]);
+        assert_eq!(out.records.len(), 1);
+        assert_eq!(out.records[0].request_id, "r1");
+    }
+
+    #[test]
+    fn query_audit_by_provenance_fingerprint_returns_empty_when_no_match() {
+        let rows = vec![EnterpriseAuditExportRecord {
+            request_id: "r1".to_string(),
+            task_id: 7001,
+            status: "reveal_submitted".to_string(),
+            provider_request_id: Some("p1".to_string()),
+            provenance_schema_version: Some("llm.v2".to_string()),
+            provenance_fingerprint: Some("fp-abc".to_string()),
+            provider: Some("openai".to_string()),
+            model: Some("gpt-5.3-codex".to_string()),
+            adapter: Some("mcp".to_string()),
+            agent_protocol: Some("a2a".to_string()),
+            compliance_profile: Some("cn-moderate".to_string()),
+        }];
+        let index = build_audit_export_index(&rows);
+
+        let out = query_audit_by_provenance_fingerprint(&index, &rows, "fp-missing");
+        assert_eq!(out.provenance_fingerprint, "fp-missing");
+        assert!(out.hit_indexes.is_empty());
+        assert!(out.records.is_empty());
+    }
+
+    #[test]
     fn attach_llm_provenance_persists_provider_request_id() {
         let mut rec = MessageIngressRecord {
             request_id: "r1".to_string(),
@@ -3720,12 +3821,21 @@ fn main() -> Result<()> {
         Command::QueryAudit {
             output_file,
             task_id,
+            provenance_fingerprint,
         } => {
             let index_file = audit_export_index_path(&output_file);
             let index: AuditExportIndex = serde_json::from_str(&fs::read_to_string(&index_file)?)?;
             let exports = load_audit_exports_jsonl(&output_file)?;
-            let query = query_audit_by_task_id(&index, &exports, task_id);
-            println!("{}", serde_json::to_string_pretty(&query)?);
+            if let Some(task_id) = task_id {
+                let query = query_audit_by_task_id(&index, &exports, task_id);
+                println!("{}", serde_json::to_string_pretty(&query)?);
+            } else if let Some(provenance_fingerprint) = provenance_fingerprint.as_deref() {
+                let query =
+                    query_audit_by_provenance_fingerprint(&index, &exports, provenance_fingerprint);
+                println!("{}", serde_json::to_string_pretty(&query)?);
+            } else {
+                bail!("either --task-id or --provenance-fingerprint is required");
+            }
         }
     }
     Ok(())
