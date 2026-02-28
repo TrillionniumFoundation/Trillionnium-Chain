@@ -914,6 +914,10 @@ fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
         | "agenttoagent"
         | "agent2agentprotocol"
         | "agenttoagentprotocol"
+        | "agent2agentprotocolv1"
+        | "agent2agentprotocolv2"
+        | "agenttoagentprotocolv1"
+        | "agenttoagentprotocolv2"
         | "agent2agentv1"
         | "agent2agentv2"
         | "agenttoagentv1"
@@ -2029,6 +2033,10 @@ mod tests {
         );
         assert_eq!(
             normalized_agent_protocol(Some("Agent:To:Agent")).as_deref(),
+            Some("a2a")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Agent-To-Agent Protocol v2")).as_deref(),
             Some("a2a")
         );
     }
