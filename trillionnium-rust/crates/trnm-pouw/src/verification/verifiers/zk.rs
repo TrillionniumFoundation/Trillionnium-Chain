@@ -17,8 +17,9 @@ impl ProofVerifier for ZkVerifier {
         }
 
         // V3 micro-patch hardening: require explicit envelope marker.
-        // Accepted example: "ZK:...".
-        if proof_data.starts_with(b"ZK:") {
+        // Accept case-insensitive variants to tolerate client casing drift.
+        // Accepted examples: "ZK:...", "zk:...".
+        if proof_data.len() >= 3 && proof_data[..3].eq_ignore_ascii_case(b"ZK:") {
             VerificationResult::Valid
         } else {
             VerificationResult::Invalid("Invalid ZK proof envelope".to_string())
@@ -73,6 +74,14 @@ mod tests {
         let task = mock_task();
 
         assert_eq!(verifier.verify_proof(&task, b"ZK:payload!"), VerificationResult::Valid);
+    }
+
+    #[test]
+    fn zk_verifier_accepts_lowercase_prefixed_proof_when_length_is_sufficient() {
+        let verifier = ZkVerifier;
+        let task = mock_task();
+
+        assert_eq!(verifier.verify_proof(&task, b"zk:payload!"), VerificationResult::Valid);
     }
 
     #[test]

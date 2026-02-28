@@ -14,8 +14,9 @@ impl ProofVerifier for FraudVerifier {
         }
 
         // V1 micro-patch: require explicit fraud-proof envelope marker.
-        // Accepted example: "FRAUD:...".
-        if proof_data.starts_with(b"FRAUD:") {
+        // Accept case-insensitive variants to tolerate client casing drift.
+        // Accepted examples: "FRAUD:...", "fraud:...".
+        if proof_data.len() >= 6 && proof_data[..6].eq_ignore_ascii_case(b"FRAUD:") {
             VerificationResult::Valid
         } else {
             VerificationResult::Invalid("Invalid fraud proof envelope".to_string())
@@ -71,6 +72,17 @@ mod tests {
 
         assert_eq!(
             verifier.verify_proof(&task, b"FRAUD:challenge-proof"),
+            VerificationResult::Valid
+        );
+    }
+
+    #[test]
+    fn fraud_verifier_accepts_lowercase_prefixed_envelope() {
+        let verifier = FraudVerifier;
+        let task = mock_task();
+
+        assert_eq!(
+            verifier.verify_proof(&task, b"fraud:challenge-proof"),
             VerificationResult::Valid
         );
     }
