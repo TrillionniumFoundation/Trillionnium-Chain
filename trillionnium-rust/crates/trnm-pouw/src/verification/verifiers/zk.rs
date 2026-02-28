@@ -16,11 +16,12 @@ impl ProofVerifier for ZkVerifier {
             return VerificationResult::Invalid("ZK proof too short".to_string());
         }
 
-        // Mock check: must start with "ZK"
-        if proof_data.starts_with(b"ZK") {
+        // V3 micro-patch hardening: require explicit envelope marker.
+        // Accepted example: "ZK:...".
+        if proof_data.starts_with(b"ZK:") {
             VerificationResult::Valid
         } else {
-            VerificationResult::Invalid("Invalid ZK proof bytes".to_string())
+            VerificationResult::Invalid("Invalid ZK proof envelope".to_string())
         }
     }
 }
@@ -81,7 +82,18 @@ mod tests {
 
         assert!(matches!(
             verifier.verify_proof(&task, b"XX:payload!"),
-            VerificationResult::Invalid(msg) if msg.contains("Invalid ZK proof")
+            VerificationResult::Invalid(msg) if msg.contains("Invalid ZK proof envelope")
+        ));
+    }
+
+    #[test]
+    fn zk_verifier_rejects_legacy_non_delimited_prefix() {
+        let verifier = ZkVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(&task, b"ZKpayload!!"),
+            VerificationResult::Invalid(msg) if msg.contains("envelope")
         ));
     }
 }
