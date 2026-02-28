@@ -783,10 +783,18 @@ fn load_market_reputation() -> BTreeMap<String, i64> {
         return BTreeMap::new();
     };
     let parsed = serde_json::from_str::<BTreeMap<String, i64>>(&raw).unwrap_or_default();
-    parsed
-        .into_iter()
-        .filter_map(|(worker, rep)| normalize_market_worker_key(&worker).map(|k| (k, rep)))
-        .collect()
+    let mut normalized: BTreeMap<String, i64> = BTreeMap::new();
+    for (worker, rep) in parsed {
+        if let Some(key) = normalize_market_worker_key(&worker) {
+            normalized
+                .entry(key)
+                // M2 hardening: if aliases normalize to the same worker key,
+                // keep the strongest reputation signal to avoid accidental downgrade.
+                .and_modify(|existing| *existing = (*existing).max(rep))
+                .or_insert(rep);
+        }
+    }
+    normalized
 }
 
 fn env_u128_clamped(name: &str, default: u128, min: u128, max: u128) -> u128 {
@@ -1018,10 +1026,8 @@ fn normalize_tx_hash_lookup(raw: &str) -> String {
     for delimiter in ['=', ':'] {
         if let Some((k, v)) = normalized.split_once(delimiter) {
             let key = k.trim();
-            let normalized_key: String = key
-                .chars()
-                .filter(|c| c.is_ascii_alphanumeric())
-                .collect();
+            let normalized_key: String =
+                key.chars().filter(|c| c.is_ascii_alphanumeric()).collect();
             if normalized_key == "txhash" || normalized_key == "hash" {
                 let mut value = v.trim_matches(|c: char| {
                     c.is_ascii_whitespace()
@@ -1987,10 +1993,7 @@ fn main() -> Result<()> {
             if worker.trim().is_empty() {
                 return Err(rpc_fail(RpcErrorResponse {
                     code: "worker-id-invalid",
-                    message: format!(
-                        "market bid worker must be non-empty for task {}",
-                        task_id
-                    ),
+                    message: format!("market bid worker must be non-empty for task {}", task_id),
                 }));
             }
             if price == 0 {
@@ -2011,7 +2014,8 @@ fn main() -> Result<()> {
                     ),
                 }));
             }
-            let normalized_worker = normalize_market_worker_key(&worker).expect("worker checked non-empty");
+            let normalized_worker =
+                normalize_market_worker_key(&worker).expect("worker checked non-empty");
             let mut bids = load_market_bids();
             if bids.iter().any(|b| {
                 b.task_id == task_id
@@ -2021,10 +2025,7 @@ fn main() -> Result<()> {
             }) {
                 return Err(rpc_fail(RpcErrorResponse {
                     code: "duplicate-bid",
-                    message: format!(
-                        "worker {} already has a bid for task {}",
-                        worker, task_id
-                    ),
+                    message: format!("worker {} already has a bid for task {}", worker, task_id),
                 }));
             }
             let bid = MarketBid {
@@ -2240,19 +2241,28 @@ mod tests {
 
     #[test]
     fn normalized_path_from_env_trims_shell_wrapped_quotes() {
-        with_market_path_env(&[("TRNM_RPC_MARKET_TASKS_FILE", Some("  \"/tmp/tasks.jsonl\"  "))], || {
-            assert_eq!(
-                normalized_path_from_env("TRNM_RPC_MARKET_TASKS_FILE"),
-                Some(PathBuf::from("/tmp/tasks.jsonl"))
-            );
-        });
+        with_market_path_env(
+            &[(
+                "TRNM_RPC_MARKET_TASKS_FILE",
+                Some("  \"/tmp/tasks.jsonl\"  "),
+            )],
+            || {
+                assert_eq!(
+                    normalized_path_from_env("TRNM_RPC_MARKET_TASKS_FILE"),
+                    Some(PathBuf::from("/tmp/tasks.jsonl"))
+                );
+            },
+        );
 
-        with_market_path_env(&[("TRNM_RPC_MARKET_TASKS_FILE", Some("'`/tmp/tasks.jsonl`'"))], || {
-            assert_eq!(
-                normalized_path_from_env("TRNM_RPC_MARKET_TASKS_FILE"),
-                Some(PathBuf::from("/tmp/tasks.jsonl"))
-            );
-        });
+        with_market_path_env(
+            &[("TRNM_RPC_MARKET_TASKS_FILE", Some("'`/tmp/tasks.jsonl`'"))],
+            || {
+                assert_eq!(
+                    normalized_path_from_env("TRNM_RPC_MARKET_TASKS_FILE"),
+                    Some(PathBuf::from("/tmp/tasks.jsonl"))
+                );
+            },
+        );
     }
 
     #[test]
@@ -2264,7 +2274,10 @@ mod tests {
                 (MARKET_REPUTATION_FILE_ENV, Some("  ''  ")),
             ],
             || {
-                assert_eq!(market_tasks_file(), run_root().join("run/market/tasks.jsonl"));
+                assert_eq!(
+                    market_tasks_file(),
+                    run_root().join("run/market/tasks.jsonl")
+                );
                 assert_eq!(market_bids_file(), run_root().join("run/market/bids.jsonl"));
                 assert_eq!(
                     market_reputation_file(),
@@ -2286,13 +2299,46 @@ mod tests {
             .expect("write reputation fixture");
 
         with_market_path_env(
-            &[(MARKET_REPUTATION_FILE_ENV, Some(path.to_string_lossy().as_ref()))],
+            &[(
+                MARKET_REPUTATION_FILE_ENV,
+                Some(path.to_string_lossy().as_ref()),
+            )],
             || {
                 let rep = load_market_reputation();
                 assert_eq!(rep.get("worker-a"), Some(&12));
                 assert_eq!(rep.get("worker-b"), Some(&-5));
                 assert!(!rep.contains_key(" Worker-A "));
                 assert!(!rep.contains_key(""));
+            },
+        );
+
+        let _ = fs::remove_file(path);
+    }
+
+    #[test]
+    fn market_reputation_loader_uses_highest_value_when_aliases_collide() {
+        let mut path = std::env::temp_dir();
+        path.push(format!(
+            "trnm_rpc_market_reputation_alias_collision_{}_{}.json",
+            std::process::id(),
+            now_ms()
+        ));
+        fs::write(
+            &path,
+            "{\"worker-a\": 10, \" Worker-A \": 200, \"WORKER-B\": -7}",
+        )
+        .expect("write alias-collision reputation fixture");
+
+        with_market_path_env(
+            &[(
+                MARKET_REPUTATION_FILE_ENV,
+                Some(path.to_string_lossy().as_ref()),
+            )],
+            || {
+                let rep = load_market_reputation();
+                assert_eq!(rep.get("worker-a"), Some(&200));
+                assert_eq!(rep.get("worker-b"), Some(&-7));
+                assert_eq!(rep.len(), 2);
             },
         );
 
@@ -2396,7 +2442,10 @@ mod tests {
     #[test]
     fn normalize_tx_hash_lookup_accepts_common_key_value_forms() {
         assert_eq!(normalize_tx_hash_lookup("tx_hash=0xAbC123"), "0xabc123");
-        assert_eq!(normalize_tx_hash_lookup("TxHash = \"0xDeF456\""), "0xdef456");
+        assert_eq!(
+            normalize_tx_hash_lookup("TxHash = \"0xDeF456\""),
+            "0xdef456"
+        );
         assert_eq!(normalize_tx_hash_lookup("hash= 0xA1B2"), "0xa1b2");
         assert_eq!(normalize_tx_hash_lookup("tx_hash:0xC0FFEE"), "0xc0ffee");
         assert_eq!(normalize_tx_hash_lookup("hash : `0xBEEF`"), "0xbeef");
@@ -2409,10 +2458,7 @@ mod tests {
 
     #[test]
     fn normalize_tx_hash_lookup_trims_sentence_period_after_hash_value() {
-        assert_eq!(
-            normalize_tx_hash_lookup("tx_hash=0xAbC123."),
-            "0xabc123"
-        );
+        assert_eq!(normalize_tx_hash_lookup("tx_hash=0xAbC123."), "0xabc123");
     }
 
     #[test]
