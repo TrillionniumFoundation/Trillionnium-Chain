@@ -46,6 +46,10 @@ impl RelayHeartbeatMonitor {
         self.config.interval_secs
     }
 
+    pub fn consecutive_failures(&self) -> u8 {
+        self.consecutive_failures
+    }
+
     pub fn record_success(
         &mut self,
         source_height: u64,

@@ -21,13 +21,16 @@ fn relay_heartbeat_retries_then_degrades() {
     let first = hb.record_failure("rpc timeout");
     assert!(first.should_retry);
     assert!(!first.degraded);
+    assert_eq!(hb.consecutive_failures(), 1);
 
     let second = hb.record_failure("rpc timeout");
     assert!(!second.should_retry);
     assert!(second.degraded);
+    assert_eq!(hb.consecutive_failures(), 2);
 
     let recovered = hb.record_success(200, 198, 8);
     assert!(!recovered.degraded);
+    assert_eq!(hb.consecutive_failures(), 0);
 }
 
 #[test]
