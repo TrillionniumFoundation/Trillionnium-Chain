@@ -7,5 +7,6 @@ edition = "2021"
 thiserror = "1"
 sha2 = "0.10"
 hex = "0.4"
+serde = { version = "1", features = ["derive"] }
 trnm-state = { path = "../trnm-state" }
 trnm-types = { path = "../trnm-types" }

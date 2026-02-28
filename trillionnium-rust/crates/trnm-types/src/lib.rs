@@ -42,12 +42,31 @@ pub enum TaskStatus {
     Slashed = 6,
 }
 
+#[repr(u8)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
+pub enum ProofType {
+    #[default]
+    Fraud = 0,
+    Tee = 1,
+    Zk = 2,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
+pub struct TaskMetadata {
+    #[serde(default)]
+    pub note: Option<String>,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct TaskObject {
     pub task_id: u64,
     pub creator: String,
     pub bounty: u128,
     pub status: TaskStatus,
+    #[serde(default)]
+    pub proof_type: ProofType,
+    #[serde(default)]
+    pub metadata: Option<TaskMetadata>,
     pub worker: Option<String>,
     pub committed_hash: Option<Hash32>,
     pub result_hash: Option<Hash32>,
