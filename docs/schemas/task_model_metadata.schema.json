@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://trillionniumchain.dev/schemas/task_model_metadata.schema.json",
+  "title": "Trillionnium Task + Model Metadata (Track D1)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "task_id",
+    "task_type",
+    "input_hash",
+    "model",
+    "provenance"
+  ],
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "task_type": {
+      "type": "string",
+      "minLength": 1
+    },
+    "input_hash": {
+      "type": "string",
+      "pattern": "^[a-fA-F0-9]{64}$"
+    },
+    "model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "model_id",
+        "model_digest",
+        "version"
+      ],
+      "properties": {
+        "model_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "model_digest": {
+          "type": "string",
+          "pattern": "^[a-fA-F0-9]{64}$"
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "producer_did",
+        "produced_at",
+        "privacy_tier"
+      ],
+      "properties": {
+        "producer_did": {
+          "type": "string",
+          "minLength": 1
+        },
+        "produced_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "privacy_tier": {
+          "type": "string",
+          "enum": [
+            "public",
+            "internal",
+            "restricted"
+          ]
+        }
+      }
+    }
+  }
+}
