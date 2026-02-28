@@ -3,7 +3,7 @@ use clap::{Parser, Subcommand};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::{
-    collections::HashSet,
+    collections::{BTreeMap, HashSet},
     env,
     fs::{self, OpenOptions},
     io::Write,
@@ -228,6 +228,51 @@ struct EnterpriseAuditExportRecord {
     adapter: Option<String>,
     agent_protocol: Option<String>,
     compliance_profile: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+struct AuditExportIndex {
+    version: u8,
+    total_records: usize,
+    by_task_id: BTreeMap<String, Vec<usize>>,
+    by_model: BTreeMap<String, Vec<usize>>,
+    by_provenance_fingerprint: BTreeMap<String, Vec<usize>>,
+}
+
+fn build_audit_export_index(exports: &[EnterpriseAuditExportRecord]) -> AuditExportIndex {
+    let mut by_task_id = BTreeMap::<String, Vec<usize>>::new();
+    let mut by_model = BTreeMap::<String, Vec<usize>>::new();
+    let mut by_provenance_fingerprint = BTreeMap::<String, Vec<usize>>::new();
+
+    for (idx, rec) in exports.iter().enumerate() {
+        by_task_id
+            .entry(rec.task_id.to_string())
+            .or_default()
+            .push(idx);
+
+        if let Some(model) = rec.model.as_deref() {
+            by_model.entry(model.to_string()).or_default().push(idx);
+        }
+
+        if let Some(fingerprint) = rec.provenance_fingerprint.as_deref() {
+            by_provenance_fingerprint
+                .entry(fingerprint.to_string())
+                .or_default()
+                .push(idx);
+        }
+    }
+
+    AuditExportIndex {
+        version: 1,
+        total_records: exports.len(),
+        by_task_id,
+        by_model,
+        by_provenance_fingerprint,
+    }
+}
+
+fn audit_export_index_path(output_file: &Path) -> PathBuf {
+    PathBuf::from(format!("{}.index.json", output_file.display()))
 }
 
 fn build_provenance_fingerprint(
@@ -1959,6 +2004,46 @@ mod tests {
         assert!(!md.contains("reveal\r\nsubmitted"));
     }
 
+
+    #[test]
+    fn export_audit_index_contains_task_model_and_fingerprint_keys() {
+        let rows = vec![
+            EnterpriseAuditExportRecord {
+                request_id: "r1".to_string(),
+                task_id: 7001,
+                status: "reveal_submitted".to_string(),
+                provider_request_id: Some("p1".to_string()),
+                provenance_schema_version: Some("llm.v2".to_string()),
+                provenance_fingerprint: Some("fp-abc".to_string()),
+                provider: Some("openai".to_string()),
+                model: Some("gpt-5.3-codex".to_string()),
+                adapter: Some("mcp".to_string()),
+                agent_protocol: Some("a2a".to_string()),
+                compliance_profile: Some("cn-moderate".to_string()),
+            },
+            EnterpriseAuditExportRecord {
+                request_id: "r2".to_string(),
+                task_id: 7002,
+                status: "rejected".to_string(),
+                provider_request_id: Some("p2".to_string()),
+                provenance_schema_version: Some("llm.v2".to_string()),
+                provenance_fingerprint: Some("fp-abc".to_string()),
+                provider: Some("openai".to_string()),
+                model: Some("gpt-5.3-codex".to_string()),
+                adapter: Some("mcp".to_string()),
+                agent_protocol: Some("a2a".to_string()),
+                compliance_profile: Some("cn-moderate".to_string()),
+            },
+        ];
+
+        let index = build_audit_export_index(&rows);
+        assert_eq!(index.total_records, 2);
+        assert_eq!(index.by_task_id.get("7001"), Some(&vec![0]));
+        assert_eq!(index.by_task_id.get("7002"), Some(&vec![1]));
+        assert_eq!(index.by_model.get("gpt-5.3-codex"), Some(&vec![0, 1]));
+        assert_eq!(index.by_provenance_fingerprint.get("fp-abc"), Some(&vec![0, 1]));
+    }
+
     #[test]
     fn attach_llm_provenance_persists_provider_request_id() {
         let mut rec = MessageIngressRecord {
@@ -3512,10 +3597,15 @@ fn main() -> Result<()> {
                 }
             }
 
+            let index = build_audit_export_index(&exports);
+            let index_file = audit_export_index_path(&output_file);
+            fs::write(&index_file, serde_json::to_string_pretty(&index)?)?;
+
             println!(
-                "[agent] exported audit records={} file={} format={:?}",
+                "[agent] exported audit records={} file={} index_file={} format={:?}",
                 exports.len(),
                 output_file.display(),
+                index_file.display(),
                 detect_audit_export_format(&output_file)
             );
         }
