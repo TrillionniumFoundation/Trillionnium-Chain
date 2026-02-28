@@ -1494,7 +1494,7 @@ fn apply_one(st: &mut StateStore, tx: MockTx, current_height: u64) -> Result<()>
             reveal_salt,
         } => {
             let r = task_ref(st, task_id)?;
-            let _ = apply_reveal_result_at_height(st, r, result_hash, reveal_salt, current_height)?;
+            let _ = apply_reveal_result_at_height(st, r, result_hash, reveal_salt, None, current_height)?;
         }
         MockTx::Challenge {
             task_id,
@@ -2783,7 +2783,7 @@ mod tests {
         )
         .unwrap();
         let r7 =
-            trnm_pouw::apply_reveal_result_at_height(&mut st, r6, result_hash, reveal_salt, 110)
+            trnm_pouw::apply_reveal_result_at_height(&mut st, r6, result_hash, reveal_salt, None, 110)
                 .unwrap();
         let _r8 = trnm_pouw::apply_challenge_at_height(&mut st, r7, "challenger".into(), 10, "challenger".into(), 120)
             .unwrap();
@@ -2800,7 +2800,7 @@ mod tests {
         )
         .unwrap();
         let _r12 =
-            trnm_pouw::apply_reveal_result_at_height(&mut st, r11, result_hash, reveal_salt, 110)
+            trnm_pouw::apply_reveal_result_at_height(&mut st, r11, result_hash, reveal_salt, None, 110)
                 .unwrap();
 
         let known: HashSet<u64> = [7001u64, 7002u64, 7003u64].into_iter().collect();
@@ -2831,7 +2831,7 @@ mod tests {
         )
         .unwrap();
         let _r4 =
-            trnm_pouw::apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, 110)
+            trnm_pouw::apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110)
                 .unwrap();
 
         let challenge_deadline = st
@@ -2875,7 +2875,7 @@ mod tests {
         )
         .unwrap();
         let revealed =
-            trnm_pouw::apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, 2)
+            trnm_pouw::apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 2)
                 .unwrap();
 
         let before = st.clone();
@@ -2906,7 +2906,7 @@ mod tests {
 
         let r2 = apply_accept_task(&mut st, r1, "worker8101".into()).unwrap();
         let r3 = apply_commit_result(&mut st, r2, "worker8101".into(), committed).unwrap();
-        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
         let r5 = apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
 
         let before = st.clone();
@@ -2945,7 +2945,7 @@ mod tests {
 
         let r2 = apply_accept_task(&mut st, r1, "worker8102".into()).unwrap();
         let r3 = apply_commit_result(&mut st, r2, "worker8102".into(), committed).unwrap();
-        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
         let r5 = apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
 
         let before = st.clone();
@@ -2992,7 +2992,7 @@ mod tests {
             1,
         )
         .unwrap();
-        let r4 = trnm_pouw::apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, 2)
+        let r4 = trnm_pouw::apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 2)
             .unwrap();
         let challenged =
             trnm_pouw::apply_challenge_at_height(&mut st, r4, "challenger".into(), 10, "challenger".into(), 3).unwrap();
