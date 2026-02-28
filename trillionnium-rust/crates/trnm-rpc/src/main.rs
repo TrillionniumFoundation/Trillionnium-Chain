@@ -2149,6 +2149,20 @@ mod tests {
     }
 
     #[test]
+    fn market_effective_score_clamps_reputation_clamp_config_to_max_boundary() {
+        with_market_score_env(
+            &[
+                (MARKET_PRICE_WEIGHT_ENV, "1000"),
+                (MARKET_REPUTATION_WEIGHT_ENV, "1"),
+                (MARKET_REPUTATION_CLAMP_ENV, "9999999"),
+            ],
+            || {
+                assert_eq!(market_effective_score(101, 2_000_000), 0);
+            },
+        );
+    }
+
+    #[test]
     fn normalize_tx_hash_lookup_tolerates_shell_wrapped_quotes() {
         assert_eq!(normalize_tx_hash_lookup("  \"0xAbC123\"  "), "0xabc123");
         assert_eq!(normalize_tx_hash_lookup(" '0xDeF456'\n"), "0xdef456");
