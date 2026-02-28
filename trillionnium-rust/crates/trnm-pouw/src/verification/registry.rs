@@ -203,6 +203,11 @@ mod tests {
     fn registry_with_builtin_verifiers_registers_v1_stack() {
         let registry = VerifierRegistry::with_builtin_verifiers();
 
+        assert_eq!(
+            registry.registered_proof_types(),
+            vec!["fraud".to_string(), "tee".to_string(), "zk".to_string()]
+        );
+
         let fraud_task = task_with_proof_type(ProofType::Fraud);
         let tee_task = task_with_proof_type(ProofType::Tee);
         let zk_task = task_with_proof_type(ProofType::Zk);
