@@ -866,15 +866,24 @@ fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
         .filter(|c| c.is_ascii_alphanumeric())
         .collect();
     match alias_key.as_str() {
-        "mcp" | "modelcontextprotocol" | "modelcontextprotocolv1" | "modelcontextprotocolv2" => {
-            Some("mcp".to_string())
-        }
+        "mcp"
+        | "mcpv1"
+        | "mcpv2"
+        | "modelcontextprotocol"
+        | "modelcontextprotocolv1"
+        | "modelcontextprotocolv2" => Some("mcp".to_string()),
         "a2a"
+        | "a2av1"
+        | "a2av2"
         | "a2aprotocol"
         | "agent2agent"
         | "agenttoagent"
         | "agent2agentprotocol"
-        | "agenttoagentprotocol" => Some("a2a".to_string()),
+        | "agenttoagentprotocol"
+        | "agent2agentv1"
+        | "agent2agentv2"
+        | "agenttoagentv1"
+        | "agenttoagentv2" => Some("a2a".to_string()),
         _ => None,
     }
 }
@@ -1827,7 +1836,37 @@ mod tests {
             provider: None,
             model: None,
             adapter: None,
+            agent_protocol: Some("MCP v2".to_string()),
+            compliance_profile: None,
+        };
+
+        attach_llm_provenance(&mut rec, &llm);
+
+        let prov = rec.llm_provenance.as_ref().expect("provenance attached");
+        assert_eq!(prov.agent_protocol.as_deref(), Some("mcp"));
+
+        let llm = LlmAdapterResponse {
+            output_text: "ok".to_string(),
+            provider_request_id: None,
+            provider: None,
+            model: None,
+            adapter: None,
             agent_protocol: Some("Agent/2/Agent".to_string()),
+            compliance_profile: None,
+        };
+
+        attach_llm_provenance(&mut rec, &llm);
+
+        let prov = rec.llm_provenance.as_ref().expect("provenance attached");
+        assert_eq!(prov.agent_protocol.as_deref(), Some("a2a"));
+
+        let llm = LlmAdapterResponse {
+            output_text: "ok".to_string(),
+            provider_request_id: None,
+            provider: None,
+            model: None,
+            adapter: None,
+            agent_protocol: Some("A2A v1".to_string()),
             compliance_profile: None,
         };
 
