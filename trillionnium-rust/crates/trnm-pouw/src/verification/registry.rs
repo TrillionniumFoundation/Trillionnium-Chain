@@ -21,6 +21,11 @@ impl VerifierRegistry {
             .insert(verifier.proof_type().to_ascii_lowercase(), verifier);
     }
 
+    pub fn has_verifier(&self, proof_type: &str) -> bool {
+        self.verifiers
+            .contains_key(&proof_type.to_ascii_lowercase())
+    }
+
     pub fn verify(&self, task: &TaskObject, proof_data: &[u8]) -> VerificationResult {
         let key = match task.proof_type {
             ProofType::Fraud => "fraud",
@@ -88,5 +93,15 @@ mod tests {
             out,
             VerificationResult::Indeterminate(msg) if msg.contains("no verifier registered for proof type: zk")
         ));
+    }
+
+    #[test]
+    fn has_verifier_is_case_insensitive() {
+        let mut registry = VerifierRegistry::new();
+        registry.register(Arc::new(MockVerifier::new("TeE", true)));
+
+        assert!(registry.has_verifier("tee"));
+        assert!(registry.has_verifier("TEE"));
+        assert!(!registry.has_verifier("zk"));
     }
 }
