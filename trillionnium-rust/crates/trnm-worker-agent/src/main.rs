@@ -1170,8 +1170,15 @@ fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
 }
 
 fn normalized_compliance_profile(value: Option<&str>) -> Option<String> {
-    let normalized: String = normalized_optional_field(value)?
-        .to_ascii_lowercase()
+    let raw = normalized_optional_field(value)?.to_ascii_lowercase();
+    let has_disallowed_chars = raw
+        .chars()
+        .any(|c| c.is_control() || is_invisible_filler(c) || !c.is_ascii());
+    if has_disallowed_chars {
+        return None;
+    }
+
+    let normalized: String = raw
         .chars()
         .map(|c| if c.is_ascii_whitespace() { '-' } else { c })
         .collect();
@@ -3285,6 +3292,14 @@ mod tests {
     fn normalized_compliance_profile_rejects_adjacent_space_separators() {
         assert_eq!(
             normalized_compliance_profile(Some("cn  pii restricted")),
+            None
+        );
+    }
+
+    #[test]
+    fn normalized_compliance_profile_rejects_control_whitespace_separators() {
+        assert_eq!(
+            normalized_compliance_profile(Some("cn\tpii restricted")),
             None
         );
     }
