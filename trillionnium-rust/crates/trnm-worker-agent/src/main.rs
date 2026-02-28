@@ -420,14 +420,19 @@ fn query_audit_by_task_id(
     }
 }
 
+fn normalized_provenance_fingerprint_query(value: &str) -> String {
+    value.trim().to_ascii_lowercase()
+}
+
 fn query_audit_by_provenance_fingerprint(
     index: &AuditExportIndex,
     exports: &[EnterpriseAuditExportRecord],
     provenance_fingerprint: &str,
 ) -> AuditProvenanceFingerprintQueryResult {
+    let normalized = normalized_provenance_fingerprint_query(provenance_fingerprint);
     let hit_indexes = index
         .by_provenance_fingerprint
-        .get(provenance_fingerprint)
+        .get(normalized.as_str())
         .cloned()
         .unwrap_or_default();
     let records = hit_indexes
@@ -436,7 +441,7 @@ fn query_audit_by_provenance_fingerprint(
         .collect();
 
     AuditProvenanceFingerprintQueryResult {
-        provenance_fingerprint: provenance_fingerprint.to_string(),
+        provenance_fingerprint: normalized,
         hit_indexes,
         records,
     }
@@ -2433,6 +2438,33 @@ mod tests {
         assert_eq!(out.provenance_fingerprint, "fp-missing");
         assert!(out.hit_indexes.is_empty());
         assert!(out.records.is_empty());
+    }
+
+    #[test]
+    fn query_audit_by_provenance_fingerprint_normalizes_query_input() {
+        let rows = vec![EnterpriseAuditExportRecord {
+            request_id: "r1".to_string(),
+            task_id: 7001,
+            status: "reveal_submitted".to_string(),
+            proof_type: None,
+            settlement_status: None,
+            timestamp_unix_ms: None,
+            provider_request_id: Some("p1".to_string()),
+            provenance_schema_version: Some("llm.v2".to_string()),
+            provenance_fingerprint: Some("fp-abc".to_string()),
+            provider: Some("openai".to_string()),
+            model: Some("gpt-5.3-codex".to_string()),
+            adapter: Some("mcp".to_string()),
+            agent_protocol: Some("a2a".to_string()),
+            compliance_profile: Some("cn-moderate".to_string()),
+        }];
+        let index = build_audit_export_index(&rows);
+
+        let out = query_audit_by_provenance_fingerprint(&index, &rows, "  FP-ABC  ");
+        assert_eq!(out.provenance_fingerprint, "fp-abc");
+        assert_eq!(out.hit_indexes, vec![0]);
+        assert_eq!(out.records.len(), 1);
+        assert_eq!(out.records[0].request_id, "r1");
     }
 
     #[test]
