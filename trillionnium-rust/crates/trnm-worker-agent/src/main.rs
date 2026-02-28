@@ -1271,11 +1271,12 @@ fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
 }
 
 fn normalized_compliance_profile(value: Option<&str>) -> Option<String> {
-    let normalized: String = normalized_optional_field(value)?
-        .to_ascii_lowercase()
-        .chars()
-        .map(|c| if c.is_ascii_whitespace() { '-' } else { c })
-        .collect();
+    let normalized_value = normalized_optional_field(value)?;
+    let normalized: String = normalized_value
+        .split_ascii_whitespace()
+        .collect::<Vec<_>>()
+        .join("-")
+        .to_ascii_lowercase();
     let is_allowed = normalized
         .chars()
         .all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || matches!(c, '-' | '_' | '.' | '/' | '\\'));
@@ -3159,7 +3160,7 @@ mod tests {
             model: None,
             adapter: None,
             agent_protocol: None,
-            compliance_profile: Some("CN PII Restricted".to_string()),
+            compliance_profile: Some("CN   PII\tRestricted".to_string()),
         };
 
         attach_llm_provenance(&mut rec, &llm);
