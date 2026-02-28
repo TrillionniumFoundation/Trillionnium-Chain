@@ -1918,10 +1918,16 @@ fn main() -> Result<()> {
             price,
         } => {
             let tasks = load_market_tasks();
-            if !tasks.iter().any(|t| t.task_id == task_id) {
+            let Some(task) = tasks.iter().find(|t| t.task_id == task_id) else {
                 return Err(rpc_fail(RpcErrorResponse {
                     code: "task-not-found",
                     message: format!("market task not found: {}", task_id),
+                }));
+            };
+            if task.status != "open" {
+                return Err(rpc_fail(RpcErrorResponse {
+                    code: "task-not-open",
+                    message: format!("market task not in open status: {}", task.status),
                 }));
             }
             let mut bids = load_market_bids();
