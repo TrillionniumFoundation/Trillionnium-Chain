@@ -12,6 +12,9 @@ use std::{
     thread,
     time::{Duration, SystemTime, UNIX_EPOCH},
 };
+mod proof_adapter;
+
+use proof_adapter::{ProofAdapter, StandardProofAdapter};
 use trnm_types::RequestStatus;
 use wait_timeout::ChildExt;
 
@@ -3291,8 +3294,10 @@ fn main() -> Result<()> {
                         continue;
                     }
                 };
-                let (v_status, resolution_code) =
-                    verify_model_output(&llm.output_text, verifier_max_output_chars);
+                let proof_adapter = StandardProofAdapter;
+                let (verified, resolution_code) =
+                    proof_adapter.verify(&llm.output_text, verifier_max_output_chars);
+                let v_status = if verified { "accepted" } else { "rejected" };
                 attach_llm_provenance(rec, &llm);
                 rec.model_output = Some(llm.output_text.clone());
                 rec.verifier_status = Some(v_status.to_string());
