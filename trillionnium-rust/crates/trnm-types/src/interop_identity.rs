@@ -2606,6 +2606,33 @@ mod tests {
     }
 
     #[test]
+    fn ensure_settlement_capability_rejects_unknown_token_without_side_effects() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did(
+            "did:trnm:settler-missing-token".to_string(),
+            "org:lane2-admin".to_string(),
+            10,
+        )
+        .unwrap();
+
+        let baseline = reg.audit_trail().to_vec();
+        let err = reg
+            .ensure_settlement_capability(
+                "org:lane2-admin",
+                42,
+                CapabilityScope::BridgeSettle,
+                50,
+            )
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            InteropIdentityError::CapabilityNotFound { token_id } if token_id == 42
+        ));
+        assert_eq!(reg.audit_trail(), baseline.as_slice());
+    }
+
+    #[test]
     fn ensure_settlement_capability_rejects_inactive_or_unauthorized_actor() {
         let mut reg = IdentityRegistry::default();
         reg.register_did(
