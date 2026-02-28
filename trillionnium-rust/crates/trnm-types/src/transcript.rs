@@ -18,6 +18,7 @@ pub struct TranscriptProof {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum TranscriptError {
     EmptySegment,
+    EmptyTargets,
     InvalidRange {
         start_seq: u64,
         end_seq: u64,
@@ -147,6 +148,10 @@ pub fn transcript_segment_proofs(
     end_seq: u64,
     target_seqs: &[u64],
 ) -> Result<(Hash32, Vec<TranscriptProof>), TranscriptError> {
+    if target_seqs.is_empty() {
+        return Err(TranscriptError::EmptyTargets);
+    }
+
     let tree = transcript_segment_tree(envelopes, start_seq, end_seq)?;
     let root = tree.root();
 
@@ -356,6 +361,20 @@ mod tests {
             assert_eq!(batch_root, single_root);
             assert_eq!(batch_proofs[i], single_proof);
         }
+    }
+
+    #[test]
+    fn transcript_batch_proofs_reject_empty_targets() {
+        let envs = vec![sample_env(1, "n1"), sample_env(2, "n2"), sample_env(3, "n3")];
+        let err = transcript_segment_proofs(&envs, 1, 3, &[]).unwrap_err();
+        assert!(matches!(err, TranscriptError::EmptyTargets));
+    }
+
+    #[test]
+    fn transcript_single_proof_api_rejects_empty_batch_indirectly() {
+        let envs = vec![sample_env(1, "n1")];
+        let (root, proof) = transcript_segment_proof(&envs, 1, 1, 1).expect("single proof");
+        assert!(verify_proof(&root, &proof));
     }
 
     #[test]
