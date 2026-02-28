@@ -46,6 +46,8 @@ SDK_JS_QUICKSTART_CMD="${P1_GATE_SDK_JS_CMD:-cd '$ROOT/examples/sdk-js' && node 
 PRODUCT_LAYER_SMOKE_CMD="${P1_GATE_PRODUCT_LAYER_CMD:-$ROOT/scripts/v2/product_layer_smoke.sh}"
 RPC_CONTRACT_V1_CMD="${P1_GATE_RPC_CONTRACT_CMD:-cd '$ROOT/trillionnium-rust' && cargo test -p trnm-rpc --test rpc_contract_v1}"
 X2_SETTLEMENT_GATE_CMD="${P1_GATE_X2_SETTLEMENT_CMD:-$ROOT/scripts/v2/x2_settlement_contract_gate.sh}"
+I2_TOKEN_LIFECYCLE_GATE_CMD="${P1_GATE_I2_TOKEN_LIFECYCLE_CMD:-$ROOT/scripts/v2/i2_token_lifecycle_gate.sh}"
+M2_POLICY_GATE_CMD="${P1_GATE_M2_POLICY_CMD:-cd '$ROOT/trillionnium-rust' && cargo test -p trnm-rpc market_m2_policy_gate_guards_default_drift_to_min_boundaries}"
 SKIP_TX_ASSERT="${P1_GATE_SKIP_TX_ASSERT:-0}"
 
 step sdk_js_quickstart_smoke bash -lc "$SDK_JS_QUICKSTART_CMD"
@@ -55,5 +57,7 @@ if [[ "$SKIP_TX_ASSERT" != "1" ]]; then
 fi
 step rpc_contract_v1_test bash -lc "$RPC_CONTRACT_V1_CMD"
 step x2_settlement_contract_gate bash -lc "$X2_SETTLEMENT_GATE_CMD"
+step i2_token_lifecycle_gate bash -lc "$I2_TOKEN_LIFECYCLE_GATE_CMD"
+step m2_policy_gate bash -lc "$M2_POLICY_GATE_CMD"
 
 echo "[GATE][PASS] all checks passed"
