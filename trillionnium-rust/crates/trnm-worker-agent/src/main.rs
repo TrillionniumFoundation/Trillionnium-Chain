@@ -1351,6 +1351,17 @@ mod tests {
     }
 
     #[test]
+    fn exp_backoff_delay_saturates_without_overflow() {
+        assert_eq!(exp_backoff_delay_ms(25, 0), 25);
+        assert_eq!(exp_backoff_delay_ms(25, 1), 50);
+        assert_eq!(exp_backoff_delay_ms(25, 2), 100);
+
+        // Very large attempts should saturate rather than overflow/panic.
+        assert_eq!(exp_backoff_delay_ms(u64::MAX, 1), u64::MAX);
+        assert_eq!(exp_backoff_delay_ms(1_000_000, 62), u64::MAX);
+    }
+
+    #[test]
     fn llm_adapter_retry_succeeds_within_budget() {
         let mut attempt = 0u32;
         let mut slept = vec![];
