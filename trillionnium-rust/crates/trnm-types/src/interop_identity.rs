@@ -444,7 +444,13 @@ impl IdentityRegistry {
 
         Self::ensure_actor_controls_did(&actor, did_rec)?;
 
-        if did_rec.revoked_at.is_some() {
+        if let Some(first_revoked_at) = did_rec.revoked_at {
+            if at_height < first_revoked_at {
+                return Err(InteropIdentityError::InvalidDidRevocationHeight {
+                    created_at: first_revoked_at,
+                    revoked_at: at_height,
+                });
+            }
             return Ok(());
         }
 
@@ -1766,6 +1772,46 @@ mod tests {
         assert_eq!(reg.did("did:trnm:agent-2").unwrap().revoked_at, Some(40));
         assert_eq!(reg.capability(token_id).unwrap().revoked_at, Some(40));
         assert_eq!(reg.audit_trail().len(), first_audit_len);
+    }
+
+    #[test]
+    fn revoke_did_replay_with_older_height_is_rejected_without_side_effects() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did(
+            "did:trnm:agent-2r".to_string(),
+            "org:lane2-admin".to_string(),
+            10,
+        )
+        .unwrap();
+
+        let token_id = reg
+            .issue_capability(
+                "org:lane2-admin".to_string(),
+                "did:trnm:agent-2r".to_string(),
+                CapabilityScope::BridgeSettle,
+                12,
+                Some(100),
+            )
+            .unwrap();
+
+        reg.revoke_did("org:lane2-admin".to_string(), "did:trnm:agent-2r", 40)
+            .unwrap();
+        let audit_len_before = reg.audit_trail().len();
+
+        let err = reg
+            .revoke_did("org:lane2-admin".to_string(), "did:trnm:agent-2r", 39)
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            InteropIdentityError::InvalidDidRevocationHeight {
+                created_at: 40,
+                revoked_at: 39,
+            }
+        ));
+        assert_eq!(reg.did("did:trnm:agent-2r").unwrap().revoked_at, Some(40));
+        assert_eq!(reg.capability(token_id).unwrap().revoked_at, Some(40));
+        assert_eq!(reg.audit_trail().len(), audit_len_before);
     }
 
     #[test]
