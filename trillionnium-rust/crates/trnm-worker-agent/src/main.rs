@@ -7,7 +7,7 @@ use std::{
     env,
     fs::{self, OpenOptions},
     io::Write,
-    path::PathBuf,
+    path::{Path, PathBuf},
     process::{Command as ProcCommand, Output, Stdio},
     thread,
     time::{Duration, SystemTime, UNIX_EPOCH},
@@ -294,6 +294,58 @@ fn to_enterprise_audit_export(rec: &MessageIngressRecord) -> EnterpriseAuditExpo
         agent_protocol,
         compliance_profile,
     }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum AuditExportFormat {
+    Jsonl,
+    Markdown,
+}
+
+fn detect_audit_export_format(path: &Path) -> AuditExportFormat {
+    if path
+        .extension()
+        .and_then(|ext| ext.to_str())
+        .map(|ext| ext.eq_ignore_ascii_case("md") || ext.eq_ignore_ascii_case("markdown"))
+        .unwrap_or(false)
+    {
+        AuditExportFormat::Markdown
+    } else {
+        AuditExportFormat::Jsonl
+    }
+}
+
+fn markdown_escape(value: Option<&str>) -> String {
+    value.unwrap_or("-").replace('|', "\\|")
+}
+
+fn render_enterprise_audit_markdown(exports: &[EnterpriseAuditExportRecord]) -> String {
+    let mut out = String::from(
+        "| request_id | task_id | status | provider_request_id | provenance_schema_version | provenance_fingerprint | provider | model | adapter | agent_protocol | compliance_profile |\n",
+    );
+    out.push_str(
+        "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n",
+    );
+
+    for rec in exports {
+        let row = format!(
+            "| {} | {} | {} | {} | {} | {} | {} | {} | {} | {} | {} |\n",
+            markdown_escape(Some(rec.request_id.as_str())),
+            rec.task_id,
+            markdown_escape(Some(rec.status.as_str())),
+            markdown_escape(rec.provider_request_id.as_deref()),
+            markdown_escape(rec.provenance_schema_version.as_deref()),
+            markdown_escape(rec.provenance_fingerprint.as_deref()),
+            markdown_escape(rec.provider.as_deref()),
+            markdown_escape(rec.model.as_deref()),
+            markdown_escape(rec.adapter.as_deref()),
+            markdown_escape(rec.agent_protocol.as_deref()),
+            markdown_escape(rec.compliance_profile.as_deref()),
+        );
+        out.push_str(&row);
+    }
+
+    out
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -1741,6 +1793,43 @@ mod tests {
         assert_eq!(export.agent_protocol, None);
         assert_eq!(export.compliance_profile, None);
         assert_eq!(export.provider, None);
+    }
+
+    #[test]
+    fn export_audit_detects_markdown_output_extension() {
+        assert_eq!(
+            detect_audit_export_format(Path::new("audit-export.md")),
+            AuditExportFormat::Markdown
+        );
+        assert_eq!(
+            detect_audit_export_format(Path::new("audit-export.markdown")),
+            AuditExportFormat::Markdown
+        );
+        assert_eq!(
+            detect_audit_export_format(Path::new("audit-export.jsonl")),
+            AuditExportFormat::Jsonl
+        );
+    }
+
+    #[test]
+    fn export_audit_markdown_contains_provenance_fingerprint_fields() {
+        let rows = vec![EnterpriseAuditExportRecord {
+            request_id: "r1".to_string(),
+            task_id: 7,
+            status: "reveal_submitted".to_string(),
+            provider_request_id: Some("req-1".to_string()),
+            provenance_schema_version: Some("llm.v2".to_string()),
+            provenance_fingerprint: Some("deadbeef".to_string()),
+            provider: Some("openai".to_string()),
+            model: Some("gpt-5.3-codex".to_string()),
+            adapter: Some("mcp".to_string()),
+            agent_protocol: Some("a2a".to_string()),
+            compliance_profile: Some("cn-pii-restricted".to_string()),
+        }];
+
+        let md = render_enterprise_audit_markdown(&rows);
+        assert!(md.contains("| provenance_schema_version | provenance_fingerprint |"));
+        assert!(md.contains("| r1 | 7 | reveal_submitted | req-1 | llm.v2 | deadbeef |"));
     }
 
     #[test]
@@ -3266,13 +3355,7 @@ fn main() -> Result<()> {
             output_file,
         } => {
             let records = load_ingress_records(&ingress_file)?;
-            let mut n = 0usize;
-            
-            // clear or create output file
-            if let Some(parent) = output_file.parent() {
-                fs::create_dir_all(parent)?;
-            }
-            let mut file = fs::File::create(&output_file)?;
+            let mut exports = Vec::new();
 
             for rec in records.iter() {
                 // Only export finalized or processed requests
@@ -3280,14 +3363,34 @@ fn main() -> Result<()> {
                     rec.status.as_str(),
                     "reveal_submitted" | "rejected" | "failed_submission" | "failed_adapter"
                 ) {
-                    let export = to_enterprise_audit_export(rec);
-                    let line = serde_json::to_string(&export)?;
-                    file.write_all(line.as_bytes())?;
-                    file.write_all(b"\n")?;
-                    n += 1;
+                    exports.push(to_enterprise_audit_export(rec));
                 }
             }
-            println!("[agent] exported audit records={} file={}", n, output_file.display());
+
+            if let Some(parent) = output_file.parent() {
+                fs::create_dir_all(parent)?;
+            }
+
+            let mut file = fs::File::create(&output_file)?;
+            match detect_audit_export_format(&output_file) {
+                AuditExportFormat::Jsonl => {
+                    for export in exports.iter() {
+                        let line = serde_json::to_string(export)?;
+                        file.write_all(line.as_bytes())?;
+                        file.write_all(b"\n")?;
+                    }
+                }
+                AuditExportFormat::Markdown => {
+                    file.write_all(render_enterprise_audit_markdown(&exports).as_bytes())?;
+                }
+            }
+
+            println!(
+                "[agent] exported audit records={} file={} format={:?}",
+                exports.len(),
+                output_file.display(),
+                detect_audit_export_format(&output_file)
+            );
         }
     }
     Ok(())
