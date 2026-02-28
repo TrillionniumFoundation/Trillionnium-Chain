@@ -26,6 +26,38 @@ pub struct VerificationReceipt {
     pub timestamp_ms: u64,
 }
 
+impl VerificationReceipt {
+    /// Creates a canonical receipt shape for persistence and downstream analytics.
+    ///
+    /// - `proof_type` is normalized to lowercase + trimmed.
+    /// - `verifier_id` is trimmed and falls back to `unknown-verifier` when empty.
+    pub fn new(
+        task_id: u64,
+        proof_type: impl AsRef<str>,
+        result: VerificationResult,
+        verifier_id: impl AsRef<str>,
+        timestamp_ms: u64,
+    ) -> Self {
+        let normalized_proof_type = proof_type.as_ref().trim().to_ascii_lowercase();
+        let verifier = verifier_id.as_ref().trim();
+        Self {
+            task_id,
+            proof_type: if normalized_proof_type.is_empty() {
+                "unknown".to_string()
+            } else {
+                normalized_proof_type
+            },
+            result,
+            verifier_id: if verifier.is_empty() {
+                "unknown-verifier".to_string()
+            } else {
+                verifier.to_string()
+            },
+            timestamp_ms,
+        }
+    }
+}
+
 /// A trait for pluggable verification logic (Fraud Proof, TEE, ZK).
 ///
 /// This allows the market to be agnostic to *how* the work is verified.
@@ -119,18 +151,34 @@ mod tests {
 
     #[test]
     fn verification_receipt_json_roundtrip_preserves_fields() {
-        let receipt = VerificationReceipt {
-            task_id: 42,
-            proof_type: "tee".to_string(),
-            result: VerificationResult::Valid,
-            verifier_id: "tee-sgx-sim".to_string(),
-            timestamp_ms: 1_706_000_000_000,
-        };
+        let receipt = VerificationReceipt::new(
+            42,
+            "tee",
+            VerificationResult::Valid,
+            "tee-sgx-sim",
+            1_706_000_000_000,
+        );
 
         let encoded = serde_json::to_string(&receipt).expect("serialize receipt");
         let decoded: VerificationReceipt =
             serde_json::from_str(&encoded).expect("deserialize receipt");
 
         assert_eq!(decoded, receipt);
+    }
+
+    #[test]
+    fn verification_receipt_new_normalizes_fields() {
+        let receipt = VerificationReceipt::new(
+            7,
+            " TEE ",
+            VerificationResult::Valid,
+            "   ",
+            123,
+        );
+
+        assert_eq!(receipt.task_id, 7);
+        assert_eq!(receipt.proof_type, "tee");
+        assert_eq!(receipt.verifier_id, "unknown-verifier");
+        assert_eq!(receipt.timestamp_ms, 123);
     }
 }
