@@ -1917,6 +1917,13 @@ fn main() -> Result<()> {
             bounty,
             description,
         } => {
+            if bounty == 0 {
+                return Err(rpc_fail(RpcErrorResponse {
+                    code: "task-bounty-invalid",
+                    message: "market task bounty must be greater than zero".to_string(),
+                }));
+            }
+
             let mut tasks = load_market_tasks();
             let task_id = 20_000 + tasks.len() as u64 + 1;
             let task = MarketTask {
