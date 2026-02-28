@@ -30,6 +30,7 @@ impl VerificationReceipt {
     /// Creates a canonical receipt shape for persistence and downstream analytics.
     ///
     /// - `proof_type` is normalized to lowercase + trimmed.
+    /// - legacy receipt aliases (`fraud_proof|tee_receipt|zk_receipt`) collapse to canonical router keys.
     /// - `verifier_id` is trimmed and falls back to `unknown-verifier` when empty.
     pub fn new(
         task_id: u64,
@@ -38,7 +39,7 @@ impl VerificationReceipt {
         verifier_id: impl AsRef<str>,
         timestamp_ms: u64,
     ) -> Self {
-        let normalized_proof_type = proof_type.as_ref().trim().to_ascii_lowercase();
+        let normalized_proof_type = normalize_receipt_proof_type(proof_type.as_ref());
         let verifier = verifier_id.as_ref().trim();
         Self {
             task_id,
@@ -73,6 +74,15 @@ impl VerificationReceipt {
             verifier_id,
             timestamp_ms,
         )
+    }
+}
+
+fn normalize_receipt_proof_type(raw: &str) -> String {
+    match raw.trim().to_ascii_lowercase().as_str() {
+        "fraud_proof" => "fraud".to_string(),
+        "tee_receipt" => "tee".to_string(),
+        "zk_receipt" => "zk".to_string(),
+        other => other.to_string(),
     }
 }
 
@@ -242,5 +252,16 @@ mod tests {
         assert_eq!(receipt.verifier_id, "tee-verifier");
         assert_eq!(receipt.timestamp_ms, 789);
         assert_eq!(receipt.result, VerificationResult::Valid);
+    }
+
+    #[test]
+    fn verification_receipt_new_collapses_legacy_receipt_aliases_to_router_keys() {
+        let fraud = VerificationReceipt::new(1, "Fraud_Proof", VerificationResult::Valid, "v", 1);
+        let tee = VerificationReceipt::new(2, " tee_receipt ", VerificationResult::Valid, "v", 2);
+        let zk = VerificationReceipt::new(3, "ZK_RECEIPT", VerificationResult::Valid, "v", 3);
+
+        assert_eq!(fraud.proof_type, "fraud");
+        assert_eq!(tee.proof_type, "tee");
+        assert_eq!(zk.proof_type, "zk");
     }
 }
