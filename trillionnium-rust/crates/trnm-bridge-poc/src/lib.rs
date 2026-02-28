@@ -144,5 +144,11 @@ pub mod bridge_status {
                 }),
             }
         }
+
     }
 }
+
+pub mod relay_heartbeat;
+
+#[cfg(test)]
+mod tests;
