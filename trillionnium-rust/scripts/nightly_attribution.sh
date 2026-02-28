@@ -34,6 +34,17 @@ latest_mixed="$(ls -1dt run/bench/bench-mixed-matrix-*.txt 2>/dev/null | head -n
 latest_strategy_exp="$(ls -1dt run/bench/executor-strategy-exp-*.txt 2>/dev/null | head -n 1 || true)"
 latest_hotspot_exp="$(ls -1dt run/bench/executor-hotspot-exp-*.txt 2>/dev/null | head -n 1 || true)"
 latest_suggest="$(ls -1dt run/health/auto-adaptive-threshold-suggestion-*.txt 2>/dev/null | head -n 1 || true)"
+latest_p1_gate="$(ls -1dt run/p1-integration-gate/* 2>/dev/null | head -n 1 || true)"
+m2_policy_gate_log=""
+m2_policy_gate_assert_default_drift_guard="missing"
+if [[ -n "$latest_p1_gate" ]] && [[ -f "$latest_p1_gate/m2_policy_gate.log" ]]; then
+  m2_policy_gate_log="$latest_p1_gate/m2_policy_gate.log"
+  if grep -Eq 'market_m2_policy_gate_guards_default_drift_to_min_boundaries.*ok' "$m2_policy_gate_log"; then
+    m2_policy_gate_assert_default_drift_guard="pass"
+  else
+    m2_policy_gate_assert_default_drift_guard="fail"
+  fi
+fi
 
 label_semantic=0
 label_perf=0
@@ -65,6 +76,11 @@ if [[ -f run/event-replay-smoke.log ]]; then
     label_semantic=1
     reasons+=("event_replay_order_failed")
   fi
+fi
+
+if [[ "$m2_policy_gate_assert_default_drift_guard" != "pass" ]]; then
+  label_semantic=1
+  reasons+=("m2_policy_gate_default_drift_guard_${m2_policy_gate_assert_default_drift_guard}")
 fi
 
 max_elapsed() {
@@ -185,6 +201,9 @@ fi
   echo "strategy_exp.file=${latest_strategy_exp:-none}"
   echo "hotspot_exp.file=${latest_hotspot_exp:-none}"
   echo "threshold_suggest.file=${latest_suggest:-none}"
+  echo "p1_gate.latest_dir=${latest_p1_gate:-none}"
+  echo "m2.policy_gate.log=${m2_policy_gate_log:-none}"
+  echo "m2.policy_gate.assert_default_drift_guard=${m2_policy_gate_assert_default_drift_guard}"
   echo "strategy_exp.auto.use_hot_bucket=${auto_used_mixed}"
   echo "strategy_exp.auto.reason=${auto_reason_mixed}"
   echo "strategy_exp.elapsed.original_ms=${orig_elapsed_mixed:-none}"
