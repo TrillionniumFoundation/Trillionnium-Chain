@@ -448,6 +448,19 @@ impl StateStore {
         if !is_sensitive_gov_param(&key) {
             // Preserve side-effect-free error behavior: only scrub stale pending entries
             // after a successful write for non-sensitive keys.
+            // Idempotence guard: unchecked replay of identical non-sensitive values should
+            // not churn object versions, but must still clear stale pending residue.
+            if self.gov_param_value(&key) == Some(value.as_str()) {
+                self.pending_gov_updates.remove(&key);
+                if let Some(existing_ref) = self
+                    .gov_param_key_index
+                    .get(&key)
+                    .copied()
+                    .and_then(|id| self.get_ref(id))
+                {
+                    return Ok(existing_ref);
+                }
+            }
             let out = self.upsert_gov_param_unchecked(key_id, key.clone(), value)?;
             self.pending_gov_updates.remove(&key);
             return Ok(out);
@@ -2095,6 +2108,42 @@ mod tests {
         assert!(
             st.pending_gov_update("emergency_pause").is_none(),
             "unchecked emergency_pause apply must remove stale pending entry"
+        );
+    }
+
+    #[test]
+    fn emergency_pause_unchecked_noop_is_idempotent_and_clears_stale_pending_entry() {
+        let mut st = StateStore::new();
+
+        let first_ref = st
+            .set_gov_param_unchecked(7_999, "emergency_pause".into(), "true".into())
+            .expect("first unchecked pause write must succeed");
+        assert!(st.is_emergency_paused());
+
+        // Corrupt/legacy state simulation: stale pending residue must be scrubbed even
+        // when the unchecked write is a noop.
+        st.pending_gov_updates.insert(
+            "emergency_pause".into(),
+            PendingGovParamUpdate {
+                key_id: 7_999,
+                key: "emergency_pause".into(),
+                value: "true".into(),
+                activate_at_height: 88_999,
+            },
+        );
+
+        let second_ref = st
+            .set_gov_param_unchecked(7_999, "emergency_pause".into(), "true".into())
+            .expect("unchecked noop pause write must stay idempotent");
+
+        assert_eq!(
+            first_ref, second_ref,
+            "unchecked noop emergency_pause write must not churn version"
+        );
+        assert!(st.is_emergency_paused());
+        assert!(
+            st.pending_gov_update("emergency_pause").is_none(),
+            "unchecked noop must still remove stale emergency_pause pending entry"
         );
     }
 
