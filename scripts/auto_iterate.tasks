@@ -146,3 +146,6 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d2-task-model-metadata-schema-reject-invalid-provenance-index-test" "./scripts/v2/d2_task_model_metadata_schema_reject_invalid_provenance_index_test.sh" "ci(gate): add d2-task-model-metadata-schema-reject-invalid-provenance-index-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-naive-produced-at-test" "./scripts/v2/d1_task_model_metadata_schema_reject_naive_produced_at_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-naive-produced-at-test regression to quick-check"
