@@ -822,6 +822,10 @@ fn is_invisible_filler(c: char) -> bool {
             | '\u{2062}' // INVISIBLE TIMES
             | '\u{2063}' // INVISIBLE SEPARATOR
             | '\u{2064}' // INVISIBLE PLUS
+            | '\u{2066}' // LEFT-TO-RIGHT ISOLATE
+            | '\u{2067}' // RIGHT-TO-LEFT ISOLATE
+            | '\u{2068}' // FIRST STRONG ISOLATE
+            | '\u{2069}' // POP DIRECTIONAL ISOLATE
             | '\u{00AD}' // SOFT HYPHEN
             | '\u{034F}' // COMBINING GRAPHEME JOINER (non-rendering)
             | '\u{180E}' // MONGOLIAN VOWEL SEPARATOR (historically zero-width)
@@ -1277,6 +1281,7 @@ mod tests {
         );
         assert_eq!(verify_model_output("\u{2060}\u{00AD}", 8), ("rejected", "empty_output"));
         assert_eq!(verify_model_output("\u{2061}\u{2062}\u{2063}\u{2064}", 8), ("rejected", "empty_output"));
+        assert_eq!(verify_model_output("\u{2066}\u{2067}\u{2068}\u{2069}", 8), ("rejected", "empty_output"));
         assert_eq!(verify_model_output("\u{034F}", 8), ("rejected", "empty_output"));
         assert_eq!(verify_model_output("\u{180E}", 8), ("rejected", "empty_output"));
         assert_eq!(verify_model_output("\u{200E}\u{200F}", 8), ("rejected", "empty_output"));
