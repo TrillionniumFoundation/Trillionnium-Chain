@@ -1949,6 +1949,15 @@ fn main() -> Result<()> {
                     message: format!("market task not in open status: {}", task.status),
                 }));
             }
+            if price == 0 {
+                return Err(rpc_fail(RpcErrorResponse {
+                    code: "bid-price-invalid",
+                    message: format!(
+                        "market bid price must be greater than zero for task {}",
+                        task_id
+                    ),
+                }));
+            }
             if price > task.bounty {
                 return Err(rpc_fail(RpcErrorResponse {
                     code: "bid-above-bounty",

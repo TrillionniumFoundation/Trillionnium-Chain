@@ -127,6 +127,35 @@ fn market_submit_bid_above_bounty_returns_structured_code() {
 }
 
 #[test]
+fn market_submit_bid_zero_price_returns_structured_code() {
+    let _guard = test_lock().lock().expect("test lock");
+    let _ = fs::remove_dir_all("run/market");
+
+    let create_out = run_ok(&[
+        "market.create_task",
+        "--creator",
+        "alice",
+        "--bounty",
+        "100",
+        "--description",
+        "m1 positive bid floor",
+    ]);
+    let created: Value = serde_json::from_str(&create_out).expect("create task JSON");
+    let task_id = created["task_id"].as_u64().expect("task_id").to_string();
+
+    let stderr = run_fail(&[
+        "market.submit_bid",
+        "--task-id",
+        &task_id,
+        "--worker",
+        "worker-a",
+        "--price",
+        "0",
+    ]);
+    assert!(stderr.contains("\"code\": \"bid-price-invalid\""));
+}
+
+#[test]
 fn market_submit_bid_duplicate_worker_returns_structured_code() {
     let _guard = test_lock().lock().expect("test lock");
     let _ = fs::remove_dir_all("run/market");
