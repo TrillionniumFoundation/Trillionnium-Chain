@@ -10,6 +10,7 @@ members = [
   "crates/trnm-bench",
   "crates/trnm-worker-agent",
   "crates/trnm-cli",
+  "crates/trnm-bridge-poc",
 ]
 resolver = "2"
 

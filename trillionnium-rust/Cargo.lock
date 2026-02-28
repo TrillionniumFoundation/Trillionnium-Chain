@@ -771,6 +771,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "trnm-bridge-poc"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "trnm-types",
+]
+
+[[package]]
 name = "trnm-cli"
 version = "0.1.0"
 dependencies = [
