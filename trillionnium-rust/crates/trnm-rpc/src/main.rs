@@ -2161,7 +2161,7 @@ fn main() -> Result<()> {
             save_market_tasks(&tasks)?;
 
             println!(
-                "{{\"task_id\":{},\"winner\":\"{}\",\"price\":{},\"status\":\"matched\",\"match_policy\":\"price_reputation_weighted\",\"winner_reputation\":{},\"winner_reputation_applied\":{},\"score_weights\":{{\"price\":{},\"reputation\":{},\"reputation_clamp\":{}}},\"score_breakdown\":{{\"base_score\":{},\"reputation_weight\":{},\"penalty\":{},\"final_score\":{}}},\"effective_score\":{}}}",
+                "{{\"task_id\":{},\"winner\":\"{}\",\"price\":{},\"status\":\"matched\",\"match_policy\":\"price_reputation_weighted\",\"score_formula_version\":\"m2-v1\",\"winner_reputation\":{},\"winner_reputation_applied\":{},\"score_weights\":{{\"price\":{},\"reputation\":{},\"reputation_clamp\":{}}},\"score_breakdown\":{{\"base_score\":{},\"reputation_weight\":{},\"penalty\":{},\"final_score\":{}}},\"effective_score\":{}}}",
                 task_id,
                 winner.worker,
                 winner.price,

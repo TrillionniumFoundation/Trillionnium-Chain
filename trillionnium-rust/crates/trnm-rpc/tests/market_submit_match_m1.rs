@@ -179,6 +179,7 @@ fn market_match_prefers_higher_reputation_when_weighted_score_is_better() {
     );
     assert!(match_out.contains("\"winner\":\"worker-high\""));
     assert!(match_out.contains("\"match_policy\":\"price_reputation_weighted\""));
+    assert!(match_out.contains("\"score_formula_version\":\"m2-v1\""));
     assert!(match_out.contains("\"winner_reputation\":200"));
     let matched: Value = serde_json::from_str(&match_out).expect("match task JSON");
     assert!(matched["winner_reputation_applied"].is_i64());
