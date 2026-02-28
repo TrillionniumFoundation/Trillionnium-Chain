@@ -13,13 +13,20 @@ impl ProofVerifier for TeeVerifier {
             return VerificationResult::Invalid("TEE receipt too short".to_string());
         }
 
-        // V2 micro patch hardening: require explicit TEE receipt prefix.
+        // V2 micro patch hardening: require explicit TEE receipt prefix
+        // plus a non-whitespace payload body.
         // Accept case-insensitive variants to avoid client-side casing drift.
         // Accepted examples: "TEE:...", "tee:...".
-        if proof_data.len() >= 4 && proof_data[..4].eq_ignore_ascii_case(b"TEE:") {
+        let has_prefix = proof_data.len() >= 4 && proof_data[..4].eq_ignore_ascii_case(b"TEE:");
+        let has_non_whitespace_body = proof_data
+            .get(4..)
+            .map(|suffix| suffix.iter().any(|b| !b.is_ascii_whitespace()))
+            .unwrap_or(false);
+
+        if has_prefix && has_non_whitespace_body {
             VerificationResult::Valid
         } else {
-            VerificationResult::Invalid("Invalid TEE receipt prefix".to_string())
+            VerificationResult::Invalid("Invalid TEE receipt envelope".to_string())
         }
     }
 }
@@ -95,7 +102,7 @@ mod tests {
 
         assert!(matches!(
             verifier.verify_proof(&task, b"TElegacy!"),
-            VerificationResult::Invalid(msg) if msg.contains("prefix")
+            VerificationResult::Invalid(msg) if msg.contains("envelope")
         ));
     }
 
@@ -106,7 +113,18 @@ mod tests {
 
         assert!(matches!(
             verifier.verify_proof(&task, b"XXreceipt"),
-            VerificationResult::Invalid(msg) if msg.contains("prefix")
+            VerificationResult::Invalid(msg) if msg.contains("envelope")
+        ));
+    }
+
+    #[test]
+    fn tee_verifier_rejects_whitespace_only_body_after_prefix() {
+        let verifier = TeeVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(&task, b"TEE:    \n\t"),
+            VerificationResult::Invalid(msg) if msg.contains("envelope")
         ));
     }
 }
