@@ -68,6 +68,10 @@ jobs:
         run: |
           ./scripts/v2/governance_value_schema_reject_test.sh
 
+      - name: D1 schema missing provenance producer_did regression
+        run: |
+          ./scripts/v2/d1_task_model_metadata_schema_missing_provenance_producer_did_test.sh
+
       - name: Auto regression: pr5-challenge-reconcile-gate
         run: |
           ./scripts/v2/pr5_challenge_reconcile_gate.sh
