@@ -120,7 +120,7 @@ fn test_market_lifecycle() {
 fn test_market_match_non_existent_task() {
     let env = test_env("no_task");
     let stderr = run_rpc_fail(&env, &["market-match-task", "--task-id", "99999"]);
-    assert!(stderr.contains("E_MARKET_TASK_NOT_FOUND"));
+    assert!(stderr.contains("\"code\": \"task-not-found\""));
 
     let _ = fs::remove_dir_all(&env.root);
 }
