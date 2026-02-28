@@ -306,10 +306,66 @@ fn market_match_prefers_higher_reputation_when_weighted_score_is_better() {
 
     let match_out = run_ok_with_env(
         &["market.match_task", "--task-id", &task_id],
-        &[("TRNM_RPC_MARKET_REPUTATION_FILE", "run/market/reputation.json")],
+        &[(
+            "TRNM_RPC_MARKET_REPUTATION_FILE",
+            "run/market/reputation.json",
+        )],
     );
     assert!(match_out.contains("\"winner\":\"worker-high\""));
     assert!(match_out.contains("\"match_policy\":\"price_reputation_weighted\""));
+    assert!(match_out.contains("\"winner_reputation\":200"));
+}
+
+#[test]
+fn market_match_reputation_lookup_normalizes_case_and_whitespace_keys() {
+    let _guard = test_lock().lock().expect("test lock");
+    let _ = fs::remove_dir_all("run/market");
+    fs::create_dir_all("run/market").expect("create market dir");
+    fs::write(
+        "run/market/reputation.json",
+        r#"{"  Worker-High  ":200}"#,
+    )
+    .expect("write reputation file");
+
+    let create_out = run_ok(&[
+        "market.create_task",
+        "--creator",
+        "alice",
+        "--bounty",
+        "101",
+        "--description",
+        "m2 normalized reputation key lookup",
+    ]);
+    let created: Value = serde_json::from_str(&create_out).expect("create task JSON");
+    let task_id = created["task_id"].as_u64().expect("task_id").to_string();
+
+    run_ok(&[
+        "market.submit_bid",
+        "--task-id",
+        &task_id,
+        "--worker",
+        "worker-low",
+        "--price",
+        "100",
+    ]);
+    run_ok(&[
+        "market.submit_bid",
+        "--task-id",
+        &task_id,
+        "--worker",
+        "worker-high",
+        "--price",
+        "101",
+    ]);
+
+    let match_out = run_ok_with_env(
+        &["market.match_task", "--task-id", &task_id],
+        &[(
+            "TRNM_RPC_MARKET_REPUTATION_FILE",
+            "run/market/reputation.json",
+        )],
+    );
+    assert!(match_out.contains("\"winner\":\"worker-high\""));
     assert!(match_out.contains("\"winner_reputation\":200"));
 }
 
