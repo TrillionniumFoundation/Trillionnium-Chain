@@ -14,6 +14,7 @@ cargo test -p trnm-types revoke_did_replay_repairs_legacy_uncascaded_capability_
 cargo test -p trnm-types verify_capability_accepts_active_controller_and_matching_scope
 cargo test -p trnm-types verify_capability_rejects_scope_mismatch_without_side_effects
 cargo test -p trnm-types verify_capability_rejects_unknown_token_without_side_effects
+cargo test -p trnm-types verify_capability_rejects_expired_token_without_side_effects
 cargo test -p trnm-types verify_capability_rejects_revoked_did_even_if_token_looks_active
 
 echo "[I2][PASS] capability token lifecycle gate"
