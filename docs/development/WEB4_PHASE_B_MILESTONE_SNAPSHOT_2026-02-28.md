@@ -60,32 +60,36 @@ cargo test -p trnm-rpc market_match_m2_policy_gate_clamps_invalid_env_values -- 
 # => [OK] query-audit smoke passed
 ```
 
-## Lane XI（Cross-chain / Identity）下一阶段推进包（高 ROI）
+## Lane MV（Market / Verification）下一阶段推进包（高 ROI）
 
-> 目标：把已完成的 X2/I2 从“可用”推进到“可审计、可演练、可故障恢复”，为 X3/I3 收口做准备。
+> 目标：基于 M2 已落地的信誉加权撮合与 policy gate，把 MV 从“可用”推进到“可解释、可回放、可压测”，并为 V2 证明回执接入预留稳定契约。
 
-### XI-1：跨链结算故障注入与补偿闭环（X3 预备）
-- 增加失败场景矩阵：`relay timeout / duplicated confirm / reordered events / stale pending`。
-- 对每个场景固化补偿动作与最终状态断言（`finalized | reverted` 互斥）。
-- 产物：`x2_settlement_contract_gate` 扩展子用例 + 对账 runbook 片段。
-
-验收信号：
-- 失败注入场景 ≥ 4 且全部可重放；
-- `reverted` 路径可在单命令重演并给出补偿证据。
-
-### XI-2：Capability Token 撤权时序与审计一致性（I3 预备）
-- 增加撤权传播边界：`issue→revoke→query` 与 `renew→revoke` 竞争时序。
-- 明确“撤权后不可再授权”的错误契约，固定稳定错误码（避免文案漂移）。
-- 产物：`i2_token_lifecycle_gate` 增补撤权时序断言 + 审计查询样例。
+### MV-1：M2 策略可解释输出（Explainability）
+- 为撮合决策补充稳定解释字段：`base_score / reputation_weight / penalty / final_score`（仅文档先行锁定字段语义）。
+- 约束解释输出必须与 gate 阈值同源，避免“通过门禁但无法解释”的运维盲区。
+- 产物：在 runbook 中新增 `match explain` 样例与故障排查路径（阈值漂移、环境变量污染）。
 
 验收信号：
-- revoke 后查询在 SLO 窗口内稳定反映不可用状态；
-- 乱序/重放情况下仍满足 fail-closed。
+- 任意一次撮合可给出可复算的 score 分解；
+- 解释字段与 policy gate 阈值一致性可通过单测回归验证。
 
-### XI 定向门禁（持续）
+### MV-2：V2 回执接入前的契约冻结（Receipt Contract Freeze）
+- 明确 `fraud_proof | tee_receipt | zk_receipt` 在市场结算视角的最小统一字段（`task_id/proof_type/verdict/verified_at/cost_hint`）。
+- 规定“证明缺失/迟到/格式不合法”进入争议或降级路径，不允许静默成功。
+- 产物：补充 M2↔V2 交界的错误码与状态迁移表，减少后续跨 crate 漂移风险。
+
+验收信号：
+- 回执缺失/异常时，策略层 fail-closed 且错误码稳定；
+- 文档状态迁移可直接映射到 gate 测试用例。
+
+### MV 定向门禁（持续）
 ```bash
-./scripts/v2/x2_settlement_contract_gate.sh
-./scripts/v2/i2_token_lifecycle_gate.sh
+# M2 阈值漂移防护（夜间门禁）
+./scripts/v2/m2_policy_gate_nightly_signal_test.sh
+
+# M2 关键回归（精确用例）
+cd trillionnium-rust
+cargo test -p trnm-rpc market_match_m2_policy_gate_clamps_invalid_env_values -- --exact
 ```
 
 ## 变更策略说明
