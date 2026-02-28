@@ -4,7 +4,7 @@ pub mod bridge_status {
     #[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
     pub enum BridgeStatus {
         Pending,
-        Finalized(u64), // block height
+        Finalized(u64),   // block height
         Reverted(String), // reason
     }
 
@@ -28,11 +28,24 @@ pub mod bridge_status {
 
     #[derive(Debug, PartialEq, Eq)]
     pub enum SettlementError {
-        Unauthorized { subject: String, action: &'static str },
-        InvalidTransition { from: &'static str, to: &'static str },
-        InvalidHeight { height: u64 },
+        Unauthorized {
+            subject: String,
+            action: &'static str,
+        },
+        InvalidTransition {
+            from: &'static str,
+            to: &'static str,
+        },
+        InvalidHeight {
+            height: u64,
+        },
         InvalidRevertReason,
-        MalformedToken { reason: &'static str },
+        MalformedRequest {
+            reason: &'static str,
+        },
+        MalformedToken {
+            reason: &'static str,
+        },
     }
 
     impl SettlementError {
@@ -57,13 +70,28 @@ pub mod bridge_status {
             }
         }
 
+        fn validate_request(&self) -> Result<(), SettlementError> {
+            if self.tx_hash.trim().is_empty() {
+                return Err(SettlementError::MalformedRequest {
+                    reason: "empty tx_hash",
+                });
+            }
+            if self.tx_hash.trim() != self.tx_hash || self.tx_hash.chars().any(char::is_control) {
+                return Err(SettlementError::MalformedRequest {
+                    reason: "non-canonical tx_hash",
+                });
+            }
+            Ok(())
+        }
+
         fn validate_token(token: &CapabilityToken) -> Result<(), SettlementError> {
             if token.subject.trim().is_empty() {
                 return Err(SettlementError::MalformedToken {
                     reason: "empty subject",
                 });
             }
-            if token.subject.trim() != token.subject || token.subject.chars().any(char::is_control) {
+            if token.subject.trim() != token.subject || token.subject.chars().any(char::is_control)
+            {
                 return Err(SettlementError::MalformedToken {
                     reason: "non-canonical subject",
                 });
@@ -84,6 +112,7 @@ pub mod bridge_status {
             token: &CapabilityToken,
             height: u64,
         ) -> Result<(), SettlementError> {
+            self.validate_request()?;
             Self::validate_token(token)?;
             if !token.allows(SettlementCapability::Finalize) {
                 return Err(SettlementError::Unauthorized {
@@ -99,6 +128,7 @@ pub mod bridge_status {
             token: &CapabilityToken,
             reason: String,
         ) -> Result<(), SettlementError> {
+            self.validate_request()?;
             Self::validate_token(token)?;
             if !token.allows(SettlementCapability::Revert) {
                 return Err(SettlementError::Unauthorized {
@@ -148,7 +178,6 @@ pub mod bridge_status {
                 }),
             }
         }
-
     }
 }
 
