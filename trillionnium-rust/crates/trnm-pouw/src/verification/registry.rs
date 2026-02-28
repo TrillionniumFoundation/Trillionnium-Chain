@@ -49,6 +49,18 @@ impl VerifierRegistry {
         keys
     }
 
+    /// Returns whether a verifier is currently registered for a concrete ProofType.
+    ///
+    /// This gives V1 callers a low-cost readiness probe before dispatching work.
+    pub fn is_registered_for(&self, proof_type: ProofType) -> bool {
+        let key = match proof_type {
+            ProofType::Fraud => "fraud",
+            ProofType::Tee => "tee",
+            ProofType::Zk => "zk",
+        };
+        self.verifiers.contains_key(key)
+    }
+
     pub fn verify(&self, task: &TaskObject, proof_data: &[u8]) -> VerificationResult {
         let key = match task.proof_type {
             ProofType::Fraud => "fraud",
@@ -197,6 +209,25 @@ mod tests {
             registry.verify(&task, b"proof"),
             VerificationResult::Indeterminate("no verifier registered for proof type: zk".into())
         );
+    }
+
+    #[test]
+    fn registry_is_registered_for_reports_false_when_key_is_missing() {
+        let mut registry = VerifierRegistry::new();
+        registry.register(Arc::new(AlwaysValidVerifier { kind: "fraud" }));
+
+        assert!(registry.is_registered_for(ProofType::Fraud));
+        assert!(!registry.is_registered_for(ProofType::Tee));
+        assert!(!registry.is_registered_for(ProofType::Zk));
+    }
+
+    #[test]
+    fn registry_is_registered_for_reports_true_for_builtin_stack() {
+        let registry = VerifierRegistry::with_builtin_verifiers();
+
+        assert!(registry.is_registered_for(ProofType::Fraud));
+        assert!(registry.is_registered_for(ProofType::Tee));
+        assert!(registry.is_registered_for(ProofType::Zk));
     }
 
     #[test]
