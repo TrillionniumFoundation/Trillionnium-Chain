@@ -16,14 +16,26 @@ impl VerifierRegistry {
         }
     }
 
+    fn normalize_key(proof_type: &str) -> Option<String> {
+        let normalized = proof_type.trim().to_ascii_lowercase();
+        if normalized.is_empty() {
+            None
+        } else {
+            Some(normalized)
+        }
+    }
+
     pub fn register(&mut self, verifier: Arc<dyn ProofVerifier + Send + Sync>) {
-        self.verifiers
-            .insert(verifier.proof_type().to_ascii_lowercase(), verifier);
+        if let Some(key) = Self::normalize_key(verifier.proof_type()) {
+            self.verifiers.insert(key, verifier);
+        }
     }
 
     pub fn has_verifier(&self, proof_type: &str) -> bool {
-        self.verifiers
-            .contains_key(&proof_type.to_ascii_lowercase())
+        match Self::normalize_key(proof_type) {
+            Some(key) => self.verifiers.contains_key(&key),
+            None => false,
+        }
     }
 
     pub fn verify(&self, task: &TaskObject, proof_data: &[u8]) -> VerificationResult {
@@ -103,5 +115,15 @@ mod tests {
         assert!(registry.has_verifier("tee"));
         assert!(registry.has_verifier("TEE"));
         assert!(!registry.has_verifier("zk"));
+    }
+
+    #[test]
+    fn registry_normalizes_whitespace_in_verifier_keys() {
+        let mut registry = VerifierRegistry::new();
+        registry.register(Arc::new(MockVerifier::new("  TeE  ", true)));
+
+        assert!(registry.has_verifier("tee"));
+        assert!(registry.has_verifier("  TEE  "));
+        assert!(!registry.has_verifier("   "));
     }
 }
