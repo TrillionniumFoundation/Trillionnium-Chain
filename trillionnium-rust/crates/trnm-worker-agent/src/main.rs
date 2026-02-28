@@ -238,6 +238,7 @@ struct AuditExportIndex {
     version: u8,
     total_records: usize,
     by_task_id: BTreeMap<String, Vec<usize>>,
+    by_provider: BTreeMap<String, Vec<usize>>,
     by_model: BTreeMap<String, Vec<usize>>,
     by_agent_protocol: BTreeMap<String, Vec<usize>>,
     by_provenance_fingerprint: BTreeMap<String, Vec<usize>>,
@@ -245,6 +246,7 @@ struct AuditExportIndex {
 
 fn build_audit_export_index(exports: &[EnterpriseAuditExportRecord]) -> AuditExportIndex {
     let mut by_task_id = BTreeMap::<String, Vec<usize>>::new();
+    let mut by_provider = BTreeMap::<String, Vec<usize>>::new();
     let mut by_model = BTreeMap::<String, Vec<usize>>::new();
     let mut by_agent_protocol = BTreeMap::<String, Vec<usize>>::new();
     let mut by_provenance_fingerprint = BTreeMap::<String, Vec<usize>>::new();
@@ -254,6 +256,10 @@ fn build_audit_export_index(exports: &[EnterpriseAuditExportRecord]) -> AuditExp
             .entry(rec.task_id.to_string())
             .or_default()
             .push(idx);
+
+        if let Some(provider) = normalized_optional_field(rec.provider.as_deref()) {
+            by_provider.entry(provider).or_default().push(idx);
+        }
 
         if let Some(model) = normalized_optional_field(rec.model.as_deref()) {
             by_model.entry(model).or_default().push(idx);
@@ -277,6 +283,7 @@ fn build_audit_export_index(exports: &[EnterpriseAuditExportRecord]) -> AuditExp
         version: 1,
         total_records: exports.len(),
         by_task_id,
+        by_provider,
         by_model,
         by_agent_protocol,
         by_provenance_fingerprint,
@@ -2093,7 +2100,7 @@ mod tests {
 
 
     #[test]
-    fn export_audit_index_contains_task_model_and_fingerprint_keys() {
+    fn export_audit_index_contains_task_provider_model_and_fingerprint_keys() {
         let rows = vec![
             EnterpriseAuditExportRecord {
                 request_id: "r1".to_string(),
@@ -2127,13 +2134,14 @@ mod tests {
         assert_eq!(index.total_records, 2);
         assert_eq!(index.by_task_id.get("7001"), Some(&vec![0]));
         assert_eq!(index.by_task_id.get("7002"), Some(&vec![1]));
+        assert_eq!(index.by_provider.get("openai"), Some(&vec![0, 1]));
         assert_eq!(index.by_model.get("gpt-5.3-codex"), Some(&vec![0, 1]));
         assert_eq!(index.by_agent_protocol.get("a2a"), Some(&vec![0, 1]));
         assert_eq!(index.by_provenance_fingerprint.get("fp-abc"), Some(&vec![0, 1]));
     }
 
     #[test]
-    fn export_audit_index_trims_and_drops_blank_model_or_fingerprint_values() {
+    fn export_audit_index_trims_and_drops_blank_provider_model_or_fingerprint_values() {
         let rows = vec![
             EnterpriseAuditExportRecord {
                 request_id: "r1".to_string(),
@@ -2142,7 +2150,7 @@ mod tests {
                 provider_request_id: Some("p1".to_string()),
                 provenance_schema_version: Some("llm.v2".to_string()),
                 provenance_fingerprint: Some("  fp-xyz  ".to_string()),
-                provider: Some("openai".to_string()),
+                provider: Some("  openai  ".to_string()),
                 model: Some("  gpt-5.3-codex  ".to_string()),
                 adapter: Some("mcp".to_string()),
                 agent_protocol: Some("a2a".to_string()),
@@ -2155,7 +2163,7 @@ mod tests {
                 provider_request_id: Some("p2".to_string()),
                 provenance_schema_version: Some("llm.v2".to_string()),
                 provenance_fingerprint: Some("   ".to_string()),
-                provider: Some("openai".to_string()),
+                provider: Some("   ".to_string()),
                 model: Some("\t".to_string()),
                 adapter: Some("mcp".to_string()),
                 agent_protocol: Some("a2a".to_string()),
@@ -2164,9 +2172,11 @@ mod tests {
         ];
 
         let index = build_audit_export_index(&rows);
+        assert_eq!(index.by_provider.get("openai"), Some(&vec![0]));
         assert_eq!(index.by_model.get("gpt-5.3-codex"), Some(&vec![0]));
         assert_eq!(index.by_agent_protocol.get("a2a"), Some(&vec![0, 1]));
         assert_eq!(index.by_provenance_fingerprint.get("fp-xyz"), Some(&vec![0]));
+        assert!(!index.by_provider.contains_key(""));
         assert!(!index.by_model.contains_key(""));
         assert!(!index.by_agent_protocol.contains_key(""));
         assert!(!index.by_provenance_fingerprint.contains_key(""));
