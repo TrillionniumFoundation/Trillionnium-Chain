@@ -1956,6 +1956,15 @@ fn main() -> Result<()> {
                     message: format!("market task not in open status: {}", task.status),
                 }));
             }
+            if worker.trim().is_empty() {
+                return Err(rpc_fail(RpcErrorResponse {
+                    code: "worker-id-invalid",
+                    message: format!(
+                        "market bid worker must be non-empty for task {}",
+                        task_id
+                    ),
+                }));
+            }
             if price == 0 {
                 return Err(rpc_fail(RpcErrorResponse {
                     code: "bid-price-invalid",
