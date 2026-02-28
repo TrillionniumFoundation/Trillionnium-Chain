@@ -589,10 +589,16 @@ fn ingress_file() -> PathBuf {
 }
 
 fn market_tasks_file() -> PathBuf {
+    if let Ok(path) = std::env::var("TRNM_RPC_MARKET_TASKS_FILE") {
+        return PathBuf::from(path);
+    }
     run_root().join("run/market/tasks.jsonl")
 }
 
 fn market_bids_file() -> PathBuf {
+    if let Ok(path) = std::env::var("TRNM_RPC_MARKET_BIDS_FILE") {
+        return PathBuf::from(path);
+    }
     run_root().join("run/market/bids.jsonl")
 }
 
@@ -1788,10 +1794,13 @@ fn main() -> Result<()> {
         Command::MarketMatchTask { task_id } => {
             let mut tasks = load_market_tasks();
             let Some(task) = tasks.iter_mut().find(|t| t.task_id == task_id) else {
-                bail!("market task not found: {}", task_id);
+                bail!("E_MARKET_TASK_NOT_FOUND: market task not found: {}", task_id);
             };
             if task.status != "open" {
-                bail!("market task not in open status: {}", task.status);
+                return Err(rpc_fail(RpcErrorResponse {
+                    code: "task-not-open",
+                    message: format!("market task not in open status: {}", task.status),
+                }));
             }
 
             let bids = load_market_bids();
@@ -1799,7 +1808,10 @@ fn main() -> Result<()> {
                 bids.iter().filter(|b| b.task_id == task_id).collect();
 
             if task_bids.is_empty() {
-                bail!("no bids found for task: {}", task_id);
+                return Err(rpc_fail(RpcErrorResponse {
+                    code: "no-bids",
+                    message: format!("no bids found for task: {}", task_id),
+                }));
             }
 
             // Simple matching: lowest price
