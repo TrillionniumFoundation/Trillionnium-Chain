@@ -358,6 +358,26 @@ fn validate_audit_export_index_consistency(
         }
     }
 
+    for (model, indexes) in index.by_model.iter() {
+        for idx in indexes {
+            let rec = exports.get(*idx).ok_or_else(|| {
+                anyhow!(
+                    "audit export/index inconsistent: by_model index out of bounds model={} idx={} exports={}",
+                    model,
+                    idx,
+                    exports.len()
+                )
+            })?;
+            if rec.model.as_deref() != Some(model.as_str()) {
+                bail!(
+                    "audit export/index inconsistent: by_model mismatch model={} idx={}",
+                    model,
+                    idx
+                );
+            }
+        }
+    }
+
     for (fingerprint, indexes) in index.by_provenance_fingerprint.iter() {
         for idx in indexes {
             let rec = exports.get(*idx).ok_or_else(|| {
@@ -2467,6 +2487,36 @@ mod tests {
         let err = validate_audit_export_index_consistency(&index, &rows).expect_err("must fail");
         assert!(
             err.to_string().contains("by_task_id mismatch"),
+            "unexpected error: {err}"
+        );
+    }
+
+    #[test]
+    fn validate_audit_export_index_consistency_rejects_model_mapping_mismatch() {
+        let rows = vec![EnterpriseAuditExportRecord {
+            request_id: "r1".to_string(),
+            task_id: 7001,
+            status: "reveal_submitted".to_string(),
+            proof_type: None,
+            settlement_status: None,
+            timestamp_unix_ms: None,
+            provider_request_id: Some("p1".to_string()),
+            provenance_schema_version: Some("llm.v2".to_string()),
+            provenance_fingerprint: Some("fp-abc".to_string()),
+            provider: Some("openai".to_string()),
+            model: Some("gpt-5.3-codex".to_string()),
+            adapter: Some("mcp".to_string()),
+            agent_protocol: Some("a2a".to_string()),
+            compliance_profile: Some("cn-moderate".to_string()),
+        }];
+        let mut index = build_audit_export_index(&rows);
+        index
+            .by_model
+            .insert("gpt-5.3-pro".to_string(), vec![0]);
+
+        let err = validate_audit_export_index_consistency(&index, &rows).expect_err("must fail");
+        assert!(
+            err.to_string().contains("by_model mismatch"),
             "unexpected error: {err}"
         );
     }
