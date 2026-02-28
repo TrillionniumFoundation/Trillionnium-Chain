@@ -899,14 +899,18 @@ fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
         .chars()
         .filter(|c| c.is_ascii_alphanumeric())
         .collect();
-    match alias_key.as_str() {
+    let alias_key = alias_key.trim_end_matches(|c: char| c.is_ascii_digit());
+    match alias_key {
         "mcp"
+        | "mcpv"
         | "mcpv1"
         | "mcpv2"
         | "modelcontextprotocol"
+        | "modelcontextprotocolv"
         | "modelcontextprotocolv1"
         | "modelcontextprotocolv2" => Some("mcp".to_string()),
         "a2a"
+        | "a2av"
         | "a2av1"
         | "a2av2"
         | "a2aprotocol"
@@ -914,12 +918,16 @@ fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
         | "agenttoagent"
         | "agent2agentprotocol"
         | "agenttoagentprotocol"
+        | "agent2agentprotocolv"
         | "agent2agentprotocolv1"
         | "agent2agentprotocolv2"
+        | "agenttoagentprotocolv"
         | "agenttoagentprotocolv1"
         | "agenttoagentprotocolv2"
+        | "agent2agentv"
         | "agent2agentv1"
         | "agent2agentv2"
+        | "agenttoagentv"
         | "agenttoagentv1"
         | "agenttoagentv2" => Some("a2a".to_string()),
         _ => None,
@@ -2044,11 +2052,19 @@ mod tests {
             Some("mcp")
         );
         assert_eq!(
+            normalized_agent_protocol(Some("Model Context Protocol 2.0")).as_deref(),
+            Some("mcp")
+        );
+        assert_eq!(
             normalized_agent_protocol(Some("Agent:To:Agent")).as_deref(),
             Some("a2a")
         );
         assert_eq!(
             normalized_agent_protocol(Some("Agent-To-Agent Protocol v2")).as_deref(),
+            Some("a2a")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("A2A 2.0")).as_deref(),
             Some("a2a")
         );
     }
