@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://trillionniumchain.dev/schemas/task_model_metadata.schema.json",
-  "title": "Trillionnium Task + Model Metadata (Track D1)",
+  "title": "Trillionnium Task + Model Metadata (Track D1/D2)",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -64,6 +64,10 @@
         "produced_at": {
           "type": "string",
           "format": "date-time"
+        },
+        "provenance_index": {
+          "type": "string",
+          "pattern": "^prov:[a-z0-9:_-]{8,128}$"
         },
         "privacy_tier": {
           "type": "string",
