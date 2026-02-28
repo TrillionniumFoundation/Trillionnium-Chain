@@ -12,7 +12,7 @@ fn unique_market_path(name: &str, ext: &str) -> PathBuf {
         std::time::SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
             .expect("unix epoch")
-            .as_millis(),
+            .as_nanos(),
         ext
     ));
     path
@@ -33,12 +33,14 @@ fn run_ok_with_env(args: &[&str], envs: &[(&str, &str)]) -> String {
     String::from_utf8_lossy(&output.stdout).to_string()
 }
 
-#[test]
-fn market_match_falls_back_to_zero_reputation_when_reputation_file_is_malformed_json() {
+fn assert_match_falls_back_to_price_order_with_invalid_reputation_fixture(
+    reputation_fixture: &str,
+    case_label: &str,
+) {
     let tasks = unique_market_path("market_tasks", "jsonl");
     let bids = unique_market_path("market_bids", "jsonl");
     let reputation = unique_market_path("market_reputation", "json");
-    fs::write(&reputation, "{not valid json").expect("write malformed reputation fixture");
+    fs::write(&reputation, reputation_fixture).expect("write malformed reputation fixture");
 
     let tasks_env = tasks.to_string_lossy().into_owned();
     let bids_env = bids.to_string_lossy().into_owned();
@@ -57,7 +59,7 @@ fn market_match_falls_back_to_zero_reputation_when_reputation_file_is_malformed_
             "--bounty",
             "101",
             "--description",
-            "m2 malformed reputation fallback",
+            case_label,
         ],
         &envs,
     );
@@ -100,4 +102,20 @@ fn market_match_falls_back_to_zero_reputation_when_reputation_file_is_malformed_
     let _ = fs::remove_file(tasks);
     let _ = fs::remove_file(bids);
     let _ = fs::remove_file(reputation);
+}
+
+#[test]
+fn market_match_falls_back_to_zero_reputation_when_reputation_file_is_malformed_json() {
+    assert_match_falls_back_to_price_order_with_invalid_reputation_fixture(
+        "{not valid json",
+        "m2 malformed reputation fallback",
+    );
+}
+
+#[test]
+fn market_match_falls_back_to_zero_reputation_when_reputation_file_is_valid_json_but_wrong_shape() {
+    assert_match_falls_back_to_price_order_with_invalid_reputation_fixture(
+        "[{\"worker\":\"worker-high\",\"reputation\":900}]",
+        "m2 wrong-shape reputation fallback",
+    );
 }
