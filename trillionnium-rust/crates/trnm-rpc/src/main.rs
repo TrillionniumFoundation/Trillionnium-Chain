@@ -137,6 +137,7 @@ enum Command {
         #[arg(long, default_value_t = QUERY_FULL_LIMIT_DEFAULT)]
         limit: usize,
     },
+    #[command(name = "market.create_task", visible_alias = "market-create-task")]
     MarketCreateTask {
         #[arg(long)]
         creator: String,
