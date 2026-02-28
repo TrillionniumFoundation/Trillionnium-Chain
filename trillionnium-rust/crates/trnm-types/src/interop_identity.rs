@@ -189,6 +189,13 @@ impl DidRecord {
     pub fn is_active(&self) -> bool {
         self.revoked_at.is_none()
     }
+
+    pub fn is_active_at(&self, at_height: u64) -> bool {
+        match self.revoked_at {
+            Some(revoked_at) => at_height < revoked_at,
+            None => true,
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -627,7 +634,7 @@ impl IdentityRegistry {
                 did: token.subject_did.clone(),
             })?;
 
-        if !did.is_active() {
+        if !did.is_active_at(at_height) {
             return Err(InteropIdentityError::DidRevoked {
                 did: did.did.clone(),
             });
@@ -3227,6 +3234,42 @@ mod tests {
             err,
             InteropIdentityError::DidRevoked { did } if did == "did:trnm:settler-legacy"
         ));
+    }
+
+    #[test]
+    fn verify_capability_allows_historical_height_before_did_revocation() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did(
+            "did:trnm:settler-legacy-historical".to_string(),
+            "org:lane2-admin".to_string(),
+            10,
+        )
+        .unwrap();
+        let token_id = reg
+            .issue_capability(
+                "org:lane2-admin".to_string(),
+                "did:trnm:settler-legacy-historical".to_string(),
+                CapabilityScope::BridgeSettle,
+                20,
+                Some(200),
+            )
+            .unwrap();
+
+        // Legacy/corrupt snapshot: DID was revoked, but token revocation was never cascaded.
+        reg.dids
+            .get_mut("did:trnm:settler-legacy-historical")
+            .unwrap()
+            .revoked_at = Some(80);
+        reg.capabilities.get_mut(&token_id).unwrap().revoked_at = None;
+
+        let out = reg.verify_capability(
+            "org:lane2-admin",
+            token_id,
+            CapabilityScope::BridgeSettle,
+            79,
+        );
+
+        assert!(out.is_ok());
     }
 
     #[test]
