@@ -94,6 +94,17 @@ mod tests {
     }
 
     #[test]
+    fn fraud_verifier_accepts_mixed_case_prefixed_envelope() {
+        let verifier = FraudVerifier;
+        let task = mock_task();
+
+        assert_eq!(
+            verifier.verify_proof(&task, b"FrAuD:challenge-proof"),
+            VerificationResult::Valid
+        );
+    }
+
+    #[test]
     fn fraud_verifier_rejects_non_prefixed_payload() {
         let verifier = FraudVerifier;
         let task = mock_task();
