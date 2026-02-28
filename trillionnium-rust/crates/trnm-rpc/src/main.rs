@@ -590,8 +590,8 @@ fn now_ms() -> u128 {
 }
 
 fn identity_registry_file() -> PathBuf {
-    if let Ok(path) = std::env::var("TRNM_RPC_IDENTITY_REGISTRY_FILE") {
-        return PathBuf::from(path);
+    if let Some(path) = normalized_path_from_env("TRNM_RPC_IDENTITY_REGISTRY_FILE") {
+        return path;
     }
     run_root().join("run/rpc/identity_registry.json")
 }
