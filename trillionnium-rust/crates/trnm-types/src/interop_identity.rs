@@ -71,21 +71,49 @@ impl SettlementRecord {
 
         let (next_settlement_tx, next_revert_reason) = match to {
             SettlementStatus::Finalized => {
-                let tx = settlement_tx
+                let provided_tx = settlement_tx
                     .as_deref()
                     .map(str::trim)
                     .filter(|v| !v.is_empty())
-                    .map(str::to_string)
+                    .map(str::to_string);
+                if self.status == SettlementStatus::Finalized {
+                    if let (Some(existing), Some(provided)) =
+                        (self.settlement_tx.as_deref(), provided_tx.as_deref())
+                    {
+                        if existing != provided {
+                            return Err(InteropIdentityError::SettlementTerminalPayloadConflict {
+                                status: SettlementStatus::Finalized,
+                                existing: existing.to_string(),
+                                provided: provided.to_string(),
+                            });
+                        }
+                    }
+                }
+                let tx = provided_tx
                     .or_else(|| self.settlement_tx.clone())
                     .ok_or(InteropIdentityError::MissingSettlementTx)?;
                 (Some(tx), None)
             }
             SettlementStatus::Reverted => {
-                let reason = revert_reason
+                let provided_reason = revert_reason
                     .as_deref()
                     .map(str::trim)
                     .filter(|v| !v.is_empty())
-                    .map(str::to_string)
+                    .map(str::to_string);
+                if self.status == SettlementStatus::Reverted {
+                    if let (Some(existing), Some(provided)) =
+                        (self.revert_reason.as_deref(), provided_reason.as_deref())
+                    {
+                        if existing != provided {
+                            return Err(InteropIdentityError::SettlementTerminalPayloadConflict {
+                                status: SettlementStatus::Reverted,
+                                existing: existing.to_string(),
+                                provided: provided.to_string(),
+                            });
+                        }
+                    }
+                }
+                let reason = provided_reason
                     .or_else(|| self.revert_reason.clone())
                     .ok_or(InteropIdentityError::MissingRevertReason)?;
                 (None, Some(reason))
@@ -422,6 +450,55 @@ impl IdentityRegistry {
         Ok(())
     }
 
+    pub fn ensure_settlement_capability(
+        &self,
+        actor: &str,
+        token_id: u64,
+        required_scope: CapabilityScope,
+        at_height: u64,
+    ) -> Result<(), InteropIdentityError> {
+        Self::validate_identity_field("actor", actor)?;
+
+        let token = self
+            .capabilities
+            .get(&token_id)
+            .ok_or(InteropIdentityError::CapabilityNotFound { token_id })?;
+
+        if token.scope != required_scope {
+            return Err(InteropIdentityError::CapabilityScopeMismatch {
+                token_id,
+                expected: required_scope,
+                actual: token.scope,
+            });
+        }
+
+        if !token.is_active_at(at_height) {
+            return Err(InteropIdentityError::CapabilityInactive {
+                token_id,
+                at_height,
+                issued_at: token.issued_at,
+                expires_at: token.expires_at,
+                revoked_at: token.revoked_at,
+            });
+        }
+
+        let did = self
+            .dids
+            .get(&token.subject_did)
+            .ok_or_else(|| InteropIdentityError::DidNotFound {
+                did: token.subject_did.clone(),
+            })?;
+
+        if !did.is_active() {
+            return Err(InteropIdentityError::DidRevoked {
+                did: did.did.clone(),
+            });
+        }
+
+        Self::ensure_actor_controls_did(actor, did)?;
+        Ok(())
+    }
+
     pub fn did(&self, did: &str) -> Option<&DidRecord> {
         self.dids.get(did)
     }
@@ -471,6 +548,11 @@ pub enum InteropIdentityError {
         current_at: u64,
         next_at: u64,
     },
+    SettlementTerminalPayloadConflict {
+        status: SettlementStatus,
+        existing: String,
+        provided: String,
+    },
     DidAlreadyExists {
         did: String,
     },
@@ -491,6 +573,18 @@ pub enum InteropIdentityError {
     },
     CapabilityNotFound {
         token_id: u64,
+    },
+    CapabilityScopeMismatch {
+        token_id: u64,
+        expected: CapabilityScope,
+        actual: CapabilityScope,
+    },
+    CapabilityInactive {
+        token_id: u64,
+        at_height: u64,
+        issued_at: u64,
+        expires_at: Option<u64>,
+        revoked_at: Option<u64>,
     },
     InvalidCapabilityExpiry {
         issued_at: u64,
@@ -529,6 +623,17 @@ impl fmt::Display for InteropIdentityError {
                     next_at, current_at
                 )
             }
+            InteropIdentityError::SettlementTerminalPayloadConflict {
+                status,
+                existing,
+                provided,
+            } => {
+                write!(
+                    f,
+                    "terminal settlement payload conflict for {:?}: existing {:?}, provided {:?}",
+                    status, existing, provided
+                )
+            }
             InteropIdentityError::DidAlreadyExists { did } => {
                 write!(f, "did already exists: {}", did)
             }
@@ -554,6 +659,30 @@ impl fmt::Display for InteropIdentityError {
             }
             InteropIdentityError::CapabilityNotFound { token_id } => {
                 write!(f, "capability not found: {}", token_id)
+            }
+            InteropIdentityError::CapabilityScopeMismatch {
+                token_id,
+                expected,
+                actual,
+            } => {
+                write!(
+                    f,
+                    "capability scope mismatch for token {}: expected {:?}, got {:?}",
+                    token_id, expected, actual
+                )
+            }
+            InteropIdentityError::CapabilityInactive {
+                token_id,
+                at_height,
+                issued_at,
+                expires_at,
+                revoked_at,
+            } => {
+                write!(
+                    f,
+                    "capability inactive for token {} at height {} (issued_at={}, expires_at={:?}, revoked_at={:?})",
+                    token_id, at_height, issued_at, expires_at, revoked_at
+                )
             }
             InteropIdentityError::InvalidCapabilityExpiry {
                 issued_at,
@@ -773,6 +902,81 @@ mod tests {
         assert_eq!(reverted.status, SettlementStatus::Reverted);
         assert_eq!(reverted.settlement_tx, None);
         assert_eq!(reverted.revert_reason.as_deref(), Some("keep-this-reason"));
+    }
+
+    #[test]
+    fn settlement_terminal_idempotent_reapply_rejects_conflicting_payload_override() {
+        let route = BridgeRoute {
+            route_id: "eth->trnm".to_string(),
+            source_chain: "ethereum".to_string(),
+            target_chain: "trillionnium".to_string(),
+        };
+
+        let mut finalized = SettlementRecord {
+            settlement_id: 83,
+            route: route.clone(),
+            status: SettlementStatus::Pending,
+            at_height: 3_000,
+            settlement_tx: None,
+            revert_reason: None,
+        };
+        finalized
+            .apply_status(
+                SettlementStatus::Finalized,
+                3_001,
+                Some("0xfinal-a".to_string()),
+                None,
+            )
+            .unwrap();
+        let err = finalized
+            .apply_status(
+                SettlementStatus::Finalized,
+                3_002,
+                Some("0xfinal-b".to_string()),
+                None,
+            )
+            .unwrap_err();
+        assert!(matches!(
+            err,
+            InteropIdentityError::SettlementTerminalPayloadConflict {
+                status: SettlementStatus::Finalized,
+                ..
+            }
+        ));
+        assert_eq!(finalized.settlement_tx.as_deref(), Some("0xfinal-a"));
+
+        let mut reverted = SettlementRecord {
+            settlement_id: 84,
+            route,
+            status: SettlementStatus::Pending,
+            at_height: 4_000,
+            settlement_tx: None,
+            revert_reason: None,
+        };
+        reverted
+            .apply_status(
+                SettlementStatus::Reverted,
+                4_001,
+                None,
+                Some("reason-a".to_string()),
+            )
+            .unwrap();
+        let err = reverted
+            .apply_status(
+                SettlementStatus::Reverted,
+                4_002,
+                None,
+                Some("reason-b".to_string()),
+            )
+            .unwrap_err();
+        assert!(matches!(
+            err,
+            InteropIdentityError::SettlementTerminalPayloadConflict {
+                status: SettlementStatus::Reverted,
+                ..
+            }
+        ));
+        assert_eq!(reverted.revert_reason.as_deref(), Some("reason-a"));
     }
 
     #[test]
@@ -1945,5 +2149,141 @@ mod tests {
         assert!(token.is_active_at(20));
         assert!(token.is_active_at(25));
         assert!(!token.is_active_at(26));
+    }
+
+    #[test]
+    fn ensure_settlement_capability_accepts_active_controller_and_matching_scope() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did(
+            "did:trnm:settler-1".to_string(),
+            "org:lane2-admin".to_string(),
+            10,
+        )
+        .unwrap();
+        let token_id = reg
+            .issue_capability(
+                "org:lane2-admin".to_string(),
+                "did:trnm:settler-1".to_string(),
+                CapabilityScope::BridgeSettle,
+                20,
+                Some(200),
+            )
+            .unwrap();
+
+        reg.ensure_settlement_capability(
+            "org:lane2-admin",
+            token_id,
+            CapabilityScope::BridgeSettle,
+            50,
+        )
+        .unwrap();
+    }
+
+    #[test]
+    fn ensure_settlement_capability_rejects_scope_mismatch_without_side_effects() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did(
+            "did:trnm:settler-2".to_string(),
+            "org:lane2-admin".to_string(),
+            10,
+        )
+        .unwrap();
+        let token_id = reg
+            .issue_capability(
+                "org:lane2-admin".to_string(),
+                "did:trnm:settler-2".to_string(),
+                CapabilityScope::AuditRead,
+                20,
+                Some(200),
+            )
+            .unwrap();
+        let audit_len_before = reg.audit_trail().len();
+
+        let err = reg
+            .ensure_settlement_capability(
+                "org:lane2-admin",
+                token_id,
+                CapabilityScope::BridgeSettle,
+                50,
+            )
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            InteropIdentityError::CapabilityScopeMismatch {
+                token_id: id,
+                expected: CapabilityScope::BridgeSettle,
+                actual: CapabilityScope::AuditRead,
+            } if id == token_id
+        ));
+        assert_eq!(reg.audit_trail().len(), audit_len_before);
+        assert_eq!(reg.capability(token_id).unwrap().revoked_at, None);
+    }
+
+    #[test]
+    fn ensure_settlement_capability_rejects_inactive_or_unauthorized_actor() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did(
+            "did:trnm:settler-3".to_string(),
+            "org:lane2-admin".to_string(),
+            10,
+        )
+        .unwrap();
+        let token_id = reg
+            .issue_capability(
+                "org:lane2-admin".to_string(),
+                "did:trnm:settler-3".to_string(),
+                CapabilityScope::BridgeRevert,
+                20,
+                Some(30),
+            )
+            .unwrap();
+
+        let err = reg
+            .ensure_settlement_capability(
+                "org:lane2-admin",
+                token_id,
+                CapabilityScope::BridgeRevert,
+                31,
+            )
+            .unwrap_err();
+        assert!(matches!(
+            err,
+            InteropIdentityError::CapabilityInactive {
+                token_id: id,
+                at_height: 31,
+                issued_at: 20,
+                expires_at: Some(30),
+                revoked_at: None,
+            } if id == token_id
+        ));
+
+        let token2 = reg
+            .issue_capability(
+                "org:lane2-admin".to_string(),
+                "did:trnm:settler-3".to_string(),
+                CapabilityScope::BridgeRevert,
+                40,
+                None,
+            )
+            .unwrap();
+        let err = reg
+            .ensure_settlement_capability(
+                "org:lane2-backup",
+                token2,
+                CapabilityScope::BridgeRevert,
+                45,
+            )
+            .unwrap_err();
+        assert!(matches!(
+            err,
+            InteropIdentityError::UnauthorizedActor {
+                actor,
+                did,
+                controller,
+            } if actor == "org:lane2-backup"
+                && did == "did:trnm:settler-3"
+                && controller == "org:lane2-admin"
+        ));
     }
 }
