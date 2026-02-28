@@ -446,31 +446,34 @@ impl IdentityRegistry {
 
         Self::ensure_actor_controls_did(&actor, did_rec)?;
 
-        if let Some(first_revoked_at) = did_rec.revoked_at {
+        let (is_first_revoke, did_revoke_anchor) = if let Some(first_revoked_at) = did_rec.revoked_at {
             if at_height < first_revoked_at {
                 return Err(InteropIdentityError::InvalidDidRevocationHeight {
                     created_at: first_revoked_at,
                     revoked_at: at_height,
                 });
             }
-            return Ok(());
-        }
+            (false, first_revoked_at)
+        } else {
+            if at_height < did_rec.created_at {
+                return Err(InteropIdentityError::InvalidDidRevocationHeight {
+                    created_at: did_rec.created_at,
+                    revoked_at: at_height,
+                });
+            }
+            did_rec.revoked_at = Some(at_height);
+            (true, at_height)
+        };
 
-        if at_height < did_rec.created_at {
-            return Err(InteropIdentityError::InvalidDidRevocationHeight {
-                created_at: did_rec.created_at,
-                revoked_at: at_height,
-            });
+        if is_first_revoke {
+            self.push_audit(
+                AuditAction::DidRevoked,
+                actor,
+                did.to_string(),
+                did_revoke_anchor,
+                None,
+            );
         }
-
-        did_rec.revoked_at = Some(at_height);
-        self.push_audit(
-            AuditAction::DidRevoked,
-            actor,
-            did.to_string(),
-            at_height,
-            None,
-        );
 
         let to_revoke: Vec<u64> = self
             .capabilities
@@ -485,7 +488,7 @@ impl IdentityRegistry {
                 let Some(token) = self.capabilities.get_mut(&token_id) else {
                     continue;
                 };
-                let cascade_revoke_height = at_height.max(token.issued_at);
+                let cascade_revoke_height = did_revoke_anchor.max(token.issued_at);
                 token.revoked_at = Some(cascade_revoke_height);
                 (token.subject_did.clone(), cascade_revoke_height)
             };
@@ -560,6 +563,66 @@ impl IdentityRegistry {
 
     pub fn audit_trail(&self) -> &[AuditEvent] {
         &self.audit_trail
+    }
+
+    pub fn content_hash(&self) -> [u8; 32] {
+        use sha2::{Digest, Sha256};
+        let mut hasher = Sha256::new();
+        hasher.update(b"dids");
+        for (k, v) in &self.dids {
+            hasher.update(k.as_bytes());
+            hasher.update(v.did.as_bytes());
+            hasher.update(v.controller.as_bytes());
+            hasher.update(v.created_at.to_le_bytes());
+            if let Some(r) = v.revoked_at {
+                hasher.update([1]);
+                hasher.update(r.to_le_bytes());
+            } else {
+                hasher.update([0]);
+            }
+        }
+        hasher.update(b"caps");
+        for (k, v) in &self.capabilities {
+            hasher.update(k.to_le_bytes());
+            hasher.update(v.token_id.to_le_bytes());
+            hasher.update(v.subject_did.as_bytes());
+            // Scope is an enum, serialize it simple
+            let scope_byte = match v.scope {
+                CapabilityScope::BridgeSettle => 1,
+                CapabilityScope::BridgeRevert => 2,
+                CapabilityScope::AuditRead => 3,
+                CapabilityScope::MarketPublish => 4,
+                CapabilityScope::MarketExecute => 5,
+            };
+            hasher.update([scope_byte]);
+            hasher.update(v.issued_at.to_le_bytes());
+            if let Some(exp) = v.expires_at {
+                hasher.update([1]);
+                hasher.update(exp.to_le_bytes());
+            } else {
+                hasher.update([0]);
+            }
+            if let Some(rev) = v.revoked_at {
+                hasher.update([1]);
+                hasher.update(rev.to_le_bytes());
+            } else {
+                hasher.update([0]);
+            }
+        }
+        // Audit trail not hashed for state root?
+        // Usually audit trails are history, state root should capture current state.
+        // But for "Verifiable Execution", history might be important.
+        // Let's hash it for completeness of the registry state.
+        hasher.update(b"audit");
+        hasher.update(self.audit_trail.len().to_le_bytes());
+        for ev in &self.audit_trail {
+            hasher.update(ev.seq.to_le_bytes());
+            // Hash other fields... simplified for now as this is a PoC
+            hasher.update(ev.actor.as_bytes());
+            hasher.update(ev.subject.as_bytes());
+        }
+        hasher.update(self.next_capability_id.to_le_bytes());
+        hasher.finalize().into()
     }
 
     fn normalize_note(note: Option<String>) -> Option<String> {
@@ -1835,6 +1898,47 @@ mod tests {
         assert_eq!(reg.did("did:trnm:agent-2").unwrap().revoked_at, Some(40));
         assert_eq!(reg.capability(token_id).unwrap().revoked_at, Some(40));
         assert_eq!(reg.audit_trail().len(), first_audit_len);
+    }
+
+    #[test]
+    fn revoke_did_replay_repairs_legacy_uncascaded_capability_without_rewriting_did_timestamp() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did(
+            "did:trnm:agent-2fix".to_string(),
+            "org:lane2-admin".to_string(),
+            10,
+        )
+        .unwrap();
+
+        let token_id = reg
+            .issue_capability(
+                "org:lane2-admin".to_string(),
+                "did:trnm:agent-2fix".to_string(),
+                CapabilityScope::BridgeSettle,
+                12,
+                Some(100),
+            )
+            .unwrap();
+
+        reg.revoke_did("org:lane2-admin".to_string(), "did:trnm:agent-2fix", 40)
+            .unwrap();
+
+        // Simulate legacy/corrupt snapshot drift: DID already revoked but cascade revoke was lost.
+        reg.capabilities.get_mut(&token_id).unwrap().revoked_at = None;
+        let audit_len_before = reg.audit_trail().len();
+
+        reg.revoke_did("org:lane2-admin".to_string(), "did:trnm:agent-2fix", 99)
+            .unwrap();
+
+        assert_eq!(reg.did("did:trnm:agent-2fix").unwrap().revoked_at, Some(40));
+        assert_eq!(reg.capability(token_id).unwrap().revoked_at, Some(40));
+        assert_eq!(reg.audit_trail().len(), audit_len_before + 1);
+        assert_eq!(
+            reg.audit_trail().last().map(|ev| ev.action),
+            Some(AuditAction::CapabilityRevoked)
+        );
+        assert_eq!(reg.audit_trail().last().map(|ev| ev.actor.as_str()), Some("system:cascade"));
+        assert_eq!(reg.audit_trail().last().map(|ev| ev.at_height), Some(40));
     }
 
     #[test]
