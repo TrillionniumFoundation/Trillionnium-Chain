@@ -243,4 +243,33 @@ mod tests {
         assert_eq!(receipt.timestamp_ms, 789);
         assert_eq!(receipt.result, VerificationResult::Valid);
     }
+
+    #[test]
+    fn verification_receipt_from_task_tracks_all_canonical_proof_keys() {
+        let mut task = mock_task();
+
+        task.proof_type = ProofType::Fraud;
+        let fraud_receipt =
+            VerificationReceipt::from_task(&task, VerificationResult::Valid, "fraud-v", 100);
+        assert_eq!(fraud_receipt.proof_type, "fraud");
+
+        task.proof_type = ProofType::Tee;
+        let tee_receipt =
+            VerificationReceipt::from_task(&task, VerificationResult::Valid, "tee-v", 101);
+        assert_eq!(tee_receipt.proof_type, "tee");
+
+        task.proof_type = ProofType::Zk;
+        let zk_receipt = VerificationReceipt::from_task(
+            &task,
+            VerificationResult::Indeterminate("pending proof sync".into()),
+            "   ",
+            102,
+        );
+        assert_eq!(zk_receipt.proof_type, "zk");
+        assert_eq!(zk_receipt.verifier_id, "unknown-verifier");
+        assert!(matches!(
+            zk_receipt.result,
+            VerificationResult::Indeterminate(msg) if msg == "pending proof sync"
+        ));
+    }
 }
