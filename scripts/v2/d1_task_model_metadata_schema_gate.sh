@@ -61,6 +61,26 @@ def validate(node, schema_node, prefix=""):
             if key in node:
                 child_prefix = f"{prefix}.{key}" if prefix else key
                 validate(node[key], child_schema, child_prefix)
+
+        for branch in schema_node.get("allOf", []):
+            condition = branch.get("if")
+            then_schema = branch.get("then")
+            if condition is None or then_schema is None:
+                continue
+
+            condition_met = True
+            cond_props = condition.get("properties", {})
+            for cond_key, cond_rule in cond_props.items():
+                if cond_key not in node:
+                    continue
+                if "const" in cond_rule and node[cond_key] != cond_rule["const"]:
+                    condition_met = False
+                    break
+
+            if condition_met:
+                for field in then_schema.get("required", []):
+                    if field not in node:
+                        fail(f"{prefix + '.' if prefix else ''}missing required field: {field}")
         return
 
     expected_type = schema_node.get("type")

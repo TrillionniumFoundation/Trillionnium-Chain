@@ -86,7 +86,23 @@
             "restricted"
           ]
         }
-      }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "privacy_tier": {
+                "const": "restricted"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "provenance_index"
+            ]
+          }
+        }
+      ]
     }
   }
 }
