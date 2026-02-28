@@ -1387,6 +1387,10 @@ mod tests {
         assert_eq!(verify_model_output("\u{200B}ok\u{200D}", 2), ("accepted", "ok"));
         assert_eq!(verify_model_output("o\u{034F}k", 2), ("accepted", "ok"));
 
+        // Direction/isolation wrappers should not alter verifiable length accounting.
+        assert_eq!(verify_model_output("\u{2066}ok\u{2069}", 2), ("accepted", "ok"));
+        assert_eq!(verify_model_output("\u{2066}ok\u{2069}", 1), ("rejected", "output_too_long"));
+
         // ZWJ inside visible emoji sequences should stay deterministic for verifier limits.
         assert_eq!(verify_model_output("👩\u{200D}💻", 2), ("accepted", "ok"));
         assert_eq!(verify_model_output("👩\u{200D}💻", 1), ("rejected", "output_too_long"));
