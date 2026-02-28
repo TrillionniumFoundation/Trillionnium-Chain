@@ -146,6 +146,7 @@ enum Command {
         #[arg(long)]
         description: String,
     },
+    #[command(name = "market.submit_bid", visible_alias = "market-submit-bid")]
     MarketSubmitBid {
         #[arg(long)]
         task_id: u64,
@@ -154,6 +155,7 @@ enum Command {
         #[arg(long)]
         price: u128,
     },
+    #[command(name = "market.match_task", visible_alias = "market-match-task")]
     MarketMatchTask {
         #[arg(long)]
         task_id: u64,
@@ -1778,7 +1780,10 @@ fn main() -> Result<()> {
         } => {
             let tasks = load_market_tasks();
             if !tasks.iter().any(|t| t.task_id == task_id) {
-                bail!("market task not found: {}", task_id);
+                return Err(rpc_fail(RpcErrorResponse {
+                    code: "task-not-found",
+                    message: format!("market task not found: {}", task_id),
+                }));
             }
             let mut bids = load_market_bids();
             let bid = MarketBid {
@@ -1794,7 +1799,10 @@ fn main() -> Result<()> {
         Command::MarketMatchTask { task_id } => {
             let mut tasks = load_market_tasks();
             let Some(task) = tasks.iter_mut().find(|t| t.task_id == task_id) else {
-                bail!("E_MARKET_TASK_NOT_FOUND: market task not found: {}", task_id);
+                return Err(rpc_fail(RpcErrorResponse {
+                    code: "task-not-found",
+                    message: format!("market task not found: {}", task_id),
+                }));
             };
             if task.status != "open" {
                 return Err(rpc_fail(RpcErrorResponse {
