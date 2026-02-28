@@ -9,6 +9,8 @@ impl ProofVerifier for TeeVerifier {
     }
 
     fn verify_proof(&self, _task: &TaskObject, proof_data: &[u8]) -> VerificationResult {
+        let proof_data = trim_ascii_whitespace(proof_data);
+
         if proof_data.len() < 8 {
             return VerificationResult::Invalid("TEE receipt too short".to_string());
         }
@@ -22,6 +24,26 @@ impl ProofVerifier for TeeVerifier {
             VerificationResult::Invalid("Invalid TEE receipt prefix".to_string())
         }
     }
+}
+
+fn trim_ascii_whitespace(mut bytes: &[u8]) -> &[u8] {
+    while let Some(first) = bytes.first() {
+        if first.is_ascii_whitespace() {
+            bytes = &bytes[1..];
+        } else {
+            break;
+        }
+    }
+
+    while let Some(last) = bytes.last() {
+        if last.is_ascii_whitespace() {
+            bytes = &bytes[..bytes.len() - 1];
+        } else {
+            break;
+        }
+    }
+
+    bytes
 }
 
 #[cfg(test)]
@@ -107,6 +129,28 @@ mod tests {
         assert!(matches!(
             verifier.verify_proof(&task, b"XXreceipt"),
             VerificationResult::Invalid(msg) if msg.contains("prefix")
+        ));
+    }
+
+    #[test]
+    fn tee_verifier_accepts_receipt_with_surrounding_ascii_whitespace() {
+        let verifier = TeeVerifier;
+        let task = mock_task();
+
+        assert_eq!(
+            verifier.verify_proof(&task, b" \n\tTEE:quote\r\n"),
+            VerificationResult::Valid
+        );
+    }
+
+    #[test]
+    fn tee_verifier_rejects_whitespace_only_receipt_after_trim() {
+        let verifier = TeeVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(&task, b" \n\t \r\n"),
+            VerificationResult::Invalid(msg) if msg.contains("too short")
         ));
     }
 }
