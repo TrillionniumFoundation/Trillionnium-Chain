@@ -13,9 +13,9 @@ impl ProofVerifier for TeeVerifier {
             return VerificationResult::Invalid("TEE receipt too short".to_string());
         }
 
-        // V2 micro patch: require explicit TEE receipt prefix.
-        // Accepted examples: "TEE:..." or legacy "TE...".
-        if proof_data.starts_with(b"TEE:") || proof_data.starts_with(b"TE") {
+        // V2 micro patch hardening: require explicit TEE receipt prefix.
+        // Accepted example: "TEE:...".
+        if proof_data.starts_with(b"TEE:") {
             VerificationResult::Valid
         } else {
             VerificationResult::Invalid("Invalid TEE receipt prefix".to_string())
@@ -64,12 +64,22 @@ mod tests {
     }
 
     #[test]
-    fn tee_verifier_accepts_prefixed_receipts_when_length_is_sufficient() {
+    fn tee_verifier_accepts_explicit_prefix_receipts_when_length_is_sufficient() {
         let verifier = TeeVerifier;
         let task = mock_task();
 
         assert_eq!(verifier.verify_proof(&task, b"TEE:quote"), VerificationResult::Valid);
-        assert_eq!(verifier.verify_proof(&task, b"TElegacy!"), VerificationResult::Valid);
+    }
+
+    #[test]
+    fn tee_verifier_rejects_legacy_prefix_receipts() {
+        let verifier = TeeVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(&task, b"TElegacy!"),
+            VerificationResult::Invalid(msg) if msg.contains("prefix")
+        ));
     }
 
     #[test]
