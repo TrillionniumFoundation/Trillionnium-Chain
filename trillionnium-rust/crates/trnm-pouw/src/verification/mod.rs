@@ -1,5 +1,8 @@
+pub mod registry;
+pub mod verifiers;
+
 use serde::{Deserialize, Serialize};
-use trnm_types::ObjectRef;
+use trnm_types::TaskObject;
 
 /// Result of a verification attempt.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -35,7 +38,7 @@ pub trait ProofVerifier {
     /// # Arguments
     /// * `task` - The task object being verified.
     /// * `proof_data` - The proof payload (e.g., TEE quote, ZK proof bytes, fraud challenge data).
-    fn verify_proof(&self, task: &ObjectRef, proof_data: &[u8]) -> VerificationResult;
+    fn verify_proof(&self, task: &TaskObject, proof_data: &[u8]) -> VerificationResult;
 }
 
 /// A mock verifier for testing purposes.
@@ -58,7 +61,7 @@ impl ProofVerifier for MockVerifier {
         &self.name
     }
 
-    fn verify_proof(&self, _task: &ObjectRef, _proof_data: &[u8]) -> VerificationResult {
+    fn verify_proof(&self, _task: &TaskObject, _proof_data: &[u8]) -> VerificationResult {
         if self.should_succeed {
             VerificationResult::Valid
         } else {
@@ -70,10 +73,29 @@ impl ProofVerifier for MockVerifier {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use trnm_types::{ProofType, TaskStatus};
 
-    fn mock_task_ref() -> ObjectRef {
-        ObjectRef {
-            id: 1,
+    fn mock_task() -> TaskObject {
+        TaskObject {
+            task_id: 1,
+            creator: "alice".into(),
+            bounty: 100,
+            status: TaskStatus::Open,
+            proof_type: ProofType::Fraud,
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
             version: 1,
         }
     }
@@ -81,7 +103,7 @@ mod tests {
     #[test]
     fn test_mock_verifier_success() {
         let verifier = MockVerifier::new("fraud", true);
-        let task = mock_task_ref();
+        let task = mock_task();
         let result = verifier.verify_proof(&task, &[]);
         assert_eq!(result, VerificationResult::Valid);
         assert_eq!(verifier.proof_type(), "fraud");
@@ -90,7 +112,7 @@ mod tests {
     #[test]
     fn test_mock_verifier_failure() {
         let verifier = MockVerifier::new("zk", false);
-        let task = mock_task_ref();
+        let task = mock_task();
         let result = verifier.verify_proof(&task, &[]);
         assert!(matches!(result, VerificationResult::Invalid(msg) if msg.contains("zk")));
     }
