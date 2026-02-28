@@ -14,8 +14,9 @@ impl ProofVerifier for TeeVerifier {
         }
 
         // V2 micro patch hardening: require explicit TEE receipt prefix.
-        // Accepted example: "TEE:...".
-        if proof_data.starts_with(b"TEE:") {
+        // Accept case-insensitive variants to avoid client-side casing drift.
+        // Accepted examples: "TEE:...", "tee:...".
+        if proof_data.len() >= 4 && proof_data[..4].eq_ignore_ascii_case(b"TEE:") {
             VerificationResult::Valid
         } else {
             VerificationResult::Invalid("Invalid TEE receipt prefix".to_string())
@@ -69,6 +70,22 @@ mod tests {
         let task = mock_task();
 
         assert_eq!(verifier.verify_proof(&task, b"TEE:quote"), VerificationResult::Valid);
+    }
+
+    #[test]
+    fn tee_verifier_accepts_lowercase_prefix_receipts_when_length_is_sufficient() {
+        let verifier = TeeVerifier;
+        let task = mock_task();
+
+        assert_eq!(verifier.verify_proof(&task, b"tee:quote"), VerificationResult::Valid);
+    }
+
+    #[test]
+    fn tee_verifier_accepts_mixed_case_prefix_receipts_when_length_is_sufficient() {
+        let verifier = TeeVerifier;
+        let task = mock_task();
+
+        assert_eq!(verifier.verify_proof(&task, b"TeE:quote"), VerificationResult::Valid);
     }
 
     #[test]
