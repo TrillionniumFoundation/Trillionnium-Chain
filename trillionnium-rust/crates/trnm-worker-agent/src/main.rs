@@ -215,6 +215,7 @@ struct EnterpriseAuditExportRecord {
     status: String,
     provider_request_id: Option<String>,
     provenance_schema_version: Option<String>,
+    provenance_fingerprint: Option<String>,
     provider: Option<String>,
     model: Option<String>,
     adapter: Option<String>,
@@ -222,9 +223,51 @@ struct EnterpriseAuditExportRecord {
     compliance_profile: Option<String>,
 }
 
+fn build_provenance_fingerprint(
+    schema_version: Option<&str>,
+    provider: Option<&str>,
+    model: Option<&str>,
+    adapter: Option<&str>,
+    agent_protocol: Option<&str>,
+    compliance_profile: Option<&str>,
+) -> Option<String> {
+    let schema = schema_version?;
+    let material = format!(
+        "schema={};provider={};model={};adapter={};agent_protocol={};compliance_profile={}",
+        schema,
+        provider.unwrap_or("-"),
+        model.unwrap_or("-"),
+        adapter.unwrap_or("-"),
+        agent_protocol.unwrap_or("-"),
+        compliance_profile.unwrap_or("-")
+    );
+    let mut h = Sha256::new();
+    h.update(material.as_bytes());
+    Some(hex::encode(h.finalize()))
+}
+
 fn to_enterprise_audit_export(rec: &MessageIngressRecord) -> EnterpriseAuditExportRecord {
     let provenance = rec.llm_provenance.as_ref();
     let is_v2 = rec.provenance_schema_version.as_deref() == Some("llm.v2");
+
+    let provider = provenance.and_then(|p| p.provider.clone());
+    let model = provenance.and_then(|p| p.model.clone());
+    let adapter = provenance.and_then(|p| p.adapter.clone());
+    let agent_protocol = is_v2
+        .then(|| provenance.and_then(|p| p.agent_protocol.clone()))
+        .flatten();
+    let compliance_profile = is_v2
+        .then(|| provenance.and_then(|p| p.compliance_profile.clone()))
+        .flatten();
+
+    let provenance_fingerprint = build_provenance_fingerprint(
+        rec.provenance_schema_version.as_deref(),
+        provider.as_deref(),
+        model.as_deref(),
+        adapter.as_deref(),
+        agent_protocol.as_deref(),
+        compliance_profile.as_deref(),
+    );
 
     EnterpriseAuditExportRecord {
         request_id: rec.request_id.clone(),
@@ -232,13 +275,12 @@ fn to_enterprise_audit_export(rec: &MessageIngressRecord) -> EnterpriseAuditExpo
         status: rec.status.clone(),
         provider_request_id: rec.provider_request_id.clone(),
         provenance_schema_version: rec.provenance_schema_version.clone(),
-        provider: provenance.and_then(|p| p.provider.clone()),
-        model: provenance.and_then(|p| p.model.clone()),
-        adapter: provenance.and_then(|p| p.adapter.clone()),
-        agent_protocol: is_v2.then(|| provenance.and_then(|p| p.agent_protocol.clone())).flatten(),
-        compliance_profile: is_v2
-            .then(|| provenance.and_then(|p| p.compliance_profile.clone()))
-            .flatten(),
+        provenance_fingerprint,
+        provider,
+        model,
+        adapter,
+        agent_protocol,
+        compliance_profile,
     }
 }
 
@@ -1534,6 +1576,15 @@ mod tests {
             Some("cn-pii-restricted")
         );
         assert_eq!(export.provider.as_deref(), Some("openai"));
+        let expected = build_provenance_fingerprint(
+            Some("llm.v2"),
+            Some("openai"),
+            Some("gpt-5.3-codex"),
+            Some("mcp"),
+            Some("a2a"),
+            Some("cn-pii-restricted"),
+        );
+        assert_eq!(export.provenance_fingerprint, expected);
     }
 
     #[test]
@@ -1576,6 +1627,15 @@ mod tests {
         assert_eq!(export.adapter.as_deref(), Some("mcp"));
         assert_eq!(export.agent_protocol, None);
         assert_eq!(export.compliance_profile, None);
+        let expected = build_provenance_fingerprint(
+            Some("llm.v1"),
+            Some("openai"),
+            Some("gpt-5.3-codex"),
+            Some("mcp"),
+            None,
+            None,
+        );
+        assert_eq!(export.provenance_fingerprint, expected);
     }
 
     #[test]
@@ -1608,6 +1668,7 @@ mod tests {
         let export = to_enterprise_audit_export(&rec);
         assert_eq!(export.request_id, "r-audit-legacy");
         assert_eq!(export.provenance_schema_version, None);
+        assert_eq!(export.provenance_fingerprint, None);
         assert_eq!(export.agent_protocol, None);
         assert_eq!(export.compliance_profile, None);
         assert_eq!(export.provider, None);
