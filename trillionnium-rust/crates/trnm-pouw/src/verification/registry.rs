@@ -37,3 +37,69 @@ impl VerifierRegistry {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::sync::Arc;
+    use trnm_types::{TaskStatus, TaskObject};
+
+    struct AlwaysValidVerifier {
+        kind: &'static str,
+    }
+
+    impl ProofVerifier for AlwaysValidVerifier {
+        fn proof_type(&self) -> &str {
+            self.kind
+        }
+
+        fn verify_proof(&self, _task: &TaskObject, _proof_data: &[u8]) -> VerificationResult {
+            VerificationResult::Valid
+        }
+    }
+
+    fn task_with_proof_type(proof_type: ProofType) -> TaskObject {
+        TaskObject {
+            task_id: 42,
+            creator: "alice".into(),
+            bounty: 100,
+            status: TaskStatus::Open,
+            proof_type,
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        }
+    }
+
+    #[test]
+    fn registry_register_is_case_insensitive_for_lookup() {
+        let mut registry = VerifierRegistry::new();
+        registry.register(Arc::new(AlwaysValidVerifier { kind: "TEE" }));
+
+        let task = task_with_proof_type(ProofType::Tee);
+        assert_eq!(registry.verify(&task, b"receipt"), VerificationResult::Valid);
+    }
+
+    #[test]
+    fn registry_returns_indeterminate_when_verifier_is_missing() {
+        let registry = VerifierRegistry::new();
+        let task = task_with_proof_type(ProofType::Zk);
+
+        assert_eq!(
+            registry.verify(&task, b"proof"),
+            VerificationResult::Indeterminate("no verifier registered for proof type: zk".into())
+        );
+    }
+}
