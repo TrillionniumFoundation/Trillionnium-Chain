@@ -195,3 +195,6 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d2-
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e2-audit-report-generator-quoted-values-test" "./scripts/v2/e2_audit_report_generator_quoted_values_test.sh" "ci(gate): add e2-audit-report-generator-quoted-values-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-model-version-blank-test" "./scripts/v2/d1_task_model_metadata_schema_reject_model_version_blank_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-model-version-blank-test regression to quick-check"
