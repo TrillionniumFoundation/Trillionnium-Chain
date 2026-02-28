@@ -40,6 +40,7 @@ const FAUCET_WINDOW_SECONDS_MIN: u64 = 1;
 const FAUCET_MAX_REQUESTS_DEFAULT: u32 = 1;
 const FAUCET_MAX_REQUESTS_MIN: u32 = 1;
 const EMERGENCY_PAUSE_KEY_ID: u64 = 7_999;
+const MARKET_REPUTATION_FILE_ENV: &str = "TRNM_RPC_MARKET_REPUTATION_FILE";
 
 #[derive(Debug, Parser)]
 #[command(
@@ -652,6 +653,35 @@ fn save_market_bids(bids: &[MarketBid]) -> Result<()> {
     }
     fs::write(path, out)?;
     Ok(())
+}
+
+fn market_reputation_file() -> PathBuf {
+    if let Ok(path) = std::env::var(MARKET_REPUTATION_FILE_ENV) {
+        return PathBuf::from(path);
+    }
+    run_root().join("run/market/reputation.json")
+}
+
+fn load_market_reputation() -> BTreeMap<String, i64> {
+    let path = market_reputation_file();
+    let Ok(raw) = fs::read_to_string(path) else {
+        return BTreeMap::new();
+    };
+    serde_json::from_str::<BTreeMap<String, i64>>(&raw).unwrap_or_default()
+}
+
+fn market_effective_score(price: u128, reputation: i64) -> u128 {
+    const PRICE_WEIGHT: u128 = 1_000;
+    const REPUTATION_WEIGHT: u128 = 100;
+    const REPUTATION_CLAMP: i64 = 1_000;
+
+    let rep = reputation.clamp(-REPUTATION_CLAMP, REPUTATION_CLAMP);
+    let base = price.saturating_mul(PRICE_WEIGHT);
+    if rep >= 0 {
+        base.saturating_sub((rep as u128).saturating_mul(REPUTATION_WEIGHT))
+    } else {
+        base.saturating_add((rep.unsigned_abs() as u128).saturating_mul(REPUTATION_WEIGHT))
+    }
 }
 
 fn load_ingress_records() -> Vec<MessageIngressRecord> {
@@ -1812,8 +1842,7 @@ fn main() -> Result<()> {
             }
 
             let bids = load_market_bids();
-            let mut task_bids: Vec<&MarketBid> =
-                bids.iter().filter(|b| b.task_id == task_id).collect();
+            let task_bids: Vec<&MarketBid> = bids.iter().filter(|b| b.task_id == task_id).collect();
 
             if task_bids.is_empty() {
                 return Err(rpc_fail(RpcErrorResponse {
@@ -1822,16 +1851,32 @@ fn main() -> Result<()> {
                 }));
             }
 
-            // Simple matching: lowest price
-            task_bids.sort_by_key(|b| b.price);
-            let winner = task_bids[0];
+            let reputation = load_market_reputation();
+            let winner = task_bids
+                .into_iter()
+                .min_by_key(|b| {
+                    let rep = *reputation.get(&b.worker).unwrap_or(&0);
+                    (
+                        market_effective_score(b.price, rep),
+                        b.price,
+                        b.created_at_unix_ms,
+                        &b.worker,
+                    )
+                })
+                .expect("non-empty bids");
+            let winner_reputation = *reputation.get(&winner.worker).unwrap_or(&0);
+            let winner_score = market_effective_score(winner.price, winner_reputation);
 
             task.status = "matched".into();
             save_market_tasks(&tasks)?;
 
             println!(
-                "{{\"task_id\":{},\"winner\":\"{}\",\"price\":{},\"status\":\"matched\"}}",
-                task_id, winner.worker, winner.price
+                "{{\"task_id\":{},\"winner\":\"{}\",\"price\":{},\"status\":\"matched\",\"match_policy\":\"price_reputation_weighted\",\"winner_reputation\":{},\"effective_score\":{}}}",
+                task_id,
+                winner.worker,
+                winner.price,
+                winner_reputation,
+                winner_score
             );
         }
         Command::DispatchOpen { worker_id, limit } => {
@@ -1913,6 +1958,20 @@ mod tests {
             QUERY_FULL_LIMIT_MAX,
         );
         assert_eq!(got, 17);
+    }
+
+    #[test]
+    fn market_effective_score_rewards_higher_reputation() {
+        let low_rep = market_effective_score(100, 0);
+        let high_rep = market_effective_score(100, 80);
+        assert!(high_rep < low_rep);
+    }
+
+    #[test]
+    fn market_effective_score_penalizes_negative_reputation() {
+        let neutral = market_effective_score(100, 0);
+        let penalized = market_effective_score(100, -50);
+        assert!(penalized > neutral);
     }
 
     #[test]
