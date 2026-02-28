@@ -3,6 +3,8 @@ use thiserror::Error;
 use trnm_state::StateStore;
 use trnm_types::{Hash32, ObjectRef, TaskObject, TaskStatus};
 
+pub mod verification;
+
 #[derive(Debug, Error)]
 pub enum PouwError {
     #[error("state error: {0}")]
