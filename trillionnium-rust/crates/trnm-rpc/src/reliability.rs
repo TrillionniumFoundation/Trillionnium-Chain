@@ -696,9 +696,23 @@ fn normalized_env_path(raw: &str) -> Option<&str> {
         return None;
     }
 
-    let stripped = if (trimmed.starts_with('"') && trimmed.ends_with('"'))
-        || (trimmed.starts_with('\'') && trimmed.ends_with('\''))
-    {
+    let starts_with_quote = trimmed.starts_with('"') || trimmed.starts_with('\'');
+    let ends_with_quote = trimmed.ends_with('"') || trimmed.ends_with('\'');
+
+    if trimmed.len() == 1 && (starts_with_quote || ends_with_quote) {
+        return None;
+    }
+
+    // Treat mismatched leading/trailing quote wrappers as noisy malformed input.
+    if starts_with_quote ^ ends_with_quote {
+        return None;
+    }
+
+    let quoted = trimmed.len() >= 2
+        && ((trimmed.starts_with('"') && trimmed.ends_with('"'))
+            || (trimmed.starts_with('\'') && trimmed.ends_with('\'')));
+
+    let stripped = if quoted {
         &trimmed[1..trimmed.len() - 1]
     } else {
         trimmed
@@ -1387,6 +1401,16 @@ mod tests {
         assert_eq!(
             default_reliability_db_path(),
             PathBuf::from("/tmp/quoted-reliability.sqlite")
+        );
+
+        // Noisy single-quote values should be treated as invalid input and
+        // fall back safely instead of slicing panic.
+        std::env::set_var("RELIABILITY_DB_PATH", "'");
+        std::env::remove_var("XDG_STATE_HOME");
+        std::env::remove_var("HOME");
+        assert_eq!(
+            default_reliability_db_path(),
+            PathBuf::from("run/reliability/reliability.sqlite")
         );
 
         std::env::remove_var("RELIABILITY_DB_PATH");
