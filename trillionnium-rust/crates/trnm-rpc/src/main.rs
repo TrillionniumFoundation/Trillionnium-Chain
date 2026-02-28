@@ -753,12 +753,25 @@ fn market_reputation_file() -> PathBuf {
     run_root().join("run/market/reputation.json")
 }
 
+fn normalize_market_worker_key(raw: &str) -> Option<String> {
+    let normalized = raw.trim().to_ascii_lowercase();
+    if normalized.is_empty() {
+        None
+    } else {
+        Some(normalized)
+    }
+}
+
 fn load_market_reputation() -> BTreeMap<String, i64> {
     let path = market_reputation_file();
     let Ok(raw) = fs::read_to_string(path) else {
         return BTreeMap::new();
     };
-    serde_json::from_str::<BTreeMap<String, i64>>(&raw).unwrap_or_default()
+    let parsed = serde_json::from_str::<BTreeMap<String, i64>>(&raw).unwrap_or_default();
+    parsed
+        .into_iter()
+        .filter_map(|(worker, rep)| normalize_market_worker_key(&worker).map(|k| (k, rep)))
+        .collect()
 }
 
 fn env_u128_clamped(name: &str, default: u128, min: u128, max: u128) -> u128 {
@@ -2035,7 +2048,9 @@ fn main() -> Result<()> {
             let winner = task_bids
                 .into_iter()
                 .min_by_key(|b| {
-                    let rep = *reputation.get(&b.worker).unwrap_or(&0);
+                    let rep = normalize_market_worker_key(&b.worker)
+                        .and_then(|k| reputation.get(&k).copied())
+                        .unwrap_or(0);
                     (
                         market_effective_score(b.price, rep),
                         b.price,
@@ -2044,7 +2059,9 @@ fn main() -> Result<()> {
                     )
                 })
                 .expect("non-empty bids");
-            let winner_reputation = *reputation.get(&winner.worker).unwrap_or(&0);
+            let winner_reputation = normalize_market_worker_key(&winner.worker)
+                .and_then(|k| reputation.get(&k).copied())
+                .unwrap_or(0);
             let winner_score = market_effective_score(winner.price, winner_reputation);
 
             task.status = "matched".into();
@@ -2234,6 +2251,31 @@ mod tests {
                 );
             },
         );
+    }
+
+    #[test]
+    fn market_reputation_loader_normalizes_worker_keys() {
+        let mut path = std::env::temp_dir();
+        path.push(format!(
+            "trnm_rpc_market_reputation_{}_{}.json",
+            std::process::id(),
+            now_ms()
+        ));
+        fs::write(&path, "{\" Worker-A \": 12, \"\": 99, \"WORKER-B\": -5}")
+            .expect("write reputation fixture");
+
+        with_market_path_env(
+            &[(MARKET_REPUTATION_FILE_ENV, Some(path.to_string_lossy().as_ref()))],
+            || {
+                let rep = load_market_reputation();
+                assert_eq!(rep.get("worker-a"), Some(&12));
+                assert_eq!(rep.get("worker-b"), Some(&-5));
+                assert!(!rep.contains_key(" Worker-A "));
+                assert!(!rep.contains_key(""));
+            },
+        );
+
+        let _ = fs::remove_file(path);
     }
 
     #[test]
