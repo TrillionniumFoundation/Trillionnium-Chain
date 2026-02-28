@@ -1199,6 +1199,14 @@ mod tests {
     }
 
     #[test]
+    fn llm_adapter_rejects_stdout_without_any_json_line() {
+        let cmd = "printf 'debug: adapter warmup\\nstatus=ok\\n'";
+        let err = run_llm_adapter_once("sh -lc", cmd, Duration::from_secs(1)).unwrap_err();
+        assert_eq!(err.kind, AdapterErrorKind::NonRetriable);
+        assert!(err.context.contains("no-json-line"));
+    }
+
+    #[test]
     fn truncate_for_error_marks_truncated_payloads() {
         let raw = "x".repeat(600);
         let truncated = truncate_for_error(&raw, 32);
