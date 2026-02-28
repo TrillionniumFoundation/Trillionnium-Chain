@@ -1223,6 +1223,67 @@ mod tests {
     }
 
     #[test]
+    fn settlement_revert_reason_normalizes_proof_adapter_aliases() {
+        let route = BridgeRoute {
+            route_id: "eth->trnm".to_string(),
+            source_chain: "ethereum".to_string(),
+            target_chain: "trillionnium".to_string(),
+        };
+        let mut rec = SettlementRecord {
+            settlement_id: 140,
+            route,
+            status: SettlementStatus::Pending,
+            at_height: 500,
+            settlement_tx: None,
+            revert_reason: None,
+        };
+
+        rec.apply_status(
+            SettlementStatus::Reverted,
+            501,
+            None,
+            Some("TEE_ATTESTATION".to_string()),
+        )
+        .unwrap();
+        assert_eq!(rec.revert_reason.as_deref(), Some("tee-receipt"));
+
+        rec.apply_status(
+            SettlementStatus::Reverted,
+            502,
+            None,
+            Some("zk_proof".to_string()),
+        )
+        .unwrap_err();
+        assert_eq!(rec.revert_reason.as_deref(), Some("tee-receipt"));
+    }
+
+    #[test]
+    fn settlement_revert_reason_normalization_keeps_non_proof_reason() {
+        let route = BridgeRoute {
+            route_id: "eth->trnm".to_string(),
+            source_chain: "ethereum".to_string(),
+            target_chain: "trillionnium".to_string(),
+        };
+        let mut rec = SettlementRecord {
+            settlement_id: 141,
+            route,
+            status: SettlementStatus::Pending,
+            at_height: 600,
+            settlement_tx: None,
+            revert_reason: None,
+        };
+
+        rec.apply_status(
+            SettlementStatus::Reverted,
+            601,
+            None,
+            Some("executor_sla_timeout".to_string()),
+        )
+        .unwrap();
+        assert_eq!(rec.revert_reason.as_deref(), Some("executor_sla_timeout"));
+    }
+
+    #[test]
     fn settlement_status_update_rejects_height_regression_without_side_effects() {
         let route = BridgeRoute {
             route_id: "eth->trnm".to_string(),
