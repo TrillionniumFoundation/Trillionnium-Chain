@@ -927,7 +927,11 @@ fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
 }
 
 fn normalized_compliance_profile(value: Option<&str>) -> Option<String> {
-    let normalized = normalized_optional_field(value)?.to_ascii_lowercase();
+    let normalized: String = normalized_optional_field(value)?
+        .to_ascii_lowercase()
+        .chars()
+        .map(|c| if c.is_ascii_whitespace() { '-' } else { c })
+        .collect();
     let is_allowed = normalized
         .chars()
         .all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || matches!(c, '-' | '_' | '.' | '/' | '\\'));
@@ -2231,6 +2235,52 @@ mod tests {
     }
 
     #[test]
+    fn attach_llm_provenance_normalizes_space_separated_compliance_profile() {
+        let mut rec = MessageIngressRecord {
+            request_id: "r6-space".to_string(),
+            task_id: 142,
+            channel: "telegram".to_string(),
+            user_id: "u6".to_string(),
+            session_id: "s6".to_string(),
+            text: "prompt".to_string(),
+            idempotency_key: "ik6-space".to_string(),
+            status: RequestStatus::Assigned.as_str().to_string(),
+            created_at_unix_ms: 1,
+            assigned_worker: Some("worker-1".to_string()),
+            assigned_at_unix_ms: Some(2),
+            model_output: None,
+            provider_request_id: None,
+            provenance_schema_version: None,
+            llm_provenance: None,
+            result_hash: None,
+            verifier_status: None,
+            resolution_code: None,
+            commit_tx_hash: None,
+            reveal_tx_hash: None,
+            adapter_error: None,
+            reputation_delta: None,
+        };
+        let llm = LlmAdapterResponse {
+            output_text: "ok".to_string(),
+            provider_request_id: None,
+            provider: None,
+            model: None,
+            adapter: None,
+            agent_protocol: None,
+            compliance_profile: Some("CN PII Restricted".to_string()),
+        };
+
+        attach_llm_provenance(&mut rec, &llm);
+
+        assert_eq!(rec.provenance_schema_version.as_deref(), Some("llm.v2"));
+        let prov = rec.llm_provenance.as_ref().expect("provenance attached");
+        assert_eq!(
+            prov.compliance_profile.as_deref(),
+            Some("cn-pii-restricted")
+        );
+    }
+
+    #[test]
     fn attach_llm_provenance_rejects_invalid_compliance_profile_chars() {
         let mut rec = MessageIngressRecord {
             request_id: "r6b".to_string(),
@@ -2454,6 +2504,22 @@ mod tests {
         assert_eq!(
             normalized_compliance_profile(Some("CN\\PII\\Restricted")).as_deref(),
             Some("cn-pii-restricted")
+        );
+    }
+
+    #[test]
+    fn normalized_compliance_profile_accepts_space_separators_and_normalizes_to_hyphen() {
+        assert_eq!(
+            normalized_compliance_profile(Some("CN PII Restricted")).as_deref(),
+            Some("cn-pii-restricted")
+        );
+    }
+
+    #[test]
+    fn normalized_compliance_profile_rejects_adjacent_space_separators() {
+        assert_eq!(
+            normalized_compliance_profile(Some("cn  pii restricted")),
+            None
         );
     }
 
