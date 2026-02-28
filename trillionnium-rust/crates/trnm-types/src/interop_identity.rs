@@ -173,6 +173,8 @@ pub enum CapabilityScope {
     BridgeSettle,
     BridgeRevert,
     AuditRead,
+    MarketPublish,
+    MarketExecute,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -499,7 +501,7 @@ impl IdentityRegistry {
         Ok(())
     }
 
-    pub fn ensure_settlement_capability(
+    pub fn verify_capability(
         &self,
         actor: &str,
         token_id: u64,
@@ -2457,7 +2459,7 @@ mod tests {
     }
 
     #[test]
-    fn ensure_settlement_capability_accepts_active_controller_and_matching_scope() {
+    fn verify_capability_accepts_active_controller_and_matching_scope() {
         let mut reg = IdentityRegistry::default();
         reg.register_did(
             "did:trnm:settler-1".to_string(),
@@ -2475,7 +2477,7 @@ mod tests {
             )
             .unwrap();
 
-        reg.ensure_settlement_capability(
+        reg.verify_capability(
             "org:lane2-admin",
             token_id,
             CapabilityScope::BridgeSettle,
@@ -2485,7 +2487,7 @@ mod tests {
     }
 
     #[test]
-    fn ensure_settlement_capability_rejects_scope_mismatch_without_side_effects() {
+    fn verify_capability_rejects_scope_mismatch_without_side_effects() {
         let mut reg = IdentityRegistry::default();
         reg.register_did(
             "did:trnm:settler-2".to_string(),
@@ -2505,7 +2507,7 @@ mod tests {
         let audit_len_before = reg.audit_trail().len();
 
         let err = reg
-            .ensure_settlement_capability(
+            .verify_capability(
                 "org:lane2-admin",
                 token_id,
                 CapabilityScope::BridgeSettle,
@@ -2526,7 +2528,7 @@ mod tests {
     }
 
     #[test]
-    fn ensure_settlement_capability_rejects_revoked_did_even_if_token_looks_active() {
+    fn verify_capability_rejects_revoked_did_even_if_token_looks_active() {
         let mut reg = IdentityRegistry::default();
         reg.register_did(
             "did:trnm:settler-legacy".to_string(),
@@ -2552,7 +2554,7 @@ mod tests {
         reg.capabilities.get_mut(&token_id).unwrap().revoked_at = None;
 
         let err = reg
-            .ensure_settlement_capability(
+            .verify_capability(
                 "org:lane2-admin",
                 token_id,
                 CapabilityScope::BridgeSettle,
@@ -2567,7 +2569,7 @@ mod tests {
     }
 
     #[test]
-    fn ensure_settlement_capability_rejects_noncanonical_actor_without_side_effects() {
+    fn verify_capability_rejects_noncanonical_actor_without_side_effects() {
         let mut reg = IdentityRegistry::default();
         reg.register_did(
             "did:trnm:settler-actorfmt".to_string(),
@@ -2589,7 +2591,7 @@ mod tests {
         let token_before = reg.capability(token_id).cloned().unwrap();
 
         let err = reg
-            .ensure_settlement_capability(
+            .verify_capability(
                 " org:lane2-admin ",
                 token_id,
                 CapabilityScope::BridgeSettle,
@@ -2606,7 +2608,7 @@ mod tests {
     }
 
     #[test]
-    fn ensure_settlement_capability_rejects_unknown_token_without_side_effects() {
+    fn verify_capability_rejects_unknown_token_without_side_effects() {
         let mut reg = IdentityRegistry::default();
         reg.register_did(
             "did:trnm:settler-missing-token".to_string(),
@@ -2617,7 +2619,7 @@ mod tests {
 
         let baseline = reg.audit_trail().to_vec();
         let err = reg
-            .ensure_settlement_capability(
+            .verify_capability(
                 "org:lane2-admin",
                 42,
                 CapabilityScope::BridgeSettle,
@@ -2633,7 +2635,7 @@ mod tests {
     }
 
     #[test]
-    fn ensure_settlement_capability_rejects_inactive_or_unauthorized_actor() {
+    fn verify_capability_rejects_inactive_or_unauthorized_actor() {
         let mut reg = IdentityRegistry::default();
         reg.register_did(
             "did:trnm:settler-3".to_string(),
@@ -2652,7 +2654,7 @@ mod tests {
             .unwrap();
 
         let err = reg
-            .ensure_settlement_capability(
+            .verify_capability(
                 "org:lane2-admin",
                 token_id,
                 CapabilityScope::BridgeRevert,
@@ -2680,7 +2682,7 @@ mod tests {
             )
             .unwrap();
         let err = reg
-            .ensure_settlement_capability(
+            .verify_capability(
                 "org:lane2-backup",
                 token2,
                 CapabilityScope::BridgeRevert,
@@ -2696,6 +2698,95 @@ mod tests {
             } if actor == "org:lane2-backup"
                 && did == "did:trnm:settler-3"
                 && controller == "org:lane2-admin"
+        ));
+    }
+
+    #[test]
+    fn market_capability_scopes_work_as_expected() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did(
+            "did:trnm:market-agent".to_string(),
+            "org:market-maker".to_string(),
+            100,
+        )
+        .unwrap();
+
+        let pub_token = reg
+            .issue_capability(
+                "org:market-maker".to_string(),
+                "did:trnm:market-agent".to_string(),
+                CapabilityScope::MarketPublish,
+                110,
+                None,
+            )
+            .unwrap();
+
+        let exec_token = reg
+            .issue_capability(
+                "org:market-maker".to_string(),
+                "did:trnm:market-agent".to_string(),
+                CapabilityScope::MarketExecute,
+                120,
+                None,
+            )
+            .unwrap();
+
+        // 1. Verify MarketPublish scope works
+        reg.verify_capability(
+            "org:market-maker",
+            pub_token,
+            CapabilityScope::MarketPublish,
+            115,
+        )
+        .unwrap();
+
+        // 2. Verify MarketExecute scope works
+        reg.verify_capability(
+            "org:market-maker",
+            exec_token,
+            CapabilityScope::MarketExecute,
+            125,
+        )
+        .unwrap();
+
+        // 3. Verify scope mismatch is rejected
+        let err = reg
+            .verify_capability(
+                "org:market-maker",
+                pub_token,
+                CapabilityScope::MarketExecute,
+                115,
+            )
+            .unwrap_err();
+        assert!(matches!(
+            err,
+            InteropIdentityError::CapabilityScopeMismatch {
+                expected: CapabilityScope::MarketExecute,
+                actual: CapabilityScope::MarketPublish,
+                ..
+            }
+        ));
+
+        // 4. Verify revocation works for market scopes
+        reg.revoke_capability(
+            "org:market-maker".to_string(),
+            pub_token,
+            130,
+            Some("market_ban".to_string()),
+        )
+        .unwrap();
+
+        let err = reg
+            .verify_capability(
+                "org:market-maker",
+                pub_token,
+                CapabilityScope::MarketPublish,
+                131,
+            )
+            .unwrap_err();
+        assert!(matches!(
+            err,
+            InteropIdentityError::CapabilityInactive { .. }
         ));
     }
 }
