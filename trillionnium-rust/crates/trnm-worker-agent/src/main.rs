@@ -2916,11 +2916,19 @@ mod tests {
             Some("mcp")
         );
         assert_eq!(
+            normalized_agent_protocol(Some("Model_Context_Protocol_v2")).as_deref(),
+            Some("mcp")
+        );
+        assert_eq!(
             normalized_agent_protocol(Some("Agent:To:Agent")).as_deref(),
             Some("a2a")
         );
         assert_eq!(
             normalized_agent_protocol(Some("Agent-To-Agent Protocol v2")).as_deref(),
+            Some("a2a")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("agent_to_agent_protocol_v2")).as_deref(),
             Some("a2a")
         );
         assert_eq!(
