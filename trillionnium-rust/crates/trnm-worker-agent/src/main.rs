@@ -1142,7 +1142,15 @@ fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
         | "agent2agentv2"
         | "agenttoagentv"
         | "agenttoagentv1"
-        | "agenttoagentv2" => Some("a2a".to_string()),
+        | "agenttoagentv2"
+        | "agent2agentjsonrpc"
+        | "agent2agentjsonrpcv"
+        | "agent2agentjsonrpcv1"
+        | "agent2agentjsonrpcv2"
+        | "agenttoagentjsonrpc"
+        | "agenttoagentjsonrpcv"
+        | "agenttoagentjsonrpcv1"
+        | "agenttoagentjsonrpcv2" => Some("a2a".to_string()),
         _ => None,
     }
 }
@@ -2731,6 +2739,10 @@ mod tests {
         );
         assert_eq!(
             normalized_agent_protocol(Some("A2A 2.0")).as_deref(),
+            Some("a2a")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Agent-to-Agent JSON-RPC v2")).as_deref(),
             Some("a2a")
         );
     }
