@@ -1,4 +1,4 @@
-use anyhow::{bail, Result};
+use anyhow::{anyhow, bail, Result};
 use clap::{Parser, Subcommand};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
@@ -323,6 +323,62 @@ fn load_audit_exports_jsonl(path: &Path) -> Result<Vec<EnterpriseAuditExportReco
         rows.push(rec);
     }
     Ok(rows)
+}
+
+fn validate_audit_export_index_consistency(
+    index: &AuditExportIndex,
+    exports: &[EnterpriseAuditExportRecord],
+) -> Result<()> {
+    if index.total_records != exports.len() {
+        bail!(
+            "audit export/index inconsistent: total_records mismatch index={} exports={}",
+            index.total_records,
+            exports.len()
+        );
+    }
+
+    for (task_id, indexes) in index.by_task_id.iter() {
+        for idx in indexes {
+            let rec = exports.get(*idx).ok_or_else(|| {
+                anyhow!(
+                    "audit export/index inconsistent: by_task_id index out of bounds task_id={} idx={} exports={}",
+                    task_id,
+                    idx,
+                    exports.len()
+                )
+            })?;
+            if rec.task_id.to_string() != *task_id {
+                bail!(
+                    "audit export/index inconsistent: by_task_id mismatch task_id={} idx={} record_task_id={}",
+                    task_id,
+                    idx,
+                    rec.task_id
+                );
+            }
+        }
+    }
+
+    for (fingerprint, indexes) in index.by_provenance_fingerprint.iter() {
+        for idx in indexes {
+            let rec = exports.get(*idx).ok_or_else(|| {
+                anyhow!(
+                    "audit export/index inconsistent: by_provenance_fingerprint index out of bounds fingerprint={} idx={} exports={}",
+                    fingerprint,
+                    idx,
+                    exports.len()
+                )
+            })?;
+            if rec.provenance_fingerprint.as_deref() != Some(fingerprint.as_str()) {
+                bail!(
+                    "audit export/index inconsistent: by_provenance_fingerprint mismatch fingerprint={} idx={}",
+                    fingerprint,
+                    idx
+                );
+            }
+        }
+    }
+
+    Ok(())
 }
 
 fn query_audit_by_task_id(
@@ -2305,6 +2361,62 @@ mod tests {
     }
 
     #[test]
+    fn validate_audit_export_index_consistency_rejects_total_record_mismatch() {
+        let rows = vec![EnterpriseAuditExportRecord {
+            request_id: "r1".to_string(),
+            task_id: 7001,
+            status: "reveal_submitted".to_string(),
+            proof_type: None,
+            settlement_status: None,
+            timestamp_unix_ms: None,
+            provider_request_id: Some("p1".to_string()),
+            provenance_schema_version: Some("llm.v2".to_string()),
+            provenance_fingerprint: Some("fp-abc".to_string()),
+            provider: Some("openai".to_string()),
+            model: Some("gpt-5.3-codex".to_string()),
+            adapter: Some("mcp".to_string()),
+            agent_protocol: Some("a2a".to_string()),
+            compliance_profile: Some("cn-moderate".to_string()),
+        }];
+        let mut index = build_audit_export_index(&rows);
+        index.total_records = 99;
+
+        let err = validate_audit_export_index_consistency(&index, &rows).expect_err("must fail");
+        assert!(
+            err.to_string().contains("total_records mismatch"),
+            "unexpected error: {err}"
+        );
+    }
+
+    #[test]
+    fn validate_audit_export_index_consistency_rejects_task_mapping_mismatch() {
+        let rows = vec![EnterpriseAuditExportRecord {
+            request_id: "r1".to_string(),
+            task_id: 7001,
+            status: "reveal_submitted".to_string(),
+            proof_type: None,
+            settlement_status: None,
+            timestamp_unix_ms: None,
+            provider_request_id: Some("p1".to_string()),
+            provenance_schema_version: Some("llm.v2".to_string()),
+            provenance_fingerprint: Some("fp-abc".to_string()),
+            provider: Some("openai".to_string()),
+            model: Some("gpt-5.3-codex".to_string()),
+            adapter: Some("mcp".to_string()),
+            agent_protocol: Some("a2a".to_string()),
+            compliance_profile: Some("cn-moderate".to_string()),
+        }];
+        let mut index = build_audit_export_index(&rows);
+        index.by_task_id.insert("7002".to_string(), vec![0]);
+
+        let err = validate_audit_export_index_consistency(&index, &rows).expect_err("must fail");
+        assert!(
+            err.to_string().contains("by_task_id mismatch"),
+            "unexpected error: {err}"
+        );
+    }
+
+    #[test]
     fn attach_llm_provenance_persists_provider_request_id() {
         let mut rec = MessageIngressRecord {
             request_id: "r1".to_string(),
@@ -3877,6 +3989,7 @@ fn main() -> Result<()> {
             let index_file = audit_export_index_path(&output_file);
             let index: AuditExportIndex = serde_json::from_str(&fs::read_to_string(&index_file)?)?;
             let exports = load_audit_exports_jsonl(&output_file)?;
+            validate_audit_export_index_consistency(&index, &exports)?;
             if let Some(task_id) = task_id {
                 let query = query_audit_by_task_id(&index, &exports, task_id);
                 println!("{}", serde_json::to_string_pretty(&query)?);
