@@ -127,3 +127,6 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: i2-
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-gate" "./scripts/v2/d1_task_model_metadata_schema_gate.sh" "ci(gate): add d1-task-model-metadata-schema-gate regression to quick-check"
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-missing-required-test" "./scripts/v2/d1_task_model_metadata_schema_missing_required_test.sh" "ci(gate): add d1-task-model-metadata-schema-missing-required-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-additional-property-test" "./scripts/v2/d1_task_model_metadata_schema_reject_additional_property_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-additional-property-test regression to quick-check"
