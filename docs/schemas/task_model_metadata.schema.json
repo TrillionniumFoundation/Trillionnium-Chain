@@ -58,7 +58,8 @@
       "properties": {
         "producer_did": {
           "type": "string",
-          "minLength": 1
+          "minLength": 1,
+          "pattern": "^did:[A-Za-z0-9._:%-]+:[^\\s]+$"
         },
         "produced_at": {
           "type": "string",
