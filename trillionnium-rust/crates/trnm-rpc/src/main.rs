@@ -19,7 +19,8 @@ use trnm_rpc::{
 };
 use trnm_state::StateStore;
 use trnm_types::{
-    GovParamObject, GovProposalObject, GovProposalStatus, RequestStatus, TaskStatus, TransferTx,
+    AuditEvent, CapabilityToken, GovParamObject, GovProposalObject, GovProposalStatus,
+    IdentityRegistry, RequestStatus, TaskStatus, TransferTx,
 };
 
 const QUERY_EVENTS_LIMIT_DEFAULT: usize = 100;
@@ -78,6 +79,10 @@ enum Command {
         task_id: u64,
         #[arg(long, default_value_t = QUERY_EVENTS_LIMIT_DEFAULT)]
         limit: usize,
+    },
+    QueryCapabilityAudit {
+        #[arg(long)]
+        token_id: u64,
     },
     /// Query challenge treasury/forfeits current summary and recent related events
     QueryChallengeTreasury {
@@ -328,6 +333,28 @@ struct ChallengeTreasuryQueryResponse {
     window: Option<ChallengeWindowView>,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct CapabilityAuditQueryResponse {
+    token: CapabilityToken,
+    owner_history: Vec<AuditEvent>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+enum CapabilityAuditQueryError {
+    TokenNotFound(u64),
+}
+
+impl CapabilityAuditQueryError {
+    fn to_rpc_error(&self) -> RpcErrorResponse {
+        match self {
+            Self::TokenNotFound(token_id) => RpcErrorResponse {
+                code: "CAPABILITY_NOT_FOUND",
+                message: format!("capability token not found: {}", token_id),
+            },
+        }
+    }
+}
+
 fn load_latest_adapter_records() -> Vec<AdapterRecord> {
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .parent()
@@ -560,6 +587,41 @@ fn now_ms() -> u128 {
         .duration_since(UNIX_EPOCH)
         .map(|d| d.as_millis())
         .unwrap_or(0)
+}
+
+fn identity_registry_file() -> PathBuf {
+    if let Ok(path) = std::env::var("TRNM_RPC_IDENTITY_REGISTRY_FILE") {
+        return PathBuf::from(path);
+    }
+    run_root().join("run/rpc/identity_registry.json")
+}
+
+fn load_identity_registry(path: &Path) -> IdentityRegistry {
+    let Ok(raw) = fs::read_to_string(path) else {
+        return IdentityRegistry::default();
+    };
+    serde_json::from_str::<IdentityRegistry>(&raw).unwrap_or_default()
+}
+
+fn query_capability_audit(
+    registry: &IdentityRegistry,
+    token_id: u64,
+) -> Result<CapabilityAuditQueryResponse, CapabilityAuditQueryError> {
+    let Some(token) = registry.capability(token_id).cloned() else {
+        return Err(CapabilityAuditQueryError::TokenNotFound(token_id));
+    };
+
+    let owner_history = registry
+        .audit_trail()
+        .iter()
+        .filter(|event| event.subject == token.subject_did)
+        .cloned()
+        .collect();
+
+    Ok(CapabilityAuditQueryResponse {
+        token,
+        owner_history,
+    })
 }
 
 fn env_u64_with_min(name: &str, default: u64, min: u64) -> u64 {
@@ -1458,6 +1520,12 @@ fn main() -> Result<()> {
                 events = events.split_off(keep_from);
             }
             println!("{}", serde_json::to_string_pretty(&events)?);
+        }
+        Command::QueryCapabilityAudit { token_id } => {
+            let registry = load_identity_registry(&identity_registry_file());
+            let out = query_capability_audit(&registry, token_id)
+                .map_err(|e| rpc_fail(e.to_rpc_error()))?;
+            println!("{}", serde_json::to_string_pretty(&out)?);
         }
         Command::QueryChallengeTreasury {
             limit,
