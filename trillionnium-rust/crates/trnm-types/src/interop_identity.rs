@@ -656,6 +656,26 @@ impl IdentityRegistry {
         Ok(events)
     }
 
+
+    /// Returns DID-scoped lifecycle events (DID register/revoke + related
+    /// capability issue/renew/revoke) for lightweight audit queries.
+    pub fn did_audit_events(&self, did: &str) -> Result<Vec<&AuditEvent>, InteropIdentityError> {
+        Self::validate_identity_field("did", did)?;
+        if !self.dids.contains_key(did) {
+            return Err(InteropIdentityError::DidNotFound {
+                did: did.to_string(),
+            });
+        }
+
+        let events = self
+            .audit_trail
+            .iter()
+            .filter(|event| event.subject == did)
+            .collect();
+
+        Ok(events)
+    }
+
     pub fn content_hash(&self) -> [u8; 32] {
         use sha2::{Digest, Sha256};
         let mut hasher = Sha256::new();
@@ -2502,6 +2522,71 @@ mod tests {
         assert_eq!(events[0].note.as_deref(), Some("token_id=1"));
         assert_eq!(events[1].note.as_deref(), Some("token_id=1 expires_at=Some(40)"));
         assert_eq!(events[2].note.as_deref(), Some("manual_revoke"));
+    }
+
+    #[test]
+    fn did_audit_events_returns_lifecycle_for_subject() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did(
+            "did:trnm:agent-did-q".to_string(),
+            "org:lane2-admin".to_string(),
+            10,
+        )
+        .unwrap();
+
+        let token_id = reg
+            .issue_capability(
+                "org:lane2-admin".to_string(),
+                "did:trnm:agent-did-q".to_string(),
+                CapabilityScope::AuditRead,
+                20,
+                Some(40),
+            )
+            .unwrap();
+        reg.renew_capability("org:lane2-admin".to_string(), token_id, 25, Some(45))
+            .unwrap();
+        reg.revoke_capability(
+            "org:lane2-admin".to_string(),
+            token_id,
+            30,
+            Some("manual_revoke".to_string()),
+        )
+        .unwrap();
+
+        let events = reg.did_audit_events("did:trnm:agent-did-q").unwrap();
+        let actions: Vec<AuditAction> = events.iter().map(|e| e.action).collect();
+        assert_eq!(
+            actions,
+            vec![
+                AuditAction::DidRegistered,
+                AuditAction::CapabilityIssued,
+                AuditAction::CapabilityRenewed,
+                AuditAction::CapabilityRevoked,
+            ]
+        );
+    }
+
+    #[test]
+    fn did_audit_events_rejects_unknown_or_noncanonical_did() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did(
+            "did:trnm:agent-did-q2".to_string(),
+            "org:lane2-admin".to_string(),
+            10,
+        )
+        .unwrap();
+
+        let err = reg.did_audit_events(" did:trnm:agent-did-q2 ").unwrap_err();
+        assert!(matches!(
+            err,
+            InteropIdentityError::InvalidIdentityValue { field: "did", .. }
+        ));
+
+        let err = reg.did_audit_events("did:trnm:missing").unwrap_err();
+        assert!(matches!(
+            err,
+            InteropIdentityError::DidNotFound { did } if did == "did:trnm:missing"
+        ));
     }
 
     #[test]
