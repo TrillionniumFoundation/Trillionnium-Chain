@@ -1907,6 +1907,18 @@ mod tests {
     }
 
     #[test]
+    fn normalized_agent_protocol_accepts_punctuation_variants_for_aliases() {
+        assert_eq!(
+            normalized_agent_protocol(Some("Model.Context.Protocol")).as_deref(),
+            Some("mcp")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Agent:To:Agent")).as_deref(),
+            Some("a2a")
+        );
+    }
+
+    #[test]
     fn attach_llm_provenance_rejects_non_ascii_or_invisible_agent_protocol_aliases() {
         let mut rec = MessageIngressRecord {
             request_id: "r5aa".to_string(),
