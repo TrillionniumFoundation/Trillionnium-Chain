@@ -1996,11 +1996,14 @@ fn main() -> Result<()> {
                     ),
                 }));
             }
+            let normalized_worker = normalize_market_worker_key(&worker).expect("worker checked non-empty");
             let mut bids = load_market_bids();
-            if bids
-                .iter()
-                .any(|b| b.task_id == task_id && b.worker == worker)
-            {
+            if bids.iter().any(|b| {
+                b.task_id == task_id
+                    && normalize_market_worker_key(&b.worker)
+                        .map(|existing| existing == normalized_worker)
+                        .unwrap_or(false)
+            }) {
                 return Err(rpc_fail(RpcErrorResponse {
                     code: "duplicate-bid",
                     message: format!(
