@@ -149,6 +149,7 @@ pub mod bridge_status {
 }
 
 pub mod relay_heartbeat;
+pub mod x2_settlement_loop;
 
 #[cfg(test)]
 mod tests;
