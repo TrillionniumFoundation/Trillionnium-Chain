@@ -45,6 +45,15 @@ impl VerifierRegistry {
         }
     }
 
+    /// Returns canonical proof types currently wired into the registry.
+    ///
+    /// Useful for V1 plugin-system diagnostics and CLI health checks.
+    pub fn registered_proof_types(&self) -> Vec<String> {
+        let mut keys: Vec<String> = self.verifiers.keys().cloned().collect();
+        keys.sort();
+        keys
+    }
+
     pub fn verify(&self, task: &TaskObject, proof_data: &[u8]) -> VerificationResult {
         let key = match task.proof_type {
             ProofType::Fraud => "fraud",
@@ -151,5 +160,19 @@ mod tests {
 
         let out = registry.verify(&mock_task(ProofType::Fraud), b"proof");
         assert_eq!(out, VerificationResult::Valid);
+    }
+
+    #[test]
+    fn registered_proof_types_returns_sorted_canonical_keys() {
+        let mut registry = VerifierRegistry::new();
+        registry.register(Arc::new(MockVerifier::new("  zk_receipt ", true)));
+        registry.register(Arc::new(MockVerifier::new("tee-receipt", true)));
+        registry.register(Arc::new(MockVerifier::new("FrAuD", true)));
+        registry.register(Arc::new(MockVerifier::new("   ", true)));
+
+        assert_eq!(
+            registry.registered_proof_types(),
+            vec!["fraud".to_string(), "tee".to_string(), "zk".to_string()]
+        );
     }
 }
