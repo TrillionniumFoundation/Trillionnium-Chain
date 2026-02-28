@@ -2332,6 +2332,27 @@ mod tests {
     }
 
     #[test]
+    fn market_effective_score_details_explainability_stays_recomputable() {
+        with_market_score_env(
+            &[
+                (MARKET_PRICE_WEIGHT_ENV, "1000"),
+                (MARKET_REPUTATION_WEIGHT_ENV, "7"),
+                (MARKET_REPUTATION_CLAMP_ENV, "50"),
+            ],
+            || {
+                let (final_score, applied_reputation, gate) = market_effective_score_details(200, 77);
+                let base_score = 200_u128.saturating_mul(gate.price_weight);
+                let reputation_component =
+                    (applied_reputation.max(0) as u128).saturating_mul(gate.reputation_weight);
+
+                assert_eq!(applied_reputation, 50);
+                assert_eq!(final_score, base_score.saturating_sub(reputation_component));
+                assert_eq!(final_score, market_effective_score(200, 77));
+            },
+        );
+    }
+
+    #[test]
     fn market_m2_policy_gate_guards_default_drift_to_min_boundaries() {
         let _guard = env_lock().lock().expect("env lock poisoned");
         unsafe {
