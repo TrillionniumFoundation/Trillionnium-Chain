@@ -59,7 +59,7 @@
         "producer_did": {
           "type": "string",
           "minLength": 1,
-          "pattern": "^did:[A-Za-z0-9._:%-]+:[^\\s]+$"
+          "pattern": "^did:[a-z0-9]+:[^\\s]+$"
         },
         "produced_at": {
           "type": "string",
