@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+cd "$ROOT/trillionnium-rust"
+
+echo "[X2] settlement contract gate: dual-chain state machine + terminal payload invariants"
+
+cargo test -p trnm-types settlement_state_machine_enforces_pending_terminal_model
+cargo test -p trnm-types settlement_reapply_same_terminal_status_is_idempotent
+cargo test -p trnm-types settlement_terminal_idempotent_reapply_rejects_conflicting_payload_override
+cargo test -p trnm-types settlement_revert_and_finalize_fields_are_mutually_exclusive
+cargo test -p trnm-types settlement_finalize_requires_non_empty_settlement_tx
+cargo test -p trnm-types settlement_revert_requires_non_empty_reason
+cargo test -p trnm-types settlement_status_update_rejects_height_regression_without_side_effects
+cargo test -p trnm-types settlement_evidence_path_tracks_terminal_state_machine_outcome
+
+echo "[X2][PASS] settlement contract gate"
