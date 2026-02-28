@@ -136,3 +136,6 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-invalid-produced-at-test" "./scripts/v2/d1_task_model_metadata_schema_reject_invalid_produced_at_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-invalid-produced-at-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-invalid-producer-did-format-test" "./scripts/v2/d1_task_model_metadata_schema_reject_invalid_producer_did_format_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-invalid-producer-did-format-test regression to quick-check"
