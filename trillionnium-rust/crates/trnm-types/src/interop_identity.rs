@@ -118,7 +118,9 @@ impl SettlementRecord {
                     .ok_or(InteropIdentityError::MissingRevertReason)?;
                 (None, Some(reason))
             }
-            SettlementStatus::Pending => (self.settlement_tx.clone(), self.revert_reason.clone()),
+            // Pending is a non-terminal in-flight state; terminal payloads must not persist here.
+            // If legacy/corrupt snapshots carry terminal fields while pending, scrub them on write.
+            SettlementStatus::Pending => (None, None),
         };
 
         self.status = next_status;
@@ -1212,6 +1214,37 @@ mod tests {
     }
 
     #[test]
+    fn settlement_pending_reapply_scrubs_terminal_payload_fields() {
+        let route = BridgeRoute {
+            route_id: "eth->trnm".to_string(),
+            source_chain: "ethereum".to_string(),
+            target_chain: "trillionnium".to_string(),
+        };
+        let mut rec = SettlementRecord {
+            settlement_id: 16,
+            route,
+            status: SettlementStatus::Pending,
+            at_height: 600,
+            // simulate legacy/corrupt snapshot carrying terminal payloads while pending
+            settlement_tx: Some("0xstale".to_string()),
+            revert_reason: Some("stale-reason".to_string()),
+        };
+
+        rec.apply_status(
+            SettlementStatus::Pending,
+            601,
+            Some("0xignored".to_string()),
+            Some("ignored".to_string()),
+        )
+        .unwrap();
+
+        assert_eq!(rec.status, SettlementStatus::Pending);
+        assert_eq!(rec.at_height, 601);
+        assert_eq!(rec.settlement_tx, None);
+        assert_eq!(rec.revert_reason, None);
+    }
+
+    #[test]
     fn register_did_rejects_duplicate_without_side_effects() {
         let mut reg = IdentityRegistry::default();
         reg.register_did(
@@ -2218,6 +2251,47 @@ mod tests {
         ));
         assert_eq!(reg.audit_trail().len(), audit_len_before);
         assert_eq!(reg.capability(token_id).unwrap().revoked_at, None);
+    }
+
+    #[test]
+    fn ensure_settlement_capability_rejects_revoked_did_even_if_token_looks_active() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did(
+            "did:trnm:settler-legacy".to_string(),
+            "org:lane2-admin".to_string(),
+            10,
+        )
+        .unwrap();
+        let token_id = reg
+            .issue_capability(
+                "org:lane2-admin".to_string(),
+                "did:trnm:settler-legacy".to_string(),
+                CapabilityScope::BridgeSettle,
+                20,
+                Some(200),
+            )
+            .unwrap();
+
+        // simulate a legacy/corrupt snapshot: DID revoked but token still not revoked.
+        reg.dids
+            .get_mut("did:trnm:settler-legacy")
+            .unwrap()
+            .revoked_at = Some(25);
+        reg.capabilities.get_mut(&token_id).unwrap().revoked_at = None;
+
+        let err = reg
+            .ensure_settlement_capability(
+                "org:lane2-admin",
+                token_id,
+                CapabilityScope::BridgeSettle,
+                30,
+            )
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            InteropIdentityError::DidRevoked { did } if did == "did:trnm:settler-legacy"
+        ));
     }
 
     #[test]
