@@ -663,16 +663,35 @@ fn ingress_file() -> PathBuf {
     run_root().join("run/message-gateway/requests.jsonl")
 }
 
+fn normalized_path_from_env(name: &str) -> Option<PathBuf> {
+    let raw = std::env::var(name).ok()?;
+    let mut normalized = raw.trim();
+    while normalized.len() >= 2 {
+        let wrapped_by_quotes = (normalized.starts_with('"') && normalized.ends_with('"'))
+            || (normalized.starts_with('\'') && normalized.ends_with('\''))
+            || (normalized.starts_with('`') && normalized.ends_with('`'));
+        if !wrapped_by_quotes {
+            break;
+        }
+        normalized = normalized[1..normalized.len() - 1].trim();
+    }
+    if normalized.is_empty() {
+        None
+    } else {
+        Some(PathBuf::from(normalized))
+    }
+}
+
 fn market_tasks_file() -> PathBuf {
-    if let Ok(path) = std::env::var("TRNM_RPC_MARKET_TASKS_FILE") {
-        return PathBuf::from(path);
+    if let Some(path) = normalized_path_from_env("TRNM_RPC_MARKET_TASKS_FILE") {
+        return path;
     }
     run_root().join("run/market/tasks.jsonl")
 }
 
 fn market_bids_file() -> PathBuf {
-    if let Ok(path) = std::env::var("TRNM_RPC_MARKET_BIDS_FILE") {
-        return PathBuf::from(path);
+    if let Some(path) = normalized_path_from_env("TRNM_RPC_MARKET_BIDS_FILE") {
+        return path;
     }
     run_root().join("run/market/bids.jsonl")
 }
@@ -728,8 +747,8 @@ fn save_market_bids(bids: &[MarketBid]) -> Result<()> {
 }
 
 fn market_reputation_file() -> PathBuf {
-    if let Ok(path) = std::env::var(MARKET_REPUTATION_FILE_ENV) {
-        return PathBuf::from(path);
+    if let Some(path) = normalized_path_from_env(MARKET_REPUTATION_FILE_ENV) {
+        return path;
     }
     run_root().join("run/market/reputation.json")
 }
@@ -2094,6 +2113,35 @@ mod tests {
         }
     }
 
+    fn with_market_path_env(vars: &[(&str, Option<&str>)], f: impl FnOnce()) {
+        let _guard = env_lock().lock().expect("env lock poisoned");
+        let keys = [
+            "TRNM_RPC_MARKET_TASKS_FILE",
+            "TRNM_RPC_MARKET_BIDS_FILE",
+            MARKET_REPUTATION_FILE_ENV,
+        ];
+        let prev: Vec<(String, Option<String>)> = keys
+            .iter()
+            .map(|k| ((*k).to_string(), std::env::var(k).ok()))
+            .collect();
+
+        for (k, v) in vars {
+            match v {
+                Some(val) => unsafe { std::env::set_var(k, val) },
+                None => unsafe { std::env::remove_var(k) },
+            }
+        }
+
+        f();
+
+        for (k, v) in prev {
+            match v {
+                Some(val) => unsafe { std::env::set_var(&k, val) },
+                None => unsafe { std::env::remove_var(&k) },
+            }
+        }
+    }
+
     #[test]
     fn clamp_limit_enforces_max() {
         let got = clamp_limit(
@@ -2125,6 +2173,42 @@ mod tests {
             QUERY_FULL_LIMIT_MAX,
         );
         assert_eq!(got, 17);
+    }
+
+    #[test]
+    fn normalized_path_from_env_trims_shell_wrapped_quotes() {
+        with_market_path_env(&[("TRNM_RPC_MARKET_TASKS_FILE", Some("  \"/tmp/tasks.jsonl\"  "))], || {
+            assert_eq!(
+                normalized_path_from_env("TRNM_RPC_MARKET_TASKS_FILE"),
+                Some(PathBuf::from("/tmp/tasks.jsonl"))
+            );
+        });
+
+        with_market_path_env(&[("TRNM_RPC_MARKET_TASKS_FILE", Some("'`/tmp/tasks.jsonl`'"))], || {
+            assert_eq!(
+                normalized_path_from_env("TRNM_RPC_MARKET_TASKS_FILE"),
+                Some(PathBuf::from("/tmp/tasks.jsonl"))
+            );
+        });
+    }
+
+    #[test]
+    fn market_path_file_helpers_fallback_when_env_is_empty_after_trim() {
+        with_market_path_env(
+            &[
+                ("TRNM_RPC_MARKET_TASKS_FILE", Some("   ")),
+                ("TRNM_RPC_MARKET_BIDS_FILE", Some(" \"\" ")),
+                (MARKET_REPUTATION_FILE_ENV, Some("  ''  ")),
+            ],
+            || {
+                assert_eq!(market_tasks_file(), run_root().join("run/market/tasks.jsonl"));
+                assert_eq!(market_bids_file(), run_root().join("run/market/bids.jsonl"));
+                assert_eq!(
+                    market_reputation_file(),
+                    run_root().join("run/market/reputation.json")
+                );
+            },
+        );
     }
 
     #[test]
