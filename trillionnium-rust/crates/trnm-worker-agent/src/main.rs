@@ -208,6 +208,36 @@ struct LlmProvenanceRecord {
     compliance_profile: Option<String>,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+struct EnterpriseAuditExportRecord {
+    request_id: String,
+    task_id: u64,
+    status: String,
+    provider_request_id: Option<String>,
+    provenance_schema_version: Option<String>,
+    provider: Option<String>,
+    model: Option<String>,
+    adapter: Option<String>,
+    agent_protocol: Option<String>,
+    compliance_profile: Option<String>,
+}
+
+fn to_enterprise_audit_export(rec: &MessageIngressRecord) -> EnterpriseAuditExportRecord {
+    let provenance = rec.llm_provenance.as_ref();
+    EnterpriseAuditExportRecord {
+        request_id: rec.request_id.clone(),
+        task_id: rec.task_id,
+        status: rec.status.clone(),
+        provider_request_id: rec.provider_request_id.clone(),
+        provenance_schema_version: rec.provenance_schema_version.clone(),
+        provider: provenance.and_then(|p| p.provider.clone()),
+        model: provenance.and_then(|p| p.model.clone()),
+        adapter: provenance.and_then(|p| p.adapter.clone()),
+        agent_protocol: provenance.and_then(|p| p.agent_protocol.clone()),
+        compliance_profile: provenance.and_then(|p| p.compliance_profile.clone()),
+    }
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 struct AckRecord {
     ts_unix_ms: u128,
@@ -1415,6 +1445,86 @@ mod tests {
         assert_eq!(rec.provider_request_id, None);
         assert_eq!(rec.provenance_schema_version, None);
         assert!(rec.llm_provenance.is_none());
+    }
+
+    #[test]
+    fn enterprise_audit_export_flattens_v2_provenance_for_agent_and_compliance() {
+        let rec = MessageIngressRecord {
+            request_id: "r-audit-v2".to_string(),
+            task_id: 701,
+            channel: "telegram".to_string(),
+            user_id: "u1".to_string(),
+            session_id: "s1".to_string(),
+            text: "hello".to_string(),
+            idempotency_key: "ik-audit-v2".to_string(),
+            status: RequestStatus::Assigned.as_str().to_string(),
+            created_at_unix_ms: 1,
+            assigned_worker: Some("worker-1".to_string()),
+            assigned_at_unix_ms: Some(2),
+            model_output: None,
+            provider_request_id: Some("provider-701".to_string()),
+            provenance_schema_version: Some("llm.v2".to_string()),
+            llm_provenance: Some(LlmProvenanceRecord {
+                provider: Some("openai".to_string()),
+                model: Some("gpt-5.3-codex".to_string()),
+                adapter: Some("mcp".to_string()),
+                agent_protocol: Some("a2a".to_string()),
+                compliance_profile: Some("cn-pii-restricted".to_string()),
+            }),
+            result_hash: None,
+            verifier_status: None,
+            resolution_code: None,
+            commit_tx_hash: None,
+            reveal_tx_hash: None,
+            adapter_error: None,
+            reputation_delta: None,
+        };
+
+        let export = to_enterprise_audit_export(&rec);
+        assert_eq!(export.request_id, "r-audit-v2");
+        assert_eq!(export.task_id, 701);
+        assert_eq!(export.provenance_schema_version.as_deref(), Some("llm.v2"));
+        assert_eq!(export.agent_protocol.as_deref(), Some("a2a"));
+        assert_eq!(
+            export.compliance_profile.as_deref(),
+            Some("cn-pii-restricted")
+        );
+        assert_eq!(export.provider.as_deref(), Some("openai"));
+    }
+
+    #[test]
+    fn enterprise_audit_export_keeps_backward_compat_when_provenance_absent() {
+        let rec = MessageIngressRecord {
+            request_id: "r-audit-legacy".to_string(),
+            task_id: 702,
+            channel: "telegram".to_string(),
+            user_id: "u1".to_string(),
+            session_id: "s1".to_string(),
+            text: "hello".to_string(),
+            idempotency_key: "ik-audit-legacy".to_string(),
+            status: RequestStatus::Assigned.as_str().to_string(),
+            created_at_unix_ms: 1,
+            assigned_worker: None,
+            assigned_at_unix_ms: None,
+            model_output: None,
+            provider_request_id: None,
+            provenance_schema_version: None,
+            llm_provenance: None,
+            result_hash: None,
+            verifier_status: None,
+            resolution_code: None,
+            commit_tx_hash: None,
+            reveal_tx_hash: None,
+            adapter_error: None,
+            reputation_delta: None,
+        };
+
+        let export = to_enterprise_audit_export(&rec);
+        assert_eq!(export.request_id, "r-audit-legacy");
+        assert_eq!(export.provenance_schema_version, None);
+        assert_eq!(export.agent_protocol, None);
+        assert_eq!(export.compliance_profile, None);
+        assert_eq!(export.provider, None);
     }
 
     #[test]
