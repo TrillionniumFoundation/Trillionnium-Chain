@@ -137,6 +137,26 @@ enum Command {
         #[arg(long, default_value_t = QUERY_FULL_LIMIT_DEFAULT)]
         limit: usize,
     },
+    MarketCreateTask {
+        #[arg(long)]
+        creator: String,
+        #[arg(long)]
+        bounty: u128,
+        #[arg(long)]
+        description: String,
+    },
+    MarketSubmitBid {
+        #[arg(long)]
+        task_id: u64,
+        #[arg(long)]
+        worker: String,
+        #[arg(long)]
+        price: u128,
+    },
+    MarketMatchTask {
+        #[arg(long)]
+        task_id: u64,
+    },
     DispatchOpen {
         #[arg(long, default_value = "worker-1")]
         worker_id: String,
@@ -162,6 +182,24 @@ struct AdapterRecord {
     status: String,
     #[serde(default)]
     tx_hash: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct MarketTask {
+    task_id: u64,
+    creator: String,
+    bounty: u128,
+    description: String,
+    status: String,
+    created_at_unix_ms: u128,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct MarketBid {
+    task_id: u64,
+    worker: String,
+    price: u128,
+    created_at_unix_ms: u128,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -547,6 +585,64 @@ fn make_request_id(
 
 fn ingress_file() -> PathBuf {
     run_root().join("run/message-gateway/requests.jsonl")
+}
+
+fn market_tasks_file() -> PathBuf {
+    run_root().join("run/market/tasks.jsonl")
+}
+
+fn market_bids_file() -> PathBuf {
+    run_root().join("run/market/bids.jsonl")
+}
+
+fn load_market_tasks() -> Vec<MarketTask> {
+    let path = market_tasks_file();
+    let Ok(raw) = fs::read_to_string(path) else {
+        return vec![];
+    };
+    raw.lines()
+        .filter(|l| !l.trim().is_empty())
+        .filter_map(|l| serde_json::from_str::<MarketTask>(l).ok())
+        .collect()
+}
+
+fn save_market_tasks(tasks: &[MarketTask]) -> Result<()> {
+    let path = market_tasks_file();
+    if let Some(parent) = path.parent() {
+        fs::create_dir_all(parent)?;
+    }
+    let mut out = String::new();
+    for t in tasks {
+        out.push_str(&serde_json::to_string(t)?);
+        out.push('\n');
+    }
+    fs::write(path, out)?;
+    Ok(())
+}
+
+fn load_market_bids() -> Vec<MarketBid> {
+    let path = market_bids_file();
+    let Ok(raw) = fs::read_to_string(path) else {
+        return vec![];
+    };
+    raw.lines()
+        .filter(|l| !l.trim().is_empty())
+        .filter_map(|l| serde_json::from_str::<MarketBid>(l).ok())
+        .collect()
+}
+
+fn save_market_bids(bids: &[MarketBid]) -> Result<()> {
+    let path = market_bids_file();
+    if let Some(parent) = path.parent() {
+        fs::create_dir_all(parent)?;
+    }
+    let mut out = String::new();
+    for b in bids {
+        out.push_str(&serde_json::to_string(b)?);
+        out.push('\n');
+    }
+    fs::write(path, out)?;
+    Ok(())
 }
 
 fn load_ingress_records() -> Vec<MessageIngressRecord> {
@@ -1648,6 +1744,74 @@ fn main() -> Result<()> {
                 events,
             };
             println!("{}", serde_json::to_string_pretty(&out)?);
+        }
+        Command::MarketCreateTask {
+            creator,
+            bounty,
+            description,
+        } => {
+            let mut tasks = load_market_tasks();
+            let task_id = 20_000 + tasks.len() as u64 + 1;
+            let task = MarketTask {
+                task_id,
+                creator,
+                bounty,
+                description,
+                status: "open".into(),
+                created_at_unix_ms: now_ms(),
+            };
+            tasks.push(task.clone());
+            save_market_tasks(&tasks)?;
+            println!("{}", serde_json::to_string_pretty(&task)?);
+        }
+        Command::MarketSubmitBid {
+            task_id,
+            worker,
+            price,
+        } => {
+            let tasks = load_market_tasks();
+            if !tasks.iter().any(|t| t.task_id == task_id) {
+                bail!("market task not found: {}", task_id);
+            }
+            let mut bids = load_market_bids();
+            let bid = MarketBid {
+                task_id,
+                worker,
+                price,
+                created_at_unix_ms: now_ms(),
+            };
+            bids.push(bid.clone());
+            save_market_bids(&bids)?;
+            println!("{}", serde_json::to_string_pretty(&bid)?);
+        }
+        Command::MarketMatchTask { task_id } => {
+            let mut tasks = load_market_tasks();
+            let Some(task) = tasks.iter_mut().find(|t| t.task_id == task_id) else {
+                bail!("market task not found: {}", task_id);
+            };
+            if task.status != "open" {
+                bail!("market task not in open status: {}", task.status);
+            }
+
+            let bids = load_market_bids();
+            let mut task_bids: Vec<&MarketBid> =
+                bids.iter().filter(|b| b.task_id == task_id).collect();
+
+            if task_bids.is_empty() {
+                bail!("no bids found for task: {}", task_id);
+            }
+
+            // Simple matching: lowest price
+            task_bids.sort_by_key(|b| b.price);
+            let winner = task_bids[0];
+
+            task.status = "matched".into();
+            save_market_tasks(&tasks)?;
+
+            println!(
+                "{{\"task_id\":{},\"winner\":\"{}\",\"price\":{},\"status\":\"matched\"}}",
+                task_id, winner.worker, winner.price
+            );
         }
         Command::DispatchOpen { worker_id, limit } => {
             let limit = clamp_limit(
