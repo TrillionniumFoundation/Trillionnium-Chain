@@ -18,7 +18,7 @@ impl VerifierRegistry {
 
     pub fn register(&mut self, verifier: Arc<dyn ProofVerifier + Send + Sync>) {
         self.verifiers
-            .insert(verifier.proof_type().to_ascii_lowercase(), verifier);
+            .insert(verifier.proof_type().trim().to_ascii_lowercase(), verifier);
     }
 
     pub fn verify(&self, task: &TaskObject, proof_data: &[u8]) -> VerificationResult {
@@ -87,6 +87,15 @@ mod tests {
     fn registry_register_is_case_insensitive_for_lookup() {
         let mut registry = VerifierRegistry::new();
         registry.register(Arc::new(AlwaysValidVerifier { kind: "TEE" }));
+
+        let task = task_with_proof_type(ProofType::Tee);
+        assert_eq!(registry.verify(&task, b"receipt"), VerificationResult::Valid);
+    }
+
+    #[test]
+    fn registry_register_trims_verifier_key_for_lookup() {
+        let mut registry = VerifierRegistry::new();
+        registry.register(Arc::new(AlwaysValidVerifier { kind: " tee " }));
 
         let task = task_with_proof_type(ProofType::Tee);
         assert_eq!(registry.verify(&task, b"receipt"), VerificationResult::Valid);
