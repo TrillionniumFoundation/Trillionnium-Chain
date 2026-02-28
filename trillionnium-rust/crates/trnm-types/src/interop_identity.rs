@@ -1725,6 +1725,27 @@ mod tests {
     }
 
     #[test]
+    fn settlement_evidence_path_sanitizes_windows_separators_and_control_whitespace() {
+        let rec = SettlementRecord {
+            settlement_id: 48,
+            route: BridgeRoute {
+                route_id: "eth\\mainnet\t->\ttrnm".to_string(),
+                source_chain: "ethereum\\mainnet".to_string(),
+                target_chain: "trillionnium\ralpha".to_string(),
+            },
+            status: SettlementStatus::Pending,
+            at_height: 2_225,
+            settlement_tx: None,
+            revert_reason: None,
+        };
+
+        assert_eq!(
+            rec.evidence_path(),
+            "settlements/eth_mainnet_->_trnm/ethereum_mainnet/trillionnium_alpha/48/pending@2225"
+        );
+    }
+
+    #[test]
     fn register_did_rejects_duplicate_without_side_effects() {
         let mut reg = IdentityRegistry::default();
         reg.register_did(
