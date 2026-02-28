@@ -30,6 +30,7 @@ pub mod bridge_status {
     pub enum SettlementError {
         Unauthorized { subject: String, action: &'static str },
         InvalidTransition { from: &'static str, to: &'static str },
+        InvalidHeight { height: u64 },
         MalformedToken { reason: &'static str },
     }
 
@@ -102,6 +103,9 @@ pub mod bridge_status {
         }
 
         fn transition_to_finalized(&mut self, height: u64) -> Result<(), SettlementError> {
+            if height == 0 {
+                return Err(SettlementError::InvalidHeight { height });
+            }
             match self.status {
                 BridgeStatus::Pending => {
                     self.status = BridgeStatus::Finalized(height);
