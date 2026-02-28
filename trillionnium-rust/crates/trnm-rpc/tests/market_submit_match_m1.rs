@@ -370,6 +370,27 @@ fn market_match_reputation_lookup_normalizes_case_and_whitespace_keys() {
 }
 
 #[test]
+fn market_match_task_without_bids_returns_structured_code() {
+    let _guard = test_lock().lock().expect("test lock");
+    let _ = fs::remove_dir_all("run/market");
+
+    let create_out = run_ok(&[
+        "market.create_task",
+        "--creator",
+        "alice",
+        "--bounty",
+        "100",
+        "--description",
+        "m1 no bids guard",
+    ]);
+    let created: Value = serde_json::from_str(&create_out).expect("create task JSON");
+    let task_id = created["task_id"].as_u64().expect("task_id").to_string();
+
+    let stderr = run_fail(&["market.match_task", "--task-id", &task_id]);
+    assert!(stderr.contains("\"code\": \"no-bids\""));
+}
+
+#[test]
 fn market_match_output_is_valid_json_when_winner_contains_quotes() {
     let _guard = test_lock().lock().expect("test lock");
     let _ = fs::remove_dir_all("run/market");
