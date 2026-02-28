@@ -582,14 +582,6 @@ impl IdentityRegistry {
             .get(&token_id)
             .ok_or(InteropIdentityError::CapabilityNotFound { token_id })?;
 
-        if token.scope != required_scope {
-            return Err(InteropIdentityError::CapabilityScopeMismatch {
-                token_id,
-                expected: required_scope,
-                actual: token.scope,
-            });
-        }
-
         if !token.is_active_at(at_height) {
             return Err(InteropIdentityError::CapabilityInactive {
                 token_id,
@@ -614,6 +606,15 @@ impl IdentityRegistry {
         }
 
         Self::ensure_actor_controls_did(actor, did)?;
+
+        if token.scope != required_scope {
+            return Err(InteropIdentityError::CapabilityScopeMismatch {
+                token_id,
+                expected: required_scope,
+                actual: token.scope,
+            });
+        }
+
         Ok(())
     }
 
