@@ -1116,6 +1116,10 @@ fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
         | "mcpjsonrpcv"
         | "mcpjsonrpcv1"
         | "mcpjsonrpcv2"
+        | "mcpstdio"
+        | "mcpstdiov"
+        | "mcpstdiov1"
+        | "mcpstdiov2"
         | "modelcontextprotocol"
         | "modelcontextprotocolv"
         | "modelcontextprotocolv1"
@@ -1123,7 +1127,11 @@ fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
         | "modelcontextprotocoljsonrpc"
         | "modelcontextprotocoljsonrpcv"
         | "modelcontextprotocoljsonrpcv1"
-        | "modelcontextprotocoljsonrpcv2" => Some("mcp".to_string()),
+        | "modelcontextprotocoljsonrpcv2"
+        | "modelcontextprotocolstdio"
+        | "modelcontextprotocolstdiov"
+        | "modelcontextprotocolstdiov1"
+        | "modelcontextprotocolstdiov2" => Some("mcp".to_string()),
         "a2a"
         | "a2av"
         | "a2av1"
@@ -1132,6 +1140,10 @@ fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
         | "a2ajsonrpcv"
         | "a2ajsonrpcv1"
         | "a2ajsonrpcv2"
+        | "a2astdio"
+        | "a2astdiov"
+        | "a2astdiov1"
+        | "a2astdiov2"
         | "a2aprotocol"
         | "agent2agent"
         | "agenttoagent"
@@ -1153,18 +1165,34 @@ fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
         | "agent2agentjsonrpcv"
         | "agent2agentjsonrpcv1"
         | "agent2agentjsonrpcv2"
+        | "agent2agentstdio"
+        | "agent2agentstdiov"
+        | "agent2agentstdiov1"
+        | "agent2agentstdiov2"
         | "agenttoagentjsonrpc"
         | "agenttoagentjsonrpcv"
         | "agenttoagentjsonrpcv1"
         | "agenttoagentjsonrpcv2"
+        | "agenttoagentstdio"
+        | "agenttoagentstdiov"
+        | "agenttoagentstdiov1"
+        | "agenttoagentstdiov2"
         | "agent2agentprotocoljsonrpc"
         | "agent2agentprotocoljsonrpcv"
         | "agent2agentprotocoljsonrpcv1"
         | "agent2agentprotocoljsonrpcv2"
+        | "agent2agentprotocolstdio"
+        | "agent2agentprotocolstdiov"
+        | "agent2agentprotocolstdiov1"
+        | "agent2agentprotocolstdiov2"
         | "agenttoagentprotocoljsonrpc"
         | "agenttoagentprotocoljsonrpcv"
         | "agenttoagentprotocoljsonrpcv1"
-        | "agenttoagentprotocoljsonrpcv2" => Some("a2a".to_string()),
+        | "agenttoagentprotocoljsonrpcv2"
+        | "agenttoagentprotocolstdio"
+        | "agenttoagentprotocolstdiov"
+        | "agenttoagentprotocolstdiov1"
+        | "agenttoagentprotocolstdiov2" => Some("a2a".to_string()),
         _ => None,
     }
 }
@@ -2814,6 +2842,14 @@ mod tests {
         );
         assert_eq!(
             normalized_agent_protocol(Some("Agent-2-Agent Protocol JSON-RPC v2")).as_deref(),
+            Some("a2a")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Model Context Protocol STDIO v2")).as_deref(),
+            Some("mcp")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Agent-to-Agent Protocol STDIO v2")).as_deref(),
             Some("a2a")
         );
     }
