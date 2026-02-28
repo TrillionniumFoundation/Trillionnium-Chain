@@ -59,6 +59,40 @@ fn x2_failure_path_confirm_failed_triggers_compensation_revert() {
     );
     assert_eq!(
         current_status(&request),
-        &BridgeStatus::Reverted("settlement confirm failed: target chain receipt timeout".to_string())
+        &BridgeStatus::Reverted(
+            "settlement confirm failed: target chain receipt timeout".to_string()
+        )
+    );
+}
+
+#[test]
+fn x2_degraded_heartbeat_short_circuits_confirm_and_reverts() {
+    let mut request = SettlementRequest::new(1, "0xdeadbeef".to_string());
+    let token = operator_token();
+
+    let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 2));
+    monitor.record_success(300, 296, 41);
+    monitor.record_failure("lag above threshold");
+    let heartbeat = monitor.record_failure("lag above threshold");
+
+    assert!(heartbeat.degraded);
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Confirmed { height: 307 },
+    )
+    .unwrap();
+
+    assert_eq!(
+        out,
+        SettlementStep::Compensated {
+            reason: "heartbeat degraded: lag above threshold".to_string(),
+        }
+    );
+    assert_eq!(
+        current_status(&request),
+        &BridgeStatus::Reverted("heartbeat degraded: lag above threshold".to_string())
     );
 }
