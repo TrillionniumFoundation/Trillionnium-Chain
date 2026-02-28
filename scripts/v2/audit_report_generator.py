@@ -1,19 +1,21 @@
 #!/usr/bin/env python3
 import sys
-import re
 import json
 import datetime
+import shlex
 
 def parse_kv(line):
-    """Parses key=value pairs from a log line."""
+    """Parses key=value pairs from a log line (supports quoted values)."""
     data = {}
-    # Regex to capture key=value where value can be quoted or not
-    # This basic regex assumes no spaces in keys and simple values
-    parts = line.strip().split(' ')
+    try:
+        parts = shlex.split(line.strip())
+    except ValueError:
+        # Keep fail-open parsing for malformed quoting in historical logs.
+        parts = line.strip().split()
     for part in parts:
         if '=' in part:
             k, v = part.split('=', 1)
-            data[k] = v
+            data[k] = v.strip()
     return data
 
 def generate_audit_report(log_file):
