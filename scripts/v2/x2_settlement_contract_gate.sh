@@ -8,6 +8,7 @@ echo "[X2] settlement contract gate: dual-chain state machine + terminal payload
 
 cargo test -p trnm-types settlement_state_machine_enforces_pending_terminal_model
 cargo test -p trnm-types settlement_reapply_same_terminal_status_is_idempotent
+cargo test -p trnm-types settlement_terminal_idempotent_reapply_ignores_blank_payload_overrides
 cargo test -p trnm-types settlement_terminal_idempotent_reapply_rejects_conflicting_payload_override
 cargo test -p trnm-types settlement_revert_and_finalize_fields_are_mutually_exclusive
 cargo test -p trnm-types settlement_pending_reapply_scrubs_terminal_payload_fields
