@@ -90,6 +90,34 @@ fn market_submit_bid_missing_task_returns_structured_code() {
 }
 
 #[test]
+fn market_submit_bid_above_bounty_returns_structured_code() {
+    let _ = fs::remove_dir_all("run/market");
+
+    let create_out = run_ok(&[
+        "market.create_task",
+        "--creator",
+        "alice",
+        "--bounty",
+        "100",
+        "--description",
+        "m1 bid cap",
+    ]);
+    let created: Value = serde_json::from_str(&create_out).expect("create task JSON");
+    let task_id = created["task_id"].as_u64().expect("task_id").to_string();
+
+    let stderr = run_fail(&[
+        "market.submit_bid",
+        "--task-id",
+        &task_id,
+        "--worker",
+        "worker-a",
+        "--price",
+        "101",
+    ]);
+    assert!(stderr.contains("\"code\": \"bid-above-bounty\""));
+}
+
+#[test]
 fn market_match_prefers_higher_reputation_when_weighted_score_is_better() {
     let _ = fs::remove_dir_all("run/market");
     fs::create_dir_all("run/market").expect("create market dir");
@@ -104,7 +132,7 @@ fn market_match_prefers_higher_reputation_when_weighted_score_is_better() {
         "--creator",
         "alice",
         "--bounty",
-        "100",
+        "101",
         "--description",
         "m2 weighted matching",
     ]);

@@ -1930,6 +1930,15 @@ fn main() -> Result<()> {
                     message: format!("market task not in open status: {}", task.status),
                 }));
             }
+            if price > task.bounty {
+                return Err(rpc_fail(RpcErrorResponse {
+                    code: "bid-above-bounty",
+                    message: format!(
+                        "market bid price {} exceeds task bounty {} for task {}",
+                        price, task.bounty, task_id
+                    ),
+                }));
+            }
             let mut bids = load_market_bids();
             let bid = MarketBid {
                 task_id,
