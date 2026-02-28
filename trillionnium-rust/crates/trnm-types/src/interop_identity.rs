@@ -726,9 +726,23 @@ impl IdentityRegistry {
         hasher.update(self.audit_trail.len().to_le_bytes());
         for ev in &self.audit_trail {
             hasher.update(ev.seq.to_le_bytes());
-            // Hash other fields... simplified for now as this is a PoC
+            let action_tag = match ev.action {
+                AuditAction::DidRegistered => 1u8,
+                AuditAction::DidRevoked => 2u8,
+                AuditAction::CapabilityIssued => 3u8,
+                AuditAction::CapabilityRenewed => 4u8,
+                AuditAction::CapabilityRevoked => 5u8,
+            };
+            hasher.update([action_tag]);
             hasher.update(ev.actor.as_bytes());
             hasher.update(ev.subject.as_bytes());
+            hasher.update(ev.at_height.to_le_bytes());
+            if let Some(note) = ev.note.as_deref() {
+                hasher.update([1]);
+                hasher.update(note.as_bytes());
+            } else {
+                hasher.update([0]);
+            }
         }
         hasher.update(self.next_capability_id.to_le_bytes());
         hasher.finalize().into()
@@ -3674,5 +3688,62 @@ mod tests {
             err,
             InteropIdentityError::CapabilityInactive { .. }
         ));
+    }
+
+    #[test]
+    fn content_hash_changes_when_audit_note_differs() {
+        let mut reg_a = IdentityRegistry::default();
+        reg_a
+            .register_did(
+                "did:trnm:hash-audit-note".to_string(),
+                "org:lane2-admin".to_string(),
+                10,
+            )
+            .unwrap();
+        let token_id = reg_a
+            .issue_capability(
+                "org:lane2-admin".to_string(),
+                "did:trnm:hash-audit-note".to_string(),
+                CapabilityScope::AuditRead,
+                20,
+                None,
+            )
+            .unwrap();
+        reg_a
+            .revoke_capability(
+                "org:lane2-admin".to_string(),
+                token_id,
+                30,
+                Some("reason:a".to_string()),
+            )
+            .unwrap();
+
+        let mut reg_b = IdentityRegistry::default();
+        reg_b
+            .register_did(
+                "did:trnm:hash-audit-note".to_string(),
+                "org:lane2-admin".to_string(),
+                10,
+            )
+            .unwrap();
+        let token_id = reg_b
+            .issue_capability(
+                "org:lane2-admin".to_string(),
+                "did:trnm:hash-audit-note".to_string(),
+                CapabilityScope::AuditRead,
+                20,
+                None,
+            )
+            .unwrap();
+        reg_b
+            .revoke_capability(
+                "org:lane2-admin".to_string(),
+                token_id,
+                30,
+                Some("reason:b".to_string()),
+            )
+            .unwrap();
+
+        assert_ne!(reg_a.content_hash(), reg_b.content_hash());
     }
 }
