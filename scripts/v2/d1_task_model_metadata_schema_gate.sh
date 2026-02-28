@@ -81,6 +81,11 @@ def validate(node, schema_node, prefix=""):
                 for field in then_schema.get("required", []):
                     if field not in node:
                         fail(f"{prefix + '.' if prefix else ''}missing required field: {field}")
+
+                forbidden_required = then_schema.get("not", {}).get("required", [])
+                for field in forbidden_required:
+                    if field in node:
+                        fail(f"{prefix + '.' if prefix else ''}forbidden field for conditional policy: {field}")
         return
 
     expected_type = schema_node.get("type")

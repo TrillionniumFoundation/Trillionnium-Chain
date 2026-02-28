@@ -101,6 +101,22 @@
               "provenance_index"
             ]
           }
+        },
+        {
+          "if": {
+            "properties": {
+              "privacy_tier": {
+                "const": "public"
+              }
+            }
+          },
+          "then": {
+            "not": {
+              "required": [
+                "provenance_index"
+              ]
+            }
+          }
         }
       ]
     }
