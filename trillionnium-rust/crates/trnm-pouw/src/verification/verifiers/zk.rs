@@ -23,7 +23,11 @@ impl ProofVerifier for ZkVerifier {
         let has_prefix = proof_data.len() >= 3 && proof_data[..3].eq_ignore_ascii_case(b"ZK:");
         let has_non_whitespace_body = proof_data
             .get(3..)
-            .map(|suffix| suffix.iter().any(|b| !b.is_ascii_whitespace()))
+            .map(|suffix| {
+                std::str::from_utf8(suffix)
+                    .map(|s| s.chars().any(|c| !c.is_whitespace()))
+                    .unwrap_or_else(|_| suffix.iter().any(|b| !b.is_ascii_whitespace()))
+            })
             .unwrap_or(false);
 
         if has_prefix && has_non_whitespace_body {
@@ -120,6 +124,17 @@ mod tests {
 
         assert!(matches!(
             verifier.verify_proof(&task, b"ZK:       "),
+            VerificationResult::Invalid(msg) if msg.contains("envelope")
+        ));
+    }
+
+    #[test]
+    fn zk_verifier_rejects_unicode_whitespace_only_body_after_prefix() {
+        let verifier = ZkVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(&task, "ZK:\u{00a0}\u{3000}      ".as_bytes()),
             VerificationResult::Invalid(msg) if msg.contains("envelope")
         ));
     }
