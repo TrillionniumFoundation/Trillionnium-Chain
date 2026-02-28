@@ -180,6 +180,11 @@ fn market_match_prefers_higher_reputation_when_weighted_score_is_better() {
     assert!(match_out.contains("\"winner\":\"worker-high\""));
     assert!(match_out.contains("\"match_policy\":\"price_reputation_weighted\""));
     assert!(match_out.contains("\"winner_reputation\":200"));
+    let matched: Value = serde_json::from_str(&match_out).expect("match task JSON");
+    assert!(matched["winner_reputation_applied"].is_i64());
+    assert!(matched["score_weights"]["price"].is_u64());
+    assert!(matched["score_weights"]["reputation"].is_u64());
+    assert!(matched["score_weights"]["reputation_clamp"].is_i64());
 }
 
 #[test]
@@ -248,6 +253,8 @@ fn market_match_m2_policy_gate_clamps_invalid_env_values() {
     );
     assert!(match_out.contains("\"winner\":\"worker-low\""));
     assert!(match_out.contains("\"effective_score\":100"));
+    let matched: Value = serde_json::from_str(&match_out).expect("match task JSON");
+    assert!(matched["score_weights"]["reputation_clamp"].is_i64());
 }
 
 #[test]

@@ -893,16 +893,21 @@ fn market_m2_policy_gate() -> MarketM2PolicyGate {
     }
 }
 
-fn market_effective_score(price: u128, reputation: i64) -> u128 {
+fn market_effective_score_details(price: u128, reputation: i64) -> (u128, i64, MarketM2PolicyGate) {
     let gate = market_m2_policy_gate();
 
     let rep = reputation.clamp(-gate.reputation_clamp, gate.reputation_clamp);
     let base = price.saturating_mul(gate.price_weight);
-    if rep >= 0 {
+    let score = if rep >= 0 {
         base.saturating_sub((rep as u128).saturating_mul(gate.reputation_weight))
     } else {
         base.saturating_add((rep.unsigned_abs() as u128).saturating_mul(gate.reputation_weight))
-    }
+    };
+    (score, rep, gate)
+}
+
+fn market_effective_score(price: u128, reputation: i64) -> u128 {
+    market_effective_score_details(price, reputation).0
 }
 
 fn load_ingress_records() -> Vec<MessageIngressRecord> {
@@ -2100,17 +2105,22 @@ fn main() -> Result<()> {
                 })
                 .expect("non-empty bids");
             let winner_reputation = *reputation.get(&winner.worker).unwrap_or(&0);
-            let winner_score = market_effective_score(winner.price, winner_reputation);
+            let (winner_score, winner_reputation_applied, gate) =
+                market_effective_score_details(winner.price, winner_reputation);
 
             task.status = "matched".into();
             save_market_tasks(&tasks)?;
 
             println!(
-                "{{\"task_id\":{},\"winner\":\"{}\",\"price\":{},\"status\":\"matched\",\"match_policy\":\"price_reputation_weighted\",\"winner_reputation\":{},\"effective_score\":{}}}",
+                "{{\"task_id\":{},\"winner\":\"{}\",\"price\":{},\"status\":\"matched\",\"match_policy\":\"price_reputation_weighted\",\"winner_reputation\":{},\"winner_reputation_applied\":{},\"score_weights\":{{\"price\":{},\"reputation\":{},\"reputation_clamp\":{}}},\"effective_score\":{}}}",
                 task_id,
                 winner.worker,
                 winner.price,
                 winner_reputation,
+                winner_reputation_applied,
+                gate.price_weight,
+                gate.reputation_weight,
+                gate.reputation_clamp,
                 winner_score
             );
         }
