@@ -480,12 +480,20 @@ impl IdentityRegistry {
                     revoked_at: token.revoked_at,
                 });
             }
-            if let (Some(current_expiry), Some(requested_expiry)) = (token.expires_at, expires_at) {
-                if requested_expiry < current_expiry {
-                    return Err(InteropIdentityError::CapabilityRenewalRegression {
-                        current_expires_at: current_expiry,
-                        requested_expires_at: requested_expiry,
-                    });
+            if let Some(current_expiry) = token.expires_at {
+                match expires_at {
+                    Some(requested_expiry) if requested_expiry < current_expiry => {
+                        return Err(InteropIdentityError::CapabilityRenewalRegression {
+                            current_expires_at: current_expiry,
+                            requested_expires_at: requested_expiry,
+                        });
+                    }
+                    None => {
+                        return Err(InteropIdentityError::CapabilityRenewalCannotClearExpiry {
+                            current_expires_at: current_expiry,
+                        });
+                    }
+                    _ => {}
                 }
             }
             token.expires_at = expires_at;
@@ -781,6 +789,9 @@ pub enum InteropIdentityError {
         current_expires_at: u64,
         requested_expires_at: u64,
     },
+    CapabilityRenewalCannotClearExpiry {
+        current_expires_at: u64,
+    },
     InvalidCapabilityRevocationHeight {
         issued_at: u64,
         revoked_at: u64,
@@ -893,6 +904,13 @@ impl fmt::Display for InteropIdentityError {
                     f,
                     "capability renewal regression: requested expiry {} < current expiry {}",
                     requested_expires_at, current_expires_at
+                )
+            }
+            InteropIdentityError::CapabilityRenewalCannotClearExpiry { current_expires_at } => {
+                write!(
+                    f,
+                    "capability renewal cannot clear existing expiry {}",
+                    current_expires_at
                 )
             }
             InteropIdentityError::InvalidCapabilityRevocationHeight {
@@ -2481,6 +2499,43 @@ mod tests {
         ));
         let token = reg.capability(token_id).unwrap();
         assert_eq!(token.expires_at, Some(60));
+        assert_eq!(reg.audit_trail().len(), audit_len_before);
+    }
+
+    #[test]
+    fn renew_capability_rejects_clearing_existing_expiry_without_side_effects() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did(
+            "did:trnm:agent-renew-clear-expiry".to_string(),
+            "org:lane2-admin".to_string(),
+            10,
+        )
+        .unwrap();
+
+        let token_id = reg
+            .issue_capability(
+                "org:lane2-admin".to_string(),
+                "did:trnm:agent-renew-clear-expiry".to_string(),
+                CapabilityScope::AuditRead,
+                20,
+                Some(60),
+            )
+            .unwrap();
+        let audit_len_before = reg.audit_trail().len();
+
+        let err = reg
+            .renew_capability("org:lane2-admin".to_string(), token_id, 25, None)
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            InteropIdentityError::CapabilityRenewalCannotClearExpiry {
+                current_expires_at: 60,
+            }
+        ));
+        let token = reg.capability(token_id).unwrap();
+        assert_eq!(token.expires_at, Some(60));
+        assert_eq!(token.revoked_at, None);
         assert_eq!(reg.audit_trail().len(), audit_len_before);
     }
 
