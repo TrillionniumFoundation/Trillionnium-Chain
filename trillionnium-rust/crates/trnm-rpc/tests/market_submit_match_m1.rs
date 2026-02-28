@@ -283,6 +283,81 @@ fn market_match_m2_policy_gate_clamps_invalid_env_values() {
 }
 
 #[test]
+fn market_match_explainability_penalty_is_positive_for_negative_reputation() {
+    let sandbox = MarketSandbox::new("market-test-m2-negative-rep-");
+    let market_env = [
+        ("TRNM_RPC_MARKET_TASKS_FILE", sandbox.tasks_file.as_str()),
+        ("TRNM_RPC_MARKET_BIDS_FILE", sandbox.bids_file.as_str()),
+    ];
+    fs::write(&sandbox.reputation_file, r#"{"worker-risky":-25}"#)
+        .expect("write reputation file");
+
+    let create_out = run_ok_with_env(
+        &[
+            "market.create_task",
+            "--creator",
+            "alice",
+            "--bounty",
+            "100",
+            "--description",
+            "m2 explain negative reputation penalty",
+        ],
+        &market_env,
+    );
+    let created: Value = serde_json::from_str(&create_out).expect("create task JSON");
+    let task_id = created["task_id"].as_u64().expect("task_id").to_string();
+
+    run_ok_with_env(
+        &[
+            "market.submit_bid",
+            "--task-id",
+            &task_id,
+            "--worker",
+            "worker-risky",
+            "--price",
+            "100",
+        ],
+        &market_env,
+    );
+
+    let match_out = run_ok_with_env(
+        &["market.match_task", "--task-id", &task_id],
+        &[
+            ("TRNM_RPC_MARKET_TASKS_FILE", sandbox.tasks_file.as_str()),
+            ("TRNM_RPC_MARKET_BIDS_FILE", sandbox.bids_file.as_str()),
+            (
+                "TRNM_RPC_MARKET_REPUTATION_FILE",
+                sandbox.reputation_file.as_str(),
+            ),
+        ],
+    );
+    let matched: Value = serde_json::from_str(&match_out).expect("match task JSON");
+
+    let rep_applied = matched["winner_reputation_applied"]
+        .as_i64()
+        .expect("winner_reputation_applied");
+    assert!(rep_applied < 0);
+
+    let rep_weight = matched["score_weights"]["reputation"]
+        .as_u64()
+        .expect("reputation weight");
+    let penalty = matched["score_breakdown"]["penalty"]
+        .as_i64()
+        .expect("penalty");
+    assert_eq!(penalty, rep_applied.unsigned_abs() as i64 * rep_weight as i64);
+    assert!(penalty > 0);
+
+    let base_score = matched["score_breakdown"]["base_score"]
+        .as_u64()
+        .expect("base_score");
+    let final_score = matched["score_breakdown"]["final_score"]
+        .as_u64()
+        .expect("final_score");
+    assert_eq!(final_score, base_score.saturating_add(penalty as u64));
+    assert_eq!(matched["effective_score"].as_u64(), Some(final_score));
+}
+
+#[test]
 fn market_isolated_envs_prevent_shared_directory_conflicts() {
     let sandbox_a = MarketSandbox::new("market-isolation-a-");
     let sandbox_b = MarketSandbox::new("market-isolation-b-");
