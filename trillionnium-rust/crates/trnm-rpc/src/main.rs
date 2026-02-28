@@ -2514,6 +2514,45 @@ mod tests {
     }
 
     #[test]
+    fn governance_state_merge_gate_emergency_pause_noop_is_version_stable() {
+        let mut st = governance_state();
+
+        st.set_gov_param(
+            9_120,
+            EMERGENCY_PAUSE_KEY_ID,
+            "emergency_pause".into(),
+            "true".into(),
+        )
+        .expect("first pause write must succeed");
+        let v_after_first = st
+            .get_param(EMERGENCY_PAUSE_KEY_ID)
+            .expect("paused emergency_pause param must remain readable")
+            .version;
+
+        let noop = st
+            .set_gov_param(
+                9_121,
+                EMERGENCY_PAUSE_KEY_ID,
+                "emergency_pause".into(),
+                "true".into(),
+            )
+            .expect("reapplying same pause value must stay successful");
+        assert!(matches!(noop, trnm_state::GovParamUpdateOutcome::Applied(_)));
+
+        let v_after_noop = st
+            .get_param(EMERGENCY_PAUSE_KEY_ID)
+            .expect("noop write must keep emergency_pause readable")
+            .version;
+
+        assert_eq!(
+            v_after_noop, v_after_first,
+            "identical emergency_pause reapply must not churn version"
+        );
+        assert!(st.is_emergency_paused());
+        assert!(st.pending_gov_update("emergency_pause").is_none());
+    }
+
+    #[test]
     fn governance_state_merge_gate_rejects_non_canonical_emergency_pause_key_id() {
         let mut st = governance_state();
 
