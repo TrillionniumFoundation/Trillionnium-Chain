@@ -16,10 +16,17 @@ impl ProofVerifier for ZkVerifier {
             return VerificationResult::Invalid("ZK proof too short".to_string());
         }
 
-        // V3 micro-patch hardening: require explicit envelope marker.
+        // V3 micro-patch hardening: require explicit envelope marker
+        // plus a non-whitespace payload body.
         // Accept case-insensitive variants to tolerate client casing drift.
         // Accepted examples: "ZK:...", "zk:...".
-        if proof_data.len() >= 3 && proof_data[..3].eq_ignore_ascii_case(b"ZK:") {
+        let has_prefix = proof_data.len() >= 3 && proof_data[..3].eq_ignore_ascii_case(b"ZK:");
+        let has_non_whitespace_body = proof_data
+            .get(3..)
+            .map(|suffix| suffix.iter().any(|b| !b.is_ascii_whitespace()))
+            .unwrap_or(false);
+
+        if has_prefix && has_non_whitespace_body {
             VerificationResult::Valid
         } else {
             VerificationResult::Invalid("Invalid ZK proof envelope".to_string())
@@ -102,6 +109,17 @@ mod tests {
 
         assert!(matches!(
             verifier.verify_proof(&task, b"ZKpayload!!"),
+            VerificationResult::Invalid(msg) if msg.contains("envelope")
+        ));
+    }
+
+    #[test]
+    fn zk_verifier_rejects_whitespace_only_body_after_prefix() {
+        let verifier = ZkVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(&task, b"ZK:       "),
             VerificationResult::Invalid(msg) if msg.contains("envelope")
         ));
     }
