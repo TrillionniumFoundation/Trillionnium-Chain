@@ -34,6 +34,12 @@ pub mod bridge_status {
         MalformedToken { reason: &'static str },
     }
 
+    impl SettlementError {
+        pub fn is_unauthorized(&self) -> bool {
+            matches!(self, SettlementError::Unauthorized { .. })
+        }
+    }
+
     #[derive(Debug, Clone, Serialize, Deserialize)]
     pub struct SettlementRequest {
         pub chain_id: u32,

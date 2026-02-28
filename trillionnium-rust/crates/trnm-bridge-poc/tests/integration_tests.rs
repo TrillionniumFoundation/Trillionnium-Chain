@@ -57,6 +57,7 @@ fn test_authorized_finalize_rejects_missing_capability() {
     };
 
     let err = request.settle_authorized(&token, 256).unwrap_err();
+    assert!(err.is_unauthorized());
     assert_eq!(
         err,
         SettlementError::Unauthorized {

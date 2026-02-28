@@ -16,6 +16,9 @@ pub enum VerificationResult {
 ///
 /// This allows the market to be agnostic to *how* the work is verified.
 pub trait ProofVerifier {
+    /// Returns the type of proof this verifier handles.
+    fn proof_type(&self) -> &str;
+
     /// Verifies a proof for a given task.
     ///
     /// # Arguments
@@ -26,15 +29,29 @@ pub trait ProofVerifier {
 
 /// A mock verifier for testing purposes.
 pub struct MockVerifier {
+    pub name: String,
     pub should_succeed: bool,
 }
 
+impl MockVerifier {
+    pub fn new(name: &str, should_succeed: bool) -> Self {
+        Self {
+            name: name.to_string(),
+            should_succeed,
+        }
+    }
+}
+
 impl ProofVerifier for MockVerifier {
+    fn proof_type(&self) -> &str {
+        &self.name
+    }
+
     fn verify_proof(&self, _task: &ObjectRef, _proof_data: &[u8]) -> VerificationResult {
         if self.should_succeed {
             VerificationResult::Valid
         } else {
-            VerificationResult::Invalid("Mock verification failed".to_string())
+            VerificationResult::Invalid(format!("Mock verification ({}) failed", self.name))
         }
     }
 }
@@ -42,7 +59,6 @@ impl ProofVerifier for MockVerifier {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use trnm_types::{ObjectRef, TaskObject, TaskStatus};
 
     fn mock_task_ref() -> ObjectRef {
         ObjectRef {
@@ -53,17 +69,18 @@ mod tests {
 
     #[test]
     fn test_mock_verifier_success() {
-        let verifier = MockVerifier { should_succeed: true };
+        let verifier = MockVerifier::new("fraud", true);
         let task = mock_task_ref();
         let result = verifier.verify_proof(&task, &[]);
         assert_eq!(result, VerificationResult::Valid);
+        assert_eq!(verifier.proof_type(), "fraud");
     }
 
     #[test]
     fn test_mock_verifier_failure() {
-        let verifier = MockVerifier { should_succeed: false };
+        let verifier = MockVerifier::new("zk", false);
         let task = mock_task_ref();
         let result = verifier.verify_proof(&task, &[]);
-        assert!(matches!(result, VerificationResult::Invalid(_)));
+        assert!(matches!(result, VerificationResult::Invalid(msg) if msg.contains("zk")));
     }
 }
