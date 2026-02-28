@@ -696,33 +696,70 @@ fn env_i64_clamped(name: &str, default: i64, min: i64, max: i64) -> i64 {
         .unwrap_or(default)
 }
 
-fn market_effective_score(price: u128, reputation: i64) -> u128 {
-    let price_weight = env_u128_clamped(
-        MARKET_PRICE_WEIGHT_ENV,
-        MARKET_PRICE_WEIGHT_DEFAULT,
-        MARKET_WEIGHT_MIN,
-        MARKET_WEIGHT_MAX,
-    );
-    let reputation_weight = env_u128_clamped(
-        MARKET_REPUTATION_WEIGHT_ENV,
-        MARKET_REPUTATION_WEIGHT_DEFAULT,
-        MARKET_WEIGHT_MIN,
-        MARKET_WEIGHT_MAX,
-    );
-    let reputation_clamp = env_i64_clamped(
-        MARKET_REPUTATION_CLAMP_ENV,
-        MARKET_REPUTATION_CLAMP_DEFAULT,
-        MARKET_REPUTATION_CLAMP_MIN,
-        MARKET_REPUTATION_CLAMP_MAX,
-    );
+#[derive(Debug, Clone, Copy)]
+struct MarketScoreConfig {
+    price_weight: u128,
+    reputation_weight: u128,
+    reputation_clamp: i64,
+}
 
-    let rep = reputation.clamp(-reputation_clamp, reputation_clamp);
-    let base = price.saturating_mul(price_weight);
-    if rep >= 0 {
-        base.saturating_sub((rep as u128).saturating_mul(reputation_weight))
-    } else {
-        base.saturating_add((rep.unsigned_abs() as u128).saturating_mul(reputation_weight))
+#[derive(Debug, Serialize)]
+struct MarketScoreConfigOutput {
+    price_weight: u128,
+    reputation_weight: u128,
+    reputation_clamp: i64,
+}
+
+impl From<MarketScoreConfig> for MarketScoreConfigOutput {
+    fn from(value: MarketScoreConfig) -> Self {
+        Self {
+            price_weight: value.price_weight,
+            reputation_weight: value.reputation_weight,
+            reputation_clamp: value.reputation_clamp,
+        }
     }
+}
+
+fn market_score_config() -> MarketScoreConfig {
+    MarketScoreConfig {
+        price_weight: env_u128_clamped(
+            MARKET_PRICE_WEIGHT_ENV,
+            MARKET_PRICE_WEIGHT_DEFAULT,
+            MARKET_WEIGHT_MIN,
+            MARKET_WEIGHT_MAX,
+        ),
+        reputation_weight: env_u128_clamped(
+            MARKET_REPUTATION_WEIGHT_ENV,
+            MARKET_REPUTATION_WEIGHT_DEFAULT,
+            MARKET_WEIGHT_MIN,
+            MARKET_WEIGHT_MAX,
+        ),
+        reputation_clamp: env_i64_clamped(
+            MARKET_REPUTATION_CLAMP_ENV,
+            MARKET_REPUTATION_CLAMP_DEFAULT,
+            MARKET_REPUTATION_CLAMP_MIN,
+            MARKET_REPUTATION_CLAMP_MAX,
+        ),
+    }
+}
+
+fn clamp_reputation_for_market(reputation: i64, cfg: MarketScoreConfig) -> i64 {
+    reputation.clamp(-cfg.reputation_clamp, cfg.reputation_clamp)
+}
+
+fn market_effective_score_with_config(price: u128, reputation: i64, cfg: MarketScoreConfig) -> u128 {
+    let rep = clamp_reputation_for_market(reputation, cfg);
+    let base = price.saturating_mul(cfg.price_weight);
+    if rep >= 0 {
+        base.saturating_sub((rep as u128).saturating_mul(cfg.reputation_weight))
+    } else {
+        base.saturating_add((rep.unsigned_abs() as u128).saturating_mul(cfg.reputation_weight))
+    }
+}
+
+#[cfg(test)]
+fn market_effective_score(price: u128, reputation: i64) -> u128 {
+    market_effective_score_with_config(price, reputation, market_score_config())
 }
 
 fn load_ingress_records() -> Vec<MessageIngressRecord> {
@@ -1893,12 +1930,13 @@ fn main() -> Result<()> {
             }
 
             let reputation = load_market_reputation();
+            let score_cfg = market_score_config();
             let winner = task_bids
                 .into_iter()
                 .min_by_key(|b| {
                     let rep = *reputation.get(&b.worker).unwrap_or(&0);
                     (
-                        market_effective_score(b.price, rep),
+                        market_effective_score_with_config(b.price, rep, score_cfg),
                         b.price,
                         b.created_at_unix_ms,
                         &b.worker,
@@ -1906,19 +1944,24 @@ fn main() -> Result<()> {
                 })
                 .expect("non-empty bids");
             let winner_reputation = *reputation.get(&winner.worker).unwrap_or(&0);
-            let winner_score = market_effective_score(winner.price, winner_reputation);
+            let winner_reputation_effective = clamp_reputation_for_market(winner_reputation, score_cfg);
+            let winner_score = market_effective_score_with_config(winner.price, winner_reputation, score_cfg);
 
             task.status = "matched".into();
             save_market_tasks(&tasks)?;
 
-            println!(
-                "{{\"task_id\":{},\"winner\":\"{}\",\"price\":{},\"status\":\"matched\",\"match_policy\":\"price_reputation_weighted\",\"winner_reputation\":{},\"effective_score\":{}}}",
-                task_id,
-                winner.worker,
-                winner.price,
-                winner_reputation,
-                winner_score
-            );
+            let out = serde_json::json!({
+                "task_id": task_id,
+                "winner": winner.worker,
+                "price": winner.price,
+                "status": "matched",
+                "match_policy": "price_reputation_weighted",
+                "winner_reputation": winner_reputation,
+                "winner_reputation_effective": winner_reputation_effective,
+                "effective_score": winner_score,
+                "match_config": MarketScoreConfigOutput::from(score_cfg),
+            });
+            println!("{}", serde_json::to_string(&out)?);
         }
         Command::DispatchOpen { worker_id, limit } => {
             let limit = clamp_limit(

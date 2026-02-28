@@ -1,6 +1,12 @@
 use serde_json::Value;
 use std::fs;
 use std::process::Command;
+use std::sync::{Mutex, OnceLock};
+
+fn market_test_lock() -> &'static Mutex<()> {
+    static LOCK: OnceLock<Mutex<()>> = OnceLock::new();
+    LOCK.get_or_init(|| Mutex::new(()))
+}
 
 fn run_ok(args: &[&str]) -> String {
     let output = Command::new("cargo")
@@ -43,6 +49,7 @@ fn run_fail(args: &[&str]) -> String {
 
 #[test]
 fn market_submit_bid_and_match_task_m1_happy_path() {
+    let _guard = market_test_lock().lock().expect("market test lock");
     let _ = fs::remove_dir_all("run/market");
 
     let create_out = run_ok(&[
@@ -75,6 +82,7 @@ fn market_submit_bid_and_match_task_m1_happy_path() {
 
 #[test]
 fn market_submit_bid_missing_task_returns_structured_code() {
+    let _guard = market_test_lock().lock().expect("market test lock");
     let _ = fs::remove_dir_all("run/market");
 
     let stderr = run_fail(&[
@@ -91,6 +99,7 @@ fn market_submit_bid_missing_task_returns_structured_code() {
 
 #[test]
 fn market_match_prefers_higher_reputation_when_weighted_score_is_better() {
+    let _guard = market_test_lock().lock().expect("market test lock");
     let _ = fs::remove_dir_all("run/market");
     fs::create_dir_all("run/market").expect("create market dir");
     fs::write(
@@ -134,7 +143,56 @@ fn market_match_prefers_higher_reputation_when_weighted_score_is_better() {
         &["market.match_task", "--task-id", &task_id],
         &[("TRNM_RPC_MARKET_REPUTATION_FILE", "run/market/reputation.json")],
     );
-    assert!(match_out.contains("\"winner\":\"worker-high\""));
-    assert!(match_out.contains("\"match_policy\":\"price_reputation_weighted\""));
-    assert!(match_out.contains("\"winner_reputation\":200"));
+    let matched: Value = serde_json::from_str(match_out.trim()).expect("match JSON");
+    assert_eq!(matched["winner"], "worker-high");
+    assert_eq!(matched["match_policy"], "price_reputation_weighted");
+    assert_eq!(matched["winner_reputation"], 200);
+    assert_eq!(matched["winner_reputation_effective"], 200);
+    assert_eq!(matched["match_config"]["price_weight"], 1000);
+    assert_eq!(matched["match_config"]["reputation_weight"], 100);
+    assert_eq!(matched["match_config"]["reputation_clamp"], 1000);
+}
+
+#[test]
+fn market_match_exposes_effective_clamp_from_env_config() {
+    let _guard = market_test_lock().lock().expect("market test lock");
+    let _ = fs::remove_dir_all("run/market");
+    fs::create_dir_all("run/market").expect("create market dir");
+    fs::write("run/market/reputation.json", r#"{"worker-high":500}"#).expect("write reputation file");
+
+    let create_out = run_ok(&[
+        "market.create_task",
+        "--creator",
+        "alice",
+        "--bounty",
+        "100",
+        "--description",
+        "m2 weighted clamp output",
+    ]);
+    let created: Value = serde_json::from_str(&create_out).expect("create task JSON");
+    let task_id = created["task_id"].as_u64().expect("task_id").to_string();
+
+    run_ok(&[
+        "market.submit_bid",
+        "--task-id",
+        &task_id,
+        "--worker",
+        "worker-high",
+        "--price",
+        "100",
+    ]);
+
+    let match_out = run_ok_with_env(
+        &["market.match_task", "--task-id", &task_id],
+        &[
+            ("TRNM_RPC_MARKET_REPUTATION_FILE", "run/market/reputation.json"),
+            ("TRNM_RPC_MARKET_REPUTATION_CLAMP", "50"),
+            ("TRNM_RPC_MARKET_REPUTATION_WEIGHT", "100"),
+            ("TRNM_RPC_MARKET_PRICE_WEIGHT", "1000"),
+        ],
+    );
+    let matched: Value = serde_json::from_str(match_out.trim()).expect("match JSON");
+    assert_eq!(matched["winner_reputation"], 500);
+    assert_eq!(matched["winner_reputation_effective"], 50);
+    assert_eq!(matched["match_config"]["reputation_clamp"], 50);
 }
