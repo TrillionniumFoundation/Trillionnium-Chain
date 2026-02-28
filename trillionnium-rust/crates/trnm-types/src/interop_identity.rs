@@ -71,14 +71,21 @@ fn normalize_revert_reason(reason: String) -> String {
 }
 
 fn canonical_path_segment(raw: &str) -> String {
-    raw.trim()
+    let sanitized: String = raw
+        .trim()
         .chars()
         .map(|ch| match ch {
             '/' | '\\' => '_',
             c if c.is_whitespace() || c.is_control() => '_',
             c => c,
         })
-        .collect()
+        .collect();
+
+    if sanitized.is_empty() {
+        "_".to_string()
+    } else {
+        sanitized
+    }
 }
 
 impl SettlementRecord {
@@ -1672,6 +1679,27 @@ mod tests {
         assert_eq!(
             rec.evidence_path(),
             "settlements/eth_mainnet_->_trnm/ethereum_mainnet/trillionnium_alpha/45/pending@2222"
+        );
+    }
+
+    #[test]
+    fn settlement_evidence_path_replaces_empty_route_segments_with_placeholder() {
+        let rec = SettlementRecord {
+            settlement_id: 46,
+            route: BridgeRoute {
+                route_id: "   ".to_string(),
+                source_chain: "\n\t".to_string(),
+                target_chain: "".to_string(),
+            },
+            status: SettlementStatus::Pending,
+            at_height: 2_223,
+            settlement_tx: None,
+            revert_reason: None,
+        };
+
+        assert_eq!(
+            rec.evidence_path(),
+            "settlements/_/_/_/46/pending@2223"
         );
     }
 
