@@ -618,6 +618,23 @@ impl IdentityRegistry {
         Ok(())
     }
 
+    pub fn list_active_capabilities(
+        &self,
+        at_height: u64,
+    ) -> Vec<&CapabilityToken> {
+        self.capabilities
+            .values()
+            .filter(|token| {
+                if !token.is_active_at(at_height) {
+                    return false;
+                }
+                self.dids.get(&token.subject_did)
+                    .map(|did| did.is_active_at(at_height))
+                    .unwrap_or(false)
+            })
+            .collect()
+    }
+
     pub fn did(&self, did: &str) -> Option<&DidRecord> {
         self.dids.get(did)
     }
@@ -3057,5 +3074,45 @@ mod tests {
             err,
             InteropIdentityError::CapabilityInactive { .. }
         ));
+    }
+
+    #[test]
+    fn list_active_capabilities_filters_out_expired_revoked_and_unborn_tokens() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did("did:1".to_string(), "admin".to_string(), 10).unwrap();
+        reg.register_did("did:2".to_string(), "admin".to_string(), 10).unwrap();
+
+        // 1. Born and active
+        let t1 = reg.issue_capability("admin".to_string(), "did:1".to_string(), CapabilityScope::AuditRead, 20, None).unwrap();
+        // 2. Expired
+        let t2 = reg.issue_capability("admin".to_string(), "did:1".to_string(), CapabilityScope::AuditRead, 20, Some(30)).unwrap();
+        // 3. Revoked
+        let t3 = reg.issue_capability("admin".to_string(), "did:1".to_string(), CapabilityScope::AuditRead, 20, None).unwrap();
+        reg.revoke_capability("admin".to_string(), t3, 25, None).unwrap();
+        // 4. Born in future
+        let t4 = reg.issue_capability("admin".to_string(), "did:1".to_string(), CapabilityScope::AuditRead, 100, None).unwrap();
+        // 5. Subject DID revoked
+        let t5 = reg.issue_capability("admin".to_string(), "did:2".to_string(), CapabilityScope::AuditRead, 20, None).unwrap();
+        reg.revoke_did("admin".to_string(), "did:2", 40).unwrap();
+
+        // At height 50:
+        // t1: active
+        // t2: expired (at 30)
+        // t3: revoked (at 25)
+        // t4: unborn (starts at 100)
+        // t5: revoked (DID 2 revoked at 40)
+        let active = reg.list_active_capabilities(50);
+        assert_eq!(active.len(), 1);
+        assert_eq!(active[0].token_id, t1);
+
+        // At height 22:
+        // t1, t2, t3, t5 are active
+        let active_early = reg.list_active_capabilities(22);
+        assert_eq!(active_early.len(), 4);
+
+        // At height 101:
+        // t1 and t4 are active
+        let active_late = reg.list_active_capabilities(101);
+        assert_eq!(active_late.len(), 2);
     }
 }
