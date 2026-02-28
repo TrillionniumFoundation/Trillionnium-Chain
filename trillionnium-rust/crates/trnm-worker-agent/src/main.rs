@@ -266,6 +266,8 @@ struct AuditTaskQueryResult {
     task_id: String,
     hit_indexes: Vec<usize>,
     records: Vec<EnterpriseAuditExportRecord>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    error_code: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -273,6 +275,8 @@ struct AuditProvenanceFingerprintQueryResult {
     provenance_fingerprint: String,
     hit_indexes: Vec<usize>,
     records: Vec<EnterpriseAuditExportRecord>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    error_code: Option<String>,
 }
 
 fn build_audit_export_index(exports: &[EnterpriseAuditExportRecord]) -> AuditExportIndex {
@@ -408,15 +412,22 @@ fn query_audit_by_task_id(
 ) -> AuditTaskQueryResult {
     let task_key = task_id.to_string();
     let hit_indexes = index.by_task_id.get(&task_key).cloned().unwrap_or_default();
-    let records = hit_indexes
+    let records: Vec<EnterpriseAuditExportRecord> = hit_indexes
         .iter()
         .filter_map(|idx| exports.get(*idx).cloned())
         .collect();
+
+    let error_code = if records.is_empty() {
+        Some("not_found".to_string())
+    } else {
+        None
+    };
 
     AuditTaskQueryResult {
         task_id: task_key,
         hit_indexes,
         records,
+        error_code,
     }
 }
 
@@ -435,15 +446,22 @@ fn query_audit_by_provenance_fingerprint(
         .get(normalized.as_str())
         .cloned()
         .unwrap_or_default();
-    let records = hit_indexes
+    let records: Vec<EnterpriseAuditExportRecord> = hit_indexes
         .iter()
         .filter_map(|idx| exports.get(*idx).cloned())
         .collect();
+
+    let error_code = if records.is_empty() {
+        Some("not_found".to_string())
+    } else {
+        None
+    };
 
     AuditProvenanceFingerprintQueryResult {
         provenance_fingerprint: normalized,
         hit_indexes,
         records,
+        error_code,
     }
 }
 
@@ -2341,6 +2359,7 @@ mod tests {
         assert_eq!(out.hit_indexes, vec![1]);
         assert_eq!(out.records.len(), 1);
         assert_eq!(out.records[0].request_id, "r2");
+        assert_eq!(out.error_code, None);
     }
 
     #[test]
@@ -2367,6 +2386,7 @@ mod tests {
         assert_eq!(out.task_id, "9999");
         assert!(out.hit_indexes.is_empty());
         assert!(out.records.is_empty());
+        assert_eq!(out.error_code.as_deref(), Some("not_found"));
     }
 
     #[test]
@@ -2412,6 +2432,7 @@ mod tests {
         assert_eq!(out.hit_indexes, vec![0]);
         assert_eq!(out.records.len(), 1);
         assert_eq!(out.records[0].request_id, "r1");
+        assert_eq!(out.error_code, None);
     }
 
     #[test]
@@ -2438,6 +2459,7 @@ mod tests {
         assert_eq!(out.provenance_fingerprint, "fp-missing");
         assert!(out.hit_indexes.is_empty());
         assert!(out.records.is_empty());
+        assert_eq!(out.error_code.as_deref(), Some("not_found"));
     }
 
     #[test]
@@ -2465,6 +2487,7 @@ mod tests {
         assert_eq!(out.hit_indexes, vec![0]);
         assert_eq!(out.records.len(), 1);
         assert_eq!(out.records[0].request_id, "r1");
+        assert_eq!(out.error_code, None);
     }
 
     #[test]
