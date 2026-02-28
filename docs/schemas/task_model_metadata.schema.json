@@ -40,7 +40,8 @@
         "model_id": {
           "type": "string",
           "minLength": 1,
-          "maxLength": 128
+          "maxLength": 128,
+          "pattern": "^.*\\S.*$"
         },
         "model_digest": {
           "type": "string",
