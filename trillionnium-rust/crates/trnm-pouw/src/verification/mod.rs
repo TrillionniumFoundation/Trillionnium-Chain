@@ -1,7 +1,8 @@
+use serde::{Deserialize, Serialize};
 use trnm_types::ObjectRef;
 
 /// Result of a verification attempt.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum VerificationResult {
     /// The proof is valid and the task result is accepted.
     Valid,
@@ -10,6 +11,16 @@ pub enum VerificationResult {
     /// The verification could not be completed (e.g., network error, resource exhaustion).
     /// This might warrant a retry or a specific error state.
     Indeterminate(String),
+}
+
+/// A standardized receipt for verifiable execution.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct VerificationReceipt {
+    pub task_id: u64,
+    pub proof_type: String,
+    pub result: VerificationResult,
+    pub verifier_id: String,
+    pub timestamp_ms: u64,
 }
 
 /// A trait for pluggable verification logic (Fraud Proof, TEE, ZK).
