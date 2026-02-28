@@ -1094,10 +1094,18 @@ fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
         | "mcpv"
         | "mcpv1"
         | "mcpv2"
+        | "mcpjsonrpc"
+        | "mcpjsonrpcv"
+        | "mcpjsonrpcv1"
+        | "mcpjsonrpcv2"
         | "modelcontextprotocol"
         | "modelcontextprotocolv"
         | "modelcontextprotocolv1"
-        | "modelcontextprotocolv2" => Some("mcp".to_string()),
+        | "modelcontextprotocolv2"
+        | "modelcontextprotocoljsonrpc"
+        | "modelcontextprotocoljsonrpcv"
+        | "modelcontextprotocoljsonrpcv1"
+        | "modelcontextprotocoljsonrpcv2" => Some("mcp".to_string()),
         "a2a"
         | "a2av"
         | "a2av1"
@@ -2649,6 +2657,10 @@ mod tests {
         );
         assert_eq!(
             normalized_agent_protocol(Some("Model Context Protocol 2.0")).as_deref(),
+            Some("mcp")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Model Context Protocol JSON-RPC v2")).as_deref(),
             Some("mcp")
         );
         assert_eq!(
