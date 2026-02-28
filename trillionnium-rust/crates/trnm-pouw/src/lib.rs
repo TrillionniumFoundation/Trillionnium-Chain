@@ -1,20 +1,14 @@
 use sha2::{Digest, Sha256};
-use std::sync::Arc;
 use thiserror::Error;
 use trnm_state::StateStore;
-use trnm_types::{Hash32, ObjectRef, TaskObject, TaskStatus, TaskMetadata, ProofType};
+use trnm_types::{Hash32, ObjectRef, ProofType, TaskMetadata, TaskObject, TaskStatus};
 
 pub mod verification;
 use verification::registry::VerifierRegistry;
-use verification::verifiers::{FraudVerifier, TeeVerifier, ZkVerifier};
 use verification::VerificationResult;
 
 fn get_default_registry() -> VerifierRegistry {
-    let mut registry = VerifierRegistry::new();
-    registry.register(Arc::new(FraudVerifier));
-    registry.register(Arc::new(TeeVerifier));
-    registry.register(Arc::new(ZkVerifier));
-    registry
+    VerifierRegistry::with_builtin_verifiers()
 }
 
 #[derive(Debug, Error)]
