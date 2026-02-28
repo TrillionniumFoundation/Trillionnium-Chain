@@ -215,3 +215,55 @@ fn market_match_prefers_higher_reputation_when_weighted_score_is_better() {
     assert!(match_out.contains("\"match_policy\":\"price_reputation_weighted\""));
     assert!(match_out.contains("\"winner_reputation\":200"));
 }
+
+#[test]
+fn market_match_breaks_weighted_score_tie_by_lower_price() {
+    let _guard = test_lock().lock().expect("test lock");
+    let _ = fs::remove_dir_all("run/market");
+    fs::create_dir_all("run/market").expect("create market dir");
+    fs::write(
+        "run/market/reputation.json",
+        r#"{"worker-cheap":0,"worker-rep":10}"#,
+    )
+    .expect("write reputation file");
+
+    let create_out = run_ok(&[
+        "market.create_task",
+        "--creator",
+        "alice",
+        "--bounty",
+        "101",
+        "--description",
+        "m2 tie break by price",
+    ]);
+    let created: Value = serde_json::from_str(&create_out).expect("create task JSON");
+    let task_id = created["task_id"].as_u64().expect("task_id").to_string();
+
+    run_ok(&[
+        "market.submit_bid",
+        "--task-id",
+        &task_id,
+        "--worker",
+        "worker-cheap",
+        "--price",
+        "100",
+    ]);
+    run_ok(&[
+        "market.submit_bid",
+        "--task-id",
+        &task_id,
+        "--worker",
+        "worker-rep",
+        "--price",
+        "101",
+    ]);
+
+    let match_out = run_ok_with_env(
+        &["market.match_task", "--task-id", &task_id],
+        &[("TRNM_RPC_MARKET_REPUTATION_FILE", "run/market/reputation.json")],
+    );
+
+    // default weights make both effective scores equal (100000), so lower raw price wins.
+    assert!(match_out.contains("\"winner\":\"worker-cheap\""));
+    assert!(match_out.contains("\"effective_score\":100000"));
+}
