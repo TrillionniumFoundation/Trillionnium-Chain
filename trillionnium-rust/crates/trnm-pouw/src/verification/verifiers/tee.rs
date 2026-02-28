@@ -20,7 +20,11 @@ impl ProofVerifier for TeeVerifier {
         let has_prefix = proof_data.len() >= 4 && proof_data[..4].eq_ignore_ascii_case(b"TEE:");
         let has_non_whitespace_body = proof_data
             .get(4..)
-            .map(|suffix| suffix.iter().any(|b| !b.is_ascii_whitespace()))
+            .map(|suffix| {
+                std::str::from_utf8(suffix)
+                    .map(|s| s.chars().any(|c| !c.is_whitespace()))
+                    .unwrap_or_else(|_| suffix.iter().any(|b| !b.is_ascii_whitespace()))
+            })
             .unwrap_or(false);
 
         if has_prefix && has_non_whitespace_body {
@@ -124,6 +128,17 @@ mod tests {
 
         assert!(matches!(
             verifier.verify_proof(&task, b"TEE:    \n\t"),
+            VerificationResult::Invalid(msg) if msg.contains("envelope")
+        ));
+    }
+
+    #[test]
+    fn tee_verifier_rejects_unicode_whitespace_only_body_after_prefix() {
+        let verifier = TeeVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(&task, "TEE:\u{00a0}\u{3000}".as_bytes()),
             VerificationResult::Invalid(msg) if msg.contains("envelope")
         ));
     }
