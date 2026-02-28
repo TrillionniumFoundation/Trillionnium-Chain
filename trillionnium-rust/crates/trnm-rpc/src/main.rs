@@ -1940,6 +1940,18 @@ fn main() -> Result<()> {
                 }));
             }
             let mut bids = load_market_bids();
+            if bids
+                .iter()
+                .any(|b| b.task_id == task_id && b.worker == worker)
+            {
+                return Err(rpc_fail(RpcErrorResponse {
+                    code: "duplicate-bid",
+                    message: format!(
+                        "worker {} already has a bid for task {}",
+                        worker, task_id
+                    ),
+                }));
+            }
             let bid = MarketBid {
                 task_id,
                 worker,

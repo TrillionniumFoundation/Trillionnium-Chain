@@ -1,6 +1,12 @@
 use serde_json::Value;
 use std::fs;
 use std::process::Command;
+use std::sync::{Mutex, OnceLock};
+
+fn test_lock() -> &'static Mutex<()> {
+    static LOCK: OnceLock<Mutex<()>> = OnceLock::new();
+    LOCK.get_or_init(|| Mutex::new(()))
+}
 
 fn run_ok(args: &[&str]) -> String {
     let output = Command::new("cargo")
@@ -43,6 +49,7 @@ fn run_fail(args: &[&str]) -> String {
 
 #[test]
 fn market_submit_bid_and_match_task_m1_happy_path() {
+    let _guard = test_lock().lock().expect("test lock");
     let _ = fs::remove_dir_all("run/market");
 
     let create_out = run_ok(&[
@@ -75,6 +82,7 @@ fn market_submit_bid_and_match_task_m1_happy_path() {
 
 #[test]
 fn market_submit_bid_missing_task_returns_structured_code() {
+    let _guard = test_lock().lock().expect("test lock");
     let _ = fs::remove_dir_all("run/market");
 
     let stderr = run_fail(&[
@@ -91,6 +99,7 @@ fn market_submit_bid_missing_task_returns_structured_code() {
 
 #[test]
 fn market_submit_bid_above_bounty_returns_structured_code() {
+    let _guard = test_lock().lock().expect("test lock");
     let _ = fs::remove_dir_all("run/market");
 
     let create_out = run_ok(&[
@@ -118,7 +127,47 @@ fn market_submit_bid_above_bounty_returns_structured_code() {
 }
 
 #[test]
+fn market_submit_bid_duplicate_worker_returns_structured_code() {
+    let _guard = test_lock().lock().expect("test lock");
+    let _ = fs::remove_dir_all("run/market");
+
+    let create_out = run_ok(&[
+        "market.create_task",
+        "--creator",
+        "alice",
+        "--bounty",
+        "100",
+        "--description",
+        "m1 duplicate bid guard",
+    ]);
+    let created: Value = serde_json::from_str(&create_out).expect("create task JSON");
+    let task_id = created["task_id"].as_u64().expect("task_id").to_string();
+
+    run_ok(&[
+        "market.submit_bid",
+        "--task-id",
+        &task_id,
+        "--worker",
+        "worker-a",
+        "--price",
+        "88",
+    ]);
+
+    let stderr = run_fail(&[
+        "market.submit_bid",
+        "--task-id",
+        &task_id,
+        "--worker",
+        "worker-a",
+        "--price",
+        "87",
+    ]);
+    assert!(stderr.contains("\"code\": \"duplicate-bid\""));
+}
+
+#[test]
 fn market_match_prefers_higher_reputation_when_weighted_score_is_better() {
+    let _guard = test_lock().lock().expect("test lock");
     let _ = fs::remove_dir_all("run/market");
     fs::create_dir_all("run/market").expect("create market dir");
     fs::write(
