@@ -804,14 +804,17 @@ impl StateStore {
                 }
                 ObjectValue::GovProposal(p) => {
                     hasher.update(b"gov_proposal");
+                    hasher.update(p.proposal_id.to_le_bytes());
                     hasher.update(p.title.as_bytes());
                     hasher.update(p.proposer.as_bytes());
                     hasher.update((p.status as u8).to_le_bytes());
+                    hasher.update(p.version.to_le_bytes());
                 }
                 ObjectValue::GovParam(p) => {
                     hasher.update(b"gov_param");
                     hasher.update(p.key.as_bytes());
                     hasher.update(p.value.as_bytes());
+                    hasher.update(p.version.to_le_bytes());
                 }
             }
         }
