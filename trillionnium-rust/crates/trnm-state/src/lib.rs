@@ -446,9 +446,11 @@ impl StateStore {
         }
         validate_gov_param_value(&key, &value)?;
         if !is_sensitive_gov_param(&key) {
-            // Defensive cleanup parity with checked writes: non-sensitive params must never
-            // retain pending timelock entries (including emergency_pause in legacy/corrupt state).
+            // Preserve side-effect-free error behavior: only scrub stale pending entries
+            // after a successful write for non-sensitive keys.
+            let out = self.upsert_gov_param_unchecked(key_id, key.clone(), value)?;
             self.pending_gov_updates.remove(&key);
+            return Ok(out);
         }
         self.upsert_gov_param_unchecked(key_id, key, value)
     }
@@ -503,16 +505,17 @@ impl StateStore {
             // Defensive cleanup: non-sensitive keys must not carry queued timelock state.
             // This keeps emergency_pause and other immediate keys deterministic even if
             // a legacy/corrupt snapshot left stale pending entries behind.
-            self.pending_gov_updates.remove(&key);
             if action == GovPendingUpdateAction::Cancel {
+                self.pending_gov_updates.remove(&key);
                 return Err(format!(
                     "governance cancel not supported for non-sensitive key {}",
                     key
                 ));
             }
-            // Idempotence guard: once stale pending state is scrubbed, re-applying the exact
-            // same value should not churn object versions.
+            // Idempotence guard: re-applying the exact same value should not churn object
+            // versions, but still scrubs stale pending non-sensitive timelock residue.
             if self.gov_param_value(&key) == Some(value.as_str()) {
+                self.pending_gov_updates.remove(&key);
                 if let Some(existing_ref) = self
                     .gov_param_key_index
                     .get(&key)
@@ -522,7 +525,8 @@ impl StateStore {
                     return Ok(GovParamUpdateOutcome::Applied(existing_ref));
                 }
             }
-            let r = self.upsert_gov_param_unchecked(key_id, key, value)?;
+            let r = self.upsert_gov_param_unchecked(key_id, key.clone(), value)?;
+            self.pending_gov_updates.remove(&key);
             return Ok(GovParamUpdateOutcome::Applied(r));
         }
 
@@ -886,6 +890,7 @@ mod tests {
             creator: "alice".into(),
             bounty: 10,
             status: TaskStatus::Open,
+            proof_type: Default::default(),
             worker: None,
             committed_hash: None,
             result_hash: None,
@@ -918,6 +923,7 @@ mod tests {
             creator: "alice".into(),
             bounty: 1,
             status: TaskStatus::Open,
+            proof_type: Default::default(),
             worker: None,
             committed_hash: None,
             result_hash: None,
@@ -1229,6 +1235,7 @@ mod tests {
             creator: "alice".into(),
             bounty: 10,
             status: TaskStatus::Open,
+            proof_type: Default::default(),
             worker: None,
             committed_hash: None,
             result_hash: None,
@@ -1264,6 +1271,66 @@ mod tests {
             .set_gov_param_unchecked(7405, "max_block_ms".into(), "20".into())
             .unwrap_err();
         assert!(err.contains("not GovParam"));
+    }
+
+    #[test]
+    fn governance_non_sensitive_failed_apply_does_not_scrub_pending_queue() {
+        // Merge-gate guard: failed writes must be side-effect free for unrelated
+        // pending governance state (except explicit Cancel unsupported path).
+        let mut st = StateStore::new();
+
+        st.pending_gov_updates.insert(
+            "max_block_ms".into(),
+            PendingGovParamUpdate {
+                key_id: 7_400,
+                key: "max_block_ms".into(),
+                value: "15".into(),
+                activate_at_height: 77_700,
+            },
+        );
+
+        let task = TaskObject {
+            task_id: 7_400,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Open,
+            proof_type: Default::default(),
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        };
+        st.put_task_new(task).unwrap();
+
+        let err_unchecked = st
+            .set_gov_param_unchecked(7_400, "max_block_ms".into(), "15".into())
+            .unwrap_err();
+        assert!(err_unchecked.contains("not GovParam"));
+        assert!(
+            st.pending_gov_update("max_block_ms").is_some(),
+            "failed unchecked apply must not scrub pending queue"
+        );
+
+        let err_checked = st
+            .set_gov_param(77_701, 7_400, "max_block_ms".into(), "15".into())
+            .unwrap_err();
+        assert!(err_checked.contains("not GovParam"));
+
+        let pending = st
+            .pending_gov_update("max_block_ms")
+            .expect("failed checked apply must not scrub pending queue");
+        assert_eq!(pending.key_id, 7_400);
+        assert_eq!(pending.activate_at_height, 77_700);
     }
 
     #[test]
@@ -2495,6 +2562,7 @@ mod tests {
             creator: "alice".into(),
             bounty: 100,
             status: TaskStatus::Challenged,
+            proof_type: Default::default(),
             worker: Some("worker-1".into()),
             committed_hash: Some([1u8; 32]),
             result_hash: Some([2u8; 32]),
