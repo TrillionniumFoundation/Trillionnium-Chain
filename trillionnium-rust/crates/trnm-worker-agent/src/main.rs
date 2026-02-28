@@ -246,9 +246,14 @@ fn build_provenance_fingerprint(
     Some(hex::encode(h.finalize()))
 }
 
+fn normalized_schema_version(value: Option<&str>) -> Option<String> {
+    normalized_optional_field(value).map(|v| v.to_ascii_lowercase())
+}
+
 fn to_enterprise_audit_export(rec: &MessageIngressRecord) -> EnterpriseAuditExportRecord {
     let provenance = rec.llm_provenance.as_ref();
-    let is_v2 = rec.provenance_schema_version.as_deref() == Some("llm.v2");
+    let schema_version = normalized_schema_version(rec.provenance_schema_version.as_deref());
+    let is_v2 = schema_version.as_deref() == Some("llm.v2");
 
     let provider = provenance.and_then(|p| p.provider.clone());
     let model = provenance.and_then(|p| p.model.clone());
@@ -261,7 +266,7 @@ fn to_enterprise_audit_export(rec: &MessageIngressRecord) -> EnterpriseAuditExpo
         .flatten();
 
     let provenance_fingerprint = build_provenance_fingerprint(
-        rec.provenance_schema_version.as_deref(),
+        schema_version.as_deref(),
         provider.as_deref(),
         model.as_deref(),
         adapter.as_deref(),
@@ -274,7 +279,7 @@ fn to_enterprise_audit_export(rec: &MessageIngressRecord) -> EnterpriseAuditExpo
         task_id: rec.task_id,
         status: rec.status.clone(),
         provider_request_id: rec.provider_request_id.clone(),
-        provenance_schema_version: rec.provenance_schema_version.clone(),
+        provenance_schema_version: schema_version,
         provenance_fingerprint,
         provider,
         model,
@@ -1580,6 +1585,58 @@ mod tests {
             Some("cn-pii-restricted")
         );
         assert_eq!(export.provider.as_deref(), Some("openai"));
+        let expected = build_provenance_fingerprint(
+            Some("llm.v2"),
+            Some("openai"),
+            Some("gpt-5.3-codex"),
+            Some("mcp"),
+            Some("a2a"),
+            Some("cn-pii-restricted"),
+        );
+        assert_eq!(export.provenance_fingerprint, expected);
+    }
+
+    #[test]
+    fn enterprise_audit_export_accepts_case_and_whitespace_drift_for_v2_schema() {
+        let rec = MessageIngressRecord {
+            request_id: "r-audit-v2-drift".to_string(),
+            task_id: 7011,
+            channel: "telegram".to_string(),
+            user_id: "u1".to_string(),
+            session_id: "s1".to_string(),
+            text: "hello".to_string(),
+            idempotency_key: "ik-audit-v2-drift".to_string(),
+            status: RequestStatus::Assigned.as_str().to_string(),
+            created_at_unix_ms: 1,
+            assigned_worker: Some("worker-1".to_string()),
+            assigned_at_unix_ms: Some(2),
+            model_output: None,
+            provider_request_id: Some("provider-7011".to_string()),
+            provenance_schema_version: Some("  LLM.V2  ".to_string()),
+            llm_provenance: Some(LlmProvenanceRecord {
+                provider: Some("openai".to_string()),
+                model: Some("gpt-5.3-codex".to_string()),
+                adapter: Some("mcp".to_string()),
+                agent_protocol: Some("a2a".to_string()),
+                compliance_profile: Some("cn-pii-restricted".to_string()),
+            }),
+            result_hash: None,
+            verifier_status: None,
+            resolution_code: None,
+            commit_tx_hash: None,
+            reveal_tx_hash: None,
+            adapter_error: None,
+            reputation_delta: None,
+        };
+
+        let export = to_enterprise_audit_export(&rec);
+        assert_eq!(export.provenance_schema_version.as_deref(), Some("llm.v2"));
+        assert_eq!(export.agent_protocol.as_deref(), Some("a2a"));
+        assert_eq!(
+            export.compliance_profile.as_deref(),
+            Some("cn-pii-restricted")
+        );
+
         let expected = build_provenance_fingerprint(
             Some("llm.v2"),
             Some("openai"),
