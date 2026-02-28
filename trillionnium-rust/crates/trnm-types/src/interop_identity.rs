@@ -70,6 +70,17 @@ fn normalize_revert_reason(reason: String) -> String {
     }
 }
 
+fn canonical_path_segment(raw: &str) -> String {
+    raw.trim()
+        .chars()
+        .map(|ch| match ch {
+            '/' | '\\' => '_',
+            c if c.is_whitespace() || c.is_control() => '_',
+            c => c,
+        })
+        .collect()
+}
+
 impl SettlementRecord {
     /// Stable PoC scaffold path for dual-chain settlement state-machine evidence.
     ///
@@ -78,9 +89,9 @@ impl SettlementRecord {
     pub fn evidence_path(&self) -> String {
         format!(
             "settlements/{}/{}/{}/{}/{}@{}",
-            self.route.route_id,
-            self.route.source_chain,
-            self.route.target_chain,
+            canonical_path_segment(&self.route.route_id),
+            canonical_path_segment(&self.route.source_chain),
+            canonical_path_segment(&self.route.target_chain),
             self.settlement_id,
             self.status.as_str(),
             self.at_height
@@ -1640,6 +1651,27 @@ mod tests {
         assert_eq!(
             rec_reverted.evidence_path(),
             "settlements/eth->trnm/ethereum/trillionnium/44/reverted@2001"
+        );
+    }
+
+    #[test]
+    fn settlement_evidence_path_sanitizes_route_segments_for_filesystem_safety() {
+        let rec = SettlementRecord {
+            settlement_id: 45,
+            route: BridgeRoute {
+                route_id: "eth/mainnet -> trnm".to_string(),
+                source_chain: "ethereum/mainnet".to_string(),
+                target_chain: "trillionnium\nalpha".to_string(),
+            },
+            status: SettlementStatus::Pending,
+            at_height: 2_222,
+            settlement_tx: None,
+            revert_reason: None,
+        };
+
+        assert_eq!(
+            rec.evidence_path(),
+            "settlements/eth_mainnet_->_trnm/ethereum_mainnet/trillionnium_alpha/45/pending@2222"
         );
     }
 
