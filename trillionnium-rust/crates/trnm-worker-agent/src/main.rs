@@ -128,6 +128,12 @@ enum Command {
         #[arg(long, default_value = "/tmp/trnm-worker-agent-progress.jsonl")]
         progress_log: PathBuf,
     },
+    ExportAudit {
+        #[arg(long, default_value = "run/message-gateway/requests.jsonl")]
+        ingress_file: PathBuf,
+        #[arg(long, default_value = "audit-export.jsonl")]
+        output_file: PathBuf,
+    },
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -3254,6 +3260,34 @@ fn main() -> Result<()> {
                 }
             }
             println!("[agent] flushed_records={} skipped={} execute={} ack_log={} event_log={} progress_log={} run_id={}", n, skipped, execute, ack_log.display(), event_log.display(), progress_log.display(), run_id);
+        }
+        Command::ExportAudit {
+            ingress_file,
+            output_file,
+        } => {
+            let records = load_ingress_records(&ingress_file)?;
+            let mut n = 0usize;
+            
+            // clear or create output file
+            if let Some(parent) = output_file.parent() {
+                fs::create_dir_all(parent)?;
+            }
+            let mut file = fs::File::create(&output_file)?;
+
+            for rec in records.iter() {
+                // Only export finalized or processed requests
+                if matches!(
+                    rec.status.as_str(),
+                    "reveal_submitted" | "rejected" | "failed_submission" | "failed_adapter"
+                ) {
+                    let export = to_enterprise_audit_export(rec);
+                    let line = serde_json::to_string(&export)?;
+                    file.write_all(line.as_bytes())?;
+                    file.write_all(b"\n")?;
+                    n += 1;
+                }
+            }
+            println!("[agent] exported audit records={} file={}", n, output_file.display());
         }
     }
     Ok(())
