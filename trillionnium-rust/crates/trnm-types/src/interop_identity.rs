@@ -3106,6 +3106,49 @@ mod tests {
     }
 
     #[test]
+    fn verify_capability_fail_closed_prefers_inactive_token_before_did_lookup() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did(
+            "did:trnm:settler-fail-closed".to_string(),
+            "org:lane2-admin".to_string(),
+            10,
+        )
+        .unwrap();
+        let token_id = reg
+            .issue_capability(
+                "org:lane2-admin".to_string(),
+                "did:trnm:settler-fail-closed".to_string(),
+                CapabilityScope::BridgeSettle,
+                20,
+                Some(25),
+            )
+            .unwrap();
+
+        // Simulate stale/corrupt snapshot: token exists, subject DID missing.
+        reg.dids.remove("did:trnm:settler-fail-closed");
+
+        let err = reg
+            .verify_capability(
+                "org:lane2-admin",
+                token_id,
+                CapabilityScope::BridgeSettle,
+                30,
+            )
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            InteropIdentityError::CapabilityInactive {
+                token_id: id,
+                at_height: 30,
+                issued_at: 20,
+                expires_at: Some(25),
+                revoked_at: None,
+            } if id == token_id
+        ));
+    }
+
+    #[test]
     fn verify_capability_rejects_inactive_or_unauthorized_actor() {
         let mut reg = IdentityRegistry::default();
         reg.register_did(
