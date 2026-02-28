@@ -496,6 +496,9 @@ impl IdentityRegistry {
                     _ => {}
                 }
             }
+            if token.expires_at == expires_at {
+                return Ok(());
+            }
             token.expires_at = expires_at;
         }
 
@@ -2466,7 +2469,7 @@ mod tests {
     }
 
     #[test]
-    fn renew_capability_with_same_expiry_is_idempotent_but_still_audited() {
+    fn renew_capability_with_same_expiry_is_idempotent_without_new_audit() {
         let mut reg = IdentityRegistry::default();
         reg.register_did(
             "did:trnm:agent-renew-same-expiry".to_string(),
@@ -2492,15 +2495,11 @@ mod tests {
         let token = reg.capability(token_id).unwrap();
         assert_eq!(token.expires_at, Some(40));
         assert_eq!(token.revoked_at, None);
-        assert_eq!(reg.audit_trail().len(), audit_len_before + 1);
+        assert_eq!(reg.audit_trail().len(), audit_len_before);
 
         let last = reg.audit_trail().last().unwrap();
-        assert_eq!(last.action, AuditAction::CapabilityRenewed);
-        assert_eq!(last.at_height, 30);
-        assert_eq!(
-            last.note.as_deref(),
-            Some("token_id=1 expires_at=Some(40)")
-        );
+        assert_eq!(last.action, AuditAction::CapabilityIssued);
+        assert_eq!(last.at_height, 20);
     }
 
     #[test]
@@ -2539,7 +2538,7 @@ mod tests {
     }
 
     #[test]
-    fn renew_capability_allows_non_expiring_token_without_expiry_regression() {
+    fn renew_capability_with_non_expiring_token_is_idempotent_without_new_audit() {
         let mut reg = IdentityRegistry::default();
         reg.register_did(
             "did:trnm:agent-renew-no-expiry".to_string(),
@@ -2558,19 +2557,21 @@ mod tests {
             )
             .unwrap();
 
+        let audit_len_before = reg.audit_trail().len();
+
         reg.renew_capability("org:lane2-admin".to_string(), token_id, 25, None)
             .unwrap();
 
         let token = reg.capability(token_id).unwrap();
         assert_eq!(token.expires_at, None);
         assert_eq!(token.revoked_at, None);
+        assert_eq!(reg.audit_trail().len(), audit_len_before);
 
         let last = reg.audit_trail().last().unwrap();
-        assert_eq!(last.action, AuditAction::CapabilityRenewed);
+        assert_eq!(last.action, AuditAction::CapabilityIssued);
         assert_eq!(last.actor, "org:lane2-admin");
         assert_eq!(last.subject, "did:trnm:agent-renew-no-expiry");
-        assert_eq!(last.at_height, 25);
-        assert_eq!(last.note.as_deref(), Some("token_id=1 expires_at=None"));
+        assert_eq!(last.at_height, 20);
     }
 
     #[test]
