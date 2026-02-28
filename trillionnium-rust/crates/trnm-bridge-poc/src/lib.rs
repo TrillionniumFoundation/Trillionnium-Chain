@@ -31,6 +31,7 @@ pub mod bridge_status {
         Unauthorized { subject: String, action: &'static str },
         InvalidTransition { from: &'static str, to: &'static str },
         InvalidHeight { height: u64 },
+        InvalidRevertReason,
         MalformedToken { reason: &'static str },
     }
 
@@ -129,6 +130,9 @@ pub mod bridge_status {
         }
 
         fn transition_to_reverted(&mut self, reason: String) -> Result<(), SettlementError> {
+            if reason.trim().is_empty() {
+                return Err(SettlementError::InvalidRevertReason);
+            }
             match self.status {
                 BridgeStatus::Pending => {
                     self.status = BridgeStatus::Reverted(reason);

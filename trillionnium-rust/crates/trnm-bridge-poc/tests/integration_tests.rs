@@ -69,6 +69,21 @@ fn test_authorized_finalize_rejects_missing_capability() {
 }
 
 #[test]
+fn test_authorized_revert_rejects_empty_reason() {
+    let mut request = SettlementRequest::new(1, "0xbbc".to_string());
+    let token = CapabilityToken {
+        subject: "agent:worker-b".to_string(),
+        capabilities: vec![SettlementCapability::Revert],
+    };
+
+    let err = request
+        .revert_authorized(&token, "   ".to_string())
+        .unwrap_err();
+    assert_eq!(err, SettlementError::InvalidRevertReason);
+    assert_eq!(request.status, BridgeStatus::Pending);
+}
+
+#[test]
 fn test_authorized_transition_blocks_terminal_rewrite() {
     let mut request = SettlementRequest::new(10, "0xccc".to_string());
     let admin = CapabilityToken {
