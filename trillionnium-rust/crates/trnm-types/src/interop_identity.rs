@@ -2466,6 +2466,41 @@ mod tests {
     }
 
     #[test]
+    fn renew_capability_allows_non_expiring_token_without_expiry_regression() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did(
+            "did:trnm:agent-renew-no-expiry".to_string(),
+            "org:lane2-admin".to_string(),
+            10,
+        )
+        .unwrap();
+
+        let token_id = reg
+            .issue_capability(
+                "org:lane2-admin".to_string(),
+                "did:trnm:agent-renew-no-expiry".to_string(),
+                CapabilityScope::AuditRead,
+                20,
+                None,
+            )
+            .unwrap();
+
+        reg.renew_capability("org:lane2-admin".to_string(), token_id, 25, None)
+            .unwrap();
+
+        let token = reg.capability(token_id).unwrap();
+        assert_eq!(token.expires_at, None);
+        assert_eq!(token.revoked_at, None);
+
+        let last = reg.audit_trail().last().unwrap();
+        assert_eq!(last.action, AuditAction::CapabilityRenewed);
+        assert_eq!(last.actor, "org:lane2-admin");
+        assert_eq!(last.subject, "did:trnm:agent-renew-no-expiry");
+        assert_eq!(last.at_height, 25);
+        assert_eq!(last.note.as_deref(), Some("token_id=1 expires_at=None"));
+    }
+
+    #[test]
     fn renew_capability_rejects_expiry_regression_without_side_effects() {
         let mut reg = IdentityRegistry::default();
         reg.register_did(
