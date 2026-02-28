@@ -40,6 +40,15 @@ impl VerifierRegistry {
         }
     }
 
+    /// Returns normalized proof-type keys currently registered in lexical order.
+    ///
+    /// This supports V1 plugin observability/debugging without exposing verifier internals.
+    pub fn registered_proof_types(&self) -> Vec<String> {
+        let mut keys: Vec<String> = self.verifiers.keys().cloned().collect();
+        keys.sort();
+        keys
+    }
+
     pub fn verify(&self, task: &TaskObject, proof_data: &[u8]) -> VerificationResult {
         let key = match task.proof_type {
             ProofType::Fraud => "fraud",
@@ -163,6 +172,19 @@ mod tests {
         assert_eq!(
             registry.verify(&task, b"receipt"),
             VerificationResult::Invalid("new".to_string())
+        );
+    }
+
+    #[test]
+    fn registry_registered_proof_types_are_normalized_and_sorted() {
+        let mut registry = VerifierRegistry::new();
+        registry.register(Arc::new(AlwaysValidVerifier { kind: " ZK " }));
+        registry.register(Arc::new(AlwaysValidVerifier { kind: "fraud" }));
+        registry.register(Arc::new(AlwaysValidVerifier { kind: "TEE" }));
+
+        assert_eq!(
+            registry.registered_proof_types(),
+            vec!["fraud".to_string(), "tee".to_string(), "zk".to_string()]
         );
     }
 
