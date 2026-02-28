@@ -312,3 +312,36 @@ fn market_match_prefers_higher_reputation_when_weighted_score_is_better() {
     assert!(match_out.contains("\"match_policy\":\"price_reputation_weighted\""));
     assert!(match_out.contains("\"winner_reputation\":200"));
 }
+
+#[test]
+fn market_match_output_is_valid_json_when_winner_contains_quotes() {
+    let _guard = test_lock().lock().expect("test lock");
+    let _ = fs::remove_dir_all("run/market");
+
+    let create_out = run_ok(&[
+        "market.create_task",
+        "--creator",
+        "alice",
+        "--bounty",
+        "100",
+        "--description",
+        "m1 json escaping",
+    ]);
+    let created: Value = serde_json::from_str(&create_out).expect("create task JSON");
+    let task_id = created["task_id"].as_u64().expect("task_id").to_string();
+
+    run_ok(&[
+        "market.submit_bid",
+        "--task-id",
+        &task_id,
+        "--worker",
+        "worker-\"quoted\"",
+        "--price",
+        "88",
+    ]);
+
+    let match_out = run_ok(&["market.match_task", "--task-id", &task_id]);
+    let matched: Value = serde_json::from_str(match_out.trim()).expect("match output JSON");
+    assert_eq!(matched["winner"], "worker-\"quoted\"");
+    assert_eq!(matched["status"], "matched");
+}

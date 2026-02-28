@@ -221,6 +221,17 @@ struct MarketBid {
     created_at_unix_ms: u128,
 }
 
+#[derive(Debug, Clone, Serialize)]
+struct MarketMatchResult {
+    task_id: u64,
+    winner: String,
+    price: u128,
+    status: String,
+    match_policy: String,
+    winner_reputation: i64,
+    effective_score: u128,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct MessageIngressRecord {
     request_id: String,
@@ -2075,14 +2086,16 @@ fn main() -> Result<()> {
             task.status = "matched".into();
             save_market_tasks(&tasks)?;
 
-            println!(
-                "{{\"task_id\":{},\"winner\":\"{}\",\"price\":{},\"status\":\"matched\",\"match_policy\":\"price_reputation_weighted\",\"winner_reputation\":{},\"effective_score\":{}}}",
+            let out = MarketMatchResult {
                 task_id,
-                winner.worker,
-                winner.price,
+                winner: winner.worker.clone(),
+                price: winner.price,
+                status: "matched".into(),
+                match_policy: "price_reputation_weighted".into(),
                 winner_reputation,
-                winner_score
-            );
+                effective_score: winner_score,
+            };
+            println!("{}", serde_json::to_string(&out)?);
         }
         Command::DispatchOpen { worker_id, limit } => {
             let limit = clamp_limit(
