@@ -762,6 +762,10 @@ fn normalize_market_worker_key(raw: &str) -> Option<String> {
     }
 }
 
+fn market_worker_tie_break_key(raw: &str) -> String {
+    normalize_market_worker_key(raw).unwrap_or_else(|| raw.trim().to_ascii_lowercase())
+}
+
 fn load_market_reputation() -> BTreeMap<String, i64> {
     let path = market_reputation_file();
     let Ok(raw) = fs::read_to_string(path) else {
@@ -2054,11 +2058,12 @@ fn main() -> Result<()> {
                     let rep = normalize_market_worker_key(&b.worker)
                         .and_then(|k| reputation.get(&k).copied())
                         .unwrap_or(0);
+                    let worker_key = market_worker_tie_break_key(&b.worker);
                     (
                         market_effective_score(b.price, rep),
                         b.price,
                         b.created_at_unix_ms,
-                        &b.worker,
+                        worker_key,
                     )
                 })
                 .expect("non-empty bids");
@@ -2279,6 +2284,12 @@ mod tests {
         );
 
         let _ = fs::remove_file(path);
+    }
+
+    #[test]
+    fn market_worker_tie_break_key_normalizes_case_and_whitespace() {
+        assert_eq!(market_worker_tie_break_key(" Worker-A "), "worker-a");
+        assert_eq!(market_worker_tie_break_key("worker-Z"), "worker-z");
     }
 
     #[test]
