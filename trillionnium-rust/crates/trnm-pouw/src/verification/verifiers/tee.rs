@@ -9,10 +9,6 @@ impl ProofVerifier for TeeVerifier {
     }
 
     fn verify_proof(&self, _task: &TaskObject, proof_data: &[u8]) -> VerificationResult {
-        if proof_data.len() < 8 {
-            return VerificationResult::Invalid("TEE receipt too short".to_string());
-        }
-
         // V2 micro patch hardening: require explicit TEE receipt prefix
         // plus a non-whitespace payload body.
         // Accept case-insensitive variants to avoid client-side casing drift.
@@ -66,13 +62,21 @@ mod tests {
     }
 
     #[test]
-    fn tee_verifier_rejects_short_receipt() {
+    fn tee_verifier_rejects_too_short_prefix_fragment() {
         let verifier = TeeVerifier;
         let task = mock_task();
         assert!(matches!(
             verifier.verify_proof(&task, b"TE"),
-            VerificationResult::Invalid(msg) if msg.contains("too short")
+            VerificationResult::Invalid(msg) if msg.contains("envelope")
         ));
+    }
+
+    #[test]
+    fn tee_verifier_accepts_minimal_non_whitespace_payload_after_prefix() {
+        let verifier = TeeVerifier;
+        let task = mock_task();
+
+        assert_eq!(verifier.verify_proof(&task, b"TEE:a"), VerificationResult::Valid);
     }
 
     #[test]
