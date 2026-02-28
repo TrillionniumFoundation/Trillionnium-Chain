@@ -61,6 +61,7 @@
         "producer_did": {
           "type": "string",
           "minLength": 1,
+          "maxLength": 128,
           "pattern": "^did:[a-z0-9]+:[^\\s]+$"
         },
         "produced_at": {
