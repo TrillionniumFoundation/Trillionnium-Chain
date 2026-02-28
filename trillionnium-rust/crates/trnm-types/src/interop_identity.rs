@@ -226,6 +226,7 @@ pub enum AuditAction {
     DidRegistered,
     DidRevoked,
     CapabilityIssued,
+    CapabilityRenewed,
     CapabilityRevoked,
 }
 
@@ -424,6 +425,65 @@ impl IdentityRegistry {
             subject,
             at_height,
             note,
+        );
+        Ok(())
+    }
+
+    pub fn renew_capability(
+        &mut self,
+        actor: String,
+        token_id: u64,
+        at_height: u64,
+        expires_at: Option<u64>,
+    ) -> Result<(), InteropIdentityError> {
+        Self::validate_identity_field("actor", &actor)?;
+
+        if let Some(exp) = expires_at {
+            if exp < at_height {
+                return Err(InteropIdentityError::InvalidCapabilityExpiry {
+                    issued_at: at_height,
+                    expires_at: exp,
+                });
+            }
+        }
+
+        let subject_did = self
+            .capabilities
+            .get(&token_id)
+            .ok_or(InteropIdentityError::CapabilityNotFound { token_id })?
+            .subject_did
+            .clone();
+        let did = self
+            .dids
+            .get(&subject_did)
+            .ok_or_else(|| InteropIdentityError::DidNotFound {
+                did: subject_did.clone(),
+            })?;
+        Self::ensure_actor_controls_did(&actor, did)?;
+
+        {
+            let token = self
+                .capabilities
+                .get_mut(&token_id)
+                .ok_or(InteropIdentityError::CapabilityNotFound { token_id })?;
+            if !token.is_active_at(at_height) {
+                return Err(InteropIdentityError::CapabilityInactive {
+                    token_id,
+                    at_height,
+                    issued_at: token.issued_at,
+                    expires_at: token.expires_at,
+                    revoked_at: token.revoked_at,
+                });
+            }
+            token.expires_at = expires_at;
+        }
+
+        self.push_audit(
+            AuditAction::CapabilityRenewed,
+            actor,
+            subject_did,
+            at_height,
+            Some(format!("token_id={} expires_at={:?}", token_id, expires_at)),
         );
         Ok(())
     }
@@ -2324,6 +2384,40 @@ mod tests {
             .unwrap();
 
         assert_eq!(token_id, 1);
+    }
+
+    #[test]
+    fn renew_capability_extends_expiry_and_appends_audit() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did(
+            "did:trnm:agent-renew".to_string(),
+            "org:lane2-admin".to_string(),
+            10,
+        )
+        .unwrap();
+
+        let token_id = reg
+            .issue_capability(
+                "org:lane2-admin".to_string(),
+                "did:trnm:agent-renew".to_string(),
+                CapabilityScope::AuditRead,
+                20,
+                Some(30),
+            )
+            .unwrap();
+
+        reg.renew_capability("org:lane2-admin".to_string(), token_id, 25, Some(45))
+            .unwrap();
+
+        let token = reg.capability(token_id).unwrap();
+        assert_eq!(token.expires_at, Some(45));
+
+        let last = reg.audit_trail().last().unwrap();
+        assert_eq!(last.action, AuditAction::CapabilityRenewed);
+        assert_eq!(last.actor, "org:lane2-admin");
+        assert_eq!(last.subject, "did:trnm:agent-renew");
+        assert_eq!(last.at_height, 25);
+        assert_eq!(last.note.as_deref(), Some("token_id=1 expires_at=Some(45)"));
     }
 
     #[test]
