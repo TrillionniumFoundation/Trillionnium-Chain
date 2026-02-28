@@ -2,7 +2,7 @@ pub mod registry;
 pub mod verifiers;
 
 use serde::{Deserialize, Serialize};
-use trnm_types::TaskObject;
+use trnm_types::{ProofType, TaskObject};
 
 /// Result of a verification attempt.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -55,6 +55,33 @@ impl VerificationReceipt {
             },
             timestamp_ms,
         }
+    }
+
+    /// Builds a canonical receipt directly from task metadata.
+    ///
+    /// This avoids proof-type string drift between V1 adapter routing and persisted V2 receipts.
+    pub fn from_task(
+        task: &TaskObject,
+        result: VerificationResult,
+        verifier_id: impl AsRef<str>,
+        timestamp_ms: u64,
+    ) -> Self {
+        Self::new(
+            task.task_id,
+            proof_type_key(task.proof_type),
+            result,
+            verifier_id,
+            timestamp_ms,
+        )
+    }
+}
+
+/// Returns the canonical key used across verification routing and receipt persistence.
+pub fn proof_type_key(proof_type: ProofType) -> &'static str {
+    match proof_type {
+        ProofType::Fraud => "fraud",
+        ProofType::Tee => "tee",
+        ProofType::Zk => "zk",
     }
 }
 
@@ -168,13 +195,7 @@ mod tests {
 
     #[test]
     fn verification_receipt_new_normalizes_fields() {
-        let receipt = VerificationReceipt::new(
-            7,
-            " TEE ",
-            VerificationResult::Valid,
-            "   ",
-            123,
-        );
+        let receipt = VerificationReceipt::new(7, " TEE ", VerificationResult::Valid, "   ", 123);
 
         assert_eq!(receipt.task_id, 7);
         assert_eq!(receipt.proof_type, "tee");
@@ -198,5 +219,28 @@ mod tests {
             receipt.result,
             VerificationResult::Indeterminate(msg) if msg == "deferred"
         ));
+    }
+
+    #[test]
+    fn proof_type_key_returns_canonical_router_keys() {
+        assert_eq!(proof_type_key(ProofType::Fraud), "fraud");
+        assert_eq!(proof_type_key(ProofType::Tee), "tee");
+        assert_eq!(proof_type_key(ProofType::Zk), "zk");
+    }
+
+    #[test]
+    fn verification_receipt_from_task_uses_canonical_proof_key_and_task_id() {
+        let mut task = mock_task();
+        task.task_id = 77;
+        task.proof_type = ProofType::Tee;
+
+        let receipt =
+            VerificationReceipt::from_task(&task, VerificationResult::Valid, " tee-verifier ", 789);
+
+        assert_eq!(receipt.task_id, 77);
+        assert_eq!(receipt.proof_type, "tee");
+        assert_eq!(receipt.verifier_id, "tee-verifier");
+        assert_eq!(receipt.timestamp_ms, 789);
+        assert_eq!(receipt.result, VerificationResult::Valid);
     }
 }

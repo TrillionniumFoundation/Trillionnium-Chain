@@ -3,7 +3,7 @@ use std::sync::Arc;
 
 use trnm_types::{ProofType, TaskObject};
 
-use super::{verifiers, ProofVerifier, VerificationResult};
+use super::{proof_type_key, verifiers, ProofVerifier, VerificationResult};
 
 pub struct VerifierRegistry {
     verifiers: HashMap<String, Arc<dyn ProofVerifier + Send + Sync>>,
@@ -53,20 +53,11 @@ impl VerifierRegistry {
     ///
     /// This gives V1 callers a low-cost readiness probe before dispatching work.
     pub fn is_registered_for(&self, proof_type: ProofType) -> bool {
-        let key = match proof_type {
-            ProofType::Fraud => "fraud",
-            ProofType::Tee => "tee",
-            ProofType::Zk => "zk",
-        };
-        self.verifiers.contains_key(key)
+        self.verifiers.contains_key(proof_type_key(proof_type))
     }
 
     pub fn verify(&self, task: &TaskObject, proof_data: &[u8]) -> VerificationResult {
-        let key = match task.proof_type {
-            ProofType::Fraud => "fraud",
-            ProofType::Tee => "tee",
-            ProofType::Zk => "zk",
-        };
+        let key = proof_type_key(task.proof_type);
 
         match self.verifiers.get(key) {
             Some(verifier) => verifier.verify_proof(task, proof_data),
@@ -82,7 +73,7 @@ impl VerifierRegistry {
 mod tests {
     use super::*;
     use std::sync::Arc;
-    use trnm_types::{TaskStatus, TaskObject};
+    use trnm_types::{TaskObject, TaskStatus};
 
     struct AlwaysValidVerifier {
         kind: &'static str,
@@ -144,7 +135,10 @@ mod tests {
         registry.register(Arc::new(AlwaysValidVerifier { kind: "TEE" }));
 
         let task = task_with_proof_type(ProofType::Tee);
-        assert_eq!(registry.verify(&task, b"receipt"), VerificationResult::Valid);
+        assert_eq!(
+            registry.verify(&task, b"receipt"),
+            VerificationResult::Valid
+        );
     }
 
     #[test]
@@ -153,7 +147,10 @@ mod tests {
         registry.register(Arc::new(AlwaysValidVerifier { kind: " tee " }));
 
         let task = task_with_proof_type(ProofType::Tee);
-        assert_eq!(registry.verify(&task, b"receipt"), VerificationResult::Valid);
+        assert_eq!(
+            registry.verify(&task, b"receipt"),
+            VerificationResult::Valid
+        );
     }
 
     #[test]
@@ -243,9 +240,18 @@ mod tests {
         let tee_task = task_with_proof_type(ProofType::Tee);
         let zk_task = task_with_proof_type(ProofType::Zk);
 
-        assert_eq!(registry.verify(&fraud_task, b"FRAUD:challenge"), VerificationResult::Valid);
-        assert_eq!(registry.verify(&tee_task, b"TEE:quote"), VerificationResult::Valid);
-        assert_eq!(registry.verify(&zk_task, b"ZK:payload!"), VerificationResult::Valid);
+        assert_eq!(
+            registry.verify(&fraud_task, b"FRAUD:challenge"),
+            VerificationResult::Valid
+        );
+        assert_eq!(
+            registry.verify(&tee_task, b"TEE:quote"),
+            VerificationResult::Valid
+        );
+        assert_eq!(
+            registry.verify(&zk_task, b"ZK:payload!"),
+            VerificationResult::Valid
+        );
     }
 
     #[test]
@@ -270,4 +276,3 @@ mod tests {
         ));
     }
 }
-
