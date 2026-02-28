@@ -55,6 +55,11 @@ pub mod bridge_status {
                     reason: "empty subject",
                 });
             }
+            if token.subject.trim() != token.subject || token.subject.chars().any(char::is_control) {
+                return Err(SettlementError::MalformedToken {
+                    reason: "non-canonical subject",
+                });
+            }
             Ok(())
         }
 

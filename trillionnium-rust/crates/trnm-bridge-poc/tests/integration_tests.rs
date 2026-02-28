@@ -105,3 +105,32 @@ fn test_authorized_calls_reject_empty_subject_token() {
     );
     assert_eq!(request.status, BridgeStatus::Pending);
 }
+
+#[test]
+fn test_authorized_calls_reject_non_canonical_subject_token() {
+    let mut request = SettlementRequest::new(43, "0xeee".to_string());
+    let malformed = CapabilityToken {
+        subject: " agent:worker-c\n".to_string(),
+        capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
+    };
+
+    let finalize_err = request.settle_authorized(&malformed, 513).unwrap_err();
+    assert_eq!(
+        finalize_err,
+        SettlementError::MalformedToken {
+            reason: "non-canonical subject",
+        }
+    );
+    assert_eq!(request.status, BridgeStatus::Pending);
+
+    let revert_err = request
+        .revert_authorized(&malformed, "bad proof".to_string())
+        .unwrap_err();
+    assert_eq!(
+        revert_err,
+        SettlementError::MalformedToken {
+            reason: "non-canonical subject",
+        }
+    );
+    assert_eq!(request.status, BridgeStatus::Pending);
+}
