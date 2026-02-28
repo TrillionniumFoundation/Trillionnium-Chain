@@ -19,8 +19,8 @@ use trnm_rpc::{
 };
 use trnm_state::StateStore;
 use trnm_types::{
-    AuditAction, AuditEvent, CapabilityToken, GovParamObject, GovProposalObject, GovProposalStatus,
-    IdentityRegistry, RequestStatus, TaskStatus, TransferTx,
+    AuditAction, AuditEvent, CapabilityScope, CapabilityToken, GovParamObject, GovProposalObject,
+    GovProposalStatus, IdentityRegistry, RequestStatus, TaskStatus, TransferTx,
 };
 
 const QUERY_EVENTS_LIMIT_DEFAULT: usize = 100;
@@ -83,6 +83,12 @@ enum Command {
     QueryCapabilityAudit {
         #[arg(long)]
         token_id: u64,
+        /// Print compact key=value summary for terminal use.
+        #[arg(long, default_value_t = false, conflicts_with = "field")]
+        summary: bool,
+        /// Print only one field value for shell scripting.
+        #[arg(long, value_enum)]
+        field: Option<CapabilityAuditFieldArg>,
     },
     /// Query challenge treasury/forfeits current summary and recent related events
     QueryChallengeTreasury {
@@ -344,6 +350,17 @@ enum CapabilityAuditQueryError {
     TokenNotFound(u64),
 }
 
+#[derive(Debug, Clone, Copy, ValueEnum)]
+enum CapabilityAuditFieldArg {
+    TokenId,
+    SubjectDid,
+    Scope,
+    IssuedAt,
+    ExpiresAt,
+    RevokedAt,
+    OwnerHistoryCount,
+}
+
 impl CapabilityAuditQueryError {
     fn to_rpc_error(&self) -> RpcErrorResponse {
         match self {
@@ -352,6 +369,67 @@ impl CapabilityAuditQueryError {
                 message: format!("capability token not found: {}", token_id),
             },
         }
+    }
+}
+
+fn capability_scope_label(scope: CapabilityScope) -> &'static str {
+    match scope {
+        CapabilityScope::BridgeSettle => "BRIDGE_SETTLE",
+        CapabilityScope::BridgeRevert => "BRIDGE_REVERT",
+        CapabilityScope::AuditRead => "AUDIT_READ",
+        CapabilityScope::MarketPublish => "MARKET_PUBLISH",
+        CapabilityScope::MarketExecute => "MARKET_EXECUTE",
+    }
+}
+
+fn print_capability_audit_summary(out: &CapabilityAuditQueryResponse) {
+    let token = &out.token;
+    let expires_at = token
+        .expires_at
+        .map(|v| v.to_string())
+        .unwrap_or_else(|| "none".to_string());
+    let revoked_at = token
+        .revoked_at
+        .map(|v| v.to_string())
+        .unwrap_or_else(|| "none".to_string());
+
+    println!(
+        "token_id={} subject_did={} scope={} issued_at={} expires_at={} revoked_at={} owner_history_count={}",
+        token.token_id,
+        token.subject_did,
+        capability_scope_label(token.scope),
+        token.issued_at,
+        expires_at,
+        revoked_at,
+        out.owner_history.len()
+    );
+}
+
+fn print_capability_audit_field(
+    out: &CapabilityAuditQueryResponse,
+    field: CapabilityAuditFieldArg,
+) {
+    let token = &out.token;
+    match field {
+        CapabilityAuditFieldArg::TokenId => println!("{}", token.token_id),
+        CapabilityAuditFieldArg::SubjectDid => println!("{}", token.subject_did),
+        CapabilityAuditFieldArg::Scope => println!("{}", capability_scope_label(token.scope)),
+        CapabilityAuditFieldArg::IssuedAt => println!("{}", token.issued_at),
+        CapabilityAuditFieldArg::ExpiresAt => println!(
+            "{}",
+            token
+                .expires_at
+                .map(|v| v.to_string())
+                .unwrap_or_else(|| "none".to_string())
+        ),
+        CapabilityAuditFieldArg::RevokedAt => println!(
+            "{}",
+            token
+                .revoked_at
+                .map(|v| v.to_string())
+                .unwrap_or_else(|| "none".to_string())
+        ),
+        CapabilityAuditFieldArg::OwnerHistoryCount => println!("{}", out.owner_history.len()),
     }
 }
 
@@ -1011,10 +1089,8 @@ fn normalize_tx_hash_lookup(raw: &str) -> String {
     for delimiter in ['=', ':'] {
         if let Some((k, v)) = normalized.split_once(delimiter) {
             let key = k.trim();
-            let normalized_key: String = key
-                .chars()
-                .filter(|c| c.is_ascii_alphanumeric())
-                .collect();
+            let normalized_key: String =
+                key.chars().filter(|c| c.is_ascii_alphanumeric()).collect();
             if normalized_key == "txhash" || normalized_key == "hash" {
                 let mut value = v.trim_matches(|c: char| {
                     c.is_ascii_whitespace()
@@ -1561,11 +1637,21 @@ fn main() -> Result<()> {
             }
             println!("{}", serde_json::to_string_pretty(&events)?);
         }
-        Command::QueryCapabilityAudit { token_id } => {
+        Command::QueryCapabilityAudit {
+            token_id,
+            summary,
+            field,
+        } => {
             let registry = load_identity_registry(&identity_registry_file());
             let out = query_capability_audit(&registry, token_id)
                 .map_err(|e| rpc_fail(e.to_rpc_error()))?;
-            println!("{}", serde_json::to_string_pretty(&out)?);
+            if let Some(field) = field {
+                print_capability_audit_field(&out, field);
+            } else if summary {
+                print_capability_audit_summary(&out);
+            } else {
+                println!("{}", serde_json::to_string_pretty(&out)?);
+            }
         }
         Command::QueryChallengeTreasury {
             limit,
@@ -2192,7 +2278,12 @@ mod tests {
         }
 
         assert_eq!(
-            env_u128_clamped("TRNM_RPC_TEST_WEIGHT_DEFAULT_DRIFT", 0, MARKET_WEIGHT_MIN, MARKET_WEIGHT_MAX),
+            env_u128_clamped(
+                "TRNM_RPC_TEST_WEIGHT_DEFAULT_DRIFT",
+                0,
+                MARKET_WEIGHT_MIN,
+                MARKET_WEIGHT_MAX
+            ),
             MARKET_WEIGHT_MIN
         );
         assert_eq!(
@@ -2227,7 +2318,10 @@ mod tests {
     #[test]
     fn normalize_tx_hash_lookup_accepts_common_key_value_forms() {
         assert_eq!(normalize_tx_hash_lookup("tx_hash=0xAbC123"), "0xabc123");
-        assert_eq!(normalize_tx_hash_lookup("TxHash = \"0xDeF456\""), "0xdef456");
+        assert_eq!(
+            normalize_tx_hash_lookup("TxHash = \"0xDeF456\""),
+            "0xdef456"
+        );
         assert_eq!(normalize_tx_hash_lookup("hash= 0xA1B2"), "0xa1b2");
         assert_eq!(normalize_tx_hash_lookup("tx_hash:0xC0FFEE"), "0xc0ffee");
         assert_eq!(normalize_tx_hash_lookup("hash : `0xBEEF`"), "0xbeef");
@@ -2240,10 +2334,7 @@ mod tests {
 
     #[test]
     fn normalize_tx_hash_lookup_trims_sentence_period_after_hash_value() {
-        assert_eq!(
-            normalize_tx_hash_lookup("tx_hash=0xAbC123."),
-            "0xabc123"
-        );
+        assert_eq!(normalize_tx_hash_lookup("tx_hash=0xAbC123."), "0xabc123");
     }
 
     #[test]
