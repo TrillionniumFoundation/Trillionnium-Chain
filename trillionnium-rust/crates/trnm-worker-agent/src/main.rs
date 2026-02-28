@@ -30,6 +30,7 @@ const LLM_ADAPTER_TIMEOUT_ENV: &str = "TRNM_LLM_ADAPTER_TIMEOUT_MS";
 const RC_OK: i32 = 0;
 const RC_DUPLICATE: i32 = 9;
 const RC_NONCE_REJECTED: i32 = 10;
+const RC_SLO_VIOLATION: i32 = 11;
 const RC_SKIPPED: i32 = -1;
 
 #[derive(Debug, Parser)]
@@ -556,7 +557,7 @@ fn parse_tx_hash(text: &str) -> Option<String> {
 }
 
 fn is_deterministic_rejection(rc: i32) -> bool {
-    matches!(rc, RC_DUPLICATE | RC_NONCE_REJECTED)
+    matches!(rc, RC_DUPLICATE | RC_NONCE_REJECTED | RC_SLO_VIOLATION)
 }
 
 fn is_idempotent_duplicate_ok(rc: i32) -> bool {
@@ -1121,6 +1122,7 @@ mod tests {
     fn deterministic_rejection_codes_are_stable() {
         assert!(is_deterministic_rejection(RC_DUPLICATE));
         assert!(is_deterministic_rejection(RC_NONCE_REJECTED));
+        assert!(is_deterministic_rejection(RC_SLO_VIOLATION));
         assert!(!is_deterministic_rejection(RC_OK));
         assert!(!is_deterministic_rejection(42));
     }
