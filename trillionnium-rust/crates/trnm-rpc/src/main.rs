@@ -733,7 +733,11 @@ fn normalize_tx_hash_lookup(raw: &str) -> String {
     for delimiter in ['=', ':'] {
         if let Some((k, v)) = normalized.split_once(delimiter) {
             let key = k.trim();
-            if key == "tx_hash" || key == "txhash" || key == "tx-hash" || key == "hash" {
+            let normalized_key: String = key
+                .chars()
+                .filter(|c| c.is_ascii_alphanumeric())
+                .collect();
+            if normalized_key == "txhash" || normalized_key == "hash" {
                 let mut value = v.trim_matches(|c: char| {
                     c.is_ascii_whitespace()
                         || matches!(c, ',' | ';' | '.' | '(' | ')' | '[' | ']' | '{' | '}')
@@ -1754,6 +1758,8 @@ mod tests {
         assert_eq!(normalize_tx_hash_lookup("tx-hash=0xCAFE"), "0xcafe");
         assert_eq!(normalize_tx_hash_lookup("tx_hash==0xFEED"), "0xfeed");
         assert_eq!(normalize_tx_hash_lookup("hash:: 0xBADA55"), "0xbada55");
+        assert_eq!(normalize_tx_hash_lookup("tx hash = 0xF00D"), "0xf00d");
+        assert_eq!(normalize_tx_hash_lookup("Tx.Hash: 0xFACE"), "0xface");
     }
 
     #[test]
