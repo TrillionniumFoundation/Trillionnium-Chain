@@ -186,8 +186,12 @@ pub struct DidRecord {
 }
 
 impl DidRecord {
-    pub fn is_active(&self) -> bool {
-        self.revoked_at.is_none()
+    pub fn is_active_at(&self, at_height: u64) -> bool {
+        if let Some(revoked_at) = self.revoked_at {
+            at_height < revoked_at
+        } else {
+            true
+        }
     }
 }
 
@@ -328,7 +332,7 @@ impl IdentityRegistry {
         }
 
         match self.dids.get(&subject_did) {
-            Some(did) if did.is_active() => {
+            Some(did) if did.is_active_at(at_height) => {
                 Self::ensure_actor_controls_did(&actor, did)?;
                 if at_height < did.created_at {
                     return Err(InteropIdentityError::InvalidCapabilityIssueHeight {
@@ -603,7 +607,7 @@ impl IdentityRegistry {
                 did: token.subject_did.clone(),
             })?;
 
-        if !did.is_active() {
+        if !did.is_active_at(at_height) {
             return Err(InteropIdentityError::DidRevoked {
                 did: did.did.clone(),
             });
@@ -1581,6 +1585,36 @@ mod tests {
         assert_eq!(did.controller, "org:lane2-admin");
         assert_eq!(did.created_at, 10);
         assert_eq!(did.revoked_at, None);
+    }
+
+    #[test]
+    fn verify_capability_respects_historical_did_revocation() {
+        let mut reg = IdentityRegistry::default();
+        let controller = "org:lane1-admin".to_string();
+        let did = "did:trnm:agent-1".to_string();
+        reg.register_did(did.clone(), controller.clone(), 10).unwrap();
+
+        let token_id = reg.issue_capability(
+            controller.clone(),
+            did.clone(),
+            CapabilityScope::BridgeSettle,
+            20,
+            None
+        ).unwrap();
+
+        // Revoke DID at height 50
+        reg.revoke_did(controller.clone(), &did, 50).unwrap();
+
+        // Token should be active at 40
+        assert!(reg.verify_capability(&controller, token_id, CapabilityScope::BridgeSettle, 40).is_ok());
+
+        // Token should be inactive at 50 (DID revoked)
+        let res = reg.verify_capability(&controller, token_id, CapabilityScope::BridgeSettle, 50);
+        assert!(matches!(res, Err(InteropIdentityError::DidRevoked { .. })) || matches!(res, Err(InteropIdentityError::CapabilityInactive { .. })));
+
+        // Token should be inactive at 60
+        let res = reg.verify_capability(&controller, token_id, CapabilityScope::BridgeSettle, 60);
+        assert!(matches!(res, Err(InteropIdentityError::DidRevoked { .. })) || matches!(res, Err(InteropIdentityError::CapabilityInactive { .. })));
     }
 
     #[test]
