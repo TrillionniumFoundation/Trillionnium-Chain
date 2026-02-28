@@ -299,7 +299,16 @@ Trillionnium 目标不是“单链功能齐全”，而是“可被开发者和�
 2) 启动 M1/V1/X1/I1/A1 的最小可用实现。  
 3) 补齐平台级验收脚本（非仅链内门禁）。  
 4) 输出首版企业接入 runbook 与审计模板。  
-5) 每周更新本 Master：进度、风险、证据。
+5) 每周更新本 Master：进度、风险、证据。  
+
+### 10.1 Phase B（截至 2026-02-28）Lane XI 收口状态与下一跳
+- 已完成：X2 最小结算闭环、I2 capability token 查询精确匹配与稳定 not-found 语义。
+- 下一跳（高 ROI，单补丁优先）：
+  - X3 预备：故障注入矩阵 + 补偿闭环可重放（timeout / duplicate / reorder / stale pending）。
+  - I3 预备：撤权时序一致性（issue/renew/revoke 竞争路径）与 fail-closed 错误契约。
+- XI 定向门禁（文档与实现同步约束）：
+  - `./scripts/v2/x2_settlement_contract_gate.sh`
+  - `./scripts/v2/i2_token_lifecycle_gate.sh`
 
 ---
 

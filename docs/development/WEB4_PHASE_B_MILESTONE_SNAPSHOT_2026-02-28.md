@@ -60,6 +60,34 @@ cargo test -p trnm-rpc market_match_m2_policy_gate_clamps_invalid_env_values -- 
 # => [OK] query-audit smoke passed
 ```
 
+## Lane XI（Cross-chain / Identity）下一阶段推进包（高 ROI）
+
+> 目标：把已完成的 X2/I2 从“可用”推进到“可审计、可演练、可故障恢复”，为 X3/I3 收口做准备。
+
+### XI-1：跨链结算故障注入与补偿闭环（X3 预备）
+- 增加失败场景矩阵：`relay timeout / duplicated confirm / reordered events / stale pending`。
+- 对每个场景固化补偿动作与最终状态断言（`finalized | reverted` 互斥）。
+- 产物：`x2_settlement_contract_gate` 扩展子用例 + 对账 runbook 片段。
+
+验收信号：
+- 失败注入场景 ≥ 4 且全部可重放；
+- `reverted` 路径可在单命令重演并给出补偿证据。
+
+### XI-2：Capability Token 撤权时序与审计一致性（I3 预备）
+- 增加撤权传播边界：`issue→revoke→query` 与 `renew→revoke` 竞争时序。
+- 明确“撤权后不可再授权”的错误契约，固定稳定错误码（避免文案漂移）。
+- 产物：`i2_token_lifecycle_gate` 增补撤权时序断言 + 审计查询样例。
+
+验收信号：
+- revoke 后查询在 SLO 窗口内稳定反映不可用状态；
+- 乱序/重放情况下仍满足 fail-closed。
+
+### XI 定向门禁（持续）
+```bash
+./scripts/v2/x2_settlement_contract_gate.sh
+./scripts/v2/i2_token_lifecycle_gate.sh
+```
+
 ## 变更策略说明
-- 本次收口采用 **1 个可回滚微补丁**：仅新增该里程碑快照文档（不改业务逻辑）。
+- 本次收口采用 **1 个可回滚微补丁**：新增 XI 下一阶段推进包（文档约束，不改业务逻辑）。
 - 回滚方式：`git revert <this_commit>` 即可完整回退。
