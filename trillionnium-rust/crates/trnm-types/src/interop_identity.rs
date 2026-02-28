@@ -1241,6 +1241,72 @@ mod tests {
     }
 
     #[test]
+    fn settlement_terminal_idempotent_reapply_accepts_whitespace_equivalent_payload() {
+        let route = BridgeRoute {
+            route_id: "eth->trnm".to_string(),
+            source_chain: "ethereum".to_string(),
+            target_chain: "trillionnium".to_string(),
+        };
+
+        let mut finalized = SettlementRecord {
+            settlement_id: 85,
+            route: route.clone(),
+            status: SettlementStatus::Pending,
+            at_height: 5_000,
+            settlement_tx: None,
+            revert_reason: None,
+        };
+        finalized
+            .apply_status(
+                SettlementStatus::Finalized,
+                5_001,
+                Some("0xstable".to_string()),
+                None,
+            )
+            .unwrap();
+        finalized
+            .apply_status(
+                SettlementStatus::Finalized,
+                5_002,
+                Some("  0xstable\n".to_string()),
+                None,
+            )
+            .unwrap();
+        assert_eq!(finalized.status, SettlementStatus::Finalized);
+        assert_eq!(finalized.settlement_tx.as_deref(), Some("0xstable"));
+
+        let mut reverted = SettlementRecord {
+            settlement_id: 86,
+            route,
+            status: SettlementStatus::Pending,
+            at_height: 6_000,
+            settlement_tx: None,
+            revert_reason: None,
+        };
+        reverted
+            .apply_status(
+                SettlementStatus::Reverted,
+                6_001,
+                None,
+                Some("timeout across relayers".to_string()),
+            )
+            .unwrap();
+        reverted
+            .apply_status(
+                SettlementStatus::Reverted,
+                6_002,
+                None,
+                Some("  timeout across relayers\t".to_string()),
+            )
+            .unwrap();
+        assert_eq!(reverted.status, SettlementStatus::Reverted);
+        assert_eq!(
+            reverted.revert_reason.as_deref(),
+            Some("timeout across relayers")
+        );
+    }
+
+    #[test]
     fn settlement_terminal_idempotent_reapply_still_rejects_height_regression() {
         let route = BridgeRoute {
             route_id: "eth->trnm".to_string(),
