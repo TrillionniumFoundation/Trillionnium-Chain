@@ -17,7 +17,7 @@ pub enum VerificationResult {
 }
 
 /// A standardized receipt for verifiable execution.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct VerificationReceipt {
     pub task_id: u64,
     pub proof_type: String,
@@ -115,5 +115,22 @@ mod tests {
         let task = mock_task();
         let result = verifier.verify_proof(&task, &[]);
         assert!(matches!(result, VerificationResult::Invalid(msg) if msg.contains("zk")));
+    }
+
+    #[test]
+    fn verification_receipt_json_roundtrip_preserves_fields() {
+        let receipt = VerificationReceipt {
+            task_id: 42,
+            proof_type: "tee".to_string(),
+            result: VerificationResult::Valid,
+            verifier_id: "tee-sgx-sim".to_string(),
+            timestamp_ms: 1_706_000_000_000,
+        };
+
+        let encoded = serde_json::to_string(&receipt).expect("serialize receipt");
+        let decoded: VerificationReceipt =
+            serde_json::from_str(&encoded).expect("deserialize receipt");
+
+        assert_eq!(decoded, receipt);
     }
 }
