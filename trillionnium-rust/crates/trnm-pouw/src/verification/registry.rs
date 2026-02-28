@@ -3,7 +3,7 @@ use std::sync::Arc;
 
 use trnm_types::{ProofType, TaskObject};
 
-use super::{ProofVerifier, VerificationResult};
+use super::{verifiers, ProofVerifier, VerificationResult};
 
 pub struct VerifierRegistry {
     verifiers: HashMap<String, Arc<dyn ProofVerifier + Send + Sync>>,
@@ -14,6 +14,15 @@ impl VerifierRegistry {
         Self {
             verifiers: HashMap::new(),
         }
+    }
+
+    /// Initializes a registry with built-in verifiers for Fraud/TEE/ZK proof types.
+    pub fn with_builtin_verifiers() -> Self {
+        let mut registry = Self::new();
+        registry.register(Arc::new(verifiers::FraudVerifier));
+        registry.register(Arc::new(verifiers::TeeVerifier));
+        registry.register(Arc::new(verifiers::ZkVerifier));
+        registry
     }
 
     fn normalize_key(raw: &str) -> Option<String> {
@@ -167,4 +176,18 @@ mod tests {
             VerificationResult::Indeterminate("no verifier registered for proof type: zk".into())
         );
     }
+
+    #[test]
+    fn registry_with_builtin_verifiers_registers_v1_stack() {
+        let registry = VerifierRegistry::with_builtin_verifiers();
+
+        let fraud_task = task_with_proof_type(ProofType::Fraud);
+        let tee_task = task_with_proof_type(ProofType::Tee);
+        let zk_task = task_with_proof_type(ProofType::Zk);
+
+        assert_eq!(registry.verify(&fraud_task, b"FRAUD:challenge"), VerificationResult::Valid);
+        assert_eq!(registry.verify(&tee_task, b"TEE:quote"), VerificationResult::Valid);
+        assert_eq!(registry.verify(&zk_task, b"ZK:payload!"), VerificationResult::Valid);
+    }
 }
+
