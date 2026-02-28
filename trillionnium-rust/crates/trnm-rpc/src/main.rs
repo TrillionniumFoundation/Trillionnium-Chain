@@ -1070,6 +1070,16 @@ fn clamp_limit(op: &str, requested: usize, default_limit: usize, max_limit: usiz
 }
 
 fn normalize_tx_hash_lookup(raw: &str) -> String {
+    let normalize_hash_token = |s: &str| {
+        if s.starts_with("0x") {
+            s.to_string()
+        } else if !s.is_empty() && s.chars().all(|c| c.is_ascii_hexdigit()) {
+            format!("0x{s}")
+        } else {
+            s.to_string()
+        }
+    };
+
     let mut normalized = raw.trim_matches(|c: char| {
         c.is_ascii_whitespace() || matches!(c, ',' | ';' | '.' | '(' | ')' | '[' | ']' | '{' | '}')
     });
@@ -1121,12 +1131,12 @@ fn normalize_tx_hash_lookup(raw: &str) -> String {
                     }
                     break;
                 }
-                return value.to_string();
+                return normalize_hash_token(value);
             }
         }
     }
 
-    normalized
+    normalize_hash_token(&normalized)
 }
 
 fn is_hex_like_tx_hash(raw: &str) -> bool {
@@ -2324,6 +2334,7 @@ mod tests {
         assert_eq!(normalize_tx_hash_lookup("'\"0xA1B2\"'"), "0xa1b2");
         assert_eq!(normalize_tx_hash_lookup(" `0xFf00` "), "0xff00");
         assert_eq!(normalize_tx_hash_lookup("`\"0xBEEF\"`"), "0xbeef");
+        assert_eq!(normalize_tx_hash_lookup("AbCd1234"), "0xabcd1234");
     }
 
     #[test]
@@ -2338,6 +2349,7 @@ mod tests {
     #[test]
     fn normalize_tx_hash_lookup_accepts_common_key_value_forms() {
         assert_eq!(normalize_tx_hash_lookup("tx_hash=0xAbC123"), "0xabc123");
+        assert_eq!(normalize_tx_hash_lookup("tx_hash=AbC123"), "0xabc123");
         assert_eq!(
             normalize_tx_hash_lookup("TxHash = \"0xDeF456\""),
             "0xdef456"
