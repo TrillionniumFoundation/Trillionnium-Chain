@@ -76,3 +76,32 @@ fn test_authorized_transition_blocks_terminal_rewrite() {
     );
     assert_eq!(request.status, BridgeStatus::Finalized(999));
 }
+
+#[test]
+fn test_authorized_calls_reject_empty_subject_token() {
+    let mut request = SettlementRequest::new(42, "0xddd".to_string());
+    let malformed = CapabilityToken {
+        subject: "   ".to_string(),
+        capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
+    };
+
+    let finalize_err = request.settle_authorized(&malformed, 512).unwrap_err();
+    assert_eq!(
+        finalize_err,
+        SettlementError::MalformedToken {
+            reason: "empty subject",
+        }
+    );
+    assert_eq!(request.status, BridgeStatus::Pending);
+
+    let revert_err = request
+        .revert_authorized(&malformed, "bad proof".to_string())
+        .unwrap_err();
+    assert_eq!(
+        revert_err,
+        SettlementError::MalformedToken {
+            reason: "empty subject",
+        }
+    );
+    assert_eq!(request.status, BridgeStatus::Pending);
+}

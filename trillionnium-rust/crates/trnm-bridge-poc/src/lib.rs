@@ -30,6 +30,7 @@ pub mod bridge_status {
     pub enum SettlementError {
         Unauthorized { subject: String, action: &'static str },
         InvalidTransition { from: &'static str, to: &'static str },
+        MalformedToken { reason: &'static str },
     }
 
     #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -48,6 +49,15 @@ pub mod bridge_status {
             }
         }
 
+        fn validate_token(token: &CapabilityToken) -> Result<(), SettlementError> {
+            if token.subject.trim().is_empty() {
+                return Err(SettlementError::MalformedToken {
+                    reason: "empty subject",
+                });
+            }
+            Ok(())
+        }
+
         pub fn settle(&mut self, height: u64) {
             self.status = BridgeStatus::Finalized(height);
         }
@@ -61,6 +71,7 @@ pub mod bridge_status {
             token: &CapabilityToken,
             height: u64,
         ) -> Result<(), SettlementError> {
+            Self::validate_token(token)?;
             if !token.allows(SettlementCapability::Finalize) {
                 return Err(SettlementError::Unauthorized {
                     subject: token.subject.clone(),
@@ -75,6 +86,7 @@ pub mod bridge_status {
             token: &CapabilityToken,
             reason: String,
         ) -> Result<(), SettlementError> {
+            Self::validate_token(token)?;
             if !token.allows(SettlementCapability::Revert) {
                 return Err(SettlementError::Unauthorized {
                     subject: token.subject.clone(),
