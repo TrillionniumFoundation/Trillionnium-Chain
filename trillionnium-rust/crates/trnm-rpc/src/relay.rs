@@ -753,6 +753,20 @@ impl RelayService {
     }
 }
 
+fn decode_hex_32(input: &str, field: &str) -> Result<[u8; 32]> {
+    let canonical = input
+        .strip_prefix("0x")
+        .or_else(|| input.strip_prefix("0X"))
+        .unwrap_or(input);
+    let bytes = hex::decode(canonical).map_err(|e| anyhow!("invalid {field} hex: {e}"))?;
+    if bytes.len() != 32 {
+        bail!("{field} must be 32 bytes");
+    }
+    let mut out = [0u8; 32];
+    out.copy_from_slice(&bytes);
+    Ok(out)
+}
+
 pub fn verify_session_proof(resp: &RelaySessionProofResponse) -> Result<()> {
     if resp.messages.is_empty() || resp.proofs.is_empty() {
         bail!("proof/messages must be non-empty");
@@ -769,11 +783,7 @@ pub fn verify_session_proof(resp: &RelaySessionProofResponse) -> Result<()> {
         bail!("seq range does not match message count");
     }
 
-    let expected_root = hex::decode(&resp.segment_root_hex)
-        .map_err(|e| anyhow!("invalid segment root hex: {e}"))?;
-    if expected_root.len() != 32 {
-        bail!("segment root must be 32 bytes");
-    }
+    let expected_root = decode_hex_32(&resp.segment_root_hex, "segment root")?;
 
     for (i, (msg, p)) in resp.messages.iter().zip(resp.proofs.iter()).enumerate() {
         if msg.session_id != resp.session_id {
@@ -806,24 +816,16 @@ pub fn verify_session_proof(resp: &RelaySessionProofResponse) -> Result<()> {
         }
 
         let leaf_hash = hash_envelope(msg)?;
-        let proof_leaf_hash = hex::decode(&p.leaf_hash_hex)
-            .map_err(|e| anyhow!("invalid leaf hash hex at index {}: {e}", i))?;
-        if proof_leaf_hash.len() != 32 {
-            bail!("invalid leaf hash length at index {}", i);
-        }
+        let proof_leaf_hash = decode_hex_32(&p.leaf_hash_hex, "leaf hash")
+            .map_err(|e| anyhow!("{e} at index {i}"))?;
         if proof_leaf_hash.as_slice() != leaf_hash.as_slice() {
             bail!("leaf hash mismatch at index {}", i);
         }
 
         let mut cur = leaf_hash;
         for step in &p.proof {
-            let sib = hex::decode(&step.sibling_hash_hex)
-                .map_err(|e| anyhow!("invalid sibling hash hex at index {}: {e}", i))?;
-            if sib.len() != 32 {
-                bail!("invalid sibling hash length at index {}", i);
-            }
-            let mut sib_arr = [0u8; 32];
-            sib_arr.copy_from_slice(&sib);
+            let sib_arr = decode_hex_32(&step.sibling_hash_hex, "sibling hash")
+                .map_err(|e| anyhow!("{e} at index {i}"))?;
             cur = if step.sibling_is_left {
                 hash_pair(&sib_arr, &cur)
             } else {
@@ -1205,6 +1207,49 @@ mod tests {
 
         for entry in proof.proofs.iter_mut() {
             entry.leaf_hash_hex = entry.leaf_hash_hex.to_uppercase();
+        }
+
+        verify_session_proof(&proof).unwrap();
+    }
+
+    #[test]
+    fn relay_session_proof_accepts_0x_prefixed_hash_hex() {
+        let mut router = RelayRouter::new();
+        router.register("relay.echo", EchoHandler);
+        let relay = RelayService::new(router);
+        relay
+            .open(RelayOpenRequest {
+                session_id: "sp3-prefixed".into(),
+            })
+            .unwrap();
+
+        relay
+            .send(RelaySendRequest {
+                session_id: "sp3-prefixed".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"m1".to_vec(),
+                source: None,
+            })
+            .unwrap();
+
+        let mut proof = relay
+            .query_session_proof(RelaySessionProofQuery {
+                task_id: 7,
+                session_id: "sp3-prefixed".into(),
+                from_seq: 1,
+                to_seq: 2,
+                source: None,
+            })
+            .unwrap();
+
+        proof.segment_root_hex = format!("0x{}", proof.segment_root_hex);
+        for entry in proof.proofs.iter_mut() {
+            entry.leaf_hash_hex = format!("0X{}", entry.leaf_hash_hex);
+            for step in entry.proof.iter_mut() {
+                step.sibling_hash_hex = format!("0x{}", step.sibling_hash_hex);
+            }
         }
 
         verify_session_proof(&proof).unwrap();
