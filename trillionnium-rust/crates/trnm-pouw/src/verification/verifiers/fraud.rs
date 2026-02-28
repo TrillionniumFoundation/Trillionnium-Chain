@@ -17,9 +17,12 @@ impl ProofVerifier for FraudVerifier {
         // Accept case-insensitive variants to tolerate client casing drift.
         // Accepted examples: "FRAUD:...", "fraud:...".
         let has_prefix = proof_data.len() >= 6 && proof_data[..6].eq_ignore_ascii_case(b"FRAUD:");
-        let has_body = proof_data.len() > 6;
+        let has_non_whitespace_body = proof_data
+            .get(6..)
+            .map(|suffix| suffix.iter().any(|b| !b.is_ascii_whitespace()))
+            .unwrap_or(false);
 
-        if has_prefix && has_body {
+        if has_prefix && has_non_whitespace_body {
             VerificationResult::Valid
         } else {
             VerificationResult::Invalid("Invalid fraud proof envelope".to_string())
@@ -122,4 +125,16 @@ mod tests {
             VerificationResult::Invalid(msg) if msg.contains("envelope")
         ));
     }
+
+    #[test]
+    fn fraud_verifier_rejects_whitespace_only_body_after_prefix() {
+        let verifier = FraudVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(&task, b"FRAUD:   \n\t"),
+            VerificationResult::Invalid(msg) if msg.contains("envelope")
+        ));
+    }
 }
+
