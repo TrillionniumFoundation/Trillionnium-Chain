@@ -8,6 +8,7 @@ echo "[I2] capability token lifecycle gate: issue/revoke/replay/verify"
 
 cargo test -p trnm-types issue_capability_rejects_height_before_did_creation_without_side_effects
 cargo test -p trnm-types renew_capability_extends_expiry_and_appends_audit
+cargo test -p trnm-types renew_capability_at_expiry_boundary_keeps_token_active_and_audited
 cargo test -p trnm-types renew_capability_with_same_expiry_is_idempotent_without_new_audit
 cargo test -p trnm-types renew_capability_rejects_expiry_regression_without_side_effects
 cargo test -p trnm-types renew_capability_rejects_previously_revoked_token_without_side_effects
