@@ -41,7 +41,7 @@
         },
         "model_digest": {
           "type": "string",
-          "pattern": "^[a-fA-F0-9]{64}$"
+          "pattern": "^[a-f0-9]{64}$"
         },
         "version": {
           "type": "string",
