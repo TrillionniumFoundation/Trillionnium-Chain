@@ -806,7 +806,12 @@ pub fn verify_session_proof(resp: &RelaySessionProofResponse) -> Result<()> {
         }
 
         let leaf_hash = hash_envelope(msg)?;
-        if hex::encode(leaf_hash) != p.leaf_hash_hex {
+        let proof_leaf_hash = hex::decode(&p.leaf_hash_hex)
+            .map_err(|e| anyhow!("invalid leaf hash hex at index {}: {e}", i))?;
+        if proof_leaf_hash.len() != 32 {
+            bail!("invalid leaf hash length at index {}", i);
+        }
+        if proof_leaf_hash.as_slice() != leaf_hash.as_slice() {
             bail!("leaf hash mismatch at index {}", i);
         }
 
@@ -1164,6 +1169,45 @@ mod tests {
         let mut session_mismatch = proof.clone();
         session_mismatch.session_id = "sp2-other".to_string();
         assert!(verify_session_proof(&session_mismatch).is_err());
+    }
+
+    #[test]
+    fn relay_session_proof_accepts_uppercase_leaf_hash_hex() {
+        let mut router = RelayRouter::new();
+        router.register("relay.echo", EchoHandler);
+        let relay = RelayService::new(router);
+        relay
+            .open(RelayOpenRequest {
+                session_id: "sp3".into(),
+            })
+            .unwrap();
+
+        relay
+            .send(RelaySendRequest {
+                session_id: "sp3".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"m1".to_vec(),
+                source: None,
+            })
+            .unwrap();
+
+        let mut proof = relay
+            .query_session_proof(RelaySessionProofQuery {
+                task_id: 7,
+                session_id: "sp3".into(),
+                from_seq: 1,
+                to_seq: 2,
+                source: None,
+            })
+            .unwrap();
+
+        for entry in proof.proofs.iter_mut() {
+            entry.leaf_hash_hex = entry.leaf_hash_hex.to_uppercase();
+        }
+
+        verify_session_proof(&proof).unwrap();
     }
 
     #[test]
