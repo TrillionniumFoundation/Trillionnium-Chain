@@ -774,7 +774,7 @@ fn env_u128_clamped(name: &str, default: u128, min: u128, max: u128) -> u128 {
         .ok()
         .and_then(|v| v.trim().parse::<u128>().ok())
         .map(|v| v.clamp(min, max))
-        .unwrap_or(default)
+        .unwrap_or(default.clamp(min, max))
 }
 
 fn env_i64_clamped(name: &str, default: i64, min: i64, max: i64) -> i64 {
@@ -782,35 +782,48 @@ fn env_i64_clamped(name: &str, default: i64, min: i64, max: i64) -> i64 {
         .ok()
         .and_then(|v| v.trim().parse::<i64>().ok())
         .map(|v| v.clamp(min, max))
-        .unwrap_or(default)
+        .unwrap_or(default.clamp(min, max))
+}
+
+#[derive(Debug, Clone, Copy)]
+struct MarketM2PolicyGate {
+    price_weight: u128,
+    reputation_weight: u128,
+    reputation_clamp: i64,
+}
+
+fn market_m2_policy_gate() -> MarketM2PolicyGate {
+    MarketM2PolicyGate {
+        price_weight: env_u128_clamped(
+            MARKET_PRICE_WEIGHT_ENV,
+            MARKET_PRICE_WEIGHT_DEFAULT,
+            MARKET_WEIGHT_MIN,
+            MARKET_WEIGHT_MAX,
+        ),
+        reputation_weight: env_u128_clamped(
+            MARKET_REPUTATION_WEIGHT_ENV,
+            MARKET_REPUTATION_WEIGHT_DEFAULT,
+            MARKET_WEIGHT_MIN,
+            MARKET_WEIGHT_MAX,
+        ),
+        reputation_clamp: env_i64_clamped(
+            MARKET_REPUTATION_CLAMP_ENV,
+            MARKET_REPUTATION_CLAMP_DEFAULT,
+            MARKET_REPUTATION_CLAMP_MIN,
+            MARKET_REPUTATION_CLAMP_MAX,
+        ),
+    }
 }
 
 fn market_effective_score(price: u128, reputation: i64) -> u128 {
-    let price_weight = env_u128_clamped(
-        MARKET_PRICE_WEIGHT_ENV,
-        MARKET_PRICE_WEIGHT_DEFAULT,
-        MARKET_WEIGHT_MIN,
-        MARKET_WEIGHT_MAX,
-    );
-    let reputation_weight = env_u128_clamped(
-        MARKET_REPUTATION_WEIGHT_ENV,
-        MARKET_REPUTATION_WEIGHT_DEFAULT,
-        MARKET_WEIGHT_MIN,
-        MARKET_WEIGHT_MAX,
-    );
-    let reputation_clamp = env_i64_clamped(
-        MARKET_REPUTATION_CLAMP_ENV,
-        MARKET_REPUTATION_CLAMP_DEFAULT,
-        MARKET_REPUTATION_CLAMP_MIN,
-        MARKET_REPUTATION_CLAMP_MAX,
-    );
+    let gate = market_m2_policy_gate();
 
-    let rep = reputation.clamp(-reputation_clamp, reputation_clamp);
-    let base = price.saturating_mul(price_weight);
+    let rep = reputation.clamp(-gate.reputation_clamp, gate.reputation_clamp);
+    let base = price.saturating_mul(gate.price_weight);
     if rep >= 0 {
-        base.saturating_sub((rep as u128).saturating_mul(reputation_weight))
+        base.saturating_sub((rep as u128).saturating_mul(gate.reputation_weight))
     } else {
-        base.saturating_add((rep.unsigned_abs() as u128).saturating_mul(reputation_weight))
+        base.saturating_add((rep.unsigned_abs() as u128).saturating_mul(gate.reputation_weight))
     }
 }
 
@@ -2166,6 +2179,30 @@ mod tests {
             || {
                 assert_eq!(market_effective_score(101, 100_000), 100_900);
             },
+        );
+    }
+
+    #[test]
+    fn market_m2_policy_gate_guards_default_drift_to_min_boundaries() {
+        let _guard = env_lock().lock().expect("env lock poisoned");
+        unsafe {
+            std::env::remove_var(MARKET_PRICE_WEIGHT_ENV);
+            std::env::remove_var(MARKET_REPUTATION_WEIGHT_ENV);
+            std::env::remove_var(MARKET_REPUTATION_CLAMP_ENV);
+        }
+
+        assert_eq!(
+            env_u128_clamped("TRNM_RPC_TEST_WEIGHT_DEFAULT_DRIFT", 0, MARKET_WEIGHT_MIN, MARKET_WEIGHT_MAX),
+            MARKET_WEIGHT_MIN
+        );
+        assert_eq!(
+            env_i64_clamped(
+                "TRNM_RPC_TEST_REPUTATION_CLAMP_DEFAULT_DRIFT",
+                0,
+                MARKET_REPUTATION_CLAMP_MIN,
+                MARKET_REPUTATION_CLAMP_MAX
+            ),
+            MARKET_REPUTATION_CLAMP_MIN
         );
     }
 
