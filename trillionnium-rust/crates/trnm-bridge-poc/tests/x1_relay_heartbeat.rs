@@ -46,3 +46,17 @@ fn relay_heartbeat_flap_after_recovery_restarts_retry_budget() {
     assert!(next.should_retry);
     assert!(!next.degraded);
 }
+
+#[test]
+fn relay_heartbeat_config_clamps_zero_to_safe_minimums() {
+    let mut hb = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(0, 0));
+    assert_eq!(hb.interval_secs(), 1);
+
+    let first = hb.record_failure("rpc timeout");
+    assert!(!first.should_retry);
+    assert!(first.degraded);
+
+    let second = hb.record_failure("rpc timeout");
+    assert!(!second.should_retry);
+    assert!(second.degraded);
+}
