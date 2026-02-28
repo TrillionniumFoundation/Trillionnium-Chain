@@ -475,6 +475,14 @@ impl IdentityRegistry {
                     revoked_at: token.revoked_at,
                 });
             }
+            if let (Some(current_expiry), Some(requested_expiry)) = (token.expires_at, expires_at) {
+                if requested_expiry < current_expiry {
+                    return Err(InteropIdentityError::CapabilityRenewalRegression {
+                        current_expires_at: current_expiry,
+                        requested_expires_at: requested_expiry,
+                    });
+                }
+            }
             token.expires_at = expires_at;
         }
 
@@ -764,6 +772,10 @@ pub enum InteropIdentityError {
         issued_at: u64,
         expires_at: u64,
     },
+    CapabilityRenewalRegression {
+        current_expires_at: u64,
+        requested_expires_at: u64,
+    },
     InvalidCapabilityRevocationHeight {
         issued_at: u64,
         revoked_at: u64,
@@ -866,6 +878,16 @@ impl fmt::Display for InteropIdentityError {
                     f,
                     "invalid capability expiry: expires_at {} < issued_at {}",
                     expires_at, issued_at
+                )
+            }
+            InteropIdentityError::CapabilityRenewalRegression {
+                current_expires_at,
+                requested_expires_at,
+            } => {
+                write!(
+                    f,
+                    "capability renewal regression: requested expiry {} < current expiry {}",
+                    requested_expires_at, current_expires_at
                 )
             }
             InteropIdentityError::InvalidCapabilityRevocationHeight {
@@ -2418,6 +2440,43 @@ mod tests {
         assert_eq!(last.subject, "did:trnm:agent-renew");
         assert_eq!(last.at_height, 25);
         assert_eq!(last.note.as_deref(), Some("token_id=1 expires_at=Some(45)"));
+    }
+
+    #[test]
+    fn renew_capability_rejects_expiry_regression_without_side_effects() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did(
+            "did:trnm:agent-renew".to_string(),
+            "org:lane2-admin".to_string(),
+            10,
+        )
+        .unwrap();
+
+        let token_id = reg
+            .issue_capability(
+                "org:lane2-admin".to_string(),
+                "did:trnm:agent-renew".to_string(),
+                CapabilityScope::AuditRead,
+                20,
+                Some(60),
+            )
+            .unwrap();
+        let audit_len_before = reg.audit_trail().len();
+
+        let err = reg
+            .renew_capability("org:lane2-admin".to_string(), token_id, 25, Some(45))
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            InteropIdentityError::CapabilityRenewalRegression {
+                current_expires_at: 60,
+                requested_expires_at: 45,
+            }
+        ));
+        let token = reg.capability(token_id).unwrap();
+        assert_eq!(token.expires_at, Some(60));
+        assert_eq!(reg.audit_trail().len(), audit_len_before);
     }
 
     #[test]
