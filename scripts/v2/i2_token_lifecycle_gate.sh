@@ -12,6 +12,7 @@ cargo test -p trnm-types renew_capability_rejects_previously_revoked_token_witho
 cargo test -p trnm-types revoke_capability_replay_with_older_height_is_rejected_without_side_effects
 cargo test -p trnm-types revoke_did_replay_repairs_legacy_uncascaded_capability_without_rewriting_did_timestamp
 cargo test -p trnm-types verify_capability_accepts_active_controller_and_matching_scope
+cargo test -p trnm-types verify_capability_rejects_scope_mismatch_without_side_effects
 cargo test -p trnm-types verify_capability_rejects_unknown_token_without_side_effects
 cargo test -p trnm-types verify_capability_rejects_revoked_did_even_if_token_looks_active
 
