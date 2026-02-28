@@ -81,7 +81,7 @@ fn canonical_path_segment(raw: &str) -> String {
         })
         .collect();
 
-    if sanitized.is_empty() {
+    if sanitized.is_empty() || sanitized == "." || sanitized == ".." {
         "_".to_string()
     } else {
         sanitized
@@ -1700,6 +1700,27 @@ mod tests {
         assert_eq!(
             rec.evidence_path(),
             "settlements/_/_/_/46/pending@2223"
+        );
+    }
+
+    #[test]
+    fn settlement_evidence_path_rewrites_dot_segments_to_placeholder() {
+        let rec = SettlementRecord {
+            settlement_id: 47,
+            route: BridgeRoute {
+                route_id: "..".to_string(),
+                source_chain: ".".to_string(),
+                target_chain: "trillionnium".to_string(),
+            },
+            status: SettlementStatus::Pending,
+            at_height: 2_224,
+            settlement_tx: None,
+            revert_reason: None,
+        };
+
+        assert_eq!(
+            rec.evidence_path(),
+            "settlements/_/_/trillionnium/47/pending@2224"
         );
     }
 
