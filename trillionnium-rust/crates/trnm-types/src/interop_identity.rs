@@ -470,6 +470,15 @@ impl IdentityRegistry {
                 .capabilities
                 .get_mut(&token_id)
                 .ok_or(InteropIdentityError::CapabilityNotFound { token_id })?;
+            if token.revoked_at.is_some() {
+                return Err(InteropIdentityError::CapabilityInactive {
+                    token_id,
+                    at_height,
+                    issued_at: token.issued_at,
+                    expires_at: token.expires_at,
+                    revoked_at: token.revoked_at,
+                });
+            }
             if !token.is_active_at(at_height) {
                 return Err(InteropIdentityError::CapabilityInactive {
                     token_id,
@@ -2473,6 +2482,50 @@ mod tests {
     }
 
     #[test]
+    fn renew_capability_rejects_stale_replay_after_revocation_without_side_effects() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did(
+            "did:trnm:agent-renew-race".to_string(),
+            "org:lane2-admin".to_string(),
+            10,
+        )
+        .unwrap();
+
+        let token_id = reg
+            .issue_capability(
+                "org:lane2-admin".to_string(),
+                "did:trnm:agent-renew-race".to_string(),
+                CapabilityScope::AuditRead,
+                20,
+                Some(80),
+            )
+            .unwrap();
+
+        reg.revoke_capability("org:lane2-admin".to_string(), token_id, 40, None)
+            .unwrap();
+
+        let audit_len_before = reg.audit_trail().len();
+        let before = reg.capability(token_id).unwrap().clone();
+
+        let err = reg
+            .renew_capability("org:lane2-admin".to_string(), token_id, 35, Some(90))
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            InteropIdentityError::CapabilityInactive {
+                token_id: got,
+                at_height: 35,
+                issued_at: 20,
+                expires_at: Some(80),
+                revoked_at: Some(40)
+            } if got == token_id
+        ));
+        assert_eq!(reg.audit_trail().len(), audit_len_before);
+        assert_eq!(reg.capability(token_id).unwrap(), &before);
+    }
+
+    #[test]
     fn issue_capability_rejects_revoked_did_without_side_effects() {
         let mut reg = IdentityRegistry::default();
         reg.register_did(
@@ -3102,6 +3155,7 @@ mod tests {
         // t4: unborn (starts at 100)
         // t5: revoked (DID 2 revoked at 40)
         let active = reg.list_active_capabilities(50);
+        let _ = (t2, t4, t5);
         assert_eq!(active.len(), 1);
         assert_eq!(active[0].token_id, t1);
 
