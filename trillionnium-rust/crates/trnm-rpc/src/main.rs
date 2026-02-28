@@ -19,7 +19,7 @@ use trnm_rpc::{
 };
 use trnm_state::StateStore;
 use trnm_types::{
-    AuditEvent, CapabilityToken, GovParamObject, GovProposalObject, GovProposalStatus,
+    AuditAction, AuditEvent, CapabilityToken, GovParamObject, GovProposalObject, GovProposalStatus,
     IdentityRegistry, RequestStatus, TaskStatus, TransferTx,
 };
 
@@ -603,6 +603,17 @@ fn load_identity_registry(path: &Path) -> IdentityRegistry {
     serde_json::from_str::<IdentityRegistry>(&raw).unwrap_or_default()
 }
 
+fn extract_token_id_from_note(note: &str) -> Option<u64> {
+    let marker = "token_id=";
+    let idx = note.find(marker)?;
+    let tail = &note[idx + marker.len()..];
+    let digits: String = tail.chars().take_while(|c| c.is_ascii_digit()).collect();
+    if digits.is_empty() {
+        return None;
+    }
+    digits.parse::<u64>().ok()
+}
+
 fn query_capability_audit(
     registry: &IdentityRegistry,
     token_id: u64,
@@ -614,7 +625,23 @@ fn query_capability_audit(
     let owner_history = registry
         .audit_trail()
         .iter()
-        .filter(|event| event.subject == token.subject_did)
+        .filter(|event| {
+            if event.subject != token.subject_did {
+                return false;
+            }
+
+            match event.action {
+                AuditAction::DidRegistered | AuditAction::DidRevoked => true,
+                AuditAction::CapabilityIssued
+                | AuditAction::CapabilityRenewed
+                | AuditAction::CapabilityRevoked => event
+                    .note
+                    .as_deref()
+                    .and_then(extract_token_id_from_note)
+                    .map(|id| id == token_id)
+                    .unwrap_or(true),
+            }
+        })
         .cloned()
         .collect();
 

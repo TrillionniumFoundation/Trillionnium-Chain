@@ -82,3 +82,75 @@ fn query_capability_audit_not_found_maps_stable_error_code() {
 
     assert!(stderr.contains("\"code\": \"CAPABILITY_NOT_FOUND\""), "{stderr}");
 }
+
+#[test]
+fn query_capability_audit_same_did_multi_token_filters_to_exact_token() {
+    let tmp = tempdir().expect("tempdir");
+    let registry_path = tmp.path().join("identity_registry.json");
+
+    let mut reg = IdentityRegistry::default();
+    reg.register_did(
+        "did:org:lane-xi-multi".to_string(),
+        "org:lane-xi-admin".to_string(),
+        10,
+    )
+    .expect("register did");
+
+    let token_1 = reg
+        .issue_capability(
+            "org:lane-xi-admin".to_string(),
+            "did:org:lane-xi-multi".to_string(),
+            CapabilityScope::AuditRead,
+            12,
+            Some(120),
+        )
+        .expect("issue capability token1");
+    let token_2 = reg
+        .issue_capability(
+            "org:lane-xi-admin".to_string(),
+            "did:org:lane-xi-multi".to_string(),
+            CapabilityScope::MarketPublish,
+            14,
+            Some(140),
+        )
+        .expect("issue capability token2");
+
+    reg.renew_capability("org:lane-xi-admin".to_string(), token_1, 16, Some(180))
+        .expect("renew token1");
+    reg.renew_capability("org:lane-xi-admin".to_string(), token_2, 18, Some(200))
+        .expect("renew token2");
+
+    fs::write(
+        &registry_path,
+        serde_json::to_string_pretty(&reg).expect("serialize registry"),
+    )
+    .expect("write registry");
+
+    let out = run_ok(
+        &["query-capability-audit", "--token-id", &token_1.to_string()],
+        registry_path.to_str().expect("utf8 path"),
+    );
+    let body: Value = serde_json::from_str(&out).expect("query response json");
+    let owner_history = body["owner_history"]
+        .as_array()
+        .expect("owner_history array");
+
+    let has_token_1 = owner_history.iter().any(|evt| {
+        evt["note"]
+            .as_str()
+            .map(|n| n.contains(&format!("token_id={token_1}")))
+            .unwrap_or(false)
+    });
+    let has_token_2 = owner_history.iter().any(|evt| {
+        evt["note"]
+            .as_str()
+            .map(|n| n.contains(&format!("token_id={token_2}")))
+            .unwrap_or(false)
+    });
+
+    assert!(has_token_1, "expected token_1 audit entries in owner_history");
+    assert!(
+        !has_token_2,
+        "owner_history should not include token_2 audit entries when querying token_1"
+    );
+}
