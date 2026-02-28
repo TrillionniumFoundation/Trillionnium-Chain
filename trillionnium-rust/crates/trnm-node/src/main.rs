@@ -604,6 +604,28 @@ fn accept_signed_vote(
     }
     if let Some(prev) = last_nonce.get(&key) {
         if msg.nonce == *prev {
+            let maybe_prev_vote = accepted.iter().rev().find(|v| {
+                v.validator == msg.vote.validator
+                    && v.height == msg.vote.height
+                    && v.round == msg.vote.round
+                    && v.vote_type == msg.vote.vote_type
+            });
+            if let Some(prev_vote) = maybe_prev_vote {
+                if prev_vote.block_hash != msg.vote.block_hash {
+                    reject_stats.bad_sig += 1;
+                    println!(
+                        "[bft-net] reject reason=nonce_equivocation validator={} height={} round={} vote_type={} nonce={} prev_hash={} new_hash={}",
+                        msg.vote.validator,
+                        msg.vote.height,
+                        msg.vote.round,
+                        vote_type_name(msg.vote.vote_type),
+                        msg.nonce,
+                        prev_vote.block_hash,
+                        msg.vote.block_hash
+                    );
+                    return;
+                }
+            }
             reject_stats.replay += 1;
             println!(
                 "[bft-net] reject reason=replay validator={} height={} round={} vote_type={} nonce={}",
@@ -2596,6 +2618,59 @@ mod tests {
         assert_eq!(reject_stats.bad_sig, 0);
         assert_eq!(reject_stats.replay, 0);
         assert_eq!(reject_stats.stale_nonce, 0);
+    }
+
+    #[test]
+    fn auth_rejects_same_nonce_equivocation_as_nonce_equivocation_not_replay() {
+        let mut last_nonce = HashMap::new();
+        let mut accepted = Vec::new();
+        let mut reject_stats = AuthRejectStats::default();
+
+        let vote1 = BftVote {
+            validator: "v1".into(),
+            vote_type: VoteType::Prevote,
+            block_hash: "h10-r0-a".into(),
+            byzantine: false,
+            height: 10,
+            round: 0,
+        };
+        let nonce = 77;
+        accept_signed_vote(
+            SignedVote {
+                vote: vote1.clone(),
+                nonce,
+                signature: vote_signature(&vote1, nonce),
+            },
+            &mut last_nonce,
+            &mut accepted,
+            &mut reject_stats,
+        );
+
+        let vote2 = BftVote {
+            validator: "v1".into(),
+            vote_type: VoteType::Prevote,
+            block_hash: "h10-r0-b".into(),
+            byzantine: false,
+            height: 10,
+            round: 0,
+        };
+        accept_signed_vote(
+            SignedVote {
+                vote: vote2.clone(),
+                nonce,
+                signature: vote_signature(&vote2, nonce),
+            },
+            &mut last_nonce,
+            &mut accepted,
+            &mut reject_stats,
+        );
+
+        assert_eq!(accepted.len(), 1);
+        assert_eq!(reject_stats.bad_sig, 1);
+        assert_eq!(reject_stats.replay, 0);
+        assert_eq!(reject_stats.stale_nonce, 0);
+        let key = ("v1".to_string(), 10, 0, VoteType::Prevote);
+        assert_eq!(last_nonce.get(&key), Some(&nonce));
     }
 
     fn expected_high_risk_tx_exhaustive(tx: &MockTx) -> bool {
