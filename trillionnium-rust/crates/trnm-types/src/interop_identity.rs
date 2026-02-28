@@ -2566,6 +2566,28 @@ mod tests {
     }
 
     #[test]
+    fn renew_capability_rejects_unknown_token_without_side_effects() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did(
+            "did:trnm:agent-renew-missing".to_string(),
+            "org:lane2-admin".to_string(),
+            10,
+        )
+        .unwrap();
+
+        let audit_len_before = reg.audit_trail().len();
+        let err = reg
+            .renew_capability("org:lane2-admin".to_string(), 42, 25, Some(60))
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            InteropIdentityError::CapabilityNotFound { token_id } if token_id == 42
+        ));
+        assert_eq!(reg.audit_trail().len(), audit_len_before);
+    }
+
+    #[test]
     fn renew_capability_rejects_revoked_did_without_side_effects() {
         let mut reg = IdentityRegistry::default();
         reg.register_did(
