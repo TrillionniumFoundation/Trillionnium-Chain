@@ -120,3 +120,6 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: con
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: x1-relay-heartbeat-smoke" "./scripts/v2/x1_relay_heartbeat_smoke.sh" "ci(gate): add x1-relay-heartbeat-smoke regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: i2-token-lifecycle-gate" "./scripts/v2/i2_token_lifecycle_gate.sh" "ci(gate): add i2-token-lifecycle-gate regression to quick-check"
