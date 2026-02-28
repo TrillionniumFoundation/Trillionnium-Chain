@@ -123,3 +123,6 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: x1-
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: i2-token-lifecycle-gate" "./scripts/v2/i2_token_lifecycle_gate.sh" "ci(gate): add i2-token-lifecycle-gate regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: x2-settlement-contract-gate" "./scripts/v2/x2_settlement_contract_gate.sh" "ci(gate): add x2-settlement-contract-gate regression to quick-check"
