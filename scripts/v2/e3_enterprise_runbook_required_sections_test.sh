@@ -25,4 +25,17 @@ for header in "${required_headers[@]}"; do
   fi
 done
 
-echo "[PASS] E3 enterprise onboarding runbook includes required sections"
+rollback_guard_phrases=(
+  "撤销新增 capability token"
+  "标记接入状态为 \`reverted\`"
+  "根因标签"
+)
+
+for phrase in "${rollback_guard_phrases[@]}"; do
+  if ! grep -Fq "$phrase" "$RUNBOOK"; then
+    echo "[FAIL] rollback section missing guard phrase: $phrase" >&2
+    exit 1
+  fi
+done
+
+echo "[PASS] E3 enterprise onboarding runbook includes required sections + rollback guard phrases"
