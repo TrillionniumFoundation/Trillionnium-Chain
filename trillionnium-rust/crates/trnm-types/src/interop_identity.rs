@@ -2119,6 +2119,27 @@ mod tests {
     }
 
     #[test]
+    fn settlement_evidence_path_sanitizes_nested_path_aliases_without_false_reserved_suffixes() {
+        let rec = SettlementRecord {
+            settlement_id: 54,
+            route: BridgeRoute {
+                route_id: "eth/CON/log".to_string(),
+                source_chain: "bridge\\aux.txt".to_string(),
+                target_chain: "mainnet/Com9.trace".to_string(),
+            },
+            status: SettlementStatus::Pending,
+            at_height: 2_231,
+            settlement_tx: None,
+            revert_reason: None,
+        };
+
+        assert_eq!(
+            rec.evidence_path(),
+            "settlements/eth_CON_log/bridge_aux.txt/mainnet_Com9.trace/54/pending@2231"
+        );
+    }
+
+    #[test]
     fn register_did_rejects_duplicate_without_side_effects() {
         let mut reg = IdentityRegistry::default();
         reg.register_did(
@@ -3496,7 +3517,12 @@ mod tests {
         let token_before = reg.capability(token_id).unwrap().clone();
 
         let err = reg
-            .renew_capability("org:lane2-admin\u{200b}".to_string(), token_id, 25, Some(80))
+            .renew_capability(
+                "org:lane2-admin\u{200b}".to_string(),
+                token_id,
+                25,
+                Some(80),
+            )
             .unwrap_err();
 
         assert!(matches!(
