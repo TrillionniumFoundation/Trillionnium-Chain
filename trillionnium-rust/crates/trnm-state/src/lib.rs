@@ -1898,7 +1898,6 @@ mod tests {
         assert!(st.pending_gov_update("emergency_pause").is_none());
     }
 
-
     #[test]
     fn emergency_pause_checked_replace_noop_is_idempotent() {
         // Merge-gate guard: Replace action on a non-sensitive emergency_pause value should
@@ -2241,7 +2240,10 @@ mod tests {
             _ => panic!("expected immediate apply"),
         };
 
-        assert_eq!(first_ref, second_ref, "replace noop must not churn object version");
+        assert_eq!(
+            first_ref, second_ref,
+            "replace noop must not churn object version"
+        );
         assert!(st.is_emergency_paused());
         assert!(st.pending_gov_update("emergency_pause").is_none());
     }
@@ -2313,7 +2315,10 @@ mod tests {
             _ => panic!("expected immediate apply"),
         };
 
-        assert_eq!(first_ref, second_ref, "enforce noop must not churn object version");
+        assert_eq!(
+            first_ref, second_ref,
+            "enforce noop must not churn object version"
+        );
         assert!(st.is_emergency_paused());
         assert!(st.pending_gov_update("emergency_pause").is_none());
     }
@@ -2797,4 +2802,3 @@ mod tests {
         assert_eq!(got.state_root_hex, "r1");
     }
 }
-
