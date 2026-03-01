@@ -43,10 +43,7 @@ impl SettlementStatus {
         if self.can_transition_to(to) {
             return Ok(to);
         }
-        Err(InteropIdentityError::InvalidSettlementTransition {
-            from: self,
-            to,
-        })
+        Err(InteropIdentityError::InvalidSettlementTransition { from: self, to })
     }
 }
 
@@ -278,10 +275,7 @@ impl IdentityRegistry {
         field: &'static str,
         value: &str,
     ) -> Result<(), InteropIdentityError> {
-        if value.trim().is_empty()
-            || value.trim() != value
-            || value.chars().any(char::is_control)
-        {
+        if value.trim().is_empty() || value.trim() != value || value.chars().any(char::is_control) {
             return Err(InteropIdentityError::InvalidIdentityValue {
                 field,
                 value: value.to_string(),
@@ -322,13 +316,7 @@ impl IdentityRegistry {
                 revoked_at: None,
             },
         );
-        self.push_audit(
-            AuditAction::DidRegistered,
-            controller,
-            did,
-            at_height,
-            None,
-        );
+        self.push_audit(AuditAction::DidRegistered, controller, did, at_height, None);
         Ok(())
     }
 
@@ -555,24 +543,25 @@ impl IdentityRegistry {
 
         Self::ensure_actor_controls_did(&actor, did_rec)?;
 
-        let (is_first_revoke, did_revoke_anchor) = if let Some(first_revoked_at) = did_rec.revoked_at {
-            if at_height < first_revoked_at {
-                return Err(InteropIdentityError::InvalidDidRevocationHeight {
-                    created_at: first_revoked_at,
-                    revoked_at: at_height,
-                });
-            }
-            (false, first_revoked_at)
-        } else {
-            if at_height < did_rec.created_at {
-                return Err(InteropIdentityError::InvalidDidRevocationHeight {
-                    created_at: did_rec.created_at,
-                    revoked_at: at_height,
-                });
-            }
-            did_rec.revoked_at = Some(at_height);
-            (true, at_height)
-        };
+        let (is_first_revoke, did_revoke_anchor) =
+            if let Some(first_revoked_at) = did_rec.revoked_at {
+                if at_height < first_revoked_at {
+                    return Err(InteropIdentityError::InvalidDidRevocationHeight {
+                        created_at: first_revoked_at,
+                        revoked_at: at_height,
+                    });
+                }
+                (false, first_revoked_at)
+            } else {
+                if at_height < did_rec.created_at {
+                    return Err(InteropIdentityError::InvalidDidRevocationHeight {
+                        created_at: did_rec.created_at,
+                        revoked_at: at_height,
+                    });
+                }
+                did_rec.revoked_at = Some(at_height);
+                (true, at_height)
+            };
 
         if is_first_revoke {
             self.push_audit(
@@ -645,12 +634,12 @@ impl IdentityRegistry {
             });
         }
 
-        let did = self
-            .dids
-            .get(&token.subject_did)
-            .ok_or_else(|| InteropIdentityError::DidNotFound {
-                did: token.subject_did.clone(),
-            })?;
+        let did =
+            self.dids
+                .get(&token.subject_did)
+                .ok_or_else(|| InteropIdentityError::DidNotFound {
+                    did: token.subject_did.clone(),
+                })?;
 
         if !did.is_active_at(at_height) {
             return Err(InteropIdentityError::DidRevoked {
@@ -1417,7 +1406,12 @@ mod tests {
         };
 
         let err = rec
-            .apply_status(SettlementStatus::Finalized, 101, Some("   ".to_string()), None)
+            .apply_status(
+                SettlementStatus::Finalized,
+                101,
+                Some("   ".to_string()),
+                None,
+            )
             .unwrap_err();
 
         assert!(matches!(err, InteropIdentityError::MissingSettlementTx));
@@ -1497,7 +1491,10 @@ mod tests {
             )
             .unwrap();
         assert_eq!(reverted.settlement_tx, None);
-        assert_eq!(reverted.revert_reason.as_deref(), Some("manual_compensation"));
+        assert_eq!(
+            reverted.revert_reason.as_deref(),
+            Some("manual_compensation")
+        );
     }
 
     #[test]
@@ -1596,6 +1593,7 @@ mod tests {
 
         assert_eq!(rec.revert_reason.as_deref(), Some("fraud-proof"));
     }
+
 
     #[test]
     fn settlement_status_update_rejects_height_regression_without_side_effects() {
@@ -1777,10 +1775,7 @@ mod tests {
             revert_reason: None,
         };
 
-        assert_eq!(
-            rec.evidence_path(),
-            "settlements/_/_/_/46/pending@2223"
-        );
+        assert_eq!(rec.evidence_path(), "settlements/_/_/_/46/pending@2223");
     }
 
     #[test]
@@ -2270,7 +2265,10 @@ mod tests {
             reg.audit_trail().last().map(|ev| ev.action),
             Some(AuditAction::CapabilityRevoked)
         );
-        assert_eq!(reg.audit_trail().last().map(|ev| ev.actor.as_str()), Some("system:cascade"));
+        assert_eq!(
+            reg.audit_trail().last().map(|ev| ev.actor.as_str()),
+            Some("system:cascade")
+        );
         assert_eq!(reg.audit_trail().last().map(|ev| ev.at_height), Some(40));
     }
 
@@ -2305,7 +2303,10 @@ mod tests {
         reg.revoke_did("org:lane2-admin".to_string(), "did:trnm:agent-2rfloor", 99)
             .unwrap();
 
-        assert_eq!(reg.did("did:trnm:agent-2rfloor").unwrap().revoked_at, Some(40));
+        assert_eq!(
+            reg.did("did:trnm:agent-2rfloor").unwrap().revoked_at,
+            Some(40)
+        );
         assert_eq!(reg.capability(token_id).unwrap().revoked_at, Some(60));
         assert_eq!(reg.audit_trail().len(), audit_len_before + 1);
     }
@@ -2955,6 +2956,41 @@ mod tests {
     }
 
     #[test]
+    fn renew_capability_rejects_noncanonical_actor_without_side_effects() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did(
+            "did:trnm:agent-renew-actorfmt".to_string(),
+            "org:lane2-admin".to_string(),
+            10,
+        )
+        .unwrap();
+
+        let token_id = reg
+            .issue_capability(
+                "org:lane2-admin".to_string(),
+                "did:trnm:agent-renew-actorfmt".to_string(),
+                CapabilityScope::AuditRead,
+                20,
+                Some(60),
+            )
+            .unwrap();
+
+        let audit_len_before = reg.audit_trail().len();
+        let token_before = reg.capability(token_id).unwrap().clone();
+
+        let err = reg
+            .renew_capability(" org:lane2-admin ".to_string(), token_id, 25, Some(80))
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            InteropIdentityError::InvalidIdentityValue { field: "actor", .. }
+        ));
+        assert_eq!(reg.audit_trail().len(), audit_len_before);
+        assert_eq!(reg.capability(token_id), Some(&token_before));
+    }
+
+    #[test]
     fn renew_capability_rejects_unknown_token_without_side_effects() {
         let mut reg = IdentityRegistry::default();
         reg.register_did(
@@ -3541,12 +3577,7 @@ mod tests {
 
         let baseline = reg.audit_trail().to_vec();
         let err = reg
-            .verify_capability(
-                "org:lane2-admin",
-                42,
-                CapabilityScope::BridgeSettle,
-                50,
-            )
+            .verify_capability("org:lane2-admin", 42, CapabilityScope::BridgeSettle, 50)
             .unwrap_err();
 
         assert!(matches!(
