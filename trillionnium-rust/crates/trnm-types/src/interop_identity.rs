@@ -100,8 +100,13 @@ fn canonical_path_segment(raw: &str) -> String {
     }
 
     let lowered = sanitized.to_ascii_lowercase();
+    let windows_basename = lowered
+        .trim_end_matches(['.', ' '])
+        .split('.')
+        .next()
+        .unwrap_or("");
     let is_windows_reserved = matches!(
-        lowered.as_str(),
+        windows_basename,
         "con"
             | "prn"
             | "aux"
@@ -2016,6 +2021,27 @@ mod tests {
         assert_eq!(
             rec.evidence_path(),
             "settlements/CON_/nul_/Com1_/51/pending@2228"
+        );
+    }
+
+    #[test]
+    fn settlement_evidence_path_avoids_windows_reserved_device_names_with_extension_alias() {
+        let rec = SettlementRecord {
+            settlement_id: 52,
+            route: BridgeRoute {
+                route_id: "con.txt".to_string(),
+                source_chain: "LPT1.log".to_string(),
+                target_chain: "aux.backup".to_string(),
+            },
+            status: SettlementStatus::Pending,
+            at_height: 2_229,
+            settlement_tx: None,
+            revert_reason: None,
+        };
+
+        assert_eq!(
+            rec.evidence_path(),
+            "settlements/con.txt_/LPT1.log_/aux.backup_/52/pending@2229"
         );
     }
 
