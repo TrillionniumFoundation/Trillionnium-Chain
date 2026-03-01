@@ -81,8 +81,11 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
     match raw.trim().to_ascii_lowercase().as_str() {
         "fraud_proof" | "fraud-proof" | "fraud proof" | "fraud_receipt" | "fraud-receipt"
         | "fraud receipt" => "fraud".to_string(),
-        "tee_receipt" | "tee-receipt" | "tee receipt" => "tee".to_string(),
-        "zk_receipt" | "zk-receipt" | "zk receipt" => "zk".to_string(),
+        "tee_proof" | "tee-proof" | "tee proof" | "tee_receipt" | "tee-receipt"
+        | "tee receipt" => "tee".to_string(),
+        "zk_proof" | "zk-proof" | "zk proof" | "zk_receipt" | "zk-receipt" | "zk receipt" => {
+            "zk".to_string()
+        }
         other => other.to_string(),
     }
 }
@@ -298,5 +301,24 @@ mod tests {
         assert_eq!(snake.proof_type, "fraud");
         assert_eq!(hyphen.proof_type, "fraud");
         assert_eq!(space.proof_type, "fraud");
+    }
+
+    #[test]
+    fn verification_receipt_new_collapses_legacy_tee_zk_proof_aliases_to_router_keys() {
+        let tee_snake = VerificationReceipt::new(1, "TEE_PROOF", VerificationResult::Valid, "v", 1);
+        let tee_hyphen = VerificationReceipt::new(2, " tee-proof ", VerificationResult::Valid, "v", 2);
+        let tee_space = VerificationReceipt::new(3, "tee proof", VerificationResult::Valid, "v", 3);
+
+        let zk_snake = VerificationReceipt::new(4, "ZK_PROOF", VerificationResult::Valid, "v", 4);
+        let zk_hyphen = VerificationReceipt::new(5, " zk-proof ", VerificationResult::Valid, "v", 5);
+        let zk_space = VerificationReceipt::new(6, "zk proof", VerificationResult::Valid, "v", 6);
+
+        assert_eq!(tee_snake.proof_type, "tee");
+        assert_eq!(tee_hyphen.proof_type, "tee");
+        assert_eq!(tee_space.proof_type, "tee");
+
+        assert_eq!(zk_snake.proof_type, "zk");
+        assert_eq!(zk_hyphen.proof_type, "zk");
+        assert_eq!(zk_space.proof_type, "zk");
     }
 }
