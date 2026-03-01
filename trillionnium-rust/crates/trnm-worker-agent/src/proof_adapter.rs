@@ -62,7 +62,7 @@ impl ProofAdapter for StandardProofAdapter {
     }
 
     fn parse_response(&self, stdout: &str) -> Result<LlmAdapterResponse, String> {
-        let normalized = stdout.trim_start_matches('\u{feff}');
+        let normalized = stdout.trim_start().trim_start_matches('\u{feff}');
 
         if let Ok(parsed) = serde_json::from_str(normalized) {
             return Ok(parsed);
@@ -172,6 +172,18 @@ mod tests {
             .expect("should parse json with leading utf-8 bom");
         assert_eq!(parsed.output_text, "ok");
         assert_eq!(parsed.provider_request_id.as_deref(), Some("r5"));
+    }
+
+    #[test]
+    fn standard_proof_adapter_parse_response_accepts_json_with_whitespace_then_bom_prefix() {
+        let adapter = StandardProofAdapter;
+        let stdout = "\n  \u{feff}{\"output_text\":\"ok\",\"provider_request_id\":\"r6\"}";
+
+        let parsed = adapter
+            .parse_response(stdout)
+            .expect("should parse json with whitespace before utf-8 bom");
+        assert_eq!(parsed.output_text, "ok");
+        assert_eq!(parsed.provider_request_id.as_deref(), Some("r6"));
     }
 
     #[test]
