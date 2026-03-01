@@ -17,6 +17,8 @@ cargo test -p trnm-types settlement_revert_and_finalize_fields_are_mutually_excl
 cargo test -p trnm-types settlement_pending_reapply_scrubs_terminal_payload_fields
 cargo test -p trnm-types settlement_finalize_requires_non_empty_settlement_tx
 cargo test -p trnm-types settlement_revert_requires_non_empty_reason
+cargo test -p trnm-types settlement_terminal_payloads_are_trimmed_before_persisting
+cargo test -p trnm-types settlement_revert_reason_normalizes_proof_adapter_aliases
 cargo test -p trnm-types settlement_status_update_rejects_height_regression_without_side_effects
 cargo test -p trnm-types settlement_evidence_path_tracks_terminal_state_machine_outcome
 
