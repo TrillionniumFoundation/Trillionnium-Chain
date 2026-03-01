@@ -33,9 +33,9 @@ impl VerifierRegistry {
 
         let canonical = match normalized.as_str() {
             // Backward-compatible aliases from early V1/V2 receipt naming.
-            "fraud_proof" => "fraud",
-            "tee_receipt" => "tee",
-            "zk_receipt" => "zk",
+            "fraud_proof" | "fraud-proof" => "fraud",
+            "tee_receipt" | "tee-receipt" => "tee",
+            "zk_receipt" | "zk-receipt" => "zk",
             _ => normalized.as_str(),
         };
 
@@ -166,6 +166,20 @@ mod tests {
         let mut registry = VerifierRegistry::new();
         registry.register(Arc::new(AlwaysValidVerifier {
             kind: " TEE_RECEIPT ",
+        }));
+
+        let task = task_with_proof_type(ProofType::Tee);
+        assert_eq!(
+            registry.verify(&task, b"receipt"),
+            VerificationResult::Valid
+        );
+    }
+
+    #[test]
+    fn registry_register_collapses_hyphenated_legacy_receipt_aliases_for_lookup() {
+        let mut registry = VerifierRegistry::new();
+        registry.register(Arc::new(AlwaysValidVerifier {
+            kind: " tee-receipt ",
         }));
 
         let task = task_with_proof_type(ProofType::Tee);
