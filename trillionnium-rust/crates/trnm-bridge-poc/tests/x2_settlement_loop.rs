@@ -201,6 +201,38 @@ fn x2_degraded_heartbeat_blank_reason_falls_back_to_stable_unknown() {
 }
 
 #[test]
+fn x2_degraded_heartbeat_control_only_reason_falls_back_to_stable_unknown() {
+    let mut request = SettlementRequest::new(2, "0x0ddcafe0".to_string());
+    let token = operator_token();
+
+    let heartbeat = trnm_bridge_poc::relay_heartbeat::HeartbeatOutcome {
+        heartbeat: None,
+        should_retry: false,
+        degraded: true,
+        message: "\u{2060}\u{202E}\u{202C}\u{2069}".to_string(),
+    };
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Confirmed { height: 401 },
+    )
+    .unwrap();
+
+    assert_eq!(
+        out,
+        SettlementStep::Compensated {
+            reason: "heartbeat degraded: unknown heartbeat degradation".to_string(),
+        }
+    );
+    assert_eq!(
+        current_status(&request),
+        &BridgeStatus::Reverted("heartbeat degraded: unknown heartbeat degradation".to_string())
+    );
+}
+
+#[test]
 fn x2_failure_path_bidi_controls_are_sanitized_before_compensation() {
     let mut request = SettlementRequest::new(2, "0x0ddcafee".to_string());
     let token = operator_token();
