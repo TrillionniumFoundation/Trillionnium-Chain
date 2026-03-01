@@ -18,16 +18,24 @@ impl ProofAdapter for StandardProofAdapter {
             return Ok(parsed);
         }
 
-        let fallback_line = stdout
-            .lines()
-            .rev()
-            .map(str::trim)
-            .find(|line| line.starts_with('{') && line.ends_with('}'));
+        for line in stdout.lines().rev().map(str::trim) {
+            if line.starts_with('{') && line.ends_with('}') {
+                if let Ok(parsed) = serde_json::from_str(line) {
+                    return Ok(parsed);
+                }
+            }
 
-        match fallback_line {
-            Some(line) => serde_json::from_str(line).map_err(|e| e.to_string()),
-            None => Err("no-json-line".to_string()),
+            if let (Some(start), Some(end)) = (line.find('{'), line.rfind('}')) {
+                if start < end {
+                    let candidate = &line[start..=end];
+                    if let Ok(parsed) = serde_json::from_str(candidate) {
+                        return Ok(parsed);
+                    }
+                }
+            }
         }
+
+        Err("no-json-line".to_string())
     }
 }
 
@@ -62,6 +70,18 @@ mod tests {
             .expect("should parse trailing json line");
         assert_eq!(parsed.output_text, "ok");
         assert_eq!(parsed.provider_request_id.as_deref(), Some("r1"));
+    }
+
+    #[test]
+    fn standard_proof_adapter_parse_response_accepts_json_embedded_in_log_line() {
+        let adapter = StandardProofAdapter;
+        let stdout = "info:adapter payload={\"output_text\":\"ok\",\"provider_request_id\":\"r2\"}\n";
+
+        let parsed = adapter
+            .parse_response(stdout)
+            .expect("should parse json embedded in log line");
+        assert_eq!(parsed.output_text, "ok");
+        assert_eq!(parsed.provider_request_id.as_deref(), Some("r2"));
     }
 
     #[test]
