@@ -243,6 +243,7 @@ struct MarketReport {
     bid_count: usize,
     unique_bidder_count: usize,
     avg_bids_per_task: f64,
+    match_rate: f64,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -2164,6 +2165,11 @@ fn main() -> Result<()> {
             } else {
                 bid_count as f64 / task_count as f64
             };
+            let match_rate = if task_count == 0 {
+                0.0
+            } else {
+                matched_task_count as f64 / task_count as f64
+            };
 
             let out = MarketReport {
                 task_count,
@@ -2172,6 +2178,7 @@ fn main() -> Result<()> {
                 bid_count,
                 unique_bidder_count,
                 avg_bids_per_task,
+                match_rate,
             };
             println!("{}", serde_json::to_string_pretty(&out)?);
         }
