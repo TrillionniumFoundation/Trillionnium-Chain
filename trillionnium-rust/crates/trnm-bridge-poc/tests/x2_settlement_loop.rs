@@ -340,3 +340,61 @@ fn x2_confirm_with_zero_height_rejected_and_preserves_pending() {
     ));
     assert_eq!(current_status(&request), &BridgeStatus::Pending);
 }
+
+#[test]
+fn x2_failure_path_long_confirm_reason_is_capped_for_log_safety() {
+    let mut request = SettlementRequest::new(11, "0xfacefeed".to_string());
+    let token = operator_token();
+
+    let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 2));
+    let heartbeat = monitor.record_success(510, 509, 11);
+    let long_reason = "r".repeat(220);
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Failed { reason: long_reason },
+    )
+    .unwrap();
+
+    let compensated_reason = match out {
+        SettlementStep::Compensated { reason } => reason,
+        other => panic!("expected compensated step, got {other:?}"),
+    };
+
+    assert_eq!(compensated_reason.chars().count(), 188);
+    assert!(compensated_reason.ends_with('…'));
+    assert!(compensated_reason.starts_with("settlement confirm failed: "));
+}
+
+#[test]
+fn x2_degraded_heartbeat_long_reason_is_capped_for_log_safety() {
+    let mut request = SettlementRequest::new(12, "0xfacebead".to_string());
+    let token = operator_token();
+
+    let long_reason = "h".repeat(220);
+    let heartbeat = trnm_bridge_poc::relay_heartbeat::HeartbeatOutcome {
+        heartbeat: None,
+        should_retry: false,
+        degraded: true,
+        message: long_reason,
+    };
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Confirmed { height: 601 },
+    )
+    .unwrap();
+
+    let compensated_reason = match out {
+        SettlementStep::Compensated { reason } => reason,
+        other => panic!("expected compensated step, got {other:?}"),
+    };
+
+    assert_eq!(compensated_reason.chars().count(), 181);
+    assert!(compensated_reason.ends_with('…'));
+    assert!(compensated_reason.starts_with("heartbeat degraded: "));
+}

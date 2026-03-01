@@ -13,6 +13,8 @@ pub enum SettlementStep {
     Compensated { reason: String },
 }
 
+const MAX_COMPENSATION_REASON_CHARS: usize = 160;
+
 pub fn drive_minimal_settlement(
     request: &mut SettlementRequest,
     token: &CapabilityToken,
@@ -76,10 +78,18 @@ fn normalize_compensation_reason(reason: &str, fallback: &'static str) -> String
     let collapsed = sanitized.split_whitespace().collect::<Vec<_>>().join(" ");
 
     if collapsed.is_empty() {
-        fallback.to_string()
-    } else {
-        collapsed
+        return fallback.to_string();
     }
+
+    let mut normalized = String::new();
+    for (idx, ch) in collapsed.chars().enumerate() {
+        if idx >= MAX_COMPENSATION_REASON_CHARS {
+            normalized.push('…');
+            break;
+        }
+        normalized.push(ch);
+    }
+    normalized
 }
 
 pub fn current_status(request: &SettlementRequest) -> &BridgeStatus {
