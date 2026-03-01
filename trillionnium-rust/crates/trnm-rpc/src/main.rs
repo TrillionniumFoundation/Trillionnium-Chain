@@ -228,6 +228,7 @@ struct MarketMatchResult {
     price: u128,
     status: String,
     match_policy: String,
+    matched_bid_count: usize,
     winner_reputation: i64,
     effective_score: u128,
 }
@@ -2079,6 +2080,7 @@ fn main() -> Result<()> {
             }
 
             let reputation = load_market_reputation();
+            let matched_bid_count = task_bids.len();
             let winner = task_bids
                 .into_iter()
                 .min_by_key(|b| {
@@ -2108,6 +2110,7 @@ fn main() -> Result<()> {
                 price: winner.price,
                 status: "matched".into(),
                 match_policy: "price_reputation_weighted".into(),
+                matched_bid_count,
                 winner_reputation,
                 effective_score: winner_score,
             };

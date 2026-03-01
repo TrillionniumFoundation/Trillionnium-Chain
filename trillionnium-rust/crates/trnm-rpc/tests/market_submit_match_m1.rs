@@ -78,6 +78,7 @@ fn market_submit_bid_and_match_task_m1_happy_path() {
     let match_out = run_ok(&["market.match_task", "--task-id", &task_id]);
     assert!(match_out.contains("\"status\":\"matched\""));
     assert!(match_out.contains("\"winner\":\"worker-a\""));
+    assert!(match_out.contains("\"matched_bid_count\":1"));
 }
 
 #[test]
