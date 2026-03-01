@@ -38,9 +38,18 @@ impl ProofVerifier for TeeVerifier {
         // plus a non-whitespace payload body.
         // Accept case-insensitive variants to avoid client-side casing drift.
         // Accepted examples: "TEE:...", "tee:...".
-        let has_prefix = proof_data.len() >= 4 && proof_data[..4].eq_ignore_ascii_case(b"TEE:");
+        // Also accept an optional UTF-8 BOM prefix for legacy clients.
+        let envelope_offset = if proof_data.starts_with(&[0xef, 0xbb, 0xbf]) {
+            3
+        } else {
+            0
+        };
+        let has_prefix = proof_data
+            .get(envelope_offset..envelope_offset + 4)
+            .map(|prefix| prefix.eq_ignore_ascii_case(b"TEE:"))
+            .unwrap_or(false);
         let has_non_whitespace_body = proof_data
-            .get(4..)
+            .get(envelope_offset + 4..)
             .map(has_visible_receipt_body)
             .unwrap_or(false);
 
@@ -134,6 +143,28 @@ mod tests {
             verifier.verify_proof(&task, b"TeE:quote"),
             VerificationResult::Valid
         );
+    }
+
+    #[test]
+    fn tee_verifier_accepts_utf8_bom_prefixed_receipt() {
+        let verifier = TeeVerifier;
+        let task = mock_task();
+
+        assert_eq!(
+            verifier.verify_proof(&task, "\u{feff}TEE:quote".as_bytes()),
+            VerificationResult::Valid
+        );
+    }
+
+    #[test]
+    fn tee_verifier_rejects_utf8_bom_prefixed_receipt_with_blank_body() {
+        let verifier = TeeVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(&task, "\u{feff}TEE: \n\t".as_bytes()),
+            VerificationResult::Invalid(msg) if msg.contains("envelope")
+        ));
     }
 
     #[test]
