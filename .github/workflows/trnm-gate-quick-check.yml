@@ -112,6 +112,10 @@ jobs:
         run: |
           ./scripts/v2/d2_task_model_metadata_schema_accept_provenance_index_maxlen_test.sh
 
+      - name: D2 schema accepts namespaced provenance_index regression
+        run: |
+          ./scripts/v2/d2_task_model_metadata_schema_accept_namespaced_provenance_index_test.sh
+
       - name: Auto regression: pr5-challenge-reconcile-gate
         run: |
           ./scripts/v2/pr5_challenge_reconcile_gate.sh
