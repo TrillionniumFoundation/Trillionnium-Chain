@@ -2039,15 +2039,21 @@ mod tests {
             Some("cn-pii-restricted")
         );
 
-        let mut compact_alias = rec.clone();
-        compact_alias.provenance_schema_version = Some("llm2".to_string());
-        let compact_export = to_enterprise_audit_export(&compact_alias);
-        assert_eq!(compact_export.provenance_schema_version.as_deref(), Some("llm.v2"));
-        assert_eq!(compact_export.agent_protocol.as_deref(), Some("a2a"));
-        assert_eq!(
-            compact_export.compliance_profile.as_deref(),
-            Some("cn-pii-restricted")
-        );
+        for alias in ["llm2", "llm-v2", "llm/v2"] {
+            let mut compact_alias = rec.clone();
+            compact_alias.provenance_schema_version = Some(alias.to_string());
+            let compact_export = to_enterprise_audit_export(&compact_alias);
+            assert_eq!(
+                compact_export.provenance_schema_version.as_deref(),
+                Some("llm.v2"),
+                "schema alias should canonicalize: {alias}"
+            );
+            assert_eq!(compact_export.agent_protocol.as_deref(), Some("a2a"));
+            assert_eq!(
+                compact_export.compliance_profile.as_deref(),
+                Some("cn-pii-restricted")
+            );
+        }
     }
 
     #[test]
