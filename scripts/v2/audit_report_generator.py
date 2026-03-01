@@ -16,7 +16,7 @@ def parse_kv(line):
     for part in parts:
         if '=' in part:
             k, v = part.split('=', 1)
-            data[k] = v.strip()
+            data[k] = v
     return data
 
 def parse_strict_int(value):
