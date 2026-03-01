@@ -46,6 +46,8 @@
 - 撤销新增 capability token。
 - 冻结本次接入环境凭据。
 - 标记接入状态为 `reverted` 并附根因标签。
+- 记录可复放的回滚命令模板（必须携带 `--root-cause-tag`），示例：
+  - `trnm-onboard rollback --org-id <org_id> --env <env> --root-cause-tag <tag>`
 
 ## 6. 证据清单（Evidence Checklist）
 

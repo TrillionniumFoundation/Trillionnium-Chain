@@ -29,6 +29,8 @@ rollback_guard_phrases=(
   "撤销新增 capability token"
   "标记接入状态为 \`reverted\`"
   "根因标签"
+  "--root-cause-tag"
+  "rollback --org-id <org_id>"
 )
 
 evidence_guard_phrases=(
@@ -36,14 +38,14 @@ evidence_guard_phrases=(
 )
 
 for phrase in "${rollback_guard_phrases[@]}"; do
-  if ! grep -Fq "$phrase" "$RUNBOOK"; then
+  if ! grep -Fq -- "$phrase" "$RUNBOOK"; then
     echo "[FAIL] rollback section missing guard phrase: $phrase" >&2
     exit 1
   fi
 done
 
 for phrase in "${evidence_guard_phrases[@]}"; do
-  if ! grep -Fq "$phrase" "$RUNBOOK"; then
+  if ! grep -Fq -- "$phrase" "$RUNBOOK"; then
     echo "[FAIL] evidence checklist missing guard phrase: $phrase" >&2
     exit 1
   fi
