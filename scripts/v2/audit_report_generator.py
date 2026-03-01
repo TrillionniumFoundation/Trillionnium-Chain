@@ -28,11 +28,15 @@ def generate_audit_report(log_file):
         with open(log_file, 'r', encoding='utf-8', errors='ignore') as f:
             for line in f:
                 if '[event]' in line and 'event_schema=v1' in line:
-                    # Extract the part after [event]
+                    # Extract timestamp prefix + content after [event]
                     try:
-                        _, content = line.split('[event]', 1)
+                        prefix, content = line.split('[event]', 1)
                         content = content.strip()
                         data = parse_kv(content)
+
+                        event_ts = prefix.strip()
+                        if event_ts:
+                            data['event_ts'] = event_ts
                         
                         if data.get('event_type') in AUDIT_TYPES:
                             events.append(data)
