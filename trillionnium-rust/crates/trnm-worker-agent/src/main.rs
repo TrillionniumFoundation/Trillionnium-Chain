@@ -1300,6 +1300,9 @@ fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
         | "agenttoagentstreamablehttpv1"
         | "agenttoagentstreamablehttpv2"
         | "googlea2a"
+        | "googlea2av"
+        | "googlea2ajsonrpc"
+        | "googlea2ajsonrpcv"
         | "googlea2aprotocol"
         | "googleagent2agent"
         | "googleagent2agentprotocol"
@@ -3260,6 +3263,10 @@ mod tests {
         );
         assert_eq!(
             normalized_agent_protocol(Some("Google A2A")).as_deref(),
+            Some("a2a")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Google A2A JSON-RPC v2")).as_deref(),
             Some("a2a")
         );
         assert_eq!(
