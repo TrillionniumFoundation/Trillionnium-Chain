@@ -3703,6 +3703,51 @@ mod tests {
     }
 
     #[test]
+    fn verify_capability_unauthorized_actor_does_not_mutate_registry() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did(
+            "did:trnm:settler-authz-no-side-effect".to_string(),
+            "org:lane2-admin".to_string(),
+            10,
+        )
+        .unwrap();
+        let token_id = reg
+            .issue_capability(
+                "org:lane2-admin".to_string(),
+                "did:trnm:settler-authz-no-side-effect".to_string(),
+                CapabilityScope::BridgeSettle,
+                20,
+                Some(120),
+            )
+            .unwrap();
+
+        let audit_before = reg.audit_trail().to_vec();
+        let token_before = reg.capability(token_id).cloned().unwrap();
+
+        let err = reg
+            .verify_capability(
+                "org:lane2-unauthorized",
+                token_id,
+                CapabilityScope::BridgeSettle,
+                30,
+            )
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            InteropIdentityError::UnauthorizedActor {
+                actor,
+                did,
+                controller,
+            } if actor == "org:lane2-unauthorized"
+                && did == "did:trnm:settler-authz-no-side-effect"
+                && controller == "org:lane2-admin"
+        ));
+        assert_eq!(reg.audit_trail(), audit_before.as_slice());
+        assert_eq!(reg.capability(token_id), Some(&token_before));
+    }
+
+    #[test]
     fn market_capability_scopes_work_as_expected() {
         let mut reg = IdentityRegistry::default();
         reg.register_did(
