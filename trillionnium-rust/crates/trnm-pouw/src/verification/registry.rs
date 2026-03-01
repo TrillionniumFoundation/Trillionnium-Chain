@@ -497,6 +497,18 @@ mod tests {
     }
 
     #[test]
+    fn registry_is_registered_for_recognizes_legacy_receipt_alias_registration() {
+        let mut registry = VerifierRegistry::new();
+        registry.register(Arc::new(AlwaysValidVerifier {
+            kind: " tee_receipt ",
+        }));
+
+        assert!(registry.is_registered_for(ProofType::Tee));
+        assert!(!registry.is_registered_for(ProofType::Fraud));
+        assert!(!registry.is_registered_for(ProofType::Zk));
+    }
+
+    #[test]
     fn registry_is_registered_for_reports_true_for_builtin_stack() {
         let registry = VerifierRegistry::with_builtin_verifiers();
 
