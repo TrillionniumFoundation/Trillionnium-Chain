@@ -78,15 +78,18 @@ impl VerificationReceipt {
 }
 
 fn normalize_receipt_proof_type(raw: &str) -> String {
-    match raw.trim().to_ascii_lowercase().as_str() {
-        "fraud_proof" | "fraud-proof" | "fraud proof" | "fraud_receipt" | "fraud-receipt"
-        | "fraud receipt" => "fraud".to_string(),
-        "tee_proof" | "tee-proof" | "tee proof" | "tee_receipt" | "tee-receipt"
-        | "tee receipt" => "tee".to_string(),
-        "zk_proof" | "zk-proof" | "zk proof" | "zk_receipt" | "zk-receipt" | "zk receipt" => {
-            "zk".to_string()
-        }
-        other => other.to_string(),
+    let lowered = raw.trim().to_ascii_lowercase();
+    let collapsed_tokens = lowered
+        .split(|ch: char| ch == '_' || ch == '-' || ch.is_ascii_whitespace())
+        .filter(|token| !token.is_empty())
+        .collect::<Vec<_>>()
+        .join(" ");
+
+    match collapsed_tokens.as_str() {
+        "fraud proof" | "fraud receipt" => "fraud".to_string(),
+        "tee proof" | "tee receipt" => "tee".to_string(),
+        "zk proof" | "zk receipt" => "zk".to_string(),
+        _ => lowered,
     }
 }
 
@@ -320,5 +323,16 @@ mod tests {
         assert_eq!(zk_snake.proof_type, "zk");
         assert_eq!(zk_hyphen.proof_type, "zk");
         assert_eq!(zk_space.proof_type, "zk");
+    }
+
+    #[test]
+    fn verification_receipt_new_collapses_repeated_separator_aliases_to_router_keys() {
+        let fraud = VerificationReceipt::new(1, "FRAUD__RECEIPT", VerificationResult::Valid, "v", 1);
+        let tee = VerificationReceipt::new(2, "tee---proof", VerificationResult::Valid, "v", 2);
+        let zk = VerificationReceipt::new(3, "zk\t\n  __--receipt", VerificationResult::Valid, "v", 3);
+
+        assert_eq!(fraud.proof_type, "fraud");
+        assert_eq!(tee.proof_type, "tee");
+        assert_eq!(zk.proof_type, "zk");
     }
 }
