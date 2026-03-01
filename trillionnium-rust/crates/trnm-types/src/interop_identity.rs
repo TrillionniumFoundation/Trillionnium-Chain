@@ -3570,6 +3570,50 @@ mod tests {
     }
 
     #[test]
+    fn verify_capability_rejects_missing_subject_did_without_side_effects() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did(
+            "did:trnm:settler-missing-subject".to_string(),
+            "org:lane2-admin".to_string(),
+            10,
+        )
+        .unwrap();
+        let token_id = reg
+            .issue_capability(
+                "org:lane2-admin".to_string(),
+                "did:trnm:settler-missing-subject".to_string(),
+                CapabilityScope::BridgeSettle,
+                20,
+                Some(120),
+            )
+            .unwrap();
+
+        // Simulate legacy/corrupt snapshot drift: capability exists but DID row was lost.
+        let removed = reg.dids.remove("did:trnm:settler-missing-subject");
+        assert!(removed.is_some());
+
+        let audit_before = reg.audit_trail().to_vec();
+        let token_before = reg.capability(token_id).cloned().unwrap();
+
+        let err = reg
+            .verify_capability(
+                "org:lane2-admin",
+                token_id,
+                CapabilityScope::BridgeSettle,
+                30,
+            )
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            InteropIdentityError::DidNotFound { did }
+                if did == "did:trnm:settler-missing-subject"
+        ));
+        assert_eq!(reg.audit_trail(), audit_before.as_slice());
+        assert_eq!(reg.capability(token_id), Some(&token_before));
+    }
+
+    #[test]
     fn verify_capability_rejects_unknown_token_without_side_effects() {
         let mut reg = IdentityRegistry::default();
         reg.register_did(
