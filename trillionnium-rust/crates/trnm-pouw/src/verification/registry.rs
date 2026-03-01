@@ -63,8 +63,10 @@ impl VerifierRegistry {
             "fraud receipt" | "fraudreceipt" => "fraud",
             "tee proof" | "teeproof" => "tee",
             "tee receipt" | "teereceipt" => "tee",
+            "tee attestation" | "teeattestation" => "tee",
             "zk proof" | "zkproof" => "zk",
             "zk receipt" | "zkreceipt" => "zk",
+            "zk attestation" | "zkattestation" => "zk",
             // Keep custom plugin keys delimiter-stable for deterministic re-registration
             // and observability output (e.g., MY__PROOF == "my proof").
             _ => collapsed.as_str(),
@@ -437,6 +439,34 @@ mod tests {
         let task = task_with_proof_type(ProofType::Zk);
         assert_eq!(
             registry.verify(&task, b"receipt"),
+            VerificationResult::Valid
+        );
+    }
+
+    #[test]
+    fn registry_register_collapses_tee_attestation_alias_for_lookup() {
+        let mut registry = VerifierRegistry::new();
+        registry.register(Arc::new(AlwaysValidVerifier {
+            kind: " tee-attestation ",
+        }));
+
+        let task = task_with_proof_type(ProofType::Tee);
+        assert_eq!(
+            registry.verify(&task, b"attestation"),
+            VerificationResult::Valid
+        );
+    }
+
+    #[test]
+    fn registry_register_collapses_zk_attestation_alias_for_lookup() {
+        let mut registry = VerifierRegistry::new();
+        registry.register(Arc::new(AlwaysValidVerifier {
+            kind: " zk_attestation ",
+        }));
+
+        let task = task_with_proof_type(ProofType::Zk);
+        assert_eq!(
+            registry.verify(&task, b"attestation"),
             VerificationResult::Valid
         );
     }
