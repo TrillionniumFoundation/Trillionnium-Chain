@@ -27,6 +27,7 @@ done
 
 rollback_guard_phrases=(
   "撤销新增 capability token"
+  "冻结本次接入环境凭据"
   "标记接入状态为 \`reverted\`"
   "根因标签"
   "--root-cause-tag"
