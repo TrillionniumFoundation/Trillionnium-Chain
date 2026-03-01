@@ -1196,6 +1196,14 @@ fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
         | "openaimodelcontextprotocolv"
         | "openaimodelcontextprotocolv1"
         | "openaimodelcontextprotocolv2"
+        | "openaimcphttp"
+        | "openaimcphttpv"
+        | "openaimcpoverhttp"
+        | "openaimcpoverhttpv"
+        | "openaimcpstreamablehttp"
+        | "openaimcpstreamablehttpv"
+        | "openaimcpoverstreamablehttp"
+        | "openaimcpoverstreamablehttpv"
         | "anthropicmcp"
         | "anthropicmcpprotocol"
         | "anthropicmodelcontextprotocol"
@@ -1314,6 +1322,10 @@ fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
         | "googlea2aoverjsonrpc"
         | "googlea2aoverjsonrpcv"
         | "googlea2aprotocol"
+        | "googlea2ahttp"
+        | "googlea2ahttpv"
+        | "googlea2aoverhttp"
+        | "googlea2aoverhttpv"
         | "googleagent2agent"
         | "googleagent2agentprotocol"
         | "googleagent2agentv"
@@ -1336,8 +1348,12 @@ fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
         | "googleagenttoagentoverstreamablehttpv"
         | "googleagent2agenthttp"
         | "googleagent2agenthttpv"
+        | "googleagent2agentoverhttp"
+        | "googleagent2agentoverhttpv"
         | "googleagenttoagenthttp"
-        | "googleagenttoagenthttpv" => Some("a2a".to_string()),
+        | "googleagenttoagenthttpv"
+        | "googleagenttoagentoverhttp"
+        | "googleagenttoagentoverhttpv" => Some("a2a".to_string()),
         _ => None,
     }
 }
@@ -3264,11 +3280,23 @@ mod tests {
             Some("a2a")
         );
         assert_eq!(
+            normalized_agent_protocol(Some("Google Agent-to-Agent over HTTP v2")).as_deref(),
+            Some("a2a")
+        );
+        assert_eq!(
             normalized_agent_protocol(Some("OpenAI MCP")).as_deref(),
             Some("mcp")
         );
         assert_eq!(
             normalized_agent_protocol(Some("OpenAI Model Context Protocol v2")).as_deref(),
+            Some("mcp")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("OpenAI MCP over HTTP v2")).as_deref(),
+            Some("mcp")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("OpenAI MCP over Streamable HTTP v2")).as_deref(),
             Some("mcp")
         );
         assert_eq!(
@@ -3289,6 +3317,10 @@ mod tests {
         );
         assert_eq!(
             normalized_agent_protocol(Some("Google A2A over JSON-RPC v2")).as_deref(),
+            Some("a2a")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Google A2A over HTTP v2")).as_deref(),
             Some("a2a")
         );
         assert_eq!(
