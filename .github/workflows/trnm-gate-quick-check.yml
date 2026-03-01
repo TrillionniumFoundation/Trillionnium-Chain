@@ -84,6 +84,10 @@ jobs:
         run: |
           ./scripts/v2/d3_task_model_metadata_schema_public_rejects_provenance_index_test.sh
 
+      - name: D2 schema accepts max provenance_index boundary regression
+        run: |
+          ./scripts/v2/d2_task_model_metadata_schema_accept_provenance_index_maxlen_test.sh
+
       - name: Auto regression: pr5-challenge-reconcile-gate
         run: |
           ./scripts/v2/pr5_challenge_reconcile_gate.sh
