@@ -1854,6 +1854,27 @@ mod tests {
     }
 
     #[test]
+    fn settlement_evidence_path_sanitizes_unicode_whitespace_segments() {
+        let rec = SettlementRecord {
+            settlement_id: 480,
+            route: BridgeRoute {
+                route_id: "eth\u{2003}mainnet->trnm".to_string(),
+                source_chain: "ethereum\u{00A0}mainnet".to_string(),
+                target_chain: "trillionnium\u{3000}alpha".to_string(),
+            },
+            status: SettlementStatus::Pending,
+            at_height: 2_225,
+            settlement_tx: None,
+            revert_reason: None,
+        };
+
+        assert_eq!(
+            rec.evidence_path(),
+            "settlements/eth_mainnet->trnm/ethereum_mainnet/trillionnium_alpha/480/pending@2225"
+        );
+    }
+
+    #[test]
     fn settlement_evidence_path_sanitizes_colon_for_cross_platform_filesystem_safety() {
         let rec = SettlementRecord {
             settlement_id: 49,
