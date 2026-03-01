@@ -429,6 +429,37 @@ fn x2_failure_path_reason_at_limit_is_not_ellipsized() {
 }
 
 #[test]
+fn x2_degraded_heartbeat_reason_at_limit_is_not_ellipsized() {
+    let mut request = SettlementRequest::new(12, "0xfacebead".to_string());
+    let token = operator_token();
+
+    let exact_limit_reason = "h".repeat(160);
+    let heartbeat = trnm_bridge_poc::relay_heartbeat::HeartbeatOutcome {
+        heartbeat: None,
+        should_retry: false,
+        degraded: true,
+        message: exact_limit_reason,
+    };
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Confirmed { height: 600 },
+    )
+    .unwrap();
+
+    let compensated_reason = match out {
+        SettlementStep::Compensated { reason } => reason,
+        other => panic!("expected compensated step, got {other:?}"),
+    };
+
+    assert_eq!(compensated_reason.chars().count(), 180);
+    assert!(!compensated_reason.ends_with('…'));
+    assert!(compensated_reason.starts_with("heartbeat degraded: "));
+}
+
+#[test]
 fn x2_degraded_heartbeat_long_reason_is_capped_for_log_safety() {
     let mut request = SettlementRequest::new(12, "0xfacebead".to_string());
     let token = operator_token();
