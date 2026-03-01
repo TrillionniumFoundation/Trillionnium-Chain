@@ -91,7 +91,16 @@ impl RelayHeartbeatMonitor {
 }
 
 fn normalize_failure_reason(reason: &str) -> String {
-    let collapsed = reason.split_whitespace().collect::<Vec<_>>().join(" ");
+    let sanitized: String = reason
+        .chars()
+        .filter(|ch| {
+            !ch.is_control() && !matches!(ch, '\u{200B}' | '\u{200C}' | '\u{200D}' | '\u{FEFF}')
+        })
+        .collect();
+    let collapsed = sanitized
+        .split_whitespace()
+        .collect::<Vec<_>>()
+        .join(" ");
     if collapsed.is_empty() {
         "unknown heartbeat failure".to_string()
     } else {

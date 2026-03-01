@@ -97,3 +97,14 @@ fn relay_heartbeat_failure_reason_collapses_internal_whitespace() {
     let out = hb.record_failure("rpc\n timeout\t on   bridge-a");
     assert_eq!(out.message, "rpc timeout on bridge-a");
 }
+
+#[test]
+fn relay_heartbeat_failure_reason_strips_control_and_zero_width_chars() {
+    let mut hb = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 3));
+
+    let out = hb.record_failure("\u{200B}rpc\u{200D} timeout\u{FEFF}\u{0007}");
+    assert_eq!(out.message, "rpc timeout");
+
+    let control_only = hb.record_failure("\u{200B}\u{200D}\u{FEFF}\u{0007}");
+    assert_eq!(control_only.message, "unknown heartbeat failure");
+}
