@@ -3715,6 +3715,47 @@ mod tests {
     }
 
     #[test]
+    fn verify_capability_rejects_height_equal_to_did_revocation_boundary() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did(
+            "did:trnm:settler-legacy-boundary".to_string(),
+            "org:lane2-admin".to_string(),
+            10,
+        )
+        .unwrap();
+        let token_id = reg
+            .issue_capability(
+                "org:lane2-admin".to_string(),
+                "did:trnm:settler-legacy-boundary".to_string(),
+                CapabilityScope::BridgeSettle,
+                20,
+                Some(200),
+            )
+            .unwrap();
+
+        // Legacy/corrupt snapshot: DID revocation exists but token revoke cascade is absent.
+        reg.dids
+            .get_mut("did:trnm:settler-legacy-boundary")
+            .unwrap()
+            .revoked_at = Some(80);
+        reg.capabilities.get_mut(&token_id).unwrap().revoked_at = None;
+
+        let err = reg
+            .verify_capability(
+                "org:lane2-admin",
+                token_id,
+                CapabilityScope::BridgeSettle,
+                80,
+            )
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            InteropIdentityError::DidRevoked { did } if did == "did:trnm:settler-legacy-boundary"
+        ));
+    }
+
+    #[test]
     fn verify_capability_rejects_noncanonical_actor_without_side_effects() {
         let mut reg = IdentityRegistry::default();
         reg.register_did(
