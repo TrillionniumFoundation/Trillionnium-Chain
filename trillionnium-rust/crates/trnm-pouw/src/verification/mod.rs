@@ -79,7 +79,8 @@ impl VerificationReceipt {
 
 fn normalize_receipt_proof_type(raw: &str) -> String {
     match raw.trim().to_ascii_lowercase().as_str() {
-        "fraud_proof" | "fraud-proof" | "fraud proof" => "fraud".to_string(),
+        "fraud_proof" | "fraud-proof" | "fraud proof" | "fraud_receipt" | "fraud-receipt"
+        | "fraud receipt" => "fraud".to_string(),
         "tee_receipt" | "tee-receipt" | "tee receipt" => "tee".to_string(),
         "zk_receipt" | "zk-receipt" | "zk receipt" => "zk".to_string(),
         other => other.to_string(),
@@ -285,5 +286,17 @@ mod tests {
         assert_eq!(fraud.proof_type, "fraud");
         assert_eq!(tee.proof_type, "tee");
         assert_eq!(zk.proof_type, "zk");
+    }
+
+    #[test]
+    fn verification_receipt_new_collapses_legacy_fraud_receipt_aliases_to_router_key() {
+        let snake = VerificationReceipt::new(1, "Fraud_Receipt", VerificationResult::Valid, "v", 1);
+        let hyphen =
+            VerificationReceipt::new(2, " fraud-receipt ", VerificationResult::Valid, "v", 2);
+        let space = VerificationReceipt::new(3, "FRAUD RECEIPT", VerificationResult::Valid, "v", 3);
+
+        assert_eq!(snake.proof_type, "fraud");
+        assert_eq!(hyphen.proof_type, "fraud");
+        assert_eq!(space.proof_type, "fraud");
     }
 }
