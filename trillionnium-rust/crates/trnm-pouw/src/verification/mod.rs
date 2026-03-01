@@ -103,7 +103,9 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
         "fraud proof" | "fraud receipt" => "fraud".to_string(),
         "tee proof" | "tee receipt" => "tee".to_string(),
         "zk proof" | "zk receipt" => "zk".to_string(),
-        _ => lowered,
+        // Keep custom plugin keys delimiter-stable so receipt persistence aligns
+        // with registry normalization/observability (e.g., MY__PROOF -> "my proof").
+        _ => collapsed_tokens,
     }
 }
 
@@ -381,5 +383,18 @@ mod tests {
         assert_eq!(fraud.proof_type, "fraud");
         assert_eq!(tee.proof_type, "tee");
         assert_eq!(zk.proof_type, "zk");
+    }
+
+    #[test]
+    fn verification_receipt_new_normalizes_custom_plugin_keys_like_registry() {
+        let receipt = VerificationReceipt::new(
+            11,
+            "  MY__CUSTOM--PROOF  ",
+            VerificationResult::Valid,
+            "v",
+            11,
+        );
+
+        assert_eq!(receipt.proof_type, "my custom proof");
     }
 }
