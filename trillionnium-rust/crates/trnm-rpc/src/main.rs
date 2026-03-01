@@ -765,7 +765,12 @@ fn market_reputation_file() -> PathBuf {
 }
 
 fn normalize_market_worker_key(raw: &str) -> Option<String> {
-    let normalized = raw.trim().to_ascii_lowercase();
+    let normalized = raw
+        .trim()
+        .to_ascii_lowercase()
+        .split_whitespace()
+        .collect::<Vec<_>>()
+        .join(" ");
     if normalized.is_empty() {
         None
     } else {
@@ -2344,6 +2349,36 @@ mod tests {
                 let rep = load_market_reputation();
                 assert_eq!(rep.get("worker-a"), Some(&200));
                 assert_eq!(rep.get("worker-b"), Some(&-7));
+                assert_eq!(rep.len(), 2);
+            },
+        );
+
+        let _ = fs::remove_file(path);
+    }
+
+    #[test]
+    fn market_reputation_loader_collapses_internal_whitespace_aliases() {
+        let mut path = std::env::temp_dir();
+        path.push(format!(
+            "trnm_rpc_market_reputation_internal_ws_{}_{}.json",
+            std::process::id(),
+            now_ms()
+        ));
+        fs::write(
+            &path,
+            r#"{" Worker   A ": 10, "worker a": 25, "WORKER   B": -3}"#,
+        )
+        .expect("write internal-whitespace reputation fixture");
+
+        with_market_path_env(
+            &[(
+                MARKET_REPUTATION_FILE_ENV,
+                Some(path.to_string_lossy().as_ref()),
+            )],
+            || {
+                let rep = load_market_reputation();
+                assert_eq!(rep.get("worker a"), Some(&25));
+                assert_eq!(rep.get("worker b"), Some(&-3));
                 assert_eq!(rep.len(), 2);
             },
         );
