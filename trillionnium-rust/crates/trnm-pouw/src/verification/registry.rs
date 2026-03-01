@@ -87,6 +87,8 @@ impl VerifierRegistry {
             "remote attestation" | "remoteattestation" => "tee",
             "tee quote" | "teequote" => "tee",
             "sgx quote" | "sgxquote" => "tee",
+            "dcap quote" | "dcapquote" => "tee",
+            "intel dcap quote" | "inteldcapquote" => "tee",
             "tee report" | "teereport" => "tee",
             "tee evidence" | "teeevidence" => "tee",
             "zk proof" | "zkproof" => "zk",
@@ -785,6 +787,34 @@ mod tests {
         let mut registry = VerifierRegistry::new();
         registry.register(Arc::new(AlwaysValidVerifier {
             kind: " SGX_QUOTE ",
+        }));
+
+        let task = task_with_proof_type(ProofType::Tee);
+        assert_eq!(
+            registry.verify(&task, b"attestation"),
+            VerificationResult::Valid
+        );
+    }
+
+    #[test]
+    fn registry_register_collapses_dcap_quote_alias_for_lookup() {
+        let mut registry = VerifierRegistry::new();
+        registry.register(Arc::new(AlwaysValidVerifier {
+            kind: " dcap-quote ",
+        }));
+
+        let task = task_with_proof_type(ProofType::Tee);
+        assert_eq!(
+            registry.verify(&task, b"attestation"),
+            VerificationResult::Valid
+        );
+    }
+
+    #[test]
+    fn registry_register_collapses_intel_dcap_quote_alias_for_lookup() {
+        let mut registry = VerifierRegistry::new();
+        registry.register(Arc::new(AlwaysValidVerifier {
+            kind: " Intel DCAP Quote ",
         }));
 
         let task = task_with_proof_type(ProofType::Tee);
