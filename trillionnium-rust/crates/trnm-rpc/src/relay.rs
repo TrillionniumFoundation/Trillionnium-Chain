@@ -469,6 +469,7 @@ pub struct RelayService {
     envelope_id: AtomicU64,
     risk_quota: Mutex<RiskQuotaState>,
     risk_quota_cfg: RiskQuotaConfig,
+    proof_query_rejected_range_out_of_bounds_total: AtomicU64,
 }
 
 impl RelayService {
@@ -479,6 +480,7 @@ impl RelayService {
             envelope_id: AtomicU64::new(1),
             risk_quota: Mutex::new(RiskQuotaState::default()),
             risk_quota_cfg: RiskQuotaConfig::default(),
+            proof_query_rejected_range_out_of_bounds_total: AtomicU64::new(0),
         }
     }
 
@@ -489,7 +491,14 @@ impl RelayService {
             envelope_id: AtomicU64::new(1),
             risk_quota: Mutex::new(RiskQuotaState::default()),
             risk_quota_cfg,
+            proof_query_rejected_range_out_of_bounds_total: AtomicU64::new(0),
         }
+    }
+
+    #[cfg(test)]
+    fn proof_query_rejected_range_out_of_bounds_total(&self) -> u64 {
+        self.proof_query_rejected_range_out_of_bounds_total
+            .load(Ordering::Relaxed)
     }
 
     fn consume_risk_quota(
@@ -666,7 +675,8 @@ impl RelayService {
 
         let max_seq = state.next_sequence.saturating_sub(1);
         if req.to_seq > max_seq {
-            // TODO(metrics): relay_proof_query_rejected_total{reason="range_out_of_bounds"} += 1
+            self.proof_query_rejected_range_out_of_bounds_total
+                .fetch_add(1, Ordering::Relaxed);
             return Err(bad_request(
                 "range_out_of_bounds",
                 format!("to_seq({}) exceeds max sequence({max_seq})", req.to_seq),
@@ -1423,6 +1433,7 @@ mod tests {
             })
             .unwrap_err();
         assert!(err.to_string().contains("bad_request/range_out_of_bounds"));
+        assert_eq!(relay.proof_query_rejected_range_out_of_bounds_total(), 1);
     }
 
     #[test]
