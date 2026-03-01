@@ -80,6 +80,10 @@ jobs:
         run: |
           ./scripts/v2/d1_task_model_metadata_schema_reject_privacy_tier_enum_test.sh
 
+      - name: D1 schema produced_at timezone offset regression
+        run: |
+          ./scripts/v2/d1_task_model_metadata_schema_reject_produced_at_timezone_offset_test.sh
+
       - name: D3 schema public rejects provenance_index regression
         run: |
           ./scripts/v2/d3_task_model_metadata_schema_public_rejects_provenance_index_test.sh
