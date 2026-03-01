@@ -84,13 +84,36 @@ fn normalize_revert_reason(reason: String) -> String {
     }
 }
 
+fn is_disallowed_invisible_char(ch: char) -> bool {
+    matches!(
+        ch,
+        '\u{061C}'
+            | '\u{200B}'
+            | '\u{200C}'
+            | '\u{200D}'
+            | '\u{200E}'
+            | '\u{200F}'
+            | '\u{202A}'
+            | '\u{202B}'
+            | '\u{202C}'
+            | '\u{202D}'
+            | '\u{202E}'
+            | '\u{2060}'
+            | '\u{2066}'
+            | '\u{2067}'
+            | '\u{2068}'
+            | '\u{2069}'
+            | '\u{FEFF}'
+    )
+}
+
 fn canonical_path_segment(raw: &str) -> String {
     let sanitized: String = raw
         .trim()
         .chars()
         .map(|ch| match ch {
             '/' | '\\' | ':' | '<' | '"' | '|' | '?' | '*' => '_',
-            c if c.is_whitespace() || c.is_control() => '_',
+            c if c.is_whitespace() || c.is_control() || is_disallowed_invisible_char(c) => '_',
             c => c,
         })
         .collect();
@@ -1966,6 +1989,27 @@ mod tests {
         assert_eq!(
             rec.evidence_path(),
             "settlements/eth_mainnet->trnm/ethereum_mainnet/trillionnium_alpha/480/pending@2225"
+        );
+    }
+
+    #[test]
+    fn settlement_evidence_path_sanitizes_bidi_and_zero_width_format_controls() {
+        let rec = SettlementRecord {
+            settlement_id: 481,
+            route: BridgeRoute {
+                route_id: "eth\u{202E}mainnet->trnm\u{200B}".to_string(),
+                source_chain: "ethereum\u{2066}mainnet\u{2069}".to_string(),
+                target_chain: "trillionnium\u{FEFF}alpha".to_string(),
+            },
+            status: SettlementStatus::Pending,
+            at_height: 2_225,
+            settlement_tx: None,
+            revert_reason: None,
+        };
+
+        assert_eq!(
+            rec.evidence_path(),
+            "settlements/eth_mainnet->trnm_/ethereum_mainnet_/trillionnium_alpha/481/pending@2225"
         );
     }
 
