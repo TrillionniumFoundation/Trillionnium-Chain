@@ -108,3 +108,13 @@ fn relay_heartbeat_failure_reason_strips_control_and_zero_width_chars() {
     let control_only = hb.record_failure("\u{200B}\u{200D}\u{FEFF}\u{0007}");
     assert_eq!(control_only.message, "unknown heartbeat failure");
 }
+
+#[test]
+fn relay_heartbeat_failure_reason_is_capped_for_log_safety() {
+    let mut hb = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 3));
+    let long_reason = "x".repeat(220);
+
+    let out = hb.record_failure(&long_reason);
+    assert_eq!(out.message.chars().count(), 161);
+    assert!(out.message.ends_with('…'));
+}

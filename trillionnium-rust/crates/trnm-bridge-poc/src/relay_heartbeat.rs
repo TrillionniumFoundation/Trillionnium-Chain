@@ -90,6 +90,8 @@ impl RelayHeartbeatMonitor {
     }
 }
 
+const MAX_FAILURE_REASON_CHARS: usize = 160;
+
 fn normalize_failure_reason(reason: &str) -> String {
     let sanitized: String = reason
         .chars()
@@ -102,8 +104,16 @@ fn normalize_failure_reason(reason: &str) -> String {
         .collect::<Vec<_>>()
         .join(" ");
     if collapsed.is_empty() {
-        "unknown heartbeat failure".to_string()
-    } else {
-        collapsed
+        return "unknown heartbeat failure".to_string();
     }
+
+    let mut normalized = String::new();
+    for (idx, ch) in collapsed.chars().enumerate() {
+        if idx >= MAX_FAILURE_REASON_CHARS {
+            normalized.push('…');
+            break;
+        }
+        normalized.push(ch);
+    }
+    normalized
 }
