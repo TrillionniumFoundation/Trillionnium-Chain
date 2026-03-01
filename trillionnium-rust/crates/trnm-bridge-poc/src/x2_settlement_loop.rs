@@ -31,7 +31,13 @@ pub fn drive_minimal_settlement(
             Ok(SettlementStep::Finalized { height })
         }
         SettlementConfirm::Failed { reason } => {
-            let reason = format!("settlement confirm failed: {reason}");
+            let confirm_reason = reason.trim();
+            let confirm_reason = if confirm_reason.is_empty() {
+                "unknown confirm failure"
+            } else {
+                confirm_reason
+            };
+            let reason = format!("settlement confirm failed: {confirm_reason}");
             request.revert_authorized(token, reason.clone())?;
             Ok(SettlementStep::Compensated { reason })
         }

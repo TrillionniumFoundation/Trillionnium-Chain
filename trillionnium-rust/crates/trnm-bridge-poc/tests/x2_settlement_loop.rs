@@ -96,3 +96,35 @@ fn x2_degraded_heartbeat_short_circuits_confirm_and_reverts() {
         &BridgeStatus::Reverted("heartbeat degraded: lag above threshold".to_string())
     );
 }
+
+#[test]
+fn x2_failure_path_blank_confirm_reason_falls_back_to_stable_unknown() {
+    let mut request = SettlementRequest::new(1, "0x00c0ffee".to_string());
+    let token = operator_token();
+
+    let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 2));
+    let heartbeat = monitor.record_success(340, 339, 17);
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Failed {
+            reason: "   \t\n  ".to_string(),
+        },
+    )
+    .unwrap();
+
+    assert_eq!(
+        out,
+        SettlementStep::Compensated {
+            reason: "settlement confirm failed: unknown confirm failure".to_string(),
+        }
+    );
+    assert_eq!(
+        current_status(&request),
+        &BridgeStatus::Reverted(
+            "settlement confirm failed: unknown confirm failure".to_string()
+        )
+    );
+}
