@@ -128,3 +128,35 @@ fn x2_failure_path_blank_confirm_reason_falls_back_to_stable_unknown() {
         )
     );
 }
+
+#[test]
+fn x2_degraded_heartbeat_blank_reason_falls_back_to_stable_unknown() {
+    let mut request = SettlementRequest::new(2, "0x0ddcafe".to_string());
+    let token = operator_token();
+
+    let heartbeat = trnm_bridge_poc::relay_heartbeat::HeartbeatOutcome {
+        heartbeat: None,
+        should_retry: false,
+        degraded: true,
+        message: "   \n\t ".to_string(),
+    };
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Confirmed { height: 401 },
+    )
+    .unwrap();
+
+    assert_eq!(
+        out,
+        SettlementStep::Compensated {
+            reason: "heartbeat degraded: unknown heartbeat degradation".to_string(),
+        }
+    );
+    assert_eq!(
+        current_status(&request),
+        &BridgeStatus::Reverted("heartbeat degraded: unknown heartbeat degradation".to_string())
+    );
+}

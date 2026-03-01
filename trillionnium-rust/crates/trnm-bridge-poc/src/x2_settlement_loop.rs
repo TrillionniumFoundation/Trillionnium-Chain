@@ -20,7 +20,13 @@ pub fn drive_minimal_settlement(
     confirm: SettlementConfirm,
 ) -> Result<SettlementStep, SettlementError> {
     if heartbeat.degraded {
-        let reason = format!("heartbeat degraded: {}", heartbeat.message);
+        let degraded_reason = heartbeat.message.trim();
+        let degraded_reason = if degraded_reason.is_empty() {
+            "unknown heartbeat degradation"
+        } else {
+            degraded_reason
+        };
+        let reason = format!("heartbeat degraded: {degraded_reason}");
         request.revert_authorized(token, reason.clone())?;
         return Ok(SettlementStep::Compensated { reason });
     }
