@@ -2161,8 +2161,14 @@ fn main() -> Result<()> {
             let tasks = load_market_tasks();
             let bids = load_market_bids();
             let task_count = tasks.len();
-            let open_task_count = tasks.iter().filter(|t| t.status == "open").count();
-            let matched_task_count = tasks.iter().filter(|t| t.status == "matched").count();
+            let open_task_count = tasks
+                .iter()
+                .filter(|t| t.status.trim().eq_ignore_ascii_case("open"))
+                .count();
+            let matched_task_count = tasks
+                .iter()
+                .filter(|t| t.status.trim().eq_ignore_ascii_case("matched"))
+                .count();
             let bid_count = bids.len();
 
             let unique_bidder_count = bids

@@ -607,6 +607,45 @@ fn market_report_summarizes_tasks_bids_and_unique_bidders() {
 }
 
 #[test]
+fn market_report_counts_status_case_and_whitespace_variants() {
+    let _guard = test_lock().lock().expect("test lock");
+
+    let tasks = unique_market_fixture_path("market_report_status_norm_tasks", "jsonl");
+    let bids = unique_market_fixture_path("market_report_status_norm_bids", "jsonl");
+    fs::write(
+        &tasks,
+        concat!(
+            r#"{"task_id":31001,"creator":"alice","bounty":100,"description":"norm","status":" Open ","created_at_unix_ms":1}"#,
+            "\n",
+            r#"{"task_id":31002,"creator":"bob","bounty":100,"description":"norm","status":"MATCHED\t","created_at_unix_ms":2}"#,
+            "\n",
+            r#"{"task_id":31003,"creator":"carol","bounty":100,"description":"norm","status":"closed","created_at_unix_ms":3}"#,
+            "\n"
+        ),
+    )
+    .expect("write tasks fixture");
+    fs::write(&bids, "").expect("write bids fixture");
+
+    let tasks_env = tasks.to_string_lossy().into_owned();
+    let bids_env = bids.to_string_lossy().into_owned();
+    let out = run_ok_with_env(
+        &["market.report"],
+        &[
+            ("TRNM_RPC_MARKET_TASKS_FILE", tasks_env.as_str()),
+            ("TRNM_RPC_MARKET_BIDS_FILE", bids_env.as_str()),
+        ],
+    );
+    let report: Value = serde_json::from_str(&out).expect("market report json");
+
+    assert_eq!(report["task_count"], 3);
+    assert_eq!(report["open_task_count"], 1);
+    assert_eq!(report["matched_task_count"], 1);
+
+    let _ = fs::remove_file(tasks);
+    let _ = fs::remove_file(bids);
+}
+
+#[test]
 fn market_report_normalizes_and_ignores_invalid_bidder_keys() {
     let _guard = test_lock().lock().expect("test lock");
 
