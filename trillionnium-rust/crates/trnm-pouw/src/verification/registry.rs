@@ -42,12 +42,12 @@ impl VerifierRegistry {
 
         let canonical = match collapsed.as_str() {
             // Backward-compatible aliases from early V1/V2 proof/receipt naming.
-            "fraud proof" => "fraud",
-            "fraud receipt" => "fraud",
-            "tee proof" => "tee",
-            "tee receipt" => "tee",
-            "zk proof" => "zk",
-            "zk receipt" => "zk",
+            "fraud proof" | "fraudproof" => "fraud",
+            "fraud receipt" | "fraudreceipt" => "fraud",
+            "tee proof" | "teeproof" => "tee",
+            "tee receipt" | "teereceipt" => "tee",
+            "zk proof" | "zkproof" => "zk",
+            "zk receipt" | "zkreceipt" => "zk",
             // Keep custom plugin keys delimiter-stable for deterministic re-registration
             // and observability output (e.g., MY__PROOF == "my proof").
             _ => collapsed.as_str(),
@@ -194,6 +194,20 @@ mod tests {
         let mut registry = VerifierRegistry::new();
         registry.register(Arc::new(AlwaysValidVerifier {
             kind: " tee-receipt ",
+        }));
+
+        let task = task_with_proof_type(ProofType::Tee);
+        assert_eq!(
+            registry.verify(&task, b"receipt"),
+            VerificationResult::Valid
+        );
+    }
+
+    #[test]
+    fn registry_register_collapses_compact_legacy_receipt_aliases_for_lookup() {
+        let mut registry = VerifierRegistry::new();
+        registry.register(Arc::new(AlwaysValidVerifier {
+            kind: " TeEReCeIpT ",
         }));
 
         let task = task_with_proof_type(ProofType::Tee);
