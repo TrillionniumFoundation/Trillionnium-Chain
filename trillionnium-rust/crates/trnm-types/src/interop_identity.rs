@@ -2519,6 +2519,47 @@ mod tests {
     }
 
     #[test]
+    fn revoke_capability_replay_with_same_height_is_idempotent_without_side_effects() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did(
+            "did:trnm:agent-3eq".to_string(),
+            "org:lane2-admin".to_string(),
+            10,
+        )
+        .unwrap();
+
+        let token_id = reg
+            .issue_capability(
+                "org:lane2-admin".to_string(),
+                "did:trnm:agent-3eq".to_string(),
+                CapabilityScope::AuditRead,
+                12,
+                None,
+            )
+            .unwrap();
+
+        reg.revoke_capability(
+            "org:lane2-admin".to_string(),
+            token_id,
+            30,
+            Some("initial_revoke".to_string()),
+        )
+        .unwrap();
+        let audit_len_before = reg.audit_trail().len();
+
+        reg.revoke_capability(
+            "org:lane2-admin".to_string(),
+            token_id,
+            30,
+            Some("same_height_replay".to_string()),
+        )
+        .unwrap();
+
+        assert_eq!(reg.capability(token_id).unwrap().revoked_at, Some(30));
+        assert_eq!(reg.audit_trail().len(), audit_len_before);
+    }
+
+    #[test]
     fn revoke_capability_replay_with_older_height_is_rejected_without_side_effects() {
         let mut reg = IdentityRegistry::default();
         reg.register_did(
