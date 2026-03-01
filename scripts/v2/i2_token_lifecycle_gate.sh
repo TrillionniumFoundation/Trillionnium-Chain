@@ -23,6 +23,7 @@ cargo test -p trnm-types verify_capability_rejects_expired_token_without_side_ef
 cargo test -p trnm-types verify_capability_accepts_height_equal_to_expiry_boundary
 cargo test -p trnm-types verify_capability_rejects_revoked_did_even_if_token_looks_active
 cargo test -p trnm-types verify_capability_allows_historical_height_before_did_revocation
+cargo test -p trnm-types verify_capability_rejects_height_equal_to_did_revocation_boundary
 cargo test -p trnm-types verify_capability_rejects_inactive_or_unauthorized_actor
 
 echo "[I2][PASS] capability token lifecycle gate"
