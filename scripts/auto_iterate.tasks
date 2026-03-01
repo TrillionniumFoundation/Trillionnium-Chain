@@ -287,3 +287,6 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e2-
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e3-enterprise-runbook-required-sections-test" "./scripts/v2/e3_enterprise_runbook_required_sections_test.sh" "ci(gate): add e3-enterprise-runbook-required-sections-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-producer-did-trailing-space-test" "./scripts/v2/d1_task_model_metadata_schema_reject_producer_did_trailing_space_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-producer-did-trailing-space-test regression to quick-check"
