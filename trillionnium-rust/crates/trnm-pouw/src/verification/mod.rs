@@ -128,8 +128,18 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
         | "teereceipt"
         | "teeattestation"
         | "teequote" => "tee".to_string(),
-        "zk proof" | "zk receipt" | "zk attestation" | "zkproof" | "zkreceipt"
-        | "zkattestation" => "zk".to_string(),
+        "zk proof"
+        | "zk receipt"
+        | "zk attestation"
+        | "zero knowledge proof"
+        | "zero knowledge receipt"
+        | "zero knowledge attestation"
+        | "zkproof"
+        | "zkreceipt"
+        | "zkattestation"
+        | "zeroknowledgeproof"
+        | "zeroknowledgereceipt"
+        | "zeroknowledgeattestation" => "zk".to_string(),
         // Keep custom plugin keys delimiter-stable so receipt persistence aligns
         // with registry normalization/observability (e.g., MY__PROOF -> "my proof").
         _ => collapsed_tokens,
@@ -454,6 +464,35 @@ mod tests {
         assert_eq!(fraud.proof_type, "fraud");
         assert_eq!(tee.proof_type, "tee");
         assert_eq!(zk.proof_type, "zk");
+    }
+
+    #[test]
+    fn verification_receipt_new_collapses_zero_knowledge_aliases_to_zk_router_key() {
+        let spaced = VerificationReceipt::new(
+            1,
+            "zero knowledge receipt",
+            VerificationResult::Valid,
+            "v",
+            1,
+        );
+        let underscored = VerificationReceipt::new(
+            2,
+            "ZERO_KNOWLEDGE_PROOF",
+            VerificationResult::Valid,
+            "v",
+            2,
+        );
+        let compact = VerificationReceipt::new(
+            3,
+            "ZeroKnowledgeAttestation",
+            VerificationResult::Valid,
+            "v",
+            3,
+        );
+
+        assert_eq!(spaced.proof_type, "zk");
+        assert_eq!(underscored.proof_type, "zk");
+        assert_eq!(compact.proof_type, "zk");
     }
 
     #[test]
