@@ -162,9 +162,7 @@ fn x2_failure_path_blank_confirm_reason_falls_back_to_stable_unknown() {
     );
     assert_eq!(
         current_status(&request),
-        &BridgeStatus::Reverted(
-            "settlement confirm failed: unknown confirm failure".to_string()
-        )
+        &BridgeStatus::Reverted("settlement confirm failed: unknown confirm failure".to_string())
     );
 }
 
@@ -245,7 +243,8 @@ fn x2_failure_path_bidi_controls_are_sanitized_before_compensation() {
         &token,
         &heartbeat,
         SettlementConfirm::Failed {
-            reason: "settlement\u{2060} \u{202E}confirm\u{202C}   \u{2067}failed\u{2069}".to_string(),
+            reason: "settlement\u{2060} \u{202E}confirm\u{202C}   \u{2067}failed\u{2069}"
+                .to_string(),
         },
     )
     .unwrap();
@@ -288,9 +287,7 @@ fn x2_failure_path_control_only_confirm_reason_falls_back_to_stable_unknown() {
     );
     assert_eq!(
         current_status(&request),
-        &BridgeStatus::Reverted(
-            "settlement confirm failed: unknown confirm failure".to_string()
-        )
+        &BridgeStatus::Reverted("settlement confirm failed: unknown confirm failure".to_string())
     );
 }
 
@@ -386,7 +383,9 @@ fn x2_failure_path_long_confirm_reason_is_capped_for_log_safety() {
         &mut request,
         &token,
         &heartbeat,
-        SettlementConfirm::Failed { reason: long_reason },
+        SettlementConfirm::Failed {
+            reason: long_reason,
+        },
     )
     .unwrap();
 
@@ -397,6 +396,35 @@ fn x2_failure_path_long_confirm_reason_is_capped_for_log_safety() {
 
     assert_eq!(compensated_reason.chars().count(), 188);
     assert!(compensated_reason.ends_with('…'));
+    assert!(compensated_reason.starts_with("settlement confirm failed: "));
+}
+
+#[test]
+fn x2_failure_path_reason_at_limit_is_not_ellipsized() {
+    let mut request = SettlementRequest::new(13, "0xfeedf00d".to_string());
+    let token = operator_token();
+
+    let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 2));
+    let heartbeat = monitor.record_success(520, 519, 10);
+    let exact_limit_reason = "r".repeat(160);
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Failed {
+            reason: exact_limit_reason,
+        },
+    )
+    .unwrap();
+
+    let compensated_reason = match out {
+        SettlementStep::Compensated { reason } => reason,
+        other => panic!("expected compensated step, got {other:?}"),
+    };
+
+    assert_eq!(compensated_reason.chars().count(), 187);
+    assert!(!compensated_reason.ends_with('…'));
     assert!(compensated_reason.starts_with("settlement confirm failed: "));
 }
 
