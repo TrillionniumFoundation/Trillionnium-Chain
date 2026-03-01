@@ -13,6 +13,13 @@ fn operator_token() -> CapabilityToken {
     }
 }
 
+fn finalize_only_token() -> CapabilityToken {
+    CapabilityToken {
+        subject: "agent:settlement-finalizer".to_string(),
+        capabilities: vec![SettlementCapability::Finalize],
+    }
+}
+
 #[test]
 fn x2_happy_path_heartbeat_ok_then_confirm_finalize() {
     let mut request = SettlementRequest::new(1, "0xfeedbeef".to_string());
@@ -159,4 +166,28 @@ fn x2_degraded_heartbeat_blank_reason_falls_back_to_stable_unknown() {
         current_status(&request),
         &BridgeStatus::Reverted("heartbeat degraded: unknown heartbeat degradation".to_string())
     );
+}
+
+#[test]
+fn x2_degraded_heartbeat_requires_revert_capability_and_preserves_pending_on_reject() {
+    let mut request = SettlementRequest::new(9, "0xdecafbad".to_string());
+    let token = finalize_only_token();
+
+    let heartbeat = trnm_bridge_poc::relay_heartbeat::HeartbeatOutcome {
+        heartbeat: None,
+        should_retry: false,
+        degraded: true,
+        message: "relay quorum lost".to_string(),
+    };
+
+    let err = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Confirmed { height: 812 },
+    )
+    .expect_err("degraded compensation must require revert capability");
+
+    assert!(err.is_unauthorized());
+    assert_eq!(current_status(&request), &BridgeStatus::Pending);
 }
