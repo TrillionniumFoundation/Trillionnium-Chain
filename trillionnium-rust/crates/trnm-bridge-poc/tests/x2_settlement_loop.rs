@@ -191,3 +191,26 @@ fn x2_degraded_heartbeat_requires_revert_capability_and_preserves_pending_on_rej
     assert!(err.is_unauthorized());
     assert_eq!(current_status(&request), &BridgeStatus::Pending);
 }
+
+#[test]
+fn x2_confirm_with_zero_height_rejected_and_preserves_pending() {
+    let mut request = SettlementRequest::new(10, "0xabcddcba".to_string());
+    let token = operator_token();
+
+    let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 2));
+    let heartbeat = monitor.record_success(500, 499, 12);
+
+    let err = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Confirmed { height: 0 },
+    )
+    .expect_err("zero height must be rejected before finalization");
+
+    assert!(matches!(
+        err,
+        trnm_bridge_poc::bridge_status::SettlementError::InvalidHeight { height: 0 }
+    ));
+    assert_eq!(current_status(&request), &BridgeStatus::Pending);
+}
