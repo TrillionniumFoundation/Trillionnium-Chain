@@ -2161,6 +2161,27 @@ mod tests {
     }
 
     #[test]
+    fn settlement_evidence_path_sanitizes_nested_reserved_device_aliases_with_trailing_dot_or_space() {
+        let rec = SettlementRecord {
+            settlement_id: 55,
+            route: BridgeRoute {
+                route_id: "eth/CON. /log".to_string(),
+                source_chain: "bridge\\aux...\\proof".to_string(),
+                target_chain: "mainnet/LPT1 .trace".to_string(),
+            },
+            status: SettlementStatus::Pending,
+            at_height: 2_232,
+            settlement_tx: None,
+            revert_reason: None,
+        };
+
+        assert_eq!(
+            rec.evidence_path(),
+            "settlements/eth_CON.__log/bridge_aux..._proof/mainnet_LPT1_.trace/55/pending@2232"
+        );
+    }
+
+    #[test]
     fn register_did_rejects_duplicate_without_side_effects() {
         let mut reg = IdentityRegistry::default();
         reg.register_did(
