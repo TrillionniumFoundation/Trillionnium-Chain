@@ -3643,6 +3643,45 @@ mod tests {
     }
 
     #[test]
+    fn verify_capability_rejects_control_character_actor_without_side_effects() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did(
+            "did:trnm:settler-actor-control".to_string(),
+            "org:lane2-admin".to_string(),
+            10,
+        )
+        .unwrap();
+        let token_id = reg
+            .issue_capability(
+                "org:lane2-admin".to_string(),
+                "did:trnm:settler-actor-control".to_string(),
+                CapabilityScope::BridgeSettle,
+                20,
+                Some(200),
+            )
+            .unwrap();
+
+        let audit_len_before = reg.audit_trail().len();
+        let token_before = reg.capability(token_id).cloned().unwrap();
+
+        let err = reg
+            .verify_capability(
+                "org:lane2-admin\n",
+                token_id,
+                CapabilityScope::BridgeSettle,
+                50,
+            )
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            InteropIdentityError::InvalidIdentityValue { field, .. } if field == "actor"
+        ));
+        assert_eq!(reg.audit_trail().len(), audit_len_before);
+        assert_eq!(reg.capability(token_id).unwrap(), &token_before);
+    }
+
+    #[test]
     fn verify_capability_rejects_missing_subject_did_without_side_effects() {
         let mut reg = IdentityRegistry::default();
         reg.register_did(
