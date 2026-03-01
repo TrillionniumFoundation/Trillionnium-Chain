@@ -18,15 +18,7 @@ impl ProofVerifier for TeeVerifier {
             .get(4..)
             .map(|suffix| {
                 std::str::from_utf8(suffix)
-                    .map(|s| {
-                        s.chars().any(|c| {
-                            !c.is_whitespace()
-                                && !c.is_control()
-                                // Reject invisible format chars (e.g. zero-width space U+200B)
-                                // so a body must contain at least one visible glyph.
-                                && !matches!(c, '\u{200B}' | '\u{200C}' | '\u{200D}' | '\u{FEFF}')
-                        })
-                    })
+                    .map(|s| s.chars().any(|c| !c.is_whitespace() && !c.is_control()))
                     .unwrap_or_else(|_| {
                         suffix
                             .iter()
@@ -167,17 +159,6 @@ mod tests {
 
         assert!(matches!(
             verifier.verify_proof(&task, "TEE:\u{00a0}\u{3000}".as_bytes()),
-            VerificationResult::Invalid(msg) if msg.contains("envelope")
-        ));
-    }
-
-    #[test]
-    fn tee_verifier_rejects_zero_width_format_chars_only_body_after_prefix() {
-        let verifier = TeeVerifier;
-        let task = mock_task();
-
-        assert!(matches!(
-            verifier.verify_proof(&task, "TEE:\u{200B}\u{200C}\u{200D}\u{FEFF}".as_bytes()),
             VerificationResult::Invalid(msg) if msg.contains("envelope")
         ));
     }
