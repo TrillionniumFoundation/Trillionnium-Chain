@@ -361,10 +361,7 @@ fn parse_kv_line(line: &str) -> Option<(String, String)> {
         return None;
     }
 
-    Some((
-        key.to_ascii_lowercase(),
-        value.to_string(),
-    ))
+    Some((key.to_ascii_lowercase(), value.to_string()))
 }
 
 fn parse_inline_kv_token(token: &str) -> Option<(String, String)> {
@@ -387,7 +384,8 @@ fn parse_inline_kv_token(token: &str) -> Option<(String, String)> {
         key.to_ascii_lowercase(),
         value
             .trim_matches(|c: char| {
-                c.is_ascii_whitespace() || matches!(c, ',' | ';' | '{' | '}' | '[' | ']' | '(' | ')')
+                c.is_ascii_whitespace()
+                    || matches!(c, ',' | ';' | '{' | '}' | '[' | ']' | '(' | ')')
             })
             .trim_matches('"')
             .trim_matches('\'')
@@ -406,9 +404,7 @@ fn normalize_tx_status(raw: &str) -> Option<String> {
         .to_ascii_lowercase();
     match cleaned.as_str() {
         "pending" => Some("pending".to_string()),
-        "committed" | "confirmed" | "success" | "succeeded" | "ok" => {
-            Some("committed".to_string())
-        },
+        "committed" | "confirmed" | "success" | "succeeded" | "ok" => Some("committed".to_string()),
         "fail" | "failed" | "error" | "rejected" | "reverted" | "aborted" | "dropped"
         | "timeout" | "timed_out" | "timed-out" => Some("fail".to_string()),
         _ => None,
@@ -490,7 +486,7 @@ fn parse_tx_query_response(raw: &str, requested_tx_hash: &str) -> Result<TxQuery
                         Some(normalized) => tx_hash = Some(normalized),
                         None => bail!("invalid tx_hash field in tx query response"),
                     }
-                },
+                }
                 "status" => {
                     if let Some(normalized) = normalize_tx_status(&value) {
                         status = Some(normalized);
@@ -1007,7 +1003,10 @@ mod tests {
         std::env::remove_var("TRNM_TX_QUERY_CMD");
         assert!(got.is_err());
         let msg = got.err().unwrap().to_string();
-        assert!(msg.contains("invalid tx hash for query"), "unexpected: {msg}");
+        assert!(
+            msg.contains("invalid tx hash for query"),
+            "unexpected: {msg}"
+        );
     }
 
     #[test]

@@ -118,7 +118,10 @@ fn smoke_tx_transfer_template_path() {
     assert!(out.status.success());
 
     let out2 = Command::new(bin())
-        .env("TRNM_TX_TRANSFER_CMD", "echo tx_hash=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+        .env(
+            "TRNM_TX_TRANSFER_CMD",
+            "echo tx_hash=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        )
         .args([
             "tx",
             "transfer",
