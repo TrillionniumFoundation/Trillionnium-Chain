@@ -412,6 +412,10 @@ jobs:
         run: |
           ./scripts/v2/x2_settlement_contract_gate.sh
 
+      - name: Auto regression: e2-audit-report-generator-reject-schema-suffix-punct-test
+        run: |
+          ./scripts/v2/e2_audit_report_generator_reject_schema_suffix_punct_test.sh
+
       - name: Upload quick gate summary
         if: always()
         uses: actions/upload-artifact@v4
