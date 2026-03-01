@@ -44,6 +44,7 @@ impl VerifierRegistry {
                     || ch == '\\'
                     || ch == ','
                     || ch == ';'
+                    || ch == '='
                 {
                     ' '
                 } else {
@@ -322,6 +323,20 @@ mod tests {
         let mut registry = VerifierRegistry::new();
         registry.register(Arc::new(AlwaysValidVerifier {
             kind: " TEE;RECEIPT ",
+        }));
+
+        let task = task_with_proof_type(ProofType::Tee);
+        assert_eq!(
+            registry.verify(&task, b"receipt"),
+            VerificationResult::Valid
+        );
+    }
+
+    #[test]
+    fn registry_register_collapses_equals_delimited_legacy_receipt_aliases_for_lookup() {
+        let mut registry = VerifierRegistry::new();
+        registry.register(Arc::new(AlwaysValidVerifier {
+            kind: " TEE=RECEIPT ",
         }));
 
         let task = task_with_proof_type(ProofType::Tee);
