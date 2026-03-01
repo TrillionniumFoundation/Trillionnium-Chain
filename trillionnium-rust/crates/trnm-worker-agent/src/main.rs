@@ -1129,6 +1129,14 @@ fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
         | "mcpoverstdiov"
         | "mcpoverstdiov1"
         | "mcpoverstdiov2"
+        | "mcpsse"
+        | "mcpssev"
+        | "mcpssev1"
+        | "mcpssev2"
+        | "mcpoversse"
+        | "mcpoverssev"
+        | "mcpoverssev1"
+        | "mcpoverssev2"
         | "modelcontextprotocol"
         | "modelcontextprotocolv"
         | "modelcontextprotocolv1"
@@ -1141,6 +1149,10 @@ fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
         | "modelcontextprotocolstdiov"
         | "modelcontextprotocolstdiov1"
         | "modelcontextprotocolstdiov2"
+        | "modelcontextprotocolsse"
+        | "modelcontextprotocolssev"
+        | "modelcontextprotocolssev1"
+        | "modelcontextprotocolssev2"
         | "openaimcp"
         | "openaimcpprotocol"
         | "anthropicmcp"
@@ -1165,6 +1177,14 @@ fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
         | "a2aoverstdiov"
         | "a2aoverstdiov1"
         | "a2aoverstdiov2"
+        | "a2asse"
+        | "a2assev"
+        | "a2assev1"
+        | "a2assev2"
+        | "a2aoversse"
+        | "a2aoverssev"
+        | "a2aoverssev1"
+        | "a2aoverssev2"
         | "a2aprotocol"
         | "agent2agent"
         | "agenttoagent"
@@ -2981,7 +3001,19 @@ mod tests {
             Some("mcp")
         );
         assert_eq!(
+            normalized_agent_protocol(Some("MCP over SSE v2")).as_deref(),
+            Some("mcp")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Model Context Protocol SSE v2")).as_deref(),
+            Some("mcp")
+        );
+        assert_eq!(
             normalized_agent_protocol(Some("Agent-to-Agent Protocol STDIO v2")).as_deref(),
+            Some("a2a")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("A2A over SSE v2")).as_deref(),
             Some("a2a")
         );
         assert_eq!(
