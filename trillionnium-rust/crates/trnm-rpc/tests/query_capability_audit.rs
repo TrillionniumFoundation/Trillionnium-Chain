@@ -336,6 +336,69 @@ fn query_capability_audit_reports_revoked_and_expiry_fields_consistently() {
 }
 
 #[test]
+fn query_capability_audit_filters_owner_history_to_subject_did_only() {
+    let tmp = tempdir().expect("tempdir");
+    let registry_path = tmp.path().join("identity_registry.json");
+
+    let mut reg = IdentityRegistry::default();
+    reg.register_did(
+        "did:org:lane-xi".to_string(),
+        "org:lane-xi-admin".to_string(),
+        10,
+    )
+    .expect("register lane-xi did");
+    reg.register_did(
+        "did:org:other-lane".to_string(),
+        "org:other-lane-admin".to_string(),
+        11,
+    )
+    .expect("register other did");
+
+    let token_id = reg
+        .issue_capability(
+            "org:lane-xi-admin".to_string(),
+            "did:org:lane-xi".to_string(),
+            CapabilityScope::AuditRead,
+            12,
+            Some(120),
+        )
+        .expect("issue lane-xi capability");
+
+    reg.issue_capability(
+        "org:other-lane-admin".to_string(),
+        "did:org:other-lane".to_string(),
+        CapabilityScope::AuditRead,
+        13,
+        Some(121),
+    )
+    .expect("issue other capability");
+
+    fs::write(
+        &registry_path,
+        serde_json::to_string_pretty(&reg).expect("serialize registry"),
+    )
+    .expect("write registry");
+
+    let out = run_ok(
+        &[
+            "query-capability-audit",
+            "--token-id",
+            &token_id.to_string(),
+        ],
+        registry_path.to_str().expect("utf8 path"),
+    );
+    let body: Value = serde_json::from_str(&out).expect("query response json");
+
+    let leaked_foreign_subject = body["owner_history"]
+        .as_array()
+        .expect("owner_history array")
+        .iter()
+        .any(|ev| ev["subject"].as_str() == Some("did:org:other-lane"));
+
+    assert!(!leaked_foreign_subject, "foreign DID events leaked into owner_history");
+}
+
+#[test]
 fn query_capability_audit_not_found_maps_stable_error_code() {
     let tmp = tempdir().expect("tempdir");
     let registry_path = tmp.path().join("identity_registry.json");
