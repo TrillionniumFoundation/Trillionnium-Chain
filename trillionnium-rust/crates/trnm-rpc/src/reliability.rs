@@ -1383,7 +1383,10 @@ mod tests {
             PathBuf::from("/tmp/explicit-reliability.sqlite")
         );
 
-        std::env::set_var("RELIABILITY_DB_PATH", "  \"/tmp/quoted-reliability.sqlite\"  ");
+        std::env::set_var(
+            "RELIABILITY_DB_PATH",
+            "  \"/tmp/quoted-reliability.sqlite\"  ",
+        );
         assert_eq!(
             default_reliability_db_path(),
             PathBuf::from("/tmp/quoted-reliability.sqlite")

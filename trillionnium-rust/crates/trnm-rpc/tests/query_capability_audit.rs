@@ -34,8 +34,12 @@ fn query_capability_audit_happy_path() {
     let registry_path = tmp.path().join("identity_registry.json");
 
     let mut reg = IdentityRegistry::default();
-    reg.register_did("did:org:lane-xi".to_string(), "org:lane-xi-admin".to_string(), 10)
-        .expect("register did");
+    reg.register_did(
+        "did:org:lane-xi".to_string(),
+        "org:lane-xi-admin".to_string(),
+        10,
+    )
+    .expect("register did");
     let token_id = reg
         .issue_capability(
             "org:lane-xi-admin".to_string(),
@@ -53,7 +57,11 @@ fn query_capability_audit_happy_path() {
     .expect("write registry");
 
     let out = run_ok(
-        &["query-capability-audit", "--token-id", &token_id.to_string()],
+        &[
+            "query-capability-audit",
+            "--token-id",
+            &token_id.to_string(),
+        ],
         registry_path.to_str().expect("utf8 path"),
     );
     let body: Value = serde_json::from_str(&out).expect("query response json");
@@ -64,7 +72,11 @@ fn query_capability_audit_happy_path() {
         Some("did:org:lane-xi")
     );
     assert!(
-        body["owner_history"].as_array().map(|v| v.len()).unwrap_or(0) >= 1,
+        body["owner_history"]
+            .as_array()
+            .map(|v| v.len())
+            .unwrap_or(0)
+            >= 1,
         "owner_history should include DID/capability audit entries"
     );
 }
@@ -75,8 +87,12 @@ fn query_capability_audit_accepts_quoted_registry_env_path() {
     let registry_path = tmp.path().join("identity_registry.json");
 
     let mut reg = IdentityRegistry::default();
-    reg.register_did("did:org:lane-xi".to_string(), "org:lane-xi-admin".to_string(), 10)
-        .expect("register did");
+    reg.register_did(
+        "did:org:lane-xi".to_string(),
+        "org:lane-xi-admin".to_string(),
+        10,
+    )
+    .expect("register did");
     let token_id = reg
         .issue_capability(
             "org:lane-xi-admin".to_string(),
@@ -95,7 +111,11 @@ fn query_capability_audit_accepts_quoted_registry_env_path() {
 
     let quoted = format!("\"{}\"", registry_path.to_str().expect("utf8 path"));
     let out = run_ok(
-        &["query-capability-audit", "--token-id", &token_id.to_string()],
+        &[
+            "query-capability-audit",
+            "--token-id",
+            &token_id.to_string(),
+        ],
         &quoted,
     );
     let body: Value = serde_json::from_str(&out).expect("query response json");
@@ -113,5 +133,8 @@ fn query_capability_audit_not_found_maps_stable_error_code() {
         registry_path.to_str().expect("utf8 path"),
     );
 
-    assert!(stderr.contains("\"code\": \"CAPABILITY_NOT_FOUND\""), "{stderr}");
+    assert!(
+        stderr.contains("\"code\": \"CAPABILITY_NOT_FOUND\""),
+        "{stderr}"
+    );
 }
