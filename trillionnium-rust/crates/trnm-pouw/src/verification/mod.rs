@@ -121,25 +121,28 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
     match collapsed_tokens.as_str() {
         "fraud proof" | "fraud receipt" | "fraudproof" | "fraudreceipt" => "fraud".to_string(),
         "tee proof" | "tee receipt" | "tee attestation" | "tee quote" | "tee report"
-        | "teeproof" | "teereceipt" | "teeattestation" | "teequote" | "teereport" => {
-            "tee".to_string()
-        }
+        | "sgx quote" | "tee evidence" | "teeproof" | "teereceipt" | "teeattestation"
+        | "teequote" | "teereport" | "sgxquote" | "teeevidence" => "tee".to_string(),
         "zk proof"
         | "zk receipt"
         | "zk attestation"
+        | "zk evidence"
         | "zk snark"
         | "zero knowledge proof"
         | "zero knowledge receipt"
         | "zero knowledge attestation"
+        | "zero knowledge evidence"
         | "zero knowledge snark"
         | "zkproof"
         | "zkreceipt"
         | "zkattestation"
+        | "zkevidence"
         | "zksnark"
         | "zeroknowledgesnark"
         | "zeroknowledgeproof"
         | "zeroknowledgereceipt"
-        | "zeroknowledgeattestation" => "zk".to_string(),
+        | "zeroknowledgeattestation"
+        | "zeroknowledgeevidence" => "zk".to_string(),
         // Keep custom plugin keys delimiter-stable so receipt persistence aligns
         // with registry normalization/observability (e.g., MY__PROOF -> "my proof").
         _ => collapsed_tokens,
@@ -521,6 +524,19 @@ mod tests {
 
         assert_eq!(tee_report.proof_type, "tee");
         assert_eq!(zk_snark.proof_type, "zk");
+    }
+
+    #[test]
+    fn verification_receipt_new_collapses_registry_aliases_for_tee_sgx_and_zk_evidence() {
+        let tee_sgx = VerificationReceipt::new(1, "SGX_QUOTE", VerificationResult::Valid, "v", 1);
+        let tee_evidence =
+            VerificationReceipt::new(2, "tee-evidence", VerificationResult::Valid, "v", 2);
+        let zk_evidence =
+            VerificationReceipt::new(3, "zero knowledge evidence", VerificationResult::Valid, "v", 3);
+
+        assert_eq!(tee_sgx.proof_type, "tee");
+        assert_eq!(tee_evidence.proof_type, "tee");
+        assert_eq!(zk_evidence.proof_type, "zk");
     }
 
     #[test]
