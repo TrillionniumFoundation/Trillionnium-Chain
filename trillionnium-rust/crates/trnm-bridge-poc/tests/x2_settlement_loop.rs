@@ -489,3 +489,32 @@ fn x2_degraded_heartbeat_long_reason_is_capped_for_log_safety() {
     assert!(compensated_reason.ends_with('…'));
     assert!(compensated_reason.starts_with("heartbeat degraded: "));
 }
+
+#[test]
+fn x2_failure_path_reason_just_above_limit_is_ellipsized_once() {
+    let mut request = SettlementRequest::new(14, "0xfeedabba".to_string());
+    let token = operator_token();
+
+    let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 2));
+    let heartbeat = monitor.record_success(530, 529, 9);
+    let above_limit_reason = "r".repeat(161);
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Failed {
+            reason: above_limit_reason,
+        },
+    )
+    .unwrap();
+
+    let compensated_reason = match out {
+        SettlementStep::Compensated { reason } => reason,
+        other => panic!("expected compensated step, got {other:?}"),
+    };
+
+    assert_eq!(compensated_reason.chars().count(), 188);
+    assert!(compensated_reason.ends_with('…'));
+    assert!(compensated_reason.starts_with("settlement confirm failed: "));
+}
