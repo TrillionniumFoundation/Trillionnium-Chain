@@ -154,7 +154,8 @@ impl SettlementRecord {
                     if let (Some(existing), Some(provided)) =
                         (self.revert_reason.as_deref(), provided_reason.as_deref())
                     {
-                        if existing != provided {
+                        let existing_normalized = normalize_revert_reason(existing.to_string());
+                        if existing_normalized != *provided {
                             return Err(InteropIdentityError::SettlementTerminalPayloadConflict {
                                 status: SettlementStatus::Reverted,
                                 existing: existing.to_string(),
@@ -164,7 +165,7 @@ impl SettlementRecord {
                     }
                 }
                 let reason = provided_reason
-                    .or_else(|| self.revert_reason.clone())
+                    .or_else(|| self.revert_reason.clone().map(normalize_revert_reason))
                     .ok_or(InteropIdentityError::MissingRevertReason)?;
                 (None, Some(reason))
             }
@@ -1297,6 +1298,34 @@ mod tests {
             reverted.revert_reason.as_deref(),
             Some("timeout across relayers")
         );
+    }
+
+    #[test]
+    fn settlement_terminal_idempotent_reapply_accepts_legacy_revert_reason_alias() {
+        let mut reverted = SettlementRecord {
+            settlement_id: 860,
+            route: BridgeRoute {
+                route_id: "eth->trnm".to_string(),
+                source_chain: "ethereum".to_string(),
+                target_chain: "trillionnium".to_string(),
+            },
+            status: SettlementStatus::Reverted,
+            at_height: 6_100,
+            settlement_tx: None,
+            revert_reason: Some("tee_attestation".to_string()),
+        };
+
+        reverted
+            .apply_status(
+                SettlementStatus::Reverted,
+                6_101,
+                None,
+                Some("tee-receipt".to_string()),
+            )
+            .unwrap();
+
+        assert_eq!(reverted.status, SettlementStatus::Reverted);
+        assert_eq!(reverted.revert_reason.as_deref(), Some("tee-receipt"));
     }
 
     #[test]
