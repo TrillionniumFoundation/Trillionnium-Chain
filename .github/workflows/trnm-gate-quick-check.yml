@@ -84,6 +84,10 @@ jobs:
         run: |
           ./scripts/v2/d1_task_model_metadata_schema_reject_produced_at_timezone_offset_test.sh
 
+      - name: D1 schema produced_at >6 fractional digits regression
+        run: |
+          ./scripts/v2/d1_task_model_metadata_schema_reject_produced_at_fractional7_test.sh
+
       - name: D1 schema rejects uppercase DID method regression
         run: |
           ./scripts/v2/d1_task_model_metadata_schema_reject_uppercase_did_method_test.sh
