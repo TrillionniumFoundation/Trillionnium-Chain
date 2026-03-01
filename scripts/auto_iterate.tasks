@@ -262,3 +262,6 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d3-task-model-metadata-schema-public-reject-blank-provenance-index-test" "./scripts/v2/d3_task_model_metadata_schema_public_reject_blank_provenance_index_test.sh" "ci(gate): add d3-task-model-metadata-schema-public-reject-blank-provenance-index-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: p11-policy-rollback-guard-invalid-attempts-field-test" "./scripts/v2/p11_policy_rollback_guard_invalid_attempts_field_test.sh" "ci(gate): add p11-policy-rollback-guard-invalid-attempts-field-test regression to quick-check"
