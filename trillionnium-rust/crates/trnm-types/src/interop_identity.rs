@@ -72,7 +72,7 @@ fn canonical_path_segment(raw: &str) -> String {
         .trim()
         .chars()
         .map(|ch| match ch {
-            '/' | '\\' => '_',
+            '/' | '\\' | ':' => '_',
             c if c.is_whitespace() || c.is_control() => '_',
             c => c,
         })
@@ -1850,6 +1850,27 @@ mod tests {
         assert_eq!(
             rec.evidence_path(),
             "settlements/eth_mainnet_->_trnm/ethereum_mainnet/trillionnium_alpha/48/pending@2225"
+        );
+    }
+
+    #[test]
+    fn settlement_evidence_path_sanitizes_colon_for_cross_platform_filesystem_safety() {
+        let rec = SettlementRecord {
+            settlement_id: 49,
+            route: BridgeRoute {
+                route_id: "eth:mainnet->trnm".to_string(),
+                source_chain: "ethereum:mainnet".to_string(),
+                target_chain: "trillionnium:alpha".to_string(),
+            },
+            status: SettlementStatus::Pending,
+            at_height: 2_226,
+            settlement_tx: None,
+            revert_reason: None,
+        };
+
+        assert_eq!(
+            rec.evidence_path(),
+            "settlements/eth_mainnet->trnm/ethereum_mainnet/trillionnium_alpha/49/pending@2226"
         );
     }
 
