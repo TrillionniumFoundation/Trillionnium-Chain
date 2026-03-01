@@ -1192,8 +1192,16 @@ fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
         | "modelcontextprotocoloverhttpv"
         | "openaimcp"
         | "openaimcpprotocol"
+        | "openaimodelcontextprotocol"
+        | "openaimodelcontextprotocolv"
+        | "openaimodelcontextprotocolv1"
+        | "openaimodelcontextprotocolv2"
         | "anthropicmcp"
-        | "anthropicmcpprotocol" => Some("mcp".to_string()),
+        | "anthropicmcpprotocol"
+        | "anthropicmodelcontextprotocol"
+        | "anthropicmodelcontextprotocolv"
+        | "anthropicmodelcontextprotocolv1"
+        | "anthropicmodelcontextprotocolv2" => Some("mcp".to_string()),
         "a2a"
         | "a2av"
         | "a2av1"
@@ -3260,7 +3268,15 @@ mod tests {
             Some("mcp")
         );
         assert_eq!(
+            normalized_agent_protocol(Some("OpenAI Model Context Protocol v2")).as_deref(),
+            Some("mcp")
+        );
+        assert_eq!(
             normalized_agent_protocol(Some("Anthropic MCP Protocol")).as_deref(),
+            Some("mcp")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Anthropic Model Context Protocol v1")).as_deref(),
             Some("mcp")
         );
         assert_eq!(
