@@ -330,11 +330,8 @@ fn market_match_reputation_lookup_normalizes_case_and_whitespace_keys() {
     let _guard = test_lock().lock().expect("test lock");
     let _ = fs::remove_dir_all("run/market");
     fs::create_dir_all("run/market").expect("create market dir");
-    fs::write(
-        "run/market/reputation.json",
-        r#"{"  Worker-High  ":200}"#,
-    )
-    .expect("write reputation file");
+    fs::write("run/market/reputation.json", r#"{"  Worker-High  ":200}"#)
+        .expect("write reputation file");
 
     let create_out = run_ok(&[
         "market.create_task",
@@ -485,7 +482,6 @@ fn market_match_output_is_valid_json_when_winner_contains_quotes() {
     assert_eq!(matched["status"], "matched");
 }
 
-
 #[test]
 fn market_report_returns_zeroed_metrics_for_empty_state() {
     let _guard = test_lock().lock().expect("test lock");
@@ -605,6 +601,50 @@ fn market_report_summarizes_tasks_bids_and_unique_bidders() {
     assert_eq!(report["unique_bidder_count"], 2);
     assert_eq!(report["avg_bids_per_task"], 1.5);
     assert_eq!(report["match_rate"], 0.5);
+
+    let _ = fs::remove_file(tasks);
+    let _ = fs::remove_file(bids);
+}
+
+#[test]
+fn market_report_normalizes_and_ignores_invalid_bidder_keys() {
+    let _guard = test_lock().lock().expect("test lock");
+
+    let tasks = unique_market_fixture_path("market_report_norm_tasks", "jsonl");
+    let bids = unique_market_fixture_path("market_report_norm_bids", "jsonl");
+    fs::write(
+        &tasks,
+        r#"{"task_id":30001,"creator":"alice","bounty":100,"description":"norm","status":"open","created_at_unix_ms":1}"#,
+    )
+    .expect("write tasks fixture");
+    fs::write(
+        &bids,
+        concat!(
+            r#"{"task_id":30001,"worker":" Worker-A ","price":90,"created_at_unix_ms":1700000000000}"#,
+            "\n",
+            r#"{"task_id":30001,"worker":"worker-a","price":91,"created_at_unix_ms":1700000000001}"#,
+            "\n",
+            r#"{"task_id":30001,"worker":"\t\t","price":92,"created_at_unix_ms":1700000000002}"#,
+            "\n",
+            r#"{"task_id":30001,"worker":"WORKER-B","price":93,"created_at_unix_ms":1700000000003}"#,
+            "\n"
+        ),
+    )
+    .expect("write bids fixture");
+
+    let tasks_env = tasks.to_string_lossy().into_owned();
+    let bids_env = bids.to_string_lossy().into_owned();
+    let out = run_ok_with_env(
+        &["market.report"],
+        &[
+            ("TRNM_RPC_MARKET_TASKS_FILE", tasks_env.as_str()),
+            ("TRNM_RPC_MARKET_BIDS_FILE", bids_env.as_str()),
+        ],
+    );
+    let report: Value = serde_json::from_str(&out).expect("market report json");
+
+    assert_eq!(report["bid_count"], 4);
+    assert_eq!(report["unique_bidder_count"], 2);
 
     let _ = fs::remove_file(tasks);
     let _ = fs::remove_file(bids);
