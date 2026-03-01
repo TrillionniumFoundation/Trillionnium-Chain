@@ -501,7 +501,8 @@ fn accept_signed_vote(
         );
         return;
     }
-    if validator_trimmed != msg.vote.validator || !is_canonical_validator_token(&msg.vote.validator) {
+    if validator_trimmed != msg.vote.validator || !is_canonical_validator_token(&msg.vote.validator)
+    {
         reject_stats.bad_sig += 1;
         println!(
             "[bft-net] reject reason=noncanonical_validator validator={} height={} round={} vote_type={} nonce={}",
@@ -527,7 +528,9 @@ fn accept_signed_vote(
         );
         return;
     }
-    if block_hash_trimmed != msg.vote.block_hash || !is_canonical_block_hash_token(&msg.vote.block_hash) {
+    if block_hash_trimmed != msg.vote.block_hash
+        || !is_canonical_block_hash_token(&msg.vote.block_hash)
+    {
         reject_stats.bad_sig += 1;
         println!(
             "[bft-net] reject reason=noncanonical_block_hash validator={} height={} round={} vote_type={} nonce={}",
@@ -1349,9 +1352,7 @@ fn emit_event(
         MockTx::Challenge { .. } => "0",
         _ => treasury_delta.text.as_str(),
     };
-    let challenger_delta_str = challenger_delta
-        .map(|d| d.text.as_str())
-        .unwrap_or("-");
+    let challenger_delta_str = challenger_delta.map(|d| d.text.as_str()).unwrap_or("-");
     let bond_disposition_str = bond_disposition.unwrap_or("-");
 
     match tx {
@@ -1420,9 +1421,7 @@ fn emit_timeout_event(
     let tx_hash = tx_hash_of(tx_id);
     let ts_unix_ms = now_unix_ms();
     let treasury_delta_str = treasury_delta.text.as_str();
-    let challenger_delta_str = challenger_delta
-        .map(|d| d.text.as_str())
-        .unwrap_or("-");
+    let challenger_delta_str = challenger_delta.map(|d| d.text.as_str()).unwrap_or("-");
     let bond_disposition_str = bond_disposition.unwrap_or("-");
     let resolution_code = if to_status == "Slashed" {
         "slashed"
@@ -1494,7 +1493,14 @@ fn apply_one(st: &mut StateStore, tx: MockTx, current_height: u64) -> Result<()>
             reveal_salt,
         } => {
             let r = task_ref(st, task_id)?;
-            let _ = apply_reveal_result_at_height(st, r, result_hash, reveal_salt, None, current_height)?;
+            let _ = apply_reveal_result_at_height(
+                st,
+                r,
+                result_hash,
+                reveal_salt,
+                None,
+                current_height,
+            )?;
         }
         MockTx::Challenge {
             task_id,
@@ -1529,7 +1535,10 @@ fn scan_and_apply_timeouts(
         };
         if !matches!(
             task.status,
-            TaskStatus::Assigned | TaskStatus::Committed | TaskStatus::Revealed | TaskStatus::Challenged
+            TaskStatus::Assigned
+                | TaskStatus::Committed
+                | TaskStatus::Revealed
+                | TaskStatus::Challenged
         ) {
             continue;
         }
@@ -2782,11 +2791,24 @@ mod tests {
             100,
         )
         .unwrap();
-        let r7 =
-            trnm_pouw::apply_reveal_result_at_height(&mut st, r6, result_hash, reveal_salt, None, 110)
-                .unwrap();
-        let _r8 = trnm_pouw::apply_challenge_at_height(&mut st, r7, "challenger".into(), 10, "challenger".into(), 120)
-            .unwrap();
+        let r7 = trnm_pouw::apply_reveal_result_at_height(
+            &mut st,
+            r6,
+            result_hash,
+            reveal_salt,
+            None,
+            110,
+        )
+        .unwrap();
+        let _r8 = trnm_pouw::apply_challenge_at_height(
+            &mut st,
+            r7,
+            "challenger".into(),
+            10,
+            "challenger".into(),
+            120,
+        )
+        .unwrap();
 
         let r9 = apply_create_task(&mut st, 7003, "alice".into(), 100).unwrap();
         let committed3 = compute_commitment(7003, &result_hash, &reveal_salt, "worker7003");
@@ -2799,9 +2821,15 @@ mod tests {
             100,
         )
         .unwrap();
-        let _r12 =
-            trnm_pouw::apply_reveal_result_at_height(&mut st, r11, result_hash, reveal_salt, None, 110)
-                .unwrap();
+        let _r12 = trnm_pouw::apply_reveal_result_at_height(
+            &mut st,
+            r11,
+            result_hash,
+            reveal_salt,
+            None,
+            110,
+        )
+        .unwrap();
 
         let known: HashSet<u64> = [7001u64, 7002u64, 7003u64].into_iter().collect();
         let migrated = scan_and_apply_timeouts(&mut st, &known, 10_000, 9_000_000);
@@ -2830,9 +2858,15 @@ mod tests {
             100,
         )
         .unwrap();
-        let _r4 =
-            trnm_pouw::apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110)
-                .unwrap();
+        let _r4 = trnm_pouw::apply_reveal_result_at_height(
+            &mut st,
+            r3,
+            result_hash,
+            reveal_salt,
+            None,
+            110,
+        )
+        .unwrap();
 
         let challenge_deadline = st
             .get_task(7004)
@@ -2874,9 +2908,15 @@ mod tests {
             1,
         )
         .unwrap();
-        let revealed =
-            trnm_pouw::apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 2)
-                .unwrap();
+        let revealed = trnm_pouw::apply_reveal_result_at_height(
+            &mut st,
+            r3,
+            result_hash,
+            reveal_salt,
+            None,
+            2,
+        )
+        .unwrap();
 
         let before = st.clone();
         let _ = apply_timeout(&mut st, revealed, 1_000).unwrap();
@@ -2907,7 +2947,8 @@ mod tests {
         let r2 = apply_accept_task(&mut st, r1, "worker8101".into()).unwrap();
         let r3 = apply_commit_result(&mut st, r2, "worker8101".into(), committed).unwrap();
         let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
-        let r5 = apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
+        let r5 =
+            apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
 
         let before = st.clone();
         let challenger = before
@@ -2929,7 +2970,13 @@ mod tests {
             challenger_delta.as_ref().and_then(|d| d.numeric),
             diff_u128_to_i128(st.balance_of(&challenger), before.balance_of(&challenger))
         );
-        assert!(challenger_delta.as_ref().and_then(|d| d.numeric).unwrap_or(0) > 0);
+        assert!(
+            challenger_delta
+                .as_ref()
+                .and_then(|d| d.numeric)
+                .unwrap_or(0)
+                > 0
+        );
     }
 
     #[test]
@@ -2946,7 +2993,8 @@ mod tests {
         let r2 = apply_accept_task(&mut st, r1, "worker8102".into()).unwrap();
         let r3 = apply_commit_result(&mut st, r2, "worker8102".into(), committed).unwrap();
         let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
-        let r5 = apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
+        let r5 =
+            apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
 
         let before = st.clone();
         let challenger = before
@@ -2992,10 +3040,24 @@ mod tests {
             1,
         )
         .unwrap();
-        let r4 = trnm_pouw::apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 2)
-            .unwrap();
-        let challenged =
-            trnm_pouw::apply_challenge_at_height(&mut st, r4, "challenger".into(), 10, "challenger".into(), 3).unwrap();
+        let r4 = trnm_pouw::apply_reveal_result_at_height(
+            &mut st,
+            r3,
+            result_hash,
+            reveal_salt,
+            None,
+            2,
+        )
+        .unwrap();
+        let challenged = trnm_pouw::apply_challenge_at_height(
+            &mut st,
+            r4,
+            "challenger".into(),
+            10,
+            "challenger".into(),
+            3,
+        )
+        .unwrap();
 
         let before = st.clone();
         let challenger = before
@@ -3016,7 +3078,10 @@ mod tests {
             diff_u128_to_i128(st.balance_of(&challenger), before.balance_of(&challenger))
         );
         assert_eq!(challenger_delta.as_ref().and_then(|d| d.numeric), Some(10));
-        assert_eq!(st.get_task(8103).and_then(|t| t.challenge_bond_forfeited), Some(false));
+        assert_eq!(
+            st.get_task(8103).and_then(|t| t.challenge_bond_forfeited),
+            Some(false)
+        );
     }
 
     #[test]
@@ -3343,9 +3408,7 @@ fn main() -> Result<()> {
                     rollback_total += 1;
                     match err_kind {
                         "version_conflict" => apply_error_version_conflict_total += 1,
-                        "preexec_conflict_miss" => {
-                            apply_error_preexec_conflict_miss_total += 1
-                        }
+                        "preexec_conflict_miss" => apply_error_preexec_conflict_miss_total += 1,
                         "invalid_transition" => apply_error_invalid_transition_total += 1,
                         "deadline_exceeded" => apply_error_deadline_exceeded_total += 1,
                         _ => apply_error_semantic_fail_total += 1,
