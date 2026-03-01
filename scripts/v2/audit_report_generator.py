@@ -27,23 +27,17 @@ def generate_audit_report(log_file):
     try:
         with open(log_file, 'r', encoding='utf-8', errors='ignore') as f:
             for line in f:
-                if '[event]' not in line:
-                    continue
-
-                # Extract the part after [event]
-                try:
-                    _, content = line.split('[event]', 1)
-                    content = content.strip()
-                    data = parse_kv(content)
-
-                    # strict schema gate: accept only event_schema=v1 (not v10/v1beta/...)
-                    if data.get('event_schema') != 'v1':
-                        continue
-
-                    if data.get('event_type') in AUDIT_TYPES:
-                        events.append(data)
-                except ValueError:
-                    continue # Skip malformed lines
+                if '[event]' in line and 'event_schema=v1' in line:
+                    # Extract the part after [event]
+                    try:
+                        _, content = line.split('[event]', 1)
+                        content = content.strip()
+                        data = parse_kv(content)
+                        
+                        if data.get('event_type') in AUDIT_TYPES:
+                            events.append(data)
+                    except ValueError:
+                        continue # Skip malformed lines
 
     except FileNotFoundError:
         print(f"Error: File {log_file} not found.", file=sys.stderr)
