@@ -48,7 +48,9 @@ impl VerifierRegistry {
             "tee receipt" => "tee",
             "zk proof" => "zk",
             "zk receipt" => "zk",
-            _ => normalized.as_str(),
+            // Keep custom plugin keys delimiter-stable for deterministic re-registration
+            // and observability output (e.g., MY__PROOF == "my proof").
+            _ => collapsed.as_str(),
         };
 
         Some(canonical.to_string())
@@ -299,6 +301,24 @@ mod tests {
         assert_eq!(
             registry.verify(&task, b"receipt"),
             VerificationResult::Invalid("new".to_string())
+        );
+    }
+
+    #[test]
+    fn registry_re_register_replaces_custom_verifier_for_delimiter_equivalent_key() {
+        let mut registry = VerifierRegistry::new();
+        registry.register(Arc::new(TaggedVerifier {
+            kind: "MY__CUSTOM--PROOF",
+            tag: "old",
+        }));
+        registry.register(Arc::new(TaggedVerifier {
+            kind: "my custom proof",
+            tag: "new",
+        }));
+
+        assert_eq!(
+            registry.registered_proof_types(),
+            vec!["my custom proof".to_string()]
         );
     }
 
