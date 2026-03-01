@@ -278,3 +278,6 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e2-audit-report-generator-ignore-non-audit-event-type-test" "./scripts/v2/e2_audit_report_generator_ignore_non_audit_event_type_test.sh" "ci(gate): add e2-audit-report-generator-ignore-non-audit-event-type-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e2-audit-report-generator-ignore-non-numeric-financial-delta-test" "./scripts/v2/e2_audit_report_generator_ignore_non_numeric_financial_delta_test.sh" "ci(gate): add e2-audit-report-generator-ignore-non-numeric-financial-delta-test regression to quick-check"
