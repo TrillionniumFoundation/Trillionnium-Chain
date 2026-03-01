@@ -89,7 +89,7 @@ fn canonical_path_segment(raw: &str) -> String {
         .trim()
         .chars()
         .map(|ch| match ch {
-            '/' | '\\' | ':' => '_',
+            '/' | '\\' | ':' | '<' | '"' | '|' | '?' | '*' => '_',
             c if c.is_whitespace() || c.is_control() => '_',
             c => c,
         })
@@ -1943,6 +1943,27 @@ mod tests {
         assert_eq!(
             rec.evidence_path(),
             "settlements/eth_mainnet->trnm/ethereum_mainnet/trillionnium_alpha/49/pending@2226"
+        );
+    }
+
+    #[test]
+    fn settlement_evidence_path_sanitizes_windows_reserved_punctuation() {
+        let rec = SettlementRecord {
+            settlement_id: 50,
+            route: BridgeRoute {
+                route_id: "eth<mainnet>|trnm".to_string(),
+                source_chain: "ethereum?mainnet".to_string(),
+                target_chain: "trillionnium\"alpha*".to_string(),
+            },
+            status: SettlementStatus::Pending,
+            at_height: 2_227,
+            settlement_tx: None,
+            revert_reason: None,
+        };
+
+        assert_eq!(
+            rec.evidence_path(),
+            "settlements/eth_mainnet>_trnm/ethereum_mainnet/trillionnium_alpha_/50/pending@2227"
         );
     }
 
