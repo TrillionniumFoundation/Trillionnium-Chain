@@ -90,7 +90,8 @@ impl VerifierRegistry {
             "zk receipt" | "zkreceipt" => "zk",
             "zk attestation" | "zkattestation" => "zk",
             "zk snark" | "zksnark" => "zk",
-            "zero knowledge proof" | "zeroknowledgeproof" => "zk",
+            "zero knowledge snark" | "zeroknowledgesnark" => "zk",
+            "zero knowledge proof" | "zeroknowledgeproof" => "zk", 
             "zero knowledge receipt" | "zeroknowledgereceipt" => "zk",
             "zero knowledge attestation" | "zeroknowledgeattestation" => "zk",
             // Keep custom plugin keys delimiter-stable for deterministic re-registration
@@ -789,6 +790,17 @@ mod tests {
         let mut registry = VerifierRegistry::new();
         registry.register(Arc::new(AlwaysValidVerifier {
             kind: " ZK-SNARK ",
+        }));
+
+        let task = task_with_proof_type(ProofType::Zk);
+        assert_eq!(registry.verify(&task, b"proof"), VerificationResult::Valid);
+    }
+
+    #[test]
+    fn registry_register_collapses_zero_knowledge_snark_alias_for_lookup() {
+        let mut registry = VerifierRegistry::new();
+        registry.register(Arc::new(AlwaysValidVerifier {
+            kind: " zero knowledge snark ",
         }));
 
         let task = task_with_proof_type(ProofType::Zk);
