@@ -1182,6 +1182,14 @@ fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
         | "modelcontextprotocoloverstreamablehttpv"
         | "modelcontextprotocoloverstreamablehttpv1"
         | "modelcontextprotocoloverstreamablehttpv2"
+        | "mcphttp"
+        | "mcphttpv"
+        | "mcpoverhttp"
+        | "mcpoverhttpv"
+        | "modelcontextprotocolhttp"
+        | "modelcontextprotocolhttpv"
+        | "modelcontextprotocoloverhttp"
+        | "modelcontextprotocoloverhttpv"
         | "openaimcp"
         | "openaimcpprotocol"
         | "anthropicmcp"
@@ -1271,6 +1279,18 @@ fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
         | "a2aoverstreamablehttpv"
         | "a2aoverstreamablehttpv1"
         | "a2aoverstreamablehttpv2"
+        | "a2ahttp"
+        | "a2ahttpv"
+        | "a2aoverhttp"
+        | "a2aoverhttpv"
+        | "agent2agenthttp"
+        | "agent2agenthttpv"
+        | "agenttoagenthttp"
+        | "agenttoagenthttpv"
+        | "agent2agentprotocolhttp"
+        | "agent2agentprotocolhttpv"
+        | "agenttoagentprotocolhttp"
+        | "agenttoagentprotocolhttpv"
         | "agent2agentstreamablehttp"
         | "agent2agentstreamablehttpv"
         | "agent2agentstreamablehttpv1"
@@ -1300,7 +1320,11 @@ fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
         | "googleagenttoagentstreamablehttp"
         | "googleagenttoagentstreamablehttpv"
         | "googleagenttoagentoverstreamablehttp"
-        | "googleagenttoagentoverstreamablehttpv" => Some("a2a".to_string()),
+        | "googleagenttoagentoverstreamablehttpv"
+        | "googleagent2agenthttp"
+        | "googleagent2agenthttpv"
+        | "googleagenttoagenthttp"
+        | "googleagenttoagenthttpv" => Some("a2a".to_string()),
         _ => None,
     }
 }
@@ -3179,6 +3203,14 @@ mod tests {
             Some("mcp")
         );
         assert_eq!(
+            normalized_agent_protocol(Some("MCP HTTP v1")).as_deref(),
+            Some("mcp")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Model Context Protocol over HTTP v2")).as_deref(),
+            Some("mcp")
+        );
+        assert_eq!(
             normalized_agent_protocol(Some("Model Context Protocol over Streamable HTTP v2")).as_deref(),
             Some("mcp")
         );
@@ -3207,7 +3239,15 @@ mod tests {
             Some("a2a")
         );
         assert_eq!(
+            normalized_agent_protocol(Some("A2A HTTP v1")).as_deref(),
+            Some("a2a")
+        );
+        assert_eq!(
             normalized_agent_protocol(Some("Agent-to-Agent Streamable HTTP v1")).as_deref(),
+            Some("a2a")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Google Agent-to-Agent HTTP v2")).as_deref(),
             Some("a2a")
         );
         assert_eq!(
