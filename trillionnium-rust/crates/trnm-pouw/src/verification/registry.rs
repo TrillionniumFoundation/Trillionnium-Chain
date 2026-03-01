@@ -41,10 +41,12 @@ impl VerifierRegistry {
             .join(" ");
 
         let canonical = match collapsed.as_str() {
-            // Backward-compatible aliases from early V1/V2 receipt naming.
+            // Backward-compatible aliases from early V1/V2 proof/receipt naming.
             "fraud proof" => "fraud",
             "fraud receipt" => "fraud",
+            "tee proof" => "tee",
             "tee receipt" => "tee",
+            "zk proof" => "zk",
             "zk receipt" => "zk",
             _ => normalized.as_str(),
         };
@@ -223,6 +225,34 @@ mod tests {
         let task = task_with_proof_type(ProofType::Fraud);
         assert_eq!(
             registry.verify(&task, b"receipt"),
+            VerificationResult::Valid
+        );
+    }
+
+    #[test]
+    fn registry_register_collapses_tee_proof_alias_for_lookup() {
+        let mut registry = VerifierRegistry::new();
+        registry.register(Arc::new(AlwaysValidVerifier {
+            kind: " TEE_PROOF ",
+        }));
+
+        let task = task_with_proof_type(ProofType::Tee);
+        assert_eq!(
+            registry.verify(&task, b"proof"),
+            VerificationResult::Valid
+        );
+    }
+
+    #[test]
+    fn registry_register_collapses_zk_proof_alias_for_lookup() {
+        let mut registry = VerifierRegistry::new();
+        registry.register(Arc::new(AlwaysValidVerifier {
+            kind: " ZK-PROOF ",
+        }));
+
+        let task = task_with_proof_type(ProofType::Zk);
+        assert_eq!(
+            registry.verify(&task, b"proof"),
             VerificationResult::Valid
         );
     }
