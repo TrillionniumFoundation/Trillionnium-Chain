@@ -201,6 +201,38 @@ fn x2_degraded_heartbeat_blank_reason_falls_back_to_stable_unknown() {
 }
 
 #[test]
+fn x2_degraded_heartbeat_control_chars_are_sanitized_before_compensation() {
+    let mut request = SettlementRequest::new(2, "0x0ddcafe1".to_string());
+    let token = operator_token();
+
+    let heartbeat = trnm_bridge_poc::relay_heartbeat::HeartbeatOutcome {
+        heartbeat: None,
+        should_retry: false,
+        degraded: true,
+        message: "\u{200B}relay\u{200D}\n\tquorum\u{FEFF} lost\u{0007}".to_string(),
+    };
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Confirmed { height: 402 },
+    )
+    .unwrap();
+
+    assert_eq!(
+        out,
+        SettlementStep::Compensated {
+            reason: "heartbeat degraded: relay quorum lost".to_string(),
+        }
+    );
+    assert_eq!(
+        current_status(&request),
+        &BridgeStatus::Reverted("heartbeat degraded: relay quorum lost".to_string())
+    );
+}
+
+#[test]
 fn x2_degraded_heartbeat_requires_revert_capability_and_preserves_pending_on_reject() {
     let mut request = SettlementRequest::new(9, "0xdecafbad".to_string());
     let token = finalize_only_token();
