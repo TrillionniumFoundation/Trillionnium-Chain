@@ -1951,6 +1951,12 @@ fn main() -> Result<()> {
             bounty,
             description,
         } => {
+            if creator.trim().is_empty() {
+                return Err(rpc_fail(RpcErrorResponse {
+                    code: "task-creator-invalid",
+                    message: "market task creator must be non-empty".to_string(),
+                }));
+            }
             if bounty == 0 {
                 return Err(rpc_fail(RpcErrorResponse {
                     code: "task-bounty-invalid",
