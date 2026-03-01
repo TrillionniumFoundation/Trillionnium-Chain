@@ -4,15 +4,22 @@ use trnm_types::TaskObject;
 pub struct TeeVerifier;
 
 fn is_zero_width_or_format_char(c: char) -> bool {
-    matches!(c, '\u{200b}' | '\u{200c}' | '\u{200d}' | '\u{2060}' | '\u{feff}')
+    matches!(
+        c,
+        // zero-width / word-joiner / BOM
+        '\u{200b}' | '\u{200c}' | '\u{200d}' | '\u{2060}' | '\u{feff}'
+            // bidirectional marks + embedding/override isolates (all invisible format chars)
+            | '\u{200e}' | '\u{200f}'
+            | '\u{202a}' | '\u{202b}' | '\u{202c}' | '\u{202d}' | '\u{202e}'
+            | '\u{2066}' | '\u{2067}' | '\u{2068}' | '\u{2069}'
+    )
 }
 
 fn has_visible_receipt_body(payload: &[u8]) -> bool {
     std::str::from_utf8(payload)
         .map(|s| {
-            s.chars().any(|c| {
-                !c.is_whitespace() && !c.is_control() && !is_zero_width_or_format_char(c)
-            })
+            s.chars()
+                .any(|c| !c.is_whitespace() && !c.is_control() && !is_zero_width_or_format_char(c))
         })
         .unwrap_or_else(|_| {
             payload
@@ -191,6 +198,28 @@ mod tests {
 
         assert_eq!(
             verifier.verify_proof(&task, "TEE:\u{200b}quote\u{200d}".as_bytes()),
+            VerificationResult::Valid
+        );
+    }
+
+    #[test]
+    fn tee_verifier_rejects_bidirectional_format_only_body_after_prefix() {
+        let verifier = TeeVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(&task, "TEE:\u{200e}\u{202a}\u{2067}\u{202c}\u{2069}".as_bytes()),
+            VerificationResult::Invalid(msg) if msg.contains("envelope")
+        ));
+    }
+
+    #[test]
+    fn tee_verifier_accepts_visible_body_when_bidirectional_format_chars_are_mixed_in() {
+        let verifier = TeeVerifier;
+        let task = mock_task();
+
+        assert_eq!(
+            verifier.verify_proof(&task, "TEE:\u{2066}quote\u{2069}".as_bytes()),
             VerificationResult::Valid
         );
     }
