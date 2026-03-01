@@ -3635,6 +3635,15 @@ mod tests {
             "non-ascii provenance labels should be rejected to avoid audit ambiguity"
         );
     }
+
+    #[test]
+    fn normalized_provenance_label_rejects_embedded_control_characters() {
+        assert_eq!(
+            normalized_provenance_label(Some("openai\nmodel"), 64),
+            None,
+            "embedded control chars should fail-closed for provenance labels"
+        );
+    }
 }
 
 fn main() -> Result<()> {
