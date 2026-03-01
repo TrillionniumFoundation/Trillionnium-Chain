@@ -1250,8 +1250,12 @@ fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
         | "googlea2aprotocol"
         | "googleagent2agent"
         | "googleagent2agentprotocol"
+        | "googleagent2agentv"
+        | "googleagent2agentprotocolv"
         | "googleagenttoagent"
-        | "googleagenttoagentprotocol" => Some("a2a".to_string()),
+        | "googleagenttoagentprotocol"
+        | "googleagenttoagentv"
+        | "googleagenttoagentprotocolv" => Some("a2a".to_string()),
         _ => None,
     }
 }
@@ -3097,6 +3101,14 @@ mod tests {
         );
         assert_eq!(
             normalized_agent_protocol(Some("Google Agent2Agent Protocol")).as_deref(),
+            Some("a2a")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Google Agent-to-Agent v2")).as_deref(),
+            Some("a2a")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Google Agent2Agent Protocol v2")).as_deref(),
             Some("a2a")
         );
     }
