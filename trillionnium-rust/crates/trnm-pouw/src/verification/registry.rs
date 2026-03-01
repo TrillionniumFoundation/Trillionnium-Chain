@@ -3,7 +3,7 @@ use std::sync::Arc;
 
 use trnm_types::{ProofType, TaskObject};
 
-use super::{proof_type_key, verifiers, ProofVerifier, VerificationResult};
+use super::{normalize_proof_type_alias, proof_type_key, verifiers, ProofVerifier, VerificationResult};
 
 pub struct VerifierRegistry {
     verifiers: HashMap<String, Arc<dyn ProofVerifier + Send + Sync>>,
@@ -26,20 +26,12 @@ impl VerifierRegistry {
     }
 
     fn normalize_key(raw: &str) -> Option<String> {
-        let normalized = raw.trim().to_ascii_lowercase();
+        let normalized = normalize_proof_type_alias(raw);
         if normalized.is_empty() {
-            return None;
+            None
+        } else {
+            Some(normalized)
         }
-
-        let canonical = match normalized.as_str() {
-            // Backward-compatible aliases from early V1/V2 receipt naming.
-            "fraud_proof" | "fraud-proof" | "fraud proof" => "fraud",
-            "tee_receipt" | "tee-receipt" | "tee receipt" => "tee",
-            "zk_receipt" | "zk-receipt" | "zk receipt" => "zk",
-            _ => normalized.as_str(),
-        };
-
-        Some(canonical.to_string())
     }
 
     pub fn register(&mut self, verifier: Arc<dyn ProofVerifier + Send + Sync>) {
