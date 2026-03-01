@@ -300,3 +300,6 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e2-audit-report-generator-llm2-compact-schema-test" "./scripts/v2/e2_audit_report_generator_llm2_compact_schema_test.sh" "ci(gate): add e2-audit-report-generator-llm2-compact-schema-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e2-audit-report-generator-reject-schema-suffix-punct-test" "./scripts/v2/e2_audit_report_generator_reject_schema_suffix_punct_test.sh" "ci(gate): add e2-audit-report-generator-reject-schema-suffix-punct-test regression to quick-check"
