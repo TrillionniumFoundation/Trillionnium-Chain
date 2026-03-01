@@ -243,7 +243,6 @@ struct MarketReport {
     bid_count: usize,
     unique_bidder_count: usize,
     avg_bids_per_task: f64,
-    avg_bids_per_open_task: f64,
     match_rate: f64,
 }
 
@@ -2166,11 +2165,6 @@ fn main() -> Result<()> {
             } else {
                 bid_count as f64 / task_count as f64
             };
-            let avg_bids_per_open_task = if open_task_count == 0 {
-                0.0
-            } else {
-                bid_count as f64 / open_task_count as f64
-            };
             let match_rate = if task_count == 0 {
                 0.0
             } else {
@@ -2184,7 +2178,6 @@ fn main() -> Result<()> {
                 bid_count,
                 unique_bidder_count,
                 avg_bids_per_task,
-                avg_bids_per_open_task,
                 match_rate,
             };
             println!("{}", serde_json::to_string_pretty(&out)?);
