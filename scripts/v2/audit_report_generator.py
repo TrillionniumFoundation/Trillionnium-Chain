@@ -3,6 +3,7 @@ import sys
 import json
 import datetime
 import shlex
+import re
 
 def parse_kv(line):
     """Parses key=value pairs from a log line (supports quoted values)."""
@@ -17,6 +18,16 @@ def parse_kv(line):
             k, v = part.split('=', 1)
             data[k] = v.strip()
     return data
+
+def parse_strict_int(value):
+    """Parses strict base-10 integers only (no underscores, spaces, or float notation)."""
+    if value is None:
+        raise ValueError("missing integer value")
+    text = str(value)
+    if not re.fullmatch(r"-?[0-9]+", text):
+        raise ValueError(f"non-canonical integer: {text}")
+    return int(text)
+
 
 def generate_audit_report(log_file):
     events = []
@@ -66,14 +77,14 @@ def generate_audit_report(log_file):
         etype = e.get('event_type', 'unknown')
         summary['event_counts'][etype] = summary['event_counts'].get(etype, 0) + 1
         
-        # Aggregate financial deltas if present and numeric
+        # Aggregate financial deltas if present and strict-canonical numeric
         try:
-            summary['financial_impact']['challenger_delta_total'] += int(e.get('challenger_delta', 0))
+            summary['financial_impact']['challenger_delta_total'] += parse_strict_int(e.get('challenger_delta', 0))
         except ValueError:
             pass
-            
+
         try:
-            summary['financial_impact']['treasury_delta_total'] += int(e.get('treasury_delta', 0))
+            summary['financial_impact']['treasury_delta_total'] += parse_strict_int(e.get('treasury_delta', 0))
         except ValueError:
             pass
 
