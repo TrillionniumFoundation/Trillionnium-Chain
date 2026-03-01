@@ -121,6 +121,16 @@ impl VerifierRegistry {
         self.verifiers.contains_key(proof_type_key(proof_type))
     }
 
+    /// Returns whether a verifier is registered for a raw plugin/alias key after normalization.
+    ///
+    /// This is useful for V1 plugin diagnostics where callers only have user-provided
+    /// proof/receipt labels (e.g. `TEE_RECEIPT`) and need a readiness check before submit.
+    pub fn is_registered_kind(&self, raw_kind: &str) -> bool {
+        Self::normalize_key(raw_kind)
+            .map(|key| self.verifiers.contains_key(&key))
+            .unwrap_or(false)
+    }
+
     pub fn verify(&self, task: &TaskObject, proof_data: &[u8]) -> VerificationResult {
         let key = proof_type_key(task.proof_type);
 
@@ -904,6 +914,17 @@ mod tests {
         assert!(registry.is_registered_for(ProofType::Fraud));
         assert!(registry.is_registered_for(ProofType::Tee));
         assert!(registry.is_registered_for(ProofType::Zk));
+    }
+
+    #[test]
+    fn registry_is_registered_kind_normalizes_aliases_for_lookup() {
+        let registry = VerifierRegistry::with_builtin_verifiers();
+
+        assert!(registry.is_registered_kind("TEE_RECEIPT"));
+        assert!(registry.is_registered_kind(" zero-knowledge proof "));
+        assert!(registry.is_registered_kind("fraud"));
+        assert!(!registry.is_registered_kind("custom-proof"));
+        assert!(!registry.is_registered_kind("   "));
     }
 
     #[test]
