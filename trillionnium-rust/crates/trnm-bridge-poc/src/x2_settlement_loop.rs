@@ -53,7 +53,8 @@ fn normalize_compensation_reason(reason: &str, fallback: &'static str) -> String
             if ch.is_control()
                 || matches!(
                     ch,
-                    '\u{200B}'
+                    '\u{061C}'
+                        | '\u{200B}'
                         | '\u{200C}'
                         | '\u{200D}'
                         | '\u{FEFF}'

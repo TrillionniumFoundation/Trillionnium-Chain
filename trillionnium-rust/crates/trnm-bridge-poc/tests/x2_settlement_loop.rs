@@ -549,3 +549,33 @@ fn x2_degraded_heartbeat_reason_just_above_limit_is_ellipsized_once() {
     assert!(compensated_reason.ends_with('…'));
     assert!(compensated_reason.starts_with("heartbeat degraded: "));
 }
+
+#[test]
+fn x2_degraded_heartbeat_reason_sanitizes_arabic_letter_mark_control() {
+    let mut request = SettlementRequest::new(16, "0xfeedbead".to_string());
+    let token = operator_token();
+
+    let heartbeat = trnm_bridge_poc::relay_heartbeat::HeartbeatOutcome {
+        heartbeat: None,
+        should_retry: false,
+        degraded: true,
+        message: "relay\u{061C}quorum\u{061C}lost".to_string(),
+    };
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Confirmed { height: 603 },
+    )
+    .unwrap();
+
+    let compensated_reason = match out {
+        SettlementStep::Compensated { reason } => reason,
+        other => panic!("expected compensated step, got {other:?}"),
+    };
+
+    assert_eq!(compensated_reason, "heartbeat degraded: relay quorum lost");
+    assert!(!compensated_reason.contains('\u{061C}'));
+    assert_eq!(current_status(&request), &BridgeStatus::Reverted(compensated_reason));
+}
