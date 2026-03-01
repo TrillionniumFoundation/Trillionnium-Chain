@@ -329,11 +329,19 @@ pub struct IdentityRegistry {
 }
 
 impl IdentityRegistry {
+    fn contains_disallowed_invisible_chars(value: &str) -> bool {
+        value.chars().any(|c| matches!(c, '\u{200B}' | '\u{200C}' | '\u{200D}' | '\u{FEFF}'))
+    }
+
     fn validate_identity_field(
         field: &'static str,
         value: &str,
     ) -> Result<(), InteropIdentityError> {
-        if value.trim().is_empty() || value.trim() != value || value.chars().any(char::is_control) {
+        if value.trim().is_empty()
+            || value.trim() != value
+            || value.chars().any(char::is_control)
+            || Self::contains_disallowed_invisible_chars(value)
+        {
             return Err(InteropIdentityError::InvalidIdentityValue {
                 field,
                 value: value.to_string(),
@@ -4079,6 +4087,45 @@ mod tests {
         let err = reg
             .verify_capability(
                 "org:lane2-admin\n",
+                token_id,
+                CapabilityScope::BridgeSettle,
+                50,
+            )
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            InteropIdentityError::InvalidIdentityValue { field, .. } if field == "actor"
+        ));
+        assert_eq!(reg.audit_trail().len(), audit_len_before);
+        assert_eq!(reg.capability(token_id).unwrap(), &token_before);
+    }
+
+    #[test]
+    fn verify_capability_rejects_zero_width_actor_without_side_effects() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did(
+            "did:trnm:settler-actor-zwsp".to_string(),
+            "org:lane2-admin".to_string(),
+            10,
+        )
+        .unwrap();
+        let token_id = reg
+            .issue_capability(
+                "org:lane2-admin".to_string(),
+                "did:trnm:settler-actor-zwsp".to_string(),
+                CapabilityScope::BridgeSettle,
+                20,
+                Some(200),
+            )
+            .unwrap();
+
+        let audit_len_before = reg.audit_trail().len();
+        let token_before = reg.capability(token_id).cloned().unwrap();
+
+        let err = reg
+            .verify_capability(
+                "org:lane2-admin\u{200B}",
                 token_id,
                 CapabilityScope::BridgeSettle,
                 50,
