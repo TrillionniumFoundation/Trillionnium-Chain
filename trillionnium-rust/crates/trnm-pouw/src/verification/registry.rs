@@ -93,8 +93,9 @@ impl VerifierRegistry {
             "zk attestation" | "zkattestation" => "zk",
             "zk evidence" | "zkevidence" => "zk",
             "zk snark" | "zksnark" => "zk",
+            "zero knowledge" | "zeroknowledge" => "zk",
             "zero knowledge snark" | "zeroknowledgesnark" => "zk",
-            "zero knowledge proof" | "zeroknowledgeproof" => "zk", 
+            "zero knowledge proof" | "zeroknowledgeproof" => "zk",
             "zero knowledge receipt" | "zeroknowledgereceipt" => "zk",
             "zero knowledge attestation" | "zeroknowledgeattestation" => "zk",
             "zero knowledge evidence" | "zeroknowledgeevidence" => "zk",
@@ -1008,6 +1009,7 @@ mod tests {
         assert!(registry.is_registered_kind("TEE_RECEIPT"));
         assert!(registry.is_registered_kind(" zero-knowledge proof "));
         assert!(registry.is_registered_kind("Zero Knowledge Attestation"));
+        assert!(registry.is_registered_kind("zero knowledge"));
         assert!(registry.is_registered_kind("fraud"));
         assert!(!registry.is_registered_kind("custom-proof"));
         assert!(!registry.is_registered_kind("   "));
