@@ -3,6 +3,24 @@ use trnm_types::TaskObject;
 
 pub struct TeeVerifier;
 
+fn is_zero_width_or_format_char(c: char) -> bool {
+    matches!(c, '\u{200b}' | '\u{200c}' | '\u{200d}' | '\u{2060}' | '\u{feff}')
+}
+
+fn has_visible_receipt_body(payload: &[u8]) -> bool {
+    std::str::from_utf8(payload)
+        .map(|s| {
+            s.chars().any(|c| {
+                !c.is_whitespace() && !c.is_control() && !is_zero_width_or_format_char(c)
+            })
+        })
+        .unwrap_or_else(|_| {
+            payload
+                .iter()
+                .any(|b| !b.is_ascii_whitespace() && !b.is_ascii_control())
+        })
+}
+
 impl ProofVerifier for TeeVerifier {
     fn proof_type(&self) -> &str {
         "tee"
@@ -16,15 +34,7 @@ impl ProofVerifier for TeeVerifier {
         let has_prefix = proof_data.len() >= 4 && proof_data[..4].eq_ignore_ascii_case(b"TEE:");
         let has_non_whitespace_body = proof_data
             .get(4..)
-            .map(|suffix| {
-                std::str::from_utf8(suffix)
-                    .map(|s| s.chars().any(|c| !c.is_whitespace() && !c.is_control()))
-                    .unwrap_or_else(|_| {
-                        suffix
-                            .iter()
-                            .any(|b| !b.is_ascii_whitespace() && !b.is_ascii_control())
-                    })
-            })
+            .map(has_visible_receipt_body)
             .unwrap_or(false);
 
         if has_prefix && has_non_whitespace_body {
@@ -161,6 +171,28 @@ mod tests {
             verifier.verify_proof(&task, "TEE:\u{00a0}\u{3000}".as_bytes()),
             VerificationResult::Invalid(msg) if msg.contains("envelope")
         ));
+    }
+
+    #[test]
+    fn tee_verifier_rejects_zero_width_only_body_after_prefix() {
+        let verifier = TeeVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(&task, "TEE:\u{200b}\u{200c}\u{200d}\u{2060}\u{feff}".as_bytes()),
+            VerificationResult::Invalid(msg) if msg.contains("envelope")
+        ));
+    }
+
+    #[test]
+    fn tee_verifier_accepts_visible_body_when_zero_width_chars_are_mixed_in() {
+        let verifier = TeeVerifier;
+        let task = mock_task();
+
+        assert_eq!(
+            verifier.verify_proof(&task, "TEE:\u{200b}quote\u{200d}".as_bytes()),
+            VerificationResult::Valid
+        );
     }
 
     #[test]
