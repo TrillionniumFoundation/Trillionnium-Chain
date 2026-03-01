@@ -86,9 +86,11 @@ impl VerifierRegistry {
             "tee attestation" | "teeattestation" => "tee",
             "tee quote" | "teequote" => "tee",
             "tee report" | "teereport" => "tee",
+            "tee evidence" | "teeevidence" => "tee",
             "zk proof" | "zkproof" => "zk",
             "zk receipt" | "zkreceipt" => "zk",
             "zk attestation" | "zkattestation" => "zk",
+            "zk evidence" | "zkevidence" => "zk",
             "zk snark" | "zksnark" => "zk",
             "zero knowledge snark" | "zeroknowledgesnark" => "zk",
             "zero knowledge proof" | "zeroknowledgeproof" => "zk", 
@@ -772,6 +774,20 @@ mod tests {
     }
 
     #[test]
+    fn registry_register_collapses_tee_evidence_alias_for_lookup() {
+        let mut registry = VerifierRegistry::new();
+        registry.register(Arc::new(AlwaysValidVerifier {
+            kind: " TEE evidence ",
+        }));
+
+        let task = task_with_proof_type(ProofType::Tee);
+        assert_eq!(
+            registry.verify(&task, b"evidence"),
+            VerificationResult::Valid
+        );
+    }
+
+    #[test]
     fn registry_register_collapses_zk_attestation_alias_for_lookup() {
         let mut registry = VerifierRegistry::new();
         registry.register(Arc::new(AlwaysValidVerifier {
@@ -781,6 +797,20 @@ mod tests {
         let task = task_with_proof_type(ProofType::Zk);
         assert_eq!(
             registry.verify(&task, b"attestation"),
+            VerificationResult::Valid
+        );
+    }
+
+    #[test]
+    fn registry_register_collapses_zk_evidence_alias_for_lookup() {
+        let mut registry = VerifierRegistry::new();
+        registry.register(Arc::new(AlwaysValidVerifier {
+            kind: " ZK-EVIDENCE ",
+        }));
+
+        let task = task_with_proof_type(ProofType::Zk);
+        assert_eq!(
+            registry.verify(&task, b"evidence"),
             VerificationResult::Valid
         );
     }
