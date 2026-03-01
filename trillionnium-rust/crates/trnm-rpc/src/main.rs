@@ -787,6 +787,12 @@ fn market_worker_tie_break_key(raw: &str) -> String {
     normalize_market_worker_key(raw).unwrap_or_else(|| raw.trim().to_ascii_lowercase())
 }
 
+fn parse_market_reputation_value(value: &serde_json::Value) -> Option<i64> {
+    value
+        .as_i64()
+        .or_else(|| value.as_str()?.trim().parse::<i64>().ok())
+}
+
 fn load_market_reputation() -> BTreeMap<String, i64> {
     let path = market_reputation_file();
     let Ok(raw) = fs::read_to_string(path) else {
@@ -802,7 +808,7 @@ fn load_market_reputation() -> BTreeMap<String, i64> {
 
     let mut normalized: BTreeMap<String, i64> = BTreeMap::new();
     for (worker, rep_value) in parsed {
-        let Some(rep) = rep_value.as_i64() else {
+        let Some(rep) = parse_market_reputation_value(&rep_value) else {
             continue;
         };
         if let Some(key) = normalize_market_worker_key(&worker) {
@@ -2427,6 +2433,38 @@ mod tests {
                 assert_eq!(rep.get("worker-a"), Some(&7));
                 assert_eq!(rep.get("worker-c"), Some(&-3));
                 assert!(!rep.contains_key("worker-b"));
+                assert_eq!(rep.len(), 2);
+            },
+        );
+
+        let _ = fs::remove_file(path);
+    }
+
+    #[test]
+    fn market_reputation_loader_accepts_integer_strings_and_skips_non_integer_strings() {
+        let mut path = std::env::temp_dir();
+        path.push(format!(
+            "trnm_rpc_market_reputation_string_ints_{}_{}.json",
+            std::process::id(),
+            now_ms()
+        ));
+        fs::write(
+            &path,
+            r#"{"worker-a": " 11 ", "worker-b": "-4", "worker-c": "3.5", "worker-d": "oops"}"#,
+        )
+        .expect("write string-int reputation fixture");
+
+        with_market_path_env(
+            &[(
+                MARKET_REPUTATION_FILE_ENV,
+                Some(path.to_string_lossy().as_ref()),
+            )],
+            || {
+                let rep = load_market_reputation();
+                assert_eq!(rep.get("worker-a"), Some(&11));
+                assert_eq!(rep.get("worker-b"), Some(&-4));
+                assert!(!rep.contains_key("worker-c"));
+                assert!(!rep.contains_key("worker-d"));
                 assert_eq!(rep.len(), 2);
             },
         );
