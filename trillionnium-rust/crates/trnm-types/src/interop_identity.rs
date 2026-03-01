@@ -4433,6 +4433,50 @@ mod tests {
     }
 
     #[test]
+    fn verify_capability_rejects_height_before_issue_without_side_effects() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did(
+            "did:trnm:settler-before-issue".to_string(),
+            "org:lane2-admin".to_string(),
+            10,
+        )
+        .unwrap();
+        let token_id = reg
+            .issue_capability(
+                "org:lane2-admin".to_string(),
+                "did:trnm:settler-before-issue".to_string(),
+                CapabilityScope::BridgeSettle,
+                20,
+                None,
+            )
+            .unwrap();
+
+        let baseline_audit = reg.audit_trail().to_vec();
+        let baseline_token = reg.capability(token_id).cloned().unwrap();
+        let err = reg
+            .verify_capability(
+                "org:lane2-admin",
+                token_id,
+                CapabilityScope::BridgeSettle,
+                19,
+            )
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            InteropIdentityError::CapabilityInactive {
+                token_id: id,
+                at_height: 19,
+                issued_at: 20,
+                expires_at: None,
+                revoked_at: None,
+            } if id == token_id
+        ));
+        assert_eq!(reg.audit_trail(), baseline_audit.as_slice());
+        assert_eq!(reg.capability(token_id), Some(&baseline_token));
+    }
+
+    #[test]
     fn verify_capability_accepts_height_equal_to_expiry_boundary() {
         let mut reg = IdentityRegistry::default();
         reg.register_did(
