@@ -91,6 +91,7 @@ impl VerifierRegistry {
             "zk snark" | "zksnark" => "zk",
             "zero knowledge proof" | "zeroknowledgeproof" => "zk",
             "zero knowledge receipt" | "zeroknowledgereceipt" => "zk",
+            "zero knowledge attestation" | "zeroknowledgeattestation" => "zk",
             // Keep custom plugin keys delimiter-stable for deterministic re-registration
             // and observability output (e.g., MY__PROOF == "my proof").
             _ => collapsed.as_str(),
@@ -922,6 +923,7 @@ mod tests {
 
         assert!(registry.is_registered_kind("TEE_RECEIPT"));
         assert!(registry.is_registered_kind(" zero-knowledge proof "));
+        assert!(registry.is_registered_kind("Zero Knowledge Attestation"));
         assert!(registry.is_registered_kind("fraud"));
         assert!(!registry.is_registered_kind("custom-proof"));
         assert!(!registry.is_registered_kind("   "));
