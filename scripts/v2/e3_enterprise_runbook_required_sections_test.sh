@@ -31,6 +31,10 @@ rollback_guard_phrases=(
   "根因标签"
 )
 
+evidence_guard_phrases=(
+  "协议版本与适配器传输层记录"
+)
+
 for phrase in "${rollback_guard_phrases[@]}"; do
   if ! grep -Fq "$phrase" "$RUNBOOK"; then
     echo "[FAIL] rollback section missing guard phrase: $phrase" >&2
@@ -38,4 +42,11 @@ for phrase in "${rollback_guard_phrases[@]}"; do
   fi
 done
 
-echo "[PASS] E3 enterprise onboarding runbook includes required sections + rollback guard phrases"
+for phrase in "${evidence_guard_phrases[@]}"; do
+  if ! grep -Fq "$phrase" "$RUNBOOK"; then
+    echo "[FAIL] evidence checklist missing guard phrase: $phrase" >&2
+    exit 1
+  fi
+done
+
+echo "[PASS] E3 enterprise onboarding runbook includes required sections + rollback/evidence guard phrases"
