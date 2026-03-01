@@ -241,6 +241,7 @@ struct AuditExportIndex {
     by_provider: BTreeMap<String, Vec<usize>>,
     by_model: BTreeMap<String, Vec<usize>>,
     by_agent_protocol: BTreeMap<String, Vec<usize>>,
+    by_compliance_profile: BTreeMap<String, Vec<usize>>,
     by_provenance_fingerprint: BTreeMap<String, Vec<usize>>,
 }
 
@@ -249,6 +250,7 @@ fn build_audit_export_index(exports: &[EnterpriseAuditExportRecord]) -> AuditExp
     let mut by_provider = BTreeMap::<String, Vec<usize>>::new();
     let mut by_model = BTreeMap::<String, Vec<usize>>::new();
     let mut by_agent_protocol = BTreeMap::<String, Vec<usize>>::new();
+    let mut by_compliance_profile = BTreeMap::<String, Vec<usize>>::new();
     let mut by_provenance_fingerprint = BTreeMap::<String, Vec<usize>>::new();
 
     for (idx, rec) in exports.iter().enumerate() {
@@ -269,6 +271,15 @@ fn build_audit_export_index(exports: &[EnterpriseAuditExportRecord]) -> AuditExp
             by_agent_protocol.entry(agent_protocol).or_default().push(idx);
         }
 
+        if let Some(compliance_profile) =
+            normalized_compliance_profile(rec.compliance_profile.as_deref())
+        {
+            by_compliance_profile
+                .entry(compliance_profile)
+                .or_default()
+                .push(idx);
+        }
+
         if let Some(fingerprint) =
             normalized_provenance_label(rec.provenance_fingerprint.as_deref(), 128)
                 .map(|value| value.to_ascii_lowercase())
@@ -287,6 +298,7 @@ fn build_audit_export_index(exports: &[EnterpriseAuditExportRecord]) -> AuditExp
         by_provider,
         by_model,
         by_agent_protocol,
+        by_compliance_profile,
         by_provenance_fingerprint,
     }
 }
@@ -2293,6 +2305,10 @@ mod tests {
         assert_eq!(index.by_provider.get("openai"), Some(&vec![0, 1]));
         assert_eq!(index.by_model.get("gpt-5.3-codex"), Some(&vec![0, 1]));
         assert_eq!(index.by_agent_protocol.get("a2a"), Some(&vec![0, 1]));
+        assert_eq!(
+            index.by_compliance_profile.get("cn-moderate"),
+            Some(&vec![0, 1])
+        );
         assert_eq!(index.by_provenance_fingerprint.get("fp-abc"), Some(&vec![0, 1]));
     }
 
@@ -2331,10 +2347,12 @@ mod tests {
         assert_eq!(index.by_provider.get("openai"), Some(&vec![0]));
         assert_eq!(index.by_model.get("gpt-5.3-codex"), Some(&vec![0]));
         assert_eq!(index.by_agent_protocol.get("a2a"), Some(&vec![0, 1]));
+        assert_eq!(index.by_compliance_profile.get("cn-moderate"), Some(&vec![0, 1]));
         assert_eq!(index.by_provenance_fingerprint.get("fp-xyz"), Some(&vec![0]));
         assert!(!index.by_provider.contains_key(""));
         assert!(!index.by_model.contains_key(""));
         assert!(!index.by_agent_protocol.contains_key(""));
+        assert!(!index.by_compliance_profile.contains_key(""));
         assert!(!index.by_provenance_fingerprint.contains_key(""));
     }
 
