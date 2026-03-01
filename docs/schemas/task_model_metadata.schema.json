@@ -22,7 +22,7 @@
       "type": "string",
       "minLength": 1,
       "maxLength": 64,
-      "pattern": "^.*\\S.*$"
+      "pattern": "^\\S(?:.*\\S)?$"
     },
     "input_hash": {
       "type": "string",
