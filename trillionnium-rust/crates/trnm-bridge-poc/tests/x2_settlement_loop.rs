@@ -201,6 +201,36 @@ fn x2_degraded_heartbeat_blank_reason_falls_back_to_stable_unknown() {
 }
 
 #[test]
+fn x2_failure_path_bidi_controls_are_sanitized_before_compensation() {
+    let mut request = SettlementRequest::new(2, "0x0ddcafee".to_string());
+    let token = operator_token();
+
+    let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 2));
+    let heartbeat = monitor.record_success(355, 354, 15);
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Failed {
+            reason: "settlement\u{2060} \u{202E}confirm\u{202C}   \u{2067}failed\u{2069}".to_string(),
+        },
+    )
+    .unwrap();
+
+    assert_eq!(
+        out,
+        SettlementStep::Compensated {
+            reason: "settlement confirm failed: settlement confirm failed".to_string(),
+        }
+    );
+    assert_eq!(
+        current_status(&request),
+        &BridgeStatus::Reverted("settlement confirm failed: settlement confirm failed".to_string())
+    );
+}
+
+#[test]
 fn x2_failure_path_control_only_confirm_reason_falls_back_to_stable_unknown() {
     let mut request = SettlementRequest::new(2, "0x0ddcafef".to_string());
     let token = operator_token();

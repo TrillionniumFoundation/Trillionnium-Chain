@@ -49,7 +49,23 @@ fn normalize_compensation_reason(reason: &str, fallback: &'static str) -> String
         .chars()
         .map(|ch| {
             if ch.is_control()
-                || matches!(ch, '\u{200B}' | '\u{200C}' | '\u{200D}' | '\u{FEFF}')
+                || matches!(
+                    ch,
+                    '\u{200B}'
+                        | '\u{200C}'
+                        | '\u{200D}'
+                        | '\u{FEFF}'
+                        | '\u{2060}'
+                        | '\u{202A}'
+                        | '\u{202B}'
+                        | '\u{202C}'
+                        | '\u{202D}'
+                        | '\u{202E}'
+                        | '\u{2066}'
+                        | '\u{2067}'
+                        | '\u{2068}'
+                        | '\u{2069}'
+                )
             {
                 ' '
             } else {
