@@ -206,6 +206,10 @@ impl DidRecord {
     }
 
     pub fn is_active_at(&self, at_height: u64) -> bool {
+        if at_height < self.created_at {
+            return false;
+        }
+
         match self.revoked_at {
             Some(revoked_at) => at_height < revoked_at,
             None => true,
