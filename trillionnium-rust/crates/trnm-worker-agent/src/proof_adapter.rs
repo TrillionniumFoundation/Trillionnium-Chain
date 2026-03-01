@@ -62,11 +62,13 @@ impl ProofAdapter for StandardProofAdapter {
     }
 
     fn parse_response(&self, stdout: &str) -> Result<LlmAdapterResponse, String> {
-        if let Ok(parsed) = serde_json::from_str(stdout) {
+        let normalized = stdout.trim_start_matches('\u{feff}');
+
+        if let Ok(parsed) = serde_json::from_str(normalized) {
             return Ok(parsed);
         }
 
-        for line in stdout.lines().rev().map(str::trim) {
+        for line in normalized.lines().rev().map(str::trim) {
             if line.starts_with('{') && line.ends_with('}') {
                 if let Ok(parsed) = serde_json::from_str(line) {
                     return Ok(parsed);
@@ -83,7 +85,7 @@ impl ProofAdapter for StandardProofAdapter {
             }
         }
 
-        if let Some(candidate) = last_balanced_json_object(stdout) {
+        if let Some(candidate) = last_balanced_json_object(normalized) {
             if let Ok(parsed) = serde_json::from_str::<LlmAdapterResponse>(&candidate) {
                 return Ok(parsed);
             }
@@ -158,6 +160,18 @@ mod tests {
             candidate,
             "{\"output_text\":\"ok\",\"provider_request_id\":\"r4\"}"
         );
+    }
+
+    #[test]
+    fn standard_proof_adapter_parse_response_accepts_json_with_utf8_bom_prefix() {
+        let adapter = StandardProofAdapter;
+        let stdout = "\u{feff}{\"output_text\":\"ok\",\"provider_request_id\":\"r5\"}";
+
+        let parsed = adapter
+            .parse_response(stdout)
+            .expect("should parse json with leading utf-8 bom");
+        assert_eq!(parsed.output_text, "ok");
+        assert_eq!(parsed.provider_request_id.as_deref(), Some("r5"));
     }
 
     #[test]
