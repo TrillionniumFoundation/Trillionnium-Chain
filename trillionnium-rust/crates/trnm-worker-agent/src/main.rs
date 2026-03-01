@@ -265,7 +265,7 @@ fn build_audit_export_index(exports: &[EnterpriseAuditExportRecord]) -> AuditExp
             by_model.entry(model).or_default().push(idx);
         }
 
-        if let Some(agent_protocol) = normalized_optional_field(rec.agent_protocol.as_deref()) {
+        if let Some(agent_protocol) = normalized_agent_protocol(rec.agent_protocol.as_deref()) {
             by_agent_protocol.entry(agent_protocol).or_default().push(idx);
         }
 
@@ -2350,6 +2350,46 @@ mod tests {
         let index = build_audit_export_index(&rows);
         assert_eq!(index.by_provenance_fingerprint.get("deadbeef"), Some(&vec![0, 1]));
         assert!(!index.by_provenance_fingerprint.contains_key("DEADBEEF"));
+    }
+
+    #[test]
+    fn export_audit_index_normalizes_agent_protocol_aliases_to_canonical_keys() {
+        let rows = vec![
+            EnterpriseAuditExportRecord {
+                request_id: "r1".to_string(),
+                task_id: 7251,
+                status: "reveal_submitted".to_string(),
+                provider_request_id: Some("p1".to_string()),
+                provenance_schema_version: Some("llm.v2".to_string()),
+                provenance_fingerprint: Some("fp-1".to_string()),
+                provider: Some("openai".to_string()),
+                model: Some("gpt-5.3-codex".to_string()),
+                adapter: Some("mcp".to_string()),
+                agent_protocol: Some("A2A-JSON-RPC-V2".to_string()),
+                compliance_profile: Some("cn-moderate".to_string()),
+            },
+            EnterpriseAuditExportRecord {
+                request_id: "r2".to_string(),
+                task_id: 7252,
+                status: "reveal_submitted".to_string(),
+                provider_request_id: Some("p2".to_string()),
+                provenance_schema_version: Some("llm.v2".to_string()),
+                provenance_fingerprint: Some("fp-2".to_string()),
+                provider: Some("openai".to_string()),
+                model: Some("gpt-5.3-codex".to_string()),
+                adapter: Some("mcp".to_string()),
+                agent_protocol: Some(" model-context-protocol / stdio v1 ".to_string()),
+                compliance_profile: Some("cn-moderate".to_string()),
+            },
+        ];
+
+        let index = build_audit_export_index(&rows);
+        assert_eq!(index.by_agent_protocol.get("a2a"), Some(&vec![0]));
+        assert_eq!(index.by_agent_protocol.get("mcp"), Some(&vec![1]));
+        assert!(!index.by_agent_protocol.contains_key("A2A-JSON-RPC-V2"));
+        assert!(!index
+            .by_agent_protocol
+            .contains_key("model-context-protocol / stdio v1"));
     }
 
     #[test]
