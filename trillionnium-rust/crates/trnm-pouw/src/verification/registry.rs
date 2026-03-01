@@ -1070,6 +1070,15 @@ mod tests {
     }
 
     #[test]
+    fn registry_is_registered_kind_accepts_dcap_quote_aliases() {
+        let registry = VerifierRegistry::with_builtin_verifiers();
+
+        assert!(registry.is_registered_kind("dcap_quote"));
+        assert!(registry.is_registered_kind("Intel DCAP Quote"));
+        assert!(registry.is_registered_kind("sgx-quote"));
+    }
+
+    #[test]
     fn registry_with_builtin_verifiers_registers_v1_stack() {
         let registry = VerifierRegistry::with_builtin_verifiers();
 
