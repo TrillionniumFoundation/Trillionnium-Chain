@@ -260,6 +260,20 @@ mod tests {
     }
 
     #[test]
+    fn registry_register_collapses_hyphenated_zk_receipt_alias_for_lookup() {
+        let mut registry = VerifierRegistry::new();
+        registry.register(Arc::new(AlwaysValidVerifier {
+            kind: " ZK-RECEIPT ",
+        }));
+
+        let task = task_with_proof_type(ProofType::Zk);
+        assert_eq!(
+            registry.verify(&task, b"receipt"),
+            VerificationResult::Valid
+        );
+    }
+
+    #[test]
     fn registry_register_collapses_mixed_delimiter_legacy_aliases_for_lookup() {
         let mut registry = VerifierRegistry::new();
         registry.register(Arc::new(AlwaysValidVerifier {
