@@ -58,7 +58,24 @@ pub struct SettlementRecord {
 }
 
 fn normalize_revert_reason(reason: String) -> String {
-    let canonical = reason.to_ascii_lowercase().replace('_', "-");
+    let mut canonical = String::with_capacity(reason.len());
+    let mut prev_sep = false;
+
+    for ch in reason.trim().chars() {
+        let lowered = ch.to_ascii_lowercase();
+        if lowered.is_ascii_alphanumeric() {
+            canonical.push(lowered);
+            prev_sep = false;
+        } else if !prev_sep {
+            canonical.push('-');
+            prev_sep = true;
+        }
+    }
+
+    while canonical.ends_with('-') {
+        canonical.pop();
+    }
+
     match canonical.as_str() {
         "fraud-proof" => "fraud-proof".to_string(),
         "tee-receipt" | "tee-attestation" => "tee-receipt".to_string(),
@@ -1627,6 +1644,40 @@ mod tests {
         assert_eq!(rec.revert_reason.as_deref(), Some("fraud-proof"));
     }
 
+    #[test]
+    fn settlement_revert_reason_reapply_accepts_delimiter_variant_alias() {
+        let route = BridgeRoute {
+            route_id: "eth->trnm".to_string(),
+            source_chain: "ethereum".to_string(),
+            target_chain: "trillionnium".to_string(),
+        };
+        let mut rec = SettlementRecord {
+            settlement_id: 143,
+            route,
+            status: SettlementStatus::Pending,
+            at_height: 620,
+            settlement_tx: None,
+            revert_reason: None,
+        };
+
+        rec.apply_status(
+            SettlementStatus::Reverted,
+            621,
+            None,
+            Some("tee-receipt".to_string()),
+        )
+        .unwrap();
+
+        rec.apply_status(
+            SettlementStatus::Reverted,
+            622,
+            None,
+            Some(" TEE / ATTESTATION ".to_string()),
+        )
+        .unwrap();
+
+        assert_eq!(rec.revert_reason.as_deref(), Some("tee-receipt"));
+    }
 
     #[test]
     fn settlement_status_update_rejects_height_regression_without_side_effects() {
