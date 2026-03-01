@@ -110,6 +110,14 @@ fn relay_heartbeat_failure_reason_strips_control_and_zero_width_chars() {
 }
 
 #[test]
+fn relay_heartbeat_failure_reason_strips_zero_width_non_joiner() {
+    let mut hb = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 3));
+
+    let out = hb.record_failure("rpc\u{200C} timeout");
+    assert_eq!(out.message, "rpc timeout");
+}
+
+#[test]
 fn relay_heartbeat_failure_reason_is_capped_for_log_safety() {
     let mut hb = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 3));
     let long_reason = "x".repeat(220);
