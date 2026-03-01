@@ -231,3 +231,6 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d2-
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-accept-task-id-maxlen-test" "./scripts/v2/d1_task_model_metadata_schema_accept_task_id_maxlen_test.sh" "ci(gate): add d1-task-model-metadata-schema-accept-task-id-maxlen-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d3-task-model-metadata-schema-internal-reject-blank-provenance-index-test" "./scripts/v2/d3_task_model_metadata_schema_internal_reject_blank_provenance_index_test.sh" "ci(gate): add d3-task-model-metadata-schema-internal-reject-blank-provenance-index-test regression to quick-check"
