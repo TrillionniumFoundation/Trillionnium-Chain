@@ -518,3 +518,34 @@ fn x2_failure_path_reason_just_above_limit_is_ellipsized_once() {
     assert!(compensated_reason.ends_with('…'));
     assert!(compensated_reason.starts_with("settlement confirm failed: "));
 }
+
+#[test]
+fn x2_degraded_heartbeat_reason_just_above_limit_is_ellipsized_once() {
+    let mut request = SettlementRequest::new(15, "0xfaceabba".to_string());
+    let token = operator_token();
+
+    let above_limit_reason = "h".repeat(161);
+    let heartbeat = trnm_bridge_poc::relay_heartbeat::HeartbeatOutcome {
+        heartbeat: None,
+        should_retry: false,
+        degraded: true,
+        message: above_limit_reason,
+    };
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Confirmed { height: 602 },
+    )
+    .unwrap();
+
+    let compensated_reason = match out {
+        SettlementStep::Compensated { reason } => reason,
+        other => panic!("expected compensated step, got {other:?}"),
+    };
+
+    assert_eq!(compensated_reason.chars().count(), 181);
+    assert!(compensated_reason.ends_with('…'));
+    assert!(compensated_reason.starts_with("heartbeat degraded: "));
+}
