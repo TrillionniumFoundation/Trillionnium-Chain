@@ -93,6 +93,17 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
                 || ch == ';'
                 || ch == '='
                 || ch == '@'
+                || ch == '#'
+                || ch == '('
+                || ch == ')'
+                || ch == '['
+                || ch == ']'
+                || ch == '{'
+                || ch == '}'
+                || ch == '<'
+                || ch == '>'
+                || ch == '"'
+                || ch == '\''
                 || ch.is_ascii_whitespace()
         })
         .filter(|token| !token.is_empty())
@@ -100,9 +111,19 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
         .join(" ");
 
     match collapsed_tokens.as_str() {
-        "fraud proof" | "fraud receipt" => "fraud".to_string(),
-        "tee proof" | "tee receipt" => "tee".to_string(),
-        "zk proof" | "zk receipt" => "zk".to_string(),
+        "fraud proof" | "fraud receipt" | "fraudproof" | "fraudreceipt" => {
+            "fraud".to_string()
+        }
+        "tee proof"
+        | "tee receipt"
+        | "tee attestation"
+        | "tee quote"
+        | "teeproof"
+        | "teereceipt"
+        | "teeattestation"
+        | "teequote" => "tee".to_string(),
+        "zk proof" | "zk receipt" | "zk attestation" | "zkproof" | "zkreceipt"
+        | "zkattestation" => "zk".to_string(),
         // Keep custom plugin keys delimiter-stable so receipt persistence aligns
         // with registry normalization/observability (e.g., MY__PROOF -> "my proof").
         _ => collapsed_tokens,
@@ -379,6 +400,28 @@ mod tests {
         let fraud = VerificationReceipt::new(1, "fraud|receipt", VerificationResult::Valid, "v", 1);
         let tee = VerificationReceipt::new(2, "TEE\\PROOF", VerificationResult::Valid, "v", 2);
         let zk = VerificationReceipt::new(3, "zk@receipt", VerificationResult::Valid, "v", 3);
+
+        assert_eq!(fraud.proof_type, "fraud");
+        assert_eq!(tee.proof_type, "tee");
+        assert_eq!(zk.proof_type, "zk");
+    }
+
+    #[test]
+    fn verification_receipt_new_collapses_registry_parenthesis_quote_aliases_to_router_keys() {
+        let fraud = VerificationReceipt::new(1, "(FRAUD'RECEIPT')", VerificationResult::Valid, "v", 1);
+        let tee = VerificationReceipt::new(2, "\"TEE\"[QUOTE]", VerificationResult::Valid, "v", 2);
+        let zk = VerificationReceipt::new(3, "<zk>{attestation}", VerificationResult::Valid, "v", 3);
+
+        assert_eq!(fraud.proof_type, "fraud");
+        assert_eq!(tee.proof_type, "tee");
+        assert_eq!(zk.proof_type, "zk");
+    }
+
+    #[test]
+    fn verification_receipt_new_collapses_compact_aliases_to_router_keys() {
+        let fraud = VerificationReceipt::new(1, "fraudproof", VerificationResult::Valid, "v", 1);
+        let tee = VerificationReceipt::new(2, "teereceipt", VerificationResult::Valid, "v", 2);
+        let zk = VerificationReceipt::new(3, "zkattestation", VerificationResult::Valid, "v", 3);
 
         assert_eq!(fraud.proof_type, "fraud");
         assert_eq!(tee.proof_type, "tee");
