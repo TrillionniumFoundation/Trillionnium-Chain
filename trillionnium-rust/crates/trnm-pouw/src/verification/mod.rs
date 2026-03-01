@@ -80,7 +80,14 @@ impl VerificationReceipt {
 fn normalize_receipt_proof_type(raw: &str) -> String {
     let lowered = raw.trim().to_ascii_lowercase();
     let collapsed_tokens = lowered
-        .split(|ch: char| ch == '_' || ch == '-' || ch.is_ascii_whitespace())
+        .split(|ch: char| {
+            ch == '_'
+                || ch == '-'
+                || ch == '/'
+                || ch == '.'
+                || ch == ':'
+                || ch.is_ascii_whitespace()
+        })
         .filter(|token| !token.is_empty())
         .collect::<Vec<_>>()
         .join(" ");
@@ -330,6 +337,17 @@ mod tests {
         let fraud = VerificationReceipt::new(1, "FRAUD__RECEIPT", VerificationResult::Valid, "v", 1);
         let tee = VerificationReceipt::new(2, "tee---proof", VerificationResult::Valid, "v", 2);
         let zk = VerificationReceipt::new(3, "zk\t\n  __--receipt", VerificationResult::Valid, "v", 3);
+
+        assert_eq!(fraud.proof_type, "fraud");
+        assert_eq!(tee.proof_type, "tee");
+        assert_eq!(zk.proof_type, "zk");
+    }
+
+    #[test]
+    fn verification_receipt_new_collapses_slash_dot_colon_aliases_to_router_keys() {
+        let fraud = VerificationReceipt::new(1, "fraud/receipt", VerificationResult::Valid, "v", 1);
+        let tee = VerificationReceipt::new(2, "TEE:PROOF", VerificationResult::Valid, "v", 2);
+        let zk = VerificationReceipt::new(3, "zk.receipt", VerificationResult::Valid, "v", 3);
 
         assert_eq!(fraud.proof_type, "fraud");
         assert_eq!(tee.proof_type, "tee");
