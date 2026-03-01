@@ -1117,10 +1117,18 @@ fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
         | "mcpjsonrpcv"
         | "mcpjsonrpcv1"
         | "mcpjsonrpcv2"
+        | "mcpoverjsonrpc"
+        | "mcpoverjsonrpcv"
+        | "mcpoverjsonrpcv1"
+        | "mcpoverjsonrpcv2"
         | "mcpstdio"
         | "mcpstdiov"
         | "mcpstdiov1"
         | "mcpstdiov2"
+        | "mcpoverstdio"
+        | "mcpoverstdiov"
+        | "mcpoverstdiov1"
+        | "mcpoverstdiov2"
         | "modelcontextprotocol"
         | "modelcontextprotocolv"
         | "modelcontextprotocolv1"
@@ -1145,10 +1153,18 @@ fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
         | "a2ajsonrpcv"
         | "a2ajsonrpcv1"
         | "a2ajsonrpcv2"
+        | "a2aoverjsonrpc"
+        | "a2aoverjsonrpcv"
+        | "a2aoverjsonrpcv1"
+        | "a2aoverjsonrpcv2"
         | "a2astdio"
         | "a2astdiov"
         | "a2astdiov1"
         | "a2astdiov2"
+        | "a2aoverstdio"
+        | "a2aoverstdiov"
+        | "a2aoverstdiov1"
+        | "a2aoverstdiov2"
         | "a2aprotocol"
         | "agent2agent"
         | "agenttoagent"
@@ -2917,7 +2933,23 @@ mod tests {
             Some("mcp")
         );
         assert_eq!(
+            normalized_agent_protocol(Some("MCP over JSON-RPC v2")).as_deref(),
+            Some("mcp")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("MCP over STDIO v2")).as_deref(),
+            Some("mcp")
+        );
+        assert_eq!(
             normalized_agent_protocol(Some("Agent-to-Agent Protocol STDIO v2")).as_deref(),
+            Some("a2a")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("A2A over JSON-RPC v2")).as_deref(),
+            Some("a2a")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("A2A over STDIO v2")).as_deref(),
             Some("a2a")
         );
         assert_eq!(
