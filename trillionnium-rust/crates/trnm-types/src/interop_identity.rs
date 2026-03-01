@@ -353,7 +353,7 @@ pub struct IdentityRegistry {
 
 impl IdentityRegistry {
     fn contains_disallowed_invisible_chars(value: &str) -> bool {
-        value.chars().any(|c| matches!(c, '\u{200B}' | '\u{200C}' | '\u{200D}' | '\u{FEFF}'))
+        value.chars().any(is_disallowed_invisible_char)
     }
 
     fn validate_identity_field(
@@ -2246,6 +2246,41 @@ mod tests {
             }
         ));
 
+        assert!(reg.audit_trail().is_empty());
+    }
+
+    #[test]
+    fn register_did_rejects_bidi_or_invisible_format_controls_without_side_effects() {
+        let mut reg = IdentityRegistry::default();
+
+        let err = reg
+            .register_did(
+                "did:trnm:agent\u{202E}spoof".to_string(),
+                "org:lane2-admin".to_string(),
+                10,
+            )
+            .unwrap_err();
+        assert!(matches!(
+            err,
+            InteropIdentityError::InvalidIdentityValue { field: "did", .. }
+        ));
+
+        let err = reg
+            .register_did(
+                "did:trnm:agent-safe".to_string(),
+                "org:lane2\u{2066}admin\u{2069}".to_string(),
+                10,
+            )
+            .unwrap_err();
+        assert!(matches!(
+            err,
+            InteropIdentityError::InvalidIdentityValue {
+                field: "controller",
+                ..
+            }
+        ));
+
+        assert!(reg.did("did:trnm:agent-safe").is_none());
         assert!(reg.audit_trail().is_empty());
     }
 
