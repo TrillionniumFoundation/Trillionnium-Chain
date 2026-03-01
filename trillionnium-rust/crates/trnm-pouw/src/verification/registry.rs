@@ -1016,6 +1016,15 @@ mod tests {
     }
 
     #[test]
+    fn registry_is_registered_kind_accepts_punctuated_legacy_receipt_aliases() {
+        let registry = VerifierRegistry::with_builtin_verifiers();
+
+        assert!(registry.is_registered_kind("TEE:RECEIPT"));
+        assert!(registry.is_registered_kind("?!tee?!receipt!?"));
+        assert!(registry.is_registered_kind("\"TEE\"\"RECEIPT\""));
+    }
+
+    #[test]
     fn registry_with_builtin_verifiers_registers_v1_stack() {
         let registry = VerifierRegistry::with_builtin_verifiers();
 
