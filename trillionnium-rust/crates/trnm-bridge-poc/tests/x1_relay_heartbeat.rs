@@ -89,3 +89,11 @@ fn relay_heartbeat_failure_reason_is_trimmed_and_never_blank() {
     let blank = hb.record_failure("   \n\t");
     assert_eq!(blank.message, "unknown heartbeat failure");
 }
+
+#[test]
+fn relay_heartbeat_failure_reason_collapses_internal_whitespace() {
+    let mut hb = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 3));
+
+    let out = hb.record_failure("rpc\n timeout\t on   bridge-a");
+    assert_eq!(out.message, "rpc timeout on bridge-a");
+}

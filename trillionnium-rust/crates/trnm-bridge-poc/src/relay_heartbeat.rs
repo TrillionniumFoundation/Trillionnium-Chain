@@ -73,14 +73,8 @@ impl RelayHeartbeatMonitor {
         self.consecutive_failures = self.consecutive_failures.saturating_add(1);
         let degraded = self.consecutive_failures >= self.config.max_retry;
         let should_retry = !degraded;
-        let normalized_reason = {
-            let trimmed = reason.trim();
-            if trimmed.is_empty() {
-                "unknown heartbeat failure"
-            } else {
-                trimmed
-            }
-        };
+        let normalized_reason = normalize_failure_reason(reason);
+
         if degraded {
             eprintln!(
                 "[relay-heartbeat][degraded] failures={} reason={}",
@@ -91,7 +85,16 @@ impl RelayHeartbeatMonitor {
             heartbeat: None,
             should_retry,
             degraded,
-            message: normalized_reason.to_string(),
+            message: normalized_reason,
         }
+    }
+}
+
+fn normalize_failure_reason(reason: &str) -> String {
+    let collapsed = reason.split_whitespace().collect::<Vec<_>>().join(" ");
+    if collapsed.is_empty() {
+        "unknown heartbeat failure".to_string()
+    } else {
+        collapsed
     }
 }
