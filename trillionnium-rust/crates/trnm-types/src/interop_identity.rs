@@ -2098,6 +2098,27 @@ mod tests {
     }
 
     #[test]
+    fn settlement_evidence_path_avoids_windows_reserved_device_names_with_trailing_dot_or_space() {
+        let rec = SettlementRecord {
+            settlement_id: 53,
+            route: BridgeRoute {
+                route_id: "CON. ".to_string(),
+                source_chain: "lpt1...".to_string(),
+                target_chain: "aux ".to_string(),
+            },
+            status: SettlementStatus::Pending,
+            at_height: 2_230,
+            settlement_tx: None,
+            revert_reason: None,
+        };
+
+        assert_eq!(
+            rec.evidence_path(),
+            "settlements/CON._/lpt1..._/aux_/53/pending@2230"
+        );
+    }
+
+    #[test]
     fn register_did_rejects_duplicate_without_side_effects() {
         let mut reg = IdentityRegistry::default();
         reg.register_did(

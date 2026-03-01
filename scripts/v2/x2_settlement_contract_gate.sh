@@ -30,5 +30,6 @@ cargo test -p trnm-types settlement_evidence_path_sanitizes_bidi_and_zero_width_
 cargo test -p trnm-types settlement_evidence_path_sanitizes_colon_for_cross_platform_filesystem_safety
 cargo test -p trnm-types settlement_evidence_path_avoids_windows_reserved_device_names
 cargo test -p trnm-types settlement_evidence_path_avoids_windows_reserved_device_names_with_extension_alias
+cargo test -p trnm-types settlement_evidence_path_avoids_windows_reserved_device_names_with_trailing_dot_or_space
 
 echo "[X2][PASS] settlement contract gate"
