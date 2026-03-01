@@ -622,12 +622,16 @@ fn query_capability_audit(
         return Err(CapabilityAuditQueryError::TokenNotFound(token_id));
     };
 
-    let owner_history = registry
+    let mut owner_history: Vec<_> = registry
         .audit_trail()
         .iter()
         .filter(|event| event.subject == token.subject_did)
         .cloned()
         .collect();
+
+    // Keep audit query output deterministic even when registry snapshots are
+    // merged/imported with non-canonical ordering.
+    owner_history.sort_by_key(|event| (event.at_height, event.seq));
 
     Ok(CapabilityAuditQueryResponse {
         token,

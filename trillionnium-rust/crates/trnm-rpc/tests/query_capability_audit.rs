@@ -123,6 +123,61 @@ fn query_capability_audit_accepts_quoted_registry_env_path() {
 }
 
 #[test]
+fn query_capability_audit_owner_history_is_stably_sorted_for_imported_registry() {
+    let tmp = tempdir().expect("tempdir");
+    let registry_path = tmp.path().join("identity_registry.json");
+
+    let mut reg = IdentityRegistry::default();
+    reg.register_did(
+        "did:org:lane-xi".to_string(),
+        "org:lane-xi-admin".to_string(),
+        10,
+    )
+    .expect("register did");
+    let token_id = reg
+        .issue_capability(
+            "org:lane-xi-admin".to_string(),
+            "did:org:lane-xi".to_string(),
+            CapabilityScope::AuditRead,
+            12,
+            Some(120),
+        )
+        .expect("issue capability");
+    reg.renew_capability("org:lane-xi-admin".to_string(), token_id, 20, Some(180))
+        .expect("renew capability");
+
+    let mut raw: Value = serde_json::to_value(&reg).expect("registry to json");
+    let audit = raw["audit_trail"]
+        .as_array_mut()
+        .expect("audit_trail array");
+    audit.reverse();
+
+    fs::write(
+        &registry_path,
+        serde_json::to_string_pretty(&raw).expect("serialize registry"),
+    )
+    .expect("write registry");
+
+    let out = run_ok(
+        &[
+            "query-capability-audit",
+            "--token-id",
+            &token_id.to_string(),
+        ],
+        registry_path.to_str().expect("utf8 path"),
+    );
+    let body: Value = serde_json::from_str(&out).expect("query response json");
+    let heights: Vec<u64> = body["owner_history"]
+        .as_array()
+        .expect("owner_history array")
+        .iter()
+        .map(|ev| ev["at_height"].as_u64().expect("audit height"))
+        .collect();
+
+    assert_eq!(heights, vec![10, 12, 20]);
+}
+
+#[test]
 fn query_capability_audit_not_found_maps_stable_error_code() {
     let tmp = tempdir().expect("tempdir");
     let registry_path = tmp.path().join("identity_registry.json");
