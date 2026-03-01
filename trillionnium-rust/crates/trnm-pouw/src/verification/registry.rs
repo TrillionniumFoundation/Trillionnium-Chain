@@ -232,6 +232,17 @@ mod tests {
     }
 
     #[test]
+    fn registry_register_collapses_fraud_proof_alias_for_lookup() {
+        let mut registry = VerifierRegistry::new();
+        registry.register(Arc::new(AlwaysValidVerifier {
+            kind: " fraud-proof ",
+        }));
+
+        let task = task_with_proof_type(ProofType::Fraud);
+        assert_eq!(registry.verify(&task, b"proof"), VerificationResult::Valid);
+    }
+
+    #[test]
     fn registry_register_collapses_tee_proof_alias_for_lookup() {
         let mut registry = VerifierRegistry::new();
         registry.register(Arc::new(AlwaysValidVerifier {
