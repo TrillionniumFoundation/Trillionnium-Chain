@@ -2035,6 +2035,27 @@ mod tests {
     }
 
     #[test]
+    fn settlement_evidence_path_sanitizes_arabic_letter_mark_controls() {
+        let rec = SettlementRecord {
+            settlement_id: 49_1,
+            route: BridgeRoute {
+                route_id: "eth\u{061C}mainnet->trnm".to_string(),
+                source_chain: "ethereum\u{061C}mainnet".to_string(),
+                target_chain: "trillionnium\u{061C}alpha".to_string(),
+            },
+            status: SettlementStatus::Pending,
+            at_height: 2_226,
+            settlement_tx: None,
+            revert_reason: None,
+        };
+
+        assert_eq!(
+            rec.evidence_path(),
+            "settlements/eth_mainnet->trnm/ethereum_mainnet/trillionnium_alpha/491/pending@2226"
+        );
+    }
+
+    #[test]
     fn settlement_evidence_path_sanitizes_windows_reserved_punctuation() {
         let rec = SettlementRecord {
             settlement_id: 50,
