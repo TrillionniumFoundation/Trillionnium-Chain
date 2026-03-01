@@ -1132,7 +1132,11 @@ fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
         | "modelcontextprotocolstdio"
         | "modelcontextprotocolstdiov"
         | "modelcontextprotocolstdiov1"
-        | "modelcontextprotocolstdiov2" => Some("mcp".to_string()),
+        | "modelcontextprotocolstdiov2"
+        | "openaimcp"
+        | "openaimcpprotocol"
+        | "anthropicmcp"
+        | "anthropicmcpprotocol" => Some("mcp".to_string()),
         "a2a"
         | "a2av"
         | "a2av1"
@@ -1193,7 +1197,11 @@ fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
         | "agenttoagentprotocolstdio"
         | "agenttoagentprotocolstdiov"
         | "agenttoagentprotocolstdiov1"
-        | "agenttoagentprotocolstdiov2" => Some("a2a".to_string()),
+        | "agenttoagentprotocolstdiov2"
+        | "googlea2a"
+        | "googlea2aprotocol"
+        | "googleagenttoagent"
+        | "googleagenttoagentprotocol" => Some("a2a".to_string()),
         _ => None,
     }
 }
@@ -2910,6 +2918,22 @@ mod tests {
         );
         assert_eq!(
             normalized_agent_protocol(Some("Agent-to-Agent Protocol STDIO v2")).as_deref(),
+            Some("a2a")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("OpenAI MCP")).as_deref(),
+            Some("mcp")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Anthropic MCP Protocol")).as_deref(),
+            Some("mcp")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Google A2A")).as_deref(),
+            Some("a2a")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Google Agent-to-Agent Protocol")).as_deref(),
             Some("a2a")
         );
     }
