@@ -96,7 +96,38 @@ fn canonical_path_segment(raw: &str) -> String {
         .collect();
 
     if sanitized.is_empty() || sanitized == "." || sanitized == ".." {
-        "_".to_string()
+        return "_".to_string();
+    }
+
+    let lowered = sanitized.to_ascii_lowercase();
+    let is_windows_reserved = matches!(
+        lowered.as_str(),
+        "con"
+            | "prn"
+            | "aux"
+            | "nul"
+            | "com1"
+            | "com2"
+            | "com3"
+            | "com4"
+            | "com5"
+            | "com6"
+            | "com7"
+            | "com8"
+            | "com9"
+            | "lpt1"
+            | "lpt2"
+            | "lpt3"
+            | "lpt4"
+            | "lpt5"
+            | "lpt6"
+            | "lpt7"
+            | "lpt8"
+            | "lpt9"
+    );
+
+    if is_windows_reserved {
+        format!("{sanitized}_")
     } else {
         sanitized
     }
@@ -1964,6 +1995,27 @@ mod tests {
         assert_eq!(
             rec.evidence_path(),
             "settlements/eth_mainnet>_trnm/ethereum_mainnet/trillionnium_alpha_/50/pending@2227"
+        );
+    }
+
+    #[test]
+    fn settlement_evidence_path_avoids_windows_reserved_device_names() {
+        let rec = SettlementRecord {
+            settlement_id: 51,
+            route: BridgeRoute {
+                route_id: "CON".to_string(),
+                source_chain: "nul".to_string(),
+                target_chain: "Com1".to_string(),
+            },
+            status: SettlementStatus::Pending,
+            at_height: 2_228,
+            settlement_tx: None,
+            revert_reason: None,
+        };
+
+        assert_eq!(
+            rec.evidence_path(),
+            "settlements/CON_/nul_/Com1_/51/pending@2228"
         );
     }
 

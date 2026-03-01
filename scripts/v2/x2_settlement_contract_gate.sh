@@ -27,5 +27,6 @@ cargo test -p trnm-types settlement_evidence_path_tracks_terminal_state_machine_
 cargo test -p trnm-types settlement_evidence_path_sanitizes_windows_separators_and_control_whitespace
 cargo test -p trnm-types settlement_evidence_path_sanitizes_unicode_whitespace_segments
 cargo test -p trnm-types settlement_evidence_path_sanitizes_colon_for_cross_platform_filesystem_safety
+cargo test -p trnm-types settlement_evidence_path_avoids_windows_reserved_device_names
 
 echo "[X2][PASS] settlement contract gate"
