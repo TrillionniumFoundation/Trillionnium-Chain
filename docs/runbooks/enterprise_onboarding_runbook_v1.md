@@ -1,0 +1,56 @@
+# Trillionnium Web4 企业接入 Runbook（Track E3）
+
+> 版本：v1（最小可用）
+> 维护：LaneDAE
+
+## 1. 目标与适用范围
+
+本 runbook 用于企业首次接入 Trillionnium Web4 平台时的标准执行流程，覆盖：
+- 身份与权限开通（DID + capability）
+- 环境连通与最小验证
+- 审计证据留存与回滚路径
+
+## 2. 前置条件（Preflight）
+
+1. 企业已完成组织主体登记并获得 `org_id`。
+2. 安全联系人与运维联系人已确认。
+3. 具备最小测试环境（非生产）与隔离凭据。
+4. 已明确合规分级：`public` / `internal` / `restricted`。
+
+## 3. 接入步骤（Step-by-step）
+
+### Step 1：身份初始化
+- 注册企业 DID（I1）并记录控制人。
+- 生成首批 capability token（I2），按最小权限发放。
+
+### Step 2：Agent 协议协商
+- 选择协议：`mcp` 或 `a2a`（A1/A2）。
+- 记录协议版本与适配器传输层（json-rpc / stdio / sse / streamable-http）。
+
+### Step 3：最小链路验收
+- 触发一条最小任务（非敏感数据）。
+- 校验回执：任务状态、结算事件、provenance 字段齐备。
+
+### Step 4：审计基线归档
+- 导出本次接入审计包（E2）：请求、回执、策略快照、失败重试记录。
+- 生成不可变指纹（hash）并登记在变更单。
+
+## 4. 验收标准（DoD）
+
+- 首次接入端到端成功率 = 100%（最小样例窗口）。
+- 关键审计字段完整：`request_id` / `task_id` / `provenance_fingerprint`。
+- 回滚演练一次成功，且有可复盘证据。
+
+## 5. 回滚方案
+
+- 撤销新增 capability token。
+- 冻结本次接入环境凭据。
+- 标记接入状态为 `reverted` 并附根因标签。
+
+## 6. 证据清单（Evidence Checklist）
+
+- [ ] 接入审批单
+- [ ] DID/capability 变更记录
+- [ ] 最小任务执行与结算日志
+- [ ] 审计包导出文件与 hash
+- [ ] 回滚演练记录
