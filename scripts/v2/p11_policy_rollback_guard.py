@@ -62,6 +62,14 @@ def safe_read_jsonl(path: Path) -> list[dict[str, Any]]:
     return out
 
 
+def safe_nonneg_int(value: Any, default: int = 0) -> int:
+    try:
+        parsed = int(value)
+    except (TypeError, ValueError):
+        return default
+    return parsed if parsed >= 0 else default
+
+
 def parse_audit_events(path: Path, since_ts: int) -> list[tuple[int, bool]]:
     """Return (ts, success) sorted by time asc.
 
@@ -78,7 +86,7 @@ def parse_audit_events(path: Path, since_ts: int) -> list[tuple[int, bool]]:
         if bool(rec.get("rejected", False)):
             continue
         if "attempts" in rec:
-            attempts = int(rec.get("attempts", 0) or 0)
+            attempts = safe_nonneg_int(rec.get("attempts", 0), default=0)
             if attempts <= 0:
                 continue
         ok = bool(rec.get("ok", False))
