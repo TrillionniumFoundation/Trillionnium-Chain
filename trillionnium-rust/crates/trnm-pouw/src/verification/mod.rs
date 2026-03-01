@@ -121,13 +121,15 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
     match collapsed_tokens.as_str() {
         "fraud proof" | "fraud receipt" | "fraudproof" | "fraudreceipt" => "fraud".to_string(),
         "tee proof" | "tee receipt" | "tee attestation" | "tee quote" | "tee report"
-        | "sgx quote" | "tee evidence" | "teeproof" | "teereceipt" | "teeattestation"
-        | "teequote" | "teereport" | "sgxquote" | "teeevidence" => "tee".to_string(),
+        | "sgx quote" | "tee evidence" | "remote attestation" | "teeproof"
+        | "teereceipt" | "teeattestation" | "teequote" | "teereport" | "sgxquote"
+        | "teeevidence" | "remoteattestation" => "tee".to_string(),
         "zk proof"
         | "zk receipt"
         | "zk attestation"
         | "zk evidence"
         | "zk snark"
+        | "zero knowledge"
         | "zero knowledge proof"
         | "zero knowledge receipt"
         | "zero knowledge attestation"
@@ -138,6 +140,7 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
         | "zkattestation"
         | "zkevidence"
         | "zksnark"
+        | "zeroknowledge"
         | "zeroknowledgesnark"
         | "zeroknowledgeproof"
         | "zeroknowledgereceipt"
@@ -537,6 +540,21 @@ mod tests {
         assert_eq!(tee_sgx.proof_type, "tee");
         assert_eq!(tee_evidence.proof_type, "tee");
         assert_eq!(zk_evidence.proof_type, "zk");
+    }
+
+    #[test]
+    fn verification_receipt_new_collapses_remote_attestation_and_zero_knowledge_aliases() {
+        let tee_remote = VerificationReceipt::new(
+            1,
+            "remote attestation",
+            VerificationResult::Valid,
+            "v",
+            1,
+        );
+        let zk_bare = VerificationReceipt::new(2, "zero knowledge", VerificationResult::Valid, "v", 2);
+
+        assert_eq!(tee_remote.proof_type, "tee");
+        assert_eq!(zk_bare.proof_type, "zk");
     }
 
     #[test]
