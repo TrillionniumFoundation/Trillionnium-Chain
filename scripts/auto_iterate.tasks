@@ -269,3 +269,6 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: p11
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-accept-produced-at-fractional1-test" "./scripts/v2/d1_task_model_metadata_schema_accept_produced_at_fractional1_test.sh" "ci(gate): add d1-task-model-metadata-schema-accept-produced-at-fractional1-test regression to quick-check"
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-model-digest-short-length-test" "./scripts/v2/d1_task_model_metadata_schema_reject_model_digest_short_length_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-model-digest-short-length-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e2-audit-report-generator-schema-token-spoof-test" "./scripts/v2/e2_audit_report_generator_schema_token_spoof_test.sh" "ci(gate): add e2-audit-report-generator-schema-token-spoof-test regression to quick-check"
