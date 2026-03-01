@@ -333,8 +333,8 @@ fn normalized_schema_version(value: Option<&str>) -> Option<String> {
         .filter(|c| c.is_ascii_alphanumeric())
         .collect();
     match alias_key.as_str() {
-        "llmv1" => Some("llm.v1".to_string()),
-        "llmv2" => Some("llm.v2".to_string()),
+        "llmv1" | "llm1" => Some("llm.v1".to_string()),
+        "llmv2" | "llm2" => Some("llm.v2".to_string()),
         _ => None,
     }
 }
@@ -1906,6 +1906,16 @@ mod tests {
         assert_eq!(export.agent_protocol.as_deref(), Some("a2a"));
         assert_eq!(
             export.compliance_profile.as_deref(),
+            Some("cn-pii-restricted")
+        );
+
+        let mut compact_alias = rec.clone();
+        compact_alias.provenance_schema_version = Some("llm2".to_string());
+        let compact_export = to_enterprise_audit_export(&compact_alias);
+        assert_eq!(compact_export.provenance_schema_version.as_deref(), Some("llm.v2"));
+        assert_eq!(compact_export.agent_protocol.as_deref(), Some("a2a"));
+        assert_eq!(
+            compact_export.compliance_profile.as_deref(),
             Some("cn-pii-restricted")
         );
     }
