@@ -1989,7 +1989,9 @@ fn main() -> Result<()> {
             bounty,
             description,
         } => {
-            if creator.trim().is_empty() {
+            let creator = creator.trim().to_string();
+
+            if creator.is_empty() {
                 return Err(rpc_fail(RpcErrorResponse {
                     code: "task-creator-invalid",
                     message: "market task creator must be non-empty".to_string(),
