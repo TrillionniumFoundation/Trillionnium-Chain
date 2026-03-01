@@ -76,6 +76,8 @@
         },
         "provenance_index": {
           "type": "string",
+          "minLength": 13,
+          "maxLength": 133,
           "pattern": "^prov:[a-z0-9:_-]{8,128}$"
         },
         "privacy_tier": {

@@ -36,8 +36,8 @@ if [[ "$rc" -eq 0 ]]; then
   exit 1
 fi
 
-if ! grep -Fq "provenance.provenance_index does not match pattern ^prov:[a-z0-9:_-]{8,128}$" <<<"$output"; then
-  echo "[FAIL] missing explicit provenance_index pattern overflow error" >&2
+if ! grep -Fq "provenance.provenance_index longer than maxLength=133" <<<"$output"; then
+  echo "[FAIL] missing explicit provenance_index maxLength overflow error" >&2
   echo "$output" >&2
   exit 1
 fi

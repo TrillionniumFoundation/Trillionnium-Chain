@@ -36,8 +36,8 @@ if [[ "$rc" -eq 0 ]]; then
   exit 1
 fi
 
-if ! grep -Fq "provenance.provenance_index does not match pattern ^prov:[a-z0-9:_-]{8,128}$" <<<"$output"; then
-  echo "[FAIL] missing explicit provenance_index pattern error" >&2
+if ! grep -Fq "provenance.provenance_index shorter than minLength=13" <<<"$output"; then
+  echo "[FAIL] missing explicit provenance_index minLength error" >&2
   echo "$output" >&2
   exit 1
 fi
