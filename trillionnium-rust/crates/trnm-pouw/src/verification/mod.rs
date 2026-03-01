@@ -119,19 +119,11 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
         .join(" ");
 
     match collapsed_tokens.as_str() {
-        "fraud proof" | "fraud receipt" | "fraudproof" | "fraudreceipt" => {
-            "fraud".to_string()
+        "fraud proof" | "fraud receipt" | "fraudproof" | "fraudreceipt" => "fraud".to_string(),
+        "tee proof" | "tee receipt" | "tee attestation" | "tee quote" | "tee report"
+        | "teeproof" | "teereceipt" | "teeattestation" | "teequote" | "teereport" => {
+            "tee".to_string()
         }
-        "tee proof"
-        | "tee receipt"
-        | "tee attestation"
-        | "tee quote"
-        | "tee report"
-        | "teeproof"
-        | "teereceipt"
-        | "teeattestation"
-        | "teequote"
-        | "teereport" => "tee".to_string(),
         "zk proof"
         | "zk receipt"
         | "zk attestation"
@@ -139,10 +131,12 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
         | "zero knowledge proof"
         | "zero knowledge receipt"
         | "zero knowledge attestation"
+        | "zero knowledge snark"
         | "zkproof"
         | "zkreceipt"
         | "zkattestation"
         | "zksnark"
+        | "zeroknowledgesnark"
         | "zeroknowledgeproof"
         | "zeroknowledgereceipt"
         | "zeroknowledgeattestation" => "zk".to_string(),
@@ -368,11 +362,13 @@ mod tests {
     #[test]
     fn verification_receipt_new_collapses_legacy_tee_zk_proof_aliases_to_router_keys() {
         let tee_snake = VerificationReceipt::new(1, "TEE_PROOF", VerificationResult::Valid, "v", 1);
-        let tee_hyphen = VerificationReceipt::new(2, " tee-proof ", VerificationResult::Valid, "v", 2);
+        let tee_hyphen =
+            VerificationReceipt::new(2, " tee-proof ", VerificationResult::Valid, "v", 2);
         let tee_space = VerificationReceipt::new(3, "tee proof", VerificationResult::Valid, "v", 3);
 
         let zk_snake = VerificationReceipt::new(4, "ZK_PROOF", VerificationResult::Valid, "v", 4);
-        let zk_hyphen = VerificationReceipt::new(5, " zk-proof ", VerificationResult::Valid, "v", 5);
+        let zk_hyphen =
+            VerificationReceipt::new(5, " zk-proof ", VerificationResult::Valid, "v", 5);
         let zk_space = VerificationReceipt::new(6, "zk proof", VerificationResult::Valid, "v", 6);
 
         assert_eq!(tee_snake.proof_type, "tee");
@@ -386,9 +382,11 @@ mod tests {
 
     #[test]
     fn verification_receipt_new_collapses_repeated_separator_aliases_to_router_keys() {
-        let fraud = VerificationReceipt::new(1, "FRAUD__RECEIPT", VerificationResult::Valid, "v", 1);
+        let fraud =
+            VerificationReceipt::new(1, "FRAUD__RECEIPT", VerificationResult::Valid, "v", 1);
         let tee = VerificationReceipt::new(2, "tee---proof", VerificationResult::Valid, "v", 2);
-        let zk = VerificationReceipt::new(3, "zk\t\n  __--receipt", VerificationResult::Valid, "v", 3);
+        let zk =
+            VerificationReceipt::new(3, "zk\t\n  __--receipt", VerificationResult::Valid, "v", 3);
 
         assert_eq!(fraud.proof_type, "fraud");
         assert_eq!(tee.proof_type, "tee");
@@ -441,7 +439,8 @@ mod tests {
 
     #[test]
     fn verification_receipt_new_collapses_punctuation_wrapped_aliases_to_router_keys() {
-        let fraud = VerificationReceipt::new(1, "?!fraud?!receipt!?", VerificationResult::Valid, "v", 1);
+        let fraud =
+            VerificationReceipt::new(1, "?!fraud?!receipt!?", VerificationResult::Valid, "v", 1);
         let tee = VerificationReceipt::new(2, "!!TEE??PROOF!!", VerificationResult::Valid, "v", 2);
         let zk = VerificationReceipt::new(3, "??zk!!receipt??", VerificationResult::Valid, "v", 3);
 
@@ -452,9 +451,11 @@ mod tests {
 
     #[test]
     fn verification_receipt_new_collapses_registry_parenthesis_quote_aliases_to_router_keys() {
-        let fraud = VerificationReceipt::new(1, "(FRAUD'RECEIPT')", VerificationResult::Valid, "v", 1);
+        let fraud =
+            VerificationReceipt::new(1, "(FRAUD'RECEIPT')", VerificationResult::Valid, "v", 1);
         let tee = VerificationReceipt::new(2, "\"TEE\"[QUOTE]", VerificationResult::Valid, "v", 2);
-        let zk = VerificationReceipt::new(3, "<zk>{attestation}", VerificationResult::Valid, "v", 3);
+        let zk =
+            VerificationReceipt::new(3, "<zk>{attestation}", VerificationResult::Valid, "v", 3);
 
         assert_eq!(fraud.proof_type, "fraud");
         assert_eq!(tee.proof_type, "tee");
@@ -481,13 +482,8 @@ mod tests {
             "v",
             1,
         );
-        let underscored = VerificationReceipt::new(
-            2,
-            "ZERO_KNOWLEDGE_PROOF",
-            VerificationResult::Valid,
-            "v",
-            2,
-        );
+        let underscored =
+            VerificationReceipt::new(2, "ZERO_KNOWLEDGE_PROOF", VerificationResult::Valid, "v", 2);
         let compact = VerificationReceipt::new(
             3,
             "ZeroKnowledgeAttestation",
@@ -495,10 +491,26 @@ mod tests {
             "v",
             3,
         );
+        let snark_spaced = VerificationReceipt::new(
+            4,
+            "zero knowledge snark",
+            VerificationResult::Valid,
+            "v",
+            4,
+        );
+        let snark_compact = VerificationReceipt::new(
+            5,
+            "ZeroKnowledgeSnark",
+            VerificationResult::Valid,
+            "v",
+            5,
+        );
 
         assert_eq!(spaced.proof_type, "zk");
         assert_eq!(underscored.proof_type, "zk");
         assert_eq!(compact.proof_type, "zk");
+        assert_eq!(snark_spaced.proof_type, "zk");
+        assert_eq!(snark_compact.proof_type, "zk");
     }
 
     #[test]
