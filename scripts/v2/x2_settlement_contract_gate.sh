@@ -25,5 +25,6 @@ cargo test -p trnm-types settlement_revert_reason_reapply_accepts_delimiter_vari
 cargo test -p trnm-types settlement_status_update_rejects_height_regression_without_side_effects
 cargo test -p trnm-types settlement_evidence_path_tracks_terminal_state_machine_outcome
 cargo test -p trnm-types settlement_evidence_path_sanitizes_windows_separators_and_control_whitespace
+cargo test -p trnm-types settlement_evidence_path_sanitizes_colon_for_cross_platform_filesystem_safety
 
 echo "[X2][PASS] settlement contract gate"
