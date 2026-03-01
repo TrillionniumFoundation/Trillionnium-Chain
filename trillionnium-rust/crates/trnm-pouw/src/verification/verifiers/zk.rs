@@ -25,8 +25,12 @@ impl ProofVerifier for ZkVerifier {
             .get(3..)
             .map(|suffix| {
                 std::str::from_utf8(suffix)
-                    .map(|s| s.chars().any(|c| !c.is_whitespace()))
-                    .unwrap_or_else(|_| suffix.iter().any(|b| !b.is_ascii_whitespace()))
+                    .map(|s| s.chars().any(|c| !c.is_whitespace() && !c.is_control()))
+                    .unwrap_or_else(|_| {
+                        suffix
+                            .iter()
+                            .any(|b| !b.is_ascii_whitespace() && !b.is_ascii_control())
+                    })
             })
             .unwrap_or(false);
 
@@ -137,5 +141,27 @@ mod tests {
             verifier.verify_proof(&task, "ZK:\u{00a0}\u{3000}      ".as_bytes()),
             VerificationResult::Invalid(msg) if msg.contains("envelope")
         ));
+    }
+
+    #[test]
+    fn zk_verifier_rejects_ascii_control_only_body_after_prefix() {
+        let verifier = ZkVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(&task, b"ZK:\x00\x1f\x7f\x08\x09\x0a\x0d"),
+            VerificationResult::Invalid(msg) if msg.contains("envelope")
+        ));
+    }
+
+    #[test]
+    fn zk_verifier_accepts_non_utf8_binary_body_when_it_contains_visible_byte() {
+        let verifier = ZkVerifier;
+        let task = mock_task();
+
+        assert_eq!(
+            verifier.verify_proof(&task, b"ZK:\xff\xfeA123456"),
+            VerificationResult::Valid
+        );
     }
 }
