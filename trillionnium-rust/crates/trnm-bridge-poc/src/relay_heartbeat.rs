@@ -73,17 +73,25 @@ impl RelayHeartbeatMonitor {
         self.consecutive_failures = self.consecutive_failures.saturating_add(1);
         let degraded = self.consecutive_failures >= self.config.max_retry;
         let should_retry = !degraded;
+        let normalized_reason = {
+            let trimmed = reason.trim();
+            if trimmed.is_empty() {
+                "unknown heartbeat failure"
+            } else {
+                trimmed
+            }
+        };
         if degraded {
             eprintln!(
                 "[relay-heartbeat][degraded] failures={} reason={}",
-                self.consecutive_failures, reason
+                self.consecutive_failures, normalized_reason
             );
         }
         HeartbeatOutcome {
             heartbeat: None,
             should_retry,
             degraded,
-            message: reason.to_string(),
+            message: normalized_reason.to_string(),
         }
     }
 }

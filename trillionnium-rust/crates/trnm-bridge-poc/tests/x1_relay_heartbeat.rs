@@ -78,3 +78,14 @@ fn relay_heartbeat_failure_counter_saturates_without_overflow() {
     assert!(!extra.should_retry);
     assert!(extra.degraded);
 }
+
+#[test]
+fn relay_heartbeat_failure_reason_is_trimmed_and_never_blank() {
+    let mut hb = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 2));
+
+    let trimmed = hb.record_failure("  rpc timeout  ");
+    assert_eq!(trimmed.message, "rpc timeout");
+
+    let blank = hb.record_failure("   \n\t");
+    assert_eq!(blank.message, "unknown heartbeat failure");
+}
