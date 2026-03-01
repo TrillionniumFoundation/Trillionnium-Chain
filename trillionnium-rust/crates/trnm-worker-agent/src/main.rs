@@ -1284,10 +1284,14 @@ fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
         | "googleagent2agentprotocol"
         | "googleagent2agentv"
         | "googleagent2agentprotocolv"
+        | "googleagent2agentjsonrpc"
+        | "googleagent2agentjsonrpcv"
         | "googleagenttoagent"
         | "googleagenttoagentprotocol"
         | "googleagenttoagentv"
-        | "googleagenttoagentprotocolv" => Some("a2a".to_string()),
+        | "googleagenttoagentprotocolv"
+        | "googleagenttoagentjsonrpc"
+        | "googleagenttoagentjsonrpcv" => Some("a2a".to_string()),
         _ => None,
     }
 }
@@ -3153,6 +3157,10 @@ mod tests {
         );
         assert_eq!(
             normalized_agent_protocol(Some("Google Agent-to-Agent v2")).as_deref(),
+            Some("a2a")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Google Agent-to-Agent JSON-RPC v2")).as_deref(),
             Some("a2a")
         );
         assert_eq!(
