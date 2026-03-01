@@ -20,9 +20,18 @@ impl ProofVerifier for ZkVerifier {
         // plus a non-whitespace payload body.
         // Accept case-insensitive variants to tolerate client casing drift.
         // Accepted examples: "ZK:...", "zk:...".
-        let has_prefix = proof_data.len() >= 3 && proof_data[..3].eq_ignore_ascii_case(b"ZK:");
+        // Also accept an optional UTF-8 BOM prefix for legacy clients.
+        let envelope_offset = if proof_data.starts_with(&[0xef, 0xbb, 0xbf]) {
+            3
+        } else {
+            0
+        };
+        let has_prefix = proof_data
+            .get(envelope_offset..envelope_offset + 3)
+            .map(|prefix| prefix.eq_ignore_ascii_case(b"ZK:"))
+            .unwrap_or(false);
         let has_non_whitespace_body = proof_data
-            .get(3..)
+            .get(envelope_offset + 3..)
             .map(|suffix| {
                 std::str::from_utf8(suffix)
                     .map(|s| s.chars().any(|c| !c.is_whitespace() && !c.is_control()))
@@ -88,7 +97,10 @@ mod tests {
         let verifier = ZkVerifier;
         let task = mock_task();
 
-        assert_eq!(verifier.verify_proof(&task, b"ZK:payload!"), VerificationResult::Valid);
+        assert_eq!(
+            verifier.verify_proof(&task, b"ZK:payload!"),
+            VerificationResult::Valid
+        );
     }
 
     #[test]
@@ -96,7 +108,32 @@ mod tests {
         let verifier = ZkVerifier;
         let task = mock_task();
 
-        assert_eq!(verifier.verify_proof(&task, b"zk:payload!"), VerificationResult::Valid);
+        assert_eq!(
+            verifier.verify_proof(&task, b"zk:payload!"),
+            VerificationResult::Valid
+        );
+    }
+
+    #[test]
+    fn zk_verifier_accepts_utf8_bom_prefixed_proof_when_length_is_sufficient() {
+        let verifier = ZkVerifier;
+        let task = mock_task();
+
+        assert_eq!(
+            verifier.verify_proof(&task, "\u{feff}ZK:payload!".as_bytes()),
+            VerificationResult::Valid
+        );
+    }
+
+    #[test]
+    fn zk_verifier_rejects_utf8_bom_prefixed_proof_with_whitespace_only_body() {
+        let verifier = ZkVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(&task, "\u{feff}ZK:    \n\t".as_bytes()),
+            VerificationResult::Invalid(msg) if msg.contains("envelope")
+        ));
     }
 
     #[test]
