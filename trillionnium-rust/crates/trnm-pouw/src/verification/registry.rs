@@ -28,10 +28,18 @@ impl VerifierRegistry {
     fn normalize_key(raw: &str) -> Option<String> {
         let normalized = raw.trim().to_ascii_lowercase();
         if normalized.is_empty() {
-            None
-        } else {
-            Some(normalized)
+            return None;
         }
+
+        let canonical = match normalized.as_str() {
+            // Backward-compatible aliases from early V1/V2 receipt naming.
+            "fraud_proof" => "fraud",
+            "tee_receipt" => "tee",
+            "zk_receipt" => "zk",
+            _ => normalized.as_str(),
+        };
+
+        Some(canonical.to_string())
     }
 
     pub fn register(&mut self, verifier: Arc<dyn ProofVerifier + Send + Sync>) {
@@ -154,6 +162,20 @@ mod tests {
     }
 
     #[test]
+    fn registry_register_collapses_legacy_receipt_aliases_for_lookup() {
+        let mut registry = VerifierRegistry::new();
+        registry.register(Arc::new(AlwaysValidVerifier {
+            kind: " TEE_RECEIPT ",
+        }));
+
+        let task = task_with_proof_type(ProofType::Tee);
+        assert_eq!(
+            registry.verify(&task, b"receipt"),
+            VerificationResult::Valid
+        );
+    }
+
+    #[test]
     fn registry_ignores_empty_verifier_key_after_normalization() {
         let mut registry = VerifierRegistry::new();
         registry.register(Arc::new(AlwaysValidVerifier { kind: "   " }));
@@ -190,6 +212,9 @@ mod tests {
         registry.register(Arc::new(AlwaysValidVerifier { kind: " ZK " }));
         registry.register(Arc::new(AlwaysValidVerifier { kind: "fraud" }));
         registry.register(Arc::new(AlwaysValidVerifier { kind: "TEE" }));
+        registry.register(Arc::new(AlwaysValidVerifier {
+            kind: " tee_receipt ",
+        }));
 
         assert_eq!(
             registry.registered_proof_types(),
