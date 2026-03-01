@@ -792,9 +792,19 @@ fn load_market_reputation() -> BTreeMap<String, i64> {
     let Ok(raw) = fs::read_to_string(path) else {
         return BTreeMap::new();
     };
-    let parsed = serde_json::from_str::<BTreeMap<String, i64>>(&raw).unwrap_or_default();
+
+    // M2 resilience: tolerate partially malformed fixtures by salvaging any
+    // object entries that still deserialize into i64 reputation values.
+    let parsed = serde_json::from_str::<serde_json::Value>(&raw)
+        .ok()
+        .and_then(|value| value.as_object().cloned())
+        .unwrap_or_default();
+
     let mut normalized: BTreeMap<String, i64> = BTreeMap::new();
-    for (worker, rep) in parsed {
+    for (worker, rep_value) in parsed {
+        let Some(rep) = rep_value.as_i64() else {
+            continue;
+        };
         if let Some(key) = normalize_market_worker_key(&worker) {
             normalized
                 .entry(key)
@@ -2386,6 +2396,37 @@ mod tests {
                 let rep = load_market_reputation();
                 assert_eq!(rep.get("worker a"), Some(&25));
                 assert_eq!(rep.get("worker b"), Some(&-3));
+                assert_eq!(rep.len(), 2);
+            },
+        );
+
+        let _ = fs::remove_file(path);
+    }
+
+    #[test]
+    fn market_reputation_loader_salvages_valid_entries_when_some_values_are_non_numeric() {
+        let mut path = std::env::temp_dir();
+        path.push(format!(
+            "trnm_rpc_market_reputation_partial_invalid_{}_{}.json",
+            std::process::id(),
+            now_ms()
+        ));
+        fs::write(
+            &path,
+            r#"{"worker-a": 7, "worker-b": "bad", "worker-c": -3}"#,
+        )
+        .expect("write partial-invalid reputation fixture");
+
+        with_market_path_env(
+            &[(
+                MARKET_REPUTATION_FILE_ENV,
+                Some(path.to_string_lossy().as_ref()),
+            )],
+            || {
+                let rep = load_market_reputation();
+                assert_eq!(rep.get("worker-a"), Some(&7));
+                assert_eq!(rep.get("worker-c"), Some(&-3));
+                assert!(!rep.contains_key("worker-b"));
                 assert_eq!(rep.len(), 2);
             },
         );
