@@ -92,17 +92,35 @@ impl RelayHeartbeatMonitor {
 
 const MAX_FAILURE_REASON_CHARS: usize = 160;
 
+fn is_disallowed_invisible_char(ch: char) -> bool {
+    matches!(
+        ch,
+        '\u{061C}'
+            | '\u{200B}'
+            | '\u{200C}'
+            | '\u{200D}'
+            | '\u{200E}'
+            | '\u{200F}'
+            | '\u{202A}'
+            | '\u{202B}'
+            | '\u{202C}'
+            | '\u{202D}'
+            | '\u{202E}'
+            | '\u{2060}'
+            | '\u{2066}'
+            | '\u{2067}'
+            | '\u{2068}'
+            | '\u{2069}'
+            | '\u{FEFF}'
+    )
+}
+
 fn normalize_failure_reason(reason: &str) -> String {
     let sanitized: String = reason
         .chars()
-        .filter(|ch| {
-            !ch.is_control() && !matches!(ch, '\u{200B}' | '\u{200C}' | '\u{200D}' | '\u{FEFF}')
-        })
+        .filter(|ch| !ch.is_control() && !is_disallowed_invisible_char(*ch))
         .collect();
-    let collapsed = sanitized
-        .split_whitespace()
-        .collect::<Vec<_>>()
-        .join(" ");
+    let collapsed = sanitized.split_whitespace().collect::<Vec<_>>().join(" ");
     if collapsed.is_empty() {
         return "unknown heartbeat failure".to_string();
     }
