@@ -1288,6 +1288,8 @@ fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
         | "googleagent2agentjsonrpcv"
         | "googleagent2agentstreamablehttp"
         | "googleagent2agentstreamablehttpv"
+        | "googleagent2agentoverstreamablehttp"
+        | "googleagent2agentoverstreamablehttpv"
         | "googleagenttoagent"
         | "googleagenttoagentprotocol"
         | "googleagenttoagentv"
@@ -1295,7 +1297,9 @@ fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
         | "googleagenttoagentjsonrpc"
         | "googleagenttoagentjsonrpcv"
         | "googleagenttoagentstreamablehttp"
-        | "googleagenttoagentstreamablehttpv" => Some("a2a".to_string()),
+        | "googleagenttoagentstreamablehttpv"
+        | "googleagenttoagentoverstreamablehttp"
+        | "googleagenttoagentoverstreamablehttpv" => Some("a2a".to_string()),
         _ => None,
     }
 }
@@ -3187,6 +3191,14 @@ mod tests {
         );
         assert_eq!(
             normalized_agent_protocol(Some("Google Agent-to-Agent JSON-RPC v2")).as_deref(),
+            Some("a2a")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Google Agent-to-Agent over Streamable HTTP v2")).as_deref(),
+            Some("a2a")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Google Agent2Agent over Streamable HTTP v2")).as_deref(),
             Some("a2a")
         );
         assert_eq!(
