@@ -34,7 +34,7 @@ impl VerifierRegistry {
         let delimiter_normalized = normalized
             .chars()
             .map(|ch| {
-                if ch == '_' || ch == '-' || ch == '/' || ch == '.' || ch == ':' {
+                if ch == '_' || ch == '-' || ch == '/' || ch == '.' || ch == ':' || ch == '+' {
                     ' '
                 } else {
                     ch
@@ -242,6 +242,20 @@ mod tests {
         let mut registry = VerifierRegistry::new();
         registry.register(Arc::new(AlwaysValidVerifier {
             kind: " TEE:RECEIPT ",
+        }));
+
+        let task = task_with_proof_type(ProofType::Tee);
+        assert_eq!(
+            registry.verify(&task, b"receipt"),
+            VerificationResult::Valid
+        );
+    }
+
+    #[test]
+    fn registry_register_collapses_plus_delimited_legacy_receipt_aliases_for_lookup() {
+        let mut registry = VerifierRegistry::new();
+        registry.register(Arc::new(AlwaysValidVerifier {
+            kind: " TEE+RECEIPT ",
         }));
 
         let task = task_with_proof_type(ProofType::Tee);
