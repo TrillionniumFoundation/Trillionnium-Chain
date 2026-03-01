@@ -77,21 +77,13 @@ impl VerificationReceipt {
     }
 }
 
-/// Normalizes proof type aliases into canonical router/receipt keys.
-///
-/// - trims + lowercases
-/// - collapses legacy aliases (`*_proof`, `*_receipt`) to canonical keys
-pub fn normalize_proof_type_alias(raw: &str) -> String {
+fn normalize_receipt_proof_type(raw: &str) -> String {
     match raw.trim().to_ascii_lowercase().as_str() {
         "fraud_proof" | "fraud-proof" | "fraud proof" => "fraud".to_string(),
         "tee_receipt" | "tee-receipt" | "tee receipt" => "tee".to_string(),
         "zk_receipt" | "zk-receipt" | "zk receipt" => "zk".to_string(),
         other => other.to_string(),
     }
-}
-
-fn normalize_receipt_proof_type(raw: &str) -> String {
-    normalize_proof_type_alias(raw)
 }
 
 /// Returns the canonical key used across verification routing and receipt persistence.
@@ -293,12 +285,5 @@ mod tests {
         assert_eq!(fraud.proof_type, "fraud");
         assert_eq!(tee.proof_type, "tee");
         assert_eq!(zk.proof_type, "zk");
-    }
-
-    #[test]
-    fn normalize_proof_type_alias_trims_lowercases_and_preserves_unknown_aliases() {
-        assert_eq!(normalize_proof_type_alias(" Tee_Receipt "), "tee");
-        assert_eq!(normalize_proof_type_alias("  CuStOm-ProOf  "), "custom-proof");
-        assert_eq!(normalize_proof_type_alias(" \n\t "), "");
     }
 }
