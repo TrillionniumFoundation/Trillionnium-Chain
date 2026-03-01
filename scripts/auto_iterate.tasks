@@ -265,3 +265,7 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d3-
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: p11-policy-rollback-guard-invalid-attempts-field-test" "./scripts/v2/p11_policy_rollback_guard_invalid_attempts_field_test.sh" "ci(gate): add p11-policy-rollback-guard-invalid-attempts-field-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-accept-produced-at-fractional1-test" "./scripts/v2/d1_task_model_metadata_schema_accept_produced_at_fractional1_test.sh" "ci(gate): add d1-task-model-metadata-schema-accept-produced-at-fractional1-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-model-digest-short-length-test" "./scripts/v2/d1_task_model_metadata_schema_reject_model_digest_short_length_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-model-digest-short-length-test regression to quick-check"
