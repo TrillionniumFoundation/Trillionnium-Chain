@@ -176,6 +176,8 @@ enum Command {
         #[arg(long)]
         task_id: u64,
     },
+    #[command(name = "market.report", visible_alias = "market-report")]
+    MarketReport {},
     DispatchOpen {
         #[arg(long, default_value = "worker-1")]
         worker_id: String,
@@ -231,6 +233,16 @@ struct MarketMatchResult {
     matched_bid_count: usize,
     winner_reputation: i64,
     effective_score: u128,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct MarketReport {
+    task_count: usize,
+    open_task_count: usize,
+    matched_task_count: usize,
+    bid_count: usize,
+    unique_bidder_count: usize,
+    avg_bids_per_task: f64,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -2131,6 +2143,35 @@ fn main() -> Result<()> {
                 effective_score: winner_score,
             };
             println!("{}", serde_json::to_string(&out)?);
+        }
+        Command::MarketReport {} => {
+            let tasks = load_market_tasks();
+            let bids = load_market_bids();
+            let task_count = tasks.len();
+            let open_task_count = tasks.iter().filter(|t| t.status == "open").count();
+            let matched_task_count = tasks.iter().filter(|t| t.status == "matched").count();
+            let bid_count = bids.len();
+
+            let unique_bidder_count = bids
+                .iter()
+                .filter_map(|b| normalize_market_worker_key(&b.worker))
+                .collect::<std::collections::BTreeSet<_>>()
+                .len();
+            let avg_bids_per_task = if task_count == 0 {
+                0.0
+            } else {
+                bid_count as f64 / task_count as f64
+            };
+
+            let out = MarketReport {
+                task_count,
+                open_task_count,
+                matched_task_count,
+                bid_count,
+                unique_bidder_count,
+                avg_bids_per_task,
+            };
+            println!("{}", serde_json::to_string_pretty(&out)?);
         }
         Command::DispatchOpen { worker_id, limit } => {
             let limit = clamp_limit(

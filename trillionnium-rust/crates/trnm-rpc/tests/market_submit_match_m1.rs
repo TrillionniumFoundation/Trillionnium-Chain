@@ -37,6 +37,14 @@ fn run_ok_with_env(args: &[&str], envs: &[(&str, &str)]) -> String {
     String::from_utf8_lossy(&output.stdout).to_string()
 }
 
+fn unique_market_fixture_path(name: &str, ext: &str) -> std::path::PathBuf {
+    let ts = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .expect("clock")
+        .as_nanos();
+    std::env::temp_dir().join(format!("trnm_rpc_{}_{}.{}", name, ts, ext))
+}
+
 fn run_fail(args: &[&str]) -> String {
     let output = Command::new("cargo")
         .args(["run", "-p", "trnm-rpc", "--"])
@@ -475,4 +483,127 @@ fn market_match_output_is_valid_json_when_winner_contains_quotes() {
     let matched: Value = serde_json::from_str(match_out.trim()).expect("match output JSON");
     assert_eq!(matched["winner"], "worker-\"quoted\"");
     assert_eq!(matched["status"], "matched");
+}
+
+
+#[test]
+fn market_report_returns_zeroed_metrics_for_empty_state() {
+    let _guard = test_lock().lock().expect("test lock");
+
+    let tasks = unique_market_fixture_path("market_report_empty_tasks", "jsonl");
+    let bids = unique_market_fixture_path("market_report_empty_bids", "jsonl");
+    let tasks_env = tasks.to_string_lossy().into_owned();
+    let bids_env = bids.to_string_lossy().into_owned();
+
+    let out = run_ok_with_env(
+        &["market.report"],
+        &[
+            ("TRNM_RPC_MARKET_TASKS_FILE", tasks_env.as_str()),
+            ("TRNM_RPC_MARKET_BIDS_FILE", bids_env.as_str()),
+        ],
+    );
+    let report: Value = serde_json::from_str(&out).expect("market report json");
+
+    assert_eq!(report["task_count"], 0);
+    assert_eq!(report["open_task_count"], 0);
+    assert_eq!(report["matched_task_count"], 0);
+    assert_eq!(report["bid_count"], 0);
+    assert_eq!(report["unique_bidder_count"], 0);
+    assert_eq!(report["avg_bids_per_task"], 0.0);
+}
+
+#[test]
+fn market_report_summarizes_tasks_bids_and_unique_bidders() {
+    let _guard = test_lock().lock().expect("test lock");
+
+    let tasks = unique_market_fixture_path("market_report_tasks", "jsonl");
+    let bids = unique_market_fixture_path("market_report_bids", "jsonl");
+    let tasks_env = tasks.to_string_lossy().into_owned();
+    let bids_env = bids.to_string_lossy().into_owned();
+    let envs = [
+        ("TRNM_RPC_MARKET_TASKS_FILE", tasks_env.as_str()),
+        ("TRNM_RPC_MARKET_BIDS_FILE", bids_env.as_str()),
+    ];
+
+    let create_1 = run_ok_with_env(
+        &[
+            "market.create_task",
+            "--creator",
+            "alice",
+            "--bounty",
+            "100",
+            "--description",
+            "m3 report task 1",
+        ],
+        &envs,
+    );
+    let task_1: Value = serde_json::from_str(&create_1).expect("create task1 json");
+    let task_1_id = task_1["task_id"].as_u64().expect("task1 id").to_string();
+
+    run_ok_with_env(
+        &[
+            "market.submit_bid",
+            "--task-id",
+            &task_1_id,
+            "--worker",
+            "Worker-A",
+            "--price",
+            "88",
+        ],
+        &envs,
+    );
+    run_ok_with_env(
+        &[
+            "market.submit_bid",
+            "--task-id",
+            &task_1_id,
+            "--worker",
+            "worker-b",
+            "--price",
+            "90",
+        ],
+        &envs,
+    );
+    run_ok_with_env(&["market.match_task", "--task-id", &task_1_id], &envs);
+
+    let create_2 = run_ok_with_env(
+        &[
+            "market.create_task",
+            "--creator",
+            "bob",
+            "--bounty",
+            "120",
+            "--description",
+            "m3 report task 2",
+        ],
+        &envs,
+    );
+    let task_2: Value = serde_json::from_str(&create_2).expect("create task2 json");
+    let task_2_id = task_2["task_id"].as_u64().expect("task2 id").to_string();
+
+    run_ok_with_env(
+        &[
+            "market.submit_bid",
+            "--task-id",
+            &task_2_id,
+            "--worker",
+            " worker-a ",
+            "--price",
+            "110",
+        ],
+        &envs,
+    );
+
+    let out = run_ok_with_env(&["market.report"], &envs);
+    let report: Value = serde_json::from_str(&out).expect("market report json");
+
+    assert_eq!(report["task_count"], 2);
+    assert_eq!(report["open_task_count"], 1);
+    assert_eq!(report["matched_task_count"], 1);
+    assert_eq!(report["bid_count"], 3);
+    assert_eq!(report["unique_bidder_count"], 2);
+    assert_eq!(report["avg_bids_per_task"], 1.5);
+
+    let _ = fs::remove_file(tasks);
+    let _ = fs::remove_file(bids);
 }
