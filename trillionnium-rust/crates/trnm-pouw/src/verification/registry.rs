@@ -31,11 +31,20 @@ impl VerifierRegistry {
             return None;
         }
 
-        let canonical = match normalized.as_str() {
+        let delimiter_normalized = normalized
+            .chars()
+            .map(|ch| if ch == '_' || ch == '-' { ' ' } else { ch })
+            .collect::<String>();
+        let collapsed = delimiter_normalized
+            .split_whitespace()
+            .collect::<Vec<_>>()
+            .join(" ");
+
+        let canonical = match collapsed.as_str() {
             // Backward-compatible aliases from early V1/V2 receipt naming.
-            "fraud_proof" | "fraud-proof" | "fraud proof" => "fraud",
-            "tee_receipt" | "tee-receipt" | "tee receipt" => "tee",
-            "zk_receipt" | "zk-receipt" | "zk receipt" => "zk",
+            "fraud proof" => "fraud",
+            "tee receipt" => "tee",
+            "zk receipt" => "zk",
             _ => normalized.as_str(),
         };
 
@@ -194,6 +203,20 @@ mod tests {
         let mut registry = VerifierRegistry::new();
         registry.register(Arc::new(AlwaysValidVerifier {
             kind: " Tee Receipt ",
+        }));
+
+        let task = task_with_proof_type(ProofType::Tee);
+        assert_eq!(
+            registry.verify(&task, b"receipt"),
+            VerificationResult::Valid
+        );
+    }
+
+    #[test]
+    fn registry_register_collapses_mixed_delimiter_legacy_aliases_for_lookup() {
+        let mut registry = VerifierRegistry::new();
+        registry.register(Arc::new(AlwaysValidVerifier {
+            kind: "  TEE__-__RECEIPT  ",
         }));
 
         let task = task_with_proof_type(ProofType::Tee);
