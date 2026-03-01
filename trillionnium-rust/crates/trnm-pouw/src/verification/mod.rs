@@ -87,12 +87,6 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
                 || ch == '.'
                 || ch == ':'
                 || ch == '+'
-                || ch == '|'
-                || ch == '\\'
-                || ch == ','
-                || ch == ';'
-                || ch == '='
-                || ch == '@'
                 || ch.is_ascii_whitespace()
         })
         .filter(|token| !token.is_empty())
@@ -370,22 +364,5 @@ mod tests {
         assert_eq!(fraud.proof_type, "fraud");
         assert_eq!(tee.proof_type, "tee");
         assert_eq!(zk.proof_type, "zk");
-    }
-
-    #[test]
-    fn verification_receipt_new_collapses_extended_delimiter_aliases_to_router_keys() {
-        let fraud = VerificationReceipt::new(1, "fraud|receipt", VerificationResult::Valid, "v", 1);
-        let tee = VerificationReceipt::new(2, "TEE@PROOF", VerificationResult::Valid, "v", 2);
-        let zk = VerificationReceipt::new(3, "zk\\receipt", VerificationResult::Valid, "v", 3);
-        let fraud_eq = VerificationReceipt::new(4, "fraud=proof", VerificationResult::Valid, "v", 4);
-        let tee_comma = VerificationReceipt::new(5, "tee,receipt", VerificationResult::Valid, "v", 5);
-        let zk_semicolon = VerificationReceipt::new(6, "zk;proof", VerificationResult::Valid, "v", 6);
-
-        assert_eq!(fraud.proof_type, "fraud");
-        assert_eq!(tee.proof_type, "tee");
-        assert_eq!(zk.proof_type, "zk");
-        assert_eq!(fraud_eq.proof_type, "fraud");
-        assert_eq!(tee_comma.proof_type, "tee");
-        assert_eq!(zk_semicolon.proof_type, "zk");
     }
 }
