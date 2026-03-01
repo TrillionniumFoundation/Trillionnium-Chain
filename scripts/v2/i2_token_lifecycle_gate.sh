@@ -27,6 +27,7 @@ cargo test -p trnm-types verify_capability_rejects_control_character_actor_witho
 cargo test -p trnm-types verify_capability_rejects_scope_mismatch_without_side_effects
 cargo test -p trnm-types verify_capability_rejects_unknown_token_without_side_effects
 cargo test -p trnm-types verify_capability_rejects_expired_token_without_side_effects
+cargo test -p trnm-types capability_revocation_takes_precedence_over_expiry_window
 cargo test -p trnm-types verify_capability_accepts_height_equal_to_expiry_boundary
 cargo test -p trnm-types verify_capability_rejects_revoked_did_even_if_token_looks_active
 cargo test -p trnm-types verify_capability_allows_historical_height_before_did_revocation
