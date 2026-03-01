@@ -5,7 +5,16 @@ pub trait ProofAdapter {
     fn parse_response(&self, stdout: &str) -> Result<LlmAdapterResponse, String>;
 }
 
+pub const DEFAULT_PROOF_ADAPTER: &str = "standard";
+
 pub struct StandardProofAdapter;
+
+pub fn build_proof_adapter(name: &str) -> Result<Box<dyn ProofAdapter>, String> {
+    match name.trim().to_ascii_lowercase().as_str() {
+        "" | DEFAULT_PROOF_ADAPTER => Ok(Box::new(StandardProofAdapter)),
+        other => Err(format!("unsupported-proof-adapter:{other}")),
+    }
+}
 
 fn last_balanced_json_object(input: &str) -> Option<String> {
     let mut depth = 0usize;
@@ -97,7 +106,10 @@ impl ProofAdapter for StandardProofAdapter {
 
 #[cfg(test)]
 mod tests {
-    use super::{last_balanced_json_object, ProofAdapter, StandardProofAdapter};
+    use super::{
+        build_proof_adapter, last_balanced_json_object, ProofAdapter, StandardProofAdapter,
+        DEFAULT_PROOF_ADAPTER,
+    };
 
     #[test]
     fn standard_proof_adapter_reports_verifier_decision_and_reason_code() {
@@ -131,7 +143,8 @@ mod tests {
     #[test]
     fn standard_proof_adapter_parse_response_accepts_json_embedded_in_log_line() {
         let adapter = StandardProofAdapter;
-        let stdout = "info:adapter payload={\"output_text\":\"ok\",\"provider_request_id\":\"r2\"}\n";
+        let stdout =
+            "info:adapter payload={\"output_text\":\"ok\",\"provider_request_id\":\"r2\"}\n";
 
         let parsed = adapter
             .parse_response(stdout)
@@ -155,7 +168,8 @@ mod tests {
     #[test]
     fn last_balanced_json_object_ignores_braces_inside_strings() {
         let payload = "log {\"message\":\"brace } kept\"}\nlog {\"output_text\":\"ok\",\"provider_request_id\":\"r4\"}";
-        let candidate = last_balanced_json_object(payload).expect("expected a balanced json object");
+        let candidate =
+            last_balanced_json_object(payload).expect("expected a balanced json object");
         assert_eq!(
             candidate,
             "{\"output_text\":\"ok\",\"provider_request_id\":\"r4\"}"
@@ -193,5 +207,19 @@ mod tests {
             .parse_response("debug:warmup\nstatus=ok\n")
             .expect_err("missing json should be rejected");
         assert_eq!(err, "no-json-line");
+    }
+
+    #[test]
+    fn build_proof_adapter_accepts_default_and_rejects_unknown_plugin_names() {
+        let adapter = build_proof_adapter(DEFAULT_PROOF_ADAPTER).expect("default adapter");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "ok");
+
+        let err = match build_proof_adapter("tee-receipt") {
+            Ok(_) => panic!("unknown plugin must fail closed"),
+            Err(err) => err,
+        };
+        assert_eq!(err, "unsupported-proof-adapter:tee-receipt");
     }
 }

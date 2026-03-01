@@ -1,4 +1,4 @@
-use anyhow::Result;
+use anyhow::{anyhow, Result};
 use clap::{Parser, Subcommand};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
@@ -14,7 +14,7 @@ use std::{
 };
 mod proof_adapter;
 
-use proof_adapter::{ProofAdapter, StandardProofAdapter};
+use proof_adapter::{build_proof_adapter, DEFAULT_PROOF_ADAPTER};
 use trnm_types::RequestStatus;
 use wait_timeout::ChildExt;
 
@@ -29,6 +29,7 @@ const TX_ADAPTER_BACKOFF_MS_ENV: &str = "TRNM_TX_ADAPTER_BACKOFF_MS";
 const LLM_ADAPTER_MAX_RETRIES_ENV: &str = "TRNM_LLM_ADAPTER_MAX_RETRIES";
 const LLM_ADAPTER_BACKOFF_MS_ENV: &str = "TRNM_LLM_ADAPTER_BACKOFF_MS";
 const LLM_ADAPTER_TIMEOUT_ENV: &str = "TRNM_LLM_ADAPTER_TIMEOUT_MS";
+const PROOF_ADAPTER_ENV: &str = "TRNM_PROOF_ADAPTER";
 
 const RC_OK: i32 = 0;
 const RC_DUPLICATE: i32 = 9;
@@ -3898,6 +3899,15 @@ fn main() -> Result<()> {
                 llm_adapter_backoff_ms,
                 llm_adapter_timeout_ms,
             );
+            let proof_adapter_name = env::var(PROOF_ADAPTER_ENV)
+                .ok()
+                .filter(|v| !v.trim().is_empty())
+                .unwrap_or_else(|| DEFAULT_PROOF_ADAPTER.to_string());
+            let proof_adapter = build_proof_adapter(&proof_adapter_name).map_err(|e| {
+                anyhow!(
+                    "invalid {PROOF_ADAPTER_ENV}={proof_adapter_name:?}: {e}; supported={DEFAULT_PROOF_ADAPTER}"
+                )
+            })?;
             let mut records = load_ingress_records(&ingress_file)?;
             let mut n = 0usize;
             for rec in records.iter_mut() {
@@ -3939,7 +3949,6 @@ fn main() -> Result<()> {
                         continue;
                     }
                 };
-                let proof_adapter = StandardProofAdapter;
                 let (verified, resolution_code) =
                     proof_adapter.verify(&llm.output_text, verifier_max_output_chars);
                 let v_status = if verified { "accepted" } else { "rejected" };
