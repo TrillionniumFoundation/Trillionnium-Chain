@@ -222,3 +222,6 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d3-
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d3-task-model-metadata-schema-internal-allows-provenance-index-test" "./scripts/v2/d3_task_model_metadata_schema_internal_allows_provenance_index_test.sh" "ci(gate): add d3-task-model-metadata-schema-internal-allows-provenance-index-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d2-task-model-metadata-schema-accept-provenance-index-minlen-test" "./scripts/v2/d2_task_model_metadata_schema_accept_provenance_index_minlen_test.sh" "ci(gate): add d2-task-model-metadata-schema-accept-provenance-index-minlen-test regression to quick-check"
