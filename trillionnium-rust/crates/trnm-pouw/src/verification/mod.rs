@@ -125,19 +125,23 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
         | "tee receipt"
         | "tee attestation"
         | "tee quote"
+        | "tee report"
         | "teeproof"
         | "teereceipt"
         | "teeattestation"
-        | "teequote" => "tee".to_string(),
+        | "teequote"
+        | "teereport" => "tee".to_string(),
         "zk proof"
         | "zk receipt"
         | "zk attestation"
+        | "zk snark"
         | "zero knowledge proof"
         | "zero knowledge receipt"
         | "zero knowledge attestation"
         | "zkproof"
         | "zkreceipt"
         | "zkattestation"
+        | "zksnark"
         | "zeroknowledgeproof"
         | "zeroknowledgereceipt"
         | "zeroknowledgeattestation" => "zk".to_string(),
@@ -494,6 +498,16 @@ mod tests {
         assert_eq!(spaced.proof_type, "zk");
         assert_eq!(underscored.proof_type, "zk");
         assert_eq!(compact.proof_type, "zk");
+    }
+
+    #[test]
+    fn verification_receipt_new_collapses_registry_aliases_for_tee_report_and_zk_snark() {
+        let tee_report =
+            VerificationReceipt::new(1, "TEE_REPORT", VerificationResult::Valid, "v", 1);
+        let zk_snark = VerificationReceipt::new(2, "zk-snark", VerificationResult::Valid, "v", 2);
+
+        assert_eq!(tee_report.proof_type, "tee");
+        assert_eq!(zk_snark.proof_type, "zk");
     }
 
     #[test]
