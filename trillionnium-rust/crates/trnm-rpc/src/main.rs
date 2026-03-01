@@ -803,6 +803,16 @@ fn market_worker_tie_break_key(raw: &str) -> String {
 fn parse_market_reputation_value(value: &serde_json::Value) -> Option<i64> {
     value
         .as_i64()
+        .or_else(|| {
+            let float = value.as_f64()?;
+            if !float.is_finite() || float.fract() != 0.0 {
+                return None;
+            }
+            if float < i64::MIN as f64 || float > i64::MAX as f64 {
+                return None;
+            }
+            Some(float as i64)
+        })
         .or_else(|| value.as_str()?.trim().parse::<i64>().ok())
 }
 
@@ -2515,6 +2525,37 @@ mod tests {
                 assert_eq!(rep.get("worker-b"), Some(&-4));
                 assert!(!rep.contains_key("worker-c"));
                 assert!(!rep.contains_key("worker-d"));
+                assert_eq!(rep.len(), 2);
+            },
+        );
+
+        let _ = fs::remove_file(path);
+    }
+
+    #[test]
+    fn market_reputation_loader_accepts_integral_json_numbers_and_skips_fractional_numbers() {
+        let mut path = std::env::temp_dir();
+        path.push(format!(
+            "trnm_rpc_market_reputation_float_ints_{}_{}.json",
+            std::process::id(),
+            now_ms()
+        ));
+        fs::write(
+            &path,
+            r#"{"worker-a": 11.0, "worker-b": -4.0, "worker-c": 3.5}"#,
+        )
+        .expect("write float-int reputation fixture");
+
+        with_market_path_env(
+            &[(
+                MARKET_REPUTATION_FILE_ENV,
+                Some(path.to_string_lossy().as_ref()),
+            )],
+            || {
+                let rep = load_market_reputation();
+                assert_eq!(rep.get("worker-a"), Some(&11));
+                assert_eq!(rep.get("worker-b"), Some(&-4));
+                assert!(!rep.contains_key("worker-c"));
                 assert_eq!(rep.len(), 2);
             },
         );
