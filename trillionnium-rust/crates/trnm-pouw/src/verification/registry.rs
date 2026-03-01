@@ -36,6 +36,8 @@ impl VerifierRegistry {
             .map(|ch| {
                 if ch == '_'
                     || ch == '-'
+                    || ch == '–'
+                    || ch == '—'
                     || ch == '/'
                     || ch == '.'
                     || ch == ':'
@@ -258,6 +260,20 @@ mod tests {
         let mut registry = VerifierRegistry::new();
         registry.register(Arc::new(AlwaysValidVerifier {
             kind: " tee-receipt ",
+        }));
+
+        let task = task_with_proof_type(ProofType::Tee);
+        assert_eq!(
+            registry.verify(&task, b"receipt"),
+            VerificationResult::Valid
+        );
+    }
+
+    #[test]
+    fn registry_register_collapses_unicode_dash_legacy_receipt_aliases_for_lookup() {
+        let mut registry = VerifierRegistry::new();
+        registry.register(Arc::new(AlwaysValidVerifier {
+            kind: " tee—receipt ",
         }));
 
         let task = task_with_proof_type(ProofType::Tee);
