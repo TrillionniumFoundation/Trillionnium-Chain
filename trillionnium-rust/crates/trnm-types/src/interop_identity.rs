@@ -122,12 +122,13 @@ fn canonical_path_segment(raw: &str) -> String {
         return "_".to_string();
     }
 
-    let lowered = sanitized.to_ascii_lowercase();
-    let windows_basename = lowered
-        .trim_end_matches(['.', ' '])
-        .split('.')
-        .next()
-        .unwrap_or("");
+    let canonical = sanitized.trim_end_matches(['.', ' ']);
+    if canonical.is_empty() || canonical == "." || canonical == ".." {
+        return "_".to_string();
+    }
+
+    let lowered = canonical.to_ascii_lowercase();
+    let windows_basename = lowered.split('.').next().unwrap_or("");
     let is_windows_reserved = matches!(
         windows_basename,
         "con"
@@ -155,9 +156,9 @@ fn canonical_path_segment(raw: &str) -> String {
     );
 
     if is_windows_reserved {
-        format!("{sanitized}_")
+        format!("{canonical}_")
     } else {
-        sanitized
+        canonical.to_string()
     }
 }
 
@@ -2135,7 +2136,28 @@ mod tests {
 
         assert_eq!(
             rec.evidence_path(),
-            "settlements/CON._/lpt1..._/aux_/53/pending@2230"
+            "settlements/CON_/lpt1_/aux_/53/pending@2230"
+        );
+    }
+
+    #[test]
+    fn settlement_evidence_path_trims_trailing_dot_or_space_for_non_reserved_segments() {
+        let rec = SettlementRecord {
+            settlement_id: 53_1,
+            route: BridgeRoute {
+                route_id: "eth-mainnet. ".to_string(),
+                source_chain: "ethereum.. ".to_string(),
+                target_chain: "trillionnium-alpha ".to_string(),
+            },
+            status: SettlementStatus::Pending,
+            at_height: 2_230,
+            settlement_tx: None,
+            revert_reason: None,
+        };
+
+        assert_eq!(
+            rec.evidence_path(),
+            "settlements/eth-mainnet/ethereum/trillionnium-alpha/531/pending@2230"
         );
     }
 
