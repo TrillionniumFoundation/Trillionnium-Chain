@@ -4225,6 +4225,50 @@ mod tests {
     }
 
     #[test]
+    fn renew_capability_rejects_when_renew_height_equals_did_revocation_boundary() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did(
+            "did:trnm:agent-renew-did-race".to_string(),
+            "org:lane2-admin".to_string(),
+            10,
+        )
+        .unwrap();
+
+        let token_id = reg
+            .issue_capability(
+                "org:lane2-admin".to_string(),
+                "did:trnm:agent-renew-did-race".to_string(),
+                CapabilityScope::AuditRead,
+                20,
+                Some(60),
+            )
+            .unwrap();
+
+        reg.revoke_did(
+            "org:lane2-admin".to_string(),
+            "did:trnm:agent-renew-did-race",
+            30,
+        )
+        .unwrap();
+
+        let audit_len_before = reg.audit_trail().len();
+        let token_before = reg.capability(token_id).unwrap().clone();
+
+        let err = reg
+            .renew_capability("org:lane2-admin".to_string(), token_id, 30, Some(90))
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            InteropIdentityError::DidRevoked { did } if did == "did:trnm:agent-renew-did-race"
+        ));
+        let token_after = reg.capability(token_id).unwrap();
+        assert_eq!(token_after.expires_at, token_before.expires_at);
+        assert_eq!(token_after.revoked_at, token_before.revoked_at);
+        assert_eq!(reg.audit_trail().len(), audit_len_before);
+    }
+
+    #[test]
     fn issue_capability_rejects_revoked_did_without_side_effects() {
         let mut reg = IdentityRegistry::default();
         reg.register_did(
