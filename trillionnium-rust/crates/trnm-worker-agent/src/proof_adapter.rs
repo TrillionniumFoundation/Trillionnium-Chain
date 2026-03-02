@@ -17,12 +17,10 @@ pub fn build_proof_adapter(name: &str) -> Result<Box<dyn ProofAdapter>, String> 
         "" | DEFAULT_PROOF_ADAPTER | "fraud-proof" | "fraud_proof" => {
             Ok(Box::new(StandardProofAdapter))
         }
-        "tee-receipt" | "tee_receipt" | "tee-attestation" | "tee_attestation" => {
-            Ok(Box::new(TeeReceiptProofAdapter))
-        }
-        "zk-receipt" | "zk_receipt" | "zk-proof" | "zk_proof" => {
-            Ok(Box::new(ZkReceiptProofAdapter))
-        }
+        "tee-receipt" | "tee_receipt" | "tee-attestation" | "tee_attestation"
+        | "teereceipt" | "teeattestation" => Ok(Box::new(TeeReceiptProofAdapter)),
+        "zk-receipt" | "zk_receipt" | "zk-proof" | "zk_proof" | "zkreceipt"
+        | "zkproof" => Ok(Box::new(ZkReceiptProofAdapter)),
         other => Err(format!("unsupported-proof-adapter:{other}")),
     }
 }
@@ -165,6 +163,8 @@ impl ProofAdapter for TeeReceiptProofAdapter {
                     || normalized == "tee_receipt"
                     || normalized == "tee-attestation"
                     || normalized == "tee_attestation"
+                    || normalized == "teereceipt"
+                    || normalized == "teeattestation"
             })
             .unwrap_or(false);
         if !adapter_ok {
@@ -206,6 +206,8 @@ impl ProofAdapter for ZkReceiptProofAdapter {
                     || normalized == "zk_receipt"
                     || normalized == "zk-proof"
                     || normalized == "zk_proof"
+                    || normalized == "zkreceipt"
+                    || normalized == "zkproof"
             })
             .unwrap_or(false);
         if !adapter_ok {
@@ -305,6 +307,13 @@ mod tests {
             Some("pr-2b")
         );
 
+        let tee_compact_alias = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-2bb\",\"adapter\":\"teeattestation\"}",
+            )
+            .expect("tee compact alias should parse");
+        assert_eq!(tee_compact_alias.provider_request_id.as_deref(), Some("pr-2bb"));
+
         let tee_with_bom_and_whitespace = adapter
             .parse_response(
                 "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-2c\",\"adapter\":\"  \\uFEFFTEE_RECEIPT  \"}",
@@ -359,6 +368,13 @@ mod tests {
             zk_proof_underscore_alias.provider_request_id.as_deref(),
             Some("pr-zk-2b")
         );
+
+        let zk_compact_alias = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-zk-2bb\",\"adapter\":\"zkproof\"}",
+            )
+            .expect("zk compact alias should parse");
+        assert_eq!(zk_compact_alias.provider_request_id.as_deref(), Some("pr-zk-2bb"));
 
         let zk_with_bom_and_whitespace = adapter
             .parse_response(
@@ -482,7 +498,17 @@ mod tests {
         assert!(ok);
         assert_eq!(code, "tee_receipt_ok");
 
+        let adapter = build_proof_adapter("teeattestation").expect("tee compact alias");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "tee_receipt_ok");
+
         let adapter = build_proof_adapter("zk-proof").expect("zk proof alias");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "zk_receipt_ok");
+
+        let adapter = build_proof_adapter("zkproof").expect("zk compact alias");
         let (ok, code) = adapter.verify("hello", 8);
         assert!(ok);
         assert_eq!(code, "zk_receipt_ok");
