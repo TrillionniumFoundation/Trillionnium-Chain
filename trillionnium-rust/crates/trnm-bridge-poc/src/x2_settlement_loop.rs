@@ -19,8 +19,14 @@ pub struct SettlementEvent {
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum SettlementStep {
-    Finalized { height: u64, event: SettlementEvent },
-    Compensated { reason: String, event: SettlementEvent },
+    Finalized {
+        height: u64,
+        event: SettlementEvent,
+    },
+    Compensated {
+        reason: String,
+        event: SettlementEvent,
+    },
 }
 
 const MAX_COMPENSATION_REASON_CHARS: usize = 160;
@@ -33,7 +39,13 @@ pub fn drive_minimal_settlement(
 ) -> Result<SettlementStep, SettlementError> {
     let (hb_src, hb_tgt, hb_latency) = heartbeat
         .heartbeat
-        .map(|h| (Some(h.source_height), Some(h.target_height), Some(h.latency_ms)))
+        .map(|h| {
+            (
+                Some(h.source_height),
+                Some(h.target_height),
+                Some(h.latency_ms),
+            )
+        })
         .unwrap_or((None, None, None));
 
     if heartbeat.degraded {
@@ -162,4 +174,31 @@ fn normalize_compensation_reason(reason: &str, fallback: &'static str) -> String
 
 pub fn current_status(request: &SettlementRequest) -> &BridgeStatus {
     &request.status
+}
+
+#[cfg(test)]
+mod tests {
+    use super::normalize_compensation_reason;
+
+    #[test]
+    fn normalize_compensation_reason_strips_controls_and_invisibles() {
+        let raw = "  timeout\u{202E}\n\t\u{200B} while\u{2066} settling  ";
+        let normalized = normalize_compensation_reason(raw, "fallback");
+        assert_eq!(normalized, "timeout while settling");
+    }
+
+    #[test]
+    fn normalize_compensation_reason_enforces_max_len_with_ellipsis() {
+        let raw = "a".repeat(220);
+        let normalized = normalize_compensation_reason(&raw, "fallback");
+        assert_eq!(normalized.chars().count(), 161);
+        assert!(normalized.ends_with('…'));
+    }
+
+    #[test]
+    fn normalize_compensation_reason_uses_fallback_when_empty_after_sanitize() {
+        let raw = "\u{200B}\u{202E}\n\t\u{2066}";
+        let normalized = normalize_compensation_reason(raw, "unknown confirm failure");
+        assert_eq!(normalized, "unknown confirm failure");
+    }
 }
