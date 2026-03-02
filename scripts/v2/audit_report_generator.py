@@ -29,6 +29,17 @@ def parse_strict_int(value):
     return int(text)
 
 
+def canonical_event_schema(value):
+    if value is None:
+        return None
+    token = str(value)
+    if token in {'v1', 'llm2', 'compact'}:
+        return token
+    if token in {'llm.v2', 'llm_v2'}:
+        return 'llm2'
+    return None
+
+
 def generate_audit_report(log_file):
     events = []
     
@@ -45,9 +56,10 @@ def generate_audit_report(log_file):
                         content = content.strip()
                         data = parse_kv(content)
 
-                        schema = data.get('event_schema') or ''
-                        if schema not in {'v1', 'llm2', 'compact'}:
+                        schema = canonical_event_schema(data.get('event_schema'))
+                        if schema is None:
                             continue
+                        data['event_schema'] = schema
 
                         event_ts = prefix.strip()
                         if event_ts:
