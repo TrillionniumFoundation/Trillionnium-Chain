@@ -196,6 +196,15 @@ mod tests {
     }
 
     #[test]
+    fn normalize_compensation_reason_exact_cap_has_no_ellipsis() {
+        let raw = "b".repeat(160);
+        let normalized = normalize_compensation_reason(&raw, "fallback");
+        assert_eq!(normalized.chars().count(), 160);
+        assert_eq!(normalized, raw);
+        assert!(!normalized.ends_with('…'));
+    }
+
+    #[test]
     fn normalize_compensation_reason_uses_fallback_when_empty_after_sanitize() {
         let raw = "\u{200B}\u{202E}\n\t\u{2066}";
         let normalized = normalize_compensation_reason(raw, "unknown confirm failure");
