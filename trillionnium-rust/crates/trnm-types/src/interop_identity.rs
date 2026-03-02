@@ -3108,6 +3108,39 @@ mod tests {
     }
 
     #[test]
+    fn revoke_capability_bidi_controls_only_audit_note_is_normalized_to_none() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did(
+            "did:trnm:agent-3ab-bidi".to_string(),
+            "org:lane2-admin".to_string(),
+            10,
+        )
+        .unwrap();
+
+        let token_id = reg
+            .issue_capability(
+                "org:lane2-admin".to_string(),
+                "did:trnm:agent-3ab-bidi".to_string(),
+                CapabilityScope::AuditRead,
+                12,
+                None,
+            )
+            .unwrap();
+
+        reg.revoke_capability(
+            "org:lane2-admin".to_string(),
+            token_id,
+            30,
+            Some("\u{202E}\u{202C}\u{2067}\u{2069}".to_string()),
+        )
+        .unwrap();
+
+        let last = reg.audit_trail().last().unwrap();
+        assert_eq!(last.action, AuditAction::CapabilityRevoked);
+        assert_eq!(last.note, None);
+    }
+
+    #[test]
     fn revoke_capability_rejects_height_before_issue_without_side_effects() {
         let mut reg = IdentityRegistry::default();
         reg.register_did(
