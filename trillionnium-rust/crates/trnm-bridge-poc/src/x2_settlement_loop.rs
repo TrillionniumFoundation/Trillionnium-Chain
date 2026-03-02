@@ -22,10 +22,8 @@ pub fn drive_minimal_settlement(
     confirm: SettlementConfirm,
 ) -> Result<SettlementStep, SettlementError> {
     if heartbeat.degraded {
-        let degraded_reason = normalize_compensation_reason(
-            &heartbeat.message,
-            "unknown heartbeat degradation",
-        );
+        let degraded_reason =
+            normalize_compensation_reason(&heartbeat.message, "unknown heartbeat degradation");
         let reason = format!("heartbeat degraded: {degraded_reason}");
         request.revert_authorized(token, reason.clone())?;
         return Ok(SettlementStep::Compensated { reason });
@@ -37,8 +35,7 @@ pub fn drive_minimal_settlement(
             Ok(SettlementStep::Finalized { height })
         }
         SettlementConfirm::Failed { reason } => {
-            let confirm_reason =
-                normalize_compensation_reason(&reason, "unknown confirm failure");
+            let confirm_reason = normalize_compensation_reason(&reason, "unknown confirm failure");
             let reason = format!("settlement confirm failed: {confirm_reason}");
             request.revert_authorized(token, reason.clone())?;
             Ok(SettlementStep::Compensated { reason })
@@ -66,6 +63,8 @@ fn normalize_compensation_reason(reason: &str, fallback: &'static str) -> String
                         | '\u{202C}'
                         | '\u{202D}'
                         | '\u{202E}'
+                        | '\u{2028}'
+                        | '\u{2029}'
                         | '\u{2066}'
                         | '\u{2067}'
                         | '\u{2068}'

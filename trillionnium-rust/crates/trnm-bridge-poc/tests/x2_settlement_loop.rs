@@ -577,7 +577,10 @@ fn x2_degraded_heartbeat_reason_sanitizes_arabic_letter_mark_control() {
 
     assert_eq!(compensated_reason, "heartbeat degraded: relay quorum lost");
     assert!(!compensated_reason.contains('\u{061C}'));
-    assert_eq!(current_status(&request), &BridgeStatus::Reverted(compensated_reason));
+    assert_eq!(
+        current_status(&request),
+        &BridgeStatus::Reverted(compensated_reason)
+    );
 }
 
 #[test]
@@ -608,7 +611,44 @@ fn x2_degraded_heartbeat_reason_sanitizes_lrm_rlm_controls() {
     assert_eq!(compensated_reason, "heartbeat degraded: relay quorum lost");
     assert!(!compensated_reason.contains('\u{200E}'));
     assert!(!compensated_reason.contains('\u{200F}'));
-    assert_eq!(current_status(&request), &BridgeStatus::Reverted(compensated_reason));
+    assert_eq!(
+        current_status(&request),
+        &BridgeStatus::Reverted(compensated_reason)
+    );
+}
+
+#[test]
+fn x2_degraded_heartbeat_reason_sanitizes_unicode_line_and_paragraph_separators() {
+    let mut request = SettlementRequest::new(18, "0x1234beef".to_string());
+    let token = operator_token();
+
+    let heartbeat = trnm_bridge_poc::relay_heartbeat::HeartbeatOutcome {
+        heartbeat: None,
+        should_retry: false,
+        degraded: true,
+        message: "relay\u{2028}quorum\u{2029}lost".to_string(),
+    };
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Confirmed { height: 605 },
+    )
+    .unwrap();
+
+    let compensated_reason = match out {
+        SettlementStep::Compensated { reason } => reason,
+        other => panic!("expected compensated step, got {other:?}"),
+    };
+
+    assert_eq!(compensated_reason, "heartbeat degraded: relay quorum lost");
+    assert!(!compensated_reason.contains('\u{2028}'));
+    assert!(!compensated_reason.contains('\u{2029}'));
+    assert_eq!(
+        current_status(&request),
+        &BridgeStatus::Reverted(compensated_reason)
+    );
 }
 
 #[test]
