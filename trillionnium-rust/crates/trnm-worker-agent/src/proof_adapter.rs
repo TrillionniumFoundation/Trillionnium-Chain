@@ -357,6 +357,16 @@ mod tests {
             Some("pr-2d")
         );
 
+        let tee_with_zero_width_joiner = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-2e\",\"adapter\":\"TEE\u{200d}_RECEIPT\"}",
+            )
+            .expect("tee receipt label with zero-width joiner should parse");
+        assert_eq!(
+            tee_with_zero_width_joiner.provider_request_id.as_deref(),
+            Some("pr-2e")
+        );
+
         let missing_request_id = adapter
             .parse_response("{\"output_text\":\"ok\",\"adapter\":\"tee-receipt\"}")
             .expect_err("provider_request_id is required");
@@ -444,6 +454,16 @@ mod tests {
         assert_eq!(
             zk_with_non_breaking_hyphen.provider_request_id.as_deref(),
             Some("pr-zk-2d")
+        );
+
+        let zk_with_zero_width_joiner = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-zk-2e\",\"adapter\":\"ZK\u{200d}_RECEIPT\"}",
+            )
+            .expect("zk receipt label with zero-width joiner should parse");
+        assert_eq!(
+            zk_with_zero_width_joiner.provider_request_id.as_deref(),
+            Some("pr-zk-2e")
         );
 
         let missing_request_id = adapter
