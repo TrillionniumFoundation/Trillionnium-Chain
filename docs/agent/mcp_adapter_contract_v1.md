@@ -17,6 +17,7 @@
 - 请求完整性：`X-TRNM-Body-SHA256`（请求体 SHA-256 小写 hex）；与服务端重算不一致按 `400 schema_invalid` fail-closed
 - 请求内容类型：`Content-Type: application/json`；非 JSON 请求按 `400 schema_invalid` fail-closed
 - 响应内容类型：`Content-Type: application/json; charset=utf-8`；非 JSON 响应视为协议违约并按 `502 upstream_execution_failed` fail-closed
+- 响应必须回显：X-TRNM-Request-ID（值必须等于请求 `request_id`，不一致按 `502 upstream_execution_failed` fail-closed）
 
 ## 3. 最小请求/响应语义
 
