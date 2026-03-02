@@ -57,6 +57,8 @@ fn normalize_compensation_reason(reason: &str, fallback: &'static str) -> String
                         | '\u{200B}'
                         | '\u{200C}'
                         | '\u{200D}'
+                        | '\u{200E}'
+                        | '\u{200F}'
                         | '\u{FEFF}'
                         | '\u{2060}'
                         | '\u{202A}'
