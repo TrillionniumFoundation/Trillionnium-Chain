@@ -82,6 +82,44 @@ fn x3_prep_stale_pending_degraded_reason_at_cap_does_not_append_ellipsis() {
 }
 
 #[test]
+fn x3_prep_stale_pending_degraded_reason_above_cap_appends_single_ellipsis() {
+    let mut request = SettlementRequest::new(4, "0xmatrix-cap-overflow".to_string());
+    let token = operator_token();
+
+    let over = "b".repeat(161);
+    let degraded = HeartbeatOutcome {
+        heartbeat: None,
+        should_retry: false,
+        degraded: true,
+        message: over,
+    };
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &degraded,
+        SettlementConfirm::Confirmed { height: 4245 },
+    )
+    .unwrap();
+
+    let SettlementStep::Compensated { reason, event } = out else {
+        panic!("expected compensated branch");
+    };
+
+    let suffix = reason
+        .strip_prefix("heartbeat degraded: ")
+        .expect("reason prefix");
+    assert_eq!(suffix.chars().count(), 161);
+    assert!(suffix.ends_with('…'));
+    assert_eq!(suffix.matches('…').count(), 1);
+
+    assert_eq!(event.phase, "relay_heartbeat_degraded");
+    assert_eq!(event.confirm_height, None);
+    assert_eq!(event.confirm_reason, Some(reason.clone()));
+    assert_eq!(current_status(&request), &BridgeStatus::Reverted(reason));
+}
+
+#[test]
 fn x3_prep_stale_pending_degraded_empty_reason_uses_stable_fallback() {
     let mut request = SettlementRequest::new(3, "0xmatrix-empty-fallback".to_string());
     let token = operator_token();
