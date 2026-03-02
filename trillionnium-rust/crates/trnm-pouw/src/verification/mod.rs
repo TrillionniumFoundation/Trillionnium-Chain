@@ -196,7 +196,19 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
         | "tee evidence"
         | "remote attestation"
         | "attestation report"
+        | "attestation report v1"
+        | "attestation report v2"
+        | "attestation report v3"
+        | "attestation report v 1"
+        | "attestation report v 2"
+        | "attestation report v 3"
         | "tee attestation report"
+        | "tee attestation report v1"
+        | "tee attestation report v2"
+        | "tee attestation report v3"
+        | "tee attestation report v 1"
+        | "tee attestation report v 2"
+        | "tee attestation report v 3"
         | "ra report"
         | "ra report v1"
         | "ra report v2"
@@ -245,7 +257,13 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
         | "teeevidence"
         | "remoteattestation"
         | "attestationreport"
+        | "attestationreportv1"
+        | "attestationreportv2"
+        | "attestationreportv3"
         | "teeattestationreport"
+        | "teeattestationreportv1"
+        | "teeattestationreportv2"
+        | "teeattestationreportv3"
         | "rareport"
         | "rareportv1"
         | "rareportv2"
@@ -928,13 +946,21 @@ mod tests {
             "v",
             2,
         );
+        let tee_attestation_report_v2 = VerificationReceipt::new(
+            3,
+            "TEE attestation report v2",
+            VerificationResult::Valid,
+            "v",
+            3,
+        );
         let tee_attestation_v2 =
-            VerificationReceipt::new(3, "TEE_ATTESTATION_V2", VerificationResult::Valid, "v", 3);
+            VerificationReceipt::new(4, "TEE_ATTESTATION_V2", VerificationResult::Valid, "v", 4);
         let zk_bare =
-            VerificationReceipt::new(4, "zero knowledge", VerificationResult::Valid, "v", 4);
+            VerificationReceipt::new(5, "zero knowledge", VerificationResult::Valid, "v", 5);
 
         assert_eq!(tee_remote.proof_type, "tee");
         assert_eq!(tee_attestation_report.proof_type, "tee");
+        assert_eq!(tee_attestation_report_v2.proof_type, "tee");
         assert_eq!(tee_attestation_v2.proof_type, "tee");
         assert_eq!(zk_bare.proof_type, "zk");
     }
