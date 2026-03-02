@@ -48,6 +48,7 @@ guard_phrases=(
   "协议版本与适配器传输层记录"
   "409 idempotency_conflict"
   "409 replay_detected"
+  "同一键值 + 同一请求体必须幂等返回同一"
   "同键不同请求体"
   "error.code"
   "error.message"
