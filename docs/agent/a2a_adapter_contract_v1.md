@@ -18,6 +18,7 @@
 - 请求内容类型：`Content-Type: application/json`
 - 响应内容类型：`Content-Type: application/json; charset=utf-8`
 - 响应必须回显：X-TRNM-Request-ID
+- 响应必须回显：X-TRNM-Trace-ID
 
 ## 3. 最小请求/响应语义
 
