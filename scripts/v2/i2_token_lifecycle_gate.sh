@@ -64,5 +64,8 @@ cargo test -p trnm-types verify_capability_allows_historical_height_before_did_r
 cargo test -p trnm-types verify_capability_rejects_height_equal_to_did_revocation_boundary
 cargo test -p trnm-types verify_capability_rejects_inactive_or_unauthorized_actor
 cargo test -p trnm-types verify_capability_unauthorized_actor_does_not_mutate_registry
+# I3-prep fail-closed competition guard: same-height renew/revoke race must stay revoke-dominant.
+cargo test -p trnm-types --test i3_capability_issue_renew_revoke_competition \
+  revoke_dominates_issue_renew_revoke_competition_at_same_height
 
 echo "[I2][PASS] capability token lifecycle gate"
