@@ -113,6 +113,7 @@ impl VerifierRegistry {
             "sgx report" | "sgxreport" => "tee",
             "dcap quote" | "dcapquote" => "tee",
             "intel dcap quote" | "inteldcapquote" => "tee",
+            "sgx dcap quote" | "sgxdcapquote" => "tee",
             "intel sgx dcap quote" | "intelsgxdcapquote" => "tee",
             "tdx quote" | "tdxquote" => "tee",
             "td quote" | "tdquote" => "tee",
@@ -1270,6 +1271,7 @@ mod tests {
 
         assert!(registry.is_registered_kind("dcap_quote"));
         assert!(registry.is_registered_kind("Intel DCAP Quote"));
+        assert!(registry.is_registered_kind("SGX DCAP Quote"));
         assert!(registry.is_registered_kind("Intel SGX DCAP Quote"));
         assert!(registry.is_registered_kind("sgx-quote"));
         assert!(registry.is_registered_kind("intel_tdx_quote"));
