@@ -116,19 +116,31 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
                 || ch == '&'
                 || ch == '('
                 || ch == ')'
+                || ch == '（'
+                || ch == '）'
                 || ch == '['
                 || ch == ']'
+                || ch == '［'
+                || ch == '］'
                 || ch == '{'
                 || ch == '}'
+                || ch == '｛'
+                || ch == '｝'
                 || ch == '<'
                 || ch == '>'
                 || ch == '"'
                 || ch == '\''
+                || ch == '“'
+                || ch == '”'
+                || ch == '‘'
+                || ch == '’'
                 || ch == '!'
                 || ch == '?'
                 || ch == '*'
                 || ch == '~'
                 || ch == '^'
+                || ch == '®'
+                || ch == '™'
                 || ch.is_whitespace()
         })
         .filter(|token| !token.is_empty())
@@ -793,18 +805,35 @@ mod tests {
         );
         let tee_intel_sgx_dcap =
             VerificationReceipt::new(5, "Intel SGX DCAP Quote", VerificationResult::Valid, "v", 5);
+        let tee_intel_sgx_dcap_marked = VerificationReceipt::new(
+            6,
+            "Intel® SGX™ DCAP Quote",
+            VerificationResult::Valid,
+            "v",
+            6,
+        );
 
         assert_eq!(tee_fullwidth.proof_type, "tee");
         assert_eq!(tee_certificate.proof_type, "tee");
         assert_eq!(zk_short.proof_type, "zk");
         assert_eq!(zk_certificate.proof_type, "zk");
         assert_eq!(tee_intel_sgx_dcap.proof_type, "tee");
+        assert_eq!(tee_intel_sgx_dcap_marked.proof_type, "tee");
     }
 
     #[test]
     fn verification_receipt_new_collapses_snark_alias_to_zk_router_key() {
         let zk = VerificationReceipt::new(5, "snark", VerificationResult::Valid, "v", 5);
 
+        assert_eq!(zk.proof_type, "zk");
+    }
+
+    #[test]
+    fn verification_receipt_new_collapses_fullwidth_brackets_and_smart_quotes_aliases() {
+        let tee = VerificationReceipt::new(1, "“TEE（RECEIPT）”", VerificationResult::Valid, "v", 1);
+        let zk = VerificationReceipt::new(2, "‘ZK｛PROOF｝’", VerificationResult::Valid, "v", 2);
+
+        assert_eq!(tee.proof_type, "tee");
         assert_eq!(zk.proof_type, "zk");
     }
 }

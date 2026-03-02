@@ -311,8 +311,18 @@ fn extract_tx_hash(text: &str) -> Option<String> {
     None
 }
 
+fn parse_template_command(cmd: &str) -> Result<(String, Vec<String>)> {
+    let parts = shell_words::split(cmd)
+        .map_err(|e| anyhow!("invalid template command (shell-words parse failed): {e}"))?;
+    let Some((program, args)) = parts.split_first() else {
+        bail!("template command must not be empty");
+    };
+    Ok((program.clone(), args.to_vec()))
+}
+
 fn run_template(cmd: &str) -> Result<String> {
-    let out = ProcCommand::new("sh").arg("-lc").arg(cmd).output()?;
+    let (program, args) = parse_template_command(cmd)?;
+    let out = ProcCommand::new(&program).args(&args).output()?;
     let stdout = String::from_utf8_lossy(&out.stdout);
     let stderr = String::from_utf8_lossy(&out.stderr);
     let merged = format!("{}\n{}", stdout, stderr);
@@ -333,7 +343,8 @@ fn run_template(cmd: &str) -> Result<String> {
 }
 
 fn run_template_raw(cmd: &str) -> Result<String> {
-    let out = ProcCommand::new("sh").arg("-lc").arg(cmd).output()?;
+    let (program, args) = parse_template_command(cmd)?;
+    let out = ProcCommand::new(&program).args(&args).output()?;
     let stdout = String::from_utf8_lossy(&out.stdout);
     let stderr = String::from_utf8_lossy(&out.stderr);
     if !out.status.success() {
@@ -543,12 +554,26 @@ fn tx_query(tx_hash: &str) -> Result<TxQueryResponse> {
         .and_then(|p| p.parent())
         .map(|p| p.to_path_buf())
         .unwrap_or_else(|| PathBuf::from("."));
-    let cmd = format!(
-        "cd {} && cargo run -q -p trnm-rpc -- get-tx --tx-hash {}",
-        rpc_workspace.display(),
-        requested
-    );
-    match run_template_raw(&cmd) {
+    let cmd = format!("cargo run -q -p trnm-rpc -- get-tx --tx-hash {}", requested);
+    match {
+        let (program, args) = parse_template_command(&cmd)?;
+        let out = ProcCommand::new(program)
+            .args(args)
+            .current_dir(&rpc_workspace)
+            .output()?;
+        let stdout = String::from_utf8_lossy(&out.stdout);
+        let stderr = String::from_utf8_lossy(&out.stderr);
+        if !out.status.success() {
+            Err(anyhow!(
+                "query command failed rc={}: {}{}",
+                out.status.code().unwrap_or(1),
+                stdout,
+                stderr
+            ))
+        } else {
+            Ok(stdout.to_string())
+        }
+    } {
         Ok(raw) => {
             let parsed = parse_tx_query_response(&raw, &requested)?;
             if let Some(got) = normalize_tx_hash(&parsed.tx_hash) {

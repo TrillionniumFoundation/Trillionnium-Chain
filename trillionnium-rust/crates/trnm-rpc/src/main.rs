@@ -926,6 +926,24 @@ fn normalize_market_status_key(raw: &str) -> String {
         .join(" ")
 }
 
+fn normalize_actor_or_signer(raw: &str) -> Option<String> {
+    let sanitized: String = raw
+        .trim()
+        .chars()
+        .filter_map(|ch| match ch {
+            '\u{200B}' | '\u{200C}' | '\u{200D}' | '\u{2060}' | '\u{FEFF}' => Some(' '),
+            _ if ch.is_control() => None,
+            _ => Some(ch),
+        })
+        .collect();
+    let collapsed = sanitized.split_whitespace().collect::<Vec<_>>().join(" ");
+    if collapsed.is_empty() {
+        None
+    } else {
+        Some(collapsed)
+    }
+}
+
 fn parse_market_reputation_value(value: &serde_json::Value) -> Option<i64> {
     value
         .as_i64()
@@ -1638,7 +1656,15 @@ fn main() -> Result<()> {
 
             let task_recs: Vec<&AdapterRecord> = recs
                 .iter()
-                .filter(|r| r.task_id == task_id && r.status == "accepted")
+                .filter(|r| {
+                    r.task_id == task_id
+                        && r.status == "accepted"
+                        && matches!(r.kind.as_str(), "commit" | "reveal")
+                        && r.worker
+                            .as_deref()
+                            .and_then(normalize_actor_or_signer)
+                            .is_some()
+                })
                 .collect();
             if task_recs.is_empty() {
                 bail!("task not found: {}", task_id);
@@ -1736,36 +1762,47 @@ fn main() -> Result<()> {
 
             if events.is_empty() {
                 let mut tx_id = 1u64;
+                let mut has_commit = false;
                 for r in recs
                     .into_iter()
                     .filter(|r| r.task_id == task_id && r.status == "accepted")
                 {
-                    let (from_status, to_status, actor) = if r.kind == "commit" {
-                        (
-                            "Assigned".to_string(),
-                            "Committed".to_string(),
-                            r.worker.clone().unwrap_or_else(|| "worker".into()),
-                        )
-                    } else {
-                        (
-                            "Committed".to_string(),
-                            "Revealed".to_string(),
-                            "worker".to_string(),
-                        )
+                    let Some(actor) = r.worker.as_deref().and_then(normalize_actor_or_signer) else {
+                        continue;
                     };
-                    let signer = Some(actor.clone());
-                    let tx_hash = r.tx_hash;
+                    let kind = r.kind.as_str();
+                    if kind == "reveal" && !has_commit {
+                        // migration legality: reveal cannot be reconstructed before a trusted commit source
+                        continue;
+                    }
+                    let Some((from_status, to_status)) = (match kind {
+                        "commit" => Some(("Assigned".to_string(), "Committed".to_string())),
+                        "reveal" => Some(("Committed".to_string(), "Revealed".to_string())),
+                        _ => None,
+                    }) else {
+                        continue;
+                    };
+
+                    let tx_hash = r.tx_hash.and_then(|v| {
+                        let normalized = normalize_tx_hash_lookup(&v);
+                        if is_hex_like_tx_hash(&normalized) {
+                            Some(normalized)
+                        } else {
+                            None
+                        }
+                    });
+
                     events.push(EventQueryResponse {
                         event_type: r.kind,
                         task_id,
                         from_status,
                         to_status,
-                        actor,
+                        actor: actor.clone(),
                         tx_id,
                         block_height: tx_id,
                         state_root: "adapter_state".into(),
                         ts_unix_ms: r.ts as u128,
-                        signer,
+                        signer: Some(actor),
                         challenger: None,
                         tx_hash,
                         resolution_code: None,
@@ -1773,6 +1810,9 @@ fn main() -> Result<()> {
                         challenger_delta: None,
                         bond_disposition: None,
                     });
+                    if kind == "commit" {
+                        has_commit = true;
+                    }
                     tx_id += 1;
                 }
             }
@@ -2469,7 +2509,10 @@ fn main() -> Result<()> {
 mod tests {
     use super::*;
     use std::panic::{catch_unwind, AssertUnwindSafe};
-    use std::sync::{Mutex, MutexGuard, OnceLock};
+    use std::sync::{
+        atomic::{AtomicU64, Ordering},
+        Mutex, MutexGuard, OnceLock,
+    };
 
     fn env_lock() -> &'static Mutex<()> {
         static LOCK: OnceLock<Mutex<()>> = OnceLock::new();
@@ -2478,6 +2521,19 @@ mod tests {
 
     fn lock_env<'a>() -> MutexGuard<'a, ()> {
         env_lock().lock().unwrap_or_else(|poison| poison.into_inner())
+    }
+
+    fn unique_tmp_path(prefix: &str, ext: &str) -> PathBuf {
+        static COUNTER: AtomicU64 = AtomicU64::new(0);
+        let seq = COUNTER.fetch_add(1, Ordering::Relaxed);
+        std::env::temp_dir().join(format!(
+            "{}-{}-{}-{}.{}",
+            prefix,
+            std::process::id(),
+            now_ms(),
+            seq,
+            ext
+        ))
     }
 
     fn with_market_score_env(vars: &[(&str, &str)], f: impl FnOnce()) {
@@ -3020,6 +3076,13 @@ mod tests {
         assert!(!is_hex_like_tx_hash("0x"));
         assert!(!is_hex_like_tx_hash("0xzz99"));
         assert!(!is_hex_like_tx_hash("tx_hash=0xabc123"));
+    }
+
+    #[test]
+    fn normalize_actor_or_signer_strips_controls_and_zero_width() {
+        let got = normalize_actor_or_signer(" \u{200B}alice\u{2060}\u{0007} bob ").expect("normalized");
+        assert_eq!(got, "alice bob");
+        assert!(normalize_actor_or_signer("\u{200B}\u{2060}\u{0000}").is_none());
     }
 
     #[test]
@@ -4225,7 +4288,7 @@ mod tests {
 
     #[test]
     fn read_log_tail_returns_recent_lines() {
-        let tmp = std::env::temp_dir().join(format!("trnm-rpc-tail-test-{}.log", now_ms()));
+        let tmp = unique_tmp_path("trnm-rpc-tail-test", "log");
         fs::write(
             &tmp,
             "line1
@@ -4241,7 +4304,7 @@ line2
 
     #[test]
     fn read_log_tail_keeps_first_line_when_tail_starts_on_newline_boundary() {
-        let tmp = std::env::temp_dir().join(format!("trnm-rpc-tail-boundary-{}.log", now_ms()));
+        let tmp = unique_tmp_path("trnm-rpc-tail-boundary", "log");
         let content = "line1\n[event] event_type=commit task_id=7 tx_id=11 block_height=3\n";
         fs::write(&tmp, content).expect("write temp log");
 
@@ -4255,7 +4318,7 @@ line2
 
     #[test]
     fn read_log_tail_tolerates_non_utf8_bytes() {
-        let tmp = std::env::temp_dir().join(format!("trnm-rpc-tail-binary-{}.log", now_ms()));
+        let tmp = unique_tmp_path("trnm-rpc-tail-binary", "log");
         let mut bytes = vec![0xff, 0xfe, b'\n'];
         bytes.extend_from_slice(b"[event] event_type=commit task_id=9 tx_id=1 block_height=1\n");
         fs::write(&tmp, bytes).expect("write temp binary log");
