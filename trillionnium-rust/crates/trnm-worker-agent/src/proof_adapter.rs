@@ -337,6 +337,13 @@ mod tests {
             .parse_response("{\"output_text\":\"ok\",\"provider_request_id\":\"pr-1\"}")
             .expect_err("adapter label is required");
         assert_eq!(missing_adapter, "tee-receipt-missing-adapter-label");
+
+        let mismatched_adapter = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-1\",\"adapter\":\"zk-receipt\"}",
+            )
+            .expect_err("mismatched adapter label must fail closed");
+        assert_eq!(mismatched_adapter, "tee-receipt-missing-adapter-label");
     }
 
     #[test]
@@ -396,6 +403,13 @@ mod tests {
             .parse_response("{\"output_text\":\"ok\",\"provider_request_id\":\"pr-zk-3\"}")
             .expect_err("adapter label is required");
         assert_eq!(missing_adapter, "zk-receipt-missing-adapter-label");
+
+        let mismatched_adapter = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-zk-4\",\"adapter\":\"tee-receipt\"}",
+            )
+            .expect_err("mismatched adapter label must fail closed");
+        assert_eq!(mismatched_adapter, "zk-receipt-missing-adapter-label");
     }
 
     #[test]
