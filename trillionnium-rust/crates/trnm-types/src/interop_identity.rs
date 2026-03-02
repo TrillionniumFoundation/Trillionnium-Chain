@@ -2141,6 +2141,27 @@ mod tests {
     }
 
     #[test]
+    fn settlement_evidence_path_avoids_windows_reserved_device_names_with_unicode_space_padding() {
+        let rec = SettlementRecord {
+            settlement_id: 53_0,
+            route: BridgeRoute {
+                route_id: "\u{2003}CON\u{2002}".to_string(),
+                source_chain: "\u{00A0}nul\u{00A0}".to_string(),
+                target_chain: "\u{2009}LPT9\u{2009}".to_string(),
+            },
+            status: SettlementStatus::Pending,
+            at_height: 2_229,
+            settlement_tx: None,
+            revert_reason: None,
+        };
+
+        assert_eq!(
+            rec.evidence_path(),
+            "settlements/CON_/nul_/LPT9_/530/pending@2229"
+        );
+    }
+
+    #[test]
     fn settlement_evidence_path_trims_trailing_dot_or_space_for_non_reserved_segments() {
         let rec = SettlementRecord {
             settlement_id: 53_1,
