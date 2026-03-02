@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# NOTE: legacy filename kept for compatibility with existing CI hooks.
+# Actual contract: internal privacy_tier MUST provide provenance_index.
+
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 GATE="$ROOT/scripts/v2/d1_task_model_metadata_schema_gate.sh"
 
