@@ -71,10 +71,16 @@ impl VerifierRegistry {
                     || ch == '&'
                     || ch == '('
                     || ch == ')'
+                    || ch == '（'
+                    || ch == '）'
                     || ch == '['
                     || ch == ']'
+                    || ch == '［'
+                    || ch == '］'
                     || ch == '{'
                     || ch == '}'
+                    || ch == '｛'
+                    || ch == '｝'
                     || ch == '<'
                     || ch == '>'
                     || ch == '"'
@@ -1319,6 +1325,9 @@ mod tests {
         assert!(registry.is_registered_kind("TEE、RECEIPT"));
         assert!(registry.is_registered_kind("TEE。RECEIPT"));
         assert!(registry.is_registered_kind("TEE；RECEIPT"));
+        assert!(registry.is_registered_kind("TEE（RECEIPT）"));
+        assert!(registry.is_registered_kind("TEE［RECEIPT］"));
+        assert!(registry.is_registered_kind("TEE｛RECEIPT｝"));
         assert!(registry.is_registered_kind("ZK＿PROOF"));
     }
 
