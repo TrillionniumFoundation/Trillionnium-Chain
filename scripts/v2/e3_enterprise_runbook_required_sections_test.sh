@@ -31,7 +31,9 @@ rollback_guard_phrases=(
   "标记接入状态为 \`reverted\`"
   "根因标签"
   "--root-cause-tag"
+  "trnm-onboard rollback"
   "rollback --org-id <org_id>"
+  "--env <env>"
 )
 
 evidence_guard_phrases=(
