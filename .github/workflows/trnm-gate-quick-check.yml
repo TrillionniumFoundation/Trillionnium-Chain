@@ -88,6 +88,10 @@ jobs:
         run: |
           ./scripts/v2/d1_task_model_metadata_schema_reject_uppercase_did_method_test.sh
 
+      - name: D1 schema rejects leading-space producer_did regression
+        run: |
+          ./scripts/v2/d1_task_model_metadata_schema_reject_producer_did_leading_space_test.sh
+
       - name: D1 schema rejects short model_digest regression
         run: |
           ./scripts/v2/d1_task_model_metadata_schema_reject_model_digest_short_length_test.sh
