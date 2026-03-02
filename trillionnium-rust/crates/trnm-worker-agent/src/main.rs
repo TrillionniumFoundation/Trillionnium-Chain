@@ -1390,6 +1390,10 @@ fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
         | "a2ahttpv"
         | "a2aoverhttp"
         | "a2aoverhttpv"
+        | "a2awebsocket"
+        | "a2awebsocketv"
+        | "a2aoverwebsocket"
+        | "a2aoverwebsocketv"
         | "agent2agenthttp"
         | "agent2agenthttpv"
         | "agenttoagenthttp"
@@ -1398,6 +1402,22 @@ fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
         | "agent2agentprotocolhttpv"
         | "agenttoagentprotocolhttp"
         | "agenttoagentprotocolhttpv"
+        | "agent2agentwebsocket"
+        | "agent2agentwebsocketv"
+        | "agent2agentoverwebsocket"
+        | "agent2agentoverwebsocketv"
+        | "agenttoagentwebsocket"
+        | "agenttoagentwebsocketv"
+        | "agenttoagentoverwebsocket"
+        | "agenttoagentoverwebsocketv"
+        | "agent2agentprotocolwebsocket"
+        | "agent2agentprotocolwebsocketv"
+        | "agent2agentprotocoloverwebsocket"
+        | "agent2agentprotocoloverwebsocketv"
+        | "agenttoagentprotocolwebsocket"
+        | "agenttoagentprotocolwebsocketv"
+        | "agenttoagentprotocoloverwebsocket"
+        | "agenttoagentprotocoloverwebsocketv"
         | "agent2agentstreamablehttp"
         | "agent2agentstreamablehttpv"
         | "agent2agentstreamablehttpv1"
@@ -1441,10 +1461,18 @@ fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
         | "googleagent2agenthttpv"
         | "googleagent2agentoverhttp"
         | "googleagent2agentoverhttpv"
+        | "googleagent2agentwebsocket"
+        | "googleagent2agentwebsocketv"
+        | "googleagent2agentoverwebsocket"
+        | "googleagent2agentoverwebsocketv"
         | "googleagenttoagenthttp"
         | "googleagenttoagenthttpv"
         | "googleagenttoagentoverhttp"
-        | "googleagenttoagentoverhttpv" => Some("a2a".to_string()),
+        | "googleagenttoagentoverhttpv"
+        | "googleagenttoagentwebsocket"
+        | "googleagenttoagentwebsocketv"
+        | "googleagenttoagentoverwebsocket"
+        | "googleagenttoagentoverwebsocketv" => Some("a2a".to_string()),
         _ => None,
     }
 }
@@ -3878,6 +3906,26 @@ mod tests {
         );
         assert_eq!(
             normalized_agent_protocol(Some("Google Agent-to-Agent Protocol v27")).as_deref(),
+            Some("a2a")
+        );
+    }
+
+    #[test]
+    fn normalized_agent_protocol_accepts_websocket_aliases() {
+        assert_eq!(
+            normalized_agent_protocol(Some("MCP over WebSocket v2")).as_deref(),
+            Some("mcp")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("OpenAI MCP WebSocket v3")).as_deref(),
+            Some("mcp")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("A2A over WebSocket v2")).as_deref(),
+            Some("a2a")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Google Agent-to-Agent WebSocket v4")).as_deref(),
             Some("a2a")
         );
     }

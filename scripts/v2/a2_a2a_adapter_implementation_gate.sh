@@ -13,5 +13,6 @@ cargo test -p trnm-worker-agent attach_llm_provenance_rejects_non_ascii_or_invis
 cargo test -p trnm-worker-agent export_audit_index_normalizes_agent_protocol_aliases_to_canonical_keys
 cargo test -p trnm-worker-agent normalized_agent_protocol_accepts_future_version_suffixes
 cargo test -p trnm-worker-agent normalized_agent_protocol_accepts_punctuation_variants_for_aliases
+cargo test -p trnm-worker-agent normalized_agent_protocol_accepts_websocket_aliases
 
 echo "[A2][PASS] A2A adapter implementation gate"
