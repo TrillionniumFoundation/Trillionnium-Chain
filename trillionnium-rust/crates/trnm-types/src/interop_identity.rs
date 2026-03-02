@@ -2386,7 +2386,35 @@ mod tests {
             }
         ));
 
+        let err = reg
+            .register_did(
+                "did:trnm:agent\u{2060}joiner".to_string(),
+                "org:lane2-admin".to_string(),
+                10,
+            )
+            .unwrap_err();
+        assert!(matches!(
+            err,
+            InteropIdentityError::InvalidIdentityValue { field: "did", .. }
+        ));
+
+        let err = reg
+            .register_did(
+                "did:trnm:agent-bom-controller".to_string(),
+                "org:lane2\u{FEFF}admin".to_string(),
+                10,
+            )
+            .unwrap_err();
+        assert!(matches!(
+            err,
+            InteropIdentityError::InvalidIdentityValue {
+                field: "controller",
+                ..
+            }
+        ));
+
         assert!(reg.did("did:trnm:agent-safe").is_none());
+        assert!(reg.did("did:trnm:agent-bom-controller").is_none());
         assert!(reg.audit_trail().is_empty());
     }
 
