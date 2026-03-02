@@ -239,6 +239,7 @@ struct AuditExportIndex {
     version: u8,
     total_records: usize,
     by_task_id: BTreeMap<String, Vec<usize>>,
+    by_status: BTreeMap<String, Vec<usize>>,
     by_provider: BTreeMap<String, Vec<usize>>,
     by_model: BTreeMap<String, Vec<usize>>,
     by_agent_protocol: BTreeMap<String, Vec<usize>>,
@@ -248,6 +249,7 @@ struct AuditExportIndex {
 
 fn build_audit_export_index(exports: &[EnterpriseAuditExportRecord]) -> AuditExportIndex {
     let mut by_task_id = BTreeMap::<String, Vec<usize>>::new();
+    let mut by_status = BTreeMap::<String, Vec<usize>>::new();
     let mut by_provider = BTreeMap::<String, Vec<usize>>::new();
     let mut by_model = BTreeMap::<String, Vec<usize>>::new();
     let mut by_agent_protocol = BTreeMap::<String, Vec<usize>>::new();
@@ -259,6 +261,10 @@ fn build_audit_export_index(exports: &[EnterpriseAuditExportRecord]) -> AuditExp
             .entry(rec.task_id.to_string())
             .or_default()
             .push(idx);
+
+        if let Some(status) = normalized_optional_field(Some(rec.status.as_str())) {
+            by_status.entry(status.to_ascii_lowercase()).or_default().push(idx);
+        }
 
         if let Some(provider) = normalized_optional_field(rec.provider.as_deref()) {
             by_provider.entry(provider).or_default().push(idx);
@@ -296,6 +302,7 @@ fn build_audit_export_index(exports: &[EnterpriseAuditExportRecord]) -> AuditExp
         version: 1,
         total_records: exports.len(),
         by_task_id,
+        by_status,
         by_provider,
         by_model,
         by_agent_protocol,
@@ -2455,7 +2462,7 @@ mod tests {
 
 
     #[test]
-    fn export_audit_index_contains_task_provider_model_and_fingerprint_keys() {
+    fn export_audit_index_contains_task_status_provider_model_and_fingerprint_keys() {
         let rows = vec![
             EnterpriseAuditExportRecord {
                 request_id: "r1".to_string(),
@@ -2489,6 +2496,8 @@ mod tests {
         assert_eq!(index.total_records, 2);
         assert_eq!(index.by_task_id.get("7001"), Some(&vec![0]));
         assert_eq!(index.by_task_id.get("7002"), Some(&vec![1]));
+        assert_eq!(index.by_status.get("reveal_submitted"), Some(&vec![0]));
+        assert_eq!(index.by_status.get("rejected"), Some(&vec![1]));
         assert_eq!(index.by_provider.get("openai"), Some(&vec![0, 1]));
         assert_eq!(index.by_model.get("gpt-5.3-codex"), Some(&vec![0, 1]));
         assert_eq!(index.by_agent_protocol.get("a2a"), Some(&vec![0, 1]));
