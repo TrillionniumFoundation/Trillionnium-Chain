@@ -13,6 +13,7 @@
 - 请求必须携带：`X-TRNM-Schema-Version`（当前固定 `mcp-adapter-v1`）；版本不匹配按 `400 schema_invalid` fail-closed
 - 重试安全：`Idempotency-Key`（同一键值 + 同一请求体必须幂等返回同一 `task_id`）
 - 请求完整性：`X-TRNM-Body-SHA256`（请求体 SHA-256 小写 hex）；与服务端重算不一致按 `400 schema_invalid` fail-closed
+- 请求内容类型：`Content-Type: application/json`；非 JSON 请求按 `400 schema_invalid` fail-closed
 
 ## 3. 最小请求/响应语义
 
