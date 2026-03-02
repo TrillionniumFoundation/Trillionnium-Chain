@@ -1,4 +1,5 @@
 mod interop_identity;
+mod market_reputation;
 mod relay;
 mod request_status;
 mod transcript;
@@ -9,6 +10,9 @@ use serde::{Deserialize, Serialize};
 pub use interop_identity::{
     AuditAction, AuditEvent, BridgeRoute, CapabilityScope, CapabilityToken, DidRecord,
     IdentityRegistry, InteropIdentityError, SettlementRecord, SettlementStatus,
+};
+pub use market_reputation::{
+    classify_reputation_tier, compute_reputation_score_bps, MarketReputationInput, ReputationTier,
 };
 pub use relay::{
     RelayAuthEnvelope, RelayAuthError, RelayAuthVerifier, RelayEnvelope, RelaySession,
