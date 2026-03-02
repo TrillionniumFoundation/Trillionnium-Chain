@@ -1623,11 +1623,12 @@ fn query_task_from_node_events(
         if let Some(mapped) = task_status_from_node_status(event.to_status.as_str()) {
             status = Some(mapped);
         }
-        if event.event_type == "accept"
+        if (event.event_type == "accept"
             || event.event_type == "commit"
-            || event.event_type == "reveal"
+            || event.event_type == "reveal")
+            && normalize_actor_or_signer(&event.actor).is_some()
         {
-            worker = Some(event.actor.clone());
+            worker = normalize_actor_or_signer(&event.actor);
         }
     }
 
@@ -1740,17 +1741,25 @@ fn main() -> Result<()> {
             let mut events = Vec::new();
 
             for e in node_events.iter().filter(|e| e.task_id == task_id) {
+                let Some(actor) = normalize_actor_or_signer(&e.actor) else {
+                    continue;
+                };
+                let signer = e
+                    .signer
+                    .as_deref()
+                    .and_then(normalize_actor_or_signer)
+                    .or_else(|| Some(actor.clone()));
                 events.push(EventQueryResponse {
                     event_type: e.event_type.clone(),
                     task_id,
                     from_status: e.from_status.clone(),
                     to_status: e.to_status.clone(),
-                    actor: e.actor.clone(),
+                    actor,
                     tx_id: e.tx_id,
                     block_height: e.block_height,
                     state_root: e.state_root.clone(),
                     ts_unix_ms: e.ts_unix_ms,
-                    signer: e.signer.clone().or_else(|| Some(e.actor.clone())),
+                    signer,
                     challenger: e.challenger.clone(),
                     tx_hash: e.tx_hash.clone(),
                     resolution_code: e.resolution_code.clone(),
@@ -1770,12 +1779,12 @@ fn main() -> Result<()> {
                     let Some(actor) = r.worker.as_deref().and_then(normalize_actor_or_signer) else {
                         continue;
                     };
-                    let kind = r.kind.as_str();
+                    let kind = r.kind.clone();
                     if kind == "reveal" && !has_commit {
                         // migration legality: reveal cannot be reconstructed before a trusted commit source
                         continue;
                     }
-                    let Some((from_status, to_status)) = (match kind {
+                    let Some((from_status, to_status)) = (match kind.as_str() {
                         "commit" => Some(("Assigned".to_string(), "Committed".to_string())),
                         "reveal" => Some(("Committed".to_string(), "Revealed".to_string())),
                         _ => None,
@@ -1793,7 +1802,7 @@ fn main() -> Result<()> {
                     });
 
                     events.push(EventQueryResponse {
-                        event_type: r.kind,
+                        event_type: kind.clone(),
                         task_id,
                         from_status,
                         to_status,
@@ -2140,6 +2149,14 @@ fn main() -> Result<()> {
 
             let mut events = Vec::new();
             for e in node_events.iter().filter(|e| e.task_id == rec.task_id) {
+                let Some(actor) = normalize_actor_or_signer(&e.actor) else {
+                    continue;
+                };
+                let signer = e
+                    .signer
+                    .as_deref()
+                    .and_then(normalize_actor_or_signer)
+                    .or_else(|| Some(actor.clone()));
                 let tx_hash = match e.event_type.as_str() {
                     "commit" => rec.commit_tx_hash.clone().or_else(|| e.tx_hash.clone()),
                     "reveal" => rec.reveal_tx_hash.clone().or_else(|| e.tx_hash.clone()),
@@ -2157,12 +2174,12 @@ fn main() -> Result<()> {
                     task_id: rec.task_id,
                     from_status: e.from_status.clone(),
                     to_status: e.to_status.clone(),
-                    actor: e.actor.clone(),
+                    actor,
                     tx_id: e.tx_id,
                     block_height: e.block_height,
                     state_root: e.state_root.clone(),
                     ts_unix_ms: e.ts_unix_ms,
-                    signer: e.signer.clone().or_else(|| Some(e.actor.clone())),
+                    signer,
                     challenger: e.challenger.clone(),
                     tx_hash,
                     resolution_code,
