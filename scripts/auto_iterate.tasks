@@ -415,3 +415,6 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-model-id-internal-whitespace-test" "./scripts/v2/d1_task_model_metadata_schema_reject_model_id_internal_whitespace_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-model-id-internal-whitespace-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-mcp-adapter-contract-response-content-type-fail-closed-test" "./scripts/v2/a1_mcp_adapter_contract_response_content_type_fail_closed_test.sh" "ci(gate): add a1-mcp-adapter-contract-response-content-type-fail-closed-test regression to quick-check"
