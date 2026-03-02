@@ -337,3 +337,9 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d3-
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e2-audit-report-generator-reject-uppercase-schema-test" "./scripts/v2/e2_audit_report_generator_reject_uppercase_schema_test.sh" "ci(gate): add e2-audit-report-generator-reject-uppercase-schema-test regression to quick-check"
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: web4-release-aggregate-gate" "./scripts/v2/web4_release_aggregate_gate.sh" "ci(gate): add web4-release-aggregate-gate regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: consensus-security-matrix-round-change-step-test" "./scripts/v2/consensus_security_matrix_round_change_step_test.sh" "ci(gate): add consensus-security-matrix-round-change-step-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: m2-policy-gate-nightly-signal-test" "./scripts/v2/m2_policy_gate_nightly_signal_test.sh" "ci(gate): add m2-policy-gate-nightly-signal-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: run-p1-integration-gate-i2-invocation-test" "./scripts/v2/run_p1_integration_gate_i2_invocation_test.sh" "ci(gate): add run-p1-integration-gate-i2-invocation-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: run-p1-integration-gate-x2-invocation-test" "./scripts/v2/run_p1_integration_gate_x2_invocation_test.sh" "ci(gate): add run-p1-integration-gate-x2-invocation-test regression to quick-check"

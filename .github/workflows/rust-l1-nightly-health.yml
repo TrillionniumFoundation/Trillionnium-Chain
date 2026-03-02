@@ -252,6 +252,12 @@ jobs:
           SKIP_GATES=1 AGENTS=${WORKER_MULTI_AGENTS:-5} \
             ./scripts/v2/worker_agent_mining_onboard.sh
 
+      - name: Lane XI gate chain (x2 settlement / i2 lifecycle / m2 policy)
+        run: |
+          set -euo pipefail
+          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+          ./scripts/v2/run_p1_integration_gate.sh
+
       - name: Executor spot-check regression gate (Original strategy)
         run: |
           set -euo pipefail
