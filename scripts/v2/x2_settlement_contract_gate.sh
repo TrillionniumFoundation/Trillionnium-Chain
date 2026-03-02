@@ -40,6 +40,10 @@ cargo test -p trnm-bridge-poc --test x2_settlement_loop \
   -- --nocapture
 
 cargo test -p trnm-bridge-poc --test x2_settlement_loop \
+  x3_prep_degraded_heartbeat_takes_precedence_over_timeout_confirm_failure \
+  -- --nocapture
+
+cargo test -p trnm-bridge-poc --test x2_settlement_loop \
   x3_prep_manual_degraded_blank_message_uses_stable_failure_fallback \
   -- --nocapture
 
