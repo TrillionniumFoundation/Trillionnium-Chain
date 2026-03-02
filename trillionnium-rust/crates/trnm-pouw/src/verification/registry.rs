@@ -71,6 +71,8 @@ impl VerifierRegistry {
                     || ch == '；'
                     || ch == '。'
                     || ch == '．'
+                    || ch == '·'
+                    || ch == '・'
                     || ch == '='
                     || ch == '@'
                     || ch == '#'
@@ -533,6 +535,29 @@ mod tests {
         }));
         assert_eq!(
             dot_registry.verify(&task, b"receipt"),
+            VerificationResult::Valid
+        );
+    }
+
+    #[test]
+    fn registry_register_collapses_middle_dot_delimited_legacy_receipt_aliases_for_lookup() {
+        let mut centered_dot_registry = VerifierRegistry::new();
+        centered_dot_registry.register(Arc::new(AlwaysValidVerifier {
+            kind: " TEE·RECEIPT ",
+        }));
+
+        let task = task_with_proof_type(ProofType::Tee);
+        assert_eq!(
+            centered_dot_registry.verify(&task, b"receipt"),
+            VerificationResult::Valid
+        );
+
+        let mut katakana_dot_registry = VerifierRegistry::new();
+        katakana_dot_registry.register(Arc::new(AlwaysValidVerifier {
+            kind: " TEE・RECEIPT ",
+        }));
+        assert_eq!(
+            katakana_dot_registry.verify(&task, b"receipt"),
             VerificationResult::Valid
         );
     }
