@@ -591,3 +591,43 @@ fn x3_prep_manual_degraded_blank_message_uses_stable_failure_fallback() {
         &BridgeStatus::Reverted("heartbeat degraded: unknown heartbeat failure".to_string())
     );
 }
+
+#[test]
+fn x3_prep_confirm_failure_reason_sanitizes_invisible_controls_for_replay_stability() {
+    let mut request = SettlementRequest::new(1, "0xconfirm-sanitize".to_string());
+    let token = operator_token();
+
+    let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 2));
+    let heartbeat = monitor.record_success(733, 732, 18);
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Failed {
+            reason: "target\u{200B}\nreceipt\t\u{202E}timeout".to_string(),
+        },
+    )
+    .unwrap();
+
+    assert_eq!(
+        out,
+        SettlementStep::Compensated {
+            reason: "settlement confirm failed: target receipt timeout".to_string(),
+            event: trnm_bridge_poc::x2_settlement_loop::SettlementEvent {
+                phase: "settlement_confirm_failed",
+                heartbeat_source_height: Some(733),
+                heartbeat_target_height: Some(732),
+                heartbeat_latency_ms: Some(18),
+                confirm_height: None,
+                confirm_reason: Some(
+                    "settlement confirm failed: target receipt timeout".to_string(),
+                ),
+            },
+        }
+    );
+    assert_eq!(
+        current_status(&request),
+        &BridgeStatus::Reverted("settlement confirm failed: target receipt timeout".to_string())
+    );
+}
