@@ -156,6 +156,8 @@ impl VerifierRegistry {
             "td report" | "tdreport" => "tee",
             "snp report" | "snpreport" => "tee",
             "snp quote" | "snpquote" => "tee",
+            "sev snp report" | "sevsnpreport" => "tee",
+            "sev snp quote" | "sevsnpquote" => "tee",
             "amd sev snp report" | "amdsevsnpreport" => "tee",
             "amd sev snp quote" | "amdsevsnpquote" => "tee",
             "intel tdx quote" | "inteltdxquote" => "tee",
@@ -1102,6 +1104,17 @@ mod tests {
     }
 
     #[test]
+    fn registry_register_collapses_sev_snp_quote_alias_for_lookup() {
+        let mut registry = VerifierRegistry::new();
+        registry.register(Arc::new(AlwaysValidVerifier {
+            kind: " SEV-SNP quote ",
+        }));
+
+        let task = task_with_proof_type(ProofType::Tee);
+        assert_eq!(registry.verify(&task, b"quote"), VerificationResult::Valid);
+    }
+
+    #[test]
     fn registry_register_collapses_tee_evidence_alias_for_lookup() {
         let mut registry = VerifierRegistry::new();
         registry.register(Arc::new(AlwaysValidVerifier {
@@ -1422,6 +1435,8 @@ mod tests {
         assert!(registry.is_registered_kind("TDX report"));
         assert!(registry.is_registered_kind("snp_report"));
         assert!(registry.is_registered_kind("snp_quote"));
+        assert!(registry.is_registered_kind("SEV-SNP report"));
+        assert!(registry.is_registered_kind("SEV-SNP quote"));
         assert!(registry.is_registered_kind("AMD SEV-SNP report"));
         assert!(registry.is_registered_kind("AMD SEV-SNP quote"));
     }
