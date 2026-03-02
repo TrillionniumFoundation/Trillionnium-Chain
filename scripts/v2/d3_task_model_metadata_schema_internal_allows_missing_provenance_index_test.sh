@@ -41,4 +41,4 @@ if ! grep -Fq "provenance.missing required field: provenance_index" <<<"$output"
   exit 1
 fi
 
-echo "[PASS] D3 schema gate rejects internal privacy tier without provenance_index"
+echo "[PASS] D3 schema gate rejects missing provenance_index for internal privacy tier"
