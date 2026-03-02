@@ -320,9 +320,15 @@ fn market_match_prefers_higher_reputation_when_weighted_score_is_better() {
             "run/market/reputation.json",
         )],
     );
-    assert!(match_out.contains("\"winner\":\"worker-high\""));
-    assert!(match_out.contains("\"match_policy\":\"price_reputation_weighted\""));
-    assert!(match_out.contains("\"winner_reputation\":200"));
+    let matched: Value = serde_json::from_str(match_out.trim()).expect("match output json");
+    assert_eq!(matched["winner"], "worker-high");
+    assert_eq!(matched["match_policy"], "price_reputation_weighted");
+    assert_eq!(matched["winner_reputation"], 200);
+    assert_eq!(matched["base_score"], 101000);
+    assert_eq!(matched["reputation_weight"], 20000);
+    assert_eq!(matched["penalty"], 0);
+    assert_eq!(matched["final_score"], 81000);
+    assert_eq!(matched["effective_score"], 81000);
 }
 
 #[test]

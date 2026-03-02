@@ -2297,8 +2297,23 @@ fn main() -> Result<()> {
                 .unwrap_or(0);
             let winner_reputation_effective =
                 clamp_reputation_for_market(winner_reputation, score_cfg);
-            let winner_score =
-                market_effective_score_with_config(winner.price, winner_reputation, score_cfg);
+            let base_score = winner.price.saturating_mul(score_cfg.price_weight);
+            let reputation_weight = if winner_reputation_effective > 0 {
+                (winner_reputation_effective as u128).saturating_mul(score_cfg.reputation_weight)
+            } else {
+                0
+            };
+            let penalty = if winner_reputation_effective < 0 {
+                (winner_reputation_effective.unsigned_abs() as u128)
+                    .saturating_mul(score_cfg.reputation_weight)
+            } else {
+                0
+            };
+            let winner_score = if winner_reputation_effective >= 0 {
+                base_score.saturating_sub(reputation_weight)
+            } else {
+                base_score.saturating_add(penalty)
+            };
 
             task.status = "matched".into();
             save_market_tasks(&tasks)?;
@@ -2312,6 +2327,10 @@ fn main() -> Result<()> {
                 "matched_bid_count": matched_bid_count,
                 "winner_reputation": winner_reputation,
                 "winner_reputation_effective": winner_reputation_effective,
+                "base_score": base_score,
+                "reputation_weight": reputation_weight,
+                "penalty": penalty,
+                "final_score": winner_score,
                 "effective_score": winner_score,
                 "match_config": MarketScoreConfigOutput::from(score_cfg),
             });
