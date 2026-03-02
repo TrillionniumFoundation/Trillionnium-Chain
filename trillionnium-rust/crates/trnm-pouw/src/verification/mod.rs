@@ -83,6 +83,8 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
         .split(|ch: char| {
             ch == '_'
                 || ch == '-'
+                || ch == '–'
+                || ch == '—'
                 || ch == '/'
                 || ch == '.'
                 || ch == ':'
@@ -337,6 +339,17 @@ mod tests {
         let fraud = VerificationReceipt::new(1, "fraud-proof", VerificationResult::Valid, "v", 1);
         let tee = VerificationReceipt::new(2, " tee-receipt ", VerificationResult::Valid, "v", 2);
         let zk = VerificationReceipt::new(3, "ZK-RECEIPT", VerificationResult::Valid, "v", 3);
+
+        assert_eq!(fraud.proof_type, "fraud");
+        assert_eq!(tee.proof_type, "tee");
+        assert_eq!(zk.proof_type, "zk");
+    }
+
+    #[test]
+    fn verification_receipt_new_collapses_unicode_dash_legacy_aliases_to_router_keys() {
+        let fraud = VerificationReceipt::new(1, "fraud—proof", VerificationResult::Valid, "v", 1);
+        let tee = VerificationReceipt::new(2, " tee–receipt ", VerificationResult::Valid, "v", 2);
+        let zk = VerificationReceipt::new(3, "ZK—RECEIPT", VerificationResult::Valid, "v", 3);
 
         assert_eq!(fraud.proof_type, "fraud");
         assert_eq!(tee.proof_type, "tee");
