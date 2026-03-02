@@ -20,11 +20,11 @@ def parse_kv(line):
     return data
 
 def parse_strict_int(value):
-    """Parses strict base-10 integers only (no underscores, spaces, or float notation)."""
+    """Parses canonical base-10 integers only (no plus sign, padding, underscores, spaces, or float notation)."""
     if value is None:
         raise ValueError("missing integer value")
     text = str(value)
-    if not re.fullmatch(r"-?[0-9]+", text):
+    if not re.fullmatch(r"(?:0|-?(?:[1-9][0-9]*))", text):
         raise ValueError(f"non-canonical integer: {text}")
     return int(text)
 
