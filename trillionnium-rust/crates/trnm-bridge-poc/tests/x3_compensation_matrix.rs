@@ -1,5 +1,5 @@
 use trnm_bridge_poc::bridge_status::{BridgeStatus, CapabilityToken, SettlementCapability, SettlementRequest};
-use trnm_bridge_poc::relay_heartbeat::HeartbeatOutcome;
+use trnm_bridge_poc::relay_heartbeat::{HeartbeatOutcome, RelayHeartbeat};
 use trnm_bridge_poc::x2_settlement_loop::{current_status, drive_minimal_settlement, SettlementConfirm, SettlementStep};
 
 fn operator_token() -> CapabilityToken {
@@ -145,6 +145,46 @@ fn x3_prep_stale_pending_degraded_empty_reason_uses_stable_fallback() {
 
     assert_eq!(reason, "heartbeat degraded: unknown heartbeat failure");
     assert_eq!(event.phase, "relay_heartbeat_degraded");
+    assert_eq!(event.confirm_height, None);
+    assert_eq!(event.confirm_reason, Some(reason.clone()));
+    assert_eq!(current_status(&request), &BridgeStatus::Reverted(reason));
+}
+
+#[test]
+fn x3_prep_stale_pending_degraded_with_heartbeat_metrics_prefers_compensation_path() {
+    let mut request = SettlementRequest::new(5, "0xmatrix-degraded-with-metrics".to_string());
+    let token = operator_token();
+
+    let degraded = HeartbeatOutcome {
+        heartbeat: Some(RelayHeartbeat {
+            source_height: 88,
+            target_height: 77,
+            latency_ms: 19,
+        }),
+        should_retry: false,
+        degraded: true,
+        message: "target relay timeout".to_string(),
+    };
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &degraded,
+        SettlementConfirm::Failed {
+            reason: "should be ignored once degraded".to_string(),
+        },
+    )
+    .unwrap();
+
+    let SettlementStep::Compensated { reason, event } = out else {
+        panic!("expected compensated branch");
+    };
+
+    assert_eq!(reason, "heartbeat degraded: target relay timeout");
+    assert_eq!(event.phase, "relay_heartbeat_degraded");
+    assert_eq!(event.heartbeat_source_height, Some(88));
+    assert_eq!(event.heartbeat_target_height, Some(77));
+    assert_eq!(event.heartbeat_latency_ms, Some(19));
     assert_eq!(event.confirm_height, None);
     assert_eq!(event.confirm_reason, Some(reason.clone()));
     assert_eq!(current_status(&request), &BridgeStatus::Reverted(reason));
