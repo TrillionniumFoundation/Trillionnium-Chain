@@ -105,6 +105,7 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
                 || ch == '，'
                 || ch == ';'
                 || ch == '；'
+                || ch == '。'
                 || ch == '='
                 || ch == '@'
                 || ch == '#'
@@ -553,6 +554,17 @@ mod tests {
         let tee = VerificationReceipt::new(1, "TEE，RECEIPT", VerificationResult::Valid, "v", 1);
         let zk = VerificationReceipt::new(2, "ZK；PROOF", VerificationResult::Valid, "v", 2);
 
+        assert_eq!(tee.proof_type, "tee");
+        assert_eq!(zk.proof_type, "zk");
+    }
+
+    #[test]
+    fn verification_receipt_new_collapses_cjk_full_stop_aliases_to_router_keys() {
+        let fraud = VerificationReceipt::new(1, "FRAUD。RECEIPT", VerificationResult::Valid, "v", 1);
+        let tee = VerificationReceipt::new(2, "TEE。PROOF", VerificationResult::Valid, "v", 2);
+        let zk = VerificationReceipt::new(3, "ZK。RECEIPT", VerificationResult::Valid, "v", 3);
+
+        assert_eq!(fraud.proof_type, "fraud");
         assert_eq!(tee.proof_type, "tee");
         assert_eq!(zk.proof_type, "zk");
     }
