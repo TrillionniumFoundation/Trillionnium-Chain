@@ -12,6 +12,7 @@
 - 请求必须携带：`X-TRNM-Timestamp`（RFC3339 UTC），允许时钟偏差 ≤ 300 秒；超窗请求按 `401 capability_invalid` fail-closed
 - 请求必须携带：`X-TRNM-Schema-Version`（当前固定 `mcp-adapter-v1`）；版本不匹配按 `400 schema_invalid` fail-closed
 - 重试安全：`Idempotency-Key`（同一键值 + 同一请求体必须幂等返回同一 `task_id`）
+- 防重放：`X-TRNM-Nonce`（每个 `request_id` 必须唯一；重复 nonce 按 `409 replay_detected` fail-closed）
 - 请求完整性：`X-TRNM-Body-SHA256`（请求体 SHA-256 小写 hex）；与服务端重算不一致按 `400 schema_invalid` fail-closed
 - 请求内容类型：`Content-Type: application/json`；非 JSON 请求按 `400 schema_invalid` fail-closed
 
@@ -42,6 +43,7 @@
 - 策略拒绝：`403 policy_denied`
 - 上游执行失败：`502 upstream_execution_failed`
 - 幂等键冲突（同键不同请求体）：`409 idempotency_conflict`（fail-closed，不得覆盖既有 `request_id -> task_id` 映射）
+- 防重放冲突：`409 replay_detected`（同一 `request_id` 出现重复 `X-TRNM-Nonce` 必须拒绝）
 
 错误响应最小字段：`request_id` / `error.code` / `error.message`。
 
