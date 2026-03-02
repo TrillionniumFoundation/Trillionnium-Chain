@@ -136,6 +136,7 @@ impl VerifierRegistry {
             "tee attestation" | "teeattestation" => "tee",
             "tee attestation v1" | "teeattestationv1" | "tee attestation v 1" => "tee",
             "tee attestation v2" | "teeattestationv2" | "tee attestation v 2" => "tee",
+            "tee attestation v3" | "teeattestationv3" | "tee attestation v 3" => "tee",
             "remote attestation" | "remoteattestation" => "tee",
             "attestation report" | "attestationreport" => "tee",
             "tee attestation report" | "teeattestationreport" => "tee",
@@ -1358,6 +1359,7 @@ mod tests {
         assert!(registry.is_registered_kind("tee-proof-v2"));
         assert!(registry.is_registered_kind("TEE_RECEIPT_V_2"));
         assert!(registry.is_registered_kind("TEE_ATTESTATION_V2"));
+        assert!(registry.is_registered_kind("tee-attestation-v3"));
         assert!(registry.is_registered_kind("fraud receipt v2"));
         assert!(registry.is_registered_kind("fraud_receipt_v_1"));
         assert!(registry.is_registered_kind("fraud-proof-v3"));
