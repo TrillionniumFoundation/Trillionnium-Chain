@@ -119,6 +119,7 @@ impl VerifierRegistry {
             "zk attestation" | "zkattestation" => "zk",
             "zk evidence" | "zkevidence" => "zk",
             "zk snark" | "zksnark" => "zk",
+            "snark" => "zk",
             "zkp" | "zk p" => "zk",
             "zero knowledge" | "zeroknowledge" => "zk",
             "zero knowledge snark" | "zeroknowledgesnark" => "zk",
@@ -1173,6 +1174,7 @@ mod tests {
         assert!(registry.is_registered_kind(" zero-knowledge proof "));
         assert!(registry.is_registered_kind("ZKP"));
         assert!(registry.is_registered_kind("zk-p"));
+        assert!(registry.is_registered_kind("SNARK"));
         assert!(registry.is_registered_kind("zk cert"));
         assert!(registry.is_registered_kind("Zero Knowledge Certificate"));
         assert!(registry.is_registered_kind("Zero Knowledge Attestation"));
