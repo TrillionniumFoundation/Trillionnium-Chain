@@ -38,6 +38,7 @@ guard_phrases=(
   "X-TRNM-Timestamp"
   "X-TRNM-Schema-Version"
   "X-TRNM-Body-SHA256"
+  "SHA-256 小写 hex"
   "Content-Type: application/json"
   "Content-Type: application/json; charset=utf-8"
   "Authorization: Bearer <capability_token>"
