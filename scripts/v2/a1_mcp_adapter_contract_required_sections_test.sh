@@ -31,6 +31,8 @@ guard_phrases=(
   "provenance_fingerprint"
   "Idempotency-Key"
   "X-TRNM-Timestamp"
+  "X-TRNM-Schema-Version"
+  "mcp-adapter-v1"
   "时钟偏差 ≤ 300 秒"
   "协议版本与适配器传输层记录"
   "trnm-agent mcp-adapter rollback"
