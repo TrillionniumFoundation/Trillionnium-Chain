@@ -9,7 +9,7 @@ trap 'rm -f "$tmp_file"' EXIT
 
 cat >"$tmp_file" <<'JSON'
 {
-  "task_id": "task-20260302-0001",
+  "task_id": "task-20260302-0005",
   "task_type": "inference",
   "input_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
   "model": {
@@ -19,13 +19,16 @@ cat >"$tmp_file" <<'JSON'
   },
   "provenance": {
     "producer_did": "did:trnm:org:lane-dae",
-    "produced_at": "2026-03-02T03:21:45.123456Z",
-    "provenance_index": "prov:lane-dae:task-20260302-0001",
+    "produced_at": "2026-03-02T01:15:00.123456Z",
+    "provenance_index": "prov:lane-dae:task-20260302-0005",
     "privacy_tier": "internal"
   }
 }
 JSON
 
-METADATA_FILE="$tmp_file" "$GATE"
+if ! METADATA_FILE="$tmp_file" "$GATE"; then
+  echo "[FAIL] expected schema gate pass for produced_at with 6-digit fractional seconds" >&2
+  exit 1
+fi
 
-echo "[PASS] D1 schema gate accepts provenance produced_at with 6-digit fractional seconds"
+echo "[PASS] D1 schema gate accepts produced_at with 6-digit fractional seconds"
