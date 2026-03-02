@@ -783,8 +783,17 @@ fn market_reputation_file() -> PathBuf {
 }
 
 fn normalize_market_worker_key(raw: &str) -> Option<String> {
-    let normalized = raw
+    let sanitized = raw
         .trim()
+        .chars()
+        // M2 micro-hardening: treat invisible joiner/ZWSP/BOM separators as whitespace
+        // so reputation aliases cannot bypass normalization with hidden code points.
+        .map(|ch| match ch {
+            '\u{200B}' | '\u{200C}' | '\u{200D}' | '\u{FEFF}' => ' ',
+            _ => ch,
+        })
+        .collect::<String>();
+    let normalized = sanitized
         .to_ascii_lowercase()
         .split_whitespace()
         .collect::<Vec<_>>()
@@ -2468,6 +2477,36 @@ mod tests {
                 let rep = load_market_reputation();
                 assert_eq!(rep.get("worker a"), Some(&25));
                 assert_eq!(rep.get("worker b"), Some(&-3));
+                assert_eq!(rep.len(), 2);
+            },
+        );
+
+        let _ = fs::remove_file(path);
+    }
+
+    #[test]
+    fn market_reputation_loader_collapses_zero_width_aliases() {
+        let mut path = std::env::temp_dir();
+        path.push(format!(
+            "trnm_rpc_market_reputation_zero_width_{}_{}.json",
+            std::process::id(),
+            now_ms()
+        ));
+        fs::write(
+            &path,
+            "{\"worker\\u200ba\": 9, \"worker a\": 31, \"worker\\u200db\": -2}",
+        )
+        .expect("write zero-width reputation fixture");
+
+        with_market_path_env(
+            &[(
+                MARKET_REPUTATION_FILE_ENV,
+                Some(path.to_string_lossy().as_ref()),
+            )],
+            || {
+                let rep = load_market_reputation();
+                assert_eq!(rep.get("worker a"), Some(&31));
+                assert_eq!(rep.get("worker b"), Some(&-2));
                 assert_eq!(rep.len(), 2);
             },
         );
