@@ -1331,6 +1331,16 @@ mod tests {
     }
 
     #[test]
+    fn registry_is_registered_kind_accepts_tdx_and_sev_snp_aliases() {
+        let registry = VerifierRegistry::with_builtin_verifiers();
+
+        assert!(registry.is_registered_kind("tdx_quote"));
+        assert!(registry.is_registered_kind("TDX report"));
+        assert!(registry.is_registered_kind("snp_report"));
+        assert!(registry.is_registered_kind("AMD SEV-SNP report"));
+    }
+
+    #[test]
     fn registry_is_registered_kind_accepts_fullwidth_punctuation_aliases() {
         let registry = VerifierRegistry::with_builtin_verifiers();
 
