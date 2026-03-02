@@ -16,9 +16,18 @@ impl ProofVerifier for FraudVerifier {
         // V1 micro-patch: require explicit fraud-proof envelope marker.
         // Accept case-insensitive variants to tolerate client casing drift.
         // Accepted examples: "FRAUD:...", "fraud:...".
-        let has_prefix = proof_data.len() >= 6 && proof_data[..6].eq_ignore_ascii_case(b"FRAUD:");
+        // Also accept an optional UTF-8 BOM prefix for legacy clients.
+        let envelope_offset = if proof_data.starts_with(&[0xef, 0xbb, 0xbf]) {
+            3
+        } else {
+            0
+        };
+        let has_prefix = proof_data
+            .get(envelope_offset..envelope_offset + 6)
+            .map(|prefix| prefix.eq_ignore_ascii_case(b"FRAUD:"))
+            .unwrap_or(false);
         let has_non_whitespace_body = proof_data
-            .get(6..)
+            .get(envelope_offset + 6..)
             .map(|suffix| {
                 std::str::from_utf8(suffix)
                     .map(|s| s.chars().any(|c| !c.is_whitespace() && !c.is_control()))
@@ -110,6 +119,28 @@ mod tests {
             verifier.verify_proof(&task, b"FrAuD:challenge-proof"),
             VerificationResult::Valid
         );
+    }
+
+    #[test]
+    fn fraud_verifier_accepts_utf8_bom_prefixed_envelope() {
+        let verifier = FraudVerifier;
+        let task = mock_task();
+
+        assert_eq!(
+            verifier.verify_proof(&task, "\u{feff}FRAUD:challenge-proof".as_bytes()),
+            VerificationResult::Valid
+        );
+    }
+
+    #[test]
+    fn fraud_verifier_rejects_utf8_bom_prefixed_envelope_with_blank_body() {
+        let verifier = FraudVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(&task, "\u{feff}FRAUD: \n\t".as_bytes()),
+            VerificationResult::Invalid(msg) if msg.contains("envelope")
+        ));
     }
 
     #[test]
