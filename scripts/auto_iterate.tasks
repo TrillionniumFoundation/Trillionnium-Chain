@@ -427,3 +427,6 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-accept-model-version-minlen-test" "./scripts/v2/d1_task_model_metadata_schema_accept_model_version_minlen_test.sh" "ci(gate): add d1-task-model-metadata-schema-accept-model-version-minlen-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e2-audit-report-generator-accept-single-quoted-schema-token-test" "./scripts/v2/e2_audit_report_generator_accept_single_quoted_schema_token_test.sh" "ci(gate): add e2-audit-report-generator-accept-single-quoted-schema-token-test regression to quick-check"
