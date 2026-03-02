@@ -381,3 +381,7 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: v1-
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-task-type-tab-test" "./scripts/v2/d1_task_model_metadata_schema_reject_task_type_tab_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-task-type-tab-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-task-type-slash-test" "./scripts/v2/d1_task_model_metadata_schema_reject_task_type_slash_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-task-type-slash-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e2-audit-report-generator-ignore-zero-padded-numeric-delta-test" "./scripts/v2/e2_audit_report_generator_ignore_zero_padded_numeric_delta_test.sh" "ci(gate): add e2-audit-report-generator-ignore-zero-padded-numeric-delta-test regression to quick-check"
