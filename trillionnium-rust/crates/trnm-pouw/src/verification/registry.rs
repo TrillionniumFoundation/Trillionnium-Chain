@@ -226,6 +226,7 @@ impl VerifierRegistry {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::verification::normalize_receipt_proof_type;
     use std::sync::Arc;
     use trnm_types::{TaskObject, TaskStatus};
 
@@ -809,7 +810,10 @@ mod tests {
         }));
 
         let task = task_with_proof_type(ProofType::Fraud);
-        assert_eq!(registry.verify(&task, b"challenge"), VerificationResult::Valid);
+        assert_eq!(
+            registry.verify(&task, b"challenge"),
+            VerificationResult::Valid
+        );
     }
 
     #[test]
@@ -820,24 +824,16 @@ mod tests {
         }));
 
         let task = task_with_proof_type(ProofType::Tee);
-        assert_eq!(
-            registry.verify(&task, b"proof"),
-            VerificationResult::Valid
-        );
+        assert_eq!(registry.verify(&task, b"proof"), VerificationResult::Valid);
     }
 
     #[test]
     fn registry_register_collapses_zk_proof_alias_for_lookup() {
         let mut registry = VerifierRegistry::new();
-        registry.register(Arc::new(AlwaysValidVerifier {
-            kind: " ZK-PROOF ",
-        }));
+        registry.register(Arc::new(AlwaysValidVerifier { kind: " ZK-PROOF " }));
 
         let task = task_with_proof_type(ProofType::Zk);
-        assert_eq!(
-            registry.verify(&task, b"proof"),
-            VerificationResult::Valid
-        );
+        assert_eq!(registry.verify(&task, b"proof"), VerificationResult::Valid);
     }
 
     #[test]
@@ -848,10 +844,7 @@ mod tests {
         }));
 
         let task = task_with_proof_type(ProofType::Zk);
-        assert_eq!(
-            registry.verify(&task, b"proof"),
-            VerificationResult::Valid
-        );
+        assert_eq!(registry.verify(&task, b"proof"), VerificationResult::Valid);
     }
 
     #[test]
@@ -1125,9 +1118,7 @@ mod tests {
     #[test]
     fn registry_register_collapses_zk_snark_alias_for_lookup() {
         let mut registry = VerifierRegistry::new();
-        registry.register(Arc::new(AlwaysValidVerifier {
-            kind: " ZK-SNARK ",
-        }));
+        registry.register(Arc::new(AlwaysValidVerifier { kind: " ZK-SNARK " }));
 
         let task = task_with_proof_type(ProofType::Zk);
         assert_eq!(registry.verify(&task, b"proof"), VerificationResult::Valid);
@@ -1152,7 +1143,10 @@ mod tests {
         }));
 
         let task = task_with_proof_type(ProofType::Zk);
-        assert_eq!(registry.verify(&task, b"evidence"), VerificationResult::Valid);
+        assert_eq!(
+            registry.verify(&task, b"evidence"),
+            VerificationResult::Valid
+        );
     }
 
     #[test]
@@ -1344,6 +1338,26 @@ mod tests {
         assert!(registry.is_registered_kind("zk receipt v1"));
         assert!(registry.is_registered_kind("zk-receipt-v-2"));
         assert!(registry.is_registered_kind("ZK_PROOF_V2"));
+    }
+
+    #[test]
+    fn registry_aliases_stay_aligned_with_receipt_normalization_contract() {
+        let aliases = [
+            "TEE_RECEIPT_V1",
+            "Intel® SGX™ DCAP Quote",
+            "AMD SEV-SNP report",
+            "zk-receipt-v-2",
+            "zero knowledge certificate",
+            "fraud_receipt_v_1",
+        ];
+
+        for alias in aliases {
+            assert_eq!(
+                VerifierRegistry::normalize_key(alias),
+                Some(normalize_receipt_proof_type(alias)),
+                "alias normalization drifted for {alias}"
+            );
+        }
     }
 
     #[test]
