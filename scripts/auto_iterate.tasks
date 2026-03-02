@@ -388,3 +388,6 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e2-
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-task-type-leading-space-test" "./scripts/v2/d1_task_model_metadata_schema_reject_task_type_leading_space_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-task-type-leading-space-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a2-a2a-adapter-contract-required-sections-test" "./scripts/v2/a2_a2a_adapter_contract_required_sections_test.sh" "ci(gate): add a2-a2a-adapter-contract-required-sections-test regression to quick-check"
