@@ -908,6 +908,22 @@ fn market_worker_tie_break_key(raw: &str) -> String {
     normalize_market_worker_key(raw).unwrap_or_else(|| raw.trim().to_ascii_lowercase())
 }
 
+fn normalize_market_status_key(raw: &str) -> String {
+    raw.trim()
+        .chars()
+        .map(|ch| match ch {
+            // treat invisible separators as whitespace so status checks remain stable
+            // against BOM/ZWSP drift from append-only JSONL producers.
+            '\u{200B}' | '\u{200C}' | '\u{200D}' | '\u{2060}' | '\u{FEFF}' => ' ',
+            _ => ch,
+        })
+        .collect::<String>()
+        .to_ascii_lowercase()
+        .split_whitespace()
+        .collect::<Vec<_>>()
+        .join(" ")
+}
+
 fn parse_market_reputation_value(value: &serde_json::Value) -> Option<i64> {
     value
         .as_i64()
@@ -2348,11 +2364,11 @@ fn main() -> Result<()> {
             let task_count = tasks.len();
             let open_task_count = tasks
                 .iter()
-                .filter(|t| t.status.trim().eq_ignore_ascii_case("open"))
+                .filter(|t| normalize_market_status_key(&t.status) == "open")
                 .count();
             let matched_task_count = tasks
                 .iter()
-                .filter(|t| t.status.trim().eq_ignore_ascii_case("matched"))
+                .filter(|t| normalize_market_status_key(&t.status) == "matched")
                 .count();
             let bid_count = bids.len();
             let unmatched_task_count = task_count.saturating_sub(matched_task_count);

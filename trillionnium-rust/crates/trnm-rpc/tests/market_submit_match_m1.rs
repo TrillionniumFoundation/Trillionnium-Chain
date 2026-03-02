@@ -628,6 +628,10 @@ fn market_report_counts_status_case_and_whitespace_variants() {
             r#"{"task_id":31002,"creator":"bob","bounty":100,"description":"norm","status":"MATCHED\t","created_at_unix_ms":2}"#,
             "\n",
             r#"{"task_id":31003,"creator":"carol","bounty":100,"description":"norm","status":"closed","created_at_unix_ms":3}"#,
+            "\n",
+            r#"{"task_id":31004,"creator":"dave","bounty":100,"description":"norm","status":"\uFEFFopen","created_at_unix_ms":4}"#,
+            "\n",
+            r#"{"task_id":31005,"creator":"erin","bounty":100,"description":"norm","status":"matched\u200B","created_at_unix_ms":5}"#,
             "\n"
         ),
     )
@@ -645,10 +649,10 @@ fn market_report_counts_status_case_and_whitespace_variants() {
     );
     let report: Value = serde_json::from_str(&out).expect("market report json");
 
-    assert_eq!(report["task_count"], 3);
-    assert_eq!(report["open_task_count"], 1);
-    assert_eq!(report["matched_task_count"], 1);
-    assert_eq!(report["unmatched_task_count"], 2);
+    assert_eq!(report["task_count"], 5);
+    assert_eq!(report["open_task_count"], 2);
+    assert_eq!(report["matched_task_count"], 2);
+    assert_eq!(report["unmatched_task_count"], 3);
 
     let _ = fs::remove_file(tasks);
     let _ = fs::remove_file(bids);
