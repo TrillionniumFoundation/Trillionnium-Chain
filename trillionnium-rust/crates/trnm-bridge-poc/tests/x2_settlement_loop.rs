@@ -708,3 +708,40 @@ fn x3_prep_confirm_failure_reason_sanitizes_bom_and_word_joiner_controls_for_rep
         &BridgeStatus::Reverted("settlement confirm failed: target receipt timeout".to_string())
     );
 }
+
+#[test]
+fn x3_prep_confirm_failure_reason_unicode_over_cap_truncates_once_with_terminal_ellipsis() {
+    let mut request = SettlementRequest::new(1, "0xconfirm-unicode-cap".to_string());
+    let token = operator_token();
+
+    let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 2));
+    let heartbeat = monitor.record_success(736, 735, 19);
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Failed {
+            reason: format!("目标链确认超时{}", "测".repeat(200)),
+        },
+    )
+    .unwrap();
+
+    let SettlementStep::Compensated { reason, event } = out else {
+        panic!("expected compensated branch");
+    };
+
+    assert!(reason.starts_with("settlement confirm failed: 目标链确认超时"));
+    assert!(reason.ends_with('…'));
+    assert_eq!(reason.matches('…').count(), 1);
+    assert!(reason.chars().count() <= 188);
+
+    assert_eq!(event.phase, "settlement_confirm_failed");
+    assert_eq!(event.heartbeat_source_height, Some(736));
+    assert_eq!(event.heartbeat_target_height, Some(735));
+    assert_eq!(event.heartbeat_latency_ms, Some(19));
+    assert_eq!(event.confirm_height, None);
+    assert_eq!(event.confirm_reason.as_deref(), Some(reason.as_str()));
+
+    assert_eq!(current_status(&request), &BridgeStatus::Reverted(reason));
+}
