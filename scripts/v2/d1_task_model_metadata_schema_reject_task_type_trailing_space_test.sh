@@ -36,7 +36,7 @@ if [[ "$rc" -eq 0 ]]; then
   exit 1
 fi
 
-if ! grep -Fq "task_type does not match pattern ^[^\\s]{1,64}$" <<<"$output"; then
+if ! grep -Fq "task_type does not match pattern ^[A-Za-z0-9:_-]{1,64}$" <<<"$output"; then
   echo "[FAIL] missing explicit no-whitespace pattern error for task_type" >&2
   echo "$output" >&2
   exit 1

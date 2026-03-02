@@ -22,7 +22,7 @@
       "type": "string",
       "minLength": 1,
       "maxLength": 64,
-      "pattern": "^[^\\s]{1,64}$"
+      "pattern": "^[A-Za-z0-9:_-]{1,64}$"
     },
     "input_hash": {
       "type": "string",

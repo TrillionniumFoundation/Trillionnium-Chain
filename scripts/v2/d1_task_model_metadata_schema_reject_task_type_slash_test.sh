@@ -9,8 +9,8 @@ trap 'rm -f "$tmp_file"' EXIT
 
 cat >"$tmp_file" <<'JSON'
 {
-  "task_id": "task-20260301-0017",
-  "task_type": "    ",
+  "task_id": "task-20260302-0002",
+  "task_type": "inference/v1",
   "input_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
   "model": {
     "model_id": "gpt-5.3-codex",
@@ -19,8 +19,8 @@ cat >"$tmp_file" <<'JSON'
   },
   "provenance": {
     "producer_did": "did:trnm:org:lane-dae",
-    "produced_at": "2026-03-01T06:10:00Z",
-    "provenance_index": "prov:lane-dae:task-20260301-0017",
+    "produced_at": "2026-03-02T23:40:00Z",
+    "provenance_index": "prov:lane-dae:task-20260302-0002",
     "privacy_tier": "internal"
   }
 }
@@ -32,14 +32,14 @@ rc=$?
 set -e
 
 if [[ "$rc" -eq 0 ]]; then
-  echo "[FAIL] expected non-zero exit for whitespace-only task_type" >&2
+  echo "[FAIL] expected non-zero exit for task_type containing slash" >&2
   exit 1
 fi
 
 if ! grep -Fq "task_type does not match pattern ^[A-Za-z0-9:_-]{1,64}$" <<<"$output"; then
-  echo "[FAIL] missing explicit edge-whitespace pattern error for task_type" >&2
+  echo "[FAIL] missing explicit task_type charset pattern error" >&2
   echo "$output" >&2
   exit 1
 fi
 
-echo "[PASS] D1 schema gate rejects whitespace-only task_type"
+echo "[PASS] D1 schema gate rejects task_type containing slash"
