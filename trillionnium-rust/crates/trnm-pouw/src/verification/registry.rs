@@ -53,6 +53,7 @@ impl VerifierRegistry {
                     || ch == '/'
                     || ch == '／'
                     || ch == '.'
+                    || ch == '．'
                     || ch == ':'
                     || ch == '：'
                     || ch == '+'
@@ -496,6 +497,15 @@ mod tests {
         }));
         assert_eq!(
             slash_registry.verify(&task, b"receipt"),
+            VerificationResult::Valid
+        );
+
+        let mut dot_registry = VerifierRegistry::new();
+        dot_registry.register(Arc::new(AlwaysValidVerifier {
+            kind: " TEE．RECEIPT ",
+        }));
+        assert_eq!(
+            dot_registry.verify(&task, b"receipt"),
             VerificationResult::Valid
         );
     }
