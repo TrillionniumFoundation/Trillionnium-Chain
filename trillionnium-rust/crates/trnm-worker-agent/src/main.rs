@@ -240,6 +240,7 @@ struct AuditExportIndex {
     total_records: usize,
     by_task_id: BTreeMap<String, Vec<usize>>,
     by_status: BTreeMap<String, Vec<usize>>,
+    by_status_phase: BTreeMap<String, Vec<usize>>,
     by_provider: BTreeMap<String, Vec<usize>>,
     by_model: BTreeMap<String, Vec<usize>>,
     by_agent_protocol: BTreeMap<String, Vec<usize>>,
@@ -247,9 +248,17 @@ struct AuditExportIndex {
     by_provenance_fingerprint: BTreeMap<String, Vec<usize>>,
 }
 
+fn audit_status_phase(status: &str) -> &'static str {
+    match status {
+        "completed" | "slashed" | "rejected" | "cancelled" => "terminal",
+        _ => "active",
+    }
+}
+
 fn build_audit_export_index(exports: &[EnterpriseAuditExportRecord]) -> AuditExportIndex {
     let mut by_task_id = BTreeMap::<String, Vec<usize>>::new();
     let mut by_status = BTreeMap::<String, Vec<usize>>::new();
+    let mut by_status_phase = BTreeMap::<String, Vec<usize>>::new();
     let mut by_provider = BTreeMap::<String, Vec<usize>>::new();
     let mut by_model = BTreeMap::<String, Vec<usize>>::new();
     let mut by_agent_protocol = BTreeMap::<String, Vec<usize>>::new();
@@ -263,7 +272,15 @@ fn build_audit_export_index(exports: &[EnterpriseAuditExportRecord]) -> AuditExp
             .push(idx);
 
         if let Some(status) = normalized_optional_field(Some(rec.status.as_str())) {
-            by_status.entry(status.to_ascii_lowercase()).or_default().push(idx);
+            let normalized_status = status.to_ascii_lowercase();
+            by_status
+                .entry(normalized_status.clone())
+                .or_default()
+                .push(idx);
+            by_status_phase
+                .entry(audit_status_phase(&normalized_status).to_string())
+                .or_default()
+                .push(idx);
         }
 
         if let Some(provider) = normalized_optional_field(rec.provider.as_deref()) {
@@ -303,6 +320,7 @@ fn build_audit_export_index(exports: &[EnterpriseAuditExportRecord]) -> AuditExp
         total_records: exports.len(),
         by_task_id,
         by_status,
+        by_status_phase,
         by_provider,
         by_model,
         by_agent_protocol,
@@ -2498,6 +2516,8 @@ mod tests {
         assert_eq!(index.by_task_id.get("7002"), Some(&vec![1]));
         assert_eq!(index.by_status.get("reveal_submitted"), Some(&vec![0]));
         assert_eq!(index.by_status.get("rejected"), Some(&vec![1]));
+        assert_eq!(index.by_status_phase.get("active"), Some(&vec![0]));
+        assert_eq!(index.by_status_phase.get("terminal"), Some(&vec![1]));
         assert_eq!(index.by_provider.get("openai"), Some(&vec![0, 1]));
         assert_eq!(index.by_model.get("gpt-5.3-codex"), Some(&vec![0, 1]));
         assert_eq!(index.by_agent_protocol.get("a2a"), Some(&vec![0, 1]));
