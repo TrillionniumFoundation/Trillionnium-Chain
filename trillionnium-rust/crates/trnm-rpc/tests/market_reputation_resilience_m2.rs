@@ -354,3 +354,86 @@ fn market_match_respects_reputation_clamp_for_m2_score_stability() {
     let _ = fs::remove_file(bids);
     let _ = fs::remove_file(reputation);
 }
+
+#[test]
+fn market_match_exposes_penalty_explainability_fields_for_negative_reputation_winner() {
+    let tasks = unique_market_path("market_tasks", "jsonl");
+    let bids = unique_market_path("market_bids", "jsonl");
+    let reputation = unique_market_path("market_reputation", "json");
+    fs::write(
+        &reputation,
+        r#"{
+  "worker-low": -3,
+  "worker-high": 0
+}"#,
+    )
+    .expect("write reputation fixture");
+
+    let tasks_env = tasks.to_string_lossy().into_owned();
+    let bids_env = bids.to_string_lossy().into_owned();
+    let reputation_env = reputation.to_string_lossy().into_owned();
+    let envs = [
+        ("TRNM_RPC_MARKET_TASKS_FILE", tasks_env.as_str()),
+        ("TRNM_RPC_MARKET_BIDS_FILE", bids_env.as_str()),
+        ("TRNM_RPC_MARKET_REPUTATION_FILE", reputation_env.as_str()),
+        ("TRNM_RPC_MARKET_PRICE_WEIGHT", "1"),
+        ("TRNM_RPC_MARKET_REPUTATION_WEIGHT", "2"),
+    ];
+
+    let create_out = run_ok_with_env(
+        &[
+            "market.create_task",
+            "--creator",
+            "alice",
+            "--bounty",
+            "120",
+            "--description",
+            "m2 explainability penalty fields",
+        ],
+        &envs,
+    );
+    let created: Value = serde_json::from_str(&create_out).expect("create task JSON");
+    let task_id = created["task_id"].as_u64().expect("task_id").to_string();
+
+    run_ok_with_env(
+        &[
+            "market.submit_bid",
+            "--task-id",
+            &task_id,
+            "--worker",
+            "worker-low",
+            "--price",
+            "80",
+        ],
+        &envs,
+    );
+
+    run_ok_with_env(
+        &[
+            "market.submit_bid",
+            "--task-id",
+            &task_id,
+            "--worker",
+            "worker-high",
+            "--price",
+            "100",
+        ],
+        &envs,
+    );
+
+    let match_out = run_ok_with_env(&["market.match_task", "--task-id", &task_id], &envs);
+    let matched: Value = serde_json::from_str(match_out.trim()).expect("match JSON");
+
+    assert_eq!(matched["winner"], "worker-low");
+    assert_eq!(matched["winner_reputation"], -3);
+    assert_eq!(matched["winner_reputation_effective"], -3);
+    assert_eq!(matched["base_score"], 80);
+    assert_eq!(matched["reputation_weight"], 0);
+    assert_eq!(matched["penalty"], 6);
+    assert_eq!(matched["final_score"], 86);
+    assert_eq!(matched["effective_score"], 86);
+
+    let _ = fs::remove_file(tasks);
+    let _ = fs::remove_file(bids);
+    let _ = fs::remove_file(reputation);
+}
