@@ -891,10 +891,11 @@ fn normalize_market_worker_key(raw: &str) -> Option<String> {
         .trim()
         .chars()
         // M2 micro-hardening: strip invisible joiner/ZWSP/word-joiner/BOM
-        // code points so alias normalization cannot be bypassed by hidden chars
-        // while preserving visible delimiters like '-' used by existing worker IDs.
+        // and soft-hyphen code points so alias normalization cannot be bypassed
+        // by hidden chars while preserving visible delimiters like '-' used by
+        // existing worker IDs.
         .filter_map(|ch| match ch {
-            '\u{200B}' | '\u{200C}' | '\u{200D}' | '\u{2060}' | '\u{FEFF}' => None,
+            '\u{00AD}' | '\u{200B}' | '\u{200C}' | '\u{200D}' | '\u{2060}' | '\u{FEFF}' => None,
             // Treat control bytes as whitespace separators so malformed/injected
             // worker IDs cannot avoid alias-collapse by embedding ASCII controls.
             _ if ch.is_control() => Some(' '),
@@ -3170,6 +3171,16 @@ mod tests {
         assert!(!is_hex_like_tx_hash("0x"));
         assert!(!is_hex_like_tx_hash("0xzz99"));
         assert!(!is_hex_like_tx_hash("tx_hash=0xabc123"));
+    }
+
+    #[test]
+    fn normalize_market_worker_key_strips_soft_hyphen_alias_spoofing() {
+        let got = normalize_market_worker_key("Worker\u{00AD} A").expect("normalized");
+        assert_eq!(got, "worker a");
+        assert_eq!(
+            normalize_market_worker_key("Worker A").expect("normalized"),
+            got
+        );
     }
 
     #[test]
