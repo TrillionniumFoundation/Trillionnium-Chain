@@ -29,3 +29,17 @@ fn did_revoked_at_creation_height_is_never_active() {
     assert!(!did.is_active_at(200));
     assert!(!did.is_active_at(201));
 }
+
+#[test]
+fn did_without_revocation_stays_active_from_creation_height_onward() {
+    let did = DidRecord {
+        did: "did:trnm:long-lived-agent".to_string(),
+        controller: "org:lane-xi".to_string(),
+        created_at: 300,
+        revoked_at: None,
+    };
+
+    assert!(!did.is_active_at(299));
+    assert!(did.is_active_at(300));
+    assert!(did.is_active_at(10_000));
+}
