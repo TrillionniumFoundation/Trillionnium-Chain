@@ -80,3 +80,34 @@ fn x3_prep_stale_pending_degraded_reason_at_cap_does_not_append_ellipsis() {
     assert_eq!(event.confirm_reason, Some(reason.clone()));
     assert_eq!(current_status(&request), &BridgeStatus::Reverted(reason));
 }
+
+#[test]
+fn x3_prep_stale_pending_degraded_empty_reason_uses_stable_fallback() {
+    let mut request = SettlementRequest::new(3, "0xmatrix-empty-fallback".to_string());
+    let token = operator_token();
+
+    let degraded = HeartbeatOutcome {
+        heartbeat: None,
+        should_retry: false,
+        degraded: true,
+        message: "\u{200B}\u{202E}\n\t\u{2066}".to_string(),
+    };
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &degraded,
+        SettlementConfirm::Confirmed { height: 4244 },
+    )
+    .unwrap();
+
+    let SettlementStep::Compensated { reason, event } = out else {
+        panic!("expected compensated branch");
+    };
+
+    assert_eq!(reason, "heartbeat degraded: unknown heartbeat failure");
+    assert_eq!(event.phase, "relay_heartbeat_degraded");
+    assert_eq!(event.confirm_height, None);
+    assert_eq!(event.confirm_reason, Some(reason.clone()));
+    assert_eq!(current_status(&request), &BridgeStatus::Reverted(reason));
+}
