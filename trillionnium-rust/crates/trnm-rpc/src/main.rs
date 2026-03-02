@@ -4016,4 +4016,26 @@ line2
         assert!(tail.contains("[event] event_type=commit task_id=9"));
         let _ = fs::remove_file(tmp);
     }
+
+    #[test]
+    fn load_latest_adapter_records_skips_invalid_jsonl_rows() {
+        let dir = run_root().join("run/worker-agent");
+        fs::create_dir_all(&dir).expect("create worker-agent dir");
+
+        let fixture = dir.join(format!(
+            "tx-adapter-99991231-{}.jsonl",
+            std::process::id()
+        ));
+        fs::write(
+            &fixture,
+            "not-json\n{\"ts\":1772074584,\"mode\":\"mock\",\"kind\":\"commit\",\"task_id\":101001,\"worker\":\"worker1\",\"commit_hash\":\"764c7baf3e1d3d325511cdc3d7836fbc1fa71a289bd669edcc4b55d6baaee9d7\",\"nonce\":101001,\"tx_hash\":\"7336b90d593ebe324cb4b3e41e7e9d86d1e2418f230cca0162ca1d539f32c2b9\",\"status\":\"accepted\",\"rc\":0}\n",
+        )
+        .expect("write adapter fixture");
+
+        let records = load_latest_adapter_records();
+        assert_eq!(records.len(), 1, "only valid JSONL rows should be loaded");
+        assert_eq!(records[0].task_id, 101001);
+
+        let _ = fs::remove_file(fixture);
+    }
 }
