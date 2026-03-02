@@ -89,6 +89,14 @@ fn normalize_adapter_value(value: &str) -> String {
         .to_ascii_lowercase()
 }
 
+fn has_non_empty_auditable_value(value: Option<&str>) -> bool {
+    value
+        .map(str::trim)
+        .map(|v| v.trim_start_matches('\u{feff}').trim())
+        .map(|v| !v.is_empty())
+        .unwrap_or(false)
+}
+
 fn parse_response_with_standard_rules(stdout: &str) -> Result<LlmAdapterResponse, String> {
     let normalized = stdout.trim_start().trim_start_matches('\u{feff}');
 
@@ -145,12 +153,7 @@ impl ProofAdapter for TeeReceiptProofAdapter {
     fn parse_response(&self, stdout: &str) -> Result<LlmAdapterResponse, String> {
         let parsed = parse_response_with_standard_rules(stdout)?;
 
-        let request_id_ok = parsed
-            .provider_request_id
-            .as_deref()
-            .map(str::trim)
-            .map(|v| !v.is_empty())
-            .unwrap_or(false);
+        let request_id_ok = has_non_empty_auditable_value(parsed.provider_request_id.as_deref());
         if !request_id_ok {
             return Err("tee-receipt-missing-provider-request-id".to_string());
         }
@@ -188,12 +191,7 @@ impl ProofAdapter for ZkReceiptProofAdapter {
     fn parse_response(&self, stdout: &str) -> Result<LlmAdapterResponse, String> {
         let parsed = parse_response_with_standard_rules(stdout)?;
 
-        let request_id_ok = parsed
-            .provider_request_id
-            .as_deref()
-            .map(str::trim)
-            .map(|v| !v.is_empty())
-            .unwrap_or(false);
+        let request_id_ok = has_non_empty_auditable_value(parsed.provider_request_id.as_deref());
         if !request_id_ok {
             return Err("zk-receipt-missing-provider-request-id".to_string());
         }
@@ -333,6 +331,16 @@ mod tests {
             "tee-receipt-missing-provider-request-id"
         );
 
+        let bom_only_request_id = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"\\uFEFF\",\"adapter\":\"tee-receipt\"}",
+            )
+            .expect_err("bom-only provider_request_id must fail closed");
+        assert_eq!(
+            bom_only_request_id,
+            "tee-receipt-missing-provider-request-id"
+        );
+
         let missing_adapter = adapter
             .parse_response("{\"output_text\":\"ok\",\"provider_request_id\":\"pr-1\"}")
             .expect_err("adapter label is required");
@@ -398,6 +406,13 @@ mod tests {
             .parse_response("{\"output_text\":\"ok\",\"adapter\":\"zk-receipt\"}")
             .expect_err("provider_request_id is required");
         assert_eq!(missing_request_id, "zk-receipt-missing-provider-request-id");
+
+        let bom_only_request_id = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"\\uFEFF\",\"adapter\":\"zk-receipt\"}",
+            )
+            .expect_err("bom-only provider_request_id must fail closed");
+        assert_eq!(bom_only_request_id, "zk-receipt-missing-provider-request-id");
 
         let missing_adapter = adapter
             .parse_response("{\"output_text\":\"ok\",\"provider_request_id\":\"pr-zk-3\"}")
