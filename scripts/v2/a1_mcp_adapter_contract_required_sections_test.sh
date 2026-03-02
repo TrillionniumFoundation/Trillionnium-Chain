@@ -30,6 +30,7 @@ guard_phrases=(
   "task_id"
   "provenance_fingerprint"
   "Idempotency-Key"
+  "X-TRNM-Request-ID"
   "X-TRNM-Timestamp"
   "X-TRNM-Schema-Version"
   "mcp-adapter-v1"
