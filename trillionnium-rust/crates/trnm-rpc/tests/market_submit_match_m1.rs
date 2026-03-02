@@ -795,3 +795,42 @@ fn market_match_uses_worker_key_as_final_tie_breaker_for_equal_scores() {
     let _ = fs::remove_file(tasks);
     let _ = fs::remove_file(bids);
 }
+
+#[test]
+fn market_match_prefers_earlier_bid_before_worker_key_tie_breaker() {
+    let _guard = test_lock().lock().expect("test lock");
+
+    let tasks = unique_market_fixture_path("market_match_created_at_tie_tasks", "jsonl");
+    let bids = unique_market_fixture_path("market_match_created_at_tie_bids", "jsonl");
+    fs::write(
+        &tasks,
+        r#"{"task_id":20002,"creator":"alice","bounty":100,"description":"created-at-tie-break","status":"open","created_at_unix_ms":1}"#,
+    )
+    .expect("write tasks fixture");
+    fs::write(
+        &bids,
+        concat!(
+            r#"{"task_id":20002,"worker":"worker-a","price":90,"created_at_unix_ms":1700000000005}"#,
+            "\n",
+            r#"{"task_id":20002,"worker":"worker-z","price":90,"created_at_unix_ms":1700000000000}"#,
+            "\n"
+        ),
+    )
+    .expect("write bids fixture");
+
+    let tasks_env = tasks.to_string_lossy().into_owned();
+    let bids_env = bids.to_string_lossy().into_owned();
+    let out = run_ok_with_env(
+        &["market.match_task", "--task-id", "20002"],
+        &[
+            ("TRNM_RPC_MARKET_TASKS_FILE", tasks_env.as_str()),
+            ("TRNM_RPC_MARKET_BIDS_FILE", bids_env.as_str()),
+        ],
+    );
+    let matched: Value = serde_json::from_str(out.trim()).expect("match output json");
+    assert_eq!(matched["winner"], "worker-z");
+    assert_eq!(matched["effective_score"], 90000);
+
+    let _ = fs::remove_file(tasks);
+    let _ = fs::remove_file(bids);
+}
