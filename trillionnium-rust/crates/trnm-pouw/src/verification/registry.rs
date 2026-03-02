@@ -73,6 +73,8 @@ impl VerifierRegistry {
                     || ch == '．'
                     || ch == '·'
                     || ch == '・'
+                    || ch == '∙'
+                    || ch == '⋅'
                     || ch == '='
                     || ch == '@'
                     || ch == '#'
@@ -558,6 +560,24 @@ mod tests {
         }));
         assert_eq!(
             katakana_dot_registry.verify(&task, b"receipt"),
+            VerificationResult::Valid
+        );
+
+        let mut bullet_operator_registry = VerifierRegistry::new();
+        bullet_operator_registry.register(Arc::new(AlwaysValidVerifier {
+            kind: " TEE∙RECEIPT ",
+        }));
+        assert_eq!(
+            bullet_operator_registry.verify(&task, b"receipt"),
+            VerificationResult::Valid
+        );
+
+        let mut dot_operator_registry = VerifierRegistry::new();
+        dot_operator_registry.register(Arc::new(AlwaysValidVerifier {
+            kind: " TEE⋅RECEIPT ",
+        }));
+        assert_eq!(
+            dot_operator_registry.verify(&task, b"receipt"),
             VerificationResult::Valid
         );
     }
