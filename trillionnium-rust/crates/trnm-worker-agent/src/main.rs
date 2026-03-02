@@ -4271,6 +4271,14 @@ mod tests {
     }
 
     #[test]
+    fn normalized_compliance_profile_rejects_newline_separators() {
+        assert_eq!(
+            normalized_compliance_profile(Some("cn\npii restricted")),
+            None
+        );
+    }
+
+    #[test]
     fn normalized_compliance_profile_rejects_adjacent_dot_separators() {
         assert_eq!(
             normalized_compliance_profile(Some("cn..pii.restricted")),
