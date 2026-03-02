@@ -118,6 +118,7 @@ impl VerifierRegistry {
             "fraud receipt" | "fraudreceipt" => "fraud",
             "fraud receipt v1" | "fraudreceiptv1" | "fraud receipt v 1" => "fraud",
             "fraud receipt v2" | "fraudreceiptv2" | "fraud receipt v 2" => "fraud",
+            "fraud receipt v3" | "fraudreceiptv3" | "fraud receipt v 3" => "fraud",
             "fraud challenge" | "fraudchallenge" => "fraud",
             "tee proof" | "teeproof" => "tee",
             "tee proof v1" | "teeproofv1" | "tee proof v 1" => "tee",
@@ -125,6 +126,7 @@ impl VerifierRegistry {
             "tee receipt" | "teereceipt" => "tee",
             "tee receipt v1" | "teereceiptv1" | "tee receipt v 1" => "tee",
             "tee receipt v2" | "teereceiptv2" | "tee receipt v 2" => "tee",
+            "tee receipt v3" | "teereceiptv3" | "tee receipt v 3" => "tee",
             "tee attestation" | "teeattestation" => "tee",
             "tee attestation v1" | "teeattestationv1" | "tee attestation v 1" => "tee",
             "tee attestation v2" | "teeattestationv2" | "tee attestation v 2" => "tee",
@@ -157,6 +159,7 @@ impl VerifierRegistry {
             "zk receipt" | "zkreceipt" => "zk",
             "zk receipt v1" | "zkreceiptv1" | "zk receipt v 1" => "zk",
             "zk receipt v2" | "zkreceiptv2" | "zk receipt v 2" => "zk",
+            "zk receipt v3" | "zkreceiptv3" | "zk receipt v 3" => "zk",
             "zk attestation" | "zkattestation" => "zk",
             "zk evidence" | "zkevidence" => "zk",
             "zk snark" | "zksnark" => "zk",
@@ -1337,6 +1340,9 @@ mod tests {
         assert!(registry.is_registered_kind("fraud_receipt_v_1"));
         assert!(registry.is_registered_kind("zk receipt v1"));
         assert!(registry.is_registered_kind("zk-receipt-v-2"));
+        assert!(registry.is_registered_kind("fraud_receipt_v3"));
+        assert!(registry.is_registered_kind("TEE_RECEIPT_V_3"));
+        assert!(registry.is_registered_kind("zk receipt v3"));
         assert!(registry.is_registered_kind("ZK_PROOF_V2"));
     }
 

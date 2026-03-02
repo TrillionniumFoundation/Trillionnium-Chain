@@ -151,8 +151,9 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
     match collapsed_tokens.as_str() {
         "fraud proof" | "fraud receipt" | "fraud proof v1" | "fraud proof v2"
         | "fraud proof v 1" | "fraud proof v 2" | "fraud receipt v1" | "fraud receipt v2"
-        | "fraud receipt v 1" | "fraud receipt v 2" | "fraudproof" | "fraudproofv1"
-        | "fraudproofv2" | "fraudreceipt" | "fraudreceiptv1" | "fraudreceiptv2" => {
+        | "fraud receipt v 1" | "fraud receipt v 2" | "fraud receipt v3" | "fraud receipt v 3"
+        | "fraudproof" | "fraudproofv1" | "fraudproofv2" | "fraudreceipt" | "fraudreceiptv1"
+        | "fraudreceiptv2" | "fraudreceiptv3" => {
             "fraud".to_string()
         }
         "tee proof"
@@ -163,8 +164,10 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
         | "tee proof v 2"
         | "tee receipt v1"
         | "tee receipt v2"
+        | "tee receipt v3"
         | "tee receipt v 1"
         | "tee receipt v 2"
+        | "tee receipt v 3"
         | "tee attestation"
         | "tee quote"
         | "tee report"
@@ -195,6 +198,7 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
         | "teereceipt"
         | "teereceiptv1"
         | "teereceiptv2"
+        | "teereceiptv3"
         | "teeattestation"
         | "teequote"
         | "teereport"
@@ -227,8 +231,10 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
         | "zk proof v 2"
         | "zk receipt v1"
         | "zk receipt v2"
+        | "zk receipt v3"
         | "zk receipt v 1"
         | "zk receipt v 2"
+        | "zk receipt v 3"
         | "zk attestation"
         | "zk evidence"
         | "zk snark"
@@ -246,6 +252,7 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
         | "zkreceipt"
         | "zkreceiptv1"
         | "zkreceiptv2"
+        | "zkreceiptv3"
         | "zkattestation"
         | "zkevidence"
         | "zksnark"
@@ -551,12 +558,15 @@ mod tests {
     #[test]
     fn verification_receipt_new_collapses_version_suffixed_legacy_aliases_to_router_keys() {
         let fraud =
-            VerificationReceipt::new(1, "fraud_receipt_v2", VerificationResult::Valid, "v", 1);
+            VerificationReceipt::new(1, "fraud_receipt_v3", VerificationResult::Valid, "v", 1);
         let tee = VerificationReceipt::new(2, "TEE-PROOF-V1", VerificationResult::Valid, "v", 2);
-        let zk = VerificationReceipt::new(3, "zk receipt v2", VerificationResult::Valid, "v", 3);
+        let tee_v3 =
+            VerificationReceipt::new(3, "tee receipt v 3", VerificationResult::Valid, "v", 3);
+        let zk = VerificationReceipt::new(4, "zk receipt v3", VerificationResult::Valid, "v", 4);
 
         assert_eq!(fraud.proof_type, "fraud");
         assert_eq!(tee.proof_type, "tee");
+        assert_eq!(tee_v3.proof_type, "tee");
         assert_eq!(zk.proof_type, "zk");
     }
 
