@@ -786,10 +786,11 @@ fn normalize_market_worker_key(raw: &str) -> Option<String> {
     let sanitized = raw
         .trim()
         .chars()
-        // M2 micro-hardening: treat invisible joiner/ZWSP/BOM separators as whitespace
-        // so reputation aliases cannot bypass normalization with hidden code points.
+        // M2 micro-hardening: treat invisible joiner/ZWSP/word-joiner/BOM separators
+        // as whitespace so reputation aliases cannot bypass normalization with hidden
+        // code points.
         .map(|ch| match ch {
-            '\u{200B}' | '\u{200C}' | '\u{200D}' | '\u{FEFF}' => ' ',
+            '\u{200B}' | '\u{200C}' | '\u{200D}' | '\u{2060}' | '\u{FEFF}' => ' ',
             _ => ch,
         })
         .collect::<String>();
@@ -2494,7 +2495,7 @@ mod tests {
         ));
         fs::write(
             &path,
-            "{\"worker\\u200ba\": 9, \"worker a\": 31, \"worker\\u200db\": -2}",
+            "{\"worker\\u200ba\": 9, \"worker a\": 31, \"worker\\u200db\": -2, \"worker\\u2060b\": 5}",
         )
         .expect("write zero-width reputation fixture");
 
@@ -2506,7 +2507,7 @@ mod tests {
             || {
                 let rep = load_market_reputation();
                 assert_eq!(rep.get("worker a"), Some(&31));
-                assert_eq!(rep.get("worker b"), Some(&-2));
+                assert_eq!(rep.get("worker b"), Some(&5));
                 assert_eq!(rep.len(), 2);
             },
         );
