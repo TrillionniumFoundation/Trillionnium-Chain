@@ -745,3 +745,39 @@ fn x3_prep_confirm_failure_reason_unicode_over_cap_truncates_once_with_terminal_
 
     assert_eq!(current_status(&request), &BridgeStatus::Reverted(reason));
 }
+
+#[test]
+fn x3_prep_degraded_heartbeat_reason_unicode_over_cap_truncates_once_with_terminal_ellipsis() {
+    let mut request = SettlementRequest::new(1, "0xheartbeat-unicode-cap".to_string());
+    let token = operator_token();
+
+    let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 2));
+    let _ = monitor.record_failure("first failure");
+    let degraded = monitor.record_failure(&format!("目标中继超时{}", "测".repeat(200)));
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &degraded,
+        SettlementConfirm::Confirmed { height: 737 },
+    )
+    .unwrap();
+
+    let SettlementStep::Compensated { reason, event } = out else {
+        panic!("expected compensated branch");
+    };
+
+    assert!(reason.starts_with("heartbeat degraded: 目标中继超时"));
+    assert!(reason.ends_with('…'));
+    assert_eq!(reason.matches('…').count(), 1);
+    assert!(reason.chars().count() <= 181);
+
+    assert_eq!(event.phase, "relay_heartbeat_degraded");
+    assert_eq!(event.heartbeat_source_height, None);
+    assert_eq!(event.heartbeat_target_height, None);
+    assert_eq!(event.heartbeat_latency_ms, None);
+    assert_eq!(event.confirm_height, None);
+    assert_eq!(event.confirm_reason.as_deref(), Some(reason.as_str()));
+
+    assert_eq!(current_status(&request), &BridgeStatus::Reverted(reason));
+}
