@@ -1554,6 +1554,7 @@ mod tests {
             "AMD SEV-SNP report",
             "tee‑proof‑v2",
             "RA_QUOTE_V2",
+            "TEEATTESTATIONV1",
             "zk-receipt-v-2",
             "zero knowledge certificate",
             "fraud_receipt_v_1",
