@@ -113,6 +113,26 @@ if grep -q 'm2_policy_gate_default_drift_guard_' "$OUT_PASS_FORMAT_VARIANT"; the
   exit 1
 fi
 
+# Case 2.6: tolerate namespaced test names emitted by some cargo harness formats.
+cat >"$M2_LOG" <<'EOF'
+running 1 test
+test market::policy::market_m2_policy_gate_guards_default_drift_to_min_boundaries ... ok
+
+test result: ok. 1 passed; 0 failed
+EOF
+
+OUT_PASS_NAMESPACED="$(./scripts/nightly_attribution.sh | sed -n 's/^\[OK\] nightly attribution: //p' | tail -n1)"
+[[ -f "$OUT_PASS_NAMESPACED" ]] || { echo "[FAIL] missing attribution output for namespaced pass case"; exit 1; }
+
+grep -q '^m2.policy_gate.assert_default_drift_guard=pass$' "$OUT_PASS_NAMESPACED" || {
+  echo "[FAIL] expected m2 default-drift guard to pass for namespaced output"; cat "$OUT_PASS_NAMESPACED"; exit 1;
+}
+if grep -q 'm2_policy_gate_default_drift_guard_' "$OUT_PASS_NAMESPACED"; then
+  echo "[FAIL] unexpected m2 default-drift failure reason in namespaced pass case"
+  cat "$OUT_PASS_NAMESPACED"
+  exit 1
+fi
+
 SUMMARY_PASS="run/health/nightly-summary-${TAG}-pass.md"
 NIGHTLY_ATTRIBUTION_FILE="$OUT_PASS" NIGHTLY_SUMMARY_OUT="$SUMMARY_PASS" \
   python3 ./scripts/render_nightly_summary.py >/dev/null
