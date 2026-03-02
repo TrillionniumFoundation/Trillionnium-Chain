@@ -5,10 +5,15 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$ROOT/trillionnium-rust"
 
 # X2 contract gate: require both finalize and compensation paths to stay green.
+# X3-prep contract guard: keep fallback compensation reason stable/replayable.
 cargo test -p trnm-bridge-poc --test x2_settlement_loop \
   x2_happy_path_heartbeat_ok_then_confirm_finalize \
   -- --nocapture
 
 cargo test -p trnm-bridge-poc --test x2_settlement_loop \
   x2_failure_path_confirm_failed_triggers_compensation_revert \
+  -- --nocapture
+
+cargo test -p trnm-bridge-poc --test x2_settlement_loop \
+  x3_prep_confirm_failure_blank_reason_falls_back_to_stable_contract_message \
   -- --nocapture
