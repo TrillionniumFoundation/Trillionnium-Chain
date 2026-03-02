@@ -41,6 +41,7 @@ impl VerifierRegistry {
                     || ch == '–'
                     || ch == '—'
                     || ch == '\u{00a0}'
+                    || ch == '\u{3000}'
                     || ch == '\u{200b}'
                     || ch == '\u{200c}'
                     || ch == '\u{200d}'
@@ -1272,6 +1273,14 @@ mod tests {
 
         assert!(registry.is_registered_kind("TEE\u{00A0}RECEIPT"));
         assert!(registry.is_registered_kind("zero\u{00A0}knowledge\u{00A0}proof"));
+    }
+
+    #[test]
+    fn registry_is_registered_kind_accepts_ideographic_space_separated_aliases() {
+        let registry = VerifierRegistry::with_builtin_verifiers();
+
+        assert!(registry.is_registered_kind("TEE\u{3000}RECEIPT"));
+        assert!(registry.is_registered_kind("zero\u{3000}knowledge\u{3000}proof"));
     }
 
     #[test]
