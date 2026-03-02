@@ -164,6 +164,7 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
         | "ra quote"
         | "dcap quote"
         | "intel dcap quote"
+        | "sgx dcap quote"
         | "intel sgx dcap quote"
         | "tdx quote"
         | "td quote"
@@ -189,6 +190,7 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
         | "raquote"
         | "dcapquote"
         | "inteldcapquote"
+        | "sgxdcapquote"
         | "intelsgxdcapquote"
         | "tdxquote"
         | "tdquote"
@@ -812,6 +814,8 @@ mod tests {
             "v",
             6,
         );
+        let tee_sgx_dcap =
+            VerificationReceipt::new(7, "SGX DCAP Quote", VerificationResult::Valid, "v", 7);
 
         assert_eq!(tee_fullwidth.proof_type, "tee");
         assert_eq!(tee_certificate.proof_type, "tee");
@@ -819,6 +823,7 @@ mod tests {
         assert_eq!(zk_certificate.proof_type, "zk");
         assert_eq!(tee_intel_sgx_dcap.proof_type, "tee");
         assert_eq!(tee_intel_sgx_dcap_marked.proof_type, "tee");
+        assert_eq!(tee_sgx_dcap.proof_type, "tee");
     }
 
     #[test]
