@@ -36,6 +36,7 @@ guard_phrases=(
   "X-TRNM-Schema-Version"
   "X-TRNM-Body-SHA256"
   "Content-Type: application/json"
+  "Content-Type: application/json; charset=utf-8"
   "Authorization: Bearer <capability_token>"
   "mcp-adapter-v1"
   "时钟偏差 ≤ 300 秒"
