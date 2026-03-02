@@ -82,12 +82,16 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
     let collapsed_tokens = lowered
         .split(|ch: char| {
             ch == '_'
+                || ch == '＿'
                 || ch == '-'
+                || ch == '－'
                 || ch == '–'
                 || ch == '—'
                 || ch == '/'
+                || ch == '／'
                 || ch == '.'
                 || ch == ':'
+                || ch == '：'
                 || ch == '+'
                 || ch == '|'
                 || ch == '\\'
@@ -124,9 +128,13 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
     match collapsed_tokens.as_str() {
         "fraud proof" | "fraud receipt" | "fraudproof" | "fraudreceipt" => "fraud".to_string(),
         "tee proof" | "tee receipt" | "tee attestation" | "tee quote" | "tee report"
-        | "sgx quote" | "tee evidence" | "remote attestation" | "teeproof"
-        | "teereceipt" | "teeattestation" | "teequote" | "teereport" | "sgxquote"
-        | "teeevidence" | "remoteattestation" => "tee".to_string(),
+        | "sgx quote" | "tee evidence" | "remote attestation" | "attestation report"
+        | "ra report" | "ra quote" | "dcap quote" | "intel dcap quote" | "tdx quote"
+        | "intel tdx quote" | "tee certificate" | "teeproof" | "teereceipt"
+        | "teeattestation" | "teequote" | "teereport" | "sgxquote" | "teeevidence"
+        | "remoteattestation" | "attestationreport" | "rareport" | "raquote"
+        | "dcapquote" | "inteldcapquote" | "tdxquote" | "inteltdxquote"
+        | "teecertificate" => "tee".to_string(),
         "zk proof"
         | "zk receipt"
         | "zk attestation"
@@ -135,6 +143,7 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
         | "zero knowledge"
         | "zero knowledge proof"
         | "zero knowledge receipt"
+        | "zero knowledge certificate"
         | "zero knowledge attestation"
         | "zero knowledge evidence"
         | "zero knowledge snark"
@@ -143,10 +152,13 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
         | "zkattestation"
         | "zkevidence"
         | "zksnark"
+        | "zkp"
+        | "zk p"
         | "zeroknowledge"
         | "zeroknowledgesnark"
         | "zeroknowledgeproof"
         | "zeroknowledgereceipt"
+        | "zeroknowledgecertificate"
         | "zeroknowledgeattestation"
         | "zeroknowledgeevidence" => "zk".to_string(),
         // Keep custom plugin keys delimiter-stable so receipt persistence aligns
@@ -626,5 +638,26 @@ mod tests {
         );
 
         assert_eq!(receipt.proof_type, "my custom proof");
+    }
+
+    #[test]
+    fn verification_receipt_new_supports_registry_parity_aliases_and_fullwidth_delimiters() {
+        let tee_fullwidth =
+            VerificationReceipt::new(1, "RA：QUOTE", VerificationResult::Valid, "v", 1);
+        let tee_certificate =
+            VerificationReceipt::new(2, "tee-certificate", VerificationResult::Valid, "v", 2);
+        let zk_short = VerificationReceipt::new(3, "zkp", VerificationResult::Valid, "v", 3);
+        let zk_certificate = VerificationReceipt::new(
+            4,
+            "zero knowledge certificate",
+            VerificationResult::Valid,
+            "v",
+            4,
+        );
+
+        assert_eq!(tee_fullwidth.proof_type, "tee");
+        assert_eq!(tee_certificate.proof_type, "tee");
+        assert_eq!(zk_short.proof_type, "zk");
+        assert_eq!(zk_certificate.proof_type, "zk");
     }
 }
