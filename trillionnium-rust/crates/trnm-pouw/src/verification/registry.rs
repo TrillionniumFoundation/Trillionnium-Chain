@@ -97,9 +97,11 @@ impl VerifierRegistry {
             "ra quote" | "raquote" => "tee",
             "tee quote" | "teequote" => "tee",
             "sgx quote" | "sgxquote" => "tee",
+            "sgx report" | "sgxreport" => "tee",
             "dcap quote" | "dcapquote" => "tee",
             "intel dcap quote" | "inteldcapquote" => "tee",
             "tdx quote" | "tdxquote" => "tee",
+            "tdx report" | "tdxreport" => "tee",
             "intel tdx quote" | "inteltdxquote" => "tee",
             "tee report" | "teereport" => "tee",
             "tee evidence" | "teeevidence" => "tee",
@@ -898,6 +900,28 @@ mod tests {
         let mut registry = VerifierRegistry::new();
         registry.register(Arc::new(AlwaysValidVerifier {
             kind: " tee_report ",
+        }));
+
+        let task = task_with_proof_type(ProofType::Tee);
+        assert_eq!(registry.verify(&task, b"report"), VerificationResult::Valid);
+    }
+
+    #[test]
+    fn registry_register_collapses_sgx_report_alias_for_lookup() {
+        let mut registry = VerifierRegistry::new();
+        registry.register(Arc::new(AlwaysValidVerifier {
+            kind: " SGX report ",
+        }));
+
+        let task = task_with_proof_type(ProofType::Tee);
+        assert_eq!(registry.verify(&task, b"report"), VerificationResult::Valid);
+    }
+
+    #[test]
+    fn registry_register_collapses_tdx_report_alias_for_lookup() {
+        let mut registry = VerifierRegistry::new();
+        registry.register(Arc::new(AlwaysValidVerifier {
+            kind: " tdx-report ",
         }));
 
         let task = task_with_proof_type(ProofType::Tee);
