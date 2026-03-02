@@ -147,7 +147,13 @@ impl VerifierRegistry {
             "attestation report" | "attestationreport" => "tee",
             "tee attestation report" | "teeattestationreport" => "tee",
             "ra report" | "rareport" => "tee",
+            "ra report v1" | "rareportv1" | "ra report v 1" => "tee",
+            "ra report v2" | "rareportv2" | "ra report v 2" => "tee",
+            "ra report v3" | "rareportv3" | "ra report v 3" => "tee",
             "ra quote" | "raquote" => "tee",
+            "ra quote v1" | "raquotev1" | "ra quote v 1" => "tee",
+            "ra quote v2" | "raquotev2" | "ra quote v 2" => "tee",
+            "ra quote v3" | "raquotev3" | "ra quote v 3" => "tee",
             "tee quote" | "teequote" => "tee",
             "sgx quote" | "sgxquote" => "tee",
             "enclave quote" | "enclavequote" => "tee",
@@ -1453,6 +1459,7 @@ mod tests {
             "TEE_RECEIPT_V1",
             "Intel® SGX™ DCAP Quote",
             "AMD SEV-SNP report",
+            "RA_QUOTE_V2",
             "zk-receipt-v-2",
             "zero knowledge certificate",
             "fraud_receipt_v_1",
@@ -1483,6 +1490,7 @@ mod tests {
         assert!(registry.is_registered_kind("attestation_report"));
         assert!(registry.is_registered_kind("TEE attestation report"));
         assert!(registry.is_registered_kind("RA report"));
+        assert!(registry.is_registered_kind("RA_QUOTE_V2"));
     }
 
     #[test]
