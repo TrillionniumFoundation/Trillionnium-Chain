@@ -102,8 +102,6 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
                 || ch == '\\'
                 || ch == ','
                 || ch == '，'
-                || ch == '、'
-                || ch == '。'
                 || ch == ';'
                 || ch == '；'
                 || ch == '='
@@ -539,18 +537,12 @@ mod tests {
     }
 
     #[test]
-    fn verification_receipt_new_collapses_fullwidth_cjk_punctuation_aliases() {
+    fn verification_receipt_new_collapses_fullwidth_comma_and_semicolon_aliases() {
         let tee = VerificationReceipt::new(1, "TEE，RECEIPT", VerificationResult::Valid, "v", 1);
         let zk = VerificationReceipt::new(2, "ZK；PROOF", VerificationResult::Valid, "v", 2);
-        let tee_ideographic_comma =
-            VerificationReceipt::new(3, "TEE、QUOTE", VerificationResult::Valid, "v", 3);
-        let zk_ideographic_full_stop =
-            VerificationReceipt::new(4, "ZK。ATTESTATION", VerificationResult::Valid, "v", 4);
 
         assert_eq!(tee.proof_type, "tee");
         assert_eq!(zk.proof_type, "zk");
-        assert_eq!(tee_ideographic_comma.proof_type, "tee");
-        assert_eq!(zk_ideographic_full_stop.proof_type, "zk");
     }
 
     #[test]
