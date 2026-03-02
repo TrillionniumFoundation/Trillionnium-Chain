@@ -38,6 +38,7 @@ rollback_guard_phrases=(
 
 evidence_guard_phrases=(
   "协议版本与适配器传输层记录"
+  "隐私分级策略快照（privacy_tier）"
 )
 
 for phrase in "${rollback_guard_phrases[@]}"; do
