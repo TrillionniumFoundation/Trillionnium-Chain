@@ -652,6 +652,40 @@ fn x2_degraded_heartbeat_reason_sanitizes_unicode_line_and_paragraph_separators(
 }
 
 #[test]
+fn x2_degraded_heartbeat_reason_sanitizes_bidi_isolate_controls() {
+    let mut request = SettlementRequest::new(19, "0x2234beef".to_string());
+    let token = operator_token();
+
+    let heartbeat = trnm_bridge_poc::relay_heartbeat::HeartbeatOutcome {
+        heartbeat: None,
+        should_retry: false,
+        degraded: true,
+        message: "relay\u{2066}quorum\u{2069}lost".to_string(),
+    };
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Confirmed { height: 606 },
+    )
+    .unwrap();
+
+    let compensated_reason = match out {
+        SettlementStep::Compensated { reason } => reason,
+        other => panic!("expected compensated step, got {other:?}"),
+    };
+
+    assert_eq!(compensated_reason, "heartbeat degraded: relay quorum lost");
+    assert!(!compensated_reason.contains('\u{2066}'));
+    assert!(!compensated_reason.contains('\u{2069}'));
+    assert_eq!(
+        current_status(&request),
+        &BridgeStatus::Reverted(compensated_reason)
+    );
+}
+
+#[test]
 fn x2_confirm_with_non_canonical_token_subject_is_rejected_and_preserves_pending() {
     let mut request = SettlementRequest::new(18, "0xfacef00d".to_string());
     let token = CapabilityToken {
