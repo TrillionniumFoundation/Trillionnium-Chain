@@ -334,6 +334,19 @@ fn build_audit_export_index(exports: &[EnterpriseAuditExportRecord]) -> AuditExp
     }
 }
 
+fn query_audit_export_by_task_id<'a>(
+    exports: &'a [EnterpriseAuditExportRecord],
+    index: &AuditExportIndex,
+    task_id: u64,
+) -> Vec<&'a EnterpriseAuditExportRecord> {
+    index
+        .by_task_id
+        .get(&task_id.to_string())
+        .into_iter()
+        .flat_map(|rows| rows.iter().filter_map(|idx| exports.get(*idx)))
+        .collect()
+}
+
 fn audit_export_index_path(output_file: &Path) -> PathBuf {
     PathBuf::from(format!("{}.index.json", output_file.display()))
 }
@@ -2863,6 +2876,46 @@ mod tests {
     }
 
     #[test]
+    fn query_audit_export_by_task_id_uses_index_offsets() {
+        let rows = vec![
+            EnterpriseAuditExportRecord {
+                request_id: "r1".to_string(),
+                task_id: 7001,
+                status: "reveal_submitted".to_string(),
+                provider_request_id: Some("p1".to_string()),
+                provenance_schema_version: Some("llm.v2".to_string()),
+                provenance_fingerprint: Some("fp-abc".to_string()),
+                provider: Some("openai".to_string()),
+                model: Some("gpt-5.3-codex".to_string()),
+                adapter: Some("mcp".to_string()),
+                agent_protocol: Some("a2a".to_string()),
+                compliance_profile: Some("cn-moderate".to_string()),
+            },
+            EnterpriseAuditExportRecord {
+                request_id: "r2".to_string(),
+                task_id: 7002,
+                status: "rejected".to_string(),
+                provider_request_id: Some("p2".to_string()),
+                provenance_schema_version: Some("llm.v2".to_string()),
+                provenance_fingerprint: Some("fp-def".to_string()),
+                provider: Some("openai".to_string()),
+                model: Some("gpt-5.3-codex".to_string()),
+                adapter: Some("mcp".to_string()),
+                agent_protocol: Some("a2a".to_string()),
+                compliance_profile: Some("cn-moderate".to_string()),
+            },
+        ];
+
+        let index = build_audit_export_index(&rows);
+        let hit = query_audit_export_by_task_id(&rows, &index, 7002);
+        assert_eq!(hit.len(), 1);
+        assert_eq!(hit[0].request_id, "r2");
+
+        let miss = query_audit_export_by_task_id(&rows, &index, 9999);
+        assert!(miss.is_empty());
+    }
+
+    #[test]
     fn attach_llm_provenance_persists_provider_request_id() {
         let mut rec = MessageIngressRecord {
             request_id: "r1".to_string(),
@@ -4646,6 +4699,9 @@ fn main() -> Result<()> {
             }
 
             let index = build_audit_export_index(&exports);
+            if let Some(first) = exports.first() {
+                let _ = query_audit_export_by_task_id(&exports, &index, first.task_id);
+            }
             let index_file = audit_export_index_path(&output_file);
             fs::write(&index_file, serde_json::to_string_pretty(&index)?)?;
 
