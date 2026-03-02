@@ -35,12 +35,16 @@ impl VerifierRegistry {
             .chars()
             .map(|ch| {
                 if ch == '_'
+                    || ch == '＿'
                     || ch == '-'
+                    || ch == '－'
                     || ch == '–'
                     || ch == '—'
                     || ch == '/'
+                    || ch == '／'
                     || ch == '.'
                     || ch == ':'
+                    || ch == '：'
                     || ch == '+'
                     || ch == '|'
                     || ch == '\\'
@@ -1148,6 +1152,16 @@ mod tests {
         assert!(registry.is_registered_kind("intel_tdx_quote"));
         assert!(registry.is_registered_kind("attestation_report"));
         assert!(registry.is_registered_kind("RA report"));
+    }
+
+    #[test]
+    fn registry_is_registered_kind_accepts_fullwidth_punctuation_aliases() {
+        let registry = VerifierRegistry::with_builtin_verifiers();
+
+        assert!(registry.is_registered_kind("TEE：RECEIPT"));
+        assert!(registry.is_registered_kind("TEE／QUOTE"));
+        assert!(registry.is_registered_kind("TEE－ATTESTATION"));
+        assert!(registry.is_registered_kind("ZK＿PROOF"));
     }
 
     #[test]
