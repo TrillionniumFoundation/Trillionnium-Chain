@@ -41,6 +41,8 @@ impl VerifierRegistry {
                     || ch == '–'
                     || ch == '—'
                     || ch == '−'
+                    || ch == '‐'
+                    || ch == '‑'
                     || ch == '\u{00a0}'
                     || ch == '\u{3000}'
                     || ch == '\u{200b}'
@@ -358,6 +360,20 @@ mod tests {
         let mut registry = VerifierRegistry::new();
         registry.register(Arc::new(AlwaysValidVerifier {
             kind: " tee—receipt ",
+        }));
+
+        let task = task_with_proof_type(ProofType::Tee);
+        assert_eq!(
+            registry.verify(&task, b"receipt"),
+            VerificationResult::Valid
+        );
+    }
+
+    #[test]
+    fn registry_register_collapses_non_breaking_hyphen_legacy_receipt_aliases_for_lookup() {
+        let mut registry = VerifierRegistry::new();
+        registry.register(Arc::new(AlwaysValidVerifier {
+            kind: " tee‑receipt ",
         }));
 
         let task = task_with_proof_type(ProofType::Tee);
