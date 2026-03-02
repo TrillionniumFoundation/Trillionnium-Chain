@@ -32,6 +32,7 @@ guard_phrases=(
   "Idempotency-Key"
   "X-TRNM-Timestamp"
   "X-TRNM-Schema-Version"
+  "X-TRNM-Nonce"
   "mcp-adapter-v1"
   "时钟偏差 ≤ 300 秒"
   "协议版本与适配器传输层记录"
