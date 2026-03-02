@@ -31,6 +31,8 @@ guard_phrases=(
   "provenance_fingerprint"
   "Idempotency-Key"
   "X-TRNM-Nonce"
+  "request_id + X-TRNM-Body-SHA256"
+  "同一 request_id 出现不同 nonce 也必须按 409 replay_detected fail-closed"
   "X-TRNM-Request-ID"
   "响应必须回显：X-TRNM-Schema-Version: mcp-adapter-v1"
   "响应必须回显：X-TRNM-Request-ID"

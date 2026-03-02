@@ -14,6 +14,7 @@
 - 请求必须携带：`X-TRNM-Schema-Version`（当前固定 `mcp-adapter-v1`）；版本不匹配按 `400 schema_invalid` fail-closed
 - 重试安全：`Idempotency-Key`（同一键值 + 同一请求体必须幂等返回同一 `task_id`）
 - 防重放：`X-TRNM-Nonce`（每个 `request_id` 必须唯一；重复 nonce 按 `409 replay_detected` fail-closed）
+- Nonce 绑定：`X-TRNM-Nonce` 必须绑定 `request_id + X-TRNM-Body-SHA256`；同一 request_id 出现不同 nonce 也必须按 409 replay_detected fail-closed
 - 请求完整性：`X-TRNM-Body-SHA256`（请求体 SHA-256 小写 hex）；与服务端重算不一致按 `400 schema_invalid` fail-closed
 - 请求内容类型：`Content-Type: application/json`；非 JSON 请求按 `400 schema_invalid` fail-closed
 - 响应内容类型：`Content-Type: application/json; charset=utf-8`；非 JSON 响应视为协议违约并按 `502 upstream_execution_failed` fail-closed
