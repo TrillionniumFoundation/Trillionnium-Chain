@@ -25,7 +25,7 @@ pub fn build_proof_adapter(name: &str) -> Result<Box<dyn ProofAdapter>, String> 
         }
         "zk-receipt" | "zk_receipt" | "zk-proof" | "zk_proof" => {
             Ok(Box::new(ZkReceiptProofAdapter))
-        },
+        }
         other => Err(format!("unsupported-proof-adapter:{other}")),
     }
 }
@@ -192,7 +192,10 @@ impl ProofAdapter for ZkReceiptProofAdapter {
             .map(str::trim)
             .map(|v| {
                 let normalized = v.to_ascii_lowercase();
-                normalized == "zk-receipt" || normalized == "zk_receipt" || normalized == "zk-proof"
+                normalized == "zk-receipt"
+                    || normalized == "zk_receipt"
+                    || normalized == "zk-proof"
+                    || normalized == "zk_proof"
             })
             .unwrap_or(false);
         if !adapter_ok {
@@ -322,7 +325,20 @@ mod tests {
                 "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-zk-2\",\"adapter\":\"zk-proof\"}",
             )
             .expect("zk proof alias should parse");
-        assert_eq!(zk_proof_alias.provider_request_id.as_deref(), Some("pr-zk-2"));
+        assert_eq!(
+            zk_proof_alias.provider_request_id.as_deref(),
+            Some("pr-zk-2")
+        );
+
+        let zk_proof_underscore_alias = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-zk-2b\",\"adapter\":\"ZK_PROOF\"}",
+            )
+            .expect("zk proof underscore alias should parse");
+        assert_eq!(
+            zk_proof_underscore_alias.provider_request_id.as_deref(),
+            Some("pr-zk-2b")
+        );
 
         let missing_request_id = adapter
             .parse_response("{\"output_text\":\"ok\",\"adapter\":\"zk-receipt\"}")
