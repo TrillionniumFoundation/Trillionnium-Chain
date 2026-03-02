@@ -409,3 +409,6 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e2-audit-report-generator-accept-llm-v2-alias-schema-test" "./scripts/v2/e2_audit_report_generator_accept_llm_v2_alias_schema_test.sh" "ci(gate): add e2-audit-report-generator-accept-llm-v2-alias-schema-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-mcp-adapter-contract-error-matrix-test" "./scripts/v2/a1_mcp_adapter_contract_error_matrix_test.sh" "ci(gate): add a1-mcp-adapter-contract-error-matrix-test regression to quick-check"
