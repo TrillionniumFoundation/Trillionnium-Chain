@@ -38,6 +38,7 @@ guard_phrases=(
   "时钟偏差 ≤ 300 秒"
   "协议版本与适配器传输层记录"
   "409 idempotency_conflict"
+  "同键不同请求体"
   "trnm-agent mcp-adapter rollback"
   "--root-cause-tag"
 )
