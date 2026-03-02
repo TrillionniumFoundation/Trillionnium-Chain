@@ -174,6 +174,9 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
         | "tee receipt v1"
         | "tee receipt v2"
         | "tee receipt v3"
+        | "tee receiptv1"
+        | "tee receiptv2"
+        | "tee receiptv3"
         | "tee receipt v 1"
         | "tee receipt v 2"
         | "tee receipt v 3"
@@ -787,6 +790,17 @@ mod tests {
         assert_eq!(fraud.proof_type, "fraud");
         assert_eq!(tee.proof_type, "tee");
         assert_eq!(zk.proof_type, "zk");
+    }
+
+    #[test]
+    fn verification_receipt_new_collapses_glued_tee_receipt_version_aliases_to_router_key() {
+        let v1 = VerificationReceipt::new(1, "TEE_RECEIPTV1", VerificationResult::Valid, "v", 1);
+        let v2 = VerificationReceipt::new(2, "tee receiptv2", VerificationResult::Valid, "v", 2);
+        let v3 = VerificationReceipt::new(3, "tee-receiptv3", VerificationResult::Valid, "v", 3);
+
+        assert_eq!(v1.proof_type, "tee");
+        assert_eq!(v2.proof_type, "tee");
+        assert_eq!(v3.proof_type, "tee");
     }
 
     #[test]
