@@ -88,6 +88,8 @@ impl VerifierRegistry {
             "tee receipt" | "teereceipt" => "tee",
             "tee attestation" | "teeattestation" => "tee",
             "remote attestation" | "remoteattestation" => "tee",
+            "attestation report" | "attestationreport" => "tee",
+            "ra report" | "rareport" => "tee",
             "tee quote" | "teequote" => "tee",
             "sgx quote" | "sgxquote" => "tee",
             "dcap quote" | "dcapquote" => "tee",
@@ -1128,6 +1130,8 @@ mod tests {
         assert!(registry.is_registered_kind("Intel DCAP Quote"));
         assert!(registry.is_registered_kind("sgx-quote"));
         assert!(registry.is_registered_kind("intel_tdx_quote"));
+        assert!(registry.is_registered_kind("attestation_report"));
+        assert!(registry.is_registered_kind("RA report"));
     }
 
     #[test]
