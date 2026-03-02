@@ -2380,11 +2380,17 @@ fn main() -> Result<()> {
                 .filter_map(|b| normalize_market_worker_key(&b.worker))
                 .collect::<std::collections::BTreeSet<_>>()
                 .len();
+            let known_task_ids = tasks
+                .iter()
+                .map(|t| t.task_id)
+                .collect::<std::collections::BTreeSet<_>>();
             let tasks_with_bids_count = bids
                 .iter()
                 .map(|b| b.task_id)
                 .collect::<std::collections::BTreeSet<_>>()
-                .len();
+                .into_iter()
+                .filter(|task_id| known_task_ids.contains(task_id))
+                .count();
             let bid_coverage_rate = if task_count == 0 {
                 0.0
             } else {
