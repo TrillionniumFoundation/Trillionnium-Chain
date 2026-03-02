@@ -383,7 +383,10 @@ impl CapabilityAuditQueryError {
             },
             Self::InvalidRegistryState { field, value } => RpcErrorResponse {
                 code: "INVALID_REGISTRY_STATE",
-                message: format!("non-canonical {} in identity registry snapshot: {}", field, value),
+                message: format!(
+                    "non-canonical {} in identity registry snapshot: {}",
+                    field, value
+                ),
             },
         }
     }
@@ -887,12 +890,15 @@ fn normalize_market_worker_key(raw: &str) -> Option<String> {
     let sanitized = raw
         .trim()
         .chars()
-        // M2 micro-hardening: treat invisible joiner/ZWSP/word-joiner/BOM separators
-        // as whitespace so reputation aliases cannot bypass normalization with hidden
-        // code points.
-        .map(|ch| match ch {
-            '\u{200B}' | '\u{200C}' | '\u{200D}' | '\u{2060}' | '\u{FEFF}' => ' ',
-            _ => ch,
+        // M2 micro-hardening: strip invisible joiner/ZWSP/word-joiner/BOM
+        // code points so alias normalization cannot be bypassed by hidden chars
+        // while preserving visible delimiters like '-' used by existing worker IDs.
+        .filter_map(|ch| match ch {
+            '\u{200B}' | '\u{200C}' | '\u{200D}' | '\u{2060}' | '\u{FEFF}' => None,
+            // Treat control bytes as whitespace separators so malformed/injected
+            // worker IDs cannot avoid alias-collapse by embedding ASCII controls.
+            _ if ch.is_control() => Some(' '),
+            _ => Some(ch),
         })
         .collect::<String>();
     let normalized = sanitized
@@ -1058,7 +1064,11 @@ fn clamp_reputation_for_market(reputation: i64, cfg: MarketScoreConfig) -> i64 {
     reputation.clamp(-cfg.reputation_clamp, cfg.reputation_clamp)
 }
 
-fn market_effective_score_with_config(price: u128, reputation: i64, cfg: MarketScoreConfig) -> u128 {
+fn market_effective_score_with_config(
+    price: u128,
+    reputation: i64,
+    cfg: MarketScoreConfig,
+) -> u128 {
     let rep = clamp_reputation_for_market(reputation, cfg);
     let base = price.saturating_mul(cfg.price_weight);
     if rep >= 0 {
@@ -1777,7 +1787,8 @@ fn main() -> Result<()> {
                     .into_iter()
                     .filter(|r| r.task_id == task_id && r.status == "accepted")
                 {
-                    let Some(actor) = r.worker.as_deref().and_then(normalize_actor_or_signer) else {
+                    let Some(actor) = r.worker.as_deref().and_then(normalize_actor_or_signer)
+                    else {
                         continue;
                     };
                     let kind = r.kind.clone();
@@ -2543,7 +2554,9 @@ mod tests {
     }
 
     fn lock_env<'a>() -> MutexGuard<'a, ()> {
-        env_lock().lock().unwrap_or_else(|poison| poison.into_inner())
+        env_lock()
+            .lock()
+            .unwrap_or_else(|poison| poison.into_inner())
     }
 
     fn unique_tmp_path(prefix: &str, ext: &str) -> PathBuf {
@@ -2814,6 +2827,36 @@ mod tests {
                 let rep = load_market_reputation();
                 assert_eq!(rep.get("worker a"), Some(&31));
                 assert_eq!(rep.get("worker b"), Some(&5));
+                assert_eq!(rep.len(), 2);
+            },
+        );
+
+        let _ = fs::remove_file(path);
+    }
+
+    #[test]
+    fn market_reputation_loader_collapses_control_character_aliases() {
+        let mut path = std::env::temp_dir();
+        path.push(format!(
+            "trnm_rpc_market_reputation_control_chars_{}_{}.json",
+            std::process::id(),
+            now_ms()
+        ));
+        fs::write(
+            &path,
+            "{\"worker\\u0007a\": 8, \"worker a\": 17, \"worker\\u000bb\": 4}",
+        )
+        .expect("write control-char reputation fixture");
+
+        with_market_path_env(
+            &[(
+                MARKET_REPUTATION_FILE_ENV,
+                Some(path.to_string_lossy().as_ref()),
+            )],
+            || {
+                let rep = load_market_reputation();
+                assert_eq!(rep.get("worker a"), Some(&17));
+                assert_eq!(rep.get("worker b"), Some(&4));
                 assert_eq!(rep.len(), 2);
             },
         );
@@ -3103,7 +3146,8 @@ mod tests {
 
     #[test]
     fn normalize_actor_or_signer_strips_controls_and_zero_width() {
-        let got = normalize_actor_or_signer(" \u{200B}alice\u{2060}\u{0007} bob ").expect("normalized");
+        let got =
+            normalize_actor_or_signer(" \u{200B}alice\u{2060}\u{0007} bob ").expect("normalized");
         assert_eq!(got, "alice bob");
         assert!(normalize_actor_or_signer("\u{200B}\u{2060}\u{0000}").is_none());
     }
@@ -4356,10 +4400,7 @@ line2
         let dir = run_root().join("run/worker-agent");
         fs::create_dir_all(&dir).expect("create worker-agent dir");
 
-        let fixture = dir.join(format!(
-            "tx-adapter-99991231-{}.jsonl",
-            std::process::id()
-        ));
+        let fixture = dir.join(format!("tx-adapter-99991231-{}.jsonl", std::process::id()));
         fs::write(
             &fixture,
             "not-json\n{\"ts\":1772074584,\"mode\":\"mock\",\"kind\":\"commit\",\"task_id\":101001,\"worker\":\"worker1\",\"commit_hash\":\"764c7baf3e1d3d325511cdc3d7836fbc1fa71a289bd669edcc4b55d6baaee9d7\",\"nonce\":101001,\"tx_hash\":\"7336b90d593ebe324cb4b3e41e7e9d86d1e2418f230cca0162ca1d539f32c2b9\",\"status\":\"accepted\",\"rc\":0}\n",
