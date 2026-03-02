@@ -2612,7 +2612,7 @@ mod tests {
     fn market_reputation_loader_accepts_stringified_i64_and_skips_non_integral_strings() {
         let mut path = std::env::temp_dir();
         path.push(format!(
-            "trnm_rpc_market_reputation_string_ints_{}_{}.json",
+            "trnm_rpc_market_reputation_stringified_i64_{}_{}.json",
             std::process::id(),
             now_ms()
         ));
