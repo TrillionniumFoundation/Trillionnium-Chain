@@ -762,16 +762,31 @@ fn backoff_delay_ms(base_ms: u64, attempt: u32) -> u64 {
     base_ms.saturating_mul(attempt as u64 + 1)
 }
 
+fn parse_command_spec(spec: &str) -> Result<(String, Vec<String>)> {
+    let tokens = shlex::split(spec).ok_or_else(|| anyhow!("invalid command spec quoting"))?;
+    if tokens.is_empty() {
+        anyhow::bail!("empty command spec");
+    }
+    let program = tokens[0].clone();
+    let args = tokens[1..].to_vec();
+    Ok((program, args))
+}
+
 fn run_adapter_with_retry(
-    cmd: &str,
+    adapter_cmd: &str,
+    action_args: &[String],
     max_retries: u32,
     backoff_ms: u64,
 ) -> Result<AdapterExecResult> {
+    let (program, base_args) = parse_command_spec(adapter_cmd)?;
     let mut last_rc = 1;
     let mut last_tx_hash: Option<String> = None;
 
     for attempt in 0..=max_retries {
-        let out = ProcCommand::new("sh").arg("-lc").arg(cmd).output()?;
+        let out = ProcCommand::new(&program)
+            .args(&base_args)
+            .args(action_args)
+            .output()?;
         let rc = out.status.code().unwrap_or(1);
         let stdout = String::from_utf8_lossy(&out.stdout);
         let stderr = String::from_utf8_lossy(&out.stderr);
@@ -911,10 +926,15 @@ fn resolve_llm_adapter_policy(
     }
 }
 
-fn run_shell_with_timeout(cmd: &str, timeout: Duration) -> Result<Output> {
-    let mut child = ProcCommand::new("sh")
-        .arg("-lc")
-        .arg(cmd)
+fn run_command_with_timeout(
+    program: &str,
+    base_args: &[String],
+    extra_args: &[String],
+    timeout: Duration,
+) -> Result<Output> {
+    let mut child = ProcCommand::new(program)
+        .args(base_args)
+        .args(extra_args)
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
         .spawn()?;
@@ -951,10 +971,16 @@ fn run_llm_adapter_once(
     timeout: Duration,
     proof_adapter: &dyn ProofAdapter,
 ) -> std::result::Result<LlmAdapterResponse, AdapterError> {
-    let cmd = format!("{} {}", adapter_cmd, shell_escape::escape(prompt.into()));
-    let out = run_shell_with_timeout(&cmd, timeout).map_err(|e| AdapterError {
-        kind: AdapterErrorKind::Retriable,
-        context: e.to_string(),
+    let (program, base_args) = parse_command_spec(adapter_cmd).map_err(|e| AdapterError {
+        kind: AdapterErrorKind::NonRetriable,
+        context: format!("invalid llm adapter command: {e}"),
+    })?;
+    let prompt_arg = vec![prompt.to_string()];
+    let out = run_command_with_timeout(&program, &base_args, &prompt_arg, timeout).map_err(|e| {
+        AdapterError {
+            kind: AdapterErrorKind::Retriable,
+            context: e.to_string(),
+        }
     })?;
     let stdout = String::from_utf8_lossy(&out.stdout).trim().to_string();
     let stderr = String::from_utf8_lossy(&out.stderr).trim().to_string();
@@ -1582,8 +1608,8 @@ mod tests {
 
     #[test]
     fn llm_adapter_timeout_triggers() {
-        let cmd = "sleep 0.2; echo '{\"output_text\":\"late\"}'";
-        let err = run_shell_with_timeout(cmd, Duration::from_millis(30)).unwrap_err();
+        let base_args = vec!["-lc".to_string(), "sleep 0.2; echo '{\"output_text\":\"late\"}'".to_string()];
+        let err = run_command_with_timeout("sh", &base_args, &[], Duration::from_millis(30)).unwrap_err();
         assert!(err.to_string().contains("timeout"));
     }
 
@@ -1629,9 +1655,19 @@ mod tests {
     }
 
     #[test]
+    fn parse_command_spec_rejects_invalid_quote() {
+        let err = parse_command_spec("python3 -c 'print(1)").expect_err("unbalanced quote must fail");
+        assert!(err.to_string().contains("invalid command spec quoting"));
+    }
+
+    #[test]
     fn llm_adapter_non_timeout_path_is_ok() {
-        let cmd = "echo '{\"output_text\":\"ok\",\"provider_request_id\":\"r1\"}'";
-        let out = run_shell_with_timeout(cmd, Duration::from_secs(1)).unwrap();
+        let base_args = vec![
+            "-c".to_string(),
+            "import sys; print(sys.argv[1])".to_string(),
+        ];
+        let extra_args = vec!["{\"output_text\":\"ok\",\"provider_request_id\":\"r1\"}".to_string()];
+        let out = run_command_with_timeout("python3", &base_args, &extra_args, Duration::from_secs(1)).unwrap();
         assert!(out.status.success());
         let stdout = String::from_utf8_lossy(&out.stdout).trim().to_string();
         let parsed: LlmAdapterResponse = serde_json::from_str(&stdout).unwrap();
@@ -1641,37 +1677,70 @@ mod tests {
 
     #[test]
     fn llm_adapter_accepts_last_json_line_when_stdout_has_noise() {
-        let cmd = "printf 'debug: adapter warmup\\n{\"output_text\":\"ok\",\"provider_request_id\":\"r1\"}\\n'";
-        let parsed =
-            run_llm_adapter_once("sh -lc", cmd, Duration::from_secs(1), &StandardProofAdapter)
-                .unwrap();
+        let prompt = "debug: adapter warmup\n{\"output_text\":\"ok\",\"provider_request_id\":\"r1\"}";
+        let parsed = run_llm_adapter_once(
+            "python3 -c 'import sys; print(sys.argv[1])'",
+            prompt,
+            Duration::from_secs(1),
+            &StandardProofAdapter,
+        )
+        .unwrap();
         assert_eq!(parsed.output_text, "ok");
         assert_eq!(parsed.provider_request_id.as_deref(), Some("r1"));
     }
 
     #[test]
     fn llm_adapter_rejects_stdout_without_any_json_line() {
-        let cmd = "printf 'debug: adapter warmup\\nstatus=ok\\n'";
-        let err =
-            run_llm_adapter_once("sh -lc", cmd, Duration::from_secs(1), &StandardProofAdapter)
-                .unwrap_err();
+        let err = run_llm_adapter_once(
+            "python3 -c 'import sys; print(sys.argv[1])'",
+            "debug: adapter warmup\nstatus=ok",
+            Duration::from_secs(1),
+            &StandardProofAdapter,
+        )
+        .unwrap_err();
         assert_eq!(err.kind, AdapterErrorKind::NonRetriable);
         assert!(err.context.contains("no-json-line"));
     }
 
     #[test]
+    fn llm_adapter_prompt_shell_chars_are_treated_as_plain_text() {
+        let marker = env::temp_dir().join(format!("trnm-worker-agent-shell-marker-{}.tmp", now_ms()));
+        let prompt = format!(
+            "{{\"output_text\":\"$(touch {})\",\"provider_request_id\":\"r-safe\"}}",
+            marker.display()
+        );
+
+        let parsed = run_llm_adapter_once(
+            "python3 -c 'import sys; print(sys.argv[1])'",
+            &prompt,
+            Duration::from_secs(1),
+            &StandardProofAdapter,
+        )
+        .expect("payload should parse without shell evaluation");
+        assert_eq!(parsed.output_text, format!("$(touch {})", marker.display()));
+        assert!(
+            fs::metadata(&marker).is_err(),
+            "prompt shell metacharacters must never execute"
+        );
+    }
+
+    #[test]
     fn llm_adapter_tee_receipt_path_uses_adapter_parse_response_validation() {
-        let cmd = "echo '{\"output_text\":\"ok\",\"provider_request_id\":\"req-tee-1\",\"adapter\":\"tee-receipt\"}'";
+        let cmd = "{\"output_text\":\"ok\",\"provider_request_id\":\"req-tee-1\",\"adapter\":\"tee-receipt\"}";
         let tee_adapter = build_proof_adapter("tee-receipt").expect("tee adapter");
-        let parsed =
-            run_llm_adapter_once("sh -lc", cmd, Duration::from_secs(1), tee_adapter.as_ref())
-                .expect("tee receipt payload should parse");
+        let parsed = run_llm_adapter_once(
+            "python3 -c 'import sys; print(sys.argv[1])'",
+            cmd,
+            Duration::from_secs(1),
+            tee_adapter.as_ref(),
+        )
+        .expect("tee receipt payload should parse");
         assert_eq!(parsed.provider_request_id.as_deref(), Some("req-tee-1"));
         assert_eq!(parsed.adapter.as_deref(), Some("tee-receipt"));
 
-        let bad_cmd = "echo '{\"output_text\":\"ok\",\"provider_request_id\":\"req-tee-2\"}'";
+        let bad_cmd = "{\"output_text\":\"ok\",\"provider_request_id\":\"req-tee-2\"}";
         let err = run_llm_adapter_once(
-            "sh -lc",
+            "python3 -c 'import sys; print(sys.argv[1])'",
             bad_cmd,
             Duration::from_secs(1),
             tee_adapter.as_ref(),
@@ -4358,20 +4427,34 @@ fn main() -> Result<()> {
                         },
                     )?;
                     let nonce = rec.nonce.unwrap_or(rec.task_id);
-                    let cmd1 = format!(
-                        "{} commit {} {} {} {}",
-                        adapter_cmd, rec.task_id, rec.worker, rec.commit_hash, nonce
-                    );
-                    let cmd2 = format!(
-                        "{} reveal {} {} {}",
-                        adapter_cmd, rec.task_id, rec.result_hash, rec.salt_hex
-                    );
+                    let commit_args = vec![
+                        "commit".to_string(),
+                        rec.task_id.to_string(),
+                        rec.worker.clone(),
+                        rec.commit_hash.clone(),
+                        nonce.to_string(),
+                    ];
+                    let reveal_args = vec![
+                        "reveal".to_string(),
+                        rec.task_id.to_string(),
+                        rec.result_hash.clone(),
+                        rec.salt_hex.clone(),
+                    ];
 
-                    let commit_res =
-                        run_adapter_with_retry(&cmd1, tx_retry.max_retries, tx_retry.backoff_ms)?;
+                    let commit_res = run_adapter_with_retry(
+                        &adapter_cmd,
+                        &commit_args,
+                        tx_retry.max_retries,
+                        tx_retry.backoff_ms,
+                    )?;
                     let reveal_executed = should_execute_reveal(&commit_res);
                     let reveal_res = if reveal_executed {
-                        run_adapter_with_retry(&cmd2, tx_retry.max_retries, tx_retry.backoff_ms)?
+                        run_adapter_with_retry(
+                            &adapter_cmd,
+                            &reveal_args,
+                            tx_retry.max_retries,
+                            tx_retry.backoff_ms,
+                        )?
                     } else {
                         AdapterExecResult {
                             ok: false,
