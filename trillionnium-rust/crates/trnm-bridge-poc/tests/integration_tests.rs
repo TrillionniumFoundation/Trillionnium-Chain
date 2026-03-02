@@ -158,6 +158,32 @@ fn test_authorized_transition_blocks_terminal_rewrite() {
 }
 
 #[test]
+fn test_authorized_transition_blocks_reverted_to_finalized_rewrite() {
+    let mut request = SettlementRequest::new(11, "0xccd".to_string());
+    let admin = CapabilityToken {
+        subject: "org:bridge-admin".to_string(),
+        capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
+    };
+
+    request
+        .revert_authorized(&admin, "proof invalidated".to_string())
+        .unwrap();
+    let err = request.settle_authorized(&admin, 1001).unwrap_err();
+
+    assert_eq!(
+        err,
+        SettlementError::InvalidTransition {
+            from: "reverted",
+            to: "finalized",
+        }
+    );
+    assert_eq!(
+        request.status,
+        BridgeStatus::Reverted("proof invalidated".to_string())
+    );
+}
+
+#[test]
 fn test_authorized_calls_reject_empty_subject_token() {
     let mut request = SettlementRequest::new(42, "0xddd".to_string());
     let malformed = CapabilityToken {
