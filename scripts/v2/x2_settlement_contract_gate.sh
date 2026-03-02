@@ -36,6 +36,10 @@ cargo test -p trnm-bridge-poc --test x2_settlement_loop \
   -- --nocapture
 
 cargo test -p trnm-bridge-poc --test x2_settlement_loop \
+  x3_prep_reorder_confirmed_after_revert_is_rejected_without_state_change \
+  -- --nocapture
+
+cargo test -p trnm-bridge-poc --test x2_settlement_loop \
   x3_prep_stale_pending_on_degraded_heartbeat_triggers_compensation_revert \
   -- --nocapture
 
