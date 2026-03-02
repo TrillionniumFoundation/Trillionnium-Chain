@@ -117,6 +117,9 @@ impl VerifierRegistry {
         let canonical = match collapsed.as_str() {
             // Backward-compatible aliases from early V1/V2 proof/receipt naming.
             "fraud proof" | "fraudproof" => "fraud",
+            "fraud proof v1" | "fraudproofv1" | "fraud proof v 1" => "fraud",
+            "fraud proof v2" | "fraudproofv2" | "fraud proof v 2" => "fraud",
+            "fraud proof v3" | "fraudproofv3" | "fraud proof v 3" => "fraud",
             "fraud receipt" | "fraudreceipt" => "fraud",
             "fraud receipt v1" | "fraudreceiptv1" | "fraud receipt v 1" => "fraud",
             "fraud receipt v2" | "fraudreceiptv2" | "fraud receipt v 2" => "fraud",
@@ -135,6 +138,7 @@ impl VerifierRegistry {
             "tee attestation v2" | "teeattestationv2" | "tee attestation v 2" => "tee",
             "remote attestation" | "remoteattestation" => "tee",
             "attestation report" | "attestationreport" => "tee",
+            "tee attestation report" | "teeattestationreport" => "tee",
             "ra report" | "rareport" => "tee",
             "ra quote" | "raquote" => "tee",
             "tee quote" | "teequote" => "tee",
@@ -1356,6 +1360,8 @@ mod tests {
         assert!(registry.is_registered_kind("TEE_ATTESTATION_V2"));
         assert!(registry.is_registered_kind("fraud receipt v2"));
         assert!(registry.is_registered_kind("fraud_receipt_v_1"));
+        assert!(registry.is_registered_kind("fraud-proof-v3"));
+        assert!(registry.is_registered_kind("FRAUD_PROOF_V_2"));
         assert!(registry.is_registered_kind("zk receipt v1"));
         assert!(registry.is_registered_kind("zk-receipt-v-2"));
         assert!(registry.is_registered_kind("fraud_receipt_v3"));
@@ -1400,6 +1406,7 @@ mod tests {
         assert!(registry.is_registered_kind("td_quote"));
         assert!(registry.is_registered_kind("TD report"));
         assert!(registry.is_registered_kind("attestation_report"));
+        assert!(registry.is_registered_kind("TEE attestation report"));
         assert!(registry.is_registered_kind("RA report"));
     }
 

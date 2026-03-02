@@ -182,6 +182,7 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
         | "tee evidence"
         | "remote attestation"
         | "attestation report"
+        | "tee attestation report"
         | "ra report"
         | "ra quote"
         | "dcap quote"
@@ -214,6 +215,7 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
         | "teeevidence"
         | "remoteattestation"
         | "attestationreport"
+        | "teeattestationreport"
         | "rareport"
         | "raquote"
         | "dcapquote"
@@ -821,10 +823,18 @@ mod tests {
     fn verification_receipt_new_collapses_remote_attestation_and_zero_knowledge_aliases() {
         let tee_remote =
             VerificationReceipt::new(1, "remote attestation", VerificationResult::Valid, "v", 1);
+        let tee_attestation_report = VerificationReceipt::new(
+            2,
+            "TEE attestation report",
+            VerificationResult::Valid,
+            "v",
+            2,
+        );
         let zk_bare =
-            VerificationReceipt::new(2, "zero knowledge", VerificationResult::Valid, "v", 2);
+            VerificationReceipt::new(3, "zero knowledge", VerificationResult::Valid, "v", 3);
 
         assert_eq!(tee_remote.proof_type, "tee");
+        assert_eq!(tee_attestation_report.proof_type, "tee");
         assert_eq!(zk_bare.proof_type, "zk");
     }
 
