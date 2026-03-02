@@ -511,6 +511,7 @@ fn market_report_returns_zeroed_metrics_for_empty_state() {
     assert_eq!(report["matched_task_count"], 0);
     assert_eq!(report["unmatched_task_count"], 0);
     assert_eq!(report["bid_count"], 0);
+    assert_eq!(report["orphan_bid_count"], 0);
     assert_eq!(report["unique_bidder_count"], 0);
     assert_eq!(report["tasks_with_bids_count"], 0);
     assert_eq!(report["bid_coverage_rate"], 0.0);
@@ -608,6 +609,7 @@ fn market_report_summarizes_tasks_bids_and_unique_bidders() {
     assert_eq!(report["matched_task_count"], 1);
     assert_eq!(report["unmatched_task_count"], 1);
     assert_eq!(report["bid_count"], 3);
+    assert_eq!(report["orphan_bid_count"], 0);
     assert_eq!(report["unique_bidder_count"], 2);
     assert_eq!(report["tasks_with_bids_count"], 2);
     assert_eq!(report["bid_coverage_rate"], 1.0);
@@ -658,6 +660,7 @@ fn market_report_ignores_orphan_bid_task_ids_for_coverage_metrics() {
 
     assert_eq!(report["task_count"], 2);
     assert_eq!(report["bid_count"], 2);
+    assert_eq!(report["orphan_bid_count"], 1);
     assert_eq!(report["tasks_with_bids_count"], 1);
     assert_eq!(report["bid_coverage_rate"], 0.5);
 
@@ -747,6 +750,7 @@ fn market_report_normalizes_and_ignores_invalid_bidder_keys() {
     let report: Value = serde_json::from_str(&out).expect("market report json");
 
     assert_eq!(report["bid_count"], 4);
+    assert_eq!(report["orphan_bid_count"], 0);
     assert_eq!(report["unique_bidder_count"], 2);
 
     let _ = fs::remove_file(tasks);

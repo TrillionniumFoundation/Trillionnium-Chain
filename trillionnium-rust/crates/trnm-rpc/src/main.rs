@@ -242,6 +242,7 @@ struct MarketReport {
     matched_task_count: usize,
     unmatched_task_count: usize,
     bid_count: usize,
+    orphan_bid_count: usize,
     unique_bidder_count: usize,
     tasks_with_bids_count: usize,
     bid_coverage_rate: f64,
@@ -2448,6 +2449,10 @@ fn main() -> Result<()> {
                 .into_iter()
                 .filter(|task_id| known_task_ids.contains(task_id))
                 .count();
+            let orphan_bid_count = bids
+                .iter()
+                .filter(|b| !known_task_ids.contains(&b.task_id))
+                .count();
             let bid_coverage_rate = if task_count == 0 {
                 0.0
             } else {
@@ -2470,6 +2475,7 @@ fn main() -> Result<()> {
                 matched_task_count,
                 unmatched_task_count,
                 bid_count,
+                orphan_bid_count,
                 unique_bidder_count,
                 tasks_with_bids_count,
                 bid_coverage_rate,
