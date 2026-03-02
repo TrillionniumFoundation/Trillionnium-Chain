@@ -921,11 +921,13 @@ fn market_worker_tie_break_key(raw: &str) -> String {
 fn normalize_market_status_key(raw: &str) -> String {
     raw.trim()
         .chars()
-        .map(|ch| match ch {
-            // treat invisible separators as whitespace so status checks remain stable
-            // against BOM/ZWSP drift from append-only JSONL producers.
-            '\u{200B}' | '\u{200C}' | '\u{200D}' | '\u{2060}' | '\u{FEFF}' => ' ',
-            _ => ch,
+        .filter_map(|ch| match ch {
+            // Treat invisible/control separators as whitespace so status checks
+            // remain stable against malformed JSONL producers and hidden-char drift.
+            '\u{00AD}' => None,
+            '\u{200B}' | '\u{200C}' | '\u{200D}' | '\u{2060}' | '\u{FEFF}' => Some(' '),
+            _ if ch.is_control() => Some(' '),
+            _ => Some(ch),
         })
         .collect::<String>()
         .to_ascii_lowercase()
@@ -2715,6 +2717,14 @@ mod tests {
                 );
             },
         );
+    }
+
+    #[test]
+    fn normalize_market_status_key_collapses_hidden_and_control_separators() {
+        assert_eq!(normalize_market_status_key(" matched\u{200b}"), "matched");
+        assert_eq!(normalize_market_status_key("mat\u{00ad}ched"), "matched");
+        assert_eq!(normalize_market_status_key("open\u{0007}"), "open");
+        assert_eq!(normalize_market_status_key("\u{feff} matched \u{2060}"), "matched");
     }
 
     #[test]
