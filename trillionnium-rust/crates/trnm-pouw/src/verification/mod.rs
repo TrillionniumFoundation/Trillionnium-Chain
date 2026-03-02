@@ -88,6 +88,8 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
                 || ch == '–'
                 || ch == '—'
                 || ch == '−'
+                || ch == '‐'
+                || ch == '‑'
                 || ch == '\u{200b}'
                 || ch == '\u{200c}'
                 || ch == '\u{200d}'
@@ -150,10 +152,11 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
 
     match collapsed_tokens.as_str() {
         "fraud proof" | "fraud receipt" | "fraud proof v1" | "fraud proof v2"
-        | "fraud proof v 1" | "fraud proof v 2" | "fraud receipt v1" | "fraud receipt v2"
-        | "fraud receipt v 1" | "fraud receipt v 2" | "fraud receipt v3" | "fraud receipt v 3"
-        | "fraudproof" | "fraudproofv1" | "fraudproofv2" | "fraudreceipt" | "fraudreceiptv1"
-        | "fraudreceiptv2" | "fraudreceiptv3" => {
+        | "fraud proof v3" | "fraud proof v 1" | "fraud proof v 2" | "fraud proof v 3"
+        | "fraud receipt v1" | "fraud receipt v2" | "fraud receipt v 1"
+        | "fraud receipt v 2" | "fraud receipt v3" | "fraud receipt v 3" | "fraudproof"
+        | "fraudproofv1" | "fraudproofv2" | "fraudproofv3" | "fraudreceipt"
+        | "fraudreceiptv1" | "fraudreceiptv2" | "fraudreceiptv3" => {
             "fraud".to_string()
         }
         "tee proof"
@@ -492,6 +495,17 @@ mod tests {
     }
 
     #[test]
+    fn verification_receipt_new_collapses_unicode_hyphen_legacy_aliases_to_router_keys() {
+        let fraud = VerificationReceipt::new(1, "fraud‐proof", VerificationResult::Valid, "v", 1);
+        let tee = VerificationReceipt::new(2, "tee‑receipt", VerificationResult::Valid, "v", 2);
+        let zk = VerificationReceipt::new(3, "zk‐proof", VerificationResult::Valid, "v", 3);
+
+        assert_eq!(fraud.proof_type, "fraud");
+        assert_eq!(tee.proof_type, "tee");
+        assert_eq!(zk.proof_type, "zk");
+    }
+
+    #[test]
     fn verification_receipt_new_collapses_space_delimited_legacy_aliases_to_router_keys() {
         let fraud = VerificationReceipt::new(1, "Fraud Proof", VerificationResult::Valid, "v", 1);
         let tee = VerificationReceipt::new(2, " tee receipt ", VerificationResult::Valid, "v", 2);
@@ -565,7 +579,9 @@ mod tests {
     fn verification_receipt_new_collapses_version_suffixed_legacy_aliases_to_router_keys() {
         let fraud =
             VerificationReceipt::new(1, "fraud_receipt_v3", VerificationResult::Valid, "v", 1);
-        let tee = VerificationReceipt::new(2, "TEE-PROOF-V1", VerificationResult::Valid, "v", 2);
+        let fraud_proof_v3 =
+            VerificationReceipt::new(2, "Fraud-Proof-V_3", VerificationResult::Valid, "v", 2);
+        let tee = VerificationReceipt::new(3, "TEE-PROOF-V1", VerificationResult::Valid, "v", 2);
         let tee_v3 =
             VerificationReceipt::new(3, "tee receipt v 3", VerificationResult::Valid, "v", 3);
         let tee_proof_v3 =
@@ -575,6 +591,7 @@ mod tests {
             VerificationReceipt::new(6, "zk-proof-v-3", VerificationResult::Valid, "v", 6);
 
         assert_eq!(fraud.proof_type, "fraud");
+        assert_eq!(fraud_proof_v3.proof_type, "fraud");
         assert_eq!(tee.proof_type, "tee");
         assert_eq!(tee_v3.proof_type, "tee");
         assert_eq!(tee_proof_v3.proof_type, "tee");
