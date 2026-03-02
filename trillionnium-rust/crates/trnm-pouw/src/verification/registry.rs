@@ -44,6 +44,7 @@ impl VerifierRegistry {
                     || ch == '−'
                     || ch == '‐'
                     || ch == '‑'
+                    || ch == '﹣'
                     || ch == '\u{00a0}'
                     || ch == '\u{3000}'
                     || ch == '\u{200b}'
@@ -1532,6 +1533,7 @@ mod tests {
         assert!(registry.is_registered_kind("TEE／QUOTE"));
         assert!(registry.is_registered_kind("TEE＋RECEIPT"));
         assert!(registry.is_registered_kind("TEE－ATTESTATION"));
+        assert!(registry.is_registered_kind("TEE﹣RECEIPT"));
         assert!(registry.is_registered_kind("TEE−RECEIPT"));
         assert!(registry.is_registered_kind("TEE，RECEIPT"));
         assert!(registry.is_registered_kind("TEE、RECEIPT"));
