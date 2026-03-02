@@ -146,7 +146,19 @@ impl VerifierRegistry {
             "tee attestation v3" | "teeattestationv3" | "tee attestation v 3" => "tee",
             "remote attestation" | "remoteattestation" => "tee",
             "attestation report" | "attestationreport" => "tee",
+            "attestation report v1" | "attestationreportv1" | "attestation report v 1" => "tee",
+            "attestation report v2" | "attestationreportv2" | "attestation report v 2" => "tee",
+            "attestation report v3" | "attestationreportv3" | "attestation report v 3" => "tee",
             "tee attestation report" | "teeattestationreport" => "tee",
+            "tee attestation report v1"
+            | "teeattestationreportv1"
+            | "tee attestation report v 1" => "tee",
+            "tee attestation report v2"
+            | "teeattestationreportv2"
+            | "tee attestation report v 2" => "tee",
+            "tee attestation report v3"
+            | "teeattestationreportv3"
+            | "tee attestation report v 3" => "tee",
             "ra report" | "rareport" => "tee",
             "ra report v1" | "rareportv1" | "ra report v 1" => "tee",
             "ra report v2" | "rareportv2" | "ra report v 2" => "tee",
@@ -1472,6 +1484,7 @@ mod tests {
         assert!(registry.is_registered_kind("TEE_RECEIPTV2"));
         assert!(registry.is_registered_kind("TEE_ATTESTATION_V2"));
         assert!(registry.is_registered_kind("tee-attestation-v3"));
+        assert!(registry.is_registered_kind("TEE_ATTESTATION_REPORT_V2"));
         assert!(registry.is_registered_kind("fraud receipt v2"));
         assert!(registry.is_registered_kind("fraud_receipt_v_1"));
         assert!(registry.is_registered_kind("fraud-proof-v3"));
