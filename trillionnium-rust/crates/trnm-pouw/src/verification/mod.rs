@@ -134,16 +134,56 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
 
     match collapsed_tokens.as_str() {
         "fraud proof" | "fraud receipt" | "fraudproof" | "fraudreceipt" => "fraud".to_string(),
-        "tee proof" | "tee receipt" | "tee attestation" | "tee quote" | "tee report"
-        | "sgx quote" | "sgx report" | "tee evidence" | "remote attestation"
-        | "attestation report" | "ra report" | "ra quote" | "dcap quote"
-        | "intel dcap quote" | "intel sgx dcap quote" | "tdx quote" | "tdx report"
-        | "intel tdx quote" | "tee cert" | "tee certificate" | "teeproof"
-        | "teereceipt" | "teeattestation" | "teequote" | "teereport" | "sgxquote"
-        | "sgxreport" | "teeevidence" | "remoteattestation" | "attestationreport"
-        | "rareport" | "raquote" | "dcapquote" | "inteldcapquote"
-        | "intelsgxdcapquote" | "tdxquote" | "tdxreport" | "inteltdxquote"
-        | "teecert" | "teecertificate" => "tee".to_string(),
+        "tee proof"
+        | "tee receipt"
+        | "tee attestation"
+        | "tee quote"
+        | "tee report"
+        | "sgx quote"
+        | "enclave quote"
+        | "sgx report"
+        | "tee evidence"
+        | "remote attestation"
+        | "attestation report"
+        | "ra report"
+        | "ra quote"
+        | "dcap quote"
+        | "intel dcap quote"
+        | "intel sgx dcap quote"
+        | "tdx quote"
+        | "td quote"
+        | "tdx report"
+        | "td report"
+        | "snp report"
+        | "amd sev snp report"
+        | "intel tdx quote"
+        | "tee cert"
+        | "tee certificate"
+        | "teeproof"
+        | "teereceipt"
+        | "teeattestation"
+        | "teequote"
+        | "teereport"
+        | "sgxquote"
+        | "enclavequote"
+        | "sgxreport"
+        | "teeevidence"
+        | "remoteattestation"
+        | "attestationreport"
+        | "rareport"
+        | "raquote"
+        | "dcapquote"
+        | "inteldcapquote"
+        | "intelsgxdcapquote"
+        | "tdxquote"
+        | "tdquote"
+        | "tdxreport"
+        | "tdreport"
+        | "snpreport"
+        | "amdsevsnpreport"
+        | "inteltdxquote"
+        | "teecert"
+        | "teecertificate" => "tee".to_string(),
         "zk proof"
         | "zk receipt"
         | "zk attestation"
@@ -393,7 +433,8 @@ mod tests {
 
     #[test]
     fn verification_receipt_new_collapses_unicode_whitespace_delimited_aliases_to_router_keys() {
-        let tee = VerificationReceipt::new(1, "TEE\u{3000}RECEIPT", VerificationResult::Valid, "v", 1);
+        let tee =
+            VerificationReceipt::new(1, "TEE\u{3000}RECEIPT", VerificationResult::Valid, "v", 1);
         let zk = VerificationReceipt::new(2, "ZK\u{00A0}PROOF", VerificationResult::Valid, "v", 2);
 
         assert_eq!(tee.proof_type, "tee");
@@ -402,8 +443,15 @@ mod tests {
 
     #[test]
     fn verification_receipt_new_collapses_zero_width_delimited_aliases_to_router_keys() {
-        let tee = VerificationReceipt::new(1, "TEE\u{200B}RECEIPT", VerificationResult::Valid, "v", 1);
-        let zk = VerificationReceipt::new(2, "zero\u{FEFF}knowledge\u{200C}proof", VerificationResult::Valid, "v", 2);
+        let tee =
+            VerificationReceipt::new(1, "TEE\u{200B}RECEIPT", VerificationResult::Valid, "v", 1);
+        let zk = VerificationReceipt::new(
+            2,
+            "zero\u{FEFF}knowledge\u{200C}proof",
+            VerificationResult::Valid,
+            "v",
+            2,
+        );
 
         assert_eq!(tee.proof_type, "tee");
         assert_eq!(zk.proof_type, "zk");
@@ -562,20 +610,10 @@ mod tests {
             "v",
             3,
         );
-        let snark_spaced = VerificationReceipt::new(
-            4,
-            "zero knowledge snark",
-            VerificationResult::Valid,
-            "v",
-            4,
-        );
-        let snark_compact = VerificationReceipt::new(
-            5,
-            "ZeroKnowledgeSnark",
-            VerificationResult::Valid,
-            "v",
-            5,
-        );
+        let snark_spaced =
+            VerificationReceipt::new(4, "zero knowledge snark", VerificationResult::Valid, "v", 4);
+        let snark_compact =
+            VerificationReceipt::new(5, "ZeroKnowledgeSnark", VerificationResult::Valid, "v", 5);
 
         assert_eq!(spaced.proof_type, "zk");
         assert_eq!(underscored.proof_type, "zk");
@@ -599,8 +637,13 @@ mod tests {
         let tee_sgx = VerificationReceipt::new(1, "SGX_QUOTE", VerificationResult::Valid, "v", 1);
         let tee_evidence =
             VerificationReceipt::new(2, "tee-evidence", VerificationResult::Valid, "v", 2);
-        let zk_evidence =
-            VerificationReceipt::new(3, "zero knowledge evidence", VerificationResult::Valid, "v", 3);
+        let zk_evidence = VerificationReceipt::new(
+            3,
+            "zero knowledge evidence",
+            VerificationResult::Valid,
+            "v",
+            3,
+        );
 
         assert_eq!(tee_sgx.proof_type, "tee");
         assert_eq!(tee_evidence.proof_type, "tee");
@@ -625,15 +668,25 @@ mod tests {
     }
 
     #[test]
+    fn verification_receipt_new_collapses_registry_aliases_for_td_snp_and_enclave_quotes() {
+        let tee_enclave_quote =
+            VerificationReceipt::new(1, "enclave quote", VerificationResult::Valid, "v", 1);
+        let tee_td_report =
+            VerificationReceipt::new(2, "td_report", VerificationResult::Valid, "v", 2);
+        let tee_snp_report =
+            VerificationReceipt::new(3, "AMD-SEV-SNP report", VerificationResult::Valid, "v", 3);
+
+        assert_eq!(tee_enclave_quote.proof_type, "tee");
+        assert_eq!(tee_td_report.proof_type, "tee");
+        assert_eq!(tee_snp_report.proof_type, "tee");
+    }
+
+    #[test]
     fn verification_receipt_new_collapses_remote_attestation_and_zero_knowledge_aliases() {
-        let tee_remote = VerificationReceipt::new(
-            1,
-            "remote attestation",
-            VerificationResult::Valid,
-            "v",
-            1,
-        );
-        let zk_bare = VerificationReceipt::new(2, "zero knowledge", VerificationResult::Valid, "v", 2);
+        let tee_remote =
+            VerificationReceipt::new(1, "remote attestation", VerificationResult::Valid, "v", 1);
+        let zk_bare =
+            VerificationReceipt::new(2, "zero knowledge", VerificationResult::Valid, "v", 2);
 
         assert_eq!(tee_remote.proof_type, "tee");
         assert_eq!(zk_bare.proof_type, "zk");
@@ -710,13 +763,8 @@ mod tests {
             "v",
             4,
         );
-        let tee_intel_sgx_dcap = VerificationReceipt::new(
-            5,
-            "Intel SGX DCAP Quote",
-            VerificationResult::Valid,
-            "v",
-            5,
-        );
+        let tee_intel_sgx_dcap =
+            VerificationReceipt::new(5, "Intel SGX DCAP Quote", VerificationResult::Valid, "v", 5);
 
         assert_eq!(tee_fullwidth.proof_type, "tee");
         assert_eq!(tee_certificate.proof_type, "tee");
