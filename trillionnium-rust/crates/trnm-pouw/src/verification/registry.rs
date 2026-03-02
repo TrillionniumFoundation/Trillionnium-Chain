@@ -43,6 +43,7 @@ impl VerifierRegistry {
                     || ch == '―'
                     || ch == '−'
                     || ch == '‐'
+                    || ch == '‑'
                     || ch == '-'
                     || ch == '-'
                     || ch == '﹣'
@@ -1551,6 +1552,7 @@ mod tests {
             "TEE_RECEIPT_V1",
             "Intel® SGX™ DCAP Quote",
             "AMD SEV-SNP report",
+            "tee‑proof‑v2",
             "RA_QUOTE_V2",
             "zk-receipt-v-2",
             "zero knowledge certificate",
