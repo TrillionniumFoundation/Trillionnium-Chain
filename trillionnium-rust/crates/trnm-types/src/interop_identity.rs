@@ -4115,6 +4115,38 @@ mod tests {
     }
 
     #[test]
+    fn revoke_capability_rejects_word_joiner_actor_without_side_effects() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did(
+            "did:trnm:agent-7-word-joiner".to_string(),
+            "org:lane2-admin".to_string(),
+            10,
+        )
+        .unwrap();
+        let token_id = reg
+            .issue_capability(
+                "org:lane2-admin".to_string(),
+                "did:trnm:agent-7-word-joiner".to_string(),
+                CapabilityScope::BridgeSettle,
+                20,
+                None,
+            )
+            .unwrap();
+        let audit_len_before = reg.audit_trail().len();
+
+        let err = reg
+            .revoke_capability("org:lane2\u{2060}-admin".to_string(), token_id, 30, None)
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            InteropIdentityError::InvalidIdentityValue { field: "actor", .. }
+        ));
+        assert_eq!(reg.audit_trail().len(), audit_len_before);
+        assert_eq!(reg.capability(token_id).unwrap().revoked_at, None);
+    }
+
+    #[test]
     fn issue_capability_rejects_actor_that_is_not_did_controller_without_side_effects() {
         let mut reg = IdentityRegistry::default();
         reg.register_did(
