@@ -22,7 +22,7 @@
       "type": "string",
       "minLength": 1,
       "maxLength": 64,
-      "pattern": "^\\S(?:.*\\S)?$"
+      "pattern": "^[^\\s]{1,64}$"
     },
     "input_hash": {
       "type": "string",
