@@ -330,3 +330,42 @@ fn x3_prep_confirm_failure_blank_reason_falls_back_to_stable_contract_message() 
         &BridgeStatus::Reverted("settlement confirm failed: unknown confirm failure".to_string())
     );
 }
+
+#[test]
+fn x3_prep_confirm_failure_reason_exact_cap_has_no_ellipsis_and_is_replay_stable() {
+    let mut request = SettlementRequest::new(1, "0xcapexact".to_string());
+    let token = operator_token();
+
+    let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 2));
+    let heartbeat = monitor.record_success(700, 699, 19);
+    let exact_reason = "r".repeat(160);
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Failed {
+            reason: exact_reason.clone(),
+        },
+    )
+    .unwrap();
+
+    let expected = format!("settlement confirm failed: {exact_reason}");
+    assert_eq!(
+        out,
+        SettlementStep::Compensated {
+            reason: expected.clone(),
+            event: trnm_bridge_poc::x2_settlement_loop::SettlementEvent {
+                phase: "settlement_confirm_failed",
+                heartbeat_source_height: Some(700),
+                heartbeat_target_height: Some(699),
+                heartbeat_latency_ms: Some(19),
+                confirm_height: None,
+                confirm_reason: Some(expected.clone()),
+            },
+        }
+    );
+    assert!(!expected.ends_with('…'));
+    assert_eq!(expected.chars().count(), 187);
+    assert_eq!(current_status(&request), &BridgeStatus::Reverted(expected));
+}
