@@ -107,6 +107,9 @@ impl VerifierRegistry {
             .split_whitespace()
             .collect::<Vec<_>>()
             .join(" ");
+        if collapsed.is_empty() {
+            return None;
+        }
 
         let canonical = match collapsed.as_str() {
             // Backward-compatible aliases from early V1/V2 proof/receipt naming.
@@ -1187,6 +1190,14 @@ mod tests {
             registry.verify(&task, b"receipt"),
             VerificationResult::Indeterminate("no verifier registered for proof type: tee".into())
         );
+    }
+
+    #[test]
+    fn registry_ignores_punctuation_only_verifier_key_after_normalization() {
+        let mut registry = VerifierRegistry::new();
+        registry.register(Arc::new(AlwaysValidVerifier { kind: "___---///" }));
+
+        assert!(registry.registered_proof_types().is_empty());
     }
 
     #[test]
