@@ -49,7 +49,9 @@ impl VerifierRegistry {
                     || ch == '|'
                     || ch == '\\'
                     || ch == ','
+                    || ch == '，'
                     || ch == ';'
+                    || ch == '；'
                     || ch == '='
                     || ch == '@'
                     || ch == '#'
@@ -1185,6 +1187,8 @@ mod tests {
         assert!(registry.is_registered_kind("TEE：RECEIPT"));
         assert!(registry.is_registered_kind("TEE／QUOTE"));
         assert!(registry.is_registered_kind("TEE－ATTESTATION"));
+        assert!(registry.is_registered_kind("TEE，RECEIPT"));
+        assert!(registry.is_registered_kind("TEE；RECEIPT"));
         assert!(registry.is_registered_kind("ZK＿PROOF"));
     }
 
