@@ -470,3 +470,41 @@ fn x3_prep_degraded_heartbeat_blank_reason_falls_back_to_stable_contract_message
         &BridgeStatus::Reverted("heartbeat degraded: unknown heartbeat failure".to_string())
     );
 }
+
+#[test]
+fn x3_prep_degraded_heartbeat_reason_exact_cap_has_no_ellipsis_and_is_replay_stable() {
+    let mut request = SettlementRequest::new(1, "0xhbcapexact".to_string());
+    let token = operator_token();
+
+    let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 2));
+    let _ = monitor.record_failure("first failure");
+    let exact_reason = "h".repeat(160);
+    let degraded = monitor.record_failure(&exact_reason);
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &degraded,
+        SettlementConfirm::Confirmed { height: 9090 },
+    )
+    .unwrap();
+
+    let expected = format!("heartbeat degraded: {exact_reason}");
+    assert_eq!(
+        out,
+        SettlementStep::Compensated {
+            reason: expected.clone(),
+            event: trnm_bridge_poc::x2_settlement_loop::SettlementEvent {
+                phase: "relay_heartbeat_degraded",
+                heartbeat_source_height: None,
+                heartbeat_target_height: None,
+                heartbeat_latency_ms: None,
+                confirm_height: None,
+                confirm_reason: Some(expected.clone()),
+            },
+        }
+    );
+    assert!(!expected.ends_with('…'));
+    assert_eq!(expected.chars().count(), 180);
+    assert_eq!(current_status(&request), &BridgeStatus::Reverted(expected));
+}
