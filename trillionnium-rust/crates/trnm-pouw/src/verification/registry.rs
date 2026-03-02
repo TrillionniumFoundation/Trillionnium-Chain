@@ -1254,6 +1254,7 @@ mod tests {
         assert!(registry.is_registered_kind("fraud_challenge"));
         assert!(!registry.is_registered_kind("custom-proof"));
         assert!(!registry.is_registered_kind("   "));
+        assert!(!registry.is_registered_kind("___---///"));
     }
 
     #[test]
