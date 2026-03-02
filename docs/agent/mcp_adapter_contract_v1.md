@@ -39,6 +39,7 @@
 - 鉴权失败：`401 capability_invalid`
 - 策略拒绝：`403 policy_denied`
 - 上游执行失败：`502 upstream_execution_failed`
+- 幂等键冲突（同键不同请求体）：`409 idempotency_conflict`（fail-closed，不得覆盖既有 `request_id -> task_id` 映射）
 
 错误响应最小字段：`request_id` / `error.code` / `error.message`。
 
