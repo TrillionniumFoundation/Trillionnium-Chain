@@ -32,6 +32,8 @@ guard_phrases=(
   "Idempotency-Key"
   "X-TRNM-Nonce"
   "X-TRNM-Request-ID"
+  "X-TRNM-Trace-ID"
+  "trace_id"
   "X-TRNM-Timestamp"
   "X-TRNM-Schema-Version"
   "X-TRNM-Body-SHA256"
