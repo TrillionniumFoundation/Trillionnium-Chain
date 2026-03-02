@@ -130,13 +130,14 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
     match collapsed_tokens.as_str() {
         "fraud proof" | "fraud receipt" | "fraudproof" | "fraudreceipt" => "fraud".to_string(),
         "tee proof" | "tee receipt" | "tee attestation" | "tee quote" | "tee report"
-        | "sgx quote" | "tee evidence" | "remote attestation" | "attestation report"
-        | "ra report" | "ra quote" | "dcap quote" | "intel dcap quote" | "tdx quote"
-        | "intel tdx quote" | "tee certificate" | "teeproof" | "teereceipt"
-        | "teeattestation" | "teequote" | "teereport" | "sgxquote" | "teeevidence"
-        | "remoteattestation" | "attestationreport" | "rareport" | "raquote"
-        | "dcapquote" | "inteldcapquote" | "tdxquote" | "inteltdxquote"
-        | "teecertificate" => "tee".to_string(),
+        | "sgx quote" | "sgx report" | "tee evidence" | "remote attestation"
+        | "attestation report" | "ra report" | "ra quote" | "dcap quote"
+        | "intel dcap quote" | "tdx quote" | "tdx report" | "intel tdx quote"
+        | "tee cert" | "tee certificate" | "teeproof" | "teereceipt"
+        | "teeattestation" | "teequote" | "teereport" | "sgxquote" | "sgxreport"
+        | "teeevidence" | "remoteattestation" | "attestationreport" | "rareport"
+        | "raquote" | "dcapquote" | "inteldcapquote" | "tdxquote" | "tdxreport"
+        | "inteltdxquote" | "teecert" | "teecertificate" => "tee".to_string(),
         "zk proof"
         | "zk receipt"
         | "zk attestation"
@@ -162,7 +163,9 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
         | "zeroknowledgereceipt"
         | "zeroknowledgecertificate"
         | "zeroknowledgeattestation"
-        | "zeroknowledgeevidence" => "zk".to_string(),
+        | "zeroknowledgeevidence"
+        | "zk cert"
+        | "zkcert" => "zk".to_string(),
         // Keep custom plugin keys delimiter-stable so receipt persistence aligns
         // with registry normalization/observability (e.g., MY__PROOF -> "my proof").
         _ => collapsed_tokens,
@@ -586,6 +589,23 @@ mod tests {
         assert_eq!(tee_sgx.proof_type, "tee");
         assert_eq!(tee_evidence.proof_type, "tee");
         assert_eq!(zk_evidence.proof_type, "zk");
+    }
+
+    #[test]
+    fn verification_receipt_new_collapses_registry_aliases_for_sgx_tdx_and_short_cert_labels() {
+        let tee_sgx_report =
+            VerificationReceipt::new(1, "SGX_REPORT", VerificationResult::Valid, "v", 1);
+        let tee_tdx_report =
+            VerificationReceipt::new(2, "tdx-report", VerificationResult::Valid, "v", 2);
+        let tee_short_cert =
+            VerificationReceipt::new(3, "tee cert", VerificationResult::Valid, "v", 3);
+        let zk_short_cert =
+            VerificationReceipt::new(4, "zk cert", VerificationResult::Valid, "v", 4);
+
+        assert_eq!(tee_sgx_report.proof_type, "tee");
+        assert_eq!(tee_tdx_report.proof_type, "tee");
+        assert_eq!(tee_short_cert.proof_type, "tee");
+        assert_eq!(zk_short_cert.proof_type, "zk");
     }
 
     #[test]
