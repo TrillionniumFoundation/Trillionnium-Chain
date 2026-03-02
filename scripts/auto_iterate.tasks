@@ -349,3 +349,4 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e2-
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d2-task-model-metadata-schema-reject-provenance-index-leading-separator-test" "./scripts/v2/d2_task_model_metadata_schema_reject_provenance_index_leading_separator_test.sh" "ci(gate): add d2-task-model-metadata-schema-reject-provenance-index-leading-separator-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-offset-timezone-produced-at-test" "./scripts/v2/d1_task_model_metadata_schema_reject_offset_timezone_produced_at_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-offset-timezone-produced-at-test regression to quick-check"
