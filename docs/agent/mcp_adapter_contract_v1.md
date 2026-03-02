@@ -9,6 +9,7 @@
 - 传输层：HTTPS + JSON
 - 鉴权：`Authorization: Bearer <capability_token>`
 - 请求必须携带：`X-TRNM-Request-ID`
+- 重试安全：`Idempotency-Key`（同一键值 + 同一请求体必须幂等返回同一 `task_id`）
 
 ## 3. 最小请求/响应语义
 
