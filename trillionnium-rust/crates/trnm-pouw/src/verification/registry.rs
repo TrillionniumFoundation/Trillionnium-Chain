@@ -155,6 +155,9 @@ impl VerifierRegistry {
             "ra quote v2" | "raquotev2" | "ra quote v 2" => "tee",
             "ra quote v3" | "raquotev3" | "ra quote v 3" => "tee",
             "tee quote" | "teequote" => "tee",
+            "tee quote v1" | "teequotev1" | "tee quote v 1" => "tee",
+            "tee quote v2" | "teequotev2" | "tee quote v 2" => "tee",
+            "tee quote v3" | "teequotev3" | "tee quote v 3" => "tee",
             "sgx quote" | "sgxquote" => "tee",
             "enclave quote" | "enclavequote" => "tee",
             "sgx report" | "sgxreport" => "tee",
@@ -1015,6 +1018,20 @@ mod tests {
         let mut registry = VerifierRegistry::new();
         registry.register(Arc::new(AlwaysValidVerifier {
             kind: " tee-quote ",
+        }));
+
+        let task = task_with_proof_type(ProofType::Tee);
+        assert_eq!(
+            registry.verify(&task, b"attestation"),
+            VerificationResult::Valid
+        );
+    }
+
+    #[test]
+    fn registry_register_collapses_versioned_tee_quote_alias_for_lookup() {
+        let mut registry = VerifierRegistry::new();
+        registry.register(Arc::new(AlwaysValidVerifier {
+            kind: " TEE_QUOTE_v1 ",
         }));
 
         let task = task_with_proof_type(ProofType::Tee);
