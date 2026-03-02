@@ -14,9 +14,14 @@ pub struct ZkReceiptProofAdapter;
 pub fn build_proof_adapter(name: &str) -> Result<Box<dyn ProofAdapter>, String> {
     let normalized = normalize_adapter_label(name);
     match normalized.as_str() {
-        "" | DEFAULT_PROOF_ADAPTER | "fraud-proof" | "fraud_proof" => {
-            Ok(Box::new(StandardProofAdapter))
-        }
+        ""
+        | DEFAULT_PROOF_ADAPTER
+        | "fraud-proof"
+        | "fraud_proof"
+        | "fraud-proof-v1"
+        | "fraud_proof_v1"
+        | "fraudproof"
+        | "fraudproofv1" => Ok(Box::new(StandardProofAdapter)),
         "tee-receipt" | "tee_receipt" | "tee-receipt-v1" | "tee_receipt_v1"
         | "tee-attestation" | "tee_attestation" | "teereceipt" | "teeattestation"
         | "teereceiptv1" => Ok(Box::new(TeeReceiptProofAdapter)),
@@ -508,6 +513,26 @@ mod tests {
         assert_eq!(code, "ok");
 
         let adapter = build_proof_adapter("FRAUD_PROOF").expect("fraud proof underscore alias");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "ok");
+
+        let adapter = build_proof_adapter("fraud-proof-v1").expect("fraud proof v1 alias");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "ok");
+
+        let adapter = build_proof_adapter("FRAUD_PROOF_V1").expect("fraud proof underscore v1 alias");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "ok");
+
+        let adapter = build_proof_adapter("fraudproof").expect("fraud proof compact alias");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "ok");
+
+        let adapter = build_proof_adapter("fraudproofv1").expect("fraud proof compact v1 alias");
         let (ok, code) = adapter.verify("hello", 8);
         assert!(ok);
         assert_eq!(code, "ok");
