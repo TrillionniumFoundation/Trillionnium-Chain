@@ -715,8 +715,7 @@ fn ingress_file() -> PathBuf {
     run_root().join("run/message-gateway/requests.jsonl")
 }
 
-fn normalized_path_from_env(name: &str) -> Option<PathBuf> {
-    let raw = std::env::var(name).ok()?;
+fn normalize_wrapped_env_value(raw: &str) -> &str {
     let mut normalized = raw.trim();
     while normalized.len() >= 2 {
         let wrapped_by_quotes = (normalized.starts_with('"') && normalized.ends_with('"'))
@@ -727,6 +726,12 @@ fn normalized_path_from_env(name: &str) -> Option<PathBuf> {
         }
         normalized = normalized[1..normalized.len() - 1].trim();
     }
+    normalized
+}
+
+fn normalized_path_from_env(name: &str) -> Option<PathBuf> {
+    let raw = std::env::var(name).ok()?;
+    let normalized = normalize_wrapped_env_value(&raw);
     if normalized.is_empty() {
         None
     } else {
@@ -951,7 +956,7 @@ fn load_market_reputation() -> BTreeMap<String, i64> {
 fn env_u128_clamped(name: &str, default: u128, min: u128, max: u128) -> u128 {
     std::env::var(name)
         .ok()
-        .and_then(|v| v.trim().parse::<u128>().ok())
+        .and_then(|v| normalize_wrapped_env_value(&v).parse::<u128>().ok())
         .map(|v| v.clamp(min, max))
         .unwrap_or(default)
 }
@@ -959,7 +964,7 @@ fn env_u128_clamped(name: &str, default: u128, min: u128, max: u128) -> u128 {
 fn env_i64_clamped(name: &str, default: i64, min: i64, max: i64) -> i64 {
     std::env::var(name)
         .ok()
-        .and_then(|v| v.trim().parse::<i64>().ok())
+        .and_then(|v| normalize_wrapped_env_value(&v).parse::<i64>().ok())
         .map(|v| v.clamp(min, max))
         .unwrap_or(default)
 }
@@ -2424,15 +2429,20 @@ fn main() -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::sync::{Mutex, OnceLock};
+    use std::panic::{catch_unwind, AssertUnwindSafe};
+    use std::sync::{Mutex, MutexGuard, OnceLock};
 
     fn env_lock() -> &'static Mutex<()> {
         static LOCK: OnceLock<Mutex<()>> = OnceLock::new();
         LOCK.get_or_init(|| Mutex::new(()))
     }
 
+    fn lock_env<'a>() -> MutexGuard<'a, ()> {
+        env_lock().lock().unwrap_or_else(|poison| poison.into_inner())
+    }
+
     fn with_market_score_env(vars: &[(&str, &str)], f: impl FnOnce()) {
-        let _guard = env_lock().lock().expect("env lock poisoned");
+        let _guard = lock_env();
         let keys = [
             MARKET_PRICE_WEIGHT_ENV,
             MARKET_REPUTATION_WEIGHT_ENV,
@@ -2446,7 +2456,8 @@ mod tests {
         for (k, v) in vars {
             unsafe { std::env::set_var(k, v) };
         }
-        f();
+
+        let run = catch_unwind(AssertUnwindSafe(f));
 
         for (k, v) in prev {
             match v {
@@ -2454,10 +2465,14 @@ mod tests {
                 None => unsafe { std::env::remove_var(&k) },
             }
         }
+
+        if let Err(panic) = run {
+            std::panic::resume_unwind(panic);
+        }
     }
 
     fn with_market_path_env(vars: &[(&str, Option<&str>)], f: impl FnOnce()) {
-        let _guard = env_lock().lock().expect("env lock poisoned");
+        let _guard = lock_env();
         let keys = [
             "TRNM_RPC_MARKET_TASKS_FILE",
             "TRNM_RPC_MARKET_BIDS_FILE",
@@ -2475,13 +2490,17 @@ mod tests {
             }
         }
 
-        f();
+        let run = catch_unwind(AssertUnwindSafe(f));
 
         for (k, v) in prev {
             match v {
                 Some(val) => unsafe { std::env::set_var(&k, val) },
                 None => unsafe { std::env::remove_var(&k) },
             }
+        }
+
+        if let Err(panic) = run {
+            std::panic::resume_unwind(panic);
         }
     }
 
@@ -2840,6 +2859,20 @@ mod tests {
             ],
             || {
                 assert_eq!(market_effective_score(101, 20), 100_800);
+            },
+        );
+    }
+
+    #[test]
+    fn market_score_config_uses_defaults_for_empty_wrapped_env_values() {
+        with_market_score_env(
+            &[
+                (MARKET_PRICE_WEIGHT_ENV, " '' "),
+                (MARKET_REPUTATION_WEIGHT_ENV, " \"\" "),
+                (MARKET_REPUTATION_CLAMP_ENV, " ` ` "),
+            ],
+            || {
+                assert_eq!(market_effective_score(10, 5), 9_500);
             },
         );
     }
@@ -4072,7 +4105,9 @@ mod tests {
 
     #[test]
     fn faucet_env_parsing_enforces_minimums() {
-        let _guard = faucet_env_test_lock().lock().expect("faucet env lock");
+        let _guard = faucet_env_test_lock()
+            .lock()
+            .unwrap_or_else(|poison| poison.into_inner());
         clear_faucet_env();
 
         std::env::set_var("TRNM_RPC_FAUCET_WINDOW_SECONDS", "0");
@@ -4097,7 +4132,9 @@ mod tests {
 
     #[test]
     fn faucet_env_parsing_uses_defaults_for_invalid_values() {
-        let _guard = faucet_env_test_lock().lock().expect("faucet env lock");
+        let _guard = faucet_env_test_lock()
+            .lock()
+            .unwrap_or_else(|poison| poison.into_inner());
         clear_faucet_env();
 
         std::env::set_var("TRNM_RPC_FAUCET_WINDOW_SECONDS", "bad");
@@ -4122,7 +4159,9 @@ mod tests {
 
     #[test]
     fn faucet_env_parsing_accepts_surrounding_whitespace() {
-        let _guard = faucet_env_test_lock().lock().expect("faucet env lock");
+        let _guard = faucet_env_test_lock()
+            .lock()
+            .unwrap_or_else(|poison| poison.into_inner());
         clear_faucet_env();
 
         std::env::set_var("TRNM_RPC_FAUCET_WINDOW_SECONDS", "  120  ");
