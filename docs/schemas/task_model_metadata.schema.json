@@ -109,6 +109,20 @@
           "if": {
             "properties": {
               "privacy_tier": {
+                "const": "internal"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "provenance_index"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "privacy_tier": {
                 "const": "public"
               }
             }
