@@ -120,6 +120,10 @@ jobs:
         run: |
           ./scripts/v2/d2_task_model_metadata_schema_accept_namespaced_provenance_index_test.sh
 
+      - name: D2 schema rejects trailing separator provenance_index regression
+        run: |
+          ./scripts/v2/d2_task_model_metadata_schema_reject_provenance_index_trailing_separator_test.sh
+
       - name: Web4 release aggregate gate regression (coverage + fail-closed guard)
         run: |
           ./scripts/v2/web4_release_aggregate_gate_regression_test.sh
