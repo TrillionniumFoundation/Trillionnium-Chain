@@ -27,6 +27,7 @@ cargo test -p trnm-types renew_capability_rejects_word_joiner_actor_without_side
 cargo test -p trnm-types renew_capability_rejects_arabic_letter_mark_actor_without_side_effects
 cargo test -p trnm-types renew_capability_rejects_bom_actor_without_side_effects
 cargo test -p trnm-types renew_capability_rejects_unknown_token_without_side_effects
+cargo test -p trnm-types revoke_capability_is_idempotent_for_audit_and_timestamp
 cargo test -p trnm-types revoke_capability_replay_with_same_height_is_idempotent_without_side_effects
 cargo test -p trnm-types revoke_capability_replay_with_older_height_is_rejected_without_side_effects
 cargo test -p trnm-types revoke_capability_blank_audit_note_is_normalized_to_none
