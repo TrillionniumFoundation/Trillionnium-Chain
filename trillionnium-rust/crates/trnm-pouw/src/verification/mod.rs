@@ -95,6 +95,7 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
                 || ch == '\u{200c}'
                 || ch == '\u{200d}'
                 || ch == '\u{2060}'
+                || ch == '\u{2063}'
                 || ch == '\u{feff}'
                 || ch == '/'
                 || ch == '／'
@@ -611,9 +612,12 @@ mod tests {
             "v",
             2,
         );
+        let tee_invisible_separator =
+            VerificationReceipt::new(3, "TEE\u{2063}RECEIPT", VerificationResult::Valid, "v", 3);
 
         assert_eq!(tee.proof_type, "tee");
         assert_eq!(zk.proof_type, "zk");
+        assert_eq!(tee_invisible_separator.proof_type, "tee");
     }
 
     #[test]
