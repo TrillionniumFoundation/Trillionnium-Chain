@@ -116,6 +116,8 @@ impl VerifierRegistry {
             "td quote" | "tdquote" => "tee",
             "tdx report" | "tdxreport" => "tee",
             "td report" | "tdreport" => "tee",
+            "snp report" | "snpreport" => "tee",
+            "amd sev snp report" | "amdsevsnpreport" => "tee",
             "intel tdx quote" | "inteltdxquote" => "tee",
             "tee report" | "teereport" => "tee",
             "tee evidence" | "teeevidence" => "tee",
@@ -1001,6 +1003,17 @@ mod tests {
         let mut registry = VerifierRegistry::new();
         registry.register(Arc::new(AlwaysValidVerifier {
             kind: " tdx-report ",
+        }));
+
+        let task = task_with_proof_type(ProofType::Tee);
+        assert_eq!(registry.verify(&task, b"report"), VerificationResult::Valid);
+    }
+
+    #[test]
+    fn registry_register_collapses_amd_sev_snp_report_alias_for_lookup() {
+        let mut registry = VerifierRegistry::new();
+        registry.register(Arc::new(AlwaysValidVerifier {
+            kind: " AMD_SEV-SNP_report ",
         }));
 
         let task = task_with_proof_type(ProofType::Tee);
