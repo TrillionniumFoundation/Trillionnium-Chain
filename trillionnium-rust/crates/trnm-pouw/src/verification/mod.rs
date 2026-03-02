@@ -202,7 +202,11 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
         | "tdx report"
         | "td report"
         | "snp report"
+        | "snp quote"
+        | "sev snp report"
+        | "sev snp quote"
         | "amd sev snp report"
+        | "amd sev snp quote"
         | "intel tdx quote"
         | "tee cert"
         | "tee certificate"
@@ -235,7 +239,11 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
         | "tdxreport"
         | "tdreport"
         | "snpreport"
+        | "snpquote"
+        | "sevsnpreport"
+        | "sevsnpquote"
         | "amdsevsnpreport"
+        | "amdsevsnpquote"
         | "inteltdxquote"
         | "teecert"
         | "teecertificate" => "tee".to_string(),
@@ -831,6 +839,19 @@ mod tests {
         assert_eq!(tee_enclave_quote.proof_type, "tee");
         assert_eq!(tee_td_report.proof_type, "tee");
         assert_eq!(tee_snp_report.proof_type, "tee");
+    }
+
+    #[test]
+    fn verification_receipt_new_collapses_snp_quote_aliases_to_tee_router_key() {
+        let snp_quote = VerificationReceipt::new(1, "SNP_QUOTE", VerificationResult::Valid, "v", 1);
+        let sev_snp_quote =
+            VerificationReceipt::new(2, "SEV-SNP quote", VerificationResult::Valid, "v", 2);
+        let amd_sev_snp_quote =
+            VerificationReceipt::new(3, "AMD SEV SNP QUOTE", VerificationResult::Valid, "v", 3);
+
+        assert_eq!(snp_quote.proof_type, "tee");
+        assert_eq!(sev_snp_quote.proof_type, "tee");
+        assert_eq!(amd_sev_snp_quote.proof_type, "tee");
     }
 
     #[test]
