@@ -81,8 +81,18 @@ fn last_balanced_json_object(input: &str) -> Option<String> {
     last
 }
 
+fn collapse_adapter_delimiters(raw: &str) -> String {
+    raw.chars()
+        .filter_map(|ch| match ch {
+            '\u{200b}' | '\u{200c}' | '\u{200d}' | '\u{2060}' | '\u{2063}' => None,
+            '‐' | '‑' | '‒' | '–' | '—' | '―' | '−' | '－' => Some('-'),
+            other => Some(other),
+        })
+        .collect()
+}
+
 fn normalize_adapter_label(label: &str) -> String {
-    label
+    collapse_adapter_delimiters(label)
         .trim()
         .trim_start_matches('\u{feff}')
         .trim()
@@ -90,7 +100,7 @@ fn normalize_adapter_label(label: &str) -> String {
 }
 
 fn normalize_adapter_value(value: &str) -> String {
-    value
+    collapse_adapter_delimiters(value)
         .trim()
         .trim_start_matches('\u{feff}')
         .trim()
@@ -337,6 +347,16 @@ mod tests {
             Some("pr-2c")
         );
 
+        let tee_with_non_breaking_hyphen = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-2d\",\"adapter\":\"TEE‑RECEIPT\"}",
+            )
+            .expect("tee receipt label with non-breaking hyphen should parse");
+        assert_eq!(
+            tee_with_non_breaking_hyphen.provider_request_id.as_deref(),
+            Some("pr-2d")
+        );
+
         let missing_request_id = adapter
             .parse_response("{\"output_text\":\"ok\",\"adapter\":\"tee-receipt\"}")
             .expect_err("provider_request_id is required");
@@ -414,6 +434,16 @@ mod tests {
         assert_eq!(
             zk_with_bom_and_whitespace.provider_request_id.as_deref(),
             Some("pr-zk-2c")
+        );
+
+        let zk_with_non_breaking_hyphen = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-zk-2d\",\"adapter\":\"ZK‑RECEIPT\"}",
+            )
+            .expect("zk receipt label with non-breaking hyphen should parse");
+        assert_eq!(
+            zk_with_non_breaking_hyphen.provider_request_id.as_deref(),
+            Some("pr-zk-2d")
         );
 
         let missing_request_id = adapter
@@ -558,6 +588,11 @@ mod tests {
         assert!(ok);
         assert_eq!(code, "tee_receipt_ok");
 
+        let adapter = build_proof_adapter("TEE‑RECEIPT").expect("tee non-breaking hyphen alias");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "tee_receipt_ok");
+
         let adapter = build_proof_adapter("zk-receipt").expect("zk receipt alias");
         let (ok, code) = adapter.verify("hello", 8);
         assert!(ok);
@@ -569,6 +604,11 @@ mod tests {
         assert_eq!(code, "zk_receipt_ok");
 
         let adapter = build_proof_adapter("zk_receipt_v1").expect("zk v1 alias");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "zk_receipt_ok");
+
+        let adapter = build_proof_adapter("ZK‑RECEIPT").expect("zk non-breaking hyphen alias");
         let (ok, code) = adapter.verify("hello", 8);
         assert!(ok);
         assert_eq!(code, "zk_receipt_ok");
