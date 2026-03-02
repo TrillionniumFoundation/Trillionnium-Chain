@@ -45,3 +45,38 @@ fn x3_prep_stale_pending_degraded_reason_is_sanitized_and_capped_for_replay() {
     assert_eq!(event.confirm_reason, Some(reason.clone()));
     assert_eq!(current_status(&request), &BridgeStatus::Reverted(reason));
 }
+
+#[test]
+fn x3_prep_stale_pending_degraded_reason_at_cap_does_not_append_ellipsis() {
+    let mut request = SettlementRequest::new(2, "0xmatrix-cap-boundary".to_string());
+    let token = operator_token();
+
+    let exact = "a".repeat(160);
+    let degraded = HeartbeatOutcome {
+        heartbeat: None,
+        should_retry: false,
+        degraded: true,
+        message: exact.clone(),
+    };
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &degraded,
+        SettlementConfirm::Confirmed { height: 4243 },
+    )
+    .unwrap();
+
+    let SettlementStep::Compensated { reason, event } = out else {
+        panic!("expected compensated branch");
+    };
+
+    let expected = format!("heartbeat degraded: {exact}");
+    assert_eq!(reason, expected);
+    assert!(!reason.ends_with('…'));
+
+    assert_eq!(event.phase, "relay_heartbeat_degraded");
+    assert_eq!(event.confirm_height, None);
+    assert_eq!(event.confirm_reason, Some(reason.clone()));
+    assert_eq!(current_status(&request), &BridgeStatus::Reverted(reason));
+}
