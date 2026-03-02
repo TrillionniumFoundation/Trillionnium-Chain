@@ -90,6 +90,8 @@ impl VerifierRegistry {
                     || ch == '*'
                     || ch == '~'
                     || ch == '^'
+                    || ch == '®'
+                    || ch == '™'
                 {
                     ' '
                 } else {
@@ -1319,6 +1321,7 @@ mod tests {
         assert!(registry.is_registered_kind("Intel DCAP Quote"));
         assert!(registry.is_registered_kind("SGX DCAP Quote"));
         assert!(registry.is_registered_kind("Intel SGX DCAP Quote"));
+        assert!(registry.is_registered_kind("Intel® SGX™ DCAP Quote"));
         assert!(registry.is_registered_kind("sgx-quote"));
         assert!(registry.is_registered_kind("intel_tdx_quote"));
         assert!(registry.is_registered_kind("td_quote"));
