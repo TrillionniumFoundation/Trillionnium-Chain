@@ -211,6 +211,12 @@ jobs:
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           ./scripts/v2/run_p1_integration_gate.sh
 
+      - name: Web4 release aggregate gate (hard gate)
+        run: |
+          set -euo pipefail
+          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+          ./scripts/v2/web4_release_aggregate_gate.sh
+
       - name: Aggressive regression check (PR-visible warn)
         if: github.event_name == 'pull_request'
         run: |
