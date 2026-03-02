@@ -99,12 +99,16 @@ pub mod bridge_status {
             Ok(())
         }
 
-        pub fn settle(&mut self, height: u64) {
-            self.status = BridgeStatus::Finalized(height);
+        #[deprecated(note = "direct settlement writes are disabled; use settle_authorized")]
+        pub fn settle(&mut self, _height: u64) {
+            // SECURITY: keep legacy API surface without allowing authorization bypass.
+            // Only *_authorized paths may perform terminal state transitions.
         }
 
-        pub fn revert(&mut self, reason: String) {
-            self.status = BridgeStatus::Reverted(reason);
+        #[deprecated(note = "direct settlement writes are disabled; use revert_authorized")]
+        pub fn revert(&mut self, _reason: String) {
+            // SECURITY: keep legacy API surface without allowing authorization bypass.
+            // Only *_authorized paths may perform terminal state transitions.
         }
 
         pub fn settle_authorized(
