@@ -830,7 +830,10 @@ impl IdentityRegistry {
     fn normalize_note(note: Option<String>) -> Option<String> {
         note.and_then(|v| {
             let trimmed = v.trim();
-            (!trimmed.is_empty()).then(|| trimmed.to_string())
+            let has_visible = trimmed
+                .chars()
+                .any(|ch| !ch.is_whitespace() && !ch.is_control() && !is_disallowed_invisible_char(ch));
+            has_visible.then(|| trimmed.to_string())
         })
     }
 
@@ -3007,6 +3010,39 @@ mod tests {
             token_id,
             30,
             Some("   ".to_string()),
+        )
+        .unwrap();
+
+        let last = reg.audit_trail().last().unwrap();
+        assert_eq!(last.action, AuditAction::CapabilityRevoked);
+        assert_eq!(last.note, None);
+    }
+
+    #[test]
+    fn revoke_capability_zero_width_audit_note_is_normalized_to_none() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did(
+            "did:trnm:agent-3ab".to_string(),
+            "org:lane2-admin".to_string(),
+            10,
+        )
+        .unwrap();
+
+        let token_id = reg
+            .issue_capability(
+                "org:lane2-admin".to_string(),
+                "did:trnm:agent-3ab".to_string(),
+                CapabilityScope::AuditRead,
+                12,
+                None,
+            )
+            .unwrap();
+
+        reg.revoke_capability(
+            "org:lane2-admin".to_string(),
+            token_id,
+            30,
+            Some("\u{200B}\u{200C}\u{2060}".to_string()),
         )
         .unwrap();
 
