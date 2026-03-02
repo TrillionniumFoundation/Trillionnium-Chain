@@ -45,7 +45,7 @@ def generate_audit_report(log_file):
                         content = content.strip()
                         data = parse_kv(content)
 
-                        schema = (data.get('event_schema') or '').strip()
+                        schema = data.get('event_schema') or ''
                         if schema not in {'v1', 'llm2', 'compact'}:
                             continue
 
