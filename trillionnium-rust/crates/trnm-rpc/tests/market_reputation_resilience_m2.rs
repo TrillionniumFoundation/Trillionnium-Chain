@@ -2,6 +2,12 @@ use serde_json::Value;
 use std::fs;
 use std::path::PathBuf;
 use std::process::Command;
+use std::sync::{Mutex, OnceLock};
+
+fn test_lock() -> &'static Mutex<()> {
+    static LOCK: OnceLock<Mutex<()>> = OnceLock::new();
+    LOCK.get_or_init(|| Mutex::new(()))
+}
 
 fn unique_market_path(name: &str, ext: &str) -> PathBuf {
     let mut path = std::env::temp_dir();
@@ -106,6 +112,7 @@ fn assert_match_falls_back_to_price_order_with_invalid_reputation_fixture(
 
 #[test]
 fn market_match_falls_back_to_zero_reputation_when_reputation_file_is_malformed_json() {
+    let _guard = test_lock().lock().unwrap_or_else(|poison| poison.into_inner());
     assert_match_falls_back_to_price_order_with_invalid_reputation_fixture(
         "{not valid json",
         "m2 malformed reputation fallback",
@@ -114,6 +121,7 @@ fn market_match_falls_back_to_zero_reputation_when_reputation_file_is_malformed_
 
 #[test]
 fn market_match_falls_back_to_zero_reputation_when_reputation_file_is_valid_json_but_wrong_shape() {
+    let _guard = test_lock().lock().unwrap_or_else(|poison| poison.into_inner());
     assert_match_falls_back_to_price_order_with_invalid_reputation_fixture(
         "[{\"worker\":\"worker-high\",\"reputation\":900}]",
         "m2 wrong-shape reputation fallback",
@@ -122,6 +130,7 @@ fn market_match_falls_back_to_zero_reputation_when_reputation_file_is_valid_json
 
 #[test]
 fn market_match_applies_reputation_weighting_from_fixture_for_m2_priority() {
+    let _guard = test_lock().lock().unwrap_or_else(|poison| poison.into_inner());
     let tasks = unique_market_path("market_tasks", "jsonl");
     let bids = unique_market_path("market_bids", "jsonl");
     let reputation = unique_market_path("market_reputation", "json");
@@ -200,6 +209,7 @@ fn market_match_applies_reputation_weighting_from_fixture_for_m2_priority() {
 
 #[test]
 fn market_match_salvages_valid_reputation_entries_when_fixture_has_partial_invalid_values() {
+    let _guard = test_lock().lock().unwrap_or_else(|poison| poison.into_inner());
     let tasks = unique_market_path("market_tasks", "jsonl");
     let bids = unique_market_path("market_bids", "jsonl");
     let reputation = unique_market_path("market_reputation", "json");
@@ -278,6 +288,7 @@ fn market_match_salvages_valid_reputation_entries_when_fixture_has_partial_inval
 
 #[test]
 fn market_match_respects_reputation_clamp_for_m2_score_stability() {
+    let _guard = test_lock().lock().unwrap_or_else(|poison| poison.into_inner());
     let tasks = unique_market_path("market_tasks", "jsonl");
     let bids = unique_market_path("market_bids", "jsonl");
     let reputation = unique_market_path("market_reputation", "json");
@@ -357,6 +368,7 @@ fn market_match_respects_reputation_clamp_for_m2_score_stability() {
 
 #[test]
 fn market_match_exposes_penalty_explainability_fields_for_negative_reputation_winner() {
+    let _guard = test_lock().lock().unwrap_or_else(|poison| poison.into_inner());
     let tasks = unique_market_path("market_tasks", "jsonl");
     let bids = unique_market_path("market_bids", "jsonl");
     let reputation = unique_market_path("market_reputation", "json");
