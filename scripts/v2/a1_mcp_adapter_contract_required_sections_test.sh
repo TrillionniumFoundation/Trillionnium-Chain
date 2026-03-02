@@ -51,6 +51,7 @@ guard_phrases=(
   "同键不同请求体"
   "error.code"
   "error.message"
+  "error.retryable"
   "trnm-agent mcp-adapter rollback"
   "--root-cause-tag"
 )

@@ -49,7 +49,7 @@
 - 幂等键冲突（同键不同请求体）：`409 idempotency_conflict`（fail-closed，不得覆盖既有 `request_id -> task_id` 映射）
 - 防重放冲突：`409 replay_detected`（同一 `request_id` 出现重复 `X-TRNM-Nonce` 必须拒绝）
 
-错误响应最小字段：`request_id` / `error.code` / `error.message`。
+错误响应最小字段：`request_id` / `error.code` / `error.message` / `error.retryable`（boolean，便于调用方在 fail-closed 前提下执行安全重试）。
 
 ## 5. 验收与证据
 
