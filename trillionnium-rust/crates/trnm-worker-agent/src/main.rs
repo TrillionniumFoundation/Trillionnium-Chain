@@ -140,6 +140,14 @@ enum Command {
         #[arg(long, default_value = "audit-export.jsonl")]
         output_file: PathBuf,
     },
+    QueryAudit {
+        #[arg(long, default_value = "audit-export.jsonl")]
+        output_file: PathBuf,
+        #[arg(long)]
+        task_id: Option<u64>,
+        #[arg(long)]
+        provenance_fingerprint: Option<String>,
+    },
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -345,6 +353,32 @@ fn query_audit_export_by_task_id<'a>(
         .into_iter()
         .flat_map(|rows| rows.iter().filter_map(|idx| exports.get(*idx)))
         .collect()
+}
+
+fn query_audit_export_by_provenance_fingerprint<'a>(
+    exports: &'a [EnterpriseAuditExportRecord],
+    index: &AuditExportIndex,
+    provenance_fingerprint: &str,
+) -> Vec<&'a EnterpriseAuditExportRecord> {
+    let Some(normalized) = normalized_provenance_label(Some(provenance_fingerprint), 128)
+        .map(|value| value.to_ascii_lowercase())
+    else {
+        return Vec::new();
+    };
+    index
+        .by_provenance_fingerprint
+        .get(&normalized)
+        .into_iter()
+        .flat_map(|rows| rows.iter().filter_map(|idx| exports.get(*idx)))
+        .collect()
+}
+
+#[derive(Debug, Serialize)]
+struct QueryAuditOutput {
+    hit_indexes: Vec<usize>,
+    records: Vec<EnterpriseAuditExportRecord>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    provenance_fingerprint: Option<String>,
 }
 
 fn audit_export_index_path(output_file: &Path) -> PathBuf {
@@ -989,12 +1023,13 @@ fn run_llm_adapter_once(
         context: format!("invalid llm adapter command: {e}"),
     })?;
     let prompt_arg = vec![prompt.to_string()];
-    let out = run_command_with_timeout(&program, &base_args, &prompt_arg, timeout).map_err(|e| {
-        AdapterError {
-            kind: AdapterErrorKind::Retriable,
-            context: e.to_string(),
-        }
-    })?;
+    let out =
+        run_command_with_timeout(&program, &base_args, &prompt_arg, timeout).map_err(|e| {
+            AdapterError {
+                kind: AdapterErrorKind::Retriable,
+                context: e.to_string(),
+            }
+        })?;
     let stdout = String::from_utf8_lossy(&out.stdout).trim().to_string();
     let stderr = String::from_utf8_lossy(&out.stderr).trim().to_string();
     if !out.status.success() {
@@ -1621,8 +1656,12 @@ mod tests {
 
     #[test]
     fn llm_adapter_timeout_triggers() {
-        let base_args = vec!["-lc".to_string(), "sleep 0.2; echo '{\"output_text\":\"late\"}'".to_string()];
-        let err = run_command_with_timeout("sh", &base_args, &[], Duration::from_millis(30)).unwrap_err();
+        let base_args = vec![
+            "-lc".to_string(),
+            "sleep 0.2; echo '{\"output_text\":\"late\"}'".to_string(),
+        ];
+        let err =
+            run_command_with_timeout("sh", &base_args, &[], Duration::from_millis(30)).unwrap_err();
         assert!(err.to_string().contains("timeout"));
     }
 
@@ -1669,7 +1708,8 @@ mod tests {
 
     #[test]
     fn parse_command_spec_rejects_invalid_quote() {
-        let err = parse_command_spec("python3 -c 'print(1)").expect_err("unbalanced quote must fail");
+        let err =
+            parse_command_spec("python3 -c 'print(1)").expect_err("unbalanced quote must fail");
         assert!(err.to_string().contains("invalid command spec quoting"));
     }
 
@@ -1679,8 +1719,11 @@ mod tests {
             "-c".to_string(),
             "import sys; print(sys.argv[1])".to_string(),
         ];
-        let extra_args = vec!["{\"output_text\":\"ok\",\"provider_request_id\":\"r1\"}".to_string()];
-        let out = run_command_with_timeout("python3", &base_args, &extra_args, Duration::from_secs(1)).unwrap();
+        let extra_args =
+            vec!["{\"output_text\":\"ok\",\"provider_request_id\":\"r1\"}".to_string()];
+        let out =
+            run_command_with_timeout("python3", &base_args, &extra_args, Duration::from_secs(1))
+                .unwrap();
         assert!(out.status.success());
         let stdout = String::from_utf8_lossy(&out.stdout).trim().to_string();
         let parsed: LlmAdapterResponse = serde_json::from_str(&stdout).unwrap();
@@ -1690,7 +1733,8 @@ mod tests {
 
     #[test]
     fn llm_adapter_accepts_last_json_line_when_stdout_has_noise() {
-        let prompt = "debug: adapter warmup\n{\"output_text\":\"ok\",\"provider_request_id\":\"r1\"}";
+        let prompt =
+            "debug: adapter warmup\n{\"output_text\":\"ok\",\"provider_request_id\":\"r1\"}";
         let parsed = run_llm_adapter_once(
             "python3 -c 'import sys; print(sys.argv[1])'",
             prompt,
@@ -1717,7 +1761,8 @@ mod tests {
 
     #[test]
     fn llm_adapter_prompt_shell_chars_are_treated_as_plain_text() {
-        let marker = env::temp_dir().join(format!("trnm-worker-agent-shell-marker-{}.tmp", now_ms()));
+        let marker =
+            env::temp_dir().join(format!("trnm-worker-agent-shell-marker-{}.tmp", now_ms()));
         let prompt = format!(
             "{{\"output_text\":\"$(touch {})\",\"provider_request_id\":\"r-safe\"}}",
             marker.display()
@@ -2969,6 +3014,31 @@ mod tests {
         assert_eq!(hit[0].request_id, "r2");
 
         let miss = query_audit_export_by_task_id(&rows, &index, 9999);
+        assert!(miss.is_empty());
+    }
+
+    #[test]
+    fn query_audit_export_by_provenance_fingerprint_normalizes_lookup() {
+        let rows = vec![EnterpriseAuditExportRecord {
+            request_id: "r1".to_string(),
+            task_id: 7002,
+            status: "reveal_submitted".to_string(),
+            provider_request_id: Some("p1".to_string()),
+            provenance_schema_version: Some("llm.v2".to_string()),
+            provenance_fingerprint: Some("deadbeef".to_string()),
+            provider: Some("openai".to_string()),
+            model: Some("gpt-5.3-codex".to_string()),
+            adapter: Some("mcp".to_string()),
+            agent_protocol: Some("a2a".to_string()),
+            compliance_profile: Some("cn-moderate".to_string()),
+        }];
+
+        let index = build_audit_export_index(&rows);
+        let hit = query_audit_export_by_provenance_fingerprint(&rows, &index, "  DEADBEEF ");
+        assert_eq!(hit.len(), 1);
+        assert_eq!(hit[0].request_id, "r1");
+
+        let miss = query_audit_export_by_provenance_fingerprint(&rows, &index, "dead\u{200b}beef");
         assert!(miss.is_empty());
     }
 
@@ -4769,6 +4839,67 @@ fn main() -> Result<()> {
                 index_file.display(),
                 detect_audit_export_format(&output_file)
             );
+        }
+        Command::QueryAudit {
+            output_file,
+            task_id,
+            provenance_fingerprint,
+        } => {
+            if task_id.is_some() == provenance_fingerprint.is_some() {
+                return Err(anyhow!(
+                    "query-audit requires exactly one filter: --task-id or --provenance-fingerprint"
+                ));
+            }
+
+            let index_file = audit_export_index_path(&output_file);
+            if !index_file.exists() {
+                return Err(anyhow!(
+                    "query-audit missing index file: {}",
+                    index_file.display()
+                ));
+            }
+
+            let mut exports = Vec::new();
+            for line in fs::read_to_string(&output_file)?.lines() {
+                if line.trim().is_empty() {
+                    continue;
+                }
+                exports.push(serde_json::from_str::<EnterpriseAuditExportRecord>(line)?);
+            }
+            let index: AuditExportIndex = serde_json::from_str(&fs::read_to_string(&index_file)?)?;
+
+            let (hit_indexes, records, normalized_fp) = if let Some(task_id) = task_id {
+                let key = task_id.to_string();
+                let hits = index.by_task_id.get(&key).cloned().unwrap_or_default();
+                let rows = query_audit_export_by_task_id(&exports, &index, task_id)
+                    .into_iter()
+                    .cloned()
+                    .collect();
+                (hits, rows, None)
+            } else {
+                let raw = provenance_fingerprint.expect("checked above");
+                let normalized = normalized_provenance_label(Some(raw.as_str()), 128)
+                    .map(|value| value.to_ascii_lowercase())
+                    .ok_or_else(|| anyhow!("invalid provenance fingerprint filter"))?;
+                let hits = index
+                    .by_provenance_fingerprint
+                    .get(&normalized)
+                    .cloned()
+                    .unwrap_or_default();
+                let rows =
+                    query_audit_export_by_provenance_fingerprint(&exports, &index, &normalized)
+                        .into_iter()
+                        .cloned()
+                        .collect();
+                (hits, rows, Some(normalized))
+            };
+
+            let out = QueryAuditOutput {
+                hit_indexes,
+                records,
+                provenance_fingerprint: normalized_fp,
+            };
+            println!("{}", serde_json::to_string_pretty(&out)?);
         }
     }
     Ok(())
