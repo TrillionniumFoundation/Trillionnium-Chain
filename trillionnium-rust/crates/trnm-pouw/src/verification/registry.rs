@@ -95,6 +95,7 @@ impl VerifierRegistry {
             // Backward-compatible aliases from early V1/V2 proof/receipt naming.
             "fraud proof" | "fraudproof" => "fraud",
             "fraud receipt" | "fraudreceipt" => "fraud",
+            "fraud challenge" | "fraudchallenge" => "fraud",
             "tee proof" | "teeproof" => "tee",
             "tee receipt" | "teereceipt" => "tee",
             "tee attestation" | "teeattestation" => "tee",
@@ -724,6 +725,17 @@ mod tests {
     }
 
     #[test]
+    fn registry_register_collapses_fraud_challenge_alias_for_lookup() {
+        let mut registry = VerifierRegistry::new();
+        registry.register(Arc::new(AlwaysValidVerifier {
+            kind: " FRAUD_CHALLENGE ",
+        }));
+
+        let task = task_with_proof_type(ProofType::Fraud);
+        assert_eq!(registry.verify(&task, b"challenge"), VerificationResult::Valid);
+    }
+
+    #[test]
     fn registry_register_collapses_tee_proof_alias_for_lookup() {
         let mut registry = VerifierRegistry::new();
         registry.register(Arc::new(AlwaysValidVerifier {
@@ -1180,6 +1192,7 @@ mod tests {
         assert!(registry.is_registered_kind("Zero Knowledge Attestation"));
         assert!(registry.is_registered_kind("zero knowledge"));
         assert!(registry.is_registered_kind("fraud"));
+        assert!(registry.is_registered_kind("fraud_challenge"));
         assert!(!registry.is_registered_kind("custom-proof"));
         assert!(!registry.is_registered_kind("   "));
     }
