@@ -3134,6 +3134,23 @@ mod tests {
     }
 
     #[test]
+    fn market_m2_policy_gate_guards_default_drift_to_min_boundaries() {
+        with_market_score_env(
+            &[
+                (MARKET_PRICE_WEIGHT_ENV, "''"),
+                (MARKET_REPUTATION_WEIGHT_ENV, "0"),
+                (MARKET_REPUTATION_CLAMP_ENV, "0"),
+            ],
+            || {
+                let cfg = market_score_config();
+                assert_eq!(cfg.price_weight, MARKET_PRICE_WEIGHT_DEFAULT);
+                assert_eq!(cfg.reputation_weight, MARKET_WEIGHT_MIN);
+                assert_eq!(cfg.reputation_clamp, MARKET_REPUTATION_CLAMP_MIN);
+            },
+        );
+    }
+
+    #[test]
     fn normalize_tx_hash_lookup_tolerates_shell_wrapped_quotes() {
         assert_eq!(normalize_tx_hash_lookup("  \"0xAbC123\"  "), "0xabc123");
         assert_eq!(normalize_tx_hash_lookup(" '0xDeF456'\n"), "0xdef456");
