@@ -2455,7 +2455,7 @@ fn main() -> Result<()> {
                 .collect::<std::collections::BTreeSet<_>>();
             let tasks_with_bids_count = bids
                 .iter()
-                .map(|b| b.task_id)
+                .filter_map(|b| normalize_market_worker_key(&b.worker).map(|_| b.task_id))
                 .collect::<std::collections::BTreeSet<_>>()
                 .into_iter()
                 .filter(|task_id| known_task_ids.contains(task_id))
