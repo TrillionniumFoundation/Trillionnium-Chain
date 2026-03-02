@@ -549,3 +549,45 @@ fn x3_prep_degraded_blank_reason_takes_precedence_over_confirm_failure_reason() 
         &BridgeStatus::Reverted("heartbeat degraded: unknown heartbeat failure".to_string())
     );
 }
+
+#[test]
+fn x3_prep_manual_degraded_blank_message_uses_stable_failure_fallback() {
+    let mut request = SettlementRequest::new(1, "0xmanual-hbblank".to_string());
+    let token = operator_token();
+
+    let degraded = trnm_bridge_poc::relay_heartbeat::HeartbeatOutcome {
+        heartbeat: None,
+        should_retry: false,
+        degraded: true,
+        message: "\u{200B}\n\t\u{202E}".to_string(),
+    };
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &degraded,
+        SettlementConfirm::Confirmed { height: 9999 },
+    )
+    .unwrap();
+
+    assert_eq!(
+        out,
+        SettlementStep::Compensated {
+            reason: "heartbeat degraded: unknown heartbeat failure".to_string(),
+            event: trnm_bridge_poc::x2_settlement_loop::SettlementEvent {
+                phase: "relay_heartbeat_degraded",
+                heartbeat_source_height: None,
+                heartbeat_target_height: None,
+                heartbeat_latency_ms: None,
+                confirm_height: None,
+                confirm_reason: Some(
+                    "heartbeat degraded: unknown heartbeat failure".to_string(),
+                ),
+            },
+        }
+    );
+    assert_eq!(
+        current_status(&request),
+        &BridgeStatus::Reverted("heartbeat degraded: unknown heartbeat failure".to_string())
+    );
+}

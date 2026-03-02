@@ -38,7 +38,7 @@ pub fn drive_minimal_settlement(
 
     if heartbeat.degraded {
         let degraded_reason =
-            normalize_compensation_reason(&heartbeat.message, "unknown heartbeat degradation");
+            normalize_compensation_reason(&heartbeat.message, "unknown heartbeat failure");
         let reason = format!("heartbeat degraded: {degraded_reason}");
         request.revert_authorized(token, reason.clone())?;
         let event = SettlementEvent {
