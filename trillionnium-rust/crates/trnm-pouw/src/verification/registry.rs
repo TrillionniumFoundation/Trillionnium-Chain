@@ -100,15 +100,15 @@ impl VerifierRegistry {
             // Backward-compatible aliases from early V1/V2 proof/receipt naming.
             "fraud proof" | "fraudproof" => "fraud",
             "fraud receipt" | "fraudreceipt" => "fraud",
-            "fraud receipt v1" | "fraudreceiptv1" => "fraud",
-            "fraud receipt v2" | "fraudreceiptv2" => "fraud",
+            "fraud receipt v1" | "fraudreceiptv1" | "fraud receipt v 1" => "fraud",
+            "fraud receipt v2" | "fraudreceiptv2" | "fraud receipt v 2" => "fraud",
             "fraud challenge" | "fraudchallenge" => "fraud",
             "tee proof" | "teeproof" => "tee",
-            "tee proof v1" | "teeproofv1" => "tee",
-            "tee proof v2" | "teeproofv2" => "tee",
+            "tee proof v1" | "teeproofv1" | "tee proof v 1" => "tee",
+            "tee proof v2" | "teeproofv2" | "tee proof v 2" => "tee",
             "tee receipt" | "teereceipt" => "tee",
-            "tee receipt v1" | "teereceiptv1" => "tee",
-            "tee receipt v2" | "teereceiptv2" => "tee",
+            "tee receipt v1" | "teereceiptv1" | "tee receipt v 1" => "tee",
+            "tee receipt v2" | "teereceiptv2" | "tee receipt v 2" => "tee",
             "tee attestation" | "teeattestation" => "tee",
             "remote attestation" | "remoteattestation" => "tee",
             "attestation report" | "attestationreport" => "tee",
@@ -134,11 +134,11 @@ impl VerifierRegistry {
             "tee cert" | "teecert" => "tee",
             "tee certificate" | "teecertificate" => "tee",
             "zk proof" | "zkproof" => "zk",
-            "zk proof v1" | "zkproofv1" => "zk",
-            "zk proof v2" | "zkproofv2" => "zk",
+            "zk proof v1" | "zkproofv1" | "zk proof v 1" => "zk",
+            "zk proof v2" | "zkproofv2" | "zk proof v 2" => "zk",
             "zk receipt" | "zkreceipt" => "zk",
-            "zk receipt v1" | "zkreceiptv1" => "zk",
-            "zk receipt v2" | "zkreceiptv2" => "zk",
+            "zk receipt v1" | "zkreceiptv1" | "zk receipt v 1" => "zk",
+            "zk receipt v2" | "zkreceiptv2" | "zk receipt v 2" => "zk",
             "zk attestation" | "zkattestation" => "zk",
             "zk evidence" | "zkevidence" => "zk",
             "zk snark" | "zksnark" => "zk",
@@ -1283,8 +1283,11 @@ mod tests {
 
         assert!(registry.is_registered_kind("TEE_RECEIPT_V1"));
         assert!(registry.is_registered_kind("tee-proof-v2"));
+        assert!(registry.is_registered_kind("TEE_RECEIPT_V_2"));
         assert!(registry.is_registered_kind("fraud receipt v2"));
+        assert!(registry.is_registered_kind("fraud_receipt_v_1"));
         assert!(registry.is_registered_kind("zk receipt v1"));
+        assert!(registry.is_registered_kind("zk-receipt-v-2"));
         assert!(registry.is_registered_kind("ZK_PROOF_V2"));
     }
 
