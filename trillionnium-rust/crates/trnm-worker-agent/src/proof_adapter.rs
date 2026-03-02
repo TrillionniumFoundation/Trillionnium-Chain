@@ -20,8 +20,12 @@ pub fn build_proof_adapter(name: &str) -> Result<Box<dyn ProofAdapter>, String> 
         "" | DEFAULT_PROOF_ADAPTER | "fraud-proof" | "fraud_proof" => {
             Ok(Box::new(StandardProofAdapter))
         }
-        "tee-receipt" | "tee_receipt" => Ok(Box::new(TeeReceiptProofAdapter)),
-        "zk-receipt" | "zk_receipt" => Ok(Box::new(ZkReceiptProofAdapter)),
+        "tee-receipt" | "tee_receipt" | "tee-attestation" | "tee_attestation" => {
+            Ok(Box::new(TeeReceiptProofAdapter))
+        }
+        "zk-receipt" | "zk_receipt" | "zk-proof" | "zk_proof" => {
+            Ok(Box::new(ZkReceiptProofAdapter))
+        },
         other => Err(format!("unsupported-proof-adapter:{other}")),
     }
 }
@@ -406,10 +410,20 @@ mod tests {
         assert!(ok);
         assert_eq!(code, "zk_receipt_ok");
 
-        let err = match build_proof_adapter("tee-attestation") {
+        let adapter = build_proof_adapter("tee-attestation").expect("tee attestation alias");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "tee_receipt_ok");
+
+        let adapter = build_proof_adapter("zk-proof").expect("zk proof alias");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "zk_receipt_ok");
+
+        let err = match build_proof_adapter("tee attestation") {
             Ok(_) => panic!("unknown plugin must fail closed"),
             Err(err) => err,
         };
-        assert_eq!(err, "unsupported-proof-adapter:tee-attestation");
+        assert_eq!(err, "unsupported-proof-adapter:tee attestation");
     }
 }
