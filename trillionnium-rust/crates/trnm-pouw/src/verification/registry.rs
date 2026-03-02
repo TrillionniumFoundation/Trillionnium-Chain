@@ -96,6 +96,7 @@ impl VerifierRegistry {
             "intel tdx quote" | "inteltdxquote" => "tee",
             "tee report" | "teereport" => "tee",
             "tee evidence" | "teeevidence" => "tee",
+            "tee certificate" | "teecertificate" => "tee",
             "zk proof" | "zkproof" => "zk",
             "zk receipt" | "zkreceipt" => "zk",
             "zk attestation" | "zkattestation" => "zk",
@@ -105,6 +106,7 @@ impl VerifierRegistry {
             "zero knowledge snark" | "zeroknowledgesnark" => "zk",
             "zero knowledge proof" | "zeroknowledgeproof" => "zk",
             "zero knowledge receipt" | "zeroknowledgereceipt" => "zk",
+            "zero knowledge certificate" | "zeroknowledgecertificate" => "zk",
             "zero knowledge attestation" | "zeroknowledgeattestation" => "zk",
             "zero knowledge evidence" | "zeroknowledgeevidence" => "zk",
             // Keep custom plugin keys delimiter-stable for deterministic re-registration
@@ -1099,7 +1101,9 @@ mod tests {
         let registry = VerifierRegistry::with_builtin_verifiers();
 
         assert!(registry.is_registered_kind("TEE_RECEIPT"));
+        assert!(registry.is_registered_kind("TEE_CERTIFICATE"));
         assert!(registry.is_registered_kind(" zero-knowledge proof "));
+        assert!(registry.is_registered_kind("Zero Knowledge Certificate"));
         assert!(registry.is_registered_kind("Zero Knowledge Attestation"));
         assert!(registry.is_registered_kind("zero knowledge"));
         assert!(registry.is_registered_kind("fraud"));
