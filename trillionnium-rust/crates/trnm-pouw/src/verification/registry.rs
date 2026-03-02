@@ -155,7 +155,9 @@ impl VerifierRegistry {
             "tdx report" | "tdxreport" => "tee",
             "td report" | "tdreport" => "tee",
             "snp report" | "snpreport" => "tee",
+            "snp quote" | "snpquote" => "tee",
             "amd sev snp report" | "amdsevsnpreport" => "tee",
+            "amd sev snp quote" | "amdsevsnpquote" => "tee",
             "intel tdx quote" | "inteltdxquote" => "tee",
             "tee report" | "teereport" => "tee",
             "tee evidence" | "teeevidence" => "tee",
@@ -1419,7 +1421,9 @@ mod tests {
         assert!(registry.is_registered_kind("tdx_quote"));
         assert!(registry.is_registered_kind("TDX report"));
         assert!(registry.is_registered_kind("snp_report"));
+        assert!(registry.is_registered_kind("snp_quote"));
         assert!(registry.is_registered_kind("AMD SEV-SNP report"));
+        assert!(registry.is_registered_kind("AMD SEV-SNP quote"));
     }
 
     #[test]
