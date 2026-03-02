@@ -175,6 +175,12 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
         | "tee receipt v 2"
         | "tee receipt v 3"
         | "tee attestation"
+        | "tee attestation v1"
+        | "tee attestation v2"
+        | "tee attestation v3"
+        | "tee attestation v 1"
+        | "tee attestation v 2"
+        | "tee attestation v 3"
         | "tee quote"
         | "tee report"
         | "sgx quote"
@@ -834,11 +840,14 @@ mod tests {
             "v",
             2,
         );
+        let tee_attestation_v2 =
+            VerificationReceipt::new(3, "TEE_ATTESTATION_V2", VerificationResult::Valid, "v", 3);
         let zk_bare =
-            VerificationReceipt::new(3, "zero knowledge", VerificationResult::Valid, "v", 3);
+            VerificationReceipt::new(4, "zero knowledge", VerificationResult::Valid, "v", 4);
 
         assert_eq!(tee_remote.proof_type, "tee");
         assert_eq!(tee_attestation_report.proof_type, "tee");
+        assert_eq!(tee_attestation_v2.proof_type, "tee");
         assert_eq!(zk_bare.proof_type, "zk");
     }
 
