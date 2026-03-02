@@ -418,3 +418,6 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-mcp-adapter-contract-response-content-type-fail-closed-test" "./scripts/v2/a1_mcp_adapter_contract_response_content_type_fail_closed_test.sh" "ci(gate): add a1-mcp-adapter-contract-response-content-type-fail-closed-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-mcp-adapter-contract-response-request-id-exact-echo-test" "./scripts/v2/a1_mcp_adapter_contract_response_request_id_exact_echo_test.sh" "ci(gate): add a1-mcp-adapter-contract-response-request-id-exact-echo-test regression to quick-check"
