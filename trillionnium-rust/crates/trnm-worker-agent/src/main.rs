@@ -14,7 +14,9 @@ use std::{
 };
 mod proof_adapter;
 
-use proof_adapter::{build_proof_adapter, DEFAULT_PROOF_ADAPTER};
+use proof_adapter::{
+    build_proof_adapter, ProofAdapter, StandardProofAdapter, DEFAULT_PROOF_ADAPTER,
+};
 use trnm_types::RequestStatus;
 use wait_timeout::ChildExt;
 
@@ -292,7 +294,10 @@ fn build_audit_export_index(exports: &[EnterpriseAuditExportRecord]) -> AuditExp
         }
 
         if let Some(agent_protocol) = normalized_agent_protocol(rec.agent_protocol.as_deref()) {
-            by_agent_protocol.entry(agent_protocol).or_default().push(idx);
+            by_agent_protocol
+                .entry(agent_protocol)
+                .or_default()
+                .push(idx);
         }
 
         if let Some(compliance_profile) =
@@ -384,18 +389,9 @@ fn to_enterprise_audit_export(rec: &MessageIngressRecord) -> EnterpriseAuditExpo
     let is_v2 = schema_version.as_deref() == Some("llm.v2");
 
     // Re-normalize persisted provenance to fail-closed on legacy/corrupt snapshots.
-    let provider = normalized_provenance_label(
-        provenance.and_then(|p| p.provider.as_deref()),
-        64,
-    );
-    let model = normalized_provenance_label(
-        provenance.and_then(|p| p.model.as_deref()),
-        128,
-    );
-    let adapter = normalized_provenance_label(
-        provenance.and_then(|p| p.adapter.as_deref()),
-        64,
-    );
+    let provider = normalized_provenance_label(provenance.and_then(|p| p.provider.as_deref()), 64);
+    let model = normalized_provenance_label(provenance.and_then(|p| p.model.as_deref()), 128);
+    let adapter = normalized_provenance_label(provenance.and_then(|p| p.adapter.as_deref()), 64);
     let agent_protocol = is_v2
         .then(|| normalized_agent_protocol(provenance.and_then(|p| p.agent_protocol.as_deref())))
         .flatten();
@@ -459,9 +455,7 @@ fn render_enterprise_audit_markdown(exports: &[EnterpriseAuditExportRecord]) -> 
     let mut out = String::from(
         "| request_id | task_id | status | provider_request_id | provenance_schema_version | provenance_fingerprint | provider | model | adapter | agent_protocol | compliance_profile |\n",
     );
-    out.push_str(
-        "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n",
-    );
+    out.push_str("| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n");
 
     for rec in exports {
         let row = format!(
@@ -736,7 +730,9 @@ fn parse_tx_hash(text: &str) -> Option<String> {
     text.split_whitespace().find_map(|w| {
         let raw = w.strip_prefix("tx_hash=")?;
         let cleaned = raw
-            .trim_matches(|c: char| matches!(c, '"' | '\'' | ',' | ';' | '.' | ':' | ')' | ']' | '}'))
+            .trim_matches(|c: char| {
+                matches!(c, '"' | '\'' | ',' | ';' | '.' | ':' | ')' | ']' | '}')
+            })
             .trim();
 
         if cleaned.starts_with("0x")
@@ -953,6 +949,7 @@ fn run_llm_adapter_once(
     adapter_cmd: &str,
     prompt: &str,
     timeout: Duration,
+    proof_adapter: &dyn ProofAdapter,
 ) -> std::result::Result<LlmAdapterResponse, AdapterError> {
     let cmd = format!("{} {}", adapter_cmd, shell_escape::escape(prompt.into()));
     let out = run_shell_with_timeout(&cmd, timeout).map_err(|e| AdapterError {
@@ -971,40 +968,16 @@ fn run_llm_adapter_once(
             ),
         });
     }
-    let parse_whole = serde_json::from_str::<LlmAdapterResponse>(&stdout);
-    let resp = if let Ok(resp) = parse_whole {
-        resp
-    } else {
-        let fallback_line = stdout
-            .lines()
-            .rev()
-            .map(str::trim)
-            .find(|line| line.starts_with('{') && line.ends_with('}'));
-
-        match fallback_line {
-            Some(line) => serde_json::from_str::<LlmAdapterResponse>(line).map_err(|e| {
-                AdapterError {
-                    kind: AdapterErrorKind::NonRetriable,
-                    context: format!(
-                        "llm adapter invalid json: {} raw={}",
-                        e,
-                        truncate_for_error(&stdout, 512)
-                    ),
-                }
-            })?,
-            None => {
-                return Err(AdapterError {
-                    kind: AdapterErrorKind::NonRetriable,
-                    context: format!(
-                        "llm adapter invalid json: no-json-line raw={}",
-                        truncate_for_error(&stdout, 512)
-                    ),
-                });
-            }
-        }
-    };
-
-    Ok(resp)
+    proof_adapter
+        .parse_response(&stdout)
+        .map_err(|e| AdapterError {
+            kind: AdapterErrorKind::NonRetriable,
+            context: format!(
+                "llm adapter invalid payload: {} raw={}",
+                e,
+                truncate_for_error(&stdout, 512)
+            ),
+        })
 }
 
 fn run_llm_adapter_with_retry_inner<F, S>(
@@ -1046,11 +1019,12 @@ fn run_llm_adapter_with_retry(
     prompt: &str,
     retry: RetryPolicy,
     timeout: Duration,
+    proof_adapter: &dyn ProofAdapter,
 ) -> std::result::Result<LlmAdapterResponse, AdapterError> {
     run_llm_adapter_with_retry_inner(
         retry.max_retries,
         retry.backoff_ms,
-        || run_llm_adapter_once(adapter_cmd, prompt, timeout),
+        || run_llm_adapter_once(adapter_cmd, prompt, timeout, proof_adapter),
         thread::sleep,
     )
 }
@@ -1122,9 +1096,9 @@ fn normalized_provider_request_id(value: Option<&str>) -> Option<String> {
 
 fn normalized_provenance_label(value: Option<&str>, max_len: usize) -> Option<String> {
     let normalized = normalized_optional_field(value)?;
-    let has_disallowed_chars = normalized.chars().any(|c| {
-        c.is_control() || is_invisible_filler(c) || !c.is_ascii() || c.is_ascii_control()
-    });
+    let has_disallowed_chars = normalized
+        .chars()
+        .any(|c| c.is_control() || is_invisible_filler(c) || !c.is_ascii() || c.is_ascii_control());
     if !has_disallowed_chars && normalized.len() <= max_len {
         Some(normalized)
     } else {
@@ -1396,9 +1370,9 @@ fn normalized_compliance_profile(value: Option<&str>) -> Option<String> {
         .chars()
         .map(|c| if c.is_ascii_whitespace() { '-' } else { c })
         .collect();
-    let is_allowed = normalized
-        .chars()
-        .all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || matches!(c, '-' | '_' | '.' | '/' | '\\'));
+    let is_allowed = normalized.chars().all(|c| {
+        c.is_ascii_lowercase() || c.is_ascii_digit() || matches!(c, '-' | '_' | '.' | '/' | '\\')
+    });
     let starts_with_alpha_and_ends_alnum = normalized
         .chars()
         .next()
@@ -1426,7 +1400,13 @@ fn normalized_compliance_profile(value: Option<&str>) -> Option<String> {
         Some(
             normalized
                 .chars()
-                .map(|c| if matches!(c, '_' | '.' | '/' | '\\') { '-' } else { c })
+                .map(|c| {
+                    if matches!(c, '_' | '.' | '/' | '\\') {
+                        '-'
+                    } else {
+                        c
+                    }
+                })
                 .collect(),
         )
     } else {
@@ -1441,8 +1421,7 @@ fn attach_llm_provenance(rec: &mut MessageIngressRecord, llm: &LlmAdapterRespons
     let model = normalized_provenance_label(llm.model.as_deref(), 128);
     let adapter = normalized_provenance_label(llm.adapter.as_deref(), 64);
     let agent_protocol = normalized_agent_protocol(llm.agent_protocol.as_deref());
-    let compliance_profile =
-        normalized_compliance_profile(llm.compliance_profile.as_deref());
+    let compliance_profile = normalized_compliance_profile(llm.compliance_profile.as_deref());
 
     let has_v1_fields = provider.is_some() || model.is_some() || adapter.is_some();
     let has_v2_fields = agent_protocol.is_some() || compliance_profile.is_some();
@@ -1574,7 +1553,8 @@ mod tests {
 
     #[test]
     fn parse_tx_hash_accepts_quoted_and_trailing_punctuated_tokens() {
-        let mixed_case = "tx_hash=\"0xABCDabcdABCDabcdABCDabcdABCDabcdABCDabcdABCDabcdABCDabcdABCDabcd\",";
+        let mixed_case =
+            "tx_hash=\"0xABCDabcdABCDabcdABCDabcdABCDabcdABCDabcdABCDabcdABCDabcdABCDabcd\",";
         let parsed = parse_tx_hash(mixed_case).expect("hash should parse");
         assert_eq!(
             parsed,
@@ -1582,7 +1562,8 @@ mod tests {
         );
 
         let sentence_tail = "submitted tx_hash=0xABCDabcdABCDabcdABCDabcdABCDabcdABCDabcdABCDabcdABCDabcdABCDabcd. next";
-        let parsed_tail = parse_tx_hash(sentence_tail).expect("hash with sentence punctuation should parse");
+        let parsed_tail =
+            parse_tx_hash(sentence_tail).expect("hash with sentence punctuation should parse");
         assert_eq!(
             parsed_tail,
             "0xabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd"
@@ -1593,7 +1574,10 @@ mod tests {
     fn parse_tx_hash_rejects_malformed_or_partial_values() {
         assert!(parse_tx_hash("tx_hash=0xdeadbeef").is_none());
         assert!(parse_tx_hash("tx_hash=not-a-hash").is_none());
-        assert!(parse_tx_hash("tx_hash=0xzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz").is_none());
+        assert!(parse_tx_hash(
+            "tx_hash=0xzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"
+        )
+        .is_none());
     }
 
     #[test]
@@ -1658,7 +1642,9 @@ mod tests {
     #[test]
     fn llm_adapter_accepts_last_json_line_when_stdout_has_noise() {
         let cmd = "printf 'debug: adapter warmup\\n{\"output_text\":\"ok\",\"provider_request_id\":\"r1\"}\\n'";
-        let parsed = run_llm_adapter_once("sh -lc", cmd, Duration::from_secs(1)).unwrap();
+        let parsed =
+            run_llm_adapter_once("sh -lc", cmd, Duration::from_secs(1), &StandardProofAdapter)
+                .unwrap();
         assert_eq!(parsed.output_text, "ok");
         assert_eq!(parsed.provider_request_id.as_deref(), Some("r1"));
     }
@@ -1666,9 +1652,33 @@ mod tests {
     #[test]
     fn llm_adapter_rejects_stdout_without_any_json_line() {
         let cmd = "printf 'debug: adapter warmup\\nstatus=ok\\n'";
-        let err = run_llm_adapter_once("sh -lc", cmd, Duration::from_secs(1)).unwrap_err();
+        let err =
+            run_llm_adapter_once("sh -lc", cmd, Duration::from_secs(1), &StandardProofAdapter)
+                .unwrap_err();
         assert_eq!(err.kind, AdapterErrorKind::NonRetriable);
         assert!(err.context.contains("no-json-line"));
+    }
+
+    #[test]
+    fn llm_adapter_tee_receipt_path_uses_adapter_parse_response_validation() {
+        let cmd = "echo '{\"output_text\":\"ok\",\"provider_request_id\":\"req-tee-1\",\"adapter\":\"tee-receipt\"}'";
+        let tee_adapter = build_proof_adapter("tee-receipt").expect("tee adapter");
+        let parsed =
+            run_llm_adapter_once("sh -lc", cmd, Duration::from_secs(1), tee_adapter.as_ref())
+                .expect("tee receipt payload should parse");
+        assert_eq!(parsed.provider_request_id.as_deref(), Some("req-tee-1"));
+        assert_eq!(parsed.adapter.as_deref(), Some("tee-receipt"));
+
+        let bad_cmd = "echo '{\"output_text\":\"ok\",\"provider_request_id\":\"req-tee-2\"}'";
+        let err = run_llm_adapter_once(
+            "sh -lc",
+            bad_cmd,
+            Duration::from_secs(1),
+            tee_adapter.as_ref(),
+        )
+        .expect_err("missing adapter label must fail closed");
+        assert_eq!(err.kind, AdapterErrorKind::NonRetriable);
+        assert!(err.context.contains("tee-receipt-missing-adapter-label"));
     }
 
     #[test]
@@ -1704,7 +1714,10 @@ mod tests {
     fn reputation_delta_maps_market_penalty_and_reward_signals() {
         assert_eq!(reputation_delta(ReputationSignal::Accepted), 3);
         assert_eq!(reputation_delta(ReputationSignal::VerifierRejected), -2);
-        assert_eq!(reputation_delta(ReputationSignal::AdapterRetryExhausted), -1);
+        assert_eq!(
+            reputation_delta(ReputationSignal::AdapterRetryExhausted),
+            -1
+        );
         assert_eq!(reputation_delta(ReputationSignal::AdapterNonRetriable), -3);
     }
 
@@ -1734,7 +1747,9 @@ mod tests {
         assert!(accepted > 0, "accepted work must remain net-positive");
         assert!(retryable < 0, "retry exhaustion must remain a penalty");
         assert!(
-            accepted > retryable && retryable > verifier_rejected && verifier_rejected > non_retriable,
+            accepted > retryable
+                && retryable > verifier_rejected
+                && verifier_rejected > non_retriable,
             "expected strict tiering: accepted > retryable > verifier_rejected > non_retriable"
         );
     }
@@ -1753,21 +1768,48 @@ mod tests {
 
     #[test]
     fn verify_model_output_enforces_trimmed_empty_and_char_limit_boundaries() {
-        assert_eq!(verify_model_output("   \n\t", 8), ("rejected", "empty_output"));
+        assert_eq!(
+            verify_model_output("   \n\t", 8),
+            ("rejected", "empty_output")
+        );
 
         // Zero-width/invisible fillers should not pass verifier checks as meaningful output.
         assert_eq!(
             verify_model_output("\u{200B}\u{200C}\u{FEFF}", 8),
             ("rejected", "empty_output")
         );
-        assert_eq!(verify_model_output("\u{2060}\u{00AD}", 8), ("rejected", "empty_output"));
-        assert_eq!(verify_model_output("\u{2061}\u{2062}\u{2063}\u{2064}", 8), ("rejected", "empty_output"));
-        assert_eq!(verify_model_output("\u{2066}\u{2067}\u{2068}\u{2069}", 8), ("rejected", "empty_output"));
-        assert_eq!(verify_model_output("\u{034F}", 8), ("rejected", "empty_output"));
-        assert_eq!(verify_model_output("\u{180E}", 8), ("rejected", "empty_output"));
-        assert_eq!(verify_model_output("\u{200E}\u{200F}", 8), ("rejected", "empty_output"));
-        assert_eq!(verify_model_output("\u{FE0E}", 8), ("rejected", "empty_output"));
-        assert_eq!(verify_model_output("\u{FE0F}", 8), ("rejected", "empty_output"));
+        assert_eq!(
+            verify_model_output("\u{2060}\u{00AD}", 8),
+            ("rejected", "empty_output")
+        );
+        assert_eq!(
+            verify_model_output("\u{2061}\u{2062}\u{2063}\u{2064}", 8),
+            ("rejected", "empty_output")
+        );
+        assert_eq!(
+            verify_model_output("\u{2066}\u{2067}\u{2068}\u{2069}", 8),
+            ("rejected", "empty_output")
+        );
+        assert_eq!(
+            verify_model_output("\u{034F}", 8),
+            ("rejected", "empty_output")
+        );
+        assert_eq!(
+            verify_model_output("\u{180E}", 8),
+            ("rejected", "empty_output")
+        );
+        assert_eq!(
+            verify_model_output("\u{200E}\u{200F}", 8),
+            ("rejected", "empty_output")
+        );
+        assert_eq!(
+            verify_model_output("\u{FE0E}", 8),
+            ("rejected", "empty_output")
+        );
+        assert_eq!(
+            verify_model_output("\u{FE0F}", 8),
+            ("rejected", "empty_output")
+        );
 
         // Whitespace + zero-width-only payloads must also be rejected deterministically.
         assert_eq!(
@@ -1776,35 +1818,59 @@ mod tests {
         );
 
         // Control-only payloads should not pass market verification as meaningful content.
-        assert_eq!(verify_model_output("\u{0007}\u{001B}", 8), ("rejected", "empty_output"));
+        assert_eq!(
+            verify_model_output("\u{0007}\u{001B}", 8),
+            ("rejected", "empty_output")
+        );
 
         // Control bytes mixed around visible content should be ignored for length accounting.
-        assert_eq!(verify_model_output("\u{0007}ok\u{001B}", 2), ("accepted", "ok"));
+        assert_eq!(
+            verify_model_output("\u{0007}ok\u{001B}", 2),
+            ("accepted", "ok")
+        );
 
         // Limit is measured in characters (not bytes) to keep verifier behavior predictable.
         let within = "你好ab"; // 4 chars
         assert_eq!(verify_model_output(within, 4), ("accepted", "ok"));
 
         let over = "你好abc"; // 5 chars
-        assert_eq!(verify_model_output(over, 4), ("rejected", "output_too_long"));
+        assert_eq!(
+            verify_model_output(over, 4),
+            ("rejected", "output_too_long")
+        );
 
         // Leading/trailing transport whitespace should not cause false rejections.
         assert_eq!(verify_model_output(" 你好ab \n", 4), ("accepted", "ok"));
 
         // Mixed visible + zero-width should still count as meaningful content.
-        assert_eq!(verify_model_output("\u{200B}ok\u{200D}", 4), ("accepted", "ok"));
+        assert_eq!(
+            verify_model_output("\u{200B}ok\u{200D}", 4),
+            ("accepted", "ok")
+        );
 
         // Invisible fillers should not inflate length checks for market verification.
-        assert_eq!(verify_model_output("\u{200B}ok\u{200D}", 2), ("accepted", "ok"));
+        assert_eq!(
+            verify_model_output("\u{200B}ok\u{200D}", 2),
+            ("accepted", "ok")
+        );
         assert_eq!(verify_model_output("o\u{034F}k", 2), ("accepted", "ok"));
 
         // Direction/isolation wrappers should not alter verifiable length accounting.
-        assert_eq!(verify_model_output("\u{2066}ok\u{2069}", 2), ("accepted", "ok"));
-        assert_eq!(verify_model_output("\u{2066}ok\u{2069}", 1), ("rejected", "output_too_long"));
+        assert_eq!(
+            verify_model_output("\u{2066}ok\u{2069}", 2),
+            ("accepted", "ok")
+        );
+        assert_eq!(
+            verify_model_output("\u{2066}ok\u{2069}", 1),
+            ("rejected", "output_too_long")
+        );
 
         // ZWJ inside visible emoji sequences should stay deterministic for verifier limits.
         assert_eq!(verify_model_output("👩\u{200D}💻", 2), ("accepted", "ok"));
-        assert_eq!(verify_model_output("👩\u{200D}💻", 1), ("rejected", "output_too_long"));
+        assert_eq!(
+            verify_model_output("👩\u{200D}💻", 1),
+            ("rejected", "output_too_long")
+        );
     }
 
     #[test]
@@ -2478,7 +2544,6 @@ mod tests {
         assert!(!md.contains("reveal\r\nsubmitted"));
     }
 
-
     #[test]
     fn export_audit_index_contains_task_status_provider_model_and_fingerprint_keys() {
         let rows = vec![
@@ -2525,7 +2590,10 @@ mod tests {
             index.by_compliance_profile.get("cn-moderate"),
             Some(&vec![0, 1])
         );
-        assert_eq!(index.by_provenance_fingerprint.get("fp-abc"), Some(&vec![0, 1]));
+        assert_eq!(
+            index.by_provenance_fingerprint.get("fp-abc"),
+            Some(&vec![0, 1])
+        );
     }
 
     #[test]
@@ -2563,8 +2631,14 @@ mod tests {
         assert_eq!(index.by_provider.get("openai"), Some(&vec![0]));
         assert_eq!(index.by_model.get("gpt-5.3-codex"), Some(&vec![0]));
         assert_eq!(index.by_agent_protocol.get("a2a"), Some(&vec![0, 1]));
-        assert_eq!(index.by_compliance_profile.get("cn-moderate"), Some(&vec![0, 1]));
-        assert_eq!(index.by_provenance_fingerprint.get("fp-xyz"), Some(&vec![0]));
+        assert_eq!(
+            index.by_compliance_profile.get("cn-moderate"),
+            Some(&vec![0, 1])
+        );
+        assert_eq!(
+            index.by_provenance_fingerprint.get("fp-xyz"),
+            Some(&vec![0])
+        );
         assert!(!index.by_provider.contains_key(""));
         assert!(!index.by_model.contains_key(""));
         assert!(!index.by_agent_protocol.contains_key(""));
@@ -2604,7 +2678,10 @@ mod tests {
         ];
 
         let index = build_audit_export_index(&rows);
-        assert_eq!(index.by_provenance_fingerprint.get("deadbeef"), Some(&vec![0, 1]));
+        assert_eq!(
+            index.by_provenance_fingerprint.get("deadbeef"),
+            Some(&vec![0, 1])
+        );
         assert!(!index.by_provenance_fingerprint.contains_key("DEADBEEF"));
     }
 
@@ -2709,7 +2786,10 @@ mod tests {
         ];
 
         let index = build_audit_export_index(&rows);
-        assert_eq!(index.by_provenance_fingerprint.get("deadbeef"), Some(&vec![0]));
+        assert_eq!(
+            index.by_provenance_fingerprint.get("deadbeef"),
+            Some(&vec![0])
+        );
         assert_eq!(index.by_provenance_fingerprint.len(), 1);
     }
 
@@ -2854,7 +2934,10 @@ mod tests {
 
         attach_llm_provenance(&mut rec, &llm);
 
-        assert_eq!(rec.provider_request_id.as_deref(), Some("provider-opaque-id"));
+        assert_eq!(
+            rec.provider_request_id.as_deref(),
+            Some("provider-opaque-id")
+        );
         assert_eq!(rec.provenance_schema_version, None);
         assert!(rec.llm_provenance.is_none());
     }
@@ -2901,7 +2984,10 @@ mod tests {
         assert_eq!(rec.provenance_schema_version.as_deref(), Some("llm.v2"));
         let prov = rec.llm_provenance.as_ref().expect("provenance attached");
         assert_eq!(prov.agent_protocol.as_deref(), Some("a2a"));
-        assert_eq!(prov.compliance_profile.as_deref(), Some("cn-pii-restricted"));
+        assert_eq!(
+            prov.compliance_profile.as_deref(),
+            Some("cn-pii-restricted")
+        );
     }
 
     #[test]
@@ -2949,7 +3035,10 @@ mod tests {
         assert_eq!(prov.model.as_deref(), Some("gpt-5.3-codex"));
         assert_eq!(prov.adapter.as_deref(), Some("mcp"));
         assert_eq!(prov.agent_protocol, None);
-        assert_eq!(prov.compliance_profile.as_deref(), Some("cn-pii-restricted"));
+        assert_eq!(
+            prov.compliance_profile.as_deref(),
+            Some("cn-pii-restricted")
+        );
     }
 
     #[test]
@@ -3269,7 +3358,8 @@ mod tests {
             Some("mcp")
         );
         assert_eq!(
-            normalized_agent_protocol(Some("Model Context Protocol over Streamable HTTP v2")).as_deref(),
+            normalized_agent_protocol(Some("Model Context Protocol over Streamable HTTP v2"))
+                .as_deref(),
             Some("mcp")
         );
         assert_eq!(
@@ -3373,11 +3463,13 @@ mod tests {
             Some("a2a")
         );
         assert_eq!(
-            normalized_agent_protocol(Some("Google Agent-to-Agent over Streamable HTTP v2")).as_deref(),
+            normalized_agent_protocol(Some("Google Agent-to-Agent over Streamable HTTP v2"))
+                .as_deref(),
             Some("a2a")
         );
         assert_eq!(
-            normalized_agent_protocol(Some("Google Agent2Agent over Streamable HTTP v2")).as_deref(),
+            normalized_agent_protocol(Some("Google Agent2Agent over Streamable HTTP v2"))
+                .as_deref(),
             Some("a2a")
         );
         assert_eq!(
@@ -3834,8 +3926,7 @@ mod tests {
     #[test]
     fn normalized_compliance_profile_accepts_alphanumeric_when_contains_alpha() {
         assert_eq!(
-            normalized_compliance_profile(Some("cn-202602"))
-                .as_deref(),
+            normalized_compliance_profile(Some("cn-202602")).as_deref(),
             Some("cn-202602")
         );
     }
@@ -4072,6 +4163,7 @@ fn main() -> Result<()> {
                     &rec.text,
                     llm_policy.retry,
                     Duration::from_millis(llm_policy.timeout_ms),
+                    proof_adapter.as_ref(),
                 ) {
                     Ok(v) => v,
                     Err(e) => {
@@ -4105,7 +4197,8 @@ fn main() -> Result<()> {
 
                 if v_status != "accepted" {
                     rec.status = transition_request_status(&rec.status, RequestStatus::Rejected)?;
-                    rec.reputation_delta = Some(reputation_delta(ReputationSignal::VerifierRejected));
+                    rec.reputation_delta =
+                        Some(reputation_delta(ReputationSignal::VerifierRejected));
                     n += 1;
                     println!(
                         "[assigned] request_id={} task_id={} worker={} verifier_status={} resolution_code={}",

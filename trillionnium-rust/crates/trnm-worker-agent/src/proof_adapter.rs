@@ -8,6 +8,7 @@ pub trait ProofAdapter {
 pub const DEFAULT_PROOF_ADAPTER: &str = "standard";
 
 pub struct StandardProofAdapter;
+pub struct TeeReceiptProofAdapter;
 
 pub fn build_proof_adapter(name: &str) -> Result<Box<dyn ProofAdapter>, String> {
     let normalized = name
@@ -18,6 +19,7 @@ pub fn build_proof_adapter(name: &str) -> Result<Box<dyn ProofAdapter>, String> 
         "" | DEFAULT_PROOF_ADAPTER | "fraud-proof" | "fraud_proof" => {
             Ok(Box::new(StandardProofAdapter))
         }
+        "tee-receipt" | "tee_receipt" => Ok(Box::new(TeeReceiptProofAdapter)),
         other => Err(format!("unsupported-proof-adapter:{other}")),
     }
 }
@@ -70,6 +72,39 @@ fn last_balanced_json_object(input: &str) -> Option<String> {
     last
 }
 
+fn parse_response_with_standard_rules(stdout: &str) -> Result<LlmAdapterResponse, String> {
+    let normalized = stdout.trim_start().trim_start_matches('\u{feff}');
+
+    if let Ok(parsed) = serde_json::from_str(normalized) {
+        return Ok(parsed);
+    }
+
+    for line in normalized.lines().rev().map(str::trim) {
+        if line.starts_with('{') && line.ends_with('}') {
+            if let Ok(parsed) = serde_json::from_str(line) {
+                return Ok(parsed);
+            }
+        }
+
+        if let (Some(start), Some(end)) = (line.find('{'), line.rfind('}')) {
+            if start < end {
+                let candidate = &line[start..=end];
+                if let Ok(parsed) = serde_json::from_str(candidate) {
+                    return Ok(parsed);
+                }
+            }
+        }
+    }
+
+    if let Some(candidate) = last_balanced_json_object(normalized) {
+        if let Ok(parsed) = serde_json::from_str::<LlmAdapterResponse>(&candidate) {
+            return Ok(parsed);
+        }
+    }
+
+    Err("no-json-line".to_string())
+}
+
 impl ProofAdapter for StandardProofAdapter {
     fn verify(&self, output: &str, max_chars: usize) -> (bool, String) {
         let (status, code) = crate::verify_model_output(output, max_chars);
@@ -77,36 +112,46 @@ impl ProofAdapter for StandardProofAdapter {
     }
 
     fn parse_response(&self, stdout: &str) -> Result<LlmAdapterResponse, String> {
-        let normalized = stdout.trim_start().trim_start_matches('\u{feff}');
+        parse_response_with_standard_rules(stdout)
+    }
+}
 
-        if let Ok(parsed) = serde_json::from_str(normalized) {
-            return Ok(parsed);
+impl ProofAdapter for TeeReceiptProofAdapter {
+    fn verify(&self, output: &str, max_chars: usize) -> (bool, String) {
+        let (ok, code) = StandardProofAdapter.verify(output, max_chars);
+        if !ok {
+            return (false, code);
+        }
+        (true, "tee_receipt_ok".to_string())
+    }
+
+    fn parse_response(&self, stdout: &str) -> Result<LlmAdapterResponse, String> {
+        let parsed = parse_response_with_standard_rules(stdout)?;
+
+        let request_id_ok = parsed
+            .provider_request_id
+            .as_deref()
+            .map(str::trim)
+            .map(|v| !v.is_empty())
+            .unwrap_or(false);
+        if !request_id_ok {
+            return Err("tee-receipt-missing-provider-request-id".to_string());
         }
 
-        for line in normalized.lines().rev().map(str::trim) {
-            if line.starts_with('{') && line.ends_with('}') {
-                if let Ok(parsed) = serde_json::from_str(line) {
-                    return Ok(parsed);
-                }
-            }
-
-            if let (Some(start), Some(end)) = (line.find('{'), line.rfind('}')) {
-                if start < end {
-                    let candidate = &line[start..=end];
-                    if let Ok(parsed) = serde_json::from_str(candidate) {
-                        return Ok(parsed);
-                    }
-                }
-            }
+        let adapter_ok = parsed
+            .adapter
+            .as_deref()
+            .map(str::trim)
+            .map(|v| {
+                let normalized = v.to_ascii_lowercase();
+                normalized == "tee-receipt" || normalized == "tee_receipt"
+            })
+            .unwrap_or(false);
+        if !adapter_ok {
+            return Err("tee-receipt-missing-adapter-label".to_string());
         }
 
-        if let Some(candidate) = last_balanced_json_object(normalized) {
-            if let Ok(parsed) = serde_json::from_str::<LlmAdapterResponse>(&candidate) {
-                return Ok(parsed);
-            }
-        }
-
-        Err("no-json-line".to_string())
+        Ok(parsed)
     }
 }
 
@@ -114,7 +159,7 @@ impl ProofAdapter for StandardProofAdapter {
 mod tests {
     use super::{
         build_proof_adapter, last_balanced_json_object, ProofAdapter, StandardProofAdapter,
-        DEFAULT_PROOF_ADAPTER,
+        TeeReceiptProofAdapter, DEFAULT_PROOF_ADAPTER,
     };
 
     #[test]
@@ -172,6 +217,31 @@ mod tests {
     }
 
     #[test]
+    fn tee_receipt_adapter_parse_response_requires_auditable_fields() {
+        let adapter = TeeReceiptProofAdapter;
+
+        let ok = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-1\",\"adapter\":\"tee-receipt\"}",
+            )
+            .expect("tee receipt payload should parse");
+        assert_eq!(ok.provider_request_id.as_deref(), Some("pr-1"));
+
+        let missing_request_id = adapter
+            .parse_response("{\"output_text\":\"ok\",\"adapter\":\"tee-receipt\"}")
+            .expect_err("provider_request_id is required");
+        assert_eq!(
+            missing_request_id,
+            "tee-receipt-missing-provider-request-id"
+        );
+
+        let missing_adapter = adapter
+            .parse_response("{\"output_text\":\"ok\",\"provider_request_id\":\"pr-1\"}")
+            .expect_err("adapter label is required");
+        assert_eq!(missing_adapter, "tee-receipt-missing-adapter-label");
+    }
+
+    #[test]
     fn last_balanced_json_object_ignores_braces_inside_strings() {
         let payload = "log {\"message\":\"brace } kept\"}\nlog {\"output_text\":\"ok\",\"provider_request_id\":\"r4\"}";
         let candidate =
@@ -216,7 +286,7 @@ mod tests {
     }
 
     #[test]
-    fn build_proof_adapter_accepts_default_and_fraud_aliases_and_rejects_unknown_plugin_names() {
+    fn build_proof_adapter_accepts_default_and_fraud_and_tee_receipt_aliases() {
         let adapter = build_proof_adapter(DEFAULT_PROOF_ADAPTER).expect("default adapter");
         let (ok, code) = adapter.verify("hello", 8);
         assert!(ok);
@@ -237,10 +307,20 @@ mod tests {
         assert!(ok);
         assert_eq!(code, "ok");
 
-        let err = match build_proof_adapter("tee-receipt") {
+        let adapter = build_proof_adapter("tee-receipt").expect("tee receipt alias");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "tee_receipt_ok");
+
+        let adapter = build_proof_adapter("TEE_RECEIPT").expect("tee receipt underscore alias");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "tee_receipt_ok");
+
+        let err = match build_proof_adapter("tee-attestation") {
             Ok(_) => panic!("unknown plugin must fail closed"),
             Err(err) => err,
         };
-        assert_eq!(err, "unsupported-proof-adapter:tee-receipt");
+        assert_eq!(err, "unsupported-proof-adapter:tee-attestation");
     }
 }
