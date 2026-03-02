@@ -263,3 +263,30 @@ fn x3_prep_reorder_failed_confirm_after_finalize_is_rejected_without_state_chang
     );
     assert_eq!(current_status(&request), &BridgeStatus::Finalized(513));
 }
+
+#[test]
+fn x3_prep_degraded_heartbeat_reason_is_length_capped_for_replayable_compensation() {
+    let mut request = SettlementRequest::new(1, "0xreasoncap".to_string());
+    let token = operator_token();
+
+    let long_reason = format!("timeout{}", "x".repeat(400));
+    let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 2));
+    let _ = monitor.record_failure("target relay timeout #1");
+    let degraded = monitor.record_failure(&long_reason);
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &degraded,
+        SettlementConfirm::Confirmed { height: 9001 },
+    )
+    .unwrap();
+
+    let SettlementStep::Compensated { reason, .. } = out else {
+        panic!("expected compensated branch");
+    };
+    assert!(reason.starts_with("heartbeat degraded: timeout"));
+    assert!(reason.ends_with('…'));
+    assert_eq!(reason.chars().count(), 181);
+    assert_eq!(current_status(&request), &BridgeStatus::Reverted(reason));
+}
