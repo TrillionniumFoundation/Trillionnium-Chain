@@ -39,6 +39,8 @@ guard_phrases=(
   "协议版本与适配器传输层记录"
   "409 idempotency_conflict"
   "同键不同请求体"
+  "error.code"
+  "error.message"
   "trnm-agent mcp-adapter rollback"
   "--root-cause-tag"
 )
