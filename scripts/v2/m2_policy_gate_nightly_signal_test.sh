@@ -15,7 +15,7 @@ mkdir -p "$(dirname "$AUDIT")" "$(dirname "$BENCH")" "$(dirname "$MIXED")" "$P1_
 
 cleanup() {
   rm -f "$AUDIT" "$BENCH" "$MIXED"
-  rm -f "run/health/nightly-summary-${TAG}-fail.md" "run/health/nightly-summary-${TAG}-pass.md"
+  rm -f "run/health/nightly-summary-${TAG}-fail.md" "run/health/nightly-summary-${TAG}-pass.md" "run/health/nightly-summary-${TAG}-missing.md"
   rm -rf "$P1_DIR"
 }
 trap cleanup EXIT
@@ -88,5 +88,28 @@ if grep -q 'm2_policy_gate_default_drift_guard_not_pass' "$SUMMARY_PASS"; then
   cat "$SUMMARY_PASS"
   exit 1
 fi
+
+# Case 3: M2 gate log missing => must mark assertion as missing and keep failure signal.
+rm -f "$M2_LOG"
+OUT_MISSING="$(./scripts/nightly_attribution.sh | sed -n 's/^\[OK\] nightly attribution: //p' | tail -n1)"
+[[ -f "$OUT_MISSING" ]] || { echo "[FAIL] missing attribution output for missing-log case"; exit 1; }
+
+grep -q '^m2.policy_gate.assert_default_drift_guard=missing$' "$OUT_MISSING" || {
+  echo "[FAIL] expected m2 default-drift guard to be missing"; cat "$OUT_MISSING"; exit 1;
+}
+grep -q 'm2_policy_gate_default_drift_guard_missing' "$OUT_MISSING" || {
+  echo "[FAIL] expected missing-log m2 default-drift failure reason"; cat "$OUT_MISSING"; exit 1;
+}
+
+SUMMARY_MISSING="run/health/nightly-summary-${TAG}-missing.md"
+NIGHTLY_ATTRIBUTION_FILE="$OUT_MISSING" NIGHTLY_SUMMARY_OUT="$SUMMARY_MISSING" \
+  python3 ./scripts/render_nightly_summary.py >/dev/null
+
+grep -q 'default-drift guard assertion: `missing`' "$SUMMARY_MISSING" || {
+  echo "[FAIL] expected summary to include m2 missing assertion status"; cat "$SUMMARY_MISSING"; exit 1;
+}
+grep -q 'failure_signal: `m2_policy_gate_default_drift_guard_not_pass`' "$SUMMARY_MISSING" || {
+  echo "[FAIL] expected summary failure_signal for m2 missing assertion"; cat "$SUMMARY_MISSING"; exit 1;
+}
 
 echo "[PASS] nightly attribution + summary expose M2 policy gate default-drift guard signal"
