@@ -107,6 +107,7 @@ impl VerifierRegistry {
             "ra quote" | "raquote" => "tee",
             "tee quote" | "teequote" => "tee",
             "sgx quote" | "sgxquote" => "tee",
+            "enclave quote" | "enclavequote" => "tee",
             "sgx report" | "sgxreport" => "tee",
             "dcap quote" | "dcapquote" => "tee",
             "intel dcap quote" | "inteldcapquote" => "tee",
@@ -906,6 +907,20 @@ mod tests {
         let mut registry = VerifierRegistry::new();
         registry.register(Arc::new(AlwaysValidVerifier {
             kind: " SGX_QUOTE ",
+        }));
+
+        let task = task_with_proof_type(ProofType::Tee);
+        assert_eq!(
+            registry.verify(&task, b"attestation"),
+            VerificationResult::Valid
+        );
+    }
+
+    #[test]
+    fn registry_register_collapses_enclave_quote_alias_for_lookup() {
+        let mut registry = VerifierRegistry::new();
+        registry.register(Arc::new(AlwaysValidVerifier {
+            kind: " Enclave-Quote ",
         }));
 
         let task = task_with_proof_type(ProofType::Tee);
