@@ -148,6 +148,7 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
         | "zk attestation"
         | "zk evidence"
         | "zk snark"
+        | "snark"
         | "zero knowledge"
         | "zero knowledge proof"
         | "zero knowledge receipt"
@@ -713,5 +714,12 @@ mod tests {
         assert_eq!(tee_certificate.proof_type, "tee");
         assert_eq!(zk_short.proof_type, "zk");
         assert_eq!(zk_certificate.proof_type, "zk");
+    }
+
+    #[test]
+    fn verification_receipt_new_collapses_snark_alias_to_zk_router_key() {
+        let zk = VerificationReceipt::new(5, "snark", VerificationResult::Valid, "v", 5);
+
+        assert_eq!(zk.proof_type, "zk");
     }
 }
