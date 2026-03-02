@@ -75,6 +75,7 @@ fn last_balanced_json_object(input: &str) -> Option<String> {
 
 fn normalize_adapter_label(label: &str) -> String {
     label
+        .trim()
         .trim_start_matches('\u{feff}')
         .trim()
         .to_ascii_lowercase()
@@ -479,6 +480,12 @@ mod tests {
         assert_eq!(code, "tee_receipt_ok");
 
         let adapter = build_proof_adapter("TEE_RECEIPT").expect("tee receipt underscore alias");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "tee_receipt_ok");
+
+        let adapter = build_proof_adapter("  \u{feff}TEE_RECEIPT  ")
+            .expect("tee receipt alias should tolerate whitespace+bom");
         let (ok, code) = adapter.verify("hello", 8);
         assert!(ok);
         assert_eq!(code, "tee_receipt_ok");
