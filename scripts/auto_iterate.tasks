@@ -362,3 +362,6 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e2-
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-task-id-dot-test" "./scripts/v2/d1_task_model_metadata_schema_reject_task_id_dot_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-task-id-dot-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-mcp-adapter-implementation-gate" "./scripts/v2/a1_mcp_adapter_implementation_gate.sh" "ci(gate): add a1-mcp-adapter-implementation-gate regression to quick-check"
