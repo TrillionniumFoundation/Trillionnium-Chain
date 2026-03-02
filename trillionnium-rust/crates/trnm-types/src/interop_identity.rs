@@ -77,7 +77,7 @@ fn normalize_revert_reason(reason: String) -> String {
     }
 
     match canonical.as_str() {
-        "fraud-proof" => "fraud-proof".to_string(),
+        "fraud-proof" | "fraudproof" => "fraud-proof".to_string(),
         "tee-receipt" | "tee-attestation" => "tee-receipt".to_string(),
         "zk-receipt" | "zk-proof" => "zk-receipt".to_string(),
         _ => reason,
@@ -1748,6 +1748,41 @@ mod tests {
         .unwrap();
 
         assert_eq!(rec.revert_reason.as_deref(), Some("tee-receipt"));
+    }
+
+    #[test]
+    fn settlement_revert_reason_reapply_accepts_compact_legacy_alias() {
+        let route = BridgeRoute {
+            route_id: "eth->trnm".to_string(),
+            source_chain: "ethereum".to_string(),
+            target_chain: "trillionnium".to_string(),
+        };
+        let mut rec = SettlementRecord {
+            settlement_id: 144,
+            route,
+            status: SettlementStatus::Pending,
+            at_height: 623,
+            settlement_tx: None,
+            revert_reason: None,
+        };
+
+        rec.apply_status(
+            SettlementStatus::Reverted,
+            624,
+            None,
+            Some("fraud-proof".to_string()),
+        )
+        .unwrap();
+
+        rec.apply_status(
+            SettlementStatus::Reverted,
+            625,
+            None,
+            Some("FRAUDPROOF".to_string()),
+        )
+        .unwrap();
+
+        assert_eq!(rec.revert_reason.as_deref(), Some("fraud-proof"));
     }
 
     #[test]
