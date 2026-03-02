@@ -25,6 +25,20 @@ cat >"$tmp_file" <<'JSON'
 }
 JSON
 
-METADATA_FILE="$tmp_file" "$GATE" >/dev/null
+set +e
+output="$(METADATA_FILE="$tmp_file" "$GATE" 2>&1)"
+status=$?
+set -e
 
-echo "[PASS] D3 schema gate allows internal privacy tier without provenance_index"
+if [[ $status -eq 0 ]]; then
+  echo "[FAIL] expected non-zero exit when internal privacy_tier omits provenance_index" >&2
+  exit 1
+fi
+
+if ! grep -Fq "provenance.missing required field: provenance_index" <<<"$output"; then
+  echo "[FAIL] missing explicit provenance_index required error for internal tier" >&2
+  echo "$output" >&2
+  exit 1
+fi
+
+echo "[PASS] D3 schema gate rejects internal privacy tier without provenance_index"
