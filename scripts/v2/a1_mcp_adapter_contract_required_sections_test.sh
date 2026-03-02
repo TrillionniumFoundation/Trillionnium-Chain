@@ -32,6 +32,7 @@ guard_phrases=(
   "Idempotency-Key"
   "X-TRNM-Nonce"
   "X-TRNM-Request-ID"
+  "响应必须回显：X-TRNM-Schema-Version: mcp-adapter-v1"
   "响应必须回显：X-TRNM-Request-ID"
   "X-TRNM-Trace-ID"
   "trace_id"
