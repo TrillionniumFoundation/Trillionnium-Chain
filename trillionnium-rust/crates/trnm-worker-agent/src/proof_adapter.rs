@@ -17,10 +17,13 @@ pub fn build_proof_adapter(name: &str) -> Result<Box<dyn ProofAdapter>, String> 
         "" | DEFAULT_PROOF_ADAPTER | "fraud-proof" | "fraud_proof" => {
             Ok(Box::new(StandardProofAdapter))
         }
-        "tee-receipt" | "tee_receipt" | "tee-attestation" | "tee_attestation"
-        | "teereceipt" | "teeattestation" => Ok(Box::new(TeeReceiptProofAdapter)),
-        "zk-receipt" | "zk_receipt" | "zk-proof" | "zk_proof" | "zkreceipt"
-        | "zkproof" => Ok(Box::new(ZkReceiptProofAdapter)),
+        "tee-receipt" | "tee_receipt" | "tee-receipt-v1" | "tee_receipt_v1"
+        | "tee-attestation" | "tee_attestation" | "teereceipt" | "teeattestation"
+        | "teereceiptv1" => Ok(Box::new(TeeReceiptProofAdapter)),
+        "zk-receipt" | "zk_receipt" | "zk-receipt-v1" | "zk_receipt_v1" | "zk-proof"
+        | "zk_proof" | "zkreceipt" | "zkproof" | "zkreceiptv1" => {
+            Ok(Box::new(ZkReceiptProofAdapter))
+        },
         other => Err(format!("unsupported-proof-adapter:{other}")),
     }
 }
@@ -165,9 +168,12 @@ impl ProofAdapter for TeeReceiptProofAdapter {
             .map(|normalized| {
                 normalized == "tee-receipt"
                     || normalized == "tee_receipt"
+                    || normalized == "tee-receipt-v1"
+                    || normalized == "tee_receipt_v1"
                     || normalized == "tee-attestation"
                     || normalized == "tee_attestation"
                     || normalized == "teereceipt"
+                    || normalized == "teereceiptv1"
                     || normalized == "teeattestation"
             })
             .unwrap_or(false);
@@ -203,9 +209,12 @@ impl ProofAdapter for ZkReceiptProofAdapter {
             .map(|normalized| {
                 normalized == "zk-receipt"
                     || normalized == "zk_receipt"
+                    || normalized == "zk-receipt-v1"
+                    || normalized == "zk_receipt_v1"
                     || normalized == "zk-proof"
                     || normalized == "zk_proof"
                     || normalized == "zkreceipt"
+                    || normalized == "zkreceiptv1"
                     || normalized == "zkproof"
             })
             .unwrap_or(false);
@@ -519,12 +528,22 @@ mod tests {
         assert!(ok);
         assert_eq!(code, "tee_receipt_ok");
 
+        let adapter = build_proof_adapter("TEE_RECEIPT_V1").expect("tee v1 alias");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "tee_receipt_ok");
+
         let adapter = build_proof_adapter("zk-receipt").expect("zk receipt alias");
         let (ok, code) = adapter.verify("hello", 8);
         assert!(ok);
         assert_eq!(code, "zk_receipt_ok");
 
         let adapter = build_proof_adapter("ZK_RECEIPT").expect("zk receipt underscore alias");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "zk_receipt_ok");
+
+        let adapter = build_proof_adapter("zk_receipt_v1").expect("zk v1 alias");
         let (ok, code) = adapter.verify("hello", 8);
         assert!(ok);
         assert_eq!(code, "zk_receipt_ok");
