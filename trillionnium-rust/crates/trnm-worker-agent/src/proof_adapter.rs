@@ -9,6 +9,7 @@ pub const DEFAULT_PROOF_ADAPTER: &str = "standard";
 
 pub struct StandardProofAdapter;
 pub struct TeeReceiptProofAdapter;
+pub struct ZkReceiptProofAdapter;
 
 pub fn build_proof_adapter(name: &str) -> Result<Box<dyn ProofAdapter>, String> {
     let normalized = name
@@ -20,6 +21,7 @@ pub fn build_proof_adapter(name: &str) -> Result<Box<dyn ProofAdapter>, String> 
             Ok(Box::new(StandardProofAdapter))
         }
         "tee-receipt" | "tee_receipt" => Ok(Box::new(TeeReceiptProofAdapter)),
+        "zk-receipt" | "zk_receipt" => Ok(Box::new(ZkReceiptProofAdapter)),
         other => Err(format!("unsupported-proof-adapter:{other}")),
     }
 }
@@ -157,11 +159,50 @@ impl ProofAdapter for TeeReceiptProofAdapter {
     }
 }
 
+impl ProofAdapter for ZkReceiptProofAdapter {
+    fn verify(&self, output: &str, max_chars: usize) -> (bool, String) {
+        let (ok, code) = StandardProofAdapter.verify(output, max_chars);
+        if !ok {
+            return (false, code);
+        }
+        (true, "zk_receipt_ok".to_string())
+    }
+
+    fn parse_response(&self, stdout: &str) -> Result<LlmAdapterResponse, String> {
+        let parsed = parse_response_with_standard_rules(stdout)?;
+
+        let request_id_ok = parsed
+            .provider_request_id
+            .as_deref()
+            .map(str::trim)
+            .map(|v| !v.is_empty())
+            .unwrap_or(false);
+        if !request_id_ok {
+            return Err("zk-receipt-missing-provider-request-id".to_string());
+        }
+
+        let adapter_ok = parsed
+            .adapter
+            .as_deref()
+            .map(str::trim)
+            .map(|v| {
+                let normalized = v.to_ascii_lowercase();
+                normalized == "zk-receipt" || normalized == "zk_receipt" || normalized == "zk-proof"
+            })
+            .unwrap_or(false);
+        if !adapter_ok {
+            return Err("zk-receipt-missing-adapter-label".to_string());
+        }
+
+        Ok(parsed)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::{
         build_proof_adapter, last_balanced_json_object, ProofAdapter, StandardProofAdapter,
-        TeeReceiptProofAdapter, DEFAULT_PROOF_ADAPTER,
+        TeeReceiptProofAdapter, ZkReceiptProofAdapter, DEFAULT_PROOF_ADAPTER,
     };
 
     #[test]
@@ -251,6 +292,35 @@ mod tests {
     }
 
     #[test]
+    fn zk_receipt_adapter_parse_response_requires_auditable_fields() {
+        let adapter = ZkReceiptProofAdapter;
+
+        let ok = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-zk-1\",\"adapter\":\"zk-receipt\"}",
+            )
+            .expect("zk receipt payload should parse");
+        assert_eq!(ok.provider_request_id.as_deref(), Some("pr-zk-1"));
+
+        let zk_proof_alias = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-zk-2\",\"adapter\":\"zk-proof\"}",
+            )
+            .expect("zk proof alias should parse");
+        assert_eq!(zk_proof_alias.provider_request_id.as_deref(), Some("pr-zk-2"));
+
+        let missing_request_id = adapter
+            .parse_response("{\"output_text\":\"ok\",\"adapter\":\"zk-receipt\"}")
+            .expect_err("provider_request_id is required");
+        assert_eq!(missing_request_id, "zk-receipt-missing-provider-request-id");
+
+        let missing_adapter = adapter
+            .parse_response("{\"output_text\":\"ok\",\"provider_request_id\":\"pr-zk-3\"}")
+            .expect_err("adapter label is required");
+        assert_eq!(missing_adapter, "zk-receipt-missing-adapter-label");
+    }
+
+    #[test]
     fn last_balanced_json_object_ignores_braces_inside_strings() {
         let payload = "log {\"message\":\"brace } kept\"}\nlog {\"output_text\":\"ok\",\"provider_request_id\":\"r4\"}";
         let candidate =
@@ -295,7 +365,7 @@ mod tests {
     }
 
     #[test]
-    fn build_proof_adapter_accepts_default_and_fraud_and_tee_receipt_aliases() {
+    fn build_proof_adapter_accepts_default_and_fraud_and_tee_receipt_and_zk_aliases() {
         let adapter = build_proof_adapter(DEFAULT_PROOF_ADAPTER).expect("default adapter");
         let (ok, code) = adapter.verify("hello", 8);
         assert!(ok);
@@ -325,6 +395,16 @@ mod tests {
         let (ok, code) = adapter.verify("hello", 8);
         assert!(ok);
         assert_eq!(code, "tee_receipt_ok");
+
+        let adapter = build_proof_adapter("zk-receipt").expect("zk receipt alias");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "zk_receipt_ok");
+
+        let adapter = build_proof_adapter("ZK_RECEIPT").expect("zk receipt underscore alias");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "zk_receipt_ok");
 
         let err = match build_proof_adapter("tee-attestation") {
             Ok(_) => panic!("unknown plugin must fail closed"),
