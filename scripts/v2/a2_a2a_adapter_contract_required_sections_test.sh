@@ -35,6 +35,7 @@ guard_phrases=(
   "X-TRNM-Nonce"
   "X-TRNM-Request-ID"
   "X-TRNM-Trace-ID"
+  "响应必须回显：X-TRNM-Request-ID"
   "响应必须回显：X-TRNM-Trace-ID"
   "trace_id"
   "X-TRNM-Timestamp"
