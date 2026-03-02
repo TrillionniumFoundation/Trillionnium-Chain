@@ -72,4 +72,16 @@ fn market_create_task_concurrent_writes_do_not_drop_records() {
         workers,
         "task_id must stay unique under contention"
     );
+
+    let tasks_lock = tasks.with_file_name(format!(
+        "{}.lock",
+        tasks
+            .file_name()
+            .and_then(|v| v.to_str())
+            .expect("tasks file name")
+    ));
+    assert!(
+        !tasks_lock.exists(),
+        "lock file should be cleaned after concurrent writers exit"
+    );
 }
