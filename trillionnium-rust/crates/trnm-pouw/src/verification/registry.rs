@@ -107,6 +107,7 @@ impl VerifierRegistry {
             "intel tdx quote" | "inteltdxquote" => "tee",
             "tee report" | "teereport" => "tee",
             "tee evidence" | "teeevidence" => "tee",
+            "tee cert" | "teecert" => "tee",
             "tee certificate" | "teecertificate" => "tee",
             "zk proof" | "zkproof" => "zk",
             "zk receipt" | "zkreceipt" => "zk",
@@ -118,6 +119,7 @@ impl VerifierRegistry {
             "zero knowledge snark" | "zeroknowledgesnark" => "zk",
             "zero knowledge proof" | "zeroknowledgeproof" => "zk",
             "zero knowledge receipt" | "zeroknowledgereceipt" => "zk",
+            "zk cert" | "zkcert" => "zk",
             "zero knowledge certificate" | "zeroknowledgecertificate" => "zk",
             "zero knowledge attestation" | "zeroknowledgeattestation" => "zk",
             "zero knowledge evidence" | "zeroknowledgeevidence" => "zk",
@@ -1148,9 +1150,11 @@ mod tests {
 
         assert!(registry.is_registered_kind("TEE_RECEIPT"));
         assert!(registry.is_registered_kind("TEE_CERTIFICATE"));
+        assert!(registry.is_registered_kind("tee cert"));
         assert!(registry.is_registered_kind(" zero-knowledge proof "));
         assert!(registry.is_registered_kind("ZKP"));
         assert!(registry.is_registered_kind("zk-p"));
+        assert!(registry.is_registered_kind("zk cert"));
         assert!(registry.is_registered_kind("Zero Knowledge Certificate"));
         assert!(registry.is_registered_kind("Zero Knowledge Attestation"));
         assert!(registry.is_registered_kind("zero knowledge"));
