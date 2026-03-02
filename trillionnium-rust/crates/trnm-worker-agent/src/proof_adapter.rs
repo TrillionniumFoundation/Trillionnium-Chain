@@ -153,6 +153,7 @@ impl ProofAdapter for TeeReceiptProofAdapter {
                 normalized == "tee-receipt"
                     || normalized == "tee_receipt"
                     || normalized == "tee-attestation"
+                    || normalized == "tee_attestation"
             })
             .unwrap_or(false);
         if !adapter_ok {
@@ -280,6 +281,16 @@ mod tests {
             )
             .expect("tee attestation alias should parse");
         assert_eq!(tee_attestation.provider_request_id.as_deref(), Some("pr-2"));
+
+        let tee_attestation_underscore = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-2b\",\"adapter\":\"TEE_ATTESTATION\"}",
+            )
+            .expect("tee attestation underscore alias should parse");
+        assert_eq!(
+            tee_attestation_underscore.provider_request_id.as_deref(),
+            Some("pr-2b")
+        );
 
         let missing_request_id = adapter
             .parse_response("{\"output_text\":\"ok\",\"adapter\":\"tee-receipt\"}")
