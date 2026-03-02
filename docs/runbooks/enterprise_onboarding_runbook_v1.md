@@ -56,6 +56,7 @@
 - [ ] DID/capability 变更记录
 - [ ] 协议版本与适配器传输层记录
 - [ ] 隐私分级策略快照（privacy_tier）
+- [ ] 最小任务 provenance_fingerprint 记录
 - [ ] 最小任务执行与结算日志
 - [ ] 审计包导出文件与 hash
 - [ ] 回滚演练记录
