@@ -367,6 +367,7 @@ struct CapabilityAuditQueryResponse {
 #[derive(Debug, Clone, PartialEq, Eq)]
 enum CapabilityAuditQueryError {
     TokenNotFound(u64),
+    InvalidRegistryState { field: &'static str, value: String },
 }
 
 impl CapabilityAuditQueryError {
@@ -375,6 +376,10 @@ impl CapabilityAuditQueryError {
             Self::TokenNotFound(token_id) => RpcErrorResponse {
                 code: "CAPABILITY_NOT_FOUND",
                 message: format!("capability token not found: {}", token_id),
+            },
+            Self::InvalidRegistryState { field, value } => RpcErrorResponse {
+                code: "INVALID_REGISTRY_STATE",
+                message: format!("non-canonical {} in identity registry snapshot: {}", field, value),
             },
         }
     }
@@ -636,12 +641,30 @@ fn query_capability_audit(
         return Err(CapabilityAuditQueryError::TokenNotFound(token_id));
     };
 
+    if !IdentityRegistry::is_canonical_did(&token.subject_did) {
+        return Err(CapabilityAuditQueryError::InvalidRegistryState {
+            field: "subject_did",
+            value: token.subject_did.clone(),
+        });
+    }
+
     let mut owner_history: Vec<_> = registry
         .audit_trail()
         .iter()
         .filter(|event| event.subject == token.subject_did)
         .cloned()
         .collect();
+
+    if let Some(invalid_subject) = owner_history
+        .iter()
+        .map(|event| event.subject.as_str())
+        .find(|subject| !IdentityRegistry::is_canonical_did(subject))
+    {
+        return Err(CapabilityAuditQueryError::InvalidRegistryState {
+            field: "owner_history.subject",
+            value: invalid_subject.to_string(),
+        });
+    }
 
     // Keep audit query output deterministic even when registry snapshots are
     // merged/imported with non-canonical ordering.

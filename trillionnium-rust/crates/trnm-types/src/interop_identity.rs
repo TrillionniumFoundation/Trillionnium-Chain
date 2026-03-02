@@ -353,18 +353,55 @@ pub struct IdentityRegistry {
 }
 
 impl IdentityRegistry {
+    const DID_MIN_LEN: usize = 7;
+    const DID_MAX_LEN: usize = 128;
+
     fn contains_disallowed_invisible_chars(value: &str) -> bool {
         value.chars().any(is_disallowed_invisible_char)
+    }
+
+    pub fn is_canonical_did(value: &str) -> bool {
+        if value.len() < Self::DID_MIN_LEN || value.len() > Self::DID_MAX_LEN {
+            return false;
+        }
+        if !value.starts_with("did:") {
+            return false;
+        }
+
+        let mut parts = value.splitn(3, ':');
+        let _did = parts.next();
+        let method = parts.next().unwrap_or("");
+        let method_specific = parts.next().unwrap_or("");
+
+        if method.is_empty() || method_specific.is_empty() {
+            return false;
+        }
+
+        if !method
+            .chars()
+            .all(|ch| ch.is_ascii_lowercase() || ch.is_ascii_digit())
+        {
+            return false;
+        }
+
+        method_specific.chars().all(|ch| {
+            ch.is_ascii_lowercase()
+                || ch.is_ascii_digit()
+                || matches!(ch, ':' | '.' | '_' | '-')
+        })
     }
 
     fn validate_identity_field(
         field: &'static str,
         value: &str,
     ) -> Result<(), InteropIdentityError> {
+        let did_field = matches!(field, "did" | "subject_did");
+
         if value.trim().is_empty()
             || value.trim() != value
             || value.chars().any(char::is_control)
             || Self::contains_disallowed_invisible_chars(value)
+            || (did_field && !Self::is_canonical_did(value))
         {
             return Err(InteropIdentityError::InvalidIdentityValue {
                 field,
@@ -2412,6 +2449,52 @@ mod tests {
         ));
 
         assert!(reg.audit_trail().is_empty());
+    }
+
+    #[test]
+    fn register_did_rejects_did_case_and_length_boundary_violations_without_side_effects() {
+        let mut reg = IdentityRegistry::default();
+
+        let err = reg
+            .register_did(
+                "did:Org:lane-xi".to_string(),
+                "org:lane2-admin".to_string(),
+                10,
+            )
+            .unwrap_err();
+        assert!(matches!(
+            err,
+            InteropIdentityError::InvalidIdentityValue { field: "did", .. }
+        ));
+
+        let err = reg
+            .register_did(
+                "did:org:Lane-Xi".to_string(),
+                "org:lane2-admin".to_string(),
+                10,
+            )
+            .unwrap_err();
+        assert!(matches!(
+            err,
+            InteropIdentityError::InvalidIdentityValue { field: "did", .. }
+        ));
+
+        let max_suffix = "a".repeat(120);
+        let ok_boundary = format!("did:org:{max_suffix}");
+        assert_eq!(ok_boundary.len(), 128);
+        reg.register_did(ok_boundary.clone(), "org:lane2-admin".to_string(), 11)
+            .expect("128-char DID boundary should be accepted");
+        assert!(reg.did(&ok_boundary).is_some());
+
+        let too_long = format!("did:org:{}", "a".repeat(121));
+        assert_eq!(too_long.len(), 129);
+        let err = reg
+            .register_did(too_long, "org:lane2-admin".to_string(), 12)
+            .unwrap_err();
+        assert!(matches!(
+            err,
+            InteropIdentityError::InvalidIdentityValue { field: "did", .. }
+        ));
     }
 
     #[test]
