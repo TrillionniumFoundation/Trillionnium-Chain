@@ -509,6 +509,7 @@ fn market_report_returns_zeroed_metrics_for_empty_state() {
     assert_eq!(report["task_count"], 0);
     assert_eq!(report["open_task_count"], 0);
     assert_eq!(report["matched_task_count"], 0);
+    assert_eq!(report["unmatched_task_count"], 0);
     assert_eq!(report["bid_count"], 0);
     assert_eq!(report["unique_bidder_count"], 0);
     assert_eq!(report["avg_bids_per_task"], 0.0);
@@ -603,6 +604,7 @@ fn market_report_summarizes_tasks_bids_and_unique_bidders() {
     assert_eq!(report["task_count"], 2);
     assert_eq!(report["open_task_count"], 1);
     assert_eq!(report["matched_task_count"], 1);
+    assert_eq!(report["unmatched_task_count"], 1);
     assert_eq!(report["bid_count"], 3);
     assert_eq!(report["unique_bidder_count"], 2);
     assert_eq!(report["avg_bids_per_task"], 1.5);
@@ -646,6 +648,7 @@ fn market_report_counts_status_case_and_whitespace_variants() {
     assert_eq!(report["task_count"], 3);
     assert_eq!(report["open_task_count"], 1);
     assert_eq!(report["matched_task_count"], 1);
+    assert_eq!(report["unmatched_task_count"], 2);
 
     let _ = fs::remove_file(tasks);
     let _ = fs::remove_file(bids);

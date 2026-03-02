@@ -240,6 +240,7 @@ struct MarketReport {
     task_count: usize,
     open_task_count: usize,
     matched_task_count: usize,
+    unmatched_task_count: usize,
     bid_count: usize,
     unique_bidder_count: usize,
     avg_bids_per_task: f64,
@@ -2354,6 +2355,7 @@ fn main() -> Result<()> {
                 .filter(|t| t.status.trim().eq_ignore_ascii_case("matched"))
                 .count();
             let bid_count = bids.len();
+            let unmatched_task_count = task_count.saturating_sub(matched_task_count);
 
             let unique_bidder_count = bids
                 .iter()
@@ -2375,6 +2377,7 @@ fn main() -> Result<()> {
                 task_count,
                 open_task_count,
                 matched_task_count,
+                unmatched_task_count,
                 bid_count,
                 unique_bidder_count,
                 avg_bids_per_task,
