@@ -164,7 +164,8 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
         "fraud proof" | "fraud receipt" | "fraud proof v1" | "fraud proof v2"
         | "fraud proof v3" | "fraud proof v 1" | "fraud proof v 2" | "fraud proof v 3"
         | "fraud receipt v1" | "fraud receipt v2" | "fraud receipt v 1"
-        | "fraud receipt v 2" | "fraud receipt v3" | "fraud receipt v 3" | "fraudproof"
+        | "fraud receipt v 2" | "fraud receipt v3" | "fraud receipt v 3"
+        | "fraud receiptv1" | "fraud receiptv2" | "fraud receiptv3" | "fraudproof"
         | "fraudproofv1" | "fraudproofv2" | "fraudproofv3" | "fraudreceipt"
         | "fraudreceiptv1" | "fraudreceiptv2" | "fraudreceiptv3" => {
             "fraud".to_string()
@@ -308,6 +309,9 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
         | "zk receipt v1"
         | "zk receipt v2"
         | "zk receipt v3"
+        | "zk receiptv1"
+        | "zk receiptv2"
+        | "zk receiptv3"
         | "zk receipt v 1"
         | "zk receipt v 2"
         | "zk receipt v 3"
@@ -856,6 +860,21 @@ mod tests {
         assert_eq!(v1.proof_type, "tee");
         assert_eq!(v2.proof_type, "tee");
         assert_eq!(v3.proof_type, "tee");
+    }
+
+    #[test]
+    fn verification_receipt_new_collapses_glued_fraud_and_zk_receipt_version_aliases_to_router_keys() {
+        let fraud_v1 =
+            VerificationReceipt::new(1, "fraud receiptv1", VerificationResult::Valid, "v", 1);
+        let fraud_v2 =
+            VerificationReceipt::new(2, "fraud-receiptv2", VerificationResult::Valid, "v", 2);
+        let zk_v1 = VerificationReceipt::new(3, "zk receiptv1", VerificationResult::Valid, "v", 3);
+        let zk_v3 = VerificationReceipt::new(4, "zk-receiptv3", VerificationResult::Valid, "v", 4);
+
+        assert_eq!(fraud_v1.proof_type, "fraud");
+        assert_eq!(fraud_v2.proof_type, "fraud");
+        assert_eq!(zk_v1.proof_type, "zk");
+        assert_eq!(zk_v3.proof_type, "zk");
     }
 
     #[test]
