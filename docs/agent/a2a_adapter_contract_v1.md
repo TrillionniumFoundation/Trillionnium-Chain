@@ -43,14 +43,19 @@
 
 ## 4. 错误模型（Fail-Closed）
 
-- 非法 schema：`400 schema_invalid`
+- 非法 schema：`400 schema_invalid`（Agent 侧语义归一：`invalid-request`）
 - 鉴权失败：`401 capability_invalid`
 - 策略拒绝：`403 policy_denied`
-- 上游执行失败：`502 upstream_execution_failed`
+- 上游执行失败：`502 upstream_execution_failed`（Agent 侧语义归一：`internal`）
+- 任务不存在：`404 task_not_found`（Agent 侧语义归一：`not-found`）
 - 幂等键冲突（同键不同请求体）：`409 idempotency_conflict`
 - 防重放冲突：`409 replay_detected`
 
 错误响应最小字段：`request_id` / `error.code` / `error.message`。
+
+A2 查询工作流稳定性约束：
+- Adapter 错误语义必须可稳定映射为 `not-found` / `invalid-request` / `internal`。
+- 不允许把 schema 错误或上游失败降级为 `not-found`（fail-closed）。
 
 ## 5. 验收与证据
 
