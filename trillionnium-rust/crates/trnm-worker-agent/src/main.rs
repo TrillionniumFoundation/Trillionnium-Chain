@@ -3387,6 +3387,22 @@ mod tests {
     }
 
     #[test]
+    fn normalized_agent_protocol_accepts_future_version_suffixes() {
+        assert_eq!(
+            normalized_agent_protocol(Some("MCP over HTTP v9")).as_deref(),
+            Some("mcp")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("A2A Streamable HTTP v12")).as_deref(),
+            Some("a2a")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Google Agent-to-Agent Protocol v27")).as_deref(),
+            Some("a2a")
+        );
+    }
+
+    #[test]
     fn attach_llm_provenance_rejects_non_ascii_or_invisible_agent_protocol_aliases() {
         let mut rec = MessageIngressRecord {
             request_id: "r5aa".to_string(),
