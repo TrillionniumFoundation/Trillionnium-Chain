@@ -830,6 +830,20 @@ mod tests {
     }
 
     #[test]
+    fn registry_register_collapses_tee_certificate_alias_for_lookup() {
+        let mut registry = VerifierRegistry::new();
+        registry.register(Arc::new(AlwaysValidVerifier {
+            kind: " TEE_CERTIFICATE ",
+        }));
+
+        let task = task_with_proof_type(ProofType::Tee);
+        assert_eq!(
+            registry.verify(&task, b"certificate"),
+            VerificationResult::Valid
+        );
+    }
+
+    #[test]
     fn registry_register_collapses_tee_quote_alias_for_lookup() {
         let mut registry = VerifierRegistry::new();
         registry.register(Arc::new(AlwaysValidVerifier {
