@@ -15,7 +15,9 @@ pub fn build_proof_adapter(name: &str) -> Result<Box<dyn ProofAdapter>, String> 
         .trim()
         .to_ascii_lowercase();
     match normalized.as_str() {
-        "" | DEFAULT_PROOF_ADAPTER => Ok(Box::new(StandardProofAdapter)),
+        "" | DEFAULT_PROOF_ADAPTER | "fraud-proof" | "fraud_proof" => {
+            Ok(Box::new(StandardProofAdapter))
+        }
         other => Err(format!("unsupported-proof-adapter:{other}")),
     }
 }
@@ -214,13 +216,23 @@ mod tests {
     }
 
     #[test]
-    fn build_proof_adapter_accepts_default_and_rejects_unknown_plugin_names() {
+    fn build_proof_adapter_accepts_default_and_fraud_aliases_and_rejects_unknown_plugin_names() {
         let adapter = build_proof_adapter(DEFAULT_PROOF_ADAPTER).expect("default adapter");
         let (ok, code) = adapter.verify("hello", 8);
         assert!(ok);
         assert_eq!(code, "ok");
 
         let adapter = build_proof_adapter("\u{feff} STANDARD ").expect("bom+whitespace default");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "ok");
+
+        let adapter = build_proof_adapter("fraud-proof").expect("fraud proof alias");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "ok");
+
+        let adapter = build_proof_adapter("FRAUD_PROOF").expect("fraud proof underscore alias");
         let (ok, code) = adapter.verify("hello", 8);
         assert!(ok);
         assert_eq!(code, "ok");
