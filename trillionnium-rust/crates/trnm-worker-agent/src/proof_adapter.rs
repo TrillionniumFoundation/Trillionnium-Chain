@@ -144,7 +144,9 @@ impl ProofAdapter for TeeReceiptProofAdapter {
             .map(str::trim)
             .map(|v| {
                 let normalized = v.to_ascii_lowercase();
-                normalized == "tee-receipt" || normalized == "tee_receipt"
+                normalized == "tee-receipt"
+                    || normalized == "tee_receipt"
+                    || normalized == "tee-attestation"
             })
             .unwrap_or(false);
         if !adapter_ok {
@@ -226,6 +228,13 @@ mod tests {
             )
             .expect("tee receipt payload should parse");
         assert_eq!(ok.provider_request_id.as_deref(), Some("pr-1"));
+
+        let tee_attestation = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-2\",\"adapter\":\"tee-attestation\"}",
+            )
+            .expect("tee attestation alias should parse");
+        assert_eq!(tee_attestation.provider_request_id.as_deref(), Some("pr-2"));
 
         let missing_request_id = adapter
             .parse_response("{\"output_text\":\"ok\",\"adapter\":\"tee-receipt\"}")
