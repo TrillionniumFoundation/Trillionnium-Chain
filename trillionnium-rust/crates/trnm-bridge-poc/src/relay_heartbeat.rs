@@ -95,7 +95,9 @@ const MAX_FAILURE_REASON_CHARS: usize = 160;
 fn is_disallowed_invisible_char(ch: char) -> bool {
     matches!(
         ch,
-        '\u{061C}'
+        '\u{00AD}'
+            | '\u{061C}'
+            | '\u{180E}'
             | '\u{200B}'
             | '\u{200C}'
             | '\u{200D}'

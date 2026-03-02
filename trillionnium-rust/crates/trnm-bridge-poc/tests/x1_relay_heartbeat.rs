@@ -126,6 +126,14 @@ fn relay_heartbeat_failure_reason_strips_bidi_and_word_joiner_controls() {
 }
 
 #[test]
+fn relay_heartbeat_failure_reason_strips_soft_hyphen_and_mongolian_vowel_separator() {
+    let mut hb = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 3));
+
+    let out = hb.record_failure("rpc\u{00AD}\u{180E} timeout");
+    assert_eq!(out.message, "rpc timeout");
+}
+
+#[test]
 fn relay_heartbeat_failure_reason_is_capped_for_log_safety() {
     let mut hb = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 3));
     let long_reason = "x".repeat(220);
