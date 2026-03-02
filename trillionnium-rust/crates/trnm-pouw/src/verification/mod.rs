@@ -137,12 +137,13 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
         "tee proof" | "tee receipt" | "tee attestation" | "tee quote" | "tee report"
         | "sgx quote" | "sgx report" | "tee evidence" | "remote attestation"
         | "attestation report" | "ra report" | "ra quote" | "dcap quote"
-        | "intel dcap quote" | "tdx quote" | "tdx report" | "intel tdx quote"
-        | "tee cert" | "tee certificate" | "teeproof" | "teereceipt"
-        | "teeattestation" | "teequote" | "teereport" | "sgxquote" | "sgxreport"
-        | "teeevidence" | "remoteattestation" | "attestationreport" | "rareport"
-        | "raquote" | "dcapquote" | "inteldcapquote" | "tdxquote" | "tdxreport"
-        | "inteltdxquote" | "teecert" | "teecertificate" => "tee".to_string(),
+        | "intel dcap quote" | "intel sgx dcap quote" | "tdx quote" | "tdx report"
+        | "intel tdx quote" | "tee cert" | "tee certificate" | "teeproof"
+        | "teereceipt" | "teeattestation" | "teequote" | "teereport" | "sgxquote"
+        | "sgxreport" | "teeevidence" | "remoteattestation" | "attestationreport"
+        | "rareport" | "raquote" | "dcapquote" | "inteldcapquote"
+        | "intelsgxdcapquote" | "tdxquote" | "tdxreport" | "inteltdxquote"
+        | "teecert" | "teecertificate" => "tee".to_string(),
         "zk proof"
         | "zk receipt"
         | "zk attestation"
@@ -709,11 +710,19 @@ mod tests {
             "v",
             4,
         );
+        let tee_intel_sgx_dcap = VerificationReceipt::new(
+            5,
+            "Intel SGX DCAP Quote",
+            VerificationResult::Valid,
+            "v",
+            5,
+        );
 
         assert_eq!(tee_fullwidth.proof_type, "tee");
         assert_eq!(tee_certificate.proof_type, "tee");
         assert_eq!(zk_short.proof_type, "zk");
         assert_eq!(zk_certificate.proof_type, "zk");
+        assert_eq!(tee_intel_sgx_dcap.proof_type, "tee");
     }
 
     #[test]
