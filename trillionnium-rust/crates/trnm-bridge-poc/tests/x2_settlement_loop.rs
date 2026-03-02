@@ -290,3 +290,43 @@ fn x3_prep_degraded_heartbeat_reason_is_length_capped_for_replayable_compensatio
     assert_eq!(reason.chars().count(), 181);
     assert_eq!(current_status(&request), &BridgeStatus::Reverted(reason));
 }
+
+#[test]
+fn x3_prep_confirm_failure_blank_reason_falls_back_to_stable_contract_message() {
+    let mut request = SettlementRequest::new(1, "0xblankreason".to_string());
+    let token = operator_token();
+
+    let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 2));
+    let heartbeat = monitor.record_success(601, 600, 22);
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Failed {
+            reason: "\u{200B}\n\t\u{202E}".to_string(),
+        },
+    )
+    .unwrap();
+
+    assert_eq!(
+        out,
+        SettlementStep::Compensated {
+            reason: "settlement confirm failed: unknown confirm failure".to_string(),
+            event: trnm_bridge_poc::x2_settlement_loop::SettlementEvent {
+                phase: "settlement_confirm_failed",
+                heartbeat_source_height: Some(601),
+                heartbeat_target_height: Some(600),
+                heartbeat_latency_ms: Some(22),
+                confirm_height: None,
+                confirm_reason: Some(
+                    "settlement confirm failed: unknown confirm failure".to_string(),
+                ),
+            },
+        }
+    );
+    assert_eq!(
+        current_status(&request),
+        &BridgeStatus::Reverted("settlement confirm failed: unknown confirm failure".to_string())
+    );
+}
