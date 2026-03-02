@@ -9,7 +9,7 @@ trap 'rm -f "$tmp_file"' EXIT
 
 cat >"$tmp_file" <<'JSON'
 {
-  "task_id": "task-20260302-0002",
+  "task_id": "task-20260303-0001",
   "task_type": "inference",
   "input_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
   "model": {
@@ -19,8 +19,8 @@ cat >"$tmp_file" <<'JSON'
   },
   "provenance": {
     "producer_did": "did:trnm:org:lane-dae ",
-    "produced_at": "2026-03-02T04:26:00Z",
-    "provenance_index": "prov:lane-dae:task-20260302-0002",
+    "produced_at": "2026-03-03T03:40:00Z",
+    "provenance_index": "prov:lane-dae:task-20260303-0001",
     "privacy_tier": "internal"
   }
 }
