@@ -90,6 +90,7 @@ impl VerifierRegistry {
             "remote attestation" | "remoteattestation" => "tee",
             "attestation report" | "attestationreport" => "tee",
             "ra report" | "rareport" => "tee",
+            "ra quote" | "raquote" => "tee",
             "tee quote" | "teequote" => "tee",
             "sgx quote" | "sgxquote" => "tee",
             "dcap quote" | "dcapquote" => "tee",
@@ -269,6 +270,18 @@ mod tests {
         registry.register(Arc::new(AlwaysValidVerifier {
             kind: " tee-receipt ",
         }));
+
+        let task = task_with_proof_type(ProofType::Tee);
+        assert_eq!(
+            registry.verify(&task, b"receipt"),
+            VerificationResult::Valid
+        );
+    }
+
+    #[test]
+    fn registry_register_collapses_ra_quote_aliases_for_lookup() {
+        let mut registry = VerifierRegistry::new();
+        registry.register(Arc::new(AlwaysValidVerifier { kind: " RA_QUOTE " }));
 
         let task = task_with_proof_type(ProofType::Tee);
         assert_eq!(
