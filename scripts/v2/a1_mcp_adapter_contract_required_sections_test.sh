@@ -33,6 +33,7 @@ guard_phrases=(
   "X-TRNM-Request-ID"
   "X-TRNM-Timestamp"
   "X-TRNM-Schema-Version"
+  "Authorization: Bearer <capability_token>"
   "mcp-adapter-v1"
   "时钟偏差 ≤ 300 秒"
   "协议版本与适配器传输层记录"
