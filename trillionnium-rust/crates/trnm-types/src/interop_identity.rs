@@ -866,11 +866,20 @@ impl IdentityRegistry {
 
     fn normalize_note(note: Option<String>) -> Option<String> {
         note.and_then(|v| {
-            let trimmed = v.trim();
-            let has_visible = trimmed
+            let sanitized: String = v
+                .trim()
                 .chars()
-                .any(|ch| !ch.is_whitespace() && !ch.is_control() && !is_disallowed_invisible_char(ch));
-            has_visible.then(|| trimmed.to_string())
+                .map(|ch| {
+                    if ch.is_control() || is_disallowed_invisible_char(ch) {
+                        ' '
+                    } else {
+                        ch
+                    }
+                })
+                .collect();
+
+            let collapsed = sanitized.split_whitespace().collect::<Vec<_>>().join(" ");
+            (!collapsed.is_empty()).then_some(collapsed)
         })
     }
 
@@ -3215,6 +3224,72 @@ mod tests {
             token_id,
             30,
             Some("\u{202E}\u{202C}\u{2067}\u{2069}".to_string()),
+        )
+        .unwrap();
+
+        let last = reg.audit_trail().last().unwrap();
+        assert_eq!(last.action, AuditAction::CapabilityRevoked);
+        assert_eq!(last.note, None);
+    }
+
+    #[test]
+    fn revoke_capability_audit_note_strips_invisibles_and_collapses_whitespace() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did(
+            "did:trnm:agent-3ab-note-sanitize".to_string(),
+            "org:lane2-admin".to_string(),
+            10,
+        )
+        .unwrap();
+
+        let token_id = reg
+            .issue_capability(
+                "org:lane2-admin".to_string(),
+                "did:trnm:agent-3ab-note-sanitize".to_string(),
+                CapabilityScope::AuditRead,
+                12,
+                None,
+            )
+            .unwrap();
+
+        reg.revoke_capability(
+            "org:lane2-admin".to_string(),
+            token_id,
+            30,
+            Some("  proof\u{200B}\n case\u{202E}\t42  ".to_string()),
+        )
+        .unwrap();
+
+        let last = reg.audit_trail().last().unwrap();
+        assert_eq!(last.action, AuditAction::CapabilityRevoked);
+        assert_eq!(last.note.as_deref(), Some("proof case 42"));
+    }
+
+    #[test]
+    fn revoke_capability_audit_note_with_only_controls_after_trim_is_none() {
+        let mut reg = IdentityRegistry::default();
+        reg.register_did(
+            "did:trnm:agent-3ab-note-empty".to_string(),
+            "org:lane2-admin".to_string(),
+            10,
+        )
+        .unwrap();
+
+        let token_id = reg
+            .issue_capability(
+                "org:lane2-admin".to_string(),
+                "did:trnm:agent-3ab-note-empty".to_string(),
+                CapabilityScope::AuditRead,
+                12,
+                None,
+            )
+            .unwrap();
+
+        reg.revoke_capability(
+            "org:lane2-admin".to_string(),
+            token_id,
+            30,
+            Some("\n\t\u{200B}\u{202E}\r".to_string()),
         )
         .unwrap();
 
