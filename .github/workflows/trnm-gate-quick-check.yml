@@ -92,6 +92,10 @@ jobs:
         run: |
           ./scripts/v2/d1_task_model_metadata_schema_reject_model_digest_short_length_test.sh
 
+      - name: D1 schema rejects short input_hash regression
+        run: |
+          ./scripts/v2/d1_task_model_metadata_schema_reject_input_hash_short_length_test.sh
+
       - name: D3 schema public rejects provenance_index regression
         run: |
           ./scripts/v2/d3_task_model_metadata_schema_public_rejects_provenance_index_test.sh
