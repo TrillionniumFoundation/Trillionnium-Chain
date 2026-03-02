@@ -244,3 +244,55 @@ fn rejected_boundary_renew_after_same_height_revoke_keeps_audit_and_token_stable
     assert_eq!(reg.audit_trail().len(), audit_len_before);
     assert_eq!(reg.capability(token_id), Some(&token_before));
 }
+
+#[test]
+fn rejected_post_boundary_renew_after_same_height_renew_then_revoke_is_side_effect_free() {
+    let mut reg = IdentityRegistry::default();
+    reg.register_did(
+        "did:trnm:agent-i3-race-renew-first-sideeffect".to_string(),
+        "org:lane-xi-admin".to_string(),
+        10,
+    )
+    .unwrap();
+
+    let token_id = reg
+        .issue_capability(
+            "org:lane-xi-admin".to_string(),
+            "did:trnm:agent-i3-race-renew-first-sideeffect".to_string(),
+            CapabilityScope::BridgeSettle,
+            20,
+            Some(60),
+        )
+        .unwrap();
+
+    reg.renew_capability("org:lane-xi-admin".to_string(), token_id, 30, Some(90))
+        .unwrap();
+    reg.revoke_capability(
+        "org:lane-xi-admin".to_string(),
+        token_id,
+        30,
+        Some("renew_first_then_revoke".to_string()),
+    )
+    .unwrap();
+
+    let audit_len_before = reg.audit_trail().len();
+    let token_before = reg.capability(token_id).cloned().expect("token exists");
+
+    let err = reg
+        .renew_capability("org:lane-xi-admin".to_string(), token_id, 31, Some(120))
+        .unwrap_err();
+
+    assert!(matches!(
+        err,
+        InteropIdentityError::CapabilityInactive {
+            token_id: err_token_id,
+            at_height: 31,
+            expires_at: Some(90),
+            revoked_at: Some(30),
+            ..
+        } if err_token_id == token_id
+    ));
+
+    assert_eq!(reg.audit_trail().len(), audit_len_before);
+    assert_eq!(reg.capability(token_id), Some(&token_before));
+}
