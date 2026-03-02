@@ -45,6 +45,23 @@ grep -q 'm2_policy_gate_default_drift_guard_fail' "$OUT_FAIL" || {
   echo "[FAIL] expected m2 default-drift failure reason"; cat "$OUT_FAIL"; exit 1;
 }
 
+# Case 1.5: avoid false pass when failure details contain target test name + trailing "ok" text.
+cat >"$M2_LOG" <<'EOF'
+running 1 test
+test market_m2_policy_gate_guards_default_drift_to_min_boundaries ... FAILED
+
+failures:
+market_m2_policy_gate_guards_default_drift_to_min_boundaries panic detail says not ok
+test result: FAILED. 0 passed; 1 failed
+EOF
+
+OUT_FALSE_PASS_GUARD="$(./scripts/nightly_attribution.sh | sed -n 's/^\[OK\] nightly attribution: //p' | tail -n1)"
+[[ -f "$OUT_FALSE_PASS_GUARD" ]] || { echo "[FAIL] missing attribution output for false-pass-guard case"; exit 1; }
+
+grep -q '^m2.policy_gate.assert_default_drift_guard=fail$' "$OUT_FALSE_PASS_GUARD" || {
+  echo "[FAIL] expected m2 default-drift guard to stay fail on failure log with misleading ok text"; cat "$OUT_FALSE_PASS_GUARD"; exit 1;
+}
+
 SUMMARY_FAIL="run/health/nightly-summary-${TAG}-fail.md"
 NIGHTLY_ATTRIBUTION_FILE="$OUT_FAIL" NIGHTLY_SUMMARY_OUT="$SUMMARY_FAIL" \
   python3 ./scripts/render_nightly_summary.py >/dev/null
