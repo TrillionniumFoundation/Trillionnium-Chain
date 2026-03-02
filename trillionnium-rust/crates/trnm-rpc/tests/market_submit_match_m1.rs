@@ -512,6 +512,8 @@ fn market_report_returns_zeroed_metrics_for_empty_state() {
     assert_eq!(report["unmatched_task_count"], 0);
     assert_eq!(report["bid_count"], 0);
     assert_eq!(report["unique_bidder_count"], 0);
+    assert_eq!(report["tasks_with_bids_count"], 0);
+    assert_eq!(report["bid_coverage_rate"], 0.0);
     assert_eq!(report["avg_bids_per_task"], 0.0);
     assert_eq!(report["match_rate"], 0.0);
 }
@@ -607,6 +609,8 @@ fn market_report_summarizes_tasks_bids_and_unique_bidders() {
     assert_eq!(report["unmatched_task_count"], 1);
     assert_eq!(report["bid_count"], 3);
     assert_eq!(report["unique_bidder_count"], 2);
+    assert_eq!(report["tasks_with_bids_count"], 2);
+    assert_eq!(report["bid_coverage_rate"], 1.0);
     assert_eq!(report["avg_bids_per_task"], 1.5);
     assert_eq!(report["match_rate"], 0.5);
 

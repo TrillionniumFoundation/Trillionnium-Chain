@@ -243,6 +243,8 @@ struct MarketReport {
     unmatched_task_count: usize,
     bid_count: usize,
     unique_bidder_count: usize,
+    tasks_with_bids_count: usize,
+    bid_coverage_rate: f64,
     avg_bids_per_task: f64,
     match_rate: f64,
 }
@@ -2378,6 +2380,16 @@ fn main() -> Result<()> {
                 .filter_map(|b| normalize_market_worker_key(&b.worker))
                 .collect::<std::collections::BTreeSet<_>>()
                 .len();
+            let tasks_with_bids_count = bids
+                .iter()
+                .map(|b| b.task_id)
+                .collect::<std::collections::BTreeSet<_>>()
+                .len();
+            let bid_coverage_rate = if task_count == 0 {
+                0.0
+            } else {
+                tasks_with_bids_count as f64 / task_count as f64
+            };
             let avg_bids_per_task = if task_count == 0 {
                 0.0
             } else {
@@ -2396,6 +2408,8 @@ fn main() -> Result<()> {
                 unmatched_task_count,
                 bid_count,
                 unique_bidder_count,
+                tasks_with_bids_count,
+                bid_coverage_rate,
                 avg_bids_per_task,
                 match_rate,
             };
