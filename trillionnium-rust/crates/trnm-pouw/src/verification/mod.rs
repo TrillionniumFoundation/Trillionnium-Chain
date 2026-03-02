@@ -114,6 +114,10 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
                 || ch == '；'
                 || ch == '。'
                 || ch == '．'
+                || ch == '·'
+                || ch == '・'
+                || ch == '∙'
+                || ch == '⋅'
                 || ch == '='
                 || ch == '@'
                 || ch == '#'
@@ -763,6 +767,20 @@ mod tests {
         assert_eq!(tee.proof_type, "tee");
         assert_eq!(zk.proof_type, "zk");
         assert_eq!(tee_fullwidth_dot.proof_type, "tee");
+    }
+
+    #[test]
+    fn verification_receipt_new_collapses_middle_dot_aliases_to_router_keys() {
+        let fraud = VerificationReceipt::new(1, "fraud·receipt", VerificationResult::Valid, "v", 1);
+        let tee = VerificationReceipt::new(2, "TEE・PROOF", VerificationResult::Valid, "v", 2);
+        let zk = VerificationReceipt::new(3, "zk∙attestation", VerificationResult::Valid, "v", 3);
+        let zk_dot_operator =
+            VerificationReceipt::new(4, "zk⋅proof", VerificationResult::Valid, "v", 4);
+
+        assert_eq!(fraud.proof_type, "fraud");
+        assert_eq!(tee.proof_type, "tee");
+        assert_eq!(zk.proof_type, "zk");
+        assert_eq!(zk_dot_operator.proof_type, "zk");
     }
 
     #[test]
