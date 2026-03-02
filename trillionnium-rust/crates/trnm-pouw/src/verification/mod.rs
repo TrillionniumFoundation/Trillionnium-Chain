@@ -87,6 +87,11 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
                 || ch == '－'
                 || ch == '–'
                 || ch == '—'
+                || ch == '\u{200b}'
+                || ch == '\u{200c}'
+                || ch == '\u{200d}'
+                || ch == '\u{2060}'
+                || ch == '\u{feff}'
                 || ch == '/'
                 || ch == '／'
                 || ch == '.'
@@ -388,6 +393,15 @@ mod tests {
     fn verification_receipt_new_collapses_unicode_whitespace_delimited_aliases_to_router_keys() {
         let tee = VerificationReceipt::new(1, "TEE\u{3000}RECEIPT", VerificationResult::Valid, "v", 1);
         let zk = VerificationReceipt::new(2, "ZK\u{00A0}PROOF", VerificationResult::Valid, "v", 2);
+
+        assert_eq!(tee.proof_type, "tee");
+        assert_eq!(zk.proof_type, "zk");
+    }
+
+    #[test]
+    fn verification_receipt_new_collapses_zero_width_delimited_aliases_to_router_keys() {
+        let tee = VerificationReceipt::new(1, "TEE\u{200B}RECEIPT", VerificationResult::Valid, "v", 1);
+        let zk = VerificationReceipt::new(2, "zero\u{FEFF}knowledge\u{200C}proof", VerificationResult::Valid, "v", 2);
 
         assert_eq!(tee.proof_type, "tee");
         assert_eq!(zk.proof_type, "zk");
