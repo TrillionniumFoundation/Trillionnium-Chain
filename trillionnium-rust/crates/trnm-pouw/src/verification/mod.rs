@@ -111,6 +111,7 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
                 || ch == ';'
                 || ch == '；'
                 || ch == '。'
+                || ch == '．'
                 || ch == '='
                 || ch == '@'
                 || ch == '#'
@@ -687,10 +688,13 @@ mod tests {
             VerificationReceipt::new(1, "FRAUD。RECEIPT", VerificationResult::Valid, "v", 1);
         let tee = VerificationReceipt::new(2, "TEE。PROOF", VerificationResult::Valid, "v", 2);
         let zk = VerificationReceipt::new(3, "ZK。RECEIPT", VerificationResult::Valid, "v", 3);
+        let tee_fullwidth_dot =
+            VerificationReceipt::new(4, "TEE．RECEIPT", VerificationResult::Valid, "v", 4);
 
         assert_eq!(fraud.proof_type, "fraud");
         assert_eq!(tee.proof_type, "tee");
         assert_eq!(zk.proof_type, "zk");
+        assert_eq!(tee_fullwidth_dot.proof_type, "tee");
     }
 
     #[test]
