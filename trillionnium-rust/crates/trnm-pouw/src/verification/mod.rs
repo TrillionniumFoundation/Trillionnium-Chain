@@ -148,9 +148,24 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
         .join(" ");
 
     match collapsed_tokens.as_str() {
-        "fraud proof" | "fraud receipt" | "fraudproof" | "fraudreceipt" => "fraud".to_string(),
+        "fraud proof"
+        | "fraud receipt"
+        | "fraud proof v1"
+        | "fraud proof v2"
+        | "fraud receipt v1"
+        | "fraud receipt v2"
+        | "fraudproof"
+        | "fraudproofv1"
+        | "fraudproofv2"
+        | "fraudreceipt"
+        | "fraudreceiptv1"
+        | "fraudreceiptv2" => "fraud".to_string(),
         "tee proof"
         | "tee receipt"
+        | "tee proof v1"
+        | "tee proof v2"
+        | "tee receipt v1"
+        | "tee receipt v2"
         | "tee attestation"
         | "tee quote"
         | "tee report"
@@ -176,7 +191,11 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
         | "tee cert"
         | "tee certificate"
         | "teeproof"
+        | "teeproofv1"
+        | "teeproofv2"
         | "teereceipt"
+        | "teereceiptv1"
+        | "teereceiptv2"
         | "teeattestation"
         | "teequote"
         | "teereport"
@@ -203,6 +222,10 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
         | "teecertificate" => "tee".to_string(),
         "zk proof"
         | "zk receipt"
+        | "zk proof v1"
+        | "zk proof v2"
+        | "zk receipt v1"
+        | "zk receipt v2"
         | "zk attestation"
         | "zk evidence"
         | "zk snark"
@@ -215,7 +238,11 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
         | "zero knowledge evidence"
         | "zero knowledge snark"
         | "zkproof"
+        | "zkproofv1"
+        | "zkproofv2"
         | "zkreceipt"
+        | "zkreceiptv1"
+        | "zkreceiptv2"
         | "zkattestation"
         | "zkevidence"
         | "zksnark"
@@ -516,6 +543,17 @@ mod tests {
         assert_eq!(zk_snake.proof_type, "zk");
         assert_eq!(zk_hyphen.proof_type, "zk");
         assert_eq!(zk_space.proof_type, "zk");
+    }
+
+    #[test]
+    fn verification_receipt_new_collapses_version_suffixed_legacy_aliases_to_router_keys() {
+        let fraud = VerificationReceipt::new(1, "fraud_receipt_v2", VerificationResult::Valid, "v", 1);
+        let tee = VerificationReceipt::new(2, "TEE-PROOF-V1", VerificationResult::Valid, "v", 2);
+        let zk = VerificationReceipt::new(3, "zk receipt v2", VerificationResult::Valid, "v", 3);
+
+        assert_eq!(fraud.proof_type, "fraud");
+        assert_eq!(tee.proof_type, "tee");
+        assert_eq!(zk.proof_type, "zk");
     }
 
     #[test]
