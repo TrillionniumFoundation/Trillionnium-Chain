@@ -346,3 +346,6 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: run
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e2-audit-report-generator-reject-schema-outer-whitespace-test" "./scripts/v2/e2_audit_report_generator_reject_schema_outer_whitespace_test.sh" "ci(gate): add e2-audit-report-generator-reject-schema-outer-whitespace-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d2-task-model-metadata-schema-reject-provenance-index-leading-separator-test" "./scripts/v2/d2_task_model_metadata_schema_reject_provenance_index_leading_separator_test.sh" "ci(gate): add d2-task-model-metadata-schema-reject-provenance-index-leading-separator-test regression to quick-check"
