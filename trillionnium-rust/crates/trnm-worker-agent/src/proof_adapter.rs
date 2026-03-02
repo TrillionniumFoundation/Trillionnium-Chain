@@ -12,10 +12,7 @@ pub struct TeeReceiptProofAdapter;
 pub struct ZkReceiptProofAdapter;
 
 pub fn build_proof_adapter(name: &str) -> Result<Box<dyn ProofAdapter>, String> {
-    let normalized = name
-        .trim_start_matches('\u{feff}')
-        .trim()
-        .to_ascii_lowercase();
+    let normalized = normalize_adapter_label(name);
     match normalized.as_str() {
         "" | DEFAULT_PROOF_ADAPTER | "fraud-proof" | "fraud_proof" => {
             Ok(Box::new(StandardProofAdapter))
@@ -76,6 +73,21 @@ fn last_balanced_json_object(input: &str) -> Option<String> {
     }
 
     last
+}
+
+fn normalize_adapter_label(label: &str) -> String {
+    label
+        .trim_start_matches('\u{feff}')
+        .trim()
+        .to_ascii_lowercase()
+}
+
+fn normalize_adapter_value(value: &str) -> String {
+    value
+        .trim()
+        .trim_start_matches('\u{feff}')
+        .trim()
+        .to_ascii_lowercase()
 }
 
 fn parse_response_with_standard_rules(stdout: &str) -> Result<LlmAdapterResponse, String> {
@@ -147,9 +159,8 @@ impl ProofAdapter for TeeReceiptProofAdapter {
         let adapter_ok = parsed
             .adapter
             .as_deref()
-            .map(str::trim)
-            .map(|v| {
-                let normalized = v.to_ascii_lowercase();
+            .map(normalize_adapter_value)
+            .map(|normalized| {
                 normalized == "tee-receipt"
                     || normalized == "tee_receipt"
                     || normalized == "tee-attestation"
@@ -189,9 +200,8 @@ impl ProofAdapter for ZkReceiptProofAdapter {
         let adapter_ok = parsed
             .adapter
             .as_deref()
-            .map(str::trim)
-            .map(|v| {
-                let normalized = v.to_ascii_lowercase();
+            .map(normalize_adapter_value)
+            .map(|normalized| {
                 normalized == "zk-receipt"
                     || normalized == "zk_receipt"
                     || normalized == "zk-proof"
@@ -295,6 +305,16 @@ mod tests {
             Some("pr-2b")
         );
 
+        let tee_with_bom_and_whitespace = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-2c\",\"adapter\":\"  \\uFEFFTEE_RECEIPT  \"}",
+            )
+            .expect("tee receipt label with bom+whitespace should parse");
+        assert_eq!(
+            tee_with_bom_and_whitespace.provider_request_id.as_deref(),
+            Some("pr-2c")
+        );
+
         let missing_request_id = adapter
             .parse_response("{\"output_text\":\"ok\",\"adapter\":\"tee-receipt\"}")
             .expect_err("provider_request_id is required");
@@ -338,6 +358,16 @@ mod tests {
         assert_eq!(
             zk_proof_underscore_alias.provider_request_id.as_deref(),
             Some("pr-zk-2b")
+        );
+
+        let zk_with_bom_and_whitespace = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-zk-2c\",\"adapter\":\"  \\uFEFFZK_RECEIPT  \"}",
+            )
+            .expect("zk receipt label with bom+whitespace should parse");
+        assert_eq!(
+            zk_with_bom_and_whitespace.provider_request_id.as_deref(),
+            Some("pr-zk-2c")
         );
 
         let missing_request_id = adapter
@@ -398,6 +428,16 @@ mod tests {
     #[test]
     fn build_proof_adapter_accepts_default_and_fraud_and_tee_receipt_and_zk_aliases() {
         let adapter = build_proof_adapter(DEFAULT_PROOF_ADAPTER).expect("default adapter");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "ok");
+
+        let adapter = build_proof_adapter(" \n\t ").expect("whitespace-only defaults to standard");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "ok");
+
+        let adapter = build_proof_adapter("\u{feff} \n\t").expect("bom+whitespace defaults to standard");
         let (ok, code) = adapter.verify("hello", 8);
         assert!(ok);
         assert_eq!(code, "ok");
