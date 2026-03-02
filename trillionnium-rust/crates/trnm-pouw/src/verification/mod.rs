@@ -160,8 +160,10 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
         | "tee receipt"
         | "tee proof v1"
         | "tee proof v2"
+        | "tee proof v3"
         | "tee proof v 1"
         | "tee proof v 2"
+        | "tee proof v 3"
         | "tee receipt v1"
         | "tee receipt v2"
         | "tee receipt v3"
@@ -195,6 +197,7 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
         | "teeproof"
         | "teeproofv1"
         | "teeproofv2"
+        | "teeproofv3"
         | "teereceipt"
         | "teereceiptv1"
         | "teereceiptv2"
@@ -227,8 +230,10 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
         | "zk receipt"
         | "zk proof v1"
         | "zk proof v2"
+        | "zk proof v3"
         | "zk proof v 1"
         | "zk proof v 2"
+        | "zk proof v 3"
         | "zk receipt v1"
         | "zk receipt v2"
         | "zk receipt v3"
@@ -249,6 +254,7 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
         | "zkproof"
         | "zkproofv1"
         | "zkproofv2"
+        | "zkproofv3"
         | "zkreceipt"
         | "zkreceiptv1"
         | "zkreceiptv2"
@@ -562,12 +568,18 @@ mod tests {
         let tee = VerificationReceipt::new(2, "TEE-PROOF-V1", VerificationResult::Valid, "v", 2);
         let tee_v3 =
             VerificationReceipt::new(3, "tee receipt v 3", VerificationResult::Valid, "v", 3);
-        let zk = VerificationReceipt::new(4, "zk receipt v3", VerificationResult::Valid, "v", 4);
+        let tee_proof_v3 =
+            VerificationReceipt::new(4, "TEE_PROOF_V_3", VerificationResult::Valid, "v", 4);
+        let zk = VerificationReceipt::new(5, "zk receipt v3", VerificationResult::Valid, "v", 5);
+        let zk_proof_v3 =
+            VerificationReceipt::new(6, "zk-proof-v-3", VerificationResult::Valid, "v", 6);
 
         assert_eq!(fraud.proof_type, "fraud");
         assert_eq!(tee.proof_type, "tee");
         assert_eq!(tee_v3.proof_type, "tee");
+        assert_eq!(tee_proof_v3.proof_type, "tee");
         assert_eq!(zk.proof_type, "zk");
+        assert_eq!(zk_proof_v3.proof_type, "zk");
     }
 
     #[test]
