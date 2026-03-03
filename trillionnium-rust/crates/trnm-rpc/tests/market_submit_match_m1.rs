@@ -14,12 +14,23 @@ fn lock_test_guard<'a>() -> MutexGuard<'a, ()> {
         .unwrap_or_else(|poison| poison.into_inner())
 }
 
+fn apply_market_env_baseline(cmd: &mut Command) {
+    for key in [
+        "TRNM_RPC_MARKET_TASKS_FILE",
+        "TRNM_RPC_MARKET_BIDS_FILE",
+        "TRNM_RPC_MARKET_REPUTATION_FILE",
+        "TRNM_RPC_MARKET_LOCK_STALE_MS",
+        "TRNM_RPC_INGRESS_FILE",
+    ] {
+        cmd.env_remove(key);
+    }
+}
+
 fn run_ok(args: &[&str]) -> String {
-    let output = Command::new("cargo")
-        .args(["run", "-p", "trnm-rpc", "--"])
-        .args(args)
-        .output()
-        .expect("failed to execute trnm-rpc");
+    let mut cmd = Command::new("cargo");
+    cmd.args(["run", "-p", "trnm-rpc", "--"]).args(args);
+    apply_market_env_baseline(&mut cmd);
+    let output = cmd.output().expect("failed to execute trnm-rpc");
     assert!(
         output.status.success(),
         "stderr: {}",
@@ -31,6 +42,7 @@ fn run_ok(args: &[&str]) -> String {
 fn run_ok_with_env(args: &[&str], envs: &[(&str, &str)]) -> String {
     let mut command = Command::new("cargo");
     command.args(["run", "-p", "trnm-rpc", "--"]).args(args);
+    apply_market_env_baseline(&mut command);
     for (k, v) in envs {
         command.env(k, v);
     }
@@ -52,11 +64,10 @@ fn unique_market_fixture_path(name: &str, ext: &str) -> std::path::PathBuf {
 }
 
 fn run_fail(args: &[&str]) -> String {
-    let output = Command::new("cargo")
-        .args(["run", "-p", "trnm-rpc", "--"])
-        .args(args)
-        .output()
-        .expect("failed to execute trnm-rpc");
+    let mut cmd = Command::new("cargo");
+    cmd.args(["run", "-p", "trnm-rpc", "--"]).args(args);
+    apply_market_env_baseline(&mut cmd);
+    let output = cmd.output().expect("failed to execute trnm-rpc");
     assert!(!output.status.success());
     String::from_utf8_lossy(&output.stderr).to_string()
 }

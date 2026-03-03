@@ -781,12 +781,23 @@ fn market_lock_path(path: &Path) -> PathBuf {
     path.with_file_name(format!("{}.lock", file_name))
 }
 
+fn market_lock_stale_after_ms() -> Option<u128> {
+    let raw = std::env::var("TRNM_RPC_MARKET_LOCK_STALE_MS").ok()?;
+    let normalized = normalize_wrapped_env_value(&raw);
+    if normalized.is_empty() {
+        return None;
+    }
+    let parsed = normalized.parse::<u128>().ok()?;
+    Some(parsed.clamp(1_000, 15 * 60 * 1_000))
+}
+
 fn acquire_market_file_lock(path: &Path) -> Result<MarketFileLock> {
     let lock_path = market_lock_path(path);
     if let Some(parent) = lock_path.parent() {
         fs::create_dir_all(parent)?;
     }
     let mut attempts: u32 = 0;
+    let stale_after_ms = market_lock_stale_after_ms();
     loop {
         match OpenOptions::new()
             .create_new(true)
@@ -798,6 +809,18 @@ fn acquire_market_file_lock(path: &Path) -> Result<MarketFileLock> {
                 return Ok(MarketFileLock { lock_path });
             }
             Err(err) if err.kind() == std::io::ErrorKind::AlreadyExists => {
+                if let Some(stale_after_ms) = stale_after_ms {
+                    if let Ok(meta) = fs::metadata(&lock_path) {
+                        if let Ok(modified) = meta.modified() {
+                            if let Ok(elapsed) = SystemTime::now().duration_since(modified) {
+                                if elapsed.as_millis() > stale_after_ms {
+                                    let _ = fs::remove_file(&lock_path);
+                                    continue;
+                                }
+                            }
+                        }
+                    }
+                }
                 attempts = attempts.saturating_add(1);
                 if attempts >= 500 {
                     return Err(anyhow!(
@@ -2770,6 +2793,32 @@ mod tests {
                 Some(val) => unsafe { std::env::set_var(&k, val) },
                 None => unsafe { std::env::remove_var(&k) },
             }
+        }
+    }
+
+    #[test]
+    fn acquire_market_file_lock_cleans_stale_lock_file() {
+        let _guard = lock_env();
+        let prev = std::env::var("TRNM_RPC_MARKET_LOCK_STALE_MS").ok();
+        unsafe { std::env::set_var("TRNM_RPC_MARKET_LOCK_STALE_MS", "1000") };
+
+        let path = unique_tmp_path("market-lock", "jsonl");
+        let lock_path = market_lock_path(&path);
+        if let Some(parent) = lock_path.parent() {
+            fs::create_dir_all(parent).expect("create lock dir");
+        }
+        fs::write(&lock_path, "stale").expect("seed stale lock");
+        std::thread::sleep(Duration::from_millis(1050));
+
+        {
+            let _lock = acquire_market_file_lock(&path).expect("acquire cleans stale lock");
+            assert!(lock_path.exists());
+        }
+        assert!(!lock_path.exists());
+
+        match prev {
+            Some(v) => unsafe { std::env::set_var("TRNM_RPC_MARKET_LOCK_STALE_MS", v) },
+            None => unsafe { std::env::remove_var("TRNM_RPC_MARKET_LOCK_STALE_MS") },
         }
     }
 
