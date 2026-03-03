@@ -79,7 +79,23 @@ impl VerificationReceipt {
 
 fn normalize_receipt_proof_type(raw: &str) -> String {
     let lowered = raw.trim().to_ascii_lowercase();
-    let collapsed_tokens = lowered
+    let ascii_compat = lowered
+        .chars()
+        .map(|ch| match ch {
+            '０' => '0',
+            '１' => '1',
+            '２' => '2',
+            '３' => '3',
+            '４' => '4',
+            '５' => '5',
+            '６' => '6',
+            '７' => '7',
+            '８' => '8',
+            '９' => '9',
+            _ => ch,
+        })
+        .collect::<String>();
+    let collapsed_tokens = ascii_compat
         .split(|ch: char| {
             ch == '_'
                 || ch == '＿'
@@ -92,6 +108,7 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
                 || ch == '−'
                 || ch == '‐'
                 || ch == '‑'
+                || ch == '﹣'
                 || ch == '﹘'
                 || ch == '\u{200b}'
                 || ch == '\u{200c}'
