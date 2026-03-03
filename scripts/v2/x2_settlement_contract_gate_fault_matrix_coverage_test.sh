@@ -13,6 +13,7 @@ required_tests=(
   "x3_prep_degraded_heartbeat_takes_precedence_over_timeout_confirm_failure"
   "x3_prep_degraded_heartbeat_reason_sanitizes_bom_and_word_joiner_controls_for_replay_stability"
   "x3_prep_confirm_failure_reason_unicode_over_cap_truncates_once_with_terminal_ellipsis"
+  "x3_prep_degraded_heartbeat_reason_unicode_over_cap_truncates_once_with_terminal_ellipsis"
 )
 
 for test_name in "${required_tests[@]}"; do

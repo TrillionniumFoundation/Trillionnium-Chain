@@ -66,3 +66,7 @@ cargo test -p trnm-bridge-poc --test x2_settlement_loop \
 cargo test -p trnm-bridge-poc --test x2_settlement_loop \
   x3_prep_confirm_failure_reason_unicode_over_cap_truncates_once_with_terminal_ellipsis \
   -- --nocapture
+
+cargo test -p trnm-bridge-poc --test x2_settlement_loop \
+  x3_prep_degraded_heartbeat_reason_unicode_over_cap_truncates_once_with_terminal_ellipsis \
+  -- --nocapture
