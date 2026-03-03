@@ -101,7 +101,29 @@ fi
 cp "$tmp_master" "$MASTER_SPEC"
 "$GATE"
 
-# Regression 4: remove canonical state transition mapping from master; gate must fail-closed.
+# Regression 4: remove canonical frozen error-code token from snapshot; gate must fail-closed.
+python3 - <<'PY' "$SNAPSHOT_SPEC"
+from pathlib import Path
+import sys
+
+spec = Path(sys.argv[1])
+text = spec.read_text(encoding='utf-8')
+needle = "ERR_M2V2_PROOF_LATE"
+if needle not in text:
+    raise SystemExit(f"missing expected baseline phrase: {needle}")
+spec.write_text(text.replace(needle, "ERR_M2V2_PROOF", 1), encoding='utf-8')
+PY
+
+if "$GATE" >/dev/null 2>&1; then
+  echo "[FAIL] MV2 gate should fail when snapshot frozen error-code token is removed" >&2
+  exit 1
+fi
+
+# Restore snapshot and validate baseline before next mutation.
+cp "$tmp_snapshot" "$SNAPSHOT_SPEC"
+"$GATE"
+
+# Regression 5: remove canonical state transition mapping from master; gate must fail-closed.
 python3 - <<'PY' "$MASTER_SPEC"
 from pathlib import Path
 import sys
