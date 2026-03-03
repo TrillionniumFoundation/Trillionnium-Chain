@@ -1800,12 +1800,32 @@ fn http_json_response(status_line: &str, body: &str) -> String {
 }
 
 fn parse_http_get_path(first_line: &str) -> Option<&str> {
-    let mut parts = first_line.split_whitespace();
-    let method = parts.next()?;
-    let path = parts.next()?;
+    let line = first_line.trim_end_matches(['\r', '\n']);
+    if line.is_empty() || line.chars().any(|ch| ch.is_control() && ch != '\t') {
+        return None;
+    }
+
+    let first_sp = line.find(' ')?;
+    let method = &line[..first_sp];
     if method != "GET" {
         return None;
     }
+
+    let mut rest = line[first_sp + 1..].trim_start_matches([' ', '\t']);
+    if rest.is_empty() {
+        return None;
+    }
+
+    let second_sp = rest.find(' ')?;
+    let path = &rest[..second_sp];
+    if !path.starts_with('/') {
+        return None;
+    }
+    rest = rest[second_sp + 1..].trim_start_matches([' ', '\t']);
+    if rest.is_empty() || !rest.starts_with("HTTP/") {
+        return None;
+    }
+
     Some(path.split('?').next().unwrap_or(path))
 }
 
@@ -3161,6 +3181,22 @@ mod tests {
             None,
             "subject lookup must fail-closed when structured token mapping is missing"
         );
+    }
+
+    #[test]
+    fn parse_http_get_path_accepts_canonical_request_line() {
+        assert_eq!(
+            parse_http_get_path("GET /query-task/42?verbose=1 HTTP/1.1"),
+            Some("/query-task/42")
+        );
+    }
+
+    #[test]
+    fn parse_http_get_path_rejects_non_get_or_malformed_lines() {
+        assert_eq!(parse_http_get_path("POST /health HTTP/1.1"), None);
+        assert_eq!(parse_http_get_path("GET /health"), None);
+        assert_eq!(parse_http_get_path("GET health HTTP/1.1"), None);
+        assert_eq!(parse_http_get_path("GET /health\u{0001} HTTP/1.1"), None);
     }
 
     #[test]
