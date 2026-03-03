@@ -525,3 +525,7 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-mcp-adapter-contract-idempotency-conflict-fail-closed-test" "./scripts/v2/a1_mcp_adapter_contract_idempotency_conflict_fail_closed_test.sh" "ci(gate): add a1-mcp-adapter-contract-idempotency-conflict-fail-closed-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-mcp-adapter-contract-response-charset-utf8-fail-closed-test" "./scripts/v2/a1_mcp_adapter_contract_response_charset_utf8_fail_closed_test.sh" "ci(gate): add a1-mcp-adapter-contract-response-charset-utf8-fail-closed-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-accept-leap-feb29-produced-at-test" "./scripts/v2/d1_task_model_metadata_schema_accept_leap_feb29_produced_at_test.sh" "ci(gate): add d1-task-model-metadata-schema-accept-leap-feb29-produced-at-test regression to quick-check"
