@@ -176,6 +176,9 @@ impl VerifierRegistry {
             "tee attestation v2" | "teeattestationv2" | "tee attestation v 2" => "tee",
             "tee attestation v3" | "teeattestationv3" | "tee attestation v 3" => "tee",
             "remote attestation" | "remoteattestation" => "tee",
+            "remote attestation v1" | "remoteattestationv1" | "remote attestation v 1" => "tee",
+            "remote attestation v2" | "remoteattestationv2" | "remote attestation v 2" => "tee",
+            "remote attestation v3" | "remoteattestationv3" | "remote attestation v 3" => "tee",
             "attestation report" | "attestationreport" => "tee",
             "attestation report v1" | "attestationreportv1" | "attestation report v 1" => "tee",
             "attestation report v2" | "attestationreportv2" | "attestation report v 2" => "tee",
@@ -1194,6 +1197,20 @@ mod tests {
         let mut registry = VerifierRegistry::new();
         registry.register(Arc::new(AlwaysValidVerifier {
             kind: " remote-attestation ",
+        }));
+
+        let task = task_with_proof_type(ProofType::Tee);
+        assert_eq!(
+            registry.verify(&task, b"attestation"),
+            VerificationResult::Valid
+        );
+    }
+
+    #[test]
+    fn registry_register_collapses_versioned_remote_attestation_alias_for_lookup() {
+        let mut registry = VerifierRegistry::new();
+        registry.register(Arc::new(AlwaysValidVerifier {
+            kind: " remote_attestation_v2 ",
         }));
 
         let task = task_with_proof_type(ProofType::Tee);
