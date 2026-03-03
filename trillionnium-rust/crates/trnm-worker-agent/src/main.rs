@@ -2222,6 +2222,15 @@ mod tests {
             ("ERR_M2V2_PROOF_LATE", "proof_late")
         );
 
+        let proof_late_with_spaces = AdapterError {
+            kind: AdapterErrorKind::Retriable,
+            context: "proof late retry window exhausted".to_string(),
+        };
+        assert_eq!(
+            classify_adapter_error(&proof_late_with_spaces),
+            ("ERR_M2V2_PROOF_LATE", "proof_late")
+        );
+
         let explicit_contract_proof_missing = AdapterError {
             kind: AdapterErrorKind::Retriable,
             context: "proof-missing-from-verifier".to_string(),
