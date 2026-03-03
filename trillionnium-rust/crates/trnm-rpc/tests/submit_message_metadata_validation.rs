@@ -66,3 +66,25 @@ fn submit_message_rejects_invalid_metadata_hash_shape() {
         stderr
     );
 }
+
+#[test]
+fn submit_message_rejects_public_privacy_tier_with_provenance_index() {
+    let ingress = unique_fixture_path("submit_message_metadata_public_index_reject", "jsonl");
+    let _ = fs::remove_file(&ingress);
+
+    let text = r#"{"prompt":"run","metadata":{"task_type":"inference","input_hash":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","provenance":{"producer_did":"did:trnm:org:lane-dae","produced_at":"2026-03-01T01:00:00Z","provenance_index":"prov:lane-dae:task-20260301-0002","privacy_tier":"public"}}}"#;
+
+    let output = run_submit_message(&ingress, text, "k-meta-public-index");
+    assert!(
+        !output.status.success(),
+        "stdout: {}",
+        String::from_utf8_lossy(&output.stdout)
+    );
+
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert!(
+        stderr.contains("metadata.provenance.provenance_index must be absent when privacy_tier=public"),
+        "stderr: {}",
+        stderr
+    );
+}
