@@ -15,7 +15,7 @@ cat >"$tmp_file" <<'JSON'
   "model": {
     "model_id": "trnm-vision-base",
     "model_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-    "version": "v1.0\nbeta"
+    "version": "v1.0 beta"
   },
   "provenance": {
     "producer_did": "did:trnm:org:lane-dae",
@@ -32,7 +32,7 @@ rc=$?
 set -e
 
 if [[ "$rc" -eq 0 ]]; then
-  echo "[FAIL] expected non-zero exit for model.version containing newline" >&2
+  echo "[FAIL] expected non-zero exit for model.version containing internal whitespace" >&2
   exit 1
 fi
 
@@ -42,4 +42,4 @@ if ! grep -Fq "model.version does not match pattern ^\\S+$" <<<"$output"; then
   exit 1
 fi
 
-echo "[PASS] D1 schema gate rejects model.version containing newline"
+echo "[PASS] D1 schema gate rejects model.version containing internal whitespace"

@@ -36,7 +36,7 @@ if [[ "$rc" -eq 0 ]]; then
   exit 1
 fi
 
-if ! grep -Fq "model.version does not match pattern ^\\S(?:.*\\S)?$" <<<"$output"; then
+if ! grep -Fq "model.version does not match pattern ^\\S+$" <<<"$output"; then
   echo "[FAIL] missing explicit edge-whitespace pattern error for model.version" >&2
   echo "$output" >&2
   exit 1
