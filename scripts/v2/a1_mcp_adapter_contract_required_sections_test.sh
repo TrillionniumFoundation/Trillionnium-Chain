@@ -36,6 +36,7 @@ guard_phrases=(
   "X-TRNM-Request-ID"
   "响应必须回显：X-TRNM-Schema-Version: mcp-adapter-v1"
   "响应必须回显：X-TRNM-Request-ID"
+  "错误响应（4xx/5xx）也必须回显"
   "X-TRNM-Trace-ID"
   "trace_id"
   "X-TRNM-Timestamp"
