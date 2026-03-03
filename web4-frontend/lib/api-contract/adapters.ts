@@ -166,13 +166,17 @@ export const adaptQueryTask = (payload: unknown): QueryTaskResult => {
   if (!rpc.success) throw normalizeSchemaError(rpc.error.flatten());
 
   const task = rpc.data;
+  const derivedIso =
+    task.version != null ? new Date(task.version * 1000).toISOString() : new Date(0).toISOString();
+
   return {
     task: {
       id: String(task.task_id),
       name: `task-${task.task_id}`,
       status: mapRpcTaskStatus(task.status),
       owner: task.worker ?? "unknown",
-      updatedAt: task.version != null ? new Date(task.version * 1000).toISOString() : undefined,
+      createdAt: derivedIso,
+      updatedAt: task.version != null ? derivedIso : undefined,
       metadata: {
         source: "trnm-rpc",
         bounty: task.bounty,

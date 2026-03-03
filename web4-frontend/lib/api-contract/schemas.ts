@@ -14,7 +14,7 @@ export const chainTaskSchema = z.object({
   name: z.string().min(1).optional(),
   status: taskStatusSchema,
   owner: z.string().min(1),
-  createdAt: z.string().datetime().optional(),
+  createdAt: z.string().datetime(),
   updatedAt: z.string().datetime().optional(),
   metadata: z.record(z.string(), z.unknown()).default({}),
 });

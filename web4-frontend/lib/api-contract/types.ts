@@ -11,7 +11,7 @@ export type ChainTask = {
   name?: string;
   status: TaskStatus;
   owner: string;
-  createdAt?: string;
+  createdAt: string;
   updatedAt?: string;
   metadata: Record<string, unknown>;
 };
