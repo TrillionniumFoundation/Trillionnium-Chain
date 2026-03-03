@@ -7,15 +7,29 @@ const kpiSchema = z.object({
   health: z.enum(["healthy", "degraded", "risk"]),
 });
 
-const taskSchema = z.object({
-  id: z.string().min(1),
-  title: z.string().min(1),
-  owner: z.string().min(1),
-  priority: z.enum(["P0", "P1", "P2"]),
-  status: z.enum(["Todo", "In Progress", "Blocked", "Done"]),
-  updatedAt: z.string().min(1),
-  description: z.string().min(1),
-});
+const taskSchema = z
+  .object({
+    id: z.string().min(1),
+    title: z.string().min(1),
+    owner: z.string().min(1),
+    priority: z.enum(["P0", "P1", "P2"]),
+    status: z.enum(["Todo", "In Progress", "Blocked", "Done"]),
+    updatedAt: z.string().min(1),
+    description: z.string().min(1),
+  })
+  .or(
+    z
+      .object({
+        id: z.string().min(1),
+        title: z.string().min(1),
+        owner: z.string().min(1),
+        priority: z.enum(["P0", "P1", "P2"]),
+        status: z.enum(["Todo", "In Progress", "Blocked", "Done"]),
+        updated_at: z.string().min(1),
+        description: z.string().min(1),
+      })
+      .transform(({ updated_at, ...rest }) => ({ ...rest, updatedAt: updated_at }))
+  );
 
 const eventSchema = z.object({
   id: z.string().min(1),
@@ -26,14 +40,27 @@ const eventSchema = z.object({
   details: z.string().min(1),
 });
 
-const auditSchema = z.object({
-  id: z.string().min(1),
-  control: z.string().min(1),
-  result: z.enum(["Pass", "Warn", "Fail"]),
-  reviewer: z.string().min(1),
-  reviewedAt: z.string().min(1),
-  notes: z.string().min(1),
-});
+const auditSchema = z
+  .object({
+    id: z.string().min(1),
+    control: z.string().min(1),
+    result: z.enum(["Pass", "Warn", "Fail"]),
+    reviewer: z.string().min(1),
+    reviewedAt: z.string().min(1),
+    notes: z.string().min(1),
+  })
+  .or(
+    z
+      .object({
+        id: z.string().min(1),
+        control: z.string().min(1),
+        result: z.enum(["Pass", "Warn", "Fail"]),
+        reviewer: z.string().min(1),
+        reviewed_at: z.string().min(1),
+        notes: z.string().min(1),
+      })
+      .transform(({ reviewed_at, ...rest }) => ({ ...rest, reviewedAt: reviewed_at }))
+  );
 
 const dashboardSnapshotSchema = z.object({
   kpis: z.array(kpiSchema),
