@@ -313,3 +313,57 @@ fn x3_prep_confirm_failed_over_cap_reason_replay_keeps_truncated_reason_stable()
     );
     assert_eq!(current_status(&request), &BridgeStatus::Reverted(reason));
 }
+
+#[test]
+fn x3_prep_degraded_over_cap_reason_replay_keeps_truncated_reason_stable() {
+    let mut request = SettlementRequest::new(12, "0xreplay-degraded-over-cap".to_string());
+    let token = operator_token();
+
+    let degraded = HeartbeatOutcome {
+        heartbeat: None,
+        should_retry: false,
+        degraded: true,
+        message: "测".repeat(220),
+    };
+
+    let first = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &degraded,
+        SettlementConfirm::Confirmed { height: 903 },
+    )
+    .unwrap();
+
+    let SettlementStep::Compensated { reason, event } = first else {
+        panic!("expected compensated branch");
+    };
+
+    assert!(reason.starts_with("heartbeat degraded: "));
+    assert!(reason.ends_with('…'));
+    assert_eq!(reason.matches('…').count(), 1);
+    assert_eq!(event.confirm_reason, Some(reason.clone()));
+
+    let replay = HeartbeatOutcome {
+        heartbeat: None,
+        should_retry: false,
+        degraded: true,
+        message: "mutated shorter degraded reason".to_string(),
+    };
+
+    let replay_err = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &replay,
+        SettlementConfirm::Confirmed { height: 904 },
+    )
+    .unwrap_err();
+
+    assert_eq!(
+        replay_err,
+        trnm_bridge_poc::bridge_status::SettlementError::InvalidTransition {
+            from: "reverted",
+            to: "reverted",
+        }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Reverted(reason));
+}
