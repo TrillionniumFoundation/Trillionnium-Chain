@@ -87,4 +87,30 @@ mod tests {
         assert_eq!(classify_reputation_tier(5_000), ReputationTier::Watch);
         assert_eq!(classify_reputation_tier(4_999), ReputationTier::Restricted);
     }
+
+    #[test]
+    fn reputation_score_clamps_input_rates_above_bps_ceiling() {
+        let score = compute_reputation_score_bps(MarketReputationInput {
+            success_rate_bps: u16::MAX,
+            timeout_rate_bps: u16::MAX,
+            dispute_rate_bps: u16::MAX,
+            penalty_events: 0,
+        });
+
+        // 10_000 - 10_000 - 2*10_000 would be negative before clamping.
+        assert_eq!(score, 0);
+    }
+
+    #[test]
+    fn reputation_score_never_exceeds_bps_ceiling() {
+        let score = compute_reputation_score_bps(MarketReputationInput {
+            success_rate_bps: u16::MAX,
+            timeout_rate_bps: 0,
+            dispute_rate_bps: 0,
+            penalty_events: 0,
+        });
+
+        assert_eq!(score, 10_000);
+        assert_eq!(classify_reputation_tier(score), ReputationTier::Trusted);
+    }
 }
