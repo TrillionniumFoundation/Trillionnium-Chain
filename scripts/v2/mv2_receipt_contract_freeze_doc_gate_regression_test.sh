@@ -341,4 +341,27 @@ if "$GATE" >/dev/null 2>&1; then
   exit 1
 fi
 
+# Restore snapshot and validate baseline before next mutation.
+cp "$tmp_snapshot" "$SNAPSHOT_SPEC"
+"$GATE"
+
+# Regression 15: alter master MV2 anchor heading metadata (date drift); gate must fail on missing canonical anchor.
+python3 - <<'PY' "$MASTER_SPEC"
+from pathlib import Path
+import sys
+
+spec = Path(sys.argv[1])
+text = spec.read_text(encoding='utf-8')
+needle = "### 10.3 Lane MV（2026-03-03）V2 回执契约冻结主文档锚点"
+replacement = "### 10.3 Lane MV（2026-03-04）V2 回执契约冻结主文档锚点"
+if needle not in text:
+    raise SystemExit(f"missing expected baseline phrase: {needle}")
+spec.write_text(text.replace(needle, replacement, 1), encoding='utf-8')
+PY
+
+if "$GATE" >/dev/null 2>&1; then
+  echo "[FAIL] MV2 gate should fail when master MV2 anchor heading drifts from canonical frozen value" >&2
+  exit 1
+fi
+
 echo "[PASS] MV2 receipt contract freeze doc gate fails-closed on snapshot + master phrase/parity drift"
