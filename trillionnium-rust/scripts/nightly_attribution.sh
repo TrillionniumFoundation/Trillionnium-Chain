@@ -39,7 +39,8 @@ m2_policy_gate_log=""
 m2_policy_gate_assert_default_drift_guard="missing"
 if [[ -n "$latest_p1_gate" ]] && [[ -f "$latest_p1_gate/m2_policy_gate.log" ]]; then
   m2_policy_gate_log="$latest_p1_gate/m2_policy_gate.log"
-  if grep -Eq '^[[:space:]]*test ([[:alnum:]_]+::)*market_m2_policy_gate_guards_default_drift_to_(min|max)_boundaries \.\.\. ok([[:space:]].*)?\r?$' "$m2_policy_gate_log"; then
+  if awk '{ line=$0; gsub(/\033\[[0-9;]*[[:alpha:]]/, "", line); print line }' "$m2_policy_gate_log" \
+    | grep -Eq '^[[:space:]]*test ([[:alnum:]_]+::)*market_m2_policy_gate_guards_default_drift_to_(min|max)_boundaries \.\.\. ok([[:space:]].*)?\r?$'; then
     m2_policy_gate_assert_default_drift_guard="pass"
   else
     m2_policy_gate_assert_default_drift_guard="fail"
