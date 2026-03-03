@@ -2372,6 +2372,8 @@ fn main() -> Result<()> {
         Command::MarketMatchTask { task_id } => {
             let tasks_path = market_tasks_file();
             let _tasks_lock = acquire_market_file_lock(&tasks_path)?;
+            let bids_path = market_bids_file();
+            let _bids_lock = acquire_market_file_lock(&bids_path)?;
             let mut tasks = load_market_tasks();
             let Some(task) = tasks.iter_mut().find(|t| t.task_id == task_id) else {
                 return Err(rpc_fail(RpcErrorResponse {
