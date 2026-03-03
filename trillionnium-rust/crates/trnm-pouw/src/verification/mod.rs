@@ -120,6 +120,7 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
                 || ch == '\u{feff}'
                 || ch == '/'
                 || ch == '／'
+                || ch == '⁄'
                 || ch == '.'
                 || ch == ':'
                 || ch == '：'
@@ -1234,6 +1235,15 @@ mod tests {
         assert_eq!(tee_intel_sgx_dcap.proof_type, "tee");
         assert_eq!(tee_intel_sgx_dcap_marked.proof_type, "tee");
         assert_eq!(tee_sgx_dcap.proof_type, "tee");
+    }
+
+    #[test]
+    fn verification_receipt_new_collapses_fraction_slash_aliases_to_router_keys() {
+        let tee = VerificationReceipt::new(1, "TEE⁄QUOTE", VerificationResult::Valid, "v", 1);
+        let zk = VerificationReceipt::new(2, "zk⁄receipt", VerificationResult::Valid, "v", 2);
+
+        assert_eq!(tee.proof_type, "tee");
+        assert_eq!(zk.proof_type, "zk");
     }
 
     #[test]
