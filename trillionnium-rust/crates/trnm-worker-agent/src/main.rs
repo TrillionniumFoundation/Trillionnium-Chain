@@ -1745,15 +1745,35 @@ fn attach_llm_provenance(rec: &mut MessageIngressRecord, llm: &LlmAdapterRespons
 }
 
 fn context_matches_token(context: &str, token: &str) -> bool {
+    fn normalize_for_contract_match(value: &str) -> String {
+        let lowered = value.to_ascii_lowercase();
+        let mut out = String::with_capacity(lowered.len());
+        let mut prev_space = false;
+        for ch in lowered.chars() {
+            if ch.is_ascii_alphanumeric() {
+                out.push(ch);
+                prev_space = false;
+            } else if !prev_space {
+                out.push(' ');
+                prev_space = true;
+            }
+        }
+        out.trim().to_string()
+    }
+
     let normalized_context = context.to_ascii_lowercase();
     let normalized_token = token.to_ascii_lowercase();
     let context_with_spaces = normalized_context.replace(['-', '_'], " ");
     let token_with_spaces = normalized_token.replace(['-', '_'], " ");
+    let normalized_context_relaxed = normalize_for_contract_match(context);
+    let normalized_token_relaxed = normalize_for_contract_match(token);
 
     normalized_context.contains(&normalized_token)
         || normalized_context.contains(&normalized_token.replace('-', "_"))
         || normalized_context.contains(&normalized_token.replace('_', "-"))
         || context_with_spaces.contains(&token_with_spaces)
+        || (!normalized_token_relaxed.is_empty()
+            && normalized_context_relaxed.contains(&normalized_token_relaxed))
 }
 
 fn classify_adapter_error(err: &AdapterError) -> (&'static str, &'static str) {
@@ -2244,6 +2264,15 @@ mod tests {
         };
         assert_eq!(
             classify_adapter_error(&proof_missing_with_spaces),
+            ("ERR_M2V2_PROOF_MISSING", "proof_missing")
+        );
+
+        let proof_missing_with_punctuation = AdapterError {
+            kind: AdapterErrorKind::NonRetriable,
+            context: "tee/receipt:missing.provider request-id".to_string(),
+        };
+        assert_eq!(
+            classify_adapter_error(&proof_missing_with_punctuation),
             ("ERR_M2V2_PROOF_MISSING", "proof_missing")
         );
 
