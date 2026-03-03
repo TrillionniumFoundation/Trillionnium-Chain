@@ -17,7 +17,7 @@
 - 请求完整性：`X-TRNM-Body-SHA256`（SHA-256 小写 hex）
 - 请求内容类型：`Content-Type: application/json`
 - 响应内容类型：`Content-Type: application/json; charset=utf-8`
-- 响应必须回显：X-TRNM-Request-ID
+- 响应必须回显：X-TRNM-Request-ID（与请求值逐字节一致）
 - 响应必须回显：X-TRNM-Trace-ID
 
 ## 3. 最小请求/响应语义
@@ -50,6 +50,7 @@
 - 任务不存在：`404 task_not_found`（Agent 侧语义归一：`not-found`）
 - 幂等键冲突（同键不同请求体）：`409 idempotency_conflict`
 - 防重放冲突：`409 replay_detected`
+- 响应请求 ID 不一致：`502 request_id_mismatch`（fail-closed，不允许继续结算）
 
 错误响应最小字段：`request_id` / `error.code` / `error.message`。
 
