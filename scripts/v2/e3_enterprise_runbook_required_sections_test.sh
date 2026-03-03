@@ -41,6 +41,7 @@ evidence_guard_phrases=(
   "协议版本与适配器传输层记录"
   "隐私分级策略快照（privacy_tier）"
   "最小任务 provenance_fingerprint 记录"
+  "回滚 dry-run 预演输出与参数核对记录"
   "回滚命令与输出日志的 sha256 记录"
 )
 
