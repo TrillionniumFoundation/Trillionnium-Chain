@@ -1757,6 +1757,15 @@ mod tests {
     }
 
     #[test]
+    fn registry_is_registered_kind_accepts_unicode_minus_delimited_aliases() {
+        let registry = VerifierRegistry::with_builtin_verifiers();
+
+        assert!(registry.is_registered_kind("TEE−RECEIPT"));
+        assert!(registry.is_registered_kind("fraud−challenge−v2"));
+        assert!(registry.is_registered_kind("zero−knowledge−proof"));
+    }
+
+    #[test]
     fn registry_is_registered_kind_accepts_zero_width_separated_aliases() {
         let registry = VerifierRegistry::with_builtin_verifiers();
 
