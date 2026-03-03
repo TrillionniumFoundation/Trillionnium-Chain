@@ -784,6 +784,14 @@ impl IdentityRegistry {
         self.capabilities.get(&token_id)
     }
 
+    pub fn capability_ids_by_subject(&self, subject_did: &str) -> Vec<u64> {
+        self.capabilities
+            .values()
+            .filter(|token| token.subject_did == subject_did)
+            .map(|token| token.token_id)
+            .collect()
+    }
+
     pub fn audit_trail(&self) -> &[AuditEvent] {
         &self.audit_trail
     }

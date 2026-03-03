@@ -1826,6 +1826,12 @@ fn resolve_capability_token_subject_or_token(
         return Some(token_id);
     }
 
+    let mut subject_tokens = registry.capability_ids_by_subject(subject_or_token);
+    subject_tokens.sort_unstable();
+    if let Some(token_id) = subject_tokens.last().copied() {
+        return Some(token_id);
+    }
+
     registry
         .audit_trail()
         .iter()
