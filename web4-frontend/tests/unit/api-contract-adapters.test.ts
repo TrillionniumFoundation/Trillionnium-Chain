@@ -58,6 +58,54 @@ describe("api-contract adapters", () => {
     expect(out.events[0]?.level).toBe("info");
   });
 
+  it("normalizes canonical events with frozen M2V2 resolution code to fail-closed level", () => {
+    const out = adaptQueryEvents({
+      taskId: "7",
+      events: [
+        {
+          id: "e1",
+          taskId: "7",
+          type: "settle",
+          level: "info",
+          timestamp: "2026-03-03T00:00:00.000Z",
+          payload: {
+            resolutionCode: " err_m2v2_proof_invalid ",
+          },
+        },
+      ],
+    });
+
+    expect(out.events[0]?.level).toBe("error");
+    expect(out.events[0]?.payload).toMatchObject({
+      resolutionCode: "ERR_M2V2_PROOF_INVALID",
+      m2v2ErrorCode: "ERR_M2V2_PROOF_INVALID",
+    });
+  });
+
+  it("normalizes canonical events using snake_case resolution_code alias", () => {
+    const out = adaptQueryEvents({
+      taskId: "8",
+      events: [
+        {
+          id: "e2",
+          taskId: "8",
+          type: "settle",
+          level: "warn",
+          timestamp: "2026-03-03T00:00:01.000Z",
+          payload: {
+            resolution_code: " err_m2v2_settlement_degraded ",
+          },
+        },
+      ],
+    });
+
+    expect(out.events[0]?.level).toBe("error");
+    expect(out.events[0]?.payload).toMatchObject({
+      resolutionCode: "ERR_M2V2_SETTLEMENT_DEGRADED",
+      m2v2ErrorCode: "ERR_M2V2_SETTLEMENT_DEGRADED",
+    });
+  });
+
   it("maps frozen M2V2 resolution codes to fail-closed error signal", () => {
     const out = adaptQueryEvents(
       [

@@ -68,6 +68,31 @@ type M2V2ErrorCode = (typeof m2v2ErrorCodes)[number];
 
 const m2v2ErrorCodeSet: ReadonlySet<string> = new Set(m2v2ErrorCodes);
 
+function normalizeCanonicalEventForM2V2(
+  event: QueryEventsResult["events"][number],
+): QueryEventsResult["events"][number] {
+  const rawResolutionCode =
+    typeof event.payload?.resolutionCode === "string"
+      ? event.payload.resolutionCode
+      : typeof event.payload?.resolution_code === "string"
+        ? event.payload.resolution_code
+        : undefined;
+  const resolutionCode = canonicalizeResolutionCode(rawResolutionCode);
+  const isM2V2Error = isM2V2ErrorCode(resolutionCode);
+
+  if (!isM2V2Error) return event;
+
+  return {
+    ...event,
+    level: "error",
+    payload: {
+      ...event.payload,
+      resolutionCode,
+      m2v2ErrorCode: resolutionCode,
+    },
+  };
+}
+
 function canonicalizeResolutionCode(code: string | undefined): string | undefined {
   if (code == null) return undefined;
   const normalized = code.trim().toUpperCase();
@@ -159,7 +184,12 @@ export const adaptQueryEvents = (
   requestedTaskId?: string,
 ): QueryEventsResult => {
   const canonical = queryEventsResponseSchema.safeParse(payload);
-  if (canonical.success) return canonical.data;
+  if (canonical.success) {
+    return {
+      ...canonical.data,
+      events: canonical.data.events.map(normalizeCanonicalEventForM2V2),
+    };
+  }
 
   const rpc = z.array(rpcEventSchema).safeParse(payload);
   if (!rpc.success) throw normalizeSchemaError(rpc.error.flatten());
