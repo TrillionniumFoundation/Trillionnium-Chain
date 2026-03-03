@@ -579,10 +579,14 @@ fn load_latest_node_events() -> Vec<NodeEventRecord> {
 
     let mut out = Vec::new();
     for line in lines {
-        if !line.starts_with("[event]") || !line.contains("event_type=") {
+        let Some(event_pos) = line.find("[event]") else {
+            continue;
+        };
+        let event_line = &line[event_pos..];
+        if !event_line.contains("event_type=") {
             continue;
         }
-        let kv = parse_event_log_kv(&line);
+        let kv = parse_event_log_kv(event_line);
 
         let Some(task_id) = kv.get("task_id").and_then(|s| parse_u64_kv_value(s)) else {
             continue;
@@ -4936,6 +4940,15 @@ mod tests {
             kv.get("bond_disposition").map(String::as_str),
             Some("forfeit all")
         );
+    }
+
+    #[test]
+    fn parse_event_log_kv_supports_prefixed_runtime_noise() {
+        let line = "2026-03-03T20:10:11Z INFO node [event] event_type=commit task_id=7 from_status=Accepted to_status=Committed actor=did:trnm:worker tx_id=9 block_height=12 state_root=abc ts_unix_ms=1000";
+        let event_line = &line[line.find("[event]").expect("event marker")..];
+        let kv = parse_event_log_kv(event_line);
+        assert_eq!(kv.get("event_type").map(String::as_str), Some("commit"));
+        assert_eq!(kv.get("task_id").map(String::as_str), Some("7"));
     }
 
     fn faucet_env_test_lock() -> &'static std::sync::Mutex<()> {
