@@ -495,3 +495,6 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e2-audit-report-generator-reject-non-rfc3339-utc-event-ts-test" "./scripts/v2/e2_audit_report_generator_reject_non_rfc3339_utc_event_ts_test.sh" "ci(gate): add e2-audit-report-generator-reject-non-rfc3339-utc-event-ts-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e2-audit-report-generator-reject-offset-utc-event-ts-test" "./scripts/v2/e2_audit_report_generator_reject_offset_utc_event_ts_test.sh" "ci(gate): add e2-audit-report-generator-reject-offset-utc-event-ts-test regression to quick-check"
