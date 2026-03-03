@@ -4571,6 +4571,25 @@ line2
         let dir = run_root().join("run/worker-agent");
         fs::create_dir_all(&dir).expect("create worker-agent dir");
 
+        let mut backup: Vec<(PathBuf, Vec<u8>)> = vec![];
+        if let Ok(entries) = fs::read_dir(&dir) {
+            for entry in entries.flatten() {
+                let path = entry.path();
+                let is_adapter = path
+                    .file_name()
+                    .and_then(|n| n.to_str())
+                    .map(|s| s.starts_with("tx-adapter-") && s.ends_with(".jsonl"))
+                    .unwrap_or(false);
+                if !is_adapter {
+                    continue;
+                }
+                if let Ok(bytes) = fs::read(&path) {
+                    backup.push((path.clone(), bytes));
+                }
+                let _ = fs::remove_file(&path);
+            }
+        }
+
         let fixture = dir.join(format!("tx-adapter-99991231-{}.jsonl", std::process::id()));
         fs::write(
             &fixture,
@@ -4582,6 +4601,9 @@ line2
         assert_eq!(records.len(), 1, "only valid JSONL rows should be loaded");
         assert_eq!(records[0].task_id, 101001);
 
-        let _ = fs::remove_file(fixture);
+        let _ = fs::remove_file(&fixture);
+        for (path, bytes) in backup {
+            let _ = fs::write(path, bytes);
+        }
     }
 }
