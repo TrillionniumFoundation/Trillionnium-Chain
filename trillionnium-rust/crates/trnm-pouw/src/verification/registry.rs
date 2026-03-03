@@ -1500,6 +1500,20 @@ mod tests {
     }
 
     #[test]
+    fn registry_register_collapses_trademark_delimited_legacy_aliases_for_lookup() {
+        let mut registry = VerifierRegistry::new();
+        registry.register(Arc::new(AlwaysValidVerifier {
+            kind: "TEE™RECEIPT",
+        }));
+
+        let task = task_with_proof_type(ProofType::Tee);
+        assert_eq!(
+            registry.verify(&task, b"receipt"),
+            VerificationResult::Valid
+        );
+    }
+
+    #[test]
     fn registry_ignores_empty_verifier_key_after_normalization() {
         let mut registry = VerifierRegistry::new();
         registry.register(Arc::new(AlwaysValidVerifier { kind: "   " }));
