@@ -40,6 +40,15 @@ def canonical_event_schema(value):
     return None
 
 
+def canonical_event_ts(value):
+    if value is None:
+        return None
+    token = str(value)
+    if re.fullmatch(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z", token):
+        return token
+    return None
+
+
 def generate_audit_report(log_file):
     events = []
     
@@ -61,9 +70,10 @@ def generate_audit_report(log_file):
                             continue
                         data['event_schema'] = schema
 
-                        event_ts = prefix.strip()
-                        if event_ts:
-                            data['event_ts'] = event_ts
+                        event_ts = canonical_event_ts(prefix.strip())
+                        if event_ts is None:
+                            continue
+                        data['event_ts'] = event_ts
 
                         if data.get('event_type') in AUDIT_TYPES:
                             events.append(data)
