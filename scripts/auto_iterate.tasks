@@ -456,3 +456,6 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e2-
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: mv2-receipt-contract-freeze-doc-gate" "./scripts/v2/mv2_receipt_contract_freeze_doc_gate.sh" "ci(gate): add mv2-receipt-contract-freeze-doc-gate regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-mcp-adapter-contract-status-enum-canonical-test" "./scripts/v2/a1_mcp_adapter_contract_status_enum_canonical_test.sh" "ci(gate): add a1-mcp-adapter-contract-status-enum-canonical-test regression to quick-check"
