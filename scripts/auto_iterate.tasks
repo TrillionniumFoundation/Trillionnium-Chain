@@ -498,3 +498,6 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e2-
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e2-audit-report-generator-reject-offset-utc-event-ts-test" "./scripts/v2/e2_audit_report_generator_reject_offset_utc_event_ts_test.sh" "ci(gate): add e2-audit-report-generator-reject-offset-utc-event-ts-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a2-a2a-adapter-contract-error-codes-fail-closed-test" "./scripts/v2/a2_a2a_adapter_contract_error_codes_fail_closed_test.sh" "ci(gate): add a2-a2a-adapter-contract-error-codes-fail-closed-test regression to quick-check"
