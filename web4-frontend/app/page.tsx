@@ -45,8 +45,10 @@ export default function Home() {
     const params = new URLSearchParams(window.location.search);
     const mode = params.get("mode");
 
+    const normalizedMode = mode === "empty" || mode === "error" || mode === "mock" ? mode : "ok";
+
     fetchDashboardSnapshot({
-      mode: mode === "empty" || mode === "error" ? mode : "ok",
+      mode: normalizedMode,
     })
       .then((data) => {
         setLoadState({ status: "ready", data });
@@ -100,7 +102,7 @@ export default function Home() {
             <h1 className="text-3xl font-semibold tracking-tight">Operations Dashboard</h1>
           </div>
           <p className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-600">
-            Data mode: readonly snapshots · No write-paths enabled
+            Data mode: readonly API client (use ?mode=mock for readonly fallback) · No write-paths enabled
           </p>
         </header>
 
