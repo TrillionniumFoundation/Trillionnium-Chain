@@ -61,4 +61,30 @@ for phrase in "${master_required_phrases[@]}"; do
   fi
 done
 
-echo "[PASS] MV2 receipt contract freeze doc guard phrases are present (snapshot + master)"
+snapshot_error_mapping_line="$(grep -F -- "最小错误码映射（冻结）：" "$SNAPSHOT_SPEC" | head -n1 || true)"
+master_error_mapping_line="$(grep -F -- "最小错误码映射（冻结）：" "$MASTER_SPEC" | head -n1 || true)"
+if [[ -z "$snapshot_error_mapping_line" || -z "$master_error_mapping_line" ]]; then
+  echo "[FAIL] missing frozen MV2 error mapping line in snapshot or master" >&2
+  exit 1
+fi
+if [[ "$snapshot_error_mapping_line" != "$master_error_mapping_line" ]]; then
+  echo "[FAIL] MV2 frozen error mapping drift between snapshot and master" >&2
+  echo "  snapshot: $snapshot_error_mapping_line" >&2
+  echo "  master:   $master_error_mapping_line" >&2
+  exit 1
+fi
+
+snapshot_state_mapping_line="$(grep -F -- "最小状态迁移映射（冻结）：" "$SNAPSHOT_SPEC" | head -n1 || true)"
+master_state_mapping_line="$(grep -F -- "最小状态迁移映射（冻结）：" "$MASTER_SPEC" | head -n1 || true)"
+if [[ -z "$snapshot_state_mapping_line" || -z "$master_state_mapping_line" ]]; then
+  echo "[FAIL] missing frozen MV2 state mapping line in snapshot or master" >&2
+  exit 1
+fi
+if [[ "$snapshot_state_mapping_line" != "$master_state_mapping_line" ]]; then
+  echo "[FAIL] MV2 frozen state mapping drift between snapshot and master" >&2
+  echo "  snapshot: $snapshot_state_mapping_line" >&2
+  echo "  master:   $master_state_mapping_line" >&2
+  exit 1
+fi
+
+echo "[PASS] MV2 receipt contract freeze doc guard phrases + snapshot/master mapping parity are present"
