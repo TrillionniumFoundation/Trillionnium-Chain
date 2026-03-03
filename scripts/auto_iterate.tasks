@@ -459,3 +459,6 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: mv2
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-mcp-adapter-contract-status-enum-canonical-test" "./scripts/v2/a1_mcp_adapter_contract_status_enum_canonical_test.sh" "ci(gate): add a1-mcp-adapter-contract-status-enum-canonical-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-mcp-adapter-contract-nullable-response-fields-test" "./scripts/v2/a1_mcp_adapter_contract_nullable_response_fields_test.sh" "ci(gate): add a1-mcp-adapter-contract-nullable-response-fields-test regression to quick-check"
