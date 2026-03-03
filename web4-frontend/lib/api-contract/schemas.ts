@@ -11,10 +11,10 @@ export const taskStatusSchema = z.enum([
 
 export const chainTaskSchema = z.object({
   id: z.string().min(1),
-  name: z.string().min(1),
+  name: z.string().min(1).optional(),
   status: taskStatusSchema,
   owner: z.string().min(1),
-  createdAt: z.string().datetime(),
+  createdAt: z.string().datetime().optional(),
   updatedAt: z.string().datetime().optional(),
   metadata: z.record(z.string(), z.unknown()).default({}),
 });

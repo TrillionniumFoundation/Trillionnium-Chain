@@ -219,11 +219,13 @@ async function fetchReadonlySnapshotFromApi(): Promise<DashboardSnapshot> {
     tasks: [
       {
         id: taskResp.task.id,
-        title: taskResp.task.name,
+        title: taskResp.task.name ?? `task-${taskResp.task.id}`,
         owner: taskResp.task.owner,
         priority: "P1" as const,
         status: mapTaskStatus(taskResp.task.status),
-        updatedAt: toDisplayTime(taskResp.task.updatedAt ?? taskResp.task.createdAt),
+        updatedAt: taskResp.task.updatedAt ?? taskResp.task.createdAt
+          ? toDisplayTime(taskResp.task.updatedAt ?? taskResp.task.createdAt ?? "")
+          : "-", 
         description: JSON.stringify(taskResp.task.metadata),
       },
     ],
