@@ -1,11 +1,17 @@
 use serde_json::Value;
 use std::fs;
 use std::process::Command;
-use std::sync::{Mutex, OnceLock};
+use std::sync::{Mutex, MutexGuard, OnceLock};
 
 fn test_lock() -> &'static Mutex<()> {
     static LOCK: OnceLock<Mutex<()>> = OnceLock::new();
     LOCK.get_or_init(|| Mutex::new(()))
+}
+
+fn lock_test_guard<'a>() -> MutexGuard<'a, ()> {
+    test_lock()
+        .lock()
+        .unwrap_or_else(|poison| poison.into_inner())
 }
 
 fn run_ok(args: &[&str]) -> String {
@@ -57,7 +63,7 @@ fn run_fail(args: &[&str]) -> String {
 
 #[test]
 fn market_submit_bid_and_match_task_m1_happy_path() {
-    let _guard = test_lock().lock().expect("test lock");
+    let _guard = lock_test_guard();
     let _ = fs::remove_dir_all("run/market");
 
     let create_out = run_ok(&[
@@ -91,7 +97,7 @@ fn market_submit_bid_and_match_task_m1_happy_path() {
 
 #[test]
 fn market_submit_bid_missing_task_returns_structured_code() {
-    let _guard = test_lock().lock().expect("test lock");
+    let _guard = lock_test_guard();
     let _ = fs::remove_dir_all("run/market");
 
     let stderr = run_fail(&[
@@ -108,7 +114,7 @@ fn market_submit_bid_missing_task_returns_structured_code() {
 
 #[test]
 fn market_submit_bid_above_bounty_returns_structured_code() {
-    let _guard = test_lock().lock().expect("test lock");
+    let _guard = lock_test_guard();
     let _ = fs::remove_dir_all("run/market");
 
     let create_out = run_ok(&[
@@ -137,7 +143,7 @@ fn market_submit_bid_above_bounty_returns_structured_code() {
 
 #[test]
 fn market_submit_bid_zero_price_returns_structured_code() {
-    let _guard = test_lock().lock().expect("test lock");
+    let _guard = lock_test_guard();
     let _ = fs::remove_dir_all("run/market");
 
     let create_out = run_ok(&[
@@ -166,7 +172,7 @@ fn market_submit_bid_zero_price_returns_structured_code() {
 
 #[test]
 fn market_submit_bid_empty_worker_returns_structured_code() {
-    let _guard = test_lock().lock().expect("test lock");
+    let _guard = lock_test_guard();
     let _ = fs::remove_dir_all("run/market");
 
     let create_out = run_ok(&[
@@ -195,7 +201,7 @@ fn market_submit_bid_empty_worker_returns_structured_code() {
 
 #[test]
 fn market_submit_bid_duplicate_worker_returns_structured_code() {
-    let _guard = test_lock().lock().expect("test lock");
+    let _guard = lock_test_guard();
     let _ = fs::remove_dir_all("run/market");
 
     let create_out = run_ok(&[
@@ -234,7 +240,7 @@ fn market_submit_bid_duplicate_worker_returns_structured_code() {
 
 #[test]
 fn market_submit_bid_duplicate_worker_is_case_and_whitespace_insensitive() {
-    let _guard = test_lock().lock().expect("test lock");
+    let _guard = lock_test_guard();
     let _ = fs::remove_dir_all("run/market");
 
     let create_out = run_ok(&[
@@ -273,7 +279,7 @@ fn market_submit_bid_duplicate_worker_is_case_and_whitespace_insensitive() {
 
 #[test]
 fn market_match_prefers_higher_reputation_when_weighted_score_is_better() {
-    let _guard = test_lock().lock().expect("test lock");
+    let _guard = lock_test_guard();
     let _ = fs::remove_dir_all("run/market");
     fs::create_dir_all("run/market").expect("create market dir");
     fs::write(
@@ -333,7 +339,7 @@ fn market_match_prefers_higher_reputation_when_weighted_score_is_better() {
 
 #[test]
 fn market_match_negative_reputation_exposes_penalty_breakdown_fields() {
-    let _guard = test_lock().lock().expect("test lock");
+    let _guard = lock_test_guard();
     let _ = fs::remove_dir_all("run/market");
     fs::create_dir_all("run/market").expect("create market dir");
     fs::write("run/market/reputation.json", r#"{"worker-risk":-50}"#)
@@ -381,7 +387,7 @@ fn market_match_negative_reputation_exposes_penalty_breakdown_fields() {
 
 #[test]
 fn market_match_reputation_lookup_normalizes_case_and_whitespace_keys() {
-    let _guard = test_lock().lock().expect("test lock");
+    let _guard = lock_test_guard();
     let _ = fs::remove_dir_all("run/market");
     fs::create_dir_all("run/market").expect("create market dir");
     fs::write("run/market/reputation.json", r#"{"  Worker-High  ":200}"#)
@@ -431,7 +437,7 @@ fn market_match_reputation_lookup_normalizes_case_and_whitespace_keys() {
 
 #[test]
 fn market_match_reputation_alias_collision_uses_max_signal() {
-    let _guard = test_lock().lock().expect("test lock");
+    let _guard = lock_test_guard();
     let _ = fs::remove_dir_all("run/market");
     fs::create_dir_all("run/market").expect("create market dir");
     fs::write(
@@ -484,7 +490,7 @@ fn market_match_reputation_alias_collision_uses_max_signal() {
 
 #[test]
 fn market_match_task_without_bids_returns_structured_code() {
-    let _guard = test_lock().lock().expect("test lock");
+    let _guard = lock_test_guard();
     let _ = fs::remove_dir_all("run/market");
 
     let create_out = run_ok(&[
@@ -505,7 +511,7 @@ fn market_match_task_without_bids_returns_structured_code() {
 
 #[test]
 fn market_match_output_is_valid_json_when_winner_contains_quotes() {
-    let _guard = test_lock().lock().expect("test lock");
+    let _guard = lock_test_guard();
     let _ = fs::remove_dir_all("run/market");
 
     let create_out = run_ok(&[
@@ -538,7 +544,7 @@ fn market_match_output_is_valid_json_when_winner_contains_quotes() {
 
 #[test]
 fn market_report_returns_zeroed_metrics_for_empty_state() {
-    let _guard = test_lock().lock().expect("test lock");
+    let _guard = lock_test_guard();
 
     let tasks = unique_market_fixture_path("market_report_empty_tasks", "jsonl");
     let bids = unique_market_fixture_path("market_report_empty_bids", "jsonl");
@@ -569,7 +575,7 @@ fn market_report_returns_zeroed_metrics_for_empty_state() {
 
 #[test]
 fn market_report_summarizes_tasks_bids_and_unique_bidders() {
-    let _guard = test_lock().lock().expect("test lock");
+    let _guard = lock_test_guard();
 
     let tasks = unique_market_fixture_path("market_report_tasks", "jsonl");
     let bids = unique_market_fixture_path("market_report_bids", "jsonl");
@@ -670,7 +676,7 @@ fn market_report_summarizes_tasks_bids_and_unique_bidders() {
 
 #[test]
 fn market_report_ignores_orphan_bid_task_ids_for_coverage_metrics() {
-    let _guard = test_lock().lock().expect("test lock");
+    let _guard = lock_test_guard();
 
     let tasks = unique_market_fixture_path("market_report_orphan_tasks", "jsonl");
     let bids = unique_market_fixture_path("market_report_orphan_bids", "jsonl");
@@ -718,7 +724,7 @@ fn market_report_ignores_orphan_bid_task_ids_for_coverage_metrics() {
 
 #[test]
 fn market_report_counts_status_case_and_whitespace_variants() {
-    let _guard = test_lock().lock().expect("test lock");
+    let _guard = lock_test_guard();
 
     let tasks = unique_market_fixture_path("market_report_status_norm_tasks", "jsonl");
     let bids = unique_market_fixture_path("market_report_status_norm_bids", "jsonl");
@@ -762,7 +768,7 @@ fn market_report_counts_status_case_and_whitespace_variants() {
 
 #[test]
 fn market_report_normalizes_and_ignores_invalid_bidder_keys() {
-    let _guard = test_lock().lock().expect("test lock");
+    let _guard = lock_test_guard();
 
     let tasks = unique_market_fixture_path("market_report_norm_tasks", "jsonl");
     let bids = unique_market_fixture_path("market_report_norm_bids", "jsonl");
@@ -807,7 +813,7 @@ fn market_report_normalizes_and_ignores_invalid_bidder_keys() {
 
 #[test]
 fn market_report_normalizes_soft_hyphen_bidder_aliases_into_single_identity() {
-    let _guard = test_lock().lock().expect("test lock");
+    let _guard = lock_test_guard();
 
     let tasks = unique_market_fixture_path("market_report_soft_hyphen_tasks", "jsonl");
     let bids = unique_market_fixture_path("market_report_soft_hyphen_bids", "jsonl");
@@ -847,7 +853,7 @@ fn market_report_normalizes_soft_hyphen_bidder_aliases_into_single_identity() {
 
 #[test]
 fn market_report_coverage_ignores_bids_with_invalid_worker_keys() {
-    let _guard = test_lock().lock().expect("test lock");
+    let _guard = lock_test_guard();
 
     let tasks = unique_market_fixture_path("market_report_coverage_tasks", "jsonl");
     let bids = unique_market_fixture_path("market_report_coverage_bids", "jsonl");
@@ -892,7 +898,7 @@ fn market_report_coverage_ignores_bids_with_invalid_worker_keys() {
 
 #[test]
 fn market_match_uses_worker_key_as_final_tie_breaker_for_equal_scores() {
-    let _guard = test_lock().lock().expect("test lock");
+    let _guard = lock_test_guard();
 
     let tasks = unique_market_fixture_path("market_match_tie_tasks", "jsonl");
     let bids = unique_market_fixture_path("market_match_tie_bids", "jsonl");
@@ -931,7 +937,7 @@ fn market_match_uses_worker_key_as_final_tie_breaker_for_equal_scores() {
 
 #[test]
 fn market_match_prefers_earlier_bid_before_worker_key_tie_breaker() {
-    let _guard = test_lock().lock().expect("test lock");
+    let _guard = lock_test_guard();
 
     let tasks = unique_market_fixture_path("market_match_created_at_tie_tasks", "jsonl");
     let bids = unique_market_fixture_path("market_match_created_at_tie_bids", "jsonl");
@@ -970,7 +976,7 @@ fn market_match_prefers_earlier_bid_before_worker_key_tie_breaker() {
 
 #[test]
 fn market_report_counts_orphan_bids_without_inflating_task_coverage() {
-    let _guard = test_lock().lock().expect("test lock");
+    let _guard = lock_test_guard();
 
     let tasks = unique_market_fixture_path("market_report_orphan_tasks", "jsonl");
     let bids = unique_market_fixture_path("market_report_orphan_bids", "jsonl");

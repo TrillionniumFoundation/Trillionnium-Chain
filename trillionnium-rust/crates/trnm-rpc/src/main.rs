@@ -1125,8 +1125,8 @@ fn transition_request_status(current: &str, to: RequestStatus) -> Result<String>
 }
 
 fn account_state_file() -> PathBuf {
-    if let Ok(path) = std::env::var("TRNM_RPC_ACCOUNTS_FILE") {
-        return PathBuf::from(path);
+    if let Some(path) = normalized_path_from_env("TRNM_RPC_ACCOUNTS_FILE") {
+        return path;
     }
     run_root().join("run/rpc/accounts.json")
 }
@@ -1147,8 +1147,8 @@ fn save_account_state(path: &Path, accounts: &BTreeMap<String, AccountState>) ->
 }
 
 fn tx_lifecycle_file() -> PathBuf {
-    if let Ok(path) = std::env::var("TRNM_RPC_TX_FILE") {
-        return PathBuf::from(path);
+    if let Some(path) = normalized_path_from_env("TRNM_RPC_TX_FILE") {
+        return path;
     }
     run_root().join("run/rpc/txs.json")
 }
@@ -1160,8 +1160,8 @@ struct FaucetRateEntry {
 }
 
 fn faucet_limits_file() -> PathBuf {
-    if let Ok(path) = std::env::var("TRNM_RPC_FAUCET_LIMITS_FILE") {
-        return PathBuf::from(path);
+    if let Some(path) = normalized_path_from_env("TRNM_RPC_FAUCET_LIMITS_FILE") {
+        return path;
     }
     run_root().join("run/rpc/faucet_limits.json")
 }
@@ -2272,19 +2272,6 @@ fn main() -> Result<()> {
             worker,
             price,
         } => {
-            let tasks = load_market_tasks();
-            let Some(task) = tasks.iter().find(|t| t.task_id == task_id) else {
-                return Err(rpc_fail(RpcErrorResponse {
-                    code: "task-not-found",
-                    message: format!("market task not found: {}", task_id),
-                }));
-            };
-            if task.status != "open" {
-                return Err(rpc_fail(RpcErrorResponse {
-                    code: "task-not-open",
-                    message: format!("market task not in open status: {}", task.status),
-                }));
-            }
             if worker.trim().is_empty() {
                 return Err(rpc_fail(RpcErrorResponse {
                     code: "worker-id-invalid",
@@ -2300,20 +2287,38 @@ fn main() -> Result<()> {
                     ),
                 }));
             }
-            if price > task.bounty {
-                return Err(rpc_fail(RpcErrorResponse {
-                    code: "bid-above-bounty",
-                    message: format!(
-                        "market bid price {} exceeds task bounty {} for task {}",
-                        price, task.bounty, task_id
-                    ),
-                }));
-            }
             let normalized_worker =
                 normalize_market_worker_key(&worker).expect("worker checked non-empty");
             let bid = {
+                // Acquire task lock first and keep it through bid persist so task
+                // status checks and bid append are linearizable with match_task.
+                let tasks_path = market_tasks_file();
+                let _tasks_lock = acquire_market_file_lock(&tasks_path)?;
+                let tasks = load_market_tasks();
+                let Some(task) = tasks.iter().find(|t| t.task_id == task_id) else {
+                    return Err(rpc_fail(RpcErrorResponse {
+                        code: "task-not-found",
+                        message: format!("market task not found: {}", task_id),
+                    }));
+                };
+                if task.status != "open" {
+                    return Err(rpc_fail(RpcErrorResponse {
+                        code: "task-not-open",
+                        message: format!("market task not in open status: {}", task.status),
+                    }));
+                }
+                if price > task.bounty {
+                    return Err(rpc_fail(RpcErrorResponse {
+                        code: "bid-above-bounty",
+                        message: format!(
+                            "market bid price {} exceeds task bounty {} for task {}",
+                            price, task.bounty, task_id
+                        ),
+                    }));
+                }
+
                 let bids_path = market_bids_file();
-                let _lock = acquire_market_file_lock(&bids_path)?;
+                let _bids_lock = acquire_market_file_lock(&bids_path)?;
                 let mut bids = load_market_bids();
                 if bids.iter().any(|b| {
                     b.task_id == task_id
@@ -2721,6 +2726,51 @@ mod tests {
                 );
             },
         );
+    }
+
+    #[test]
+    fn rpc_state_paths_use_same_wrapped_env_and_empty_fallback_rules() {
+        let _guard = lock_env();
+        let keys = [
+            "TRNM_RPC_ACCOUNTS_FILE",
+            "TRNM_RPC_TX_FILE",
+            "TRNM_RPC_FAUCET_LIMITS_FILE",
+        ];
+        let prev: Vec<(String, Option<String>)> = keys
+            .iter()
+            .map(|k| ((*k).to_string(), std::env::var(k).ok()))
+            .collect();
+
+        unsafe {
+            std::env::set_var("TRNM_RPC_ACCOUNTS_FILE", "  \"/tmp/accounts.json\"  ");
+            std::env::set_var("TRNM_RPC_TX_FILE", " '`/tmp/txs.json`' ");
+            std::env::set_var("TRNM_RPC_FAUCET_LIMITS_FILE", "  /tmp/faucet_limits.json  ");
+        }
+        assert_eq!(account_state_file(), PathBuf::from("/tmp/accounts.json"));
+        assert_eq!(tx_lifecycle_file(), PathBuf::from("/tmp/txs.json"));
+        assert_eq!(
+            faucet_limits_file(),
+            PathBuf::from("/tmp/faucet_limits.json")
+        );
+
+        unsafe {
+            std::env::set_var("TRNM_RPC_ACCOUNTS_FILE", "  \"\"  ");
+            std::env::set_var("TRNM_RPC_TX_FILE", "  ''  ");
+            std::env::set_var("TRNM_RPC_FAUCET_LIMITS_FILE", " `   ` ");
+        }
+        assert_eq!(account_state_file(), run_root().join("run/rpc/accounts.json"));
+        assert_eq!(tx_lifecycle_file(), run_root().join("run/rpc/txs.json"));
+        assert_eq!(
+            faucet_limits_file(),
+            run_root().join("run/rpc/faucet_limits.json")
+        );
+
+        for (k, v) in prev {
+            match v {
+                Some(val) => unsafe { std::env::set_var(&k, val) },
+                None => unsafe { std::env::remove_var(&k) },
+            }
+        }
     }
 
     #[test]
