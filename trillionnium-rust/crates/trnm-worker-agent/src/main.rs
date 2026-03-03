@@ -1131,6 +1131,7 @@ fn is_invisible_filler(c: char) -> bool {
             | '\u{200D}' // ZERO WIDTH JOINER
             | '\u{200E}' // LEFT-TO-RIGHT MARK
             | '\u{200F}' // RIGHT-TO-LEFT MARK
+            | '\u{061C}' // ARABIC LETTER MARK (bidi/invisible)
             | '\u{2060}' // WORD JOINER
             | '\u{2061}' // FUNCTION APPLICATION (invisible operator)
             | '\u{2062}' // INVISIBLE TIMES
@@ -2014,6 +2015,10 @@ mod tests {
             ("rejected", "empty_output")
         );
         assert_eq!(
+            verify_model_output("\u{061C}", 8),
+            ("rejected", "empty_output")
+        );
+        assert_eq!(
             verify_model_output("\u{FE0E}", 8),
             ("rejected", "empty_output")
         );
@@ -2073,6 +2078,13 @@ mod tests {
         );
         assert_eq!(
             verify_model_output("\u{2066}ok\u{2069}", 1),
+            ("rejected", "output_too_long")
+        );
+
+        // ARABIC LETTER MARK wrappers should be treated as invisible fillers as well.
+        assert_eq!(verify_model_output("\u{061C}ok\u{061C}", 2), ("accepted", "ok"));
+        assert_eq!(
+            verify_model_output("\u{061C}ok\u{061C}", 1),
             ("rejected", "output_too_long")
         );
 
