@@ -1770,6 +1770,14 @@ mod tests {
     }
 
     #[test]
+    fn registry_is_registered_kind_accepts_narrow_and_figure_space_aliases() {
+        let registry = VerifierRegistry::with_builtin_verifiers();
+
+        assert!(registry.is_registered_kind("TEE\u{202F}RECEIPT"));
+        assert!(registry.is_registered_kind("zero\u{2007}knowledge\u{2009}proof"));
+    }
+
+    #[test]
     fn registry_with_builtin_verifiers_registers_v1_stack() {
         let registry = VerifierRegistry::with_builtin_verifiers();
 
