@@ -8,7 +8,7 @@ use trnm_bridge_poc::x2_settlement_loop::{
 
 fn operator_token() -> CapabilityToken {
     CapabilityToken {
-        subject: "agent:settlement-operator".to_string(),
+        subject: "did:trn:settlement-operator".to_string(),
         capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
     }
 }

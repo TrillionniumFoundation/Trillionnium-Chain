@@ -1,5 +1,6 @@
 pub mod bridge_status {
     use serde::{Deserialize, Serialize};
+    use trnm_types::IdentityRegistry;
 
     #[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
     pub enum BridgeStatus {
@@ -92,6 +93,11 @@ pub mod bridge_status {
             }
             if token.subject.trim() != token.subject || token.subject.chars().any(char::is_control)
             {
+                return Err(SettlementError::MalformedToken {
+                    reason: "non-canonical subject",
+                });
+            }
+            if !IdentityRegistry::is_canonical_did(&token.subject) {
                 return Err(SettlementError::MalformedToken {
                     reason: "non-canonical subject",
                 });
