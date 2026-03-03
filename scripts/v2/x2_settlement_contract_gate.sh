@@ -63,6 +63,10 @@ cargo test -p trnm-bridge-poc --test x3_replay_stability \
   x3_prep_confirm_failed_replay_keeps_first_compensation_reason_stable \
   -- --nocapture
 
+cargo test -p trnm-bridge-poc --test x3_replay_stability \
+  x3_prep_confirm_failed_blank_reason_replay_keeps_fallback_reason_stable \
+  -- --nocapture
+
 cargo test -p trnm-bridge-poc --test x2_settlement_loop \
   x3_prep_manual_degraded_blank_message_uses_stable_failure_fallback \
   -- --nocapture
