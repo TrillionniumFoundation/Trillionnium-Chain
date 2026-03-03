@@ -1251,12 +1251,25 @@ fn is_nonempty_no_whitespace(input: &str) -> bool {
     !input.is_empty() && !input.chars().any(|c| c.is_whitespace())
 }
 
+fn is_leap_year(year: u32) -> bool {
+    (year.is_multiple_of(4) && !year.is_multiple_of(100)) || year.is_multiple_of(400)
+}
+
+fn days_in_month(year: u32, month: u32) -> Option<u32> {
+    match month {
+        1 | 3 | 5 | 7 | 8 | 10 | 12 => Some(31),
+        4 | 6 | 9 | 11 => Some(30),
+        2 => Some(if is_leap_year(year) { 29 } else { 28 }),
+        _ => None,
+    }
+}
+
 fn is_canonical_rfc3339_utc_z(input: &str) -> bool {
     if input.len() != 20 {
         return false;
     }
     let bytes = input.as_bytes();
-    bytes[4] == b'-'
+    if !(bytes[4] == b'-'
         && bytes[7] == b'-'
         && bytes[10] == b'T'
         && bytes[13] == b':'
@@ -1265,7 +1278,40 @@ fn is_canonical_rfc3339_utc_z(input: &str) -> bool {
         && bytes
             .iter()
             .enumerate()
-            .all(|(i, b)| matches!(i, 4 | 7 | 10 | 13 | 16 | 19) || b.is_ascii_digit())
+            .all(|(i, b)| matches!(i, 4 | 7 | 10 | 13 | 16 | 19) || b.is_ascii_digit()))
+    {
+        return false;
+    }
+
+    let parse_u32 = |start: usize, end: usize| -> Option<u32> { input.get(start..end)?.parse().ok() };
+
+    let Some(year) = parse_u32(0, 4) else {
+        return false;
+    };
+    let Some(month) = parse_u32(5, 7) else {
+        return false;
+    };
+    let Some(day) = parse_u32(8, 10) else {
+        return false;
+    };
+    let Some(hour) = parse_u32(11, 13) else {
+        return false;
+    };
+    let Some(minute) = parse_u32(14, 16) else {
+        return false;
+    };
+    let Some(second) = parse_u32(17, 19) else {
+        return false;
+    };
+
+    let Some(max_day) = days_in_month(year, month) else {
+        return false;
+    };
+
+    (1..=max_day).contains(&day)
+        && hour <= 23
+        && minute <= 59
+        && second <= 59
 }
 
 fn validate_task_metadata_core_fields(metadata: &TaskMetadata) -> Result<()> {
