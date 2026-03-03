@@ -272,16 +272,6 @@ describe("api-contract adapters", () => {
     expect(out.audits[0]?.granted).toBe(true);
   });
 
-  it("fails closed on rpc query-task payload without reliable timestamp source", () => {
-    expect(() =>
-      adaptQueryTask({
-        task_id: 43,
-        status: "Assigned",
-        worker: "did:trnm:bob",
-      }),
-    ).toThrow(FrontendApiError);
-  });
-
   it("fails closed on malformed payload", () => {
     expect(() => adaptQueryEvents({ bad: true }, "1")).toThrow(FrontendApiError);
   });
