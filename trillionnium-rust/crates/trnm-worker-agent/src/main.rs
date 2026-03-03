@@ -1764,13 +1764,13 @@ fn classify_adapter_error(err: &AdapterError) -> (&'static str, &'static str) {
     {
         return ("ERR_M2V2_PROOF_INVALID", "proof_invalid");
     }
+    if context_matches_token(&err.context, "settlement-degraded") {
+        return ("ERR_M2V2_SETTLEMENT_DEGRADED", "settlement_degraded");
+    }
     if context_matches_token(&err.context, "proof-late")
         || context_matches_token(&err.context, "timeout")
     {
         return ("ERR_M2V2_PROOF_LATE", "proof_late");
-    }
-    if context_matches_token(&err.context, "settlement-degraded") {
-        return ("ERR_M2V2_SETTLEMENT_DEGRADED", "settlement_degraded");
     }
 
     match err.kind {
@@ -2168,6 +2168,15 @@ mod tests {
         };
         assert_eq!(
             classify_adapter_error(&settlement_degraded_retriable),
+            ("ERR_M2V2_SETTLEMENT_DEGRADED", "settlement_degraded")
+        );
+
+        let settlement_degraded_timeout_overlap = AdapterError {
+            kind: AdapterErrorKind::Retriable,
+            context: "settlement-degraded-timeout-window".to_string(),
+        };
+        assert_eq!(
+            classify_adapter_error(&settlement_degraded_timeout_overlap),
             ("ERR_M2V2_SETTLEMENT_DEGRADED", "settlement_degraded")
         );
 
