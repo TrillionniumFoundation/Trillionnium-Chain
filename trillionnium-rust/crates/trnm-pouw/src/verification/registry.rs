@@ -61,6 +61,7 @@ impl VerifierRegistry {
                     || ch == '\u{feff}'
                     || ch == '/'
                     || ch == '／'
+                    || ch == '⁄'
                     || ch == '.'
                     || ch == '．'
                     || ch == ':'
@@ -507,6 +508,20 @@ mod tests {
         let mut registry = VerifierRegistry::new();
         registry.register(Arc::new(AlwaysValidVerifier {
             kind: " TEE/RECEIPT ",
+        }));
+
+        let task = task_with_proof_type(ProofType::Tee);
+        assert_eq!(
+            registry.verify(&task, b"receipt"),
+            VerificationResult::Valid
+        );
+    }
+
+    #[test]
+    fn registry_register_collapses_fraction_slash_delimited_legacy_receipt_aliases_for_lookup() {
+        let mut registry = VerifierRegistry::new();
+        registry.register(Arc::new(AlwaysValidVerifier {
+            kind: " TEE⁄RECEIPT ",
         }));
 
         let task = task_with_proof_type(ProofType::Tee);
@@ -1775,6 +1790,15 @@ mod tests {
 
         assert!(registry.is_registered_kind("TEE\u{202F}RECEIPT"));
         assert!(registry.is_registered_kind("zero\u{2007}knowledge\u{2009}proof"));
+    }
+
+    #[test]
+    fn registry_is_registered_kind_accepts_fullwidth_version_digits() {
+        let registry = VerifierRegistry::with_builtin_verifiers();
+
+        assert!(registry.is_registered_kind("TEE RECEIPT V２"));
+        assert!(registry.is_registered_kind("FRAUD CHALLENGE V３"));
+        assert!(registry.is_registered_kind("ZK PROOF V１"));
     }
 
     #[test]
