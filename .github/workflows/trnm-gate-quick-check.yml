@@ -440,6 +440,14 @@ jobs:
         run: |
           ./scripts/v2/i2_token_lifecycle_gate.sh
 
+      - name: Auto regression: mv2-receipt-contract-freeze-doc-gate
+        run: |
+          ./scripts/v2/mv2_receipt_contract_freeze_doc_gate.sh
+
+      - name: Auto regression: mv2-receipt-contract-freeze-doc-gate-regression-test
+        run: |
+          ./scripts/v2/mv2_receipt_contract_freeze_doc_gate_regression_test.sh
+
       - name: Auto regression: e2-audit-report-generator-reject-schema-suffix-punct-test
         run: |
           ./scripts/v2/e2_audit_report_generator_reject_schema_suffix_punct_test.sh
