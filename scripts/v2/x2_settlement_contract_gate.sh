@@ -20,6 +20,10 @@ cargo test -p trnm-bridge-poc --test x2_settlement_loop \
   -- --nocapture
 
 cargo test -p trnm-bridge-poc --test x2_settlement_loop \
+  x3_prep_reorder_confirm_with_older_height_after_finalize_is_rejected_without_state_change \
+  -- --nocapture
+
+cargo test -p trnm-bridge-poc --test x2_settlement_loop \
   x3_prep_reorder_failed_confirm_after_finalize_is_rejected_without_state_change \
   -- --nocapture
 
