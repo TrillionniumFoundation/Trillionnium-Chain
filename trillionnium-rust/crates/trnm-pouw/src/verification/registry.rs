@@ -1817,6 +1817,7 @@ mod tests {
 
         assert!(registry.is_registered_kind("TEE\u{202F}RECEIPT"));
         assert!(registry.is_registered_kind("zero\u{2007}knowledge\u{2009}proof"));
+        assert!(registry.is_registered_kind("zero\u{200A}knowledge\u{200A}proof"));
     }
 
     #[test]
