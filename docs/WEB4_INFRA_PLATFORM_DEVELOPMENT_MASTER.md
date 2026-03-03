@@ -315,6 +315,12 @@ Trillionnium 目标不是“单链功能齐全”，而是“可被开发者和�
 - 接口契约基线：`docs/development/WEB4_FRONTEND_API_INTERFACE_V0.md`
 - 约束：Dashboard 仅消费只读聚合 API，不得绕过 XI 门禁结论（X2/I2 gate）。
 
+### 10.3 Lane MV（2026-03-03）V2 回执契约冻结主文档锚点
+- 锚点目标：把 `fraud_proof | tee_receipt | zk_receipt` 的统一回执字段固定到 Master，避免仅在专题文档生效。
+- 统一字段（最小集）：`task_id/proof_type/verdict/verified_at/cost_hint`。
+- fail-closed 约束：证明缺失/迟到/格式不合法时，不允许静默成功，必须进入争议或降级路径并给出稳定错误码。
+- 交界约束：M2↔V2 的错误码与状态迁移表必须与 gate 用例一一映射。
+
 ---
 
 ## 11. 维护规则
