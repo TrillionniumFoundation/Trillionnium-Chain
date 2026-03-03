@@ -469,6 +469,9 @@ pub struct RelayService {
     envelope_id: AtomicU64,
     risk_quota: Mutex<RiskQuotaState>,
     risk_quota_cfg: RiskQuotaConfig,
+    relay_open_total: AtomicU64,
+    relay_poll_total: AtomicU64,
+    relay_send_rejected_route_not_registered_total: AtomicU64,
     proof_query_rejected_range_out_of_bounds_total: AtomicU64,
 }
 
@@ -480,6 +483,9 @@ impl RelayService {
             envelope_id: AtomicU64::new(1),
             risk_quota: Mutex::new(RiskQuotaState::default()),
             risk_quota_cfg: RiskQuotaConfig::default(),
+            relay_open_total: AtomicU64::new(0),
+            relay_poll_total: AtomicU64::new(0),
+            relay_send_rejected_route_not_registered_total: AtomicU64::new(0),
             proof_query_rejected_range_out_of_bounds_total: AtomicU64::new(0),
         }
     }
@@ -491,8 +497,27 @@ impl RelayService {
             envelope_id: AtomicU64::new(1),
             risk_quota: Mutex::new(RiskQuotaState::default()),
             risk_quota_cfg,
+            relay_open_total: AtomicU64::new(0),
+            relay_poll_total: AtomicU64::new(0),
+            relay_send_rejected_route_not_registered_total: AtomicU64::new(0),
             proof_query_rejected_range_out_of_bounds_total: AtomicU64::new(0),
         }
+    }
+
+    #[cfg(test)]
+    fn relay_open_total(&self) -> u64 {
+        self.relay_open_total.load(Ordering::Relaxed)
+    }
+
+    #[cfg(test)]
+    fn relay_poll_total(&self) -> u64 {
+        self.relay_poll_total.load(Ordering::Relaxed)
+    }
+
+    #[cfg(test)]
+    fn relay_send_rejected_route_not_registered_total(&self) -> u64 {
+        self.relay_send_rejected_route_not_registered_total
+            .load(Ordering::Relaxed)
     }
 
     #[cfg(test)]
@@ -518,7 +543,7 @@ impl RelayService {
 
     pub fn open(&self, req: RelayOpenRequest) -> Result<RelayOpenResponse> {
         validate_session_id(&req.session_id, "session_id")?;
-        // TODO(metrics): relay_open_total += 1
+        self.relay_open_total.fetch_add(1, Ordering::Relaxed);
         let mut g = self
             .sessions
             .lock()
@@ -540,7 +565,8 @@ impl RelayService {
         validate_route(&req.route)?;
         self.consume_risk_quota(RiskDomain::Relay, &req.session_id, req.source.as_deref())?;
         if !self.router.has_route(&req.route) {
-            // TODO(metrics): relay_send_rejected_total{reason="route_not_registered"} += 1
+            self.relay_send_rejected_route_not_registered_total
+                .fetch_add(1, Ordering::Relaxed);
             return Err(bad_request(
                 "invalid_route",
                 format!("route not registered: {}", req.route),
@@ -602,7 +628,7 @@ impl RelayService {
         };
 
         let limit = req.limit.clamp(1, MAX_RELAY_QUERY_LIMIT);
-        // TODO(metrics): relay_poll_total += 1
+        self.relay_poll_total.fetch_add(1, Ordering::Relaxed);
         let envelopes = state
             .queue
             .iter()
@@ -659,7 +685,13 @@ impl RelayService {
         req: RelaySessionProofQuery,
     ) -> Result<RelaySessionProofResponse> {
         validate_session_id(&req.session_id, "session_id")?;
-        validate_proof_query_range(req.from_seq, req.to_seq)?;
+        if let Err(err) = validate_proof_query_range(req.from_seq, req.to_seq) {
+            if err.to_string().contains("bad_request/range_out_of_bounds") {
+                self.proof_query_rejected_range_out_of_bounds_total
+                    .fetch_add(1, Ordering::Relaxed);
+            }
+            return Err(err);
+        }
         self.consume_risk_quota(RiskDomain::Proof, &req.session_id, req.source.as_deref())?;
 
         let g = self
@@ -884,6 +916,7 @@ mod tests {
             })
             .expect("open");
         assert_eq!(opened.session.status, RelaySessionStatus::Open);
+        assert_eq!(relay.relay_open_total(), 1);
 
         let sent = relay
             .send(RelaySendRequest {
@@ -904,6 +937,7 @@ mod tests {
             })
             .expect("poll");
         assert_eq!(polled.envelopes.len(), 2);
+        assert_eq!(relay.relay_poll_total(), 1);
 
         let acked = relay
             .ack(RelayAckRequest {
@@ -921,6 +955,7 @@ mod tests {
             })
             .expect("poll after ack");
         assert!(polled2.envelopes.is_empty());
+        assert_eq!(relay.relay_poll_total(), 2);
 
         let closed = relay
             .close(RelayCloseRequest {
@@ -1342,6 +1377,31 @@ mod tests {
     }
 
     #[test]
+    fn relay_send_rejects_unregistered_route_and_counts_metric() {
+        let mut router = RelayRouter::new();
+        router.register("relay.echo", EchoHandler);
+        let relay = RelayService::new(router);
+        relay
+            .open(RelayOpenRequest {
+                session_id: "s-route-missing".into(),
+            })
+            .unwrap();
+
+        let err = relay
+            .send(RelaySendRequest {
+                session_id: "s-route-missing".into(),
+                route: "relay.unknown".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"x".to_vec(),
+                source: None,
+            })
+            .unwrap_err();
+        assert!(err.to_string().contains("bad_request/invalid_route"));
+        assert_eq!(relay.relay_send_rejected_route_not_registered_total(), 1);
+    }
+
+    #[test]
     fn relay_proof_query_rejects_empty_session() {
         let relay = RelayService::new(RelayRouter::new());
         let err = relay
@@ -1400,6 +1460,7 @@ mod tests {
             })
             .unwrap_err();
         assert!(err.to_string().contains("bad_request/range_out_of_bounds"));
+        assert_eq!(relay.proof_query_rejected_range_out_of_bounds_total(), 1);
     }
 
     #[test]
@@ -1512,6 +1573,7 @@ mod tests {
             })
             .unwrap();
         assert_eq!(out.envelopes.len(), 6);
+        assert_eq!(relay.relay_poll_total(), 1);
     }
 
     fn tiny_quota_relay() -> RelayService {

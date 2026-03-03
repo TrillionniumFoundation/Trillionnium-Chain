@@ -2,6 +2,7 @@ use rusqlite::Connection;
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, HashMap};
 use std::path::PathBuf;
+use std::sync::atomic::{AtomicU64, Ordering};
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub struct DedupKey {
@@ -389,6 +390,9 @@ pub struct ReliabilityEngine<S: ReliabilityStore> {
     last_cleanup_at_unix_ms: Option<u128>,
     circuit_state: CircuitState,
     consecutive_retry_exhausted: u32,
+    retry_exhausted_total: AtomicU64,
+    circuit_open_total: AtomicU64,
+    circuit_recovered_total: AtomicU64,
 }
 
 impl<S: ReliabilityStore> ReliabilityEngine<S> {
@@ -404,6 +408,9 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
             last_cleanup_at_unix_ms: None,
             circuit_state: CircuitState::Closed,
             consecutive_retry_exhausted: 0,
+            retry_exhausted_total: AtomicU64::new(0),
+            circuit_open_total: AtomicU64::new(0),
+            circuit_recovered_total: AtomicU64::new(0),
         }
     }
 
@@ -413,6 +420,21 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
 
     pub fn circuit_state(&self) -> CircuitState {
         self.circuit_state
+    }
+
+    #[cfg(test)]
+    fn retry_exhausted_total(&self) -> u64 {
+        self.retry_exhausted_total.load(Ordering::Relaxed)
+    }
+
+    #[cfg(test)]
+    fn circuit_open_total(&self) -> u64 {
+        self.circuit_open_total.load(Ordering::Relaxed)
+    }
+
+    #[cfg(test)]
+    fn circuit_recovered_total(&self) -> u64 {
+        self.circuit_recovered_total.load(Ordering::Relaxed)
     }
 
     pub fn receive(&mut self, msg: ReliableMessage, now_unix_ms: u128) -> Ack {
@@ -591,7 +613,7 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
                         "[reliability] drop pending after max_attempts ack_id={} attempts={}",
                         ack_id, item.attempts
                     );
-                    // TODO(metrics): reliability_retry_exhausted_total += 1
+                    self.retry_exhausted_total.fetch_add(1, Ordering::Relaxed);
                     return false;
                 }
 
@@ -638,7 +660,7 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
                 self.retry.circuit_breaker_threshold,
                 until_unix_ms
             );
-            // TODO(metrics): reliability_circuit_open_total += 1
+            self.circuit_open_total.fetch_add(1, Ordering::Relaxed);
         }
     }
 
@@ -648,7 +670,8 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
                 self.circuit_state = CircuitState::Closed;
                 self.consecutive_retry_exhausted = 0;
                 eprintln!("[reliability] circuit recovered at {}", now_unix_ms);
-                // TODO(metrics): reliability_circuit_recovered_total += 1
+                self.circuit_recovered_total
+                    .fetch_add(1, Ordering::Relaxed);
             }
         }
     }
@@ -1176,6 +1199,7 @@ mod tests {
 
         let third = engine.collect_due_retries(1_400);
         assert!(third.is_empty(), "must stop retrying after max_attempts");
+        assert_eq!(engine.retry_exhausted_total(), 1);
 
         let store = engine.into_store();
         let session = store.get_session("s1");
@@ -1209,6 +1233,8 @@ mod tests {
 
         let exhausted_round = engine.collect_due_retries(1_200);
         assert!(exhausted_round.is_empty());
+        assert_eq!(engine.retry_exhausted_total(), 1);
+        assert_eq!(engine.circuit_open_total(), 1);
         assert_eq!(
             engine.circuit_state(),
             CircuitState::Open {
@@ -1222,6 +1248,7 @@ mod tests {
 
         let recovered = engine.collect_due_retries(1_550);
         assert_eq!(engine.circuit_state(), CircuitState::Closed);
+        assert_eq!(engine.circuit_recovered_total(), 1);
         assert_eq!(recovered.len(), 1);
         assert_eq!(recovered[0].ack_id, "ack_bob_1");
     }
