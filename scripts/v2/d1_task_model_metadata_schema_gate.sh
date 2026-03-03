@@ -57,11 +57,6 @@ def validate(node, schema_node, prefix=""):
                 if key not in allowed:
                     fail(f"{prefix + '.' if prefix else ''}unexpected field: {key}")
 
-        for key, child_schema in schema_node.get("properties", {}).items():
-            if key in node:
-                child_prefix = f"{prefix}.{key}" if prefix else key
-                validate(node[key], child_schema, child_prefix)
-
         for branch in schema_node.get("allOf", []):
             condition = branch.get("if")
             then_schema = branch.get("then")
@@ -86,6 +81,11 @@ def validate(node, schema_node, prefix=""):
                 for field in forbidden_required:
                     if field in node:
                         fail(f"{prefix + '.' if prefix else ''}forbidden field for conditional policy: {field}")
+
+        for key, child_schema in schema_node.get("properties", {}).items():
+            if key in node:
+                child_prefix = f"{prefix}.{key}" if prefix else key
+                validate(node[key], child_schema, child_prefix)
         return
 
     expected_type = schema_node.get("type")
