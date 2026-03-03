@@ -490,6 +490,70 @@ fn parse_i128_kv_value(raw: &str) -> Option<i128> {
     trim_wrapped_log_numeric(raw).parse::<i128>().ok()
 }
 
+fn parse_event_log_kv(line: &str) -> BTreeMap<String, String> {
+    let mut kv = BTreeMap::<String, String>::new();
+    let mut i = 0usize;
+    let bytes = line.as_bytes();
+    let len = bytes.len();
+
+    while i < len {
+        while i < len && bytes[i].is_ascii_whitespace() {
+            i += 1;
+        }
+        if i >= len {
+            break;
+        }
+
+        let key_start = i;
+        while i < len && !bytes[i].is_ascii_whitespace() && bytes[i] != b'=' {
+            i += 1;
+        }
+        if i >= len || bytes[i] != b'=' {
+            while i < len && !bytes[i].is_ascii_whitespace() {
+                i += 1;
+            }
+            continue;
+        }
+        let key_end = i;
+        i += 1;
+
+        if key_end <= key_start {
+            continue;
+        }
+        let key = &line[key_start..key_end];
+
+        let value = if i < len && (bytes[i] == b'"' || bytes[i] == b'\'') {
+            let quote = bytes[i];
+            i += 1;
+            let mut out = String::new();
+            while i < len {
+                let b = bytes[i];
+                i += 1;
+                if b == quote {
+                    break;
+                }
+                if b == b'\\' && i < len {
+                    out.push(bytes[i] as char);
+                    i += 1;
+                } else {
+                    out.push(b as char);
+                }
+            }
+            out
+        } else {
+            let val_start = i;
+            while i < len && !bytes[i].is_ascii_whitespace() {
+                i += 1;
+            }
+            line[val_start..i].to_string()
+        };
+
+        kv.insert(key.to_string(), value);
+    }
+
+    kv
+}
+
 fn load_latest_node_events() -> Vec<NodeEventRecord> {
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .parent()
@@ -518,12 +582,7 @@ fn load_latest_node_events() -> Vec<NodeEventRecord> {
         if !line.starts_with("[event]") || !line.contains("event_type=") {
             continue;
         }
-        let mut kv = BTreeMap::<String, String>::new();
-        for tok in line.split_whitespace().skip(1) {
-            if let Some((k, v)) = tok.split_once('=') {
-                kv.insert(k.to_string(), v.to_string());
-            }
-        }
+        let kv = parse_event_log_kv(&line);
 
         let Some(task_id) = kv.get("task_id").and_then(|s| parse_u64_kv_value(s)) else {
             continue;
@@ -1132,10 +1191,7 @@ fn atomic_write_text_file(path: &Path, content: &str) -> Result<()> {
         fs::create_dir_all(parent)?;
     }
 
-    let file_name = path
-        .file_name()
-        .and_then(|n| n.to_str())
-        .unwrap_or("tmp");
+    let file_name = path.file_name().and_then(|n| n.to_str()).unwrap_or("tmp");
     let tmp = path.with_file_name(format!(
         ".{}.tmp-{}-{}",
         file_name,
@@ -1144,10 +1200,7 @@ fn atomic_write_text_file(path: &Path, content: &str) -> Result<()> {
     ));
 
     {
-        let mut file = OpenOptions::new()
-            .create_new(true)
-            .write(true)
-            .open(&tmp)?;
+        let mut file = OpenOptions::new().create_new(true).write(true).open(&tmp)?;
         file.write_all(content.as_bytes())?;
         file.sync_all()?;
     }
@@ -1184,7 +1237,10 @@ fn next_ingress_task_id(records: &[MessageIngressRecord]) -> Result<u64> {
 }
 
 fn is_lower_hex_64(input: &str) -> bool {
-    input.len() == 64 && input.bytes().all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
+    input.len() == 64
+        && input
+            .bytes()
+            .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
 }
 
 fn is_nonempty_no_whitespace(input: &str) -> bool {
@@ -1833,7 +1889,12 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
                     Ok(task_id) => {
                         let node_events = load_latest_node_events();
                         let recs = load_latest_adapter_records();
-                        match query_events_response(task_id, QUERY_EVENTS_LIMIT_DEFAULT, &node_events, &recs) {
+                        match query_events_response(
+                            task_id,
+                            QUERY_EVENTS_LIMIT_DEFAULT,
+                            &node_events,
+                            &recs,
+                        ) {
                             Ok(events) => {
                                 let body = serde_json::to_string(&events).unwrap_or_else(|_| {
                                     "{\"ok\":false,\"code\":\"SERDE_ERROR\"}".to_string()
@@ -1855,7 +1916,9 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
             Some(path) if path.starts_with("/query-capability-audit/") => {
                 let subject_or_token = path.trim_start_matches("/query-capability-audit/");
                 let registry = load_identity_registry(&identity_registry_file());
-                if let Some(token_id) = resolve_capability_token_subject_or_token(&registry, subject_or_token) {
+                if let Some(token_id) =
+                    resolve_capability_token_subject_or_token(&registry, subject_or_token)
+                {
                     match query_capability_audit(&registry, token_id) {
                         Ok(out) => {
                             let body = serde_json::to_string(&out).unwrap_or_else(|_| {
@@ -1926,9 +1989,26 @@ fn is_trusted_event_source(event: &NodeEventRecord) -> bool {
 
     match event.event_type.as_str() {
         "accept" | "commit" | "reveal" | "challenge" | "create" => signer == actor,
-        "resolve" | "timeout" => signer == actor && matches!(actor.as_str(), "authority" | "system"),
+        "resolve" | "timeout" => {
+            signer == actor && matches!(actor.as_str(), "authority" | "system")
+        }
         _ => false,
     }
+}
+
+fn filtered_node_events_for_task<'a>(
+    task_id: u64,
+    node_events: &'a [NodeEventRecord],
+) -> impl Iterator<Item = &'a NodeEventRecord> {
+    node_events.iter().filter(move |event| {
+        event.task_id == task_id
+            && is_legal_node_event_transition(
+                event.event_type.as_str(),
+                event.from_status.as_str(),
+                event.to_status.as_str(),
+            )
+            && is_trusted_event_source(event)
+    })
 }
 
 fn query_task_from_node_events(
@@ -1939,21 +2019,15 @@ fn query_task_from_node_events(
     let mut status: Option<TaskStatus> = None;
     let mut worker: Option<String> = None;
 
-    for event in node_events.iter().filter(|e| e.task_id == task_id) {
-        if !is_legal_node_event_transition(
-            event.event_type.as_str(),
-            event.from_status.as_str(),
-            event.to_status.as_str(),
-        ) || !is_trusted_event_source(event)
-        {
-            continue;
-        }
-
+    for event in filtered_node_events_for_task(task_id, node_events) {
         version += 1;
         if let Some(mapped) = task_status_from_node_status(event.to_status.as_str()) {
             status = Some(mapped);
         }
-        if event.event_type == "accept" || event.event_type == "commit" || event.event_type == "reveal" {
+        if event.event_type == "accept"
+            || event.event_type == "commit"
+            || event.event_type == "reveal"
+        {
             worker = normalize_actor_or_signer(&event.actor);
         }
     }
@@ -2033,7 +2107,7 @@ fn query_events_response(
     );
     let mut events = Vec::new();
 
-    for e in node_events.iter().filter(|e| e.task_id == task_id) {
+    for e in filtered_node_events_for_task(task_id, node_events) {
         let Some(actor) = normalize_actor_or_signer(&e.actor) else {
             continue;
         };
@@ -3084,7 +3158,10 @@ mod tests {
             std::env::set_var("TRNM_RPC_TX_FILE", "  ''  ");
             std::env::set_var("TRNM_RPC_FAUCET_LIMITS_FILE", " `   ` ");
         }
-        assert_eq!(account_state_file(), run_root().join("run/rpc/accounts.json"));
+        assert_eq!(
+            account_state_file(),
+            run_root().join("run/rpc/accounts.json")
+        );
         assert_eq!(tx_lifecycle_file(), run_root().join("run/rpc/txs.json"));
         assert_eq!(
             faucet_limits_file(),
@@ -3130,7 +3207,10 @@ mod tests {
         assert_eq!(normalize_market_status_key(" matched\u{200b}"), "matched");
         assert_eq!(normalize_market_status_key("mat\u{00ad}ched"), "matched");
         assert_eq!(normalize_market_status_key("open\u{0007}"), "open");
-        assert_eq!(normalize_market_status_key("\u{feff} matched \u{2060}"), "matched");
+        assert_eq!(
+            normalize_market_status_key("\u{feff} matched \u{2060}"),
+            "matched"
+        );
     }
 
     #[test]
@@ -4776,6 +4856,86 @@ mod tests {
         ];
 
         assert!(query_task_from_node_events(8, &events).is_none());
+    }
+
+    #[test]
+    fn query_events_response_applies_same_trust_and_transition_filters() {
+        let events = vec![
+            NodeEventRecord {
+                event_type: "accept".into(),
+                task_id: 9,
+                from_status: "Open".into(),
+                to_status: "Assigned".into(),
+                actor: "worker-a".into(),
+                tx_id: 1,
+                block_height: 1,
+                state_root: "s1".into(),
+                ts_unix_ms: 1,
+                signer: Some("worker-a".into()),
+                challenger: None,
+                tx_hash: None,
+                resolution_code: None,
+                treasury_delta: None,
+                challenger_delta: None,
+                bond_disposition: None,
+            },
+            NodeEventRecord {
+                event_type: "commit".into(),
+                task_id: 9,
+                from_status: "Open".into(),
+                to_status: "Committed".into(),
+                actor: "worker-a".into(),
+                tx_id: 2,
+                block_height: 2,
+                state_root: "s2".into(),
+                ts_unix_ms: 2,
+                signer: Some("worker-a".into()),
+                challenger: None,
+                tx_hash: None,
+                resolution_code: None,
+                treasury_delta: None,
+                challenger_delta: None,
+                bond_disposition: None,
+            },
+            NodeEventRecord {
+                event_type: "reveal".into(),
+                task_id: 9,
+                from_status: "Committed".into(),
+                to_status: "Revealed".into(),
+                actor: "worker-a".into(),
+                tx_id: 3,
+                block_height: 3,
+                state_root: "s3".into(),
+                ts_unix_ms: 3,
+                signer: Some("worker-b".into()),
+                challenger: None,
+                tx_hash: None,
+                resolution_code: None,
+                treasury_delta: None,
+                challenger_delta: None,
+                bond_disposition: None,
+            },
+        ];
+
+        let out = query_events_response(9, 20, &events, &[]).expect("events expected");
+        assert_eq!(out.len(), 1);
+        assert_eq!(out[0].event_type, "accept");
+    }
+
+    #[test]
+    fn parse_event_log_kv_preserves_quoted_values_with_spaces() {
+        let line = "[event] event_type=resolve task_id=7 from_status=Challenged to_status=Completed actor=authority tx_id=9 block_height=12 state_root=abc ts_unix_ms=1000 resolution_code=\"timeout reached\" bond_disposition='forfeit all'";
+        let kv = parse_event_log_kv(line);
+
+        assert_eq!(kv.get("event_type").map(String::as_str), Some("resolve"));
+        assert_eq!(
+            kv.get("resolution_code").map(String::as_str),
+            Some("timeout reached")
+        );
+        assert_eq!(
+            kv.get("bond_disposition").map(String::as_str),
+            Some("forfeit all")
+        );
     }
 
     fn faucet_env_test_lock() -> &'static std::sync::Mutex<()> {

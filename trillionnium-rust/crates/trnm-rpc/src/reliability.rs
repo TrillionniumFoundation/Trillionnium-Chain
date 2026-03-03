@@ -670,8 +670,7 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
                 self.circuit_state = CircuitState::Closed;
                 self.consecutive_retry_exhausted = 0;
                 eprintln!("[reliability] circuit recovered at {}", now_unix_ms);
-                self.circuit_recovered_total
-                    .fetch_add(1, Ordering::Relaxed);
+                self.circuit_recovered_total.fetch_add(1, Ordering::Relaxed);
             }
         }
     }

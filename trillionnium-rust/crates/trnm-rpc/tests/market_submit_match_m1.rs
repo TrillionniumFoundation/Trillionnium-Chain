@@ -42,7 +42,10 @@ fn apply_market_env_baseline(cmd: &mut Command) {
     let root = fixture_root();
     cmd.env("TRNM_RPC_MARKET_TASKS_FILE", root.join("tasks.jsonl"));
     cmd.env("TRNM_RPC_MARKET_BIDS_FILE", root.join("bids.jsonl"));
-    cmd.env("TRNM_RPC_MARKET_REPUTATION_FILE", market_reputation_fixture_path());
+    cmd.env(
+        "TRNM_RPC_MARKET_REPUTATION_FILE",
+        market_reputation_fixture_path(),
+    );
     cmd.env("TRNM_RPC_INGRESS_FILE", root.join("ingress.jsonl"));
     cmd.env("TRNM_RPC_MARKET_LOCK_STALE_MS", "2000");
 }
@@ -414,8 +417,11 @@ fn market_match_reputation_lookup_normalizes_case_and_whitespace_keys() {
     let _guard = lock_test_guard();
     let _ = fs::remove_dir_all("run/market");
     fs::create_dir_all("run/market").expect("create market dir");
-    fs::write(market_reputation_fixture_path(), r#"{"  Worker-High  ":200}"#)
-        .expect("write reputation file");
+    fs::write(
+        market_reputation_fixture_path(),
+        r#"{"  Worker-High  ":200}"#,
+    )
+    .expect("write reputation file");
 
     let create_out = run_ok(&[
         "market.create_task",

@@ -533,7 +533,9 @@ fn market_match_exposes_penalty_explainability_fields_for_negative_reputation_wi
     assert_eq!(matched["winner_reputation"], -3);
     assert_eq!(matched["winner_reputation_effective"], -3);
 
-    let cfg = matched["match_config"].as_object().expect("match_config object");
+    let cfg = matched["match_config"]
+        .as_object()
+        .expect("match_config object");
     let price_weight = cfg
         .get("price_weight")
         .and_then(Value::as_u64)
@@ -552,7 +554,9 @@ fn market_match_exposes_penalty_explainability_fields_for_negative_reputation_wi
         .expect("reputation_weight") as u128;
     let penalty = matched["penalty"].as_u64().expect("penalty") as u128;
     let final_score = matched["final_score"].as_u64().expect("final_score") as u128;
-    let effective_score = matched["effective_score"].as_u64().expect("effective_score") as u128;
+    let effective_score = matched["effective_score"]
+        .as_u64()
+        .expect("effective_score") as u128;
 
     assert_eq!(base_score, 80);
     assert_eq!(reputation_weight, 0);

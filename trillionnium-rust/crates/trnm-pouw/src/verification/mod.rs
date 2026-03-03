@@ -186,18 +186,45 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
         .join(" ");
 
     match collapsed_tokens.as_str() {
-        "fraud proof" | "fraud receipt" | "fraud challenge" | "fraud proof v1"
-        | "fraud proof v2" | "fraud proof v3" | "fraud proof v 1" | "fraud proof v 2"
-        | "fraud proof v 3" | "fraud receipt v1" | "fraud receipt v2"
-        | "fraud receipt v 1" | "fraud receipt v 2" | "fraud receipt v3"
-        | "fraud receipt v 3" | "fraud challenge v1" | "fraud challenge v2"
-        | "fraud challenge v3" | "fraud challenge v 1" | "fraud challenge v 2"
-        | "fraud challenge v 3" | "fraud receiptv1" | "fraud receiptv2"
-        | "fraud receiptv3" | "fraud challengev1" | "fraud challengev2"
-        | "fraud challengev3" | "fraudproof" | "fraudproofv1" | "fraudproofv2"
-        | "fraudproofv3" | "fraudreceipt" | "fraudreceiptv1" | "fraudreceiptv2"
-        | "fraudreceiptv3" | "fraudchallenge" | "fraudchallengev1"
-        | "fraudchallengev2" | "fraudchallengev3" => "fraud".to_string(),
+        "fraud proof"
+        | "fraud receipt"
+        | "fraud challenge"
+        | "fraud proof v1"
+        | "fraud proof v2"
+        | "fraud proof v3"
+        | "fraud proof v 1"
+        | "fraud proof v 2"
+        | "fraud proof v 3"
+        | "fraud receipt v1"
+        | "fraud receipt v2"
+        | "fraud receipt v 1"
+        | "fraud receipt v 2"
+        | "fraud receipt v3"
+        | "fraud receipt v 3"
+        | "fraud challenge v1"
+        | "fraud challenge v2"
+        | "fraud challenge v3"
+        | "fraud challenge v 1"
+        | "fraud challenge v 2"
+        | "fraud challenge v 3"
+        | "fraud receiptv1"
+        | "fraud receiptv2"
+        | "fraud receiptv3"
+        | "fraud challengev1"
+        | "fraud challengev2"
+        | "fraud challengev3"
+        | "fraudproof"
+        | "fraudproofv1"
+        | "fraudproofv2"
+        | "fraudproofv3"
+        | "fraudreceipt"
+        | "fraudreceiptv1"
+        | "fraudreceiptv2"
+        | "fraudreceiptv3"
+        | "fraudchallenge"
+        | "fraudchallengev1"
+        | "fraudchallengev2"
+        | "fraudchallengev3" => "fraud".to_string(),
         "tee proof"
         | "tee receipt"
         | "tee proof v1"
@@ -733,9 +760,12 @@ mod tests {
 
     #[test]
     fn verification_receipt_new_collapses_fraud_challenge_aliases_to_router_key() {
-        let bare = VerificationReceipt::new(1, "Fraud Challenge", VerificationResult::Valid, "v", 1);
-        let snake = VerificationReceipt::new(2, "fraud_challenge_v2", VerificationResult::Valid, "v", 2);
-        let compact = VerificationReceipt::new(3, "fraudchallengev3", VerificationResult::Valid, "v", 3);
+        let bare =
+            VerificationReceipt::new(1, "Fraud Challenge", VerificationResult::Valid, "v", 1);
+        let snake =
+            VerificationReceipt::new(2, "fraud_challenge_v2", VerificationResult::Valid, "v", 2);
+        let compact =
+            VerificationReceipt::new(3, "fraudchallengev3", VerificationResult::Valid, "v", 3);
 
         assert_eq!(bare.proof_type, "fraud");
         assert_eq!(snake.proof_type, "fraud");
@@ -924,8 +954,15 @@ mod tests {
             "v",
             1,
         );
-        let tee = VerificationReceipt::new(2, "！！TEE？？PROOF！！", VerificationResult::Valid, "v", 2);
-        let zk = VerificationReceipt::new(3, "？？zk！！receipt？？", VerificationResult::Valid, "v", 3);
+        let tee =
+            VerificationReceipt::new(2, "！！TEE？？PROOF！！", VerificationResult::Valid, "v", 2);
+        let zk = VerificationReceipt::new(
+            3,
+            "？？zk！！receipt？？",
+            VerificationResult::Valid,
+            "v",
+            3,
+        );
 
         assert_eq!(fraud.proof_type, "fraud");
         assert_eq!(tee.proof_type, "tee");
@@ -968,7 +1005,8 @@ mod tests {
     }
 
     #[test]
-    fn verification_receipt_new_collapses_glued_fraud_and_zk_receipt_version_aliases_to_router_keys() {
+    fn verification_receipt_new_collapses_glued_fraud_and_zk_receipt_version_aliases_to_router_keys(
+    ) {
         let fraud_v1 =
             VerificationReceipt::new(1, "fraud receiptv1", VerificationResult::Valid, "v", 1);
         let fraud_v2 =
@@ -1004,8 +1042,13 @@ mod tests {
             VerificationReceipt::new(4, "zero knowledge snark", VerificationResult::Valid, "v", 4);
         let snark_compact =
             VerificationReceipt::new(5, "ZeroKnowledgeSnark", VerificationResult::Valid, "v", 5);
-        let versioned =
-            VerificationReceipt::new(6, "zero-knowledge-proof-v2", VerificationResult::Valid, "v", 6);
+        let versioned = VerificationReceipt::new(
+            6,
+            "zero-knowledge-proof-v2",
+            VerificationResult::Valid,
+            "v",
+            6,
+        );
         let receipt_versioned = VerificationReceipt::new(
             7,
             "ZeroKnowledgeReceiptV3",

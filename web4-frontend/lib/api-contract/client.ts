@@ -94,7 +94,7 @@ export function createFrontendApiClient(config: BaseClientConfig) {
 
     queryEvents(taskId: string, options?: QueryOptions): Promise<QueryEventsResult> {
       return getJson(`/query-events/${encodeURIComponent(taskId)}`, options).then(
-        adaptQueryEvents,
+        (payload) => adaptQueryEvents(payload, taskId),
       );
     },
 

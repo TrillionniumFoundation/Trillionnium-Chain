@@ -156,9 +156,15 @@ impl VerifierRegistry {
             "fraud proof v2" | "fraudproofv2" | "fraud proof v 2" => "fraud",
             "fraud proof v3" | "fraudproofv3" | "fraud proof v 3" => "fraud",
             "fraud receipt" | "fraudreceipt" => "fraud",
-            "fraud receipt v1" | "fraudreceiptv1" | "fraud receipt v 1" | "fraud receiptv1" => "fraud",
-            "fraud receipt v2" | "fraudreceiptv2" | "fraud receipt v 2" | "fraud receiptv2" => "fraud",
-            "fraud receipt v3" | "fraudreceiptv3" | "fraud receipt v 3" | "fraud receiptv3" => "fraud",
+            "fraud receipt v1" | "fraudreceiptv1" | "fraud receipt v 1" | "fraud receiptv1" => {
+                "fraud"
+            }
+            "fraud receipt v2" | "fraudreceiptv2" | "fraud receipt v 2" | "fraud receiptv2" => {
+                "fraud"
+            }
+            "fraud receipt v3" | "fraudreceiptv3" | "fraud receipt v 3" | "fraud receiptv3" => {
+                "fraud"
+            }
             "fraud challenge" | "fraudchallenge" => "fraud",
             "fraud challenge v1" | "fraudchallengev1" | "fraud challenge v 1" => "fraud",
             "fraud challenge v2" | "fraudchallengev2" | "fraud challenge v 2" => "fraud",
@@ -262,9 +268,18 @@ impl VerifierRegistry {
             "zero knowledge proof v2" | "zeroknowledgeproofv2" | "zero knowledge proof v 2" => "zk",
             "zero knowledge proof v3" | "zeroknowledgeproofv3" | "zero knowledge proof v 3" => "zk",
             "zero knowledge receipt" | "zeroknowledgereceipt" => "zk",
-            "zero knowledge receipt v1" | "zeroknowledgereceiptv1" | "zero knowledge receipt v 1" | "zero knowledge receiptv1" => "zk",
-            "zero knowledge receipt v2" | "zeroknowledgereceiptv2" | "zero knowledge receipt v 2" | "zero knowledge receiptv2" => "zk",
-            "zero knowledge receipt v3" | "zeroknowledgereceiptv3" | "zero knowledge receipt v 3" | "zero knowledge receiptv3" => "zk",
+            "zero knowledge receipt v1"
+            | "zeroknowledgereceiptv1"
+            | "zero knowledge receipt v 1"
+            | "zero knowledge receiptv1" => "zk",
+            "zero knowledge receipt v2"
+            | "zeroknowledgereceiptv2"
+            | "zero knowledge receipt v 2"
+            | "zero knowledge receiptv2" => "zk",
+            "zero knowledge receipt v3"
+            | "zeroknowledgereceiptv3"
+            | "zero knowledge receipt v 3"
+            | "zero knowledge receiptv3" => "zk",
             "zk cert" | "zkcert" => "zk",
             "zero knowledge certificate" | "zeroknowledgecertificate" => "zk",
             "zero knowledge attestation" | "zeroknowledgeattestation" => "zk",
@@ -574,7 +589,8 @@ mod tests {
     }
 
     #[test]
-    fn registry_register_collapses_fullwidth_backslash_delimited_legacy_receipt_aliases_for_lookup() {
+    fn registry_register_collapses_fullwidth_backslash_delimited_legacy_receipt_aliases_for_lookup()
+    {
         let mut registry = VerifierRegistry::new();
         registry.register(Arc::new(AlwaysValidVerifier {
             kind: " TEE＼RECEIPT ",

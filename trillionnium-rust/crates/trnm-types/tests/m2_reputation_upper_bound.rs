@@ -1,4 +1,6 @@
-use trnm_types::{classify_reputation_tier, compute_reputation_score_bps, MarketReputationInput, ReputationTier};
+use trnm_types::{
+    classify_reputation_tier, compute_reputation_score_bps, MarketReputationInput, ReputationTier,
+};
 
 #[test]
 fn m2_reputation_score_clamps_to_upper_bound_and_stays_trusted() {

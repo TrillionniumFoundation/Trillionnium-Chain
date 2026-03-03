@@ -385,9 +385,7 @@ impl IdentityRegistry {
         }
 
         method_specific.chars().all(|ch| {
-            ch.is_ascii_lowercase()
-                || ch.is_ascii_digit()
-                || matches!(ch, ':' | '.' | '_' | '-')
+            ch.is_ascii_lowercase() || ch.is_ascii_digit() || matches!(ch, ':' | '.' | '_' | '-')
         })
     }
 
@@ -2309,7 +2307,8 @@ mod tests {
     }
 
     #[test]
-    fn settlement_evidence_path_sanitizes_nested_reserved_device_aliases_with_trailing_dot_or_space() {
+    fn settlement_evidence_path_sanitizes_nested_reserved_device_aliases_with_trailing_dot_or_space(
+    ) {
         let rec = SettlementRecord {
             settlement_id: 55,
             route: BridgeRoute {

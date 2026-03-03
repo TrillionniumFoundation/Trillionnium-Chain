@@ -83,7 +83,9 @@ fn submit_message_rejects_public_privacy_tier_with_provenance_index() {
 
     let stderr = String::from_utf8_lossy(&output.stderr);
     assert!(
-        stderr.contains("metadata.provenance.provenance_index must be absent when privacy_tier=public"),
+        stderr.contains(
+            "metadata.provenance.provenance_index must be absent when privacy_tier=public"
+        ),
         "stderr: {}",
         stderr
     );

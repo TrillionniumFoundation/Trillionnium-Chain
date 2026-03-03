@@ -120,7 +120,12 @@ fn expired_token_with_scope_mismatch_returns_inactive_fail_closed() {
     // I3 fail-closed contract: inactive state from expiry must dominate scope
     // mismatch checks, preserving stable verifier error semantics.
     let err = reg
-        .verify_capability("org:lane-xi-admin", token_id, CapabilityScope::AuditRead, 31)
+        .verify_capability(
+            "org:lane-xi-admin",
+            token_id,
+            CapabilityScope::AuditRead,
+            31,
+        )
         .unwrap_err();
 
     assert!(matches!(
@@ -249,7 +254,12 @@ fn revoked_did_with_scope_mismatch_returns_did_revoked_fail_closed() {
     // I3 fail-closed contract: DID revocation must dominate requested scope
     // mismatch checks so verifier error shape does not leak authz semantics.
     let err = reg
-        .verify_capability("org:lane-xi-admin", token_id, CapabilityScope::AuditRead, 35)
+        .verify_capability(
+            "org:lane-xi-admin",
+            token_id,
+            CapabilityScope::AuditRead,
+            35,
+        )
         .unwrap_err();
 
     assert!(matches!(
@@ -406,7 +416,12 @@ fn revoked_did_with_expired_token_and_scope_mismatch_still_returns_did_revoked_f
     // I3 fail-closed contract: DID revocation must still dominate verifier error
     // shape even when capability expiry (inactive) and scope mismatch are also true.
     let err = reg
-        .verify_capability("org:lane-xi-admin", token_id, CapabilityScope::AuditRead, 40)
+        .verify_capability(
+            "org:lane-xi-admin",
+            token_id,
+            CapabilityScope::AuditRead,
+            40,
+        )
         .unwrap_err();
 
     assert!(matches!(

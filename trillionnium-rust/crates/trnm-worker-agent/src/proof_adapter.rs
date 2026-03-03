@@ -22,15 +22,15 @@ pub fn build_proof_adapter(name: &str) -> Result<Box<dyn ProofAdapter>, String> 
         | "fraud_proof_v1"
         | "fraudproof"
         | "fraudproofv1" => Ok(Box::new(StandardProofAdapter)),
-        "tee-receipt" | "tee_receipt" | "tee-receipt-v1" | "tee_receipt_v1"
-        | "tee-attestation" | "tee_attestation" | "tee-attestation-v1" | "tee_attestation_v1"
-        | "teereceipt" | "teeattestation" | "teereceiptv1" | "teeattestationv1" => {
+        "tee-receipt" | "tee_receipt" | "tee-receipt-v1" | "tee_receipt_v1" | "tee-attestation"
+        | "tee_attestation" | "tee-attestation-v1" | "tee_attestation_v1" | "teereceipt"
+        | "teeattestation" | "teereceiptv1" | "teeattestationv1" => {
             Ok(Box::new(TeeReceiptProofAdapter))
-        },
+        }
         "zk-receipt" | "zk_receipt" | "zk-receipt-v1" | "zk_receipt_v1" | "zk-proof"
         | "zk_proof" | "zkreceipt" | "zkproof" | "zkreceiptv1" => {
             Ok(Box::new(ZkReceiptProofAdapter))
-        },
+        }
         other => Err(format!("unsupported-proof-adapter:{other}")),
     }
 }
@@ -340,14 +340,20 @@ mod tests {
                 "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-2bb\",\"adapter\":\"teeattestation\"}",
             )
             .expect("tee compact alias should parse");
-        assert_eq!(tee_compact_alias.provider_request_id.as_deref(), Some("pr-2bb"));
+        assert_eq!(
+            tee_compact_alias.provider_request_id.as_deref(),
+            Some("pr-2bb")
+        );
 
         let tee_attestation_v1 = adapter
             .parse_response(
                 "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-2bc\",\"adapter\":\"TEE_ATTESTATION_V1\"}",
             )
             .expect("tee attestation v1 alias should parse");
-        assert_eq!(tee_attestation_v1.provider_request_id.as_deref(), Some("pr-2bc"));
+        assert_eq!(
+            tee_attestation_v1.provider_request_id.as_deref(),
+            Some("pr-2bc")
+        );
 
         let tee_with_bom_and_whitespace = adapter
             .parse_response(
@@ -463,7 +469,10 @@ mod tests {
                 "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-zk-2bb\",\"adapter\":\"zkproof\"}",
             )
             .expect("zk compact alias should parse");
-        assert_eq!(zk_compact_alias.provider_request_id.as_deref(), Some("pr-zk-2bb"));
+        assert_eq!(
+            zk_compact_alias.provider_request_id.as_deref(),
+            Some("pr-zk-2bb")
+        );
 
         let zk_with_bom_and_whitespace = adapter
             .parse_response(
@@ -515,7 +524,10 @@ mod tests {
                 "{\"output_text\":\"ok\",\"provider_request_id\":\"\\uFEFF\",\"adapter\":\"zk-receipt\"}",
             )
             .expect_err("bom-only provider_request_id must fail closed");
-        assert_eq!(bom_only_request_id, "zk-receipt-missing-provider-request-id");
+        assert_eq!(
+            bom_only_request_id,
+            "zk-receipt-missing-provider-request-id"
+        );
 
         let missing_adapter = adapter
             .parse_response("{\"output_text\":\"ok\",\"provider_request_id\":\"pr-zk-3\"}")
@@ -593,7 +605,8 @@ mod tests {
         assert!(ok);
         assert_eq!(code, "ok");
 
-        let adapter = build_proof_adapter("\u{feff} \n\t").expect("bom+whitespace defaults to standard");
+        let adapter =
+            build_proof_adapter("\u{feff} \n\t").expect("bom+whitespace defaults to standard");
         let (ok, code) = adapter.verify("hello", 8);
         assert!(ok);
         assert_eq!(code, "ok");
@@ -624,7 +637,8 @@ mod tests {
         assert!(ok);
         assert_eq!(code, "ok");
 
-        let adapter = build_proof_adapter("FRAUD_PROOF_V1").expect("fraud proof underscore v1 alias");
+        let adapter =
+            build_proof_adapter("FRAUD_PROOF_V1").expect("fraud proof underscore v1 alias");
         let (ok, code) = adapter.verify("hello", 8);
         assert!(ok);
         assert_eq!(code, "ok");

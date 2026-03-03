@@ -1,6 +1,10 @@
-use trnm_bridge_poc::bridge_status::{BridgeStatus, CapabilityToken, SettlementCapability, SettlementRequest};
+use trnm_bridge_poc::bridge_status::{
+    BridgeStatus, CapabilityToken, SettlementCapability, SettlementRequest,
+};
 use trnm_bridge_poc::relay_heartbeat::{HeartbeatOutcome, RelayHeartbeat};
-use trnm_bridge_poc::x2_settlement_loop::{current_status, drive_minimal_settlement, SettlementConfirm, SettlementStep};
+use trnm_bridge_poc::x2_settlement_loop::{
+    current_status, drive_minimal_settlement, SettlementConfirm, SettlementStep,
+};
 
 fn operator_token() -> CapabilityToken {
     CapabilityToken {
@@ -218,7 +222,10 @@ fn x3_prep_stale_pending_degraded_retry_hint_still_fails_closed_to_compensation(
         panic!("expected compensated branch");
     };
 
-    assert_eq!(reason, "heartbeat degraded: target relay timeout with retry hint");
+    assert_eq!(
+        reason,
+        "heartbeat degraded: target relay timeout with retry hint"
+    );
     assert_eq!(event.phase, "relay_heartbeat_degraded");
     assert_eq!(event.heartbeat_source_height, Some(188));
     assert_eq!(event.heartbeat_target_height, Some(177));

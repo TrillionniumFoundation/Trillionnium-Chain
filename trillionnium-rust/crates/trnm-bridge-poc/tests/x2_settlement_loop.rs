@@ -883,7 +883,9 @@ fn x3_prep_confirm_failure_reason_collapses_crlf_and_unicode_separators_for_repl
     );
     assert_eq!(
         current_status(&request),
-        &BridgeStatus::Reverted("settlement confirm failed: target relay timeout signal".to_string())
+        &BridgeStatus::Reverted(
+            "settlement confirm failed: target relay timeout signal".to_string()
+        )
     );
 }
 
@@ -928,8 +930,7 @@ fn x3_prep_confirm_failure_reason_sanitizes_bom_and_word_joiner_controls_for_rep
 }
 
 #[test]
-fn x3_prep_degraded_heartbeat_reason_sanitizes_bom_and_word_joiner_controls_for_replay_stability(
-) {
+fn x3_prep_degraded_heartbeat_reason_sanitizes_bom_and_word_joiner_controls_for_replay_stability() {
     let mut request = SettlementRequest::new(1, "0xheartbeat-sanitize-bom".to_string());
     let token = operator_token();
 

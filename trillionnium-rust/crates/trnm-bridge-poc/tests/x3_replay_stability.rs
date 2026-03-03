@@ -1,6 +1,12 @@
-use trnm_bridge_poc::bridge_status::{BridgeStatus, CapabilityToken, SettlementCapability, SettlementRequest};
-use trnm_bridge_poc::relay_heartbeat::{HeartbeatOutcome, RelayHeartbeatConfig, RelayHeartbeatMonitor};
-use trnm_bridge_poc::x2_settlement_loop::{current_status, drive_minimal_settlement, SettlementConfirm, SettlementStep};
+use trnm_bridge_poc::bridge_status::{
+    BridgeStatus, CapabilityToken, SettlementCapability, SettlementRequest,
+};
+use trnm_bridge_poc::relay_heartbeat::{
+    HeartbeatOutcome, RelayHeartbeatConfig, RelayHeartbeatMonitor,
+};
+use trnm_bridge_poc::x2_settlement_loop::{
+    current_status, drive_minimal_settlement, SettlementConfirm, SettlementStep,
+};
 
 fn operator_token() -> CapabilityToken {
     CapabilityToken {

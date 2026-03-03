@@ -71,5 +71,8 @@ fn submit_message_task_id_uses_max_existing_plus_one() {
         .filter_map(|e| e.file_name().into_string().ok())
         .filter(|name| name.starts_with(&format!(".{}.tmp-", file_name)))
         .count();
-    assert_eq!(leftovers, 0, "no temp files should remain after atomic write");
+    assert_eq!(
+        leftovers, 0,
+        "no temp files should remain after atomic write"
+    );
 }

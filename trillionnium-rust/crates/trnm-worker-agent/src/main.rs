@@ -870,8 +870,7 @@ fn is_forbidden_shell_program(program: &str) -> bool {
         .to_ascii_lowercase();
     matches!(
         leaf.as_str(),
-        "sh"
-            | "bash"
+        "sh" | "bash"
             | "zsh"
             | "dash"
             | "ksh"
@@ -1926,7 +1925,11 @@ mod tests {
 
     #[test]
     fn parse_command_spec_rejects_shell_interpreter_programs() {
-        for spec in ["sh -c 'echo pwn'", "/bin/bash -lc 'echo pwn'", "pwsh -c echo"] {
+        for spec in [
+            "sh -c 'echo pwn'",
+            "/bin/bash -lc 'echo pwn'",
+            "pwsh -c echo",
+        ] {
             let err = parse_command_spec(spec).expect_err("shell program must be rejected");
             assert!(
                 err.to_string()
@@ -2228,7 +2231,10 @@ mod tests {
         );
 
         // ARABIC LETTER MARK wrappers should be treated as invisible fillers as well.
-        assert_eq!(verify_model_output("\u{061C}ok\u{061C}", 2), ("accepted", "ok"));
+        assert_eq!(
+            verify_model_output("\u{061C}ok\u{061C}", 2),
+            ("accepted", "ok")
+        );
         assert_eq!(
             verify_model_output("\u{061C}ok\u{061C}", 1),
             ("rejected", "output_too_long")
@@ -3077,7 +3083,9 @@ mod tests {
 
         let err = validate_audit_export_index(&index)
             .expect_err("unknown audit index version must fail closed");
-        assert!(err.to_string().contains("unsupported audit index version=2"));
+        assert!(err
+            .to_string()
+            .contains("unsupported audit index version=2"));
     }
 
     #[test]
@@ -3356,7 +3364,9 @@ mod tests {
             index.by_compliance_profile.get("cn-pii-restricted"),
             Some(&vec![0, 1])
         );
-        assert!(!index.by_compliance_profile.contains_key("CN_PII_RESTRICTED"));
+        assert!(!index
+            .by_compliance_profile
+            .contains_key("CN_PII_RESTRICTED"));
         assert!(!index
             .by_compliance_profile
             .contains_key("cn/pii/restricted"));
@@ -3574,9 +3584,7 @@ mod tests {
         assert!(query_audit_export_by_provenance_fingerprint(&rows, &index, "   ").is_empty());
 
         let oversized = "a".repeat(129);
-        assert!(
-            query_audit_export_by_provenance_fingerprint(&rows, &index, &oversized).is_empty()
-        );
+        assert!(query_audit_export_by_provenance_fingerprint(&rows, &index, &oversized).is_empty());
     }
 
     #[test]
