@@ -320,6 +320,7 @@ Trillionnium 目标不是“单链功能齐全”，而是“可被开发者和�
 - 统一字段（最小集）：`task_id/proof_type/verdict/verified_at/cost_hint`。
 - fail-closed 约束：证明缺失/迟到/格式不合法时，不允许静默成功，必须进入争议或降级路径并给出稳定错误码。
 - 交界约束：M2↔V2 的错误码与状态迁移表必须与 gate 用例一一映射。
+- 最小状态迁移映射（冻结）：`pending_proof -> disputed(proof_missing|proof_late|proof_invalid) -> downgraded(settlement_degraded)`。
 
 ---
 

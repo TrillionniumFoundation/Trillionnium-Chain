@@ -34,6 +34,7 @@ master_required_phrases=(
   "不允许静默成功"
   "M2↔V2"
   "错误码与状态迁移表"
+  "pending_proof -> disputed(proof_missing|proof_late|proof_invalid) -> downgraded(settlement_degraded)"
   "fail-closed"
 )
 
