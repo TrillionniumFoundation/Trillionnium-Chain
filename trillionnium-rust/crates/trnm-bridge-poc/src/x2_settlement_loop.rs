@@ -153,6 +153,12 @@ fn normalize_compensation_reason(reason: &str, fallback: &'static str) -> String
                         | '\u{2067}'
                         | '\u{2068}'
                         | '\u{2069}'
+                        | '\u{206A}'
+                        | '\u{206B}'
+                        | '\u{206C}'
+                        | '\u{206D}'
+                        | '\u{206E}'
+                        | '\u{206F}'
                 )
             {
                 ' '
@@ -243,5 +249,12 @@ mod tests {
         let raw = "target\u{00AD}relay timeout";
         let normalized = normalize_compensation_reason(raw, "fallback");
         assert_eq!(normalized, "target relay timeout");
+    }
+
+    #[test]
+    fn normalize_compensation_reason_strips_legacy_bidi_isolates_for_replay_stability() {
+        let raw = "target\u{206A} relay\u{206B} timeout\u{206C} signal\u{206D}\u{206E}\u{206F}";
+        let normalized = normalize_compensation_reason(raw, "fallback");
+        assert_eq!(normalized, "target relay timeout signal");
     }
 }
