@@ -522,3 +522,6 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e2-
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-mcp-adapter-contract-nonce-binding-fail-closed-test" "./scripts/v2/a1_mcp_adapter_contract_nonce_binding_fail_closed_test.sh" "ci(gate): add a1-mcp-adapter-contract-nonce-binding-fail-closed-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-mcp-adapter-contract-idempotency-conflict-fail-closed-test" "./scripts/v2/a1_mcp_adapter_contract_idempotency_conflict_fail_closed_test.sh" "ci(gate): add a1-mcp-adapter-contract-idempotency-conflict-fail-closed-test regression to quick-check"
