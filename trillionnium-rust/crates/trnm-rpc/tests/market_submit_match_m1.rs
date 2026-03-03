@@ -758,6 +758,46 @@ fn market_report_normalizes_and_ignores_invalid_bidder_keys() {
 }
 
 #[test]
+fn market_report_normalizes_soft_hyphen_bidder_aliases_into_single_identity() {
+    let _guard = test_lock().lock().expect("test lock");
+
+    let tasks = unique_market_fixture_path("market_report_soft_hyphen_tasks", "jsonl");
+    let bids = unique_market_fixture_path("market_report_soft_hyphen_bids", "jsonl");
+    fs::write(
+        &tasks,
+        r#"{"task_id":31001,"creator":"alice","bounty":100,"description":"soft-hyphen","status":"open","created_at_unix_ms":1}"#,
+    )
+    .expect("write tasks fixture");
+    fs::write(
+        &bids,
+        concat!(
+            r#"{"task_id":31001,"worker":"Worker\u00ad A","price":90,"created_at_unix_ms":1700000000000}"#,
+            "\n",
+            r#"{"task_id":31001,"worker":"worker a","price":91,"created_at_unix_ms":1700000000001}"#,
+            "\n"
+        ),
+    )
+    .expect("write bids fixture");
+
+    let tasks_env = tasks.to_string_lossy().into_owned();
+    let bids_env = bids.to_string_lossy().into_owned();
+    let out = run_ok_with_env(
+        &["market.report"],
+        &[
+            ("TRNM_RPC_MARKET_TASKS_FILE", tasks_env.as_str()),
+            ("TRNM_RPC_MARKET_BIDS_FILE", bids_env.as_str()),
+        ],
+    );
+    let report: Value = serde_json::from_str(&out).expect("market report json");
+
+    assert_eq!(report["bid_count"], 2);
+    assert_eq!(report["unique_bidder_count"], 1);
+
+    let _ = fs::remove_file(tasks);
+    let _ = fs::remove_file(bids);
+}
+
+#[test]
 fn market_report_coverage_ignores_bids_with_invalid_worker_keys() {
     let _guard = test_lock().lock().expect("test lock");
 
