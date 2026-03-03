@@ -166,8 +166,12 @@ export const adaptQueryTask = (payload: unknown): QueryTaskResult => {
   if (!rpc.success) throw normalizeSchemaError(rpc.error.flatten());
 
   const task = rpc.data;
-  const derivedIso =
-    task.version != null ? new Date(task.version * 1000).toISOString() : new Date(0).toISOString();
+  if (task.version == null) {
+    throw normalizeSchemaError({
+      message: "rpc query-task payload missing reliable timestamp source (version)",
+    });
+  }
+  const derivedIso = new Date(task.version * 1000).toISOString();
 
   return {
     task: {
@@ -176,7 +180,7 @@ export const adaptQueryTask = (payload: unknown): QueryTaskResult => {
       status: mapRpcTaskStatus(task.status),
       owner: "unmapped:rpc-owner-not-provided",
       createdAt: derivedIso,
-      updatedAt: task.version != null ? derivedIso : undefined,
+      updatedAt: derivedIso,
       metadata: {
         source: "trnm-rpc",
         bounty: task.bounty,
