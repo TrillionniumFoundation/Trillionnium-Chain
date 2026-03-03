@@ -719,6 +719,9 @@ fn make_request_id(
 }
 
 fn ingress_file() -> PathBuf {
+    if let Some(path) = normalized_path_from_env("TRNM_RPC_INGRESS_FILE") {
+        return path;
+    }
     run_root().join("run/message-gateway/requests.jsonl")
 }
 
@@ -895,7 +898,11 @@ fn normalize_market_worker_key(raw: &str) -> Option<String> {
         // by hidden chars while preserving visible delimiters like '-' used by
         // existing worker IDs.
         .filter_map(|ch| match ch {
-            '\u{00AD}' | '\u{200B}' | '\u{200C}' | '\u{200D}' | '\u{2060}' | '\u{FEFF}' => None,
+            // Treat invisible separators as whitespace so aliases like
+            // "worker\u200ba" and "worker\u2060b" collapse to canonical keys.
+            '\u{200B}' | '\u{200C}' | '\u{200D}' | '\u{2060}' | '\u{FEFF}' => Some(' '),
+            // Strip soft-hyphen entirely to avoid creating fake separators.
+            '\u{00AD}' => None,
             // Treat control bytes as whitespace separators so malformed/injected
             // worker IDs cannot avoid alias-collapse by embedding ASCII controls.
             _ if ch.is_control() => Some(' '),
@@ -2064,7 +2071,10 @@ fn main() -> Result<()> {
             text,
             idempotency_key,
         } => {
-            let records = load_ingress_records();
+            let path = ingress_file();
+            let _lock = acquire_market_file_lock(&path)?;
+
+            let mut records = load_ingress_records();
             if let Some(found) = records
                 .iter()
                 .find(|r| r.idempotency_key == idempotency_key && r.session_id == session_id)
@@ -2096,20 +2106,8 @@ fn main() -> Result<()> {
                 reveal_tx_hash: None,
             };
 
-            let path = ingress_file();
-            if let Some(parent) = path.parent() {
-                fs::create_dir_all(parent)?;
-            }
-            let mut buf = String::new();
-            if let Ok(existing) = fs::read_to_string(&path) {
-                buf.push_str(&existing);
-                if !existing.ends_with('\n') {
-                    buf.push('\n');
-                }
-            }
-            buf.push_str(&serde_json::to_string(&rec)?);
-            buf.push('\n');
-            fs::write(&path, buf)?;
+            records.push(rec.clone());
+            save_ingress_records(&records)?;
 
             let out = MessageRequestQueryResponse {
                 request_id: rec.request_id,
@@ -2610,6 +2608,7 @@ mod tests {
         let keys = [
             "TRNM_RPC_MARKET_TASKS_FILE",
             "TRNM_RPC_MARKET_BIDS_FILE",
+            "TRNM_RPC_INGRESS_FILE",
             MARKET_REPUTATION_FILE_ENV,
         ];
         let prev: Vec<(String, Option<String>)> = keys
@@ -2703,6 +2702,7 @@ mod tests {
             &[
                 ("TRNM_RPC_MARKET_TASKS_FILE", Some("   ")),
                 ("TRNM_RPC_MARKET_BIDS_FILE", Some(" \"\" ")),
+                ("TRNM_RPC_INGRESS_FILE", Some(" `   ` ")),
                 (MARKET_REPUTATION_FILE_ENV, Some("  ''  ")),
             ],
             || {
@@ -2711,6 +2711,10 @@ mod tests {
                     run_root().join("run/market/tasks.jsonl")
                 );
                 assert_eq!(market_bids_file(), run_root().join("run/market/bids.jsonl"));
+                assert_eq!(
+                    ingress_file(),
+                    run_root().join("run/message-gateway/requests.jsonl")
+                );
                 assert_eq!(
                     market_reputation_file(),
                     run_root().join("run/market/reputation.json")
