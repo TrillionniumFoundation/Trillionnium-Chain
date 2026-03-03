@@ -476,3 +476,43 @@ fn revoked_did_with_expired_token_and_scope_mismatch_still_returns_did_revoked_f
             if did == "did:trnm:agent-i3-fail-closed-did-revoked-expired"
     ));
 }
+
+#[test]
+fn revoked_did_with_expired_token_and_unauthorized_actor_still_returns_did_revoked_fail_closed() {
+    let mut reg = IdentityRegistry::default();
+    reg.register_did(
+        "did:trnm:agent-i3-fail-closed-did-revoked-expired-unauth".to_string(),
+        "org:lane-xi-admin".to_string(),
+        10,
+    )
+    .unwrap();
+
+    let token_id = reg
+        .issue_capability(
+            "org:lane-xi-admin".to_string(),
+            "did:trnm:agent-i3-fail-closed-did-revoked-expired-unauth".to_string(),
+            CapabilityScope::BridgeSettle,
+            20,
+            Some(30),
+        )
+        .unwrap();
+
+    reg.revoke_did(
+        "org:lane-xi-admin".to_string(),
+        "did:trnm:agent-i3-fail-closed-did-revoked-expired-unauth",
+        35,
+    )
+    .unwrap();
+
+    // I3 fail-closed contract: DID revocation must dominate even when expiry and
+    // actor unauthorized conditions are both true at verification height.
+    let err = reg
+        .verify_capability("org:intruder", token_id, CapabilityScope::BridgeSettle, 40)
+        .unwrap_err();
+
+    assert!(matches!(
+        err,
+        InteropIdentityError::DidRevoked { did }
+            if did == "did:trnm:agent-i3-fail-closed-did-revoked-expired-unauth"
+    ));
+}
