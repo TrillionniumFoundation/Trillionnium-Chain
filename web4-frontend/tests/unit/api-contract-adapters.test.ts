@@ -110,6 +110,41 @@ describe("api-contract adapters", () => {
     });
   });
 
+  it("treats all frozen M2V2 resolution codes as fail-closed errors", () => {
+    const frozenCodes = [
+      "ERR_M2V2_PROOF_MISSING",
+      "ERR_M2V2_PROOF_LATE",
+      "ERR_M2V2_PROOF_INVALID",
+      "ERR_M2V2_SETTLEMENT_DEGRADED",
+    ] as const;
+
+    frozenCodes.forEach((code, idx) => {
+      const out = adaptQueryEvents(
+        [
+          {
+            event_type: "settle",
+            task_id: 90 + idx,
+            from_status: "Revealed",
+            to_status: "Challenged",
+            actor: "did:trnm:verifier",
+            tx_id: 100 + idx,
+            block_height: 200 + idx,
+            state_root: `root-${idx}`,
+            ts_unix_ms: 1700000010000 + idx,
+            resolution_code: code,
+          },
+        ],
+        String(90 + idx),
+      );
+
+      expect(out.events[0]?.level).toBe("error");
+      expect(out.events[0]?.payload).toMatchObject({
+        resolutionCode: code,
+        m2v2ErrorCode: code,
+      });
+    });
+  });
+
   it("adapts rpc capability audit payload", () => {
     const out = adaptQueryCapabilityAudit({
       token: {
