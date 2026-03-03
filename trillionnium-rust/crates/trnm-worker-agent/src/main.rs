@@ -1739,7 +1739,17 @@ fn attach_llm_provenance(rec: &mut MessageIngressRecord, llm: &LlmAdapterRespons
 fn classify_adapter_error(err: &AdapterError) -> (&'static str, &'static str) {
     match err.kind {
         AdapterErrorKind::Retriable => ("adapter_error", "retry_exhausted"),
-        AdapterErrorKind::NonRetriable => ("adapter_error", "non_retriable"),
+        AdapterErrorKind::NonRetriable => {
+            if err.context.contains("missing-provider-request-id") {
+                ("ERR_M2V2_PROOF_MISSING", "proof_missing")
+            } else if err.context.contains("missing-adapter-label")
+                || err.context.contains("no-json-line")
+            {
+                ("ERR_M2V2_PROOF_INVALID", "proof_invalid")
+            } else {
+                ("adapter_error", "non_retriable")
+            }
+        }
     }
 }
 
@@ -2076,6 +2086,36 @@ mod tests {
         assert_eq!(
             classify_adapter_error(&non_retriable),
             ("adapter_error", "non_retriable")
+        );
+    }
+
+    #[test]
+    fn adapter_error_classification_maps_mv2_fail_closed_receipt_contract_codes() {
+        let proof_missing = AdapterError {
+            kind: AdapterErrorKind::NonRetriable,
+            context: "tee-receipt-missing-provider-request-id".to_string(),
+        };
+        assert_eq!(
+            classify_adapter_error(&proof_missing),
+            ("ERR_M2V2_PROOF_MISSING", "proof_missing")
+        );
+
+        let proof_invalid = AdapterError {
+            kind: AdapterErrorKind::NonRetriable,
+            context: "zk-receipt-missing-adapter-label".to_string(),
+        };
+        assert_eq!(
+            classify_adapter_error(&proof_invalid),
+            ("ERR_M2V2_PROOF_INVALID", "proof_invalid")
+        );
+
+        let no_json_line = AdapterError {
+            kind: AdapterErrorKind::NonRetriable,
+            context: "no-json-line".to_string(),
+        };
+        assert_eq!(
+            classify_adapter_error(&no_json_line),
+            ("ERR_M2V2_PROOF_INVALID", "proof_invalid")
         );
     }
 
