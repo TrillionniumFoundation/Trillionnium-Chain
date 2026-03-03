@@ -11,5 +11,6 @@ cargo test -p trnm-pouw registry_aliases_stay_aligned_with_receipt_normalization
 cargo test -p trnm-pouw registry_is_registered_kind_accepts_version_suffixed_legacy_aliases
 cargo test -p trnm-pouw registry_is_registered_kind_accepts_zero_width_separated_aliases
 cargo test -p trnm-pouw registry_is_registered_kind_accepts_non_breaking_space_separated_aliases
+cargo test -p trnm-pouw registry_is_registered_kind_accepts_ideographic_space_separated_aliases
 
 echo "[PASS] V1 proof registry contract gate"
