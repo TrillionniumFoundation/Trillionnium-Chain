@@ -23,8 +23,10 @@ pub fn build_proof_adapter(name: &str) -> Result<Box<dyn ProofAdapter>, String> 
         | "fraudproof"
         | "fraudproofv1" => Ok(Box::new(StandardProofAdapter)),
         "tee-receipt" | "tee_receipt" | "tee-receipt-v1" | "tee_receipt_v1"
-        | "tee-attestation" | "tee_attestation" | "teereceipt" | "teeattestation"
-        | "teereceiptv1" => Ok(Box::new(TeeReceiptProofAdapter)),
+        | "tee-attestation" | "tee_attestation" | "tee-attestation-v1" | "tee_attestation_v1"
+        | "teereceipt" | "teeattestation" | "teereceiptv1" | "teeattestationv1" => {
+            Ok(Box::new(TeeReceiptProofAdapter))
+        },
         "zk-receipt" | "zk_receipt" | "zk-receipt-v1" | "zk_receipt_v1" | "zk-proof"
         | "zk_proof" | "zkreceipt" | "zkproof" | "zkreceiptv1" => {
             Ok(Box::new(ZkReceiptProofAdapter))
@@ -187,9 +189,12 @@ impl ProofAdapter for TeeReceiptProofAdapter {
                     || normalized == "tee_receipt_v1"
                     || normalized == "tee-attestation"
                     || normalized == "tee_attestation"
+                    || normalized == "tee-attestation-v1"
+                    || normalized == "tee_attestation_v1"
                     || normalized == "teereceipt"
                     || normalized == "teereceiptv1"
                     || normalized == "teeattestation"
+                    || normalized == "teeattestationv1"
             })
             .unwrap_or(false);
         if !adapter_ok {
@@ -336,6 +341,13 @@ mod tests {
             )
             .expect("tee compact alias should parse");
         assert_eq!(tee_compact_alias.provider_request_id.as_deref(), Some("pr-2bb"));
+
+        let tee_attestation_v1 = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-2bc\",\"adapter\":\"TEE_ATTESTATION_V1\"}",
+            )
+            .expect("tee attestation v1 alias should parse");
+        assert_eq!(tee_attestation_v1.provider_request_id.as_deref(), Some("pr-2bc"));
 
         let tee_with_bom_and_whitespace = adapter
             .parse_response(
@@ -687,6 +699,11 @@ mod tests {
         assert_eq!(code, "tee_receipt_ok");
 
         let adapter = build_proof_adapter("teeattestation").expect("tee compact alias");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "tee_receipt_ok");
+
+        let adapter = build_proof_adapter("TEE_ATTESTATION_V1").expect("tee attestation v1 alias");
         let (ok, code) = adapter.verify("hello", 8);
         assert!(ok);
         assert_eq!(code, "tee_receipt_ok");
