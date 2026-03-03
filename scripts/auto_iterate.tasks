@@ -436,3 +436,6 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d3-
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d2-task-model-metadata-schema-reject-provenance-index-consecutive-separator-test" "./scripts/v2/d2_task_model_metadata_schema_reject_provenance_index_consecutive_separator_test.sh" "ci(gate): add d2-task-model-metadata-schema-reject-provenance-index-consecutive-separator-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: x2-settlement-contract-gate-fault-matrix-coverage-test" "./scripts/v2/x2_settlement_contract_gate_fault_matrix_coverage_test.sh" "ci(gate): add x2-settlement-contract-gate-fault-matrix-coverage-test regression to quick-check"
