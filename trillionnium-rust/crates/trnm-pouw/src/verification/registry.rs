@@ -256,6 +256,9 @@ impl VerifierRegistry {
             "zero knowledge proof v2" | "zeroknowledgeproofv2" | "zero knowledge proof v 2" => "zk",
             "zero knowledge proof v3" | "zeroknowledgeproofv3" | "zero knowledge proof v 3" => "zk",
             "zero knowledge receipt" | "zeroknowledgereceipt" => "zk",
+            "zero knowledge receipt v1" | "zeroknowledgereceiptv1" | "zero knowledge receipt v 1" | "zero knowledge receiptv1" => "zk",
+            "zero knowledge receipt v2" | "zeroknowledgereceiptv2" | "zero knowledge receipt v 2" | "zero knowledge receiptv2" => "zk",
+            "zero knowledge receipt v3" | "zeroknowledgereceiptv3" | "zero knowledge receipt v 3" | "zero knowledge receiptv3" => "zk",
             "zk cert" | "zkcert" => "zk",
             "zero knowledge certificate" | "zeroknowledgecertificate" => "zk",
             "zero knowledge attestation" | "zeroknowledgeattestation" => "zk",
@@ -1655,6 +1658,8 @@ mod tests {
         assert!(registry.is_registered_kind("FRAUD_PROOF_V_2"));
         assert!(registry.is_registered_kind("zk receipt v1"));
         assert!(registry.is_registered_kind("zk-receipt-v-2"));
+        assert!(registry.is_registered_kind("zero knowledge receipt v2"));
+        assert!(registry.is_registered_kind("ZeroKnowledgeReceiptV3"));
         assert!(registry.is_registered_kind("fraud_receipt_v3"));
         assert!(registry.is_registered_kind("fraud receiptv1"));
         assert!(registry.is_registered_kind("fraud receiptv2"));
@@ -1682,6 +1687,7 @@ mod tests {
             "TEEATTESTATIONV1",
             "zk-receipt-v-2",
             "zero knowledge proof v2",
+            "zero knowledge receipt v3",
             "zero knowledge certificate",
             "fraud_receipt_v_1",
             "TEE_RECEIPT_V２",
