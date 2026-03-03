@@ -27,6 +27,7 @@ snapshot_required_phrases=(
   "ERR_M2V2_PROOF_LATE"
   "ERR_M2V2_PROOF_INVALID"
   "ERR_M2V2_SETTLEMENT_DEGRADED"
+  "pending_proof -> disputed(proof_missing|proof_late|proof_invalid) -> downgraded(settlement_degraded)"
   "fail-closed"
 )
 

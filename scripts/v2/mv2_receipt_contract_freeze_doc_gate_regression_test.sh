@@ -141,4 +141,26 @@ if "$GATE" >/dev/null 2>&1; then
   exit 1
 fi
 
+# Restore master and validate baseline before next mutation.
+cp "$tmp_master" "$MASTER_SPEC"
+"$GATE"
+
+# Regression 6: remove canonical state transition mapping from snapshot; gate must fail-closed.
+python3 - <<'PY' "$SNAPSHOT_SPEC"
+from pathlib import Path
+import sys
+
+spec = Path(sys.argv[1])
+text = spec.read_text(encoding='utf-8')
+needle = "pending_proof -> disputed(proof_missing|proof_late|proof_invalid) -> downgraded(settlement_degraded)"
+if needle not in text:
+    raise SystemExit(f"missing expected baseline phrase: {needle}")
+spec.write_text(text.replace(needle, "pending_proof -> disputed -> downgraded", 1), encoding='utf-8')
+PY
+
+if "$GATE" >/dev/null 2>&1; then
+  echo "[FAIL] MV2 gate should fail when snapshot state transition mapping phrase is removed" >&2
+  exit 1
+fi
+
 echo "[PASS] MV2 receipt contract freeze doc gate fails-closed on snapshot + master phrase drift"
