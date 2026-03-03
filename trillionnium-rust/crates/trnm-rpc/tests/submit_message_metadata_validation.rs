@@ -110,3 +110,25 @@ fn submit_message_rejects_internal_privacy_tier_without_provenance_index() {
         stderr
     );
 }
+
+#[test]
+fn submit_message_rejects_provenance_index_with_whitespace() {
+    let ingress = unique_fixture_path("submit_message_metadata_whitespace_index", "jsonl");
+    let _ = fs::remove_file(&ingress);
+
+    let text = r#"{"prompt":"run","metadata":{"task_type":"inference","input_hash":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","provenance":{"producer_did":"did:trnm:org:lane-dae","produced_at":"2026-03-01T01:00:00Z","provenance_index":"prov:lane dae:task-20260301-0003","privacy_tier":"internal"}}}"#;
+
+    let output = run_submit_message(&ingress, text, "k-meta-whitespace-index");
+    assert!(
+        !output.status.success(),
+        "stdout: {}",
+        String::from_utf8_lossy(&output.stdout)
+    );
+
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert!(
+        stderr.contains("metadata.provenance.provenance_index must use prov:* canonical form"),
+        "stderr: {}",
+        stderr
+    );
+}

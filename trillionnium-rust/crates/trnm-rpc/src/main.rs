@@ -1230,7 +1230,10 @@ fn validate_task_metadata_core_fields(metadata: &TaskMetadata) -> Result<()> {
         }
 
         if let Some(provenance_index) = provenance.provenance_index.as_deref() {
-            if !provenance_index.starts_with("prov:") || provenance_index.len() < 13 {
+            if !provenance_index.starts_with("prov:")
+                || provenance_index.len() < 13
+                || !is_nonempty_no_whitespace(provenance_index)
+            {
                 bail!("metadata.provenance.provenance_index must use prov:* canonical form");
             }
         }
