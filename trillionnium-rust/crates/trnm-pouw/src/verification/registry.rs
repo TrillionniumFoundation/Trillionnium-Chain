@@ -1901,6 +1901,15 @@ mod tests {
     }
 
     #[test]
+    fn registry_is_registered_kind_accepts_ogham_space_mark_aliases() {
+        let registry = VerifierRegistry::with_builtin_verifiers();
+
+        assert!(registry.is_registered_kind("TEE\u{1680}RECEIPT"));
+        assert!(registry.is_registered_kind("fraud\u{1680}challenge\u{1680}v2"));
+        assert!(registry.is_registered_kind("zero\u{1680}knowledge\u{1680}proof"));
+    }
+
+    #[test]
     fn registry_with_builtin_verifiers_registers_v1_stack() {
         let registry = VerifierRegistry::with_builtin_verifiers();
 
