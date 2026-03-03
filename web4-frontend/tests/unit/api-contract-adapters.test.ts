@@ -33,7 +33,15 @@ describe("api-contract adapters", () => {
     });
     expect(out.task.id).toBe("42");
     expect(out.task.status).toBe("succeeded");
-    expect(out.task.owner).toBe("did:trnm:alice");
+    expect(out.task.name).toBe("rpc-task:42");
+    expect(out.task.owner).toBe("unmapped:rpc-owner-not-provided");
+    expect(out.task.metadata).toMatchObject({
+      trace: {
+        name: "derived-from-rpc-task-id",
+        owner: "not-derived-from-worker-field",
+        workerObserved: "did:trnm:alice",
+      },
+    });
   });
 
   it("adapts rpc query-events array payload", () => {

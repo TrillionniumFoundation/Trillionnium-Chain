@@ -172,9 +172,9 @@ export const adaptQueryTask = (payload: unknown): QueryTaskResult => {
   return {
     task: {
       id: String(task.task_id),
-      name: `task-${task.task_id}`,
+      name: `rpc-task:${task.task_id}`,
       status: mapRpcTaskStatus(task.status),
-      owner: task.worker ?? "unknown",
+      owner: "unmapped:rpc-owner-not-provided",
       createdAt: derivedIso,
       updatedAt: task.version != null ? derivedIso : undefined,
       metadata: {
@@ -182,6 +182,11 @@ export const adaptQueryTask = (payload: unknown): QueryTaskResult => {
         bounty: task.bounty,
         resultHashHex: task.result_hash_hex ?? undefined,
         version: task.version,
+        trace: {
+          name: "derived-from-rpc-task-id",
+          owner: "not-derived-from-worker-field",
+          workerObserved: task.worker ?? null,
+        },
       },
     },
   };
