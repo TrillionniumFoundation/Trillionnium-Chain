@@ -50,6 +50,7 @@ impl VerifierRegistry {
                     || ch == '﹣'
                     || ch == '﹘'
                     || ch == '\u{00a0}'
+                    || ch == '\u{00ad}'
                     || ch == '\u{3000}'
                     || ch == '\u{200b}'
                     || ch == '\u{200c}'
@@ -1766,6 +1767,15 @@ mod tests {
         assert!(registry.is_registered_kind("ZK\u{2062}PROOF"));
         assert!(registry.is_registered_kind("TEE\u{2063}RECEIPT"));
         assert!(registry.is_registered_kind("zero\u{FEFF}knowledge\u{200C}proof"));
+    }
+
+    #[test]
+    fn registry_is_registered_kind_accepts_soft_hyphen_delimited_aliases() {
+        let registry = VerifierRegistry::with_builtin_verifiers();
+
+        assert!(registry.is_registered_kind("TEE\u{00AD}RECEIPT"));
+        assert!(registry.is_registered_kind("fraud\u{00AD}challenge\u{00AD}v2"));
+        assert!(registry.is_registered_kind("zero\u{00AD}knowledge\u{00AD}proof"));
     }
 
     #[test]
