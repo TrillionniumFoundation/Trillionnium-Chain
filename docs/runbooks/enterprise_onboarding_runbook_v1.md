@@ -55,7 +55,7 @@
 
 ## 6. 证据清单（Evidence Checklist）
 
-- [ ] 接入审批单
+- [ ] 接入审批单（含 change_ticket_id）
 - [ ] DID/capability 变更记录
 - [ ] 协议版本与适配器传输层记录
 - [ ] 隐私分级策略快照（privacy_tier）

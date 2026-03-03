@@ -42,6 +42,7 @@ evidence_guard_phrases=(
   "隐私分级策略快照（privacy_tier）"
   "最小任务 provenance_fingerprint 记录"
   "回滚命令与输出日志的 sha256 记录"
+  "接入审批单（含 change_ticket_id）"
 )
 
 for phrase in "${rollback_guard_phrases[@]}"; do
