@@ -587,6 +587,12 @@ mod tests {
         assert!(ok);
         assert_eq!(code, "ok");
 
+        let adapter = build_proof_adapter("FRAUD\u{200d}_PROOF")
+            .expect("fraud proof alias should strip zero-width joiner");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "ok");
+
         let adapter = build_proof_adapter("fraud-proof-v1").expect("fraud proof v1 alias");
         let (ok, code) = adapter.verify("hello", 8);
         assert!(ok);
@@ -633,6 +639,12 @@ mod tests {
         assert!(ok);
         assert_eq!(code, "tee_receipt_ok");
 
+        let adapter = build_proof_adapter("TEE\u{200d}_RECEIPT")
+            .expect("tee alias should strip zero-width joiner");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "tee_receipt_ok");
+
         let adapter = build_proof_adapter("TEE\u{feff}_RECEIPT").expect("tee embedded bom alias");
         let (ok, code) = adapter.verify("hello", 8);
         assert!(ok);
@@ -654,6 +666,12 @@ mod tests {
         assert_eq!(code, "zk_receipt_ok");
 
         let adapter = build_proof_adapter("ZK‑RECEIPT").expect("zk non-breaking hyphen alias");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "zk_receipt_ok");
+
+        let adapter = build_proof_adapter("ZK\u{200d}_RECEIPT")
+            .expect("zk alias should strip zero-width joiner");
         let (ok, code) = adapter.verify("hello", 8);
         assert!(ok);
         assert_eq!(code, "zk_receipt_ok");
