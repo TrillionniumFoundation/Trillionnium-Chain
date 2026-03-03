@@ -11,6 +11,7 @@ DEFAULT_REQUIRED_GATES=(
   "scripts/v2/d1_task_model_metadata_schema_gate.sh"
   "scripts/v2/a1_mcp_adapter_implementation_gate.sh"
   "scripts/v2/v1_proof_registry_contract_gate.sh"
+  "scripts/v2/m2_policy_gate_nightly_signal_test.sh"
   "scripts/v2/e2_audit_report_generator_llm2_compact_schema_test.sh"
   "scripts/v2/e2_audit_report_generator_schema_token_spoof_test.sh"
   "scripts/v2/e2_audit_report_generator_reject_uppercase_schema_test.sh"
