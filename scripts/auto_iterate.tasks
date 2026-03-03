@@ -507,3 +507,6 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d2-
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: web4-premerge-evidence-pack" "./scripts/v2/web4_premerge_evidence_pack.sh" "ci(gate): add web4-premerge-evidence-pack regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a2-a2a-adapter-contract-status-enum-canonical-test" "./scripts/v2/a2_a2a_adapter_contract_status_enum_canonical_test.sh" "ci(gate): add a2-a2a-adapter-contract-status-enum-canonical-test regression to quick-check"
