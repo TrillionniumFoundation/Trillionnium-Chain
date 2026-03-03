@@ -51,6 +51,7 @@
   - `trnm-onboard rollback --org-id <org_id> --env <env> --root-cause-tag <tag>`
 - 先执行一次 `--dry-run` 预演，确认参数与目标环境一致后再执行真实回滚：
   - `trnm-onboard rollback --org-id <org_id> --env <env> --root-cause-tag <tag> --dry-run`
+- 将最终执行命令与输出日志计算 `sha256` 并写入变更单，作为回滚可复盘锚点。
 
 ## 6. 证据清单（Evidence Checklist）
 
@@ -62,3 +63,4 @@
 - [ ] 最小任务执行与结算日志
 - [ ] 审计包导出文件与 hash
 - [ ] 回滚演练记录
+- [ ] 回滚命令与输出日志的 sha256 记录
