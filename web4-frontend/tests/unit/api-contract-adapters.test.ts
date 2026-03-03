@@ -84,6 +84,32 @@ describe("api-contract adapters", () => {
     });
   });
 
+  it("canonicalizes M2V2 resolution code casing/whitespace before fail-closed mapping", () => {
+    const out = adaptQueryEvents(
+      [
+        {
+          event_type: "settle",
+          task_id: 8,
+          from_status: "Revealed",
+          to_status: "Challenged",
+          actor: "did:trnm:verifier",
+          tx_id: 13,
+          block_height: 24,
+          state_root: "root-3",
+          ts_unix_ms: 1700000002000,
+          resolution_code: "  err_m2v2_proof_late  ",
+        },
+      ],
+      "8",
+    );
+
+    expect(out.events[0]?.level).toBe("error");
+    expect(out.events[0]?.payload).toMatchObject({
+      resolutionCode: "ERR_M2V2_PROOF_LATE",
+      m2v2ErrorCode: "ERR_M2V2_PROOF_LATE",
+    });
+  });
+
   it("adapts rpc capability audit payload", () => {
     const out = adaptQueryCapabilityAudit({
       token: {

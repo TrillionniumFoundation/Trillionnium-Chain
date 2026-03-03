@@ -68,6 +68,12 @@ type M2V2ErrorCode = (typeof m2v2ErrorCodes)[number];
 
 const m2v2ErrorCodeSet: ReadonlySet<string> = new Set(m2v2ErrorCodes);
 
+function canonicalizeResolutionCode(code: string | undefined): string | undefined {
+  if (code == null) return undefined;
+  const normalized = code.trim().toUpperCase();
+  return normalized.length > 0 ? normalized : undefined;
+}
+
 function isM2V2ErrorCode(code: string | undefined): code is M2V2ErrorCode {
   return code != null && m2v2ErrorCodeSet.has(code);
 }
@@ -175,7 +181,7 @@ export const adaptQueryEvents = (
   return {
     taskId: normalizedTaskId,
     events: events.map((event) => {
-      const resolutionCode = event.resolution_code ?? undefined;
+      const resolutionCode = canonicalizeResolutionCode(event.resolution_code ?? undefined);
       const isM2V2Error = isM2V2ErrorCode(resolutionCode);
 
       return {
