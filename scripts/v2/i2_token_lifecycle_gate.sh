@@ -80,6 +80,8 @@ cargo test -p trnm-types --test i3_capability_nonexpiring_revoke_competition \
   nonexpiring_same_height_renew_then_revoke_still_fails_closed_at_boundary
 cargo test -p trnm-types --test i3_capability_nonexpiring_revoke_competition \
   nonexpiring_same_height_renew_then_revoke_preserves_historical_pre_boundary_verify
+cargo test -p trnm-types --test i3_capability_nonexpiring_revoke_competition \
+  nonexpiring_rejected_post_boundary_renew_after_same_height_renew_then_revoke_is_side_effect_free
 # I3-prep fail-closed verifier error-contract guard: inactive state must dominate
 # scope mismatch once token is revoked to avoid authorization-shape leakage.
 cargo test -p trnm-types --test i3_capability_fail_closed_precedence \
