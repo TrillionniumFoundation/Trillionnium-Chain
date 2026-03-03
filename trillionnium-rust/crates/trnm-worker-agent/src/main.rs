@@ -359,7 +359,9 @@ fn normalize_provenance_fingerprint_lookup(value: &str) -> Option<String> {
     let mut normalized = normalized_provenance_label(Some(value), 128)?;
     // Accept heavily shell-escaped forms (e.g., nested quote wrappers from CLI/env propagation)
     // while still fail-closing on empty/invalid labels after normalization.
-    for _ in 0..4 {
+    // Cap recursive unwrapping to keep lookup bounded while tolerating deeply nested
+    // shell/env quote wrappers seen in propagation pipelines.
+    for _ in 0..16 {
         let bytes = normalized.as_bytes();
         if bytes.len() >= 2
             && ((bytes[0] == b'\'' && bytes[bytes.len() - 1] == b'\'')
@@ -403,6 +405,16 @@ struct QueryAuditOutput {
 
 fn audit_export_index_path(output_file: &Path) -> PathBuf {
     PathBuf::from(format!("{}.index.json", output_file.display()))
+}
+
+fn validate_audit_export_index(index: &AuditExportIndex) -> Result<()> {
+    if index.version != 1 {
+        anyhow::bail!(
+            "unsupported audit index version={} (expected=1)",
+            index.version
+        );
+    }
+    Ok(())
 }
 
 fn build_provenance_fingerprint(
@@ -829,12 +841,37 @@ fn backoff_delay_ms(base_ms: u64, attempt: u32) -> u64 {
     base_ms.saturating_mul(attempt as u64 + 1)
 }
 
+fn is_forbidden_shell_program(program: &str) -> bool {
+    let leaf = Path::new(program)
+        .file_name()
+        .and_then(|v| v.to_str())
+        .unwrap_or(program)
+        .to_ascii_lowercase();
+    matches!(
+        leaf.as_str(),
+        "sh"
+            | "bash"
+            | "zsh"
+            | "dash"
+            | "ksh"
+            | "csh"
+            | "tcsh"
+            | "fish"
+            | "cmd"
+            | "powershell"
+            | "pwsh"
+    )
+}
+
 fn parse_command_spec(spec: &str) -> Result<(String, Vec<String>)> {
     let tokens = shlex::split(spec).ok_or_else(|| anyhow!("invalid command spec quoting"))?;
     if tokens.is_empty() {
         anyhow::bail!("empty command spec");
     }
     let program = tokens[0].clone();
+    if is_forbidden_shell_program(&program) {
+        anyhow::bail!("shell interpreter is forbidden in adapter command spec");
+    }
     let args = tokens[1..].to_vec();
     Ok((program, args))
 }
@@ -1300,16 +1337,28 @@ fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
         | "openaimcpoverstreamablehttpv"
         | "mcpwebsocket"
         | "mcpwebsocketv"
+        | "mcpwebsockets"
+        | "mcpwebsocketsv"
         | "mcpoverwebsocket"
         | "mcpoverwebsocketv"
+        | "mcpoverwebsockets"
+        | "mcpoverwebsocketsv"
         | "modelcontextprotocolwebsocket"
         | "modelcontextprotocolwebsocketv"
+        | "modelcontextprotocolwebsockets"
+        | "modelcontextprotocolwebsocketsv"
         | "modelcontextprotocoloverwebsocket"
         | "modelcontextprotocoloverwebsocketv"
+        | "modelcontextprotocoloverwebsockets"
+        | "modelcontextprotocoloverwebsocketsv"
         | "openaimcpwebsocket"
         | "openaimcpwebsocketv"
+        | "openaimcpwebsockets"
+        | "openaimcpwebsocketsv"
         | "openaimcpoverwebsocket"
         | "openaimcpoverwebsocketv"
+        | "openaimcpoverwebsockets"
+        | "openaimcpoverwebsocketsv"
         | "anthropicmcp"
         | "anthropicmcpprotocol"
         | "anthropicmodelcontextprotocol"
@@ -1334,12 +1383,20 @@ fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
         | "anthropicmodelcontextprotocoloverstreamablehttpv"
         | "anthropicmcpwebsocket"
         | "anthropicmcpwebsocketv"
+        | "anthropicmcpwebsockets"
+        | "anthropicmcpwebsocketsv"
         | "anthropicmcpoverwebsocket"
         | "anthropicmcpoverwebsocketv"
+        | "anthropicmcpoverwebsockets"
+        | "anthropicmcpoverwebsocketsv"
         | "anthropicmodelcontextprotocolwebsocket"
         | "anthropicmodelcontextprotocolwebsocketv"
+        | "anthropicmodelcontextprotocolwebsockets"
+        | "anthropicmodelcontextprotocolwebsocketsv"
         | "anthropicmodelcontextprotocoloverwebsocket"
-        | "anthropicmodelcontextprotocoloverwebsocketv" => Some("mcp".to_string()),
+        | "anthropicmodelcontextprotocoloverwebsocketv"
+        | "anthropicmodelcontextprotocoloverwebsockets"
+        | "anthropicmodelcontextprotocoloverwebsocketsv" => Some("mcp".to_string()),
         "a2a"
         | "a2av"
         | "a2av1"
@@ -1431,8 +1488,12 @@ fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
         | "a2aoverhttpv"
         | "a2awebsocket"
         | "a2awebsocketv"
+        | "a2awebsockets"
+        | "a2awebsocketsv"
         | "a2aoverwebsocket"
         | "a2aoverwebsocketv"
+        | "a2aoverwebsockets"
+        | "a2aoverwebsocketsv"
         | "agent2agenthttp"
         | "agent2agenthttpv"
         | "agenttoagenthttp"
@@ -1443,20 +1504,36 @@ fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
         | "agenttoagentprotocolhttpv"
         | "agent2agentwebsocket"
         | "agent2agentwebsocketv"
+        | "agent2agentwebsockets"
+        | "agent2agentwebsocketsv"
         | "agent2agentoverwebsocket"
         | "agent2agentoverwebsocketv"
+        | "agent2agentoverwebsockets"
+        | "agent2agentoverwebsocketsv"
         | "agenttoagentwebsocket"
         | "agenttoagentwebsocketv"
+        | "agenttoagentwebsockets"
+        | "agenttoagentwebsocketsv"
         | "agenttoagentoverwebsocket"
         | "agenttoagentoverwebsocketv"
+        | "agenttoagentoverwebsockets"
+        | "agenttoagentoverwebsocketsv"
         | "agent2agentprotocolwebsocket"
         | "agent2agentprotocolwebsocketv"
+        | "agent2agentprotocolwebsockets"
+        | "agent2agentprotocolwebsocketsv"
         | "agent2agentprotocoloverwebsocket"
         | "agent2agentprotocoloverwebsocketv"
+        | "agent2agentprotocoloverwebsockets"
+        | "agent2agentprotocoloverwebsocketsv"
         | "agenttoagentprotocolwebsocket"
         | "agenttoagentprotocolwebsocketv"
+        | "agenttoagentprotocolwebsockets"
+        | "agenttoagentprotocolwebsocketsv"
         | "agenttoagentprotocoloverwebsocket"
         | "agenttoagentprotocoloverwebsocketv"
+        | "agenttoagentprotocoloverwebsockets"
+        | "agenttoagentprotocoloverwebsocketsv"
         | "agent2agentstreamablehttp"
         | "agent2agentstreamablehttpv"
         | "agent2agentstreamablehttpv1"
@@ -1502,16 +1579,24 @@ fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
         | "googleagent2agentoverhttpv"
         | "googleagent2agentwebsocket"
         | "googleagent2agentwebsocketv"
+        | "googleagent2agentwebsockets"
+        | "googleagent2agentwebsocketsv"
         | "googleagent2agentoverwebsocket"
         | "googleagent2agentoverwebsocketv"
+        | "googleagent2agentoverwebsockets"
+        | "googleagent2agentoverwebsocketsv"
         | "googleagenttoagenthttp"
         | "googleagenttoagenthttpv"
         | "googleagenttoagentoverhttp"
         | "googleagenttoagentoverhttpv"
         | "googleagenttoagentwebsocket"
         | "googleagenttoagentwebsocketv"
+        | "googleagenttoagentwebsockets"
+        | "googleagenttoagentwebsocketsv"
         | "googleagenttoagentoverwebsocket"
-        | "googleagenttoagentoverwebsocketv" => Some("a2a".to_string()),
+        | "googleagenttoagentoverwebsocketv"
+        | "googleagenttoagentoverwebsockets"
+        | "googleagenttoagentoverwebsocketsv" => Some("a2a".to_string()),
         _ => None,
     }
 }
@@ -1796,6 +1881,26 @@ mod tests {
         let err =
             parse_command_spec("python3 -c 'print(1)").expect_err("unbalanced quote must fail");
         assert!(err.to_string().contains("invalid command spec quoting"));
+    }
+
+    #[test]
+    fn parse_command_spec_rejects_shell_interpreter_programs() {
+        for spec in ["sh -c 'echo pwn'", "/bin/bash -lc 'echo pwn'", "pwsh -c echo"] {
+            let err = parse_command_spec(spec).expect_err("shell program must be rejected");
+            assert!(
+                err.to_string()
+                    .contains("shell interpreter is forbidden in adapter command spec"),
+                "unexpected error for {spec}: {err}"
+            );
+        }
+    }
+
+    #[test]
+    fn parse_command_spec_accepts_non_shell_binary() {
+        let (program, args) =
+            parse_command_spec("python3 -c 'print(1)'").expect("python must be accepted");
+        assert_eq!(program, "python3");
+        assert_eq!(args, vec!["-c".to_string(), "print(1)".to_string()]);
     }
 
     #[test]
@@ -2836,6 +2941,44 @@ mod tests {
     }
 
     #[test]
+    fn validate_audit_export_index_accepts_current_version() {
+        let index = AuditExportIndex {
+            version: 1,
+            total_records: 0,
+            by_task_id: BTreeMap::new(),
+            by_status: BTreeMap::new(),
+            by_status_phase: BTreeMap::new(),
+            by_provider: BTreeMap::new(),
+            by_model: BTreeMap::new(),
+            by_agent_protocol: BTreeMap::new(),
+            by_compliance_profile: BTreeMap::new(),
+            by_provenance_fingerprint: BTreeMap::new(),
+        };
+
+        validate_audit_export_index(&index).expect("v1 index should be accepted");
+    }
+
+    #[test]
+    fn validate_audit_export_index_rejects_unknown_version_fail_closed() {
+        let index = AuditExportIndex {
+            version: 2,
+            total_records: 0,
+            by_task_id: BTreeMap::new(),
+            by_status: BTreeMap::new(),
+            by_status_phase: BTreeMap::new(),
+            by_provider: BTreeMap::new(),
+            by_model: BTreeMap::new(),
+            by_agent_protocol: BTreeMap::new(),
+            by_compliance_profile: BTreeMap::new(),
+            by_provenance_fingerprint: BTreeMap::new(),
+        };
+
+        let err = validate_audit_export_index(&index)
+            .expect_err("unknown audit index version must fail closed");
+        assert!(err.to_string().contains("unsupported audit index version=2"));
+    }
+
+    #[test]
     fn export_audit_markdown_contains_provenance_fingerprint_fields() {
         let rows = vec![EnterpriseAuditExportRecord {
             request_id: "r1".to_string(),
@@ -3277,6 +3420,33 @@ mod tests {
             &rows,
             &index,
             "  ` ' \" deadbeef \" ' `  ",
+        );
+        assert_eq!(hit.len(), 1);
+        assert_eq!(hit[0].request_id, "r1");
+    }
+
+    #[test]
+    fn query_audit_export_by_provenance_fingerprint_accepts_very_deep_quote_wrappers() {
+        let rows = vec![EnterpriseAuditExportRecord {
+            request_id: "r1".to_string(),
+            task_id: 7002,
+            status: "reveal_submitted".to_string(),
+            provider_request_id: Some("p1".to_string()),
+            provenance_schema_version: Some("llm.v2".to_string()),
+            provenance_fingerprint: Some("deadbeef".to_string()),
+            provider: Some("openai".to_string()),
+            model: Some("gpt-5.3-codex".to_string()),
+            adapter: Some("mcp".to_string()),
+            agent_protocol: Some("a2a".to_string()),
+            compliance_profile: Some("cn-moderate".to_string()),
+        }];
+
+        let index = build_audit_export_index(&rows);
+        // Five nested wrappers can appear after repeated env-forwarding hops.
+        let hit = query_audit_export_by_provenance_fingerprint(
+            &rows,
+            &index,
+            "  ' \" ` ' \" deadbeef \" ' ` \" '  ",
         );
         assert_eq!(hit.len(), 1);
         assert_eq!(hit[0].request_id, "r1");
@@ -4024,7 +4194,15 @@ mod tests {
             Some("mcp")
         );
         assert_eq!(
+            normalized_agent_protocol(Some("MCP over WebSockets v2")).as_deref(),
+            Some("mcp")
+        );
+        assert_eq!(
             normalized_agent_protocol(Some("OpenAI MCP WebSocket v3")).as_deref(),
+            Some("mcp")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("OpenAI MCP WebSockets v3")).as_deref(),
             Some("mcp")
         );
         assert_eq!(
@@ -4032,11 +4210,23 @@ mod tests {
             Some("mcp")
         );
         assert_eq!(
+            normalized_agent_protocol(Some("Anthropic MCP over WebSockets v2")).as_deref(),
+            Some("mcp")
+        );
+        assert_eq!(
             normalized_agent_protocol(Some("A2A over WebSocket v2")).as_deref(),
             Some("a2a")
         );
         assert_eq!(
+            normalized_agent_protocol(Some("A2A over WebSockets v2")).as_deref(),
+            Some("a2a")
+        );
+        assert_eq!(
             normalized_agent_protocol(Some("Google Agent-to-Agent WebSocket v4")).as_deref(),
+            Some("a2a")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Google Agent-to-Agent WebSockets v4")).as_deref(),
             Some("a2a")
         );
     }
@@ -5173,6 +5363,7 @@ fn main() -> Result<()> {
                 exports.push(serde_json::from_str::<EnterpriseAuditExportRecord>(line)?);
             }
             let index: AuditExportIndex = serde_json::from_str(&fs::read_to_string(&index_file)?)?;
+            validate_audit_export_index(&index)?;
 
             let (hit_indexes, records, normalized_fp) = if let Some(task_id) = task_id {
                 let key = task_id.to_string();

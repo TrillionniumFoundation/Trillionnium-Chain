@@ -17,6 +17,7 @@ required_refs=(
   "scripts/v2/v1_proof_registry_contract_gate.sh"
   "scripts/v2/e2_audit_report_generator_llm2_compact_schema_test.sh"
   "scripts/v2/e2_audit_report_generator_schema_token_spoof_test.sh"
+  "scripts/v2/e2_audit_report_generator_reject_uppercase_schema_test.sh"
   "scripts/v2/e3_enterprise_runbook_required_sections_test.sh"
 )
 

@@ -120,7 +120,16 @@ fn is_disallowed_invisible_char(ch: char) -> bool {
 fn normalize_failure_reason(reason: &str) -> String {
     let sanitized: String = reason
         .chars()
-        .filter(|ch| !ch.is_control() && !is_disallowed_invisible_char(*ch))
+        .map(|ch| {
+            if ch.is_whitespace() {
+                ' '
+            } else if ch.is_control() || is_disallowed_invisible_char(ch) {
+                '\0'
+            } else {
+                ch
+            }
+        })
+        .filter(|ch| *ch != '\0')
         .collect();
     let collapsed = sanitized.split_whitespace().collect::<Vec<_>>().join(" ");
     if collapsed.is_empty() {
