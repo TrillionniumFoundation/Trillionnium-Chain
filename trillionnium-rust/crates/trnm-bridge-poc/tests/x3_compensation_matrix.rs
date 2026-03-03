@@ -268,3 +268,39 @@ fn x3_prep_stale_pending_degraded_reason_strips_alm_and_zwnj_for_replay_stabilit
     assert_eq!(event.confirm_reason, Some(reason.clone()));
     assert_eq!(current_status(&request), &BridgeStatus::Reverted(reason));
 }
+
+#[test]
+fn x3_prep_stale_pending_degraded_reason_collapses_crlf_and_unicode_separators_for_replay_stability() {
+    let mut request = SettlementRequest::new(8, "0xmatrix-sanitize-crlf-separators".to_string());
+    let token = operator_token();
+
+    let degraded = HeartbeatOutcome {
+        heartbeat: None,
+        should_retry: false,
+        degraded: true,
+        message: "target\r\nrelay\u{2028}timeout\u{2029}signal\n".to_string(),
+    };
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &degraded,
+        SettlementConfirm::Confirmed { height: 6263 },
+    )
+    .unwrap();
+
+    let SettlementStep::Compensated { reason, event } = out else {
+        panic!("expected compensated branch");
+    };
+
+    assert_eq!(reason, "heartbeat degraded: target relay timeout signal");
+    assert!(!reason.contains('\n'));
+    assert!(!reason.contains('\r'));
+    assert!(!reason.contains('\u{2028}'));
+    assert!(!reason.contains('\u{2029}'));
+
+    assert_eq!(event.phase, "relay_heartbeat_degraded");
+    assert_eq!(event.confirm_height, None);
+    assert_eq!(event.confirm_reason, Some(reason.clone()));
+    assert_eq!(current_status(&request), &BridgeStatus::Reverted(reason));
+}
