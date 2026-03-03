@@ -1738,7 +1738,13 @@ fn attach_llm_provenance(rec: &mut MessageIngressRecord, llm: &LlmAdapterRespons
 
 fn classify_adapter_error(err: &AdapterError) -> (&'static str, &'static str) {
     match err.kind {
-        AdapterErrorKind::Retriable => ("adapter_error", "retry_exhausted"),
+        AdapterErrorKind::Retriable => {
+            if err.context.contains("timeout") || err.context.contains("proof-late") {
+                ("ERR_M2V2_PROOF_LATE", "proof_late")
+            } else {
+                ("adapter_error", "retry_exhausted")
+            }
+        }
         AdapterErrorKind::NonRetriable => {
             if err.context.contains("missing-provider-request-id") {
                 ("ERR_M2V2_PROOF_MISSING", "proof_missing")
@@ -2073,7 +2079,7 @@ mod tests {
     fn adapter_error_classification_is_unified_failed_adapter() {
         let retry_exhausted = AdapterError {
             kind: AdapterErrorKind::Retriable,
-            context: "llm adapter timeout after 3000ms".to_string(),
+            context: "llm adapter transient io failure".to_string(),
         };
         let non_retriable = AdapterError {
             kind: AdapterErrorKind::NonRetriable,
@@ -2098,6 +2104,15 @@ mod tests {
         assert_eq!(
             classify_adapter_error(&proof_missing),
             ("ERR_M2V2_PROOF_MISSING", "proof_missing")
+        );
+
+        let proof_late = AdapterError {
+            kind: AdapterErrorKind::Retriable,
+            context: "llm adapter timeout after 3000ms".to_string(),
+        };
+        assert_eq!(
+            classify_adapter_error(&proof_late),
+            ("ERR_M2V2_PROOF_LATE", "proof_late")
         );
 
         let proof_invalid = AdapterError {
