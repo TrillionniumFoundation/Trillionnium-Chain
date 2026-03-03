@@ -36,7 +36,7 @@ if [[ "$rc" -eq 0 ]]; then
   exit 1
 fi
 
-if ! grep -Fq "provenance.provenance_index does not match pattern ^prov:[a-z0-9](?:[a-z0-9:_-]{6,126}[a-z0-9])$" <<<"$output"; then
+if ! grep -Fq "provenance.provenance_index does not match pattern ^prov:[a-z0-9](?:[a-z0-9]|[:_-](?=[a-z0-9])){6,126}[a-z0-9]$" <<<"$output"; then
   echo "[FAIL] missing explicit provenance_index pattern error" >&2
   echo "$output" >&2
   exit 1
