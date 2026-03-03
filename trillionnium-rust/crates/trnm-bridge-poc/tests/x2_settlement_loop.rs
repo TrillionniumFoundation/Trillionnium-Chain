@@ -771,6 +771,35 @@ fn x3_prep_manual_degraded_blank_message_uses_stable_failure_fallback() {
 }
 
 #[test]
+fn x3_prep_manual_degraded_reason_is_length_capped_for_replayable_compensation() {
+    let mut request = SettlementRequest::new(1, "0xmanual-hbcap".to_string());
+    let token = operator_token();
+
+    let degraded = trnm_bridge_poc::relay_heartbeat::HeartbeatOutcome {
+        heartbeat: None,
+        should_retry: false,
+        degraded: true,
+        message: format!("manual{}", "y".repeat(400)),
+    };
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &degraded,
+        SettlementConfirm::Confirmed { height: 10001 },
+    )
+    .unwrap();
+
+    let SettlementStep::Compensated { reason, .. } = out else {
+        panic!("expected compensated branch");
+    };
+    assert!(reason.starts_with("heartbeat degraded: manual"));
+    assert!(reason.ends_with('…'));
+    assert_eq!(reason.chars().count(), 181);
+    assert_eq!(current_status(&request), &BridgeStatus::Reverted(reason));
+}
+
+#[test]
 fn x3_prep_confirm_failure_reason_sanitizes_invisible_controls_for_replay_stability() {
     let mut request = SettlementRequest::new(1, "0xconfirm-sanitize".to_string());
     let token = operator_token();
