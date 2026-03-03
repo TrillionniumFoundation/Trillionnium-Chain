@@ -1313,6 +1313,22 @@ fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
         | "anthropicmodelcontextprotocolv"
         | "anthropicmodelcontextprotocolv1"
         | "anthropicmodelcontextprotocolv2"
+        | "anthropicmcphttp"
+        | "anthropicmcphttpv"
+        | "anthropicmcpoverhttp"
+        | "anthropicmcpoverhttpv"
+        | "anthropicmcpstreamablehttp"
+        | "anthropicmcpstreamablehttpv"
+        | "anthropicmcpoverstreamablehttp"
+        | "anthropicmcpoverstreamablehttpv"
+        | "anthropicmodelcontextprotocolhttp"
+        | "anthropicmodelcontextprotocolhttpv"
+        | "anthropicmodelcontextprotocoloverhttp"
+        | "anthropicmodelcontextprotocoloverhttpv"
+        | "anthropicmodelcontextprotocolstreamablehttp"
+        | "anthropicmodelcontextprotocolstreamablehttpv"
+        | "anthropicmodelcontextprotocoloverstreamablehttp"
+        | "anthropicmodelcontextprotocoloverstreamablehttpv"
         | "anthropicmcpwebsocket"
         | "anthropicmcpwebsocketv"
         | "anthropicmodelcontextprotocolwebsocket"
@@ -3880,6 +3896,15 @@ mod tests {
         );
         assert_eq!(
             normalized_agent_protocol(Some("Anthropic Model Context Protocol v1")).as_deref(),
+            Some("mcp")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Anthropic MCP over Streamable HTTP v2")).as_deref(),
+            Some("mcp")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Anthropic Model Context Protocol over HTTP v2"))
+                .as_deref(),
             Some("mcp")
         );
         assert_eq!(
