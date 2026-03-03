@@ -1809,15 +1809,46 @@ fn parse_http_get_path(first_line: &str) -> Option<&str> {
     Some(path.split('?').next().unwrap_or(path))
 }
 
+fn normalize_capability_subject_lookup(raw: &str) -> Option<String> {
+    let normalized = raw
+        .trim()
+        .chars()
+        .filter_map(|ch| match ch {
+            '\u{200B}' | '\u{200C}' | '\u{200D}' | '\u{2060}' | '\u{FEFF}' => None,
+            _ if ch.is_control() => None,
+            _ => Some(ch),
+        })
+        .collect::<String>();
+    if normalized.is_empty() {
+        None
+    } else {
+        Some(normalized)
+    }
+}
+
 fn resolve_capability_token_subject_or_token(
     registry: &IdentityRegistry,
     subject_or_token: &str,
 ) -> Option<u64> {
-    if let Ok(token_id) = subject_or_token.parse::<u64>() {
+    let normalized = normalize_capability_subject_lookup(subject_or_token)?;
+    if let Ok(token_id) = normalized.parse::<u64>() {
         return Some(token_id);
     }
 
-    let mut subject_tokens = registry.capability_ids_by_subject(subject_or_token);
+    if !IdentityRegistry::is_canonical_did(&normalized) {
+        return None;
+    }
+
+    let mut subject_tokens = registry
+        .capability_ids_by_subject(&normalized)
+        .into_iter()
+        .filter(|token_id| {
+            registry
+                .capability(*token_id)
+                .map(|token| token.subject_did == normalized)
+                .unwrap_or(false)
+        })
+        .collect::<Vec<_>>();
     subject_tokens.sort_unstable();
     subject_tokens.last().copied()
 }
@@ -3033,6 +3064,66 @@ mod tests {
         if let Err(panic) = run {
             std::panic::resume_unwind(panic);
         }
+    }
+
+    #[test]
+    fn resolve_capability_token_subject_or_token_strips_invisible_controls_before_lookup() {
+        let mut registry = IdentityRegistry::default();
+        registry
+            .register_did(
+                "did:org:lane-xi".to_string(),
+                "org:lane-xi-admin".to_string(),
+                10,
+            )
+            .expect("register did");
+        let token_id = registry
+            .issue_capability(
+                "org:lane-xi-admin".to_string(),
+                "did:org:lane-xi".to_string(),
+                CapabilityScope::AuditRead,
+                12,
+                Some(120),
+            )
+            .expect("issue capability");
+
+        assert_eq!(
+            resolve_capability_token_subject_or_token(
+                &registry,
+                " \u{FEFF}did:org:lane-xi\u{200B} ",
+            ),
+            Some(token_id)
+        );
+    }
+
+    #[test]
+    fn resolve_capability_token_subject_or_token_rejects_noncanonical_subject_alias() {
+        let mut registry = IdentityRegistry::default();
+        registry
+            .register_did(
+                "did:org:lane-xi".to_string(),
+                "org:lane-xi-admin".to_string(),
+                10,
+            )
+            .expect("register did");
+        let token_id = registry
+            .issue_capability(
+                "org:lane-xi-admin".to_string(),
+                "did:org:lane-xi".to_string(),
+                CapabilityScope::AuditRead,
+                12,
+                Some(120),
+            )
+            .expect("issue capability");
+
+        assert_eq!(
+            resolve_capability_token_subject_or_token(&registry, "did:org:lane-xi\n"),
+            Some(token_id)
+        );
+        assert_eq!(
+            resolve_capability_token_subject_or_token(&registry, "did:org:lane xi"),
+            None,
+            "non-canonical DID aliases must fail closed"
+        );
     }
 
     #[test]
