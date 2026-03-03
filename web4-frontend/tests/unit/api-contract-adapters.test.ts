@@ -158,6 +158,32 @@ describe("api-contract adapters", () => {
     });
   });
 
+  it("canonicalizes M2V2 resolution code with BOM/zero-width noise before fail-closed mapping", () => {
+    const out = adaptQueryEvents(
+      [
+        {
+          event_type: "settle",
+          task_id: 9,
+          from_status: "Revealed",
+          to_status: "Challenged",
+          actor: "did:trnm:verifier",
+          tx_id: 14,
+          block_height: 25,
+          state_root: "root-4",
+          ts_unix_ms: 1700000003000,
+          resolution_code: "\uFEFF err\u200d_m2v2_proof_invalid \u200b",
+        },
+      ],
+      "9",
+    );
+
+    expect(out.events[0]?.level).toBe("error");
+    expect(out.events[0]?.payload).toMatchObject({
+      resolutionCode: "ERR_M2V2_PROOF_INVALID",
+      m2v2ErrorCode: "ERR_M2V2_PROOF_INVALID",
+    });
+  });
+
   it("treats all frozen M2V2 resolution codes as fail-closed errors", () => {
     const frozenCodes = [
       "ERR_M2V2_PROOF_MISSING",

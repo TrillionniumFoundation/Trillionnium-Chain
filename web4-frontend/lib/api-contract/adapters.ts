@@ -95,7 +95,10 @@ function normalizeCanonicalEventForM2V2(
 
 function canonicalizeResolutionCode(code: string | undefined): string | undefined {
   if (code == null) return undefined;
-  const normalized = code.trim().toUpperCase();
+  const normalized = code
+    .replace(/[\u200B\u200C\u200D\u2060\u2063\uFEFF]/g, "")
+    .trim()
+    .toUpperCase();
   return normalized.length > 0 ? normalized : undefined;
 }
 
@@ -167,7 +170,6 @@ export const adaptQueryTask = (payload: unknown): QueryTaskResult => {
       name: `task-${task.task_id}`,
       status: mapRpcTaskStatus(task.status),
       owner: task.worker ?? "unknown",
-      createdAt: new Date(0).toISOString(),
       updatedAt: task.version != null ? new Date(task.version * 1000).toISOString() : undefined,
       metadata: {
         source: "trnm-rpc",
