@@ -67,6 +67,7 @@ impl VerifierRegistry {
                     || ch == '|'
                     || ch == '｜'
                     || ch == '\\'
+                    || ch == '＼'
                     || ch == ','
                     || ch == '，'
                     || ch == '、'
@@ -1015,7 +1016,7 @@ mod tests {
     fn registry_register_collapses_non_breaking_hyphen_zk_receipt_alias_for_lookup() {
         let mut registry = VerifierRegistry::new();
         registry.register(Arc::new(AlwaysValidVerifier {
-            kind: " ZK-RECEIPT ",
+            kind: " ZK‑RECEIPT ",
         }));
 
         let task = task_with_proof_type(ProofType::Zk);
@@ -1029,7 +1030,7 @@ mod tests {
     fn registry_register_collapses_figure_dash_zk_receipt_alias_for_lookup() {
         let mut registry = VerifierRegistry::new();
         registry.register(Arc::new(AlwaysValidVerifier {
-            kind: " ZK-RECEIPT ",
+            kind: " ZK‒RECEIPT ",
         }));
 
         let task = task_with_proof_type(ProofType::Zk);
@@ -1043,7 +1044,7 @@ mod tests {
     fn registry_register_collapses_em_dash_zk_receipt_alias_for_lookup() {
         let mut registry = VerifierRegistry::new();
         registry.register(Arc::new(AlwaysValidVerifier {
-            kind: " ZK-RECEIPT ",
+            kind: " ZK—RECEIPT ",
         }));
 
         let task = task_with_proof_type(ProofType::Zk);
@@ -1638,6 +1639,7 @@ mod tests {
 
         assert!(registry.is_registered_kind("TEE：RECEIPT"));
         assert!(registry.is_registered_kind("TEE／QUOTE"));
+        assert!(registry.is_registered_kind("TEE＼QUOTE"));
         assert!(registry.is_registered_kind("TEE＋RECEIPT"));
         assert!(registry.is_registered_kind("TEE－ATTESTATION"));
         assert!(registry.is_registered_kind("TEE﹣RECEIPT"));

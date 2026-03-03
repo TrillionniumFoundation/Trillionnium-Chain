@@ -107,6 +107,7 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
                 || ch == '|'
                 || ch == '｜'
                 || ch == '\\'
+                || ch == '＼'
                 || ch == ','
                 || ch == '，'
                 || ch == '、'
@@ -736,10 +737,13 @@ mod tests {
     fn verification_receipt_new_collapses_extended_registry_delimiters_to_router_keys() {
         let fraud = VerificationReceipt::new(1, "fraud|receipt", VerificationResult::Valid, "v", 1);
         let tee = VerificationReceipt::new(2, "TEE\\PROOF", VerificationResult::Valid, "v", 2);
-        let zk = VerificationReceipt::new(3, "zk@receipt", VerificationResult::Valid, "v", 3);
+        let tee_fullwidth =
+            VerificationReceipt::new(3, "TEE＼PROOF", VerificationResult::Valid, "v", 3);
+        let zk = VerificationReceipt::new(4, "zk@receipt", VerificationResult::Valid, "v", 4);
 
         assert_eq!(fraud.proof_type, "fraud");
         assert_eq!(tee.proof_type, "tee");
+        assert_eq!(tee_fullwidth.proof_type, "tee");
         assert_eq!(zk.proof_type, "zk");
     }
 
