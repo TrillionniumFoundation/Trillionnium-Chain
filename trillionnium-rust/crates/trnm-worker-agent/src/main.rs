@@ -396,9 +396,30 @@ fn query_audit_export_by_provenance_fingerprint<'a>(
 }
 
 #[derive(Debug, Serialize)]
+struct QueryAuditRecord {
+    #[serde(flatten)]
+    record: EnterpriseAuditExportRecord,
+    proof_type: Option<String>,
+    settlement_status: String,
+    timestamp_unix_ms: Option<u128>,
+}
+
+impl From<EnterpriseAuditExportRecord> for QueryAuditRecord {
+    fn from(record: EnterpriseAuditExportRecord) -> Self {
+        let settlement_status = record.status.clone();
+        Self {
+            record,
+            proof_type: None,
+            settlement_status,
+            timestamp_unix_ms: None,
+        }
+    }
+}
+
+#[derive(Debug, Serialize)]
 struct QueryAuditOutput {
     hit_indexes: Vec<usize>,
-    records: Vec<EnterpriseAuditExportRecord>,
+    records: Vec<QueryAuditRecord>,
     #[serde(skip_serializing_if = "Option::is_none")]
     provenance_fingerprint: Option<String>,
 }
@@ -5374,10 +5395,11 @@ fn main() -> Result<()> {
             let (hit_indexes, records, normalized_fp) = if let Some(task_id) = task_id {
                 let key = task_id.to_string();
                 let hits = index.by_task_id.get(&key).cloned().unwrap_or_default();
-                let rows = query_audit_export_by_task_id(&exports, &index, task_id)
-                    .into_iter()
-                    .cloned()
-                    .collect();
+                let rows: Vec<EnterpriseAuditExportRecord> =
+                    query_audit_export_by_task_id(&exports, &index, task_id)
+                        .into_iter()
+                        .cloned()
+                        .collect();
                 (hits, rows, None)
             } else {
                 let raw = provenance_fingerprint.expect("checked above");
@@ -5388,7 +5410,7 @@ fn main() -> Result<()> {
                     .get(&normalized)
                     .cloned()
                     .unwrap_or_default();
-                let rows =
+                let rows: Vec<EnterpriseAuditExportRecord> =
                     query_audit_export_by_provenance_fingerprint(&exports, &index, &normalized)
                         .into_iter()
                         .cloned()
@@ -5398,7 +5420,7 @@ fn main() -> Result<()> {
 
             let out = QueryAuditOutput {
                 hit_indexes,
-                records,
+                records: records.into_iter().map(QueryAuditRecord::from).collect(),
                 provenance_fingerprint: normalized_fp,
             };
             println!("{}", serde_json::to_string_pretty(&out)?);
