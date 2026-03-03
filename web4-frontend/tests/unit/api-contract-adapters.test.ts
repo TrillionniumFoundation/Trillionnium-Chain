@@ -272,6 +272,10 @@ describe("api-contract adapters", () => {
     expect(out.audits[0]?.granted).toBe(true);
   });
 
+  it("fails closed on rpc query-events empty payload without requested task context", () => {
+    expect(() => adaptQueryEvents([], "   ")).toThrow(FrontendApiError);
+  });
+
   it("fails closed on malformed payload", () => {
     expect(() => adaptQueryEvents({ bad: true }, "1")).toThrow(FrontendApiError);
   });
