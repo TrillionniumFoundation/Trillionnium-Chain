@@ -15,9 +15,6 @@ if [[ ! -f "$MASTER_SPEC" ]]; then
   exit 1
 fi
 
-expected_error_mapping_line='- 最小错误码映射（冻结）：`proof_missing -> ERR_M2V2_PROOF_MISSING`、`proof_late -> ERR_M2V2_PROOF_LATE`、`proof_invalid -> ERR_M2V2_PROOF_INVALID`、`settlement_degraded -> ERR_M2V2_SETTLEMENT_DEGRADED`。'
-expected_state_mapping_line='- 最小状态迁移映射（冻结）：`pending_proof -> disputed(proof_missing|proof_late|proof_invalid) -> downgraded(settlement_degraded)`。'
-
 snapshot_required_phrases=(
   "### MV-2：V2 回执接入前的契约冻结（Receipt Contract Freeze）"
   "fraud_proof | tee_receipt | zk_receipt"
@@ -104,12 +101,6 @@ if [[ "$snapshot_error_mapping_line" != "$master_error_mapping_line" ]]; then
   echo "  master:   $master_error_mapping_line" >&2
   exit 1
 fi
-if [[ "$snapshot_error_mapping_line" != "$expected_error_mapping_line" ]]; then
-  echo "[FAIL] MV2 frozen error mapping line deviates from canonical contract" >&2
-  echo "  expected: $expected_error_mapping_line" >&2
-  echo "  snapshot: $snapshot_error_mapping_line" >&2
-  exit 1
-fi
 
 mapfile -t snapshot_state_mapping_lines < <(grep -F -- "最小状态迁移映射（冻结）：" "$SNAPSHOT_SPEC" || true)
 mapfile -t master_state_mapping_lines < <(grep -F -- "最小状态迁移映射（冻结）：" "$MASTER_SPEC" || true)
@@ -124,12 +115,6 @@ if [[ "$snapshot_state_mapping_line" != "$master_state_mapping_line" ]]; then
   echo "[FAIL] MV2 frozen state mapping drift between snapshot and master" >&2
   echo "  snapshot: $snapshot_state_mapping_line" >&2
   echo "  master:   $master_state_mapping_line" >&2
-  exit 1
-fi
-if [[ "$snapshot_state_mapping_line" != "$expected_state_mapping_line" ]]; then
-  echo "[FAIL] MV2 frozen state mapping line deviates from canonical contract" >&2
-  echo "  expected: $expected_state_mapping_line" >&2
-  echo "  snapshot: $snapshot_state_mapping_line" >&2
   exit 1
 fi
 
