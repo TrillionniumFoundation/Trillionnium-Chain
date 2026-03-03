@@ -18,6 +18,9 @@ cargo test -p trnm-types renew_capability_rejects_height_before_issue_without_si
 cargo test -p trnm-types renew_capability_rejects_previously_revoked_token_without_side_effects
 cargo test -p trnm-types renew_capability_rejects_when_renew_height_equals_revocation_height
 cargo test -p trnm-types renew_capability_rejects_revoked_did_without_side_effects
+# I3 prep: issue/renew/revoke competition must stay fail-closed at revocation boundary.
+cargo test -p trnm-types --test i3_capability_issue_renew_revoke_competition \
+  renew_at_revocation_boundary_is_fail_closed_when_revoke_lands_first
 cargo test -p trnm-types renew_capability_rejects_noncanonical_actor_without_side_effects
 cargo test -p trnm-types renew_capability_rejects_blank_actor_without_side_effects
 cargo test -p trnm-types renew_capability_rejects_control_character_actor_without_side_effects
