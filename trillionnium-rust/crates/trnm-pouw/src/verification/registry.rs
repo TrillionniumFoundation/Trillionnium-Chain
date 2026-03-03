@@ -140,6 +140,9 @@ impl VerifierRegistry {
             "fraud receipt v2" | "fraudreceiptv2" | "fraud receipt v 2" | "fraud receiptv2" => "fraud",
             "fraud receipt v3" | "fraudreceiptv3" | "fraud receipt v 3" | "fraud receiptv3" => "fraud",
             "fraud challenge" | "fraudchallenge" => "fraud",
+            "fraud challenge v1" | "fraudchallengev1" | "fraud challenge v 1" => "fraud",
+            "fraud challenge v2" | "fraudchallengev2" | "fraud challenge v 2" => "fraud",
+            "fraud challenge v3" | "fraudchallengev3" | "fraud challenge v 3" => "fraud",
             "tee proof" | "teeproof" => "tee",
             "tee proof v1" | "teeproofv1" | "tee proof v 1" => "tee",
             "tee proof v2" | "teeproofv2" | "tee proof v 2" => "tee",
@@ -1553,6 +1556,9 @@ mod tests {
         assert!(registry.is_registered_kind("TEE_ATTESTATION_REPORT_V2"));
         assert!(registry.is_registered_kind("fraud receipt v2"));
         assert!(registry.is_registered_kind("fraud_receipt_v_1"));
+        assert!(registry.is_registered_kind("fraud challenge v1"));
+        assert!(registry.is_registered_kind("FRAUD_CHALLENGE_V_2"));
+        assert!(registry.is_registered_kind("fraud-challenge-v3"));
         assert!(registry.is_registered_kind("fraud-proof-v3"));
         assert!(registry.is_registered_kind("FRAUD_PROOF_V_2"));
         assert!(registry.is_registered_kind("zk receipt v1"));
