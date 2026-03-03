@@ -13,6 +13,7 @@ required_tests=(
   "x3_prep_degraded_heartbeat_takes_precedence_over_timeout_confirm_failure"
   "x3_prep_degraded_blank_reason_replay_keeps_fallback_reason_stable"
   "x3_prep_confirm_failed_replay_keeps_first_compensation_reason_stable"
+  "x3_prep_manual_degraded_blank_message_uses_stable_failure_fallback"
   "x3_prep_degraded_heartbeat_reason_sanitizes_bom_and_word_joiner_controls_for_replay_stability"
   "x3_prep_confirm_failure_reason_unicode_over_cap_truncates_once_with_terminal_ellipsis"
   "x3_prep_degraded_heartbeat_reason_unicode_over_cap_truncates_once_with_terminal_ellipsis"
@@ -25,4 +26,4 @@ for test_name in "${required_tests[@]}"; do
   fi
 done
 
-echo "[PASS] x2 settlement contract gate keeps timeout precedence + duplicate/reorder/stale-pending + degraded-reason sanitization anchors"
+echo "[PASS] x2 settlement contract gate keeps timeout precedence + duplicate/reorder/stale-pending + manual/degraded fallback + reason sanitization anchors"
