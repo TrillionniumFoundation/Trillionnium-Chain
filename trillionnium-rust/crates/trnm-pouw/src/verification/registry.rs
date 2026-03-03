@@ -217,6 +217,9 @@ impl VerifierRegistry {
             "zero knowledge" | "zeroknowledge" => "zk",
             "zero knowledge snark" | "zeroknowledgesnark" => "zk",
             "zero knowledge proof" | "zeroknowledgeproof" => "zk",
+            "zero knowledge proof v1" | "zeroknowledgeproofv1" | "zero knowledge proof v 1" => "zk",
+            "zero knowledge proof v2" | "zeroknowledgeproofv2" | "zero knowledge proof v 2" => "zk",
+            "zero knowledge proof v3" | "zeroknowledgeproofv3" | "zero knowledge proof v 3" => "zk",
             "zero knowledge receipt" | "zeroknowledgereceipt" => "zk",
             "zk cert" | "zkcert" => "zk",
             "zero knowledge certificate" | "zeroknowledgecertificate" => "zk",
@@ -1576,6 +1579,7 @@ mod tests {
             "RA_QUOTE_V2",
             "TEEATTESTATIONV1",
             "zk-receipt-v-2",
+            "zero knowledge proof v2",
             "zero knowledge certificate",
             "fraud_receipt_v_1",
         ];

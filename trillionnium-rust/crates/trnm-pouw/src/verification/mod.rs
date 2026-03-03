@@ -321,6 +321,12 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
         | "snark"
         | "zero knowledge"
         | "zero knowledge proof"
+        | "zero knowledge proof v1"
+        | "zero knowledge proof v2"
+        | "zero knowledge proof v3"
+        | "zero knowledge proof v 1"
+        | "zero knowledge proof v 2"
+        | "zero knowledge proof v 3"
         | "zero knowledge receipt"
         | "zero knowledge certificate"
         | "zero knowledge attestation"
@@ -342,6 +348,9 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
         | "zeroknowledge"
         | "zeroknowledgesnark"
         | "zeroknowledgeproof"
+        | "zeroknowledgeproofv1"
+        | "zeroknowledgeproofv2"
+        | "zeroknowledgeproofv3"
         | "zeroknowledgereceipt"
         | "zeroknowledgecertificate"
         | "zeroknowledgeattestation"
@@ -899,12 +908,15 @@ mod tests {
             VerificationReceipt::new(4, "zero knowledge snark", VerificationResult::Valid, "v", 4);
         let snark_compact =
             VerificationReceipt::new(5, "ZeroKnowledgeSnark", VerificationResult::Valid, "v", 5);
+        let versioned =
+            VerificationReceipt::new(6, "zero-knowledge-proof-v2", VerificationResult::Valid, "v", 6);
 
         assert_eq!(spaced.proof_type, "zk");
         assert_eq!(underscored.proof_type, "zk");
         assert_eq!(compact.proof_type, "zk");
         assert_eq!(snark_spaced.proof_type, "zk");
         assert_eq!(snark_compact.proof_type, "zk");
+        assert_eq!(versioned.proof_type, "zk");
     }
 
     #[test]
