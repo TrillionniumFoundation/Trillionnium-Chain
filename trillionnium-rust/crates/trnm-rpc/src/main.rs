@@ -20,7 +20,7 @@ use trnm_rpc::{
 use trnm_state::StateStore;
 use trnm_types::{
     AuditEvent, CapabilityToken, GovParamObject, GovProposalObject, GovProposalStatus,
-    IdentityRegistry, RequestStatus, TaskStatus, TransferTx,
+    IdentityRegistry, PrivacyTier, RequestStatus, TaskMetadata, TaskStatus, TransferTx,
 };
 
 const QUERY_EVENTS_LIMIT_DEFAULT: usize = 100;
@@ -1127,18 +1127,149 @@ fn load_ingress_records() -> Vec<MessageIngressRecord> {
         .collect()
 }
 
-fn save_ingress_records(records: &[MessageIngressRecord]) -> Result<()> {
-    let path = ingress_file();
+fn atomic_write_text_file(path: &Path, content: &str) -> Result<()> {
     if let Some(parent) = path.parent() {
         fs::create_dir_all(parent)?;
     }
+
+    let file_name = path
+        .file_name()
+        .and_then(|n| n.to_str())
+        .unwrap_or("tmp");
+    let tmp = path.with_file_name(format!(
+        ".{}.tmp-{}-{}",
+        file_name,
+        std::process::id(),
+        now_ms()
+    ));
+
+    {
+        let mut file = OpenOptions::new()
+            .create_new(true)
+            .write(true)
+            .open(&tmp)?;
+        file.write_all(content.as_bytes())?;
+        file.sync_all()?;
+    }
+
+    fs::rename(&tmp, path)?;
+
+    #[cfg(unix)]
+    {
+        if let Some(parent) = path.parent() {
+            if let Ok(dir) = OpenOptions::new().read(true).open(parent) {
+                let _ = dir.sync_all();
+            }
+        }
+    }
+
+    Ok(())
+}
+
+fn save_ingress_records(records: &[MessageIngressRecord]) -> Result<()> {
+    let path = ingress_file();
     let mut out = String::new();
     for rec in records {
         out.push_str(&serde_json::to_string(rec)?);
         out.push('\n');
     }
-    fs::write(path, out)?;
+    atomic_write_text_file(&path, &out)
+}
+
+fn next_ingress_task_id(records: &[MessageIngressRecord]) -> Result<u64> {
+    let max_existing = records.iter().map(|r| r.task_id).max().unwrap_or(10_000);
+    max_existing
+        .checked_add(1)
+        .ok_or_else(|| anyhow!("ingress task_id exhausted: {}", max_existing))
+}
+
+fn is_lower_hex_64(input: &str) -> bool {
+    input.len() == 64 && input.bytes().all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
+}
+
+fn is_nonempty_no_whitespace(input: &str) -> bool {
+    !input.is_empty() && !input.chars().any(|c| c.is_whitespace())
+}
+
+fn validate_task_metadata_core_fields(metadata: &TaskMetadata) -> Result<()> {
+    if let Some(task_type) = metadata.task_type.as_deref() {
+        if task_type.is_empty() {
+            bail!("metadata.task_type must not be empty");
+        }
+    }
+
+    if let Some(input_hash) = metadata.input_hash.as_deref() {
+        if !is_lower_hex_64(input_hash) {
+            bail!("metadata.input_hash must be 64-char lowercase hex");
+        }
+    }
+
+    if let Some(model) = metadata.model.as_ref() {
+        if let Some(model_id) = model.model_id.as_deref() {
+            if !is_nonempty_no_whitespace(model_id) {
+                bail!("metadata.model.model_id must be non-empty and whitespace-free");
+            }
+        }
+        if let Some(model_digest) = model.model_digest.as_deref() {
+            if !is_lower_hex_64(model_digest) {
+                bail!("metadata.model.model_digest must be 64-char lowercase hex");
+            }
+        }
+        if let Some(version) = model.version.as_deref() {
+            if !is_nonempty_no_whitespace(version) {
+                bail!("metadata.model.version must be non-empty and whitespace-free");
+            }
+        }
+    }
+
+    if let Some(provenance) = metadata.provenance.as_ref() {
+        if let Some(producer_did) = provenance.producer_did.as_deref() {
+            if !(producer_did.starts_with("did:") && is_nonempty_no_whitespace(producer_did)) {
+                bail!("metadata.provenance.producer_did must be canonical did:* token");
+            }
+        }
+
+        if let Some(provenance_index) = provenance.provenance_index.as_deref() {
+            if !provenance_index.starts_with("prov:") || provenance_index.len() < 13 {
+                bail!("metadata.provenance.provenance_index must use prov:* canonical form");
+            }
+        }
+
+        match provenance.privacy_tier {
+            Some(PrivacyTier::Public) => {
+                if provenance.provenance_index.is_some() {
+                    bail!(
+                        "metadata.provenance.provenance_index must be absent when privacy_tier=public"
+                    );
+                }
+            }
+            Some(PrivacyTier::Internal) | Some(PrivacyTier::Restricted) => {
+                if provenance.provenance_index.is_none() {
+                    bail!(
+                        "metadata.provenance.provenance_index is required when privacy_tier=internal|restricted"
+                    );
+                }
+            }
+            None => {}
+        }
+    }
+
     Ok(())
+}
+
+fn validate_submit_message_metadata(text: &str) -> Result<()> {
+    let Ok(value) = serde_json::from_str::<serde_json::Value>(text) else {
+        return Ok(());
+    };
+
+    let Some(metadata_value) = value.get("metadata") else {
+        return Ok(());
+    };
+
+    let metadata: TaskMetadata = serde_json::from_value(metadata_value.clone())
+        .map_err(|err| anyhow!("invalid metadata payload: {}", err))?;
+
+    validate_task_metadata_core_fields(&metadata)
 }
 
 fn transition_request_status(current: &str, to: RequestStatus) -> Result<String> {
@@ -1597,6 +1728,49 @@ fn summarize_challenge_treasury(
     }
 }
 
+fn http_json_response(status_line: &str, body: &str) -> String {
+    format!(
+        "HTTP/1.1 {status_line}\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{}",
+        body.len(),
+        body
+    )
+}
+
+fn parse_http_get_path(first_line: &str) -> Option<&str> {
+    let mut parts = first_line.split_whitespace();
+    let method = parts.next()?;
+    let path = parts.next()?;
+    if method != "GET" {
+        return None;
+    }
+    Some(path.split('?').next().unwrap_or(path))
+}
+
+fn parse_token_id_from_audit_note(note: Option<&str>) -> Option<u64> {
+    let note = note?;
+    note.split_whitespace().find_map(|part| {
+        part.strip_prefix("token_id=")
+            .or_else(|| part.strip_prefix("token_id:"))
+            .and_then(|v| v.trim_matches(',').parse::<u64>().ok())
+    })
+}
+
+fn resolve_capability_token_subject_or_token(
+    registry: &IdentityRegistry,
+    subject_or_token: &str,
+) -> Option<u64> {
+    if let Ok(token_id) = subject_or_token.parse::<u64>() {
+        return Some(token_id);
+    }
+
+    registry
+        .audit_trail()
+        .iter()
+        .rev()
+        .filter(|event| event.subject == subject_or_token)
+        .find_map(|event| parse_token_id_from_audit_note(event.note.as_deref()))
+}
+
 fn serve_health(host: &str, port: u16) -> Result<()> {
     let addr = format!("{}:{}", host, port);
     let listener = TcpListener::bind(&addr)?;
@@ -1608,34 +1782,101 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
             Err(_) => continue,
         };
 
-        let mut buf = [0u8; 2048];
+        let mut buf = [0u8; 4096];
         let n = stream.read(&mut buf).unwrap_or(0);
         let req = String::from_utf8_lossy(&buf[..n]);
         let first = req.lines().next().unwrap_or("");
+        let path = parse_http_get_path(first);
 
-        if first.starts_with("GET /health") {
-            let body = serde_json::json!({
-                "ok": true,
-                "service": "trnm-rpc",
-                "ts_unix_ms": now_ms(),
-                "version": 1
-            })
-            .to_string();
-            let resp = format!(
-                "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{}",
-                body.len(),
-                body
-            );
-            let _ = stream.write_all(resp.as_bytes());
-        } else {
-            let body = "{\"ok\":false,\"code\":\"NOT_FOUND\"}";
-            let resp = format!(
-                "HTTP/1.1 404 Not Found\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{}",
-                body.len(),
-                body
-            );
-            let _ = stream.write_all(resp.as_bytes());
-        }
+        let response = match path {
+            Some("/health") => {
+                let body = serde_json::json!({
+                    "ok": true,
+                    "service": "trnm-rpc",
+                    "ts_unix_ms": now_ms(),
+                    "version": 1
+                })
+                .to_string();
+                http_json_response("200 OK", &body)
+            }
+            Some(path) if path.starts_with("/query-task/") => {
+                let task_id = path.trim_start_matches("/query-task/").parse::<u64>();
+                match task_id {
+                    Ok(task_id) => {
+                        let node_events = load_latest_node_events();
+                        let recs = load_latest_adapter_records();
+                        match query_task_response(task_id, &node_events, &recs) {
+                            Ok(out) => {
+                                let body = serde_json::to_string(&out).unwrap_or_else(|_| {
+                                    "{\"ok\":false,\"code\":\"SERDE_ERROR\"}".to_string()
+                                });
+                                http_json_response("200 OK", &body)
+                            }
+                            Err(err) => {
+                                let body = serde_json::json!({"ok": false, "code": "NOT_FOUND", "message": err.to_string()}).to_string();
+                                http_json_response("404 Not Found", &body)
+                            }
+                        }
+                    }
+                    Err(_) => {
+                        let body = "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid task_id\"}";
+                        http_json_response("400 Bad Request", body)
+                    }
+                }
+            }
+            Some(path) if path.starts_with("/query-events/") => {
+                let task_id = path.trim_start_matches("/query-events/").parse::<u64>();
+                match task_id {
+                    Ok(task_id) => {
+                        let node_events = load_latest_node_events();
+                        let recs = load_latest_adapter_records();
+                        match query_events_response(task_id, QUERY_EVENTS_LIMIT_DEFAULT, &node_events, &recs) {
+                            Ok(events) => {
+                                let body = serde_json::to_string(&events).unwrap_or_else(|_| {
+                                    "{\"ok\":false,\"code\":\"SERDE_ERROR\"}".to_string()
+                                });
+                                http_json_response("200 OK", &body)
+                            }
+                            Err(err) => {
+                                let body = serde_json::json!({"ok": false, "code": "NOT_FOUND", "message": err.to_string()}).to_string();
+                                http_json_response("404 Not Found", &body)
+                            }
+                        }
+                    }
+                    Err(_) => {
+                        let body = "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid task_id\"}";
+                        http_json_response("400 Bad Request", body)
+                    }
+                }
+            }
+            Some(path) if path.starts_with("/query-capability-audit/") => {
+                let subject_or_token = path.trim_start_matches("/query-capability-audit/");
+                let registry = load_identity_registry(&identity_registry_file());
+                if let Some(token_id) = resolve_capability_token_subject_or_token(&registry, subject_or_token) {
+                    match query_capability_audit(&registry, token_id) {
+                        Ok(out) => {
+                            let body = serde_json::to_string(&out).unwrap_or_else(|_| {
+                                "{\"ok\":false,\"code\":\"SERDE_ERROR\"}".to_string()
+                            });
+                            http_json_response("200 OK", &body)
+                        }
+                        Err(err) => {
+                            let body = serde_json::json!({"ok": false, "code": "NOT_FOUND", "message": err.to_rpc_error().message}).to_string();
+                            http_json_response("404 Not Found", &body)
+                        }
+                    }
+                } else {
+                    let body = "{\"ok\":false,\"code\":\"NOT_FOUND\",\"message\":\"token or subject not found\"}";
+                    http_json_response("404 Not Found", body)
+                }
+            }
+            _ => {
+                let body = "{\"ok\":false,\"code\":\"NOT_FOUND\"}";
+                http_json_response("404 Not Found", body)
+            }
+        };
+
+        let _ = stream.write_all(response.as_bytes());
     }
 
     Ok(())
@@ -1654,6 +1895,39 @@ fn task_status_from_node_status(status: &str) -> Option<TaskStatus> {
     }
 }
 
+fn is_legal_node_event_transition(event_type: &str, from_status: &str, to_status: &str) -> bool {
+    matches!(
+        (event_type, from_status, to_status),
+        ("create", "NONE", "Open")
+            | ("accept", "Open", "Assigned")
+            | ("commit", "Assigned", "Committed")
+            | ("reveal", "Committed", "Revealed")
+            | ("challenge", "Revealed", "Challenged")
+            | ("resolve", "Challenged", "Completed")
+            | ("resolve", "Challenged", "Slashed")
+            | ("timeout", "Committed", "Slashed")
+            | ("timeout", "Revealed", "Completed")
+            | ("timeout", "Challenged", "Completed")
+    )
+}
+
+fn is_trusted_event_source(event: &NodeEventRecord) -> bool {
+    let Some(actor) = normalize_actor_or_signer(&event.actor) else {
+        return false;
+    };
+    let signer = event
+        .signer
+        .as_deref()
+        .and_then(normalize_actor_or_signer)
+        .unwrap_or_else(|| actor.clone());
+
+    match event.event_type.as_str() {
+        "accept" | "commit" | "reveal" | "challenge" | "create" => signer == actor,
+        "resolve" | "timeout" => signer == actor && matches!(actor.as_str(), "authority" | "system"),
+        _ => false,
+    }
+}
+
 fn query_task_from_node_events(
     task_id: u64,
     node_events: &[NodeEventRecord],
@@ -1663,15 +1937,20 @@ fn query_task_from_node_events(
     let mut worker: Option<String> = None;
 
     for event in node_events.iter().filter(|e| e.task_id == task_id) {
+        if !is_legal_node_event_transition(
+            event.event_type.as_str(),
+            event.from_status.as_str(),
+            event.to_status.as_str(),
+        ) || !is_trusted_event_source(event)
+        {
+            continue;
+        }
+
         version += 1;
         if let Some(mapped) = task_status_from_node_status(event.to_status.as_str()) {
             status = Some(mapped);
         }
-        if (event.event_type == "accept"
-            || event.event_type == "commit"
-            || event.event_type == "reveal")
-            && normalize_actor_or_signer(&event.actor).is_some()
-        {
+        if event.event_type == "accept" || event.event_type == "commit" || event.event_type == "reveal" {
             worker = normalize_actor_or_signer(&event.actor);
         }
     }
@@ -1686,6 +1965,166 @@ fn query_task_from_node_events(
     })
 }
 
+fn query_task_response(
+    task_id: u64,
+    node_events: &[NodeEventRecord],
+    recs: &[AdapterRecord],
+) -> Result<TaskQueryResponse> {
+    if let Some(out) = query_task_from_node_events(task_id, node_events) {
+        return Ok(out);
+    }
+
+    let task_recs: Vec<&AdapterRecord> = recs
+        .iter()
+        .filter(|r| {
+            r.task_id == task_id
+                && r.status == "accepted"
+                && matches!(r.kind.as_str(), "commit" | "reveal")
+                && r.worker
+                    .as_deref()
+                    .and_then(normalize_actor_or_signer)
+                    .is_some()
+        })
+        .collect();
+    if task_recs.is_empty() {
+        bail!("task not found: {}", task_id);
+    }
+    let has_reveal = task_recs.iter().any(|r| r.kind == "reveal");
+    let has_commit = task_recs.iter().any(|r| r.kind == "commit");
+    let status = if has_reveal {
+        TaskStatus::Revealed
+    } else if has_commit {
+        TaskStatus::Committed
+    } else {
+        TaskStatus::Open
+    };
+    let worker = task_recs.iter().find_map(|r| r.worker.clone());
+    let result_hash_hex = task_recs.iter().rev().find_map(|r| {
+        if r.kind == "reveal" {
+            r.result_hash.clone()
+        } else {
+            None
+        }
+    });
+    Ok(TaskQueryResponse {
+        task_id,
+        status,
+        worker,
+        bounty: 100,
+        result_hash_hex,
+        version: task_recs.len() as u64,
+    })
+}
+
+fn query_events_response(
+    task_id: u64,
+    limit: usize,
+    node_events: &[NodeEventRecord],
+    recs: &[AdapterRecord],
+) -> Result<Vec<EventQueryResponse>> {
+    let limit = clamp_limit(
+        "QueryEvents",
+        limit,
+        QUERY_EVENTS_LIMIT_DEFAULT,
+        QUERY_EVENTS_LIMIT_MAX,
+    );
+    let mut events = Vec::new();
+
+    for e in node_events.iter().filter(|e| e.task_id == task_id) {
+        let Some(actor) = normalize_actor_or_signer(&e.actor) else {
+            continue;
+        };
+        let signer = e
+            .signer
+            .as_deref()
+            .and_then(normalize_actor_or_signer)
+            .or_else(|| Some(actor.clone()));
+        events.push(EventQueryResponse {
+            event_type: e.event_type.clone(),
+            task_id,
+            from_status: e.from_status.clone(),
+            to_status: e.to_status.clone(),
+            actor,
+            tx_id: e.tx_id,
+            block_height: e.block_height,
+            state_root: e.state_root.clone(),
+            ts_unix_ms: e.ts_unix_ms,
+            signer,
+            challenger: e.challenger.clone(),
+            tx_hash: e.tx_hash.clone(),
+            resolution_code: e.resolution_code.clone(),
+            treasury_delta: e.treasury_delta,
+            challenger_delta: e.challenger_delta,
+            bond_disposition: e.bond_disposition.clone(),
+        });
+    }
+
+    if events.is_empty() {
+        let mut tx_id = 1u64;
+        let mut has_commit = false;
+        for r in recs
+            .iter()
+            .filter(|r| r.task_id == task_id && r.status == "accepted")
+        {
+            let Some(actor) = r.worker.as_deref().and_then(normalize_actor_or_signer) else {
+                continue;
+            };
+            let kind = r.kind.clone();
+            if kind == "reveal" && !has_commit {
+                continue;
+            }
+            let Some((from_status, to_status)) = (match kind.as_str() {
+                "commit" => Some(("Assigned".to_string(), "Committed".to_string())),
+                "reveal" => Some(("Committed".to_string(), "Revealed".to_string())),
+                _ => None,
+            }) else {
+                continue;
+            };
+
+            let tx_hash = r.tx_hash.clone().and_then(|v| {
+                let normalized = normalize_tx_hash_lookup(&v);
+                if is_hex_like_tx_hash(&normalized) {
+                    Some(normalized)
+                } else {
+                    None
+                }
+            });
+
+            events.push(EventQueryResponse {
+                event_type: kind.clone(),
+                task_id,
+                from_status,
+                to_status,
+                actor: actor.clone(),
+                tx_id,
+                block_height: tx_id,
+                state_root: "adapter_state".into(),
+                ts_unix_ms: r.ts as u128,
+                signer: Some(actor),
+                challenger: None,
+                tx_hash,
+                resolution_code: None,
+                treasury_delta: None,
+                challenger_delta: None,
+                bond_disposition: None,
+            });
+            if kind == "commit" {
+                has_commit = true;
+            }
+            tx_id += 1;
+        }
+    }
+
+    if events.is_empty() {
+        bail!("events not found for task_id={}", task_id);
+    }
+    if events.len() > limit {
+        let keep_from = events.len() - limit;
+        events = events.split_off(keep_from);
+    }
+    Ok(events)
+}
+
 fn main() -> Result<()> {
     let args = Args::parse();
     let st = governance_state();
@@ -1694,51 +2133,7 @@ fn main() -> Result<()> {
 
     match args.cmd {
         Command::QueryTask { task_id } => {
-            if let Some(out) = query_task_from_node_events(task_id, &node_events) {
-                println!("{}", serde_json::to_string_pretty(&out)?);
-                return Ok(());
-            }
-
-            let task_recs: Vec<&AdapterRecord> = recs
-                .iter()
-                .filter(|r| {
-                    r.task_id == task_id
-                        && r.status == "accepted"
-                        && matches!(r.kind.as_str(), "commit" | "reveal")
-                        && r.worker
-                            .as_deref()
-                            .and_then(normalize_actor_or_signer)
-                            .is_some()
-                })
-                .collect();
-            if task_recs.is_empty() {
-                bail!("task not found: {}", task_id);
-            }
-            let has_reveal = task_recs.iter().any(|r| r.kind == "reveal");
-            let has_commit = task_recs.iter().any(|r| r.kind == "commit");
-            let status = if has_reveal {
-                TaskStatus::Revealed
-            } else if has_commit {
-                TaskStatus::Committed
-            } else {
-                TaskStatus::Open
-            };
-            let worker = task_recs.iter().find_map(|r| r.worker.clone());
-            let result_hash_hex = task_recs.iter().rev().find_map(|r| {
-                if r.kind == "reveal" {
-                    r.result_hash.clone()
-                } else {
-                    None
-                }
-            });
-            let out = TaskQueryResponse {
-                task_id,
-                status,
-                worker,
-                bounty: 100,
-                result_hash_hex,
-                version: task_recs.len() as u64,
-            };
+            let out = query_task_response(task_id, &node_events, &recs)?;
             println!("{}", serde_json::to_string_pretty(&out)?);
         }
         Command::QueryProposal { proposal_id } => {
@@ -1776,108 +2171,7 @@ fn main() -> Result<()> {
             println!("{}", serde_json::to_string_pretty(&out)?);
         }
         Command::QueryEvents { task_id, limit } => {
-            let limit = clamp_limit(
-                "QueryEvents",
-                limit,
-                QUERY_EVENTS_LIMIT_DEFAULT,
-                QUERY_EVENTS_LIMIT_MAX,
-            );
-            let mut events = Vec::new();
-
-            for e in node_events.iter().filter(|e| e.task_id == task_id) {
-                let Some(actor) = normalize_actor_or_signer(&e.actor) else {
-                    continue;
-                };
-                let signer = e
-                    .signer
-                    .as_deref()
-                    .and_then(normalize_actor_or_signer)
-                    .or_else(|| Some(actor.clone()));
-                events.push(EventQueryResponse {
-                    event_type: e.event_type.clone(),
-                    task_id,
-                    from_status: e.from_status.clone(),
-                    to_status: e.to_status.clone(),
-                    actor,
-                    tx_id: e.tx_id,
-                    block_height: e.block_height,
-                    state_root: e.state_root.clone(),
-                    ts_unix_ms: e.ts_unix_ms,
-                    signer,
-                    challenger: e.challenger.clone(),
-                    tx_hash: e.tx_hash.clone(),
-                    resolution_code: e.resolution_code.clone(),
-                    treasury_delta: e.treasury_delta,
-                    challenger_delta: e.challenger_delta,
-                    bond_disposition: e.bond_disposition.clone(),
-                });
-            }
-
-            if events.is_empty() {
-                let mut tx_id = 1u64;
-                let mut has_commit = false;
-                for r in recs
-                    .into_iter()
-                    .filter(|r| r.task_id == task_id && r.status == "accepted")
-                {
-                    let Some(actor) = r.worker.as_deref().and_then(normalize_actor_or_signer)
-                    else {
-                        continue;
-                    };
-                    let kind = r.kind.clone();
-                    if kind == "reveal" && !has_commit {
-                        // migration legality: reveal cannot be reconstructed before a trusted commit source
-                        continue;
-                    }
-                    let Some((from_status, to_status)) = (match kind.as_str() {
-                        "commit" => Some(("Assigned".to_string(), "Committed".to_string())),
-                        "reveal" => Some(("Committed".to_string(), "Revealed".to_string())),
-                        _ => None,
-                    }) else {
-                        continue;
-                    };
-
-                    let tx_hash = r.tx_hash.and_then(|v| {
-                        let normalized = normalize_tx_hash_lookup(&v);
-                        if is_hex_like_tx_hash(&normalized) {
-                            Some(normalized)
-                        } else {
-                            None
-                        }
-                    });
-
-                    events.push(EventQueryResponse {
-                        event_type: kind.clone(),
-                        task_id,
-                        from_status,
-                        to_status,
-                        actor: actor.clone(),
-                        tx_id,
-                        block_height: tx_id,
-                        state_root: "adapter_state".into(),
-                        ts_unix_ms: r.ts as u128,
-                        signer: Some(actor),
-                        challenger: None,
-                        tx_hash,
-                        resolution_code: None,
-                        treasury_delta: None,
-                        challenger_delta: None,
-                        bond_disposition: None,
-                    });
-                    if kind == "commit" {
-                        has_commit = true;
-                    }
-                    tx_id += 1;
-                }
-            }
-
-            if events.is_empty() {
-                bail!("events not found for task_id={}", task_id);
-            }
-            if events.len() > limit {
-                let keep_from = events.len() - limit;
-                events = events.split_off(keep_from);
-            }
+            let events = query_events_response(task_id, limit, &node_events, &recs)?;
             println!("{}", serde_json::to_string_pretty(&events)?);
         }
         Command::QueryCapabilityAudit { token_id } => {
@@ -2106,9 +2400,11 @@ fn main() -> Result<()> {
                 return Ok(());
             }
 
+            validate_submit_message_metadata(&text)?;
+
             let ts = now_ms();
             let request_id = make_request_id(&channel, &user_id, &session_id, &idempotency_key, ts);
-            let task_id = 10_000 + records.len() as u64 + 1;
+            let task_id = next_ingress_task_id(&records)?;
             let rec = MessageIngressRecord {
                 request_id,
                 task_id,
@@ -4430,7 +4726,51 @@ mod tests {
 
         let out = query_task_from_node_events(7, &events).expect("task expected");
         assert_eq!(out.status, TaskStatus::Assigned);
-        assert_eq!(out.version, 2);
+        assert_eq!(out.version, 1);
+    }
+
+    #[test]
+    fn query_task_from_node_events_filters_invalid_signer_mismatch() {
+        let events = vec![
+            NodeEventRecord {
+                event_type: "accept".into(),
+                task_id: 8,
+                from_status: "Open".into(),
+                to_status: "Assigned".into(),
+                actor: "worker-a".into(),
+                tx_id: 1,
+                block_height: 1,
+                state_root: "s1".into(),
+                ts_unix_ms: 1,
+                signer: Some("worker-b".into()),
+                challenger: None,
+                tx_hash: None,
+                resolution_code: None,
+                treasury_delta: None,
+                challenger_delta: None,
+                bond_disposition: None,
+            },
+            NodeEventRecord {
+                event_type: "commit".into(),
+                task_id: 8,
+                from_status: "Open".into(),
+                to_status: "Committed".into(),
+                actor: "worker-a".into(),
+                tx_id: 2,
+                block_height: 2,
+                state_root: "s2".into(),
+                ts_unix_ms: 2,
+                signer: Some("worker-a".into()),
+                challenger: None,
+                tx_hash: None,
+                resolution_code: None,
+                treasury_delta: None,
+                challenger_delta: None,
+                bond_disposition: None,
+            },
+        ];
+
+        assert!(query_task_from_node_events(8, &events).is_none());
     }
 
     fn faucet_env_test_lock() -> &'static std::sync::Mutex<()> {

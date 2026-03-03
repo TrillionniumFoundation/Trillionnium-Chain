@@ -55,10 +55,48 @@ pub enum ProofType {
     Zk = 2,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum PrivacyTier {
+    Public,
+    Internal,
+    Restricted,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
+pub struct TaskModelMetadata {
+    #[serde(default)]
+    pub model_id: Option<String>,
+    #[serde(default)]
+    pub model_digest: Option<String>,
+    #[serde(default)]
+    pub version: Option<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
+pub struct TaskProvenanceMetadata {
+    #[serde(default)]
+    pub producer_did: Option<String>,
+    #[serde(default)]
+    pub produced_at: Option<String>,
+    #[serde(default)]
+    pub provenance_index: Option<String>,
+    #[serde(default)]
+    pub privacy_tier: Option<PrivacyTier>,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
 pub struct TaskMetadata {
     #[serde(default)]
     pub note: Option<String>,
+    #[serde(default)]
+    pub task_type: Option<String>,
+    #[serde(default)]
+    pub input_hash: Option<String>,
+    #[serde(default)]
+    pub model: Option<TaskModelMetadata>,
+    #[serde(default)]
+    pub provenance: Option<TaskProvenanceMetadata>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -142,5 +180,40 @@ mod tests {
         assert_eq!(tx.id, 1);
         assert_eq!(TaskStatus::Open, TaskStatus::Open);
         assert_eq!(GovProposalStatus::Draft, GovProposalStatus::Draft);
+    }
+
+    #[test]
+    fn task_metadata_backward_compatible_with_legacy_note_only_payload() {
+        let metadata: TaskMetadata = serde_json::from_str(r#"{"note":"legacy"}"#)
+            .expect("legacy payload should deserialize");
+        assert_eq!(metadata.note.as_deref(), Some("legacy"));
+        assert!(metadata.task_type.is_none());
+        assert!(metadata.input_hash.is_none());
+        assert!(metadata.model.is_none());
+        assert!(metadata.provenance.is_none());
+    }
+
+    #[test]
+    fn task_metadata_roundtrip_with_schema_core_fields() {
+        let metadata = TaskMetadata {
+            note: Some("interop".into()),
+            task_type: Some("inference".into()),
+            input_hash: Some("a".repeat(64)),
+            model: Some(TaskModelMetadata {
+                model_id: Some("trnm-vision-base".into()),
+                model_digest: Some("b".repeat(64)),
+                version: Some("v1.0.0".into()),
+            }),
+            provenance: Some(TaskProvenanceMetadata {
+                producer_did: Some("did:trnm:org:lane-dae".into()),
+                produced_at: Some("2026-03-01T01:00:00Z".into()),
+                provenance_index: Some("prov:lane-dae:task-20260301-0001".into()),
+                privacy_tier: Some(PrivacyTier::Internal),
+            }),
+        };
+
+        let raw = serde_json::to_string(&metadata).expect("serialize metadata");
+        let decoded: TaskMetadata = serde_json::from_str(&raw).expect("deserialize metadata");
+        assert_eq!(decoded, metadata);
     }
 }

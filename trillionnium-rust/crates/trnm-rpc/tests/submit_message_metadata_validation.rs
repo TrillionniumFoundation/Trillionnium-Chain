@@ -1,0 +1,68 @@
+use std::fs;
+use std::path::PathBuf;
+use std::process::Command;
+
+fn unique_fixture_path(name: &str, ext: &str) -> PathBuf {
+    let ts = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .expect("clock")
+        .as_nanos();
+    std::env::temp_dir().join(format!("trnm_rpc_{}_{}.{}", name, ts, ext))
+}
+
+fn run_submit_message(ingress: &PathBuf, text: &str, key: &str) -> std::process::Output {
+    Command::new("cargo")
+        .args(["run", "-p", "trnm-rpc", "--"])
+        .args([
+            "submit-message",
+            "--channel",
+            "telegram",
+            "--user-id",
+            "u-meta",
+            "--session-id",
+            "s-meta",
+            "--text",
+            text,
+            "--idempotency-key",
+            key,
+        ])
+        .env("TRNM_RPC_INGRESS_FILE", ingress)
+        .output()
+        .expect("run submit-message")
+}
+
+#[test]
+fn submit_message_accepts_schema_core_metadata_payload() {
+    let ingress = unique_fixture_path("submit_message_metadata_ok", "jsonl");
+    let _ = fs::remove_file(&ingress);
+
+    let text = r#"{"prompt":"run","metadata":{"task_type":"inference","input_hash":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","model":{"model_id":"trnm-vision-base","model_digest":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","version":"v1.0.0"},"provenance":{"producer_did":"did:trnm:org:lane-dae","produced_at":"2026-03-01T01:00:00Z","provenance_index":"prov:lane-dae:task-20260301-0001","privacy_tier":"internal"}}}"#;
+
+    let output = run_submit_message(&ingress, text, "k-meta-ok");
+    assert!(
+        output.status.success(),
+        "stderr: {}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+}
+
+#[test]
+fn submit_message_rejects_invalid_metadata_hash_shape() {
+    let ingress = unique_fixture_path("submit_message_metadata_bad", "jsonl");
+    let _ = fs::remove_file(&ingress);
+
+    let text = r#"{"metadata":{"task_type":"inference","input_hash":"NOT_HEX"}}"#;
+    let output = run_submit_message(&ingress, text, "k-meta-bad");
+
+    assert!(
+        !output.status.success(),
+        "stdout: {}",
+        String::from_utf8_lossy(&output.stdout)
+    );
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert!(
+        stderr.contains("metadata.input_hash must be 64-char lowercase hex"),
+        "stderr: {}",
+        stderr
+    );
+}
