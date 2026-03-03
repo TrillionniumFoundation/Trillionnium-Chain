@@ -1745,9 +1745,11 @@ fn attach_llm_provenance(rec: &mut MessageIngressRecord, llm: &LlmAdapterRespons
 }
 
 fn context_matches_token(context: &str, token: &str) -> bool {
-    context.contains(token)
-        || context.contains(&token.replace('-', "_"))
-        || context.contains(&token.replace('_', "-"))
+    let normalized_context = context.to_ascii_lowercase();
+    let normalized_token = token.to_ascii_lowercase();
+    normalized_context.contains(&normalized_token)
+        || normalized_context.contains(&normalized_token.replace('-', "_"))
+        || normalized_context.contains(&normalized_token.replace('_', "-"))
 }
 
 fn classify_adapter_error(err: &AdapterError) -> (&'static str, &'static str) {
@@ -2211,6 +2213,24 @@ mod tests {
         };
         assert_eq!(
             classify_adapter_error(&settlement_degraded_underscore),
+            ("ERR_M2V2_SETTLEMENT_DEGRADED", "settlement_degraded")
+        );
+
+        let proof_missing_uppercase = AdapterError {
+            kind: AdapterErrorKind::NonRetriable,
+            context: "TEE-RECEIPT-MISSING-PROVIDER-REQUEST-ID".to_string(),
+        };
+        assert_eq!(
+            classify_adapter_error(&proof_missing_uppercase),
+            ("ERR_M2V2_PROOF_MISSING", "proof_missing")
+        );
+
+        let settlement_degraded_mixed_case = AdapterError {
+            kind: AdapterErrorKind::Retriable,
+            context: "Settlement_Degraded_retry_window_exhausted".to_string(),
+        };
+        assert_eq!(
+            classify_adapter_error(&settlement_degraded_mixed_case),
             ("ERR_M2V2_SETTLEMENT_DEGRADED", "settlement_degraded")
         );
     }
