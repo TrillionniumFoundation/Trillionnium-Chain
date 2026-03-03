@@ -55,6 +55,7 @@ impl VerifierRegistry {
                     || ch == '\u{200c}'
                     || ch == '\u{200d}'
                     || ch == '\u{2060}'
+                    || ch == '\u{2062}'
                     || ch == '\u{2063}'
                     || ch == '\u{feff}'
                     || ch == '/'
@@ -1703,6 +1704,7 @@ mod tests {
         assert!(registry.is_registered_kind("TEE\u{200B}RECEIPT"));
         assert!(registry.is_registered_kind("TEE\u{200D}QUOTE"));
         assert!(registry.is_registered_kind("ZK\u{2060}PROOF"));
+        assert!(registry.is_registered_kind("ZK\u{2062}PROOF"));
         assert!(registry.is_registered_kind("TEE\u{2063}RECEIPT"));
         assert!(registry.is_registered_kind("zero\u{FEFF}knowledge\u{200C}proof"));
     }
