@@ -55,6 +55,33 @@ describe("api-contract adapters", () => {
     );
     expect(out.taskId).toBe("7");
     expect(out.events[0]?.type).toBe("commit");
+    expect(out.events[0]?.level).toBe("info");
+  });
+
+  it("maps frozen M2V2 resolution codes to fail-closed error signal", () => {
+    const out = adaptQueryEvents(
+      [
+        {
+          event_type: "settle",
+          task_id: 7,
+          from_status: "Revealed",
+          to_status: "Challenged",
+          actor: "did:trnm:verifier",
+          tx_id: 12,
+          block_height: 23,
+          state_root: "root-2",
+          ts_unix_ms: 1700000001000,
+          resolution_code: "ERR_M2V2_PROOF_MISSING",
+        },
+      ],
+      "7",
+    );
+
+    expect(out.events[0]?.level).toBe("error");
+    expect(out.events[0]?.payload).toMatchObject({
+      resolutionCode: "ERR_M2V2_PROOF_MISSING",
+      m2v2ErrorCode: "ERR_M2V2_PROOF_MISSING",
+    });
   });
 
   it("adapts rpc capability audit payload", () => {

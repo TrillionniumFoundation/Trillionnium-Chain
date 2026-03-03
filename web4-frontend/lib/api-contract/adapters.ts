@@ -57,6 +57,21 @@ const rpcEventSchema = z.object({
   bond_disposition: z.string().min(1).nullable().optional(),
 });
 
+const m2v2ErrorCodes = [
+  "ERR_M2V2_PROOF_MISSING",
+  "ERR_M2V2_PROOF_LATE",
+  "ERR_M2V2_PROOF_INVALID",
+  "ERR_M2V2_SETTLEMENT_DEGRADED",
+] as const;
+
+type M2V2ErrorCode = (typeof m2v2ErrorCodes)[number];
+
+const m2v2ErrorCodeSet: ReadonlySet<string> = new Set(m2v2ErrorCodes);
+
+function isM2V2ErrorCode(code: string | undefined): code is M2V2ErrorCode {
+  return code != null && m2v2ErrorCodeSet.has(code);
+}
+
 const rpcCapabilityAuditSchema = z.object({
   token: z.object({
     subject_did: z.string().min(1),
@@ -159,32 +174,38 @@ export const adaptQueryEvents = (
 
   return {
     taskId: normalizedTaskId,
-    events: events.map((event) => ({
-      id: `${event.task_id}:${event.tx_id}:${event.event_type}`,
-      taskId: String(event.task_id),
-      type: event.event_type,
-      level:
-        event.event_type === "challenge"
-          ? "warn"
-          : event.to_status === "Slashed"
+    events: events.map((event) => {
+      const resolutionCode = event.resolution_code ?? undefined;
+      const isM2V2Error = isM2V2ErrorCode(resolutionCode);
+
+      return {
+        id: `${event.task_id}:${event.tx_id}:${event.event_type}`,
+        taskId: String(event.task_id),
+        type: event.event_type,
+        level:
+          isM2V2Error || event.to_status === "Slashed"
             ? "error"
-            : "info",
-      timestamp: toIsoFromUnixMs(event.ts_unix_ms),
-      payload: {
-        fromStatus: event.from_status,
-        toStatus: event.to_status,
-        actor: event.actor,
-        blockHeight: event.block_height,
-        stateRoot: event.state_root,
-        signer: event.signer,
-        challenger: event.challenger,
-        txHash: event.tx_hash,
-        resolutionCode: event.resolution_code,
-        treasuryDelta: event.treasury_delta,
-        challengerDelta: event.challenger_delta,
-        bondDisposition: event.bond_disposition,
-      },
-    })),
+            : event.event_type === "challenge"
+              ? "warn"
+              : "info",
+        timestamp: toIsoFromUnixMs(event.ts_unix_ms),
+        payload: {
+          fromStatus: event.from_status,
+          toStatus: event.to_status,
+          actor: event.actor,
+          blockHeight: event.block_height,
+          stateRoot: event.state_root,
+          signer: event.signer,
+          challenger: event.challenger,
+          txHash: event.tx_hash,
+          resolutionCode,
+          m2v2ErrorCode: isM2V2Error ? resolutionCode : undefined,
+          treasuryDelta: event.treasury_delta,
+          challengerDelta: event.challenger_delta,
+          bondDisposition: event.bond_disposition,
+        },
+      };
+    }),
   };
 };
 
