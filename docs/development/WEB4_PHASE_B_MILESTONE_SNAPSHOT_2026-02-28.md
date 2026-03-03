@@ -77,6 +77,7 @@ cargo test -p trnm-rpc market_match_m2_policy_gate_clamps_invalid_env_values -- 
 - 明确 `fraud_proof | tee_receipt | zk_receipt` 在市场结算视角的最小统一字段（`task_id/proof_type/verdict/verified_at/cost_hint`）。
 - 规定“证明缺失/迟到/格式不合法”进入争议或降级路径，不允许静默成功。
 - 产物：补充 M2↔V2 交界的错误码与状态迁移表，减少后续跨 crate 漂移风险。
+- 最小错误码映射（冻结）：`proof_missing -> ERR_M2V2_PROOF_MISSING`、`proof_late -> ERR_M2V2_PROOF_LATE`、`proof_invalid -> ERR_M2V2_PROOF_INVALID`、`settlement_degraded -> ERR_M2V2_SETTLEMENT_DEGRADED`。
 
 验收信号：
 - 回执缺失/异常时，策略层 fail-closed 且错误码稳定；

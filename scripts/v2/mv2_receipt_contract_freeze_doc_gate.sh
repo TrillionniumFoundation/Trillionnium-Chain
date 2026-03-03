@@ -23,6 +23,8 @@ snapshot_required_phrases=(
   "不允许静默成功"
   "M2↔V2"
   "错误码与状态迁移表"
+  "ERR_M2V2_PROOF_MISSING"
+  "ERR_M2V2_SETTLEMENT_DEGRADED"
   "fail-closed"
 )
 
@@ -34,6 +36,8 @@ master_required_phrases=(
   "不允许静默成功"
   "M2↔V2"
   "错误码与状态迁移表"
+  "ERR_M2V2_PROOF_MISSING"
+  "ERR_M2V2_SETTLEMENT_DEGRADED"
   "pending_proof -> disputed(proof_missing|proof_late|proof_invalid) -> downgraded(settlement_degraded)"
   "fail-closed"
 )
