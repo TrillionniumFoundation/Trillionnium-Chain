@@ -29,7 +29,6 @@
 - 响应必须回显：X-TRNM-Trace-ID（值必须等于请求头 `X-TRNM-Trace-ID`，不一致按 `502 upstream_execution_failed` fail-closed）
 - 响应体 `request_id` 必须与响应头 `X-TRNM-Request-ID` 严格一致；不一致按 `502 upstream_execution_failed` fail-closed
 - 错误响应（4xx/5xx）也必须回显 `X-TRNM-Request-ID`，且必须与错误体 `request_id` 严格一致；不一致按 `502 upstream_execution_failed` fail-closed
-- 错误响应（4xx/5xx）也必须使用 `Content-Type: application/json; charset=utf-8`；非 JSON 错误体按 `502 upstream_execution_failed` fail-closed
 
 ## 3. 最小请求/响应语义
 
