@@ -532,11 +532,33 @@ fn market_match_exposes_penalty_explainability_fields_for_negative_reputation_wi
     assert_eq!(matched["winner"], "worker-low");
     assert_eq!(matched["winner_reputation"], -3);
     assert_eq!(matched["winner_reputation_effective"], -3);
-    assert_eq!(matched["base_score"], 80);
-    assert_eq!(matched["reputation_weight"], 0);
-    assert_eq!(matched["penalty"], 6);
-    assert_eq!(matched["final_score"], 86);
-    assert_eq!(matched["effective_score"], 86);
+
+    let cfg = matched["match_config"].as_object().expect("match_config object");
+    let price_weight = cfg
+        .get("price_weight")
+        .and_then(Value::as_u64)
+        .expect("price_weight") as u128;
+    let reputation_weight_unit = cfg
+        .get("reputation_weight")
+        .and_then(Value::as_u64)
+        .expect("reputation_weight") as u128;
+
+    assert_eq!(price_weight, 1);
+    assert_eq!(reputation_weight_unit, 2);
+
+    let base_score = matched["base_score"].as_u64().expect("base_score") as u128;
+    let reputation_weight = matched["reputation_weight"]
+        .as_u64()
+        .expect("reputation_weight") as u128;
+    let penalty = matched["penalty"].as_u64().expect("penalty") as u128;
+    let final_score = matched["final_score"].as_u64().expect("final_score") as u128;
+    let effective_score = matched["effective_score"].as_u64().expect("effective_score") as u128;
+
+    assert_eq!(base_score, 80);
+    assert_eq!(reputation_weight, 0);
+    assert_eq!(penalty, 3u128 * reputation_weight_unit);
+    assert_eq!(final_score, base_score + penalty);
+    assert_eq!(effective_score, final_score);
 
     let _ = fs::remove_file(tasks);
     let _ = fs::remove_file(bids);
