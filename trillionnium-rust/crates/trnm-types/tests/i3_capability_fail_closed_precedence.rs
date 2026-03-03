@@ -136,6 +136,44 @@ fn expired_token_with_scope_mismatch_returns_inactive_fail_closed() {
 }
 
 #[test]
+fn expired_token_with_unauthorized_actor_returns_inactive_fail_closed() {
+    let mut reg = IdentityRegistry::default();
+    reg.register_did(
+        "did:trnm:agent-i3-fail-closed-expired-unauth".to_string(),
+        "org:lane-xi-admin".to_string(),
+        10,
+    )
+    .unwrap();
+
+    let token_id = reg
+        .issue_capability(
+            "org:lane-xi-admin".to_string(),
+            "did:trnm:agent-i3-fail-closed-expired-unauth".to_string(),
+            CapabilityScope::BridgeSettle,
+            20,
+            Some(30),
+        )
+        .unwrap();
+
+    // I3 fail-closed contract: inactive state from expiry must dominate actor
+    // authorization checks so verifier error shape does not leak authz details.
+    let err = reg
+        .verify_capability("org:intruder", token_id, CapabilityScope::BridgeSettle, 31)
+        .unwrap_err();
+
+    assert!(matches!(
+        err,
+        InteropIdentityError::CapabilityInactive {
+            token_id: err_token_id,
+            at_height: 31,
+            issued_at: 20,
+            expires_at: Some(30),
+            revoked_at: None,
+        } if err_token_id == token_id
+    ));
+}
+
+#[test]
 fn revoked_and_expired_token_with_unauthorized_actor_returns_inactive_fail_closed() {
     let mut reg = IdentityRegistry::default();
     reg.register_did(
