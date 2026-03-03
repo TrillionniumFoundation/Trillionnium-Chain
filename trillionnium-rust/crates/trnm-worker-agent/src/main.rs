@@ -2249,6 +2249,15 @@ mod tests {
             ("ERR_M2V2_PROOF_INVALID", "proof_invalid")
         );
 
+        let proof_invalid_with_spaces = AdapterError {
+            kind: AdapterErrorKind::Retriable,
+            context: "proof invalid signature".to_string(),
+        };
+        assert_eq!(
+            classify_adapter_error(&proof_invalid_with_spaces),
+            ("ERR_M2V2_PROOF_INVALID", "proof_invalid")
+        );
+
         let settlement_degraded_underscore = AdapterError {
             kind: AdapterErrorKind::Retriable,
             context: "settlement_degraded_retry_window_exhausted".to_string(),
