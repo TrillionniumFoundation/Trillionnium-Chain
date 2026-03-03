@@ -1793,7 +1793,6 @@ fn classify_adapter_error(err: &AdapterError) -> (&'static str, &'static str) {
     }
     if context_matches_token(&err.context, "proof-late")
         || context_matches_token(&err.context, "timeout")
-        || context_matches_token(&err.context, "time out")
     {
         return ("ERR_M2V2_PROOF_LATE", "proof_late");
     }
@@ -2229,15 +2228,6 @@ mod tests {
         };
         assert_eq!(
             classify_adapter_error(&proof_late_with_spaces),
-            ("ERR_M2V2_PROOF_LATE", "proof_late")
-        );
-
-        let proof_late_time_out_phrase = AdapterError {
-            kind: AdapterErrorKind::Retriable,
-            context: "llm adapter time out after 3000ms".to_string(),
-        };
-        assert_eq!(
-            classify_adapter_error(&proof_late_time_out_phrase),
             ("ERR_M2V2_PROOF_LATE", "proof_late")
         );
 
