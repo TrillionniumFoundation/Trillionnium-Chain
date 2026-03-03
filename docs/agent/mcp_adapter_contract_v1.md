@@ -42,6 +42,7 @@
 - `status`（`accepted|rejected|settled`）
 - `settlement_ref`（可空）
 - `provenance_fingerprint`（可空，遵循隐私策略）
+- `status` 必须为上述小写枚举之一；出现大小写漂移或未知状态（如 `Accepted` / `done`）按 `502 upstream_execution_failed` fail-closed
 
 ## 4. 错误模型（Fail-Closed）
 
