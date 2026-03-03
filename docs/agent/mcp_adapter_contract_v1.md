@@ -21,6 +21,7 @@
 - 请求内容类型：`Content-Type: application/json`；非 JSON 请求按 `400 schema_invalid` fail-closed
 - 请求可接受类型：`Accept` 必须显式包含 `application/json`；缺失或不包含 JSON 按 `400 schema_invalid` fail-closed
 - `Accept` 中若 `application/json;q=0`（显式不可接受）必须视为不接受 JSON，并按 `400 schema_invalid` fail-closed
+- `Accept` 仅为通配符（如 `*/*` 或 `application/*`）不视为“显式包含 `application/json`”，必须按 `400 schema_invalid` fail-closed
 - 响应内容类型：`Content-Type: application/json; charset=utf-8`；非 JSON 响应视为协议违约并按 `502 upstream_execution_failed` fail-closed
 - 响应必须回显：X-TRNM-Schema-Version: mcp-adapter-v1；缺失或不匹配按 `502 upstream_execution_failed` fail-closed
 - 响应必须回显：X-TRNM-Request-ID（值必须等于请求 `request_id`，不一致按 `502 upstream_execution_failed` fail-closed）
