@@ -132,3 +132,65 @@ fn x3_prep_degraded_blank_reason_replay_keeps_fallback_reason_stable() {
         &BridgeStatus::Reverted("heartbeat degraded: unknown heartbeat failure".to_string())
     );
 }
+
+#[test]
+fn x3_prep_confirm_failed_replay_keeps_first_compensation_reason_stable() {
+    let mut request = SettlementRequest::new(9, "0xreplay-confirm-failed".to_string());
+    let token = operator_token();
+
+    let healthy = HeartbeatOutcome {
+        heartbeat: None,
+        should_retry: false,
+        degraded: false,
+        message: "healthy".to_string(),
+    };
+
+    let first = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &healthy,
+        SettlementConfirm::Failed {
+            reason: "target relay timeout #1".to_string(),
+        },
+    )
+    .unwrap();
+
+    assert_eq!(
+        first,
+        SettlementStep::Compensated {
+            reason: "settlement confirm failed: target relay timeout #1".to_string(),
+            event: trnm_bridge_poc::x2_settlement_loop::SettlementEvent {
+                phase: "settlement_confirm_failed",
+                heartbeat_source_height: None,
+                heartbeat_target_height: None,
+                heartbeat_latency_ms: None,
+                confirm_height: None,
+                confirm_reason: Some(
+                    "settlement confirm failed: target relay timeout #1".to_string(),
+                ),
+            },
+        }
+    );
+
+    let replay_err = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &healthy,
+        SettlementConfirm::Failed {
+            reason: "mutated timeout reason".to_string(),
+        },
+    )
+    .unwrap_err();
+
+    assert_eq!(
+        replay_err,
+        trnm_bridge_poc::bridge_status::SettlementError::InvalidTransition {
+            from: "reverted",
+            to: "reverted",
+        }
+    );
+    assert_eq!(
+        current_status(&request),
+        &BridgeStatus::Reverted("settlement confirm failed: target relay timeout #1".to_string())
+    );
+}
