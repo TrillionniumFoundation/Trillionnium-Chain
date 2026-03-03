@@ -95,6 +95,8 @@ cargo test -p trnm-types --test i3_capability_fail_closed_precedence \
 cargo test -p trnm-types --test i3_capability_fail_closed_precedence \
   revoked_did_with_unauthorized_actor_still_returns_did_revoked_fail_closed
 cargo test -p trnm-types --test i3_capability_fail_closed_precedence \
+  revoked_did_before_token_issue_still_returns_did_revoked_fail_closed
+cargo test -p trnm-types --test i3_capability_fail_closed_precedence \
   preissued_token_with_unauthorized_actor_returns_inactive_fail_closed
 
 echo "[I2][PASS] capability token lifecycle gate"
