@@ -75,7 +75,13 @@ cargo test -p trnm-types --test i3_capability_issue_renew_revoke_competition \
 cargo test -p trnm-types --test i3_capability_issue_renew_revoke_competition \
   verify_at_revocation_boundary_is_fail_closed_after_same_height_renew_revoke_race
 cargo test -p trnm-types --test i3_capability_issue_renew_revoke_competition \
+  rejected_boundary_renew_after_same_height_revoke_keeps_audit_and_token_stable
+cargo test -p trnm-types --test i3_capability_issue_renew_revoke_competition \
+  rejected_post_boundary_renew_after_same_height_renew_then_revoke_is_side_effect_free
+cargo test -p trnm-types --test i3_capability_issue_renew_revoke_competition \
   same_height_revoke_replay_after_renew_then_revoke_is_idempotent_without_side_effects
+cargo test -p trnm-types --test i3_capability_issue_renew_revoke_competition \
+  issue_at_did_revocation_boundary_is_fail_closed_and_sequence_safe
 cargo test -p trnm-types --test i3_capability_nonexpiring_revoke_competition \
   nonexpiring_token_revoke_then_same_height_renew_is_fail_closed
 cargo test -p trnm-types --test i3_capability_nonexpiring_revoke_competition \
