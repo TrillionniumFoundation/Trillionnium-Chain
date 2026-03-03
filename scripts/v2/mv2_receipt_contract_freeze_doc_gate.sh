@@ -61,6 +61,14 @@ for phrase in "${master_required_phrases[@]}"; do
   fi
 done
 
+snapshot_anchor_count=$(grep -Fc -- "### MV-2：V2 回执接入前的契约冻结（Receipt Contract Freeze）" "$SNAPSHOT_SPEC" || true)
+master_anchor_count=$(grep -Fc -- "### 10.3 Lane MV（2026-03-03）V2 回执契约冻结主文档锚点" "$MASTER_SPEC" || true)
+if [[ "$snapshot_anchor_count" -ne 1 || "$master_anchor_count" -ne 1 ]]; then
+  echo "[FAIL] expected exactly one MV2 receipt contract anchor in snapshot and master" >&2
+  echo "  snapshot_anchor_count=$snapshot_anchor_count master_anchor_count=$master_anchor_count" >&2
+  exit 1
+fi
+
 mapfile -t snapshot_error_mapping_lines < <(grep -F -- "最小错误码映射（冻结）：" "$SNAPSHOT_SPEC" || true)
 mapfile -t master_error_mapping_lines < <(grep -F -- "最小错误码映射（冻结）：" "$MASTER_SPEC" || true)
 if [[ "${#snapshot_error_mapping_lines[@]}" -ne 1 || "${#master_error_mapping_lines[@]}" -ne 1 ]]; then
