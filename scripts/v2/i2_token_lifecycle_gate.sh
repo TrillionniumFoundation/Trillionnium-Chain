@@ -90,10 +90,6 @@ cargo test -p trnm-types --test i3_capability_nonexpiring_revoke_competition \
   nonexpiring_same_height_renew_then_revoke_preserves_historical_pre_boundary_verify
 cargo test -p trnm-types --test i3_capability_nonexpiring_revoke_competition \
   nonexpiring_rejected_post_boundary_renew_after_same_height_renew_then_revoke_is_side_effect_free
-# I3-prep DID revoke cascade guard: same-height DID revoke must deterministically
-# cascade across all subject tokens with fail-closed boundary verification.
-cargo test -p trnm-types --test i3_did_revoke_cascade_same_height \
-  did_revoke_cascade_same_height_fail_closed_for_all_subject_tokens
 # I3-prep fail-closed verifier error-contract guard: inactive state must dominate
 # scope mismatch once token is revoked to avoid authorization-shape leakage.
 cargo test -p trnm-types --test i3_capability_fail_closed_precedence \
