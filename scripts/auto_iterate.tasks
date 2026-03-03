@@ -532,3 +532,6 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-mcp-adapter-contract-request-id-trimmed-non-empty-test" "./scripts/v2/a1_mcp_adapter_contract_request_id_trimmed_non_empty_test.sh" "ci(gate): add a1-mcp-adapter-contract-request-id-trimmed-non-empty-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-mcp-adapter-contract-request-id-header-body-parity-test" "./scripts/v2/a1_mcp_adapter_contract_request_id_header_body_parity_test.sh" "ci(gate): add a1-mcp-adapter-contract-request-id-header-body-parity-test regression to quick-check"
