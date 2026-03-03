@@ -1749,6 +1749,8 @@ fn classify_adapter_error(err: &AdapterError) -> (&'static str, &'static str) {
         AdapterErrorKind::Retriable => {
             if err.context.contains("timeout") || err.context.contains("proof-late") {
                 ("ERR_M2V2_PROOF_LATE", "proof_late")
+            } else if err.context.contains("settlement-degraded") {
+                ("ERR_M2V2_SETTLEMENT_DEGRADED", "settlement_degraded")
             } else {
                 ("adapter_error", "retry_exhausted")
             }
@@ -1760,6 +1762,8 @@ fn classify_adapter_error(err: &AdapterError) -> (&'static str, &'static str) {
                 || err.context.contains("no-json-line")
             {
                 ("ERR_M2V2_PROOF_INVALID", "proof_invalid")
+            } else if err.context.contains("settlement-degraded") {
+                ("ERR_M2V2_SETTLEMENT_DEGRADED", "settlement_degraded")
             } else {
                 ("adapter_error", "non_retriable")
             }
@@ -2139,6 +2143,24 @@ mod tests {
         assert_eq!(
             classify_adapter_error(&no_json_line),
             ("ERR_M2V2_PROOF_INVALID", "proof_invalid")
+        );
+
+        let settlement_degraded_non_retriable = AdapterError {
+            kind: AdapterErrorKind::NonRetriable,
+            context: "tee-receipt-settlement-degraded".to_string(),
+        };
+        assert_eq!(
+            classify_adapter_error(&settlement_degraded_non_retriable),
+            ("ERR_M2V2_SETTLEMENT_DEGRADED", "settlement_degraded")
+        );
+
+        let settlement_degraded_retriable = AdapterError {
+            kind: AdapterErrorKind::Retriable,
+            context: "settlement-degraded-retry-window-exhausted".to_string(),
+        };
+        assert_eq!(
+            classify_adapter_error(&settlement_degraded_retriable),
+            ("ERR_M2V2_SETTLEMENT_DEGRADED", "settlement_degraded")
         );
     }
 
