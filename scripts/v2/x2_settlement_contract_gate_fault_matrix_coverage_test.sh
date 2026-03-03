@@ -9,6 +9,7 @@ required_tests=(
   "x3_prep_duplicate_confirm_after_finalize_is_rejected_without_state_change"
   "x3_prep_reorder_failed_confirm_after_finalize_is_rejected_without_state_change"
   "x3_prep_stale_pending_on_degraded_heartbeat_triggers_compensation_revert"
+  "x3_prep_degraded_heartbeat_takes_precedence_over_timeout_confirm_failure"
 )
 
 for test_name in "${required_tests[@]}"; do
@@ -18,4 +19,4 @@ for test_name in "${required_tests[@]}"; do
   fi
 done
 
-echo "[PASS] x2 settlement contract gate keeps timeout/duplicate/reorder/stale-pending matrix anchors"
+echo "[PASS] x2 settlement contract gate keeps timeout precedence + duplicate/reorder/stale-pending matrix anchors"
