@@ -332,6 +332,54 @@ fn market_match_prefers_higher_reputation_when_weighted_score_is_better() {
 }
 
 #[test]
+fn market_match_negative_reputation_exposes_penalty_breakdown_fields() {
+    let _guard = test_lock().lock().expect("test lock");
+    let _ = fs::remove_dir_all("run/market");
+    fs::create_dir_all("run/market").expect("create market dir");
+    fs::write("run/market/reputation.json", r#"{"worker-risk":-50}"#)
+        .expect("write reputation file");
+
+    let create_out = run_ok(&[
+        "market.create_task",
+        "--creator",
+        "alice",
+        "--bounty",
+        "100",
+        "--description",
+        "m2 negative reputation breakdown",
+    ]);
+    let created: Value = serde_json::from_str(&create_out).expect("create task JSON");
+    let task_id = created["task_id"].as_u64().expect("task_id").to_string();
+
+    run_ok(&[
+        "market.submit_bid",
+        "--task-id",
+        &task_id,
+        "--worker",
+        "worker-risk",
+        "--price",
+        "50",
+    ]);
+
+    let match_out = run_ok_with_env(
+        &["market.match_task", "--task-id", &task_id],
+        &[(
+            "TRNM_RPC_MARKET_REPUTATION_FILE",
+            "run/market/reputation.json",
+        )],
+    );
+    let matched: Value = serde_json::from_str(match_out.trim()).expect("match output json");
+    assert_eq!(matched["winner"], "worker-risk");
+    assert_eq!(matched["winner_reputation"], -50);
+    assert_eq!(matched["winner_reputation_effective"], -50);
+    assert_eq!(matched["base_score"], 50000);
+    assert_eq!(matched["reputation_weight"], 0);
+    assert_eq!(matched["penalty"], 5000);
+    assert_eq!(matched["final_score"], 55000);
+    assert_eq!(matched["effective_score"], 55000);
+}
+
+#[test]
 fn market_match_reputation_lookup_normalizes_case_and_whitespace_keys() {
     let _guard = test_lock().lock().expect("test lock");
     let _ = fs::remove_dir_all("run/market");
