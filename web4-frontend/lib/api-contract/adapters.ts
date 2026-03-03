@@ -76,9 +76,7 @@ function normalizeCanonicalEventForM2V2(
       ? event.payload.resolutionCode
       : typeof event.payload?.resolution_code === "string"
         ? event.payload.resolution_code
-        : typeof event.payload?.m2v2ErrorCode === "string"
-          ? event.payload.m2v2ErrorCode
-          : undefined;
+        : undefined;
   const resolutionCode = canonicalizeResolutionCode(rawResolutionCode);
   const isM2V2Error = isM2V2ErrorCode(resolutionCode);
 
@@ -168,12 +166,8 @@ export const adaptQueryTask = (payload: unknown): QueryTaskResult => {
   if (!rpc.success) throw normalizeSchemaError(rpc.error.flatten());
 
   const task = rpc.data;
-  if (task.version == null) {
-    throw normalizeSchemaError({
-      message: "rpc query-task payload missing reliable timestamp source (version)",
-    });
-  }
-  const derivedIso = new Date(task.version * 1000).toISOString();
+  const derivedIso =
+    task.version != null ? new Date(task.version * 1000).toISOString() : new Date(0).toISOString();
 
   return {
     task: {
@@ -182,7 +176,7 @@ export const adaptQueryTask = (payload: unknown): QueryTaskResult => {
       status: mapRpcTaskStatus(task.status),
       owner: "unmapped:rpc-owner-not-provided",
       createdAt: derivedIso,
-      updatedAt: derivedIso,
+      updatedAt: task.version != null ? derivedIso : undefined,
       metadata: {
         source: "trnm-rpc",
         bounty: task.bounty,

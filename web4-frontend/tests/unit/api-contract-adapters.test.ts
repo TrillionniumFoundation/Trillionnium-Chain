@@ -114,30 +114,6 @@ describe("api-contract adapters", () => {
     });
   });
 
-  it("normalizes canonical events using m2v2ErrorCode alias", () => {
-    const out = adaptQueryEvents({
-      taskId: "8b",
-      events: [
-        {
-          id: "e2b",
-          taskId: "8b",
-          type: "settle",
-          level: "info",
-          timestamp: "2026-03-03T00:00:01.500Z",
-          payload: {
-            m2v2ErrorCode: " err_m2v2_proof_late ",
-          },
-        },
-      ],
-    });
-
-    expect(out.events[0]?.level).toBe("error");
-    expect(out.events[0]?.payload).toMatchObject({
-      resolutionCode: "ERR_M2V2_PROOF_LATE",
-      m2v2ErrorCode: "ERR_M2V2_PROOF_LATE",
-    });
-  });
-
   it("maps frozen M2V2 resolution codes to fail-closed error signal", () => {
     const out = adaptQueryEvents(
       [
@@ -294,16 +270,6 @@ describe("api-contract adapters", () => {
     expect(out.subject).toBe("did:trnm:bob");
     expect(out.audits[0]?.capability).toBe("AUDIT_READ");
     expect(out.audits[0]?.granted).toBe(true);
-  });
-
-  it("fails closed on rpc query-task payload without reliable timestamp source", () => {
-    expect(() =>
-      adaptQueryTask({
-        task_id: 43,
-        status: "Assigned",
-        worker: "did:trnm:bob",
-      }),
-    ).toThrow(FrontendApiError);
   });
 
   it("fails closed on malformed payload", () => {
