@@ -1751,31 +1751,29 @@ fn context_matches_token(context: &str, token: &str) -> bool {
 }
 
 fn classify_adapter_error(err: &AdapterError) -> (&'static str, &'static str) {
+    if context_matches_token(&err.context, "proof-missing")
+        || context_matches_token(&err.context, "missing-provider-request-id")
+    {
+        return ("ERR_M2V2_PROOF_MISSING", "proof_missing");
+    }
+    if context_matches_token(&err.context, "proof-invalid")
+        || context_matches_token(&err.context, "missing-adapter-label")
+        || context_matches_token(&err.context, "no-json-line")
+    {
+        return ("ERR_M2V2_PROOF_INVALID", "proof_invalid");
+    }
+    if context_matches_token(&err.context, "proof-late")
+        || context_matches_token(&err.context, "timeout")
+    {
+        return ("ERR_M2V2_PROOF_LATE", "proof_late");
+    }
+    if context_matches_token(&err.context, "settlement-degraded") {
+        return ("ERR_M2V2_SETTLEMENT_DEGRADED", "settlement_degraded");
+    }
+
     match err.kind {
-        AdapterErrorKind::Retriable => {
-            if context_matches_token(&err.context, "timeout")
-                || context_matches_token(&err.context, "proof-late")
-            {
-                ("ERR_M2V2_PROOF_LATE", "proof_late")
-            } else if context_matches_token(&err.context, "settlement-degraded") {
-                ("ERR_M2V2_SETTLEMENT_DEGRADED", "settlement_degraded")
-            } else {
-                ("adapter_error", "retry_exhausted")
-            }
-        }
-        AdapterErrorKind::NonRetriable => {
-            if context_matches_token(&err.context, "missing-provider-request-id") {
-                ("ERR_M2V2_PROOF_MISSING", "proof_missing")
-            } else if context_matches_token(&err.context, "missing-adapter-label")
-                || context_matches_token(&err.context, "no-json-line")
-            {
-                ("ERR_M2V2_PROOF_INVALID", "proof_invalid")
-            } else if context_matches_token(&err.context, "settlement-degraded") {
-                ("ERR_M2V2_SETTLEMENT_DEGRADED", "settlement_degraded")
-            } else {
-                ("adapter_error", "non_retriable")
-            }
-        }
+        AdapterErrorKind::Retriable => ("adapter_error", "retry_exhausted"),
+        AdapterErrorKind::NonRetriable => ("adapter_error", "non_retriable"),
     }
 }
 
@@ -2187,6 +2185,24 @@ mod tests {
         assert_eq!(
             classify_adapter_error(&proof_late_underscore),
             ("ERR_M2V2_PROOF_LATE", "proof_late")
+        );
+
+        let explicit_contract_proof_missing = AdapterError {
+            kind: AdapterErrorKind::Retriable,
+            context: "proof-missing-from-verifier".to_string(),
+        };
+        assert_eq!(
+            classify_adapter_error(&explicit_contract_proof_missing),
+            ("ERR_M2V2_PROOF_MISSING", "proof_missing")
+        );
+
+        let explicit_contract_proof_invalid = AdapterError {
+            kind: AdapterErrorKind::Retriable,
+            context: "proof_invalid_signature".to_string(),
+        };
+        assert_eq!(
+            classify_adapter_error(&explicit_contract_proof_invalid),
+            ("ERR_M2V2_PROOF_INVALID", "proof_invalid")
         );
 
         let settlement_degraded_underscore = AdapterError {
