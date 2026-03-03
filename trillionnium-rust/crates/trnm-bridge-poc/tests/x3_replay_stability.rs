@@ -262,3 +262,54 @@ fn x3_prep_confirm_failed_blank_reason_replay_keeps_fallback_reason_stable() {
         &BridgeStatus::Reverted("settlement confirm failed: unknown confirm failure".to_string())
     );
 }
+
+#[test]
+fn x3_prep_confirm_failed_over_cap_reason_replay_keeps_truncated_reason_stable() {
+    let mut request = SettlementRequest::new(11, "0xreplay-confirm-failed-over-cap".to_string());
+    let token = operator_token();
+
+    let healthy = HeartbeatOutcome {
+        heartbeat: None,
+        should_retry: false,
+        degraded: false,
+        message: "healthy".to_string(),
+    };
+
+    let first = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &healthy,
+        SettlementConfirm::Failed {
+            reason: "x".repeat(220),
+        },
+    )
+    .unwrap();
+
+    let SettlementStep::Compensated { reason, event } = first else {
+        panic!("expected compensated branch");
+    };
+
+    assert!(reason.starts_with("settlement confirm failed: "));
+    assert!(reason.ends_with('…'));
+    assert_eq!(reason.matches('…').count(), 1);
+    assert_eq!(event.confirm_reason, Some(reason.clone()));
+
+    let replay_err = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &healthy,
+        SettlementConfirm::Failed {
+            reason: "mutated shorter reason".to_string(),
+        },
+    )
+    .unwrap_err();
+
+    assert_eq!(
+        replay_err,
+        trnm_bridge_poc::bridge_status::SettlementError::InvalidTransition {
+            from: "reverted",
+            to: "reverted",
+        }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Reverted(reason));
+}
