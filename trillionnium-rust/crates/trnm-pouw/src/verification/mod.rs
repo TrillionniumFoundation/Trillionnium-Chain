@@ -88,9 +88,11 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
                 || ch == '–'
                 || ch == '—'
                 || ch == '―'
+                || ch == '‒'
                 || ch == '−'
                 || ch == '‐'
                 || ch == '‑'
+                || ch == '﹘'
                 || ch == '\u{200b}'
                 || ch == '\u{200c}'
                 || ch == '\u{200d}'
@@ -1132,5 +1134,16 @@ mod tests {
 
         assert_eq!(tee.proof_type, "tee");
         assert_eq!(zk.proof_type, "zk");
+    }
+
+    #[test]
+    fn verification_receipt_new_collapses_registry_dash_variants_to_router_keys() {
+        let figure_dash =
+            VerificationReceipt::new(1, "TEE‒RECEIPT", VerificationResult::Valid, "v", 1);
+        let small_em_dash =
+            VerificationReceipt::new(2, "TEE﹘RECEIPT", VerificationResult::Valid, "v", 2);
+
+        assert_eq!(figure_dash.proof_type, "tee");
+        assert_eq!(small_em_dash.proof_type, "tee");
     }
 }
