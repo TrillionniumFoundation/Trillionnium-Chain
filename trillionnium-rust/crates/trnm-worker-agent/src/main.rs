@@ -1356,6 +1356,10 @@ fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
         | "openaimcpstreamablehttpv"
         | "openaimcpoverstreamablehttp"
         | "openaimcpoverstreamablehttpv"
+        | "openaimodelcontextprotocolstreamablehttp"
+        | "openaimodelcontextprotocolstreamablehttpv"
+        | "openaimodelcontextprotocoloverstreamablehttp"
+        | "openaimodelcontextprotocoloverstreamablehttpv"
         | "mcpwebsocket"
         | "mcpwebsocketv"
         | "mcpwebsockets"
@@ -2599,6 +2603,7 @@ mod tests {
             "MCP/streamable-http v2",
             "mcp over streamable-http",
             "model context protocol over streamable-http",
+            "OpenAI model context protocol over streamable-http v2",
         ] {
             let mut alias_rec = rec.clone();
             alias_rec
