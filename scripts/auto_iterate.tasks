@@ -489,3 +489,6 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-public-with-provenance-index-test" "./scripts/v2/d1_task_model_metadata_schema_reject_public_with_provenance_index_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-public-with-provenance-index-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-mcp-adapter-contract-timestamp-rfc3339-utc-test" "./scripts/v2/a1_mcp_adapter_contract_timestamp_rfc3339_utc_test.sh" "ci(gate): add a1-mcp-adapter-contract-timestamp-rfc3339-utc-test regression to quick-check"
