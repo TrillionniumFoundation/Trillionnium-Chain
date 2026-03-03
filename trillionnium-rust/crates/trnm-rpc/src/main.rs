@@ -2832,6 +2832,8 @@ fn main() -> Result<()> {
                 DISPATCH_OPEN_LIMIT_DEFAULT,
                 DISPATCH_OPEN_LIMIT_MAX,
             );
+            let path = ingress_file();
+            let _lock = acquire_market_file_lock(&path)?;
             let mut records = load_ingress_records();
             let mut assigned = Vec::<MessageRequestQueryResponse>::new();
             let ts = now_ms();
