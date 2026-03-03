@@ -15,6 +15,7 @@ required_tests=(
   "x3_prep_reorder_confirmed_after_revert_is_rejected_without_state_change"
   "x3_prep_stale_pending_on_degraded_heartbeat_triggers_compensation_revert"
   "x3_prep_degraded_heartbeat_takes_precedence_over_timeout_confirm_failure"
+  "x3_prep_degraded_replay_keeps_first_compensation_reason_stable"
   "x3_prep_degraded_blank_reason_replay_keeps_fallback_reason_stable"
   "x3_prep_confirm_failed_replay_keeps_first_compensation_reason_stable"
   "x3_prep_confirm_failed_blank_reason_replay_keeps_fallback_reason_stable"
