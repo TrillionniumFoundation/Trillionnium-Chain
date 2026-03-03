@@ -1243,7 +1243,7 @@ fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
     let has_disallowed_chars = normalized
         .chars()
         .any(|c| c.is_control() || is_invisible_filler(c) || !c.is_ascii());
-    if has_disallowed_chars {
+    if has_disallowed_chars || normalized.len() > 128 {
         return None;
     }
 
@@ -4185,6 +4185,12 @@ mod tests {
             normalized_agent_protocol(Some("Google Agent-to-Agent Protocol v27")).as_deref(),
             Some("a2a")
         );
+    }
+
+    #[test]
+    fn normalized_agent_protocol_rejects_oversized_alias_input() {
+        let oversized = format!("MCP over HTTP v2 {}", "x".repeat(200));
+        assert_eq!(normalized_agent_protocol(Some(&oversized)), None);
     }
 
     #[test]
