@@ -128,7 +128,8 @@ fn normalize_compensation_reason(reason: &str, fallback: &'static str) -> String
             if ch.is_control()
                 || matches!(
                     ch,
-                    '\u{061C}'
+                    '\u{00AD}'
+                        | '\u{061C}'
                         | '\u{200B}'
                         | '\u{200C}'
                         | '\u{200D}'
@@ -233,6 +234,13 @@ mod tests {
     #[test]
     fn normalize_compensation_reason_strips_bidi_markers_for_replay_stability() {
         let raw = "target\u{200E} relay\u{200F} timeout";
+        let normalized = normalize_compensation_reason(raw, "fallback");
+        assert_eq!(normalized, "target relay timeout");
+    }
+
+    #[test]
+    fn normalize_compensation_reason_strips_soft_hyphen_for_replay_stability() {
+        let raw = "target\u{00AD}relay timeout";
         let normalized = normalize_compensation_reason(raw, "fallback");
         assert_eq!(normalized, "target relay timeout");
     }
