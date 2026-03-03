@@ -1371,10 +1371,14 @@ fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
         | "mcpwebsocketv"
         | "mcpwebsockets"
         | "mcpwebsocketsv"
+        | "mcpws"
+        | "mcpwsv"
         | "mcpoverwebsocket"
         | "mcpoverwebsocketv"
         | "mcpoverwebsockets"
         | "mcpoverwebsocketsv"
+        | "mcpoverws"
+        | "mcpoverwsv"
         | "modelcontextprotocolwebsocket"
         | "modelcontextprotocolwebsocketv"
         | "modelcontextprotocolwebsockets"
@@ -1538,10 +1542,14 @@ fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
         | "a2awebsocketv"
         | "a2awebsockets"
         | "a2awebsocketsv"
+        | "a2aws"
+        | "a2awsv"
         | "a2aoverwebsocket"
         | "a2aoverwebsocketv"
         | "a2aoverwebsockets"
         | "a2aoverwebsocketsv"
+        | "a2aoverws"
+        | "a2aoverwsv"
         | "agent2agenthttp"
         | "agent2agenthttpv"
         | "agenttoagenthttp"
@@ -4374,6 +4382,10 @@ mod tests {
             Some("mcp")
         );
         assert_eq!(
+            normalized_agent_protocol(Some("MCP over WS v2")).as_deref(),
+            Some("mcp")
+        );
+        assert_eq!(
             normalized_agent_protocol(Some("MCP over WebSockets v2")).as_deref(),
             Some("mcp")
         );
@@ -4395,6 +4407,10 @@ mod tests {
         );
         assert_eq!(
             normalized_agent_protocol(Some("A2A over WebSocket v2")).as_deref(),
+            Some("a2a")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("A2A over WS v2")).as_deref(),
             Some("a2a")
         );
         assert_eq!(
