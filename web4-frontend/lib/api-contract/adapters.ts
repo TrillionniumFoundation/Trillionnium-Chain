@@ -98,7 +98,9 @@ function canonicalizeResolutionCode(code: string | undefined): string | undefine
   const normalized = code
     .replace(/[\u200B\u200C\u200D\u2060\u2063\uFEFF]/g, "")
     .trim()
-    .toUpperCase();
+    .toUpperCase()
+    .replace(/[\s-]+/g, "_")
+    .replace(/_+/g, "_");
   return normalized.length > 0 ? normalized : undefined;
 }
 

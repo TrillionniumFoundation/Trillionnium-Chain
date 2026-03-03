@@ -158,6 +158,32 @@ describe("api-contract adapters", () => {
     });
   });
 
+  it("canonicalizes hyphen/space-separated M2V2 resolution code tokens before fail-closed mapping", () => {
+    const out = adaptQueryEvents(
+      [
+        {
+          event_type: "settle",
+          task_id: 81,
+          from_status: "Revealed",
+          to_status: "Challenged",
+          actor: "did:trnm:verifier",
+          tx_id: 131,
+          block_height: 241,
+          state_root: "root-3b",
+          ts_unix_ms: 1700000002100,
+          resolution_code: "err-m2v2 proof-late",
+        },
+      ],
+      "81",
+    );
+
+    expect(out.events[0]?.level).toBe("error");
+    expect(out.events[0]?.payload).toMatchObject({
+      resolutionCode: "ERR_M2V2_PROOF_LATE",
+      m2v2ErrorCode: "ERR_M2V2_PROOF_LATE",
+    });
+  });
+
   it("canonicalizes M2V2 resolution code with BOM/zero-width noise before fail-closed mapping", () => {
     const out = adaptQueryEvents(
       [
