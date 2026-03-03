@@ -357,7 +357,9 @@ fn query_audit_export_by_task_id<'a>(
 
 fn normalize_provenance_fingerprint_lookup(value: &str) -> Option<String> {
     let mut normalized = normalized_provenance_label(Some(value), 128)?;
-    for _ in 0..2 {
+    // Accept heavily shell-escaped forms (e.g., nested quote wrappers from CLI/env propagation)
+    // while still fail-closing on empty/invalid labels after normalization.
+    for _ in 0..4 {
         let bytes = normalized.as_bytes();
         if bytes.len() >= 2
             && ((bytes[0] == b'\'' && bytes[bytes.len() - 1] == b'\'')
@@ -3236,6 +3238,32 @@ mod tests {
 
         let index = build_audit_export_index(&rows);
         let hit = query_audit_export_by_provenance_fingerprint(&rows, &index, " ' \"DEADBEEF\" ' ");
+        assert_eq!(hit.len(), 1);
+        assert_eq!(hit[0].request_id, "r1");
+    }
+
+    #[test]
+    fn query_audit_export_by_provenance_fingerprint_accepts_deeply_nested_quotes() {
+        let rows = vec![EnterpriseAuditExportRecord {
+            request_id: "r1".to_string(),
+            task_id: 7002,
+            status: "reveal_submitted".to_string(),
+            provider_request_id: Some("p1".to_string()),
+            provenance_schema_version: Some("llm.v2".to_string()),
+            provenance_fingerprint: Some("deadbeef".to_string()),
+            provider: Some("openai".to_string()),
+            model: Some("gpt-5.3-codex".to_string()),
+            adapter: Some("mcp".to_string()),
+            agent_protocol: Some("a2a".to_string()),
+            compliance_profile: Some("cn-moderate".to_string()),
+        }];
+
+        let index = build_audit_export_index(&rows);
+        let hit = query_audit_export_by_provenance_fingerprint(
+            &rows,
+            &index,
+            "  ` ' \" deadbeef \" ' `  ",
+        );
         assert_eq!(hit.len(), 1);
         assert_eq!(hit[0].request_id, "r1");
     }
