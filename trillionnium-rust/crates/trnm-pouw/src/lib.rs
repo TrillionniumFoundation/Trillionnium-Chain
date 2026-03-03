@@ -3957,4 +3957,29 @@ mod tests {
 
         assert!(matches!(err, PouwError::State(msg) if msg.contains("Proof verification failed")));
     }
+
+    #[test]
+    fn zk_proof_immediately_completes_task_and_skips_challenge_window() {
+        let mut st = seeded_state();
+        let r1 = apply_create_task(&mut st, 7004, "alice".into(), 10).unwrap();
+
+        let mut task = st.get_task(r1.id).unwrap();
+        task.proof_type = ProofType::Zk;
+        let r1_updated = st.update_task(r1, task).unwrap();
+
+        let result_hash = [3u8; 32];
+        let reveal_salt = [4u8; 32];
+        let committed = compute_commitment(7004, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1_updated, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+
+        let proof = b"ZK:VALID_PROOF".to_vec();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, Some(proof)).unwrap();
+
+        let final_task = st.get_task(r4.id).unwrap();
+        assert_eq!(final_task.status, TaskStatus::Completed);
+        assert!(final_task.challenge_deadline_height.is_none());
+        assert!(final_task.resolve_deadline_height.is_none());
+    }
 }
