@@ -39,8 +39,23 @@ m2_policy_gate_log=""
 m2_policy_gate_assert_default_drift_guard="missing"
 if [[ -n "$latest_p1_gate" ]] && [[ -f "$latest_p1_gate/m2_policy_gate.log" ]]; then
   m2_policy_gate_log="$latest_p1_gate/m2_policy_gate.log"
-  if awk '{ line=$0; gsub(/\033\[[0-9;]*[[:alpha:]]/, "", line); print line }' "$m2_policy_gate_log" \
-    | grep -Eq '^[[:space:]]*test ([[:alnum:]_]+::)*market_m2_policy_gate_guards_default_drift_to_(min|max)_boundaries \.\.\. ok([[:space:]].*)?\r?$'; then
+  if python3 - "$m2_policy_gate_log" <<'PY' | grep -Eq '^[[:space:]]*test ([[:alnum:]_]+::)*market_m2_policy_gate_guards_default_drift_to_(min|max)_boundaries \.\.\. ok([[:space:]].*)?\r?$'
+import re
+import sys
+from pathlib import Path
+
+text = Path(sys.argv[1]).read_text(encoding='utf-8', errors='ignore')
+text = re.sub(r'\x1b\[[0-9;]*[A-Za-z]', '', text)
+text = text.translate({
+    0xFEFF: None,
+    0x200B: None,
+    0x200C: None,
+    0x200D: None,
+    0x2060: None,
+})
+sys.stdout.write(text)
+PY
+  then
     m2_policy_gate_assert_default_drift_guard="pass"
   else
     m2_policy_gate_assert_default_drift_guard="fail"
