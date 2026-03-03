@@ -34,6 +34,7 @@ rollback_guard_phrases=(
   "trnm-onboard rollback"
   "rollback --org-id <org_id>"
   "--env <env>"
+  "--change-ticket-id <change_ticket_id>"
   "--dry-run"
 )
 
