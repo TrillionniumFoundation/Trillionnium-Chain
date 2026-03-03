@@ -61,12 +61,15 @@ for phrase in "${master_required_phrases[@]}"; do
   fi
 done
 
-snapshot_error_mapping_line="$(grep -F -- "最小错误码映射（冻结）：" "$SNAPSHOT_SPEC" | head -n1 || true)"
-master_error_mapping_line="$(grep -F -- "最小错误码映射（冻结）：" "$MASTER_SPEC" | head -n1 || true)"
-if [[ -z "$snapshot_error_mapping_line" || -z "$master_error_mapping_line" ]]; then
-  echo "[FAIL] missing frozen MV2 error mapping line in snapshot or master" >&2
+mapfile -t snapshot_error_mapping_lines < <(grep -F -- "最小错误码映射（冻结）：" "$SNAPSHOT_SPEC" || true)
+mapfile -t master_error_mapping_lines < <(grep -F -- "最小错误码映射（冻结）：" "$MASTER_SPEC" || true)
+if [[ "${#snapshot_error_mapping_lines[@]}" -ne 1 || "${#master_error_mapping_lines[@]}" -ne 1 ]]; then
+  echo "[FAIL] expected exactly one frozen MV2 error mapping line in snapshot and master" >&2
+  echo "  snapshot_count=${#snapshot_error_mapping_lines[@]} master_count=${#master_error_mapping_lines[@]}" >&2
   exit 1
 fi
+snapshot_error_mapping_line="${snapshot_error_mapping_lines[0]}"
+master_error_mapping_line="${master_error_mapping_lines[0]}"
 if [[ "$snapshot_error_mapping_line" != "$master_error_mapping_line" ]]; then
   echo "[FAIL] MV2 frozen error mapping drift between snapshot and master" >&2
   echo "  snapshot: $snapshot_error_mapping_line" >&2
@@ -74,12 +77,15 @@ if [[ "$snapshot_error_mapping_line" != "$master_error_mapping_line" ]]; then
   exit 1
 fi
 
-snapshot_state_mapping_line="$(grep -F -- "最小状态迁移映射（冻结）：" "$SNAPSHOT_SPEC" | head -n1 || true)"
-master_state_mapping_line="$(grep -F -- "最小状态迁移映射（冻结）：" "$MASTER_SPEC" | head -n1 || true)"
-if [[ -z "$snapshot_state_mapping_line" || -z "$master_state_mapping_line" ]]; then
-  echo "[FAIL] missing frozen MV2 state mapping line in snapshot or master" >&2
+mapfile -t snapshot_state_mapping_lines < <(grep -F -- "最小状态迁移映射（冻结）：" "$SNAPSHOT_SPEC" || true)
+mapfile -t master_state_mapping_lines < <(grep -F -- "最小状态迁移映射（冻结）：" "$MASTER_SPEC" || true)
+if [[ "${#snapshot_state_mapping_lines[@]}" -ne 1 || "${#master_state_mapping_lines[@]}" -ne 1 ]]; then
+  echo "[FAIL] expected exactly one frozen MV2 state mapping line in snapshot and master" >&2
+  echo "  snapshot_count=${#snapshot_state_mapping_lines[@]} master_count=${#master_state_mapping_lines[@]}" >&2
   exit 1
 fi
+snapshot_state_mapping_line="${snapshot_state_mapping_lines[0]}"
+master_state_mapping_line="${master_state_mapping_lines[0]}"
 if [[ "$snapshot_state_mapping_line" != "$master_state_mapping_line" ]]; then
   echo "[FAIL] MV2 frozen state mapping drift between snapshot and master" >&2
   echo "  snapshot: $snapshot_state_mapping_line" >&2
