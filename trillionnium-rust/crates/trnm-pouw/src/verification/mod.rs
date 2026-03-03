@@ -219,10 +219,34 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
         | "tee attestation v 2"
         | "tee attestation v 3"
         | "tee quote"
+        | "tee quote v1"
+        | "tee quote v2"
+        | "tee quote v3"
+        | "tee quote v 1"
+        | "tee quote v 2"
+        | "tee quote v 3"
         | "tee report"
+        | "tee report v1"
+        | "tee report v2"
+        | "tee report v3"
+        | "tee report v 1"
+        | "tee report v 2"
+        | "tee report v 3"
         | "sgx quote"
+        | "sgx quote v1"
+        | "sgx quote v2"
+        | "sgx quote v3"
+        | "sgx quote v 1"
+        | "sgx quote v 2"
+        | "sgx quote v 3"
         | "enclave quote"
         | "sgx report"
+        | "sgx report v1"
+        | "sgx report v2"
+        | "sgx report v3"
+        | "sgx report v 1"
+        | "sgx report v 2"
+        | "sgx report v 3"
         | "tee evidence"
         | "remote attestation"
         | "attestation report"
@@ -283,10 +307,22 @@ fn normalize_receipt_proof_type(raw: &str) -> String {
         | "teeattestationv2"
         | "teeattestationv3"
         | "teequote"
+        | "teequotev1"
+        | "teequotev2"
+        | "teequotev3"
         | "teereport"
+        | "teereportv1"
+        | "teereportv2"
+        | "teereportv3"
         | "sgxquote"
+        | "sgxquotev1"
+        | "sgxquotev2"
+        | "sgxquotev3"
         | "enclavequote"
         | "sgxreport"
+        | "sgxreportv1"
+        | "sgxreportv2"
+        | "sgxreportv3"
         | "teeevidence"
         | "remoteattestation"
         | "attestationreport"
@@ -960,6 +996,20 @@ mod tests {
 
         assert_eq!(tee_report.proof_type, "tee");
         assert_eq!(zk_snark.proof_type, "zk");
+    }
+
+    #[test]
+    fn verification_receipt_new_collapses_versioned_tee_quote_and_sgx_report_aliases() {
+        let tee_quote_v2 =
+            VerificationReceipt::new(1, "TEE_QUOTE_V2", VerificationResult::Valid, "v", 1);
+        let sgx_report_v3 =
+            VerificationReceipt::new(2, "sgx-report-v3", VerificationResult::Valid, "v", 2);
+        let tee_quote_compact_v1 =
+            VerificationReceipt::new(3, "teequotev1", VerificationResult::Valid, "v", 3);
+
+        assert_eq!(tee_quote_v2.proof_type, "tee");
+        assert_eq!(sgx_report_v3.proof_type, "tee");
+        assert_eq!(tee_quote_compact_v1.proof_type, "tee");
     }
 
     #[test]
