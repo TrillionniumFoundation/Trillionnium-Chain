@@ -1809,15 +1809,6 @@ fn parse_http_get_path(first_line: &str) -> Option<&str> {
     Some(path.split('?').next().unwrap_or(path))
 }
 
-fn parse_token_id_from_audit_note(note: Option<&str>) -> Option<u64> {
-    let note = note?;
-    note.split_whitespace().find_map(|part| {
-        part.strip_prefix("token_id=")
-            .or_else(|| part.strip_prefix("token_id:"))
-            .and_then(|v| v.trim_matches(',').parse::<u64>().ok())
-    })
-}
-
 fn resolve_capability_token_subject_or_token(
     registry: &IdentityRegistry,
     subject_or_token: &str,
@@ -1828,16 +1819,7 @@ fn resolve_capability_token_subject_or_token(
 
     let mut subject_tokens = registry.capability_ids_by_subject(subject_or_token);
     subject_tokens.sort_unstable();
-    if let Some(token_id) = subject_tokens.last().copied() {
-        return Some(token_id);
-    }
-
-    registry
-        .audit_trail()
-        .iter()
-        .rev()
-        .filter(|event| event.subject == subject_or_token)
-        .find_map(|event| parse_token_id_from_audit_note(event.note.as_deref()))
+    subject_tokens.last().copied()
 }
 
 fn serve_health(host: &str, port: u16) -> Result<()> {
@@ -2958,6 +2940,7 @@ fn main() -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use trnm_types::CapabilityScope;
     use std::panic::{catch_unwind, AssertUnwindSafe};
     use std::sync::{
         atomic::{AtomicU64, Ordering},
@@ -3050,6 +3033,43 @@ mod tests {
         if let Err(panic) = run {
             std::panic::resume_unwind(panic);
         }
+    }
+
+    #[test]
+    fn resolve_capability_token_subject_or_token_fail_closed_without_structured_token() {
+        let mut registry = IdentityRegistry::default();
+        registry
+            .register_did(
+                "did:org:lane-xi".to_string(),
+                "org:lane-xi-admin".to_string(),
+                10,
+            )
+            .expect("register did");
+        let token_id = registry
+            .issue_capability(
+                "org:lane-xi-admin".to_string(),
+                "did:org:lane-xi".to_string(),
+                CapabilityScope::AuditRead,
+                12,
+                Some(120),
+            )
+            .expect("issue capability");
+
+        let mut raw = serde_json::to_value(&registry).expect("serialize registry");
+        raw["capabilities"] = serde_json::json!({});
+        if let Some(events) = raw["audit_trail"].as_array_mut() {
+            if let Some(last) = events.last_mut() {
+                last["note"] = serde_json::json!(format!("legacy-note token_id={token_id}"));
+            }
+        }
+        let imported: IdentityRegistry =
+            serde_json::from_value(raw).expect("deserialize mutated registry");
+
+        assert_eq!(
+            resolve_capability_token_subject_or_token(&imported, "did:org:lane-xi"),
+            None,
+            "subject lookup must fail-closed when structured token mapping is missing"
+        );
     }
 
     #[test]
