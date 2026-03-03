@@ -68,6 +68,10 @@ cargo test -p trnm-bridge-poc --test x2_settlement_loop \
   -- --nocapture
 
 cargo test -p trnm-bridge-poc --test x2_settlement_loop \
+  x3_prep_degraded_heartbeat_blank_reason_falls_back_to_stable_contract_message \
+  -- --nocapture
+
+cargo test -p trnm-bridge-poc --test x2_settlement_loop \
   x3_prep_confirm_failure_reason_sanitizes_bom_and_word_joiner_controls_for_replay_stability \
   -- --nocapture
 
