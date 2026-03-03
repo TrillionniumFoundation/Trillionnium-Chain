@@ -216,4 +216,19 @@ mod tests {
         let decoded: TaskMetadata = serde_json::from_str(&raw).expect("deserialize metadata");
         assert_eq!(decoded, metadata);
     }
+
+    #[test]
+    fn task_object_defaults_proof_type_when_legacy_payload_omits_it() {
+        let raw = r#"{
+            "task_id": 7,
+            "creator": "did:trnm:worker:legacy",
+            "bounty": 100,
+            "status": "Open",
+            "version": 1
+        }"#;
+
+        let task: TaskObject = serde_json::from_str(raw).expect("legacy task payload should deserialize");
+        assert_eq!(task.proof_type, ProofType::Fraud);
+        assert!(task.metadata.is_none());
+    }
 }
