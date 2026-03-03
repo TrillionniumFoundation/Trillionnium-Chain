@@ -538,3 +538,6 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-mcp-adapter-contract-response-content-type-charset-utf8-test" "./scripts/v2/a1_mcp_adapter_contract_response_content_type_charset_utf8_test.sh" "ci(gate): add a1-mcp-adapter-contract-response-content-type-charset-utf8-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a2-a2a-adapter-contract-response-trace-id-exact-echo-test" "./scripts/v2/a2_a2a_adapter_contract_response_trace_id_exact_echo_test.sh" "ci(gate): add a2-a2a-adapter-contract-response-trace-id-exact-echo-test regression to quick-check"
