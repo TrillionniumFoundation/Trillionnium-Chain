@@ -75,4 +75,26 @@ if "$GATE" >/dev/null 2>&1; then
   exit 1
 fi
 
+# Restore master and validate baseline again before next mutation.
+cp "$tmp_master" "$MASTER_SPEC"
+"$GATE"
+
+# Regression 3: remove M2↔V2 interface anchor from master; gate must fail-closed.
+python3 - <<'PY' "$MASTER_SPEC"
+from pathlib import Path
+import sys
+
+spec = Path(sys.argv[1])
+text = spec.read_text(encoding='utf-8')
+needle = "M2↔V2"
+if needle not in text:
+    raise SystemExit(f"missing expected baseline phrase: {needle}")
+spec.write_text(text.replace(needle, "M2-V2", 1), encoding='utf-8')
+PY
+
+if "$GATE" >/dev/null 2>&1; then
+  echo "[FAIL] MV2 gate should fail when master M2↔V2 interface anchor is removed" >&2
+  exit 1
+fi
+
 echo "[PASS] MV2 receipt contract freeze doc gate fails-closed on snapshot + master phrase drift"
