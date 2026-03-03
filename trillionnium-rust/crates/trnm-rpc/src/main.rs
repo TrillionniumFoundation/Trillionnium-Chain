@@ -1251,6 +1251,23 @@ fn is_nonempty_no_whitespace(input: &str) -> bool {
     !input.is_empty() && !input.chars().any(|c| c.is_whitespace())
 }
 
+fn is_canonical_rfc3339_utc_z(input: &str) -> bool {
+    if input.len() != 20 {
+        return false;
+    }
+    let bytes = input.as_bytes();
+    bytes[4] == b'-'
+        && bytes[7] == b'-'
+        && bytes[10] == b'T'
+        && bytes[13] == b':'
+        && bytes[16] == b':'
+        && bytes[19] == b'Z'
+        && bytes
+            .iter()
+            .enumerate()
+            .all(|(i, b)| matches!(i, 4 | 7 | 10 | 13 | 16 | 19) || b.is_ascii_digit())
+}
+
 fn validate_task_metadata_core_fields(metadata: &TaskMetadata) -> Result<()> {
     if let Some(task_type) = metadata.task_type.as_deref() {
         if task_type.is_empty() {
@@ -1286,6 +1303,12 @@ fn validate_task_metadata_core_fields(metadata: &TaskMetadata) -> Result<()> {
         if let Some(producer_did) = provenance.producer_did.as_deref() {
             if !(producer_did.starts_with("did:") && is_nonempty_no_whitespace(producer_did)) {
                 bail!("metadata.provenance.producer_did must be canonical did:* token");
+            }
+        }
+
+        if let Some(produced_at) = provenance.produced_at.as_deref() {
+            if !is_canonical_rfc3339_utc_z(produced_at) {
+                bail!("metadata.provenance.produced_at must be canonical RFC3339 UTC Z timestamp");
             }
         }
 
