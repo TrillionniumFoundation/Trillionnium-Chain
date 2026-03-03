@@ -179,10 +179,18 @@ impl VerifierRegistry {
             "ra report v1" | "rareportv1" | "ra report v 1" => "tee",
             "ra report v2" | "rareportv2" | "ra report v 2" => "tee",
             "ra report v3" | "rareportv3" | "ra report v 3" => "tee",
+            "tee ra report" | "teerareport" => "tee",
+            "tee ra report v1" | "teerareportv1" | "tee ra report v 1" => "tee",
+            "tee ra report v2" | "teerareportv2" | "tee ra report v 2" => "tee",
+            "tee ra report v3" | "teerareportv3" | "tee ra report v 3" => "tee",
             "ra quote" | "raquote" => "tee",
             "ra quote v1" | "raquotev1" | "ra quote v 1" => "tee",
             "ra quote v2" | "raquotev2" | "ra quote v 2" => "tee",
             "ra quote v3" | "raquotev3" | "ra quote v 3" => "tee",
+            "tee ra quote" | "teeraquote" => "tee",
+            "tee ra quote v1" | "teeraquotev1" | "tee ra quote v 1" => "tee",
+            "tee ra quote v2" | "teeraquotev2" | "tee ra quote v 2" => "tee",
+            "tee ra quote v3" | "teeraquotev3" | "tee ra quote v 3" => "tee",
             "tee quote" | "teequote" => "tee",
             "tee quote v1" | "teequotev1" | "tee quote v 1" => "tee",
             "tee quote v2" | "teequotev2" | "tee quote v 2" => "tee",
@@ -1649,6 +1657,8 @@ mod tests {
         assert!(registry.is_registered_kind("TEE attestation report"));
         assert!(registry.is_registered_kind("RA report"));
         assert!(registry.is_registered_kind("RA_QUOTE_V2"));
+        assert!(registry.is_registered_kind("TEE_RA_REPORT"));
+        assert!(registry.is_registered_kind("tee-ra-quote-v2"));
     }
 
     #[test]
