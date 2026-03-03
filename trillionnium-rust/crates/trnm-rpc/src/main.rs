@@ -997,7 +997,7 @@ fn normalize_market_worker_key(raw: &str) -> Option<String> {
         .collect::<String>();
     let normalized = sanitized
         .to_ascii_lowercase()
-        .split_whitespace()
+        .split_ascii_whitespace()
         .collect::<Vec<_>>()
         .join(" ");
     if normalized.is_empty() {
@@ -1024,7 +1024,7 @@ fn normalize_market_status_key(raw: &str) -> String {
         })
         .collect::<String>()
         .to_ascii_lowercase()
-        .split_whitespace()
+        .split_ascii_whitespace()
         .collect::<Vec<_>>()
         .join(" ")
 }
@@ -1035,11 +1035,14 @@ fn normalize_actor_or_signer(raw: &str) -> Option<String> {
         .chars()
         .filter_map(|ch| match ch {
             '\u{200B}' | '\u{200C}' | '\u{200D}' | '\u{2060}' | '\u{FEFF}' => Some(' '),
-            _ if ch.is_control() => None,
+            _ if ch.is_control() => Some(' '),
             _ => Some(ch),
         })
         .collect();
-    let collapsed = sanitized.split_whitespace().collect::<Vec<_>>().join(" ");
+    let collapsed = sanitized
+        .split_ascii_whitespace()
+        .collect::<Vec<_>>()
+        .join(" ");
     if collapsed.is_empty() {
         None
     } else {
@@ -3928,6 +3931,12 @@ mod tests {
             normalize_actor_or_signer(" \u{200B}alice\u{2060}\u{0007} bob ").expect("normalized");
         assert_eq!(got, "alice bob");
         assert!(normalize_actor_or_signer("\u{200B}\u{2060}\u{0000}").is_none());
+    }
+
+    #[test]
+    fn normalize_actor_or_signer_treats_controls_as_separators_not_concatenation() {
+        let got = normalize_actor_or_signer("alice\u{0007}bob").expect("normalized");
+        assert_eq!(got, "alice bob");
     }
 
     #[test]
