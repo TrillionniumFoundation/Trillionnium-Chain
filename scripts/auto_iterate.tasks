@@ -465,3 +465,6 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: mv2-receipt-contract-freeze-doc-gate-regression-test" "./scripts/v2/mv2_receipt_contract_freeze_doc_gate_regression_test.sh" "ci(gate): add mv2-receipt-contract-freeze-doc-gate-regression-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-model-version-internal-whitespace-test" "./scripts/v2/d1_task_model_metadata_schema_reject_model_version_internal_whitespace_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-model-version-internal-whitespace-test regression to quick-check"
