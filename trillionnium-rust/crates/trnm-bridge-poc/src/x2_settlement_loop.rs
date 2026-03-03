@@ -222,4 +222,11 @@ mod tests {
         let normalized = normalize_compensation_reason(raw, "fallback");
         assert_eq!(normalized, "target relay timeout signal");
     }
+
+    #[test]
+    fn normalize_compensation_reason_collapses_crlf_and_unicode_separators_for_replay_stability() {
+        let raw = "target\r\nrelay\u{2028}timeout\u{2029}signal\n";
+        let normalized = normalize_compensation_reason(raw, "fallback");
+        assert_eq!(normalized, "target relay timeout signal");
+    }
 }
