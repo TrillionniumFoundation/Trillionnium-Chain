@@ -45,6 +45,7 @@ evidence_guard_phrases=(
   "回滚命令与输出日志的 sha256 记录"
   "接入审批单（含 change_ticket_id）"
   "NTP 时钟偏差检查记录（≤300秒）"
+  "审计包导出文件与 hash（SHA-256 小写 hex，64位）"
 )
 
 for phrase in "${rollback_guard_phrases[@]}"; do
