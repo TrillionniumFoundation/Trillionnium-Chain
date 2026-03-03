@@ -14,9 +14,13 @@ fn lock_test_guard<'a>() -> MutexGuard<'a, ()> {
         .unwrap_or_else(|poison| poison.into_inner());
     let root = fixture_root();
     let _ = fs::remove_file(root.join("tasks.jsonl"));
+    let _ = fs::remove_file(root.join("tasks.jsonl.lock"));
     let _ = fs::remove_file(root.join("bids.jsonl"));
+    let _ = fs::remove_file(root.join("bids.jsonl.lock"));
     let _ = fs::remove_file(root.join("reputation.json"));
+    let _ = fs::remove_file(root.join("reputation.json.lock"));
     let _ = fs::remove_file(root.join("ingress.jsonl"));
+    let _ = fs::remove_file(root.join("ingress.jsonl.lock"));
     guard
 }
 
@@ -315,7 +319,7 @@ fn market_match_prefers_higher_reputation_when_weighted_score_is_better() {
     let _ = fs::remove_dir_all("run/market");
     fs::create_dir_all("run/market").expect("create market dir");
     fs::write(
-        "run/market/reputation.json",
+        market_reputation_fixture_path(),
         r#"{"worker-low":0,"worker-high":200}"#,
     )
     .expect("write reputation file");
@@ -351,13 +355,7 @@ fn market_match_prefers_higher_reputation_when_weighted_score_is_better() {
         "101",
     ]);
 
-    let match_out = run_ok_with_env(
-        &["market.match_task", "--task-id", &task_id],
-        &[(
-            "TRNM_RPC_MARKET_REPUTATION_FILE",
-            "run/market/reputation.json",
-        )],
-    );
+    let match_out = run_ok(&["market.match_task", "--task-id", &task_id]);
     let matched: Value = serde_json::from_str(match_out.trim()).expect("match output json");
     assert_eq!(matched["winner"], "worker-high");
     assert_eq!(matched["match_policy"], "price_reputation_weighted");
@@ -374,7 +372,7 @@ fn market_match_negative_reputation_exposes_penalty_breakdown_fields() {
     let _guard = lock_test_guard();
     let _ = fs::remove_dir_all("run/market");
     fs::create_dir_all("run/market").expect("create market dir");
-    fs::write("run/market/reputation.json", r#"{"worker-risk":-50}"#)
+    fs::write(market_reputation_fixture_path(), r#"{"worker-risk":-50}"#)
         .expect("write reputation file");
 
     let create_out = run_ok(&[
@@ -399,13 +397,7 @@ fn market_match_negative_reputation_exposes_penalty_breakdown_fields() {
         "50",
     ]);
 
-    let match_out = run_ok_with_env(
-        &["market.match_task", "--task-id", &task_id],
-        &[(
-            "TRNM_RPC_MARKET_REPUTATION_FILE",
-            "run/market/reputation.json",
-        )],
-    );
+    let match_out = run_ok(&["market.match_task", "--task-id", &task_id]);
     let matched: Value = serde_json::from_str(match_out.trim()).expect("match output json");
     assert_eq!(matched["winner"], "worker-risk");
     assert_eq!(matched["winner_reputation"], -50);
@@ -422,7 +414,7 @@ fn market_match_reputation_lookup_normalizes_case_and_whitespace_keys() {
     let _guard = lock_test_guard();
     let _ = fs::remove_dir_all("run/market");
     fs::create_dir_all("run/market").expect("create market dir");
-    fs::write("run/market/reputation.json", r#"{"  Worker-High  ":200}"#)
+    fs::write(market_reputation_fixture_path(), r#"{"  Worker-High  ":200}"#)
         .expect("write reputation file");
 
     let create_out = run_ok(&[
@@ -456,13 +448,7 @@ fn market_match_reputation_lookup_normalizes_case_and_whitespace_keys() {
         "101",
     ]);
 
-    let match_out = run_ok_with_env(
-        &["market.match_task", "--task-id", &task_id],
-        &[(
-            "TRNM_RPC_MARKET_REPUTATION_FILE",
-            "run/market/reputation.json",
-        )],
-    );
+    let match_out = run_ok(&["market.match_task", "--task-id", &task_id]);
     assert!(match_out.contains("\"winner\":\"worker-high\""));
     assert!(match_out.contains("\"winner_reputation\":200"));
 }
@@ -473,7 +459,7 @@ fn market_match_reputation_alias_collision_uses_max_signal() {
     let _ = fs::remove_dir_all("run/market");
     fs::create_dir_all("run/market").expect("create market dir");
     fs::write(
-        "run/market/reputation.json",
+        market_reputation_fixture_path(),
         r#"{"worker-high":5,"  WORKER-HIGH  ":220,"worker-low":0}"#,
     )
     .expect("write reputation file");
@@ -509,13 +495,7 @@ fn market_match_reputation_alias_collision_uses_max_signal() {
         "101",
     ]);
 
-    let match_out = run_ok_with_env(
-        &["market.match_task", "--task-id", &task_id],
-        &[(
-            "TRNM_RPC_MARKET_REPUTATION_FILE",
-            "run/market/reputation.json",
-        )],
-    );
+    let match_out = run_ok(&["market.match_task", "--task-id", &task_id]);
     assert!(match_out.contains("\"winner\":\"worker-high\""));
     assert!(match_out.contains("\"winner_reputation\":220"));
 }
