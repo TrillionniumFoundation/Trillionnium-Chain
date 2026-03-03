@@ -246,6 +246,7 @@ impl VerifierRegistry {
             "snark" => "zk",
             "zk stark" | "zkstark" => "zk",
             "stark" => "zk",
+            "stark proof" | "starkproof" => "zk",
             "zkp" | "zk p" => "zk",
             "zero knowledge" | "zeroknowledge" => "zk",
             "zero knowledge snark" | "zeroknowledgesnark" => "zk",
@@ -1610,6 +1611,7 @@ mod tests {
         assert!(registry.is_registered_kind("zk-p"));
         assert!(registry.is_registered_kind("SNARK"));
         assert!(registry.is_registered_kind("STARK"));
+        assert!(registry.is_registered_kind("STARK_PROOF"));
         assert!(registry.is_registered_kind("zk-stark"));
         assert!(registry.is_registered_kind("zero knowledge stark"));
         assert!(registry.is_registered_kind("zk cert"));
