@@ -355,14 +355,32 @@ fn query_audit_export_by_task_id<'a>(
         .collect()
 }
 
+fn normalize_provenance_fingerprint_lookup(value: &str) -> Option<String> {
+    let mut normalized = normalized_provenance_label(Some(value), 128)?;
+    for _ in 0..2 {
+        let bytes = normalized.as_bytes();
+        if bytes.len() >= 2
+            && ((bytes[0] == b'\'' && bytes[bytes.len() - 1] == b'\'')
+                || (bytes[0] == b'"' && bytes[bytes.len() - 1] == b'"')
+                || (bytes[0] == b'`' && bytes[bytes.len() - 1] == b'`'))
+        {
+            normalized = normalized[1..normalized.len() - 1].trim().to_string();
+            if normalized.is_empty() {
+                return None;
+            }
+            continue;
+        }
+        break;
+    }
+    normalized_provenance_label(Some(normalized.as_str()), 128).map(|v| v.to_ascii_lowercase())
+}
+
 fn query_audit_export_by_provenance_fingerprint<'a>(
     exports: &'a [EnterpriseAuditExportRecord],
     index: &AuditExportIndex,
     provenance_fingerprint: &str,
 ) -> Vec<&'a EnterpriseAuditExportRecord> {
-    let Some(normalized) = normalized_provenance_label(Some(provenance_fingerprint), 128)
-        .map(|value| value.to_ascii_lowercase())
-    else {
+    let Some(normalized) = normalize_provenance_fingerprint_lookup(provenance_fingerprint) else {
         return Vec::new();
     };
     index
@@ -3185,6 +3203,28 @@ mod tests {
     }
 
     #[test]
+    fn query_audit_export_by_provenance_fingerprint_accepts_quoted_lookup() {
+        let rows = vec![EnterpriseAuditExportRecord {
+            request_id: "r1".to_string(),
+            task_id: 7002,
+            status: "reveal_submitted".to_string(),
+            provider_request_id: Some("p1".to_string()),
+            provenance_schema_version: Some("llm.v2".to_string()),
+            provenance_fingerprint: Some("deadbeef".to_string()),
+            provider: Some("openai".to_string()),
+            model: Some("gpt-5.3-codex".to_string()),
+            adapter: Some("mcp".to_string()),
+            agent_protocol: Some("a2a".to_string()),
+            compliance_profile: Some("cn-moderate".to_string()),
+        }];
+
+        let index = build_audit_export_index(&rows);
+        let hit = query_audit_export_by_provenance_fingerprint(&rows, &index, " ' \"DEADBEEF\" ' ");
+        assert_eq!(hit.len(), 1);
+        assert_eq!(hit[0].request_id, "r1");
+    }
+
+    #[test]
     fn query_audit_export_by_provenance_fingerprint_rejects_blank_or_oversized_lookup() {
         let rows = vec![EnterpriseAuditExportRecord {
             request_id: "r1".to_string(),
@@ -5073,8 +5113,7 @@ fn main() -> Result<()> {
                 (hits, rows, None)
             } else {
                 let raw = provenance_fingerprint.expect("checked above");
-                let normalized = normalized_provenance_label(Some(raw.as_str()), 128)
-                    .map(|value| value.to_ascii_lowercase())
+                let normalized = normalize_provenance_fingerprint_lookup(raw.as_str())
                     .ok_or_else(|| anyhow!("invalid provenance fingerprint filter"))?;
                 let hits = index
                     .by_provenance_fingerprint
