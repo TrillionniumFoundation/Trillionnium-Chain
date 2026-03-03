@@ -182,6 +182,45 @@ fn revoked_and_expired_token_with_unauthorized_actor_returns_inactive_fail_close
 }
 
 #[test]
+fn revoked_did_with_scope_mismatch_returns_did_revoked_fail_closed() {
+    let mut reg = IdentityRegistry::default();
+    reg.register_did(
+        "did:trnm:agent-i3-fail-closed-did-revoked".to_string(),
+        "org:lane-xi-admin".to_string(),
+        10,
+    )
+    .unwrap();
+
+    let token_id = reg
+        .issue_capability(
+            "org:lane-xi-admin".to_string(),
+            "did:trnm:agent-i3-fail-closed-did-revoked".to_string(),
+            CapabilityScope::BridgeSettle,
+            20,
+            Some(80),
+        )
+        .unwrap();
+
+    reg.revoke_did(
+        "org:lane-xi-admin".to_string(),
+        "did:trnm:agent-i3-fail-closed-did-revoked",
+        35,
+    )
+    .unwrap();
+
+    // I3 fail-closed contract: DID revocation must dominate requested scope
+    // mismatch checks so verifier error shape does not leak authz semantics.
+    let err = reg
+        .verify_capability("org:lane-xi-admin", token_id, CapabilityScope::AuditRead, 35)
+        .unwrap_err();
+
+    assert!(matches!(
+        err,
+        InteropIdentityError::DidRevoked { did } if did == "did:trnm:agent-i3-fail-closed-did-revoked"
+    ));
+}
+
+#[test]
 fn preissued_token_with_unauthorized_actor_returns_inactive_fail_closed() {
     let mut reg = IdentityRegistry::default();
     reg.register_did(
@@ -216,5 +255,45 @@ fn preissued_token_with_unauthorized_actor_returns_inactive_fail_closed() {
             expires_at: Some(80),
             revoked_at: None,
         } if err_token_id == token_id
+    ));
+}
+
+#[test]
+fn revoked_did_with_unauthorized_actor_still_returns_did_revoked_fail_closed() {
+    let mut reg = IdentityRegistry::default();
+    reg.register_did(
+        "did:trnm:agent-i3-fail-closed-did-revoked-unauth".to_string(),
+        "org:lane-xi-admin".to_string(),
+        10,
+    )
+    .unwrap();
+
+    let token_id = reg
+        .issue_capability(
+            "org:lane-xi-admin".to_string(),
+            "did:trnm:agent-i3-fail-closed-did-revoked-unauth".to_string(),
+            CapabilityScope::BridgeSettle,
+            20,
+            Some(80),
+        )
+        .unwrap();
+
+    reg.revoke_did(
+        "org:lane-xi-admin".to_string(),
+        "did:trnm:agent-i3-fail-closed-did-revoked-unauth",
+        35,
+    )
+    .unwrap();
+
+    // I3 fail-closed contract: DID revocation should dominate actor auth checks
+    // so unauthorized callers do not get an ActorUnauthorized-shaped side channel.
+    let err = reg
+        .verify_capability("org:intruder", token_id, CapabilityScope::BridgeSettle, 35)
+        .unwrap_err();
+
+    assert!(matches!(
+        err,
+        InteropIdentityError::DidRevoked { did }
+            if did == "did:trnm:agent-i3-fail-closed-did-revoked-unauth"
     ));
 }
