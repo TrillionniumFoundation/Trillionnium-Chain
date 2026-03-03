@@ -61,6 +61,23 @@ for phrase in "${master_required_phrases[@]}"; do
   fi
 done
 
+# Canonical contract lines must stay unique to avoid ambiguous spec anchors.
+snapshot_field_contract_count=$(grep -Fc -- "task_id/proof_type/verdict/verified_at/cost_hint" "$SNAPSHOT_SPEC" || true)
+master_field_contract_count=$(grep -Fc -- "task_id/proof_type/verdict/verified_at/cost_hint" "$MASTER_SPEC" || true)
+if [[ "$snapshot_field_contract_count" -ne 1 || "$master_field_contract_count" -ne 1 ]]; then
+  echo "[FAIL] expected exactly one unified MV2 field-contract phrase in snapshot and master" >&2
+  echo "  snapshot_field_contract_count=$snapshot_field_contract_count master_field_contract_count=$master_field_contract_count" >&2
+  exit 1
+fi
+
+snapshot_fail_closed_line_count=$(grep -Fc -- "不允许静默成功" "$SNAPSHOT_SPEC" || true)
+master_fail_closed_line_count=$(grep -Fc -- "不允许静默成功" "$MASTER_SPEC" || true)
+if [[ "$snapshot_fail_closed_line_count" -ne 1 || "$master_fail_closed_line_count" -ne 1 ]]; then
+  echo "[FAIL] expected exactly one MV2 fail-closed phrase in snapshot and master" >&2
+  echo "  snapshot_fail_closed_line_count=$snapshot_fail_closed_line_count master_fail_closed_line_count=$master_fail_closed_line_count" >&2
+  exit 1
+fi
+
 snapshot_anchor_count=$(grep -Fc -- "### MV-2：V2 回执接入前的契约冻结（Receipt Contract Freeze）" "$SNAPSHOT_SPEC" || true)
 master_anchor_count=$(grep -Fc -- "### 10.3 Lane MV（2026-03-03）V2 回执契约冻结主文档锚点" "$MASTER_SPEC" || true)
 if [[ "$snapshot_anchor_count" -ne 1 || "$master_anchor_count" -ne 1 ]]; then
