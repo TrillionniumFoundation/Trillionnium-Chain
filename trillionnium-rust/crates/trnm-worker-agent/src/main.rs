@@ -2338,8 +2338,11 @@ mod tests {
 
     #[test]
     fn task_lock_prevents_parallel_replay_for_same_task() {
-        let ack_log =
-            std::env::temp_dir().join(format!("trnm-worker-agent-ack-{}.jsonl", now_ms()));
+        let ack_log = std::env::temp_dir().join(format!(
+            "trnm-worker-agent-ack-lock-{}-{}.jsonl",
+            std::process::id(),
+            now_ms()
+        ));
         let guard = try_acquire_task_lock(&ack_log, 42)
             .expect("acquire lock")
             .expect("first lock should succeed");
@@ -2361,8 +2364,11 @@ mod tests {
 
     #[test]
     fn is_task_acked_only_true_for_accepted_records() {
-        let ack_log =
-            std::env::temp_dir().join(format!("trnm-worker-agent-ack-{}.jsonl", now_ms()));
+        let ack_log = std::env::temp_dir().join(format!(
+            "trnm-worker-agent-ack-records-{}-{}.jsonl",
+            std::process::id(),
+            now_ms()
+        ));
         fs::write(
             &ack_log,
             "{\"ts_unix_ms\":1,\"task_id\":1,\"status\":\"rejected\"}\n{\"ts_unix_ms\":2,\"task_id\":2,\"status\":\"accepted\"}\n",
