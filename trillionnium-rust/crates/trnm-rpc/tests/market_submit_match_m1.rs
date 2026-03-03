@@ -919,3 +919,47 @@ fn market_match_prefers_earlier_bid_before_worker_key_tie_breaker() {
     let _ = fs::remove_file(tasks);
     let _ = fs::remove_file(bids);
 }
+
+#[test]
+fn market_report_counts_orphan_bids_without_inflating_task_coverage() {
+    let _guard = test_lock().lock().expect("test lock");
+
+    let tasks = unique_market_fixture_path("market_report_orphan_tasks", "jsonl");
+    let bids = unique_market_fixture_path("market_report_orphan_bids", "jsonl");
+    fs::write(
+        &tasks,
+        r#"{"task_id":21001,"creator":"alice","bounty":100,"description":"coverage","status":"open","created_at_unix_ms":1}"#,
+    )
+    .expect("write task fixture");
+    fs::write(
+        &bids,
+        concat!(
+            r#"{"task_id":21001,"worker":"worker-a","price":90,"created_at_unix_ms":1700000000000}"#,
+            "\n",
+            r#"{"task_id":99999,"worker":"worker-orphan","price":80,"created_at_unix_ms":1700000000001}"#,
+            "\n"
+        ),
+    )
+    .expect("write bids fixture");
+
+    let tasks_env = tasks.to_string_lossy().into_owned();
+    let bids_env = bids.to_string_lossy().into_owned();
+    let out = run_ok_with_env(
+        &["market.report"],
+        &[
+            ("TRNM_RPC_MARKET_TASKS_FILE", tasks_env.as_str()),
+            ("TRNM_RPC_MARKET_BIDS_FILE", bids_env.as_str()),
+        ],
+    );
+    let report: Value = serde_json::from_str(out.trim()).expect("market report json");
+
+    assert_eq!(report["task_count"], 1);
+    assert_eq!(report["bid_count"], 2);
+    assert_eq!(report["orphan_bid_count"], 1);
+    assert_eq!(report["tasks_with_bids_count"], 1);
+    assert_eq!(report["bid_coverage_rate"], 1.0);
+    assert_eq!(report["avg_bids_per_task"], 2.0);
+
+    let _ = fs::remove_file(tasks);
+    let _ = fs::remove_file(bids);
+}
