@@ -229,4 +229,11 @@ mod tests {
         let normalized = normalize_compensation_reason(raw, "fallback");
         assert_eq!(normalized, "target relay timeout signal");
     }
+
+    #[test]
+    fn normalize_compensation_reason_strips_bidi_markers_for_replay_stability() {
+        let raw = "target\u{200E} relay\u{200F} timeout";
+        let normalized = normalize_compensation_reason(raw, "fallback");
+        assert_eq!(normalized, "target relay timeout");
+    }
 }
