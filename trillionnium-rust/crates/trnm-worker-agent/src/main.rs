@@ -1333,6 +1333,8 @@ fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
         | "anthropicmodelcontextprotocoloverstreamablehttpv"
         | "anthropicmcpwebsocket"
         | "anthropicmcpwebsocketv"
+        | "anthropicmcpoverwebsocket"
+        | "anthropicmcpoverwebsocketv"
         | "anthropicmodelcontextprotocolwebsocket"
         | "anthropicmodelcontextprotocolwebsocketv"
         | "anthropicmodelcontextprotocoloverwebsocket"
@@ -4011,6 +4013,10 @@ mod tests {
         );
         assert_eq!(
             normalized_agent_protocol(Some("OpenAI MCP WebSocket v3")).as_deref(),
+            Some("mcp")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Anthropic MCP over WebSocket v2")).as_deref(),
             Some("mcp")
         );
         assert_eq!(
