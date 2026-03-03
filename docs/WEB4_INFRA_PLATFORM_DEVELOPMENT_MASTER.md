@@ -15,7 +15,7 @@
 - Web4 平台化能力（计算市场、可验证执行、互操作、身份信任、数据治理、Agent 协议、企业合规）
 - 研发流程（测试、门禁、发布、运维）
 
-> 说明：本文件为唯一规范来源；历史 docs 已清理，关键审计信息已迁移至本文件。
+> 说明：本文件为主入口规范；历史 docs 以归档/专题形式保留，关键审计信息在本文件持续汇总。
 
 ---
 
@@ -28,7 +28,7 @@
 - 工作区全量测试已完成收口，近期关键红点已修复（含 `trnm-rpc` 环境变量测试并发干扰问题）。
 
 ### 1.2 Web4 能力雷达（现状）
-（来源：`docs/reports/web4-infra-capability-radar-v1.md`）
+（来源：Appendix A.4 雷达快照；并与 `docs/development/WEB4_PHASE_B_MILESTONE_SNAPSHOT_2026-02-28.md` 对齐）
 - Decentralized AI Compute Market：3/5
 - Verifiable Execution (TEE/ZK/Fraud)：2/5
 - Cross-chain Settlement & Interop：1/5
@@ -287,9 +287,9 @@ Trillionnium 目标不是“单链功能齐全”，而是“可被开发者和�
 - development/* → 开发流程主指南
 
 ### 9.2 文档策略（精简后）
-- 本 Master 为唯一主入口与唯一持续维护文档
-- 历史 docs 已删除，审计必需信息集中维护在本文件 Appendix C
-- 新增或变更需求，仅更新本 Master（禁止再分散到多处）
+- 本 Master 为唯一主入口与持续维护基线
+- 历史 docs 保留为专题文档，审计必需信息同步维护在本文件 Appendix A
+- 新增或变更需求，优先更新本 Master，并在专题文档保持双向引用一致
 
 ---
 
@@ -309,6 +309,11 @@ Trillionnium 目标不是“单链功能齐全”，而是“可被开发者和�
 - XI 定向门禁（文档与实现同步约束）：
   - `./scripts/v2/x2_settlement_contract_gate.sh`
   - `./scripts/v2/i2_token_lifecycle_gate.sh`
+
+### 10.2 前端接口文档（2026-03-03）
+- 现状：`web4-frontend/app/dashboard-data.ts` 仍为本地 mock 数据源。
+- 接口契约基线：`docs/development/WEB4_FRONTEND_API_INTERFACE_V0.md`
+- 约束：Dashboard 仅消费只读聚合 API，不得绕过 XI 门禁结论（X2/I2 gate）。
 
 ---
 
