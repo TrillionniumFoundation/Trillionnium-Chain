@@ -136,6 +136,11 @@ fn normalize_compensation_reason(reason: &str, fallback: &'static str) -> String
                         | '\u{200F}'
                         | '\u{FEFF}'
                         | '\u{2060}'
+                        | '\u{2061}'
+                        | '\u{2062}'
+                        | '\u{2063}'
+                        | '\u{2064}'
+                        | '\u{180E}'
                         | '\u{202A}'
                         | '\u{202B}'
                         | '\u{202C}'
@@ -209,5 +214,12 @@ mod tests {
         let raw = "\u{200B}\u{202E}\n\t\u{2066}";
         let normalized = normalize_compensation_reason(raw, "unknown confirm failure");
         assert_eq!(normalized, "unknown confirm failure");
+    }
+
+    #[test]
+    fn normalize_compensation_reason_strips_invisible_math_operators_and_mvs() {
+        let raw = "target\u{2061} relay\u{2062} timeout\u{2063} signal\u{2064}\u{180E}";
+        let normalized = normalize_compensation_reason(raw, "fallback");
+        assert_eq!(normalized, "target relay timeout signal");
     }
 }
