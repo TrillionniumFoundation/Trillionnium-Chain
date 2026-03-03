@@ -225,6 +225,52 @@ fn revoked_and_expired_token_with_unauthorized_actor_returns_inactive_fail_close
 }
 
 #[test]
+fn revoked_and_expired_token_with_scope_mismatch_returns_inactive_fail_closed() {
+    let mut reg = IdentityRegistry::default();
+    reg.register_did(
+        "did:trnm:agent-i3-fail-closed-revoked-expired-scope".to_string(),
+        "org:lane-xi-admin".to_string(),
+        10,
+    )
+    .unwrap();
+
+    let token_id = reg
+        .issue_capability(
+            "org:lane-xi-admin".to_string(),
+            "did:trnm:agent-i3-fail-closed-revoked-expired-scope".to_string(),
+            CapabilityScope::BridgeSettle,
+            20,
+            Some(28),
+        )
+        .unwrap();
+
+    reg.revoke_capability(
+        "org:lane-xi-admin".to_string(),
+        token_id,
+        25,
+        Some("precedence_revoke".to_string()),
+    )
+    .unwrap();
+
+    // I3 fail-closed contract: inactive must also dominate scope mismatch checks
+    // at the same revoked+expired verification boundary.
+    let err = reg
+        .verify_capability("org:lane-xi-admin", token_id, CapabilityScope::AuditRead, 31)
+        .unwrap_err();
+
+    assert!(matches!(
+        err,
+        InteropIdentityError::CapabilityInactive {
+            token_id: err_token_id,
+            at_height: 31,
+            issued_at: 20,
+            expires_at: Some(28),
+            revoked_at: Some(25),
+        } if err_token_id == token_id
+    ));
+}
+
+#[test]
 fn revoked_did_with_scope_mismatch_returns_did_revoked_fail_closed() {
     let mut reg = IdentityRegistry::default();
     reg.register_did(
