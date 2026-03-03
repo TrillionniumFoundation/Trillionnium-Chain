@@ -3936,4 +3936,25 @@ mod tests {
 
         assert!(matches!(err, PouwError::State(msg) if msg.contains("Proof verification failed")));
     }
+
+    #[test]
+    fn missing_tee_proof_rejects_reveal_fail_closed() {
+        let mut st = seeded_state();
+        let r1 = apply_create_task(&mut st, 7003, "alice".into(), 10).unwrap();
+
+        let mut task = st.get_task(r1.id).unwrap();
+        task.proof_type = ProofType::Tee;
+        let r1_updated = st.update_task(r1, task).unwrap();
+
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(7003, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1_updated, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+
+        let err = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap_err();
+
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("Proof verification failed")));
+    }
 }
