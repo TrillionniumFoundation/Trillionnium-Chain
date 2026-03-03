@@ -1391,6 +1391,14 @@ fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
         | "openaimcpoverwebsocketv"
         | "openaimcpoverwebsockets"
         | "openaimcpoverwebsocketsv"
+        | "openaimodelcontextprotocolwebsocket"
+        | "openaimodelcontextprotocolwebsocketv"
+        | "openaimodelcontextprotocolwebsockets"
+        | "openaimodelcontextprotocolwebsocketsv"
+        | "openaimodelcontextprotocoloverwebsocket"
+        | "openaimodelcontextprotocoloverwebsocketv"
+        | "openaimodelcontextprotocoloverwebsockets"
+        | "openaimodelcontextprotocoloverwebsocketsv"
         | "anthropicmcp"
         | "anthropicmcpprotocol"
         | "anthropicmodelcontextprotocol"
@@ -2685,6 +2693,7 @@ mod tests {
             "MCP over WebSocket v2",
             "model context protocol websocket",
             "OpenAI MCP websocket v1",
+            "OpenAI model context protocol over websocket v2",
             "Anthropic model-context-protocol over websocket",
         ] {
             let mut alias_rec = rec.clone();
