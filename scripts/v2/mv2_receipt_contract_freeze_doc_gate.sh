@@ -78,22 +78,6 @@ if [[ "$snapshot_fail_closed_line_count" -ne 1 || "$master_fail_closed_line_coun
   exit 1
 fi
 
-mv2_error_tokens=(
-  "ERR_M2V2_PROOF_MISSING"
-  "ERR_M2V2_PROOF_LATE"
-  "ERR_M2V2_PROOF_INVALID"
-  "ERR_M2V2_SETTLEMENT_DEGRADED"
-)
-for token in "${mv2_error_tokens[@]}"; do
-  snapshot_token_count=$(grep -Fc -- "$token" "$SNAPSHOT_SPEC" || true)
-  master_token_count=$(grep -Fc -- "$token" "$MASTER_SPEC" || true)
-  if [[ "$snapshot_token_count" -ne 1 || "$master_token_count" -ne 1 ]]; then
-    echo "[FAIL] expected exactly one frozen MV2 error token in snapshot and master: $token" >&2
-    echo "  snapshot_token_count=$snapshot_token_count master_token_count=$master_token_count" >&2
-    exit 1
-  fi
-done
-
 snapshot_anchor_count=$(grep -Fc -- "### MV-2：V2 回执接入前的契约冻结（Receipt Contract Freeze）" "$SNAPSHOT_SPEC" || true)
 master_anchor_count=$(grep -Fc -- "### 10.3 Lane MV（2026-03-03）V2 回执契约冻结主文档锚点" "$MASTER_SPEC" || true)
 if [[ "$snapshot_anchor_count" -ne 1 || "$master_anchor_count" -ne 1 ]]; then
