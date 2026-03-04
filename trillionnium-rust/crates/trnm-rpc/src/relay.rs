@@ -416,10 +416,16 @@ impl RiskQuotaState {
         domain: RiskDomain,
         key: &str,
     ) {
-        if let Some(bucket) = buckets.get_mut(&(domain, key.to_string())) {
+        let bucket_key = (domain, key.to_string());
+        let mut should_remove = false;
+        if let Some(bucket) = buckets.get_mut(&bucket_key) {
             if bucket.used > 0 {
                 bucket.used -= 1;
             }
+            should_remove = bucket.used == 0;
+        }
+        if should_remove {
+            buckets.remove(&bucket_key);
         }
     }
 }
