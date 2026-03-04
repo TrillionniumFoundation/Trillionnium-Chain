@@ -610,3 +610,56 @@ fn revoked_did_with_expired_token_and_unauthorized_actor_still_returns_did_revok
             if did == "did:trnm:agent-i3-fail-closed-did-revoked-expired-unauth"
     ));
 }
+
+#[test]
+fn revoked_did_with_revoked_token_and_scope_mismatch_still_returns_did_revoked_fail_closed() {
+    let mut reg = IdentityRegistry::default();
+    reg.register_did(
+        "did:trnm:agent-i3-fail-closed-did-and-token-revoked".to_string(),
+        "org:lane-xi-admin".to_string(),
+        10,
+    )
+    .unwrap();
+
+    let token_id = reg
+        .issue_capability(
+            "org:lane-xi-admin".to_string(),
+            "did:trnm:agent-i3-fail-closed-did-and-token-revoked".to_string(),
+            CapabilityScope::BridgeSettle,
+            20,
+            Some(80),
+        )
+        .unwrap();
+
+    reg.revoke_capability(
+        "org:lane-xi-admin".to_string(),
+        token_id,
+        30,
+        Some("precedence_revoke_token".to_string()),
+    )
+    .unwrap();
+
+    reg.revoke_did(
+        "org:lane-xi-admin".to_string(),
+        "did:trnm:agent-i3-fail-closed-did-and-token-revoked",
+        35,
+    )
+    .unwrap();
+
+    // I3 fail-closed contract: once DID is revoked, DidRevoked must dominate
+    // even when token-level inactive and scope mismatch are simultaneously true.
+    let err = reg
+        .verify_capability(
+            "org:lane-xi-admin",
+            token_id,
+            CapabilityScope::AuditRead,
+            40,
+        )
+        .unwrap_err();
+
+    assert!(matches!(
+        err,
+        InteropIdentityError::DidRevoked { did }
+            if did == "did:trnm:agent-i3-fail-closed-did-and-token-revoked"
+    ));
+}
