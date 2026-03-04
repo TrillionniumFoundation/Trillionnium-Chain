@@ -68,6 +68,15 @@ impl AdmissionGate {
             return AdmitOutcome::Backpressured;
         }
 
+        // Fairness guard: once we have known backpressured retries, reserve newly
+        // opened capacity for them first. Fresh ids are briefly backpressured so
+        // retry traffic cannot be perpetually starved by new ingress.
+        if !self.backpressured_ids.is_empty() && !self.backpressured_ids.contains(&tx_id) {
+            self.remember_backpressured(tx_id);
+            self.metrics.backpressured += 1;
+            return AdmitOutcome::Backpressured;
+        }
+
         if self.backpressured_ids.remove(&tx_id) {
             self.backpressured_fifo.retain(|id| *id != tx_id);
         }
@@ -204,13 +213,25 @@ mod tests {
 
         // A single slot opens but is consumed by another tx before id=9 retries.
         assert_eq!(gate.pop_ready(), Some(1));
-        assert_eq!(gate.admit(3), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(3), AdmitOutcome::Backpressured);
 
-        // Retry should remain idempotent instead of counting as a fresh backpressure hit.
-        assert_eq!(gate.admit(9), AdmitOutcome::Duplicate);
+        // Retry should be admitted ahead of fresh ingress to avoid starvation.
+        assert_eq!(gate.admit(9), AdmitOutcome::Accepted);
 
         let m = gate.metrics();
-        assert_eq!(m.backpressured, 1);
-        assert_eq!(m.backpressure_duplicates, 1);
+        assert_eq!(m.backpressured, 2);
+        assert_eq!(m.backpressure_duplicates, 0);
+    }
+
+    #[test]
+    fn opened_capacity_is_reserved_for_known_retries_before_fresh_ingress() {
+        let mut gate = AdmissionGate::new(2);
+        assert_eq!(gate.admit(1), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(4), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(2), AdmitOutcome::Backpressured);
+
+        assert_eq!(gate.pop_ready(), Some(1));
+        assert_eq!(gate.admit(3), AdmitOutcome::Backpressured);
+        assert_eq!(gate.admit(2), AdmitOutcome::Accepted);
     }
 }
