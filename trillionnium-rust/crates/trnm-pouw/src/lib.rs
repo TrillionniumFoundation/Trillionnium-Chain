@@ -674,6 +674,14 @@ pub fn apply_reveal_result_at_height(
     }
 
     let worker = task.worker.clone().ok_or(PouwError::MissingWorker)?;
+    let worker_trimmed = worker.trim();
+    if worker_trimmed.is_empty() || worker_trimmed != worker {
+        // Legacy-state hardening: fail closed on malformed assigned worker ids so
+        // commitment/proof envelope worker binding cannot be validated against
+        // non-canonical identity strings.
+        return Err(PouwError::State("non-canonical worker account".into()));
+    }
+
     let committed = task.committed_hash.ok_or(PouwError::MissingCommitment)?;
     let expected = compute_commitment(task.task_id, &result_hash, &reveal_salt, &worker);
     if expected != committed {
@@ -1354,6 +1362,48 @@ mod tests {
 
         let err = apply_reveal_result(&mut st, r2, [2u8; 32], [3u8; 32], None).unwrap_err();
         assert!(matches!(err, PouwError::MissingWorker));
+    }
+
+    #[test]
+    fn reveal_rejects_noncanonical_worker_in_legacy_committed_state() {
+        let mut st = seeded_state();
+        let r1 = apply_create_task(&mut st, 78, "alice".into(), 10).unwrap();
+
+        // Forge a legacy Committed task with malformed worker identity.
+        let result_hash = [2u8; 32];
+        let reveal_salt = [3u8; 32];
+        let malformed_worker = " worker1 ".to_string();
+        let bad_task = TaskObject {
+            task_id: 78,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Committed,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some(malformed_worker.clone()),
+            committed_hash: Some(compute_commitment(
+                78,
+                &result_hash,
+                &reveal_salt,
+                &malformed_worker,
+            )),
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        };
+        let r2 = st.update_task(r1, bad_task).unwrap();
+
+        let err = apply_reveal_result(&mut st, r2, result_hash, reveal_salt, None).unwrap_err();
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("non-canonical worker account")));
     }
 
     #[test]
