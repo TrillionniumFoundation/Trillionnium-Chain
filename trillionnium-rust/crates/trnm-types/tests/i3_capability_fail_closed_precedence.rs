@@ -255,7 +255,12 @@ fn revoked_and_expired_token_with_scope_mismatch_returns_inactive_fail_closed() 
     // I3 fail-closed contract: inactive must also dominate scope mismatch checks
     // at the same revoked+expired verification boundary.
     let err = reg
-        .verify_capability("org:lane-xi-admin", token_id, CapabilityScope::AuditRead, 31)
+        .verify_capability(
+            "org:lane-xi-admin",
+            token_id,
+            CapabilityScope::AuditRead,
+            31,
+        )
         .unwrap_err();
 
     assert!(matches!(
@@ -375,7 +380,12 @@ fn preissued_token_with_scope_mismatch_returns_inactive_fail_closed() {
     // I3 fail-closed contract: pre-issue verification must short-circuit as inactive
     // before scope mismatch checks, preventing verifier shape leakage.
     let err = reg
-        .verify_capability("org:lane-xi-admin", token_id, CapabilityScope::AuditRead, 19)
+        .verify_capability(
+            "org:lane-xi-admin",
+            token_id,
+            CapabilityScope::AuditRead,
+            19,
+        )
         .unwrap_err();
 
     assert!(matches!(
@@ -386,6 +396,52 @@ fn preissued_token_with_scope_mismatch_returns_inactive_fail_closed() {
             issued_at: 20,
             expires_at: Some(80),
             revoked_at: None,
+        } if err_token_id == token_id
+    ));
+}
+
+#[test]
+fn preissued_revoked_token_with_unauthorized_actor_and_scope_mismatch_stays_inactive_fail_closed() {
+    let mut reg = IdentityRegistry::default();
+    reg.register_did(
+        "did:trnm:agent-i3-fail-closed-preissue-revoked".to_string(),
+        "org:lane-xi-admin".to_string(),
+        10,
+    )
+    .unwrap();
+
+    let token_id = reg
+        .issue_capability(
+            "org:lane-xi-admin".to_string(),
+            "did:trnm:agent-i3-fail-closed-preissue-revoked".to_string(),
+            CapabilityScope::BridgeSettle,
+            20,
+            Some(80),
+        )
+        .unwrap();
+
+    reg.revoke_capability(
+        "org:lane-xi-admin".to_string(),
+        token_id,
+        35,
+        Some("precedence_revoke".to_string()),
+    )
+    .unwrap();
+
+    // I3 fail-closed contract: at pre-issue verification height, inactive must
+    // dominate both actor and scope mismatches while preserving issued metadata.
+    let err = reg
+        .verify_capability("org:intruder", token_id, CapabilityScope::AuditRead, 19)
+        .unwrap_err();
+
+    assert!(matches!(
+        err,
+        InteropIdentityError::CapabilityInactive {
+            token_id: err_token_id,
+            at_height: 19,
+            issued_at: 20,
+            expires_at: Some(80),
+            revoked_at: Some(35),
         } if err_token_id == token_id
     ));
 }
