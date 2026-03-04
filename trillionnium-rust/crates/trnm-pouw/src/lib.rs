@@ -3899,6 +3899,23 @@ mod tests {
     }
 
     #[test]
+    fn resolve_authority_role_separation_merge_gate_constants_remain_distinct() {
+        // Merge-gate hardening: custody (escrow), governance placeholder, and reserved
+        // system identities must remain disjoint. If any collide, resolver authorization
+        // checks can silently degrade into centralized/single-party control.
+        let escrow = CHALLENGE_ESCROW_ACCOUNT.trim();
+        let placeholder = DEFAULT_RESOLVE_AUTHORITY.trim();
+        let system = "system";
+
+        assert!(!escrow.is_empty());
+        assert!(!placeholder.is_empty());
+        assert_ne!(escrow, placeholder);
+        assert_ne!(escrow, system);
+        assert_ne!(placeholder, system);
+        assert_ne!(placeholder.to_ascii_lowercase(), system);
+    }
+
+    #[test]
     fn resolve_rejects_reserved_system_authority_without_escrow_mutation() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
