@@ -788,6 +788,11 @@ pub fn apply_challenge_at_height(
         return Err(PouwError::InvalidTransition);
     }
     validate_challenge_accounting_invariants(&task)?;
+    // Safety boundary: emergency pause must also freeze new challenged-state
+    // entry because it immediately debits challenger funds into escrow.
+    if st.is_emergency_paused() {
+        return Err(PouwError::InvalidTransition);
+    }
     reject_if_deadline_exceeded(task.challenge_deadline_height, current_height)?;
 
     let min_bond = required_challenge_bond(st, &task);
@@ -3096,6 +3101,40 @@ mod tests {
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
         assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
         assert_eq!(st.balance_of("challenger"), 90);
+    }
+
+    #[test]
+    fn challenge_rejects_while_emergency_pause_active_without_escrow_mutation() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+
+        let r1 = apply_create_task(&mut st, 8_969, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(8_969, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+
+        st.set_gov_param(9_206, 7_999, "emergency_pause".into(), "true".into())
+            .expect("pause=true governance update must succeed");
+        assert!(st.is_emergency_paused());
+
+        let before_task = st.get_task(8_969).unwrap();
+        let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+        let before_challenger = st.balance_of("challenger");
+
+        let err = apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into())
+            .expect_err("emergency pause must freeze challenge escrow entry path");
+        assert!(matches!(err, PouwError::InvalidTransition));
+
+        let after_task = st.get_task(8_969).unwrap();
+        assert_eq!(after_task.status, before_task.status);
+        assert_eq!(after_task.challenger, before_task.challenger);
+        assert_eq!(after_task.challenge_bond, before_task.challenge_bond);
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
+        assert_eq!(st.balance_of("challenger"), before_challenger);
     }
 
     #[test]
