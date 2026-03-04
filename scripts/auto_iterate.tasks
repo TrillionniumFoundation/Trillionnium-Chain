@@ -557,3 +557,6 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: v1-
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-mcp-adapter-contract-error-retryable-boolean-test" "./scripts/v2/a1_mcp_adapter_contract_error_retryable_boolean_test.sh" "ci(gate): add a1-mcp-adapter-contract-error-retryable-boolean-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: i2-token-lifecycle-gate-i3-fail-closed-coverage-test" "./scripts/v2/i2_token_lifecycle_gate_i3_fail_closed_coverage_test.sh" "ci(gate): add i2-token-lifecycle-gate-i3-fail-closed-coverage-test regression to quick-check"
