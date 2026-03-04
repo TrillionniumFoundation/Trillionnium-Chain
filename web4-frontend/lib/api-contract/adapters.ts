@@ -221,6 +221,13 @@ export const adaptQueryEvents = (
     });
   }
 
+  if (events.some((event) => String(event.task_id) !== normalizedTaskId)) {
+    throw normalizeSchemaError({
+      message: "query-events payload contains mixed task ids",
+      taskId: normalizedTaskId,
+    });
+  }
+
   return {
     taskId: normalizedTaskId,
     events: events.map((event) => {

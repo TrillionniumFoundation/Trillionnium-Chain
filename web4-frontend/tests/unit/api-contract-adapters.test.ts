@@ -275,4 +275,36 @@ describe("api-contract adapters", () => {
   it("fails closed on malformed payload", () => {
     expect(() => adaptQueryEvents({ bad: true }, "1")).toThrow(FrontendApiError);
   });
+
+  it("fails closed when rpc events contain mixed task ids", () => {
+    expect(() =>
+      adaptQueryEvents(
+        [
+          {
+            event_type: "commit",
+            task_id: 7,
+            from_status: "Assigned",
+            to_status: "Committed",
+            actor: "did:trnm:alice",
+            tx_id: 11,
+            block_height: 22,
+            state_root: "root",
+            ts_unix_ms: 1700000000000,
+          },
+          {
+            event_type: "reveal",
+            task_id: 8,
+            from_status: "Committed",
+            to_status: "Revealed",
+            actor: "did:trnm:bob",
+            tx_id: 12,
+            block_height: 23,
+            state_root: "root-2",
+            ts_unix_ms: 1700000001000,
+          },
+        ],
+        "7",
+      ),
+    ).toThrow(FrontendApiError);
+  });
 });
