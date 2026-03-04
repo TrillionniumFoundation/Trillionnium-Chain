@@ -7,8 +7,32 @@ export type RetryOptions = {
   signal?: AbortSignal;
 };
 
-const sleep = (ms: number): Promise<void> =>
-  new Promise((resolve) => setTimeout(resolve, ms));
+const sleep = (ms: number, signal?: AbortSignal): Promise<void> =>
+  new Promise((resolve, reject) => {
+    const timer = setTimeout(() => {
+      signal?.removeEventListener("abort", onAbort);
+      resolve();
+    }, ms);
+
+    const onAbort = () => {
+      clearTimeout(timer);
+      reject(
+        new FrontendApiError({
+          code: "ABORTED",
+          message: "Request aborted",
+          causeData: signal?.reason,
+          retryable: false,
+        }),
+      );
+    };
+
+    if (signal?.aborted) {
+      onAbort();
+      return;
+    }
+
+    signal?.addEventListener("abort", onAbort, { once: true });
+  });
 
 const nextDelay = (attempt: number, baseDelayMs: number, maxDelayMs: number) => {
   const exp = Math.min(maxDelayMs, baseDelayMs * 2 ** attempt);
@@ -29,7 +53,7 @@ export async function withRetry<T>(
   for (let attempt = 0; attempt <= retries; attempt += 1) {
     if (opts.signal?.aborted) {
       throw new FrontendApiError({
-        code: "UNKNOWN",
+        code: "ABORTED",
         message: "Request aborted",
         causeData: opts.signal.reason,
         retryable: false,
@@ -45,7 +69,7 @@ export async function withRetry<T>(
       if (!retryable || attempt === retries) {
         throw err;
       }
-      await sleep(nextDelay(attempt, baseDelayMs, maxDelayMs));
+      await sleep(nextDelay(attempt, baseDelayMs, maxDelayMs), opts.signal);
     }
   }
 

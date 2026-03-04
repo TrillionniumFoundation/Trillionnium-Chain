@@ -125,7 +125,7 @@ const apiBaseUrl =
   process.env.NEXT_PUBLIC_QUERY_API_BASE_URL ?? "http://127.0.0.1:8080";
 const defaultTaskId = process.env.NEXT_PUBLIC_DASHBOARD_TASK_ID ?? "341";
 const defaultAuditSubject =
-  process.env.NEXT_PUBLIC_DASHBOARD_AUDIT_SUBJECT ?? "did:trn:core-rpc";
+  process.env.NEXT_PUBLIC_DASHBOARD_AUDIT_SUBJECT ?? "did:trnm:core-rpc";
 
 const toDisplayTime = (isoLike: string): string => {
   const date = new Date(isoLike);
@@ -140,7 +140,7 @@ const toDisplayTime = (isoLike: string): string => {
     hour12: false,
   });
 
-  return fmt.format(date).replace(" ", " ");
+  return fmt.format(date);
 };
 
 const mapTaskStatus = (status: ChainTask["status"]): DashboardSnapshot["tasks"][number]["status"] => {
@@ -262,6 +262,9 @@ export async function fetchDashboardSnapshot({
   }
 
   if (mode === "mock") {
+    if (process.env.NODE_ENV === "production") {
+      throw new Error("Mock mode is disabled in production");
+    }
     return adaptDashboardSnapshot(rawSnapshot);
   }
 

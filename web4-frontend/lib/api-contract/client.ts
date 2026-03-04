@@ -22,7 +22,11 @@ type QueryOptions = RetryOptions & {
 
 const withTimeoutSignal = (timeoutMs: number, signal?: AbortSignal) => {
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort("timeout"), timeoutMs);
+  let timedOut = false;
+  const timer = setTimeout(() => {
+    timedOut = true;
+    controller.abort("timeout");
+  }, timeoutMs);
 
   if (signal) {
     signal.addEventListener("abort", () => controller.abort(signal.reason), {
@@ -32,6 +36,7 @@ const withTimeoutSignal = (timeoutMs: number, signal?: AbortSignal) => {
 
   return {
     signal: controller.signal,
+    isTimeout: () => timedOut,
     cleanup: () => clearTimeout(timer),
   };
 };
@@ -60,16 +65,34 @@ export function createFrontendApiClient(config: BaseClientConfig) {
           });
         }
 
-        return await response.json();
+        try {
+          return await response.json();
+        } catch (err) {
+          throw new FrontendApiError({
+            code: "INVALID_PAYLOAD",
+            message: "Backend returned non-JSON payload",
+            causeData: err,
+            retryable: false,
+          });
+        }
       } catch (err) {
         if (err instanceof FrontendApiError) throw err;
 
         if (err instanceof Error && err.name === "AbortError") {
+          if (timeout.isTimeout()) {
+            throw new FrontendApiError({
+              code: "TIMEOUT",
+              message: "Query timeout",
+              causeData: err,
+              retryable: true,
+            });
+          }
+
           throw new FrontendApiError({
-            code: "TIMEOUT",
-            message: "Query timeout",
+            code: "ABORTED",
+            message: "Request aborted",
             causeData: err,
-            retryable: true,
+            retryable: false,
           });
         }
 

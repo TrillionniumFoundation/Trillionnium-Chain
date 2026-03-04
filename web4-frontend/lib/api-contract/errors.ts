@@ -1,6 +1,7 @@
 export type ApiErrorCode =
   | "NETWORK"
   | "TIMEOUT"
+  | "ABORTED"
   | "HTTP_STATUS"
   | "INVALID_PAYLOAD"
   | "UNKNOWN";
