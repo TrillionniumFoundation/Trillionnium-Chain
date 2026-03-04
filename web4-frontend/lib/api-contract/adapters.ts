@@ -100,7 +100,8 @@ function canonicalizeResolutionCode(code: string | undefined): string | undefine
     .trim()
     .toUpperCase()
     .replace(/[\s\-\u2010\u2011\u2012\u2013\u2014\u2015\u2212\uFF0D\uFE63\uFE58]+/g, "_")
-    .replace(/_+/g, "_");
+    .replace(/_+/g, "_")
+    .replace(/^_+|_+$/g, "");
   return normalized.length > 0 ? normalized : undefined;
 }
 

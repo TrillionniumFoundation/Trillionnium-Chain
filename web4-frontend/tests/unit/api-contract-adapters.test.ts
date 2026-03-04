@@ -218,6 +218,32 @@ describe("api-contract adapters", () => {
     });
   });
 
+  it("canonicalizes boundary separators around M2V2 resolution code before fail-closed mapping", () => {
+    const out = adaptQueryEvents(
+      [
+        {
+          event_type: "settle",
+          task_id: 83,
+          from_status: "Revealed",
+          to_status: "Challenged",
+          actor: "did:trnm:verifier",
+          tx_id: 133,
+          block_height: 243,
+          state_root: "root-3d",
+          ts_unix_ms: 1700000002300,
+          resolution_code: " -- err_m2v2_proof_missing -- ",
+        },
+      ],
+      "83",
+    );
+
+    expect(out.events[0]?.level).toBe("error");
+    expect(out.events[0]?.payload).toMatchObject({
+      resolutionCode: "ERR_M2V2_PROOF_MISSING",
+      m2v2ErrorCode: "ERR_M2V2_PROOF_MISSING",
+    });
+  });
+
   it("canonicalizes M2V2 resolution code with BOM/zero-width noise before fail-closed mapping", () => {
     const out = adaptQueryEvents(
       [
