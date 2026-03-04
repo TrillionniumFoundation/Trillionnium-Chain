@@ -356,7 +356,6 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e2-audit-report-generator-ignore-scientific-notation-numeric-delta-test" "./scripts/v2/e2_audit_report_generator_ignore_scientific_notation_numeric_delta_test.sh" "ci(gate): add e2-audit-report-generator-ignore-scientific-notation-numeric-delta-test regression to quick-check"
-bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-mcp-adapter-contract-request-trace-id-required-test" "./scripts/v2/a1_mcp_adapter_contract_request_trace_id_required_test.sh" "ci(gate): add a1-mcp-adapter-contract-request-trace-id-required-test regression to quick-check"
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e2-audit-report-generator-accept-quoted-schema-token-test" "./scripts/v2/e2_audit_report_generator_accept_quoted_schema_token_test.sh" "ci(gate): add e2-audit-report-generator-accept-quoted-schema-token-test regression to quick-check"
