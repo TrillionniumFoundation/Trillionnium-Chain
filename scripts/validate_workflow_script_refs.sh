@@ -40,7 +40,7 @@ for wf in "${WORKFLOW_FILES[@]}"; do
   while IFS= read -r ref; do
     [[ -n "$ref" ]] || continue
     printf '%s\n' "$ref" >>"$refs_file"
-  done < <(grep -Eo '\./scripts/[[:alnum:]_./-]+\.sh' "$wf" || true)
+  done < <(LC_ALL=C grep -Eo '\./scripts/[[:alnum:]_./-]+\.sh' "$wf" || true)
 done
 
 mapfile -t SCRIPT_REFS < <(LC_ALL=C sort -u "$refs_file")
