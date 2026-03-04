@@ -25,6 +25,9 @@ pub struct AdmissionGate {
 
 impl AdmissionGate {
     pub fn new(capacity: usize) -> Self {
+        // Keep the gate live even if operators accidentally configure zero capacity.
+        // This prevents a permanent backpressure state with unbounded retry key growth.
+        let capacity = capacity.max(1);
         Self {
             capacity,
             queue: VecDeque::with_capacity(capacity),
@@ -127,5 +130,14 @@ mod tests {
 
         assert_eq!(gate.pop_ready(), Some(1));
         assert_eq!(gate.admit(9), AdmitOutcome::Accepted);
+    }
+
+    #[test]
+    fn zero_capacity_is_clamped_to_keep_forward_progress() {
+        let mut gate = AdmissionGate::new(0);
+        assert_eq!(gate.admit(1), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(2), AdmitOutcome::Backpressured);
+        assert_eq!(gate.pop_ready(), Some(1));
+        assert_eq!(gate.admit(2), AdmitOutcome::Accepted);
     }
 }
