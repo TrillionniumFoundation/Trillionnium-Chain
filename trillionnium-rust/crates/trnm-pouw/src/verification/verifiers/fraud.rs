@@ -1,6 +1,8 @@
 use crate::verification::{ProofVerifier, VerificationResult};
 use trnm_types::TaskObject;
 
+use super::verify_bound_envelope;
+
 pub struct FraudVerifier;
 
 impl ProofVerifier for FraudVerifier {
@@ -8,42 +10,8 @@ impl ProofVerifier for FraudVerifier {
         "fraud"
     }
 
-    fn verify_proof(&self, _task: &TaskObject, proof_data: &[u8]) -> VerificationResult {
-        if proof_data.is_empty() {
-            return VerificationResult::Invalid("Fraud proof payload is empty".to_string());
-        }
-
-        // V1 micro-patch: require explicit fraud-proof envelope marker.
-        // Accept case-insensitive variants to tolerate client casing drift.
-        // Accepted examples: "FRAUD:...", "fraud:...".
-        // Also accept an optional UTF-8 BOM prefix for legacy clients.
-        let envelope_offset = if proof_data.starts_with(&[0xef, 0xbb, 0xbf]) {
-            3
-        } else {
-            0
-        };
-        let has_prefix = proof_data
-            .get(envelope_offset..envelope_offset + 6)
-            .map(|prefix| prefix.eq_ignore_ascii_case(b"FRAUD:"))
-            .unwrap_or(false);
-        let has_non_whitespace_body = proof_data
-            .get(envelope_offset + 6..)
-            .map(|suffix| {
-                std::str::from_utf8(suffix)
-                    .map(|s| s.chars().any(|c| !c.is_whitespace() && !c.is_control()))
-                    .unwrap_or_else(|_| {
-                        suffix
-                            .iter()
-                            .any(|b| !b.is_ascii_whitespace() && !b.is_ascii_control())
-                    })
-            })
-            .unwrap_or(false);
-
-        if has_prefix && has_non_whitespace_body {
-            VerificationResult::Valid
-        } else {
-            VerificationResult::Invalid("Invalid fraud proof envelope".to_string())
-        }
+    fn verify_proof(&self, task: &TaskObject, proof_data: &[u8]) -> VerificationResult {
+        verify_bound_envelope(task, proof_data, b"FRAUD:", "fraud proof")
     }
 }
 
@@ -78,145 +46,63 @@ mod tests {
     }
 
     #[test]
-    fn fraud_verifier_rejects_empty_payload() {
-        let verifier = FraudVerifier;
-        let task = mock_task();
-
-        assert!(matches!(
-            verifier.verify_proof(&task, b""),
-            VerificationResult::Invalid(msg) if msg.contains("empty")
-        ));
-    }
-
-    #[test]
-    fn fraud_verifier_accepts_prefixed_envelope() {
+    fn fraud_verifier_accepts_bound_task_id() {
         let verifier = FraudVerifier;
         let task = mock_task();
 
         assert_eq!(
-            verifier.verify_proof(&task, b"FRAUD:challenge-proof"),
+            verifier.verify_proof(
+                &task,
+                b"FRAUD:{\"task_id\":7,\"worker\":\"worker-fraud\",\"proof_type\":\"fraud\"}"
+            ),
             VerificationResult::Valid
         );
     }
 
     #[test]
-    fn fraud_verifier_accepts_lowercase_prefixed_envelope() {
-        let verifier = FraudVerifier;
-        let task = mock_task();
-
-        assert_eq!(
-            verifier.verify_proof(&task, b"fraud:challenge-proof"),
-            VerificationResult::Valid
-        );
-    }
-
-    #[test]
-    fn fraud_verifier_accepts_mixed_case_prefixed_envelope() {
-        let verifier = FraudVerifier;
-        let task = mock_task();
-
-        assert_eq!(
-            verifier.verify_proof(&task, b"FrAuD:challenge-proof"),
-            VerificationResult::Valid
-        );
-    }
-
-    #[test]
-    fn fraud_verifier_accepts_utf8_bom_prefixed_envelope() {
-        let verifier = FraudVerifier;
-        let task = mock_task();
-
-        assert_eq!(
-            verifier.verify_proof(&task, "\u{feff}FRAUD:challenge-proof".as_bytes()),
-            VerificationResult::Valid
-        );
-    }
-
-    #[test]
-    fn fraud_verifier_rejects_utf8_bom_prefixed_envelope_with_blank_body() {
+    fn fraud_verifier_rejects_task_id_mismatch() {
         let verifier = FraudVerifier;
         let task = mock_task();
 
         assert!(matches!(
-            verifier.verify_proof(&task, "\u{feff}FRAUD: \n\t".as_bytes()),
-            VerificationResult::Invalid(msg) if msg.contains("envelope")
+            verifier.verify_proof(&task, b"FRAUD:{\"task_id\":8,\"worker\":\"worker-fraud\"}"),
+            VerificationResult::Invalid(msg) if msg.contains("task_id mismatch")
         ));
     }
 
     #[test]
-    fn fraud_verifier_rejects_non_prefixed_payload() {
+    fn fraud_verifier_rejects_missing_task_id_binding() {
         let verifier = FraudVerifier;
         let task = mock_task();
 
         assert!(matches!(
-            verifier.verify_proof(&task, b"challenge-proof"),
-            VerificationResult::Invalid(msg) if msg.contains("envelope")
+            verifier.verify_proof(&task, b"FRAUD:{\"challenge\":\"ok\"}"),
+            VerificationResult::Invalid(msg) if msg.contains("missing task_id binding")
         ));
     }
 
     #[test]
-    fn fraud_verifier_rejects_prefix_only_without_body() {
+    fn fraud_verifier_rejects_worker_mismatch_when_worker_is_present() {
         let verifier = FraudVerifier;
         let task = mock_task();
 
         assert!(matches!(
-            verifier.verify_proof(&task, b"FRAUD:"),
-            VerificationResult::Invalid(msg) if msg.contains("envelope")
+            verifier.verify_proof(&task, b"FRAUD:{\"task_id\":7,\"worker\":\"worker-x\"}"),
+            VerificationResult::Invalid(msg) if msg.contains("worker mismatch")
         ));
     }
 
     #[test]
-    fn fraud_verifier_rejects_lowercase_prefix_only_without_body() {
+    fn fraud_verifier_rejects_proof_type_mismatch_when_present() {
         let verifier = FraudVerifier;
         let task = mock_task();
 
         assert!(matches!(
-            verifier.verify_proof(&task, b"fraud:"),
-            VerificationResult::Invalid(msg) if msg.contains("envelope")
+            verifier.verify_proof(
+                &task,
+                b"FRAUD:{\"task_id\":7,\"worker\":\"worker-fraud\",\"proof_type\":\"tee\"}"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("proof_type mismatch")
         ));
-    }
-
-    #[test]
-    fn fraud_verifier_rejects_whitespace_only_body_after_prefix() {
-        let verifier = FraudVerifier;
-        let task = mock_task();
-
-        assert!(matches!(
-            verifier.verify_proof(&task, b"FRAUD:   \n\t"),
-            VerificationResult::Invalid(msg) if msg.contains("envelope")
-        ));
-    }
-
-    #[test]
-    fn fraud_verifier_rejects_unicode_whitespace_only_body_after_prefix() {
-        let verifier = FraudVerifier;
-        let task = mock_task();
-
-        assert!(matches!(
-            verifier.verify_proof(&task, "FRAUD:\u{00a0}\u{3000}".as_bytes()),
-            VerificationResult::Invalid(msg) if msg.contains("envelope")
-        ));
-    }
-
-    #[test]
-    fn fraud_verifier_rejects_ascii_control_only_body_after_prefix() {
-        let verifier = FraudVerifier;
-        let task = mock_task();
-
-        assert!(matches!(
-            verifier.verify_proof(&task, b"FRAUD:\x00\x1f\x7f"),
-            VerificationResult::Invalid(msg) if msg.contains("envelope")
-        ));
-    }
-
-    #[test]
-    fn fraud_verifier_accepts_non_utf8_binary_body_when_it_contains_visible_byte() {
-        let verifier = FraudVerifier;
-        let task = mock_task();
-
-        assert_eq!(
-            verifier.verify_proof(&task, b"FRAUD:\xff\xfeA"),
-            VerificationResult::Valid
-        );
     }
 }
