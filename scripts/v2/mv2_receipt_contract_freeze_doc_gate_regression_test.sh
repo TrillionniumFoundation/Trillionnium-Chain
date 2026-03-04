@@ -562,4 +562,30 @@ if "$GATE" >/dev/null 2>&1; then
   exit 1
 fi
 
+# Restore both specs and validate baseline before next mutation.
+cp "$tmp_snapshot" "$SNAPSHOT_SPEC"
+cp "$tmp_master" "$MASTER_SPEC"
+"$GATE" >/dev/null
+
+# Regression 24: reorder frozen error mapping identically in snapshot + master; gate must fail on canonical contract drift (not parity-only).
+python3 - <<'PY' "$SNAPSHOT_SPEC" "$MASTER_SPEC"
+from pathlib import Path
+import sys
+
+snapshot = Path(sys.argv[1])
+master = Path(sys.argv[2])
+needle = "- 最小错误码映射（冻结）：`proof_missing -> ERR_M2V2_PROOF_MISSING`、`proof_late -> ERR_M2V2_PROOF_LATE`、`proof_invalid -> ERR_M2V2_PROOF_INVALID`、`settlement_degraded -> ERR_M2V2_SETTLEMENT_DEGRADED`。"
+replacement = "- 最小错误码映射（冻结）：`proof_late -> ERR_M2V2_PROOF_LATE`、`proof_missing -> ERR_M2V2_PROOF_MISSING`、`proof_invalid -> ERR_M2V2_PROOF_INVALID`、`settlement_degraded -> ERR_M2V2_SETTLEMENT_DEGRADED`。"
+for spec in (snapshot, master):
+    text = spec.read_text(encoding='utf-8')
+    if needle not in text:
+        raise SystemExit(f"missing expected baseline phrase in {spec}: {needle}")
+    spec.write_text(text.replace(needle, replacement, 1), encoding='utf-8')
+PY
+
+if "$GATE" >/dev/null 2>&1; then
+  echo "[FAIL] MV2 gate should fail when snapshot + master drift together from canonical frozen error mapping order" >&2
+  exit 1
+fi
+
 echo "[PASS] MV2 receipt contract freeze doc gate fails-closed on snapshot + master phrase/parity drift"
