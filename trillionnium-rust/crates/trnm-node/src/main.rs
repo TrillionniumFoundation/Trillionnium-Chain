@@ -89,7 +89,7 @@ struct NodeConfig {
     p2p_addr: String,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 enum MockTx {
     CreateTask {
         task_id: u64,
@@ -1184,6 +1184,13 @@ fn build_demo_mempool(demo_tasks: u64, _demo_keys: u64) -> VecDeque<MockTx> {
     q
 }
 
+fn requeue_uncommitted_txs(mempool: &mut VecDeque<MockTx>, picked: Vec<MockTx>) {
+    if picked.is_empty() {
+        return;
+    }
+    mempool.extend(picked);
+}
+
 fn task_ref(st: &StateStore, task_id: u64) -> Result<ObjectRef> {
     st.get_ref(task_id)
         .with_context(|| format!("task_ref missing for task_id={}", task_id))
@@ -1786,6 +1793,52 @@ fn pre_execute_group_parallel(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn requeue_uncommitted_txs_preserves_order_at_tail() {
+        let mut mempool = VecDeque::from(vec![
+            MockTx::CreateTask {
+                task_id: 2001,
+                creator: "alice".into(),
+                bounty: 10,
+            },
+            MockTx::CreateTask {
+                task_id: 2002,
+                creator: "bob".into(),
+                bounty: 20,
+            },
+        ]);
+        let picked = vec![
+            MockTx::AcceptTask {
+                task_id: 1001,
+                worker: "worker1001".into(),
+            },
+            MockTx::Commit {
+                task_id: 1001,
+                worker: "worker1001".into(),
+                committed_hash: [9u8; 32],
+            },
+        ];
+
+        requeue_uncommitted_txs(&mut mempool, picked);
+
+        let task_ids: Vec<u64> = mempool.iter().map(task_id_of).collect();
+        assert_eq!(task_ids, vec![2001, 2002, 1001, 1001]);
+    }
+
+    #[test]
+    fn requeue_uncommitted_txs_noop_on_empty_pick() {
+        let mut mempool = VecDeque::from(vec![MockTx::CreateTask {
+            task_id: 3001,
+            creator: "alice".into(),
+            bounty: 10,
+        }]);
+
+        requeue_uncommitted_txs(&mut mempool, vec![]);
+
+        let task_ids: Vec<u64> = mempool.iter().map(task_id_of).collect();
+        assert_eq!(task_ids, vec![3001]);
+    }
 
     #[test]
     fn backoff_is_capped() {
@@ -3443,6 +3496,7 @@ fn main() -> Result<()> {
                 bft.round_change_backoff_total_ms,
                 bft.leader_missed_snapshot
             );
+            requeue_uncommitted_txs(&mut mempool, picked);
             let wal_entry = WalMeta {
                 height,
                 round: bft.committed_round,
