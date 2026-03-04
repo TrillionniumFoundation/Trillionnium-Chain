@@ -36,7 +36,6 @@ rollback_guard_phrases=(
   "--env <env>"
   "--change-ticket-id <change_ticket_id>"
   "--dry-run"
-  "校验 org_id 与 change_ticket_id 绑定关系"
 )
 
 evidence_guard_phrases=(
