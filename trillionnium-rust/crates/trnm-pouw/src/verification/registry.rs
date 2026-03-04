@@ -59,6 +59,7 @@ impl VerifierRegistry {
                     || ch == '\u{2061}'
                     || ch == '\u{2062}'
                     || ch == '\u{2063}'
+                    || ch == '\u{180e}'
                     || ch == '\u{feff}'
                     || ch == '/'
                     || ch == '／'
@@ -1855,6 +1856,15 @@ mod tests {
         assert!(registry.is_registered_kind("ZK\u{2062}PROOF"));
         assert!(registry.is_registered_kind("TEE\u{2063}RECEIPT"));
         assert!(registry.is_registered_kind("zero\u{FEFF}knowledge\u{200C}proof"));
+    }
+
+    #[test]
+    fn registry_is_registered_kind_accepts_mongolian_vowel_separator_aliases() {
+        let registry = VerifierRegistry::with_builtin_verifiers();
+
+        assert!(registry.is_registered_kind("TEE\u{180E}RECEIPT"));
+        assert!(registry.is_registered_kind("fraud\u{180E}challenge\u{180E}v2"));
+        assert!(registry.is_registered_kind("zero\u{180E}knowledge\u{180E}proof"));
     }
 
     #[test]
