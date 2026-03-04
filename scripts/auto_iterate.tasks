@@ -575,3 +575,6 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e3-enterprise-runbook-root-cause-tag-examples-test" "./scripts/v2/e3_enterprise_runbook_root_cause_tag_examples_test.sh" "ci(gate): add e3-enterprise-runbook-root-cause-tag-examples-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-mcp-adapter-contract-response-schema-version-duplicate-header-fail-closed-test" "./scripts/v2/a1_mcp_adapter_contract_response_schema_version_duplicate_header_fail_closed_test.sh" "ci(gate): add a1-mcp-adapter-contract-response-schema-version-duplicate-header-fail-closed-test regression to quick-check"
