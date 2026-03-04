@@ -3157,6 +3157,44 @@ mod tests {
     }
 
     #[test]
+    fn timeout_revealed_path_remains_available_while_emergency_pause_active() {
+        let mut st = seeded_state();
+
+        let r1 = apply_create_task(&mut st, 8_963, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(8_963, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+
+        st.set_gov_param(9_203, 7_999, "emergency_pause".into(), "true".into())
+            .expect("pause=true governance update must succeed");
+        assert!(st.is_emergency_paused());
+
+        let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+        let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+        let before_worker_slash_treasury = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
+
+        let next = apply_timeout(&mut st, r4, 10_000)
+            .expect("emergency pause must not block non-challenged timeout completion path");
+
+        let task = st
+            .get_task(next.id)
+            .expect("revealed timeout completion must persist task object");
+        assert_eq!(task.status, TaskStatus::Completed);
+        assert_eq!(task.challenge_bond, None);
+        assert_eq!(task.challenge_bond_forfeited, None);
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
+        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
+        assert_eq!(
+            st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
+            before_worker_slash_treasury
+        );
+    }
+
+    #[test]
     fn resolve_missing_governance_authority_stays_fail_closed() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
