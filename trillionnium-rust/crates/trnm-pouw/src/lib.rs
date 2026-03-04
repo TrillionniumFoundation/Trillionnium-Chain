@@ -683,10 +683,17 @@ pub fn apply_reveal_result_at_height(
     // Verify proof if TEE/ZK.
     // For Fraud proofs, we rely on the challenge period (no immediate verification).
     if matches!(task.proof_type, ProofType::Tee | ProofType::Zk) {
+        let proof_payload = proof_data.as_deref().unwrap_or(&[]);
+        if proof_payload.is_empty() {
+            return Err(PouwError::State(
+                "Proof verification failed: missing proof payload".into(),
+            ));
+        }
+
         let registry = get_default_registry();
         let mut verification_task = task.clone();
         verification_task.result_hash = Some(result_hash);
-        let verification = registry.verify(&verification_task, proof_data.as_deref().unwrap_or(&[]));
+        let verification = registry.verify(&verification_task, proof_payload);
         match verification {
             VerificationResult::Valid => {
                 // Immediate finality for verifiable execution.
