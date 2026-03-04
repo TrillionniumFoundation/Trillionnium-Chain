@@ -2976,6 +2976,42 @@ mod tests {
     }
 
     #[test]
+    fn resolve_missing_governance_authority_falls_back_to_default_authority() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+
+        let r1 = apply_create_task(&mut st, 8_951, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(8_951, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+        let r5 =
+            apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
+
+        let err = apply_resolve(&mut st, r5.clone(), true, "authority".into(), "authority".into())
+            .expect_err("missing governance authority must not silently authorize legacy singleton");
+        assert!(matches!(err, PouwError::Unauthorized));
+
+        let r6 = apply_resolve(
+            &mut st,
+            r5,
+            true,
+            DEFAULT_RESOLVE_AUTHORITY.into(),
+            DEFAULT_RESOLVE_AUTHORITY.into(),
+        )
+        .expect("missing governance authority must revert to canonical default authority");
+        let task = st.get_task(r6.id).unwrap();
+        assert_eq!(task.status, TaskStatus::Slashed);
+        assert_eq!(task.challenge_bond_forfeited, Some(false));
+        assert_eq!(st.balance_of("challenger"), 101);
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), 0);
+        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), 0);
+    }
+
+    #[test]
     fn resolve_replay_attempt_after_terminal_resolution_is_rejected_without_double_payout() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
