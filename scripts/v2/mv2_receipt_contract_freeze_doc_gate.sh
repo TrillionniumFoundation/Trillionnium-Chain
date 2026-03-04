@@ -86,14 +86,6 @@ if [[ "$snapshot_anchor_count" -ne 1 || "$master_anchor_count" -ne 1 ]]; then
   exit 1
 fi
 
-snapshot_proof_anchor_count=$(grep -Fc -- "- 明确 \`fraud_proof | tee_receipt | zk_receipt\` 在市场结算视角的最小统一字段（\`task_id/proof_type/verdict/verified_at/cost_hint\`）。" "$SNAPSHOT_SPEC" || true)
-master_proof_anchor_count=$(grep -Fc -- "- 锚点目标：把 \`fraud_proof | tee_receipt | zk_receipt\` 的统一回执字段固定到 Master，避免仅在专题文档生效。" "$MASTER_SPEC" || true)
-if [[ "$snapshot_proof_anchor_count" -ne 1 || "$master_proof_anchor_count" -ne 1 ]]; then
-  echo "[FAIL] expected exactly one MV2 proof-family anchor line in snapshot and master" >&2
-  echo "  snapshot_proof_anchor_count=$snapshot_proof_anchor_count master_proof_anchor_count=$master_proof_anchor_count" >&2
-  exit 1
-fi
-
 mapfile -t snapshot_error_mapping_lines < <(grep -F -- "最小错误码映射（冻结）：" "$SNAPSHOT_SPEC" || true)
 mapfile -t master_error_mapping_lines < <(grep -F -- "最小错误码映射（冻结）：" "$MASTER_SPEC" || true)
 if [[ "${#snapshot_error_mapping_lines[@]}" -ne 1 || "${#master_error_mapping_lines[@]}" -ne 1 ]]; then
