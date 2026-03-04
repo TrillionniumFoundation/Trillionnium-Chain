@@ -82,6 +82,8 @@ cargo test -p trnm-types --test i3_capability_issue_renew_revoke_competition \
   same_height_revoke_replay_after_renew_then_revoke_is_idempotent_without_side_effects
 cargo test -p trnm-types --test i3_capability_issue_renew_revoke_competition \
   issue_at_did_revocation_boundary_is_fail_closed_and_sequence_safe
+cargo test -p trnm-types --test i3_capability_issue_renew_revoke_competition \
+  revoke_at_issue_boundary_is_immediately_fail_closed_and_side_effect_free_for_renew
 cargo test -p trnm-types --test i3_capability_nonexpiring_revoke_competition \
   nonexpiring_token_revoke_then_same_height_renew_is_fail_closed
 cargo test -p trnm-types --test i3_capability_nonexpiring_revoke_competition \
@@ -90,6 +92,8 @@ cargo test -p trnm-types --test i3_capability_nonexpiring_revoke_competition \
   nonexpiring_same_height_renew_then_revoke_preserves_historical_pre_boundary_verify
 cargo test -p trnm-types --test i3_capability_nonexpiring_revoke_competition \
   nonexpiring_rejected_post_boundary_renew_after_same_height_renew_then_revoke_is_side_effect_free
+cargo test -p trnm-types --test i3_did_revoke_cascade_same_height \
+  did_revoke_cascade_same_height_fail_closed_for_all_subject_tokens
 # I3-prep fail-closed verifier error-contract guard: inactive state must dominate
 # scope mismatch once token is revoked to avoid authorization-shape leakage.
 cargo test -p trnm-types --test i3_capability_fail_closed_precedence \
