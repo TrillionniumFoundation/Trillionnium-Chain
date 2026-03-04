@@ -908,15 +908,16 @@ pub fn apply_resolve_at_height(
     // Minimal multi-party control: escrow treasury account must never be reused
     // as resolve authority signer/payload, otherwise custody + adjudication roles
     // collapse into a single privileged actor surface.
-    let uses_escrow_account_as_authority = resolver_trimmed == CHALLENGE_ESCROW_ACCOUNT
-        || signer_trimmed == CHALLENGE_ESCROW_ACCOUNT
-        || authority_trimmed == CHALLENGE_ESCROW_ACCOUNT;
+    let uses_escrow_account_as_authority = resolver_trimmed.eq_ignore_ascii_case(CHALLENGE_ESCROW_ACCOUNT)
+        || signer_trimmed.eq_ignore_ascii_case(CHALLENGE_ESCROW_ACCOUNT)
+        || authority_trimmed.eq_ignore_ascii_case(CHALLENGE_ESCROW_ACCOUNT);
     // Decentralization hardening: unresolved default placeholder must never
     // authorize challenge resolution. Governance must explicitly set a concrete
     // non-placeholder resolve authority before terminal escrow movement can occur.
-    let uses_unconfigured_placeholder_authority = resolver_trimmed == DEFAULT_RESOLVE_AUTHORITY
-        || signer_trimmed == DEFAULT_RESOLVE_AUTHORITY
-        || authority_trimmed == DEFAULT_RESOLVE_AUTHORITY;
+    let uses_unconfigured_placeholder_authority =
+        resolver_trimmed.eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY)
+            || signer_trimmed.eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY)
+            || authority_trimmed.eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY);
     // Minimal multi-party control: assigned worker cannot self-authorize terminal
     // challenge resolution for their own disputed task.
     let resolver_is_assigned_worker = task.worker.as_deref() == Some(signer_trimmed);
@@ -4140,6 +4141,49 @@ mod tests {
         assert!(matches!(err, PouwError::Unauthorized));
 
         let task = st.get_task(9_001_3).unwrap();
+        assert_eq!(task.status, TaskStatus::Challenged);
+        assert_eq!(task.challenge_bond_forfeited, None);
+        assert_eq!(st.balance_of("challenger"), before.balance_of("challenger"));
+        assert_eq!(
+            st.balance_of(CHALLENGE_ESCROW_ACCOUNT),
+            before.balance_of(CHALLENGE_ESCROW_ACCOUNT)
+        );
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT)
+        );
+    }
+
+    #[test]
+    fn resolve_rejects_placeholder_authority_case_drift_without_escrow_mutation() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        let placeholder_case_drift = "Governance.Resolve_Authority";
+        set_resolve_authority(&mut st, placeholder_case_drift);
+
+        let r1 = apply_create_task(&mut st, 9_001_4, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(9_001_4, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+        let r5 =
+            apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
+
+        let before = st.clone();
+        let err = apply_resolve(
+            &mut st,
+            r5,
+            true,
+            placeholder_case_drift.into(),
+            placeholder_case_drift.into(),
+        )
+        .unwrap_err();
+        assert!(matches!(err, PouwError::Unauthorized));
+
+        let task = st.get_task(9_001_4).unwrap();
         assert_eq!(task.status, TaskStatus::Challenged);
         assert_eq!(task.challenge_bond_forfeited, None);
         assert_eq!(st.balance_of("challenger"), before.balance_of("challenger"));
