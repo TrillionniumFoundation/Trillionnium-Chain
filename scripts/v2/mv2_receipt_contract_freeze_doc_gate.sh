@@ -86,6 +86,14 @@ if [[ "$snapshot_m2v2_boundary_count" -ne 1 || "$master_m2v2_boundary_count" -ne
   exit 1
 fi
 
+snapshot_error_state_table_phrase_count=$(grep -Fc -- "错误码与状态迁移表" "$SNAPSHOT_SPEC" || true)
+master_error_state_table_phrase_count=$(grep -Fc -- "错误码与状态迁移表" "$MASTER_SPEC" || true)
+if [[ "$snapshot_error_state_table_phrase_count" -ne 1 || "$master_error_state_table_phrase_count" -ne 1 ]]; then
+  echo "[FAIL] expected exactly one MV2 error/state-table phrase in snapshot and master" >&2
+  echo "  snapshot_error_state_table_phrase_count=$snapshot_error_state_table_phrase_count master_error_state_table_phrase_count=$master_error_state_table_phrase_count" >&2
+  exit 1
+fi
+
 snapshot_proof_union_anchor_count=$(grep -Fc -- '- 明确 `fraud_proof | tee_receipt | zk_receipt` 在市场结算视角的最小统一字段（`task_id/proof_type/verdict/verified_at/cost_hint`）。' "$SNAPSHOT_SPEC" || true)
 master_proof_union_anchor_count=$(grep -Fc -- '- 锚点目标：把 `fraud_proof | tee_receipt | zk_receipt` 的统一回执字段固定到 Master，避免仅在专题文档生效。' "$MASTER_SPEC" || true)
 if [[ "$snapshot_proof_union_anchor_count" -ne 1 || "$master_proof_union_anchor_count" -ne 1 ]]; then
