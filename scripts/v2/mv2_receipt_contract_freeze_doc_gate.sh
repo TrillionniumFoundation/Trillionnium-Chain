@@ -94,6 +94,21 @@ if [[ "$snapshot_error_state_table_phrase_count" -ne 1 || "$master_error_state_t
   exit 1
 fi
 
+for code in \
+  "ERR_M2V2_PROOF_MISSING" \
+  "ERR_M2V2_PROOF_LATE" \
+  "ERR_M2V2_PROOF_INVALID" \
+  "ERR_M2V2_SETTLEMENT_DEGRADED"
+do
+  snapshot_code_count=$(grep -Fc -- "$code" "$SNAPSHOT_SPEC" || true)
+  master_code_count=$(grep -Fc -- "$code" "$MASTER_SPEC" || true)
+  if [[ "$snapshot_code_count" -ne 1 || "$master_code_count" -ne 1 ]]; then
+    echo "[FAIL] expected exactly one occurrence of $code in snapshot and master" >&2
+    echo "  snapshot_code_count=$snapshot_code_count master_code_count=$master_code_count" >&2
+    exit 1
+  fi
+done
+
 snapshot_proof_union_anchor_count=$(grep -Fc -- '- 明确 `fraud_proof | tee_receipt | zk_receipt` 在市场结算视角的最小统一字段（`task_id/proof_type/verdict/verified_at/cost_hint`）。' "$SNAPSHOT_SPEC" || true)
 master_proof_union_anchor_count=$(grep -Fc -- '- 锚点目标：把 `fraud_proof | tee_receipt | zk_receipt` 的统一回执字段固定到 Master，避免仅在专题文档生效。' "$MASTER_SPEC" || true)
 if [[ "$snapshot_proof_union_anchor_count" -ne 1 || "$master_proof_union_anchor_count" -ne 1 ]]; then
