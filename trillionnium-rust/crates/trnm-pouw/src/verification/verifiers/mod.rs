@@ -206,12 +206,18 @@ pub(super) fn verify_bound_envelope(
         }
     }
 
-    if let Some(worker) = find_token_field(&body_text, "worker") {
-        if let Some(expected_worker) = task.worker.as_deref() {
-            if !expected_worker.eq_ignore_ascii_case(worker.trim()) {
+    if let Some(expected_worker) = task.worker.as_deref() {
+        match find_token_field(&body_text, "worker") {
+            Some(worker) if expected_worker.eq_ignore_ascii_case(worker.trim()) => {}
+            Some(_) => {
                 return VerificationResult::Invalid(format!(
                     "Invalid {kind_name} envelope: worker mismatch"
-                ));
+                ))
+            }
+            None => {
+                return VerificationResult::Invalid(format!(
+                    "Invalid {kind_name} envelope: missing worker binding"
+                ))
             }
         }
     }
