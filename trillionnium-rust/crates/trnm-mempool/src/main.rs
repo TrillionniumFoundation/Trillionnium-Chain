@@ -19,6 +19,7 @@ pub struct AdmissionGate {
     capacity: usize,
     queue: VecDeque<u64>,
     seen: HashSet<u64>,
+    backpressured_ids: HashSet<u64>,
     metrics: GateMetrics,
 }
 
@@ -28,6 +29,7 @@ impl AdmissionGate {
             capacity,
             queue: VecDeque::with_capacity(capacity),
             seen: HashSet::with_capacity(capacity),
+            backpressured_ids: HashSet::with_capacity(capacity),
             metrics: GateMetrics::default(),
         }
     }
@@ -39,10 +41,15 @@ impl AdmissionGate {
         }
 
         if self.queue.len() >= self.capacity {
+            if !self.backpressured_ids.insert(tx_id) {
+                self.metrics.duplicates += 1;
+                return AdmitOutcome::Duplicate;
+            }
             self.metrics.backpressured += 1;
             return AdmitOutcome::Backpressured;
         }
 
+        self.backpressured_ids.remove(&tx_id);
         self.queue.push_back(tx_id);
         self.seen.insert(tx_id);
         self.metrics.accepted += 1;
@@ -52,6 +59,8 @@ impl AdmissionGate {
     pub fn pop_ready(&mut self) -> Option<u64> {
         let id = self.queue.pop_front()?;
         self.seen.remove(&id);
+        // Opening capacity starts a new backpressure epoch.
+        self.backpressured_ids.clear();
         Some(id)
     }
 
@@ -102,5 +111,21 @@ mod tests {
 
         assert_eq!(gate.pop_ready(), Some(1));
         assert_eq!(gate.admit(2), AdmitOutcome::Accepted);
+    }
+
+    #[test]
+    fn repeated_backpressured_retry_is_idempotent_until_capacity_opens() {
+        let mut gate = AdmissionGate::new(1);
+        assert_eq!(gate.admit(1), AdmitOutcome::Accepted);
+
+        assert_eq!(gate.admit(9), AdmitOutcome::Backpressured);
+        assert_eq!(gate.admit(9), AdmitOutcome::Duplicate);
+
+        let m = gate.metrics();
+        assert_eq!(m.backpressured, 1);
+        assert_eq!(m.duplicates, 1);
+
+        assert_eq!(gate.pop_ready(), Some(1));
+        assert_eq!(gate.admit(9), AdmitOutcome::Accepted);
     }
 }
