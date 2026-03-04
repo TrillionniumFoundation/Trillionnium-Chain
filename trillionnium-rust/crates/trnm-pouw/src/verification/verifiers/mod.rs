@@ -2,7 +2,7 @@ pub mod fraud;
 pub mod tee;
 pub mod zk;
 
-use crate::verification::{proof_type_key, VerificationResult};
+use crate::verification::{normalize_receipt_proof_type, proof_type_key, VerificationResult};
 use trnm_types::TaskObject;
 
 pub use fraud::FraudVerifier;
@@ -216,12 +216,18 @@ pub(super) fn verify_bound_envelope(
         }
     }
 
-    if let Some(proof_type) = find_token_field(&body_text, "proof_type") {
-        let expected = proof_type_key(task.proof_type);
-        if proof_type != expected {
+    let expected = proof_type_key(task.proof_type);
+    match find_token_field(&body_text, "proof_type") {
+        Some(proof_type) if normalize_receipt_proof_type(&proof_type) == expected => {}
+        Some(_) => {
             return VerificationResult::Invalid(format!(
                 "Invalid {kind_name} envelope: proof_type mismatch"
-            ));
+            ))
+        }
+        None => {
+            return VerificationResult::Invalid(format!(
+                "Invalid {kind_name} envelope: missing proof_type binding"
+            ))
         }
     }
 

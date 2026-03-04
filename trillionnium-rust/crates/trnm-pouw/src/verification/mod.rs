@@ -77,7 +77,7 @@ impl VerificationReceipt {
     }
 }
 
-fn normalize_receipt_proof_type(raw: &str) -> String {
+pub(crate) fn normalize_receipt_proof_type(raw: &str) -> String {
     let lowered = raw.trim().to_ascii_lowercase();
     let ascii_compat = lowered
         .chars()

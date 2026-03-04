@@ -1,63 +1,17 @@
 use crate::verification::{ProofVerifier, VerificationResult};
 use trnm_types::TaskObject;
 
+use super::verify_bound_envelope;
+
 pub struct TeeVerifier;
-
-fn is_zero_width_or_format_char(c: char) -> bool {
-    matches!(
-        c,
-        // zero-width / word-joiner / BOM
-        '\u{200b}' | '\u{200c}' | '\u{200d}' | '\u{2060}' | '\u{feff}'
-            // bidirectional marks + embedding/override isolates (all invisible format chars)
-            | '\u{200e}' | '\u{200f}'
-            | '\u{202a}' | '\u{202b}' | '\u{202c}' | '\u{202d}' | '\u{202e}'
-            | '\u{2066}' | '\u{2067}' | '\u{2068}' | '\u{2069}'
-    )
-}
-
-fn has_visible_receipt_body(payload: &[u8]) -> bool {
-    std::str::from_utf8(payload)
-        .map(|s| {
-            s.chars()
-                .any(|c| !c.is_whitespace() && !c.is_control() && !is_zero_width_or_format_char(c))
-        })
-        .unwrap_or_else(|_| {
-            payload
-                .iter()
-                .any(|b| !b.is_ascii_whitespace() && !b.is_ascii_control())
-        })
-}
 
 impl ProofVerifier for TeeVerifier {
     fn proof_type(&self) -> &str {
         "tee"
     }
 
-    fn verify_proof(&self, _task: &TaskObject, proof_data: &[u8]) -> VerificationResult {
-        // V2 micro patch hardening: require explicit TEE receipt prefix
-        // plus a non-whitespace payload body.
-        // Accept case-insensitive variants to avoid client-side casing drift.
-        // Accepted examples: "TEE:...", "tee:...".
-        // Also accept an optional UTF-8 BOM prefix for legacy clients.
-        let envelope_offset = if proof_data.starts_with(&[0xef, 0xbb, 0xbf]) {
-            3
-        } else {
-            0
-        };
-        let has_prefix = proof_data
-            .get(envelope_offset..envelope_offset + 4)
-            .map(|prefix| prefix.eq_ignore_ascii_case(b"TEE:"))
-            .unwrap_or(false);
-        let has_non_whitespace_body = proof_data
-            .get(envelope_offset + 4..)
-            .map(has_visible_receipt_body)
-            .unwrap_or(false);
-
-        if has_prefix && has_non_whitespace_body {
-            VerificationResult::Valid
-        } else {
-            VerificationResult::Invalid("Invalid TEE receipt envelope".to_string())
-        }
+    fn verify_proof(&self, task: &TaskObject, proof_data: &[u8]) -> VerificationResult {
+        verify_bound_envelope(task, proof_data, b"TEE:", "TEE receipt")
     }
 }
 
@@ -92,187 +46,73 @@ mod tests {
     }
 
     #[test]
-    fn tee_verifier_rejects_too_short_prefix_fragment() {
-        let verifier = TeeVerifier;
-        let task = mock_task();
-        assert!(matches!(
-            verifier.verify_proof(&task, b"TE"),
-            VerificationResult::Invalid(msg) if msg.contains("envelope")
-        ));
-    }
-
-    #[test]
-    fn tee_verifier_accepts_minimal_non_whitespace_payload_after_prefix() {
+    fn tee_verifier_accepts_bound_task_id() {
         let verifier = TeeVerifier;
         let task = mock_task();
 
         assert_eq!(
-            verifier.verify_proof(&task, b"TEE:a"),
+            verifier.verify_proof(
+                &task,
+                b"TEE:task_id=42,worker=worker1,proof_type=tee,quote=abc"
+            ),
             VerificationResult::Valid
         );
     }
 
     #[test]
-    fn tee_verifier_accepts_explicit_prefix_receipts_when_length_is_sufficient() {
+    fn tee_verifier_rejects_task_id_mismatch() {
+        let verifier = TeeVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(&task, b"TEE:task_id=99,worker=worker1,quote=abc"),
+            VerificationResult::Invalid(msg) if msg.contains("task_id mismatch")
+        ));
+    }
+
+    #[test]
+    fn tee_verifier_rejects_missing_task_id_binding() {
+        let verifier = TeeVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(&task, b"TEE:quote=abc,nonce=1"),
+            VerificationResult::Invalid(msg) if msg.contains("missing task_id binding")
+        ));
+    }
+
+    #[test]
+    fn tee_verifier_rejects_proof_type_mismatch_when_present() {
+        let verifier = TeeVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(&task, b"TEE:task_id=42,worker=worker1,proof_type=zk"),
+            VerificationResult::Invalid(msg) if msg.contains("proof_type mismatch")
+        ));
+    }
+
+    #[test]
+    fn tee_verifier_rejects_missing_proof_type_binding() {
+        let verifier = TeeVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(&task, b"TEE:task_id=42,worker=worker1,quote=abc"),
+            VerificationResult::Invalid(msg) if msg.contains("missing proof_type binding")
+        ));
+    }
+
+    #[test]
+    fn tee_verifier_accepts_legacy_receipt_proof_type_alias() {
         let verifier = TeeVerifier;
         let task = mock_task();
 
         assert_eq!(
-            verifier.verify_proof(&task, b"TEE:quote"),
-            VerificationResult::Valid
-        );
-    }
-
-    #[test]
-    fn tee_verifier_accepts_lowercase_prefix_receipts_when_length_is_sufficient() {
-        let verifier = TeeVerifier;
-        let task = mock_task();
-
-        assert_eq!(
-            verifier.verify_proof(&task, b"tee:quote"),
-            VerificationResult::Valid
-        );
-    }
-
-    #[test]
-    fn tee_verifier_accepts_mixed_case_prefix_receipts_when_length_is_sufficient() {
-        let verifier = TeeVerifier;
-        let task = mock_task();
-
-        assert_eq!(
-            verifier.verify_proof(&task, b"TeE:quote"),
-            VerificationResult::Valid
-        );
-    }
-
-    #[test]
-    fn tee_verifier_accepts_utf8_bom_prefixed_receipt() {
-        let verifier = TeeVerifier;
-        let task = mock_task();
-
-        assert_eq!(
-            verifier.verify_proof(&task, "\u{feff}TEE:quote".as_bytes()),
-            VerificationResult::Valid
-        );
-    }
-
-    #[test]
-    fn tee_verifier_rejects_utf8_bom_prefixed_receipt_with_blank_body() {
-        let verifier = TeeVerifier;
-        let task = mock_task();
-
-        assert!(matches!(
-            verifier.verify_proof(&task, "\u{feff}TEE: \n\t".as_bytes()),
-            VerificationResult::Invalid(msg) if msg.contains("envelope")
-        ));
-    }
-
-    #[test]
-    fn tee_verifier_rejects_legacy_prefix_receipts() {
-        let verifier = TeeVerifier;
-        let task = mock_task();
-
-        assert!(matches!(
-            verifier.verify_proof(&task, b"TElegacy!"),
-            VerificationResult::Invalid(msg) if msg.contains("envelope")
-        ));
-    }
-
-    #[test]
-    fn tee_verifier_rejects_unknown_prefix_even_if_receipt_is_long_enough() {
-        let verifier = TeeVerifier;
-        let task = mock_task();
-
-        assert!(matches!(
-            verifier.verify_proof(&task, b"XXreceipt"),
-            VerificationResult::Invalid(msg) if msg.contains("envelope")
-        ));
-    }
-
-    #[test]
-    fn tee_verifier_rejects_whitespace_only_body_after_prefix() {
-        let verifier = TeeVerifier;
-        let task = mock_task();
-
-        assert!(matches!(
-            verifier.verify_proof(&task, b"TEE:    \n\t"),
-            VerificationResult::Invalid(msg) if msg.contains("envelope")
-        ));
-    }
-
-    #[test]
-    fn tee_verifier_rejects_unicode_whitespace_only_body_after_prefix() {
-        let verifier = TeeVerifier;
-        let task = mock_task();
-
-        assert!(matches!(
-            verifier.verify_proof(&task, "TEE:\u{00a0}\u{3000}".as_bytes()),
-            VerificationResult::Invalid(msg) if msg.contains("envelope")
-        ));
-    }
-
-    #[test]
-    fn tee_verifier_rejects_zero_width_only_body_after_prefix() {
-        let verifier = TeeVerifier;
-        let task = mock_task();
-
-        assert!(matches!(
-            verifier.verify_proof(&task, "TEE:\u{200b}\u{200c}\u{200d}\u{2060}\u{feff}".as_bytes()),
-            VerificationResult::Invalid(msg) if msg.contains("envelope")
-        ));
-    }
-
-    #[test]
-    fn tee_verifier_accepts_visible_body_when_zero_width_chars_are_mixed_in() {
-        let verifier = TeeVerifier;
-        let task = mock_task();
-
-        assert_eq!(
-            verifier.verify_proof(&task, "TEE:\u{200b}quote\u{200d}".as_bytes()),
-            VerificationResult::Valid
-        );
-    }
-
-    #[test]
-    fn tee_verifier_rejects_bidirectional_format_only_body_after_prefix() {
-        let verifier = TeeVerifier;
-        let task = mock_task();
-
-        assert!(matches!(
-            verifier.verify_proof(&task, "TEE:\u{200e}\u{202a}\u{2067}\u{202c}\u{2069}".as_bytes()),
-            VerificationResult::Invalid(msg) if msg.contains("envelope")
-        ));
-    }
-
-    #[test]
-    fn tee_verifier_accepts_visible_body_when_bidirectional_format_chars_are_mixed_in() {
-        let verifier = TeeVerifier;
-        let task = mock_task();
-
-        assert_eq!(
-            verifier.verify_proof(&task, "TEE:\u{2066}quote\u{2069}".as_bytes()),
-            VerificationResult::Valid
-        );
-    }
-
-    #[test]
-    fn tee_verifier_rejects_ascii_control_only_body_after_prefix() {
-        let verifier = TeeVerifier;
-        let task = mock_task();
-
-        assert!(matches!(
-            verifier.verify_proof(&task, b"TEE:\x00\x1f\x7f"),
-            VerificationResult::Invalid(msg) if msg.contains("envelope")
-        ));
-    }
-
-    #[test]
-    fn tee_verifier_accepts_non_utf8_binary_body_when_it_contains_visible_byte() {
-        let verifier = TeeVerifier;
-        let task = mock_task();
-
-        assert_eq!(
-            verifier.verify_proof(&task, b"TEE:\xff\xfeA"),
+            verifier.verify_proof(
+                &task,
+                b"TEE:task_id=42,worker=worker1,proof_type=tee_receipt,quote=abc"
+            ),
             VerificationResult::Valid
         );
     }
