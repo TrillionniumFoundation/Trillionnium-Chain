@@ -496,4 +496,26 @@ if "$GATE" >/dev/null 2>&1; then
   exit 1
 fi
 
+# Restore master and validate baseline before next mutation.
+cp "$tmp_master" "$MASTER_SPEC"
+"$GATE"
+
+# Regression 21: duplicate proof union phrase in snapshot; gate must fail on ambiguous proof adapter union anchor.
+python3 - <<'PY' "$SNAPSHOT_SPEC"
+from pathlib import Path
+import sys
+
+spec = Path(sys.argv[1])
+text = spec.read_text(encoding='utf-8')
+needle = "fraud_proof | tee_receipt | zk_receipt"
+if needle not in text:
+    raise SystemExit(f"missing expected baseline phrase: {needle}")
+spec.write_text(text.replace(needle, f"{needle}\n{needle}", 1), encoding='utf-8')
+PY
+
+if "$GATE" >/dev/null 2>&1; then
+  echo "[FAIL] MV2 gate should fail when snapshot duplicates proof union phrase" >&2
+  exit 1
+fi
+
 echo "[PASS] MV2 receipt contract freeze doc gate fails-closed on snapshot + master phrase/parity drift"

@@ -86,6 +86,14 @@ if [[ "$snapshot_m2v2_boundary_count" -ne 1 || "$master_m2v2_boundary_count" -ne
   exit 1
 fi
 
+snapshot_proof_union_anchor_count=$(grep -Fc -- '- 明确 `fraud_proof | tee_receipt | zk_receipt` 在市场结算视角的最小统一字段（`task_id/proof_type/verdict/verified_at/cost_hint`）。' "$SNAPSHOT_SPEC" || true)
+master_proof_union_anchor_count=$(grep -Fc -- '- 锚点目标：把 `fraud_proof | tee_receipt | zk_receipt` 的统一回执字段固定到 Master，避免仅在专题文档生效。' "$MASTER_SPEC" || true)
+if [[ "$snapshot_proof_union_anchor_count" -ne 1 || "$master_proof_union_anchor_count" -ne 1 ]]; then
+  echo "[FAIL] expected exactly one MV2 proof union anchor line in snapshot and master" >&2
+  echo "  snapshot_proof_union_anchor_count=$snapshot_proof_union_anchor_count master_proof_union_anchor_count=$master_proof_union_anchor_count" >&2
+  exit 1
+fi
+
 snapshot_anchor_count=$(grep -Fc -- "### MV-2：V2 回执接入前的契约冻结（Receipt Contract Freeze）" "$SNAPSHOT_SPEC" || true)
 master_anchor_count=$(grep -Fc -- "### 10.3 Lane MV（2026-03-03）V2 回执契约冻结主文档锚点" "$MASTER_SPEC" || true)
 if [[ "$snapshot_anchor_count" -ne 1 || "$master_anchor_count" -ne 1 ]]; then
