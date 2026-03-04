@@ -4,7 +4,7 @@ set -euo pipefail
 ROOT=$(cd "$(dirname "$0")/../.." && pwd)
 SCRIPT_DIR="$ROOT/scripts/v2"
 
-mapfile -t TESTS < <(find "$SCRIPT_DIR" -maxdepth 1 -type f -name 'e2_audit_report_generator_*_test.sh' | sort)
+mapfile -t TESTS < <(find "$SCRIPT_DIR" -maxdepth 1 -type f -name 'e2_audit_report_generator_*_test.sh' | LC_ALL=C sort)
 
 if [[ ${#TESTS[@]} -eq 0 ]]; then
   echo "[FAIL] no E2 audit report generator tests found" >&2
