@@ -12,6 +12,7 @@ pub struct GateMetrics {
     pub accepted: usize,
     pub duplicates: usize,
     pub backpressured: usize,
+    pub backpressure_duplicates: usize,
 }
 
 #[derive(Debug)]
@@ -59,6 +60,7 @@ impl AdmissionGate {
         if self.queue.len() >= self.capacity {
             if self.backpressured_ids.contains(&tx_id) {
                 self.metrics.duplicates += 1;
+                self.metrics.backpressure_duplicates += 1;
                 return AdmitOutcome::Duplicate;
             }
             self.remember_backpressured(tx_id);
@@ -107,6 +109,7 @@ mod tests {
         assert_eq!(m.accepted, 1);
         assert_eq!(m.duplicates, 1);
         assert_eq!(m.backpressured, 0);
+        assert_eq!(m.backpressure_duplicates, 0);
     }
 
     #[test]
@@ -119,6 +122,7 @@ mod tests {
         assert_eq!(m.accepted, 1);
         assert_eq!(m.duplicates, 0);
         assert_eq!(m.backpressured, 1);
+        assert_eq!(m.backpressure_duplicates, 0);
     }
 
     #[test]
@@ -142,6 +146,7 @@ mod tests {
         let m = gate.metrics();
         assert_eq!(m.backpressured, 1);
         assert_eq!(m.duplicates, 1);
+        assert_eq!(m.backpressure_duplicates, 1);
 
         assert_eq!(gate.pop_ready(), Some(1));
         assert_eq!(gate.admit(9), AdmitOutcome::Accepted);
@@ -172,5 +177,6 @@ mod tests {
         let m = gate.metrics();
         assert_eq!(m.backpressured, 4);
         assert_eq!(m.duplicates, 0);
+        assert_eq!(m.backpressure_duplicates, 0);
     }
 }
