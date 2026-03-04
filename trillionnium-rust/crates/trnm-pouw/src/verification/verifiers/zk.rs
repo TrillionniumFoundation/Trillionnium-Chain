@@ -152,4 +152,20 @@ mod tests {
             VerificationResult::Invalid(msg) if msg.contains("worker mismatch")
         ));
     }
+
+    #[test]
+    fn zk_verifier_rejects_missing_result_hash_binding_context_fail_closed() {
+        let verifier = ZkVerifier;
+        let mut task = mock_task();
+        task.result_hash = None;
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"ZK:{\"task_id\":99,\"worker\":\"worker-zk\",\"proof_type\":\"zk\",\"proof\":\"...\"}"
+            ),
+            VerificationResult::Invalid(msg)
+                if msg.contains("missing task result_hash binding context")
+        ));
+    }
 }
