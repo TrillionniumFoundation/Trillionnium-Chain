@@ -75,7 +75,8 @@ fn market_match_waits_for_bids_lock_before_reading() {
     let release_lock = {
         let lock = bids_lock.clone();
         thread::spawn(move || {
-            thread::sleep(Duration::from_millis(300));
+            // Hold the lock long enough to dominate process startup jitter on busy CI nodes.
+            thread::sleep(Duration::from_millis(800));
             let _ = fs::remove_file(lock);
         })
     };
@@ -99,7 +100,7 @@ fn market_match_waits_for_bids_lock_before_reading() {
         String::from_utf8_lossy(&match_out.stderr)
     );
     assert!(
-        elapsed >= Duration::from_millis(250),
+        elapsed >= Duration::from_millis(500),
         "market.match_task should wait for bids lock; elapsed={elapsed:?}"
     );
 }
