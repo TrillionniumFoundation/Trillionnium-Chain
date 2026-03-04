@@ -1641,8 +1641,6 @@ fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
         | "googleagent2agentoverwebsocketv"
         | "googleagent2agentoverwebsockets"
         | "googleagent2agentoverwebsocketsv"
-        | "googleagent2agentoverws"
-        | "googleagent2agentoverwsv"
         | "googleagenttoagenthttp"
         | "googleagenttoagenthttpv"
         | "googleagenttoagentoverhttp"
@@ -1654,9 +1652,7 @@ fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
         | "googleagenttoagentoverwebsocket"
         | "googleagenttoagentoverwebsocketv"
         | "googleagenttoagentoverwebsockets"
-        | "googleagenttoagentoverwebsocketsv"
-        | "googleagenttoagentoverws"
-        | "googleagenttoagentoverwsv" => Some("a2a".to_string()),
+        | "googleagenttoagentoverwebsocketsv" => Some("a2a".to_string()),
         _ => None,
     }
 }
@@ -4589,14 +4585,6 @@ mod tests {
         );
         assert_eq!(
             normalized_agent_protocol(Some("Google Agent-to-Agent WebSockets v4")).as_deref(),
-            Some("a2a")
-        );
-        assert_eq!(
-            normalized_agent_protocol(Some("Google Agent-to-Agent over WS v4")).as_deref(),
-            Some("a2a")
-        );
-        assert_eq!(
-            normalized_agent_protocol(Some("Google Agent2Agent over WS v4")).as_deref(),
             Some("a2a")
         );
     }
