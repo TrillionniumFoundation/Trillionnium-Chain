@@ -99,7 +99,7 @@ function canonicalizeResolutionCode(code: string | undefined): string | undefine
     .replace(/[\u200B\u200C\u200D\u2060\u2063\uFEFF]/g, "")
     .trim()
     .toUpperCase()
-    .replace(/[\s-]+/g, "_")
+    .replace(/[\s\-\u2010\u2011\u2012\u2013\u2014\u2015\u2212\uFF0D\uFE63\uFE58]+/g, "_")
     .replace(/_+/g, "_");
   return normalized.length > 0 ? normalized : undefined;
 }

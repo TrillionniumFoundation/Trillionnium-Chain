@@ -192,6 +192,32 @@ describe("api-contract adapters", () => {
     });
   });
 
+  it("canonicalizes unicode dash-separated M2V2 resolution code tokens before fail-closed mapping", () => {
+    const out = adaptQueryEvents(
+      [
+        {
+          event_type: "settle",
+          task_id: 82,
+          from_status: "Revealed",
+          to_status: "Challenged",
+          actor: "did:trnm:verifier",
+          tx_id: 132,
+          block_height: 242,
+          state_root: "root-3c",
+          ts_unix_ms: 1700000002200,
+          resolution_code: "err—m2v2 proof−late",
+        },
+      ],
+      "82",
+    );
+
+    expect(out.events[0]?.level).toBe("error");
+    expect(out.events[0]?.payload).toMatchObject({
+      resolutionCode: "ERR_M2V2_PROOF_LATE",
+      m2v2ErrorCode: "ERR_M2V2_PROOF_LATE",
+    });
+  });
+
   it("canonicalizes M2V2 resolution code with BOM/zero-width noise before fail-closed mapping", () => {
     const out = adaptQueryEvents(
       [
