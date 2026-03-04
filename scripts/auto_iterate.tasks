@@ -560,3 +560,6 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: i2-token-lifecycle-gate-i3-fail-closed-coverage-test" "./scripts/v2/i2_token_lifecycle_gate_i3_fail_closed_coverage_test.sh" "ci(gate): add i2-token-lifecycle-gate-i3-fail-closed-coverage-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a2-a2a-adapter-contract-request-content-type-fail-closed-test" "./scripts/v2/a2_a2a_adapter_contract_request_content_type_fail_closed_test.sh" "ci(gate): add a2-a2a-adapter-contract-request-content-type-fail-closed-test regression to quick-check"
