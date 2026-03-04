@@ -55,6 +55,14 @@ fn is_identifier_byte(b: u8) -> bool {
     b.is_ascii_alphanumeric() || b == b'_'
 }
 
+fn is_value_terminator(b: u8) -> bool {
+    b.is_ascii_whitespace()
+        || matches!(
+            b,
+            b',' | b'}' | b']' | b')' | b'\'' | b'"' | b'\n' | b'\r' | b'\t'
+        )
+}
+
 fn is_field_name_boundary(bytes: &[u8], start: usize, len: usize) -> bool {
     let before_ok = start == 0 || !is_identifier_byte(bytes[start - 1]);
     let after = start + len;
@@ -96,6 +104,10 @@ fn find_numeric_field(body: &str, field: &str) -> Option<u64> {
             i += 1;
         }
         if i > start {
+            if i < bytes.len() && !is_value_terminator(bytes[i]) {
+                cursor = idx + 1;
+                continue;
+            }
             if let Ok(v) = body[start..i].parse::<u64>() {
                 return Some(v);
             }
@@ -145,6 +157,10 @@ fn find_token_field(body: &str, field: &str) -> Option<String> {
             i += 1;
         }
         if i > start {
+            if i < bytes.len() && !is_value_terminator(bytes[i]) {
+                cursor = idx + 1;
+                continue;
+            }
             return Some(body[start..i].trim().to_ascii_lowercase());
         }
         cursor = idx + 1;
@@ -229,8 +245,23 @@ mod tests {
     }
 
     #[test]
+    fn find_numeric_field_rejects_trailing_non_delimiter_bytes() {
+        let body = r#"{"task_id":7oops,"worker":"w1"}"#;
+        assert_eq!(find_numeric_field(body, "task_id"), None);
+    }
+
+    #[test]
     fn find_token_field_rejects_identifier_prefix_spoof() {
         let body = "xproof_type=zk,proof_type=tee";
-        assert_eq!(find_token_field(body, "proof_type"), Some("tee".to_string()));
+        assert_eq!(
+            find_token_field(body, "proof_type"),
+            Some("tee".to_string())
+        );
+    }
+
+    #[test]
+    fn find_token_field_rejects_trailing_non_delimiter_bytes() {
+        let body = "proof_type=tee%2Cfraud";
+        assert_eq!(find_token_field(body, "proof_type"), None);
     }
 }
