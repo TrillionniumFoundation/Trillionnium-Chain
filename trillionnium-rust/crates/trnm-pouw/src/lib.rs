@@ -4889,6 +4889,35 @@ mod tests {
     }
 
     #[test]
+    fn zk_reveal_rejects_proof_type_mismatch_fail_closed() {
+        let mut st = seeded_state();
+        let r1 = apply_create_task(&mut st, 7007, "alice".into(), 10).unwrap();
+
+        let mut task = st.get_task(r1.id).unwrap();
+        task.proof_type = ProofType::Zk;
+        let r1_updated = st.update_task(r1, task).unwrap();
+
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(7007, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1_updated, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+
+        // Deliberately mismatched proof_type binding should be rejected fail-closed.
+        let proof = b"ZK:task_id=7007,worker=worker1,proof_type=tee,result_hash=0101010101010101010101010101010101010101010101010101010101010101,receipt=VALID_PROOF".to_vec();
+        let err = apply_reveal_result(&mut st, r3.clone(), result_hash, reveal_salt, Some(proof))
+            .unwrap_err();
+
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("Proof verification failed")));
+
+        // Ensure task does not advance on invalid envelope binding.
+        let task_after = st.get_task(r3.id).unwrap();
+        assert_eq!(task_after.status, TaskStatus::Committed);
+        assert!(task_after.result_hash.is_none());
+    }
+
+    #[test]
     fn missing_tee_proof_rejects_reveal_fail_closed() {
         let mut st = seeded_state();
         let r1 = apply_create_task(&mut st, 7003, "alice".into(), 10).unwrap();
