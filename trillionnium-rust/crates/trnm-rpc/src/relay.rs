@@ -386,6 +386,14 @@ impl RiskQuotaState {
     }
 }
 
+fn canonicalize_risk_source(source: Option<&str>) -> String {
+    let source = source.unwrap_or("anon").trim();
+    if source.is_empty() {
+        return "anon".to_string();
+    }
+    source.to_ascii_lowercase()
+}
+
 pub trait RelayHandler: Send + Sync {
     fn handle(&self, envelope: &RelayEnvelope) -> Result<Vec<RelayEnvelope>>;
 }
@@ -532,13 +540,12 @@ impl RelayService {
         session_id: &str,
         source: Option<&str>,
     ) -> Result<()> {
-        let source = source.unwrap_or("anon").trim();
-        let source = if source.is_empty() { "anon" } else { source };
+        let source = canonicalize_risk_source(source);
         let mut q = self
             .risk_quota
             .lock()
             .map_err(|_| anyhow!("relay risk quota lock poisoned"))?;
-        q.consume(now_ms(), domain, session_id, source, &self.risk_quota_cfg)
+        q.consume(now_ms(), domain, session_id, source.as_str(), &self.risk_quota_cfg)
     }
 
     pub fn open(&self, req: RelayOpenRequest) -> Result<RelayOpenResponse> {
@@ -1793,6 +1800,46 @@ mod tests {
             })
             .unwrap_err();
         assert!(anon_alias_err
+            .to_string()
+            .contains("too_many_requests/quota_exceeded"));
+
+        // Case-only variants must share the same source quota bucket.
+        relay
+            .open(RelayOpenRequest {
+                session_id: "mv-src-s2".into(),
+            })
+            .unwrap();
+        relay
+            .send(RelaySendRequest {
+                session_id: "mv-src-s2".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"g".to_vec(),
+                source: Some("CaseMixSrc".into()),
+            })
+            .unwrap();
+        relay
+            .send(RelaySendRequest {
+                session_id: "mv-src-s2".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"h".to_vec(),
+                source: Some("casemixsrc".into()),
+            })
+            .unwrap();
+        let case_alias_err = relay
+            .send(RelaySendRequest {
+                session_id: "mv-src-s2".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"i".to_vec(),
+                source: Some("CASEMIXSRC".into()),
+            })
+            .unwrap_err();
+        assert!(case_alias_err
             .to_string()
             .contains("too_many_requests/quota_exceeded"));
     }
