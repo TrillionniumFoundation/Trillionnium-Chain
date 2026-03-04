@@ -1562,6 +1562,56 @@ mod tests {
     }
 
     #[test]
+    fn emergency_pause_does_not_mutate_pending_resolve_authority_update() {
+        let mut st = StateStore::new();
+        st.set_gov_param_unchecked(7313, "resolve_authority".into(), "resolver-v1".into())
+            .unwrap();
+
+        let scheduled = st
+            .set_gov_param(
+                13_000,
+                7313,
+                "resolve_authority".into(),
+                "resolver-v2".into(),
+            )
+            .unwrap();
+        assert!(matches!(
+            scheduled,
+            GovParamUpdateOutcome::Scheduled {
+                activate_at_height: 13_020
+            }
+        ));
+
+        st.set_gov_param(13_001, 7_999, "emergency_pause".into(), "true".into())
+            .expect("pause toggle must apply immediately");
+        st.set_gov_param(13_002, 7_999, "emergency_pause".into(), "false".into())
+            .expect("unpause toggle must apply immediately");
+
+        assert!(!st.is_emergency_paused());
+        let pending = st
+            .pending_gov_update("resolve_authority")
+            .expect("pending resolve_authority update should survive pause toggles");
+        assert_eq!(pending.key_id, 7313);
+        assert_eq!(pending.value, "resolver-v2");
+        assert_eq!(pending.activate_at_height, 13_020);
+
+        let applied = st
+            .set_gov_param(
+                13_020,
+                7313,
+                "resolve_authority".into(),
+                "resolver-v2".into(),
+            )
+            .expect("resolve_authority should still activate at original timelock height");
+        assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+        assert_eq!(
+            st.gov_param_string("resolve_authority"),
+            Some("resolver-v2".into())
+        );
+        assert!(st.pending_gov_update("resolve_authority").is_none());
+    }
+
+    #[test]
     fn governance_sensitive_pending_replace_before_activation_resets_timelock() {
         let mut st = StateStore::new();
         st.set_gov_param_unchecked(7320, "challenge_window_blocks".into(), "100".into())
