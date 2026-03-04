@@ -68,7 +68,9 @@ impl AdmissionGate {
             return AdmitOutcome::Backpressured;
         }
 
-        self.backpressured_ids.remove(&tx_id);
+        if self.backpressured_ids.remove(&tx_id) {
+            self.backpressured_fifo.retain(|id| *id != tx_id);
+        }
         self.queue.push_back(tx_id);
         self.seen.insert(tx_id);
         self.metrics.accepted += 1;
@@ -178,5 +180,19 @@ mod tests {
         assert_eq!(m.backpressured, 4);
         assert_eq!(m.duplicates, 0);
         assert_eq!(m.backpressure_duplicates, 0);
+    }
+
+    #[test]
+    fn accepted_retry_id_is_removed_from_backpressure_fifo() {
+        let mut gate = AdmissionGate::new(2);
+        assert_eq!(gate.admit(10), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(11), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(12), AdmitOutcome::Backpressured);
+
+        assert_eq!(gate.pop_ready(), Some(10));
+        assert_eq!(gate.admit(12), AdmitOutcome::Accepted);
+
+        assert!(!gate.backpressured_fifo.iter().any(|id| *id == 12));
+        assert!(!gate.backpressured_ids.contains(&12));
     }
 }
