@@ -49,9 +49,9 @@
 - 标记接入状态为 `reverted` 并附根因标签。
 - 根因标签建议使用稳定枚举（示例）：`schema_drift` / `auth_scope_mismatch` / `policy_conflict`。
 - 记录可复放的回滚命令模板（必须携带 `--root-cause-tag` 与 `--change-ticket-id`），示例：
-  - `trnm-onboard rollback --org-id <org_id> --env <env> --change-ticket-id <change_ticket_id> --root-cause-tag <tag>`
+  - `trnm-onboard rollback --org-id <org_id> --env <env> --change-ticket-id <change_ticket_id> --root-cause-tag <root_cause_tag>`
 - 先执行一次 `--dry-run` 预演，确认参数与目标环境一致后再执行真实回滚：
-  - `trnm-onboard rollback --org-id <org_id> --env <env> --change-ticket-id <change_ticket_id> --root-cause-tag <tag> --dry-run`
+  - `trnm-onboard rollback --org-id <org_id> --env <env> --change-ticket-id <change_ticket_id> --root-cause-tag <root_cause_tag> --dry-run`
 - 将最终执行命令与输出日志计算 `sha256` 并写入变更单，作为回滚可复盘锚点。
 
 ## 6. 证据清单（Evidence Checklist）
