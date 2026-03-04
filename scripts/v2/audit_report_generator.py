@@ -6,7 +6,10 @@ import shlex
 import re
 
 def parse_kv(line):
-    """Parses key=value pairs from a log line (supports quoted values)."""
+    """Parses key=value pairs from a log line (supports quoted values).
+
+    Returns None when duplicate keys are present to avoid key-shadowing spoof.
+    """
     data = {}
     try:
         parts = shlex.split(line.strip())
@@ -16,6 +19,8 @@ def parse_kv(line):
     for part in parts:
         if '=' in part:
             k, v = part.split('=', 1)
+            if k in data:
+                return None
             data[k] = v
     return data
 
@@ -64,6 +69,8 @@ def generate_audit_report(log_file):
                         prefix, content = line.split('[event]', 1)
                         content = content.strip()
                         data = parse_kv(content)
+                        if data is None:
+                            continue
 
                         schema = canonical_event_schema(data.get('event_schema'))
                         if schema is None:
