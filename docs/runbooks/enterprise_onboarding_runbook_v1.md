@@ -51,6 +51,7 @@
   - `trnm-onboard rollback --org-id <org_id> --env <env> --change-ticket-id <change_ticket_id> --root-cause-tag <tag>`
 - 先执行一次 `--dry-run` 预演，确认参数与目标环境一致后再执行真实回滚：
   - `trnm-onboard rollback --org-id <org_id> --env <env> --change-ticket-id <change_ticket_id> --root-cause-tag <tag> --dry-run`
+- 回滚前必须校验 org_id 与 change_ticket_id 绑定关系，避免跨工单误回滚。
 - 将最终执行命令与输出日志计算 `sha256` 并写入变更单，作为回滚可复盘锚点。
 
 ## 6. 证据清单（Evidence Checklist）
