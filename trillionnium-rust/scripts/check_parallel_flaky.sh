@@ -7,7 +7,9 @@ export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
 
 RUNS="${RUNS:-5}"
 RUN_TIMEOUT_SEC="${RUN_TIMEOUT_SEC:-120}"
-mkdir -p run
+RUN_TAG="${RUN_TAG:-$(date +%Y%m%d-%H%M%S)-$$}"
+RUN_DIR="run/parallel-sanity-flaky-${RUN_TAG}"
+mkdir -p "$RUN_DIR"
 
 TIMEOUT_BIN=""
 if command -v timeout >/dev/null 2>&1; then
@@ -18,7 +20,7 @@ fi
 
 ok=0
 for i in $(seq 1 "$RUNS"); do
-  log="run/parallel-sanity-flaky-${i}.log"
+  log="$RUN_DIR/run-${i}.log"
   if [[ -n "$TIMEOUT_BIN" ]]; then
     if ! "$TIMEOUT_BIN" "$RUN_TIMEOUT_SEC" \
       cargo run -q -p trnm-node -- \
@@ -51,4 +53,4 @@ for i in $(seq 1 "$RUNS"); do
   ok=$((ok+1))
 done
 
-echo "[OK] parallel flaky streak=${ok}/${RUNS}"
+echo "[OK] parallel flaky streak=${ok}/${RUNS} run_dir=${RUN_DIR}"
