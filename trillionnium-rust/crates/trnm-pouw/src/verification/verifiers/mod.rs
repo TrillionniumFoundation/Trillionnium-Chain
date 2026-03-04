@@ -220,6 +220,12 @@ pub(super) fn verify_bound_envelope(
     }
 
     if let Some(expected_worker) = task.worker.as_deref() {
+        if expected_worker.trim().is_empty() || expected_worker.trim() != expected_worker {
+            return VerificationResult::Invalid(format!(
+                "Invalid {kind_name} envelope: non-canonical worker binding context"
+            ));
+        }
+
         match find_token_field_raw(&body_text, "worker") {
             Some(worker)
                 if !worker.trim().is_empty()
@@ -275,7 +281,9 @@ pub(super) fn verify_bound_envelope(
 
 #[cfg(test)]
 mod tests {
-    use super::{find_numeric_field, find_token_field};
+    use super::{find_numeric_field, find_token_field, verify_bound_envelope};
+    use crate::verification::VerificationResult;
+    use trnm_types::{ProofType, TaskObject, TaskStatus};
 
     #[test]
     fn find_numeric_field_rejects_identifier_suffix_spoof() {
@@ -317,5 +325,42 @@ mod tests {
     fn find_token_field_rejects_trailing_non_delimiter_bytes() {
         let body = "proof_type=tee%2Cfraud";
         assert_eq!(find_token_field(body, "proof_type"), None);
+    }
+
+    #[test]
+    fn verify_bound_envelope_rejects_noncanonical_worker_binding_context_fail_closed() {
+        let task = TaskObject {
+            task_id: 42,
+            creator: "alice".into(),
+            bounty: 1,
+            status: TaskStatus::Committed,
+            proof_type: ProofType::Tee,
+            metadata: None,
+            worker: Some(" worker1 ".into()),
+            committed_hash: None,
+            result_hash: Some([0xabu8; 32]),
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        };
+
+        assert!(matches!(
+            verify_bound_envelope(
+                &task,
+                b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,quote=ok",
+                b"TEE:",
+                "TEE receipt"
+            ),
+            VerificationResult::Invalid(msg)
+                if msg.contains("non-canonical worker binding context")
+        ));
     }
 }
