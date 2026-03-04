@@ -9,7 +9,7 @@ if [[ ! -f "$RUNBOOK" ]]; then
   exit 1
 fi
 
-base_cmd='trnm-onboard rollback --org-id <org_id> --env <env> --change-ticket-id <change_ticket_id> --root-cause-tag <root_cause_tag>'
+base_cmd='trnm-onboard rollback --org-id <org_id> --env <env> --change-ticket-id <change_ticket_id> --operator-id <operator_id> --root-cause-tag <root_cause_tag>'
 dry_run_cmd="$base_cmd --dry-run"
 
 if ! grep -Fq -- "$base_cmd" "$RUNBOOK"; then
