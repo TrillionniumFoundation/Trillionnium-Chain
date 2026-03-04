@@ -47,6 +47,7 @@
 - 撤销新增 capability token。
 - 冻结本次接入环境凭据。
 - 标记接入状态为 `reverted` 并附根因标签。
+- 根因标签建议使用稳定枚举（示例）：`schema_drift` / `auth_scope_mismatch` / `policy_conflict`。
 - 记录可复放的回滚命令模板（必须携带 `--root-cause-tag` 与 `--change-ticket-id`），示例：
   - `trnm-onboard rollback --org-id <org_id> --env <env> --change-ticket-id <change_ticket_id> --root-cause-tag <tag>`
 - 先执行一次 `--dry-run` 预演，确认参数与目标环境一致后再执行真实回滚：
