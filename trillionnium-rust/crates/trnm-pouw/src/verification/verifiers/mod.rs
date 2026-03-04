@@ -221,7 +221,10 @@ pub(super) fn verify_bound_envelope(
 
     if let Some(expected_worker) = task.worker.as_deref() {
         match find_token_field_raw(&body_text, "worker") {
-            Some(worker) if expected_worker == worker.trim() => {}
+            Some(worker)
+                if !worker.trim().is_empty()
+                    && worker.trim() == worker
+                    && expected_worker == worker => {}
             Some(_) => {
                 return VerificationResult::Invalid(format!(
                     "Invalid {kind_name} envelope: worker mismatch"
