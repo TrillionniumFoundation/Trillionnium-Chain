@@ -96,6 +96,8 @@ cargo test -p trnm-types --test i3_did_revoke_cascade_same_height \
   did_revoke_cascade_same_height_fail_closed_for_all_subject_tokens
 cargo test -p trnm-types --test i3_did_revoke_cascade_same_height \
   did_revoke_same_height_replay_is_idempotent_without_duplicate_cascade_audit
+cargo test -p trnm-types --test i3_did_token_revoke_same_height_precedence \
+  did_revoke_dominates_token_revoke_at_same_height_for_verifier_shape
 # I3-prep fail-closed verifier error-contract guard: inactive state must dominate
 # scope mismatch once token is revoked to avoid authorization-shape leakage.
 cargo test -p trnm-types --test i3_capability_fail_closed_precedence \
