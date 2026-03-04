@@ -49,10 +49,6 @@ def canonical_event_ts(value):
     return None
 
 
-def canonical_generated_at_utc():
-    return datetime.datetime.now(datetime.timezone.utc).replace(microsecond=0).strftime("%Y-%m-%dT%H:%M:%SZ")
-
-
 def generate_audit_report(log_file):
     events = []
     
@@ -90,7 +86,7 @@ def generate_audit_report(log_file):
 
     # Summary statistics
     summary = {
-        'generated_at_utc': canonical_generated_at_utc(),
+        'generated_at_utc': datetime.datetime.now(datetime.timezone.utc).isoformat(),
         'source_log': log_file,
         'total_audit_events': len(events),
         'event_counts': {},
