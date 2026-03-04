@@ -104,6 +104,10 @@ cargo test -p trnm-bridge-poc --test x3_compensation_matrix \
   -- --nocapture
 
 cargo test -p trnm-bridge-poc --test x3_compensation_matrix \
+  x3_prep_stale_pending_degraded_reason_strips_directional_marks_for_replay_stability \
+  -- --nocapture
+
+cargo test -p trnm-bridge-poc --test x3_compensation_matrix \
   x3_prep_stale_pending_degraded_reason_collapses_crlf_and_unicode_separators_for_replay_stability \
   -- --nocapture
 

@@ -270,8 +270,42 @@ fn x3_prep_stale_pending_degraded_reason_strips_alm_and_zwnj_for_replay_stabilit
 }
 
 #[test]
+fn x3_prep_stale_pending_degraded_reason_strips_directional_marks_for_replay_stability() {
+    let mut request = SettlementRequest::new(8, "0xmatrix-sanitize-directional-marks".to_string());
+    let token = operator_token();
+
+    let degraded = HeartbeatOutcome {
+        heartbeat: None,
+        should_retry: false,
+        degraded: true,
+        message: "target\u{200E} relay\u{200F} timeout".to_string(),
+    };
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &degraded,
+        SettlementConfirm::Confirmed { height: 6263 },
+    )
+    .unwrap();
+
+    let SettlementStep::Compensated { reason, event } = out else {
+        panic!("expected compensated branch");
+    };
+
+    assert_eq!(reason, "heartbeat degraded: target relay timeout");
+    assert!(!reason.contains('\u{200E}'));
+    assert!(!reason.contains('\u{200F}'));
+
+    assert_eq!(event.phase, "relay_heartbeat_degraded");
+    assert_eq!(event.confirm_height, None);
+    assert_eq!(event.confirm_reason, Some(reason.clone()));
+    assert_eq!(current_status(&request), &BridgeStatus::Reverted(reason));
+}
+
+#[test]
 fn x3_prep_stale_pending_degraded_reason_collapses_crlf_and_unicode_separators_for_replay_stability() {
-    let mut request = SettlementRequest::new(8, "0xmatrix-sanitize-crlf-separators".to_string());
+    let mut request = SettlementRequest::new(9, "0xmatrix-sanitize-crlf-separators".to_string());
     let token = operator_token();
 
     let degraded = HeartbeatOutcome {
@@ -307,7 +341,7 @@ fn x3_prep_stale_pending_degraded_reason_collapses_crlf_and_unicode_separators_f
 
 #[test]
 fn x3_prep_stale_pending_degraded_reason_strips_bidi_embeddings_for_replay_stability() {
-    let mut request = SettlementRequest::new(9, "0xmatrix-sanitize-bidi-embeddings".to_string());
+    let mut request = SettlementRequest::new(10, "0xmatrix-sanitize-bidi-embeddings".to_string());
     let token = operator_token();
 
     let degraded = HeartbeatOutcome {
@@ -343,7 +377,7 @@ fn x3_prep_stale_pending_degraded_reason_strips_bidi_embeddings_for_replay_stabi
 
 #[test]
 fn x3_prep_stale_pending_degraded_reason_strips_bidi_isolates_for_replay_stability() {
-    let mut request = SettlementRequest::new(10, "0xmatrix-sanitize-bidi-isolates".to_string());
+    let mut request = SettlementRequest::new(11, "0xmatrix-sanitize-bidi-isolates".to_string());
     let token = operator_token();
 
     let degraded = HeartbeatOutcome {
