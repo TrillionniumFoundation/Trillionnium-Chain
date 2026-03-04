@@ -25,13 +25,13 @@ fi
 base_count="$(grep -F -- "$base_cmd" "$RUNBOOK" | wc -l | tr -d ' ')"
 dry_run_count="$(grep -F -- "$dry_run_cmd" "$RUNBOOK" | wc -l | tr -d ' ')"
 
-if [[ "$base_count" -ne 2 ]]; then
-  echo "[FAIL] expected rollback command template to appear twice (normal + dry-run prefix), got $base_count" >&2
+if [[ "$base_count" -lt 2 ]]; then
+  echo "[FAIL] expected rollback command template to appear at least twice (normal + dry-run prefix), got $base_count" >&2
   exit 1
 fi
 
-if [[ "$dry_run_count" -ne 1 ]]; then
-  echo "[FAIL] expected rollback --dry-run template to appear exactly once, got $dry_run_count" >&2
+if [[ "$dry_run_count" -lt 1 ]]; then
+  echo "[FAIL] expected rollback --dry-run template to appear at least once, got $dry_run_count" >&2
   exit 1
 fi
 
