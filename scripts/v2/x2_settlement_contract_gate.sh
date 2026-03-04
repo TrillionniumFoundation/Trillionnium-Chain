@@ -98,3 +98,7 @@ cargo test -p trnm-bridge-poc --test x2_settlement_loop \
 cargo test -p trnm-bridge-poc --test x3_compensation_matrix \
   x3_prep_stale_pending_degraded_retry_hint_still_fails_closed_to_compensation \
   -- --nocapture
+
+cargo test -p trnm-bridge-poc --test x3_compensation_matrix \
+  x3_prep_stale_pending_degraded_reason_collapses_crlf_and_unicode_separators_for_replay_stability \
+  -- --nocapture
