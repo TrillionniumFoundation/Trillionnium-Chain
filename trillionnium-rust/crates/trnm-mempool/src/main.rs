@@ -23,6 +23,7 @@ pub struct AdmissionGate {
     seen: HashSet<u64>,
     backpressured_ids: HashSet<u64>,
     backpressured_fifo: VecDeque<u64>,
+    retry_reservations: usize,
     metrics: GateMetrics,
 }
 
@@ -48,6 +49,7 @@ impl AdmissionGate {
             seen: HashSet::with_capacity(capacity),
             backpressured_ids: HashSet::with_capacity(capacity),
             backpressured_fifo: VecDeque::with_capacity(capacity),
+            retry_reservations: 0,
             metrics: GateMetrics::default(),
         }
     }
@@ -72,15 +74,22 @@ impl AdmissionGate {
         // Fairness guard: once we have known backpressured retries, reserve newly
         // opened capacity for them first. Fresh ids are briefly backpressured so
         // retry traffic cannot be perpetually starved by new ingress.
-        if !self.backpressured_ids.is_empty() && !self.backpressured_ids.contains(&tx_id) {
+        if self.retry_reservations > 0
+            && !self.backpressured_ids.is_empty()
+            && !self.backpressured_ids.contains(&tx_id)
+        {
             self.remember_backpressured(tx_id);
             self.metrics.backpressured += 1;
             self.metrics.fairness_deferrals += 1;
+            self.retry_reservations -= 1;
             return AdmitOutcome::Backpressured;
         }
 
         if self.backpressured_ids.remove(&tx_id) {
             self.backpressured_fifo.retain(|id| *id != tx_id);
+        }
+        if self.retry_reservations > 0 {
+            self.retry_reservations -= 1;
         }
         self.queue.push_back(tx_id);
         self.seen.insert(tx_id);
@@ -91,6 +100,8 @@ impl AdmissionGate {
     pub fn pop_ready(&mut self) -> Option<u64> {
         let id = self.queue.pop_front()?;
         self.seen.remove(&id);
+        // Reserve one newly opened slot for known retries to reduce starvation.
+        self.retry_reservations = self.retry_reservations.saturating_add(1).min(self.capacity);
         // Keep retry memory across partial drain so repeated retries stay idempotent
         // when the queue quickly re-saturates before the original sender retries.
         Some(id)
@@ -240,6 +251,22 @@ mod tests {
         assert_eq!(gate.pop_ready(), Some(1));
         assert_eq!(gate.admit(3), AdmitOutcome::Backpressured);
         assert_eq!(gate.admit(2), AdmitOutcome::Accepted);
+
+        let m = gate.metrics();
+        assert_eq!(m.fairness_deferrals, 1);
+    }
+
+    #[test]
+    fn fairness_reservation_does_not_deadlock_fresh_ingress_when_retries_disappear() {
+        let mut gate = AdmissionGate::new(1);
+        assert_eq!(gate.admit(1), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(2), AdmitOutcome::Backpressured);
+
+        assert_eq!(gate.pop_ready(), Some(1));
+        // First fresh ingress is deferred to give retry id=2 one chance.
+        assert_eq!(gate.admit(3), AdmitOutcome::Backpressured);
+        // If no retry shows up, subsequent fresh ingress must still make progress.
+        assert_eq!(gate.admit(4), AdmitOutcome::Accepted);
 
         let m = gate.metrics();
         assert_eq!(m.fairness_deferrals, 1);
