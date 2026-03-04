@@ -44,9 +44,13 @@ def canonical_event_ts(value):
     if value is None:
         return None
     token = str(value)
-    if re.fullmatch(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z", token):
-        return token
-    return None
+    if not re.fullmatch(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z", token):
+        return None
+    try:
+        datetime.datetime.strptime(token, "%Y-%m-%dT%H:%M:%SZ")
+    except ValueError:
+        return None
+    return token
 
 
 def generate_audit_report(log_file):
