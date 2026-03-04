@@ -588,10 +588,13 @@ impl RelayService {
         source: Option<&str>,
     ) -> Result<()> {
         let source = canonicalize_risk_source(source);
-        let mut q = self
-            .risk_quota
-            .lock()
-            .map_err(|_| anyhow!("relay risk quota lock poisoned"))?;
+        let mut q = match self.risk_quota.lock() {
+            Ok(guard) => guard,
+            Err(poisoned) => {
+                // Best-effort recovery: keep quota enforcement alive after a panicking caller.
+                poisoned.into_inner()
+            }
+        };
         q.consume(now_ms(), domain, session_id, source.as_str(), &self.risk_quota_cfg)
     }
 
@@ -1652,6 +1655,48 @@ mod tests {
             })
             .unwrap();
         relay
+    }
+
+    #[test]
+    fn relay_quota_lock_poisoning_recovers_and_still_enforces_limits() {
+        let relay = tiny_quota_relay();
+        let _ = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+            let _guard = relay.risk_quota.lock().expect("quota lock");
+            panic!("intentional poison for resilience test");
+        }));
+
+        relay
+            .send(RelaySendRequest {
+                session_id: "rq-s1".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"x".to_vec(),
+                source: Some("src-poison".into()),
+            })
+            .expect("first post-poison request should recover");
+        relay
+            .send(RelaySendRequest {
+                session_id: "rq-s1".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"x".to_vec(),
+                source: Some("src-poison".into()),
+            })
+            .expect("second post-poison request should recover");
+
+        let err = relay
+            .send(RelaySendRequest {
+                session_id: "rq-s1".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"x".to_vec(),
+                source: Some("src-poison".into()),
+            })
+            .unwrap_err();
+        assert!(err.to_string().contains("too_many_requests/quota_exceeded"));
     }
 
     #[test]
