@@ -684,7 +684,9 @@ pub fn apply_reveal_result_at_height(
     // For Fraud proofs, we rely on the challenge period (no immediate verification).
     if matches!(task.proof_type, ProofType::Tee | ProofType::Zk) {
         let registry = get_default_registry();
-        let verification = registry.verify(&task, proof_data.as_deref().unwrap_or(&[]));
+        let mut verification_task = task.clone();
+        verification_task.result_hash = Some(result_hash);
+        let verification = registry.verify(&verification_task, proof_data.as_deref().unwrap_or(&[]));
         match verification {
             VerificationResult::Valid => {
                 // Immediate finality for verifiable execution.
@@ -3905,7 +3907,7 @@ mod tests {
         let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
 
         // TEE proof envelope must bind task_id/worker/proof_type.
-        let proof = b"TEE:task_id=7001,worker=worker1,proof_type=tee,quote=QUOTE_XYZ".to_vec();
+        let proof = b"TEE:task_id=7001,worker=worker1,proof_type=tee,result_hash=0101010101010101010101010101010101010101010101010101010101010101,quote=QUOTE_XYZ".to_vec();
         let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, Some(proof)).unwrap();
 
         let final_task = st.get_task(r4.id).unwrap();
@@ -3974,7 +3976,7 @@ mod tests {
         let r2 = apply_accept_task(&mut st, r1_updated, "worker1".into()).unwrap();
         let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
 
-        let proof = b"ZK:task_id=7004,worker=worker1,proof_type=zk,receipt=VALID_PROOF".to_vec();
+        let proof = b"ZK:task_id=7004,worker=worker1,proof_type=zk,result_hash=0303030303030303030303030303030303030303030303030303030303030303,receipt=VALID_PROOF".to_vec();
         let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, Some(proof)).unwrap();
 
         let final_task = st.get_task(r4.id).unwrap();

@@ -216,6 +216,23 @@ pub(super) fn verify_bound_envelope(
         }
     }
 
+    if let Some(expected_result_hash) = task.result_hash {
+        let expected_hex = hex::encode(expected_result_hash);
+        match find_token_field(&body_text, "result_hash") {
+            Some(result_hash) if result_hash.trim_start_matches("0x") == expected_hex => {}
+            Some(_) => {
+                return VerificationResult::Invalid(format!(
+                    "Invalid {kind_name} envelope: result_hash mismatch"
+                ))
+            }
+            None => {
+                return VerificationResult::Invalid(format!(
+                    "Invalid {kind_name} envelope: missing result_hash binding"
+                ))
+            }
+        }
+    }
+
     let expected = proof_type_key(task.proof_type);
     match find_token_field(&body_text, "proof_type") {
         Some(proof_type) if normalize_receipt_proof_type(&proof_type) == expected => {}

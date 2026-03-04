@@ -30,7 +30,7 @@ mod tests {
             metadata: None,
             worker: Some("worker1".into()),
             committed_hash: None,
-            result_hash: None,
+            result_hash: Some([0xabu8; 32]),
             reveal_salt: None,
             committed_at_height: None,
             reveal_deadline_height: None,
@@ -53,7 +53,7 @@ mod tests {
         assert_eq!(
             verifier.verify_proof(
                 &task,
-                b"TEE:task_id=42,worker=worker1,proof_type=tee,quote=abc"
+                b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,quote=abc"
             ),
             VerificationResult::Valid
         );
@@ -65,7 +65,7 @@ mod tests {
         let task = mock_task();
 
         assert!(matches!(
-            verifier.verify_proof(&task, b"TEE:task_id=99,worker=worker1,quote=abc"),
+            verifier.verify_proof(&task, b"TEE:task_id=99,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,quote=abc"),
             VerificationResult::Invalid(msg) if msg.contains("task_id mismatch")
         ));
     }
@@ -76,7 +76,7 @@ mod tests {
         let task = mock_task();
 
         assert!(matches!(
-            verifier.verify_proof(&task, b"TEE:quote=abc,nonce=1"),
+            verifier.verify_proof(&task, b"TEE:quote=abc,nonce=1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab"),
             VerificationResult::Invalid(msg) if msg.contains("missing task_id binding")
         ));
     }
@@ -87,7 +87,7 @@ mod tests {
         let task = mock_task();
 
         assert!(matches!(
-            verifier.verify_proof(&task, b"TEE:task_id=42,worker=worker1,proof_type=zk"),
+            verifier.verify_proof(&task, b"TEE:task_id=42,worker=worker1,proof_type=zk,result_hash=abababababababababababababababababababababababababababababababab"),
             VerificationResult::Invalid(msg) if msg.contains("proof_type mismatch")
         ));
     }
@@ -98,8 +98,19 @@ mod tests {
         let task = mock_task();
 
         assert!(matches!(
-            verifier.verify_proof(&task, b"TEE:task_id=42,worker=worker1,quote=abc"),
+            verifier.verify_proof(&task, b"TEE:task_id=42,worker=worker1,result_hash=abababababababababababababababababababababababababababababababab,quote=abc"),
             VerificationResult::Invalid(msg) if msg.contains("missing proof_type binding")
+        ));
+    }
+
+    #[test]
+    fn tee_verifier_rejects_missing_result_hash_binding() {
+        let verifier = TeeVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(&task, b"TEE:task_id=42,worker=worker1,proof_type=tee,quote=abc"),
+            VerificationResult::Invalid(msg) if msg.contains("missing result_hash binding")
         ));
     }
 
@@ -111,7 +122,7 @@ mod tests {
         assert_eq!(
             verifier.verify_proof(
                 &task,
-                b"TEE:task_id=42,worker=worker1,proof_type=tee_receipt,quote=abc"
+                b"TEE:task_id=42,worker=worker1,proof_type=tee_receipt,result_hash=abababababababababababababababababababababababababababababababab,quote=abc"
             ),
             VerificationResult::Valid
         );
