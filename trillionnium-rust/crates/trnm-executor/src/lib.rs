@@ -326,7 +326,7 @@ fn build_parallel_groups_aggressive_profile(
     let mut stage_rw_hits = 0usize;
     let scan_window = aggr_scan_window();
     let skip_empty_stage_checks = aggr_skip_empty_stage_checks();
-    let mut rr_cursor = 0usize;
+    let mut rr_cursor = aggr_scan_round_robin_seed();
 
     for tx in ordered {
         let mut tx_slot = Some(tx);
@@ -494,6 +494,13 @@ fn aggr_scan_round_robin_enabled() -> bool {
             !(s == "0" || s == "false" || s == "off" || s == "no")
         })
         .unwrap_or(true)
+}
+
+fn aggr_scan_round_robin_seed() -> usize {
+    std::env::var("TRNM_AGGR_SCAN_RR_SEED")
+        .ok()
+        .and_then(|v| v.parse::<usize>().ok())
+        .unwrap_or(0)
 }
 
 fn auto_hot_streak_threshold() -> f64 {
@@ -844,6 +851,26 @@ mod tests {
         assert!(groups.len() >= 2);
         assert!(groups[0].len() >= 2);
         assert!(groups[1].len() >= 2);
+    }
+
+    #[test]
+    fn aggressive_round_robin_seed_rotates_initial_probe_start() {
+        let _deep = EnvGuard::set("TRNM_AGGR_DEEP_SCAN", "1");
+        let _rr = EnvGuard::set("TRNM_AGGR_SCAN_ROUND_ROBIN", "1");
+        let _window = EnvGuard::set("TRNM_AGGR_SCAN_WINDOW", "1");
+        let _seed = EnvGuard::set("TRNM_AGGR_SCAN_RR_SEED", "1");
+
+        let txs = vec![
+            tx(1, vec![], vec![o(7)]), // group 0
+            tx(3, vec![], vec![o(7)]), // forced to group 1
+            tx(10, vec![o(101)], vec![]), // first free candidate should honor seed offset
+        ];
+
+        let (groups, _) =
+            build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::AggressiveGreedy);
+
+        assert!(groups.len() >= 2);
+        assert!(groups[1].iter().any(|t| t.id == 10));
     }
 
     struct EnvGuard {
