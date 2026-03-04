@@ -78,6 +78,14 @@ if [[ "$snapshot_fail_closed_line_count" -ne 1 || "$master_fail_closed_line_coun
   exit 1
 fi
 
+snapshot_m2v2_boundary_count=$(grep -Fc -- "M2↔V2" "$SNAPSHOT_SPEC" || true)
+master_m2v2_boundary_count=$(grep -Fc -- "M2↔V2" "$MASTER_SPEC" || true)
+if [[ "$snapshot_m2v2_boundary_count" -ne 1 || "$master_m2v2_boundary_count" -ne 1 ]]; then
+  echo "[FAIL] expected exactly one MV2 boundary phrase (M2↔V2) in snapshot and master" >&2
+  echo "  snapshot_m2v2_boundary_count=$snapshot_m2v2_boundary_count master_m2v2_boundary_count=$master_m2v2_boundary_count" >&2
+  exit 1
+fi
+
 snapshot_anchor_count=$(grep -Fc -- "### MV-2：V2 回执接入前的契约冻结（Receipt Contract Freeze）" "$SNAPSHOT_SPEC" || true)
 master_anchor_count=$(grep -Fc -- "### 10.3 Lane MV（2026-03-03）V2 回执契约冻结主文档锚点" "$MASTER_SPEC" || true)
 if [[ "$snapshot_anchor_count" -ne 1 || "$master_anchor_count" -ne 1 ]]; then
