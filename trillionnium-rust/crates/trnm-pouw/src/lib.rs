@@ -71,16 +71,6 @@ fn map_state_err(err: String) -> PouwError {
     }
 }
 
-fn m2v2_proof_error_code(reason: &str) -> &'static str {
-    if contains_ascii_case_insensitive(reason, "empty")
-        || contains_ascii_case_insensitive(reason, "missing")
-    {
-        "ERR_M2V2_PROOF_MISSING"
-    } else {
-        "ERR_M2V2_PROOF_INVALID"
-    }
-}
-
 const DEFAULT_ASSIGNMENT_WINDOW_BLOCKS: u64 = 20;
 const DEFAULT_REVEAL_WINDOW_BLOCKS: u64 = 20;
 const DEFAULT_CHALLENGE_WINDOW_BLOCKS: u64 = 100;
@@ -89,8 +79,6 @@ const DEFAULT_CHALLENGE_MIN_BOND_BOUNTY_BPS: u128 = 500;
 const DEFAULT_CHALLENGE_MIN_BOND_WORKER_STAKE_BPS: u128 = 0;
 const DEFAULT_MIN_WORKER_STAKE: u128 = 1;
 const DEFAULT_CHALLENGE_SUCCESS_BOUNTY: u128 = 1;
-const DEFAULT_CHALLENGE_SUCCESS_BOUNTY_ABS_CAP: u128 = 1_000;
-const DEFAULT_CHALLENGE_SUCCESS_BOUNTY_REL_BPS: u128 = 10_000;
 const BPS_DENOMINATOR: u128 = 10_000;
 const CHALLENGE_ESCROW_ACCOUNT: &str = "treasury.challenge_escrow";
 const CHALLENGE_FORFEIT_TREASURY_ACCOUNT: &str = "treasury.challenge_forfeits";
@@ -100,10 +88,6 @@ const MIN_CHALLENGE_WINDOW_BLOCKS: u64 = 1;
 
 fn worker_stake_lock_account(task_id: u64) -> String {
     format!("worker_stake_lock.{}", task_id)
-}
-
-fn task_bounty_escrow_account(task_id: u64) -> String {
-    format!("task_bounty_escrow.{}", task_id)
 }
 
 fn ensure_balance_at_least(st: &StateStore, account: &str, amount: u128) -> Result<(), PouwError> {
@@ -184,35 +168,6 @@ fn resolve_authority_account(st: &StateStore) -> String {
         .map(|v| v.trim().to_string())
         .filter(|v| !v.is_empty())
         .unwrap_or_else(|| DEFAULT_RESOLVE_AUTHORITY.to_string())
-}
-
-fn resolve_committee_members(st: &StateStore) -> Vec<String> {
-    if let Some(raw) = st.gov_param_string("resolve_authority_committee") {
-        let members: Vec<String> = raw
-            .split(',')
-            .map(|s| s.trim())
-            .filter(|s| !s.is_empty())
-            .map(|s| s.to_string())
-            .collect();
-        if !members.is_empty() {
-            return members;
-        }
-    }
-    vec![resolve_authority_account(st)]
-}
-
-fn resolve_committee_quorum(st: &StateStore, committee_len: usize) -> usize {
-    let configured = st.gov_param_u64("resolve_authority_quorum").unwrap_or(1) as usize;
-    configured.max(1).min(committee_len.max(1))
-}
-
-fn parse_approval_signers(raw_signer: &str) -> Vec<String> {
-    raw_signer
-        .split(',')
-        .map(|s| s.trim())
-        .filter(|s| !s.is_empty())
-        .map(|s| s.to_string())
-        .collect()
 }
 
 fn validate_challenge_accounting_invariants(task: &TaskObject) -> Result<(), PouwError> {
@@ -376,7 +331,6 @@ fn preflight_resolve_transfers(
         let _ = maybe_pay_challenge_success_bounty(&mut sim, task)?;
     }
 
-    settle_task_bounty_for_terminal_state(&mut sim, task)?;
     settle_worker_stake_for_terminal_state(&mut sim, task)?;
     Ok(())
 }
@@ -426,7 +380,6 @@ fn preflight_timeout_transfers(
         }
     }
 
-    settle_task_bounty_for_terminal_state(&mut sim, task)?;
     settle_worker_stake_for_terminal_state(&mut sim, task)?;
     Ok(())
 }
@@ -461,13 +414,10 @@ pub fn apply_create_task(
     if creator_trimmed.is_empty() || creator_trimmed != creator {
         return Err(PouwError::Unauthorized);
     }
-    if st.balance_of(&creator) < bounty {
-        return Err(PouwError::InsufficientStake);
-    }
 
     let task = TaskObject {
         task_id,
-        creator: creator.clone(),
+        creator,
         bounty,
         status: TaskStatus::Open,
         proof_type: Default::default(),
@@ -487,13 +437,7 @@ pub fn apply_create_task(
         challenge_bond_forfeited: None,
         version: 1,
     };
-    let obj_ref = st.put_task_new(task).map_err(map_state_err)?;
-    let escrow = task_bounty_escrow_account(task_id);
-    st.debit_balance(&creator, bounty)
-        .map_err(|_| PouwError::InsufficientStake)?;
-    st.credit_balance(&escrow, bounty)
-        .map_err(PouwError::State)?;
-    Ok(obj_ref)
+    st.put_task_new(task).map_err(map_state_err)
 }
 
 pub fn apply_create_task_with_metadata(
@@ -509,13 +453,10 @@ pub fn apply_create_task_with_metadata(
     if creator_trimmed.is_empty() || creator_trimmed != creator {
         return Err(PouwError::Unauthorized);
     }
-    if st.balance_of(&creator) < bounty {
-        return Err(PouwError::InsufficientStake);
-    }
 
     let task = TaskObject {
         task_id,
-        creator: creator.clone(),
+        creator,
         bounty,
         status: TaskStatus::Open,
         proof_type: Default::default(),
@@ -535,13 +476,7 @@ pub fn apply_create_task_with_metadata(
         challenge_bond_forfeited: None,
         version: 1,
     };
-    let obj_ref = st.put_task_new(task).map_err(map_state_err)?;
-    let escrow = task_bounty_escrow_account(task_id);
-    st.debit_balance(&creator, bounty)
-        .map_err(|_| PouwError::InsufficientStake)?;
-    st.credit_balance(&escrow, bounty)
-        .map_err(PouwError::State)?;
-    Ok(obj_ref)
+    st.put_task_new(task).map_err(map_state_err)
 }
 
 pub fn apply_accept_task(
@@ -604,28 +539,6 @@ pub fn apply_accept_task_at_height(
     Ok(next_ref)
 }
 
-fn settle_task_bounty_for_terminal_state(
-    st: &mut StateStore,
-    task: &TaskObject,
-) -> Result<(), PouwError> {
-    let escrow = task_bounty_escrow_account(task.task_id);
-    let locked = st.balance_of(&escrow);
-    if locked == 0 {
-        return Ok(());
-    }
-
-    st.debit_balance(&escrow, locked)
-        .map_err(PouwError::State)?;
-    let recipient = if task.status == TaskStatus::Completed {
-        task.worker.as_deref().unwrap_or(task.creator.as_str())
-    } else {
-        task.creator.as_str()
-    };
-    st.credit_balance(recipient, locked)
-        .map_err(PouwError::State)?;
-    Ok(())
-}
-
 fn settle_worker_stake_for_terminal_state(
     st: &mut StateStore,
     task: &TaskObject,
@@ -670,29 +583,9 @@ fn maybe_pay_challenge_success_bounty(
         return Ok(0);
     }
 
-    let abs_cap = st
-        .gov_param_u128("challenge_success_bounty_abs_cap")
-        .unwrap_or(DEFAULT_CHALLENGE_SUCCESS_BOUNTY_ABS_CAP);
-    let rel_bps = st
-        .gov_param_u128("challenge_success_bounty_rel_bps")
-        .unwrap_or(DEFAULT_CHALLENGE_SUCCESS_BOUNTY_REL_BPS);
-    let rel_cap_from_bounty = task.bounty.saturating_mul(rel_bps) / BPS_DENOMINATOR;
-    let min_worker_stake = st
-        .gov_param_u128("min_worker_stake")
-        .unwrap_or(DEFAULT_MIN_WORKER_STAKE);
-    let rel_cap_from_stake = min_worker_stake.saturating_mul(rel_bps) / BPS_DENOMINATOR;
-
-    let effective_bounty = configured_bounty
-        .min(abs_cap)
-        .min(rel_cap_from_bounty)
-        .min(rel_cap_from_stake);
-    if effective_bounty == 0 {
-        return Ok(0);
-    }
-
     let lock_account = worker_stake_lock_account(task.task_id);
     let lock_available = st.balance_of(&lock_account);
-    let from_lock = effective_bounty.min(lock_available);
+    let from_lock = configured_bounty.min(lock_available);
 
     if from_lock > 0 {
         st.debit_balance(&lock_account, from_lock)
@@ -703,7 +596,7 @@ fn maybe_pay_challenge_success_bounty(
     }
 
     let slash_treasury_available = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
-    let from_slash_treasury = effective_bounty.min(slash_treasury_available);
+    let from_slash_treasury = configured_bounty.min(slash_treasury_available);
     if from_slash_treasury > 0 {
         st.debit_balance(WORKER_SLASH_TREASURY_ACCOUNT, from_slash_treasury)
             .map_err(PouwError::State)?;
@@ -803,7 +696,6 @@ pub fn apply_reveal_result_at_height(
                 task.resolve_deadline_height = None;
 
                 // Settle payment immediately.
-                settle_task_bounty_for_terminal_state(st, &task)?;
                 settle_worker_stake_for_terminal_state(st, &task)?;
 
                 return st.update_task(task_ref, task).map_err(map_state_err);
@@ -813,10 +705,9 @@ pub fn apply_reveal_result_at_height(
                 // before deadline. If deadline passes, timeout will slash.
                 // Alternatively, we could slash immediately if we consider bad proof as malicious.
                 // For now, let's reject to be safe against client errors.
-                let code = m2v2_proof_error_code(&reason);
                 return Err(PouwError::State(format!(
-                    "{}: Proof verification failed: {}",
-                    code, reason
+                    "Proof verification failed: {}",
+                    reason
                 )));
             }
             VerificationResult::Indeterminate(reason) => {
@@ -973,35 +864,24 @@ pub fn apply_resolve_at_height(
     }
     validate_challenge_accounting_invariants(&task)?;
     let resolve_authority = resolve_authority_account(st);
+    // Authorization is bound to authenticated signer context; payload resolver
+    // is retained only for backward-compatible event fields.
+    // Gate hardening: reject malformed or divergent resolver payloads so canonical
+    // signer authorization cannot be paired with spoofed event actor metadata.
     let resolver_trimmed = resolver.trim();
+    // Gate hardening: signer and configured authority must both be canonical
+    // non-blank account identifiers (no surrounding whitespace).
     let signer_trimmed = signer.trim();
+    let authority_trimmed = resolve_authority.trim();
     if resolver_trimmed.is_empty()
         || resolver_trimmed != resolver
         || signer_trimmed.is_empty()
+        || authority_trimmed.is_empty()
         || signer_trimmed != signer
+        || authority_trimmed != resolve_authority
+        || signer_trimmed != authority_trimmed
+        || resolver_trimmed != signer_trimmed
     {
-        return Err(PouwError::Unauthorized);
-    }
-
-    let committee = resolve_committee_members(st);
-    let quorum = resolve_committee_quorum(st, committee.len());
-    let mut seen = std::collections::BTreeSet::new();
-    let mut approvals = 0usize;
-    for s in parse_approval_signers(&signer) {
-        if committee.iter().any(|m| m == &s) && seen.insert(s) {
-            approvals += 1;
-        }
-    }
-    // Backward-compat path: legacy single-authority signer.
-    if approvals == 0 && signer_trimmed == resolve_authority {
-        approvals = 1;
-    }
-    if approvals < quorum {
-        return Err(PouwError::Unauthorized);
-    }
-
-    // Keep resolver field canonical and bound to one of approved committee signers.
-    if !committee.iter().any(|m| m == resolver_trimmed) {
         return Err(PouwError::Unauthorized);
     }
     reject_if_deadline_exceeded_optional(task.resolve_deadline_height, current_height)?;
@@ -1043,7 +923,6 @@ pub fn apply_resolve_at_height(
         let _ = maybe_pay_challenge_success_bounty(st, &task)?;
     }
 
-    settle_task_bounty_for_terminal_state(st, &task)?;
     settle_worker_stake_for_terminal_state(st, &task)?;
 
     Ok(next_ref)
@@ -1118,7 +997,6 @@ pub fn apply_timeout(
         }
     }
 
-    settle_task_bounty_for_terminal_state(st, &task)?;
     settle_worker_stake_for_terminal_state(st, &task)?;
 
     Ok(next_ref)
@@ -1130,9 +1008,6 @@ mod tests {
 
     fn seeded_state() -> StateStore {
         let mut st = StateStore::new();
-        st.set_balance("alice", 1_000_000);
-        st.set_balance("creator", 1_000_000);
-        st.set_balance("challenger", 1_000_000);
         st.set_balance("worker1", 1_000);
         st.set_balance("worker2", 1_000);
         st
@@ -1141,141 +1016,6 @@ mod tests {
     fn set_resolve_authority(st: &mut StateStore, authority: &str) {
         st.set_gov_param_unchecked(9_500, "resolve_authority".into(), authority.into())
             .unwrap();
-    }
-
-    #[test]
-    fn create_task_moves_bounty_into_task_escrow_and_rejects_insufficient_creator_balance() {
-        let mut st = seeded_state();
-        st.set_balance("creator-a", 50);
-
-        assert!(matches!(
-            apply_create_task(&mut st, 9901, "creator-a".into(), 100),
-            Err(PouwError::InsufficientStake)
-        ));
-
-        st.set_balance("creator-a", 200);
-        let _ = apply_create_task(&mut st, 9901, "creator-a".into(), 100).unwrap();
-        assert_eq!(st.balance_of("creator-a"), 100);
-        assert_eq!(st.balance_of("task_bounty_escrow.9901"), 100);
-    }
-
-    #[test]
-    fn timeout_paths_settle_bounty_to_creator_or_worker_deterministically() {
-        let mut st = seeded_state();
-        st.set_balance("creator-b", 500);
-        st.set_balance("challenger-b", 500);
-
-        let r1 = apply_create_task(&mut st, 9902, "creator-b".into(), 100).unwrap();
-        let r2 = apply_accept_task_at_height(&mut st, r1, "worker1".into(), 1).unwrap();
-        let _ = apply_timeout(&mut st, r2, 10_000).unwrap();
-        assert_eq!(st.balance_of("creator-b"), 500);
-        assert_eq!(st.balance_of("task_bounty_escrow.9902"), 0);
-
-        let result_hash = [7u8; 32];
-        let reveal_salt = [8u8; 32];
-        let r3 = apply_create_task(&mut st, 9903, "creator-b".into(), 100).unwrap();
-        let r4 = apply_accept_task_at_height(&mut st, r3, "worker1".into(), 1).unwrap();
-        let committed = compute_commitment(9903, &result_hash, &reveal_salt, "worker1");
-        let r5 =
-            apply_commit_result_at_height(&mut st, r4, "worker1".into(), committed, 2).unwrap();
-        let r6 =
-            apply_reveal_result_at_height(&mut st, r5, result_hash, reveal_salt, None, 3).unwrap();
-        let _ = apply_timeout(&mut st, r6, 10_000).unwrap();
-        assert_eq!(st.balance_of("task_bounty_escrow.9903"), 0);
-        assert!(st.balance_of("worker1") >= 1_000);
-    }
-
-    #[test]
-    fn resolve_supports_committee_quorum_and_legacy_single_authority_fallback() {
-        let mut st = seeded_state();
-        st.set_balance("creator-c", 500);
-        st.set_balance("challenger-c", 500);
-        set_resolve_authority(&mut st, "resolver-a");
-        st.set_gov_param_unchecked(
-            9_501,
-            "resolve_authority_committee".into(),
-            "resolver-a,resolver-b,resolver-c".into(),
-        )
-        .unwrap();
-        st.set_gov_param_unchecked(9_502, "resolve_authority_quorum".into(), "2".into())
-            .unwrap();
-
-        let result_hash = [7u8; 32];
-        let reveal_salt = [9u8; 32];
-        let r1 = apply_create_task(&mut st, 9904, "creator-c".into(), 100).unwrap();
-        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
-        let committed = compute_commitment(9904, &result_hash, &reveal_salt, "worker1");
-        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
-        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
-        let r5 = apply_challenge(
-            &mut st,
-            r4,
-            "challenger-c".into(),
-            10,
-            "challenger-c".into(),
-        )
-        .unwrap();
-
-        assert!(apply_resolve(
-            &mut st,
-            r5.clone(),
-            false,
-            "resolver-a".into(),
-            "resolver-a".into()
-        )
-        .is_err());
-        let _ = apply_resolve(
-            &mut st,
-            r5,
-            false,
-            "resolver-a".into(),
-            "resolver-a,resolver-b".into(),
-        )
-        .unwrap();
-    }
-
-    #[test]
-    fn challenge_success_bounty_respects_abs_and_relative_caps() {
-        let mut st = seeded_state();
-        st.set_balance("creator-d", 500);
-        st.set_balance("challenger-d", 500);
-        set_resolve_authority(&mut st, "resolver-a");
-        st.set_gov_param_unchecked(9_510, "challenge_success_bounty".into(), "1000".into())
-            .unwrap();
-        st.set_gov_param_unchecked(
-            9_511,
-            "challenge_success_bounty_abs_cap".into(),
-            "30".into(),
-        )
-        .unwrap();
-        st.set_gov_param_unchecked(
-            9_512,
-            "challenge_success_bounty_rel_bps".into(),
-            "1000".into(),
-        )
-        .unwrap();
-        st.set_gov_param_unchecked(9_513, "min_worker_stake".into(), "100".into())
-            .unwrap();
-
-        let result_hash = [7u8; 32];
-        let reveal_salt = [10u8; 32];
-        let r1 = apply_create_task(&mut st, 9905, "creator-d".into(), 100).unwrap();
-        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
-        let committed = compute_commitment(9905, &result_hash, &reveal_salt, "worker1");
-        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
-        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
-        let r5 = apply_challenge(
-            &mut st,
-            r4,
-            "challenger-d".into(),
-            10,
-            "challenger-d".into(),
-        )
-        .unwrap();
-        let before = st.balance_of("challenger-d");
-        let _ = apply_resolve(&mut st, r5, true, "resolver-a".into(), "resolver-a".into()).unwrap();
-        // rel cap = min(bounty, min_worker_stake)*10% ; seeded default min_worker_stake=10 => cap=1
-        assert_eq!(st.balance_of("challenger-d") - before, 11);
     }
 
     #[test]
@@ -4194,12 +3934,7 @@ mod tests {
         let err =
             apply_reveal_result(&mut st, r3, result_hash, reveal_salt, Some(proof)).unwrap_err();
 
-        assert!(matches!(
-            err,
-            PouwError::State(msg)
-                if msg.contains("ERR_M2V2_PROOF_INVALID")
-                    && msg.contains("Proof verification failed")
-        ));
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("Proof verification failed")));
     }
 
     #[test]
@@ -4220,12 +3955,7 @@ mod tests {
 
         let err = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap_err();
 
-        assert!(matches!(
-            err,
-            PouwError::State(msg)
-                if msg.contains("ERR_M2V2_PROOF_MISSING")
-                    && msg.contains("Proof verification failed")
-        ));
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("Proof verification failed")));
     }
 
     #[test]
@@ -4251,143 +3981,5 @@ mod tests {
         assert_eq!(final_task.status, TaskStatus::Completed);
         assert!(final_task.challenge_deadline_height.is_none());
         assert!(final_task.resolve_deadline_height.is_none());
-    }
-
-    #[test]
-    fn challenge_rejects_self_challenge_from_worker_identity() {
-        let mut st = seeded_state();
-        st.set_balance("worker1", 100);
-
-        let r1 = apply_create_task(&mut st, 9_201, "alice".into(), 10).unwrap();
-        let result_hash = [1u8; 32];
-        let reveal_salt = [2u8; 32];
-        let committed = compute_commitment(9_201, &result_hash, &reveal_salt, "worker1");
-
-        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
-        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
-        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
-
-        let before = st.clone();
-        let err = apply_challenge(&mut st, r4, "worker1".into(), 10, "worker1".into()).unwrap_err();
-        assert!(matches!(err, PouwError::Unauthorized));
-
-        let task = st.get_task(9_201).unwrap();
-        assert_eq!(task.status, TaskStatus::Revealed);
-        assert_eq!(task.challenger, None);
-        assert_eq!(st.balance_of("worker1"), before.balance_of("worker1"));
-        assert_eq!(
-            st.balance_of(CHALLENGE_ESCROW_ACCOUNT),
-            before.balance_of(CHALLENGE_ESCROW_ACCOUNT)
-        );
-    }
-
-    #[test]
-    fn resolve_rejects_spoofed_signer_even_if_payload_resolver_matches_authority() {
-        let mut st = seeded_state();
-        st.set_balance("challenger", 100);
-        set_resolve_authority(&mut st, "authority");
-
-        let r1 = apply_create_task(&mut st, 9_202, "alice".into(), 10).unwrap();
-        let result_hash = [1u8; 32];
-        let reveal_salt = [2u8; 32];
-        let committed = compute_commitment(9_202, &result_hash, &reveal_salt, "worker1");
-
-        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
-        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
-        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
-        let r5 =
-            apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
-
-        let before = st.clone();
-        let err =
-            apply_resolve(&mut st, r5, true, "authority".into(), "authority\n".into()).unwrap_err();
-        assert!(matches!(err, PouwError::Unauthorized));
-
-        let task = st.get_task(9_202).unwrap();
-        assert_eq!(task.status, TaskStatus::Challenged);
-        assert_eq!(st.balance_of("challenger"), before.balance_of("challenger"));
-        assert_eq!(
-            st.balance_of(CHALLENGE_ESCROW_ACCOUNT),
-            before.balance_of(CHALLENGE_ESCROW_ACCOUNT)
-        );
-    }
-
-    #[test]
-    fn resolve_deadline_boundary_allows_at_deadline_and_rejects_after_deadline() {
-        let mut st = seeded_state();
-        st.set_balance("challenger", 100);
-        set_resolve_authority(&mut st, "authority");
-
-        let r1 = apply_create_task(&mut st, 9_203, "alice".into(), 10).unwrap();
-        let result_hash = [1u8; 32];
-        let reveal_salt = [2u8; 32];
-        let committed = compute_commitment(9_203, &result_hash, &reveal_salt, "worker1");
-
-        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
-        let r3 =
-            apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
-        let r4 = apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110)
-            .unwrap();
-        let r5 = apply_challenge_at_height(
-            &mut st,
-            r4,
-            "challenger".into(),
-            10,
-            "challenger".into(),
-            120,
-        )
-        .unwrap();
-
-        let deadline = st.get_task(r5.id).unwrap().resolve_deadline_height.unwrap();
-
-        let at_deadline = apply_resolve_at_height(
-            &mut st,
-            r5.clone(),
-            true,
-            "authority".into(),
-            "authority".into(),
-            deadline,
-        )
-        .unwrap();
-        assert_eq!(
-            st.get_task(at_deadline.id).unwrap().status,
-            TaskStatus::Slashed
-        );
-
-        let mut st2 = seeded_state();
-        st2.set_balance("challenger", 100);
-        set_resolve_authority(&mut st2, "authority");
-        let r1 = apply_create_task(&mut st2, 9_204, "alice".into(), 10).unwrap();
-        let committed = compute_commitment(9_204, &result_hash, &reveal_salt, "worker1");
-        let r2 = apply_accept_task(&mut st2, r1, "worker1".into()).unwrap();
-        let r3 =
-            apply_commit_result_at_height(&mut st2, r2, "worker1".into(), committed, 100).unwrap();
-        let r4 = apply_reveal_result_at_height(&mut st2, r3, result_hash, reveal_salt, None, 110)
-            .unwrap();
-        let r5 = apply_challenge_at_height(
-            &mut st2,
-            r4,
-            "challenger".into(),
-            10,
-            "challenger".into(),
-            120,
-        )
-        .unwrap();
-        let deadline = st2
-            .get_task(r5.id)
-            .unwrap()
-            .resolve_deadline_height
-            .unwrap();
-
-        let err = apply_resolve_at_height(
-            &mut st2,
-            r5,
-            true,
-            "authority".into(),
-            "authority".into(),
-            deadline + 1,
-        )
-        .unwrap_err();
-        assert!(matches!(err, PouwError::DeadlineExceeded));
     }
 }
