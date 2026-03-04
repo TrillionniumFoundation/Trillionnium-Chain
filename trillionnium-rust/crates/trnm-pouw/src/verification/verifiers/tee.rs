@@ -126,6 +126,20 @@ mod tests {
     }
 
     #[test]
+    fn tee_verifier_rejects_worker_binding_identifier_spoof() {
+        let verifier = TeeVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"TEE:task_id=42,networker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,quote=abc"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("missing worker binding")
+        ));
+    }
+
+    #[test]
     fn tee_verifier_rejects_worker_case_mismatch() {
         let verifier = TeeVerifier;
         let task = mock_task();
