@@ -11,7 +11,14 @@ impl ProofVerifier for ZkVerifier {
     }
 
     fn verify_proof(&self, task: &TaskObject, proof_data: &[u8]) -> VerificationResult {
-        verify_bound_envelope(task, proof_data, b"ZK:", "ZK proof")
+        let verification = verify_bound_envelope(task, proof_data, b"ZK:", "ZK proof");
+        if matches!(verification, VerificationResult::Valid) && task.result_hash.is_none() {
+            return VerificationResult::Invalid(
+                "Invalid ZK proof envelope: missing task result_hash binding context".to_string(),
+            );
+        }
+
+        verification
     }
 }
 
@@ -30,7 +37,7 @@ mod tests {
             metadata: None,
             worker: Some("worker-zk".into()),
             committed_hash: None,
-            result_hash: None,
+            result_hash: Some([0x11; 32]),
             reveal_salt: None,
             committed_at_height: None,
             reveal_deadline_height: None,
@@ -53,7 +60,7 @@ mod tests {
         assert_eq!(
             verifier.verify_proof(
                 &task,
-                b"ZK:{\"task_id\":99,\"worker\":\"worker-zk\",\"proof_type\":\"zk\",\"proof\":\"...\"}"
+                b"ZK:{\"task_id\":99,\"worker\":\"worker-zk\",\"proof_type\":\"zk\",\"result_hash\":\"1111111111111111111111111111111111111111111111111111111111111111\",\"proof\":\"...\"}"
             ),
             VerificationResult::Valid
         );
@@ -100,7 +107,7 @@ mod tests {
         assert!(matches!(
             verifier.verify_proof(
                 &task,
-                b"ZK:{\"task_id\":99,\"worker\":\"worker-zk\",\"proof_type\":\"fraud\"}"
+                b"ZK:{\"task_id\":99,\"worker\":\"worker-zk\",\"proof_type\":\"fraud\",\"result_hash\":\"1111111111111111111111111111111111111111111111111111111111111111\"}"
             ),
             VerificationResult::Invalid(msg) if msg.contains("proof_type mismatch")
         ));

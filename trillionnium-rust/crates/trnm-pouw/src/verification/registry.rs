@@ -1939,7 +1939,8 @@ mod tests {
 
         let fraud_task = task_with_proof_type(ProofType::Fraud);
         let tee_task = task_with_proof_type(ProofType::Tee);
-        let zk_task = task_with_proof_type(ProofType::Zk);
+        let mut zk_task = task_with_proof_type(ProofType::Zk);
+        zk_task.result_hash = Some([0x11; 32]);
 
         assert_eq!(
             registry.verify(
@@ -1953,7 +1954,10 @@ mod tests {
             VerificationResult::Valid
         );
         assert_eq!(
-            registry.verify(&zk_task, b"ZK:task_id=42,proof_type=zk,proof=ok"),
+            registry.verify(
+                &zk_task,
+                b"ZK:task_id=42,proof_type=zk,result_hash=1111111111111111111111111111111111111111111111111111111111111111,proof=ok"
+            ),
             VerificationResult::Valid
         );
     }
