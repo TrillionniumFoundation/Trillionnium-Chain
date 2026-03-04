@@ -32,14 +32,17 @@ for ref in "${required_refs[@]}"; do
   fi
 done
 
-if WEB4_RELEASE_REQUIRED_GATES="scripts/v2/definitely_missing_gate.sh" "$GATE" >/tmp/web4-release-neg.log 2>&1; then
+NEG_LOG="$(mktemp -t web4-release-neg.XXXXXX.log)"
+trap 'rm -f "$NEG_LOG"' EXIT
+
+if WEB4_RELEASE_REQUIRED_GATES="scripts/v2/definitely_missing_gate.sh" "$GATE" >"$NEG_LOG" 2>&1; then
   echo "[FAIL] aggregate gate should fail when required gate script is missing" >&2
   exit 1
 fi
 
-if ! grep -Fq "missing gate script" /tmp/web4-release-neg.log; then
+if ! grep -Fq "missing gate script" "$NEG_LOG"; then
   echo "[FAIL] expected missing gate script error message in negative test" >&2
-  cat /tmp/web4-release-neg.log >&2 || true
+  cat "$NEG_LOG" >&2 || true
   exit 1
 fi
 
