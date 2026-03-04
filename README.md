@@ -13,6 +13,7 @@ Rust-native Layer 1 for Decentralized AI Compute（PoUW）。
 - PoUW 时序：`docs/architecture/rust-l1-pouw-sequence.md`
 - v1 接口冻结：`docs/protocol/rust-l1-v1-interface-freeze.md`
 - 项目状态：`STATUS.md`
+- 统一开发调度：`docs/development/DEVELOPMENT_MASTER_UNIFIED_2026-03-04.md`
 - 运维手册：`OPERATIONS.md`
 
 ## 当前仓库结构（真实）
