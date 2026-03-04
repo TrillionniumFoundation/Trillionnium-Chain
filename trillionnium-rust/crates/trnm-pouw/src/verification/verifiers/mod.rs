@@ -117,6 +117,57 @@ fn find_numeric_field(body: &str, field: &str) -> Option<u64> {
     None
 }
 
+fn has_duplicate_numeric_field(body: &str, field: &str) -> bool {
+    let lower = body.to_ascii_lowercase();
+    let body_bytes = body.as_bytes();
+    let mut cursor = 0usize;
+    let mut seen = 0usize;
+    while let Some(found) = lower[cursor..].find(field) {
+        let idx = cursor + found;
+        if !is_field_name_boundary(body_bytes, idx, field.len()) {
+            cursor = idx + 1;
+            continue;
+        }
+        let mut i = idx + field.len();
+        let bytes = body.as_bytes();
+        while i < bytes.len() && bytes[i].is_ascii_whitespace() {
+            i += 1;
+        }
+        if i < bytes.len() && (bytes[i] == b'"' || bytes[i] == b'\'') {
+            i += 1;
+            while i < bytes.len() && bytes[i].is_ascii_whitespace() {
+                i += 1;
+            }
+        }
+        if i >= bytes.len() || (bytes[i] != b':' && bytes[i] != b'=') {
+            cursor = idx + 1;
+            continue;
+        }
+        i += 1;
+        while i < bytes.len() && (bytes[i].is_ascii_whitespace() || bytes[i] == b'"') {
+            i += 1;
+        }
+        let start = i;
+        while i < bytes.len() && bytes[i].is_ascii_digit() {
+            i += 1;
+        }
+        if i > start {
+            if i < bytes.len() && !is_value_terminator(bytes[i]) {
+                cursor = idx + 1;
+                continue;
+            }
+            if body[start..i].parse::<u64>().is_ok() {
+                seen += 1;
+                if seen > 1 {
+                    return true;
+                }
+            }
+        }
+        cursor = idx + 1;
+    }
+    false
+}
+
 fn find_token_field(body: &str, field: &str) -> Option<String> {
     find_token_field_with_case(body, field, true)
 }
@@ -217,6 +268,12 @@ pub(super) fn verify_bound_envelope(
                 "Invalid {kind_name} envelope: missing task_id binding"
             ))
         }
+    }
+
+    if has_duplicate_numeric_field(&body_text, "task_id") {
+        return VerificationResult::Invalid(format!(
+            "Invalid {kind_name} envelope: duplicate task_id binding"
+        ));
     }
 
     if let Some(expected_worker) = task.worker.as_deref() {
@@ -401,6 +458,42 @@ mod tests {
                 "ZK receipt"
             ),
             VerificationResult::Invalid(msg) if msg.contains("result_hash mismatch")
+        ));
+    }
+
+    #[test]
+    fn verify_bound_envelope_rejects_duplicate_task_id_binding_fail_closed() {
+        let task = TaskObject {
+            task_id: 42,
+            creator: "alice".into(),
+            bounty: 1,
+            status: TaskStatus::Committed,
+            proof_type: ProofType::Tee,
+            metadata: None,
+            worker: Some("worker1".into()),
+            committed_hash: None,
+            result_hash: Some([0xabu8; 32]),
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        };
+
+        assert!(matches!(
+            verify_bound_envelope(
+                &task,
+                b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,task_id=42,quote=ok",
+                b"TEE:",
+                "TEE receipt"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("duplicate task_id binding")
         ));
     }
 }
