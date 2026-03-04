@@ -875,6 +875,12 @@ pub fn apply_resolve_at_height(
     // non-blank account identifiers (no surrounding whitespace).
     let signer_trimmed = signer.trim();
     let authority_trimmed = resolve_authority.trim();
+    // Decentralization hardening: reserve privileged runtime account ids from
+    // governance resolve authority flow; challenge resolution must be executed
+    // by explicit governance-designated non-system operators.
+    let uses_reserved_system_actor = resolver_trimmed == "system"
+        || signer_trimmed == "system"
+        || authority_trimmed == "system";
     if resolver_trimmed.is_empty()
         || resolver_trimmed != resolver
         || signer_trimmed.is_empty()
@@ -883,6 +889,7 @@ pub fn apply_resolve_at_height(
         || authority_trimmed != resolve_authority
         || signer_trimmed != authority_trimmed
         || resolver_trimmed != signer_trimmed
+        || uses_reserved_system_actor
     {
         return Err(PouwError::Unauthorized);
     }
@@ -3256,6 +3263,41 @@ mod tests {
         assert!(matches!(err, PouwError::Unauthorized));
 
         let task = st.get_task(8_999).unwrap();
+        assert_eq!(task.status, TaskStatus::Challenged);
+        assert_eq!(task.challenge_bond_forfeited, None);
+        assert_eq!(st.balance_of("challenger"), before.balance_of("challenger"));
+        assert_eq!(
+            st.balance_of(CHALLENGE_ESCROW_ACCOUNT),
+            before.balance_of(CHALLENGE_ESCROW_ACCOUNT)
+        );
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT)
+        );
+    }
+
+    #[test]
+    fn resolve_rejects_reserved_system_authority_without_escrow_mutation() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        set_resolve_authority(&mut st, "system");
+
+        let r1 = apply_create_task(&mut st, 9_001, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(9_001, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+        let r5 =
+            apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
+
+        let before = st.clone();
+        let err = apply_resolve(&mut st, r5, true, "system".into(), "system".into()).unwrap_err();
+        assert!(matches!(err, PouwError::Unauthorized));
+
+        let task = st.get_task(9_001).unwrap();
         assert_eq!(task.status, TaskStatus::Challenged);
         assert_eq!(task.challenge_bond_forfeited, None);
         assert_eq!(st.balance_of("challenger"), before.balance_of("challenger"));
