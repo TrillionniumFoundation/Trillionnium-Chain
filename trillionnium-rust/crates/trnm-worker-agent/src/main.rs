@@ -2342,6 +2342,15 @@ mod tests {
             classify_adapter_error(&settlement_degraded_mixed_case),
             ("ERR_M2V2_SETTLEMENT_DEGRADED", "settlement_degraded")
         );
+
+        let settlement_degraded_camel_case = AdapterError {
+            kind: AdapterErrorKind::Retriable,
+            context: "settlementDegradedRetryWindowExhausted".to_string(),
+        };
+        assert_eq!(
+            classify_adapter_error(&settlement_degraded_camel_case),
+            ("ERR_M2V2_SETTLEMENT_DEGRADED", "settlement_degraded")
+        );
     }
 
     #[test]
