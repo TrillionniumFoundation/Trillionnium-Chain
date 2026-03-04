@@ -686,10 +686,15 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
             let mut iters: Vec<std::vec::IntoIter<Tx>> =
                 buckets.into_iter().map(|b| b.into_iter()).collect();
             let mut merged = Vec::with_capacity(txs.len());
+            // Rotate the round-robin start bucket each pass to reduce consistent
+            // first-bucket preference under uneven bucket depths.
+            let mut rr_start = 0usize;
             loop {
                 let mut moved = false;
-                for it in &mut iters {
-                    if let Some(tx) = it.next() {
+                let n = iters.len();
+                for step in 0..n {
+                    let idx = (rr_start + step) % n;
+                    if let Some(tx) = iters[idx].next() {
                         merged.push(tx);
                         moved = true;
                     }
@@ -697,6 +702,7 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
                 if !moved {
                     break;
                 }
+                rr_start = (rr_start + 1) % n;
             }
 
             for (dst, src) in txs.iter_mut().zip(merged.into_iter()) {
