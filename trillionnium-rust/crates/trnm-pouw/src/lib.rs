@@ -2997,7 +2997,7 @@ mod tests {
     }
 
     #[test]
-    fn resolve_missing_governance_authority_falls_back_to_default_authority() {
+    fn resolve_missing_governance_authority_stays_fail_closed() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
 
@@ -3012,24 +3012,33 @@ mod tests {
         let r5 =
             apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
 
+        let before = st.clone();
         let err = apply_resolve(&mut st, r5.clone(), true, "authority".into(), "authority".into())
             .expect_err("missing governance authority must not silently authorize legacy singleton");
         assert!(matches!(err, PouwError::Unauthorized));
 
-        let r6 = apply_resolve(
+        let err = apply_resolve(
             &mut st,
             r5,
             true,
             DEFAULT_RESOLVE_AUTHORITY.into(),
             DEFAULT_RESOLVE_AUTHORITY.into(),
         )
-        .expect("missing governance authority must revert to canonical default authority");
-        let task = st.get_task(r6.id).unwrap();
-        assert_eq!(task.status, TaskStatus::Slashed);
-        assert_eq!(task.challenge_bond_forfeited, Some(false));
-        assert_eq!(st.balance_of("challenger"), 101);
-        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), 0);
-        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), 0);
+        .expect_err("missing governance authority must remain fail-closed for placeholder authority");
+        assert!(matches!(err, PouwError::Unauthorized));
+
+        let task = st.get_task(8_951).unwrap();
+        assert_eq!(task.status, TaskStatus::Challenged);
+        assert_eq!(task.challenge_bond_forfeited, None);
+        assert_eq!(st.balance_of("challenger"), before.balance_of("challenger"));
+        assert_eq!(
+            st.balance_of(CHALLENGE_ESCROW_ACCOUNT),
+            before.balance_of(CHALLENGE_ESCROW_ACCOUNT)
+        );
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT)
+        );
     }
 
     #[test]
