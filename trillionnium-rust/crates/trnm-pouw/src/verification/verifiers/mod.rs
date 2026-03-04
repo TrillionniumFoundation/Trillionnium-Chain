@@ -302,6 +302,15 @@ mod tests {
     }
 
     #[test]
+    fn find_token_field_rejects_identifier_suffix_spoof() {
+        let body = "proof_typex=zk,proof_type=tee";
+        assert_eq!(
+            find_token_field(body, "proof_type"),
+            Some("tee".to_string())
+        );
+    }
+
+    #[test]
     fn find_token_field_rejects_trailing_non_delimiter_bytes() {
         let body = "proof_type=tee%2Cfraud";
         assert_eq!(find_token_field(body, "proof_type"), None);
