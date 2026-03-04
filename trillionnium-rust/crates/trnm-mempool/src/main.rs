@@ -20,10 +20,22 @@ pub struct AdmissionGate {
     queue: VecDeque<u64>,
     seen: HashSet<u64>,
     backpressured_ids: HashSet<u64>,
+    backpressured_fifo: VecDeque<u64>,
     metrics: GateMetrics,
 }
 
 impl AdmissionGate {
+    fn remember_backpressured(&mut self, tx_id: u64) {
+        if self.backpressured_ids.insert(tx_id) {
+            self.backpressured_fifo.push_back(tx_id);
+            while self.backpressured_fifo.len() > self.capacity {
+                if let Some(evicted) = self.backpressured_fifo.pop_front() {
+                    self.backpressured_ids.remove(&evicted);
+                }
+            }
+        }
+    }
+
     pub fn new(capacity: usize) -> Self {
         // Keep the gate live even if operators accidentally configure zero capacity.
         // This prevents a permanent backpressure state with unbounded retry key growth.
@@ -33,6 +45,7 @@ impl AdmissionGate {
             queue: VecDeque::with_capacity(capacity),
             seen: HashSet::with_capacity(capacity),
             backpressured_ids: HashSet::with_capacity(capacity),
+            backpressured_fifo: VecDeque::with_capacity(capacity),
             metrics: GateMetrics::default(),
         }
     }
@@ -44,10 +57,11 @@ impl AdmissionGate {
         }
 
         if self.queue.len() >= self.capacity {
-            if !self.backpressured_ids.insert(tx_id) {
+            if self.backpressured_ids.contains(&tx_id) {
                 self.metrics.duplicates += 1;
                 return AdmitOutcome::Duplicate;
             }
+            self.remember_backpressured(tx_id);
             self.metrics.backpressured += 1;
             return AdmitOutcome::Backpressured;
         }
@@ -64,6 +78,7 @@ impl AdmissionGate {
         self.seen.remove(&id);
         // Opening capacity starts a new backpressure epoch.
         self.backpressured_ids.clear();
+        self.backpressured_fifo.clear();
         Some(id)
     }
 
@@ -139,5 +154,23 @@ mod tests {
         assert_eq!(gate.admit(2), AdmitOutcome::Backpressured);
         assert_eq!(gate.pop_ready(), Some(1));
         assert_eq!(gate.admit(2), AdmitOutcome::Accepted);
+    }
+
+    #[test]
+    fn backpressure_retry_cache_is_bounded_by_capacity() {
+        let mut gate = AdmissionGate::new(2);
+        assert_eq!(gate.admit(1), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(2), AdmitOutcome::Accepted);
+
+        assert_eq!(gate.admit(10), AdmitOutcome::Backpressured);
+        assert_eq!(gate.admit(11), AdmitOutcome::Backpressured);
+        assert_eq!(gate.admit(12), AdmitOutcome::Backpressured);
+
+        // 10 is evicted from the bounded retry cache once a third unique id is observed.
+        assert_eq!(gate.admit(10), AdmitOutcome::Backpressured);
+
+        let m = gate.metrics();
+        assert_eq!(m.backpressured, 4);
+        assert_eq!(m.duplicates, 0);
     }
 }
