@@ -24,6 +24,7 @@ required_tests=(
   "registry_is_registered_kind_accepts_horizontal_bar_delimited_aliases"
   "registry_is_registered_kind_accepts_unicode_minus_delimited_aliases"
   "registry_is_registered_kind_accepts_zero_width_separated_aliases"
+  "registry_is_registered_kind_accepts_mongolian_vowel_separator_aliases"
   "registry_is_registered_kind_accepts_soft_hyphen_delimited_aliases"
   "registry_is_registered_kind_accepts_non_breaking_space_separated_aliases"
   "registry_is_registered_kind_accepts_ideographic_space_separated_aliases"
