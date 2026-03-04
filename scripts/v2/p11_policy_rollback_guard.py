@@ -138,9 +138,9 @@ def main() -> int:
     dead = safe_read_jsonl(dead_path)
 
     stats = state.get("stats", {}) if isinstance(state.get("stats"), dict) else {}
-    sent_state = int(stats.get("alerts_sent", 0) or 0)
-    failed_state = int(stats.get("alerts_failed", 0) or 0)
-    suppressed_state = int(stats.get("alerts_suppressed", 0) or 0)
+    sent_state = safe_nonneg_int(stats.get("alerts_sent", 0), default=0)
+    failed_state = safe_nonneg_int(stats.get("alerts_failed", 0), default=0)
+    suppressed_state = safe_nonneg_int(stats.get("alerts_suppressed", 0), default=0)
 
     # Windowed dead-letter sample (1h) for critical failure count and rate fallback.
     dead_1h = []
