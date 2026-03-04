@@ -28,7 +28,8 @@ pub fn build_proof_adapter(name: &str) -> Result<Box<dyn ProofAdapter>, String> 
             Ok(Box::new(TeeReceiptProofAdapter))
         }
         "zk-receipt" | "zk_receipt" | "zk-receipt-v1" | "zk_receipt_v1" | "zk-proof"
-        | "zk_proof" | "zkreceipt" | "zkproof" | "zkreceiptv1" => {
+        | "zk_proof" | "zk-proof-v1" | "zk_proof_v1" | "zkreceipt" | "zkproof"
+        | "zkproofv1" | "zkreceiptv1" => {
             Ok(Box::new(ZkReceiptProofAdapter))
         }
         other => Err(format!("unsupported-proof-adapter:{other}")),
@@ -737,6 +738,16 @@ mod tests {
         assert_eq!(code, "tee_receipt_ok");
 
         let adapter = build_proof_adapter("zk-proof").expect("zk proof alias");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "zk_receipt_ok");
+
+        let adapter = build_proof_adapter("zk-proof-v1").expect("zk proof v1 alias");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "zk_receipt_ok");
+
+        let adapter = build_proof_adapter("ZK_PROOF_V1").expect("zk proof underscore v1 alias");
         let (ok, code) = adapter.verify("hello", 8);
         assert!(ok);
         assert_eq!(code, "zk_receipt_ok");
