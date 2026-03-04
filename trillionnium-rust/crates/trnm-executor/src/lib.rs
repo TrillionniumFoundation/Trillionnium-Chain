@@ -326,6 +326,7 @@ fn build_parallel_groups_aggressive_profile(
     let mut stage_rw_hits = 0usize;
     let scan_window = aggr_scan_window();
     let skip_empty_stage_checks = aggr_skip_empty_stage_checks();
+    let mut rr_cursor = 0usize;
 
     for tx in ordered {
         let mut tx_slot = Some(tx);
@@ -354,7 +355,7 @@ fn build_parallel_groups_aggressive_profile(
         let candidate_span = groups.len().saturating_sub(min_group);
         let rr_enabled = aggr_scan_round_robin_enabled();
         let start_offset = if rr_enabled && candidate_span > 1 {
-            (tx_slot.as_ref().expect("tx must exist").id as usize) % candidate_span
+            rr_cursor % candidate_span
         } else {
             0
         };
@@ -419,6 +420,10 @@ fn build_parallel_groups_aggressive_profile(
             for key in &group_write_keys[idx] {
                 latest_writer_group.insert(*key, idx);
             }
+        }
+
+        if rr_enabled && candidate_span > 1 {
+            rr_cursor = rr_cursor.wrapping_add(1);
         }
     }
 
@@ -813,6 +818,58 @@ mod tests {
             for i in 0..grp.len() {
                 for j in (i + 1)..grp.len() {
                     assert!(!detect_conflict(&grp[i], &grp[j]));
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn aggressive_round_robin_cursor_avoids_even_id_bias() {
+        let _deep = EnvGuard::set("TRNM_AGGR_DEEP_SCAN", "1");
+        let _rr = EnvGuard::set("TRNM_AGGR_SCAN_ROUND_ROBIN", "1");
+        let _window = EnvGuard::set("TRNM_AGGR_SCAN_WINDOW", "1");
+
+        let txs = vec![
+            tx(1, vec![], vec![o(7)]),   // group 0
+            tx(3, vec![], vec![o(7)]),   // forced to group 1 (conflicts with tx1)
+            tx(10, vec![o(101)], vec![]), // independent even ids that previously pinned to offset 0
+            tx(12, vec![o(102)], vec![]),
+            tx(14, vec![o(103)], vec![]),
+            tx(16, vec![o(104)], vec![]),
+        ];
+
+        let (groups, _) =
+            build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::AggressiveGreedy);
+
+        assert!(groups.len() >= 2);
+        assert!(groups[0].len() >= 2);
+        assert!(groups[1].len() >= 2);
+    }
+
+    struct EnvGuard {
+        key: &'static str,
+        old: Option<String>,
+    }
+
+    impl EnvGuard {
+        fn set(key: &'static str, value: &str) -> Self {
+            let old = std::env::var(key).ok();
+            unsafe {
+                std::env::set_var(key, value);
+            }
+            Self { key, old }
+        }
+    }
+
+    impl Drop for EnvGuard {
+        fn drop(&mut self) {
+            if let Some(v) = &self.old {
+                unsafe {
+                    std::env::set_var(self.key, v);
+                }
+            } else {
+                unsafe {
+                    std::env::remove_var(self.key);
                 }
             }
         }
