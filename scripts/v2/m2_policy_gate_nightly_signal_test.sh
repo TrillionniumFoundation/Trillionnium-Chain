@@ -252,6 +252,33 @@ if grep -q 'm2_policy_gate_default_drift_guard_' "$OUT_PASS_UPPER_OK"; then
   exit 1
 fi
 
+# Case 2.12: tolerate tab/multi-space delimiters around ellipsis and status token.
+python3 - <<'PY' "$M2_LOG"
+from pathlib import Path
+import sys
+
+log = Path(sys.argv[1])
+log.write_text(
+    "running 1 test\n"
+    "test market_m2_policy_gate_guards_default_drift_to_min_boundaries\t...    ok\n"
+    "\n"
+    "test result: ok. 1 passed; 0 failed\n",
+    encoding='utf-8'
+)
+PY
+
+OUT_PASS_SPACING_VARIANT="$(./scripts/nightly_attribution.sh | sed -n 's/^\[OK\] nightly attribution: //p' | tail -n1)"
+[[ -f "$OUT_PASS_SPACING_VARIANT" ]] || { echo "[FAIL] missing attribution output for spacing-variant pass case"; exit 1; }
+
+grep -q '^m2.policy_gate.assert_default_drift_guard=pass$' "$OUT_PASS_SPACING_VARIANT" || {
+  echo "[FAIL] expected m2 default-drift guard to pass for tab/multi-space output"; cat "$OUT_PASS_SPACING_VARIANT"; exit 1;
+}
+if grep -q 'm2_policy_gate_default_drift_guard_' "$OUT_PASS_SPACING_VARIANT"; then
+  echo "[FAIL] unexpected m2 default-drift failure reason in spacing-variant pass case"
+  cat "$OUT_PASS_SPACING_VARIANT"
+  exit 1
+fi
+
 SUMMARY_PASS="run/health/nightly-summary-${TAG}-pass.md"
 NIGHTLY_ATTRIBUTION_FILE="$OUT_PASS" NIGHTLY_SUMMARY_OUT="$SUMMARY_PASS" \
   python3 ./scripts/render_nightly_summary.py >/dev/null

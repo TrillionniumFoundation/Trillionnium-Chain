@@ -39,7 +39,7 @@ m2_policy_gate_log=""
 m2_policy_gate_assert_default_drift_guard="missing"
 if [[ -n "$latest_p1_gate" ]] && [[ -f "$latest_p1_gate/m2_policy_gate.log" ]]; then
   m2_policy_gate_log="$latest_p1_gate/m2_policy_gate.log"
-  if python3 - "$m2_policy_gate_log" <<'PY' | grep -Eq '^[[:space:]]*test ([[:alnum:]_]+::)*market_m2_policy_gate_guards_default_drift_to_(min|max)_boundaries \.\.\. [Oo][Kk]([[:space:]].*)?\r?$'
+  if python3 - "$m2_policy_gate_log" <<'PY' | grep -Eq '^[[:space:]]*test ([[:alnum:]_]+::)*market_m2_policy_gate_guards_default_drift_to_(min|max)_boundaries[[:space:]]+\.\.\.[[:space:]]+[Oo][Kk]([[:space:]].*)?\r?$'
 import re
 import sys
 from pathlib import Path
