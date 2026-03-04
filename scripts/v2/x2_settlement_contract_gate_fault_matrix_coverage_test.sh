@@ -30,6 +30,7 @@ required_tests=(
   "x3_prep_stale_pending_degraded_empty_reason_uses_stable_fallback"
   "x3_prep_stale_pending_degraded_reason_collapses_crlf_and_unicode_separators_for_replay_stability"
   "x3_prep_stale_pending_degraded_reason_strips_bidi_embeddings_for_replay_stability"
+  "x3_prep_stale_pending_degraded_reason_strips_bidi_isolates_for_replay_stability"
 )
 
 for test_name in "${required_tests[@]}"; do
