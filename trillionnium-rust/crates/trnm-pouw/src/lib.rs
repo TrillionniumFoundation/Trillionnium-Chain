@@ -893,6 +893,12 @@ pub fn apply_resolve_at_height(
     let uses_reserved_system_actor = resolver_trimmed == "system"
         || signer_trimmed == "system"
         || authority_trimmed == "system";
+    // Minimal multi-party control: escrow treasury account must never be reused
+    // as resolve authority signer/payload, otherwise custody + adjudication roles
+    // collapse into a single privileged actor surface.
+    let uses_escrow_account_as_authority = resolver_trimmed == CHALLENGE_ESCROW_ACCOUNT
+        || signer_trimmed == CHALLENGE_ESCROW_ACCOUNT
+        || authority_trimmed == CHALLENGE_ESCROW_ACCOUNT;
     // Decentralization hardening: unresolved default placeholder must never
     // authorize challenge resolution. Governance must explicitly set a concrete
     // non-placeholder resolve authority before terminal escrow movement can occur.
@@ -911,6 +917,7 @@ pub fn apply_resolve_at_height(
         || signer_trimmed != authority_trimmed
         || resolver_trimmed != signer_trimmed
         || uses_reserved_system_actor
+        || uses_escrow_account_as_authority
         || uses_unconfigured_placeholder_authority
         || resolver_is_assigned_worker
     {
@@ -3596,6 +3603,48 @@ mod tests {
         assert!(matches!(err, PouwError::Unauthorized));
 
         let task = st.get_task(9_001).unwrap();
+        assert_eq!(task.status, TaskStatus::Challenged);
+        assert_eq!(task.challenge_bond_forfeited, None);
+        assert_eq!(st.balance_of("challenger"), before.balance_of("challenger"));
+        assert_eq!(
+            st.balance_of(CHALLENGE_ESCROW_ACCOUNT),
+            before.balance_of(CHALLENGE_ESCROW_ACCOUNT)
+        );
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT)
+        );
+    }
+
+    #[test]
+    fn resolve_rejects_escrow_account_authority_without_escrow_mutation() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        set_resolve_authority(&mut st, CHALLENGE_ESCROW_ACCOUNT);
+
+        let r1 = apply_create_task(&mut st, 9_001_2, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(9_001_2, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+        let r5 =
+            apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
+
+        let before = st.clone();
+        let err = apply_resolve(
+            &mut st,
+            r5,
+            true,
+            CHALLENGE_ESCROW_ACCOUNT.into(),
+            CHALLENGE_ESCROW_ACCOUNT.into(),
+        )
+        .unwrap_err();
+        assert!(matches!(err, PouwError::Unauthorized));
+
+        let task = st.get_task(9_001_2).unwrap();
         assert_eq!(task.status, TaskStatus::Challenged);
         assert_eq!(task.challenge_bond_forfeited, None);
         assert_eq!(st.balance_of("challenger"), before.balance_of("challenger"));
