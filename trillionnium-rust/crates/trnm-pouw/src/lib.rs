@@ -3237,6 +3237,45 @@ mod tests {
     }
 
     #[test]
+    fn challenge_reopens_after_emergency_pause_clears() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+
+        let r1 = apply_create_task(&mut st, 8_970, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(8_970, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+
+        st.set_gov_param(9_207, 7_999, "emergency_pause".into(), "true".into())
+            .expect("pause=true governance update must succeed");
+        assert!(st.is_emergency_paused());
+
+        let paused_err = apply_challenge(&mut st, r4.clone(), "challenger".into(), 10, "challenger".into())
+            .expect_err("emergency pause must freeze challenge entry path");
+        assert!(matches!(paused_err, PouwError::InvalidTransition));
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), 0);
+        assert_eq!(st.balance_of("challenger"), 100);
+
+        st.set_gov_param(9_208, 7_999, "emergency_pause".into(), "false".into())
+            .expect("pause=false governance update must succeed");
+        assert!(!st.is_emergency_paused());
+
+        let r5 = apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into())
+            .expect("challenge must reopen after emergency pause is cleared");
+
+        let task = st.get_task(r5.id).expect("challenged task must persist");
+        assert_eq!(task.status, TaskStatus::Challenged);
+        assert_eq!(task.challenger.as_deref(), Some("challenger"));
+        assert_eq!(task.challenge_bond, Some(10));
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), 10);
+        assert_eq!(st.balance_of("challenger"), 90);
+    }
+
+    #[test]
     fn resolve_rejects_while_emergency_pause_active_without_escrow_mutation() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
