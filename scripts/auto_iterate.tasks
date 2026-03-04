@@ -584,3 +584,6 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e2-
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e3-enterprise-runbook-rollback-request-id-anchor-test" "./scripts/v2/e3_enterprise_runbook_rollback_request_id_anchor_test.sh" "ci(gate): add e3-enterprise-runbook-rollback-request-id-anchor-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-task-id-plus-char-test" "./scripts/v2/d1_task_model_metadata_schema_reject_task_id_plus_char_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-task-id-plus-char-test regression to quick-check"
