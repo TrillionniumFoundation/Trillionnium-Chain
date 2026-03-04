@@ -376,6 +376,39 @@ fn x3_prep_stale_pending_degraded_reason_strips_bidi_embeddings_for_replay_stabi
 }
 
 #[test]
+fn x3_prep_stale_pending_degraded_reason_strips_soft_hyphen_for_replay_stability() {
+    let mut request = SettlementRequest::new(11, "0xmatrix-sanitize-soft-hyphen".to_string());
+    let token = operator_token();
+
+    let degraded = HeartbeatOutcome {
+        heartbeat: None,
+        should_retry: false,
+        degraded: true,
+        message: "target\u{00AD}relay timeout".to_string(),
+    };
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &degraded,
+        SettlementConfirm::Confirmed { height: 6265 },
+    )
+    .unwrap();
+
+    let SettlementStep::Compensated { reason, event } = out else {
+        panic!("expected compensated branch");
+    };
+
+    assert_eq!(reason, "heartbeat degraded: target relay timeout");
+    assert!(!reason.contains('\u{00AD}'));
+
+    assert_eq!(event.phase, "relay_heartbeat_degraded");
+    assert_eq!(event.confirm_height, None);
+    assert_eq!(event.confirm_reason, Some(reason.clone()));
+    assert_eq!(current_status(&request), &BridgeStatus::Reverted(reason));
+}
+
+#[test]
 fn x3_prep_stale_pending_degraded_reason_strips_bidi_isolates_for_replay_stability() {
     let mut request = SettlementRequest::new(11, "0xmatrix-sanitize-bidi-isolates".to_string());
     let token = operator_token();

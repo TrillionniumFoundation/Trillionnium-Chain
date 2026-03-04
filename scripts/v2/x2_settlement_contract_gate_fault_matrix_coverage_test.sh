@@ -31,6 +31,7 @@ required_tests=(
   "x3_prep_stale_pending_degraded_reason_strips_directional_marks_for_replay_stability"
   "x3_prep_stale_pending_degraded_reason_collapses_crlf_and_unicode_separators_for_replay_stability"
   "x3_prep_stale_pending_degraded_reason_strips_bidi_embeddings_for_replay_stability"
+  "x3_prep_stale_pending_degraded_reason_strips_soft_hyphen_for_replay_stability"
   "x3_prep_stale_pending_degraded_reason_strips_bidi_isolates_for_replay_stability"
 )
 

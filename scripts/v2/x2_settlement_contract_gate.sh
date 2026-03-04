@@ -116,5 +116,9 @@ cargo test -p trnm-bridge-poc --test x3_compensation_matrix \
   -- --nocapture
 
 cargo test -p trnm-bridge-poc --test x3_compensation_matrix \
+  x3_prep_stale_pending_degraded_reason_strips_soft_hyphen_for_replay_stability \
+  -- --nocapture
+
+cargo test -p trnm-bridge-poc --test x3_compensation_matrix \
   x3_prep_stale_pending_degraded_reason_strips_bidi_isolates_for_replay_stability \
   -- --nocapture
