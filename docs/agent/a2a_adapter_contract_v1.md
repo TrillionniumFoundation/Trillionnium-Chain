@@ -16,7 +16,7 @@
 - 防重放：`X-TRNM-Nonce`
 - 请求完整性：`X-TRNM-Body-SHA256`（SHA-256 小写 hex）
 - 请求内容类型：`Content-Type: application/json`
-- 响应内容类型：`Content-Type: application/json; charset=utf-8`
+- 响应内容类型：`Content-Type: application/json; charset=utf-8`；非 JSON 响应按 `502 upstream_execution_failed` fail-closed
 - 响应必须回显：X-TRNM-Request-ID（与请求值逐字节一致）
 - 响应必须回显：X-TRNM-Trace-ID（与请求值逐字节一致）
 
