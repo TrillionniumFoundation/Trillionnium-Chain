@@ -304,3 +304,39 @@ fn x3_prep_stale_pending_degraded_reason_collapses_crlf_and_unicode_separators_f
     assert_eq!(event.confirm_reason, Some(reason.clone()));
     assert_eq!(current_status(&request), &BridgeStatus::Reverted(reason));
 }
+
+#[test]
+fn x3_prep_stale_pending_degraded_reason_strips_bidi_embeddings_for_replay_stability() {
+    let mut request = SettlementRequest::new(9, "0xmatrix-sanitize-bidi-embeddings".to_string());
+    let token = operator_token();
+
+    let degraded = HeartbeatOutcome {
+        heartbeat: None,
+        should_retry: false,
+        degraded: true,
+        message: "target\u{202A} relay\u{202B} timeout\u{202C} signal\u{202D}".to_string(),
+    };
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &degraded,
+        SettlementConfirm::Confirmed { height: 6264 },
+    )
+    .unwrap();
+
+    let SettlementStep::Compensated { reason, event } = out else {
+        panic!("expected compensated branch");
+    };
+
+    assert_eq!(reason, "heartbeat degraded: target relay timeout signal");
+    assert!(!reason.contains('\u{202A}'));
+    assert!(!reason.contains('\u{202B}'));
+    assert!(!reason.contains('\u{202C}'));
+    assert!(!reason.contains('\u{202D}'));
+
+    assert_eq!(event.phase, "relay_heartbeat_degraded");
+    assert_eq!(event.confirm_height, None);
+    assert_eq!(event.confirm_reason, Some(reason.clone()));
+    assert_eq!(current_status(&request), &BridgeStatus::Reverted(reason));
+}
