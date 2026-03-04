@@ -80,9 +80,8 @@ impl AdmissionGate {
     pub fn pop_ready(&mut self) -> Option<u64> {
         let id = self.queue.pop_front()?;
         self.seen.remove(&id);
-        // Opening capacity starts a new backpressure epoch.
-        self.backpressured_ids.clear();
-        self.backpressured_fifo.clear();
+        // Keep retry memory across partial drain so repeated retries stay idempotent
+        // when the queue quickly re-saturates before the original sender retries.
         Some(id)
     }
 
@@ -194,5 +193,24 @@ mod tests {
 
         assert!(!gate.backpressured_fifo.iter().any(|id| *id == 12));
         assert!(!gate.backpressured_ids.contains(&12));
+    }
+
+    #[test]
+    fn backpressure_retry_memory_survives_partial_drain_and_resaturation() {
+        let mut gate = AdmissionGate::new(2);
+        assert_eq!(gate.admit(1), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(2), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(9), AdmitOutcome::Backpressured);
+
+        // A single slot opens but is consumed by another tx before id=9 retries.
+        assert_eq!(gate.pop_ready(), Some(1));
+        assert_eq!(gate.admit(3), AdmitOutcome::Accepted);
+
+        // Retry should remain idempotent instead of counting as a fresh backpressure hit.
+        assert_eq!(gate.admit(9), AdmitOutcome::Duplicate);
+
+        let m = gate.metrics();
+        assert_eq!(m.backpressured, 1);
+        assert_eq!(m.backpressure_duplicates, 1);
     }
 }
