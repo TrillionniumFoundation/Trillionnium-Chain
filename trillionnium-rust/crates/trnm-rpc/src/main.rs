@@ -1243,6 +1243,19 @@ fn next_ingress_task_id(records: &[MessageIngressRecord]) -> Result<u64> {
         .ok_or_else(|| anyhow!("ingress task_id exhausted: {}", max_existing))
 }
 
+fn is_same_submit_message_idempotency_scope(
+    rec: &MessageIngressRecord,
+    channel: &str,
+    user_id: &str,
+    session_id: &str,
+    idempotency_key: &str,
+) -> bool {
+    rec.idempotency_key == idempotency_key
+        && rec.session_id == session_id
+        && rec.channel == channel
+        && rec.user_id == user_id
+}
+
 fn is_lower_hex_64(input: &str) -> bool {
     input.len() == 64
         && input
@@ -2584,11 +2597,15 @@ fn main() -> Result<()> {
             let _lock = acquire_market_file_lock(&path)?;
 
             let mut records = load_ingress_records();
-            if let Some(found) = records
-                .iter()
-                .rev()
-                .find(|r| r.idempotency_key == idempotency_key && r.session_id == session_id)
-            {
+            if let Some(found) = records.iter().rev().find(|r| {
+                is_same_submit_message_idempotency_scope(
+                    r,
+                    &channel,
+                    &user_id,
+                    &session_id,
+                    &idempotency_key,
+                )
+            }) {
                 println!("{}", serde_json::to_string_pretty(found)?);
                 return Ok(());
             }
@@ -4891,6 +4908,45 @@ mod tests {
         assert_eq!(to, 1_000);
         assert_eq!(mode, "24h");
         assert!(from <= to);
+    }
+
+    #[test]
+    fn submit_message_idempotency_scope_requires_channel_user_session_and_key_match() {
+        let rec = MessageIngressRecord {
+            request_id: "req_1".into(),
+            task_id: 42,
+            channel: "telegram".into(),
+            user_id: "u1".into(),
+            session_id: "s1".into(),
+            text: "hi".into(),
+            idempotency_key: "idem-1".into(),
+            status: RequestStatus::Open.as_str().into(),
+            created_at_unix_ms: 1,
+            assigned_worker: None,
+            assigned_at_unix_ms: None,
+            model_output: None,
+            result_hash: None,
+            verifier_status: None,
+            resolution_code: None,
+            commit_tx_hash: None,
+            reveal_tx_hash: None,
+        };
+
+        assert!(is_same_submit_message_idempotency_scope(
+            &rec, "telegram", "u1", "s1", "idem-1"
+        ));
+        assert!(!is_same_submit_message_idempotency_scope(
+            &rec, "discord", "u1", "s1", "idem-1"
+        ));
+        assert!(!is_same_submit_message_idempotency_scope(
+            &rec, "telegram", "u2", "s1", "idem-1"
+        ));
+        assert!(!is_same_submit_message_idempotency_scope(
+            &rec, "telegram", "u1", "s2", "idem-1"
+        ));
+        assert!(!is_same_submit_message_idempotency_scope(
+            &rec, "telegram", "u1", "s1", "idem-2"
+        ));
     }
 
     #[test]
