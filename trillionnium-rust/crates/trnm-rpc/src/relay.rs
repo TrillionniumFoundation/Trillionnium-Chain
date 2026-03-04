@@ -299,6 +299,8 @@ struct RiskQuotaState {
     by_source: HashMap<(RiskDomain, String), WindowCounter>,
 }
 
+const MAX_RISK_BUCKET_KEYS_PER_DOMAIN: usize = 4096;
+
 impl RiskQuotaState {
     fn consume(
         &mut self,
@@ -344,12 +346,27 @@ impl RiskQuotaState {
         limit: u32,
         dim: &str,
     ) -> Result<()> {
-        let bucket = buckets
-            .entry((domain, key.to_string()))
-            .or_insert_with(|| WindowCounter {
-                window_start_ms: now_ms,
-                used: 0,
-            });
+        Self::prune_expired_domain_buckets(buckets, now_ms, domain, window_ms);
+        let bucket_key = (domain, key.to_string());
+        if !buckets.contains_key(&bucket_key)
+            && Self::domain_bucket_count(buckets, domain) >= MAX_RISK_BUCKET_KEYS_PER_DOMAIN
+        {
+            return Err(too_many_requests(
+                "quota_exceeded",
+                format!(
+                    "domain={} dim={} keyspace_exhausted max_keys={} window_ms={}",
+                    domain.as_str(),
+                    dim,
+                    MAX_RISK_BUCKET_KEYS_PER_DOMAIN,
+                    window_ms
+                ),
+            ));
+        }
+
+        let bucket = buckets.entry(bucket_key).or_insert_with(|| WindowCounter {
+            window_start_ms: now_ms,
+            used: 0,
+        });
 
         if now_ms.saturating_sub(bucket.window_start_ms) >= window_ms {
             bucket.window_start_ms = now_ms;
@@ -371,6 +388,27 @@ impl RiskQuotaState {
         }
         bucket.used += 1;
         Ok(())
+    }
+
+    fn prune_expired_domain_buckets(
+        buckets: &mut HashMap<(RiskDomain, String), WindowCounter>,
+        now_ms: u128,
+        domain: RiskDomain,
+        window_ms: u128,
+    ) {
+        buckets.retain(|(d, _), bucket| {
+            if *d != domain {
+                return true;
+            }
+            now_ms.saturating_sub(bucket.window_start_ms) < window_ms
+        });
+    }
+
+    fn domain_bucket_count(
+        buckets: &HashMap<(RiskDomain, String), WindowCounter>,
+        domain: RiskDomain,
+    ) -> usize {
+        buckets.keys().filter(|(d, _)| *d == domain).count()
     }
 
     fn rollback_bucket(
@@ -1660,6 +1698,51 @@ mod tests {
                 payload: b"x".to_vec(),
                 source: Some("src-b".into()),
             })
+            .unwrap();
+    }
+
+    #[test]
+    fn quota_keyspace_has_domain_cap_with_expired_bucket_pruning() {
+        let mut state = RiskQuotaState::default();
+        let cfg = RiskQuotaConfig {
+            window_ms: 50,
+            per_session_limit: u32::MAX,
+            per_source_limit: u32::MAX,
+        };
+
+        for i in 0..MAX_RISK_BUCKET_KEYS_PER_DOMAIN {
+            state
+                .consume(
+                    1_000,
+                    RiskDomain::Relay,
+                    "ks-session",
+                    &format!("src-{i}"),
+                    &cfg,
+                )
+                .unwrap();
+        }
+
+        let err = state
+            .consume(
+                1_000,
+                RiskDomain::Relay,
+                "ks-session",
+                "src-over-cap",
+                &cfg,
+            )
+            .unwrap_err();
+        assert!(err.to_string().contains("too_many_requests/quota_exceeded"));
+        assert!(err.to_string().contains("keyspace_exhausted"));
+
+        // Once the window moves forward, expired buckets are pruned and new keys are accepted.
+        state
+            .consume(
+                1_100,
+                RiskDomain::Relay,
+                "ks-session",
+                "src-after-window",
+                &cfg,
+            )
             .unwrap();
     }
 
