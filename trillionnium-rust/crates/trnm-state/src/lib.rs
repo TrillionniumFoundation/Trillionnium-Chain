@@ -444,6 +444,14 @@ impl StateStore {
                 key, EMERGENCY_PAUSE_KEY_ID, key_id
             ));
         }
+        if let Some(existing_key_id) = self.gov_param_key_index.get(&key).copied() {
+            if existing_key_id != key_id {
+                return Err(format!(
+                    "governance key id mismatch for {}: existing_id={}, attempted_id={}",
+                    key, existing_key_id, key_id
+                ));
+            }
+        }
         validate_gov_param_value(&key, &value)?;
         if !is_sensitive_gov_param(&key) {
             // Preserve side-effect-free error behavior: only scrub stale pending entries
@@ -1559,6 +1567,25 @@ mod tests {
         assert_eq!(pending.key_id, 7312);
         assert_eq!(pending.value, "resolver-v2");
         assert_eq!(pending.activate_at_height, 12_020);
+    }
+
+    #[test]
+    fn governance_resolve_authority_unchecked_path_rejects_key_id_shadowing() {
+        let mut st = StateStore::new();
+        st.set_gov_param_unchecked(7313, "resolve_authority".into(), "resolver-v1".into())
+            .expect("initial unchecked resolve_authority write should succeed");
+
+        let err = st
+            .set_gov_param_unchecked(9001, "resolve_authority".into(), "resolver-v2".into())
+            .expect_err("unchecked key-id shadowing for resolve_authority must be rejected");
+        assert!(
+            err.contains("governance key id mismatch for resolve_authority"),
+            "{err}"
+        );
+        assert_eq!(
+            st.gov_param_string("resolve_authority"),
+            Some("resolver-v1".into())
+        );
     }
 
     #[test]
