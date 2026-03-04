@@ -563,3 +563,6 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: i2-
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a2-a2a-adapter-contract-request-content-type-fail-closed-test" "./scripts/v2/a2_a2a_adapter_contract_request_content_type_fail_closed_test.sh" "ci(gate): add a2-a2a-adapter-contract-request-content-type-fail-closed-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-producer-did-newline-test" "./scripts/v2/d1_task_model_metadata_schema_reject_producer_did_newline_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-producer-did-newline-test regression to quick-check"
