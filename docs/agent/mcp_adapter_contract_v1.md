@@ -25,6 +25,7 @@
 - 响应内容类型：`Content-Type: application/json; charset=utf-8`；非 JSON 响应视为协议违约并按 `502 upstream_execution_failed` fail-closed
 - 响应必须回显：X-TRNM-Schema-Version: mcp-adapter-v1；缺失或不匹配按 `502 upstream_execution_failed` fail-closed
 - `X-TRNM-Schema-Version` 回显值必须为未加引号的精确 token `mcp-adapter-v1`（禁止 `"mcp-adapter-v1"`、前后空白或参数拼接）；否则按 `502 upstream_execution_failed` fail-closed
+- 响应若出现多个 `X-TRNM-Schema-Version` 头（重复字段）必须按协议违约处理，并按 `502 upstream_execution_failed` fail-closed（禁止“取第一个/最后一个”容错）
 - 响应必须回显：X-TRNM-Request-ID（值必须等于请求 `request_id`，不一致按 `502 upstream_execution_failed` fail-closed）
 - 响应必须回显：X-TRNM-Trace-ID（值必须等于请求头 `X-TRNM-Trace-ID`，不一致按 `502 upstream_execution_failed` fail-closed）
 - 响应体 `request_id` 必须与响应头 `X-TRNM-Request-ID` 严格一致；不一致按 `502 upstream_execution_failed` fail-closed
