@@ -578,3 +578,6 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e3-
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-mcp-adapter-contract-response-schema-version-duplicate-header-fail-closed-test" "./scripts/v2/a1_mcp_adapter_contract_response_schema_version_duplicate_header_fail_closed_test.sh" "ci(gate): add a1-mcp-adapter-contract-response-schema-version-duplicate-header-fail-closed-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e2-audit-report-generator-reject-invalid-calendar-event-ts-test" "./scripts/v2/e2_audit_report_generator_reject_invalid_calendar_event_ts_test.sh" "ci(gate): add e2-audit-report-generator-reject-invalid-calendar-event-ts-test regression to quick-check"
