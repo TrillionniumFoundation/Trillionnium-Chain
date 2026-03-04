@@ -590,3 +590,6 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-mcp-adapter-contract-body-sha256-fail-closed-test" "./scripts/v2/a1_mcp_adapter_contract_body_sha256_fail_closed_test.sh" "ci(gate): add a1-mcp-adapter-contract-body-sha256-fail-closed-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e3-enterprise-onboarding-runbook-rollback-contract-test" "./scripts/v2/e3_enterprise_onboarding_runbook_rollback_contract_test.sh" "ci(gate): add e3-enterprise-onboarding-runbook-rollback-contract-test regression to quick-check"
