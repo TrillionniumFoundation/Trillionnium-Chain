@@ -2586,6 +2586,7 @@ fn main() -> Result<()> {
             let mut records = load_ingress_records();
             if let Some(found) = records
                 .iter()
+                .rev()
                 .find(|r| r.idempotency_key == idempotency_key && r.session_id == session_id)
             {
                 println!("{}", serde_json::to_string_pretty(found)?);
