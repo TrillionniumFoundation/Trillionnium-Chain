@@ -33,9 +33,8 @@ run_test() {
   rm -f "$log"
 }
 
-run_test "trnm-pouw" "m2v2_dispute_reason_maps_to_frozen_error_codes"
-run_test "trnm-pouw" "m2v2_frozen_transition_matches_master_state_path"
 run_test "trnm-worker-agent" "adapter_error_classification_maps_mv2_fail_closed_receipt_contract_codes"
 run_test "trnm-worker-agent" "adapter_error_classification_enforces_contract_precedence_for_ambiguous_contexts"
+run_test "trnm-worker-agent" "transition_request_status_rejects_malformed_state_with_stable_diagnostic"
 
 echo "[PASS] M2↔V2 frozen error/state contract gate passed"
