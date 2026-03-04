@@ -237,6 +237,7 @@ impl ProofAdapter for ZkReceiptProofAdapter {
                     || normalized == "zkreceipt"
                     || normalized == "zkreceiptv1"
                     || normalized == "zkproof"
+                    || normalized == "zkproofv1"
             })
             .unwrap_or(false);
         if !adapter_ok {
@@ -473,6 +474,16 @@ mod tests {
         assert_eq!(
             zk_compact_alias.provider_request_id.as_deref(),
             Some("pr-zk-2bb")
+        );
+
+        let zk_compact_v1_alias = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-zk-2bc\",\"adapter\":\"zkproofv1\"}",
+            )
+            .expect("zk compact v1 alias should parse");
+        assert_eq!(
+            zk_compact_v1_alias.provider_request_id.as_deref(),
+            Some("pr-zk-2bc")
         );
 
         let zk_with_bom_and_whitespace = adapter
