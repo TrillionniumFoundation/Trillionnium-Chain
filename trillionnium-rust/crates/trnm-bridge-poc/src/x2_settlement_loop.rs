@@ -121,51 +121,51 @@ pub fn drive_minimal_settlement(
     }
 }
 
+fn is_sanitized_to_space(ch: char) -> bool {
+    ch.is_control()
+        || matches!(
+            ch,
+            '\u{00AD}'
+                | '\u{034F}'
+                | '\u{061C}'
+                | '\u{180E}'
+                | '\u{200B}'
+                | '\u{200C}'
+                | '\u{200D}'
+                | '\u{200E}'
+                | '\u{200F}'
+                | '\u{2028}'
+                | '\u{2029}'
+                | '\u{202A}'
+                | '\u{202B}'
+                | '\u{202C}'
+                | '\u{202D}'
+                | '\u{202E}'
+                | '\u{2060}'
+                | '\u{2061}'
+                | '\u{2062}'
+                | '\u{2063}'
+                | '\u{2064}'
+                | '\u{2066}'
+                | '\u{2067}'
+                | '\u{2068}'
+                | '\u{2069}'
+                | '\u{206A}'
+                | '\u{206B}'
+                | '\u{206C}'
+                | '\u{206D}'
+                | '\u{206E}'
+                | '\u{206F}'
+                | '\u{FEFF}'
+        )
+        || ('\u{FE00}'..='\u{FE0F}').contains(&ch)
+        || ('\u{E0100}'..='\u{E01EF}').contains(&ch)
+}
+
 fn normalize_compensation_reason(reason: &str, fallback: &'static str) -> String {
     let sanitized: String = reason
         .chars()
-        .map(|ch| {
-            if ch.is_control()
-                || matches!(
-                    ch,
-                    '\u{00AD}'
-                        | '\u{061C}'
-                        | '\u{200B}'
-                        | '\u{200C}'
-                        | '\u{200D}'
-                        | '\u{200E}'
-                        | '\u{200F}'
-                        | '\u{FEFF}'
-                        | '\u{2060}'
-                        | '\u{2061}'
-                        | '\u{2062}'
-                        | '\u{2063}'
-                        | '\u{2064}'
-                        | '\u{180E}'
-                        | '\u{202A}'
-                        | '\u{202B}'
-                        | '\u{202C}'
-                        | '\u{202D}'
-                        | '\u{202E}'
-                        | '\u{2028}'
-                        | '\u{2029}'
-                        | '\u{2066}'
-                        | '\u{2067}'
-                        | '\u{2068}'
-                        | '\u{2069}'
-                        | '\u{206A}'
-                        | '\u{206B}'
-                        | '\u{206C}'
-                        | '\u{206D}'
-                        | '\u{206E}'
-                        | '\u{206F}'
-                )
-            {
-                ' '
-            } else {
-                ch
-            }
-        })
+        .map(|ch| if is_sanitized_to_space(ch) { ' ' } else { ch })
         .collect();
     let collapsed = sanitized.split_whitespace().collect::<Vec<_>>().join(" ");
 
@@ -254,6 +254,13 @@ mod tests {
     #[test]
     fn normalize_compensation_reason_strips_legacy_bidi_isolates_for_replay_stability() {
         let raw = "target\u{206A} relay\u{206B} timeout\u{206C} signal\u{206D}\u{206E}\u{206F}";
+        let normalized = normalize_compensation_reason(raw, "fallback");
+        assert_eq!(normalized, "target relay timeout signal");
+    }
+
+    #[test]
+    fn normalize_compensation_reason_strips_variation_selectors_and_cgj_for_log_consensus() {
+        let raw = "target\u{FE0F} relay\u{E0100} timeout\u{034F} signal";
         let normalized = normalize_compensation_reason(raw, "fallback");
         assert_eq!(normalized, "target relay timeout signal");
     }
