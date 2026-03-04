@@ -105,4 +105,19 @@ mod tests {
             VerificationResult::Invalid(msg) if msg.contains("proof_type mismatch")
         ));
     }
+
+    #[test]
+    fn zk_verifier_rejects_missing_result_hash_binding_when_expected() {
+        let verifier = ZkVerifier;
+        let mut task = mock_task();
+        task.result_hash = Some([0x11; 32]);
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"ZK:{\"task_id\":99,\"worker\":\"worker-zk\",\"proof_type\":\"zk\"}"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("missing result_hash binding")
+        ));
+    }
 }
