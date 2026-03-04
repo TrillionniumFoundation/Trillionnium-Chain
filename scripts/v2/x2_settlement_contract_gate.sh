@@ -94,3 +94,7 @@ cargo test -p trnm-bridge-poc --test x2_settlement_loop \
 cargo test -p trnm-bridge-poc --test x2_settlement_loop \
   x3_prep_degraded_heartbeat_reason_unicode_over_cap_truncates_once_with_terminal_ellipsis \
   -- --nocapture
+
+cargo test -p trnm-bridge-poc --test x3_compensation_matrix \
+  x3_prep_stale_pending_degraded_retry_hint_still_fails_closed_to_compensation \
+  -- --nocapture

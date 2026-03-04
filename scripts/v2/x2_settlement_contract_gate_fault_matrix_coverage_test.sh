@@ -25,6 +25,7 @@ required_tests=(
   "x3_prep_degraded_heartbeat_reason_sanitizes_bom_and_word_joiner_controls_for_replay_stability"
   "x3_prep_confirm_failure_reason_unicode_over_cap_truncates_once_with_terminal_ellipsis"
   "x3_prep_degraded_heartbeat_reason_unicode_over_cap_truncates_once_with_terminal_ellipsis"
+  "x3_prep_stale_pending_degraded_retry_hint_still_fails_closed_to_compensation"
 )
 
 for test_name in "${required_tests[@]}"; do
