@@ -572,3 +572,6 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e3-
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-task-type-newline-test" "./scripts/v2/d1_task_model_metadata_schema_reject_task_type_newline_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-task-type-newline-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e3-enterprise-runbook-root-cause-tag-examples-test" "./scripts/v2/e3_enterprise_runbook_root_cause_tag_examples_test.sh" "ci(gate): add e3-enterprise-runbook-root-cause-tag-examples-test regression to quick-check"
