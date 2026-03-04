@@ -3793,6 +3793,23 @@ mod tests {
     }
 
     #[test]
+    fn governance_rejects_blank_resolve_authority_update_without_side_effects() {
+        let mut st = seeded_state();
+        let baseline = resolve_authority_account(&st);
+
+        let err = st
+            .set_gov_param_unchecked(9_500, "resolve_authority".into(), "".into())
+            .expect_err("blank governance resolve authority update must be rejected");
+        assert!(
+            err.contains("must be non-empty"),
+            "expected explicit non-empty guard error, got: {err}"
+        );
+
+        let after = resolve_authority_account(&st);
+        assert_eq!(after, baseline);
+    }
+
+    #[test]
     fn resolve_rejects_reserved_system_authority_without_escrow_mutation() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
