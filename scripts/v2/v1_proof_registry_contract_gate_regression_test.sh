@@ -30,6 +30,7 @@ required_tests=(
   "registry_is_registered_kind_accepts_narrow_and_figure_space_aliases"
   "registry_is_registered_kind_accepts_ogham_space_mark_aliases"
   "registry_is_registered_kind_accepts_fullwidth_version_digits"
+  "registry_is_registered_kind_accepts_multiline_whitespace_aliases"
 )
 
 for t in "${required_tests[@]}"; do

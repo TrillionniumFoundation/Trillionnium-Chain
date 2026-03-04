@@ -1910,6 +1910,15 @@ mod tests {
     }
 
     #[test]
+    fn registry_is_registered_kind_accepts_multiline_whitespace_aliases() {
+        let registry = VerifierRegistry::with_builtin_verifiers();
+
+        assert!(registry.is_registered_kind("TEE\nRECEIPT"));
+        assert!(registry.is_registered_kind("fraud\r\nchallenge\tv2"));
+        assert!(registry.is_registered_kind("zero\n\r\tknowledge\nproof"));
+    }
+
+    #[test]
     fn registry_with_builtin_verifiers_registers_v1_stack() {
         let registry = VerifierRegistry::with_builtin_verifiers();
 
@@ -1923,15 +1932,18 @@ mod tests {
         let zk_task = task_with_proof_type(ProofType::Zk);
 
         assert_eq!(
-            registry.verify(&fraud_task, b"FRAUD:challenge"),
+            registry.verify(
+                &fraud_task,
+                b"FRAUD:task_id=42,worker=alice,proof_type=fraud,challenge=1"
+            ),
             VerificationResult::Valid
         );
         assert_eq!(
-            registry.verify(&tee_task, b"TEE:quote"),
+            registry.verify(&tee_task, b"TEE:task_id=42,proof_type=tee,quote=ok"),
             VerificationResult::Valid
         );
         assert_eq!(
-            registry.verify(&zk_task, b"ZK:payload!"),
+            registry.verify(&zk_task, b"ZK:task_id=42,proof_type=zk,proof=ok"),
             VerificationResult::Valid
         );
     }

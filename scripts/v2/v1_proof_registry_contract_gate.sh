@@ -24,5 +24,6 @@ cargo test -p trnm-pouw registry_is_registered_kind_accepts_ideographic_space_se
 cargo test -p trnm-pouw registry_is_registered_kind_accepts_narrow_and_figure_space_aliases
 cargo test -p trnm-pouw registry_is_registered_kind_accepts_ogham_space_mark_aliases
 cargo test -p trnm-pouw registry_is_registered_kind_accepts_fullwidth_version_digits
+cargo test -p trnm-pouw registry_is_registered_kind_accepts_multiline_whitespace_aliases
 
 echo "[PASS] V1 proof registry contract gate"
