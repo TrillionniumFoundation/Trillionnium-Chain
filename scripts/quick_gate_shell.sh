@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Normalize locale/timezone-sensitive output so local and CI runs produce
+# consistent summary artifacts for replay/rollback evidence.
+export TZ="${TZ:-UTC}"
+export LANG="${LANG:-C.UTF-8}"
+export LC_ALL="${LC_ALL:-C.UTF-8}"
+
 if [[ $# -eq 0 ]]; then
   TARGET_DIRS=("scripts")
 else
