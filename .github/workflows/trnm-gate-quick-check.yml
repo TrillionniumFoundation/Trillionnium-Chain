@@ -25,6 +25,8 @@ jobs:
       TZ: UTC
       LANG: C.UTF-8
       LC_ALL: C.UTF-8
+      # Normalize shell/test behavior for tools that branch on CI mode.
+      CI: "true"
     # This workflow runs dozens of regression scripts; 10 minutes can truncate
     # coverage and hide late-stage failures. Keep enough headroom for full sweep.
     timeout-minutes: 45
