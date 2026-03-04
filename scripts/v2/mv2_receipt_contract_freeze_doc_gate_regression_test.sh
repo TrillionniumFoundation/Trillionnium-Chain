@@ -33,7 +33,7 @@ cleanup() {
 trap cleanup EXIT
 
 # Baseline: current specs should satisfy the gate.
-"$GATE"
+"$GATE" >/dev/null
 
 # Regression 1: remove canonical field contract phrase from snapshot; gate must fail-closed.
 python3 - <<'PY' "$SNAPSHOT_SPEC"
@@ -55,7 +55,7 @@ fi
 
 # Restore snapshot and validate baseline again before next mutation.
 cp "$tmp_snapshot" "$SNAPSHOT_SPEC"
-"$GATE"
+"$GATE" >/dev/null
 
 # Regression 2: remove canonical fail-closed phrase from master; gate must fail-closed.
 python3 - <<'PY' "$MASTER_SPEC"
@@ -77,7 +77,7 @@ fi
 
 # Restore master and validate baseline before next mutation.
 cp "$tmp_master" "$MASTER_SPEC"
-"$GATE"
+"$GATE" >/dev/null
 
 # Regression 3: remove canonical frozen error-code token from master; gate must fail-closed.
 python3 - <<'PY' "$MASTER_SPEC"
@@ -99,7 +99,7 @@ fi
 
 # Restore master and validate baseline before next mutation.
 cp "$tmp_master" "$MASTER_SPEC"
-"$GATE"
+"$GATE" >/dev/null
 
 # Regression 4: remove canonical frozen error-code token from snapshot; gate must fail-closed.
 python3 - <<'PY' "$SNAPSHOT_SPEC"
@@ -121,7 +121,7 @@ fi
 
 # Restore snapshot and validate baseline before next mutation.
 cp "$tmp_snapshot" "$SNAPSHOT_SPEC"
-"$GATE"
+"$GATE" >/dev/null
 
 # Regression 5: remove canonical state transition mapping from master; gate must fail-closed.
 python3 - <<'PY' "$MASTER_SPEC"
@@ -143,7 +143,7 @@ fi
 
 # Restore master and validate baseline before next mutation.
 cp "$tmp_master" "$MASTER_SPEC"
-"$GATE"
+"$GATE" >/dev/null
 
 # Regression 6: remove canonical state transition mapping from snapshot; gate must fail-closed.
 python3 - <<'PY' "$SNAPSHOT_SPEC"
@@ -165,7 +165,7 @@ fi
 
 # Restore snapshot and validate baseline before next mutation.
 cp "$tmp_snapshot" "$SNAPSHOT_SPEC"
-"$GATE"
+"$GATE" >/dev/null
 
 # Regression 7: keep all frozen tokens but reorder snapshot error mapping; gate must fail on snapshot/master parity drift.
 python3 - <<'PY' "$SNAPSHOT_SPEC"
@@ -188,7 +188,7 @@ fi
 
 # Restore snapshot and validate baseline before next mutation.
 cp "$tmp_snapshot" "$SNAPSHOT_SPEC"
-"$GATE"
+"$GATE" >/dev/null
 
 # Regression 8: duplicate frozen error mapping line in snapshot; gate must fail on non-unique canonical contract line.
 python3 - <<'PY' "$SNAPSHOT_SPEC"
@@ -210,7 +210,7 @@ fi
 
 # Restore snapshot and validate baseline before next mutation.
 cp "$tmp_snapshot" "$SNAPSHOT_SPEC"
-"$GATE"
+"$GATE" >/dev/null
 
 # Regression 9: duplicate frozen state transition mapping line in master; gate must fail on non-unique canonical state mapping line.
 python3 - <<'PY' "$MASTER_SPEC"
@@ -232,7 +232,7 @@ fi
 
 # Restore master and validate baseline before next mutation.
 cp "$tmp_master" "$MASTER_SPEC"
-"$GATE"
+"$GATE" >/dev/null
 
 # Regression 10: keep all frozen state tokens but reorder master mapping; gate must fail on snapshot/master state mapping parity drift.
 python3 - <<'PY' "$MASTER_SPEC"
@@ -255,7 +255,7 @@ fi
 
 # Restore master and validate baseline before next mutation.
 cp "$tmp_master" "$MASTER_SPEC"
-"$GATE"
+"$GATE" >/dev/null
 
 # Regression 11: duplicate MV2 master anchor heading; gate must fail on non-unique anchor.
 python3 - <<'PY' "$MASTER_SPEC"
@@ -277,7 +277,7 @@ fi
 
 # Restore master and validate baseline before next mutation.
 cp "$tmp_master" "$MASTER_SPEC"
-"$GATE"
+"$GATE" >/dev/null
 
 # Regression 12: duplicate MV2 snapshot anchor heading; gate must fail on non-unique anchor.
 python3 - <<'PY' "$SNAPSHOT_SPEC"
@@ -299,7 +299,7 @@ fi
 
 # Restore snapshot and validate baseline before next mutation.
 cp "$tmp_snapshot" "$SNAPSHOT_SPEC"
-"$GATE"
+"$GATE" >/dev/null
 
 # Regression 13: duplicate canonical unified field-contract phrase in master; gate must fail on non-unique contract line.
 python3 - <<'PY' "$MASTER_SPEC"
@@ -321,7 +321,7 @@ fi
 
 # Restore master and validate baseline before next mutation.
 cp "$tmp_master" "$MASTER_SPEC"
-"$GATE"
+"$GATE" >/dev/null
 
 # Regression 13b: duplicate canonical unified field-contract phrase in snapshot; gate must fail on non-unique contract line.
 python3 - <<'PY' "$SNAPSHOT_SPEC"
@@ -343,7 +343,7 @@ fi
 
 # Restore snapshot and validate baseline before next mutation.
 cp "$tmp_snapshot" "$SNAPSHOT_SPEC"
-"$GATE"
+"$GATE" >/dev/null
 
 # Regression 14: duplicate canonical fail-closed phrase in snapshot; gate must fail on non-unique fail-closed contract line.
 python3 - <<'PY' "$SNAPSHOT_SPEC"
@@ -365,7 +365,7 @@ fi
 
 # Restore snapshot and validate baseline before next mutation.
 cp "$tmp_snapshot" "$SNAPSHOT_SPEC"
-"$GATE"
+"$GATE" >/dev/null
 
 # Regression 15: alter master MV2 anchor heading metadata (date drift); gate must fail on missing canonical anchor.
 python3 - <<'PY' "$MASTER_SPEC"
@@ -388,7 +388,7 @@ fi
 
 # Restore master and validate baseline before next mutation.
 cp "$tmp_master" "$MASTER_SPEC"
-"$GATE"
+"$GATE" >/dev/null
 
 # Regression 16: duplicate frozen state transition mapping line in snapshot; gate must fail on non-unique canonical state mapping line.
 python3 - <<'PY' "$SNAPSHOT_SPEC"
@@ -410,7 +410,7 @@ fi
 
 # Restore snapshot and validate baseline before next mutation.
 cp "$tmp_snapshot" "$SNAPSHOT_SPEC"
-"$GATE"
+"$GATE" >/dev/null
 
 # Regression 17: duplicate canonical fail-closed phrase in master; gate must fail on non-unique fail-closed contract line.
 python3 - <<'PY' "$MASTER_SPEC"
@@ -432,7 +432,7 @@ fi
 
 # Restore master and validate baseline before next mutation.
 cp "$tmp_master" "$MASTER_SPEC"
-"$GATE"
+"$GATE" >/dev/null
 
 # Regression 18: duplicate frozen error mapping line in master; gate must fail on non-unique canonical error mapping line.
 python3 - <<'PY' "$MASTER_SPEC"
@@ -454,7 +454,7 @@ fi
 
 # Restore master and validate baseline before next mutation.
 cp "$tmp_master" "$MASTER_SPEC"
-"$GATE"
+"$GATE" >/dev/null
 
 # Regression 19: duplicate M2↔V2 boundary phrase in snapshot; gate must fail on ambiguous cross-track boundary anchor.
 python3 - <<'PY' "$SNAPSHOT_SPEC"
@@ -476,7 +476,7 @@ fi
 
 # Restore snapshot and validate baseline before next mutation.
 cp "$tmp_snapshot" "$SNAPSHOT_SPEC"
-"$GATE"
+"$GATE" >/dev/null
 
 # Regression 20: duplicate M2↔V2 boundary phrase in master; gate must fail on ambiguous cross-track boundary anchor.
 python3 - <<'PY' "$MASTER_SPEC"
@@ -498,7 +498,7 @@ fi
 
 # Restore master and validate baseline before next mutation.
 cp "$tmp_master" "$MASTER_SPEC"
-"$GATE"
+"$GATE" >/dev/null
 
 # Regression 21: duplicate proof union phrase in snapshot; gate must fail on ambiguous proof adapter union anchor.
 python3 - <<'PY' "$SNAPSHOT_SPEC"
@@ -520,7 +520,7 @@ fi
 
 # Restore snapshot and validate baseline before next mutation.
 cp "$tmp_snapshot" "$SNAPSHOT_SPEC"
-"$GATE"
+"$GATE" >/dev/null
 
 # Regression 22: duplicate proof union anchor line in master; gate must fail on non-unique anchor line.
 python3 - <<'PY' "$MASTER_SPEC"
