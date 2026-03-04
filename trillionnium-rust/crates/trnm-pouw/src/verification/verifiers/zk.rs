@@ -140,6 +140,20 @@ mod tests {
     }
 
     #[test]
+    fn zk_verifier_rejects_worker_binding_identifier_spoof() {
+        let verifier = ZkVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"ZK:{\"task_id\":99,\"networker\":\"worker-zk\",\"proof_type\":\"zk\",\"result_hash\":\"1111111111111111111111111111111111111111111111111111111111111111\"}"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("missing worker binding")
+        ));
+    }
+
+    #[test]
     fn zk_verifier_rejects_worker_mismatch_when_worker_is_present() {
         let verifier = ZkVerifier;
         let task = mock_task();
