@@ -7,6 +7,7 @@ cd "$ROOT/trillionnium-rust"
 cargo test -p trnm-pouw registry_register_collapses_legacy_receipt_aliases_for_lookup
 cargo test -p trnm-pouw registry_registered_proof_types_are_normalized_and_sorted
 cargo test -p trnm-pouw registry_is_registered_for_reports_true_for_builtin_stack
+cargo test -p trnm-pouw registry_with_builtin_verifiers_surfaces_envelope_validation_failures
 cargo test -p trnm-pouw registry_ignores_empty_verifier_key_after_normalization
 cargo test -p trnm-pouw registry_aliases_stay_aligned_with_receipt_normalization_contract
 cargo test -p trnm-pouw registry_is_registered_kind_accepts_version_suffixed_legacy_aliases
