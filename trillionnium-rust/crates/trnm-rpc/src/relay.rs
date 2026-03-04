@@ -424,12 +424,21 @@ impl RiskQuotaState {
     }
 }
 
+const RISK_SOURCE_MAX_CHARS: usize = 64;
+
 fn canonicalize_risk_source(source: Option<&str>) -> String {
     let source = source.unwrap_or("anon").trim();
     if source.is_empty() {
         return "anon".to_string();
     }
-    source.to_ascii_lowercase()
+
+    // Bound source cardinality to reduce key-space/memory pressure from adversarial
+    // high-entropy attribution strings while preserving stable aliasing semantics.
+    source
+        .chars()
+        .take(RISK_SOURCE_MAX_CHARS)
+        .collect::<String>()
+        .to_ascii_lowercase()
 }
 
 pub trait RelayHandler: Send + Sync {
@@ -1923,6 +1932,64 @@ mod tests {
             })
             .unwrap_err();
         assert!(case_alias_err
+            .to_string()
+            .contains("too_many_requests/quota_exceeded"));
+    }
+
+    #[test]
+    fn source_attribution_overlong_values_share_truncated_quota_bucket() {
+        let mut router = RelayRouter::new();
+        router.register("relay.echo", EchoHandler);
+        let relay = RelayService::with_risk_quota_config(
+            router,
+            RiskQuotaConfig {
+                window_ms: 1_000,
+                per_session_limit: 5,
+                per_source_limit: 2,
+            },
+        );
+        relay
+            .open(RelayOpenRequest {
+                session_id: "mv-src-s3".into(),
+            })
+            .unwrap();
+
+        let prefix = "X".repeat(RISK_SOURCE_MAX_CHARS);
+        let src_a = format!("{}-A", prefix);
+        let src_b = format!("{}-B", prefix);
+
+        relay
+            .send(RelaySendRequest {
+                session_id: "mv-src-s3".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"a".to_vec(),
+                source: Some(src_a),
+            })
+            .unwrap();
+        relay
+            .send(RelaySendRequest {
+                session_id: "mv-src-s3".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"b".to_vec(),
+                source: Some(src_b),
+            })
+            .unwrap();
+
+        let err = relay
+            .send(RelaySendRequest {
+                session_id: "mv-src-s3".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"c".to_vec(),
+                source: Some(format!("{}-C", prefix)),
+            })
+            .unwrap_err();
+        assert!(err
             .to_string()
             .contains("too_many_requests/quota_exceeded"));
     }
