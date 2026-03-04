@@ -3904,8 +3904,8 @@ mod tests {
         let r2 = apply_accept_task(&mut st, r1_updated, "worker1".into()).unwrap();
         let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
 
-        // TEE proof (must start with "TEE:")
-        let proof = b"TEE:QUOTE_XYZ".to_vec();
+        // TEE proof envelope must bind task_id/worker/proof_type.
+        let proof = b"TEE:task_id=7001,worker=worker1,proof_type=tee,quote=QUOTE_XYZ".to_vec();
         let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, Some(proof)).unwrap();
 
         let final_task = st.get_task(r4.id).unwrap();
@@ -3974,7 +3974,7 @@ mod tests {
         let r2 = apply_accept_task(&mut st, r1_updated, "worker1".into()).unwrap();
         let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
 
-        let proof = b"ZK:VALID_PROOF".to_vec();
+        let proof = b"ZK:task_id=7004,worker=worker1,proof_type=zk,receipt=VALID_PROOF".to_vec();
         let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, Some(proof)).unwrap();
 
         let final_task = st.get_task(r4.id).unwrap();
