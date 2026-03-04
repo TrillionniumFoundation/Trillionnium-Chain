@@ -351,10 +351,18 @@ fn build_parallel_groups_aggressive_profile(
 
         let mut placed = false;
         let mut scanned = 0usize;
-        for idx in min_group..groups.len() {
+        let candidate_span = groups.len().saturating_sub(min_group);
+        let rr_enabled = aggr_scan_round_robin_enabled();
+        let start_offset = if rr_enabled && candidate_span > 1 {
+            (tx_slot.as_ref().expect("tx must exist").id as usize) % candidate_span
+        } else {
+            0
+        };
+        for step in 0..candidate_span {
             if scan_window > 0 && scanned >= scan_window {
                 break;
             }
+            let idx = min_group + ((start_offset + step) % candidate_span);
             scanned += 1;
             candidate_groups_scanned += 1;
             conflict_checks += 1;
@@ -471,6 +479,16 @@ fn aggr_deep_scan_enabled() -> bool {
             !(s == "0" || s == "false" || s == "off" || s == "no")
         })
         .unwrap_or(false)
+}
+
+fn aggr_scan_round_robin_enabled() -> bool {
+    std::env::var("TRNM_AGGR_SCAN_ROUND_ROBIN")
+        .ok()
+        .map(|v| {
+            let s = v.trim().to_ascii_lowercase();
+            !(s == "0" || s == "false" || s == "off" || s == "no")
+        })
+        .unwrap_or(true)
 }
 
 fn auto_hot_streak_threshold() -> f64 {
