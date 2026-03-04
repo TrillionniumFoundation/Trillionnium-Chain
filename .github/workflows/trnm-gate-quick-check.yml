@@ -17,6 +17,10 @@ on:
 jobs:
   shell-static-checks:
     runs-on: ubuntu-latest
+    env:
+      TZ: UTC
+      LANG: C.UTF-8
+      LC_ALL: C.UTF-8
     # This workflow runs dozens of regression scripts; 10 minutes can truncate
     # coverage and hide late-stage failures. Keep enough headroom for full sweep.
     timeout-minutes: 45
