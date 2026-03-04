@@ -698,9 +698,28 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
             let mut iters: Vec<std::vec::IntoIter<Tx>> =
                 buckets.into_iter().map(|b| b.into_iter()).collect();
             let mut merged = Vec::with_capacity(txs.len());
+            // Seed the initial bucket probe from the first tx hot-key hint so
+            // repeated batches do not always favor bucket 0 at cycle start.
+            let mut rr_start = txs
+                .first()
+                .map(|tx| {
+                    let key_a = tx
+                        .write_set
+                        .first()
+                        .or_else(|| tx.read_set.first())
+                        .map(|o| o.id as usize)
+                        .unwrap_or(0);
+                    let key_b = tx
+                        .write_set
+                        .get(1)
+                        .or_else(|| tx.read_set.get(1))
+                        .map(|o| o.id as usize)
+                        .unwrap_or(0);
+                    (key_a ^ key_b.rotate_left(7)) % iters.len()
+                })
+                .unwrap_or(0);
             // Rotate the round-robin start bucket each pass to reduce consistent
             // first-bucket preference under uneven bucket depths.
-            let mut rr_start = 0usize;
             loop {
                 let mut moved = false;
                 let n = iters.len();
@@ -851,6 +870,19 @@ mod tests {
         assert!(groups.len() >= 2);
         assert!(groups[0].len() >= 2);
         assert!(groups[1].len() >= 2);
+    }
+
+    #[test]
+    fn hot_bucket_interleave_seeds_initial_round_from_first_hot_key() {
+        let mut txs = vec![
+            tx(501, vec![], vec![o(5)]), // bucket 5 when TRNM_HOT_BUCKETS=8
+            tx(101, vec![], vec![o(0)]), // bucket 0
+            tx(102, vec![], vec![o(8)]), // bucket 0
+            tx(103, vec![], vec![o(16)]), // bucket 0
+        ];
+
+        reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
+        assert_eq!(txs.first().map(|t| t.id), Some(501));
     }
 
     #[test]
