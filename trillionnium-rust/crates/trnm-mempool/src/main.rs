@@ -13,6 +13,7 @@ pub struct GateMetrics {
     pub duplicates: usize,
     pub backpressured: usize,
     pub backpressure_duplicates: usize,
+    pub fairness_deferrals: usize,
 }
 
 #[derive(Debug)]
@@ -74,6 +75,7 @@ impl AdmissionGate {
         if !self.backpressured_ids.is_empty() && !self.backpressured_ids.contains(&tx_id) {
             self.remember_backpressured(tx_id);
             self.metrics.backpressured += 1;
+            self.metrics.fairness_deferrals += 1;
             return AdmitOutcome::Backpressured;
         }
 
@@ -120,6 +122,7 @@ mod tests {
         assert_eq!(m.duplicates, 1);
         assert_eq!(m.backpressured, 0);
         assert_eq!(m.backpressure_duplicates, 0);
+        assert_eq!(m.fairness_deferrals, 0);
     }
 
     #[test]
@@ -133,6 +136,7 @@ mod tests {
         assert_eq!(m.duplicates, 0);
         assert_eq!(m.backpressured, 1);
         assert_eq!(m.backpressure_duplicates, 0);
+        assert_eq!(m.fairness_deferrals, 0);
     }
 
     #[test]
@@ -157,6 +161,7 @@ mod tests {
         assert_eq!(m.backpressured, 1);
         assert_eq!(m.duplicates, 1);
         assert_eq!(m.backpressure_duplicates, 1);
+        assert_eq!(m.fairness_deferrals, 0);
 
         assert_eq!(gate.pop_ready(), Some(1));
         assert_eq!(gate.admit(9), AdmitOutcome::Accepted);
@@ -188,6 +193,7 @@ mod tests {
         assert_eq!(m.backpressured, 4);
         assert_eq!(m.duplicates, 0);
         assert_eq!(m.backpressure_duplicates, 0);
+        assert_eq!(m.fairness_deferrals, 0);
     }
 
     #[test]
@@ -221,6 +227,7 @@ mod tests {
         let m = gate.metrics();
         assert_eq!(m.backpressured, 2);
         assert_eq!(m.backpressure_duplicates, 0);
+        assert_eq!(m.fairness_deferrals, 1);
     }
 
     #[test]
@@ -233,5 +240,8 @@ mod tests {
         assert_eq!(gate.pop_ready(), Some(1));
         assert_eq!(gate.admit(3), AdmitOutcome::Backpressured);
         assert_eq!(gate.admit(2), AdmitOutcome::Accepted);
+
+        let m = gate.metrics();
+        assert_eq!(m.fairness_deferrals, 1);
     }
 }
