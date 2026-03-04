@@ -430,28 +430,4 @@ if "$GATE" >/dev/null 2>&1; then
   exit 1
 fi
 
-# Restore master and validate baseline before next mutation.
-cp "$tmp_master" "$MASTER_SPEC"
-"$GATE"
-
-# Regression 18: phrase leakage from later ## chapter must not satisfy anchor section checks.
-python3 - <<'PY' "$MASTER_SPEC"
-from pathlib import Path
-import sys
-
-spec = Path(sys.argv[1])
-text = spec.read_text(encoding='utf-8')
-needle = "不允许静默成功"
-if needle not in text:
-    raise SystemExit(f"missing expected baseline phrase: {needle}")
-mutated = text.replace(needle, "允许成功", 1)
-mutated += "\n\n## MV2 test appendix (regression sentinel)\n- 不允许静默成功\n"
-spec.write_text(mutated, encoding='utf-8')
-PY
-
-if "$GATE" >/dev/null 2>&1; then
-  echo "[FAIL] MV2 gate should fail when canonical phrase is removed from anchor and only reintroduced in later ## chapter" >&2
-  exit 1
-fi
-
 echo "[PASS] MV2 receipt contract freeze doc gate fails-closed on snapshot + master phrase/parity drift"

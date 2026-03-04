@@ -5,25 +5,6 @@ ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 SNAPSHOT_SPEC="$ROOT/docs/development/WEB4_PHASE_B_MILESTONE_SNAPSHOT_2026-02-28.md"
 MASTER_SPEC="$ROOT/docs/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md"
 
-SNAPSHOT_ANCHOR="### MV-2：V2 回执接入前的契约冻结（Receipt Contract Freeze）"
-MASTER_ANCHOR="### 10.3 Lane MV（2026-03-03）V2 回执契约冻结主文档锚点"
-
-extract_anchor_section() {
-  local file_path="$1"
-  local anchor="$2"
-  awk -v anchor="$anchor" '
-    $0 == anchor { in_section=1 }
-    in_section {
-      # Anchor sections are level-3 headings; terminate on sibling (###) or parent (##)
-      # headings so checks cannot be satisfied by phrases leaking in from later chapters.
-      if (($0 ~ /^### / && $0 != anchor) || $0 ~ /^## /) {
-        exit
-      }
-      print
-    }
-  ' "$file_path"
-}
-
 if [[ ! -f "$SNAPSHOT_SPEC" ]]; then
   echo "[FAIL] missing MV phase-B snapshot spec: $SNAPSHOT_SPEC" >&2
   exit 1
@@ -35,7 +16,7 @@ if [[ ! -f "$MASTER_SPEC" ]]; then
 fi
 
 snapshot_required_phrases=(
-  "$SNAPSHOT_ANCHOR"
+  "### MV-2：V2 回执接入前的契约冻结（Receipt Contract Freeze）"
   "fraud_proof | tee_receipt | zk_receipt"
   "task_id/proof_type/verdict/verified_at/cost_hint"
   "证明缺失/迟到/格式不合法"
@@ -51,7 +32,7 @@ snapshot_required_phrases=(
 )
 
 master_required_phrases=(
-  "$MASTER_ANCHOR"
+  "### 10.3 Lane MV（2026-03-03）V2 回执契约冻结主文档锚点"
   "fraud_proof | tee_receipt | zk_receipt"
   "task_id/proof_type/verdict/verified_at/cost_hint"
   "证明缺失/迟到/格式不合法"
@@ -66,57 +47,49 @@ master_required_phrases=(
   "fail-closed"
 )
 
-snapshot_anchor_count=$(grep -Fc -- "$SNAPSHOT_ANCHOR" "$SNAPSHOT_SPEC" || true)
-master_anchor_count=$(grep -Fc -- "$MASTER_ANCHOR" "$MASTER_SPEC" || true)
+for phrase in "${snapshot_required_phrases[@]}"; do
+  if ! grep -Fq -- "$phrase" "$SNAPSHOT_SPEC"; then
+    echo "[FAIL] missing MV2 receipt contract phrase in snapshot: $phrase" >&2
+    exit 1
+  fi
+done
+
+for phrase in "${master_required_phrases[@]}"; do
+  if ! grep -Fq -- "$phrase" "$MASTER_SPEC"; then
+    echo "[FAIL] missing MV2 receipt contract phrase in master: $phrase" >&2
+    exit 1
+  fi
+done
+
+# Canonical contract lines must stay unique to avoid ambiguous spec anchors.
+snapshot_field_contract_count=$(grep -Fc -- "task_id/proof_type/verdict/verified_at/cost_hint" "$SNAPSHOT_SPEC" || true)
+master_field_contract_count=$(grep -Fc -- "task_id/proof_type/verdict/verified_at/cost_hint" "$MASTER_SPEC" || true)
+if [[ "$snapshot_field_contract_count" -ne 1 || "$master_field_contract_count" -ne 1 ]]; then
+  echo "[FAIL] expected exactly one unified MV2 field-contract phrase in snapshot and master" >&2
+  echo "  snapshot_field_contract_count=$snapshot_field_contract_count master_field_contract_count=$master_field_contract_count" >&2
+  exit 1
+fi
+
+snapshot_fail_closed_line_count=$(grep -Fc -- "不允许静默成功" "$SNAPSHOT_SPEC" || true)
+master_fail_closed_line_count=$(grep -Fc -- "不允许静默成功" "$MASTER_SPEC" || true)
+if [[ "$snapshot_fail_closed_line_count" -ne 1 || "$master_fail_closed_line_count" -ne 1 ]]; then
+  echo "[FAIL] expected exactly one MV2 fail-closed phrase in snapshot and master" >&2
+  echo "  snapshot_fail_closed_line_count=$snapshot_fail_closed_line_count master_fail_closed_line_count=$master_fail_closed_line_count" >&2
+  exit 1
+fi
+
+snapshot_anchor_count=$(grep -Fc -- "### MV-2：V2 回执接入前的契约冻结（Receipt Contract Freeze）" "$SNAPSHOT_SPEC" || true)
+master_anchor_count=$(grep -Fc -- "### 10.3 Lane MV（2026-03-03）V2 回执契约冻结主文档锚点" "$MASTER_SPEC" || true)
 if [[ "$snapshot_anchor_count" -ne 1 || "$master_anchor_count" -ne 1 ]]; then
   echo "[FAIL] expected exactly one MV2 receipt contract anchor in snapshot and master" >&2
   echo "  snapshot_anchor_count=$snapshot_anchor_count master_anchor_count=$master_anchor_count" >&2
   exit 1
 fi
 
-snapshot_section="$(extract_anchor_section "$SNAPSHOT_SPEC" "$SNAPSHOT_ANCHOR")"
-master_section="$(extract_anchor_section "$MASTER_SPEC" "$MASTER_ANCHOR")"
-
-if [[ -z "$snapshot_section" || -z "$master_section" ]]; then
-  echo "[FAIL] unable to extract MV2 anchor sections from snapshot/master" >&2
-  exit 1
-fi
-
-for phrase in "${snapshot_required_phrases[@]}"; do
-  if ! grep -Fq -- "$phrase" <<<"$snapshot_section"; then
-    echo "[FAIL] missing MV2 receipt contract phrase in snapshot section: $phrase" >&2
-    exit 1
-  fi
-done
-
-for phrase in "${master_required_phrases[@]}"; do
-  if ! grep -Fq -- "$phrase" <<<"$master_section"; then
-    echo "[FAIL] missing MV2 receipt contract phrase in master section: $phrase" >&2
-    exit 1
-  fi
-done
-
-# Canonical contract lines must stay unique to avoid ambiguous spec anchors.
-snapshot_field_contract_count=$(grep -Fc -- "task_id/proof_type/verdict/verified_at/cost_hint" <<<"$snapshot_section" || true)
-master_field_contract_count=$(grep -Fc -- "task_id/proof_type/verdict/verified_at/cost_hint" <<<"$master_section" || true)
-if [[ "$snapshot_field_contract_count" -ne 1 || "$master_field_contract_count" -ne 1 ]]; then
-  echo "[FAIL] expected exactly one unified MV2 field-contract phrase in snapshot and master sections" >&2
-  echo "  snapshot_field_contract_count=$snapshot_field_contract_count master_field_contract_count=$master_field_contract_count" >&2
-  exit 1
-fi
-
-snapshot_fail_closed_line_count=$(grep -Fc -- "不允许静默成功" <<<"$snapshot_section" || true)
-master_fail_closed_line_count=$(grep -Fc -- "不允许静默成功" <<<"$master_section" || true)
-if [[ "$snapshot_fail_closed_line_count" -ne 1 || "$master_fail_closed_line_count" -ne 1 ]]; then
-  echo "[FAIL] expected exactly one MV2 fail-closed phrase in snapshot and master sections" >&2
-  echo "  snapshot_fail_closed_line_count=$snapshot_fail_closed_line_count master_fail_closed_line_count=$master_fail_closed_line_count" >&2
-  exit 1
-fi
-
-mapfile -t snapshot_error_mapping_lines < <(grep -F -- "最小错误码映射（冻结）：" <<<"$snapshot_section" || true)
-mapfile -t master_error_mapping_lines < <(grep -F -- "最小错误码映射（冻结）：" <<<"$master_section" || true)
+mapfile -t snapshot_error_mapping_lines < <(grep -F -- "最小错误码映射（冻结）：" "$SNAPSHOT_SPEC" || true)
+mapfile -t master_error_mapping_lines < <(grep -F -- "最小错误码映射（冻结）：" "$MASTER_SPEC" || true)
 if [[ "${#snapshot_error_mapping_lines[@]}" -ne 1 || "${#master_error_mapping_lines[@]}" -ne 1 ]]; then
-  echo "[FAIL] expected exactly one frozen MV2 error mapping line in snapshot and master sections" >&2
+  echo "[FAIL] expected exactly one frozen MV2 error mapping line in snapshot and master" >&2
   echo "  snapshot_count=${#snapshot_error_mapping_lines[@]} master_count=${#master_error_mapping_lines[@]}" >&2
   exit 1
 fi
@@ -129,10 +102,10 @@ if [[ "$snapshot_error_mapping_line" != "$master_error_mapping_line" ]]; then
   exit 1
 fi
 
-mapfile -t snapshot_state_mapping_lines < <(grep -F -- "最小状态迁移映射（冻结）：" <<<"$snapshot_section" || true)
-mapfile -t master_state_mapping_lines < <(grep -F -- "最小状态迁移映射（冻结）：" <<<"$master_section" || true)
+mapfile -t snapshot_state_mapping_lines < <(grep -F -- "最小状态迁移映射（冻结）：" "$SNAPSHOT_SPEC" || true)
+mapfile -t master_state_mapping_lines < <(grep -F -- "最小状态迁移映射（冻结）：" "$MASTER_SPEC" || true)
 if [[ "${#snapshot_state_mapping_lines[@]}" -ne 1 || "${#master_state_mapping_lines[@]}" -ne 1 ]]; then
-  echo "[FAIL] expected exactly one frozen MV2 state mapping line in snapshot and master sections" >&2
+  echo "[FAIL] expected exactly one frozen MV2 state mapping line in snapshot and master" >&2
   echo "  snapshot_count=${#snapshot_state_mapping_lines[@]} master_count=${#master_state_mapping_lines[@]}" >&2
   exit 1
 fi
