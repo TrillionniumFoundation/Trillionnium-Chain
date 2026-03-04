@@ -599,3 +599,7 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: m2v
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e2-audit-report-generator-reject-event-type-suffix-punct-test" "./scripts/v2/e2_audit_report_generator_reject_event_type_suffix_punct_test.sh" "ci(gate): add e2-audit-report-generator-reject-event-type-suffix-punct-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-mcp-adapter-contract-timestamp-offset-fail-closed-test" "./scripts/v2/a1_mcp_adapter_contract_timestamp_offset_fail_closed_test.sh" "ci(gate): add a1-mcp-adapter-contract-timestamp-offset-fail-closed-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: m2v2-error-state-contract-gate-regression-test" "./scripts/v2/m2v2_error_state_contract_gate_regression_test.sh" "ci(gate): add m2v2-error-state-contract-gate-regression-test regression to quick-check"
