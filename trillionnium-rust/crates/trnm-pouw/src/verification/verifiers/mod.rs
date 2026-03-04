@@ -118,6 +118,14 @@ fn find_numeric_field(body: &str, field: &str) -> Option<u64> {
 }
 
 fn find_token_field(body: &str, field: &str) -> Option<String> {
+    find_token_field_with_case(body, field, true)
+}
+
+fn find_token_field_raw(body: &str, field: &str) -> Option<String> {
+    find_token_field_with_case(body, field, false)
+}
+
+fn find_token_field_with_case(body: &str, field: &str, lowercase_value: bool) -> Option<String> {
     let lower = body.to_ascii_lowercase();
     let body_bytes = body.as_bytes();
     let mut cursor = 0usize;
@@ -161,7 +169,12 @@ fn find_token_field(body: &str, field: &str) -> Option<String> {
                 cursor = idx + 1;
                 continue;
             }
-            return Some(body[start..i].trim().to_ascii_lowercase());
+            let token = body[start..i].trim();
+            return Some(if lowercase_value {
+                token.to_ascii_lowercase()
+            } else {
+                token.to_string()
+            });
         }
         cursor = idx + 1;
     }
@@ -207,8 +220,8 @@ pub(super) fn verify_bound_envelope(
     }
 
     if let Some(expected_worker) = task.worker.as_deref() {
-        match find_token_field(&body_text, "worker") {
-            Some(worker) if expected_worker.eq_ignore_ascii_case(worker.trim()) => {}
+        match find_token_field_raw(&body_text, "worker") {
+            Some(worker) if expected_worker == worker.trim() => {}
             Some(_) => {
                 return VerificationResult::Invalid(format!(
                     "Invalid {kind_name} envelope: worker mismatch"
