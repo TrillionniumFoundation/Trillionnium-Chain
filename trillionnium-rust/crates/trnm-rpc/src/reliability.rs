@@ -395,6 +395,19 @@ pub struct ReliabilityEngine<S: ReliabilityStore> {
     circuit_recovered_total: AtomicU64,
 }
 
+fn sanitize_retry_config(mut retry: RetryConfig) -> RetryConfig {
+    if retry.base_backoff_ms == 0 {
+        retry.base_backoff_ms = 1;
+    }
+    if retry.max_backoff_ms == 0 {
+        retry.max_backoff_ms = retry.base_backoff_ms;
+    }
+    if retry.max_backoff_ms < retry.base_backoff_ms {
+        retry.max_backoff_ms = retry.base_backoff_ms;
+    }
+    retry
+}
+
 impl<S: ReliabilityStore> ReliabilityEngine<S> {
     pub fn new(store: S, retry: RetryConfig) -> Self {
         Self::new_with_retention(store, retry, RetentionConfig::default())
@@ -403,7 +416,7 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
     pub fn new_with_retention(store: S, retry: RetryConfig, retention: RetentionConfig) -> Self {
         Self {
             store,
-            retry,
+            retry: sanitize_retry_config(retry),
             retention,
             last_cleanup_at_unix_ms: None,
             circuit_state: CircuitState::Closed,
@@ -1481,5 +1494,21 @@ mod tests {
         let _ = std::fs::remove_file(&db_path);
         let _ = std::fs::remove_file(db_path.with_extension("sqlite-wal"));
         let _ = std::fs::remove_file(db_path.with_extension("sqlite-shm"));
+    }
+
+    #[test]
+    fn retry_config_is_sanitized_to_prevent_zero_delay_retry_spin() {
+        let store = InMemoryReliabilityStore::default();
+        let engine = ReliabilityEngine::new(
+            store,
+            RetryConfig {
+                base_backoff_ms: 0,
+                max_backoff_ms: 0,
+                ..RetryConfig::default()
+            },
+        );
+
+        assert_eq!(engine.retry.base_backoff_ms, 1);
+        assert_eq!(engine.retry.max_backoff_ms, 1);
     }
 }
