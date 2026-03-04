@@ -2244,6 +2244,24 @@ mod tests {
             ("ERR_M2V2_PROOF_LATE", "proof_late")
         );
 
+        let proof_missing_with_nonbreaking_hyphen = AdapterError {
+            kind: AdapterErrorKind::NonRetriable,
+            context: "proof‑missing provider request id".to_string(),
+        };
+        assert_eq!(
+            classify_adapter_error(&proof_missing_with_nonbreaking_hyphen),
+            ("ERR_M2V2_PROOF_MISSING", "proof_missing")
+        );
+
+        let settlement_degraded_with_em_dash = AdapterError {
+            kind: AdapterErrorKind::Retriable,
+            context: "settlement—degraded timeout overlap".to_string(),
+        };
+        assert_eq!(
+            classify_adapter_error(&settlement_degraded_with_em_dash),
+            ("ERR_M2V2_SETTLEMENT_DEGRADED", "settlement_degraded")
+        );
+
         let explicit_contract_proof_missing = AdapterError {
             kind: AdapterErrorKind::Retriable,
             context: "proof-missing-from-verifier".to_string(),
