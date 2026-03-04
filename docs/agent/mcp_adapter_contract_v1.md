@@ -12,7 +12,6 @@
 - `X-TRNM-Request-ID` 必须为去首尾空白后的非空字符串；出现前后空白或空串按 `400 schema_invalid` fail-closed
 - 请求头 `X-TRNM-Request-ID` 必须与请求体 `request_id` 严格一致；不一致按 `400 schema_invalid` fail-closed
 - 请求必须携带：`X-TRNM-Trace-ID`（跨系统审计关联键，必须与审计导出中的 `trace_id` 一致）
-- `X-TRNM-Trace-ID` 必须为去首尾空白后的非空字符串；出现前后空白或空串按 `400 schema_invalid` fail-closed
 - 请求必须携带：`X-TRNM-Timestamp`（RFC3339 UTC），允许时钟偏差 ≤ 300 秒；超窗请求按 `401 capability_invalid` fail-closed
 - 请求必须携带：`X-TRNM-Schema-Version`（当前固定 `mcp-adapter-v1`）；版本不匹配按 `400 schema_invalid` fail-closed
 - 重试安全：`Idempotency-Key`（同一键值 + 同一请求体必须幂等返回同一 `task_id`）
