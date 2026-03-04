@@ -1767,6 +1767,8 @@ fn context_matches_token(context: &str, token: &str) -> bool {
     let token_with_spaces = normalized_token.replace(['-', '_'], " ");
     let normalized_context_relaxed = normalize_for_contract_match(context);
     let normalized_token_relaxed = normalize_for_contract_match(token);
+    let normalized_context_compact = normalized_context_relaxed.replace(' ', "");
+    let normalized_token_compact = normalized_token_relaxed.replace(' ', "");
 
     normalized_context.contains(&normalized_token)
         || normalized_context.contains(&normalized_token.replace('-', "_"))
@@ -1774,6 +1776,8 @@ fn context_matches_token(context: &str, token: &str) -> bool {
         || context_with_spaces.contains(&token_with_spaces)
         || (!normalized_token_relaxed.is_empty()
             && normalized_context_relaxed.contains(&normalized_token_relaxed))
+        || (!normalized_token_compact.is_empty()
+            && normalized_context_compact.contains(&normalized_token_compact))
 }
 
 fn classify_adapter_error(err: &AdapterError) -> (&'static str, &'static str) {
@@ -2300,6 +2304,15 @@ mod tests {
         };
         assert_eq!(
             classify_adapter_error(&proof_missing_with_punctuation),
+            ("ERR_M2V2_PROOF_MISSING", "proof_missing")
+        );
+
+        let proof_missing_compact = AdapterError {
+            kind: AdapterErrorKind::NonRetriable,
+            context: "teeReceiptMissingProviderRequestId".to_string(),
+        };
+        assert_eq!(
+            classify_adapter_error(&proof_missing_compact),
             ("ERR_M2V2_PROOF_MISSING", "proof_missing")
         );
 
