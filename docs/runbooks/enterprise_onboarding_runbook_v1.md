@@ -48,13 +48,13 @@
 - 冻结本次接入环境凭据。
 - 标记接入状态为 `reverted` 并附根因标签。
 - 根因标签建议使用稳定枚举（示例）：`schema_drift` / `auth_scope_mismatch` / `policy_conflict`。
-- 记录可复放的回滚命令模板（必须携带 `--root-cause-tag` 与 `--change-ticket-id`），示例：
-  - `trnm-onboard rollback --org-id <org_id> --env <env> --change-ticket-id <change_ticket_id> --root-cause-tag <root_cause_tag>`
+- 记录可复放的回滚命令模板（必须携带 `--root-cause-tag`、`--change-ticket-id` 与 `--operator-id`），示例：
+  - `trnm-onboard rollback --org-id <org_id> --env <env> --change-ticket-id <change_ticket_id> --operator-id <operator_id> --root-cause-tag <root_cause_tag>`
 - 先执行一次 `--dry-run` 预演，确认参数与目标环境一致后再执行真实回滚：
-  - `trnm-onboard rollback --org-id <org_id> --env <env> --change-ticket-id <change_ticket_id> --root-cause-tag <root_cause_tag> --dry-run`
-- 单事件回滚建议追加 `--request-id <request_id>` 形成审计锚点（与 root_cause_tag 一起固化）。
-  - `trnm-onboard rollback --org-id <org_id> --env <env> --change-ticket-id <change_ticket_id> --root-cause-tag <root_cause_tag> --request-id <request_id>`
-  - `trnm-onboard rollback --org-id <org_id> --env <env> --change-ticket-id <change_ticket_id> --root-cause-tag <root_cause_tag> --request-id <request_id> --dry-run`
+  - `trnm-onboard rollback --org-id <org_id> --env <env> --change-ticket-id <change_ticket_id> --operator-id <operator_id> --root-cause-tag <root_cause_tag> --dry-run`
+- 单事件回滚建议追加 `--request-id <request_id>` 形成审计锚点（与 root_cause_tag + operator_id 一起固化）。
+  - `trnm-onboard rollback --org-id <org_id> --env <env> --change-ticket-id <change_ticket_id> --operator-id <operator_id> --root-cause-tag <root_cause_tag> --request-id <request_id>`
+  - `trnm-onboard rollback --org-id <org_id> --env <env> --change-ticket-id <change_ticket_id> --operator-id <operator_id> --root-cause-tag <root_cause_tag> --request-id <request_id> --dry-run`
 - 将最终执行命令与输出日志计算 `sha256` 并写入变更单，作为回滚可复盘锚点。
 
 ## 6. 证据清单（Evidence Checklist）
@@ -68,6 +68,7 @@
 - [ ] 审计包导出文件与 hash（SHA-256 小写 hex，64位）
 - [ ] 回滚演练记录
 - [ ] 回滚命令与输出日志的 sha256 记录
+- [ ] 回滚执行人标识（operator_id）与变更单绑定记录
 - [ ] 回滚根因标签（root_cause_tag）与审计事件 request_id 绑定记录
 - [ ] NTP 时钟偏差检查记录（≤300秒）
 - [ ] 审计事件时间戳格式校验记录（RFC3339 UTC，后缀 `Z`）
