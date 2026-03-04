@@ -2366,6 +2366,16 @@ mod tests {
             "proof_invalid must outrank proof_late to avoid timeout masking malformed proofs"
         );
 
+        let missing_vs_late = AdapterError {
+            kind: AdapterErrorKind::Retriable,
+            context: "missing-provider-request-id timeout overlap".to_string(),
+        };
+        assert_eq!(
+            classify_adapter_error(&missing_vs_late),
+            ("ERR_M2V2_PROOF_MISSING", "proof_missing"),
+            "proof_missing must outrank proof_late when timeout co-occurs with missing receipt ids"
+        );
+
         let degraded_vs_late = AdapterError {
             kind: AdapterErrorKind::Retriable,
             context: "settlement-degraded timeout overlap".to_string(),
