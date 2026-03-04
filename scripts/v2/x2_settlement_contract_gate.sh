@@ -108,6 +108,14 @@ cargo test -p trnm-bridge-poc --test x3_compensation_matrix \
   -- --nocapture
 
 cargo test -p trnm-bridge-poc --test x3_compensation_matrix \
+  x3_prep_stale_pending_degraded_reason_strips_cgj_for_replay_stability \
+  -- --nocapture
+
+cargo test -p trnm-bridge-poc --test x3_compensation_matrix \
+  x3_prep_stale_pending_degraded_reason_strips_invisible_math_operators_for_replay_stability \
+  -- --nocapture
+
+cargo test -p trnm-bridge-poc --test x3_compensation_matrix \
   x3_prep_stale_pending_degraded_reason_collapses_crlf_and_unicode_separators_for_replay_stability \
   -- --nocapture
 
@@ -122,3 +130,17 @@ cargo test -p trnm-bridge-poc --test x3_compensation_matrix \
 cargo test -p trnm-bridge-poc --test x3_compensation_matrix \
   x3_prep_stale_pending_degraded_reason_strips_bidi_isolates_for_replay_stability \
   -- --nocapture
+
+cargo test -p trnm-bridge-poc --test x3_compensation_matrix \
+  x3_prep_stale_pending_degraded_reason_strips_bom_and_word_joiner_for_replay_stability \
+  -- --nocapture
+
+cargo test -p trnm-bridge-poc --test x3_compensation_matrix \
+  x3_prep_stale_pending_degraded_reason_strips_legacy_bidi_isolates_for_replay_stability \
+  -- --nocapture
+
+cargo test -p trnm-bridge-poc --test x3_compensation_matrix \
+  x3_prep_stale_pending_degraded_reason_collapses_figure_and_narrow_nbsp_for_replay_stability \
+  -- --nocapture
+
+echo "[X2][PASS] settlement contract gate"
