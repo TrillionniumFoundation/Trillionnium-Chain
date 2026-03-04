@@ -129,6 +129,20 @@ mod tests {
     }
 
     #[test]
+    fn zk_verifier_rejects_result_hash_mismatch_fail_closed() {
+        let verifier = ZkVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"ZK:{\"task_id\":99,\"worker\":\"worker-zk\",\"proof_type\":\"zk\",\"result_hash\":\"2222222222222222222222222222222222222222222222222222222222222222\",\"proof\":\"...\"}"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("result_hash mismatch")
+        ));
+    }
+
+    #[test]
     fn zk_verifier_rejects_missing_worker_binding_when_worker_is_present() {
         let verifier = ZkVerifier;
         let task = mock_task();
