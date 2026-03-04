@@ -152,10 +152,10 @@ function toIsoFromUnixMs(ts: unknown): string {
   return new Date(Number(num)).toISOString();
 }
 
-function toIsoFromHeight(height: unknown): string {
+function toHeightMarker(height: unknown): string {
   const num = typeof height === "string" ? Number(height) : height;
   if (!Number.isFinite(num)) throw new Error("invalid height");
-  return new Date(Number(num) * 1000).toISOString();
+  return `height:${Math.trunc(Number(num))}`;
 }
 
 export const adaptQueryTask = (payload: unknown): QueryTaskResult => {
@@ -221,6 +221,17 @@ export const adaptQueryEvents = (
     });
   }
 
+  const hasMixedTaskIds = events.some(
+    (event) => String(event.task_id) !== normalizedTaskId,
+  );
+  if (hasMixedTaskIds) {
+    throw normalizeSchemaError({
+      message: "query-events payload contains mixed task ids",
+      requestedTaskId,
+      normalizedTaskId,
+    });
+  }
+
   return {
     taskId: normalizedTaskId,
     events: events.map((event) => {
@@ -274,7 +285,7 @@ export const adaptQueryCapabilityAudit = (
       capability: rpc.data.token.scope,
       granted: entry.action !== "CAPABILITY_REVOKED" && entry.action !== "DID_REVOKED",
       reason: entry.note ?? entry.action,
-      checkedAt: toIsoFromHeight(entry.at_height),
+      checkedAt: toHeightMarker(entry.at_height),
     })),
   };
 };
