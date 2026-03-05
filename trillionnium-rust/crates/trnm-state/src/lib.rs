@@ -18,12 +18,48 @@ pub struct StateStore {
     balances: BTreeMap<String, u128>,
     pending_gov_updates: BTreeMap<String, PendingGovParamUpdate>,
     gov_param_key_index: BTreeMap<String, u64>,
+    pending_resolve_approvals: BTreeMap<u64, PendingResolveApproval>,
+    monetary_state: MonetaryState,
 }
 
 #[derive(Debug, Clone)]
 struct VersionedObject {
     version: u64,
     value: ObjectValue,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct PendingResolveApproval {
+    slash_worker: bool,
+    confirmations: u8,
+    first_approver: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Default)]
+pub struct MonetaryState {
+    pub last_tick_height: u64,
+    pub tick_count: u64,
+    pub total_minted: u128,
+    pub total_burned: u128,
+    pub net_issuance: i128,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct PolicyTickEvent {
+    pub block_height: u64,
+    pub interval_blocks: u64,
+    pub cooldown_blocks: u64,
+    pub minted: u128,
+    pub burned: u128,
+    pub net_delta: i128,
+    pub total_minted: u128,
+    pub total_burned: u128,
+    pub net_issuance: i128,
+    pub tick_count: u64,
+    pub interval_param_version: u64,
+    pub issuance_param_version: u64,
+    pub burn_param_version: u64,
+    pub cooldown_param_version: u64,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -96,6 +132,10 @@ const GOV_ALLOWED_KEYS: &[&str] = &[
     "challenge_success_bounty",
     "resolve_authority",
     "emergency_pause",
+    "monetary_policy_tick_interval_blocks",
+    "monetary_policy_tick_cooldown_blocks",
+    "monetary_base_issuance_per_tick",
+    "monetary_base_burn_per_tick",
 ];
 const GOV_SENSITIVE_KEYS: &[&str] = &[
     "challenge_window_blocks",
@@ -206,34 +246,63 @@ fn validate_gov_param_value(key: &str, value: &str) -> Result<(), String> {
             }
             if trimmed.chars().any(|c| c.is_whitespace()) {
                 return Err(format!(
-                    "invalid governance value for {}: must not contain internal whitespace",
+                    "invalid governance value for {}: must not contain whitespace",
                     key
                 ));
             }
-            if trimmed.eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER) {
-                return Err(format!(
-                    "invalid governance value for {}: placeholder authority is not allowed",
-                    key
-                ));
-            }
-            if trimmed.eq_ignore_ascii_case(RESERVED_SYSTEM_AUTHORITY) {
-                return Err(format!(
-                    "invalid governance value for {}: reserved system authority is not allowed",
-                    key
-                ));
-            }
-            if trimmed.eq_ignore_ascii_case(CHALLENGE_ESCROW_ACCOUNT)
-                || trimmed.eq_ignore_ascii_case(CHALLENGE_FORFEIT_TREASURY_ACCOUNT)
-            {
-                return Err(format!(
-                    "invalid governance value for {}: treasury custody accounts are not allowed",
-                    key
-                ));
+
+            let mut seen_lower = std::collections::BTreeSet::new();
+            for member in trimmed.split(',') {
+                if member.is_empty() {
+                    return Err(format!(
+                        "invalid governance value for {}: empty authority member is not allowed",
+                        key
+                    ));
+                }
+                let member_lower = member.to_ascii_lowercase();
+                if !seen_lower.insert(member_lower.clone()) {
+                    return Err(format!(
+                        "invalid governance value for {}: duplicate authority member '{}' is not allowed",
+                        key, member
+                    ));
+                }
+                if member.eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER) {
+                    return Err(format!(
+                        "invalid governance value for {}: placeholder authority is not allowed",
+                        key
+                    ));
+                }
+                if member.eq_ignore_ascii_case(RESERVED_SYSTEM_AUTHORITY) {
+                    return Err(format!(
+                        "invalid governance value for {}: reserved system authority is not allowed",
+                        key
+                    ));
+                }
+                if member.eq_ignore_ascii_case(CHALLENGE_ESCROW_ACCOUNT)
+                    || member.eq_ignore_ascii_case(CHALLENGE_FORFEIT_TREASURY_ACCOUNT)
+                {
+                    return Err(format!(
+                        "invalid governance value for {}: treasury custody accounts are not allowed",
+                        key
+                    ));
+                }
             }
             Ok(())
         }
         "emergency_pause" => {
             let _ = parse_bool_strict(key, value)?;
+            Ok(())
+        }
+        "monetary_policy_tick_interval_blocks" => {
+            let _ = parse_u64_in_range(key, value, 1, 100_000)?;
+            Ok(())
+        }
+        "monetary_policy_tick_cooldown_blocks" => {
+            let _ = parse_u64_in_range(key, value, 1, 100_000)?;
+            Ok(())
+        }
+        "monetary_base_issuance_per_tick" | "monetary_base_burn_per_tick" => {
+            let _ = parse_u64_in_range(key, value, 0, 1_000_000_000_000)?;
             Ok(())
         }
         _ => Ok(()),
@@ -243,6 +312,40 @@ fn validate_gov_param_value(key: &str, value: &str) -> Result<(), String> {
 impl StateStore {
     pub fn new() -> Self {
         Self::default()
+    }
+
+    pub fn stage_or_confirm_resolve_approval(
+        &mut self,
+        task_id: u64,
+        slash_worker: bool,
+        approver: &str,
+    ) -> Result<bool, String> {
+        let entry =
+            self.pending_resolve_approvals
+                .entry(task_id)
+                .or_insert(PendingResolveApproval {
+                    slash_worker,
+                    confirmations: 0,
+                    first_approver: approver.to_string(),
+                });
+        if entry.slash_worker != slash_worker {
+            return Err("resolve approval decision mismatch".into());
+        }
+        if entry.confirmations > 0 && entry.first_approver == approver {
+            return Err("resolve approval requires distinct approver".into());
+        }
+        entry.confirmations = entry.confirmations.saturating_add(1);
+        Ok(entry.confirmations >= 2)
+    }
+
+    pub fn clear_pending_resolve_approval(&mut self, task_id: u64) {
+        self.pending_resolve_approvals.remove(&task_id);
+    }
+
+    pub fn pending_resolve_approval(&self, task_id: u64) -> Option<(bool, u8)> {
+        self.pending_resolve_approvals
+            .get(&task_id)
+            .map(|entry| (entry.slash_worker, entry.confirmations))
     }
 
     pub fn get_ref(&self, id: u64) -> Option<ObjectRef> {
@@ -720,6 +823,117 @@ impl StateStore {
         Some(self.gov_param_value(key)?.to_string())
     }
 
+    fn gov_param_ref_for_key(&self, key: &str) -> Option<(u64, &GovParamObject)> {
+        let id = self.gov_param_key_index.get(key).copied()?;
+        let object = self.objects.get(&id)?;
+        match &object.value {
+            ObjectValue::GovParam(p) if p.key == key => Some((id, p)),
+            _ => None,
+        }
+    }
+
+    fn monetary_tick_config(&self) -> Option<(u64, u64, u128, u128, u64, u64, u64, u64)> {
+        let (_, interval_param) =
+            self.gov_param_ref_for_key("monetary_policy_tick_interval_blocks")?;
+        let (_, cooldown_param) =
+            self.gov_param_ref_for_key("monetary_policy_tick_cooldown_blocks")?;
+        let (_, issuance_param) = self.gov_param_ref_for_key("monetary_base_issuance_per_tick")?;
+        let (_, burn_param) = self.gov_param_ref_for_key("monetary_base_burn_per_tick")?;
+
+        let interval = interval_param.value.parse::<u64>().ok()?;
+        let cooldown = cooldown_param.value.parse::<u64>().ok()?;
+        let minted = issuance_param.value.parse::<u128>().ok()?;
+        let burned = burn_param.value.parse::<u128>().ok()?;
+
+        if !(1..=100_000).contains(&interval)
+            || !(1..=100_000).contains(&cooldown)
+            || minted > 1_000_000_000_000u128
+            || burned > 1_000_000_000_000u128
+        {
+            return None;
+        }
+
+        Some((
+            interval,
+            cooldown,
+            minted,
+            burned,
+            interval_param.version,
+            issuance_param.version,
+            burn_param.version,
+            cooldown_param.version,
+        ))
+    }
+
+    pub fn monetary_state(&self) -> &MonetaryState {
+        &self.monetary_state
+    }
+
+    pub fn should_trigger_policy_tick(&self, block_height: u64) -> bool {
+        let Some((interval, cooldown, _, _, _, _, _, _)) = self.monetary_tick_config() else {
+            // Fail-closed: missing/invalid monetary params disable policy tick.
+            return false;
+        };
+        block_height > 0
+            && block_height % interval == 0
+            && self
+                .monetary_state
+                .last_tick_height
+                .saturating_add(cooldown)
+                <= block_height
+            && self.monetary_state.last_tick_height < block_height
+    }
+
+    pub fn policy_tick(&mut self, block_height: u64) -> Option<PolicyTickEvent> {
+        let (
+            interval_blocks,
+            cooldown_blocks,
+            minted,
+            burned,
+            interval_param_version,
+            issuance_param_version,
+            burn_param_version,
+            cooldown_param_version,
+        ) = self.monetary_tick_config()?;
+
+        if !(block_height > 0
+            && block_height % interval_blocks == 0
+            && self
+                .monetary_state
+                .last_tick_height
+                .saturating_add(cooldown_blocks)
+                <= block_height
+            && self.monetary_state.last_tick_height < block_height)
+        {
+            return None;
+        }
+        let net_delta = minted as i128 - burned as i128;
+
+        self.monetary_state.last_tick_height = block_height;
+        self.monetary_state.tick_count = self.monetary_state.tick_count.saturating_add(1);
+        self.monetary_state.total_minted = self.monetary_state.total_minted.saturating_add(minted);
+        self.monetary_state.total_burned = self.monetary_state.total_burned.saturating_add(burned);
+        self.monetary_state.net_issuance =
+            self.monetary_state.net_issuance.saturating_add(net_delta);
+
+        Some(PolicyTickEvent {
+            block_height,
+            interval_blocks,
+            cooldown_blocks,
+            minted,
+            burned,
+            net_delta,
+            total_minted: self.monetary_state.total_minted,
+            total_burned: self.monetary_state.total_burned,
+            net_issuance: self.monetary_state.net_issuance,
+            tick_count: self.monetary_state.tick_count,
+            interval_param_version,
+            issuance_param_version,
+            burn_param_version,
+            cooldown_param_version,
+        })
+    }
+
     pub fn set_balance(&mut self, address: impl Into<String>, amount: u128) {
         self.balances.insert(address.into(), amount);
     }
@@ -887,6 +1101,18 @@ impl StateStore {
             hasher.update(pending.value.as_bytes());
             hasher.update(pending.activate_at_height.to_le_bytes());
         }
+        for (task_id, pending) in &self.pending_resolve_approvals {
+            hasher.update(b"resolve_pending");
+            hasher.update(task_id.to_le_bytes());
+            hasher.update([pending.slash_worker as u8]);
+            hasher.update([pending.confirmations]);
+        }
+        hasher.update(b"monetary_state");
+        hasher.update(self.monetary_state.last_tick_height.to_le_bytes());
+        hasher.update(self.monetary_state.tick_count.to_le_bytes());
+        hasher.update(self.monetary_state.total_minted.to_le_bytes());
+        hasher.update(self.monetary_state.total_burned.to_le_bytes());
+        hasher.update(self.monetary_state.net_issuance.to_le_bytes());
         hasher.finalize().into()
     }
 }
@@ -2666,6 +2892,10 @@ mod tests {
             ("challenge_success_bounty", "-1"),
             ("resolve_authority", "   "),
             ("emergency_pause", "TRUE"),
+            ("monetary_policy_tick_interval_blocks", "0"),
+            ("monetary_policy_tick_cooldown_blocks", "0"),
+            ("monetary_base_issuance_per_tick", "1000000000001"),
+            ("monetary_base_burn_per_tick", "1000000000001"),
         ];
 
         assert_eq!(
@@ -2714,12 +2944,22 @@ mod tests {
             "authority ",
             "authority team",
             "authority\u{3000}team",
+            "authority,",
+            ",authority",
+            "authority,,authority2",
+            "authority,authority",
+            "authority,Authority",
+            "authority, authority2",
         ]
         .iter()
         .enumerate()
         {
             let err = st
-                .set_gov_param_unchecked(97_100 + i as u64, "resolve_authority".into(), (*bad_value).into())
+                .set_gov_param_unchecked(
+                    97_100 + i as u64,
+                    "resolve_authority".into(),
+                    (*bad_value).into(),
+                )
                 .expect_err("reserved/malformed resolve_authority must be rejected");
             assert!(
                 err.contains("invalid governance value for resolve_authority"),
@@ -2728,6 +2968,21 @@ mod tests {
                 err
             );
         }
+    }
+
+    #[test]
+    fn governance_accepts_comma_separated_resolve_authority_members() {
+        let mut st = StateStore::new();
+        st.set_gov_param_unchecked(
+            97_500,
+            "resolve_authority".into(),
+            "authority,authority2".into(),
+        )
+        .expect("comma-separated resolve authority members should be accepted");
+        assert_eq!(
+            st.gov_param_string("resolve_authority"),
+            Some("authority,authority2".to_string())
+        );
     }
 
     #[test]
@@ -3025,5 +3280,125 @@ mod tests {
             .expect("checkpoint");
         assert_eq!(got.height, 1);
         assert_eq!(got.state_root_hex, "r1");
+    }
+
+    #[test]
+    fn policy_tick_triggers_on_interval_and_updates_monetary_state() {
+        let mut st = StateStore::new();
+        st.set_gov_param_unchecked(
+            9_001,
+            "monetary_policy_tick_interval_blocks".into(),
+            "3".into(),
+        )
+        .expect("set interval");
+        st.set_gov_param_unchecked(
+            9_002,
+            "monetary_policy_tick_cooldown_blocks".into(),
+            "3".into(),
+        )
+        .expect("set cooldown");
+        st.set_gov_param_unchecked(9_003, "monetary_base_issuance_per_tick".into(), "15".into())
+            .expect("set issuance");
+        st.set_gov_param_unchecked(9_004, "monetary_base_burn_per_tick".into(), "4".into())
+            .expect("set burn");
+
+        assert!(st.policy_tick(2).is_none());
+        let e1 = st.policy_tick(3).expect("tick at h=3");
+        assert_eq!(e1.net_delta, 11);
+        assert_eq!(e1.tick_count, 1);
+        assert_eq!(e1.block_height, 3);
+        assert_eq!(e1.cooldown_blocks, 3);
+        assert_eq!(e1.interval_param_version, 1);
+        assert_eq!(e1.cooldown_param_version, 1);
+        assert!(
+            st.policy_tick(3).is_none(),
+            "same height must be idempotent"
+        );
+
+        let e2 = st.policy_tick(6).expect("tick at h=6");
+        assert_eq!(e2.tick_count, 2);
+        assert_eq!(e2.total_minted, 30);
+        assert_eq!(e2.total_burned, 8);
+        assert_eq!(e2.net_issuance, 22);
+    }
+
+    #[test]
+    fn governance_param_schema_rejects_invalid_monetary_policy_bounds() {
+        let mut st = StateStore::new();
+        let err_interval = st
+            .set_gov_param_unchecked(
+                9_010,
+                "monetary_policy_tick_interval_blocks".into(),
+                "0".into(),
+            )
+            .unwrap_err();
+        assert!(err_interval.contains("out of range"));
+
+        let err_cooldown = st
+            .set_gov_param_unchecked(
+                9_011,
+                "monetary_policy_tick_cooldown_blocks".into(),
+                "0".into(),
+            )
+            .unwrap_err();
+        assert!(err_cooldown.contains("out of range"));
+
+        let err_issuance = st
+            .set_gov_param_unchecked(
+                9_012,
+                "monetary_base_issuance_per_tick".into(),
+                "1000000000001".into(),
+            )
+            .unwrap_err();
+        assert!(err_issuance.contains("out of range"));
+
+        let err_burn = st
+            .set_gov_param_unchecked(9_013, "monetary_base_burn_per_tick".into(), "-1".into())
+            .unwrap_err();
+        assert!(err_burn.contains("expected u64"));
+    }
+
+    #[test]
+    fn policy_tick_fail_closed_when_monetary_params_incomplete() {
+        let mut st = StateStore::new();
+        st.set_gov_param_unchecked(
+            9_020,
+            "monetary_policy_tick_interval_blocks".into(),
+            "2".into(),
+        )
+        .unwrap();
+        st.set_gov_param_unchecked(9_021, "monetary_base_issuance_per_tick".into(), "1".into())
+            .unwrap();
+        st.set_gov_param_unchecked(9_022, "monetary_base_burn_per_tick".into(), "0".into())
+            .unwrap();
+
+        assert!(!st.should_trigger_policy_tick(2));
+        assert!(st.policy_tick(2).is_none());
+        assert_eq!(st.monetary_state().tick_count, 0);
+    }
+
+    #[test]
+    fn policy_tick_cooldown_throttles_repeated_schedule_points() {
+        let mut st = StateStore::new();
+        st.set_gov_param_unchecked(
+            9_030,
+            "monetary_policy_tick_interval_blocks".into(),
+            "2".into(),
+        )
+        .unwrap();
+        st.set_gov_param_unchecked(
+            9_031,
+            "monetary_policy_tick_cooldown_blocks".into(),
+            "4".into(),
+        )
+        .unwrap();
+        st.set_gov_param_unchecked(9_032, "monetary_base_issuance_per_tick".into(), "5".into())
+            .unwrap();
+        st.set_gov_param_unchecked(9_033, "monetary_base_burn_per_tick".into(), "1".into())
+            .unwrap();
+
+        assert!(st.policy_tick(2).is_some());
+        assert!(st.policy_tick(4).is_none(), "cooldown should block h=4");
+        assert!(st.policy_tick(6).is_some(), "cooldown should allow h=6");
     }
 }
