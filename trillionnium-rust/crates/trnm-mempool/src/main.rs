@@ -610,13 +610,15 @@ mod tests {
     #[test]
     fn metrics_counters_saturate_instead_of_overflowing() {
         let mut gate = AdmissionGate::new(1);
+        gate.metrics.accepted = usize::MAX;
         gate.metrics.duplicates = usize::MAX;
         gate.metrics.backpressured = usize::MAX;
         gate.metrics.backpressure_duplicates = usize::MAX;
         gate.metrics.fairness_deferrals = usize::MAX;
 
-        // Duplicate path saturates duplicates.
+        // Accepted path saturates accepted.
         assert_eq!(gate.admit(1), AdmitOutcome::Accepted);
+        // Duplicate path saturates duplicates.
         assert_eq!(gate.admit(1), AdmitOutcome::Duplicate);
 
         // Backpressure + duplicate(backpressured) path saturates both counters.
@@ -628,9 +630,11 @@ mod tests {
         assert_eq!(gate.admit(3), AdmitOutcome::Backpressured);
 
         let m = gate.metrics();
+        assert_eq!(m.accepted, usize::MAX);
         assert_eq!(m.duplicates, usize::MAX);
         assert_eq!(m.backpressured, usize::MAX);
         assert_eq!(m.backpressure_duplicates, usize::MAX);
         assert_eq!(m.fairness_deferrals, usize::MAX);
     }
 }
+
