@@ -31,4 +31,5 @@
 - CI 总检查：`npm run ci:check`
 - CI 开启 E2E：`CI_RUN_E2E=1 npm run ci:check`
 - 发布前检查：`npm run release:preflight`
+- 发布准备（版本/changelog/预检串联）：`npm run release:ready`
 - 生产运行：`npm run build && npm run start`

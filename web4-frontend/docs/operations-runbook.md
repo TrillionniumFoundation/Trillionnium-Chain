@@ -4,9 +4,11 @@
 
 ```bash
 npm ci
-npm run release:preflight
+npm run release:ready
 npm run start
 ```
+
+> `release:ready` 会校验 `package.json` 当前版本是否已写入 `CHANGELOG.md`，随后自动执行 `release:preflight`。
 
 ## 回滚最小路径
 
@@ -32,9 +34,9 @@ npm run start
 
 ### 2) CI 通过但 E2E 未执行
 
-`ci:check` 默认跳过 E2E，属预期。
+`ci-check.sh` 本身默认跳过 E2E；仓库 workflow 正常情况下会通过 `CI_RUN_E2E=1` 强制开启。
 
-如需强制执行：
+如需本地复现 CI 行为：
 
 ```bash
 CI_RUN_E2E=1 npm run ci:check

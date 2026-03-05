@@ -21,7 +21,7 @@ npm run ci:check
 4. （可选）`npm run --if-present test:e2e`
 5. `npm run build`
 
-默认跳过 E2E；设置环境变量后启用：
+`ci-check.sh` 默认跳过 E2E；设置环境变量后启用。当前仓库的 GitHub Actions `web4-frontend-ci` 已在 workflow 中默认注入 `CI_RUN_E2E=1`，因此 CI 会强制执行 E2E：
 
 ```bash
 CI_RUN_E2E=1 npm run ci:check

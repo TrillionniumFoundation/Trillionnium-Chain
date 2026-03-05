@@ -14,7 +14,8 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "ci:check": "bash ./scripts/ci-check.sh",
-    "release:preflight": "bash ./scripts/release-preflight.sh"
+    "release:preflight": "bash ./scripts/release-preflight.sh",
+    "release:ready": "bash ./scripts/release-ready.sh"
   },
   "dependencies": {
     "next": "16.1.6",

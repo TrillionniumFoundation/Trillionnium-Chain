@@ -23,9 +23,22 @@ npm run release:preflight
 - [ ] GitHub Actions `web4-frontend-ci` 绿灯
 - [ ] PR 中仅修改前端路径时，前端门禁自动触发
 - [ ] `main` 分支 push 也会自动触发同一套门禁
+- [ ] CI 默认强制 E2E（`CI_RUN_E2E=1`），本地默认不强制
+
+## 发布自动化最小链路（版本 / Changelog / 预检）
+
+1. 更新版本号（`package.json` 的 `version`）。
+2. 在 `CHANGELOG.md` 添加同版本条目（如 `## [0.1.1] - YYYY-MM-DD`）。
+3. 执行：
+
+```bash
+npm run release:ready
+```
+
+`release:ready` 会先校验 `CHANGELOG.md` 存在对应版本，再执行 `release:preflight`。
 
 ## 发布前人工复核（轻量）
 
-- [ ] `docs/frontend-api-contract.md` 与当前 adapter/schema 变更一致
+- [ ] `docs/api-contract.md` 与当前 adapter/schema 变更一致
 - [ ] 如改动 `lib/api-contract/**`，确认 `tests/unit/api-contract-adapters.test.ts` 覆盖关键分支
 - [ ] 如涉及页面渲染，至少本地打开首页做一次 smoke check

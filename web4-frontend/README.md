@@ -22,18 +22,19 @@ npm run dev
 - `npm run test:unit`：Vitest 单元/组件测试
 - `npm run test:contract`：API 合约适配层测试
 - `npm run test:e2e`：Playwright E2E
-- `npm run ci:check`：CI 同步检查（lint + typecheck + test + build；默认不跑 e2e）
-- `CI_RUN_E2E=1 npm run ci:check`：CI 中开启 E2E
+- `npm run ci:check`：统一门禁检查（默认不跑 e2e）
+- `CI_RUN_E2E=1 npm run ci:check`：显式开启 E2E（CI workflow 默认已开启）
 - `npm run release:preflight`：发布前检查（含 contract + build，输出报告）
+- `npm run release:ready`：发布准备检查（版本号 ↔ CHANGELOG ↔ preflight）
 
 ## 发布（最小路径）
 
 ```bash
 npm ci
-npm run release:preflight
+npm run release:ready
 npm run start
 ```
 
-> `release:preflight` 已包含 lint/typecheck/test/test:contract/build。
+> `release:ready` 会先校验当前版本在 `CHANGELOG.md` 中有对应条目，再执行 `release:preflight`（lint/typecheck/test/test:contract/build）。
 
 详细说明见：`docs/operations-runbook.md`
