@@ -108,6 +108,8 @@ const GOV_SENSITIVE_KEYS: &[&str] = &[
 ];
 const DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER: &str = "governance.resolve_authority";
 const RESERVED_SYSTEM_AUTHORITY: &str = "system";
+const CHALLENGE_ESCROW_ACCOUNT: &str = "treasury.challenge_escrow";
+const CHALLENGE_FORFEIT_TREASURY_ACCOUNT: &str = "treasury.challenge_forfeits";
 
 fn is_sensitive_gov_param(key: &str) -> bool {
     GOV_SENSITIVE_KEYS.contains(&key)
@@ -217,6 +219,14 @@ fn validate_gov_param_value(key: &str, value: &str) -> Result<(), String> {
             if trimmed.eq_ignore_ascii_case(RESERVED_SYSTEM_AUTHORITY) {
                 return Err(format!(
                     "invalid governance value for {}: reserved system authority is not allowed",
+                    key
+                ));
+            }
+            if trimmed.eq_ignore_ascii_case(CHALLENGE_ESCROW_ACCOUNT)
+                || trimmed.eq_ignore_ascii_case(CHALLENGE_FORFEIT_TREASURY_ACCOUNT)
+            {
+                return Err(format!(
+                    "invalid governance value for {}: treasury custody accounts are not allowed",
                     key
                 ));
             }
@@ -2669,6 +2679,10 @@ mod tests {
             "Governance.Resolve_Authority",
             RESERVED_SYSTEM_AUTHORITY,
             "System",
+            CHALLENGE_ESCROW_ACCOUNT,
+            "Treasury.Challenge_Escrow",
+            CHALLENGE_FORFEIT_TREASURY_ACCOUNT,
+            "TREASURY.CHALLENGE_FORFEITS",
             "authority ",
             "authority team",
             "authority\u{3000}team",
