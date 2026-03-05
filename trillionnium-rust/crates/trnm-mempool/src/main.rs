@@ -95,8 +95,15 @@ impl AdmissionGate {
         // This guards restored/corrupted state from over-deferring free ingress.
         let retry_budget = self.backpressured_ids.len().min(self.capacity);
         self.retry_reservations = self.retry_reservations.min(retry_budget);
-        if self.retry_reservations == 0 || self.backpressured_ids.is_empty() {
-            self.last_fairness_deferred = None;
+        if self.retry_reservations == 0 {
+            if self.backpressured_ids.is_empty() {
+                self.last_fairness_deferred = None;
+            } else if self.last_fairness_deferred == Some(tx_id) {
+                // Preserve idempotency for immediate repeats of a just-deferred fresh id,
+                // even when only a single retry reservation was available.
+                self.metrics.duplicates = self.metrics.duplicates.saturating_add(1);
+                return AdmitOutcome::Duplicate;
+            }
         }
 
         if self.queue.len() >= self.capacity {
@@ -419,6 +426,29 @@ mod tests {
 
         let m = gate.metrics();
         assert_eq!(m.fairness_deferrals, 1);
+    }
+
+    #[test]
+    fn repeated_single_slot_fairness_deferral_stays_idempotent() {
+        let mut gate = AdmissionGate::new(2);
+        assert_eq!(gate.admit(1), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(2), AdmitOutcome::Accepted);
+
+        // One known retry + one freed slot => a single fairness reservation.
+        assert_eq!(gate.admit(9), AdmitOutcome::Backpressured);
+        assert_eq!(gate.pop_ready(), Some(1));
+
+        // First fresh ingress is deferred; immediate repeat must dedupe instead of
+        // being accepted and stealing the reserved slot from retry traffic.
+        assert_eq!(gate.admit(10), AdmitOutcome::Backpressured);
+        assert_eq!(gate.admit(10), AdmitOutcome::Duplicate);
+
+        // The reserved slot remains available for known retry.
+        assert_eq!(gate.admit(9), AdmitOutcome::Accepted);
+
+        let m = gate.metrics();
+        assert_eq!(m.fairness_deferrals, 1);
+        assert_eq!(m.duplicates, 1);
     }
 
     #[test]
