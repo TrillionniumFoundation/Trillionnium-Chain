@@ -259,9 +259,13 @@ fn find_token_field_with_case(body: &str, field: &str, lowercase_value: bool) ->
         while i < bytes.len() && bytes[i].is_ascii_whitespace() {
             i += 1;
         }
-        if i < bytes.len() && (bytes[i] == b'"' || bytes[i] == b'\'') {
+        let quote = if i < bytes.len() && (bytes[i] == b'"' || bytes[i] == b'\'') {
+            let q = bytes[i];
             i += 1;
-        }
+            Some(q)
+        } else {
+            None
+        };
 
         let start = i;
         while i < bytes.len()
@@ -270,11 +274,18 @@ fn find_token_field_with_case(body: &str, field: &str, lowercase_value: bool) ->
             i += 1;
         }
         if i > start {
+            if let Some(q) = quote {
+                if i >= bytes.len() || bytes[i] != q {
+                    cursor = idx + 1;
+                    continue;
+                }
+                i += 1;
+            }
             if i < bytes.len() && !is_value_terminator(bytes[i]) {
                 cursor = idx + 1;
                 continue;
             }
-            let token = body[start..i].trim();
+            let token = &body[start..(if quote.is_some() { i - 1 } else { i })];
             return Some(if lowercase_value {
                 token.to_ascii_lowercase()
             } else {
@@ -457,6 +468,18 @@ mod tests {
     #[test]
     fn find_token_field_rejects_trailing_non_delimiter_bytes() {
         let body = "proof_type=tee%2Cfraud";
+        assert_eq!(find_token_field(body, "proof_type"), None);
+    }
+
+    #[test]
+    fn find_token_field_rejects_quoted_value_with_trailing_space_before_quote() {
+        let body = r#"worker=\"worker1 \""#;
+        assert_eq!(find_token_field(body, "worker"), None);
+    }
+
+    #[test]
+    fn find_token_field_rejects_unclosed_quoted_value() {
+        let body = r#"proof_type=\"tee"#;
         assert_eq!(find_token_field(body, "proof_type"), None);
     }
 
