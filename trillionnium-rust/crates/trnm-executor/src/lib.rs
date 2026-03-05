@@ -341,6 +341,7 @@ fn build_parallel_groups_aggressive_profile(
     let mut stage_rw_hits = 0usize;
     let scan_window = aggr_scan_window();
     let skip_empty_stage_checks = aggr_skip_empty_stage_checks();
+    let rr_enabled = aggr_scan_round_robin_enabled();
     let mut rr_cursor = aggr_scan_round_robin_seed();
 
     for tx in ordered {
@@ -368,7 +369,6 @@ fn build_parallel_groups_aggressive_profile(
         let mut placed = false;
         let mut scanned = 0usize;
         let candidate_span = groups.len().saturating_sub(min_group);
-        let rr_enabled = aggr_scan_round_robin_enabled();
         let start_offset = if rr_enabled && candidate_span > 1 {
             rr_cursor % candidate_span
         } else {
