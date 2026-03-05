@@ -1,36 +1,39 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# web4-frontend
 
-## Getting Started
+Web4 前端项目（Next.js 16 + React 19）。
 
-First, run the development server:
+> 文档统一入口：**[docs/README.md](./docs/README.md)**
+
+## 快速开始（最小可执行）
 
 ```bash
+npm ci
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+打开 <http://localhost:3000>
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 常用命令（统一）
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `npm run dev`：本地开发
+- `npm run lint`：ESLint
+- `npm run typecheck`：TypeScript 类型检查
+- `npm run test`：默认测试入口（当前映射 `test:unit`）
+- `npm run test:unit`：Vitest 单元/组件测试
+- `npm run test:contract`：API 合约适配层测试
+- `npm run test:e2e`：Playwright E2E
+- `npm run ci:check`：CI 同步检查（lint + typecheck + test + build；默认不跑 e2e）
+- `CI_RUN_E2E=1 npm run ci:check`：CI 中开启 E2E
+- `npm run release:preflight`：发布前检查（含 contract + build，输出报告）
 
-## Learn More
+## 发布（最小路径）
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm ci
+npm run release:preflight
+npm run start
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+> `release:preflight` 已包含 lint/typecheck/test/test:contract/build。
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+详细说明见：`docs/operations-runbook.md`
