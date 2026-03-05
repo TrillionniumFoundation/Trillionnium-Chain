@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Stabilize locale/time-sensitive snapshots and logs across developer/CI hosts.
+export TZ=UTC
+export LANG=C.UTF-8
+export LC_ALL=C.UTF-8
+
 npm run lint
 npm run typecheck
 npm run test
