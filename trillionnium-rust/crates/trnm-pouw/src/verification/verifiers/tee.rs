@@ -210,6 +210,20 @@ mod tests {
     }
 
     #[test]
+    fn tee_verifier_rejects_duplicate_worker_binding_fail_closed() {
+        let verifier = TeeVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,worker=worker1,quote=abc"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("duplicate worker binding")
+        ));
+    }
+
+    #[test]
     fn tee_verifier_accepts_legacy_receipt_proof_type_alias() {
         let verifier = TeeVerifier;
         let task = mock_task();
