@@ -106,6 +106,8 @@ const GOV_SENSITIVE_KEYS: &[&str] = &[
     "challenge_min_bond_worker_stake_bps",
     "resolve_authority",
 ];
+const DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER: &str = "governance.resolve_authority";
+const RESERVED_SYSTEM_AUTHORITY: &str = "system";
 
 fn is_sensitive_gov_param(key: &str) -> bool {
     GOV_SENSITIVE_KEYS.contains(&key)
@@ -188,9 +190,27 @@ fn validate_gov_param_value(key: &str, value: &str) -> Result<(), String> {
                     key
                 ));
             }
+            if trimmed != value {
+                return Err(format!(
+                    "invalid governance value for {}: must not contain surrounding whitespace",
+                    key
+                ));
+            }
             if trimmed.len() > 128 {
                 return Err(format!(
                     "invalid governance value for {}: exceeds max length 128",
+                    key
+                ));
+            }
+            if trimmed.eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER) {
+                return Err(format!(
+                    "invalid governance value for {}: placeholder authority is not allowed",
+                    key
+                ));
+            }
+            if trimmed.eq_ignore_ascii_case(RESERVED_SYSTEM_AUTHORITY) {
+                return Err(format!(
+                    "invalid governance value for {}: reserved system authority is not allowed",
                     key
                 ));
             }
@@ -2629,6 +2649,32 @@ mod tests {
                 err.contains("invalid governance value"),
                 "expected schema rejection for key={}, got: {}",
                 key,
+                err
+            );
+        }
+    }
+
+    #[test]
+    fn governance_resolve_authority_rejects_reserved_or_placeholder_values() {
+        let mut st = StateStore::new();
+
+        for (i, bad_value) in [
+            DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER,
+            "Governance.Resolve_Authority",
+            RESERVED_SYSTEM_AUTHORITY,
+            "System",
+            "authority ",
+        ]
+        .iter()
+        .enumerate()
+        {
+            let err = st
+                .set_gov_param_unchecked(97_100 + i as u64, "resolve_authority".into(), (*bad_value).into())
+                .expect_err("reserved/malformed resolve_authority must be rejected");
+            assert!(
+                err.contains("invalid governance value for resolve_authority"),
+                "unexpected error for value {:?}: {}",
+                bad_value,
                 err
             );
         }
