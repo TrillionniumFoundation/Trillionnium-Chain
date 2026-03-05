@@ -11,6 +11,7 @@ use std::{
     time::{Duration, Instant, SystemTime, UNIX_EPOCH},
 };
 use trnm_executor::build_parallel_groups;
+use trnm_mempool::{AdmitOutcome, IngressClass, LaneAdmissionGate};
 use trnm_pouw::{
     apply_accept_task, apply_accept_task_at_height, apply_challenge, apply_challenge_at_height,
     apply_commit_result, apply_commit_result_at_height, apply_create_task, apply_resolve,
@@ -80,6 +81,15 @@ struct Args {
     /// Run timeout scanner every N committed blocks (1 = every block)
     #[arg(long, default_value_t = 1)]
     pouw_timeout_scan_every_blocks: u64,
+    /// P2 scaffold switch: enable DA/ordering decoupled path (default false keeps legacy path)
+    #[arg(long, default_value_t = false)]
+    enable_da_ordering_decouple: bool,
+    /// Enable RL advisor in shadow mode (suggest only, never execute)
+    #[arg(long, default_value_t = false)]
+    rl_advisor_shadow: bool,
+    /// Maximum suggested tx ids printed by shadow advisor
+    #[arg(long, default_value_t = 4)]
+    rl_advisor_shadow_topk: usize,
 }
 
 #[derive(Debug, Deserialize)]
@@ -216,6 +226,107 @@ struct WalMetaList {
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 struct CheckpointMetaList {
     checkpoints: Vec<CheckpointMeta>,
+}
+
+/// DA layer output consumed by ordering/consensus.
+#[derive(Debug, Clone)]
+struct DaBatch {
+    tx_ids: Vec<u64>,
+}
+
+/// Ordering result passed into commit loop.
+#[derive(Debug, Clone)]
+struct OrderingDecision {
+    ordered_ids: Vec<u64>,
+    rejected: u64,
+}
+
+#[derive(Debug, Clone)]
+struct RlAdviceContext {
+    height: u64,
+    ordered_ids: Vec<u64>,
+}
+
+#[derive(Debug, Clone)]
+struct RlAdvice {
+    suggested_ids: Vec<u64>,
+    reason: &'static str,
+}
+
+trait DaProvider {
+    fn batch_from_picked(&self, picked: &[MockTx]) -> DaBatch;
+}
+
+struct LegacyMempoolDaProvider;
+
+impl DaProvider for LegacyMempoolDaProvider {
+    fn batch_from_picked(&self, picked: &[MockTx]) -> DaBatch {
+        DaBatch {
+            tx_ids: (1..=(picked.len() as u64)).collect(),
+        }
+    }
+}
+
+trait OrderingEngine {
+    fn decide(
+        &self,
+        snapshot: &StateStore,
+        picked: &[MockTx],
+        da_batch: &DaBatch,
+        workers: usize,
+    ) -> OrderingDecision;
+}
+
+struct PreexecOrderingEngine;
+
+impl OrderingEngine for PreexecOrderingEngine {
+    fn decide(
+        &self,
+        snapshot: &StateStore,
+        picked: &[MockTx],
+        da_batch: &DaBatch,
+        workers: usize,
+    ) -> OrderingDecision {
+        let (ordered_ids, rejected) =
+            pre_execute_group_parallel(snapshot, da_batch.tx_ids.clone(), picked, workers);
+        OrderingDecision {
+            ordered_ids,
+            rejected,
+        }
+    }
+}
+
+trait RlAdvisor {
+    fn advise(&self, ctx: &RlAdviceContext) -> Option<RlAdvice>;
+}
+
+struct DisabledRlAdvisor;
+
+impl RlAdvisor for DisabledRlAdvisor {
+    fn advise(&self, _ctx: &RlAdviceContext) -> Option<RlAdvice> {
+        None
+    }
+}
+
+/// Shadow-only advisor: emits recommendation logs but never mutates commit ordering.
+struct ShadowOnlyRlAdvisor {
+    topk: usize,
+}
+
+impl RlAdvisor for ShadowOnlyRlAdvisor {
+    fn advise(&self, ctx: &RlAdviceContext) -> Option<RlAdvice> {
+        if ctx.ordered_ids.is_empty() {
+            return None;
+        }
+        let mut suggested = ctx.ordered_ids.clone();
+        suggested.reverse();
+        suggested.truncate(self.topk.max(1));
+        let _ = ctx.height;
+        Some(RlAdvice {
+            suggested_ids: suggested,
+            reason: "shadow_reverse_baseline",
+        })
+    }
 }
 
 fn wal_file(wal_dir: &Path) -> PathBuf {
@@ -1218,6 +1329,44 @@ fn event_type_of(tx: &MockTx) -> &'static str {
     }
 }
 
+fn is_critical_tx(tx: &MockTx) -> bool {
+    matches!(tx, MockTx::Challenge { .. } | MockTx::Resolve { .. })
+}
+
+fn pick_txs_with_critical_guard(
+    mempool: &mut VecDeque<MockTx>,
+    txs_per_block: usize,
+) -> Vec<MockTx> {
+    if txs_per_block == 0 || mempool.is_empty() {
+        return Vec::new();
+    }
+
+    let mut lane = LaneAdmissionGate::new(txs_per_block, 1);
+    let mut selected = vec![false; mempool.len()];
+    for (idx, tx) in mempool.iter().enumerate() {
+        let class = if is_critical_tx(tx) {
+            IngressClass::Critical
+        } else {
+            IngressClass::Normal
+        };
+        if matches!(lane.admit(idx as u64, class), AdmitOutcome::Accepted) {
+            selected[idx] = true;
+        }
+    }
+
+    let mut picked = Vec::with_capacity(txs_per_block);
+    let mut remain = VecDeque::with_capacity(mempool.len());
+    for (idx, tx) in mempool.drain(..).enumerate() {
+        if selected[idx] && picked.len() < txs_per_block {
+            picked.push(tx);
+        } else {
+            remain.push_back(tx);
+        }
+    }
+    *mempool = remain;
+    picked
+}
+
 fn actor_of(st: &StateStore, tx: &MockTx) -> String {
     match tx {
         MockTx::CreateTask { creator, .. } => creator.clone(),
@@ -1790,6 +1939,39 @@ fn pre_execute_group_parallel(
     (ok_ids, rejected)
 }
 
+fn decide_order_for_commit(
+    state: &StateStore,
+    picked: &[MockTx],
+    workers: usize,
+    enable_da_ordering_decouple: bool,
+) -> OrderingDecision {
+    if !enable_da_ordering_decouple {
+        let plan: Vec<Tx> = picked
+            .iter()
+            .enumerate()
+            .map(|(i, tx)| read_write_decl(state, tx, (i as u64) + 1))
+            .collect();
+        let groups = build_parallel_groups(&plan);
+        let mut ordered = Vec::new();
+        let mut rejected = 0u64;
+        for g in groups {
+            let group_ids: Vec<u64> = g.iter().map(|t| t.id).collect();
+            let (ids, rej) = pre_execute_group_parallel(state, group_ids, picked, workers);
+            ordered.extend(ids);
+            rejected += rej;
+        }
+        return OrderingDecision {
+            ordered_ids: ordered,
+            rejected,
+        };
+    }
+
+    let da = LegacyMempoolDaProvider;
+    let ordering = PreexecOrderingEngine;
+    let da_batch = da.batch_from_picked(picked);
+    ordering.decide(state, picked, &da_batch, workers)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -1838,6 +2020,81 @@ mod tests {
 
         let task_ids: Vec<u64> = mempool.iter().map(task_id_of).collect();
         assert_eq!(task_ids, vec![3001]);
+    }
+
+    #[test]
+    fn da_ordering_decouple_switch_off_and_on_keep_same_commit_order_on_happy_path() {
+        let state = StateStore::new();
+        let picked = vec![
+            MockTx::CreateTask {
+                task_id: 4001,
+                creator: "alice".into(),
+                bounty: 10,
+            },
+            MockTx::CreateTask {
+                task_id: 4002,
+                creator: "bob".into(),
+                bounty: 20,
+            },
+        ];
+
+        let legacy = decide_order_for_commit(&state, &picked, 2, false);
+        let decoupled = decide_order_for_commit(&state, &picked, 2, true);
+
+        assert_eq!(legacy.ordered_ids, vec![1, 2]);
+        assert_eq!(decoupled.ordered_ids, legacy.ordered_ids);
+        assert_eq!(legacy.rejected, 0);
+        assert_eq!(decoupled.rejected, 0);
+    }
+
+    #[test]
+    fn rl_shadow_advisor_only_suggests_and_does_not_mutate_baseline_order() {
+        let baseline = vec![1, 2, 3, 4];
+        let advisor = ShadowOnlyRlAdvisor { topk: 2 };
+        let advice = advisor
+            .advise(&RlAdviceContext {
+                height: 7,
+                ordered_ids: baseline.clone(),
+            })
+            .expect("advice");
+
+        assert_eq!(baseline, vec![1, 2, 3, 4]);
+        assert_eq!(advice.suggested_ids, vec![4, 3]);
+        assert_eq!(advice.reason, "shadow_reverse_baseline");
+    }
+
+    #[test]
+    fn critical_txs_are_selected_even_when_normal_queue_is_long() {
+        let mut mempool = VecDeque::from(vec![
+            MockTx::CreateTask {
+                task_id: 1,
+                creator: "alice".into(),
+                bounty: 10,
+            },
+            MockTx::AcceptTask {
+                task_id: 1,
+                worker: "w1".into(),
+            },
+            MockTx::Challenge {
+                task_id: 1,
+                challenger: "c1".into(),
+                bond: 10,
+            },
+            MockTx::Commit {
+                task_id: 1,
+                worker: "w1".into(),
+                committed_hash: [3u8; 32],
+            },
+            MockTx::Resolve {
+                task_id: 1,
+                slash_worker: false,
+                resolver: "gov".into(),
+            },
+        ]);
+
+        let picked = pick_txs_with_critical_guard(&mut mempool, 2);
+        assert_eq!(picked.len(), 2);
+        assert!(picked.iter().any(is_critical_tx));
     }
 
     #[test]
@@ -3391,7 +3648,7 @@ fn main() -> Result<()> {
     );
     println!("[node] parallel_workers={}", args.parallel_workers);
     println!(
-        "[node] bft validators={} byzantine={} max_rounds={} fault_rounds={} missed_threshold={} penalty_rounds={} rc_backoff_ms={} rc_backoff_cap_ms={} wal_dir={} checkpoint_interval={} timeout_scan={} timeout_scan_every_blocks={}",
+        "[node] bft validators={} byzantine={} max_rounds={} fault_rounds={} missed_threshold={} penalty_rounds={} rc_backoff_ms={} rc_backoff_cap_ms={} wal_dir={} checkpoint_interval={} timeout_scan={} timeout_scan_every_blocks={} da_ordering_decouple={} rl_shadow={} rl_shadow_topk={}",
         args.validators,
         args.byzantine,
         args.bft_max_rounds,
@@ -3403,7 +3660,10 @@ fn main() -> Result<()> {
         args.bft_wal_dir,
         args.bft_checkpoint_interval,
         args.pouw_timeout_scan,
-        args.pouw_timeout_scan_every_blocks
+        args.pouw_timeout_scan_every_blocks,
+        args.enable_da_ordering_decouple,
+        args.rl_advisor_shadow,
+        args.rl_advisor_shadow_topk
     );
 
     let wal_dir = PathBuf::from(&args.bft_wal_dir);
@@ -3460,12 +3720,7 @@ fn main() -> Result<()> {
     loop {
         let block_start = Instant::now();
         let txs_per_block = args.txs_per_block.max(1);
-        let mut picked: Vec<MockTx> = Vec::new();
-        for _ in 0..txs_per_block {
-            if let Some(tx) = mempool.pop_front() {
-                picked.push(tx);
-            }
-        }
+        let mut picked = pick_txs_with_critical_guard(&mut mempool, txs_per_block);
 
         let proposal_hash = hash32_hex(format!("h:{}:txs:{}", height, picked.len()).as_bytes());
         let bft = simulate_bft_height(
@@ -3545,88 +3800,109 @@ fn main() -> Result<()> {
         );
         bft_committed_heights += 1;
 
-        let plan: Vec<Tx> = picked
-            .iter()
-            .enumerate()
-            .map(|(i, tx)| read_write_decl(&state, tx, (i as u64) + 1))
-            .collect();
-        let groups = build_parallel_groups(&plan);
-        let group_count = groups.len();
-
         let mut applied = 0u64;
-        for g in groups {
-            let group_ids: Vec<u64> = g.iter().map(|t| t.id).collect();
-            let (ordered_ids, rejected) =
-                pre_execute_group_parallel(&state, group_ids, &picked, args.parallel_workers);
-            preexec_reject_total += rejected;
+        let ordering_decision = decide_order_for_commit(
+            &state,
+            &picked,
+            args.parallel_workers,
+            args.enable_da_ordering_decouple,
+        );
+        preexec_reject_total += ordering_decision.rejected;
+        let group_count = if args.enable_da_ordering_decouple {
+            usize::from(!ordering_decision.ordered_ids.is_empty())
+        } else {
+            let plan: Vec<Tx> = picked
+                .iter()
+                .enumerate()
+                .map(|(i, tx)| read_write_decl(&state, tx, (i as u64) + 1))
+                .collect();
+            build_parallel_groups(&plan).len()
+        };
 
-            for id in ordered_ids {
-                let idx = (id - 1) as usize;
-                let tx = picked[idx].clone();
-                let task_id = task_id_of(&tx);
-                let from_status = status_name(&state, task_id);
+        let rl_advisor: Box<dyn RlAdvisor> = if args.rl_advisor_shadow {
+            Box::new(ShadowOnlyRlAdvisor {
+                topk: args.rl_advisor_shadow_topk,
+            })
+        } else {
+            Box::new(DisabledRlAdvisor)
+        };
+        if let Some(advice) = rl_advisor.advise(&RlAdviceContext {
+            height,
+            ordered_ids: ordering_decision.ordered_ids.clone(),
+        }) {
+            println!(
+                "[rl-shadow] height={} enabled=true reason={} baseline_ids={:?} suggested_ids={:?} applied=false",
+                height,
+                advice.reason,
+                ordering_decision.ordered_ids,
+                advice.suggested_ids
+            );
+        }
 
-                if is_rejected_by_emergency_pause(state.is_emergency_paused(), &tx) {
-                    println!(
-                        "[tx] rejected_by_pause height={} tx_id={} event_type={} emergency_pause=true",
-                        height,
-                        id,
-                        event_type_of(&tx)
-                    );
-                    continue;
+        for id in ordering_decision.ordered_ids {
+            let idx = (id - 1) as usize;
+            let tx = picked[idx].clone();
+            let task_id = task_id_of(&tx);
+            let from_status = status_name(&state, task_id);
+
+            if is_rejected_by_emergency_pause(state.is_emergency_paused(), &tx) {
+                println!(
+                    "[tx] rejected_by_pause height={} tx_id={} event_type={} emergency_pause=true",
+                    height,
+                    id,
+                    event_type_of(&tx)
+                );
+                continue;
+            }
+
+            let before = state.clone();
+            if let Err(e) = apply_one(&mut state, tx.clone(), height) {
+                let err_kind = classify_apply_error(&e);
+                let err_text = e.to_string();
+                state = before; // rollback on failed commit
+                apply_error_total += 1;
+                rollback_total += 1;
+                match err_kind {
+                    "version_conflict" => apply_error_version_conflict_total += 1,
+                    "preexec_conflict_miss" => apply_error_preexec_conflict_miss_total += 1,
+                    "invalid_transition" => apply_error_invalid_transition_total += 1,
+                    "deadline_exceeded" => apply_error_deadline_exceeded_total += 1,
+                    _ => apply_error_semantic_fail_total += 1,
                 }
-
-                let before = state.clone();
-                if let Err(e) = apply_one(&mut state, tx.clone(), height) {
-                    let err_kind = classify_apply_error(&e);
-                    let err_text = e.to_string();
-                    state = before; // rollback on failed commit
-                    apply_error_total += 1;
-                    rollback_total += 1;
-                    match err_kind {
-                        "version_conflict" => apply_error_version_conflict_total += 1,
-                        "preexec_conflict_miss" => apply_error_preexec_conflict_miss_total += 1,
-                        "invalid_transition" => apply_error_invalid_transition_total += 1,
-                        "deadline_exceeded" => apply_error_deadline_exceeded_total += 1,
-                        _ => apply_error_semantic_fail_total += 1,
-                    }
-                    println!(
-                        "[tx] apply_error height={} tx_id={} err_kind={} err={} rollback=true",
-                        height, id, err_kind, err_text
-                    );
-                } else {
-                    applied += 1;
-                    known_task_ids.insert(task_id);
-                    let to_status = status_name(&state, task_id);
-                    let root = hex::encode(state.state_root());
-                    let challenger_account: Option<String> = match &tx {
-                        MockTx::Challenge { challenger, .. } => Some(challenger.clone()),
-                        MockTx::Resolve { .. } => {
-                            before.get_task(task_id).and_then(|t| t.challenger)
-                        }
-                        _ => None,
-                    };
-                    let (treasury_delta, challenger_delta) = balance_deltas_for_transition(
-                        &before,
-                        &state,
-                        task_id,
-                        challenger_account.as_deref(),
-                    );
-                    let signer = verified_signer_of(&before, &tx);
-                    emit_event(
-                        &state,
-                        &tx,
-                        &signer,
-                        id,
-                        height,
-                        &from_status,
-                        &to_status,
-                        &root,
-                        &treasury_delta,
-                        challenger_delta.as_ref(),
-                        challenger_account.as_deref(),
-                    );
-                }
+                println!(
+                    "[tx] apply_error height={} tx_id={} err_kind={} err={} rollback=true",
+                    height, id, err_kind, err_text
+                );
+            } else {
+                applied += 1;
+                known_task_ids.insert(task_id);
+                let to_status = status_name(&state, task_id);
+                let root = hex::encode(state.state_root());
+                let challenger_account: Option<String> = match &tx {
+                    MockTx::Challenge { challenger, .. } => Some(challenger.clone()),
+                    MockTx::Resolve { .. } => before.get_task(task_id).and_then(|t| t.challenger),
+                    _ => None,
+                };
+                let (treasury_delta, challenger_delta) = balance_deltas_for_transition(
+                    &before,
+                    &state,
+                    task_id,
+                    challenger_account.as_deref(),
+                );
+                let signer = verified_signer_of(&before, &tx);
+                emit_event(
+                    &state,
+                    &tx,
+                    &signer,
+                    id,
+                    height,
+                    &from_status,
+                    &to_status,
+                    &root,
+                    &treasury_delta,
+                    challenger_delta.as_ref(),
+                    challenger_account.as_deref(),
+                );
             }
         }
 
