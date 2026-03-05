@@ -202,6 +202,12 @@ fn validate_gov_param_value(key: &str, value: &str) -> Result<(), String> {
                     key
                 ));
             }
+            if trimmed.chars().any(|c| c.is_whitespace()) {
+                return Err(format!(
+                    "invalid governance value for {}: must not contain internal whitespace",
+                    key
+                ));
+            }
             if trimmed.eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER) {
                 return Err(format!(
                     "invalid governance value for {}: placeholder authority is not allowed",
@@ -2664,6 +2670,8 @@ mod tests {
             RESERVED_SYSTEM_AUTHORITY,
             "System",
             "authority ",
+            "authority team",
+            "authority\u{3000}team",
         ]
         .iter()
         .enumerate()
