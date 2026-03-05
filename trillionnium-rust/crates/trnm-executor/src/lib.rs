@@ -764,6 +764,7 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::sync::{Mutex, MutexGuard, OnceLock};
 
     fn o(id: u64) -> ObjectRef {
         ObjectRef { id, version: 1 }
@@ -871,8 +872,17 @@ mod tests {
         }
     }
 
+    fn env_lock() -> MutexGuard<'static, ()> {
+        static ENV_LOCK: OnceLock<Mutex<()>> = OnceLock::new();
+        ENV_LOCK
+            .get_or_init(|| Mutex::new(()))
+            .lock()
+            .expect("env test lock poisoned")
+    }
+
     #[test]
     fn aggressive_round_robin_cursor_avoids_even_id_bias() {
+        let _env = env_lock();
         let _deep = EnvGuard::set("TRNM_AGGR_DEEP_SCAN", "1");
         let _rr = EnvGuard::set("TRNM_AGGR_SCAN_ROUND_ROBIN", "1");
         let _window = EnvGuard::set("TRNM_AGGR_SCAN_WINDOW", "1");
@@ -909,6 +919,7 @@ mod tests {
 
     #[test]
     fn aggressive_round_robin_seed_rotates_initial_probe_start() {
+        let _env = env_lock();
         let _deep = EnvGuard::set("TRNM_AGGR_DEEP_SCAN", "1");
         let _rr = EnvGuard::set("TRNM_AGGR_SCAN_ROUND_ROBIN", "1");
         let _window = EnvGuard::set("TRNM_AGGR_SCAN_WINDOW", "1");
@@ -925,6 +936,37 @@ mod tests {
 
         assert!(groups.len() >= 2);
         assert!(groups[1].iter().any(|t| t.id == 10));
+    }
+
+    #[test]
+    fn aggressive_respects_skip_empty_stage_checks_toggle() {
+        let _env = env_lock();
+        let _deep = EnvGuard::set("TRNM_AGGR_DEEP_SCAN", "1");
+        let _rr = EnvGuard::set("TRNM_AGGR_SCAN_ROUND_ROBIN", "0");
+        let _window = EnvGuard::set("TRNM_AGGR_SCAN_WINDOW", "2");
+        let _skip_empty = EnvGuard::set("TRNM_AGGR_SKIP_EMPTY_STAGE_CHECKS", "0");
+
+        let txs = vec![
+            tx(1, vec![], vec![o(7)]), // group 0
+            tx(3, vec![], vec![o(7)]), // forced to group 1
+            tx(10, vec![], vec![]),    // empty access set, scans existing groups first
+        ];
+
+        let (_groups, profile) =
+            build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::AggressiveGreedy);
+
+        assert!(
+            profile.stage_ww_checks > 0,
+            "disable-skip toggle must keep ww stage checks observable"
+        );
+        assert!(
+            profile.stage_wr_checks > 0,
+            "disable-skip toggle must keep wr stage checks observable"
+        );
+        assert!(
+            profile.stage_rw_checks > 0,
+            "disable-skip toggle must keep rw stage checks observable"
+        );
     }
 
     struct EnvGuard {
