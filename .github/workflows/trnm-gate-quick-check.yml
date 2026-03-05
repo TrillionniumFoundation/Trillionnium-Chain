@@ -486,6 +486,10 @@ jobs:
         run: |
           ./scripts/v2/e3_enterprise_runbook_root_cause_tag_format_test.sh
 
+      - name: Auto regression: e3-enterprise-runbook-rollback-request-id-anchor-test
+        run: |
+          ./scripts/v2/e3_enterprise_runbook_rollback_request_id_anchor_test.sh
+
       - name: Upload quick gate summary
         if: always()
         uses: actions/upload-artifact@v4
