@@ -116,7 +116,14 @@ impl AdmissionGate {
             return AdmitOutcome::Backpressured;
         }
 
-        self.backpressured_ids.remove(&tx_id);
+        if self.backpressured_ids.remove(&tx_id)
+            && self.backpressured_fifo.len() > self.capacity.saturating_mul(4)
+        {
+            // Under sustained retry drain with little/no new ingress, stale FIFO markers can
+            // accumulate without hitting remember_backpressured() compaction. Compact eagerly
+            // once a retry is accepted to keep retry-memory bookkeeping bounded.
+            self.compact_backpressured_fifo();
+        }
         if self.retry_reservations > 0 {
             self.retry_reservations -= 1;
         }
@@ -408,5 +415,25 @@ mod tests {
 
         let m = gate.metrics();
         assert_eq!(m.fairness_deferrals, 2);
+    }
+
+    #[test]
+    fn accepted_retry_compacts_stale_backpressure_fifo_without_new_ingress() {
+        let mut gate = AdmissionGate::new(2);
+        assert_eq!(gate.admit(1), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(2), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(10), AdmitOutcome::Backpressured);
+        assert_eq!(gate.admit(11), AdmitOutcome::Backpressured);
+
+        // Simulate stale marker buildup from prior churn; only 10/11 remain active retries.
+        gate.backpressured_fifo
+            .extend([10, 11, 10, 11, 10, 11, 10, 11, 10, 11]);
+        assert!(gate.backpressured_fifo.len() > gate.capacity.saturating_mul(4));
+
+        assert_eq!(gate.pop_ready(), Some(1));
+        assert_eq!(gate.admit(10), AdmitOutcome::Accepted);
+
+        // Retry admission should compact stale markers even without new backpressured inserts.
+        assert!(gate.backpressured_fifo.len() <= gate.capacity.saturating_mul(4));
     }
 }
