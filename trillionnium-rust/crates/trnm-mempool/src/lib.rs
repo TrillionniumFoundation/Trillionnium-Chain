@@ -22,7 +22,7 @@ pub struct AdmissionGate {
 impl AdmissionGate {
     pub fn new(capacity: usize) -> Self {
         Self {
-            capacity: capacity.max(1),
+            capacity,
             queue: VecDeque::new(),
             seen: HashSet::new(),
         }
@@ -58,7 +58,7 @@ impl LaneAdmissionGate {
     pub fn new(total_capacity: usize, critical_reserve: usize) -> Self {
         let total = total_capacity.max(1);
         let reserve = critical_reserve.min(total).max(1);
-        let normal_cap = total.saturating_sub(reserve).max(1);
+        let normal_cap = total.saturating_sub(reserve);
         Self {
             normal: AdmissionGate::new(normal_cap),
             critical: AdmissionGate::new(reserve),
@@ -183,6 +183,15 @@ mod tests {
         assert_eq!(g.admit(101, IngressClass::Normal), AdmitOutcome::Backpressured);
 
         assert_eq!(g.pop_ready(), Some(100));
-        assert_eq!(g.admit(101, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(101, IngressClass::Normal), AdmitOutcome::Backpressured);
+    }
+
+    #[test]
+    fn full_critical_reserve_prevents_normal_from_stealing_single_slot() {
+        let mut g = LaneAdmissionGate::new(1, 1);
+
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(g.admit(2, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.pop_ready(), Some(2));
     }
 }
