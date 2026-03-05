@@ -116,9 +116,8 @@ impl AdmissionGate {
             return AdmitOutcome::Backpressured;
         }
 
-        if self.backpressured_ids.remove(&tx_id)
-            && self.backpressured_fifo.len() > self.capacity.saturating_mul(4)
-        {
+        let accepted_was_retry = self.backpressured_ids.remove(&tx_id);
+        if accepted_was_retry && self.backpressured_fifo.len() > self.capacity.saturating_mul(4) {
             // Under sustained retry drain with little/no new ingress, stale FIFO markers can
             // accumulate without hitting remember_backpressured() compaction. Compact eagerly
             // once a retry is accepted to keep retry-memory bookkeeping bounded.
@@ -126,6 +125,11 @@ impl AdmissionGate {
         }
         if self.retry_reservations > 0 {
             self.retry_reservations -= 1;
+        }
+        if accepted_was_retry && self.backpressured_ids.is_empty() {
+            // As soon as all known retries are drained, release any stale fairness reservations
+            // so newly arriving free-ingress traffic is not pointlessly deferred.
+            self.retry_reservations = 0;
         }
         self.queue.push_back(tx_id);
         self.seen.insert(tx_id);
@@ -143,10 +147,7 @@ impl AdmissionGate {
         if retry_budget == 0 {
             self.retry_reservations = 0;
         } else {
-            self.retry_reservations = self
-                .retry_reservations
-                .saturating_add(1)
-                .min(retry_budget);
+            self.retry_reservations = self.retry_reservations.saturating_add(1).min(retry_budget);
         }
         // Keep retry memory across partial drain so repeated retries stay idempotent
         // when the queue quickly re-saturates before the original sender retries.
@@ -435,5 +436,25 @@ mod tests {
 
         // Retry admission should compact stale markers even without new backpressured inserts.
         assert!(gate.backpressured_fifo.len() <= gate.capacity.saturating_mul(4));
+    }
+
+    #[test]
+    fn draining_last_known_retry_clears_stale_fairness_reservations() {
+        let mut gate = AdmissionGate::new(3);
+        assert_eq!(gate.admit(1), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(2), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(3), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(9), AdmitOutcome::Backpressured);
+
+        // Build up reservations by freeing slots before retry arrives.
+        assert_eq!(gate.pop_ready(), Some(1));
+        assert_eq!(gate.pop_ready(), Some(2));
+        assert_eq!(gate.admit(9), AdmitOutcome::Accepted);
+
+        // No retry ids remain; fresh ingress should not be deferred.
+        assert_eq!(gate.admit(10), AdmitOutcome::Accepted);
+
+        let m = gate.metrics();
+        assert_eq!(m.fairness_deferrals, 0);
     }
 }
