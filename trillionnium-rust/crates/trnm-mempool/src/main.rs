@@ -28,9 +28,25 @@ pub struct AdmissionGate {
 }
 
 impl AdmissionGate {
+    fn compact_backpressured_fifo(&mut self) {
+        if self.backpressured_fifo.len() <= self.capacity.saturating_mul(4) {
+            return;
+        }
+
+        let mut rebuilt = VecDeque::with_capacity(self.backpressured_ids.len());
+        let mut seen = HashSet::with_capacity(self.backpressured_ids.len());
+        while let Some(candidate) = self.backpressured_fifo.pop_front() {
+            if self.backpressured_ids.contains(&candidate) && seen.insert(candidate) {
+                rebuilt.push_back(candidate);
+            }
+        }
+        self.backpressured_fifo = rebuilt;
+    }
+
     fn remember_backpressured(&mut self, tx_id: u64) {
         if self.backpressured_ids.insert(tx_id) {
             self.backpressured_fifo.push_back(tx_id);
+            self.compact_backpressured_fifo();
             while self.backpressured_ids.len() > self.capacity {
                 let mut evicted = false;
                 while let Some(candidate) = self.backpressured_fifo.pop_front() {
@@ -350,5 +366,21 @@ mod tests {
 
         let m = gate.metrics();
         assert_eq!(m.fairness_deferrals, 1);
+    }
+
+    #[test]
+    fn stale_retry_fifo_is_compacted_under_high_churn() {
+        let mut gate = AdmissionGate::new(2);
+        assert_eq!(gate.admit(1), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(2), AdmitOutcome::Accepted);
+
+        for i in 0..24u64 {
+            let retry_id = 100 + i;
+            assert_eq!(gate.admit(retry_id), AdmitOutcome::Backpressured);
+        }
+
+        // Retry set is capacity-bounded and fifo gets compacted during churn.
+        assert!(gate.backpressured_ids.len() <= 2);
+        assert!(gate.backpressured_fifo.len() <= gate.capacity.saturating_mul(4));
     }
 }
