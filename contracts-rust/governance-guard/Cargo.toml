@@ -1,0 +1,12 @@
+[package]
+name = "governance-guard"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "GovernanceGuard Rust MVP state machine (proposal/timelock/execute + emergency pause/unpause)"
+
+[lib]
+name = "governance_guard"
+path = "src/lib.rs"
+
+[dependencies]
