@@ -22,7 +22,7 @@ ok=0
 for i in $(seq 1 "$RUNS"); do
   log="$RUN_DIR/run-${i}.log"
   if [[ -n "$TIMEOUT_BIN" ]]; then
-    if ! "$TIMEOUT_BIN" "$RUN_TIMEOUT_SEC" \
+    if "$TIMEOUT_BIN" "$RUN_TIMEOUT_SEC" \
       cargo run -q -p trnm-node -- \
       --config configs/node1.toml \
       --block-ms 1 \
@@ -30,6 +30,8 @@ for i in $(seq 1 "$RUNS"); do
       --demo-tasks 2 \
       --demo-keys 2 \
       --parallel-workers 4 > "$log"; then
+      :
+    else
       rc=$?
       if [[ "$rc" -eq 124 ]]; then
         echo "flaky check timed out at run=$i after ${RUN_TIMEOUT_SEC}s log=$log" >&2
