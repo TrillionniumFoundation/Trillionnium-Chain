@@ -974,6 +974,15 @@ pub fn apply_resolve_at_height(
         .as_deref()
         .map(|challenger| challenger.eq_ignore_ascii_case(signer_trimmed))
         .unwrap_or(false);
+    let authority_includes_challenger = task
+        .challenger
+        .as_deref()
+        .map(|challenger| {
+            authority_members
+                .iter()
+                .any(|member| member.eq_ignore_ascii_case(challenger))
+        })
+        .unwrap_or(false);
     if resolver_trimmed.is_empty()
         || resolver_trimmed != resolver
         || signer_trimmed.is_empty()
@@ -993,6 +1002,7 @@ pub fn apply_resolve_at_height(
         || uses_unconfigured_placeholder_authority
         || resolver_is_assigned_worker
         || resolver_is_challenger
+        || authority_includes_challenger
     {
         return Err(PouwError::Unauthorized);
     }
@@ -3288,6 +3298,39 @@ mod tests {
         assert_eq!(st.balance_of("challenger"), 90);
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
         assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
+    }
+
+    #[test]
+    fn resolve_rejects_authority_set_that_includes_challenger_member_without_escrow_mutation() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        set_resolve_authority(&mut st, "authority,challenger");
+
+        let r1 = apply_create_task(&mut st, 894_2, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(894_2, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+        let r5 =
+            apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
+
+        let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+        let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+        let before_challenger = st.balance_of("challenger");
+
+        let err = apply_resolve(&mut st, r5, true, "authority".into(), "authority".into())
+            .expect_err("resolve authority set must reject challenger membership even via multisig list");
+        assert!(matches!(err, PouwError::Unauthorized));
+
+        let task = st.get_task(894_2).unwrap();
+        assert_eq!(task.status, TaskStatus::Challenged);
+        assert_eq!(task.challenge_bond_forfeited, None);
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
+        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
+        assert_eq!(st.balance_of("challenger"), before_challenger);
     }
 
     #[test]
