@@ -96,19 +96,33 @@ fn find_numeric_field(body: &str, field: &str) -> Option<u64> {
             continue;
         }
         i += 1;
-        while i < bytes.len() && (bytes[i].is_ascii_whitespace() || bytes[i] == b'"') {
+        while i < bytes.len() && bytes[i].is_ascii_whitespace() {
             i += 1;
         }
+        let quote = if i < bytes.len() && (bytes[i] == b'"' || bytes[i] == b'\'') {
+            let q = bytes[i];
+            i += 1;
+            Some(q)
+        } else {
+            None
+        };
         let start = i;
         while i < bytes.len() && bytes[i].is_ascii_digit() {
             i += 1;
         }
         if i > start {
+            if let Some(q) = quote {
+                if i >= bytes.len() || bytes[i] != q {
+                    cursor = idx + 1;
+                    continue;
+                }
+                i += 1;
+            }
             if i < bytes.len() && !is_value_terminator(bytes[i]) {
                 cursor = idx + 1;
                 continue;
             }
-            if let Ok(v) = body[start..i].parse::<u64>() {
+            if let Ok(v) = body[start..(if quote.is_some() { i - 1 } else { i })].parse::<u64>() {
                 return Some(v);
             }
         }
@@ -144,19 +158,36 @@ fn has_duplicate_numeric_field(body: &str, field: &str) -> bool {
             continue;
         }
         i += 1;
-        while i < bytes.len() && (bytes[i].is_ascii_whitespace() || bytes[i] == b'"') {
+        while i < bytes.len() && bytes[i].is_ascii_whitespace() {
             i += 1;
         }
+        let quote = if i < bytes.len() && (bytes[i] == b'"' || bytes[i] == b'\'') {
+            let q = bytes[i];
+            i += 1;
+            Some(q)
+        } else {
+            None
+        };
         let start = i;
         while i < bytes.len() && bytes[i].is_ascii_digit() {
             i += 1;
         }
         if i > start {
+            if let Some(q) = quote {
+                if i >= bytes.len() || bytes[i] != q {
+                    cursor = idx + 1;
+                    continue;
+                }
+                i += 1;
+            }
             if i < bytes.len() && !is_value_terminator(bytes[i]) {
                 cursor = idx + 1;
                 continue;
             }
-            if body[start..i].parse::<u64>().is_ok() {
+            if body[start..(if quote.is_some() { i - 1 } else { i })]
+                .parse::<u64>()
+                .is_ok()
+            {
                 seen += 1;
                 if seen > 1 {
                     return true;
@@ -444,6 +475,12 @@ mod tests {
     #[test]
     fn find_numeric_field_rejects_trailing_non_delimiter_bytes() {
         let body = r#"{"task_id":7oops,"worker":"w1"}"#;
+        assert_eq!(find_numeric_field(body, "task_id"), None);
+    }
+
+    #[test]
+    fn find_numeric_field_rejects_unclosed_quoted_value() {
+        let body = r#"{"task_id":"7,"worker":"w1"}"#;
         assert_eq!(find_numeric_field(body, "task_id"), None);
     }
 
