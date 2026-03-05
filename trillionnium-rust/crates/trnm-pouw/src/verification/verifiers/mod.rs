@@ -372,6 +372,12 @@ pub(super) fn verify_bound_envelope(
         ));
     }
 
+    if has_duplicate_token_field(&body_text, "worker") {
+        return VerificationResult::Invalid(format!(
+            "Invalid {kind_name} envelope: duplicate worker binding"
+        ));
+    }
+
     if let Some(expected_worker) = task.worker.as_deref() {
         if expected_worker.trim().is_empty() || expected_worker.trim() != expected_worker {
             return VerificationResult::Invalid(format!(
@@ -395,12 +401,12 @@ pub(super) fn verify_bound_envelope(
                 ))
             }
         }
+    }
 
-        if has_duplicate_token_field(&body_text, "worker") {
-            return VerificationResult::Invalid(format!(
-                "Invalid {kind_name} envelope: duplicate worker binding"
-            ));
-        }
+    if has_duplicate_token_field(&body_text, "result_hash") {
+        return VerificationResult::Invalid(format!(
+            "Invalid {kind_name} envelope: duplicate result_hash binding"
+        ));
     }
 
     if let Some(expected_result_hash) = task.result_hash {
@@ -422,12 +428,6 @@ pub(super) fn verify_bound_envelope(
                     "Invalid {kind_name} envelope: missing result_hash binding"
                 ))
             }
-        }
-
-        if has_duplicate_token_field(&body_text, "result_hash") {
-            return VerificationResult::Invalid(format!(
-                "Invalid {kind_name} envelope: duplicate result_hash binding"
-            ));
         }
     }
 
@@ -951,6 +951,78 @@ mod tests {
                 "ZK receipt"
             ),
             VerificationResult::Invalid(msg) if msg.contains("missing result_hash binding")
+        ));
+    }
+
+    #[test]
+    fn verify_bound_envelope_rejects_duplicate_worker_binding_without_worker_context_fail_closed() {
+        let task = TaskObject {
+            task_id: 42,
+            creator: "alice".into(),
+            bounty: 1,
+            status: TaskStatus::Committed,
+            proof_type: ProofType::Fraud,
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        };
+
+        assert!(matches!(
+            verify_bound_envelope(
+                &task,
+                b"FRAUD:task_id=42,proof_type=fraud,worker=w1,worker=w2,proof=ok",
+                b"FRAUD:",
+                "Fraud proof"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("duplicate worker binding")
+        ));
+    }
+
+    #[test]
+    fn verify_bound_envelope_rejects_duplicate_result_hash_binding_without_hash_context_fail_closed() {
+        let task = TaskObject {
+            task_id: 42,
+            creator: "alice".into(),
+            bounty: 1,
+            status: TaskStatus::Committed,
+            proof_type: ProofType::Fraud,
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        };
+
+        assert!(matches!(
+            verify_bound_envelope(
+                &task,
+                b"FRAUD:task_id=42,proof_type=fraud,result_hash=aa,result_hash=bb,proof=ok",
+                b"FRAUD:",
+                "Fraud proof"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("duplicate result_hash binding")
         ));
     }
 }
