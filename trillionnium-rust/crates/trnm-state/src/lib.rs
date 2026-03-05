@@ -1625,6 +1625,34 @@ mod tests {
     }
 
     #[test]
+    fn governance_resolve_authority_checked_path_rejects_key_id_shadowing_without_state_mutation() {
+        let mut st = StateStore::new();
+        st.set_gov_param_unchecked(7314, "resolve_authority".into(), "resolver-v1".into())
+            .expect("initial resolve_authority write should succeed");
+
+        let err = st
+            .set_gov_param(
+                14_000,
+                9001,
+                "resolve_authority".into(),
+                "resolver-v2".into(),
+            )
+            .expect_err("checked key-id shadowing for resolve_authority must be rejected");
+        assert!(
+            err.contains("governance key id mismatch for resolve_authority"),
+            "{err}"
+        );
+        assert_eq!(
+            st.gov_param_string("resolve_authority"),
+            Some("resolver-v1".into())
+        );
+        assert!(
+            st.pending_gov_update("resolve_authority").is_none(),
+            "rejected key-id shadowing must not enqueue pending updates"
+        );
+    }
+
+    #[test]
     fn emergency_pause_does_not_mutate_pending_resolve_authority_update() {
         let mut st = StateStore::new();
         st.set_gov_param_unchecked(7313, "resolve_authority".into(), "resolver-v1".into())
