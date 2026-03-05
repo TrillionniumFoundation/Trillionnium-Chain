@@ -930,7 +930,11 @@ pub fn apply_resolve_at_height(
             || authority_trimmed.eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY);
     // Minimal multi-party control: assigned worker cannot self-authorize terminal
     // challenge resolution for their own disputed task.
-    let resolver_is_assigned_worker = task.worker.as_deref() == Some(signer_trimmed);
+    let resolver_is_assigned_worker = task
+        .worker
+        .as_deref()
+        .map(|worker| worker.eq_ignore_ascii_case(signer_trimmed))
+        .unwrap_or(false);
     if resolver_trimmed.is_empty()
         || resolver_trimmed != resolver
         || signer_trimmed.is_empty()
@@ -3212,6 +3216,37 @@ mod tests {
         assert!(matches!(err, PouwError::Unauthorized));
 
         let task = st.get_task(8_959).unwrap();
+        assert_eq!(task.status, TaskStatus::Challenged);
+        assert_eq!(task.challenge_bond_forfeited, None);
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
+        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
+        assert_eq!(st.balance_of("challenger"), 90);
+    }
+
+    #[test]
+    fn resolve_rejects_worker_authority_case_drift_without_escrow_mutation() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        set_resolve_authority(&mut st, "Worker1");
+
+        let r1 = apply_create_task(&mut st, 8_960, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(8_960, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+        let r5 =
+            apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
+
+        let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+        let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+        let err = apply_resolve(&mut st, r5, true, "Worker1".into(), "Worker1".into())
+            .expect_err("assigned worker must not self-authorize challenged resolution via case drift");
+        assert!(matches!(err, PouwError::Unauthorized));
+
+        let task = st.get_task(8_960).unwrap();
         assert_eq!(task.status, TaskStatus::Challenged);
         assert_eq!(task.challenge_bond_forfeited, None);
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
