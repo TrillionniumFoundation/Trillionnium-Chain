@@ -28,10 +28,8 @@ pub fn build_proof_adapter(name: &str) -> Result<Box<dyn ProofAdapter>, String> 
             Ok(Box::new(TeeReceiptProofAdapter))
         }
         "zk-receipt" | "zk_receipt" | "zk-receipt-v1" | "zk_receipt_v1" | "zk-proof"
-        | "zk_proof" | "zk-proof-v1" | "zk_proof_v1" | "zkreceipt" | "zkproof"
-        | "zkproofv1" | "zkreceiptv1" => {
-            Ok(Box::new(ZkReceiptProofAdapter))
-        }
+        | "zk_proof" | "zk-proof-v1" | "zk_proof_v1" | "zkreceipt" | "zkproof" | "zkproofv1"
+        | "zkreceiptv1" => Ok(Box::new(ZkReceiptProofAdapter)),
         other => Err(format!("unsupported-proof-adapter:{other}")),
     }
 }
@@ -234,6 +232,8 @@ impl ProofAdapter for ZkReceiptProofAdapter {
                     || normalized == "zk_receipt_v1"
                     || normalized == "zk-proof"
                     || normalized == "zk_proof"
+                    || normalized == "zk-proof-v1"
+                    || normalized == "zk_proof_v1"
                     || normalized == "zkreceipt"
                     || normalized == "zkreceiptv1"
                     || normalized == "zkproof"
@@ -464,6 +464,16 @@ mod tests {
         assert_eq!(
             zk_proof_underscore_alias.provider_request_id.as_deref(),
             Some("pr-zk-2b")
+        );
+
+        let zk_proof_v1_alias = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-zk-2ba\",\"adapter\":\"ZK_PROOF_V1\"}",
+            )
+            .expect("zk proof v1 underscore alias should parse");
+        assert_eq!(
+            zk_proof_v1_alias.provider_request_id.as_deref(),
+            Some("pr-zk-2ba")
         );
 
         let zk_compact_alias = adapter
