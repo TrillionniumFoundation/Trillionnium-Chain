@@ -127,6 +127,10 @@ impl LaneAdmissionGate {
 
         if served_critical {
             self.critical_served_streak = self.critical_served_streak.saturating_add(1);
+        } else if !self.normal.queue.is_empty() && !self.critical.queue.is_empty() {
+            // When both lanes remain backlogged, keep fairness warm so normal traffic
+            // is not forced to wait through another full critical burst.
+            self.critical_served_streak = self.critical_burst_limit.saturating_sub(1);
         } else {
             self.critical_served_streak = 0;
         }
@@ -215,5 +219,33 @@ mod tests {
         assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
         assert_eq!(g.admit(2, IngressClass::Critical), AdmitOutcome::Backpressured);
         assert_eq!(g.pop_ready(), Some(1));
+    }
+
+    #[test]
+    fn sustained_dual_lane_backlog_keeps_normal_progress_after_first_fairness_turn() {
+        let mut g = LaneAdmissionGate::new(5, 2);
+
+        // Prime both lanes.
+        assert_eq!(g.admit(10, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(11, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(12, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(20, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(21, IngressClass::Critical), AdmitOutcome::Accepted);
+
+        // Sustain critical pressure while preserving normal backlog.
+        assert_eq!(g.pop_ready(), Some(20));
+        assert_eq!(g.admit(22, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.pop_ready(), Some(21));
+        assert_eq!(g.admit(23, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.pop_ready(), Some(22));
+        assert_eq!(g.admit(24, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.pop_ready(), Some(23));
+
+        // Fairness turn.
+        assert_eq!(g.pop_ready(), Some(10));
+
+        // Warm fairness: one critical then normal, instead of another full burst.
+        assert_eq!(g.pop_ready(), Some(24));
+        assert_eq!(g.pop_ready(), Some(11));
     }
 }
