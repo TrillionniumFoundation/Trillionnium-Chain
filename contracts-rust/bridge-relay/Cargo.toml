@@ -1,0 +1,9 @@
+[package]
+name = "bridge-relay"
+version = "0.1.0"
+edition = "2021"
+description = "BridgeRelay Rust MVP state machine skeleton"
+license = "MIT"
+
+[dependencies]
+sha2 = "0.10"
