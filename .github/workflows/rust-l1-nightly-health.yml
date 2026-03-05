@@ -84,7 +84,7 @@ jobs:
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           cd trillionnium-rust
-          RUNS=${PARALLEL_FLAKY_RUNS:-5} ./scripts/check_parallel_flaky.sh
+          RUNS=${PARALLEL_FLAKY_RUNS:-5} RUN_TIMEOUT_SEC=${PARALLEL_FLAKY_TIMEOUT_SEC:-120} ./scripts/check_parallel_flaky.sh
 
       - name: Validate v1 event replay order (hard gate)
         run: |
