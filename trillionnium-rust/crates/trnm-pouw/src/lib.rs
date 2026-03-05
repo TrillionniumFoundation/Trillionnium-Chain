@@ -904,6 +904,9 @@ pub fn apply_resolve_at_height(
     let signer_has_internal_whitespace = signer_trimmed.chars().any(|c| c.is_whitespace());
     let authority_has_internal_whitespace = authority_trimmed.chars().any(|c| c.is_whitespace());
     let authority_members: Vec<&str> = authority_trimmed.split(',').collect();
+    let authority_has_empty_member = authority_members
+        .iter()
+        .any(|member| member.trim().is_empty());
     let signer_matches_configured_member = authority_members
         .iter()
         .any(|member| *member == signer_trimmed);
@@ -968,6 +971,7 @@ pub fn apply_resolve_at_height(
         || resolver_has_internal_whitespace
         || signer_has_internal_whitespace
         || authority_has_internal_whitespace
+        || authority_has_empty_member
         || resolver_trimmed != signer_trimmed
         || uses_reserved_system_actor
         || uses_escrow_account_as_authority
@@ -3951,6 +3955,42 @@ mod tests {
         assert!(matches!(err, PouwError::Unauthorized));
 
         let task = st.get_task(8_999).unwrap();
+        assert_eq!(task.status, TaskStatus::Challenged);
+        assert_eq!(task.challenge_bond_forfeited, None);
+        assert_eq!(st.balance_of("challenger"), before.balance_of("challenger"));
+        assert_eq!(
+            st.balance_of(CHALLENGE_ESCROW_ACCOUNT),
+            before.balance_of(CHALLENGE_ESCROW_ACCOUNT)
+        );
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT)
+        );
+    }
+
+    #[test]
+    fn resolve_rejects_configured_authority_with_empty_member_without_state_mutation() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        set_resolve_authority(&mut st, "authority,");
+
+        let r1 = apply_create_task(&mut st, 8_999_1, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(8_999_1, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+        let r5 =
+            apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
+
+        let before = st.clone();
+        let err = apply_resolve(&mut st, r5, true, "authority".into(), "authority".into())
+            .expect_err("authority list with empty member must fail closed");
+        assert!(matches!(err, PouwError::Unauthorized));
+
+        let task = st.get_task(8_999_1).unwrap();
         assert_eq!(task.status, TaskStatus::Challenged);
         assert_eq!(task.challenge_bond_forfeited, None);
         assert_eq!(st.balance_of("challenger"), before.balance_of("challenger"));
