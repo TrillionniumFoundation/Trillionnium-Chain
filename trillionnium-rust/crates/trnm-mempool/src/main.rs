@@ -114,7 +114,17 @@ impl AdmissionGate {
         let id = self.queue.pop_front()?;
         self.seen.remove(&id);
         // Reserve one newly opened slot for known retries to reduce starvation.
-        self.retry_reservations = self.retry_reservations.saturating_add(1).min(self.capacity);
+        // Bound reservations by currently known retry ids so free-ingress throughput
+        // is not over-deferred after multi-pop bursts with only a few retry candidates.
+        let retry_budget = self.backpressured_ids.len().min(self.capacity);
+        if retry_budget == 0 {
+            self.retry_reservations = 0;
+        } else {
+            self.retry_reservations = self
+                .retry_reservations
+                .saturating_add(1)
+                .min(retry_budget);
+        }
         // Keep retry memory across partial drain so repeated retries stay idempotent
         // when the queue quickly re-saturates before the original sender retries.
         Some(id)
@@ -318,5 +328,27 @@ mod tests {
         assert!(gate.backpressured_ids.contains(&9));
         assert!(gate.backpressured_ids.contains(&10));
         assert!(!gate.backpressured_ids.contains(&3));
+    }
+
+    #[test]
+    fn retry_reservation_is_capped_by_known_retry_population() {
+        let mut gate = AdmissionGate::new(3);
+        assert_eq!(gate.admit(1), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(2), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(3), AdmitOutcome::Accepted);
+
+        // Only one known retry id exists.
+        assert_eq!(gate.admit(9), AdmitOutcome::Backpressured);
+
+        // Open two slots before retry arrives.
+        assert_eq!(gate.pop_ready(), Some(1));
+        assert_eq!(gate.pop_ready(), Some(2));
+
+        // Only one fresh ingress should be deferred; the second should progress.
+        assert_eq!(gate.admit(10), AdmitOutcome::Backpressured);
+        assert_eq!(gate.admit(11), AdmitOutcome::Accepted);
+
+        let m = gate.metrics();
+        assert_eq!(m.fairness_deferrals, 1);
     }
 }
