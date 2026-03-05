@@ -44,7 +44,7 @@ impl AdmissionGate {
         self.backpressured_fifo = rebuilt;
     }
 
-    fn remember_backpressured(&mut self, tx_id: u64) {
+    fn remember_backpressured(&mut self, tx_id: u64) -> bool {
         if self.backpressured_ids.insert(tx_id) {
             self.backpressured_fifo.push_back(tx_id);
             self.compact_backpressured_fifo();
@@ -60,6 +60,9 @@ impl AdmissionGate {
                     break;
                 }
             }
+            true
+        } else {
+            false
         }
     }
 
@@ -108,13 +111,12 @@ impl AdmissionGate {
 
         if self.queue.len() >= self.capacity {
             self.last_fairness_deferred = None;
-            if self.backpressured_ids.contains(&tx_id) {
+            if !self.remember_backpressured(tx_id) {
                 self.metrics.duplicates = self.metrics.duplicates.saturating_add(1);
                 self.metrics.backpressure_duplicates =
                     self.metrics.backpressure_duplicates.saturating_add(1);
                 return AdmitOutcome::Duplicate;
             }
-            self.remember_backpressured(tx_id);
             self.metrics.backpressured = self.metrics.backpressured.saturating_add(1);
             return AdmitOutcome::Backpressured;
         }
