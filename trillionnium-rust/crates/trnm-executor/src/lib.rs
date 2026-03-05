@@ -87,6 +87,17 @@ fn intersects(x: &[ObjectRef], y: &[ObjectRef]) -> bool {
         return false;
     }
 
+    // Singleton fast path: common for simple transfer-like txs; avoid HashSet and
+    // reduce iterator overhead in hot conflict probes.
+    if x.len() == 1 {
+        let key = access_key(&x[0]);
+        return y.iter().any(|obj| access_key(obj) == key);
+    }
+    if y.len() == 1 {
+        let key = access_key(&y[0]);
+        return x.iter().any(|obj| access_key(obj) == key);
+    }
+
     // Tiny-set fast path: avoid HashSet allocation on common low-footprint txs.
     // Iterate the smaller side first to reduce pairwise comparisons under skewed
     // tiny footprints (e.g. 1x8), while preserving duplicate-tolerant semantics.
@@ -819,6 +830,16 @@ mod tests {
 
         assert!(!detect_conflict(&a, &b));
         assert!(detect_conflict(&a, &c));
+    }
+
+    #[test]
+    fn singleton_access_conflict_path_handles_skewed_footprints() {
+        let singleton_write = tx(1, vec![], vec![o(42)]);
+        let wide_read_hit = tx(2, vec![o(7), o(8), o(42), o(9), o(10)], vec![]);
+        let wide_read_miss = tx(3, vec![o(7), o(8), o(9), o(10)], vec![]);
+
+        assert!(detect_conflict(&singleton_write, &wide_read_hit));
+        assert!(!detect_conflict(&singleton_write, &wide_read_miss));
     }
 
     #[test]
