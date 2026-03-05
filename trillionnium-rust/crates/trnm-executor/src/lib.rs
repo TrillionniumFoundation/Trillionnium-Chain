@@ -486,9 +486,12 @@ fn build_parallel_groups_aggressive_profile(
 }
 
 fn aggr_scan_window() -> usize {
+    const MAX_SCAN_WINDOW: usize = 4096;
+
     std::env::var("TRNM_AGGR_SCAN_WINDOW")
         .ok()
         .and_then(|v| v.parse::<usize>().ok())
+        .map(|v| v.min(MAX_SCAN_WINDOW))
         .unwrap_or(0)
 }
 
@@ -1030,6 +1033,14 @@ mod tests {
             profile.candidate_groups_scanned <= txs.len().saturating_sub(1),
             "scan window must cap candidate scans to ~1 probe per tx"
         );
+    }
+
+    #[test]
+    fn aggressive_scan_window_is_clamped_to_prevent_misconfigured_probe_blowups() {
+        let _env = env_lock();
+        let _window = EnvGuard::set("TRNM_AGGR_SCAN_WINDOW", "999999");
+
+        assert_eq!(aggr_scan_window(), 4096);
     }
 
     struct EnvGuard {
