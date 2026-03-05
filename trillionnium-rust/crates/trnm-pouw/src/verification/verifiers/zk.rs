@@ -196,6 +196,20 @@ mod tests {
     }
 
     #[test]
+    fn zk_verifier_rejects_worker_case_mismatch_when_worker_is_present() {
+        let verifier = ZkVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"ZK:{\"task_id\":99,\"worker\":\"WORKER-zk\",\"proof_type\":\"zk\",\"result_hash\":\"1111111111111111111111111111111111111111111111111111111111111111\"}"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("worker mismatch")
+        ));
+    }
+
+    #[test]
     fn zk_verifier_rejects_missing_result_hash_binding_context_fail_closed() {
         let verifier = ZkVerifier;
         let mut task = mock_task();
