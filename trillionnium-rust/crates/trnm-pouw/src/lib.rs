@@ -1133,9 +1133,9 @@ mod tests {
         let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
         let r5 =
             apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
-        set_resolve_authority(&mut st, "challenger");
+        set_resolve_authority(&mut st, "authority");
         let r6 =
-            apply_resolve(&mut st, r5, false, "challenger".into(), "challenger".into()).unwrap();
+            apply_resolve(&mut st, r5, false, "authority".into(), "authority".into()).unwrap();
 
         let task = st.get_task(r6.id).unwrap();
         assert_eq!(task.status, TaskStatus::Completed);
@@ -1317,13 +1317,13 @@ mod tests {
 
         let r5 =
             apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
-        set_resolve_authority(&mut st, "challenger");
+        set_resolve_authority(&mut st, "authority");
         let _r6 = apply_resolve(
             &mut st,
             r5.clone(),
             false,
-            "challenger".into(),
-            "challenger".into(),
+            "authority".into(),
+            "authority".into(),
         )
         .unwrap();
 
@@ -3060,9 +3060,9 @@ mod tests {
         assert_eq!(st.balance_of("challenger"), 90);
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), 10);
 
-        set_resolve_authority(&mut st, "challenger");
+        set_resolve_authority(&mut st, "authority");
         let r6 =
-            apply_resolve(&mut st, r5, false, "challenger".into(), "challenger".into()).unwrap();
+            apply_resolve(&mut st, r5, false, "authority".into(), "authority".into()).unwrap();
         let resolved = st.get_task(r6.id).unwrap();
         assert_eq!(resolved.challenge_bond_forfeited, Some(true));
         assert_eq!(st.balance_of("challenger"), 90);
@@ -3089,9 +3089,9 @@ mod tests {
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), 10);
 
         let refund_only_baseline = 100u128;
-        set_resolve_authority(&mut st, "challenger");
+        set_resolve_authority(&mut st, "authority");
         let r6 =
-            apply_resolve(&mut st, r5, true, "challenger".into(), "challenger".into()).unwrap();
+            apply_resolve(&mut st, r5, true, "authority".into(), "authority".into()).unwrap();
 
         let resolved = st.get_task(r6.id).unwrap();
         assert_eq!(resolved.status, TaskStatus::Slashed);
@@ -3128,9 +3128,9 @@ mod tests {
             + st.balance_of(CHALLENGE_ESCROW_ACCOUNT)
             + st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
 
-        set_resolve_authority(&mut st, "challenger");
+        set_resolve_authority(&mut st, "authority");
         let _r6 =
-            apply_resolve(&mut st, r5, true, "challenger".into(), "challenger".into()).unwrap();
+            apply_resolve(&mut st, r5, true, "authority".into(), "authority".into()).unwrap();
 
         let final_sum = st.balance_of("challenger")
             + st.balance_of(&worker_stake_lock_account(task_id))
