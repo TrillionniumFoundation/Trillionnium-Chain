@@ -911,6 +911,12 @@ pub fn apply_resolve_at_height(
     let uses_escrow_account_as_authority = resolver_trimmed.eq_ignore_ascii_case(CHALLENGE_ESCROW_ACCOUNT)
         || signer_trimmed.eq_ignore_ascii_case(CHALLENGE_ESCROW_ACCOUNT)
         || authority_trimmed.eq_ignore_ascii_case(CHALLENGE_ESCROW_ACCOUNT);
+    // Minimal multi-party control: forfeits treasury account receives terminal
+    // slashing-path value and must remain custody-only (not an adjudicator).
+    let uses_forfeit_treasury_account_as_authority = resolver_trimmed
+        .eq_ignore_ascii_case(CHALLENGE_FORFEIT_TREASURY_ACCOUNT)
+        || signer_trimmed.eq_ignore_ascii_case(CHALLENGE_FORFEIT_TREASURY_ACCOUNT)
+        || authority_trimmed.eq_ignore_ascii_case(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
     // Decentralization hardening: unresolved default placeholder must never
     // authorize challenge resolution. Governance must explicitly set a concrete
     // non-placeholder resolve authority before terminal escrow movement can occur.
@@ -931,6 +937,7 @@ pub fn apply_resolve_at_height(
         || resolver_trimmed != signer_trimmed
         || uses_reserved_system_actor
         || uses_escrow_account_as_authority
+        || uses_forfeit_treasury_account_as_authority
         || uses_unconfigured_placeholder_authority
         || resolver_is_assigned_worker
     {
@@ -3907,13 +3914,18 @@ mod tests {
         // system identities must remain disjoint. If any collide, resolver authorization
         // checks can silently degrade into centralized/single-party control.
         let escrow = CHALLENGE_ESCROW_ACCOUNT.trim();
+        let forfeits = CHALLENGE_FORFEIT_TREASURY_ACCOUNT.trim();
         let placeholder = DEFAULT_RESOLVE_AUTHORITY.trim();
         let system = "system";
 
         assert!(!escrow.is_empty());
+        assert!(!forfeits.is_empty());
         assert!(!placeholder.is_empty());
+        assert_ne!(escrow, forfeits);
         assert_ne!(escrow, placeholder);
+        assert_ne!(forfeits, placeholder);
         assert_ne!(escrow, system);
+        assert_ne!(forfeits, system);
         assert_ne!(placeholder, system);
         assert_ne!(placeholder.to_ascii_lowercase(), system);
     }
@@ -4097,6 +4109,91 @@ mod tests {
         assert!(matches!(err, PouwError::Unauthorized));
 
         let task = st.get_task(9_001_7).unwrap();
+        assert_eq!(task.status, TaskStatus::Challenged);
+        assert_eq!(task.challenge_bond_forfeited, None);
+        assert_eq!(st.balance_of("challenger"), before.balance_of("challenger"));
+        assert_eq!(
+            st.balance_of(CHALLENGE_ESCROW_ACCOUNT),
+            before.balance_of(CHALLENGE_ESCROW_ACCOUNT)
+        );
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT)
+        );
+    }
+
+    #[test]
+    fn resolve_rejects_forfeit_treasury_account_authority_without_escrow_mutation() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        set_resolve_authority(&mut st, CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+
+        let r1 = apply_create_task(&mut st, 9_001_8, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(9_001_8, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+        let r5 =
+            apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
+
+        let before = st.clone();
+        let err = apply_resolve(
+            &mut st,
+            r5,
+            false,
+            CHALLENGE_FORFEIT_TREASURY_ACCOUNT.into(),
+            CHALLENGE_FORFEIT_TREASURY_ACCOUNT.into(),
+        )
+        .unwrap_err();
+        assert!(matches!(err, PouwError::Unauthorized));
+
+        let task = st.get_task(9_001_8).unwrap();
+        assert_eq!(task.status, TaskStatus::Challenged);
+        assert_eq!(task.challenge_bond_forfeited, None);
+        assert_eq!(st.balance_of("challenger"), before.balance_of("challenger"));
+        assert_eq!(
+            st.balance_of(CHALLENGE_ESCROW_ACCOUNT),
+            before.balance_of(CHALLENGE_ESCROW_ACCOUNT)
+        );
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT)
+        );
+    }
+
+    #[test]
+    fn resolve_rejects_forfeit_treasury_account_authority_case_drift_without_escrow_mutation() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        let forfeits_case_drift = "Treasury.Challenge_Forfeits";
+        set_resolve_authority(&mut st, forfeits_case_drift);
+
+        let r1 = apply_create_task(&mut st, 9_001_9, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(9_001_9, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+        let r5 =
+            apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
+
+        let before = st.clone();
+        let err = apply_resolve(
+            &mut st,
+            r5,
+            false,
+            forfeits_case_drift.into(),
+            forfeits_case_drift.into(),
+        )
+        .unwrap_err();
+        assert!(matches!(err, PouwError::Unauthorized));
+
+        let task = st.get_task(9_001_9).unwrap();
         assert_eq!(task.status, TaskStatus::Challenged);
         assert_eq!(task.challenge_bond_forfeited, None);
         assert_eq!(st.balance_of("challenger"), before.balance_of("challenger"));
