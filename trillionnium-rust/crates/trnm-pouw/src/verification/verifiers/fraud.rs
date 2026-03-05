@@ -107,6 +107,20 @@ mod tests {
     }
 
     #[test]
+    fn fraud_verifier_rejects_duplicate_worker_binding_fail_closed() {
+        let verifier = FraudVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"FRAUD:{\"task_id\":7,\"worker\":\"worker-fraud\",\"Worker\":\"worker-fraud\",\"proof_type\":\"fraud\"}"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("duplicate worker binding")
+        ));
+    }
+
+    #[test]
     fn fraud_verifier_rejects_duplicate_proof_type_binding_fail_closed() {
         let verifier = FraudVerifier;
         let task = mock_task();
