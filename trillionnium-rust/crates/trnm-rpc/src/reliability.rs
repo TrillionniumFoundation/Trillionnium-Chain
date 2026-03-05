@@ -1541,4 +1541,20 @@ mod tests {
         assert_eq!(engine.retry.circuit_breaker_threshold, 1);
         assert_eq!(engine.retry.circuit_open_ms, 10);
     }
+
+    #[test]
+    fn retry_config_clamps_max_backoff_to_base_floor() {
+        let store = InMemoryReliabilityStore::default();
+        let engine = ReliabilityEngine::new(
+            store,
+            RetryConfig {
+                base_backoff_ms: 25,
+                max_backoff_ms: 5,
+                ..RetryConfig::default()
+            },
+        );
+
+        assert_eq!(engine.retry.base_backoff_ms, 25);
+        assert_eq!(engine.retry.max_backoff_ms, 25);
+    }
 }
