@@ -85,18 +85,19 @@ impl AdmissionGate {
 
     pub fn admit(&mut self, tx_id: u64) -> AdmitOutcome {
         if self.seen.contains(&tx_id) {
-            self.metrics.duplicates += 1;
+            self.metrics.duplicates = self.metrics.duplicates.saturating_add(1);
             return AdmitOutcome::Duplicate;
         }
 
         if self.queue.len() >= self.capacity {
             if self.backpressured_ids.contains(&tx_id) {
-                self.metrics.duplicates += 1;
-                self.metrics.backpressure_duplicates += 1;
+                self.metrics.duplicates = self.metrics.duplicates.saturating_add(1);
+                self.metrics.backpressure_duplicates =
+                    self.metrics.backpressure_duplicates.saturating_add(1);
                 return AdmitOutcome::Duplicate;
             }
             self.remember_backpressured(tx_id);
-            self.metrics.backpressured += 1;
+            self.metrics.backpressured = self.metrics.backpressured.saturating_add(1);
             return AdmitOutcome::Backpressured;
         }
 
@@ -110,8 +111,8 @@ impl AdmissionGate {
             // Deferring fresh ingress should not evict older retries from bounded memory,
             // otherwise long-waiting retries can lose their anti-starvation preference.
             self.remember_backpressured_without_eviction(tx_id);
-            self.metrics.backpressured += 1;
-            self.metrics.fairness_deferrals += 1;
+            self.metrics.backpressured = self.metrics.backpressured.saturating_add(1);
+            self.metrics.fairness_deferrals = self.metrics.fairness_deferrals.saturating_add(1);
             self.retry_reservations -= 1;
             return AdmitOutcome::Backpressured;
         }
@@ -133,7 +134,7 @@ impl AdmissionGate {
         }
         self.queue.push_back(tx_id);
         self.seen.insert(tx_id);
-        self.metrics.accepted += 1;
+        self.metrics.accepted = self.metrics.accepted.saturating_add(1);
         AdmitOutcome::Accepted
     }
 
@@ -456,5 +457,32 @@ mod tests {
 
         let m = gate.metrics();
         assert_eq!(m.fairness_deferrals, 0);
+    }
+
+    #[test]
+    fn metrics_counters_saturate_instead_of_overflowing() {
+        let mut gate = AdmissionGate::new(1);
+        gate.metrics.duplicates = usize::MAX;
+        gate.metrics.backpressured = usize::MAX;
+        gate.metrics.backpressure_duplicates = usize::MAX;
+        gate.metrics.fairness_deferrals = usize::MAX;
+
+        // Duplicate path saturates duplicates.
+        assert_eq!(gate.admit(1), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(1), AdmitOutcome::Duplicate);
+
+        // Backpressure + duplicate(backpressured) path saturates both counters.
+        assert_eq!(gate.admit(2), AdmitOutcome::Backpressured);
+        assert_eq!(gate.admit(2), AdmitOutcome::Duplicate);
+
+        // Fairness deferral path saturates fairness_deferrals/backpressured.
+        assert_eq!(gate.pop_ready(), Some(1));
+        assert_eq!(gate.admit(3), AdmitOutcome::Backpressured);
+
+        let m = gate.metrics();
+        assert_eq!(m.duplicates, usize::MAX);
+        assert_eq!(m.backpressured, usize::MAX);
+        assert_eq!(m.backpressure_duplicates, usize::MAX);
+        assert_eq!(m.fairness_deferrals, usize::MAX);
     }
 }
