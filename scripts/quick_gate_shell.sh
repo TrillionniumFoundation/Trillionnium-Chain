@@ -85,6 +85,11 @@ echo "[quick-gate] script_count=${#FILES[@]}"
 
 audit_ts="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
+git_head=""
+if command -v git >/dev/null 2>&1; then
+  git_head="$(git rev-parse --short=12 HEAD 2>/dev/null || true)"
+fi
+
 manifest_sha256=""
 if command -v sha256sum >/dev/null 2>&1; then
   manifest_sha256="$(printf '%s\n' "${FILES[@]}" | sha256sum | awk '{print $1}')"
@@ -129,6 +134,7 @@ if [[ -n "$SUMMARY_PATH" ]]; then
   "target_dirs_csv": "$(json_escape "$(IFS=,; printf '%s' "${NORMALIZED_TARGET_DIRS[*]}")")",
   "target_dir_count": ${#NORMALIZED_TARGET_DIRS[@]},
   "script_count": ${#FILES[@]},
+  "git_head": "$(json_escape "${git_head}")",
   "file_manifest_sha256": "$(json_escape "${manifest_sha256}")",
   "skip_shellcheck": ${SKIP_SHELLCHECK},
   "bash_n_elapsed_sec": $((bashn_end - bashn_start)),
