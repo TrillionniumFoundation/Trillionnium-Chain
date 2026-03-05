@@ -31,9 +31,16 @@ impl AdmissionGate {
     fn remember_backpressured(&mut self, tx_id: u64) {
         if self.backpressured_ids.insert(tx_id) {
             self.backpressured_fifo.push_back(tx_id);
-            while self.backpressured_fifo.len() > self.capacity {
-                if let Some(evicted) = self.backpressured_fifo.pop_front() {
-                    self.backpressured_ids.remove(&evicted);
+            while self.backpressured_ids.len() > self.capacity {
+                let mut evicted = false;
+                while let Some(candidate) = self.backpressured_fifo.pop_front() {
+                    if self.backpressured_ids.remove(&candidate) {
+                        evicted = true;
+                        break;
+                    }
+                }
+                if !evicted {
+                    break;
                 }
             }
         }
@@ -85,9 +92,7 @@ impl AdmissionGate {
             return AdmitOutcome::Backpressured;
         }
 
-        if self.backpressured_ids.remove(&tx_id) {
-            self.backpressured_fifo.retain(|id| *id != tx_id);
-        }
+        self.backpressured_ids.remove(&tx_id);
         if self.retry_reservations > 0 {
             self.retry_reservations -= 1;
         }
@@ -208,7 +213,26 @@ mod tests {
     }
 
     #[test]
-    fn accepted_retry_id_is_removed_from_backpressure_fifo() {
+    fn stale_fifo_entries_do_not_break_bounded_retry_tracking() {
+        let mut gate = AdmissionGate::new(2);
+        assert_eq!(gate.admit(1), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(2), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(10), AdmitOutcome::Backpressured);
+        assert_eq!(gate.admit(11), AdmitOutcome::Backpressured);
+
+        // Admit one retry so its stale fifo marker remains but is removed from set.
+        assert_eq!(gate.pop_ready(), Some(1));
+        assert_eq!(gate.admit(10), AdmitOutcome::Accepted);
+        assert!(!gate.backpressured_ids.contains(&10));
+
+        // New retries should remain bounded by active set size despite stale markers.
+        assert_eq!(gate.admit(12), AdmitOutcome::Backpressured);
+        assert_eq!(gate.admit(13), AdmitOutcome::Backpressured);
+        assert!(gate.backpressured_ids.len() <= 2);
+    }
+
+    #[test]
+    fn accepted_retry_id_is_removed_from_backpressure_set() {
         let mut gate = AdmissionGate::new(2);
         assert_eq!(gate.admit(10), AdmitOutcome::Accepted);
         assert_eq!(gate.admit(11), AdmitOutcome::Accepted);
@@ -217,7 +241,6 @@ mod tests {
         assert_eq!(gate.pop_ready(), Some(10));
         assert_eq!(gate.admit(12), AdmitOutcome::Accepted);
 
-        assert!(!gate.backpressured_fifo.iter().any(|id| *id == 12));
         assert!(!gate.backpressured_ids.contains(&12));
     }
 
