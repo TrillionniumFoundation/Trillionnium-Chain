@@ -540,7 +540,7 @@ fn aggr_scan_round_robin_enabled() -> bool {
 fn aggr_scan_round_robin_seed() -> usize {
     std::env::var("TRNM_AGGR_SCAN_RR_SEED")
         .ok()
-        .and_then(|v| v.parse::<usize>().ok())
+        .and_then(|v| v.trim().parse::<usize>().ok())
         .unwrap_or(0)
 }
 
@@ -1051,6 +1051,14 @@ mod tests {
         let _window = EnvGuard::set("TRNM_AGGR_SCAN_WINDOW", " 128 ");
 
         assert_eq!(aggr_scan_window(), 128);
+    }
+
+    #[test]
+    fn aggressive_round_robin_seed_parses_trimmed_numeric_env_values() {
+        let _env = env_lock();
+        let _seed = EnvGuard::set("TRNM_AGGR_SCAN_RR_SEED", " 7 ");
+
+        assert_eq!(aggr_scan_round_robin_seed(), 7);
     }
 
     struct EnvGuard {
