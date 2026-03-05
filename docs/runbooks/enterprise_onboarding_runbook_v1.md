@@ -48,6 +48,7 @@
 - 冻结本次接入环境凭据。
 - 标记接入状态为 `reverted` 并附根因标签。
 - 根因标签建议使用稳定枚举（示例）：`schema_drift` / `auth_scope_mismatch` / `policy_conflict`。
+- 根因标签格式约束：仅允许小写 snake_case（`[a-z0-9_]+`），禁止空格与大小写混用，避免审计聚合分桶漂移。
 - 记录可复放的回滚命令模板（必须携带 `--root-cause-tag`、`--change-ticket-id` 与 `--operator-id`），示例：
   - `trnm-onboard rollback --org-id <org_id> --env <env> --change-ticket-id <change_ticket_id> --operator-id <operator_id> --root-cause-tag <root_cause_tag>`
 - 先执行一次 `--dry-run` 预演，确认参数与目标环境一致后再执行真实回滚：
