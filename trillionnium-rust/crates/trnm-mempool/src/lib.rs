@@ -57,7 +57,7 @@ pub struct LaneAdmissionGate {
 impl LaneAdmissionGate {
     pub fn new(total_capacity: usize, critical_reserve: usize) -> Self {
         let total = total_capacity.max(1);
-        let reserve = critical_reserve.min(total).max(1);
+        let reserve = critical_reserve.min(total);
         let normal_cap = total.saturating_sub(reserve);
         Self {
             normal: AdmissionGate::new(normal_cap),
@@ -247,5 +247,20 @@ mod tests {
         // Warm fairness: one critical then normal, instead of another full burst.
         assert_eq!(g.pop_ready(), Some(24));
         assert_eq!(g.pop_ready(), Some(11));
+    }
+
+    #[test]
+    fn zero_critical_reserve_preserves_normal_capacity_with_critical_spillover() {
+        let mut g = LaneAdmissionGate::new(3, 0);
+
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(4, IngressClass::Normal), AdmitOutcome::Backpressured);
+
+        // With zero reserve configured, critical ingress still has a path via
+        // spillover into free normal capacity once pressure clears.
+        assert_eq!(g.pop_ready(), Some(1));
+        assert_eq!(g.admit(99, IngressClass::Critical), AdmitOutcome::Accepted);
     }
 }
