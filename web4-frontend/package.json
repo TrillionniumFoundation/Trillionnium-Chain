@@ -6,12 +6,15 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint",
+    "lint": "eslint . --max-warnings=0",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run",
+    "test": "npm run test:unit",
+    "test:unit": "vitest run tests/unit tests/component",
+    "test:contract": "vitest run tests/unit/api-contract-adapters.test.ts",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
-    "ci:check": "bash ./scripts/ci-check.sh"
+    "ci:check": "bash ./scripts/ci-check.sh",
+    "release:preflight": "bash ./scripts/release-preflight.sh"
   },
   "dependencies": {
     "next": "16.1.6",
