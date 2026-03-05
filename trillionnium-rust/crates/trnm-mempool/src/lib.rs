@@ -287,4 +287,20 @@ mod tests {
         assert_eq!(g.pop_ready(), Some(51));
         assert_eq!(g.admit(51, IngressClass::Normal), AdmitOutcome::Accepted);
     }
+
+    #[test]
+    fn backpressured_tx_id_is_not_marked_seen_and_can_be_admitted_after_drain() {
+        let mut g = LaneAdmissionGate::new(2, 1);
+
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Critical), AdmitOutcome::Accepted);
+
+        // tx 3 is backpressured at global capacity; this must not poison global
+        // idempotency tracking.
+        assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Backpressured);
+
+        // Once a slot is freed, tx 3 should admit cleanly (not duplicate).
+        assert_eq!(g.pop_ready(), Some(2));
+        assert_eq!(g.admit(3, IngressClass::Critical), AdmitOutcome::Accepted);
+    }
 }
