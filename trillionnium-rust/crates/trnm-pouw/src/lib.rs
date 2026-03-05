@@ -935,6 +935,13 @@ pub fn apply_resolve_at_height(
         .as_deref()
         .map(|worker| worker.eq_ignore_ascii_case(signer_trimmed))
         .unwrap_or(false);
+    // Minimal multi-party control: challenger (escrow depositor) must stay separate
+    // from adjudicator authority to avoid prosecutor+judge role collapse.
+    let resolver_is_challenger = task
+        .challenger
+        .as_deref()
+        .map(|challenger| challenger.eq_ignore_ascii_case(signer_trimmed))
+        .unwrap_or(false);
     if resolver_trimmed.is_empty()
         || resolver_trimmed != resolver
         || signer_trimmed.is_empty()
@@ -951,6 +958,7 @@ pub fn apply_resolve_at_height(
         || uses_forfeit_treasury_account_as_authority
         || uses_unconfigured_placeholder_authority
         || resolver_is_assigned_worker
+        || resolver_is_challenger
     {
         return Err(PouwError::Unauthorized);
     }
@@ -3167,6 +3175,44 @@ mod tests {
     }
 
     #[test]
+    fn resolve_rejects_challenger_even_when_configured_as_authority_without_escrow_mutation() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        set_resolve_authority(&mut st, "challenger");
+
+        let r1 = apply_create_task(&mut st, 894_1, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(894_1, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+        let r5 =
+            apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
+
+        let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+        let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+
+        let err = apply_resolve(
+            &mut st,
+            r5,
+            true,
+            "challenger".into(),
+            "challenger".into(),
+        )
+        .expect_err("challenger must not self-authorize terminal challenged resolution");
+        assert!(matches!(err, PouwError::Unauthorized));
+
+        let task = st.get_task(894_1).unwrap();
+        assert_eq!(task.status, TaskStatus::Challenged);
+        assert_eq!(task.challenge_bond_forfeited, None);
+        assert_eq!(st.balance_of("challenger"), 90);
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
+        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
+    }
+
+    #[test]
     fn resolve_accepts_configured_authority_resolver() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
@@ -4839,8 +4885,8 @@ mod tests {
         let r5 =
             apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
 
-        set_resolve_authority(&mut st, "challenger");
-        let err = apply_resolve(&mut st, r5, false, "challenger".into(), "challenger".into())
+        set_resolve_authority(&mut st, "authority");
+        let err = apply_resolve(&mut st, r5, false, "authority".into(), "authority".into())
             .unwrap_err();
         assert!(matches!(err, PouwError::State(_)));
 
@@ -4950,7 +4996,7 @@ mod tests {
         let r5 =
             apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
 
-        set_resolve_authority(&mut st, "challenger");
+        set_resolve_authority(&mut st, "authority");
         let stale_ref = r5.clone();
         let same_task = st.get_task(r5.id).unwrap();
         let _fresh_ref = st.update_task(r5, same_task).unwrap();
@@ -4959,8 +5005,8 @@ mod tests {
             &mut st,
             stale_ref,
             false,
-            "challenger".into(),
-            "challenger".into(),
+            "authority".into(),
+            "authority".into(),
         )
         .unwrap_err();
         assert!(matches!(err, PouwError::VersionConflict));
