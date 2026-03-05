@@ -123,7 +123,19 @@ fn vec_hashset_intersects(a: &[u64], b: &HashSet<u64>) -> bool {
     if a.is_empty() || b.is_empty() {
         return false;
     }
-    a.iter().any(|k| b.contains(k))
+
+    // Singleton fast path shows up frequently in conflict-domain probes and
+    // avoids iterator/closure overhead in the hottest branch.
+    if a.len() == 1 {
+        return b.contains(&a[0]);
+    }
+
+    for k in a {
+        if b.contains(k) {
+            return true;
+        }
+    }
+    false
 }
 
 /// Build parallel-safe groups:
