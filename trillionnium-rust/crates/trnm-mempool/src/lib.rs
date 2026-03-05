@@ -77,7 +77,20 @@ impl LaneAdmissionGate {
             return AdmitOutcome::Backpressured;
         }
         let out = match class {
-            IngressClass::Normal => self.normal.admit(tx_id),
+            IngressClass::Normal => {
+                let primary = self.normal.admit(tx_id);
+                if matches!(primary, AdmitOutcome::Backpressured)
+                    && self.normal.capacity == 0
+                    && self.critical.queue.is_empty()
+                    && self.critical.queue.len() < self.critical.capacity
+                {
+                    // Keep free-ingress throughput live for degenerate reserve-only
+                    // configs (normal capacity == 0) when the critical lane is idle.
+                    self.critical.admit(tx_id)
+                } else {
+                    primary
+                }
+            }
             IngressClass::Critical => {
                 let primary = self.critical.admit(tx_id);
                 if matches!(primary, AdmitOutcome::Backpressured)
@@ -183,15 +196,24 @@ mod tests {
         assert_eq!(g.admit(101, IngressClass::Normal), AdmitOutcome::Backpressured);
 
         assert_eq!(g.pop_ready(), Some(100));
-        assert_eq!(g.admit(101, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(g.admit(101, IngressClass::Normal), AdmitOutcome::Accepted);
     }
 
     #[test]
-    fn full_critical_reserve_prevents_normal_from_stealing_single_slot() {
+    fn normal_lane_does_not_spill_when_critical_lane_is_busy() {
+        let mut g = LaneAdmissionGate::new(2, 1);
+
+        assert_eq!(g.admit(1, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Backpressured);
+    }
+
+    #[test]
+    fn full_critical_reserve_allows_normal_when_critical_lane_idle() {
         let mut g = LaneAdmissionGate::new(1, 1);
 
-        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Backpressured);
-        assert_eq!(g.admit(2, IngressClass::Critical), AdmitOutcome::Accepted);
-        assert_eq!(g.pop_ready(), Some(2));
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Critical), AdmitOutcome::Backpressured);
+        assert_eq!(g.pop_ready(), Some(1));
     }
 }
