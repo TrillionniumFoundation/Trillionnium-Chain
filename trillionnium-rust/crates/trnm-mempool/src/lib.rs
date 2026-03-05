@@ -49,6 +49,7 @@ impl AdmissionGate {
 pub struct LaneAdmissionGate {
     normal: AdmissionGate,
     critical: AdmissionGate,
+    total_capacity: usize,
     seen_global: HashSet<u64>,
     critical_served_streak: usize,
     critical_burst_limit: usize,
@@ -61,6 +62,7 @@ impl LaneAdmissionGate {
         Self {
             normal: AdmissionGate::new(normal_cap),
             critical: AdmissionGate::new(reserve),
+            total_capacity: total,
             seen_global: HashSet::new(),
             critical_served_streak: 0,
             critical_burst_limit: reserve.saturating_mul(2).max(1),
@@ -69,6 +71,10 @@ impl LaneAdmissionGate {
     pub fn admit(&mut self, tx_id: u64, class: IngressClass) -> AdmitOutcome {
         if self.seen_global.contains(&tx_id) {
             return AdmitOutcome::Duplicate;
+        }
+        let total_queued = self.normal.queue.len() + self.critical.queue.len();
+        if total_queued >= self.total_capacity {
+            return AdmitOutcome::Backpressured;
         }
         let out = match class {
             IngressClass::Normal => self.normal.admit(tx_id),
@@ -148,5 +154,16 @@ mod tests {
         // normal lane is served before another critical id.
         assert_eq!(g.admit(23, IngressClass::Critical), AdmitOutcome::Accepted);
         assert_eq!(g.pop_ready(), Some(10));
+    }
+
+    #[test]
+    fn lane_gate_enforces_global_capacity_even_when_lane_mins_apply() {
+        let mut g = LaneAdmissionGate::new(1, 1);
+
+        assert_eq!(g.admit(100, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(101, IngressClass::Normal), AdmitOutcome::Backpressured);
+
+        assert_eq!(g.pop_ready(), Some(100));
+        assert_eq!(g.admit(101, IngressClass::Normal), AdmitOutcome::Accepted);
     }
 }
