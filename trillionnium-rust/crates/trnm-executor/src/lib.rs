@@ -88,10 +88,13 @@ fn intersects(x: &[ObjectRef], y: &[ObjectRef]) -> bool {
     }
 
     // Tiny-set fast path: avoid HashSet allocation on common low-footprint txs.
+    // Iterate the smaller side first to reduce pairwise comparisons under skewed
+    // tiny footprints (e.g. 1x8), while preserving duplicate-tolerant semantics.
     if x.len() <= 8 && y.len() <= 8 {
-        for a in x {
+        let (small, large) = if x.len() <= y.len() { (x, y) } else { (y, x) };
+        for a in small {
             let akey = access_key(a);
-            if y.iter().any(|b| access_key(b) == akey) {
+            if large.iter().any(|b| access_key(b) == akey) {
                 return true;
             }
         }
