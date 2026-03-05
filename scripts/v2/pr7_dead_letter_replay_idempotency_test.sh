@@ -53,4 +53,28 @@ if [[ "$rc" -ne 4 ]]; then
 fi
 rm -f "$LOCK"
 
+# channel casing should not bypass message-hash based dedup when fingerprint is absent
+DLQ2="$OUT_DIR/dead-letter-case.jsonl"
+RECEIPT2="$OUT_DIR/dead-letter-case.replayed.jsonl"
+LOCK2="$OUT_DIR/dead-letter-case.lock"
+cat > "$DLQ2" <<'EOF'
+{"channel":"telegram","message":"hello-case"}
+{"channel":"Telegram","message":"hello-case"}
+EOF
+: > "$RECEIPT2"
+rm -f "$LOCK2"
+
+python3 scripts/v2/pr7_dead_letter_replay.py \
+  --dead-letter-file "$DLQ2" \
+  --receipt-file "$RECEIPT2" \
+  --lock-file "$LOCK2" \
+  --dry-run \
+  --max-items 2 > "$OUT_DIR/case.log"
+
+if ! grep -q "replayed=1 dedup_skipped=1 failed=0" "$OUT_DIR/case.log"; then
+  echo "expected case-insensitive channel dedup summary" >&2
+  cat "$OUT_DIR/case.log" >&2
+  exit 1
+fi
+
 echo "[OK] pr7 dead-letter replay idempotency/lock test passed"
