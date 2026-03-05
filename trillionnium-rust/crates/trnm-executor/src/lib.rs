@@ -502,7 +502,7 @@ fn aggr_scan_window() -> usize {
 
     std::env::var("TRNM_AGGR_SCAN_WINDOW")
         .ok()
-        .and_then(|v| v.parse::<usize>().ok())
+        .and_then(|v| v.trim().parse::<usize>().ok())
         .map(|v| v.min(MAX_SCAN_WINDOW))
         .unwrap_or(0)
 }
@@ -1043,6 +1043,14 @@ mod tests {
         let _window = EnvGuard::set("TRNM_AGGR_SCAN_WINDOW", "999999");
 
         assert_eq!(aggr_scan_window(), 4096);
+    }
+
+    #[test]
+    fn aggressive_scan_window_parses_trimmed_numeric_env_values() {
+        let _env = env_lock();
+        let _window = EnvGuard::set("TRNM_AGGR_SCAN_WINDOW", " 128 ");
+
+        assert_eq!(aggr_scan_window(), 128);
     }
 
     struct EnvGuard {
