@@ -42,8 +42,20 @@ jobs:
 
       - name: Install shellcheck
         run: |
-          sudo apt-get update
-          sudo apt-get install -y shellcheck
+          retry() {
+            local attempts="$1"; shift
+            local n=1
+            until "$@"; do
+              if [ "$n" -ge "$attempts" ]; then
+                echo "Command failed after ${attempts} attempts: $*" >&2
+                return 1
+              fi
+              n=$((n+1))
+              sleep 2
+            done
+          }
+          retry 3 sudo apt-get update
+          retry 3 sudo apt-get install -y shellcheck
 
       - name: Quick shell gate (bash -n + shellcheck)
         run: |
