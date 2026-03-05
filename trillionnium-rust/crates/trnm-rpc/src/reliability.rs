@@ -405,6 +405,17 @@ fn sanitize_retry_config(mut retry: RetryConfig) -> RetryConfig {
     if retry.max_backoff_ms < retry.base_backoff_ms {
         retry.max_backoff_ms = retry.base_backoff_ms;
     }
+    // Prevent zeroed limits from causing immediate drop/open loops under
+    // misconfigured environments.
+    if retry.max_attempts == 0 {
+        retry.max_attempts = 1;
+    }
+    if retry.circuit_breaker_threshold == 0 {
+        retry.circuit_breaker_threshold = 1;
+    }
+    if retry.circuit_open_ms == 0 {
+        retry.circuit_open_ms = retry.base_backoff_ms;
+    }
     retry
 }
 
@@ -1510,5 +1521,24 @@ mod tests {
 
         assert_eq!(engine.retry.base_backoff_ms, 1);
         assert_eq!(engine.retry.max_backoff_ms, 1);
+    }
+
+    #[test]
+    fn retry_config_sanitizes_zero_attempt_and_circuit_thresholds() {
+        let store = InMemoryReliabilityStore::default();
+        let engine = ReliabilityEngine::new(
+            store,
+            RetryConfig {
+                base_backoff_ms: 10,
+                max_backoff_ms: 10,
+                max_attempts: 0,
+                circuit_breaker_threshold: 0,
+                circuit_open_ms: 0,
+            },
+        );
+
+        assert_eq!(engine.retry.max_attempts, 1);
+        assert_eq!(engine.retry.circuit_breaker_threshold, 1);
+        assert_eq!(engine.retry.circuit_open_ms, 10);
     }
 }
