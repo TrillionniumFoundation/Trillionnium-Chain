@@ -106,6 +106,10 @@ fn find_numeric_field(body: &str, field: &str) -> Option<u64> {
         } else {
             None
         };
+        if quote.is_some() && i < bytes.len() && bytes[i].is_ascii_whitespace() {
+            cursor = idx + 1;
+            continue;
+        }
         let start = i;
         while i < bytes.len() && bytes[i].is_ascii_digit() {
             i += 1;
@@ -168,6 +172,10 @@ fn has_duplicate_numeric_field(body: &str, field: &str) -> bool {
         } else {
             None
         };
+        if quote.is_some() && i < bytes.len() && bytes[i].is_ascii_whitespace() {
+            cursor = idx + 1;
+            continue;
+        }
         let start = i;
         while i < bytes.len() && bytes[i].is_ascii_digit() {
             i += 1;
@@ -494,6 +502,12 @@ mod tests {
     #[test]
     fn find_numeric_field_rejects_unclosed_quoted_value() {
         let body = r#"{"task_id":"7,"worker":"w1"}"#;
+        assert_eq!(find_numeric_field(body, "task_id"), None);
+    }
+
+    #[test]
+    fn find_numeric_field_rejects_quoted_value_with_leading_space() {
+        let body = r#"{"task_id":" 7","worker":"w1"}"#;
         assert_eq!(find_numeric_field(body, "task_id"), None);
     }
 
