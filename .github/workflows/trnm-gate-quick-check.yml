@@ -33,6 +33,8 @@ jobs:
       PYTHONHASHSEED: "0"
       # Normalize shell/test behavior for tools that branch on CI mode.
       CI: "true"
+      # Avoid sporadic apt interactive prompts on runner image/package drift.
+      DEBIAN_FRONTEND: noninteractive
     # This workflow runs dozens of regression scripts; 10 minutes can truncate
     # coverage and hide late-stage failures. Keep enough headroom for full sweep.
     timeout-minutes: 45
