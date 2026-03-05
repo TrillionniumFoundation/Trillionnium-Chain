@@ -86,6 +86,18 @@ fn intersects(x: &[ObjectRef], y: &[ObjectRef]) -> bool {
     if x.is_empty() || y.is_empty() {
         return false;
     }
+
+    // Tiny-set fast path: avoid HashSet allocation on common low-footprint txs.
+    if x.len() <= 8 && y.len() <= 8 {
+        for a in x {
+            let akey = access_key(a);
+            if y.iter().any(|b| access_key(b) == akey) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     // Build a set from the smaller side to reduce comparisons.
     let (small, large) = if x.len() <= y.len() { (x, y) } else { (y, x) };
     let seen: HashSet<u64> = small.iter().map(access_key).collect();
@@ -787,6 +799,16 @@ mod tests {
             &tx(1, vec![o(1)], vec![]),
             &tx(2, vec![o(2)], vec![])
         ));
+    }
+
+    #[test]
+    fn tiny_footprint_conflict_check_handles_duplicates_without_false_positive() {
+        let a = tx(1, vec![o(10), o(10), o(11)], vec![]);
+        let b = tx(2, vec![o(12), o(12), o(13)], vec![]);
+        let c = tx(3, vec![], vec![o(11)]);
+
+        assert!(!detect_conflict(&a, &b));
+        assert!(detect_conflict(&a, &c));
     }
 
     #[test]
