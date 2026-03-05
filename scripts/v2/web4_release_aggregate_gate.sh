@@ -21,8 +21,22 @@ DEFAULT_REQUIRED_GATES=(
   "scripts/v2/e3_enterprise_runbook_required_sections_test.sh"
 )
 
+trim_ws() {
+  local s="$1"
+  s="${s#"${s%%[![:space:]]*}"}"
+  s="${s%"${s##*[![:space:]]}"}"
+  printf '%s' "$s"
+}
+
 if [[ -n "${WEB4_RELEASE_REQUIRED_GATES:-}" ]]; then
-  IFS=',' read -r -a REQUIRED_GATES <<<"${WEB4_RELEASE_REQUIRED_GATES}"
+  IFS=',' read -r -a RAW_REQUIRED_GATES <<<"${WEB4_RELEASE_REQUIRED_GATES}"
+  REQUIRED_GATES=()
+  for gate in "${RAW_REQUIRED_GATES[@]}"; do
+    gate="$(trim_ws "$gate")"
+    if [[ -n "$gate" ]]; then
+      REQUIRED_GATES+=("$gate")
+    fi
+  done
 else
   REQUIRED_GATES=("${DEFAULT_REQUIRED_GATES[@]}")
 fi
