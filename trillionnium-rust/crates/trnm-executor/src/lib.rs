@@ -679,6 +679,22 @@ pub fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
     }
 }
 
+fn hot_bucket_hint(tx: &Tx, buckets_n: usize) -> usize {
+    let key_a = tx
+        .write_set
+        .first()
+        .or_else(|| tx.read_set.first())
+        .map(|o| o.id as usize)
+        .unwrap_or(0);
+    let key_b = tx
+        .write_set
+        .get(1)
+        .or_else(|| tx.read_set.get(1))
+        .map(|o| o.id as usize)
+        .unwrap_or(0);
+    (key_a ^ key_b.rotate_left(7)) % buckets_n
+}
+
 fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
     match strategy {
         GroupingStrategy::Original => {}
@@ -722,19 +738,7 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
             for tx in txs.iter().cloned() {
                 // Prefer write-set as stronger conflict signal; fold a second key when present
                 // to reduce bucket skew for mixed workloads.
-                let key_a = tx
-                    .write_set
-                    .first()
-                    .or_else(|| tx.read_set.first())
-                    .map(|o| o.id as usize)
-                    .unwrap_or(0);
-                let key_b = tx
-                    .write_set
-                    .get(1)
-                    .or_else(|| tx.read_set.get(1))
-                    .map(|o| o.id as usize)
-                    .unwrap_or(0);
-                let bucket = (key_a ^ key_b.rotate_left(7)) % buckets_n;
+                let bucket = hot_bucket_hint(&tx, buckets_n);
                 buckets[bucket].push(tx);
             }
 
@@ -749,21 +753,7 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
             // repeated batches do not always favor bucket 0 at cycle start.
             let mut rr_start = txs
                 .first()
-                .map(|tx| {
-                    let key_a = tx
-                        .write_set
-                        .first()
-                        .or_else(|| tx.read_set.first())
-                        .map(|o| o.id as usize)
-                        .unwrap_or(0);
-                    let key_b = tx
-                        .write_set
-                        .get(1)
-                        .or_else(|| tx.read_set.get(1))
-                        .map(|o| o.id as usize)
-                        .unwrap_or(0);
-                    (key_a ^ key_b.rotate_left(7)) % iters.len()
-                })
+                .map(|tx| hot_bucket_hint(tx, iters.len()))
                 .unwrap_or(0);
             // Rotate the round-robin start bucket each pass to reduce consistent
             // first-bucket preference under uneven bucket depths.
