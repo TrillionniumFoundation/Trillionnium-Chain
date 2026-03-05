@@ -263,4 +263,28 @@ mod tests {
         assert_eq!(g.pop_ready(), Some(1));
         assert_eq!(g.admit(99, IngressClass::Critical), AdmitOutcome::Accepted);
     }
+
+    #[test]
+    fn spillover_admission_remains_globally_idempotent_until_drained() {
+        let mut g = LaneAdmissionGate::new(4, 1);
+
+        // Keep one free total slot while saturating the critical reserve, then
+        // force a critical tx to spill into normal capacity.
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(50, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(51, IngressClass::Critical), AdmitOutcome::Accepted);
+
+        // Even though tx 51 was admitted via spillover, duplicate admission from
+        // either ingress class must still be rejected until it is drained.
+        assert_eq!(g.admit(51, IngressClass::Critical), AdmitOutcome::Duplicate);
+        assert_eq!(g.admit(51, IngressClass::Normal), AdmitOutcome::Duplicate);
+
+        // Drain until tx 51 leaves the queue, then re-admission is allowed.
+        assert_eq!(g.pop_ready(), Some(50));
+        assert_eq!(g.pop_ready(), Some(1));
+        assert_eq!(g.pop_ready(), Some(2));
+        assert_eq!(g.pop_ready(), Some(51));
+        assert_eq!(g.admit(51, IngressClass::Normal), AdmitOutcome::Accepted);
+    }
 }
