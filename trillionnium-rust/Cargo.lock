@@ -820,9 +820,21 @@ dependencies = [
  "sha2",
  "toml",
  "trnm-executor",
+ "trnm-mempool",
  "trnm-pouw",
  "trnm-state",
  "trnm-types",
+]
+
+[[package]]
+name = "trnm-oracle"
+version = "0.1.0"
+dependencies = [
+ "hex",
+ "serde",
+ "serde_json",
+ "sha2",
+ "thiserror",
 ]
 
 [[package]]
@@ -851,6 +863,7 @@ dependencies = [
  "serde_json",
  "sha2",
  "tempfile",
+ "trnm-mempool",
  "trnm-state",
  "trnm-types",
 ]
