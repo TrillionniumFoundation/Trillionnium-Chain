@@ -78,7 +78,18 @@ impl LaneAdmissionGate {
         }
         let out = match class {
             IngressClass::Normal => self.normal.admit(tx_id),
-            IngressClass::Critical => self.critical.admit(tx_id),
+            IngressClass::Critical => {
+                let primary = self.critical.admit(tx_id);
+                if matches!(primary, AdmitOutcome::Backpressured)
+                    && self.normal.queue.len() < self.normal.capacity
+                {
+                    // Keep free-ingress throughput high under critical bursts by
+                    // allowing bounded spillover into normal capacity.
+                    self.normal.admit(tx_id)
+                } else {
+                    primary
+                }
+            }
         };
         if matches!(out, AdmitOutcome::Accepted) {
             self.seen_global.insert(tx_id);
@@ -144,16 +155,24 @@ mod tests {
 
         assert_eq!(g.admit(10, IngressClass::Normal), AdmitOutcome::Accepted);
         assert_eq!(g.admit(20, IngressClass::Critical), AdmitOutcome::Accepted);
-        assert_eq!(g.admit(21, IngressClass::Critical), AdmitOutcome::Backpressured);
+        assert_eq!(g.admit(21, IngressClass::Critical), AdmitOutcome::Accepted);
 
         assert_eq!(g.pop_ready(), Some(20));
-        assert_eq!(g.admit(22, IngressClass::Critical), AdmitOutcome::Accepted);
-        assert_eq!(g.pop_ready(), Some(22));
-
-        // After two consecutive critical dispatches (burst limit for reserve=1),
-        // normal lane is served before another critical id.
-        assert_eq!(g.admit(23, IngressClass::Critical), AdmitOutcome::Accepted);
         assert_eq!(g.pop_ready(), Some(10));
+        assert_eq!(g.pop_ready(), Some(21));
+    }
+
+    #[test]
+    fn critical_lane_spills_over_to_free_normal_capacity() {
+        let mut g = LaneAdmissionGate::new(4, 1);
+
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(3, IngressClass::Critical), AdmitOutcome::Accepted);
+
+        // Critical reserved slot is full, but total capacity still has one slot.
+        assert_eq!(g.admit(4, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(5, IngressClass::Critical), AdmitOutcome::Backpressured);
     }
 
     #[test]
