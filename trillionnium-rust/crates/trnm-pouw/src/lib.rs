@@ -3572,6 +3572,40 @@ mod tests {
     }
 
     #[test]
+    fn resolve_allows_distinct_multisig_authority_member_and_preserves_single_escrow_settlement() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        set_resolve_authority(&mut st, "authority,authority2");
+
+        let r1 = apply_create_task(&mut st, 8_968, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(8_968, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+        let r5 =
+            apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
+
+        let r6 =
+            apply_resolve(&mut st, r5, true, "authority2".into(), "authority2".into()).unwrap();
+        let task = st.get_task(r6.id).unwrap();
+        assert_eq!(task.status, TaskStatus::Slashed);
+        assert_eq!(task.challenge_bond_forfeited, Some(false));
+        assert_eq!(st.balance_of("challenger"), 101);
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), 0);
+        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), 0);
+
+        let err = apply_resolve(&mut st, r6, true, "authority2".into(), "authority2".into())
+            .expect_err("terminal challenge resolution must remain single-settlement under multisig authority");
+        assert!(matches!(err, PouwError::InvalidTransition));
+        assert_eq!(st.balance_of("challenger"), 101);
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), 0);
+        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), 0);
+    }
+
+    #[test]
     fn challenge_rejects_while_emergency_pause_active_without_escrow_mutation() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
