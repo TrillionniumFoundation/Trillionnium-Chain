@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Force bytewise locale so fixed-string matching is deterministic across host locales.
+export LC_ALL=C
+export LANG=C
+
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 RUNBOOK="$ROOT/docs/runbooks/enterprise_onboarding_runbook_v1.md"
 
