@@ -488,6 +488,7 @@ struct RelaySessionState {
     /// Cache of envelope hash by sequence index (sequence starts from 1).
     envelope_hashes: Vec<[u8; 32]>,
     acked_ids: BTreeSet<u64>,
+    poll_start_idx: usize,
 }
 
 impl RelaySessionState {
@@ -503,6 +504,7 @@ impl RelaySessionState {
             queue: VecDeque::new(),
             envelope_hashes: Vec::new(),
             acked_ids: BTreeSet::new(),
+            poll_start_idx: 0,
         }
     }
 
@@ -521,6 +523,16 @@ impl RelaySessionState {
         self.queue.push_back(envelope);
         self.envelope_hashes.push(hash);
         Ok(())
+    }
+
+    fn advance_poll_start_idx(&mut self) {
+        while let Some(env) = self.queue.get(self.poll_start_idx) {
+            if self.acked_ids.contains(&env.envelope_id) {
+                self.poll_start_idx += 1;
+            } else {
+                break;
+            }
+        }
     }
 }
 
@@ -695,6 +707,7 @@ impl RelayService {
         let envelopes = state
             .queue
             .iter()
+            .skip(state.poll_start_idx)
             .filter(|e| !state.acked_ids.contains(&e.envelope_id))
             .take(limit)
             .cloned()
@@ -736,6 +749,8 @@ impl RelayService {
                 }
             }
         }
+
+        state.advance_poll_start_idx();
 
         Ok(RelayAckResponse {
             session_id: req.session_id,
@@ -1153,6 +1168,63 @@ mod tests {
             })
             .unwrap();
         assert!(none_left.envelopes.is_empty());
+    }
+
+    #[test]
+    fn relay_ack_advances_poll_start_index_for_contiguous_acked_prefix() {
+        let mut router = RelayRouter::new();
+        router.register("relay.echo", EchoHandler);
+        let relay = RelayService::new(router);
+        relay
+            .open(RelayOpenRequest {
+                session_id: "s2-cursor".into(),
+            })
+            .unwrap();
+
+        relay
+            .send(RelaySendRequest {
+                session_id: "s2-cursor".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"m1".to_vec(),
+                source: None,
+            })
+            .unwrap();
+        relay
+            .send(RelaySendRequest {
+                session_id: "s2-cursor".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"m2".to_vec(),
+                source: None,
+            })
+            .unwrap();
+
+        let batch = relay
+            .ack(RelayAckRequest {
+                session_id: "s2-cursor".into(),
+                envelope_ids: vec![],
+                upto_seq: Some(2),
+            })
+            .unwrap();
+        assert_eq!(batch.acked, 2);
+
+        {
+            let g = relay.sessions.lock().unwrap();
+            let state = g.get("s2-cursor").unwrap();
+            assert_eq!(state.poll_start_idx, 2);
+        }
+
+        let pending = relay
+            .poll(RelayPollRequest {
+                session_id: "s2-cursor".into(),
+                limit: 10,
+            })
+            .unwrap();
+        assert_eq!(pending.envelopes.len(), 2);
+        assert!(pending.envelopes.iter().all(|e| e.sequence > 2));
     }
 
     #[test]
