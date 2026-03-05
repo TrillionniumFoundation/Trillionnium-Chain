@@ -383,4 +383,29 @@ mod tests {
         assert!(gate.backpressured_ids.len() <= 2);
         assert!(gate.backpressured_fifo.len() <= gate.capacity.saturating_mul(4));
     }
+
+    #[test]
+    fn burst_capacity_release_only_defers_fresh_ingress_for_known_retry_budget() {
+        let mut gate = AdmissionGate::new(4);
+        for tx_id in 1..=4 {
+            assert_eq!(gate.admit(tx_id), AdmitOutcome::Accepted);
+        }
+
+        // Only two known retries exist.
+        assert_eq!(gate.admit(90), AdmitOutcome::Backpressured);
+        assert_eq!(gate.admit(91), AdmitOutcome::Backpressured);
+
+        // Free three slots in a burst.
+        assert_eq!(gate.pop_ready(), Some(1));
+        assert_eq!(gate.pop_ready(), Some(2));
+        assert_eq!(gate.pop_ready(), Some(3));
+
+        // Only two fresh admissions should be deferred; the third should pass through.
+        assert_eq!(gate.admit(1000), AdmitOutcome::Backpressured);
+        assert_eq!(gate.admit(1001), AdmitOutcome::Backpressured);
+        assert_eq!(gate.admit(1002), AdmitOutcome::Accepted);
+
+        let m = gate.metrics();
+        assert_eq!(m.fairness_deferrals, 2);
+    }
 }
