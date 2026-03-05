@@ -969,6 +969,32 @@ mod tests {
         );
     }
 
+    #[test]
+    fn aggressive_scan_window_caps_candidate_probe_cost() {
+        let _env = env_lock();
+        let _deep = EnvGuard::set("TRNM_AGGR_DEEP_SCAN", "1");
+        let _rr = EnvGuard::set("TRNM_AGGR_SCAN_ROUND_ROBIN", "1");
+        let _window = EnvGuard::set("TRNM_AGGR_SCAN_WINDOW", "1");
+
+        // Force many independent txs to create an expanding candidate span.
+        // With scan window=1, each tx can probe at most one candidate group,
+        // bounding probe work to O(n) and preventing deep-scan blowups.
+        let mut txs = Vec::new();
+        txs.push(tx(1, vec![], vec![o(7)]));
+        txs.push(tx(2, vec![], vec![o(7)]));
+        for i in 0..32u64 {
+            txs.push(tx(100 + i, vec![o(10_000 + i)], vec![]));
+        }
+
+        let (_groups, profile) =
+            build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::AggressiveGreedy);
+
+        assert!(
+            profile.candidate_groups_scanned <= txs.len().saturating_sub(1),
+            "scan window must cap candidate scans to ~1 probe per tx"
+        );
+    }
+
     struct EnvGuard {
         key: &'static str,
         old: Option<String>,
