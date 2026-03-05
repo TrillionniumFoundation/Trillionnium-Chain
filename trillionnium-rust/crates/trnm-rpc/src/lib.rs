@@ -179,10 +179,7 @@ pub fn validate_trnm_address(address: &str) -> Result<(), AccountQueryError> {
     if hex_part.len() != 40 {
         return Err(AccountQueryError::InvalidAddressFormat(address.to_string()));
     }
-    if !hex_part
-        .chars()
-        .all(|c| c.is_ascii_hexdigit() || c.is_ascii_lowercase() || c.is_ascii_digit())
-    {
+    if !hex_part.chars().all(|c| c.is_ascii_hexdigit()) {
         return Err(AccountQueryError::InvalidAddressFormat(address.to_string()));
     }
     Ok(())
@@ -296,6 +293,14 @@ mod tests {
     fn query_account_state_invalid_input() {
         let accounts = BTreeMap::new();
         let err = query_account_state(&accounts, "not-an-address").unwrap_err();
+        assert_eq!(err.code(), "INVALID_ADDRESS");
+    }
+
+    #[test]
+    fn query_account_state_rejects_non_hex_suffix() {
+        let accounts = BTreeMap::new();
+        let bad = format!("trnm1{}", "z".repeat(40));
+        let err = query_account_state(&accounts, &bad).unwrap_err();
         assert_eq!(err.code(), "INVALID_ADDRESS");
     }
 }
