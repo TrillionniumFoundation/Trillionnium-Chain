@@ -43,7 +43,7 @@ def replay_key(row: dict) -> str:
     fingerprint = str(row.get("fingerprint", "")).strip()
     if fingerprint and fingerprint != "unknown":
         return f"fp:{fingerprint}"
-    channel = str(row.get("channel", "")).strip().lower()
+    channel = str(row.get("channel", "")).strip()
     message = str(row.get("message", "")).strip()
     digest = hashlib.sha256(f"{channel}\n{message}".encode("utf-8")).hexdigest()
     return f"msg:{digest}"
