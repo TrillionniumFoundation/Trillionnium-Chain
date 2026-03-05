@@ -240,4 +240,19 @@ mod tests {
                 if msg.contains("duplicate proof_type binding")
         ));
     }
+
+    #[test]
+    fn zk_verifier_rejects_case_variant_duplicate_task_id_binding_fail_closed() {
+        let verifier = ZkVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"ZK:{\"task_id\":99,\"worker\":\"worker-zk\",\"proof_type\":\"zk\",\"Task_ID\":99,\"result_hash\":\"1111111111111111111111111111111111111111111111111111111111111111\"}"
+            ),
+            VerificationResult::Invalid(msg)
+                if msg.contains("duplicate task_id binding")
+        ));
+    }
 }
