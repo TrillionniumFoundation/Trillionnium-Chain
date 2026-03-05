@@ -5,6 +5,7 @@ ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 
 # 发布级聚合 gate：关闭 Web4 高风险门禁盲区
 # 可通过 WEB4_RELEASE_REQUIRED_GATES 覆盖（逗号分隔，相对 ROOT 路径）以做定向回归/失败注入。
+# 约束：CI 环境默认禁止 override，避免发布覆盖面被误降级。
 DEFAULT_REQUIRED_GATES=(
   "scripts/v2/x2_settlement_contract_gate.sh"
   "scripts/v2/i2_token_lifecycle_gate.sh"
@@ -29,6 +30,11 @@ trim_ws() {
 }
 
 if [[ -n "${WEB4_RELEASE_REQUIRED_GATES:-}" ]]; then
+  if [[ "${CI:-}" == "true" && "${WEB4_RELEASE_ALLOW_CI_OVERRIDE:-0}" != "1" ]]; then
+    echo "[WEB4-RELEASE][FAIL] WEB4_RELEASE_REQUIRED_GATES override is forbidden in CI (set WEB4_RELEASE_ALLOW_CI_OVERRIDE=1 only for non-release debugging)" >&2
+    exit 2
+  fi
+
   IFS=',' read -r -a RAW_REQUIRED_GATES <<<"${WEB4_RELEASE_REQUIRED_GATES}"
   REQUIRED_GATES=()
   for gate in "${RAW_REQUIRED_GATES[@]}"; do
