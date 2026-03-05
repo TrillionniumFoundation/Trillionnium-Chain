@@ -35,6 +35,9 @@ jobs:
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+          # Keep test scheduling deterministic across runner class changes to
+          # reduce timing-sensitive flakes in RC merge-gate runs.
+          export RUST_TEST_THREADS="${RUST_TEST_THREADS:-1}"
           cd trillionnium-rust
           cargo test --workspace
 
