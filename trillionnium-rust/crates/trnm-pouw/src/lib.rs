@@ -3714,6 +3714,61 @@ mod tests {
     }
 
     #[test]
+    fn timeout_reopens_after_emergency_pause_clears_with_single_settlement() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+
+        let r1 = apply_create_task(&mut st, 8_962_1, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(8_962_1, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+        let r5 =
+            apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
+
+        st.set_gov_param(9_202_1, 7_999, "emergency_pause".into(), "true".into())
+            .expect("pause=true governance update must succeed");
+        assert!(st.is_emergency_paused());
+
+        let paused_err = apply_timeout(&mut st, r5.clone(), 221)
+            .expect_err("emergency pause must freeze challenged timeout settlement path");
+        assert!(matches!(paused_err, PouwError::InvalidTransition));
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), 10);
+        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), 0);
+        assert_eq!(st.balance_of("challenger"), 90);
+
+        st.set_gov_param(9_202_2, 7_999, "emergency_pause".into(), "false".into())
+            .expect("pause=false governance update must succeed");
+        assert!(!st.is_emergency_paused());
+
+        let done = apply_timeout(&mut st, r5, 221)
+            .expect("challenged timeout must reopen after emergency pause clears");
+        let task = st.get_task(done.id).expect("timed out task must persist");
+        assert_eq!(task.status, TaskStatus::Completed);
+        assert_eq!(task.challenge_bond_forfeited, Some(false));
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), 0);
+        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), 0);
+        assert_eq!(st.balance_of("challenger"), 100);
+
+        let escrow_after_first_timeout = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+        let forfeit_after_first_timeout = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+        let challenger_after_first_timeout = st.balance_of("challenger");
+
+        let replay_err = apply_timeout(&mut st, done, 221)
+            .expect_err("terminal timeout replay must be rejected without double settlement");
+        assert!(matches!(replay_err, PouwError::InvalidTransition));
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_after_first_timeout);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            forfeit_after_first_timeout
+        );
+        assert_eq!(st.balance_of("challenger"), challenger_after_first_timeout);
+    }
+
+    #[test]
     fn timeout_revealed_path_remains_available_while_emergency_pause_active() {
         let mut st = seeded_state();
 
