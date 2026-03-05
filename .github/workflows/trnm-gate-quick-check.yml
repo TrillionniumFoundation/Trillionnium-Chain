@@ -25,6 +25,9 @@ jobs:
       TZ: UTC
       LANG: C.UTF-8
       LC_ALL: C.UTF-8
+      # Freeze Python hash randomization so set/dict iteration in shell-driven
+      # regression scripts stays deterministic across CI re-runs.
+      PYTHONHASHSEED: "0"
       # Normalize shell/test behavior for tools that branch on CI mode.
       CI: "true"
     # This workflow runs dozens of regression scripts; 10 minutes can truncate
