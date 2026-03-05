@@ -1983,4 +1983,28 @@ mod tests {
             VerificationResult::Invalid(msg) if msg.contains("Invalid ZK proof envelope")
         ));
     }
+
+    #[test]
+    fn registry_with_builtin_verifiers_fail_closed_when_worker_binding_missing() {
+        let registry = VerifierRegistry::with_builtin_verifiers();
+
+        let mut tee_task = task_with_proof_type(ProofType::Tee);
+        tee_task.worker = Some("worker-a".into());
+
+        let mut zk_task = task_with_proof_type(ProofType::Zk);
+        zk_task.worker = Some("worker-a".into());
+        zk_task.result_hash = Some([0x22; 32]);
+
+        assert!(matches!(
+            registry.verify(&tee_task, b"TEE:task_id=42,proof_type=tee,quote=ok"),
+            VerificationResult::Invalid(msg) if msg.contains("worker")
+        ));
+        assert!(matches!(
+            registry.verify(
+                &zk_task,
+                b"ZK:task_id=42,proof_type=zk,result_hash=2222222222222222222222222222222222222222222222222222222222222222,proof=ok"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("worker")
+        ));
+    }
 }
