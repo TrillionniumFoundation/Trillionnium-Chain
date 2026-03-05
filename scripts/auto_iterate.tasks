@@ -610,3 +610,6 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e2-
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e3-enterprise-runbook-operator-id-template-test" "./scripts/v2/e3_enterprise_runbook_operator_id_template_test.sh" "ci(gate): add e3-enterprise-runbook-operator-id-template-test regression to quick-check"
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: p11-policy-rollback-guard-invalid-state-counters-test" "./scripts/v2/p11_policy_rollback_guard_invalid_state_counters_test.sh" "ci(gate): add p11-policy-rollback-guard-invalid-state-counters-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: web4-release-aggregate-gate-required-gates-whitespace-test" "./scripts/v2/web4_release_aggregate_gate_required_gates_whitespace_test.sh" "ci(gate): add web4-release-aggregate-gate-required-gates-whitespace-test regression to quick-check"
