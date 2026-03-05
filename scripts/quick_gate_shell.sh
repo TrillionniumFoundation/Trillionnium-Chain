@@ -6,6 +6,9 @@ set -euo pipefail
 export TZ="${TZ:-UTC}"
 export LANG="${LANG:-C.UTF-8}"
 export LC_ALL="${LC_ALL:-C.UTF-8}"
+# Ensure bytewise collation even when callers only set LANG/LC_ALL,
+# keeping file manifest ordering reproducible for replay evidence.
+export LC_COLLATE="${LC_COLLATE:-C}"
 
 if [[ $# -eq 0 ]]; then
   TARGET_DIRS=("scripts")
