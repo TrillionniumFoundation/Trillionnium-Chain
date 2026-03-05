@@ -672,6 +672,12 @@ pub fn apply_reveal_result_at_height(
         }
     }
 
+    if task.task_id != task_ref.id {
+        // Fail closed if legacy/corrupted state breaks the canonical task_id
+        // binding between object reference and proof envelope context.
+        return Err(PouwError::State("task id binding mismatch".into()));
+    }
+
     let worker = task.worker.clone().ok_or(PouwError::MissingWorker)?;
     let worker_trimmed = worker.trim();
     if worker_trimmed.is_empty() || worker_trimmed != worker {
@@ -5802,6 +5808,37 @@ mod tests {
         assert!(matches!(err, PouwError::State(msg) if msg.contains("Proof verification failed")));
 
         // Ensure task does not advance on malformed envelope bindings.
+        let task_after = st.get_task(r3.id).unwrap();
+        assert_eq!(task_after.status, TaskStatus::Committed);
+        assert!(task_after.result_hash.is_none());
+    }
+
+    #[test]
+    fn tee_reveal_rejects_legacy_task_id_binding_mismatch_fail_closed() {
+        let mut st = seeded_state();
+        let r1 = apply_create_task(&mut st, 7003, "alice".into(), 10).unwrap();
+
+        let mut task = st.get_task(r1.id).unwrap();
+        task.proof_type = ProofType::Tee;
+        let r1_updated = st.update_task(r1, task).unwrap();
+
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(7003, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1_updated, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+
+        let mut corrupted = st.get_task(r3.id).unwrap();
+        corrupted.task_id = r3.id + 1;
+        st.update_task(r3.clone(), corrupted).unwrap();
+
+        let proof = b"TEE:task_id=7003,worker=worker1,proof_type=tee,result_hash=0101010101010101010101010101010101010101010101010101010101010101,quote=VALID_QUOTE".to_vec();
+        let err = apply_reveal_result(&mut st, r3.clone(), result_hash, reveal_salt, Some(proof))
+            .unwrap_err();
+
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("task id binding mismatch")));
+
         let task_after = st.get_task(r3.id).unwrap();
         assert_eq!(task_after.status, TaskStatus::Committed);
         assert!(task_after.result_hash.is_none());
