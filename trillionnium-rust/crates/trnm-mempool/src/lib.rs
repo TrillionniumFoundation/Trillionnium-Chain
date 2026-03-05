@@ -81,11 +81,11 @@ impl LaneAdmissionGate {
                 let primary = self.normal.admit(tx_id);
                 if matches!(primary, AdmitOutcome::Backpressured)
                     && self.normal.capacity == 0
-                    && self.critical.queue.is_empty()
                     && self.critical.queue.len() < self.critical.capacity
                 {
                     // Keep free-ingress throughput live for degenerate reserve-only
-                    // configs (normal capacity == 0) when the critical lane is idle.
+                    // configs (normal capacity == 0) by borrowing available
+                    // critical-lane headroom instead of requiring it to be fully idle.
                     self.critical.admit(tx_id)
                 } else {
                     primary
@@ -219,6 +219,18 @@ mod tests {
         assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
         assert_eq!(g.admit(2, IngressClass::Critical), AdmitOutcome::Backpressured);
         assert_eq!(g.pop_ready(), Some(1));
+    }
+
+    #[test]
+    fn full_critical_reserve_allows_normal_to_use_free_headroom_while_critical_busy() {
+        let mut g = LaneAdmissionGate::new(3, 3);
+
+        assert_eq!(g.admit(1, IngressClass::Critical), AdmitOutcome::Accepted);
+        // Even with critical backlog present, reserve-only configs should keep
+        // free-ingress throughput live while total capacity has room.
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(4, IngressClass::Normal), AdmitOutcome::Backpressured);
     }
 
     #[test]
