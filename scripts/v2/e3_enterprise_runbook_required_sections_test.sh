@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Keep text matching deterministic across CI runners with different locales/timezones.
+export LC_ALL=C.UTF-8
+export LANG=C.UTF-8
+export TZ=UTC
+
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 RUNBOOK="$ROOT/docs/runbooks/enterprise_onboarding_runbook_v1.md"
 
