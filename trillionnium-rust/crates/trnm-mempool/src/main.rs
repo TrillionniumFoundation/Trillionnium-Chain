@@ -24,6 +24,7 @@ pub struct AdmissionGate {
     backpressured_ids: HashSet<u64>,
     backpressured_fifo: VecDeque<u64>,
     retry_reservations: usize,
+    last_fairness_deferred: Option<u64>,
     metrics: GateMetrics,
 }
 
@@ -79,6 +80,7 @@ impl AdmissionGate {
             backpressured_ids: HashSet::with_capacity(capacity),
             backpressured_fifo: VecDeque::with_capacity(capacity),
             retry_reservations: 0,
+            last_fairness_deferred: None,
             metrics: GateMetrics::default(),
         }
     }
@@ -93,8 +95,12 @@ impl AdmissionGate {
         // This guards restored/corrupted state from over-deferring free ingress.
         let retry_budget = self.backpressured_ids.len().min(self.capacity);
         self.retry_reservations = self.retry_reservations.min(retry_budget);
+        if self.retry_reservations == 0 || self.backpressured_ids.is_empty() {
+            self.last_fairness_deferred = None;
+        }
 
         if self.queue.len() >= self.capacity {
+            self.last_fairness_deferred = None;
             if self.backpressured_ids.contains(&tx_id) {
                 self.metrics.duplicates = self.metrics.duplicates.saturating_add(1);
                 self.metrics.backpressure_duplicates =
@@ -113,9 +119,15 @@ impl AdmissionGate {
             && !self.backpressured_ids.is_empty()
             && !self.backpressured_ids.contains(&tx_id)
         {
+            if self.last_fairness_deferred == Some(tx_id) {
+                self.metrics.duplicates = self.metrics.duplicates.saturating_add(1);
+                return AdmitOutcome::Duplicate;
+            }
+
             // Deferring fresh ingress should not evict older retries from bounded memory,
             // otherwise long-waiting retries can lose their anti-starvation preference.
             self.remember_backpressured_without_eviction(tx_id);
+            self.last_fairness_deferred = Some(tx_id);
             self.metrics.backpressured = self.metrics.backpressured.saturating_add(1);
             self.metrics.fairness_deferrals = self.metrics.fairness_deferrals.saturating_add(1);
             self.retry_reservations -= 1;
@@ -358,6 +370,33 @@ mod tests {
         assert!(gate.backpressured_ids.contains(&9));
         assert!(gate.backpressured_ids.contains(&10));
         assert!(!gate.backpressured_ids.contains(&3));
+    }
+
+    #[test]
+    fn repeated_fairness_deferral_of_same_fresh_id_is_idempotent() {
+        let mut gate = AdmissionGate::new(4);
+        for tx_id in 1..=4 {
+            assert_eq!(gate.admit(tx_id), AdmitOutcome::Accepted);
+        }
+        // Fill bounded retry memory to capacity.
+        assert_eq!(gate.admit(9), AdmitOutcome::Backpressured);
+        assert_eq!(gate.admit(10), AdmitOutcome::Backpressured);
+        assert_eq!(gate.admit(11), AdmitOutcome::Backpressured);
+        assert_eq!(gate.admit(12), AdmitOutcome::Backpressured);
+
+        // Open two slots to create a multi-step fairness reservation window.
+        assert_eq!(gate.pop_ready(), Some(1));
+        assert_eq!(gate.pop_ready(), Some(2));
+
+        // Fresh id=20 is deferred while retry memory is full, so it cannot be
+        // remembered in backpressured_ids and should dedupe via last_fairness_deferred.
+        assert_eq!(gate.admit(20), AdmitOutcome::Backpressured);
+        assert_eq!(gate.admit(20), AdmitOutcome::Duplicate);
+
+        let m = gate.metrics();
+        assert_eq!(m.backpressured, 5);
+        assert_eq!(m.fairness_deferrals, 1);
+        assert_eq!(m.duplicates, 1);
     }
 
     #[test]
