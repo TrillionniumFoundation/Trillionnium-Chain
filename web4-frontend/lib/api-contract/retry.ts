@@ -7,6 +7,11 @@ export type RetryOptions = {
   signal?: AbortSignal;
 };
 
+const clampNonNegativeInt = (value: number | undefined, fallback: number): number => {
+  if (typeof value !== "number" || !Number.isFinite(value)) return fallback;
+  return Math.max(0, Math.trunc(value));
+};
+
 const sleep = (ms: number, signal?: AbortSignal): Promise<void> =>
   new Promise((resolve, reject) => {
     const timer = setTimeout(() => {
@@ -44,9 +49,9 @@ export async function withRetry<T>(
   fn: () => Promise<T>,
   opts: RetryOptions = {},
 ): Promise<T> {
-  const retries = opts.retries ?? 2;
-  const baseDelayMs = opts.baseDelayMs ?? 250;
-  const maxDelayMs = opts.maxDelayMs ?? 2_000;
+  const retries = clampNonNegativeInt(opts.retries, 2);
+  const baseDelayMs = clampNonNegativeInt(opts.baseDelayMs, 250);
+  const maxDelayMs = Math.max(baseDelayMs, clampNonNegativeInt(opts.maxDelayMs, 2_000));
 
   let lastErr: unknown;
 

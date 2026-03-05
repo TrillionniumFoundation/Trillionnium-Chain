@@ -20,6 +20,11 @@ type QueryOptions = RetryOptions & {
   timeoutMs?: number;
 };
 
+const normalizeTimeoutMs = (timeoutMs: unknown): number => {
+  if (typeof timeoutMs !== "number" || !Number.isFinite(timeoutMs)) return 8_000;
+  return Math.max(100, Math.trunc(timeoutMs));
+};
+
 const withTimeoutSignal = (timeoutMs: number, signal?: AbortSignal) => {
   const controller = new AbortController();
   let timedOut = false;
@@ -28,29 +33,50 @@ const withTimeoutSignal = (timeoutMs: number, signal?: AbortSignal) => {
     controller.abort("timeout");
   }, timeoutMs);
 
+  const onAbort = () => controller.abort(signal?.reason);
+
   if (signal) {
-    signal.addEventListener("abort", () => controller.abort(signal.reason), {
-      once: true,
-    });
+    if (signal.aborted) {
+      onAbort();
+    } else {
+      signal.addEventListener("abort", onAbort, { once: true });
+    }
   }
 
   return {
     signal: controller.signal,
     isTimeout: () => timedOut,
-    cleanup: () => clearTimeout(timer),
+    cleanup: () => {
+      clearTimeout(timer);
+      signal?.removeEventListener("abort", onAbort);
+    },
   };
+};
+
+const normalizeBaseUrl = (baseUrl: string): string => {
+  const trimmed = baseUrl.trim();
+  if (!trimmed) {
+    throw new FrontendApiError({
+      code: "UNKNOWN",
+      message: "Frontend API base URL is empty",
+      retryable: false,
+    });
+  }
+
+  return trimmed.replace(/\/+$/, "");
 };
 
 export function createFrontendApiClient(config: BaseClientConfig) {
   const fetchImpl = config.fetchImpl ?? fetch;
+  const normalizedBaseUrl = normalizeBaseUrl(config.baseUrl);
 
   const getJson = async (path: string, options: QueryOptions = {}) => {
-    const timeoutMs = options.timeoutMs ?? 8_000;
+    const timeoutMs = normalizeTimeoutMs(options.timeoutMs);
 
     return withRetry(async () => {
       const timeout = withTimeoutSignal(timeoutMs, options.signal);
       try {
-        const response = await fetchImpl(`${config.baseUrl}${path}`, {
+        const response = await fetchImpl(`${normalizedBaseUrl}${path}`, {
           method: "GET",
           headers: { Accept: "application/json" },
           signal: timeout.signal,
