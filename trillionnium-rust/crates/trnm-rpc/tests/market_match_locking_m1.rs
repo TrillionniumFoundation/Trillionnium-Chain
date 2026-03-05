@@ -76,7 +76,8 @@ fn market_match_waits_for_bids_lock_before_reading() {
         let lock = bids_lock.clone();
         thread::spawn(move || {
             // Hold the lock long enough to dominate process startup jitter on busy CI nodes.
-            thread::sleep(Duration::from_millis(800));
+            // Slightly longer dwell cuts rare CI flakes where subprocess startup races lock release.
+            thread::sleep(Duration::from_millis(1500));
             let _ = fs::remove_file(lock);
         })
     };
