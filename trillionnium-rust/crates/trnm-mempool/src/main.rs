@@ -46,6 +46,12 @@ impl AdmissionGate {
         }
     }
 
+    fn remember_backpressured_without_eviction(&mut self, tx_id: u64) {
+        if self.backpressured_ids.contains(&tx_id) || self.backpressured_ids.len() < self.capacity {
+            self.remember_backpressured(tx_id);
+        }
+    }
+
     pub fn new(capacity: usize) -> Self {
         // Keep the gate live even if operators accidentally configure zero capacity.
         // This prevents a permanent backpressure state with unbounded retry key growth.
@@ -85,7 +91,9 @@ impl AdmissionGate {
             && !self.backpressured_ids.is_empty()
             && !self.backpressured_ids.contains(&tx_id)
         {
-            self.remember_backpressured(tx_id);
+            // Deferring fresh ingress should not evict older retries from bounded memory,
+            // otherwise long-waiting retries can lose their anti-starvation preference.
+            self.remember_backpressured_without_eviction(tx_id);
             self.metrics.backpressured += 1;
             self.metrics.fairness_deferrals += 1;
             self.retry_reservations -= 1;
@@ -293,5 +301,22 @@ mod tests {
 
         let m = gate.metrics();
         assert_eq!(m.fairness_deferrals, 1);
+    }
+
+    #[test]
+    fn fairness_deferral_does_not_evict_older_retries_from_bounded_memory() {
+        let mut gate = AdmissionGate::new(2);
+        assert_eq!(gate.admit(1), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(2), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(9), AdmitOutcome::Backpressured);
+        assert_eq!(gate.admit(10), AdmitOutcome::Backpressured);
+
+        assert_eq!(gate.pop_ready(), Some(1));
+        assert_eq!(gate.admit(3), AdmitOutcome::Backpressured);
+
+        // Deferring fresh ingress should not evict long-waiting retries from fairness tracking.
+        assert!(gate.backpressured_ids.contains(&9));
+        assert!(gate.backpressured_ids.contains(&10));
+        assert!(!gate.backpressured_ids.contains(&3));
     }
 }
