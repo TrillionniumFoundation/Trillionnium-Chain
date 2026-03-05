@@ -89,6 +89,11 @@ impl AdmissionGate {
             return AdmitOutcome::Duplicate;
         }
 
+        // Keep fairness reservations bounded to currently known retry population.
+        // This guards restored/corrupted state from over-deferring free ingress.
+        let retry_budget = self.backpressured_ids.len().min(self.capacity);
+        self.retry_reservations = self.retry_reservations.min(retry_budget);
+
         if self.queue.len() >= self.capacity {
             if self.backpressured_ids.contains(&tx_id) {
                 self.metrics.duplicates = self.metrics.duplicates.saturating_add(1);
@@ -370,6 +375,26 @@ mod tests {
         assert_eq!(gate.pop_ready(), Some(2));
 
         // Only one fresh ingress should be deferred; the second should progress.
+        assert_eq!(gate.admit(10), AdmitOutcome::Backpressured);
+        assert_eq!(gate.admit(11), AdmitOutcome::Accepted);
+
+        let m = gate.metrics();
+        assert_eq!(m.fairness_deferrals, 1);
+    }
+
+    #[test]
+    fn stale_retry_reservation_is_clamped_before_fairness_deferral() {
+        let mut gate = AdmissionGate::new(3);
+        assert_eq!(gate.admit(1), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(2), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(3), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(9), AdmitOutcome::Backpressured);
+
+        // Open one slot and then simulate stale/restored over-large reservation state.
+        assert_eq!(gate.pop_ready(), Some(1));
+        gate.retry_reservations = 99;
+
+        // Clamp should limit deferral pressure to the one known retry id.
         assert_eq!(gate.admit(10), AdmitOutcome::Backpressured);
         assert_eq!(gate.admit(11), AdmitOutcome::Accepted);
 
