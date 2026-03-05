@@ -613,3 +613,6 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: p11
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: web4-release-aggregate-gate-required-gates-whitespace-test" "./scripts/v2/web4_release_aggregate_gate_required_gates_whitespace_test.sh" "ci(gate): add web4-release-aggregate-gate-required-gates-whitespace-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: web4-release-aggregate-gate-ci-override-forbidden-test" "./scripts/v2/web4_release_aggregate_gate_ci_override_forbidden_test.sh" "ci(gate): add web4-release-aggregate-gate-ci-override-forbidden-test regression to quick-check"
