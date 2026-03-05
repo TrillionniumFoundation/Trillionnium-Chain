@@ -21,8 +21,20 @@ MAX_RETRY_EXHAUSTED="${MAX_RETRY_EXHAUSTED:-0}"
 
 pick_latest() {
   local pattern="$1"
-  # shellcheck disable=SC2086
-  ls -1t $pattern 2>/dev/null | head -n 1 || true
+  python3 - "$pattern" <<'PY'
+import glob
+import os
+import sys
+
+pattern = sys.argv[1]
+matches = [p for p in glob.glob(pattern) if os.path.isfile(p)]
+if not matches:
+    sys.exit(0)
+
+# Deterministic tie-breaker for equal mtimes: lexical path order.
+matches.sort(key=lambda p: (-os.path.getmtime(p), p))
+print(matches[0])
+PY
 }
 
 if [[ -z "$SOAK_RESULT" ]]; then
