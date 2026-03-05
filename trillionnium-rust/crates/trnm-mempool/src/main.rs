@@ -400,10 +400,11 @@ mod tests {
         assert_eq!(gate.pop_ready(), Some(2));
         assert_eq!(gate.pop_ready(), Some(3));
 
-        // Only two fresh admissions should be deferred; the third should pass through.
+        // Only two fresh admissions should be deferred; later fresh ingress must progress.
         assert_eq!(gate.admit(1000), AdmitOutcome::Backpressured);
         assert_eq!(gate.admit(1001), AdmitOutcome::Backpressured);
         assert_eq!(gate.admit(1002), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(1003), AdmitOutcome::Accepted);
 
         let m = gate.metrics();
         assert_eq!(m.fairness_deferrals, 2);
