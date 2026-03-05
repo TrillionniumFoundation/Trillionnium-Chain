@@ -903,31 +903,47 @@ pub fn apply_resolve_at_height(
     let resolver_has_internal_whitespace = resolver_trimmed.chars().any(|c| c.is_whitespace());
     let signer_has_internal_whitespace = signer_trimmed.chars().any(|c| c.is_whitespace());
     let authority_has_internal_whitespace = authority_trimmed.chars().any(|c| c.is_whitespace());
+    let authority_members: Vec<&str> = authority_trimmed.split(',').collect();
+    let signer_matches_configured_member = authority_members
+        .iter()
+        .any(|member| *member == signer_trimmed);
     // Decentralization hardening: reserve privileged runtime account ids from
     // governance resolve authority flow; challenge resolution must be executed
     // by explicit governance-designated non-system operators.
+    let authority_uses_reserved_system_actor = authority_members
+        .iter()
+        .any(|member| member.eq_ignore_ascii_case("system"));
     let uses_reserved_system_actor = resolver_trimmed.eq_ignore_ascii_case("system")
         || signer_trimmed.eq_ignore_ascii_case("system")
-        || authority_trimmed.eq_ignore_ascii_case("system");
+        || authority_uses_reserved_system_actor;
     // Minimal multi-party control: escrow treasury account must never be reused
     // as resolve authority signer/payload, otherwise custody + adjudication roles
     // collapse into a single privileged actor surface.
+    let authority_uses_escrow_account = authority_members
+        .iter()
+        .any(|member| member.eq_ignore_ascii_case(CHALLENGE_ESCROW_ACCOUNT));
     let uses_escrow_account_as_authority = resolver_trimmed.eq_ignore_ascii_case(CHALLENGE_ESCROW_ACCOUNT)
         || signer_trimmed.eq_ignore_ascii_case(CHALLENGE_ESCROW_ACCOUNT)
-        || authority_trimmed.eq_ignore_ascii_case(CHALLENGE_ESCROW_ACCOUNT);
+        || authority_uses_escrow_account;
     // Minimal multi-party control: forfeits treasury account receives terminal
     // slashing-path value and must remain custody-only (not an adjudicator).
+    let authority_uses_forfeit_treasury_account = authority_members
+        .iter()
+        .any(|member| member.eq_ignore_ascii_case(CHALLENGE_FORFEIT_TREASURY_ACCOUNT));
     let uses_forfeit_treasury_account_as_authority = resolver_trimmed
         .eq_ignore_ascii_case(CHALLENGE_FORFEIT_TREASURY_ACCOUNT)
         || signer_trimmed.eq_ignore_ascii_case(CHALLENGE_FORFEIT_TREASURY_ACCOUNT)
-        || authority_trimmed.eq_ignore_ascii_case(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+        || authority_uses_forfeit_treasury_account;
     // Decentralization hardening: unresolved default placeholder must never
     // authorize challenge resolution. Governance must explicitly set a concrete
     // non-placeholder resolve authority before terminal escrow movement can occur.
+    let authority_uses_placeholder = authority_members
+        .iter()
+        .any(|member| member.eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY));
     let uses_unconfigured_placeholder_authority =
         resolver_trimmed.eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY)
             || signer_trimmed.eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY)
-            || authority_trimmed.eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY);
+            || authority_uses_placeholder;
     // Minimal multi-party control: assigned worker cannot self-authorize terminal
     // challenge resolution for their own disputed task.
     let resolver_is_assigned_worker = task
@@ -948,7 +964,7 @@ pub fn apply_resolve_at_height(
         || authority_trimmed.is_empty()
         || signer_trimmed != signer
         || authority_trimmed != resolve_authority
-        || signer_trimmed != authority_trimmed
+        || !signer_matches_configured_member
         || resolver_has_internal_whitespace
         || signer_has_internal_whitespace
         || authority_has_internal_whitespace
