@@ -18,6 +18,9 @@ concurrency:
   group: trnm-gate-quick-check-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
   shell-static-checks:
     runs-on: ubuntu-latest
