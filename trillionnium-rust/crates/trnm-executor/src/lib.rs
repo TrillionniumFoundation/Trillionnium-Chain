@@ -173,6 +173,29 @@ pub fn build_parallel_groups_profile_with_strategy(
     txs: &[Tx],
     strategy: GroupingStrategy,
 ) -> (Vec<Vec<Tx>>, GroupingProfile) {
+    if txs.is_empty() {
+        return (
+            Vec::new(),
+            GroupingProfile {
+                tx_count: 0,
+                group_count: 0,
+                grouped_count: 0,
+                max_group_size: 0,
+                min_group_size: 0,
+                avg_group_size: 0.0,
+                conflict_checks: 0,
+                conflict_hits: 0,
+                candidate_groups_scanned: 0,
+                stage_ww_checks: 0,
+                stage_ww_hits: 0,
+                stage_wr_checks: 0,
+                stage_wr_hits: 0,
+                stage_rw_checks: 0,
+                stage_rw_hits: 0,
+            },
+        );
+    }
+
     let mut selected = strategy;
     if matches!(selected, GroupingStrategy::AutoAdaptive) {
         let d = auto_adaptive_decision(txs);
@@ -1117,6 +1140,36 @@ mod tests {
         let _seed = EnvGuard::set("TRNM_AGGR_SCAN_RR_SEED", " 7 ");
 
         assert_eq!(aggr_scan_round_robin_seed(), 7);
+    }
+
+    #[test]
+    fn empty_batch_fast_path_is_profile_stable_across_strategies() {
+        let strategies = [
+            GroupingStrategy::Original,
+            GroupingStrategy::HotBucketInterleave,
+            GroupingStrategy::AggressiveGreedy,
+            GroupingStrategy::AutoAdaptive,
+        ];
+
+        for strategy in strategies {
+            let (groups, profile) = build_parallel_groups_profile_with_strategy(&[], strategy);
+            assert!(groups.is_empty());
+            assert_eq!(profile.tx_count, 0);
+            assert_eq!(profile.group_count, 0);
+            assert_eq!(profile.grouped_count, 0);
+            assert_eq!(profile.max_group_size, 0);
+            assert_eq!(profile.min_group_size, 0);
+            assert_eq!(profile.avg_group_size, 0.0);
+            assert_eq!(profile.conflict_checks, 0);
+            assert_eq!(profile.conflict_hits, 0);
+            assert_eq!(profile.candidate_groups_scanned, 0);
+            assert_eq!(profile.stage_ww_checks, 0);
+            assert_eq!(profile.stage_ww_hits, 0);
+            assert_eq!(profile.stage_wr_checks, 0);
+            assert_eq!(profile.stage_wr_hits, 0);
+            assert_eq!(profile.stage_rw_checks, 0);
+            assert_eq!(profile.stage_rw_hits, 0);
+        }
     }
 
     struct EnvGuard {
