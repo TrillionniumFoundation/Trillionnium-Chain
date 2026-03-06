@@ -752,19 +752,22 @@ pub fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
 }
 
 fn hot_bucket_hint(tx: &Tx, buckets_n: usize) -> usize {
+    // Keep hash mixing deterministic across targets (32/64-bit) by using a
+    // fixed-width integer domain before reducing to bucket count.
     let key_a = tx
         .write_set
         .first()
         .or_else(|| tx.read_set.first())
-        .map(|o| o.id as usize)
+        .map(|o| o.id)
         .unwrap_or(0);
     let key_b = tx
         .write_set
         .get(1)
         .or_else(|| tx.read_set.get(1))
-        .map(|o| o.id as usize)
+        .map(|o| o.id)
         .unwrap_or(0);
-    (key_a ^ key_b.rotate_left(7)) % buckets_n
+    let mixed = key_a ^ key_b.rotate_left(7);
+    (mixed as usize) % buckets_n
 }
 
 fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
