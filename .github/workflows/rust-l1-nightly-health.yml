@@ -16,6 +16,24 @@ concurrency:
 jobs:
   rust-l1-health:
     runs-on: macos-latest
+    env:
+      TZ: UTC
+      LANG: C.UTF-8
+      LC_ALL: C.UTF-8
+      # Keep numeric parsing/formatting locale-stable for shell/python evidence.
+      LC_NUMERIC: C
+      # Force bytewise collation for deterministic sort/uniq behavior.
+      LC_COLLATE: C
+      # Keep date/time rendering stable for logs and grep-based assertions.
+      LC_TIME: C
+      # Stabilize locale-driven stderr/messages across runner image refreshes.
+      LC_MESSAGES: C
+      # Freeze Python hash randomization for deterministic dict/set ordering.
+      PYTHONHASHSEED: "0"
+      # Normalize CI-branching behavior in scripts/tools.
+      CI: "true"
+      # Pin reproducible timestamp metadata for archive/build helper tools.
+      SOURCE_DATE_EPOCH: "1704067200"
     timeout-minutes: 45
 
     steps:

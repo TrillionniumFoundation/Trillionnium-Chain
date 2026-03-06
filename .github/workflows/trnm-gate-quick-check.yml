@@ -93,6 +93,10 @@ jobs:
         run: |
           ./scripts/v2/trnm_merge_gates_deterministic_env_guard_test.sh
 
+      - name: Nightly health deterministic env guard regression
+        run: |
+          ./scripts/v2/rust_l1_nightly_health_deterministic_env_guard_test.sh
+
       - name: PR5 reconcile skip-when-missing-log regression
         run: |
           ./scripts/v2/pr5_treasury_reconcile_skip_when_missing_log_test.sh
