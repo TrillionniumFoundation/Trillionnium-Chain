@@ -241,8 +241,14 @@ jobs:
 
           python3 scripts/summarize_aggressive_profile.py
           python3 scripts/analyze_aggressive_scan_correlation.py
-          PROFILE_SUMMARY=$(ls -1t run/bench/aggressive-profile-summary-*.md | head -n 1)
-          CORR_SUMMARY=$(ls -1t run/bench/aggressive-scan-correlation-*.md | head -n 1)
+
+          shopt -s nullglob
+          profile_candidates=(run/bench/aggressive-profile-summary-*.md)
+          corr_candidates=(run/bench/aggressive-scan-correlation-*.md)
+          shopt -u nullglob
+
+          PROFILE_SUMMARY="${profile_candidates[0]:-}"
+          CORR_SUMMARY="${corr_candidates[0]:-}"
 
           if grep -q "regression ratio above threshold" "$REPORT"; then
             echo "::warning title=Aggressive regression warning::One or more aggressive/original ratios exceeded threshold. See workflow summary + artifact report."
@@ -261,11 +267,19 @@ jobs:
               echo
               echo "## Aggressive Profile Summary"
               echo
-              cat "$PROFILE_SUMMARY"
+              if [ -n "$PROFILE_SUMMARY" ] && [ -f "$PROFILE_SUMMARY" ]; then
+                cat "$PROFILE_SUMMARY"
+              else
+                echo "(missing aggressive profile summary artifact)"
+              fi
               echo
               echo "## Aggressive Scan Correlation"
               echo
-              cat "$CORR_SUMMARY"
+              if [ -n "$CORR_SUMMARY" ] && [ -f "$CORR_SUMMARY" ]; then
+                cat "$CORR_SUMMARY"
+              else
+                echo "(missing aggressive scan correlation artifact)"
+              fi
             } >> "$GITHUB_STEP_SUMMARY"
           fi
 
