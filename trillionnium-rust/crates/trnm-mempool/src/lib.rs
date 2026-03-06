@@ -23,8 +23,10 @@ impl AdmissionGate {
     pub fn new(capacity: usize) -> Self {
         Self {
             capacity,
-            queue: VecDeque::new(),
-            seen: HashSet::new(),
+            // Pre-size hot-path structures to reduce allocator churn during
+            // sustained ingress bursts while preserving zero-capacity semantics.
+            queue: VecDeque::with_capacity(capacity),
+            seen: HashSet::with_capacity(capacity),
         }
     }
     pub fn admit(&mut self, tx_id: u64) -> AdmitOutcome {
