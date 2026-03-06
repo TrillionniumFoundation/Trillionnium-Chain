@@ -19,8 +19,9 @@ require_line() {
 require_line "## 5. 回滚方案"
 require_line "--root-cause-tag"
 require_line "--change-ticket-id"
+require_line "--operator-id <operator_id>"
 require_line "--dry-run"
 require_line "--request-id <request_id>"
 require_line "根因标签"
 
-echo "[PASS] E3 runbook keeps rollback contract fields (root-cause-tag/change-ticket-id/dry-run/request-id)"
+echo "[PASS] E3 runbook keeps rollback contract fields (root-cause-tag/change-ticket-id/operator-id/dry-run/request-id)"
