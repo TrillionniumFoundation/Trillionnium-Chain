@@ -673,7 +673,8 @@ pub fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
         };
     }
 
-    // Sample first window to estimate hot-key streak pressure.
+    // Sample a bounded, evenly-spaced window across the whole batch to avoid
+    // first-window bias when hotspots arrive later in queue order.
     let sample_len = txs.len().min(2048);
     let mut same_key_streak_hits = 0usize;
     let mut total_pairs = 0usize;
@@ -681,7 +682,10 @@ pub fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
     let mut key_hist: HashMap<u64, usize> = HashMap::new();
     let mut observed = 0usize;
 
-    for tx in txs.iter().take(sample_len) {
+    let batch_len = txs.len();
+    for i in 0..sample_len {
+        let idx = i.saturating_mul(batch_len) / sample_len;
+        let tx = &txs[idx];
         let key = tx
             .write_set
             .first()
@@ -1188,6 +1192,27 @@ mod tests {
 
         let _high = EnvGuard::set("TRNM_HOT_BUCKETS", "999");
         assert_eq!(hot_bucket_count(), 64);
+    }
+
+    #[test]
+    fn auto_adaptive_sampling_detects_late_batch_hotspots() {
+        let _env = env_lock();
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.20");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.10");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.01");
+
+        let mut txs = Vec::with_capacity(4096);
+        for i in 0..2048u64 {
+            txs.push(tx(i, vec![], vec![o(10_000 + i)]));
+        }
+        for i in 0..2048u64 {
+            txs.push(tx(3_000 + i, vec![], vec![o(42)]));
+        }
+
+        let d = auto_adaptive_decision(&txs);
+        assert!(d.use_hot_bucket, "late hotspot should be visible in adaptive sample");
+        assert_eq!(d.reason, "hotspot_detected");
     }
 
     #[test]
