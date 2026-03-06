@@ -259,13 +259,20 @@ fn has_duplicate_token_field(body: &str, field: &str) -> bool {
         while i < bytes.len() && bytes[i].is_ascii_whitespace() {
             i += 1;
         }
-        let quoted = if i < bytes.len() && (bytes[i] == b'"' || bytes[i] == b'\'') {
+        let quote = if i < bytes.len() && (bytes[i] == b'"' || bytes[i] == b'\'') {
+            let q = bytes[i];
             i += 1;
-            true
+            Some(q)
         } else {
-            false
+            None
         };
-        if quoted && i < bytes.len() && bytes[i].is_ascii_whitespace() {
+        if quote.is_some() && i < bytes.len() && bytes[i].is_ascii_whitespace() {
+            return true;
+        }
+        if seen > 0 {
+            // Fail closed: once a canonical token binding has been seen,
+            // any subsequent binding attempt for the same field is ambiguous
+            // even when malformed (e.g. empty/unterminated quoted values).
             return true;
         }
         let start = i;
@@ -275,6 +282,16 @@ fn has_duplicate_token_field(body: &str, field: &str) -> bool {
             i += 1;
         }
         if i > start {
+            if let Some(q) = quote {
+                if i < bytes.len() && bytes[i].is_ascii_whitespace() {
+                    return true;
+                }
+                if i >= bytes.len() || bytes[i] != q {
+                    cursor = idx + 1;
+                    continue;
+                }
+                i += 1;
+            }
             if i < bytes.len() && !is_value_terminator(bytes[i]) {
                 cursor = idx + 1;
                 continue;
@@ -1249,6 +1266,42 @@ mod tests {
             verify_bound_envelope(
                 &task,
                 b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,\"worker\"=\"worker2,quote=ok",
+                b"TEE:",
+                "TEE receipt"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("duplicate worker binding")
+        ));
+    }
+
+    #[test]
+    fn verify_bound_envelope_rejects_malformed_secondary_worker_binding_fail_closed() {
+        let task = TaskObject {
+            task_id: 42,
+            creator: "alice".into(),
+            bounty: 1,
+            status: TaskStatus::Committed,
+            proof_type: ProofType::Tee,
+            metadata: None,
+            worker: Some("worker1".into()),
+            committed_hash: None,
+            result_hash: Some([0xabu8; 32]),
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        };
+
+        assert!(matches!(
+            verify_bound_envelope(
+                &task,
+                b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,worker=\"\",quote=ok",
                 b"TEE:",
                 "TEE receipt"
             ),
