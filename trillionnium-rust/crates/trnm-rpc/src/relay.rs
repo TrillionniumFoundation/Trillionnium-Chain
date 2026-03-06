@@ -346,6 +346,9 @@ impl RiskQuotaState {
         limit: u32,
         dim: &str,
     ) -> Result<()> {
+        // Misconfigured zero windows effectively disable quota enforcement by expiring
+        // every bucket on each consume. Clamp to 1ms so limits stay meaningful.
+        let window_ms = window_ms.max(1);
         Self::prune_expired_domain_buckets(buckets, now_ms, domain, window_ms);
         let bucket_key = (domain, key.to_string());
         if !buckets.contains_key(&bucket_key)
@@ -1831,6 +1834,28 @@ mod tests {
                 source: Some("src-b".into()),
             })
             .unwrap();
+    }
+
+    #[test]
+    fn zero_window_quota_config_is_clamped_to_preserve_enforcement() {
+        let mut state = RiskQuotaState::default();
+        let cfg = RiskQuotaConfig {
+            window_ms: 0,
+            per_session_limit: 2,
+            per_source_limit: 2,
+        };
+
+        state
+            .consume(1_000, RiskDomain::Relay, "zw-session", "zw-src", &cfg)
+            .unwrap();
+        state
+            .consume(1_000, RiskDomain::Relay, "zw-session", "zw-src", &cfg)
+            .unwrap();
+
+        let err = state
+            .consume(1_000, RiskDomain::Relay, "zw-session", "zw-src", &cfg)
+            .unwrap_err();
+        assert!(err.to_string().contains("too_many_requests/quota_exceeded"));
     }
 
     #[test]
