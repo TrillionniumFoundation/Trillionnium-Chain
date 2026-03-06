@@ -121,6 +121,17 @@ mod tests {
     }
 
     #[test]
+    fn fraud_verifier_rejects_missing_proof_type_binding_fail_closed() {
+        let verifier = FraudVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(&task, b"FRAUD:{\"task_id\":7,\"worker\":\"worker-fraud\"}"),
+            VerificationResult::Invalid(msg) if msg.contains("missing proof_type binding")
+        ));
+    }
+
+    #[test]
     fn fraud_verifier_rejects_duplicate_worker_binding_fail_closed() {
         let verifier = FraudVerifier;
         let task = mock_task();
