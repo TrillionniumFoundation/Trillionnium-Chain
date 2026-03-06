@@ -15,6 +15,7 @@ required_lines=(
   'LC_ALL: C.UTF-8'
   'LC_NUMERIC: C'
   'LC_COLLATE: C'
+  'LC_TIME: C'
   'PYTHONHASHSEED: "0"'
   'CI: "true"'
   'SOURCE_DATE_EPOCH: "1704067200"'
