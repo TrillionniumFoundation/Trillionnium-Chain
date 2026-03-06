@@ -109,9 +109,19 @@ fn intersects(x: &[ObjectRef], y: &[ObjectRef]) -> bool {
     // tiny footprints (e.g. 1x8), while preserving duplicate-tolerant semantics.
     if x.len() <= 8 && y.len() <= 8 {
         let (small, large) = if x.len() <= y.len() { (x, y) } else { (y, x) };
+
+        // Duplicate-heavy small footprints can otherwise rescan `large` for the same
+        // key many times. Keep this tiny-path dedup allocation bounded by <=8 keys.
+        let mut unique_small_keys: Vec<u64> = Vec::with_capacity(small.len());
         for a in small {
-            let akey = access_key(a);
-            if large.iter().any(|b| access_key(b) == akey) {
+            let key = access_key(a);
+            if !unique_small_keys.contains(&key) {
+                unique_small_keys.push(key);
+            }
+        }
+
+        for key in unique_small_keys {
+            if large.iter().any(|b| access_key(b) == key) {
                 return true;
             }
         }
