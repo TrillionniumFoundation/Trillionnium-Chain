@@ -609,7 +609,7 @@ fn aggr_scan_round_robin_seed() -> usize {
 fn auto_hot_streak_threshold() -> f64 {
     std::env::var("TRNM_AUTO_HOT_STREAK_RATIO")
         .ok()
-        .and_then(|v| v.parse::<f64>().ok())
+        .and_then(|v| v.trim().parse::<f64>().ok())
         .map(|v| v.clamp(0.0, 1.0))
         .unwrap_or(0.22)
 }
@@ -617,7 +617,7 @@ fn auto_hot_streak_threshold() -> f64 {
 fn auto_reorder_min_margin() -> f64 {
     std::env::var("TRNM_AUTO_REORDER_MIN_MARGIN")
         .ok()
-        .and_then(|v| v.parse::<f64>().ok())
+        .and_then(|v| v.trim().parse::<f64>().ok())
         .map(|v| v.clamp(0.0, 1.0))
         .unwrap_or(0.04)
 }
@@ -625,7 +625,7 @@ fn auto_reorder_min_margin() -> f64 {
 fn auto_reorder_min_hot_key_share() -> f64 {
     std::env::var("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE")
         .ok()
-        .and_then(|v| v.parse::<f64>().ok())
+        .and_then(|v| v.trim().parse::<f64>().ok())
         .map(|v| v.clamp(0.0, 1.0))
         .unwrap_or(0.0075)
 }
@@ -633,7 +633,7 @@ fn auto_reorder_min_hot_key_share() -> f64 {
 fn hot_bucket_count() -> usize {
     std::env::var("TRNM_HOT_BUCKETS")
         .ok()
-        .and_then(|v| v.parse::<usize>().ok())
+        .and_then(|v| v.trim().parse::<usize>().ok())
         .map(|v| v.clamp(4, 64))
         .unwrap_or(8)
 }
@@ -641,7 +641,7 @@ fn hot_bucket_count() -> usize {
 fn auto_min_expected_gain_score() -> f64 {
     std::env::var("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE")
         .ok()
-        .and_then(|v| v.parse::<f64>().ok())
+        .and_then(|v| v.trim().parse::<f64>().ok())
         .map(|v| v.clamp(0.0, 1.0))
         .unwrap_or(0.01)
 }
@@ -1140,6 +1140,28 @@ mod tests {
         let _seed = EnvGuard::set("TRNM_AGGR_SCAN_RR_SEED", " 7 ");
 
         assert_eq!(aggr_scan_round_robin_seed(), 7);
+    }
+
+    #[test]
+    fn auto_threshold_env_parsers_accept_trimmed_numeric_values() {
+        let _env = env_lock();
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", " 0.35 ");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", " 0.12 ");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", " 0.018 ");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", " 0.03 ");
+
+        assert!((auto_hot_streak_threshold() - 0.35).abs() < f64::EPSILON);
+        assert!((auto_reorder_min_margin() - 0.12).abs() < f64::EPSILON);
+        assert!((auto_reorder_min_hot_key_share() - 0.018).abs() < f64::EPSILON);
+        assert!((auto_min_expected_gain_score() - 0.03).abs() < f64::EPSILON);
+    }
+
+    #[test]
+    fn hot_bucket_count_parser_accepts_trimmed_numeric_values() {
+        let _env = env_lock();
+        let _buckets = EnvGuard::set("TRNM_HOT_BUCKETS", " 16 ");
+
+        assert_eq!(hot_bucket_count(), 16);
     }
 
     #[test]
