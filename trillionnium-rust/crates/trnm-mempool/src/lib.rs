@@ -319,4 +319,24 @@ mod tests {
         assert_eq!(g.pop_ready(), Some(2));
         assert_eq!(g.admit(3, IngressClass::Critical), AdmitOutcome::Accepted);
     }
+
+    #[test]
+    fn reserve_only_normal_borrowed_admission_stays_globally_idempotent() {
+        let mut g = LaneAdmissionGate::new(2, 2);
+
+        // Normal lane has zero dedicated capacity, so normal ingress borrows
+        // free headroom from critical capacity.
+        assert_eq!(g.admit(1, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(42, IngressClass::Normal), AdmitOutcome::Accepted);
+
+        // Even though tx 42 was admitted through borrowed critical headroom,
+        // it must be globally deduped across both ingress classes.
+        assert_eq!(g.admit(42, IngressClass::Normal), AdmitOutcome::Duplicate);
+        assert_eq!(g.admit(42, IngressClass::Critical), AdmitOutcome::Duplicate);
+
+        // After drain, re-admission should proceed as a fresh tx id.
+        assert_eq!(g.pop_ready(), Some(1));
+        assert_eq!(g.pop_ready(), Some(42));
+        assert_eq!(g.admit(42, IngressClass::Critical), AdmitOutcome::Accepted);
+    }
 }
