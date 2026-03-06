@@ -47,6 +47,12 @@ pub struct AutoAdaptiveDecision {
 }
 
 pub fn detect_conflict(a: &Tx, b: &Tx) -> bool {
+    // Read-only pairs can never conflict; skip three intersection probes in
+    // the common telemetry/transfer path where writes are absent.
+    if a.write_set.is_empty() && b.write_set.is_empty() {
+        return false;
+    }
+
     intersects(&a.write_set, &b.write_set)
         || intersects(&a.write_set, &b.read_set)
         || intersects(&a.read_set, &b.write_set)
@@ -885,6 +891,14 @@ mod tests {
         assert!(!detect_conflict(
             &tx(1, vec![o(1)], vec![]),
             &tx(2, vec![o(2)], vec![])
+        ));
+    }
+
+    #[test]
+    fn read_only_overlap_is_non_conflicting() {
+        assert!(!detect_conflict(
+            &tx(1, vec![o(7), o(8)], vec![]),
+            &tx(2, vec![o(8), o(9)], vec![])
         ));
     }
 
