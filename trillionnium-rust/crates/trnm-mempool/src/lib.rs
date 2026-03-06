@@ -65,7 +65,9 @@ impl LaneAdmissionGate {
             normal: AdmissionGate::new(normal_cap),
             critical: AdmissionGate::new(reserve),
             total_capacity: total,
-            seen_global: HashSet::new(),
+            // Bound global idempotency set to lane-wide capacity so bursty dual-lane
+            // ingress does not pay avoidable HashSet reallocation churn.
+            seen_global: HashSet::with_capacity(total),
             critical_served_streak: 0,
             critical_burst_limit: reserve.saturating_mul(2).max(1),
         }
