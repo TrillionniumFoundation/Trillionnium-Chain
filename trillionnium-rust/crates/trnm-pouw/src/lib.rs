@@ -6637,6 +6637,36 @@ mod tests {
     }
 
     #[test]
+    fn tee_reveal_rejects_duplicate_result_hash_binding_with_quoted_leading_space_fail_closed() {
+        let mut st = seeded_state();
+        let r1 = apply_create_task(&mut st, 7018, "alice".into(), 10).unwrap();
+
+        let mut task = st.get_task(r1.id).unwrap();
+        task.proof_type = ProofType::Tee;
+        let r1_updated = st.update_task(r1, task).unwrap();
+
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(7018, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1_updated, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+
+        // Quoted leading-space alias plus canonical result_hash must still be
+        // treated as a duplicate binding and fail closed.
+        let proof = b"TEE:task_id=7018,worker=worker1,proof_type=tee,result_hash=\" 0101010101010101010101010101010101010101010101010101010101010101\",result_hash=0101010101010101010101010101010101010101010101010101010101010101,quote=QUOTE_XYZ".to_vec();
+        let err = apply_reveal_result(&mut st, r3.clone(), result_hash, reveal_salt, Some(proof))
+            .unwrap_err();
+
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("Proof verification failed")));
+
+        // Ensure task does not advance on malformed envelope bindings.
+        let task_after = st.get_task(r3.id).unwrap();
+        assert_eq!(task_after.status, TaskStatus::Committed);
+        assert!(task_after.result_hash.is_none());
+    }
+
+    #[test]
     fn tee_reveal_rejects_case_variant_duplicate_result_hash_binding_fail_closed() {
         let mut st = seeded_state();
         let r1 = apply_create_task(&mut st, 7012, "alice".into(), 10).unwrap();
