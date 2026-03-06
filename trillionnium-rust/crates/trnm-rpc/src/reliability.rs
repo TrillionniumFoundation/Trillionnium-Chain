@@ -448,6 +448,24 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
         self.circuit_state
     }
 
+    fn increment_retry_exhausted_total(&self) {
+        let mut current = self.retry_exhausted_total.load(Ordering::Relaxed);
+        loop {
+            if current == u64::MAX {
+                return;
+            }
+            match self.retry_exhausted_total.compare_exchange_weak(
+                current,
+                current + 1,
+                Ordering::Relaxed,
+                Ordering::Relaxed,
+            ) {
+                Ok(_) => return,
+                Err(observed) => current = observed,
+            }
+        }
+    }
+
     #[cfg(test)]
     fn retry_exhausted_total(&self) -> u64 {
         self.retry_exhausted_total.load(Ordering::Relaxed)
@@ -639,7 +657,7 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
                         "[reliability] drop pending after max_attempts ack_id={} attempts={}",
                         ack_id, item.attempts
                     );
-                    self.retry_exhausted_total.fetch_add(1, Ordering::Relaxed);
+                    self.increment_retry_exhausted_total();
                     return false;
                 }
 
@@ -1581,5 +1599,18 @@ mod tests {
 
         assert_eq!(engine.retry.base_backoff_ms, 25);
         assert_eq!(engine.retry.max_backoff_ms, 25);
+    }
+
+    #[test]
+    fn retry_exhausted_total_increment_saturates_at_u64_max() {
+        let store = InMemoryReliabilityStore::default();
+        let engine = ReliabilityEngine::new(store, RetryConfig::default());
+
+        engine
+            .retry_exhausted_total
+            .store(u64::MAX, Ordering::Relaxed);
+        engine.increment_retry_exhausted_total();
+
+        assert_eq!(engine.retry_exhausted_total(), u64::MAX);
     }
 }
