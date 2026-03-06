@@ -863,7 +863,6 @@ dependencies = [
  "serde_json",
  "sha2",
  "tempfile",
- "trnm-mempool",
  "trnm-state",
  "trnm-types",
 ]

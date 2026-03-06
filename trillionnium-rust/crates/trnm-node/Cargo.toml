@@ -16,3 +16,4 @@ trnm-pouw = { path = "../trnm-pouw" }
 trnm-state = { path = "../trnm-state" }
 trnm-types = { path = "../trnm-types" }
 trnm-executor = { path = "../trnm-executor" }
+trnm-mempool = { path = "../trnm-mempool" }
