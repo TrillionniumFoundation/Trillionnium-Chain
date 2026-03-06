@@ -339,4 +339,26 @@ mod tests {
         assert_eq!(g.pop_ready(), Some(42));
         assert_eq!(g.admit(42, IngressClass::Critical), AdmitOutcome::Accepted);
     }
+
+    #[test]
+    fn fairness_warmup_does_not_slow_critical_when_normal_lane_drains() {
+        let mut g = LaneAdmissionGate::new(4, 1);
+
+        // Build a short mixed backlog so fairness warmup is exercised.
+        assert_eq!(g.admit(10, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(20, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(21, IngressClass::Critical), AdmitOutcome::Accepted);
+
+        // Fairness grants one normal turn after the critical burst limit is hit.
+        assert_eq!(g.pop_ready(), Some(20));
+        assert_eq!(g.pop_ready(), Some(10));
+
+        // Once normal backlog is drained, critical throughput should continue
+        // immediately without another fairness-induced detour.
+        assert_eq!(g.pop_ready(), Some(21));
+
+        // New critical ingress should keep making progress while normal remains empty.
+        assert_eq!(g.admit(22, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.pop_ready(), Some(22));
+    }
 }
