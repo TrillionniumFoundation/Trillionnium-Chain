@@ -28,6 +28,9 @@ jobs:
       TZ: UTC
       LANG: C.UTF-8
       LC_ALL: C.UTF-8
+      # Keep numeric parsing/formatting locale-stable (decimal separator, etc.)
+      # for shell/python probes that may emit or compare numeric evidence.
+      LC_NUMERIC: C
       # Force bytewise collation so sort/uniq behavior is reproducible across
       # runner image refreshes and locale package changes.
       LC_COLLATE: C
