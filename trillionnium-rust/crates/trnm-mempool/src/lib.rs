@@ -84,14 +84,26 @@ impl LaneAdmissionGate {
             IngressClass::Normal => {
                 let normal_was_empty = self.normal.queue.is_empty();
                 let primary = self.normal.admit(tx_id);
-                let out = if matches!(primary, AdmitOutcome::Backpressured)
-                    && self.normal.capacity == 0
-                    && self.critical.queue.len() < self.critical.capacity
-                {
-                    // Keep free-ingress throughput live for degenerate reserve-only
-                    // configs (normal capacity == 0) by borrowing available
-                    // critical-lane headroom instead of requiring it to be fully idle.
-                    self.critical.admit(tx_id)
+                let out = if matches!(primary, AdmitOutcome::Backpressured) {
+                    let critical_free = self
+                        .critical
+                        .capacity
+                        .saturating_sub(self.critical.queue.len());
+
+                    if (self.normal.capacity == 0 && critical_free > 0)
+                        || (self.normal.capacity > 0 && critical_free > 1)
+                    {
+                        // Keep free-ingress throughput live for reserve-only configs
+                        // (normal capacity == 0) by borrowing available critical
+                        // headroom.
+                        //
+                        // For non-degenerate splits, allow bounded normal spillover
+                        // only while preserving at least one critical slot so high-
+                        // priority ingress still has immediate admission headroom.
+                        self.critical.admit(tx_id)
+                    } else {
+                        primary
+                    }
                 } else {
                     primary
                 };
@@ -228,6 +240,26 @@ mod tests {
         assert_eq!(g.admit(1, IngressClass::Critical), AdmitOutcome::Accepted);
         assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
         assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Backpressured);
+    }
+
+    #[test]
+    fn normal_lane_can_borrow_only_surplus_critical_headroom() {
+        let mut g = LaneAdmissionGate::new(6, 2);
+
+        // Fill normal lane first.
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(4, IngressClass::Normal), AdmitOutcome::Accepted);
+
+        // With two critical slots free, normal may borrow one for better free-ingress throughput.
+        assert_eq!(g.admit(5, IngressClass::Normal), AdmitOutcome::Accepted);
+
+        // Borrowing preserves one immediate critical slot.
+        assert_eq!(g.admit(99, IngressClass::Critical), AdmitOutcome::Accepted);
+
+        // No surplus critical headroom remains, so further normal spillover is blocked.
+        assert_eq!(g.admit(6, IngressClass::Normal), AdmitOutcome::Backpressured);
     }
 
     #[test]
