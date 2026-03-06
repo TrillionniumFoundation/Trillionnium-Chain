@@ -480,9 +480,7 @@ pub(super) fn verify_bound_envelope(
                 ))
             }
         }
-    } else if !matches!(task.proof_type, trnm_types::ProofType::Fraud)
-        && find_token_field(&body_text, "result_hash").is_some()
-    {
+    } else if find_token_field(&body_text, "result_hash").is_some() {
         return VerificationResult::Invalid(format!(
             "Invalid {kind_name} envelope: unexpected result_hash binding"
         ));
