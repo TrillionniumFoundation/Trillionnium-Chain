@@ -11,6 +11,34 @@ RUN_TAG="${RUN_TAG:-$(date +%Y%m%d-%H%M%S)-$$}"
 RUN_DIR="run/parallel-sanity-flaky-${RUN_TAG}"
 mkdir -p "$RUN_DIR"
 
+CMD=(
+  cargo run -q -p trnm-node --
+  --config configs/node1.toml
+  --block-ms 1
+  --max-blocks 3
+  --demo-tasks 2
+  --demo-keys 2
+  --parallel-workers 4
+)
+
+cat >"$RUN_DIR/replay.sh" <<EOF
+#!/usr/bin/env bash
+set -euo pipefail
+cd "$ROOT"
+if [[ "$#" -gt 0 ]]; then
+  "$@"
+else
+  cargo run -q -p trnm-node -- \
+    --config configs/node1.toml \
+    --block-ms 1 \
+    --max-blocks 3 \
+    --demo-tasks 2 \
+    --demo-keys 2 \
+    --parallel-workers 4
+fi
+EOF
+chmod +x "$RUN_DIR/replay.sh"
+
 TIMEOUT_BIN=""
 if command -v timeout >/dev/null 2>&1; then
   TIMEOUT_BIN="timeout"
@@ -22,14 +50,7 @@ ok=0
 for i in $(seq 1 "$RUNS"); do
   log="$RUN_DIR/run-${i}.log"
   if [[ -n "$TIMEOUT_BIN" ]]; then
-    if "$TIMEOUT_BIN" "$RUN_TIMEOUT_SEC" \
-      cargo run -q -p trnm-node -- \
-      --config configs/node1.toml \
-      --block-ms 1 \
-      --max-blocks 3 \
-      --demo-tasks 2 \
-      --demo-keys 2 \
-      --parallel-workers 4 > "$log"; then
+    if "$TIMEOUT_BIN" "$RUN_TIMEOUT_SEC" "${CMD[@]}" > "$log"; then
       :
     else
       rc=$?
@@ -39,13 +60,7 @@ for i in $(seq 1 "$RUNS"); do
       exit "$rc"
     fi
   else
-    cargo run -q -p trnm-node -- \
-      --config configs/node1.toml \
-      --block-ms 1 \
-      --max-blocks 3 \
-      --demo-tasks 2 \
-      --demo-keys 2 \
-      --parallel-workers 4 > "$log"
+    "${CMD[@]}" > "$log"
   fi
 
   if grep -E '\[tx\] apply_error|rollback=true' "$log" >/dev/null; then
