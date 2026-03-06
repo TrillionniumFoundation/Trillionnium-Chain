@@ -55,6 +55,9 @@ const MARKET_REPUTATION_CLAMP_MAX: i64 = 1_000_000;
 const MARKET_LOCK_TIMEOUT_MS_DEFAULT: u64 = 5_000;
 const MARKET_LOCK_TIMEOUT_MS_MIN: u64 = 100;
 const MARKET_LOCK_TIMEOUT_MS_MAX: u64 = 60_000;
+const SUBMIT_MESSAGE_MAX_BYTES_ENV: &str = "TRNM_RPC_SUBMIT_MESSAGE_MAX_BYTES";
+const SUBMIT_MESSAGE_MAX_BYTES_DEFAULT: u64 = 256 * 1024;
+const SUBMIT_MESSAGE_MAX_BYTES_MIN: u64 = 1;
 
 #[derive(Debug, Parser)]
 #[command(
@@ -789,6 +792,14 @@ fn ingress_file() -> PathBuf {
         return path;
     }
     run_root().join("run/message-gateway/requests.jsonl")
+}
+
+fn submit_message_max_bytes() -> u64 {
+    env_u64_with_min(
+        SUBMIT_MESSAGE_MAX_BYTES_ENV,
+        SUBMIT_MESSAGE_MAX_BYTES_DEFAULT,
+        SUBMIT_MESSAGE_MAX_BYTES_MIN,
+    )
 }
 
 fn normalize_wrapped_env_value(raw: &str) -> &str {
@@ -2614,6 +2625,15 @@ fn main() -> Result<()> {
             text,
             idempotency_key,
         } => {
+            let max_bytes = submit_message_max_bytes() as usize;
+            if text.len() > max_bytes {
+                bail!(
+                    "submit-message text exceeds {} bytes limit (got {})",
+                    max_bytes,
+                    text.len()
+                );
+            }
+
             let path = ingress_file();
             let _lock = acquire_market_file_lock(&path)?;
 
