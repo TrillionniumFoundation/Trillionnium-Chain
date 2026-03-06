@@ -639,6 +639,21 @@ mod tests {
     }
 
     #[test]
+    fn zero_capacity_configuration_still_allows_progress() {
+        // Capacity is clamped to 1 so a misconfigured zero-capacity gate does not
+        // deadlock all ingress into permanent backpressure.
+        let mut gate = AdmissionGate::new(0);
+        assert_eq!(gate.admit(1), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(2), AdmitOutcome::Backpressured);
+        assert_eq!(gate.pop_ready(), Some(1));
+        assert_eq!(gate.admit(2), AdmitOutcome::Accepted);
+
+        let m = gate.metrics();
+        assert_eq!(m.accepted, 2);
+        assert_eq!(m.backpressured, 1);
+    }
+
+    #[test]
     fn metrics_counters_saturate_instead_of_overflowing() {
         let mut gate = AdmissionGate::new(1);
         gate.metrics.accepted = usize::MAX;
