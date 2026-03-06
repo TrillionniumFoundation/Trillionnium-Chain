@@ -143,6 +143,13 @@ fn vec_hashset_intersects(a: &[u64], b: &HashSet<u64>) -> bool {
         return b.contains(&a[0]);
     }
 
+    // Symmetric singleton fast path: deep-scan stages can probe wide vectors
+    // against one-key group domains; avoid walking the whole vector in that case.
+    if b.len() == 1 {
+        let only = *b.iter().next().expect("single-key set must contain one element");
+        return a.contains(&only);
+    }
+
     for k in a {
         if b.contains(k) {
             return true;
@@ -877,6 +884,15 @@ mod tests {
 
         assert!(detect_conflict(&singleton_write, &wide_read_hit));
         assert!(!detect_conflict(&singleton_write, &wide_read_miss));
+    }
+
+    #[test]
+    fn vec_hashset_intersects_handles_singleton_hashset_domain() {
+        let mut singleton = HashSet::new();
+        singleton.insert(42u64);
+
+        assert!(vec_hashset_intersects(&[7, 8, 42, 9], &singleton));
+        assert!(!vec_hashset_intersects(&[7, 8, 9], &singleton));
     }
 
     #[test]
