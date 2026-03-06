@@ -765,13 +765,12 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
             // Heuristic reorder; see should_use_hot_bucket_interleave for adaptive trigger.
             // Heuristic: shard txs by a stable access-key hint, then round-robin buckets.
             // Goal is to avoid long same-key streaks in input order under hotspot workloads.
-            if txs.is_empty() {
+            if txs.len() <= 1 {
                 return;
             }
-            let buckets_n = hot_bucket_count();
-            if buckets_n == 0 {
-                return;
-            }
+            // Cap bucket fanout by input size: for tiny batches this avoids allocating
+            // and probing empty buckets while preserving the same interleave semantics.
+            let buckets_n = hot_bucket_count().min(txs.len());
             let mut buckets: Vec<Vec<Tx>> = vec![Vec::new(); buckets_n];
 
             for tx in txs.iter().cloned() {
