@@ -8,7 +8,7 @@ use std::{
     io::{Read, Seek, SeekFrom, Write},
     net::TcpListener,
     path::{Path, PathBuf},
-    time::{Duration, SystemTime, UNIX_EPOCH},
+    time::{Duration, Instant, SystemTime, UNIX_EPOCH},
 };
 use trnm_rpc::{
     get_tx, query_account_state, submit_tx, validate_trnm_address, AccountBalanceQueryResponse,
@@ -52,6 +52,9 @@ const MARKET_WEIGHT_MIN: u128 = 1;
 const MARKET_WEIGHT_MAX: u128 = 1_000_000;
 const MARKET_REPUTATION_CLAMP_MIN: i64 = 1;
 const MARKET_REPUTATION_CLAMP_MAX: i64 = 1_000_000;
+const MARKET_LOCK_TIMEOUT_MS_DEFAULT: u64 = 5_000;
+const MARKET_LOCK_TIMEOUT_MS_MIN: u64 = 100;
+const MARKET_LOCK_TIMEOUT_MS_MAX: u64 = 60_000;
 
 #[derive(Debug, Parser)]
 #[command(
@@ -854,13 +857,30 @@ fn market_lock_stale_after_ms() -> Option<u128> {
     Some(parsed.clamp(1_000, 15 * 60 * 1_000))
 }
 
+fn market_lock_timeout_ms() -> u64 {
+    let raw = match std::env::var("TRNM_RPC_MARKET_LOCK_TIMEOUT_MS") {
+        Ok(v) => v,
+        Err(_) => return MARKET_LOCK_TIMEOUT_MS_DEFAULT,
+    };
+    let normalized = normalize_wrapped_env_value(&raw);
+    if normalized.is_empty() {
+        return MARKET_LOCK_TIMEOUT_MS_DEFAULT;
+    }
+    let parsed = match normalized.parse::<u64>() {
+        Ok(v) => v,
+        Err(_) => return MARKET_LOCK_TIMEOUT_MS_DEFAULT,
+    };
+    parsed.clamp(MARKET_LOCK_TIMEOUT_MS_MIN, MARKET_LOCK_TIMEOUT_MS_MAX)
+}
+
 fn acquire_market_file_lock(path: &Path) -> Result<MarketFileLock> {
     let lock_path = market_lock_path(path);
     if let Some(parent) = lock_path.parent() {
         fs::create_dir_all(parent)?;
     }
-    let mut attempts: u32 = 0;
     let stale_after_ms = market_lock_stale_after_ms();
+    let timeout = Duration::from_millis(market_lock_timeout_ms());
+    let start = Instant::now();
     loop {
         match OpenOptions::new()
             .create_new(true)
@@ -884,10 +904,10 @@ fn acquire_market_file_lock(path: &Path) -> Result<MarketFileLock> {
                         }
                     }
                 }
-                attempts = attempts.saturating_add(1);
-                if attempts >= 500 {
+                if start.elapsed() >= timeout {
                     return Err(anyhow!(
-                        "timed out waiting for market file lock: {}",
+                        "timed out waiting for market file lock after {}ms: {}",
+                        timeout.as_millis(),
                         lock_path.display()
                     ));
                 }
@@ -3447,6 +3467,29 @@ mod tests {
         match prev {
             Some(v) => unsafe { std::env::set_var("TRNM_RPC_MARKET_LOCK_STALE_MS", v) },
             None => unsafe { std::env::remove_var("TRNM_RPC_MARKET_LOCK_STALE_MS") },
+        }
+    }
+
+    #[test]
+    fn market_lock_timeout_ms_uses_wrapped_env_with_clamp_and_fallback() {
+        let _guard = lock_env();
+        let prev = std::env::var("TRNM_RPC_MARKET_LOCK_TIMEOUT_MS").ok();
+
+        unsafe { std::env::remove_var("TRNM_RPC_MARKET_LOCK_TIMEOUT_MS") };
+        assert_eq!(market_lock_timeout_ms(), MARKET_LOCK_TIMEOUT_MS_DEFAULT);
+
+        unsafe { std::env::set_var("TRNM_RPC_MARKET_LOCK_TIMEOUT_MS", "  `50`  ") };
+        assert_eq!(market_lock_timeout_ms(), MARKET_LOCK_TIMEOUT_MS_MIN);
+
+        unsafe { std::env::set_var("TRNM_RPC_MARKET_LOCK_TIMEOUT_MS", "  \"70000\"  ") };
+        assert_eq!(market_lock_timeout_ms(), MARKET_LOCK_TIMEOUT_MS_MAX);
+
+        unsafe { std::env::set_var("TRNM_RPC_MARKET_LOCK_TIMEOUT_MS", "  not-a-number  ") };
+        assert_eq!(market_lock_timeout_ms(), MARKET_LOCK_TIMEOUT_MS_DEFAULT);
+
+        match prev {
+            Some(v) => unsafe { std::env::set_var("TRNM_RPC_MARKET_LOCK_TIMEOUT_MS", v) },
+            None => unsafe { std::env::remove_var("TRNM_RPC_MARKET_LOCK_TIMEOUT_MS") },
         }
     }
 
