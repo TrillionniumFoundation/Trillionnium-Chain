@@ -755,7 +755,14 @@ fn query_capability_audit(
 fn env_u64_with_min(name: &str, default: u64, min: u64) -> u64 {
     std::env::var(name)
         .ok()
-        .and_then(|v| v.trim().parse::<u64>().ok())
+        .and_then(|v| {
+            let normalized = normalize_wrapped_env_value(&v);
+            if normalized.is_empty() {
+                None
+            } else {
+                normalized.parse::<u64>().ok()
+            }
+        })
         .map(|v| v.max(min))
         .unwrap_or(default.max(min))
 }
@@ -763,7 +770,14 @@ fn env_u64_with_min(name: &str, default: u64, min: u64) -> u64 {
 fn env_u32_with_min(name: &str, default: u32, min: u32) -> u32 {
     std::env::var(name)
         .ok()
-        .and_then(|v| v.trim().parse::<u32>().ok())
+        .and_then(|v| {
+            let normalized = normalize_wrapped_env_value(&v);
+            if normalized.is_empty() {
+                None
+            } else {
+                normalized.parse::<u32>().ok()
+            }
+        })
         .map(|v| v.max(min))
         .unwrap_or(default.max(min))
 }
@@ -3557,6 +3571,27 @@ mod tests {
         match prev {
             Some(v) => unsafe { std::env::set_var("TRNM_RPC_MARKET_LOCK_TIMEOUT_MS", v) },
             None => unsafe { std::env::remove_var("TRNM_RPC_MARKET_LOCK_TIMEOUT_MS") },
+        }
+    }
+
+    #[test]
+    fn env_u64_with_min_accepts_wrapped_values_and_empty_fallback() {
+        let _guard = lock_env();
+        let key = "TRNM_RPC_TEST_ENV_U64_WITH_MIN";
+        let prev = std::env::var(key).ok();
+
+        unsafe { std::env::set_var(key, "  \"12\"  ") };
+        assert_eq!(env_u64_with_min(key, 8, 1), 12);
+
+        unsafe { std::env::set_var(key, "  ''  ") };
+        assert_eq!(env_u64_with_min(key, 8, 1), 8);
+
+        unsafe { std::env::set_var(key, "  `0`  ") };
+        assert_eq!(env_u64_with_min(key, 8, 3), 3);
+
+        match prev {
+            Some(v) => unsafe { std::env::set_var(key, v) },
+            None => unsafe { std::env::remove_var(key) },
         }
     }
 
