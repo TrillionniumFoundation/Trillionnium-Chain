@@ -32,6 +32,8 @@ jobs:
       PYTHONHASHSEED: "0"
       # Normalize CI-branching behavior in scripts/tools.
       CI: "true"
+      # Keep GitHub Actions context checks deterministic in shell helpers.
+      GITHUB_ACTIONS: "true"
       # Pin reproducible timestamp metadata for archive/build helper tools.
       SOURCE_DATE_EPOCH: "1704067200"
     timeout-minutes: 45
