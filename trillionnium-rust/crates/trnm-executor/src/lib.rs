@@ -1165,6 +1165,18 @@ mod tests {
     }
 
     #[test]
+    fn hot_bucket_count_is_clamped_to_safe_bounds() {
+        let _env = env_lock();
+
+        let _low = EnvGuard::set("TRNM_HOT_BUCKETS", "0");
+        assert_eq!(hot_bucket_count(), 4);
+        drop(_low);
+
+        let _high = EnvGuard::set("TRNM_HOT_BUCKETS", "999");
+        assert_eq!(hot_bucket_count(), 64);
+    }
+
+    #[test]
     fn empty_batch_fast_path_is_profile_stable_across_strategies() {
         let strategies = [
             GroupingStrategy::Original,
