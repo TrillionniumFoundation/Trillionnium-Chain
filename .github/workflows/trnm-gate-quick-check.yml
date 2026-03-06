@@ -36,6 +36,9 @@ jobs:
       PYTHONHASHSEED: "0"
       # Normalize shell/test behavior for tools that branch on CI mode.
       CI: "true"
+      # Pin a stable build timestamp for any tooling that emits date metadata
+      # (zip/tar/python wheel/etc.) so artifact ordering stays reproducible.
+      SOURCE_DATE_EPOCH: "1704067200"
       # Avoid sporadic apt interactive prompts on runner image/package drift.
       DEBIAN_FRONTEND: noninteractive
     # This workflow runs dozens of regression scripts; 10 minutes can truncate

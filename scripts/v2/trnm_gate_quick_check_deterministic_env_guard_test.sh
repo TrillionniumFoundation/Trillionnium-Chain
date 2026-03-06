@@ -13,6 +13,7 @@ required_lines=(
   'LC_COLLATE: C'
   'PYTHONHASHSEED: "0"'
   'CI: "true"'
+  'SOURCE_DATE_EPOCH: "1704067200"'
   'timeout-minutes: 45'
 )
 
