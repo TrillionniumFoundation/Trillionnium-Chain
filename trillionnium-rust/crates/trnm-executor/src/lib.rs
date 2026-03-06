@@ -172,8 +172,9 @@ pub fn build_parallel_groups_profile_with_strategy(
 
     let mut groups: Vec<Vec<Tx>> = Vec::new();
 
-    // Pre-size maps to reduce rehashing on large workloads.
-    let map_cap = (txs.len() / 2).max(64);
+    // Pre-size maps from access-footprint hint to reduce rehashing on
+    // wide-object workloads while keeping bounded overhead on tiny batches.
+    let map_cap = access_map_capacity_hint(txs);
     // object(id) -> latest group that has a writer touching this object
     let mut latest_writer_group: HashMap<u64, usize> = HashMap::with_capacity(map_cap);
     // object(id) -> latest group that has a reader touching this object
@@ -267,7 +268,7 @@ fn build_parallel_groups_aggressive_profile(
     // but keeps Aggressive strategy identity/flags and metrics interface stable.
     if !aggr_deep_scan_enabled() {
         let mut groups: Vec<Vec<Tx>> = Vec::new();
-        let map_cap = (original_txs.len() / 2).max(64);
+        let map_cap = access_map_capacity_hint(original_txs);
         let mut latest_writer_group: HashMap<u64, usize> = HashMap::with_capacity(map_cap);
         let mut latest_reader_group: HashMap<u64, usize> = HashMap::with_capacity(map_cap);
 
@@ -349,7 +350,7 @@ fn build_parallel_groups_aggressive_profile(
     let mut group_read_keys: Vec<HashSet<u64>> = Vec::new();
     let mut group_write_keys: Vec<HashSet<u64>> = Vec::new();
 
-    let map_cap = (original_txs.len() / 2).max(64);
+    let map_cap = access_map_capacity_hint(original_txs);
     let mut latest_writer_group: HashMap<u64, usize> = HashMap::with_capacity(map_cap);
     let mut latest_reader_group: HashMap<u64, usize> = HashMap::with_capacity(map_cap);
 
@@ -495,6 +496,24 @@ fn build_parallel_groups_aggressive_profile(
             stage_rw_hits,
         },
     )
+}
+
+#[inline]
+fn access_map_capacity_hint(txs: &[Tx]) -> usize {
+    const MIN_CAP: usize = 64;
+    const MAX_CAP: usize = 1 << 20;
+
+    let mut footprint = 0usize;
+    for tx in txs {
+        footprint = footprint
+            .saturating_add(tx.read_set.len())
+            .saturating_add(tx.write_set.len());
+    }
+
+    // HashMap load-factor friendly sizing. Keep a floor for tiny batches and
+    // cap for pathological bursts so this remains a low-risk sizing hint.
+    let hinted = footprint.saturating_mul(4).saturating_div(3).saturating_add(1);
+    hinted.clamp(MIN_CAP, MAX_CAP)
 }
 
 fn aggr_scan_window() -> usize {
