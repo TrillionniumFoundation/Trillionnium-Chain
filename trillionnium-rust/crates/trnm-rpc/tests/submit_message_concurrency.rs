@@ -137,3 +137,64 @@ fn submit_message_concurrent_same_idempotency_key_different_sessions_are_isolate
     sessions.sort_unstable();
     assert_eq!(sessions, vec!["s-1", "s-2"]);
 }
+
+#[test]
+fn submit_message_concurrent_same_idempotency_key_different_channels_are_isolated() {
+    let ingress = unique_fixture_path("submit_message_concurrency_channels", "jsonl");
+    let _ = fs::remove_file(&ingress);
+
+    let workers = 8usize;
+    let mut joins = Vec::with_capacity(workers);
+    for i in 0..workers {
+        let ingress_env = ingress.clone();
+        let channel = if i % 2 == 0 { "telegram" } else { "feishu" }.to_string();
+        joins.push(thread::spawn(move || {
+            Command::new("cargo")
+                .args(["run", "-p", "trnm-rpc", "--"])
+                .args([
+                    "submit-message",
+                    "--channel",
+                    &channel,
+                    "--user-id",
+                    "u-1",
+                    "--session-id",
+                    "s-1",
+                    "--text",
+                    "hello",
+                    "--idempotency-key",
+                    "k-1",
+                ])
+                .env("TRNM_RPC_INGRESS_FILE", ingress_env)
+                .output()
+                .expect("failed to execute trnm-rpc")
+        }));
+    }
+
+    for out in joins {
+        let output = out.join().expect("join thread");
+        assert!(
+            output.status.success(),
+            "stderr: {}",
+            String::from_utf8_lossy(&output.stderr)
+        );
+    }
+
+    let raw = fs::read_to_string(&ingress).expect("read ingress file");
+    let records: Vec<Value> = raw
+        .lines()
+        .filter(|l| !l.trim().is_empty())
+        .map(|line| serde_json::from_str(line).expect("valid ingress json line"))
+        .collect();
+    assert_eq!(
+        records.len(),
+        2,
+        "idempotency key should be deduplicated per channel scope, not globally"
+    );
+
+    let mut channels: Vec<&str> = records
+        .iter()
+        .filter_map(|r| r["channel"].as_str())
+        .collect();
+    channels.sort_unstable();
+    assert_eq!(channels, vec!["feishu", "telegram"]);
+}
