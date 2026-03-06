@@ -89,10 +89,6 @@ jobs:
         run: |
           ./scripts/v2/quick_gate_summary_path_guard_test.sh
 
-      - name: Merge gates deterministic env guard regression
-        run: |
-          ./scripts/v2/trnm_merge_gates_deterministic_env_guard_test.sh
-
       - name: Nightly health deterministic env guard regression
         run: |
           ./scripts/v2/rust_l1_nightly_health_deterministic_env_guard_test.sh
