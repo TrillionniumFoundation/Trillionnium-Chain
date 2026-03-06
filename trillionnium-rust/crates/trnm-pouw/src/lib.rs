@@ -5681,6 +5681,50 @@ mod tests {
     }
 
     #[test]
+    fn resolve_rejects_multisig_authority_with_unicode_comma_whitespace_without_escrow_mutation() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        // Unicode ideographic space after comma must fail closed like ASCII whitespace.
+        let malformed_authority = "authority,\u{3000}guardian";
+        set_resolve_authority(&mut st, malformed_authority);
+
+        let r1 = apply_create_task(&mut st, 9_001_6_1, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(9_001_6_1, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+        let r5 =
+            apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
+
+        let before = st.clone();
+        let err = apply_resolve(
+            &mut st,
+            r5,
+            true,
+            "authority".into(),
+            "authority".into(),
+        )
+        .expect_err("comma+unicode-whitespace authority list must fail closed");
+        assert!(matches!(err, PouwError::Unauthorized));
+
+        let task = st.get_task(9_001_6_1).unwrap();
+        assert_eq!(task.status, TaskStatus::Challenged);
+        assert_eq!(task.challenge_bond_forfeited, None);
+        assert_eq!(st.balance_of("challenger"), before.balance_of("challenger"));
+        assert_eq!(
+            st.balance_of(CHALLENGE_ESCROW_ACCOUNT),
+            before.balance_of(CHALLENGE_ESCROW_ACCOUNT)
+        );
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT)
+        );
+    }
+
+    #[test]
     fn challenge_rejects_when_payload_challenger_matches_but_signer_is_attacker() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
@@ -6380,6 +6424,32 @@ mod tests {
 
         // Accept canonical envelope tuple when result_hash uses uppercase 0X hex prefix.
         let proof = b"TEE:task_id=7701,worker=worker1,proof_type=tee,result_hash=0XABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABAB,quote=QUOTE_XYZ".to_vec();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, Some(proof)).unwrap();
+
+        let final_task = st.get_task(r4.id).unwrap();
+        assert_eq!(final_task.status, TaskStatus::Completed);
+        assert_eq!(final_task.result_hash, Some(result_hash));
+        assert!(final_task.challenge_deadline_height.is_none());
+    }
+
+    #[test]
+    fn zk_proof_accepts_uppercase_hex_prefix_in_result_hash_binding() {
+        let mut st = seeded_state();
+        let r1 = apply_create_task(&mut st, 8701, "alice".into(), 10).unwrap();
+
+        let mut task = st.get_task(r1.id).unwrap();
+        task.proof_type = ProofType::Zk;
+        let r1_updated = st.update_task(r1, task).unwrap();
+
+        let result_hash = [0xcdu8; 32];
+        let reveal_salt = [4u8; 32];
+        let committed = compute_commitment(8701, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1_updated, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+
+        // Accept canonical envelope tuple when result_hash uses uppercase 0X hex prefix.
+        let proof = b"ZK:task_id=8701,worker=worker1,proof_type=zk,result_hash=0XCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD,seal=SEAL_XYZ".to_vec();
         let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, Some(proof)).unwrap();
 
         let final_task = st.get_task(r4.id).unwrap();
