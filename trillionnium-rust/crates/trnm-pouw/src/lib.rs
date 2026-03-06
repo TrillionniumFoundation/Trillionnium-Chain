@@ -5839,10 +5839,15 @@ mod tests {
 
         // Invalid proof (doesn't start with TE)
         let proof = b"BAD_PROOF".to_vec();
-        let err =
-            apply_reveal_result(&mut st, r3, result_hash, reveal_salt, Some(proof)).unwrap_err();
+        let err = apply_reveal_result(&mut st, r3.clone(), result_hash, reveal_salt, Some(proof))
+            .unwrap_err();
 
         assert!(matches!(err, PouwError::State(msg) if msg.contains("Proof verification failed")));
+
+        // Fail closed on verifier rejection: committed task must remain unchanged.
+        let task_after = st.get_task(r3.id).unwrap();
+        assert_eq!(task_after.status, TaskStatus::Committed);
+        assert!(task_after.result_hash.is_none());
     }
 
     #[test]
