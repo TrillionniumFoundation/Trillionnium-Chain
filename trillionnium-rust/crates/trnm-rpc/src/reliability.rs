@@ -422,6 +422,16 @@ fn sanitize_retry_config(mut retry: RetryConfig) -> RetryConfig {
 }
 
 fn sanitize_retention_config(mut retention: RetentionConfig) -> RetentionConfig {
+    // Zero dedup ttl disables idempotency memory and allows immediate duplicate
+    // replays under concurrent ingress. Keep a 1ms floor so dedup remains active.
+    if retention.dedup_ttl_ms == 0 {
+        retention.dedup_ttl_ms = 1;
+    }
+    // Zero pending ttl drops retry state instantly and can starve in-flight
+    // reliability guarantees under short backoff loops.
+    if retention.pending_ttl_ms == 0 {
+        retention.pending_ttl_ms = 1;
+    }
     // Zero cleanup interval causes cleanup to run on every receive(), which can
     // become a self-inflicted backpressure hotspot under sustained ingress.
     if retention.cleanup_interval_ms == 0 {
@@ -1624,6 +1634,23 @@ mod tests {
         );
 
         assert_eq!(engine.retention.cleanup_interval_ms, 1);
+    }
+
+    #[test]
+    fn retention_config_sanitizes_zero_ttls_to_preserve_idempotency_and_retry_state() {
+        let store = InMemoryReliabilityStore::default();
+        let engine = ReliabilityEngine::new_with_retention(
+            store,
+            RetryConfig::default(),
+            RetentionConfig {
+                dedup_ttl_ms: 0,
+                pending_ttl_ms: 0,
+                cleanup_interval_ms: 1_000,
+            },
+        );
+
+        assert_eq!(engine.retention.dedup_ttl_ms, 1);
+        assert_eq!(engine.retention.pending_ttl_ms, 1);
     }
 
     #[test]
