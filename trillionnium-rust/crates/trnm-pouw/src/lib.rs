@@ -6912,6 +6912,34 @@ mod tests {
     }
 
     #[test]
+    fn empty_zk_proof_payload_rejects_reveal_fail_closed_without_state_mutation() {
+        let mut st = seeded_state();
+        let r1 = apply_create_task(&mut st, 7008, "alice".into(), 10).unwrap();
+
+        let mut task = st.get_task(r1.id).unwrap();
+        task.proof_type = ProofType::Zk;
+        let r1_updated = st.update_task(r1, task).unwrap();
+
+        let result_hash = [5u8; 32];
+        let reveal_salt = [6u8; 32];
+        let committed = compute_commitment(7008, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1_updated, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+
+        let err =
+            apply_reveal_result(&mut st, r3.clone(), result_hash, reveal_salt, Some(Vec::new()))
+                .unwrap_err();
+
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("missing proof payload")));
+
+        // Fail closed on empty payload: task must remain Committed with no result hash.
+        let task_after = st.get_task(r3.id).unwrap();
+        assert_eq!(task_after.status, TaskStatus::Committed);
+        assert!(task_after.result_hash.is_none());
+    }
+
+    #[test]
     fn zk_proof_immediately_completes_task_and_skips_challenge_window() {
         let mut st = seeded_state();
         let r1 = apply_create_task(&mut st, 7004, "alice".into(), 10).unwrap();
