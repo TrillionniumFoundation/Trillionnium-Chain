@@ -705,6 +705,12 @@ pub fn apply_reveal_result_at_height(
 
         let registry = get_default_registry();
         let mut verification_task = task.clone();
+        // Rebind canonical envelope context explicitly so verification always
+        // evaluates the committed task_id/worker/proof_type/result_hash tuple,
+        // even when legacy state carries drift in optional fields.
+        verification_task.task_id = task.task_id;
+        verification_task.worker = Some(worker.clone());
+        verification_task.proof_type = task.proof_type;
         verification_task.result_hash = Some(result_hash);
         let verification = registry.verify(&verification_task, proof_payload);
         match verification {
