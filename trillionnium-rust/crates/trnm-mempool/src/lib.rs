@@ -361,4 +361,14 @@ mod tests {
         assert_eq!(g.admit(22, IngressClass::Critical), AdmitOutcome::Accepted);
         assert_eq!(g.pop_ready(), Some(22));
     }
+
+    #[test]
+    fn zero_capacity_admission_gate_does_not_poison_idempotency_after_backpressure() {
+        let mut g = AdmissionGate::new(0);
+
+        // Capacity exhaustion should reject ingress without marking tx ids as seen.
+        assert_eq!(g.admit(7), AdmitOutcome::Backpressured);
+        assert_eq!(g.admit(7), AdmitOutcome::Backpressured);
+        assert_eq!(g.pop_ready(), None);
+    }
 }
