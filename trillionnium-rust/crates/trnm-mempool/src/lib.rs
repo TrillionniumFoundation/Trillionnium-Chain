@@ -82,8 +82,9 @@ impl LaneAdmissionGate {
         }
         let out = match class {
             IngressClass::Normal => {
+                let normal_was_empty = self.normal.queue.is_empty();
                 let primary = self.normal.admit(tx_id);
-                if matches!(primary, AdmitOutcome::Backpressured)
+                let out = if matches!(primary, AdmitOutcome::Backpressured)
                     && self.normal.capacity == 0
                     && self.critical.queue.len() < self.critical.capacity
                 {
@@ -93,7 +94,20 @@ impl LaneAdmissionGate {
                     self.critical.admit(tx_id)
                 } else {
                     primary
+                };
+
+                if matches!(out, AdmitOutcome::Accepted)
+                    && normal_was_empty
+                    && !self.normal.queue.is_empty()
+                    && !self.critical.queue.is_empty()
+                {
+                    // Anti-starvation: when normal backlog appears during an active
+                    // critical flood, warm fairness so normal gets a turn after at
+                    // most one additional critical dequeue.
+                    self.critical_served_streak = self.critical_burst_limit;
                 }
+
+                out
             }
             IngressClass::Critical => {
                 let primary = self.critical.admit(tx_id);
@@ -375,6 +389,26 @@ mod tests {
         // New critical ingress should keep making progress while normal remains empty.
         assert_eq!(g.admit(22, IngressClass::Critical), AdmitOutcome::Accepted);
         assert_eq!(g.pop_ready(), Some(22));
+    }
+
+    #[test]
+    fn newly_arrived_normal_backlog_gets_turn_during_critical_flood() {
+        let mut g = LaneAdmissionGate::new(7, 3);
+
+        // Build critical pressure and consume a few critical turns first.
+        assert_eq!(g.admit(100, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(101, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(102, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.pop_ready(), Some(100));
+        assert_eq!(g.pop_ready(), Some(101));
+
+        // Normal traffic appears while critical lane stays backlogged.
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+
+        // Anti-starvation target: once normal backlog appears under active
+        // critical pressure, fairness should immediately grant a normal turn.
+        assert_eq!(g.pop_ready(), Some(1));
+        assert_eq!(g.pop_ready(), Some(102));
     }
 
     #[test]
