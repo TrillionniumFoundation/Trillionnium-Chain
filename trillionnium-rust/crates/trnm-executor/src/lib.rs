@@ -777,7 +777,9 @@ fn hot_bucket_hint(tx: &Tx, buckets_n: usize) -> usize {
         .map(|o| o.id)
         .unwrap_or(0);
     let mixed = key_a ^ key_b.rotate_left(7);
-    (mixed as usize) % buckets_n
+    // Reduce in u64-space first; casting mixed directly to usize would truncate
+    // high bits on 32-bit targets and skew bucket selection under wide key domains.
+    (mixed % buckets_n as u64) as usize
 }
 
 fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
@@ -1069,6 +1071,21 @@ mod tests {
         let mut txs = Vec::<Tx>::new();
         reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
         assert!(txs.is_empty());
+    }
+
+    #[test]
+    fn hot_bucket_hint_uses_full_u64_keyspace_before_bucket_reduce() {
+        let buckets_n = 97usize;
+        let low = tx(1, vec![], vec![o(1)]);
+        let high = tx(2, vec![], vec![o(1 + (1u64 << 40))]);
+
+        let low_bucket = hot_bucket_hint(&low, buckets_n);
+        let high_bucket = hot_bucket_hint(&high, buckets_n);
+
+        // Distinct high bits must influence bucket selection; truncating to usize
+        // before modulo would collapse these on 32-bit targets.
+        assert_ne!(low_bucket, high_bucket);
+        assert_eq!(high_bucket, ((1 + (1u64 << 40)) % buckets_n as u64) as usize);
     }
 
     #[test]
