@@ -198,3 +198,64 @@ fn submit_message_concurrent_same_idempotency_key_different_channels_are_isolate
     channels.sort_unstable();
     assert_eq!(channels, vec!["feishu", "telegram"]);
 }
+
+#[test]
+fn submit_message_concurrent_same_idempotency_key_different_users_are_isolated() {
+    let ingress = unique_fixture_path("submit_message_concurrency_users", "jsonl");
+    let _ = fs::remove_file(&ingress);
+
+    let workers = 8usize;
+    let mut joins = Vec::with_capacity(workers);
+    for i in 0..workers {
+        let ingress_env = ingress.clone();
+        let user_id = if i % 2 == 0 { "u-1" } else { "u-2" }.to_string();
+        joins.push(thread::spawn(move || {
+            Command::new("cargo")
+                .args(["run", "-p", "trnm-rpc", "--"])
+                .args([
+                    "submit-message",
+                    "--channel",
+                    "telegram",
+                    "--user-id",
+                    &user_id,
+                    "--session-id",
+                    "s-1",
+                    "--text",
+                    "hello",
+                    "--idempotency-key",
+                    "k-1",
+                ])
+                .env("TRNM_RPC_INGRESS_FILE", ingress_env)
+                .output()
+                .expect("failed to execute trnm-rpc")
+        }));
+    }
+
+    for out in joins {
+        let output = out.join().expect("join thread");
+        assert!(
+            output.status.success(),
+            "stderr: {}",
+            String::from_utf8_lossy(&output.stderr)
+        );
+    }
+
+    let raw = fs::read_to_string(&ingress).expect("read ingress file");
+    let records: Vec<Value> = raw
+        .lines()
+        .filter(|l| !l.trim().is_empty())
+        .map(|line| serde_json::from_str(line).expect("valid ingress json line"))
+        .collect();
+    assert_eq!(
+        records.len(),
+        2,
+        "idempotency key should be deduplicated per user scope, not globally"
+    );
+
+    let mut users: Vec<&str> = records
+        .iter()
+        .filter_map(|r| r["user_id"].as_str())
+        .collect();
+    users.sort_unstable();
+    assert_eq!(users, vec!["u-1", "u-2"]);
+}
