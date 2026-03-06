@@ -744,10 +744,14 @@ impl RelayService {
         let before = state.acked_ids.len();
 
         // Backward-compatible id ack path: only accept ids that exist in this session queue.
-        let known_ids: HashSet<u64> = state.queue.iter().map(|e| e.envelope_id).collect();
-        for id in req.envelope_ids {
-            if known_ids.contains(&id) {
-                state.acked_ids.insert(id);
+        // Avoid rebuilding the known-id set when clients use the newer upto_seq-only path,
+        // which is common in high-throughput polling loops.
+        if !req.envelope_ids.is_empty() {
+            let known_ids: HashSet<u64> = state.queue.iter().map(|e| e.envelope_id).collect();
+            for id in req.envelope_ids {
+                if known_ids.contains(&id) {
+                    state.acked_ids.insert(id);
+                }
             }
         }
 
