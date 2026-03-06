@@ -202,7 +202,9 @@ impl ReliabilityStore for InMemoryReliabilityStore {
     }
 
     fn list_session_ids(&self) -> Vec<String> {
-        self.sessions.keys().cloned().collect()
+        let mut ids: Vec<String> = self.sessions.keys().cloned().collect();
+        ids.sort();
+        ids
     }
 
     fn contains_dedup_key(&self, key: &DedupKey) -> bool {
@@ -991,6 +993,7 @@ impl ReliabilityStore for SqliteReliabilityStore {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::collections::BTreeMap;
     use std::sync::{Arc, Mutex, OnceLock};
     use std::thread;
 
@@ -1418,6 +1421,28 @@ mod tests {
 
         assert_eq!(accepted, 1);
         assert_eq!(duplicate, 15);
+    }
+
+    #[test]
+    fn in_memory_store_lists_sessions_in_stable_sorted_order() {
+        let mut store = InMemoryReliabilityStore::default();
+        store.upsert_session(SessionState {
+            session_id: "s-b".to_string(),
+            pending: BTreeMap::new(),
+        });
+        store.upsert_session(SessionState {
+            session_id: "s-a".to_string(),
+            pending: BTreeMap::new(),
+        });
+        store.upsert_session(SessionState {
+            session_id: "s-c".to_string(),
+            pending: BTreeMap::new(),
+        });
+
+        assert_eq!(
+            store.list_session_ids(),
+            vec!["s-a".to_string(), "s-b".to_string(), "s-c".to_string()]
+        );
     }
 
     #[test]
