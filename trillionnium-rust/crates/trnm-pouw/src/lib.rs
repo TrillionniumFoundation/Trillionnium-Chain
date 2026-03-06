@@ -1448,8 +1448,13 @@ mod tests {
         };
         let r2 = st.update_task(r1, bad_task).unwrap();
 
-        let err = apply_reveal_result(&mut st, r2, [2u8; 32], [3u8; 32], None).unwrap_err();
+        let err = apply_reveal_result(&mut st, r2.clone(), [2u8; 32], [3u8; 32], None).unwrap_err();
         assert!(matches!(err, PouwError::MissingWorker));
+
+        let task_after = st.get_task(r2.id).unwrap();
+        assert_eq!(task_after.status, TaskStatus::Committed);
+        assert!(task_after.result_hash.is_none());
+        assert!(task_after.reveal_salt.is_none());
     }
 
     #[test]
