@@ -1541,6 +1541,52 @@ mod tests {
     }
 
     #[test]
+    fn tee_reveal_rebinds_result_hash_context_for_legacy_committed_state() {
+        let mut st = seeded_state();
+        let r1 = apply_create_task(&mut st, 783, "alice".into(), 10).unwrap();
+
+        // Simulate legacy drift where Committed state already carries a stale result_hash.
+        // Reveal verification must rebind to the reveal arguments and proof envelope bindings.
+        let result_hash = [2u8; 32];
+        let stale_result_hash = [9u8; 32];
+        let reveal_salt = [3u8; 32];
+        let worker = "worker1".to_string();
+        let committed = compute_commitment(783, &result_hash, &reveal_salt, &worker);
+        let legacy_task = TaskObject {
+            task_id: 783,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Committed,
+            proof_type: ProofType::Tee,
+            metadata: None,
+            worker: Some(worker),
+            committed_hash: Some(committed),
+            // Legacy/corrupted optional field drift.
+            result_hash: Some(stale_result_hash),
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        };
+        let r2 = st.update_task(r1, legacy_task).unwrap();
+
+        let proof = b"TEE:task_id=783,worker=worker1,proof_type=tee,result_hash=0202020202020202020202020202020202020202020202020202020202020202,quote=QUOTE_XYZ".to_vec();
+        let r3 = apply_reveal_result(&mut st, r2.clone(), result_hash, reveal_salt, Some(proof)).unwrap();
+
+        let task_after = st.get_task(r3.id).unwrap();
+        assert_eq!(task_after.status, TaskStatus::Completed);
+        assert_eq!(task_after.result_hash, Some(result_hash));
+        assert_ne!(task_after.result_hash, Some(stale_result_hash));
+    }
+
+    #[test]
     fn reveal_rejects_noncanonical_worker_in_legacy_committed_state() {
         let mut st = seeded_state();
         let r1 = apply_create_task(&mut st, 78, "alice".into(), 10).unwrap();
