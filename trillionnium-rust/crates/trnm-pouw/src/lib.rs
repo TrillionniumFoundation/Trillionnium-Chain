@@ -3869,6 +3869,45 @@ mod tests {
     }
 
     #[test]
+    fn challenge_emergency_pause_precedes_bond_checks_without_escrow_mutation() {
+        // Merge-gate hardening: emergency pause must fail-closed before economic
+        // min-bond gates so paused challenge flow cannot leak bond-policy outcomes.
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+
+        st.set_gov_param_unchecked(9_209, "challenge_min_bond".into(), "50".into())
+            .expect("challenge_min_bond governance seed must succeed");
+
+        let r1 = apply_create_task(&mut st, 8_971, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(8_971, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+
+        st.set_gov_param(9_210, 7_999, "emergency_pause".into(), "true".into())
+            .expect("pause=true governance update must succeed");
+        assert!(st.is_emergency_paused());
+
+        let before_task = st.get_task(8_971).unwrap();
+        let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+        let before_challenger = st.balance_of("challenger");
+
+        let err = apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into())
+            .expect_err("emergency pause must mask min-bond result and freeze challenge entry path");
+        assert!(matches!(err, PouwError::InvalidTransition));
+
+        let after_task = st.get_task(8_971).unwrap();
+        assert_eq!(after_task.status, before_task.status);
+        assert_eq!(after_task.challenger, before_task.challenger);
+        assert_eq!(after_task.challenge_bond, before_task.challenge_bond);
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
+        assert_eq!(st.balance_of("challenger"), before_challenger);
+    }
+
+    #[test]
     fn challenge_reopens_after_emergency_pause_clears() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
