@@ -2007,4 +2007,26 @@ mod tests {
             VerificationResult::Invalid(msg) if msg.contains("worker")
         ));
     }
+
+    #[test]
+    fn registry_with_builtin_verifiers_fail_closed_when_proof_type_binding_missing() {
+        let registry = VerifierRegistry::with_builtin_verifiers();
+
+        let tee_task = task_with_proof_type(ProofType::Tee);
+
+        let mut zk_task = task_with_proof_type(ProofType::Zk);
+        zk_task.result_hash = Some([0x33; 32]);
+
+        assert!(matches!(
+            registry.verify(&tee_task, b"TEE:task_id=42,quote=ok"),
+            VerificationResult::Invalid(msg) if msg.contains("proof_type")
+        ));
+        assert!(matches!(
+            registry.verify(
+                &zk_task,
+                b"ZK:task_id=42,result_hash=3333333333333333333333333333333333333333333333333333333333333333,proof=ok"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("proof_type")
+        ));
+    }
 }
