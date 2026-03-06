@@ -166,6 +166,10 @@ impl AdmissionGate {
             // so newly arriving free-ingress traffic is not pointlessly deferred.
             self.retry_reservations = 0;
         }
+        // Fairness deferral idempotency is only intended for immediate repeats of a just-deferred
+        // fresh id. Once any admission succeeds, clear the marker so unrelated later retries are
+        // not misclassified as duplicates under a future saturation wave.
+        self.last_fairness_deferred = None;
         self.queue.push_back(tx_id);
         self.seen.insert(tx_id);
         self.metrics.accepted = self.metrics.accepted.saturating_add(1);
@@ -502,6 +506,33 @@ mod tests {
         let m = gate.metrics();
         assert_eq!(m.fairness_deferrals, 1);
         assert_eq!(m.duplicates, 1);
+        assert_eq!(m.backpressure_duplicates, 1);
+    }
+
+    #[test]
+    fn stale_fairness_marker_is_cleared_after_successful_admission() {
+        let mut gate = AdmissionGate::new(2);
+        assert_eq!(gate.admit(1), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(2), AdmitOutcome::Accepted);
+
+        // Fill bounded retry memory.
+        assert_eq!(gate.admit(9), AdmitOutcome::Backpressured);
+        assert_eq!(gate.admit(10), AdmitOutcome::Backpressured);
+
+        // Open one slot and fairness-defer a fresh id that cannot be remembered
+        // because retry memory is already full.
+        assert_eq!(gate.pop_ready(), Some(1));
+        assert_eq!(gate.admit(20), AdmitOutcome::Backpressured);
+
+        // A different fresh admission succeeds and must clear stale fairness marker state.
+        assert_eq!(gate.admit(1), AdmitOutcome::Accepted);
+        assert_eq!(gate.pop_ready(), Some(2));
+
+        // If marker was stale, this would be a duplicate despite not being in retry memory.
+        assert_eq!(gate.admit(20), AdmitOutcome::Backpressured);
+
+        let m = gate.metrics();
+        assert_eq!(m.fairness_deferrals, 2);
         assert_eq!(m.backpressure_duplicates, 0);
     }
 
