@@ -441,9 +441,16 @@ fn canonicalize_risk_source(source: Option<&str>) -> String {
         return "anon".to_string();
     }
 
+    // Collapse internal whitespace so cosmetic attribution variants don't explode
+    // quota key-space (e.g. "bot  worker" vs "bot worker").
+    let normalized = source.split_whitespace().collect::<Vec<_>>().join(" ");
+    if normalized.is_empty() {
+        return "anon".to_string();
+    }
+
     // Bound source cardinality to reduce key-space/memory pressure from adversarial
     // high-entropy attribution strings while preserving stable aliasing semantics.
-    source
+    normalized
         .chars()
         .take(RISK_SOURCE_MAX_CHARS)
         .collect::<String>()
@@ -2043,7 +2050,7 @@ mod tests {
             .to_string()
             .contains("too_many_requests/quota_exceeded"));
 
-        // Case-only variants must share the same source quota bucket.
+        // Internal whitespace variants should collapse into the same quota bucket.
         relay
             .open(RelayOpenRequest {
                 session_id: "mv-src-s2".into(),
@@ -2055,13 +2062,53 @@ mod tests {
                 route: "relay.echo".into(),
                 from: "alice".into(),
                 to: Some("bob".into()),
+                payload: b"ws-a".to_vec(),
+                source: Some("worker   lane".into()),
+            })
+            .unwrap();
+        relay
+            .send(RelaySendRequest {
+                session_id: "mv-src-s2".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"ws-b".to_vec(),
+                source: Some("worker lane".into()),
+            })
+            .unwrap();
+        let ws_alias_err = relay
+            .send(RelaySendRequest {
+                session_id: "mv-src-s2".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"ws-c".to_vec(),
+                source: Some("worker\t\nlane".into()),
+            })
+            .unwrap_err();
+        assert!(ws_alias_err
+            .to_string()
+            .contains("too_many_requests/quota_exceeded"));
+
+        // Case-only variants must share the same source quota bucket.
+        relay
+            .open(RelayOpenRequest {
+                session_id: "mv-src-s3".into(),
+            })
+            .unwrap();
+        relay
+            .send(RelaySendRequest {
+                session_id: "mv-src-s3".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
                 payload: b"g".to_vec(),
                 source: Some("CaseMixSrc".into()),
             })
             .unwrap();
         relay
             .send(RelaySendRequest {
-                session_id: "mv-src-s2".into(),
+                session_id: "mv-src-s3".into(),
                 route: "relay.echo".into(),
                 from: "alice".into(),
                 to: Some("bob".into()),
@@ -2071,7 +2118,7 @@ mod tests {
             .unwrap();
         let case_alias_err = relay
             .send(RelaySendRequest {
-                session_id: "mv-src-s2".into(),
+                session_id: "mv-src-s3".into(),
                 route: "relay.echo".into(),
                 from: "alice".into(),
                 to: Some("bob".into()),
