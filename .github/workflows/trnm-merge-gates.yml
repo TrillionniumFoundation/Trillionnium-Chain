@@ -23,6 +23,15 @@ concurrency:
 jobs:
   rust-l1-merge-gates:
     runs-on: macos-latest
+    env:
+      TZ: UTC
+      LANG: C.UTF-8
+      LC_ALL: C.UTF-8
+      LC_NUMERIC: C
+      LC_COLLATE: C
+      PYTHONHASHSEED: "0"
+      CI: "true"
+      SOURCE_DATE_EPOCH: "1704067200"
     timeout-minutes: 45
 
     steps:
