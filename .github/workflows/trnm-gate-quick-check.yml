@@ -37,6 +37,9 @@ jobs:
       # Keep month/day names and locale-sensitive time formatting stable for
       # any date evidence emitted by shell/python helpers.
       LC_TIME: C
+      # Force locale-driven message strings to remain stable across runner
+      # image updates so grep/assertions on stderr stay deterministic.
+      LC_MESSAGES: C
       # Freeze Python hash randomization so set/dict iteration in shell-driven
       # regression scripts stays deterministic across CI re-runs.
       PYTHONHASHSEED: "0"
