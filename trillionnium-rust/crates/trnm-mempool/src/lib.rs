@@ -238,6 +238,21 @@ mod tests {
     }
 
     #[test]
+    fn reserve_only_normal_borrowed_admission_is_globally_idempotent_until_drained() {
+        let mut g = LaneAdmissionGate::new(2, 2);
+
+        // Normal ingress borrows critical headroom when normal lane has zero reserved capacity.
+        assert_eq!(g.admit(41, IngressClass::Normal), AdmitOutcome::Accepted);
+
+        // Replays from either class must dedupe until the tx is drained.
+        assert_eq!(g.admit(41, IngressClass::Normal), AdmitOutcome::Duplicate);
+        assert_eq!(g.admit(41, IngressClass::Critical), AdmitOutcome::Duplicate);
+
+        assert_eq!(g.pop_ready(), Some(41));
+        assert_eq!(g.admit(41, IngressClass::Critical), AdmitOutcome::Accepted);
+    }
+
+    #[test]
     fn sustained_dual_lane_backlog_keeps_normal_progress_after_first_fairness_turn() {
         let mut g = LaneAdmissionGate::new(5, 2);
 
