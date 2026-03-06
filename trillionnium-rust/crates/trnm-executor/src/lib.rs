@@ -114,6 +114,19 @@ fn intersects(x: &[ObjectRef], y: &[ObjectRef]) -> bool {
 
     // Build a set from the smaller side to reduce comparisons.
     let (small, large) = if x.len() <= y.len() { (x, y) } else { (y, x) };
+
+    // Skewed low-footprint path: avoid HashSet allocation when one side has only a
+    // handful of keys (common in transfer-like writes against large read domains).
+    if small.len() <= 4 {
+        for a in small {
+            let akey = access_key(a);
+            if large.iter().any(|b| access_key(b) == akey) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     let seen: HashSet<u64> = small.iter().map(access_key).collect();
     large.iter().any(|obj| seen.contains(&access_key(obj)))
 }
@@ -864,6 +877,17 @@ mod tests {
 
         assert!(detect_conflict(&singleton_write, &wide_read_hit));
         assert!(!detect_conflict(&singleton_write, &wide_read_miss));
+    }
+
+    #[test]
+    fn skewed_small_vs_large_conflict_path_handles_large_domains() {
+        let small_write = tx(1, vec![], vec![o(101), o(202), o(303), o(404)]);
+        let mut wide_read_hit: Vec<ObjectRef> = (1..=64).map(o).collect();
+        wide_read_hit.push(o(303));
+        let wide_read_miss: Vec<ObjectRef> = (1..=64).map(|id| o(id + 10_000)).collect();
+
+        assert!(detect_conflict(&small_write, &tx(2, wide_read_hit, vec![])));
+        assert!(!detect_conflict(&small_write, &tx(3, wide_read_miss, vec![])));
     }
 
     #[test]
