@@ -145,14 +145,17 @@ TRNM_TX_CLI=./trillionnium-rust/target/debug/trnm-cli \
 
 ## 6. 文档入口
 
-- 项目状态：`STATUS.md`
-- 统一开发调度：`docs/development/DEVELOPMENT_MASTER_UNIFIED_2026-03-04.md`
-- 架构总览：`docs/architecture/README.md`
-- 代码地图：`docs/architecture/CODEBASE_MAP.md`
-- PoUW 时序：`docs/architecture/rust-l1-pouw-sequence.md`
-- v1 接口冻结：`docs/protocol/rust-l1-v1-interface-freeze.md`
-- 运维手册：`OPERATIONS.md`
-- Web4 前端说明：`web4-frontend/README.md`
+- 项目状态：[STATUS.md](STATUS.md)
+- 统一开发调度：[docs/development/DEVELOPMENT_MASTER_UNIFIED_2026-03-04.md](docs/development/DEVELOPMENT_MASTER_UNIFIED_2026-03-04.md)
+- Web4 基础设施总览：[docs/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md](docs/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md)
+- PoUW 机制说明：[trillionnium-rust/docs/challenge-economics-minimal.md](trillionnium-rust/docs/challenge-economics-minimal.md)
+- A2A 适配契约：[docs/agent/a2a_adapter_contract_v1.md](docs/agent/a2a_adapter_contract_v1.md)
+- MCP 适配契约：[docs/agent/mcp_adapter_contract_v1.md](docs/agent/mcp_adapter_contract_v1.md)
+- 运维手册：[OPERATIONS.md](OPERATIONS.md)
+- OpenClaw 微型运维 Runbook：[docs/development/OPENCLAW_OPS_MICRO_RUNBOOK.md](docs/development/OPENCLAW_OPS_MICRO_RUNBOOK.md)
+- Web4 前端说明：[web4-frontend/README.md](web4-frontend/README.md)
+
+> 轻量校验：可运行 `./scripts/check_root_readme_local_links.sh` 验证 README 本地相对链接是否全部可达。
 
 ---
 
