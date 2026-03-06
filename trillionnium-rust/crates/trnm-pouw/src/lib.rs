@@ -6665,9 +6665,14 @@ mod tests {
         let r2 = apply_accept_task(&mut st, r1_updated, "worker1".into()).unwrap();
         let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
 
-        let err = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap_err();
+        let err = apply_reveal_result(&mut st, r3.clone(), result_hash, reveal_salt, None).unwrap_err();
 
         assert!(matches!(err, PouwError::State(msg) if msg.contains("Proof verification failed")));
+
+        // Fail closed on missing payload: task must remain in Committed state.
+        let task_after = st.get_task(r3.id).unwrap();
+        assert_eq!(task_after.status, TaskStatus::Committed);
+        assert!(task_after.result_hash.is_none());
     }
 
     #[test]
