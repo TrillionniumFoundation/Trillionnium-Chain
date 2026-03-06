@@ -443,18 +443,42 @@ fn canonicalize_risk_source(source: Option<&str>) -> String {
 
     // Collapse internal whitespace so cosmetic attribution variants don't explode
     // quota key-space (e.g. "bot  worker" vs "bot worker").
-    let normalized = source.split_whitespace().collect::<Vec<_>>().join(" ");
-    if normalized.is_empty() {
+    // Keep this allocation-light: avoid split+collect+join on the hot ingress path.
+    let mut out = String::with_capacity(source.len().min(RISK_SOURCE_MAX_CHARS));
+    let mut emitted = 0usize;
+    let mut pending_space = false;
+
+    for ch in source.chars() {
+        if ch.is_whitespace() {
+            if emitted > 0 {
+                pending_space = true;
+            }
+            continue;
+        }
+
+        if pending_space {
+            if emitted >= RISK_SOURCE_MAX_CHARS {
+                break;
+            }
+            out.push(' ');
+            emitted += 1;
+            pending_space = false;
+        }
+
+        if emitted >= RISK_SOURCE_MAX_CHARS {
+            break;
+        }
+        out.push(ch.to_ascii_lowercase());
+        emitted += 1;
+    }
+
+    if out.is_empty() {
         return "anon".to_string();
     }
 
     // Bound source cardinality to reduce key-space/memory pressure from adversarial
     // high-entropy attribution strings while preserving stable aliasing semantics.
-    normalized
-        .chars()
-        .take(RISK_SOURCE_MAX_CHARS)
-        .collect::<String>()
-        .to_ascii_lowercase()
+    out
 }
 
 pub trait RelayHandler: Send + Sync {
@@ -2133,6 +2157,17 @@ mod tests {
         assert!(case_alias_err
             .to_string()
             .contains("too_many_requests/quota_exceeded"));
+    }
+
+    #[test]
+    fn source_attribution_canonicalization_collapses_whitespace_without_trailing_space() {
+        let canonical = canonicalize_risk_source(Some("   Bot\t\n Worker   "));
+        assert_eq!(canonical, "bot worker");
+
+        let exact = "A".repeat(RISK_SOURCE_MAX_CHARS);
+        let with_suffix = format!("{}   z", exact);
+        // Truncation should not keep a trailing separator when the next token is cut.
+        assert_eq!(canonicalize_risk_source(Some(&with_suffix)), exact.to_ascii_lowercase());
     }
 
     #[test]
