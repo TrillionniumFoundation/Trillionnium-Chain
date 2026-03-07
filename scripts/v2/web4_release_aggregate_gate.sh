@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Keep logs/ordering deterministic across heterogeneous CI runners.
+export LC_ALL=C.UTF-8
+export LANG=C.UTF-8
+export LC_NUMERIC=C
+export TZ=UTC
+
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 
 # 发布级聚合 gate：关闭 Web4 高风险门禁盲区
