@@ -5270,6 +5270,81 @@ mod tests {
     }
 
     #[test]
+    fn resolve_multisig_paused_after_first_approval_preserves_staged_authority_and_escrow_until_unpaused() {
+        // Safety boundary: pause must fail-closed before multisig confirmation so
+        // staged approvals remain intact and escrow cannot settle while paused.
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        set_resolve_authority(&mut st, "authority-a,authority-b");
+
+        let r1 = apply_create_task(&mut st, 8_961_2, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(8_961_2, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+        let r5 =
+            apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
+
+        let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+        let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+        let before_challenger = st.balance_of("challenger");
+
+        let first_err = apply_resolve(
+            &mut st,
+            r5.clone(),
+            true,
+            "authority-a".into(),
+            "authority-a".into(),
+        )
+        .expect_err("first multisig approval should stage only");
+        assert!(matches!(first_err, PouwError::Unauthorized));
+        assert_eq!(
+            st.pending_resolve_first_approver(r5.id).as_deref(),
+            Some("authority-a")
+        );
+
+        st.set_gov_param(9_201_2, 7_999, "emergency_pause".into(), "true".into())
+            .expect("pause=true governance update must succeed");
+        assert!(st.is_emergency_paused());
+
+        let paused_err = apply_resolve(
+            &mut st,
+            r5.clone(),
+            true,
+            "authority-b".into(),
+            "authority-b".into(),
+        )
+        .expect_err("pause must block second multisig approval and terminal settlement");
+        assert!(matches!(paused_err, PouwError::InvalidTransition));
+        assert_eq!(
+            st.pending_resolve_first_approver(r5.id).as_deref(),
+            Some("authority-a")
+        );
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
+        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
+        assert_eq!(st.balance_of("challenger"), before_challenger);
+
+        st.set_gov_param(9_201_3, 7_999, "emergency_pause".into(), "false".into())
+            .expect("pause=false governance update must succeed");
+        assert!(!st.is_emergency_paused());
+
+        let r6 = apply_resolve(
+            &mut st,
+            r5.clone(),
+            true,
+            "authority-b".into(),
+            "authority-b".into(),
+        )
+        .expect("second multisig signer should finalize after pause clears");
+        let task = st.get_task(r6.id).expect("resolved task must exist");
+        assert_eq!(task.status, TaskStatus::Slashed);
+        assert_eq!(st.pending_resolve_first_approver(r5.id), None);
+    }
+
+    #[test]
     fn resolve_emergency_pause_precedes_authority_checks_without_escrow_mutation() {
         // Merge-gate hardening: emergency pause must fail-closed before signer/authority
         // checks, so challenged escrow cannot leak side-channel auth outcomes.
