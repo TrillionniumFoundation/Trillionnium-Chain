@@ -237,6 +237,9 @@ impl AdmissionGate {
             // Once retry memory is empty, clear stale fairness marker immediately so
             // pop-only drain cycles restore a clean fast-path state before new ingress.
             self.last_fairness_deferred = None;
+            // Retry memory is fully drained; drop stale fifo markers eagerly so
+            // idle drain windows do not carry unnecessary backpressure bookkeeping.
+            self.backpressured_fifo.clear();
         } else {
             self.retry_reservations = self.retry_reservations.saturating_add(1).min(retry_budget);
         }
@@ -658,10 +661,12 @@ mod tests {
         gate.last_fairness_deferred = Some(99);
         gate.retry_reservations = 1;
         gate.backpressured_ids.clear();
+        gate.backpressured_fifo.extend([42, 43, 42]);
 
         assert_eq!(gate.pop_ready(), Some(1));
         assert_eq!(gate.retry_reservations, 0);
         assert_eq!(gate.last_fairness_deferred, None);
+        assert!(gate.backpressured_fifo.is_empty());
     }
 
     #[test]
