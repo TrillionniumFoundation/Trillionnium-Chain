@@ -272,9 +272,9 @@ fn validate_gov_param_value(key: &str, value: &str) -> Result<(), String> {
                         key, member
                     ));
                 }
-                if member.contains(';') {
+                if member.contains(';') || member.contains('|') {
                     return Err(format!(
-                        "invalid governance value for {}: forbidden separator ';' in authority member",
+                        "invalid governance value for {}: forbidden separator ';' or '|' in authority member",
                         key
                     ));
                 }
@@ -3098,6 +3098,8 @@ mod tests {
             "authority,Authority",
             "authority, authority2",
             "authority;authority2",
+            "authority|authority2",
+            "authority,authority2|authority3",
             "authority,authority2;authority3",
             "authority；authority2",
             "authority，authority2",
