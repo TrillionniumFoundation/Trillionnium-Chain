@@ -901,7 +901,7 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
                         _ => Some((idx, depth)),
                     };
                 }
-                if min_non_zero != usize::MAX && max_depth >= min_non_zero.saturating_mul(3) {
+                if min_non_zero != usize::MAX && max_depth >= min_non_zero.saturating_mul(2) {
                     min_bucket.map(|(idx, _)| idx)
                 } else {
                     None
@@ -1176,6 +1176,19 @@ mod tests {
 
         reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
         assert_eq!(txs.first().map(|t| t.id), Some(204));
+    }
+
+    #[test]
+    fn hot_bucket_interleave_prefers_a_sparse_bucket_under_moderate_two_to_one_skew() {
+        let mut txs = vec![
+            tx(301, vec![], vec![o(0)]), // hot bucket (depth 2)
+            tx(302, vec![], vec![o(8)]), // same hot bucket
+            tx(303, vec![], vec![o(3)]), // sparse bucket A (depth 1)
+            tx(304, vec![], vec![o(5)]), // sparse bucket B (depth 1); keeps len >= 4
+        ];
+
+        reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
+        assert!(matches!(txs.first().map(|t| t.id), Some(303 | 304)));
     }
 
     #[test]
