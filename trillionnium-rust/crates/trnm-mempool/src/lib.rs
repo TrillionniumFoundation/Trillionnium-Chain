@@ -59,6 +59,15 @@ pub struct LaneAdmissionGate {
     critical_burst_limit: usize,
 }
 impl LaneAdmissionGate {
+    #[inline]
+    fn contains_queued_tx(&self, tx_id: u64) -> bool {
+        // Fast-path uses lane-wide idempotency set; lane-local fallback preserves
+        // duplicate semantics if transient state restoration leaves seen_global stale.
+        self.seen_global.contains(&tx_id)
+            || self.normal.seen.contains(&tx_id)
+            || self.critical.seen.contains(&tx_id)
+    }
+
     pub fn new(total_capacity: usize, critical_reserve: usize) -> Self {
         // Preserve explicit zero-capacity semantics so callers can hard-stop
         // ingress without accidentally admitting one tx.
@@ -80,21 +89,31 @@ impl LaneAdmissionGate {
         // Fast-path saturation check from the global idempotency set: this tracks
         // all currently queued tx ids and avoids touching both lane queues on every
         // ingress probe.
-        let total_queued = self.seen_global.len();
-        debug_assert_eq!(total_queued, self.normal.queue.len() + self.critical.queue.len());
+        let lane_total = self.normal.queue.len() + self.critical.queue.len();
+        let total_queued = if self.seen_global.len() == lane_total {
+            lane_total
+        } else {
+            // Defensive self-heal for transient restored-state skew: lane-local queues
+            // remain source of truth for saturation, and rebuild lane-wide id set.
+            self.seen_global.clear();
+            self.seen_global.extend(self.normal.seen.iter().copied());
+            self.seen_global.extend(self.critical.seen.iter().copied());
+            lane_total
+        };
         if total_queued >= self.total_capacity {
             // Saturated hot path: avoid insert-then-remove churn for fresh ids while
             // preserving duplicate-vs-backpressure semantics under full queues.
-            return if self.seen_global.contains(&tx_id) {
+            return if self.contains_queued_tx(tx_id) {
                 AdmitOutcome::Duplicate
             } else {
                 AdmitOutcome::Backpressured
             };
         }
 
-        if !self.seen_global.insert(tx_id) {
+        if self.contains_queued_tx(tx_id) {
             return AdmitOutcome::Duplicate;
         }
+        self.seen_global.insert(tx_id);
 
         let out = match class {
             IngressClass::Normal => {
@@ -527,6 +546,22 @@ mod tests {
         // Full-queue fast path must still preserve duplicate semantics.
         assert_eq!(g.admit(9, IngressClass::Normal), AdmitOutcome::Duplicate);
         assert_eq!(g.admit(10, IngressClass::Normal), AdmitOutcome::Backpressured);
+    }
+
+    #[test]
+    fn duplicate_semantics_survive_stale_seen_global_under_saturation() {
+        let mut g = LaneAdmissionGate::new(2, 1);
+
+        assert_eq!(g.admit(1, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+
+        // Simulate transient restored-state skew: tx 1 is still queued in lane-local
+        // sets, but lane-wide idempotency cache is stale.
+        g.seen_global.remove(&1);
+
+        // Duplicate must still be detected under saturated fast-path.
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Duplicate);
+        assert_eq!(g.admit(3, IngressClass::Critical), AdmitOutcome::Backpressured);
     }
 
     #[test]
