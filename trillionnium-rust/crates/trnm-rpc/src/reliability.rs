@@ -639,7 +639,7 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
                 message: msg,
                 attempts: 0,
                 created_at_unix_ms: now_unix_ms,
-                next_retry_at_unix_ms: now_unix_ms + self.retry.base_backoff_ms as u128,
+                next_retry_at_unix_ms: now_unix_ms.saturating_add(self.retry.base_backoff_ms as u128),
             },
         );
 
@@ -736,7 +736,7 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
                     self.retry.max_backoff_ms,
                     item.attempts,
                 );
-                item.next_retry_at_unix_ms = now_unix_ms + delay as u128;
+                item.next_retry_at_unix_ms = now_unix_ms.saturating_add(delay as u128);
                 out.push(item.clone());
                 dispatched_for_session = dispatched_for_session.saturating_add(1);
                 true
@@ -766,7 +766,7 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
         if self.consecutive_retry_exhausted >= self.retry.circuit_breaker_threshold
             && !matches!(self.circuit_state, CircuitState::Open { .. })
         {
-            let until_unix_ms = now_unix_ms + self.retry.circuit_open_ms as u128;
+            let until_unix_ms = now_unix_ms.saturating_add(self.retry.circuit_open_ms as u128);
             self.circuit_state = CircuitState::Open { until_unix_ms };
             eprintln!(
                 "[reliability] circuit open exhausted={} threshold={} until={}",
