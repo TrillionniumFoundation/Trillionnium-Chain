@@ -250,6 +250,12 @@ fn validate_gov_param_value(key: &str, value: &str) -> Result<(), String> {
                     key
                 ));
             }
+            if trimmed.contains('，') || trimmed.contains('、') || trimmed.contains('；') {
+                return Err(format!(
+                    "invalid governance value for {}: only ASCII ',' is allowed as member separator",
+                    key
+                ));
+            }
 
             let mut seen_lower = std::collections::BTreeSet::new();
             for member in trimmed.split(',') {
@@ -3087,6 +3093,8 @@ mod tests {
             "authority, authority2",
             "authority;authority2",
             "authority,authority2;authority3",
+            "authority，authority2",
+            "authority、authority2",
         ]
         .iter()
         .enumerate()
