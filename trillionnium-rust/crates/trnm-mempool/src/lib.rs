@@ -613,4 +613,29 @@ mod tests {
         let (_, _, total_after_drain) = g.queued_counts();
         assert_eq!(g.seen_global.len(), total_after_drain);
     }
+
+    #[test]
+    fn stale_seen_global_self_heals_without_dropping_duplicate_or_fresh_semantics() {
+        let mut g = LaneAdmissionGate::new(4, 1);
+
+        assert_eq!(g.admit(1, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+
+        // Simulate transient restored-state skew where lane-wide idempotency cache
+        // is stale, but lane-local queues remain authoritative.
+        g.seen_global.clear();
+
+        // Non-saturated admission should self-heal from lane-local state first.
+        assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
+
+        // Duplicate semantics for pre-existing queued ids must survive healing.
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Duplicate);
+
+        // Fresh ids still admit until global capacity is reached.
+        assert_eq!(g.admit(4, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(5, IngressClass::Normal), AdmitOutcome::Backpressured);
+
+        let (_, _, total) = g.queued_counts();
+        assert_eq!(g.seen_global.len(), total);
+    }
 }
