@@ -1050,6 +1050,18 @@ pub fn apply_resolve_at_height(
     }
     preflight_resolve_transfers(st, &task, slash_worker)?;
 
+    // Minimal multi-party control: when governance configures a resolver set,
+    // require two distinct member approvals before terminal escrow settlement.
+    if authority_members.len() > 1 {
+        let approved = st
+            .stage_or_confirm_resolve_approval(task_ref.id, slash_worker, signer_trimmed)
+            .map_err(|_| PouwError::Unauthorized)?;
+        if !approved {
+            return Err(PouwError::Unauthorized);
+        }
+    }
+
+    let task_id = task_ref.id;
     let next_ref = st
         .update_task(task_ref, task.clone())
         .map_err(map_state_err)?;
@@ -1078,6 +1090,7 @@ pub fn apply_resolve_at_height(
     }
 
     settle_worker_stake_for_terminal_state(st, &task)?;
+    st.clear_pending_resolve_approval(task_id);
 
     Ok(next_ref)
 }
@@ -4116,6 +4129,58 @@ mod tests {
     }
 
     #[test]
+    fn resolve_multisig_requires_two_distinct_approvers_before_terminal_settlement() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        set_resolve_authority(&mut st, "authority-a,authority-b");
+
+        let r1 = apply_create_task(&mut st, 895_1, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(895_1, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+        let r5 =
+            apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
+
+        let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+        let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+        let before_challenger = st.balance_of("challenger");
+
+        let first_err = apply_resolve(
+            &mut st,
+            r5.clone(),
+            true,
+            "authority-a".into(),
+            "authority-a".into(),
+        )
+        .expect_err("first multisig approver must not finalize resolve");
+        assert!(matches!(first_err, PouwError::Unauthorized));
+        assert_eq!(st.pending_resolve_approval(r5.id), Some((true, 1)));
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
+        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
+        assert_eq!(st.balance_of("challenger"), before_challenger);
+
+        let r6 = apply_resolve(
+            &mut st,
+            r5,
+            true,
+            "authority-b".into(),
+            "authority-b".into(),
+        )
+        .expect("second distinct multisig approver should finalize resolve");
+        let task = st.get_task(r6.id).unwrap();
+        assert_eq!(task.status, TaskStatus::Slashed);
+        assert_eq!(task.challenge_bond_forfeited, Some(false));
+        assert_eq!(st.pending_resolve_approval(r6.id), None);
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), 0);
+        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), 0);
+        assert_eq!(st.balance_of("challenger"), 101);
+    }
+
+    #[test]
     fn resolve_rejects_worker_as_configured_authority_without_escrow_mutation() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
@@ -4450,8 +4515,18 @@ mod tests {
         let r5 =
             apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
 
-        let r6 =
-            apply_resolve(&mut st, r5, true, "authority2".into(), "authority2".into()).unwrap();
+        let staged_err = apply_resolve(
+            &mut st,
+            r5.clone(),
+            true,
+            "authority2".into(),
+            "authority2".into(),
+        )
+        .expect_err("first multisig member must stage but not finalize resolution");
+        assert!(matches!(staged_err, PouwError::Unauthorized));
+
+        let r6 = apply_resolve(&mut st, r5, true, "authority".into(), "authority".into())
+            .expect("second distinct multisig member should finalize resolution");
         let task = st.get_task(r6.id).unwrap();
         assert_eq!(task.status, TaskStatus::Slashed);
         assert_eq!(task.challenge_bond_forfeited, Some(false));
@@ -5232,14 +5307,19 @@ mod tests {
             .expect("pause=false governance update must succeed");
         assert!(!st.is_emergency_paused());
 
-        let done = apply_resolve(
+        let staged_err = apply_resolve(
             &mut st,
-            r5,
+            r5.clone(),
             false,
             "authority2".into(),
             "authority2".into(),
         )
-        .expect("resolve must reopen after emergency pause clears");
+        .expect_err("first multisig member must stage resolve after pause clears");
+        assert!(matches!(staged_err, PouwError::Unauthorized));
+        assert_eq!(total_funds(&st), baseline_total);
+
+        let done = apply_resolve(&mut st, r5, false, "authority".into(), "authority".into())
+            .expect("second multisig member must finalize resolve after pause clears");
         let task = st.get_task(done.id).expect("resolved task must persist");
         assert_eq!(task.status, TaskStatus::Completed);
         assert_eq!(task.challenge_bond_forfeited, Some(true));
@@ -5289,8 +5369,18 @@ mod tests {
             .expect("pause=false governance update must succeed");
         assert!(!st.is_emergency_paused());
 
-        let r6 = apply_resolve(&mut st, r5, true, "authority2".into(), "authority2".into())
-            .expect("resolve must reopen for configured multisig member after pause clears");
+        let staged_err = apply_resolve(
+            &mut st,
+            r5.clone(),
+            true,
+            "authority2".into(),
+            "authority2".into(),
+        )
+        .expect_err("first multisig member must stage resolve after pause clears");
+        assert!(matches!(staged_err, PouwError::Unauthorized));
+
+        let r6 = apply_resolve(&mut st, r5, true, "authority".into(), "authority".into())
+            .expect("second multisig member must finalize resolve after pause clears");
         let task = st.get_task(r6.id).expect("resolved task must persist");
         assert_eq!(task.status, TaskStatus::Slashed);
         assert_eq!(task.challenge_bond_forfeited, Some(false));
