@@ -79,8 +79,11 @@ impl AdmissionGate {
             return;
         }
 
+        // Fairness deferral must never evict older retry ids. When bounded memory has
+        // room, insert directly and append a FIFO marker (no eviction/compaction path).
         if self.backpressured_ids.len() < self.capacity {
-            self.remember_backpressured(tx_id);
+            self.backpressured_ids.insert(tx_id);
+            self.backpressured_fifo.push_back(tx_id);
         }
     }
 
