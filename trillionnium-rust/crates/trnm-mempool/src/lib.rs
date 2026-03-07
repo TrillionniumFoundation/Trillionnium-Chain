@@ -60,7 +60,9 @@ pub struct LaneAdmissionGate {
 }
 impl LaneAdmissionGate {
     pub fn new(total_capacity: usize, critical_reserve: usize) -> Self {
-        let total = total_capacity.max(1);
+        // Preserve explicit zero-capacity semantics so callers can hard-stop
+        // ingress without accidentally admitting one tx.
+        let total = total_capacity;
         let reserve = critical_reserve.min(total);
         let normal_cap = total.saturating_sub(reserve);
         Self {
@@ -473,6 +475,16 @@ mod tests {
         // Capacity exhaustion should reject ingress without marking tx ids as seen.
         assert_eq!(g.admit(7), AdmitOutcome::Backpressured);
         assert_eq!(g.admit(7), AdmitOutcome::Backpressured);
+        assert_eq!(g.pop_ready(), None);
+    }
+
+    #[test]
+    fn zero_total_capacity_lane_gate_backpressures_all_ingress_without_poisoning_seen_ids() {
+        let mut g = LaneAdmissionGate::new(0, 0);
+
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(g.admit(1, IngressClass::Critical), AdmitOutcome::Backpressured);
+        assert_eq!(g.admit(2, IngressClass::Critical), AdmitOutcome::Backpressured);
         assert_eq!(g.pop_ready(), None);
     }
 }
