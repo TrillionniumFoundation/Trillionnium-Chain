@@ -68,6 +68,9 @@ jobs:
       GZIP: "-n"
       # Avoid sporadic apt interactive prompts on runner image/package drift.
       DEBIAN_FRONTEND: noninteractive
+      # Prevent apt-listchanges from opening pager/prompts when package metadata
+      # changes on runner refreshes, which can otherwise hang shellcheck install.
+      APT_LISTCHANGES_FRONTEND: none
     # This workflow runs dozens of regression scripts; 10 minutes can truncate
     # coverage and hide late-stage failures. Keep enough headroom for full sweep.
     timeout-minutes: 45

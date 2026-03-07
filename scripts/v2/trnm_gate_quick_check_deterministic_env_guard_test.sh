@@ -27,6 +27,7 @@ required_lines=(
   'SOURCE_DATE_EPOCH: "1704067200"'
   'GZIP: "-n"'
   'DEBIAN_FRONTEND: noninteractive'
+  'APT_LISTCHANGES_FRONTEND: none'
   'timeout-minutes: 45'
 )
 
