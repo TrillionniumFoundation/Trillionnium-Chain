@@ -333,6 +333,9 @@ impl StateStore {
         if approver_trimmed != approver || approver_trimmed.chars().any(|c| c.is_whitespace()) {
             return Err("resolve approval approver must not contain whitespace".into());
         }
+        if approver_trimmed.contains(',') || approver_trimmed.contains(';') {
+            return Err("resolve approval approver must be a single canonical actor id".into());
+        }
 
         let entry =
             self.pending_resolve_approvals
@@ -1338,6 +1341,29 @@ mod tests {
             Some((true, 1)),
             "whitespace-drift approver must not increase confirmation count"
         );
+    }
+
+    #[test]
+    fn resolve_approval_rejects_multiactor_delimited_approver_without_mutation() {
+        let mut st = StateStore::new();
+
+        let first = st
+            .stage_or_confirm_resolve_approval(79, true, "authority-a")
+            .expect("first approval stage should succeed");
+        assert!(!first);
+        assert_eq!(st.pending_resolve_approval(79), Some((true, 1)));
+
+        for bad_actor in ["authority-a,authority-b", "authority-a;authority-b"] {
+            let err = st
+                .stage_or_confirm_resolve_approval(79, true, bad_actor)
+                .expect_err("delimited approver id must be rejected");
+            assert!(err.contains("single canonical actor id"));
+            assert_eq!(
+                st.pending_resolve_approval(79),
+                Some((true, 1)),
+                "invalid approver id must not mutate staged confirmations"
+            );
+        }
     }
 
     #[test]

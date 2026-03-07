@@ -3430,9 +3430,17 @@ mod tests {
             .get_task(8101)
             .and_then(|t| t.challenger)
             .expect("challenger must exist");
-        st.set_gov_param_unchecked(18_101, "resolve_authority".into(), challenger.clone())
+        let resolve_authority = "authority8101".to_string();
+        st.set_gov_param_unchecked(18_101, "resolve_authority".into(), resolve_authority.clone())
             .unwrap();
-        let _r6 = apply_resolve(&mut st, r5, true, challenger.clone(), challenger.clone()).unwrap();
+        let _r6 = apply_resolve(
+            &mut st,
+            r5,
+            true,
+            resolve_authority.clone(),
+            resolve_authority,
+        )
+        .unwrap();
 
         let (treasury_delta, challenger_delta) =
             balance_deltas_for_transition(&before, &st, 8101, Some(challenger.as_str()));
@@ -3476,10 +3484,17 @@ mod tests {
             .get_task(8102)
             .and_then(|t| t.challenger)
             .expect("challenger must exist");
-        st.set_gov_param_unchecked(18_102, "resolve_authority".into(), challenger.clone())
+        let resolve_authority = "authority8102".to_string();
+        st.set_gov_param_unchecked(18_102, "resolve_authority".into(), resolve_authority.clone())
             .unwrap();
-        let _r6 =
-            apply_resolve(&mut st, r5, false, challenger.clone(), challenger.clone()).unwrap();
+        let _r6 = apply_resolve(
+            &mut st,
+            r5,
+            false,
+            resolve_authority.clone(),
+            resolve_authority,
+        )
+        .unwrap();
 
         let (treasury_delta, challenger_delta) =
             balance_deltas_for_transition(&before, &st, 8102, Some(challenger.as_str()));
