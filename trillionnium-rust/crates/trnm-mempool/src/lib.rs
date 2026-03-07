@@ -382,6 +382,26 @@ mod tests {
     }
 
     #[test]
+    fn critical_backpressured_tx_id_can_admit_from_other_class_after_drain() {
+        let mut g = LaneAdmissionGate::new(3, 1);
+
+        assert_eq!(g.admit(10, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(11, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(20, IngressClass::Critical), AdmitOutcome::Accepted);
+
+        // Global capacity backpressures fresh critical ingress and must not poison
+        // cross-class idempotency for the same tx id.
+        assert_eq!(g.admit(30, IngressClass::Critical), AdmitOutcome::Backpressured);
+
+        // Drain one critical and one normal so normal class has explicit headroom.
+        assert_eq!(g.pop_ready(), Some(20));
+        assert_eq!(g.pop_ready(), Some(10));
+
+        // The previously backpressured id must still be treated as fresh.
+        assert_eq!(g.admit(30, IngressClass::Normal), AdmitOutcome::Accepted);
+    }
+
+    #[test]
     fn reserve_only_normal_borrowed_admission_stays_globally_idempotent() {
         let mut g = LaneAdmissionGate::new(2, 2);
 
