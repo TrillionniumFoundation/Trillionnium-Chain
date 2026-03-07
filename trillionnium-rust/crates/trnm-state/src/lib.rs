@@ -266,6 +266,12 @@ fn validate_gov_param_value(key: &str, value: &str) -> Result<(), String> {
                         key, member
                     ));
                 }
+                if member.contains(';') {
+                    return Err(format!(
+                        "invalid governance value for {}: forbidden separator ';' in authority member",
+                        key
+                    ));
+                }
                 if member.eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER) {
                     return Err(format!(
                         "invalid governance value for {}: placeholder authority is not allowed",
@@ -3018,6 +3024,8 @@ mod tests {
             "authority,authority",
             "authority,Authority",
             "authority, authority2",
+            "authority;authority2",
+            "authority,authority2;authority3",
         ]
         .iter()
         .enumerate()
@@ -3051,6 +3059,28 @@ mod tests {
             st.gov_param_string("resolve_authority"),
             Some("authority,authority2".to_string())
         );
+    }
+
+    #[test]
+    fn emergency_pause_toggles_preserve_challenge_escrow_conservation() {
+        // Merge-gate guard: emergency pause is a control-plane brake only; it must never
+        // mutate custody balances used by challenge escrow accounting.
+        let mut st = StateStore::new();
+        st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 1_000);
+        st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 500);
+        let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+        let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+
+        st.set_gov_param(98_000, 7_999, "emergency_pause".into(), "true".into())
+            .expect("checked pause write should apply immediately");
+        st.set_gov_param(98_001, 7_999, "emergency_pause".into(), "false".into())
+            .expect("checked unpause write should apply immediately");
+        st.set_gov_param_unchecked(7_999, "emergency_pause".into(), "true".into())
+            .expect("unchecked pause write should be accepted at canonical key id");
+
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), forfeits_before);
+        assert!(st.pending_gov_update("emergency_pause").is_none());
     }
 
     #[test]
