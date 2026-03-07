@@ -727,7 +727,13 @@ pub fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
 
     let batch_len = txs.len();
     for i in 0..sample_len {
-        let idx = i.saturating_mul(batch_len) / sample_len;
+        // Keep endpoints visible in bounded sampling windows so late-batch
+        // hotspots contribute to adaptive scheduler decisions.
+        let idx = if sample_len > 1 {
+            i.saturating_mul(batch_len.saturating_sub(1)) / (sample_len - 1)
+        } else {
+            0
+        };
         let tx = &txs[idx];
         let key = tx
             .write_set
@@ -1436,6 +1442,29 @@ mod tests {
             d.use_hot_bucket,
             "late hotspot should be visible in adaptive sample"
         );
+        assert_eq!(d.reason, "hotspot_detected");
+    }
+
+    #[test]
+    fn auto_adaptive_sampling_includes_batch_tail_for_hotspot_estimate() {
+        let _env = env_lock();
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.0");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.0007");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.0");
+
+        // sample_len clamps to 2048. Duplicate key appears only at the first and
+        // final tx. Endpoint-inclusive sampling must capture both to avoid
+        // underestimating tail hotspots.
+        let mut txs = Vec::with_capacity(3000);
+        txs.push(tx(1, vec![], vec![o(777)]));
+        for i in 1..2999u64 {
+            txs.push(tx(10_000 + i, vec![], vec![o(20_000 + i)]));
+        }
+        txs.push(tx(9_999, vec![], vec![o(777)]));
+
+        let d = auto_adaptive_decision(&txs);
+        assert!(d.use_hot_bucket, "tail hotspot should be counted in sample");
         assert_eq!(d.reason, "hotspot_detected");
     }
 
