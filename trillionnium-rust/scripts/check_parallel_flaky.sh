@@ -10,6 +10,7 @@ export LC_ALL="${LC_ALL:-C}"
 export NO_COLOR="${NO_COLOR:-1}"
 export CARGO_TERM_COLOR="${CARGO_TERM_COLOR:-never}"
 export RUST_LOG_STYLE="${RUST_LOG_STYLE:-never}"
+umask "${UMASK:-022}"
 
 RUNS="${RUNS:-5}"
 RUN_TIMEOUT_SEC="${RUN_TIMEOUT_SEC:-120}"
@@ -37,6 +38,7 @@ export LC_ALL="${LC_ALL:-C}"
 export NO_COLOR="${NO_COLOR:-1}"
 export CARGO_TERM_COLOR="${CARGO_TERM_COLOR:-never}"
 export RUST_LOG_STYLE="${RUST_LOG_STYLE:-never}"
+umask "${UMASK:-022}"
 if [[ "$#" -gt 0 ]]; then
   "$@"
 else

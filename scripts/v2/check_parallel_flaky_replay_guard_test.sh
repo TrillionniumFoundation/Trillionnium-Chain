@@ -16,6 +16,7 @@ required_lines=(
   'export NO_COLOR="${NO_COLOR:-1}"'
   'export CARGO_TERM_COLOR="${CARGO_TERM_COLOR:-never}"'
   'export RUST_LOG_STYLE="${RUST_LOG_STYLE:-never}"'
+  'umask "${UMASK:-022}"'
 )
 
 for line in "${required_lines[@]}"; do
