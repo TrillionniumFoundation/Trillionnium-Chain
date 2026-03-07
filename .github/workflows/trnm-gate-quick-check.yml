@@ -43,6 +43,9 @@ jobs:
       # Force locale-driven message strings to remain stable across runner
       # image updates so grep/assertions on stderr stay deterministic.
       LC_MESSAGES: C
+      # Keep locale-driven monetary formatting deterministic in finance-facing
+      # report/gate probes (currency symbol/decimal-group separators).
+      LC_MONETARY: C
       # Freeze Python hash randomization so set/dict iteration in shell-driven
       # regression scripts stays deterministic across CI re-runs.
       PYTHONHASHSEED: "0"
