@@ -34,6 +34,12 @@ impl AdmissionGate {
             return;
         }
 
+        if self.backpressured_ids.is_empty() {
+            // Fast-path stale retry marker cleanup after full retry drain.
+            self.backpressured_fifo.clear();
+            return;
+        }
+
         let mut rebuilt = VecDeque::with_capacity(self.backpressured_ids.len());
         let mut seen = HashSet::with_capacity(self.backpressured_ids.len());
         while let Some(candidate) = self.backpressured_fifo.pop_front() {
@@ -684,6 +690,19 @@ mod tests {
 
         // Retry admission should compact stale markers even without new backpressured inserts.
         assert!(gate.backpressured_fifo.len() <= gate.capacity.saturating_mul(4));
+    }
+
+    #[test]
+    fn compaction_clears_stale_fifo_immediately_when_retry_set_is_empty() {
+        let mut gate = AdmissionGate::new(2);
+        // Simulate restored/churned state where retry set drained but fifo still carries stale markers.
+        gate.backpressured_fifo
+            .extend([42, 43, 42, 43, 42, 43, 42, 43, 42]);
+        gate.backpressured_ids.clear();
+        assert!(gate.backpressured_fifo.len() > gate.capacity.saturating_mul(4));
+
+        gate.compact_backpressured_fifo();
+        assert!(gate.backpressured_fifo.is_empty());
     }
 
     #[test]
