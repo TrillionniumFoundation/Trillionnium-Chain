@@ -514,6 +514,10 @@ jobs:
         run: |
           ./scripts/v2/e2_audit_report_generator_reject_schema_suffix_punct_test.sh
 
+      - name: Auto regression: e3-enterprise-runbook-required-sections-test
+        run: |
+          ./scripts/v2/e3_enterprise_runbook_required_sections_test.sh
+
       - name: Auto regression: e3-enterprise-runbook-root-cause-tag-format-test
         run: |
           ./scripts/v2/e3_enterprise_runbook_root_cause_tag_format_test.sh
