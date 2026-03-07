@@ -942,13 +942,14 @@ pub fn apply_resolve_at_height(
             .map(|member| member.to_ascii_lowercase())
             .any(|member| !seen.insert(member))
     };
-    // Canonical actor token hardening: reject semicolon-delimited payloads so
+    // Canonical actor token hardening: reject delimiter-smuggled payloads so
     // a single signer string cannot masquerade as an out-of-band authority list.
-    let resolver_has_forbidden_separator = resolver_trimmed.contains(';');
-    let signer_has_forbidden_separator = signer_trimmed.contains(';');
+    let has_forbidden_separator = |token: &str| token.contains(';') || token.contains('|');
+    let resolver_has_forbidden_separator = has_forbidden_separator(resolver_trimmed);
+    let signer_has_forbidden_separator = has_forbidden_separator(signer_trimmed);
     let authority_has_forbidden_separator = authority_members
         .iter()
-        .any(|member| member.contains(';'));
+        .any(|member| has_forbidden_separator(member));
     let signer_matches_configured_member = authority_members
         .iter()
         .any(|member| *member == signer_trimmed);
@@ -7607,6 +7608,51 @@ mod tests {
         assert!(matches!(err, PouwError::Unauthorized));
 
         let task = st.get_task(9_001_6_0).unwrap();
+        assert_eq!(task.status, TaskStatus::Challenged);
+        assert_eq!(task.challenge_bond_forfeited, None);
+        assert_eq!(st.balance_of("challenger"), before.balance_of("challenger"));
+        assert_eq!(
+            st.balance_of(CHALLENGE_ESCROW_ACCOUNT),
+            before.balance_of(CHALLENGE_ESCROW_ACCOUNT)
+        );
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT)
+        );
+    }
+
+    #[test]
+    fn resolve_rejects_pipe_delimited_authority_token_without_escrow_mutation() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        // Canonical token hardening: pipe-delimited authority aliases must
+        // fail closed so signer payload cannot smuggle pseudo-multisig syntax.
+        let malformed_authority = "authority|guardian";
+        set_resolve_authority(&mut st, malformed_authority);
+
+        let r1 = apply_create_task(&mut st, 9_001_6_3, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(9_001_6_3, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+        let r5 =
+            apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
+
+        let before = st.clone();
+        let err = apply_resolve(
+            &mut st,
+            r5,
+            true,
+            malformed_authority.into(),
+            malformed_authority.into(),
+        )
+        .expect_err("pipe-delimited authority token must fail closed");
+        assert!(matches!(err, PouwError::Unauthorized));
+
+        let task = st.get_task(9_001_6_3).unwrap();
         assert_eq!(task.status, TaskStatus::Challenged);
         assert_eq!(task.challenge_bond_forfeited, None);
         assert_eq!(st.balance_of("challenger"), before.balance_of("challenger"));
