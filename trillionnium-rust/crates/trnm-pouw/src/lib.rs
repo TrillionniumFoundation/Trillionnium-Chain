@@ -7981,6 +7981,7 @@ mod tests {
         let task_after = st.get_task(r3.id).unwrap();
         assert_eq!(task_after.status, TaskStatus::Committed);
         assert!(task_after.result_hash.is_none());
+        assert!(task_after.challenge_deadline_height.is_none());
     }
 
     #[test]
@@ -8449,6 +8450,7 @@ mod tests {
         let task_after = st.get_task(r3.id).unwrap();
         assert_eq!(task_after.status, TaskStatus::Committed);
         assert!(task_after.result_hash.is_none());
+        assert!(task_after.challenge_deadline_height.is_none());
     }
 
     #[test]
