@@ -306,6 +306,20 @@ mod tests {
     }
 
     #[test]
+    fn critical_spillover_can_fill_normal_lane_until_global_capacity() {
+        let mut g = LaneAdmissionGate::new(4, 2);
+
+        assert_eq!(g.admit(100, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(101, IngressClass::Critical), AdmitOutcome::Accepted);
+
+        // With reserve saturated, critical traffic should spill into free normal
+        // headroom until global capacity is fully consumed.
+        assert_eq!(g.admit(102, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(103, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Backpressured);
+    }
+
+    #[test]
     fn reserve_only_normal_borrowed_admission_is_globally_idempotent_until_drained() {
         let mut g = LaneAdmissionGate::new(2, 2);
 
