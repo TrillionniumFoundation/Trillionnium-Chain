@@ -1300,6 +1300,17 @@ mod tests {
     }
 
     #[test]
+    fn exp_backoff_saturates_without_overflow_for_large_bases() {
+        // Regression guard for free-ingress throughput gates: malformed retry config
+        // must not overflow into tiny delays that can trigger retry storms.
+        let capped = exp_backoff_ms(u64::MAX - 7, u64::MAX - 3, 32);
+        assert_eq!(capped, u64::MAX - 3);
+
+        let exact_first_attempt = exp_backoff_ms(u64::MAX - 7, u64::MAX, 1);
+        assert_eq!(exact_first_attempt, u64::MAX - 7);
+    }
+
+    #[test]
     fn max_attempts_stops_retrying_and_drops_pending() {
         let store = InMemoryReliabilityStore::default();
         let mut engine = ReliabilityEngine::new(
