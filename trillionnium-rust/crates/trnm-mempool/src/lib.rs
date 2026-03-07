@@ -30,14 +30,16 @@ impl AdmissionGate {
         }
     }
     pub fn admit(&mut self, tx_id: u64) -> AdmitOutcome {
-        if self.seen.contains(&tx_id) {
+        if !self.seen.insert(tx_id) {
             return AdmitOutcome::Duplicate;
         }
         if self.queue.len() >= self.capacity {
+            // Keep duplicate-vs-backpressure semantics stable while avoiding an
+            // extra successful hash probe on the accepted hot path.
+            self.seen.remove(&tx_id);
             return AdmitOutcome::Backpressured;
         }
         self.queue.push_back(tx_id);
-        self.seen.insert(tx_id);
         AdmitOutcome::Accepted
     }
     pub fn pop_ready(&mut self) -> Option<u64> {
@@ -73,11 +75,12 @@ impl LaneAdmissionGate {
         }
     }
     pub fn admit(&mut self, tx_id: u64, class: IngressClass) -> AdmitOutcome {
-        if self.seen_global.contains(&tx_id) {
+        if !self.seen_global.insert(tx_id) {
             return AdmitOutcome::Duplicate;
         }
         let total_queued = self.normal.queue.len() + self.critical.queue.len();
         if total_queued >= self.total_capacity {
+            self.seen_global.remove(&tx_id);
             return AdmitOutcome::Backpressured;
         }
         let out = match class {
@@ -134,8 +137,8 @@ impl LaneAdmissionGate {
                 }
             }
         };
-        if matches!(out, AdmitOutcome::Accepted) {
-            self.seen_global.insert(tx_id);
+        if !matches!(out, AdmitOutcome::Accepted) {
+            self.seen_global.remove(&tx_id);
         }
         out
     }
