@@ -675,8 +675,14 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
                 continue;
             };
 
+            let mut dispatched_for_session = 0usize;
             session.pending.retain(|ack_id, item| {
                 if item.next_retry_at_unix_ms > now_unix_ms {
+                    return true;
+                }
+
+                // Prevent one hot session from monopolizing a collect cycle.
+                if dispatched_for_session >= MAX_DUE_RETRIES_PER_SESSION_PER_COLLECT {
                     return true;
                 }
 
@@ -698,6 +704,7 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
                 );
                 item.next_retry_at_unix_ms = now_unix_ms + delay as u128;
                 out.push(item.clone());
+                dispatched_for_session = dispatched_for_session.saturating_add(1);
                 true
             });
 
@@ -758,6 +765,8 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
         }
     }
 }
+
+const MAX_DUE_RETRIES_PER_SESSION_PER_COLLECT: usize = 64;
 
 fn exp_backoff_ms(base: u64, max: u64, attempts: u32) -> u64 {
     let shift = attempts.saturating_sub(1).min(20);
@@ -1435,6 +1444,52 @@ mod tests {
         let blocked = engine.receive(mk_msg("bob", "s2", 1), 1_001);
         assert_eq!(blocked.code, AckCode::BadRequest);
         assert!(blocked.detail.contains("capacity_exceeded"));
+    }
+
+    #[test]
+    fn collect_due_retries_caps_per_session_to_reduce_hot_session_starvation() {
+        let store = InMemoryReliabilityStore::default();
+        let mut engine = ReliabilityEngine::new(
+            store,
+            RetryConfig {
+                base_backoff_ms: 1,
+                max_backoff_ms: 1,
+                ..RetryConfig::default()
+            },
+        );
+
+        for seq in 1..=80 {
+            let ack = engine.receive(mk_msg("alice", "hot", seq), 1_000 + seq as u128);
+            assert_eq!(ack.code, AckCode::Accepted);
+        }
+        for seq in 1..=2 {
+            let ack = engine.receive(mk_msg("bob", "cold", seq), 2_000 + seq as u128);
+            assert_eq!(ack.code, AckCode::Accepted);
+        }
+
+        let first_round = engine.collect_due_retries(10_000);
+        let hot_count = first_round
+            .iter()
+            .filter(|i| i.message.session_id == "hot")
+            .count();
+        let cold_count = first_round
+            .iter()
+            .filter(|i| i.message.session_id == "cold")
+            .count();
+
+        assert_eq!(hot_count, MAX_DUE_RETRIES_PER_SESSION_PER_COLLECT);
+        assert_eq!(cold_count, 2, "cold session should still make progress");
+
+        let second_round = engine.collect_due_retries(10_002);
+        let hot_count_second = second_round
+            .iter()
+            .filter(|i| i.message.session_id == "hot")
+            .count();
+        assert_eq!(
+            hot_count_second,
+            MAX_DUE_RETRIES_PER_SESSION_PER_COLLECT,
+            "hot session should stay bounded per collect cycle"
+        );
     }
 
     #[test]
