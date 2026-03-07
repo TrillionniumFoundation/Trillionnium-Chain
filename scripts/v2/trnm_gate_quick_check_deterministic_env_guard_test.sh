@@ -24,6 +24,7 @@ required_lines=(
   'PYTHONDONTWRITEBYTECODE: "1"'
   'CI: "true"'
   'SOURCE_DATE_EPOCH: "1704067200"'
+  'DEBIAN_FRONTEND: noninteractive'
   'timeout-minutes: 45'
 )
 
