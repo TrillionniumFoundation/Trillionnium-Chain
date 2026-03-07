@@ -23,6 +23,7 @@ required_lines=(
   'PYTHONHASHSEED: "0"'
   'PYTHONDONTWRITEBYTECODE: "1"'
   'CI: "true"'
+  'PYTHONIOENCODING: "UTF-8"'
   'SOURCE_DATE_EPOCH: "1704067200"'
   'DEBIAN_FRONTEND: noninteractive'
   'timeout-minutes: 45'
