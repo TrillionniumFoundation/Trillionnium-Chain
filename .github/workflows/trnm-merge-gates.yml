@@ -43,6 +43,11 @@ jobs:
       - name: Setup Rust toolchain
         uses: dtolnay/rust-toolchain@stable
 
+      - name: Deterministic env guard self-check (hard gate)
+        run: |
+          set -euo pipefail
+          ./scripts/v2/trnm_merge_gates_deterministic_env_guard_test.sh
+
       - name: Rust workspace tests
         run: |
           set -euo pipefail
