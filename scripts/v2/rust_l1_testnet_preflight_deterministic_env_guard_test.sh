@@ -16,6 +16,7 @@ required_lines=(
   'LC_NUMERIC: C'
   'LC_COLLATE: C'
   'LC_TIME: C'
+  'LC_CTYPE: C'
   'LC_MESSAGES: C'
   'PYTHONHASHSEED: "0"'
   'CI: "true"'
