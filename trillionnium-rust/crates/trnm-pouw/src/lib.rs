@@ -5460,6 +5460,17 @@ mod tests {
         let r5 =
             apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
 
+        let worker_lock_account = worker_stake_lock_account(r5.id);
+        let total_funds = |st: &StateStore| {
+            st.balance_of("challenger")
+                + st.balance_of("worker1")
+                + st.balance_of(&worker_lock_account)
+                + st.balance_of(CHALLENGE_ESCROW_ACCOUNT)
+                + st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT)
+                + st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT)
+        };
+        let baseline_total = total_funds(&st);
+
         let staged_err = apply_resolve(
             &mut st,
             r5.clone(),
@@ -5470,6 +5481,7 @@ mod tests {
         .expect_err("first multisig member must stage a pending approval");
         assert!(matches!(staged_err, PouwError::Unauthorized));
         assert_eq!(st.pending_resolve_approval(r5.id), Some((true, 1)));
+        assert_eq!(total_funds(&st), baseline_total);
 
         let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
         let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
@@ -5513,6 +5525,7 @@ mod tests {
         assert_eq!(task.status, TaskStatus::Slashed);
         assert_eq!(task.challenge_bond_forfeited, Some(false));
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), 0);
+        assert_eq!(total_funds(&st), baseline_total);
     }
 
     #[test]
