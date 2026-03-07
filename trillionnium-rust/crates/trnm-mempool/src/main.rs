@@ -98,6 +98,12 @@ impl AdmissionGate {
         // This guards restored/corrupted state from over-deferring free ingress.
         let retry_budget = self.backpressured_ids.len().min(self.capacity);
         self.retry_reservations = self.retry_reservations.min(retry_budget);
+        if self.backpressured_ids.is_empty() {
+            // Restored/corrupted state may carry stale fairness marker + reservation even
+            // when retry memory is empty. Clear both so free ingress is never mis-deduped.
+            self.retry_reservations = 0;
+            self.last_fairness_deferred = None;
+        }
         if self.retry_reservations == 0 {
             if self.backpressured_ids.is_empty() {
                 self.last_fairness_deferred = None;
@@ -562,6 +568,24 @@ mod tests {
 
         let m = gate.metrics();
         assert_eq!(m.fairness_deferrals, 1);
+    }
+
+    #[test]
+    fn stale_fairness_marker_without_known_retries_does_not_force_duplicate() {
+        let mut gate = AdmissionGate::new(1);
+        assert_eq!(gate.admit(1), AdmitOutcome::Accepted);
+
+        // Simulate restored stale state with no known retries left.
+        gate.retry_reservations = 1;
+        gate.last_fairness_deferred = Some(9);
+        gate.backpressured_ids.clear();
+
+        // With no retry memory, fresh id should be treated as backpressured, not duplicate.
+        assert_eq!(gate.admit(9), AdmitOutcome::Backpressured);
+
+        let m = gate.metrics();
+        assert_eq!(m.duplicates, 0);
+        assert_eq!(m.backpressured, 1);
     }
 
     #[test]
