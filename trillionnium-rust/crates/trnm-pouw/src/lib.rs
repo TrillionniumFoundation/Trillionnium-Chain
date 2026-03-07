@@ -6795,7 +6795,7 @@ mod tests {
     }
 
     #[test]
-    fn invalid_tee_proof_rejects_reveal() {
+    fn invalid_tee_proof_rejects_reveal_fail_closed_without_state_mutation() {
         let mut st = seeded_state();
         let r1 = apply_create_task(&mut st, 7002, "alice".into(), 10).unwrap();
 
@@ -6821,6 +6821,7 @@ mod tests {
         let task_after = st.get_task(r3.id).unwrap();
         assert_eq!(task_after.status, TaskStatus::Committed);
         assert!(task_after.result_hash.is_none());
+        assert!(task_after.challenge_deadline_height.is_none());
     }
 
     #[test]
