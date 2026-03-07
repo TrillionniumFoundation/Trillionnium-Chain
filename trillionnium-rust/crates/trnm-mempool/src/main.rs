@@ -217,6 +217,9 @@ impl AdmissionGate {
         let retry_budget = self.backpressured_ids.len().min(self.capacity);
         if retry_budget == 0 {
             self.retry_reservations = 0;
+            // Once retry memory is empty, clear stale fairness marker immediately so
+            // pop-only drain cycles restore a clean fast-path state before new ingress.
+            self.last_fairness_deferred = None;
         } else {
             self.retry_reservations = self.retry_reservations.saturating_add(1).min(retry_budget);
         }
@@ -627,6 +630,21 @@ mod tests {
         let m = gate.metrics();
         assert_eq!(m.duplicates, 0);
         assert_eq!(m.backpressured, 1);
+    }
+
+    #[test]
+    fn pop_ready_clears_stale_fairness_marker_when_retry_memory_is_empty() {
+        let mut gate = AdmissionGate::new(2);
+        assert_eq!(gate.admit(1), AdmitOutcome::Accepted);
+
+        // Simulate stale/restored marker state with no known retries.
+        gate.last_fairness_deferred = Some(99);
+        gate.retry_reservations = 1;
+        gate.backpressured_ids.clear();
+
+        assert_eq!(gate.pop_ready(), Some(1));
+        assert_eq!(gate.retry_reservations, 0);
+        assert_eq!(gate.last_fairness_deferred, None);
     }
 
     #[test]
