@@ -884,34 +884,41 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
             // Under highly skewed hot-bucket loads, start from the sparsest non-empty
             // bucket so low-volume conflict domains are serviced promptly instead of
             // always waiting behind the dominant lane at cycle start.
+            let first_hint = txs
+                .first()
+                .map(|tx| hot_bucket_hint(tx, iters.len()))
+                .unwrap_or(0);
             let sparse_start = {
-                let mut min_bucket: Option<(usize, usize)> = None;
+                let mut sparse_candidates: Vec<usize> = Vec::new();
                 let mut min_non_zero = usize::MAX;
                 let mut max_depth = 0usize;
                 for (idx, depth) in bucket_depths.iter().copied().enumerate() {
                     if depth == 0 {
                         continue;
                     }
-                    min_non_zero = min_non_zero.min(depth);
                     max_depth = max_depth.max(depth);
-                    min_bucket = match min_bucket {
-                        Some((best_idx, best_depth)) if best_depth <= depth => {
-                            Some((best_idx, best_depth))
-                        }
-                        _ => Some((idx, depth)),
-                    };
+                    if depth < min_non_zero {
+                        min_non_zero = depth;
+                        sparse_candidates.clear();
+                        sparse_candidates.push(idx);
+                    } else if depth == min_non_zero {
+                        sparse_candidates.push(idx);
+                    }
                 }
                 if min_non_zero != usize::MAX && max_depth >= min_non_zero.saturating_mul(2) {
-                    min_bucket.map(|(idx, _)| idx)
+                    // When multiple equally sparse buckets exist, rotate the sparse
+                    // anti-starvation seed around the first hot-key hint to avoid
+                    // repeatedly preferring the lowest bucket index.
+                    sparse_candidates
+                        .into_iter()
+                        .min_by_key(|idx| (idx + iters.len() - first_hint) % iters.len())
                 } else {
                     None
                 }
             };
             // Seed the initial bucket probe from either sparse anti-starvation hint
             // or first tx hot-key hint so repeated batches do not always favor bucket 0.
-            let mut rr_start = sparse_start
-                .or_else(|| txs.first().map(|tx| hot_bucket_hint(tx, iters.len())))
-                .unwrap_or(0);
+            let mut rr_start = sparse_start.unwrap_or(first_hint);
             // Rotate the round-robin start bucket each pass to reduce consistent
             // first-bucket preference under uneven bucket depths.
             loop {
@@ -1189,6 +1196,21 @@ mod tests {
 
         reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
         assert!(matches!(txs.first().map(|t| t.id), Some(303 | 304)));
+    }
+
+    #[test]
+    fn hot_bucket_interleave_sparse_tie_rotates_from_first_hot_hint() {
+        let mut txs = vec![
+            tx(401, vec![], vec![o(5)]),  // first hot hint bucket 5
+            tx(402, vec![], vec![o(13)]), // same hot bucket (depth 2)
+            tx(403, vec![], vec![o(1)]),  // sparse bucket 1
+            tx(404, vec![], vec![o(6)]),  // sparse bucket 6
+        ];
+
+        reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
+        // Both bucket 1 and 6 are equally sparse; prefer the one nearest the first
+        // hot-key hint to avoid fixed low-index sparse bias across batches.
+        assert_eq!(txs.first().map(|t| t.id), Some(404));
     }
 
     #[test]
