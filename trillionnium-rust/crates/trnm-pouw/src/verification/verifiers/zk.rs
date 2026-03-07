@@ -67,6 +67,20 @@ mod tests {
     }
 
     #[test]
+    fn zk_verifier_accepts_legacy_proof_type_alias() {
+        let verifier = ZkVerifier;
+        let task = mock_task();
+
+        assert_eq!(
+            verifier.verify_proof(
+                &task,
+                b"ZK:task_id=99,worker=worker-zk,proof_type=zk_snark,result_hash=1111111111111111111111111111111111111111111111111111111111111111,proof=ok"
+            ),
+            VerificationResult::Valid
+        );
+    }
+
+    #[test]
     fn zk_verifier_rejects_task_id_mismatch() {
         let verifier = ZkVerifier;
         let task = mock_task();
