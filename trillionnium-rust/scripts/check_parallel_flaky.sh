@@ -31,6 +31,7 @@ cat >"$RUN_DIR/replay.sh" <<EOF
 #!/usr/bin/env bash
 set -euo pipefail
 cd "$ROOT"
+export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
 export TZ="${TZ:-UTC}"
 export LC_ALL="${LC_ALL:-C}"
 export NO_COLOR="${NO_COLOR:-1}"
