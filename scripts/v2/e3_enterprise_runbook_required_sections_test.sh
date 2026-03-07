@@ -4,6 +4,9 @@ set -euo pipefail
 # Keep text matching deterministic across CI runners with different locales/timezones.
 export LC_ALL=C.UTF-8
 export LANG=C.UTF-8
+# Pin numeric locale too, so any future numeric assertions/log parsing in this
+# gate remain stable if runner defaults drift.
+export LC_NUMERIC=C
 export TZ=UTC
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
