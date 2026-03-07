@@ -306,7 +306,8 @@ impl ReliabilityStore for InMemoryReliabilityStore {
 
     fn cleanup_expired(&mut self, now_unix_ms: u128, retention: &RetentionConfig) {
         let dedup_cutoff = now_unix_ms.saturating_sub(retention.dedup_ttl_ms as u128);
-        self.dedup.retain(|_, seen_at| *seen_at >= dedup_cutoff);
+        self.dedup
+            .retain(|_, seen_at| *seen_at == 0 || *seen_at >= dedup_cutoff);
 
         let pending_cutoff = now_unix_ms.saturating_sub(retention.pending_ttl_ms as u128);
 
@@ -1030,7 +1031,7 @@ impl ReliabilityStore for SqliteReliabilityStore {
         let cutoff = now_unix_ms.saturating_sub(retention.dedup_ttl_ms as u128);
         let cutoff_i64 = i64::try_from(cutoff).unwrap_or(i64::MAX);
         let _ = self.conn.execute(
-            "DELETE FROM reliability_dedup WHERE seen_at_unix_ms < ?1",
+            "DELETE FROM reliability_dedup WHERE seen_at_unix_ms <> 0 AND seen_at_unix_ms < ?1",
             [cutoff_i64],
         );
     }
@@ -1358,6 +1359,30 @@ mod tests {
 
         let after_ttl = engine.receive(mk_msg("alice", "s1", 9), 1_101);
         assert_eq!(after_ttl.code, AckCode::Accepted);
+    }
+
+    #[test]
+    fn cleanup_preserves_legacy_dedup_entries_without_timestamp() {
+        let mut store = InMemoryReliabilityStore::default();
+        let key = DedupKey {
+            from: "legacy".to_string(),
+            seq_or_nonce: 77,
+        };
+        store.remember_dedup_key(key.clone()); // seen_at=0 legacy path
+
+        store.cleanup_expired(
+            10_000,
+            &RetentionConfig {
+                dedup_ttl_ms: 100,
+                pending_ttl_ms: 10_000,
+                cleanup_interval_ms: 1,
+            },
+        );
+
+        assert!(
+            store.contains_dedup_key(&key),
+            "legacy seen_at=0 dedup entry should remain until rewritten with a timestamp"
+        );
     }
 
     #[test]
