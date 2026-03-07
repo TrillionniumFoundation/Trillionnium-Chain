@@ -13,7 +13,7 @@ if [[ ! -f "$RUNBOOK" ]]; then
   exit 1
 fi
 
-required_line='根因标签格式约束：仅允许小写 snake_case（`[a-z0-9_]+`），禁止空格与大小写混用，避免审计聚合分桶漂移。'
+required_line='根因标签格式约束：仅允许小写 snake_case 且必须字母开头（`[a-z][a-z0-9_]*`），禁止空格与大小写混用，避免审计聚合分桶漂移。'
 if ! grep -Fq -- "$required_line" "$RUNBOOK"; then
   echo "[FAIL] missing E3 root-cause-tag format constraint clause" >&2
   exit 1
