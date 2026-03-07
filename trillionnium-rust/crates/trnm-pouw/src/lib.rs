@@ -4599,6 +4599,45 @@ mod tests {
     }
 
     #[test]
+    fn timeout_emergency_pause_precedes_deadline_checks_without_escrow_mutation() {
+        // Merge-gate hardening: emergency pause must fail-closed before timeout
+        // deadline checks so challenged timeout flow cannot leak liveness outcomes.
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+
+        let r1 = apply_create_task(&mut st, 8_962_4, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(8_962_4, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+        let r5 =
+            apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
+
+        st.set_gov_param(9_202_4, 7_999, "emergency_pause".into(), "true".into())
+            .expect("pause=true governance update must succeed");
+        assert!(st.is_emergency_paused());
+
+        let before_task = st.get_task(8_962_4).unwrap();
+        let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+        let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+        let before_challenger = st.balance_of("challenger");
+
+        let err = apply_timeout(&mut st, r5, 0)
+            .expect_err("emergency pause must mask deadline checks and freeze challenged timeout path");
+        assert!(matches!(err, PouwError::InvalidTransition));
+
+        let after_task = st.get_task(8_962_4).unwrap();
+        assert_eq!(after_task.status, before_task.status);
+        assert_eq!(after_task.challenge_bond_forfeited, before_task.challenge_bond_forfeited);
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
+        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
+        assert_eq!(st.balance_of("challenger"), before_challenger);
+    }
+
+    #[test]
     fn timeout_reopens_after_emergency_pause_clears_with_single_settlement() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
