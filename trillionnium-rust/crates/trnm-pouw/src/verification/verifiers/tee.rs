@@ -283,6 +283,20 @@ mod tests {
     }
 
     #[test]
+    fn tee_verifier_rejects_duplicate_result_hash_binding_with_quoted_trailing_space_fail_closed() {
+        let verifier = TeeVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=\"abababababababababababababababababababababababababababababababab \",result_hash=abababababababababababababababababababababababababababababababab,quote=abc"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("duplicate result_hash binding")
+        ));
+    }
+
+    #[test]
     fn tee_verifier_rejects_unexpected_result_hash_binding_without_context_fail_closed() {
         let verifier = TeeVerifier;
         let mut task = mock_task();
