@@ -77,18 +77,18 @@ impl LaneAdmissionGate {
         }
     }
     pub fn admit(&mut self, tx_id: u64, class: IngressClass) -> AdmitOutcome {
-        if self.seen_global.contains(&tx_id) {
+        if !self.seen_global.insert(tx_id) {
             return AdmitOutcome::Duplicate;
         }
 
         let total_queued = self.normal.queue.len() + self.critical.queue.len();
         if total_queued >= self.total_capacity {
-            // Fast backpressure path: preserve duplicate-vs-backpressure semantics
-            // without transiently mutating the global idempotency set.
+            // Preserve duplicate-vs-backpressure semantics while keeping accepted
+            // and duplicate ingress on a single HashSet probe hot path.
+            self.seen_global.remove(&tx_id);
             return AdmitOutcome::Backpressured;
         }
 
-        self.seen_global.insert(tx_id);
         let out = match class {
             IngressClass::Normal => {
                 let normal_was_empty = self.normal.queue.is_empty();
