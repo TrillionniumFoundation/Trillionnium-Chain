@@ -1658,8 +1658,9 @@ fn is_high_risk_tx(tx: &MockTx) -> bool {
         | MockTx::Commit { .. }
         | MockTx::Reveal { .. }
         | MockTx::Challenge { .. } => true,
-        // Resolve must remain callable during emergency pause to close out challenged tasks.
-        MockTx::Resolve { .. } => false,
+        // Resolve performs terminal challenged escrow settlement and must stay
+        // frozen while emergency pause is active.
+        MockTx::Resolve { .. } => true,
     }
 }
 
@@ -3043,8 +3044,9 @@ mod tests {
             | MockTx::Commit { .. }
             | MockTx::Reveal { .. }
             | MockTx::Challenge { .. } => true,
-            // Resolve must remain callable during emergency pause to close out challenged tasks.
-            MockTx::Resolve { .. } => false,
+            // Resolve performs terminal challenged escrow settlement and must stay
+            // frozen while emergency pause is active.
+            MockTx::Resolve { .. } => true,
         }
     }
 
