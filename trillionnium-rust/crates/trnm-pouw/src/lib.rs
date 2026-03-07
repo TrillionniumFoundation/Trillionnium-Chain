@@ -4337,6 +4337,71 @@ mod tests {
     }
 
     #[test]
+    fn resolve_multisig_rejects_decision_flip_and_preserves_staged_approval_without_escrow_mutation() {
+        // Economic + governance hardening: once one multisig signer stages a
+        // slashing/non-slashing decision, a second signer cannot flip that
+        // terminal settlement decision in-flight.
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        set_resolve_authority(&mut st, "authority-a,authority-b");
+
+        let r1 = apply_create_task(&mut st, 895_2, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(895_2, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+        let r5 =
+            apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
+
+        let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+        let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+        let before_challenger = st.balance_of("challenger");
+        let before_worker_slash_treasury = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
+
+        let first_err = apply_resolve(
+            &mut st,
+            r5.clone(),
+            true,
+            "authority-a".into(),
+            "authority-a".into(),
+        )
+        .expect_err("first signer must only stage slashing resolve approval");
+        assert!(matches!(first_err, PouwError::Unauthorized));
+        assert_eq!(st.pending_resolve_approval(r5.id), Some((true, 1)));
+
+        let decision_flip_err = apply_resolve(
+            &mut st,
+            r5.clone(),
+            false,
+            "authority-b".into(),
+            "authority-b".into(),
+        )
+        .expect_err("second signer must not flip staged slashing decision to non-slashing");
+        assert!(matches!(decision_flip_err, PouwError::Unauthorized));
+        assert_eq!(
+            st.pending_resolve_approval(r5.id),
+            Some((true, 1)),
+            "decision mismatch must not mutate staged multisig approval",
+        );
+
+        let task = st
+            .get_task(r5.id)
+            .expect("challenged task must remain in state after decision mismatch");
+        assert_eq!(task.status, TaskStatus::Challenged);
+        assert_eq!(task.challenge_bond_forfeited, None);
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
+        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
+        assert_eq!(st.balance_of("challenger"), before_challenger);
+        assert_eq!(
+            st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
+            before_worker_slash_treasury,
+        );
+    }
+
+    #[test]
     fn resolve_rejects_worker_as_configured_authority_without_escrow_mutation() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
