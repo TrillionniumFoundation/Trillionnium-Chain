@@ -811,6 +811,14 @@ fn normalized_env_path(raw: &str) -> Option<&str> {
     if starts_with_quote ^ ends_with_quote {
         return None;
     }
+    if trimmed.len() >= 2 {
+        let first = trimmed.as_bytes()[0];
+        let last = trimmed.as_bytes()[trimmed.len() - 1];
+        let mixed_quote_pair = (first == b'\'' && last == b'"') || (first == b'"' && last == b'\'');
+        if mixed_quote_pair {
+            return None;
+        }
+    }
 
     let quoted = trimmed.len() >= 2
         && ((trimmed.starts_with('"') && trimmed.ends_with('"'))
@@ -1656,6 +1664,15 @@ mod tests {
         assert_eq!(
             default_reliability_db_path(),
             PathBuf::from("/tmp/quoted-reliability.sqlite")
+        );
+
+        // Mismatched quote wrappers are malformed and must not leak literal
+        // quote characters into filesystem paths.
+        std::env::set_var("RELIABILITY_DB_PATH", "\"/tmp/mixed.sqlite'");
+        std::env::set_var("XDG_STATE_HOME", "/tmp/state-home");
+        assert_eq!(
+            default_reliability_db_path(),
+            PathBuf::from("/tmp/state-home/trillionnium/reliability.sqlite")
         );
 
         // Noisy single-quote values should be treated as invalid input and
