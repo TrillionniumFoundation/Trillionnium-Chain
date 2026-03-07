@@ -821,12 +821,12 @@ pub enum ReliabilityStoreMode {
 
 impl ReliabilityStoreMode {
     pub fn from_env() -> Self {
-        match std::env::var("RELIABILITY_STORE")
-            .unwrap_or_else(|_| "sqlite".to_string())
-            .trim()
-            .to_ascii_lowercase()
-            .as_str()
-        {
+        let mode = std::env::var("RELIABILITY_STORE")
+            .ok()
+            .and_then(|raw| normalized_env_path(&raw).map(|v| v.to_ascii_lowercase()))
+            .unwrap_or_else(|| "sqlite".to_string());
+
+        match mode.as_str() {
             "memory" => Self::Memory,
             _ => Self::Sqlite,
         }
@@ -1820,6 +1820,21 @@ mod tests {
         assert_eq!(
             ReliabilityStoreMode::from_env(),
             ReliabilityStoreMode::Memory
+        );
+
+        // Noisy quoted values are common in env templating; accept canonical
+        // mode tokens after trimming quote wrappers.
+        std::env::set_var("RELIABILITY_STORE", "  'memory'  ");
+        assert_eq!(
+            ReliabilityStoreMode::from_env(),
+            ReliabilityStoreMode::Memory
+        );
+
+        // Mismatched quotes are malformed and should fail closed to sqlite.
+        std::env::set_var("RELIABILITY_STORE", "\"memory'");
+        assert_eq!(
+            ReliabilityStoreMode::from_env(),
+            ReliabilityStoreMode::Sqlite
         );
 
         std::env::remove_var("RELIABILITY_STORE");
