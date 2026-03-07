@@ -1595,6 +1595,40 @@ mod tests {
     }
 
     #[test]
+    fn collect_due_retries_cursor_handles_session_churn_without_stalling_other_sessions() {
+        let store = InMemoryReliabilityStore::default();
+        let mut engine = ReliabilityEngine::new(
+            store,
+            RetryConfig {
+                base_backoff_ms: 1,
+                max_backoff_ms: 1,
+                ..RetryConfig::default()
+            },
+        );
+
+        let hot_ack = engine.receive(mk_msg("alice", "s-a", 1), 1_000);
+        assert_eq!(hot_ack.code, AckCode::Accepted);
+        let cold_ack = engine.receive(mk_msg("bob", "s-b", 1), 1_001);
+        assert_eq!(cold_ack.code, AckCode::Accepted);
+
+        let first = engine.collect_due_retries(2_000);
+        assert_eq!(
+            first.first().map(|i| i.message.session_id.as_str()),
+            Some("s-a")
+        );
+
+        // Simulate session churn: one lane drains/acks fully while another lane remains hot.
+        assert!(engine.mark_acked("s-a", &hot_ack.ack_id));
+
+        let second = engine.collect_due_retries(2_001);
+        assert_eq!(
+            second.first().map(|i| i.message.session_id.as_str()),
+            Some("s-b"),
+            "round-robin cursor should rebase on the active session set"
+        );
+    }
+
+    #[test]
     fn dedup_quota_limit_rejects_fresh_ingress_without_breaking_duplicate_ack_path() {
         let store = InMemoryReliabilityStore::with_config(InMemoryReliabilityStoreConfig {
             max_dedup_entries: Some(1),
