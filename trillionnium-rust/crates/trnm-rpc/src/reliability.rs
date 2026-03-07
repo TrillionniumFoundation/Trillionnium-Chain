@@ -417,6 +417,7 @@ pub struct ReliabilityEngine<S: ReliabilityStore> {
     retry_exhausted_total: AtomicU64,
     circuit_open_total: AtomicU64,
     circuit_recovered_total: AtomicU64,
+    collect_rr_cursor: usize,
 }
 
 fn sanitize_retry_config(mut retry: RetryConfig) -> RetryConfig {
@@ -478,6 +479,7 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
             retry_exhausted_total: AtomicU64::new(0),
             circuit_open_total: AtomicU64::new(0),
             circuit_recovered_total: AtomicU64::new(0),
+            collect_rr_cursor: 0,
         }
     }
 
@@ -681,15 +683,35 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
         let mut out = Vec::new();
         let mut exhausted_in_this_round = 0u32;
         let session_ids = self.store.list_session_ids();
+        let session_count = session_ids.len();
 
-        for sid in session_ids {
-            let Some(mut session) = self.store.get_session(&sid) else {
+        if session_count == 0 {
+            self.on_retry_round_finished(exhausted_in_this_round, now_unix_ms);
+            return out;
+        }
+
+        let start = self.collect_rr_cursor % session_count;
+        self.collect_rr_cursor = (self.collect_rr_cursor + 1) % session_count;
+
+        for offset in 0..session_count {
+            if out.len() >= MAX_DUE_RETRIES_PER_COLLECT {
+                break;
+            }
+
+            let sid = &session_ids[(start + offset) % session_count];
+            let Some(mut session) = self.store.get_session(sid) else {
                 continue;
             };
 
             let mut dispatched_for_session = 0usize;
             session.pending.retain(|ack_id, item| {
                 if item.next_retry_at_unix_ms > now_unix_ms {
+                    return true;
+                }
+
+                // Keep each collect cycle bounded under sustained ingress so retry
+                // scanning itself does not become a backpressure hotspot.
+                if out.len() >= MAX_DUE_RETRIES_PER_COLLECT {
                     return true;
                 }
 
@@ -721,7 +743,7 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
             });
 
             if session.pending.is_empty() && self.store.should_remove_empty_session_immediately() {
-                self.store.remove_session(&sid);
+                self.store.remove_session(sid);
             } else {
                 let _ = self.store.try_upsert_session_with_ts(session, now_unix_ms);
             }
@@ -779,6 +801,7 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
 }
 
 const MAX_DUE_RETRIES_PER_SESSION_PER_COLLECT: usize = 64;
+const MAX_DUE_RETRIES_PER_COLLECT: usize = 256;
 
 fn exp_backoff_ms(base: u64, max: u64, attempts: u32) -> u64 {
     let shift = attempts.saturating_sub(1).min(20);
@@ -1509,6 +1532,65 @@ mod tests {
             hot_count_second,
             MAX_DUE_RETRIES_PER_SESSION_PER_COLLECT,
             "hot session should stay bounded per collect cycle"
+        );
+    }
+
+    #[test]
+    fn collect_due_retries_applies_global_cap_and_rotates_start_session() {
+        let store = InMemoryReliabilityStore::default();
+        let mut engine = ReliabilityEngine::new(
+            store,
+            RetryConfig {
+                base_backoff_ms: 1,
+                max_backoff_ms: 1,
+                ..RetryConfig::default()
+            },
+        );
+
+        // Keep each session small enough to avoid hitting per-session caps; this
+        // isolates global-cap and round-robin behavior.
+        for seq in 1..=100 {
+            let ack = engine.receive(mk_msg("alice", "s-a", seq), 1_000 + seq as u128);
+            assert_eq!(ack.code, AckCode::Accepted);
+        }
+        for seq in 1..=100 {
+            let ack = engine.receive(mk_msg("bob", "s-b", seq), 2_000 + seq as u128);
+            assert_eq!(ack.code, AckCode::Accepted);
+        }
+        for seq in 1..=100 {
+            let ack = engine.receive(mk_msg("carol", "s-c", seq), 3_000 + seq as u128);
+            assert_eq!(ack.code, AckCode::Accepted);
+        }
+        for seq in 1..=100 {
+            let ack = engine.receive(mk_msg("dave", "s-d", seq), 4_000 + seq as u128);
+            assert_eq!(ack.code, AckCode::Accepted);
+        }
+        for seq in 1..=100 {
+            let ack = engine.receive(mk_msg("erin", "s-e", seq), 5_000 + seq as u128);
+            assert_eq!(ack.code, AckCode::Accepted);
+        }
+
+        let first = engine.collect_due_retries(10_000);
+        assert_eq!(
+            first.len(),
+            MAX_DUE_RETRIES_PER_COLLECT,
+            "global cap should bound one collect cycle"
+        );
+
+        let first_front = first.first().expect("first batch not empty");
+        assert_eq!(first_front.message.session_id, "s-a");
+
+        let second = engine.collect_due_retries(10_001);
+        assert_eq!(
+            second.len(),
+            MAX_DUE_RETRIES_PER_COLLECT,
+            "global cap should remain stable across rounds"
+        );
+
+        let second_front = second.first().expect("second batch not empty");
+        assert_eq!(
+            second_front.message.session_id, "s-b",
+            "round-robin session rotation should avoid fixed first-session bias"
         );
     }
 
