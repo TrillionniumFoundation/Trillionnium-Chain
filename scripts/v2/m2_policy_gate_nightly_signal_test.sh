@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Keep parsing/output deterministic across heterogeneous CI runners.
+export LC_ALL=C.UTF-8
+export LANG=C.UTF-8
+export LC_NUMERIC=C
+export TZ=UTC
+
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$ROOT/trillionnium-rust"
 
