@@ -11,7 +11,7 @@ use std::{
     time::{Duration, Instant, SystemTime, UNIX_EPOCH},
 };
 use trnm_executor::build_parallel_groups;
-use trnm_mempool::{AdmitOutcome, IngressClass, LaneAdmissionGate};
+use trnm_mempool::{IngressClass, LaneAdmissionGate};
 use trnm_pouw::{
     apply_accept_task, apply_accept_task_at_height, apply_challenge, apply_challenge_at_height,
     apply_commit_result, apply_commit_result_at_height, apply_create_task, apply_resolve,
@@ -1342,29 +1342,40 @@ fn pick_txs_with_critical_guard(
     }
 
     let mut lane = LaneAdmissionGate::new(txs_per_block, 1);
-    let mut selected = vec![false; mempool.len()];
+    let mut selected_pos = vec![None; mempool.len()];
     for (idx, tx) in mempool.iter().enumerate() {
         let class = if is_critical_tx(tx) {
             IngressClass::Critical
         } else {
             IngressClass::Normal
         };
-        if matches!(lane.admit(idx as u64, class), AdmitOutcome::Accepted) {
-            selected[idx] = true;
+        let _ = lane.admit(idx as u64, class);
+    }
+
+    let mut admit_order = 0usize;
+    while admit_order < txs_per_block {
+        let Some(id) = lane.pop_ready() else {
+            break;
+        };
+        let idx = id as usize;
+        if idx < selected_pos.len() {
+            selected_pos[idx] = Some(admit_order);
+            admit_order += 1;
         }
     }
 
-    let mut picked = Vec::with_capacity(txs_per_block);
+    let mut picked_slots: Vec<Option<MockTx>> = (0..admit_order).map(|_| None).collect();
     let mut remain = VecDeque::with_capacity(mempool.len());
     for (idx, tx) in mempool.drain(..).enumerate() {
-        if selected[idx] && picked.len() < txs_per_block {
-            picked.push(tx);
+        if let Some(pos) = selected_pos[idx] {
+            picked_slots[pos] = Some(tx);
         } else {
             remain.push_back(tx);
         }
     }
     *mempool = remain;
-    picked
+
+    picked_slots.into_iter().flatten().collect()
 }
 
 fn actor_of(st: &StateStore, tx: &MockTx) -> String {
@@ -2095,6 +2106,37 @@ mod tests {
         let picked = pick_txs_with_critical_guard(&mut mempool, 2);
         assert_eq!(picked.len(), 2);
         assert!(picked.iter().any(is_critical_tx));
+    }
+
+    #[test]
+    fn critical_guard_selection_respects_lane_fairness_pop_order() {
+        let mut mempool = VecDeque::from(vec![
+            MockTx::CreateTask {
+                task_id: 11,
+                creator: "alice".into(),
+                bounty: 10,
+            },
+            MockTx::Challenge {
+                task_id: 11,
+                challenger: "c1".into(),
+                bond: 10,
+            },
+            MockTx::Resolve {
+                task_id: 11,
+                slash_worker: false,
+                resolver: "gov".into(),
+            },
+            MockTx::AcceptTask {
+                task_id: 11,
+                worker: "w1".into(),
+            },
+        ]);
+
+        let picked = pick_txs_with_critical_guard(&mut mempool, 3);
+        assert_eq!(picked.len(), 3);
+        assert!(matches!(picked[0], MockTx::Challenge { .. }));
+        assert!(matches!(picked[1], MockTx::CreateTask { .. }));
+        assert!(matches!(picked[2], MockTx::Resolve { .. }));
     }
 
     #[test]
@@ -3720,7 +3762,7 @@ fn main() -> Result<()> {
     loop {
         let block_start = Instant::now();
         let txs_per_block = args.txs_per_block.max(1);
-        let mut picked = pick_txs_with_critical_guard(&mut mempool, txs_per_block);
+        let picked = pick_txs_with_critical_guard(&mut mempool, txs_per_block);
 
         let proposal_hash = hash32_hex(format!("h:{}:txs:{}", height, picked.len()).as_bytes());
         let bft = simulate_bft_height(
