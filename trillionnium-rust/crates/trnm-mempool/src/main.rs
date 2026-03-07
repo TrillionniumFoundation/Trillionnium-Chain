@@ -73,16 +73,12 @@ impl AdmissionGate {
     }
 
     fn remember_backpressured_without_eviction(&mut self, tx_id: u64) {
-        // Known retry ids are already tracked; avoid a second hash-table probe/insert
-        // attempt on the hot fairness-deferral path.
-        if self.backpressured_ids.contains(&tx_id) {
-            return;
-        }
-
         // Fairness deferral must never evict older retry ids. When bounded memory has
         // room, insert directly and append a FIFO marker (no eviction/compaction path).
-        if self.backpressured_ids.len() < self.capacity {
-            self.backpressured_ids.insert(tx_id);
+        //
+        // Hot-path note: gate on capacity first, then rely on HashSet::insert's boolean
+        // to avoid a separate contains() probe for fresh ids.
+        if self.backpressured_ids.len() < self.capacity && self.backpressured_ids.insert(tx_id) {
             self.backpressured_fifo.push_back(tx_id);
         }
     }
