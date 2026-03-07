@@ -229,10 +229,22 @@ impl ReliabilityStore for InMemoryReliabilityStore {
         now_unix_ms: u128,
     ) -> Result<(), ReliabilityStoreError> {
         if let Some(max) = self.config.max_dedup_entries {
-            if !self.dedup.contains_key(&key) && self.dedup.len() >= max {
-                return Err(ReliabilityStoreError::CapacityExceeded {
-                    detail: format!("dedup limit reached ({max})"),
-                });
+            use std::collections::hash_map::Entry;
+            let at_capacity = self.dedup.len() >= max;
+            match self.dedup.entry(key) {
+                Entry::Occupied(mut occupied) => {
+                    occupied.insert(now_unix_ms);
+                    return Ok(());
+                }
+                Entry::Vacant(vacant) => {
+                    if at_capacity {
+                        return Err(ReliabilityStoreError::CapacityExceeded {
+                            detail: format!("dedup limit reached ({max})"),
+                        });
+                    }
+                    vacant.insert(now_unix_ms);
+                    return Ok(());
+                }
             }
         }
         self.remember_dedup_key_with_ts(key, now_unix_ms);
@@ -1521,6 +1533,40 @@ mod tests {
         let duplicate = engine.receive(mk_msg("alice", "s1", 1), 1_002);
         assert_eq!(duplicate.code, AckCode::Duplicate);
         assert_eq!(duplicate.ack_id, first.ack_id);
+    }
+
+    #[test]
+    fn dedup_quota_allows_refreshing_existing_key_timestamp_at_capacity() {
+        let mut store = InMemoryReliabilityStore::with_config(InMemoryReliabilityStoreConfig {
+            max_dedup_entries: Some(1),
+            ..InMemoryReliabilityStoreConfig::default()
+        });
+
+        let key = DedupKey {
+            from: "alice".to_string(),
+            seq_or_nonce: 7,
+        };
+
+        assert!(store
+            .try_remember_dedup_key_with_ts(key.clone(), 1_000)
+            .is_ok());
+        assert!(store
+            .try_remember_dedup_key_with_ts(key.clone(), 2_000)
+            .is_ok());
+
+        let blocked = store.try_remember_dedup_key_with_ts(
+            DedupKey {
+                from: "bob".to_string(),
+                seq_or_nonce: 8,
+            },
+            2_001,
+        );
+        assert!(matches!(
+            blocked,
+            Err(ReliabilityStoreError::CapacityExceeded { .. })
+        ));
+
+        assert_eq!(store.dedup.get(&key), Some(&2_000));
     }
 
     #[test]
