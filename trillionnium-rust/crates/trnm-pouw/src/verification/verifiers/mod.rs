@@ -141,6 +141,7 @@ fn has_duplicate_numeric_field(body: &str, field: &str) -> bool {
     let body_bytes = body.as_bytes();
     let mut cursor = 0usize;
     let mut seen = 0usize;
+    let mut saw_binding_attempt = false;
     while let Some(found) = lower[cursor..].find(field) {
         let idx = cursor + found;
         if !is_field_name_boundary(body_bytes, idx, field.len()) {
@@ -178,12 +179,12 @@ fn has_duplicate_numeric_field(body: &str, field: &str) -> bool {
             // ambiguous secondary bindings and must trip the duplicate gate.
             return true;
         }
-        if seen > 0 {
-            // Fail closed: once a canonical numeric binding has been seen,
-            // any subsequent binding attempt for the same field is ambiguous
-            // even when malformed (e.g. `task_id=+42`).
+        if saw_binding_attempt {
+            // Fail closed: any second binding attempt for the same numeric
+            // field is ambiguous, even if the first attempt was malformed.
             return true;
         }
+        saw_binding_attempt = true;
         let start = i;
         while i < bytes.len() && bytes[i].is_ascii_digit() {
             i += 1;
@@ -828,6 +829,42 @@ mod tests {
             verify_bound_envelope(
                 &task,
                 b"TEE:task_id=42;task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,quote=ok",
+                b"TEE:",
+                "TEE receipt"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("duplicate task_id binding")
+        ));
+    }
+
+    #[test]
+    fn verify_bound_envelope_rejects_malformed_then_canonical_task_id_binding_fail_closed() {
+        let task = TaskObject {
+            task_id: 42,
+            creator: "alice".into(),
+            bounty: 1,
+            status: TaskStatus::Committed,
+            proof_type: ProofType::Tee,
+            metadata: None,
+            worker: Some("worker1".into()),
+            committed_hash: None,
+            result_hash: Some([0xabu8; 32]),
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        };
+
+        assert!(matches!(
+            verify_bound_envelope(
+                &task,
+                b"TEE:task_id=+42,task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,quote=ok",
                 b"TEE:",
                 "TEE receipt"
             ),
