@@ -326,6 +326,21 @@ mod tests {
     }
 
     #[test]
+    fn tee_verifier_rejects_duplicate_result_hash_binding_without_context_fail_closed() {
+        let verifier = TeeVerifier;
+        let mut task = mock_task();
+        task.result_hash = None;
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=aa,result_hash=bb,quote=abc"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("duplicate result_hash binding")
+        ));
+    }
+
+    #[test]
     fn tee_verifier_rejects_missing_worker_binding() {
         let verifier = TeeVerifier;
         let task = mock_task();
