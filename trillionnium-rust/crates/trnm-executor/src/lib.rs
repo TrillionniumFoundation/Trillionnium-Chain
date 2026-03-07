@@ -181,7 +181,10 @@ fn vec_hashset_intersects(a: &[u64], b: &HashSet<u64>) -> bool {
     // Symmetric singleton fast path: deep-scan stages can probe wide vectors
     // against one-key group domains; avoid walking the whole vector in that case.
     if b.len() == 1 {
-        let only = *b.iter().next().expect("single-key set must contain one element");
+        let only = *b
+            .iter()
+            .next()
+            .expect("single-key set must contain one element");
         return a.contains(&only);
     }
 
@@ -590,7 +593,10 @@ fn access_map_capacity_hint(txs: &[Tx]) -> usize {
 
     // HashMap load-factor friendly sizing. Keep a floor for tiny batches and
     // cap for pathological bursts so this remains a low-risk sizing hint.
-    let hinted = footprint.saturating_mul(4).saturating_div(3).saturating_add(1);
+    let hinted = footprint
+        .saturating_mul(4)
+        .saturating_div(3)
+        .saturating_add(1);
     hinted.clamp(MIN_CAP, MAX_CAP)
 }
 
@@ -796,9 +802,15 @@ fn hot_bucket_hint(tx: &Tx, buckets_n: usize) -> usize {
         .map(|o| o.id)
         .unwrap_or(0);
     let mixed = key_a ^ key_b.rotate_left(7);
-    // Reduce in u64-space first; casting mixed directly to usize would truncate
-    // high bits on 32-bit targets and skew bucket selection under wide key domains.
-    (mixed % buckets_n as u64) as usize
+    if buckets_n.is_power_of_two() {
+        // Fast-path hot scheduler probes: avoid division in the common power-of-two
+        // bucket layout while keeping deterministic bucket mapping.
+        (mixed as usize) & (buckets_n - 1)
+    } else {
+        // Reduce in u64-space first; casting mixed directly to usize would truncate
+        // high bits on 32-bit targets and skew bucket selection under wide key domains.
+        (mixed % buckets_n as u64) as usize
+    }
 }
 
 fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
@@ -983,18 +995,28 @@ mod tests {
         let wide_read_miss: Vec<ObjectRef> = (1..=64).map(|id| o(id + 10_000)).collect();
 
         assert!(detect_conflict(&small_write, &tx(2, wide_read_hit, vec![])));
-        assert!(!detect_conflict(&small_write, &tx(3, wide_read_miss, vec![])));
+        assert!(!detect_conflict(
+            &small_write,
+            &tx(3, wide_read_miss, vec![])
+        ));
     }
 
     #[test]
     fn medium_small_vs_large_conflict_path_avoids_hashset_and_preserves_semantics() {
-        let small_write = tx(1, vec![], vec![o(501), o(502), o(503), o(503), o(504), o(505)]);
+        let small_write = tx(
+            1,
+            vec![],
+            vec![o(501), o(502), o(503), o(503), o(504), o(505)],
+        );
         let mut wide_read_hit: Vec<ObjectRef> = (1..=64).map(|id| o(10_000 + id)).collect();
         wide_read_hit.push(o(504));
         let wide_read_miss: Vec<ObjectRef> = (1..=64).map(|id| o(20_000 + id)).collect();
 
         assert!(detect_conflict(&small_write, &tx(2, wide_read_hit, vec![])));
-        assert!(!detect_conflict(&small_write, &tx(3, wide_read_miss, vec![])));
+        assert!(!detect_conflict(
+            &small_write,
+            &tx(3, wide_read_miss, vec![])
+        ));
     }
 
     #[test]
@@ -1073,8 +1095,8 @@ mod tests {
         let _window = EnvGuard::set("TRNM_AGGR_SCAN_WINDOW", "1");
 
         let txs = vec![
-            tx(1, vec![], vec![o(7)]),   // group 0
-            tx(3, vec![], vec![o(7)]),   // forced to group 1 (conflicts with tx1)
+            tx(1, vec![], vec![o(7)]),    // group 0
+            tx(3, vec![], vec![o(7)]),    // forced to group 1 (conflicts with tx1)
             tx(10, vec![o(101)], vec![]), // independent even ids that previously pinned to offset 0
             tx(12, vec![o(102)], vec![]),
             tx(14, vec![o(103)], vec![]),
@@ -1092,9 +1114,9 @@ mod tests {
     #[test]
     fn hot_bucket_interleave_seeds_initial_round_from_first_hot_key() {
         let mut txs = vec![
-            tx(501, vec![], vec![o(5)]), // bucket 5 when TRNM_HOT_BUCKETS=8
-            tx(101, vec![], vec![o(0)]), // bucket 0
-            tx(102, vec![], vec![o(8)]), // bucket 0
+            tx(501, vec![], vec![o(5)]),  // bucket 5 when TRNM_HOT_BUCKETS=8
+            tx(101, vec![], vec![o(0)]),  // bucket 0
+            tx(102, vec![], vec![o(8)]),  // bucket 0
             tx(103, vec![], vec![o(16)]), // bucket 0
         ];
 
@@ -1118,7 +1140,10 @@ mod tests {
         ];
 
         reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
-        assert_eq!(txs.iter().map(|t| t.id).collect::<Vec<_>>(), vec![21, 22, 23]);
+        assert_eq!(
+            txs.iter().map(|t| t.id).collect::<Vec<_>>(),
+            vec![21, 22, 23]
+        );
     }
 
     #[test]
@@ -1133,7 +1158,39 @@ mod tests {
         // Distinct high bits must influence bucket selection; truncating to usize
         // before modulo would collapse these on 32-bit targets.
         assert_ne!(low_bucket, high_bucket);
-        assert_eq!(high_bucket, ((1 + (1u64 << 40)) % buckets_n as u64) as usize);
+        assert_eq!(
+            high_bucket,
+            ((1 + (1u64 << 40)) % buckets_n as u64) as usize
+        );
+    }
+
+    #[test]
+    fn hot_bucket_hint_power_of_two_fast_path_matches_modulo_mapping() {
+        let txs = [
+            tx(1, vec![], vec![o(1)]),
+            tx(2, vec![], vec![o(1 + (1u64 << 40))]),
+            tx(3, vec![o(7)], vec![]),
+            tx(4, vec![o(11), o(13)], vec![]),
+            tx(5, vec![], vec![o(23), o(29)]),
+        ];
+        let buckets_n = 8usize;
+
+        for t in txs {
+            let expected = ((t
+                .write_set
+                .first()
+                .or_else(|| t.read_set.first())
+                .map(|o| o.id)
+                .unwrap_or(0)
+                ^ t.write_set
+                    .get(1)
+                    .or_else(|| t.read_set.get(1))
+                    .map(|o| o.id)
+                    .unwrap_or(0)
+                    .rotate_left(7))
+                % buckets_n as u64) as usize;
+            assert_eq!(hot_bucket_hint(&t, buckets_n), expected);
+        }
     }
 
     #[test]
@@ -1145,8 +1202,8 @@ mod tests {
         let _seed = EnvGuard::set("TRNM_AGGR_SCAN_RR_SEED", "1");
 
         let txs = vec![
-            tx(1, vec![], vec![o(7)]), // group 0
-            tx(3, vec![], vec![o(7)]), // forced to group 1
+            tx(1, vec![], vec![o(7)]),    // group 0
+            tx(3, vec![], vec![o(7)]),    // forced to group 1
             tx(10, vec![o(101)], vec![]), // first free candidate should honor seed offset
         ];
 
@@ -1289,7 +1346,10 @@ mod tests {
         }
 
         let d = auto_adaptive_decision(&txs);
-        assert!(d.use_hot_bucket, "late hotspot should be visible in adaptive sample");
+        assert!(
+            d.use_hot_bucket,
+            "late hotspot should be visible in adaptive sample"
+        );
         assert_eq!(d.reason, "hotspot_detected");
     }
 
