@@ -331,7 +331,7 @@ impl StateStore {
         if entry.slash_worker != slash_worker {
             return Err("resolve approval decision mismatch".into());
         }
-        if entry.confirmations > 0 && entry.first_approver == approver {
+        if entry.confirmations > 0 && entry.first_approver.eq_ignore_ascii_case(approver) {
             return Err("resolve approval requires distinct approver".into());
         }
         entry.confirmations = entry.confirmations.saturating_add(1);
@@ -1277,6 +1277,27 @@ mod tests {
             st.pending_resolve_approval(7),
             Some((false, 1)),
             "decision mismatch must not mutate staged confirmation"
+        );
+    }
+
+    #[test]
+    fn resolve_approval_rejects_case_drift_duplicate_approver_without_mutation() {
+        let mut st = StateStore::new();
+
+        let first = st
+            .stage_or_confirm_resolve_approval(77, true, "authority-a")
+            .expect("first approval stage should succeed");
+        assert!(!first);
+        assert_eq!(st.pending_resolve_approval(77), Some((true, 1)));
+
+        let dup_err = st
+            .stage_or_confirm_resolve_approval(77, true, "Authority-A")
+            .expect_err("case-drift duplicate approver must be rejected");
+        assert!(dup_err.contains("distinct approver"));
+        assert_eq!(
+            st.pending_resolve_approval(77),
+            Some((true, 1)),
+            "case-drift duplicate must not increase confirmation count"
         );
     }
 
