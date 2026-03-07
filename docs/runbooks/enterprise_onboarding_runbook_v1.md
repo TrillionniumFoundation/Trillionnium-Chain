@@ -59,6 +59,9 @@
   - （如需显式执行人追踪）`trnm-onboard rollback --org-id <org_id> --env <env> --change-ticket-id <change_ticket_id> --operator-id <operator_id> --root-cause-tag <root_cause_tag> --request-id <request_id>`
   - （如需显式执行人追踪）`trnm-onboard rollback --org-id <org_id> --env <env> --change-ticket-id <change_ticket_id> --operator-id <operator_id> --root-cause-tag <root_cause_tag> --request-id <request_id> --dry-run`
 - 将最终执行命令与输出日志计算 `sha256` 并写入变更单，作为回滚可复盘锚点。
+- 回滚后必须执行一次按 `request_id` 的回放校验，确认目标事件状态已转为 `reverted` 且不再可重复回滚（幂等）。
+  - `trnm-onboard replay --request-id <request_id> --expect-status reverted --expect-idempotent`
+  - `trnm-onboard replay --request-id <request_id> --expect-status reverted --expect-idempotent --dry-run`
 
 ## 6. 证据清单（Evidence Checklist）
 
