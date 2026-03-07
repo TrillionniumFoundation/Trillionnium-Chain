@@ -58,6 +58,10 @@ mkdir -p "$RUN_DIR"
 echo "[WEB4-RELEASE] start"
 echo "[WEB4-RELEASE] root=$ROOT"
 echo "[WEB4-RELEASE] run_dir=$RUN_DIR"
+echo "[WEB4-RELEASE] required_gate_count=${#REQUIRED_GATES[@]}"
+for idx in "${!REQUIRED_GATES[@]}"; do
+  printf '[WEB4-RELEASE] required_gate[%02d]=%s\n' "$idx" "${REQUIRED_GATES[$idx]}"
+done
 
 step() {
   local gate_rel="$1"
