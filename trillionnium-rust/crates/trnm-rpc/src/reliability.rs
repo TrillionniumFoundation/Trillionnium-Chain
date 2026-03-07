@@ -320,7 +320,16 @@ impl ReliabilityStore for InMemoryReliabilityStore {
 
                 if session.pending.is_empty() {
                     let meta = self.meta.entry(sid.clone()).or_default();
-                    meta.empty_since_unix_ms.get_or_insert(now_unix_ms);
+                    // mark_acked() updates sessions without an explicit timestamp.
+                    // Reuse last_touched as a stable fallback so empty-session TTL
+                    // reclaim is measured from the latest known activity rather than
+                    // drifting by an extra cleanup interval.
+                    meta.empty_since_unix_ms
+                        .get_or_insert(if meta.last_touched_unix_ms != 0 {
+                            meta.last_touched_unix_ms
+                        } else {
+                            now_unix_ms
+                        });
                     remove = match self.config.empty_session_cleanup {
                         EmptySessionCleanupPolicy::RemoveImmediately => true,
                         EmptySessionCleanupPolicy::RetainForMs(ttl_ms) => meta
@@ -1451,6 +1460,34 @@ mod tests {
 
         let store = engine.into_store();
         assert!(store.get_session("s1").is_some());
+    }
+
+    #[test]
+    fn empty_session_cleanup_ttl_eventually_reclaims_idle_session() {
+        let store = InMemoryReliabilityStore::with_config(InMemoryReliabilityStoreConfig {
+            empty_session_cleanup: EmptySessionCleanupPolicy::RetainForMs(200),
+            ..InMemoryReliabilityStoreConfig::default()
+        });
+        let mut engine = ReliabilityEngine::new_with_retention(
+            store,
+            RetryConfig::default(),
+            RetentionConfig {
+                dedup_ttl_ms: 10_000,
+                pending_ttl_ms: 10_000,
+                cleanup_interval_ms: 1,
+            },
+        );
+
+        let ack = engine.receive(mk_msg("alice", "s1", 1), 1_000);
+        assert!(engine.mark_acked("s1", &ack.ack_id));
+
+        // Trigger cleanup at/after TTL so retained empty sessions do not linger
+        // and consume quota under prolonged idle periods.
+        let due = engine.collect_due_retries(1_201);
+        assert!(due.is_empty());
+
+        let store = engine.into_store();
+        assert!(store.get_session("s1").is_none());
     }
 
     #[test]
