@@ -110,6 +110,20 @@ mod tests {
     }
 
     #[test]
+    fn tee_verifier_rejects_duplicate_task_id_binding_with_quoted_leading_space_fail_closed() {
+        let verifier = TeeVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"TEE:task_id=\" 42\",task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,quote=abc"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("duplicate task_id binding")
+        ));
+    }
+
+    #[test]
     fn tee_verifier_rejects_duplicate_task_id_binding_with_quoted_trailing_space_fail_closed() {
         let verifier = TeeVerifier;
         let task = mock_task();
