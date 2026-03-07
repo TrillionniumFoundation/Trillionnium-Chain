@@ -12,6 +12,36 @@ fn unique_fixture_path(name: &str, ext: &str) -> PathBuf {
     std::env::temp_dir().join(format!("trnm_rpc_{}_{}.{}", name, ts, ext))
 }
 
+fn run_submit_message_with_limit(
+    ingress: &PathBuf,
+    text: &str,
+    key: &str,
+    max_bytes: Option<&str>,
+) -> std::process::Output {
+    let mut cmd = Command::new("cargo");
+    cmd.args(["run", "-p", "trnm-rpc", "--"])
+        .args([
+            "submit-message",
+            "--channel",
+            "telegram",
+            "--user-id",
+            "u-1",
+            "--session-id",
+            "s-1",
+            "--text",
+            text,
+            "--idempotency-key",
+            key,
+        ])
+        .env("TRNM_RPC_INGRESS_FILE", ingress);
+
+    if let Some(limit) = max_bytes {
+        cmd.env("TRNM_RPC_SUBMIT_MESSAGE_MAX_BYTES", limit);
+    }
+
+    cmd.output().expect("failed to execute trnm-rpc")
+}
+
 #[test]
 fn submit_message_concurrent_same_idempotency_key_deduplicates() {
     let ingress = unique_fixture_path("submit_message_concurrency", "jsonl");
@@ -258,4 +288,38 @@ fn submit_message_concurrent_same_idempotency_key_different_users_are_isolated()
         .collect();
     users.sort_unstable();
     assert_eq!(users, vec!["u-1", "u-2"]);
+}
+
+#[test]
+fn submit_message_idempotent_replay_survives_runtime_quota_tightening() {
+    let ingress = unique_fixture_path("submit_message_quota_tightening", "jsonl");
+    let _ = fs::remove_file(&ingress);
+
+    let first = run_submit_message_with_limit(&ingress, "hello", "k-tighten", Some("5"));
+    assert!(
+        first.status.success(),
+        "stderr: {}",
+        String::from_utf8_lossy(&first.stderr)
+    );
+
+    let replay = run_submit_message_with_limit(&ingress, "hello", "k-tighten", Some("4"));
+    assert!(
+        replay.status.success(),
+        "stderr: {}",
+        String::from_utf8_lossy(&replay.stderr)
+    );
+
+    let raw = fs::read_to_string(&ingress).expect("read ingress file");
+    let records: Vec<Value> = raw
+        .lines()
+        .filter(|l| !l.trim().is_empty())
+        .map(|line| serde_json::from_str(line).expect("valid ingress json line"))
+        .collect();
+
+    assert_eq!(records.len(), 1, "idempotent replay must not create new record");
+    assert_eq!(
+        records[0]["idempotency_key"].as_str(),
+        Some("k-tighten"),
+        "replay should return existing record under tighter quota"
+    );
 }

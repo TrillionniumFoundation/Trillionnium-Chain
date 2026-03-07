@@ -2641,15 +2641,6 @@ fn main() -> Result<()> {
             text,
             idempotency_key,
         } => {
-            let max_bytes = submit_message_max_bytes() as usize;
-            if text.len() > max_bytes {
-                bail!(
-                    "submit-message text exceeds {} bytes limit (got {})",
-                    max_bytes,
-                    text.len()
-                );
-            }
-
             let path = ingress_file();
             let _lock = acquire_market_file_lock(&path)?;
 
@@ -2665,6 +2656,17 @@ fn main() -> Result<()> {
             }) {
                 println!("{}", serde_json::to_string_pretty(found)?);
                 return Ok(());
+            }
+
+            // Quota gate applies to fresh ingress only. Existing idempotent records
+            // must still replay successfully under tighter runtime limits.
+            let max_bytes = submit_message_max_bytes() as usize;
+            if text.len() > max_bytes {
+                bail!(
+                    "submit-message text exceeds {} bytes limit (got {})",
+                    max_bytes,
+                    text.len()
+                );
             }
 
             validate_submit_message_metadata(&text)?;
