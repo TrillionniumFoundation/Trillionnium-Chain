@@ -3074,6 +3074,8 @@ mod tests {
             "Treasury.Challenge_Escrow",
             CHALLENGE_FORFEIT_TREASURY_ACCOUNT,
             "TREASURY.CHALLENGE_FORFEITS",
+            "authority,treasury.challenge_escrow",
+            "authority,Treasury.Challenge_Forfeits",
             "authority ",
             "authority team",
             "authority\u{3000}team",
