@@ -2031,6 +2031,26 @@ mod tests {
     }
 
     #[test]
+    fn registry_with_builtin_verifiers_fail_closed_when_result_hash_binding_missing() {
+        let registry = VerifierRegistry::with_builtin_verifiers();
+
+        let mut tee_task = task_with_proof_type(ProofType::Tee);
+        tee_task.result_hash = Some([0x55; 32]);
+
+        let mut zk_task = task_with_proof_type(ProofType::Zk);
+        zk_task.result_hash = Some([0x55; 32]);
+
+        assert!(matches!(
+            registry.verify(&tee_task, b"TEE:task_id=42,proof_type=tee,quote=ok"),
+            VerificationResult::Invalid(msg) if msg.contains("result_hash")
+        ));
+        assert!(matches!(
+            registry.verify(&zk_task, b"ZK:task_id=42,proof_type=zk,proof=ok"),
+            VerificationResult::Invalid(msg) if msg.contains("result_hash")
+        ));
+    }
+
+    #[test]
     fn registry_with_builtin_verifiers_fail_closed_when_task_id_binding_missing() {
         let registry = VerifierRegistry::with_builtin_verifiers();
 
