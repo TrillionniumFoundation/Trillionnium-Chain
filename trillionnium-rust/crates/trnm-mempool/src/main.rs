@@ -157,7 +157,12 @@ impl AdmissionGate {
         // Preserve idempotency for immediate repeats of a fairness-deferred id
         // while reservations remain active, even if throughput guard would allow
         // fresh ingress in the current queue state.
-        let is_known_retry = self.backpressured_ids.contains(&tx_id);
+        //
+        // Hot fresh-ingress path commonly runs with an empty retry set. Skip the
+        // hash probe in that case so admission stays branch/lightweight under
+        // free-ingress bursts.
+        let has_known_retries = !self.backpressured_ids.is_empty();
+        let is_known_retry = has_known_retries && self.backpressured_ids.contains(&tx_id);
         if self.retry_reservations > 0
             && self.last_fairness_deferred == Some(tx_id)
             && !is_known_retry
