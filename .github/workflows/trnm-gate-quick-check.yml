@@ -37,6 +37,9 @@ jobs:
       # Keep month/day names and locale-sensitive time formatting stable for
       # any date evidence emitted by shell/python helpers.
       LC_TIME: C
+      # Normalize character-class behavior ([[:alpha:]], upper/lower transforms)
+      # across runner locale package changes for shell/python regex assertions.
+      LC_CTYPE: C
       # Force locale-driven message strings to remain stable across runner
       # image updates so grep/assertions on stderr stay deterministic.
       LC_MESSAGES: C
