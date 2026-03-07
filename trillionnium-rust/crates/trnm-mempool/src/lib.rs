@@ -77,16 +77,19 @@ impl LaneAdmissionGate {
         }
     }
     pub fn admit(&mut self, tx_id: u64, class: IngressClass) -> AdmitOutcome {
-        if !self.seen_global.insert(tx_id) {
-            return AdmitOutcome::Duplicate;
-        }
-
         let total_queued = self.normal.queue.len() + self.critical.queue.len();
         if total_queued >= self.total_capacity {
-            // Preserve duplicate-vs-backpressure semantics while keeping accepted
-            // and duplicate ingress on a single HashSet probe hot path.
-            self.seen_global.remove(&tx_id);
-            return AdmitOutcome::Backpressured;
+            // Saturated hot path: avoid insert-then-remove churn for fresh ids while
+            // preserving duplicate-vs-backpressure semantics under full queues.
+            return if self.seen_global.contains(&tx_id) {
+                AdmitOutcome::Duplicate
+            } else {
+                AdmitOutcome::Backpressured
+            };
+        }
+
+        if !self.seen_global.insert(tx_id) {
+            return AdmitOutcome::Duplicate;
         }
 
         let out = match class {
@@ -496,6 +499,16 @@ mod tests {
         assert_eq!(g.admit(1, IngressClass::Critical), AdmitOutcome::Backpressured);
         assert_eq!(g.admit(2, IngressClass::Critical), AdmitOutcome::Backpressured);
         assert_eq!(g.pop_ready(), None);
+    }
+
+    #[test]
+    fn duplicate_stays_duplicate_when_lane_is_globally_full() {
+        let mut g = LaneAdmissionGate::new(1, 1);
+
+        assert_eq!(g.admit(9, IngressClass::Critical), AdmitOutcome::Accepted);
+        // Full-queue fast path must still preserve duplicate semantics.
+        assert_eq!(g.admit(9, IngressClass::Normal), AdmitOutcome::Duplicate);
+        assert_eq!(g.admit(10, IngressClass::Normal), AdmitOutcome::Backpressured);
     }
 
     #[test]
