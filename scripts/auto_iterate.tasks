@@ -619,3 +619,6 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: web
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: web4-release-aggregate-gate-empty-override-forbidden-test" "./scripts/v2/web4_release_aggregate_gate_empty_override_forbidden_test.sh" "ci(gate): add web4-release-aggregate-gate-empty-override-forbidden-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: check-parallel-flaky-replay-guard-test" "./scripts/v2/check_parallel_flaky_replay_guard_test.sh" "ci(gate): add check-parallel-flaky-replay-guard-test regression to quick-check"
