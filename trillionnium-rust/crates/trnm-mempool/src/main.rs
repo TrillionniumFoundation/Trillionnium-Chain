@@ -190,7 +190,13 @@ impl AdmissionGate {
             return AdmitOutcome::Backpressured;
         }
 
-        let accepted_was_retry = self.backpressured_ids.remove(&tx_id);
+        // Fast-path fresh ingress: skip retry-set remove hash probe when we already
+        // know this tx id was not tracked as a deferred retry candidate.
+        let accepted_was_retry = if is_known_retry {
+            self.backpressured_ids.remove(&tx_id)
+        } else {
+            false
+        };
         if accepted_was_retry && self.backpressured_fifo.len() > self.capacity.saturating_mul(4) {
             // Under sustained retry drain with little/no new ingress, stale FIFO markers can
             // accumulate without hitting remember_backpressured() compaction. Compact eagerly
