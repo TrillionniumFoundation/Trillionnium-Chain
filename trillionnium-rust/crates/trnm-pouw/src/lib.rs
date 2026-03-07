@@ -1949,10 +1949,11 @@ mod tests {
             .unwrap_err();
         assert!(matches!(err, PouwError::State(msg) if msg.contains("unexpected proof payload for non-verifiable proof type")));
 
-        // Fail-closed behavior: state must remain Committed and unset result hash.
+        // Fail-closed behavior: state must remain Committed and unset reveal artifacts.
         let task_after = st.get_task(r2.id).unwrap();
         assert_eq!(task_after.status, TaskStatus::Committed);
         assert!(task_after.result_hash.is_none());
+        assert!(task_after.reveal_salt.is_none());
     }
 
     #[test]
