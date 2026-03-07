@@ -375,6 +375,12 @@ impl StateStore {
             .map(|entry| (entry.slash_worker, entry.confirmations))
     }
 
+    pub fn pending_resolve_first_approver(&self, task_id: u64) -> Option<String> {
+        self.pending_resolve_approvals
+            .get(&task_id)
+            .map(|entry| entry.first_approver.clone())
+    }
+
     pub fn get_ref(&self, id: u64) -> Option<ObjectRef> {
         self.objects.get(&id).map(|v| ObjectRef {
             id,
