@@ -625,3 +625,6 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: che
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: web4-frontend-ci-deterministic-env-guard-test" "./scripts/v2/web4_frontend_ci_deterministic_env_guard_test.sh" "ci(gate): add web4-frontend-ci-deterministic-env-guard-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: run-local-release-evidence-deterministic-entry-test" "./scripts/v2/run_local_release_evidence_deterministic_entry_test.sh" "ci(gate): add run-local-release-evidence-deterministic-entry-test regression to quick-check"
