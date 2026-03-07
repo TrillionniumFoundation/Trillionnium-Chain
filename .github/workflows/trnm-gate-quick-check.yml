@@ -49,6 +49,9 @@ jobs:
       # Freeze Python hash randomization so set/dict iteration in shell-driven
       # regression scripts stays deterministic across CI re-runs.
       PYTHONHASHSEED: "0"
+      # Prevent interpreter bytecode cache writes (.pyc/__pycache__) so CI
+      # workspaces stay side-effect free and reruns remain evidence-stable.
+      PYTHONDONTWRITEBYTECODE: "1"
       # Normalize shell/test behavior for tools that branch on CI mode.
       CI: "true"
       # Pin a stable build timestamp for any tooling that emits date metadata

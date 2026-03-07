@@ -20,6 +20,7 @@ required_lines=(
   'LC_MESSAGES: C'
   'LC_MONETARY: C'
   'PYTHONHASHSEED: "0"'
+  'PYTHONDONTWRITEBYTECODE: "1"'
   'CI: "true"'
   'SOURCE_DATE_EPOCH: "1704067200"'
   'timeout-minutes: 45'
