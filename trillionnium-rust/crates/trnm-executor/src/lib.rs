@@ -889,29 +889,33 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
                 .map(|tx| hot_bucket_hint(tx, iters.len()))
                 .unwrap_or(0);
             let sparse_start = {
-                let mut sparse_candidates: Vec<usize> = Vec::new();
                 let mut min_non_zero = usize::MAX;
                 let mut max_depth = 0usize;
-                for (idx, depth) in bucket_depths.iter().copied().enumerate() {
+                for depth in bucket_depths.iter().copied() {
                     if depth == 0 {
                         continue;
                     }
                     max_depth = max_depth.max(depth);
-                    if depth < min_non_zero {
-                        min_non_zero = depth;
-                        sparse_candidates.clear();
-                        sparse_candidates.push(idx);
-                    } else if depth == min_non_zero {
-                        sparse_candidates.push(idx);
-                    }
+                    min_non_zero = min_non_zero.min(depth);
                 }
+
                 if min_non_zero != usize::MAX && max_depth >= min_non_zero.saturating_mul(2) {
                     // When multiple equally sparse buckets exist, rotate the sparse
                     // anti-starvation seed around the first hot-key hint to avoid
                     // repeatedly preferring the lowest bucket index.
-                    sparse_candidates
-                        .into_iter()
-                        .min_by_key(|idx| (idx + iters.len() - first_hint) % iters.len())
+                    let mut best_idx = None;
+                    let mut best_distance = usize::MAX;
+                    for (idx, depth) in bucket_depths.iter().copied().enumerate() {
+                        if depth != min_non_zero {
+                            continue;
+                        }
+                        let distance = (idx + iters.len() - first_hint) % iters.len();
+                        if distance < best_distance {
+                            best_distance = distance;
+                            best_idx = Some(idx);
+                        }
+                    }
+                    best_idx
                 } else {
                     None
                 }
