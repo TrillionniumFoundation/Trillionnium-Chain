@@ -5,7 +5,7 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
 
-TS="$(date +%Y%m%d-%H%M%S)"
+TS="$(date -u +%Y%m%d-%H%M%S)"
 BASE_OUT="${OUT_DIR:-$ROOT/run/health}"
 EVIDENCE_DIR="$BASE_OUT/evidence-$TS"
 SUMMARY="$EVIDENCE_DIR/summary.txt"
