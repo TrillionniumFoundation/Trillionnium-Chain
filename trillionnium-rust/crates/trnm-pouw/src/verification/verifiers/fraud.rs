@@ -304,6 +304,21 @@ mod tests {
     }
 
     #[test]
+    fn fraud_verifier_rejects_duplicate_result_hash_binding_with_quoted_leading_space_fail_closed() {
+        let verifier = FraudVerifier;
+        let mut task = mock_task();
+        task.result_hash = Some([9u8; 32]);
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"FRAUD:{\"task_id\":7,\"worker\":\"worker-fraud\",\"proof_type\":\"fraud\",\"result_hash\":\"0909090909090909090909090909090909090909090909090909090909090909\",\"result_hash\":\" 0909090909090909090909090909090909090909090909090909090909090909\"}"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("duplicate result_hash binding")
+        ));
+    }
+
+    #[test]
     fn fraud_verifier_rejects_unexpected_result_hash_binding_without_context_fail_closed() {
         let verifier = FraudVerifier;
         let task = mock_task();
