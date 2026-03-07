@@ -2076,5 +2076,22 @@ mod tests {
             VerificationResult::Invalid(msg) if msg.contains("task_id")
         ));
     }
+
+    #[test]
+    fn registry_with_builtin_verifiers_fail_closed_when_worker_binding_is_unexpected() {
+        let registry = VerifierRegistry::with_builtin_verifiers();
+
+        let tee_task = task_with_proof_type(ProofType::Tee);
+        let zk_task = task_with_proof_type(ProofType::Zk);
+
+        assert!(matches!(
+            registry.verify(&tee_task, b"TEE:task_id=42,worker=attacker,proof_type=tee,quote=ok"),
+            VerificationResult::Invalid(msg) if msg.contains("unexpected worker binding")
+        ));
+        assert!(matches!(
+            registry.verify(&zk_task, b"ZK:task_id=42,worker=attacker,proof_type=zk,proof=ok"),
+            VerificationResult::Invalid(msg) if msg.contains("unexpected worker binding")
+        ));
+    }
 }
 
