@@ -148,9 +148,10 @@ impl AdmissionGate {
         // Preserve idempotency for immediate repeats of a fairness-deferred id
         // while reservations remain active, even if throughput guard would allow
         // fresh ingress in the current queue state.
+        let is_known_retry = self.backpressured_ids.contains(&tx_id);
         if self.retry_reservations > 0
             && self.last_fairness_deferred == Some(tx_id)
-            && !self.backpressured_ids.contains(&tx_id)
+            && !is_known_retry
         {
             self.metrics.duplicates = self.metrics.duplicates.saturating_add(1);
             self.metrics.backpressure_duplicates =
@@ -170,7 +171,7 @@ impl AdmissionGate {
         if self.retry_reservations > 0
             && free_slots <= self.retry_reservations
             && !self.backpressured_ids.is_empty()
-            && !self.backpressured_ids.contains(&tx_id)
+            && !is_known_retry
         {
 
             // Deferring fresh ingress should not evict older retries from bounded memory,
