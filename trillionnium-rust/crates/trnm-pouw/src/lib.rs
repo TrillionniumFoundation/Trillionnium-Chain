@@ -5643,6 +5643,11 @@ mod tests {
         )
         .expect_err("emergency pause must freeze multisig-member resolve path");
         assert!(matches!(paused_err, PouwError::InvalidTransition));
+        assert_eq!(
+            st.pending_resolve_approval(r5.id),
+            None,
+            "paused resolve attempt must not stage multisig approvals",
+        );
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), 10);
         assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), 0);
         assert_eq!(st.balance_of("challenger"), 90);
@@ -5664,6 +5669,11 @@ mod tests {
         )
         .expect_err("first multisig member must stage resolve after pause clears");
         assert!(matches!(staged_err, PouwError::Unauthorized));
+        assert_eq!(
+            st.pending_resolve_approval(r5.id),
+            Some((true, 1)),
+            "post-pause first signer should stage exactly one slashing approval",
+        );
 
         let r6 = apply_resolve(&mut st, r5, true, "authority".into(), "authority".into())
             .expect("second multisig member must finalize resolve after pause clears");
