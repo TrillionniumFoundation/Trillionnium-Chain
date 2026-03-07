@@ -134,9 +134,17 @@ fn intersects(x: &[ObjectRef], y: &[ObjectRef]) -> bool {
     // Skewed low-footprint path: avoid HashSet allocation when one side has only a
     // handful of keys (common in transfer-like writes against large read domains).
     if small.len() <= 4 {
+        // Duplicate-heavy small footprints can otherwise rescan the large side
+        // multiple times for the same key under hot-key bursts.
+        let mut keys: Vec<u64> = Vec::with_capacity(small.len());
         for a in small {
-            let akey = access_key(a);
-            if large.iter().any(|b| access_key(b) == akey) {
+            let key = access_key(a);
+            if !keys.contains(&key) {
+                keys.push(key);
+            }
+        }
+        for key in keys {
+            if large.iter().any(|b| access_key(b) == key) {
                 return true;
             }
         }
