@@ -19,6 +19,7 @@ required_lines=(
   'LC_CTYPE: C'
   'LC_MESSAGES: C'
   'LC_MONETARY: C'
+  'LC_MEASUREMENT: C'
   'PYTHONHASHSEED: "0"'
   'PYTHONDONTWRITEBYTECODE: "1"'
   'CI: "true"'

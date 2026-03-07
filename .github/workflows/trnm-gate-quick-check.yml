@@ -46,6 +46,9 @@ jobs:
       # Keep locale-driven monetary formatting deterministic in finance-facing
       # report/gate probes (currency symbol/decimal-group separators).
       LC_MONETARY: C
+      # Keep measurement-unit formatting deterministic (metric/imperial labels)
+      # for any locale-aware helpers that may emit operational evidence text.
+      LC_MEASUREMENT: C
       # Freeze Python hash randomization so set/dict iteration in shell-driven
       # regression scripts stays deterministic across CI re-runs.
       PYTHONHASHSEED: "0"
