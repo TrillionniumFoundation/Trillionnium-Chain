@@ -1060,7 +1060,7 @@ pub fn apply_resolve_at_height(
         if let Some(first_approver) = st.pending_resolve_first_approver(task_ref.id) {
             let first_still_authorized = authority_members
                 .iter()
-                .any(|member| member.eq_ignore_ascii_case(&first_approver));
+                .any(|member| *member == first_approver);
             if !first_still_authorized {
                 st.clear_pending_resolve_approval(task_ref.id);
                 return Err(PouwError::Unauthorized);
@@ -6479,6 +6479,65 @@ mod tests {
         let task = st.get_task(r6.id).expect("resolved task must persist");
         assert_eq!(task.status, TaskStatus::Slashed);
         assert_eq!(task.challenge_bond_forfeited, Some(false));
+    }
+
+    #[test]
+    fn resolve_multisig_clears_staged_approval_on_case_drifted_member_rotation_without_escrow_mutation() {
+        // Canonical-account hardening: signer membership uses exact account IDs,
+        // so case-drifted rotations must clear staged approvals fail-closed.
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        set_resolve_authority(&mut st, "authority-a,authority-b");
+
+        let r1 = apply_create_task(&mut st, 8_969, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(8_969, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+        let r5 =
+            apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
+
+        let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+        let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+        let before_challenger = st.balance_of("challenger");
+
+        let staged_err = apply_resolve(
+            &mut st,
+            r5.clone(),
+            true,
+            "authority-a".into(),
+            "authority-a".into(),
+        )
+        .expect_err("first multisig signer should only stage pending approval");
+        assert!(matches!(staged_err, PouwError::Unauthorized));
+        assert_eq!(st.pending_resolve_approval(r5.id), Some((true, 1)));
+
+        // Rotate with case drift for the first approver ID.
+        set_resolve_authority(&mut st, "Authority-A,authority-b");
+
+        let stale_err = apply_resolve(
+            &mut st,
+            r5.clone(),
+            true,
+            "authority-b".into(),
+            "authority-b".into(),
+        )
+        .expect_err("case-drifted membership rotation must clear staged approval fail-closed");
+        assert!(matches!(stale_err, PouwError::Unauthorized));
+        assert_eq!(
+            st.pending_resolve_approval(r5.id),
+            None,
+            "staged approval should be cleared when first approver account id no longer matches exactly",
+        );
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
+        assert_eq!(st.balance_of("challenger"), before_challenger);
     }
 
     #[test]
