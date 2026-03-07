@@ -4,6 +4,9 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+# stabilize log/render ordering across environments for deterministic replay evidence
+export TZ="${TZ:-UTC}"
+export LC_ALL="${LC_ALL:-C}"
 
 RUNS="${RUNS:-5}"
 RUN_TIMEOUT_SEC="${RUN_TIMEOUT_SEC:-120}"
@@ -25,6 +28,8 @@ cat >"$RUN_DIR/replay.sh" <<EOF
 #!/usr/bin/env bash
 set -euo pipefail
 cd "$ROOT"
+export TZ="${TZ:-UTC}"
+export LC_ALL="${LC_ALL:-C}"
 if [[ "$#" -gt 0 ]]; then
   "$@"
 else
