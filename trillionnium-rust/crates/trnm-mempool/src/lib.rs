@@ -144,6 +144,12 @@ impl LaneAdmissionGate {
         }
         out
     }
+    pub fn queued_counts(&self) -> (usize, usize, usize) {
+        let normal = self.normal.queue.len();
+        let critical = self.critical.queue.len();
+        (normal, critical, normal + critical)
+    }
+
     pub fn pop_ready(&mut self) -> Option<u64> {
         let prefer_normal = self.critical_served_streak >= self.critical_burst_limit
             && !self.normal.queue.is_empty();
@@ -486,5 +492,27 @@ mod tests {
         assert_eq!(g.admit(1, IngressClass::Critical), AdmitOutcome::Backpressured);
         assert_eq!(g.admit(2, IngressClass::Critical), AdmitOutcome::Backpressured);
         assert_eq!(g.pop_ready(), None);
+    }
+
+    #[test]
+    fn queued_counts_track_spillover_and_drain() {
+        let mut g = LaneAdmissionGate::new(4, 1);
+
+        assert_eq!(g.queued_counts(), (0, 0, 0));
+
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(50, IngressClass::Critical), AdmitOutcome::Accepted);
+        // Critical reserve full; tx 51 spills into normal queue.
+        assert_eq!(g.admit(51, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (3, 1, 4));
+
+        assert_eq!(g.pop_ready(), Some(50));
+        assert_eq!(g.queued_counts(), (3, 0, 3));
+
+        assert_eq!(g.pop_ready(), Some(1));
+        assert_eq!(g.pop_ready(), Some(2));
+        assert_eq!(g.pop_ready(), Some(51));
+        assert_eq!(g.queued_counts(), (0, 0, 0));
     }
 }
