@@ -326,18 +326,30 @@ impl StateStore {
         slash_worker: bool,
         approver: &str,
     ) -> Result<bool, String> {
+        let approver_trimmed = approver.trim();
+        if approver_trimmed.is_empty() {
+            return Err("resolve approval approver must be non-empty".into());
+        }
+        if approver_trimmed != approver || approver_trimmed.chars().any(|c| c.is_whitespace()) {
+            return Err("resolve approval approver must not contain whitespace".into());
+        }
+
         let entry =
             self.pending_resolve_approvals
                 .entry(task_id)
                 .or_insert(PendingResolveApproval {
                     slash_worker,
                     confirmations: 0,
-                    first_approver: approver.to_string(),
+                    first_approver: approver_trimmed.to_string(),
                 });
         if entry.slash_worker != slash_worker {
             return Err("resolve approval decision mismatch".into());
         }
-        if entry.confirmations > 0 && entry.first_approver.eq_ignore_ascii_case(approver) {
+        if entry.confirmations > 0
+            && entry
+                .first_approver
+                .eq_ignore_ascii_case(approver_trimmed)
+        {
             return Err("resolve approval requires distinct approver".into());
         }
         entry.confirmations = entry.confirmations.saturating_add(1);
@@ -1304,6 +1316,27 @@ mod tests {
             st.pending_resolve_approval(77),
             Some((true, 1)),
             "case-drift duplicate must not increase confirmation count"
+        );
+    }
+
+    #[test]
+    fn resolve_approval_rejects_whitespace_drift_approver_without_mutation() {
+        let mut st = StateStore::new();
+
+        let first = st
+            .stage_or_confirm_resolve_approval(78, true, "authority-a")
+            .expect("first approval stage should succeed");
+        assert!(!first);
+        assert_eq!(st.pending_resolve_approval(78), Some((true, 1)));
+
+        let whitespace_err = st
+            .stage_or_confirm_resolve_approval(78, true, " authority-a ")
+            .expect_err("whitespace-drift approver must be rejected");
+        assert!(whitespace_err.contains("must not contain whitespace"));
+        assert_eq!(
+            st.pending_resolve_approval(78),
+            Some((true, 1)),
+            "whitespace-drift approver must not increase confirmation count"
         );
     }
 
