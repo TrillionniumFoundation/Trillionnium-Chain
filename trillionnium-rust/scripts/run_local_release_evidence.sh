@@ -47,6 +47,14 @@ find_challenge_reexec_entry() {
   local repo_root
   repo_root="$(cd "$ROOT/.." && pwd)"
 
+  if [[ -n "${TRNM_CHALLENGE_REEXEC_ENTRY:-}" ]]; then
+    if [[ -f "$TRNM_CHALLENGE_REEXEC_ENTRY" ]]; then
+      echo "$TRNM_CHALLENGE_REEXEC_ENTRY"
+      return 0
+    fi
+    return 1
+  fi
+
   local candidates=(
     "$ROOT/scripts/run_challenge_reexec.sh"
     "$ROOT/scripts/check_challenge_reexec.sh"
@@ -63,18 +71,6 @@ find_challenge_reexec_entry() {
       return 0
     fi
   done
-
-  f="$(find "$ROOT/scripts" -maxdepth 1 -type f \( -name '*challenge*reexec*.sh' -o -name '*reexec*challenge*.sh' \) | head -n 1 || true)"
-  if [[ -n "$f" ]]; then
-    echo "$f"
-    return 0
-  fi
-
-  f="$(find "$repo_root/scripts" -maxdepth 1 -type f \( -name '*challenge*reexec*.sh' -o -name '*reexec*challenge*.sh' \) | head -n 1 || true)"
-  if [[ -n "$f" ]]; then
-    echo "$f"
-    return 0
-  fi
 
   return 1
 }
