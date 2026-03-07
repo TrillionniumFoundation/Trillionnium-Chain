@@ -491,13 +491,13 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
         self.circuit_state
     }
 
-    fn increment_retry_exhausted_total(&self) {
-        let mut current = self.retry_exhausted_total.load(Ordering::Relaxed);
+    fn increment_atomic_saturating(counter: &AtomicU64) {
+        let mut current = counter.load(Ordering::Relaxed);
         loop {
             if current == u64::MAX {
                 return;
             }
-            match self.retry_exhausted_total.compare_exchange_weak(
+            match counter.compare_exchange_weak(
                 current,
                 current + 1,
                 Ordering::Relaxed,
@@ -507,6 +507,10 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
                 Err(observed) => current = observed,
             }
         }
+    }
+
+    fn increment_retry_exhausted_total(&self) {
+        Self::increment_atomic_saturating(&self.retry_exhausted_total);
     }
 
     #[cfg(test)]
@@ -774,7 +778,7 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
                 self.retry.circuit_breaker_threshold,
                 until_unix_ms
             );
-            self.circuit_open_total.fetch_add(1, Ordering::Relaxed);
+            Self::increment_atomic_saturating(&self.circuit_open_total);
         }
     }
 
@@ -784,7 +788,7 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
                 self.circuit_state = CircuitState::Closed;
                 self.consecutive_retry_exhausted = 0;
                 eprintln!("[reliability] circuit recovered at {}", now_unix_ms);
-                self.circuit_recovered_total.fetch_add(1, Ordering::Relaxed);
+                Self::increment_atomic_saturating(&self.circuit_recovered_total);
             }
         }
     }
@@ -1994,5 +1998,25 @@ mod tests {
         engine.increment_retry_exhausted_total();
 
         assert_eq!(engine.retry_exhausted_total(), u64::MAX);
+    }
+
+    #[test]
+    fn circuit_counters_increment_saturates_at_u64_max() {
+        let store = InMemoryReliabilityStore::default();
+        let engine = ReliabilityEngine::new(store, RetryConfig::default());
+
+        engine.circuit_open_total.store(u64::MAX, Ordering::Relaxed);
+        ReliabilityEngine::<InMemoryReliabilityStore>::increment_atomic_saturating(
+            &engine.circuit_open_total,
+        );
+        assert_eq!(engine.circuit_open_total(), u64::MAX);
+
+        engine
+            .circuit_recovered_total
+            .store(u64::MAX, Ordering::Relaxed);
+        ReliabilityEngine::<InMemoryReliabilityStore>::increment_atomic_saturating(
+            &engine.circuit_recovered_total,
+        );
+        assert_eq!(engine.circuit_recovered_total(), u64::MAX);
     }
 }
