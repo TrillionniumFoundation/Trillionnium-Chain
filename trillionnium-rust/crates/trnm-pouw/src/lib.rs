@@ -1151,6 +1151,7 @@ pub fn apply_timeout(
 
     preflight_timeout_transfers(st, &task, forfeit_challenge_bond, refund_challenge_bond)?;
 
+    let task_id = task_ref.id;
     let next_ref = st
         .update_task(task_ref, task.clone())
         .map_err(map_state_err)?;
@@ -1172,6 +1173,9 @@ pub fn apply_timeout(
     }
 
     settle_worker_stake_for_terminal_state(st, &task)?;
+    // Hygiene boundary: timeout finalization must clear any staged multisig resolve
+    // approvals so stale partial authorizations cannot linger after terminal state.
+    st.clear_pending_resolve_approval(task_id);
 
     Ok(next_ref)
 }
@@ -2931,6 +2935,61 @@ mod tests {
         let r6 = apply_timeout(&mut st, r5, 311).unwrap();
         let task = st.get_task(r6.id).unwrap();
         assert_eq!(task.status, TaskStatus::Completed);
+    }
+
+    #[test]
+    fn timeout_clears_stale_multisig_pending_approval_after_challenged_finalization() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        set_resolve_authority(&mut st, "authority-a,authority-b");
+
+        let r1 = apply_create_task(&mut st, 19121, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(19121, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 =
+            apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
+        let r4 = apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110)
+            .unwrap();
+        let r5 = apply_challenge_at_height(
+            &mut st,
+            r4,
+            "challenger".into(),
+            10,
+            "challenger".into(),
+            210,
+        )
+        .unwrap();
+
+        let before_total = st.balance_of("challenger")
+            + st.balance_of(CHALLENGE_ESCROW_ACCOUNT)
+            + st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+
+        let staged_err = apply_resolve_at_height(
+            &mut st,
+            r5.clone(),
+            true,
+            "authority-a".into(),
+            "authority-a".into(),
+            211,
+        )
+        .expect_err("first multisig signer should only stage pending approval");
+        assert!(matches!(staged_err, PouwError::Unauthorized));
+        assert_eq!(st.pending_resolve_approval(r5.id), Some((true, 1)));
+
+        let r6 = apply_timeout(&mut st, r5, 311).expect("timeout should finalize challenged task");
+        let task = st.get_task(r6.id).expect("timed out task must exist");
+        assert_eq!(task.status, TaskStatus::Completed);
+        assert_eq!(task.challenge_bond_forfeited, Some(false));
+        assert_eq!(st.pending_resolve_approval(r6.id), None);
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), 0);
+
+        let after_total = st.balance_of("challenger")
+            + st.balance_of(CHALLENGE_ESCROW_ACCOUNT)
+            + st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+        assert_eq!(after_total, before_total);
     }
 
     #[test]
