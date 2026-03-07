@@ -3093,6 +3093,7 @@ mod tests {
             "authority, authority2",
             "authority;authority2",
             "authority,authority2;authority3",
+            "authority；authority2",
             "authority，authority2",
             "authority、authority2",
         ]
