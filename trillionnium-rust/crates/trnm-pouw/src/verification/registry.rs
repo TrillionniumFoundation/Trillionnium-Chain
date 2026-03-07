@@ -2029,4 +2029,32 @@ mod tests {
             VerificationResult::Invalid(msg) if msg.contains("proof_type")
         ));
     }
+
+    #[test]
+    fn registry_with_builtin_verifiers_fail_closed_when_task_id_binding_missing() {
+        let registry = VerifierRegistry::with_builtin_verifiers();
+
+        let fraud_task = task_with_proof_type(ProofType::Fraud);
+        let tee_task = task_with_proof_type(ProofType::Tee);
+
+        let mut zk_task = task_with_proof_type(ProofType::Zk);
+        zk_task.result_hash = Some([0x44; 32]);
+
+        assert!(matches!(
+            registry.verify(&fraud_task, b"FRAUD:worker=alice,proof_type=fraud,challenge=1"),
+            VerificationResult::Invalid(msg) if msg.contains("task_id")
+        ));
+        assert!(matches!(
+            registry.verify(&tee_task, b"TEE:proof_type=tee,quote=ok"),
+            VerificationResult::Invalid(msg) if msg.contains("task_id")
+        ));
+        assert!(matches!(
+            registry.verify(
+                &zk_task,
+                b"ZK:proof_type=zk,result_hash=4444444444444444444444444444444444444444444444444444444444444444,proof=ok"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("task_id")
+        ));
+    }
 }
+
