@@ -25,6 +25,7 @@ required_lines=(
   'CI: "true"'
   'PYTHONIOENCODING: "UTF-8"'
   'SOURCE_DATE_EPOCH: "1704067200"'
+  'GZIP: "-n"'
   'DEBIAN_FRONTEND: noninteractive'
   'timeout-minutes: 45'
 )
