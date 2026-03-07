@@ -15,7 +15,7 @@ RUN_DIR="run/parallel-sanity-flaky-${RUN_TAG}"
 mkdir -p "$RUN_DIR"
 
 CMD=(
-  cargo run -q -p trnm-node --
+  cargo run --locked -q -p trnm-node --
   --config configs/node1.toml
   --block-ms 1
   --max-blocks 3
@@ -33,7 +33,7 @@ export LC_ALL="${LC_ALL:-C}"
 if [[ "$#" -gt 0 ]]; then
   "$@"
 else
-  cargo run -q -p trnm-node -- \
+  cargo run --locked -q -p trnm-node -- \
     --config configs/node1.toml \
     --block-ms 1 \
     --max-blocks 3 \
