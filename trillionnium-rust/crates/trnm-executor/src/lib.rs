@@ -911,13 +911,20 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
                     // repeatedly preferring the lowest bucket index.
                     let mut best_idx = None;
                     let mut best_distance = usize::MAX;
+                    let mut best_counter_clockwise = usize::MAX;
                     for (idx, depth) in bucket_depths.iter().copied().enumerate() {
                         if depth != min_non_zero {
                             continue;
                         }
-                        let distance = (idx + iters.len() - first_hint) % iters.len();
-                        if distance < best_distance {
+                        let clockwise = (idx + iters.len() - first_hint) % iters.len();
+                        let counter_clockwise = (first_hint + iters.len() - idx) % iters.len();
+                        let distance = clockwise.min(counter_clockwise);
+                        if distance < best_distance
+                            || (distance == best_distance
+                                && counter_clockwise < best_counter_clockwise)
+                        {
                             best_distance = distance;
+                            best_counter_clockwise = counter_clockwise;
                             best_idx = Some(idx);
                         }
                     }
@@ -1221,6 +1228,21 @@ mod tests {
         // Both bucket 1 and 6 are equally sparse; prefer the one nearest the first
         // hot-key hint to avoid fixed low-index sparse bias across batches.
         assert_eq!(txs.first().map(|t| t.id), Some(404));
+    }
+
+    #[test]
+    fn hot_bucket_interleave_sparse_tie_prefers_nearest_bucket_across_ring_wrap() {
+        let mut txs = vec![
+            tx(411, vec![], vec![o(0)]),  // first hot hint bucket 0
+            tx(412, vec![], vec![o(8)]),  // same hot bucket (depth 2)
+            tx(413, vec![], vec![o(1)]),  // sparse bucket +1 clockwise
+            tx(414, vec![], vec![o(7)]),  // sparse bucket -1 counter-clockwise
+        ];
+
+        reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
+        // When sparse buckets straddle the ring boundary, prefer the truly nearest
+        // bucket instead of always scanning clockwise from the first hint.
+        assert_eq!(txs.first().map(|t| t.id), Some(414));
     }
 
     #[test]
