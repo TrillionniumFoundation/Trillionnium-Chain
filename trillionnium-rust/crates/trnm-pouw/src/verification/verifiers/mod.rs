@@ -580,6 +580,12 @@ mod tests {
     }
 
     #[test]
+    fn find_token_field_rejects_quoted_value_with_leading_space_after_quote() {
+        let body = r#"worker=\" worker1\""#;
+        assert_eq!(find_token_field(body, "worker"), None);
+    }
+
+    #[test]
     fn find_token_field_rejects_unclosed_quoted_value() {
         let body = r#"proof_type=\"tee"#;
         assert_eq!(find_token_field(body, "proof_type"), None);
