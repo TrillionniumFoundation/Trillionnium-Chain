@@ -1404,6 +1404,29 @@ mod tests {
     }
 
     #[test]
+    fn dedup_quota_limit_rejects_fresh_ingress_without_breaking_duplicate_ack_path() {
+        let store = InMemoryReliabilityStore::with_config(InMemoryReliabilityStoreConfig {
+            max_dedup_entries: Some(1),
+            ..InMemoryReliabilityStoreConfig::default()
+        });
+        let mut engine = ReliabilityEngine::new(store, RetryConfig::default());
+
+        let first = engine.receive(mk_msg("alice", "s1", 1), 1_000);
+        assert_eq!(first.code, AckCode::Accepted);
+
+        // New dedup domains should be backpressured once quota is full.
+        let blocked = engine.receive(mk_msg("bob", "s2", 9), 1_001);
+        assert_eq!(blocked.code, AckCode::BadRequest);
+        assert!(blocked.detail.contains("dedup limit reached (1)"));
+
+        // Existing dedup domains must still resolve to Duplicate rather than
+        // quota errors so callers keep idempotent semantics under pressure.
+        let duplicate = engine.receive(mk_msg("alice", "s1", 1), 1_002);
+        assert_eq!(duplicate.code, AckCode::Duplicate);
+        assert_eq!(duplicate.ack_id, first.ack_id);
+    }
+
+    #[test]
     fn empty_session_retained_until_cleanup_ttl() {
         let store = InMemoryReliabilityStore::with_config(InMemoryReliabilityStoreConfig {
             empty_session_cleanup: EmptySessionCleanupPolicy::RetainForMs(200),
