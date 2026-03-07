@@ -73,7 +73,13 @@ impl AdmissionGate {
     }
 
     fn remember_backpressured_without_eviction(&mut self, tx_id: u64) {
-        if self.backpressured_ids.contains(&tx_id) || self.backpressured_ids.len() < self.capacity {
+        // Known retry ids are already tracked; avoid a second hash-table probe/insert
+        // attempt on the hot fairness-deferral path.
+        if self.backpressured_ids.contains(&tx_id) {
+            return;
+        }
+
+        if self.backpressured_ids.len() < self.capacity {
             self.remember_backpressured(tx_id);
         }
     }
