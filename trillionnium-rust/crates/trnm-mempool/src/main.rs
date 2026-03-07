@@ -107,16 +107,17 @@ impl AdmissionGate {
 
         // Keep fairness reservations bounded to currently known retry population.
         // This guards restored/corrupted state from over-deferring free ingress.
-        let retry_budget = self.backpressured_ids.len().min(self.capacity);
+        let known_retry_count = self.backpressured_ids.len();
+        let retry_budget = known_retry_count.min(self.capacity);
         self.retry_reservations = self.retry_reservations.min(retry_budget);
-        if self.backpressured_ids.is_empty() {
+        if known_retry_count == 0 {
             // Restored/corrupted state may carry stale fairness marker + reservation even
             // when retry memory is empty. Clear both so free ingress is never mis-deduped.
             self.retry_reservations = 0;
             self.last_fairness_deferred = None;
         }
         if self.retry_reservations == 0 {
-            if self.backpressured_ids.is_empty() {
+            if known_retry_count == 0 {
                 self.last_fairness_deferred = None;
             } else if self.last_fairness_deferred == Some(tx_id) {
                 // Preserve idempotency for immediate repeats of a just-deferred fresh id,
@@ -157,7 +158,7 @@ impl AdmissionGate {
         // Hot fresh-ingress path commonly runs with an empty retry set. Skip the
         // hash probe in that case so admission stays branch/lightweight under
         // free-ingress bursts.
-        let has_known_retries = !self.backpressured_ids.is_empty();
+        let has_known_retries = known_retry_count != 0;
         let is_known_retry = has_known_retries && self.backpressured_ids.contains(&tx_id);
         if self.retry_reservations > 0
             && self.last_fairness_deferred == Some(tx_id)
@@ -180,7 +181,7 @@ impl AdmissionGate {
         let free_slots = self.capacity.saturating_sub(self.queue.len());
         if self.retry_reservations > 0
             && free_slots <= self.retry_reservations
-            && !self.backpressured_ids.is_empty()
+            && has_known_retries
             && !is_known_retry
         {
 
