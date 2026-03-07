@@ -869,14 +869,40 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
             // avoid extra O(n log n) sorting cost.
 
             // Stable round-robin with move semantics (avoid per-tx clone cost).
+            let bucket_depths: Vec<usize> = buckets.iter().map(|b| b.len()).collect();
             let mut iters: Vec<std::vec::IntoIter<Tx>> =
                 buckets.into_iter().map(|b| b.into_iter()).collect();
             let mut merged = Vec::with_capacity(txs.len());
-            // Seed the initial bucket probe from the first tx hot-key hint so
-            // repeated batches do not always favor bucket 0 at cycle start.
-            let mut rr_start = txs
-                .first()
-                .map(|tx| hot_bucket_hint(tx, iters.len()))
+            // Under highly skewed hot-bucket loads, start from the sparsest non-empty
+            // bucket so low-volume conflict domains are serviced promptly instead of
+            // always waiting behind the dominant lane at cycle start.
+            let sparse_start = {
+                let mut min_bucket: Option<(usize, usize)> = None;
+                let mut min_non_zero = usize::MAX;
+                let mut max_depth = 0usize;
+                for (idx, depth) in bucket_depths.iter().copied().enumerate() {
+                    if depth == 0 {
+                        continue;
+                    }
+                    min_non_zero = min_non_zero.min(depth);
+                    max_depth = max_depth.max(depth);
+                    min_bucket = match min_bucket {
+                        Some((best_idx, best_depth)) if best_depth <= depth => {
+                            Some((best_idx, best_depth))
+                        }
+                        _ => Some((idx, depth)),
+                    };
+                }
+                if min_non_zero != usize::MAX && max_depth >= min_non_zero.saturating_mul(3) {
+                    min_bucket.map(|(idx, _)| idx)
+                } else {
+                    None
+                }
+            };
+            // Seed the initial bucket probe from either sparse anti-starvation hint
+            // or first tx hot-key hint so repeated batches do not always favor bucket 0.
+            let mut rr_start = sparse_start
+                .or_else(|| txs.first().map(|tx| hot_bucket_hint(tx, iters.len())))
                 .unwrap_or(0);
             // Rotate the round-robin start bucket each pass to reduce consistent
             // first-bucket preference under uneven bucket depths.
@@ -1129,6 +1155,19 @@ mod tests {
         let mut txs = Vec::<Tx>::new();
         reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
         assert!(txs.is_empty());
+    }
+
+    #[test]
+    fn hot_bucket_interleave_prefers_sparse_non_empty_bucket_under_heavy_skew() {
+        let mut txs = vec![
+            tx(201, vec![], vec![o(0)]),  // hot bucket (depth 3)
+            tx(202, vec![], vec![o(8)]),  // same hot bucket
+            tx(203, vec![], vec![o(16)]), // same hot bucket
+            tx(204, vec![], vec![o(3)]),  // sparse bucket (depth 1)
+        ];
+
+        reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
+        assert_eq!(txs.first().map(|t| t.id), Some(204));
     }
 
     #[test]
