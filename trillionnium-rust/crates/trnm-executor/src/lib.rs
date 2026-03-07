@@ -835,6 +835,12 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
             if txs.len() <= 1 {
                 return;
             }
+            // Micro-batches (2-3 txs) do not benefit from bucket interleave and only pay
+            // allocation/probing overhead. Keep original order for better free-ingress latency
+            // at low concurrency while preserving deterministic behavior.
+            if txs.len() < 4 {
+                return;
+            }
             // Cap bucket fanout by input size: for tiny batches this avoids allocating
             // and probing empty buckets while preserving the same interleave semantics.
             let buckets_n = hot_bucket_count().min(txs.len());
@@ -1101,6 +1107,18 @@ mod tests {
         let mut txs = Vec::<Tx>::new();
         reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
         assert!(txs.is_empty());
+    }
+
+    #[test]
+    fn hot_bucket_interleave_skips_micro_batches_to_preserve_low_latency_order() {
+        let mut txs = vec![
+            tx(21, vec![], vec![o(8)]),
+            tx(22, vec![], vec![o(1)]),
+            tx(23, vec![], vec![o(16)]),
+        ];
+
+        reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
+        assert_eq!(txs.iter().map(|t| t.id).collect::<Vec<_>>(), vec![21, 22, 23]);
     }
 
     #[test]
