@@ -139,21 +139,33 @@ impl AdmissionGate {
             return AdmitOutcome::Backpressured;
         }
 
+        // Preserve idempotency for immediate repeats of a fairness-deferred id
+        // while reservations remain active, even if throughput guard would allow
+        // fresh ingress in the current queue state.
+        if self.retry_reservations > 0
+            && self.last_fairness_deferred == Some(tx_id)
+            && !self.backpressured_ids.contains(&tx_id)
+        {
+            self.metrics.duplicates = self.metrics.duplicates.saturating_add(1);
+            self.metrics.backpressure_duplicates =
+                self.metrics.backpressure_duplicates.saturating_add(1);
+            return AdmitOutcome::Duplicate;
+        }
+
         // Fairness guard: once we have known backpressured retries, reserve newly
         // opened capacity for them first. Fresh ids are briefly backpressured so
         // retry traffic cannot be perpetually starved by new ingress.
+        //
+        // Throughput guard: only defer when admitting fresh ingress would consume a
+        // slot that must remain reserved for retry traffic. If there are more free
+        // slots than retry reservations, admit immediately to avoid unnecessary
+        // free-ingress throttling.
+        let free_slots = self.capacity.saturating_sub(self.queue.len());
         if self.retry_reservations > 0
+            && free_slots <= self.retry_reservations
             && !self.backpressured_ids.is_empty()
             && !self.backpressured_ids.contains(&tx_id)
         {
-            if self.last_fairness_deferred == Some(tx_id) {
-                self.metrics.duplicates = self.metrics.duplicates.saturating_add(1);
-                // Fairness deferral duplicates are still backpressure-induced retries;
-                // account them in backpressure duplicate telemetry for quota tuning.
-                self.metrics.backpressure_duplicates =
-                    self.metrics.backpressure_duplicates.saturating_add(1);
-                return AdmitOutcome::Duplicate;
-            }
 
             // Deferring fresh ingress should not evict older retries from bounded memory,
             // otherwise long-waiting retries can lose their anti-starvation preference.
@@ -448,12 +460,35 @@ mod tests {
         assert_eq!(gate.pop_ready(), Some(1));
         assert_eq!(gate.pop_ready(), Some(2));
 
-        // Only one fresh ingress should be deferred; the second should progress.
-        assert_eq!(gate.admit(10), AdmitOutcome::Backpressured);
+        // With spare capacity beyond the one retry reservation, fresh ingress
+        // should progress without deferral.
+        assert_eq!(gate.admit(10), AdmitOutcome::Accepted);
         assert_eq!(gate.admit(11), AdmitOutcome::Accepted);
 
         let m = gate.metrics();
-        assert_eq!(m.fairness_deferrals, 1);
+        assert_eq!(m.fairness_deferrals, 0);
+    }
+
+    #[test]
+    fn fairness_reservation_preserves_free_ingress_when_spare_capacity_exists() {
+        let mut gate = AdmissionGate::new(4);
+        assert_eq!(gate.admit(1), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(2), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(3), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(4), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(9), AdmitOutcome::Backpressured);
+
+        // Two slots open while only one retry id is known.
+        assert_eq!(gate.pop_ready(), Some(1));
+        assert_eq!(gate.pop_ready(), Some(2));
+
+        // Queue now has two free slots. Fresh ingress should proceed without deferral
+        // because one slot can still remain reserved for retry traffic.
+        assert_eq!(gate.admit(10), AdmitOutcome::Accepted);
+        assert_eq!(gate.metrics().fairness_deferrals, 0);
+
+        // Known retry can still consume the reserved slot.
+        assert_eq!(gate.admit(9), AdmitOutcome::Accepted);
     }
 
     #[test]
@@ -620,14 +655,15 @@ mod tests {
         assert_eq!(gate.pop_ready(), Some(2));
         assert_eq!(gate.pop_ready(), Some(3));
 
-        // Only two fresh admissions should be deferred; later fresh ingress must progress.
-        assert_eq!(gate.admit(1000), AdmitOutcome::Backpressured);
-        assert_eq!(gate.admit(1001), AdmitOutcome::Backpressured);
+        // Spare capacity exceeds retry reservation budget, so fresh ingress should
+        // proceed without additional fairness deferrals.
+        assert_eq!(gate.admit(1000), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(1001), AdmitOutcome::Accepted);
         assert_eq!(gate.admit(1002), AdmitOutcome::Accepted);
-        assert_eq!(gate.admit(1003), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(1003), AdmitOutcome::Backpressured);
 
         let m = gate.metrics();
-        assert_eq!(m.fairness_deferrals, 2);
+        assert_eq!(m.fairness_deferrals, 0);
     }
 
     #[test]
