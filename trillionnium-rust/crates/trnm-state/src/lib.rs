@@ -1234,6 +1234,53 @@ mod tests {
     }
 
     #[test]
+    fn resolve_approval_requires_two_distinct_approvers_before_ready() {
+        let mut st = StateStore::new();
+
+        let first = st
+            .stage_or_confirm_resolve_approval(42, true, "authority-a")
+            .expect("first approval stage should succeed");
+        assert!(!first, "single approver must not finalize resolve approval");
+        assert_eq!(st.pending_resolve_approval(42), Some((true, 1)));
+
+        let dup_err = st
+            .stage_or_confirm_resolve_approval(42, true, "authority-a")
+            .expect_err("same approver must not satisfy multi-party confirmation");
+        assert!(dup_err.contains("distinct approver"));
+        assert_eq!(st.pending_resolve_approval(42), Some((true, 1)));
+
+        let second = st
+            .stage_or_confirm_resolve_approval(42, true, "authority-b")
+            .expect("second distinct approver should finalize");
+        assert!(second, "second distinct approver must finalize resolve approval");
+        assert_eq!(st.pending_resolve_approval(42), Some((true, 2)));
+
+        st.clear_pending_resolve_approval(42);
+        assert!(st.pending_resolve_approval(42).is_none());
+    }
+
+    #[test]
+    fn resolve_approval_rejects_decision_mismatch_without_mutation() {
+        let mut st = StateStore::new();
+
+        let first = st
+            .stage_or_confirm_resolve_approval(7, false, "authority-a")
+            .expect("initial non-slash approval should stage");
+        assert!(!first);
+        assert_eq!(st.pending_resolve_approval(7), Some((false, 1)));
+
+        let mismatch = st
+            .stage_or_confirm_resolve_approval(7, true, "authority-b")
+            .expect_err("mismatched slash decision must fail closed");
+        assert!(mismatch.contains("decision mismatch"));
+        assert_eq!(
+            st.pending_resolve_approval(7),
+            Some((false, 1)),
+            "decision mismatch must not mutate staged confirmation"
+        );
+    }
+
+    #[test]
     fn governance_minimal_state_machine() {
         let mut st = StateStore::new();
         let p = GovProposalObject {
