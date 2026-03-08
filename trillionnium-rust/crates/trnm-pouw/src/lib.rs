@@ -1096,7 +1096,7 @@ pub fn apply_resolve_at_height(
         }
 
         let approved = st
-            .stage_or_confirm_resolve_approval(task_ref.id, slash_worker, signer_trimmed)
+            .stage_or_confirm_resolve_approval(task_ref.id, slash_worker, signer_trimmed, authority_trimmed)
             .map_err(|_| PouwError::Unauthorized)?;
         if !approved {
             return Err(PouwError::Unauthorized);
@@ -7676,6 +7676,89 @@ mod tests {
             "authority-c".into(),
         )
         .expect("second rotated signer should finalize terminal settlement");
+        assert_eq!(st.pending_resolve_approval(r6.id), None);
+        let task = st.get_task(r6.id).expect("resolved task must persist");
+        assert_eq!(task.status, TaskStatus::Slashed);
+        assert_eq!(task.challenge_bond_forfeited, Some(false));
+    }
+
+    #[test]
+    fn resolve_multisig_rotation_that_keeps_first_member_still_clears_stale_staging_before_escrow_settlement() {
+        // Governance hardening: any signer-set rotation must invalidate prior staged approvals,
+        // even if the original first approver remains in the new multisig set.
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        set_resolve_authority(&mut st, "authority-a,authority-b");
+
+        let r1 = apply_create_task(&mut st, 8_970, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(8_970, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+        let r5 =
+            apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
+
+        let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+        let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+        let before_challenger = st.balance_of("challenger");
+
+        let staged_err = apply_resolve(
+            &mut st,
+            r5.clone(),
+            true,
+            "authority-a".into(),
+            "authority-a".into(),
+        )
+        .expect_err("first multisig signer should only stage pending approval");
+        assert!(matches!(staged_err, PouwError::Unauthorized));
+        assert_eq!(st.pending_resolve_approval(r5.id), Some((true, 1)));
+
+        // Rotate membership while keeping authority-a present.
+        set_resolve_authority(&mut st, "authority-a,authority-c");
+
+        let stale_err = apply_resolve(
+            &mut st,
+            r5.clone(),
+            true,
+            "authority-c".into(),
+            "authority-c".into(),
+        )
+        .expect_err("rotation must clear stale staged approval even when first signer remains in set");
+        assert!(matches!(stale_err, PouwError::Unauthorized));
+        assert_eq!(
+            st.pending_resolve_approval(r5.id),
+            None,
+            "any authority-set rotation must clear stale staged approvals",
+        );
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
+        assert_eq!(st.balance_of("challenger"), before_challenger);
+
+        let staged_again_err = apply_resolve(
+            &mut st,
+            r5.clone(),
+            true,
+            "authority-a".into(),
+            "authority-a".into(),
+        )
+        .expect_err("first signer in rotated set should re-stage from empty state");
+        assert!(matches!(staged_again_err, PouwError::Unauthorized));
+        assert_eq!(st.pending_resolve_approval(r5.id), Some((true, 1)));
+
+        let r6 = apply_resolve(
+            &mut st,
+            r5,
+            true,
+            "authority-c".into(),
+            "authority-c".into(),
+        )
+        .expect("second signer in rotated set should finalize terminal settlement");
         assert_eq!(st.pending_resolve_approval(r6.id), None);
         let task = st.get_task(r6.id).expect("resolved task must persist");
         assert_eq!(task.status, TaskStatus::Slashed);
