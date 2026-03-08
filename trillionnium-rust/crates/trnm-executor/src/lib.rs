@@ -871,18 +871,22 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
             // and probing empty buckets while preserving the same interleave semantics.
             let buckets_n = hot_bucket_count().min(txs.len());
             let mut buckets: Vec<Vec<Tx>> = vec![Vec::new(); buckets_n];
+            let mut non_empty_buckets = 0usize;
 
             for tx in txs.iter().cloned() {
                 // Prefer write-set as stronger conflict signal; fold a second key when present
                 // to reduce bucket skew for mixed workloads.
                 let bucket = hot_bucket_hint(&tx, buckets_n);
-                buckets[bucket].push(tx);
+                let target = &mut buckets[bucket];
+                if target.is_empty() {
+                    non_empty_buckets += 1;
+                }
+                target.push(tx);
             }
 
             // Degenerate hotspot fast path: if all txs landed in the same bucket,
             // round-robin interleave would reproduce the original order while paying
             // n-bucket probing overhead. Keep stable input order for lower scheduler cost.
-            let non_empty_buckets = buckets.iter().filter(|b| !b.is_empty()).count();
             if non_empty_buckets <= 1 {
                 return;
             }
