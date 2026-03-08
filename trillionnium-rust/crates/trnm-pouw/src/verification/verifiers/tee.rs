@@ -452,6 +452,21 @@ mod tests {
     }
 
     #[test]
+    fn tee_verifier_rejects_unexpected_worker_binding_without_context_fail_closed() {
+        let verifier = TeeVerifier;
+        let mut task = mock_task();
+        task.worker = None;
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,quote=abc"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("unexpected worker binding")
+        ));
+    }
+
+    #[test]
     fn tee_verifier_accepts_legacy_receipt_proof_type_alias() {
         let verifier = TeeVerifier;
         let task = mock_task();
