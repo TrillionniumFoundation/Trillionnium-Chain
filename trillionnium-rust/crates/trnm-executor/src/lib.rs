@@ -904,21 +904,19 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
             // avoid extra O(n log n) sorting cost.
 
             // Stable round-robin with move semantics (avoid per-tx clone cost).
-            let bucket_depths: Vec<usize> = buckets.iter().map(|b| b.len()).collect();
-            let mut iters: Vec<std::vec::IntoIter<Tx>> =
-                buckets.into_iter().map(|b| b.into_iter()).collect();
+            let n = buckets.len();
             let mut merged = Vec::with_capacity(txs.len());
             // Under highly skewed hot-bucket loads, start from the sparsest non-empty
             // bucket so low-volume conflict domains are serviced promptly instead of
             // always waiting behind the dominant lane at cycle start.
             let first_hint = txs
                 .first()
-                .map(|tx| hot_bucket_hint(tx, iters.len()))
+                .map(|tx| hot_bucket_hint(tx, n))
                 .unwrap_or(0);
             let sparse_start = {
                 let mut min_non_zero = usize::MAX;
                 let mut max_depth = 0usize;
-                for depth in bucket_depths.iter().copied() {
+                for depth in buckets.iter().map(|b| b.len()) {
                     if depth == 0 {
                         continue;
                     }
@@ -933,12 +931,12 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
                     let mut best_idx = None;
                     let mut best_distance = usize::MAX;
                     let mut best_counter_clockwise = usize::MAX;
-                    for (idx, depth) in bucket_depths.iter().copied().enumerate() {
+                    for (idx, depth) in buckets.iter().map(|b| b.len()).enumerate() {
                         if depth != min_non_zero {
                             continue;
                         }
-                        let clockwise = (idx + iters.len() - first_hint) % iters.len();
-                        let counter_clockwise = (first_hint + iters.len() - idx) % iters.len();
+                        let clockwise = (idx + n - first_hint) % n;
+                        let counter_clockwise = (first_hint + n - idx) % n;
                         let distance = clockwise.min(counter_clockwise);
                         if distance < best_distance
                             || (distance == best_distance
@@ -954,10 +952,11 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
                     None
                 }
             };
+            let mut iters: Vec<std::vec::IntoIter<Tx>> =
+                buckets.into_iter().map(|b| b.into_iter()).collect();
             // Seed the initial bucket probe from either sparse anti-starvation hint
             // or first tx hot-key hint so repeated batches do not always favor bucket 0.
             let mut rr_start = sparse_start.unwrap_or(first_hint);
-            let n = iters.len();
             // Rotate the round-robin start bucket each pass to reduce consistent
             // first-bucket preference under uneven bucket depths.
             loop {
