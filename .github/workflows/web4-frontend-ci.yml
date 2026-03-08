@@ -25,6 +25,9 @@ jobs:
       TZ: UTC
       LANG: C.UTF-8
       LC_ALL: C.UTF-8
+      # Freeze numeric formatting/collation for locale-sensitive snapshot/log assertions.
+      LC_NUMERIC: C
+      LC_COLLATE: C
       PYTHONHASHSEED: '0'
       CI: 'true'
     defaults:
