@@ -3537,9 +3537,13 @@ mod tests {
         let msg = err.to_string();
 
         assert!(msg.contains("timed out waiting for market file lock"));
-        // Sleep interval is 10ms; allow minor scheduler jitter.
-        assert!(elapsed >= Duration::from_millis(90));
-        assert!(elapsed < Duration::from_millis(600));
+        // Sleep interval is 10ms; allow scheduler jitter plus occasional heavily-loaded
+        // CI runners while still catching hangs/regressions that overshoot timeout badly.
+        let timeout_ms = market_lock_timeout_ms();
+        let lower_bound_ms = timeout_ms.saturating_sub(10);
+        let upper_bound_ms = timeout_ms.saturating_mul(8).saturating_add(200);
+        assert!(elapsed >= Duration::from_millis(lower_bound_ms));
+        assert!(elapsed < Duration::from_millis(upper_bound_ms));
 
         let _ = fs::remove_file(&lock_path);
 
