@@ -144,6 +144,10 @@ jobs:
         run: |
           ./scripts/v2/rpc_node_events_resource_guard_test.sh
 
+      - name: Check-parallel flaky CI timeout guard regression
+        run: |
+          ./scripts/v2/check_parallel_flaky_ci_timeout_guard_test.sh
+
       - name: Governance value schema reject regression
         run: |
           ./scripts/v2/governance_value_schema_reject_test.sh
