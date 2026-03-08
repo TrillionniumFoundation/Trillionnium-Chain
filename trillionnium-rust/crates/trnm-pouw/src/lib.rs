@@ -3955,6 +3955,82 @@ mod tests {
     }
 
     #[test]
+    fn challenged_pause_preserves_pre_staged_multisig_approval_until_unpaused_consensus() {
+        // Safety boundary: emergency pause must reject terminal resolve attempts
+        // without mutating previously staged multisig approval state.
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        set_resolve_authority(&mut st, "authority-a,authority-b,authority-c");
+
+        let r1 = apply_create_task(&mut st, 19_223_2, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(19_223_2, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 =
+            apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
+        let r4 = apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110)
+            .unwrap();
+        let r5 = apply_challenge_at_height(
+            &mut st,
+            r4,
+            "challenger".into(),
+            10,
+            "challenger".into(),
+            210,
+        )
+        .unwrap();
+
+        let stage_err = apply_resolve_at_height(
+            &mut st,
+            r5.clone(),
+            false,
+            "authority-a".into(),
+            "authority-a".into(),
+            211,
+        )
+        .expect_err("first signer should only stage pending multisig approval");
+        assert!(matches!(stage_err, PouwError::Unauthorized));
+        let staged_before_pause = st.pending_resolve_approval(r5.id);
+        assert!(matches!(staged_before_pause, Some((false, _))));
+
+        st.set_gov_param(9_228, 7_999, "emergency_pause".into(), "true".into())
+            .expect("pause=true governance update must succeed");
+        assert!(st.is_emergency_paused());
+
+        let paused_err = apply_resolve_at_height(
+            &mut st,
+            r5.clone(),
+            false,
+            "authority-b".into(),
+            "authority-b".into(),
+            212,
+        )
+        .expect_err("pause must reject resolve without mutating staged approvals");
+        assert!(matches!(paused_err, PouwError::InvalidTransition));
+        assert_eq!(st.pending_resolve_approval(r5.id), staged_before_pause);
+
+        st.set_gov_param(9_229, 7_999, "emergency_pause".into(), "false".into())
+            .expect("pause=false governance update must succeed");
+        assert!(!st.is_emergency_paused());
+
+        let r6 = apply_resolve_at_height(
+            &mut st,
+            r5,
+            false,
+            "authority-b".into(),
+            "authority-b".into(),
+            213,
+        )
+        .expect("second distinct signer should finalize once pause clears");
+
+        let task = st.get_task(r6.id).expect("resolved task must exist");
+        assert_eq!(task.status, TaskStatus::Completed);
+        assert_eq!(st.pending_resolve_approval(r6.id), None);
+    }
+
+    #[test]
     fn challenged_single_authority_resolve_rejects_while_paused_without_escrow_drift() {
         // Safety boundary: emergency pause must fail-closed for single-authority
         // resolve so escrow settlement remains frozen regardless of multisig mode.
