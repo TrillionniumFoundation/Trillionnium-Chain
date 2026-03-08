@@ -178,13 +178,27 @@ impl InMemoryReliabilityStore {
             sessions: HashMap::new(),
             dedup: HashMap::new(),
             meta: HashMap::new(),
-            config,
+            config: sanitize_store_config(config),
         }
     }
 
     fn total_pending_items(&self) -> usize {
         self.sessions.values().map(|s| s.pending.len()).sum()
     }
+}
+
+fn sanitize_store_config(mut config: InMemoryReliabilityStoreConfig) -> InMemoryReliabilityStoreConfig {
+    // Zeroed quotas create permanent capacity_exceeded responses for fresh ingress.
+    // Clamp to a minimally live value so misconfigured operators retain recovery paths.
+    fn clamp_zero(opt: Option<usize>) -> Option<usize> {
+        opt.map(|v| v.max(1))
+    }
+
+    config.max_sessions = clamp_zero(config.max_sessions);
+    config.max_pending_per_session = clamp_zero(config.max_pending_per_session);
+    config.max_pending_total = clamp_zero(config.max_pending_total);
+    config.max_dedup_entries = clamp_zero(config.max_dedup_entries);
+    config
 }
 
 impl ReliabilityStore for InMemoryReliabilityStore {
@@ -2072,6 +2086,45 @@ mod tests {
         let _ = std::fs::remove_file(&db_path);
         let _ = std::fs::remove_file(db_path.with_extension("sqlite-wal"));
         let _ = std::fs::remove_file(db_path.with_extension("sqlite-shm"));
+    }
+
+    #[test]
+    fn store_config_clamps_zero_dedup_quota_to_keep_one_idempotency_slot_live() {
+        let mut store = InMemoryReliabilityStore::with_config(InMemoryReliabilityStoreConfig {
+            max_dedup_entries: Some(0),
+            ..InMemoryReliabilityStoreConfig::default()
+        });
+
+        let key1 = DedupKey {
+            from: "alice".to_string(),
+            seq_or_nonce: 1,
+        };
+        let key2 = DedupKey {
+            from: "bob".to_string(),
+            seq_or_nonce: 1,
+        };
+
+        assert!(store.try_remember_dedup_key_with_ts(key1, 1).is_ok());
+        let err = store
+            .try_remember_dedup_key_with_ts(key2, 2)
+            .expect_err("second unique key should hit clamped quota");
+        assert!(matches!(err, ReliabilityStoreError::CapacityExceeded { .. }));
+    }
+
+    #[test]
+    fn store_config_clamps_zero_session_limit_to_preserve_forward_progress() {
+        let mut store = InMemoryReliabilityStore::with_config(InMemoryReliabilityStoreConfig {
+            max_sessions: Some(0),
+            ..InMemoryReliabilityStoreConfig::default()
+        });
+
+        let session = SessionState {
+            session_id: "s1".to_string(),
+            pending: BTreeMap::new(),
+        };
+
+        assert!(store.try_upsert_session_with_ts(session, 1).is_ok());
+        assert_eq!(store.list_session_ids(), vec!["s1".to_string()]);
     }
 
     #[test]
