@@ -223,3 +223,38 @@ fn pause_toggle_rejects_non_boolean_value_without_releasing_escrow_or_centralizi
     assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
     assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), forfeits_before);
 }
+
+#[test]
+fn paused_unpause_rejects_noncanonical_key_id_without_mutating_custody_or_quorum_state() {
+    // M1 merge-gate invariant: emergency pause exit path must keep canonical key-id guard.
+    // A wrong-key unpause attempt must fail closed: pause state, escrow custody, and
+    // staged multi-party resolve approvals remain unchanged.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 12_345);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 678);
+
+    st.set_gov_param(98_150, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    st.stage_or_confirm_resolve_approval(9_906, false, "authority-a", "authority-a,authority-b")
+        .expect("first approval stage should succeed while paused");
+    assert_eq!(st.pending_resolve_approval(9_906), Some((false, 1)));
+
+    let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+    let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+
+    let err = st
+        .set_gov_param(98_151, 7_998, "emergency_pause".into(), "false".into())
+        .expect_err("unpause must reject non-canonical emergency_pause key id");
+    assert!(err.contains("governance key id mismatch"));
+
+    assert!(
+        st.is_emergency_paused(),
+        "wrong-key unpause must not clear paused state"
+    );
+    assert_eq!(st.pending_resolve_approval(9_906), Some((false, 1)));
+    assert_eq!(st.pending_gov_update("resolve_authority"), None);
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+    assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), forfeits_before);
+}
