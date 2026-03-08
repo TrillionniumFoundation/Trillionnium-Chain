@@ -25,6 +25,6 @@ require_line "--request-id <request_id>"
 require_line "--expect-status reverted"
 require_line "--expect-idempotent"
 require_line "根因标签"
-require_line 'sha256sum "$ROLLBACK_LOG" "$REPLAY_LOG" > "$EVID_DIR/sha256-${request_id}.txt"'
+require_line 'LC_ALL=C sha256sum "$ROLLBACK_LOG" "$REPLAY_LOG" > "$EVID_DIR/sha256-${request_id}.txt"'
 
 echo "[PASS] E3 runbook keeps rollback/replay contract fields (root-cause-tag/change-ticket-id/operator-id/dry-run/request-id/expect-status/expect-idempotent) and deterministic evidence hashing template"

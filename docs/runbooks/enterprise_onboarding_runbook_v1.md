@@ -62,7 +62,7 @@
 - 建议固定证据目录与文件名模板，避免人工命名漂移（示例）：
   - `EVID_DIR="run/evidence/onboarding/${org_id}/${change_ticket_id}"; mkdir -p "$EVID_DIR"`
   - `ROLLBACK_LOG="$EVID_DIR/rollback-${request_id}.log"; REPLAY_LOG="$EVID_DIR/replay-${request_id}.log"`
-  - `sha256sum "$ROLLBACK_LOG" "$REPLAY_LOG" > "$EVID_DIR/sha256-${request_id}.txt"`
+  - `LC_ALL=C sha256sum "$ROLLBACK_LOG" "$REPLAY_LOG" > "$EVID_DIR/sha256-${request_id}.txt"`（固定排序/本地化行为，避免证据摘要在异构执行环境漂移）
 - 回滚后必须执行一次按 `request_id` 的回放校验，确认目标事件状态已转为 `reverted` 且不再可重复回滚（幂等）。
   - `trnm-onboard replay --request-id <request_id> --expect-status reverted --expect-idempotent`
   - `trnm-onboard replay --request-id <request_id> --expect-status reverted --expect-idempotent --dry-run`
