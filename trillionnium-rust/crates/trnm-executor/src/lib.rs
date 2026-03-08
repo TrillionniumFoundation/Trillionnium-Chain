@@ -1099,6 +1099,24 @@ mod tests {
     }
 
     #[test]
+    fn dedup_access_keys_large_path_preserves_first_seen_order() {
+        let keys = dedup_access_keys(&[
+            o(100),
+            o(200),
+            o(100),
+            o(300),
+            o(400),
+            o(300),
+            o(500),
+            o(600),
+            o(700),
+            o(600),
+        ]);
+
+        assert_eq!(keys, vec![100, 200, 300, 400, 500, 600, 700]);
+    }
+
+    #[test]
     fn grouping_parallel_safe() {
         let g = build_parallel_groups(&[
             tx(1, vec![], vec![o(1)]),
