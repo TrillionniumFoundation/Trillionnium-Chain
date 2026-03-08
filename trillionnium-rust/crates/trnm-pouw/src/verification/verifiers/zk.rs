@@ -197,4 +197,18 @@ mod tests {
             VerificationResult::Invalid(msg) if msg.contains("proof_type binding mismatch")
         ));
     }
+
+    #[test]
+    fn zk_verifier_rejects_missing_proof_type_binding() {
+        let verifier = ZkVerifier;
+        let task = mock_task();
+        let payload = format!(
+            "ZK|task_id=84|worker=worker1|result_hash={}",
+            hex::encode([0x22; 32])
+        );
+        assert!(matches!(
+            verifier.verify_proof(&task, payload.as_bytes()),
+            VerificationResult::Invalid(msg) if msg.contains("missing proof_type binding")
+        ));
+    }
 }
