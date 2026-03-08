@@ -148,6 +148,10 @@ jobs:
         run: |
           ./scripts/v2/check_parallel_flaky_ci_timeout_guard_test.sh
 
+      - name: Check-parallel flaky invalid RUN_TIMEOUT_SEC input guard regression
+        run: |
+          ./scripts/v2/check_parallel_flaky_invalid_timeout_guard_test.sh
+
       - name: Governance value schema reject regression
         run: |
           ./scripts/v2/governance_value_schema_reject_test.sh
