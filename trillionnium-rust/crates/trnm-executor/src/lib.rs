@@ -1216,6 +1216,22 @@ mod tests {
     }
 
     #[test]
+    fn hot_bucket_interleave_keeps_first_hint_when_skew_is_below_two_to_one_threshold() {
+        let mut txs = vec![
+            tx(391, vec![], vec![o(0)]),  // first hot hint bucket 0
+            tx(392, vec![], vec![o(8)]),  // same bucket (depth 3)
+            tx(393, vec![], vec![o(16)]), // same bucket (depth 3)
+            tx(394, vec![], vec![o(1)]),  // second bucket (depth 2)
+            tx(395, vec![], vec![o(9)]),  // second bucket (depth 2)
+        ];
+
+        reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
+        // Sparse anti-starvation seeding should only engage at >=2x skew. For 3:2,
+        // keep first-hot-hint ordering to avoid unnecessary lane rotation overhead.
+        assert_eq!(txs.first().map(|t| t.id), Some(391));
+    }
+
+    #[test]
     fn hot_bucket_interleave_sparse_tie_rotates_from_first_hot_hint() {
         let mut txs = vec![
             tx(401, vec![], vec![o(5)]),  // first hot hint bucket 5
