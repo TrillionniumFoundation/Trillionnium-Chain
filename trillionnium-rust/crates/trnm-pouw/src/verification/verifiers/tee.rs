@@ -142,6 +142,20 @@ mod tests {
     }
 
     #[test]
+    fn tee_verifier_rejects_task_id_binding_mismatch() {
+        let verifier = TeeVerifier;
+        let task = mock_task();
+        let payload = format!(
+            "TEE|task_id=43|worker=worker1|proof_type=tee|result_hash={}",
+            hex::encode([0x11; 32])
+        );
+        assert!(matches!(
+            verifier.verify_proof(&task, payload.as_bytes()),
+            VerificationResult::Invalid(msg) if msg.contains("task_id binding mismatch")
+        ));
+    }
+
+    #[test]
     fn tee_verifier_rejects_proof_type_binding_mismatch() {
         let verifier = TeeVerifier;
         let task = mock_task();
