@@ -3622,4 +3622,37 @@ mod tests {
         assert!(post.result_hash.is_none());
         assert!(post.reveal_salt.is_none());
     }
+
+    #[test]
+    fn invalid_tee_envelope_worker_binding_rejects_reveal_without_state_mutation() {
+        let mut st = seeded_state();
+        let r1 = apply_create_task(&mut st, 7006, "alice".into(), 10).unwrap();
+
+        let mut task = st.get_task(r1.id).unwrap();
+        task.proof_type = ProofType::Tee;
+        let r1_updated = st.update_task(r1, task).unwrap();
+
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(7006, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1_updated, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+
+        // worker binding mismatch must fail-closed.
+        let proof = format!(
+            "TEE|task_id=7006|worker=worker2|proof_type=tee|result_hash={}",
+            hex::encode(result_hash)
+        )
+        .into_bytes();
+
+        let task_id = r3.id;
+        let err = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, Some(proof)).unwrap_err();
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("Proof verification failed")));
+
+        let post = st.get_task(task_id).unwrap();
+        assert_eq!(post.status, TaskStatus::Committed);
+        assert!(post.result_hash.is_none());
+        assert!(post.reveal_salt.is_none());
+    }
 }
