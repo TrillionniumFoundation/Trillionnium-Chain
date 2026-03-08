@@ -634,4 +634,27 @@ mod tests {
         let (_, _, total) = g.queued_counts();
         assert_eq!(g.seen_global.len(), total);
     }
+
+    #[test]
+    fn stale_seen_global_ghost_id_does_not_poison_fresh_admission_after_self_heal() {
+        let mut g = LaneAdmissionGate::new(3, 1);
+
+        assert_eq!(g.admit(1, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+
+        // Simulate restored-state skew where lane-wide cache carries a ghost id
+        // that is not present in either lane queue.
+        g.seen_global.insert(999);
+
+        // Self-heal should rebuild from lane-local truth and keep fresh ingress live.
+        assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
+
+        // Queue is now globally full; ghost id must not appear as a duplicate.
+        assert_eq!(g.admit(999, IngressClass::Critical), AdmitOutcome::Backpressured);
+
+        // After one dequeue, the same id should admit as fresh.
+        let drained = g.pop_ready();
+        assert!(drained == Some(1) || drained == Some(2) || drained == Some(3));
+        assert_eq!(g.admit(999, IngressClass::Critical), AdmitOutcome::Accepted);
+    }
 }
