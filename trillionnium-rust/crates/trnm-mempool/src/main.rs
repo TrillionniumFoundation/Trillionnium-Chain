@@ -115,6 +115,11 @@ impl AdmissionGate {
             // when retry memory is empty. Clear both so free ingress is never mis-deduped.
             self.retry_reservations = 0;
             self.last_fairness_deferred = None;
+            // Retry memory can also keep stale FIFO markers after partial state restore.
+            // Drop them eagerly on the no-retry fast path so bookkeeping stays bounded.
+            if !self.backpressured_fifo.is_empty() {
+                self.backpressured_fifo.clear();
+            }
         }
         if self.retry_reservations == 0 {
             if known_retry_count == 0 {
@@ -191,7 +196,6 @@ impl AdmissionGate {
             && has_known_retries
             && !is_known_retry_for_fairness
         {
-
             // Deferring fresh ingress should not evict older retries from bounded memory,
             // otherwise long-waiting retries can lose their anti-starvation preference.
             self.remember_backpressured_without_eviction(tx_id);
@@ -688,6 +692,23 @@ mod tests {
     }
 
     #[test]
+    fn admit_fast_path_clears_stale_retry_fifo_when_retry_set_is_empty() {
+        let mut gate = AdmissionGate::new(3);
+
+        // Simulate restored-state skew: stale retry fifo markers remain, but retry
+        // memory itself is empty.
+        gate.backpressured_fifo.extend([7, 8, 7, 9]);
+        gate.backpressured_ids.clear();
+        gate.retry_reservations = 2;
+        gate.last_fairness_deferred = Some(7);
+
+        assert_eq!(gate.admit(100), AdmitOutcome::Accepted);
+        assert!(gate.backpressured_fifo.is_empty());
+        assert_eq!(gate.retry_reservations, 0);
+        assert_eq!(gate.last_fairness_deferred, None);
+    }
+
+    #[test]
     fn stale_retry_fifo_is_compacted_under_high_churn() {
         let mut gate = AdmissionGate::new(2);
         assert_eq!(gate.admit(1), AdmitOutcome::Accepted);
@@ -828,4 +849,3 @@ mod tests {
         assert_eq!(m.fairness_deferrals, usize::MAX);
     }
 }
-
