@@ -948,11 +948,11 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
             // Seed the initial bucket probe from either sparse anti-starvation hint
             // or first tx hot-key hint so repeated batches do not always favor bucket 0.
             let mut rr_start = sparse_start.unwrap_or(first_hint);
+            let n = iters.len();
             // Rotate the round-robin start bucket each pass to reduce consistent
             // first-bucket preference under uneven bucket depths.
             loop {
                 let mut moved = false;
-                let n = iters.len();
                 for step in 0..n {
                     let idx = (rr_start + step) % n;
                     if let Some(tx) = iters[idx].next() {
