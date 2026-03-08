@@ -10,7 +10,8 @@ fn unique_market_fixture_path(name: &str, ext: &str) -> PathBuf {
         .duration_since(std::time::UNIX_EPOCH)
         .expect("clock")
         .as_nanos();
-    std::env::temp_dir().join(format!("trnm_rpc_{}_{}.{}", name, ts, ext))
+    let pid = std::process::id();
+    std::env::temp_dir().join(format!("trnm_rpc_{}_{}_{}.{}", name, pid, ts, ext))
 }
 
 #[test]
