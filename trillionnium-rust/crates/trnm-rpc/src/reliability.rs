@@ -750,8 +750,14 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
 
             if session.pending.is_empty() && self.store.should_remove_empty_session_immediately() {
                 self.store.remove_session(sid);
-            } else {
-                let _ = self.store.try_upsert_session_with_ts(session, now_unix_ms);
+            } else if let Err(e) = self.store.try_upsert_session_with_ts(session, now_unix_ms) {
+                // Fail closed on persistence errors: keeping a stale in-memory retry
+                // view can repeatedly re-dispatch the same due item and amplify load.
+                eprintln!(
+                    "[reliability] drop session after failed retry-state persist sid={} err={}",
+                    sid, e
+                );
+                self.store.remove_session(sid);
             }
         }
 
@@ -1116,6 +1122,75 @@ mod tests {
             nonce: None,
             msg_type: "INPUT_CHUNK".to_string(),
             payload: "hello".to_string(),
+        }
+    }
+
+    #[derive(Default)]
+    struct FailingUpsertStore {
+        inner: InMemoryReliabilityStore,
+        fail_upsert: bool,
+    }
+
+    impl ReliabilityStore for FailingUpsertStore {
+        fn get_session(&self, session_id: &str) -> Option<SessionState> {
+            self.inner.get_session(session_id)
+        }
+
+        fn upsert_session(&mut self, session: SessionState) {
+            self.inner.upsert_session(session);
+        }
+
+        fn remove_session(&mut self, session_id: &str) {
+            self.inner.remove_session(session_id);
+        }
+
+        fn list_session_ids(&self) -> Vec<String> {
+            self.inner.list_session_ids()
+        }
+
+        fn contains_dedup_key(&self, key: &DedupKey) -> bool {
+            self.inner.contains_dedup_key(key)
+        }
+
+        fn remember_dedup_key(&mut self, key: DedupKey) {
+            self.inner.remember_dedup_key(key);
+        }
+
+        fn remember_dedup_key_with_ts(&mut self, key: DedupKey, now_unix_ms: u128) {
+            self.inner.remember_dedup_key_with_ts(key, now_unix_ms);
+        }
+
+        fn try_upsert_session_with_ts(
+            &mut self,
+            session: SessionState,
+            now_unix_ms: u128,
+        ) -> Result<(), ReliabilityStoreError> {
+            if self.fail_upsert {
+                return Err(ReliabilityStoreError::InvalidState {
+                    detail: "injected upsert failure".to_string(),
+                });
+            }
+            self.inner.try_upsert_session_with_ts(session, now_unix_ms)
+        }
+
+        fn try_remember_dedup_key_with_ts(
+            &mut self,
+            key: DedupKey,
+            now_unix_ms: u128,
+        ) -> Result<(), ReliabilityStoreError> {
+            self.inner.try_remember_dedup_key_with_ts(key, now_unix_ms)
+        }
+
+        fn forget_dedup_key(&mut self, key: &DedupKey) {
+            self.inner.forget_dedup_key(key);
+        }
+
+        fn should_remove_empty_session_immediately(&self) -> bool {
+            self.inner.should_remove_empty_session_immediately()
+        }
+
+        fn cleanup_expired(&mut self, now_unix_ms: u128, retention: &RetentionConfig) {
+            self.inner.cleanup_expired(now_unix_ms, retention);
         }
     }
 
@@ -1642,6 +1717,36 @@ mod tests {
             second.first().map(|i| i.message.session_id.as_str()),
             Some("s-b"),
             "round-robin cursor should rebase on the active session set"
+        );
+    }
+
+    #[test]
+    fn collect_due_retries_drops_session_when_retry_state_persist_fails() {
+        let mut store = FailingUpsertStore::default();
+        store.fail_upsert = true;
+        let mut engine = ReliabilityEngine::new(
+            store,
+            RetryConfig {
+                base_backoff_ms: 1,
+                max_backoff_ms: 1,
+                ..RetryConfig::default()
+            },
+        );
+
+        // Seed one pending item while upsert failures are disabled.
+        engine.store.fail_upsert = false;
+        let ack = engine.receive(mk_msg("alice", "s1", 1), 1_000);
+        assert_eq!(ack.code, AckCode::Accepted);
+
+        // Inject persistence failure for the collect/update pass.
+        engine.store.fail_upsert = true;
+        let due = engine.collect_due_retries(2_000);
+        assert_eq!(due.len(), 1, "first due retry still dispatches once");
+
+        let store = engine.into_store();
+        assert!(
+            store.get_session("s1").is_none(),
+            "failed retry-state persist should drop session to avoid retry storms"
         );
     }
 
