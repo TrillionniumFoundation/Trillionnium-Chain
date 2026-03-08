@@ -190,8 +190,9 @@ impl LaneAdmissionGate {
                 out
             }
             IngressClass::Critical => {
+                let normal_was_empty = self.normal.queue.is_empty();
                 let primary = self.critical.admit(tx_id);
-                if matches!(primary, AdmitOutcome::Backpressured)
+                let out = if matches!(primary, AdmitOutcome::Backpressured)
                     && self.normal.queue.len() < self.normal.capacity
                 {
                     // Keep free-ingress throughput high under critical bursts by
@@ -199,7 +200,20 @@ impl LaneAdmissionGate {
                     self.normal.admit(tx_id)
                 } else {
                     primary
+                };
+
+                if matches!(out, AdmitOutcome::Accepted)
+                    && normal_was_empty
+                    && !self.normal.queue.is_empty()
+                    && !self.critical.queue.is_empty()
+                {
+                    // Mirror fairness warmup for critical spillover into the normal
+                    // lane: once overflow traffic appears there under active critical
+                    // pressure, grant a normal-lane turn within one dequeue.
+                    self.critical_served_streak = self.critical_burst_limit;
                 }
+
+                out
             }
         };
         if matches!(out, AdmitOutcome::Accepted) {
