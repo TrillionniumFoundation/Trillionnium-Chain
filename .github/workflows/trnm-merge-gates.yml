@@ -57,7 +57,7 @@ jobs:
           # reduce timing-sensitive flakes in RC merge-gate runs.
           export RUST_TEST_THREADS="${RUST_TEST_THREADS:-1}"
           cd trillionnium-rust
-          cargo test --workspace
+          cargo test --workspace --locked
 
       - name: Run parallel mode sanity (hard gate)
         run: |
