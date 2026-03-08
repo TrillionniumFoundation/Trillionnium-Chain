@@ -30,13 +30,24 @@ BENCH_MAX_MS="${BENCH_MAX_MS:-$CLASSIC_HARD_DEFAULT}"
 BENCH_MIXED_WARN_MS="${BENCH_MIXED_WARN_MS:-$MIXED_WARN_DEFAULT}"
 BENCH_MIXED_MAX_MS="${BENCH_MIXED_MAX_MS:-$MIXED_HARD_DEFAULT}"
 
+file_mtime() {
+  local path="$1"
+  # BSD/macOS: stat -f %m, GNU/Linux: stat -c %Y
+  if stat -f '%m' "$path" >/dev/null 2>&1; then
+    stat -f '%m' "$path"
+  else
+    stat -c '%Y' "$path"
+  fi
+}
+
 latest_file() {
   local pattern="$1"
   local label="$2"
   local latest=""
+  local latest_mtime=""
 
-  # Use nullglob + mtime sort to avoid brittle `ls` parsing and produce a
-  # deterministic, actionable failure when CI artifacts are missing.
+  # Use nullglob + explicit mtime comparison to avoid brittle `ls` parsing and
+  # keep behavior deterministic across BSD/GNU userlands.
   shopt -s nullglob
   local matches=( $pattern )
   shopt -u nullglob
@@ -47,7 +58,16 @@ latest_file() {
     exit 66
   fi
 
-  latest="$(printf '%s\n' "${matches[@]}" | xargs -I{} stat -f '%m %N' "{}" | sort -nr | head -n1 | cut -d' ' -f2-)"
+  local candidate=""
+  local mtime=""
+  for candidate in "${matches[@]}"; do
+    mtime="$(file_mtime "$candidate")"
+    if [[ -z "$latest" || "$mtime" -gt "$latest_mtime" || ( "$mtime" -eq "$latest_mtime" && "$candidate" > "$latest" ) ]]; then
+      latest="$candidate"
+      latest_mtime="$mtime"
+    fi
+  done
+
   printf '%s\n' "$latest"
 }
 
