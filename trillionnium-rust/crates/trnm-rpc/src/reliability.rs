@@ -636,6 +636,17 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
                 pending: BTreeMap::new(),
             });
 
+        // Even if the dedup TTL has elapsed, an in-flight pending entry with the
+        // same ack_id must remain idempotent; otherwise repeated ingress can
+        // continuously reset retry state and inflate queue pressure.
+        if session.pending.contains_key(&ack_id) {
+            return Ack {
+                code: AckCode::Duplicate,
+                ack_id,
+                detail: "already processed".to_string(),
+            };
+        }
+
         session.pending.insert(
             ack_id.clone(),
             PendingItem {
@@ -1424,8 +1435,51 @@ mod tests {
         let dup = engine.receive(mk_msg("alice", "s1", 9), 1_050);
         assert_eq!(dup.code, AckCode::Duplicate);
 
+        // Once the in-flight entry is acknowledged, dedup expiry should allow
+        // the same key to be accepted again.
+        assert!(engine.mark_acked("s1", &first.ack_id));
+
         let after_ttl = engine.receive(mk_msg("alice", "s1", 9), 1_101);
         assert_eq!(after_ttl.code, AckCode::Accepted);
+    }
+
+    #[test]
+    fn pending_entry_keeps_duplicate_semantics_after_dedup_ttl_expiry() {
+        let store = InMemoryReliabilityStore::default();
+        let mut engine = ReliabilityEngine::new_with_retention(
+            store,
+            RetryConfig {
+                base_backoff_ms: 1_000,
+                max_backoff_ms: 1_000,
+                ..RetryConfig::default()
+            },
+            RetentionConfig {
+                dedup_ttl_ms: 50,
+                pending_ttl_ms: 5_000,
+                cleanup_interval_ms: 1,
+            },
+        );
+
+        let first = engine.receive(mk_msg("alice", "s1", 11), 1_000);
+        assert_eq!(first.code, AckCode::Accepted);
+
+        // Trigger cleanup after dedup TTL, while the pending item is still in-flight.
+        let dupe = engine.receive(mk_msg("alice", "s1", 11), 1_100);
+        assert_eq!(dupe.code, AckCode::Duplicate);
+        assert_eq!(dupe.ack_id, first.ack_id);
+
+        let store = engine.into_store();
+        let session = store.get_session("s1").expect("session should exist");
+        let item = session
+            .pending
+            .get(&first.ack_id)
+            .expect("pending item should be retained");
+
+        assert_eq!(item.attempts, 0, "duplicate must not reset retry attempts");
+        assert_eq!(
+            item.created_at_unix_ms, 1_000,
+            "duplicate must not overwrite pending creation timestamp"
+        );
     }
 
     #[test]
