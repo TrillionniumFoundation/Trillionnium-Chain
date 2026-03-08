@@ -1283,6 +1283,27 @@ mod tests {
     }
 
     #[test]
+    fn hot_bucket_interleave_keeps_first_hint_when_it_is_already_sparse_seed() {
+        let mut txs = vec![
+            tx(421, vec![], vec![o(5)]),  // first hot hint bucket 5 (also sparse)
+            tx(422, vec![], vec![o(0)]),  // dominant bucket 0 depth 4
+            tx(423, vec![], vec![o(8)]),  // dominant bucket 0 depth 4
+            tx(424, vec![], vec![o(16)]), // dominant bucket 0 depth 4
+            tx(425, vec![], vec![o(24)]), // dominant bucket 0 depth 4
+            tx(426, vec![], vec![o(6)]),  // equally sparse bucket 6 depth 1
+            tx(427, vec![], vec![o(1)]),  // sparse bucket 1 depth 1
+            tx(428, vec![], vec![o(2)]),  // sparse bucket 2 depth 1
+        ];
+
+        reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
+        // Keep len >= default bucket fanout (8) so object ids map directly to buckets.
+        // If the first-hot hint already points at one of the sparsest buckets,
+        // keep that bucket as the anti-starvation seed (distance 0) instead of
+        // rotating away to a neighboring sparse lane.
+        assert_eq!(txs.first().map(|t| t.id), Some(421));
+    }
+
+    #[test]
     fn hot_bucket_interleave_skips_micro_batches_to_preserve_low_latency_order() {
         let mut txs = vec![
             tx(21, vec![], vec![o(8)]),
