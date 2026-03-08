@@ -3525,4 +3525,37 @@ mod tests {
         
         assert!(matches!(err, PouwError::State(msg) if msg.contains("Proof verification failed")));
     }
+
+    #[test]
+    fn invalid_zk_envelope_binding_rejects_reveal_without_state_mutation() {
+        let mut st = seeded_state();
+        let r1 = apply_create_task(&mut st, 7003, "alice".into(), 10).unwrap();
+
+        let mut task = st.get_task(r1.id).unwrap();
+        task.proof_type = ProofType::Zk;
+        let r1_updated = st.update_task(r1, task).unwrap();
+
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(7003, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1_updated, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+
+        // result_hash binding mismatch must fail-closed.
+        let proof = format!(
+            "ZK|task_id=7003|worker=worker1|proof_type=zk|result_hash={}",
+            hex::encode([9u8; 32])
+        )
+        .into_bytes();
+
+        let task_id = r3.id;
+        let err = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, Some(proof)).unwrap_err();
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("Proof verification failed")));
+
+        let post = st.get_task(task_id).unwrap();
+        assert_eq!(post.status, TaskStatus::Committed);
+        assert!(post.result_hash.is_none());
+        assert!(post.reveal_salt.is_none());
+    }
 }
