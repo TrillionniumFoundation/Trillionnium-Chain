@@ -60,6 +60,9 @@ jobs:
       # Force deterministic Python stdio encoding regardless of locale fallback
       # behavior on runner image refreshes.
       PYTHONIOENCODING: "UTF-8"
+      # Enforce Python UTF-8 mode regardless of ambient locale coercion so text
+      # decoding/encoding behavior stays stable across runner image refreshes.
+      PYTHONUTF8: "1"
       # Pin a stable build timestamp for any tooling that emits date metadata
       # (zip/tar/python wheel/etc.) so artifact ordering stays reproducible.
       SOURCE_DATE_EPOCH: "1704067200"
