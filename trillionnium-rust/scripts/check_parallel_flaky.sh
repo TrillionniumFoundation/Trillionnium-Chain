@@ -68,6 +68,12 @@ elif command -v gtimeout >/dev/null 2>&1; then
   TIMEOUT_BIN="gtimeout"
 fi
 
+# In CI, require an external timeout guard to avoid non-deterministic hangs.
+if [[ -n "${CI:-}" && -z "$TIMEOUT_BIN" ]]; then
+  echo "timeout binary not found (need timeout or gtimeout)" >&2
+  exit 69
+fi
+
 ok=0
 for i in $(seq 1 "$RUNS"); do
   log="$RUN_DIR/run-${i}.log"
