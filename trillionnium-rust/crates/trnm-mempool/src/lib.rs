@@ -62,15 +62,6 @@ pub struct LaneAdmissionGate {
     critical_burst_limit: usize,
 }
 impl LaneAdmissionGate {
-    #[inline]
-    fn contains_queued_tx(&self, tx_id: u64) -> bool {
-        // Fast-path uses lane-wide idempotency set; lane-local fallback preserves
-        // duplicate semantics if transient state restoration leaves seen_global stale.
-        self.seen_global.contains(&tx_id)
-            || self.normal.seen.contains(&tx_id)
-            || self.critical.seen.contains(&tx_id)
-    }
-
     pub fn new(total_capacity: usize, critical_reserve: usize) -> Self {
         // Preserve explicit zero-capacity semantics so callers can hard-stop
         // ingress without accidentally admitting one tx.
@@ -89,31 +80,33 @@ impl LaneAdmissionGate {
         }
     }
     pub fn admit(&mut self, tx_id: u64, class: IngressClass) -> AdmitOutcome {
-        // Fast-path saturation check from the global idempotency set: this tracks
+        // Fast-path saturation check from the lane-wide idempotency set: this tracks
         // all currently queued tx ids and avoids touching both lane queues on every
-        // ingress probe.
+        // ingress probe while the cache is in sync.
         let lane_total = self.normal.queue.len() + self.critical.queue.len();
-        let total_queued = if self.seen_global.len() == lane_total {
-            lane_total
-        } else {
+        if self.seen_global.len() != lane_total {
             // Defensive self-heal for transient restored-state skew: lane-local queues
             // remain source of truth for saturation, and rebuild lane-wide id set.
             self.seen_global.clear();
             self.seen_global.extend(self.normal.seen.iter().copied());
             self.seen_global.extend(self.critical.seen.iter().copied());
-            lane_total
-        };
-        if total_queued >= self.total_capacity {
+        }
+
+        // When cache and lane queue cardinality are aligned, lane-wide membership
+        // is authoritative for duplicate checks on both saturated and free paths.
+        let is_duplicate = self.seen_global.contains(&tx_id);
+
+        if lane_total >= self.total_capacity {
             // Saturated hot path: avoid insert-then-remove churn for fresh ids while
             // preserving duplicate-vs-backpressure semantics under full queues.
-            return if self.contains_queued_tx(tx_id) {
+            return if is_duplicate {
                 AdmitOutcome::Duplicate
             } else {
                 AdmitOutcome::Backpressured
             };
         }
 
-        if self.contains_queued_tx(tx_id) {
+        if is_duplicate {
             return AdmitOutcome::Duplicate;
         }
         self.seen_global.insert(tx_id);
