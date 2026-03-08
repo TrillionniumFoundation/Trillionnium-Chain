@@ -693,6 +693,18 @@ pub fn apply_reveal_result_at_height(
         return Err(PouwError::CommitmentMismatch);
     }
 
+    if matches!(task.proof_type, ProofType::Tee | ProofType::Zk) {
+        if let Some(stored_result_hash) = task.result_hash {
+            if stored_result_hash != result_hash {
+                // Legacy-state hardening: verifiable envelopes must not proceed when
+                // persisted committed state already drifts from the reveal/hash tuple.
+                return Err(PouwError::State(
+                    "legacy committed result hash drift".into(),
+                ));
+            }
+        }
+    }
+
     // Verify proof if TEE/ZK.
     // For Fraud proofs, we rely on the challenge period (no immediate verification).
     // Fail closed if a proof payload is supplied for a non-verifiable proof type, so
@@ -2220,7 +2232,7 @@ mod tests {
     }
 
     #[test]
-    fn tee_reveal_rebinds_result_hash_context_for_legacy_committed_state() {
+    fn tee_reveal_rejects_legacy_committed_result_hash_drift_fail_closed_without_state_mutation() {
         let mut st = seeded_state();
         let r1 = apply_create_task(&mut st, 783, "alice".into(), 10).unwrap();
 
@@ -2257,17 +2269,18 @@ mod tests {
         let r2 = st.update_task(r1, legacy_task).unwrap();
 
         let proof = b"TEE:task_id=783,worker=worker1,proof_type=tee,result_hash=0202020202020202020202020202020202020202020202020202020202020202,quote=QUOTE_XYZ".to_vec();
-        let r3 = apply_reveal_result(&mut st, r2.clone(), result_hash, reveal_salt, Some(proof))
-            .unwrap();
+        let err = apply_reveal_result(&mut st, r2.clone(), result_hash, reveal_salt, Some(proof))
+            .unwrap_err();
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("legacy committed result hash drift")));
 
-        let task_after = st.get_task(r3.id).unwrap();
-        assert_eq!(task_after.status, TaskStatus::Completed);
-        assert_eq!(task_after.result_hash, Some(result_hash));
-        assert_ne!(task_after.result_hash, Some(stale_result_hash));
+        let task_after = st.get_task(r2.id).unwrap();
+        assert_eq!(task_after.status, TaskStatus::Committed);
+        assert_eq!(task_after.result_hash, Some(stale_result_hash));
+        assert!(task_after.reveal_salt.is_none());
     }
 
     #[test]
-    fn zk_reveal_rebinds_result_hash_context_for_legacy_committed_state() {
+    fn zk_reveal_rejects_legacy_committed_result_hash_drift_fail_closed_without_state_mutation() {
         let mut st = seeded_state();
         let r1 = apply_create_task(&mut st, 784, "alice".into(), 10).unwrap();
 
@@ -2304,13 +2317,14 @@ mod tests {
         let r2 = st.update_task(r1, legacy_task).unwrap();
 
         let proof = b"ZK:task_id=784,worker=worker1,proof_type=zk,result_hash=0202020202020202020202020202020202020202020202020202020202020202,seal=SEAL_XYZ".to_vec();
-        let r3 = apply_reveal_result(&mut st, r2.clone(), result_hash, reveal_salt, Some(proof))
-            .unwrap();
+        let err = apply_reveal_result(&mut st, r2.clone(), result_hash, reveal_salt, Some(proof))
+            .unwrap_err();
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("legacy committed result hash drift")));
 
-        let task_after = st.get_task(r3.id).unwrap();
-        assert_eq!(task_after.status, TaskStatus::Completed);
-        assert_eq!(task_after.result_hash, Some(result_hash));
-        assert_ne!(task_after.result_hash, Some(stale_result_hash));
+        let task_after = st.get_task(r2.id).unwrap();
+        assert_eq!(task_after.status, TaskStatus::Committed);
+        assert_eq!(task_after.result_hash, Some(stale_result_hash));
+        assert!(task_after.reveal_salt.is_none());
     }
 
     #[test]
