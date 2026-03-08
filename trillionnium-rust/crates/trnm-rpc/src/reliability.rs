@@ -730,7 +730,10 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
         }
 
         let start = self.collect_rr_cursor % session_count;
-        self.collect_rr_cursor = (self.collect_rr_cursor + 1) % session_count;
+        // Harden against pathological/corrupted cursor values in long-running
+        // processes and debug builds: wrapping increment avoids usize overflow
+        // panic while preserving modulo-based round-robin semantics.
+        self.collect_rr_cursor = self.collect_rr_cursor.wrapping_add(1) % session_count;
 
         for offset in 0..session_count {
             if out.len() >= MAX_DUE_RETRIES_PER_COLLECT {
@@ -1751,6 +1754,35 @@ mod tests {
             Some("s-b"),
             "round-robin cursor should rebase on the active session set"
         );
+    }
+
+    #[test]
+    fn collect_due_retries_cursor_wraps_without_overflow_panic() {
+        let store = InMemoryReliabilityStore::default();
+        let mut engine = ReliabilityEngine::new(
+            store,
+            RetryConfig {
+                base_backoff_ms: 1,
+                max_backoff_ms: 1,
+                ..RetryConfig::default()
+            },
+        );
+
+        let ack_a = engine.receive(mk_msg("alice", "s-a", 1), 1_000);
+        let ack_b = engine.receive(mk_msg("bob", "s-b", 1), 1_001);
+        assert_eq!(ack_a.code, AckCode::Accepted);
+        assert_eq!(ack_b.code, AckCode::Accepted);
+
+        engine.collect_rr_cursor = usize::MAX;
+
+        let due = engine.collect_due_retries(2_000);
+        assert_eq!(
+            due.first().map(|i| i.message.session_id.as_str()),
+            Some("s-b"),
+            "wrapped cursor should still produce deterministic modulo rotation"
+        );
+
+        assert_eq!(engine.collect_rr_cursor, 0);
     }
 
     #[test]
