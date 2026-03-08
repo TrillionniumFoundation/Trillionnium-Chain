@@ -99,6 +99,19 @@ impl LaneAdmissionGate {
         // aligned while replacing one queued id with a ghost id in seen_global. In
         // that case, trust lane-local seen sets and repair lane-wide cache inline.
         let mut is_duplicate = self.seen_global.contains(&tx_id);
+        if is_duplicate
+            && !self.normal.seen.contains(&tx_id)
+            && !self.critical.seen.contains(&tx_id)
+        {
+            // Defensive self-heal: restored-state skew can preserve cardinality while
+            // leaving stale ids in the lane-wide cache. Rebuild from lane-local truth
+            // so fresh ingress is not misclassified as duplicate.
+            self.seen_global.clear();
+            self.seen_global.extend(self.normal.seen.iter().copied());
+            self.seen_global.extend(self.critical.seen.iter().copied());
+            is_duplicate = self.seen_global.contains(&tx_id);
+        }
+
         if !is_duplicate
             && (self.normal.seen.contains(&tx_id) || self.critical.seen.contains(&tx_id))
         {
