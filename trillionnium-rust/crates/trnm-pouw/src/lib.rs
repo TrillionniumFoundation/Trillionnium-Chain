@@ -974,7 +974,8 @@ pub fn apply_resolve_at_height(
     let authority_uses_escrow_account = authority_members
         .iter()
         .any(|member| member.eq_ignore_ascii_case(CHALLENGE_ESCROW_ACCOUNT));
-    let uses_escrow_account_as_authority = resolver_trimmed.eq_ignore_ascii_case(CHALLENGE_ESCROW_ACCOUNT)
+    let uses_escrow_account_as_authority = resolver_trimmed
+        .eq_ignore_ascii_case(CHALLENGE_ESCROW_ACCOUNT)
         || signer_trimmed.eq_ignore_ascii_case(CHALLENGE_ESCROW_ACCOUNT)
         || authority_uses_escrow_account;
     // Minimal multi-party control: forfeits treasury account receives terminal
@@ -992,10 +993,10 @@ pub fn apply_resolve_at_height(
     let authority_uses_placeholder = authority_members
         .iter()
         .any(|member| member.eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY));
-    let uses_unconfigured_placeholder_authority =
-        resolver_trimmed.eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY)
-            || signer_trimmed.eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY)
-            || authority_uses_placeholder;
+    let uses_unconfigured_placeholder_authority = resolver_trimmed
+        .eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY)
+        || signer_trimmed.eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY)
+        || authority_uses_placeholder;
     // Legacy-state hardening: assigned worker identity must remain canonical
     // before resolve authority checks, otherwise malformed worker ids could
     // bypass self-resolution separation gates.
@@ -1258,8 +1259,7 @@ mod tests {
         let r5 =
             apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
         set_resolve_authority(&mut st, "authority");
-        let r6 =
-            apply_resolve(&mut st, r5, false, "authority".into(), "authority".into()).unwrap();
+        let r6 = apply_resolve(&mut st, r5, false, "authority".into(), "authority".into()).unwrap();
 
         let task = st.get_task(r6.id).unwrap();
         assert_eq!(task.status, TaskStatus::Completed);
@@ -1679,7 +1679,8 @@ mod tests {
     }
 
     #[test]
-    fn tee_reveal_rejects_result_hash_binding_with_repeated_hex_prefix_fail_closed_without_state_mutation() {
+    fn tee_reveal_rejects_result_hash_binding_with_repeated_hex_prefix_fail_closed_without_state_mutation(
+    ) {
         let mut st = seeded_state();
         let r1 = apply_create_task(&mut st, 7892, "alice".into(), 10).unwrap();
         let mut tee_task = st.get_task(r1.id).unwrap();
@@ -2209,7 +2210,8 @@ mod tests {
         };
         let r2 = st.update_task(r1, bad_task).unwrap();
 
-        let err = apply_reveal_result(&mut st, r2.clone(), result_hash, reveal_salt, None).unwrap_err();
+        let err =
+            apply_reveal_result(&mut st, r2.clone(), result_hash, reveal_salt, None).unwrap_err();
         assert!(matches!(err, PouwError::State(msg) if msg.contains("task id binding mismatch")));
 
         let task_after = st.get_task(r2.id).unwrap();
@@ -2255,7 +2257,8 @@ mod tests {
         let r2 = st.update_task(r1, legacy_task).unwrap();
 
         let proof = b"TEE:task_id=783,worker=worker1,proof_type=tee,result_hash=0202020202020202020202020202020202020202020202020202020202020202,quote=QUOTE_XYZ".to_vec();
-        let r3 = apply_reveal_result(&mut st, r2.clone(), result_hash, reveal_salt, Some(proof)).unwrap();
+        let r3 = apply_reveal_result(&mut st, r2.clone(), result_hash, reveal_salt, Some(proof))
+            .unwrap();
 
         let task_after = st.get_task(r3.id).unwrap();
         assert_eq!(task_after.status, TaskStatus::Completed);
@@ -2301,7 +2304,8 @@ mod tests {
         let r2 = st.update_task(r1, legacy_task).unwrap();
 
         let proof = b"ZK:task_id=784,worker=worker1,proof_type=zk,result_hash=0202020202020202020202020202020202020202020202020202020202020202,seal=SEAL_XYZ".to_vec();
-        let r3 = apply_reveal_result(&mut st, r2.clone(), result_hash, reveal_salt, Some(proof)).unwrap();
+        let r3 = apply_reveal_result(&mut st, r2.clone(), result_hash, reveal_salt, Some(proof))
+            .unwrap();
 
         let task_after = st.get_task(r3.id).unwrap();
         assert_eq!(task_after.status, TaskStatus::Completed);
@@ -2348,7 +2352,9 @@ mod tests {
         let r2 = st.update_task(r1, bad_task).unwrap();
 
         let err = apply_reveal_result(&mut st, r2, result_hash, reveal_salt, None).unwrap_err();
-        assert!(matches!(err, PouwError::State(msg) if msg.contains("non-canonical worker account")));
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("non-canonical worker account"))
+        );
     }
 
     #[test]
@@ -2389,7 +2395,9 @@ mod tests {
         let proof = b"TEE:task_id=789,worker=worker1,proof_type=tee,result_hash=0202020202020202020202020202020202020202020202020202020202020202,quote=QUOTE_XYZ".to_vec();
         let err = apply_reveal_result(&mut st, r2.clone(), result_hash, reveal_salt, Some(proof))
             .unwrap_err();
-        assert!(matches!(err, PouwError::State(msg) if msg.contains("unexpected proof payload for non-verifiable proof type")));
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("unexpected proof payload for non-verifiable proof type"))
+        );
 
         // Fail-closed behavior: state must remain Committed and unset reveal artifacts.
         let task_after = st.get_task(r2.id).unwrap();
@@ -2417,7 +2425,12 @@ mod tests {
             proof_type: ProofType::Fraud,
             metadata: None,
             worker: Some(worker.clone()),
-            committed_hash: Some(compute_commitment(7890, &result_hash, &reveal_salt, &worker)),
+            committed_hash: Some(compute_commitment(
+                7890,
+                &result_hash,
+                &reveal_salt,
+                &worker,
+            )),
             result_hash: None,
             reveal_salt: None,
             committed_at_height: None,
@@ -2436,7 +2449,9 @@ mod tests {
         let proof = b"ZK:task_id=7890,worker=worker1,proof_type=zk,result_hash=0202020202020202020202020202020202020202020202020202020202020202,seal=SEAL_XYZ".to_vec();
         let err = apply_reveal_result(&mut st, r2.clone(), result_hash, reveal_salt, Some(proof))
             .unwrap_err();
-        assert!(matches!(err, PouwError::State(msg) if msg.contains("unexpected proof payload for non-verifiable proof type")));
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("unexpected proof payload for non-verifiable proof type"))
+        );
 
         // Fail-closed behavior: state must remain Committed and unset reveal artifacts.
         let task_after = st.get_task(r2.id).unwrap();
@@ -2461,7 +2476,12 @@ mod tests {
             proof_type: ProofType::Fraud,
             metadata: None,
             worker: Some(worker.clone()),
-            committed_hash: Some(compute_commitment(7891, &result_hash, &reveal_salt, &worker)),
+            committed_hash: Some(compute_commitment(
+                7891,
+                &result_hash,
+                &reveal_salt,
+                &worker,
+            )),
             result_hash: None,
             reveal_salt: None,
             committed_at_height: None,
@@ -2485,7 +2505,9 @@ mod tests {
             Some(b" \t\n".to_vec()),
         )
         .unwrap_err();
-        assert!(matches!(err, PouwError::State(msg) if msg.contains("unexpected proof payload for non-verifiable proof type")));
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("unexpected proof payload for non-verifiable proof type"))
+        );
 
         let task_after = st.get_task(r2.id).unwrap();
         assert_eq!(task_after.status, TaskStatus::Committed);
@@ -2509,7 +2531,12 @@ mod tests {
             proof_type: ProofType::Fraud,
             metadata: None,
             worker: Some(worker.clone()),
-            committed_hash: Some(compute_commitment(7892, &result_hash, &reveal_salt, &worker)),
+            committed_hash: Some(compute_commitment(
+                7892,
+                &result_hash,
+                &reveal_salt,
+                &worker,
+            )),
             result_hash: None,
             reveal_salt: None,
             committed_at_height: None,
@@ -2533,7 +2560,9 @@ mod tests {
             Some(vec![0xEF, 0xBB, 0xBF]),
         )
         .unwrap_err();
-        assert!(matches!(err, PouwError::State(msg) if msg.contains("unexpected proof payload for non-verifiable proof type")));
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("unexpected proof payload for non-verifiable proof type"))
+        );
 
         let task_after = st.get_task(r2.id).unwrap();
         assert_eq!(task_after.status, TaskStatus::Committed);
@@ -2557,7 +2586,12 @@ mod tests {
             proof_type: ProofType::Fraud,
             metadata: None,
             worker: Some(worker.clone()),
-            committed_hash: Some(compute_commitment(7893, &result_hash, &reveal_salt, &worker)),
+            committed_hash: Some(compute_commitment(
+                7893,
+                &result_hash,
+                &reveal_salt,
+                &worker,
+            )),
             result_hash: None,
             reveal_salt: None,
             committed_at_height: None,
@@ -2581,7 +2615,9 @@ mod tests {
             Some("\u{3000}\u{2003}".as_bytes().to_vec()),
         )
         .unwrap_err();
-        assert!(matches!(err, PouwError::State(msg) if msg.contains("unexpected proof payload for non-verifiable proof type")));
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("unexpected proof payload for non-verifiable proof type"))
+        );
 
         let task_after = st.get_task(r2.id).unwrap();
         assert_eq!(task_after.status, TaskStatus::Committed);
@@ -2590,7 +2626,8 @@ mod tests {
     }
 
     #[test]
-    fn tee_reveal_rejects_utf8_bom_and_whitespace_only_payload_fail_closed_without_state_mutation() {
+    fn tee_reveal_rejects_utf8_bom_and_whitespace_only_payload_fail_closed_without_state_mutation()
+    {
         let mut st = seeded_state();
         let r1 = apply_create_task(&mut st, 7894, "alice".into(), 10).unwrap();
         let mut tee_task = st.get_task(r1.id).unwrap();
@@ -2661,7 +2698,9 @@ mod tests {
         let proof = b"TEE:task_id=79,worker=worker1,proof_type=tee,result_hash=0202020202020202020202020202020202020202020202020202020202020202,quote=QUOTE_XYZ".to_vec();
         let err = apply_reveal_result(&mut st, r2.clone(), result_hash, reveal_salt, Some(proof))
             .unwrap_err();
-        assert!(matches!(err, PouwError::State(msg) if msg.contains("non-canonical worker account")));
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("non-canonical worker account"))
+        );
 
         // Fail-closed behavior: state must remain Committed and unset result hash.
         let task_after = st.get_task(r2.id).unwrap();
@@ -2845,7 +2884,9 @@ mod tests {
         let proof = b"ZK:task_id=80,worker=worker1,proof_type=zk,result_hash=0202020202020202020202020202020202020202020202020202020202020202,seal=SEAL_XYZ".to_vec();
         let err = apply_reveal_result(&mut st, r2.clone(), result_hash, reveal_salt, Some(proof))
             .unwrap_err();
-        assert!(matches!(err, PouwError::State(msg) if msg.contains("non-canonical worker account")));
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("non-canonical worker account"))
+        );
 
         // Fail-closed behavior: state must remain Committed and unset result hash.
         let task_after = st.get_task(r2.id).unwrap();
@@ -3024,7 +3065,9 @@ mod tests {
         let proof = b"ZK:task_id=802,worker=worker1,proof_type=zk,Proof_Type=zk,result_hash=0202020202020202020202020202020202020202020202020202020202020202,seal=SEAL_XYZ".to_vec();
         let err = apply_reveal_result(&mut st, r2.clone(), result_hash, reveal_salt, Some(proof))
             .unwrap_err();
-        assert!(matches!(err, PouwError::State(msg) if msg.contains("duplicate proof_type binding")));
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("duplicate proof_type binding"))
+        );
 
         let task_after = st.get_task(r2.id).unwrap();
         assert_eq!(task_after.status, TaskStatus::Committed);
@@ -3663,14 +3706,19 @@ mod tests {
         assert!(matches!(paused_err, PouwError::InvalidTransition));
         assert_eq!(st.pending_resolve_approval(r5.id), Some((true, 1)));
 
-        let after_paused_task = st.get_task(r5.id).expect("task must remain unchanged while paused");
+        let after_paused_task = st
+            .get_task(r5.id)
+            .expect("task must remain unchanged while paused");
         assert_eq!(after_paused_task.status, before_task.status);
         assert_eq!(
             after_paused_task.challenge_bond_forfeited,
             before_task.challenge_bond_forfeited
         );
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
-        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
         assert_eq!(st.balance_of("challenger"), before_challenger);
 
         st.set_gov_param(9_223, 7_999, "emergency_pause".into(), "false".into())
@@ -4732,8 +4780,7 @@ mod tests {
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), 10);
 
         set_resolve_authority(&mut st, "authority");
-        let r6 =
-            apply_resolve(&mut st, r5, false, "authority".into(), "authority".into()).unwrap();
+        let r6 = apply_resolve(&mut st, r5, false, "authority".into(), "authority".into()).unwrap();
         let resolved = st.get_task(r6.id).unwrap();
         assert_eq!(resolved.challenge_bond_forfeited, Some(true));
         assert_eq!(st.balance_of("challenger"), 90);
@@ -4761,8 +4808,7 @@ mod tests {
 
         let refund_only_baseline = 100u128;
         set_resolve_authority(&mut st, "authority");
-        let r6 =
-            apply_resolve(&mut st, r5, true, "authority".into(), "authority".into()).unwrap();
+        let r6 = apply_resolve(&mut st, r5, true, "authority".into(), "authority".into()).unwrap();
 
         let resolved = st.get_task(r6.id).unwrap();
         assert_eq!(resolved.status, TaskStatus::Slashed);
@@ -4800,8 +4846,7 @@ mod tests {
             + st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
 
         set_resolve_authority(&mut st, "authority");
-        let _r6 =
-            apply_resolve(&mut st, r5, true, "authority".into(), "authority".into()).unwrap();
+        let _r6 = apply_resolve(&mut st, r5, true, "authority".into(), "authority".into()).unwrap();
 
         let final_sum = st.balance_of("challenger")
             + st.balance_of(&worker_stake_lock_account(task_id))
@@ -4865,14 +4910,8 @@ mod tests {
         let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
         let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
 
-        let err = apply_resolve(
-            &mut st,
-            r5,
-            true,
-            "challenger".into(),
-            "challenger".into(),
-        )
-        .expect_err("challenger must not self-authorize terminal challenged resolution");
+        let err = apply_resolve(&mut st, r5, true, "challenger".into(), "challenger".into())
+            .expect_err("challenger must not self-authorize terminal challenged resolution");
         assert!(matches!(err, PouwError::Unauthorized));
 
         let task = st.get_task(894_1).unwrap();
@@ -4880,7 +4919,10 @@ mod tests {
         assert_eq!(task.challenge_bond_forfeited, None);
         assert_eq!(st.balance_of("challenger"), 90);
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
-        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
     }
 
     #[test]
@@ -4905,14 +4947,19 @@ mod tests {
         let before_challenger = st.balance_of("challenger");
 
         let err = apply_resolve(&mut st, r5, true, "authority".into(), "authority".into())
-            .expect_err("resolve authority set must reject challenger membership even via multisig list");
+            .expect_err(
+                "resolve authority set must reject challenger membership even via multisig list",
+            );
         assert!(matches!(err, PouwError::Unauthorized));
 
         let task = st.get_task(894_2).unwrap();
         assert_eq!(task.status, TaskStatus::Challenged);
         assert_eq!(task.challenge_bond_forfeited, None);
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
-        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
         assert_eq!(st.balance_of("challenger"), before_challenger);
     }
 
@@ -4938,14 +4985,19 @@ mod tests {
         let before_challenger = st.balance_of("challenger");
 
         let err = apply_resolve(&mut st, r5, true, "authority".into(), "authority".into())
-            .expect_err("resolve authority set must reject challenger membership even with case drift");
+            .expect_err(
+                "resolve authority set must reject challenger membership even with case drift",
+            );
         assert!(matches!(err, PouwError::Unauthorized));
 
         let task = st.get_task(894_3).unwrap();
         assert_eq!(task.status, TaskStatus::Challenged);
         assert_eq!(task.challenge_bond_forfeited, None);
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
-        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
         assert_eq!(st.balance_of("challenger"), before_challenger);
     }
 
@@ -5007,7 +5059,10 @@ mod tests {
         assert!(matches!(first_err, PouwError::Unauthorized));
         assert_eq!(st.pending_resolve_approval(r5.id), Some((true, 1)));
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
-        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
         assert_eq!(st.balance_of("challenger"), before_challenger);
 
         let r6 = apply_resolve(
@@ -5072,12 +5127,16 @@ mod tests {
         assert!(matches!(replay_err, PouwError::Unauthorized));
         assert_eq!(st.pending_resolve_approval(r5.id), Some((true, 1)));
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
-        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
         assert_eq!(st.balance_of("challenger"), before_challenger);
     }
 
     #[test]
-    fn resolve_multisig_rejects_decision_flip_and_preserves_staged_approval_without_escrow_mutation() {
+    fn resolve_multisig_rejects_decision_flip_and_preserves_staged_approval_without_escrow_mutation(
+    ) {
         // Economic + governance hardening: once one multisig signer stages a
         // slashing/non-slashing decision, a second signer cannot flip that
         // terminal settlement decision in-flight.
@@ -5133,7 +5192,10 @@ mod tests {
         assert_eq!(task.status, TaskStatus::Challenged);
         assert_eq!(task.challenge_bond_forfeited, None);
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
-        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
         assert_eq!(st.balance_of("challenger"), before_challenger);
         assert_eq!(
             st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
@@ -5168,7 +5230,10 @@ mod tests {
         assert_eq!(task.status, TaskStatus::Challenged);
         assert_eq!(task.challenge_bond_forfeited, None);
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
-        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
         assert_eq!(st.balance_of("challenger"), 90);
     }
 
@@ -5191,15 +5256,19 @@ mod tests {
 
         let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
         let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
-        let err = apply_resolve(&mut st, r5, true, "Worker1".into(), "Worker1".into())
-            .expect_err("assigned worker must not self-authorize challenged resolution via case drift");
+        let err = apply_resolve(&mut st, r5, true, "Worker1".into(), "Worker1".into()).expect_err(
+            "assigned worker must not self-authorize challenged resolution via case drift",
+        );
         assert!(matches!(err, PouwError::Unauthorized));
 
         let task = st.get_task(8_960).unwrap();
         assert_eq!(task.status, TaskStatus::Challenged);
         assert_eq!(task.challenge_bond_forfeited, None);
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
-        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
         assert_eq!(st.balance_of("challenger"), 90);
     }
 
@@ -5223,14 +5292,19 @@ mod tests {
         let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
         let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
         let err = apply_resolve(&mut st, r5, true, "authority".into(), "authority".into())
-            .expect_err("duplicate authority members must be rejected to preserve signer-set integrity");
+            .expect_err(
+                "duplicate authority members must be rejected to preserve signer-set integrity",
+            );
         assert!(matches!(err, PouwError::Unauthorized));
 
         let task = st.get_task(8_961).unwrap();
         assert_eq!(task.status, TaskStatus::Challenged);
         assert_eq!(task.challenge_bond_forfeited, None);
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
-        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
         assert_eq!(st.balance_of("challenger"), 90);
     }
 
@@ -5261,7 +5335,10 @@ mod tests {
         assert_eq!(task.status, TaskStatus::Challenged);
         assert_eq!(task.challenge_bond_forfeited, None);
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
-        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
         assert_eq!(st.balance_of("challenger"), 90);
     }
 
@@ -5285,14 +5362,19 @@ mod tests {
         let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
         let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
         let err = apply_resolve(&mut st, r5, true, "authority".into(), "authority".into())
-            .expect_err("authority member whitespace must be rejected to preserve canonical signer set");
+            .expect_err(
+                "authority member whitespace must be rejected to preserve canonical signer set",
+            );
         assert!(matches!(err, PouwError::Unauthorized));
 
         let task = st.get_task(8_967).unwrap();
         assert_eq!(task.status, TaskStatus::Challenged);
         assert_eq!(task.challenge_bond_forfeited, None);
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
-        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
         assert_eq!(st.balance_of("challenger"), 90);
     }
 
@@ -5325,7 +5407,10 @@ mod tests {
         assert_eq!(task.status, TaskStatus::Challenged);
         assert_eq!(task.challenge_bond_forfeited, None);
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
-        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
         assert_eq!(st.balance_of("challenger"), 90);
     }
 
@@ -5351,14 +5436,19 @@ mod tests {
         let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
         let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
         let err = apply_resolve(&mut st, r5, true, "authority".into(), "authority".into())
-            .expect_err("authority member newlines must be rejected to preserve canonical signer sets");
+            .expect_err(
+                "authority member newlines must be rejected to preserve canonical signer sets",
+            );
         assert!(matches!(err, PouwError::Unauthorized));
 
         let task = st.get_task(8_967_0).unwrap();
         assert_eq!(task.status, TaskStatus::Challenged);
         assert_eq!(task.challenge_bond_forfeited, None);
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
-        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
         assert_eq!(st.balance_of("challenger"), 90);
     }
 
@@ -5395,7 +5485,10 @@ mod tests {
         assert_eq!(task.status, TaskStatus::Challenged);
         assert_eq!(task.challenge_bond_forfeited, None);
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
-        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
         assert_eq!(st.balance_of("challenger"), 90);
     }
 
@@ -5426,7 +5519,10 @@ mod tests {
         assert_eq!(task.status, TaskStatus::Challenged);
         assert_eq!(task.challenge_bond_forfeited, None);
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
-        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
         assert_eq!(st.balance_of("challenger"), 90);
     }
 
@@ -5450,14 +5546,19 @@ mod tests {
         let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
         let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
         let err = apply_resolve(&mut st, r5, true, "authority".into(), "authority".into())
-            .expect_err("multisig authority member list with leading empty entries must be rejected");
+            .expect_err(
+                "multisig authority member list with leading empty entries must be rejected",
+            );
         assert!(matches!(err, PouwError::Unauthorized));
 
         let task = st.get_task(8_967_1_05).unwrap();
         assert_eq!(task.status, TaskStatus::Challenged);
         assert_eq!(task.challenge_bond_forfeited, None);
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
-        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
         assert_eq!(st.balance_of("challenger"), 90);
     }
 
@@ -5481,14 +5582,19 @@ mod tests {
         let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
         let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
         let err = apply_resolve(&mut st, r5, true, "authority2".into(), "authority2".into())
-            .expect_err("multisig authority member list with interior empty entries must be rejected");
+            .expect_err(
+                "multisig authority member list with interior empty entries must be rejected",
+            );
         assert!(matches!(err, PouwError::Unauthorized));
 
         let task = st.get_task(8_967_1_1).unwrap();
         assert_eq!(task.status, TaskStatus::Challenged);
         assert_eq!(task.challenge_bond_forfeited, None);
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
-        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
         assert_eq!(st.balance_of("challenger"), 90);
     }
 
@@ -5521,7 +5627,10 @@ mod tests {
         assert_eq!(task.status, TaskStatus::Challenged);
         assert_eq!(task.challenge_bond_forfeited, None);
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
-        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
         assert_eq!(st.balance_of("challenger"), 90);
     }
 
@@ -5562,7 +5671,9 @@ mod tests {
         assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), 0);
 
         let err = apply_resolve(&mut st, r6, true, "authority2".into(), "authority2".into())
-            .expect_err("terminal challenge resolution must remain single-settlement under multisig authority");
+            .expect_err(
+            "terminal challenge resolution must remain single-settlement under multisig authority",
+        );
         assert!(matches!(err, PouwError::InvalidTransition));
         assert_eq!(st.balance_of("challenger"), 101);
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), 0);
@@ -5631,7 +5742,9 @@ mod tests {
         let before_challenger = st.balance_of("challenger");
 
         let err = apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into())
-            .expect_err("emergency pause must mask min-bond result and freeze challenge entry path");
+            .expect_err(
+                "emergency pause must mask min-bond result and freeze challenge entry path",
+            );
         assert!(matches!(err, PouwError::InvalidTransition));
 
         let after_task = st.get_task(8_971).unwrap();
@@ -5660,8 +5773,14 @@ mod tests {
             .expect("pause=true governance update must succeed");
         assert!(st.is_emergency_paused());
 
-        let paused_err = apply_challenge(&mut st, r4.clone(), "challenger".into(), 10, "challenger".into())
-            .expect_err("emergency pause must freeze challenge entry path");
+        let paused_err = apply_challenge(
+            &mut st,
+            r4.clone(),
+            "challenger".into(),
+            10,
+            "challenger".into(),
+        )
+        .expect_err("emergency pause must freeze challenge entry path");
         assert!(matches!(paused_err, PouwError::InvalidTransition));
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), 0);
         assert_eq!(st.balance_of("challenger"), 100);
@@ -5701,7 +5820,10 @@ mod tests {
         let pause = st
             .set_gov_param(9_200, 7_999, "emergency_pause".into(), "true".into())
             .expect("pause=true governance update must succeed");
-        assert!(matches!(pause, trnm_state::GovParamUpdateOutcome::Applied(_)));
+        assert!(matches!(
+            pause,
+            trnm_state::GovParamUpdateOutcome::Applied(_)
+        ));
         assert!(st.is_emergency_paused());
 
         let before_task = st.get_task(8_960).unwrap();
@@ -5715,9 +5837,67 @@ mod tests {
 
         let after_task = st.get_task(8_960).unwrap();
         assert_eq!(after_task.status, before_task.status);
-        assert_eq!(after_task.challenge_bond_forfeited, before_task.challenge_bond_forfeited);
+        assert_eq!(
+            after_task.challenge_bond_forfeited,
+            before_task.challenge_bond_forfeited
+        );
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
-        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
+        assert_eq!(st.balance_of("challenger"), before_challenger);
+    }
+
+    #[test]
+    fn resolve_pause_boundary_precedes_authority_validation_without_escrow_mutation() {
+        // Safety boundary: emergency pause must fail-closed before authority
+        // validation so malformed resolver payloads cannot leak auth-policy outcomes.
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        set_resolve_authority(&mut st, "authority");
+
+        let r1 = apply_create_task(&mut st, 8_960_5, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(8_960_5, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+        let r5 =
+            apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
+
+        st.set_gov_param(9_200_5, 7_999, "emergency_pause".into(), "true".into())
+            .expect("pause=true governance update must succeed");
+        assert!(st.is_emergency_paused());
+
+        let before_task = st.get_task(8_960_5).unwrap();
+        let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+        let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+        let before_challenger = st.balance_of("challenger");
+
+        let err = apply_resolve(
+            &mut st,
+            r5,
+            true,
+            "authority".into(),
+            "authority;spoof".into(),
+        )
+        .expect_err("pause boundary must trigger before malformed signer validation");
+        assert!(matches!(err, PouwError::InvalidTransition));
+
+        let after_task = st.get_task(8_960_5).unwrap();
+        assert_eq!(after_task.status, before_task.status);
+        assert_eq!(
+            after_task.challenge_bond_forfeited,
+            before_task.challenge_bond_forfeited
+        );
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
         assert_eq!(st.balance_of("challenger"), before_challenger);
     }
 
@@ -5753,14 +5933,21 @@ mod tests {
 
         let after_task = st.get_task(8_961).unwrap();
         assert_eq!(after_task.status, before_task.status);
-        assert_eq!(after_task.challenge_bond_forfeited, before_task.challenge_bond_forfeited);
+        assert_eq!(
+            after_task.challenge_bond_forfeited,
+            before_task.challenge_bond_forfeited
+        );
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
-        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
         assert_eq!(st.balance_of("challenger"), before_challenger);
     }
 
     #[test]
-    fn resolve_multisig_paused_after_first_approval_preserves_staged_authority_and_escrow_until_unpaused() {
+    fn resolve_multisig_paused_after_first_approval_preserves_staged_authority_and_escrow_until_unpaused(
+    ) {
         // Safety boundary: pause must fail-closed before multisig confirmation so
         // staged approvals remain intact and escrow cannot settle while paused.
         let mut st = seeded_state();
@@ -5814,7 +6001,10 @@ mod tests {
             Some("authority-a")
         );
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
-        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
         assert_eq!(st.balance_of("challenger"), before_challenger);
 
         st.set_gov_param(9_201_3, 7_999, "emergency_pause".into(), "false".into())
@@ -5891,7 +6081,10 @@ mod tests {
             Some("authority-a")
         );
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
-        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
         assert_eq!(st.balance_of("challenger"), before_challenger);
 
         st.set_gov_param(9_201_17, 7_999, "emergency_pause".into(), "false".into())
@@ -5909,7 +6102,10 @@ mod tests {
         assert!(matches!(stale_err, PouwError::Unauthorized));
         assert_eq!(st.pending_resolve_first_approver(8_961_16), None);
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
-        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
         assert_eq!(st.balance_of("challenger"), before_challenger);
     }
 
@@ -5949,9 +6145,15 @@ mod tests {
 
         let after_task = st.get_task(8_961_1).unwrap();
         assert_eq!(after_task.status, before_task.status);
-        assert_eq!(after_task.challenge_bond_forfeited, before_task.challenge_bond_forfeited);
+        assert_eq!(
+            after_task.challenge_bond_forfeited,
+            before_task.challenge_bond_forfeited
+        );
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
-        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
         assert_eq!(st.balance_of("challenger"), before_challenger);
     }
 
@@ -5984,17 +6186,22 @@ mod tests {
         let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
         let before_challenger = st.balance_of("challenger");
 
-        let err = apply_resolve(&mut st, r5, true, "system".into(), "system".into())
-            .expect_err(
-                "emergency pause must mask reserved system-actor validation and freeze settlement",
-            );
+        let err = apply_resolve(&mut st, r5, true, "system".into(), "system".into()).expect_err(
+            "emergency pause must mask reserved system-actor validation and freeze settlement",
+        );
         assert!(matches!(err, PouwError::InvalidTransition));
 
         let after_task = st.get_task(8_961_15).unwrap();
         assert_eq!(after_task.status, before_task.status);
-        assert_eq!(after_task.challenge_bond_forfeited, before_task.challenge_bond_forfeited);
+        assert_eq!(
+            after_task.challenge_bond_forfeited,
+            before_task.challenge_bond_forfeited
+        );
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
-        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
         assert_eq!(st.balance_of("challenger"), before_challenger);
     }
 
@@ -6028,20 +6235,27 @@ mod tests {
 
         let err = apply_resolve(&mut st, r5, true, "authority".into(), "authority".into())
             .expect_err(
-                "emergency pause must mask malformed authority-member validation and freeze settlement",
-            );
+            "emergency pause must mask malformed authority-member validation and freeze settlement",
+        );
         assert!(matches!(err, PouwError::InvalidTransition));
 
         let after_task = st.get_task(8_961_2).unwrap();
         assert_eq!(after_task.status, before_task.status);
-        assert_eq!(after_task.challenge_bond_forfeited, before_task.challenge_bond_forfeited);
+        assert_eq!(
+            after_task.challenge_bond_forfeited,
+            before_task.challenge_bond_forfeited
+        );
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
-        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
         assert_eq!(st.balance_of("challenger"), before_challenger);
     }
 
     #[test]
-    fn resolve_emergency_pause_precedes_duplicate_multisig_member_validation_without_escrow_mutation() {
+    fn resolve_emergency_pause_precedes_duplicate_multisig_member_validation_without_escrow_mutation(
+    ) {
         // Merge-gate hardening: emergency pause must fail-closed before duplicate
         // resolver-member validation so multisig-shape probing cannot leak governance policy.
         let mut st = seeded_state();
@@ -6070,20 +6284,27 @@ mod tests {
 
         let err = apply_resolve(&mut st, r5, true, "authority".into(), "authority".into())
             .expect_err(
-                "emergency pause must mask duplicate authority-member validation and freeze settlement",
-            );
+            "emergency pause must mask duplicate authority-member validation and freeze settlement",
+        );
         assert!(matches!(err, PouwError::InvalidTransition));
 
         let after_task = st.get_task(8_961_2_1).unwrap();
         assert_eq!(after_task.status, before_task.status);
-        assert_eq!(after_task.challenge_bond_forfeited, before_task.challenge_bond_forfeited);
+        assert_eq!(
+            after_task.challenge_bond_forfeited,
+            before_task.challenge_bond_forfeited
+        );
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
-        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
         assert_eq!(st.balance_of("challenger"), before_challenger);
     }
 
     #[test]
-    fn resolve_emergency_pause_precedes_escrow_member_multisig_validation_without_escrow_mutation() {
+    fn resolve_emergency_pause_precedes_escrow_member_multisig_validation_without_escrow_mutation()
+    {
         // Merge-gate hardening: emergency pause must fail-closed before escrow-member
         // authority-set validation to avoid leaking governance role-separation outcomes.
         let mut st = seeded_state();
@@ -6113,20 +6334,27 @@ mod tests {
 
         let err = apply_resolve(&mut st, r5, true, "authority".into(), "authority".into())
             .expect_err(
-                "emergency pause must mask escrow-member authority validation and freeze settlement",
-            );
+            "emergency pause must mask escrow-member authority validation and freeze settlement",
+        );
         assert!(matches!(err, PouwError::InvalidTransition));
 
         let after_task = st.get_task(8_961_21).unwrap();
         assert_eq!(after_task.status, before_task.status);
-        assert_eq!(after_task.challenge_bond_forfeited, before_task.challenge_bond_forfeited);
+        assert_eq!(
+            after_task.challenge_bond_forfeited,
+            before_task.challenge_bond_forfeited
+        );
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
-        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
         assert_eq!(st.balance_of("challenger"), before_challenger);
     }
 
     #[test]
-    fn resolve_emergency_pause_precedes_forfeit_treasury_authority_validation_without_escrow_mutation() {
+    fn resolve_emergency_pause_precedes_forfeit_treasury_authority_validation_without_escrow_mutation(
+    ) {
         // Merge-gate hardening: emergency pause must fail-closed before forfeit-treasury
         // authority validation to avoid leaking custody-role separation outcomes.
         let mut st = seeded_state();
@@ -6167,9 +6395,15 @@ mod tests {
 
         let after_task = st.get_task(8_961_22).unwrap();
         assert_eq!(after_task.status, before_task.status);
-        assert_eq!(after_task.challenge_bond_forfeited, before_task.challenge_bond_forfeited);
+        assert_eq!(
+            after_task.challenge_bond_forfeited,
+            before_task.challenge_bond_forfeited
+        );
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
-        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
         assert_eq!(st.balance_of("challenger"), before_challenger);
     }
 
@@ -6208,16 +6442,20 @@ mod tests {
             "authority;attacker".into(),
             "authority;attacker".into(),
         )
-        .expect_err(
-            "emergency pause must mask semicolon signer validation and freeze settlement",
-        );
+        .expect_err("emergency pause must mask semicolon signer validation and freeze settlement");
         assert!(matches!(err, PouwError::InvalidTransition));
 
         let after_task = st.get_task(8_961_23).unwrap();
         assert_eq!(after_task.status, before_task.status);
-        assert_eq!(after_task.challenge_bond_forfeited, before_task.challenge_bond_forfeited);
+        assert_eq!(
+            after_task.challenge_bond_forfeited,
+            before_task.challenge_bond_forfeited
+        );
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
-        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
         assert_eq!(st.balance_of("challenger"), before_challenger);
     }
 
@@ -6261,9 +6499,15 @@ mod tests {
 
         let after_task = st.get_task(8_961_23_1).unwrap();
         assert_eq!(after_task.status, before_task.status);
-        assert_eq!(after_task.challenge_bond_forfeited, before_task.challenge_bond_forfeited);
+        assert_eq!(
+            after_task.challenge_bond_forfeited,
+            before_task.challenge_bond_forfeited
+        );
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
-        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
         assert_eq!(st.balance_of("challenger"), before_challenger);
     }
 
@@ -6295,23 +6539,23 @@ mod tests {
         let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
         let before_challenger = st.balance_of("challenger");
 
-        let err = apply_resolve(
-            &mut st,
-            r5,
-            true,
-            "challenger".into(),
-            "challenger".into(),
-        )
-        .expect_err(
-            "emergency pause must mask challenger-authority validation and freeze settlement",
-        );
+        let err = apply_resolve(&mut st, r5, true, "challenger".into(), "challenger".into())
+            .expect_err(
+                "emergency pause must mask challenger-authority validation and freeze settlement",
+            );
         assert!(matches!(err, PouwError::InvalidTransition));
 
         let after_task = st.get_task(8_961_24).unwrap();
         assert_eq!(after_task.status, before_task.status);
-        assert_eq!(after_task.challenge_bond_forfeited, before_task.challenge_bond_forfeited);
+        assert_eq!(
+            after_task.challenge_bond_forfeited,
+            before_task.challenge_bond_forfeited
+        );
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
-        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
         assert_eq!(st.balance_of("challenger"), before_challenger);
     }
 
@@ -6344,23 +6588,22 @@ mod tests {
         let before_challenger = st.balance_of("challenger");
 
         let placeholder = DEFAULT_RESOLVE_AUTHORITY.to_string();
-        let err = apply_resolve(
-            &mut st,
-            r5,
-            true,
-            placeholder.clone(),
-            placeholder,
-        )
-        .expect_err(
+        let err = apply_resolve(&mut st, r5, true, placeholder.clone(), placeholder).expect_err(
             "emergency pause must mask placeholder-authority validation and freeze settlement",
         );
         assert!(matches!(err, PouwError::InvalidTransition));
 
         let after_task = st.get_task(8_961_25).unwrap();
         assert_eq!(after_task.status, before_task.status);
-        assert_eq!(after_task.challenge_bond_forfeited, before_task.challenge_bond_forfeited);
+        assert_eq!(
+            after_task.challenge_bond_forfeited,
+            before_task.challenge_bond_forfeited
+        );
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
-        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
         assert_eq!(st.balance_of("challenger"), before_challenger);
     }
 
@@ -6395,14 +6638,21 @@ mod tests {
 
         let after_task = st.get_task(8_962).unwrap();
         assert_eq!(after_task.status, before_task.status);
-        assert_eq!(after_task.challenge_bond_forfeited, before_task.challenge_bond_forfeited);
+        assert_eq!(
+            after_task.challenge_bond_forfeited,
+            before_task.challenge_bond_forfeited
+        );
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
-        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
         assert_eq!(st.balance_of("challenger"), before_challenger);
     }
 
     #[test]
-    fn timeout_emergency_pause_preserves_staged_multisig_resolve_approval_without_escrow_mutation() {
+    fn timeout_emergency_pause_preserves_staged_multisig_resolve_approval_without_escrow_mutation()
+    {
         // Safety boundary: emergency pause must fail-closed for challenged timeout
         // settlement even when a multisig resolve approval is already staged.
         let mut st = seeded_state();
@@ -6440,16 +6690,23 @@ mod tests {
         let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
         let before_challenger = st.balance_of("challenger");
 
-        let err = apply_timeout(&mut st, r5.clone(), 221)
-            .expect_err("emergency pause must freeze challenged timeout despite staged multisig approval");
+        let err = apply_timeout(&mut st, r5.clone(), 221).expect_err(
+            "emergency pause must freeze challenged timeout despite staged multisig approval",
+        );
         assert!(matches!(err, PouwError::InvalidTransition));
         assert_eq!(st.pending_resolve_approval(r5.id), Some((true, 1)));
 
         let after_task = st.get_task(8_962_09).unwrap();
         assert_eq!(after_task.status, before_task.status);
-        assert_eq!(after_task.challenge_bond_forfeited, before_task.challenge_bond_forfeited);
+        assert_eq!(
+            after_task.challenge_bond_forfeited,
+            before_task.challenge_bond_forfeited
+        );
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
-        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
         assert_eq!(st.balance_of("challenger"), before_challenger);
 
         st.set_gov_param(9_202_10, 7_999, "emergency_pause".into(), "false".into())
@@ -6500,9 +6757,15 @@ mod tests {
 
         let after_task = st.get_task(8_962_1).unwrap();
         assert_eq!(after_task.status, before_task.status);
-        assert_eq!(after_task.challenge_bond_forfeited, before_task.challenge_bond_forfeited);
+        assert_eq!(
+            after_task.challenge_bond_forfeited,
+            before_task.challenge_bond_forfeited
+        );
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
-        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
         assert_eq!(st.balance_of("challenger"), before_challenger);
     }
 
@@ -6533,15 +6796,22 @@ mod tests {
         let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
         let before_challenger = st.balance_of("challenger");
 
-        let err = apply_timeout(&mut st, r5, 0)
-            .expect_err("emergency pause must mask deadline checks and freeze challenged timeout path");
+        let err = apply_timeout(&mut st, r5, 0).expect_err(
+            "emergency pause must mask deadline checks and freeze challenged timeout path",
+        );
         assert!(matches!(err, PouwError::InvalidTransition));
 
         let after_task = st.get_task(8_962_4).unwrap();
         assert_eq!(after_task.status, before_task.status);
-        assert_eq!(after_task.challenge_bond_forfeited, before_task.challenge_bond_forfeited);
+        assert_eq!(
+            after_task.challenge_bond_forfeited,
+            before_task.challenge_bond_forfeited
+        );
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
-        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
         assert_eq!(st.balance_of("challenger"), before_challenger);
     }
 
@@ -6592,7 +6862,10 @@ mod tests {
         let replay_err = apply_timeout(&mut st, done, 221)
             .expect_err("terminal timeout replay must be rejected without double settlement");
         assert!(matches!(replay_err, PouwError::InvalidTransition));
-        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_after_first_timeout);
+        assert_eq!(
+            st.balance_of(CHALLENGE_ESCROW_ACCOUNT),
+            escrow_after_first_timeout
+        );
         assert_eq!(
             st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
             forfeit_after_first_timeout
@@ -6631,7 +6904,10 @@ mod tests {
         assert_eq!(task.challenge_bond, None);
         assert_eq!(task.challenge_bond_forfeited, None);
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
-        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
         assert_eq!(
             st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
             before_worker_slash_treasury
@@ -6659,8 +6935,14 @@ mod tests {
             .expect("pause=true governance update must succeed");
         assert!(st.is_emergency_paused());
 
-        let paused_err = apply_resolve(&mut st, r5.clone(), false, "authority".into(), "authority".into())
-            .expect_err("resolve must stay frozen while emergency pause is active");
+        let paused_err = apply_resolve(
+            &mut st,
+            r5.clone(),
+            false,
+            "authority".into(),
+            "authority".into(),
+        )
+        .expect_err("resolve must stay frozen while emergency pause is active");
         assert!(matches!(paused_err, PouwError::InvalidTransition));
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), 10);
         assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), 0);
@@ -6704,14 +6986,8 @@ mod tests {
         let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
         let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
         let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
-        let r5 = apply_challenge(
-            &mut st,
-            r4,
-            "challenger".into(),
-            10,
-            "challenger".into(),
-        )
-        .unwrap();
+        let r5 =
+            apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
         assert_eq!(total_funds(&st), baseline_total);
 
         st.set_gov_param(9_214_1, 7_999, "emergency_pause".into(), "true".into())
@@ -6965,7 +7241,9 @@ mod tests {
             "authority".into(),
             "authority".into(),
         )
-        .expect_err("second signer must not be able to flip staged slash decision after pause clear");
+        .expect_err(
+            "second signer must not be able to flip staged slash decision after pause clear",
+        );
         assert!(matches!(flip_err, PouwError::Unauthorized));
 
         assert_eq!(st.pending_resolve_approval(r5.id), Some((true, 1)));
@@ -6984,7 +7262,8 @@ mod tests {
     }
 
     #[test]
-    fn resolve_multisig_rejects_stale_first_approver_after_governance_member_rotation_without_escrow_mutation() {
+    fn resolve_multisig_rejects_stale_first_approver_after_governance_member_rotation_without_escrow_mutation(
+    ) {
         // Governance hardening: once signer membership rotates, previously staged
         // approvals from removed members must be discarded before settlement.
         let mut st = seeded_state();
@@ -7174,7 +7453,8 @@ mod tests {
     }
 
     #[test]
-    fn resolve_multisig_clears_staged_approval_on_case_drifted_member_rotation_without_escrow_mutation() {
+    fn resolve_multisig_clears_staged_approval_on_case_drifted_member_rotation_without_escrow_mutation(
+    ) {
         // Canonical-account hardening: signer membership uses exact account IDs,
         // so case-drifted rotations must clear staged approvals fail-closed.
         let mut st = seeded_state();
@@ -7249,8 +7529,14 @@ mod tests {
             apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
 
         let before = st.clone();
-        let err = apply_resolve(&mut st, r5.clone(), true, "authority".into(), "authority".into())
-            .expect_err("missing governance authority must not silently authorize legacy singleton");
+        let err = apply_resolve(
+            &mut st,
+            r5.clone(),
+            true,
+            "authority".into(),
+            "authority".into(),
+        )
+        .expect_err("missing governance authority must not silently authorize legacy singleton");
         assert!(matches!(err, PouwError::Unauthorized));
 
         let err = apply_resolve(
@@ -7260,7 +7546,9 @@ mod tests {
             DEFAULT_RESOLVE_AUTHORITY.into(),
             DEFAULT_RESOLVE_AUTHORITY.into(),
         )
-        .expect_err("missing governance authority must remain fail-closed for placeholder authority");
+        .expect_err(
+            "missing governance authority must remain fail-closed for placeholder authority",
+        );
         assert!(matches!(err, PouwError::Unauthorized));
 
         let task = st.get_task(8_951).unwrap();
@@ -7735,8 +8023,14 @@ mod tests {
             apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
 
         let before = st.clone();
-        let err = apply_resolve(&mut st, r5, true, "authority team".into(), "authority team".into())
-            .expect_err("internal-whitespace governance authority must fail closed");
+        let err = apply_resolve(
+            &mut st,
+            r5,
+            true,
+            "authority team".into(),
+            "authority team".into(),
+        )
+        .expect_err("internal-whitespace governance authority must fail closed");
         assert!(matches!(err, PouwError::Unauthorized));
 
         let task = st.get_task(9_001_7).unwrap();
@@ -7754,7 +8048,8 @@ mod tests {
     }
 
     #[test]
-    fn resolve_rejects_governance_authority_with_unicode_internal_whitespace_without_escrow_mutation() {
+    fn resolve_rejects_governance_authority_with_unicode_internal_whitespace_without_escrow_mutation(
+    ) {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
         // Unicode whitespace (U+3000 ideographic space) must be rejected the same as ASCII space.
@@ -7809,8 +8104,14 @@ mod tests {
             apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
 
         let before = st.clone();
-        let err = apply_resolve(&mut st, r5, true, "authority".into(), "authority;ops".into())
-            .expect_err("signer separators must fail closed to prevent authority-list spoofing");
+        let err = apply_resolve(
+            &mut st,
+            r5,
+            true,
+            "authority".into(),
+            "authority;ops".into(),
+        )
+        .expect_err("signer separators must fail closed to prevent authority-list spoofing");
         assert!(matches!(err, PouwError::Unauthorized));
 
         let task = st.get_task(9_001_72).unwrap();
@@ -7845,8 +8146,16 @@ mod tests {
             apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
 
         let before = st.clone();
-        let err = apply_resolve(&mut st, r5, true, "authority".into(), "authority；ops".into())
-            .expect_err("unicode separator aliases must fail closed to prevent authority-list spoofing");
+        let err = apply_resolve(
+            &mut st,
+            r5,
+            true,
+            "authority".into(),
+            "authority；ops".into(),
+        )
+        .expect_err(
+            "unicode separator aliases must fail closed to prevent authority-list spoofing",
+        );
         assert!(matches!(err, PouwError::Unauthorized));
 
         let task = st.get_task(9_001_73).unwrap();
@@ -7881,8 +8190,14 @@ mod tests {
             apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
 
         let before = st.clone();
-        let err = apply_resolve(&mut st, r5, true, "authority;ops".into(), "authority".into())
-            .expect_err("resolver separators must fail closed to prevent payload actor spoofing");
+        let err = apply_resolve(
+            &mut st,
+            r5,
+            true,
+            "authority;ops".into(),
+            "authority".into(),
+        )
+        .expect_err("resolver separators must fail closed to prevent payload actor spoofing");
         assert!(matches!(err, PouwError::Unauthorized));
 
         let task = st.get_task(9_001_74).unwrap();
@@ -8022,14 +8337,8 @@ mod tests {
             apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
 
         let before = st.clone();
-        let err = apply_resolve(
-            &mut st,
-            r5,
-            true,
-            " system ".into(),
-            " system ".into(),
-        )
-        .unwrap_err();
+        let err =
+            apply_resolve(&mut st, r5, true, " system ".into(), " system ".into()).unwrap_err();
         assert!(matches!(err, PouwError::Unauthorized));
 
         let task = st.get_task(9_001_5).unwrap();
@@ -8099,14 +8408,8 @@ mod tests {
             apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
 
         let before = st.clone();
-        let err = apply_resolve(
-            &mut st,
-            r5,
-            true,
-            "authority".into(),
-            "authority".into(),
-        )
-        .unwrap_err();
+        let err =
+            apply_resolve(&mut st, r5, true, "authority".into(), "authority".into()).unwrap_err();
         assert!(matches!(err, PouwError::Unauthorized));
 
         let task = st.get_task(9_001_7).unwrap();
@@ -8184,9 +8487,14 @@ mod tests {
             apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
 
         let before = st.clone();
-        let err =
-            apply_resolve(&mut st, r5, true, escrow_case_drift.into(), escrow_case_drift.into())
-                .unwrap_err();
+        let err = apply_resolve(
+            &mut st,
+            r5,
+            true,
+            escrow_case_drift.into(),
+            escrow_case_drift.into(),
+        )
+        .unwrap_err();
         assert!(matches!(err, PouwError::Unauthorized));
 
         let task = st.get_task(9_001_7).unwrap();
@@ -8289,7 +8597,8 @@ mod tests {
     }
 
     #[test]
-    fn resolve_rejects_forfeit_treasury_account_authority_with_whitespace_without_escrow_mutation() {
+    fn resolve_rejects_forfeit_treasury_account_authority_with_whitespace_without_escrow_mutation()
+    {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
         set_resolve_authority(&mut st, CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
@@ -8331,7 +8640,8 @@ mod tests {
     }
 
     #[test]
-    fn resolve_rejects_multisig_authority_when_forfeit_treasury_is_member_without_escrow_mutation() {
+    fn resolve_rejects_multisig_authority_when_forfeit_treasury_is_member_without_escrow_mutation()
+    {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
         let authority_with_forfeit_member =
@@ -8369,7 +8679,8 @@ mod tests {
     }
 
     #[test]
-    fn resolve_rejects_multisig_authority_when_forfeit_treasury_member_has_case_drift_without_escrow_mutation() {
+    fn resolve_rejects_multisig_authority_when_forfeit_treasury_member_has_case_drift_without_escrow_mutation(
+    ) {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
         let authority_with_case_drift_forfeit_member =
@@ -8451,7 +8762,8 @@ mod tests {
     }
 
     #[test]
-    fn resolve_rejects_unconfigured_placeholder_authority_with_whitespace_without_escrow_mutation() {
+    fn resolve_rejects_unconfigured_placeholder_authority_with_whitespace_without_escrow_mutation()
+    {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
         // Keep default unconfigured governance placeholder authority.
@@ -8554,14 +8866,8 @@ mod tests {
             apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
 
         let before = st.clone();
-        let err = apply_resolve(
-            &mut st,
-            r5,
-            true,
-            "authority".into(),
-            "authority".into(),
-        )
-        .unwrap_err();
+        let err =
+            apply_resolve(&mut st, r5, true, "authority".into(), "authority".into()).unwrap_err();
         assert!(matches!(err, PouwError::Unauthorized));
 
         let task = st.get_task(9_001_5).unwrap();
@@ -8597,14 +8903,8 @@ mod tests {
             apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
 
         let before = st.clone();
-        let err = apply_resolve(
-            &mut st,
-            r5,
-            true,
-            "authority".into(),
-            "authority".into(),
-        )
-        .expect_err("multisig authority containing escrow account must fail closed");
+        let err = apply_resolve(&mut st, r5, true, "authority".into(), "authority".into())
+            .expect_err("multisig authority containing escrow account must fail closed");
         assert!(matches!(err, PouwError::Unauthorized));
 
         let task = st.get_task(9_001_5_1).unwrap();
@@ -8640,14 +8940,8 @@ mod tests {
             apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
 
         let before = st.clone();
-        let err = apply_resolve(
-            &mut st,
-            r5,
-            true,
-            "authority".into(),
-            "authority".into(),
-        )
-        .expect_err("comma+whitespace authority list must fail closed");
+        let err = apply_resolve(&mut st, r5, true, "authority".into(), "authority".into())
+            .expect_err("comma+whitespace authority list must fail closed");
         assert!(matches!(err, PouwError::Unauthorized));
 
         let task = st.get_task(9_001_6).unwrap();
@@ -8755,7 +9049,8 @@ mod tests {
     }
 
     #[test]
-    fn resolve_rejects_multisig_authority_with_casefolded_duplicate_member_without_escrow_mutation() {
+    fn resolve_rejects_multisig_authority_with_casefolded_duplicate_member_without_escrow_mutation()
+    {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
         // Canonical member-set hardening: case-folded duplicates collapse signer
@@ -8775,14 +9070,8 @@ mod tests {
             apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
 
         let before = st.clone();
-        let err = apply_resolve(
-            &mut st,
-            r5,
-            true,
-            "authority".into(),
-            "authority".into(),
-        )
-        .expect_err("case-folded duplicate multisig member must fail closed");
+        let err = apply_resolve(&mut st, r5, true, "authority".into(), "authority".into())
+            .expect_err("case-folded duplicate multisig member must fail closed");
         assert!(matches!(err, PouwError::Unauthorized));
 
         let task = st.get_task(9_001_6_2).unwrap();
@@ -8819,14 +9108,8 @@ mod tests {
             apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
 
         let before = st.clone();
-        let err = apply_resolve(
-            &mut st,
-            r5,
-            true,
-            "authority".into(),
-            "authority".into(),
-        )
-        .expect_err("comma+unicode-whitespace authority list must fail closed");
+        let err = apply_resolve(&mut st, r5, true, "authority".into(), "authority".into())
+            .expect_err("comma+unicode-whitespace authority list must fail closed");
         assert!(matches!(err, PouwError::Unauthorized));
 
         let task = st.get_task(9_001_6_1).unwrap();
@@ -9117,8 +9400,8 @@ mod tests {
             apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
 
         set_resolve_authority(&mut st, "authority");
-        let err = apply_resolve(&mut st, r5, false, "authority".into(), "authority".into())
-            .unwrap_err();
+        let err =
+            apply_resolve(&mut st, r5, false, "authority".into(), "authority".into()).unwrap_err();
         assert!(matches!(err, PouwError::State(_)));
 
         let task = st.get_task(9952).unwrap();
@@ -10219,7 +10502,8 @@ mod tests {
     }
 
     #[test]
-    fn zk_reveal_rejects_duplicate_proof_type_binding_with_single_quoted_trailing_space_fail_closed() {
+    fn zk_reveal_rejects_duplicate_proof_type_binding_with_single_quoted_trailing_space_fail_closed(
+    ) {
         let mut st = seeded_state();
         let r1 = apply_create_task(&mut st, 7027, "alice".into(), 10).unwrap();
 
@@ -10249,7 +10533,8 @@ mod tests {
     }
 
     #[test]
-    fn zk_reveal_rejects_duplicate_proof_type_binding_with_single_quoted_leading_space_fail_closed() {
+    fn zk_reveal_rejects_duplicate_proof_type_binding_with_single_quoted_leading_space_fail_closed()
+    {
         let mut st = seeded_state();
         let r1 = apply_create_task(&mut st, 7028, "alice".into(), 10).unwrap();
 
@@ -10652,7 +10937,8 @@ mod tests {
         let r2 = apply_accept_task(&mut st, r1_updated, "worker1".into()).unwrap();
         let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
 
-        let err = apply_reveal_result(&mut st, r3.clone(), result_hash, reveal_salt, None).unwrap_err();
+        let err =
+            apply_reveal_result(&mut st, r3.clone(), result_hash, reveal_salt, None).unwrap_err();
 
         assert!(matches!(err, PouwError::State(msg) if msg.contains("Proof verification failed")));
 
@@ -10678,9 +10964,14 @@ mod tests {
         let r2 = apply_accept_task(&mut st, r1_updated, "worker1".into()).unwrap();
         let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
 
-        let err =
-            apply_reveal_result(&mut st, r3.clone(), result_hash, reveal_salt, Some(Vec::new()))
-                .unwrap_err();
+        let err = apply_reveal_result(
+            &mut st,
+            r3.clone(),
+            result_hash,
+            reveal_salt,
+            Some(Vec::new()),
+        )
+        .unwrap_err();
 
         assert!(matches!(err, PouwError::State(msg) if msg.contains("missing proof payload")));
 
@@ -10723,7 +11014,8 @@ mod tests {
     }
 
     #[test]
-    fn unicode_whitespace_only_tee_proof_payload_rejects_reveal_fail_closed_without_state_mutation() {
+    fn unicode_whitespace_only_tee_proof_payload_rejects_reveal_fail_closed_without_state_mutation()
+    {
         let mut st = seeded_state();
         let r1 = apply_create_task(&mut st, 7025, "alice".into(), 10).unwrap();
 
@@ -10802,7 +11094,8 @@ mod tests {
         let r2 = apply_accept_task(&mut st, r1_updated, "worker1".into()).unwrap();
         let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
 
-        let err = apply_reveal_result(&mut st, r3.clone(), result_hash, reveal_salt, None).unwrap_err();
+        let err =
+            apply_reveal_result(&mut st, r3.clone(), result_hash, reveal_salt, None).unwrap_err();
 
         assert!(matches!(err, PouwError::State(msg) if msg.contains("Proof verification failed")));
 
@@ -10828,9 +11121,14 @@ mod tests {
         let r2 = apply_accept_task(&mut st, r1_updated, "worker1".into()).unwrap();
         let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
 
-        let err =
-            apply_reveal_result(&mut st, r3.clone(), result_hash, reveal_salt, Some(Vec::new()))
-                .unwrap_err();
+        let err = apply_reveal_result(
+            &mut st,
+            r3.clone(),
+            result_hash,
+            reveal_salt,
+            Some(Vec::new()),
+        )
+        .unwrap_err();
 
         assert!(matches!(err, PouwError::State(msg) if msg.contains("missing proof payload")));
 
@@ -10841,7 +11139,8 @@ mod tests {
     }
 
     #[test]
-    fn unicode_whitespace_only_zk_proof_payload_rejects_reveal_fail_closed_without_state_mutation() {
+    fn unicode_whitespace_only_zk_proof_payload_rejects_reveal_fail_closed_without_state_mutation()
+    {
         let mut st = seeded_state();
         let r1 = apply_create_task(&mut st, 7026, "alice".into(), 10).unwrap();
 
