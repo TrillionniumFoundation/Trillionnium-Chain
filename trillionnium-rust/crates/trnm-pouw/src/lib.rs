@@ -6827,6 +6827,60 @@ mod tests {
     }
 
     #[test]
+    fn resolve_emergency_pause_precedes_malformed_worker_state_validation_without_escrow_mutation() {
+        // Merge-gate hardening: emergency pause must fail-closed before malformed
+        // worker-account state validation so paused resolve flow does not leak legacy
+        // challenged-task corruption details while escrow settlement is frozen.
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        set_resolve_authority(&mut st, "authority");
+
+        let r1 = apply_create_task(&mut st, 8_961_90, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(8_961_90, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+        let r5 =
+            apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
+
+        // Simulate malformed legacy challenged state carrying non-canonical worker id.
+        let mut malformed = st.get_task(r5.id).unwrap();
+        malformed.worker = Some(" worker1".into());
+        let r5 = st.update_task(r5, malformed).unwrap();
+
+        st.set_gov_param(9_201_90, 7_999, "emergency_pause".into(), "true".into())
+            .expect("pause=true governance update must succeed");
+        assert!(st.is_emergency_paused());
+
+        let before_task = st.get_task(8_961_90).unwrap();
+        let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+        let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+        let before_challenger = st.balance_of("challenger");
+
+        let err = apply_resolve(&mut st, r5, true, "authority".into(), "authority".into())
+            .expect_err(
+                "emergency pause must mask malformed worker-state validation and freeze settlement",
+            );
+        assert!(matches!(err, PouwError::InvalidTransition));
+
+        let after_task = st.get_task(8_961_90).unwrap();
+        assert_eq!(after_task.status, before_task.status);
+        assert_eq!(
+            after_task.challenge_bond_forfeited,
+            before_task.challenge_bond_forfeited
+        );
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
+        assert_eq!(st.balance_of("challenger"), before_challenger);
+    }
+
+    #[test]
     fn timeout_emergency_pause_preserves_staged_multisig_resolve_approval_without_escrow_mutation()
     {
         // Safety boundary: emergency pause must fail-closed for challenged timeout
