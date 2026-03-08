@@ -94,7 +94,17 @@ impl LaneAdmissionGate {
 
         // When cache and lane queue cardinality are aligned, lane-wide membership
         // is authoritative for duplicate checks on both saturated and free paths.
-        let is_duplicate = self.seen_global.contains(&tx_id);
+        //
+        // Defensive fallback: restored-state skew can theoretically keep cardinality
+        // aligned while replacing one queued id with a ghost id in seen_global. In
+        // that case, trust lane-local seen sets and repair lane-wide cache inline.
+        let mut is_duplicate = self.seen_global.contains(&tx_id);
+        if !is_duplicate
+            && (self.normal.seen.contains(&tx_id) || self.critical.seen.contains(&tx_id))
+        {
+            is_duplicate = true;
+            self.seen_global.insert(tx_id);
+        }
 
         if lane_total >= self.total_capacity {
             // Saturated hot path: avoid insert-then-remove churn for fresh ids while
@@ -654,6 +664,26 @@ mod tests {
         // After one dequeue, the same id should admit as fresh.
         let drained = g.pop_ready();
         assert!(drained == Some(1) || drained == Some(2) || drained == Some(3));
+        assert_eq!(g.admit(999, IngressClass::Critical), AdmitOutcome::Accepted);
+    }
+
+    #[test]
+    fn equal_cardinality_seen_global_skew_still_preserves_duplicate_semantics() {
+        let mut g = LaneAdmissionGate::new(3, 1);
+
+        assert_eq!(g.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(11, IngressClass::Normal), AdmitOutcome::Accepted);
+
+        // Simulate restored-state skew where lane-wide cache keeps the same
+        // cardinality but drops a queued id in favor of a ghost id.
+        g.seen_global.remove(&10);
+        g.seen_global.insert(999);
+        assert_eq!(g.seen_global.len(), 2);
+
+        // Duplicate for tx 10 must still be detected via lane-local truth.
+        assert_eq!(g.admit(10, IngressClass::Normal), AdmitOutcome::Duplicate);
+
+        // Ghost id should not be treated as duplicate while lane still has room.
         assert_eq!(g.admit(999, IngressClass::Critical), AdmitOutcome::Accepted);
     }
 }
