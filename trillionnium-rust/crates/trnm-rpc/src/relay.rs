@@ -609,6 +609,13 @@ impl RelayService {
 
     pub fn ack(&self, req: RelayAckRequest) -> Result<RelayAckResponse> {
         validate_session_id(&req.session_id, "session_id")?;
+        if req.envelope_ids.is_empty() && req.upto_seq.is_none() {
+            return Err(bad_request(
+                "empty_ack_request",
+                "relay ack requires envelope_ids or upto_seq",
+            ));
+        }
+
         let mut g = self
             .sessions
             .lock()
@@ -918,6 +925,25 @@ mod tests {
             })
             .expect("close");
         assert_eq!(closed.session.status, RelaySessionStatus::Closed);
+    }
+
+    #[test]
+    fn relay_ack_rejects_empty_request() {
+        let relay = RelayService::new(RelayRouter::new());
+        relay
+            .open(RelayOpenRequest {
+                session_id: "s-ack-empty".into(),
+            })
+            .unwrap();
+
+        let err = relay
+            .ack(RelayAckRequest {
+                session_id: "s-ack-empty".into(),
+                envelope_ids: vec![],
+                upto_seq: None,
+            })
+            .expect_err("empty ack should fail");
+        assert!(err.to_string().contains("empty_ack_request"));
     }
 
     #[test]
