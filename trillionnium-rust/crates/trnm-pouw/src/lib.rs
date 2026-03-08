@@ -996,6 +996,15 @@ pub fn apply_resolve_at_height(
         resolver_trimmed.eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY)
             || signer_trimmed.eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY)
             || authority_uses_placeholder;
+    // Legacy-state hardening: assigned worker identity must remain canonical
+    // before resolve authority checks, otherwise malformed worker ids could
+    // bypass self-resolution separation gates.
+    if let Some(worker) = task.worker.as_ref() {
+        let worker_trimmed = worker.trim();
+        if worker_trimmed.is_empty() || worker_trimmed != worker {
+            return Err(PouwError::State("non-canonical worker account".into()));
+        }
+    }
     // Minimal multi-party control: assigned worker cannot self-authorize terminal
     // challenge resolution for their own disputed task.
     let resolver_is_assigned_worker = task
@@ -4132,6 +4141,52 @@ mod tests {
         );
 
         let task = st.get_task(39002).unwrap();
+        assert_eq!(task.status, TaskStatus::Challenged);
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
+    }
+
+    #[test]
+    fn resolve_rejects_noncanonical_assigned_worker_identity_without_escrow_mutation() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        set_resolve_authority(&mut st, "authority");
+
+        let r1 = apply_create_task(&mut st, 39003, "alice".into(), 100).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(39003, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+        let r5 =
+            apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
+
+        // Simulate malformed legacy state where assigned worker identity drifts.
+        let mut bad = st.get_task(r5.id).unwrap();
+        bad.worker = Some(" worker1".into());
+        let bad_ref = st.update_task(r5, bad).unwrap();
+
+        let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+        let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+
+        let err = apply_resolve(
+            &mut st,
+            bad_ref,
+            true,
+            "authority".into(),
+            "authority".into(),
+        )
+        .unwrap_err();
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("non-canonical worker account"))
+        );
+
+        let task = st.get_task(39003).unwrap();
         assert_eq!(task.status, TaskStatus::Challenged);
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
         assert_eq!(
