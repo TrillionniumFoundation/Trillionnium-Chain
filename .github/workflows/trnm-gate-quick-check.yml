@@ -545,6 +545,10 @@ jobs:
         run: |
           ./scripts/v2/e3_enterprise_runbook_rollback_request_id_anchor_test.sh
 
+      - name: Auto regression: e3-enterprise-onboarding-runbook-rollback-contract-test
+        run: |
+          ./scripts/v2/e3_enterprise_onboarding_runbook_rollback_contract_test.sh
+
       - name: Auto regression: trnm-gate-quick-check-deterministic-env-guard-test
         run: |
           ./scripts/v2/trnm_gate_quick_check_deterministic_env_guard_test.sh
