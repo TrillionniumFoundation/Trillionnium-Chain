@@ -682,11 +682,17 @@ pub fn apply_reveal_result_at_height(
     // Verify proof if TEE/ZK.
     // For Fraud proofs, we rely on the challenge period (no immediate verification).
     if matches!(task.proof_type, ProofType::Tee | ProofType::Zk) {
+        // Fail-closed gate: verifiable proofs must include non-empty envelope bytes.
+        let proof_payload = proof_data
+            .as_deref()
+            .filter(|bytes| !bytes.is_empty())
+            .ok_or_else(|| PouwError::State("Proof verification failed: missing proof payload".into()))?;
+
         // Bind verifiable proof envelopes to the reveal payload before verifier dispatch.
         // This is an in-function shadow update; state is only persisted on success below.
         task.result_hash = Some(result_hash);
         let registry = get_default_registry();
-        let verification = registry.verify(&task, proof_data.as_deref().unwrap_or(&[]));
+        let verification = registry.verify(&task, proof_payload);
         match verification {
             VerificationResult::Valid => {
                 // Immediate finality for verifiable execution.
@@ -3507,7 +3513,7 @@ mod tests {
     fn invalid_tee_proof_rejects_reveal() {
         let mut st = seeded_state();
         let r1 = apply_create_task(&mut st, 7002, "alice".into(), 10).unwrap();
-        
+
         let mut task = st.get_task(r1.id).unwrap();
         task.proof_type = ProofType::Tee;
         let r1_updated = st.update_task(r1, task).unwrap();
@@ -3518,12 +3524,41 @@ mod tests {
 
         let r2 = apply_accept_task(&mut st, r1_updated, "worker1".into()).unwrap();
         let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
-        
+
         // Invalid proof (doesn't start with TE)
         let proof = b"BAD_PROOF".to_vec();
         let err = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, Some(proof)).unwrap_err();
-        
+
         assert!(matches!(err, PouwError::State(msg) if msg.contains("Proof verification failed")));
+    }
+
+    #[test]
+    fn tee_reveal_rejects_missing_or_empty_proof_payload_fail_closed() {
+        let mut st = seeded_state();
+        let r1 = apply_create_task(&mut st, 7004, "alice".into(), 10).unwrap();
+
+        let mut task = st.get_task(r1.id).unwrap();
+        task.proof_type = ProofType::Tee;
+        let r1_updated = st.update_task(r1, task).unwrap();
+
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(7004, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1_updated, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+
+        let task_id = r3.id;
+        let err_missing = apply_reveal_result(&mut st, r3.clone(), result_hash, reveal_salt, None).unwrap_err();
+        assert!(matches!(err_missing, PouwError::State(msg) if msg.contains("missing proof payload")));
+
+        let err_empty = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, Some(vec![])).unwrap_err();
+        assert!(matches!(err_empty, PouwError::State(msg) if msg.contains("missing proof payload")));
+
+        let post = st.get_task(task_id).unwrap();
+        assert_eq!(post.status, TaskStatus::Committed);
+        assert!(post.result_hash.is_none());
+        assert!(post.reveal_salt.is_none());
     }
 
     #[test]
