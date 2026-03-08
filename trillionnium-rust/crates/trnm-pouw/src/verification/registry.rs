@@ -2093,5 +2093,33 @@ mod tests {
             VerificationResult::Invalid(msg) if msg.contains("unexpected worker binding")
         ));
     }
+
+    #[test]
+    fn registry_with_builtin_verifiers_fail_closed_when_worker_identifier_is_spoofed() {
+        let registry = VerifierRegistry::with_builtin_verifiers();
+
+        let mut tee_task = task_with_proof_type(ProofType::Tee);
+        tee_task.worker = Some("worker-a".into());
+
+        let mut zk_task = task_with_proof_type(ProofType::Zk);
+        zk_task.worker = Some("worker-a".into());
+        zk_task.result_hash = Some([0x66; 32]);
+
+        assert!(matches!(
+            registry.verify(
+                &tee_task,
+                "TEE:task_id=42,worke＿r=worker-a,proof_type=tee,quote=ok".as_bytes()
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("missing worker binding")
+        ));
+        assert!(matches!(
+            registry.verify(
+                &zk_task,
+                "ZK:task_id=42,worke＿r=worker-a,proof_type=zk,result_hash=6666666666666666666666666666666666666666666666666666666666666666,proof=ok"
+                    .as_bytes()
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("missing worker binding")
+        ));
+    }
 }
 
