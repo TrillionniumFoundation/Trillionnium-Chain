@@ -5,11 +5,14 @@ use std::process::Command;
 use std::thread;
 
 fn unique_fixture_path(name: &str, ext: &str) -> PathBuf {
+    static COUNTER: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
     let ts = std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
         .expect("clock")
         .as_nanos();
-    std::env::temp_dir().join(format!("trnm_rpc_{}_{}.{}", name, ts, ext))
+    let seq = COUNTER.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+    let pid = std::process::id();
+    std::env::temp_dir().join(format!("trnm_rpc_{}_{}_{}_{}.{}", name, pid, ts, seq, ext))
 }
 
 fn run_submit_message_with_limit(
