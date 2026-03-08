@@ -832,6 +832,28 @@ mod tests {
     }
 
     #[test]
+    fn stale_retry_reservations_are_clamped_before_fresh_ingress_deferral() {
+        let mut gate = AdmissionGate::new(3);
+        assert_eq!(gate.admit(1), AdmitOutcome::Accepted);
+
+        // Simulate restored/churned runtime state with one known retry id but
+        // stale oversized reservation count.
+        gate.backpressured_ids.insert(99);
+        gate.retry_reservations = 3;
+
+        // With free_slots=2 and retry_budget=1, stale reservations must be
+        // clamped so fresh ingress is accepted instead of over-deferred.
+        assert_eq!(gate.admit(2), AdmitOutcome::Accepted);
+
+        // Clamp should now be observable in runtime state.
+        assert_eq!(gate.retry_reservations, 0);
+
+        let m = gate.metrics();
+        assert_eq!(m.fairness_deferrals, 0);
+        assert_eq!(m.backpressured, 0);
+    }
+
+    #[test]
     fn fairness_only_deferral_path_compacts_stale_fifo_markers() {
         let mut gate = AdmissionGate::new(2);
 
