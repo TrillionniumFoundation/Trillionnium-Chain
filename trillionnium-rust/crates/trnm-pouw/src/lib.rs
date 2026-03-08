@@ -5453,6 +5453,42 @@ mod tests {
     }
 
     #[test]
+    fn resolve_rejects_multisig_authority_with_carriage_return_member_without_escrow_mutation() {
+        // Canonical authority-set hardening: CR-delimited members must be rejected
+        // so governance signer sets cannot hide malformed CRLF-style tokens.
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        set_resolve_authority(&mut st, "authority,\rauthority2");
+
+        let r1 = apply_create_task(&mut st, 8_967_01, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(8_967_01, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+        let r5 =
+            apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
+
+        let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+        let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+        let err = apply_resolve(&mut st, r5, true, "authority".into(), "authority".into())
+            .expect_err("authority member carriage returns must be rejected to preserve canonical signer sets");
+        assert!(matches!(err, PouwError::Unauthorized));
+
+        let task = st.get_task(8_967_01).unwrap();
+        assert_eq!(task.status, TaskStatus::Challenged);
+        assert_eq!(task.challenge_bond_forfeited, None);
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
+        assert_eq!(st.balance_of("challenger"), 90);
+    }
+
+    #[test]
     fn resolve_rejects_semicolon_delimited_signer_without_escrow_mutation() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
