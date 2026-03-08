@@ -159,10 +159,17 @@ impl AdmissionGate {
         // hash probe in that case so admission stays branch/lightweight under
         // free-ingress bursts.
         let has_known_retries = known_retry_count != 0;
-        let is_known_retry = has_known_retries && self.backpressured_ids.contains(&tx_id);
+        // Hot free-ingress path usually has zero active retry reservations; skip
+        // retry-set hash probes in that case and only consult retry memory when
+        // fairness logic is actually armed.
+        let is_known_retry_for_fairness = if self.retry_reservations > 0 && has_known_retries {
+            self.backpressured_ids.contains(&tx_id)
+        } else {
+            false
+        };
         if self.retry_reservations > 0
             && self.last_fairness_deferred == Some(tx_id)
-            && !is_known_retry
+            && !is_known_retry_for_fairness
         {
             self.metrics.duplicates = self.metrics.duplicates.saturating_add(1);
             self.metrics.backpressure_duplicates =
@@ -182,7 +189,7 @@ impl AdmissionGate {
         if self.retry_reservations > 0
             && free_slots <= self.retry_reservations
             && has_known_retries
-            && !is_known_retry
+            && !is_known_retry_for_fairness
         {
 
             // Deferring fresh ingress should not evict older retries from bounded memory,
@@ -197,11 +204,7 @@ impl AdmissionGate {
 
         // Fast-path fresh ingress: skip retry-set remove hash probe when we already
         // know this tx id was not tracked as a deferred retry candidate.
-        let accepted_was_retry = if is_known_retry {
-            self.backpressured_ids.remove(&tx_id)
-        } else {
-            false
-        };
+        let accepted_was_retry = has_known_retries && self.backpressured_ids.remove(&tx_id);
         if accepted_was_retry && self.backpressured_fifo.len() > self.capacity.saturating_mul(4) {
             // Under sustained retry drain with little/no new ingress, stale FIFO markers can
             // accumulate without hitting remember_backpressured() compaction. Compact eagerly
@@ -379,6 +382,20 @@ mod tests {
         assert_eq!(gate.admit(12), AdmitOutcome::Accepted);
 
         assert!(!gate.backpressured_ids.contains(&12));
+    }
+
+    #[test]
+    fn retry_acceptance_clears_tracking_even_without_active_fairness_reservations() {
+        let mut gate = AdmissionGate::new(3);
+        assert_eq!(gate.admit(1), AdmitOutcome::Accepted);
+
+        // Simulate restored-state skew: retry memory knows about tx=9 but fairness
+        // reservations are already exhausted.
+        gate.backpressured_ids.insert(9);
+        gate.retry_reservations = 0;
+
+        assert_eq!(gate.admit(9), AdmitOutcome::Accepted);
+        assert!(!gate.backpressured_ids.contains(&9));
     }
 
     #[test]
