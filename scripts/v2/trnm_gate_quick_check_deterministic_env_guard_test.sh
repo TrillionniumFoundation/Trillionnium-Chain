@@ -29,6 +29,7 @@ required_lines=(
   'GZIP: "-n"'
   'DEBIAN_FRONTEND: noninteractive'
   'APT_LISTCHANGES_FRONTEND: none'
+  'APT_LISTBUGS_FRONTEND: none'
   'timeout-minutes: 45'
 )
 

@@ -74,6 +74,9 @@ jobs:
       # Prevent apt-listchanges from opening pager/prompts when package metadata
       # changes on runner refreshes, which can otherwise hang shellcheck install.
       APT_LISTCHANGES_FRONTEND: none
+      # Disable apt-listbugs interactive prompts on Debian-family runners when
+      # package transitions introduce RC bug notices during shellcheck install.
+      APT_LISTBUGS_FRONTEND: none
     # This workflow runs dozens of regression scripts; 10 minutes can truncate
     # coverage and hide late-stage failures. Keep enough headroom for full sweep.
     timeout-minutes: 45
