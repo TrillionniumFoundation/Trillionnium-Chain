@@ -337,6 +337,16 @@ fn has_token_field_binding_attempt(body: &str, field: &str) -> bool {
             return true;
         }
 
+        // Fail closed on confusable fullwidth separators so malformed bindings
+        // still trip unexpected-binding gates when context is absent.
+        if bytes
+            .get(i..i + 3)
+            .map(|seq| seq == [0xEF, 0xBC, 0x9A] || seq == [0xEF, 0xBC, 0x9D])
+            .unwrap_or(false)
+        {
+            return true;
+        }
+
         cursor = idx + 1;
     }
 
@@ -3538,6 +3548,80 @@ mod tests {
             verify_bound_envelope(
                 &task,
                 b"ZK:task_id=42,proof_type=zk,result_hash=,proof=ok",
+                b"ZK:",
+                "ZK receipt"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("unexpected result_hash binding")
+        ));
+    }
+
+    #[test]
+    fn verify_bound_envelope_rejects_fullwidth_equals_unexpected_worker_binding_without_worker_context_fail_closed(
+    ) {
+        let task = TaskObject {
+            task_id: 42,
+            creator: "alice".into(),
+            bounty: 1,
+            status: TaskStatus::Committed,
+            proof_type: ProofType::Tee,
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        };
+
+        assert!(matches!(
+            verify_bound_envelope(
+                &task,
+                "TEE:task_id=42,proof_type=tee,worker＝w1,quote=ok".as_bytes(),
+                b"TEE:",
+                "TEE proof"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("unexpected worker binding")
+        ));
+    }
+
+    #[test]
+    fn verify_bound_envelope_rejects_fullwidth_colon_unexpected_result_hash_binding_without_hash_context_fail_closed(
+    ) {
+        let task = TaskObject {
+            task_id: 42,
+            creator: "alice".into(),
+            bounty: 1,
+            status: TaskStatus::Committed,
+            proof_type: ProofType::Zk,
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        };
+
+        assert!(matches!(
+            verify_bound_envelope(
+                &task,
+                "ZK:task_id=42,proof_type=zk,result_hash：aa,proof=ok".as_bytes(),
                 b"ZK:",
                 "ZK receipt"
             ),
