@@ -8969,6 +8969,45 @@ mod tests {
     }
 
     #[test]
+    fn resolve_rejects_configured_authority_member_with_forbidden_separator_without_escrow_mutation(
+    ) {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        let authority = "authority;ops";
+        set_resolve_authority(&mut st, authority);
+
+        let r1 = apply_create_task(&mut st, 9_001_74_1, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(9_001_74_1, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+        let r5 =
+            apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
+
+        let before = st.clone();
+        let err = apply_resolve(&mut st, r5, true, authority.into(), authority.into()).expect_err(
+            "configured authority members containing separators must fail closed",
+        );
+        assert!(matches!(err, PouwError::Unauthorized));
+
+        let task = st.get_task(9_001_74_1).unwrap();
+        assert_eq!(task.status, TaskStatus::Challenged);
+        assert_eq!(task.challenge_bond_forfeited, None);
+        assert_eq!(st.balance_of("challenger"), before.balance_of("challenger"));
+        assert_eq!(
+            st.balance_of(CHALLENGE_ESCROW_ACCOUNT),
+            before.balance_of(CHALLENGE_ESCROW_ACCOUNT)
+        );
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT)
+        );
+    }
+
+    #[test]
     fn governance_rejects_blank_resolve_authority_update_without_side_effects() {
         let mut st = seeded_state();
         let baseline = resolve_authority_account(&st);
