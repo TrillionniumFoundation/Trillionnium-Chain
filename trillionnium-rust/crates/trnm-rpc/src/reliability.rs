@@ -636,6 +636,17 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
                 pending: BTreeMap::new(),
             });
 
+        // Guard against dedup TTL rollover while retry state is still pending.
+        // A replay of the same ack_id must not reset attempts/backoff and gain
+        // unfair retry priority under sustained ingress.
+        if session.pending.contains_key(&ack_id) {
+            return Ack {
+                code: AckCode::Duplicate,
+                ack_id,
+                detail: "already pending".to_string(),
+            };
+        }
+
         session.pending.insert(
             ack_id.clone(),
             PendingItem {
@@ -1771,6 +1782,44 @@ mod tests {
         let duplicate = engine.receive(mk_msg("alice", "s1", 1), 1_002);
         assert_eq!(duplicate.code, AckCode::Duplicate);
         assert_eq!(duplicate.ack_id, first.ack_id);
+    }
+
+    #[test]
+    fn dedup_ttl_expiry_does_not_reset_existing_pending_retry_state() {
+        let store = InMemoryReliabilityStore::default();
+        let mut engine = ReliabilityEngine::new_with_retention(
+            store,
+            RetryConfig {
+                base_backoff_ms: 10,
+                max_backoff_ms: 10,
+                ..RetryConfig::default()
+            },
+            RetentionConfig {
+                dedup_ttl_ms: 1,
+                pending_ttl_ms: 10_000,
+                cleanup_interval_ms: 1,
+            },
+        );
+
+        let first = engine.receive(mk_msg("alice", "s1", 7), 1_000);
+        assert_eq!(first.code, AckCode::Accepted);
+
+        // Dedup memory expires, but retry state is still pending in-session.
+        engine.maybe_cleanup(1_010);
+        let replay = engine.receive(mk_msg("alice", "s1", 7), 1_011);
+        assert_eq!(replay.code, AckCode::Duplicate);
+        assert_eq!(replay.detail, "already pending");
+
+        let store = engine.into_store();
+        let session = store.get_session("s1").expect("session should exist");
+        assert_eq!(session.pending.len(), 1, "replay must not overwrite pending state");
+
+        let item = session
+            .pending
+            .get(&first.ack_id)
+            .expect("pending item should keep original ack_id");
+        assert_eq!(item.created_at_unix_ms, 1_000);
+        assert_eq!(item.attempts, 0);
     }
 
     #[test]
