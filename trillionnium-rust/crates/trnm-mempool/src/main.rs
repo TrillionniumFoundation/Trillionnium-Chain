@@ -124,9 +124,12 @@ impl AdmissionGate {
         if self.retry_reservations == 0 {
             if known_retry_count == 0 {
                 self.last_fairness_deferred = None;
-            } else if self.last_fairness_deferred == Some(tx_id) {
+            } else if self.last_fairness_deferred == Some(tx_id)
+                && !self.backpressured_ids.contains(&tx_id)
+            {
                 // Preserve idempotency for immediate repeats of a just-deferred fresh id,
                 // even when only a single retry reservation was available.
+                // If the marker points at a known retry id, never shadow its admission.
                 self.metrics.duplicates = self.metrics.duplicates.saturating_add(1);
                 self.metrics.backpressure_duplicates =
                     self.metrics.backpressure_duplicates.saturating_add(1);
@@ -672,6 +675,27 @@ mod tests {
         let m = gate.metrics();
         assert_eq!(m.duplicates, 0);
         assert_eq!(m.backpressured, 1);
+    }
+
+    #[test]
+    fn fairness_marker_does_not_shadow_known_retry_id_admission() {
+        let mut gate = AdmissionGate::new(2);
+        assert_eq!(gate.admit(1), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(2), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(9), AdmitOutcome::Backpressured);
+
+        // Open one slot to arm retry fairness, then simulate restored stale marker that
+        // points to the known retry id itself.
+        assert_eq!(gate.pop_ready(), Some(1));
+        gate.last_fairness_deferred = Some(9);
+
+        // Known retry must be admitted, not misclassified as fairness-duplicate.
+        assert_eq!(gate.admit(9), AdmitOutcome::Accepted);
+
+        let m = gate.metrics();
+        assert_eq!(m.accepted, 3);
+        assert_eq!(m.duplicates, 0);
+        assert_eq!(m.backpressure_duplicates, 0);
     }
 
     #[test]
