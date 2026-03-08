@@ -173,7 +173,14 @@ pub struct InMemoryReliabilityStore {
 }
 
 impl InMemoryReliabilityStore {
-    pub fn with_config(config: InMemoryReliabilityStoreConfig) -> Self {
+    pub fn with_config(mut config: InMemoryReliabilityStoreConfig) -> Self {
+        // Misconfigured zero dedup quota would reject every fresh ingress and
+        // collapse free-ingress throughput. Keep a one-entry floor so
+        // idempotency semantics remain live while still signaling tight quota.
+        if matches!(config.max_dedup_entries, Some(0)) {
+            config.max_dedup_entries = Some(1);
+        }
+
         Self {
             sessions: HashMap::new(),
             dedup: HashMap::new(),
@@ -1698,6 +1705,25 @@ mod tests {
         ));
 
         assert_eq!(store.dedup.get(&key), Some(&2_000));
+    }
+
+    #[test]
+    fn zero_dedup_quota_is_sanitized_to_one_entry_floor() {
+        let store = InMemoryReliabilityStore::with_config(InMemoryReliabilityStoreConfig {
+            max_dedup_entries: Some(0),
+            ..InMemoryReliabilityStoreConfig::default()
+        });
+        let mut engine = ReliabilityEngine::new(store, RetryConfig::default());
+
+        let first = engine.receive(mk_msg("alice", "s1", 1), 1_000);
+        assert_eq!(first.code, AckCode::Accepted);
+
+        let duplicate = engine.receive(mk_msg("alice", "s1", 1), 1_001);
+        assert_eq!(duplicate.code, AckCode::Duplicate);
+
+        let second_domain = engine.receive(mk_msg("bob", "s2", 1), 1_002);
+        assert_eq!(second_domain.code, AckCode::BadRequest);
+        assert!(second_domain.detail.contains("dedup limit reached (1)"));
     }
 
     #[test]
