@@ -879,6 +879,14 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
                 buckets[bucket].push(tx);
             }
 
+            // Degenerate hotspot fast path: if all txs landed in the same bucket,
+            // round-robin interleave would reproduce the original order while paying
+            // n-bucket probing overhead. Keep stable input order for lower scheduler cost.
+            let non_empty_buckets = buckets.iter().filter(|b| !b.is_empty()).count();
+            if non_empty_buckets <= 1 {
+                return;
+            }
+
             // Keep insertion order inside each bucket (already stable by input stream);
             // avoid extra O(n log n) sorting cost.
 
@@ -1274,6 +1282,21 @@ mod tests {
             txs.iter().map(|t| t.id).collect::<Vec<_>>(),
             vec![21, 22, 23]
         );
+    }
+
+    #[test]
+    fn hot_bucket_interleave_short_circuits_single_bucket_hotspot() {
+        let mut txs = vec![
+            tx(61, vec![], vec![o(8)]),
+            tx(62, vec![], vec![o(16)]),
+            tx(63, vec![], vec![o(24)]),
+            tx(64, vec![], vec![o(32)]),
+        ];
+
+        reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
+        // All keys map to bucket 0 under the default 8-bucket layout; interleave
+        // is a no-op and should return early without extra round-robin passes.
+        assert_eq!(txs.iter().map(|t| t.id).collect::<Vec<_>>(), vec![61, 62, 63, 64]);
     }
 
     #[test]
