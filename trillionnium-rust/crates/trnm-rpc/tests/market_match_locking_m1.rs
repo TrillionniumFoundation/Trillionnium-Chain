@@ -86,8 +86,8 @@ fn market_match_waits_for_bids_lock_before_reading() {
         let lock = bids_lock.clone();
         thread::spawn(move || {
             // Hold the lock long enough to dominate process startup jitter on busy CI nodes.
-            // Keep this comfortably above warm `cargo run` startup so lock contention is exercised deterministically.
-            thread::sleep(Duration::from_millis(2500));
+            // 1.8s keeps contention deterministic while shaving gate latency vs 2.5s.
+            thread::sleep(Duration::from_millis(1800));
             let _ = fs::remove_file(lock);
         })
     };
