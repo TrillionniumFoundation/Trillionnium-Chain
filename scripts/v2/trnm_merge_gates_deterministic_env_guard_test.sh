@@ -19,6 +19,7 @@ required_lines=(
   'LC_CTYPE: C'
   'LC_MESSAGES: C'
   'PYTHONHASHSEED: "0"'
+  'CARGO_TERM_COLOR: never'
   'CI: "true"'
   'SOURCE_DATE_EPOCH: "1704067200"'
   'timeout-minutes: 45'
