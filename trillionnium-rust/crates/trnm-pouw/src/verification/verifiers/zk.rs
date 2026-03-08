@@ -155,4 +155,18 @@ mod tests {
             VerificationResult::Invalid(msg) if msg.contains("result_hash binding mismatch")
         ));
     }
+
+    #[test]
+    fn zk_verifier_rejects_task_id_binding_mismatch() {
+        let verifier = ZkVerifier;
+        let task = mock_task();
+        let payload = format!(
+            "ZK|task_id=85|worker=worker1|proof_type=zk|result_hash={}",
+            hex::encode([0x22; 32])
+        );
+        assert!(matches!(
+            verifier.verify_proof(&task, payload.as_bytes()),
+            VerificationResult::Invalid(msg) if msg.contains("task_id binding mismatch")
+        ));
+    }
 }
