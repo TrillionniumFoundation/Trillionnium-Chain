@@ -361,11 +361,10 @@ impl StateStore {
         if entry.slash_worker != slash_worker {
             return Err("resolve approval decision mismatch".into());
         }
-        if entry.confirmations > 0
-            && entry
-                .first_approver
-                .eq_ignore_ascii_case(approver_trimmed)
-        {
+        if entry.confirmations >= 2 {
+            return Err("resolve approval already finalized; clear pending approval first".into());
+        }
+        if entry.confirmations > 0 && entry.first_approver.eq_ignore_ascii_case(approver_trimmed) {
             return Err("resolve approval requires distinct approver".into());
         }
         entry.confirmations = entry.confirmations.saturating_add(1);
@@ -1317,6 +1316,32 @@ mod tests {
             st.pending_resolve_approval(7),
             Some((false, 1)),
             "decision mismatch must not mutate staged confirmation"
+        );
+    }
+
+    #[test]
+    fn resolve_approval_rejects_post_quorum_replay_without_mutation() {
+        let mut st = StateStore::new();
+
+        let first = st
+            .stage_or_confirm_resolve_approval(88, true, "authority-a")
+            .expect("first approval stage should succeed");
+        assert!(!first);
+
+        let second = st
+            .stage_or_confirm_resolve_approval(88, true, "authority-b")
+            .expect("second distinct approver should finalize");
+        assert!(second);
+        assert_eq!(st.pending_resolve_approval(88), Some((true, 2)));
+
+        let replay_err = st
+            .stage_or_confirm_resolve_approval(88, true, "authority-c")
+            .expect_err("post-quorum replay must be rejected");
+        assert!(replay_err.contains("already finalized"));
+        assert_eq!(
+            st.pending_resolve_approval(88),
+            Some((true, 2)),
+            "post-quorum replay must not mutate confirmation state"
         );
     }
 
