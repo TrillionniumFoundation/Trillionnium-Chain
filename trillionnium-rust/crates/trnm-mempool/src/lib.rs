@@ -83,7 +83,11 @@ impl LaneAdmissionGate {
         // Fast-path saturation check from the lane-wide idempotency set: this tracks
         // all currently queued tx ids and avoids touching both lane queues on every
         // ingress probe while the cache is in sync.
-        let lane_total = self.normal.queue.len() + self.critical.queue.len();
+        let lane_total = self
+            .normal
+            .queue
+            .len()
+            .saturating_add(self.critical.queue.len());
         if self.seen_global.len() != lane_total {
             // Defensive self-heal for transient restored-state skew: lane-local queues
             // remain source of truth for saturation, and rebuild lane-wide id set.
