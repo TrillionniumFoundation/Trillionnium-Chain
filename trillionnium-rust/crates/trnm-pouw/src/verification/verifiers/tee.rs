@@ -140,4 +140,18 @@ mod tests {
             VerificationResult::Invalid(msg) if msg.contains("worker binding mismatch")
         ));
     }
+
+    #[test]
+    fn tee_verifier_rejects_proof_type_binding_mismatch() {
+        let verifier = TeeVerifier;
+        let task = mock_task();
+        let payload = format!(
+            "TEE|task_id=42|worker=worker1|proof_type=zk|result_hash={}",
+            hex::encode([0x11; 32])
+        );
+        assert!(matches!(
+            verifier.verify_proof(&task, payload.as_bytes()),
+            VerificationResult::Invalid(msg) if msg.contains("proof_type binding mismatch")
+        ));
+    }
 }
