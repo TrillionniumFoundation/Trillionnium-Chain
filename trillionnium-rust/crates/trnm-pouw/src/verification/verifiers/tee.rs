@@ -154,4 +154,15 @@ mod tests {
             VerificationResult::Invalid(msg) if msg.contains("proof_type binding mismatch")
         ));
     }
+
+    #[test]
+    fn tee_verifier_rejects_missing_result_hash_binding() {
+        let verifier = TeeVerifier;
+        let task = mock_task();
+        let payload = "TEE|task_id=42|worker=worker1|proof_type=tee";
+        assert!(matches!(
+            verifier.verify_proof(&task, payload.as_bytes()),
+            VerificationResult::Invalid(msg) if msg.contains("missing result_hash binding")
+        ));
+    }
 }
