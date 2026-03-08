@@ -105,3 +105,37 @@ fn paused_state_keeps_multi_party_resolve_quorum_and_escrow_conservation() {
     assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
     assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), forfeits_before);
 }
+
+#[test]
+fn paused_state_rejects_noncanonical_resolve_authority_without_escrow_side_effects() {
+    // M1 merge-gate invariant: emergency_pause cannot be used to slip malformed
+    // authority sets into resolve flow, and any rejection must be side-effect free.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 77_777);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 1_234);
+
+    let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+    let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+
+    st.set_gov_param(98_120, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    let malformed_err = st
+        .stage_or_confirm_resolve_approval(
+            9_902,
+            true,
+            "authority-a",
+            "authority-a, authority-b",
+        )
+        .expect_err("non-canonical authority set must fail closed while paused");
+    assert!(malformed_err.contains("authority set"));
+
+    assert_eq!(
+        st.pending_resolve_approval(9_902),
+        None,
+        "rejected malformed authority set must not stage approvals"
+    );
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+    assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), forfeits_before);
+}
