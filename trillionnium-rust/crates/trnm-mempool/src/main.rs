@@ -80,6 +80,9 @@ impl AdmissionGate {
         // to avoid a separate contains() probe for fresh ids.
         if self.backpressured_ids.len() < self.capacity && self.backpressured_ids.insert(tx_id) {
             self.backpressured_fifo.push_back(tx_id);
+            // Fairness-only deferrals can run for long windows without hitting the
+            // saturation insertion path; keep stale FIFO markers bounded here too.
+            self.compact_backpressured_fifo();
         }
     }
 
@@ -826,6 +829,22 @@ mod tests {
 
         let m = gate.metrics();
         assert_eq!(m.fairness_deferrals, 0);
+    }
+
+    #[test]
+    fn fairness_only_deferral_path_compacts_stale_fifo_markers() {
+        let mut gate = AdmissionGate::new(2);
+
+        // Simulate fairness-only deferred ids being inserted and later drained,
+        // which can leave stale FIFO markers behind without saturation inserts.
+        gate.backpressured_ids.insert(1);
+        for i in 0..32u64 {
+            let deferred = 1000 + i;
+            gate.remember_backpressured_without_eviction(deferred);
+            gate.backpressured_ids.remove(&deferred);
+        }
+
+        assert!(gate.backpressured_fifo.len() <= gate.capacity.saturating_mul(4));
     }
 
     #[test]
