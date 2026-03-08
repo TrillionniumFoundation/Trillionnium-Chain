@@ -1466,6 +1466,18 @@ mod tests {
     }
 
     #[test]
+    fn aggressive_round_robin_toggle_parser_handles_trimmed_false_and_true_tokens() {
+        let _env = env_lock();
+
+        let _off = EnvGuard::set("TRNM_AGGR_SCAN_ROUND_ROBIN", " OFF ");
+        assert!(!aggr_scan_round_robin_enabled());
+        drop(_off);
+
+        let _yes = EnvGuard::set("TRNM_AGGR_SCAN_ROUND_ROBIN", " yes ");
+        assert!(aggr_scan_round_robin_enabled());
+    }
+
+    #[test]
     fn auto_threshold_env_parsers_accept_trimmed_numeric_values() {
         let _env = env_lock();
         let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", " 0.35 ");
