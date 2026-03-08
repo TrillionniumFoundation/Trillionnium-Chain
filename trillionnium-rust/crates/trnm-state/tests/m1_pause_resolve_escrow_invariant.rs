@@ -258,3 +258,38 @@ fn paused_unpause_rejects_noncanonical_key_id_without_mutating_custody_or_quorum
     assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
     assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), forfeits_before);
 }
+
+#[test]
+fn paused_state_rejects_authority_set_flip_mid_quorum_without_escrow_side_effects() {
+    // M1 merge-gate invariant: under emergency pause, resolve quorum remains multi-party
+    // and bound to a stable authority set. Mid-flight authority-set flips must fail closed
+    // and keep custody balances untouched.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 55_500);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 444);
+
+    st.set_gov_param(98_160, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    st.stage_or_confirm_resolve_approval(9_907, true, "authority-a", "authority-a,authority-b")
+        .expect("first approval stage should succeed while paused");
+    assert_eq!(st.pending_resolve_approval(9_907), Some((true, 1)));
+
+    let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+    let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+
+    let err = st
+        .stage_or_confirm_resolve_approval(9_907, true, "authority-c", "authority-a,authority-c")
+        .expect_err("authority-set flip must fail closed and reset stale quorum entry");
+    assert!(err.contains("authority set changed"));
+
+    assert_eq!(
+        st.pending_resolve_approval(9_907),
+        None,
+        "authority-set flip rejection must clear stale pending approval"
+    );
+    assert!(st.is_emergency_paused());
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+    assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), forfeits_before);
+}
