@@ -109,7 +109,6 @@ impl LaneAdmissionGate {
         if is_duplicate {
             return AdmitOutcome::Duplicate;
         }
-        self.seen_global.insert(tx_id);
 
         let out = match class {
             IngressClass::Normal => {
@@ -165,8 +164,8 @@ impl LaneAdmissionGate {
                 }
             }
         };
-        if !matches!(out, AdmitOutcome::Accepted) {
-            self.seen_global.remove(&tx_id);
+        if matches!(out, AdmitOutcome::Accepted) {
+            self.seen_global.insert(tx_id);
         }
         out
     }
