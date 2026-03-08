@@ -296,6 +296,10 @@ jobs:
         run: |
           ./scripts/v2/pouw_challenge_timeout_migration_test.sh
 
+      - name: Backlog regression: v1-proof-registry-contract-gate
+        run: |
+          ./scripts/v2/v1_proof_registry_contract_gate.sh
+
       - name: Backlog regression: worker-replay-guard-test
         run: |
           ./scripts/v2/worker_replay_guard_test.sh
