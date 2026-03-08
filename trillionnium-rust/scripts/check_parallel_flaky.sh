@@ -6,6 +6,10 @@ cd "$ROOT"
 export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
 
 RUNS="${RUNS:-5}"
+if ! [[ "$RUNS" =~ ^[0-9]+$ ]] || [[ "$RUNS" -lt 1 ]]; then
+  echo "RUNS must be a positive integer (got: ${RUNS})" >&2
+  exit 64
+fi
 mkdir -p run
 
 ok=0
