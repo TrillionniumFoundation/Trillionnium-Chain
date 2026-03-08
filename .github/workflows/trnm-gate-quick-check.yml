@@ -77,6 +77,9 @@ jobs:
       # Disable apt-listbugs interactive prompts on Debian-family runners when
       # package transitions introduce RC bug notices during shellcheck install.
       APT_LISTBUGS_FRONTEND: none
+      # Stabilize created file permissions across runner/image defaults so
+      # replay artifacts and git diffs keep deterministic mode bits.
+      UMASK: "022"
     # This workflow runs dozens of regression scripts; 10 minutes can truncate
     # coverage and hide late-stage failures. Keep enough headroom for full sweep.
     timeout-minutes: 45
