@@ -1,32 +1,95 @@
 use crate::verification::{ProofVerifier, VerificationResult};
-use trnm_types::TaskObject;
+use trnm_types::{ProofType, TaskObject};
 
 pub struct TeeVerifier;
+
+fn parse_binding_envelope<'a>(raw: &'a str, expected_prefix: &str) -> Result<Vec<(&'a str, &'a str)>, String> {
+    let mut parts = raw.split('|');
+    let Some(prefix) = parts.next() else {
+        return Err("empty proof envelope".to_string());
+    };
+    if prefix != expected_prefix {
+        return Err(format!("invalid {} proof envelope prefix", expected_prefix));
+    }
+
+    let mut kvs = Vec::new();
+    for part in parts {
+        let Some((k, v)) = part.split_once('=') else {
+            return Err(format!("malformed envelope segment: {}", part));
+        };
+        kvs.push((k, v));
+    }
+    Ok(kvs)
+}
+
+fn lookup<'a>(kvs: &'a [(&'a str, &'a str)], key: &str) -> Option<&'a str> {
+    kvs.iter().find_map(|(k, v)| if *k == key { Some(*v) } else { None })
+}
 
 impl ProofVerifier for TeeVerifier {
     fn proof_type(&self) -> &str {
         "tee"
     }
 
-    fn verify_proof(&self, _task: &TaskObject, proof_data: &[u8]) -> VerificationResult {
-        if proof_data.len() < 8 {
-            return VerificationResult::Invalid("TEE receipt too short".to_string());
+    fn verify_proof(&self, task: &TaskObject, proof_data: &[u8]) -> VerificationResult {
+        let payload = match std::str::from_utf8(proof_data) {
+            Ok(v) => v,
+            Err(_) => return VerificationResult::Invalid("TEE envelope must be valid UTF-8".to_string()),
+        };
+
+        let kvs = match parse_binding_envelope(payload, "TEE") {
+            Ok(v) => v,
+            Err(e) => return VerificationResult::Invalid(e),
+        };
+
+        if !matches!(task.proof_type, ProofType::Tee) {
+            return VerificationResult::Invalid("task proof_type is not tee".to_string());
         }
 
-        // V2 micro patch: require explicit TEE receipt prefix.
-        // Accepted examples: "TEE:..." or legacy "TE...".
-        if proof_data.starts_with(b"TEE:") || proof_data.starts_with(b"TE") {
-            VerificationResult::Valid
-        } else {
-            VerificationResult::Invalid("Invalid TEE receipt prefix".to_string())
+        let task_id = match lookup(&kvs, "task_id").and_then(|v| v.parse::<u64>().ok()) {
+            Some(v) => v,
+            None => return VerificationResult::Invalid("missing/invalid task_id binding".to_string()),
+        };
+        if task_id != task.task_id {
+            return VerificationResult::Invalid("task_id binding mismatch".to_string());
         }
+
+        let worker = match lookup(&kvs, "worker") {
+            Some(v) => v,
+            None => return VerificationResult::Invalid("missing worker binding".to_string()),
+        };
+        if task.worker.as_deref() != Some(worker) {
+            return VerificationResult::Invalid("worker binding mismatch".to_string());
+        }
+
+        let proof_type = match lookup(&kvs, "proof_type") {
+            Some(v) => v,
+            None => return VerificationResult::Invalid("missing proof_type binding".to_string()),
+        };
+        if !proof_type.eq_ignore_ascii_case("tee") {
+            return VerificationResult::Invalid("proof_type binding mismatch".to_string());
+        }
+
+        let result_hash = match lookup(&kvs, "result_hash") {
+            Some(v) => v,
+            None => return VerificationResult::Invalid("missing result_hash binding".to_string()),
+        };
+        let expected_result_hash = match task.result_hash {
+            Some(hash) => hex::encode(hash),
+            None => return VerificationResult::Invalid("task missing result_hash for envelope binding".to_string()),
+        };
+        if !result_hash.eq_ignore_ascii_case(&expected_result_hash) {
+            return VerificationResult::Invalid("result_hash binding mismatch".to_string());
+        }
+
+        VerificationResult::Valid
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use trnm_types::{ProofType, TaskObject, TaskStatus};
+    use trnm_types::TaskStatus;
 
     fn mock_task() -> TaskObject {
         TaskObject {
@@ -38,7 +101,7 @@ mod tests {
             metadata: None,
             worker: Some("worker1".into()),
             committed_hash: None,
-            result_hash: None,
+            result_hash: Some([0x11; 32]),
             reveal_salt: None,
             committed_at_height: None,
             reveal_deadline_height: None,
@@ -54,12 +117,27 @@ mod tests {
     }
 
     #[test]
-    fn tee_verifier_rejects_short_receipt() {
+    fn tee_verifier_accepts_bound_envelope() {
         let verifier = TeeVerifier;
         let task = mock_task();
+        let payload = format!(
+            "TEE|task_id=42|worker=worker1|proof_type=tee|result_hash={}",
+            hex::encode([0x11; 32])
+        );
+        assert_eq!(verifier.verify_proof(&task, payload.as_bytes()), VerificationResult::Valid);
+    }
+
+    #[test]
+    fn tee_verifier_rejects_worker_binding_mismatch() {
+        let verifier = TeeVerifier;
+        let task = mock_task();
+        let payload = format!(
+            "TEE|task_id=42|worker=worker2|proof_type=tee|result_hash={}",
+            hex::encode([0x11; 32])
+        );
         assert!(matches!(
-            verifier.verify_proof(&task, b"TE"),
-            VerificationResult::Invalid(msg) if msg.contains("too short")
+            verifier.verify_proof(&task, payload.as_bytes()),
+            VerificationResult::Invalid(msg) if msg.contains("worker binding mismatch")
         ));
     }
 }

@@ -682,6 +682,9 @@ pub fn apply_reveal_result_at_height(
     // Verify proof if TEE/ZK.
     // For Fraud proofs, we rely on the challenge period (no immediate verification).
     if matches!(task.proof_type, ProofType::Tee | ProofType::Zk) {
+        // Bind verifiable proof envelopes to the reveal payload before verifier dispatch.
+        // This is an in-function shadow update; state is only persisted on success below.
+        task.result_hash = Some(result_hash);
         let registry = get_default_registry();
         let verification = registry.verify(&task, proof_data.as_deref().unwrap_or(&[]));
         match verification {
@@ -3487,8 +3490,12 @@ mod tests {
         let r2 = apply_accept_task(&mut st, r1_updated, "worker1".into()).unwrap();
         let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
         
-        // TEE proof (starts with "TE")
-        let proof = b"TE_QUOTE_XYZ".to_vec();
+        // TEE proof envelope binds task_id/worker/proof_type/result_hash.
+        let proof = format!(
+            "TEE|task_id=7001|worker=worker1|proof_type=tee|result_hash={}",
+            hex::encode(result_hash)
+        )
+        .into_bytes();
         let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, Some(proof)).unwrap();
         
         let final_task = st.get_task(r4.id).unwrap();
