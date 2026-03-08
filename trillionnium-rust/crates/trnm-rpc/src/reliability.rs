@@ -198,6 +198,14 @@ fn sanitize_store_config(mut config: InMemoryReliabilityStoreConfig) -> InMemory
     config.max_pending_per_session = clamp_zero(config.max_pending_per_session);
     config.max_pending_total = clamp_zero(config.max_pending_total);
     config.max_dedup_entries = clamp_zero(config.max_dedup_entries);
+
+    // Zero-duration retain windows collapse into effectively immediate cleanup,
+    // which can jitter between retain/remove behavior across cleanup call sites.
+    // Keep a 1ms floor so "retain" mode remains semantically distinct.
+    if let EmptySessionCleanupPolicy::RetainForMs(0) = config.empty_session_cleanup {
+        config.empty_session_cleanup = EmptySessionCleanupPolicy::RetainForMs(1);
+    }
+
     config
 }
 
@@ -2125,6 +2133,19 @@ mod tests {
 
         assert!(store.try_upsert_session_with_ts(session, 1).is_ok());
         assert_eq!(store.list_session_ids(), vec!["s1".to_string()]);
+    }
+
+    #[test]
+    fn store_config_clamps_zero_empty_session_retention_window() {
+        let store = InMemoryReliabilityStore::with_config(InMemoryReliabilityStoreConfig {
+            empty_session_cleanup: EmptySessionCleanupPolicy::RetainForMs(0),
+            ..InMemoryReliabilityStoreConfig::default()
+        });
+
+        assert!(matches!(
+            store.config.empty_session_cleanup,
+            EmptySessionCleanupPolicy::RetainForMs(1)
+        ));
     }
 
     #[test]
