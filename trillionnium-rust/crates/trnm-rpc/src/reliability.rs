@@ -684,7 +684,9 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
             return Vec::new();
         }
 
-        let mut out = Vec::new();
+        // Throughput hot-path: pre-allocate to the global dispatch cap so saturated
+        // retry rounds avoid incremental Vec growth/realloc churn.
+        let mut out = Vec::with_capacity(MAX_DUE_RETRIES_PER_COLLECT);
         let mut exhausted_in_this_round = 0u32;
         let session_ids = self.store.list_session_ids();
         let session_count = session_ids.len();
