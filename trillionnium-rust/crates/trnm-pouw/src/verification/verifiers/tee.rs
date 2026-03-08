@@ -202,7 +202,8 @@ mod tests {
     }
 
     #[test]
-    fn tee_verifier_rejects_duplicate_proof_type_binding_with_single_quoted_trailing_space_fail_closed() {
+    fn tee_verifier_rejects_duplicate_proof_type_binding_with_single_quoted_trailing_space_fail_closed(
+    ) {
         let verifier = TeeVerifier;
         let task = mock_task();
 
@@ -216,7 +217,8 @@ mod tests {
     }
 
     #[test]
-    fn tee_verifier_rejects_duplicate_proof_type_binding_with_single_quoted_leading_space_fail_closed() {
+    fn tee_verifier_rejects_duplicate_proof_type_binding_with_single_quoted_leading_space_fail_closed(
+    ) {
         let verifier = TeeVerifier;
         let task = mock_task();
 
@@ -305,6 +307,20 @@ mod tests {
             verifier.verify_proof(
                 &task,
                 b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=\"abababababababababababababababababababababababababababababababab \",result_hash=abababababababababababababababababababababababababababababababab,quote=abc"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("duplicate result_hash binding")
+        ));
+    }
+
+    #[test]
+    fn tee_verifier_rejects_duplicate_result_hash_binding_with_single_quoted_alias_fail_closed() {
+        let verifier = TeeVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"TEE:task_id=42,worker=worker1,proof_type=tee,'result_hash'=abababababababababababababababababababababababababababababababab,result_hash=abababababababababababababababababababababababababababababababab,quote=abc"
             ),
             VerificationResult::Invalid(msg) if msg.contains("duplicate result_hash binding")
         ));
