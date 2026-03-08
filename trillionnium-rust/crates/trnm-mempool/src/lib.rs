@@ -30,14 +30,17 @@ impl AdmissionGate {
         }
     }
     pub fn admit(&mut self, tx_id: u64) -> AdmitOutcome {
+        if self.queue.len() >= self.capacity {
+            // Saturated fast path: preserve duplicate-vs-backpressure semantics
+            // without insert-then-remove churn for fresh ids.
+            return if self.seen.contains(&tx_id) {
+                AdmitOutcome::Duplicate
+            } else {
+                AdmitOutcome::Backpressured
+            };
+        }
         if !self.seen.insert(tx_id) {
             return AdmitOutcome::Duplicate;
-        }
-        if self.queue.len() >= self.capacity {
-            // Keep duplicate-vs-backpressure semantics stable while avoiding an
-            // extra successful hash probe on the accepted hot path.
-            self.seen.remove(&tx_id);
-            return AdmitOutcome::Backpressured;
         }
         self.queue.push_back(tx_id);
         AdmitOutcome::Accepted
