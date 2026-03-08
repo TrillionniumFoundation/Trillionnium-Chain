@@ -14,6 +14,14 @@ umask "${UMASK:-022}"
 
 RUNS="${RUNS:-5}"
 RUN_TIMEOUT_SEC="${RUN_TIMEOUT_SEC:-120}"
+if ! [[ "$RUNS" =~ ^[0-9]+$ ]] || [[ "$RUNS" -lt 1 ]]; then
+  echo "RUNS must be a positive integer (got: $RUNS)" >&2
+  exit 64
+fi
+if ! [[ "$RUN_TIMEOUT_SEC" =~ ^[0-9]+$ ]] || [[ "$RUN_TIMEOUT_SEC" -lt 1 ]]; then
+  echo "RUN_TIMEOUT_SEC must be a positive integer (got: $RUN_TIMEOUT_SEC)" >&2
+  exit 64
+fi
 RUN_TAG="${RUN_TAG:-$(date +%Y%m%d-%H%M%S)-$$}"
 RUN_DIR="run/parallel-sanity-flaky-${RUN_TAG}"
 mkdir -p "$RUN_DIR"
