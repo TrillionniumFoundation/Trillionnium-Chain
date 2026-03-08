@@ -801,6 +801,13 @@ pub fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
 }
 
 fn hot_bucket_hint(tx: &Tx, buckets_n: usize) -> usize {
+    // Defensive guard: keep helper total for misconfigured callers and tests.
+    // Production reorder path always uses buckets_n>=1, but this preserves
+    // fail-closed deterministic behavior if future call sites pass zero.
+    if buckets_n == 0 {
+        return 0;
+    }
+
     // Keep hash mixing deterministic across targets (32/64-bit) by using a
     // fixed-width integer domain before reducing to bucket count.
     let key_a = tx
@@ -1348,6 +1355,12 @@ mod tests {
                 % buckets_n as u64) as usize;
             assert_eq!(hot_bucket_hint(&t, buckets_n), expected);
         }
+    }
+
+    #[test]
+    fn hot_bucket_hint_zero_bucket_count_fails_closed_to_bucket_zero() {
+        let t = tx(999, vec![], vec![o(42)]);
+        assert_eq!(hot_bucket_hint(&t, 0), 0);
     }
 
     #[test]
