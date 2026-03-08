@@ -550,6 +550,10 @@ jobs:
         run: |
           ./scripts/v2/trnm_merge_gates_deterministic_env_guard_test.sh
 
+      - name: Auto regression: web4-frontend-ci-deterministic-env-guard-test
+        run: |
+          ./scripts/v2/web4_frontend_ci_deterministic_env_guard_test.sh
+
       - name: Upload quick gate summary
         if: always()
         uses: actions/upload-artifact@v4
