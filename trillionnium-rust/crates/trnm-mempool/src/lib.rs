@@ -82,6 +82,12 @@ impl LaneAdmissionGate {
         }
     }
     pub fn admit(&mut self, tx_id: u64, class: IngressClass) -> AdmitOutcome {
+        if self.total_capacity == 0 {
+            // Hard-stop mode: keep zero-capacity ingress semantics O(1) and avoid
+            // unnecessary lane/cache probes on hot backpressured paths.
+            return AdmitOutcome::Backpressured;
+        }
+
         // Fast-path saturation check from the lane-wide idempotency set: this tracks
         // all currently queued tx ids and avoids touching both lane queues on every
         // ingress probe while the cache is in sync.
