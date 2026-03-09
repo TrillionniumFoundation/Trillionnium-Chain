@@ -328,8 +328,8 @@ impl VerifierRegistry {
 
         match self.verifiers.get(key) {
             Some(verifier) => verifier.verify_proof(task, proof_data),
-            None => VerificationResult::Indeterminate(format!(
-                "no verifier registered for proof type: {}",
+            None => VerificationResult::Invalid(format!(
+                "verification failed closed: no verifier registered for proof type: {}",
                 key
             )),
         }
@@ -1570,7 +1570,9 @@ mod tests {
         let task = task_with_proof_type(ProofType::Tee);
         assert_eq!(
             registry.verify(&task, b"receipt"),
-            VerificationResult::Indeterminate("no verifier registered for proof type: tee".into())
+            VerificationResult::Invalid(
+                "verification failed closed: no verifier registered for proof type: tee".into()
+            )
         );
     }
 
@@ -1636,13 +1638,15 @@ mod tests {
     }
 
     #[test]
-    fn registry_returns_indeterminate_when_verifier_is_missing() {
+    fn registry_fails_closed_when_verifier_is_missing() {
         let registry = VerifierRegistry::new();
         let task = task_with_proof_type(ProofType::Zk);
 
         assert_eq!(
             registry.verify(&task, b"proof"),
-            VerificationResult::Indeterminate("no verifier registered for proof type: zk".into())
+            VerificationResult::Invalid(
+                "verification failed closed: no verifier registered for proof type: zk".into()
+            )
         );
     }
 
