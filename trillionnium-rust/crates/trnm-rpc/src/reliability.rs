@@ -173,7 +173,14 @@ pub struct InMemoryReliabilityStore {
 }
 
 impl InMemoryReliabilityStore {
-    pub fn with_config(config: InMemoryReliabilityStoreConfig) -> Self {
+    pub fn with_config(mut config: InMemoryReliabilityStoreConfig) -> Self {
+        // Misconfigured zero dedup quota would reject every fresh ingress and
+        // collapse free-ingress throughput. Keep a one-entry floor so
+        // idempotency semantics remain live while still signaling tight quota.
+        if matches!(config.max_dedup_entries, Some(0)) {
+            config.max_dedup_entries = Some(1);
+        }
+
         Self {
             sessions: HashMap::new(),
             dedup: HashMap::new(),
@@ -491,13 +498,13 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
         self.circuit_state
     }
 
-    fn increment_retry_exhausted_total(&self) {
-        let mut current = self.retry_exhausted_total.load(Ordering::Relaxed);
+    fn increment_atomic_saturating(counter: &AtomicU64) {
+        let mut current = counter.load(Ordering::Relaxed);
         loop {
             if current == u64::MAX {
                 return;
             }
-            match self.retry_exhausted_total.compare_exchange_weak(
+            match counter.compare_exchange_weak(
                 current,
                 current + 1,
                 Ordering::Relaxed,
@@ -507,6 +514,10 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
                 Err(observed) => current = observed,
             }
         }
+    }
+
+    fn increment_retry_exhausted_total(&self) {
+        Self::increment_atomic_saturating(&self.retry_exhausted_total);
     }
 
     #[cfg(test)]
@@ -774,7 +785,7 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
                 self.retry.circuit_breaker_threshold,
                 until_unix_ms
             );
-            self.circuit_open_total.fetch_add(1, Ordering::Relaxed);
+            Self::increment_atomic_saturating(&self.circuit_open_total);
         }
     }
 
@@ -784,7 +795,7 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
                 self.circuit_state = CircuitState::Closed;
                 self.consecutive_retry_exhausted = 0;
                 eprintln!("[reliability] circuit recovered at {}", now_unix_ms);
-                self.circuit_recovered_total.fetch_add(1, Ordering::Relaxed);
+                Self::increment_atomic_saturating(&self.circuit_recovered_total);
             }
         }
     }
@@ -1300,6 +1311,17 @@ mod tests {
     }
 
     #[test]
+    fn exp_backoff_saturates_without_overflow_for_large_bases() {
+        // Regression guard for free-ingress throughput gates: malformed retry config
+        // must not overflow into tiny delays that can trigger retry storms.
+        let capped = exp_backoff_ms(u64::MAX - 7, u64::MAX - 3, 32);
+        assert_eq!(capped, u64::MAX - 3);
+
+        let exact_first_attempt = exp_backoff_ms(u64::MAX - 7, u64::MAX, 1);
+        assert_eq!(exact_first_attempt, u64::MAX - 7);
+    }
+
+    #[test]
     fn max_attempts_stops_retrying_and_drops_pending() {
         let store = InMemoryReliabilityStore::default();
         let mut engine = ReliabilityEngine::new(
@@ -1595,6 +1617,40 @@ mod tests {
     }
 
     #[test]
+    fn collect_due_retries_cursor_handles_session_churn_without_stalling_other_sessions() {
+        let store = InMemoryReliabilityStore::default();
+        let mut engine = ReliabilityEngine::new(
+            store,
+            RetryConfig {
+                base_backoff_ms: 1,
+                max_backoff_ms: 1,
+                ..RetryConfig::default()
+            },
+        );
+
+        let hot_ack = engine.receive(mk_msg("alice", "s-a", 1), 1_000);
+        assert_eq!(hot_ack.code, AckCode::Accepted);
+        let cold_ack = engine.receive(mk_msg("bob", "s-b", 1), 1_001);
+        assert_eq!(cold_ack.code, AckCode::Accepted);
+
+        let first = engine.collect_due_retries(2_000);
+        assert_eq!(
+            first.first().map(|i| i.message.session_id.as_str()),
+            Some("s-a")
+        );
+
+        // Simulate session churn: one lane drains/acks fully while another lane remains hot.
+        assert!(engine.mark_acked("s-a", &hot_ack.ack_id));
+
+        let second = engine.collect_due_retries(2_001);
+        assert_eq!(
+            second.first().map(|i| i.message.session_id.as_str()),
+            Some("s-b"),
+            "round-robin cursor should rebase on the active session set"
+        );
+    }
+
+    #[test]
     fn dedup_quota_limit_rejects_fresh_ingress_without_breaking_duplicate_ack_path() {
         let store = InMemoryReliabilityStore::with_config(InMemoryReliabilityStoreConfig {
             max_dedup_entries: Some(1),
@@ -1649,6 +1705,25 @@ mod tests {
         ));
 
         assert_eq!(store.dedup.get(&key), Some(&2_000));
+    }
+
+    #[test]
+    fn zero_dedup_quota_is_sanitized_to_one_entry_floor() {
+        let store = InMemoryReliabilityStore::with_config(InMemoryReliabilityStoreConfig {
+            max_dedup_entries: Some(0),
+            ..InMemoryReliabilityStoreConfig::default()
+        });
+        let mut engine = ReliabilityEngine::new(store, RetryConfig::default());
+
+        let first = engine.receive(mk_msg("alice", "s1", 1), 1_000);
+        assert_eq!(first.code, AckCode::Accepted);
+
+        let duplicate = engine.receive(mk_msg("alice", "s1", 1), 1_001);
+        assert_eq!(duplicate.code, AckCode::Duplicate);
+
+        let second_domain = engine.receive(mk_msg("bob", "s2", 1), 1_002);
+        assert_eq!(second_domain.code, AckCode::BadRequest);
+        assert!(second_domain.detail.contains("dedup limit reached (1)"));
     }
 
     #[test]
@@ -1964,5 +2039,25 @@ mod tests {
         engine.increment_retry_exhausted_total();
 
         assert_eq!(engine.retry_exhausted_total(), u64::MAX);
+    }
+
+    #[test]
+    fn circuit_counters_increment_saturates_at_u64_max() {
+        let store = InMemoryReliabilityStore::default();
+        let engine = ReliabilityEngine::new(store, RetryConfig::default());
+
+        engine.circuit_open_total.store(u64::MAX, Ordering::Relaxed);
+        ReliabilityEngine::<InMemoryReliabilityStore>::increment_atomic_saturating(
+            &engine.circuit_open_total,
+        );
+        assert_eq!(engine.circuit_open_total(), u64::MAX);
+
+        engine
+            .circuit_recovered_total
+            .store(u64::MAX, Ordering::Relaxed);
+        ReliabilityEngine::<InMemoryReliabilityStore>::increment_atomic_saturating(
+            &engine.circuit_recovered_total,
+        );
+        assert_eq!(engine.circuit_recovered_total(), u64::MAX);
     }
 }

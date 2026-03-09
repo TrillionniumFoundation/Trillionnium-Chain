@@ -59,6 +59,10 @@
   - （如需显式执行人追踪）`trnm-onboard rollback --org-id <org_id> --env <env> --change-ticket-id <change_ticket_id> --operator-id <operator_id> --root-cause-tag <root_cause_tag> --request-id <request_id>`
   - （如需显式执行人追踪）`trnm-onboard rollback --org-id <org_id> --env <env> --change-ticket-id <change_ticket_id> --operator-id <operator_id> --root-cause-tag <root_cause_tag> --request-id <request_id> --dry-run`
 - 将最终执行命令与输出日志计算 `sha256` 并写入变更单，作为回滚可复盘锚点。
+- 建议固定证据目录与文件名模板，避免人工命名漂移（示例）：
+  - `EVID_DIR="run/evidence/onboarding/${org_id}/${change_ticket_id}"; mkdir -p "$EVID_DIR"`
+  - `ROLLBACK_LOG="$EVID_DIR/rollback-${request_id}.log"; REPLAY_LOG="$EVID_DIR/replay-${request_id}.log"`
+  - `sha256sum "$ROLLBACK_LOG" "$REPLAY_LOG" > "$EVID_DIR/sha256-${request_id}.txt"`
 - 回滚后必须执行一次按 `request_id` 的回放校验，确认目标事件状态已转为 `reverted` 且不再可重复回滚（幂等）。
   - `trnm-onboard replay --request-id <request_id> --expect-status reverted --expect-idempotent`
   - `trnm-onboard replay --request-id <request_id> --expect-status reverted --expect-idempotent --dry-run`

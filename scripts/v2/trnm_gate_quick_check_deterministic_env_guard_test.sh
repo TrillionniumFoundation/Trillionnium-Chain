@@ -24,10 +24,12 @@ required_lines=(
   'PYTHONDONTWRITEBYTECODE: "1"'
   'CI: "true"'
   'PYTHONIOENCODING: "UTF-8"'
+  'PYTHONUTF8: "1"'
   'SOURCE_DATE_EPOCH: "1704067200"'
   'GZIP: "-n"'
   'DEBIAN_FRONTEND: noninteractive'
   'APT_LISTCHANGES_FRONTEND: none'
+  'APT_LISTBUGS_FRONTEND: none'
   'timeout-minutes: 45'
 )
 

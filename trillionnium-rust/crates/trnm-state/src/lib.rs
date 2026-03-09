@@ -342,6 +342,13 @@ impl StateStore {
         if approver_trimmed.contains(',') || approver_trimmed.contains(';') {
             return Err("resolve approval approver must be a single canonical actor id".into());
         }
+        if approver_trimmed.eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER)
+            || approver_trimmed.eq_ignore_ascii_case(RESERVED_SYSTEM_AUTHORITY)
+            || approver_trimmed.eq_ignore_ascii_case(CHALLENGE_ESCROW_ACCOUNT)
+            || approver_trimmed.eq_ignore_ascii_case(CHALLENGE_FORFEIT_TREASURY_ACCOUNT)
+        {
+            return Err("resolve approval approver must be an explicit non-system authority".into());
+        }
 
         let entry =
             self.pending_resolve_approvals
@@ -1374,6 +1381,34 @@ mod tests {
                 st.pending_resolve_approval(79),
                 Some((true, 1)),
                 "invalid approver id must not mutate staged confirmations"
+            );
+        }
+    }
+
+    #[test]
+    fn resolve_approval_rejects_system_or_treasury_approver_without_mutation() {
+        let mut st = StateStore::new();
+
+        let first = st
+            .stage_or_confirm_resolve_approval(80, true, "authority-a")
+            .expect("first approval stage should succeed");
+        assert!(!first);
+        assert_eq!(st.pending_resolve_approval(80), Some((true, 1)));
+
+        for bad_actor in [
+            DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER,
+            "System",
+            CHALLENGE_ESCROW_ACCOUNT,
+            "Treasury.Challenge_Forfeits",
+        ] {
+            let err = st
+                .stage_or_confirm_resolve_approval(80, true, bad_actor)
+                .expect_err("system/treasury approver must be rejected");
+            assert!(err.contains("explicit non-system authority"));
+            assert_eq!(
+                st.pending_resolve_approval(80),
+                Some((true, 1)),
+                "reserved approver id must not mutate staged confirmations"
             );
         }
     }

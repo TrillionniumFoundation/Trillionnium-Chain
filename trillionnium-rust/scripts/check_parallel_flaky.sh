@@ -14,6 +14,14 @@ umask "${UMASK:-022}"
 
 RUNS="${RUNS:-5}"
 RUN_TIMEOUT_SEC="${RUN_TIMEOUT_SEC:-120}"
+if ! [[ "$RUNS" =~ ^[0-9]+$ ]] || [[ "$RUNS" -lt 1 ]]; then
+  echo "RUNS must be a positive integer (got: $RUNS)" >&2
+  exit 64
+fi
+if ! [[ "$RUN_TIMEOUT_SEC" =~ ^[0-9]+$ ]] || [[ "$RUN_TIMEOUT_SEC" -lt 1 ]]; then
+  echo "RUN_TIMEOUT_SEC must be a positive integer (got: $RUN_TIMEOUT_SEC)" >&2
+  exit 64
+fi
 RUN_TAG="${RUN_TAG:-$(date +%Y%m%d-%H%M%S)-$$}"
 RUN_DIR="run/parallel-sanity-flaky-${RUN_TAG}"
 mkdir -p "$RUN_DIR"
@@ -58,6 +66,12 @@ if command -v timeout >/dev/null 2>&1; then
   TIMEOUT_BIN="timeout"
 elif command -v gtimeout >/dev/null 2>&1; then
   TIMEOUT_BIN="gtimeout"
+fi
+
+# In CI, require an external timeout guard to avoid non-deterministic hangs.
+if [[ -n "${CI:-}" && -z "$TIMEOUT_BIN" ]]; then
+  echo "timeout binary not found (need timeout or gtimeout)" >&2
+  exit 69
 fi
 
 ok=0
