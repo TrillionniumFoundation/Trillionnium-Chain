@@ -788,6 +788,29 @@ mod tests {
     }
 
     #[test]
+    fn equal_cardinality_skew_under_saturation_keeps_fresh_ids_backpressured_not_duplicated() {
+        let mut g = LaneAdmissionGate::new(2, 1);
+
+        assert_eq!(g.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(11, IngressClass::Normal), AdmitOutcome::Accepted);
+
+        // Restore-state skew keeps cardinality aligned while replacing a queued id
+        // with a ghost id in lane-wide cache.
+        g.seen_global.remove(&10);
+        g.seen_global.insert(999);
+        assert_eq!(g.seen_global.len(), 2);
+
+        // With queues saturated, fresh ids must remain backpressured (not duplicate)
+        // even while duplicate semantics for queued ids still hold.
+        assert_eq!(g.admit(10, IngressClass::Normal), AdmitOutcome::Duplicate);
+        assert_eq!(g.admit(999, IngressClass::Critical), AdmitOutcome::Backpressured);
+
+        // After one dequeue, the previously fresh id can admit cleanly.
+        assert!(matches!(g.pop_ready(), Some(10) | Some(11)));
+        assert_eq!(g.admit(999, IngressClass::Critical), AdmitOutcome::Accepted);
+    }
+
+    #[test]
     fn pop_ready_self_heals_stale_seen_global_without_new_admission() {
         let mut g = LaneAdmissionGate::new(3, 1);
 
