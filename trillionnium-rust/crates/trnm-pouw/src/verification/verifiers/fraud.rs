@@ -473,6 +473,20 @@ mod tests {
 
 
     #[test]
+    fn fraud_verifier_rejects_fullwidth_equals_then_ascii_task_id_binding_fail_closed() {
+        let verifier = FraudVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"FRAUD:{\"task_id\"\xef\xbc\x9a7,\"task_id\":7,\"worker\":\"worker-fraud\",\"proof_type\":\"fraud\"}"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("duplicate task_id binding")
+        ));
+    }
+
+    #[test]
     fn fraud_verifier_rejects_fullwidth_equals_then_ascii_worker_binding_fail_closed() {
         let verifier = FraudVerifier;
         let task = mock_task();
