@@ -26,3 +26,17 @@ fn reserve_only_split_backpressures_fresh_normal_ingress_once_borrowed_headroom_
     // not silently over-admit.
     assert_eq!(gate.admit(12, IngressClass::Normal), AdmitOutcome::Backpressured);
 }
+
+#[test]
+fn reserve_only_split_backpressured_id_is_not_poisoned_across_class_after_drain() {
+    let mut gate = LaneAdmissionGate::new(2, 2);
+
+    assert_eq!(gate.admit(20, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(21, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(22, IngressClass::Normal), AdmitOutcome::Backpressured);
+
+    // Drain one slot and ensure the previously backpressured id remains fresh,
+    // even when retried via a different ingress class.
+    assert!(gate.pop_ready().is_some());
+    assert_eq!(gate.admit(22, IngressClass::Critical), AdmitOutcome::Accepted);
+}
