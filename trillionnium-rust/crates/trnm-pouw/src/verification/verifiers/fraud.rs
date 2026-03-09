@@ -104,6 +104,21 @@ mod tests {
     }
 
     #[test]
+    fn fraud_verifier_rejects_unexpected_worker_binding_without_worker_context_fail_closed() {
+        let verifier = FraudVerifier;
+        let mut task = mock_task();
+        task.worker = None;
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"FRAUD:{\"task_id\":7,\"worker\":\"worker-fraud\",\"proof_type\":\"fraud\"}"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("unexpected worker binding")
+        ));
+    }
+
+    #[test]
     fn fraud_verifier_rejects_case_variant_duplicate_task_id_binding_fail_closed() {
         let verifier = FraudVerifier;
         let task = mock_task();
