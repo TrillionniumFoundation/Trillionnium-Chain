@@ -546,7 +546,8 @@ fn paused_state_rejects_challenge_escrow_as_singleton_authority_without_side_eff
         err.contains("reserved")
             || err.contains("authority set")
             || err.contains("resolve authority")
-            || err.contains("invalid governance value"),
+            || err.contains("invalid governance value")
+            || err.contains("explicit non-system authority"),
         "unexpected error: {err}"
     );
 

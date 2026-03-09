@@ -1688,7 +1688,7 @@ mod tests {
     }
 
     #[test]
-    fn tee_reveal_accepts_matching_legacy_committed_result_hash_binding() {
+    fn tee_reveal_rejects_matching_legacy_committed_result_hash_binding_without_crypto_backend() {
         let mut st = seeded_state();
         let r1 = apply_create_task(&mut st, 788, "alice".into(), 10).unwrap();
         let mut tee_task = st.get_task(r1.id).unwrap();
@@ -1702,18 +1702,21 @@ mod tests {
         let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
 
         // Simulate legacy state where committed result_hash was persisted early but
-        // still matches the reveal payload. This should pass verification.
+        // still matches the reveal payload. Without a real crypto backend, TEE remains
+        // fail-closed and must not complete the task.
         let mut prebound = st.get_task(r3.id).unwrap();
         prebound.result_hash = Some(result_hash);
         let r3 = st.update_task(r3, prebound).unwrap();
 
         let proof = b"TEE:task_id=788,worker=worker1,proof_type=tee,result_hash=0202020202020202020202020202020202020202020202020202020202020202,quote=QUOTE_XYZ".to_vec();
-        let r4 = apply_reveal_result(&mut st, r3.clone(), result_hash, reveal_salt, Some(proof)).unwrap();
+        let err = apply_reveal_result(&mut st, r3.clone(), result_hash, reveal_salt, Some(proof))
+            .unwrap_err();
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("backend not configured") || msg.contains("indeterminate")));
 
-        let task_after = st.get_task(r4.id).unwrap();
-        assert_eq!(task_after.status, TaskStatus::Completed);
+        let task_after = st.get_task(r3.id).unwrap();
+        assert_eq!(task_after.status, TaskStatus::Committed);
         assert_eq!(task_after.result_hash, Some(result_hash));
-        assert_eq!(task_after.reveal_salt, Some(reveal_salt));
+        assert!(task_after.reveal_salt.is_none());
     }
 
     #[test]
