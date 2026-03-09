@@ -52,6 +52,7 @@ evidence_guard_phrases=(
   "最小任务 provenance_fingerprint 记录"
   "回滚命令与输出日志的 sha256 记录"
   "回放校验命令与输出日志的 sha256 记录"
+  "LC_ALL=C sha256sum"
   "回滚根因标签（root_cause_tag）与审计事件 request_id 绑定记录"
   "接入审批单（含 change_ticket_id）"
   "NTP 时钟偏差检查记录（≤300秒）"
