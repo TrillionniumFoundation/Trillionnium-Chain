@@ -790,13 +790,15 @@ fn make_request_id(
     ts: u128,
 ) -> String {
     let mut h = Sha256::new();
-    h.update(
-        format!(
-            "{}|{}|{}|{}|{}",
-            channel, user_id, session_id, idempotency_key, ts
-        )
-        .as_bytes(),
-    );
+    h.update(channel.as_bytes());
+    h.update(b"|");
+    h.update(user_id.as_bytes());
+    h.update(b"|");
+    h.update(session_id.as_bytes());
+    h.update(b"|");
+    h.update(idempotency_key.as_bytes());
+    h.update(b"|");
+    h.update(ts.to_string().as_bytes());
     let digest = hex::encode(h.finalize());
     format!("req_{}", &digest[..16])
 }
@@ -5136,6 +5138,18 @@ mod tests {
         assert_eq!(to, 1_000);
         assert_eq!(mode, "24h");
         assert!(from <= to);
+    }
+
+    #[test]
+    fn make_request_id_is_deterministic_and_separator_sensitive() {
+        let a = make_request_id("telegram", "u1", "s1", "idem-1", 123);
+        let b = make_request_id("telegram", "u1", "s1", "idem-1", 123);
+        let c = make_request_id("telegram|u1", "s1", "idem-1", "", 123);
+
+        assert_eq!(a, b, "same tuple must hash to a stable request id");
+        assert_ne!(a, c, "field separators must keep scopes unambiguous");
+        assert!(a.starts_with("req_"));
+        assert_eq!(a.len(), 20, "req_ + 16 hex chars");
     }
 
     #[test]
