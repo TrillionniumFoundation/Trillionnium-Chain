@@ -103,6 +103,9 @@ impl LaneAdmissionGate {
                 // Hot idle path after burst drains: clear stale cache entries without
                 // touching lane-local sets.
                 self.seen_global.clear();
+                // Fully idle lane state must also reset fairness streak; otherwise a
+                // restored stale streak can spuriously preempt fresh critical work.
+                self.critical_served_streak = 0;
             } else {
                 self.seen_global.clear();
                 self.seen_global.extend(self.normal.seen.iter().copied());
@@ -926,5 +929,23 @@ mod tests {
         let (_, _, total) = g.queued_counts();
         assert_eq!(g.seen_global.len(), total);
         assert!(!g.seen_global.contains(&999));
+    }
+
+    #[test]
+    fn idle_self_heal_resets_stale_fairness_streak_before_new_mixed_ingress() {
+        let mut g = LaneAdmissionGate::new(4, 1);
+
+        // Simulate restored idle state with stale fairness/bookkeeping counters.
+        g.critical_served_streak = g.critical_burst_limit;
+        g.seen_global.insert(777);
+
+        // Trigger idle self-heal path via first admission.
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+        // Then add critical ingress. This path should not arm fairness warmup because
+        // normal backlog was already present before critical arrived.
+        assert_eq!(g.admit(1, IngressClass::Critical), AdmitOutcome::Accepted);
+
+        // Critical should not be spuriously preempted by stale fairness state.
+        assert_eq!(g.pop_ready(), Some(1));
     }
 }
