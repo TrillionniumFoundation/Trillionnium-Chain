@@ -468,3 +468,30 @@ fn paused_state_rejects_worker_slash_treasury_member_authority_set_without_escro
     assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), forfeits_before);
     assert_eq!(st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT), worker_slash_before);
 }
+
+#[test]
+fn paused_state_rejects_challenge_escrow_member_authority_set_without_side_effects() {
+    // M1 merge-gate invariant: custody escrow account must never join resolve
+    // authority quorum, even while emergency pause is active.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 7_170);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 717);
+
+    st.set_gov_param(98_193, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+    let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+
+    let authority_with_escrow = format!("authority-a,{}", CHALLENGE_ESCROW_ACCOUNT);
+    let err = st
+        .stage_or_confirm_resolve_approval(9_912, true, "authority-a", &authority_with_escrow)
+        .expect_err("escrow account in authority set must be rejected while paused");
+    assert!(err.contains("reserved") || err.contains("authority set"));
+
+    assert_eq!(st.pending_resolve_approval(9_912), None);
+    assert_eq!(st.pending_gov_update("resolve_authority"), None);
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+    assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), forfeits_before);
+}
