@@ -72,6 +72,7 @@ impl AdmissionGate {
         }
     }
 
+    #[cfg(test)]
     fn remember_backpressured_without_eviction(&mut self, tx_id: u64) {
         // Fairness deferral must never evict older retry ids. When bounded memory has
         // room, insert directly and append a FIFO marker (no eviction/compaction path).
