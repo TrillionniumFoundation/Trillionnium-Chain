@@ -1945,7 +1945,7 @@ mod tests {
         assert_eq!(
             registry.verify(
                 &fraud_task,
-                b"FRAUD:task_id=42,worker=alice,proof_type=fraud,challenge=1"
+                b"FRAUD:task_id=42,proof_type=fraud,challenge=1"
             ),
             VerificationResult::Valid
         );
