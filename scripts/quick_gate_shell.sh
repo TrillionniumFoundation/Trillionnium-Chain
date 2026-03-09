@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Force deterministic sort/awk/find behavior across CI locales.
+: "${LC_ALL:=C}"
+export LC_ALL
+
 if [[ $# -eq 0 ]]; then
   TARGET_DIRS=("scripts")
 else
