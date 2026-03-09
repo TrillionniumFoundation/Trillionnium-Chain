@@ -40,3 +40,18 @@ fn reserve_only_split_backpressured_id_is_not_poisoned_across_class_after_drain(
     assert!(gate.pop_ready().is_some());
     assert_eq!(gate.admit(22, IngressClass::Critical), AdmitOutcome::Accepted);
 }
+
+#[test]
+fn reserve_only_borrowed_normal_ingress_preserves_cross_class_idempotency_until_drain() {
+    let mut gate = LaneAdmissionGate::new(3, 3);
+
+    // In reserve-only split, normal ingress borrows critical headroom.
+    assert_eq!(gate.admit(30, IngressClass::Normal), AdmitOutcome::Accepted);
+
+    // Cross-class retries for the same tx id must dedupe while queued.
+    assert_eq!(gate.admit(30, IngressClass::Critical), AdmitOutcome::Duplicate);
+
+    // Once drained, the id should become admissible again.
+    assert_eq!(gate.pop_ready(), Some(30));
+    assert_eq!(gate.admit(30, IngressClass::Critical), AdmitOutcome::Accepted);
+}
