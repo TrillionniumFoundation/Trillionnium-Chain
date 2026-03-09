@@ -458,6 +458,20 @@ mod tests {
     }
 
     #[test]
+    fn fraud_verifier_rejects_fullwidth_underscore_task_id_identifier_spoof_fail_closed() {
+        let verifier = FraudVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"FRAUD:{\"task\xef\xbc\xbfid\":7,\"worker\":\"worker-fraud\",\"proof_type\":\"fraud\"}"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("missing task_id binding")
+        ));
+    }
+
+    #[test]
     fn fraud_verifier_rejects_fullwidth_equals_then_ascii_proof_type_binding_fail_closed() {
         let verifier = FraudVerifier;
         let task = mock_task();
