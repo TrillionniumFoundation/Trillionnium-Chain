@@ -2857,7 +2857,10 @@ mod tests {
     fn resolve_rejects_non_canonical_configured_authority_without_state_mutation() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
-        set_resolve_authority(&mut st, " authority ");
+        let bad_auth = st
+            .set_gov_param_unchecked(9_500, "resolve_authority".into(), " authority ".into())
+            .unwrap_err();
+        assert!(bad_auth.contains("must be canonical"));
 
         let r1 = apply_create_task(&mut st, 8_999, "alice".into(), 10).unwrap();
         let result_hash = [1u8; 32];
@@ -2889,7 +2892,10 @@ mod tests {
     fn resolve_rejects_trimmed_signer_when_configured_authority_has_surrounding_whitespace() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
-        set_resolve_authority(&mut st, " authority ");
+        let bad_auth = st
+            .set_gov_param_unchecked(9_500, "resolve_authority".into(), " authority ".into())
+            .unwrap_err();
+        assert!(bad_auth.contains("must be canonical"));
 
         let r1 = apply_create_task(&mut st, 9_000, "alice".into(), 10).unwrap();
         let result_hash = [1u8; 32];
