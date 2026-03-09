@@ -590,10 +590,7 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
         // Gate hardening: preserve a single canonical msg_type namespace so
         // strict-field routing and replay domains cannot diverge by padding
         // or case-variant aliases.
-        if !msg.msg_type.is_empty()
-            && (msg.msg_type.trim() != msg.msg_type
-                || msg.msg_type != msg.msg_type.to_ascii_uppercase())
-        {
+        if !msg.msg_type.is_empty() && !is_canonical_msg_type(&msg.msg_type) {
             return Ack {
                 code: AckCode::BadRequest,
                 ack_id: "ack_invalid".to_string(),
@@ -850,6 +847,17 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
 
 const MAX_DUE_RETRIES_PER_SESSION_PER_COLLECT: usize = 64;
 const MAX_DUE_RETRIES_PER_COLLECT: usize = 256;
+
+fn is_canonical_msg_type(msg_type: &str) -> bool {
+    if msg_type.trim() != msg_type {
+        return false;
+    }
+
+    !msg_type
+        .as_bytes()
+        .iter()
+        .any(|b| b.is_ascii_lowercase())
+}
 
 fn exp_backoff_ms(base: u64, max: u64, attempts: u32) -> u64 {
     let shift = attempts.saturating_sub(1).min(20);
