@@ -2224,6 +2224,50 @@ mod tests {
     }
 
     #[test]
+    fn store_config_clamps_zero_pending_quotas_to_keep_ingress_live() {
+        let mut store = InMemoryReliabilityStore::with_config(InMemoryReliabilityStoreConfig {
+            max_pending_per_session: Some(0),
+            max_pending_total: Some(0),
+            ..InMemoryReliabilityStoreConfig::default()
+        });
+
+        let mk_pending = |ack_id: &str| PendingItem {
+            ack_id: ack_id.to_string(),
+            message: ReliableMessage {
+                from: "alice".to_string(),
+                chain_id: "trnm-testnet".to_string(),
+                session_id: "s1".to_string(),
+                seq: Some(1),
+                nonce: None,
+                msg_type: "INPUT_CHUNK".to_string(),
+                payload: "x".to_string(),
+            },
+            attempts: 0,
+            created_at_unix_ms: 1,
+            next_retry_at_unix_ms: 1,
+        };
+
+        let mut first_pending = BTreeMap::new();
+        first_pending.insert("ack-1".to_string(), mk_pending("ack-1"));
+        let first = SessionState {
+            session_id: "s1".to_string(),
+            pending: first_pending,
+        };
+        assert!(store.try_upsert_session_with_ts(first, 1).is_ok());
+
+        let mut second_pending = BTreeMap::new();
+        second_pending.insert("ack-2".to_string(), mk_pending("ack-2"));
+        let second = SessionState {
+            session_id: "s2".to_string(),
+            pending: second_pending,
+        };
+        let err = store
+            .try_upsert_session_with_ts(second, 2)
+            .expect_err("second pending item should hit clamped global quota");
+        assert!(matches!(err, ReliabilityStoreError::CapacityExceeded { .. }));
+    }
+
+    #[test]
     fn store_config_clamps_zero_empty_session_retention_window() {
         let store = InMemoryReliabilityStore::with_config(InMemoryReliabilityStoreConfig {
             empty_session_cleanup: EmptySessionCleanupPolicy::RetainForMs(0),
