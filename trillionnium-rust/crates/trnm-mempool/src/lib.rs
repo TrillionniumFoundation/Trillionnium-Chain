@@ -99,9 +99,15 @@ impl LaneAdmissionGate {
         if self.seen_global.len() != lane_total {
             // Defensive self-heal for transient restored-state skew: lane-local queues
             // remain source of truth for saturation, and rebuild lane-wide id set.
-            self.seen_global.clear();
-            self.seen_global.extend(self.normal.seen.iter().copied());
-            self.seen_global.extend(self.critical.seen.iter().copied());
+            if lane_total == 0 {
+                // Hot idle path after burst drains: clear stale cache entries without
+                // touching lane-local sets.
+                self.seen_global.clear();
+            } else {
+                self.seen_global.clear();
+                self.seen_global.extend(self.normal.seen.iter().copied());
+                self.seen_global.extend(self.critical.seen.iter().copied());
+            }
         }
 
         // When cache and lane queue cardinality are aligned, lane-wide membership
@@ -285,9 +291,15 @@ impl LaneAdmissionGate {
             if self.seen_global.len() != lane_total {
                 // Keep idempotency cache in sync even when a stale ghost id
                 // survives removal of the drained tx id.
-                self.seen_global.clear();
-                self.seen_global.extend(self.normal.seen.iter().copied());
-                self.seen_global.extend(self.critical.seen.iter().copied());
+                if lane_total == 0 {
+                    // Hot idle path after full drain: clear stale cache entries without
+                    // touching lane-local sets.
+                    self.seen_global.clear();
+                } else {
+                    self.seen_global.clear();
+                    self.seen_global.extend(self.normal.seen.iter().copied());
+                    self.seen_global.extend(self.critical.seen.iter().copied());
+                }
             }
         }
         Some(id)
