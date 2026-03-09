@@ -1537,6 +1537,11 @@ mod tests {
         let dup = engine.receive(mk_msg("alice", "s1", 9), 1_050);
         assert_eq!(dup.code, AckCode::Duplicate);
 
+        // This test isolates dedup-TTL expiry after the original delivery has been
+        // fully acknowledged. Pending retry state is covered separately below and
+        // must still reject replays even after dedup memory ages out.
+        assert!(engine.mark_acked("s1", &first.ack_id));
+
         let after_ttl = engine.receive(mk_msg("alice", "s1", 9), 1_101);
         assert_eq!(after_ttl.code, AckCode::Accepted);
     }

@@ -961,13 +961,15 @@ impl StateStore {
             // Fail-closed: missing/invalid monetary params disable policy tick.
             return false;
         };
-        block_height > 0
-            && block_height % interval == 0
-            && self
+        let cooldown_allows = self.monetary_state.tick_count == 0
+            || self
                 .monetary_state
                 .last_tick_height
                 .saturating_add(cooldown)
-                <= block_height
+                <= block_height;
+        block_height > 0
+            && block_height % interval == 0
+            && cooldown_allows
             && self.monetary_state.last_tick_height < block_height
     }
 
@@ -983,13 +985,16 @@ impl StateStore {
             cooldown_param_version,
         ) = self.monetary_tick_config()?;
 
-        if !(block_height > 0
-            && block_height % interval_blocks == 0
-            && self
+        let cooldown_allows = self.monetary_state.tick_count == 0
+            || self
                 .monetary_state
                 .last_tick_height
                 .saturating_add(cooldown_blocks)
-                <= block_height
+                <= block_height;
+
+        if !(block_height > 0
+            && block_height % interval_blocks == 0
+            && cooldown_allows
             && self.monetary_state.last_tick_height < block_height)
         {
             return None;
