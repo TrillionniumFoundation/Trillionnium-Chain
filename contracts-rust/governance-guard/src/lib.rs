@@ -47,6 +47,7 @@ pub enum Error {
     NotReady,
     AlreadyFinalized,
     WrongProposalKind,
+    SelfExecutionForbidden,
 }
 
 pub type Result<T> = std::result::Result<T, Error>;
@@ -249,6 +250,9 @@ impl GovernanceGuard {
             if now < proposal.eta {
                 return Err(Error::NotReady);
             }
+            if proposal.proposer == caller {
+                return Err(Error::SelfExecutionForbidden);
+            }
         }
 
         self.bridge.emergency_paused = false;
@@ -441,6 +445,28 @@ mod tests {
         assert_eq!(
             gov.execute_unpause("exec", pid, eta - 1).unwrap_err(),
             Error::NotReady
+        );
+        assert!(gov.bridge_state().emergency_paused);
+
+        gov.execute_unpause("exec", pid, eta).unwrap();
+        assert!(!gov.bridge_state().emergency_paused);
+    }
+
+    #[test]
+    fn emergency_unpause_requires_distinct_executor() {
+        let mut gov = setup();
+        gov.set_role("admin", "guardian", false, true).unwrap();
+
+        let now = 5_000;
+        let eta = now + 60;
+        gov.emergency_pause("guardian", "incident-2").unwrap();
+        let pid = gov
+            .schedule_unpause("guardian", eta, "recover-2", now)
+            .unwrap();
+
+        assert_eq!(
+            gov.execute_unpause("guardian", pid, eta).unwrap_err(),
+            Error::SelfExecutionForbidden
         );
         assert!(gov.bridge_state().emergency_paused);
 
