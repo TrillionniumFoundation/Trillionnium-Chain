@@ -1688,6 +1688,35 @@ mod tests {
     }
 
     #[test]
+    fn tee_reveal_accepts_matching_legacy_committed_result_hash_binding() {
+        let mut st = seeded_state();
+        let r1 = apply_create_task(&mut st, 788, "alice".into(), 10).unwrap();
+        let mut tee_task = st.get_task(r1.id).unwrap();
+        tee_task.proof_type = ProofType::Tee;
+        let r1 = st.update_task(r1, tee_task).unwrap();
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+
+        let result_hash = [2u8; 32];
+        let reveal_salt = [3u8; 32];
+        let committed = compute_commitment(788, &result_hash, &reveal_salt, "worker1");
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+
+        // Simulate legacy state where committed result_hash was persisted early but
+        // still matches the reveal payload. This should pass verification.
+        let mut prebound = st.get_task(r3.id).unwrap();
+        prebound.result_hash = Some(result_hash);
+        let r3 = st.update_task(r3, prebound).unwrap();
+
+        let proof = b"TEE:task_id=788,worker=worker1,proof_type=tee,result_hash=0202020202020202020202020202020202020202020202020202020202020202,quote=QUOTE_XYZ".to_vec();
+        let r4 = apply_reveal_result(&mut st, r3.clone(), result_hash, reveal_salt, Some(proof)).unwrap();
+
+        let task_after = st.get_task(r4.id).unwrap();
+        assert_eq!(task_after.status, TaskStatus::Completed);
+        assert_eq!(task_after.result_hash, Some(result_hash));
+        assert_eq!(task_after.reveal_salt, Some(reveal_salt));
+    }
+
+    #[test]
     fn tee_reveal_rejects_legacy_state_task_id_drift_fail_closed_without_state_mutation() {
         let mut st = seeded_state();
         let r1 = apply_create_task(&mut st, 789, "alice".into(), 10).unwrap();
