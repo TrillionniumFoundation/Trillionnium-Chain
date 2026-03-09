@@ -60,6 +60,7 @@ pub struct LaneAdmissionGate {
     seen_global: HashSet<u64>,
     critical_served_streak: usize,
     critical_burst_limit: usize,
+    normal_has_dedicated_capacity: bool,
 }
 impl LaneAdmissionGate {
     pub fn new(total_capacity: usize, critical_reserve: usize) -> Self {
@@ -77,6 +78,7 @@ impl LaneAdmissionGate {
             seen_global: HashSet::with_capacity(total),
             critical_served_streak: 0,
             critical_burst_limit: reserve.saturating_mul(2).max(1),
+            normal_has_dedicated_capacity: normal_cap > 0,
         }
     }
     pub fn admit(&mut self, tx_id: u64, class: IngressClass) -> AdmitOutcome {
@@ -176,7 +178,8 @@ impl LaneAdmissionGate {
                     primary
                 };
 
-                if matches!(out, AdmitOutcome::Accepted)
+                if self.normal_has_dedicated_capacity
+                    && matches!(out, AdmitOutcome::Accepted)
                     && normal_was_empty
                     && !self.normal.queue.is_empty()
                     && !self.critical.queue.is_empty()
@@ -202,7 +205,8 @@ impl LaneAdmissionGate {
                     primary
                 };
 
-                if matches!(out, AdmitOutcome::Accepted)
+                if self.normal_has_dedicated_capacity
+                    && matches!(out, AdmitOutcome::Accepted)
                     && normal_was_empty
                     && !self.normal.queue.is_empty()
                     && !self.critical.queue.is_empty()
@@ -228,7 +232,8 @@ impl LaneAdmissionGate {
     }
 
     pub fn pop_ready(&mut self) -> Option<u64> {
-        let prefer_normal = self.critical_served_streak >= self.critical_burst_limit
+        let prefer_normal = self.normal_has_dedicated_capacity
+            && self.critical_served_streak >= self.critical_burst_limit
             && !self.normal.queue.is_empty();
 
         let (id, served_critical) = if prefer_normal {
@@ -369,6 +374,22 @@ mod tests {
         assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
         assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
         assert_eq!(g.admit(4, IngressClass::Normal), AdmitOutcome::Backpressured);
+    }
+
+    #[test]
+    fn reserve_only_normal_borrowing_does_not_preempt_critical_drain_order() {
+        let mut g = LaneAdmissionGate::new(3, 3);
+
+        assert_eq!(g.admit(100, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(101, IngressClass::Critical), AdmitOutcome::Accepted);
+        // Normal ingress borrows reserve-only headroom.
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+
+        // With no dedicated normal capacity configured, borrowed normal traffic
+        // should not preempt pending critical work.
+        assert_eq!(g.pop_ready(), Some(100));
+        assert_eq!(g.pop_ready(), Some(101));
+        assert_eq!(g.pop_ready(), Some(1));
     }
 
     #[test]
