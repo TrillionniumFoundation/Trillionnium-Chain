@@ -3637,6 +3637,59 @@ mod tests {
     }
 
     #[test]
+    fn timeout_scan_revealed_task_still_finalizes_while_emergency_paused() {
+        // Safety boundary scope: emergency pause should block challenged escrow
+        // settlement paths only, not uncontested revealed timeout completion.
+        let mut st = StateStore::new();
+        st.set_balance("worker7005", 1_000);
+
+        let result_hash = [7u8; 32];
+        let reveal_salt = [9u8; 32];
+        let r1 = apply_create_task(&mut st, 7005, "alice".into(), 100).unwrap();
+        let committed = compute_commitment(7005, &result_hash, &reveal_salt, "worker7005");
+        let r2 = apply_accept_task(&mut st, r1, "worker7005".into()).unwrap();
+        let r3 = trnm_pouw::apply_commit_result_at_height(
+            &mut st,
+            r2,
+            "worker7005".into(),
+            committed,
+            100,
+        )
+        .unwrap();
+        let _r4 = trnm_pouw::apply_reveal_result_at_height(
+            &mut st,
+            r3,
+            result_hash,
+            reveal_salt,
+            None,
+            110,
+        )
+        .unwrap();
+
+        st.set_gov_param(9_230, 7_999, "emergency_pause".into(), "true".into())
+            .expect("pause=true governance update must succeed");
+        assert!(st.is_emergency_paused());
+
+        let challenge_deadline = st
+            .get_task(7005)
+            .and_then(|t| t.challenge_deadline_height)
+            .expect("challenge deadline must be present after reveal");
+
+        let known: HashSet<u64> = [7005u64].into_iter().collect();
+        let migrated = scan_and_apply_timeouts(
+            &mut st,
+            &known,
+            challenge_deadline.saturating_add(1),
+            9_100_200,
+        );
+
+        assert_eq!(migrated, 1);
+        let task = st.get_task(7005).expect("task must exist after timeout scan");
+        assert_eq!(task.status, TaskStatus::Completed);
+        assert_eq!(task.challenge_bond_forfeited, None);
+    }
+
+    #[test]
     fn event_deltas_match_balance_movements_on_revealed_timeout_complete() {
         let mut st = StateStore::new();
         st.set_balance("worker8100", 1_000);
