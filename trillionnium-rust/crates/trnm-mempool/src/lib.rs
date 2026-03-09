@@ -264,6 +264,19 @@ impl LaneAdmissionGate {
             self.seen_global.clear();
             self.seen_global.extend(self.normal.seen.iter().copied());
             self.seen_global.extend(self.critical.seen.iter().copied());
+        } else {
+            let lane_total = self
+                .normal
+                .queue
+                .len()
+                .saturating_add(self.critical.queue.len());
+            if self.seen_global.len() != lane_total {
+                // Keep idempotency cache in sync even when a stale ghost id
+                // survives removal of the drained tx id.
+                self.seen_global.clear();
+                self.seen_global.extend(self.normal.seen.iter().copied());
+                self.seen_global.extend(self.critical.seen.iter().copied());
+            }
         }
         Some(id)
     }
@@ -795,6 +808,25 @@ mod tests {
         assert_eq!(g.seen_global.len(), total);
         let survivor = if drained == Some(1) { 2 } else { 1 };
         assert!(g.seen_global.contains(&survivor));
+        assert!(!g.seen_global.contains(&999));
+    }
+
+    #[test]
+    fn pop_ready_self_heals_when_ghost_id_survives_successful_remove() {
+        let mut g = LaneAdmissionGate::new(3, 1);
+
+        assert_eq!(g.admit(1, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+
+        // Keep queued ids so remove(id) succeeds, but inject a ghost entry that
+        // should be pruned by post-pop cardinality self-heal.
+        g.seen_global.insert(999);
+
+        let drained = g.pop_ready();
+        assert!(drained == Some(1) || drained == Some(2));
+
+        let (_, _, total) = g.queued_counts();
+        assert_eq!(g.seen_global.len(), total);
         assert!(!g.seen_global.contains(&999));
     }
 }
