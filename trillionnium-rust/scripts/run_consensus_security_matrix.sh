@@ -38,7 +38,7 @@ echo "consensus_security.ts=$TS" > "$SUMMARY"
 echo "consensus_security.out_dir=$OUT_DIR" >> "$SUMMARY"
 echo "steps:" >> "$SUMMARY"
 
-run_step "cargo_core_tests" "cargo test -p trnm-types -p trnm-worker-agent -p trnm-rpc"
+run_step "cargo_core_tests" "cargo test -p trnm-types -p trnm-worker-agent -p trnm-rpc -- --test-threads=1"
 run_step "request_tx_binding" "OUT_DIR='$OUT_DIR' ./scripts/check_request_tx_binding.sh"
 run_step "request_fault_injection" "OUT_DIR='$OUT_DIR' ./scripts/run_request_fault_injection.sh"
 run_step "consensus_fault_matrix" "./scripts/run_consensus_fault_matrix.sh"
