@@ -719,9 +719,10 @@ pub fn apply_reveal_result_at_height(
     // Fail closed if a proof payload is supplied for a non-verifiable proof type, so
     // legacy/corrupted proof_type drift cannot silently bypass envelope verification.
     if proof_data.is_some() && !matches!(task.proof_type, ProofType::Tee | ProofType::Zk) {
-        return Err(PouwError::State(
-            "unexpected proof payload for non-verifiable proof type".into(),
-        ));
+        return Err(PouwError::State(format!(
+            "unexpected proof payload for non-verifiable proof type: {:?}",
+            task.proof_type
+        )));
     }
     if matches!(task.proof_type, ProofType::Tee | ProofType::Zk) {
         let proof_payload = proof_data.as_deref().unwrap_or(&[]);
@@ -2685,9 +2686,12 @@ mod tests {
         let proof = b"TEE:task_id=789,worker=worker1,proof_type=tee,result_hash=0202020202020202020202020202020202020202020202020202020202020202,quote=QUOTE_XYZ".to_vec();
         let err = apply_reveal_result(&mut st, r2.clone(), result_hash, reveal_salt, Some(proof))
             .unwrap_err();
-        assert!(
-            matches!(err, PouwError::State(msg) if msg.contains("unexpected proof payload for non-verifiable proof type"))
-        );
+        assert!(matches!(
+            err,
+            PouwError::State(msg)
+                if msg.contains("unexpected proof payload for non-verifiable proof type")
+                    && msg.contains("Fraud")
+        ));
 
         // Fail-closed behavior: state must remain Committed and unset reveal artifacts.
         let task_after = st.get_task(r2.id).unwrap();
