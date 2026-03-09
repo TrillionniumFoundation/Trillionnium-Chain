@@ -313,6 +313,12 @@ impl AdmissionGate {
             self.backpressured_fifo.clear();
         } else {
             self.retry_reservations = self.retry_reservations.saturating_add(1).min(retry_budget);
+            if self.backpressured_fifo.len() > self.capacity.saturating_mul(4) {
+                // Pop-heavy recovery windows can retain oversized stale FIFO marker tails
+                // from restored/churned state without hitting admit() compaction paths.
+                // Compact on dequeue boundaries to keep retry bookkeeping memory bounded.
+                self.compact_backpressured_fifo();
+            }
         }
         // Keep retry memory across partial drain so repeated retries stay idempotent
         // when the queue quickly re-saturates before the original sender retries.
@@ -909,6 +915,26 @@ mod tests {
         assert_eq!(gate.admit(10), AdmitOutcome::Accepted);
 
         // Retry admission should compact stale markers even without new backpressured inserts.
+        assert!(gate.backpressured_fifo.len() <= gate.capacity.saturating_mul(4));
+    }
+
+    #[test]
+    fn pop_ready_compacts_oversized_retry_fifo_when_retry_memory_is_non_empty() {
+        let mut gate = AdmissionGate::new(2);
+        assert_eq!(gate.admit(1), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(2), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(10), AdmitOutcome::Backpressured);
+        assert_eq!(gate.admit(11), AdmitOutcome::Backpressured);
+
+        // Simulate restored/churned state where stale markers are oversized while
+        // active retry ids still exist.
+        gate.backpressured_fifo
+            .extend([10, 11, 10, 11, 10, 11, 10, 11, 10, 11]);
+        assert!(gate.backpressured_fifo.len() > gate.capacity.saturating_mul(4));
+
+        assert_eq!(gate.pop_ready(), Some(1));
+
+        // Dequeue boundary should compact stale retry markers even before retry admission.
         assert!(gate.backpressured_fifo.len() <= gate.capacity.saturating_mul(4));
     }
 
