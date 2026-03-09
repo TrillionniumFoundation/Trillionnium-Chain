@@ -412,4 +412,36 @@ mod tests {
             VerificationResult::Invalid(msg) if msg.contains("duplicate proof_type binding")
         ));
     }
+<<<<<<< HEAD
+=======
+
+    #[test]
+    fn fraud_verifier_rejects_fullwidth_equals_then_ascii_worker_binding_fail_closed() {
+        let verifier = FraudVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"FRAUD:{\"task_id\":7,\"worker\"\xef\xbc\x9a\"worker-fraud\",\"worker\":\"worker-fraud\",\"proof_type\":\"fraud\"}"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("duplicate worker binding")
+        ));
+    }
+
+    #[test]
+    fn fraud_verifier_rejects_result_hash_with_repeated_hex_prefix_fail_closed() {
+        let verifier = FraudVerifier;
+        let mut task = mock_task();
+        task.result_hash = Some([9u8; 32]);
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"FRAUD:{\"task_id\":7,\"worker\":\"worker-fraud\",\"proof_type\":\"fraud\",\"result_hash\":\"0x0x0909090909090909090909090909090909090909090909090909090909090909\"}"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("result_hash mismatch")
+        ));
+    }
+>>>>>>> 3cae41fa (laneM0: add fail-closed fraud verifier test for repeated 0x result_hash prefix)
 }
