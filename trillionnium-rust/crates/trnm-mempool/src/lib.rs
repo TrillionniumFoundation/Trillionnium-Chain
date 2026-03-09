@@ -725,6 +725,26 @@ mod tests {
     }
 
     #[test]
+    fn stale_seen_global_ghost_id_is_healed_without_false_duplicate_under_saturation() {
+        let mut g = LaneAdmissionGate::new(2, 1);
+
+        assert_eq!(g.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(20, IngressClass::Normal), AdmitOutcome::Accepted);
+
+        // Simulate restored-state skew with preserved cardinality: the lane-wide
+        // cache contains a ghost id and misses one actually queued id.
+        g.seen_global.remove(&20);
+        g.seen_global.insert(99);
+        assert_eq!(g.seen_global.len(), 2);
+
+        // Fresh ingress matching the ghost id must not be misclassified as duplicate.
+        assert_eq!(g.admit(99, IngressClass::Critical), AdmitOutcome::Backpressured);
+
+        // After the self-heal rebuild, the real queued id is deduped again.
+        assert_eq!(g.admit(20, IngressClass::Critical), AdmitOutcome::Duplicate);
+    }
+
+    #[test]
     fn queued_counts_track_spillover_and_drain() {
         let mut g = LaneAdmissionGate::new(4, 1);
 
