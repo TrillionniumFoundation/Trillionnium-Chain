@@ -391,6 +391,22 @@ mod tests {
     }
 
     #[test]
+    fn stale_retry_bookkeeping_is_cleared_before_free_ingress_admission() {
+        let mut gate = AdmissionGate::new(2);
+
+        // Simulate restored/corrupted bookkeeping: no known retries but stale
+        // reservation/marker/fifo state remains.
+        gate.retry_reservations = 2;
+        gate.last_fairness_deferred = Some(99);
+        gate.backpressured_fifo.push_back(99);
+
+        assert_eq!(gate.admit(100), AdmitOutcome::Accepted);
+        assert_eq!(gate.retry_reservations, 0);
+        assert_eq!(gate.last_fairness_deferred, None);
+        assert!(gate.backpressured_fifo.is_empty());
+    }
+
+    #[test]
     fn backpressure_retry_cache_is_bounded_by_capacity() {
         let mut gate = AdmissionGate::new(2);
         assert_eq!(gate.admit(1), AdmitOutcome::Accepted);
