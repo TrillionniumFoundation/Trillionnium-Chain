@@ -21,6 +21,7 @@ required_lines=(
   'LC_MONETARY: C'
   'LC_MEASUREMENT: C'
   'PYTHONHASHSEED: "0"'
+  'PYTHONIOENCODING: "UTF-8"'
   'CI: "true"'
   'SOURCE_DATE_EPOCH: "1704067200"'
   'timeout-minutes: 60'

@@ -47,6 +47,9 @@ jobs:
       - name: Rust workspace tests
         run: |
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+          # Reduce scheduler-sensitive flakes in RC health runs by pinning a
+          # deterministic default test-thread count unless explicitly overridden.
+          export RUST_TEST_THREADS="${RUST_TEST_THREADS:-1}"
           cd trillionnium-rust
           cargo test --workspace
 

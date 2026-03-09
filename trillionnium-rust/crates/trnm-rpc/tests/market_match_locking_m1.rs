@@ -2,8 +2,11 @@ use serde_json::Value;
 use std::fs;
 use std::path::PathBuf;
 use std::process::Command;
+use std::sync::atomic::{AtomicU64, Ordering};
 use std::thread;
 use std::time::{Duration, Instant};
+
+static UNIQUE_SUFFIX: AtomicU64 = AtomicU64::new(0);
 
 fn unique_market_fixture_path(name: &str, ext: &str) -> PathBuf {
     let ts = std::time::SystemTime::now()
@@ -11,7 +14,8 @@ fn unique_market_fixture_path(name: &str, ext: &str) -> PathBuf {
         .expect("clock")
         .as_nanos();
     let pid = std::process::id();
-    std::env::temp_dir().join(format!("trnm_rpc_{}_{}_{}.{}", name, pid, ts, ext))
+    let seq = UNIQUE_SUFFIX.fetch_add(1, Ordering::Relaxed);
+    std::env::temp_dir().join(format!("trnm_rpc_{}_{}_{}_{}.{}", name, pid, ts, seq, ext))
 }
 
 #[test]
@@ -99,6 +103,7 @@ fn market_match_waits_for_bids_lock_before_reading() {
         .env("TRNM_RPC_MARKET_TASKS_FILE", &tasks)
         .env("TRNM_RPC_MARKET_BIDS_FILE", &bids)
         .env("TRNM_RPC_MARKET_LOCK_STALE_MS", "60000")
+        .env("TRNM_RPC_MARKET_LOCK_TIMEOUT_MS", "2500")
         .output()
         .expect("failed to run market.match_task");
     let elapsed = started.elapsed();

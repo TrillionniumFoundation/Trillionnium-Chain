@@ -441,6 +441,17 @@ fn canonicalize_risk_source(source: Option<&str>) -> String {
         return "anon".to_string();
     }
 
+    // Hot-path shortcut: most ingress already carries stable lowercase aliases
+    // without whitespace. Reuse the trimmed string directly to avoid per-char
+    // writes/allocation churn on quota accounting.
+    if source.len() <= RISK_SOURCE_MAX_CHARS
+        && source
+            .chars()
+            .all(|ch| !ch.is_whitespace() && !ch.is_ascii_uppercase())
+    {
+        return source.to_string();
+    }
+
     // Collapse internal whitespace so cosmetic attribution variants don't explode
     // quota key-space (e.g. "bot  worker" vs "bot worker").
     // Keep this allocation-light: avoid split+collect+join on the hot ingress path.
@@ -2163,6 +2174,13 @@ mod tests {
     fn source_attribution_canonicalization_collapses_whitespace_without_trailing_space() {
         let canonical = canonicalize_risk_source(Some("   Bot\t\n Worker   "));
         assert_eq!(canonical, "bot worker");
+
+        // Non-ASCII whitespace must still collapse even on the lowercase fast path.
+        let canonical_nbsp = canonicalize_risk_source(Some("bot\u{00a0}worker"));
+        assert_eq!(canonical_nbsp, "bot worker");
+
+        // Lowercase/no-whitespace aliases should keep byte shape for hot-path speed.
+        assert_eq!(canonicalize_risk_source(Some("relay-source-1")), "relay-source-1");
 
         let exact = "A".repeat(RISK_SOURCE_MAX_CHARS);
         let with_suffix = format!("{}   z", exact);
