@@ -57,12 +57,35 @@ impl AdmissionGate {
             while self.backpressured_ids.len() > self.capacity {
                 let mut evicted = false;
                 while let Some(candidate) = self.backpressured_fifo.pop_front() {
+                    if candidate == tx_id
+                        && self.backpressured_ids.len().saturating_sub(1) >= self.capacity
+                    {
+                        // Restored state may miss historical fifo markers. Keep the
+                        // newly inserted retry id and let deterministic set trimming
+                        // evict older entries instead of immediately dropping tx_id.
+                        continue;
+                    }
                     if self.backpressured_ids.remove(&candidate) {
                         evicted = true;
                         break;
                     }
                 }
                 if !evicted {
+                    // Restored/corrupted state can carry a retry set larger than
+                    // capacity with missing fifo markers. Fall back to deterministic
+                    // set trimming so fairness quota remains bounded.
+                    let overflow = self.backpressured_ids.len().saturating_sub(self.capacity);
+                    if overflow == 0 {
+                        break;
+                    }
+                    // HashSet iteration order is randomized; sort for stable trimming so
+                    // restored-state recovery stays deterministic across runs/nodes.
+                    let mut to_drop: Vec<u64> = self.backpressured_ids.iter().copied().collect();
+                    to_drop.sort_unstable();
+                    to_drop.truncate(overflow);
+                    for tx in to_drop {
+                        self.backpressured_ids.remove(&tx);
+                    }
                     break;
                 }
             }
@@ -872,6 +895,23 @@ mod tests {
         }
 
         assert!(gate.backpressured_fifo.len() <= gate.capacity.saturating_mul(4));
+    }
+
+    #[test]
+    fn restored_retry_set_without_fifo_markers_is_rebounded_to_capacity() {
+        let mut gate = AdmissionGate::new(2);
+
+        // Simulate restored/corrupted state: retry set exceeds capacity but fifo is missing.
+        gate.backpressured_ids.extend([100, 101, 102]);
+        gate.backpressured_fifo.clear();
+
+        // Any new backpressure insert should rebalance retry memory to quota bounds.
+        assert!(gate.remember_backpressured(103));
+        assert!(gate.backpressured_ids.len() <= gate.capacity);
+
+        // Fallback trim is deterministic: oldest/smallest ids are dropped first.
+        assert!(gate.backpressured_ids.contains(&102));
+        assert!(gate.backpressured_ids.contains(&103));
     }
 
     #[test]
