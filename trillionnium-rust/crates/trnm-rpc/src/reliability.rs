@@ -577,9 +577,9 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
         // Replay/auth hardening: reject non-canonical identifiers with
         // surrounding whitespace so equivalent principals/namespaces cannot
         // bypass dedup domains by string-shape variance.
-        if msg.chain_id.trim() != msg.chain_id
-            || msg.from.trim() != msg.from
-            || msg.session_id.trim() != msg.session_id
+        if !is_canonical_identifier(&msg.chain_id)
+            || !is_canonical_identifier(&msg.from)
+            || !is_canonical_identifier(&msg.session_id)
         {
             return Ack {
                 code: AckCode::BadRequest,
@@ -848,8 +848,16 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
 const MAX_DUE_RETRIES_PER_SESSION_PER_COLLECT: usize = 64;
 const MAX_DUE_RETRIES_PER_COLLECT: usize = 256;
 
+fn is_canonical_identifier(value: &str) -> bool {
+    if value.trim() != value {
+        return false;
+    }
+
+    !value.as_bytes().iter().any(|b| b.is_ascii_control())
+}
+
 fn is_canonical_msg_type(msg_type: &str) -> bool {
-    if msg_type.trim() != msg_type {
+    if !is_canonical_identifier(msg_type) {
         return false;
     }
 
@@ -1340,6 +1348,46 @@ mod tests {
         let ack = engine.receive(msg, 1_000);
         assert_eq!(ack.code, AckCode::BadRequest);
         assert!(ack.detail.contains("non-canonical identifier"));
+    }
+
+    #[test]
+    fn rejects_non_canonical_identifier_with_control_chars() {
+        let store = InMemoryReliabilityStore::default();
+        let mut engine = ReliabilityEngine::new(store, RetryConfig::default());
+
+        let msg = ReliableMessage {
+            from: "alice\n".to_string(),
+            chain_id: "trnm-mainnet".to_string(),
+            session_id: "s1".to_string(),
+            seq: Some(1),
+            nonce: None,
+            msg_type: "INPUT_CHUNK".to_string(),
+            payload: "hello".to_string(),
+        };
+
+        let ack = engine.receive(msg, 1_000);
+        assert_eq!(ack.code, AckCode::BadRequest);
+        assert!(ack.detail.contains("non-canonical identifier"));
+    }
+
+    #[test]
+    fn rejects_non_canonical_msg_type_with_control_chars() {
+        let store = InMemoryReliabilityStore::default();
+        let mut engine = ReliabilityEngine::new(store, RetryConfig::default());
+
+        let msg = ReliableMessage {
+            from: "alice".to_string(),
+            chain_id: "trnm-mainnet".to_string(),
+            session_id: "s1".to_string(),
+            seq: None,
+            nonce: Some(7),
+            msg_type: "ACK\n".to_string(),
+            payload: "ok".to_string(),
+        };
+
+        let ack = engine.receive(msg, 1_000);
+        assert_eq!(ack.code, AckCode::BadRequest);
+        assert!(ack.detail.contains("non-canonical msg_type"));
     }
 
     #[test]
