@@ -3981,6 +3981,7 @@ mod tests {
         let before_task = st.get_task(r5.id).expect("challenged task must persist");
         let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
         let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+        let before_worker_slash_treasury = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
         let before_challenger = st.balance_of("challenger");
 
         let paused_err = apply_timeout(&mut st, r5.clone(), 311)
@@ -4000,6 +4001,10 @@ mod tests {
         assert_eq!(
             st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
             before_forfeit
+        );
+        assert_eq!(
+            st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
+            before_worker_slash_treasury
         );
         assert_eq!(st.balance_of("challenger"), before_challenger);
 
