@@ -350,6 +350,7 @@ impl StateStore {
             || approver_trimmed.eq_ignore_ascii_case(RESERVED_SYSTEM_AUTHORITY)
             || approver_trimmed.eq_ignore_ascii_case(CHALLENGE_ESCROW_ACCOUNT)
             || approver_trimmed.eq_ignore_ascii_case(CHALLENGE_FORFEIT_TREASURY_ACCOUNT)
+            || approver_trimmed.eq_ignore_ascii_case(WORKER_SLASH_TREASURY_ACCOUNT)
         {
             return Err(
                 "resolve approval approver must be an explicit non-system authority".into(),
@@ -386,6 +387,7 @@ impl StateStore {
                 || member_trimmed.eq_ignore_ascii_case(RESERVED_SYSTEM_AUTHORITY)
                 || member_trimmed.eq_ignore_ascii_case(CHALLENGE_ESCROW_ACCOUNT)
                 || member_trimmed.eq_ignore_ascii_case(CHALLENGE_FORFEIT_TREASURY_ACCOUNT)
+                || member_trimmed.eq_ignore_ascii_case(WORKER_SLASH_TREASURY_ACCOUNT)
             {
                 return Err(
                     "resolve approval authority set contains non-canonical or forbidden member"
