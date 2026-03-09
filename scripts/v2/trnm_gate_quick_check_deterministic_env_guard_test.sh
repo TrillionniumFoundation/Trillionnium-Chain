@@ -30,6 +30,7 @@ required_lines=(
   'DEBIAN_FRONTEND: noninteractive'
   'APT_LISTCHANGES_FRONTEND: none'
   'APT_LISTBUGS_FRONTEND: none'
+  'UMASK: "022"'
   'timeout-minutes: 45'
 )
 

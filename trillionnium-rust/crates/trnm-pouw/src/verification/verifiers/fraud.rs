@@ -93,6 +93,17 @@ mod tests {
     }
 
     #[test]
+    fn fraud_verifier_rejects_missing_worker_binding_when_worker_is_present() {
+        let verifier = FraudVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(&task, b"FRAUD:{\"task_id\":7,\"proof_type\":\"fraud\"}"),
+            VerificationResult::Invalid(msg) if msg.contains("missing worker binding")
+        ));
+    }
+
+    #[test]
     fn fraud_verifier_rejects_case_variant_duplicate_task_id_binding_fail_closed() {
         let verifier = FraudVerifier;
         let task = mock_task();
@@ -210,6 +221,20 @@ mod tests {
             verifier.verify_proof(
                 &task,
                 b"FRAUD:{\"task_id\":7,\"worker\":\"worker-fraud\",'worker':\"worker-fraud\",\"proof_type\":\"fraud\"}"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("duplicate worker binding")
+        ));
+    }
+
+    #[test]
+    fn fraud_verifier_rejects_case_variant_duplicate_worker_binding_fail_closed() {
+        let verifier = FraudVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"FRAUD:{\"task_id\":7,\"worker\":\"worker-fraud\",\"WORKER\":\"worker-fraud\",\"proof_type\":\"fraud\"}"
             ),
             VerificationResult::Invalid(msg) if msg.contains("duplicate worker binding")
         ));

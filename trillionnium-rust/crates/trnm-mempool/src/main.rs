@@ -202,9 +202,9 @@ impl AdmissionGate {
             && has_known_retries
             && !is_known_retry_for_fairness
         {
-            // Deferring fresh ingress should not evict older retries from bounded memory,
-            // otherwise long-waiting retries can lose their anti-starvation preference.
-            self.remember_backpressured_without_eviction(tx_id);
+            // Fairness-only deferral is tracked via last_fairness_deferred. Do not
+            // promote this fresh id into retry memory here; otherwise an immediate
+            // repeat can be misclassified as a known retry and consume the reserved slot.
             self.last_fairness_deferred = Some(tx_id);
             self.metrics.backpressured = self.metrics.backpressured.saturating_add(1);
             self.metrics.fairness_deferrals = self.metrics.fairness_deferrals.saturating_add(1);
@@ -229,10 +229,9 @@ impl AdmissionGate {
             // so newly arriving free-ingress traffic is not pointlessly deferred.
             self.retry_reservations = 0;
         }
-        // Fairness deferral idempotency is only intended for immediate repeats of a just-deferred
-        // fresh id. Once any admission succeeds, clear the marker so unrelated later retries are
-        // not misclassified as duplicates under a future saturation wave.
-        self.last_fairness_deferred = None;
+        // Keep fairness marker until the next dequeue boundary. This preserves
+        // idempotency for a just-deferred id when the queue re-saturates before
+        // sender retry, while still allowing pop_ready() to clear stale markers.
         self.queue.push_back(tx_id);
         self.seen.insert(tx_id);
         self.metrics.accepted = self.metrics.accepted.saturating_add(1);
@@ -242,6 +241,8 @@ impl AdmissionGate {
     pub fn pop_ready(&mut self) -> Option<u64> {
         let id = self.queue.pop_front()?;
         self.seen.remove(&id);
+        // Dequeue boundary ends immediate fairness-deferral idempotency window.
+        self.last_fairness_deferred = None;
         // Reserve one newly opened slot for known retries to reduce starvation.
         // Bound reservations by currently known retry ids so free-ingress throughput
         // is not over-deferred after multi-pop bursts with only a few retry candidates.

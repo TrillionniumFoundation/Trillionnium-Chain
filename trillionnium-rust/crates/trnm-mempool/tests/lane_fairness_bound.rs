@@ -21,3 +21,21 @@ fn normal_backlog_gets_service_within_one_pop_after_arrival_under_critical_press
     let second = gate.pop_ready();
     assert!(first == Some(1) || second == Some(1));
 }
+
+#[test]
+fn critical_spillover_in_normal_lane_gets_turn_within_one_pop_under_critical_pressure() {
+    let mut gate = LaneAdmissionGate::new(6, 2);
+
+    // Saturate reserved critical capacity.
+    assert_eq!(gate.admit(200, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(201, IngressClass::Critical), AdmitOutcome::Accepted);
+
+    // Keep some critical backlog active while admitting one overflow critical tx
+    // via normal-lane spillover.
+    assert_eq!(gate.admit(202, IngressClass::Critical), AdmitOutcome::Accepted);
+
+    // Overflowed critical tx in normal lane should not wait through a full burst.
+    let first = gate.pop_ready();
+    let second = gate.pop_ready();
+    assert!(first == Some(202) || second == Some(202));
+}

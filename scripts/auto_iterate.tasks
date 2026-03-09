@@ -634,3 +634,9 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: web
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: check-parallel-flaky-input-guard-test" "./scripts/v2/check_parallel_flaky_input_guard_test.sh" "ci(gate): add check-parallel-flaky-input-guard-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: web4-release-aggregate-gate-duplicate-required-gate-test" "./scripts/v2/web4_release_aggregate_gate_duplicate_required_gate_test.sh" "ci(gate): add web4-release-aggregate-gate-duplicate-required-gate-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: check-parallel-flaky-ci-timeout-guard-test" "./scripts/v2/check_parallel_flaky_ci_timeout_guard_test.sh" "ci(gate): add check-parallel-flaky-ci-timeout-guard-test regression to quick-check"

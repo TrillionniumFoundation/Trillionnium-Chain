@@ -13,6 +13,7 @@ required_lines=(
   'export PATH="/opt/homebrew/opt/rustup/bin:$PATH"'
   'export TZ="${TZ:-UTC}"'
   'export LC_ALL="${LC_ALL:-C}"'
+  'export LANG="${LANG:-$LC_ALL}"'
   'export NO_COLOR="${NO_COLOR:-1}"'
   'export CARGO_TERM_COLOR="${CARGO_TERM_COLOR:-never}"'
   'export RUST_LOG_STYLE="${RUST_LOG_STYLE:-never}"'
