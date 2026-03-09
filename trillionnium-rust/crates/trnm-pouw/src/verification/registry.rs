@@ -45,8 +45,6 @@ impl VerifierRegistry {
                     || ch == '−'
                     || ch == '‐'
                     || ch == '‑'
-                    || ch == '-'
-                    || ch == '-'
                     || ch == '﹣'
                     || ch == '﹘'
                     || ch == '\u{00a0}'

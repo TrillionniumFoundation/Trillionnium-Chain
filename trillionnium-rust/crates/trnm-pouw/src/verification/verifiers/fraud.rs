@@ -271,6 +271,34 @@ mod tests {
     }
 
     #[test]
+    fn fraud_verifier_rejects_duplicate_worker_binding_with_double_quoted_alias_fail_closed() {
+        let verifier = FraudVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"FRAUD:{\"task_id\":7,\"worker\":\"worker-fraud\",\"worker\":\"worker-fraud\",\"proof_type\":\"fraud\"}"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("duplicate worker binding")
+        ));
+    }
+
+    #[test]
+    fn fraud_verifier_rejects_duplicate_worker_binding_with_unclosed_quoted_alias_fail_closed() {
+        let verifier = FraudVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"FRAUD:{\"task_id\":7,\"worker\":\"worker-fraud\",\"worker:\"worker-fraud\",\"proof_type\":\"fraud\"}"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("duplicate worker binding")
+        ));
+    }
+
+    #[test]
     fn fraud_verifier_rejects_case_variant_duplicate_worker_binding_fail_closed() {
         let verifier = FraudVerifier;
         let task = mock_task();
