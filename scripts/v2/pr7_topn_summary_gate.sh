@@ -20,7 +20,19 @@ if [[ ! "$TOP_N" =~ ^[1-9][0-9]*$ ]]; then
   exit 2
 fi
 
-latest_pr5_json="$(ls -1t "$ROOT"/run/pr5-reconcile/*/reconcile.json 2>/dev/null | head -n1 || true)"
+latest_pr5_json="$(python3 - <<'PY' "$ROOT"
+import glob
+import os
+import sys
+
+root = sys.argv[1]
+candidates = glob.glob(os.path.join(root, "run", "pr5-reconcile", "*", "reconcile.json"))
+files = [p for p in candidates if os.path.isfile(p)]
+if files:
+    # Deterministic winner: newest mtime, then lexical path when mtimes tie.
+    print(max(files, key=lambda p: (os.path.getmtime(p), p)))
+PY
+)"
 if [[ -z "$latest_pr5_json" ]]; then
   latest_pr5_json="$ROOT/run/pr5-reconcile/latest/reconcile.json"
 fi

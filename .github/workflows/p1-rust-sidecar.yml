@@ -40,14 +40,13 @@ jobs:
         run: |
           curl -sf http://127.0.0.1:26657/status >/dev/null
 
-      - name: Run P1 integration gate (non-blocking)
-        continue-on-error: true
+      - name: Run P1 integration gate (blocking)
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           RUN_DIR="run/p1-integration-gate/${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" ./scripts/v2/run_p1_integration_gate.sh
 
-      - name: Summarize integration gate result (advisory)
+      - name: Summarize integration gate result
         if: always()
         run: |
           set -euo pipefail

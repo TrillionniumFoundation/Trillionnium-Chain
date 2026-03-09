@@ -23,6 +23,18 @@ concurrency:
 jobs:
   rust-l1-merge-gates:
     runs-on: macos-latest
+    env:
+      TZ: UTC
+      LANG: C.UTF-8
+      LC_ALL: C.UTF-8
+      LC_NUMERIC: C
+      LC_COLLATE: C
+      LC_TIME: C
+      LC_CTYPE: C
+      LC_MESSAGES: C
+      PYTHONHASHSEED: "0"
+      CI: "true"
+      SOURCE_DATE_EPOCH: "1704067200"
     timeout-minutes: 45
 
     steps:
@@ -31,10 +43,18 @@ jobs:
       - name: Setup Rust toolchain
         uses: dtolnay/rust-toolchain@stable
 
+      - name: Deterministic env guard self-check (hard gate)
+        run: |
+          set -euo pipefail
+          ./scripts/v2/trnm_merge_gates_deterministic_env_guard_test.sh
+
       - name: Rust workspace tests
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+          # Keep test scheduling deterministic across runner class changes to
+          # reduce timing-sensitive flakes in RC merge-gate runs.
+          export RUST_TEST_THREADS="${RUST_TEST_THREADS:-1}"
           cd trillionnium-rust
           cargo test --workspace
 
@@ -211,6 +231,12 @@ jobs:
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           ./scripts/v2/run_p1_integration_gate.sh
 
+      - name: Web4 release aggregate gate (hard gate)
+        run: |
+          set -euo pipefail
+          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+          ./scripts/v2/web4_release_aggregate_gate.sh
+
       - name: Aggressive regression check (PR-visible warn)
         if: github.event_name == 'pull_request'
         run: |
@@ -232,8 +258,14 @@ jobs:
 
           python3 scripts/summarize_aggressive_profile.py
           python3 scripts/analyze_aggressive_scan_correlation.py
-          PROFILE_SUMMARY=$(ls -1t run/bench/aggressive-profile-summary-*.md | head -n 1)
-          CORR_SUMMARY=$(ls -1t run/bench/aggressive-scan-correlation-*.md | head -n 1)
+
+          shopt -s nullglob
+          profile_candidates=(run/bench/aggressive-profile-summary-*.md)
+          corr_candidates=(run/bench/aggressive-scan-correlation-*.md)
+          shopt -u nullglob
+
+          PROFILE_SUMMARY="${profile_candidates[0]:-}"
+          CORR_SUMMARY="${corr_candidates[0]:-}"
 
           if grep -q "regression ratio above threshold" "$REPORT"; then
             echo "::warning title=Aggressive regression warning::One or more aggressive/original ratios exceeded threshold. See workflow summary + artifact report."
@@ -252,11 +284,19 @@ jobs:
               echo
               echo "## Aggressive Profile Summary"
               echo
-              cat "$PROFILE_SUMMARY"
+              if [ -n "$PROFILE_SUMMARY" ] && [ -f "$PROFILE_SUMMARY" ]; then
+                cat "$PROFILE_SUMMARY"
+              else
+                echo "(missing aggressive profile summary artifact)"
+              fi
               echo
               echo "## Aggressive Scan Correlation"
               echo
-              cat "$CORR_SUMMARY"
+              if [ -n "$CORR_SUMMARY" ] && [ -f "$CORR_SUMMARY" ]; then
+                cat "$CORR_SUMMARY"
+              else
+                echo "(missing aggressive scan correlation artifact)"
+              fi
             } >> "$GITHUB_STEP_SUMMARY"
           fi
 

@@ -14,9 +14,63 @@ on:
       - '.github/workflows/trnm-gate-quick-check.yml'
   workflow_dispatch:
 
+concurrency:
+  group: trnm-gate-quick-check-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
 jobs:
   shell-static-checks:
     runs-on: ubuntu-latest
+    env:
+      TZ: UTC
+      LANG: C.UTF-8
+      LC_ALL: C.UTF-8
+      # Keep numeric parsing/formatting locale-stable (decimal separator, etc.)
+      # for shell/python probes that may emit or compare numeric evidence.
+      LC_NUMERIC: C
+      # Force bytewise collation so sort/uniq behavior is reproducible across
+      # runner image refreshes and locale package changes.
+      LC_COLLATE: C
+      # Keep month/day names and locale-sensitive time formatting stable for
+      # any date evidence emitted by shell/python helpers.
+      LC_TIME: C
+      # Normalize character-class behavior ([[:alpha:]], upper/lower transforms)
+      # across runner locale package changes for shell/python regex assertions.
+      LC_CTYPE: C
+      # Force locale-driven message strings to remain stable across runner
+      # image updates so grep/assertions on stderr stay deterministic.
+      LC_MESSAGES: C
+      # Keep locale-driven monetary formatting deterministic in finance-facing
+      # report/gate probes (currency symbol/decimal-group separators).
+      LC_MONETARY: C
+      # Keep measurement-unit formatting deterministic (metric/imperial labels)
+      # for any locale-aware helpers that may emit operational evidence text.
+      LC_MEASUREMENT: C
+      # Freeze Python hash randomization so set/dict iteration in shell-driven
+      # regression scripts stays deterministic across CI re-runs.
+      PYTHONHASHSEED: "0"
+      # Prevent interpreter bytecode cache writes (.pyc/__pycache__) so CI
+      # workspaces stay side-effect free and reruns remain evidence-stable.
+      PYTHONDONTWRITEBYTECODE: "1"
+      # Normalize shell/test behavior for tools that branch on CI mode.
+      CI: "true"
+      # Force deterministic Python stdio encoding regardless of locale fallback
+      # behavior on runner image refreshes.
+      PYTHONIOENCODING: "UTF-8"
+      # Pin a stable build timestamp for any tooling that emits date metadata
+      # (zip/tar/python wheel/etc.) so artifact ordering stays reproducible.
+      SOURCE_DATE_EPOCH: "1704067200"
+      # Strip gzip header filename/timestamp for deterministic compressed
+      # fixtures produced during shell/python regression probes.
+      GZIP: "-n"
+      # Avoid sporadic apt interactive prompts on runner image/package drift.
+      DEBIAN_FRONTEND: noninteractive
+      # Prevent apt-listchanges from opening pager/prompts when package metadata
+      # changes on runner refreshes, which can otherwise hang shellcheck install.
+      APT_LISTCHANGES_FRONTEND: none
     # This workflow runs dozens of regression scripts; 10 minutes can truncate
     # coverage and hide late-stage failures. Keep enough headroom for full sweep.
     timeout-minutes: 45
@@ -26,8 +80,20 @@ jobs:
 
       - name: Install shellcheck
         run: |
-          sudo apt-get update
-          sudo apt-get install -y shellcheck
+          retry() {
+            local attempts="$1"; shift
+            local n=1
+            until "$@"; do
+              if [ "$n" -ge "$attempts" ]; then
+                echo "Command failed after ${attempts} attempts: $*" >&2
+                return 1
+              fi
+              n=$((n+1))
+              sleep 2
+            done
+          }
+          retry 3 sudo apt-get -o DPkg::Lock::Timeout=60 -o Acquire::Retries=3 -o Acquire::http::Timeout=30 -o Dpkg::Use-Pty=0 -o APT::Color=0 update
+          retry 3 sudo apt-get -o DPkg::Lock::Timeout=60 -o Acquire::Retries=3 -o Acquire::http::Timeout=30 -o Dpkg::Use-Pty=0 -o APT::Color=0 install -y --no-install-recommends shellcheck
 
       - name: Quick shell gate (bash -n + shellcheck)
         run: |
@@ -43,6 +109,14 @@ jobs:
       - name: Quick gate summary path guard regression
         run: |
           ./scripts/v2/quick_gate_summary_path_guard_test.sh
+
+      - name: Nightly health deterministic env guard regression
+        run: |
+          ./scripts/v2/rust_l1_nightly_health_deterministic_env_guard_test.sh
+
+      - name: Testnet preflight deterministic env guard regression
+        run: |
+          ./scripts/v2/rust_l1_testnet_preflight_deterministic_env_guard_test.sh
 
       - name: PR5 reconcile skip-when-missing-log regression
         run: |
@@ -67,6 +141,74 @@ jobs:
       - name: Governance value schema reject regression
         run: |
           ./scripts/v2/governance_value_schema_reject_test.sh
+
+      - name: D1 schema missing provenance producer_did regression
+        run: |
+          ./scripts/v2/d1_task_model_metadata_schema_missing_provenance_producer_did_test.sh
+
+      - name: D1 schema missing nested model.version regression
+        run: |
+          ./scripts/v2/d1_task_model_metadata_schema_missing_model_version_test.sh
+
+      - name: D1 schema privacy_tier enum regression
+        run: |
+          ./scripts/v2/d1_task_model_metadata_schema_reject_privacy_tier_enum_test.sh
+
+      - name: D1 schema produced_at timezone offset regression
+        run: |
+          ./scripts/v2/d1_task_model_metadata_schema_reject_produced_at_timezone_offset_test.sh
+
+      - name: D1 schema rejects uppercase DID method regression
+        run: |
+          ./scripts/v2/d1_task_model_metadata_schema_reject_uppercase_did_method_test.sh
+
+      - name: D1 schema rejects leading-space producer_did regression
+        run: |
+          ./scripts/v2/d1_task_model_metadata_schema_reject_producer_did_leading_space_test.sh
+
+      - name: D1 schema rejects short model_digest regression
+        run: |
+          ./scripts/v2/d1_task_model_metadata_schema_reject_model_digest_short_length_test.sh
+
+      - name: D1 schema rejects short input_hash regression
+        run: |
+          ./scripts/v2/d1_task_model_metadata_schema_reject_input_hash_short_length_test.sh
+
+      - name: D3 schema public rejects provenance_index regression
+        run: |
+          ./scripts/v2/d3_task_model_metadata_schema_public_rejects_provenance_index_test.sh
+
+      - name: D3 schema requires privacy_tier regression
+        run: |
+          ./scripts/v2/d3_task_model_metadata_schema_reject_missing_privacy_tier_test.sh
+
+      - name: D3 schema internal rejects blank provenance_index regression
+        run: |
+          ./scripts/v2/d3_task_model_metadata_schema_internal_reject_blank_provenance_index_test.sh
+
+      - name: D2 schema restricted tier requires provenance_index regression
+        run: |
+          ./scripts/v2/d2_task_model_metadata_schema_restrict_requires_provenance_index_test.sh
+
+      - name: D2 schema accepts max provenance_index boundary regression
+        run: |
+          ./scripts/v2/d2_task_model_metadata_schema_accept_provenance_index_maxlen_test.sh
+
+      - name: D2 schema accepts namespaced provenance_index regression
+        run: |
+          ./scripts/v2/d2_task_model_metadata_schema_accept_namespaced_provenance_index_test.sh
+
+      - name: D2 schema rejects trailing separator provenance_index regression
+        run: |
+          ./scripts/v2/d2_task_model_metadata_schema_reject_provenance_index_trailing_separator_test.sh
+
+      - name: A1 MCP adapter request-id body/header parity regression
+        run: |
+          ./scripts/v2/a1_mcp_adapter_contract_response_body_request_id_header_parity_test.sh
+
+      - name: Web4 release aggregate gate regression (coverage + fail-closed guard)
+        run: |
+          ./scripts/v2/web4_release_aggregate_gate_regression_test.sh
 
       - name: Auto regression: pr5-challenge-reconcile-gate
         run: |
@@ -359,6 +501,54 @@ jobs:
       - name: Auto regression: check-unchecked-gov-usage
         run: |
           ./scripts/v2/check_unchecked_gov_usage.sh
+
+      - name: Auto regression: x1-relay-heartbeat-smoke
+        run: |
+          ./scripts/v2/x1_relay_heartbeat_smoke.sh
+
+      - name: Auto regression: x2-settlement-contract-gate
+        run: |
+          ./scripts/v2/x2_settlement_contract_gate.sh
+
+      - name: Auto regression: i2-token-lifecycle-gate
+        run: |
+          ./scripts/v2/i2_token_lifecycle_gate.sh
+
+      - name: Auto regression: mv2-receipt-contract-freeze-doc-gate
+        run: |
+          ./scripts/v2/mv2_receipt_contract_freeze_doc_gate.sh
+
+      - name: Auto regression: mv2-receipt-contract-freeze-doc-gate-regression-test
+        run: |
+          ./scripts/v2/mv2_receipt_contract_freeze_doc_gate_regression_test.sh
+
+      - name: Auto regression: e2-audit-report-generator-reject-schema-suffix-punct-test
+        run: |
+          ./scripts/v2/e2_audit_report_generator_reject_schema_suffix_punct_test.sh
+
+      - name: Auto regression: e3-enterprise-runbook-required-sections-test
+        run: |
+          ./scripts/v2/e3_enterprise_runbook_required_sections_test.sh
+
+      - name: Auto regression: e3-enterprise-runbook-root-cause-tag-format-test
+        run: |
+          ./scripts/v2/e3_enterprise_runbook_root_cause_tag_format_test.sh
+
+      - name: Auto regression: e3-enterprise-runbook-audit-timestamp-determinism-test
+        run: |
+          ./scripts/v2/e3_enterprise_runbook_audit_timestamp_determinism_test.sh
+
+      - name: Auto regression: e3-enterprise-runbook-rollback-request-id-anchor-test
+        run: |
+          ./scripts/v2/e3_enterprise_runbook_rollback_request_id_anchor_test.sh
+
+      - name: Auto regression: trnm-gate-quick-check-deterministic-env-guard-test
+        run: |
+          ./scripts/v2/trnm_gate_quick_check_deterministic_env_guard_test.sh
+
+      - name: Auto regression: trnm-merge-gates-deterministic-env-guard-test
+        run: |
+          ./scripts/v2/trnm_merge_gates_deterministic_env_guard_test.sh
 
       - name: Upload quick gate summary
         if: always()

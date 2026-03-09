@@ -44,13 +44,25 @@ chmod +x "$MOCK_PR7_OK"
 LOCK_DIR="$TMP/.pr7-lock"
 
 # Case 1: concurrent run should not overlap; second run times out on lock.
-RUN_DIR="$TMP/run-a" PR7_GATE_LOCK_DIR="$LOCK_DIR" PR7_GATE_LOCK_WAIT_SECONDS=10 PR6_GATE_CMD="$MOCK_PR6_SLEEP" PR7_DELIVERY_CMD="$MOCK_PR7_OK" \
+RUN_DIR="$TMP/run-a" PR7_GATE_LOCK_DIR="$LOCK_DIR" PR7_GATE_LOCK_WAIT_SECONDS=10 PR7_GATE_LOCK_JITTER_MIN_MS=120 PR7_GATE_LOCK_JITTER_MAX_MS=120 PR6_GATE_CMD="$MOCK_PR6_SLEEP" PR7_DELIVERY_CMD="$MOCK_PR7_OK" \
   "$ROOT/scripts/v2/pr7_alert_delivery_gate.sh" >"$TMP/run-a.out" 2>&1 &
 pid1=$!
 
-sleep 0.2
+# Avoid race on slower CI hosts: wait until run-a has actually acquired the lock.
+for _ in {1..30}; do
+  [[ -d "$LOCK_DIR" ]] && break
+  sleep 0.1
+done
+if [[ ! -d "$LOCK_DIR" ]]; then
+  echo "[FAIL] first run did not acquire lock in time"
+  cat "$TMP/run-a.out" || true
+  kill "$pid1" 2>/dev/null || true
+  wait "$pid1" 2>/dev/null || true
+  exit 1
+fi
+
 set +e
-RUN_DIR="$TMP/run-b" PR7_GATE_LOCK_DIR="$LOCK_DIR" PR7_GATE_LOCK_WAIT_SECONDS=1 PR6_GATE_CMD="$MOCK_PR6_FAST" PR7_DELIVERY_CMD="$MOCK_PR7_OK" \
+RUN_DIR="$TMP/run-b" PR7_GATE_LOCK_DIR="$LOCK_DIR" PR7_GATE_LOCK_WAIT_SECONDS=1 PR7_GATE_LOCK_JITTER_MIN_MS=120 PR7_GATE_LOCK_JITTER_MAX_MS=120 PR6_GATE_CMD="$MOCK_PR6_FAST" PR7_DELIVERY_CMD="$MOCK_PR7_OK" \
   "$ROOT/scripts/v2/pr7_alert_delivery_gate.sh" >"$TMP/run-b.out" 2>&1
 rc2=$?
 set -e

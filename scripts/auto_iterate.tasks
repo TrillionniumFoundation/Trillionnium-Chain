@@ -125,5 +125,506 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: x1-
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: i2-token-lifecycle-gate" "./scripts/v2/i2_token_lifecycle_gate.sh" "ci(gate): add i2-token-lifecycle-gate regression to quick-check"
 
 # Auto-filled by dual-subagent task pool
-bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: run-p1-integration-gate-x2-invocation-test" "./scripts/v2/run_p1_integration_gate_x2_invocation_test.sh" "ci(gate): add run-p1-integration-gate-x2-invocation-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-gate" "./scripts/v2/d1_task_model_metadata_schema_gate.sh" "ci(gate): add d1-task-model-metadata-schema-gate regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-missing-required-test" "./scripts/v2/d1_task_model_metadata_schema_missing_required_test.sh" "ci(gate): add d1-task-model-metadata-schema-missing-required-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-missing-provenance-producer-did-test" "./scripts/v2/d1_task_model_metadata_schema_missing_provenance_producer_did_test.sh" "ci(gate): add d1-task-model-metadata-schema-missing-provenance-producer-did-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-additional-property-test" "./scripts/v2/d1_task_model_metadata_schema_reject_additional_property_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-additional-property-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-privacy-tier-enum-test" "./scripts/v2/d1_task_model_metadata_schema_reject_privacy_tier_enum_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-privacy-tier-enum-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-invalid-produced-at-test" "./scripts/v2/d1_task_model_metadata_schema_reject_invalid_produced_at_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-invalid-produced-at-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-invalid-producer-did-format-test" "./scripts/v2/d1_task_model_metadata_schema_reject_invalid_producer_did_format_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-invalid-producer-did-format-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-uppercase-did-method-test" "./scripts/v2/d1_task_model_metadata_schema_reject_uppercase_did_method_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-uppercase-did-method-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d2-task-model-metadata-schema-reject-invalid-provenance-index-test" "./scripts/v2/d2_task_model_metadata_schema_reject_invalid_provenance_index_test.sh" "ci(gate): add d2-task-model-metadata-schema-reject-invalid-provenance-index-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-naive-produced-at-test" "./scripts/v2/d1_task_model_metadata_schema_reject_naive_produced_at_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-naive-produced-at-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-model-version-overflow-test" "./scripts/v2/d1_task_model_metadata_schema_reject_model_version_overflow_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-model-version-overflow-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-producer-did-overflow-test" "./scripts/v2/d1_task_model_metadata_schema_reject_producer_did_overflow_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-producer-did-overflow-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-task-id-overflow-test" "./scripts/v2/d1_task_model_metadata_schema_reject_task_id_overflow_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-task-id-overflow-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-task-type-overflow-test" "./scripts/v2/d1_task_model_metadata_schema_reject_task_type_overflow_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-task-type-overflow-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-uppercase-hex-hash-test" "./scripts/v2/d1_task_model_metadata_schema_reject_uppercase_hex_hash_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-uppercase-hex-hash-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d2-task-model-metadata-schema-reject-uppercase-provenance-index-test" "./scripts/v2/d2_task_model_metadata_schema_reject_uppercase_provenance_index_test.sh" "ci(gate): add d2-task-model-metadata-schema-reject-uppercase-provenance-index-test regression to quick-check"
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: x2-settlement-contract-gate" "./scripts/v2/x2_settlement_contract_gate.sh" "ci(gate): add x2-settlement-contract-gate regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-uppercase-model-digest-test" "./scripts/v2/d1_task_model_metadata_schema_reject_uppercase_model_digest_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-uppercase-model-digest-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-model-id-overflow-test" "./scripts/v2/d1_task_model_metadata_schema_reject_model_id_overflow_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-model-id-overflow-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-producer-did-whitespace-test" "./scripts/v2/d1_task_model_metadata_schema_reject_producer_did_whitespace_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-producer-did-whitespace-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-task-id-whitespace-test" "./scripts/v2/d1_task_model_metadata_schema_reject_task_id_whitespace_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-task-id-whitespace-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-task-id-illegal-char-test" "./scripts/v2/d1_task_model_metadata_schema_reject_task_id_illegal_char_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-task-id-illegal-char-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d2-task-model-metadata-schema-reject-provenance-index-overflow-test" "./scripts/v2/d2_task_model_metadata_schema_reject_provenance_index_overflow_test.sh" "ci(gate): add d2-task-model-metadata-schema-reject-provenance-index-overflow-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d2-task-model-metadata-schema-reject-short-provenance-index-test" "./scripts/v2/d2_task_model_metadata_schema_reject_short_provenance_index_test.sh" "ci(gate): add d2-task-model-metadata-schema-reject-short-provenance-index-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-task-type-blank-test" "./scripts/v2/d1_task_model_metadata_schema_reject_task_type_blank_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-task-type-blank-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-model-id-blank-test" "./scripts/v2/d1_task_model_metadata_schema_reject_model_id_blank_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-model-id-blank-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d2-task-model-metadata-schema-reject-provenance-index-whitespace-test" "./scripts/v2/d2_task_model_metadata_schema_reject_provenance_index_whitespace_test.sh" "ci(gate): add d2-task-model-metadata-schema-reject-provenance-index-whitespace-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e2-audit-report-generator-quoted-values-test" "./scripts/v2/e2_audit_report_generator_quoted_values_test.sh" "ci(gate): add e2-audit-report-generator-quoted-values-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-model-version-blank-test" "./scripts/v2/d1_task_model_metadata_schema_reject_model_version_blank_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-model-version-blank-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d2-task-model-metadata-schema-restrict-requires-provenance-index-test" "./scripts/v2/d2_task_model_metadata_schema_restrict_requires_provenance_index_test.sh" "ci(gate): add d2-task-model-metadata-schema-restrict-requires-provenance-index-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d2-task-model-metadata-schema-restrict-reject-blank-provenance-index-test" "./scripts/v2/d2_task_model_metadata_schema_restrict_reject_blank_provenance_index_test.sh" "ci(gate): add d2-task-model-metadata-schema-restrict-reject-blank-provenance-index-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d3-task-model-metadata-schema-public-rejects-provenance-index-test" "./scripts/v2/d3_task_model_metadata_schema_public_rejects_provenance_index_test.sh" "ci(gate): add d3-task-model-metadata-schema-public-rejects-provenance-index-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d3-task-model-metadata-schema-internal-rejects-missing-provenance-index-test" "./scripts/v2/d3_task_model_metadata_schema_internal_allows_missing_provenance_index_test.sh" "ci(gate): add d3-task-model-metadata-schema-internal-rejects-missing-provenance-index-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d3-task-model-metadata-schema-internal-allows-provenance-index-test" "./scripts/v2/d3_task_model_metadata_schema_internal_allows_provenance_index_test.sh" "ci(gate): add d3-task-model-metadata-schema-internal-allows-provenance-index-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-lowercase-z-produced-at-test" "./scripts/v2/d1_task_model_metadata_schema_reject_lowercase_z_produced_at_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-lowercase-z-produced-at-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d3-task-model-metadata-schema-public-allows-missing-provenance-index-test" "./scripts/v2/d3_task_model_metadata_schema_public_allows_missing_provenance_index_test.sh" "ci(gate): add d3-task-model-metadata-schema-public-allows-missing-provenance-index-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d3-task-model-metadata-schema-internal-allows-provenance-index-test" "./scripts/v2/d3_task_model_metadata_schema_internal_allows_provenance_index_test.sh" "ci(gate): add d3-task-model-metadata-schema-internal-allows-provenance-index-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d2-task-model-metadata-schema-accept-provenance-index-minlen-test" "./scripts/v2/d2_task_model_metadata_schema_accept_provenance_index_minlen_test.sh" "ci(gate): add d2-task-model-metadata-schema-accept-provenance-index-minlen-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d2-task-model-metadata-schema-accept-provenance-index-maxlen-test" "./scripts/v2/d2_task_model_metadata_schema_accept_provenance_index_maxlen_test.sh" "ci(gate): add d2-task-model-metadata-schema-accept-provenance-index-maxlen-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d2-task-model-metadata-schema-accept-namespaced-provenance-index-test" "./scripts/v2/d2_task_model_metadata_schema_accept_namespaced_provenance_index_test.sh" "ci(gate): add d2-task-model-metadata-schema-accept-namespaced-provenance-index-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-accept-task-id-maxlen-test" "./scripts/v2/d1_task_model_metadata_schema_accept_task_id_maxlen_test.sh" "ci(gate): add d1-task-model-metadata-schema-accept-task-id-maxlen-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d3-task-model-metadata-schema-internal-reject-blank-provenance-index-test" "./scripts/v2/d3_task_model_metadata_schema_internal_reject_blank_provenance_index_test.sh" "ci(gate): add d3-task-model-metadata-schema-internal-reject-blank-provenance-index-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d2-task-model-metadata-schema-restrict-accept-valid-provenance-index-test" "./scripts/v2/d2_task_model_metadata_schema_restrict_accept_valid_provenance_index_test.sh" "ci(gate): add d2-task-model-metadata-schema-restrict-accept-valid-provenance-index-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e2-audit-report-generator-event-ts-test" "./scripts/v2/e2_audit_report_generator_event_ts_test.sh" "ci(gate): add e2-audit-report-generator-event-ts-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e2-audit-report-generator-malformed-quote-fallback-test" "./scripts/v2/e2_audit_report_generator_malformed_quote_fallback_test.sh" "ci(gate): add e2-audit-report-generator-malformed-quote-fallback-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d3-task-model-metadata-schema-reject-missing-privacy-tier-test" "./scripts/v2/d3_task_model_metadata_schema_reject_missing_privacy_tier_test.sh" "ci(gate): add d3-task-model-metadata-schema-reject-missing-privacy-tier-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-accept-produced-at-fractional6-test" "./scripts/v2/d1_task_model_metadata_schema_accept_produced_at_fractional6_test.sh" "ci(gate): add d1-task-model-metadata-schema-accept-produced-at-fractional6-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-produced-at-fractional7-test" "./scripts/v2/d1_task_model_metadata_schema_reject_produced_at_fractional7_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-produced-at-fractional7-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e2-audit-report-generator-note-equals-escape-test" "./scripts/v2/e2_audit_report_generator_note_equals_escape_test.sh" "ci(gate): add e2-audit-report-generator-note-equals-escape-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-accept-producer-did-maxlen-test" "./scripts/v2/d1_task_model_metadata_schema_accept_producer_did_maxlen_test.sh" "ci(gate): add d1-task-model-metadata-schema-accept-producer-did-maxlen-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d3-task-model-metadata-schema-public-reject-blank-provenance-index-test" "./scripts/v2/d3_task_model_metadata_schema_public_reject_blank_provenance_index_test.sh" "ci(gate): add d3-task-model-metadata-schema-public-reject-blank-provenance-index-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: p11-policy-rollback-guard-invalid-attempts-field-test" "./scripts/v2/p11_policy_rollback_guard_invalid_attempts_field_test.sh" "ci(gate): add p11-policy-rollback-guard-invalid-attempts-field-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-accept-produced-at-fractional1-test" "./scripts/v2/d1_task_model_metadata_schema_accept_produced_at_fractional1_test.sh" "ci(gate): add d1-task-model-metadata-schema-accept-produced-at-fractional1-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-model-digest-short-length-test" "./scripts/v2/d1_task_model_metadata_schema_reject_model_digest_short_length_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-model-digest-short-length-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e2-audit-report-generator-schema-token-spoof-test" "./scripts/v2/e2_audit_report_generator_schema_token_spoof_test.sh" "ci(gate): add e2-audit-report-generator-schema-token-spoof-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-model-id-trailing-space-test" "./scripts/v2/d1_task_model_metadata_schema_reject_model_id_trailing_space_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-model-id-trailing-space-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e2-audit-report-generator-ignore-non-audit-event-type-test" "./scripts/v2/e2_audit_report_generator_ignore_non_audit_event_type_test.sh" "ci(gate): add e2-audit-report-generator-ignore-non-audit-event-type-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e2-audit-report-generator-ignore-non-numeric-financial-delta-test" "./scripts/v2/e2_audit_report_generator_ignore_non_numeric_financial_delta_test.sh" "ci(gate): add e2-audit-report-generator-ignore-non-numeric-financial-delta-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e2-audit-report-generator-ignore-underscore-numeric-delta-test" "./scripts/v2/e2_audit_report_generator_ignore_underscore_numeric_delta_test.sh" "ci(gate): add e2-audit-report-generator-ignore-underscore-numeric-delta-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e3-enterprise-runbook-required-sections-test" "./scripts/v2/e3_enterprise_runbook_required_sections_test.sh" "ci(gate): add e3-enterprise-runbook-required-sections-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-producer-did-trailing-space-test" "./scripts/v2/d1_task_model_metadata_schema_reject_producer_did_trailing_space_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-producer-did-trailing-space-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-task-type-trailing-space-test" "./scripts/v2/d1_task_model_metadata_schema_reject_task_type_trailing_space_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-task-type-trailing-space-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e2-audit-report-generator-ignore-plus-prefixed-numeric-delta-test" "./scripts/v2/e2_audit_report_generator_ignore_plus_prefixed_numeric_delta_test.sh" "ci(gate): add e2-audit-report-generator-ignore-plus-prefixed-numeric-delta-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-produced-at-leap-second-test" "./scripts/v2/d1_task_model_metadata_schema_reject_produced_at_leap_second_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-produced-at-leap-second-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e2-audit-report-generator-llm2-compact-schema-test" "./scripts/v2/e2_audit_report_generator_llm2_compact_schema_test.sh" "ci(gate): add e2-audit-report-generator-llm2-compact-schema-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e2-audit-report-generator-reject-schema-suffix-punct-test" "./scripts/v2/e2_audit_report_generator_reject_schema_suffix_punct_test.sh" "ci(gate): add e2-audit-report-generator-reject-schema-suffix-punct-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e2-audit-report-generator-reject-uppercase-event-type-test" "./scripts/v2/e2_audit_report_generator_reject_uppercase_event_type_test.sh" "ci(gate): add e2-audit-report-generator-reject-uppercase-event-type-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-model-version-trailing-space-test" "./scripts/v2/d1_task_model_metadata_schema_reject_model_version_trailing_space_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-model-version-trailing-space-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e2-audit-report-generator-reject-event-type-trailing-space-test" "./scripts/v2/e2_audit_report_generator_reject_event_type_trailing_space_test.sh" "ci(gate): add e2-audit-report-generator-reject-event-type-trailing-space-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-accept-task-id-minlen-test" "./scripts/v2/d1_task_model_metadata_schema_accept_task_id_minlen_test.sh" "ci(gate): add d1-task-model-metadata-schema-accept-task-id-minlen-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-model-version-leading-space-test" "./scripts/v2/d1_task_model_metadata_schema_reject_model_version_leading_space_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-model-version-leading-space-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d3-task-model-metadata-schema-restrict-reject-null-provenance-index-test" "./scripts/v2/d3_task_model_metadata_schema_restrict_reject_null_provenance_index_test.sh" "ci(gate): add d3-task-model-metadata-schema-restrict-reject-null-provenance-index-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-mcp-adapter-contract-required-sections-test" "./scripts/v2/a1_mcp_adapter_contract_required_sections_test.sh" "ci(gate): add a1-mcp-adapter-contract-required-sections-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d2-task-model-metadata-schema-reject-provenance-index-trailing-separator-test" "./scripts/v2/d2_task_model_metadata_schema_reject_provenance_index_trailing_separator_test.sh" "ci(gate): add d2-task-model-metadata-schema-reject-provenance-index-trailing-separator-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d3-task-model-metadata-schema-internal-requires-provenance-index-test" "./scripts/v2/d3_task_model_metadata_schema_internal_requires_provenance_index_test.sh" "ci(gate): add d3-task-model-metadata-schema-internal-requires-provenance-index-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d3-task-model-metadata-schema-internal-allows-missing-provenance-index-test" "./scripts/v2/d3_task_model_metadata_schema_internal_allows_missing_provenance_index_test.sh" "ci(gate): add d3-task-model-metadata-schema-internal-allows-missing-provenance-index-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e2-audit-report-generator-reject-uppercase-schema-test" "./scripts/v2/e2_audit_report_generator_reject_uppercase_schema_test.sh" "ci(gate): add e2-audit-report-generator-reject-uppercase-schema-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: web4-release-aggregate-gate" "./scripts/v2/web4_release_aggregate_gate.sh" "ci(gate): add web4-release-aggregate-gate regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: consensus-security-matrix-round-change-step-test" "./scripts/v2/consensus_security_matrix_round_change_step_test.sh" "ci(gate): add consensus-security-matrix-round-change-step-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: m2-policy-gate-nightly-signal-test" "./scripts/v2/m2_policy_gate_nightly_signal_test.sh" "ci(gate): add m2-policy-gate-nightly-signal-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: run-p1-integration-gate-i2-invocation-test" "./scripts/v2/run_p1_integration_gate_i2_invocation_test.sh" "ci(gate): add run-p1-integration-gate-i2-invocation-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: run-p1-integration-gate-x2-invocation-test" "./scripts/v2/run_p1_integration_gate_x2_invocation_test.sh" "ci(gate): add run-p1-integration-gate-x2-invocation-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e2-audit-report-generator-reject-schema-outer-whitespace-test" "./scripts/v2/e2_audit_report_generator_reject_schema_outer_whitespace_test.sh" "ci(gate): add e2-audit-report-generator-reject-schema-outer-whitespace-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d2-task-model-metadata-schema-reject-provenance-index-leading-separator-test" "./scripts/v2/d2_task_model_metadata_schema_reject_provenance_index_leading_separator_test.sh" "ci(gate): add d2-task-model-metadata-schema-reject-provenance-index-leading-separator-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-offset-timezone-produced-at-test" "./scripts/v2/d1_task_model_metadata_schema_reject_offset_timezone_produced_at_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-offset-timezone-produced-at-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-model-id-leading-space-test" "./scripts/v2/d1_task_model_metadata_schema_reject_model_id_leading_space_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-model-id-leading-space-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e2-audit-report-generator-ignore-scientific-notation-numeric-delta-test" "./scripts/v2/e2_audit_report_generator_ignore_scientific_notation_numeric_delta_test.sh" "ci(gate): add e2-audit-report-generator-ignore-scientific-notation-numeric-delta-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e2-audit-report-generator-accept-quoted-schema-token-test" "./scripts/v2/e2_audit_report_generator_accept_quoted_schema_token_test.sh" "ci(gate): add e2-audit-report-generator-accept-quoted-schema-token-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-task-id-dot-test" "./scripts/v2/d1_task_model_metadata_schema_reject_task_id_dot_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-task-id-dot-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-lowercase-t-produced-at-test" "./scripts/v2/d1_task_model_metadata_schema_reject_lowercase_t_produced_at_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-lowercase-t-produced-at-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-mcp-adapter-implementation-gate" "./scripts/v2/a1_mcp_adapter_implementation_gate.sh" "ci(gate): add a1-mcp-adapter-implementation-gate regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-accept-produced-at-no-fraction-test" "./scripts/v2/d1_task_model_metadata_schema_accept_produced_at_no_fraction_test.sh" "ci(gate): add d1-task-model-metadata-schema-accept-produced-at-no-fraction-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e2-audit-report-generator-reject-event-type-leading-space-test" "./scripts/v2/e2_audit_report_generator_reject_event_type_leading_space_test.sh" "ci(gate): add e2-audit-report-generator-reject-event-type-leading-space-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d3-task-model-metadata-schema-restrict-reject-blank-provenance-index-test" "./scripts/v2/d3_task_model_metadata_schema_restrict_reject_blank_provenance_index_test.sh" "ci(gate): add d3-task-model-metadata-schema-restrict-reject-blank-provenance-index-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: v1-proof-registry-contract-gate" "./scripts/v2/v1_proof_registry_contract_gate.sh" "ci(gate): add v1-proof-registry-contract-gate regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-task-type-tab-test" "./scripts/v2/d1_task_model_metadata_schema_reject_task_type_tab_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-task-type-tab-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-task-type-slash-test" "./scripts/v2/d1_task_model_metadata_schema_reject_task_type_slash_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-task-type-slash-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e2-audit-report-generator-ignore-zero-padded-numeric-delta-test" "./scripts/v2/e2_audit_report_generator_ignore_zero_padded_numeric_delta_test.sh" "ci(gate): add e2-audit-report-generator-ignore-zero-padded-numeric-delta-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-task-type-leading-space-test" "./scripts/v2/d1_task_model_metadata_schema_reject_task_type_leading_space_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-task-type-leading-space-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a2-a2a-adapter-contract-required-sections-test" "./scripts/v2/a2_a2a_adapter_contract_required_sections_test.sh" "ci(gate): add a2-a2a-adapter-contract-required-sections-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-producer-did-internal-whitespace-test" "./scripts/v2/d1_task_model_metadata_schema_reject_producer_did_internal_whitespace_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-producer-did-internal-whitespace-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-non-leap-feb29-produced-at-test" "./scripts/v2/d1_task_model_metadata_schema_reject_non_leap_feb29_produced_at_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-non-leap-feb29-produced-at-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-accept-model-version-maxlen-test" "./scripts/v2/d1_task_model_metadata_schema_accept_model_version_maxlen_test.sh" "ci(gate): add d1-task-model-metadata-schema-accept-model-version-maxlen-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a2-a2a-adapter-implementation-gate" "./scripts/v2/a2_a2a_adapter_implementation_gate.sh" "ci(gate): add a2-a2a-adapter-implementation-gate regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-produced-at-trailing-space-test" "./scripts/v2/d1_task_model_metadata_schema_reject_produced_at_trailing_space_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-produced-at-trailing-space-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e2-audit-report-generator-accept-llm-v2-alias-schema-test" "./scripts/v2/e2_audit_report_generator_accept_llm_v2_alias_schema_test.sh" "ci(gate): add e2-audit-report-generator-accept-llm-v2-alias-schema-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-mcp-adapter-contract-error-matrix-test" "./scripts/v2/a1_mcp_adapter_contract_error_matrix_test.sh" "ci(gate): add a1-mcp-adapter-contract-error-matrix-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-model-id-internal-whitespace-test" "./scripts/v2/d1_task_model_metadata_schema_reject_model_id_internal_whitespace_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-model-id-internal-whitespace-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-mcp-adapter-contract-response-content-type-fail-closed-test" "./scripts/v2/a1_mcp_adapter_contract_response_content_type_fail_closed_test.sh" "ci(gate): add a1-mcp-adapter-contract-response-content-type-fail-closed-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-mcp-adapter-contract-response-request-id-exact-echo-test" "./scripts/v2/a1_mcp_adapter_contract_response_request_id_exact_echo_test.sh" "ci(gate): add a1-mcp-adapter-contract-response-request-id-exact-echo-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-mcp-adapter-contract-response-body-request-id-header-parity-test" "./scripts/v2/a1_mcp_adapter_contract_response_body_request_id_header_parity_test.sh" "ci(gate): add a1-mcp-adapter-contract-response-body-request-id-header-parity-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-accept-model-version-minlen-test" "./scripts/v2/d1_task_model_metadata_schema_accept_model_version_minlen_test.sh" "ci(gate): add d1-task-model-metadata-schema-accept-model-version-minlen-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e2-audit-report-generator-accept-single-quoted-schema-token-test" "./scripts/v2/e2_audit_report_generator_accept_single_quoted_schema_token_test.sh" "ci(gate): add e2-audit-report-generator-accept-single-quoted-schema-token-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d3-task-model-metadata-schema-internal-reject-null-provenance-index-test" "./scripts/v2/d3_task_model_metadata_schema_internal_reject_null_provenance_index_test.sh" "ci(gate): add d3-task-model-metadata-schema-internal-reject-null-provenance-index-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d2-task-model-metadata-schema-reject-provenance-index-consecutive-separator-test" "./scripts/v2/d2_task_model_metadata_schema_reject_provenance_index_consecutive_separator_test.sh" "ci(gate): add d2-task-model-metadata-schema-reject-provenance-index-consecutive-separator-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: x2-settlement-contract-gate-fault-matrix-coverage-test" "./scripts/v2/x2_settlement_contract_gate_fault_matrix_coverage_test.sh" "ci(gate): add x2-settlement-contract-gate-fault-matrix-coverage-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-model-version-newline-test" "./scripts/v2/d1_task_model_metadata_schema_reject_model_version_newline_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-model-version-newline-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d3-task-model-metadata-schema-public-reject-null-provenance-index-test" "./scripts/v2/d3_task_model_metadata_schema_public_reject_null_provenance_index_test.sh" "ci(gate): add d3-task-model-metadata-schema-public-reject-null-provenance-index-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-mcp-adapter-contract-error-response-request-id-parity-test" "./scripts/v2/a1_mcp_adapter_contract_error_response_request_id_parity_test.sh" "ci(gate): add a1-mcp-adapter-contract-error-response-request-id-parity-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-mcp-adapter-contract-response-schema-version-echo-test" "./scripts/v2/a1_mcp_adapter_contract_response_schema_version_echo_test.sh" "ci(gate): add a1-mcp-adapter-contract-response-schema-version-echo-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-mcp-adapter-contract-timestamp-skew-fail-closed-test" "./scripts/v2/a1_mcp_adapter_contract_timestamp_skew_fail_closed_test.sh" "ci(gate): add a1-mcp-adapter-contract-timestamp-skew-fail-closed-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e2-audit-report-generator-reject-uppercase-llm-v2-alias-schema-test" "./scripts/v2/e2_audit_report_generator_reject_uppercase_llm_v2_alias_schema_test.sh" "ci(gate): add e2-audit-report-generator-reject-uppercase-llm-v2-alias-schema-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: mv2-receipt-contract-freeze-doc-gate" "./scripts/v2/mv2_receipt_contract_freeze_doc_gate.sh" "ci(gate): add mv2-receipt-contract-freeze-doc-gate regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-mcp-adapter-contract-status-enum-canonical-test" "./scripts/v2/a1_mcp_adapter_contract_status_enum_canonical_test.sh" "ci(gate): add a1-mcp-adapter-contract-status-enum-canonical-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-mcp-adapter-contract-nullable-response-fields-test" "./scripts/v2/a1_mcp_adapter_contract_nullable_response_fields_test.sh" "ci(gate): add a1-mcp-adapter-contract-nullable-response-fields-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: mv2-receipt-contract-freeze-doc-gate-regression-test" "./scripts/v2/mv2_receipt_contract_freeze_doc_gate_regression_test.sh" "ci(gate): add mv2-receipt-contract-freeze-doc-gate-regression-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-model-version-internal-whitespace-test" "./scripts/v2/d1_task_model_metadata_schema_reject_model_version_internal_whitespace_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-model-version-internal-whitespace-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d3-task-model-metadata-schema-internal-reject-invalid-provenance-index-pattern-test" "./scripts/v2/d3_task_model_metadata_schema_internal_reject_invalid_provenance_index_pattern_test.sh" "ci(gate): add d3-task-model-metadata-schema-internal-reject-invalid-provenance-index-pattern-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e2-audit-report-generator-gate" "./scripts/v2/e2_audit_report_generator_gate.sh" "ci(gate): add e2-audit-report-generator-gate regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d2-task-model-metadata-schema-reject-provenance-index-dot-separator-test" "./scripts/v2/d2_task_model_metadata_schema_reject_provenance_index_dot_separator_test.sh" "ci(gate): add d2-task-model-metadata-schema-reject-provenance-index-dot-separator-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-accept-producer-did-minlen-test" "./scripts/v2/d1_task_model_metadata_schema_accept_producer_did_minlen_test.sh" "ci(gate): add d1-task-model-metadata-schema-accept-producer-did-minlen-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-mcp-adapter-contract-request-content-type-fail-closed-test" "./scripts/v2/a1_mcp_adapter_contract_request_content_type_fail_closed_test.sh" "ci(gate): add a1-mcp-adapter-contract-request-content-type-fail-closed-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-mcp-adapter-contract-accept-header-fail-closed-test" "./scripts/v2/a1_mcp_adapter_contract_accept_header_fail_closed_test.sh" "ci(gate): add a1-mcp-adapter-contract-accept-header-fail-closed-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-public-with-provenance-index-test" "./scripts/v2/d1_task_model_metadata_schema_reject_public_with_provenance_index_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-public-with-provenance-index-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-mcp-adapter-contract-timestamp-rfc3339-utc-test" "./scripts/v2/a1_mcp_adapter_contract_timestamp_rfc3339_utc_test.sh" "ci(gate): add a1-mcp-adapter-contract-timestamp-rfc3339-utc-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e2-audit-report-generator-reject-non-rfc3339-utc-event-ts-test" "./scripts/v2/e2_audit_report_generator_reject_non_rfc3339_utc_event_ts_test.sh" "ci(gate): add e2-audit-report-generator-reject-non-rfc3339-utc-event-ts-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e2-audit-report-generator-reject-offset-utc-event-ts-test" "./scripts/v2/e2_audit_report_generator_reject_offset_utc_event_ts_test.sh" "ci(gate): add e2-audit-report-generator-reject-offset-utc-event-ts-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a2-a2a-adapter-contract-error-codes-fail-closed-test" "./scripts/v2/a2_a2a_adapter_contract_error_codes_fail_closed_test.sh" "ci(gate): add a2-a2a-adapter-contract-error-codes-fail-closed-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d2-task-model-metadata-schema-reject-provenance-index-slash-separator-test" "./scripts/v2/d2_task_model_metadata_schema_reject_provenance_index_slash_separator_test.sh" "ci(gate): add d2-task-model-metadata-schema-reject-provenance-index-slash-separator-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: web4-premerge-evidence-pack" "./scripts/v2/web4_premerge_evidence_pack.sh" "ci(gate): add web4-premerge-evidence-pack regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a2-a2a-adapter-contract-status-enum-canonical-test" "./scripts/v2/a2_a2a_adapter_contract_status_enum_canonical_test.sh" "ci(gate): add a2-a2a-adapter-contract-status-enum-canonical-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a2-a2a-adapter-contract-response-request-id-exact-echo-test" "./scripts/v2/a2_a2a_adapter_contract_response_request_id_exact_echo_test.sh" "ci(gate): add a2-a2a-adapter-contract-response-request-id-exact-echo-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-mcp-adapter-contract-accept-header-q0-fail-closed-test" "./scripts/v2/a1_mcp_adapter_contract_accept_header_q0_fail_closed_test.sh" "ci(gate): add a1-mcp-adapter-contract-accept-header-q0-fail-closed-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e2-audit-report-generator-reject-fractional-utc-event-ts-test" "./scripts/v2/e2_audit_report_generator_reject_fractional_utc_event_ts_test.sh" "ci(gate): add e2-audit-report-generator-reject-fractional-utc-event-ts-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-mcp-adapter-contract-nonce-binding-fail-closed-test" "./scripts/v2/a1_mcp_adapter_contract_nonce_binding_fail_closed_test.sh" "ci(gate): add a1-mcp-adapter-contract-nonce-binding-fail-closed-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-mcp-adapter-contract-idempotency-conflict-fail-closed-test" "./scripts/v2/a1_mcp_adapter_contract_idempotency_conflict_fail_closed_test.sh" "ci(gate): add a1-mcp-adapter-contract-idempotency-conflict-fail-closed-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-mcp-adapter-contract-response-charset-utf8-fail-closed-test" "./scripts/v2/a1_mcp_adapter_contract_response_charset_utf8_fail_closed_test.sh" "ci(gate): add a1-mcp-adapter-contract-response-charset-utf8-fail-closed-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-accept-leap-feb29-produced-at-test" "./scripts/v2/d1_task_model_metadata_schema_accept_leap_feb29_produced_at_test.sh" "ci(gate): add d1-task-model-metadata-schema-accept-leap-feb29-produced-at-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-mcp-adapter-contract-request-id-trimmed-non-empty-test" "./scripts/v2/a1_mcp_adapter_contract_request_id_trimmed_non_empty_test.sh" "ci(gate): add a1-mcp-adapter-contract-request-id-trimmed-non-empty-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-mcp-adapter-contract-request-id-header-body-parity-test" "./scripts/v2/a1_mcp_adapter_contract_request_id_header_body_parity_test.sh" "ci(gate): add a1-mcp-adapter-contract-request-id-header-body-parity-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-mcp-adapter-contract-response-content-type-charset-utf8-test" "./scripts/v2/a1_mcp_adapter_contract_response_content_type_charset_utf8_test.sh" "ci(gate): add a1-mcp-adapter-contract-response-content-type-charset-utf8-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a2-a2a-adapter-contract-response-trace-id-exact-echo-test" "./scripts/v2/a2_a2a_adapter_contract_response_trace_id_exact_echo_test.sh" "ci(gate): add a2-a2a-adapter-contract-response-trace-id-exact-echo-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-mcp-adapter-contract-accept-wildcard-fail-closed-test" "./scripts/v2/a1_mcp_adapter_contract_accept_wildcard_fail_closed_test.sh" "ci(gate): add a1-mcp-adapter-contract-accept-wildcard-fail-closed-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-mcp-adapter-contract-response-schema-version-unquoted-token-test" "./scripts/v2/a1_mcp_adapter_contract_response_schema_version_unquoted_token_test.sh" "ci(gate): add a1-mcp-adapter-contract-response-schema-version-unquoted-token-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-mcp-adapter-contract-response-trace-id-exact-echo-test" "./scripts/v2/a1_mcp_adapter_contract_response_trace_id_exact_echo_test.sh" "ci(gate): add a1-mcp-adapter-contract-response-trace-id-exact-echo-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a2-a2a-adapter-contract-response-content-type-fail-closed-test" "./scripts/v2/a2_a2a_adapter_contract_response_content_type_fail_closed_test.sh" "ci(gate): add a2-a2a-adapter-contract-response-content-type-fail-closed-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: v1-proof-registry-contract-gate-regression-test" "./scripts/v2/v1_proof_registry_contract_gate_regression_test.sh" "ci(gate): add v1-proof-registry-contract-gate-regression-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-mcp-adapter-contract-error-retryable-boolean-test" "./scripts/v2/a1_mcp_adapter_contract_error_retryable_boolean_test.sh" "ci(gate): add a1-mcp-adapter-contract-error-retryable-boolean-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: i2-token-lifecycle-gate-i3-fail-closed-coverage-test" "./scripts/v2/i2_token_lifecycle_gate_i3_fail_closed_coverage_test.sh" "ci(gate): add i2-token-lifecycle-gate-i3-fail-closed-coverage-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a2-a2a-adapter-contract-request-content-type-fail-closed-test" "./scripts/v2/a2_a2a_adapter_contract_request_content_type_fail_closed_test.sh" "ci(gate): add a2-a2a-adapter-contract-request-content-type-fail-closed-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-producer-did-newline-test" "./scripts/v2/d1_task_model_metadata_schema_reject_producer_did_newline_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-producer-did-newline-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e3-enterprise-runbook-rollback-command-template-test" "./scripts/v2/e3_enterprise_runbook_rollback_command_template_test.sh" "ci(gate): add e3-enterprise-runbook-rollback-command-template-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-task-type-newline-test" "./scripts/v2/d1_task_model_metadata_schema_reject_task_type_newline_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-task-type-newline-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e3-enterprise-runbook-root-cause-tag-examples-test" "./scripts/v2/e3_enterprise_runbook_root_cause_tag_examples_test.sh" "ci(gate): add e3-enterprise-runbook-root-cause-tag-examples-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-mcp-adapter-contract-response-schema-version-duplicate-header-fail-closed-test" "./scripts/v2/a1_mcp_adapter_contract_response_schema_version_duplicate_header_fail_closed_test.sh" "ci(gate): add a1-mcp-adapter-contract-response-schema-version-duplicate-header-fail-closed-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e2-audit-report-generator-reject-invalid-calendar-event-ts-test" "./scripts/v2/e2_audit_report_generator_reject_invalid_calendar_event_ts_test.sh" "ci(gate): add e2-audit-report-generator-reject-invalid-calendar-event-ts-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e3-enterprise-runbook-rollback-request-id-anchor-test" "./scripts/v2/e3_enterprise_runbook_rollback_request_id_anchor_test.sh" "ci(gate): add e3-enterprise-runbook-rollback-request-id-anchor-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: d1-task-model-metadata-schema-reject-task-id-plus-char-test" "./scripts/v2/d1_task_model_metadata_schema_reject_task_id_plus_char_test.sh" "ci(gate): add d1-task-model-metadata-schema-reject-task-id-plus-char-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-mcp-adapter-contract-body-sha256-fail-closed-test" "./scripts/v2/a1_mcp_adapter_contract_body_sha256_fail_closed_test.sh" "ci(gate): add a1-mcp-adapter-contract-body-sha256-fail-closed-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e3-enterprise-onboarding-runbook-rollback-contract-test" "./scripts/v2/e3_enterprise_onboarding_runbook_rollback_contract_test.sh" "ci(gate): add e3-enterprise-onboarding-runbook-rollback-contract-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: m2v2-error-state-contract-gate" "./scripts/v2/m2v2_error_state_contract_gate.sh" "ci(gate): add m2v2-error-state-contract-gate regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e2-audit-report-generator-reject-event-type-suffix-punct-test" "./scripts/v2/e2_audit_report_generator_reject_event_type_suffix_punct_test.sh" "ci(gate): add e2-audit-report-generator-reject-event-type-suffix-punct-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: a1-mcp-adapter-contract-timestamp-offset-fail-closed-test" "./scripts/v2/a1_mcp_adapter_contract_timestamp_offset_fail_closed_test.sh" "ci(gate): add a1-mcp-adapter-contract-timestamp-offset-fail-closed-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: m2v2-error-state-contract-gate-regression-test" "./scripts/v2/m2v2_error_state_contract_gate_regression_test.sh" "ci(gate): add m2v2-error-state-contract-gate-regression-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e2-audit-report-generator-reject-mixedcase-event-type-test" "./scripts/v2/e2_audit_report_generator_reject_mixedcase_event_type_test.sh" "ci(gate): add e2-audit-report-generator-reject-mixedcase-event-type-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e3-enterprise-runbook-operator-id-template-test" "./scripts/v2/e3_enterprise_runbook_operator_id_template_test.sh" "ci(gate): add e3-enterprise-runbook-operator-id-template-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: p11-policy-rollback-guard-invalid-state-counters-test" "./scripts/v2/p11_policy_rollback_guard_invalid_state_counters_test.sh" "ci(gate): add p11-policy-rollback-guard-invalid-state-counters-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: web4-release-aggregate-gate-required-gates-whitespace-test" "./scripts/v2/web4_release_aggregate_gate_required_gates_whitespace_test.sh" "ci(gate): add web4-release-aggregate-gate-required-gates-whitespace-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: web4-release-aggregate-gate-ci-override-forbidden-test" "./scripts/v2/web4_release_aggregate_gate_ci_override_forbidden_test.sh" "ci(gate): add web4-release-aggregate-gate-ci-override-forbidden-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: web4-release-aggregate-gate-empty-override-forbidden-test" "./scripts/v2/web4_release_aggregate_gate_empty_override_forbidden_test.sh" "ci(gate): add web4-release-aggregate-gate-empty-override-forbidden-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: check-parallel-flaky-replay-guard-test" "./scripts/v2/check_parallel_flaky_replay_guard_test.sh" "ci(gate): add check-parallel-flaky-replay-guard-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: web4-frontend-ci-deterministic-env-guard-test" "./scripts/v2/web4_frontend_ci_deterministic_env_guard_test.sh" "ci(gate): add web4-frontend-ci-deterministic-env-guard-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: run-local-release-evidence-deterministic-entry-test" "./scripts/v2/run_local_release_evidence_deterministic_entry_test.sh" "ci(gate): add run-local-release-evidence-deterministic-entry-test regression to quick-check"

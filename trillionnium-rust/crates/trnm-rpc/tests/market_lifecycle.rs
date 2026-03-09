@@ -181,3 +181,49 @@ fn test_market_match_task_not_open_prefers_code_field() {
 
     let _ = fs::remove_dir_all(&env.root);
 }
+
+#[test]
+fn test_market_submit_bid_task_not_open_prefers_code_field() {
+    let env = test_env("submit_bid_task_not_open");
+    run_rpc(
+        &env,
+        &[
+            "market-create-task",
+            "--creator",
+            "alice",
+            "--bounty",
+            "100",
+            "--description",
+            "submit bid task not open",
+        ],
+    );
+    run_rpc(
+        &env,
+        &[
+            "market-submit-bid",
+            "--task-id",
+            "20001",
+            "--worker",
+            "worker1",
+            "--price",
+            "90",
+        ],
+    );
+    run_rpc(&env, &["market-match-task", "--task-id", "20001"]);
+
+    let stderr = run_rpc_fail(
+        &env,
+        &[
+            "market-submit-bid",
+            "--task-id",
+            "20001",
+            "--worker",
+            "worker2",
+            "--price",
+            "80",
+        ],
+    );
+    assert!(stderr.contains("\"code\": \"task-not-open\""));
+
+    let _ = fs::remove_dir_all(&env.root);
+}

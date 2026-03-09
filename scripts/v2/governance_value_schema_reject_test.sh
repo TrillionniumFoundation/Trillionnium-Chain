@@ -56,6 +56,7 @@ cargo test -q -p trnm-state emergency_pause_checked_path_is_immediate_and_non_ca
 cargo test -q -p trnm-state emergency_pause_checked_noop_update_is_idempotent_after_pause -- --nocapture
 cargo test -q -p trnm-state emergency_pause_checked_path_rejects_non_canonical_key_id -- --nocapture
 cargo test -q -p trnm-state emergency_pause_checked_path_key_id_validation_precedes_bool_schema_validation -- --nocapture
+cargo test -q -p trnm-state emergency_pause_checked_path_rejects_key_id_shadowing -- --nocapture
 cargo test -q -p trnm-state emergency_pause_does_not_bypass_sensitive_timelock_guards -- --nocapture
 cargo test -q -p trnm-rpc governance_state_merge_gate_keeps_emergency_pause_seeded_unpaused -- --nocapture
 cargo test -q -p trnm-rpc governance_state_merge_gate_rejects_non_canonical_emergency_pause_key_id -- --nocapture

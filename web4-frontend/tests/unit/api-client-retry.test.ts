@@ -1,0 +1,77 @@
+import { describe, expect, it, vi } from "vitest";
+import { createFrontendApiClient } from "@/lib/api-contract/client";
+import { FrontendApiError } from "@/lib/api-contract/errors";
+import { withRetry } from "@/lib/api-contract/retry";
+
+describe("api-contract client and retry hardening", () => {
+  it("fails fast when baseUrl is blank", () => {
+    expect(() => createFrontendApiClient({ baseUrl: "   " })).toThrow(FrontendApiError);
+  });
+
+  it("normalizes trailing slash in base url", async () => {
+    const fetchImpl = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        task: {
+          id: "42",
+          status: "running",
+          owner: "alice",
+          createdAt: "2026-03-01T00:00:00.000Z",
+          metadata: {},
+        },
+      }),
+    });
+
+    const client = createFrontendApiClient({
+      baseUrl: "http://127.0.0.1:8080///",
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+    await client.queryTask("42");
+
+    expect(fetchImpl).toHaveBeenCalledWith(
+      "http://127.0.0.1:8080/query-task/42",
+      expect.objectContaining({ method: "GET" }),
+    );
+  });
+
+  it("enforces minimum timeout boundary", async () => {
+    const fetchImpl: typeof fetch = vi.fn(
+      (_url: URL | RequestInfo, init?: RequestInit) =>
+        new Promise((_resolve, reject) => {
+          init?.signal?.addEventListener("abort", () => {
+            const err = new Error("aborted");
+            err.name = "AbortError";
+            reject(err);
+          });
+        }),
+    ) as unknown as typeof fetch;
+
+    const client = createFrontendApiClient({
+      baseUrl: "http://127.0.0.1:8080",
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    await expect(client.queryTask("9", { timeoutMs: -1, retries: 0 })).rejects.toMatchObject({
+      code: "TIMEOUT",
+    });
+  });
+
+  it("clamps invalid retry options to safe defaults", async () => {
+    let attempts = 0;
+    await expect(
+      withRetry(
+        async () => {
+          attempts += 1;
+          throw new FrontendApiError({
+            code: "NETWORK",
+            message: "temporary",
+            retryable: true,
+          });
+        },
+        { retries: -5, baseDelayMs: -100, maxDelayMs: -50 },
+      ),
+    ).rejects.toBeInstanceOf(FrontendApiError);
+
+    expect(attempts).toBe(1);
+  });
+});

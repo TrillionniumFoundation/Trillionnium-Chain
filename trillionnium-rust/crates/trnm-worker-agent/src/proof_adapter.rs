@@ -1,4 +1,3 @@
-use std::time::Duration;
 use crate::LlmAdapterResponse;
 
 pub trait ProofAdapter {
@@ -6,15 +5,783 @@ pub trait ProofAdapter {
     fn parse_response(&self, stdout: &str) -> Result<LlmAdapterResponse, String>;
 }
 
+pub const DEFAULT_PROOF_ADAPTER: &str = "standard";
+
 pub struct StandardProofAdapter;
+pub struct TeeReceiptProofAdapter;
+pub struct ZkReceiptProofAdapter;
+
+pub fn build_proof_adapter(name: &str) -> Result<Box<dyn ProofAdapter>, String> {
+    let normalized = normalize_adapter_label(name);
+    match normalized.as_str() {
+        ""
+        | DEFAULT_PROOF_ADAPTER
+        | "fraud-proof"
+        | "fraud_proof"
+        | "fraud-proof-v1"
+        | "fraud_proof_v1"
+        | "fraudproof"
+        | "fraudproofv1" => Ok(Box::new(StandardProofAdapter)),
+        "tee-receipt" | "tee_receipt" | "tee-receipt-v1" | "tee_receipt_v1" | "tee-attestation"
+        | "tee_attestation" | "tee-attestation-v1" | "tee_attestation_v1" | "teereceipt"
+        | "teeattestation" | "teereceiptv1" | "teeattestationv1" => {
+            Ok(Box::new(TeeReceiptProofAdapter))
+        }
+        "zk-receipt" | "zk_receipt" | "zk-receipt-v1" | "zk_receipt_v1" | "zk-proof"
+        | "zk_proof" | "zk-proof-v1" | "zk_proof_v1" | "zkreceipt" | "zkproof" | "zkproofv1"
+        | "zkreceiptv1" => Ok(Box::new(ZkReceiptProofAdapter)),
+        other => Err(format!("unsupported-proof-adapter:{other}")),
+    }
+}
+
+fn last_balanced_json_object(input: &str) -> Option<String> {
+    let mut depth = 0usize;
+    let mut start: Option<usize> = None;
+    let mut in_string = false;
+    let mut escaped = false;
+    let mut last: Option<String> = None;
+
+    for (idx, ch) in input.char_indices() {
+        if in_string {
+            if escaped {
+                escaped = false;
+                continue;
+            }
+            match ch {
+                '\\' => escaped = true,
+                '"' => in_string = false,
+                _ => {}
+            }
+            continue;
+        }
+
+        match ch {
+            '"' => in_string = true,
+            '{' => {
+                if depth == 0 {
+                    start = Some(idx);
+                }
+                depth += 1;
+            }
+            '}' => {
+                if depth == 0 {
+                    continue;
+                }
+                depth -= 1;
+                if depth == 0 {
+                    if let Some(s) = start {
+                        last = Some(input[s..=idx].to_string());
+                    }
+                    start = None;
+                }
+            }
+            _ => {}
+        }
+    }
+
+    last
+}
+
+fn collapse_adapter_delimiters(raw: &str) -> String {
+    raw.chars()
+        .filter_map(|ch| match ch {
+            '\u{200b}' | '\u{200c}' | '\u{200d}' | '\u{2060}' | '\u{2063}' | '\u{feff}' => None,
+            '‐' | '‑' | '‒' | '–' | '—' | '―' | '−' | '－' => Some('-'),
+            other => Some(other),
+        })
+        .collect()
+}
+
+fn normalize_adapter_label(label: &str) -> String {
+    collapse_adapter_delimiters(label)
+        .trim()
+        .trim_start_matches('\u{feff}')
+        .trim()
+        .to_ascii_lowercase()
+}
+
+fn normalize_adapter_value(value: &str) -> String {
+    collapse_adapter_delimiters(value)
+        .trim()
+        .trim_start_matches('\u{feff}')
+        .trim()
+        .to_ascii_lowercase()
+}
+
+fn has_non_empty_auditable_value(value: Option<&str>) -> bool {
+    value
+        .map(str::trim)
+        .map(|v| v.trim_start_matches('\u{feff}').trim())
+        .map(|v| !v.is_empty())
+        .unwrap_or(false)
+}
+
+fn parse_response_with_standard_rules(stdout: &str) -> Result<LlmAdapterResponse, String> {
+    let normalized = stdout.trim_start().trim_start_matches('\u{feff}');
+
+    if let Ok(parsed) = serde_json::from_str(normalized) {
+        return Ok(parsed);
+    }
+
+    for line in normalized.lines().rev().map(str::trim) {
+        if line.starts_with('{') && line.ends_with('}') {
+            if let Ok(parsed) = serde_json::from_str(line) {
+                return Ok(parsed);
+            }
+        }
+
+        if let (Some(start), Some(end)) = (line.find('{'), line.rfind('}')) {
+            if start < end {
+                let candidate = &line[start..=end];
+                if let Ok(parsed) = serde_json::from_str(candidate) {
+                    return Ok(parsed);
+                }
+            }
+        }
+    }
+
+    if let Some(candidate) = last_balanced_json_object(normalized) {
+        if let Ok(parsed) = serde_json::from_str::<LlmAdapterResponse>(&candidate) {
+            return Ok(parsed);
+        }
+    }
+
+    Err("no-json-line".to_string())
+}
 
 impl ProofAdapter for StandardProofAdapter {
     fn verify(&self, output: &str, max_chars: usize) -> (bool, String) {
-        crate::verify_model_output(output, max_chars)
-            .map(|(status, code)| (status == "accepted", code.to_string()))
+        let (status, code) = crate::verify_model_output(output, max_chars);
+        (status == "accepted", code.to_string())
     }
-    
+
     fn parse_response(&self, stdout: &str) -> Result<LlmAdapterResponse, String> {
-        serde_json::from_str(stdout).map_err(|e| e.to_string())
+        parse_response_with_standard_rules(stdout)
+    }
+}
+
+impl ProofAdapter for TeeReceiptProofAdapter {
+    fn verify(&self, output: &str, max_chars: usize) -> (bool, String) {
+        let (ok, code) = StandardProofAdapter.verify(output, max_chars);
+        if !ok {
+            return (false, code);
+        }
+        (true, "tee_receipt_ok".to_string())
+    }
+
+    fn parse_response(&self, stdout: &str) -> Result<LlmAdapterResponse, String> {
+        let parsed = parse_response_with_standard_rules(stdout)?;
+
+        let request_id_ok = has_non_empty_auditable_value(parsed.provider_request_id.as_deref());
+        if !request_id_ok {
+            return Err("tee-receipt-missing-provider-request-id".to_string());
+        }
+
+        let adapter_ok = parsed
+            .adapter
+            .as_deref()
+            .map(normalize_adapter_value)
+            .map(|normalized| {
+                normalized == "tee-receipt"
+                    || normalized == "tee_receipt"
+                    || normalized == "tee-receipt-v1"
+                    || normalized == "tee_receipt_v1"
+                    || normalized == "tee-attestation"
+                    || normalized == "tee_attestation"
+                    || normalized == "tee-attestation-v1"
+                    || normalized == "tee_attestation_v1"
+                    || normalized == "teereceipt"
+                    || normalized == "teereceiptv1"
+                    || normalized == "teeattestation"
+                    || normalized == "teeattestationv1"
+            })
+            .unwrap_or(false);
+        if !adapter_ok {
+            return Err("tee-receipt-missing-adapter-label".to_string());
+        }
+
+        Ok(parsed)
+    }
+}
+
+impl ProofAdapter for ZkReceiptProofAdapter {
+    fn verify(&self, output: &str, max_chars: usize) -> (bool, String) {
+        let (ok, code) = StandardProofAdapter.verify(output, max_chars);
+        if !ok {
+            return (false, code);
+        }
+        (true, "zk_receipt_ok".to_string())
+    }
+
+    fn parse_response(&self, stdout: &str) -> Result<LlmAdapterResponse, String> {
+        let parsed = parse_response_with_standard_rules(stdout)?;
+
+        let request_id_ok = has_non_empty_auditable_value(parsed.provider_request_id.as_deref());
+        if !request_id_ok {
+            return Err("zk-receipt-missing-provider-request-id".to_string());
+        }
+
+        let adapter_ok = parsed
+            .adapter
+            .as_deref()
+            .map(normalize_adapter_value)
+            .map(|normalized| {
+                normalized == "zk-receipt"
+                    || normalized == "zk_receipt"
+                    || normalized == "zk-receipt-v1"
+                    || normalized == "zk_receipt_v1"
+                    || normalized == "zk-proof"
+                    || normalized == "zk_proof"
+                    || normalized == "zk-proof-v1"
+                    || normalized == "zk_proof_v1"
+                    || normalized == "zkreceipt"
+                    || normalized == "zkreceiptv1"
+                    || normalized == "zkproof"
+                    || normalized == "zkproofv1"
+            })
+            .unwrap_or(false);
+        if !adapter_ok {
+            return Err("zk-receipt-missing-adapter-label".to_string());
+        }
+
+        Ok(parsed)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{
+        build_proof_adapter, last_balanced_json_object, ProofAdapter, StandardProofAdapter,
+        TeeReceiptProofAdapter, ZkReceiptProofAdapter, DEFAULT_PROOF_ADAPTER,
+    };
+
+    #[test]
+    fn standard_proof_adapter_reports_verifier_decision_and_reason_code() {
+        let adapter = StandardProofAdapter;
+
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "ok");
+
+        let (ok, code) = adapter.verify("\u{200B}\u{200C}", 8);
+        assert!(!ok);
+        assert_eq!(code, "empty_output");
+
+        let (ok, code) = adapter.verify("你好abc", 4);
+        assert!(!ok);
+        assert_eq!(code, "output_too_long");
+    }
+
+    #[test]
+    fn standard_proof_adapter_parse_response_accepts_last_json_line_after_noise() {
+        let adapter = StandardProofAdapter;
+        let stdout = "debug:warmup\n{\"output_text\":\"ok\",\"provider_request_id\":\"r1\"}\n";
+
+        let parsed = adapter
+            .parse_response(stdout)
+            .expect("should parse trailing json line");
+        assert_eq!(parsed.output_text, "ok");
+        assert_eq!(parsed.provider_request_id.as_deref(), Some("r1"));
+    }
+
+    #[test]
+    fn standard_proof_adapter_parse_response_accepts_json_embedded_in_log_line() {
+        let adapter = StandardProofAdapter;
+        let stdout =
+            "info:adapter payload={\"output_text\":\"ok\",\"provider_request_id\":\"r2\"}\n";
+
+        let parsed = adapter
+            .parse_response(stdout)
+            .expect("should parse json embedded in log line");
+        assert_eq!(parsed.output_text, "ok");
+        assert_eq!(parsed.provider_request_id.as_deref(), Some("r2"));
+    }
+
+    #[test]
+    fn standard_proof_adapter_parse_response_accepts_multiline_json_payload() {
+        let adapter = StandardProofAdapter;
+        let stdout = "info: warmup\n```json\n{\n  \"output_text\": \"ok\",\n  \"provider_request_id\": \"r3\"\n}\n```\n";
+
+        let parsed = adapter
+            .parse_response(stdout)
+            .expect("should parse multiline json payload");
+        assert_eq!(parsed.output_text, "ok");
+        assert_eq!(parsed.provider_request_id.as_deref(), Some("r3"));
+    }
+
+    #[test]
+    fn tee_receipt_adapter_parse_response_requires_auditable_fields() {
+        let adapter = TeeReceiptProofAdapter;
+
+        let ok = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-1\",\"adapter\":\"tee-receipt\"}",
+            )
+            .expect("tee receipt payload should parse");
+        assert_eq!(ok.provider_request_id.as_deref(), Some("pr-1"));
+
+        let tee_attestation = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-2\",\"adapter\":\"tee-attestation\"}",
+            )
+            .expect("tee attestation alias should parse");
+        assert_eq!(tee_attestation.provider_request_id.as_deref(), Some("pr-2"));
+
+        let tee_attestation_underscore = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-2b\",\"adapter\":\"TEE_ATTESTATION\"}",
+            )
+            .expect("tee attestation underscore alias should parse");
+        assert_eq!(
+            tee_attestation_underscore.provider_request_id.as_deref(),
+            Some("pr-2b")
+        );
+
+        let tee_compact_alias = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-2bb\",\"adapter\":\"teeattestation\"}",
+            )
+            .expect("tee compact alias should parse");
+        assert_eq!(
+            tee_compact_alias.provider_request_id.as_deref(),
+            Some("pr-2bb")
+        );
+
+        let tee_attestation_v1 = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-2bc\",\"adapter\":\"TEE_ATTESTATION_V1\"}",
+            )
+            .expect("tee attestation v1 alias should parse");
+        assert_eq!(
+            tee_attestation_v1.provider_request_id.as_deref(),
+            Some("pr-2bc")
+        );
+
+        let tee_with_bom_and_whitespace = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-2c\",\"adapter\":\"  \\uFEFFTEE_RECEIPT  \"}",
+            )
+            .expect("tee receipt label with bom+whitespace should parse");
+        assert_eq!(
+            tee_with_bom_and_whitespace.provider_request_id.as_deref(),
+            Some("pr-2c")
+        );
+
+        let tee_with_non_breaking_hyphen = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-2d\",\"adapter\":\"TEE‑RECEIPT\"}",
+            )
+            .expect("tee receipt label with non-breaking hyphen should parse");
+        assert_eq!(
+            tee_with_non_breaking_hyphen.provider_request_id.as_deref(),
+            Some("pr-2d")
+        );
+
+        let tee_with_zero_width_joiner = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-2e\",\"adapter\":\"TEE\u{200d}_RECEIPT\"}",
+            )
+            .expect("tee receipt label with zero-width joiner should parse");
+        assert_eq!(
+            tee_with_zero_width_joiner.provider_request_id.as_deref(),
+            Some("pr-2e")
+        );
+
+        let tee_with_embedded_bom = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-2f\",\"adapter\":\"TEE\u{feff}_RECEIPT\"}",
+            )
+            .expect("tee receipt label with embedded bom should parse");
+        assert_eq!(
+            tee_with_embedded_bom.provider_request_id.as_deref(),
+            Some("pr-2f")
+        );
+
+        let missing_request_id = adapter
+            .parse_response("{\"output_text\":\"ok\",\"adapter\":\"tee-receipt\"}")
+            .expect_err("provider_request_id is required");
+        assert_eq!(
+            missing_request_id,
+            "tee-receipt-missing-provider-request-id"
+        );
+
+        let bom_only_request_id = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"\\uFEFF\",\"adapter\":\"tee-receipt\"}",
+            )
+            .expect_err("bom-only provider_request_id must fail closed");
+        assert_eq!(
+            bom_only_request_id,
+            "tee-receipt-missing-provider-request-id"
+        );
+
+        let missing_adapter = adapter
+            .parse_response("{\"output_text\":\"ok\",\"provider_request_id\":\"pr-1\"}")
+            .expect_err("adapter label is required");
+        assert_eq!(missing_adapter, "tee-receipt-missing-adapter-label");
+
+        let bom_only_adapter = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-1x\",\"adapter\":\"\\uFEFF\"}",
+            )
+            .expect_err("bom-only adapter label must fail closed");
+        assert_eq!(bom_only_adapter, "tee-receipt-missing-adapter-label");
+
+        let mismatched_adapter = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-1\",\"adapter\":\"zk-receipt\"}",
+            )
+            .expect_err("mismatched adapter label must fail closed");
+        assert_eq!(mismatched_adapter, "tee-receipt-missing-adapter-label");
+    }
+
+    #[test]
+    fn zk_receipt_adapter_parse_response_requires_auditable_fields() {
+        let adapter = ZkReceiptProofAdapter;
+
+        let ok = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-zk-1\",\"adapter\":\"zk-receipt\"}",
+            )
+            .expect("zk receipt payload should parse");
+        assert_eq!(ok.provider_request_id.as_deref(), Some("pr-zk-1"));
+
+        let zk_proof_alias = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-zk-2\",\"adapter\":\"zk-proof\"}",
+            )
+            .expect("zk proof alias should parse");
+        assert_eq!(
+            zk_proof_alias.provider_request_id.as_deref(),
+            Some("pr-zk-2")
+        );
+
+        let zk_proof_underscore_alias = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-zk-2b\",\"adapter\":\"ZK_PROOF\"}",
+            )
+            .expect("zk proof underscore alias should parse");
+        assert_eq!(
+            zk_proof_underscore_alias.provider_request_id.as_deref(),
+            Some("pr-zk-2b")
+        );
+
+        let zk_proof_v1_alias = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-zk-2ba\",\"adapter\":\"ZK_PROOF_V1\"}",
+            )
+            .expect("zk proof v1 underscore alias should parse");
+        assert_eq!(
+            zk_proof_v1_alias.provider_request_id.as_deref(),
+            Some("pr-zk-2ba")
+        );
+
+        let zk_compact_alias = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-zk-2bb\",\"adapter\":\"zkproof\"}",
+            )
+            .expect("zk compact alias should parse");
+        assert_eq!(
+            zk_compact_alias.provider_request_id.as_deref(),
+            Some("pr-zk-2bb")
+        );
+
+        let zk_compact_v1_alias = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-zk-2bc\",\"adapter\":\"zkproofv1\"}",
+            )
+            .expect("zk compact v1 alias should parse");
+        assert_eq!(
+            zk_compact_v1_alias.provider_request_id.as_deref(),
+            Some("pr-zk-2bc")
+        );
+
+        let zk_with_bom_and_whitespace = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-zk-2c\",\"adapter\":\"  \\uFEFFZK_RECEIPT  \"}",
+            )
+            .expect("zk receipt label with bom+whitespace should parse");
+        assert_eq!(
+            zk_with_bom_and_whitespace.provider_request_id.as_deref(),
+            Some("pr-zk-2c")
+        );
+
+        let zk_with_non_breaking_hyphen = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-zk-2d\",\"adapter\":\"ZK‑RECEIPT\"}",
+            )
+            .expect("zk receipt label with non-breaking hyphen should parse");
+        assert_eq!(
+            zk_with_non_breaking_hyphen.provider_request_id.as_deref(),
+            Some("pr-zk-2d")
+        );
+
+        let zk_with_zero_width_joiner = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-zk-2e\",\"adapter\":\"ZK\u{200d}_RECEIPT\"}",
+            )
+            .expect("zk receipt label with zero-width joiner should parse");
+        assert_eq!(
+            zk_with_zero_width_joiner.provider_request_id.as_deref(),
+            Some("pr-zk-2e")
+        );
+
+        let zk_with_embedded_bom = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-zk-2f\",\"adapter\":\"ZK\u{feff}_RECEIPT\"}",
+            )
+            .expect("zk receipt label with embedded bom should parse");
+        assert_eq!(
+            zk_with_embedded_bom.provider_request_id.as_deref(),
+            Some("pr-zk-2f")
+        );
+
+        let missing_request_id = adapter
+            .parse_response("{\"output_text\":\"ok\",\"adapter\":\"zk-receipt\"}")
+            .expect_err("provider_request_id is required");
+        assert_eq!(missing_request_id, "zk-receipt-missing-provider-request-id");
+
+        let bom_only_request_id = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"\\uFEFF\",\"adapter\":\"zk-receipt\"}",
+            )
+            .expect_err("bom-only provider_request_id must fail closed");
+        assert_eq!(
+            bom_only_request_id,
+            "zk-receipt-missing-provider-request-id"
+        );
+
+        let missing_adapter = adapter
+            .parse_response("{\"output_text\":\"ok\",\"provider_request_id\":\"pr-zk-3\"}")
+            .expect_err("adapter label is required");
+        assert_eq!(missing_adapter, "zk-receipt-missing-adapter-label");
+
+        let bom_only_adapter = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-zk-3x\",\"adapter\":\"\\uFEFF\"}",
+            )
+            .expect_err("bom-only adapter label must fail closed");
+        assert_eq!(bom_only_adapter, "zk-receipt-missing-adapter-label");
+
+        let mismatched_adapter = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-zk-4\",\"adapter\":\"tee-receipt\"}",
+            )
+            .expect_err("mismatched adapter label must fail closed");
+        assert_eq!(mismatched_adapter, "zk-receipt-missing-adapter-label");
+    }
+
+    #[test]
+    fn last_balanced_json_object_ignores_braces_inside_strings() {
+        let payload = "log {\"message\":\"brace } kept\"}\nlog {\"output_text\":\"ok\",\"provider_request_id\":\"r4\"}";
+        let candidate =
+            last_balanced_json_object(payload).expect("expected a balanced json object");
+        assert_eq!(
+            candidate,
+            "{\"output_text\":\"ok\",\"provider_request_id\":\"r4\"}"
+        );
+    }
+
+    #[test]
+    fn standard_proof_adapter_parse_response_accepts_json_with_utf8_bom_prefix() {
+        let adapter = StandardProofAdapter;
+        let stdout = "\u{feff}{\"output_text\":\"ok\",\"provider_request_id\":\"r5\"}";
+
+        let parsed = adapter
+            .parse_response(stdout)
+            .expect("should parse json with leading utf-8 bom");
+        assert_eq!(parsed.output_text, "ok");
+        assert_eq!(parsed.provider_request_id.as_deref(), Some("r5"));
+    }
+
+    #[test]
+    fn standard_proof_adapter_parse_response_accepts_json_with_whitespace_then_bom_prefix() {
+        let adapter = StandardProofAdapter;
+        let stdout = "\n  \u{feff}{\"output_text\":\"ok\",\"provider_request_id\":\"r6\"}";
+
+        let parsed = adapter
+            .parse_response(stdout)
+            .expect("should parse json with whitespace before utf-8 bom");
+        assert_eq!(parsed.output_text, "ok");
+        assert_eq!(parsed.provider_request_id.as_deref(), Some("r6"));
+    }
+
+    #[test]
+    fn standard_proof_adapter_parse_response_rejects_without_json_line() {
+        let adapter = StandardProofAdapter;
+        let err = adapter
+            .parse_response("debug:warmup\nstatus=ok\n")
+            .expect_err("missing json should be rejected");
+        assert_eq!(err, "no-json-line");
+    }
+
+    #[test]
+    fn build_proof_adapter_accepts_default_and_fraud_and_tee_receipt_and_zk_aliases() {
+        let adapter = build_proof_adapter(DEFAULT_PROOF_ADAPTER).expect("default adapter");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "ok");
+
+        let adapter = build_proof_adapter(" \n\t ").expect("whitespace-only defaults to standard");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "ok");
+
+        let adapter =
+            build_proof_adapter("\u{feff} \n\t").expect("bom+whitespace defaults to standard");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "ok");
+
+        let adapter = build_proof_adapter("\u{feff} STANDARD ").expect("bom+whitespace default");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "ok");
+
+        let adapter = build_proof_adapter("fraud-proof").expect("fraud proof alias");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "ok");
+
+        let adapter = build_proof_adapter("FRAUD_PROOF").expect("fraud proof underscore alias");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "ok");
+
+        let adapter = build_proof_adapter("FRAUD\u{200d}_PROOF")
+            .expect("fraud proof alias should strip zero-width joiner");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "ok");
+
+        let adapter = build_proof_adapter("fraud-proof-v1").expect("fraud proof v1 alias");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "ok");
+
+        let adapter =
+            build_proof_adapter("FRAUD_PROOF_V1").expect("fraud proof underscore v1 alias");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "ok");
+
+        let adapter = build_proof_adapter("fraudproof").expect("fraud proof compact alias");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "ok");
+
+        let adapter = build_proof_adapter("fraudproofv1").expect("fraud proof compact v1 alias");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "ok");
+
+        let adapter = build_proof_adapter("tee-receipt").expect("tee receipt alias");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "tee_receipt_ok");
+
+        let adapter = build_proof_adapter("TEE_RECEIPT").expect("tee receipt underscore alias");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "tee_receipt_ok");
+
+        let adapter = build_proof_adapter("  \u{feff}TEE_RECEIPT  ")
+            .expect("tee receipt alias should tolerate whitespace+bom");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "tee_receipt_ok");
+
+        let adapter = build_proof_adapter("TEE_RECEIPT_V1").expect("tee v1 alias");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "tee_receipt_ok");
+
+        let adapter = build_proof_adapter("TEE‑RECEIPT").expect("tee non-breaking hyphen alias");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "tee_receipt_ok");
+
+        let adapter = build_proof_adapter("TEE\u{200d}_RECEIPT")
+            .expect("tee alias should strip zero-width joiner");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "tee_receipt_ok");
+
+        let adapter = build_proof_adapter("TEE\u{feff}_RECEIPT").expect("tee embedded bom alias");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "tee_receipt_ok");
+
+        let adapter = build_proof_adapter("zk-receipt").expect("zk receipt alias");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "zk_receipt_ok");
+
+        let adapter = build_proof_adapter("ZK_RECEIPT").expect("zk receipt underscore alias");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "zk_receipt_ok");
+
+        let adapter = build_proof_adapter("zk_receipt_v1").expect("zk v1 alias");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "zk_receipt_ok");
+
+        let adapter = build_proof_adapter("ZK‑RECEIPT").expect("zk non-breaking hyphen alias");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "zk_receipt_ok");
+
+        let adapter = build_proof_adapter("ZK\u{200d}_RECEIPT")
+            .expect("zk alias should strip zero-width joiner");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "zk_receipt_ok");
+
+        let adapter = build_proof_adapter("ZK\u{feff}_RECEIPT").expect("zk embedded bom alias");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "zk_receipt_ok");
+
+        let adapter = build_proof_adapter("tee-attestation").expect("tee attestation alias");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "tee_receipt_ok");
+
+        let adapter = build_proof_adapter("teeattestation").expect("tee compact alias");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "tee_receipt_ok");
+
+        let adapter = build_proof_adapter("TEE_ATTESTATION_V1").expect("tee attestation v1 alias");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "tee_receipt_ok");
+
+        let adapter = build_proof_adapter("zk-proof").expect("zk proof alias");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "zk_receipt_ok");
+
+        let adapter = build_proof_adapter("zk-proof-v1").expect("zk proof v1 alias");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "zk_receipt_ok");
+
+        let adapter = build_proof_adapter("ZK_PROOF_V1").expect("zk proof underscore v1 alias");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "zk_receipt_ok");
+
+        let adapter = build_proof_adapter("zkproof").expect("zk compact alias");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "zk_receipt_ok");
+
+        let err = match build_proof_adapter("tee attestation") {
+            Ok(_) => panic!("unknown plugin must fail closed"),
+            Err(err) => err,
+        };
+        assert_eq!(err, "unsupported-proof-adapter:tee attestation");
     }
 }

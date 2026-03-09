@@ -1,0 +1,131 @@
+#!/usr/bin/env python3
+import argparse
+import json
+import random
+import statistics
+import time
+from pathlib import Path
+
+
+def median(vals):
+    if not vals:
+        return None
+    vals = sorted(vals)
+    n = len(vals)
+    m = n // 2
+    return (vals[m - 1] + vals[m]) / 2 if n % 2 == 0 else vals[m]
+
+
+def validate_snapshot(s, min_sources, max_staleness_ms, max_deviation_bps):
+    now_ms = int(s.get("snapshot_ts_ms", 0))
+    uniq = set()
+    values = []
+    for src in s.get("sources", []):
+        sid = src.get("source", "").strip().lower()
+        if not sid:
+            continue
+        uniq.add(sid)
+        values.append(float(src.get("value", 0.0)))
+        ts = int(src.get("ts_unix_ms", now_ms))
+        if now_ms - ts > max_staleness_ms:
+            return "stale", len(uniq)
+
+    if len(uniq) < min_sources:
+        return "quorum", len(uniq)
+
+    m = median(values)
+    if m is None:
+        return "quorum", len(uniq)
+
+    if abs(m) > 1e-12:
+        lim = abs(m) * (max_deviation_bps / 10000.0)
+        for v in values:
+            if abs(v - m) > lim:
+                return "drift", len(uniq)
+
+    return "ok", len(uniq)
+
+
+def run_baseline(cases, args):
+    t0 = time.perf_counter_ns()
+    stale = quorum = drift = 0
+    source_cardinality = 0
+    oks = 0
+    for s in cases:
+        r, card = validate_snapshot(s, args.min_sources, args.max_staleness_ms, args.max_deviation_bps)
+        if r == "stale":
+            stale += 1
+        elif r == "quorum":
+            quorum += 1
+        elif r == "drift":
+            drift += 1
+        else:
+            oks += 1
+            source_cardinality = card
+    elapsed_ms = (time.perf_counter_ns() - t0) / 1_000_000.0
+    return {
+        "oracle_ingest_latency_ms": round(elapsed_ms, 3),
+        "oracle_stale_reject_total": stale,
+        "oracle_quorum_reject_total": quorum,
+        "oracle_drift_reject_total": drift,
+        "oracle_source_cardinality": source_cardinality,
+        "accepted_total": oks,
+        "sample_count": len(cases),
+    }
+
+
+def synth_case(ts):
+    base = 1.0 + random.uniform(-0.002, 0.002)
+    return {
+        "feed_id": "trnm/usdt",
+        "snapshot_ts_ms": ts,
+        "sources": [
+            {"source": "s1", "value": base, "ts_unix_ms": ts},
+            {"source": "s2", "value": base * (1 + random.uniform(-0.001, 0.001)), "ts_unix_ms": ts - random.randint(0, 1200)},
+            {"source": "s3", "value": base * (1 + random.uniform(-0.001, 0.001)), "ts_unix_ms": ts - random.randint(0, 1200)},
+        ],
+    }
+
+
+def run_bench(args):
+    lat = []
+    now = int(time.time() * 1000)
+    for i in range(args.bench_rounds):
+        cases = [synth_case(now + i * 1000 + j) for j in range(args.bench_count)]
+        out = run_baseline(cases, args)
+        lat.append(out["oracle_ingest_latency_ms"])
+    lat_sorted = sorted(lat)
+    p50 = statistics.median(lat_sorted)
+    p95 = lat_sorted[min(len(lat_sorted) - 1, int(len(lat_sorted) * 0.95))]
+    return {
+        "bench_rounds": args.bench_rounds,
+        "bench_count": args.bench_count,
+        "ingest_latency_p50_ms": round(p50, 3),
+        "ingest_latency_p95_ms": round(p95, 3),
+        "ingest_latency_max_ms": round(max(lat_sorted), 3),
+    }
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--input", type=Path)
+    ap.add_argument("--min-sources", type=int, default=2)
+    ap.add_argument("--max-staleness-ms", type=int, default=60_000)
+    ap.add_argument("--max-deviation-bps", type=int, default=1_000)
+    ap.add_argument("--bench", action="store_true")
+    ap.add_argument("--bench-count", type=int, default=500)
+    ap.add_argument("--bench-rounds", type=int, default=20)
+    args = ap.parse_args()
+
+    if args.bench:
+        print(json.dumps(run_bench(args), ensure_ascii=False, indent=2))
+        return
+
+    if not args.input:
+        raise SystemExit("--input is required when not in --bench mode")
+    cases = json.loads(args.input.read_text())
+    print(json.dumps(run_baseline(cases, args), ensure_ascii=False, indent=2))
+
+
+if __name__ == "__main__":
+    main()

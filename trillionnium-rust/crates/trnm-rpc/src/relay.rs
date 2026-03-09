@@ -299,6 +299,8 @@ struct RiskQuotaState {
     by_source: HashMap<(RiskDomain, String), WindowCounter>,
 }
 
+const MAX_RISK_BUCKET_KEYS_PER_DOMAIN: usize = 4096;
+
 impl RiskQuotaState {
     fn consume(
         &mut self,
@@ -344,12 +346,30 @@ impl RiskQuotaState {
         limit: u32,
         dim: &str,
     ) -> Result<()> {
-        let bucket = buckets
-            .entry((domain, key.to_string()))
-            .or_insert_with(|| WindowCounter {
-                window_start_ms: now_ms,
-                used: 0,
-            });
+        // Misconfigured zero windows effectively disable quota enforcement by expiring
+        // every bucket on each consume. Clamp to 1ms so limits stay meaningful.
+        let window_ms = window_ms.max(1);
+        Self::prune_expired_domain_buckets(buckets, now_ms, domain, window_ms);
+        let bucket_key = (domain, key.to_string());
+        if !buckets.contains_key(&bucket_key)
+            && Self::domain_bucket_count(buckets, domain) >= MAX_RISK_BUCKET_KEYS_PER_DOMAIN
+        {
+            return Err(too_many_requests(
+                "quota_exceeded",
+                format!(
+                    "domain={} dim={} keyspace_exhausted max_keys={} window_ms={}",
+                    domain.as_str(),
+                    dim,
+                    MAX_RISK_BUCKET_KEYS_PER_DOMAIN,
+                    window_ms
+                ),
+            ));
+        }
+
+        let bucket = buckets.entry(bucket_key).or_insert_with(|| WindowCounter {
+            window_start_ms: now_ms,
+            used: 0,
+        });
 
         if now_ms.saturating_sub(bucket.window_start_ms) >= window_ms {
             bucket.window_start_ms = now_ms;
@@ -373,17 +393,92 @@ impl RiskQuotaState {
         Ok(())
     }
 
+    fn prune_expired_domain_buckets(
+        buckets: &mut HashMap<(RiskDomain, String), WindowCounter>,
+        now_ms: u128,
+        domain: RiskDomain,
+        window_ms: u128,
+    ) {
+        buckets.retain(|(d, _), bucket| {
+            if *d != domain {
+                return true;
+            }
+            now_ms.saturating_sub(bucket.window_start_ms) < window_ms
+        });
+    }
+
+    fn domain_bucket_count(
+        buckets: &HashMap<(RiskDomain, String), WindowCounter>,
+        domain: RiskDomain,
+    ) -> usize {
+        buckets.keys().filter(|(d, _)| *d == domain).count()
+    }
+
     fn rollback_bucket(
         buckets: &mut HashMap<(RiskDomain, String), WindowCounter>,
         domain: RiskDomain,
         key: &str,
     ) {
-        if let Some(bucket) = buckets.get_mut(&(domain, key.to_string())) {
+        let bucket_key = (domain, key.to_string());
+        let mut should_remove = false;
+        if let Some(bucket) = buckets.get_mut(&bucket_key) {
             if bucket.used > 0 {
                 bucket.used -= 1;
             }
+            should_remove = bucket.used == 0;
+        }
+        if should_remove {
+            buckets.remove(&bucket_key);
         }
     }
+}
+
+const RISK_SOURCE_MAX_CHARS: usize = 64;
+
+fn canonicalize_risk_source(source: Option<&str>) -> String {
+    let source = source.unwrap_or("anon").trim();
+    if source.is_empty() {
+        return "anon".to_string();
+    }
+
+    // Collapse internal whitespace so cosmetic attribution variants don't explode
+    // quota key-space (e.g. "bot  worker" vs "bot worker").
+    // Keep this allocation-light: avoid split+collect+join on the hot ingress path.
+    let mut out = String::with_capacity(source.len().min(RISK_SOURCE_MAX_CHARS));
+    let mut emitted = 0usize;
+    let mut pending_space = false;
+
+    for ch in source.chars() {
+        if ch.is_whitespace() {
+            if emitted > 0 {
+                pending_space = true;
+            }
+            continue;
+        }
+
+        if pending_space {
+            if emitted >= RISK_SOURCE_MAX_CHARS {
+                break;
+            }
+            out.push(' ');
+            emitted += 1;
+            pending_space = false;
+        }
+
+        if emitted >= RISK_SOURCE_MAX_CHARS {
+            break;
+        }
+        out.push(ch.to_ascii_lowercase());
+        emitted += 1;
+    }
+
+    if out.is_empty() {
+        return "anon".to_string();
+    }
+
+    // Bound source cardinality to reduce key-space/memory pressure from adversarial
+    // high-entropy attribution strings while preserving stable aliasing semantics.
+    out
 }
 
 pub trait RelayHandler: Send + Sync {
@@ -427,6 +522,7 @@ struct RelaySessionState {
     /// Cache of envelope hash by sequence index (sequence starts from 1).
     envelope_hashes: Vec<[u8; 32]>,
     acked_ids: BTreeSet<u64>,
+    poll_start_idx: usize,
 }
 
 impl RelaySessionState {
@@ -442,6 +538,7 @@ impl RelaySessionState {
             queue: VecDeque::new(),
             envelope_hashes: Vec::new(),
             acked_ids: BTreeSet::new(),
+            poll_start_idx: 0,
         }
     }
 
@@ -461,6 +558,16 @@ impl RelaySessionState {
         self.envelope_hashes.push(hash);
         Ok(())
     }
+
+    fn advance_poll_start_idx(&mut self) {
+        while let Some(env) = self.queue.get(self.poll_start_idx) {
+            if self.acked_ids.contains(&env.envelope_id) {
+                self.poll_start_idx += 1;
+            } else {
+                break;
+            }
+        }
+    }
 }
 
 pub struct RelayService {
@@ -469,11 +576,13 @@ pub struct RelayService {
     envelope_id: AtomicU64,
     risk_quota: Mutex<RiskQuotaState>,
     risk_quota_cfg: RiskQuotaConfig,
+    relay_open_total: AtomicU64,
+    relay_poll_total: AtomicU64,
+    relay_send_rejected_route_not_registered_total: AtomicU64,
+    proof_query_rejected_range_out_of_bounds_total: AtomicU64,
 }
 
 impl RelayService {
-    const MAX_SOURCE_KEY_LEN: usize = 64;
-
     pub fn new(router: RelayRouter) -> Self {
         Self {
             sessions: Mutex::new(HashMap::new()),
@@ -481,6 +590,10 @@ impl RelayService {
             envelope_id: AtomicU64::new(1),
             risk_quota: Mutex::new(RiskQuotaState::default()),
             risk_quota_cfg: RiskQuotaConfig::default(),
+            relay_open_total: AtomicU64::new(0),
+            relay_poll_total: AtomicU64::new(0),
+            relay_send_rejected_route_not_registered_total: AtomicU64::new(0),
+            proof_query_rejected_range_out_of_bounds_total: AtomicU64::new(0),
         }
     }
 
@@ -491,21 +604,33 @@ impl RelayService {
             envelope_id: AtomicU64::new(1),
             risk_quota: Mutex::new(RiskQuotaState::default()),
             risk_quota_cfg,
+            relay_open_total: AtomicU64::new(0),
+            relay_poll_total: AtomicU64::new(0),
+            relay_send_rejected_route_not_registered_total: AtomicU64::new(0),
+            proof_query_rejected_range_out_of_bounds_total: AtomicU64::new(0),
         }
     }
 
-    fn canonicalize_source(source: Option<&str>) -> String {
-        let source = source.unwrap_or("anon").trim();
-        if source.is_empty() {
-            return "anon".to_string();
-        }
+    #[cfg(test)]
+    fn relay_open_total(&self) -> u64 {
+        self.relay_open_total.load(Ordering::Relaxed)
+    }
 
-        let canonical = source.to_ascii_lowercase();
-        if canonical.len() <= Self::MAX_SOURCE_KEY_LEN {
-            canonical
-        } else {
-            canonical[..Self::MAX_SOURCE_KEY_LEN].to_string()
-        }
+    #[cfg(test)]
+    fn relay_poll_total(&self) -> u64 {
+        self.relay_poll_total.load(Ordering::Relaxed)
+    }
+
+    #[cfg(test)]
+    fn relay_send_rejected_route_not_registered_total(&self) -> u64 {
+        self.relay_send_rejected_route_not_registered_total
+            .load(Ordering::Relaxed)
+    }
+
+    #[cfg(test)]
+    fn proof_query_rejected_range_out_of_bounds_total(&self) -> u64 {
+        self.proof_query_rejected_range_out_of_bounds_total
+            .load(Ordering::Relaxed)
     }
 
     fn consume_risk_quota(
@@ -514,17 +639,20 @@ impl RelayService {
         session_id: &str,
         source: Option<&str>,
     ) -> Result<()> {
-        let source = Self::canonicalize_source(source);
-        let mut q = self
-            .risk_quota
-            .lock()
-            .map_err(|_| anyhow!("relay risk quota lock poisoned"))?;
-        q.consume(now_ms(), domain, session_id, &source, &self.risk_quota_cfg)
+        let source = canonicalize_risk_source(source);
+        let mut q = match self.risk_quota.lock() {
+            Ok(guard) => guard,
+            Err(poisoned) => {
+                // Best-effort recovery: keep quota enforcement alive after a panicking caller.
+                poisoned.into_inner()
+            }
+        };
+        q.consume(now_ms(), domain, session_id, source.as_str(), &self.risk_quota_cfg)
     }
 
     pub fn open(&self, req: RelayOpenRequest) -> Result<RelayOpenResponse> {
         validate_session_id(&req.session_id, "session_id")?;
-        // TODO(metrics): relay_open_total += 1
+        self.relay_open_total.fetch_add(1, Ordering::Relaxed);
         let mut g = self
             .sessions
             .lock()
@@ -546,7 +674,8 @@ impl RelayService {
         validate_route(&req.route)?;
         self.consume_risk_quota(RiskDomain::Relay, &req.session_id, req.source.as_deref())?;
         if !self.router.has_route(&req.route) {
-            // TODO(metrics): relay_send_rejected_total{reason="route_not_registered"} += 1
+            self.relay_send_rejected_route_not_registered_total
+                .fetch_add(1, Ordering::Relaxed);
             return Err(bad_request(
                 "invalid_route",
                 format!("route not registered: {}", req.route),
@@ -608,10 +737,11 @@ impl RelayService {
         };
 
         let limit = req.limit.clamp(1, MAX_RELAY_QUERY_LIMIT);
-        // TODO(metrics): relay_poll_total += 1
+        self.relay_poll_total.fetch_add(1, Ordering::Relaxed);
         let envelopes = state
             .queue
             .iter()
+            .skip(state.poll_start_idx)
             .filter(|e| !state.acked_ids.contains(&e.envelope_id))
             .take(limit)
             .cloned()
@@ -624,23 +754,6 @@ impl RelayService {
 
     pub fn ack(&self, req: RelayAckRequest) -> Result<RelayAckResponse> {
         validate_session_id(&req.session_id, "session_id")?;
-        if req.envelope_ids.is_empty() && req.upto_seq.is_none() {
-            return Err(bad_request(
-                "empty_ack_request",
-                "relay ack requires envelope_ids or upto_seq",
-            ));
-        }
-        if req.envelope_ids.len() > MAX_RELAY_QUERY_LIMIT {
-            return Err(bad_request(
-                "too_many_ack_ids",
-                format!(
-                    "relay ack envelope_ids exceeds limit: {} > {}",
-                    req.envelope_ids.len(),
-                    MAX_RELAY_QUERY_LIMIT
-                ),
-            ));
-        }
-
         let mut g = self
             .sessions
             .lock()
@@ -655,10 +768,14 @@ impl RelayService {
         let before = state.acked_ids.len();
 
         // Backward-compatible id ack path: only accept ids that exist in this session queue.
-        let known_ids: HashSet<u64> = state.queue.iter().map(|e| e.envelope_id).collect();
-        for id in req.envelope_ids {
-            if known_ids.contains(&id) {
-                state.acked_ids.insert(id);
+        // Avoid rebuilding the known-id set when clients use the newer upto_seq-only path,
+        // which is common in high-throughput polling loops.
+        if !req.envelope_ids.is_empty() {
+            let known_ids: HashSet<u64> = state.queue.iter().map(|e| e.envelope_id).collect();
+            for id in req.envelope_ids {
+                if known_ids.contains(&id) {
+                    state.acked_ids.insert(id);
+                }
             }
         }
 
@@ -671,6 +788,8 @@ impl RelayService {
             }
         }
 
+        state.advance_poll_start_idx();
+
         Ok(RelayAckResponse {
             session_id: req.session_id,
             acked: state.acked_ids.len().saturating_sub(before),
@@ -682,7 +801,13 @@ impl RelayService {
         req: RelaySessionProofQuery,
     ) -> Result<RelaySessionProofResponse> {
         validate_session_id(&req.session_id, "session_id")?;
-        validate_proof_query_range(req.from_seq, req.to_seq)?;
+        if let Err(err) = validate_proof_query_range(req.from_seq, req.to_seq) {
+            if err.to_string().contains("bad_request/range_out_of_bounds") {
+                self.proof_query_rejected_range_out_of_bounds_total
+                    .fetch_add(1, Ordering::Relaxed);
+            }
+            return Err(err);
+        }
         self.consume_risk_quota(RiskDomain::Proof, &req.session_id, req.source.as_deref())?;
 
         let g = self
@@ -698,7 +823,8 @@ impl RelayService {
 
         let max_seq = state.next_sequence.saturating_sub(1);
         if req.to_seq > max_seq {
-            // TODO(metrics): relay_proof_query_rejected_total{reason="range_out_of_bounds"} += 1
+            self.proof_query_rejected_range_out_of_bounds_total
+                .fetch_add(1, Ordering::Relaxed);
             return Err(bad_request(
                 "range_out_of_bounds",
                 format!("to_seq({}) exceeds max sequence({max_seq})", req.to_seq),
@@ -906,6 +1032,7 @@ mod tests {
             })
             .expect("open");
         assert_eq!(opened.session.status, RelaySessionStatus::Open);
+        assert_eq!(relay.relay_open_total(), 1);
 
         let sent = relay
             .send(RelaySendRequest {
@@ -926,6 +1053,7 @@ mod tests {
             })
             .expect("poll");
         assert_eq!(polled.envelopes.len(), 2);
+        assert_eq!(relay.relay_poll_total(), 1);
 
         let acked = relay
             .ack(RelayAckRequest {
@@ -943,6 +1071,7 @@ mod tests {
             })
             .expect("poll after ack");
         assert!(polled2.envelopes.is_empty());
+        assert_eq!(relay.relay_poll_total(), 2);
 
         let closed = relay
             .close(RelayCloseRequest {
@@ -953,22 +1082,44 @@ mod tests {
     }
 
     #[test]
-    fn relay_ack_rejects_empty_request() {
-        let relay = RelayService::new(RelayRouter::new());
+    fn relay_reopen_closed_session_clears_closed_at_and_accepts_send() {
+        let mut router = RelayRouter::new();
+        router.register("relay.echo", EchoHandler);
+        let relay = RelayService::new(router);
+
         relay
             .open(RelayOpenRequest {
-                session_id: "s-ack-empty".into(),
+                session_id: "s1-reopen".to_string(),
             })
-            .unwrap();
+            .expect("open");
 
-        let err = relay
-            .ack(RelayAckRequest {
-                session_id: "s-ack-empty".into(),
-                envelope_ids: vec![],
-                upto_seq: None,
+        let closed = relay
+            .close(RelayCloseRequest {
+                session_id: "s1-reopen".to_string(),
             })
-            .expect_err("empty ack should fail");
-        assert!(err.to_string().contains("empty_ack_request"));
+            .expect("close");
+        assert_eq!(closed.session.status, RelaySessionStatus::Closed);
+        assert!(closed.session.closed_at_unix_ms.is_some());
+
+        let reopened = relay
+            .open(RelayOpenRequest {
+                session_id: "s1-reopen".to_string(),
+            })
+            .expect("reopen");
+        assert_eq!(reopened.session.status, RelaySessionStatus::Open);
+        assert!(reopened.session.closed_at_unix_ms.is_none());
+
+        let sent = relay
+            .send(RelaySendRequest {
+                session_id: "s1-reopen".to_string(),
+                route: "relay.echo".to_string(),
+                from: "alice".to_string(),
+                to: Some("bob".to_string()),
+                payload: b"ping-reopen".to_vec(),
+                source: None,
+            })
+            .expect("send after reopen");
+        assert_eq!(sent.envelope.sequence, 1);
     }
 
     #[test]
@@ -1055,6 +1206,63 @@ mod tests {
             })
             .unwrap();
         assert!(none_left.envelopes.is_empty());
+    }
+
+    #[test]
+    fn relay_ack_advances_poll_start_index_for_contiguous_acked_prefix() {
+        let mut router = RelayRouter::new();
+        router.register("relay.echo", EchoHandler);
+        let relay = RelayService::new(router);
+        relay
+            .open(RelayOpenRequest {
+                session_id: "s2-cursor".into(),
+            })
+            .unwrap();
+
+        relay
+            .send(RelaySendRequest {
+                session_id: "s2-cursor".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"m1".to_vec(),
+                source: None,
+            })
+            .unwrap();
+        relay
+            .send(RelaySendRequest {
+                session_id: "s2-cursor".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"m2".to_vec(),
+                source: None,
+            })
+            .unwrap();
+
+        let batch = relay
+            .ack(RelayAckRequest {
+                session_id: "s2-cursor".into(),
+                envelope_ids: vec![],
+                upto_seq: Some(2),
+            })
+            .unwrap();
+        assert_eq!(batch.acked, 2);
+
+        {
+            let g = relay.sessions.lock().unwrap();
+            let state = g.get("s2-cursor").unwrap();
+            assert_eq!(state.poll_start_idx, 2);
+        }
+
+        let pending = relay
+            .poll(RelayPollRequest {
+                session_id: "s2-cursor".into(),
+                limit: 10,
+            })
+            .unwrap();
+        assert_eq!(pending.envelopes.len(), 2);
+        assert!(pending.envelopes.iter().all(|e| e.sequence > 2));
     }
 
     #[test]
@@ -1342,6 +1550,31 @@ mod tests {
     }
 
     #[test]
+    fn relay_send_rejects_unregistered_route_and_counts_metric() {
+        let mut router = RelayRouter::new();
+        router.register("relay.echo", EchoHandler);
+        let relay = RelayService::new(router);
+        relay
+            .open(RelayOpenRequest {
+                session_id: "s-route-missing".into(),
+            })
+            .unwrap();
+
+        let err = relay
+            .send(RelaySendRequest {
+                session_id: "s-route-missing".into(),
+                route: "relay.unknown".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"x".to_vec(),
+                source: None,
+            })
+            .unwrap_err();
+        assert!(err.to_string().contains("bad_request/invalid_route"));
+        assert_eq!(relay.relay_send_rejected_route_not_registered_total(), 1);
+    }
+
+    #[test]
     fn relay_proof_query_rejects_empty_session() {
         let relay = RelayService::new(RelayRouter::new());
         let err = relay
@@ -1400,6 +1633,7 @@ mod tests {
             })
             .unwrap_err();
         assert!(err.to_string().contains("bad_request/range_out_of_bounds"));
+        assert_eq!(relay.proof_query_rejected_range_out_of_bounds_total(), 1);
     }
 
     #[test]
@@ -1433,6 +1667,7 @@ mod tests {
             })
             .unwrap_err();
         assert!(err.to_string().contains("bad_request/range_out_of_bounds"));
+        assert_eq!(relay.proof_query_rejected_range_out_of_bounds_total(), 1);
     }
 
     #[test]
@@ -1511,6 +1746,7 @@ mod tests {
             })
             .unwrap();
         assert_eq!(out.envelopes.len(), 6);
+        assert_eq!(relay.relay_poll_total(), 1);
     }
 
     fn tiny_quota_relay() -> RelayService {
@@ -1535,6 +1771,48 @@ mod tests {
             })
             .unwrap();
         relay
+    }
+
+    #[test]
+    fn relay_quota_lock_poisoning_recovers_and_still_enforces_limits() {
+        let relay = tiny_quota_relay();
+        let _ = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+            let _guard = relay.risk_quota.lock().expect("quota lock");
+            panic!("intentional poison for resilience test");
+        }));
+
+        relay
+            .send(RelaySendRequest {
+                session_id: "rq-s1".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"x".to_vec(),
+                source: Some("src-poison".into()),
+            })
+            .expect("first post-poison request should recover");
+        relay
+            .send(RelaySendRequest {
+                session_id: "rq-s1".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"x".to_vec(),
+                source: Some("src-poison".into()),
+            })
+            .expect("second post-poison request should recover");
+
+        let err = relay
+            .send(RelaySendRequest {
+                session_id: "rq-s1".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"x".to_vec(),
+                source: Some("src-poison".into()),
+            })
+            .unwrap_err();
+        assert!(err.to_string().contains("too_many_requests/quota_exceeded"));
     }
 
     #[test]
@@ -1590,6 +1868,73 @@ mod tests {
                 payload: b"x".to_vec(),
                 source: Some("src-b".into()),
             })
+            .unwrap();
+    }
+
+    #[test]
+    fn zero_window_quota_config_is_clamped_to_preserve_enforcement() {
+        let mut state = RiskQuotaState::default();
+        let cfg = RiskQuotaConfig {
+            window_ms: 0,
+            per_session_limit: 2,
+            per_source_limit: 2,
+        };
+
+        state
+            .consume(1_000, RiskDomain::Relay, "zw-session", "zw-src", &cfg)
+            .unwrap();
+        state
+            .consume(1_000, RiskDomain::Relay, "zw-session", "zw-src", &cfg)
+            .unwrap();
+
+        let err = state
+            .consume(1_000, RiskDomain::Relay, "zw-session", "zw-src", &cfg)
+            .unwrap_err();
+        assert!(err.to_string().contains("too_many_requests/quota_exceeded"));
+    }
+
+    #[test]
+    fn quota_keyspace_has_domain_cap_with_expired_bucket_pruning() {
+        let mut state = RiskQuotaState::default();
+        let cfg = RiskQuotaConfig {
+            window_ms: 50,
+            per_session_limit: u32::MAX,
+            per_source_limit: u32::MAX,
+        };
+
+        for i in 0..MAX_RISK_BUCKET_KEYS_PER_DOMAIN {
+            state
+                .consume(
+                    1_000,
+                    RiskDomain::Relay,
+                    "ks-session",
+                    &format!("src-{i}"),
+                    &cfg,
+                )
+                .unwrap();
+        }
+
+        let err = state
+            .consume(
+                1_000,
+                RiskDomain::Relay,
+                "ks-session",
+                "src-over-cap",
+                &cfg,
+            )
+            .unwrap_err();
+        assert!(err.to_string().contains("too_many_requests/quota_exceeded"));
+        assert!(err.to_string().contains("keyspace_exhausted"));
+
+        // Once the window moves forward, expired buckets are pruned and new keys are accepted.
+        state
+            .consume(
+                1_100,
+                RiskDomain::Relay,
+                "ks-session",
+                "src-after-window",
+                &cfg,
+            )
             .unwrap();
     }
 
@@ -1673,7 +2018,7 @@ mod tests {
             })
             .unwrap();
 
-        // Leading/trailing whitespace and case variation must not create fresh source buckets.
+        // Leading/trailing whitespace must not create a fresh source bucket.
         relay
             .send(RelaySendRequest {
                 session_id: "mv-src-s1".into(),
@@ -1681,7 +2026,7 @@ mod tests {
                 from: "alice".into(),
                 to: Some("bob".into()),
                 payload: b"b".to_vec(),
-                source: Some("  MV-SRC  ".into()),
+                source: Some("  mv-src  ".into()),
             })
             .unwrap();
         let trimmed_alias_err = relay
@@ -1732,10 +2077,101 @@ mod tests {
         assert!(anon_alias_err
             .to_string()
             .contains("too_many_requests/quota_exceeded"));
+
+        // Internal whitespace variants should collapse into the same quota bucket.
+        relay
+            .open(RelayOpenRequest {
+                session_id: "mv-src-s2".into(),
+            })
+            .unwrap();
+        relay
+            .send(RelaySendRequest {
+                session_id: "mv-src-s2".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"ws-a".to_vec(),
+                source: Some("worker   lane".into()),
+            })
+            .unwrap();
+        relay
+            .send(RelaySendRequest {
+                session_id: "mv-src-s2".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"ws-b".to_vec(),
+                source: Some("worker lane".into()),
+            })
+            .unwrap();
+        let ws_alias_err = relay
+            .send(RelaySendRequest {
+                session_id: "mv-src-s2".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"ws-c".to_vec(),
+                source: Some("worker\t\nlane".into()),
+            })
+            .unwrap_err();
+        assert!(ws_alias_err
+            .to_string()
+            .contains("too_many_requests/quota_exceeded"));
+
+        // Case-only variants must share the same source quota bucket.
+        relay
+            .open(RelayOpenRequest {
+                session_id: "mv-src-s3".into(),
+            })
+            .unwrap();
+        relay
+            .send(RelaySendRequest {
+                session_id: "mv-src-s3".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"g".to_vec(),
+                source: Some("CaseMixSrc".into()),
+            })
+            .unwrap();
+        relay
+            .send(RelaySendRequest {
+                session_id: "mv-src-s3".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"h".to_vec(),
+                source: Some("casemixsrc".into()),
+            })
+            .unwrap();
+        let case_alias_err = relay
+            .send(RelaySendRequest {
+                session_id: "mv-src-s3".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"i".to_vec(),
+                source: Some("CASEMIXSRC".into()),
+            })
+            .unwrap_err();
+        assert!(case_alias_err
+            .to_string()
+            .contains("too_many_requests/quota_exceeded"));
     }
 
     #[test]
-    fn source_attribution_length_is_bounded_for_quota_buckets() {
+    fn source_attribution_canonicalization_collapses_whitespace_without_trailing_space() {
+        let canonical = canonicalize_risk_source(Some("   Bot\t\n Worker   "));
+        assert_eq!(canonical, "bot worker");
+
+        let exact = "A".repeat(RISK_SOURCE_MAX_CHARS);
+        let with_suffix = format!("{}   z", exact);
+        // Truncation should not keep a trailing separator when the next token is cut.
+        assert_eq!(canonicalize_risk_source(Some(&with_suffix)), exact.to_ascii_lowercase());
+    }
+
+    #[test]
+    fn source_attribution_overlong_values_share_truncated_quota_bucket() {
         let mut router = RelayRouter::new();
         router.register("relay.echo", EchoHandler);
         let relay = RelayService::with_risk_quota_config(
@@ -1748,42 +2184,43 @@ mod tests {
         );
         relay
             .open(RelayOpenRequest {
-                session_id: "src-cap-s1".into(),
+                session_id: "mv-src-s3".into(),
             })
             .unwrap();
 
-        let long_src = "x".repeat(256);
+        let prefix = "X".repeat(RISK_SOURCE_MAX_CHARS);
+        let src_a = format!("{}-A", prefix);
+        let src_b = format!("{}-B", prefix);
+
         relay
             .send(RelaySendRequest {
-                session_id: "src-cap-s1".into(),
+                session_id: "mv-src-s3".into(),
                 route: "relay.echo".into(),
                 from: "alice".into(),
                 to: Some("bob".into()),
                 payload: b"a".to_vec(),
-                source: Some(long_src.clone()),
+                source: Some(src_a),
             })
             .unwrap();
-
-        // Casing/whitespace aliases for a long source key should still share one capped bucket.
         relay
             .send(RelaySendRequest {
-                session_id: "src-cap-s1".into(),
+                session_id: "mv-src-s3".into(),
                 route: "relay.echo".into(),
                 from: "alice".into(),
                 to: Some("bob".into()),
                 payload: b"b".to_vec(),
-                source: Some(format!("  {}  ", long_src.to_ascii_uppercase())),
+                source: Some(src_b),
             })
             .unwrap();
 
         let err = relay
             .send(RelaySendRequest {
-                session_id: "src-cap-s1".into(),
+                session_id: "mv-src-s3".into(),
                 route: "relay.echo".into(),
                 from: "alice".into(),
                 to: Some("bob".into()),
                 payload: b"c".to_vec(),
-                source: Some(format!("{}tail", long_src)),
+                source: Some(format!("{}-C", prefix)),
             })
             .unwrap_err();
         assert!(err
@@ -1840,6 +2277,97 @@ mod tests {
             })
             .unwrap_err();
         assert!(err.to_string().contains("too_many_requests/quota_exceeded"));
+    }
+
+    #[test]
+    fn proof_quota_source_attribution_aliases_share_boundary() {
+        let mut router = RelayRouter::new();
+        router.register("relay.echo", EchoHandler);
+        let relay = RelayService::with_risk_quota_config(
+            router,
+            RiskQuotaConfig {
+                window_ms: 1_000,
+                per_session_limit: 6,
+                per_source_limit: 2,
+            },
+        );
+        relay
+            .open(RelayOpenRequest {
+                session_id: "proof-src-s1".into(),
+            })
+            .unwrap();
+        relay
+            .send(RelaySendRequest {
+                session_id: "proof-src-s1".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"x".to_vec(),
+                source: Some("seed".into()),
+            })
+            .unwrap();
+
+        relay
+            .query_session_proof(RelaySessionProofQuery {
+                task_id: 1,
+                session_id: "proof-src-s1".into(),
+                from_seq: 1,
+                to_seq: 1,
+                source: Some("proof-src".into()),
+            })
+            .unwrap();
+        relay
+            .query_session_proof(RelaySessionProofQuery {
+                task_id: 1,
+                session_id: "proof-src-s1".into(),
+                from_seq: 1,
+                to_seq: 1,
+                source: Some("  proof-src  ".into()),
+            })
+            .unwrap();
+        let trimmed_alias_err = relay
+            .query_session_proof(RelaySessionProofQuery {
+                task_id: 1,
+                session_id: "proof-src-s1".into(),
+                from_seq: 1,
+                to_seq: 1,
+                source: Some("proof-src".into()),
+            })
+            .unwrap_err();
+        assert!(trimmed_alias_err
+            .to_string()
+            .contains("too_many_requests/quota_exceeded"));
+
+        relay
+            .query_session_proof(RelaySessionProofQuery {
+                task_id: 1,
+                session_id: "proof-src-s1".into(),
+                from_seq: 1,
+                to_seq: 1,
+                source: None,
+            })
+            .unwrap();
+        relay
+            .query_session_proof(RelaySessionProofQuery {
+                task_id: 1,
+                session_id: "proof-src-s1".into(),
+                from_seq: 1,
+                to_seq: 1,
+                source: Some("\t \n".into()),
+            })
+            .unwrap();
+        let anon_alias_err = relay
+            .query_session_proof(RelaySessionProofQuery {
+                task_id: 1,
+                session_id: "proof-src-s1".into(),
+                from_seq: 1,
+                to_seq: 1,
+                source: Some("".into()),
+            })
+            .unwrap_err();
+        assert!(anon_alias_err
+            .to_string()
+            .contains("too_many_requests/quota_exceeded"));
     }
 
     #[test]

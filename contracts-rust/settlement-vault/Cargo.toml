@@ -1,0 +1,12 @@
+[package]
+name = "settlement-vault"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "Minimal in-memory SettlementVault state machine"
+
+[lib]
+name = "settlement_vault"
+path = "src/lib.rs"
+
+[dependencies]

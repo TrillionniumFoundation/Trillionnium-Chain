@@ -8,8 +8,125 @@ echo "[I2] capability token lifecycle gate: issue/revoke/replay/verify"
 
 cargo test -p trnm-types issue_capability_rejects_height_before_did_creation_without_side_effects
 cargo test -p trnm-types renew_capability_extends_expiry_and_appends_audit
+cargo test -p trnm-types renew_capability_at_expiry_boundary_keeps_token_active_and_audited
+cargo test -p trnm-types renew_capability_with_same_expiry_is_idempotent_without_new_audit
+cargo test -p trnm-types renew_capability_with_non_expiring_token_is_idempotent_without_new_audit
+cargo test -p trnm-types renew_capability_rejects_expiry_before_renew_height_without_side_effects
+cargo test -p trnm-types renew_capability_rejects_expiry_regression_without_side_effects
+cargo test -p trnm-types renew_capability_rejects_clearing_existing_expiry_without_side_effects
+cargo test -p trnm-types renew_capability_rejects_height_before_issue_without_side_effects
+cargo test -p trnm-types renew_capability_rejects_previously_revoked_token_without_side_effects
+cargo test -p trnm-types renew_capability_rejects_when_renew_height_equals_revocation_height
+cargo test -p trnm-types renew_capability_rejects_revoked_did_without_side_effects
+cargo test -p trnm-types renew_capability_rejects_noncanonical_actor_without_side_effects
+cargo test -p trnm-types renew_capability_rejects_blank_actor_without_side_effects
+cargo test -p trnm-types renew_capability_rejects_control_character_actor_without_side_effects
+cargo test -p trnm-types renew_capability_rejects_zero_width_actor_without_side_effects
+cargo test -p trnm-types renew_capability_rejects_zero_width_non_joiner_actor_without_side_effects
+cargo test -p trnm-types renew_capability_rejects_word_joiner_actor_without_side_effects
+cargo test -p trnm-types renew_capability_rejects_arabic_letter_mark_actor_without_side_effects
+cargo test -p trnm-types renew_capability_rejects_bom_actor_without_side_effects
+cargo test -p trnm-types renew_capability_rejects_unknown_token_without_side_effects
+cargo test -p trnm-types revoke_capability_is_idempotent_for_audit_and_timestamp
+cargo test -p trnm-types revoke_capability_replay_with_same_height_is_idempotent_without_side_effects
 cargo test -p trnm-types revoke_capability_replay_with_older_height_is_rejected_without_side_effects
+cargo test -p trnm-types revoke_capability_blank_audit_note_is_normalized_to_none
+cargo test -p trnm-types revoke_capability_rejects_blank_actor_without_side_effects
+cargo test -p trnm-types revoke_capability_rejects_control_character_actor_without_side_effects
+cargo test -p trnm-types revoke_capability_rejects_zero_width_actor_without_side_effects
+cargo test -p trnm-types revoke_capability_rejects_zero_width_non_joiner_actor_without_side_effects
+cargo test -p trnm-types revoke_capability_rejects_word_joiner_actor_without_side_effects
+cargo test -p trnm-types revoke_capability_rejects_arabic_letter_mark_actor_without_side_effects
+cargo test -p trnm-types revoke_capability_rejects_bom_actor_without_side_effects
+cargo test -p trnm-types revoke_capability_rejects_actor_that_is_not_did_controller_without_side_effects
 cargo test -p trnm-types revoke_did_replay_repairs_legacy_uncascaded_capability_without_rewriting_did_timestamp
+cargo test -p trnm-types revoke_did_replay_preserves_issue_height_floor_when_repairing_legacy_token
 cargo test -p trnm-types verify_capability_accepts_active_controller_and_matching_scope
+cargo test -p trnm-types verify_capability_rejects_noncanonical_actor_without_side_effects
+cargo test -p trnm-types verify_capability_rejects_blank_actor_without_side_effects
+cargo test -p trnm-types verify_capability_rejects_control_character_actor_without_side_effects
+cargo test -p trnm-types verify_capability_rejects_zero_width_actor_without_side_effects
+cargo test -p trnm-types verify_capability_rejects_zero_width_non_joiner_actor_without_side_effects
+cargo test -p trnm-types verify_capability_rejects_word_joiner_actor_without_side_effects
+cargo test -p trnm-types verify_capability_rejects_arabic_letter_mark_actor_without_side_effects
+cargo test -p trnm-types verify_capability_rejects_bom_actor_without_side_effects
+cargo test -p trnm-types verify_capability_rejects_missing_subject_did_without_side_effects
+cargo test -p trnm-types verify_capability_rejects_scope_mismatch_without_side_effects
+cargo test -p trnm-types verify_capability_rejects_unknown_token_without_side_effects
+cargo test -p trnm-types verify_capability_rejects_expired_token_without_side_effects
+cargo test -p trnm-types verify_capability_rejects_height_before_issue_without_side_effects
+cargo test -p trnm-types capability_revocation_takes_precedence_over_expiry_window
+cargo test -p trnm-types capability_revoked_at_issue_height_is_never_active
+cargo test -p trnm-types non_expiring_capability_still_honors_revocation_boundary
+cargo test -p trnm-types verify_capability_accepts_height_equal_to_expiry_boundary
+cargo test -p trnm-types verify_capability_rejects_revoked_did_even_if_token_looks_active
+cargo test -p trnm-types verify_capability_allows_historical_height_before_did_revocation
+cargo test -p trnm-types verify_capability_rejects_height_equal_to_did_revocation_boundary
+cargo test -p trnm-types verify_capability_rejects_inactive_or_unauthorized_actor
+cargo test -p trnm-types verify_capability_unauthorized_actor_does_not_mutate_registry
+# I3-prep fail-closed competition guard: same-height renew/revoke race must stay revoke-dominant
+# regardless of whether renew or revoke is observed first at the boundary.
+cargo test -p trnm-types --test i3_capability_issue_renew_revoke_competition \
+  revoke_dominates_issue_renew_revoke_competition_at_same_height
+cargo test -p trnm-types --test i3_capability_issue_renew_revoke_competition \
+  renew_at_revocation_boundary_is_fail_closed_when_revoke_lands_first
+cargo test -p trnm-types --test i3_capability_issue_renew_revoke_competition \
+  verify_before_revocation_boundary_stays_active_after_same_height_renew_revoke_race
+cargo test -p trnm-types --test i3_capability_issue_renew_revoke_competition \
+  verify_at_revocation_boundary_is_fail_closed_after_same_height_renew_revoke_race
+cargo test -p trnm-types --test i3_capability_issue_renew_revoke_competition \
+  rejected_boundary_renew_after_same_height_revoke_keeps_audit_and_token_stable
+cargo test -p trnm-types --test i3_capability_issue_renew_revoke_competition \
+  rejected_post_boundary_renew_after_same_height_renew_then_revoke_is_side_effect_free
+cargo test -p trnm-types --test i3_capability_issue_renew_revoke_competition \
+  same_height_revoke_replay_after_renew_then_revoke_is_idempotent_without_side_effects
+cargo test -p trnm-types --test i3_capability_issue_renew_revoke_competition \
+  issue_at_did_revocation_boundary_is_fail_closed_and_sequence_safe
+cargo test -p trnm-types --test i3_capability_issue_renew_revoke_competition \
+  revoke_at_issue_boundary_is_immediately_fail_closed_and_side_effect_free_for_renew
+cargo test -p trnm-types --test i3_capability_nonexpiring_revoke_competition \
+  nonexpiring_token_revoke_then_same_height_renew_is_fail_closed
+cargo test -p trnm-types --test i3_capability_nonexpiring_revoke_competition \
+  nonexpiring_same_height_renew_then_revoke_still_fails_closed_at_boundary
+cargo test -p trnm-types --test i3_capability_nonexpiring_revoke_competition \
+  nonexpiring_same_height_renew_then_revoke_preserves_historical_pre_boundary_verify
+cargo test -p trnm-types --test i3_capability_nonexpiring_revoke_competition \
+  nonexpiring_rejected_post_boundary_renew_after_same_height_renew_then_revoke_is_side_effect_free
+cargo test -p trnm-types --test i3_did_revoke_cascade_same_height \
+  did_revoke_cascade_same_height_fail_closed_for_all_subject_tokens
+cargo test -p trnm-types --test i3_did_revoke_cascade_same_height \
+  did_revoke_same_height_replay_is_idempotent_without_duplicate_cascade_audit
+cargo test -p trnm-types --test i3_did_token_revoke_same_height_precedence \
+  did_revoke_dominates_token_revoke_at_same_height_for_verifier_shape
+# I3-prep fail-closed verifier error-contract guard: inactive state must dominate
+# scope mismatch once token is revoked to avoid authorization-shape leakage.
+cargo test -p trnm-types --test i3_capability_fail_closed_precedence \
+  revoked_token_with_scope_mismatch_returns_inactive_fail_closed
+cargo test -p trnm-types --test i3_capability_fail_closed_precedence \
+  revoked_token_with_unauthorized_actor_returns_inactive_fail_closed
+cargo test -p trnm-types --test i3_capability_fail_closed_precedence \
+  expired_token_with_scope_mismatch_returns_inactive_fail_closed
+cargo test -p trnm-types --test i3_capability_fail_closed_precedence \
+  expired_token_with_unauthorized_actor_returns_inactive_fail_closed
+cargo test -p trnm-types --test i3_capability_fail_closed_precedence \
+  revoked_and_expired_token_with_unauthorized_actor_returns_inactive_fail_closed
+cargo test -p trnm-types --test i3_capability_fail_closed_precedence \
+  revoked_and_expired_token_with_scope_mismatch_returns_inactive_fail_closed
+cargo test -p trnm-types --test i3_capability_fail_closed_precedence \
+  revoked_did_with_scope_mismatch_returns_did_revoked_fail_closed
+cargo test -p trnm-types --test i3_capability_fail_closed_precedence \
+  revoked_did_with_unauthorized_actor_still_returns_did_revoked_fail_closed
+cargo test -p trnm-types --test i3_capability_fail_closed_precedence \
+  revoked_did_before_token_issue_still_returns_did_revoked_fail_closed
+cargo test -p trnm-types --test i3_capability_fail_closed_precedence \
+  revoked_did_with_expired_token_and_scope_mismatch_still_returns_did_revoked_fail_closed
+cargo test -p trnm-types --test i3_capability_fail_closed_precedence \
+  revoked_did_with_expired_token_and_unauthorized_actor_still_returns_did_revoked_fail_closed
+cargo test -p trnm-types --test i3_capability_fail_closed_precedence \
+  revoked_did_with_revoked_token_and_scope_mismatch_still_returns_did_revoked_fail_closed
+cargo test -p trnm-types --test i3_capability_fail_closed_precedence \
+  preissued_token_with_unauthorized_actor_returns_inactive_fail_closed
+cargo test -p trnm-types --test i3_capability_fail_closed_precedence \
+  preissued_token_with_scope_mismatch_returns_inactive_fail_closed
 
 echo "[I2][PASS] capability token lifecycle gate"

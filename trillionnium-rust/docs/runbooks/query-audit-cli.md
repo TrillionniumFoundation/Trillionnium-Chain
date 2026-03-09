@@ -1,6 +1,6 @@
 # Query-Audit CLI（运维最小使用说明）
 
-适用对象：需要从 `run/message-gateway/requests.jsonl` 导出企业审计记录，并按 `task_id` 快速检索的运维同学。
+适用对象：需要从 `run/message-gateway/requests.jsonl` 导出企业审计记录，并按 `task_id` 或 `provenance_fingerprint` 快速检索的运维同学。
 
 ## 1) 导出审计数据（JSONL + 索引）
 
@@ -35,7 +35,25 @@ cargo run -q -p trnm-worker-agent -- \
 - `hit_indexes`：命中下标数组（长度即命中条数）
 - `records`：命中记录列表
 
-## 3) 直接给值班同学的最短命令
+## 3) 按 provenance_fingerprint 查询（最小入口）
+
+```bash
+cd trillionnium-rust
+cargo run -q -p trnm-worker-agent -- \
+  query-audit \
+  --output-file run/audit-export.jsonl \
+  --provenance-fingerprint <FINGERPRINT>
+```
+
+返回为 JSON，核心字段：
+
+- `provenance_fingerprint`：查询指纹
+- `hit_indexes`：命中下标数组
+- `records`：命中记录列表
+
+> `query-audit` 必须二选一：`--task-id` 或 `--provenance-fingerprint`。
+
+## 4) 直接给值班同学的最短命令
 
 ```bash
 cd trillionnium-rust && \
@@ -45,7 +63,7 @@ cargo run -q -p trnm-worker-agent -- query-audit --output-file run/audit-export.
 
 将 `<TASK_ID>` 替换为实际值即可。
 
-## 4) 一键 smoke 校验
+## 5) 一键 smoke 校验
 
 ```bash
 cd trillionnium-rust
