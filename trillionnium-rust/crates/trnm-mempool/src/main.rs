@@ -57,6 +57,14 @@ impl AdmissionGate {
             while self.backpressured_ids.len() > self.capacity {
                 let mut evicted = false;
                 while let Some(candidate) = self.backpressured_fifo.pop_front() {
+                    if candidate == tx_id
+                        && self.backpressured_ids.len().saturating_sub(1) >= self.capacity
+                    {
+                        // Restored state may miss historical fifo markers. Keep the
+                        // newly inserted retry id and let deterministic set trimming
+                        // evict older entries instead of immediately dropping tx_id.
+                        continue;
+                    }
                     if self.backpressured_ids.remove(&candidate) {
                         evicted = true;
                         break;
@@ -70,12 +78,11 @@ impl AdmissionGate {
                     if overflow == 0 {
                         break;
                     }
-                    let to_drop: Vec<u64> = self
-                        .backpressured_ids
-                        .iter()
-                        .copied()
-                        .take(overflow)
-                        .collect();
+                    // HashSet iteration order is randomized; sort for stable trimming so
+                    // restored-state recovery stays deterministic across runs/nodes.
+                    let mut to_drop: Vec<u64> = self.backpressured_ids.iter().copied().collect();
+                    to_drop.sort_unstable();
+                    to_drop.truncate(overflow);
                     for tx in to_drop {
                         self.backpressured_ids.remove(&tx);
                     }
@@ -901,6 +908,10 @@ mod tests {
         // Any new backpressure insert should rebalance retry memory to quota bounds.
         assert!(gate.remember_backpressured(103));
         assert!(gate.backpressured_ids.len() <= gate.capacity);
+
+        // Fallback trim is deterministic: oldest/smallest ids are dropped first.
+        assert!(gate.backpressured_ids.contains(&102));
+        assert!(gate.backpressured_ids.contains(&103));
     }
 
     #[test]
