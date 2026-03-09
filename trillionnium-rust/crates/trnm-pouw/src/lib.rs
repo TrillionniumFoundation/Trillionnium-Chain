@@ -313,6 +313,12 @@ fn preflight_resolve_transfers(
     task: &TaskObject,
     slash_worker: bool,
 ) -> Result<(), PouwError> {
+    if slash_worker && task.challenge_bond.is_some() && task.challenger.is_none() {
+        return Err(PouwError::State(
+            "resolve challenge refund requested without challenger".into(),
+        ));
+    }
+
     let mut sim = st.clone();
 
     if let Some(bond) = task.challenge_bond {
@@ -11331,6 +11337,36 @@ mod tests {
         let err = apply_timeout(&mut st, r4, 122).unwrap_err();
         assert!(matches!(err, PouwError::InvalidTransition));
         assert_eq!(st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT), 40);
+    }
+
+    #[test]
+    fn resolve_preflight_rejects_slash_refund_without_challenger() {
+        let st = seeded_state();
+        let task = TaskObject {
+            task_id: 76,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker1".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: Some(1),
+            reveal_deadline_height: Some(10),
+            challenge_deadline_height: Some(20),
+            challenge_window_blocks_snapshot: Some(10),
+            challenged_at_height: Some(11),
+            resolve_deadline_height: Some(30),
+            challenge_bond: Some(10),
+            challenge_bond_forfeited: None,
+            challenger: None,
+            version: 0,
+        };
+
+        let err = preflight_resolve_transfers(&st, &task, true).unwrap_err();
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("without challenger")));
     }
 
     #[test]
