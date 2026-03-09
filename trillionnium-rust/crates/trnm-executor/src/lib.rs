@@ -934,9 +934,12 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
                 .map(|tx| hot_bucket_hint(tx, n))
                 .unwrap_or(0);
             let sparse_start = {
+                // Cache per-bucket depth once to avoid repeated Vec::len probes in
+                // the sparse-seed scan on hot interleave paths.
+                let bucket_depths: Vec<usize> = buckets.iter().map(Vec::len).collect();
                 let mut min_non_zero = usize::MAX;
                 let mut max_depth = 0usize;
-                for depth in buckets.iter().map(|b| b.len()) {
+                for &depth in &bucket_depths {
                     if depth == 0 {
                         continue;
                     }
@@ -951,7 +954,7 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
                     let mut best_idx = None;
                     let mut best_distance = usize::MAX;
                     let mut best_counter_clockwise = usize::MAX;
-                    for (idx, depth) in buckets.iter().map(|b| b.len()).enumerate() {
+                    for (idx, &depth) in bucket_depths.iter().enumerate() {
                         if depth != min_non_zero {
                             continue;
                         }
