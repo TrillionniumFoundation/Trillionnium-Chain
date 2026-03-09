@@ -77,6 +77,10 @@ elif command -v gtimeout >/dev/null 2>&1; then
   TIMEOUT_BIN="gtimeout"
 fi
 RUN_TIMEOUT_SEC="${RUN_TIMEOUT_SEC:-120}"
+if ! [[ "$RUN_TIMEOUT_SEC" =~ ^[0-9]+$ ]] || [[ "$RUN_TIMEOUT_SEC" -lt 1 ]]; then
+  echo "RUN_TIMEOUT_SEC must be a positive integer (got: $RUN_TIMEOUT_SEC)" >&2
+  exit 64
+fi
 if [[ "$#" -gt 0 ]]; then
   "$@"
 else
