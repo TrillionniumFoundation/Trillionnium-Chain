@@ -3494,7 +3494,9 @@ mod tests {
             fs::create_dir_all(parent).expect("create lock dir");
         }
         fs::write(&lock_path, "stale").expect("seed stale lock");
-        std::thread::sleep(Duration::from_millis(1050));
+        // Use extra margin above the 1000ms stale threshold to avoid filesystem
+        // timestamp granularity edge-cases on slower CI runners.
+        std::thread::sleep(Duration::from_millis(1200));
 
         {
             let _lock = acquire_market_file_lock(&path).expect("acquire cleans stale lock");
