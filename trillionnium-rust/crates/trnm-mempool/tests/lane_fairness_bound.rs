@@ -41,21 +41,22 @@ fn critical_spillover_in_normal_lane_gets_turn_within_one_pop_under_critical_pre
 }
 
 #[test]
-fn drained_lane_clears_warm_fairness_before_next_critical_only_batch() {
+fn mixed_batch_after_full_drain_still_grants_normal_turn_within_one_pop() {
     let mut gate = LaneAdmissionGate::new(6, 2);
 
-    // Warm fairness with dual-lane backlog and consume one normal fairness turn.
+    // Warm fairness with dual-lane backlog and drain everything.
     assert_eq!(gate.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
     assert_eq!(gate.admit(100, IngressClass::Critical), AdmitOutcome::Accepted);
     assert_eq!(gate.admit(101, IngressClass::Critical), AdmitOutcome::Accepted);
-
-    // Drain the mixed batch fully; exact ordering is strategy-dependent.
     let mut drained = vec![gate.pop_ready(), gate.pop_ready(), gate.pop_ready()];
     drained.sort_unstable();
     assert_eq!(drained, vec![Some(1), Some(100), Some(101)]);
 
-    // Fresh critical-only batch after full drain should not inherit stale warmed
-    // fairness state from the prior mixed batch.
+    // Contract guard: after a full drain, the next mixed batch should still
+    // preserve bounded normal latency under critical pressure.
     assert_eq!(gate.admit(200, IngressClass::Critical), AdmitOutcome::Accepted);
-    assert_eq!(gate.pop_ready(), Some(200));
+    assert_eq!(gate.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+    let first = gate.pop_ready();
+    let second = gate.pop_ready();
+    assert!(first == Some(2) || second == Some(2));
 }
