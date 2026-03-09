@@ -618,10 +618,10 @@ fn parse_env_usize(name: &str) -> Option<usize> {
             return None;
         }
         // Accept common human-friendly separators in ops configs.
-        if trimmed.contains('_') {
+        if trimmed.contains('_') || trimmed.contains(',') {
             let mut compact = String::with_capacity(trimmed.len());
             for ch in trimmed.chars() {
-                if ch != '_' {
+                if ch != '_' && ch != ',' {
                     compact.push(ch);
                 }
             }
@@ -1592,6 +1592,17 @@ mod tests {
         let _env = env_lock();
         let _buckets = EnvGuard::set("TRNM_HOT_BUCKETS", " 16 ");
 
+        assert_eq!(hot_bucket_count(), 16);
+    }
+
+    #[test]
+    fn hot_bucket_count_parser_accepts_grouped_numeric_values() {
+        let _env = env_lock();
+        let _underscored = EnvGuard::set("TRNM_HOT_BUCKETS", " 6_4 ");
+        assert_eq!(hot_bucket_count(), 64);
+        drop(_underscored);
+
+        let _comma_grouped = EnvGuard::set("TRNM_HOT_BUCKETS", " 1,6 ");
         assert_eq!(hot_bucket_count(), 16);
     }
 
