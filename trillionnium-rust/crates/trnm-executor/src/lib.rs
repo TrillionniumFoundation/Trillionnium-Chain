@@ -801,6 +801,13 @@ pub fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
 }
 
 fn hot_bucket_hint(tx: &Tx, buckets_n: usize) -> usize {
+    // Defensive guard: keep helper total for misconfigured callers and tests.
+    // Production reorder path always uses buckets_n>=1, but this preserves
+    // fail-closed deterministic behavior if future call sites pass zero.
+    if buckets_n == 0 {
+        return 0;
+    }
+
     // Keep hash mixing deterministic across targets (32/64-bit) by using a
     // fixed-width integer domain before reducing to bucket count.
     let key_a = tx
@@ -871,12 +878,24 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
             // and probing empty buckets while preserving the same interleave semantics.
             let buckets_n = hot_bucket_count().min(txs.len());
             let mut buckets: Vec<Vec<Tx>> = vec![Vec::new(); buckets_n];
+            let mut non_empty_buckets = 0usize;
 
             for tx in txs.iter().cloned() {
                 // Prefer write-set as stronger conflict signal; fold a second key when present
                 // to reduce bucket skew for mixed workloads.
                 let bucket = hot_bucket_hint(&tx, buckets_n);
-                buckets[bucket].push(tx);
+                let target = &mut buckets[bucket];
+                if target.is_empty() {
+                    non_empty_buckets += 1;
+                }
+                target.push(tx);
+            }
+
+            // Degenerate hotspot fast path: if all txs landed in the same bucket,
+            // round-robin interleave would reproduce the original order while paying
+            // n-bucket probing overhead. Keep stable input order for lower scheduler cost.
+            if non_empty_buckets <= 1 {
+                return;
             }
 
             // Keep insertion order inside each bucket (already stable by input stream);
@@ -936,11 +955,11 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
             // Seed the initial bucket probe from either sparse anti-starvation hint
             // or first tx hot-key hint so repeated batches do not always favor bucket 0.
             let mut rr_start = sparse_start.unwrap_or(first_hint);
+            let n = iters.len();
             // Rotate the round-robin start bucket each pass to reduce consistent
             // first-bucket preference under uneven bucket depths.
             loop {
                 let mut moved = false;
-                let n = iters.len();
                 for step in 0..n {
                     let idx = (rr_start + step) % n;
                     if let Some(tx) = iters[idx].next() {
@@ -1216,6 +1235,22 @@ mod tests {
     }
 
     #[test]
+    fn hot_bucket_interleave_keeps_first_hint_when_skew_is_below_two_to_one_threshold() {
+        let mut txs = vec![
+            tx(391, vec![], vec![o(0)]),  // first hot hint bucket 0
+            tx(392, vec![], vec![o(8)]),  // same bucket (depth 3)
+            tx(393, vec![], vec![o(16)]), // same bucket (depth 3)
+            tx(394, vec![], vec![o(1)]),  // second bucket (depth 2)
+            tx(395, vec![], vec![o(9)]),  // second bucket (depth 2)
+        ];
+
+        reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
+        // Sparse anti-starvation seeding should only engage at >=2x skew. For 3:2,
+        // keep first-hot-hint ordering to avoid unnecessary lane rotation overhead.
+        assert_eq!(txs.first().map(|t| t.id), Some(391));
+    }
+
+    #[test]
     fn hot_bucket_interleave_sparse_tie_rotates_from_first_hot_hint() {
         let mut txs = vec![
             tx(401, vec![], vec![o(5)]),  // first hot hint bucket 5
@@ -1258,6 +1293,21 @@ mod tests {
             txs.iter().map(|t| t.id).collect::<Vec<_>>(),
             vec![21, 22, 23]
         );
+    }
+
+    #[test]
+    fn hot_bucket_interleave_short_circuits_single_bucket_hotspot() {
+        let mut txs = vec![
+            tx(61, vec![], vec![o(8)]),
+            tx(62, vec![], vec![o(16)]),
+            tx(63, vec![], vec![o(24)]),
+            tx(64, vec![], vec![o(32)]),
+        ];
+
+        reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
+        // All keys map to bucket 0 under the default 8-bucket layout; interleave
+        // is a no-op and should return early without extra round-robin passes.
+        assert_eq!(txs.iter().map(|t| t.id).collect::<Vec<_>>(), vec![61, 62, 63, 64]);
     }
 
     #[test]
@@ -1305,6 +1355,12 @@ mod tests {
                 % buckets_n as u64) as usize;
             assert_eq!(hot_bucket_hint(&t, buckets_n), expected);
         }
+    }
+
+    #[test]
+    fn hot_bucket_hint_zero_bucket_count_fails_closed_to_bucket_zero() {
+        let t = tx(999, vec![], vec![o(42)]);
+        assert_eq!(hot_bucket_hint(&t, 0), 0);
     }
 
     #[test]

@@ -20,6 +20,13 @@ jobs:
   gates:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    env:
+      # Keep locale/time hashing deterministic for frontend snapshots/log assertions.
+      TZ: UTC
+      LANG: C.UTF-8
+      LC_ALL: C.UTF-8
+      PYTHONHASHSEED: '0'
+      CI: 'true'
     defaults:
       run:
         working-directory: web4-frontend

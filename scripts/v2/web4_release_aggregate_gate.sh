@@ -58,7 +58,13 @@ if [[ ${#REQUIRED_GATES[@]} -eq 0 ]]; then
   exit 2
 fi
 
-RUN_DIR="${WEB4_RELEASE_RUN_DIR:-$ROOT/run/web4-release-gate/$(date +%Y%m%d-%H%M%S)}"
+RUN_STAMP="${WEB4_RELEASE_RUN_STAMP:-$(date +%Y%m%d-%H%M%S)}"
+if [[ ! "$RUN_STAMP" =~ ^[0-9]{8}-[0-9]{6}$ ]]; then
+  echo "[WEB4-RELEASE][FAIL] WEB4_RELEASE_RUN_STAMP must match YYYYMMDD-HHMMSS, got: $RUN_STAMP" >&2
+  exit 2
+fi
+
+RUN_DIR="${WEB4_RELEASE_RUN_DIR:-$ROOT/run/web4-release-gate/$RUN_STAMP}"
 mkdir -p "$RUN_DIR"
 
 echo "[WEB4-RELEASE] start"

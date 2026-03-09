@@ -30,14 +30,17 @@ impl AdmissionGate {
         }
     }
     pub fn admit(&mut self, tx_id: u64) -> AdmitOutcome {
+        if self.queue.len() >= self.capacity {
+            // Saturated fast path: preserve duplicate-vs-backpressure semantics
+            // without insert-then-remove churn for fresh ids.
+            return if self.seen.contains(&tx_id) {
+                AdmitOutcome::Duplicate
+            } else {
+                AdmitOutcome::Backpressured
+            };
+        }
         if !self.seen.insert(tx_id) {
             return AdmitOutcome::Duplicate;
-        }
-        if self.queue.len() >= self.capacity {
-            // Keep duplicate-vs-backpressure semantics stable while avoiding an
-            // extra successful hash probe on the accepted hot path.
-            self.seen.remove(&tx_id);
-            return AdmitOutcome::Backpressured;
         }
         self.queue.push_back(tx_id);
         AdmitOutcome::Accepted
@@ -59,15 +62,6 @@ pub struct LaneAdmissionGate {
     critical_burst_limit: usize,
 }
 impl LaneAdmissionGate {
-    #[inline]
-    fn contains_queued_tx(&self, tx_id: u64) -> bool {
-        // Fast-path uses lane-wide idempotency set; lane-local fallback preserves
-        // duplicate semantics if transient state restoration leaves seen_global stale.
-        self.seen_global.contains(&tx_id)
-            || self.normal.seen.contains(&tx_id)
-            || self.critical.seen.contains(&tx_id)
-    }
-
     pub fn new(total_capacity: usize, critical_reserve: usize) -> Self {
         // Preserve explicit zero-capacity semantics so callers can hard-stop
         // ingress without accidentally admitting one tx.
@@ -86,34 +80,35 @@ impl LaneAdmissionGate {
         }
     }
     pub fn admit(&mut self, tx_id: u64, class: IngressClass) -> AdmitOutcome {
-        // Fast-path saturation check from the global idempotency set: this tracks
+        // Fast-path saturation check from the lane-wide idempotency set: this tracks
         // all currently queued tx ids and avoids touching both lane queues on every
-        // ingress probe.
+        // ingress probe while the cache is in sync.
         let lane_total = self.normal.queue.len() + self.critical.queue.len();
-        let total_queued = if self.seen_global.len() == lane_total {
-            lane_total
-        } else {
+        if self.seen_global.len() != lane_total {
             // Defensive self-heal for transient restored-state skew: lane-local queues
             // remain source of truth for saturation, and rebuild lane-wide id set.
             self.seen_global.clear();
             self.seen_global.extend(self.normal.seen.iter().copied());
             self.seen_global.extend(self.critical.seen.iter().copied());
-            lane_total
-        };
-        if total_queued >= self.total_capacity {
+        }
+
+        // When cache and lane queue cardinality are aligned, lane-wide membership
+        // is authoritative for duplicate checks on both saturated and free paths.
+        let is_duplicate = self.seen_global.contains(&tx_id);
+
+        if lane_total >= self.total_capacity {
             // Saturated hot path: avoid insert-then-remove churn for fresh ids while
             // preserving duplicate-vs-backpressure semantics under full queues.
-            return if self.contains_queued_tx(tx_id) {
+            return if is_duplicate {
                 AdmitOutcome::Duplicate
             } else {
                 AdmitOutcome::Backpressured
             };
         }
 
-        if self.contains_queued_tx(tx_id) {
+        if is_duplicate {
             return AdmitOutcome::Duplicate;
         }
-        self.seen_global.insert(tx_id);
 
         let out = match class {
             IngressClass::Normal => {
@@ -169,8 +164,8 @@ impl LaneAdmissionGate {
                 }
             }
         };
-        if !matches!(out, AdmitOutcome::Accepted) {
-            self.seen_global.remove(&tx_id);
+        if matches!(out, AdmitOutcome::Accepted) {
+            self.seen_global.insert(tx_id);
         }
         out
     }
@@ -612,5 +607,53 @@ mod tests {
         assert_eq!(g.pop_ready(), Some(1));
         let (_, _, total_after_drain) = g.queued_counts();
         assert_eq!(g.seen_global.len(), total_after_drain);
+    }
+
+    #[test]
+    fn stale_seen_global_self_heals_without_dropping_duplicate_or_fresh_semantics() {
+        let mut g = LaneAdmissionGate::new(4, 1);
+
+        assert_eq!(g.admit(1, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+
+        // Simulate transient restored-state skew where lane-wide idempotency cache
+        // is stale, but lane-local queues remain authoritative.
+        g.seen_global.clear();
+
+        // Non-saturated admission should self-heal from lane-local state first.
+        assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
+
+        // Duplicate semantics for pre-existing queued ids must survive healing.
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Duplicate);
+
+        // Fresh ids still admit until global capacity is reached.
+        assert_eq!(g.admit(4, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(5, IngressClass::Normal), AdmitOutcome::Backpressured);
+
+        let (_, _, total) = g.queued_counts();
+        assert_eq!(g.seen_global.len(), total);
+    }
+
+    #[test]
+    fn stale_seen_global_ghost_id_does_not_poison_fresh_admission_after_self_heal() {
+        let mut g = LaneAdmissionGate::new(3, 1);
+
+        assert_eq!(g.admit(1, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+
+        // Simulate restored-state skew where lane-wide cache carries a ghost id
+        // that is not present in either lane queue.
+        g.seen_global.insert(999);
+
+        // Self-heal should rebuild from lane-local truth and keep fresh ingress live.
+        assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
+
+        // Queue is now globally full; ghost id must not appear as a duplicate.
+        assert_eq!(g.admit(999, IngressClass::Critical), AdmitOutcome::Backpressured);
+
+        // After one dequeue, the same id should admit as fresh.
+        let drained = g.pop_ready();
+        assert!(drained == Some(1) || drained == Some(2) || drained == Some(3));
+        assert_eq!(g.admit(999, IngressClass::Critical), AdmitOutcome::Accepted);
     }
 }

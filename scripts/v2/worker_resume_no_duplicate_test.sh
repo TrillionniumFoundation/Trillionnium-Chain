@@ -17,7 +17,13 @@ PASS2_OUT="${PASS2_OUT:-/tmp/trnm-worker-resume-pass2-${RUN_TAG}.out}"
 rm -f "$STATE" "$SUBMIT_LOG" "$ACK_LOG" "$OUT_JSON" "$ADAPTER_PARTIAL" "$PASS1_OUT" "$PASS2_OUT"
 
 # avoid collision with historical adapter logs (replay check is task_id-based)
-START_ID=$(( $(date +%s%N) / 1000 ))
+# Use Python for microsecond epoch generation because `date +%s%N` is not portable
+# across GNU/BSD runners (BSD `date` may emit a literal `N`).
+START_ID="$(python3 - <<'PY'
+import time
+print(time.time_ns() // 1000)
+PY
+)"
 printf '{"last_task_id": %s}\n' "$START_ID" > "$STATE"
 
 cat > "$ADAPTER_PARTIAL" <<'EOF'

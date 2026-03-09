@@ -18,6 +18,8 @@ required_lines=(
   'LC_TIME: C'
   'LC_CTYPE: C'
   'LC_MESSAGES: C'
+  'LC_MONETARY: C'
+  'LC_MEASUREMENT: C'
   'PYTHONHASHSEED: "0"'
   'CI: "true"'
   'SOURCE_DATE_EPOCH: "1704067200"'
