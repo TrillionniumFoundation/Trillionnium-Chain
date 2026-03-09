@@ -387,7 +387,7 @@ impl RiskQuotaState {
                     "domain={} dim={} key={} limit={} window_ms={}",
                     domain.as_str(),
                     dim,
-                    key,
+                    elide_risk_error_key(key),
                     limit,
                     window_ms
                 ),
@@ -438,6 +438,18 @@ impl RiskQuotaState {
 }
 
 const RISK_SOURCE_MAX_CHARS: usize = 64;
+const RISK_ERROR_KEY_MAX_CHARS: usize = 96;
+
+fn elide_risk_error_key(key: &str) -> String {
+    let mut out = String::with_capacity(key.len().min(RISK_ERROR_KEY_MAX_CHARS));
+    for ch in key.chars().take(RISK_ERROR_KEY_MAX_CHARS) {
+        out.push(ch);
+    }
+    if key.chars().count() > RISK_ERROR_KEY_MAX_CHARS {
+        out.push('…');
+    }
+    out
+}
 
 fn canonicalize_risk_source(source: Option<&str>) -> String {
     let source = source.unwrap_or("anon").trim();
@@ -2205,6 +2217,28 @@ mod tests {
         assert!(case_alias_err
             .to_string()
             .contains("too_many_requests/quota_exceeded"));
+    }
+
+    #[test]
+    fn risk_quota_error_key_is_elided_for_overlong_session_ids() {
+        let overlong = "s".repeat(RISK_ERROR_KEY_MAX_CHARS + 32);
+        let msg = too_many_requests(
+            "quota_exceeded",
+            format!(
+                "domain={} dim={} key={} limit={} window_ms={}",
+                RiskDomain::Relay.as_str(),
+                "session",
+                elide_risk_error_key(&overlong),
+                1,
+                1_000
+            ),
+        )
+        .to_string();
+
+        assert!(msg.contains("too_many_requests/quota_exceeded"));
+        assert!(msg.contains("key=ss"));
+        assert!(msg.contains('…'));
+        assert!(!msg.contains(&overlong));
     }
 
     #[test]
