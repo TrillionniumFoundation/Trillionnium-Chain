@@ -27,7 +27,6 @@ required_lines=(
   'PYTHONIOENCODING: "UTF-8"'
   'PYTHONUTF8: "1"'
   'CI: "true"'
-  'CARGO_TERM_COLOR: "never"'
   'SOURCE_DATE_EPOCH: "1704067200"'
   'RUST_TEST_THREADS: "1"'
   'timeout-minutes: 60'
