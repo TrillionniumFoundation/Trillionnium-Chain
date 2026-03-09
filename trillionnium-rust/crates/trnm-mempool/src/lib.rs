@@ -136,10 +136,10 @@ impl LaneAdmissionGate {
             // Probe the likely lane first to trim one HashSet lookup from the hot path.
             let lane_local_duplicate = match class {
                 IngressClass::Normal => {
-                    self.normal.seen.contains(&tx_id) || self.critical.seen.contains(&tx_id)
+                    self.normal.queue.contains(&tx_id) || self.critical.queue.contains(&tx_id)
                 }
                 IngressClass::Critical => {
-                    self.critical.seen.contains(&tx_id) || self.normal.seen.contains(&tx_id)
+                    self.critical.queue.contains(&tx_id) || self.normal.queue.contains(&tx_id)
                 }
             };
             if lane_local_duplicate {
@@ -490,6 +490,21 @@ mod tests {
         // Warm fairness: one critical then normal, instead of another full burst.
         assert_eq!(g.pop_ready(), Some(24));
         assert_eq!(g.pop_ready(), Some(11));
+    }
+
+
+    #[test]
+    fn ghost_lane_seen_entry_does_not_misclassify_fresh_ingress_as_duplicate() {
+        let mut g = LaneAdmissionGate::new(3, 1);
+
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+
+        // Simulate restored-state skew: lane-local seen set contains a stale id
+        // that is not present in either queue.
+        g.normal.seen.insert(77);
+
+        // Fresh ingress for the ghost id should still admit (not duplicate).
+        assert_eq!(g.admit(77, IngressClass::Critical), AdmitOutcome::Accepted);
     }
 
     #[test]
