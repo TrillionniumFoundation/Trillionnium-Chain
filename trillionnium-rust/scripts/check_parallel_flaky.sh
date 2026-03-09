@@ -67,16 +67,33 @@ export CARGO_TERM_COLOR="${CARGO_TERM_COLOR:-never}"
 export RUST_LOG_STYLE="${RUST_LOG_STYLE:-never}"
 export RUST_BACKTRACE="${RUST_BACKTRACE:-0}"
 umask "${UMASK:-022}"
+TIMEOUT_BIN=""
+if command -v timeout >/dev/null 2>&1; then
+  TIMEOUT_BIN="timeout"
+elif command -v gtimeout >/dev/null 2>&1; then
+  TIMEOUT_BIN="gtimeout"
+fi
+RUN_TIMEOUT_SEC="${RUN_TIMEOUT_SEC:-120}"
 if [[ "$#" -gt 0 ]]; then
   "$@"
 else
-  cargo run --locked -q -p trnm-node -- \
-    --config configs/node1.toml \
-    --block-ms 1 \
-    --max-blocks 3 \
-    --demo-tasks 2 \
-    --demo-keys 2 \
-    --parallel-workers 4
+  if [[ -n "$TIMEOUT_BIN" ]]; then
+    "$TIMEOUT_BIN" "$RUN_TIMEOUT_SEC" cargo run --locked -q -p trnm-node -- \
+      --config configs/node1.toml \
+      --block-ms 1 \
+      --max-blocks 3 \
+      --demo-tasks 2 \
+      --demo-keys 2 \
+      --parallel-workers 4
+  else
+    cargo run --locked -q -p trnm-node -- \
+      --config configs/node1.toml \
+      --block-ms 1 \
+      --max-blocks 3 \
+      --demo-tasks 2 \
+      --demo-keys 2 \
+      --parallel-workers 4
+  fi
 fi
 EOF
 chmod +x "$RUN_DIR/replay.sh"
