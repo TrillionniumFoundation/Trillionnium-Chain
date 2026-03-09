@@ -2136,7 +2136,7 @@ mod tests {
     #[test]
     fn governance_resolve_authority_rejects_non_canonical_value_without_mutation() {
         let mut st = StateStore::new();
-        st.set_gov_param_bootstrap_unchecked(7312, "resolve_authority".into(), "resolver-v1".into())
+        st.set_gov_param_unchecked(7312, "resolve_authority".into(), "resolver-v1".into())
             .unwrap();
 
         let err = st
@@ -2159,7 +2159,7 @@ mod tests {
     #[test]
     fn governance_resolve_authority_rejects_forbidden_separator_without_mutation() {
         let mut st = StateStore::new();
-        st.set_gov_param_bootstrap_unchecked(7313, "resolve_authority".into(), "resolver-v1".into())
+        st.set_gov_param_unchecked(7313, "resolve_authority".into(), "resolver-v1".into())
             .unwrap();
 
         let err = st
@@ -2182,7 +2182,7 @@ mod tests {
     #[test]
     fn governance_resolve_authority_rejects_non_ascii_without_mutation() {
         let mut st = StateStore::new();
-        st.set_gov_param_bootstrap_unchecked(7314, "resolve_authority".into(), "resolver-v1".into())
+        st.set_gov_param_unchecked(7314, "resolve_authority".into(), "resolver-v1".into())
             .unwrap();
 
         let err = st
