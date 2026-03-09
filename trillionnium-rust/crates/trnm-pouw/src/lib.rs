@@ -4110,6 +4110,50 @@ mod tests {
     }
 
     #[test]
+    fn challenged_timeout_allows_uncontested_revealed_finalization_while_paused() {
+        // Safety boundary scope: emergency pause should freeze challenged escrow
+        // settlement only; uncontested reveal timeout finalization must remain live.
+        let mut st = seeded_state();
+        set_resolve_authority(&mut st, "authority-a,authority-b");
+
+        let r1 = apply_create_task(&mut st, 19_121, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(19_121, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 =
+            apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
+        let r4 = apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110)
+            .unwrap();
+
+        st.set_gov_param(9_220, 7_999, "emergency_pause".into(), "true".into())
+            .expect("pause=true governance update must succeed");
+        assert!(st.is_emergency_paused());
+
+        let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+        let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+        let before_worker_slash_treasury = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
+
+        let r5 = apply_timeout(&mut st, r4, 211)
+            .expect("uncontested reveal timeout should finalize even while paused");
+        let task = st.get_task(r5.id).expect("task must exist after timeout");
+        assert_eq!(task.status, TaskStatus::Completed);
+        assert_eq!(task.challenge_bond_forfeited, None);
+
+        // No challenged escrow path was entered; custodial balances remain unchanged.
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
+        assert_eq!(
+            st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
+            before_worker_slash_treasury
+        );
+    }
+
+    #[test]
     fn challenged_multisig_first_approval_rejects_while_paused_without_staging_or_escrow_drift() {
         // Safety boundary: emergency pause must also block first-signer staging so
         // challenged escrow paths cannot accumulate latent approvals while paused.
