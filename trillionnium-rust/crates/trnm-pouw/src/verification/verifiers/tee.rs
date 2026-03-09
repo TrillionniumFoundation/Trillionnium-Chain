@@ -547,4 +547,20 @@ mod tests {
             VerificationResult::Invalid(msg) if msg.contains("duplicate proof_type binding")
         ));
     }
+
+    #[test]
+    fn tee_verifier_rejects_fullwidth_colon_then_ascii_result_hash_binding_fail_closed() {
+        let verifier = TeeVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                "TEE:task_id=42,worker=worker1,proof_type=tee,result_hash：abababababababababababababababababababababababababababababababab,result_hash=abababababababababababababababababababababababababababababababab,quote=abc"
+                    .as_bytes()
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("duplicate result_hash binding")
+        ));
+    }
 }
+
