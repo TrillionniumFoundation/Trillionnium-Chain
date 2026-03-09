@@ -49,6 +49,9 @@ jobs:
       PYTHONUTF8: "1"
       CARGO_TERM_COLOR: never
       CARGO_INCREMENTAL: "0"
+      # Reduce transient crates.io/index fetch flakes during RC gate runs.
+      CARGO_NET_RETRY: "5"
+      CARGO_HTTP_TIMEOUT: "120"
       CI: "true"
       # Stabilize created file permissions across runner/image defaults so
       # replay artifacts and git diffs keep deterministic mode bits.
