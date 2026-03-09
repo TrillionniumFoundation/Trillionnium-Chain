@@ -4,6 +4,11 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 
+# Keep parsing/output deterministic across CI runners and local replays.
+export TZ="${TZ:-UTC}"
+export LC_ALL="${LC_ALL:-C}"
+export LANG="${LANG:-$LC_ALL}"
+
 PROFILE="${THRESHOLD_PROFILE:-stage1}"
 
 case "$PROFILE" in
