@@ -24,6 +24,7 @@ required_lines=(
   'CARGO_TERM_COLOR: never'
   'CARGO_INCREMENTAL: "0"'
   'CI: "true"'
+  'UMASK: "022"'
   'SOURCE_DATE_EPOCH: "1704067200"'
   'timeout-minutes: 45'
   'export RUST_TEST_THREADS="${RUST_TEST_THREADS:-1}"'
