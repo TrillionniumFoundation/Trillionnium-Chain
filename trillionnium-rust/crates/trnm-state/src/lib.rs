@@ -706,12 +706,37 @@ impl StateStore {
             return Err("empty signer".into());
         }
 
-        let members: Vec<&str> = authority
-            .split(',')
-            .map(str::trim)
-            .filter(|m| !m.is_empty())
-            .collect();
-        if !members.iter().any(|m| m.eq_ignore_ascii_case(signer)) {
+        let authority_trimmed = authority.trim();
+        let members: Vec<&str> = authority_trimmed.split(',').collect();
+        if members.len() < 2 {
+            return Err("authority set must include at least two members".into());
+        }
+
+        let mut canonical_members = Vec::with_capacity(members.len());
+        for member in members {
+            let member_trimmed = member.trim();
+            if member_trimmed.is_empty() {
+                return Err("authority set contains empty member".into());
+            }
+            canonical_members.push(member_trimmed);
+        }
+
+        let canonical_authority = canonical_members.join(",");
+        if authority_trimmed != canonical_authority {
+            return Err("authority set must be canonical comma-delimited without whitespace".into());
+        }
+
+        let mut unique_members = std::collections::BTreeSet::new();
+        for member in &canonical_members {
+            if !unique_members.insert(member.to_ascii_lowercase()) {
+                return Err("authority set contains duplicate member".into());
+            }
+        }
+
+        if !canonical_members
+            .iter()
+            .any(|m| m.eq_ignore_ascii_case(signer))
+        {
             return Err("signer not in authority".into());
         }
 
@@ -723,22 +748,21 @@ impl StateStore {
                         slash_worker,
                         approvals: 1,
                         first_approver: signer.to_string(),
-                        authority_snapshot: authority.trim().to_string(),
+                        authority_snapshot: authority_trimmed.to_string(),
                     },
                 );
                 Ok(false)
             }
             Some(pending) => {
-                let authority_trimmed = authority.trim();
                 if pending.authority_snapshot != authority_trimmed {
                     self.pending_resolve_approvals.remove(&task_id);
-                    return Err("resolve authority rotated".into());
+                    return Err("authority set changed".into());
                 }
                 if pending.slash_worker != slash_worker {
                     return Err("resolve intent mismatch".into());
                 }
                 if pending.first_approver.eq_ignore_ascii_case(signer) {
-                    return Ok(false);
+                    return Err("distinct approver required".into());
                 }
                 pending.approvals = pending.approvals.max(2);
                 Ok(true)
