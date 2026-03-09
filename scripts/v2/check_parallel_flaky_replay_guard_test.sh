@@ -17,6 +17,7 @@ required_lines=(
   'export NO_COLOR="${NO_COLOR:-1}"'
   'export CARGO_TERM_COLOR="${CARGO_TERM_COLOR:-never}"'
   'export RUST_LOG_STYLE="${RUST_LOG_STYLE:-never}"'
+  'export CARGO_INCREMENTAL="${CARGO_INCREMENTAL:-0}"'
   'umask "${UMASK:-022}"'
 )
 
