@@ -149,9 +149,15 @@ MANIFEST="$RUN_DIR/manifest.txt"
   echo "cmd=${CMD[*]}"
   echo "replay=$RUN_DIR/replay.sh"
   if [[ "$HASH_BIN" == "sha256sum" ]]; then
+    echo "hash_algo=sha256sum"
+    sha256sum "$RUN_DIR/replay.sh"
     sha256sum "$RUN_DIR"/run-*.log
   elif [[ "$HASH_BIN" == "shasum -a 256" ]]; then
+    echo "hash_algo=shasum -a 256"
+    shasum -a 256 "$RUN_DIR/replay.sh"
     shasum -a 256 "$RUN_DIR"/run-*.log
+  else
+    echo "hash_algo=none"
   fi
 } >"$MANIFEST"
 
