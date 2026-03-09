@@ -27,6 +27,7 @@ required_lines=(
   'PYTHONUTF8: "1"'
   'CARGO_TERM_COLOR: never'
   'CARGO_INCREMENTAL: "0"'
+  'CARGO_NET_GIT_FETCH_WITH_CLI: "true"'
   'CI: "true"'
   'UMASK: "022"'
   'SOURCE_DATE_EPOCH: "1704067200"'
