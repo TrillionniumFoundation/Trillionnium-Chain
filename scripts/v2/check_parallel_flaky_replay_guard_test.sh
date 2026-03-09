@@ -20,6 +20,7 @@ required_lines=(
   'export CARGO_INCREMENTAL="${CARGO_INCREMENTAL:-0}"'
   'export PYTHONHASHSEED="${PYTHONHASHSEED:-0}"'
   'export RUST_BACKTRACE="${RUST_BACKTRACE:-0}"'
+  'export SOURCE_DATE_EPOCH="${SOURCE_DATE_EPOCH:-1704067200}"'
   'umask "${UMASK:-022}"'
 )
 

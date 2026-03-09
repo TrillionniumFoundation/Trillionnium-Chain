@@ -17,6 +17,8 @@ export CARGO_INCREMENTAL="${CARGO_INCREMENTAL:-0}"
 export PYTHONHASHSEED="${PYTHONHASHSEED:-0}"
 # keep panic output stable across local/CI runs for replay diffing
 export RUST_BACKTRACE="${RUST_BACKTRACE:-0}"
+# normalize build metadata timestamps to improve replay artifact diffs
+export SOURCE_DATE_EPOCH="${SOURCE_DATE_EPOCH:-1704067200}"
 umask "${UMASK:-022}"
 
 RUNS="${RUNS:-5}"
@@ -72,6 +74,7 @@ export RUST_LOG_STYLE="${RUST_LOG_STYLE:-never}"
 export CARGO_INCREMENTAL="${CARGO_INCREMENTAL:-0}"
 export PYTHONHASHSEED="${PYTHONHASHSEED:-0}"
 export RUST_BACKTRACE="${RUST_BACKTRACE:-0}"
+export SOURCE_DATE_EPOCH="${SOURCE_DATE_EPOCH:-1704067200}"
 umask "${UMASK:-022}"
 TIMEOUT_BIN=""
 if command -v timeout >/dev/null 2>&1; then
