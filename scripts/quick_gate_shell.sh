@@ -52,7 +52,9 @@ done
 
 mapfile -t FILES < <(
   for target_dir in "${NORMALIZED_TARGET_DIRS[@]}"; do
-    find "$target_dir" -type f -name '*.sh' -print
+    find "$target_dir" \
+      -type d \( -name '.git' -o -name 'node_modules' -o -name 'target' \) -prune -o \
+      -type f -name '*.sh' -print
   done | LC_ALL=C sort -u
 )
 
