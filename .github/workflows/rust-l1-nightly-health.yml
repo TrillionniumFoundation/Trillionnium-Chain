@@ -9,6 +9,9 @@ on:
       - 'trillionnium-rust/**'
       - '.github/workflows/rust-l1-nightly-health.yml'
 
+permissions:
+  contents: read
+
 concurrency:
   group: rust-l1-nightly-health-${{ github.ref }}
   cancel-in-progress: true

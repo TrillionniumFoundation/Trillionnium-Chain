@@ -230,6 +230,7 @@ struct RecoveredWalState {
     restored_lock: Option<String>,
     last_checkpoint: Option<CheckpointMeta>,
     truncated: bool,
+    metadata_only_recovery: bool,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
@@ -487,6 +488,7 @@ fn recover_wal_state(wal_dir: &Path) -> Result<RecoveredWalState> {
             restored_lock: None,
             last_checkpoint: None,
             truncated,
+            metadata_only_recovery: false,
         });
     }
 
@@ -524,6 +526,7 @@ fn recover_wal_state(wal_dir: &Path) -> Result<RecoveredWalState> {
             restored_lock: Some(last.proposal_hash.clone()),
             last_checkpoint,
             truncated,
+            metadata_only_recovery: true,
         });
     }
 
@@ -532,6 +535,7 @@ fn recover_wal_state(wal_dir: &Path) -> Result<RecoveredWalState> {
         restored_lock: None,
         last_checkpoint,
         truncated,
+        metadata_only_recovery: false,
     })
 }
 
@@ -3894,6 +3898,7 @@ mod tests {
         assert!(recovered.restored_lock.is_none());
         assert!(recovered.last_checkpoint.is_none());
         assert!(recovered.truncated);
+        assert!(!recovered.metadata_only_recovery);
 
         let checkpoints = load_checkpoint_meta(&wal_dir).unwrap();
         assert!(checkpoints.is_empty());
@@ -3953,9 +3958,36 @@ mod tests {
         let recovered = recover_wal_state(&wal_dir).unwrap();
         assert_eq!(recovered.next_height, 3);
         assert!(recovered.truncated);
+        assert!(recovered.metadata_only_recovery);
 
         let entries = load_wal_meta_entries(&wal_dir).unwrap();
         assert_eq!(entries.len(), 2);
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn recover_discards_uncheckpointed_wal_without_claiming_recovery() {
+        let wal_dir = temp_wal_dir("recover-uncheckpointed");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "h1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        persist_wal_meta_entries(&wal_dir, &[e1]).unwrap();
+
+        let recovered = recover_wal_state(&wal_dir).unwrap();
+        assert_eq!(recovered.next_height, 1);
+        assert!(recovered.restored_lock.is_none());
+        assert!(recovered.last_checkpoint.is_none());
+        assert!(recovered.truncated);
+        assert!(!recovered.metadata_only_recovery);
+        assert!(load_wal_meta_entries(&wal_dir).unwrap().is_empty());
 
         let _ = fs::remove_dir_all(&wal_dir);
     }
@@ -4132,7 +4164,7 @@ fn main() -> Result<()> {
     let mut restored_lock: Option<String> = recovered.restored_lock;
     let mut height: u64 = recovered.next_height.max(1);
     println!(
-        "[bft-recover] restored height={} lock={} checkpoint={} truncated={}",
+        "[bft-recover] restored height={} lock={} checkpoint={} truncated={} metadata_only_recovery={}",
         height,
         restored_lock.clone().unwrap_or_else(|| "none".to_string()),
         recovered
@@ -4140,8 +4172,16 @@ fn main() -> Result<()> {
             .as_ref()
             .map(|cp| cp.height.to_string())
             .unwrap_or_else(|| "none".to_string()),
-        recovered.truncated
+        recovered.truncated,
+        recovered.metadata_only_recovery
     );
+    if recovered.metadata_only_recovery {
+        anyhow::bail!(
+            "refusing metadata-only recovery from {}: WAL/checkpoint metadata advanced consensus to height {} but trnm-node does not yet restore application StateStore snapshots or replay committed blocks; start from a fresh --bft-wal-dir / --bft-wal-mode auto isolated run, or implement state snapshot+replay recovery first",
+            wal_dir.display(),
+            height.saturating_sub(1)
+        );
+    }
 
     let mut state = StateStore::new();
     state.set_balance("challenger", 1_000_000);

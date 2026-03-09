@@ -5,6 +5,7 @@ ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 RUN_DIR="${RUN_DIR:-$ROOT/run/product-smoke/$(date +%Y%m%d-%H%M%S)}"
 WALLET_STORE="${WALLET_STORE:-$RUN_DIR/wallets}"
 CLI_BIN="${CLI_BIN:-cargo run -q -p trnm-cli --}"
+read -r -a CLI_BIN_ARR <<<"$CLI_BIN"
 
 mkdir -p "$RUN_DIR" "$WALLET_STORE"
 
@@ -39,12 +40,7 @@ extract_kv() {
 }
 
 run_cli() {
-  local quoted=""
-  local arg
-  for arg in "$@"; do
-    quoted+=" $(printf '%q' "$arg")"
-  done
-  (cd "$ROOT/trillionnium-rust" && eval "$CLI_BIN$quoted")
+  (cd "$ROOT/trillionnium-rust" && "${CLI_BIN_ARR[@]}" "$@")
 }
 
 # 1) wallet create

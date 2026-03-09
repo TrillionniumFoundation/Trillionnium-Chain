@@ -32,6 +32,9 @@ on:
       - 'OPERATIONS.md'
       - '.github/workflows/agent-user-phasea-gate.yml'
 
+permissions:
+  contents: read
+
 concurrency:
   group: agent-user-phasea-gate-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true

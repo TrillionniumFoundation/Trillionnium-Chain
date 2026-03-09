@@ -2,13 +2,9 @@ name: p1-rust-sidecar
 
 on:
   workflow_dispatch:
-  pull_request:
-    paths:
-      - 'scripts/v2/run_p1_integration_gate.sh'
-      - 'scripts/v2/product_layer_smoke.sh'
-      - 'examples/sdk-js/**'
-      - 'trillionnium-rust/crates/trnm-rpc/tests/rpc_contract_v1.rs'
-      - '.github/workflows/p1-rust-sidecar.yml'
+  # Intentionally do not run on pull_request: this job executes repository code on
+  # a self-hosted runner with local chain access, so only trusted main/workflow_dispatch
+  # contexts may invoke it.
   push:
     branches: [main]
     paths:
@@ -17,6 +13,9 @@ on:
       - 'examples/sdk-js/**'
       - 'trillionnium-rust/crates/trnm-rpc/tests/rpc_contract_v1.rs'
       - '.github/workflows/p1-rust-sidecar.yml'
+
+permissions:
+  contents: read
 
 concurrency:
   group: p1-rust-sidecar-${{ github.workflow }}-${{ github.ref }}

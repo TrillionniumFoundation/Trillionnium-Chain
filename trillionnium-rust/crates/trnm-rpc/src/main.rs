@@ -5,6 +5,7 @@ use sha2::{Digest, Sha256};
 use std::{
     collections::{BTreeMap, HashSet},
     fs::{self, OpenOptions},
+    hash::{Hash, Hasher},
     io::{Read, Seek, SeekFrom, Write},
     net::TcpListener,
     path::{Path, PathBuf},
@@ -1229,17 +1230,6 @@ fn market_effective_score(price: u128, reputation: i64) -> u128 {
     market_effective_score_with_config(price, reputation, market_score_config())
 }
 
-fn load_ingress_records() -> Vec<MessageIngressRecord> {
-    let path = ingress_file();
-    let Ok(raw) = fs::read_to_string(path) else {
-        return vec![];
-    };
-    raw.lines()
-        .filter(|l| !l.trim().is_empty())
-        .filter_map(|l| serde_json::from_str::<MessageIngressRecord>(l).ok())
-        .collect()
-}
-
 fn atomic_write_text_file(path: &Path, content: &str) -> Result<()> {
     if let Some(parent) = path.parent() {
         fs::create_dir_all(parent)?;
@@ -1271,6 +1261,93 @@ fn atomic_write_text_file(path: &Path, content: &str) -> Result<()> {
     }
 
     Ok(())
+}
+
+#[derive(Debug, Serialize)]
+struct IngressQuarantineRecord {
+    source_path: String,
+    line_number: usize,
+    line_hash: u64,
+    raw_line: String,
+    error: String,
+    quarantined_at_unix_ms: u128,
+}
+
+fn ingress_quarantine_file_for(path: &Path) -> PathBuf {
+    let file_name = path
+        .file_name()
+        .and_then(|n| n.to_str())
+        .unwrap_or("requests.jsonl");
+    path.with_file_name(format!("{}.quarantine.jsonl", file_name))
+}
+
+fn stable_line_hash(raw: &str) -> u64 {
+    let mut hasher = std::collections::hash_map::DefaultHasher::new();
+    raw.hash(&mut hasher);
+    hasher.finish()
+}
+
+fn append_quarantine_records(path: &Path, entries: &[IngressQuarantineRecord]) -> Result<()> {
+    if entries.is_empty() {
+        return Ok(());
+    }
+    let quarantine_path = ingress_quarantine_file_for(path);
+    let _lock = acquire_market_file_lock(&quarantine_path)?;
+    if let Some(parent) = quarantine_path.parent() {
+        fs::create_dir_all(parent)?;
+    }
+    let mut file = OpenOptions::new()
+        .create(true)
+        .append(true)
+        .open(&quarantine_path)?;
+    for entry in entries {
+        writeln!(file, "{}", serde_json::to_string(entry)?)?;
+    }
+    file.sync_all()?;
+    Ok(())
+}
+
+fn load_ingress_records() -> Vec<MessageIngressRecord> {
+    let path = ingress_file();
+    let Ok(raw) = fs::read_to_string(&path) else {
+        return vec![];
+    };
+    let mut records = Vec::new();
+    let mut quarantined = Vec::new();
+    for (idx, line) in raw.lines().enumerate() {
+        if line.trim().is_empty() {
+            continue;
+        }
+        match serde_json::from_str::<MessageIngressRecord>(line) {
+            Ok(record) => records.push(record),
+            Err(err) => quarantined.push(IngressQuarantineRecord {
+                source_path: path.display().to_string(),
+                line_number: idx + 1,
+                line_hash: stable_line_hash(line),
+                raw_line: line.to_string(),
+                error: err.to_string(),
+                quarantined_at_unix_ms: now_ms(),
+            }),
+        }
+    }
+    if !quarantined.is_empty() {
+        if let Err(err) = append_quarantine_records(&path, &quarantined) {
+            eprintln!(
+                "[trnm-rpc][warn][INGRESS_QUARANTINE_WRITE] path={} quarantined={} err={}",
+                path.display(),
+                quarantined.len(),
+                err
+            );
+        } else {
+            eprintln!(
+                "[trnm-rpc][warn][INGRESS_QUARANTINE] path={} quarantined={} quarantine_path={}",
+                path.display(),
+                quarantined.len(),
+                ingress_quarantine_file_for(&path).display()
+            );
+        }
+    }
+    records
 }
 
 fn save_ingress_records(records: &[MessageIngressRecord]) -> Result<()> {
@@ -1346,7 +1423,8 @@ fn is_canonical_rfc3339_utc_z(input: &str) -> bool {
         return false;
     }
 
-    let parse_u32 = |start: usize, end: usize| -> Option<u32> { input.get(start..end)?.parse().ok() };
+    let parse_u32 =
+        |start: usize, end: usize| -> Option<u32> { input.get(start..end)?.parse().ok() };
 
     let Some(year) = parse_u32(0, 4) else {
         return false;
@@ -1371,10 +1449,7 @@ fn is_canonical_rfc3339_utc_z(input: &str) -> bool {
         return false;
     };
 
-    (1..=max_day).contains(&day)
-        && hour <= 23
-        && minute <= 59
-        && second <= 59
+    (1..=max_day).contains(&day) && hour <= 23 && minute <= 59 && second <= 59
 }
 
 fn validate_task_metadata_core_fields(metadata: &TaskMetadata) -> Result<()> {
@@ -1488,11 +1563,8 @@ fn load_account_state(path: &Path) -> BTreeMap<String, AccountState> {
 }
 
 fn save_account_state(path: &Path, accounts: &BTreeMap<String, AccountState>) -> Result<()> {
-    if let Some(parent) = path.parent() {
-        fs::create_dir_all(parent)?;
-    }
-    fs::write(path, serde_json::to_string_pretty(accounts)?)?;
-    Ok(())
+    let content = serde_json::to_string_pretty(accounts)?;
+    atomic_write_text_file(path, &content)
 }
 
 fn tx_lifecycle_file() -> PathBuf {
@@ -1523,11 +1595,8 @@ fn load_faucet_limits(path: &Path) -> BTreeMap<String, FaucetRateEntry> {
 }
 
 fn save_faucet_limits(path: &Path, limits: &BTreeMap<String, FaucetRateEntry>) -> Result<()> {
-    if let Some(parent) = path.parent() {
-        fs::create_dir_all(parent)?;
-    }
-    fs::write(path, serde_json::to_string_pretty(limits)?)?;
-    Ok(())
+    let content = serde_json::to_string_pretty(limits)?;
+    atomic_write_text_file(path, &content)
 }
 
 fn load_tx_lifecycle(path: &Path) -> BTreeMap<String, TxLifecycleRecord> {
@@ -1548,11 +1617,8 @@ fn load_tx_lifecycle(path: &Path) -> BTreeMap<String, TxLifecycleRecord> {
 }
 
 fn save_tx_lifecycle(path: &Path, txs: &BTreeMap<String, TxLifecycleRecord>) -> Result<()> {
-    if let Some(parent) = path.parent() {
-        fs::create_dir_all(parent)?;
-    }
-    fs::write(path, serde_json::to_string_pretty(txs)?)?;
-    Ok(())
+    let content = serde_json::to_string_pretty(txs)?;
+    atomic_write_text_file(path, &content)
 }
 
 fn accounts_to_ledger(accounts: &BTreeMap<String, AccountState>) -> InMemoryTransferLedger {
@@ -1826,54 +1892,52 @@ fn summarize_challenge_treasury(
                     });
                 }
             }
-            "resolve" | "timeout" => {
-                match e.bond_disposition.as_deref() {
-                    Some("forfeited") => {
-                        let maybe_bond = posted_by_task.remove(&e.task_id).unwrap_or(0);
-                        bond_amount = maybe_bond;
-                        if maybe_bond > 0 {
-                            escrow_balance = escrow_balance.saturating_sub(maybe_bond);
-                            forfeits_balance = forfeits_balance.saturating_add(maybe_bond);
-                            cumulative_forfeited = cumulative_forfeited.saturating_add(maybe_bond);
-                            escrow_delta = -i128::try_from(maybe_bond).ok().unwrap_or(i128::MAX);
-                            forfeits_delta = maybe_bond;
-                            if in_window {
-                                summary_forfeited = summary_forfeited.saturating_add(1);
-                            }
-                        } else {
-                            anomalies.push(ChallengeTreasuryAnomaly {
+            "resolve" | "timeout" => match e.bond_disposition.as_deref() {
+                Some("forfeited") => {
+                    let maybe_bond = posted_by_task.remove(&e.task_id).unwrap_or(0);
+                    bond_amount = maybe_bond;
+                    if maybe_bond > 0 {
+                        escrow_balance = escrow_balance.saturating_sub(maybe_bond);
+                        forfeits_balance = forfeits_balance.saturating_add(maybe_bond);
+                        cumulative_forfeited = cumulative_forfeited.saturating_add(maybe_bond);
+                        escrow_delta = -i128::try_from(maybe_bond).ok().unwrap_or(i128::MAX);
+                        forfeits_delta = maybe_bond;
+                        if in_window {
+                            summary_forfeited = summary_forfeited.saturating_add(1);
+                        }
+                    } else {
+                        anomalies.push(ChallengeTreasuryAnomaly {
                                 event_type: e.event_type.clone(),
                                 task_id: e.task_id,
                                 tx_id: e.tx_id,
                                 code: "resolve_without_posted_bond".to_string(),
                                 detail: "forfeited resolve ignored because no prior posted challenge bond found".to_string(),
                             });
-                        }
-                        posted_open_in_window.remove(&e.task_id);
                     }
-                    Some("refunded") => {
-                        let maybe_bond = posted_by_task.remove(&e.task_id).unwrap_or(0);
-                        bond_amount = maybe_bond;
-                        if maybe_bond > 0 {
-                            escrow_balance = escrow_balance.saturating_sub(maybe_bond);
-                            escrow_delta = -i128::try_from(maybe_bond).ok().unwrap_or(i128::MAX);
-                            if in_window {
-                                summary_refunded = summary_refunded.saturating_add(1);
-                            }
-                        } else {
-                            anomalies.push(ChallengeTreasuryAnomaly {
+                    posted_open_in_window.remove(&e.task_id);
+                }
+                Some("refunded") => {
+                    let maybe_bond = posted_by_task.remove(&e.task_id).unwrap_or(0);
+                    bond_amount = maybe_bond;
+                    if maybe_bond > 0 {
+                        escrow_balance = escrow_balance.saturating_sub(maybe_bond);
+                        escrow_delta = -i128::try_from(maybe_bond).ok().unwrap_or(i128::MAX);
+                        if in_window {
+                            summary_refunded = summary_refunded.saturating_add(1);
+                        }
+                    } else {
+                        anomalies.push(ChallengeTreasuryAnomaly {
                                 event_type: e.event_type.clone(),
                                 task_id: e.task_id,
                                 tx_id: e.tx_id,
                                 code: "resolve_without_posted_bond".to_string(),
                                 detail: "refunded resolve ignored because no prior posted challenge bond found".to_string(),
                             });
-                        }
-                        posted_open_in_window.remove(&e.task_id);
                     }
-                    _ => {}
+                    posted_open_in_window.remove(&e.task_id);
                 }
-            }
+                _ => {}
+            },
             _ => {}
         }
 
@@ -2488,6 +2552,7 @@ fn main() -> Result<()> {
             signature,
         } => {
             let tx_path = tx_lifecycle_file();
+            let _tx_lock = acquire_market_file_lock(&tx_path)?;
             let mut txs = load_tx_lifecycle(&tx_path);
             let tx = TransferTx {
                 from,
@@ -2503,9 +2568,11 @@ fn main() -> Result<()> {
         }
         Command::GetTx { tx_hash } => {
             let tx_path = tx_lifecycle_file();
+            let _tx_lock = acquire_market_file_lock(&tx_path)?;
             let mut txs = load_tx_lifecycle(&tx_path);
 
             let account_path = account_state_file();
+            let _account_lock = acquire_market_file_lock(&account_path)?;
             let mut accounts = load_account_state(&account_path);
             let mut ledger = accounts_to_ledger(&accounts);
             let tx_hash = normalize_tx_hash_lookup(&tx_hash);
@@ -2563,6 +2630,7 @@ fn main() -> Result<()> {
             }
 
             let limits_path = faucet_limits_file();
+            let _limits_lock = acquire_market_file_lock(&limits_path)?;
             let mut limits = load_faucet_limits(&limits_path);
             let window_ms = (window_seconds as u128) * 1000;
             let next_allowed_unix_ms;
@@ -2583,6 +2651,7 @@ fn main() -> Result<()> {
             }
 
             let account_path = account_state_file();
+            let _account_lock = acquire_market_file_lock(&account_path)?;
             let mut accounts = load_account_state(&account_path);
 
             if !allowed {
@@ -3142,12 +3211,12 @@ fn main() -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use trnm_types::CapabilityScope;
     use std::panic::{catch_unwind, AssertUnwindSafe};
     use std::sync::{
         atomic::{AtomicU64, Ordering},
         Mutex, MutexGuard, OnceLock,
     };
+    use trnm_types::CapabilityScope;
 
     fn env_lock() -> &'static Mutex<()> {
         static LOCK: OnceLock<Mutex<()>> = OnceLock::new();
@@ -5048,7 +5117,8 @@ mod tests {
     }
 
     #[test]
-    fn summarize_challenge_treasury_ignores_non_terminal_disposition_without_clearing_posted_bond() {
+    fn summarize_challenge_treasury_ignores_non_terminal_disposition_without_clearing_posted_bond()
+    {
         let events = vec![
             NodeEventRecord {
                 event_type: "challenge".into(),
@@ -5658,6 +5728,79 @@ line2
         let tail = read_log_tail(&tmp, 1024).expect("tail text");
         assert!(tail.contains("[event] event_type=commit task_id=9"));
         let _ = fs::remove_file(tmp);
+    }
+
+    #[test]
+    fn load_ingress_records_quarantines_malformed_lines_with_accounting() {
+        let _guard = lock_env();
+        let path = unique_tmp_path("ingress-quarantine", "jsonl");
+        let quarantine = ingress_quarantine_file_for(&path);
+        let _ = fs::remove_file(&path);
+        let _ = fs::remove_file(&quarantine);
+        std::env::set_var("TRNM_RPC_INGRESS_FILE", path.to_string_lossy().to_string());
+
+        fs::write(
+            &path,
+            r#"{"request_id":"req-1","task_id":10001,"channel":"telegram","user_id":"u1","session_id":"s1","text":"ok","idempotency_key":"k1","status":"open","created_at_unix_ms":1,"assigned_worker":null,"assigned_at_unix_ms":null,"model_output":null,"result_hash":null,"verifier_status":null,"resolution_code":null,"commit_tx_hash":null,"reveal_tx_hash":null}
+not-json
+"#,
+        )
+        .expect("write ingress fixture");
+
+        let records = load_ingress_records();
+        assert_eq!(
+            records.len(),
+            1,
+            "valid ingress rows should survive salvage"
+        );
+
+        let quarantine_raw = fs::read_to_string(&quarantine).expect("read quarantine file");
+        let entries: Vec<serde_json::Value> = quarantine_raw
+            .lines()
+            .filter(|line| !line.trim().is_empty())
+            .map(|line| serde_json::from_str(line).expect("valid quarantine jsonl"))
+            .collect();
+        assert_eq!(
+            entries.len(),
+            1,
+            "malformed ingress row should be quarantined"
+        );
+        assert_eq!(entries[0]["line_number"], 2);
+        assert_eq!(entries[0]["raw_line"], "not-json");
+        assert_eq!(entries[0]["source_path"], path.display().to_string());
+
+        std::env::remove_var("TRNM_RPC_INGRESS_FILE");
+        let _ = fs::remove_file(&path);
+        let _ = fs::remove_file(&quarantine);
+    }
+
+    #[test]
+    fn atomic_write_text_file_replaces_without_leaving_temp_files() {
+        let path = unique_tmp_path("rpc-atomic-write", "json");
+        let parent = path.parent().expect("temp parent").to_path_buf();
+        let file_name = path
+            .file_name()
+            .and_then(|n| n.to_str())
+            .unwrap()
+            .to_string();
+        let _ = fs::remove_file(&path);
+
+        atomic_write_text_file(&path, "{\"ok\":true}\n").expect("atomic write succeeds");
+        let raw = fs::read_to_string(&path).expect("read atomic target");
+        assert_eq!(raw, "{\"ok\":true}\n");
+
+        let leftovers: Vec<_> = fs::read_dir(&parent)
+            .expect("read temp dir")
+            .filter_map(Result::ok)
+            .map(|entry| entry.file_name().to_string_lossy().to_string())
+            .filter(|name| name.starts_with(&format!(".{}.tmp-", file_name)))
+            .collect();
+        assert!(
+            leftovers.is_empty(),
+            "temporary atomic-write files should be cleaned"
+        );
+
+        let _ = fs::remove_file(&path);
     }
 
     #[test]

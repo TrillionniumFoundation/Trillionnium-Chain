@@ -6,15 +6,22 @@ on:
     paths:
       - 'docs/**'
       - 'trillionnium-rust/**'
+      - 'web4-frontend/**'
       - '.github/workflows/trnm-merge-gates.yml'
+      - '.github/workflows/web4-frontend-ci.yml'
       - 'scripts/**'
   push:
     branches: [main]
     paths:
       - 'docs/**'
       - 'trillionnium-rust/**'
+      - 'web4-frontend/**'
       - '.github/workflows/trnm-merge-gates.yml'
+      - '.github/workflows/web4-frontend-ci.yml'
       - 'scripts/**'
+
+permissions:
+  contents: read
 
 concurrency:
   group: trnm-merge-gates-${{ github.workflow }}-${{ github.ref }}
