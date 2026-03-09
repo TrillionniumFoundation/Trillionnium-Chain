@@ -17,6 +17,7 @@ required_lines=(
   'LC_NUMERIC: C'
   'LC_COLLATE: C'
   "PYTHONHASHSEED: '0'"
+  "FORCE_COLOR: '0'"
   "CI: 'true'"
 )
 
