@@ -10,6 +10,8 @@ if [[ ! -f "$WF" ]]; then
 fi
 
 required_lines=(
+  'group: rust-l1-testnet-preflight-${{ github.ref }}'
+  'cancel-in-progress: true'
   'TZ: UTC'
   'LANG: C.UTF-8'
   'LC_ALL: C.UTF-8'
