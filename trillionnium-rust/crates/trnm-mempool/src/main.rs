@@ -54,6 +54,14 @@ impl AdmissionGate {
         if self.backpressured_ids.insert(tx_id) {
             self.backpressured_fifo.push_back(tx_id);
             self.compact_backpressured_fifo();
+            if self.backpressured_fifo.len() < self.backpressured_ids.len() {
+                // Restored-state skew can drop FIFO markers while retaining retry ids.
+                // Rebuild deterministic markers when marker coverage is incomplete so
+                // bounded eviction avoids repeated set-wide fallback trimming.
+                let mut rebuilt: Vec<u64> = self.backpressured_ids.iter().copied().collect();
+                rebuilt.sort_unstable();
+                self.backpressured_fifo = rebuilt.into_iter().collect();
+            }
             while self.backpressured_ids.len() > self.capacity {
                 let mut evicted = false;
                 while let Some(candidate) = self.backpressured_fifo.pop_front() {
@@ -940,6 +948,22 @@ mod tests {
 
         assert!(gate.backpressured_ids.len() <= gate.capacity);
         assert!(gate.backpressured_ids.contains(&1));
+    }
+
+    #[test]
+    fn restored_retry_ids_rehydrate_fifo_before_bounded_eviction() {
+        let mut gate = AdmissionGate::new(2);
+
+        // Corrupted restore: retry ids exist but FIFO markers are missing.
+        gate.backpressured_ids.extend([41, 42]);
+        gate.backpressured_fifo.clear();
+
+        assert!(gate.remember_backpressured(99));
+
+        // Rehydrated FIFO should stay aligned with bounded retry tracking.
+        assert!(!gate.backpressured_fifo.is_empty());
+        assert!(gate.backpressured_fifo.len() <= gate.backpressured_ids.len());
+        assert!(gate.backpressured_ids.contains(&99));
     }
 
     #[test]
