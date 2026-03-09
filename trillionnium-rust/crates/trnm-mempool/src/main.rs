@@ -766,6 +766,28 @@ mod tests {
     }
 
     #[test]
+    fn saturated_retry_remains_idempotent_when_stale_fairness_marker_points_to_known_retry() {
+        let mut gate = AdmissionGate::new(2);
+        assert_eq!(gate.admit(1), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(2), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(9), AdmitOutcome::Backpressured);
+
+        // Simulate restored stale fairness marker while queue is still saturated.
+        gate.last_fairness_deferred = Some(9);
+        gate.retry_reservations = 0;
+
+        // Retry should stay idempotent duplicate (not a fresh backpressure event), and
+        // retry memory must keep tracking the tx id for later admission once capacity opens.
+        assert_eq!(gate.admit(9), AdmitOutcome::Duplicate);
+        assert!(gate.backpressured_ids.contains(&9));
+
+        let m = gate.metrics();
+        assert_eq!(m.backpressured, 1);
+        assert_eq!(m.duplicates, 1);
+        assert_eq!(m.backpressure_duplicates, 1);
+    }
+
+    #[test]
     fn pop_ready_clears_stale_fairness_marker_when_retry_memory_is_empty() {
         let mut gate = AdmissionGate::new(2);
         assert_eq!(gate.admit(1), AdmitOutcome::Accepted);
