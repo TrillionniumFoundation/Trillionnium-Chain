@@ -735,10 +735,16 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
         }
 
         let start = self.collect_rr_cursor % session_count;
-        // Harden against pathological/corrupted cursor values in long-running
-        // processes and debug builds: wrapping increment avoids usize overflow
-        // panic while preserving modulo-based round-robin semantics.
-        self.collect_rr_cursor = self.collect_rr_cursor.wrapping_add(1) % session_count;
+        // Single-session fast path: keep cursor pinned to zero so hot retry loops
+        // avoid redundant wrapping/modulo churn while preserving semantics.
+        if session_count == 1 {
+            self.collect_rr_cursor = 0;
+        } else {
+            // Harden against pathological/corrupted cursor values in long-running
+            // processes and debug builds: wrapping increment avoids usize overflow
+            // panic while preserving modulo-based round-robin semantics.
+            self.collect_rr_cursor = self.collect_rr_cursor.wrapping_add(1) % session_count;
+        }
 
         for offset in 0..session_count {
             if out.len() >= MAX_DUE_RETRIES_PER_COLLECT {
@@ -1823,6 +1829,31 @@ mod tests {
             Some("s-b"),
             "round-robin cursor should rebase on the active session set"
         );
+    }
+
+    #[test]
+    fn collect_due_retries_single_session_keeps_cursor_stable_at_zero() {
+        let store = InMemoryReliabilityStore::default();
+        let mut engine = ReliabilityEngine::new(
+            store,
+            RetryConfig {
+                base_backoff_ms: 1,
+                max_backoff_ms: 1,
+                ..RetryConfig::default()
+            },
+        );
+
+        let ack = engine.receive(mk_msg("alice", "s-a", 1), 1_000);
+        assert_eq!(ack.code, AckCode::Accepted);
+
+        engine.collect_rr_cursor = usize::MAX;
+        let first = engine.collect_due_retries(2_000);
+        assert_eq!(first.len(), 1);
+        assert_eq!(engine.collect_rr_cursor, 0);
+
+        let second = engine.collect_due_retries(2_001);
+        assert_eq!(second.len(), 1);
+        assert_eq!(engine.collect_rr_cursor, 0);
     }
 
     #[test]
