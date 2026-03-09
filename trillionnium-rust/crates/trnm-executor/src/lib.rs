@@ -743,10 +743,15 @@ pub fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
     let mut observed = 0usize;
 
     let batch_len = txs.len();
+    let direct_scan = sample_len == batch_len;
     for i in 0..sample_len {
         // Keep endpoints visible in bounded sampling windows so late-batch
         // hotspots contribute to adaptive scheduler decisions.
-        let idx = if sample_len > 1 {
+        // When sample_len==batch_len (most medium batches), index directly to
+        // avoid per-item division in this hot scheduler probe.
+        let idx = if direct_scan {
+            i
+        } else if sample_len > 1 {
             i.saturating_mul(batch_len.saturating_sub(1)) / (sample_len - 1)
         } else {
             0
