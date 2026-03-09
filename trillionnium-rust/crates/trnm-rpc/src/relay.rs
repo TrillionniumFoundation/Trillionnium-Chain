@@ -349,6 +349,10 @@ impl RiskQuotaState {
         // Misconfigured zero windows effectively disable quota enforcement by expiring
         // every bucket on each consume. Clamp to 1ms so limits stay meaningful.
         let window_ms = window_ms.max(1);
+        // Misconfigured zero limits would reject every request (`used >= 0`) and can
+        // create a permanent self-inflicted backpressure hotspot. Clamp to 1 so each
+        // key always has at least one slot per window.
+        let limit = limit.max(1);
         Self::prune_expired_domain_buckets(buckets, now_ms, domain, window_ms);
         let bucket_key = (domain, key.to_string());
         if !buckets.contains_key(&bucket_key)
@@ -1901,6 +1905,37 @@ mod tests {
         let err = state
             .consume(1_000, RiskDomain::Relay, "zw-session", "zw-src", &cfg)
             .unwrap_err();
+        assert!(err.to_string().contains("too_many_requests/quota_exceeded"));
+    }
+
+    #[test]
+    fn zero_limits_are_clamped_to_preserve_forward_progress() {
+        let mut state = RiskQuotaState::default();
+        let cfg = RiskQuotaConfig {
+            window_ms: 1_000,
+            per_session_limit: 0,
+            per_source_limit: 0,
+        };
+
+        state
+            .consume(
+                1_000,
+                RiskDomain::Relay,
+                "zl-session",
+                "zl-source",
+                &cfg,
+            )
+            .expect("first request should pass because zero limits are clamped to one slot");
+
+        let err = state
+            .consume(
+                1_000,
+                RiskDomain::Relay,
+                "zl-session",
+                "zl-source",
+                &cfg,
+            )
+            .expect_err("second request in same window should hit clamped quota");
         assert!(err.to_string().contains("too_many_requests/quota_exceeded"));
     }
 
