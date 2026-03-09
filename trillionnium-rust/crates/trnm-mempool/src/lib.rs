@@ -135,14 +135,8 @@ impl LaneAdmissionGate {
             // queue cardinality match but one queued id is missing from seen_global.
             // Probe lane-local id sets (O(1)) rather than queue scans (O(n)) to keep
             // free-ingress admission lightweight under bursty concurrency.
-            let lane_local_duplicate = match class {
-                IngressClass::Normal => {
-                    self.normal.seen.contains(&tx_id) || self.critical.seen.contains(&tx_id)
-                }
-                IngressClass::Critical => {
-                    self.critical.seen.contains(&tx_id) || self.normal.seen.contains(&tx_id)
-                }
-            };
+            let lane_local_duplicate =
+                self.normal.seen.contains(&tx_id) || self.critical.seen.contains(&tx_id);
             if lane_local_duplicate {
                 is_duplicate = true;
                 self.seen_global.insert(tx_id);
