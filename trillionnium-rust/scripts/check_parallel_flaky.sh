@@ -111,6 +111,13 @@ fi
 EOF
 chmod +x "$RUN_DIR/replay.sh"
 
+HASH_BIN=""
+if command -v sha256sum >/dev/null 2>&1; then
+  HASH_BIN="sha256sum"
+elif command -v shasum >/dev/null 2>&1; then
+  HASH_BIN="shasum -a 256"
+fi
+
 ok=0
 for i in $(seq 1 "$RUNS"); do
   log="$RUN_DIR/run-${i}.log"
@@ -135,4 +142,17 @@ for i in $(seq 1 "$RUNS"); do
   ok=$((ok+1))
 done
 
-echo "[OK] parallel flaky streak=${ok}/${RUNS} run_dir=${RUN_DIR}"
+MANIFEST="$RUN_DIR/manifest.txt"
+{
+  echo "streak=${ok}/${RUNS}"
+  echo "run_timeout_sec=${RUN_TIMEOUT_SEC}"
+  echo "cmd=${CMD[*]}"
+  echo "replay=$RUN_DIR/replay.sh"
+  if [[ "$HASH_BIN" == "sha256sum" ]]; then
+    sha256sum "$RUN_DIR"/run-*.log
+  elif [[ "$HASH_BIN" == "shasum -a 256" ]]; then
+    shasum -a 256 "$RUN_DIR"/run-*.log
+  fi
+} >"$MANIFEST"
+
+echo "[OK] parallel flaky streak=${ok}/${RUNS} run_dir=${RUN_DIR} manifest=${MANIFEST}"
