@@ -72,12 +72,10 @@ impl AdmissionGate {
         }
     }
 
+    #[cfg(test)]
     fn remember_backpressured_without_eviction(&mut self, tx_id: u64) {
         // Fairness deferral must never evict older retry ids. When bounded memory has
         // room, insert directly and append a FIFO marker (no eviction/compaction path).
-        //
-        // Hot-path note: gate on capacity first, then rely on HashSet::insert's boolean
-        // to avoid a separate contains() probe for fresh ids.
         if self.backpressured_ids.len() < self.capacity && self.backpressured_ids.insert(tx_id) {
             self.backpressured_fifo.push_back(tx_id);
             // Fairness-only deferrals can run for long windows without hitting the
