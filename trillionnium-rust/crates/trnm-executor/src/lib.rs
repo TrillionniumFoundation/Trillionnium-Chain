@@ -610,12 +610,32 @@ fn access_map_capacity_hint(txs: &[Tx]) -> usize {
     hinted.clamp(MIN_CAP, MAX_CAP)
 }
 
+#[inline]
+fn parse_env_usize(name: &str) -> Option<usize> {
+    std::env::var(name).ok().and_then(|v| {
+        let trimmed = v.trim();
+        if trimmed.is_empty() {
+            return None;
+        }
+        // Accept common human-friendly separators in ops configs.
+        if trimmed.contains('_') {
+            let mut compact = String::with_capacity(trimmed.len());
+            for ch in trimmed.chars() {
+                if ch != '_' {
+                    compact.push(ch);
+                }
+            }
+            compact.parse::<usize>().ok()
+        } else {
+            trimmed.parse::<usize>().ok()
+        }
+    })
+}
+
 fn aggr_scan_window() -> usize {
     const MAX_SCAN_WINDOW: usize = 4096;
 
-    std::env::var("TRNM_AGGR_SCAN_WINDOW")
-        .ok()
-        .and_then(|v| v.trim().parse::<usize>().ok())
+    parse_env_usize("TRNM_AGGR_SCAN_WINDOW")
         .map(|v| v.min(MAX_SCAN_WINDOW))
         .unwrap_or(0)
 }
@@ -651,10 +671,7 @@ fn aggr_scan_round_robin_enabled() -> bool {
 }
 
 fn aggr_scan_round_robin_seed() -> usize {
-    std::env::var("TRNM_AGGR_SCAN_RR_SEED")
-        .ok()
-        .and_then(|v| v.trim().parse::<usize>().ok())
-        .unwrap_or(0)
+    parse_env_usize("TRNM_AGGR_SCAN_RR_SEED").unwrap_or(0)
 }
 
 fn auto_hot_streak_threshold() -> f64 {
@@ -682,9 +699,7 @@ fn auto_reorder_min_hot_key_share() -> f64 {
 }
 
 fn hot_bucket_count() -> usize {
-    std::env::var("TRNM_HOT_BUCKETS")
-        .ok()
-        .and_then(|v| v.trim().parse::<usize>().ok())
+    parse_env_usize("TRNM_HOT_BUCKETS")
         .map(|v| v.clamp(4, 64))
         .unwrap_or(8)
 }
@@ -1527,6 +1542,18 @@ mod tests {
         let _seed = EnvGuard::set("TRNM_AGGR_SCAN_RR_SEED", " 7 ");
 
         assert_eq!(aggr_scan_round_robin_seed(), 7);
+    }
+
+    #[test]
+    fn integer_env_parsers_accept_underscored_numeric_values() {
+        let _env = env_lock();
+        let _window = EnvGuard::set("TRNM_AGGR_SCAN_WINDOW", "1_024");
+        let _seed = EnvGuard::set("TRNM_AGGR_SCAN_RR_SEED", "9_001");
+        let _buckets = EnvGuard::set("TRNM_HOT_BUCKETS", "3_2");
+
+        assert_eq!(aggr_scan_window(), 1024);
+        assert_eq!(aggr_scan_round_robin_seed(), 9001);
+        assert_eq!(hot_bucket_count(), 32);
     }
 
     #[test]

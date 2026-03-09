@@ -47,6 +47,9 @@ jobs:
       CARGO_TERM_COLOR: never
       CARGO_INCREMENTAL: "0"
       CI: "true"
+      # Stabilize created file permissions across runner/image defaults so
+      # replay artifacts and git diffs keep deterministic mode bits.
+      UMASK: "022"
       SOURCE_DATE_EPOCH: "1704067200"
     timeout-minutes: 45
 

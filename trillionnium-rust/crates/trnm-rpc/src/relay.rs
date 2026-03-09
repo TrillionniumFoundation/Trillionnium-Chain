@@ -451,7 +451,7 @@ fn canonicalize_risk_source(source: Option<&str>) -> String {
     if source.len() <= RISK_SOURCE_MAX_CHARS
         && source
             .chars()
-            .all(|ch| !ch.is_whitespace() && !ch.is_ascii_uppercase())
+            .all(|ch| !ch.is_whitespace() && !ch.is_uppercase())
     {
         return source.to_string();
     }
@@ -480,11 +480,13 @@ fn canonicalize_risk_source(source: Option<&str>) -> String {
             pending_space = false;
         }
 
-        if emitted >= RISK_SOURCE_MAX_CHARS {
-            break;
+        for lower in ch.to_lowercase() {
+            if emitted >= RISK_SOURCE_MAX_CHARS {
+                break;
+            }
+            out.push(lower);
+            emitted += 1;
         }
-        out.push(ch.to_ascii_lowercase());
-        emitted += 1;
     }
 
     if out.is_empty() {
@@ -2216,6 +2218,10 @@ mod tests {
 
         // Lowercase/no-whitespace aliases should keep byte shape for hot-path speed.
         assert_eq!(canonicalize_risk_source(Some("relay-source-1")), "relay-source-1");
+
+        // Non-ASCII uppercase aliases must canonicalize into the same lowercase bucket.
+        let canonical_unicode_case = canonicalize_risk_source(Some("İSTANBUL source"));
+        assert_eq!(canonical_unicode_case, "i̇stanbul source");
 
         let exact = "A".repeat(RISK_SOURCE_MAX_CHARS);
         let with_suffix = format!("{}   z", exact);
