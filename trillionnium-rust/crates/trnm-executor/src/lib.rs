@@ -919,6 +919,13 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
             if non_empty_buckets <= 1 {
                 return;
             }
+            // Free-ingress fast path: when every non-empty bucket is singleton,
+            // interleave cannot reduce same-key streaks and only adds probe/rotation
+            // overhead. Preserve stable input order to reduce micro-batch scheduler cost.
+            let max_bucket_depth = buckets.iter().map(|bucket| bucket.len()).max().unwrap_or(0);
+            if max_bucket_depth <= 1 {
+                return;
+            }
 
             // Keep insertion order inside each bucket (already stable by input stream);
             // avoid extra O(n log n) sorting cost.
@@ -1370,6 +1377,21 @@ mod tests {
         // All keys map to bucket 0 under the default 8-bucket layout; interleave
         // is a no-op and should return early without extra round-robin passes.
         assert_eq!(txs.iter().map(|t| t.id).collect::<Vec<_>>(), vec![61, 62, 63, 64]);
+    }
+
+    #[test]
+    fn hot_bucket_interleave_short_circuits_all_singleton_buckets() {
+        let mut txs = vec![
+            tx(71, vec![], vec![o(0)]),
+            tx(72, vec![], vec![o(1)]),
+            tx(73, vec![], vec![o(2)]),
+            tx(74, vec![], vec![o(3)]),
+        ];
+
+        reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
+        // With singleton occupancy across non-empty buckets there are no same-key
+        // streaks to break; keep ingress order and avoid extra round-robin probing.
+        assert_eq!(txs.iter().map(|t| t.id).collect::<Vec<_>>(), vec![71, 72, 73, 74]);
     }
 
     #[test]
