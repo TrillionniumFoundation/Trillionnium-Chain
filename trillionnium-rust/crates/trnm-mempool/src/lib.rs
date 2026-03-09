@@ -96,17 +96,39 @@ impl LaneAdmissionGate {
             .queue
             .len()
             .saturating_add(self.critical.queue.len());
-        if self.seen_global.len() != lane_total {
-            // Defensive self-heal for transient restored-state skew: lane-local queues
-            // remain source of truth for saturation, and rebuild lane-wide id set.
-            if lane_total == 0 {
-                // Hot idle path after burst drains: clear stale cache entries without
-                // touching lane-local sets.
+
+        if lane_total == 0 {
+            // Defensive restored-state self-heal: with no queued work, lane-local and
+            // lane-wide idempotency sets must be empty. Clearing here avoids stale
+            // ghost ids being treated as duplicates on the first fresh ingress.
+            self.normal.seen.clear();
+            self.critical.seen.clear();
+            self.seen_global.clear();
+            // Fully idle lane state must also reset fairness streak; otherwise a
+            // restored stale streak can spuriously preempt fresh critical work.
+            self.critical_served_streak = 0;
+        } else {
+            let lane_local_seen_total = self
+                .normal
+                .seen
+                .len()
+                .saturating_add(self.critical.seen.len());
+            if lane_local_seen_total != lane_total {
+                // Lane-local seen sets are stale (typically from restored-state skew).
+                // Rebuild from authoritative queue contents so duplicate probes stay
+                // correct without scanning queues on the steady-state hot path.
+                self.normal.seen.clear();
+                self.normal.seen.extend(self.normal.queue.iter().copied());
+                self.critical.seen.clear();
+                self.critical
+                    .seen
+                    .extend(self.critical.queue.iter().copied());
                 self.seen_global.clear();
-                // Fully idle lane state must also reset fairness streak; otherwise a
-                // restored stale streak can spuriously preempt fresh critical work.
-                self.critical_served_streak = 0;
-            } else {
+                self.seen_global.extend(self.normal.seen.iter().copied());
+                self.seen_global.extend(self.critical.seen.iter().copied());
+            } else if self.seen_global.len() != lane_total {
+                // Defensive self-heal for transient restored-state skew: lane-local queues
+                // remain source of truth for saturation, and rebuild lane-wide id set.
                 self.seen_global.clear();
                 self.seen_global.extend(self.normal.seen.iter().copied());
                 self.seen_global.extend(self.critical.seen.iter().copied());
@@ -524,6 +546,20 @@ mod tests {
 
         // Fresh ingress for the ghost id should still admit (not duplicate).
         assert_eq!(g.admit(77, IngressClass::Critical), AdmitOutcome::Accepted);
+    }
+
+    #[test]
+    fn idle_lane_ghost_seen_entry_is_cleared_before_first_fresh_admission() {
+        let mut g = LaneAdmissionGate::new(3, 1);
+
+        // Simulate restored idle state with stale lane-local/global seen caches.
+        g.normal.seen.insert(123);
+        g.critical.seen.insert(456);
+        g.seen_global.insert(789);
+        assert_eq!(g.queued_counts(), (0, 0, 0));
+
+        // First fresh ingress must self-heal stale caches and admit cleanly.
+        assert_eq!(g.admit(123, IngressClass::Normal), AdmitOutcome::Accepted);
     }
 
     #[test]
