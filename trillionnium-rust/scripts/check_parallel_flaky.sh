@@ -11,6 +11,8 @@ export LANG="${LANG:-$LC_ALL}"
 export NO_COLOR="${NO_COLOR:-1}"
 export CARGO_TERM_COLOR="${CARGO_TERM_COLOR:-never}"
 export RUST_LOG_STYLE="${RUST_LOG_STYLE:-never}"
+# keep panic output stable across local/CI runs for replay diffing
+export RUST_BACKTRACE="${RUST_BACKTRACE:-0}"
 umask "${UMASK:-022}"
 
 RUNS="${RUNS:-5}"
@@ -63,6 +65,7 @@ export LANG="${LANG:-$LC_ALL}"
 export NO_COLOR="${NO_COLOR:-1}"
 export CARGO_TERM_COLOR="${CARGO_TERM_COLOR:-never}"
 export RUST_LOG_STYLE="${RUST_LOG_STYLE:-never}"
+export RUST_BACKTRACE="${RUST_BACKTRACE:-0}"
 umask "${UMASK:-022}"
 if [[ "$#" -gt 0 ]]; then
   "$@"
