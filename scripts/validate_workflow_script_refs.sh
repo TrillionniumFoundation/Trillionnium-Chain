@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Normalize locale/timezone-sensitive behavior so workflow reference scans and
+# summary evidence remain reproducible across local/CI runner environments.
+export TZ="${TZ:-UTC}"
+export LANG="${LANG:-C.UTF-8}"
+export LC_ALL="${LC_ALL:-C.UTF-8}"
+export LC_COLLATE="${LC_COLLATE:-C}"
+
 WORKFLOW_ROOT="${WORKFLOW_ROOT:-.github/workflows}"
 SUMMARY_PATH="${WORKFLOW_SCRIPT_REF_SUMMARY_PATH:-}"
 STRICT_MODE="${WORKFLOW_SCRIPT_REF_STRICT:-0}"
@@ -40,7 +47,7 @@ for wf in "${WORKFLOW_FILES[@]}"; do
   while IFS= read -r ref; do
     [[ -n "$ref" ]] || continue
     printf '%s\n' "$ref" >>"$refs_file"
-  done < <(grep -Eo '\./scripts/[[:alnum:]_./-]+\.sh' "$wf" || true)
+  done < <(LC_ALL=C grep -Eo '\./scripts/[[:alnum:]_./-]+\.sh' "$wf" || true)
 done
 
 mapfile -t SCRIPT_REFS < <(LC_ALL=C sort -u "$refs_file")

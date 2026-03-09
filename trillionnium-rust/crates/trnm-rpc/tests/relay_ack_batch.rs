@@ -110,3 +110,68 @@ fn relay_ack_upto_seq_then_id_ack_mixed() {
         .unwrap();
     assert!(left.envelopes.is_empty());
 }
+
+#[test]
+fn relay_ack_does_not_cross_session_boundary_by_envelope_id() {
+    let mut router = RelayRouter::new();
+    router.register("relay.echo", EchoHandler);
+    let relay = RelayService::new(router);
+
+    relay
+        .open(RelayOpenRequest {
+            session_id: "it-s3-a".into(),
+        })
+        .unwrap();
+    relay
+        .open(RelayOpenRequest {
+            session_id: "it-s3-b".into(),
+        })
+        .unwrap();
+
+    relay
+        .send(RelaySendRequest {
+            session_id: "it-s3-a".into(),
+            route: "relay.echo".into(),
+            from: "alice".into(),
+            to: Some("bob".into()),
+            payload: b"a1".to_vec(),
+            source: None,
+        })
+        .unwrap();
+    relay
+        .send(RelaySendRequest {
+            session_id: "it-s3-b".into(),
+            route: "relay.echo".into(),
+            from: "carol".into(),
+            to: Some("dave".into()),
+            payload: b"b1".to_vec(),
+            source: None,
+        })
+        .unwrap();
+
+    let polled_b = relay
+        .poll(RelayPollRequest {
+            session_id: "it-s3-b".into(),
+            limit: 10,
+        })
+        .unwrap();
+    assert_eq!(polled_b.envelopes.len(), 2);
+    let foreign_id = polled_b.envelopes[0].envelope_id;
+
+    let ack_on_a = relay
+        .ack(RelayAckRequest {
+            session_id: "it-s3-a".into(),
+            envelope_ids: vec![foreign_id],
+            upto_seq: None,
+        })
+        .unwrap();
+    assert_eq!(ack_on_a.acked, 0);
+
+    let still_visible_a = relay
+        .poll(RelayPollRequest {
+            session_id: "it-s3-a".into(),
+            limit: 10,
+        })
+        .unwrap();
+    assert_eq!(still_visible_a.envelopes.len(), 2);
+}

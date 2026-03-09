@@ -17,6 +17,8 @@ PR7_DELIVERY_FAIL_MODE="${PR7_DELIVERY_FAIL_MODE:-ignore}" # ignore|warn|escalat
 STATUS_FILE="${PR7_STATUS_FILE:-$RUN_DIR/pr7-delivery-status.env}"
 LOCK_DIR="${PR7_GATE_LOCK_DIR:-$ROOT/run/pr7-alert-delivery/.gate-lock}"
 LOCK_WAIT_SECONDS="${PR7_GATE_LOCK_WAIT_SECONDS:-30}"
+LOCK_JITTER_MIN_MS="${PR7_GATE_LOCK_JITTER_MIN_MS:-100}"
+LOCK_JITTER_MAX_MS="${PR7_GATE_LOCK_JITTER_MAX_MS:-299}"
 
 require_non_negative_integer() {
   local name="$1"
@@ -42,6 +44,12 @@ require_enum() {
 }
 
 require_non_negative_integer "PR7_GATE_LOCK_WAIT_SECONDS" "$LOCK_WAIT_SECONDS"
+require_non_negative_integer "PR7_GATE_LOCK_JITTER_MIN_MS" "$LOCK_JITTER_MIN_MS"
+require_non_negative_integer "PR7_GATE_LOCK_JITTER_MAX_MS" "$LOCK_JITTER_MAX_MS"
+if (( LOCK_JITTER_MAX_MS < LOCK_JITTER_MIN_MS )); then
+  echo "[PR7][FAIL] PR7_GATE_LOCK_JITTER_MAX_MS must be >= PR7_GATE_LOCK_JITTER_MIN_MS" >&2
+  exit 2
+fi
 require_enum "PR7_DELIVERY_FAIL_MODE" "$PR7_DELIVERY_FAIL_MODE" ignore warn escalate
 if [[ ! -x "$PR6_GATE_CMD" ]]; then
   echo "[PR7][FAIL] PR6_GATE_CMD not executable: $PR6_GATE_CMD" >&2
@@ -67,7 +75,7 @@ if [[ -f "$POLICY_FILE" ]]; then
 fi
 
 acquire_lock() {
-  local start now elapsed jitter
+  local start now elapsed jitter_range jitter
   mkdir -p "$(dirname "$LOCK_DIR")"
   start="$(date +%s)"
   while ! mkdir "$LOCK_DIR" 2>/dev/null; do
@@ -77,7 +85,12 @@ acquire_lock() {
       echo "[PR7][FAIL] lock timeout after ${LOCK_WAIT_SECONDS}s lock_dir=$LOCK_DIR" >&2
       return 1
     fi
-    jitter=$(( (RANDOM % 200) + 100 ))
+    if (( LOCK_JITTER_MAX_MS == LOCK_JITTER_MIN_MS )); then
+      jitter="$LOCK_JITTER_MIN_MS"
+    else
+      jitter_range=$(( LOCK_JITTER_MAX_MS - LOCK_JITTER_MIN_MS + 1 ))
+      jitter=$(( (RANDOM % jitter_range) + LOCK_JITTER_MIN_MS ))
+    fi
     sleep "0.$jitter"
   done
   echo "$$" >"$LOCK_DIR/pid"

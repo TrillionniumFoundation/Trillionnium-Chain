@@ -47,6 +47,12 @@ pub struct AutoAdaptiveDecision {
 }
 
 pub fn detect_conflict(a: &Tx, b: &Tx) -> bool {
+    // Read-only pairs can never conflict; skip three intersection probes in
+    // the common telemetry/transfer path where writes are absent.
+    if a.write_set.is_empty() && b.write_set.is_empty() {
+        return false;
+    }
+
     intersects(&a.write_set, &b.write_set)
         || intersects(&a.write_set, &b.read_set)
         || intersects(&a.read_set, &b.write_set)
@@ -86,8 +92,84 @@ fn intersects(x: &[ObjectRef], y: &[ObjectRef]) -> bool {
     if x.is_empty() || y.is_empty() {
         return false;
     }
+
+    // Singleton fast path: common for simple transfer-like txs; avoid HashSet and
+    // reduce iterator overhead in hot conflict probes.
+    if x.len() == 1 {
+        let key = access_key(&x[0]);
+        return y.iter().any(|obj| access_key(obj) == key);
+    }
+    if y.len() == 1 {
+        let key = access_key(&y[0]);
+        return x.iter().any(|obj| access_key(obj) == key);
+    }
+
+    // Tiny-set fast path: avoid HashSet allocation on common low-footprint txs.
+    // Iterate the smaller side first to reduce pairwise comparisons under skewed
+    // tiny footprints (e.g. 1x8), while preserving duplicate-tolerant semantics.
+    if x.len() <= 8 && y.len() <= 8 {
+        let (small, large) = if x.len() <= y.len() { (x, y) } else { (y, x) };
+
+        // Duplicate-heavy small footprints can otherwise rescan `large` for the same
+        // key many times. Keep this tiny-path dedup allocation bounded by <=8 keys.
+        let mut unique_small_keys: Vec<u64> = Vec::with_capacity(small.len());
+        for a in small {
+            let key = access_key(a);
+            if !unique_small_keys.contains(&key) {
+                unique_small_keys.push(key);
+            }
+        }
+
+        for key in unique_small_keys {
+            if large.iter().any(|b| access_key(b) == key) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     // Build a set from the smaller side to reduce comparisons.
     let (small, large) = if x.len() <= y.len() { (x, y) } else { (y, x) };
+
+    // Skewed low-footprint path: avoid HashSet allocation when one side has only a
+    // handful of keys (common in transfer-like writes against large read domains).
+    if small.len() <= 4 {
+        // Duplicate-heavy small footprints can otherwise rescan the large side
+        // multiple times for the same key under hot-key bursts.
+        let mut keys: Vec<u64> = Vec::with_capacity(small.len());
+        for a in small {
+            let key = access_key(a);
+            if !keys.contains(&key) {
+                keys.push(key);
+            }
+        }
+        for key in keys {
+            if large.iter().any(|b| access_key(b) == key) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Medium-small skew path: for 5..=8 unique keys against a larger domain, avoid
+    // HashSet allocation and probe linearly. This keeps hot conflict checks in stack-
+    // local vectors under common transfer-vs-wide-read workloads.
+    if small.len() <= 8 && large.len() >= 16 {
+        let mut keys: Vec<u64> = Vec::with_capacity(small.len());
+        for a in small {
+            let key = access_key(a);
+            if !keys.contains(&key) {
+                keys.push(key);
+            }
+        }
+        for key in keys {
+            if large.iter().any(|b| access_key(b) == key) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     let seen: HashSet<u64> = small.iter().map(access_key).collect();
     large.iter().any(|obj| seen.contains(&access_key(obj)))
 }
@@ -97,7 +179,29 @@ fn vec_hashset_intersects(a: &[u64], b: &HashSet<u64>) -> bool {
     if a.is_empty() || b.is_empty() {
         return false;
     }
-    a.iter().any(|k| b.contains(k))
+
+    // Singleton fast path shows up frequently in conflict-domain probes and
+    // avoids iterator/closure overhead in the hottest branch.
+    if a.len() == 1 {
+        return b.contains(&a[0]);
+    }
+
+    // Symmetric singleton fast path: deep-scan stages can probe wide vectors
+    // against one-key group domains; avoid walking the whole vector in that case.
+    if b.len() == 1 {
+        let only = *b
+            .iter()
+            .next()
+            .expect("single-key set must contain one element");
+        return a.contains(&only);
+    }
+
+    for k in a {
+        if b.contains(k) {
+            return true;
+        }
+    }
+    false
 }
 
 /// Build parallel-safe groups:
@@ -115,6 +219,29 @@ pub fn build_parallel_groups_profile_with_strategy(
     txs: &[Tx],
     strategy: GroupingStrategy,
 ) -> (Vec<Vec<Tx>>, GroupingProfile) {
+    if txs.is_empty() {
+        return (
+            Vec::new(),
+            GroupingProfile {
+                tx_count: 0,
+                group_count: 0,
+                grouped_count: 0,
+                max_group_size: 0,
+                min_group_size: 0,
+                avg_group_size: 0.0,
+                conflict_checks: 0,
+                conflict_hits: 0,
+                candidate_groups_scanned: 0,
+                stage_ww_checks: 0,
+                stage_ww_hits: 0,
+                stage_wr_checks: 0,
+                stage_wr_hits: 0,
+                stage_rw_checks: 0,
+                stage_rw_hits: 0,
+            },
+        );
+    }
+
     let mut selected = strategy;
     if matches!(selected, GroupingStrategy::AutoAdaptive) {
         let d = auto_adaptive_decision(txs);
@@ -134,8 +261,9 @@ pub fn build_parallel_groups_profile_with_strategy(
 
     let mut groups: Vec<Vec<Tx>> = Vec::new();
 
-    // Pre-size maps to reduce rehashing on large workloads.
-    let map_cap = (txs.len() / 2).max(64);
+    // Pre-size maps from access-footprint hint to reduce rehashing on
+    // wide-object workloads while keeping bounded overhead on tiny batches.
+    let map_cap = access_map_capacity_hint(txs);
     // object(id) -> latest group that has a writer touching this object
     let mut latest_writer_group: HashMap<u64, usize> = HashMap::with_capacity(map_cap);
     // object(id) -> latest group that has a reader touching this object
@@ -229,7 +357,7 @@ fn build_parallel_groups_aggressive_profile(
     // but keeps Aggressive strategy identity/flags and metrics interface stable.
     if !aggr_deep_scan_enabled() {
         let mut groups: Vec<Vec<Tx>> = Vec::new();
-        let map_cap = (original_txs.len() / 2).max(64);
+        let map_cap = access_map_capacity_hint(original_txs);
         let mut latest_writer_group: HashMap<u64, usize> = HashMap::with_capacity(map_cap);
         let mut latest_reader_group: HashMap<u64, usize> = HashMap::with_capacity(map_cap);
 
@@ -311,7 +439,7 @@ fn build_parallel_groups_aggressive_profile(
     let mut group_read_keys: Vec<HashSet<u64>> = Vec::new();
     let mut group_write_keys: Vec<HashSet<u64>> = Vec::new();
 
-    let map_cap = (original_txs.len() / 2).max(64);
+    let map_cap = access_map_capacity_hint(original_txs);
     let mut latest_writer_group: HashMap<u64, usize> = HashMap::with_capacity(map_cap);
     let mut latest_reader_group: HashMap<u64, usize> = HashMap::with_capacity(map_cap);
 
@@ -326,6 +454,8 @@ fn build_parallel_groups_aggressive_profile(
     let mut stage_rw_hits = 0usize;
     let scan_window = aggr_scan_window();
     let skip_empty_stage_checks = aggr_skip_empty_stage_checks();
+    let rr_enabled = aggr_scan_round_robin_enabled();
+    let mut rr_cursor = aggr_scan_round_robin_seed();
 
     for tx in ordered {
         let mut tx_slot = Some(tx);
@@ -351,10 +481,17 @@ fn build_parallel_groups_aggressive_profile(
 
         let mut placed = false;
         let mut scanned = 0usize;
-        for idx in min_group..groups.len() {
+        let candidate_span = groups.len().saturating_sub(min_group);
+        let start_offset = if rr_enabled && candidate_span > 1 {
+            rr_cursor % candidate_span
+        } else {
+            0
+        };
+        for step in 0..candidate_span {
             if scan_window > 0 && scanned >= scan_window {
                 break;
             }
+            let idx = min_group + ((start_offset + step) % candidate_span);
             scanned += 1;
             candidate_groups_scanned += 1;
             conflict_checks += 1;
@@ -412,6 +549,10 @@ fn build_parallel_groups_aggressive_profile(
                 latest_writer_group.insert(*key, idx);
             }
         }
+
+        if rr_enabled && candidate_span > 1 {
+            rr_cursor = rr_cursor.wrapping_add(1);
+        }
     }
 
     let group_count = groups.len();
@@ -446,10 +587,34 @@ fn build_parallel_groups_aggressive_profile(
     )
 }
 
+#[inline]
+fn access_map_capacity_hint(txs: &[Tx]) -> usize {
+    const MIN_CAP: usize = 64;
+    const MAX_CAP: usize = 1 << 20;
+
+    let mut footprint = 0usize;
+    for tx in txs {
+        footprint = footprint
+            .saturating_add(tx.read_set.len())
+            .saturating_add(tx.write_set.len());
+    }
+
+    // HashMap load-factor friendly sizing. Keep a floor for tiny batches and
+    // cap for pathological bursts so this remains a low-risk sizing hint.
+    let hinted = footprint
+        .saturating_mul(4)
+        .saturating_div(3)
+        .saturating_add(1);
+    hinted.clamp(MIN_CAP, MAX_CAP)
+}
+
 fn aggr_scan_window() -> usize {
+    const MAX_SCAN_WINDOW: usize = 4096;
+
     std::env::var("TRNM_AGGR_SCAN_WINDOW")
         .ok()
-        .and_then(|v| v.parse::<usize>().ok())
+        .and_then(|v| v.trim().parse::<usize>().ok())
+        .map(|v| v.min(MAX_SCAN_WINDOW))
         .unwrap_or(0)
 }
 
@@ -473,10 +638,27 @@ fn aggr_deep_scan_enabled() -> bool {
         .unwrap_or(false)
 }
 
+fn aggr_scan_round_robin_enabled() -> bool {
+    std::env::var("TRNM_AGGR_SCAN_ROUND_ROBIN")
+        .ok()
+        .map(|v| {
+            let s = v.trim().to_ascii_lowercase();
+            !(s == "0" || s == "false" || s == "off" || s == "no")
+        })
+        .unwrap_or(true)
+}
+
+fn aggr_scan_round_robin_seed() -> usize {
+    std::env::var("TRNM_AGGR_SCAN_RR_SEED")
+        .ok()
+        .and_then(|v| v.trim().parse::<usize>().ok())
+        .unwrap_or(0)
+}
+
 fn auto_hot_streak_threshold() -> f64 {
     std::env::var("TRNM_AUTO_HOT_STREAK_RATIO")
         .ok()
-        .and_then(|v| v.parse::<f64>().ok())
+        .and_then(|v| v.trim().parse::<f64>().ok())
         .map(|v| v.clamp(0.0, 1.0))
         .unwrap_or(0.22)
 }
@@ -484,7 +666,7 @@ fn auto_hot_streak_threshold() -> f64 {
 fn auto_reorder_min_margin() -> f64 {
     std::env::var("TRNM_AUTO_REORDER_MIN_MARGIN")
         .ok()
-        .and_then(|v| v.parse::<f64>().ok())
+        .and_then(|v| v.trim().parse::<f64>().ok())
         .map(|v| v.clamp(0.0, 1.0))
         .unwrap_or(0.04)
 }
@@ -492,7 +674,7 @@ fn auto_reorder_min_margin() -> f64 {
 fn auto_reorder_min_hot_key_share() -> f64 {
     std::env::var("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE")
         .ok()
-        .and_then(|v| v.parse::<f64>().ok())
+        .and_then(|v| v.trim().parse::<f64>().ok())
         .map(|v| v.clamp(0.0, 1.0))
         .unwrap_or(0.0075)
 }
@@ -500,7 +682,7 @@ fn auto_reorder_min_hot_key_share() -> f64 {
 fn hot_bucket_count() -> usize {
     std::env::var("TRNM_HOT_BUCKETS")
         .ok()
-        .and_then(|v| v.parse::<usize>().ok())
+        .and_then(|v| v.trim().parse::<usize>().ok())
         .map(|v| v.clamp(4, 64))
         .unwrap_or(8)
 }
@@ -508,7 +690,7 @@ fn hot_bucket_count() -> usize {
 fn auto_min_expected_gain_score() -> f64 {
     std::env::var("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE")
         .ok()
-        .and_then(|v| v.parse::<f64>().ok())
+        .and_then(|v| v.trim().parse::<f64>().ok())
         .map(|v| v.clamp(0.0, 1.0))
         .unwrap_or(0.01)
 }
@@ -534,7 +716,8 @@ pub fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
         };
     }
 
-    // Sample first window to estimate hot-key streak pressure.
+    // Sample a bounded, evenly-spaced window across the whole batch to avoid
+    // first-window bias when hotspots arrive later in queue order.
     let sample_len = txs.len().min(2048);
     let mut same_key_streak_hits = 0usize;
     let mut total_pairs = 0usize;
@@ -542,7 +725,16 @@ pub fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
     let mut key_hist: HashMap<u64, usize> = HashMap::new();
     let mut observed = 0usize;
 
-    for tx in txs.iter().take(sample_len) {
+    let batch_len = txs.len();
+    for i in 0..sample_len {
+        // Keep endpoints visible in bounded sampling windows so late-batch
+        // hotspots contribute to adaptive scheduler decisions.
+        let idx = if sample_len > 1 {
+            i.saturating_mul(batch_len.saturating_sub(1)) / (sample_len - 1)
+        } else {
+            0
+        };
+        let tx = &txs[idx];
         let key = tx
             .write_set
             .first()
@@ -608,6 +800,33 @@ pub fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
     }
 }
 
+fn hot_bucket_hint(tx: &Tx, buckets_n: usize) -> usize {
+    // Keep hash mixing deterministic across targets (32/64-bit) by using a
+    // fixed-width integer domain before reducing to bucket count.
+    let key_a = tx
+        .write_set
+        .first()
+        .or_else(|| tx.read_set.first())
+        .map(|o| o.id)
+        .unwrap_or(0);
+    let key_b = tx
+        .write_set
+        .get(1)
+        .or_else(|| tx.read_set.get(1))
+        .map(|o| o.id)
+        .unwrap_or(0);
+    let mixed = key_a ^ key_b.rotate_left(7);
+    if buckets_n.is_power_of_two() {
+        // Fast-path hot scheduler probes: avoid division in the common power-of-two
+        // bucket layout while keeping deterministic bucket mapping.
+        (mixed as usize) & (buckets_n - 1)
+    } else {
+        // Reduce in u64-space first; casting mixed directly to usize would truncate
+        // high bits on 32-bit targets and skew bucket selection under wide key domains.
+        (mixed % buckets_n as u64) as usize
+    }
+}
+
 fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
     match strategy {
         GroupingStrategy::Original => {}
@@ -639,25 +858,24 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
             // Heuristic reorder; see should_use_hot_bucket_interleave for adaptive trigger.
             // Heuristic: shard txs by a stable access-key hint, then round-robin buckets.
             // Goal is to avoid long same-key streaks in input order under hotspot workloads.
-            let buckets_n = hot_bucket_count();
+            if txs.len() <= 1 {
+                return;
+            }
+            // Micro-batches (2-3 txs) do not benefit from bucket interleave and only pay
+            // allocation/probing overhead. Keep original order for better free-ingress latency
+            // at low concurrency while preserving deterministic behavior.
+            if txs.len() < 4 {
+                return;
+            }
+            // Cap bucket fanout by input size: for tiny batches this avoids allocating
+            // and probing empty buckets while preserving the same interleave semantics.
+            let buckets_n = hot_bucket_count().min(txs.len());
             let mut buckets: Vec<Vec<Tx>> = vec![Vec::new(); buckets_n];
 
             for tx in txs.iter().cloned() {
                 // Prefer write-set as stronger conflict signal; fold a second key when present
                 // to reduce bucket skew for mixed workloads.
-                let key_a = tx
-                    .write_set
-                    .first()
-                    .or_else(|| tx.read_set.first())
-                    .map(|o| o.id as usize)
-                    .unwrap_or(0);
-                let key_b = tx
-                    .write_set
-                    .get(1)
-                    .or_else(|| tx.read_set.get(1))
-                    .map(|o| o.id as usize)
-                    .unwrap_or(0);
-                let bucket = (key_a ^ key_b.rotate_left(7)) % buckets_n;
+                let bucket = hot_bucket_hint(&tx, buckets_n);
                 buckets[bucket].push(tx);
             }
 
@@ -665,13 +883,67 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
             // avoid extra O(n log n) sorting cost.
 
             // Stable round-robin with move semantics (avoid per-tx clone cost).
+            let bucket_depths: Vec<usize> = buckets.iter().map(|b| b.len()).collect();
             let mut iters: Vec<std::vec::IntoIter<Tx>> =
                 buckets.into_iter().map(|b| b.into_iter()).collect();
             let mut merged = Vec::with_capacity(txs.len());
+            // Under highly skewed hot-bucket loads, start from the sparsest non-empty
+            // bucket so low-volume conflict domains are serviced promptly instead of
+            // always waiting behind the dominant lane at cycle start.
+            let first_hint = txs
+                .first()
+                .map(|tx| hot_bucket_hint(tx, iters.len()))
+                .unwrap_or(0);
+            let sparse_start = {
+                let mut min_non_zero = usize::MAX;
+                let mut max_depth = 0usize;
+                for depth in bucket_depths.iter().copied() {
+                    if depth == 0 {
+                        continue;
+                    }
+                    max_depth = max_depth.max(depth);
+                    min_non_zero = min_non_zero.min(depth);
+                }
+
+                if min_non_zero != usize::MAX && max_depth >= min_non_zero.saturating_mul(2) {
+                    // When multiple equally sparse buckets exist, rotate the sparse
+                    // anti-starvation seed around the first hot-key hint to avoid
+                    // repeatedly preferring the lowest bucket index.
+                    let mut best_idx = None;
+                    let mut best_distance = usize::MAX;
+                    let mut best_counter_clockwise = usize::MAX;
+                    for (idx, depth) in bucket_depths.iter().copied().enumerate() {
+                        if depth != min_non_zero {
+                            continue;
+                        }
+                        let clockwise = (idx + iters.len() - first_hint) % iters.len();
+                        let counter_clockwise = (first_hint + iters.len() - idx) % iters.len();
+                        let distance = clockwise.min(counter_clockwise);
+                        if distance < best_distance
+                            || (distance == best_distance
+                                && counter_clockwise < best_counter_clockwise)
+                        {
+                            best_distance = distance;
+                            best_counter_clockwise = counter_clockwise;
+                            best_idx = Some(idx);
+                        }
+                    }
+                    best_idx
+                } else {
+                    None
+                }
+            };
+            // Seed the initial bucket probe from either sparse anti-starvation hint
+            // or first tx hot-key hint so repeated batches do not always favor bucket 0.
+            let mut rr_start = sparse_start.unwrap_or(first_hint);
+            // Rotate the round-robin start bucket each pass to reduce consistent
+            // first-bucket preference under uneven bucket depths.
             loop {
                 let mut moved = false;
-                for it in &mut iters {
-                    if let Some(tx) = it.next() {
+                let n = iters.len();
+                for step in 0..n {
+                    let idx = (rr_start + step) % n;
+                    if let Some(tx) = iters[idx].next() {
                         merged.push(tx);
                         moved = true;
                     }
@@ -679,6 +951,7 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
                 if !moved {
                     break;
                 }
+                rr_start = (rr_start + 1) % n;
             }
 
             for (dst, src) in txs.iter_mut().zip(merged.into_iter()) {
@@ -697,6 +970,7 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::sync::{Mutex, MutexGuard, OnceLock};
 
     fn o(id: u64) -> ObjectRef {
         ObjectRef { id, version: 1 }
@@ -731,6 +1005,75 @@ mod tests {
         assert!(!detect_conflict(
             &tx(1, vec![o(1)], vec![]),
             &tx(2, vec![o(2)], vec![])
+        ));
+    }
+
+    #[test]
+    fn read_only_overlap_is_non_conflicting() {
+        assert!(!detect_conflict(
+            &tx(1, vec![o(7), o(8)], vec![]),
+            &tx(2, vec![o(8), o(9)], vec![])
+        ));
+    }
+
+    #[test]
+    fn tiny_footprint_conflict_check_handles_duplicates_without_false_positive() {
+        let a = tx(1, vec![o(10), o(10), o(11)], vec![]);
+        let b = tx(2, vec![o(12), o(12), o(13)], vec![]);
+        let c = tx(3, vec![], vec![o(11)]);
+
+        assert!(!detect_conflict(&a, &b));
+        assert!(detect_conflict(&a, &c));
+    }
+
+    #[test]
+    fn singleton_access_conflict_path_handles_skewed_footprints() {
+        let singleton_write = tx(1, vec![], vec![o(42)]);
+        let wide_read_hit = tx(2, vec![o(7), o(8), o(42), o(9), o(10)], vec![]);
+        let wide_read_miss = tx(3, vec![o(7), o(8), o(9), o(10)], vec![]);
+
+        assert!(detect_conflict(&singleton_write, &wide_read_hit));
+        assert!(!detect_conflict(&singleton_write, &wide_read_miss));
+    }
+
+    #[test]
+    fn vec_hashset_intersects_handles_singleton_hashset_domain() {
+        let mut singleton = HashSet::new();
+        singleton.insert(42u64);
+
+        assert!(vec_hashset_intersects(&[7, 8, 42, 9], &singleton));
+        assert!(!vec_hashset_intersects(&[7, 8, 9], &singleton));
+    }
+
+    #[test]
+    fn skewed_small_vs_large_conflict_path_handles_large_domains() {
+        let small_write = tx(1, vec![], vec![o(101), o(202), o(303), o(404)]);
+        let mut wide_read_hit: Vec<ObjectRef> = (1..=64).map(o).collect();
+        wide_read_hit.push(o(303));
+        let wide_read_miss: Vec<ObjectRef> = (1..=64).map(|id| o(id + 10_000)).collect();
+
+        assert!(detect_conflict(&small_write, &tx(2, wide_read_hit, vec![])));
+        assert!(!detect_conflict(
+            &small_write,
+            &tx(3, wide_read_miss, vec![])
+        ));
+    }
+
+    #[test]
+    fn medium_small_vs_large_conflict_path_avoids_hashset_and_preserves_semantics() {
+        let small_write = tx(
+            1,
+            vec![],
+            vec![o(501), o(502), o(503), o(503), o(504), o(505)],
+        );
+        let mut wide_read_hit: Vec<ObjectRef> = (1..=64).map(|id| o(10_000 + id)).collect();
+        wide_read_hit.push(o(504));
+        let wide_read_miss: Vec<ObjectRef> = (1..=64).map(|id| o(20_000 + id)).collect();
+
+        assert!(detect_conflict(&small_write, &tx(2, wide_read_hit, vec![])));
+        assert!(!detect_conflict(
+            &small_write,
+            &tx(3, wide_read_miss, vec![])
         ));
     }
 
@@ -789,6 +1132,418 @@ mod tests {
             for i in 0..grp.len() {
                 for j in (i + 1)..grp.len() {
                     assert!(!detect_conflict(&grp[i], &grp[j]));
+                }
+            }
+        }
+    }
+
+    fn env_lock() -> MutexGuard<'static, ()> {
+        static ENV_LOCK: OnceLock<Mutex<()>> = OnceLock::new();
+        ENV_LOCK
+            .get_or_init(|| Mutex::new(()))
+            .lock()
+            .expect("env test lock poisoned")
+    }
+
+    #[test]
+    fn aggressive_round_robin_cursor_avoids_even_id_bias() {
+        let _env = env_lock();
+        let _deep = EnvGuard::set("TRNM_AGGR_DEEP_SCAN", "1");
+        let _rr = EnvGuard::set("TRNM_AGGR_SCAN_ROUND_ROBIN", "1");
+        let _window = EnvGuard::set("TRNM_AGGR_SCAN_WINDOW", "1");
+
+        let txs = vec![
+            tx(1, vec![], vec![o(7)]),    // group 0
+            tx(3, vec![], vec![o(7)]),    // forced to group 1 (conflicts with tx1)
+            tx(10, vec![o(101)], vec![]), // independent even ids that previously pinned to offset 0
+            tx(12, vec![o(102)], vec![]),
+            tx(14, vec![o(103)], vec![]),
+            tx(16, vec![o(104)], vec![]),
+        ];
+
+        let (groups, _) =
+            build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::AggressiveGreedy);
+
+        assert!(groups.len() >= 2);
+        assert!(groups[0].len() >= 2);
+        assert!(groups[1].len() >= 2);
+    }
+
+    #[test]
+    fn hot_bucket_interleave_seeds_initial_round_from_first_hot_key() {
+        let mut txs = vec![
+            tx(501, vec![], vec![o(5)]),  // bucket 5 when TRNM_HOT_BUCKETS=8
+            tx(101, vec![], vec![o(0)]),  // bucket 0
+            tx(102, vec![], vec![o(8)]),  // bucket 0
+            tx(103, vec![], vec![o(16)]), // bucket 0
+        ];
+
+        reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
+        assert_eq!(txs.first().map(|t| t.id), Some(501));
+    }
+
+    #[test]
+    fn hot_bucket_interleave_empty_batch_is_noop() {
+        let mut txs = Vec::<Tx>::new();
+        reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
+        assert!(txs.is_empty());
+    }
+
+    #[test]
+    fn hot_bucket_interleave_prefers_sparse_non_empty_bucket_under_heavy_skew() {
+        let mut txs = vec![
+            tx(201, vec![], vec![o(0)]),  // hot bucket (depth 3)
+            tx(202, vec![], vec![o(8)]),  // same hot bucket
+            tx(203, vec![], vec![o(16)]), // same hot bucket
+            tx(204, vec![], vec![o(3)]),  // sparse bucket (depth 1)
+        ];
+
+        reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
+        assert_eq!(txs.first().map(|t| t.id), Some(204));
+    }
+
+    #[test]
+    fn hot_bucket_interleave_prefers_a_sparse_bucket_under_moderate_two_to_one_skew() {
+        let mut txs = vec![
+            tx(301, vec![], vec![o(0)]), // hot bucket (depth 2)
+            tx(302, vec![], vec![o(8)]), // same hot bucket
+            tx(303, vec![], vec![o(3)]), // sparse bucket A (depth 1)
+            tx(304, vec![], vec![o(5)]), // sparse bucket B (depth 1); keeps len >= 4
+        ];
+
+        reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
+        assert!(matches!(txs.first().map(|t| t.id), Some(303 | 304)));
+    }
+
+    #[test]
+    fn hot_bucket_interleave_sparse_tie_rotates_from_first_hot_hint() {
+        let mut txs = vec![
+            tx(401, vec![], vec![o(5)]),  // first hot hint bucket 5
+            tx(402, vec![], vec![o(13)]), // same hot bucket (depth 2)
+            tx(403, vec![], vec![o(1)]),  // sparse bucket 1
+            tx(404, vec![], vec![o(6)]),  // sparse bucket 6
+        ];
+
+        reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
+        // Both bucket 1 and 6 are equally sparse; prefer the one nearest the first
+        // hot-key hint to avoid fixed low-index sparse bias across batches.
+        assert_eq!(txs.first().map(|t| t.id), Some(404));
+    }
+
+    #[test]
+    fn hot_bucket_interleave_sparse_tie_prefers_nearest_bucket_across_ring_wrap() {
+        let mut txs = vec![
+            tx(411, vec![], vec![o(0)]),  // first hot hint bucket 0
+            tx(412, vec![], vec![o(8)]),  // same hot bucket (depth 2)
+            tx(413, vec![], vec![o(1)]),  // sparse bucket +1 clockwise
+            tx(414, vec![], vec![o(7)]),  // sparse bucket -1 counter-clockwise
+        ];
+
+        reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
+        // When sparse buckets straddle the ring boundary, prefer the truly nearest
+        // bucket instead of always scanning clockwise from the first hint.
+        assert_eq!(txs.first().map(|t| t.id), Some(414));
+    }
+
+    #[test]
+    fn hot_bucket_interleave_skips_micro_batches_to_preserve_low_latency_order() {
+        let mut txs = vec![
+            tx(21, vec![], vec![o(8)]),
+            tx(22, vec![], vec![o(1)]),
+            tx(23, vec![], vec![o(16)]),
+        ];
+
+        reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
+        assert_eq!(
+            txs.iter().map(|t| t.id).collect::<Vec<_>>(),
+            vec![21, 22, 23]
+        );
+    }
+
+    #[test]
+    fn hot_bucket_hint_uses_full_u64_keyspace_before_bucket_reduce() {
+        let buckets_n = 97usize;
+        let low = tx(1, vec![], vec![o(1)]);
+        let high = tx(2, vec![], vec![o(1 + (1u64 << 40))]);
+
+        let low_bucket = hot_bucket_hint(&low, buckets_n);
+        let high_bucket = hot_bucket_hint(&high, buckets_n);
+
+        // Distinct high bits must influence bucket selection; truncating to usize
+        // before modulo would collapse these on 32-bit targets.
+        assert_ne!(low_bucket, high_bucket);
+        assert_eq!(
+            high_bucket,
+            ((1 + (1u64 << 40)) % buckets_n as u64) as usize
+        );
+    }
+
+    #[test]
+    fn hot_bucket_hint_power_of_two_fast_path_matches_modulo_mapping() {
+        let txs = [
+            tx(1, vec![], vec![o(1)]),
+            tx(2, vec![], vec![o(1 + (1u64 << 40))]),
+            tx(3, vec![o(7)], vec![]),
+            tx(4, vec![o(11), o(13)], vec![]),
+            tx(5, vec![], vec![o(23), o(29)]),
+        ];
+        let buckets_n = 8usize;
+
+        for t in txs {
+            let expected = ((t
+                .write_set
+                .first()
+                .or_else(|| t.read_set.first())
+                .map(|o| o.id)
+                .unwrap_or(0)
+                ^ t.write_set
+                    .get(1)
+                    .or_else(|| t.read_set.get(1))
+                    .map(|o| o.id)
+                    .unwrap_or(0)
+                    .rotate_left(7))
+                % buckets_n as u64) as usize;
+            assert_eq!(hot_bucket_hint(&t, buckets_n), expected);
+        }
+    }
+
+    #[test]
+    fn aggressive_round_robin_seed_rotates_initial_probe_start() {
+        let _env = env_lock();
+        let _deep = EnvGuard::set("TRNM_AGGR_DEEP_SCAN", "1");
+        let _rr = EnvGuard::set("TRNM_AGGR_SCAN_ROUND_ROBIN", "1");
+        let _window = EnvGuard::set("TRNM_AGGR_SCAN_WINDOW", "1");
+        let _seed = EnvGuard::set("TRNM_AGGR_SCAN_RR_SEED", "1");
+
+        let txs = vec![
+            tx(1, vec![], vec![o(7)]),    // group 0
+            tx(3, vec![], vec![o(7)]),    // forced to group 1
+            tx(10, vec![o(101)], vec![]), // first free candidate should honor seed offset
+        ];
+
+        let (groups, _) =
+            build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::AggressiveGreedy);
+
+        assert!(groups.len() >= 2);
+        assert!(groups[1].iter().any(|t| t.id == 10));
+    }
+
+    #[test]
+    fn aggressive_respects_skip_empty_stage_checks_toggle() {
+        let _env = env_lock();
+        let _deep = EnvGuard::set("TRNM_AGGR_DEEP_SCAN", "1");
+        let _rr = EnvGuard::set("TRNM_AGGR_SCAN_ROUND_ROBIN", "0");
+        let _window = EnvGuard::set("TRNM_AGGR_SCAN_WINDOW", "2");
+        let _skip_empty = EnvGuard::set("TRNM_AGGR_SKIP_EMPTY_STAGE_CHECKS", "0");
+
+        let txs = vec![
+            tx(1, vec![], vec![o(7)]), // group 0
+            tx(3, vec![], vec![o(7)]), // forced to group 1
+            tx(10, vec![], vec![]),    // empty access set, scans existing groups first
+        ];
+
+        let (_groups, profile) =
+            build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::AggressiveGreedy);
+
+        assert!(
+            profile.stage_ww_checks > 0,
+            "disable-skip toggle must keep ww stage checks observable"
+        );
+        assert!(
+            profile.stage_wr_checks > 0,
+            "disable-skip toggle must keep wr stage checks observable"
+        );
+        assert!(
+            profile.stage_rw_checks > 0,
+            "disable-skip toggle must keep rw stage checks observable"
+        );
+    }
+
+    #[test]
+    fn aggressive_scan_window_caps_candidate_probe_cost() {
+        let _env = env_lock();
+        let _deep = EnvGuard::set("TRNM_AGGR_DEEP_SCAN", "1");
+        let _rr = EnvGuard::set("TRNM_AGGR_SCAN_ROUND_ROBIN", "1");
+        let _window = EnvGuard::set("TRNM_AGGR_SCAN_WINDOW", "1");
+
+        // Force many independent txs to create an expanding candidate span.
+        // With scan window=1, each tx can probe at most one candidate group,
+        // bounding probe work to O(n) and preventing deep-scan blowups.
+        let mut txs = Vec::new();
+        txs.push(tx(1, vec![], vec![o(7)]));
+        txs.push(tx(2, vec![], vec![o(7)]));
+        for i in 0..32u64 {
+            txs.push(tx(100 + i, vec![o(10_000 + i)], vec![]));
+        }
+
+        let (_groups, profile) =
+            build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::AggressiveGreedy);
+
+        assert!(
+            profile.candidate_groups_scanned <= txs.len().saturating_sub(1),
+            "scan window must cap candidate scans to ~1 probe per tx"
+        );
+    }
+
+    #[test]
+    fn aggressive_scan_window_is_clamped_to_prevent_misconfigured_probe_blowups() {
+        let _env = env_lock();
+        let _window = EnvGuard::set("TRNM_AGGR_SCAN_WINDOW", "999999");
+
+        assert_eq!(aggr_scan_window(), 4096);
+    }
+
+    #[test]
+    fn aggressive_scan_window_parses_trimmed_numeric_env_values() {
+        let _env = env_lock();
+        let _window = EnvGuard::set("TRNM_AGGR_SCAN_WINDOW", " 128 ");
+
+        assert_eq!(aggr_scan_window(), 128);
+    }
+
+    #[test]
+    fn aggressive_round_robin_seed_parses_trimmed_numeric_env_values() {
+        let _env = env_lock();
+        let _seed = EnvGuard::set("TRNM_AGGR_SCAN_RR_SEED", " 7 ");
+
+        assert_eq!(aggr_scan_round_robin_seed(), 7);
+    }
+
+    #[test]
+    fn auto_threshold_env_parsers_accept_trimmed_numeric_values() {
+        let _env = env_lock();
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", " 0.35 ");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", " 0.12 ");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", " 0.018 ");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", " 0.03 ");
+
+        assert!((auto_hot_streak_threshold() - 0.35).abs() < f64::EPSILON);
+        assert!((auto_reorder_min_margin() - 0.12).abs() < f64::EPSILON);
+        assert!((auto_reorder_min_hot_key_share() - 0.018).abs() < f64::EPSILON);
+        assert!((auto_min_expected_gain_score() - 0.03).abs() < f64::EPSILON);
+    }
+
+    #[test]
+    fn hot_bucket_count_parser_accepts_trimmed_numeric_values() {
+        let _env = env_lock();
+        let _buckets = EnvGuard::set("TRNM_HOT_BUCKETS", " 16 ");
+
+        assert_eq!(hot_bucket_count(), 16);
+    }
+
+    #[test]
+    fn hot_bucket_count_is_clamped_to_safe_bounds() {
+        let _env = env_lock();
+
+        let _low = EnvGuard::set("TRNM_HOT_BUCKETS", "0");
+        assert_eq!(hot_bucket_count(), 4);
+        drop(_low);
+
+        let _high = EnvGuard::set("TRNM_HOT_BUCKETS", "999");
+        assert_eq!(hot_bucket_count(), 64);
+    }
+
+    #[test]
+    fn auto_adaptive_sampling_detects_late_batch_hotspots() {
+        let _env = env_lock();
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.20");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.10");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.01");
+
+        let mut txs = Vec::with_capacity(4096);
+        for i in 0..2048u64 {
+            txs.push(tx(i, vec![], vec![o(10_000 + i)]));
+        }
+        for i in 0..2048u64 {
+            txs.push(tx(3_000 + i, vec![], vec![o(42)]));
+        }
+
+        let d = auto_adaptive_decision(&txs);
+        assert!(
+            d.use_hot_bucket,
+            "late hotspot should be visible in adaptive sample"
+        );
+        assert_eq!(d.reason, "hotspot_detected");
+    }
+
+    #[test]
+    fn auto_adaptive_sampling_includes_batch_tail_for_hotspot_estimate() {
+        let _env = env_lock();
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.0");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.0007");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.0");
+
+        // sample_len clamps to 2048. Duplicate key appears only at the first and
+        // final tx. Endpoint-inclusive sampling must capture both to avoid
+        // underestimating tail hotspots.
+        let mut txs = Vec::with_capacity(3000);
+        txs.push(tx(1, vec![], vec![o(777)]));
+        for i in 1..2999u64 {
+            txs.push(tx(10_000 + i, vec![], vec![o(20_000 + i)]));
+        }
+        txs.push(tx(9_999, vec![], vec![o(777)]));
+
+        let d = auto_adaptive_decision(&txs);
+        assert!(d.use_hot_bucket, "tail hotspot should be counted in sample");
+        assert_eq!(d.reason, "hotspot_detected");
+    }
+
+    #[test]
+    fn empty_batch_fast_path_is_profile_stable_across_strategies() {
+        let strategies = [
+            GroupingStrategy::Original,
+            GroupingStrategy::HotBucketInterleave,
+            GroupingStrategy::AggressiveGreedy,
+            GroupingStrategy::AutoAdaptive,
+        ];
+
+        for strategy in strategies {
+            let (groups, profile) = build_parallel_groups_profile_with_strategy(&[], strategy);
+            assert!(groups.is_empty());
+            assert_eq!(profile.tx_count, 0);
+            assert_eq!(profile.group_count, 0);
+            assert_eq!(profile.grouped_count, 0);
+            assert_eq!(profile.max_group_size, 0);
+            assert_eq!(profile.min_group_size, 0);
+            assert_eq!(profile.avg_group_size, 0.0);
+            assert_eq!(profile.conflict_checks, 0);
+            assert_eq!(profile.conflict_hits, 0);
+            assert_eq!(profile.candidate_groups_scanned, 0);
+            assert_eq!(profile.stage_ww_checks, 0);
+            assert_eq!(profile.stage_ww_hits, 0);
+            assert_eq!(profile.stage_wr_checks, 0);
+            assert_eq!(profile.stage_wr_hits, 0);
+            assert_eq!(profile.stage_rw_checks, 0);
+            assert_eq!(profile.stage_rw_hits, 0);
+        }
+    }
+
+    struct EnvGuard {
+        key: &'static str,
+        old: Option<String>,
+    }
+
+    impl EnvGuard {
+        fn set(key: &'static str, value: &str) -> Self {
+            let old = std::env::var(key).ok();
+            unsafe {
+                std::env::set_var(key, value);
+            }
+            Self { key, old }
+        }
+    }
+
+    impl Drop for EnvGuard {
+        fn drop(&mut self) {
+            if let Some(v) = &self.old {
+                unsafe {
+                    std::env::set_var(self.key, v);
+                }
+            } else {
+                unsafe {
+                    std::env::remove_var(self.key);
                 }
             }
         }

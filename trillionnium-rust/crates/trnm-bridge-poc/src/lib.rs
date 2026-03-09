@@ -1,10 +1,11 @@
 pub mod bridge_status {
     use serde::{Deserialize, Serialize};
+    use trnm_types::IdentityRegistry;
 
     #[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
     pub enum BridgeStatus {
         Pending,
-        Finalized(u64), // block height
+        Finalized(u64),   // block height
         Reverted(String), // reason
     }
 
@@ -28,10 +29,24 @@ pub mod bridge_status {
 
     #[derive(Debug, PartialEq, Eq)]
     pub enum SettlementError {
-        Unauthorized { subject: String, action: &'static str },
-        InvalidTransition { from: &'static str, to: &'static str },
-        InvalidHeight { height: u64 },
-        MalformedToken { reason: &'static str },
+        Unauthorized {
+            subject: String,
+            action: &'static str,
+        },
+        InvalidTransition {
+            from: &'static str,
+            to: &'static str,
+        },
+        InvalidHeight {
+            height: u64,
+        },
+        InvalidRevertReason,
+        MalformedRequest {
+            reason: &'static str,
+        },
+        MalformedToken {
+            reason: &'static str,
+        },
     }
 
     impl SettlementError {
@@ -56,13 +71,33 @@ pub mod bridge_status {
             }
         }
 
+        fn validate_request(&self) -> Result<(), SettlementError> {
+            if self.tx_hash.trim().is_empty() {
+                return Err(SettlementError::MalformedRequest {
+                    reason: "empty tx_hash",
+                });
+            }
+            if self.tx_hash.trim() != self.tx_hash || self.tx_hash.chars().any(char::is_control) {
+                return Err(SettlementError::MalformedRequest {
+                    reason: "non-canonical tx_hash",
+                });
+            }
+            Ok(())
+        }
+
         fn validate_token(token: &CapabilityToken) -> Result<(), SettlementError> {
             if token.subject.trim().is_empty() {
                 return Err(SettlementError::MalformedToken {
                     reason: "empty subject",
                 });
             }
-            if token.subject.trim() != token.subject || token.subject.chars().any(char::is_control) {
+            if token.subject.trim() != token.subject || token.subject.chars().any(char::is_control)
+            {
+                return Err(SettlementError::MalformedToken {
+                    reason: "non-canonical subject",
+                });
+            }
+            if !IdentityRegistry::is_canonical_did(&token.subject) {
                 return Err(SettlementError::MalformedToken {
                     reason: "non-canonical subject",
                 });
@@ -70,12 +105,16 @@ pub mod bridge_status {
             Ok(())
         }
 
-        pub fn settle(&mut self, height: u64) {
-            self.status = BridgeStatus::Finalized(height);
+        #[deprecated(note = "direct settlement writes are disabled; use settle_authorized")]
+        pub fn settle(&mut self, _height: u64) {
+            // SECURITY: keep legacy API surface without allowing authorization bypass.
+            // Only *_authorized paths may perform terminal state transitions.
         }
 
-        pub fn revert(&mut self, reason: String) {
-            self.status = BridgeStatus::Reverted(reason);
+        #[deprecated(note = "direct settlement writes are disabled; use revert_authorized")]
+        pub fn revert(&mut self, _reason: String) {
+            // SECURITY: keep legacy API surface without allowing authorization bypass.
+            // Only *_authorized paths may perform terminal state transitions.
         }
 
         pub fn settle_authorized(
@@ -83,6 +122,7 @@ pub mod bridge_status {
             token: &CapabilityToken,
             height: u64,
         ) -> Result<(), SettlementError> {
+            self.validate_request()?;
             Self::validate_token(token)?;
             if !token.allows(SettlementCapability::Finalize) {
                 return Err(SettlementError::Unauthorized {
@@ -98,6 +138,7 @@ pub mod bridge_status {
             token: &CapabilityToken,
             reason: String,
         ) -> Result<(), SettlementError> {
+            self.validate_request()?;
             Self::validate_token(token)?;
             if !token.allows(SettlementCapability::Revert) {
                 return Err(SettlementError::Unauthorized {
@@ -129,6 +170,9 @@ pub mod bridge_status {
         }
 
         fn transition_to_reverted(&mut self, reason: String) -> Result<(), SettlementError> {
+            if reason.trim().is_empty() {
+                return Err(SettlementError::InvalidRevertReason);
+            }
             match self.status {
                 BridgeStatus::Pending => {
                     self.status = BridgeStatus::Reverted(reason);
@@ -144,7 +188,6 @@ pub mod bridge_status {
                 }),
             }
         }
-
     }
 }
 

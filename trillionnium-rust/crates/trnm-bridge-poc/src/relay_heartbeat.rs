@@ -46,6 +46,10 @@ impl RelayHeartbeatMonitor {
         self.config.interval_secs
     }
 
+    pub fn consecutive_failures(&self) -> u8 {
+        self.consecutive_failures
+    }
+
     pub fn record_success(
         &mut self,
         source_height: u64,
@@ -69,17 +73,76 @@ impl RelayHeartbeatMonitor {
         self.consecutive_failures = self.consecutive_failures.saturating_add(1);
         let degraded = self.consecutive_failures >= self.config.max_retry;
         let should_retry = !degraded;
+        let normalized_reason = normalize_failure_reason(reason);
+
         if degraded {
             eprintln!(
                 "[relay-heartbeat][degraded] failures={} reason={}",
-                self.consecutive_failures, reason
+                self.consecutive_failures, normalized_reason
             );
         }
         HeartbeatOutcome {
             heartbeat: None,
             should_retry,
             degraded,
-            message: reason.to_string(),
+            message: normalized_reason,
         }
     }
+}
+
+const MAX_FAILURE_REASON_CHARS: usize = 160;
+
+fn is_disallowed_invisible_char(ch: char) -> bool {
+    matches!(
+        ch,
+        '\u{00AD}'
+            | '\u{061C}'
+            | '\u{180E}'
+            | '\u{200B}'
+            | '\u{200C}'
+            | '\u{200D}'
+            | '\u{200E}'
+            | '\u{200F}'
+            | '\u{202A}'
+            | '\u{202B}'
+            | '\u{202C}'
+            | '\u{202D}'
+            | '\u{202E}'
+            | '\u{2060}'
+            | '\u{2066}'
+            | '\u{2067}'
+            | '\u{2068}'
+            | '\u{2069}'
+            | '\u{FEFF}'
+    )
+}
+
+fn normalize_failure_reason(reason: &str) -> String {
+    let sanitized: String = reason
+        .chars()
+        .map(|ch| {
+            if ch.is_whitespace() {
+                ' '
+            } else if ch.is_control() || is_disallowed_invisible_char(ch) {
+                '\0'
+            } else {
+                ch
+            }
+        })
+        .filter(|ch| *ch != '\0')
+        .collect();
+    let collapsed = sanitized.split_whitespace().collect::<Vec<_>>().join(" ");
+    if collapsed.is_empty() {
+        return "unknown heartbeat failure".to_string();
+    }
+
+    let mut normalized = String::new();
+    for (idx, ch) in collapsed.chars().enumerate() {
+        if idx >= MAX_FAILURE_REASON_CHARS {
+            normalized.push('…');
+            break;
+        }
+        normalized.push(ch);
+    }
+    normalized
 }

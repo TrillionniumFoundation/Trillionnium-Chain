@@ -4,8 +4,19 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 cd "$ROOT"
 
-OUT_DIR="${OUT_DIR:-/tmp/pr7-replay-idempotency-test}"
+OUT_DIR="${OUT_DIR:-$(mktemp -d "${TMPDIR:-/tmp}/pr7-replay-idempotency-test.XXXXXX")}" 
 mkdir -p "$OUT_DIR"
+cleanup() {
+  if [[ -z "${OUT_DIR:-}" ]]; then
+    return
+  fi
+  case "$OUT_DIR" in
+    /tmp/pr7-replay-idempotency-test.*|"${TMPDIR:-/tmp}"/pr7-replay-idempotency-test.*)
+      rm -rf "$OUT_DIR"
+      ;;
+  esac
+}
+trap cleanup EXIT
 DLQ="$OUT_DIR/dead-letter.jsonl"
 RECEIPT="$OUT_DIR/dead-letter.replayed.jsonl"
 LOCK="$OUT_DIR/dead-letter.lock"

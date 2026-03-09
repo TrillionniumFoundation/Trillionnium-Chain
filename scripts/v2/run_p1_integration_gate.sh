@@ -48,6 +48,9 @@ RPC_CONTRACT_V1_CMD="${P1_GATE_RPC_CONTRACT_CMD:-cd '$ROOT/trillionnium-rust' &&
 X2_SETTLEMENT_GATE_CMD="${P1_GATE_X2_SETTLEMENT_CMD:-$ROOT/scripts/v2/x2_settlement_contract_gate.sh}"
 I2_TOKEN_LIFECYCLE_GATE_CMD="${P1_GATE_I2_TOKEN_LIFECYCLE_CMD:-$ROOT/scripts/v2/i2_token_lifecycle_gate.sh}"
 M2_POLICY_GATE_CMD="${P1_GATE_M2_POLICY_CMD:-cd '$ROOT/trillionnium-rust' && cargo test -p trnm-rpc market_m2_policy_gate_guards_default_drift_to_min_boundaries}"
+V1_PROOF_REGISTRY_GATE_CMD="${P1_GATE_V1_PROOF_REGISTRY_CMD:-$ROOT/scripts/v2/v1_proof_registry_contract_gate.sh}"
+MV2_RECEIPT_CONTRACT_GATE_CMD="${P1_GATE_MV2_RECEIPT_CONTRACT_CMD:-$ROOT/scripts/v2/mv2_receipt_contract_freeze_doc_gate.sh}"
+D2_INTEROP_GATE_CMD="${P1_GATE_D2_INTEROP_CMD:-cd '$ROOT/trillionnium-rust' && cargo test -p trnm-types settlement_evidence_path_tracks_terminal_state_machine_outcome}"
 SKIP_TX_ASSERT="${P1_GATE_SKIP_TX_ASSERT:-0}"
 
 step sdk_js_quickstart_smoke bash -lc "$SDK_JS_QUICKSTART_CMD"
@@ -59,5 +62,8 @@ step rpc_contract_v1_test bash -lc "$RPC_CONTRACT_V1_CMD"
 step x2_settlement_contract_gate bash -lc "$X2_SETTLEMENT_GATE_CMD"
 step i2_token_lifecycle_gate bash -lc "$I2_TOKEN_LIFECYCLE_GATE_CMD"
 step m2_policy_gate bash -lc "$M2_POLICY_GATE_CMD"
+step v1_proof_registry_gate bash -lc "$V1_PROOF_REGISTRY_GATE_CMD"
+step mv2_receipt_contract_gate bash -lc "$MV2_RECEIPT_CONTRACT_GATE_CMD"
+step d2_interop_gate bash -lc "$D2_INTEROP_GATE_CMD"
 
 echo "[GATE][PASS] all checks passed"

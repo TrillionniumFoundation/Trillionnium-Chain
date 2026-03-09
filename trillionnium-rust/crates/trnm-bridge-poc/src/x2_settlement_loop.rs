@@ -8,10 +8,28 @@ pub enum SettlementConfirm {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub enum SettlementStep {
-    Finalized { height: u64 },
-    Compensated { reason: String },
+pub struct SettlementEvent {
+    pub phase: &'static str,
+    pub heartbeat_source_height: Option<u64>,
+    pub heartbeat_target_height: Option<u64>,
+    pub heartbeat_latency_ms: Option<u64>,
+    pub confirm_height: Option<u64>,
+    pub confirm_reason: Option<String>,
 }
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum SettlementStep {
+    Finalized {
+        height: u64,
+        event: SettlementEvent,
+    },
+    Compensated {
+        reason: String,
+        event: SettlementEvent,
+    },
+}
+
+const MAX_COMPENSATION_REASON_CHARS: usize = 160;
 
 pub fn drive_minimal_settlement(
     request: &mut SettlementRequest,
@@ -19,25 +37,231 @@ pub fn drive_minimal_settlement(
     heartbeat: &HeartbeatOutcome,
     confirm: SettlementConfirm,
 ) -> Result<SettlementStep, SettlementError> {
+    let (hb_src, hb_tgt, hb_latency) = heartbeat
+        .heartbeat
+        .map(|h| {
+            (
+                Some(h.source_height),
+                Some(h.target_height),
+                Some(h.latency_ms),
+            )
+        })
+        .unwrap_or((None, None, None));
+
     if heartbeat.degraded {
-        let reason = format!("heartbeat degraded: {}", heartbeat.message);
+        let degraded_reason =
+            normalize_compensation_reason(&heartbeat.message, "unknown heartbeat failure");
+        let reason = format!("heartbeat degraded: {degraded_reason}");
         request.revert_authorized(token, reason.clone())?;
-        return Ok(SettlementStep::Compensated { reason });
+        let event = SettlementEvent {
+            phase: "relay_heartbeat_degraded",
+            heartbeat_source_height: hb_src,
+            heartbeat_target_height: hb_tgt,
+            heartbeat_latency_ms: hb_latency,
+            confirm_height: None,
+            confirm_reason: Some(reason.clone()),
+        };
+        eprintln!(
+            "[x2-settlement] phase={} hb_source_height={:?} hb_target_height={:?} hb_latency_ms={:?} confirm_height={:?} confirm_reason={:?}",
+            event.phase,
+            event.heartbeat_source_height,
+            event.heartbeat_target_height,
+            event.heartbeat_latency_ms,
+            event.confirm_height,
+            event.confirm_reason,
+        );
+        return Ok(SettlementStep::Compensated { reason, event });
     }
 
     match confirm {
         SettlementConfirm::Confirmed { height } => {
             request.settle_authorized(token, height)?;
-            Ok(SettlementStep::Finalized { height })
+            let event = SettlementEvent {
+                phase: "settlement_confirmed",
+                heartbeat_source_height: hb_src,
+                heartbeat_target_height: hb_tgt,
+                heartbeat_latency_ms: hb_latency,
+                confirm_height: Some(height),
+                confirm_reason: None,
+            };
+            eprintln!(
+                "[x2-settlement] phase={} hb_source_height={:?} hb_target_height={:?} hb_latency_ms={:?} confirm_height={:?} confirm_reason={:?}",
+                event.phase,
+                event.heartbeat_source_height,
+                event.heartbeat_target_height,
+                event.heartbeat_latency_ms,
+                event.confirm_height,
+                event.confirm_reason,
+            );
+            Ok(SettlementStep::Finalized { height, event })
         }
         SettlementConfirm::Failed { reason } => {
-            let reason = format!("settlement confirm failed: {reason}");
+            let confirm_reason = normalize_compensation_reason(&reason, "unknown confirm failure");
+            let reason = format!("settlement confirm failed: {confirm_reason}");
             request.revert_authorized(token, reason.clone())?;
-            Ok(SettlementStep::Compensated { reason })
+            let event = SettlementEvent {
+                phase: "settlement_confirm_failed",
+                heartbeat_source_height: hb_src,
+                heartbeat_target_height: hb_tgt,
+                heartbeat_latency_ms: hb_latency,
+                confirm_height: None,
+                confirm_reason: Some(reason.clone()),
+            };
+            eprintln!(
+                "[x2-settlement] phase={} hb_source_height={:?} hb_target_height={:?} hb_latency_ms={:?} confirm_height={:?} confirm_reason={:?}",
+                event.phase,
+                event.heartbeat_source_height,
+                event.heartbeat_target_height,
+                event.heartbeat_latency_ms,
+                event.confirm_height,
+                event.confirm_reason,
+            );
+            Ok(SettlementStep::Compensated { reason, event })
         }
     }
 }
 
+fn is_sanitized_to_space(ch: char) -> bool {
+    ch.is_control()
+        || matches!(
+            ch,
+            '\u{00AD}'
+                | '\u{034F}'
+                | '\u{061C}'
+                | '\u{180E}'
+                | '\u{200B}'
+                | '\u{200C}'
+                | '\u{200D}'
+                | '\u{200E}'
+                | '\u{200F}'
+                | '\u{2028}'
+                | '\u{2029}'
+                | '\u{202A}'
+                | '\u{202B}'
+                | '\u{202C}'
+                | '\u{202D}'
+                | '\u{202E}'
+                | '\u{2060}'
+                | '\u{2061}'
+                | '\u{2062}'
+                | '\u{2063}'
+                | '\u{2064}'
+                | '\u{2066}'
+                | '\u{2067}'
+                | '\u{2068}'
+                | '\u{2069}'
+                | '\u{206A}'
+                | '\u{206B}'
+                | '\u{206C}'
+                | '\u{206D}'
+                | '\u{206E}'
+                | '\u{206F}'
+                | '\u{FEFF}'
+        )
+        || ('\u{FE00}'..='\u{FE0F}').contains(&ch)
+        || ('\u{E0100}'..='\u{E01EF}').contains(&ch)
+}
+
+fn normalize_compensation_reason(reason: &str, fallback: &'static str) -> String {
+    let sanitized: String = reason
+        .chars()
+        .map(|ch| if is_sanitized_to_space(ch) { ' ' } else { ch })
+        .collect();
+    let collapsed = sanitized.split_whitespace().collect::<Vec<_>>().join(" ");
+
+    if collapsed.is_empty() {
+        return fallback.to_string();
+    }
+
+    let mut normalized = String::new();
+    for (idx, ch) in collapsed.chars().enumerate() {
+        if idx >= MAX_COMPENSATION_REASON_CHARS {
+            normalized.push('…');
+            break;
+        }
+        normalized.push(ch);
+    }
+    normalized
+}
+
 pub fn current_status(request: &SettlementRequest) -> &BridgeStatus {
     &request.status
+}
+
+#[cfg(test)]
+mod tests {
+    use super::normalize_compensation_reason;
+
+    #[test]
+    fn normalize_compensation_reason_strips_controls_and_invisibles() {
+        let raw = "  timeout\u{202E}\n\t\u{200B} while\u{2066} settling  ";
+        let normalized = normalize_compensation_reason(raw, "fallback");
+        assert_eq!(normalized, "timeout while settling");
+    }
+
+    #[test]
+    fn normalize_compensation_reason_enforces_max_len_with_ellipsis() {
+        let raw = "a".repeat(220);
+        let normalized = normalize_compensation_reason(&raw, "fallback");
+        assert_eq!(normalized.chars().count(), 161);
+        assert!(normalized.ends_with('…'));
+    }
+
+    #[test]
+    fn normalize_compensation_reason_exact_cap_has_no_ellipsis() {
+        let raw = "b".repeat(160);
+        let normalized = normalize_compensation_reason(&raw, "fallback");
+        assert_eq!(normalized.chars().count(), 160);
+        assert_eq!(normalized, raw);
+        assert!(!normalized.ends_with('…'));
+    }
+
+    #[test]
+    fn normalize_compensation_reason_uses_fallback_when_empty_after_sanitize() {
+        let raw = "\u{200B}\u{202E}\n\t\u{2066}";
+        let normalized = normalize_compensation_reason(raw, "unknown confirm failure");
+        assert_eq!(normalized, "unknown confirm failure");
+    }
+
+    #[test]
+    fn normalize_compensation_reason_strips_invisible_math_operators_and_mvs() {
+        let raw = "target\u{2061} relay\u{2062} timeout\u{2063} signal\u{2064}\u{180E}";
+        let normalized = normalize_compensation_reason(raw, "fallback");
+        assert_eq!(normalized, "target relay timeout signal");
+    }
+
+    #[test]
+    fn normalize_compensation_reason_collapses_crlf_and_unicode_separators_for_replay_stability() {
+        let raw = "target\r\nrelay\u{2028}timeout\u{2029}signal\n";
+        let normalized = normalize_compensation_reason(raw, "fallback");
+        assert_eq!(normalized, "target relay timeout signal");
+    }
+
+    #[test]
+    fn normalize_compensation_reason_strips_bidi_markers_for_replay_stability() {
+        let raw = "target\u{200E} relay\u{200F} timeout";
+        let normalized = normalize_compensation_reason(raw, "fallback");
+        assert_eq!(normalized, "target relay timeout");
+    }
+
+    #[test]
+    fn normalize_compensation_reason_strips_soft_hyphen_for_replay_stability() {
+        let raw = "target\u{00AD}relay timeout";
+        let normalized = normalize_compensation_reason(raw, "fallback");
+        assert_eq!(normalized, "target relay timeout");
+    }
+
+    #[test]
+    fn normalize_compensation_reason_strips_legacy_bidi_isolates_for_replay_stability() {
+        let raw = "target\u{206A} relay\u{206B} timeout\u{206C} signal\u{206D}\u{206E}\u{206F}";
+        let normalized = normalize_compensation_reason(raw, "fallback");
+        assert_eq!(normalized, "target relay timeout signal");
+    }
+
+    #[test]
+    fn normalize_compensation_reason_strips_variation_selectors_and_cgj_for_log_consensus() {
+        let raw = "target\u{FE0F} relay\u{E0100} timeout\u{034F} signal";
+        let normalized = normalize_compensation_reason(raw, "fallback");
+        assert_eq!(normalized, "target relay timeout signal");
+    }
 }

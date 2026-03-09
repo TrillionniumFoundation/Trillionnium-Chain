@@ -1,4 +1,4 @@
-use anyhow::Result;
+use anyhow::{anyhow, Result};
 use clap::{Parser, Subcommand};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
@@ -11,6 +11,11 @@ use std::{
     process::{Command as ProcCommand, Output, Stdio},
     thread,
     time::{Duration, SystemTime, UNIX_EPOCH},
+};
+mod proof_adapter;
+
+use proof_adapter::{
+    build_proof_adapter, ProofAdapter, StandardProofAdapter, DEFAULT_PROOF_ADAPTER,
 };
 use trnm_types::RequestStatus;
 use wait_timeout::ChildExt;
@@ -26,6 +31,7 @@ const TX_ADAPTER_BACKOFF_MS_ENV: &str = "TRNM_TX_ADAPTER_BACKOFF_MS";
 const LLM_ADAPTER_MAX_RETRIES_ENV: &str = "TRNM_LLM_ADAPTER_MAX_RETRIES";
 const LLM_ADAPTER_BACKOFF_MS_ENV: &str = "TRNM_LLM_ADAPTER_BACKOFF_MS";
 const LLM_ADAPTER_TIMEOUT_ENV: &str = "TRNM_LLM_ADAPTER_TIMEOUT_MS";
+const PROOF_ADAPTER_ENV: &str = "TRNM_PROOF_ADAPTER";
 
 const RC_OK: i32 = 0;
 const RC_DUPLICATE: i32 = 9;
@@ -138,7 +144,9 @@ enum Command {
         #[arg(long, default_value = "audit-export.jsonl")]
         output_file: PathBuf,
         #[arg(long)]
-        task_id: u64,
+        task_id: Option<u64>,
+        #[arg(long)]
+        provenance_fingerprint: Option<String>,
     },
 }
 
@@ -241,20 +249,30 @@ struct AuditExportIndex {
     version: u8,
     total_records: usize,
     by_task_id: BTreeMap<String, Vec<usize>>,
+    by_status: BTreeMap<String, Vec<usize>>,
+    by_status_phase: BTreeMap<String, Vec<usize>>,
+    by_provider: BTreeMap<String, Vec<usize>>,
     by_model: BTreeMap<String, Vec<usize>>,
+    by_agent_protocol: BTreeMap<String, Vec<usize>>,
+    by_compliance_profile: BTreeMap<String, Vec<usize>>,
     by_provenance_fingerprint: BTreeMap<String, Vec<usize>>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-struct AuditTaskQueryResult {
-    task_id: String,
-    hit_indexes: Vec<usize>,
-    records: Vec<EnterpriseAuditExportRecord>,
+fn audit_status_phase(status: &str) -> &'static str {
+    match status {
+        "completed" | "slashed" | "rejected" | "cancelled" => "terminal",
+        _ => "active",
+    }
 }
 
 fn build_audit_export_index(exports: &[EnterpriseAuditExportRecord]) -> AuditExportIndex {
     let mut by_task_id = BTreeMap::<String, Vec<usize>>::new();
+    let mut by_status = BTreeMap::<String, Vec<usize>>::new();
+    let mut by_status_phase = BTreeMap::<String, Vec<usize>>::new();
+    let mut by_provider = BTreeMap::<String, Vec<usize>>::new();
     let mut by_model = BTreeMap::<String, Vec<usize>>::new();
+    let mut by_agent_protocol = BTreeMap::<String, Vec<usize>>::new();
+    let mut by_compliance_profile = BTreeMap::<String, Vec<usize>>::new();
     let mut by_provenance_fingerprint = BTreeMap::<String, Vec<usize>>::new();
 
     for (idx, rec) in exports.iter().enumerate() {
@@ -263,13 +281,48 @@ fn build_audit_export_index(exports: &[EnterpriseAuditExportRecord]) -> AuditExp
             .or_default()
             .push(idx);
 
-        if let Some(model) = rec.model.as_deref() {
-            by_model.entry(model.to_string()).or_default().push(idx);
+        if let Some(status) = normalized_optional_field(Some(rec.status.as_str())) {
+            let normalized_status = status.to_ascii_lowercase();
+            by_status
+                .entry(normalized_status.clone())
+                .or_default()
+                .push(idx);
+            by_status_phase
+                .entry(audit_status_phase(&normalized_status).to_string())
+                .or_default()
+                .push(idx);
         }
 
-        if let Some(fingerprint) = rec.provenance_fingerprint.as_deref() {
+        if let Some(provider) = normalized_optional_field(rec.provider.as_deref()) {
+            by_provider.entry(provider).or_default().push(idx);
+        }
+
+        if let Some(model) = normalized_optional_field(rec.model.as_deref()) {
+            by_model.entry(model).or_default().push(idx);
+        }
+
+        if let Some(agent_protocol) = normalized_agent_protocol(rec.agent_protocol.as_deref()) {
+            by_agent_protocol
+                .entry(agent_protocol)
+                .or_default()
+                .push(idx);
+        }
+
+        if let Some(compliance_profile) =
+            normalized_compliance_profile(rec.compliance_profile.as_deref())
+        {
+            by_compliance_profile
+                .entry(compliance_profile)
+                .or_default()
+                .push(idx);
+        }
+
+        if let Some(fingerprint) =
+            normalized_provenance_label(rec.provenance_fingerprint.as_deref(), 128)
+                .map(|value| value.to_ascii_lowercase())
+        {
             by_provenance_fingerprint
-                .entry(fingerprint.to_string())
+                .entry(fingerprint)
                 .or_default()
                 .push(idx);
         }
@@ -279,46 +332,110 @@ fn build_audit_export_index(exports: &[EnterpriseAuditExportRecord]) -> AuditExp
         version: 1,
         total_records: exports.len(),
         by_task_id,
+        by_status,
+        by_status_phase,
+        by_provider,
         by_model,
+        by_agent_protocol,
+        by_compliance_profile,
         by_provenance_fingerprint,
     }
+}
+
+fn query_audit_export_by_task_id<'a>(
+    exports: &'a [EnterpriseAuditExportRecord],
+    index: &AuditExportIndex,
+    task_id: u64,
+) -> Vec<&'a EnterpriseAuditExportRecord> {
+    index
+        .by_task_id
+        .get(&task_id.to_string())
+        .into_iter()
+        .flat_map(|rows| rows.iter().filter_map(|idx| exports.get(*idx)))
+        .collect()
+}
+
+fn normalize_provenance_fingerprint_lookup(value: &str) -> Option<String> {
+    let mut normalized = normalized_provenance_label(Some(value), 128)?;
+    // Accept heavily shell-escaped forms (e.g., nested quote wrappers from CLI/env propagation)
+    // while still fail-closing on empty/invalid labels after normalization.
+    // Cap recursive unwrapping to keep lookup bounded while tolerating deeply nested
+    // shell/env quote wrappers seen in propagation pipelines.
+    for _ in 0..16 {
+        let bytes = normalized.as_bytes();
+        if bytes.len() >= 2
+            && ((bytes[0] == b'\'' && bytes[bytes.len() - 1] == b'\'')
+                || (bytes[0] == b'"' && bytes[bytes.len() - 1] == b'"')
+                || (bytes[0] == b'`' && bytes[bytes.len() - 1] == b'`'))
+        {
+            normalized = normalized[1..normalized.len() - 1].trim().to_string();
+            if normalized.is_empty() {
+                return None;
+            }
+            continue;
+        }
+        break;
+    }
+    normalized_provenance_label(Some(normalized.as_str()), 128).map(|v| v.to_ascii_lowercase())
+}
+
+fn query_audit_export_by_provenance_fingerprint<'a>(
+    exports: &'a [EnterpriseAuditExportRecord],
+    index: &AuditExportIndex,
+    provenance_fingerprint: &str,
+) -> Vec<&'a EnterpriseAuditExportRecord> {
+    let Some(normalized) = normalize_provenance_fingerprint_lookup(provenance_fingerprint) else {
+        return Vec::new();
+    };
+    index
+        .by_provenance_fingerprint
+        .get(&normalized)
+        .into_iter()
+        .flat_map(|rows| rows.iter().filter_map(|idx| exports.get(*idx)))
+        .collect()
+}
+
+#[derive(Debug, Serialize)]
+struct QueryAuditRecord {
+    #[serde(flatten)]
+    record: EnterpriseAuditExportRecord,
+    proof_type: Option<String>,
+    settlement_status: String,
+    timestamp_unix_ms: Option<u128>,
+}
+
+impl From<EnterpriseAuditExportRecord> for QueryAuditRecord {
+    fn from(record: EnterpriseAuditExportRecord) -> Self {
+        let settlement_status = record.status.clone();
+        Self {
+            record,
+            proof_type: None,
+            settlement_status,
+            timestamp_unix_ms: None,
+        }
+    }
+}
+
+#[derive(Debug, Serialize)]
+struct QueryAuditOutput {
+    hit_indexes: Vec<usize>,
+    records: Vec<QueryAuditRecord>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    provenance_fingerprint: Option<String>,
 }
 
 fn audit_export_index_path(output_file: &Path) -> PathBuf {
     PathBuf::from(format!("{}.index.json", output_file.display()))
 }
 
-fn load_audit_exports_jsonl(path: &Path) -> Result<Vec<EnterpriseAuditExportRecord>> {
-    let raw = fs::read_to_string(path)?;
-    let mut rows = Vec::new();
-    for line in raw.lines() {
-        let trimmed = line.trim();
-        if trimmed.is_empty() {
-            continue;
-        }
-        let rec: EnterpriseAuditExportRecord = serde_json::from_str(trimmed)?;
-        rows.push(rec);
+fn validate_audit_export_index(index: &AuditExportIndex) -> Result<()> {
+    if index.version != 1 {
+        anyhow::bail!(
+            "unsupported audit index version={} (expected=1)",
+            index.version
+        );
     }
-    Ok(rows)
-}
-
-fn query_audit_by_task_id(
-    index: &AuditExportIndex,
-    exports: &[EnterpriseAuditExportRecord],
-    task_id: u64,
-) -> AuditTaskQueryResult {
-    let task_key = task_id.to_string();
-    let hit_indexes = index.by_task_id.get(&task_key).cloned().unwrap_or_default();
-    let records = hit_indexes
-        .iter()
-        .filter_map(|idx| exports.get(*idx).cloned())
-        .collect();
-
-    AuditTaskQueryResult {
-        task_id: task_key,
-        hit_indexes,
-        records,
-    }
+    Ok(())
 }
 
 fn build_provenance_fingerprint(
@@ -354,12 +471,14 @@ fn build_provenance_fingerprint(
 }
 
 fn normalized_schema_version(value: Option<&str>) -> Option<String> {
-    match normalized_optional_field(value)
-        .map(|v| v.to_ascii_lowercase())
-        .as_deref()
-    {
-        Some("llm.v1") => Some("llm.v1".to_string()),
-        Some("llm.v2") => Some("llm.v2".to_string()),
+    let normalized = normalized_optional_field(value)?.to_ascii_lowercase();
+    let alias_key: String = normalized
+        .chars()
+        .filter(|c| c.is_ascii_alphanumeric())
+        .collect();
+    match alias_key.as_str() {
+        "llmv1" | "llm1" => Some("llm.v1".to_string()),
+        "llmv2" | "llm2" => Some("llm.v2".to_string()),
         _ => None,
     }
 }
@@ -369,14 +488,17 @@ fn to_enterprise_audit_export(rec: &MessageIngressRecord) -> EnterpriseAuditExpo
     let schema_version = normalized_schema_version(rec.provenance_schema_version.as_deref());
     let is_v2 = schema_version.as_deref() == Some("llm.v2");
 
-    let provider = provenance.and_then(|p| p.provider.clone());
-    let model = provenance.and_then(|p| p.model.clone());
-    let adapter = provenance.and_then(|p| p.adapter.clone());
+    // Re-normalize persisted provenance to fail-closed on legacy/corrupt snapshots.
+    let provider = normalized_provenance_label(provenance.and_then(|p| p.provider.as_deref()), 64);
+    let model = normalized_provenance_label(provenance.and_then(|p| p.model.as_deref()), 128);
+    let adapter = normalized_provenance_label(provenance.and_then(|p| p.adapter.as_deref()), 64);
     let agent_protocol = is_v2
-        .then(|| provenance.and_then(|p| p.agent_protocol.clone()))
+        .then(|| normalized_agent_protocol(provenance.and_then(|p| p.agent_protocol.as_deref())))
         .flatten();
     let compliance_profile = is_v2
-        .then(|| provenance.and_then(|p| p.compliance_profile.clone()))
+        .then(|| {
+            normalized_compliance_profile(provenance.and_then(|p| p.compliance_profile.as_deref()))
+        })
         .flatten();
 
     let provenance_fingerprint = build_provenance_fingerprint(
@@ -392,7 +514,7 @@ fn to_enterprise_audit_export(rec: &MessageIngressRecord) -> EnterpriseAuditExpo
         request_id: rec.request_id.clone(),
         task_id: rec.task_id,
         status: rec.status.clone(),
-        provider_request_id: rec.provider_request_id.clone(),
+        provider_request_id: normalized_provider_request_id(rec.provider_request_id.as_deref()),
         provenance_schema_version: schema_version,
         provenance_fingerprint,
         provider,
@@ -433,9 +555,7 @@ fn render_enterprise_audit_markdown(exports: &[EnterpriseAuditExportRecord]) -> 
     let mut out = String::from(
         "| request_id | task_id | status | provider_request_id | provenance_schema_version | provenance_fingerprint | provider | model | adapter | agent_protocol | compliance_profile |\n",
     );
-    out.push_str(
-        "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n",
-    );
+    out.push_str("| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n");
 
     for rec in exports {
         let row = format!(
@@ -710,7 +830,9 @@ fn parse_tx_hash(text: &str) -> Option<String> {
     text.split_whitespace().find_map(|w| {
         let raw = w.strip_prefix("tx_hash=")?;
         let cleaned = raw
-            .trim_matches(|c: char| matches!(c, '"' | '\'' | ',' | ';' | '.' | ':' | ')' | ']' | '}'))
+            .trim_matches(|c: char| {
+                matches!(c, '"' | '\'' | ',' | ';' | '.' | ':' | ')' | ']' | '}')
+            })
             .trim();
 
         if cleaned.starts_with("0x")
@@ -740,16 +862,55 @@ fn backoff_delay_ms(base_ms: u64, attempt: u32) -> u64 {
     base_ms.saturating_mul(attempt as u64 + 1)
 }
 
+fn is_forbidden_shell_program(program: &str) -> bool {
+    let leaf = Path::new(program)
+        .file_name()
+        .and_then(|v| v.to_str())
+        .unwrap_or(program)
+        .to_ascii_lowercase();
+    matches!(
+        leaf.as_str(),
+        "sh" | "bash"
+            | "zsh"
+            | "dash"
+            | "ksh"
+            | "csh"
+            | "tcsh"
+            | "fish"
+            | "cmd"
+            | "powershell"
+            | "pwsh"
+    )
+}
+
+fn parse_command_spec(spec: &str) -> Result<(String, Vec<String>)> {
+    let tokens = shlex::split(spec).ok_or_else(|| anyhow!("invalid command spec quoting"))?;
+    if tokens.is_empty() {
+        anyhow::bail!("empty command spec");
+    }
+    let program = tokens[0].clone();
+    if is_forbidden_shell_program(&program) {
+        anyhow::bail!("shell interpreter is forbidden in adapter command spec");
+    }
+    let args = tokens[1..].to_vec();
+    Ok((program, args))
+}
+
 fn run_adapter_with_retry(
-    cmd: &str,
+    adapter_cmd: &str,
+    action_args: &[String],
     max_retries: u32,
     backoff_ms: u64,
 ) -> Result<AdapterExecResult> {
+    let (program, base_args) = parse_command_spec(adapter_cmd)?;
     let mut last_rc = 1;
     let mut last_tx_hash: Option<String> = None;
 
     for attempt in 0..=max_retries {
-        let out = ProcCommand::new("sh").arg("-lc").arg(cmd).output()?;
+        let out = ProcCommand::new(&program)
+            .args(&base_args)
+            .args(action_args)
+            .output()?;
         let rc = out.status.code().unwrap_or(1);
         let stdout = String::from_utf8_lossy(&out.stdout);
         let stderr = String::from_utf8_lossy(&out.stderr);
@@ -889,10 +1050,15 @@ fn resolve_llm_adapter_policy(
     }
 }
 
-fn run_shell_with_timeout(cmd: &str, timeout: Duration) -> Result<Output> {
-    let mut child = ProcCommand::new("sh")
-        .arg("-lc")
-        .arg(cmd)
+fn run_command_with_timeout(
+    program: &str,
+    base_args: &[String],
+    extra_args: &[String],
+    timeout: Duration,
+) -> Result<Output> {
+    let mut child = ProcCommand::new(program)
+        .args(base_args)
+        .args(extra_args)
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
         .spawn()?;
@@ -927,12 +1093,20 @@ fn run_llm_adapter_once(
     adapter_cmd: &str,
     prompt: &str,
     timeout: Duration,
+    proof_adapter: &dyn ProofAdapter,
 ) -> std::result::Result<LlmAdapterResponse, AdapterError> {
-    let cmd = format!("{} {}", adapter_cmd, shell_escape::escape(prompt.into()));
-    let out = run_shell_with_timeout(&cmd, timeout).map_err(|e| AdapterError {
-        kind: AdapterErrorKind::Retriable,
-        context: e.to_string(),
+    let (program, base_args) = parse_command_spec(adapter_cmd).map_err(|e| AdapterError {
+        kind: AdapterErrorKind::NonRetriable,
+        context: format!("invalid llm adapter command: {e}"),
     })?;
+    let prompt_arg = vec![prompt.to_string()];
+    let out =
+        run_command_with_timeout(&program, &base_args, &prompt_arg, timeout).map_err(|e| {
+            AdapterError {
+                kind: AdapterErrorKind::Retriable,
+                context: e.to_string(),
+            }
+        })?;
     let stdout = String::from_utf8_lossy(&out.stdout).trim().to_string();
     let stderr = String::from_utf8_lossy(&out.stderr).trim().to_string();
     if !out.status.success() {
@@ -945,40 +1119,16 @@ fn run_llm_adapter_once(
             ),
         });
     }
-    let parse_whole = serde_json::from_str::<LlmAdapterResponse>(&stdout);
-    let resp = if let Ok(resp) = parse_whole {
-        resp
-    } else {
-        let fallback_line = stdout
-            .lines()
-            .rev()
-            .map(str::trim)
-            .find(|line| line.starts_with('{') && line.ends_with('}'));
-
-        match fallback_line {
-            Some(line) => serde_json::from_str::<LlmAdapterResponse>(line).map_err(|e| {
-                AdapterError {
-                    kind: AdapterErrorKind::NonRetriable,
-                    context: format!(
-                        "llm adapter invalid json: {} raw={}",
-                        e,
-                        truncate_for_error(&stdout, 512)
-                    ),
-                }
-            })?,
-            None => {
-                return Err(AdapterError {
-                    kind: AdapterErrorKind::NonRetriable,
-                    context: format!(
-                        "llm adapter invalid json: no-json-line raw={}",
-                        truncate_for_error(&stdout, 512)
-                    ),
-                });
-            }
-        }
-    };
-
-    Ok(resp)
+    proof_adapter
+        .parse_response(&stdout)
+        .map_err(|e| AdapterError {
+            kind: AdapterErrorKind::NonRetriable,
+            context: format!(
+                "llm adapter invalid payload: {} raw={}",
+                e,
+                truncate_for_error(&stdout, 512)
+            ),
+        })
 }
 
 fn run_llm_adapter_with_retry_inner<F, S>(
@@ -1020,11 +1170,12 @@ fn run_llm_adapter_with_retry(
     prompt: &str,
     retry: RetryPolicy,
     timeout: Duration,
+    proof_adapter: &dyn ProofAdapter,
 ) -> std::result::Result<LlmAdapterResponse, AdapterError> {
     run_llm_adapter_with_retry_inner(
         retry.max_retries,
         retry.backoff_ms,
-        || run_llm_adapter_once(adapter_cmd, prompt, timeout),
+        || run_llm_adapter_once(adapter_cmd, prompt, timeout, proof_adapter),
         thread::sleep,
     )
 }
@@ -1037,6 +1188,7 @@ fn is_invisible_filler(c: char) -> bool {
             | '\u{200D}' // ZERO WIDTH JOINER
             | '\u{200E}' // LEFT-TO-RIGHT MARK
             | '\u{200F}' // RIGHT-TO-LEFT MARK
+            | '\u{061C}' // ARABIC LETTER MARK (bidi/invisible)
             | '\u{2060}' // WORD JOINER
             | '\u{2061}' // FUNCTION APPLICATION (invisible operator)
             | '\u{2062}' // INVISIBLE TIMES
@@ -1096,9 +1248,9 @@ fn normalized_provider_request_id(value: Option<&str>) -> Option<String> {
 
 fn normalized_provenance_label(value: Option<&str>, max_len: usize) -> Option<String> {
     let normalized = normalized_optional_field(value)?;
-    let has_disallowed_chars = normalized.chars().any(|c| {
-        c.is_control() || is_invisible_filler(c) || !c.is_ascii() || c.is_ascii_control()
-    });
+    let has_disallowed_chars = normalized
+        .chars()
+        .any(|c| c.is_control() || is_invisible_filler(c) || !c.is_ascii() || c.is_ascii_control());
     if !has_disallowed_chars && normalized.len() <= max_len {
         Some(normalized)
     } else {
@@ -1111,7 +1263,7 @@ fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
     let has_disallowed_chars = normalized
         .chars()
         .any(|c| c.is_control() || is_invisible_filler(c) || !c.is_ascii());
-    if has_disallowed_chars {
+    if has_disallowed_chars || normalized.len() > 128 {
         return None;
     }
 
@@ -1125,14 +1277,206 @@ fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
         | "mcpv"
         | "mcpv1"
         | "mcpv2"
+        | "mcpjsonrpc"
+        | "mcpjsonrpcv"
+        | "mcpjsonrpcv1"
+        | "mcpjsonrpcv2"
+        | "mcpoverjsonrpc"
+        | "mcpoverjsonrpcv"
+        | "mcpoverjsonrpcv1"
+        | "mcpoverjsonrpcv2"
+        | "mcpstdio"
+        | "mcpstdiov"
+        | "mcpstdiov1"
+        | "mcpstdiov2"
+        | "mcpoverstdio"
+        | "mcpoverstdiov"
+        | "mcpoverstdiov1"
+        | "mcpoverstdiov2"
+        | "mcpsse"
+        | "mcpssev"
+        | "mcpssev1"
+        | "mcpssev2"
+        | "mcpoversse"
+        | "mcpoverssev"
+        | "mcpoverssev1"
+        | "mcpoverssev2"
         | "modelcontextprotocol"
         | "modelcontextprotocolv"
         | "modelcontextprotocolv1"
-        | "modelcontextprotocolv2" => Some("mcp".to_string()),
+        | "modelcontextprotocolv2"
+        | "modelcontextprotocoljsonrpc"
+        | "modelcontextprotocoljsonrpcv"
+        | "modelcontextprotocoljsonrpcv1"
+        | "modelcontextprotocoljsonrpcv2"
+        | "modelcontextprotocolstdio"
+        | "modelcontextprotocolstdiov"
+        | "modelcontextprotocolstdiov1"
+        | "modelcontextprotocolstdiov2"
+        | "modelcontextprotocolsse"
+        | "modelcontextprotocolssev"
+        | "modelcontextprotocolssev1"
+        | "modelcontextprotocolssev2"
+        | "mcpstreamablehttp"
+        | "mcpstreamablehttpv"
+        | "mcpstreamablehttpv1"
+        | "mcpstreamablehttpv2"
+        | "mcpoverstreamablehttp"
+        | "mcpoverstreamablehttpv"
+        | "mcpoverstreamablehttpv1"
+        | "mcpoverstreamablehttpv2"
+        | "modelcontextprotocolstreamablehttp"
+        | "modelcontextprotocolstreamablehttpv"
+        | "modelcontextprotocolstreamablehttpv1"
+        | "modelcontextprotocolstreamablehttpv2"
+        | "modelcontextprotocoloverstreamablehttp"
+        | "modelcontextprotocoloverstreamablehttpv"
+        | "modelcontextprotocoloverstreamablehttpv1"
+        | "modelcontextprotocoloverstreamablehttpv2"
+        | "mcphttp"
+        | "mcphttpv"
+        | "mcpoverhttp"
+        | "mcpoverhttpv"
+        | "modelcontextprotocolhttp"
+        | "modelcontextprotocolhttpv"
+        | "modelcontextprotocoloverhttp"
+        | "modelcontextprotocoloverhttpv"
+        | "openaimcp"
+        | "openaimcpprotocol"
+        | "openaimodelcontextprotocol"
+        | "openaimodelcontextprotocolv"
+        | "openaimodelcontextprotocolv1"
+        | "openaimodelcontextprotocolv2"
+        | "openaimcphttp"
+        | "openaimcphttpv"
+        | "openaimcpoverhttp"
+        | "openaimcpoverhttpv"
+        | "openaimcpstreamablehttp"
+        | "openaimcpstreamablehttpv"
+        | "openaimcpoverstreamablehttp"
+        | "openaimcpoverstreamablehttpv"
+        | "openaimcpsse"
+        | "openaimcpssev"
+        | "openaimcpoversse"
+        | "openaimcpoverssev"
+        | "openaimodelcontextprotocolstreamablehttp"
+        | "openaimodelcontextprotocolstreamablehttpv"
+        | "openaimodelcontextprotocoloverstreamablehttp"
+        | "openaimodelcontextprotocoloverstreamablehttpv"
+        | "openaimodelcontextprotocolsse"
+        | "openaimodelcontextprotocolssev"
+        | "openaimodelcontextprotocoloversse"
+        | "openaimodelcontextprotocoloverssev"
+        | "mcpwebsocket"
+        | "mcpwebsocketv"
+        | "mcpwebsockets"
+        | "mcpwebsocketsv"
+        | "mcpws"
+        | "mcpwsv"
+        | "mcpoverwebsocket"
+        | "mcpoverwebsocketv"
+        | "mcpoverwebsockets"
+        | "mcpoverwebsocketsv"
+        | "mcpoverws"
+        | "mcpoverwsv"
+        | "modelcontextprotocolwebsocket"
+        | "modelcontextprotocolwebsocketv"
+        | "modelcontextprotocolwebsockets"
+        | "modelcontextprotocolwebsocketsv"
+        | "modelcontextprotocoloverwebsocket"
+        | "modelcontextprotocoloverwebsocketv"
+        | "modelcontextprotocoloverwebsockets"
+        | "modelcontextprotocoloverwebsocketsv"
+        | "openaimcpwebsocket"
+        | "openaimcpwebsocketv"
+        | "openaimcpwebsockets"
+        | "openaimcpwebsocketsv"
+        | "openaimcpoverwebsocket"
+        | "openaimcpoverwebsocketv"
+        | "openaimcpoverwebsockets"
+        | "openaimcpoverwebsocketsv"
+        | "openaimodelcontextprotocolwebsocket"
+        | "openaimodelcontextprotocolwebsocketv"
+        | "openaimodelcontextprotocolwebsockets"
+        | "openaimodelcontextprotocolwebsocketsv"
+        | "openaimodelcontextprotocoloverwebsocket"
+        | "openaimodelcontextprotocoloverwebsocketv"
+        | "openaimodelcontextprotocoloverwebsockets"
+        | "openaimodelcontextprotocoloverwebsocketsv"
+        | "anthropicmcp"
+        | "anthropicmcpprotocol"
+        | "anthropicmodelcontextprotocol"
+        | "anthropicmodelcontextprotocolv"
+        | "anthropicmodelcontextprotocolv1"
+        | "anthropicmodelcontextprotocolv2"
+        | "anthropicmcphttp"
+        | "anthropicmcphttpv"
+        | "anthropicmcpoverhttp"
+        | "anthropicmcpoverhttpv"
+        | "anthropicmcpstreamablehttp"
+        | "anthropicmcpstreamablehttpv"
+        | "anthropicmcpoverstreamablehttp"
+        | "anthropicmcpoverstreamablehttpv"
+        | "anthropicmcpsse"
+        | "anthropicmcpssev"
+        | "anthropicmcpoversse"
+        | "anthropicmcpoverssev"
+        | "anthropicmodelcontextprotocolhttp"
+        | "anthropicmodelcontextprotocolhttpv"
+        | "anthropicmodelcontextprotocoloverhttp"
+        | "anthropicmodelcontextprotocoloverhttpv"
+        | "anthropicmodelcontextprotocolstreamablehttp"
+        | "anthropicmodelcontextprotocolstreamablehttpv"
+        | "anthropicmodelcontextprotocoloverstreamablehttp"
+        | "anthropicmodelcontextprotocoloverstreamablehttpv"
+        | "anthropicmodelcontextprotocolsse"
+        | "anthropicmodelcontextprotocolssev"
+        | "anthropicmodelcontextprotocoloversse"
+        | "anthropicmodelcontextprotocoloverssev"
+        | "anthropicmcpwebsocket"
+        | "anthropicmcpwebsocketv"
+        | "anthropicmcpwebsockets"
+        | "anthropicmcpwebsocketsv"
+        | "anthropicmcpoverwebsocket"
+        | "anthropicmcpoverwebsocketv"
+        | "anthropicmcpoverwebsockets"
+        | "anthropicmcpoverwebsocketsv"
+        | "anthropicmodelcontextprotocolwebsocket"
+        | "anthropicmodelcontextprotocolwebsocketv"
+        | "anthropicmodelcontextprotocolwebsockets"
+        | "anthropicmodelcontextprotocolwebsocketsv"
+        | "anthropicmodelcontextprotocoloverwebsocket"
+        | "anthropicmodelcontextprotocoloverwebsocketv"
+        | "anthropicmodelcontextprotocoloverwebsockets"
+        | "anthropicmodelcontextprotocoloverwebsocketsv" => Some("mcp".to_string()),
         "a2a"
         | "a2av"
         | "a2av1"
         | "a2av2"
+        | "a2ajsonrpc"
+        | "a2ajsonrpcv"
+        | "a2ajsonrpcv1"
+        | "a2ajsonrpcv2"
+        | "a2aoverjsonrpc"
+        | "a2aoverjsonrpcv"
+        | "a2aoverjsonrpcv1"
+        | "a2aoverjsonrpcv2"
+        | "a2astdio"
+        | "a2astdiov"
+        | "a2astdiov1"
+        | "a2astdiov2"
+        | "a2aoverstdio"
+        | "a2aoverstdiov"
+        | "a2aoverstdiov1"
+        | "a2aoverstdiov2"
+        | "a2asse"
+        | "a2assev"
+        | "a2assev1"
+        | "a2assev2"
+        | "a2aoversse"
+        | "a2aoverssev"
+        | "a2aoverssev1"
+        | "a2aoverssev2"
         | "a2aprotocol"
         | "agent2agent"
         | "agenttoagent"
@@ -1149,20 +1493,186 @@ fn normalized_agent_protocol(value: Option<&str>) -> Option<String> {
         | "agent2agentv2"
         | "agenttoagentv"
         | "agenttoagentv1"
-        | "agenttoagentv2" => Some("a2a".to_string()),
+        | "agenttoagentv2"
+        | "agent2agentjsonrpc"
+        | "agent2agentjsonrpcv"
+        | "agent2agentjsonrpcv1"
+        | "agent2agentjsonrpcv2"
+        | "agent2agentstdio"
+        | "agent2agentstdiov"
+        | "agent2agentstdiov1"
+        | "agent2agentstdiov2"
+        | "agenttoagentjsonrpc"
+        | "agenttoagentjsonrpcv"
+        | "agenttoagentjsonrpcv1"
+        | "agenttoagentjsonrpcv2"
+        | "agenttoagentstdio"
+        | "agenttoagentstdiov"
+        | "agenttoagentstdiov1"
+        | "agenttoagentstdiov2"
+        | "agent2agentprotocoljsonrpc"
+        | "agent2agentprotocoljsonrpcv"
+        | "agent2agentprotocoljsonrpcv1"
+        | "agent2agentprotocoljsonrpcv2"
+        | "agent2agentprotocolstdio"
+        | "agent2agentprotocolstdiov"
+        | "agent2agentprotocolstdiov1"
+        | "agent2agentprotocolstdiov2"
+        | "agenttoagentprotocoljsonrpc"
+        | "agenttoagentprotocoljsonrpcv"
+        | "agenttoagentprotocoljsonrpcv1"
+        | "agenttoagentprotocoljsonrpcv2"
+        | "agenttoagentprotocolstdio"
+        | "agenttoagentprotocolstdiov"
+        | "agenttoagentprotocolstdiov1"
+        | "agenttoagentprotocolstdiov2"
+        | "a2astreamablehttp"
+        | "a2astreamablehttpv"
+        | "a2astreamablehttpv1"
+        | "a2astreamablehttpv2"
+        | "a2aoverstreamablehttp"
+        | "a2aoverstreamablehttpv"
+        | "a2aoverstreamablehttpv1"
+        | "a2aoverstreamablehttpv2"
+        | "a2ahttp"
+        | "a2ahttpv"
+        | "a2aoverhttp"
+        | "a2aoverhttpv"
+        | "a2awebsocket"
+        | "a2awebsocketv"
+        | "a2awebsockets"
+        | "a2awebsocketsv"
+        | "a2aws"
+        | "a2awsv"
+        | "a2aoverwebsocket"
+        | "a2aoverwebsocketv"
+        | "a2aoverwebsockets"
+        | "a2aoverwebsocketsv"
+        | "a2aoverws"
+        | "a2aoverwsv"
+        | "agent2agenthttp"
+        | "agent2agenthttpv"
+        | "agenttoagenthttp"
+        | "agenttoagenthttpv"
+        | "agent2agentprotocolhttp"
+        | "agent2agentprotocolhttpv"
+        | "agenttoagentprotocolhttp"
+        | "agenttoagentprotocolhttpv"
+        | "agent2agentwebsocket"
+        | "agent2agentwebsocketv"
+        | "agent2agentwebsockets"
+        | "agent2agentwebsocketsv"
+        | "agent2agentoverwebsocket"
+        | "agent2agentoverwebsocketv"
+        | "agent2agentoverwebsockets"
+        | "agent2agentoverwebsocketsv"
+        | "agenttoagentwebsocket"
+        | "agenttoagentwebsocketv"
+        | "agenttoagentwebsockets"
+        | "agenttoagentwebsocketsv"
+        | "agenttoagentoverwebsocket"
+        | "agenttoagentoverwebsocketv"
+        | "agenttoagentoverwebsockets"
+        | "agenttoagentoverwebsocketsv"
+        | "agent2agentprotocolwebsocket"
+        | "agent2agentprotocolwebsocketv"
+        | "agent2agentprotocolwebsockets"
+        | "agent2agentprotocolwebsocketsv"
+        | "agent2agentprotocoloverwebsocket"
+        | "agent2agentprotocoloverwebsocketv"
+        | "agent2agentprotocoloverwebsockets"
+        | "agent2agentprotocoloverwebsocketsv"
+        | "agenttoagentprotocolwebsocket"
+        | "agenttoagentprotocolwebsocketv"
+        | "agenttoagentprotocolwebsockets"
+        | "agenttoagentprotocolwebsocketsv"
+        | "agenttoagentprotocoloverwebsocket"
+        | "agenttoagentprotocoloverwebsocketv"
+        | "agenttoagentprotocoloverwebsockets"
+        | "agenttoagentprotocoloverwebsocketsv"
+        | "agent2agentstreamablehttp"
+        | "agent2agentstreamablehttpv"
+        | "agent2agentstreamablehttpv1"
+        | "agent2agentstreamablehttpv2"
+        | "agenttoagentstreamablehttp"
+        | "agenttoagentstreamablehttpv"
+        | "agenttoagentstreamablehttpv1"
+        | "agenttoagentstreamablehttpv2"
+        | "googlea2a"
+        | "googlea2av"
+        | "googlea2ajsonrpc"
+        | "googlea2ajsonrpcv"
+        | "googlea2aoverjsonrpc"
+        | "googlea2aoverjsonrpcv"
+        | "googlea2aprotocol"
+        | "googlea2ahttp"
+        | "googlea2ahttpv"
+        | "googlea2aoverhttp"
+        | "googlea2aoverhttpv"
+        | "googleagent2agent"
+        | "googleagent2agentprotocol"
+        | "googleagent2agentv"
+        | "googleagent2agentprotocolv"
+        | "googleagent2agentjsonrpc"
+        | "googleagent2agentjsonrpcv"
+        | "googleagent2agentstreamablehttp"
+        | "googleagent2agentstreamablehttpv"
+        | "googleagent2agentoverstreamablehttp"
+        | "googleagent2agentoverstreamablehttpv"
+        | "googleagenttoagent"
+        | "googleagenttoagentprotocol"
+        | "googleagenttoagentv"
+        | "googleagenttoagentprotocolv"
+        | "googleagenttoagentjsonrpc"
+        | "googleagenttoagentjsonrpcv"
+        | "googleagenttoagentstreamablehttp"
+        | "googleagenttoagentstreamablehttpv"
+        | "googleagenttoagentoverstreamablehttp"
+        | "googleagenttoagentoverstreamablehttpv"
+        | "googleagent2agenthttp"
+        | "googleagent2agenthttpv"
+        | "googleagent2agentoverhttp"
+        | "googleagent2agentoverhttpv"
+        | "googleagent2agentwebsocket"
+        | "googleagent2agentwebsocketv"
+        | "googleagent2agentwebsockets"
+        | "googleagent2agentwebsocketsv"
+        | "googleagent2agentoverwebsocket"
+        | "googleagent2agentoverwebsocketv"
+        | "googleagent2agentoverwebsockets"
+        | "googleagent2agentoverwebsocketsv"
+        | "googleagenttoagenthttp"
+        | "googleagenttoagenthttpv"
+        | "googleagenttoagentoverhttp"
+        | "googleagenttoagentoverhttpv"
+        | "googleagenttoagentwebsocket"
+        | "googleagenttoagentwebsocketv"
+        | "googleagenttoagentwebsockets"
+        | "googleagenttoagentwebsocketsv"
+        | "googleagenttoagentoverwebsocket"
+        | "googleagenttoagentoverwebsocketv"
+        | "googleagenttoagentoverwebsockets"
+        | "googleagenttoagentoverwebsocketsv" => Some("a2a".to_string()),
         _ => None,
     }
 }
 
 fn normalized_compliance_profile(value: Option<&str>) -> Option<String> {
-    let normalized: String = normalized_optional_field(value)?
-        .to_ascii_lowercase()
+    let raw = normalized_optional_field(value)?.to_ascii_lowercase();
+    let has_disallowed_chars = raw
+        .chars()
+        .any(|c| c.is_control() || is_invisible_filler(c) || !c.is_ascii());
+    if has_disallowed_chars {
+        return None;
+    }
+
+    let normalized: String = raw
         .chars()
         .map(|c| if c.is_ascii_whitespace() { '-' } else { c })
         .collect();
-    let is_allowed = normalized
-        .chars()
-        .all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || matches!(c, '-' | '_' | '.' | '/' | '\\'));
+    let is_allowed = normalized.chars().all(|c| {
+        c.is_ascii_lowercase() || c.is_ascii_digit() || matches!(c, '-' | '_' | '.' | '/' | '\\')
+    });
     let starts_with_alpha_and_ends_alnum = normalized
         .chars()
         .next()
@@ -1190,7 +1700,13 @@ fn normalized_compliance_profile(value: Option<&str>) -> Option<String> {
         Some(
             normalized
                 .chars()
-                .map(|c| if matches!(c, '_' | '.' | '/' | '\\') { '-' } else { c })
+                .map(|c| {
+                    if matches!(c, '_' | '.' | '/' | '\\') {
+                        '-'
+                    } else {
+                        c
+                    }
+                })
                 .collect(),
         )
     } else {
@@ -1205,8 +1721,7 @@ fn attach_llm_provenance(rec: &mut MessageIngressRecord, llm: &LlmAdapterRespons
     let model = normalized_provenance_label(llm.model.as_deref(), 128);
     let adapter = normalized_provenance_label(llm.adapter.as_deref(), 64);
     let agent_protocol = normalized_agent_protocol(llm.agent_protocol.as_deref());
-    let compliance_profile =
-        normalized_compliance_profile(llm.compliance_profile.as_deref());
+    let compliance_profile = normalized_compliance_profile(llm.compliance_profile.as_deref());
 
     let has_v1_fields = provider.is_some() || model.is_some() || adapter.is_some();
     let has_v2_fields = agent_protocol.is_some() || compliance_profile.is_some();
@@ -1229,7 +1744,63 @@ fn attach_llm_provenance(rec: &mut MessageIngressRecord, llm: &LlmAdapterRespons
     });
 }
 
+fn context_matches_token(context: &str, token: &str) -> bool {
+    fn normalize_for_contract_match(value: &str) -> String {
+        let lowered = value.to_ascii_lowercase();
+        let mut out = String::with_capacity(lowered.len());
+        let mut prev_space = false;
+        for ch in lowered.chars() {
+            if ch.is_ascii_alphanumeric() {
+                out.push(ch);
+                prev_space = false;
+            } else if !prev_space {
+                out.push(' ');
+                prev_space = true;
+            }
+        }
+        out.trim().to_string()
+    }
+
+    let normalized_context = context.to_ascii_lowercase();
+    let normalized_token = token.to_ascii_lowercase();
+    let context_with_spaces = normalized_context.replace(['-', '_'], " ");
+    let token_with_spaces = normalized_token.replace(['-', '_'], " ");
+    let normalized_context_relaxed = normalize_for_contract_match(context);
+    let normalized_token_relaxed = normalize_for_contract_match(token);
+    let normalized_context_compact = normalized_context_relaxed.replace(' ', "");
+    let normalized_token_compact = normalized_token_relaxed.replace(' ', "");
+
+    normalized_context.contains(&normalized_token)
+        || normalized_context.contains(&normalized_token.replace('-', "_"))
+        || normalized_context.contains(&normalized_token.replace('_', "-"))
+        || context_with_spaces.contains(&token_with_spaces)
+        || (!normalized_token_relaxed.is_empty()
+            && normalized_context_relaxed.contains(&normalized_token_relaxed))
+        || (!normalized_token_compact.is_empty()
+            && normalized_context_compact.contains(&normalized_token_compact))
+}
+
 fn classify_adapter_error(err: &AdapterError) -> (&'static str, &'static str) {
+    if context_matches_token(&err.context, "proof-missing")
+        || context_matches_token(&err.context, "missing-provider-request-id")
+    {
+        return ("ERR_M2V2_PROOF_MISSING", "proof_missing");
+    }
+    if context_matches_token(&err.context, "proof-invalid")
+        || context_matches_token(&err.context, "missing-adapter-label")
+        || context_matches_token(&err.context, "no-json-line")
+    {
+        return ("ERR_M2V2_PROOF_INVALID", "proof_invalid");
+    }
+    if context_matches_token(&err.context, "settlement-degraded") {
+        return ("ERR_M2V2_SETTLEMENT_DEGRADED", "settlement_degraded");
+    }
+    if context_matches_token(&err.context, "proof-late")
+        || context_matches_token(&err.context, "timeout")
+    {
+        return ("ERR_M2V2_PROOF_LATE", "proof_late");
+    }
+
     match err.kind {
         AdapterErrorKind::Retriable => ("adapter_error", "retry_exhausted"),
         AdapterErrorKind::NonRetriable => ("adapter_error", "non_retriable"),
@@ -1338,7 +1909,8 @@ mod tests {
 
     #[test]
     fn parse_tx_hash_accepts_quoted_and_trailing_punctuated_tokens() {
-        let mixed_case = "tx_hash=\"0xABCDabcdABCDabcdABCDabcdABCDabcdABCDabcdABCDabcdABCDabcdABCDabcd\",";
+        let mixed_case =
+            "tx_hash=\"0xABCDabcdABCDabcdABCDabcdABCDabcdABCDabcdABCDabcdABCDabcdABCDabcd\",";
         let parsed = parse_tx_hash(mixed_case).expect("hash should parse");
         assert_eq!(
             parsed,
@@ -1346,7 +1918,8 @@ mod tests {
         );
 
         let sentence_tail = "submitted tx_hash=0xABCDabcdABCDabcdABCDabcdABCDabcdABCDabcdABCDabcdABCDabcdABCDabcd. next";
-        let parsed_tail = parse_tx_hash(sentence_tail).expect("hash with sentence punctuation should parse");
+        let parsed_tail =
+            parse_tx_hash(sentence_tail).expect("hash with sentence punctuation should parse");
         assert_eq!(
             parsed_tail,
             "0xabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd"
@@ -1357,13 +1930,20 @@ mod tests {
     fn parse_tx_hash_rejects_malformed_or_partial_values() {
         assert!(parse_tx_hash("tx_hash=0xdeadbeef").is_none());
         assert!(parse_tx_hash("tx_hash=not-a-hash").is_none());
-        assert!(parse_tx_hash("tx_hash=0xzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz").is_none());
+        assert!(parse_tx_hash(
+            "tx_hash=0xzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"
+        )
+        .is_none());
     }
 
     #[test]
     fn llm_adapter_timeout_triggers() {
-        let cmd = "sleep 0.2; echo '{\"output_text\":\"late\"}'";
-        let err = run_shell_with_timeout(cmd, Duration::from_millis(30)).unwrap_err();
+        let base_args = vec![
+            "-lc".to_string(),
+            "sleep 0.2; echo '{\"output_text\":\"late\"}'".to_string(),
+        ];
+        let err =
+            run_command_with_timeout("sh", &base_args, &[], Duration::from_millis(30)).unwrap_err();
         assert!(err.to_string().contains("timeout"));
     }
 
@@ -1409,9 +1989,47 @@ mod tests {
     }
 
     #[test]
+    fn parse_command_spec_rejects_invalid_quote() {
+        let err =
+            parse_command_spec("python3 -c 'print(1)").expect_err("unbalanced quote must fail");
+        assert!(err.to_string().contains("invalid command spec quoting"));
+    }
+
+    #[test]
+    fn parse_command_spec_rejects_shell_interpreter_programs() {
+        for spec in [
+            "sh -c 'echo pwn'",
+            "/bin/bash -lc 'echo pwn'",
+            "pwsh -c echo",
+        ] {
+            let err = parse_command_spec(spec).expect_err("shell program must be rejected");
+            assert!(
+                err.to_string()
+                    .contains("shell interpreter is forbidden in adapter command spec"),
+                "unexpected error for {spec}: {err}"
+            );
+        }
+    }
+
+    #[test]
+    fn parse_command_spec_accepts_non_shell_binary() {
+        let (program, args) =
+            parse_command_spec("python3 -c 'print(1)'").expect("python must be accepted");
+        assert_eq!(program, "python3");
+        assert_eq!(args, vec!["-c".to_string(), "print(1)".to_string()]);
+    }
+
+    #[test]
     fn llm_adapter_non_timeout_path_is_ok() {
-        let cmd = "echo '{\"output_text\":\"ok\",\"provider_request_id\":\"r1\"}'";
-        let out = run_shell_with_timeout(cmd, Duration::from_secs(1)).unwrap();
+        let base_args = vec![
+            "-c".to_string(),
+            "import sys; print(sys.argv[1])".to_string(),
+        ];
+        let extra_args =
+            vec!["{\"output_text\":\"ok\",\"provider_request_id\":\"r1\"}".to_string()];
+        let out =
+            run_command_with_timeout("python3", &base_args, &extra_args, Duration::from_secs(1))
+                .unwrap();
         assert!(out.status.success());
         let stdout = String::from_utf8_lossy(&out.stdout).trim().to_string();
         let parsed: LlmAdapterResponse = serde_json::from_str(&stdout).unwrap();
@@ -1421,18 +2039,79 @@ mod tests {
 
     #[test]
     fn llm_adapter_accepts_last_json_line_when_stdout_has_noise() {
-        let cmd = "printf 'debug: adapter warmup\\n{\"output_text\":\"ok\",\"provider_request_id\":\"r1\"}\\n'";
-        let parsed = run_llm_adapter_once("sh -lc", cmd, Duration::from_secs(1)).unwrap();
+        let prompt =
+            "debug: adapter warmup\n{\"output_text\":\"ok\",\"provider_request_id\":\"r1\"}";
+        let parsed = run_llm_adapter_once(
+            "python3 -c 'import sys; print(sys.argv[1])'",
+            prompt,
+            Duration::from_secs(1),
+            &StandardProofAdapter,
+        )
+        .unwrap();
         assert_eq!(parsed.output_text, "ok");
         assert_eq!(parsed.provider_request_id.as_deref(), Some("r1"));
     }
 
     #[test]
     fn llm_adapter_rejects_stdout_without_any_json_line() {
-        let cmd = "printf 'debug: adapter warmup\\nstatus=ok\\n'";
-        let err = run_llm_adapter_once("sh -lc", cmd, Duration::from_secs(1)).unwrap_err();
+        let err = run_llm_adapter_once(
+            "python3 -c 'import sys; print(sys.argv[1])'",
+            "debug: adapter warmup\nstatus=ok",
+            Duration::from_secs(1),
+            &StandardProofAdapter,
+        )
+        .unwrap_err();
         assert_eq!(err.kind, AdapterErrorKind::NonRetriable);
         assert!(err.context.contains("no-json-line"));
+    }
+
+    #[test]
+    fn llm_adapter_prompt_shell_chars_are_treated_as_plain_text() {
+        let marker =
+            env::temp_dir().join(format!("trnm-worker-agent-shell-marker-{}.tmp", now_ms()));
+        let prompt = format!(
+            "{{\"output_text\":\"$(touch {})\",\"provider_request_id\":\"r-safe\"}}",
+            marker.display()
+        );
+
+        let parsed = run_llm_adapter_once(
+            "python3 -c 'import sys; print(sys.argv[1])'",
+            &prompt,
+            Duration::from_secs(1),
+            &StandardProofAdapter,
+        )
+        .expect("payload should parse without shell evaluation");
+        assert_eq!(parsed.output_text, format!("$(touch {})", marker.display()));
+        assert!(
+            fs::metadata(&marker).is_err(),
+            "prompt shell metacharacters must never execute"
+        );
+    }
+
+    #[test]
+    fn llm_adapter_tee_receipt_path_uses_adapter_parse_response_validation() {
+        let cmd = "{\"output_text\":\"ok\",\"provider_request_id\":\"req-tee-1\",\"adapter\":\"tee-receipt\"}";
+        let tee_adapter = build_proof_adapter("tee-receipt").expect("tee adapter");
+        let parsed = run_llm_adapter_once(
+            "python3 -c 'import sys; print(sys.argv[1])'",
+            cmd,
+            Duration::from_secs(1),
+            tee_adapter.as_ref(),
+        )
+        .expect("tee receipt payload should parse");
+        assert_eq!(parsed.provider_request_id.as_deref(), Some("req-tee-1"));
+        assert_eq!(parsed.adapter.as_deref(), Some("tee-receipt"));
+
+        let bad_cmd = "{\"output_text\":\"ok\",\"provider_request_id\":\"req-tee-2\"}";
+        let err = run_llm_adapter_once(
+            "python3 -c 'import sys; print(sys.argv[1])'",
+            bad_cmd,
+            Duration::from_secs(1),
+            tee_adapter.as_ref(),
+        )
+        .expect_err("missing adapter label must fail closed");
+        assert_eq!(err.kind, AdapterErrorKind::NonRetriable);
+        assert!(err.context.contains("tee-receipt-missing-adapter-label"));
     }
 
     #[test]
@@ -1448,7 +2127,7 @@ mod tests {
     fn adapter_error_classification_is_unified_failed_adapter() {
         let retry_exhausted = AdapterError {
             kind: AdapterErrorKind::Retriable,
-            context: "llm adapter timeout after 3000ms".to_string(),
+            context: "llm adapter transient io failure".to_string(),
         };
         let non_retriable = AdapterError {
             kind: AdapterErrorKind::NonRetriable,
@@ -1465,10 +2144,266 @@ mod tests {
     }
 
     #[test]
+    fn adapter_error_classification_maps_mv2_fail_closed_receipt_contract_codes() {
+        let proof_missing = AdapterError {
+            kind: AdapterErrorKind::NonRetriable,
+            context: "tee-receipt-missing-provider-request-id".to_string(),
+        };
+        assert_eq!(
+            classify_adapter_error(&proof_missing),
+            ("ERR_M2V2_PROOF_MISSING", "proof_missing")
+        );
+
+        let proof_late = AdapterError {
+            kind: AdapterErrorKind::Retriable,
+            context: "llm adapter timeout after 3000ms".to_string(),
+        };
+        assert_eq!(
+            classify_adapter_error(&proof_late),
+            ("ERR_M2V2_PROOF_LATE", "proof_late")
+        );
+
+        let proof_invalid = AdapterError {
+            kind: AdapterErrorKind::NonRetriable,
+            context: "zk-receipt-missing-adapter-label".to_string(),
+        };
+        assert_eq!(
+            classify_adapter_error(&proof_invalid),
+            ("ERR_M2V2_PROOF_INVALID", "proof_invalid")
+        );
+
+        let no_json_line = AdapterError {
+            kind: AdapterErrorKind::NonRetriable,
+            context: "no-json-line".to_string(),
+        };
+        assert_eq!(
+            classify_adapter_error(&no_json_line),
+            ("ERR_M2V2_PROOF_INVALID", "proof_invalid")
+        );
+
+        let settlement_degraded_non_retriable = AdapterError {
+            kind: AdapterErrorKind::NonRetriable,
+            context: "tee-receipt-settlement-degraded".to_string(),
+        };
+        assert_eq!(
+            classify_adapter_error(&settlement_degraded_non_retriable),
+            ("ERR_M2V2_SETTLEMENT_DEGRADED", "settlement_degraded")
+        );
+
+        let settlement_degraded_retriable = AdapterError {
+            kind: AdapterErrorKind::Retriable,
+            context: "settlement-degraded-retry-window-exhausted".to_string(),
+        };
+        assert_eq!(
+            classify_adapter_error(&settlement_degraded_retriable),
+            ("ERR_M2V2_SETTLEMENT_DEGRADED", "settlement_degraded")
+        );
+
+        let settlement_degraded_timeout_overlap = AdapterError {
+            kind: AdapterErrorKind::Retriable,
+            context: "settlement-degraded-timeout-window".to_string(),
+        };
+        assert_eq!(
+            classify_adapter_error(&settlement_degraded_timeout_overlap),
+            ("ERR_M2V2_SETTLEMENT_DEGRADED", "settlement_degraded")
+        );
+
+        let proof_missing_underscore = AdapterError {
+            kind: AdapterErrorKind::NonRetriable,
+            context: "tee_receipt_missing_provider_request_id".to_string(),
+        };
+        assert_eq!(
+            classify_adapter_error(&proof_missing_underscore),
+            ("ERR_M2V2_PROOF_MISSING", "proof_missing")
+        );
+
+        let proof_late_underscore = AdapterError {
+            kind: AdapterErrorKind::Retriable,
+            context: "proof_late_retry_window_exhausted".to_string(),
+        };
+        assert_eq!(
+            classify_adapter_error(&proof_late_underscore),
+            ("ERR_M2V2_PROOF_LATE", "proof_late")
+        );
+
+        let proof_late_with_spaces = AdapterError {
+            kind: AdapterErrorKind::Retriable,
+            context: "proof late retry window exhausted".to_string(),
+        };
+        assert_eq!(
+            classify_adapter_error(&proof_late_with_spaces),
+            ("ERR_M2V2_PROOF_LATE", "proof_late")
+        );
+
+        let proof_late_with_nonbreaking_hyphen = AdapterError {
+            kind: AdapterErrorKind::Retriable,
+            context: "proof‑late retry window exhausted".to_string(),
+        };
+        assert_eq!(
+            classify_adapter_error(&proof_late_with_nonbreaking_hyphen),
+            ("ERR_M2V2_PROOF_LATE", "proof_late")
+        );
+
+        let proof_missing_with_nonbreaking_hyphen = AdapterError {
+            kind: AdapterErrorKind::NonRetriable,
+            context: "proof‑missing provider request id".to_string(),
+        };
+        assert_eq!(
+            classify_adapter_error(&proof_missing_with_nonbreaking_hyphen),
+            ("ERR_M2V2_PROOF_MISSING", "proof_missing")
+        );
+
+        let settlement_degraded_with_em_dash = AdapterError {
+            kind: AdapterErrorKind::Retriable,
+            context: "settlement—degraded timeout overlap".to_string(),
+        };
+        assert_eq!(
+            classify_adapter_error(&settlement_degraded_with_em_dash),
+            ("ERR_M2V2_SETTLEMENT_DEGRADED", "settlement_degraded")
+        );
+
+        let explicit_contract_proof_missing = AdapterError {
+            kind: AdapterErrorKind::Retriable,
+            context: "proof-missing-from-verifier".to_string(),
+        };
+        assert_eq!(
+            classify_adapter_error(&explicit_contract_proof_missing),
+            ("ERR_M2V2_PROOF_MISSING", "proof_missing")
+        );
+
+        let explicit_contract_proof_invalid = AdapterError {
+            kind: AdapterErrorKind::Retriable,
+            context: "proof_invalid_signature".to_string(),
+        };
+        assert_eq!(
+            classify_adapter_error(&explicit_contract_proof_invalid),
+            ("ERR_M2V2_PROOF_INVALID", "proof_invalid")
+        );
+
+        let proof_invalid_with_spaces = AdapterError {
+            kind: AdapterErrorKind::Retriable,
+            context: "proof invalid signature".to_string(),
+        };
+        assert_eq!(
+            classify_adapter_error(&proof_invalid_with_spaces),
+            ("ERR_M2V2_PROOF_INVALID", "proof_invalid")
+        );
+
+        let settlement_degraded_underscore = AdapterError {
+            kind: AdapterErrorKind::Retriable,
+            context: "settlement_degraded_retry_window_exhausted".to_string(),
+        };
+        assert_eq!(
+            classify_adapter_error(&settlement_degraded_underscore),
+            ("ERR_M2V2_SETTLEMENT_DEGRADED", "settlement_degraded")
+        );
+
+        let proof_missing_uppercase = AdapterError {
+            kind: AdapterErrorKind::NonRetriable,
+            context: "TEE-RECEIPT-MISSING-PROVIDER-REQUEST-ID".to_string(),
+        };
+        assert_eq!(
+            classify_adapter_error(&proof_missing_uppercase),
+            ("ERR_M2V2_PROOF_MISSING", "proof_missing")
+        );
+
+        let proof_missing_with_spaces = AdapterError {
+            kind: AdapterErrorKind::NonRetriable,
+            context: "tee receipt missing provider request id".to_string(),
+        };
+        assert_eq!(
+            classify_adapter_error(&proof_missing_with_spaces),
+            ("ERR_M2V2_PROOF_MISSING", "proof_missing")
+        );
+
+        let proof_missing_with_punctuation = AdapterError {
+            kind: AdapterErrorKind::NonRetriable,
+            context: "tee/receipt:missing.provider request-id".to_string(),
+        };
+        assert_eq!(
+            classify_adapter_error(&proof_missing_with_punctuation),
+            ("ERR_M2V2_PROOF_MISSING", "proof_missing")
+        );
+
+        let proof_missing_compact = AdapterError {
+            kind: AdapterErrorKind::NonRetriable,
+            context: "teeReceiptMissingProviderRequestId".to_string(),
+        };
+        assert_eq!(
+            classify_adapter_error(&proof_missing_compact),
+            ("ERR_M2V2_PROOF_MISSING", "proof_missing")
+        );
+
+        let settlement_degraded_mixed_case = AdapterError {
+            kind: AdapterErrorKind::Retriable,
+            context: "Settlement_Degraded_retry_window_exhausted".to_string(),
+        };
+        assert_eq!(
+            classify_adapter_error(&settlement_degraded_mixed_case),
+            ("ERR_M2V2_SETTLEMENT_DEGRADED", "settlement_degraded")
+        );
+
+        let settlement_degraded_camel_case = AdapterError {
+            kind: AdapterErrorKind::Retriable,
+            context: "settlementDegradedRetryWindowExhausted".to_string(),
+        };
+        assert_eq!(
+            classify_adapter_error(&settlement_degraded_camel_case),
+            ("ERR_M2V2_SETTLEMENT_DEGRADED", "settlement_degraded")
+        );
+    }
+
+    #[test]
+    fn adapter_error_classification_enforces_contract_precedence_for_ambiguous_contexts() {
+        let missing_vs_invalid = AdapterError {
+            kind: AdapterErrorKind::NonRetriable,
+            context: "proof-missing and proof-invalid in same envelope".to_string(),
+        };
+        assert_eq!(
+            classify_adapter_error(&missing_vs_invalid),
+            ("ERR_M2V2_PROOF_MISSING", "proof_missing"),
+            "proof_missing must outrank proof_invalid for deterministic disputed reason"
+        );
+
+        let invalid_vs_late = AdapterError {
+            kind: AdapterErrorKind::Retriable,
+            context: "proof-invalid timeout overlap".to_string(),
+        };
+        assert_eq!(
+            classify_adapter_error(&invalid_vs_late),
+            ("ERR_M2V2_PROOF_INVALID", "proof_invalid"),
+            "proof_invalid must outrank proof_late to avoid timeout masking malformed proofs"
+        );
+
+        let missing_vs_late = AdapterError {
+            kind: AdapterErrorKind::Retriable,
+            context: "missing-provider-request-id timeout overlap".to_string(),
+        };
+        assert_eq!(
+            classify_adapter_error(&missing_vs_late),
+            ("ERR_M2V2_PROOF_MISSING", "proof_missing"),
+            "proof_missing must outrank proof_late when timeout co-occurs with missing receipt ids"
+        );
+
+        let degraded_vs_late = AdapterError {
+            kind: AdapterErrorKind::Retriable,
+            context: "settlement-degraded timeout overlap".to_string(),
+        };
+        assert_eq!(
+            classify_adapter_error(&degraded_vs_late),
+            ("ERR_M2V2_SETTLEMENT_DEGRADED", "settlement_degraded"),
+            "settlement_degraded must outrank proof_late for stable downgrade signaling"
+        );
+    }
+
+    #[test]
     fn reputation_delta_maps_market_penalty_and_reward_signals() {
         assert_eq!(reputation_delta(ReputationSignal::Accepted), 3);
         assert_eq!(reputation_delta(ReputationSignal::VerifierRejected), -2);
-        assert_eq!(reputation_delta(ReputationSignal::AdapterRetryExhausted), -1);
+        assert_eq!(
+            reputation_delta(ReputationSignal::AdapterRetryExhausted),
+            -1
+        );
         assert_eq!(reputation_delta(ReputationSignal::AdapterNonRetriable), -3);
     }
 
@@ -1498,7 +2433,9 @@ mod tests {
         assert!(accepted > 0, "accepted work must remain net-positive");
         assert!(retryable < 0, "retry exhaustion must remain a penalty");
         assert!(
-            accepted > retryable && retryable > verifier_rejected && verifier_rejected > non_retriable,
+            accepted > retryable
+                && retryable > verifier_rejected
+                && verifier_rejected > non_retriable,
             "expected strict tiering: accepted > retryable > verifier_rejected > non_retriable"
         );
     }
@@ -1517,21 +2454,52 @@ mod tests {
 
     #[test]
     fn verify_model_output_enforces_trimmed_empty_and_char_limit_boundaries() {
-        assert_eq!(verify_model_output("   \n\t", 8), ("rejected", "empty_output"));
+        assert_eq!(
+            verify_model_output("   \n\t", 8),
+            ("rejected", "empty_output")
+        );
 
         // Zero-width/invisible fillers should not pass verifier checks as meaningful output.
         assert_eq!(
             verify_model_output("\u{200B}\u{200C}\u{FEFF}", 8),
             ("rejected", "empty_output")
         );
-        assert_eq!(verify_model_output("\u{2060}\u{00AD}", 8), ("rejected", "empty_output"));
-        assert_eq!(verify_model_output("\u{2061}\u{2062}\u{2063}\u{2064}", 8), ("rejected", "empty_output"));
-        assert_eq!(verify_model_output("\u{2066}\u{2067}\u{2068}\u{2069}", 8), ("rejected", "empty_output"));
-        assert_eq!(verify_model_output("\u{034F}", 8), ("rejected", "empty_output"));
-        assert_eq!(verify_model_output("\u{180E}", 8), ("rejected", "empty_output"));
-        assert_eq!(verify_model_output("\u{200E}\u{200F}", 8), ("rejected", "empty_output"));
-        assert_eq!(verify_model_output("\u{FE0E}", 8), ("rejected", "empty_output"));
-        assert_eq!(verify_model_output("\u{FE0F}", 8), ("rejected", "empty_output"));
+        assert_eq!(
+            verify_model_output("\u{2060}\u{00AD}", 8),
+            ("rejected", "empty_output")
+        );
+        assert_eq!(
+            verify_model_output("\u{2061}\u{2062}\u{2063}\u{2064}", 8),
+            ("rejected", "empty_output")
+        );
+        assert_eq!(
+            verify_model_output("\u{2066}\u{2067}\u{2068}\u{2069}", 8),
+            ("rejected", "empty_output")
+        );
+        assert_eq!(
+            verify_model_output("\u{034F}", 8),
+            ("rejected", "empty_output")
+        );
+        assert_eq!(
+            verify_model_output("\u{180E}", 8),
+            ("rejected", "empty_output")
+        );
+        assert_eq!(
+            verify_model_output("\u{200E}\u{200F}", 8),
+            ("rejected", "empty_output")
+        );
+        assert_eq!(
+            verify_model_output("\u{061C}", 8),
+            ("rejected", "empty_output")
+        );
+        assert_eq!(
+            verify_model_output("\u{FE0E}", 8),
+            ("rejected", "empty_output")
+        );
+        assert_eq!(
+            verify_model_output("\u{FE0F}", 8),
+            ("rejected", "empty_output")
+        );
 
         // Whitespace + zero-width-only payloads must also be rejected deterministically.
         assert_eq!(
@@ -1540,35 +2508,69 @@ mod tests {
         );
 
         // Control-only payloads should not pass market verification as meaningful content.
-        assert_eq!(verify_model_output("\u{0007}\u{001B}", 8), ("rejected", "empty_output"));
+        assert_eq!(
+            verify_model_output("\u{0007}\u{001B}", 8),
+            ("rejected", "empty_output")
+        );
 
         // Control bytes mixed around visible content should be ignored for length accounting.
-        assert_eq!(verify_model_output("\u{0007}ok\u{001B}", 2), ("accepted", "ok"));
+        assert_eq!(
+            verify_model_output("\u{0007}ok\u{001B}", 2),
+            ("accepted", "ok")
+        );
 
         // Limit is measured in characters (not bytes) to keep verifier behavior predictable.
         let within = "你好ab"; // 4 chars
         assert_eq!(verify_model_output(within, 4), ("accepted", "ok"));
 
         let over = "你好abc"; // 5 chars
-        assert_eq!(verify_model_output(over, 4), ("rejected", "output_too_long"));
+        assert_eq!(
+            verify_model_output(over, 4),
+            ("rejected", "output_too_long")
+        );
 
         // Leading/trailing transport whitespace should not cause false rejections.
         assert_eq!(verify_model_output(" 你好ab \n", 4), ("accepted", "ok"));
 
         // Mixed visible + zero-width should still count as meaningful content.
-        assert_eq!(verify_model_output("\u{200B}ok\u{200D}", 4), ("accepted", "ok"));
+        assert_eq!(
+            verify_model_output("\u{200B}ok\u{200D}", 4),
+            ("accepted", "ok")
+        );
 
         // Invisible fillers should not inflate length checks for market verification.
-        assert_eq!(verify_model_output("\u{200B}ok\u{200D}", 2), ("accepted", "ok"));
+        assert_eq!(
+            verify_model_output("\u{200B}ok\u{200D}", 2),
+            ("accepted", "ok")
+        );
         assert_eq!(verify_model_output("o\u{034F}k", 2), ("accepted", "ok"));
 
         // Direction/isolation wrappers should not alter verifiable length accounting.
-        assert_eq!(verify_model_output("\u{2066}ok\u{2069}", 2), ("accepted", "ok"));
-        assert_eq!(verify_model_output("\u{2066}ok\u{2069}", 1), ("rejected", "output_too_long"));
+        assert_eq!(
+            verify_model_output("\u{2066}ok\u{2069}", 2),
+            ("accepted", "ok")
+        );
+        assert_eq!(
+            verify_model_output("\u{2066}ok\u{2069}", 1),
+            ("rejected", "output_too_long")
+        );
+
+        // ARABIC LETTER MARK wrappers should be treated as invisible fillers as well.
+        assert_eq!(
+            verify_model_output("\u{061C}ok\u{061C}", 2),
+            ("accepted", "ok")
+        );
+        assert_eq!(
+            verify_model_output("\u{061C}ok\u{061C}", 1),
+            ("rejected", "output_too_long")
+        );
 
         // ZWJ inside visible emoji sequences should stay deterministic for verifier limits.
         assert_eq!(verify_model_output("👩\u{200D}💻", 2), ("accepted", "ok"));
-        assert_eq!(verify_model_output("👩\u{200D}💻", 1), ("rejected", "output_too_long"));
+        assert_eq!(
+            verify_model_output("👩\u{200D}💻", 1),
+            ("rejected", "output_too_long")
+        );
     }
 
     #[test]
@@ -1667,8 +2669,11 @@ mod tests {
 
     #[test]
     fn task_lock_prevents_parallel_replay_for_same_task() {
-        let ack_log =
-            std::env::temp_dir().join(format!("trnm-worker-agent-ack-{}.jsonl", now_ms()));
+        let ack_log = std::env::temp_dir().join(format!(
+            "trnm-worker-agent-ack-lock-{}-{}.jsonl",
+            std::process::id(),
+            now_ms()
+        ));
         let guard = try_acquire_task_lock(&ack_log, 42)
             .expect("acquire lock")
             .expect("first lock should succeed");
@@ -1690,8 +2695,11 @@ mod tests {
 
     #[test]
     fn is_task_acked_only_true_for_accepted_records() {
-        let ack_log =
-            std::env::temp_dir().join(format!("trnm-worker-agent-ack-{}.jsonl", now_ms()));
+        let ack_log = std::env::temp_dir().join(format!(
+            "trnm-worker-agent-ack-records-{}-{}.jsonl",
+            std::process::id(),
+            now_ms()
+        ));
         fs::write(
             &ack_log,
             "{\"ts_unix_ms\":1,\"task_id\":1,\"status\":\"rejected\"}\n{\"ts_unix_ms\":2,\"task_id\":2,\"status\":\"accepted\"}\n",
@@ -1710,6 +2718,37 @@ mod tests {
         assert_eq!(rec.provider_request_id, None);
         assert_eq!(rec.provenance_schema_version, None);
         assert!(rec.llm_provenance.is_none());
+    }
+
+    #[test]
+    fn enterprise_audit_export_re_normalizes_legacy_provider_request_id() {
+        let rec = MessageIngressRecord {
+            request_id: "r-audit-provider-request-id".to_string(),
+            task_id: 700,
+            channel: "telegram".to_string(),
+            user_id: "u1".to_string(),
+            session_id: "s1".to_string(),
+            text: "hello".to_string(),
+            idempotency_key: "ik-audit-provider-request-id".to_string(),
+            status: RequestStatus::Assigned.as_str().to_string(),
+            created_at_unix_ms: 1,
+            assigned_worker: Some("worker-1".to_string()),
+            assigned_at_unix_ms: Some(2),
+            model_output: None,
+            provider_request_id: Some(" provider\n701 ".to_string()),
+            provenance_schema_version: None,
+            llm_provenance: None,
+            result_hash: None,
+            verifier_status: None,
+            resolution_code: None,
+            commit_tx_hash: None,
+            reveal_tx_hash: None,
+            adapter_error: None,
+            reputation_delta: None,
+        };
+
+        let export = to_enterprise_audit_export(&rec);
+        assert_eq!(export.provider_request_id, None);
     }
 
     #[test]
@@ -1812,6 +2851,334 @@ mod tests {
             Some("openai"),
             Some("gpt-5.3-codex"),
             Some("mcp"),
+            Some("a2a"),
+            Some("cn-pii-restricted"),
+        );
+        assert_eq!(export.provenance_fingerprint, expected);
+    }
+
+    #[test]
+    fn enterprise_audit_export_accepts_separator_aliases_for_schema_version() {
+        let rec = MessageIngressRecord {
+            request_id: "r-audit-v2-alias".to_string(),
+            task_id: 70115,
+            channel: "telegram".to_string(),
+            user_id: "u1".to_string(),
+            session_id: "s1".to_string(),
+            text: "hello".to_string(),
+            idempotency_key: "ik-audit-v2-alias".to_string(),
+            status: RequestStatus::Assigned.as_str().to_string(),
+            created_at_unix_ms: 1,
+            assigned_worker: Some("worker-1".to_string()),
+            assigned_at_unix_ms: Some(2),
+            model_output: None,
+            provider_request_id: Some("provider-70115".to_string()),
+            provenance_schema_version: Some("LLM_V2".to_string()),
+            llm_provenance: Some(LlmProvenanceRecord {
+                provider: Some("openai".to_string()),
+                model: Some("gpt-5.3-codex".to_string()),
+                adapter: Some("mcp".to_string()),
+                agent_protocol: Some("a2a".to_string()),
+                compliance_profile: Some("cn-pii-restricted".to_string()),
+            }),
+            result_hash: None,
+            verifier_status: None,
+            resolution_code: None,
+            commit_tx_hash: None,
+            reveal_tx_hash: None,
+            adapter_error: None,
+            reputation_delta: None,
+        };
+
+        let export = to_enterprise_audit_export(&rec);
+        assert_eq!(export.provenance_schema_version.as_deref(), Some("llm.v2"));
+        assert_eq!(export.agent_protocol.as_deref(), Some("a2a"));
+        assert_eq!(
+            export.compliance_profile.as_deref(),
+            Some("cn-pii-restricted")
+        );
+
+        for alias in ["llm2", "llm-v2", "llm/v2"] {
+            let mut compact_alias = rec.clone();
+            compact_alias.provenance_schema_version = Some(alias.to_string());
+            let compact_export = to_enterprise_audit_export(&compact_alias);
+            assert_eq!(
+                compact_export.provenance_schema_version.as_deref(),
+                Some("llm.v2"),
+                "schema alias should canonicalize: {alias}"
+            );
+            assert_eq!(compact_export.agent_protocol.as_deref(), Some("a2a"));
+            assert_eq!(
+                compact_export.compliance_profile.as_deref(),
+                Some("cn-pii-restricted")
+            );
+        }
+    }
+
+    #[test]
+    fn enterprise_audit_export_normalizes_mcp_streamable_http_aliases_for_v2_schema() {
+        let rec = MessageIngressRecord {
+            request_id: "r-audit-v2-mcp-streamable-http".to_string(),
+            task_id: 70117,
+            channel: "telegram".to_string(),
+            user_id: "u1".to_string(),
+            session_id: "s1".to_string(),
+            text: "hello".to_string(),
+            idempotency_key: "ik-audit-v2-mcp-streamable-http".to_string(),
+            status: RequestStatus::Assigned.as_str().to_string(),
+            created_at_unix_ms: 1,
+            assigned_worker: Some("worker-1".to_string()),
+            assigned_at_unix_ms: Some(2),
+            model_output: None,
+            provider_request_id: Some("provider-70117".to_string()),
+            provenance_schema_version: Some("llm.v2".to_string()),
+            llm_provenance: Some(LlmProvenanceRecord {
+                provider: Some("openai".to_string()),
+                model: Some("gpt-5.3-codex".to_string()),
+                adapter: Some("mcp".to_string()),
+                agent_protocol: Some("MCP/streamable-http v2".to_string()),
+                compliance_profile: Some("cn-pii-restricted".to_string()),
+            }),
+            result_hash: None,
+            verifier_status: None,
+            resolution_code: None,
+            commit_tx_hash: None,
+            reveal_tx_hash: None,
+            adapter_error: None,
+            reputation_delta: None,
+        };
+
+        let export = to_enterprise_audit_export(&rec);
+        assert_eq!(export.provenance_schema_version.as_deref(), Some("llm.v2"));
+        assert_eq!(export.agent_protocol.as_deref(), Some("mcp"));
+
+        for alias in [
+            "MCP/streamable-http v2",
+            "mcp over streamable-http",
+            "model context protocol over streamable-http",
+            "OpenAI model context protocol over streamable-http v2",
+        ] {
+            let mut alias_rec = rec.clone();
+            alias_rec
+                .llm_provenance
+                .as_mut()
+                .expect("provenance exists")
+                .agent_protocol = Some(alias.to_string());
+            let alias_export = to_enterprise_audit_export(&alias_rec);
+            assert_eq!(
+                alias_export.agent_protocol.as_deref(),
+                Some("mcp"),
+                "agent protocol alias should canonicalize: {alias}"
+            );
+        }
+    }
+
+    #[test]
+    fn enterprise_audit_export_normalizes_mcp_websocket_aliases_for_v2_schema() {
+        let rec = MessageIngressRecord {
+            request_id: "r-audit-v2-mcp-websocket".to_string(),
+            task_id: 70118,
+            channel: "telegram".to_string(),
+            user_id: "u1".to_string(),
+            session_id: "s1".to_string(),
+            text: "hello".to_string(),
+            idempotency_key: "ik-audit-v2-mcp-websocket".to_string(),
+            status: RequestStatus::Assigned.as_str().to_string(),
+            created_at_unix_ms: 1,
+            assigned_worker: Some("worker-1".to_string()),
+            assigned_at_unix_ms: Some(2),
+            model_output: None,
+            provider_request_id: Some("provider-70118".to_string()),
+            provenance_schema_version: Some("llm.v2".to_string()),
+            llm_provenance: Some(LlmProvenanceRecord {
+                provider: Some("openai".to_string()),
+                model: Some("gpt-5.3-codex".to_string()),
+                adapter: Some("mcp".to_string()),
+                agent_protocol: Some("MCP over WebSocket v2".to_string()),
+                compliance_profile: Some("cn-pii-restricted".to_string()),
+            }),
+            result_hash: None,
+            verifier_status: None,
+            resolution_code: None,
+            commit_tx_hash: None,
+            reveal_tx_hash: None,
+            adapter_error: None,
+            reputation_delta: None,
+        };
+
+        for alias in [
+            "MCP over WebSocket v2",
+            "model context protocol websocket",
+            "OpenAI MCP websocket v1",
+            "OpenAI model context protocol over websocket v2",
+            "Anthropic model-context-protocol over websocket",
+        ] {
+            let mut alias_rec = rec.clone();
+            alias_rec
+                .llm_provenance
+                .as_mut()
+                .expect("provenance exists")
+                .agent_protocol = Some(alias.to_string());
+            let alias_export = to_enterprise_audit_export(&alias_rec);
+            assert_eq!(
+                alias_export.agent_protocol.as_deref(),
+                Some("mcp"),
+                "agent protocol websocket alias should canonicalize: {alias}"
+            );
+        }
+    }
+
+    #[test]
+    fn enterprise_audit_export_normalizes_mcp_sse_aliases_for_v2_schema() {
+        let rec = MessageIngressRecord {
+            request_id: "r-audit-v2-mcp-sse".to_string(),
+            task_id: 70119,
+            channel: "telegram".to_string(),
+            user_id: "u1".to_string(),
+            session_id: "s1".to_string(),
+            text: "hello".to_string(),
+            idempotency_key: "ik-audit-v2-mcp-sse".to_string(),
+            status: RequestStatus::Assigned.as_str().to_string(),
+            created_at_unix_ms: 1,
+            assigned_worker: Some("worker-1".to_string()),
+            assigned_at_unix_ms: Some(2),
+            model_output: None,
+            provider_request_id: Some("provider-70119".to_string()),
+            provenance_schema_version: Some("llm.v2".to_string()),
+            llm_provenance: Some(LlmProvenanceRecord {
+                provider: Some("openai".to_string()),
+                model: Some("gpt-5.3-codex".to_string()),
+                adapter: Some("mcp".to_string()),
+                agent_protocol: Some("OpenAI MCP over SSE v2".to_string()),
+                compliance_profile: Some("cn-pii-restricted".to_string()),
+            }),
+            result_hash: None,
+            verifier_status: None,
+            resolution_code: None,
+            commit_tx_hash: None,
+            reveal_tx_hash: None,
+            adapter_error: None,
+            reputation_delta: None,
+        };
+
+        for alias in [
+            "OpenAI MCP over SSE v2",
+            "openai model context protocol sse",
+            "Anthropic MCP over SSE",
+            "Anthropic model-context-protocol over sse v1",
+        ] {
+            let mut alias_rec = rec.clone();
+            alias_rec
+                .llm_provenance
+                .as_mut()
+                .expect("provenance exists")
+                .agent_protocol = Some(alias.to_string());
+            let alias_export = to_enterprise_audit_export(&alias_rec);
+            assert_eq!(
+                alias_export.agent_protocol.as_deref(),
+                Some("mcp"),
+                "agent protocol sse alias should canonicalize: {alias}"
+            );
+        }
+    }
+
+    #[test]
+    fn enterprise_audit_export_accepts_separator_aliases_for_v1_schema_version() {
+        let rec = MessageIngressRecord {
+            request_id: "r-audit-v1-alias".to_string(),
+            task_id: 70116,
+            channel: "telegram".to_string(),
+            user_id: "u1".to_string(),
+            session_id: "s1".to_string(),
+            text: "hello".to_string(),
+            idempotency_key: "ik-audit-v1-alias".to_string(),
+            status: RequestStatus::Assigned.as_str().to_string(),
+            created_at_unix_ms: 1,
+            assigned_worker: Some("worker-1".to_string()),
+            assigned_at_unix_ms: Some(2),
+            model_output: None,
+            provider_request_id: Some("provider-70116".to_string()),
+            provenance_schema_version: Some("LLM_V1".to_string()),
+            llm_provenance: Some(LlmProvenanceRecord {
+                provider: Some("openai".to_string()),
+                model: Some("gpt-5.3-codex".to_string()),
+                adapter: Some("mcp".to_string()),
+                agent_protocol: Some("a2a".to_string()),
+                compliance_profile: Some("cn-pii-restricted".to_string()),
+            }),
+            result_hash: None,
+            verifier_status: None,
+            resolution_code: None,
+            commit_tx_hash: None,
+            reveal_tx_hash: None,
+            adapter_error: None,
+            reputation_delta: None,
+        };
+
+        for alias in ["LLM_V1", "llm1", "llm-v1", "llm/v1"] {
+            let mut v1_alias = rec.clone();
+            v1_alias.provenance_schema_version = Some(alias.to_string());
+            let export = to_enterprise_audit_export(&v1_alias);
+            assert_eq!(
+                export.provenance_schema_version.as_deref(),
+                Some("llm.v1"),
+                "schema alias should canonicalize: {alias}"
+            );
+            assert_eq!(export.adapter.as_deref(), Some("mcp"));
+            assert_eq!(export.agent_protocol, None);
+            assert_eq!(export.compliance_profile, None);
+        }
+    }
+
+    #[test]
+    fn enterprise_audit_export_re_normalizes_legacy_persisted_provenance_fields() {
+        let rec = MessageIngressRecord {
+            request_id: "r-audit-v2-legacy-provenance".to_string(),
+            task_id: 7012,
+            channel: "telegram".to_string(),
+            user_id: "u1".to_string(),
+            session_id: "s1".to_string(),
+            text: "hello".to_string(),
+            idempotency_key: "ik-audit-v2-legacy-provenance".to_string(),
+            status: RequestStatus::Assigned.as_str().to_string(),
+            created_at_unix_ms: 1,
+            assigned_worker: Some("worker-1".to_string()),
+            assigned_at_unix_ms: Some(2),
+            model_output: None,
+            provider_request_id: Some("provider-7012".to_string()),
+            provenance_schema_version: Some("llm.v2".to_string()),
+            llm_provenance: Some(LlmProvenanceRecord {
+                provider: Some("  openai  ".to_string()),
+                model: Some("  gpt-5.3-codex  ".to_string()),
+                adapter: Some("mcp\ninvalid".to_string()),
+                agent_protocol: Some(" Agent-to-Agent v2 ".to_string()),
+                compliance_profile: Some(" CN_PII/RESTRICTED ".to_string()),
+            }),
+            result_hash: None,
+            verifier_status: None,
+            resolution_code: None,
+            commit_tx_hash: None,
+            reveal_tx_hash: None,
+            adapter_error: None,
+            reputation_delta: None,
+        };
+
+        let export = to_enterprise_audit_export(&rec);
+        assert_eq!(export.provenance_schema_version.as_deref(), Some("llm.v2"));
+        assert_eq!(export.provider.as_deref(), Some("openai"));
+        assert_eq!(export.model.as_deref(), Some("gpt-5.3-codex"));
+        assert_eq!(export.adapter, None);
+        assert_eq!(export.agent_protocol.as_deref(), Some("a2a"));
+        assert_eq!(
+            export.compliance_profile.as_deref(),
+            Some("cn-pii-restricted")
+        );
+
+        let expected = build_provenance_fingerprint(
+            Some("llm.v2"),
+            Some("openai"),
+            Some("gpt-5.3-codex"),
+            None,
             Some("a2a"),
             Some("cn-pii-restricted"),
         );
@@ -2008,6 +3375,46 @@ mod tests {
     }
 
     #[test]
+    fn validate_audit_export_index_accepts_current_version() {
+        let index = AuditExportIndex {
+            version: 1,
+            total_records: 0,
+            by_task_id: BTreeMap::new(),
+            by_status: BTreeMap::new(),
+            by_status_phase: BTreeMap::new(),
+            by_provider: BTreeMap::new(),
+            by_model: BTreeMap::new(),
+            by_agent_protocol: BTreeMap::new(),
+            by_compliance_profile: BTreeMap::new(),
+            by_provenance_fingerprint: BTreeMap::new(),
+        };
+
+        validate_audit_export_index(&index).expect("v1 index should be accepted");
+    }
+
+    #[test]
+    fn validate_audit_export_index_rejects_unknown_version_fail_closed() {
+        let index = AuditExportIndex {
+            version: 2,
+            total_records: 0,
+            by_task_id: BTreeMap::new(),
+            by_status: BTreeMap::new(),
+            by_status_phase: BTreeMap::new(),
+            by_provider: BTreeMap::new(),
+            by_model: BTreeMap::new(),
+            by_agent_protocol: BTreeMap::new(),
+            by_compliance_profile: BTreeMap::new(),
+            by_provenance_fingerprint: BTreeMap::new(),
+        };
+
+        let err = validate_audit_export_index(&index)
+            .expect_err("unknown audit index version must fail closed");
+        assert!(err
+            .to_string()
+            .contains("unsupported audit index version=2"));
+    }
+
+    #[test]
     fn export_audit_markdown_contains_provenance_fingerprint_fields() {
         let rows = vec![EnterpriseAuditExportRecord {
             request_id: "r1".to_string(),
@@ -2050,9 +3457,8 @@ mod tests {
         assert!(!md.contains("reveal\r\nsubmitted"));
     }
 
-
     #[test]
-    fn export_audit_index_contains_task_model_and_fingerprint_keys() {
+    fn export_audit_index_contains_task_status_provider_model_and_fingerprint_keys() {
         let rows = vec![
             EnterpriseAuditExportRecord {
                 request_id: "r1".to_string(),
@@ -2086,12 +3492,266 @@ mod tests {
         assert_eq!(index.total_records, 2);
         assert_eq!(index.by_task_id.get("7001"), Some(&vec![0]));
         assert_eq!(index.by_task_id.get("7002"), Some(&vec![1]));
+        assert_eq!(index.by_status.get("reveal_submitted"), Some(&vec![0]));
+        assert_eq!(index.by_status.get("rejected"), Some(&vec![1]));
+        assert_eq!(index.by_status_phase.get("active"), Some(&vec![0]));
+        assert_eq!(index.by_status_phase.get("terminal"), Some(&vec![1]));
+        assert_eq!(index.by_provider.get("openai"), Some(&vec![0, 1]));
         assert_eq!(index.by_model.get("gpt-5.3-codex"), Some(&vec![0, 1]));
-        assert_eq!(index.by_provenance_fingerprint.get("fp-abc"), Some(&vec![0, 1]));
+        assert_eq!(index.by_agent_protocol.get("a2a"), Some(&vec![0, 1]));
+        assert_eq!(
+            index.by_compliance_profile.get("cn-moderate"),
+            Some(&vec![0, 1])
+        );
+        assert_eq!(
+            index.by_provenance_fingerprint.get("fp-abc"),
+            Some(&vec![0, 1])
+        );
     }
 
     #[test]
-    fn query_audit_by_task_id_returns_hits_and_records() {
+    fn export_audit_index_trims_and_drops_blank_provider_model_or_fingerprint_values() {
+        let rows = vec![
+            EnterpriseAuditExportRecord {
+                request_id: "r1".to_string(),
+                task_id: 7101,
+                status: "reveal_submitted".to_string(),
+                provider_request_id: Some("p1".to_string()),
+                provenance_schema_version: Some("llm.v2".to_string()),
+                provenance_fingerprint: Some("  fp-xyz  ".to_string()),
+                provider: Some("  openai  ".to_string()),
+                model: Some("  gpt-5.3-codex  ".to_string()),
+                adapter: Some("mcp".to_string()),
+                agent_protocol: Some("a2a".to_string()),
+                compliance_profile: Some("cn-moderate".to_string()),
+            },
+            EnterpriseAuditExportRecord {
+                request_id: "r2".to_string(),
+                task_id: 7102,
+                status: "rejected".to_string(),
+                provider_request_id: Some("p2".to_string()),
+                provenance_schema_version: Some("llm.v2".to_string()),
+                provenance_fingerprint: Some("   ".to_string()),
+                provider: Some("   ".to_string()),
+                model: Some("\t".to_string()),
+                adapter: Some("mcp".to_string()),
+                agent_protocol: Some("a2a".to_string()),
+                compliance_profile: Some("cn-moderate".to_string()),
+            },
+        ];
+
+        let index = build_audit_export_index(&rows);
+        assert_eq!(index.by_provider.get("openai"), Some(&vec![0]));
+        assert_eq!(index.by_model.get("gpt-5.3-codex"), Some(&vec![0]));
+        assert_eq!(index.by_agent_protocol.get("a2a"), Some(&vec![0, 1]));
+        assert_eq!(
+            index.by_compliance_profile.get("cn-moderate"),
+            Some(&vec![0, 1])
+        );
+        assert_eq!(
+            index.by_provenance_fingerprint.get("fp-xyz"),
+            Some(&vec![0])
+        );
+        assert!(!index.by_provider.contains_key(""));
+        assert!(!index.by_model.contains_key(""));
+        assert!(!index.by_agent_protocol.contains_key(""));
+        assert!(!index.by_compliance_profile.contains_key(""));
+        assert!(!index.by_provenance_fingerprint.contains_key(""));
+    }
+
+    #[test]
+    fn export_audit_index_normalizes_uppercase_fingerprint_variants() {
+        let rows = vec![
+            EnterpriseAuditExportRecord {
+                request_id: "r1".to_string(),
+                task_id: 7201,
+                status: "reveal_submitted".to_string(),
+                provider_request_id: Some("p1".to_string()),
+                provenance_schema_version: Some("llm.v2".to_string()),
+                provenance_fingerprint: Some("DEADBEEF".to_string()),
+                provider: Some("openai".to_string()),
+                model: Some("gpt-5.3-codex".to_string()),
+                adapter: Some("mcp".to_string()),
+                agent_protocol: Some("a2a".to_string()),
+                compliance_profile: Some("cn-moderate".to_string()),
+            },
+            EnterpriseAuditExportRecord {
+                request_id: "r2".to_string(),
+                task_id: 7202,
+                status: "rejected".to_string(),
+                provider_request_id: Some("p2".to_string()),
+                provenance_schema_version: Some("llm.v2".to_string()),
+                provenance_fingerprint: Some("deadbeef".to_string()),
+                provider: Some("openai".to_string()),
+                model: Some("gpt-5.3-codex".to_string()),
+                adapter: Some("mcp".to_string()),
+                agent_protocol: Some("a2a".to_string()),
+                compliance_profile: Some("cn-moderate".to_string()),
+            },
+        ];
+
+        let index = build_audit_export_index(&rows);
+        assert_eq!(
+            index.by_provenance_fingerprint.get("deadbeef"),
+            Some(&vec![0, 1])
+        );
+        assert!(!index.by_provenance_fingerprint.contains_key("DEADBEEF"));
+    }
+
+    #[test]
+    fn export_audit_index_normalizes_agent_protocol_aliases_to_canonical_keys() {
+        let rows = vec![
+            EnterpriseAuditExportRecord {
+                request_id: "r1".to_string(),
+                task_id: 7251,
+                status: "reveal_submitted".to_string(),
+                provider_request_id: Some("p1".to_string()),
+                provenance_schema_version: Some("llm.v2".to_string()),
+                provenance_fingerprint: Some("fp-1".to_string()),
+                provider: Some("openai".to_string()),
+                model: Some("gpt-5.3-codex".to_string()),
+                adapter: Some("mcp".to_string()),
+                agent_protocol: Some("A2A-JSON-RPC-V2".to_string()),
+                compliance_profile: Some("cn-moderate".to_string()),
+            },
+            EnterpriseAuditExportRecord {
+                request_id: "r2".to_string(),
+                task_id: 7252,
+                status: "reveal_submitted".to_string(),
+                provider_request_id: Some("p2".to_string()),
+                provenance_schema_version: Some("llm.v2".to_string()),
+                provenance_fingerprint: Some("fp-2".to_string()),
+                provider: Some("openai".to_string()),
+                model: Some("gpt-5.3-codex".to_string()),
+                adapter: Some("mcp".to_string()),
+                agent_protocol: Some(" model-context-protocol / stdio v1 ".to_string()),
+                compliance_profile: Some("cn-moderate".to_string()),
+            },
+            EnterpriseAuditExportRecord {
+                request_id: "r3".to_string(),
+                task_id: 7253,
+                status: "reveal_submitted".to_string(),
+                provider_request_id: Some("p3".to_string()),
+                provenance_schema_version: Some("llm.v2".to_string()),
+                provenance_fingerprint: Some("fp-3".to_string()),
+                provider: Some("openai".to_string()),
+                model: Some("gpt-5.3-codex".to_string()),
+                adapter: Some("mcp".to_string()),
+                agent_protocol: Some("Google-Agent-to-Agent-Streamable-HTTP-v1".to_string()),
+                compliance_profile: Some("cn-moderate".to_string()),
+            },
+        ];
+
+        let index = build_audit_export_index(&rows);
+        assert_eq!(index.by_agent_protocol.get("a2a"), Some(&vec![0, 2]));
+        assert_eq!(index.by_agent_protocol.get("mcp"), Some(&vec![1]));
+        assert!(!index.by_agent_protocol.contains_key("A2A-JSON-RPC-V2"));
+        assert!(!index
+            .by_agent_protocol
+            .contains_key("model-context-protocol / stdio v1"));
+        assert!(!index
+            .by_agent_protocol
+            .contains_key("Google-Agent-to-Agent-Streamable-HTTP-v1"));
+    }
+
+    #[test]
+    fn export_audit_index_normalizes_compliance_profile_aliases_to_canonical_keys() {
+        let rows = vec![
+            EnterpriseAuditExportRecord {
+                request_id: "r1".to_string(),
+                task_id: 7281,
+                status: "reveal_submitted".to_string(),
+                provider_request_id: Some("p1".to_string()),
+                provenance_schema_version: Some("llm.v2".to_string()),
+                provenance_fingerprint: Some("fp-1".to_string()),
+                provider: Some("openai".to_string()),
+                model: Some("gpt-5.3-codex".to_string()),
+                adapter: Some("mcp".to_string()),
+                agent_protocol: Some("a2a".to_string()),
+                compliance_profile: Some("CN_PII_RESTRICTED".to_string()),
+            },
+            EnterpriseAuditExportRecord {
+                request_id: "r2".to_string(),
+                task_id: 7282,
+                status: "reveal_submitted".to_string(),
+                provider_request_id: Some("p2".to_string()),
+                provenance_schema_version: Some("llm.v2".to_string()),
+                provenance_fingerprint: Some("fp-2".to_string()),
+                provider: Some("openai".to_string()),
+                model: Some("gpt-5.3-codex".to_string()),
+                adapter: Some("mcp".to_string()),
+                agent_protocol: Some("a2a".to_string()),
+                compliance_profile: Some(" cn/pii/restricted ".to_string()),
+            },
+        ];
+
+        let index = build_audit_export_index(&rows);
+        assert_eq!(
+            index.by_compliance_profile.get("cn-pii-restricted"),
+            Some(&vec![0, 1])
+        );
+        assert!(!index
+            .by_compliance_profile
+            .contains_key("CN_PII_RESTRICTED"));
+        assert!(!index
+            .by_compliance_profile
+            .contains_key("cn/pii/restricted"));
+    }
+
+    #[test]
+    fn export_audit_index_drops_non_ascii_or_controlled_fingerprints() {
+        let rows = vec![
+            EnterpriseAuditExportRecord {
+                request_id: "r1".to_string(),
+                task_id: 7301,
+                status: "reveal_submitted".to_string(),
+                provider_request_id: Some("p1".to_string()),
+                provenance_schema_version: Some("llm.v2".to_string()),
+                provenance_fingerprint: Some("deadbeef".to_string()),
+                provider: Some("openai".to_string()),
+                model: Some("gpt-5.3-codex".to_string()),
+                adapter: Some("mcp".to_string()),
+                agent_protocol: Some("a2a".to_string()),
+                compliance_profile: Some("cn-moderate".to_string()),
+            },
+            EnterpriseAuditExportRecord {
+                request_id: "r2".to_string(),
+                task_id: 7302,
+                status: "rejected".to_string(),
+                provider_request_id: Some("p2".to_string()),
+                provenance_schema_version: Some("llm.v2".to_string()),
+                provenance_fingerprint: Some("de\u{200b}adbeef".to_string()),
+                provider: Some("openai".to_string()),
+                model: Some("gpt-5.3-codex".to_string()),
+                adapter: Some("mcp".to_string()),
+                agent_protocol: Some("a2a".to_string()),
+                compliance_profile: Some("cn-moderate".to_string()),
+            },
+            EnterpriseAuditExportRecord {
+                request_id: "r3".to_string(),
+                task_id: 7303,
+                status: "rejected".to_string(),
+                provider_request_id: Some("p3".to_string()),
+                provenance_schema_version: Some("llm.v2".to_string()),
+                provenance_fingerprint: Some("cafébabe".to_string()),
+                provider: Some("openai".to_string()),
+                model: Some("gpt-5.3-codex".to_string()),
+                adapter: Some("mcp".to_string()),
+                agent_protocol: Some("a2a".to_string()),
+                compliance_profile: Some("cn-moderate".to_string()),
+            },
+        ];
+
+        let index = build_audit_export_index(&rows);
+        assert_eq!(
+            index.by_provenance_fingerprint.get("deadbeef"),
+            Some(&vec![0])
+        );
+        assert_eq!(index.by_provenance_fingerprint.len(), 1);
+    }
+
+    #[test]
+    fn query_audit_export_by_task_id_uses_index_offsets() {
         let rows = vec![
             EnterpriseAuditExportRecord {
                 request_id: "r1".to_string(),
@@ -2112,7 +3772,7 @@ mod tests {
                 status: "rejected".to_string(),
                 provider_request_id: Some("p2".to_string()),
                 provenance_schema_version: Some("llm.v2".to_string()),
-                provenance_fingerprint: Some("fp-xyz".to_string()),
+                provenance_fingerprint: Some("fp-def".to_string()),
                 provider: Some("openai".to_string()),
                 model: Some("gpt-5.3-codex".to_string()),
                 adapter: Some("mcp".to_string()),
@@ -2120,36 +3780,137 @@ mod tests {
                 compliance_profile: Some("cn-moderate".to_string()),
             },
         ];
-        let index = build_audit_export_index(&rows);
 
-        let out = query_audit_by_task_id(&index, &rows, 7002);
-        assert_eq!(out.task_id, "7002");
-        assert_eq!(out.hit_indexes, vec![1]);
-        assert_eq!(out.records.len(), 1);
-        assert_eq!(out.records[0].request_id, "r2");
+        let index = build_audit_export_index(&rows);
+        let hit = query_audit_export_by_task_id(&rows, &index, 7002);
+        assert_eq!(hit.len(), 1);
+        assert_eq!(hit[0].request_id, "r2");
+
+        let miss = query_audit_export_by_task_id(&rows, &index, 9999);
+        assert!(miss.is_empty());
     }
 
     #[test]
-    fn query_audit_by_task_id_returns_empty_when_no_match() {
+    fn query_audit_export_by_provenance_fingerprint_normalizes_lookup() {
         let rows = vec![EnterpriseAuditExportRecord {
             request_id: "r1".to_string(),
-            task_id: 7001,
+            task_id: 7002,
             status: "reveal_submitted".to_string(),
             provider_request_id: Some("p1".to_string()),
             provenance_schema_version: Some("llm.v2".to_string()),
-            provenance_fingerprint: Some("fp-abc".to_string()),
+            provenance_fingerprint: Some("deadbeef".to_string()),
             provider: Some("openai".to_string()),
             model: Some("gpt-5.3-codex".to_string()),
             adapter: Some("mcp".to_string()),
             agent_protocol: Some("a2a".to_string()),
             compliance_profile: Some("cn-moderate".to_string()),
         }];
-        let index = build_audit_export_index(&rows);
 
-        let out = query_audit_by_task_id(&index, &rows, 9999);
-        assert_eq!(out.task_id, "9999");
-        assert!(out.hit_indexes.is_empty());
-        assert!(out.records.is_empty());
+        let index = build_audit_export_index(&rows);
+        let hit = query_audit_export_by_provenance_fingerprint(&rows, &index, "  DEADBEEF ");
+        assert_eq!(hit.len(), 1);
+        assert_eq!(hit[0].request_id, "r1");
+
+        let miss = query_audit_export_by_provenance_fingerprint(&rows, &index, "dead\u{200b}beef");
+        assert!(miss.is_empty());
+    }
+
+    #[test]
+    fn query_audit_export_by_provenance_fingerprint_accepts_quoted_lookup() {
+        let rows = vec![EnterpriseAuditExportRecord {
+            request_id: "r1".to_string(),
+            task_id: 7002,
+            status: "reveal_submitted".to_string(),
+            provider_request_id: Some("p1".to_string()),
+            provenance_schema_version: Some("llm.v2".to_string()),
+            provenance_fingerprint: Some("deadbeef".to_string()),
+            provider: Some("openai".to_string()),
+            model: Some("gpt-5.3-codex".to_string()),
+            adapter: Some("mcp".to_string()),
+            agent_protocol: Some("a2a".to_string()),
+            compliance_profile: Some("cn-moderate".to_string()),
+        }];
+
+        let index = build_audit_export_index(&rows);
+        let hit = query_audit_export_by_provenance_fingerprint(&rows, &index, " ' \"DEADBEEF\" ' ");
+        assert_eq!(hit.len(), 1);
+        assert_eq!(hit[0].request_id, "r1");
+    }
+
+    #[test]
+    fn query_audit_export_by_provenance_fingerprint_accepts_deeply_nested_quotes() {
+        let rows = vec![EnterpriseAuditExportRecord {
+            request_id: "r1".to_string(),
+            task_id: 7002,
+            status: "reveal_submitted".to_string(),
+            provider_request_id: Some("p1".to_string()),
+            provenance_schema_version: Some("llm.v2".to_string()),
+            provenance_fingerprint: Some("deadbeef".to_string()),
+            provider: Some("openai".to_string()),
+            model: Some("gpt-5.3-codex".to_string()),
+            adapter: Some("mcp".to_string()),
+            agent_protocol: Some("a2a".to_string()),
+            compliance_profile: Some("cn-moderate".to_string()),
+        }];
+
+        let index = build_audit_export_index(&rows);
+        let hit = query_audit_export_by_provenance_fingerprint(
+            &rows,
+            &index,
+            "  ` ' \" deadbeef \" ' `  ",
+        );
+        assert_eq!(hit.len(), 1);
+        assert_eq!(hit[0].request_id, "r1");
+    }
+
+    #[test]
+    fn query_audit_export_by_provenance_fingerprint_accepts_very_deep_quote_wrappers() {
+        let rows = vec![EnterpriseAuditExportRecord {
+            request_id: "r1".to_string(),
+            task_id: 7002,
+            status: "reveal_submitted".to_string(),
+            provider_request_id: Some("p1".to_string()),
+            provenance_schema_version: Some("llm.v2".to_string()),
+            provenance_fingerprint: Some("deadbeef".to_string()),
+            provider: Some("openai".to_string()),
+            model: Some("gpt-5.3-codex".to_string()),
+            adapter: Some("mcp".to_string()),
+            agent_protocol: Some("a2a".to_string()),
+            compliance_profile: Some("cn-moderate".to_string()),
+        }];
+
+        let index = build_audit_export_index(&rows);
+        // Five nested wrappers can appear after repeated env-forwarding hops.
+        let hit = query_audit_export_by_provenance_fingerprint(
+            &rows,
+            &index,
+            "  ' \" ` ' \" deadbeef \" ' ` \" '  ",
+        );
+        assert_eq!(hit.len(), 1);
+        assert_eq!(hit[0].request_id, "r1");
+    }
+
+    #[test]
+    fn query_audit_export_by_provenance_fingerprint_rejects_blank_or_oversized_lookup() {
+        let rows = vec![EnterpriseAuditExportRecord {
+            request_id: "r1".to_string(),
+            task_id: 7002,
+            status: "reveal_submitted".to_string(),
+            provider_request_id: Some("p1".to_string()),
+            provenance_schema_version: Some("llm.v2".to_string()),
+            provenance_fingerprint: Some("deadbeef".to_string()),
+            provider: Some("openai".to_string()),
+            model: Some("gpt-5.3-codex".to_string()),
+            adapter: Some("mcp".to_string()),
+            agent_protocol: Some("a2a".to_string()),
+            compliance_profile: Some("cn-moderate".to_string()),
+        }];
+
+        let index = build_audit_export_index(&rows);
+        assert!(query_audit_export_by_provenance_fingerprint(&rows, &index, "   ").is_empty());
+
+        let oversized = "a".repeat(129);
+        assert!(query_audit_export_by_provenance_fingerprint(&rows, &index, &oversized).is_empty());
     }
 
     #[test]
@@ -2293,7 +4054,10 @@ mod tests {
 
         attach_llm_provenance(&mut rec, &llm);
 
-        assert_eq!(rec.provider_request_id.as_deref(), Some("provider-opaque-id"));
+        assert_eq!(
+            rec.provider_request_id.as_deref(),
+            Some("provider-opaque-id")
+        );
         assert_eq!(rec.provenance_schema_version, None);
         assert!(rec.llm_provenance.is_none());
     }
@@ -2340,7 +4104,10 @@ mod tests {
         assert_eq!(rec.provenance_schema_version.as_deref(), Some("llm.v2"));
         let prov = rec.llm_provenance.as_ref().expect("provenance attached");
         assert_eq!(prov.agent_protocol.as_deref(), Some("a2a"));
-        assert_eq!(prov.compliance_profile.as_deref(), Some("cn-pii-restricted"));
+        assert_eq!(
+            prov.compliance_profile.as_deref(),
+            Some("cn-pii-restricted")
+        );
     }
 
     #[test]
@@ -2388,7 +4155,10 @@ mod tests {
         assert_eq!(prov.model.as_deref(), Some("gpt-5.3-codex"));
         assert_eq!(prov.adapter.as_deref(), Some("mcp"));
         assert_eq!(prov.agent_protocol, None);
-        assert_eq!(prov.compliance_profile.as_deref(), Some("cn-pii-restricted"));
+        assert_eq!(
+            prov.compliance_profile.as_deref(),
+            Some("cn-pii-restricted")
+        );
     }
 
     #[test]
@@ -2652,6 +4422,10 @@ mod tests {
             Some("mcp")
         );
         assert_eq!(
+            normalized_agent_protocol(Some("Model Context Protocol JSON-RPC v2")).as_deref(),
+            Some("mcp")
+        );
+        assert_eq!(
             normalized_agent_protocol(Some("Agent:To:Agent")).as_deref(),
             Some("a2a")
         );
@@ -2661,6 +4435,248 @@ mod tests {
         );
         assert_eq!(
             normalized_agent_protocol(Some("A2A 2.0")).as_deref(),
+            Some("a2a")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("A2A JSON-RPC v2")).as_deref(),
+            Some("a2a")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Agent-to-Agent JSON-RPC v2")).as_deref(),
+            Some("a2a")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Agent-2-Agent Protocol JSON-RPC v2")).as_deref(),
+            Some("a2a")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Model Context Protocol STDIO v2")).as_deref(),
+            Some("mcp")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("MCP over JSON-RPC v2")).as_deref(),
+            Some("mcp")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("MCP over STDIO v2")).as_deref(),
+            Some("mcp")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("MCP over SSE v2")).as_deref(),
+            Some("mcp")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("MCP Streamable HTTP v1")).as_deref(),
+            Some("mcp")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("MCP HTTP v1")).as_deref(),
+            Some("mcp")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Model Context Protocol over HTTP v2")).as_deref(),
+            Some("mcp")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Model Context Protocol over Streamable HTTP v2"))
+                .as_deref(),
+            Some("mcp")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Model Context Protocol SSE v2")).as_deref(),
+            Some("mcp")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Agent-to-Agent Protocol STDIO v2")).as_deref(),
+            Some("a2a")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("A2A over SSE v2")).as_deref(),
+            Some("a2a")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("A2A over JSON-RPC v2")).as_deref(),
+            Some("a2a")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("A2A over STDIO v2")).as_deref(),
+            Some("a2a")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("A2A Streamable HTTP v2")).as_deref(),
+            Some("a2a")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("A2A HTTP v1")).as_deref(),
+            Some("a2a")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Agent-to-Agent Streamable HTTP v1")).as_deref(),
+            Some("a2a")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Google Agent-to-Agent HTTP v2")).as_deref(),
+            Some("a2a")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Google Agent-to-Agent over HTTP v2")).as_deref(),
+            Some("a2a")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("OpenAI MCP")).as_deref(),
+            Some("mcp")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("OpenAI Model Context Protocol v2")).as_deref(),
+            Some("mcp")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("OpenAI MCP over HTTP v2")).as_deref(),
+            Some("mcp")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("OpenAI MCP over Streamable HTTP v2")).as_deref(),
+            Some("mcp")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Anthropic MCP Protocol")).as_deref(),
+            Some("mcp")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Anthropic Model Context Protocol v1")).as_deref(),
+            Some("mcp")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Anthropic MCP over Streamable HTTP v2")).as_deref(),
+            Some("mcp")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Anthropic Model Context Protocol over HTTP v2"))
+                .as_deref(),
+            Some("mcp")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Google A2A")).as_deref(),
+            Some("a2a")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Google A2A JSON-RPC v2")).as_deref(),
+            Some("a2a")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Google A2A over JSON-RPC v2")).as_deref(),
+            Some("a2a")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Google A2A over HTTP v2")).as_deref(),
+            Some("a2a")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Google Agent-to-Agent Protocol")).as_deref(),
+            Some("a2a")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Google Agent2Agent")).as_deref(),
+            Some("a2a")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Google Agent2Agent Protocol")).as_deref(),
+            Some("a2a")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Google Agent-to-Agent v2")).as_deref(),
+            Some("a2a")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Google Agent-to-Agent JSON-RPC v2")).as_deref(),
+            Some("a2a")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Google Agent-to-Agent over Streamable HTTP v2"))
+                .as_deref(),
+            Some("a2a")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Google Agent2Agent over Streamable HTTP v2"))
+                .as_deref(),
+            Some("a2a")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Google Agent2Agent Protocol v2")).as_deref(),
+            Some("a2a")
+        );
+    }
+
+    #[test]
+    fn normalized_agent_protocol_accepts_future_version_suffixes() {
+        assert_eq!(
+            normalized_agent_protocol(Some("MCP over HTTP v9")).as_deref(),
+            Some("mcp")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("A2A Streamable HTTP v12")).as_deref(),
+            Some("a2a")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Google Agent-to-Agent Protocol v27")).as_deref(),
+            Some("a2a")
+        );
+    }
+
+    #[test]
+    fn normalized_agent_protocol_rejects_oversized_alias_input() {
+        let oversized = format!("MCP over HTTP v2 {}", "x".repeat(200));
+        assert_eq!(normalized_agent_protocol(Some(&oversized)), None);
+    }
+
+    #[test]
+    fn normalized_agent_protocol_accepts_websocket_aliases() {
+        assert_eq!(
+            normalized_agent_protocol(Some("MCP over WebSocket v2")).as_deref(),
+            Some("mcp")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("MCP over WS v2")).as_deref(),
+            Some("mcp")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("MCP over WebSockets v2")).as_deref(),
+            Some("mcp")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("OpenAI MCP WebSocket v3")).as_deref(),
+            Some("mcp")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("OpenAI MCP WebSockets v3")).as_deref(),
+            Some("mcp")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Anthropic MCP over WebSocket v2")).as_deref(),
+            Some("mcp")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Anthropic MCP over WebSockets v2")).as_deref(),
+            Some("mcp")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("A2A over WebSocket v2")).as_deref(),
+            Some("a2a")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("A2A over WS v2")).as_deref(),
+            Some("a2a")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("A2A over WebSockets v2")).as_deref(),
+            Some("a2a")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Google Agent-to-Agent WebSocket v4")).as_deref(),
+            Some("a2a")
+        );
+        assert_eq!(
+            normalized_agent_protocol(Some("Google Agent-to-Agent WebSockets v4")).as_deref(),
             Some("a2a")
         );
     }
@@ -3097,8 +5113,7 @@ mod tests {
     #[test]
     fn normalized_compliance_profile_accepts_alphanumeric_when_contains_alpha() {
         assert_eq!(
-            normalized_compliance_profile(Some("cn-202602"))
-                .as_deref(),
+            normalized_compliance_profile(Some("cn-202602")).as_deref(),
             Some("cn-202602")
         );
     }
@@ -3139,6 +5154,22 @@ mod tests {
     fn normalized_compliance_profile_rejects_adjacent_space_separators() {
         assert_eq!(
             normalized_compliance_profile(Some("cn  pii restricted")),
+            None
+        );
+    }
+
+    #[test]
+    fn normalized_compliance_profile_rejects_control_whitespace_separators() {
+        assert_eq!(
+            normalized_compliance_profile(Some("cn\tpii restricted")),
+            None
+        );
+    }
+
+    #[test]
+    fn normalized_compliance_profile_rejects_newline_separators() {
+        assert_eq!(
+            normalized_compliance_profile(Some("cn\npii restricted")),
             None
         );
     }
@@ -3189,6 +5220,15 @@ mod tests {
             normalized_provenance_label(Some("оpenai"), 64),
             None,
             "non-ascii provenance labels should be rejected to avoid audit ambiguity"
+        );
+    }
+
+    #[test]
+    fn normalized_provenance_label_rejects_embedded_control_characters() {
+        assert_eq!(
+            normalized_provenance_label(Some("openai\nmodel"), 64),
+            None,
+            "embedded control chars should fail-closed for provenance labels"
         );
     }
 }
@@ -3291,6 +5331,15 @@ fn main() -> Result<()> {
                 llm_adapter_backoff_ms,
                 llm_adapter_timeout_ms,
             );
+            let proof_adapter_name = env::var(PROOF_ADAPTER_ENV)
+                .ok()
+                .filter(|v| !v.trim().is_empty())
+                .unwrap_or_else(|| DEFAULT_PROOF_ADAPTER.to_string());
+            let proof_adapter = build_proof_adapter(&proof_adapter_name).map_err(|e| {
+                anyhow!(
+                    "invalid {PROOF_ADAPTER_ENV}={proof_adapter_name:?}: {e}; supported={DEFAULT_PROOF_ADAPTER}"
+                )
+            })?;
             let mut records = load_ingress_records(&ingress_file)?;
             let mut n = 0usize;
             for rec in records.iter_mut() {
@@ -3309,6 +5358,7 @@ fn main() -> Result<()> {
                     &rec.text,
                     llm_policy.retry,
                     Duration::from_millis(llm_policy.timeout_ms),
+                    proof_adapter.as_ref(),
                 ) {
                     Ok(v) => v,
                     Err(e) => {
@@ -3332,8 +5382,9 @@ fn main() -> Result<()> {
                         continue;
                     }
                 };
-                let (v_status, resolution_code) =
-                    verify_model_output(&llm.output_text, verifier_max_output_chars);
+                let (verified, resolution_code) =
+                    proof_adapter.verify(&llm.output_text, verifier_max_output_chars);
+                let v_status = if verified { "accepted" } else { "rejected" };
                 attach_llm_provenance(rec, &llm);
                 rec.model_output = Some(llm.output_text.clone());
                 rec.verifier_status = Some(v_status.to_string());
@@ -3341,7 +5392,8 @@ fn main() -> Result<()> {
 
                 if v_status != "accepted" {
                     rec.status = transition_request_status(&rec.status, RequestStatus::Rejected)?;
-                    rec.reputation_delta = Some(reputation_delta(ReputationSignal::VerifierRejected));
+                    rec.reputation_delta =
+                        Some(reputation_delta(ReputationSignal::VerifierRejected));
                     n += 1;
                     println!(
                         "[assigned] request_id={} task_id={} worker={} verifier_status={} resolution_code={}",
@@ -3501,20 +5553,34 @@ fn main() -> Result<()> {
                         },
                     )?;
                     let nonce = rec.nonce.unwrap_or(rec.task_id);
-                    let cmd1 = format!(
-                        "{} commit {} {} {} {}",
-                        adapter_cmd, rec.task_id, rec.worker, rec.commit_hash, nonce
-                    );
-                    let cmd2 = format!(
-                        "{} reveal {} {} {}",
-                        adapter_cmd, rec.task_id, rec.result_hash, rec.salt_hex
-                    );
+                    let commit_args = vec![
+                        "commit".to_string(),
+                        rec.task_id.to_string(),
+                        rec.worker.clone(),
+                        rec.commit_hash.clone(),
+                        nonce.to_string(),
+                    ];
+                    let reveal_args = vec![
+                        "reveal".to_string(),
+                        rec.task_id.to_string(),
+                        rec.result_hash.clone(),
+                        rec.salt_hex.clone(),
+                    ];
 
-                    let commit_res =
-                        run_adapter_with_retry(&cmd1, tx_retry.max_retries, tx_retry.backoff_ms)?;
+                    let commit_res = run_adapter_with_retry(
+                        &adapter_cmd,
+                        &commit_args,
+                        tx_retry.max_retries,
+                        tx_retry.backoff_ms,
+                    )?;
                     let reveal_executed = should_execute_reveal(&commit_res);
                     let reveal_res = if reveal_executed {
-                        run_adapter_with_retry(&cmd2, tx_retry.max_retries, tx_retry.backoff_ms)?
+                        run_adapter_with_retry(
+                            &adapter_cmd,
+                            &reveal_args,
+                            tx_retry.max_retries,
+                            tx_retry.backoff_ms,
+                        )?
                     } else {
                         AdapterExecResult {
                             ok: false,
@@ -3706,6 +5772,9 @@ fn main() -> Result<()> {
             }
 
             let index = build_audit_export_index(&exports);
+            if let Some(first) = exports.first() {
+                let _ = query_audit_export_by_task_id(&exports, &index, first.task_id);
+            }
             let index_file = audit_export_index_path(&output_file);
             fs::write(&index_file, serde_json::to_string_pretty(&index)?)?;
 
@@ -3720,12 +5789,64 @@ fn main() -> Result<()> {
         Command::QueryAudit {
             output_file,
             task_id,
+            provenance_fingerprint,
         } => {
+            if task_id.is_some() == provenance_fingerprint.is_some() {
+                return Err(anyhow!(
+                    "query-audit requires exactly one filter: --task-id or --provenance-fingerprint"
+                ));
+            }
+
             let index_file = audit_export_index_path(&output_file);
+            if !index_file.exists() {
+                return Err(anyhow!(
+                    "query-audit missing index file: {}",
+                    index_file.display()
+                ));
+            }
+
+            let mut exports = Vec::new();
+            for line in fs::read_to_string(&output_file)?.lines() {
+                if line.trim().is_empty() {
+                    continue;
+                }
+                exports.push(serde_json::from_str::<EnterpriseAuditExportRecord>(line)?);
+            }
             let index: AuditExportIndex = serde_json::from_str(&fs::read_to_string(&index_file)?)?;
-            let exports = load_audit_exports_jsonl(&output_file)?;
-            let query = query_audit_by_task_id(&index, &exports, task_id);
-            println!("{}", serde_json::to_string_pretty(&query)?);
+            validate_audit_export_index(&index)?;
+
+            let (hit_indexes, records, normalized_fp) = if let Some(task_id) = task_id {
+                let key = task_id.to_string();
+                let hits = index.by_task_id.get(&key).cloned().unwrap_or_default();
+                let rows: Vec<EnterpriseAuditExportRecord> =
+                    query_audit_export_by_task_id(&exports, &index, task_id)
+                        .into_iter()
+                        .cloned()
+                        .collect();
+                (hits, rows, None)
+            } else {
+                let raw = provenance_fingerprint.expect("checked above");
+                let normalized = normalize_provenance_fingerprint_lookup(raw.as_str())
+                    .ok_or_else(|| anyhow!("invalid provenance fingerprint filter"))?;
+                let hits = index
+                    .by_provenance_fingerprint
+                    .get(&normalized)
+                    .cloned()
+                    .unwrap_or_default();
+                let rows: Vec<EnterpriseAuditExportRecord> =
+                    query_audit_export_by_provenance_fingerprint(&exports, &index, &normalized)
+                        .into_iter()
+                        .cloned()
+                        .collect();
+                (hits, rows, Some(normalized))
+            };
+
+            let out = QueryAuditOutput {
+                hit_indexes,
+                records: records.into_iter().map(QueryAuditRecord::from).collect(),
+                provenance_fingerprint: normalized_fp,
+            };
+            println!("{}", serde_json::to_string_pretty(&out)?);
         }
     }
     Ok(())

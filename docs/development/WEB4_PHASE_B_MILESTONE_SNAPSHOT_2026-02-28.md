@@ -60,6 +60,40 @@ cargo test -p trnm-rpc market_match_m2_policy_gate_clamps_invalid_env_values -- 
 # => [OK] query-audit smoke passed
 ```
 
+## Lane MV（Market / Verification）下一阶段推进包（高 ROI）
+
+> 目标：基于 M2 已落地的信誉加权撮合与 policy gate，把 MV 从“可用”推进到“可解释、可回放、可压测”，并为 V2 证明回执接入预留稳定契约。
+
+### MV-1：M2 策略可解释输出（Explainability）
+- 为撮合决策补充稳定解释字段：`base_score / reputation_weight / penalty / final_score`（仅文档先行锁定字段语义）。
+- 约束解释输出必须与 gate 阈值同源，避免“通过门禁但无法解释”的运维盲区。
+- 产物：在 runbook 中新增 `match explain` 样例与故障排查路径（阈值漂移、环境变量污染）。
+
+验收信号：
+- 任意一次撮合可给出可复算的 score 分解；
+- 解释字段与 policy gate 阈值一致性可通过单测回归验证。
+
+### MV-2：V2 回执接入前的契约冻结（Receipt Contract Freeze）
+- 明确 `fraud_proof | tee_receipt | zk_receipt` 在市场结算视角的最小统一字段（`task_id/proof_type/verdict/verified_at/cost_hint`）。
+- 规定“证明缺失/迟到/格式不合法”进入争议或降级路径，不允许静默成功。
+- 产物：补充 M2↔V2 交界的错误码与状态迁移表，减少后续跨 crate 漂移风险。
+- 最小错误码映射（冻结）：`proof_missing -> ERR_M2V2_PROOF_MISSING`、`proof_late -> ERR_M2V2_PROOF_LATE`、`proof_invalid -> ERR_M2V2_PROOF_INVALID`、`settlement_degraded -> ERR_M2V2_SETTLEMENT_DEGRADED`。
+- 最小状态迁移映射（冻结）：`pending_proof -> disputed(proof_missing|proof_late|proof_invalid) -> downgraded(settlement_degraded)`。
+
+验收信号：
+- 回执缺失/异常时，策略层 fail-closed 且错误码稳定；
+- 文档状态迁移可直接映射到 gate 测试用例。
+
+### MV 定向门禁（持续）
+```bash
+# M2 阈值漂移防护（夜间门禁）
+./scripts/v2/m2_policy_gate_nightly_signal_test.sh
+
+# M2 关键回归（精确用例）
+cd trillionnium-rust
+cargo test -p trnm-rpc market_match_m2_policy_gate_clamps_invalid_env_values -- --exact
+```
+
 ## 变更策略说明
-- 本次收口采用 **1 个可回滚微补丁**：仅新增该里程碑快照文档（不改业务逻辑）。
+- 本次收口采用 **1 个可回滚微补丁**：新增 XI 下一阶段推进包（文档约束，不改业务逻辑）。
 - 回滚方式：`git revert <this_commit>` 即可完整回退。

@@ -2,6 +2,7 @@ use rusqlite::Connection;
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, HashMap};
 use std::path::PathBuf;
+use std::sync::atomic::{AtomicU64, Ordering};
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub struct DedupKey {
@@ -201,7 +202,9 @@ impl ReliabilityStore for InMemoryReliabilityStore {
     }
 
     fn list_session_ids(&self) -> Vec<String> {
-        self.sessions.keys().cloned().collect()
+        let mut ids: Vec<String> = self.sessions.keys().cloned().collect();
+        ids.sort();
+        ids
     }
 
     fn contains_dedup_key(&self, key: &DedupKey) -> bool {
@@ -226,10 +229,22 @@ impl ReliabilityStore for InMemoryReliabilityStore {
         now_unix_ms: u128,
     ) -> Result<(), ReliabilityStoreError> {
         if let Some(max) = self.config.max_dedup_entries {
-            if !self.dedup.contains_key(&key) && self.dedup.len() >= max {
-                return Err(ReliabilityStoreError::CapacityExceeded {
-                    detail: format!("dedup limit reached ({max})"),
-                });
+            use std::collections::hash_map::Entry;
+            let at_capacity = self.dedup.len() >= max;
+            match self.dedup.entry(key) {
+                Entry::Occupied(mut occupied) => {
+                    occupied.insert(now_unix_ms);
+                    return Ok(());
+                }
+                Entry::Vacant(vacant) => {
+                    if at_capacity {
+                        return Err(ReliabilityStoreError::CapacityExceeded {
+                            detail: format!("dedup limit reached ({max})"),
+                        });
+                    }
+                    vacant.insert(now_unix_ms);
+                    return Ok(());
+                }
             }
         }
         self.remember_dedup_key_with_ts(key, now_unix_ms);
@@ -303,7 +318,8 @@ impl ReliabilityStore for InMemoryReliabilityStore {
 
     fn cleanup_expired(&mut self, now_unix_ms: u128, retention: &RetentionConfig) {
         let dedup_cutoff = now_unix_ms.saturating_sub(retention.dedup_ttl_ms as u128);
-        self.dedup.retain(|_, seen_at| *seen_at >= dedup_cutoff);
+        self.dedup
+            .retain(|_, seen_at| *seen_at == 0 || *seen_at >= dedup_cutoff);
 
         let pending_cutoff = now_unix_ms.saturating_sub(retention.pending_ttl_ms as u128);
 
@@ -317,7 +333,16 @@ impl ReliabilityStore for InMemoryReliabilityStore {
 
                 if session.pending.is_empty() {
                     let meta = self.meta.entry(sid.clone()).or_default();
-                    meta.empty_since_unix_ms.get_or_insert(now_unix_ms);
+                    // mark_acked() updates sessions without an explicit timestamp.
+                    // Reuse last_touched as a stable fallback so empty-session TTL
+                    // reclaim is measured from the latest known activity rather than
+                    // drifting by an extra cleanup interval.
+                    meta.empty_since_unix_ms
+                        .get_or_insert(if meta.last_touched_unix_ms != 0 {
+                            meta.last_touched_unix_ms
+                        } else {
+                            now_unix_ms
+                        });
                     remove = match self.config.empty_session_cleanup {
                         EmptySessionCleanupPolicy::RemoveImmediately => true,
                         EmptySessionCleanupPolicy::RetainForMs(ttl_ms) => meta
@@ -389,6 +414,53 @@ pub struct ReliabilityEngine<S: ReliabilityStore> {
     last_cleanup_at_unix_ms: Option<u128>,
     circuit_state: CircuitState,
     consecutive_retry_exhausted: u32,
+    retry_exhausted_total: AtomicU64,
+    circuit_open_total: AtomicU64,
+    circuit_recovered_total: AtomicU64,
+    collect_rr_cursor: usize,
+}
+
+fn sanitize_retry_config(mut retry: RetryConfig) -> RetryConfig {
+    if retry.base_backoff_ms == 0 {
+        retry.base_backoff_ms = 1;
+    }
+    if retry.max_backoff_ms == 0 {
+        retry.max_backoff_ms = retry.base_backoff_ms;
+    }
+    if retry.max_backoff_ms < retry.base_backoff_ms {
+        retry.max_backoff_ms = retry.base_backoff_ms;
+    }
+    // Prevent zeroed limits from causing immediate drop/open loops under
+    // misconfigured environments.
+    if retry.max_attempts == 0 {
+        retry.max_attempts = 1;
+    }
+    if retry.circuit_breaker_threshold == 0 {
+        retry.circuit_breaker_threshold = 1;
+    }
+    if retry.circuit_open_ms == 0 {
+        retry.circuit_open_ms = retry.base_backoff_ms;
+    }
+    retry
+}
+
+fn sanitize_retention_config(mut retention: RetentionConfig) -> RetentionConfig {
+    // Zero dedup ttl disables idempotency memory and allows immediate duplicate
+    // replays under concurrent ingress. Keep a 1ms floor so dedup remains active.
+    if retention.dedup_ttl_ms == 0 {
+        retention.dedup_ttl_ms = 1;
+    }
+    // Zero pending ttl drops retry state instantly and can starve in-flight
+    // reliability guarantees under short backoff loops.
+    if retention.pending_ttl_ms == 0 {
+        retention.pending_ttl_ms = 1;
+    }
+    // Zero cleanup interval causes cleanup to run on every receive(), which can
+    // become a self-inflicted backpressure hotspot under sustained ingress.
+    if retention.cleanup_interval_ms == 0 {
+        retention.cleanup_interval_ms = 1;
+    }
+    retention
 }
 
 impl<S: ReliabilityStore> ReliabilityEngine<S> {
@@ -399,11 +471,15 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
     pub fn new_with_retention(store: S, retry: RetryConfig, retention: RetentionConfig) -> Self {
         Self {
             store,
-            retry,
-            retention,
+            retry: sanitize_retry_config(retry),
+            retention: sanitize_retention_config(retention),
             last_cleanup_at_unix_ms: None,
             circuit_state: CircuitState::Closed,
             consecutive_retry_exhausted: 0,
+            retry_exhausted_total: AtomicU64::new(0),
+            circuit_open_total: AtomicU64::new(0),
+            circuit_recovered_total: AtomicU64::new(0),
+            collect_rr_cursor: 0,
         }
     }
 
@@ -413,6 +489,39 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
 
     pub fn circuit_state(&self) -> CircuitState {
         self.circuit_state
+    }
+
+    fn increment_retry_exhausted_total(&self) {
+        let mut current = self.retry_exhausted_total.load(Ordering::Relaxed);
+        loop {
+            if current == u64::MAX {
+                return;
+            }
+            match self.retry_exhausted_total.compare_exchange_weak(
+                current,
+                current + 1,
+                Ordering::Relaxed,
+                Ordering::Relaxed,
+            ) {
+                Ok(_) => return,
+                Err(observed) => current = observed,
+            }
+        }
+    }
+
+    #[cfg(test)]
+    fn retry_exhausted_total(&self) -> u64 {
+        self.retry_exhausted_total.load(Ordering::Relaxed)
+    }
+
+    #[cfg(test)]
+    fn circuit_open_total(&self) -> u64 {
+        self.circuit_open_total.load(Ordering::Relaxed)
+    }
+
+    #[cfg(test)]
+    fn circuit_recovered_total(&self) -> u64 {
+        self.circuit_recovered_total.load(Ordering::Relaxed)
     }
 
     pub fn receive(&mut self, msg: ReliableMessage, now_unix_ms: u128) -> Ack {
@@ -530,7 +639,7 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
                 message: msg,
                 attempts: 0,
                 created_at_unix_ms: now_unix_ms,
-                next_retry_at_unix_ms: now_unix_ms + self.retry.base_backoff_ms as u128,
+                next_retry_at_unix_ms: now_unix_ms.saturating_add(self.retry.base_backoff_ms as u128),
             },
         );
 
@@ -574,14 +683,40 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
         let mut out = Vec::new();
         let mut exhausted_in_this_round = 0u32;
         let session_ids = self.store.list_session_ids();
+        let session_count = session_ids.len();
 
-        for sid in session_ids {
-            let Some(mut session) = self.store.get_session(&sid) else {
+        if session_count == 0 {
+            self.on_retry_round_finished(exhausted_in_this_round, now_unix_ms);
+            return out;
+        }
+
+        let start = self.collect_rr_cursor % session_count;
+        self.collect_rr_cursor = (self.collect_rr_cursor + 1) % session_count;
+
+        for offset in 0..session_count {
+            if out.len() >= MAX_DUE_RETRIES_PER_COLLECT {
+                break;
+            }
+
+            let sid = &session_ids[(start + offset) % session_count];
+            let Some(mut session) = self.store.get_session(sid) else {
                 continue;
             };
 
+            let mut dispatched_for_session = 0usize;
             session.pending.retain(|ack_id, item| {
                 if item.next_retry_at_unix_ms > now_unix_ms {
+                    return true;
+                }
+
+                // Keep each collect cycle bounded under sustained ingress so retry
+                // scanning itself does not become a backpressure hotspot.
+                if out.len() >= MAX_DUE_RETRIES_PER_COLLECT {
+                    return true;
+                }
+
+                // Prevent one hot session from monopolizing a collect cycle.
+                if dispatched_for_session >= MAX_DUE_RETRIES_PER_SESSION_PER_COLLECT {
                     return true;
                 }
 
@@ -591,7 +726,7 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
                         "[reliability] drop pending after max_attempts ack_id={} attempts={}",
                         ack_id, item.attempts
                     );
-                    // TODO(metrics): reliability_retry_exhausted_total += 1
+                    self.increment_retry_exhausted_total();
                     return false;
                 }
 
@@ -601,13 +736,14 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
                     self.retry.max_backoff_ms,
                     item.attempts,
                 );
-                item.next_retry_at_unix_ms = now_unix_ms + delay as u128;
+                item.next_retry_at_unix_ms = now_unix_ms.saturating_add(delay as u128);
                 out.push(item.clone());
+                dispatched_for_session = dispatched_for_session.saturating_add(1);
                 true
             });
 
             if session.pending.is_empty() && self.store.should_remove_empty_session_immediately() {
-                self.store.remove_session(&sid);
+                self.store.remove_session(sid);
             } else {
                 let _ = self.store.try_upsert_session_with_ts(session, now_unix_ms);
             }
@@ -630,7 +766,7 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
         if self.consecutive_retry_exhausted >= self.retry.circuit_breaker_threshold
             && !matches!(self.circuit_state, CircuitState::Open { .. })
         {
-            let until_unix_ms = now_unix_ms + self.retry.circuit_open_ms as u128;
+            let until_unix_ms = now_unix_ms.saturating_add(self.retry.circuit_open_ms as u128);
             self.circuit_state = CircuitState::Open { until_unix_ms };
             eprintln!(
                 "[reliability] circuit open exhausted={} threshold={} until={}",
@@ -638,7 +774,7 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
                 self.retry.circuit_breaker_threshold,
                 until_unix_ms
             );
-            // TODO(metrics): reliability_circuit_open_total += 1
+            self.circuit_open_total.fetch_add(1, Ordering::Relaxed);
         }
     }
 
@@ -648,7 +784,7 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
                 self.circuit_state = CircuitState::Closed;
                 self.consecutive_retry_exhausted = 0;
                 eprintln!("[reliability] circuit recovered at {}", now_unix_ms);
-                // TODO(metrics): reliability_circuit_recovered_total += 1
+                self.circuit_recovered_total.fetch_add(1, Ordering::Relaxed);
             }
         }
     }
@@ -664,6 +800,9 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
     }
 }
 
+const MAX_DUE_RETRIES_PER_SESSION_PER_COLLECT: usize = 64;
+const MAX_DUE_RETRIES_PER_COLLECT: usize = 256;
+
 fn exp_backoff_ms(base: u64, max: u64, attempts: u32) -> u64 {
     let shift = attempts.saturating_sub(1).min(20);
     let factor = 1u64 << shift;
@@ -678,12 +817,12 @@ pub enum ReliabilityStoreMode {
 
 impl ReliabilityStoreMode {
     pub fn from_env() -> Self {
-        match std::env::var("RELIABILITY_STORE")
-            .unwrap_or_else(|_| "sqlite".to_string())
-            .trim()
-            .to_ascii_lowercase()
-            .as_str()
-        {
+        let mode = std::env::var("RELIABILITY_STORE")
+            .ok()
+            .and_then(|raw| normalized_env_path(&raw).map(|v| v.to_ascii_lowercase()))
+            .unwrap_or_else(|| "sqlite".to_string());
+
+        match mode.as_str() {
             "memory" => Self::Memory,
             _ => Self::Sqlite,
         }
@@ -696,9 +835,31 @@ fn normalized_env_path(raw: &str) -> Option<&str> {
         return None;
     }
 
-    let stripped = if (trimmed.starts_with('"') && trimmed.ends_with('"'))
-        || (trimmed.starts_with('\'') && trimmed.ends_with('\''))
-    {
+    let starts_with_quote = trimmed.starts_with('"') || trimmed.starts_with('\'');
+    let ends_with_quote = trimmed.ends_with('"') || trimmed.ends_with('\'');
+
+    if trimmed.len() == 1 && (starts_with_quote || ends_with_quote) {
+        return None;
+    }
+
+    // Treat mismatched leading/trailing quote wrappers as noisy malformed input.
+    if starts_with_quote ^ ends_with_quote {
+        return None;
+    }
+    if trimmed.len() >= 2 {
+        let first = trimmed.as_bytes()[0];
+        let last = trimmed.as_bytes()[trimmed.len() - 1];
+        let mixed_quote_pair = (first == b'\'' && last == b'"') || (first == b'"' && last == b'\'');
+        if mixed_quote_pair {
+            return None;
+        }
+    }
+
+    let quoted = trimmed.len() >= 2
+        && ((trimmed.starts_with('"') && trimmed.ends_with('"'))
+            || (trimmed.starts_with('\'') && trimmed.ends_with('\'')));
+
+    let stripped = if quoted {
         &trimmed[1..trimmed.len() - 1]
     } else {
         trimmed
@@ -922,7 +1083,7 @@ impl ReliabilityStore for SqliteReliabilityStore {
         let cutoff = now_unix_ms.saturating_sub(retention.dedup_ttl_ms as u128);
         let cutoff_i64 = i64::try_from(cutoff).unwrap_or(i64::MAX);
         let _ = self.conn.execute(
-            "DELETE FROM reliability_dedup WHERE seen_at_unix_ms < ?1",
+            "DELETE FROM reliability_dedup WHERE seen_at_unix_ms <> 0 AND seen_at_unix_ms < ?1",
             [cutoff_i64],
         );
     }
@@ -931,6 +1092,7 @@ impl ReliabilityStore for SqliteReliabilityStore {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::collections::BTreeMap;
     use std::sync::{Arc, Mutex, OnceLock};
     use std::thread;
 
@@ -1162,6 +1324,7 @@ mod tests {
 
         let third = engine.collect_due_retries(1_400);
         assert!(third.is_empty(), "must stop retrying after max_attempts");
+        assert_eq!(engine.retry_exhausted_total(), 1);
 
         let store = engine.into_store();
         let session = store.get_session("s1");
@@ -1195,6 +1358,8 @@ mod tests {
 
         let exhausted_round = engine.collect_due_retries(1_200);
         assert!(exhausted_round.is_empty());
+        assert_eq!(engine.retry_exhausted_total(), 1);
+        assert_eq!(engine.circuit_open_total(), 1);
         assert_eq!(
             engine.circuit_state(),
             CircuitState::Open {
@@ -1208,6 +1373,7 @@ mod tests {
 
         let recovered = engine.collect_due_retries(1_550);
         assert_eq!(engine.circuit_state(), CircuitState::Closed);
+        assert_eq!(engine.circuit_recovered_total(), 1);
         assert_eq!(recovered.len(), 1);
         assert_eq!(recovered[0].ack_id, "ack_bob_1");
     }
@@ -1245,6 +1411,30 @@ mod tests {
 
         let after_ttl = engine.receive(mk_msg("alice", "s1", 9), 1_101);
         assert_eq!(after_ttl.code, AckCode::Accepted);
+    }
+
+    #[test]
+    fn cleanup_preserves_legacy_dedup_entries_without_timestamp() {
+        let mut store = InMemoryReliabilityStore::default();
+        let key = DedupKey {
+            from: "legacy".to_string(),
+            seq_or_nonce: 77,
+        };
+        store.remember_dedup_key(key.clone()); // seen_at=0 legacy path
+
+        store.cleanup_expired(
+            10_000,
+            &RetentionConfig {
+                dedup_ttl_ms: 100,
+                pending_ttl_ms: 10_000,
+                cleanup_interval_ms: 1,
+            },
+        );
+
+        assert!(
+            store.contains_dedup_key(&key),
+            "legacy seen_at=0 dedup entry should remain until rewritten with a timestamp"
+        );
     }
 
     #[test]
@@ -1300,6 +1490,168 @@ mod tests {
     }
 
     #[test]
+    fn collect_due_retries_caps_per_session_to_reduce_hot_session_starvation() {
+        let store = InMemoryReliabilityStore::default();
+        let mut engine = ReliabilityEngine::new(
+            store,
+            RetryConfig {
+                base_backoff_ms: 1,
+                max_backoff_ms: 1,
+                ..RetryConfig::default()
+            },
+        );
+
+        for seq in 1..=80 {
+            let ack = engine.receive(mk_msg("alice", "hot", seq), 1_000 + seq as u128);
+            assert_eq!(ack.code, AckCode::Accepted);
+        }
+        for seq in 1..=2 {
+            let ack = engine.receive(mk_msg("bob", "cold", seq), 2_000 + seq as u128);
+            assert_eq!(ack.code, AckCode::Accepted);
+        }
+
+        let first_round = engine.collect_due_retries(10_000);
+        let hot_count = first_round
+            .iter()
+            .filter(|i| i.message.session_id == "hot")
+            .count();
+        let cold_count = first_round
+            .iter()
+            .filter(|i| i.message.session_id == "cold")
+            .count();
+
+        assert_eq!(hot_count, MAX_DUE_RETRIES_PER_SESSION_PER_COLLECT);
+        assert_eq!(cold_count, 2, "cold session should still make progress");
+
+        let second_round = engine.collect_due_retries(10_002);
+        let hot_count_second = second_round
+            .iter()
+            .filter(|i| i.message.session_id == "hot")
+            .count();
+        assert_eq!(
+            hot_count_second,
+            MAX_DUE_RETRIES_PER_SESSION_PER_COLLECT,
+            "hot session should stay bounded per collect cycle"
+        );
+    }
+
+    #[test]
+    fn collect_due_retries_applies_global_cap_and_rotates_start_session() {
+        let store = InMemoryReliabilityStore::default();
+        let mut engine = ReliabilityEngine::new(
+            store,
+            RetryConfig {
+                base_backoff_ms: 1,
+                max_backoff_ms: 1,
+                ..RetryConfig::default()
+            },
+        );
+
+        // Keep each session small enough to avoid hitting per-session caps; this
+        // isolates global-cap and round-robin behavior.
+        for seq in 1..=100 {
+            let ack = engine.receive(mk_msg("alice", "s-a", seq), 1_000 + seq as u128);
+            assert_eq!(ack.code, AckCode::Accepted);
+        }
+        for seq in 1..=100 {
+            let ack = engine.receive(mk_msg("bob", "s-b", seq), 2_000 + seq as u128);
+            assert_eq!(ack.code, AckCode::Accepted);
+        }
+        for seq in 1..=100 {
+            let ack = engine.receive(mk_msg("carol", "s-c", seq), 3_000 + seq as u128);
+            assert_eq!(ack.code, AckCode::Accepted);
+        }
+        for seq in 1..=100 {
+            let ack = engine.receive(mk_msg("dave", "s-d", seq), 4_000 + seq as u128);
+            assert_eq!(ack.code, AckCode::Accepted);
+        }
+        for seq in 1..=100 {
+            let ack = engine.receive(mk_msg("erin", "s-e", seq), 5_000 + seq as u128);
+            assert_eq!(ack.code, AckCode::Accepted);
+        }
+
+        let first = engine.collect_due_retries(10_000);
+        assert_eq!(
+            first.len(),
+            MAX_DUE_RETRIES_PER_COLLECT,
+            "global cap should bound one collect cycle"
+        );
+
+        let first_front = first.first().expect("first batch not empty");
+        assert_eq!(first_front.message.session_id, "s-a");
+
+        let second = engine.collect_due_retries(10_001);
+        assert_eq!(
+            second.len(),
+            MAX_DUE_RETRIES_PER_COLLECT,
+            "global cap should remain stable across rounds"
+        );
+
+        let second_front = second.first().expect("second batch not empty");
+        assert_eq!(
+            second_front.message.session_id, "s-b",
+            "round-robin session rotation should avoid fixed first-session bias"
+        );
+    }
+
+    #[test]
+    fn dedup_quota_limit_rejects_fresh_ingress_without_breaking_duplicate_ack_path() {
+        let store = InMemoryReliabilityStore::with_config(InMemoryReliabilityStoreConfig {
+            max_dedup_entries: Some(1),
+            ..InMemoryReliabilityStoreConfig::default()
+        });
+        let mut engine = ReliabilityEngine::new(store, RetryConfig::default());
+
+        let first = engine.receive(mk_msg("alice", "s1", 1), 1_000);
+        assert_eq!(first.code, AckCode::Accepted);
+
+        // New dedup domains should be backpressured once quota is full.
+        let blocked = engine.receive(mk_msg("bob", "s2", 9), 1_001);
+        assert_eq!(blocked.code, AckCode::BadRequest);
+        assert!(blocked.detail.contains("dedup limit reached (1)"));
+
+        // Existing dedup domains must still resolve to Duplicate rather than
+        // quota errors so callers keep idempotent semantics under pressure.
+        let duplicate = engine.receive(mk_msg("alice", "s1", 1), 1_002);
+        assert_eq!(duplicate.code, AckCode::Duplicate);
+        assert_eq!(duplicate.ack_id, first.ack_id);
+    }
+
+    #[test]
+    fn dedup_quota_allows_refreshing_existing_key_timestamp_at_capacity() {
+        let mut store = InMemoryReliabilityStore::with_config(InMemoryReliabilityStoreConfig {
+            max_dedup_entries: Some(1),
+            ..InMemoryReliabilityStoreConfig::default()
+        });
+
+        let key = DedupKey {
+            from: "alice".to_string(),
+            seq_or_nonce: 7,
+        };
+
+        assert!(store
+            .try_remember_dedup_key_with_ts(key.clone(), 1_000)
+            .is_ok());
+        assert!(store
+            .try_remember_dedup_key_with_ts(key.clone(), 2_000)
+            .is_ok());
+
+        let blocked = store.try_remember_dedup_key_with_ts(
+            DedupKey {
+                from: "bob".to_string(),
+                seq_or_nonce: 8,
+            },
+            2_001,
+        );
+        assert!(matches!(
+            blocked,
+            Err(ReliabilityStoreError::CapacityExceeded { .. })
+        ));
+
+        assert_eq!(store.dedup.get(&key), Some(&2_000));
+    }
+
+    #[test]
     fn empty_session_retained_until_cleanup_ttl() {
         let store = InMemoryReliabilityStore::with_config(InMemoryReliabilityStoreConfig {
             empty_session_cleanup: EmptySessionCleanupPolicy::RetainForMs(200),
@@ -1324,6 +1676,34 @@ mod tests {
 
         let store = engine.into_store();
         assert!(store.get_session("s1").is_some());
+    }
+
+    #[test]
+    fn empty_session_cleanup_ttl_eventually_reclaims_idle_session() {
+        let store = InMemoryReliabilityStore::with_config(InMemoryReliabilityStoreConfig {
+            empty_session_cleanup: EmptySessionCleanupPolicy::RetainForMs(200),
+            ..InMemoryReliabilityStoreConfig::default()
+        });
+        let mut engine = ReliabilityEngine::new_with_retention(
+            store,
+            RetryConfig::default(),
+            RetentionConfig {
+                dedup_ttl_ms: 10_000,
+                pending_ttl_ms: 10_000,
+                cleanup_interval_ms: 1,
+            },
+        );
+
+        let ack = engine.receive(mk_msg("alice", "s1", 1), 1_000);
+        assert!(engine.mark_acked("s1", &ack.ack_id));
+
+        // Trigger cleanup at/after TTL so retained empty sessions do not linger
+        // and consume quota under prolonged idle periods.
+        let due = engine.collect_due_retries(1_201);
+        assert!(due.is_empty());
+
+        let store = engine.into_store();
+        assert!(store.get_session("s1").is_none());
     }
 
     #[test]
@@ -1357,6 +1737,28 @@ mod tests {
     }
 
     #[test]
+    fn in_memory_store_lists_sessions_in_stable_sorted_order() {
+        let mut store = InMemoryReliabilityStore::default();
+        store.upsert_session(SessionState {
+            session_id: "s-b".to_string(),
+            pending: BTreeMap::new(),
+        });
+        store.upsert_session(SessionState {
+            session_id: "s-a".to_string(),
+            pending: BTreeMap::new(),
+        });
+        store.upsert_session(SessionState {
+            session_id: "s-c".to_string(),
+            pending: BTreeMap::new(),
+        });
+
+        assert_eq!(
+            store.list_session_ids(),
+            vec!["s-a".to_string(), "s-b".to_string(), "s-c".to_string()]
+        );
+    }
+
+    #[test]
     fn reliability_store_mode_defaults_to_sqlite_and_keeps_memory_override() {
         let _guard = env_lock().lock().expect("env lock");
         std::env::remove_var("RELIABILITY_STORE");
@@ -1371,6 +1773,21 @@ mod tests {
             ReliabilityStoreMode::Memory
         );
 
+        // Noisy quoted values are common in env templating; accept canonical
+        // mode tokens after trimming quote wrappers.
+        std::env::set_var("RELIABILITY_STORE", "  'memory'  ");
+        assert_eq!(
+            ReliabilityStoreMode::from_env(),
+            ReliabilityStoreMode::Memory
+        );
+
+        // Mismatched quotes are malformed and should fail closed to sqlite.
+        std::env::set_var("RELIABILITY_STORE", "\"memory'");
+        assert_eq!(
+            ReliabilityStoreMode::from_env(),
+            ReliabilityStoreMode::Sqlite
+        );
+
         std::env::remove_var("RELIABILITY_STORE");
     }
 
@@ -1383,10 +1800,32 @@ mod tests {
             PathBuf::from("/tmp/explicit-reliability.sqlite")
         );
 
-        std::env::set_var("RELIABILITY_DB_PATH", "  \"/tmp/quoted-reliability.sqlite\"  ");
+        std::env::set_var(
+            "RELIABILITY_DB_PATH",
+            "  \"/tmp/quoted-reliability.sqlite\"  ",
+        );
         assert_eq!(
             default_reliability_db_path(),
             PathBuf::from("/tmp/quoted-reliability.sqlite")
+        );
+
+        // Mismatched quote wrappers are malformed and must not leak literal
+        // quote characters into filesystem paths.
+        std::env::set_var("RELIABILITY_DB_PATH", "\"/tmp/mixed.sqlite'");
+        std::env::set_var("XDG_STATE_HOME", "/tmp/state-home");
+        assert_eq!(
+            default_reliability_db_path(),
+            PathBuf::from("/tmp/state-home/trillionnium/reliability.sqlite")
+        );
+
+        // Noisy single-quote values should be treated as invalid input and
+        // fall back safely instead of slicing panic.
+        std::env::set_var("RELIABILITY_DB_PATH", "'");
+        std::env::remove_var("XDG_STATE_HOME");
+        std::env::remove_var("HOME");
+        assert_eq!(
+            default_reliability_db_path(),
+            PathBuf::from("run/reliability/reliability.sqlite")
         );
 
         std::env::remove_var("RELIABILITY_DB_PATH");
@@ -1428,5 +1867,102 @@ mod tests {
         let _ = std::fs::remove_file(&db_path);
         let _ = std::fs::remove_file(db_path.with_extension("sqlite-wal"));
         let _ = std::fs::remove_file(db_path.with_extension("sqlite-shm"));
+    }
+
+    #[test]
+    fn retry_config_is_sanitized_to_prevent_zero_delay_retry_spin() {
+        let store = InMemoryReliabilityStore::default();
+        let engine = ReliabilityEngine::new(
+            store,
+            RetryConfig {
+                base_backoff_ms: 0,
+                max_backoff_ms: 0,
+                ..RetryConfig::default()
+            },
+        );
+
+        assert_eq!(engine.retry.base_backoff_ms, 1);
+        assert_eq!(engine.retry.max_backoff_ms, 1);
+    }
+
+    #[test]
+    fn retry_config_sanitizes_zero_attempt_and_circuit_thresholds() {
+        let store = InMemoryReliabilityStore::default();
+        let engine = ReliabilityEngine::new(
+            store,
+            RetryConfig {
+                base_backoff_ms: 10,
+                max_backoff_ms: 10,
+                max_attempts: 0,
+                circuit_breaker_threshold: 0,
+                circuit_open_ms: 0,
+            },
+        );
+
+        assert_eq!(engine.retry.max_attempts, 1);
+        assert_eq!(engine.retry.circuit_breaker_threshold, 1);
+        assert_eq!(engine.retry.circuit_open_ms, 10);
+    }
+
+    #[test]
+    fn retry_config_clamps_max_backoff_to_base_floor() {
+        let store = InMemoryReliabilityStore::default();
+        let engine = ReliabilityEngine::new(
+            store,
+            RetryConfig {
+                base_backoff_ms: 25,
+                max_backoff_ms: 5,
+                ..RetryConfig::default()
+            },
+        );
+
+        assert_eq!(engine.retry.base_backoff_ms, 25);
+        assert_eq!(engine.retry.max_backoff_ms, 25);
+    }
+
+    #[test]
+    fn retention_config_sanitizes_zero_cleanup_interval() {
+        let store = InMemoryReliabilityStore::default();
+        let engine = ReliabilityEngine::new_with_retention(
+            store,
+            RetryConfig::default(),
+            RetentionConfig {
+                dedup_ttl_ms: 1_000,
+                pending_ttl_ms: 1_000,
+                cleanup_interval_ms: 0,
+            },
+        );
+
+        assert_eq!(engine.retention.cleanup_interval_ms, 1);
+    }
+
+    #[test]
+    fn retention_config_sanitizes_zero_ttls_to_preserve_idempotency_and_retry_state() {
+        let store = InMemoryReliabilityStore::default();
+        let engine = ReliabilityEngine::new_with_retention(
+            store,
+            RetryConfig::default(),
+            RetentionConfig {
+                dedup_ttl_ms: 0,
+                pending_ttl_ms: 0,
+                cleanup_interval_ms: 1_000,
+            },
+        );
+
+        assert_eq!(engine.retention.dedup_ttl_ms, 1);
+        assert_eq!(engine.retention.pending_ttl_ms, 1);
+    }
+
+    #[test]
+    fn retry_exhausted_total_increment_saturates_at_u64_max() {
+        let store = InMemoryReliabilityStore::default();
+        let engine = ReliabilityEngine::new(store, RetryConfig::default());
+
+        engine
+            .retry_exhausted_total
+            .store(u64::MAX, Ordering::Relaxed);
+        engine.increment_retry_exhausted_total();
+
+        assert_eq!(engine.retry_exhausted_total(), u64::MAX);
     }
 }

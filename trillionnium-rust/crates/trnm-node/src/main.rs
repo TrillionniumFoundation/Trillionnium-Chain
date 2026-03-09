@@ -11,6 +11,7 @@ use std::{
     time::{Duration, Instant, SystemTime, UNIX_EPOCH},
 };
 use trnm_executor::build_parallel_groups;
+use trnm_mempool::{IngressClass, LaneAdmissionGate};
 use trnm_pouw::{
     apply_accept_task, apply_accept_task_at_height, apply_challenge, apply_challenge_at_height,
     apply_commit_result, apply_commit_result_at_height, apply_create_task, apply_resolve,
@@ -80,6 +81,15 @@ struct Args {
     /// Run timeout scanner every N committed blocks (1 = every block)
     #[arg(long, default_value_t = 1)]
     pouw_timeout_scan_every_blocks: u64,
+    /// P2 scaffold switch: enable DA/ordering decoupled path (default false keeps legacy path)
+    #[arg(long, default_value_t = false)]
+    enable_da_ordering_decouple: bool,
+    /// Enable RL advisor in shadow mode (suggest only, never execute)
+    #[arg(long, default_value_t = false)]
+    rl_advisor_shadow: bool,
+    /// Maximum suggested tx ids printed by shadow advisor
+    #[arg(long, default_value_t = 4)]
+    rl_advisor_shadow_topk: usize,
 }
 
 #[derive(Debug, Deserialize)]
@@ -89,7 +99,7 @@ struct NodeConfig {
     p2p_addr: String,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 enum MockTx {
     CreateTask {
         task_id: u64,
@@ -216,6 +226,107 @@ struct WalMetaList {
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 struct CheckpointMetaList {
     checkpoints: Vec<CheckpointMeta>,
+}
+
+/// DA layer output consumed by ordering/consensus.
+#[derive(Debug, Clone)]
+struct DaBatch {
+    tx_ids: Vec<u64>,
+}
+
+/// Ordering result passed into commit loop.
+#[derive(Debug, Clone)]
+struct OrderingDecision {
+    ordered_ids: Vec<u64>,
+    rejected: u64,
+}
+
+#[derive(Debug, Clone)]
+struct RlAdviceContext {
+    height: u64,
+    ordered_ids: Vec<u64>,
+}
+
+#[derive(Debug, Clone)]
+struct RlAdvice {
+    suggested_ids: Vec<u64>,
+    reason: &'static str,
+}
+
+trait DaProvider {
+    fn batch_from_picked(&self, picked: &[MockTx]) -> DaBatch;
+}
+
+struct LegacyMempoolDaProvider;
+
+impl DaProvider for LegacyMempoolDaProvider {
+    fn batch_from_picked(&self, picked: &[MockTx]) -> DaBatch {
+        DaBatch {
+            tx_ids: (1..=(picked.len() as u64)).collect(),
+        }
+    }
+}
+
+trait OrderingEngine {
+    fn decide(
+        &self,
+        snapshot: &StateStore,
+        picked: &[MockTx],
+        da_batch: &DaBatch,
+        workers: usize,
+    ) -> OrderingDecision;
+}
+
+struct PreexecOrderingEngine;
+
+impl OrderingEngine for PreexecOrderingEngine {
+    fn decide(
+        &self,
+        snapshot: &StateStore,
+        picked: &[MockTx],
+        da_batch: &DaBatch,
+        workers: usize,
+    ) -> OrderingDecision {
+        let (ordered_ids, rejected) =
+            pre_execute_group_parallel(snapshot, da_batch.tx_ids.clone(), picked, workers);
+        OrderingDecision {
+            ordered_ids,
+            rejected,
+        }
+    }
+}
+
+trait RlAdvisor {
+    fn advise(&self, ctx: &RlAdviceContext) -> Option<RlAdvice>;
+}
+
+struct DisabledRlAdvisor;
+
+impl RlAdvisor for DisabledRlAdvisor {
+    fn advise(&self, _ctx: &RlAdviceContext) -> Option<RlAdvice> {
+        None
+    }
+}
+
+/// Shadow-only advisor: emits recommendation logs but never mutates commit ordering.
+struct ShadowOnlyRlAdvisor {
+    topk: usize,
+}
+
+impl RlAdvisor for ShadowOnlyRlAdvisor {
+    fn advise(&self, ctx: &RlAdviceContext) -> Option<RlAdvice> {
+        if ctx.ordered_ids.is_empty() {
+            return None;
+        }
+        let mut suggested = ctx.ordered_ids.clone();
+        suggested.reverse();
+        suggested.truncate(self.topk.max(1));
+        let _ = ctx.height;
+        Some(RlAdvice {
+            suggested_ids: suggested,
+            reason: "shadow_reverse_baseline",
+        })
+    }
 }
 
 fn wal_file(wal_dir: &Path) -> PathBuf {
@@ -501,7 +612,8 @@ fn accept_signed_vote(
         );
         return;
     }
-    if validator_trimmed != msg.vote.validator || !is_canonical_validator_token(&msg.vote.validator) {
+    if validator_trimmed != msg.vote.validator || !is_canonical_validator_token(&msg.vote.validator)
+    {
         reject_stats.bad_sig += 1;
         println!(
             "[bft-net] reject reason=noncanonical_validator validator={} height={} round={} vote_type={} nonce={}",
@@ -527,7 +639,9 @@ fn accept_signed_vote(
         );
         return;
     }
-    if block_hash_trimmed != msg.vote.block_hash || !is_canonical_block_hash_token(&msg.vote.block_hash) {
+    if block_hash_trimmed != msg.vote.block_hash
+        || !is_canonical_block_hash_token(&msg.vote.block_hash)
+    {
         reject_stats.bad_sig += 1;
         println!(
             "[bft-net] reject reason=noncanonical_block_hash validator={} height={} round={} vote_type={} nonce={}",
@@ -589,8 +703,43 @@ fn accept_signed_vote(
         msg.vote.round,
         msg.vote.vote_type,
     );
+    if !last_nonce.contains_key(&key) && msg.nonce > MAX_BFT_NONCE_FORWARD_JUMP {
+        reject_stats.stale_nonce += 1;
+        println!(
+            "[bft-net] reject reason=nonce_bootstrap_jump validator={} height={} round={} vote_type={} nonce={} max_initial_nonce={}",
+            msg.vote.validator,
+            msg.vote.height,
+            msg.vote.round,
+            vote_type_name(msg.vote.vote_type),
+            msg.nonce,
+            MAX_BFT_NONCE_FORWARD_JUMP
+        );
+        return;
+    }
     if let Some(prev) = last_nonce.get(&key) {
         if msg.nonce == *prev {
+            let maybe_prev_vote = accepted.iter().rev().find(|v| {
+                v.validator == msg.vote.validator
+                    && v.height == msg.vote.height
+                    && v.round == msg.vote.round
+                    && v.vote_type == msg.vote.vote_type
+            });
+            if let Some(prev_vote) = maybe_prev_vote {
+                if prev_vote.block_hash != msg.vote.block_hash {
+                    reject_stats.bad_sig += 1;
+                    println!(
+                        "[bft-net] reject reason=nonce_equivocation validator={} height={} round={} vote_type={} nonce={} prev_hash={} new_hash={}",
+                        msg.vote.validator,
+                        msg.vote.height,
+                        msg.vote.round,
+                        vote_type_name(msg.vote.vote_type),
+                        msg.nonce,
+                        prev_vote.block_hash,
+                        msg.vote.block_hash
+                    );
+                    return;
+                }
+            }
             reject_stats.replay += 1;
             println!(
                 "[bft-net] reject reason=replay validator={} height={} round={} vote_type={} nonce={}",
@@ -1146,6 +1295,13 @@ fn build_demo_mempool(demo_tasks: u64, _demo_keys: u64) -> VecDeque<MockTx> {
     q
 }
 
+fn requeue_uncommitted_txs(mempool: &mut VecDeque<MockTx>, picked: Vec<MockTx>) {
+    if picked.is_empty() {
+        return;
+    }
+    mempool.extend(picked);
+}
+
 fn task_ref(st: &StateStore, task_id: u64) -> Result<ObjectRef> {
     st.get_ref(task_id)
         .with_context(|| format!("task_ref missing for task_id={}", task_id))
@@ -1171,6 +1327,55 @@ fn event_type_of(tx: &MockTx) -> &'static str {
         MockTx::Challenge { .. } => "challenge",
         MockTx::Resolve { .. } => "resolve",
     }
+}
+
+fn is_critical_tx(tx: &MockTx) -> bool {
+    matches!(tx, MockTx::Challenge { .. } | MockTx::Resolve { .. })
+}
+
+fn pick_txs_with_critical_guard(
+    mempool: &mut VecDeque<MockTx>,
+    txs_per_block: usize,
+) -> Vec<MockTx> {
+    if txs_per_block == 0 || mempool.is_empty() {
+        return Vec::new();
+    }
+
+    let mut lane = LaneAdmissionGate::new(txs_per_block, 1);
+    let mut selected_pos = vec![None; mempool.len()];
+    for (idx, tx) in mempool.iter().enumerate() {
+        let class = if is_critical_tx(tx) {
+            IngressClass::Critical
+        } else {
+            IngressClass::Normal
+        };
+        let _ = lane.admit(idx as u64, class);
+    }
+
+    let mut admit_order = 0usize;
+    while admit_order < txs_per_block {
+        let Some(id) = lane.pop_ready() else {
+            break;
+        };
+        let idx = id as usize;
+        if idx < selected_pos.len() {
+            selected_pos[idx] = Some(admit_order);
+            admit_order += 1;
+        }
+    }
+
+    let mut picked_slots: Vec<Option<MockTx>> = (0..admit_order).map(|_| None).collect();
+    let mut remain = VecDeque::with_capacity(mempool.len());
+    for (idx, tx) in mempool.drain(..).enumerate() {
+        if let Some(pos) = selected_pos[idx] {
+            picked_slots[pos] = Some(tx);
+        } else {
+            remain.push_back(tx);
+        }
+    }
+    *mempool = remain;
+
+    picked_slots.into_iter().flatten().collect()
 }
 
 fn actor_of(st: &StateStore, tx: &MockTx) -> String {
@@ -1349,9 +1554,7 @@ fn emit_event(
         MockTx::Challenge { .. } => "0",
         _ => treasury_delta.text.as_str(),
     };
-    let challenger_delta_str = challenger_delta
-        .map(|d| d.text.as_str())
-        .unwrap_or("-");
+    let challenger_delta_str = challenger_delta.map(|d| d.text.as_str()).unwrap_or("-");
     let bond_disposition_str = bond_disposition.unwrap_or("-");
 
     match tx {
@@ -1420,9 +1623,7 @@ fn emit_timeout_event(
     let tx_hash = tx_hash_of(tx_id);
     let ts_unix_ms = now_unix_ms();
     let treasury_delta_str = treasury_delta.text.as_str();
-    let challenger_delta_str = challenger_delta
-        .map(|d| d.text.as_str())
-        .unwrap_or("-");
+    let challenger_delta_str = challenger_delta.map(|d| d.text.as_str()).unwrap_or("-");
     let bond_disposition_str = bond_disposition.unwrap_or("-");
     let resolution_code = if to_status == "Slashed" {
         "slashed"
@@ -1457,8 +1658,9 @@ fn is_high_risk_tx(tx: &MockTx) -> bool {
         | MockTx::Commit { .. }
         | MockTx::Reveal { .. }
         | MockTx::Challenge { .. } => true,
-        // Resolve must remain callable during emergency pause to close out challenged tasks.
-        MockTx::Resolve { .. } => false,
+        // Resolve performs terminal challenged escrow settlement and must stay
+        // frozen while emergency pause is active.
+        MockTx::Resolve { .. } => true,
     }
 }
 
@@ -1494,7 +1696,14 @@ fn apply_one(st: &mut StateStore, tx: MockTx, current_height: u64) -> Result<()>
             reveal_salt,
         } => {
             let r = task_ref(st, task_id)?;
-            let _ = apply_reveal_result_at_height(st, r, result_hash, reveal_salt, None, current_height)?;
+            let _ = apply_reveal_result_at_height(
+                st,
+                r,
+                result_hash,
+                reveal_salt,
+                None,
+                current_height,
+            )?;
         }
         MockTx::Challenge {
             task_id,
@@ -1529,7 +1738,10 @@ fn scan_and_apply_timeouts(
         };
         if !matches!(
             task.status,
-            TaskStatus::Assigned | TaskStatus::Committed | TaskStatus::Revealed | TaskStatus::Challenged
+            TaskStatus::Assigned
+                | TaskStatus::Committed
+                | TaskStatus::Revealed
+                | TaskStatus::Challenged
         ) {
             continue;
         }
@@ -1739,9 +1951,194 @@ fn pre_execute_group_parallel(
     (ok_ids, rejected)
 }
 
+fn decide_order_for_commit(
+    state: &StateStore,
+    picked: &[MockTx],
+    workers: usize,
+    enable_da_ordering_decouple: bool,
+) -> OrderingDecision {
+    if !enable_da_ordering_decouple {
+        let plan: Vec<Tx> = picked
+            .iter()
+            .enumerate()
+            .map(|(i, tx)| read_write_decl(state, tx, (i as u64) + 1))
+            .collect();
+        let groups = build_parallel_groups(&plan);
+        let mut ordered = Vec::new();
+        let mut rejected = 0u64;
+        for g in groups {
+            let group_ids: Vec<u64> = g.iter().map(|t| t.id).collect();
+            let (ids, rej) = pre_execute_group_parallel(state, group_ids, picked, workers);
+            ordered.extend(ids);
+            rejected += rej;
+        }
+        return OrderingDecision {
+            ordered_ids: ordered,
+            rejected,
+        };
+    }
+
+    let da = LegacyMempoolDaProvider;
+    let ordering = PreexecOrderingEngine;
+    let da_batch = da.batch_from_picked(picked);
+    ordering.decide(state, picked, &da_batch, workers)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn requeue_uncommitted_txs_preserves_order_at_tail() {
+        let mut mempool = VecDeque::from(vec![
+            MockTx::CreateTask {
+                task_id: 2001,
+                creator: "alice".into(),
+                bounty: 10,
+            },
+            MockTx::CreateTask {
+                task_id: 2002,
+                creator: "bob".into(),
+                bounty: 20,
+            },
+        ]);
+        let picked = vec![
+            MockTx::AcceptTask {
+                task_id: 1001,
+                worker: "worker1001".into(),
+            },
+            MockTx::Commit {
+                task_id: 1001,
+                worker: "worker1001".into(),
+                committed_hash: [9u8; 32],
+            },
+        ];
+
+        requeue_uncommitted_txs(&mut mempool, picked);
+
+        let task_ids: Vec<u64> = mempool.iter().map(task_id_of).collect();
+        assert_eq!(task_ids, vec![2001, 2002, 1001, 1001]);
+    }
+
+    #[test]
+    fn requeue_uncommitted_txs_noop_on_empty_pick() {
+        let mut mempool = VecDeque::from(vec![MockTx::CreateTask {
+            task_id: 3001,
+            creator: "alice".into(),
+            bounty: 10,
+        }]);
+
+        requeue_uncommitted_txs(&mut mempool, vec![]);
+
+        let task_ids: Vec<u64> = mempool.iter().map(task_id_of).collect();
+        assert_eq!(task_ids, vec![3001]);
+    }
+
+    #[test]
+    fn da_ordering_decouple_switch_off_and_on_keep_same_commit_order_on_happy_path() {
+        let state = StateStore::new();
+        let picked = vec![
+            MockTx::CreateTask {
+                task_id: 4001,
+                creator: "alice".into(),
+                bounty: 10,
+            },
+            MockTx::CreateTask {
+                task_id: 4002,
+                creator: "bob".into(),
+                bounty: 20,
+            },
+        ];
+
+        let legacy = decide_order_for_commit(&state, &picked, 2, false);
+        let decoupled = decide_order_for_commit(&state, &picked, 2, true);
+
+        assert_eq!(legacy.ordered_ids, vec![1, 2]);
+        assert_eq!(decoupled.ordered_ids, legacy.ordered_ids);
+        assert_eq!(legacy.rejected, 0);
+        assert_eq!(decoupled.rejected, 0);
+    }
+
+    #[test]
+    fn rl_shadow_advisor_only_suggests_and_does_not_mutate_baseline_order() {
+        let baseline = vec![1, 2, 3, 4];
+        let advisor = ShadowOnlyRlAdvisor { topk: 2 };
+        let advice = advisor
+            .advise(&RlAdviceContext {
+                height: 7,
+                ordered_ids: baseline.clone(),
+            })
+            .expect("advice");
+
+        assert_eq!(baseline, vec![1, 2, 3, 4]);
+        assert_eq!(advice.suggested_ids, vec![4, 3]);
+        assert_eq!(advice.reason, "shadow_reverse_baseline");
+    }
+
+    #[test]
+    fn critical_txs_are_selected_even_when_normal_queue_is_long() {
+        let mut mempool = VecDeque::from(vec![
+            MockTx::CreateTask {
+                task_id: 1,
+                creator: "alice".into(),
+                bounty: 10,
+            },
+            MockTx::AcceptTask {
+                task_id: 1,
+                worker: "w1".into(),
+            },
+            MockTx::Challenge {
+                task_id: 1,
+                challenger: "c1".into(),
+                bond: 10,
+            },
+            MockTx::Commit {
+                task_id: 1,
+                worker: "w1".into(),
+                committed_hash: [3u8; 32],
+            },
+            MockTx::Resolve {
+                task_id: 1,
+                slash_worker: false,
+                resolver: "gov".into(),
+            },
+        ]);
+
+        let picked = pick_txs_with_critical_guard(&mut mempool, 2);
+        assert_eq!(picked.len(), 2);
+        assert!(picked.iter().any(is_critical_tx));
+    }
+
+    #[test]
+    fn critical_guard_selection_respects_lane_fairness_pop_order() {
+        let mut mempool = VecDeque::from(vec![
+            MockTx::CreateTask {
+                task_id: 11,
+                creator: "alice".into(),
+                bounty: 10,
+            },
+            MockTx::Challenge {
+                task_id: 11,
+                challenger: "c1".into(),
+                bond: 10,
+            },
+            MockTx::Resolve {
+                task_id: 11,
+                slash_worker: false,
+                resolver: "gov".into(),
+            },
+            MockTx::AcceptTask {
+                task_id: 11,
+                worker: "w1".into(),
+            },
+        ]);
+
+        let picked = pick_txs_with_critical_guard(&mut mempool, 3);
+        assert_eq!(picked.len(), 3);
+        assert!(matches!(picked[0], MockTx::Challenge { .. }));
+        assert!(matches!(picked[1], MockTx::CreateTask { .. }));
+        assert!(matches!(picked[2], MockTx::Resolve { .. }));
+    }
 
     #[test]
     fn backoff_is_capped() {
@@ -2465,6 +2862,41 @@ mod tests {
     }
 
     #[test]
+    fn auth_rejects_first_nonce_bootstrap_jump_without_prior_domain_nonce() {
+        let mut last_nonce = HashMap::new();
+        let mut accepted = Vec::new();
+        let mut reject_stats = AuthRejectStats::default();
+
+        let vote = BftVote {
+            validator: "v1".into(),
+            vote_type: VoteType::Prevote,
+            block_hash: "h11-r0".into(),
+            byzantine: false,
+            height: 11,
+            round: 0,
+        };
+        let jumped_nonce = MAX_BFT_NONCE_FORWARD_JUMP + 1;
+        accept_signed_vote(
+            SignedVote {
+                vote: vote.clone(),
+                nonce: jumped_nonce,
+                signature: vote_signature(&vote, jumped_nonce),
+            },
+            &mut last_nonce,
+            &mut accepted,
+            &mut reject_stats,
+        );
+
+        assert_eq!(accepted.len(), 0);
+        assert_eq!(reject_stats.bad_sig, 0);
+        assert_eq!(reject_stats.replay, 0);
+        assert_eq!(reject_stats.stale_nonce, 1);
+
+        let key = ("v1".to_string(), 11, 0, VoteType::Prevote);
+        assert_eq!(last_nonce.get(&key), None);
+    }
+
+    #[test]
     fn aggregate_votes_dedups_validator_duplicates_per_hash() {
         let votes = vec![
             BftVote {
@@ -2550,6 +2982,59 @@ mod tests {
         assert_eq!(reject_stats.stale_nonce, 0);
     }
 
+    #[test]
+    fn auth_rejects_same_nonce_equivocation_as_nonce_equivocation_not_replay() {
+        let mut last_nonce = HashMap::new();
+        let mut accepted = Vec::new();
+        let mut reject_stats = AuthRejectStats::default();
+
+        let vote1 = BftVote {
+            validator: "v1".into(),
+            vote_type: VoteType::Prevote,
+            block_hash: "h10-r0-a".into(),
+            byzantine: false,
+            height: 10,
+            round: 0,
+        };
+        let nonce = 77;
+        accept_signed_vote(
+            SignedVote {
+                vote: vote1.clone(),
+                nonce,
+                signature: vote_signature(&vote1, nonce),
+            },
+            &mut last_nonce,
+            &mut accepted,
+            &mut reject_stats,
+        );
+
+        let vote2 = BftVote {
+            validator: "v1".into(),
+            vote_type: VoteType::Prevote,
+            block_hash: "h10-r0-b".into(),
+            byzantine: false,
+            height: 10,
+            round: 0,
+        };
+        accept_signed_vote(
+            SignedVote {
+                vote: vote2.clone(),
+                nonce,
+                signature: vote_signature(&vote2, nonce),
+            },
+            &mut last_nonce,
+            &mut accepted,
+            &mut reject_stats,
+        );
+
+        assert_eq!(accepted.len(), 1);
+        assert_eq!(reject_stats.bad_sig, 1);
+        assert_eq!(reject_stats.replay, 0);
+        assert_eq!(reject_stats.stale_nonce, 0);
+        let key = ("v1".to_string(), 10, 0, VoteType::Prevote);
+        assert_eq!(last_nonce.get(&key), Some(&nonce));
+    }
+
     fn expected_high_risk_tx_exhaustive(tx: &MockTx) -> bool {
         // Exhaustive match intentionally used as a merge-gate guard:
         // if a new tx variant is introduced, this test must be reviewed.
@@ -2559,8 +3044,9 @@ mod tests {
             | MockTx::Commit { .. }
             | MockTx::Reveal { .. }
             | MockTx::Challenge { .. } => true,
-            // Resolve must remain callable during emergency pause to close out challenged tasks.
-            MockTx::Resolve { .. } => false,
+            // Resolve performs terminal challenged escrow settlement and must stay
+            // frozen while emergency pause is active.
+            MockTx::Resolve { .. } => true,
         }
     }
 
@@ -2782,11 +3268,24 @@ mod tests {
             100,
         )
         .unwrap();
-        let r7 =
-            trnm_pouw::apply_reveal_result_at_height(&mut st, r6, result_hash, reveal_salt, None, 110)
-                .unwrap();
-        let _r8 = trnm_pouw::apply_challenge_at_height(&mut st, r7, "challenger".into(), 10, "challenger".into(), 120)
-            .unwrap();
+        let r7 = trnm_pouw::apply_reveal_result_at_height(
+            &mut st,
+            r6,
+            result_hash,
+            reveal_salt,
+            None,
+            110,
+        )
+        .unwrap();
+        let _r8 = trnm_pouw::apply_challenge_at_height(
+            &mut st,
+            r7,
+            "challenger".into(),
+            10,
+            "challenger".into(),
+            120,
+        )
+        .unwrap();
 
         let r9 = apply_create_task(&mut st, 7003, "alice".into(), 100).unwrap();
         let committed3 = compute_commitment(7003, &result_hash, &reveal_salt, "worker7003");
@@ -2799,9 +3298,15 @@ mod tests {
             100,
         )
         .unwrap();
-        let _r12 =
-            trnm_pouw::apply_reveal_result_at_height(&mut st, r11, result_hash, reveal_salt, None, 110)
-                .unwrap();
+        let _r12 = trnm_pouw::apply_reveal_result_at_height(
+            &mut st,
+            r11,
+            result_hash,
+            reveal_salt,
+            None,
+            110,
+        )
+        .unwrap();
 
         let known: HashSet<u64> = [7001u64, 7002u64, 7003u64].into_iter().collect();
         let migrated = scan_and_apply_timeouts(&mut st, &known, 10_000, 9_000_000);
@@ -2830,9 +3335,15 @@ mod tests {
             100,
         )
         .unwrap();
-        let _r4 =
-            trnm_pouw::apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110)
-                .unwrap();
+        let _r4 = trnm_pouw::apply_reveal_result_at_height(
+            &mut st,
+            r3,
+            result_hash,
+            reveal_salt,
+            None,
+            110,
+        )
+        .unwrap();
 
         let challenge_deadline = st
             .get_task(7004)
@@ -2874,9 +3385,15 @@ mod tests {
             1,
         )
         .unwrap();
-        let revealed =
-            trnm_pouw::apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 2)
-                .unwrap();
+        let revealed = trnm_pouw::apply_reveal_result_at_height(
+            &mut st,
+            r3,
+            result_hash,
+            reveal_salt,
+            None,
+            2,
+        )
+        .unwrap();
 
         let before = st.clone();
         let _ = apply_timeout(&mut st, revealed, 1_000).unwrap();
@@ -2907,16 +3424,25 @@ mod tests {
         let r2 = apply_accept_task(&mut st, r1, "worker8101".into()).unwrap();
         let r3 = apply_commit_result(&mut st, r2, "worker8101".into(), committed).unwrap();
         let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
-        let r5 = apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
+        let r5 =
+            apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
 
         let before = st.clone();
         let challenger = before
             .get_task(8101)
             .and_then(|t| t.challenger)
             .expect("challenger must exist");
-        st.set_gov_param_unchecked(18_101, "resolve_authority".into(), challenger.clone())
+        let resolve_authority = "authority8101".to_string();
+        st.set_gov_param_unchecked(18_101, "resolve_authority".into(), resolve_authority.clone())
             .unwrap();
-        let _r6 = apply_resolve(&mut st, r5, true, challenger.clone(), challenger.clone()).unwrap();
+        let _r6 = apply_resolve(
+            &mut st,
+            r5,
+            true,
+            resolve_authority.clone(),
+            resolve_authority,
+        )
+        .unwrap();
 
         let (treasury_delta, challenger_delta) =
             balance_deltas_for_transition(&before, &st, 8101, Some(challenger.as_str()));
@@ -2929,7 +3455,13 @@ mod tests {
             challenger_delta.as_ref().and_then(|d| d.numeric),
             diff_u128_to_i128(st.balance_of(&challenger), before.balance_of(&challenger))
         );
-        assert!(challenger_delta.as_ref().and_then(|d| d.numeric).unwrap_or(0) > 0);
+        assert!(
+            challenger_delta
+                .as_ref()
+                .and_then(|d| d.numeric)
+                .unwrap_or(0)
+                > 0
+        );
     }
 
     #[test]
@@ -2946,17 +3478,25 @@ mod tests {
         let r2 = apply_accept_task(&mut st, r1, "worker8102".into()).unwrap();
         let r3 = apply_commit_result(&mut st, r2, "worker8102".into(), committed).unwrap();
         let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
-        let r5 = apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
+        let r5 =
+            apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
 
         let before = st.clone();
         let challenger = before
             .get_task(8102)
             .and_then(|t| t.challenger)
             .expect("challenger must exist");
-        st.set_gov_param_unchecked(18_102, "resolve_authority".into(), challenger.clone())
+        let resolve_authority = "authority8102".to_string();
+        st.set_gov_param_unchecked(18_102, "resolve_authority".into(), resolve_authority.clone())
             .unwrap();
-        let _r6 =
-            apply_resolve(&mut st, r5, false, challenger.clone(), challenger.clone()).unwrap();
+        let _r6 = apply_resolve(
+            &mut st,
+            r5,
+            false,
+            resolve_authority.clone(),
+            resolve_authority,
+        )
+        .unwrap();
 
         let (treasury_delta, challenger_delta) =
             balance_deltas_for_transition(&before, &st, 8102, Some(challenger.as_str()));
@@ -2992,10 +3532,24 @@ mod tests {
             1,
         )
         .unwrap();
-        let r4 = trnm_pouw::apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 2)
-            .unwrap();
-        let challenged =
-            trnm_pouw::apply_challenge_at_height(&mut st, r4, "challenger".into(), 10, "challenger".into(), 3).unwrap();
+        let r4 = trnm_pouw::apply_reveal_result_at_height(
+            &mut st,
+            r3,
+            result_hash,
+            reveal_salt,
+            None,
+            2,
+        )
+        .unwrap();
+        let challenged = trnm_pouw::apply_challenge_at_height(
+            &mut st,
+            r4,
+            "challenger".into(),
+            10,
+            "challenger".into(),
+            3,
+        )
+        .unwrap();
 
         let before = st.clone();
         let challenger = before
@@ -3016,7 +3570,10 @@ mod tests {
             diff_u128_to_i128(st.balance_of(&challenger), before.balance_of(&challenger))
         );
         assert_eq!(challenger_delta.as_ref().and_then(|d| d.numeric), Some(10));
-        assert_eq!(st.get_task(8103).and_then(|t| t.challenge_bond_forfeited), Some(false));
+        assert_eq!(
+            st.get_task(8103).and_then(|t| t.challenge_bond_forfeited),
+            Some(false)
+        );
     }
 
     #[test]
@@ -3150,7 +3707,7 @@ fn main() -> Result<()> {
     );
     println!("[node] parallel_workers={}", args.parallel_workers);
     println!(
-        "[node] bft validators={} byzantine={} max_rounds={} fault_rounds={} missed_threshold={} penalty_rounds={} rc_backoff_ms={} rc_backoff_cap_ms={} wal_dir={} checkpoint_interval={} timeout_scan={} timeout_scan_every_blocks={}",
+        "[node] bft validators={} byzantine={} max_rounds={} fault_rounds={} missed_threshold={} penalty_rounds={} rc_backoff_ms={} rc_backoff_cap_ms={} wal_dir={} checkpoint_interval={} timeout_scan={} timeout_scan_every_blocks={} da_ordering_decouple={} rl_shadow={} rl_shadow_topk={}",
         args.validators,
         args.byzantine,
         args.bft_max_rounds,
@@ -3162,7 +3719,10 @@ fn main() -> Result<()> {
         args.bft_wal_dir,
         args.bft_checkpoint_interval,
         args.pouw_timeout_scan,
-        args.pouw_timeout_scan_every_blocks
+        args.pouw_timeout_scan_every_blocks,
+        args.enable_da_ordering_decouple,
+        args.rl_advisor_shadow,
+        args.rl_advisor_shadow_topk
     );
 
     let wal_dir = PathBuf::from(&args.bft_wal_dir);
@@ -3219,12 +3779,7 @@ fn main() -> Result<()> {
     loop {
         let block_start = Instant::now();
         let txs_per_block = args.txs_per_block.max(1);
-        let mut picked: Vec<MockTx> = Vec::new();
-        for _ in 0..txs_per_block {
-            if let Some(tx) = mempool.pop_front() {
-                picked.push(tx);
-            }
-        }
+        let picked = pick_txs_with_critical_guard(&mut mempool, txs_per_block);
 
         let proposal_hash = hash32_hex(format!("h:{}:txs:{}", height, picked.len()).as_bytes());
         let bft = simulate_bft_height(
@@ -3255,6 +3810,7 @@ fn main() -> Result<()> {
                 bft.round_change_backoff_total_ms,
                 bft.leader_missed_snapshot
             );
+            requeue_uncommitted_txs(&mut mempool, picked);
             let wal_entry = WalMeta {
                 height,
                 round: bft.committed_round,
@@ -3303,90 +3859,109 @@ fn main() -> Result<()> {
         );
         bft_committed_heights += 1;
 
-        let plan: Vec<Tx> = picked
-            .iter()
-            .enumerate()
-            .map(|(i, tx)| read_write_decl(&state, tx, (i as u64) + 1))
-            .collect();
-        let groups = build_parallel_groups(&plan);
-        let group_count = groups.len();
-
         let mut applied = 0u64;
-        for g in groups {
-            let group_ids: Vec<u64> = g.iter().map(|t| t.id).collect();
-            let (ordered_ids, rejected) =
-                pre_execute_group_parallel(&state, group_ids, &picked, args.parallel_workers);
-            preexec_reject_total += rejected;
+        let ordering_decision = decide_order_for_commit(
+            &state,
+            &picked,
+            args.parallel_workers,
+            args.enable_da_ordering_decouple,
+        );
+        preexec_reject_total += ordering_decision.rejected;
+        let group_count = if args.enable_da_ordering_decouple {
+            usize::from(!ordering_decision.ordered_ids.is_empty())
+        } else {
+            let plan: Vec<Tx> = picked
+                .iter()
+                .enumerate()
+                .map(|(i, tx)| read_write_decl(&state, tx, (i as u64) + 1))
+                .collect();
+            build_parallel_groups(&plan).len()
+        };
 
-            for id in ordered_ids {
-                let idx = (id - 1) as usize;
-                let tx = picked[idx].clone();
-                let task_id = task_id_of(&tx);
-                let from_status = status_name(&state, task_id);
+        let rl_advisor: Box<dyn RlAdvisor> = if args.rl_advisor_shadow {
+            Box::new(ShadowOnlyRlAdvisor {
+                topk: args.rl_advisor_shadow_topk,
+            })
+        } else {
+            Box::new(DisabledRlAdvisor)
+        };
+        if let Some(advice) = rl_advisor.advise(&RlAdviceContext {
+            height,
+            ordered_ids: ordering_decision.ordered_ids.clone(),
+        }) {
+            println!(
+                "[rl-shadow] height={} enabled=true reason={} baseline_ids={:?} suggested_ids={:?} applied=false",
+                height,
+                advice.reason,
+                ordering_decision.ordered_ids,
+                advice.suggested_ids
+            );
+        }
 
-                if is_rejected_by_emergency_pause(state.is_emergency_paused(), &tx) {
-                    println!(
-                        "[tx] rejected_by_pause height={} tx_id={} event_type={} emergency_pause=true",
-                        height,
-                        id,
-                        event_type_of(&tx)
-                    );
-                    continue;
+        for id in ordering_decision.ordered_ids {
+            let idx = (id - 1) as usize;
+            let tx = picked[idx].clone();
+            let task_id = task_id_of(&tx);
+            let from_status = status_name(&state, task_id);
+
+            if is_rejected_by_emergency_pause(state.is_emergency_paused(), &tx) {
+                println!(
+                    "[tx] rejected_by_pause height={} tx_id={} event_type={} emergency_pause=true",
+                    height,
+                    id,
+                    event_type_of(&tx)
+                );
+                continue;
+            }
+
+            let before = state.clone();
+            if let Err(e) = apply_one(&mut state, tx.clone(), height) {
+                let err_kind = classify_apply_error(&e);
+                let err_text = e.to_string();
+                state = before; // rollback on failed commit
+                apply_error_total += 1;
+                rollback_total += 1;
+                match err_kind {
+                    "version_conflict" => apply_error_version_conflict_total += 1,
+                    "preexec_conflict_miss" => apply_error_preexec_conflict_miss_total += 1,
+                    "invalid_transition" => apply_error_invalid_transition_total += 1,
+                    "deadline_exceeded" => apply_error_deadline_exceeded_total += 1,
+                    _ => apply_error_semantic_fail_total += 1,
                 }
-
-                let before = state.clone();
-                if let Err(e) = apply_one(&mut state, tx.clone(), height) {
-                    let err_kind = classify_apply_error(&e);
-                    let err_text = e.to_string();
-                    state = before; // rollback on failed commit
-                    apply_error_total += 1;
-                    rollback_total += 1;
-                    match err_kind {
-                        "version_conflict" => apply_error_version_conflict_total += 1,
-                        "preexec_conflict_miss" => {
-                            apply_error_preexec_conflict_miss_total += 1
-                        }
-                        "invalid_transition" => apply_error_invalid_transition_total += 1,
-                        "deadline_exceeded" => apply_error_deadline_exceeded_total += 1,
-                        _ => apply_error_semantic_fail_total += 1,
-                    }
-                    println!(
-                        "[tx] apply_error height={} tx_id={} err_kind={} err={} rollback=true",
-                        height, id, err_kind, err_text
-                    );
-                } else {
-                    applied += 1;
-                    known_task_ids.insert(task_id);
-                    let to_status = status_name(&state, task_id);
-                    let root = hex::encode(state.state_root());
-                    let challenger_account: Option<String> = match &tx {
-                        MockTx::Challenge { challenger, .. } => Some(challenger.clone()),
-                        MockTx::Resolve { .. } => {
-                            before.get_task(task_id).and_then(|t| t.challenger)
-                        }
-                        _ => None,
-                    };
-                    let (treasury_delta, challenger_delta) = balance_deltas_for_transition(
-                        &before,
-                        &state,
-                        task_id,
-                        challenger_account.as_deref(),
-                    );
-                    let signer = verified_signer_of(&before, &tx);
-                    emit_event(
-                        &state,
-                        &tx,
-                        &signer,
-                        id,
-                        height,
-                        &from_status,
-                        &to_status,
-                        &root,
-                        &treasury_delta,
-                        challenger_delta.as_ref(),
-                        challenger_account.as_deref(),
-                    );
-                }
+                println!(
+                    "[tx] apply_error height={} tx_id={} err_kind={} err={} rollback=true",
+                    height, id, err_kind, err_text
+                );
+            } else {
+                applied += 1;
+                known_task_ids.insert(task_id);
+                let to_status = status_name(&state, task_id);
+                let root = hex::encode(state.state_root());
+                let challenger_account: Option<String> = match &tx {
+                    MockTx::Challenge { challenger, .. } => Some(challenger.clone()),
+                    MockTx::Resolve { .. } => before.get_task(task_id).and_then(|t| t.challenger),
+                    _ => None,
+                };
+                let (treasury_delta, challenger_delta) = balance_deltas_for_transition(
+                    &before,
+                    &state,
+                    task_id,
+                    challenger_account.as_deref(),
+                );
+                let signer = verified_signer_of(&before, &tx);
+                emit_event(
+                    &state,
+                    &tx,
+                    &signer,
+                    id,
+                    height,
+                    &from_status,
+                    &to_status,
+                    &root,
+                    &treasury_delta,
+                    challenger_delta.as_ref(),
+                    challenger_account.as_deref(),
+                );
             }
         }
 

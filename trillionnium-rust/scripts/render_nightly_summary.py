@@ -93,6 +93,8 @@ stage_stats, strategy_sources = parse_aggr_stage_stats(regression_csv)
 
 labels = a.get("attribution.labels", "unknown")
 reasons = a.get("attribution.reasons", "none")
+m2_gate_log = a.get("m2.policy_gate.log", "none")
+m2_default_drift_guard = a.get("m2.policy_gate.assert_default_drift_guard", "unknown")
 
 lines = []
 lines.append("# Nightly Health Summary")
@@ -108,6 +110,12 @@ lines.append(
 lines.append(
     f"- Regression matrix artifact: `{regression_csv or 'missing'}`"
 )
+lines.append("")
+lines.append("## M2 policy gate signal")
+lines.append(f"- default-drift guard assertion: `{m2_default_drift_guard}`")
+lines.append(f"- gate log: `{m2_gate_log}`")
+if m2_default_drift_guard != "pass":
+    lines.append("- failure_signal: `m2_policy_gate_default_drift_guard_not_pass`")
 lines.append("")
 lines.append("## Auto-adaptive decision snapshot")
 lines.append(f"- Mixed: `{a.get('strategy_exp.auto.reason', 'unknown')}` (use_hot={a.get('strategy_exp.auto.use_hot_bucket', 'unknown')})")

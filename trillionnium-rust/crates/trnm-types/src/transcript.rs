@@ -67,7 +67,11 @@ impl TranscriptMerkleTree {
         let mut directions = Vec::with_capacity(self.levels.len().saturating_sub(1));
 
         for level in self.levels.iter().take(self.levels.len().saturating_sub(1)) {
-            let sibling_idx = if idx.is_multiple_of(2) { idx + 1 } else { idx - 1 };
+            let sibling_idx = if idx.is_multiple_of(2) {
+                idx + 1
+            } else {
+                idx - 1
+            };
             let sibling = if sibling_idx < level.len() {
                 level[sibling_idx]
             } else {
@@ -365,7 +369,11 @@ mod tests {
 
     #[test]
     fn transcript_batch_proofs_reject_empty_targets() {
-        let envs = vec![sample_env(1, "n1"), sample_env(2, "n2"), sample_env(3, "n3")];
+        let envs = vec![
+            sample_env(1, "n1"),
+            sample_env(2, "n2"),
+            sample_env(3, "n3"),
+        ];
         let err = transcript_segment_proofs(&envs, 1, 3, &[]).unwrap_err();
         assert!(matches!(err, TranscriptError::EmptyTargets));
     }

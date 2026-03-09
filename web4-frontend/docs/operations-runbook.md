@@ -1,0 +1,66 @@
+# 运维手册（发布 / 回滚 / 排障）
+
+## 发布最小路径
+
+```bash
+npm ci
+npm run release:ready
+npm run start
+```
+
+> `release:ready` 会校验 `package.json` 当前版本是否已写入 `CHANGELOG.md`，随后自动执行 `release:preflight`。
+
+## 回滚最小路径
+
+当新版本不可用时：
+
+1. 切回上一稳定版本（Git tag/commit）。
+2. 重新执行：
+
+```bash
+npm ci
+npm run build
+npm run start
+```
+
+> 回滚版本必须对应已通过 `npm run ci:check` 的提交。
+
+## 常见故障排障
+
+### 1) 本地启动失败
+
+- 检查 Node/npm 版本是否满足要求（Node 20+）。
+- 执行 `npm ci` 重新安装依赖。
+
+### 2) CI 通过但 E2E 未执行
+
+`ci-check.sh` 本身默认跳过 E2E；仓库 workflow 正常情况下会通过 `CI_RUN_E2E=1` 强制开启。
+
+如需本地复现 CI 行为：
+
+```bash
+CI_RUN_E2E=1 npm run ci:check
+```
+
+### 3) API 响应解析失败（INVALID_PAYLOAD）
+
+- 对照 `docs/api-contract.md` 与 `lib/api-contract/schemas.ts`
+- 确认后端字段与类型是否一致
+- 必要时补向后兼容映射，避免直接破坏前端读取
+
+### 4) 超时与取消语义混淆
+
+- 超时必须映射 `TIMEOUT`
+- 主动取消必须映射 `ABORTED`
+
+若出现混淆，优先检查 `lib/api-contract/client.ts` 错误归一逻辑。
+
+### 5) build 阶段字体下载失败（Geist / fonts.gstatic）
+
+症状：`next build` 报字体下载或 `@vercel/turbopack-next/internal/font/google/font` 相关错误。
+
+排查方向：
+
+1. 先确认当前环境是否可访问 `fonts.gstatic.com`。
+2. 受限网络环境建议改为本地托管字体或移除在线字体依赖。
+3. 重新执行 `npm run build` 验证。

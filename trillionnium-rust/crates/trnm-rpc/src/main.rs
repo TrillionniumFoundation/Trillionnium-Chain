@@ -4,11 +4,11 @@ use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::{
     collections::{BTreeMap, HashSet},
-    fs,
+    fs::{self, OpenOptions},
     io::{Read, Seek, SeekFrom, Write},
     net::TcpListener,
     path::{Path, PathBuf},
-    time::{SystemTime, UNIX_EPOCH},
+    time::{Duration, Instant, SystemTime, UNIX_EPOCH},
 };
 use trnm_rpc::{
     get_tx, query_account_state, submit_tx, validate_trnm_address, AccountBalanceQueryResponse,
@@ -19,8 +19,8 @@ use trnm_rpc::{
 };
 use trnm_state::StateStore;
 use trnm_types::{
-    AuditAction, AuditEvent, CapabilityToken, GovParamObject, GovProposalObject, GovProposalStatus,
-    IdentityRegistry, RequestStatus, TaskStatus, TransferTx,
+    AuditEvent, CapabilityToken, GovParamObject, GovProposalObject, GovProposalStatus,
+    IdentityRegistry, PrivacyTier, RequestStatus, TaskMetadata, TaskStatus, TransferTx,
 };
 
 const QUERY_EVENTS_LIMIT_DEFAULT: usize = 100;
@@ -52,6 +52,12 @@ const MARKET_WEIGHT_MIN: u128 = 1;
 const MARKET_WEIGHT_MAX: u128 = 1_000_000;
 const MARKET_REPUTATION_CLAMP_MIN: i64 = 1;
 const MARKET_REPUTATION_CLAMP_MAX: i64 = 1_000_000;
+const MARKET_LOCK_TIMEOUT_MS_DEFAULT: u64 = 5_000;
+const MARKET_LOCK_TIMEOUT_MS_MIN: u64 = 100;
+const MARKET_LOCK_TIMEOUT_MS_MAX: u64 = 60_000;
+const SUBMIT_MESSAGE_MAX_BYTES_ENV: &str = "TRNM_RPC_SUBMIT_MESSAGE_MAX_BYTES";
+const SUBMIT_MESSAGE_MAX_BYTES_DEFAULT: u64 = 256 * 1024;
+const SUBMIT_MESSAGE_MAX_BYTES_MIN: u64 = 1;
 
 #[derive(Debug, Parser)]
 #[command(
@@ -176,6 +182,8 @@ enum Command {
         #[arg(long)]
         task_id: u64,
     },
+    #[command(name = "market.report", visible_alias = "market-report")]
+    MarketReport {},
     DispatchOpen {
         #[arg(long, default_value = "worker-1")]
         worker_id: String,
@@ -219,6 +227,33 @@ struct MarketBid {
     worker: String,
     price: u128,
     created_at_unix_ms: u128,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct MarketMatchResult {
+    task_id: u64,
+    winner: String,
+    price: u128,
+    status: String,
+    match_policy: String,
+    matched_bid_count: usize,
+    winner_reputation: i64,
+    effective_score: u128,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct MarketReport {
+    task_count: usize,
+    open_task_count: usize,
+    matched_task_count: usize,
+    unmatched_task_count: usize,
+    bid_count: usize,
+    orphan_bid_count: usize,
+    unique_bidder_count: usize,
+    tasks_with_bids_count: usize,
+    bid_coverage_rate: f64,
+    avg_bids_per_task: f64,
+    match_rate: f64,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -342,6 +377,7 @@ struct CapabilityAuditQueryResponse {
 #[derive(Debug, Clone, PartialEq, Eq)]
 enum CapabilityAuditQueryError {
     TokenNotFound(u64),
+    InvalidRegistryState { field: &'static str, value: String },
 }
 
 impl CapabilityAuditQueryError {
@@ -350,6 +386,13 @@ impl CapabilityAuditQueryError {
             Self::TokenNotFound(token_id) => RpcErrorResponse {
                 code: "CAPABILITY_NOT_FOUND",
                 message: format!("capability token not found: {}", token_id),
+            },
+            Self::InvalidRegistryState { field, value } => RpcErrorResponse {
+                code: "INVALID_REGISTRY_STATE",
+                message: format!(
+                    "non-canonical {} in identity registry snapshot: {}",
+                    field, value
+                ),
             },
         }
     }
@@ -453,6 +496,70 @@ fn parse_i128_kv_value(raw: &str) -> Option<i128> {
     trim_wrapped_log_numeric(raw).parse::<i128>().ok()
 }
 
+fn parse_event_log_kv(line: &str) -> BTreeMap<String, String> {
+    let mut kv = BTreeMap::<String, String>::new();
+    let mut i = 0usize;
+    let bytes = line.as_bytes();
+    let len = bytes.len();
+
+    while i < len {
+        while i < len && bytes[i].is_ascii_whitespace() {
+            i += 1;
+        }
+        if i >= len {
+            break;
+        }
+
+        let key_start = i;
+        while i < len && !bytes[i].is_ascii_whitespace() && bytes[i] != b'=' {
+            i += 1;
+        }
+        if i >= len || bytes[i] != b'=' {
+            while i < len && !bytes[i].is_ascii_whitespace() {
+                i += 1;
+            }
+            continue;
+        }
+        let key_end = i;
+        i += 1;
+
+        if key_end <= key_start {
+            continue;
+        }
+        let key = &line[key_start..key_end];
+
+        let value = if i < len && (bytes[i] == b'"' || bytes[i] == b'\'') {
+            let quote = bytes[i];
+            i += 1;
+            let mut out = String::new();
+            while i < len {
+                let b = bytes[i];
+                i += 1;
+                if b == quote {
+                    break;
+                }
+                if b == b'\\' && i < len {
+                    out.push(bytes[i] as char);
+                    i += 1;
+                } else {
+                    out.push(b as char);
+                }
+            }
+            out
+        } else {
+            let val_start = i;
+            while i < len && !bytes[i].is_ascii_whitespace() {
+                i += 1;
+            }
+            line[val_start..i].to_string()
+        };
+
+        kv.insert(key.to_string(), value);
+    }
+
+    kv
+}
+
 fn load_latest_node_events() -> Vec<NodeEventRecord> {
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .parent()
@@ -478,15 +585,14 @@ fn load_latest_node_events() -> Vec<NodeEventRecord> {
 
     let mut out = Vec::new();
     for line in lines {
-        if !line.starts_with("[event]") || !line.contains("event_type=") {
+        let Some(event_pos) = line.find("[event]") else {
+            continue;
+        };
+        let event_line = &line[event_pos..];
+        if !event_line.contains("event_type=") {
             continue;
         }
-        let mut kv = BTreeMap::<String, String>::new();
-        for tok in line.split_whitespace().skip(1) {
-            if let Some((k, v)) = tok.split_once('=') {
-                kv.insert(k.to_string(), v.to_string());
-            }
-        }
+        let kv = parse_event_log_kv(event_line);
 
         let Some(task_id) = kv.get("task_id").and_then(|s| parse_u64_kv_value(s)) else {
             continue;
@@ -590,8 +696,8 @@ fn now_ms() -> u128 {
 }
 
 fn identity_registry_file() -> PathBuf {
-    if let Ok(path) = std::env::var("TRNM_RPC_IDENTITY_REGISTRY_FILE") {
-        return PathBuf::from(path);
+    if let Some(path) = normalized_path_from_env("TRNM_RPC_IDENTITY_REGISTRY_FILE") {
+        return path;
     }
     run_root().join("run/rpc/identity_registry.json")
 }
@@ -603,17 +709,6 @@ fn load_identity_registry(path: &Path) -> IdentityRegistry {
     serde_json::from_str::<IdentityRegistry>(&raw).unwrap_or_default()
 }
 
-fn extract_token_id_from_note(note: &str) -> Option<u64> {
-    let marker = "token_id=";
-    let idx = note.find(marker)?;
-    let tail = &note[idx + marker.len()..];
-    let digits: String = tail.chars().take_while(|c| c.is_ascii_digit()).collect();
-    if digits.is_empty() {
-        return None;
-    }
-    digits.parse::<u64>().ok()
-}
-
 fn query_capability_audit(
     registry: &IdentityRegistry,
     token_id: u64,
@@ -622,28 +717,34 @@ fn query_capability_audit(
         return Err(CapabilityAuditQueryError::TokenNotFound(token_id));
     };
 
-    let owner_history = registry
+    if !IdentityRegistry::is_canonical_did(&token.subject_did) {
+        return Err(CapabilityAuditQueryError::InvalidRegistryState {
+            field: "subject_did",
+            value: token.subject_did.clone(),
+        });
+    }
+
+    let mut owner_history: Vec<_> = registry
         .audit_trail()
         .iter()
-        .filter(|event| {
-            if event.subject != token.subject_did {
-                return false;
-            }
-
-            match event.action {
-                AuditAction::DidRegistered | AuditAction::DidRevoked => true,
-                AuditAction::CapabilityIssued
-                | AuditAction::CapabilityRenewed
-                | AuditAction::CapabilityRevoked => event
-                    .note
-                    .as_deref()
-                    .and_then(extract_token_id_from_note)
-                    .map(|id| id == token_id)
-                    .unwrap_or(true),
-            }
-        })
+        .filter(|event| event.subject == token.subject_did)
         .cloned()
         .collect();
+
+    if let Some(invalid_subject) = owner_history
+        .iter()
+        .map(|event| event.subject.as_str())
+        .find(|subject| !IdentityRegistry::is_canonical_did(subject))
+    {
+        return Err(CapabilityAuditQueryError::InvalidRegistryState {
+            field: "owner_history.subject",
+            value: invalid_subject.to_string(),
+        });
+    }
+
+    // Keep audit query output deterministic even when registry snapshots are
+    // merged/imported with non-canonical ordering.
+    owner_history.sort_by_key(|event| (event.at_height, event.seq));
 
     Ok(CapabilityAuditQueryResponse {
         token,
@@ -654,7 +755,14 @@ fn query_capability_audit(
 fn env_u64_with_min(name: &str, default: u64, min: u64) -> u64 {
     std::env::var(name)
         .ok()
-        .and_then(|v| v.trim().parse::<u64>().ok())
+        .and_then(|v| {
+            let normalized = normalize_wrapped_env_value(&v);
+            if normalized.is_empty() {
+                None
+            } else {
+                normalized.parse::<u64>().ok()
+            }
+        })
         .map(|v| v.max(min))
         .unwrap_or(default.max(min))
 }
@@ -662,7 +770,14 @@ fn env_u64_with_min(name: &str, default: u64, min: u64) -> u64 {
 fn env_u32_with_min(name: &str, default: u32, min: u32) -> u32 {
     std::env::var(name)
         .ok()
-        .and_then(|v| v.trim().parse::<u32>().ok())
+        .and_then(|v| {
+            let normalized = normalize_wrapped_env_value(&v);
+            if normalized.is_empty() {
+                None
+            } else {
+                normalized.parse::<u32>().ok()
+            }
+        })
         .map(|v| v.max(min))
         .unwrap_or(default.max(min))
 }
@@ -687,21 +802,173 @@ fn make_request_id(
 }
 
 fn ingress_file() -> PathBuf {
+    if let Some(path) = normalized_path_from_env("TRNM_RPC_INGRESS_FILE") {
+        return path;
+    }
     run_root().join("run/message-gateway/requests.jsonl")
 }
 
+fn submit_message_max_bytes() -> u64 {
+    env_u64_with_min(
+        SUBMIT_MESSAGE_MAX_BYTES_ENV,
+        SUBMIT_MESSAGE_MAX_BYTES_DEFAULT,
+        SUBMIT_MESSAGE_MAX_BYTES_MIN,
+    )
+}
+
+fn normalize_wrapped_env_value(raw: &str) -> &str {
+    let mut normalized = raw.trim();
+    while normalized.len() >= 2 {
+        let wrapped_by_quotes = (normalized.starts_with('"') && normalized.ends_with('"'))
+            || (normalized.starts_with('\'') && normalized.ends_with('\''))
+            || (normalized.starts_with('`') && normalized.ends_with('`'));
+        if !wrapped_by_quotes {
+            break;
+        }
+        normalized = normalized[1..normalized.len() - 1].trim();
+    }
+    normalized
+}
+
+fn normalized_path_from_env(name: &str) -> Option<PathBuf> {
+    let raw = std::env::var(name).ok()?;
+    let normalized = normalize_wrapped_env_value(&raw);
+    if normalized.is_empty() {
+        None
+    } else {
+        Some(PathBuf::from(normalized))
+    }
+}
+
 fn market_tasks_file() -> PathBuf {
-    if let Ok(path) = std::env::var("TRNM_RPC_MARKET_TASKS_FILE") {
-        return PathBuf::from(path);
+    if let Some(path) = normalized_path_from_env("TRNM_RPC_MARKET_TASKS_FILE") {
+        return path;
     }
     run_root().join("run/market/tasks.jsonl")
 }
 
 fn market_bids_file() -> PathBuf {
-    if let Ok(path) = std::env::var("TRNM_RPC_MARKET_BIDS_FILE") {
-        return PathBuf::from(path);
+    if let Some(path) = normalized_path_from_env("TRNM_RPC_MARKET_BIDS_FILE") {
+        return path;
     }
     run_root().join("run/market/bids.jsonl")
+}
+
+struct MarketFileLock {
+    lock_path: PathBuf,
+}
+
+impl Drop for MarketFileLock {
+    fn drop(&mut self) {
+        let _ = fs::remove_file(&self.lock_path);
+    }
+}
+
+fn market_lock_path(path: &Path) -> PathBuf {
+    let file_name = path
+        .file_name()
+        .and_then(|v| v.to_str())
+        .unwrap_or("market-data");
+    path.with_file_name(format!("{}.lock", file_name))
+}
+
+fn market_lock_stale_after_ms() -> Option<u128> {
+    let raw = std::env::var("TRNM_RPC_MARKET_LOCK_STALE_MS").ok()?;
+    let normalized = normalize_wrapped_env_value(&raw);
+    if normalized.is_empty() {
+        return None;
+    }
+    let parsed = normalized.parse::<u128>().ok()?;
+    Some(parsed.clamp(1_000, 15 * 60 * 1_000))
+}
+
+fn market_lock_timeout_ms() -> u64 {
+    let raw = match std::env::var("TRNM_RPC_MARKET_LOCK_TIMEOUT_MS") {
+        Ok(v) => v,
+        Err(_) => return MARKET_LOCK_TIMEOUT_MS_DEFAULT,
+    };
+    let normalized = normalize_wrapped_env_value(&raw);
+    if normalized.is_empty() {
+        return MARKET_LOCK_TIMEOUT_MS_DEFAULT;
+    }
+    let parsed = match normalized.parse::<u64>() {
+        Ok(v) => v,
+        Err(_) => return MARKET_LOCK_TIMEOUT_MS_DEFAULT,
+    };
+    parsed.clamp(MARKET_LOCK_TIMEOUT_MS_MIN, MARKET_LOCK_TIMEOUT_MS_MAX)
+}
+
+fn acquire_market_file_lock(path: &Path) -> Result<MarketFileLock> {
+    let lock_path = market_lock_path(path);
+    if let Some(parent) = lock_path.parent() {
+        fs::create_dir_all(parent)?;
+    }
+    let stale_after_ms = market_lock_stale_after_ms();
+    let timeout = Duration::from_millis(market_lock_timeout_ms());
+    let start = Instant::now();
+    loop {
+        match OpenOptions::new()
+            .create_new(true)
+            .write(true)
+            .open(&lock_path)
+        {
+            Ok(mut file) => {
+                writeln!(file, "{}", std::process::id())?;
+                return Ok(MarketFileLock { lock_path });
+            }
+            Err(err) if err.kind() == std::io::ErrorKind::AlreadyExists => {
+                if let Some(stale_after_ms) = stale_after_ms {
+                    if let Ok(meta) = fs::metadata(&lock_path) {
+                        if let Ok(modified) = meta.modified() {
+                            if let Ok(elapsed) = SystemTime::now().duration_since(modified) {
+                                if elapsed.as_millis() > stale_after_ms {
+                                    let _ = fs::remove_file(&lock_path);
+                                    continue;
+                                }
+                            }
+                        }
+                    }
+                }
+                if start.elapsed() >= timeout {
+                    return Err(anyhow!(
+                        "timed out waiting for market file lock after {}ms: {}",
+                        timeout.as_millis(),
+                        lock_path.display()
+                    ));
+                }
+                std::thread::sleep(Duration::from_millis(10));
+            }
+            Err(err) => {
+                return Err(anyhow!(
+                    "failed to acquire market file lock {}: {}",
+                    lock_path.display(),
+                    err
+                ));
+            }
+        }
+    }
+}
+
+fn write_string_atomically(path: &Path, content: &str) -> Result<()> {
+    if let Some(parent) = path.parent() {
+        fs::create_dir_all(parent)?;
+    }
+    let ts = SystemTime::now().duration_since(UNIX_EPOCH)?.as_nanos();
+    let tmp = path.with_file_name(format!(
+        ".{}.tmp.{}.{}",
+        path.file_name()
+            .and_then(|v| v.to_str())
+            .unwrap_or("market"),
+        std::process::id(),
+        ts
+    ));
+
+    fs::write(&tmp, content)?;
+    if let Err(err) = fs::rename(&tmp, path) {
+        let _ = fs::remove_file(&tmp);
+        return Err(err.into());
+    }
+    Ok(())
 }
 
 fn load_market_tasks() -> Vec<MarketTask> {
@@ -717,16 +984,12 @@ fn load_market_tasks() -> Vec<MarketTask> {
 
 fn save_market_tasks(tasks: &[MarketTask]) -> Result<()> {
     let path = market_tasks_file();
-    if let Some(parent) = path.parent() {
-        fs::create_dir_all(parent)?;
-    }
     let mut out = String::new();
     for t in tasks {
         out.push_str(&serde_json::to_string(t)?);
         out.push('\n');
     }
-    fs::write(path, out)?;
-    Ok(())
+    write_string_atomically(&path, &out)
 }
 
 fn load_market_bids() -> Vec<MarketBid> {
@@ -742,23 +1005,110 @@ fn load_market_bids() -> Vec<MarketBid> {
 
 fn save_market_bids(bids: &[MarketBid]) -> Result<()> {
     let path = market_bids_file();
-    if let Some(parent) = path.parent() {
-        fs::create_dir_all(parent)?;
-    }
     let mut out = String::new();
     for b in bids {
         out.push_str(&serde_json::to_string(b)?);
         out.push('\n');
     }
-    fs::write(path, out)?;
-    Ok(())
+    write_string_atomically(&path, &out)
 }
 
 fn market_reputation_file() -> PathBuf {
-    if let Ok(path) = std::env::var(MARKET_REPUTATION_FILE_ENV) {
-        return PathBuf::from(path);
+    if let Some(path) = normalized_path_from_env(MARKET_REPUTATION_FILE_ENV) {
+        return path;
     }
     run_root().join("run/market/reputation.json")
+}
+
+fn normalize_market_worker_key(raw: &str) -> Option<String> {
+    let sanitized = raw
+        .trim()
+        .chars()
+        // M2 micro-hardening: strip invisible joiner/ZWSP/word-joiner/BOM
+        // and soft-hyphen code points so alias normalization cannot be bypassed
+        // by hidden chars while preserving visible delimiters like '-' used by
+        // existing worker IDs.
+        .filter_map(|ch| match ch {
+            // Treat invisible separators as whitespace so aliases like
+            // "worker\u200ba" and "worker\u2060b" collapse to canonical keys.
+            '\u{200B}' | '\u{200C}' | '\u{200D}' | '\u{2060}' | '\u{FEFF}' => Some(' '),
+            // Strip soft-hyphen entirely to avoid creating fake separators.
+            '\u{00AD}' => None,
+            // Treat control bytes as whitespace separators so malformed/injected
+            // worker IDs cannot avoid alias-collapse by embedding ASCII controls.
+            _ if ch.is_control() => Some(' '),
+            _ => Some(ch),
+        })
+        .collect::<String>();
+    let normalized = sanitized
+        .to_ascii_lowercase()
+        .split_ascii_whitespace()
+        .collect::<Vec<_>>()
+        .join(" ");
+    if normalized.is_empty() {
+        None
+    } else {
+        Some(normalized)
+    }
+}
+
+fn market_worker_tie_break_key(raw: &str) -> String {
+    normalize_market_worker_key(raw).unwrap_or_else(|| raw.trim().to_ascii_lowercase())
+}
+
+fn normalize_market_status_key(raw: &str) -> String {
+    raw.trim()
+        .chars()
+        .filter_map(|ch| match ch {
+            // Treat invisible/control separators as whitespace so status checks
+            // remain stable against malformed JSONL producers and hidden-char drift.
+            '\u{00AD}' => None,
+            '\u{200B}' | '\u{200C}' | '\u{200D}' | '\u{2060}' | '\u{FEFF}' => Some(' '),
+            _ if ch.is_control() => Some(' '),
+            _ => Some(ch),
+        })
+        .collect::<String>()
+        .to_ascii_lowercase()
+        .split_ascii_whitespace()
+        .collect::<Vec<_>>()
+        .join(" ")
+}
+
+fn normalize_actor_or_signer(raw: &str) -> Option<String> {
+    let sanitized: String = raw
+        .trim()
+        .chars()
+        .filter_map(|ch| match ch {
+            '\u{200B}' | '\u{200C}' | '\u{200D}' | '\u{2060}' | '\u{FEFF}' => Some(' '),
+            _ if ch.is_control() => Some(' '),
+            _ => Some(ch),
+        })
+        .collect();
+    let collapsed = sanitized
+        .split_ascii_whitespace()
+        .collect::<Vec<_>>()
+        .join(" ");
+    if collapsed.is_empty() {
+        None
+    } else {
+        Some(collapsed)
+    }
+}
+
+fn parse_market_reputation_value(value: &serde_json::Value) -> Option<i64> {
+    value
+        .as_i64()
+        .or_else(|| {
+            let float = value.as_f64()?;
+            if !float.is_finite() || float.fract() != 0.0 {
+                return None;
+            }
+            if float < i64::MIN as f64 || float > i64::MAX as f64 {
+                return None;
+            }
+            Some(float as i64)
+        })
+        .or_else(|| value.as_str()?.trim().parse::<i64>().ok())
 }
 
 fn load_market_reputation() -> BTreeMap<String, i64> {
@@ -766,34 +1116,73 @@ fn load_market_reputation() -> BTreeMap<String, i64> {
     let Ok(raw) = fs::read_to_string(path) else {
         return BTreeMap::new();
     };
-    serde_json::from_str::<BTreeMap<String, i64>>(&raw).unwrap_or_default()
+
+    // M2 resilience: tolerate partially malformed fixtures by salvaging any
+    // object entries that still deserialize into i64 reputation values.
+    let parsed = serde_json::from_str::<serde_json::Value>(&raw)
+        .ok()
+        .and_then(|value| value.as_object().cloned())
+        .unwrap_or_default();
+
+    let mut normalized: BTreeMap<String, i64> = BTreeMap::new();
+    for (worker, rep_value) in parsed {
+        let Some(rep) = parse_market_reputation_value(&rep_value) else {
+            continue;
+        };
+        if let Some(key) = normalize_market_worker_key(&worker) {
+            normalized
+                .entry(key)
+                // M2 hardening: if aliases normalize to the same worker key,
+                // keep the strongest reputation signal to avoid accidental downgrade.
+                .and_modify(|existing| *existing = (*existing).max(rep))
+                .or_insert(rep);
+        }
+    }
+    normalized
 }
 
 fn env_u128_clamped(name: &str, default: u128, min: u128, max: u128) -> u128 {
     std::env::var(name)
         .ok()
-        .and_then(|v| v.trim().parse::<u128>().ok())
+        .and_then(|v| normalize_wrapped_env_value(&v).parse::<u128>().ok())
         .map(|v| v.clamp(min, max))
-        .unwrap_or(default.clamp(min, max))
+        .unwrap_or(default)
 }
 
 fn env_i64_clamped(name: &str, default: i64, min: i64, max: i64) -> i64 {
     std::env::var(name)
         .ok()
-        .and_then(|v| v.trim().parse::<i64>().ok())
+        .and_then(|v| normalize_wrapped_env_value(&v).parse::<i64>().ok())
         .map(|v| v.clamp(min, max))
-        .unwrap_or(default.clamp(min, max))
+        .unwrap_or(default)
 }
 
 #[derive(Debug, Clone, Copy)]
-struct MarketM2PolicyGate {
+struct MarketScoreConfig {
     price_weight: u128,
     reputation_weight: u128,
     reputation_clamp: i64,
 }
 
-fn market_m2_policy_gate() -> MarketM2PolicyGate {
-    MarketM2PolicyGate {
+#[derive(Debug, Serialize)]
+struct MarketScoreConfigOutput {
+    price_weight: u128,
+    reputation_weight: u128,
+    reputation_clamp: i64,
+}
+
+impl From<MarketScoreConfig> for MarketScoreConfigOutput {
+    fn from(value: MarketScoreConfig) -> Self {
+        Self {
+            price_weight: value.price_weight,
+            reputation_weight: value.reputation_weight,
+            reputation_clamp: value.reputation_clamp,
+        }
+    }
+}
+
+fn market_score_config() -> MarketScoreConfig {
+    MarketScoreConfig {
         price_weight: env_u128_clamped(
             MARKET_PRICE_WEIGHT_ENV,
             MARKET_PRICE_WEIGHT_DEFAULT,
@@ -815,16 +1204,27 @@ fn market_m2_policy_gate() -> MarketM2PolicyGate {
     }
 }
 
-fn market_effective_score(price: u128, reputation: i64) -> u128 {
-    let gate = market_m2_policy_gate();
+fn clamp_reputation_for_market(reputation: i64, cfg: MarketScoreConfig) -> i64 {
+    reputation.clamp(-cfg.reputation_clamp, cfg.reputation_clamp)
+}
 
-    let rep = reputation.clamp(-gate.reputation_clamp, gate.reputation_clamp);
-    let base = price.saturating_mul(gate.price_weight);
+fn market_effective_score_with_config(
+    price: u128,
+    reputation: i64,
+    cfg: MarketScoreConfig,
+) -> u128 {
+    let rep = clamp_reputation_for_market(reputation, cfg);
+    let base = price.saturating_mul(cfg.price_weight);
     if rep >= 0 {
-        base.saturating_sub((rep as u128).saturating_mul(gate.reputation_weight))
+        base.saturating_sub((rep as u128).saturating_mul(cfg.reputation_weight))
     } else {
-        base.saturating_add((rep.unsigned_abs() as u128).saturating_mul(gate.reputation_weight))
+        base.saturating_add((rep.unsigned_abs() as u128).saturating_mul(cfg.reputation_weight))
     }
+}
+
+#[cfg(test)]
+fn market_effective_score(price: u128, reputation: i64) -> u128 {
+    market_effective_score_with_config(price, reputation, market_score_config())
 }
 
 fn load_ingress_records() -> Vec<MessageIngressRecord> {
@@ -838,18 +1238,231 @@ fn load_ingress_records() -> Vec<MessageIngressRecord> {
         .collect()
 }
 
-fn save_ingress_records(records: &[MessageIngressRecord]) -> Result<()> {
-    let path = ingress_file();
+fn atomic_write_text_file(path: &Path, content: &str) -> Result<()> {
     if let Some(parent) = path.parent() {
         fs::create_dir_all(parent)?;
     }
+
+    let file_name = path.file_name().and_then(|n| n.to_str()).unwrap_or("tmp");
+    let tmp = path.with_file_name(format!(
+        ".{}.tmp-{}-{}",
+        file_name,
+        std::process::id(),
+        now_ms()
+    ));
+
+    {
+        let mut file = OpenOptions::new().create_new(true).write(true).open(&tmp)?;
+        file.write_all(content.as_bytes())?;
+        file.sync_all()?;
+    }
+
+    fs::rename(&tmp, path)?;
+
+    #[cfg(unix)]
+    {
+        if let Some(parent) = path.parent() {
+            if let Ok(dir) = OpenOptions::new().read(true).open(parent) {
+                let _ = dir.sync_all();
+            }
+        }
+    }
+
+    Ok(())
+}
+
+fn save_ingress_records(records: &[MessageIngressRecord]) -> Result<()> {
+    let path = ingress_file();
     let mut out = String::new();
     for rec in records {
         out.push_str(&serde_json::to_string(rec)?);
         out.push('\n');
     }
-    fs::write(path, out)?;
+    atomic_write_text_file(&path, &out)
+}
+
+fn next_ingress_task_id(records: &[MessageIngressRecord]) -> Result<u64> {
+    let max_existing = records.iter().map(|r| r.task_id).max().unwrap_or(10_000);
+    max_existing
+        .checked_add(1)
+        .ok_or_else(|| anyhow!("ingress task_id exhausted: {}", max_existing))
+}
+
+fn is_same_submit_message_idempotency_scope(
+    rec: &MessageIngressRecord,
+    channel: &str,
+    user_id: &str,
+    session_id: &str,
+    idempotency_key: &str,
+) -> bool {
+    rec.idempotency_key == idempotency_key
+        && rec.session_id == session_id
+        && rec.channel == channel
+        && rec.user_id == user_id
+}
+
+fn is_lower_hex_64(input: &str) -> bool {
+    input.len() == 64
+        && input
+            .bytes()
+            .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
+}
+
+fn is_nonempty_no_whitespace(input: &str) -> bool {
+    !input.is_empty() && !input.chars().any(|c| c.is_whitespace())
+}
+
+fn is_leap_year(year: u32) -> bool {
+    (year.is_multiple_of(4) && !year.is_multiple_of(100)) || year.is_multiple_of(400)
+}
+
+fn days_in_month(year: u32, month: u32) -> Option<u32> {
+    match month {
+        1 | 3 | 5 | 7 | 8 | 10 | 12 => Some(31),
+        4 | 6 | 9 | 11 => Some(30),
+        2 => Some(if is_leap_year(year) { 29 } else { 28 }),
+        _ => None,
+    }
+}
+
+fn is_canonical_rfc3339_utc_z(input: &str) -> bool {
+    if input.len() != 20 {
+        return false;
+    }
+    let bytes = input.as_bytes();
+    if !(bytes[4] == b'-'
+        && bytes[7] == b'-'
+        && bytes[10] == b'T'
+        && bytes[13] == b':'
+        && bytes[16] == b':'
+        && bytes[19] == b'Z'
+        && bytes
+            .iter()
+            .enumerate()
+            .all(|(i, b)| matches!(i, 4 | 7 | 10 | 13 | 16 | 19) || b.is_ascii_digit()))
+    {
+        return false;
+    }
+
+    let parse_u32 = |start: usize, end: usize| -> Option<u32> { input.get(start..end)?.parse().ok() };
+
+    let Some(year) = parse_u32(0, 4) else {
+        return false;
+    };
+    let Some(month) = parse_u32(5, 7) else {
+        return false;
+    };
+    let Some(day) = parse_u32(8, 10) else {
+        return false;
+    };
+    let Some(hour) = parse_u32(11, 13) else {
+        return false;
+    };
+    let Some(minute) = parse_u32(14, 16) else {
+        return false;
+    };
+    let Some(second) = parse_u32(17, 19) else {
+        return false;
+    };
+
+    let Some(max_day) = days_in_month(year, month) else {
+        return false;
+    };
+
+    (1..=max_day).contains(&day)
+        && hour <= 23
+        && minute <= 59
+        && second <= 59
+}
+
+fn validate_task_metadata_core_fields(metadata: &TaskMetadata) -> Result<()> {
+    if let Some(task_type) = metadata.task_type.as_deref() {
+        if task_type.is_empty() {
+            bail!("metadata.task_type must not be empty");
+        }
+    }
+
+    if let Some(input_hash) = metadata.input_hash.as_deref() {
+        if !is_lower_hex_64(input_hash) {
+            bail!("metadata.input_hash must be 64-char lowercase hex");
+        }
+    }
+
+    if let Some(model) = metadata.model.as_ref() {
+        if let Some(model_id) = model.model_id.as_deref() {
+            if !is_nonempty_no_whitespace(model_id) {
+                bail!("metadata.model.model_id must be non-empty and whitespace-free");
+            }
+        }
+        if let Some(model_digest) = model.model_digest.as_deref() {
+            if !is_lower_hex_64(model_digest) {
+                bail!("metadata.model.model_digest must be 64-char lowercase hex");
+            }
+        }
+        if let Some(version) = model.version.as_deref() {
+            if !is_nonempty_no_whitespace(version) {
+                bail!("metadata.model.version must be non-empty and whitespace-free");
+            }
+        }
+    }
+
+    if let Some(provenance) = metadata.provenance.as_ref() {
+        if let Some(producer_did) = provenance.producer_did.as_deref() {
+            if !(producer_did.starts_with("did:") && is_nonempty_no_whitespace(producer_did)) {
+                bail!("metadata.provenance.producer_did must be canonical did:* token");
+            }
+        }
+
+        if let Some(produced_at) = provenance.produced_at.as_deref() {
+            if !is_canonical_rfc3339_utc_z(produced_at) {
+                bail!("metadata.provenance.produced_at must be canonical RFC3339 UTC Z timestamp");
+            }
+        }
+
+        if let Some(provenance_index) = provenance.provenance_index.as_deref() {
+            if !provenance_index.starts_with("prov:")
+                || provenance_index.len() < 13
+                || !is_nonempty_no_whitespace(provenance_index)
+            {
+                bail!("metadata.provenance.provenance_index must use prov:* canonical form");
+            }
+        }
+
+        match provenance.privacy_tier {
+            Some(PrivacyTier::Public) => {
+                if provenance.provenance_index.is_some() {
+                    bail!(
+                        "metadata.provenance.provenance_index must be absent when privacy_tier=public"
+                    );
+                }
+            }
+            Some(PrivacyTier::Internal) | Some(PrivacyTier::Restricted) => {
+                if provenance.provenance_index.is_none() {
+                    bail!(
+                        "metadata.provenance.provenance_index is required when privacy_tier=internal|restricted"
+                    );
+                }
+            }
+            None => {}
+        }
+    }
+
     Ok(())
+}
+
+fn validate_submit_message_metadata(text: &str) -> Result<()> {
+    let Ok(value) = serde_json::from_str::<serde_json::Value>(text) else {
+        return Ok(());
+    };
+
+    let Some(metadata_value) = value.get("metadata") else {
+        return Ok(());
+    };
+
+    let metadata: TaskMetadata = serde_json::from_value(metadata_value.clone())
+        .map_err(|err| anyhow!("invalid metadata payload: {}", err))?;
+
+    validate_task_metadata_core_fields(&metadata)
 }
 
 fn transition_request_status(current: &str, to: RequestStatus) -> Result<String> {
@@ -859,8 +1472,8 @@ fn transition_request_status(current: &str, to: RequestStatus) -> Result<String>
 }
 
 fn account_state_file() -> PathBuf {
-    if let Ok(path) = std::env::var("TRNM_RPC_ACCOUNTS_FILE") {
-        return PathBuf::from(path);
+    if let Some(path) = normalized_path_from_env("TRNM_RPC_ACCOUNTS_FILE") {
+        return path;
     }
     run_root().join("run/rpc/accounts.json")
 }
@@ -881,8 +1494,8 @@ fn save_account_state(path: &Path, accounts: &BTreeMap<String, AccountState>) ->
 }
 
 fn tx_lifecycle_file() -> PathBuf {
-    if let Ok(path) = std::env::var("TRNM_RPC_TX_FILE") {
-        return PathBuf::from(path);
+    if let Some(path) = normalized_path_from_env("TRNM_RPC_TX_FILE") {
+        return path;
     }
     run_root().join("run/rpc/txs.json")
 }
@@ -894,8 +1507,8 @@ struct FaucetRateEntry {
 }
 
 fn faucet_limits_file() -> PathBuf {
-    if let Ok(path) = std::env::var("TRNM_RPC_FAUCET_LIMITS_FILE") {
-        return PathBuf::from(path);
+    if let Some(path) = normalized_path_from_env("TRNM_RPC_FAUCET_LIMITS_FILE") {
+        return path;
     }
     run_root().join("run/rpc/faucet_limits.json")
 }
@@ -1011,10 +1624,8 @@ fn normalize_tx_hash_lookup(raw: &str) -> String {
     for delimiter in ['=', ':'] {
         if let Some((k, v)) = normalized.split_once(delimiter) {
             let key = k.trim();
-            let normalized_key: String = key
-                .chars()
-                .filter(|c| c.is_ascii_alphanumeric())
-                .collect();
+            let normalized_key: String =
+                key.chars().filter(|c| c.is_ascii_alphanumeric()).collect();
             if normalized_key == "txhash" || normalized_key == "hash" {
                 let mut value = v.trim_matches(|c: char| {
                     c.is_ascii_whitespace()
@@ -1214,10 +1825,10 @@ fn summarize_challenge_treasury(
                 }
             }
             "resolve" | "timeout" => {
-                let maybe_bond = posted_by_task.remove(&e.task_id).unwrap_or(0);
-                bond_amount = maybe_bond;
                 match e.bond_disposition.as_deref() {
                     Some("forfeited") => {
+                        let maybe_bond = posted_by_task.remove(&e.task_id).unwrap_or(0);
+                        bond_amount = maybe_bond;
                         if maybe_bond > 0 {
                             escrow_balance = escrow_balance.saturating_sub(maybe_bond);
                             forfeits_balance = forfeits_balance.saturating_add(maybe_bond);
@@ -1239,6 +1850,8 @@ fn summarize_challenge_treasury(
                         posted_open_in_window.remove(&e.task_id);
                     }
                     Some("refunded") => {
+                        let maybe_bond = posted_by_task.remove(&e.task_id).unwrap_or(0);
+                        bond_amount = maybe_bond;
                         if maybe_bond > 0 {
                             escrow_balance = escrow_balance.saturating_sub(maybe_bond);
                             escrow_delta = -i128::try_from(maybe_bond).ok().unwrap_or(i128::MAX);
@@ -1310,6 +1923,88 @@ fn summarize_challenge_treasury(
     }
 }
 
+fn http_json_response(status_line: &str, body: &str) -> String {
+    format!(
+        "HTTP/1.1 {status_line}\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{}",
+        body.len(),
+        body
+    )
+}
+
+fn parse_http_get_path(first_line: &str) -> Option<&str> {
+    let line = first_line.trim_end_matches(['\r', '\n']);
+    if line.is_empty() || line.chars().any(|ch| ch.is_control() && ch != '\t') {
+        return None;
+    }
+
+    let first_sp = line.find(' ')?;
+    let method = &line[..first_sp];
+    if method != "GET" {
+        return None;
+    }
+
+    let mut rest = line[first_sp + 1..].trim_start_matches([' ', '\t']);
+    if rest.is_empty() {
+        return None;
+    }
+
+    let second_sp = rest.find(' ')?;
+    let path = &rest[..second_sp];
+    if !path.starts_with('/') {
+        return None;
+    }
+    rest = rest[second_sp + 1..].trim_start_matches([' ', '\t']);
+    if rest.is_empty() || !rest.starts_with("HTTP/") {
+        return None;
+    }
+
+    Some(path.split('?').next().unwrap_or(path))
+}
+
+fn normalize_capability_subject_lookup(raw: &str) -> Option<String> {
+    let normalized = raw
+        .trim()
+        .chars()
+        .filter_map(|ch| match ch {
+            '\u{200B}' | '\u{200C}' | '\u{200D}' | '\u{2060}' | '\u{FEFF}' => None,
+            _ if ch.is_control() => None,
+            _ => Some(ch),
+        })
+        .collect::<String>();
+    if normalized.is_empty() {
+        None
+    } else {
+        Some(normalized)
+    }
+}
+
+fn resolve_capability_token_subject_or_token(
+    registry: &IdentityRegistry,
+    subject_or_token: &str,
+) -> Option<u64> {
+    let normalized = normalize_capability_subject_lookup(subject_or_token)?;
+    if let Ok(token_id) = normalized.parse::<u64>() {
+        return Some(token_id);
+    }
+
+    if !IdentityRegistry::is_canonical_did(&normalized) {
+        return None;
+    }
+
+    let mut subject_tokens = registry
+        .capability_ids_by_subject(&normalized)
+        .into_iter()
+        .filter(|token_id| {
+            registry
+                .capability(*token_id)
+                .map(|token| token.subject_did == normalized)
+                .unwrap_or(false)
+        })
+        .collect::<Vec<_>>();
+    subject_tokens.sort_unstable();
+    subject_tokens.last().copied()
+}
+
 fn serve_health(host: &str, port: u16) -> Result<()> {
     let addr = format!("{}:{}", host, port);
     let listener = TcpListener::bind(&addr)?;
@@ -1321,34 +2016,108 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
             Err(_) => continue,
         };
 
-        let mut buf = [0u8; 2048];
+        let mut buf = [0u8; 4096];
         let n = stream.read(&mut buf).unwrap_or(0);
         let req = String::from_utf8_lossy(&buf[..n]);
         let first = req.lines().next().unwrap_or("");
+        let path = parse_http_get_path(first);
 
-        if first.starts_with("GET /health") {
-            let body = serde_json::json!({
-                "ok": true,
-                "service": "trnm-rpc",
-                "ts_unix_ms": now_ms(),
-                "version": 1
-            })
-            .to_string();
-            let resp = format!(
-                "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{}",
-                body.len(),
-                body
-            );
-            let _ = stream.write_all(resp.as_bytes());
-        } else {
-            let body = "{\"ok\":false,\"code\":\"NOT_FOUND\"}";
-            let resp = format!(
-                "HTTP/1.1 404 Not Found\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{}",
-                body.len(),
-                body
-            );
-            let _ = stream.write_all(resp.as_bytes());
-        }
+        let response = match path {
+            Some("/health") => {
+                let body = serde_json::json!({
+                    "ok": true,
+                    "service": "trnm-rpc",
+                    "ts_unix_ms": now_ms(),
+                    "version": 1
+                })
+                .to_string();
+                http_json_response("200 OK", &body)
+            }
+            Some(path) if path.starts_with("/query-task/") => {
+                let task_id = path.trim_start_matches("/query-task/").parse::<u64>();
+                match task_id {
+                    Ok(task_id) => {
+                        let node_events = load_latest_node_events();
+                        let recs = load_latest_adapter_records();
+                        match query_task_response(task_id, &node_events, &recs) {
+                            Ok(out) => {
+                                let body = serde_json::to_string(&out).unwrap_or_else(|_| {
+                                    "{\"ok\":false,\"code\":\"SERDE_ERROR\"}".to_string()
+                                });
+                                http_json_response("200 OK", &body)
+                            }
+                            Err(err) => {
+                                let body = serde_json::json!({"ok": false, "code": "NOT_FOUND", "message": err.to_string()}).to_string();
+                                http_json_response("404 Not Found", &body)
+                            }
+                        }
+                    }
+                    Err(_) => {
+                        let body = "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid task_id\"}";
+                        http_json_response("400 Bad Request", body)
+                    }
+                }
+            }
+            Some(path) if path.starts_with("/query-events/") => {
+                let task_id = path.trim_start_matches("/query-events/").parse::<u64>();
+                match task_id {
+                    Ok(task_id) => {
+                        let node_events = load_latest_node_events();
+                        let recs = load_latest_adapter_records();
+                        match query_events_response(
+                            task_id,
+                            QUERY_EVENTS_LIMIT_DEFAULT,
+                            &node_events,
+                            &recs,
+                        ) {
+                            Ok(events) => {
+                                let body = serde_json::to_string(&events).unwrap_or_else(|_| {
+                                    "{\"ok\":false,\"code\":\"SERDE_ERROR\"}".to_string()
+                                });
+                                http_json_response("200 OK", &body)
+                            }
+                            Err(err) => {
+                                let body = serde_json::json!({"ok": false, "code": "NOT_FOUND", "message": err.to_string()}).to_string();
+                                http_json_response("404 Not Found", &body)
+                            }
+                        }
+                    }
+                    Err(_) => {
+                        let body = "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid task_id\"}";
+                        http_json_response("400 Bad Request", body)
+                    }
+                }
+            }
+            Some(path) if path.starts_with("/query-capability-audit/") => {
+                let subject_or_token = path.trim_start_matches("/query-capability-audit/");
+                let registry = load_identity_registry(&identity_registry_file());
+                if let Some(token_id) =
+                    resolve_capability_token_subject_or_token(&registry, subject_or_token)
+                {
+                    match query_capability_audit(&registry, token_id) {
+                        Ok(out) => {
+                            let body = serde_json::to_string(&out).unwrap_or_else(|_| {
+                                "{\"ok\":false,\"code\":\"SERDE_ERROR\"}".to_string()
+                            });
+                            http_json_response("200 OK", &body)
+                        }
+                        Err(err) => {
+                            let body = serde_json::json!({"ok": false, "code": "NOT_FOUND", "message": err.to_rpc_error().message}).to_string();
+                            http_json_response("404 Not Found", &body)
+                        }
+                    }
+                } else {
+                    let body = "{\"ok\":false,\"code\":\"NOT_FOUND\",\"message\":\"token or subject not found\"}";
+                    http_json_response("404 Not Found", body)
+                }
+            }
+            _ => {
+                let body = "{\"ok\":false,\"code\":\"NOT_FOUND\"}";
+                http_json_response("404 Not Found", body)
+            }
+        };
+
+        let _ = stream.write_all(response.as_bytes());
     }
 
     Ok(())
@@ -1367,6 +2136,57 @@ fn task_status_from_node_status(status: &str) -> Option<TaskStatus> {
     }
 }
 
+fn is_legal_node_event_transition(event_type: &str, from_status: &str, to_status: &str) -> bool {
+    matches!(
+        (event_type, from_status, to_status),
+        ("create", "NONE", "Open")
+            | ("accept", "Open", "Assigned")
+            | ("commit", "Assigned", "Committed")
+            | ("reveal", "Committed", "Revealed")
+            | ("challenge", "Revealed", "Challenged")
+            | ("resolve", "Challenged", "Completed")
+            | ("resolve", "Challenged", "Slashed")
+            | ("timeout", "Committed", "Slashed")
+            | ("timeout", "Revealed", "Completed")
+            | ("timeout", "Challenged", "Completed")
+    )
+}
+
+fn is_trusted_event_source(event: &NodeEventRecord) -> bool {
+    let Some(actor) = normalize_actor_or_signer(&event.actor) else {
+        return false;
+    };
+    let signer = event
+        .signer
+        .as_deref()
+        .and_then(normalize_actor_or_signer)
+        .unwrap_or_else(|| actor.clone());
+
+    match event.event_type.as_str() {
+        "accept" | "commit" | "reveal" | "challenge" | "create" => signer == actor,
+        // Hardening: terminal resolve events must be adjudicated by governance
+        // authority only; reserve `system` for timeout automation paths.
+        "resolve" => signer == actor && actor == "authority",
+        "timeout" => signer == actor && matches!(actor.as_str(), "authority" | "system"),
+        _ => false,
+    }
+}
+
+fn filtered_node_events_for_task<'a>(
+    task_id: u64,
+    node_events: &'a [NodeEventRecord],
+) -> impl Iterator<Item = &'a NodeEventRecord> {
+    node_events.iter().filter(move |event| {
+        event.task_id == task_id
+            && is_legal_node_event_transition(
+                event.event_type.as_str(),
+                event.from_status.as_str(),
+                event.to_status.as_str(),
+            )
+            && is_trusted_event_source(event)
+    })
+}
+
 fn query_task_from_node_events(
     task_id: u64,
     node_events: &[NodeEventRecord],
@@ -1375,7 +2195,7 @@ fn query_task_from_node_events(
     let mut status: Option<TaskStatus> = None;
     let mut worker: Option<String> = None;
 
-    for event in node_events.iter().filter(|e| e.task_id == task_id) {
+    for event in filtered_node_events_for_task(task_id, node_events) {
         version += 1;
         if let Some(mapped) = task_status_from_node_status(event.to_status.as_str()) {
             status = Some(mapped);
@@ -1384,7 +2204,7 @@ fn query_task_from_node_events(
             || event.event_type == "commit"
             || event.event_type == "reveal"
         {
-            worker = Some(event.actor.clone());
+            worker = normalize_actor_or_signer(&event.actor);
         }
     }
 
@@ -1398,6 +2218,166 @@ fn query_task_from_node_events(
     })
 }
 
+fn query_task_response(
+    task_id: u64,
+    node_events: &[NodeEventRecord],
+    recs: &[AdapterRecord],
+) -> Result<TaskQueryResponse> {
+    if let Some(out) = query_task_from_node_events(task_id, node_events) {
+        return Ok(out);
+    }
+
+    let task_recs: Vec<&AdapterRecord> = recs
+        .iter()
+        .filter(|r| {
+            r.task_id == task_id
+                && r.status == "accepted"
+                && matches!(r.kind.as_str(), "commit" | "reveal")
+                && r.worker
+                    .as_deref()
+                    .and_then(normalize_actor_or_signer)
+                    .is_some()
+        })
+        .collect();
+    if task_recs.is_empty() {
+        bail!("task not found: {}", task_id);
+    }
+    let has_reveal = task_recs.iter().any(|r| r.kind == "reveal");
+    let has_commit = task_recs.iter().any(|r| r.kind == "commit");
+    let status = if has_reveal {
+        TaskStatus::Revealed
+    } else if has_commit {
+        TaskStatus::Committed
+    } else {
+        TaskStatus::Open
+    };
+    let worker = task_recs.iter().find_map(|r| r.worker.clone());
+    let result_hash_hex = task_recs.iter().rev().find_map(|r| {
+        if r.kind == "reveal" {
+            r.result_hash.clone()
+        } else {
+            None
+        }
+    });
+    Ok(TaskQueryResponse {
+        task_id,
+        status,
+        worker,
+        bounty: 100,
+        result_hash_hex,
+        version: task_recs.len() as u64,
+    })
+}
+
+fn query_events_response(
+    task_id: u64,
+    limit: usize,
+    node_events: &[NodeEventRecord],
+    recs: &[AdapterRecord],
+) -> Result<Vec<EventQueryResponse>> {
+    let limit = clamp_limit(
+        "QueryEvents",
+        limit,
+        QUERY_EVENTS_LIMIT_DEFAULT,
+        QUERY_EVENTS_LIMIT_MAX,
+    );
+    let mut events = Vec::new();
+
+    for e in filtered_node_events_for_task(task_id, node_events) {
+        let Some(actor) = normalize_actor_or_signer(&e.actor) else {
+            continue;
+        };
+        let signer = e
+            .signer
+            .as_deref()
+            .and_then(normalize_actor_or_signer)
+            .or_else(|| Some(actor.clone()));
+        events.push(EventQueryResponse {
+            event_type: e.event_type.clone(),
+            task_id,
+            from_status: e.from_status.clone(),
+            to_status: e.to_status.clone(),
+            actor,
+            tx_id: e.tx_id,
+            block_height: e.block_height,
+            state_root: e.state_root.clone(),
+            ts_unix_ms: e.ts_unix_ms,
+            signer,
+            challenger: e.challenger.clone(),
+            tx_hash: e.tx_hash.clone(),
+            resolution_code: e.resolution_code.clone(),
+            treasury_delta: e.treasury_delta,
+            challenger_delta: e.challenger_delta,
+            bond_disposition: e.bond_disposition.clone(),
+        });
+    }
+
+    if events.is_empty() {
+        let mut tx_id = 1u64;
+        let mut has_commit = false;
+        for r in recs
+            .iter()
+            .filter(|r| r.task_id == task_id && r.status == "accepted")
+        {
+            let Some(actor) = r.worker.as_deref().and_then(normalize_actor_or_signer) else {
+                continue;
+            };
+            let kind = r.kind.clone();
+            if kind == "reveal" && !has_commit {
+                continue;
+            }
+            let Some((from_status, to_status)) = (match kind.as_str() {
+                "commit" => Some(("Assigned".to_string(), "Committed".to_string())),
+                "reveal" => Some(("Committed".to_string(), "Revealed".to_string())),
+                _ => None,
+            }) else {
+                continue;
+            };
+
+            let tx_hash = r.tx_hash.clone().and_then(|v| {
+                let normalized = normalize_tx_hash_lookup(&v);
+                if is_hex_like_tx_hash(&normalized) {
+                    Some(normalized)
+                } else {
+                    None
+                }
+            });
+
+            events.push(EventQueryResponse {
+                event_type: kind.clone(),
+                task_id,
+                from_status,
+                to_status,
+                actor: actor.clone(),
+                tx_id,
+                block_height: tx_id,
+                state_root: "adapter_state".into(),
+                ts_unix_ms: r.ts as u128,
+                signer: Some(actor),
+                challenger: None,
+                tx_hash,
+                resolution_code: None,
+                treasury_delta: None,
+                challenger_delta: None,
+                bond_disposition: None,
+            });
+            if kind == "commit" {
+                has_commit = true;
+            }
+            tx_id += 1;
+        }
+    }
+
+    if events.is_empty() {
+        bail!("events not found for task_id={}", task_id);
+    }
+    if events.len() > limit {
+        let keep_from = events.len() - limit;
+        events = events.split_off(keep_from);
+    }
+    Ok(events)
+}
+
 fn main() -> Result<()> {
     let args = Args::parse();
     let st = governance_state();
@@ -1406,43 +2386,7 @@ fn main() -> Result<()> {
 
     match args.cmd {
         Command::QueryTask { task_id } => {
-            if let Some(out) = query_task_from_node_events(task_id, &node_events) {
-                println!("{}", serde_json::to_string_pretty(&out)?);
-                return Ok(());
-            }
-
-            let task_recs: Vec<&AdapterRecord> = recs
-                .iter()
-                .filter(|r| r.task_id == task_id && r.status == "accepted")
-                .collect();
-            if task_recs.is_empty() {
-                bail!("task not found: {}", task_id);
-            }
-            let has_reveal = task_recs.iter().any(|r| r.kind == "reveal");
-            let has_commit = task_recs.iter().any(|r| r.kind == "commit");
-            let status = if has_reveal {
-                TaskStatus::Revealed
-            } else if has_commit {
-                TaskStatus::Committed
-            } else {
-                TaskStatus::Open
-            };
-            let worker = task_recs.iter().find_map(|r| r.worker.clone());
-            let result_hash_hex = task_recs.iter().rev().find_map(|r| {
-                if r.kind == "reveal" {
-                    r.result_hash.clone()
-                } else {
-                    None
-                }
-            });
-            let out = TaskQueryResponse {
-                task_id,
-                status,
-                worker,
-                bounty: 100,
-                result_hash_hex,
-                version: task_recs.len() as u64,
-            };
+            let out = query_task_response(task_id, &node_events, &recs)?;
             println!("{}", serde_json::to_string_pretty(&out)?);
         }
         Command::QueryProposal { proposal_id } => {
@@ -1480,85 +2424,7 @@ fn main() -> Result<()> {
             println!("{}", serde_json::to_string_pretty(&out)?);
         }
         Command::QueryEvents { task_id, limit } => {
-            let limit = clamp_limit(
-                "QueryEvents",
-                limit,
-                QUERY_EVENTS_LIMIT_DEFAULT,
-                QUERY_EVENTS_LIMIT_MAX,
-            );
-            let mut events = Vec::new();
-
-            for e in node_events.iter().filter(|e| e.task_id == task_id) {
-                events.push(EventQueryResponse {
-                    event_type: e.event_type.clone(),
-                    task_id,
-                    from_status: e.from_status.clone(),
-                    to_status: e.to_status.clone(),
-                    actor: e.actor.clone(),
-                    tx_id: e.tx_id,
-                    block_height: e.block_height,
-                    state_root: e.state_root.clone(),
-                    ts_unix_ms: e.ts_unix_ms,
-                    signer: e.signer.clone().or_else(|| Some(e.actor.clone())),
-                    challenger: e.challenger.clone(),
-                    tx_hash: e.tx_hash.clone(),
-                    resolution_code: e.resolution_code.clone(),
-                    treasury_delta: e.treasury_delta,
-                    challenger_delta: e.challenger_delta,
-                    bond_disposition: e.bond_disposition.clone(),
-                });
-            }
-
-            if events.is_empty() {
-                let mut tx_id = 1u64;
-                for r in recs
-                    .into_iter()
-                    .filter(|r| r.task_id == task_id && r.status == "accepted")
-                {
-                    let (from_status, to_status, actor) = if r.kind == "commit" {
-                        (
-                            "Assigned".to_string(),
-                            "Committed".to_string(),
-                            r.worker.clone().unwrap_or_else(|| "worker".into()),
-                        )
-                    } else {
-                        (
-                            "Committed".to_string(),
-                            "Revealed".to_string(),
-                            "worker".to_string(),
-                        )
-                    };
-                    let signer = Some(actor.clone());
-                    let tx_hash = r.tx_hash;
-                    events.push(EventQueryResponse {
-                        event_type: r.kind,
-                        task_id,
-                        from_status,
-                        to_status,
-                        actor,
-                        tx_id,
-                        block_height: tx_id,
-                        state_root: "adapter_state".into(),
-                        ts_unix_ms: r.ts as u128,
-                        signer,
-                        challenger: None,
-                        tx_hash,
-                        resolution_code: None,
-                        treasury_delta: None,
-                        challenger_delta: None,
-                        bond_disposition: None,
-                    });
-                    tx_id += 1;
-                }
-            }
-
-            if events.is_empty() {
-                bail!("events not found for task_id={}", task_id);
-            }
-            if events.len() > limit {
-                let keep_from = events.len() - limit;
-                events = events.split_off(keep_from);
-            }
+            let events = query_events_response(task_id, limit, &node_events, &recs)?;
             println!("{}", serde_json::to_string_pretty(&events)?);
         }
         Command::QueryCapabilityAudit { token_id } => {
@@ -1775,18 +2641,39 @@ fn main() -> Result<()> {
             text,
             idempotency_key,
         } => {
-            let records = load_ingress_records();
-            if let Some(found) = records
-                .iter()
-                .find(|r| r.idempotency_key == idempotency_key && r.session_id == session_id)
-            {
+            let path = ingress_file();
+            let _lock = acquire_market_file_lock(&path)?;
+
+            let mut records = load_ingress_records();
+            if let Some(found) = records.iter().rev().find(|r| {
+                is_same_submit_message_idempotency_scope(
+                    r,
+                    &channel,
+                    &user_id,
+                    &session_id,
+                    &idempotency_key,
+                )
+            }) {
                 println!("{}", serde_json::to_string_pretty(found)?);
                 return Ok(());
             }
 
+            // Quota gate applies to fresh ingress only. Existing idempotent records
+            // must still replay successfully under tighter runtime limits.
+            let max_bytes = submit_message_max_bytes() as usize;
+            if text.len() > max_bytes {
+                bail!(
+                    "submit-message text exceeds {} bytes limit (got {})",
+                    max_bytes,
+                    text.len()
+                );
+            }
+
+            validate_submit_message_metadata(&text)?;
+
             let ts = now_ms();
             let request_id = make_request_id(&channel, &user_id, &session_id, &idempotency_key, ts);
-            let task_id = 10_000 + records.len() as u64 + 1;
+            let task_id = next_ingress_task_id(&records)?;
             let rec = MessageIngressRecord {
                 request_id,
                 task_id,
@@ -1807,20 +2694,8 @@ fn main() -> Result<()> {
                 reveal_tx_hash: None,
             };
 
-            let path = ingress_file();
-            if let Some(parent) = path.parent() {
-                fs::create_dir_all(parent)?;
-            }
-            let mut buf = String::new();
-            if let Ok(existing) = fs::read_to_string(&path) {
-                buf.push_str(&existing);
-                if !existing.ends_with('\n') {
-                    buf.push('\n');
-                }
-            }
-            buf.push_str(&serde_json::to_string(&rec)?);
-            buf.push('\n');
-            fs::write(&path, buf)?;
+            records.push(rec.clone());
+            save_ingress_records(&records)?;
 
             let out = MessageRequestQueryResponse {
                 request_id: rec.request_id,
@@ -1874,7 +2749,15 @@ fn main() -> Result<()> {
             };
 
             let mut events = Vec::new();
-            for e in node_events.iter().filter(|e| e.task_id == rec.task_id) {
+            for e in filtered_node_events_for_task(rec.task_id, &node_events) {
+                let Some(actor) = normalize_actor_or_signer(&e.actor) else {
+                    continue;
+                };
+                let signer = e
+                    .signer
+                    .as_deref()
+                    .and_then(normalize_actor_or_signer)
+                    .or_else(|| Some(actor.clone()));
                 let tx_hash = match e.event_type.as_str() {
                     "commit" => rec.commit_tx_hash.clone().or_else(|| e.tx_hash.clone()),
                     "reveal" => rec.reveal_tx_hash.clone().or_else(|| e.tx_hash.clone()),
@@ -1892,12 +2775,12 @@ fn main() -> Result<()> {
                     task_id: rec.task_id,
                     from_status: e.from_status.clone(),
                     to_status: e.to_status.clone(),
-                    actor: e.actor.clone(),
+                    actor,
                     tx_id: e.tx_id,
                     block_height: e.block_height,
                     state_root: e.state_root.clone(),
                     ts_unix_ms: e.ts_unix_ms,
-                    signer: e.signer.clone().or_else(|| Some(e.actor.clone())),
+                    signer,
                     challenger: e.challenger.clone(),
                     tx_hash,
                     resolution_code,
@@ -1938,18 +2821,38 @@ fn main() -> Result<()> {
             bounty,
             description,
         } => {
-            let mut tasks = load_market_tasks();
-            let task_id = 20_000 + tasks.len() as u64 + 1;
-            let task = MarketTask {
-                task_id,
-                creator,
-                bounty,
-                description,
-                status: "open".into(),
-                created_at_unix_ms: now_ms(),
+            let creator = creator.trim().to_string();
+
+            if creator.is_empty() {
+                return Err(rpc_fail(RpcErrorResponse {
+                    code: "task-creator-invalid",
+                    message: "market task creator must be non-empty".to_string(),
+                }));
+            }
+            if bounty == 0 {
+                return Err(rpc_fail(RpcErrorResponse {
+                    code: "task-bounty-invalid",
+                    message: "market task bounty must be greater than zero".to_string(),
+                }));
+            }
+
+            let task = {
+                let tasks_path = market_tasks_file();
+                let _lock = acquire_market_file_lock(&tasks_path)?;
+                let mut tasks = load_market_tasks();
+                let task_id = 20_000 + tasks.len() as u64 + 1;
+                let task = MarketTask {
+                    task_id,
+                    creator,
+                    bounty,
+                    description,
+                    status: "open".into(),
+                    created_at_unix_ms: now_ms(),
+                };
+                tasks.push(task.clone());
+                save_market_tasks(&tasks)?;
+                task
             };
-            tasks.push(task.clone());
-            save_market_tasks(&tasks)?;
             println!("{}", serde_json::to_string_pretty(&task)?);
         }
         Command::MarketSubmitBid {
@@ -1957,25 +2860,85 @@ fn main() -> Result<()> {
             worker,
             price,
         } => {
-            let tasks = load_market_tasks();
-            if !tasks.iter().any(|t| t.task_id == task_id) {
+            if worker.trim().is_empty() {
                 return Err(rpc_fail(RpcErrorResponse {
-                    code: "task-not-found",
-                    message: format!("market task not found: {}", task_id),
+                    code: "worker-id-invalid",
+                    message: format!("market bid worker must be non-empty for task {}", task_id),
                 }));
             }
-            let mut bids = load_market_bids();
-            let bid = MarketBid {
-                task_id,
-                worker,
-                price,
-                created_at_unix_ms: now_ms(),
+            if price == 0 {
+                return Err(rpc_fail(RpcErrorResponse {
+                    code: "bid-price-invalid",
+                    message: format!(
+                        "market bid price must be greater than zero for task {}",
+                        task_id
+                    ),
+                }));
+            }
+            let normalized_worker =
+                normalize_market_worker_key(&worker).expect("worker checked non-empty");
+            let bid = {
+                // Acquire task lock first and keep it through bid persist so task
+                // status checks and bid append are linearizable with match_task.
+                let tasks_path = market_tasks_file();
+                let _tasks_lock = acquire_market_file_lock(&tasks_path)?;
+                let tasks = load_market_tasks();
+                let Some(task) = tasks.iter().find(|t| t.task_id == task_id) else {
+                    return Err(rpc_fail(RpcErrorResponse {
+                        code: "task-not-found",
+                        message: format!("market task not found: {}", task_id),
+                    }));
+                };
+                if task.status != "open" {
+                    return Err(rpc_fail(RpcErrorResponse {
+                        code: "task-not-open",
+                        message: format!("market task not in open status: {}", task.status),
+                    }));
+                }
+                if price > task.bounty {
+                    return Err(rpc_fail(RpcErrorResponse {
+                        code: "bid-above-bounty",
+                        message: format!(
+                            "market bid price {} exceeds task bounty {} for task {}",
+                            price, task.bounty, task_id
+                        ),
+                    }));
+                }
+
+                let bids_path = market_bids_file();
+                let _bids_lock = acquire_market_file_lock(&bids_path)?;
+                let mut bids = load_market_bids();
+                if bids.iter().any(|b| {
+                    b.task_id == task_id
+                        && normalize_market_worker_key(&b.worker)
+                            .map(|existing| existing == normalized_worker)
+                            .unwrap_or(false)
+                }) {
+                    return Err(rpc_fail(RpcErrorResponse {
+                        code: "duplicate-bid",
+                        message: format!(
+                            "worker {} already has a bid for task {}",
+                            worker, task_id
+                        ),
+                    }));
+                }
+                let bid = MarketBid {
+                    task_id,
+                    worker,
+                    price,
+                    created_at_unix_ms: now_ms(),
+                };
+                bids.push(bid.clone());
+                save_market_bids(&bids)?;
+                bid
             };
-            bids.push(bid.clone());
-            save_market_bids(&bids)?;
             println!("{}", serde_json::to_string_pretty(&bid)?);
         }
         Command::MarketMatchTask { task_id } => {
+            let tasks_path = market_tasks_file();
+            let _tasks_lock = acquire_market_file_lock(&tasks_path)?;
+            let bids_path = market_bids_file();
+            let _bids_lock = acquire_market_file_lock(&bids_path)?;
             let mut tasks = load_market_tasks();
             let Some(task) = tasks.iter_mut().find(|t| t.task_id == task_id) else {
                 return Err(rpc_fail(RpcErrorResponse {
@@ -2001,32 +2964,132 @@ fn main() -> Result<()> {
             }
 
             let reputation = load_market_reputation();
+            let score_cfg = market_score_config();
+            let matched_bid_count = task_bids.len();
             let winner = task_bids
                 .into_iter()
                 .min_by_key(|b| {
-                    let rep = *reputation.get(&b.worker).unwrap_or(&0);
+                    let rep = normalize_market_worker_key(&b.worker)
+                        .and_then(|k| reputation.get(&k).copied())
+                        .unwrap_or(0);
+                    let worker_key = market_worker_tie_break_key(&b.worker);
                     (
-                        market_effective_score(b.price, rep),
+                        market_effective_score_with_config(b.price, rep, score_cfg),
                         b.price,
                         b.created_at_unix_ms,
-                        &b.worker,
+                        worker_key,
                     )
                 })
                 .expect("non-empty bids");
-            let winner_reputation = *reputation.get(&winner.worker).unwrap_or(&0);
-            let winner_score = market_effective_score(winner.price, winner_reputation);
+            let winner_reputation = normalize_market_worker_key(&winner.worker)
+                .and_then(|k| reputation.get(&k).copied())
+                .unwrap_or(0);
+            let winner_reputation_effective =
+                clamp_reputation_for_market(winner_reputation, score_cfg);
+            let base_score = winner.price.saturating_mul(score_cfg.price_weight);
+            let reputation_weight = if winner_reputation_effective > 0 {
+                (winner_reputation_effective as u128).saturating_mul(score_cfg.reputation_weight)
+            } else {
+                0
+            };
+            let penalty = if winner_reputation_effective < 0 {
+                (winner_reputation_effective.unsigned_abs() as u128)
+                    .saturating_mul(score_cfg.reputation_weight)
+            } else {
+                0
+            };
+            let winner_score = if winner_reputation_effective >= 0 {
+                base_score.saturating_sub(reputation_weight)
+            } else {
+                base_score.saturating_add(penalty)
+            };
 
             task.status = "matched".into();
             save_market_tasks(&tasks)?;
 
-            println!(
-                "{{\"task_id\":{},\"winner\":\"{}\",\"price\":{},\"status\":\"matched\",\"match_policy\":\"price_reputation_weighted\",\"winner_reputation\":{},\"effective_score\":{}}}",
-                task_id,
-                winner.worker,
-                winner.price,
-                winner_reputation,
-                winner_score
-            );
+            let out = serde_json::json!({
+                "task_id": task_id,
+                "winner": winner.worker,
+                "price": winner.price,
+                "status": "matched",
+                "match_policy": "price_reputation_weighted",
+                "matched_bid_count": matched_bid_count,
+                "winner_reputation": winner_reputation,
+                "winner_reputation_effective": winner_reputation_effective,
+                "base_score": base_score,
+                "reputation_weight": reputation_weight,
+                "penalty": penalty,
+                "final_score": winner_score,
+                "effective_score": winner_score,
+                "match_config": MarketScoreConfigOutput::from(score_cfg),
+            });
+            println!("{}", serde_json::to_string(&out)?);
+        }
+        Command::MarketReport {} => {
+            let tasks = load_market_tasks();
+            let bids = load_market_bids();
+            let task_count = tasks.len();
+            let open_task_count = tasks
+                .iter()
+                .filter(|t| normalize_market_status_key(&t.status) == "open")
+                .count();
+            let matched_task_count = tasks
+                .iter()
+                .filter(|t| normalize_market_status_key(&t.status) == "matched")
+                .count();
+            let bid_count = bids.len();
+            let unmatched_task_count = task_count.saturating_sub(matched_task_count);
+
+            let unique_bidder_count = bids
+                .iter()
+                .filter_map(|b| normalize_market_worker_key(&b.worker))
+                .collect::<std::collections::BTreeSet<_>>()
+                .len();
+            let known_task_ids = tasks
+                .iter()
+                .map(|t| t.task_id)
+                .collect::<std::collections::BTreeSet<_>>();
+            let tasks_with_bids_count = bids
+                .iter()
+                .filter_map(|b| normalize_market_worker_key(&b.worker).map(|_| b.task_id))
+                .collect::<std::collections::BTreeSet<_>>()
+                .into_iter()
+                .filter(|task_id| known_task_ids.contains(task_id))
+                .count();
+            let orphan_bid_count = bids
+                .iter()
+                .filter(|b| !known_task_ids.contains(&b.task_id))
+                .count();
+            let bid_coverage_rate = if task_count == 0 {
+                0.0
+            } else {
+                tasks_with_bids_count as f64 / task_count as f64
+            };
+            let avg_bids_per_task = if task_count == 0 {
+                0.0
+            } else {
+                bid_count as f64 / task_count as f64
+            };
+            let match_rate = if task_count == 0 {
+                0.0
+            } else {
+                matched_task_count as f64 / task_count as f64
+            };
+
+            let out = MarketReport {
+                task_count,
+                open_task_count,
+                matched_task_count,
+                unmatched_task_count,
+                bid_count,
+                orphan_bid_count,
+                unique_bidder_count,
+                tasks_with_bids_count,
+                bid_coverage_rate,
+                avg_bids_per_task,
+                match_rate,
+            };
+            println!("{}", serde_json::to_string_pretty(&out)?);
         }
         Command::DispatchOpen { worker_id, limit } => {
             let limit = clamp_limit(
@@ -2035,6 +3098,8 @@ fn main() -> Result<()> {
                 DISPATCH_OPEN_LIMIT_DEFAULT,
                 DISPATCH_OPEN_LIMIT_MAX,
             );
+            let path = ingress_file();
+            let _lock = acquire_market_file_lock(&path)?;
             let mut records = load_ingress_records();
             let mut assigned = Vec::<MessageRequestQueryResponse>::new();
             let ts = now_ms();
@@ -2075,15 +3140,39 @@ fn main() -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::sync::{Mutex, OnceLock};
+    use trnm_types::CapabilityScope;
+    use std::panic::{catch_unwind, AssertUnwindSafe};
+    use std::sync::{
+        atomic::{AtomicU64, Ordering},
+        Mutex, MutexGuard, OnceLock,
+    };
 
     fn env_lock() -> &'static Mutex<()> {
         static LOCK: OnceLock<Mutex<()>> = OnceLock::new();
         LOCK.get_or_init(|| Mutex::new(()))
     }
 
+    fn lock_env<'a>() -> MutexGuard<'a, ()> {
+        env_lock()
+            .lock()
+            .unwrap_or_else(|poison| poison.into_inner())
+    }
+
+    fn unique_tmp_path(prefix: &str, ext: &str) -> PathBuf {
+        static COUNTER: AtomicU64 = AtomicU64::new(0);
+        let seq = COUNTER.fetch_add(1, Ordering::Relaxed);
+        std::env::temp_dir().join(format!(
+            "{}-{}-{}-{}.{}",
+            prefix,
+            std::process::id(),
+            now_ms(),
+            seq,
+            ext
+        ))
+    }
+
     fn with_market_score_env(vars: &[(&str, &str)], f: impl FnOnce()) {
-        let _guard = env_lock().lock().expect("env lock poisoned");
+        let _guard = lock_env();
         let keys = [
             MARKET_PRICE_WEIGHT_ENV,
             MARKET_REPUTATION_WEIGHT_ENV,
@@ -2097,7 +3186,8 @@ mod tests {
         for (k, v) in vars {
             unsafe { std::env::set_var(k, v) };
         }
-        f();
+
+        let run = catch_unwind(AssertUnwindSafe(f));
 
         for (k, v) in prev {
             match v {
@@ -2105,6 +3195,157 @@ mod tests {
                 None => unsafe { std::env::remove_var(&k) },
             }
         }
+
+        if let Err(panic) = run {
+            std::panic::resume_unwind(panic);
+        }
+    }
+
+    fn with_market_path_env(vars: &[(&str, Option<&str>)], f: impl FnOnce()) {
+        let _guard = lock_env();
+        let keys = [
+            "TRNM_RPC_MARKET_TASKS_FILE",
+            "TRNM_RPC_MARKET_BIDS_FILE",
+            "TRNM_RPC_INGRESS_FILE",
+            MARKET_REPUTATION_FILE_ENV,
+        ];
+        let prev: Vec<(String, Option<String>)> = keys
+            .iter()
+            .map(|k| ((*k).to_string(), std::env::var(k).ok()))
+            .collect();
+
+        for (k, v) in vars {
+            match v {
+                Some(val) => unsafe { std::env::set_var(k, val) },
+                None => unsafe { std::env::remove_var(k) },
+            }
+        }
+
+        let run = catch_unwind(AssertUnwindSafe(f));
+
+        for (k, v) in prev {
+            match v {
+                Some(val) => unsafe { std::env::set_var(&k, val) },
+                None => unsafe { std::env::remove_var(&k) },
+            }
+        }
+
+        if let Err(panic) = run {
+            std::panic::resume_unwind(panic);
+        }
+    }
+
+    #[test]
+    fn resolve_capability_token_subject_or_token_strips_invisible_controls_before_lookup() {
+        let mut registry = IdentityRegistry::default();
+        registry
+            .register_did(
+                "did:org:lane-xi".to_string(),
+                "org:lane-xi-admin".to_string(),
+                10,
+            )
+            .expect("register did");
+        let token_id = registry
+            .issue_capability(
+                "org:lane-xi-admin".to_string(),
+                "did:org:lane-xi".to_string(),
+                CapabilityScope::AuditRead,
+                12,
+                Some(120),
+            )
+            .expect("issue capability");
+
+        assert_eq!(
+            resolve_capability_token_subject_or_token(
+                &registry,
+                " \u{FEFF}did:org:lane-xi\u{200B} ",
+            ),
+            Some(token_id)
+        );
+    }
+
+    #[test]
+    fn resolve_capability_token_subject_or_token_rejects_noncanonical_subject_alias() {
+        let mut registry = IdentityRegistry::default();
+        registry
+            .register_did(
+                "did:org:lane-xi".to_string(),
+                "org:lane-xi-admin".to_string(),
+                10,
+            )
+            .expect("register did");
+        let token_id = registry
+            .issue_capability(
+                "org:lane-xi-admin".to_string(),
+                "did:org:lane-xi".to_string(),
+                CapabilityScope::AuditRead,
+                12,
+                Some(120),
+            )
+            .expect("issue capability");
+
+        assert_eq!(
+            resolve_capability_token_subject_or_token(&registry, "did:org:lane-xi\n"),
+            Some(token_id)
+        );
+        assert_eq!(
+            resolve_capability_token_subject_or_token(&registry, "did:org:lane xi"),
+            None,
+            "non-canonical DID aliases must fail closed"
+        );
+    }
+
+    #[test]
+    fn resolve_capability_token_subject_or_token_fail_closed_without_structured_token() {
+        let mut registry = IdentityRegistry::default();
+        registry
+            .register_did(
+                "did:org:lane-xi".to_string(),
+                "org:lane-xi-admin".to_string(),
+                10,
+            )
+            .expect("register did");
+        let token_id = registry
+            .issue_capability(
+                "org:lane-xi-admin".to_string(),
+                "did:org:lane-xi".to_string(),
+                CapabilityScope::AuditRead,
+                12,
+                Some(120),
+            )
+            .expect("issue capability");
+
+        let mut raw = serde_json::to_value(&registry).expect("serialize registry");
+        raw["capabilities"] = serde_json::json!({});
+        if let Some(events) = raw["audit_trail"].as_array_mut() {
+            if let Some(last) = events.last_mut() {
+                last["note"] = serde_json::json!(format!("legacy-note token_id={token_id}"));
+            }
+        }
+        let imported: IdentityRegistry =
+            serde_json::from_value(raw).expect("deserialize mutated registry");
+
+        assert_eq!(
+            resolve_capability_token_subject_or_token(&imported, "did:org:lane-xi"),
+            None,
+            "subject lookup must fail-closed when structured token mapping is missing"
+        );
+    }
+
+    #[test]
+    fn parse_http_get_path_accepts_canonical_request_line() {
+        assert_eq!(
+            parse_http_get_path("GET /query-task/42?verbose=1 HTTP/1.1"),
+            Some("/query-task/42")
+        );
+    }
+
+    #[test]
+    fn parse_http_get_path_rejects_non_get_or_malformed_lines() {
+        assert_eq!(parse_http_get_path("POST /health HTTP/1.1"), None);
+        assert_eq!(parse_http_get_path("GET /health"), None);
+        assert_eq!(parse_http_get_path("GET health HTTP/1.1"), None);
+        assert_eq!(parse_http_get_path("GET /health\u{0001} HTTP/1.1"), None);
     }
 
     #[test]
@@ -2141,6 +3382,513 @@ mod tests {
     }
 
     #[test]
+    fn normalized_path_from_env_trims_shell_wrapped_quotes() {
+        with_market_path_env(
+            &[(
+                "TRNM_RPC_MARKET_TASKS_FILE",
+                Some("  \"/tmp/tasks.jsonl\"  "),
+            )],
+            || {
+                assert_eq!(
+                    normalized_path_from_env("TRNM_RPC_MARKET_TASKS_FILE"),
+                    Some(PathBuf::from("/tmp/tasks.jsonl"))
+                );
+            },
+        );
+
+        with_market_path_env(
+            &[("TRNM_RPC_MARKET_TASKS_FILE", Some("'`/tmp/tasks.jsonl`'"))],
+            || {
+                assert_eq!(
+                    normalized_path_from_env("TRNM_RPC_MARKET_TASKS_FILE"),
+                    Some(PathBuf::from("/tmp/tasks.jsonl"))
+                );
+            },
+        );
+    }
+
+    #[test]
+    fn market_path_file_helpers_fallback_when_env_is_empty_after_trim() {
+        with_market_path_env(
+            &[
+                ("TRNM_RPC_MARKET_TASKS_FILE", Some("   ")),
+                ("TRNM_RPC_MARKET_BIDS_FILE", Some(" \"\" ")),
+                ("TRNM_RPC_INGRESS_FILE", Some(" `   ` ")),
+                (MARKET_REPUTATION_FILE_ENV, Some("  ''  ")),
+            ],
+            || {
+                assert_eq!(
+                    market_tasks_file(),
+                    run_root().join("run/market/tasks.jsonl")
+                );
+                assert_eq!(market_bids_file(), run_root().join("run/market/bids.jsonl"));
+                assert_eq!(
+                    ingress_file(),
+                    run_root().join("run/message-gateway/requests.jsonl")
+                );
+                assert_eq!(
+                    market_reputation_file(),
+                    run_root().join("run/market/reputation.json")
+                );
+            },
+        );
+    }
+
+    #[test]
+    fn rpc_state_paths_use_same_wrapped_env_and_empty_fallback_rules() {
+        let _guard = lock_env();
+        let keys = [
+            "TRNM_RPC_ACCOUNTS_FILE",
+            "TRNM_RPC_TX_FILE",
+            "TRNM_RPC_FAUCET_LIMITS_FILE",
+        ];
+        let prev: Vec<(String, Option<String>)> = keys
+            .iter()
+            .map(|k| ((*k).to_string(), std::env::var(k).ok()))
+            .collect();
+
+        unsafe {
+            std::env::set_var("TRNM_RPC_ACCOUNTS_FILE", "  \"/tmp/accounts.json\"  ");
+            std::env::set_var("TRNM_RPC_TX_FILE", " '`/tmp/txs.json`' ");
+            std::env::set_var("TRNM_RPC_FAUCET_LIMITS_FILE", "  /tmp/faucet_limits.json  ");
+        }
+        assert_eq!(account_state_file(), PathBuf::from("/tmp/accounts.json"));
+        assert_eq!(tx_lifecycle_file(), PathBuf::from("/tmp/txs.json"));
+        assert_eq!(
+            faucet_limits_file(),
+            PathBuf::from("/tmp/faucet_limits.json")
+        );
+
+        unsafe {
+            std::env::set_var("TRNM_RPC_ACCOUNTS_FILE", "  \"\"  ");
+            std::env::set_var("TRNM_RPC_TX_FILE", "  ''  ");
+            std::env::set_var("TRNM_RPC_FAUCET_LIMITS_FILE", " `   ` ");
+        }
+        assert_eq!(
+            account_state_file(),
+            run_root().join("run/rpc/accounts.json")
+        );
+        assert_eq!(tx_lifecycle_file(), run_root().join("run/rpc/txs.json"));
+        assert_eq!(
+            faucet_limits_file(),
+            run_root().join("run/rpc/faucet_limits.json")
+        );
+
+        for (k, v) in prev {
+            match v {
+                Some(val) => unsafe { std::env::set_var(&k, val) },
+                None => unsafe { std::env::remove_var(&k) },
+            }
+        }
+    }
+
+    #[test]
+    fn acquire_market_file_lock_cleans_stale_lock_file() {
+        let _guard = lock_env();
+        let prev = std::env::var("TRNM_RPC_MARKET_LOCK_STALE_MS").ok();
+        unsafe { std::env::set_var("TRNM_RPC_MARKET_LOCK_STALE_MS", "1000") };
+
+        let path = unique_tmp_path("market-lock", "jsonl");
+        let lock_path = market_lock_path(&path);
+        if let Some(parent) = lock_path.parent() {
+            fs::create_dir_all(parent).expect("create lock dir");
+        }
+        fs::write(&lock_path, "stale").expect("seed stale lock");
+        std::thread::sleep(Duration::from_millis(1050));
+
+        {
+            let _lock = acquire_market_file_lock(&path).expect("acquire cleans stale lock");
+            assert!(lock_path.exists());
+        }
+        assert!(!lock_path.exists());
+
+        match prev {
+            Some(v) => unsafe { std::env::set_var("TRNM_RPC_MARKET_LOCK_STALE_MS", v) },
+            None => unsafe { std::env::remove_var("TRNM_RPC_MARKET_LOCK_STALE_MS") },
+        }
+    }
+
+    #[test]
+    fn acquire_market_file_lock_respects_timeout_when_lock_is_live() {
+        let _guard = lock_env();
+        let prev_timeout = std::env::var("TRNM_RPC_MARKET_LOCK_TIMEOUT_MS").ok();
+        let prev_stale = std::env::var("TRNM_RPC_MARKET_LOCK_STALE_MS").ok();
+
+        unsafe {
+            // Keep timeout short for deterministic gate speed.
+            std::env::set_var("TRNM_RPC_MARKET_LOCK_TIMEOUT_MS", "100");
+            // Treat existing lock as live (not stale) for this check.
+            std::env::set_var("TRNM_RPC_MARKET_LOCK_STALE_MS", "60000");
+        }
+
+        let path = unique_tmp_path("market-lock-timeout", "jsonl");
+        let lock_path = market_lock_path(&path);
+        if let Some(parent) = lock_path.parent() {
+            fs::create_dir_all(parent).expect("create lock dir");
+        }
+        fs::write(&lock_path, "live").expect("seed live lock");
+
+        let start = Instant::now();
+        let err = match acquire_market_file_lock(&path) {
+            Ok(_) => panic!("lock should time out while live lock exists"),
+            Err(err) => err,
+        };
+        let elapsed = start.elapsed();
+        let msg = err.to_string();
+
+        assert!(msg.contains("timed out waiting for market file lock"));
+        // Sleep interval is 10ms; allow minor scheduler jitter.
+        assert!(elapsed >= Duration::from_millis(90));
+        assert!(elapsed < Duration::from_millis(600));
+
+        let _ = fs::remove_file(&lock_path);
+
+        match prev_timeout {
+            Some(v) => unsafe { std::env::set_var("TRNM_RPC_MARKET_LOCK_TIMEOUT_MS", v) },
+            None => unsafe { std::env::remove_var("TRNM_RPC_MARKET_LOCK_TIMEOUT_MS") },
+        }
+        match prev_stale {
+            Some(v) => unsafe { std::env::set_var("TRNM_RPC_MARKET_LOCK_STALE_MS", v) },
+            None => unsafe { std::env::remove_var("TRNM_RPC_MARKET_LOCK_STALE_MS") },
+        }
+    }
+
+    #[test]
+    fn market_lock_timeout_ms_uses_wrapped_env_with_clamp_and_fallback() {
+        let _guard = lock_env();
+        let prev = std::env::var("TRNM_RPC_MARKET_LOCK_TIMEOUT_MS").ok();
+
+        unsafe { std::env::remove_var("TRNM_RPC_MARKET_LOCK_TIMEOUT_MS") };
+        assert_eq!(market_lock_timeout_ms(), MARKET_LOCK_TIMEOUT_MS_DEFAULT);
+
+        unsafe { std::env::set_var("TRNM_RPC_MARKET_LOCK_TIMEOUT_MS", "  `50`  ") };
+        assert_eq!(market_lock_timeout_ms(), MARKET_LOCK_TIMEOUT_MS_MIN);
+
+        unsafe { std::env::set_var("TRNM_RPC_MARKET_LOCK_TIMEOUT_MS", "  \"70000\"  ") };
+        assert_eq!(market_lock_timeout_ms(), MARKET_LOCK_TIMEOUT_MS_MAX);
+
+        unsafe { std::env::set_var("TRNM_RPC_MARKET_LOCK_TIMEOUT_MS", "  not-a-number  ") };
+        assert_eq!(market_lock_timeout_ms(), MARKET_LOCK_TIMEOUT_MS_DEFAULT);
+
+        match prev {
+            Some(v) => unsafe { std::env::set_var("TRNM_RPC_MARKET_LOCK_TIMEOUT_MS", v) },
+            None => unsafe { std::env::remove_var("TRNM_RPC_MARKET_LOCK_TIMEOUT_MS") },
+        }
+    }
+
+    #[test]
+    fn env_u64_with_min_accepts_wrapped_values_and_empty_fallback() {
+        let _guard = lock_env();
+        let key = "TRNM_RPC_TEST_ENV_U64_WITH_MIN";
+        let prev = std::env::var(key).ok();
+
+        unsafe { std::env::set_var(key, "  \"12\"  ") };
+        assert_eq!(env_u64_with_min(key, 8, 1), 12);
+
+        unsafe { std::env::set_var(key, "  ''  ") };
+        assert_eq!(env_u64_with_min(key, 8, 1), 8);
+
+        unsafe { std::env::set_var(key, "  `0`  ") };
+        assert_eq!(env_u64_with_min(key, 8, 3), 3);
+
+        match prev {
+            Some(v) => unsafe { std::env::set_var(key, v) },
+            None => unsafe { std::env::remove_var(key) },
+        }
+    }
+
+    #[test]
+    fn normalize_market_status_key_collapses_hidden_and_control_separators() {
+        assert_eq!(normalize_market_status_key(" matched\u{200b}"), "matched");
+        assert_eq!(normalize_market_status_key("mat\u{00ad}ched"), "matched");
+        assert_eq!(normalize_market_status_key("open\u{0007}"), "open");
+        assert_eq!(
+            normalize_market_status_key("\u{feff} matched \u{2060}"),
+            "matched"
+        );
+    }
+
+    #[test]
+    fn market_reputation_loader_normalizes_worker_keys() {
+        let mut path = std::env::temp_dir();
+        path.push(format!(
+            "trnm_rpc_market_reputation_{}_{}.json",
+            std::process::id(),
+            now_ms()
+        ));
+        fs::write(&path, "{\" Worker-A \": 12, \"\": 99, \"WORKER-B\": -5}")
+            .expect("write reputation fixture");
+
+        with_market_path_env(
+            &[(
+                MARKET_REPUTATION_FILE_ENV,
+                Some(path.to_string_lossy().as_ref()),
+            )],
+            || {
+                let rep = load_market_reputation();
+                assert_eq!(rep.get("worker-a"), Some(&12));
+                assert_eq!(rep.get("worker-b"), Some(&-5));
+                assert!(!rep.contains_key(" Worker-A "));
+                assert!(!rep.contains_key(""));
+            },
+        );
+
+        let _ = fs::remove_file(path);
+    }
+
+    #[test]
+    fn market_reputation_loader_uses_highest_value_when_aliases_collide() {
+        let mut path = std::env::temp_dir();
+        path.push(format!(
+            "trnm_rpc_market_reputation_alias_collision_{}_{}.json",
+            std::process::id(),
+            now_ms()
+        ));
+        fs::write(
+            &path,
+            "{\"worker-a\": 10, \" Worker-A \": 200, \"WORKER-B\": -7}",
+        )
+        .expect("write alias-collision reputation fixture");
+
+        with_market_path_env(
+            &[(
+                MARKET_REPUTATION_FILE_ENV,
+                Some(path.to_string_lossy().as_ref()),
+            )],
+            || {
+                let rep = load_market_reputation();
+                assert_eq!(rep.get("worker-a"), Some(&200));
+                assert_eq!(rep.get("worker-b"), Some(&-7));
+                assert_eq!(rep.len(), 2);
+            },
+        );
+
+        let _ = fs::remove_file(path);
+    }
+
+    #[test]
+    fn market_reputation_loader_collapses_internal_whitespace_aliases() {
+        let mut path = std::env::temp_dir();
+        path.push(format!(
+            "trnm_rpc_market_reputation_internal_ws_{}_{}.json",
+            std::process::id(),
+            now_ms()
+        ));
+        fs::write(
+            &path,
+            r#"{" Worker   A ": 10, "worker a": 25, "WORKER   B": -3}"#,
+        )
+        .expect("write internal-whitespace reputation fixture");
+
+        with_market_path_env(
+            &[(
+                MARKET_REPUTATION_FILE_ENV,
+                Some(path.to_string_lossy().as_ref()),
+            )],
+            || {
+                let rep = load_market_reputation();
+                assert_eq!(rep.get("worker a"), Some(&25));
+                assert_eq!(rep.get("worker b"), Some(&-3));
+                assert_eq!(rep.len(), 2);
+            },
+        );
+
+        let _ = fs::remove_file(path);
+    }
+
+    #[test]
+    fn market_reputation_loader_collapses_zero_width_aliases() {
+        let mut path = std::env::temp_dir();
+        path.push(format!(
+            "trnm_rpc_market_reputation_zero_width_{}_{}.json",
+            std::process::id(),
+            now_ms()
+        ));
+        fs::write(
+            &path,
+            "{\"worker\\u200ba\": 9, \"worker a\": 31, \"worker\\u200db\": -2, \"worker\\u2060b\": 5}",
+        )
+        .expect("write zero-width reputation fixture");
+
+        with_market_path_env(
+            &[(
+                MARKET_REPUTATION_FILE_ENV,
+                Some(path.to_string_lossy().as_ref()),
+            )],
+            || {
+                let rep = load_market_reputation();
+                assert_eq!(rep.get("worker a"), Some(&31));
+                assert_eq!(rep.get("worker b"), Some(&5));
+                assert_eq!(rep.len(), 2);
+            },
+        );
+
+        let _ = fs::remove_file(path);
+    }
+
+    #[test]
+    fn market_reputation_loader_collapses_control_character_aliases() {
+        let mut path = std::env::temp_dir();
+        path.push(format!(
+            "trnm_rpc_market_reputation_control_chars_{}_{}.json",
+            std::process::id(),
+            now_ms()
+        ));
+        fs::write(
+            &path,
+            "{\"worker\\u0007a\": 8, \"worker a\": 17, \"worker\\u000bb\": 4}",
+        )
+        .expect("write control-char reputation fixture");
+
+        with_market_path_env(
+            &[(
+                MARKET_REPUTATION_FILE_ENV,
+                Some(path.to_string_lossy().as_ref()),
+            )],
+            || {
+                let rep = load_market_reputation();
+                assert_eq!(rep.get("worker a"), Some(&17));
+                assert_eq!(rep.get("worker b"), Some(&4));
+                assert_eq!(rep.len(), 2);
+            },
+        );
+
+        let _ = fs::remove_file(path);
+    }
+
+    #[test]
+    fn market_reputation_loader_salvages_valid_entries_when_some_values_are_non_numeric() {
+        let mut path = std::env::temp_dir();
+        path.push(format!(
+            "trnm_rpc_market_reputation_partial_invalid_{}_{}.json",
+            std::process::id(),
+            now_ms()
+        ));
+        fs::write(
+            &path,
+            r#"{"worker-a": 7, "worker-b": "bad", "worker-c": -3}"#,
+        )
+        .expect("write partial-invalid reputation fixture");
+
+        with_market_path_env(
+            &[(
+                MARKET_REPUTATION_FILE_ENV,
+                Some(path.to_string_lossy().as_ref()),
+            )],
+            || {
+                let rep = load_market_reputation();
+                assert_eq!(rep.get("worker-a"), Some(&7));
+                assert_eq!(rep.get("worker-c"), Some(&-3));
+                assert!(!rep.contains_key("worker-b"));
+                assert_eq!(rep.len(), 2);
+            },
+        );
+
+        let _ = fs::remove_file(path);
+    }
+
+    #[test]
+    fn market_reputation_loader_accepts_integer_strings_and_skips_non_integer_strings() {
+        let mut path = std::env::temp_dir();
+        path.push(format!(
+            "trnm_rpc_market_reputation_string_ints_{}_{}.json",
+            std::process::id(),
+            now_ms()
+        ));
+        fs::write(
+            &path,
+            r#"{"worker-a": " 11 ", "worker-b": "-4", "worker-c": "3.5", "worker-d": "oops"}"#,
+        )
+        .expect("write string-int reputation fixture");
+
+        with_market_path_env(
+            &[(
+                MARKET_REPUTATION_FILE_ENV,
+                Some(path.to_string_lossy().as_ref()),
+            )],
+            || {
+                let rep = load_market_reputation();
+                assert_eq!(rep.get("worker-a"), Some(&11));
+                assert_eq!(rep.get("worker-b"), Some(&-4));
+                assert!(!rep.contains_key("worker-c"));
+                assert!(!rep.contains_key("worker-d"));
+                assert_eq!(rep.len(), 2);
+            },
+        );
+
+        let _ = fs::remove_file(path);
+    }
+
+    #[test]
+    fn market_reputation_loader_accepts_integral_json_numbers_and_skips_fractional_numbers() {
+        let mut path = std::env::temp_dir();
+        path.push(format!(
+            "trnm_rpc_market_reputation_float_ints_{}_{}.json",
+            std::process::id(),
+            now_ms()
+        ));
+        fs::write(
+            &path,
+            r#"{"worker-a": 11.0, "worker-b": -4.0, "worker-c": 3.5}"#,
+        )
+        .expect("write float-int reputation fixture");
+
+        with_market_path_env(
+            &[(
+                MARKET_REPUTATION_FILE_ENV,
+                Some(path.to_string_lossy().as_ref()),
+            )],
+            || {
+                let rep = load_market_reputation();
+                assert_eq!(rep.get("worker-a"), Some(&11));
+                assert_eq!(rep.get("worker-b"), Some(&-4));
+                assert!(!rep.contains_key("worker-c"));
+                assert_eq!(rep.len(), 2);
+            },
+        );
+
+        let _ = fs::remove_file(path);
+    }
+
+    #[test]
+    fn market_reputation_loader_accepts_stringified_i64_and_skips_non_integral_strings() {
+        let mut path = std::env::temp_dir();
+        path.push(format!(
+            "trnm_rpc_market_reputation_stringified_i64_{}_{}.json",
+            std::process::id(),
+            now_ms()
+        ));
+        fs::write(
+            &path,
+            r#"{"worker-a": " 11 ", "worker-b": "-4", "worker-c": "3.5", "worker-d": "oops"}"#,
+        )
+        .expect("write string-int reputation fixture");
+
+        with_market_path_env(
+            &[(
+                MARKET_REPUTATION_FILE_ENV,
+                Some(path.to_string_lossy().as_ref()),
+            )],
+            || {
+                let rep = load_market_reputation();
+                assert_eq!(rep.get("worker-a"), Some(&11));
+                assert_eq!(rep.get("worker-b"), Some(&-4));
+                assert!(!rep.contains_key("worker-c"));
+                assert!(!rep.contains_key("worker-d"));
+                assert_eq!(rep.len(), 2);
+            },
+        );
+
+        let _ = fs::remove_file(path);
+    }
+
+    #[test]
+    fn market_worker_tie_break_key_normalizes_case_and_whitespace() {
+        assert_eq!(market_worker_tie_break_key(" Worker-A "), "worker-a");
+        assert_eq!(market_worker_tie_break_key("worker-Z"), "worker-z");
+    }
+
+    #[test]
     fn market_effective_score_rewards_higher_reputation() {
         let low_rep = market_effective_score(100, 0);
         let high_rep = market_effective_score(100, 80);
@@ -2169,6 +3917,20 @@ mod tests {
     }
 
     #[test]
+    fn market_score_config_uses_defaults_for_empty_wrapped_env_values() {
+        with_market_score_env(
+            &[
+                (MARKET_PRICE_WEIGHT_ENV, " '' "),
+                (MARKET_REPUTATION_WEIGHT_ENV, " \"\" "),
+                (MARKET_REPUTATION_CLAMP_ENV, " ` ` "),
+            ],
+            || {
+                assert_eq!(market_effective_score(10, 5), 9_500);
+            },
+        );
+    }
+
+    #[test]
     fn market_effective_score_clamps_reputation_clamp_config_to_min_boundary() {
         with_market_score_env(
             &[
@@ -2183,26 +3945,89 @@ mod tests {
     }
 
     #[test]
-    fn market_m2_policy_gate_guards_default_drift_to_min_boundaries() {
-        let _guard = env_lock().lock().expect("env lock poisoned");
-        unsafe {
-            std::env::remove_var(MARKET_PRICE_WEIGHT_ENV);
-            std::env::remove_var(MARKET_REPUTATION_WEIGHT_ENV);
-            std::env::remove_var(MARKET_REPUTATION_CLAMP_ENV);
-        }
-
-        assert_eq!(
-            env_u128_clamped("TRNM_RPC_TEST_WEIGHT_DEFAULT_DRIFT", 0, MARKET_WEIGHT_MIN, MARKET_WEIGHT_MAX),
-            MARKET_WEIGHT_MIN
+    fn market_effective_score_clamps_reputation_clamp_config_to_max_boundary() {
+        with_market_score_env(
+            &[
+                (MARKET_PRICE_WEIGHT_ENV, "1000"),
+                (MARKET_REPUTATION_WEIGHT_ENV, "1"),
+                (MARKET_REPUTATION_CLAMP_ENV, "9999999"),
+            ],
+            || {
+                assert_eq!(market_effective_score(101, 2_000_000), 0);
+            },
         );
-        assert_eq!(
-            env_i64_clamped(
-                "TRNM_RPC_TEST_REPUTATION_CLAMP_DEFAULT_DRIFT",
-                0,
-                MARKET_REPUTATION_CLAMP_MIN,
-                MARKET_REPUTATION_CLAMP_MAX
-            ),
-            MARKET_REPUTATION_CLAMP_MIN
+    }
+
+    #[test]
+    fn market_effective_score_clamps_price_weight_config_to_min_boundary() {
+        with_market_score_env(
+            &[
+                (MARKET_PRICE_WEIGHT_ENV, "0"),
+                (MARKET_REPUTATION_WEIGHT_ENV, "1"),
+                (MARKET_REPUTATION_CLAMP_ENV, "1000"),
+            ],
+            || {
+                assert_eq!(market_effective_score(2, 0), 2);
+            },
+        );
+    }
+
+    #[test]
+    fn market_effective_score_clamps_reputation_weight_config_to_min_boundary() {
+        with_market_score_env(
+            &[
+                (MARKET_PRICE_WEIGHT_ENV, "1000"),
+                (MARKET_REPUTATION_WEIGHT_ENV, "0"),
+                (MARKET_REPUTATION_CLAMP_ENV, "1000"),
+            ],
+            || {
+                assert_eq!(market_effective_score(2, 5), 1995);
+            },
+        );
+    }
+
+    #[test]
+    fn market_effective_score_clamps_reputation_weight_config_to_max_boundary() {
+        with_market_score_env(
+            &[
+                (MARKET_PRICE_WEIGHT_ENV, "1"),
+                (MARKET_REPUTATION_WEIGHT_ENV, "999999999"),
+                (MARKET_REPUTATION_CLAMP_ENV, "1000"),
+            ],
+            || {
+                assert_eq!(market_effective_score(1, -2000), 1_000_000_001);
+            },
+        );
+    }
+
+    #[test]
+    fn market_effective_score_clamps_price_weight_config_to_max_boundary() {
+        with_market_score_env(
+            &[
+                (MARKET_PRICE_WEIGHT_ENV, "999999999"),
+                (MARKET_REPUTATION_WEIGHT_ENV, "1"),
+                (MARKET_REPUTATION_CLAMP_ENV, "1000"),
+            ],
+            || {
+                assert_eq!(market_effective_score(2, 0), 2_000_000);
+            },
+        );
+    }
+
+    #[test]
+    fn market_m2_policy_gate_guards_default_drift_to_min_boundaries() {
+        with_market_score_env(
+            &[
+                (MARKET_PRICE_WEIGHT_ENV, "''"),
+                (MARKET_REPUTATION_WEIGHT_ENV, "0"),
+                (MARKET_REPUTATION_CLAMP_ENV, "0"),
+            ],
+            || {
+                let cfg = market_score_config();
+                assert_eq!(cfg.price_weight, MARKET_PRICE_WEIGHT_DEFAULT);
+                assert_eq!(cfg.reputation_weight, MARKET_WEIGHT_MIN);
+                assert_eq!(cfg.reputation_clamp, MARKET_REPUTATION_CLAMP_MIN);
+            },
         );
     }
 
@@ -2227,7 +4052,10 @@ mod tests {
     #[test]
     fn normalize_tx_hash_lookup_accepts_common_key_value_forms() {
         assert_eq!(normalize_tx_hash_lookup("tx_hash=0xAbC123"), "0xabc123");
-        assert_eq!(normalize_tx_hash_lookup("TxHash = \"0xDeF456\""), "0xdef456");
+        assert_eq!(
+            normalize_tx_hash_lookup("TxHash = \"0xDeF456\""),
+            "0xdef456"
+        );
         assert_eq!(normalize_tx_hash_lookup("hash= 0xA1B2"), "0xa1b2");
         assert_eq!(normalize_tx_hash_lookup("tx_hash:0xC0FFEE"), "0xc0ffee");
         assert_eq!(normalize_tx_hash_lookup("hash : `0xBEEF`"), "0xbeef");
@@ -2240,10 +4068,7 @@ mod tests {
 
     #[test]
     fn normalize_tx_hash_lookup_trims_sentence_period_after_hash_value() {
-        assert_eq!(
-            normalize_tx_hash_lookup("tx_hash=0xAbC123."),
-            "0xabc123"
-        );
+        assert_eq!(normalize_tx_hash_lookup("tx_hash=0xAbC123."), "0xabc123");
     }
 
     #[test]
@@ -2254,6 +4079,30 @@ mod tests {
         assert!(!is_hex_like_tx_hash("0x"));
         assert!(!is_hex_like_tx_hash("0xzz99"));
         assert!(!is_hex_like_tx_hash("tx_hash=0xabc123"));
+    }
+
+    #[test]
+    fn normalize_market_worker_key_strips_soft_hyphen_alias_spoofing() {
+        let got = normalize_market_worker_key("Worker\u{00AD} A").expect("normalized");
+        assert_eq!(got, "worker a");
+        assert_eq!(
+            normalize_market_worker_key("Worker A").expect("normalized"),
+            got
+        );
+    }
+
+    #[test]
+    fn normalize_actor_or_signer_strips_controls_and_zero_width() {
+        let got =
+            normalize_actor_or_signer(" \u{200B}alice\u{2060}\u{0007} bob ").expect("normalized");
+        assert_eq!(got, "alice bob");
+        assert!(normalize_actor_or_signer("\u{200B}\u{2060}\u{0000}").is_none());
+    }
+
+    #[test]
+    fn normalize_actor_or_signer_treats_controls_as_separators_not_concatenation() {
+        let got = normalize_actor_or_signer("alice\u{0007}bob").expect("normalized");
+        assert_eq!(got, "alice bob");
     }
 
     #[test]
@@ -3191,6 +5040,80 @@ mod tests {
     }
 
     #[test]
+    fn summarize_challenge_treasury_ignores_non_terminal_disposition_without_clearing_posted_bond() {
+        let events = vec![
+            NodeEventRecord {
+                event_type: "challenge".into(),
+                task_id: 77,
+                from_status: "Revealed".into(),
+                to_status: "Challenged".into(),
+                actor: "c77".into(),
+                tx_id: 1,
+                block_height: 10,
+                state_root: "a".into(),
+                ts_unix_ms: 1_000,
+                signer: None,
+                challenger: Some("c77".into()),
+                tx_hash: None,
+                resolution_code: None,
+                treasury_delta: Some(0),
+                challenger_delta: Some(-8),
+                bond_disposition: Some("posted".into()),
+            },
+            NodeEventRecord {
+                event_type: "resolve".into(),
+                task_id: 77,
+                from_status: "Challenged".into(),
+                to_status: "Completed".into(),
+                actor: "validator".into(),
+                tx_id: 2,
+                block_height: 11,
+                state_root: "b".into(),
+                ts_unix_ms: 2_000,
+                signer: None,
+                challenger: Some("c77".into()),
+                tx_hash: None,
+                resolution_code: Some("completed".into()),
+                treasury_delta: Some(0),
+                challenger_delta: Some(0),
+                bond_disposition: Some("posted".into()),
+            },
+            NodeEventRecord {
+                event_type: "resolve".into(),
+                task_id: 77,
+                from_status: "Challenged".into(),
+                to_status: "Slashed".into(),
+                actor: "validator".into(),
+                tx_id: 3,
+                block_height: 12,
+                state_root: "c".into(),
+                ts_unix_ms: 3_000,
+                signer: None,
+                challenger: Some("c77".into()),
+                tx_hash: None,
+                resolution_code: Some("slashed".into()),
+                treasury_delta: Some(0),
+                challenger_delta: Some(0),
+                bond_disposition: Some("forfeited".into()),
+            },
+        ];
+
+        let out = summarize_challenge_treasury(&events, 10, Some((500, 3_500, "custom".into())));
+        assert_eq!(out.current_escrow_balance, 0);
+        assert_eq!(out.current_forfeits_balance, 8);
+        assert_eq!(out.cumulative_forfeited, 8);
+        assert_eq!(out.events.len(), 2);
+        assert_eq!(out.events[1].bond_amount, 8);
+        assert_eq!(out.events[1].escrow_delta, -8);
+        assert_eq!(out.events[1].forfeits_delta, 8);
+        let summary = out.daily_summary.expect("summary expected");
+        assert_eq!(summary.posted, 1);
+        assert_eq!(summary.forfeited, 1);
+        assert_eq!(summary.unresolved, 0);
+        assert_eq!(out.anomaly_count, 0);
+    }
+
+    #[test]
     fn resolve_ops_window_custom_validation() {
         assert!(resolve_ops_window(Some(OpsWindowArg::Custom), None, Some(1), 10).is_err());
         assert!(resolve_ops_window(Some(OpsWindowArg::Custom), Some(2), Some(1), 10).is_err());
@@ -3207,6 +5130,45 @@ mod tests {
         assert_eq!(to, 1_000);
         assert_eq!(mode, "24h");
         assert!(from <= to);
+    }
+
+    #[test]
+    fn submit_message_idempotency_scope_requires_channel_user_session_and_key_match() {
+        let rec = MessageIngressRecord {
+            request_id: "req_1".into(),
+            task_id: 42,
+            channel: "telegram".into(),
+            user_id: "u1".into(),
+            session_id: "s1".into(),
+            text: "hi".into(),
+            idempotency_key: "idem-1".into(),
+            status: RequestStatus::Open.as_str().into(),
+            created_at_unix_ms: 1,
+            assigned_worker: None,
+            assigned_at_unix_ms: None,
+            model_output: None,
+            result_hash: None,
+            verifier_status: None,
+            resolution_code: None,
+            commit_tx_hash: None,
+            reveal_tx_hash: None,
+        };
+
+        assert!(is_same_submit_message_idempotency_scope(
+            &rec, "telegram", "u1", "s1", "idem-1"
+        ));
+        assert!(!is_same_submit_message_idempotency_scope(
+            &rec, "discord", "u1", "s1", "idem-1"
+        ));
+        assert!(!is_same_submit_message_idempotency_scope(
+            &rec, "telegram", "u2", "s1", "idem-1"
+        ));
+        assert!(!is_same_submit_message_idempotency_scope(
+            &rec, "telegram", "u1", "s2", "idem-1"
+        ));
+        assert!(!is_same_submit_message_idempotency_scope(
+            &rec, "telegram", "u1", "s1", "idem-2"
+        ));
     }
 
     #[test]
@@ -3363,7 +5325,186 @@ mod tests {
 
         let out = query_task_from_node_events(7, &events).expect("task expected");
         assert_eq!(out.status, TaskStatus::Assigned);
-        assert_eq!(out.version, 2);
+        assert_eq!(out.version, 1);
+    }
+
+    #[test]
+    fn query_task_from_node_events_filters_invalid_signer_mismatch() {
+        let events = vec![
+            NodeEventRecord {
+                event_type: "accept".into(),
+                task_id: 8,
+                from_status: "Open".into(),
+                to_status: "Assigned".into(),
+                actor: "worker-a".into(),
+                tx_id: 1,
+                block_height: 1,
+                state_root: "s1".into(),
+                ts_unix_ms: 1,
+                signer: Some("worker-b".into()),
+                challenger: None,
+                tx_hash: None,
+                resolution_code: None,
+                treasury_delta: None,
+                challenger_delta: None,
+                bond_disposition: None,
+            },
+            NodeEventRecord {
+                event_type: "commit".into(),
+                task_id: 8,
+                from_status: "Open".into(),
+                to_status: "Committed".into(),
+                actor: "worker-a".into(),
+                tx_id: 2,
+                block_height: 2,
+                state_root: "s2".into(),
+                ts_unix_ms: 2,
+                signer: Some("worker-a".into()),
+                challenger: None,
+                tx_hash: None,
+                resolution_code: None,
+                treasury_delta: None,
+                challenger_delta: None,
+                bond_disposition: None,
+            },
+        ];
+
+        assert!(query_task_from_node_events(8, &events).is_none());
+    }
+
+    #[test]
+    fn query_task_from_node_events_rejects_system_resolve_actor() {
+        let events = vec![
+            NodeEventRecord {
+                event_type: "challenge".into(),
+                task_id: 10,
+                from_status: "Revealed".into(),
+                to_status: "Challenged".into(),
+                actor: "challenger-a".into(),
+                tx_id: 1,
+                block_height: 1,
+                state_root: "s1".into(),
+                ts_unix_ms: 1,
+                signer: Some("challenger-a".into()),
+                challenger: Some("challenger-a".into()),
+                tx_hash: None,
+                resolution_code: None,
+                treasury_delta: Some(0),
+                challenger_delta: Some(-5),
+                bond_disposition: Some("posted".into()),
+            },
+            NodeEventRecord {
+                event_type: "resolve".into(),
+                task_id: 10,
+                from_status: "Challenged".into(),
+                to_status: "Completed".into(),
+                actor: "system".into(),
+                tx_id: 2,
+                block_height: 2,
+                state_root: "s2".into(),
+                ts_unix_ms: 2,
+                signer: Some("system".into()),
+                challenger: Some("challenger-a".into()),
+                tx_hash: None,
+                resolution_code: Some("completed".into()),
+                treasury_delta: Some(0),
+                challenger_delta: Some(0),
+                bond_disposition: Some("forfeited".into()),
+            },
+        ];
+
+        let out = query_task_from_node_events(10, &events).expect("task expected");
+        assert_eq!(out.status, TaskStatus::Challenged);
+        assert_eq!(out.version, 1);
+    }
+
+    #[test]
+    fn query_events_response_applies_same_trust_and_transition_filters() {
+        let events = vec![
+            NodeEventRecord {
+                event_type: "accept".into(),
+                task_id: 9,
+                from_status: "Open".into(),
+                to_status: "Assigned".into(),
+                actor: "worker-a".into(),
+                tx_id: 1,
+                block_height: 1,
+                state_root: "s1".into(),
+                ts_unix_ms: 1,
+                signer: Some("worker-a".into()),
+                challenger: None,
+                tx_hash: None,
+                resolution_code: None,
+                treasury_delta: None,
+                challenger_delta: None,
+                bond_disposition: None,
+            },
+            NodeEventRecord {
+                event_type: "commit".into(),
+                task_id: 9,
+                from_status: "Open".into(),
+                to_status: "Committed".into(),
+                actor: "worker-a".into(),
+                tx_id: 2,
+                block_height: 2,
+                state_root: "s2".into(),
+                ts_unix_ms: 2,
+                signer: Some("worker-a".into()),
+                challenger: None,
+                tx_hash: None,
+                resolution_code: None,
+                treasury_delta: None,
+                challenger_delta: None,
+                bond_disposition: None,
+            },
+            NodeEventRecord {
+                event_type: "reveal".into(),
+                task_id: 9,
+                from_status: "Committed".into(),
+                to_status: "Revealed".into(),
+                actor: "worker-a".into(),
+                tx_id: 3,
+                block_height: 3,
+                state_root: "s3".into(),
+                ts_unix_ms: 3,
+                signer: Some("worker-b".into()),
+                challenger: None,
+                tx_hash: None,
+                resolution_code: None,
+                treasury_delta: None,
+                challenger_delta: None,
+                bond_disposition: None,
+            },
+        ];
+
+        let out = query_events_response(9, 20, &events, &[]).expect("events expected");
+        assert_eq!(out.len(), 1);
+        assert_eq!(out[0].event_type, "accept");
+    }
+
+    #[test]
+    fn parse_event_log_kv_preserves_quoted_values_with_spaces() {
+        let line = "[event] event_type=resolve task_id=7 from_status=Challenged to_status=Completed actor=authority tx_id=9 block_height=12 state_root=abc ts_unix_ms=1000 resolution_code=\"timeout reached\" bond_disposition='forfeit all'";
+        let kv = parse_event_log_kv(line);
+
+        assert_eq!(kv.get("event_type").map(String::as_str), Some("resolve"));
+        assert_eq!(
+            kv.get("resolution_code").map(String::as_str),
+            Some("timeout reached")
+        );
+        assert_eq!(
+            kv.get("bond_disposition").map(String::as_str),
+            Some("forfeit all")
+        );
+    }
+
+    #[test]
+    fn parse_event_log_kv_supports_prefixed_runtime_noise() {
+        let line = "2026-03-03T20:10:11Z INFO node [event] event_type=commit task_id=7 from_status=Accepted to_status=Committed actor=did:trnm:worker tx_id=9 block_height=12 state_root=abc ts_unix_ms=1000";
+        let event_line = &line[line.find("[event]").expect("event marker")..];
+        let kv = parse_event_log_kv(event_line);
+        assert_eq!(kv.get("event_type").map(String::as_str), Some("commit"));
+        assert_eq!(kv.get("task_id").map(String::as_str), Some("7"));
     }
 
     fn faucet_env_test_lock() -> &'static std::sync::Mutex<()> {
@@ -3378,7 +5519,9 @@ mod tests {
 
     #[test]
     fn faucet_env_parsing_enforces_minimums() {
-        let _guard = faucet_env_test_lock().lock().expect("faucet env lock");
+        let _guard = faucet_env_test_lock()
+            .lock()
+            .unwrap_or_else(|poison| poison.into_inner());
         clear_faucet_env();
 
         std::env::set_var("TRNM_RPC_FAUCET_WINDOW_SECONDS", "0");
@@ -3403,7 +5546,9 @@ mod tests {
 
     #[test]
     fn faucet_env_parsing_uses_defaults_for_invalid_values() {
-        let _guard = faucet_env_test_lock().lock().expect("faucet env lock");
+        let _guard = faucet_env_test_lock()
+            .lock()
+            .unwrap_or_else(|poison| poison.into_inner());
         clear_faucet_env();
 
         std::env::set_var("TRNM_RPC_FAUCET_WINDOW_SECONDS", "bad");
@@ -3428,7 +5573,9 @@ mod tests {
 
     #[test]
     fn faucet_env_parsing_accepts_surrounding_whitespace() {
-        let _guard = faucet_env_test_lock().lock().expect("faucet env lock");
+        let _guard = faucet_env_test_lock()
+            .lock()
+            .unwrap_or_else(|poison| poison.into_inner());
         clear_faucet_env();
 
         std::env::set_var("TRNM_RPC_FAUCET_WINDOW_SECONDS", "  120  ");
@@ -3453,7 +5600,7 @@ mod tests {
 
     #[test]
     fn read_log_tail_returns_recent_lines() {
-        let tmp = std::env::temp_dir().join(format!("trnm-rpc-tail-test-{}.log", now_ms()));
+        let tmp = unique_tmp_path("trnm-rpc-tail-test", "log");
         fs::write(
             &tmp,
             "line1
@@ -3469,7 +5616,7 @@ line2
 
     #[test]
     fn read_log_tail_keeps_first_line_when_tail_starts_on_newline_boundary() {
-        let tmp = std::env::temp_dir().join(format!("trnm-rpc-tail-boundary-{}.log", now_ms()));
+        let tmp = unique_tmp_path("trnm-rpc-tail-boundary", "log");
         let content = "line1\n[event] event_type=commit task_id=7 tx_id=11 block_height=3\n";
         fs::write(&tmp, content).expect("write temp log");
 
@@ -3483,7 +5630,7 @@ line2
 
     #[test]
     fn read_log_tail_tolerates_non_utf8_bytes() {
-        let tmp = std::env::temp_dir().join(format!("trnm-rpc-tail-binary-{}.log", now_ms()));
+        let tmp = unique_tmp_path("trnm-rpc-tail-binary", "log");
         let mut bytes = vec![0xff, 0xfe, b'\n'];
         bytes.extend_from_slice(b"[event] event_type=commit task_id=9 tx_id=1 block_height=1\n");
         fs::write(&tmp, bytes).expect("write temp binary log");
@@ -3491,5 +5638,46 @@ line2
         let tail = read_log_tail(&tmp, 1024).expect("tail text");
         assert!(tail.contains("[event] event_type=commit task_id=9"));
         let _ = fs::remove_file(tmp);
+    }
+
+    #[test]
+    fn load_latest_adapter_records_skips_invalid_jsonl_rows() {
+        let dir = run_root().join("run/worker-agent");
+        fs::create_dir_all(&dir).expect("create worker-agent dir");
+
+        let mut backup: Vec<(PathBuf, Vec<u8>)> = vec![];
+        if let Ok(entries) = fs::read_dir(&dir) {
+            for entry in entries.flatten() {
+                let path = entry.path();
+                let is_adapter = path
+                    .file_name()
+                    .and_then(|n| n.to_str())
+                    .map(|s| s.starts_with("tx-adapter-") && s.ends_with(".jsonl"))
+                    .unwrap_or(false);
+                if !is_adapter {
+                    continue;
+                }
+                if let Ok(bytes) = fs::read(&path) {
+                    backup.push((path.clone(), bytes));
+                }
+                let _ = fs::remove_file(&path);
+            }
+        }
+
+        let fixture = dir.join(format!("tx-adapter-99991231-{}.jsonl", std::process::id()));
+        fs::write(
+            &fixture,
+            "not-json\n{\"ts\":1772074584,\"mode\":\"mock\",\"kind\":\"commit\",\"task_id\":101001,\"worker\":\"worker1\",\"commit_hash\":\"764c7baf3e1d3d325511cdc3d7836fbc1fa71a289bd669edcc4b55d6baaee9d7\",\"nonce\":101001,\"tx_hash\":\"7336b90d593ebe324cb4b3e41e7e9d86d1e2418f230cca0162ca1d539f32c2b9\",\"status\":\"accepted\",\"rc\":0}\n",
+        )
+        .expect("write adapter fixture");
+
+        let records = load_latest_adapter_records();
+        assert_eq!(records.len(), 1, "only valid JSONL rows should be loaded");
+        assert_eq!(records[0].task_id, 101001);
+
+        let _ = fs::remove_file(&fixture);
+        for (path, bytes) in backup {
+            let _ = fs::write(path, bytes);
+        }
     }
 }

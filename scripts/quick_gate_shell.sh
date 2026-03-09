@@ -1,9 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Force deterministic sort/awk/find behavior across CI locales.
-: "${LC_ALL:=C}"
-export LC_ALL
+# Normalize locale/timezone-sensitive output so local and CI runs produce
+# consistent summary artifacts for replay/rollback evidence.
+export TZ="${TZ:-UTC}"
+export LANG="${LANG:-C.UTF-8}"
+export LC_ALL="${LC_ALL:-C.UTF-8}"
+# Ensure bytewise collation even when callers only set LANG/LC_ALL,
+# keeping file manifest ordering reproducible for replay evidence.
+export LC_COLLATE="${LC_COLLATE:-C}"
 
 if [[ $# -eq 0 ]]; then
   TARGET_DIRS=("scripts")
@@ -56,9 +61,7 @@ done
 
 mapfile -t FILES < <(
   for target_dir in "${NORMALIZED_TARGET_DIRS[@]}"; do
-    find "$target_dir" \
-      -type d \( -name '.git' -o -name 'node_modules' -o -name 'target' \) -prune -o \
-      -type f -name '*.sh' -print
+    find "$target_dir" -type f -name '*.sh' -print
   done | LC_ALL=C sort -u
 )
 
@@ -84,6 +87,11 @@ echo "[quick-gate] target_dir_count=${#NORMALIZED_TARGET_DIRS[@]}"
 echo "[quick-gate] script_count=${#FILES[@]}"
 
 audit_ts="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+
+git_head=""
+if command -v git >/dev/null 2>&1; then
+  git_head="$(git rev-parse --short=12 HEAD 2>/dev/null || true)"
+fi
 
 manifest_sha256=""
 if command -v sha256sum >/dev/null 2>&1; then
@@ -129,6 +137,7 @@ if [[ -n "$SUMMARY_PATH" ]]; then
   "target_dirs_csv": "$(json_escape "$(IFS=,; printf '%s' "${NORMALIZED_TARGET_DIRS[*]}")")",
   "target_dir_count": ${#NORMALIZED_TARGET_DIRS[@]},
   "script_count": ${#FILES[@]},
+  "git_head": "$(json_escape "${git_head}")",
   "file_manifest_sha256": "$(json_escape "${manifest_sha256}")",
   "skip_shellcheck": ${SKIP_SHELLCHECK},
   "bash_n_elapsed_sec": $((bashn_end - bashn_start)),
