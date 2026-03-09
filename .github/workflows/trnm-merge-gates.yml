@@ -42,6 +42,9 @@ jobs:
       LC_MONETARY: C
       LC_MEASUREMENT: C
       PYTHONHASHSEED: "0"
+      # Prevent interpreter bytecode cache writes (.pyc/__pycache__) so
+      # merge-gate CI workspaces remain side-effect free across reruns.
+      PYTHONDONTWRITEBYTECODE: "1"
       PYTHONIOENCODING: "UTF-8"
       PYTHONUTF8: "1"
       CARGO_TERM_COLOR: never
