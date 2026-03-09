@@ -15,8 +15,9 @@ run_test() {
   local log
   log="$(mktemp)"
 
-  echo "[M2V2-GATE][RUN] cargo test -p $package $test_name"
+  echo "[M2V2-GATE][RUN] cargo test --locked -p $package $test_name"
   if ! cargo test \
+    --locked \
     --manifest-path "$RUST_ROOT/Cargo.toml" \
     -p "$package" \
     "$test_name" | tee "$log"; then
