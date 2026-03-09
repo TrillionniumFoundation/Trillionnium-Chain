@@ -42,6 +42,19 @@ fn reserve_only_split_backpressured_id_is_not_poisoned_across_class_after_drain(
 }
 
 #[test]
+fn reserve_only_split_backpressured_id_is_not_poisoned_on_same_class_retry_after_drain() {
+    let mut gate = LaneAdmissionGate::new(2, 2);
+
+    assert_eq!(gate.admit(40, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(41, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(42, IngressClass::Normal), AdmitOutcome::Backpressured);
+
+    // Same-class retry should remain fresh once capacity is freed.
+    assert!(gate.pop_ready().is_some());
+    assert_eq!(gate.admit(42, IngressClass::Normal), AdmitOutcome::Accepted);
+}
+
+#[test]
 fn reserve_only_borrowed_normal_ingress_preserves_cross_class_idempotency_until_drain() {
     let mut gate = LaneAdmissionGate::new(3, 3);
 
