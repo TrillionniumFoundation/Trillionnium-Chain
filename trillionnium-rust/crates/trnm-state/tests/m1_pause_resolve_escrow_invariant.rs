@@ -554,3 +554,36 @@ fn paused_state_rejects_challenge_escrow_as_singleton_authority_without_side_eff
     assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
     assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), forfeits_before);
 }
+
+#[test]
+fn paused_state_rejects_reserved_system_singleton_authority_without_side_effects() {
+    // M1 merge-gate invariant: emergency pause must not allow reserved control-plane
+    // identities to become the sole resolve authority.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 8_280);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 828);
+
+    st.set_gov_param(98_195, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+    let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+
+    let err = st
+        .stage_or_confirm_resolve_approval(9_914, true, "system", "system")
+        .expect_err("reserved system singleton authority must be rejected while paused");
+    assert!(
+        err.contains("reserved")
+            || err.contains("authority set")
+            || err.contains("resolve authority")
+            || err.contains("explicit non-system authority")
+            || err.contains("invalid governance value"),
+        "unexpected error: {err}"
+    );
+
+    assert_eq!(st.pending_resolve_approval(9_914), None);
+    assert_eq!(st.pending_gov_update("resolve_authority"), None);
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+    assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), forfeits_before);
+}
