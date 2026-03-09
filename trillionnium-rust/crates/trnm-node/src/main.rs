@@ -1418,6 +1418,12 @@ fn pick_txs_with_critical_guard(
         return Vec::new();
     }
 
+    if txs_per_block >= mempool.len() {
+        // Free-ingress fast path: when block capacity can absorb the whole queue,
+        // keep FIFO dequeue semantics while avoiding lane-gate bookkeeping.
+        return mempool.drain(..).collect();
+    }
+
     let mut lane = LaneAdmissionGate::new(txs_per_block, 1);
     let mut selected_pos = vec![None; mempool.len()];
     for (idx, tx) in mempool.iter().enumerate() {
@@ -2254,6 +2260,33 @@ mod tests {
         let picked = pick_txs_with_critical_guard(&mut mempool, 2);
         assert_eq!(picked.len(), 2);
         assert!(picked.iter().any(is_critical_tx));
+    }
+
+    #[test]
+    fn critical_guard_fast_path_drains_fifo_when_capacity_covers_queue() {
+        let mut mempool = VecDeque::from(vec![
+            MockTx::CreateTask {
+                task_id: 1,
+                creator: "alice".into(),
+                bounty: 10,
+            },
+            MockTx::Challenge {
+                task_id: 1,
+                challenger: "c1".into(),
+                bond: 10,
+            },
+            MockTx::AcceptTask {
+                task_id: 1,
+                worker: "w1".into(),
+            },
+        ]);
+
+        let picked = pick_txs_with_critical_guard(&mut mempool, 3);
+        assert_eq!(picked.len(), 3);
+        assert!(mempool.is_empty());
+        assert!(matches!(picked[0], MockTx::CreateTask { .. }));
+        assert!(matches!(picked[1], MockTx::Challenge { .. }));
+        assert!(matches!(picked[2], MockTx::AcceptTask { .. }));
     }
 
     #[test]
