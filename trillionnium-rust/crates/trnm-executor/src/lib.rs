@@ -494,9 +494,9 @@ fn build_parallel_groups_aggressive_profile(
             let idx = min_group + ((start_offset + step) % candidate_span);
             scanned += 1;
             candidate_groups_scanned += 1;
-            conflict_checks += 1;
 
             if !skip_empty_stage_checks || !write_empty {
+                conflict_checks += 1;
                 stage_ww_checks += 1;
                 if vec_hashset_intersects(&write_keys, &group_write_keys[idx]) {
                     conflict_hits += 1;
@@ -504,6 +504,7 @@ fn build_parallel_groups_aggressive_profile(
                     continue;
                 }
 
+                conflict_checks += 1;
                 stage_wr_checks += 1;
                 if vec_hashset_intersects(&write_keys, &group_read_keys[idx]) {
                     conflict_hits += 1;
@@ -513,6 +514,7 @@ fn build_parallel_groups_aggressive_profile(
             }
 
             if !skip_empty_stage_checks || !read_empty {
+                conflict_checks += 1;
                 stage_rw_checks += 1;
                 if vec_hashset_intersects(&read_keys, &group_write_keys[idx]) {
                     conflict_hits += 1;
@@ -902,21 +904,19 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
             // avoid extra O(n log n) sorting cost.
 
             // Stable round-robin with move semantics (avoid per-tx clone cost).
-            let bucket_depths: Vec<usize> = buckets.iter().map(|b| b.len()).collect();
-            let mut iters: Vec<std::vec::IntoIter<Tx>> =
-                buckets.into_iter().map(|b| b.into_iter()).collect();
+            let n = buckets.len();
             let mut merged = Vec::with_capacity(txs.len());
             // Under highly skewed hot-bucket loads, start from the sparsest non-empty
             // bucket so low-volume conflict domains are serviced promptly instead of
             // always waiting behind the dominant lane at cycle start.
             let first_hint = txs
                 .first()
-                .map(|tx| hot_bucket_hint(tx, iters.len()))
+                .map(|tx| hot_bucket_hint(tx, n))
                 .unwrap_or(0);
             let sparse_start = {
                 let mut min_non_zero = usize::MAX;
                 let mut max_depth = 0usize;
-                for depth in bucket_depths.iter().copied() {
+                for depth in buckets.iter().map(|b| b.len()) {
                     if depth == 0 {
                         continue;
                     }
@@ -931,12 +931,12 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
                     let mut best_idx = None;
                     let mut best_distance = usize::MAX;
                     let mut best_counter_clockwise = usize::MAX;
-                    for (idx, depth) in bucket_depths.iter().copied().enumerate() {
+                    for (idx, depth) in buckets.iter().map(|b| b.len()).enumerate() {
                         if depth != min_non_zero {
                             continue;
                         }
-                        let clockwise = (idx + iters.len() - first_hint) % iters.len();
-                        let counter_clockwise = (first_hint + iters.len() - idx) % iters.len();
+                        let clockwise = (idx + n - first_hint) % n;
+                        let counter_clockwise = (first_hint + n - idx) % n;
                         let distance = clockwise.min(counter_clockwise);
                         if distance < best_distance
                             || (distance == best_distance
@@ -952,10 +952,11 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
                     None
                 }
             };
+            let mut iters: Vec<std::vec::IntoIter<Tx>> =
+                buckets.into_iter().map(|b| b.into_iter()).collect();
             // Seed the initial bucket probe from either sparse anti-starvation hint
             // or first tx hot-key hint so repeated batches do not always favor bucket 0.
             let mut rr_start = sparse_start.unwrap_or(first_hint);
-            let n = iters.len();
             // Rotate the round-robin start bucket each pass to reduce consistent
             // first-bucket preference under uneven bucket depths.
             loop {
@@ -1094,6 +1095,24 @@ mod tests {
             &small_write,
             &tx(3, wide_read_miss, vec![])
         ));
+    }
+
+    #[test]
+    fn dedup_access_keys_large_path_preserves_first_seen_order() {
+        let keys = dedup_access_keys(&[
+            o(100),
+            o(200),
+            o(100),
+            o(300),
+            o(400),
+            o(300),
+            o(500),
+            o(600),
+            o(700),
+            o(600),
+        ]);
+
+        assert_eq!(keys, vec![100, 200, 300, 400, 500, 600, 700]);
     }
 
     #[test]
@@ -1281,6 +1300,27 @@ mod tests {
     }
 
     #[test]
+    fn hot_bucket_interleave_keeps_first_hint_when_it_is_already_sparse_seed() {
+        let mut txs = vec![
+            tx(421, vec![], vec![o(5)]),  // first hot hint bucket 5 (also sparse)
+            tx(422, vec![], vec![o(0)]),  // dominant bucket 0 depth 4
+            tx(423, vec![], vec![o(8)]),  // dominant bucket 0 depth 4
+            tx(424, vec![], vec![o(16)]), // dominant bucket 0 depth 4
+            tx(425, vec![], vec![o(24)]), // dominant bucket 0 depth 4
+            tx(426, vec![], vec![o(6)]),  // equally sparse bucket 6 depth 1
+            tx(427, vec![], vec![o(1)]),  // sparse bucket 1 depth 1
+            tx(428, vec![], vec![o(2)]),  // sparse bucket 2 depth 1
+        ];
+
+        reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
+        // Keep len >= default bucket fanout (8) so object ids map directly to buckets.
+        // If the first-hot hint already points at one of the sparsest buckets,
+        // keep that bucket as the anti-starvation seed (distance 0) instead of
+        // rotating away to a neighboring sparse lane.
+        assert_eq!(txs.first().map(|t| t.id), Some(421));
+    }
+
+    #[test]
     fn hot_bucket_interleave_skips_micro_batches_to_preserve_low_latency_order() {
         let mut txs = vec![
             tx(21, vec![], vec![o(8)]),
@@ -1416,6 +1456,30 @@ mod tests {
     }
 
     #[test]
+    fn aggressive_skip_empty_stage_checks_keeps_conflict_check_metric_at_zero_for_empty_access() {
+        let _env = env_lock();
+        let _deep = EnvGuard::set("TRNM_AGGR_DEEP_SCAN", "1");
+        let _rr = EnvGuard::set("TRNM_AGGR_SCAN_ROUND_ROBIN", "0");
+        let _window = EnvGuard::set("TRNM_AGGR_SCAN_WINDOW", "2");
+        let _skip_empty = EnvGuard::set("TRNM_AGGR_SKIP_EMPTY_STAGE_CHECKS", "1");
+
+        let txs = vec![
+            tx(1, vec![], vec![o(7)]), // group 0
+            tx(3, vec![], vec![o(7)]), // forced to group 1
+            tx(10, vec![], vec![]),    // empty access set, should not execute stage probes
+        ];
+
+        let (_groups, profile) =
+            build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::AggressiveGreedy);
+
+        assert_eq!(profile.stage_ww_checks, 0);
+        assert_eq!(profile.stage_wr_checks, 0);
+        assert_eq!(profile.stage_rw_checks, 0);
+        assert_eq!(profile.conflict_checks, 0);
+        assert_eq!(profile.conflict_hits, 0);
+    }
+
+    #[test]
     fn aggressive_scan_window_caps_candidate_probe_cost() {
         let _env = env_lock();
         let _deep = EnvGuard::set("TRNM_AGGR_DEEP_SCAN", "1");
@@ -1463,6 +1527,18 @@ mod tests {
         let _seed = EnvGuard::set("TRNM_AGGR_SCAN_RR_SEED", " 7 ");
 
         assert_eq!(aggr_scan_round_robin_seed(), 7);
+    }
+
+    #[test]
+    fn aggressive_round_robin_toggle_parser_handles_trimmed_false_and_true_tokens() {
+        let _env = env_lock();
+
+        let _off = EnvGuard::set("TRNM_AGGR_SCAN_ROUND_ROBIN", " OFF ");
+        assert!(!aggr_scan_round_robin_enabled());
+        drop(_off);
+
+        let _yes = EnvGuard::set("TRNM_AGGR_SCAN_ROUND_ROBIN", " yes ");
+        assert!(aggr_scan_round_robin_enabled());
     }
 
     #[test]

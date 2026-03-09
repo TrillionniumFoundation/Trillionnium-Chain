@@ -14,6 +14,8 @@ required_lines=(
   'TZ: UTC'
   'LANG: C.UTF-8'
   'LC_ALL: C.UTF-8'
+  'LC_NUMERIC: C'
+  'LC_COLLATE: C'
   "PYTHONHASHSEED: '0'"
   "CI: 'true'"
 )

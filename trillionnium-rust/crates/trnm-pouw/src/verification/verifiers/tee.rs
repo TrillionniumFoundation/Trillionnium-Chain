@@ -452,6 +452,20 @@ mod tests {
     }
 
     #[test]
+    fn tee_verifier_rejects_duplicate_worker_binding_with_unclosed_quoted_alias_fail_closed() {
+        let verifier = TeeVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,\"worker=worker1,quote=abc"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("duplicate worker binding")
+        ));
+    }
+
+    #[test]
     fn tee_verifier_rejects_unexpected_worker_binding_without_context_fail_closed() {
         let verifier = TeeVerifier;
         let mut task = mock_task();
@@ -479,4 +493,51 @@ mod tests {
             VerificationResult::Valid
         );
     }
+
+    #[test]
+    fn tee_verifier_rejects_fullwidth_equals_unexpected_worker_binding_without_context_fail_closed() {
+        let verifier = TeeVerifier;
+        let mut task = mock_task();
+        task.worker = None;
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                "TEE:task_id=42,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,worker＝worker1,quote=abc"
+                    .as_bytes()
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("unexpected worker binding")
+        ));
+    }
+
+    #[test]
+    fn tee_verifier_rejects_fullwidth_equals_then_ascii_result_hash_binding_fail_closed() {
+        let verifier = TeeVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                "TEE:task_id=42,worker=worker1,proof_type=tee,result_hash＝abababababababababababababababababababababababababababababababab,result_hash=abababababababababababababababababababababababababababababababab,quote=abc"
+                    .as_bytes()
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("duplicate result_hash binding")
+        ));
+    }
+
+    #[test]
+    fn tee_verifier_rejects_fullwidth_equals_then_ascii_proof_type_binding_fail_closed() {
+        let verifier = TeeVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                "TEE:task_id=42,worker=worker1,proof_type＝tee,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,quote=abc"
+                    .as_bytes()
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("duplicate proof_type binding")
+        ));
+    }
 }
+

@@ -30,9 +30,50 @@ BENCH_MAX_MS="${BENCH_MAX_MS:-$CLASSIC_HARD_DEFAULT}"
 BENCH_MIXED_WARN_MS="${BENCH_MIXED_WARN_MS:-$MIXED_WARN_DEFAULT}"
 BENCH_MIXED_MAX_MS="${BENCH_MIXED_MAX_MS:-$MIXED_HARD_DEFAULT}"
 
-latest_audit="$(ls -1dt run/audit/state-root-audit-*.txt | head -n 1)"
-latest_bench="$(ls -1dt run/bench/bench-matrix-*.txt | head -n 1)"
-latest_mixed="$(ls -1dt run/bench/bench-mixed-matrix-*.txt | head -n 1)"
+file_mtime() {
+  local path="$1"
+  # BSD/macOS: stat -f %m, GNU/Linux: stat -c %Y
+  if stat -f '%m' "$path" >/dev/null 2>&1; then
+    stat -f '%m' "$path"
+  else
+    stat -c '%Y' "$path"
+  fi
+}
+
+latest_file() {
+  local pattern="$1"
+  local label="$2"
+  local latest=""
+  local latest_mtime=""
+
+  # Use nullglob + explicit mtime comparison to avoid brittle `ls` parsing and
+  # keep behavior deterministic across BSD/GNU userlands.
+  shopt -s nullglob
+  local matches=( $pattern )
+  shopt -u nullglob
+
+  if [[ ${#matches[@]} -eq 0 ]]; then
+    echo "missing required $label artifact (pattern: $pattern)" >&2
+    echo "hint: run the corresponding gate job before enforce_ci_thresholds.sh" >&2
+    exit 66
+  fi
+
+  local candidate=""
+  local mtime=""
+  for candidate in "${matches[@]}"; do
+    mtime="$(file_mtime "$candidate")"
+    if [[ -z "$latest" || "$mtime" -gt "$latest_mtime" || ( "$mtime" -eq "$latest_mtime" && "$candidate" > "$latest" ) ]]; then
+      latest="$candidate"
+      latest_mtime="$mtime"
+    fi
+  done
+
+  printf '%s\n' "$latest"
+}
+
+latest_audit="$(latest_file 'run/audit/state-root-audit-*.txt' 'audit')"
+latest_bench="$(latest_file 'run/bench/bench-matrix-*.txt' 'bench')"
+latest_mixed="$(latest_file 'run/bench/bench-mixed-matrix-*.txt' 'bench_mixed')"
 
 echo "threshold.profile=$PROFILE"
 echo "threshold.classic.warn_ms=$BENCH_WARN_MS"

@@ -27,3 +27,20 @@
 ```bash
 OUT_DIR=/tmp/trnm-evidence ./scripts/run_local_release_evidence.sh
 ```
+
+## RC 复现与回滚留痕（M3）
+
+为减少“同命令不同结果”的波动，建议在采集证据前固定环境：
+
+```bash
+export CARGO_TERM_COLOR=never
+export RUST_BACKTRACE=1
+export CARGO_BUILD_JOBS=1
+./scripts/run_local_release_evidence.sh
+```
+
+执行完成后，在 `summary.txt` 末尾追加：
+
+- 本次证据目录绝对路径
+- 复放命令：`./scripts/run_local_release_evidence.sh`
+- 回滚命令：`rm -rf <evidence_dir>`（仅删除本次生成目录）

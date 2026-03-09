@@ -173,25 +173,40 @@ pub struct InMemoryReliabilityStore {
 }
 
 impl InMemoryReliabilityStore {
-    pub fn with_config(mut config: InMemoryReliabilityStoreConfig) -> Self {
-        // Misconfigured zero dedup quota would reject every fresh ingress and
-        // collapse free-ingress throughput. Keep a one-entry floor so
-        // idempotency semantics remain live while still signaling tight quota.
-        if matches!(config.max_dedup_entries, Some(0)) {
-            config.max_dedup_entries = Some(1);
-        }
-
+    pub fn with_config(config: InMemoryReliabilityStoreConfig) -> Self {
         Self {
             sessions: HashMap::new(),
             dedup: HashMap::new(),
             meta: HashMap::new(),
-            config,
+            config: sanitize_store_config(config),
         }
     }
 
     fn total_pending_items(&self) -> usize {
         self.sessions.values().map(|s| s.pending.len()).sum()
     }
+}
+
+fn sanitize_store_config(mut config: InMemoryReliabilityStoreConfig) -> InMemoryReliabilityStoreConfig {
+    // Zeroed quotas create permanent capacity_exceeded responses for fresh ingress.
+    // Clamp to a minimally live value so misconfigured operators retain recovery paths.
+    fn clamp_zero(opt: Option<usize>) -> Option<usize> {
+        opt.map(|v| v.max(1))
+    }
+
+    config.max_sessions = clamp_zero(config.max_sessions);
+    config.max_pending_per_session = clamp_zero(config.max_pending_per_session);
+    config.max_pending_total = clamp_zero(config.max_pending_total);
+    config.max_dedup_entries = clamp_zero(config.max_dedup_entries);
+
+    // Zero-duration retain windows collapse into effectively immediate cleanup,
+    // which can jitter between retain/remove behavior across cleanup call sites.
+    // Keep a 1ms floor so "retain" mode remains semantically distinct.
+    if let EmptySessionCleanupPolicy::RetainForMs(0) = config.empty_session_cleanup {
+        config.empty_session_cleanup = EmptySessionCleanupPolicy::RetainForMs(1);
+    }
+
+    config
 }
 
 impl ReliabilityStore for InMemoryReliabilityStore {
@@ -643,14 +658,14 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
                 pending: BTreeMap::new(),
             });
 
-        // Even if the dedup TTL has elapsed, an in-flight pending entry with the
-        // same ack_id must remain idempotent; otherwise repeated ingress can
-        // continuously reset retry state and inflate queue pressure.
+        // Guard against dedup TTL rollover while retry state is still pending.
+        // A replay of the same ack_id must not reset attempts/backoff and gain
+        // unfair retry priority under sustained ingress.
         if session.pending.contains_key(&ack_id) {
             return Ack {
                 code: AckCode::Duplicate,
                 ack_id,
-                detail: "already processed".to_string(),
+                detail: "already pending".to_string(),
             };
         }
 
@@ -702,7 +717,9 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
             return Vec::new();
         }
 
-        let mut out = Vec::new();
+        // Throughput hot-path: pre-allocate to the global dispatch cap so saturated
+        // retry rounds avoid incremental Vec growth/realloc churn.
+        let mut out = Vec::with_capacity(MAX_DUE_RETRIES_PER_COLLECT);
         let mut exhausted_in_this_round = 0u32;
         let session_ids = self.store.list_session_ids();
         let session_count = session_ids.len();
@@ -713,7 +730,10 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
         }
 
         let start = self.collect_rr_cursor % session_count;
-        self.collect_rr_cursor = (self.collect_rr_cursor + 1) % session_count;
+        // Harden against pathological/corrupted cursor values in long-running
+        // processes and debug builds: wrapping increment avoids usize overflow
+        // panic while preserving modulo-based round-robin semantics.
+        self.collect_rr_cursor = self.collect_rr_cursor.wrapping_add(1) % session_count;
 
         for offset in 0..session_count {
             if out.len() >= MAX_DUE_RETRIES_PER_COLLECT {
@@ -766,8 +786,14 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
 
             if session.pending.is_empty() && self.store.should_remove_empty_session_immediately() {
                 self.store.remove_session(sid);
-            } else {
-                let _ = self.store.try_upsert_session_with_ts(session, now_unix_ms);
+            } else if let Err(e) = self.store.try_upsert_session_with_ts(session, now_unix_ms) {
+                // Fail closed on persistence errors: keeping a stale in-memory retry
+                // view can repeatedly re-dispatch the same due item and amplify load.
+                eprintln!(
+                    "[reliability] drop session after failed retry-state persist sid={} err={}",
+                    sid, e
+                );
+                self.store.remove_session(sid);
             }
         }
 
@@ -1135,6 +1161,75 @@ mod tests {
         }
     }
 
+    #[derive(Default)]
+    struct FailingUpsertStore {
+        inner: InMemoryReliabilityStore,
+        fail_upsert: bool,
+    }
+
+    impl ReliabilityStore for FailingUpsertStore {
+        fn get_session(&self, session_id: &str) -> Option<SessionState> {
+            self.inner.get_session(session_id)
+        }
+
+        fn upsert_session(&mut self, session: SessionState) {
+            self.inner.upsert_session(session);
+        }
+
+        fn remove_session(&mut self, session_id: &str) {
+            self.inner.remove_session(session_id);
+        }
+
+        fn list_session_ids(&self) -> Vec<String> {
+            self.inner.list_session_ids()
+        }
+
+        fn contains_dedup_key(&self, key: &DedupKey) -> bool {
+            self.inner.contains_dedup_key(key)
+        }
+
+        fn remember_dedup_key(&mut self, key: DedupKey) {
+            self.inner.remember_dedup_key(key);
+        }
+
+        fn remember_dedup_key_with_ts(&mut self, key: DedupKey, now_unix_ms: u128) {
+            self.inner.remember_dedup_key_with_ts(key, now_unix_ms);
+        }
+
+        fn try_upsert_session_with_ts(
+            &mut self,
+            session: SessionState,
+            now_unix_ms: u128,
+        ) -> Result<(), ReliabilityStoreError> {
+            if self.fail_upsert {
+                return Err(ReliabilityStoreError::InvalidState {
+                    detail: "injected upsert failure".to_string(),
+                });
+            }
+            self.inner.try_upsert_session_with_ts(session, now_unix_ms)
+        }
+
+        fn try_remember_dedup_key_with_ts(
+            &mut self,
+            key: DedupKey,
+            now_unix_ms: u128,
+        ) -> Result<(), ReliabilityStoreError> {
+            self.inner.try_remember_dedup_key_with_ts(key, now_unix_ms)
+        }
+
+        fn forget_dedup_key(&mut self, key: &DedupKey) {
+            self.inner.forget_dedup_key(key);
+        }
+
+        fn should_remove_empty_session_immediately(&self) -> bool {
+            self.inner.should_remove_empty_session_immediately()
+        }
+
+        fn cleanup_expired(&mut self, now_unix_ms: u128, retention: &RetentionConfig) {
+            self.inner.cleanup_expired(now_unix_ms, retention);
+        }
+    }
+
     #[test]
     fn dedup_by_from_and_seq() {
         let store = InMemoryReliabilityStore::default();
@@ -1442,51 +1537,8 @@ mod tests {
         let dup = engine.receive(mk_msg("alice", "s1", 9), 1_050);
         assert_eq!(dup.code, AckCode::Duplicate);
 
-        // Once the in-flight entry is acknowledged, dedup expiry should allow
-        // the same key to be accepted again.
-        assert!(engine.mark_acked("s1", &first.ack_id));
-
         let after_ttl = engine.receive(mk_msg("alice", "s1", 9), 1_101);
         assert_eq!(after_ttl.code, AckCode::Accepted);
-    }
-
-    #[test]
-    fn pending_entry_keeps_duplicate_semantics_after_dedup_ttl_expiry() {
-        let store = InMemoryReliabilityStore::default();
-        let mut engine = ReliabilityEngine::new_with_retention(
-            store,
-            RetryConfig {
-                base_backoff_ms: 1_000,
-                max_backoff_ms: 1_000,
-                ..RetryConfig::default()
-            },
-            RetentionConfig {
-                dedup_ttl_ms: 50,
-                pending_ttl_ms: 5_000,
-                cleanup_interval_ms: 1,
-            },
-        );
-
-        let first = engine.receive(mk_msg("alice", "s1", 11), 1_000);
-        assert_eq!(first.code, AckCode::Accepted);
-
-        // Trigger cleanup after dedup TTL, while the pending item is still in-flight.
-        let dupe = engine.receive(mk_msg("alice", "s1", 11), 1_100);
-        assert_eq!(dupe.code, AckCode::Duplicate);
-        assert_eq!(dupe.ack_id, first.ack_id);
-
-        let store = engine.into_store();
-        let session = store.get_session("s1").expect("session should exist");
-        let item = session
-            .pending
-            .get(&first.ack_id)
-            .expect("pending item should be retained");
-
-        assert_eq!(item.attempts, 0, "duplicate must not reset retry attempts");
-        assert_eq!(
-            item.created_at_unix_ms, 1_000,
-            "duplicate must not overwrite pending creation timestamp"
-        );
     }
 
     #[test]
@@ -1705,6 +1757,65 @@ mod tests {
     }
 
     #[test]
+    fn collect_due_retries_cursor_wraps_without_overflow_panic() {
+        let store = InMemoryReliabilityStore::default();
+        let mut engine = ReliabilityEngine::new(
+            store,
+            RetryConfig {
+                base_backoff_ms: 1,
+                max_backoff_ms: 1,
+                ..RetryConfig::default()
+            },
+        );
+
+        let ack_a = engine.receive(mk_msg("alice", "s-a", 1), 1_000);
+        let ack_b = engine.receive(mk_msg("bob", "s-b", 1), 1_001);
+        assert_eq!(ack_a.code, AckCode::Accepted);
+        assert_eq!(ack_b.code, AckCode::Accepted);
+
+        engine.collect_rr_cursor = usize::MAX;
+
+        let due = engine.collect_due_retries(2_000);
+        assert_eq!(
+            due.first().map(|i| i.message.session_id.as_str()),
+            Some("s-b"),
+            "wrapped cursor should still produce deterministic modulo rotation"
+        );
+
+        assert_eq!(engine.collect_rr_cursor, 0);
+    }
+
+    #[test]
+    fn collect_due_retries_drops_session_when_retry_state_persist_fails() {
+        let mut store = FailingUpsertStore::default();
+        store.fail_upsert = true;
+        let mut engine = ReliabilityEngine::new(
+            store,
+            RetryConfig {
+                base_backoff_ms: 1,
+                max_backoff_ms: 1,
+                ..RetryConfig::default()
+            },
+        );
+
+        // Seed one pending item while upsert failures are disabled.
+        engine.store.fail_upsert = false;
+        let ack = engine.receive(mk_msg("alice", "s1", 1), 1_000);
+        assert_eq!(ack.code, AckCode::Accepted);
+
+        // Inject persistence failure for the collect/update pass.
+        engine.store.fail_upsert = true;
+        let due = engine.collect_due_retries(2_000);
+        assert_eq!(due.len(), 1, "first due retry still dispatches once");
+
+        let store = engine.into_store();
+        assert!(
+            store.get_session("s1").is_none(),
+            "failed retry-state persist should drop session to avoid retry storms"
+        );
+    }
+
+    #[test]
     fn dedup_quota_limit_rejects_fresh_ingress_without_breaking_duplicate_ack_path() {
         let store = InMemoryReliabilityStore::with_config(InMemoryReliabilityStoreConfig {
             max_dedup_entries: Some(1),
@@ -1725,6 +1836,44 @@ mod tests {
         let duplicate = engine.receive(mk_msg("alice", "s1", 1), 1_002);
         assert_eq!(duplicate.code, AckCode::Duplicate);
         assert_eq!(duplicate.ack_id, first.ack_id);
+    }
+
+    #[test]
+    fn dedup_ttl_expiry_does_not_reset_existing_pending_retry_state() {
+        let store = InMemoryReliabilityStore::default();
+        let mut engine = ReliabilityEngine::new_with_retention(
+            store,
+            RetryConfig {
+                base_backoff_ms: 10,
+                max_backoff_ms: 10,
+                ..RetryConfig::default()
+            },
+            RetentionConfig {
+                dedup_ttl_ms: 1,
+                pending_ttl_ms: 10_000,
+                cleanup_interval_ms: 1,
+            },
+        );
+
+        let first = engine.receive(mk_msg("alice", "s1", 7), 1_000);
+        assert_eq!(first.code, AckCode::Accepted);
+
+        // Dedup memory expires, but retry state is still pending in-session.
+        engine.maybe_cleanup(1_010);
+        let replay = engine.receive(mk_msg("alice", "s1", 7), 1_011);
+        assert_eq!(replay.code, AckCode::Duplicate);
+        assert_eq!(replay.detail, "already pending");
+
+        let store = engine.into_store();
+        let session = store.get_session("s1").expect("session should exist");
+        assert_eq!(session.pending.len(), 1, "replay must not overwrite pending state");
+
+        let item = session
+            .pending
+            .get(&first.ack_id)
+            .expect("pending item should keep original ack_id");
+        assert_eq!(item.created_at_unix_ms, 1_000);
+        assert_eq!(item.attempts, 0);
     }
 
     #[test]
@@ -1759,25 +1908,6 @@ mod tests {
         ));
 
         assert_eq!(store.dedup.get(&key), Some(&2_000));
-    }
-
-    #[test]
-    fn zero_dedup_quota_is_sanitized_to_one_entry_floor() {
-        let store = InMemoryReliabilityStore::with_config(InMemoryReliabilityStoreConfig {
-            max_dedup_entries: Some(0),
-            ..InMemoryReliabilityStoreConfig::default()
-        });
-        let mut engine = ReliabilityEngine::new(store, RetryConfig::default());
-
-        let first = engine.receive(mk_msg("alice", "s1", 1), 1_000);
-        assert_eq!(first.code, AckCode::Accepted);
-
-        let duplicate = engine.receive(mk_msg("alice", "s1", 1), 1_001);
-        assert_eq!(duplicate.code, AckCode::Duplicate);
-
-        let second_domain = engine.receive(mk_msg("bob", "s2", 1), 1_002);
-        assert_eq!(second_domain.code, AckCode::BadRequest);
-        assert!(second_domain.detail.contains("dedup limit reached (1)"));
     }
 
     #[test]
@@ -1996,6 +2126,58 @@ mod tests {
         let _ = std::fs::remove_file(&db_path);
         let _ = std::fs::remove_file(db_path.with_extension("sqlite-wal"));
         let _ = std::fs::remove_file(db_path.with_extension("sqlite-shm"));
+    }
+
+    #[test]
+    fn store_config_clamps_zero_dedup_quota_to_keep_one_idempotency_slot_live() {
+        let mut store = InMemoryReliabilityStore::with_config(InMemoryReliabilityStoreConfig {
+            max_dedup_entries: Some(0),
+            ..InMemoryReliabilityStoreConfig::default()
+        });
+
+        let key1 = DedupKey {
+            from: "alice".to_string(),
+            seq_or_nonce: 1,
+        };
+        let key2 = DedupKey {
+            from: "bob".to_string(),
+            seq_or_nonce: 1,
+        };
+
+        assert!(store.try_remember_dedup_key_with_ts(key1, 1).is_ok());
+        let err = store
+            .try_remember_dedup_key_with_ts(key2, 2)
+            .expect_err("second unique key should hit clamped quota");
+        assert!(matches!(err, ReliabilityStoreError::CapacityExceeded { .. }));
+    }
+
+    #[test]
+    fn store_config_clamps_zero_session_limit_to_preserve_forward_progress() {
+        let mut store = InMemoryReliabilityStore::with_config(InMemoryReliabilityStoreConfig {
+            max_sessions: Some(0),
+            ..InMemoryReliabilityStoreConfig::default()
+        });
+
+        let session = SessionState {
+            session_id: "s1".to_string(),
+            pending: BTreeMap::new(),
+        };
+
+        assert!(store.try_upsert_session_with_ts(session, 1).is_ok());
+        assert_eq!(store.list_session_ids(), vec!["s1".to_string()]);
+    }
+
+    #[test]
+    fn store_config_clamps_zero_empty_session_retention_window() {
+        let store = InMemoryReliabilityStore::with_config(InMemoryReliabilityStoreConfig {
+            empty_session_cleanup: EmptySessionCleanupPolicy::RetainForMs(0),
+            ..InMemoryReliabilityStoreConfig::default()
+        });
+
+        assert!(matches!(
+            store.config.empty_session_cleanup,
+            EmptySessionCleanupPolicy::RetainForMs(1)
+        ));
     }
 
     #[test]

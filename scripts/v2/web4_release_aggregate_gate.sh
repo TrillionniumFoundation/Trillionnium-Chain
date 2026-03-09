@@ -58,6 +58,15 @@ if [[ ${#REQUIRED_GATES[@]} -eq 0 ]]; then
   exit 2
 fi
 
+declare -A seen_gate=()
+for gate in "${REQUIRED_GATES[@]}"; do
+  if [[ -n "${seen_gate[$gate]:-}" ]]; then
+    echo "[WEB4-RELEASE][FAIL] duplicate required gate detected: $gate" >&2
+    exit 2
+  fi
+  seen_gate[$gate]=1
+done
+
 RUN_STAMP="${WEB4_RELEASE_RUN_STAMP:-$(date +%Y%m%d-%H%M%S)}"
 if [[ ! "$RUN_STAMP" =~ ^[0-9]{8}-[0-9]{6}$ ]]; then
   echo "[WEB4-RELEASE][FAIL] WEB4_RELEASE_RUN_STAMP must match YYYYMMDD-HHMMSS, got: $RUN_STAMP" >&2

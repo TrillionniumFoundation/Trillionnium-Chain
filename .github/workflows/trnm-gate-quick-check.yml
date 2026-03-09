@@ -77,6 +77,9 @@ jobs:
       # Disable apt-listbugs interactive prompts on Debian-family runners when
       # package transitions introduce RC bug notices during shellcheck install.
       APT_LISTBUGS_FRONTEND: none
+      # Stabilize created file permissions across runner/image defaults so
+      # replay artifacts and git diffs keep deterministic mode bits.
+      UMASK: "022"
     # This workflow runs dozens of regression scripts; 10 minutes can truncate
     # coverage and hide late-stage failures. Keep enough headroom for full sweep.
     timeout-minutes: 45
@@ -98,8 +101,8 @@ jobs:
               sleep 2
             done
           }
-          retry 3 sudo apt-get -o DPkg::Lock::Timeout=60 -o Acquire::Retries=3 -o Acquire::http::Timeout=30 -o Dpkg::Use-Pty=0 -o APT::Color=0 update
-          retry 3 sudo apt-get -o DPkg::Lock::Timeout=60 -o Acquire::Retries=3 -o Acquire::http::Timeout=30 -o Dpkg::Use-Pty=0 -o APT::Color=0 install -y --no-install-recommends shellcheck
+          retry 3 sudo apt-get -o DPkg::Lock::Timeout=60 -o Acquire::Retries=3 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 -o Dpkg::Use-Pty=0 -o APT::Color=0 update
+          retry 3 sudo apt-get -o DPkg::Lock::Timeout=60 -o Acquire::Retries=3 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 -o Dpkg::Use-Pty=0 -o APT::Color=0 install -y --no-install-recommends shellcheck
 
       - name: Quick shell gate (bash -n + shellcheck)
         run: |
@@ -143,6 +146,14 @@ jobs:
       - name: RPC node events resource guard regression
         run: |
           ./scripts/v2/rpc_node_events_resource_guard_test.sh
+
+      - name: Check-parallel flaky CI timeout guard regression
+        run: |
+          ./scripts/v2/check_parallel_flaky_ci_timeout_guard_test.sh
+
+      - name: Check-parallel flaky invalid RUN_TIMEOUT_SEC input guard regression
+        run: |
+          ./scripts/v2/check_parallel_flaky_invalid_timeout_guard_test.sh
 
       - name: Governance value schema reject regression
         run: |
@@ -295,6 +306,10 @@ jobs:
       - name: Backlog regression: pouw-challenge-timeout-migration-test
         run: |
           ./scripts/v2/pouw_challenge_timeout_migration_test.sh
+
+      - name: Backlog regression: v1-proof-registry-contract-gate
+        run: |
+          ./scripts/v2/v1_proof_registry_contract_gate.sh
 
       - name: Backlog regression: worker-replay-guard-test
         run: |
@@ -535,6 +550,10 @@ jobs:
       - name: Auto regression: e3-enterprise-runbook-required-sections-test
         run: |
           ./scripts/v2/e3_enterprise_runbook_required_sections_test.sh
+
+      - name: Auto regression: e3-enterprise-runbook-operator-id-template-test
+        run: |
+          ./scripts/v2/e3_enterprise_runbook_operator_id_template_test.sh
 
       - name: Auto regression: e3-enterprise-runbook-root-cause-tag-format-test
         run: |
