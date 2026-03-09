@@ -1949,17 +1949,19 @@ mod tests {
             ),
             VerificationResult::Valid
         );
-        assert_eq!(
+        assert!(matches!(
             registry.verify(&tee_task, b"TEE:task_id=42,proof_type=tee,quote=ok"),
-            VerificationResult::Valid
-        );
-        assert_eq!(
+            VerificationResult::Indeterminate(msg)
+                if msg.contains("cryptographic verification backend not configured")
+        ));
+        assert!(matches!(
             registry.verify(
                 &zk_task,
                 b"ZK:task_id=42,proof_type=zk,result_hash=1111111111111111111111111111111111111111111111111111111111111111,proof=ok"
             ),
-            VerificationResult::Valid
-        );
+            VerificationResult::Indeterminate(msg)
+                if msg.contains("cryptographic verification backend not configured")
+        ));
     }
 
     #[test]
@@ -2122,4 +2124,3 @@ mod tests {
         ));
     }
 }
-

@@ -85,13 +85,10 @@
 - 适用条件：私有仓库当前无法启用 GitHub required checks（平台套餐限制）。
 - 执行要求：合并前必须附 P0/P1 summary 证据（P0 fail=0；P1 fail=0 & skip=0）+ quick gate 通过记录。
 
-## 8) Rust 旁路 PoC（新增）
+## 8) Rust 旁路 PoC（历史记录，当前仓内已无实现）
 
-- 新增 `rust/verifier`：commitment 校验 sidecar（输入 task_id/result_hash/reveal_salt/worker_address/committed_hash）。
-- 新增 fixtures：`match.json` / `mismatch.json`。
-- 新增本地入口：`scripts/run_rust_verifier_poc.sh`。
-- 新增 CI：`.github/workflows/rust-verifier-poc.yml`（build + test + fixture verification）。
-- 文档：`docs/protocol/rust-verifier-poc.md`。
+- 该 PoC 曾规划 `rust/verifier` sidecar、fixtures、本地入口与独立 CI。
+- 当前 `origin/main` 已不存在 `rust/verifier`、`scripts/run_rust_verifier_poc.sh`、`docs/protocol/rust-verifier-poc.md`；相应历史 workflow 已移除，避免继续制造“看似受保护、实际未覆盖”的假象。
 
 ## 9) Rust 旁路接入进展（执行中）
 

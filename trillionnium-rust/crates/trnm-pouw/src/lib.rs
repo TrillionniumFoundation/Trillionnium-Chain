@@ -27,6 +27,8 @@ pub enum PouwError {
     CommitmentMismatch,
     #[error("unauthorized")]
     Unauthorized,
+    #[error("resolve approval staged")]
+    ResolveApprovalStaged,
     #[error("insufficient stake")]
     InsufficientStake,
     #[error("deadline exceeded")]
@@ -43,6 +45,7 @@ impl PouwError {
             PouwError::MissingCommitment => "MissingCommitment",
             PouwError::CommitmentMismatch => "CommitmentMismatch",
             PouwError::Unauthorized => "Unauthorized",
+            PouwError::ResolveApprovalStaged => "ResolveApprovalStaged",
             PouwError::InsufficientStake => "InsufficientStake",
             PouwError::DeadlineExceeded => "DeadlineExceeded",
             // Internal-only state storage errors are not protocol-stable.
@@ -972,9 +975,7 @@ pub fn apply_resolve_at_height(
     // account ids to prevent homoglyph spoofing in signer/member matching.
     let resolver_has_non_ascii = !resolver_trimmed.is_ascii();
     let signer_has_non_ascii = !signer_trimmed.is_ascii();
-    let authority_has_non_ascii_member = authority_members
-        .iter()
-        .any(|member| !member.is_ascii());
+    let authority_has_non_ascii_member = authority_members.iter().any(|member| !member.is_ascii());
     let signer_matches_configured_member = authority_members
         .iter()
         .any(|member| *member == signer_trimmed);
@@ -1119,10 +1120,15 @@ pub fn apply_resolve_at_height(
         }
 
         let approved = st
-            .stage_or_confirm_resolve_approval(task_ref.id, slash_worker, signer_trimmed, authority_trimmed)
+            .stage_or_confirm_resolve_approval(
+                task_ref.id,
+                slash_worker,
+                signer_trimmed,
+                authority_trimmed,
+            )
             .map_err(|_| PouwError::Unauthorized)?;
         if !approved {
-            return Err(PouwError::Unauthorized);
+            return Err(PouwError::ResolveApprovalStaged);
         }
     }
 
@@ -1730,7 +1736,8 @@ mod tests {
         drifted.task_id = 17893;
         let r3 = st.update_task(r3, drifted).unwrap();
 
-        let err = apply_reveal_result(&mut st, r3.clone(), result_hash, reveal_salt, None).unwrap_err();
+        let err =
+            apply_reveal_result(&mut st, r3.clone(), result_hash, reveal_salt, None).unwrap_err();
         assert!(matches!(err, PouwError::State(msg) if msg.contains("task id binding mismatch")));
 
         let task_after = st.get_task(r3.id).unwrap();
@@ -1766,7 +1773,8 @@ mod tests {
     }
 
     #[test]
-    fn tee_reveal_rejects_fullwidth_equals_result_hash_binding_fail_closed_without_state_mutation() {
+    fn tee_reveal_rejects_fullwidth_equals_result_hash_binding_fail_closed_without_state_mutation()
+    {
         let mut st = seeded_state();
         let r1 = apply_create_task(&mut st, 78921, "alice".into(), 10).unwrap();
         let mut tee_task = st.get_task(r1.id).unwrap();
@@ -2453,7 +2461,9 @@ mod tests {
         let proof = b"TEE:task_id=783,worker=worker1,proof_type=tee,result_hash=0202020202020202020202020202020202020202020202020202020202020202,quote=QUOTE_XYZ".to_vec();
         let err = apply_reveal_result(&mut st, r2.clone(), result_hash, reveal_salt, Some(proof))
             .unwrap_err();
-        assert!(matches!(err, PouwError::State(msg) if msg.contains("legacy committed result hash drift")));
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("legacy committed result hash drift"))
+        );
 
         let task_after = st.get_task(r2.id).unwrap();
         assert_eq!(task_after.status, TaskStatus::Committed);
@@ -2501,7 +2511,9 @@ mod tests {
         let proof = b"ZK:task_id=784,worker=worker1,proof_type=zk,result_hash=0202020202020202020202020202020202020202020202020202020202020202,seal=SEAL_XYZ".to_vec();
         let err = apply_reveal_result(&mut st, r2.clone(), result_hash, reveal_salt, Some(proof))
             .unwrap_err();
-        assert!(matches!(err, PouwError::State(msg) if msg.contains("legacy committed result hash drift")));
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("legacy committed result hash drift"))
+        );
 
         let task_after = st.get_task(r2.id).unwrap();
         assert_eq!(task_after.status, TaskStatus::Committed);
@@ -3883,7 +3895,7 @@ mod tests {
             211,
         )
         .expect_err("first multisig signer should only stage pending approval");
-        assert!(matches!(staged_err, PouwError::Unauthorized));
+        assert!(matches!(staged_err, PouwError::ResolveApprovalStaged));
         assert_eq!(st.pending_resolve_approval(r5.id), Some((true, 1)));
 
         let r6 = apply_timeout(&mut st, r5, 311).expect("timeout should finalize challenged task");
@@ -3937,7 +3949,7 @@ mod tests {
             211,
         )
         .expect_err("first multisig signer should only stage pending approval");
-        assert!(matches!(staged_err, PouwError::Unauthorized));
+        assert!(matches!(staged_err, PouwError::ResolveApprovalStaged));
         assert_eq!(st.pending_resolve_approval(r5.id), Some((true, 1)));
 
         st.set_gov_param(9_222, 7_999, "emergency_pause".into(), "true".into())
@@ -4019,7 +4031,7 @@ mod tests {
             211,
         )
         .expect_err("first multisig signer should only stage pending approval");
-        assert!(matches!(staged_err, PouwError::Unauthorized));
+        assert!(matches!(staged_err, PouwError::ResolveApprovalStaged));
         assert!(matches!(st.pending_resolve_approval(r5.id), Some((_, 1))));
 
         st.set_gov_param(9_224, 7_999, "emergency_pause".into(), "true".into())
@@ -4083,7 +4095,8 @@ mod tests {
     }
 
     #[test]
-    fn challenged_multisig_resolve_rejects_first_approval_while_paused_without_staging_or_escrow_drift() {
+    fn challenged_multisig_resolve_rejects_first_approval_while_paused_without_staging_or_escrow_drift(
+    ) {
         // Safety boundary: emergency pause must fail closed before any multisig
         // approval staging, so no partial authority state is recorded while paused.
         let mut st = seeded_state();
@@ -4159,7 +4172,7 @@ mod tests {
             211,
         )
         .expect_err("first signer should stage pending approval once pause clears");
-        assert!(matches!(staged_err, PouwError::Unauthorized));
+        assert!(matches!(staged_err, PouwError::ResolveApprovalStaged));
     }
 
     #[test]
@@ -4199,7 +4212,7 @@ mod tests {
             211,
         )
         .expect_err("first signer should only stage pending multisig approval");
-        assert!(matches!(stage_err, PouwError::Unauthorized));
+        assert!(matches!(stage_err, PouwError::ResolveApprovalStaged));
         let staged_before_pause = st.pending_resolve_approval(r5.id);
         assert!(matches!(staged_before_pause, Some((false, _))));
 
@@ -5648,7 +5661,7 @@ mod tests {
             "authority-a".into(),
         )
         .expect_err("first multisig approver must not finalize resolve");
-        assert!(matches!(first_err, PouwError::Unauthorized));
+        assert!(matches!(first_err, PouwError::ResolveApprovalStaged));
         assert_eq!(st.pending_resolve_approval(r5.id), Some((true, 1)));
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
         assert_eq!(
@@ -5705,7 +5718,7 @@ mod tests {
             "authority-a".into(),
         )
         .expect_err("first multisig approver must only stage pending approval");
-        assert!(matches!(first_err, PouwError::Unauthorized));
+        assert!(matches!(first_err, PouwError::ResolveApprovalStaged));
         assert_eq!(st.pending_resolve_approval(r5.id), Some((true, 1)));
 
         let replay_err = apply_resolve(
@@ -5760,7 +5773,7 @@ mod tests {
             "authority-a".into(),
         )
         .expect_err("first signer must only stage slashing resolve approval");
-        assert!(matches!(first_err, PouwError::Unauthorized));
+        assert!(matches!(first_err, PouwError::ResolveApprovalStaged));
         assert_eq!(st.pending_resolve_approval(r5.id), Some((true, 1)));
 
         let decision_flip_err = apply_resolve(
@@ -5930,9 +5943,7 @@ mod tests {
             "authority-a".into(),
             "authority-a".into(),
         )
-        .expect_err(
-            "authority sets with assigned worker member via case drift must be rejected",
-        );
+        .expect_err("authority sets with assigned worker member via case drift must be rejected");
         assert!(matches!(err, PouwError::Unauthorized));
 
         let task = st.get_task(8_963).unwrap();
@@ -6148,7 +6159,9 @@ mod tests {
         let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
         let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
         let err = apply_resolve(&mut st, r5, true, "authority".into(), "authority".into())
-            .expect_err("authority member carriage returns must be rejected to preserve canonical signer sets");
+            .expect_err(
+            "authority member carriage returns must be rejected to preserve canonical signer sets",
+        );
         assert!(matches!(err, PouwError::Unauthorized));
 
         let task = st.get_task(8_967_01).unwrap();
@@ -6455,7 +6468,7 @@ mod tests {
             "authority2".into(),
         )
         .expect_err("first multisig member must stage but not finalize resolution");
-        assert!(matches!(staged_err, PouwError::Unauthorized));
+        assert!(matches!(staged_err, PouwError::ResolveApprovalStaged));
 
         let r6 = apply_resolve(&mut st, r5, true, "authority".into(), "authority".into())
             .expect("second distinct multisig member should finalize resolution");
@@ -6773,7 +6786,7 @@ mod tests {
             "authority-a".into(),
         )
         .expect_err("first multisig approval should stage only");
-        assert!(matches!(first_err, PouwError::Unauthorized));
+        assert!(matches!(first_err, PouwError::ResolveApprovalStaged));
         assert_eq!(
             st.pending_resolve_first_approver(r5.id).as_deref(),
             Some("authority-a")
@@ -6852,7 +6865,7 @@ mod tests {
             "authority-a".into(),
         )
         .expect_err("first multisig approval should stage only");
-        assert!(matches!(first_err, PouwError::Unauthorized));
+        assert!(matches!(first_err, PouwError::ResolveApprovalStaged));
         assert_eq!(
             st.pending_resolve_first_approver(r5.id).as_deref(),
             Some("authority-a")
@@ -7336,8 +7349,14 @@ mod tests {
         let before_challenger = st.balance_of("challenger");
 
         let spoofed_signer = "authоrity"; // Cyrillic 'о' (U+043E)
-        let err = apply_resolve(&mut st, r5, true, spoofed_signer.into(), spoofed_signer.into())
-            .expect_err("emergency pause must mask non-ASCII signer validation and freeze settlement");
+        let err = apply_resolve(
+            &mut st,
+            r5,
+            true,
+            spoofed_signer.into(),
+            spoofed_signer.into(),
+        )
+        .expect_err("emergency pause must mask non-ASCII signer validation and freeze settlement");
         assert!(matches!(err, PouwError::InvalidTransition));
 
         let after_task = st.get_task(8_961_23_2).unwrap();
@@ -7433,8 +7452,8 @@ mod tests {
 
         let err = apply_resolve(&mut st, r5, true, "authority".into(), "authority".into())
             .expect_err(
-                "emergency pause must mask challenger-member multisig validation and freeze settlement",
-            );
+            "emergency pause must mask challenger-member multisig validation and freeze settlement",
+        );
         assert!(matches!(err, PouwError::InvalidTransition));
 
         let after_task = st.get_task(8_961_24_1).unwrap();
@@ -7480,10 +7499,9 @@ mod tests {
         let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
         let before_challenger = st.balance_of("challenger");
 
-        let err = apply_resolve(&mut st, r5, true, "worker1".into(), "worker1".into())
-            .expect_err(
-                "emergency pause must mask assigned-worker authority validation and freeze settlement",
-            );
+        let err = apply_resolve(&mut st, r5, true, "worker1".into(), "worker1".into()).expect_err(
+            "emergency pause must mask assigned-worker authority validation and freeze settlement",
+        );
         assert!(matches!(err, PouwError::InvalidTransition));
 
         let after_task = st.get_task(8_961_24_2).unwrap();
@@ -7641,7 +7659,8 @@ mod tests {
     }
 
     #[test]
-    fn resolve_emergency_pause_precedes_malformed_worker_state_validation_without_escrow_mutation() {
+    fn resolve_emergency_pause_precedes_malformed_worker_state_validation_without_escrow_mutation()
+    {
         // Merge-gate hardening: emergency pause must fail-closed before malformed
         // worker-account state validation so paused resolve flow does not leak legacy
         // challenged-task corruption details while escrow settlement is frozen.
@@ -7722,7 +7741,7 @@ mod tests {
             "authority2".into(),
         )
         .expect_err("first multisig signer must stage resolve approval before timeout");
-        assert!(matches!(staged_err, PouwError::Unauthorized));
+        assert!(matches!(staged_err, PouwError::ResolveApprovalStaged));
         assert_eq!(st.pending_resolve_approval(r5.id), Some((true, 1)));
 
         st.set_gov_param(9_202_09, 7_999, "emergency_pause".into(), "true".into())
@@ -8061,7 +8080,7 @@ mod tests {
             "authority2".into(),
         )
         .expect_err("first multisig member must stage resolve after pause clears");
-        assert!(matches!(staged_err, PouwError::Unauthorized));
+        assert!(matches!(staged_err, PouwError::ResolveApprovalStaged));
         assert_eq!(total_funds(&st), baseline_total);
 
         let done = apply_resolve(&mut st, r5, false, "authority".into(), "authority".into())
@@ -8128,7 +8147,7 @@ mod tests {
             "authority2".into(),
         )
         .expect_err("first multisig member must stage resolve after pause clears");
-        assert!(matches!(staged_err, PouwError::Unauthorized));
+        assert!(matches!(staged_err, PouwError::ResolveApprovalStaged));
         assert_eq!(
             st.pending_resolve_approval(r5.id),
             Some((true, 1)),
@@ -8187,7 +8206,7 @@ mod tests {
             "authority2".into(),
         )
         .expect_err("first multisig member must stage a pending approval");
-        assert!(matches!(staged_err, PouwError::Unauthorized));
+        assert!(matches!(staged_err, PouwError::ResolveApprovalStaged));
         assert_eq!(st.pending_resolve_approval(r5.id), Some((true, 1)));
         assert_eq!(total_funds(&st), baseline_total);
 
@@ -8267,7 +8286,7 @@ mod tests {
             "authority2".into(),
         )
         .expect_err("first multisig member must stage slash decision");
-        assert!(matches!(staged_err, PouwError::Unauthorized));
+        assert!(matches!(staged_err, PouwError::ResolveApprovalStaged));
         assert_eq!(st.pending_resolve_approval(r5.id), Some((true, 1)));
 
         st.set_gov_param(9_218, 7_999, "emergency_pause".into(), "true".into())
@@ -8337,7 +8356,7 @@ mod tests {
             "authority-a".into(),
         )
         .expect_err("first multisig signer should only stage pending approval");
-        assert!(matches!(staged_err, PouwError::Unauthorized));
+        assert!(matches!(staged_err, PouwError::ResolveApprovalStaged));
         assert_eq!(st.pending_resolve_approval(r5.id), Some((true, 1)));
 
         // Rotate signer set: remove staged approver and add a new member.
@@ -8372,7 +8391,7 @@ mod tests {
             "authority-b".into(),
         )
         .expect_err("first signer in rotated set should re-stage from empty state");
-        assert!(matches!(staged_again_err, PouwError::Unauthorized));
+        assert!(matches!(staged_again_err, PouwError::ResolveApprovalStaged));
         assert_eq!(st.pending_resolve_approval(r5.id), Some((true, 1)));
 
         let r6 = apply_resolve(
@@ -8421,7 +8440,7 @@ mod tests {
             "authority-a".into(),
         )
         .expect_err("first multisig signer should only stage pending approval");
-        assert!(matches!(staged_err, PouwError::Unauthorized));
+        assert!(matches!(staged_err, PouwError::ResolveApprovalStaged));
         assert_eq!(st.pending_resolve_approval(r5.id), Some((true, 1)));
 
         st.set_gov_param(9_219_30, 7_999, "emergency_pause".into(), "true".into())
@@ -8479,7 +8498,7 @@ mod tests {
             "authority-b".into(),
         )
         .expect_err("first signer in rotated set should re-stage from empty state");
-        assert!(matches!(staged_again_err, PouwError::Unauthorized));
+        assert!(matches!(staged_again_err, PouwError::ResolveApprovalStaged));
         assert_eq!(st.pending_resolve_approval(r5.id), Some((true, 1)));
 
         let r6 = apply_resolve(
@@ -8497,7 +8516,8 @@ mod tests {
     }
 
     #[test]
-    fn resolve_multisig_rotation_that_keeps_first_member_still_clears_stale_staging_before_escrow_settlement() {
+    fn resolve_multisig_rotation_that_keeps_first_member_still_clears_stale_staging_before_escrow_settlement(
+    ) {
         // Governance hardening: any signer-set rotation must invalidate prior staged approvals,
         // even if the original first approver remains in the new multisig set.
         let mut st = seeded_state();
@@ -8527,7 +8547,7 @@ mod tests {
             "authority-a".into(),
         )
         .expect_err("first multisig signer should only stage pending approval");
-        assert!(matches!(staged_err, PouwError::Unauthorized));
+        assert!(matches!(staged_err, PouwError::ResolveApprovalStaged));
         assert_eq!(st.pending_resolve_approval(r5.id), Some((true, 1)));
 
         // Rotate membership while keeping authority-a present.
@@ -8540,7 +8560,9 @@ mod tests {
             "authority-c".into(),
             "authority-c".into(),
         )
-        .expect_err("rotation must clear stale staged approval even when first signer remains in set");
+        .expect_err(
+            "rotation must clear stale staged approval even when first signer remains in set",
+        );
         assert!(matches!(stale_err, PouwError::Unauthorized));
         assert_eq!(
             st.pending_resolve_approval(r5.id),
@@ -8562,7 +8584,7 @@ mod tests {
             "authority-a".into(),
         )
         .expect_err("first signer in rotated set should re-stage from empty state");
-        assert!(matches!(staged_again_err, PouwError::Unauthorized));
+        assert!(matches!(staged_again_err, PouwError::ResolveApprovalStaged));
         assert_eq!(st.pending_resolve_approval(r5.id), Some((true, 1)));
 
         let r6 = apply_resolve(
@@ -8611,7 +8633,7 @@ mod tests {
             "authority-a".into(),
         )
         .expect_err("first multisig signer should only stage pending approval");
-        assert!(matches!(staged_err, PouwError::Unauthorized));
+        assert!(matches!(staged_err, PouwError::ResolveApprovalStaged));
         assert_eq!(st.pending_resolve_approval(r5.id), Some((true, 1)));
 
         // Rotate with case drift for the first approver ID.
@@ -9361,9 +9383,8 @@ mod tests {
             apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
 
         let before = st.clone();
-        let err = apply_resolve(&mut st, r5, true, authority.into(), authority.into()).expect_err(
-            "configured authority members containing separators must fail closed",
-        );
+        let err = apply_resolve(&mut st, r5, true, authority.into(), authority.into())
+            .expect_err("configured authority members containing separators must fail closed");
         assert!(matches!(err, PouwError::Unauthorized));
 
         let task = st.get_task(9_001_74_1).unwrap();
@@ -10989,7 +11010,7 @@ mod tests {
     }
 
     #[test]
-    fn tee_proof_immediately_completes_task() {
+    fn tee_proof_without_crypto_backend_rejects_reveal_and_preserves_committed_state() {
         let mut st = seeded_state();
         let r1 = apply_create_task(&mut st, 7001, "alice".into(), 10).unwrap();
 
@@ -11006,10 +11027,17 @@ mod tests {
 
         // TEE proof envelope must bind task_id/worker/proof_type.
         let proof = b"TEE:task_id=7001,worker=worker1,proof_type=tee,result_hash=0101010101010101010101010101010101010101010101010101010101010101,quote=QUOTE_XYZ".to_vec();
-        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, Some(proof)).unwrap();
+        let err = apply_reveal_result(&mut st, r3.clone(), result_hash, reveal_salt, Some(proof))
+            .unwrap_err();
 
-        let final_task = st.get_task(r4.id).unwrap();
-        assert_eq!(final_task.status, TaskStatus::Completed);
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("Proof verification indeterminate") && msg.contains("backend not configured"))
+        );
+
+        let final_task = st.get_task(r3.id).unwrap();
+        assert_eq!(final_task.status, TaskStatus::Committed);
+        assert!(final_task.result_hash.is_none());
+        assert!(final_task.reveal_salt.is_none());
         assert!(final_task.challenge_deadline_height.is_none());
     }
 
@@ -11031,11 +11059,17 @@ mod tests {
 
         // Accept canonical envelope tuple when result_hash uses uppercase 0X hex prefix.
         let proof = b"TEE:task_id=7701,worker=worker1,proof_type=tee,result_hash=0XABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABAB,quote=QUOTE_XYZ".to_vec();
-        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, Some(proof)).unwrap();
+        let err = apply_reveal_result(&mut st, r3.clone(), result_hash, reveal_salt, Some(proof))
+            .unwrap_err();
 
-        let final_task = st.get_task(r4.id).unwrap();
-        assert_eq!(final_task.status, TaskStatus::Completed);
-        assert_eq!(final_task.result_hash, Some(result_hash));
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("Proof verification indeterminate") && msg.contains("backend not configured"))
+        );
+
+        let final_task = st.get_task(r3.id).unwrap();
+        assert_eq!(final_task.status, TaskStatus::Committed);
+        assert!(final_task.result_hash.is_none());
+        assert!(final_task.reveal_salt.is_none());
         assert!(final_task.challenge_deadline_height.is_none());
     }
 
@@ -11057,11 +11091,17 @@ mod tests {
 
         // Accept canonical envelope tuple when proof_type value uses uppercase alias.
         let proof = b"TEE:task_id=7702,worker=worker1,proof_type=TEE,result_hash=ACACACACACACACACACACACACACACACACACACACACACACACACACACACACACACACAC,quote=QUOTE_XYZ".to_vec();
-        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, Some(proof)).unwrap();
+        let err = apply_reveal_result(&mut st, r3.clone(), result_hash, reveal_salt, Some(proof))
+            .unwrap_err();
 
-        let final_task = st.get_task(r4.id).unwrap();
-        assert_eq!(final_task.status, TaskStatus::Completed);
-        assert_eq!(final_task.result_hash, Some(result_hash));
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("Proof verification indeterminate") && msg.contains("backend not configured"))
+        );
+
+        let final_task = st.get_task(r3.id).unwrap();
+        assert_eq!(final_task.status, TaskStatus::Committed);
+        assert!(final_task.result_hash.is_none());
+        assert!(final_task.reveal_salt.is_none());
         assert!(final_task.challenge_deadline_height.is_none());
     }
 
@@ -11083,11 +11123,17 @@ mod tests {
 
         // Accept canonical envelope tuple when result_hash uses uppercase 0X hex prefix.
         let proof = b"ZK:task_id=8701,worker=worker1,proof_type=zk,result_hash=0XCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD,seal=SEAL_XYZ".to_vec();
-        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, Some(proof)).unwrap();
+        let err = apply_reveal_result(&mut st, r3.clone(), result_hash, reveal_salt, Some(proof))
+            .unwrap_err();
 
-        let final_task = st.get_task(r4.id).unwrap();
-        assert_eq!(final_task.status, TaskStatus::Completed);
-        assert_eq!(final_task.result_hash, Some(result_hash));
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("Proof verification indeterminate") && msg.contains("backend not configured"))
+        );
+
+        let final_task = st.get_task(r3.id).unwrap();
+        assert_eq!(final_task.status, TaskStatus::Committed);
+        assert!(final_task.result_hash.is_none());
+        assert!(final_task.reveal_salt.is_none());
         assert!(final_task.challenge_deadline_height.is_none());
     }
 
@@ -11109,11 +11155,17 @@ mod tests {
 
         // Accept canonical envelope tuple when proof_type value uses uppercase alias.
         let proof = b"ZK:task_id=8702,worker=worker1,proof_type=ZK,result_hash=CECECECECECECECECECECECECECECECECECECECECECECECECECECECECECECECE,seal=SEAL_XYZ".to_vec();
-        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, Some(proof)).unwrap();
+        let err = apply_reveal_result(&mut st, r3.clone(), result_hash, reveal_salt, Some(proof))
+            .unwrap_err();
 
-        let final_task = st.get_task(r4.id).unwrap();
-        assert_eq!(final_task.status, TaskStatus::Completed);
-        assert_eq!(final_task.result_hash, Some(result_hash));
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("Proof verification indeterminate") && msg.contains("backend not configured"))
+        );
+
+        let final_task = st.get_task(r3.id).unwrap();
+        assert_eq!(final_task.status, TaskStatus::Committed);
+        assert!(final_task.result_hash.is_none());
+        assert!(final_task.reveal_salt.is_none());
         assert!(final_task.challenge_deadline_height.is_none());
     }
 
@@ -11769,8 +11821,8 @@ mod tests {
     }
 
     #[test]
-    fn zk_reveal_rejects_duplicate_proof_type_binding_with_double_quoted_leading_space_fail_closed(
-    ) {
+    fn zk_reveal_rejects_duplicate_proof_type_binding_with_double_quoted_leading_space_fail_closed()
+    {
         let mut st = seeded_state();
         let r1 = apply_create_task(&mut st, 7029, "alice".into(), 10).unwrap();
 
@@ -12440,7 +12492,8 @@ mod tests {
     }
 
     #[test]
-    fn utf8_bom_and_whitespace_only_zk_proof_payload_rejects_reveal_fail_closed_without_state_mutation() {
+    fn utf8_bom_and_whitespace_only_zk_proof_payload_rejects_reveal_fail_closed_without_state_mutation(
+    ) {
         let mut st = seeded_state();
         let r1 = apply_create_task(&mut st, 7028, "alice".into(), 10).unwrap();
 
@@ -12472,7 +12525,7 @@ mod tests {
     }
 
     #[test]
-    fn zk_proof_immediately_completes_task_and_skips_challenge_window() {
+    fn zk_proof_without_crypto_backend_rejects_reveal_and_preserves_committed_state() {
         let mut st = seeded_state();
         let r1 = apply_create_task(&mut st, 7004, "alice".into(), 10).unwrap();
 
@@ -12488,10 +12541,17 @@ mod tests {
         let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
 
         let proof = b"ZK:task_id=7004,worker=worker1,proof_type=zk,result_hash=0303030303030303030303030303030303030303030303030303030303030303,receipt=VALID_PROOF".to_vec();
-        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, Some(proof)).unwrap();
+        let err = apply_reveal_result(&mut st, r3.clone(), result_hash, reveal_salt, Some(proof))
+            .unwrap_err();
 
-        let final_task = st.get_task(r4.id).unwrap();
-        assert_eq!(final_task.status, TaskStatus::Completed);
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("Proof verification indeterminate") && msg.contains("backend not configured"))
+        );
+
+        let final_task = st.get_task(r3.id).unwrap();
+        assert_eq!(final_task.status, TaskStatus::Committed);
+        assert!(final_task.result_hash.is_none());
+        assert!(final_task.reveal_salt.is_none());
         assert!(final_task.challenge_deadline_height.is_none());
         assert!(final_task.resolve_deadline_height.is_none());
     }

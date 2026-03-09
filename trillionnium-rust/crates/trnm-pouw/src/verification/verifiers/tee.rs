@@ -11,7 +11,12 @@ impl ProofVerifier for TeeVerifier {
     }
 
     fn verify_proof(&self, task: &TaskObject, proof_data: &[u8]) -> VerificationResult {
-        verify_bound_envelope(task, proof_data, b"TEE:", "TEE receipt")
+        match verify_bound_envelope(task, proof_data, b"TEE:", "TEE receipt") {
+            VerificationResult::Valid => VerificationResult::Indeterminate(
+                "TEE receipt cryptographic verification backend not configured".to_string(),
+            ),
+            other => other,
+        }
     }
 }
 
@@ -46,17 +51,18 @@ mod tests {
     }
 
     #[test]
-    fn tee_verifier_accepts_bound_task_id() {
+    fn tee_verifier_requires_cryptographic_backend_after_bound_envelope_validation() {
         let verifier = TeeVerifier;
         let task = mock_task();
 
-        assert_eq!(
+        assert!(matches!(
             verifier.verify_proof(
                 &task,
                 b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,quote=abc"
             ),
-            VerificationResult::Valid
-        );
+            VerificationResult::Indeterminate(msg)
+                if msg.contains("cryptographic verification backend not configured")
+        ));
     }
 
     #[test]
@@ -481,21 +487,23 @@ mod tests {
     }
 
     #[test]
-    fn tee_verifier_accepts_legacy_receipt_proof_type_alias() {
+    fn tee_verifier_requires_cryptographic_backend_for_legacy_receipt_alias() {
         let verifier = TeeVerifier;
         let task = mock_task();
 
-        assert_eq!(
+        assert!(matches!(
             verifier.verify_proof(
                 &task,
                 b"TEE:task_id=42,worker=worker1,proof_type=tee_receipt,result_hash=abababababababababababababababababababababababababababababababab,quote=abc"
             ),
-            VerificationResult::Valid
-        );
+            VerificationResult::Indeterminate(msg)
+                if msg.contains("cryptographic verification backend not configured")
+        ));
     }
 
     #[test]
-    fn tee_verifier_rejects_fullwidth_equals_unexpected_worker_binding_without_context_fail_closed() {
+    fn tee_verifier_rejects_fullwidth_equals_unexpected_worker_binding_without_context_fail_closed()
+    {
         let verifier = TeeVerifier;
         let mut task = mock_task();
         task.worker = None;
@@ -540,4 +548,3 @@ mod tests {
         ));
     }
 }
-

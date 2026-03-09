@@ -274,6 +274,7 @@ trait OrderingEngine {
         picked: &[MockTx],
         da_batch: &DaBatch,
         workers: usize,
+        candidate_height: u64,
     ) -> OrderingDecision;
 }
 
@@ -286,9 +287,15 @@ impl OrderingEngine for PreexecOrderingEngine {
         picked: &[MockTx],
         da_batch: &DaBatch,
         workers: usize,
+        candidate_height: u64,
     ) -> OrderingDecision {
-        let (ordered_ids, rejected) =
-            pre_execute_group_parallel(snapshot, da_batch.tx_ids.clone(), picked, workers);
+        let (ordered_ids, rejected) = pre_execute_group_parallel(
+            snapshot,
+            da_batch.tx_ids.clone(),
+            picked,
+            workers,
+            candidate_height,
+        );
         OrderingDecision {
             ordered_ids,
             rejected,
@@ -1394,9 +1401,7 @@ fn actor_of(st: &StateStore, tx: &MockTx) -> String {
 
 fn verified_signer_of(st: &StateStore, tx: &MockTx) -> String {
     match tx {
-        MockTx::Resolve { .. } => st
-            .gov_param_string("resolve_authority")
-            .unwrap_or_else(|| "governance.resolve_authority".to_string()),
+        MockTx::Resolve { resolver, .. } => resolver.clone(),
         MockTx::Reveal { task_id, .. } => st
             .get_task(*task_id)
             .and_then(|t| t.worker)
@@ -1463,6 +1468,7 @@ fn classify_apply_error(err: &anyhow::Error) -> &'static str {
             trnm_pouw::PouwError::VersionConflict => "version_conflict",
             trnm_pouw::PouwError::InvalidTransition => "invalid_transition",
             trnm_pouw::PouwError::DeadlineExceeded => "deadline_exceeded",
+            trnm_pouw::PouwError::ResolveApprovalStaged => "resolve_approval_staged",
             _ => "semantic_fail",
         };
     }
@@ -1895,6 +1901,7 @@ fn pre_execute_group_parallel(
     group_ids: Vec<u64>,
     picked: &[MockTx],
     workers: usize,
+    candidate_height: u64,
 ) -> (Vec<u64>, u64) {
     if group_ids.is_empty() {
         return (vec![], 0);
@@ -1918,7 +1925,11 @@ fn pre_execute_group_parallel(
             for id in ids {
                 let idx = (id - 1) as usize;
                 let mut local_state = base.clone();
-                let res = apply_one(&mut local_state, local_picked[idx].clone(), 0);
+                let res = apply_one(
+                    &mut local_state,
+                    local_picked[idx].clone(),
+                    candidate_height,
+                );
                 match res {
                     Ok(_) => {
                         let _ = txc.send((id, true, String::new()));
@@ -1956,6 +1967,7 @@ fn decide_order_for_commit(
     picked: &[MockTx],
     workers: usize,
     enable_da_ordering_decouple: bool,
+    candidate_height: u64,
 ) -> OrderingDecision {
     if !enable_da_ordering_decouple {
         let plan: Vec<Tx> = picked
@@ -1968,7 +1980,8 @@ fn decide_order_for_commit(
         let mut rejected = 0u64;
         for g in groups {
             let group_ids: Vec<u64> = g.iter().map(|t| t.id).collect();
-            let (ids, rej) = pre_execute_group_parallel(state, group_ids, picked, workers);
+            let (ids, rej) =
+                pre_execute_group_parallel(state, group_ids, picked, workers, candidate_height);
             ordered.extend(ids);
             rejected += rej;
         }
@@ -1981,7 +1994,7 @@ fn decide_order_for_commit(
     let da = LegacyMempoolDaProvider;
     let ordering = PreexecOrderingEngine;
     let da_batch = da.batch_from_picked(picked);
-    ordering.decide(state, picked, &da_batch, workers)
+    ordering.decide(state, picked, &da_batch, workers, candidate_height)
 }
 
 #[cfg(test)]
@@ -2050,13 +2063,76 @@ mod tests {
             },
         ];
 
-        let legacy = decide_order_for_commit(&state, &picked, 2, false);
-        let decoupled = decide_order_for_commit(&state, &picked, 2, true);
+        let legacy = decide_order_for_commit(&state, &picked, 2, false, 1);
+        let decoupled = decide_order_for_commit(&state, &picked, 2, true, 1);
 
         assert_eq!(legacy.ordered_ids, vec![1, 2]);
         assert_eq!(decoupled.ordered_ids, legacy.ordered_ids);
         assert_eq!(legacy.rejected, 0);
         assert_eq!(decoupled.rejected, 0);
+    }
+
+    #[test]
+    fn preexec_uses_candidate_height_for_deadline_sensitive_reveal() {
+        let mut state = StateStore::new();
+        state.set_balance("worker4100", 1_000);
+
+        let result_hash = [7u8; 32];
+        let reveal_salt = [9u8; 32];
+        let r1 = apply_create_task(&mut state, 4100, "alice".into(), 100).unwrap();
+        let r2 = apply_accept_task_at_height(&mut state, r1, "worker4100".into(), 100).unwrap();
+        let committed = compute_commitment(4100, &result_hash, &reveal_salt, "worker4100");
+        let _r3 =
+            apply_commit_result_at_height(&mut state, r2, "worker4100".into(), committed, 100)
+                .unwrap();
+
+        let reveal_deadline = state
+            .get_task(4100)
+            .and_then(|t| t.reveal_deadline_height)
+            .expect("reveal deadline must exist after commit");
+        let reveal_tx = MockTx::Reveal {
+            task_id: 4100,
+            result_hash,
+            reveal_salt,
+        };
+
+        let accepted_at_deadline = decide_order_for_commit(
+            &state,
+            std::slice::from_ref(&reveal_tx),
+            1,
+            false,
+            reveal_deadline,
+        );
+        assert_eq!(accepted_at_deadline.ordered_ids, vec![1]);
+        assert_eq!(accepted_at_deadline.rejected, 0);
+
+        let rejected_after_deadline = decide_order_for_commit(
+            &state,
+            std::slice::from_ref(&reveal_tx),
+            1,
+            false,
+            reveal_deadline.saturating_add(1),
+        );
+        assert!(rejected_after_deadline.ordered_ids.is_empty());
+        assert_eq!(rejected_after_deadline.rejected, 1);
+
+        let rejected_after_deadline_decoupled = decide_order_for_commit(
+            &state,
+            std::slice::from_ref(&reveal_tx),
+            1,
+            true,
+            reveal_deadline.saturating_add(1),
+        );
+        assert!(rejected_after_deadline_decoupled.ordered_ids.is_empty());
+        assert_eq!(rejected_after_deadline_decoupled.rejected, 1);
+
+        let err = apply_one(
+            &mut state.clone(),
+            reveal_tx,
+            reveal_deadline.saturating_add(1),
+        )
+        .unwrap_err();
+        assert_eq!(classify_apply_error(&err), "deadline_exceeded");
     }
 
     #[test]
@@ -3229,6 +3305,87 @@ mod tests {
         assert!(shifted2);
     }
 
+    fn challenged_task_fixture(st: &mut StateStore, task_id: u64) -> (ObjectRef, [u8; 32], [u8; 32]) {
+        st.set_balance("challenger", 1_000_000);
+        st.set_balance(&format!("worker{}", task_id), 1_000);
+        let result_hash = [7u8; 32];
+        let reveal_salt = [9u8; 32];
+        let committed = compute_commitment(task_id, &result_hash, &reveal_salt, &format!("worker{}", task_id));
+        let r1 = apply_create_task(st, task_id, "alice".into(), 100).unwrap();
+        let r2 = apply_accept_task(st, r1, format!("worker{}", task_id)).unwrap();
+        let r3 = trnm_pouw::apply_commit_result_at_height(
+            st,
+            r2,
+            format!("worker{}", task_id),
+            committed,
+            100,
+        )
+        .unwrap();
+        let r4 = trnm_pouw::apply_reveal_result_at_height(st, r3, result_hash, reveal_salt, None, 110)
+            .unwrap();
+        let r5 = trnm_pouw::apply_challenge_at_height(
+            st,
+            r4,
+            "challenger".into(),
+            10,
+            "challenger".into(),
+            120,
+        )
+        .unwrap();
+        (r5, result_hash, reveal_salt)
+    }
+
+    #[test]
+    fn node_resolve_multisig_first_approval_persists_and_second_finalizes() {
+        let mut st = StateStore::new();
+        st.set_gov_param_unchecked(9_500, "resolve_authority".into(), "authority-a,authority-b".into())
+            .unwrap();
+        let (r5, _, _) = challenged_task_fixture(&mut st, 8101);
+
+        let first = apply_one(
+            &mut st,
+            MockTx::Resolve {
+                task_id: r5.id,
+                slash_worker: true,
+                resolver: "authority-a".into(),
+            },
+            130,
+        );
+        assert!(matches!(
+            first.unwrap_err().downcast::<trnm_pouw::PouwError>(),
+            Ok(trnm_pouw::PouwError::ResolveApprovalStaged)
+        ));
+        assert_eq!(st.pending_resolve_approval(r5.id), Some((true, 1)));
+        assert_eq!(st.get_task(r5.id).unwrap().status, TaskStatus::Challenged);
+
+        apply_one(
+            &mut st,
+            MockTx::Resolve {
+                task_id: r5.id,
+                slash_worker: true,
+                resolver: "authority-b".into(),
+            },
+            131,
+        )
+        .expect("second signer should finalize through node-facing path");
+        assert_eq!(st.pending_resolve_approval(r5.id), None);
+        assert_eq!(st.get_task(r5.id).unwrap().status, TaskStatus::Slashed);
+        assert!(st.get_ref(r5.id).unwrap().version > r5.version);
+    }
+
+    #[test]
+    fn verified_signer_for_multisig_resolve_uses_actual_resolver_member() {
+        let mut st = StateStore::new();
+        st.set_gov_param_unchecked(9_501, "resolve_authority".into(), "authority-a,authority-b".into())
+            .unwrap();
+        let tx = MockTx::Resolve {
+            task_id: 42,
+            slash_worker: false,
+            resolver: "authority-b".into(),
+        };
+        assert_eq!(verified_signer_of(&st, &tx), "authority-b");
+    }
+
     fn temp_wal_dir(name: &str) -> PathBuf {
         let mut p = std::env::temp_dir();
         p.push(format!("trnm-node-{}-{}", name, now_unix_ms()));
@@ -3865,6 +4022,7 @@ fn main() -> Result<()> {
             &picked,
             args.parallel_workers,
             args.enable_da_ordering_decouple,
+            height,
         );
         preexec_reject_total += ordering_decision.rejected;
         let group_count = if args.enable_da_ordering_decouple {
@@ -3918,20 +4076,52 @@ fn main() -> Result<()> {
             if let Err(e) = apply_one(&mut state, tx.clone(), height) {
                 let err_kind = classify_apply_error(&e);
                 let err_text = e.to_string();
-                state = before; // rollback on failed commit
-                apply_error_total += 1;
-                rollback_total += 1;
-                match err_kind {
-                    "version_conflict" => apply_error_version_conflict_total += 1,
-                    "preexec_conflict_miss" => apply_error_preexec_conflict_miss_total += 1,
-                    "invalid_transition" => apply_error_invalid_transition_total += 1,
-                    "deadline_exceeded" => apply_error_deadline_exceeded_total += 1,
-                    _ => apply_error_semantic_fail_total += 1,
+                if err_kind == "resolve_approval_staged" {
+                    applied += 1;
+                    known_task_ids.insert(task_id);
+                    let to_status = status_name(&state, task_id);
+                    let root = hex::encode(state.state_root());
+                    let challenger_account: Option<String> = match &tx {
+                        MockTx::Challenge { challenger, .. } => Some(challenger.clone()),
+                        MockTx::Resolve { .. } => before.get_task(task_id).and_then(|t| t.challenger),
+                        _ => None,
+                    };
+                    let (treasury_delta, challenger_delta) = balance_deltas_for_transition(
+                        &before,
+                        &state,
+                        task_id,
+                        challenger_account.as_deref(),
+                    );
+                    let signer = verified_signer_of(&before, &tx);
+                    emit_event(
+                        &state,
+                        &tx,
+                        &signer,
+                        id,
+                        height,
+                        &from_status,
+                        &to_status,
+                        &root,
+                        &treasury_delta,
+                        challenger_delta.as_ref(),
+                        challenger_account.as_deref(),
+                    );
+                } else {
+                    state = before; // rollback on failed commit
+                    apply_error_total += 1;
+                    rollback_total += 1;
+                    match err_kind {
+                        "version_conflict" => apply_error_version_conflict_total += 1,
+                        "preexec_conflict_miss" => apply_error_preexec_conflict_miss_total += 1,
+                        "invalid_transition" => apply_error_invalid_transition_total += 1,
+                        "deadline_exceeded" => apply_error_deadline_exceeded_total += 1,
+                        _ => apply_error_semantic_fail_total += 1,
+                    }
+                    println!(
+                        "[tx] apply_error height={} tx_id={} err_kind={} err={} rollback=true",
+                        height, id, err_kind, err_text
+                    );
                 }
-                println!(
-                    "[tx] apply_error height={} tx_id={} err_kind={} err={} rollback=true",
-                    height, id, err_kind, err_text
-                );
             } else {
                 applied += 1;
                 known_task_ids.insert(task_id);

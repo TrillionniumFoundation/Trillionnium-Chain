@@ -11,11 +11,17 @@ mkdir -p "$OUT"
 
 echo "[rc] output=$OUT"
 
+RELEASE_MODE="${MVP_MODE:-prod}"
+
 # 0) release guard: nightly green streak
-if [ "${SKIP_STREAK_CHECK:-0}" != "1" ]; then
-  ./scripts/check_nightly_green_streak.sh "${GITHUB_OWNER:-ProfAlexQI}" "${GITHUB_REPO:-TrillionniumChain}" "${REQUIRED_GREEN_STREAK:-3}" | tee "$OUT/nightly-streak.log"
+if [ "${SKIP_STREAK_CHECK:-0}" = "1" ]; then
+  if [ "${CI:-false}" = "true" ] || [ "$RELEASE_MODE" = "prod" ]; then
+    echo "SKIP_STREAK_CHECK=1 is forbidden when CI=true or MVP_MODE=prod" >&2
+    exit 11
+  fi
+  echo "nightly streak check skipped (SKIP_STREAK_CHECK=1, MVP_MODE=$RELEASE_MODE)" | tee "$OUT/nightly-streak.log"
 else
-  echo "nightly streak check skipped (SKIP_STREAK_CHECK=1)" | tee "$OUT/nightly-streak.log"
+  ./scripts/check_nightly_green_streak.sh "${GITHUB_OWNER:-ProfAlexQI}" "${GITHUB_REPO:-TrillionniumChain}" "${REQUIRED_GREEN_STREAK:-3}" | tee "$OUT/nightly-streak.log"
 fi
 
 # 1) workspace correctness

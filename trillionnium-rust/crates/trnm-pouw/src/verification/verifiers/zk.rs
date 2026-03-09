@@ -18,7 +18,12 @@ impl ProofVerifier for ZkVerifier {
             );
         }
 
-        verification
+        match verification {
+            VerificationResult::Valid => VerificationResult::Indeterminate(
+                "ZK proof cryptographic verification backend not configured".to_string(),
+            ),
+            other => other,
+        }
     }
 }
 
@@ -53,31 +58,33 @@ mod tests {
     }
 
     #[test]
-    fn zk_verifier_accepts_bound_task_id() {
+    fn zk_verifier_requires_cryptographic_backend_after_bound_envelope_validation() {
         let verifier = ZkVerifier;
         let task = mock_task();
 
-        assert_eq!(
+        assert!(matches!(
             verifier.verify_proof(
                 &task,
                 b"ZK:{\"task_id\":99,\"worker\":\"worker-zk\",\"proof_type\":\"zk\",\"result_hash\":\"1111111111111111111111111111111111111111111111111111111111111111\",\"proof\":\"...\"}"
             ),
-            VerificationResult::Valid
-        );
+            VerificationResult::Indeterminate(msg)
+                if msg.contains("cryptographic verification backend not configured")
+        ));
     }
 
     #[test]
-    fn zk_verifier_accepts_legacy_proof_type_alias() {
+    fn zk_verifier_requires_cryptographic_backend_for_legacy_proof_type_alias() {
         let verifier = ZkVerifier;
         let task = mock_task();
 
-        assert_eq!(
+        assert!(matches!(
             verifier.verify_proof(
                 &task,
                 b"ZK:task_id=99,worker=worker-zk,proof_type=zk_snark,result_hash=1111111111111111111111111111111111111111111111111111111111111111,proof=ok"
             ),
-            VerificationResult::Valid
-        );
+            VerificationResult::Indeterminate(msg)
+                if msg.contains("cryptographic verification backend not configured")
+        ));
     }
 
     #[test]
@@ -527,7 +534,8 @@ mod tests {
     }
 
     #[test]
-    fn zk_verifier_rejects_duplicate_task_id_binding_with_single_quoted_leading_space_fail_closed() {
+    fn zk_verifier_rejects_duplicate_task_id_binding_with_single_quoted_leading_space_fail_closed()
+    {
         let verifier = ZkVerifier;
         let task = mock_task();
 
@@ -602,7 +610,8 @@ mod tests {
     }
 
     #[test]
-    fn zk_verifier_rejects_fullwidth_equals_unexpected_worker_binding_without_context_fail_closed() {
+    fn zk_verifier_rejects_fullwidth_equals_unexpected_worker_binding_without_context_fail_closed()
+    {
         let verifier = ZkVerifier;
         let mut task = mock_task();
         task.worker = None;

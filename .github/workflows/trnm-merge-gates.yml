@@ -7,14 +7,14 @@ on:
       - 'docs/**'
       - 'trillionnium-rust/**'
       - '.github/workflows/trnm-merge-gates.yml'
-      - 'scripts/v2/**'
+      - 'scripts/**'
   push:
     branches: [main]
     paths:
       - 'docs/**'
       - 'trillionnium-rust/**'
       - '.github/workflows/trnm-merge-gates.yml'
-      - 'scripts/v2/**'
+      - 'scripts/**'
 
 concurrency:
   group: trnm-merge-gates-${{ github.workflow }}-${{ github.ref }}
