@@ -43,6 +43,16 @@ jobs:
   phasea-gate:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    env:
+      # Keep locale/time behavior deterministic across re-runs for soak evidence,
+      # grep/sed assertions, and artifact diffability.
+      TZ: UTC
+      LANG: C.UTF-8
+      LC_ALL: C.UTF-8
+      LC_NUMERIC: C
+      LC_COLLATE: C
+      PYTHONHASHSEED: '0'
+      CI: 'true'
 
     steps:
       - uses: actions/checkout@v4
