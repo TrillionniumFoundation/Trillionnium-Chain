@@ -46,7 +46,7 @@ if [[ -n "${CI:-}" && -z "$TIMEOUT_BIN" ]]; then
   exit 69
 fi
 
-RUN_TAG="${RUN_TAG:-$(date +%Y%m%d-%H%M%S)-$$}"
+RUN_TAG="${RUN_TAG:-$(date -u +%Y%m%d-%H%M%S)-$$}"
 RUN_DIR="run/parallel-sanity-flaky-${RUN_TAG}"
 mkdir -p "$RUN_DIR"
 

@@ -29,8 +29,7 @@ jobs:
       LC_COLLATE: C
       # Keep date/time rendering stable for logs and grep-based assertions.
       LC_TIME: C
-      # Normalize character-class and case transform behavior for shell/python
-      # regex checks across runner locale package changes.
+      # Normalize character classes/case-folding used by grep/sed/python regexes.
       LC_CTYPE: C
       # Stabilize locale-driven stderr/messages across runner image refreshes.
       LC_MESSAGES: C
@@ -42,6 +41,9 @@ jobs:
       PYTHONHASHSEED: "0"
       # Prevent bytecode side-effects (.pyc/__pycache__) in CI workspace.
       PYTHONDONTWRITEBYTECODE: "1"
+      # Force UTF-8 stdio/codec behavior independent of runner locale coercion.
+      PYTHONUTF8: "1"
+      PYTHONIOENCODING: "UTF-8"
       # Normalize CI-branching behavior in scripts/tools.
       CI: "true"
       # Keep GitHub Actions context checks deterministic in shell helpers.
