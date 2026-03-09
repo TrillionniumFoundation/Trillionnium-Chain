@@ -566,6 +566,24 @@ mod tests {
     }
 
     #[test]
+    fn newly_arrived_critical_backlog_preempts_normal_flood_without_waiting_for_burst_reset() {
+        let mut g = LaneAdmissionGate::new(8, 2);
+
+        // Build only normal backlog and consume one normal turn.
+        for id in 1..=4 {
+            assert_eq!(g.admit(id, IngressClass::Normal), AdmitOutcome::Accepted);
+        }
+        assert_eq!(g.pop_ready(), Some(1));
+
+        // Critical traffic appears while normal backlog remains active.
+        assert_eq!(g.admit(900, IngressClass::Critical), AdmitOutcome::Accepted);
+
+        // Critical ingress should preempt immediately to keep high-priority
+        // latency bounded even during an existing normal flood.
+        assert_eq!(g.pop_ready(), Some(900));
+    }
+
+    #[test]
     fn zero_capacity_admission_gate_does_not_poison_idempotency_after_backpressure() {
         let mut g = AdmissionGate::new(0);
 
