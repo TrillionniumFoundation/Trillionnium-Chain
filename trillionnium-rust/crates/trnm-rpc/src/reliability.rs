@@ -199,6 +199,14 @@ fn sanitize_store_config(mut config: InMemoryReliabilityStoreConfig) -> InMemory
     config.max_pending_total = clamp_zero(config.max_pending_total);
     config.max_dedup_entries = clamp_zero(config.max_dedup_entries);
 
+    if let (Some(per_session), Some(total)) =
+        (config.max_pending_per_session, config.max_pending_total)
+    {
+        // Keep per-session quota within the global cap so operators cannot configure
+        // an impossible local limit that only manifests as avoidable global backpressure.
+        config.max_pending_per_session = Some(per_session.min(total));
+    }
+
     // Zero-duration retain windows collapse into effectively immediate cleanup,
     // which can jitter between retain/remove behavior across cleanup call sites.
     // Keep a 1ms floor so "retain" mode remains semantically distinct.
@@ -2226,6 +2234,54 @@ mod tests {
 
         assert!(store.try_upsert_session_with_ts(session, 1).is_ok());
         assert_eq!(store.list_session_ids(), vec!["s1".to_string()]);
+    }
+
+    #[test]
+    fn store_config_clamps_per_session_pending_quota_to_global_total_cap() {
+        let mut store = InMemoryReliabilityStore::with_config(InMemoryReliabilityStoreConfig {
+            max_pending_per_session: Some(5),
+            max_pending_total: Some(2),
+            ..InMemoryReliabilityStoreConfig::default()
+        });
+
+        let mk_pending = |ack_id: &str| PendingItem {
+            ack_id: ack_id.to_string(),
+            message: ReliableMessage {
+                from: "alice".to_string(),
+                chain_id: "trnm-testnet".to_string(),
+                session_id: "s1".to_string(),
+                seq: Some(1),
+                nonce: None,
+                msg_type: "INPUT_CHUNK".to_string(),
+                payload: "x".to_string(),
+            },
+            attempts: 0,
+            created_at_unix_ms: 1,
+            next_retry_at_unix_ms: 1,
+        };
+
+        let mut two_pending = BTreeMap::new();
+        two_pending.insert("ack-1".to_string(), mk_pending("ack-1"));
+        two_pending.insert("ack-2".to_string(), mk_pending("ack-2"));
+        let two = SessionState {
+            session_id: "s1".to_string(),
+            pending: two_pending,
+        };
+        assert!(store.try_upsert_session_with_ts(two, 1).is_ok());
+
+        let mut three_pending = BTreeMap::new();
+        three_pending.insert("ack-1".to_string(), mk_pending("ack-1"));
+        three_pending.insert("ack-2".to_string(), mk_pending("ack-2"));
+        three_pending.insert("ack-3".to_string(), mk_pending("ack-3"));
+        let three = SessionState {
+            session_id: "s1".to_string(),
+            pending: three_pending,
+        };
+
+        let err = store
+            .try_upsert_session_with_ts(three, 2)
+            .expect_err("per-session quota should be clamped to global total cap");
+        assert!(matches!(err, ReliabilityStoreError::CapacityExceeded { .. }));
     }
 
     #[test]
