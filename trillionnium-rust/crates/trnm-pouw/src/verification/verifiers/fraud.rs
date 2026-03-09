@@ -271,8 +271,6 @@ mod tests {
     }
 
     #[test]
-<<<<<<< HEAD
-=======
     fn fraud_verifier_rejects_duplicate_worker_binding_with_double_quoted_alias_fail_closed() {
         let verifier = FraudVerifier;
         let task = mock_task();
@@ -301,7 +299,6 @@ mod tests {
     }
 
     #[test]
->>>>>>> 052970f6 (laneM0: add fraud verifier unclosed-quote duplicate worker fail-closed test)
     fn fraud_verifier_rejects_case_variant_duplicate_worker_binding_fail_closed() {
         let verifier = FraudVerifier;
         let task = mock_task();
