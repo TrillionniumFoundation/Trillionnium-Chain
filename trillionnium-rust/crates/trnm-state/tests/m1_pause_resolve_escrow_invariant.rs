@@ -328,3 +328,41 @@ fn paused_unpause_rejects_noncanonical_bool_literal_without_mutating_custody_or_
     assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
     assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), forfeits_before);
 }
+
+#[test]
+fn paused_unpause_wrong_key_id_precedes_bool_validation_and_preserves_quorum_and_escrow() {
+    // M1 merge-gate invariant: emergency pause key-id boundary must fail closed before
+    // value-schema checks, so malformed wrong-key unpause attempts cannot clear pause,
+    // mutate staged multi-party quorum, or move escrow custody.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 5_050);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 505);
+
+    st.set_gov_param(98_180, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    st.stage_or_confirm_resolve_approval(9_909, true, "authority-a", "authority-a,authority-b")
+        .expect("first approval stage should succeed while paused");
+    assert_eq!(st.pending_resolve_approval(9_909), Some((true, 1)));
+
+    let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+    let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+
+    let err = st
+        .set_gov_param(98_181, 8_000, "emergency_pause".into(), "False".into())
+        .expect_err("wrong-key unpause attempt must reject before bool validation");
+    assert!(
+        err.contains("key id") && err.contains("7999"),
+        "wrong-key path must reject on canonical key boundary first: {err}"
+    );
+
+    assert!(
+        st.is_emergency_paused(),
+        "wrong-key malformed unpause must keep pause state unchanged"
+    );
+    assert_eq!(st.pending_resolve_approval(9_909), Some((true, 1)));
+    assert_eq!(st.pending_gov_update("resolve_authority"), None);
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+    assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), forfeits_before);
+}

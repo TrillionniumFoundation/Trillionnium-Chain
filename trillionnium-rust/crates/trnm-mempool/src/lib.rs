@@ -60,6 +60,7 @@ pub struct LaneAdmissionGate {
     seen_global: HashSet<u64>,
     critical_served_streak: usize,
     critical_burst_limit: usize,
+    normal_has_dedicated_capacity: bool,
 }
 impl LaneAdmissionGate {
     pub fn new(total_capacity: usize, critical_reserve: usize) -> Self {
@@ -77,6 +78,7 @@ impl LaneAdmissionGate {
             seen_global: HashSet::with_capacity(total),
             critical_served_streak: 0,
             critical_burst_limit: reserve.saturating_mul(2).max(1),
+            normal_has_dedicated_capacity: normal_cap > 0,
         }
     }
     pub fn admit(&mut self, tx_id: u64, class: IngressClass) -> AdmitOutcome {
@@ -176,7 +178,8 @@ impl LaneAdmissionGate {
                     primary
                 };
 
-                if matches!(out, AdmitOutcome::Accepted)
+                if self.normal_has_dedicated_capacity
+                    && matches!(out, AdmitOutcome::Accepted)
                     && normal_was_empty
                     && !self.normal.queue.is_empty()
                     && !self.critical.queue.is_empty()
@@ -202,7 +205,8 @@ impl LaneAdmissionGate {
                     primary
                 };
 
-                if matches!(out, AdmitOutcome::Accepted)
+                if self.normal_has_dedicated_capacity
+                    && matches!(out, AdmitOutcome::Accepted)
                     && normal_was_empty
                     && !self.normal.queue.is_empty()
                     && !self.critical.queue.is_empty()
@@ -228,7 +232,8 @@ impl LaneAdmissionGate {
     }
 
     pub fn pop_ready(&mut self) -> Option<u64> {
-        let prefer_normal = self.critical_served_streak >= self.critical_burst_limit
+        let prefer_normal = self.normal_has_dedicated_capacity
+            && self.critical_served_streak >= self.critical_burst_limit
             && !self.normal.queue.is_empty();
 
         let (id, served_critical) = if prefer_normal {
@@ -253,7 +258,26 @@ impl LaneAdmissionGate {
             self.critical_served_streak = 0;
         }
 
-        self.seen_global.remove(&id);
+        if !self.seen_global.remove(&id) {
+            // Defensive self-heal: restored-state skew can leave lane-wide cache
+            // stale while lane-local queues remain authoritative.
+            self.seen_global.clear();
+            self.seen_global.extend(self.normal.seen.iter().copied());
+            self.seen_global.extend(self.critical.seen.iter().copied());
+        } else {
+            let lane_total = self
+                .normal
+                .queue
+                .len()
+                .saturating_add(self.critical.queue.len());
+            if self.seen_global.len() != lane_total {
+                // Keep idempotency cache in sync even when a stale ghost id
+                // survives removal of the drained tx id.
+                self.seen_global.clear();
+                self.seen_global.extend(self.normal.seen.iter().copied());
+                self.seen_global.extend(self.critical.seen.iter().copied());
+            }
+        }
         Some(id)
     }
 }
@@ -369,6 +393,22 @@ mod tests {
         assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
         assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
         assert_eq!(g.admit(4, IngressClass::Normal), AdmitOutcome::Backpressured);
+    }
+
+    #[test]
+    fn reserve_only_normal_borrowing_does_not_preempt_critical_drain_order() {
+        let mut g = LaneAdmissionGate::new(3, 3);
+
+        assert_eq!(g.admit(100, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(101, IngressClass::Critical), AdmitOutcome::Accepted);
+        // Normal ingress borrows reserve-only headroom.
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+
+        // With no dedicated normal capacity configured, borrowed normal traffic
+        // should not preempt pending critical work.
+        assert_eq!(g.pop_ready(), Some(100));
+        assert_eq!(g.pop_ready(), Some(101));
+        assert_eq!(g.pop_ready(), Some(1));
     }
 
     #[test]
@@ -566,6 +606,24 @@ mod tests {
     }
 
     #[test]
+    fn newly_arrived_critical_backlog_preempts_normal_flood_without_waiting_for_burst_reset() {
+        let mut g = LaneAdmissionGate::new(8, 2);
+
+        // Build only normal backlog and consume one normal turn.
+        for id in 1..=4 {
+            assert_eq!(g.admit(id, IngressClass::Normal), AdmitOutcome::Accepted);
+        }
+        assert_eq!(g.pop_ready(), Some(1));
+
+        // Critical traffic appears while normal backlog remains active.
+        assert_eq!(g.admit(900, IngressClass::Critical), AdmitOutcome::Accepted);
+
+        // Critical ingress should preempt immediately to keep high-priority
+        // latency bounded even during an existing normal flood.
+        assert_eq!(g.pop_ready(), Some(900));
+    }
+
+    #[test]
     fn zero_capacity_admission_gate_does_not_poison_idempotency_after_backpressure() {
         let mut g = AdmissionGate::new(0);
 
@@ -727,5 +785,71 @@ mod tests {
 
         // Ghost id should not be treated as duplicate while lane still has room.
         assert_eq!(g.admit(999, IngressClass::Critical), AdmitOutcome::Accepted);
+    }
+
+    #[test]
+    fn equal_cardinality_skew_under_saturation_keeps_fresh_ids_backpressured_not_duplicated() {
+        let mut g = LaneAdmissionGate::new(2, 1);
+
+        assert_eq!(g.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(11, IngressClass::Normal), AdmitOutcome::Accepted);
+
+        // Restore-state skew keeps cardinality aligned while replacing a queued id
+        // with a ghost id in lane-wide cache.
+        g.seen_global.remove(&10);
+        g.seen_global.insert(999);
+        assert_eq!(g.seen_global.len(), 2);
+
+        // With queues saturated, fresh ids must remain backpressured (not duplicate)
+        // even while duplicate semantics for queued ids still hold.
+        assert_eq!(g.admit(10, IngressClass::Normal), AdmitOutcome::Duplicate);
+        assert_eq!(g.admit(999, IngressClass::Critical), AdmitOutcome::Backpressured);
+
+        // After one dequeue, the previously fresh id can admit cleanly.
+        assert!(matches!(g.pop_ready(), Some(10) | Some(11)));
+        assert_eq!(g.admit(999, IngressClass::Critical), AdmitOutcome::Accepted);
+    }
+
+    #[test]
+    fn pop_ready_self_heals_stale_seen_global_without_new_admission() {
+        let mut g = LaneAdmissionGate::new(3, 1);
+
+        assert_eq!(g.admit(1, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+
+        // Simulate restored-state skew where lane-wide cache drops queued ids and
+        // only keeps ghost entries.
+        g.seen_global.clear();
+        g.seen_global.insert(999);
+
+        // pop_ready should rebuild lane-wide cache from lane-local truth even when
+        // no new admission occurs.
+        let drained = g.pop_ready();
+        assert!(drained == Some(1) || drained == Some(2));
+
+        let (_, _, total) = g.queued_counts();
+        assert_eq!(g.seen_global.len(), total);
+        let survivor = if drained == Some(1) { 2 } else { 1 };
+        assert!(g.seen_global.contains(&survivor));
+        assert!(!g.seen_global.contains(&999));
+    }
+
+    #[test]
+    fn pop_ready_self_heals_when_ghost_id_survives_successful_remove() {
+        let mut g = LaneAdmissionGate::new(3, 1);
+
+        assert_eq!(g.admit(1, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+
+        // Keep queued ids so remove(id) succeeds, but inject a ghost entry that
+        // should be pruned by post-pop cardinality self-heal.
+        g.seen_global.insert(999);
+
+        let drained = g.pop_ready();
+        assert!(drained == Some(1) || drained == Some(2));
+
+        let (_, _, total) = g.queued_counts();
+        assert_eq!(g.seen_global.len(), total);
+        assert!(!g.seen_global.contains(&999));
     }
 }

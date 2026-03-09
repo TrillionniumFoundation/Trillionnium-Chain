@@ -103,6 +103,35 @@ mod tests {
     }
 
     #[test]
+    fn zk_verifier_rejects_task_id_identifier_spoof() {
+        let verifier = ZkVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"ZK:taskid=99,worker=worker-zk,proof_type=zk,result_hash=1111111111111111111111111111111111111111111111111111111111111111,seal=SEAL_XYZ"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("missing task_id binding")
+        ));
+    }
+
+    #[test]
+    fn zk_verifier_rejects_fullwidth_underscore_task_id_identifier_spoof_fail_closed() {
+        let verifier = ZkVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                "ZK:task＿id=99,worker=worker-zk,proof_type=zk,result_hash=1111111111111111111111111111111111111111111111111111111111111111,seal=SEAL_XYZ"
+                    .as_bytes()
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("missing task_id binding")
+        ));
+    }
+
+    #[test]
     fn zk_verifier_rejects_prefix_only_payload() {
         let verifier = ZkVerifier;
         let task = mock_task();
@@ -190,6 +219,21 @@ mod tests {
             verifier.verify_proof(
                 &task,
                 b"ZK:{\"task_id\":99,\"networker\":\"worker-zk\",\"proof_type\":\"zk\",\"result_hash\":\"1111111111111111111111111111111111111111111111111111111111111111\"}"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("missing worker binding")
+        ));
+    }
+
+    #[test]
+    fn zk_verifier_rejects_fullwidth_underscore_worker_identifier_spoof_fail_closed() {
+        let verifier = ZkVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                "ZK:task_id=99,work＿er=worker-zk,proof_type=zk,result_hash=1111111111111111111111111111111111111111111111111111111111111111,seal=SEAL_XYZ"
+                    .as_bytes()
             ),
             VerificationResult::Invalid(msg) if msg.contains("missing worker binding")
         ));
@@ -585,6 +629,21 @@ mod tests {
                     .as_bytes()
             ),
             VerificationResult::Invalid(msg) if msg.contains("duplicate result_hash binding")
+        ));
+    }
+
+    #[test]
+    fn zk_verifier_rejects_fullwidth_equals_then_ascii_worker_binding_fail_closed() {
+        let verifier = ZkVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                "ZK:task_id=99,worker＝worker-zk,proof_type=zk,result_hash=1111111111111111111111111111111111111111111111111111111111111111,worker=worker-zk,proof=ok"
+                    .as_bytes()
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("duplicate worker binding")
         ));
     }
 }

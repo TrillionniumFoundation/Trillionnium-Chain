@@ -577,9 +577,9 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
         // Replay/auth hardening: reject non-canonical identifiers with
         // surrounding whitespace so equivalent principals/namespaces cannot
         // bypass dedup domains by string-shape variance.
-        if msg.chain_id.trim() != msg.chain_id
-            || msg.from.trim() != msg.from
-            || msg.session_id.trim() != msg.session_id
+        if !is_canonical_identifier(&msg.chain_id)
+            || !is_canonical_identifier(&msg.from)
+            || !is_canonical_identifier(&msg.session_id)
         {
             return Ack {
                 code: AckCode::BadRequest,
@@ -590,10 +590,7 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
         // Gate hardening: preserve a single canonical msg_type namespace so
         // strict-field routing and replay domains cannot diverge by padding
         // or case-variant aliases.
-        if !msg.msg_type.is_empty()
-            && (msg.msg_type.trim() != msg.msg_type
-                || msg.msg_type != msg.msg_type.to_ascii_uppercase())
-        {
+        if !msg.msg_type.is_empty() && !is_canonical_msg_type(&msg.msg_type) {
             return Ack {
                 code: AckCode::BadRequest,
                 ack_id: "ack_invalid".to_string(),
@@ -850,6 +847,25 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
 
 const MAX_DUE_RETRIES_PER_SESSION_PER_COLLECT: usize = 64;
 const MAX_DUE_RETRIES_PER_COLLECT: usize = 256;
+
+fn is_canonical_identifier(value: &str) -> bool {
+    if value.trim() != value {
+        return false;
+    }
+
+    !value.as_bytes().iter().any(|b| b.is_ascii_control())
+}
+
+fn is_canonical_msg_type(msg_type: &str) -> bool {
+    if !is_canonical_identifier(msg_type) {
+        return false;
+    }
+
+    !msg_type
+        .as_bytes()
+        .iter()
+        .any(|b| b.is_ascii_lowercase())
+}
 
 fn exp_backoff_ms(base: u64, max: u64, attempts: u32) -> u64 {
     let shift = attempts.saturating_sub(1).min(20);
@@ -1332,6 +1348,46 @@ mod tests {
         let ack = engine.receive(msg, 1_000);
         assert_eq!(ack.code, AckCode::BadRequest);
         assert!(ack.detail.contains("non-canonical identifier"));
+    }
+
+    #[test]
+    fn rejects_non_canonical_identifier_with_control_chars() {
+        let store = InMemoryReliabilityStore::default();
+        let mut engine = ReliabilityEngine::new(store, RetryConfig::default());
+
+        let msg = ReliableMessage {
+            from: "alice\n".to_string(),
+            chain_id: "trnm-mainnet".to_string(),
+            session_id: "s1".to_string(),
+            seq: Some(1),
+            nonce: None,
+            msg_type: "INPUT_CHUNK".to_string(),
+            payload: "hello".to_string(),
+        };
+
+        let ack = engine.receive(msg, 1_000);
+        assert_eq!(ack.code, AckCode::BadRequest);
+        assert!(ack.detail.contains("non-canonical identifier"));
+    }
+
+    #[test]
+    fn rejects_non_canonical_msg_type_with_control_chars() {
+        let store = InMemoryReliabilityStore::default();
+        let mut engine = ReliabilityEngine::new(store, RetryConfig::default());
+
+        let msg = ReliableMessage {
+            from: "alice".to_string(),
+            chain_id: "trnm-mainnet".to_string(),
+            session_id: "s1".to_string(),
+            seq: None,
+            nonce: Some(7),
+            msg_type: "ACK\n".to_string(),
+            payload: "ok".to_string(),
+        };
+
+        let ack = engine.receive(msg, 1_000);
+        assert_eq!(ack.code, AckCode::BadRequest);
+        assert!(ack.detail.contains("non-canonical msg_type"));
     }
 
     #[test]
@@ -2170,6 +2226,50 @@ mod tests {
 
         assert!(store.try_upsert_session_with_ts(session, 1).is_ok());
         assert_eq!(store.list_session_ids(), vec!["s1".to_string()]);
+    }
+
+    #[test]
+    fn store_config_clamps_zero_pending_quotas_to_keep_ingress_live() {
+        let mut store = InMemoryReliabilityStore::with_config(InMemoryReliabilityStoreConfig {
+            max_pending_per_session: Some(0),
+            max_pending_total: Some(0),
+            ..InMemoryReliabilityStoreConfig::default()
+        });
+
+        let mk_pending = |ack_id: &str| PendingItem {
+            ack_id: ack_id.to_string(),
+            message: ReliableMessage {
+                from: "alice".to_string(),
+                chain_id: "trnm-testnet".to_string(),
+                session_id: "s1".to_string(),
+                seq: Some(1),
+                nonce: None,
+                msg_type: "INPUT_CHUNK".to_string(),
+                payload: "x".to_string(),
+            },
+            attempts: 0,
+            created_at_unix_ms: 1,
+            next_retry_at_unix_ms: 1,
+        };
+
+        let mut first_pending = BTreeMap::new();
+        first_pending.insert("ack-1".to_string(), mk_pending("ack-1"));
+        let first = SessionState {
+            session_id: "s1".to_string(),
+            pending: first_pending,
+        };
+        assert!(store.try_upsert_session_with_ts(first, 1).is_ok());
+
+        let mut second_pending = BTreeMap::new();
+        second_pending.insert("ack-2".to_string(), mk_pending("ack-2"));
+        let second = SessionState {
+            session_id: "s2".to_string(),
+            pending: second_pending,
+        };
+        let err = store
+            .try_upsert_session_with_ts(second, 2)
+            .expect_err("second pending item should hit clamped global quota");
+        assert!(matches!(err, ReliabilityStoreError::CapacityExceeded { .. }));
     }
 
     #[test]

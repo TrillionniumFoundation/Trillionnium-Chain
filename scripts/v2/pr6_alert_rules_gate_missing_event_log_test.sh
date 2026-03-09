@@ -4,7 +4,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 cd "$ROOT"
 
-TMP="$(mktemp -d /tmp/trnm-pr6-gate-missing-log-test.XXXXXX)"
+TMP="$(mktemp -d "${TMPDIR:-/tmp}/trnm-pr6-gate-missing-log-test.XXXXXX")"
 trap 'rm -rf "$TMP"' EXIT
 
 MISSING_LOG="$TMP/not-found.log"
