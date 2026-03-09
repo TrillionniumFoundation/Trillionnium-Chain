@@ -26,6 +26,7 @@ required_lines=(
   'GITHUB_ACTIONS: "true"'
   'SOURCE_DATE_EPOCH: "1704067200"'
   'timeout-minutes: 45'
+  'export RUST_TEST_THREADS="${RUST_TEST_THREADS:-1}"'
 )
 
 for line in "${required_lines[@]}"; do
