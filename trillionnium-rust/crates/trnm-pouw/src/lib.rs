@@ -736,9 +736,10 @@ pub fn apply_reveal_result_at_height(
                 })
                 .unwrap_or(false);
         if proof_payload_is_blank {
-            return Err(PouwError::State(
-                "Proof verification failed: missing proof payload".into(),
-            ));
+            return Err(PouwError::State(format!(
+                "Proof verification failed: missing proof payload for {:?}",
+                task.proof_type
+            )));
         }
 
         let registry = get_default_registry();
