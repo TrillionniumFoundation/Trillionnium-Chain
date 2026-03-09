@@ -472,6 +472,8 @@ pub struct RelayService {
 }
 
 impl RelayService {
+    const MAX_SOURCE_KEY_LEN: usize = 64;
+
     pub fn new(router: RelayRouter) -> Self {
         Self {
             sessions: Mutex::new(HashMap::new()),
@@ -492,19 +494,32 @@ impl RelayService {
         }
     }
 
+    fn canonicalize_source(source: Option<&str>) -> String {
+        let source = source.unwrap_or("anon").trim();
+        if source.is_empty() {
+            return "anon".to_string();
+        }
+
+        let canonical = source.to_ascii_lowercase();
+        if canonical.len() <= Self::MAX_SOURCE_KEY_LEN {
+            canonical
+        } else {
+            canonical[..Self::MAX_SOURCE_KEY_LEN].to_string()
+        }
+    }
+
     fn consume_risk_quota(
         &self,
         domain: RiskDomain,
         session_id: &str,
         source: Option<&str>,
     ) -> Result<()> {
-        let source = source.unwrap_or("anon").trim();
-        let source = if source.is_empty() { "anon" } else { source };
+        let source = Self::canonicalize_source(source);
         let mut q = self
             .risk_quota
             .lock()
             .map_err(|_| anyhow!("relay risk quota lock poisoned"))?;
-        q.consume(now_ms(), domain, session_id, source, &self.risk_quota_cfg)
+        q.consume(now_ms(), domain, session_id, &source, &self.risk_quota_cfg)
     }
 
     pub fn open(&self, req: RelayOpenRequest) -> Result<RelayOpenResponse> {
@@ -613,6 +628,16 @@ impl RelayService {
             return Err(bad_request(
                 "empty_ack_request",
                 "relay ack requires envelope_ids or upto_seq",
+            ));
+        }
+        if req.envelope_ids.len() > MAX_RELAY_QUERY_LIMIT {
+            return Err(bad_request(
+                "too_many_ack_ids",
+                format!(
+                    "relay ack envelope_ids exceeds limit: {} > {}",
+                    req.envelope_ids.len(),
+                    MAX_RELAY_QUERY_LIMIT
+                ),
             ));
         }
 
@@ -1648,7 +1673,7 @@ mod tests {
             })
             .unwrap();
 
-        // Leading/trailing whitespace must not create a fresh source bucket.
+        // Leading/trailing whitespace and case variation must not create fresh source buckets.
         relay
             .send(RelaySendRequest {
                 session_id: "mv-src-s1".into(),
@@ -1656,7 +1681,7 @@ mod tests {
                 from: "alice".into(),
                 to: Some("bob".into()),
                 payload: b"b".to_vec(),
-                source: Some("  mv-src  ".into()),
+                source: Some("  MV-SRC  ".into()),
             })
             .unwrap();
         let trimmed_alias_err = relay
@@ -1705,6 +1730,63 @@ mod tests {
             })
             .unwrap_err();
         assert!(anon_alias_err
+            .to_string()
+            .contains("too_many_requests/quota_exceeded"));
+    }
+
+    #[test]
+    fn source_attribution_length_is_bounded_for_quota_buckets() {
+        let mut router = RelayRouter::new();
+        router.register("relay.echo", EchoHandler);
+        let relay = RelayService::with_risk_quota_config(
+            router,
+            RiskQuotaConfig {
+                window_ms: 1_000,
+                per_session_limit: 5,
+                per_source_limit: 2,
+            },
+        );
+        relay
+            .open(RelayOpenRequest {
+                session_id: "src-cap-s1".into(),
+            })
+            .unwrap();
+
+        let long_src = "x".repeat(256);
+        relay
+            .send(RelaySendRequest {
+                session_id: "src-cap-s1".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"a".to_vec(),
+                source: Some(long_src.clone()),
+            })
+            .unwrap();
+
+        // Casing/whitespace aliases for a long source key should still share one capped bucket.
+        relay
+            .send(RelaySendRequest {
+                session_id: "src-cap-s1".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"b".to_vec(),
+                source: Some(format!("  {}  ", long_src.to_ascii_uppercase())),
+            })
+            .unwrap();
+
+        let err = relay
+            .send(RelaySendRequest {
+                session_id: "src-cap-s1".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"c".to_vec(),
+                source: Some(format!("{}tail", long_src)),
+            })
+            .unwrap_err();
+        assert!(err
             .to_string()
             .contains("too_many_requests/quota_exceeded"));
     }
