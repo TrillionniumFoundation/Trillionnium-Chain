@@ -133,13 +133,14 @@ impl LaneAdmissionGate {
         if !is_duplicate {
             // Defensive fallback for rare restored-state skew where lane-wide cache and
             // queue cardinality match but one queued id is missing from seen_global.
-            // Probe the likely lane first to trim one HashSet lookup from the hot path.
+            // Probe lane-local id sets (O(1)) rather than queue scans (O(n)) to keep
+            // free-ingress admission lightweight under bursty concurrency.
             let lane_local_duplicate = match class {
                 IngressClass::Normal => {
-                    self.normal.queue.contains(&tx_id) || self.critical.queue.contains(&tx_id)
+                    self.normal.seen.contains(&tx_id) || self.critical.seen.contains(&tx_id)
                 }
                 IngressClass::Critical => {
-                    self.critical.queue.contains(&tx_id) || self.normal.queue.contains(&tx_id)
+                    self.critical.seen.contains(&tx_id) || self.normal.seen.contains(&tx_id)
                 }
             };
             if lane_local_duplicate {
