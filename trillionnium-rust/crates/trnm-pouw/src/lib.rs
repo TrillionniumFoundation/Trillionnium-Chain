@@ -1266,7 +1266,11 @@ mod tests {
         // Some fail-closed tests intentionally attempt malformed/reserved authorities.
         // Keep the fixture helper tolerant so those tests can still exercise resolve
         // authorization behavior even when governance-layer validation rejects writes.
-        let _ = st.set_gov_param_unchecked(9_500, "resolve_authority".into(), authority.into());
+        let _ = st.set_gov_param_bootstrap_unchecked(
+            9_500,
+            "resolve_authority".into(),
+            authority.into(),
+        );
     }
 
     #[test]
@@ -3410,7 +3414,7 @@ mod tests {
     fn challenge_rejected_after_reveal_deadline_window() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
-        st.set_gov_param_unchecked(9101, "challenge_window_blocks".into(), "100".into())
+        st.set_gov_param_bootstrap_unchecked(9101, "challenge_window_blocks".into(), "100".into())
             .unwrap();
 
         let r1 = apply_create_task(&mut st, 901, "alice".into(), 10).unwrap();
@@ -3440,7 +3444,7 @@ mod tests {
     fn challenge_accepted_at_reveal_deadline_boundary() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
-        st.set_gov_param_unchecked(9102, "challenge_window_blocks".into(), "100".into())
+        st.set_gov_param_bootstrap_unchecked(9102, "challenge_window_blocks".into(), "100".into())
             .unwrap();
 
         let r1 = apply_create_task(&mut st, 902, "alice".into(), 10).unwrap();
@@ -3582,7 +3586,7 @@ mod tests {
     fn challenge_window_is_snapshotted_at_reveal_even_if_governance_changes_after() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
-        st.set_gov_param_unchecked(9110, "challenge_window_blocks".into(), "100".into())
+        st.set_gov_param_bootstrap_unchecked(9110, "challenge_window_blocks".into(), "100".into())
             .unwrap();
 
         let r1 = apply_create_task(&mut st, 19110, "alice".into(), 10).unwrap();
@@ -3596,7 +3600,7 @@ mod tests {
         let r4 = apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110)
             .unwrap();
 
-        st.set_gov_param_unchecked(9110, "challenge_window_blocks".into(), "300".into())
+        st.set_gov_param_bootstrap_unchecked(9110, "challenge_window_blocks".into(), "300".into())
             .unwrap();
 
         let err = apply_challenge_at_height(
@@ -3628,7 +3632,7 @@ mod tests {
     fn legacy_revealed_without_snapshot_gets_snapshotted_on_challenge() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
-        st.set_gov_param_unchecked(9130, "challenge_window_blocks".into(), "100".into())
+        st.set_gov_param_bootstrap_unchecked(9130, "challenge_window_blocks".into(), "100".into())
             .unwrap();
 
         let r1 = apply_create_task(&mut st, 19130, "alice".into(), 10).unwrap();
@@ -3647,7 +3651,7 @@ mod tests {
         legacy.challenge_window_blocks_snapshot = None;
         let r4 = st.update_task(r4, legacy).unwrap();
 
-        st.set_gov_param_unchecked(9130, "challenge_window_blocks".into(), "300".into())
+        st.set_gov_param_bootstrap_unchecked(9130, "challenge_window_blocks".into(), "300".into())
             .unwrap();
 
         let r5 = apply_challenge_at_height(
@@ -3669,7 +3673,7 @@ mod tests {
     fn legacy_revealed_snapshot_freezes_resolve_timing_after_challenge_despite_later_gov_change() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
-        st.set_gov_param_unchecked(9133, "challenge_window_blocks".into(), "100".into())
+        st.set_gov_param_bootstrap_unchecked(9133, "challenge_window_blocks".into(), "100".into())
             .unwrap();
 
         let r1 = apply_create_task(&mut st, 19133, "alice".into(), 10).unwrap();
@@ -3688,7 +3692,7 @@ mod tests {
         legacy.challenge_window_blocks_snapshot = None;
         let r4 = st.update_task(r4, legacy).unwrap();
 
-        st.set_gov_param_unchecked(9133, "challenge_window_blocks".into(), "300".into())
+        st.set_gov_param_bootstrap_unchecked(9133, "challenge_window_blocks".into(), "300".into())
             .unwrap();
 
         let r5 = apply_challenge_at_height(
@@ -3705,7 +3709,7 @@ mod tests {
         assert_eq!(task.resolve_deadline_height, Some(510));
 
         // Later governance updates must not affect already-derived challenged timing.
-        st.set_gov_param_unchecked(9133, "challenge_window_blocks".into(), "600".into())
+        st.set_gov_param_bootstrap_unchecked(9133, "challenge_window_blocks".into(), "600".into())
             .unwrap();
 
         let err = apply_timeout(&mut st, r5.clone(), 510).unwrap_err();
@@ -3721,7 +3725,7 @@ mod tests {
     {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
-        st.set_gov_param_unchecked(9131, "challenge_window_blocks".into(), "100".into())
+        st.set_gov_param_bootstrap_unchecked(9131, "challenge_window_blocks".into(), "100".into())
             .unwrap();
 
         let r1 = apply_create_task(&mut st, 19131, "alice".into(), 10).unwrap();
@@ -3740,7 +3744,7 @@ mod tests {
         legacy.challenge_window_blocks_snapshot = None;
         let r4 = st.update_task(r4, legacy).unwrap();
 
-        st.set_gov_param_unchecked(9131, "challenge_window_blocks".into(), "300".into())
+        st.set_gov_param_bootstrap_unchecked(9131, "challenge_window_blocks".into(), "300".into())
             .unwrap();
 
         let err = apply_challenge_at_height(
@@ -3759,7 +3763,7 @@ mod tests {
     fn legacy_fallback_asymmetry_keeps_challenge_deadline_and_signer_auth_intact() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
-        st.set_gov_param_unchecked(9132, "challenge_window_blocks".into(), "100".into())
+        st.set_gov_param_bootstrap_unchecked(9132, "challenge_window_blocks".into(), "100".into())
             .unwrap();
         set_resolve_authority(&mut st, "authority");
 
@@ -3780,7 +3784,7 @@ mod tests {
         let r4 = st.update_task(r4, legacy).unwrap();
 
         // Increase window to governance max just before challenge.
-        st.set_gov_param_unchecked(9132, "challenge_window_blocks".into(), "600".into())
+        st.set_gov_param_bootstrap_unchecked(9132, "challenge_window_blocks".into(), "600".into())
             .unwrap();
 
         // Challenge admission still respects stored reveal-time deadline (<= 210).
@@ -3819,7 +3823,7 @@ mod tests {
     fn challenge_boundary_stays_correct_at_and_after_deadline_with_snapshot() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
-        st.set_gov_param_unchecked(9120, "challenge_window_blocks".into(), "100".into())
+        st.set_gov_param_bootstrap_unchecked(9120, "challenge_window_blocks".into(), "100".into())
             .unwrap();
 
         let r1 = apply_create_task(&mut st, 19120, "alice".into(), 10).unwrap();
@@ -3833,7 +3837,7 @@ mod tests {
         let r4 = apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110)
             .unwrap();
 
-        st.set_gov_param_unchecked(9120, "challenge_window_blocks".into(), "300".into())
+        st.set_gov_param_bootstrap_unchecked(9120, "challenge_window_blocks".into(), "300".into())
             .unwrap();
 
         let r5 = apply_challenge_at_height(
@@ -4342,7 +4346,7 @@ mod tests {
     #[test]
     fn revealed_timeout_auto_completes_without_challenge() {
         let mut st = seeded_state();
-        st.set_gov_param_unchecked(9103, "challenge_window_blocks".into(), "100".into())
+        st.set_gov_param_bootstrap_unchecked(9103, "challenge_window_blocks".into(), "100".into())
             .unwrap();
 
         let r1 = apply_create_task(&mut st, 903, "alice".into(), 10).unwrap();
@@ -4369,13 +4373,17 @@ mod tests {
     fn challenge_requires_min_bond_from_worker_stake_floor() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
-        st.set_gov_param_unchecked(9000, "challenge_min_bond".into(), "1".into())
+        st.set_gov_param_bootstrap_unchecked(9000, "challenge_min_bond".into(), "1".into())
             .unwrap();
-        st.set_gov_param_unchecked(9001, "challenge_min_bond_bounty_bps".into(), "1".into())
+        st.set_gov_param_bootstrap_unchecked(
+            9001,
+            "challenge_min_bond_bounty_bps".into(),
+            "1".into(),
+        )
+        .unwrap();
+        st.set_gov_param_bootstrap_unchecked(9002, "min_worker_stake".into(), "80".into())
             .unwrap();
-        st.set_gov_param_unchecked(9002, "min_worker_stake".into(), "80".into())
-            .unwrap();
-        st.set_gov_param_unchecked(
+        st.set_gov_param_bootstrap_unchecked(
             9003,
             "challenge_min_bond_worker_stake_bps".into(),
             "2500".into(),
@@ -4412,13 +4420,17 @@ mod tests {
     fn challenge_requires_min_bond_as_max_of_governance_bounty_and_worker_stake_floors() {
         let mut st = seeded_state();
         st.set_balance("challenger", 200);
-        st.set_gov_param_unchecked(9004, "challenge_min_bond".into(), "30".into())
+        st.set_gov_param_bootstrap_unchecked(9004, "challenge_min_bond".into(), "30".into())
             .unwrap();
-        st.set_gov_param_unchecked(9005, "challenge_min_bond_bounty_bps".into(), "5000".into())
+        st.set_gov_param_bootstrap_unchecked(
+            9005,
+            "challenge_min_bond_bounty_bps".into(),
+            "5000".into(),
+        )
+        .unwrap();
+        st.set_gov_param_bootstrap_unchecked(9006, "min_worker_stake".into(), "80".into())
             .unwrap();
-        st.set_gov_param_unchecked(9006, "min_worker_stake".into(), "80".into())
-            .unwrap();
-        st.set_gov_param_unchecked(
+        st.set_gov_param_bootstrap_unchecked(
             9007,
             "challenge_min_bond_worker_stake_bps".into(),
             "7500".into(),
@@ -4455,7 +4467,7 @@ mod tests {
     fn challenge_requires_min_bond_from_governance() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
-        st.set_gov_param_unchecked(9001, "challenge_min_bond".into(), "50".into())
+        st.set_gov_param_bootstrap_unchecked(9001, "challenge_min_bond".into(), "50".into())
             .unwrap();
 
         let r1 = apply_create_task(&mut st, 888, "alice".into(), 10).unwrap();
@@ -4536,10 +4548,14 @@ mod tests {
     fn challenge_rejects_spam_like_low_bond_under_dynamic_bounty_floor() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
-        st.set_gov_param_unchecked(9050, "challenge_min_bond".into(), "10".into())
+        st.set_gov_param_bootstrap_unchecked(9050, "challenge_min_bond".into(), "10".into())
             .unwrap();
-        st.set_gov_param_unchecked(9051, "challenge_min_bond_bounty_bps".into(), "5000".into())
-            .unwrap();
+        st.set_gov_param_bootstrap_unchecked(
+            9051,
+            "challenge_min_bond_bounty_bps".into(),
+            "5000".into(),
+        )
+        .unwrap();
 
         let r1 = apply_create_task(&mut st, 29050, "alice".into(), 100).unwrap();
         let result_hash = [1u8; 32];
@@ -4559,10 +4575,14 @@ mod tests {
     fn challenge_accepts_normal_bond_when_dynamic_floor_met() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
-        st.set_gov_param_unchecked(9052, "challenge_min_bond".into(), "10".into())
+        st.set_gov_param_bootstrap_unchecked(9052, "challenge_min_bond".into(), "10".into())
             .unwrap();
-        st.set_gov_param_unchecked(9053, "challenge_min_bond_bounty_bps".into(), "5000".into())
-            .unwrap();
+        st.set_gov_param_bootstrap_unchecked(
+            9053,
+            "challenge_min_bond_bounty_bps".into(),
+            "5000".into(),
+        )
+        .unwrap();
 
         let r1 = apply_create_task(&mut st, 29052, "alice".into(), 100).unwrap();
         let result_hash = [1u8; 32];
@@ -4584,10 +4604,14 @@ mod tests {
     fn challenge_dynamic_floor_boundary_ceil_passes_and_fails() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
-        st.set_gov_param_unchecked(9054, "challenge_min_bond".into(), "1".into())
+        st.set_gov_param_bootstrap_unchecked(9054, "challenge_min_bond".into(), "1".into())
             .unwrap();
-        st.set_gov_param_unchecked(9055, "challenge_min_bond_bounty_bps".into(), "500".into())
-            .unwrap();
+        st.set_gov_param_bootstrap_unchecked(
+            9055,
+            "challenge_min_bond_bounty_bps".into(),
+            "500".into(),
+        )
+        .unwrap();
 
         let r1 = apply_create_task(&mut st, 29054, "alice".into(), 101).unwrap();
         let result_hash = [1u8; 32];
@@ -4664,10 +4688,14 @@ mod tests {
     fn challenged_timeout_refunds_bond_and_keeps_forfeit_bucket_unchanged() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
-        st.set_gov_param_unchecked(9056, "challenge_min_bond".into(), "10".into())
+        st.set_gov_param_bootstrap_unchecked(9056, "challenge_min_bond".into(), "10".into())
             .unwrap();
-        st.set_gov_param_unchecked(9057, "challenge_min_bond_bounty_bps".into(), "5000".into())
-            .unwrap();
+        st.set_gov_param_bootstrap_unchecked(
+            9057,
+            "challenge_min_bond_bounty_bps".into(),
+            "5000".into(),
+        )
+        .unwrap();
 
         let r1 = apply_create_task(&mut st, 29056, "alice".into(), 100).unwrap();
         let result_hash = [1u8; 32];
@@ -5356,7 +5384,7 @@ mod tests {
     fn challenge_uses_governance_window_and_resolve_marks_bond_outcome() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
-        st.set_gov_param_unchecked(9002, "challenge_window_blocks".into(), "123".into())
+        st.set_gov_param_bootstrap_unchecked(9002, "challenge_window_blocks".into(), "123".into())
             .unwrap();
 
         let r1 = apply_create_task(&mut st, 889, "alice".into(), 10).unwrap();
@@ -5428,7 +5456,7 @@ mod tests {
     fn resolve_success_conserves_challenge_related_buckets_with_explicit_bounty_flow() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
-        st.set_gov_param_unchecked(9810, "min_worker_stake".into(), "40".into())
+        st.set_gov_param_bootstrap_unchecked(9810, "min_worker_stake".into(), "40".into())
             .unwrap();
         st.set_balance("worker1", 40);
 
@@ -6530,7 +6558,7 @@ mod tests {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
 
-        st.set_gov_param_unchecked(9_209, "challenge_min_bond".into(), "50".into())
+        st.set_gov_param_bootstrap_unchecked(9_209, "challenge_min_bond".into(), "50".into())
             .expect("challenge_min_bond governance seed must succeed");
 
         let r1 = apply_create_task(&mut st, 8_971, "alice".into(), 10).unwrap();
@@ -9446,7 +9474,7 @@ mod tests {
         let baseline = resolve_authority_account(&st);
 
         let err = st
-            .set_gov_param_unchecked(9_500, "resolve_authority".into(), "".into())
+            .set_gov_param_bootstrap_unchecked(9_500, "resolve_authority".into(), "".into())
             .expect_err("blank governance resolve authority update must be rejected");
         assert!(
             err.contains("must be non-empty"),
@@ -10791,7 +10819,7 @@ mod tests {
     #[test]
     fn accept_preflight_rejects_lock_credit_overflow_without_mutation() {
         let mut st = seeded_state();
-        st.set_gov_param_unchecked(9801, "min_worker_stake".into(), "50".into())
+        st.set_gov_param_bootstrap_unchecked(9801, "min_worker_stake".into(), "50".into())
             .unwrap();
         st.set_balance("worker1", 50);
         st.set_balance(&worker_stake_lock_account(19801), u128::MAX);
@@ -10810,7 +10838,7 @@ mod tests {
     #[test]
     fn accept_preflight_rejects_insufficient_stake_without_mutation() {
         let mut st = seeded_state();
-        st.set_gov_param_unchecked(9802, "min_worker_stake".into(), "50".into())
+        st.set_gov_param_bootstrap_unchecked(9802, "min_worker_stake".into(), "50".into())
             .unwrap();
         st.set_balance("worker1", 49);
 
@@ -10828,7 +10856,7 @@ mod tests {
     #[test]
     fn accept_succeeds_when_worker_stake_at_or_above_minimum() {
         let mut st = seeded_state();
-        st.set_gov_param_unchecked(9802, "min_worker_stake".into(), "50".into())
+        st.set_gov_param_bootstrap_unchecked(9802, "min_worker_stake".into(), "50".into())
             .unwrap();
         st.set_balance("worker1", 50);
 
@@ -10842,7 +10870,7 @@ mod tests {
     #[test]
     fn committed_timeout_slashes_worker_economically_and_credits_treasury() {
         let mut st = seeded_state();
-        st.set_gov_param_unchecked(9803, "min_worker_stake".into(), "40".into())
+        st.set_gov_param_bootstrap_unchecked(9803, "min_worker_stake".into(), "40".into())
             .unwrap();
         st.set_balance("worker1", 40);
 
@@ -10866,7 +10894,7 @@ mod tests {
     #[test]
     fn committed_timeout_no_double_slash_on_repeated_attempts() {
         let mut st = seeded_state();
-        st.set_gov_param_unchecked(9804, "min_worker_stake".into(), "40".into())
+        st.set_gov_param_bootstrap_unchecked(9804, "min_worker_stake".into(), "40".into())
             .unwrap();
         st.set_balance("worker1", 40);
 

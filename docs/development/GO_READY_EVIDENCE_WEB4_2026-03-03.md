@@ -1,5 +1,7 @@
 # GO-ready 收口最终证据包（Web4）
 
+> 历史证据说明：本文档仅记录 **2026-03-03 当次 Web4 收口/并 main 前证据**，不是当前仓库的 release readiness 权威结论。当前总体验收口径请以仓库根 `RELEASE_READINESS.md` 为准。
+
 - 分支：`merge/web4-integration-2026-03-02`
 - 日期：2026-03-03（Asia/Shanghai）
 - 目标：清理工作区残留、补齐门禁盲区回归、提供并 main 前可复验证据。

@@ -1,5 +1,7 @@
 # Web4 6点修复补丁序列收口证据（2026-03-04）
 
+> 历史证据说明：本文档仅证明 **2026-03-04 这组 Web4 修复序列** 当时通过了列出的门禁；不应被解读为当前整个仓库或当前 Web4 状态已自动 release-ready。当前口径请以仓库根 `RELEASE_READINESS.md` 为准。
+
 ## 固定补丁序列 SHA（本次6点任务）
 
 1. `42a67a45` `fix(frontend): require ChainTask.createdAt across contract`

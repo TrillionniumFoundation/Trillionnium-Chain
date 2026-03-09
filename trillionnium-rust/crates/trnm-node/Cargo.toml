@@ -17,3 +17,6 @@ trnm-state = { path = "../trnm-state" }
 trnm-types = { path = "../trnm-types" }
 trnm-executor = { path = "../trnm-executor" }
 trnm-mempool = { path = "../trnm-mempool" }
+
+[dev-dependencies]
+trnm-state = { path = "../trnm-state", features = ["test-utils"] }

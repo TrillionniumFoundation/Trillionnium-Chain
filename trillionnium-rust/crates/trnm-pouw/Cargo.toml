@@ -13,3 +13,4 @@ trnm-types = { path = "../trnm-types" }
 
 [dev-dependencies]
 serde_json = "1"
+trnm-state = { path = "../trnm-state", features = ["test-utils"] }

@@ -9,7 +9,7 @@
 ## Top 3 P0（先看）
 
 1. **P0-1 解析层“伪签名”导致 Resolve 权限可被任意提交者冒用**（`trnm-node`）
-2. **P0-2 `set_gov_param_unchecked` 可绕过敏感参数 timelock 与治理流程**（`trnm-state`）
+2. **P0-2 `set_gov_param_bootstrap_unchecked` 可绕过敏感参数 timelock 与治理流程**（`trnm-state`）
 3. **P0-3 挑战奖励可从全局 slash treasury 回退支付，存在“库余额抽取”经济面**（`trnm-pouw`）
 
 ---
@@ -43,16 +43,16 @@ Resolve 授权被节点层“配置回填 signer”绕过（任意调用者可�
 
 ## Challenge 2 — P0（timelock 绕过）
 ### 标题
-`set_gov_param_unchecked` 允许敏感参数即时生效，绕过 timelock
+`set_gov_param_bootstrap_unchecked` 允许敏感参数即时生效，绕过 timelock
 
 ### 证据
 - `trnm-state/src/lib.rs:571-616`
-  - `set_gov_param_unchecked()` 直接 `upsert_gov_param_unchecked`。
+  - `set_gov_param_bootstrap_unchecked()` 直接 `upsert_gov_param_unchecked`。
 - `trnm-state/src/lib.rs:634+`
   - 正常路径 `set_gov_param_with_action()` 才实现 sensitive timelock + pending 机制。
 
 ### 复现（最小）
-1. 对敏感键（如 `challenge_min_bond` / `resolve_authority`）调用 `set_gov_param_unchecked`。
+1. 对敏感键（如 `challenge_min_bond` / `resolve_authority`）调用 `set_gov_param_bootstrap_unchecked`。
 2. 参数立即写入对象，无 `activate_at_height` 延迟。
 
 ### 影响
@@ -60,7 +60,7 @@ Resolve 授权被节点层“配置回填 signer”绕过（任意调用者可�
 - 可与 Challenge 1 联动实现治理-结算联动攻击。
 
 ### 修复
-- 将 `set_gov_param_unchecked` 限制为 `#[cfg(test)]` 或私有 API。
+- 将 `set_gov_param_bootstrap_unchecked` 限制为 `#[cfg(test)]` 或私有 API。
 - 生产路径统一走 `set_gov_param_with_action`，并在调用侧做 capability gate。
 
 ---
@@ -209,7 +209,7 @@ Monetary policy 仅记账不铸销到账户，且节点主循环未触发 policy
 
 ## 额外说明（针对指令中的四个必答点）
 
-1. **timelock 绕过**：见 Challenge 2（`set_gov_param_unchecked`）。
+1. **timelock 绕过**：见 Challenge 2（`set_gov_param_bootstrap_unchecked`）。
 2. **参数蠕变**：见 Challenge 4（20% 复合漂移 + replace 重排）。
 3. **奖励/惩罚守恒**：见 Challenge 7（policy tick 未落账、节点未触发）。
 4. **库余额抽取风险**：见 Challenge 3（challenge bounty fallback 到全局 slash treasury）。

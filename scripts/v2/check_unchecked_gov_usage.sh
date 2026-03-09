@@ -4,18 +4,18 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 cd "$ROOT"
 
-# Enforce that set_gov_param_unchecked is only used in tests or explicitly allowed bootstrap helper.
+# Enforce that set_gov_param_bootstrap_unchecked is only used in tests or explicitly allowed bootstrap helper.
 # Allowed patterns:
 # - *_test files / #[cfg(test)] blocks in source (best-effort via path filter)
 # - trnm-state crate internal tests in lib.rs
 # - this check script itself / docs / workflow files
 
-hits=$(grep -RIn "set_gov_param_unchecked" trillionnium-rust/crates \
+hits=$(grep -RIn "set_gov_param_bootstrap_unchecked" trillionnium-rust/crates \
   --exclude-dir target \
   --exclude-dir .git || true)
 
 if [[ -z "${hits}" ]]; then
-  echo "[OK] no set_gov_param_unchecked usage found"
+  echo "[OK] no set_gov_param_bootstrap_unchecked usage found"
   exit 0
 fi
 
@@ -45,10 +45,10 @@ while IFS= read -r line; do
 done <<< "$hits"
 
 if (( ${#violations[@]} > 0 )); then
-  echo "[FAIL] disallowed set_gov_param_unchecked usage detected:" >&2
+  echo "[FAIL] disallowed set_gov_param_bootstrap_unchecked usage detected:" >&2
   printf '%s
 ' "${violations[@]}" >&2
   exit 2
 fi
 
-echo "[OK] set_gov_param_unchecked usage limited to allowed test/bootstrap paths"
+echo "[OK] set_gov_param_bootstrap_unchecked usage limited to allowed test/bootstrap paths"

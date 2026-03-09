@@ -71,7 +71,7 @@ TrillionniumChain/
 - Next.js 应用（`app/`）
 - 合约/接口适配层（`lib/`）
 - 测试（unit / component / contract / e2e）
-- 发布前检查脚本（`scripts/ci-check.sh`, `scripts/release-preflight.sh`, `scripts/release-ready.sh`）
+- 发布前检查脚本（位于 `web4-frontend/scripts/`；入口命令见 `web4-frontend/package.json`：`npm run ci:check` / `npm run release:preflight` / `npm run release:ready`）
 
 ---
 
@@ -145,7 +145,8 @@ TRNM_TX_CLI=./trillionnium-rust/target/debug/trnm-cli \
 
 ## 6. 文档入口
 
-- 项目状态：[STATUS.md](STATUS.md)
+- 当前发布/就绪真相源：[RELEASE_READINESS.md](RELEASE_READINESS.md)
+- 项目状态（历史推进日志）：[STATUS.md](STATUS.md)
 - 统一开发调度：[docs/development/DEVELOPMENT_MASTER_UNIFIED_2026-03-04.md](docs/development/DEVELOPMENT_MASTER_UNIFIED_2026-03-04.md)
 - Web4 基础设施总览：[docs/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md](docs/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md)
 - PoUW 机制说明：[trillionnium-rust/docs/challenge-economics-minimal.md](trillionnium-rust/docs/challenge-economics-minimal.md)
@@ -174,9 +175,10 @@ TRNM_TX_CLI=./trillionnium-rust/target/debug/trnm-cli \
 
 ## 8. 现阶段说明
 
-- 主线已完成“Rust L1 收敛”，默认入口为 `trillionnium-rust/`。
+- 主线开发入口为 `trillionnium-rust/`。
 - `legacy/` 仅作归档，不作为当前开发入口。
-- 自动化脚本较多，优先使用本 README 和 `docs/development` 下统一调度文档作为导航。
+- 当前是否“可发布 / release-ready”请以 [RELEASE_READINESS.md](RELEASE_READINESS.md) 为准；历史证据文档不自动代表今日状态。
+- 自动化脚本较多，优先使用本 README、`RELEASE_READINESS.md` 和 `docs/development` 下统一调度文档作为导航。
 
 ---
 

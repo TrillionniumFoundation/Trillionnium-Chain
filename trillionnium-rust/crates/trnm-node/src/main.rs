@@ -1,5 +1,5 @@
 use anyhow::{Context, Result};
-use clap::Parser;
+use clap::{Parser, ValueEnum};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::{
@@ -70,8 +70,13 @@ struct Args {
     #[arg(long, default_value_t = 40)]
     bft_round_change_backoff_max_ms: u64,
     /// Consensus WAL directory for restart recovery
-    #[arg(long, default_value = "run/consensus-wal")]
+    #[arg(long, default_value = DEFAULT_BFT_WAL_DIR)]
     bft_wal_dir: String,
+    /// How to handle the default WAL directory when no explicit isolated dir is provided.
+    /// `auto` isolates repeated runs that use the built-in default path, while explicit custom
+    /// paths keep legacy restart-recovery behavior.
+    #[arg(long, value_enum, default_value_t = WalDirMode::Auto)]
+    bft_wal_mode: WalDirMode,
     /// Write one checkpoint metadata every N committed blocks
     #[arg(long, default_value_t = 5)]
     bft_checkpoint_interval: u64,
@@ -90,6 +95,15 @@ struct Args {
     /// Maximum suggested tx ids printed by shadow advisor
     #[arg(long, default_value_t = 4)]
     rl_advisor_shadow_topk: usize,
+}
+
+const DEFAULT_BFT_WAL_DIR: &str = "run/consensus-wal";
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, ValueEnum)]
+enum WalDirMode {
+    Auto,
+    Reuse,
+    FailIfExists,
 }
 
 #[derive(Debug, Deserialize)]
@@ -338,6 +352,50 @@ impl RlAdvisor for ShadowOnlyRlAdvisor {
 
 fn wal_file(wal_dir: &Path) -> PathBuf {
     wal_dir.join("consensus-wal.toml")
+}
+
+fn wal_dir_has_existing_state(wal_dir: &Path) -> bool {
+    wal_file(wal_dir).exists()
+        || wal_meta_file(wal_dir).exists()
+        || checkpoint_file(wal_dir).exists()
+}
+
+fn isolated_default_wal_dir(base_dir: &Path) -> PathBuf {
+    base_dir.join(format!("session-{}-{}", now_unix_ms(), std::process::id()))
+}
+
+fn resolve_wal_dir(args: &Args) -> Result<(PathBuf, Option<String>)> {
+    let requested = PathBuf::from(&args.bft_wal_dir);
+    let uses_builtin_default = requested == PathBuf::from(DEFAULT_BFT_WAL_DIR);
+    let has_existing_state = wal_dir_has_existing_state(&requested);
+
+    match args.bft_wal_mode {
+        WalDirMode::Reuse => Ok((requested, None)),
+        WalDirMode::FailIfExists => {
+            if has_existing_state {
+                anyhow::bail!(
+                    "refusing to reuse existing BFT WAL state at {} (pass --bft-wal-mode reuse to recover, or choose a fresh --bft-wal-dir)",
+                    requested.display()
+                );
+            }
+            Ok((requested, None))
+        }
+        WalDirMode::Auto => {
+            if uses_builtin_default && has_existing_state {
+                let isolated = isolated_default_wal_dir(&requested);
+                Ok((
+                    isolated.clone(),
+                    Some(format!(
+                        "[bft-wal] existing default WAL state detected at {}; isolating this run in {} (pass --bft-wal-mode reuse to recover prior state explicitly)",
+                        requested.display(),
+                        isolated.display()
+                    )),
+                ))
+            } else {
+                Ok((requested, None))
+            }
+        }
+    }
 }
 
 fn wal_meta_file(wal_dir: &Path) -> PathBuf {
@@ -1336,6 +1394,14 @@ fn event_type_of(tx: &MockTx) -> &'static str {
     }
 }
 
+fn event_type_for_apply_outcome(tx: &MockTx, err_kind: Option<&str>) -> &'static str {
+    if matches!(tx, MockTx::Resolve { .. }) && err_kind == Some("resolve_approval_staged") {
+        "resolve_approval_staged"
+    } else {
+        event_type_of(tx)
+    }
+}
+
 fn is_critical_tx(tx: &MockTx) -> bool {
     matches!(tx, MockTx::Challenge { .. } | MockTx::Resolve { .. })
 }
@@ -1413,7 +1479,7 @@ fn verified_signer_of(st: &StateStore, tx: &MockTx) -> String {
 fn challenger_of(tx: &MockTx) -> Option<String> {
     match tx {
         MockTx::Challenge { challenger, .. } => Some(challenger.clone()),
-        MockTx::Resolve { resolver, .. } => Some(resolver.clone()),
+        MockTx::Resolve { .. } => None,
         _ => None,
     }
 }
@@ -1533,9 +1599,10 @@ fn emit_event(
     treasury_delta: &EventDelta,
     challenger_delta: Option<&EventDelta>,
     challenger: Option<&str>,
+    err_kind: Option<&str>,
 ) {
     let task_id = task_id_of(tx);
-    let event_type = event_type_of(tx);
+    let event_type = event_type_for_apply_outcome(tx, err_kind);
     let actor = actor_of(st, tx);
     let challenger = challenger
         .map(|s| s.to_string())
@@ -3305,12 +3372,20 @@ mod tests {
         assert!(shifted2);
     }
 
-    fn challenged_task_fixture(st: &mut StateStore, task_id: u64) -> (ObjectRef, [u8; 32], [u8; 32]) {
+    fn challenged_task_fixture(
+        st: &mut StateStore,
+        task_id: u64,
+    ) -> (ObjectRef, [u8; 32], [u8; 32]) {
         st.set_balance("challenger", 1_000_000);
         st.set_balance(&format!("worker{}", task_id), 1_000);
         let result_hash = [7u8; 32];
         let reveal_salt = [9u8; 32];
-        let committed = compute_commitment(task_id, &result_hash, &reveal_salt, &format!("worker{}", task_id));
+        let committed = compute_commitment(
+            task_id,
+            &result_hash,
+            &reveal_salt,
+            &format!("worker{}", task_id),
+        );
         let r1 = apply_create_task(st, task_id, "alice".into(), 100).unwrap();
         let r2 = apply_accept_task(st, r1, format!("worker{}", task_id)).unwrap();
         let r3 = trnm_pouw::apply_commit_result_at_height(
@@ -3321,8 +3396,9 @@ mod tests {
             100,
         )
         .unwrap();
-        let r4 = trnm_pouw::apply_reveal_result_at_height(st, r3, result_hash, reveal_salt, None, 110)
-            .unwrap();
+        let r4 =
+            trnm_pouw::apply_reveal_result_at_height(st, r3, result_hash, reveal_salt, None, 110)
+                .unwrap();
         let r5 = trnm_pouw::apply_challenge_at_height(
             st,
             r4,
@@ -3338,8 +3414,12 @@ mod tests {
     #[test]
     fn node_resolve_multisig_first_approval_persists_and_second_finalizes() {
         let mut st = StateStore::new();
-        st.set_gov_param_unchecked(9_500, "resolve_authority".into(), "authority-a,authority-b".into())
-            .unwrap();
+        st.set_gov_param_bootstrap_unchecked(
+            9_500,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .unwrap();
         let (r5, _, _) = challenged_task_fixture(&mut st, 8101);
 
         let first = apply_one(
@@ -3376,14 +3456,42 @@ mod tests {
     #[test]
     fn verified_signer_for_multisig_resolve_uses_actual_resolver_member() {
         let mut st = StateStore::new();
-        st.set_gov_param_unchecked(9_501, "resolve_authority".into(), "authority-a,authority-b".into())
-            .unwrap();
+        st.set_gov_param_bootstrap_unchecked(
+            9_501,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .unwrap();
         let tx = MockTx::Resolve {
             task_id: 42,
             slash_worker: false,
             resolver: "authority-b".into(),
         };
         assert_eq!(verified_signer_of(&st, &tx), "authority-b");
+    }
+
+    #[test]
+    fn staged_resolve_approval_uses_distinct_event_type() {
+        let tx = MockTx::Resolve {
+            task_id: 7,
+            slash_worker: true,
+            resolver: "authority-a".into(),
+        };
+        assert_eq!(
+            event_type_for_apply_outcome(&tx, Some("resolve_approval_staged")),
+            "resolve_approval_staged"
+        );
+        assert_eq!(event_type_for_apply_outcome(&tx, None), "resolve");
+    }
+
+    #[test]
+    fn resolve_challenger_fallback_does_not_alias_resolver() {
+        let tx = MockTx::Resolve {
+            task_id: 9,
+            slash_worker: false,
+            resolver: "authority-b".into(),
+        };
+        assert_eq!(challenger_of(&tx), None);
     }
 
     fn temp_wal_dir(name: &str) -> PathBuf {
@@ -3590,8 +3698,12 @@ mod tests {
             .and_then(|t| t.challenger)
             .expect("challenger must exist");
         let resolve_authority = "authority8101".to_string();
-        st.set_gov_param_unchecked(18_101, "resolve_authority".into(), resolve_authority.clone())
-            .unwrap();
+        st.set_gov_param_bootstrap_unchecked(
+            18_101,
+            "resolve_authority".into(),
+            resolve_authority.clone(),
+        )
+        .unwrap();
         let _r6 = apply_resolve(
             &mut st,
             r5,
@@ -3644,8 +3756,12 @@ mod tests {
             .and_then(|t| t.challenger)
             .expect("challenger must exist");
         let resolve_authority = "authority8102".to_string();
-        st.set_gov_param_unchecked(18_102, "resolve_authority".into(), resolve_authority.clone())
-            .unwrap();
+        st.set_gov_param_bootstrap_unchecked(
+            18_102,
+            "resolve_authority".into(),
+            resolve_authority.clone(),
+        )
+        .unwrap();
         let _r6 = apply_resolve(
             &mut st,
             r5,
@@ -3843,6 +3959,130 @@ mod tests {
 
         let _ = fs::remove_dir_all(&wal_dir);
     }
+
+    #[test]
+    fn resolve_wal_dir_auto_isolates_existing_builtin_default_state() {
+        let root = temp_wal_dir("default-wal-root");
+        let base = root.join(DEFAULT_BFT_WAL_DIR);
+        fs::create_dir_all(&base).unwrap();
+        fs::write(wal_file(&base), "existing").unwrap();
+
+        let args = Args {
+            config: "configs/node1.toml".into(),
+            block_ms: 1000,
+            max_blocks: 10,
+            demo_tasks: 2,
+            demo_keys: 2,
+            parallel_workers: 4,
+            txs_per_block: 4,
+            validators: 4,
+            byzantine: 0,
+            bft_max_rounds: 3,
+            bft_fault_rounds: 0,
+            bft_missed_proposal_threshold: 2,
+            bft_leader_penalty_rounds: 2,
+            bft_round_change_backoff_ms: 5,
+            bft_round_change_backoff_max_ms: 40,
+            bft_wal_dir: DEFAULT_BFT_WAL_DIR.into(),
+            bft_wal_mode: WalDirMode::Auto,
+            bft_checkpoint_interval: 5,
+            pouw_timeout_scan: true,
+            pouw_timeout_scan_every_blocks: 1,
+            enable_da_ordering_decouple: false,
+            rl_advisor_shadow: false,
+            rl_advisor_shadow_topk: 4,
+        };
+
+        let cwd = std::env::current_dir().unwrap();
+        std::env::set_current_dir(&root).unwrap();
+        let (resolved, notice) = resolve_wal_dir(&args).unwrap();
+        std::env::set_current_dir(cwd).unwrap();
+
+        assert_ne!(resolved, PathBuf::from(DEFAULT_BFT_WAL_DIR));
+        assert!(resolved.starts_with(PathBuf::from(DEFAULT_BFT_WAL_DIR)));
+        assert!(notice.unwrap().contains("isolating this run"));
+
+        let _ = fs::remove_dir_all(&root);
+    }
+
+    #[test]
+    fn resolve_wal_dir_auto_keeps_explicit_custom_dir_even_if_state_exists() {
+        let wal_dir = temp_wal_dir("custom-reuse");
+        fs::create_dir_all(&wal_dir).unwrap();
+        fs::write(wal_file(&wal_dir), "existing").unwrap();
+
+        let args = Args {
+            config: "configs/node1.toml".into(),
+            block_ms: 1000,
+            max_blocks: 10,
+            demo_tasks: 2,
+            demo_keys: 2,
+            parallel_workers: 4,
+            txs_per_block: 4,
+            validators: 4,
+            byzantine: 0,
+            bft_max_rounds: 3,
+            bft_fault_rounds: 0,
+            bft_missed_proposal_threshold: 2,
+            bft_leader_penalty_rounds: 2,
+            bft_round_change_backoff_ms: 5,
+            bft_round_change_backoff_max_ms: 40,
+            bft_wal_dir: wal_dir.display().to_string(),
+            bft_wal_mode: WalDirMode::Auto,
+            bft_checkpoint_interval: 5,
+            pouw_timeout_scan: true,
+            pouw_timeout_scan_every_blocks: 1,
+            enable_da_ordering_decouple: false,
+            rl_advisor_shadow: false,
+            rl_advisor_shadow_topk: 4,
+        };
+
+        let (resolved, notice) = resolve_wal_dir(&args).unwrap();
+        assert_eq!(resolved, wal_dir);
+        assert!(notice.is_none());
+
+        let _ = fs::remove_dir_all(&resolved);
+    }
+
+    #[test]
+    fn resolve_wal_dir_fail_if_exists_rejects_stale_state() {
+        let wal_dir = temp_wal_dir("fail-if-exists");
+        fs::create_dir_all(&wal_dir).unwrap();
+        fs::write(wal_meta_file(&wal_dir), "existing").unwrap();
+
+        let args = Args {
+            config: "configs/node1.toml".into(),
+            block_ms: 1000,
+            max_blocks: 10,
+            demo_tasks: 2,
+            demo_keys: 2,
+            parallel_workers: 4,
+            txs_per_block: 4,
+            validators: 4,
+            byzantine: 0,
+            bft_max_rounds: 3,
+            bft_fault_rounds: 0,
+            bft_missed_proposal_threshold: 2,
+            bft_leader_penalty_rounds: 2,
+            bft_round_change_backoff_ms: 5,
+            bft_round_change_backoff_max_ms: 40,
+            bft_wal_dir: wal_dir.display().to_string(),
+            bft_wal_mode: WalDirMode::FailIfExists,
+            bft_checkpoint_interval: 5,
+            pouw_timeout_scan: true,
+            pouw_timeout_scan_every_blocks: 1,
+            enable_da_ordering_decouple: false,
+            rl_advisor_shadow: false,
+            rl_advisor_shadow_topk: 4,
+        };
+
+        let err = resolve_wal_dir(&args).unwrap_err();
+        assert!(err
+            .to_string()
+            .contains("refusing to reuse existing BFT WAL state"));
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
 }
 
 fn main() -> Result<()> {
@@ -3864,7 +4104,7 @@ fn main() -> Result<()> {
     );
     println!("[node] parallel_workers={}", args.parallel_workers);
     println!(
-        "[node] bft validators={} byzantine={} max_rounds={} fault_rounds={} missed_threshold={} penalty_rounds={} rc_backoff_ms={} rc_backoff_cap_ms={} wal_dir={} checkpoint_interval={} timeout_scan={} timeout_scan_every_blocks={} da_ordering_decouple={} rl_shadow={} rl_shadow_topk={}",
+        "[node] bft validators={} byzantine={} max_rounds={} fault_rounds={} missed_threshold={} penalty_rounds={} rc_backoff_ms={} rc_backoff_cap_ms={} wal_dir={} wal_mode={:?} checkpoint_interval={} timeout_scan={} timeout_scan_every_blocks={} da_ordering_decouple={} rl_shadow={} rl_shadow_topk={}",
         args.validators,
         args.byzantine,
         args.bft_max_rounds,
@@ -3874,6 +4114,7 @@ fn main() -> Result<()> {
         args.bft_round_change_backoff_ms,
         args.bft_round_change_backoff_max_ms,
         args.bft_wal_dir,
+        args.bft_wal_mode,
         args.bft_checkpoint_interval,
         args.pouw_timeout_scan,
         args.pouw_timeout_scan_every_blocks,
@@ -3882,7 +4123,11 @@ fn main() -> Result<()> {
         args.rl_advisor_shadow_topk
     );
 
-    let wal_dir = PathBuf::from(&args.bft_wal_dir);
+    let (wal_dir, wal_notice) = resolve_wal_dir(&args)?;
+    if let Some(notice) = wal_notice {
+        println!("{}", notice);
+    }
+    println!("[bft-wal] using wal_dir={}", wal_dir.display());
     let recovered = recover_wal_state(&wal_dir)?;
     let mut restored_lock: Option<String> = recovered.restored_lock;
     let mut height: u64 = recovered.next_height.max(1);
@@ -4083,7 +4328,9 @@ fn main() -> Result<()> {
                     let root = hex::encode(state.state_root());
                     let challenger_account: Option<String> = match &tx {
                         MockTx::Challenge { challenger, .. } => Some(challenger.clone()),
-                        MockTx::Resolve { .. } => before.get_task(task_id).and_then(|t| t.challenger),
+                        MockTx::Resolve { .. } => {
+                            before.get_task(task_id).and_then(|t| t.challenger)
+                        }
                         _ => None,
                     };
                     let (treasury_delta, challenger_delta) = balance_deltas_for_transition(
@@ -4105,6 +4352,7 @@ fn main() -> Result<()> {
                         &treasury_delta,
                         challenger_delta.as_ref(),
                         challenger_account.as_deref(),
+                        Some(err_kind),
                     );
                 } else {
                     state = before; // rollback on failed commit
@@ -4151,6 +4399,7 @@ fn main() -> Result<()> {
                     &treasury_delta,
                     challenger_delta.as_ref(),
                     challenger_account.as_deref(),
+                    None,
                 );
             }
         }

@@ -349,12 +349,17 @@ impl StateStore {
             || approver_trimmed.eq_ignore_ascii_case(CHALLENGE_ESCROW_ACCOUNT)
             || approver_trimmed.eq_ignore_ascii_case(CHALLENGE_FORFEIT_TREASURY_ACCOUNT)
         {
-            return Err("resolve approval approver must be an explicit non-system authority".into());
+            return Err(
+                "resolve approval approver must be an explicit non-system authority".into(),
+            );
         }
 
         let authority_trimmed = authority_set.trim();
         if authority_trimmed.is_empty() || authority_trimmed != authority_set {
-            return Err("resolve approval authority set must be a canonical comma-delimited actor list".into());
+            return Err(
+                "resolve approval authority set must be a canonical comma-delimited actor list"
+                    .into(),
+            );
         }
         let authority_members: Vec<&str> = authority_trimmed.split(',').collect();
         if authority_members.len() < 2 {
@@ -380,13 +385,21 @@ impl StateStore {
                 || member_trimmed.eq_ignore_ascii_case(CHALLENGE_ESCROW_ACCOUNT)
                 || member_trimmed.eq_ignore_ascii_case(CHALLENGE_FORFEIT_TREASURY_ACCOUNT)
             {
-                return Err("resolve approval authority set contains non-canonical or forbidden member".into());
+                return Err(
+                    "resolve approval authority set contains non-canonical or forbidden member"
+                        .into(),
+                );
             }
             if !seen_members.insert(member_trimmed.to_ascii_lowercase()) {
-                return Err("resolve approval authority set must not contain duplicate members".into());
+                return Err(
+                    "resolve approval authority set must not contain duplicate members".into(),
+                );
             }
         }
-        if !authority_members.iter().any(|member| *member == approver_trimmed) {
+        if !authority_members
+            .iter()
+            .any(|member| *member == approver_trimmed)
+        {
             return Err("resolve approval approver must be a configured authority member".into());
         }
 
@@ -655,7 +668,8 @@ impl StateStore {
         }
     }
 
-    pub fn set_gov_param_unchecked(
+    #[cfg_attr(not(feature = "test-utils"), allow(dead_code))]
+    pub(crate) fn set_gov_param_unchecked(
         &mut self,
         key_id: u64,
         key: String,
@@ -700,6 +714,17 @@ impl StateStore {
             return Ok(out);
         }
         self.upsert_gov_param_unchecked(key_id, key, value)
+    }
+
+    #[cfg(feature = "test-utils")]
+    #[doc(hidden)]
+    pub fn set_gov_param_bootstrap_unchecked(
+        &mut self,
+        key_id: u64,
+        key: String,
+        value: String,
+    ) -> Result<ObjectRef, String> {
+        self.set_gov_param_unchecked(key_id, key, value)
     }
 
     pub fn set_gov_param(
@@ -1344,7 +1369,10 @@ mod tests {
         let second = st
             .stage_or_confirm_resolve_approval(42, true, "authority-b", "authority-a,authority-b")
             .expect("second distinct approver should finalize");
-        assert!(second, "second distinct approver must finalize resolve approval");
+        assert!(
+            second,
+            "second distinct approver must finalize resolve approval"
+        );
         assert_eq!(st.pending_resolve_approval(42), Some((true, 2)));
 
         st.clear_pending_resolve_approval(42);
@@ -3321,7 +3349,10 @@ mod tests {
             .expect("unchecked pause write should be accepted at canonical key id");
 
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
-        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), forfeits_before);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            forfeits_before
+        );
         assert!(st.pending_gov_update("emergency_pause").is_none());
     }
 
