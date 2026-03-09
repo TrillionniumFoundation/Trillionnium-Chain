@@ -213,8 +213,14 @@ impl AdmissionGate {
         }
 
         // Fast-path fresh ingress: skip retry-set remove hash probe when we already
-        // know this tx id was not tracked as a deferred retry candidate.
-        let accepted_was_retry = has_known_retries && self.backpressured_ids.remove(&tx_id);
+        // know this tx id was not tracked as a deferred retry candidate. When
+        // fairness probing already confirmed membership, reuse that signal to avoid
+        // a second hash lookup on the acceptance path.
+        let accepted_was_retry = if is_known_retry_for_fairness {
+            self.backpressured_ids.remove(&tx_id)
+        } else {
+            has_known_retries && self.backpressured_ids.remove(&tx_id)
+        };
         if accepted_was_retry && self.backpressured_fifo.len() > self.capacity.saturating_mul(4) {
             // Under sustained retry drain with little/no new ingress, stale FIFO markers can
             // accumulate without hitting remember_backpressured() compaction. Compact eagerly
