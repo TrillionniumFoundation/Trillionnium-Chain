@@ -83,9 +83,16 @@ impl LaneAdmissionGate {
     }
     pub fn admit(&mut self, tx_id: u64, class: IngressClass) -> AdmitOutcome {
         if self.total_capacity == 0 {
-            // Hard-stop mode: keep zero-capacity ingress semantics O(1) and avoid
-            // unnecessary lane/cache probes on hot backpressured paths.
-            return AdmitOutcome::Backpressured;
+            // Hard-stop mode: preserve duplicate semantics for restored-state backlog
+            // while still backpressuring fresh ingress.
+            let is_duplicate = self.seen_global.contains(&tx_id)
+                || self.normal.seen.contains(&tx_id)
+                || self.critical.seen.contains(&tx_id);
+            return if is_duplicate {
+                AdmitOutcome::Duplicate
+            } else {
+                AdmitOutcome::Backpressured
+            };
         }
 
         // Fast-path saturation check from the lane-wide idempotency set: this tracks
@@ -983,5 +990,17 @@ mod tests {
 
         // Critical should not be spuriously preempted by stale fairness state.
         assert_eq!(g.pop_ready(), Some(1));
+    }
+
+    #[test]
+    fn hard_stop_mode_preserves_duplicate_semantics_for_restored_backlog() {
+        let mut g = LaneAdmissionGate::new(0, 0);
+
+        // Simulate restored-state backlog under a temporary hard-stop config.
+        g.seen_global.insert(42);
+        g.normal.seen.insert(42);
+
+        assert_eq!(g.admit(42, IngressClass::Normal), AdmitOutcome::Duplicate);
+        assert_eq!(g.admit(7, IngressClass::Critical), AdmitOutcome::Backpressured);
     }
 }
