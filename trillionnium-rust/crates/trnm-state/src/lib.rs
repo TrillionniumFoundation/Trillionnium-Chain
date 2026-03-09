@@ -3280,6 +3280,7 @@ mod tests {
             "Governance.Resolve_Authority",
             RESERVED_SYSTEM_AUTHORITY,
             "System",
+            "authority,system",
             CHALLENGE_ESCROW_ACCOUNT,
             "Treasury.Challenge_Escrow",
             CHALLENGE_FORFEIT_TREASURY_ACCOUNT,
