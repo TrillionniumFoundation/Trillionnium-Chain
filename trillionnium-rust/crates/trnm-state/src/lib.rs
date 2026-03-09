@@ -280,6 +280,12 @@ fn validate_gov_param_value(key: &str, value: &str) -> Result<(), String> {
                         key
                     ));
                 }
+                if !member.is_ascii() {
+                    return Err(format!(
+                        "invalid governance value for {}: must contain ASCII-only account ids",
+                        key
+                    ));
+                }
                 if member.eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER) {
                     return Err(format!(
                         "invalid governance value for {}: placeholder authority is not allowed",
@@ -2123,6 +2129,75 @@ mod tests {
         assert_eq!(
             st.gov_param_string("resolve_authority"),
             Some("resolver-v2".into())
+        );
+        assert!(st.pending_gov_update("resolve_authority").is_none());
+    }
+
+    #[test]
+    fn governance_resolve_authority_rejects_non_canonical_value_without_mutation() {
+        let mut st = StateStore::new();
+        st.set_gov_param_bootstrap_unchecked(7312, "resolve_authority".into(), "resolver-v1".into())
+            .unwrap();
+
+        let err = st
+            .set_gov_param(
+                12_000,
+                7312,
+                "resolve_authority".into(),
+                " resolver-v2 ".into(),
+            )
+            .unwrap_err();
+        assert!(err.contains("whitespace") || err.contains("canonical"));
+
+        assert_eq!(
+            st.gov_param_string("resolve_authority"),
+            Some("resolver-v1".into())
+        );
+        assert!(st.pending_gov_update("resolve_authority").is_none());
+    }
+
+    #[test]
+    fn governance_resolve_authority_rejects_forbidden_separator_without_mutation() {
+        let mut st = StateStore::new();
+        st.set_gov_param_bootstrap_unchecked(7313, "resolve_authority".into(), "resolver-v1".into())
+            .unwrap();
+
+        let err = st
+            .set_gov_param(
+                12_000,
+                7313,
+                "resolve_authority".into(),
+                "resolver-a，resolver-b".into(),
+            )
+            .unwrap_err();
+        assert!(err.contains("separator") || err.contains("ASCII ','"));
+
+        assert_eq!(
+            st.gov_param_string("resolve_authority"),
+            Some("resolver-v1".into())
+        );
+        assert!(st.pending_gov_update("resolve_authority").is_none());
+    }
+
+    #[test]
+    fn governance_resolve_authority_rejects_non_ascii_without_mutation() {
+        let mut st = StateStore::new();
+        st.set_gov_param_bootstrap_unchecked(7314, "resolve_authority".into(), "resolver-v1".into())
+            .unwrap();
+
+        let err = st
+            .set_gov_param(
+                12_000,
+                7314,
+                "resolve_authority".into(),
+                "resolvér-v2".into(),
+            )
+            .unwrap_err();
+        assert!(err.contains("ASCII-only") || err.contains("whitespace") || err.contains("separator"));
+
+        assert_eq!(
+            st.gov_param_string("resolve_authority"),
+            Some("resolver-v1".into())
         );
         assert!(st.pending_gov_update("resolve_authority").is_none());
     }
