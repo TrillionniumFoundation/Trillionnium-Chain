@@ -255,7 +255,13 @@ impl LaneAdmissionGate {
         };
 
         if served_critical {
-            self.critical_served_streak = self.critical_served_streak.saturating_add(1);
+            // Keep streak bounded to the fairness threshold. This preserves
+            // dequeue semantics while avoiding unbounded counter growth under
+            // prolonged critical-only drains.
+            self.critical_served_streak = self
+                .critical_served_streak
+                .saturating_add(1)
+                .min(self.critical_burst_limit);
         } else if !self.normal.queue.is_empty() && !self.critical.queue.is_empty() {
             // When both lanes remain backlogged, keep fairness warm so normal traffic
             // is not forced to wait through another full critical burst.
