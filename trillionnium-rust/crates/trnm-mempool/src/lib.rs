@@ -258,7 +258,13 @@ impl LaneAdmissionGate {
             self.critical_served_streak = 0;
         }
 
-        self.seen_global.remove(&id);
+        if !self.seen_global.remove(&id) {
+            // Defensive self-heal: restored-state skew can leave lane-wide cache
+            // stale while lane-local queues remain authoritative.
+            self.seen_global.clear();
+            self.seen_global.extend(self.normal.seen.iter().copied());
+            self.seen_global.extend(self.critical.seen.iter().copied());
+        }
         Some(id)
     }
 }
@@ -766,5 +772,29 @@ mod tests {
 
         // Ghost id should not be treated as duplicate while lane still has room.
         assert_eq!(g.admit(999, IngressClass::Critical), AdmitOutcome::Accepted);
+    }
+
+    #[test]
+    fn pop_ready_self_heals_stale_seen_global_without_new_admission() {
+        let mut g = LaneAdmissionGate::new(3, 1);
+
+        assert_eq!(g.admit(1, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+
+        // Simulate restored-state skew where lane-wide cache drops queued ids and
+        // only keeps ghost entries.
+        g.seen_global.clear();
+        g.seen_global.insert(999);
+
+        // pop_ready should rebuild lane-wide cache from lane-local truth even when
+        // no new admission occurs.
+        let drained = g.pop_ready();
+        assert!(drained == Some(1) || drained == Some(2));
+
+        let (_, _, total) = g.queued_counts();
+        assert_eq!(g.seen_global.len(), total);
+        let survivor = if drained == Some(1) { 2 } else { 1 };
+        assert!(g.seen_global.contains(&survivor));
+        assert!(!g.seen_global.contains(&999));
     }
 }
