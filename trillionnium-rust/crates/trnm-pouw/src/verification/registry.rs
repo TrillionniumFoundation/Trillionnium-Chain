@@ -1651,6 +1651,19 @@ mod tests {
     }
 
     #[test]
+    fn registry_fails_closed_when_fraud_verifier_is_missing() {
+        let registry = VerifierRegistry::new();
+        let task = task_with_proof_type(ProofType::Fraud);
+
+        assert_eq!(
+            registry.verify(&task, b"proof"),
+            VerificationResult::Invalid(
+                "verification failed closed: no verifier registered for proof type: fraud".into()
+            )
+        );
+    }
+
+    #[test]
     fn registry_is_registered_for_reports_false_when_key_is_missing() {
         let mut registry = VerifierRegistry::new();
         registry.register(Arc::new(AlwaysValidVerifier { kind: "fraud" }));
