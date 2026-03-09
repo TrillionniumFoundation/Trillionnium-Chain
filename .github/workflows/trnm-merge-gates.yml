@@ -32,6 +32,8 @@ jobs:
       LC_TIME: C
       LC_CTYPE: C
       LC_MESSAGES: C
+      LC_MONETARY: C
+      LC_MEASUREMENT: C
       PYTHONHASHSEED: "0"
       CARGO_TERM_COLOR: never
       CARGO_INCREMENTAL: "0"
