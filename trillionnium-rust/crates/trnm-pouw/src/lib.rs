@@ -10474,6 +10474,55 @@ mod tests {
     }
 
     #[test]
+    fn resolve_rejects_worker_slash_treasury_account_authority_case_drift_without_escrow_mutation(
+    ) {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        let authority_with_case_drift_worker_slash_member =
+            "Treasury.Worker_Slashes".to_string();
+        set_resolve_authority(&mut st, &authority_with_case_drift_worker_slash_member);
+
+        let r1 = apply_create_task(&mut st, 9_001_14, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(9_001_14, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+        let r5 =
+            apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
+
+        let before = st.clone();
+        let err = apply_resolve(
+            &mut st,
+            r5,
+            true,
+            authority_with_case_drift_worker_slash_member.clone(),
+            authority_with_case_drift_worker_slash_member,
+        )
+        .unwrap_err();
+        assert!(matches!(err, PouwError::Unauthorized));
+
+        let task = st.get_task(9_001_14).unwrap();
+        assert_eq!(task.status, TaskStatus::Challenged);
+        assert_eq!(task.challenge_bond_forfeited, None);
+        assert_eq!(st.balance_of("challenger"), before.balance_of("challenger"));
+        assert_eq!(
+            st.balance_of(CHALLENGE_ESCROW_ACCOUNT),
+            before.balance_of(CHALLENGE_ESCROW_ACCOUNT)
+        );
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT)
+        );
+        assert_eq!(
+            st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
+            before.balance_of(WORKER_SLASH_TREASURY_ACCOUNT)
+        );
+    }
+
+    #[test]
     fn resolve_rejects_unconfigured_placeholder_authority_without_escrow_mutation() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
