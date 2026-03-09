@@ -35,8 +35,15 @@ trim_ws() {
   printf '%s' "$s"
 }
 
+is_ci_context() {
+  local ci_raw="${CI:-}"
+  local ci_norm
+  ci_norm="$(printf '%s' "$ci_raw" | tr '[:upper:]' '[:lower:]')"
+  [[ "$ci_norm" == "true" || "$ci_norm" == "1" || "$ci_norm" == "yes" ]]
+}
+
 if [[ -n "${WEB4_RELEASE_REQUIRED_GATES:-}" ]]; then
-  if [[ "${CI:-}" == "true" && "${WEB4_RELEASE_ALLOW_CI_OVERRIDE:-0}" != "1" ]]; then
+  if is_ci_context && [[ "${WEB4_RELEASE_ALLOW_CI_OVERRIDE:-0}" != "1" ]]; then
     echo "[WEB4-RELEASE][FAIL] WEB4_RELEASE_REQUIRED_GATES override is forbidden in CI (set WEB4_RELEASE_ALLOW_CI_OVERRIDE=1 only for non-release debugging)" >&2
     exit 2
   fi
