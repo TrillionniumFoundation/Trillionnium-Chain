@@ -80,11 +80,23 @@ impl AdmissionGate {
                     }
                     // HashSet iteration order is randomized; sort for stable trimming so
                     // restored-state recovery stays deterministic across runs/nodes.
-                    let mut to_drop: Vec<u64> = self.backpressured_ids.iter().copied().collect();
+                    // Preserve the newly inserted tx_id when possible so immediate
+                    // retries for the fresh backpressured id stay idempotent.
+                    let mut to_drop: Vec<u64> = self
+                        .backpressured_ids
+                        .iter()
+                        .copied()
+                        .filter(|id| *id != tx_id)
+                        .collect();
                     to_drop.sort_unstable();
                     to_drop.truncate(overflow);
                     for tx in to_drop {
                         self.backpressured_ids.remove(&tx);
+                    }
+                    // If overflow remains (e.g. capacity=0 before clamping and only tx_id
+                    // was present), fall back to removing the inserted id as a last resort.
+                    if self.backpressured_ids.len() > self.capacity {
+                        self.backpressured_ids.remove(&tx_id);
                     }
                     break;
                 }
@@ -912,6 +924,22 @@ mod tests {
         // Fallback trim is deterministic: oldest/smallest ids are dropped first.
         assert!(gate.backpressured_ids.contains(&102));
         assert!(gate.backpressured_ids.contains(&103));
+    }
+
+    #[test]
+    fn restored_retry_set_trim_preserves_newly_backpressured_id_when_fifo_markers_missing() {
+        let mut gate = AdmissionGate::new(2);
+
+        // Corrupted restore: oversized retry memory with no FIFO markers.
+        gate.backpressured_ids.extend([8, 9, 10]);
+        gate.backpressured_fifo.clear();
+
+        // Insert a smaller id so deterministic trimming would drop it first unless
+        // we explicitly preserve the newly backpressured id.
+        assert!(gate.remember_backpressured(1));
+
+        assert!(gate.backpressured_ids.len() <= gate.capacity);
+        assert!(gate.backpressured_ids.contains(&1));
     }
 
     #[test]
