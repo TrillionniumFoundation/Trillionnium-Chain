@@ -452,7 +452,7 @@ mod tests {
         assert!(matches!(
             verifier.verify_proof(
                 &task,
-                b"FRAUD:{"task_id":7,"worker"ï¼"worker-fraud","worker":"worker-fraud","proof_type":"fraud"}"
+                b"FRAUD:{\"task_id\":7,\"worker\"\xef\xbc\x9a\"worker-fraud\",\"worker\":\"worker-fraud\",\"proof_type\":\"fraud\"}"
             ),
             VerificationResult::Invalid(msg) if msg.contains("duplicate worker binding")
         ));
@@ -467,7 +467,7 @@ mod tests {
         assert!(matches!(
             verifier.verify_proof(
                 &task,
-                b"FRAUD:{"task_id":7,"worker":"worker-fraud","proof_type":"fraud","result_hash":"0x0x0909090909090909090909090909090909090909090909090909090909090909"}"
+                b"FRAUD:{\"task_id\":7,\"worker\":\"worker-fraud\",\"proof_type\":\"fraud\",\"result_hash\":\"0x0x0909090909090909090909090909090909090909090909090909090909090909\"}"
             ),
             VerificationResult::Invalid(msg) if msg.contains("result_hash mismatch")
         ));
