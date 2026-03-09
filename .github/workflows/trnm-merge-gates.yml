@@ -41,6 +41,9 @@ jobs:
       LC_MESSAGES: C
       LC_MONETARY: C
       LC_MEASUREMENT: C
+      # Keep page-size/unit locale formatting deterministic for any helpers
+      # emitting paper/print-related evidence text.
+      LC_PAPER: C
       PYTHONHASHSEED: "0"
       # Prevent interpreter bytecode cache writes (.pyc/__pycache__) so
       # merge-gate CI workspaces remain side-effect free across reruns.
