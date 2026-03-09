@@ -8,6 +8,7 @@ export LC_ALL=C.UTF-8
 # CI runners so grep/assertions never depend on host locale/timezone drift.
 export LC_NUMERIC=C
 export LC_TIME=C
+export LC_COLLATE=C
 export TZ=UTC
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
