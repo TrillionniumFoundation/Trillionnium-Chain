@@ -4303,6 +4303,7 @@ mod tests {
         let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
         let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
         let before_challenger = st.balance_of("challenger");
+        let before_total = before_challenger + before_escrow + before_forfeit;
 
         let paused_err = apply_resolve_at_height(
             &mut st,
@@ -4330,6 +4331,10 @@ mod tests {
             before_forfeit
         );
         assert_eq!(st.balance_of("challenger"), before_challenger);
+        let after_total = st.balance_of("challenger")
+            + st.balance_of(CHALLENGE_ESCROW_ACCOUNT)
+            + st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+        assert_eq!(after_total, before_total);
 
         st.set_gov_param(9_227, 7_999, "emergency_pause".into(), "false".into())
             .expect("pause=false governance update must succeed");
