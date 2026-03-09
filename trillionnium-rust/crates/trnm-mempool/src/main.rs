@@ -193,6 +193,15 @@ impl AdmissionGate {
             }
 
             self.last_fairness_deferred = None;
+            // Hot saturated retry path: if this tx id is already tracked as backpressured,
+            // classify immediately as duplicate and skip bounded retry-cache churn.
+            if self.backpressured_ids.contains(&tx_id) {
+                self.metrics.duplicates = self.metrics.duplicates.saturating_add(1);
+                self.metrics.backpressure_duplicates =
+                    self.metrics.backpressure_duplicates.saturating_add(1);
+                return AdmitOutcome::Duplicate;
+            }
+
             if !self.remember_backpressured(tx_id) {
                 self.metrics.duplicates = self.metrics.duplicates.saturating_add(1);
                 self.metrics.backpressure_duplicates =
@@ -379,6 +388,25 @@ mod tests {
 
         assert_eq!(gate.pop_ready(), Some(1));
         assert_eq!(gate.admit(9), AdmitOutcome::Accepted);
+    }
+
+    #[test]
+    fn saturated_known_retry_duplicate_does_not_churn_retry_fifo() {
+        let mut gate = AdmissionGate::new(1);
+        assert_eq!(gate.admit(1), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(9), AdmitOutcome::Backpressured);
+        let fifo_len_before = gate.backpressured_fifo.len();
+
+        for _ in 0..8 {
+            assert_eq!(gate.admit(9), AdmitOutcome::Duplicate);
+        }
+
+        // Repeated saturated retries should dedupe without growing retry FIFO markers.
+        assert_eq!(gate.backpressured_fifo.len(), fifo_len_before);
+        let m = gate.metrics();
+        assert_eq!(m.backpressured, 1);
+        assert_eq!(m.duplicates, 8);
+        assert_eq!(m.backpressure_duplicates, 8);
     }
 
     #[test]
