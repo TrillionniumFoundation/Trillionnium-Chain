@@ -22,10 +22,12 @@ required_lines=(
   'export RUST_BACKTRACE="${RUST_BACKTRACE:-0}"'
   'export SOURCE_DATE_EPOCH="${SOURCE_DATE_EPOCH:-1704067200}"'
   'umask "${UMASK:-022}"'
+  'RUN_TIMEOUT_SEC="${RUN_TIMEOUT_SEC:-120}"'
+  'RUN_TIMEOUT_SEC must be a positive integer (got:'
 )
 
 for line in "${required_lines[@]}"; do
-  count=$(grep -Fxc -- "$line" "$SCRIPT" || true)
+  count=$(grep -Fc -- "$line" "$SCRIPT" || true)
   if [[ "$count" -lt 2 ]]; then
     echo "[FAIL] expected guard line in both runner and replay template: $line" >&2
     exit 1
