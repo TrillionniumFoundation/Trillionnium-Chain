@@ -60,6 +60,21 @@ mod tests {
     }
 
     #[test]
+    fn fraud_verifier_accepts_uppercase_proof_type_and_result_hash_prefix_bindings() {
+        let verifier = FraudVerifier;
+        let mut task = mock_task();
+        task.result_hash = Some([9u8; 32]);
+
+        assert_eq!(
+            verifier.verify_proof(
+                &task,
+                b"FRAUD:{\"task_id\":7,\"worker\":\"worker-fraud\",\"proof_type\":\"FRAUD\",\"result_hash\":\"0X0909090909090909090909090909090909090909090909090909090909090909\"}"
+            ),
+            VerificationResult::Valid
+        );
+    }
+
+    #[test]
     fn fraud_verifier_rejects_task_id_mismatch() {
         let verifier = FraudVerifier;
         let task = mock_task();
