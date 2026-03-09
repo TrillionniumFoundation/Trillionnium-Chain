@@ -19,6 +19,8 @@ required_lines=(
   'LC_CTYPE: C'
   'LC_MESSAGES: C'
   'PYTHONHASHSEED: "0"'
+  'PYTHONIOENCODING: "UTF-8"'
+  'PYTHONUTF8: "1"'
   'CARGO_TERM_COLOR: never'
   'CARGO_INCREMENTAL: "0"'
   'CI: "true"'
