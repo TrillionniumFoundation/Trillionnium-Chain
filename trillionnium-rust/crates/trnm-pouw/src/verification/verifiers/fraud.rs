@@ -311,6 +311,20 @@ mod tests {
     }
 
     #[test]
+    fn fraud_verifier_rejects_duplicate_proof_type_binding_with_single_quoted_alias_fail_closed() {
+        let verifier = FraudVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"FRAUD:{\"task_id\":7,\"worker\":\"worker-fraud\",\"proof_type\":\"fraud\",'proof_type':\"fraud\"}"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("duplicate proof_type binding")
+        ));
+    }
+
+    #[test]
     fn fraud_verifier_rejects_missing_result_hash_binding_when_expected() {
         let verifier = FraudVerifier;
         let mut task = mock_task();
