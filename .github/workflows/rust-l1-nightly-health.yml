@@ -29,10 +29,19 @@ jobs:
       LC_COLLATE: C
       # Keep date/time rendering stable for logs and grep-based assertions.
       LC_TIME: C
+      # Normalize character-class and case transform behavior for shell/python
+      # regex checks across runner locale package changes.
+      LC_CTYPE: C
       # Stabilize locale-driven stderr/messages across runner image refreshes.
       LC_MESSAGES: C
+      # Keep locale-sensitive monetary/unit rendering deterministic for
+      # runbook/report probes that emit evidence text.
+      LC_MONETARY: C
+      LC_MEASUREMENT: C
       # Freeze Python hash randomization for deterministic dict/set ordering.
       PYTHONHASHSEED: "0"
+      # Prevent bytecode side-effects (.pyc/__pycache__) in CI workspace.
+      PYTHONDONTWRITEBYTECODE: "1"
       # Normalize CI-branching behavior in scripts/tools.
       CI: "true"
       # Keep GitHub Actions context checks deterministic in shell helpers.
