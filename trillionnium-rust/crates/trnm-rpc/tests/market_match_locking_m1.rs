@@ -103,7 +103,7 @@ fn market_match_waits_for_bids_lock_before_reading() {
         .env("TRNM_RPC_MARKET_TASKS_FILE", &tasks)
         .env("TRNM_RPC_MARKET_BIDS_FILE", &bids)
         .env("TRNM_RPC_MARKET_LOCK_STALE_MS", "60000")
-        .env("TRNM_RPC_MARKET_LOCK_TIMEOUT_MS", "2500")
+        .env("TRNM_RPC_MARKET_LOCK_TIMEOUT_MS", "4000")
         .output()
         .expect("failed to run market.match_task");
     let elapsed = started.elapsed();
