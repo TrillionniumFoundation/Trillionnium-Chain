@@ -732,6 +732,21 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
         removed
     }
 
+    fn advance_collect_rr_cursor(&mut self, session_count: usize) -> usize {
+        let start = self.collect_rr_cursor % session_count;
+        // Single-session fast path: keep cursor pinned to zero so hot retry loops
+        // avoid redundant wrapping/modulo churn while preserving semantics.
+        if session_count == 1 {
+            self.collect_rr_cursor = 0;
+        } else {
+            // Harden against pathological/corrupted cursor values in long-running
+            // processes and debug builds: wrapping increment avoids usize overflow
+            // panic while preserving modulo-based round-robin semantics.
+            self.collect_rr_cursor = self.collect_rr_cursor.wrapping_add(1) % session_count;
+        }
+        start
+    }
+
     pub fn collect_due_retries(&mut self, now_unix_ms: u128) -> Vec<PendingItem> {
         self.maybe_cleanup(now_unix_ms);
         self.maybe_recover_circuit(now_unix_ms);
@@ -752,17 +767,7 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
             return out;
         }
 
-        let start = self.collect_rr_cursor % session_count;
-        // Single-session fast path: keep cursor pinned to zero so hot retry loops
-        // avoid redundant wrapping/modulo churn while preserving semantics.
-        if session_count == 1 {
-            self.collect_rr_cursor = 0;
-        } else {
-            // Harden against pathological/corrupted cursor values in long-running
-            // processes and debug builds: wrapping increment avoids usize overflow
-            // panic while preserving modulo-based round-robin semantics.
-            self.collect_rr_cursor = self.collect_rr_cursor.wrapping_add(1) % session_count;
-        }
+        let start = self.advance_collect_rr_cursor(session_count);
 
         for offset in 0..session_count {
             if out.len() >= MAX_DUE_RETRIES_PER_COLLECT {
@@ -1105,11 +1110,7 @@ impl SqliteReliabilityStore {
             .sum()
     }
 
-    fn cleanup_expired_sessions_only(
-        &mut self,
-        now_unix_ms: u128,
-        retention: &RetentionConfig,
-    ) {
+    fn cleanup_expired_sessions_only(&mut self, now_unix_ms: u128, retention: &RetentionConfig) {
         let pending_cutoff = now_unix_ms.saturating_sub(retention.pending_ttl_ms as u128);
         for sid in self.list_session_ids() {
             let Some(mut session) = self.get_session(&sid) else {
@@ -1340,7 +1341,8 @@ impl ReliabilityStore for SqliteReliabilityStore {
                 .retain(|_, item| item.created_at_unix_ms >= pending_cutoff);
 
             if session.pending.is_empty() {
-                if before_len != 0 || (updated_at_unix_ms != 0 && updated_at_unix_ms < pending_cutoff_i64)
+                if before_len != 0
+                    || (updated_at_unix_ms != 0 && updated_at_unix_ms < pending_cutoff_i64)
                 {
                     remove_ids.push(session_id);
                 }
@@ -2609,6 +2611,25 @@ mod tests {
 
         assert_eq!(engine.retry.base_backoff_ms, 1);
         assert_eq!(engine.retry.max_backoff_ms, 1);
+    }
+
+    #[test]
+    fn collect_retry_cursor_wraps_safely_from_usize_max() {
+        let store = InMemoryReliabilityStore::default();
+        let mut engine = ReliabilityEngine::new(
+            store,
+            RetryConfig {
+                base_backoff_ms: 1,
+                max_backoff_ms: 1,
+                ..RetryConfig::default()
+            },
+        );
+
+        engine.collect_rr_cursor = usize::MAX;
+        let start = engine.advance_collect_rr_cursor(5);
+
+        assert_eq!(start, usize::MAX % 5);
+        assert_eq!(engine.collect_rr_cursor, 0);
     }
 
     #[test]
