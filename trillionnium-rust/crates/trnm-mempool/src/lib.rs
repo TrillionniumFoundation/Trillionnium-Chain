@@ -107,14 +107,21 @@ impl LaneAdmissionGate {
 
         if lane_was_empty {
             // Defensive restored-state self-heal: with no queued work, lane-local and
-            // lane-wide idempotency sets must be empty. Clearing here avoids stale
-            // ghost ids being treated as duplicates on the first fresh ingress.
-            self.normal.seen.clear();
-            self.critical.seen.clear();
-            self.seen_global.clear();
+            // lane-wide idempotency sets must be empty. Clear only when needed so
+            // repeated empty-lane admits avoid redundant HashSet clear work.
+            if !(self.normal.seen.is_empty()
+                && self.critical.seen.is_empty()
+                && self.seen_global.is_empty())
+            {
+                self.normal.seen.clear();
+                self.critical.seen.clear();
+                self.seen_global.clear();
+            }
             // Fully idle lane state must also reset fairness streak; otherwise a
             // restored stale streak can spuriously preempt fresh critical work.
-            self.critical_served_streak = 0;
+            if self.critical_served_streak != 0 {
+                self.critical_served_streak = 0;
+            }
         } else {
             let lane_local_seen_total = self
                 .normal
