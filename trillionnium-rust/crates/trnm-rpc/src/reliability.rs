@@ -747,6 +747,10 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
         let session_count = session_ids.len();
 
         if session_count == 0 {
+            // Idle-cycle self-heal: keep cursor anchored so the first session after
+            // a full drain starts from deterministic index 0 rather than carrying
+            // stale high values across long idle gaps.
+            self.collect_rr_cursor = 0;
             self.on_retry_round_finished(exhausted_in_this_round, now_unix_ms);
             return out;
         }
@@ -2123,6 +2127,38 @@ mod tests {
         );
 
         assert_eq!(engine.collect_rr_cursor, 0);
+    }
+
+    #[test]
+    fn collect_due_retries_resets_cursor_after_idle_full_drain() {
+        let store = InMemoryReliabilityStore::default();
+        let mut engine = ReliabilityEngine::new(
+            store,
+            RetryConfig {
+                base_backoff_ms: 1,
+                max_backoff_ms: 1,
+                ..RetryConfig::default()
+            },
+        );
+
+        let ack = engine.receive(mk_msg("alice", "s-a", 1), 1_000);
+        assert_eq!(ack.code, AckCode::Accepted);
+
+        engine.collect_rr_cursor = usize::MAX;
+        assert!(engine.mark_acked("s-a", &ack.ack_id));
+
+        let idle = engine.collect_due_retries(2_000);
+        assert!(idle.is_empty());
+        assert_eq!(
+            engine.collect_rr_cursor, 0,
+            "idle collect should reset stale cursor state"
+        );
+
+        let cold = engine.receive(mk_msg("bob", "s-b", 1), 2_001);
+        assert_eq!(cold.code, AckCode::Accepted);
+        let due = engine.collect_due_retries(2_002);
+        assert_eq!(due.len(), 1);
+        assert_eq!(due[0].message.session_id, "s-b");
     }
 
     #[test]
