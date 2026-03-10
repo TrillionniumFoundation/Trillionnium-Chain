@@ -351,8 +351,7 @@ impl LaneAdmissionGate {
                 // Keep idempotency cache in sync even when a stale ghost id
                 // survives removal of the drained tx id.
                 if lane_total == 0 {
-                    // Hot idle path after full drain: clear stale cache entries without
-                    // touching lane-local sets.
+                    // Hot idle path after full drain: clear stale cache entries.
                     self.seen_global.clear();
                 } else {
                     self.seen_global.clear();
@@ -361,6 +360,14 @@ impl LaneAdmissionGate {
                 }
             }
         }
+
+        if self.normal.queue.is_empty() && self.critical.queue.is_empty() {
+            // Full-drain boundary: aggressively clear lane-local id caches so
+            // restored-state ghost markers cannot survive until the next admit().
+            self.normal.seen.clear();
+            self.critical.seen.clear();
+        }
+
         Some(id)
     }
 }
@@ -1044,6 +1051,27 @@ mod tests {
         let (_, _, total) = g.queued_counts();
         assert_eq!(g.seen_global.len(), total);
         assert!(!g.seen_global.contains(&999));
+    }
+
+    #[test]
+    fn full_drain_clears_stale_lane_local_seen_without_waiting_for_next_admit() {
+        let mut g = LaneAdmissionGate::new(2, 1);
+
+        assert_eq!(g.admit(1, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+
+        // Simulate restored-state skew: stale ghost ids exist in lane-local seen sets.
+        g.normal.seen.insert(7001);
+        g.critical.seen.insert(7002);
+
+        // Drain both queued txs.
+        assert!(matches!(g.pop_ready(), Some(1) | Some(2)));
+        assert!(matches!(g.pop_ready(), Some(1) | Some(2)));
+
+        // Full-drain boundary should proactively clear stale lane-local seen caches.
+        assert!(g.normal.seen.is_empty());
+        assert!(g.critical.seen.is_empty());
+        assert_eq!(g.queued_counts(), (0, 0, 0));
     }
 
     #[test]
