@@ -233,7 +233,12 @@ impl ReliabilityStore for InMemoryReliabilityStore {
 
     fn list_session_ids(&self) -> Vec<String> {
         let mut ids: Vec<String> = self.sessions.keys().cloned().collect();
-        ids.sort();
+        // Hot reliability polling commonly observes 0/1 active sessions.
+        // Skip sort work there and keep deterministic ordering for larger sets.
+        if ids.len() < 2 {
+            return ids;
+        }
+        ids.sort_unstable();
         ids
     }
 
