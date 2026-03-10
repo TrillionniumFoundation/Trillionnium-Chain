@@ -298,6 +298,38 @@ pub fn build_parallel_groups_profile_with_strategy(
     let mut ordered: Vec<Tx> = txs.to_vec();
     reorder_for_strategy(&mut ordered, selected);
 
+    // Free-ingress fast path: when no tx carries read/write footprint, all txs are
+    // conflict-independent and land in a single execution group. Skip per-key map
+    // bookkeeping in this hot path to reduce scheduler overhead at high ingress.
+    if ordered
+        .iter()
+        .all(|tx| tx.read_set.is_empty() && tx.write_set.is_empty())
+    {
+        let grouped_count = ordered.len();
+        let avg_group_size = grouped_count as f64;
+        return (
+            vec![ordered],
+            GroupingProfile {
+                tx_count: txs.len(),
+                group_count: 1,
+                grouped_count,
+                max_group_size: grouped_count,
+                min_group_size: grouped_count,
+                avg_group_size,
+                hot_object_share: 0.0,
+                conflict_checks: 0,
+                conflict_hits: 0,
+                candidate_groups_scanned: 0,
+                stage_ww_checks: 0,
+                stage_ww_hits: 0,
+                stage_wr_checks: 0,
+                stage_wr_hits: 0,
+                stage_rw_checks: 0,
+                stage_rw_hits: 0,
+            },
+        );
+    }
+
     if matches!(selected, GroupingStrategy::AggressiveGreedy) {
         return build_parallel_groups_aggressive_profile(txs, ordered);
     }
@@ -1839,6 +1871,28 @@ mod tests {
         let d = auto_adaptive_decision(&txs);
         assert!(d.use_hot_bucket, "tail hotspot should be counted in sample");
         assert_eq!(d.reason, "hotspot_detected");
+    }
+
+    #[test]
+    fn free_ingress_batches_short_circuit_to_single_group_after_strategy_reorder() {
+        let txs = vec![
+            tx(9, vec![], vec![]),
+            tx(3, vec![], vec![]),
+            tx(7, vec![], vec![]),
+        ];
+
+        let (groups, profile) =
+            build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::WriteFirst);
+
+        assert_eq!(groups.len(), 1);
+        assert_eq!(groups[0].len(), txs.len());
+        // WriteFirst tie-breaks by tx id; fast path must preserve strategy reorder.
+        assert_eq!(groups[0].iter().map(|t| t.id).collect::<Vec<_>>(), vec![3, 7, 9]);
+        assert_eq!(profile.conflict_checks, 0);
+        assert_eq!(profile.conflict_hits, 0);
+        assert_eq!(profile.group_count, 1);
+        assert_eq!(profile.max_group_size, txs.len());
+        assert_eq!(profile.min_group_size, txs.len());
     }
 
     #[test]
