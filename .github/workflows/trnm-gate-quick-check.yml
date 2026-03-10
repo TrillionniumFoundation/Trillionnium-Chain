@@ -137,6 +137,10 @@ jobs:
         run: |
           ./scripts/v2/rust_l1_nightly_health_deterministic_env_guard_test.sh
 
+      - name: Nightly soft-fail signal guard regression
+        run: |
+          ./scripts/v2/nightly_softfail_signal_guard_test.sh
+
       - name: Testnet preflight deterministic env guard regression
         run: |
           ./scripts/v2/rust_l1_testnet_preflight_deterministic_env_guard_test.sh

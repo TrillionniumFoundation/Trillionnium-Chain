@@ -475,6 +475,7 @@ jobs:
 
       - name: PR-5 treasury reconcile report (non-gate)
         if: always()
+        id: pr5_reconcile_report
         continue-on-error: true
         run: |
           set -euo pipefail
@@ -488,6 +489,7 @@ jobs:
 
       - name: Build PR-6 daily security summary (non-gate)
         if: always()
+        id: pr6_daily_security_summary
         continue-on-error: true
         run: |
           set -euo pipefail
@@ -495,6 +497,7 @@ jobs:
 
       - name: Build PR-9 weekly alert governance (non-gate)
         if: always()
+        id: pr9_weekly_alert_governance
         continue-on-error: true
         run: |
           set -euo pipefail
@@ -502,6 +505,7 @@ jobs:
 
       - name: Build P11 policy rollback guard (dry-run, non-gate)
         if: always()
+        id: p11_policy_rollback_guard
         continue-on-error: true
         run: |
           set -euo pipefail
@@ -509,6 +513,7 @@ jobs:
 
       - name: PR-7 alert delivery gate (non-gate, observable)
         if: always()
+        id: pr7_alert_delivery_gate
         continue-on-error: true
         run: |
           set -euo pipefail
@@ -563,6 +568,60 @@ jobs:
               echo
               cat "${status_file}"
             } >> "${GITHUB_STEP_SUMMARY}"
+          fi
+
+      - name: Aggregate nightly critical soft-fail signals
+        if: always()
+        run: |
+          set -euo pipefail
+
+          OUT_DIR="trillionnium-rust/run/health"
+          mkdir -p "$OUT_DIR"
+          OUT_FILE="$OUT_DIR/nightly-softfail-summary-${GITHUB_RUN_ID:-local}-${GITHUB_RUN_ATTEMPT:-1}.md"
+
+          pr5_outcome="${{ steps.pr5_reconcile_report.outcome }}"
+          pr6_outcome="${{ steps.pr6_daily_security_summary.outcome }}"
+          pr9_outcome="${{ steps.pr9_weekly_alert_governance.outcome }}"
+          p11_outcome="${{ steps.p11_policy_rollback_guard.outcome }}"
+          pr7_outcome="${{ steps.pr7_alert_delivery_gate.outcome }}"
+
+          critical_failed=0
+          observe_failed=0
+
+          if [[ "$pr6_outcome" != "success" ]]; then critical_failed=1; fi
+          if [[ "$p11_outcome" != "success" ]]; then critical_failed=1; fi
+          if [[ "$pr7_outcome" != "success" ]]; then critical_failed=1; fi
+          if [[ "$pr5_outcome" != "success" ]]; then observe_failed=1; fi
+          if [[ "$pr9_outcome" != "success" ]]; then observe_failed=1; fi
+
+          {
+            echo "# Nightly soft-fail summary"
+            echo
+            echo "| scope | step_id | class | outcome | signal |"
+            echo "| --- | --- | --- | --- | --- |"
+            echo "| report | pr5_reconcile_report | observe | ${pr5_outcome} | $([[ "$pr5_outcome" == "success" ]] && echo clear || echo soft_fail_observe) |"
+            echo "| security | pr6_daily_security_summary | critical | ${pr6_outcome} | $([[ "$pr6_outcome" == "success" ]] && echo clear || echo soft_fail_critical) |"
+            echo "| report | pr9_weekly_alert_governance | observe | ${pr9_outcome} | $([[ "$pr9_outcome" == "success" ]] && echo clear || echo soft_fail_observe) |"
+            echo "| delivery_guard | p11_policy_rollback_guard | critical | ${p11_outcome} | $([[ "$p11_outcome" == "success" ]] && echo clear || echo soft_fail_critical) |"
+            echo "| delivery | pr7_alert_delivery_gate | critical | ${pr7_outcome} | $([[ "$pr7_outcome" == "success" ]] && echo clear || echo soft_fail_critical) |"
+            echo
+            echo "- critical_soft_fail_present: \`$([[ "$critical_failed" -eq 1 ]] && echo true || echo false)\`"
+            echo "- observe_soft_fail_present: \`$([[ "$observe_failed" -eq 1 ]] && echo true || echo false)\`"
+            echo "- gate_signal: \`$([[ "$critical_failed" -eq 1 ]] && echo nightly_critical_soft_fail || echo clear)\`"
+            echo "- semantics: \`critical soft-fail no longer stays silently green; observe-only soft-fail remains non-blocking but visible in summary\`"
+          } > "$OUT_FILE"
+
+          if [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
+            {
+              echo "## Nightly Soft-Fail Signals"
+              echo
+              cat "$OUT_FILE"
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+          if [[ "$critical_failed" -eq 1 ]]; then
+            echo "critical nightly soft-fail detected (security/delivery/reporting-critical path); see $OUT_FILE" >&2
+            exit 1
           fi
 
       - name: Upload nightly health artifacts
