@@ -66,6 +66,9 @@ jobs:
       # Ignore user-site Python packages to keep runner-local pip residue from
       # altering module resolution during shell/python gate probes.
       PYTHONNOUSERSITE: "1"
+      # Disable pip's periodic version check network call to avoid nondeterministic
+      # stderr timing/noise and occasional flaky delays in shell-driven probes.
+      PIP_DISABLE_PIP_VERSION_CHECK: "1"
       # Pin a stable build timestamp for any tooling that emits date metadata
       # (zip/tar/python wheel/etc.) so artifact ordering stays reproducible.
       SOURCE_DATE_EPOCH: "1704067200"
