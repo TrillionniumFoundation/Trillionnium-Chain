@@ -12,7 +12,7 @@ pub enum ObjectValue {
     GovParam(GovParamObject),
 }
 
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default)]
 pub struct StateStore {
     objects: BTreeMap<u64, VersionedObject>,
     balances: BTreeMap<String, u128>,
@@ -20,6 +20,17 @@ pub struct StateStore {
     gov_param_key_index: BTreeMap<String, u64>,
     pending_resolve_approvals: BTreeMap<u64, PendingResolveApproval>,
     monetary_state: MonetaryState,
+    rollback_journal: Option<StateRollbackJournal>,
+}
+
+#[derive(Debug, Default, Clone)]
+struct StateRollbackJournal {
+    objects: BTreeMap<u64, Option<VersionedObject>>,
+    balances: BTreeMap<String, Option<u128>>,
+    pending_gov_updates: BTreeMap<String, Option<PendingGovParamUpdate>>,
+    gov_param_key_index: BTreeMap<String, Option<u64>>,
+    pending_resolve_approvals: BTreeMap<u64, Option<PendingResolveApproval>>,
+    monetary_state: Option<MonetaryState>,
 }
 
 #[derive(Debug, Clone)]
@@ -336,9 +347,143 @@ fn validate_gov_param_value(key: &str, value: &str) -> Result<(), String> {
     }
 }
 
+impl Clone for StateStore {
+    fn clone(&self) -> Self {
+        Self {
+            objects: self.objects.clone(),
+            balances: self.balances.clone(),
+            pending_gov_updates: self.pending_gov_updates.clone(),
+            gov_param_key_index: self.gov_param_key_index.clone(),
+            pending_resolve_approvals: self.pending_resolve_approvals.clone(),
+            monetary_state: self.monetary_state.clone(),
+            rollback_journal: None,
+        }
+    }
+}
+
 impl StateStore {
     pub fn new() -> Self {
         Self::default()
+    }
+
+    pub fn begin_rollback_journal(&mut self) {
+        self.rollback_journal = Some(StateRollbackJournal::default());
+    }
+
+    pub fn commit_rollback_journal(&mut self) {
+        self.rollback_journal = None;
+    }
+
+    pub fn rollback_from_journal(&mut self) {
+        let Some(journal) = self.rollback_journal.take() else {
+            return;
+        };
+        for (id, previous) in journal.objects {
+            match previous {
+                Some(value) => {
+                    self.objects.insert(id, value);
+                }
+                None => {
+                    self.objects.remove(&id);
+                }
+            }
+        }
+        for (address, previous) in journal.balances {
+            match previous {
+                Some(value) => {
+                    self.balances.insert(address, value);
+                }
+                None => {
+                    self.balances.remove(&address);
+                }
+            }
+        }
+        for (key, previous) in journal.pending_gov_updates {
+            match previous {
+                Some(value) => {
+                    self.pending_gov_updates.insert(key, value);
+                }
+                None => {
+                    self.pending_gov_updates.remove(&key);
+                }
+            }
+        }
+        for (key, previous) in journal.gov_param_key_index {
+            match previous {
+                Some(value) => {
+                    self.gov_param_key_index.insert(key, value);
+                }
+                None => {
+                    self.gov_param_key_index.remove(&key);
+                }
+            }
+        }
+        for (task_id, previous) in journal.pending_resolve_approvals {
+            match previous {
+                Some(value) => {
+                    self.pending_resolve_approvals.insert(task_id, value);
+                }
+                None => {
+                    self.pending_resolve_approvals.remove(&task_id);
+                }
+            }
+        }
+        if let Some(previous) = journal.monetary_state {
+            self.monetary_state = previous;
+        }
+    }
+
+    fn note_object_before_change(&mut self, id: u64) {
+        if let Some(journal) = self.rollback_journal.as_mut() {
+            journal
+                .objects
+                .entry(id)
+                .or_insert_with(|| self.objects.get(&id).cloned());
+        }
+    }
+
+    fn note_balance_before_change(&mut self, address: &str) {
+        if let Some(journal) = self.rollback_journal.as_mut() {
+            journal
+                .balances
+                .entry(address.to_string())
+                .or_insert_with(|| self.balances.get(address).copied());
+        }
+    }
+
+    fn note_pending_gov_update_before_change(&mut self, key: &str) {
+        if let Some(journal) = self.rollback_journal.as_mut() {
+            journal
+                .pending_gov_updates
+                .entry(key.to_string())
+                .or_insert_with(|| self.pending_gov_updates.get(key).cloned());
+        }
+    }
+
+    fn note_gov_param_key_index_before_change(&mut self, key: &str) {
+        if let Some(journal) = self.rollback_journal.as_mut() {
+            journal
+                .gov_param_key_index
+                .entry(key.to_string())
+                .or_insert_with(|| self.gov_param_key_index.get(key).copied());
+        }
+    }
+
+    fn note_pending_resolve_approval_before_change(&mut self, task_id: u64) {
+        if let Some(journal) = self.rollback_journal.as_mut() {
+            journal
+                .pending_resolve_approvals
+                .entry(task_id)
+                .or_insert_with(|| self.pending_resolve_approvals.get(&task_id).cloned());
+        }
+    }
+
+    fn note_monetary_state_before_change(&mut self) {
+        if let Some(journal) = self.rollback_journal.as_mut() {
+            if journal.monetary_state.is_none() {
+                journal.monetary_state = Some(self.monetary_state.clone());
+            }
+        }
     }
 
     pub fn stage_or_confirm_resolve_approval(
@@ -421,11 +566,13 @@ impl StateStore {
 
         if let Some(entry) = self.pending_resolve_approvals.get(&task_id) {
             if entry.authority_set != authority_set {
+                self.note_pending_resolve_approval_before_change(task_id);
                 self.pending_resolve_approvals.remove(&task_id);
                 return Err("resolve approval authority set changed".into());
             }
         }
 
+        self.note_pending_resolve_approval_before_change(task_id);
         let entry =
             self.pending_resolve_approvals
                 .entry(task_id)
@@ -449,6 +596,7 @@ impl StateStore {
     }
 
     pub fn clear_pending_resolve_approval(&mut self, task_id: u64) {
+        self.note_pending_resolve_approval_before_change(task_id);
         self.pending_resolve_approvals.remove(&task_id);
     }
 
@@ -497,6 +645,7 @@ impl StateStore {
             return Err("task already exists".into());
         }
         let id = task.task_id;
+        self.note_object_before_change(id);
         self.objects.insert(
             id,
             VersionedObject {
@@ -521,6 +670,7 @@ impl StateStore {
         }
         let new_version = current.version + 1;
         task.version = new_version;
+        self.note_object_before_change(expected.id);
         self.objects.insert(
             expected.id,
             VersionedObject {
@@ -539,6 +689,7 @@ impl StateStore {
             return Err("proposal already exists".into());
         }
         let id = proposal.proposal_id;
+        self.note_object_before_change(id);
         self.objects.insert(
             id,
             VersionedObject {
@@ -563,6 +714,7 @@ impl StateStore {
         }
         let new_version = current.version + 1;
         proposal.version = new_version;
+        self.note_object_before_change(expected.id);
         self.objects.insert(
             expected.id,
             VersionedObject {
@@ -646,7 +798,9 @@ impl StateStore {
                 ));
             }
 
+            self.note_gov_param_key_index_before_change(&key);
             self.gov_param_key_index.insert(key.clone(), key_id);
+            self.note_object_before_change(key_id);
             self.objects.insert(
                 key_id,
                 VersionedObject {
@@ -664,7 +818,9 @@ impl StateStore {
                 version: new_version,
             })
         } else {
+            self.note_gov_param_key_index_before_change(&key);
             self.gov_param_key_index.insert(key.clone(), key_id);
+            self.note_object_before_change(key_id);
             self.objects.insert(
                 key_id,
                 VersionedObject {
@@ -715,7 +871,8 @@ impl StateStore {
             // Idempotence guard: unchecked replay of identical non-sensitive values should
             // not churn object versions, but must still clear stale pending residue.
             if self.gov_param_value(&key) == Some(value.as_str()) {
-                self.pending_gov_updates.remove(&key);
+                self.note_pending_gov_update_before_change(&key);
+            self.pending_gov_updates.remove(&key);
                 if let Some(existing_ref) = self
                     .gov_param_key_index
                     .get(&key)
@@ -726,6 +883,7 @@ impl StateStore {
                 }
             }
             let out = self.upsert_gov_param_unchecked(key_id, key.clone(), value)?;
+            self.note_pending_gov_update_before_change(&key);
             self.pending_gov_updates.remove(&key);
             return Ok(out);
         }
@@ -794,7 +952,8 @@ impl StateStore {
             // This keeps emergency_pause and other immediate keys deterministic even if
             // a legacy/corrupt snapshot left stale pending entries behind.
             if action == GovPendingUpdateAction::Cancel {
-                self.pending_gov_updates.remove(&key);
+                self.note_pending_gov_update_before_change(&key);
+            self.pending_gov_updates.remove(&key);
                 return Err(format!(
                     "governance cancel not supported for non-sensitive key {}",
                     key
@@ -803,7 +962,8 @@ impl StateStore {
             // Idempotence guard: re-applying the exact same value should not churn object
             // versions, but still scrubs stale pending non-sensitive timelock residue.
             if self.gov_param_value(&key) == Some(value.as_str()) {
-                self.pending_gov_updates.remove(&key);
+                self.note_pending_gov_update_before_change(&key);
+            self.pending_gov_updates.remove(&key);
                 if let Some(existing_ref) = self
                     .gov_param_key_index
                     .get(&key)
@@ -814,6 +974,7 @@ impl StateStore {
                 }
             }
             let r = self.upsert_gov_param_unchecked(key_id, key.clone(), value)?;
+            self.note_pending_gov_update_before_change(&key);
             self.pending_gov_updates.remove(&key);
             return Ok(GovParamUpdateOutcome::Applied(r));
         }
@@ -854,12 +1015,14 @@ impl StateStore {
             if current_height < pending.activate_at_height {
                 match action {
                     GovPendingUpdateAction::Cancel => {
-                        self.pending_gov_updates.remove(&key);
+                        self.note_pending_gov_update_before_change(&key);
+            self.pending_gov_updates.remove(&key);
                         return Ok(GovParamUpdateOutcome::Cancelled);
                     }
                     GovPendingUpdateAction::Replace => {
                         let activate_at_height =
                             current_height.saturating_add(GOV_SENSITIVE_PARAM_TIMELOCK_BLOCKS);
+                        self.note_pending_gov_update_before_change(&key);
                         self.pending_gov_updates.insert(
                             key.clone(),
                             PendingGovParamUpdate {
@@ -900,6 +1063,7 @@ impl StateStore {
                     key, pending.activate_at_height
                 ));
             }
+            self.note_pending_gov_update_before_change(&key);
             self.pending_gov_updates.remove(&key);
             let r = self.upsert_gov_param_unchecked(key_id, key, value)?;
             return Ok(GovParamUpdateOutcome::Applied(r));
@@ -910,6 +1074,7 @@ impl StateStore {
         }
 
         let activate_at_height = current_height.saturating_add(GOV_SENSITIVE_PARAM_TIMELOCK_BLOCKS);
+        self.note_pending_gov_update_before_change(&key);
         self.pending_gov_updates.insert(
             key.clone(),
             PendingGovParamUpdate {
@@ -1042,6 +1207,7 @@ impl StateStore {
         }
         let net_delta = minted as i128 - burned as i128;
 
+        self.note_monetary_state_before_change();
         self.monetary_state.last_tick_height = block_height;
         self.monetary_state.tick_count = self.monetary_state.tick_count.saturating_add(1);
         self.monetary_state.total_minted = self.monetary_state.total_minted.saturating_add(minted);
@@ -1068,7 +1234,9 @@ impl StateStore {
     }
 
     pub fn set_balance(&mut self, address: impl Into<String>, amount: u128) {
-        self.balances.insert(address.into(), amount);
+        let address = address.into();
+        self.note_balance_before_change(&address);
+        self.balances.insert(address, amount);
     }
 
     pub fn balance_of(&self, address: &str) -> u128 {
@@ -1083,6 +1251,7 @@ impl StateStore {
                 address, cur, amount
             ));
         }
+        self.note_balance_before_change(address);
         self.balances.insert(address.to_string(), cur - amount);
         Ok(())
     }
@@ -1095,6 +1264,7 @@ impl StateStore {
                 address, cur, amount
             )
         })?;
+        self.note_balance_before_change(address);
         self.balances.insert(address.to_string(), next);
         Ok(())
     }
@@ -3907,5 +4077,22 @@ mod tests {
         assert!(st.policy_tick(2).is_some());
         assert!(st.policy_tick(4).is_none(), "cooldown should block h=4");
         assert!(st.policy_tick(6).is_some(), "cooldown should allow h=6");
+    }
+
+    #[test]
+    fn rollback_journal_restores_only_touched_entries() {
+        let mut st = StateStore::new();
+        st.set_balance("alice", 10);
+        st.set_balance("bob", 3);
+
+        st.begin_rollback_journal();
+        st.debit_balance("alice", 4).unwrap();
+        st.credit_balance("bob", 4).unwrap();
+        st.set_balance("carol", 8);
+        st.rollback_from_journal();
+
+        assert_eq!(st.balance_of("alice"), 10);
+        assert_eq!(st.balance_of("bob"), 3);
+        assert_eq!(st.balance_of("carol"), 0);
     }
 }

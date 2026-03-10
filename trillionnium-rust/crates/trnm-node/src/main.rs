@@ -18,7 +18,7 @@ use trnm_pouw::{
     apply_resolve_at_height, apply_reveal_result, apply_reveal_result_at_height, apply_timeout,
 };
 use trnm_state::{verify_wal_and_find_checkpoint, CheckpointMeta, StateStore, WalMeta};
-use trnm_types::{Hash32, ObjectRef, TaskStatus, Tx};
+use trnm_types::{Hash32, ObjectRef, TaskObject, TaskStatus, Tx};
 
 #[derive(Debug, Parser)]
 #[command(
@@ -1538,6 +1538,14 @@ struct EventDelta {
     text: String,
 }
 
+#[derive(Debug, Clone)]
+struct CommitEventSnapshot {
+    task_before: Option<TaskObject>,
+    treasury_total_before: u128,
+    challenger_balance_before: Option<u128>,
+    signer: String,
+}
+
 fn classify_apply_error(err: &anyhow::Error) -> &'static str {
     if let Some(pouw) = err.downcast_ref::<trnm_pouw::PouwError>() {
         return match pouw {
@@ -1579,6 +1587,40 @@ fn event_delta_from_balances(after: u128, before: u128) -> EventDelta {
     EventDelta { numeric, text }
 }
 
+fn capture_commit_event_snapshot(st: &StateStore, tx: &MockTx, task_id: u64) -> CommitEventSnapshot {
+    let task_before = st.get_task(task_id);
+    let challenger_account = match tx {
+        MockTx::Challenge { challenger, .. } => Some(challenger.as_str()),
+        MockTx::Resolve { .. } => task_before.as_ref().and_then(|task| task.challenger.as_deref()),
+        _ => None,
+    };
+    CommitEventSnapshot {
+        challenger_balance_before: challenger_account.map(|acct| st.balance_of(acct)),
+        task_before,
+        treasury_total_before: treasury_total(st),
+        signer: verified_signer_of(st, tx),
+    }
+}
+
+fn balance_deltas_for_snapshot_transition(
+    before: &CommitEventSnapshot,
+    after: &StateStore,
+    task_id: u64,
+    challenger: Option<&str>,
+) -> (EventDelta, Option<EventDelta>) {
+    let treasury_delta =
+        event_delta_from_balances(treasury_total(after), before.treasury_total_before);
+    let challenger_delta = challenger.map(|acct| {
+        let before_bal = before.challenger_balance_before.unwrap_or(0);
+        let after_bal = after.balance_of(acct);
+        event_delta_from_balances(after_bal, before_bal)
+    });
+
+    let _ = task_id;
+    (treasury_delta, challenger_delta)
+}
+
+#[cfg(test)]
 fn balance_deltas_for_transition(
     before: &StateStore,
     after: &StateStore,
@@ -1592,7 +1634,6 @@ fn balance_deltas_for_transition(
         event_delta_from_balances(after_bal, before_bal)
     });
 
-    // task_id currently reserved for future richer per-task accounting; keep signature explicit.
     let _ = task_id;
     (treasury_delta, challenger_delta)
 }
@@ -1833,13 +1874,18 @@ fn scan_and_apply_timeouts(
         let Some(task_ref) = st.get_ref(task_id) else {
             continue;
         };
-        let before = st.clone();
+        let before = CommitEventSnapshot {
+            task_before: Some(task.clone()),
+            treasury_total_before: treasury_total(st),
+            challenger_balance_before: challenger.as_deref().map(|acct| st.balance_of(acct)),
+            signer: String::new(),
+        };
         if apply_timeout(st, task_ref, current_height).is_ok() {
             migrated += 1;
             let to_status = status_name(st, task_id);
             let root = hex::encode(st.state_root());
             let (treasury_delta, challenger_delta) =
-                balance_deltas_for_transition(&before, st, task_id, challenger.as_deref());
+                balance_deltas_for_snapshot_transition(&before, st, task_id, challenger.as_deref());
             let bond_disposition = if from_status == "Challenged" {
                 st.get_task(task_id).and_then(|t| {
                     t.challenge_bond_forfeited
@@ -4443,11 +4489,13 @@ fn main() -> Result<()> {
                 continue;
             }
 
-            let before = state.clone();
+            let before = capture_commit_event_snapshot(&state, &tx, task_id);
+            state.begin_rollback_journal();
             if let Err(e) = apply_one(&mut state, tx.clone(), height) {
                 let err_kind = classify_apply_error(&e);
                 let err_text = e.to_string();
                 if err_kind == "resolve_approval_staged" {
+                    state.commit_rollback_journal();
                     applied += 1;
                     known_task_ids.insert(task_id);
                     let to_status = status_name(&state, task_id);
@@ -4455,17 +4503,17 @@ fn main() -> Result<()> {
                     let challenger_account: Option<String> = match &tx {
                         MockTx::Challenge { challenger, .. } => Some(challenger.clone()),
                         MockTx::Resolve { .. } => {
-                            before.get_task(task_id).and_then(|t| t.challenger)
+                            before.task_before.as_ref().and_then(|t| t.challenger.clone())
                         }
                         _ => None,
                     };
-                    let (treasury_delta, challenger_delta) = balance_deltas_for_transition(
+                    let (treasury_delta, challenger_delta) = balance_deltas_for_snapshot_transition(
                         &before,
                         &state,
                         task_id,
                         challenger_account.as_deref(),
                     );
-                    let signer = verified_signer_of(&before, &tx);
+                    let signer = before.signer.clone();
                     emit_event(
                         &state,
                         &tx,
@@ -4481,7 +4529,7 @@ fn main() -> Result<()> {
                         Some(err_kind),
                     );
                 } else {
-                    state = before; // rollback on failed commit
+                    state.rollback_from_journal();
                     apply_error_total += 1;
                     rollback_total += 1;
                     match err_kind {
@@ -4497,26 +4545,26 @@ fn main() -> Result<()> {
                     );
                 }
             } else {
+                state.commit_rollback_journal();
                 applied += 1;
                 known_task_ids.insert(task_id);
                 let to_status = status_name(&state, task_id);
                 let root = hex::encode(state.state_root());
                 let challenger_account: Option<String> = match &tx {
                     MockTx::Challenge { challenger, .. } => Some(challenger.clone()),
-                    MockTx::Resolve { .. } => before.get_task(task_id).and_then(|t| t.challenger),
+                    MockTx::Resolve { .. } => before.task_before.as_ref().and_then(|t| t.challenger.clone()),
                     _ => None,
                 };
-                let (treasury_delta, challenger_delta) = balance_deltas_for_transition(
+                let (treasury_delta, challenger_delta) = balance_deltas_for_snapshot_transition(
                     &before,
                     &state,
                     task_id,
                     challenger_account.as_deref(),
                 );
-                let signer = verified_signer_of(&before, &tx);
                 emit_event(
                     &state,
                     &tx,
-                    &signer,
+                    &before.signer,
                     id,
                     height,
                     &from_status,
