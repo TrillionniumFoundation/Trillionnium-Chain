@@ -646,3 +646,6 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: che
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: check-parallel-flaky-replay-ci-timeout-guard-test" "./scripts/v2/check_parallel_flaky_replay_ci_timeout_guard_test.sh" "ci(gate): add check-parallel-flaky-replay-ci-timeout-guard-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: p1-rust-sidecar-paths-coverage-guard-test" "./scripts/v2/p1_rust_sidecar_paths_coverage_guard_test.sh" "ci(gate): add p1-rust-sidecar-paths-coverage-guard-test regression to quick-check"
