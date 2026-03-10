@@ -6,7 +6,7 @@ use std::{
     collections::{HashMap, HashSet, VecDeque},
     fs,
     path::{Path, PathBuf},
-    sync::mpsc,
+    sync::{mpsc, Arc, Condvar, Mutex},
     thread,
     time::{Duration, Instant, SystemTime, UNIX_EPOCH},
 };
@@ -304,13 +304,13 @@ impl OrderingEngine for PreexecOrderingEngine {
         workers: usize,
         candidate_height: u64,
     ) -> OrderingDecision {
-        let (ordered_ids, rejected) = pre_execute_group_parallel(
-            snapshot,
-            da_batch.tx_ids.clone(),
-            picked,
+        let pool = PreExecPool::new(
+            Arc::new(snapshot.clone()),
+            Arc::new(picked.to_vec()),
             workers,
             candidate_height,
         );
+        let (ordered_ids, rejected) = pre_execute_group_parallel(&pool, da_batch.tx_ids.clone());
         OrderingDecision {
             ordered_ids,
             rejected,
@@ -1973,70 +1973,150 @@ fn read_write_decl(st: &StateStore, tx: &MockTx, tx_id: u64) -> Tx {
     }
 }
 
-fn pre_execute_group_parallel(
-    snapshot: &StateStore,
-    group_ids: Vec<u64>,
-    picked: &[MockTx],
-    workers: usize,
-    candidate_height: u64,
-) -> (Vec<u64>, u64) {
-    if group_ids.is_empty() {
-        return (vec![], 0);
-    }
-    let workers = workers.max(1).min(group_ids.len());
-    let (tx, rx) = mpsc::channel::<(u64, bool, String)>();
+#[derive(Clone)]
+struct PreExecJob {
+    ids: Vec<u64>,
+    result_tx: mpsc::Sender<(u64, bool, String)>,
+}
 
-    let mut handles = Vec::with_capacity(workers);
-    for w in 0..workers {
-        let txc = tx.clone();
-        let ids: Vec<u64> = group_ids
-            .iter()
-            .copied()
-            .enumerate()
-            .filter_map(|(i, id)| if i % workers == w { Some(id) } else { None })
-            .collect();
-        let local_picked = picked.to_vec();
-        let base = snapshot.clone();
+enum PreExecQueueEntry {
+    Run(PreExecJob),
+    Shutdown,
+}
 
-        handles.push(thread::spawn(move || {
-            for id in ids {
-                let idx = (id - 1) as usize;
-                let mut local_state = base.clone();
-                let res = apply_one(
-                    &mut local_state,
-                    local_picked[idx].clone(),
-                    candidate_height,
-                );
-                match res {
-                    Ok(_) => {
-                        let _ = txc.send((id, true, String::new()));
+struct PreExecPoolState {
+    queue: Mutex<VecDeque<PreExecQueueEntry>>,
+    cv: Condvar,
+}
+
+struct PreExecPool {
+    state: Arc<PreExecPoolState>,
+    handles: Vec<thread::JoinHandle<()>>,
+    width: usize,
+}
+
+impl PreExecPool {
+    fn new(
+        snapshot: Arc<StateStore>,
+        picked: Arc<Vec<MockTx>>,
+        workers: usize,
+        candidate_height: u64,
+    ) -> Self {
+        let width = workers.max(1);
+        let state = Arc::new(PreExecPoolState {
+            queue: Mutex::new(VecDeque::new()),
+            cv: Condvar::new(),
+        });
+        let mut handles = Vec::with_capacity(width);
+        for _ in 0..width {
+            let state_cloned = Arc::clone(&state);
+            let snapshot_cloned = Arc::clone(&snapshot);
+            let picked_cloned = Arc::clone(&picked);
+            handles.push(thread::spawn(move || loop {
+                let entry = {
+                    let mut guard = state_cloned.queue.lock().expect("preexec queue poisoned");
+                    loop {
+                        if let Some(entry) = guard.pop_front() {
+                            break entry;
+                        }
+                        guard = state_cloned
+                            .cv
+                            .wait(guard)
+                            .expect("preexec queue poisoned while waiting");
                     }
-                    Err(e) => {
-                        let _ = txc.send((id, false, e.to_string()));
+                };
+                match entry {
+                    PreExecQueueEntry::Run(job) => {
+                        for id in job.ids {
+                            let idx = (id - 1) as usize;
+                            let mut local_state = snapshot_cloned.as_ref().clone();
+                            let res = apply_one(
+                                &mut local_state,
+                                picked_cloned[idx].clone(),
+                                candidate_height,
+                            );
+                            match res {
+                                Ok(_) => {
+                                    let _ = job.result_tx.send((id, true, String::new()));
+                                }
+                                Err(e) => {
+                                    let _ = job.result_tx.send((id, false, e.to_string()));
+                                }
+                            }
+                        }
                     }
+                    PreExecQueueEntry::Shutdown => break,
                 }
-            }
-        }));
-    }
-    drop(tx);
+            }));
+        }
 
-    for h in handles {
-        let _ = h.join();
-    }
-
-    let mut ok_ids = Vec::new();
-    let mut rejected = 0u64;
-    for (id, ok, err) in rx {
-        if ok {
-            ok_ids.push(id);
-        } else {
-            rejected += 1;
-            println!("[preexec] tx_id={} rejected err={}", id, err);
+        Self {
+            state,
+            handles,
+            width,
         }
     }
 
-    ok_ids.sort_unstable();
-    (ok_ids, rejected)
+    fn execute_group(&self, group_ids: Vec<u64>) -> (Vec<u64>, u64) {
+        if group_ids.is_empty() {
+            return (vec![], 0);
+        }
+        let workers = self.width.min(group_ids.len());
+        let (tx, rx) = mpsc::channel::<(u64, bool, String)>();
+        {
+            let mut queue = self.state.queue.lock().expect("preexec queue poisoned");
+            for w in 0..workers {
+                let ids: Vec<u64> = group_ids
+                    .iter()
+                    .copied()
+                    .enumerate()
+                    .filter_map(|(i, id)| if i % workers == w { Some(id) } else { None })
+                    .collect();
+                if ids.is_empty() {
+                    continue;
+                }
+                queue.push_back(PreExecQueueEntry::Run(PreExecJob {
+                    ids,
+                    result_tx: tx.clone(),
+                }));
+            }
+        }
+        self.state.cv.notify_all();
+        drop(tx);
+
+        let mut ok_ids = Vec::new();
+        let mut rejected = 0u64;
+        for (id, ok, err) in rx {
+            if ok {
+                ok_ids.push(id);
+            } else {
+                rejected += 1;
+                println!("[preexec] tx_id={} rejected err={}", id, err);
+            }
+        }
+
+        ok_ids.sort_unstable();
+        (ok_ids, rejected)
+    }
+}
+
+impl Drop for PreExecPool {
+    fn drop(&mut self) {
+        {
+            let mut queue = self.state.queue.lock().expect("preexec queue poisoned");
+            for _ in 0..self.handles.len() {
+                queue.push_back(PreExecQueueEntry::Shutdown);
+            }
+        }
+        self.state.cv.notify_all();
+        while let Some(handle) = self.handles.pop() {
+            let _ = handle.join();
+        }
+    }
+}
+
+fn pre_execute_group_parallel(pool: &PreExecPool, group_ids: Vec<u64>) -> (Vec<u64>, u64) {
+    pool.execute_group(group_ids)
 }
 
 fn decide_order_for_commit(
@@ -2055,10 +2135,15 @@ fn decide_order_for_commit(
         let groups = build_parallel_groups(&plan);
         let mut ordered = Vec::new();
         let mut rejected = 0u64;
+        let pool = PreExecPool::new(
+            Arc::new(state.clone()),
+            Arc::new(picked.to_vec()),
+            workers,
+            candidate_height,
+        );
         for g in groups {
             let group_ids: Vec<u64> = g.iter().map(|t| t.id).collect();
-            let (ids, rej) =
-                pre_execute_group_parallel(state, group_ids, picked, workers, candidate_height);
+            let (ids, rej) = pre_execute_group_parallel(&pool, group_ids);
             ordered.extend(ids);
             rejected += rej;
         }
@@ -2210,6 +2295,42 @@ mod tests {
         )
         .unwrap_err();
         assert_eq!(classify_apply_error(&err), "deadline_exceeded");
+    }
+
+    #[test]
+    fn preexec_pool_reuses_workers_across_multiple_groups() {
+        let state = Arc::new(StateStore::new());
+        let picked = Arc::new(vec![
+            MockTx::CreateTask {
+                task_id: 4201,
+                creator: "alice".into(),
+                bounty: 10,
+            },
+            MockTx::CreateTask {
+                task_id: 4202,
+                creator: "bob".into(),
+                bounty: 20,
+            },
+            MockTx::CreateTask {
+                task_id: 4203,
+                creator: "carol".into(),
+                bounty: 30,
+            },
+            MockTx::CreateTask {
+                task_id: 4204,
+                creator: "dave".into(),
+                bounty: 40,
+            },
+        ]);
+
+        let pool = PreExecPool::new(Arc::clone(&state), Arc::clone(&picked), 2, 1);
+        let first = pre_execute_group_parallel(&pool, vec![1, 2]);
+        let second = pre_execute_group_parallel(&pool, vec![3, 4]);
+
+        assert_eq!(first.0, vec![1, 2]);
+        assert_eq!(first.1, 0);
+        assert_eq!(second.0, vec![3, 4]);
+        assert_eq!(second.1, 0);
     }
 
     #[test]
@@ -3717,7 +3838,9 @@ mod tests {
         );
 
         assert_eq!(migrated, 1);
-        let task = st.get_task(7005).expect("task must exist after timeout scan");
+        let task = st
+            .get_task(7005)
+            .expect("task must exist after timeout scan");
         assert_eq!(task.status, TaskStatus::Completed);
         assert_eq!(task.challenge_bond_forfeited, None);
     }
