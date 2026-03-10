@@ -1704,6 +1704,51 @@ mod tests {
     }
 
     #[test]
+    fn tee_reveal_rejects_noncanonical_worker_binding_before_verification() {
+        let mut st = seeded_state();
+        let r1 = apply_create_task(&mut st, 781, "alice".into(), 10).unwrap();
+
+        // Legacy/corrupted state may carry non-canonical worker account ids.
+        // TEE proof verification must fail closed before any terminal mutation.
+        let result_hash = [2u8; 32];
+        let reveal_salt = [3u8; 32];
+        let committed = compute_commitment(781, &result_hash, &reveal_salt, " worker1 ");
+        let bad_task = TaskObject {
+            task_id: 781,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Committed,
+            proof_type: ProofType::Tee,
+            metadata: None,
+            worker: Some(" worker1 ".into()),
+            committed_hash: Some(committed),
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        };
+        let r2 = st.update_task(r1, bad_task).unwrap();
+
+        let proof = b"TEE:task_id=781,worker=worker1,proof_type=tee,result_hash=0202020202020202020202020202020202020202020202020202020202020202,quote=QUOTE_XYZ".to_vec();
+        let err = apply_reveal_result(&mut st, r2.clone(), result_hash, reveal_salt, Some(proof))
+            .unwrap_err();
+        assert!(matches!(err, PouwError::State(reason) if reason == "non-canonical worker account"));
+
+        let task_after = st.get_task(r2.id).unwrap();
+        assert_eq!(task_after.status, TaskStatus::Committed);
+        assert!(task_after.result_hash.is_none());
+        assert!(task_after.reveal_salt.is_none());
+    }
+
+    #[test]
     fn tee_reveal_rejects_matching_legacy_committed_result_hash_binding_fail_closed_before_verification() {
         let mut st = seeded_state();
         let r1 = apply_create_task(&mut st, 788, "alice".into(), 10).unwrap();
