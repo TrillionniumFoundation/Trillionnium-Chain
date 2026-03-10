@@ -69,6 +69,9 @@ jobs:
       # Enforce Python UTF-8 mode regardless of ambient locale coercion so text
       # decoding/encoding behavior stays stable across runner image refreshes.
       PYTHONUTF8: "1"
+      # Force unbuffered Python stdout/stderr so failure evidence ordering stays
+      # stable under runner load and in replayed CI logs.
+      PYTHONUNBUFFERED: "1"
       # Ignore user-site Python packages to keep runner-local pip residue from
       # altering module resolution during shell/python gate probes.
       PYTHONNOUSERSITE: "1"
