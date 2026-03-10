@@ -30,7 +30,7 @@ pub struct AdmissionGate {
 
 impl AdmissionGate {
     fn compact_backpressured_fifo(&mut self) {
-        if self.backpressured_fifo.len() <= self.capacity.saturating_mul(4) {
+        if self.backpressured_fifo.len() < self.capacity.saturating_mul(4) {
             return;
         }
 
@@ -946,6 +946,19 @@ mod tests {
             .extend([42, 43, 42, 43, 42, 43, 42, 43, 42]);
         gate.backpressured_ids.clear();
         assert!(gate.backpressured_fifo.len() > gate.capacity.saturating_mul(4));
+
+        gate.compact_backpressured_fifo();
+        assert!(gate.backpressured_fifo.is_empty());
+    }
+
+    #[test]
+    fn compaction_triggers_at_threshold_to_bound_stale_fifo_growth() {
+        let mut gate = AdmissionGate::new(2);
+        // Exactly 4x stale markers should compact immediately instead of waiting
+        // for an extra insert above threshold.
+        gate.backpressured_fifo.extend([1, 2, 1, 2, 1, 2, 1, 2]);
+        gate.backpressured_ids.clear();
+        assert_eq!(gate.backpressured_fifo.len(), gate.capacity.saturating_mul(4));
 
         gate.compact_backpressured_fifo();
         assert!(gate.backpressured_fifo.is_empty());
