@@ -14,6 +14,16 @@
 - 老文档不删，但视为“证据/历史”，不再作为主调度源
 - 若与 `RELEASE_READINESS.md` 冲突：**发布口径以 `RELEASE_READINESS.md` 为准**；若与 `STATUS.md` 冲突：`STATUS.md` 仅保留历史记录
 
+### 0.1 入口地图（防止引用漂移）
+
+- **当前是否 release-ready / 哪个文档能当真相源**：看仓库根 `RELEASE_READINESS.md`
+- **开发排期 / lane 调度 / 下一步执行优先级**：看本文
+- **ZKP 平台边界 / backend 抽象 / payload 与错误契约**：看 `docs/architecture/TRNM_ZKP_PLATFORM_V0.md`
+- **benchmark closeout 方法、产物字段、micro→system bridge**：看 `docs/reports/TRNM_WEEK7_E2E_CLOSEOUT_BENCHMARK_SYSTEM_2026-03-10.md`
+- **并发瓶颈图、8 周路线、对外并发 closeout 口径**：看 `docs/reports/TRNM_CONCURRENCY_BOTTLENECK_MAP_AND_8W_ROADMAP_2026-03-10.md`
+
+> 规则：本文可以引用上述文档作为专题权威，但**不覆盖**它们各自的专题口径；反之，专题文档若涉及发布判断，也必须回指 `RELEASE_READINESS.md`。
+
 ---
 
 ## 1. 范围与当前基线

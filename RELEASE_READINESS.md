@@ -42,12 +42,15 @@
 ## 文档使用规则（新的 truth-source 结构）
 
 1. **当前是否可发布**：先看本文件 `RELEASE_READINESS.md`。
-2. **历史推进与里程碑**：看 `STATUS.md`。
-3. **某一轮 Web4 / release 修复是否跑通过**：看对应 `docs/development/*evidence*.md`、`docs/release/*evidence*.md`。
-4. **并发架构现状 / 对外对标口径**：
+2. **开发排期 / lane 调度 / 下一步执行**：看 `docs/development/DEVELOPMENT_MASTER_UNIFIED_2026-03-04.md`。
+3. **ZKP 平台边界 / backend 抽象 / payload 与错误契约**：看 `docs/architecture/TRNM_ZKP_PLATFORM_V0.md`。
+4. **benchmark closeout 方法、统一产物、micro→system bridge**：看 `docs/reports/TRNM_WEEK7_E2E_CLOSEOUT_BENCHMARK_SYSTEM_2026-03-10.md`。
+5. **并发架构现状 / 对外对标口径 / 8 周路线**：
    - 当前瓶颈图与 8 周路线：`docs/reports/TRNM_CONCURRENCY_BOTTLENECK_MAP_AND_8W_ROADMAP_2026-03-10.md`
    - TRNM vs Solana vs Sui 对比口径：`docs/reports/TRNM_CONCURRENCY_COMPARISON_2026-03-05.md`
-5. **子项目操作说明**：
+6. **历史推进与里程碑**：看 `STATUS.md`。
+7. **某一轮 Web4 / release 修复是否跑通过**：看对应 `docs/development/*evidence*.md`、`docs/release/*evidence*.md`。
+8. **子项目操作说明**：
    - 仓库总览：`README.md`
    - Web4 子项目：`web4-frontend/README.md`
 

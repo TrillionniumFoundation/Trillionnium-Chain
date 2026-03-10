@@ -3,6 +3,14 @@
 > 日期：2026-03-10  
 > 目标：把 classic / mixed / hot-streak 的 micro-bench，桥接到更真实的系统链路指标；同时冻结可复现命令、统一结果产物、硬件/窗口/口径说明。  
 > 状态：Week 7 closeout v1（先收口方法、产物、字段；不把 micro 数字冒充链级 TPS）
+>
+> 入口约定：
+> - 当前是否 release-ready：看仓库根 `RELEASE_READINESS.md`
+> - 开发排期 / lane 调度 / 谁在推进什么：看 `docs/development/DEVELOPMENT_MASTER_UNIFIED_2026-03-04.md`
+> - ZKP 平台边界 / backend 抽象 / payload 与错误契约：看 `docs/architecture/TRNM_ZKP_PLATFORM_V0.md`
+> - 当前并发瓶颈图 / 8 周路线 / 并发 closeout truth-source：看 `docs/reports/TRNM_CONCURRENCY_BOTTLENECK_MAP_AND_8W_ROADMAP_2026-03-10.md`
+>
+> 本文只负责 **benchmark closeout 方法、统一产物与 micro→system bridge**；不单独承载 release 判定，也不替代并发路线图。
 
 ---
 
