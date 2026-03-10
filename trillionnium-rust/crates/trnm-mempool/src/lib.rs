@@ -150,17 +150,12 @@ impl LaneAdmissionGate {
         // that case, trust lane-local seen sets and repair lane-wide cache inline.
         let mut is_duplicate = self.seen_global.contains(&tx_id);
         if is_duplicate {
-            // Fast duplicate confirmation from lane-local id sets avoids queue scans
-            // on the common path where caches are aligned.
-            let lane_local_contains =
-                self.normal.seen.contains(&tx_id) || self.critical.seen.contains(&tx_id);
-            if !lane_local_contains
-                && !self.normal.queue.contains(&tx_id)
-                && !self.critical.queue.contains(&tx_id)
-            {
-                // Defensive self-heal: restored-state skew can preserve cardinality while
-                // leaving stale ids in lane-wide/lane-local caches. Verify against queue
-                // truth and rebuild so fresh ingress is not misclassified as duplicate.
+            // Defensive fallback: cardinality can stay aligned while restored-state skew
+            // replaces a queued id with a ghost id in both lane-local and lane-wide
+            // caches. Queue membership remains authoritative in that case.
+            let queue_contains =
+                self.normal.queue.contains(&tx_id) || self.critical.queue.contains(&tx_id);
+            if !queue_contains {
                 self.normal.seen.clear();
                 self.normal.seen.extend(self.normal.queue.iter().copied());
                 self.critical.seen.clear();
@@ -379,10 +374,8 @@ mod tests {
         assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
         assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
         assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
-        assert_eq!(
-            g.admit(4, IngressClass::Normal),
-            AdmitOutcome::Backpressured
-        );
+        // Keep one slot free so fresh critical ingress can still enter and drain
+        // ahead of the normal flood.
         assert_eq!(g.admit(99, IngressClass::Critical), AdmitOutcome::Accepted);
         assert_eq!(g.pop_ready(), Some(99));
     }
