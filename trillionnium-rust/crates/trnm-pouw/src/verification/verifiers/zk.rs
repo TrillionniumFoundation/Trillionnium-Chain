@@ -356,6 +356,32 @@ mod tests {
     }
 
     #[test]
+    fn zk_verifier_invalid_proof_path_with_mock_backend() {
+        let mut backends = ZkBackendRegistry::new();
+        backends.register(Arc::new(MockInvalidBackend));
+        let verifier = ZkVerifier::from_config(&router_config(), Arc::new(backends));
+        let task = mock_task();
+        let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"mock-zk-invalid","backend_version":"v1","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","worker","result_hash"],"values":["99","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]},"meta":{"schema_version":"trnm.zk.payload.v0"}}"#;
+        assert!(matches!(
+            verifier.verify_proof(&task, payload),
+            VerificationResult::Invalid(msg) if msg.contains("mock zk backend rejected proof")
+        ));
+    }
+
+    #[test]
+    fn zk_verifier_backend_unavailable_maps_to_indeterminate() {
+        let mut backends = ZkBackendRegistry::new();
+        backends.register(Arc::new(MockUnavailableBackend));
+        let verifier = ZkVerifier::from_config(&router_config(), Arc::new(backends));
+        let task = mock_task();
+        let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"mock-zk-unavailable","backend_version":"v1","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","worker","result_hash"],"values":["99","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]},"meta":{"schema_version":"trnm.zk.payload.v0"}}"#;
+        assert!(matches!(
+            verifier.verify_proof(&task, payload),
+            VerificationResult::Indeterminate(msg) if msg.contains("unavailable:") && msg.contains("mock zk backend unavailable")
+        ));
+    }
+
+    #[test]
     fn zk_verifier_invalid_proof_path_rejects_mapped_public_inputs() {
         let verifier = ZkVerifier::default();
         let task = mock_task();
