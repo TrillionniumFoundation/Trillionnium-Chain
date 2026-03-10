@@ -77,9 +77,9 @@ def file_count(pattern: str) -> int:
     return len(glob.glob(pattern))
 
 
-attrib_file = latest(os.path.join(RUST_HEALTH, "nightly-attribution-*.txt"))
-nightly_summary = latest(os.path.join(RUST_HEALTH, "nightly-summary-*.md"))
-suggest_file = latest(os.path.join(RUST_HEALTH, "auto-adaptive-threshold-suggestion-*.txt"))
+attrib_file = os.environ.get("NIGHTLY_ATTRIBUTION_FILE") or latest(os.path.join(RUST_HEALTH, "nightly-attribution-*.txt"))
+nightly_summary = os.environ.get("NIGHTLY_SUMMARY_FILE") or latest(os.path.join(RUST_HEALTH, "nightly-summary-*.md"))
+suggest_file = os.environ.get("AUTO_ADAPTIVE_SUGGESTION_FILE") or latest(os.path.join(RUST_HEALTH, "auto-adaptive-threshold-suggestion-*.txt"))
 aggr_profile = latest(os.path.join(RUST_BENCH, "aggressive-profile-summary-*.md"))
 pr5_summary_file = latest(os.path.join(PR5_ROOT, "*", "summary.txt"))
 pr7_topn_summary = latest(os.path.join(PR7_TOPN_ROOT, "*", "topn-anomaly-summary.md"))

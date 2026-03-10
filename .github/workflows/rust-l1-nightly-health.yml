@@ -166,6 +166,8 @@ jobs:
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           cd trillionnium-rust
+          hard_report="run/health/consensus-fault-matrix-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-hard.txt"
+          CONSENSUS_FAULT_MATRIX_OUT="$hard_report" \
           GATE_MODE=hard \
           ALLOW_FAIL=0 \
           EXPECTED_CASES=3 \
@@ -178,7 +180,6 @@ jobs:
           BYZANTINE_ROUNDS_MAX_ROUND_CHANGE_TOTAL=${BYZANTINE_ROUNDS_MAX_ROUND_CHANGE_TOTAL:-10} \
           ./scripts/run_consensus_fault_matrix.sh
 
-          hard_report=$(ls -1t run/health/consensus-fault-matrix-*.txt | head -n 1)
           echo "hard_report=${hard_report}" >> "$GITHUB_OUTPUT"
 
       - name: "Consensus fault matrix (soft gate observe: 5 stress cases)"
@@ -189,6 +190,8 @@ jobs:
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           cd trillionnium-rust
+          soft_report="run/health/consensus-fault-matrix-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-soft.txt"
+          CONSENSUS_FAULT_MATRIX_OUT="$soft_report" \
           GATE_MODE=soft \
           EXPECTED_CASES=5 \
           CASE_FILTER="slow_block,faulty_round_backoff,leader_jitter,message_reorder,slow_validator" \
@@ -200,7 +203,6 @@ jobs:
           SLOW_VALIDATOR_MAX_FINALITY_P95_MS=${SLOW_VALIDATOR_MAX_FINALITY_P95_MS:-320} \
           ./scripts/run_consensus_fault_matrix.sh
 
-          soft_report=$(ls -1t run/health/consensus-fault-matrix-*.txt | head -n 1)
           echo "soft_report=${soft_report}" >> "$GITHUB_OUTPUT"
 
       - name: Append consensus fault matrix (hard/soft) to GitHub Step Summary
@@ -439,8 +441,9 @@ jobs:
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           cd trillionnium-rust
 
+          attribution_file="run/health/nightly-attribution-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}.txt"
+          NIGHTLY_ATTRIBUTION_OUT="$attribution_file" \
           THRESHOLD_PROFILE=${THRESHOLD_PROFILE:-stage2} ./scripts/nightly_attribution.sh
-          attribution_file=$(ls -1t run/health/nightly-attribution-*.txt 2>/dev/null | head -n 1 || true)
           echo "attribution_file=${attribution_file}" >> "$GITHUB_OUTPUT"
 
       - name: Render nightly summary (non-gate)
@@ -494,6 +497,9 @@ jobs:
         continue-on-error: true
         run: |
           set -euo pipefail
+          NIGHTLY_ATTRIBUTION_FILE="${{ steps.nightly_attribution.outputs.attribution_file }}" \
+          NIGHTLY_SUMMARY_FILE="${{ steps.render_nightly_summary.outputs.summary_file }}" \
+          AUTO_ADAPTIVE_SUGGESTION_FILE="${{ steps.auto_adaptive_suggestion.outputs.suggestion_file }}" \
           python3 ./scripts/v2/pr6_daily_security_summary.py
 
       - name: Build PR-9 weekly alert governance (non-gate)

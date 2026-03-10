@@ -7,7 +7,8 @@ export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
 
 TS="$(date +%Y%m%d-%H%M%S)"
 OUT_DIR="${OUT_DIR:-$ROOT/run/health}"
-OUT="$OUT_DIR/consensus-fault-matrix-$TS.txt"
+OUT="${CONSENSUS_FAULT_MATRIX_OUT:-$OUT_DIR/consensus-fault-matrix-$TS.txt}"
+OUT_DIR="$(dirname "$OUT")"
 mkdir -p "$OUT_DIR"
 
 # Global defaults (can be overridden per-case below).
