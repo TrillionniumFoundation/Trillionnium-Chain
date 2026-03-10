@@ -1267,6 +1267,14 @@ impl StateStore {
             return cached;
         }
 
+        let mut cache_guard = self
+            .state_root_cache
+            .write()
+            .expect("state root cache poisoned");
+        if let Some(cached) = cache_guard.clone() {
+            return cached;
+        }
+
         let mut hasher = Sha256::new();
         for (id, v) in &self.objects {
             hasher.update(id.to_le_bytes());
@@ -1417,10 +1425,7 @@ impl StateStore {
         hasher.update(self.monetary_state.total_burned.to_le_bytes());
         hasher.update(self.monetary_state.net_issuance.to_le_bytes());
         let root: Hash32 = hasher.finalize().into();
-        *self
-            .state_root_cache
-            .write()
-            .expect("state root cache poisoned") = Some(root.clone());
+        *cache_guard = Some(root.clone());
         root
     }
 }
@@ -2624,7 +2629,11 @@ mod tests {
         .expect("initial unchecked resolve_authority write should succeed");
 
         let err = st
-            .set_gov_param_unchecked(9001, "resolve_authority".into(), "resolver-v3,resolver-v4".into())
+            .set_gov_param_unchecked(
+                9001,
+                "resolve_authority".into(),
+                "resolver-v3,resolver-v4".into(),
+            )
             .expect_err("unchecked key-id shadowing for resolve_authority must be rejected");
         assert!(
             err.contains("governance key id mismatch for resolve_authority"),

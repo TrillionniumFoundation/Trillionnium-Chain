@@ -1772,10 +1772,11 @@ struct TxRollbackSnapshot {
 }
 
 fn balance_snapshot(st: &StateStore, address: &str) -> Option<u128> {
-    if st.balance_of(address) == 0 {
+    let balance = st.balance_of(address);
+    if balance == 0 {
         None
     } else {
-        Some(st.balance_of(address))
+        Some(balance)
     }
 }
 
