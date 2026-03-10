@@ -96,6 +96,11 @@ jobs:
           set -euo pipefail
           ./scripts/v2/trnm_merge_gates_deterministic_env_guard_test.sh
 
+      - name: Testnet preflight deterministic env guard drift check (hard gate)
+        run: |
+          set -euo pipefail
+          ./scripts/v2/rust_l1_testnet_preflight_deterministic_env_guard_test.sh
+
       - name: PoUW proof-binding fail-closed gate (hard gate)
         run: |
           set -euo pipefail
