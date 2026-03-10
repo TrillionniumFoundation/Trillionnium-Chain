@@ -63,6 +63,19 @@ pub struct LaneAdmissionGate {
     normal_has_dedicated_capacity: bool,
 }
 impl LaneAdmissionGate {
+    fn maybe_warm_normal_fairness(&mut self, normal_was_empty: bool, out: AdmitOutcome) {
+        if self.normal_has_dedicated_capacity
+            && matches!(out, AdmitOutcome::Accepted)
+            && normal_was_empty
+            && !self.normal.queue.is_empty()
+            && !self.critical.queue.is_empty()
+        {
+            // Centralize the dual-backlog warmup contract so normal-arrival and
+            // critical-spillover paths refill fairness identically.
+            self.critical_served_streak = self.critical_burst_limit;
+        }
+    }
+
     pub fn new(total_capacity: usize, critical_reserve: usize) -> Self {
         // Preserve explicit zero-capacity semantics so callers can hard-stop
         // ingress without accidentally admitting one tx.
@@ -192,8 +205,7 @@ impl LaneAdmissionGate {
                     .len()
                     .saturating_add(self.critical.seen.len());
                 if lane_local_seen_total != lane_total
-                    && (self.normal.queue.contains(&tx_id)
-                        || self.critical.queue.contains(&tx_id))
+                    && (self.normal.queue.contains(&tx_id) || self.critical.queue.contains(&tx_id))
                 {
                     is_duplicate = true;
                     self.seen_global.insert(tx_id);
@@ -247,17 +259,7 @@ impl LaneAdmissionGate {
                     primary
                 };
 
-                if self.normal_has_dedicated_capacity
-                    && matches!(out, AdmitOutcome::Accepted)
-                    && normal_was_empty
-                    && !self.normal.queue.is_empty()
-                    && !self.critical.queue.is_empty()
-                {
-                    // Anti-starvation: when normal backlog appears during an active
-                    // critical flood, warm fairness so normal gets a turn after at
-                    // most one additional critical dequeue.
-                    self.critical_served_streak = self.critical_burst_limit;
-                }
+                self.maybe_warm_normal_fairness(normal_was_empty, out);
 
                 out
             }
@@ -274,17 +276,7 @@ impl LaneAdmissionGate {
                     primary
                 };
 
-                if self.normal_has_dedicated_capacity
-                    && matches!(out, AdmitOutcome::Accepted)
-                    && normal_was_empty
-                    && !self.normal.queue.is_empty()
-                    && !self.critical.queue.is_empty()
-                {
-                    // Mirror fairness warmup for critical spillover into the normal
-                    // lane: once overflow traffic appears there under active critical
-                    // pressure, grant a normal-lane turn within one dequeue.
-                    self.critical_served_streak = self.critical_burst_limit;
-                }
+                self.maybe_warm_normal_fairness(normal_was_empty, out);
 
                 out
             }
@@ -419,7 +411,10 @@ mod tests {
 
         // Critical reserved slot is full, but total capacity still has one slot.
         assert_eq!(g.admit(4, IngressClass::Critical), AdmitOutcome::Accepted);
-        assert_eq!(g.admit(5, IngressClass::Critical), AdmitOutcome::Backpressured);
+        assert_eq!(
+            g.admit(5, IngressClass::Critical),
+            AdmitOutcome::Backpressured
+        );
     }
 
     #[test]
@@ -427,7 +422,10 @@ mod tests {
         let mut g = LaneAdmissionGate::new(1, 1);
 
         assert_eq!(g.admit(100, IngressClass::Critical), AdmitOutcome::Accepted);
-        assert_eq!(g.admit(101, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(
+            g.admit(101, IngressClass::Normal),
+            AdmitOutcome::Backpressured
+        );
 
         assert_eq!(g.pop_ready(), Some(100));
         assert_eq!(g.admit(101, IngressClass::Normal), AdmitOutcome::Accepted);
@@ -439,7 +437,10 @@ mod tests {
 
         assert_eq!(g.admit(1, IngressClass::Critical), AdmitOutcome::Accepted);
         assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
-        assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(
+            g.admit(3, IngressClass::Normal),
+            AdmitOutcome::Backpressured
+        );
     }
 
     #[test]
@@ -460,7 +461,10 @@ mod tests {
 
         // With critical backlog active and no surplus headroom left, further normal
         // spillover is blocked.
-        assert_eq!(g.admit(6, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(
+            g.admit(6, IngressClass::Normal),
+            AdmitOutcome::Backpressured
+        );
     }
 
     #[test]
@@ -476,7 +480,10 @@ mod tests {
         assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
 
         // Once borrowed, fresh critical ingress should backpressure until dequeue.
-        assert_eq!(g.admit(99, IngressClass::Critical), AdmitOutcome::Backpressured);
+        assert_eq!(
+            g.admit(99, IngressClass::Critical),
+            AdmitOutcome::Backpressured
+        );
     }
 
     #[test]
@@ -484,7 +491,10 @@ mod tests {
         let mut g = LaneAdmissionGate::new(1, 1);
 
         assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
-        assert_eq!(g.admit(2, IngressClass::Critical), AdmitOutcome::Backpressured);
+        assert_eq!(
+            g.admit(2, IngressClass::Critical),
+            AdmitOutcome::Backpressured
+        );
         assert_eq!(g.pop_ready(), Some(1));
     }
 
@@ -497,7 +507,10 @@ mod tests {
         // free-ingress throughput live while total capacity has room.
         assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
         assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
-        assert_eq!(g.admit(4, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(
+            g.admit(4, IngressClass::Normal),
+            AdmitOutcome::Backpressured
+        );
     }
 
     #[test]
@@ -527,7 +540,10 @@ mod tests {
         // headroom until global capacity is fully consumed.
         assert_eq!(g.admit(102, IngressClass::Critical), AdmitOutcome::Accepted);
         assert_eq!(g.admit(103, IngressClass::Critical), AdmitOutcome::Accepted);
-        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(
+            g.admit(1, IngressClass::Normal),
+            AdmitOutcome::Backpressured
+        );
     }
 
     #[test]
@@ -573,7 +589,6 @@ mod tests {
         assert_eq!(g.pop_ready(), Some(11));
     }
 
-
     #[test]
     fn ghost_lane_seen_entry_does_not_misclassify_fresh_ingress_as_duplicate() {
         let mut g = LaneAdmissionGate::new(3, 1);
@@ -609,7 +624,10 @@ mod tests {
         assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
         assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
         assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
-        assert_eq!(g.admit(4, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(
+            g.admit(4, IngressClass::Normal),
+            AdmitOutcome::Backpressured
+        );
 
         // With zero reserve configured, critical ingress still has a path via
         // spillover into free normal capacity once pressure clears.
@@ -650,7 +668,10 @@ mod tests {
 
         // tx 3 is backpressured at global capacity; this must not poison global
         // idempotency tracking.
-        assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(
+            g.admit(3, IngressClass::Normal),
+            AdmitOutcome::Backpressured
+        );
 
         // Once a slot is freed, tx 3 should admit cleanly (not duplicate).
         assert_eq!(g.pop_ready(), Some(2));
@@ -667,7 +688,10 @@ mod tests {
 
         // Global capacity backpressures fresh critical ingress and must not poison
         // cross-class idempotency for the same tx id.
-        assert_eq!(g.admit(30, IngressClass::Critical), AdmitOutcome::Backpressured);
+        assert_eq!(
+            g.admit(30, IngressClass::Critical),
+            AdmitOutcome::Backpressured
+        );
 
         // Drain one critical and one normal so normal class has explicit headroom.
         assert_eq!(g.pop_ready(), Some(20));
@@ -810,9 +834,18 @@ mod tests {
     fn zero_total_capacity_lane_gate_backpressures_all_ingress_without_poisoning_seen_ids() {
         let mut g = LaneAdmissionGate::new(0, 0);
 
-        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Backpressured);
-        assert_eq!(g.admit(1, IngressClass::Critical), AdmitOutcome::Backpressured);
-        assert_eq!(g.admit(2, IngressClass::Critical), AdmitOutcome::Backpressured);
+        assert_eq!(
+            g.admit(1, IngressClass::Normal),
+            AdmitOutcome::Backpressured
+        );
+        assert_eq!(
+            g.admit(1, IngressClass::Critical),
+            AdmitOutcome::Backpressured
+        );
+        assert_eq!(
+            g.admit(2, IngressClass::Critical),
+            AdmitOutcome::Backpressured
+        );
         assert_eq!(g.pop_ready(), None);
     }
 
@@ -823,7 +856,10 @@ mod tests {
         assert_eq!(g.admit(9, IngressClass::Critical), AdmitOutcome::Accepted);
         // Full-queue fast path must still preserve duplicate semantics.
         assert_eq!(g.admit(9, IngressClass::Normal), AdmitOutcome::Duplicate);
-        assert_eq!(g.admit(10, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(
+            g.admit(10, IngressClass::Normal),
+            AdmitOutcome::Backpressured
+        );
     }
 
     #[test]
@@ -839,7 +875,10 @@ mod tests {
 
         // Duplicate must still be detected under saturated fast-path.
         assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Duplicate);
-        assert_eq!(g.admit(3, IngressClass::Critical), AdmitOutcome::Backpressured);
+        assert_eq!(
+            g.admit(3, IngressClass::Critical),
+            AdmitOutcome::Backpressured
+        );
     }
 
     #[test]
@@ -856,7 +895,10 @@ mod tests {
         assert_eq!(g.seen_global.len(), 2);
 
         // Fresh ingress matching the ghost id must not be misclassified as duplicate.
-        assert_eq!(g.admit(99, IngressClass::Critical), AdmitOutcome::Backpressured);
+        assert_eq!(
+            g.admit(99, IngressClass::Critical),
+            AdmitOutcome::Backpressured
+        );
 
         // After the self-heal rebuild, the real queued id is deduped again.
         assert_eq!(g.admit(20, IngressClass::Critical), AdmitOutcome::Duplicate);
@@ -900,7 +942,10 @@ mod tests {
         assert_eq!(g.seen_global.len(), 4);
 
         // Backpressured ids must not inflate the queued count invariant.
-        assert_eq!(g.admit(99, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(
+            g.admit(99, IngressClass::Normal),
+            AdmitOutcome::Backpressured
+        );
         assert_eq!(g.seen_global.len(), 4);
 
         let (_, _, total) = g.queued_counts();
@@ -931,7 +976,10 @@ mod tests {
 
         // Fresh ids still admit until global capacity is reached.
         assert_eq!(g.admit(4, IngressClass::Critical), AdmitOutcome::Accepted);
-        assert_eq!(g.admit(5, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(
+            g.admit(5, IngressClass::Normal),
+            AdmitOutcome::Backpressured
+        );
 
         let (_, _, total) = g.queued_counts();
         assert_eq!(g.seen_global.len(), total);
@@ -952,7 +1000,10 @@ mod tests {
         assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
 
         // Queue is now globally full; ghost id must not appear as a duplicate.
-        assert_eq!(g.admit(999, IngressClass::Critical), AdmitOutcome::Backpressured);
+        assert_eq!(
+            g.admit(999, IngressClass::Critical),
+            AdmitOutcome::Backpressured
+        );
 
         // After one dequeue, the same id should admit as fresh.
         let drained = g.pop_ready();
@@ -996,7 +1047,10 @@ mod tests {
         // With queues saturated, fresh ids must remain backpressured (not duplicate)
         // even while duplicate semantics for queued ids still hold.
         assert_eq!(g.admit(10, IngressClass::Normal), AdmitOutcome::Duplicate);
-        assert_eq!(g.admit(999, IngressClass::Critical), AdmitOutcome::Backpressured);
+        assert_eq!(
+            g.admit(999, IngressClass::Critical),
+            AdmitOutcome::Backpressured
+        );
 
         // After one dequeue, the previously fresh id can admit cleanly.
         assert!(matches!(g.pop_ready(), Some(10) | Some(11)));
@@ -1091,6 +1145,9 @@ mod tests {
         g.normal.seen.insert(42);
 
         assert_eq!(g.admit(42, IngressClass::Normal), AdmitOutcome::Duplicate);
-        assert_eq!(g.admit(7, IngressClass::Critical), AdmitOutcome::Backpressured);
+        assert_eq!(
+            g.admit(7, IngressClass::Critical),
+            AdmitOutcome::Backpressured
+        );
     }
 }
