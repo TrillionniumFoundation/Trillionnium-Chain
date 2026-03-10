@@ -7399,6 +7399,50 @@ mod tests {
     }
 
     #[test]
+    fn resolve_rejects_non_ascii_separator_in_authority_set_without_escrow_mutation() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        set_resolve_authority(&mut st, "authority-a，authority-b");
+
+        let r1 = apply_create_task(&mut st, 8_962_1, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(8_962_1, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+        let r5 =
+            apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
+        let pending_task_id = r5.id;
+
+        let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+        let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+        let err = apply_resolve(
+            &mut st,
+            r5,
+            true,
+            "authority-a".into(),
+            "authority-a".into(),
+        )
+        .expect_err(
+            "non-ASCII separator must be rejected so resolver sets cannot degrade into ambiguous single-signer authority",
+        );
+        assert!(matches!(err, PouwError::Unauthorized));
+
+        let task = st.get_task(8_962_1).unwrap();
+        assert_eq!(task.status, TaskStatus::Challenged);
+        assert_eq!(task.challenge_bond_forfeited, None);
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
+        assert_eq!(st.balance_of("challenger"), 90);
+        assert_eq!(st.pending_resolve_approval(pending_task_id), None);
+    }
+
+    #[test]
     fn resolve_rejects_control_char_authority_member_without_escrow_mutation() {
         // Canonical signer hardening: invisible control bytes must never be
         // accepted as authority members.
