@@ -33,6 +33,17 @@ const DEMO_BACKEND_ID: &str = "ark-groth16-bn254-demo";
 const DEMO_BACKEND_FIELD: &str = "backend";
 const DEMO_PROOF_FIELD: &str = "proof";
 
+fn expected_zk_system_for_backend(backend_id: &str) -> Option<&'static str> {
+    let normalized = backend_id.trim().to_ascii_lowercase();
+    if normalized.is_empty() {
+        return None;
+    }
+    if normalized == DEMO_BACKEND_ID || normalized.starts_with("mock-zk") {
+        return Some("groth16");
+    }
+    None
+}
+
 #[cfg(feature = "real-zk-backend")]
 #[derive(Clone)]
 struct DemoSquareCircuit {
@@ -417,6 +428,31 @@ impl ZkVerifier {
                     reason: "invalid zk payload: backend_id is required when zk_explicit_backend_required is enabled".to_string(),
                 }
                 .into());
+            }
+
+            if let (Some(backend_id), Some(zk_system)) = (
+                payload
+                    .backend_id
+                    .as_deref()
+                    .map(str::trim)
+                    .filter(|raw| !raw.is_empty()),
+                payload
+                    .zk_system
+                    .as_deref()
+                    .map(str::trim)
+                    .filter(|raw| !raw.is_empty()),
+            ) {
+                if let Some(expected_system) = expected_zk_system_for_backend(backend_id) {
+                    if !zk_system.eq_ignore_ascii_case(expected_system) {
+                        return Err(BackendExecutionError::MalformedProof {
+                            backend: format!("zk:{backend_id}"),
+                            reason: format!(
+                                "invalid zk payload: backend_id '{backend_id}' requires zk_system '{expected_system}', got '{zk_system}'"
+                            ),
+                        }
+                        .into());
+                    }
+                }
             }
 
             Some(payload)
