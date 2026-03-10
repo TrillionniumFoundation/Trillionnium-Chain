@@ -392,6 +392,15 @@ fn preflight_timeout_transfers(
     Ok(())
 }
 
+fn preflight_terminal_worker_settlement(
+    st: &StateStore,
+    task: &TaskObject,
+) -> Result<(), PouwError> {
+    let mut sim = st.clone();
+    settle_worker_stake_for_terminal_state(&mut sim, task)?;
+    Ok(())
+}
+
 fn compute_commitment(
     task_id: u64,
     result_hash: &Hash32,
@@ -767,10 +776,16 @@ pub fn apply_reveal_result_at_height(
                 task.challenge_deadline_height = None;
                 task.resolve_deadline_height = None;
 
-                // Settle payment immediately.
+                preflight_terminal_worker_settlement(st, &task)?;
+
+                let next_ref = st.update_task(task_ref, task.clone()).map_err(map_state_err)?;
+
+                // Settle payment immediately after the terminal state write, matching
+                // the ordering used by other terminal paths while keeping the path
+                // atomic via the preflight simulation above.
                 settle_worker_stake_for_terminal_state(st, &task)?;
 
-                return st.update_task(task_ref, task).map_err(map_state_err);
+                return Ok(next_ref);
             }
             VerificationResult::Invalid(reason) => {
                 // Return error to reject the transaction, allowing retry with correct proof
@@ -12406,6 +12421,40 @@ mod tests {
         assert_eq!(task.status, TaskStatus::Revealed);
         assert_eq!(st.balance_of("challenger"), 100);
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), u128::MAX - 5);
+    }
+
+    #[test]
+    fn verifiable_reveal_preflight_overflow_rejects_without_status_or_balance_mutation() {
+        let mut st = seeded_state();
+
+        let r1 = apply_create_task(&mut st, 99515, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(99515, &result_hash, &reveal_salt, "worker1");
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let locked_before = st.balance_of(&worker_stake_lock_account(99515));
+        st.set_balance("worker1", u128::MAX - 5);
+        let mut tee_task = st.get_task(r2.id).unwrap();
+        tee_task.status = TaskStatus::Committed;
+        tee_task.proof_type = ProofType::Tee;
+        tee_task.committed_hash = Some(committed);
+        let r3 = st.update_task(r2, tee_task).unwrap();
+
+        let proof = format!(
+            "TEE:task_id=99515,worker=worker1,proof_type=tee,result_hash={},quote=QUOTE_OK",
+            hex::encode(result_hash)
+        )
+        .into_bytes();
+        let err = apply_reveal_result(&mut st, r3.clone(), result_hash, reveal_salt, Some(proof))
+            .unwrap_err();
+        assert!(matches!(err, PouwError::State(_)));
+
+        let task = st.get_task(99515).unwrap();
+        assert_eq!(task.status, TaskStatus::Committed);
+        assert_eq!(task.result_hash, None);
+        assert_eq!(task.reveal_salt, None);
+        assert_eq!(st.balance_of("worker1"), u128::MAX - 5);
+        assert_eq!(st.balance_of(&worker_stake_lock_account(99515)), locked_before);
     }
 
     #[test]
