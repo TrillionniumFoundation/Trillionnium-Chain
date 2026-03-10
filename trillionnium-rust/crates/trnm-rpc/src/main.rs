@@ -7,7 +7,7 @@ use std::{
     fs::{self, OpenOptions},
     hash::{Hash, Hasher},
     io::{Read, Seek, SeekFrom, Write},
-    net::TcpListener,
+    net::{TcpListener, TcpStream},
     path::{Path, PathBuf},
     time::{Duration, Instant, SystemTime, UNIX_EPOCH},
 };
@@ -58,6 +58,9 @@ const MARKET_LOCK_TIMEOUT_MS_MIN: u64 = 100;
 const MARKET_LOCK_TIMEOUT_MS_MAX: u64 = 60_000;
 const SUBMIT_MESSAGE_MAX_BYTES_ENV: &str = "TRNM_RPC_SUBMIT_MESSAGE_MAX_BYTES";
 const SUBMIT_MESSAGE_MAX_BYTES_DEFAULT: u64 = 256 * 1024;
+const HEALTH_SOCKET_READ_TIMEOUT_MS: u64 = 2_000;
+const HEALTH_SOCKET_WRITE_TIMEOUT_MS: u64 = 2_000;
+const HEALTH_REQUEST_HEADER_MAX_BYTES: usize = 4 * 1024;
 const SUBMIT_MESSAGE_MAX_BYTES_MIN: u64 = 1;
 
 #[derive(Debug, Parser)]
@@ -1997,6 +2000,34 @@ fn http_json_response(status_line: &str, body: &str) -> String {
     )
 }
 
+fn configure_health_stream(stream: &TcpStream) -> std::io::Result<()> {
+    stream.set_read_timeout(Some(Duration::from_millis(HEALTH_SOCKET_READ_TIMEOUT_MS)))?;
+    stream.set_write_timeout(Some(Duration::from_millis(HEALTH_SOCKET_WRITE_TIMEOUT_MS)))?;
+    Ok(())
+}
+
+fn read_http_request_head(stream: &mut TcpStream) -> std::io::Result<Vec<u8>> {
+    let mut buf = Vec::with_capacity(512);
+    let mut chunk = [0u8; 512];
+
+    while buf.len() < HEALTH_REQUEST_HEADER_MAX_BYTES {
+        let remaining = HEALTH_REQUEST_HEADER_MAX_BYTES - buf.len();
+        let to_read = remaining.min(chunk.len());
+        let n = stream.read(&mut chunk[..to_read])?;
+        if n == 0 {
+            break;
+        }
+        buf.extend_from_slice(&chunk[..n]);
+        if buf.windows(4).any(|window| window == b"\r\n\r\n")
+            || buf.windows(2).any(|window| window == b"\n\n")
+        {
+            break;
+        }
+    }
+
+    Ok(buf)
+}
+
 fn parse_http_get_path(first_line: &str) -> Option<&str> {
     let line = first_line.trim_end_matches(['\r', '\n']);
     if line.is_empty() || line.chars().any(|ch| ch.is_control() && ch != '\t') {
@@ -2081,10 +2112,23 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
             Ok(s) => s,
             Err(_) => continue,
         };
+        if configure_health_stream(&stream).is_err() {
+            continue;
+        }
 
-        let mut buf = [0u8; 4096];
-        let n = stream.read(&mut buf).unwrap_or(0);
-        let req = String::from_utf8_lossy(&buf[..n]);
+        let req = match read_http_request_head(&mut stream) {
+            Ok(req) => req,
+            Err(err)
+                if matches!(
+                    err.kind(),
+                    std::io::ErrorKind::TimedOut | std::io::ErrorKind::WouldBlock
+                ) =>
+            {
+                continue;
+            }
+            Err(_) => continue,
+        };
+        let req = String::from_utf8_lossy(&req);
         let first = req.lines().next().unwrap_or("");
         let path = parse_http_get_path(first);
 
@@ -3417,6 +3461,35 @@ mod tests {
         assert_eq!(parse_http_get_path("GET /health"), None);
         assert_eq!(parse_http_get_path("GET health HTTP/1.1"), None);
         assert_eq!(parse_http_get_path("GET /health\u{0001} HTTP/1.1"), None);
+    }
+
+    #[test]
+    fn read_http_request_head_times_out_on_partial_slowloris_client() {
+        use std::net::{Shutdown, TcpListener, TcpStream};
+        use std::thread;
+
+        let listener = TcpListener::bind("127.0.0.1:0").expect("bind test listener");
+        let addr = listener.local_addr().expect("listener addr");
+
+        let client = thread::spawn(move || {
+            let mut client = TcpStream::connect(addr).expect("connect test listener");
+            client
+                .write_all(b"GET /health HTTP/1.1")
+                .expect("write partial request");
+            thread::sleep(Duration::from_millis(HEALTH_SOCKET_READ_TIMEOUT_MS + 250));
+            let _ = client.shutdown(Shutdown::Both);
+        });
+
+        let (mut server_stream, _) = listener.accept().expect("accept test client");
+        configure_health_stream(&server_stream).expect("configure timeouts");
+        let err =
+            read_http_request_head(&mut server_stream).expect_err("partial request must time out");
+        assert!(matches!(
+            err.kind(),
+            std::io::ErrorKind::TimedOut | std::io::ErrorKind::WouldBlock
+        ));
+
+        client.join().expect("client thread join");
     }
 
     #[test]
