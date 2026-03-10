@@ -149,23 +149,29 @@ impl LaneAdmissionGate {
         // aligned while replacing one queued id with a ghost id in seen_global. In
         // that case, trust lane-local seen sets and repair lane-wide cache inline.
         let mut is_duplicate = self.seen_global.contains(&tx_id);
-        if is_duplicate
-            && !self.normal.queue.contains(&tx_id)
-            && !self.critical.queue.contains(&tx_id)
-        {
-            // Defensive self-heal: restored-state skew can preserve cardinality while
-            // leaving stale ids in lane-wide/lane-local caches. Verify against queue
-            // truth and rebuild so fresh ingress is not misclassified as duplicate.
-            self.normal.seen.clear();
-            self.normal.seen.extend(self.normal.queue.iter().copied());
-            self.critical.seen.clear();
-            self.critical
-                .seen
-                .extend(self.critical.queue.iter().copied());
-            self.seen_global.clear();
-            self.seen_global.extend(self.normal.queue.iter().copied());
-            self.seen_global.extend(self.critical.queue.iter().copied());
-            is_duplicate = self.seen_global.contains(&tx_id);
+        if is_duplicate {
+            // Fast duplicate confirmation from lane-local id sets avoids queue scans
+            // on the common path where caches are aligned.
+            let lane_local_contains =
+                self.normal.seen.contains(&tx_id) || self.critical.seen.contains(&tx_id);
+            if !lane_local_contains
+                && !self.normal.queue.contains(&tx_id)
+                && !self.critical.queue.contains(&tx_id)
+            {
+                // Defensive self-heal: restored-state skew can preserve cardinality while
+                // leaving stale ids in lane-wide/lane-local caches. Verify against queue
+                // truth and rebuild so fresh ingress is not misclassified as duplicate.
+                self.normal.seen.clear();
+                self.normal.seen.extend(self.normal.queue.iter().copied());
+                self.critical.seen.clear();
+                self.critical
+                    .seen
+                    .extend(self.critical.queue.iter().copied());
+                self.seen_global.clear();
+                self.seen_global.extend(self.normal.queue.iter().copied());
+                self.seen_global.extend(self.critical.queue.iter().copied());
+                is_duplicate = self.seen_global.contains(&tx_id);
+            }
         }
 
         if !is_duplicate {
