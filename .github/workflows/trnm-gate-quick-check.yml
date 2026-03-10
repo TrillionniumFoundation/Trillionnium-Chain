@@ -107,8 +107,10 @@ jobs:
               sleep 2
             done
           }
-          retry 3 sudo apt-get -o DPkg::Lock::Timeout=60 -o Acquire::Retries=3 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 -o Dpkg::Use-Pty=0 -o APT::Color=0 update
-          retry 3 sudo apt-get -o DPkg::Lock::Timeout=60 -o Acquire::Retries=3 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 -o Dpkg::Use-Pty=0 -o APT::Color=0 install -y --no-install-recommends shellcheck
+          # Keep network-level retries slightly higher than outer retry loop to
+          # absorb transient mirror hiccups without changing gate semantics.
+          retry 3 sudo apt-get -o DPkg::Lock::Timeout=60 -o Acquire::Retries=5 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 -o Dpkg::Use-Pty=0 -o APT::Color=0 update
+          retry 3 sudo apt-get -o DPkg::Lock::Timeout=60 -o Acquire::Retries=5 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 -o Dpkg::Use-Pty=0 -o APT::Color=0 install -y --no-install-recommends shellcheck
 
       - name: Quick shell gate (bash -n + shellcheck)
         run: |
