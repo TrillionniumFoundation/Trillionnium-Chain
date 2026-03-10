@@ -13,6 +13,8 @@ export CARGO_TERM_COLOR="${CARGO_TERM_COLOR:-never}"
 export RUST_LOG_STYLE="${RUST_LOG_STYLE:-never}"
 # avoid host-specific incremental cache effects in flaky CI checks
 export CARGO_INCREMENTAL="${CARGO_INCREMENTAL:-0}"
+# keep scheduling deterministic across host/CI core-count differences
+export RUST_TEST_THREADS="${RUST_TEST_THREADS:-1}"
 # keep any Python-backed helper output (if invoked transitively) hash-stable
 export PYTHONHASHSEED="${PYTHONHASHSEED:-0}"
 # keep panic output stable across local/CI runs for replay diffing
@@ -72,6 +74,7 @@ export NO_COLOR="${NO_COLOR:-1}"
 export CARGO_TERM_COLOR="${CARGO_TERM_COLOR:-never}"
 export RUST_LOG_STYLE="${RUST_LOG_STYLE:-never}"
 export CARGO_INCREMENTAL="${CARGO_INCREMENTAL:-0}"
+export RUST_TEST_THREADS="${RUST_TEST_THREADS:-1}"
 export PYTHONHASHSEED="${PYTHONHASHSEED:-0}"
 export RUST_BACKTRACE="${RUST_BACKTRACE:-0}"
 export SOURCE_DATE_EPOCH="${SOURCE_DATE_EPOCH:-1704067200}"
