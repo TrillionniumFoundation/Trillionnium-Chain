@@ -4726,6 +4726,7 @@ fn main() -> Result<()> {
             );
         }
 
+        let mut last_state_root_hex: Option<String> = None;
         for id in ordering_decision.ordered_ids {
             let idx = (id - 1) as usize;
             let tx = picked[idx].clone();
@@ -4751,6 +4752,7 @@ fn main() -> Result<()> {
                     known_task_ids.insert(task_id);
                     let to_status = status_name(&state, task_id);
                     let root = hex::encode(state.state_root());
+                    last_state_root_hex = Some(root.clone());
                     let challenger_account: Option<String> = match &tx {
                         MockTx::Challenge { challenger, .. } => Some(challenger.clone()),
                         MockTx::Resolve { .. } => {
@@ -4802,6 +4804,7 @@ fn main() -> Result<()> {
                 known_task_ids.insert(task_id);
                 let to_status = status_name(&state, task_id);
                 let root = hex::encode(state.state_root());
+                last_state_root_hex = Some(root.clone());
                 let challenger_account: Option<String> = match &tx {
                     MockTx::Challenge { challenger, .. } => Some(challenger.clone()),
                     MockTx::Resolve { .. } => {
@@ -4834,6 +4837,7 @@ fn main() -> Result<()> {
             let migrated = scan_and_apply_timeouts(&mut state, &known_task_ids, height, 9_000_000);
             timeout_migrated_total += migrated;
             if migrated > 0 {
+                last_state_root_hex = None;
                 println!(
                     "[timeout] height={} migrated={} cumulative_migrated={}",
                     height, migrated, timeout_migrated_total
@@ -4841,7 +4845,9 @@ fn main() -> Result<()> {
             }
         }
 
-        let root = hex::encode(state.state_root());
+        let root = last_state_root_hex
+            .clone()
+            .unwrap_or_else(|| hex::encode(state.state_root()));
         let elapsed_ms = block_start.elapsed().as_millis();
         finality_samples_ms.push(elapsed_ms);
         println!(
