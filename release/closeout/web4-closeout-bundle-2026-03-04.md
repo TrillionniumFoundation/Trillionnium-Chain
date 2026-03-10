@@ -1,12 +1,15 @@
 # Web4 Release Closeout Bundle (2026-03-04)
 
+> 历史证据说明：本文仅记录 **2026-03-04 当次 Web4 closeout**；它不是当前仓库的 release truth-source。
+> 当前是否 release-ready，请看仓库根 `RELEASE_READINESS.md`；当前仓库入口请看 `README.md`。
+
 ## Fixed SHAs
 - Branch: `merge/web4-integration-2026-03-02`
-- Head SHA: `c7a7dd51`
-- RPC hardening patch SHA: `c7a7dd51`
+- Head SHA: `c7a7dd51a79604655fc88b3af5f4b6e7f3d4e0ba`
+- RPC hardening patch SHA: `c7a7dd51a79604655fc88b3af5f4b6e7f3d4e0ba`
 - Baseline frontend A/B reference SHAs in history:
-  - `9dc71e72` (A attempt, later reverted by `d478b447`)
-  - `a24b68b4` (B semantic mapping hardening)
+  - `9dc71e72e3b39c55ff8e7c7652e87db4f06b62b0` (A attempt, later reverted by `d478b447ae89a901a91dfb2bae5d8f3b3b04592a`)
+  - `a24b68b4be87a9d7bcc54d30eb08eeca5a499346` (B semantic mapping hardening)
 
 ## Patch status summary
 | Patch | Scope | Status | Notes |
@@ -51,9 +54,9 @@ Result:
 
 ## Rollback commands
 - Revert Patch C commit:
-  - `git revert c7a7dd51`
+  - `git revert c7a7dd51a79604655fc88b3af5f4b6e7f3d4e0ba`
 - Hard reset to pre-patch state (destructive, local only):
-  - `git reset --hard c7a7dd51^`
+  - `git reset --hard c7a7dd51a79604655fc88b3af5f4b6e7f3d4e0ba^`
 - Restore working tree without changing history:
   - `git restore trillionnium-rust/crates/trnm-rpc/src/main.rs`
 

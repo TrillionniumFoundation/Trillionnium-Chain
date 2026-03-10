@@ -1,0 +1,437 @@
+# TRNM 并发架构瓶颈图与 8 周技术路线图
+
+> 日期：2026-03-10  
+> 基线：当前仓库 `main` 快照 `0b209289`（截至本文收口时 `origin/main` 同步）  
+> 口径：本文是**并发 closeout / 8 周路线 truth-source**；当前是否 release-ready 仍以仓库根 `RELEASE_READINESS.md` 为准。  
+> 目的：
+> 1. 明确 TRNM 当前并发架构的真实瓶颈  
+> 2. 给出与 Solana / Sui 对标时最该优先追的工程方向  
+> 3. 形成未来 8 周可拆解、可验收、可回滚的技术路线图
+
+---
+
+## 0. 执行摘要
+
+> 入口约定：
+> - 当前发布/就绪真相源：`RELEASE_READINESS.md`
+> - 当前并发 closeout / 8 周路线：本文
+> - 当前对外 TRNM vs Solana vs Sui 对标口径：`docs/reports/TRNM_CONCURRENCY_COMPARISON_2026-03-05.md`
+
+TRNM 当前已经具备：
+
+- 对象级 `read_set / write_set` 冲突检测
+- 多策略并发分组（`Original / FootprintDesc / HotBucketInterleave / AutoAdaptive / AggressiveGreedy`）
+- lane-aware ingress / mempool（`Normal / Critical`）
+- pre-exec / commit / `state_root()` 热路径的一轮系统性减负
+- challenge / resolve / governance 路径上的多项 fail-closed 与原子性修复
+
+但若以“并发架构效率”对标 Solana / Sui，TRNM 当前仍处于：
+
+> **并发设计已成型，但状态执行后端仍未工业化。**
+
+更具体地说：
+
+- **调度器思路**已经是正经并发链问题空间；
+- **执行器热路径**已经不再是朴素串行；
+- **真正的上限**仍主要卡在：
+  - 状态复制成本
+  - 热点对象退化
+  - `state_root()`/事件记账重复成本
+  - 系统级 E2E 吞吐口径尚未闭环
+
+因此未来 8 周最合理的目标不是“空喊追平 Solana/Sui”，而是：
+
+1. 把 **TRNM 从高质量工程 alpha** 推到 **可量化 benchmark / closeout 的 pre-beta**；
+2. 把“并发架构是对的”推进到“并发收益可以稳定测出来、解释得出来、复现得出来”；
+3. 对外形成一套**不虚标、能自洽、可审查**的对标口径。
+
+---
+
+## 1. 当前并发架构的瓶颈图（Bottleneck Map）
+
+---
+
+### A. Ingress / Mempool 层
+
+#### 当前已具备
+- `LaneAdmissionGate`
+- `Normal / Critical` lane
+- reserve / spillover / anti-starvation 逻辑
+- duplicate / backpressure / self-heal
+
+#### 当前主要瓶颈
+1. **critical fairness 仍是逻辑敏感区**
+   - 虽然本轮已修 `pick_txs_with_critical_guard()` 的 full-backlog fairness，
+   - 但该区域仍然耦合：
+     - mempool lane reserve
+     - block picker
+     - node 侧出队顺序
+   - 后续任何微优化都可能再次打破 fairness 语义。
+
+2. **mempool 当前仍是“聪明队列”，不是“原生并发索引层”**
+   - lane-aware 是好事，
+   - 但还不是那种围绕 object hotness / conflict domain 原生组织的数据结构。
+
+#### 对 Solana/Sui 的差距
+- **比 Solana**：缺少端到端高吞吐 ingress pipeline（不仅是 gate，而是传播+预排队+执行联动）。
+- **比 Sui**：缺少更原生的 object/hot-object 入池与快慢路径分离。
+
+#### 优先级
+**P1**
+
+---
+
+### B. Scheduler / Grouping 层（`trnm-executor`）
+
+#### 当前已具备
+- 冲突检测基于 `read_set / write_set`
+- 多策略分组
+- profiling 指标（如 `candidate_groups_scanned`）
+- classic / mixed / hot-streak micro-bench
+
+#### 当前主要瓶颈
+1. **策略收益还不稳定**
+   - 目前不少策略在 bench 上是“接近持平”而不是“稳定显著领先”。
+   - 说明问题已经不再是“有没有策略”，而是：
+     - 策略是不是打中了真实瓶颈
+     - 或被下游状态执行成本吞掉了收益
+
+2. **调度器已经不再是唯一上限**
+   - 当前最明显的系统问题，不再只是分组策略本身；
+   - scheduler 改进很可能会被 clone / root / rollback 等成本抵消。
+
+#### 对 Solana/Sui 的差距
+- **比 Solana**：调度与 runtime/账户系统的联动深度远不够。
+- **比 Sui**：对象冲突抽象方向相近，但对象模型和存储层没有同等原生性。
+
+#### 优先级
+**P1-P2**
+
+---
+
+### C. Pre-exec 层（`trnm-node`）
+
+#### 当前已具备
+- pre-exec 并发路径
+- worker 复用池
+- 去掉多余 worker-base clone
+- 多组并发预执行
+
+#### 当前主要瓶颈
+1. **虽然 clone 已减，但 per-tx clone 仍在**
+   - 当前已经从“双层 clone”降到了更可接受状态，
+   - 但仍未进入真正低复制执行形态。
+
+2. **Pre-exec 仍然是“业务执行 + 状态快照”的复合成本**
+   - 不是纯 scheduler 时间。
+   - 一旦状态规模扩大，收益仍可能被快照成本吃掉。
+
+#### 对 Solana/Sui 的差距
+- **比 Solana**：缺少更成熟的 runtime / bank / lock / cache 联动。
+- **比 Sui**：对象级执行隔离还不够原生，仍依赖较厚的共享状态层。
+
+#### 优先级
+**P1**
+
+---
+
+### D. Commit / Rollback 层
+
+#### 当前已具备
+- 定向 rollback snapshot
+- 不再对每笔 tx 暴力 `state.clone()`
+- staged resolve 等特殊路径的语义保留
+
+#### 当前主要瓶颈
+1. **已经从“极重”降到“中等偏重”，但仍然不是零代价**
+2. **rollback 仍然是热点路径复杂度来源**
+   - 因为它直接耦合：
+     - task 对象
+     - balances
+     - pending resolve approval
+     - challenge / resolve 特殊语义
+
+#### 对 Solana/Sui 的差距
+- 两者都比 TRNM 更接近“执行后端天然支撑回滚/版本化”的范式；
+- TRNM 现在仍是在应用层认真优化，而不是底层系统层天然便宜。
+
+#### 优先级
+**P1**
+
+---
+
+### E. State / Root / Audit 层
+
+#### 当前已具备
+- `state_root_cache`
+- 块内 root 复用
+- `PendingResolveApproval.task_version` 纳入状态根
+
+#### 当前主要瓶颈
+1. **`state_root()` 依然是“单体状态根”语义**
+   - 虽然 cache 已经救了很多，
+   - 但根本形态仍不是：
+     - 增量 subtree root
+     - 原生 MVCC state root
+     - sharded object root
+
+2. **状态对象结构仍然偏“中心化聚合”**
+   - `objects`
+   - `balances`
+   - `pending_*`
+   - `monetary_state`
+   都挂在一个 `StateStore` 下。
+
+#### 对 Solana/Sui 的差距
+- **比 Solana**：缺少与执行/存储 tightly-coupled 的 state backend 优化。
+- **比 Sui**：缺少“对象版本 + 存储模型原生服务于并发”的优势。
+
+#### 优先级
+**P0-P1**
+
+---
+
+### F. RPC / Index / Query 层
+
+#### 当前已具备
+- SQLite TTL + quota
+- RPC timeout
+- authoritative vs recent-tail
+- log source 扩展
+
+#### 当前主要瓶颈
+1. **查询层仍偏“轻 index + 日志拼接”**
+   - 比之前可靠很多，
+   - 但还不是成熟的链上索引服务体系。
+
+2. **E2E 吞吐评估还没有统一对外口径**
+   - 这会直接限制对标 Solana/Sui 时的说服力。
+
+#### 优先级
+**P2**
+
+---
+
+## 2. 当前 TRNM 并发效率的现实判断
+
+### 2.1 我会怎么描述它
+
+TRNM 当前不是“高 TPS 公链的仿制品”，而是：
+
+> **面向 AI compute / task settlement 的对象冲突并发链雏形，已经跨过可运行门槛，但仍在把执行后端做便宜的阶段。**
+
+### 2.2 现阶段性能气质
+
+- **对低到中等冲突、任务相对独立的 workload**：
+  - 具备真实并发收益
+  - 比朴素串行链明显强
+
+- **对高热点 / 高共享状态压力**：
+  - scheduler 思路对，但退化仍会较早出现
+  - 下游状态/根计算/回滚会更快变成瓶颈
+
+### 2.3 对标结论
+- **比普通原型强**：是
+- **比大部分“只有 read/write set 概念”的学术原型更成熟**：是
+- **达到 Solana / Sui 生产级并发效率**：否
+
+---
+
+## 3. 与 Solana 的对标路线：差在哪
+
+### TRNM 当前与 Solana 相似之处
+- 都重视访问集/冲突集
+- 都不是纯串行执行
+- 都试图用调度来换吞吐
+
+### TRNM 当前落后 Solana 的关键点
+1. **没有 Sealevel 那种端到端工业级 runtime 路径**
+2. **没有同等级的网络传播/调度/执行/存储 pipeline 协同**
+3. **状态执行后端仍偏“应用层优化”，不是“系统层原生高吞吐”**
+
+### 结论
+如果今天直接比高压吞吐：
+
+> **TRNM 与 Solana 仍有明显代差。**
+
+但这个代差主要是：
+- 系统工程成熟度差
+- 而不是“是否理解并发问题”差
+
+---
+
+## 4. 与 Sui 的对标路线：差在哪
+
+### TRNM 当前与 Sui 相似之处
+- 更接近对象/任务冲突抽象
+- 并发语义上更像“对象级并行”而不是单纯账户锁
+
+### TRNM 当前落后 Sui 的关键点
+1. **对象模型还不够协议原生**
+   - 对象虽然存在，但状态仍更偏集中式 `StateStore`
+2. **共享热点路径仍然太容易回落到中心状态瓶颈**
+3. **对象版本/存储/执行的一体化程度不足**
+
+### 结论
+与 Sui 比：
+
+> **TRNM 在抽象方向上更接近，但在成熟度与对象原生并发性上仍明显落后。**
+
+---
+
+## 5. 未来 8 周技术路线图
+
+路线原则：
+- 不追求“一步追平 Solana/Sui”
+- 追求：**每 2 周都有可测收益、可回滚补丁、可复审数据**
+
+---
+
+### Week 1-2：并发口径冻结 + 基线仪表化
+
+#### 目标
+把“我们在优化什么”说清楚，并让 benchmark 对外可解释。
+
+#### 任务
+1. 建立统一指标面：
+   - `scheduler_elapsed_ms`
+   - `preexec_elapsed_ms`
+   - `commit_elapsed_ms`
+   - `state_root_total_ms`
+   - `rollback_count`
+   - `critical_wait_blocks_p50/p95/max`
+   - `group_count`
+   - `avg_group_size`
+   - `hot_object_share`
+
+2. 为 `trnm-node` 增加块级 profiling 输出（默认关）
+3. 建立 benchmark 报表模板：
+   - classic
+   - mixed
+   - hot-streak
+   - high-conflict hotspot
+4. 输出第一版 E2E 说明：
+   - micro-bench ≠ TPS
+   - 当前只承诺执行内核与块内路径指标
+
+#### 验收
+- `trnm-bench` + `trnm-node` 能输出统一 profiling JSON/文本
+- 新增一份 `run/bench/closeout-baseline-*.md`
+
+---
+
+### Week 3-4：状态后端降复制（第一阶段）
+
+#### 目标
+进一步降低 clone / rollback / root 计算成本。
+
+#### 任务
+1. 把 commit rollback 的片段化快照继续泛化：
+   - 不只 task / balances / pending resolve
+   - 明确“受影响片段”接口层
+2. 将 `state_root_cache` 从“单状态缓存”推进到“块内 dirty-aware cache”
+3. 对 `StateStore` 写路径建立统一 invalidate / restore 约束测试
+4. 建立 `state_root_total_ms_per_block` 回归门禁
+
+#### 验收
+- 高冲突 mixed / hot-streak 下，`state_root_total_ms` 显著下降
+- rollback 场景下总 wall time 下降，且语义测试全绿
+
+---
+
+### Week 5-6：热点对象降热点 / 快慢路径拆分
+
+#### 目标
+让 challenge / resolve / treasury / authority 等路径不那么容易拖垮整块并发度。
+
+#### 任务
+1. 梳理共享热点对象：
+   - challenge escrow
+   - forfeit treasury
+   - worker slash treasury
+   - resolve authority / pending approvals
+2. 给热点路径打 `hot_object` profiling
+3. 评估两类轻量改造：
+   - 对象拆分（更细粒度）
+   - 快慢路径拆分（非共享对象快走，共享路径慢走）
+4. 先做一项最小可回滚实验，不上默认
+
+#### 验收
+- 输出热点对象榜单
+- 至少一组 workload 下，group_count 不变但 wall time / hot contention 明显下降
+
+---
+
+### Week 7：E2E closeout 与对标口径落地
+
+#### 目标
+从“架构上看起来不错”推进到“对外能解释自己现在到哪一步”。
+
+#### 任务
+1. 建立第一版 E2E closeout 文档：
+   - 测试硬件
+   - 负载模型
+   - 指标定义
+   - 不可比项说明
+2. 对比 Solana / Sui 采用同类维度：
+   - 并发单元
+   - 热点退化机制
+   - scheduler 作用边界
+   - 状态后端特征
+3. 输出 TRNM 当前定位：
+   - 工程 alpha / pre-beta
+   - 不宣称 production parity
+
+#### 验收
+- 新增对外审阅版对照文档
+- `RELEASE_READINESS.md` 同步一条当前并发 closeout 结论
+
+---
+
+### Week 8：收口与路线决策
+
+#### 目标
+决定 TRNM 后续是：
+- 继续沿当前状态后端迭代，还是
+- 进入更深的对象化 / shard / MVCC 路线
+
+#### 任务
+1. 汇总 8 周数据：
+   - 哪些优化稳定有效
+   - 哪些只是局部 gain
+2. 做一次 owner review：
+   - 是否继续投入 scheduler 微优化
+   - 是否转向状态后端大改
+3. 冻结下一阶段技术主线
+
+#### 验收
+- 新增 `docs/reports/TRNM_CONCURRENCY_CLOSEOUT_2026-03-xx.md`
+- 明确下一阶段架构决策
+
+---
+
+## 6. 优先级清单（按收益/风险比）
+
+### P0
+1. `StateStore` 降复制 / rollback 泛化
+2. `state_root()` dirty-aware 降成本
+3. 统一块级 profiling 指标
+
+### P1
+4. 热点对象 profiling 与拆分实验
+5. 继续稳定 critical fairness / lane QoS closeout
+6. 建立 E2E closeout 口径
+
+### P2
+7. RPC / query / index 更强工程化
+8. 文档 / release truth-source 持续跟上主线
+
+---
+
+## 7. 最后一句
+
+TRNM 现在最需要的，不是再证明“自己懂并发”，而是：
+
+> **把并发收益从“代码里有设计”推进到“在统一指标下可稳定观测、可复现、可对标”。**
+
+只有做到这一步，和 Solana / Sui 的比较才会从“架构讨论”变成“工程事实”。
