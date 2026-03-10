@@ -26,5 +26,6 @@ cargo test -p trnm-pouw --lib registry_is_registered_kind_accepts_narrow_and_fig
 cargo test -p trnm-pouw --lib registry_is_registered_kind_accepts_ogham_space_mark_aliases
 cargo test -p trnm-pouw --lib registry_is_registered_kind_accepts_fullwidth_version_digits
 cargo test -p trnm-pouw --lib registry_is_registered_kind_accepts_multiline_whitespace_aliases
+cargo test -p trnm-pouw --lib verify_bound_envelope_rejects_duplicate_task_id_binding_fail_closed
 
 echo "[PASS] V1 proof registry contract gate"
