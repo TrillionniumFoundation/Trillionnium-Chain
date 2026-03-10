@@ -665,12 +665,16 @@ fn aggr_scan_round_robin_enabled() -> bool {
         .ok()
         .map(|v| {
             let trimmed = v.trim();
-            let s = trimmed
+            let unquoted = trimmed
                 .strip_prefix('"')
                 .and_then(|inner| inner.strip_suffix('"'))
-                .unwrap_or(trimmed)
-                .trim()
-                .to_ascii_lowercase();
+                .or_else(|| {
+                    trimmed
+                        .strip_prefix('\'')
+                        .and_then(|inner| inner.strip_suffix('\''))
+                })
+                .unwrap_or(trimmed);
+            let s = unquoted.trim().to_ascii_lowercase();
             !(s == "0" || s == "false" || s == "off" || s == "no")
         })
         .unwrap_or(true)
@@ -1630,6 +1634,18 @@ mod tests {
         drop(_off);
 
         let _on = EnvGuard::set("TRNM_AGGR_SCAN_ROUND_ROBIN", " \"on\" ");
+        assert!(aggr_scan_round_robin_enabled());
+    }
+
+    #[test]
+    fn aggressive_round_robin_toggle_parser_accepts_single_quoted_tokens() {
+        let _env = env_lock();
+
+        let _off = EnvGuard::set("TRNM_AGGR_SCAN_ROUND_ROBIN", " 'off' ");
+        assert!(!aggr_scan_round_robin_enabled());
+        drop(_off);
+
+        let _on = EnvGuard::set("TRNM_AGGR_SCAN_ROUND_ROBIN", " 'on' ");
         assert!(aggr_scan_round_robin_enabled());
     }
 
