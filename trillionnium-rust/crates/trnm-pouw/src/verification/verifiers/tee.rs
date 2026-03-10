@@ -1,9 +1,55 @@
+use std::sync::Arc;
+
 use crate::verification::{ProofVerifier, VerificationResult};
 use trnm_types::TaskObject;
 
 use super::verify_bound_envelope;
+use crate::verification::backend::{
+    BackendExecutionError, BackendVerificationRequest, VerificationBackendConfig,
+    VerificationBackendError, VerificationBackendFamily, ZkBackendKind, ZkBackendRegistry,
+};
 
-pub struct TeeVerifier;
+pub struct TeeVerifier {
+    backend: ZkBackendKind,
+    backends: Arc<ZkBackendRegistry>,
+}
+
+impl TeeVerifier {
+    pub fn new(backend: ZkBackendKind, backends: Arc<ZkBackendRegistry>) -> Self {
+        Self { backend, backends }
+    }
+
+    #[allow(dead_code)]
+    pub fn from_config(
+        config: &VerificationBackendConfig,
+        backends: Arc<ZkBackendRegistry>,
+    ) -> Self {
+        Self::new(config.tee_backend.clone(), backends)
+    }
+
+    fn verify_backend(
+        &self,
+        task: &TaskObject,
+        proof_data: &[u8],
+    ) -> Result<(), VerificationBackendError> {
+        let backend = self
+            .backends
+            .resolve(VerificationBackendFamily::Tee, &self.backend)?;
+        backend.verify(BackendVerificationRequest {
+            family: VerificationBackendFamily::Tee,
+            task,
+            proof_data,
+            zk_payload: None,
+        })?;
+        Ok(())
+    }
+}
+
+impl Default for TeeVerifier {
+    fn default() -> Self {
+        Self::new(ZkBackendKind::Noop, Arc::new(ZkBackendRegistry::new()))
+    }
+}
 
 impl ProofVerifier for TeeVerifier {
     fn proof_type(&self) -> &str {
@@ -12,9 +58,19 @@ impl ProofVerifier for TeeVerifier {
 
     fn verify_proof(&self, task: &TaskObject, proof_data: &[u8]) -> VerificationResult {
         match verify_bound_envelope(task, proof_data, b"TEE:", "TEE receipt") {
-            VerificationResult::Valid => VerificationResult::Indeterminate(
-                "TEE receipt cryptographic verification backend not configured".to_string(),
-            ),
+            VerificationResult::Valid => match self.verify_backend(task, proof_data) {
+                Ok(()) => VerificationResult::Valid,
+                Err(VerificationBackendError::Execution(BackendExecutionError::InvalidProof {
+                    reason,
+                    ..
+                })) => VerificationResult::Invalid(reason),
+                Err(VerificationBackendError::Execution(
+                    BackendExecutionError::NotConfigured { .. },
+                )) => VerificationResult::Indeterminate(
+                    "TEE receipt cryptographic verification backend not configured".to_string(),
+                ),
+                Err(err) => VerificationResult::Indeterminate(err.to_string()),
+            },
             other => other,
         }
     }
@@ -110,7 +166,7 @@ mod tests {
 
     #[test]
     fn tee_verifier_requires_cryptographic_backend_after_bound_envelope_validation() {
-        let verifier = TeeVerifier;
+        let verifier = TeeVerifier::default();
         let task = mock_task();
 
         assert!(matches!(
@@ -127,10 +183,8 @@ mod tests {
     fn tee_verifier_valid_receipt_path_with_mock_backend() {
         let mut backends = ZkBackendRegistry::new();
         backends.register(Arc::new(MockTeeSuccessBackend));
-        let verifier = TeeVerifier::new(
-            ZkBackendKind::Custom("mock-tee".into()),
-            Arc::new(backends),
-        );
+        let verifier =
+            TeeVerifier::new(ZkBackendKind::Custom("mock-tee".into()), Arc::new(backends));
         let task = mock_task();
 
         assert!(matches!(
@@ -182,7 +236,7 @@ mod tests {
 
     #[test]
     fn tee_verifier_rejects_task_id_mismatch() {
-        let verifier = TeeVerifier;
+        let verifier = TeeVerifier::default();
         let task = mock_task();
 
         assert!(matches!(
@@ -193,7 +247,7 @@ mod tests {
 
     #[test]
     fn tee_verifier_rejects_missing_task_id_binding() {
-        let verifier = TeeVerifier;
+        let verifier = TeeVerifier::default();
         let task = mock_task();
 
         assert!(matches!(
@@ -204,7 +258,7 @@ mod tests {
 
     #[test]
     fn tee_verifier_rejects_task_id_identifier_spoof() {
-        let verifier = TeeVerifier;
+        let verifier = TeeVerifier::default();
         let task = mock_task();
 
         assert!(matches!(
@@ -218,7 +272,7 @@ mod tests {
 
     #[test]
     fn tee_verifier_rejects_duplicate_task_id_binding_fail_closed() {
-        let verifier = TeeVerifier;
+        let verifier = TeeVerifier::default();
         let task = mock_task();
 
         assert!(matches!(
@@ -232,7 +286,7 @@ mod tests {
 
     #[test]
     fn tee_verifier_rejects_duplicate_task_id_binding_with_quoted_leading_space_fail_closed() {
-        let verifier = TeeVerifier;
+        let verifier = TeeVerifier::default();
         let task = mock_task();
 
         assert!(matches!(
@@ -246,7 +300,7 @@ mod tests {
 
     #[test]
     fn tee_verifier_rejects_duplicate_task_id_binding_with_quoted_trailing_space_fail_closed() {
-        let verifier = TeeVerifier;
+        let verifier = TeeVerifier::default();
         let task = mock_task();
 
         assert!(matches!(
@@ -260,7 +314,7 @@ mod tests {
 
     #[test]
     fn tee_verifier_rejects_duplicate_task_id_binding_with_single_quoted_alias_fail_closed() {
-        let verifier = TeeVerifier;
+        let verifier = TeeVerifier::default();
         let task = mock_task();
 
         assert!(matches!(
@@ -274,7 +328,7 @@ mod tests {
 
     #[test]
     fn tee_verifier_rejects_proof_type_mismatch_when_present() {
-        let verifier = TeeVerifier;
+        let verifier = TeeVerifier::default();
         let task = mock_task();
 
         assert!(matches!(
@@ -285,7 +339,7 @@ mod tests {
 
     #[test]
     fn tee_verifier_rejects_missing_proof_type_binding() {
-        let verifier = TeeVerifier;
+        let verifier = TeeVerifier::default();
         let task = mock_task();
 
         assert!(matches!(
@@ -296,7 +350,7 @@ mod tests {
 
     #[test]
     fn tee_verifier_rejects_case_variant_duplicate_proof_type_binding_fail_closed() {
-        let verifier = TeeVerifier;
+        let verifier = TeeVerifier::default();
         let task = mock_task();
 
         assert!(matches!(
@@ -310,7 +364,7 @@ mod tests {
 
     #[test]
     fn tee_verifier_rejects_duplicate_proof_type_binding_with_quoted_leading_space_fail_closed() {
-        let verifier = TeeVerifier;
+        let verifier = TeeVerifier::default();
         let task = mock_task();
 
         assert!(matches!(
@@ -324,7 +378,7 @@ mod tests {
 
     #[test]
     fn tee_verifier_rejects_duplicate_proof_type_binding_with_quoted_trailing_space_fail_closed() {
-        let verifier = TeeVerifier;
+        let verifier = TeeVerifier::default();
         let task = mock_task();
 
         assert!(matches!(
@@ -339,7 +393,7 @@ mod tests {
     #[test]
     fn tee_verifier_rejects_duplicate_proof_type_binding_with_single_quoted_trailing_space_fail_closed(
     ) {
-        let verifier = TeeVerifier;
+        let verifier = TeeVerifier::default();
         let task = mock_task();
 
         assert!(matches!(
@@ -354,7 +408,7 @@ mod tests {
     #[test]
     fn tee_verifier_rejects_duplicate_proof_type_binding_with_single_quoted_leading_space_fail_closed(
     ) {
-        let verifier = TeeVerifier;
+        let verifier = TeeVerifier::default();
         let task = mock_task();
 
         assert!(matches!(
@@ -368,7 +422,7 @@ mod tests {
 
     #[test]
     fn tee_verifier_rejects_missing_result_hash_binding() {
-        let verifier = TeeVerifier;
+        let verifier = TeeVerifier::default();
         let task = mock_task();
 
         assert!(matches!(
@@ -379,7 +433,7 @@ mod tests {
 
     #[test]
     fn tee_verifier_rejects_result_hash_mismatch_fail_closed() {
-        let verifier = TeeVerifier;
+        let verifier = TeeVerifier::default();
         let task = mock_task();
 
         assert!(matches!(
@@ -393,7 +447,7 @@ mod tests {
 
     #[test]
     fn tee_verifier_rejects_case_variant_duplicate_result_hash_binding_fail_closed() {
-        let verifier = TeeVerifier;
+        let verifier = TeeVerifier::default();
         let task = mock_task();
 
         assert!(matches!(
@@ -407,7 +461,7 @@ mod tests {
 
     #[test]
     fn tee_verifier_rejects_result_hash_with_repeated_hex_prefix_fail_closed() {
-        let verifier = TeeVerifier;
+        let verifier = TeeVerifier::default();
         let task = mock_task();
 
         assert!(matches!(
@@ -421,7 +475,7 @@ mod tests {
 
     #[test]
     fn tee_verifier_rejects_duplicate_result_hash_binding_with_quoted_leading_space_fail_closed() {
-        let verifier = TeeVerifier;
+        let verifier = TeeVerifier::default();
         let task = mock_task();
 
         assert!(matches!(
@@ -435,7 +489,7 @@ mod tests {
 
     #[test]
     fn tee_verifier_rejects_duplicate_result_hash_binding_with_quoted_trailing_space_fail_closed() {
-        let verifier = TeeVerifier;
+        let verifier = TeeVerifier::default();
         let task = mock_task();
 
         assert!(matches!(
@@ -449,7 +503,7 @@ mod tests {
 
     #[test]
     fn tee_verifier_rejects_duplicate_result_hash_binding_with_single_quoted_alias_fail_closed() {
-        let verifier = TeeVerifier;
+        let verifier = TeeVerifier::default();
         let task = mock_task();
 
         assert!(matches!(
@@ -463,7 +517,7 @@ mod tests {
 
     #[test]
     fn tee_verifier_rejects_duplicate_result_hash_binding_with_double_quoted_alias_fail_closed() {
-        let verifier = TeeVerifier;
+        let verifier = TeeVerifier::default();
         let task = mock_task();
 
         assert!(matches!(
@@ -477,7 +531,7 @@ mod tests {
 
     #[test]
     fn tee_verifier_rejects_unexpected_result_hash_binding_without_context_fail_closed() {
-        let verifier = TeeVerifier;
+        let verifier = TeeVerifier::default();
         let mut task = mock_task();
         task.result_hash = None;
 
@@ -492,7 +546,7 @@ mod tests {
 
     #[test]
     fn tee_verifier_rejects_duplicate_result_hash_binding_without_context_fail_closed() {
-        let verifier = TeeVerifier;
+        let verifier = TeeVerifier::default();
         let mut task = mock_task();
         task.result_hash = None;
 
@@ -507,7 +561,7 @@ mod tests {
 
     #[test]
     fn tee_verifier_rejects_missing_worker_binding() {
-        let verifier = TeeVerifier;
+        let verifier = TeeVerifier::default();
         let task = mock_task();
 
         assert!(matches!(
@@ -518,7 +572,7 @@ mod tests {
 
     #[test]
     fn tee_verifier_rejects_worker_binding_identifier_spoof() {
-        let verifier = TeeVerifier;
+        let verifier = TeeVerifier::default();
         let task = mock_task();
 
         assert!(matches!(
@@ -532,7 +586,7 @@ mod tests {
 
     #[test]
     fn tee_verifier_rejects_fullwidth_underscore_worker_identifier_spoof_fail_closed() {
-        let verifier = TeeVerifier;
+        let verifier = TeeVerifier::default();
         let task = mock_task();
 
         assert!(matches!(
@@ -547,7 +601,7 @@ mod tests {
 
     #[test]
     fn tee_verifier_rejects_worker_case_mismatch() {
-        let verifier = TeeVerifier;
+        let verifier = TeeVerifier::default();
         let task = mock_task();
 
         assert!(matches!(
@@ -561,7 +615,7 @@ mod tests {
 
     #[test]
     fn tee_verifier_rejects_duplicate_worker_binding_fail_closed() {
-        let verifier = TeeVerifier;
+        let verifier = TeeVerifier::default();
         let task = mock_task();
 
         assert!(matches!(
@@ -575,7 +629,7 @@ mod tests {
 
     #[test]
     fn tee_verifier_rejects_case_variant_duplicate_worker_binding_fail_closed() {
-        let verifier = TeeVerifier;
+        let verifier = TeeVerifier::default();
         let task = mock_task();
 
         assert!(matches!(
@@ -589,7 +643,7 @@ mod tests {
 
     #[test]
     fn tee_verifier_rejects_duplicate_worker_binding_with_single_quoted_alias_fail_closed() {
-        let verifier = TeeVerifier;
+        let verifier = TeeVerifier::default();
         let task = mock_task();
 
         assert!(matches!(
@@ -603,7 +657,7 @@ mod tests {
 
     #[test]
     fn tee_verifier_rejects_duplicate_worker_binding_with_double_quoted_alias_fail_closed() {
-        let verifier = TeeVerifier;
+        let verifier = TeeVerifier::default();
         let task = mock_task();
 
         assert!(matches!(
@@ -617,7 +671,7 @@ mod tests {
 
     #[test]
     fn tee_verifier_rejects_duplicate_worker_binding_with_unclosed_quoted_alias_fail_closed() {
-        let verifier = TeeVerifier;
+        let verifier = TeeVerifier::default();
         let task = mock_task();
 
         assert!(matches!(
@@ -631,7 +685,7 @@ mod tests {
 
     #[test]
     fn tee_verifier_rejects_unexpected_worker_binding_without_context_fail_closed() {
-        let verifier = TeeVerifier;
+        let verifier = TeeVerifier::default();
         let mut task = mock_task();
         task.worker = None;
 
@@ -646,7 +700,7 @@ mod tests {
 
     #[test]
     fn tee_verifier_requires_cryptographic_backend_for_legacy_receipt_alias() {
-        let verifier = TeeVerifier;
+        let verifier = TeeVerifier::default();
         let task = mock_task();
 
         assert!(matches!(
@@ -662,7 +716,7 @@ mod tests {
     #[test]
     fn tee_verifier_rejects_fullwidth_equals_unexpected_worker_binding_without_context_fail_closed()
     {
-        let verifier = TeeVerifier;
+        let verifier = TeeVerifier::default();
         let mut task = mock_task();
         task.worker = None;
 
@@ -678,7 +732,7 @@ mod tests {
 
     #[test]
     fn tee_verifier_rejects_fullwidth_equals_then_ascii_result_hash_binding_fail_closed() {
-        let verifier = TeeVerifier;
+        let verifier = TeeVerifier::default();
         let task = mock_task();
 
         assert!(matches!(
@@ -693,7 +747,7 @@ mod tests {
 
     #[test]
     fn tee_verifier_rejects_fullwidth_equals_then_ascii_task_id_binding_fail_closed() {
-        let verifier = TeeVerifier;
+        let verifier = TeeVerifier::default();
         let task = mock_task();
 
         assert!(matches!(
@@ -708,7 +762,7 @@ mod tests {
 
     #[test]
     fn tee_verifier_rejects_fullwidth_equals_then_ascii_proof_type_binding_fail_closed() {
-        let verifier = TeeVerifier;
+        let verifier = TeeVerifier::default();
         let task = mock_task();
 
         assert!(matches!(
@@ -723,7 +777,7 @@ mod tests {
 
     #[test]
     fn tee_verifier_rejects_fullwidth_colon_then_ascii_result_hash_binding_fail_closed() {
-        let verifier = TeeVerifier;
+        let verifier = TeeVerifier::default();
         let task = mock_task();
 
         assert!(matches!(
@@ -738,7 +792,7 @@ mod tests {
 
     #[test]
     fn tee_verifier_rejects_fullwidth_colon_then_ascii_worker_binding_fail_closed() {
-        let verifier = TeeVerifier;
+        let verifier = TeeVerifier::default();
         let task = mock_task();
 
         assert!(matches!(
@@ -751,4 +805,3 @@ mod tests {
         ));
     }
 }
-

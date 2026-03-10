@@ -3,7 +3,10 @@ use std::sync::Arc;
 
 use trnm_types::{ProofType, TaskObject};
 
-use super::{proof_type_key, verifiers, ProofVerifier, VerificationResult};
+use super::{
+    backend::{VerificationBackendConfig, ZkBackendRegistry},
+    proof_type_key, verifiers, ProofVerifier, VerificationResult,
+};
 
 pub struct VerifierRegistry {
     verifiers: HashMap<String, Arc<dyn ProofVerifier + Send + Sync>>,
@@ -16,12 +19,40 @@ impl VerifierRegistry {
         }
     }
 
-    /// Initializes a registry with built-in verifiers for Fraud/TEE/ZK proof types.
+    /// Initializes a registry with the built-in verification platform stack.
+    ///
+    /// Routing contract:
+    /// - Fraud is a backendless semantic verifier (fail-closed envelope/binding checks only).
+    /// - TEE and ZK are semantic verifiers plus configurable backend families.
+    /// - Backend selection is family-scoped (`tee` vs `zk`) so config hooks and
+    ///   error surfaces stay aligned even when different proof systems share the
+    ///   same platform registry implementation.
     pub fn with_builtin_verifiers() -> Self {
+        Self::with_backend_config(VerificationBackendConfig::default())
+    }
+
+    pub fn with_backend_config(config: VerificationBackendConfig) -> Self {
+        let backend_registry = Arc::new(ZkBackendRegistry::new());
+        Self::with_backends(config, backend_registry)
+    }
+
+    pub fn with_backends(
+        config: VerificationBackendConfig,
+        backends: Arc<ZkBackendRegistry>,
+    ) -> Self {
         let mut registry = Self::new();
+
+        // Fraud is intentionally kept as the platform's built-in semantic verifier.
+        // Only TEE/ZK consume configurable backend families today.
         registry.register(Arc::new(verifiers::FraudVerifier));
-        registry.register(Arc::new(verifiers::TeeVerifier));
-        registry.register(Arc::new(verifiers::ZkVerifier));
+        registry.register(Arc::new(verifiers::TeeVerifier::new(
+            config.tee_backend,
+            Arc::clone(&backends),
+        )));
+        registry.register(Arc::new(verifiers::ZkVerifier::new(
+            config.zk_backend,
+            backends,
+        )));
         registry
     }
 
