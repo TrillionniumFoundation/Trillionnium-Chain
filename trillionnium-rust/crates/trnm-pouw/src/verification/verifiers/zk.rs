@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use crate::verification::backend::{
     parse_zk_proof_payload, BackendExecutionError, BackendVerificationRequest,
-    VerificationBackendError, VerificationBackendConfig, VerificationBackendFamily, ZkBackendKind,
+    VerificationBackendConfig, VerificationBackendError, VerificationBackendFamily, ZkBackendKind,
     ZkBackendRegistry,
 };
 use crate::verification::{ProofVerifier, VerificationResult};
@@ -13,23 +13,35 @@ use super::verify_bound_envelope;
 pub struct ZkVerifier {
     backend: ZkBackendKind,
     backends: Arc<ZkBackendRegistry>,
+    config: VerificationBackendConfig,
 }
 
 impl ZkVerifier {
     pub fn new(backend: ZkBackendKind, backends: Arc<ZkBackendRegistry>) -> Self {
-        Self { backend, backends }
+        Self {
+            backend: backend.clone(),
+            backends,
+            config: VerificationBackendConfig {
+                zk_backend: backend,
+                ..VerificationBackendConfig::default()
+            },
+        }
     }
 
     #[allow(dead_code)]
-    pub fn from_config(config: &VerificationBackendConfig, backends: Arc<ZkBackendRegistry>) -> Self {
-        Self::new(config.zk_backend.clone(), backends)
+    pub fn from_config(
+        config: &VerificationBackendConfig,
+        backends: Arc<ZkBackendRegistry>,
+    ) -> Self {
+        Self {
+            backend: config.zk_backend.clone(),
+            backends,
+            config: config.clone(),
+        }
     }
 
-    fn verify_backend(&self, task: &TaskObject, proof_data: &[u8]) -> Result<(), VerificationBackendError> {
-        let backend = self
-            .backends
-            .resolve(VerificationBackendFamily::Zk, &self.backend)?;
-        let zk_payload = if proof_data
+    fn has_json_envelope(proof_data: &[u8]) -> bool {
+        proof_data
             .iter()
             .position(|b| *b == b':')
             .and_then(|idx| proof_data.get(idx + 1..))
@@ -40,11 +52,106 @@ impl ZkVerifier {
                     && (trimmed.contains("\"vk_ref\"") || trimmed.contains("\"public_inputs\""))
             })
             .unwrap_or(false)
-        {
-            Some(parse_zk_proof_payload(task, proof_data)?)
+    }
+
+    fn classify_backend_err(err: VerificationBackendError) -> VerificationResult {
+        match err {
+            VerificationBackendError::Selection(selection) => {
+                VerificationResult::Indeterminate(format!("unavailable: {selection}"))
+            }
+            VerificationBackendError::Execution(BackendExecutionError::InvalidProof {
+                reason, ..
+            }) => VerificationResult::Invalid(reason),
+            VerificationBackendError::Execution(BackendExecutionError::MalformedProof {
+                reason, ..
+            }) => VerificationResult::Invalid(format!("malformed: {reason}")),
+            VerificationBackendError::Execution(BackendExecutionError::NotConfigured { .. }) => {
+                VerificationResult::Indeterminate(
+                    "unavailable: ZK proof cryptographic verification backend not configured"
+                        .to_string(),
+                )
+            }
+            VerificationBackendError::Execution(BackendExecutionError::Unavailable {
+                backend,
+                reason,
+            }) => VerificationResult::Indeterminate(format!(
+                "unavailable: verification backend '{backend}' cannot currently verify proof: {reason}"
+            )),
+            VerificationBackendError::Execution(BackendExecutionError::Internal {
+                backend,
+                reason,
+            }) => VerificationResult::Indeterminate(format!(
+                "backend_error: verification backend '{backend}' failed: {reason}"
+            )),
+        }
+    }
+
+    fn verify_backend(
+        &self,
+        task: &TaskObject,
+        proof_data: &[u8],
+    ) -> Result<(), VerificationBackendError> {
+        let flags = &self.config.zk_features;
+        let has_json_envelope = Self::has_json_envelope(proof_data);
+
+        if flags.zk_payload_v0_envelope && !has_json_envelope {
+            return Err(BackendExecutionError::MalformedProof {
+                backend: "zk:payload".to_string(),
+                reason: "invalid zk payload: canonical JSON object is required when zk_payload_v0_envelope is enabled".to_string(),
+            }
+            .into());
+        }
+
+        let zk_payload = if has_json_envelope {
+            let payload = parse_zk_proof_payload(task, proof_data)?;
+
+            if flags.zk_payload_v0_envelope && payload.meta.schema_version != "trnm.zk.payload.v0" {
+                return Err(BackendExecutionError::MalformedProof {
+                    backend: "zk:payload".to_string(),
+                    reason: "invalid zk payload: meta.schema_version must be trnm.zk.payload.v0"
+                        .to_string(),
+                }
+                .into());
+            }
+
+            if flags.zk_explicit_backend_required
+                && payload
+                    .backend_id
+                    .as_deref()
+                    .map(str::trim)
+                    .unwrap_or_default()
+                    .is_empty()
+            {
+                return Err(BackendExecutionError::MalformedProof {
+                    backend: "zk:payload".to_string(),
+                    reason: "invalid zk payload: backend_id is required when zk_explicit_backend_required is enabled".to_string(),
+                }
+                .into());
+            }
+
+            Some(payload)
         } else {
             None
         };
+
+        let selected_backend = if flags.zk_platform_v0 && flags.zk_backend_router {
+            if let Some(payload_backend_id) = zk_payload
+                .as_ref()
+                .and_then(|payload| payload.backend_id.as_deref())
+                .map(str::trim)
+                .filter(|raw| !raw.is_empty())
+            {
+                ZkBackendKind::Custom(payload_backend_id.to_string())
+            } else {
+                self.backend.clone()
+            }
+        } else {
+            self.backend.clone()
+        };
+
+        let backend = self
+            .backends
+            .resolve(VerificationBackendFamily::Zk, &selected_backend)?;
         backend.verify(BackendVerificationRequest {
             family: VerificationBackendFamily::Zk,
             task,
@@ -57,7 +164,10 @@ impl ZkVerifier {
 
 impl Default for ZkVerifier {
     fn default() -> Self {
-        Self::new(ZkBackendKind::Noop, Arc::new(ZkBackendRegistry::new()))
+        Self::from_config(
+            &VerificationBackendConfig::default(),
+            Arc::new(ZkBackendRegistry::new()),
+        )
     }
 }
 
@@ -77,13 +187,7 @@ impl ProofVerifier for ZkVerifier {
         match verification {
             VerificationResult::Valid => match self.verify_backend(task, proof_data) {
                 Ok(()) => VerificationResult::Valid,
-                Err(VerificationBackendError::Execution(BackendExecutionError::InvalidProof { reason, .. })) => VerificationResult::Invalid(reason),
-                Err(VerificationBackendError::Execution(BackendExecutionError::NotConfigured { .. })) => {
-                    VerificationResult::Indeterminate(
-                        "ZK proof cryptographic verification backend not configured".to_string(),
-                    )
-                }
-                Err(err) => VerificationResult::Indeterminate(err.to_string()),
+                Err(err) => Self::classify_backend_err(err),
             },
             other => other,
         }
@@ -93,7 +197,7 @@ impl ProofVerifier for ZkVerifier {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::verification::backend::{BackendVerificationSuccess, ZkBackend};
+    use crate::verification::backend::{BackendVerificationSuccess, ZkBackend, ZkFeatureFlags};
     use trnm_types::{ProofType, TaskObject, TaskStatus};
 
     fn mock_task() -> TaskObject {
@@ -131,13 +235,67 @@ mod tests {
             request: BackendVerificationRequest<'_>,
         ) -> Result<BackendVerificationSuccess, BackendExecutionError> {
             let payload = request.zk_payload.expect("zk payload required");
-            assert_eq!(payload.public_inputs.order, vec!["task_id", "worker", "result_hash"]);
+            assert_eq!(request.family, VerificationBackendFamily::Zk);
+            assert_eq!(
+                payload.public_inputs.order,
+                vec!["task_id", "worker", "result_hash"]
+            );
             assert_eq!(payload.public_inputs.values[0], "99");
             assert_eq!(payload.worker, "worker-zk");
             assert_eq!(payload.vk_ref, "vk://trnm/dev/mock-groth16/v1");
             Ok(BackendVerificationSuccess {
                 backend_id: self.backend_id().into(),
             })
+        }
+    }
+
+    struct MockUnavailableBackend;
+    impl ZkBackend for MockUnavailableBackend {
+        fn backend_id(&self) -> &str {
+            "mock-zk-unavailable"
+        }
+
+        fn verify(
+            &self,
+            request: BackendVerificationRequest<'_>,
+        ) -> Result<BackendVerificationSuccess, BackendExecutionError> {
+            assert_eq!(request.family, VerificationBackendFamily::Zk);
+            Err(BackendExecutionError::Unavailable {
+                backend: request.backend_label(self.backend_id()),
+                reason: "mock zk backend unavailable".to_string(),
+            })
+        }
+    }
+
+    struct MockInvalidBackend;
+    impl ZkBackend for MockInvalidBackend {
+        fn backend_id(&self) -> &str {
+            "mock-zk-invalid"
+        }
+
+        fn verify(
+            &self,
+            request: BackendVerificationRequest<'_>,
+        ) -> Result<BackendVerificationSuccess, BackendExecutionError> {
+            assert_eq!(request.family, VerificationBackendFamily::Zk);
+            Err(BackendExecutionError::InvalidProof {
+                backend: request.backend_label(self.backend_id()),
+                reason: "mock zk backend rejected proof".to_string(),
+            })
+        }
+    }
+
+    fn router_config() -> VerificationBackendConfig {
+        VerificationBackendConfig {
+            zk_backend: ZkBackendKind::Noop,
+            zk_features: ZkFeatureFlags {
+                zk_platform_v0: true,
+                zk_backend_router: true,
+                zk_payload_v0_envelope: true,
+                zk_explicit_backend_required: true,
+                ..ZkFeatureFlags::default()
+            },
+            ..VerificationBackendConfig::default()
         }
     }
 
@@ -152,7 +310,7 @@ mod tests {
                 b"ZK:task_id=99,worker=worker-zk,proof_type=zk,result_hash=1111111111111111111111111111111111111111111111111111111111111111,proof=ok"
             ),
             VerificationResult::Indeterminate(msg)
-                if msg.contains("cryptographic verification backend not configured")
+                if msg.contains("unavailable:") && msg.contains("cryptographic verification backend not configured")
         ));
     }
 
@@ -175,10 +333,26 @@ mod tests {
     fn zk_verifier_valid_proof_path_with_mock_backend() {
         let mut backends = ZkBackendRegistry::new();
         backends.register(Arc::new(MockSuccessBackend));
-        let verifier = ZkVerifier::new(ZkBackendKind::Custom("mock-zk".into()), Arc::new(backends));
+        let verifier = ZkVerifier::from_config(&router_config(), Arc::new(backends));
         let task = mock_task();
-        let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","worker","result_hash"],"values":["99","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#;
-        assert!(matches!(verifier.verify_proof(&task, payload), VerificationResult::Valid));
+        let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"mock-zk","backend_version":"v1","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","worker","result_hash"],"values":["99","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]},"meta":{"schema_version":"trnm.zk.payload.v0","circuit_id":"settlement-result-v1"}}"#;
+        assert!(matches!(
+            verifier.verify_proof(&task, payload),
+            VerificationResult::Valid
+        ));
+    }
+
+    #[test]
+    fn zk_verifier_routes_to_payload_selected_backend_when_router_enabled() {
+        let mut backends = ZkBackendRegistry::new();
+        backends.register(Arc::new(MockSuccessBackend));
+        let verifier = ZkVerifier::from_config(&router_config(), Arc::new(backends));
+        let task = mock_task();
+        let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"mock-zk","backend_version":"v1","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","worker","result_hash"],"values":["99","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]},"meta":{"schema_version":"trnm.zk.payload.v0"}}"#;
+        assert_eq!(
+            verifier.verify_proof(&task, payload),
+            VerificationResult::Valid
+        );
     }
 
     #[test]
@@ -186,7 +360,9 @@ mod tests {
         let verifier = ZkVerifier::default();
         let task = mock_task();
         let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","worker","result_hash"],"values":["99","worker-zk","2222222222222222222222222222222222222222222222222222222222222222"]}}"#;
-        assert!(matches!(verifier.verify_proof(&task, payload), VerificationResult::Invalid(msg) if msg.contains("public_inputs mismatch")));
+        assert!(
+            matches!(verifier.verify_proof(&task, payload), VerificationResult::Invalid(msg) if msg.contains("public_inputs mismatch"))
+        );
     }
 
     #[test]
@@ -194,6 +370,31 @@ mod tests {
         let verifier = ZkVerifier::default();
         let task = mock_task();
         let payload = b"ZK:   \n\t";
-        assert!(matches!(verifier.verify_proof(&task, payload), VerificationResult::Invalid(msg) if msg.contains("Invalid ZK proof envelope")));
+        assert!(
+            matches!(verifier.verify_proof(&task, payload), VerificationResult::Invalid(msg) if msg.contains("Invalid ZK proof envelope"))
+        );
+    }
+
+    #[test]
+    fn zk_verifier_enforces_v0_schema_when_feature_enabled() {
+        let mut backends = ZkBackendRegistry::new();
+        backends.register(Arc::new(MockSuccessBackend));
+        let verifier = ZkVerifier::from_config(&router_config(), Arc::new(backends));
+        let task = mock_task();
+        let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"mock-zk","backend_version":"v1","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","worker","result_hash"],"values":["99","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]},"meta":{"schema_version":"legacy"}}"#;
+        assert!(
+            matches!(verifier.verify_proof(&task, payload), VerificationResult::Invalid(msg) if msg.contains("malformed:") && msg.contains("schema_version"))
+        );
+    }
+
+    #[test]
+    fn zk_verifier_requires_explicit_backend_id_when_feature_enabled() {
+        let verifier =
+            ZkVerifier::from_config(&router_config(), Arc::new(ZkBackendRegistry::new()));
+        let task = mock_task();
+        let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_version":"v1","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","worker","result_hash"],"values":["99","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]},"meta":{"schema_version":"trnm.zk.payload.v0"}}"#;
+        assert!(
+            matches!(verifier.verify_proof(&task, payload), VerificationResult::Invalid(msg) if msg.contains("malformed:") && msg.contains("backend_id is required"))
+        );
     }
 }
