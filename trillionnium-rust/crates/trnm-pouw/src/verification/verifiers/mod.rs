@@ -1265,7 +1265,8 @@ mod tests {
     }
 
     #[test]
-    fn verify_bound_envelope_rejects_semicolon_delimited_duplicate_proof_type_binding_fail_closed() {
+    fn verify_bound_envelope_rejects_semicolon_delimited_duplicate_proof_type_binding_fail_closed()
+    {
         let task = TaskObject {
             task_id: 42,
             creator: "alice".into(),
@@ -1413,7 +1414,8 @@ mod tests {
     }
 
     #[test]
-    fn verify_bound_envelope_rejects_semicolon_delimited_duplicate_result_hash_binding_fail_closed() {
+    fn verify_bound_envelope_rejects_semicolon_delimited_duplicate_result_hash_binding_fail_closed()
+    {
         let task = TaskObject {
             task_id: 42,
             creator: "alice".into(),
@@ -1708,7 +1710,8 @@ mod tests {
     }
 
     #[test]
-    fn verify_bound_envelope_rejects_case_variant_duplicate_task_id_binding_with_quoted_alias_fail_closed() {
+    fn verify_bound_envelope_rejects_case_variant_duplicate_task_id_binding_with_quoted_alias_fail_closed(
+    ) {
         let task = TaskObject {
             task_id: 42,
             creator: "alice".into(),
@@ -1965,8 +1968,8 @@ mod tests {
     }
 
     #[test]
-    fn verify_bound_envelope_rejects_malformed_primary_then_canonical_task_id_binding_fail_closed(
-    ) {
+    fn verify_bound_envelope_rejects_malformed_primary_then_canonical_task_id_binding_fail_closed()
+    {
         let task = TaskObject {
             task_id: 42,
             creator: "alice".into(),
@@ -3823,7 +3826,8 @@ mod tests {
     }
 
     #[test]
-    fn verify_bound_envelope_rejects_fullwidth_underscore_result_hash_identifier_spoof_fail_closed() {
+    fn verify_bound_envelope_rejects_fullwidth_underscore_result_hash_identifier_spoof_fail_closed()
+    {
         let task = TaskObject {
             task_id: 42,
             creator: "alice".into(),
@@ -3896,7 +3900,8 @@ mod tests {
     }
 
     #[test]
-    fn verify_bound_envelope_rejects_fullwidth_underscore_proof_type_identifier_spoof_fail_closed() {
+    fn verify_bound_envelope_rejects_fullwidth_underscore_proof_type_identifier_spoof_fail_closed()
+    {
         let task = TaskObject {
             task_id: 42,
             creator: "alice".into(),
@@ -4598,8 +4603,7 @@ mod tests {
     }
 
     #[test]
-    fn verify_bound_envelope_rejects_fullwidth_equals_then_ascii_result_hash_binding_fail_closed(
-    ) {
+    fn verify_bound_envelope_rejects_fullwidth_equals_then_ascii_result_hash_binding_fail_closed() {
         let task = TaskObject {
             task_id: 42,
             creator: "alice".into(),
@@ -4912,7 +4916,8 @@ mod tests {
     }
 
     #[test]
-    fn verify_bound_envelope_rejects_fullwidth_colon_unexpected_worker_binding_without_worker_context_for_fraud_fail_closed() {
+    fn verify_bound_envelope_rejects_fullwidth_colon_unexpected_worker_binding_without_worker_context_for_fraud_fail_closed(
+    ) {
         let task = TaskObject {
             task_id: 42,
             creator: "alice".into(),
@@ -4948,7 +4953,8 @@ mod tests {
     }
 
     #[test]
-    fn verify_bound_envelope_rejects_fullwidth_equals_unexpected_worker_binding_without_worker_context_for_fraud_fail_closed() {
+    fn verify_bound_envelope_rejects_fullwidth_equals_unexpected_worker_binding_without_worker_context_for_fraud_fail_closed(
+    ) {
         let task = TaskObject {
             task_id: 42,
             creator: "alice".into(),
@@ -4984,7 +4990,8 @@ mod tests {
     }
 
     #[test]
-    fn verify_bound_envelope_rejects_fullwidth_colon_unexpected_result_hash_binding_without_hash_context_for_fraud_fail_closed() {
+    fn verify_bound_envelope_rejects_fullwidth_colon_unexpected_result_hash_binding_without_hash_context_for_fraud_fail_closed(
+    ) {
         let task = TaskObject {
             task_id: 42,
             creator: "alice".into(),
@@ -5020,7 +5027,8 @@ mod tests {
     }
 
     #[test]
-    fn verify_bound_envelope_rejects_fullwidth_equals_unexpected_result_hash_binding_without_hash_context_for_fraud_fail_closed() {
+    fn verify_bound_envelope_rejects_fullwidth_equals_unexpected_result_hash_binding_without_hash_context_for_fraud_fail_closed(
+    ) {
         let task = TaskObject {
             task_id: 42,
             creator: "alice".into(),

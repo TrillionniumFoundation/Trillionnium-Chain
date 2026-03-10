@@ -471,6 +471,7 @@ mod tests {
             VerificationBackendConfig {
                 tee_backend: ZkBackendKind::Noop,
                 zk_backend: ZkBackendKind::Custom("mock-zk-vectors".into()),
+                zk_features: Default::default(),
             },
             Arc::new(backends),
         )
@@ -2148,6 +2149,7 @@ mod tests {
             zk_backend: crate::verification::backend::ZkBackendKind::Custom(
                 "missing-zk-backend".into(),
             ),
+            zk_features: Default::default(),
         });
         let mut fraud_task = task_with_proof_type(ProofType::Fraud);
         fraud_task.worker = Some("worker-fraud".into());

@@ -2,7 +2,8 @@ use std::sync::Arc;
 
 use crate::verification::backend::{
     parse_zk_proof_payload, BackendExecutionError, BackendVerificationRequest,
-    VerificationBackendError, VerificationBackendConfig, ZkBackendKind, ZkBackendRegistry,
+    VerificationBackendError, VerificationBackendConfig, VerificationBackendFamily, ZkBackendKind,
+    ZkBackendRegistry,
 };
 use crate::verification::{ProofVerifier, VerificationResult};
 use trnm_types::TaskObject;
@@ -25,7 +26,9 @@ impl ZkVerifier {
     }
 
     fn verify_backend(&self, task: &TaskObject, proof_data: &[u8]) -> Result<(), VerificationBackendError> {
-        let backend = self.backends.resolve("zk", &self.backend)?;
+        let backend = self
+            .backends
+            .resolve(VerificationBackendFamily::Zk, &self.backend)?;
         let zk_payload = if proof_data
             .iter()
             .position(|b| *b == b':')
@@ -43,7 +46,7 @@ impl ZkVerifier {
             None
         };
         backend.verify(BackendVerificationRequest {
-            backend_family: "zk",
+            family: VerificationBackendFamily::Zk,
             task,
             proof_data,
             zk_payload: zk_payload.as_ref(),
