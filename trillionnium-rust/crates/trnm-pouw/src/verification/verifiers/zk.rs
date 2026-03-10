@@ -403,6 +403,18 @@ mod tests {
     }
 
     #[test]
+    fn zk_verifier_rejects_duplicate_worker_binding_with_single_quoted_trailing_space_alias_fail_closed(
+    ) {
+        let verifier = ZkVerifier::default();
+        let task = mock_task();
+        let payload = b"ZK:task_id=99,worker=worker-zk,proof_type=zk,result_hash=1111111111111111111111111111111111111111111111111111111111111111,'worker '=worker-zk,proof=ok";
+        assert!(matches!(
+            verifier.verify_proof(&task, payload),
+            VerificationResult::Invalid(msg) if msg.contains("duplicate worker binding")
+        ));
+    }
+
+    #[test]
     fn zk_verifier_enforces_v0_schema_when_feature_enabled() {
         let mut backends = ZkBackendRegistry::new();
         backends.register(Arc::new(MockSuccessBackend));
