@@ -55,6 +55,9 @@ jobs:
       # Keep locale-derived postal/address formatting deterministic for any
       # helper that may serialize operator/site metadata into evidence logs.
       LC_ADDRESS: C
+      # Keep locale-derived personal-name formatting deterministic for any
+      # helper that emits operator identity fields in evidence artifacts.
+      LC_NAME: C
       # Freeze Python hash randomization so set/dict iteration in shell-driven
       # regression scripts stays deterministic across CI re-runs.
       PYTHONHASHSEED: "0"

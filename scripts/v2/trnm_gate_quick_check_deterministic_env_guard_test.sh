@@ -22,6 +22,7 @@ required_lines=(
   'LC_MEASUREMENT: C'
   'LC_PAPER: C'
   'LC_ADDRESS: C'
+  'LC_NAME: C'
   'PYTHONHASHSEED: "0"'
   'PYTHONDONTWRITEBYTECODE: "1"'
   'CI: "true"'
