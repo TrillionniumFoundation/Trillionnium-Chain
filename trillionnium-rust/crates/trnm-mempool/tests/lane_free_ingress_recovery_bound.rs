@@ -21,3 +21,20 @@ fn borrowed_last_critical_slot_recovers_to_critical_progress_after_one_dequeue()
     // Critical work should make progress before remaining normal backlog.
     assert_eq!(g.pop_ready(), Some(90));
 }
+
+#[test]
+fn reserve_only_backpressured_critical_id_remains_fresh_after_one_drain() {
+    let mut g = LaneAdmissionGate::new(2, 2);
+
+    // Reserve-only split keeps normal ingress live by borrowing critical slots.
+    assert_eq!(g.admit(11, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(g.admit(12, IngressClass::Normal), AdmitOutcome::Accepted);
+
+    // Critical ingress is backpressured at full capacity.
+    assert_eq!(g.admit(77, IngressClass::Critical), AdmitOutcome::Backpressured);
+
+    // After one dequeue, the previously backpressured id must still be fresh
+    // (not poisoned as duplicate) and admit immediately.
+    assert!(matches!(g.pop_ready(), Some(11) | Some(12)));
+    assert_eq!(g.admit(77, IngressClass::Critical), AdmitOutcome::Accepted);
+}
