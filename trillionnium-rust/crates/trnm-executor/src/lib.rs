@@ -932,8 +932,9 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
             // Free-ingress fast path: when every non-empty bucket is singleton,
             // interleave cannot reduce same-key streaks and only adds probe/rotation
             // overhead. Preserve stable input order to reduce micro-batch scheduler cost.
-            let max_bucket_depth = buckets.iter().map(|bucket| bucket.len()).max().unwrap_or(0);
-            if max_bucket_depth <= 1 {
+            // We already track how many buckets are non-empty; equality here means each
+            // tx landed in its own bucket (all singleton), avoiding an extra max-depth scan.
+            if non_empty_buckets == txs.len() {
                 return;
             }
 
