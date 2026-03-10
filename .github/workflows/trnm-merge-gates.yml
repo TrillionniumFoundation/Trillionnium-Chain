@@ -7,18 +7,28 @@ on:
       - 'docs/**'
       - 'trillionnium-rust/**'
       - 'web4-frontend/**'
+      - 'scripts/**'
+      - '.github/workflows/agent-user-phasea-gate.yml'
+      - '.github/workflows/p1-rust-sidecar.yml'
+      - '.github/workflows/rust-l1-nightly-health.yml'
+      - '.github/workflows/rust-l1-testnet-preflight.yml'
+      - '.github/workflows/trnm-gate-quick-check.yml'
       - '.github/workflows/trnm-merge-gates.yml'
       - '.github/workflows/web4-frontend-ci.yml'
-      - 'scripts/**'
   push:
     branches: [main]
     paths:
       - 'docs/**'
       - 'trillionnium-rust/**'
       - 'web4-frontend/**'
+      - 'scripts/**'
+      - '.github/workflows/agent-user-phasea-gate.yml'
+      - '.github/workflows/p1-rust-sidecar.yml'
+      - '.github/workflows/rust-l1-nightly-health.yml'
+      - '.github/workflows/rust-l1-testnet-preflight.yml'
+      - '.github/workflows/trnm-gate-quick-check.yml'
       - '.github/workflows/trnm-merge-gates.yml'
       - '.github/workflows/web4-frontend-ci.yml'
-      - 'scripts/**'
 
 permissions:
   contents: read
