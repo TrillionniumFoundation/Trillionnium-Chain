@@ -1,0 +1,356 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://trillionniumchain.dev/schemas/benchmark_closeout.schema.json",
+  "title": "TRNM Benchmark Closeout + E2E Bridge",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "generated_at",
+    "inputs",
+    "git",
+    "hardware",
+    "benchmark_profile",
+    "summary",
+    "e2e_mapping_template",
+    "e2e_bridge"
+  ],
+  "properties": {
+    "generated_at": { "$ref": "#/$defs/utcDateTime" },
+    "inputs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["regression_csv"],
+      "properties": {
+        "regression_csv": { "type": "string", "minLength": 1 }
+      }
+    },
+    "git": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["branch", "head"],
+      "properties": {
+        "branch": { "type": ["string", "null"] },
+        "head": { "type": ["string", "null"], "pattern": "^[a-f0-9]{40}$|^$" }
+      }
+    },
+    "hardware": {
+      "type": "object",
+      "additionalProperties": { "type": ["string", "number", "integer", "boolean", "null"] }
+    },
+    "benchmark_profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profile_id",
+        "measurement_window",
+        "warmup_policy",
+        "target_tps_windows",
+        "workload_family",
+        "disclaimer"
+      ],
+      "properties": {
+        "profile_id": { "type": "string", "minLength": 1 },
+        "measurement_window": { "type": "string", "minLength": 1 },
+        "warmup_policy": { "type": "string", "minLength": 1 },
+        "target_tps_windows": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "integer", "minimum": 1 }
+        },
+        "workload_family": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "enum": ["classic", "mixed", "hot-streak"] }
+        },
+        "disclaimer": { "type": "string", "minLength": 1 }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["row_count", "strategy_sources", "workloads"],
+      "properties": {
+        "row_count": { "type": "integer", "minimum": 0 },
+        "strategy_sources": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "workloads": {
+          "type": "object",
+          "propertyNames": { "enum": ["classic", "mixed", "hot-streak"] },
+          "additionalProperties": { "$ref": "#/$defs/workloadSummary" }
+        }
+      }
+    },
+    "e2e_mapping_template": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required_fields", "segment_order"],
+      "properties": {
+        "required_fields": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "segment_order": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/segmentName" }
+        }
+      }
+    },
+    "e2e_bridge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "status",
+        "placeholder_policy",
+        "system_timestamps",
+        "workloads"
+      ],
+      "properties": {
+        "schema_version": { "type": "string", "const": "trnm.benchmark-closeout.e2e-bridge.v1" },
+        "status": { "type": "string", "enum": ["placeholder_only", "partial", "complete"] },
+        "placeholder_policy": {
+          "type": "string",
+          "const": "null means not yet measured; placeholders must not be interpreted as observed data"
+        },
+        "system_timestamps": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "run_started_at_utc",
+            "submit_window_started_at_utc",
+            "submit_window_ended_at_utc",
+            "finality_observed_at_utc"
+          ],
+          "properties": {
+            "run_started_at_utc": { "$ref": "#/$defs/nullableUtcDateTime" },
+            "submit_window_started_at_utc": { "$ref": "#/$defs/nullableUtcDateTime" },
+            "submit_window_ended_at_utc": { "$ref": "#/$defs/nullableUtcDateTime" },
+            "finality_observed_at_utc": { "$ref": "#/$defs/nullableUtcDateTime" }
+          }
+        },
+        "workloads": {
+          "type": "object",
+          "propertyNames": { "enum": ["classic", "mixed", "hot-streak"] },
+          "additionalProperties": { "$ref": "#/$defs/e2eWorkloadBridge" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "utcDateTime": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?(?:Z|\\+00:00)$"
+    },
+    "nullableUtcDateTime": {
+      "anyOf": [
+        { "type": "null" },
+        { "$ref": "#/$defs/utcDateTime" }
+      ]
+    },
+    "segmentName": {
+      "type": "string",
+      "enum": [
+        "client_submit",
+        "mempool_queue",
+        "consensus",
+        "scheduler_grouping",
+        "execution",
+        "commit",
+        "storage",
+        "finality_observation"
+      ]
+    },
+    "summaryTriplet": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["min", "max", "avg"],
+      "properties": {
+        "min": { "type": ["number", "integer", "null"] },
+        "max": { "type": ["number", "integer", "null"] },
+        "avg": { "type": ["number", "integer", "null"] }
+      }
+    },
+    "schedulerWindowShareMap": {
+      "type": "object",
+      "propertyNames": { "pattern": "^[1-9][0-9]*$" },
+      "additionalProperties": { "type": ["number", "null"] }
+    },
+    "workloadCase": {
+      "type": "object",
+      "required": [
+        "workload",
+        "txs",
+        "keys",
+        "strategy",
+        "strategy_source",
+        "groups",
+        "elapsed_ms",
+        "micro_scheduler_ceiling_tps",
+        "groups_per_ktx",
+        "elapsed_ms_per_ktx",
+        "scheduler_window_share"
+      ],
+      "properties": {
+        "workload": { "type": "string", "enum": ["classic", "mixed", "hot-streak"] },
+        "txs": { "type": "integer", "minimum": 1 },
+        "keys": { "type": "integer", "minimum": 1 },
+        "strategy": { "type": "string", "minLength": 1 },
+        "strategy_source": { "type": "string", "minLength": 1 },
+        "groups": { "type": "integer", "minimum": 0 },
+        "elapsed_ms": { "type": "integer", "minimum": 0 },
+        "micro_scheduler_ceiling_tps": { "type": ["number", "null"] },
+        "groups_per_ktx": { "type": ["number", "null"] },
+        "elapsed_ms_per_ktx": { "type": ["number", "null"] },
+        "scheduler_window_share": { "$ref": "#/$defs/schedulerWindowShareMap" }
+      },
+      "additionalProperties": true
+    },
+    "workloadSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "rows",
+        "original_rows",
+        "aggressive_rows",
+        "elapsed_ms",
+        "groups",
+        "micro_scheduler_ceiling_tps",
+        "groups_per_ktx",
+        "elapsed_ms_per_ktx",
+        "aggressive_minus_original_ms",
+        "bridge_to_system",
+        "cases",
+        "pairwise_deltas"
+      ],
+      "properties": {
+        "rows": { "type": "integer", "minimum": 0 },
+        "original_rows": { "type": "integer", "minimum": 0 },
+        "aggressive_rows": { "type": "integer", "minimum": 0 },
+        "elapsed_ms": { "$ref": "#/$defs/summaryTriplet" },
+        "groups": { "$ref": "#/$defs/summaryTriplet" },
+        "micro_scheduler_ceiling_tps": { "$ref": "#/$defs/summaryTriplet" },
+        "groups_per_ktx": { "$ref": "#/$defs/summaryTriplet" },
+        "elapsed_ms_per_ktx": { "$ref": "#/$defs/summaryTriplet" },
+        "aggressive_minus_original_ms": { "$ref": "#/$defs/summaryTriplet" },
+        "bridge_to_system": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["interpretation", "window_share_avg_original"],
+          "properties": {
+            "interpretation": {
+              "type": "array",
+              "minItems": 1,
+              "items": { "type": "string", "minLength": 1 }
+            },
+            "window_share_avg_original": { "$ref": "#/$defs/schedulerWindowShareMap" }
+          }
+        },
+        "cases": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/workloadCase" }
+        },
+        "pairwise_deltas": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["txs", "keys", "delta_ms", "original_elapsed_ms", "aggressive_elapsed_ms"],
+            "properties": {
+              "txs": { "type": "integer", "minimum": 1 },
+              "keys": { "type": "integer", "minimum": 1 },
+              "delta_ms": { "type": "integer" },
+              "original_elapsed_ms": { "type": "integer", "minimum": 0 },
+              "aggressive_elapsed_ms": { "type": "integer", "minimum": 0 }
+            }
+          }
+        }
+      }
+    },
+    "nullableNumber": {
+      "type": ["number", "null"]
+    },
+    "segmentLatencyMap": {
+      "type": "object",
+      "propertyNames": { "enum": [
+        "client_submit",
+        "mempool_queue",
+        "consensus",
+        "scheduler_grouping",
+        "execution",
+        "commit",
+        "storage",
+        "finality_observation"
+      ] },
+      "additionalProperties": { "$ref": "#/$defs/nullableNumber" }
+    },
+    "e2eWorkloadBridge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "measurement_status",
+        "timestamps",
+        "metrics",
+        "segment_latency_ms",
+        "scheduler_window_share_reference",
+        "bottleneck_segment"
+      ],
+      "properties": {
+        "measurement_status": { "type": "string", "enum": ["placeholder_only", "partial", "complete"] },
+        "timestamps": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "submit_first_seen_at_utc",
+            "submit_last_seen_at_utc",
+            "first_finalized_at_utc",
+            "last_finalized_at_utc"
+          ],
+          "properties": {
+            "submit_first_seen_at_utc": { "$ref": "#/$defs/nullableUtcDateTime" },
+            "submit_last_seen_at_utc": { "$ref": "#/$defs/nullableUtcDateTime" },
+            "first_finalized_at_utc": { "$ref": "#/$defs/nullableUtcDateTime" },
+            "last_finalized_at_utc": { "$ref": "#/$defs/nullableUtcDateTime" }
+          }
+        },
+        "metrics": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "submit_tps",
+            "finalized_tps",
+            "finality_p50_ms",
+            "finality_p95_ms",
+            "finality_p99_ms",
+            "drop_rate",
+            "retry_rate",
+            "rollback_rate"
+          ],
+          "properties": {
+            "submit_tps": { "$ref": "#/$defs/nullableNumber" },
+            "finalized_tps": { "$ref": "#/$defs/nullableNumber" },
+            "finality_p50_ms": { "$ref": "#/$defs/nullableNumber" },
+            "finality_p95_ms": { "$ref": "#/$defs/nullableNumber" },
+            "finality_p99_ms": { "$ref": "#/$defs/nullableNumber" },
+            "drop_rate": { "$ref": "#/$defs/nullableNumber" },
+            "retry_rate": { "$ref": "#/$defs/nullableNumber" },
+            "rollback_rate": { "$ref": "#/$defs/nullableNumber" }
+          }
+        },
+        "segment_latency_ms": { "$ref": "#/$defs/segmentLatencyMap" },
+        "scheduler_window_share_reference": { "$ref": "#/$defs/schedulerWindowShareMap" },
+        "bottleneck_segment": {
+          "anyOf": [
+            { "type": "null" },
+            { "$ref": "#/$defs/segmentName" },
+            { "type": "string", "const": "undetermined" }
+          ]
+        }
+      }
+    }
+  }
+}

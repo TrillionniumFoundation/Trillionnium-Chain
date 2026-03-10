@@ -15,6 +15,16 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 BENCH_DIR = ROOT / "run" / "bench"
 DEFAULT_TARGET_TPS = [1000, 5000, 10000]
+SEGMENT_ORDER = [
+    "client_submit",
+    "mempool_queue",
+    "consensus",
+    "scheduler_grouping",
+    "execution",
+    "commit",
+    "storage",
+    "finality_observation",
+]
 
 
 def latest(pattern: str):
@@ -181,6 +191,46 @@ def build_summary(rows, targets_tps):
     }
 
 
+def build_e2e_bridge(summary, segment_order):
+    workloads = {}
+    for wl, data in summary["workloads"].items():
+        workloads[wl] = {
+            "measurement_status": "placeholder_only",
+            "timestamps": {
+                "submit_first_seen_at_utc": None,
+                "submit_last_seen_at_utc": None,
+                "first_finalized_at_utc": None,
+                "last_finalized_at_utc": None,
+            },
+            "metrics": {
+                "submit_tps": None,
+                "finalized_tps": None,
+                "finality_p50_ms": None,
+                "finality_p95_ms": None,
+                "finality_p99_ms": None,
+                "drop_rate": None,
+                "retry_rate": None,
+                "rollback_rate": None,
+            },
+            "segment_latency_ms": {segment: None for segment in segment_order},
+            "scheduler_window_share_reference": data["bridge_to_system"]["window_share_avg_original"],
+            "bottleneck_segment": "undetermined",
+        }
+
+    return {
+        "schema_version": "trnm.benchmark-closeout.e2e-bridge.v1",
+        "status": "placeholder_only",
+        "placeholder_policy": "null means not yet measured; placeholders must not be interpreted as observed data",
+        "system_timestamps": {
+            "run_started_at_utc": None,
+            "submit_window_started_at_utc": None,
+            "submit_window_ended_at_utc": None,
+            "finality_observed_at_utc": None,
+        },
+        "workloads": workloads,
+    }
+
+
 def render_md(payload, out_json: Path):
     src = payload["inputs"]["regression_csv"]
     lines = [
@@ -236,22 +286,29 @@ def render_md(payload, out_json: Path):
         lines.append("")
 
     lines += [
-        "## 5. E2E mapping template",
+        "## 5. E2E bridge placeholders",
+        f"- e2e_bridge.schema_version: `{payload['e2e_bridge']['schema_version']}`",
+        f"- e2e_bridge.status: `{payload['e2e_bridge']['status']}`",
+        "- system_timestamps: reserved for chain-level run / submit-window / finality observation UTC timestamps",
+        "- per-workload placeholders carry null metrics until real E2E instrumentation lands; null is intentionally 'not measured', never synthetic data",
+        "",
+        "## 6. E2E mapping template",
         "- submit_tps: client accepted tx / observation window",
         "- finalized_tps: finalized tx / observation window",
         "- finality_p50_ms / p95 / p99: submit→finalized latency",
-        "- drop_rate / retry_rate: ingress quality",
+        "- drop_rate / retry_rate / rollback_rate: ingress + execution quality",
         "- scheduler_window_share: attach this artifact's per-workload share as execution-kernel budget component",
         "- bottleneck_segment: whichever segment dominates after E2E timestamps are added",
+        "- segment_latency_ms[*]: client_submit / mempool_queue / consensus / scheduler_grouping / execution / commit / storage / finality_observation",
         "",
-        "## 6. Repro commands",
+        "## 7. Repro commands",
         "```bash",
         "cd trillionnium-rust",
         "./scripts/run_bench_regression_matrix.sh",
         "python3 ./scripts/render_benchmark_closeout.py",
         "```",
         "",
-        "## 7. Machine-readable artifact",
+        "## 8. Machine-readable artifact",
         f"- JSON: `{out_json}`",
     ]
     return "\n".join(lines) + "\n"
@@ -304,21 +361,14 @@ def main():
                 "finality_p99_ms",
                 "drop_rate",
                 "retry_rate",
+                "rollback_rate",
                 "scheduler_window_share",
                 "bottleneck_segment",
             ],
-            "segment_order": [
-                "client_submit",
-                "mempool_queue",
-                "consensus",
-                "scheduler_grouping",
-                "execution",
-                "commit",
-                "storage",
-                "finality_observation",
-            ],
+            "segment_order": SEGMENT_ORDER,
         },
     }
+    payload["e2e_bridge"] = build_e2e_bridge(payload["summary"], SEGMENT_ORDER)
 
     out_json = out_dir / "benchmark-closeout.json"
     out_md = out_dir / "benchmark-closeout.md"
