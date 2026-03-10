@@ -649,3 +649,7 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: che
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: p1-rust-sidecar-paths-coverage-guard-test" "./scripts/v2/p1_rust_sidecar_paths_coverage_guard_test.sh" "ci(gate): add p1-rust-sidecar-paths-coverage-guard-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: rust-l1-nightly-health-paths-coverage-guard-test" "./scripts/v2/rust_l1_nightly_health_paths_coverage_guard_test.sh" "ci(gate): add rust-l1-nightly-health-paths-coverage-guard-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: trnm-merge-gates-paths-coverage-guard-test" "./scripts/v2/trnm_merge_gates_paths_coverage_guard_test.sh" "ci(gate): add trnm-merge-gates-paths-coverage-guard-test regression to quick-check"
