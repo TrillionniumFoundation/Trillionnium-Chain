@@ -176,15 +176,23 @@ pub fn validate_trnm_address(address: &str) -> Result<(), AccountQueryError> {
     let Some(hex_part) = address.strip_prefix("trnm1") else {
         return Err(AccountQueryError::InvalidAddressFormat(address.to_string()));
     };
-    if hex_part.len() != 40 {
+
+    // Hot-path parser for RPC account queries: enforce fixed-length lowercase
+    // hex suffix using byte checks to avoid UTF-8 char iteration overhead.
+    const TRNM_SUFFIX_LEN: usize = 40;
+    if hex_part.len() != TRNM_SUFFIX_LEN {
         return Err(AccountQueryError::InvalidAddressFormat(address.to_string()));
     }
+
     if !hex_part
-        .chars()
-        .all(|c| c.is_ascii_digit() || ('a'..='f').contains(&c))
+        .as_bytes()
+        .iter()
+        .copied()
+        .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
     {
         return Err(AccountQueryError::InvalidAddressFormat(address.to_string()));
     }
+
     Ok(())
 }
 
@@ -313,5 +321,26 @@ mod tests {
         let bad = format!("trnm1{}", "A".repeat(40));
         let err = query_account_state(&accounts, &bad).unwrap_err();
         assert_eq!(err.code(), "INVALID_ADDRESS");
+    }
+
+    #[test]
+    fn query_account_state_rejects_wrong_suffix_length() {
+        let accounts = BTreeMap::new();
+
+        let short = format!("trnm1{}", "1".repeat(39));
+        assert_eq!(
+            query_account_state(&accounts, &short)
+                .unwrap_err()
+                .code(),
+            "INVALID_ADDRESS"
+        );
+
+        let long = format!("trnm1{}", "1".repeat(41));
+        assert_eq!(
+            query_account_state(&accounts, &long)
+                .unwrap_err()
+                .code(),
+            "INVALID_ADDRESS"
+        );
     }
 }
