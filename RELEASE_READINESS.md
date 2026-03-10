@@ -59,6 +59,7 @@
 > 目标：只做可回滚的 RC 就绪演练，禁止 release/tag/publish。
 
 - **CI/门禁命令**：记录本轮执行的最小命令（含退出码）。建议统一加 deterministic 前缀：`env TZ=UTC LC_ALL=C LANG=C`。
+  - Rust 侧示例：`env TZ=UTC LC_ALL=C LANG=C cargo test -p trnm-rpc --test reliability_persistent_smoke -- --nocapture`
 - **回放证据**：记录输入快照与输出摘要路径（例如 `run/local-release-evidence/` 下产物），并附 `date -u +"%Y-%m-%dT%H:%M:%SZ"` 时间戳。
 - **回滚命令**：每轮必须给出单行回滚命令（例如 `git revert <commit>` 或文档改动的 `git checkout -- <file>`）。
 - **根因标签**：失败时使用统一标签（建议：`CI_FLAKE` / `ENV_DRIFT` / `DOC_DRIFT` / `MISSING_FIXTURE` / `NON_DETERMINISTIC_TEST`）。
