@@ -3,7 +3,7 @@ use clap::{Parser, Subcommand, ValueEnum};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::{
-    collections::{BTreeMap, HashSet},
+    collections::{BTreeMap, BTreeSet, HashSet},
     fs::{self, OpenOptions},
     hash::{Hash, Hasher},
     io::{Read, Seek, SeekFrom, Write},
@@ -36,6 +36,8 @@ const CHALLENGE_ESCROW_ACCOUNT: &str = "treasury.challenge_escrow";
 const CHALLENGE_FORFEIT_TREASURY_ACCOUNT: &str = "treasury.challenge_forfeits";
 const NODE_EVENT_LOG_TAIL_BYTES_DEFAULT: u64 = 4 * 1024 * 1024;
 const NODE_EVENT_LOG_TAIL_BYTES_MAX: u64 = 16 * 1024 * 1024;
+const NODE_EVENT_LOG_SOURCES_ENV: &str = "TRNM_RPC_NODE_EVENT_LOG_SOURCES";
+const NODE_EVENT_LOG_MANIFEST_ENV: &str = "TRNM_RPC_NODE_EVENT_LOG_MANIFEST";
 const OPS_WINDOW_CUSTOM_MAX_MS: u128 = 31 * 24 * 60 * 60 * 1000;
 const FAUCET_WINDOW_SECONDS_DEFAULT: u64 = 60;
 const FAUCET_WINDOW_SECONDS_MIN: u64 = 1;
@@ -564,6 +566,85 @@ fn parse_event_log_kv(line: &str) -> BTreeMap<String, String> {
     kv
 }
 
+fn parse_node_event_log_sources_list(raw: &str) -> Vec<PathBuf> {
+    raw.split(|c: char| c == ',' || c == ';' || c == '\n')
+        .filter_map(|part| {
+            let trimmed = part.trim();
+            if trimmed.is_empty() {
+                None
+            } else {
+                Some(PathBuf::from(trimmed))
+            }
+        })
+        .collect()
+}
+
+fn discover_default_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
+    let run_dir = root.join("run");
+    let mut out = BTreeSet::<PathBuf>::new();
+    for seed in ["event-field-check.log", "parallel-sanity.log"] {
+        let candidate = run_dir.join(seed);
+        if candidate.is_file() {
+            out.insert(candidate);
+        }
+    }
+    if let Ok(entries) = fs::read_dir(&run_dir) {
+        for entry in entries.flatten() {
+            let path = entry.path();
+            if !path.is_file() {
+                continue;
+            }
+            let Some(name) = path.file_name().and_then(|v| v.to_str()) else {
+                continue;
+            };
+            if name.ends_with(".log") {
+                out.insert(path);
+            }
+        }
+    }
+    out.into_iter().collect()
+}
+
+fn load_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
+    let mut sources = BTreeSet::<PathBuf>::new();
+
+    if let Some(manifest_path) = normalized_path_from_env(NODE_EVENT_LOG_MANIFEST_ENV) {
+        if let Ok(raw) = fs::read_to_string(&manifest_path) {
+            let manifest_dir = manifest_path.parent().unwrap_or_else(|| Path::new("."));
+            for line in raw.lines() {
+                let trimmed = line.trim();
+                if trimmed.is_empty() || trimmed.starts_with('#') {
+                    continue;
+                }
+                let path = PathBuf::from(trimmed);
+                let resolved = if path.is_absolute() {
+                    path
+                } else {
+                    manifest_dir.join(path)
+                };
+                sources.insert(resolved);
+            }
+        }
+    }
+
+    if let Ok(raw) = std::env::var(NODE_EVENT_LOG_SOURCES_ENV) {
+        for path in parse_node_event_log_sources_list(&raw) {
+            let resolved = if path.is_absolute() {
+                path
+            } else {
+                root.join(path)
+            };
+            sources.insert(resolved);
+        }
+    }
+
+    if sources.is_empty() {
+        return discover_default_node_event_log_sources(root);
+    }
+
+    sources.into_iter().collect()
+}
+
 fn load_latest_node_events() -> Vec<NodeEventRecord> {
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .parent()
@@ -571,13 +652,7 @@ fn load_latest_node_events() -> Vec<NodeEventRecord> {
         .map(|p| p.to_path_buf())
         .unwrap_or_else(|| PathBuf::from("."));
 
-    let candidates = [
-        root.join("run/event-field-check.log"),
-        root.join("run/parallel-sanity.log"),
-        root.join("run/node1.log"),
-        root.join("run/node2.log"),
-        root.join("run/node3.log"),
-    ];
+    let candidates = load_node_event_log_sources(&root);
 
     let tail_bytes = node_event_log_tail_bytes();
     let mut lines = Vec::new();
@@ -5801,6 +5876,115 @@ line2
         let tail = read_log_tail(&tmp, 1024).expect("tail text");
         assert!(tail.contains("[event] event_type=commit task_id=9"));
         let _ = fs::remove_file(tmp);
+    }
+
+    #[test]
+    fn discover_default_node_event_log_sources_includes_dynamic_node4_and_nightly_logs() {
+        let root = unique_tmp_path("trnm-rpc-log-root", "dir");
+        let run_dir = root.join("run");
+        fs::create_dir_all(&run_dir).expect("create run dir");
+        fs::write(run_dir.join("node1.log"), "").expect("write node1");
+        fs::write(run_dir.join("node4.log"), "").expect("write node4");
+        fs::write(run_dir.join("nightly-bft.log"), "").expect("write nightly");
+        fs::write(run_dir.join("notes.txt"), "").expect("write txt");
+
+        let got = discover_default_node_event_log_sources(&root);
+
+        assert!(got.contains(&run_dir.join("node1.log")));
+        assert!(got.contains(&run_dir.join("node4.log")));
+        assert!(got.contains(&run_dir.join("nightly-bft.log")));
+        assert!(!got.contains(&run_dir.join("notes.txt")));
+
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn load_node_event_log_sources_prefers_manifest_and_env_over_fixed_defaults() {
+        let _guard = lock_env();
+        let root = unique_tmp_path("trnm-rpc-log-sources", "dir");
+        let run_dir = root.join("run");
+        let manifest_dir = root.join("cfg");
+        fs::create_dir_all(&run_dir).expect("create run dir");
+        fs::create_dir_all(&manifest_dir).expect("create manifest dir");
+
+        let env_log = root.join("env-node4.log");
+        let manifest_log = manifest_dir.join("nightly.log");
+        let manifest = manifest_dir.join("sources.txt");
+        fs::write(&env_log, "").expect("write env log");
+        fs::write(&manifest_log, "").expect("write manifest log");
+        fs::write(&manifest, "# comment\nnightly.log\n").expect("write manifest");
+
+        let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+        let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+        unsafe {
+            std::env::set_var(
+                NODE_EVENT_LOG_SOURCES_ENV,
+                env_log.to_string_lossy().to_string(),
+            );
+            std::env::set_var(
+                NODE_EVENT_LOG_MANIFEST_ENV,
+                manifest.to_string_lossy().to_string(),
+            );
+        }
+
+        let got = load_node_event_log_sources(&root);
+
+        match prev_sources {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+        }
+        match prev_manifest {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+        }
+
+        assert!(got.contains(&env_log));
+        assert!(got.contains(&manifest_log));
+        assert_eq!(got.len(), 2, "custom sources should replace defaults");
+
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn load_latest_node_events_reads_events_from_configured_node4_source() {
+        let _guard = lock_env();
+        let path = unique_tmp_path("trnm-rpc-node4", "log");
+        fs::write(
+            &path,
+            "[event] event_type=commit task_id=44 tx_id=7 block_height=9 actor=node4 from_status=ASSIGNED to_status=COMPLETED state_root=abc signer=node4\n",
+        )
+        .expect("write node4 log");
+
+        let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+        let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+        unsafe {
+            std::env::set_var(
+                NODE_EVENT_LOG_SOURCES_ENV,
+                path.to_string_lossy().to_string(),
+            );
+            std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV);
+        }
+
+        let got = load_latest_node_events();
+
+        match prev_sources {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+        }
+        match prev_manifest {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+        }
+
+        assert!(got.iter().any(|evt| {
+            evt.task_id == 44
+                && evt.tx_id == 7
+                && evt.block_height == 9
+                && evt.actor == "node4"
+                && evt.signer.as_deref() == Some("node4")
+        }));
+
+        let _ = fs::remove_file(path);
     }
 
     #[test]
