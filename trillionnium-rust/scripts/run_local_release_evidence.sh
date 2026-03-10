@@ -80,6 +80,9 @@ find_challenge_reexec_entry() {
   echo "generated_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
   echo "workspace=$ROOT"
   echo "evidence_dir=$EVIDENCE_DIR"
+  echo "env_tz=${TZ:-<unset>}"
+  echo "env_lc_all=${LC_ALL:-<unset>}"
+  echo "env_source_date_epoch=${SOURCE_DATE_EPOCH:-<unset>}"
   echo ""
   echo "steps:"
 } > "$SUMMARY"
@@ -108,6 +111,8 @@ else
   log "FAIL  challenge_reexec (entry not found)"
 fi
 
+rollback_cmd="rm -rf $(printf '%q' "$EVIDENCE_DIR")"
+
 {
   echo ""
   echo "pass_count=$PASS_COUNT"
@@ -117,6 +122,8 @@ fi
   else
     echo "result=FAIL"
   fi
+  echo "replay_command=OUT_DIR='${OUT_DIR:-$BASE_OUT}' ./scripts/run_local_release_evidence.sh"
+  echo "rollback_command=$rollback_cmd"
 } >> "$SUMMARY"
 
 log "evidence_dir=$EVIDENCE_DIR"
