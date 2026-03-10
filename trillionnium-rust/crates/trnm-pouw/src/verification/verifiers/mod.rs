@@ -631,6 +631,12 @@ mod tests {
     }
 
     #[test]
+    fn find_numeric_field_rejects_quoted_value_with_trailing_space() {
+        let body = r#"{"task_id":"7 ","worker":"w1"}"#;
+        assert_eq!(find_numeric_field(body, "task_id"), None);
+    }
+
+    #[test]
     fn find_numeric_field_rejects_fullwidth_separator_spoof() {
         let body = "task_id：7,worker=w1";
         assert_eq!(find_numeric_field(body, "task_id"), None);
