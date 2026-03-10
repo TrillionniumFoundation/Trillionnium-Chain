@@ -5432,6 +5432,67 @@ mod tests {
     }
 
     #[test]
+    fn challenged_resolve_exact_duplicate_authority_config_rejects_without_escrow_drift() {
+        // Governance hardening: exact duplicate resolver entries must fail closed
+        // so challenged escrow settlement never relies on a single duplicated actor.
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        set_resolve_authority(&mut st, "authority,authority");
+
+        let r1 = apply_create_task(&mut st, 19_223_4_1, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(19_223_4_1, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 =
+            apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
+        let r4 = apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110)
+            .unwrap();
+        let r5 = apply_challenge_at_height(
+            &mut st,
+            r4,
+            "challenger".into(),
+            10,
+            "challenger".into(),
+            210,
+        )
+        .unwrap();
+
+        let before_task = st.get_task(r5.id).expect("challenged task must persist");
+        let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+        let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+        let before_challenger = st.balance_of("challenger");
+
+        let duplicate_err = apply_resolve_at_height(
+            &mut st,
+            r5,
+            false,
+            "authority".into(),
+            "authority".into(),
+            211,
+        )
+        .expect_err("duplicate resolver config should be rejected before settlement");
+        assert!(matches!(duplicate_err, PouwError::Unauthorized));
+        assert_eq!(st.pending_resolve_approval(before_task.task_id), None);
+
+        let after_task = st
+            .get_task(before_task.task_id)
+            .expect("task must remain unchanged after rejected resolve");
+        assert_eq!(after_task.status, before_task.status);
+        assert_eq!(
+            after_task.challenge_bond_forfeited,
+            before_task.challenge_bond_forfeited
+        );
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
+        assert_eq!(st.balance_of("challenger"), before_challenger);
+    }
+
+    #[test]
     fn challenged_resolve_escrow_authority_overlap_is_masked_by_pause_without_escrow_drift() {
         // Safety boundary: emergency pause must fail closed before resolver/escrow
         // overlap checks so paused challenged flows cannot leak authority validation
