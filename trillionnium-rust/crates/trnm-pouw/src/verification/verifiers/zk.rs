@@ -2,8 +2,7 @@ use std::sync::Arc;
 
 use crate::verification::backend::{
     parse_zk_proof_payload, BackendExecutionError, BackendVerificationRequest,
-    BackendVerificationSuccess, VerificationBackendError, VerificationBackendConfig, ZkBackend,
-    ZkBackendKind, ZkBackendRegistry,
+    VerificationBackendError, VerificationBackendConfig, ZkBackendKind, ZkBackendRegistry,
 };
 use crate::verification::{ProofVerifier, VerificationResult};
 use trnm_types::TaskObject;
@@ -91,6 +90,7 @@ impl ProofVerifier for ZkVerifier {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::verification::backend::{BackendVerificationSuccess, ZkBackend};
     use trnm_types::{ProofType, TaskObject, TaskStatus};
 
     fn mock_task() -> TaskObject {

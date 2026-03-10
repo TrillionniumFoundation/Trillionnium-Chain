@@ -3,7 +3,10 @@ use std::sync::Arc;
 
 use trnm_types::{ProofType, TaskObject};
 
-use super::{proof_type_key, verifiers, ProofVerifier, VerificationResult};
+use super::{
+    backend::{VerificationBackendConfig, ZkBackendRegistry},
+    proof_type_key, verifiers, ProofVerifier, VerificationResult,
+};
 
 pub struct VerifierRegistry {
     verifiers: HashMap<String, Arc<dyn ProofVerifier + Send + Sync>>,
@@ -18,10 +21,28 @@ impl VerifierRegistry {
 
     /// Initializes a registry with built-in verifiers for Fraud/TEE/ZK proof types.
     pub fn with_builtin_verifiers() -> Self {
+        Self::with_backend_config(VerificationBackendConfig::default())
+    }
+
+    pub fn with_backend_config(config: VerificationBackendConfig) -> Self {
+        let backend_registry = Arc::new(ZkBackendRegistry::new());
+        Self::with_backends(config, backend_registry)
+    }
+
+    pub fn with_backends(
+        config: VerificationBackendConfig,
+        backends: Arc<ZkBackendRegistry>,
+    ) -> Self {
         let mut registry = Self::new();
         registry.register(Arc::new(verifiers::FraudVerifier));
-        registry.register(Arc::new(verifiers::TeeVerifier));
-        registry.register(Arc::new(verifiers::ZkVerifier));
+        registry.register(Arc::new(verifiers::TeeVerifier::new(
+            config.tee_backend,
+            Arc::clone(&backends),
+        )));
+        registry.register(Arc::new(verifiers::ZkVerifier::new(
+            config.zk_backend,
+            backends,
+        )));
         registry
     }
 
