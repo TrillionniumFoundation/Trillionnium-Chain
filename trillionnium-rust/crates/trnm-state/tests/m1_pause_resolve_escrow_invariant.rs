@@ -1,4 +1,4 @@
-use trnm_state::{GovParamUpdateOutcome, StateStore};
+use trnm_state::{GovParamUpdateOutcome, GovPendingUpdateAction, StateStore};
 
 const CHALLENGE_ESCROW_ACCOUNT: &str = "treasury.challenge_escrow";
 const CHALLENGE_FORFEIT_TREASURY_ACCOUNT: &str = "treasury.challenge_forfeits";
@@ -717,4 +717,47 @@ fn paused_state_rejects_duplicate_multisig_member_authority_set_without_side_eff
         st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
         forfeits_before
     );
+}
+
+#[test]
+fn paused_cancel_resolve_authority_timelock_keeps_pause_boundary_and_escrow_conservation() {
+    // M1 micro-hardening: cancel path for sensitive resolve_authority must remain
+    // side-effect free for pause state and custody balances.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 55_000);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 700);
+
+    let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+    let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+
+    st.set_gov_param(98_198, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    let scheduled = st
+        .set_gov_param(
+            98_199,
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("resolve_authority should schedule while paused");
+    assert!(matches!(scheduled, GovParamUpdateOutcome::Scheduled { .. }));
+    assert!(st.pending_gov_update("resolve_authority").is_some());
+
+    let cancelled = st
+        .set_gov_param_with_action(
+            98_200,
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+            GovPendingUpdateAction::Cancel,
+        )
+        .expect("cancel should remove pending resolve_authority update");
+    assert!(matches!(cancelled, GovParamUpdateOutcome::Cancelled));
+
+    assert!(st.is_emergency_paused());
+    assert_eq!(st.pending_gov_update("resolve_authority"), None);
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+    assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), forfeits_before);
 }
