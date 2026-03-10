@@ -1449,8 +1449,11 @@ mod tests {
 
         reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
         // Sparse anti-starvation seeding should only engage at >=2x skew. For 3:2,
-        // keep first-hot-hint ordering to avoid unnecessary lane rotation overhead.
-        assert_eq!(txs.first().map(|t| t.id), Some(391));
+        // keep first-hot-hint ordering and deterministic pass rotation from bucket 0.
+        assert_eq!(
+            txs.iter().map(|t| t.id).collect::<Vec<_>>(),
+            vec![391, 393, 392, 395, 394]
+        );
     }
 
     #[test]
