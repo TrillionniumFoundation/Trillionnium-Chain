@@ -263,50 +263,6 @@ pub enum VerificationBackendError {
     Execution(#[from] BackendExecutionError),
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct ResolvedVkRef {
-    pub canonical_ref: String,
-}
-
-#[derive(Debug, Error, Clone, PartialEq, Eq)]
-pub enum VkRefResolutionError {
-    #[error("vk_ref is malformed: {reason}")]
-    Malformed { reason: String },
-    #[error("vk_ref cannot be resolved right now: {reason}")]
-    Unavailable { reason: String },
-    #[error("vk_ref not found: {vk_ref}")]
-    NotFound { vk_ref: String },
-    #[error("vk_ref resolver internal error: {reason}")]
-    Internal { reason: String },
-}
-
-impl VkRefResolutionError {
-    pub fn into_backend_execution_error(self) -> BackendExecutionError {
-        match self {
-            Self::Malformed { reason } => BackendExecutionError::MalformedProof {
-                backend: "zk:vk-ref".to_string(),
-                reason,
-            },
-            Self::NotFound { vk_ref } => BackendExecutionError::InvalidProof {
-                backend: "zk:vk-ref".to_string(),
-                reason: format!("unrecognized vk_ref: {vk_ref}"),
-            },
-            Self::Unavailable { reason } => BackendExecutionError::Unavailable {
-                backend: "zk:vk-ref".to_string(),
-                reason,
-            },
-            Self::Internal { reason } => BackendExecutionError::Internal {
-                backend: "zk:vk-ref".to_string(),
-                reason,
-            },
-        }
-    }
-}
-
-pub trait VkRefResolver: Send + Sync {
-    fn resolve(&self, vk_ref: &str) -> Result<ResolvedVkRef, VkRefResolutionError>;
-}
-
 pub trait VerificationBackend: Send + Sync {
     fn backend_id(&self) -> &str;
     fn verify(
