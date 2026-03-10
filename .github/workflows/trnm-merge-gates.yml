@@ -76,6 +76,13 @@ jobs:
           set -euo pipefail
           ./scripts/v2/trnm_merge_gates_deterministic_env_guard_test.sh
 
+      - name: PoUW proof-binding fail-closed gate (hard gate)
+        run: |
+          set -euo pipefail
+          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+          cd trillionnium-rust
+          cargo test -p trnm-pouw --lib --locked
+
       - name: Rust workspace tests
         run: |
           set -euo pipefail
