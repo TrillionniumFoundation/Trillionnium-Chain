@@ -2138,19 +2138,34 @@ impl PreExecPool {
                 match entry {
                     PreExecQueueEntry::Run(job) => {
                         for id in job.ids {
-                            let idx = (id - 1) as usize;
-                            let mut local_state = snapshot_cloned.as_ref().clone();
-                            let res = apply_one(
-                                &mut local_state,
-                                picked_cloned[idx].clone(),
-                                candidate_height,
-                            );
-                            match res {
-                                Ok(_) => {
+                            let result =
+                                std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+                                    let idx = (id - 1) as usize;
+                                    let tx = picked_cloned
+                                        .get(idx)
+                                        .cloned()
+                                        .ok_or_else(|| format!("preexec invalid tx id {}", id))?;
+                                    let mut local_state = snapshot_cloned.as_ref().clone();
+                                    apply_one(&mut local_state, tx, candidate_height)
+                                        .map(|_| ())
+                                        .map_err(|e| e.to_string())
+                                }));
+                            match result {
+                                Ok(Ok(())) => {
                                     let _ = job.result_tx.send((id, true, String::new()));
                                 }
-                                Err(e) => {
-                                    let _ = job.result_tx.send((id, false, e.to_string()));
+                                Ok(Err(err)) => {
+                                    let _ = job.result_tx.send((id, false, err));
+                                }
+                                Err(_) => {
+                                    let _ = job.result_tx.send((
+                                        id,
+                                        false,
+                                        format!(
+                                            "preexec worker panic while evaluating tx_id={}",
+                                            id
+                                        ),
+                                    ));
                                 }
                             }
                         }
@@ -2471,6 +2486,25 @@ mod tests {
         assert_eq!(first.1, 0);
         assert_eq!(second.0, vec![3, 4]);
         assert_eq!(second.1, 0);
+    }
+
+    #[test]
+    fn preexec_pool_rejects_invalid_job_ids_without_losing_workers() {
+        let state = Arc::new(StateStore::new());
+        let picked = Arc::new(vec![MockTx::CreateTask {
+            task_id: 4301,
+            creator: "alice".into(),
+            bounty: 10,
+        }]);
+
+        let pool = PreExecPool::new(Arc::clone(&state), Arc::clone(&picked), 2, 1);
+        let malformed = pre_execute_group_parallel(&pool, vec![1, 2]);
+        let followup = pre_execute_group_parallel(&pool, vec![1]);
+
+        assert_eq!(malformed.0, vec![1]);
+        assert_eq!(malformed.1, 1);
+        assert_eq!(followup.0, vec![1]);
+        assert_eq!(followup.1, 0);
     }
 
     #[test]
