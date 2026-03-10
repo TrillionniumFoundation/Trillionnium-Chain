@@ -1442,6 +1442,20 @@ fn pick_txs_with_critical_guard(
         return mempool.drain(..).collect();
     }
 
+    if !mempool.iter().any(is_critical_tx) {
+        // Normal-only backlog has no critical-lane anti-starvation requirement.
+        // Keep FIFO prefix drain and skip lane gate bookkeeping to reduce
+        // free-ingress selection overhead on the hot path.
+        let mut picked = Vec::with_capacity(txs_per_block);
+        for _ in 0..txs_per_block {
+            let Some(tx) = mempool.pop_front() else {
+                break;
+            };
+            picked.push(tx);
+        }
+        return picked;
+    }
+
     // Selection fairness should consider the full queued backlog, not only the
     // first block-sized prefix. Otherwise a critical tx that arrives behind a
     // long normal queue can never enter the fairness gate and is effectively
@@ -2674,6 +2688,40 @@ mod tests {
         assert!(matches!(mempool[0], MockTx::CreateTask { .. }));
         assert!(matches!(mempool[1], MockTx::Challenge { .. }));
         assert!(matches!(mempool[2], MockTx::AcceptTask { .. }));
+    }
+
+    #[test]
+    fn critical_guard_normal_only_backlog_drains_fifo_prefix_without_reordering() {
+        let mut mempool = VecDeque::from(vec![
+            MockTx::CreateTask {
+                task_id: 31,
+                creator: "alice".into(),
+                bounty: 10,
+            },
+            MockTx::AcceptTask {
+                task_id: 31,
+                worker: "w31".into(),
+            },
+            MockTx::Commit {
+                task_id: 31,
+                worker: "w31".into(),
+                committed_hash: [1u8; 32],
+            },
+            MockTx::CreateTask {
+                task_id: 32,
+                creator: "bob".into(),
+                bounty: 20,
+            },
+        ]);
+
+        let picked = pick_txs_with_critical_guard(&mut mempool, 2);
+        assert_eq!(picked.len(), 2);
+        assert!(matches!(picked[0], MockTx::CreateTask { task_id: 31, .. }));
+        assert!(matches!(picked[1], MockTx::AcceptTask { task_id: 31, .. }));
+
+        assert_eq!(mempool.len(), 2);
+        assert!(matches!(mempool[0], MockTx::Commit { task_id: 31, .. }));
+        assert!(matches!(mempool[1], MockTx::CreateTask { task_id: 32, .. }));
     }
 
     #[test]
