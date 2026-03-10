@@ -1120,20 +1120,33 @@ mod tests {
 
     #[cfg(feature = "real-zk-backend")]
     #[test]
-    fn zk_verifier_rejects_invalid_real_groth16_proof() {
+    fn zk_verifier_rejects_malformed_real_groth16_proof_encoding() {
         let verifier = ZkVerifier::default();
         let task = demo_task();
-        let public_output = public_output_from_result_hash(&task).unwrap();
-        let mut proof_hex = demo_backend_proof_hex_for_public_output(public_output);
-        proof_hex.replace_range(0..2, if &proof_hex[0..2] == "00" { "11" } else { "00" });
         let proof = format!(
-            "ZK:task_id=99,worker=worker-zk,proof_type=zk,result_hash=0000000000000051000000000000000000000000000000000000000000000000,backend={DEMO_BACKEND_ID},proof={proof_hex}"
+            "ZK:task_id=99,worker=worker-zk,proof_type=zk,result_hash=0000000000000051000000000000000000000000000000000000000000000000,backend={DEMO_BACKEND_ID},proof=zzzz"
         );
 
         assert!(matches!(
             verifier.verify_proof(&task, proof.as_bytes()),
-            VerificationResult::Invalid(msg)
-                if msg.contains("malformed") || msg.contains("cryptographic verification failed")
+            VerificationResult::Invalid(msg) if msg.contains("malformed")
+        ));
+    }
+
+    #[cfg(feature = "real-zk-backend")]
+    #[test]
+    fn zk_verifier_rejects_cryptographically_invalid_real_groth16_proof() {
+        let verifier = ZkVerifier::default();
+        let task = demo_task();
+        let other_public_output = 64u64;
+        let wrong_proof_hex = demo_backend_proof_hex_for_public_output(other_public_output);
+        let proof = format!(
+            "ZK:task_id=99,worker=worker-zk,proof_type=zk,result_hash=0000000000000051000000000000000000000000000000000000000000000000,backend={DEMO_BACKEND_ID},proof={wrong_proof_hex}"
+        );
+
+        assert!(matches!(
+            verifier.verify_proof(&task, proof.as_bytes()),
+            VerificationResult::Invalid(msg) if msg.contains("cryptographic verification failed")
         ));
     }
 
