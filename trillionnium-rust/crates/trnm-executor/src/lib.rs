@@ -20,6 +20,7 @@ pub struct GroupingProfile {
     pub max_group_size: usize,
     pub min_group_size: usize,
     pub avg_group_size: f64,
+    pub hot_object_share: f64,
     pub conflict_checks: usize,
     pub conflict_hits: usize,
     pub candidate_groups_scanned: usize,
@@ -227,6 +228,31 @@ pub fn build_parallel_groups(txs: &[Tx]) -> Vec<Vec<Tx>> {
     build_parallel_groups_profile(txs).0
 }
 
+fn hot_object_share(txs: &[Tx]) -> f64 {
+    let mut counts: HashMap<u64, usize> = HashMap::new();
+    let mut total = 0usize;
+
+    for tx in txs {
+        let mut keys = dedup_access_keys(&tx.read_set);
+        for key in dedup_access_keys(&tx.write_set) {
+            if !keys.contains(&key) {
+                keys.push(key);
+            }
+        }
+        total += keys.len();
+        for key in keys {
+            *counts.entry(key).or_insert(0) += 1;
+        }
+    }
+
+    if total == 0 {
+        return 0.0;
+    }
+
+    let hottest = counts.values().copied().max().unwrap_or(0);
+    hottest as f64 / total as f64
+}
+
 pub fn build_parallel_groups_profile(txs: &[Tx]) -> (Vec<Vec<Tx>>, GroupingProfile) {
     build_parallel_groups_profile_with_strategy(txs, GroupingStrategy::Original)
 }
@@ -245,6 +271,7 @@ pub fn build_parallel_groups_profile_with_strategy(
                 max_group_size: 0,
                 min_group_size: 0,
                 avg_group_size: 0.0,
+                hot_object_share: 0.0,
                 conflict_checks: 0,
                 conflict_hits: 0,
                 candidate_groups_scanned: 0,
@@ -342,6 +369,7 @@ pub fn build_parallel_groups_profile_with_strategy(
     } else {
         grouped_count as f64 / group_count as f64
     };
+    let hot_object_share = hot_object_share(txs);
 
     (
         groups,
@@ -352,6 +380,7 @@ pub fn build_parallel_groups_profile_with_strategy(
             max_group_size,
             min_group_size,
             avg_group_size,
+            hot_object_share,
             conflict_checks,
             conflict_hits,
             candidate_groups_scanned: 0,
@@ -427,6 +456,7 @@ fn build_parallel_groups_aggressive_profile(
         } else {
             grouped_count as f64 / group_count as f64
         };
+        let hot_object_share = hot_object_share(original_txs);
 
         return (
             groups,
@@ -437,6 +467,7 @@ fn build_parallel_groups_aggressive_profile(
                 max_group_size,
                 min_group_size,
                 avg_group_size,
+                hot_object_share,
                 conflict_checks,
                 conflict_hits,
                 candidate_groups_scanned: 0,
@@ -582,6 +613,7 @@ fn build_parallel_groups_aggressive_profile(
     } else {
         grouped_count as f64 / group_count as f64
     };
+    let hot_object_share = hot_object_share(original_txs);
 
     (
         groups,
@@ -592,6 +624,7 @@ fn build_parallel_groups_aggressive_profile(
             max_group_size,
             min_group_size,
             avg_group_size,
+            hot_object_share,
             conflict_checks,
             conflict_hits,
             candidate_groups_scanned,
@@ -963,10 +996,7 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
             // Under highly skewed hot-bucket loads, start from the sparsest non-empty
             // bucket so low-volume conflict domains are serviced promptly instead of
             // always waiting behind the dominant lane at cycle start.
-            let first_hint = txs
-                .first()
-                .map(|tx| hot_bucket_hint(tx, n))
-                .unwrap_or(0);
+            let first_hint = txs.first().map(|tx| hot_bucket_hint(tx, n)).unwrap_or(0);
             let sparse_start = {
                 let mut min_non_zero = usize::MAX;
                 let mut max_depth = 0usize;
@@ -1168,8 +1198,7 @@ mod tests {
         let small_write = tx(1, vec![], vec![o(901), o(902), o(903), o(904), o(905)]);
         let mut very_wide_read_hit: Vec<ObjectRef> = (1..=256).map(|id| o(30_000 + id)).collect();
         very_wide_read_hit.push(o(904));
-        let very_wide_read_miss: Vec<ObjectRef> =
-            (1..=256).map(|id| o(40_000 + id)).collect();
+        let very_wide_read_miss: Vec<ObjectRef> = (1..=256).map(|id| o(40_000 + id)).collect();
 
         assert!(detect_conflict(
             &small_write,
@@ -1371,10 +1400,10 @@ mod tests {
     #[test]
     fn hot_bucket_interleave_sparse_tie_prefers_nearest_bucket_across_ring_wrap() {
         let mut txs = vec![
-            tx(411, vec![], vec![o(0)]),  // first hot hint bucket 0
-            tx(412, vec![], vec![o(8)]),  // same hot bucket (depth 2)
-            tx(413, vec![], vec![o(1)]),  // sparse bucket +1 clockwise
-            tx(414, vec![], vec![o(7)]),  // sparse bucket -1 counter-clockwise
+            tx(411, vec![], vec![o(0)]), // first hot hint bucket 0
+            tx(412, vec![], vec![o(8)]), // same hot bucket (depth 2)
+            tx(413, vec![], vec![o(1)]), // sparse bucket +1 clockwise
+            tx(414, vec![], vec![o(7)]), // sparse bucket -1 counter-clockwise
         ];
 
         reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
@@ -1431,7 +1460,10 @@ mod tests {
         reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
         // All keys map to bucket 0 under the default 8-bucket layout; interleave
         // is a no-op and should return early without extra round-robin passes.
-        assert_eq!(txs.iter().map(|t| t.id).collect::<Vec<_>>(), vec![61, 62, 63, 64]);
+        assert_eq!(
+            txs.iter().map(|t| t.id).collect::<Vec<_>>(),
+            vec![61, 62, 63, 64]
+        );
     }
 
     #[test]
@@ -1446,7 +1478,10 @@ mod tests {
         reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
         // With singleton occupancy across non-empty buckets there are no same-key
         // streaks to break; keep ingress order and avoid extra round-robin probing.
-        assert_eq!(txs.iter().map(|t| t.id).collect::<Vec<_>>(), vec![71, 72, 73, 74]);
+        assert_eq!(
+            txs.iter().map(|t| t.id).collect::<Vec<_>>(),
+            vec![71, 72, 73, 74]
+        );
     }
 
     #[test]

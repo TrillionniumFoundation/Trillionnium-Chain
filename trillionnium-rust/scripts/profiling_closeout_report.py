@@ -1,0 +1,137 @@
+#!/usr/bin/env python3
+import argparse
+import glob
+import os
+import re
+import statistics
+from datetime import datetime
+
+KV = re.compile(r"([a-zA-Z0-9_\.]+)=([^\s]+)")
+
+
+def latest(pattern: str):
+    files = sorted(glob.glob(pattern), key=os.path.getmtime, reverse=True)
+    return files[0] if files else None
+
+
+def parse_kv_line(line: str):
+    return {k: v for k, v in KV.findall(line)}
+
+
+def as_num(v):
+    try:
+        return int(v)
+    except Exception:
+        try:
+            return float(v)
+        except Exception:
+            return v
+
+
+def summarize(vals):
+    vals = [as_num(v) for v in vals]
+    if not vals:
+        return None
+    vals = sorted(vals)
+    p95 = vals[min(len(vals) - 1, int(len(vals) * 0.95))]
+    return vals[0], statistics.median(vals), p95, vals[-1]
+
+
+def fmt_metric(name: str, vals):
+    s = summarize(vals)
+    if not s:
+        return f"- {name}: n/a"
+    mn, p50, p95, mx = s
+    return f"- {name}: min={mn} p50={p50} p95={p95} max={mx}"
+
+
+def main():
+    p = argparse.ArgumentParser(description="Render profiling closeout baseline from node/bench outputs")
+    p.add_argument("--node-log", default=None)
+    p.add_argument("--classic", default=None)
+    p.add_argument("--mixed", default=None)
+    p.add_argument("--executor-profile", default=None)
+    p.add_argument("--out", default=None)
+    args = p.parse_args()
+
+    root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    node_log = args.node_log or latest(os.path.join(root, "run", "parallel-sanity.log"))
+    classic = args.classic or latest(os.path.join(root, "run", "bench", "bench-matrix-*.txt"))
+    mixed = args.mixed or latest(os.path.join(root, "run", "bench", "bench-mixed-matrix-*.txt"))
+    executor_profile = args.executor_profile or latest(os.path.join(root, "run", "bench", "executor-profile-summary-*.txt"))
+    ts = datetime.now().strftime("%Y%m%d-%H%M%S")
+    out = args.out or os.path.join(root, "docs", "reports", f"profiling-closeout-baseline-{ts}.md")
+
+    block_rows = []
+    consensus_rows = []
+    if node_log and os.path.exists(node_log):
+        with open(node_log, "r", encoding="utf-8") as f:
+            for raw in f:
+                line = raw.strip()
+                if line.startswith("[block] "):
+                    block_rows.append(parse_kv_line(line))
+                elif line.startswith("[consensus] "):
+                    consensus_rows.append(parse_kv_line(line))
+
+    lines = ["# Profiling Closeout Baseline", f"generated_at={datetime.now().isoformat()}", "", "## Inputs"]
+    lines += [
+        f"- node_log: {node_log}",
+        f"- classic_bench: {classic}",
+        f"- mixed_bench: {mixed}",
+        f"- executor_profile: {executor_profile}",
+        "",
+        "## Block Metrics",
+    ]
+    for key in [
+        "scheduler_elapsed_ms",
+        "preexec_elapsed_ms",
+        "commit_elapsed_ms",
+        "state_root_total_ms",
+        "critical_wait_blocks",
+        "rollback_count",
+        "groups",
+        "elapsed_ms",
+    ]:
+        lines.append(fmt_metric(key, [r.get(key) for r in block_rows if key in r]))
+
+    lines += ["", "## Consensus Summary"]
+    if consensus_rows:
+        c = consensus_rows[-1]
+        for key in [
+            "finality_p50_ms",
+            "finality_p95_ms",
+            "scheduler_elapsed_p50_ms",
+            "scheduler_elapsed_p95_ms",
+            "preexec_elapsed_p50_ms",
+            "preexec_elapsed_p95_ms",
+            "commit_elapsed_p50_ms",
+            "commit_elapsed_p95_ms",
+            "state_root_total_p50_ms",
+            "state_root_total_p95_ms",
+            "critical_wait_blocks_p50",
+            "critical_wait_blocks_p95",
+            "rollback_total",
+            "preexec_reject_total",
+            "apply_error_total",
+            "bft_round_change_total",
+        ]:
+            if key in c:
+                lines.append(f"- {key}: {c[key]}")
+    else:
+        lines.append("- consensus summary: missing")
+
+    lines += ["", "## Benchmark Summary"]
+    if executor_profile and os.path.exists(executor_profile):
+        with open(executor_profile, "r", encoding="utf-8") as f:
+            lines.extend([line.rstrip() for line in f])
+    else:
+        lines.append("- executor profile summary: missing")
+
+    os.makedirs(os.path.dirname(out), exist_ok=True)
+    with open(out, "w", encoding="utf-8") as f:
+        f.write("\n".join(lines) + "\n")
+    print(f"[OK] profiling closeout baseline: {out}")
+
+
+if __name__ == "__main__":
+    main()

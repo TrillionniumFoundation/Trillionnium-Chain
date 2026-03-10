@@ -111,6 +111,7 @@ fn main() {
         println!("profile.max_group_size={}", profile.max_group_size);
         println!("profile.min_group_size={}", profile.min_group_size);
         println!("profile.avg_group_size={:.4}", profile.avg_group_size);
+        println!("profile.hot_object_share={:.4}", profile.hot_object_share);
         println!("profile.conflict_checks={}", profile.conflict_checks);
         println!("profile.conflict_hits={}", profile.conflict_hits);
         println!(
