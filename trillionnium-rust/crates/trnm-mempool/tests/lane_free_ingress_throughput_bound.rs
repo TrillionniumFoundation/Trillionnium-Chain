@@ -83,3 +83,19 @@ fn reserve_only_critical_ingress_preserves_cross_class_idempotency_until_drain()
     assert_eq!(gate.pop_ready(), Some(50));
     assert_eq!(gate.admit(50, IngressClass::Normal), AdmitOutcome::Accepted);
 }
+
+#[test]
+fn reserve_only_mixed_ingress_keeps_fifo_progress_without_fairness_detours() {
+    let mut gate = LaneAdmissionGate::new(3, 3);
+
+    // In reserve-only split, all ingress lands on the critical queue. Mixed class
+    // submit order should still drain FIFO so free-ingress throughput does not
+    // regress behind fairness bookkeeping intended for dual-lane mode.
+    assert_eq!(gate.admit(61, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(62, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(63, IngressClass::Normal), AdmitOutcome::Accepted);
+
+    assert_eq!(gate.pop_ready(), Some(61));
+    assert_eq!(gate.pop_ready(), Some(62));
+    assert_eq!(gate.pop_ready(), Some(63));
+}
