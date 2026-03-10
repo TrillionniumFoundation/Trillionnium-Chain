@@ -49,6 +49,10 @@ fn reserve_only_split_backpressured_id_is_not_poisoned_on_same_class_retry_after
     assert_eq!(gate.admit(41, IngressClass::Normal), AdmitOutcome::Accepted);
     assert_eq!(gate.admit(42, IngressClass::Normal), AdmitOutcome::Backpressured);
 
+    // While saturation persists, retries for a fresh backpressured id must remain
+    // backpressured (not duplicate-poisoned), even if retried via another class.
+    assert_eq!(gate.admit(42, IngressClass::Critical), AdmitOutcome::Backpressured);
+
     // Same-class retry should remain fresh once capacity is freed.
     assert!(gate.pop_ready().is_some());
     assert_eq!(gate.admit(42, IngressClass::Normal), AdmitOutcome::Accepted);
