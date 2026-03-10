@@ -2614,6 +2614,54 @@ mod tests {
     }
 
     #[test]
+    fn pending_total_quota_does_not_block_empty_session_touch_at_capacity() {
+        let mut store = InMemoryReliabilityStore::with_config(InMemoryReliabilityStoreConfig {
+            max_pending_total: Some(1),
+            ..InMemoryReliabilityStoreConfig::default()
+        });
+
+        let mut pending = BTreeMap::new();
+        pending.insert(
+            "ack-1".to_string(),
+            PendingItem {
+                ack_id: "ack-1".to_string(),
+                message: ReliableMessage {
+                    from: "alice".to_string(),
+                    chain_id: "trnm-testnet".to_string(),
+                    session_id: "s1".to_string(),
+                    seq: Some(1),
+                    nonce: None,
+                    msg_type: "INPUT_CHUNK".to_string(),
+                    payload: "x".to_string(),
+                },
+                attempts: 0,
+                created_at_unix_ms: 1,
+                next_retry_at_unix_ms: 1,
+            },
+        );
+
+        assert!(store
+            .try_upsert_session_with_ts(
+                SessionState {
+                    session_id: "s1".to_string(),
+                    pending,
+                },
+                1,
+            )
+            .is_ok());
+
+        assert!(store
+            .try_upsert_session_with_ts(
+                SessionState {
+                    session_id: "s2".to_string(),
+                    pending: BTreeMap::new(),
+                },
+                2,
+            )
+            .is_ok());
+    }
+
+    #[test]
     fn store_config_clamps_zero_empty_session_retention_window() {
         let store = InMemoryReliabilityStore::with_config(InMemoryReliabilityStoreConfig {
             empty_session_cleanup: EmptySessionCleanupPolicy::RetainForMs(0),
