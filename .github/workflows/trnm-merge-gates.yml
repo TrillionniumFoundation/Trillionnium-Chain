@@ -83,6 +83,9 @@ jobs:
       # Disable dynamic pip progress rendering to keep stderr/stdout stable.
       PIP_PROGRESS_BAR: "off"
       CARGO_TERM_COLOR: never
+      # Disable dynamic progress rendering to keep cargo logs deterministic
+      # across reruns and runner load variance.
+      CARGO_TERM_PROGRESS_WHEN: never
       CARGO_INCREMENTAL: "0"
       # Reduce transient crates.io/index fetch flakes during RC gate runs.
       CARGO_NET_RETRY: "5"
