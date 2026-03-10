@@ -955,21 +955,29 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
             if txs.len() < 4 {
                 return;
             }
+            // Free-ingress (empty read/write sets) has no conflict-domain signal to
+            // interleave on. Skip bucket materialization/probing and preserve stable
+            // order to reduce scheduler overhead on the no-access hot path.
+            if txs
+                .iter()
+                .all(|tx| tx.read_set.is_empty() && tx.write_set.is_empty())
+            {
+                return;
+            }
             // Cap bucket fanout by input size: for tiny batches this avoids allocating
             // and probing empty buckets while preserving the same interleave semantics.
             let buckets_n = hot_bucket_count().min(txs.len());
-            let mut buckets: Vec<Vec<Tx>> = vec![Vec::new(); buckets_n];
+            let mut bucket_depths = vec![0usize; buckets_n];
             let mut non_empty_buckets = 0usize;
 
-            for tx in txs.iter().cloned() {
-                // Prefer write-set as stronger conflict signal; fold a second key when present
-                // to reduce bucket skew for mixed workloads.
-                let bucket = hot_bucket_hint(&tx, buckets_n);
-                let target = &mut buckets[bucket];
-                if target.is_empty() {
+            for tx in txs.iter() {
+                // First pass: count occupancy only. This lets hotspot/singleton
+                // short-circuits bail out before cloning tx payloads into buckets.
+                let bucket = hot_bucket_hint(tx, buckets_n);
+                if bucket_depths[bucket] == 0 {
                     non_empty_buckets += 1;
                 }
-                target.push(tx);
+                bucket_depths[bucket] += 1;
             }
 
             // Degenerate hotspot fast path: if all txs landed in the same bucket,
@@ -985,6 +993,17 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
             // tx landed in its own bucket (all singleton), avoiding an extra max-depth scan.
             if non_empty_buckets == txs.len() {
                 return;
+            }
+
+            let mut buckets: Vec<Vec<Tx>> = bucket_depths
+                .iter()
+                .map(|depth| Vec::with_capacity(*depth))
+                .collect();
+            for tx in txs.iter().cloned() {
+                // Prefer write-set as stronger conflict signal; fold a second key when present
+                // to reduce bucket skew for mixed workloads.
+                let bucket = hot_bucket_hint(&tx, buckets_n);
+                buckets[bucket].push(tx);
             }
 
             // Keep insertion order inside each bucket (already stable by input stream);
@@ -1445,6 +1464,24 @@ mod tests {
         assert_eq!(
             txs.iter().map(|t| t.id).collect::<Vec<_>>(),
             vec![21, 22, 23]
+        );
+    }
+
+    #[test]
+    fn hot_bucket_interleave_short_circuits_empty_access_batches() {
+        let mut txs = vec![
+            tx(31, vec![], vec![]),
+            tx(32, vec![], vec![]),
+            tx(33, vec![], vec![]),
+            tx(34, vec![], vec![]),
+        ];
+
+        reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
+        // Empty-access free-ingress has no conflict-domain signal; keep stable
+        // order and avoid bucket allocation/probing overhead.
+        assert_eq!(
+            txs.iter().map(|t| t.id).collect::<Vec<_>>(),
+            vec![31, 32, 33, 34]
         );
     }
 
