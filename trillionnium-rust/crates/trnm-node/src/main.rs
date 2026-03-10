@@ -17,7 +17,10 @@ use trnm_pouw::{
     apply_commit_result, apply_commit_result_at_height, apply_create_task, apply_resolve,
     apply_resolve_at_height, apply_reveal_result, apply_reveal_result_at_height, apply_timeout,
 };
-use trnm_state::{verify_wal_and_find_checkpoint, CheckpointMeta, StateStore, WalMeta};
+use trnm_state::{
+    verify_wal_and_find_checkpoint, CheckpointMeta, PendingResolveApprovalSnapshot, StateStore,
+    WalMeta,
+};
 use trnm_types::{Hash32, ObjectRef, TaskStatus, Tx};
 
 #[derive(Debug, Parser)]
@@ -1749,6 +1752,104 @@ fn is_high_risk_tx(tx: &MockTx) -> bool {
 
 fn is_rejected_by_emergency_pause(is_paused: bool, tx: &MockTx) -> bool {
     is_paused && is_high_risk_tx(tx)
+}
+
+#[derive(Debug, Clone)]
+struct TxRollbackSnapshot {
+    task_id: u64,
+    task: Option<trnm_types::TaskObject>,
+    balances: Vec<(String, Option<u128>)>,
+    pending_resolve_approval: Option<PendingResolveApprovalSnapshot>,
+}
+
+fn balance_snapshot(st: &StateStore, address: &str) -> Option<u128> {
+    if st.balance_of(address) == 0 {
+        None
+    } else {
+        Some(st.balance_of(address))
+    }
+}
+
+fn capture_rollback_snapshot(st: &StateStore, tx: &MockTx) -> TxRollbackSnapshot {
+    let task_id = task_id_of(tx);
+    let task = st.get_task(task_id);
+    let pending_resolve_approval = st.pending_resolve_approval_snapshot(task_id);
+    let mut balances: Vec<(String, Option<u128>)> = Vec::new();
+    let mut push_balance = |address: &str| {
+        if balances.iter().any(|(existing, _)| existing == address) {
+            return;
+        }
+        balances.push((address.to_string(), balance_snapshot(st, address)));
+    };
+
+    match tx {
+        MockTx::CreateTask { creator, .. } => {
+            push_balance(creator);
+        }
+        MockTx::Challenge { challenger, .. } => {
+            push_balance(challenger);
+            push_balance("treasury.challenge_escrow");
+        }
+        MockTx::Resolve { .. } => {
+            push_balance("treasury.challenge_escrow");
+            push_balance("treasury.challenge_forfeits");
+            push_balance("treasury.worker_slashes");
+            if let Some(task) = task.as_ref() {
+                if let Some(worker) = task.worker.as_deref() {
+                    push_balance(worker);
+                }
+                if let Some(challenger) = task.challenger.as_deref() {
+                    push_balance(challenger);
+                }
+            }
+        }
+        MockTx::AcceptTask { .. } | MockTx::Commit { .. } | MockTx::Reveal { .. } => {}
+    }
+
+    TxRollbackSnapshot {
+        task_id,
+        task,
+        balances,
+        pending_resolve_approval,
+    }
+}
+
+fn rollback_tx_snapshot(st: &mut StateStore, snapshot: TxRollbackSnapshot) {
+    st.restore_task(snapshot.task_id, snapshot.task);
+    for (address, balance) in snapshot.balances {
+        st.restore_balance(&address, balance);
+    }
+    st.restore_pending_resolve_approval(snapshot.task_id, snapshot.pending_resolve_approval);
+}
+
+fn balance_deltas_from_snapshot(
+    before: &TxRollbackSnapshot,
+    after: &StateStore,
+    challenger: Option<&str>,
+) -> (EventDelta, Option<EventDelta>) {
+    let treasury_before: u128 = before
+        .balances
+        .iter()
+        .filter(|(address, _)| address.starts_with("treasury."))
+        .map(|(_, balance)| balance.unwrap_or(0))
+        .sum();
+    let treasury_after: u128 = before
+        .balances
+        .iter()
+        .filter(|(address, _)| address.starts_with("treasury."))
+        .map(|(address, _)| after.balance_of(address))
+        .sum();
+    let treasury_delta = event_delta_from_balances(treasury_after, treasury_before);
+    let challenger_delta = challenger.and_then(|acct| {
+        before
+            .balances
+            .iter()
+            .find(|(address, _)| address == acct)
+            .map(|(_, balance)| {
+                event_delta_from_balances(after.balance_of(acct), balance.unwrap_or(0))
+            })
+    });
+    (treasury_delta, challenger_delta)
 }
 
 fn apply_one(st: &mut StateStore, tx: MockTx, current_height: u64) -> Result<()> {
@@ -3600,6 +3701,51 @@ mod tests {
     }
 
     #[test]
+    fn rollback_snapshot_restores_task_balances_and_pending_resolve_state() {
+        let mut st = StateStore::new();
+        st.set_gov_param_bootstrap_unchecked(
+            9_499,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .unwrap();
+        let _ = challenged_task_fixture(&mut st, 8100);
+        st.stage_or_confirm_resolve_approval(8100, true, "authority-a", "authority-a,authority-b")
+            .unwrap();
+        let before_task = st.get_task(8100).unwrap();
+        let before_worker = st.balance_of("worker8100");
+        let before_challenger = st.balance_of("challenger");
+        let before_escrow = st.balance_of("treasury.challenge_escrow");
+        let before_pending = st.pending_resolve_approval_snapshot(8100);
+
+        let snapshot = capture_rollback_snapshot(
+            &st,
+            &MockTx::Resolve {
+                task_id: 8100,
+                slash_worker: true,
+                resolver: "authority-b".into(),
+            },
+        );
+
+        st.set_balance("worker8100", 0);
+        st.set_balance("challenger", 0);
+        st.set_balance("treasury.challenge_escrow", 0);
+        let mut mutated_task = before_task.clone();
+        mutated_task.status = TaskStatus::Completed;
+        mutated_task.version += 1;
+        st.restore_task(8100, Some(mutated_task));
+        st.clear_pending_resolve_approval(8100);
+
+        rollback_tx_snapshot(&mut st, snapshot);
+
+        assert_eq!(st.get_task(8100).unwrap(), before_task);
+        assert_eq!(st.balance_of("worker8100"), before_worker);
+        assert_eq!(st.balance_of("challenger"), before_challenger);
+        assert_eq!(st.balance_of("treasury.challenge_escrow"), before_escrow);
+        assert_eq!(st.pending_resolve_approval_snapshot(8100), before_pending);
+    }
+
+    #[test]
     fn node_resolve_multisig_first_approval_persists_and_second_finalizes() {
         let mut st = StateStore::new();
         st.set_gov_param_bootstrap_unchecked(
@@ -4596,7 +4742,7 @@ fn main() -> Result<()> {
                 continue;
             }
 
-            let before = state.clone();
+            let before = capture_rollback_snapshot(&state, &tx);
             if let Err(e) = apply_one(&mut state, tx.clone(), height) {
                 let err_kind = classify_apply_error(&e);
                 let err_text = e.to_string();
@@ -4608,17 +4754,19 @@ fn main() -> Result<()> {
                     let challenger_account: Option<String> = match &tx {
                         MockTx::Challenge { challenger, .. } => Some(challenger.clone()),
                         MockTx::Resolve { .. } => {
-                            before.get_task(task_id).and_then(|t| t.challenger)
+                            before.task.as_ref().and_then(|t| t.challenger.clone())
                         }
                         _ => None,
                     };
-                    let (treasury_delta, challenger_delta) = balance_deltas_for_transition(
-                        &before,
-                        &state,
-                        task_id,
-                        challenger_account.as_deref(),
-                    );
-                    let signer = verified_signer_of(&before, &tx);
+                    let treasury_delta = EventDelta {
+                        numeric: Some(0),
+                        text: "0".to_string(),
+                    };
+                    let challenger_delta = challenger_account.as_ref().map(|_| EventDelta {
+                        numeric: Some(0),
+                        text: "0".to_string(),
+                    });
+                    let signer = verified_signer_of(&state, &tx);
                     emit_event(
                         &state,
                         &tx,
@@ -4634,7 +4782,7 @@ fn main() -> Result<()> {
                         Some(err_kind),
                     );
                 } else {
-                    state = before; // rollback on failed commit
+                    rollback_tx_snapshot(&mut state, before);
                     apply_error_total += 1;
                     rollback_total += 1;
                     match err_kind {
@@ -4656,16 +4804,14 @@ fn main() -> Result<()> {
                 let root = hex::encode(state.state_root());
                 let challenger_account: Option<String> = match &tx {
                     MockTx::Challenge { challenger, .. } => Some(challenger.clone()),
-                    MockTx::Resolve { .. } => before.get_task(task_id).and_then(|t| t.challenger),
+                    MockTx::Resolve { .. } => {
+                        before.task.as_ref().and_then(|t| t.challenger.clone())
+                    }
                     _ => None,
                 };
-                let (treasury_delta, challenger_delta) = balance_deltas_for_transition(
-                    &before,
-                    &state,
-                    task_id,
-                    challenger_account.as_deref(),
-                );
-                let signer = verified_signer_of(&before, &tx);
+                let (treasury_delta, challenger_delta) =
+                    balance_deltas_from_snapshot(&before, &state, challenger_account.as_deref());
+                let signer = verified_signer_of(&state, &tx);
                 emit_event(
                     &state,
                     &tx,

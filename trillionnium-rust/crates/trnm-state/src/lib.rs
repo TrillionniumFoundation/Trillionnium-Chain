@@ -107,6 +107,15 @@ pub struct PendingGovParamUpdate {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
+pub struct PendingResolveApprovalSnapshot {
+    pub slash_worker: bool,
+    pub confirmations: u8,
+    pub first_approver: String,
+    pub authority_set: String,
+    pub task_version: u64,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum GovParamUpdateOutcome {
     Applied(ObjectRef),
     Scheduled { activate_at_height: u64 },
@@ -477,6 +486,73 @@ impl StateStore {
         self.pending_resolve_approvals
             .get(&task_id)
             .map(|entry| entry.first_approver.clone())
+    }
+
+    pub fn pending_resolve_approval_snapshot(
+        &self,
+        task_id: u64,
+    ) -> Option<PendingResolveApprovalSnapshot> {
+        self.pending_resolve_approvals
+            .get(&task_id)
+            .map(|entry| PendingResolveApprovalSnapshot {
+                slash_worker: entry.slash_worker,
+                confirmations: entry.confirmations,
+                first_approver: entry.first_approver.clone(),
+                authority_set: entry.authority_set.clone(),
+                task_version: entry.task_version,
+            })
+    }
+
+    pub fn restore_pending_resolve_approval(
+        &mut self,
+        task_id: u64,
+        snapshot: Option<PendingResolveApprovalSnapshot>,
+    ) {
+        match snapshot {
+            Some(snapshot) => {
+                self.pending_resolve_approvals.insert(
+                    task_id,
+                    PendingResolveApproval {
+                        slash_worker: snapshot.slash_worker,
+                        confirmations: snapshot.confirmations,
+                        first_approver: snapshot.first_approver,
+                        authority_set: snapshot.authority_set,
+                        task_version: snapshot.task_version,
+                    },
+                );
+            }
+            None => {
+                self.pending_resolve_approvals.remove(&task_id);
+            }
+        }
+    }
+
+    pub fn restore_task(&mut self, id: u64, snapshot: Option<TaskObject>) {
+        match snapshot {
+            Some(task) => {
+                self.objects.insert(
+                    id,
+                    VersionedObject {
+                        version: task.version,
+                        value: ObjectValue::Task(task),
+                    },
+                );
+            }
+            None => {
+                self.objects.remove(&id);
+            }
+        }
+    }
+
+    pub fn restore_balance(&mut self, address: &str, snapshot: Option<u128>) {
+        match snapshot {
+            Some(amount) => {
+                self.balances.insert(address.to_string(), amount);
+            }
+            None => {
+                self.balances.remove(address);
+            }
+        }
     }
 
     pub fn get_ref(&self, id: u64) -> Option<ObjectRef> {
