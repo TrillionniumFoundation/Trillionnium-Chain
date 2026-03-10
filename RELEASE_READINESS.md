@@ -1,7 +1,7 @@
 # TRNM Release Readiness
 
 更新日期：2026-03-10
-适用范围：`origin/main` 当前快照（`fde185a7`）
+适用范围：`origin/main` 当前快照（`0b209289`）
 
 > 本文件是当前 **release readiness truth source**，且仅对上面标明的 `origin/main` 快照负责。
 > - `STATUS.md`：历史推进日志 / working journal，不参与当前 release 判定。
@@ -20,6 +20,7 @@
 4. verifier 相关旧 PoC 本体（如 `rust/verifier`、`scripts/run_rust_verifier_poc.sh`）当前不存在；若文档仍给人“已内建并持续受保护”的印象，会造成错误预期。
 5. Web4 当前真实语义是“**readonly API client + explicit mock fallback**”：页面默认尝试只读查询客户端；只有在显式 `?mode=mock` 时才回退到本地 snapshot，因此不能把它写成“纯静态 mock 页面”，也不能写成“已接通仓内写路由的生产后台”。
 6. 文档中出现的 `/api/v0/web4/*` 属于历史 V0 草案命名；当前仓内并没有对应的 Next.js/仓内 route，实现语义应以 `web4-frontend/lib/api-contract/*` 与 `web4-frontend/lib/dashboard/source.ts` 的只读客户端为准。
+7. 并发 closeout / 对外对标目前也仍处于文档收口阶段：`docs/reports/TRNM_CONCURRENCY_BOTTLENECK_MAP_AND_8W_ROADMAP_2026-03-10.md` 是当前瓶颈图与 8 周路线入口，`docs/reports/TRNM_CONCURRENCY_COMPARISON_2026-03-05.md` 是对外口径草案；二者用于说明“当前到哪一步”，**不是** release-ready 证明。
 
 ## 分项状态
 
@@ -43,7 +44,10 @@
 1. **当前是否可发布**：先看本文件 `RELEASE_READINESS.md`。
 2. **历史推进与里程碑**：看 `STATUS.md`。
 3. **某一轮 Web4 / release 修复是否跑通过**：看对应 `docs/development/*evidence*.md`、`docs/release/*evidence*.md`。
-4. **子项目操作说明**：
+4. **并发架构现状 / 对外对标口径**：
+   - 当前瓶颈图与 8 周路线：`docs/reports/TRNM_CONCURRENCY_BOTTLENECK_MAP_AND_8W_ROADMAP_2026-03-10.md`
+   - TRNM vs Solana vs Sui 对比口径：`docs/reports/TRNM_CONCURRENCY_COMPARISON_2026-03-05.md`
+5. **子项目操作说明**：
    - 仓库总览：`README.md`
    - Web4 子项目：`web4-frontend/README.md`
 
