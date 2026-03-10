@@ -169,15 +169,29 @@ impl LaneAdmissionGate {
         }
 
         if !is_duplicate {
-            // Defensive fallback for rare restored-state skew where lane-wide cache and
-            // queue cardinality match but one queued id is missing from seen_global.
-            // Probe authoritative queues directly so stale lane-local seen caches do
-            // not spuriously classify fresh ingress as duplicate.
+            // Hot free-ingress path: lane-local idempotency sets are pre-synced with
+            // queue truth above, so probe them first to avoid O(n) queue scans under
+            // concurrent fresh-ingress bursts.
             let lane_local_duplicate =
-                self.normal.queue.contains(&tx_id) || self.critical.queue.contains(&tx_id);
+                self.normal.seen.contains(&tx_id) || self.critical.seen.contains(&tx_id);
             if lane_local_duplicate {
                 is_duplicate = true;
                 self.seen_global.insert(tx_id);
+            } else {
+                // Defensive fallback for restored-state skew where queue membership can
+                // diverge from lane-local id sets after the initial sync window.
+                let lane_local_seen_total = self
+                    .normal
+                    .seen
+                    .len()
+                    .saturating_add(self.critical.seen.len());
+                if lane_local_seen_total != lane_total
+                    && (self.normal.queue.contains(&tx_id)
+                        || self.critical.queue.contains(&tx_id))
+                {
+                    is_duplicate = true;
+                    self.seen_global.insert(tx_id);
+                }
             }
         }
 
