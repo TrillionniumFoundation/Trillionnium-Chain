@@ -720,6 +720,47 @@ fn paused_state_rejects_duplicate_multisig_member_authority_set_without_side_eff
 }
 
 #[test]
+fn paused_state_rejects_case_variant_duplicate_multisig_member_authority_set_without_side_effects() {
+    // M1 merge-gate invariant: emergency pause must not permit case-variant duplicates
+    // (same signer with different casing) to bypass multi-party resolve quorum.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 8_481);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 849);
+
+    st.set_gov_param(98_197, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+    let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+
+    let err = st
+        .stage_or_confirm_resolve_approval(
+            9_917,
+            1,
+            true,
+            "authority-a",
+            "authority-a,Authority-A",
+        )
+        .expect_err("case-variant duplicate members must be rejected while paused");
+    assert!(
+        err.contains("duplicate")
+            || err.contains("authority set")
+            || err.contains("resolve authority")
+            || err.contains("invalid governance value"),
+        "unexpected error: {err}"
+    );
+
+    assert_eq!(st.pending_resolve_approval(9_917), None);
+    assert_eq!(st.pending_gov_update("resolve_authority"), None);
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
+}
+
+#[test]
 fn paused_cancel_resolve_authority_timelock_keeps_pause_boundary_and_escrow_conservation() {
     // M1 micro-hardening: cancel path for sensitive resolve_authority must remain
     // side-effect free for pause state and custody balances.
