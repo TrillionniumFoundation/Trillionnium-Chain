@@ -291,19 +291,26 @@ impl LaneAdmissionGate {
             (self.normal.pop_ready()?, false)
         };
 
-        if served_critical {
-            // Keep streak bounded to the fairness threshold. This preserves
-            // dequeue semantics while avoiding unbounded counter growth under
-            // prolonged critical-only drains.
-            self.critical_served_streak = self
-                .critical_served_streak
-                .saturating_add(1)
-                .min(self.critical_burst_limit);
-        } else if !self.normal.queue.is_empty() && !self.critical.queue.is_empty() {
-            // When both lanes remain backlogged, keep fairness warm so normal traffic
-            // is not forced to wait through another full critical burst.
-            self.critical_served_streak = self.critical_burst_limit.saturating_sub(1);
+        if self.normal_has_dedicated_capacity {
+            if served_critical {
+                // Keep streak bounded to the fairness threshold. This preserves
+                // dequeue semantics while avoiding unbounded counter growth under
+                // prolonged critical-only drains.
+                self.critical_served_streak = self
+                    .critical_served_streak
+                    .saturating_add(1)
+                    .min(self.critical_burst_limit);
+            } else if !self.normal.queue.is_empty() && !self.critical.queue.is_empty() {
+                // When both lanes remain backlogged, keep fairness warm so normal traffic
+                // is not forced to wait through another full critical burst.
+                self.critical_served_streak = self.critical_burst_limit.saturating_sub(1);
+            } else {
+                self.critical_served_streak = 0;
+            }
         } else {
+            // Reserve-only mode has no dedicated normal-lane fairness target.
+            // Keep streak cold to avoid carrying stale fairness state across
+            // prolonged spillover drains.
             self.critical_served_streak = 0;
         }
 
@@ -662,6 +669,23 @@ mod tests {
         assert_eq!(g.pop_ready(), Some(1));
         assert_eq!(g.pop_ready(), Some(42));
         assert_eq!(g.admit(42, IngressClass::Critical), AdmitOutcome::Accepted);
+    }
+
+    #[test]
+    fn reserve_only_mode_keeps_fairness_streak_cold_during_spillover_drains() {
+        let mut g = LaneAdmissionGate::new(2, 2);
+
+        // Zero dedicated normal capacity (reserve-only): normal ingress borrows
+        // critical headroom but fairness streak should stay cold.
+        assert_eq!(g.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(11, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.critical_served_streak, 0);
+
+        // Critical remains preferred when available and the streak remains reset.
+        assert_eq!(g.pop_ready(), Some(10));
+        assert_eq!(g.critical_served_streak, 0);
+        assert_eq!(g.pop_ready(), Some(11));
+        assert_eq!(g.critical_served_streak, 0);
     }
 
     #[test]
