@@ -33,6 +33,8 @@ jobs:
       LC_COLLATE: C
       PYTHONHASHSEED: '0'
       FORCE_COLOR: '0'
+      # Disable npm update notifier network check to avoid nondeterministic stderr timing/noise.
+      NPM_CONFIG_UPDATE_NOTIFIER: 'false'
       CI: 'true'
     defaults:
       run:

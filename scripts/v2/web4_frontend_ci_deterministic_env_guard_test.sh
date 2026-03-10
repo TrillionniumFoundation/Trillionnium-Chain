@@ -18,6 +18,7 @@ required_lines=(
   'LC_COLLATE: C'
   "PYTHONHASHSEED: '0'"
   "FORCE_COLOR: '0'"
+  "NPM_CONFIG_UPDATE_NOTIFIER: 'false'"
   "CI: 'true'"
 )
 
