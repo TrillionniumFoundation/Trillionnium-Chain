@@ -10,6 +10,12 @@
 
 实现目录：`lib/api-contract/`
 
+## 语义边界
+
+- 本文档描述的是**当前前端实际消费的只读查询接口**。
+- 当前仓内并没有 `/api/v0/web4/*` 对应 route；若你在历史文档里看到这些路径，应理解为未落地的聚合草案，而不是现有实现。
+- Dashboard 默认走只读 API client；仅在显式 `?mode=mock` 时回退到本地 mock snapshot。
+
 ## 分层结构
 
 1. **类型层**：`types.ts`

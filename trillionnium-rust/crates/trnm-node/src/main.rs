@@ -6,7 +6,7 @@ use std::{
     collections::{HashMap, HashSet, VecDeque},
     fs,
     path::{Path, PathBuf},
-    sync::mpsc,
+    sync::{mpsc, Arc, Condvar, Mutex},
     thread,
     time::{Duration, Instant, SystemTime, UNIX_EPOCH},
 };
@@ -17,7 +17,10 @@ use trnm_pouw::{
     apply_commit_result, apply_commit_result_at_height, apply_create_task, apply_resolve,
     apply_resolve_at_height, apply_reveal_result, apply_reveal_result_at_height, apply_timeout,
 };
-use trnm_state::{verify_wal_and_find_checkpoint, CheckpointMeta, StateStore, WalMeta};
+use trnm_state::{
+    verify_wal_and_find_checkpoint, CheckpointMeta, PendingResolveApprovalSnapshot, StateStore,
+    WalMeta,
+};
 use trnm_types::{Hash32, ObjectRef, TaskStatus, Tx};
 
 #[derive(Debug, Parser)]
@@ -304,13 +307,13 @@ impl OrderingEngine for PreexecOrderingEngine {
         workers: usize,
         candidate_height: u64,
     ) -> OrderingDecision {
-        let (ordered_ids, rejected) = pre_execute_group_parallel(
-            snapshot,
-            da_batch.tx_ids.clone(),
-            picked,
+        let pool = PreExecPool::new(
+            Arc::new(snapshot.clone()),
+            Arc::new(picked.to_vec()),
             workers,
             candidate_height,
         );
+        let (ordered_ids, rejected) = pre_execute_group_parallel(&pool, da_batch.tx_ids.clone());
         OrderingDecision {
             ordered_ids,
             rejected,
@@ -1424,7 +1427,11 @@ fn pick_txs_with_critical_guard(
         return mempool.drain(..).collect();
     }
 
-    let mut lane = LaneAdmissionGate::new(txs_per_block, 1);
+    // Selection fairness should consider the full queued backlog, not only the
+    // first block-sized prefix. Otherwise a critical tx that arrives behind a
+    // long normal queue can never enter the fairness gate and is effectively
+    // starved until the prefix drains.
+    let mut lane = LaneAdmissionGate::new(mempool.len(), 1);
     let mut selected_pos = vec![None; mempool.len()];
     for (idx, tx) in mempool.iter().enumerate() {
         let class = if is_critical_tx(tx) {
@@ -1448,15 +1455,20 @@ fn pick_txs_with_critical_guard(
     }
 
     let mut picked_slots: Vec<Option<MockTx>> = (0..admit_order).map(|_| None).collect();
-    let mut remain = VecDeque::with_capacity(mempool.len());
-    for (idx, tx) in mempool.drain(..).enumerate() {
-        if let Some(pos) = selected_pos[idx] {
-            picked_slots[pos] = Some(tx);
-        } else {
-            remain.push_back(tx);
+    let mut selected_indices_desc = Vec::with_capacity(admit_order);
+    for (idx, pos) in selected_pos.into_iter().enumerate() {
+        if let Some(pos) = pos {
+            selected_indices_desc.push((idx, pos));
         }
     }
-    *mempool = remain;
+    selected_indices_desc.sort_unstable_by(|(lhs, _), (rhs, _)| rhs.cmp(lhs));
+
+    for (idx, pos) in selected_indices_desc {
+        let tx = mempool
+            .remove(idx)
+            .expect("selected tx index must still exist during descending extraction");
+        picked_slots[pos] = Some(tx);
+    }
 
     picked_slots.into_iter().flatten().collect()
 }
@@ -1751,6 +1763,104 @@ fn is_rejected_by_emergency_pause(is_paused: bool, tx: &MockTx) -> bool {
     is_paused && is_high_risk_tx(tx)
 }
 
+#[derive(Debug, Clone)]
+struct TxRollbackSnapshot {
+    task_id: u64,
+    task: Option<trnm_types::TaskObject>,
+    balances: Vec<(String, Option<u128>)>,
+    pending_resolve_approval: Option<PendingResolveApprovalSnapshot>,
+}
+
+fn balance_snapshot(st: &StateStore, address: &str) -> Option<u128> {
+    if st.balance_of(address) == 0 {
+        None
+    } else {
+        Some(st.balance_of(address))
+    }
+}
+
+fn capture_rollback_snapshot(st: &StateStore, tx: &MockTx) -> TxRollbackSnapshot {
+    let task_id = task_id_of(tx);
+    let task = st.get_task(task_id);
+    let pending_resolve_approval = st.pending_resolve_approval_snapshot(task_id);
+    let mut balances: Vec<(String, Option<u128>)> = Vec::new();
+    let mut push_balance = |address: &str| {
+        if balances.iter().any(|(existing, _)| existing == address) {
+            return;
+        }
+        balances.push((address.to_string(), balance_snapshot(st, address)));
+    };
+
+    match tx {
+        MockTx::CreateTask { creator, .. } => {
+            push_balance(creator);
+        }
+        MockTx::Challenge { challenger, .. } => {
+            push_balance(challenger);
+            push_balance("treasury.challenge_escrow");
+        }
+        MockTx::Resolve { .. } => {
+            push_balance("treasury.challenge_escrow");
+            push_balance("treasury.challenge_forfeits");
+            push_balance("treasury.worker_slashes");
+            if let Some(task) = task.as_ref() {
+                if let Some(worker) = task.worker.as_deref() {
+                    push_balance(worker);
+                }
+                if let Some(challenger) = task.challenger.as_deref() {
+                    push_balance(challenger);
+                }
+            }
+        }
+        MockTx::AcceptTask { .. } | MockTx::Commit { .. } | MockTx::Reveal { .. } => {}
+    }
+
+    TxRollbackSnapshot {
+        task_id,
+        task,
+        balances,
+        pending_resolve_approval,
+    }
+}
+
+fn rollback_tx_snapshot(st: &mut StateStore, snapshot: TxRollbackSnapshot) {
+    st.restore_task(snapshot.task_id, snapshot.task);
+    for (address, balance) in snapshot.balances {
+        st.restore_balance(&address, balance);
+    }
+    st.restore_pending_resolve_approval(snapshot.task_id, snapshot.pending_resolve_approval);
+}
+
+fn balance_deltas_from_snapshot(
+    before: &TxRollbackSnapshot,
+    after: &StateStore,
+    challenger: Option<&str>,
+) -> (EventDelta, Option<EventDelta>) {
+    let treasury_before: u128 = before
+        .balances
+        .iter()
+        .filter(|(address, _)| address.starts_with("treasury."))
+        .map(|(_, balance)| balance.unwrap_or(0))
+        .sum();
+    let treasury_after: u128 = before
+        .balances
+        .iter()
+        .filter(|(address, _)| address.starts_with("treasury."))
+        .map(|(address, _)| after.balance_of(address))
+        .sum();
+    let treasury_delta = event_delta_from_balances(treasury_after, treasury_before);
+    let challenger_delta = challenger.and_then(|acct| {
+        before
+            .balances
+            .iter()
+            .find(|(address, _)| address == acct)
+            .map(|(_, balance)| {
+                event_delta_from_balances(after.balance_of(acct), balance.unwrap_or(0))
+            })
+    });
+    (treasury_delta, challenger_delta)
+}
+
 fn apply_one(st: &mut StateStore, tx: MockTx, current_height: u64) -> Result<()> {
     let signer = verified_signer_of(st, &tx);
     match tx {
@@ -1973,70 +2083,150 @@ fn read_write_decl(st: &StateStore, tx: &MockTx, tx_id: u64) -> Tx {
     }
 }
 
-fn pre_execute_group_parallel(
-    snapshot: &StateStore,
-    group_ids: Vec<u64>,
-    picked: &[MockTx],
-    workers: usize,
-    candidate_height: u64,
-) -> (Vec<u64>, u64) {
-    if group_ids.is_empty() {
-        return (vec![], 0);
-    }
-    let workers = workers.max(1).min(group_ids.len());
-    let (tx, rx) = mpsc::channel::<(u64, bool, String)>();
+#[derive(Clone)]
+struct PreExecJob {
+    ids: Vec<u64>,
+    result_tx: mpsc::Sender<(u64, bool, String)>,
+}
 
-    let mut handles = Vec::with_capacity(workers);
-    for w in 0..workers {
-        let txc = tx.clone();
-        let ids: Vec<u64> = group_ids
-            .iter()
-            .copied()
-            .enumerate()
-            .filter_map(|(i, id)| if i % workers == w { Some(id) } else { None })
-            .collect();
-        let local_picked = picked.to_vec();
-        let base = snapshot.clone();
+enum PreExecQueueEntry {
+    Run(PreExecJob),
+    Shutdown,
+}
 
-        handles.push(thread::spawn(move || {
-            for id in ids {
-                let idx = (id - 1) as usize;
-                let mut local_state = base.clone();
-                let res = apply_one(
-                    &mut local_state,
-                    local_picked[idx].clone(),
-                    candidate_height,
-                );
-                match res {
-                    Ok(_) => {
-                        let _ = txc.send((id, true, String::new()));
+struct PreExecPoolState {
+    queue: Mutex<VecDeque<PreExecQueueEntry>>,
+    cv: Condvar,
+}
+
+struct PreExecPool {
+    state: Arc<PreExecPoolState>,
+    handles: Vec<thread::JoinHandle<()>>,
+    width: usize,
+}
+
+impl PreExecPool {
+    fn new(
+        snapshot: Arc<StateStore>,
+        picked: Arc<Vec<MockTx>>,
+        workers: usize,
+        candidate_height: u64,
+    ) -> Self {
+        let width = workers.max(1);
+        let state = Arc::new(PreExecPoolState {
+            queue: Mutex::new(VecDeque::new()),
+            cv: Condvar::new(),
+        });
+        let mut handles = Vec::with_capacity(width);
+        for _ in 0..width {
+            let state_cloned = Arc::clone(&state);
+            let snapshot_cloned = Arc::clone(&snapshot);
+            let picked_cloned = Arc::clone(&picked);
+            handles.push(thread::spawn(move || loop {
+                let entry = {
+                    let mut guard = state_cloned.queue.lock().expect("preexec queue poisoned");
+                    loop {
+                        if let Some(entry) = guard.pop_front() {
+                            break entry;
+                        }
+                        guard = state_cloned
+                            .cv
+                            .wait(guard)
+                            .expect("preexec queue poisoned while waiting");
                     }
-                    Err(e) => {
-                        let _ = txc.send((id, false, e.to_string()));
+                };
+                match entry {
+                    PreExecQueueEntry::Run(job) => {
+                        for id in job.ids {
+                            let idx = (id - 1) as usize;
+                            let mut local_state = snapshot_cloned.as_ref().clone();
+                            let res = apply_one(
+                                &mut local_state,
+                                picked_cloned[idx].clone(),
+                                candidate_height,
+                            );
+                            match res {
+                                Ok(_) => {
+                                    let _ = job.result_tx.send((id, true, String::new()));
+                                }
+                                Err(e) => {
+                                    let _ = job.result_tx.send((id, false, e.to_string()));
+                                }
+                            }
+                        }
                     }
+                    PreExecQueueEntry::Shutdown => break,
                 }
-            }
-        }));
-    }
-    drop(tx);
+            }));
+        }
 
-    for h in handles {
-        let _ = h.join();
-    }
-
-    let mut ok_ids = Vec::new();
-    let mut rejected = 0u64;
-    for (id, ok, err) in rx {
-        if ok {
-            ok_ids.push(id);
-        } else {
-            rejected += 1;
-            println!("[preexec] tx_id={} rejected err={}", id, err);
+        Self {
+            state,
+            handles,
+            width,
         }
     }
 
-    ok_ids.sort_unstable();
-    (ok_ids, rejected)
+    fn execute_group(&self, group_ids: Vec<u64>) -> (Vec<u64>, u64) {
+        if group_ids.is_empty() {
+            return (vec![], 0);
+        }
+        let workers = self.width.min(group_ids.len());
+        let (tx, rx) = mpsc::channel::<(u64, bool, String)>();
+        {
+            let mut queue = self.state.queue.lock().expect("preexec queue poisoned");
+            for w in 0..workers {
+                let ids: Vec<u64> = group_ids
+                    .iter()
+                    .copied()
+                    .enumerate()
+                    .filter_map(|(i, id)| if i % workers == w { Some(id) } else { None })
+                    .collect();
+                if ids.is_empty() {
+                    continue;
+                }
+                queue.push_back(PreExecQueueEntry::Run(PreExecJob {
+                    ids,
+                    result_tx: tx.clone(),
+                }));
+            }
+        }
+        self.state.cv.notify_all();
+        drop(tx);
+
+        let mut ok_ids = Vec::new();
+        let mut rejected = 0u64;
+        for (id, ok, err) in rx {
+            if ok {
+                ok_ids.push(id);
+            } else {
+                rejected += 1;
+                println!("[preexec] tx_id={} rejected err={}", id, err);
+            }
+        }
+
+        ok_ids.sort_unstable();
+        (ok_ids, rejected)
+    }
+}
+
+impl Drop for PreExecPool {
+    fn drop(&mut self) {
+        {
+            let mut queue = self.state.queue.lock().expect("preexec queue poisoned");
+            for _ in 0..self.handles.len() {
+                queue.push_back(PreExecQueueEntry::Shutdown);
+            }
+        }
+        self.state.cv.notify_all();
+        while let Some(handle) = self.handles.pop() {
+            let _ = handle.join();
+        }
+    }
+}
+
+fn pre_execute_group_parallel(pool: &PreExecPool, group_ids: Vec<u64>) -> (Vec<u64>, u64) {
+    pool.execute_group(group_ids)
 }
 
 fn decide_order_for_commit(
@@ -2055,10 +2245,15 @@ fn decide_order_for_commit(
         let groups = build_parallel_groups(&plan);
         let mut ordered = Vec::new();
         let mut rejected = 0u64;
+        let pool = PreExecPool::new(
+            Arc::new(state.clone()),
+            Arc::new(picked.to_vec()),
+            workers,
+            candidate_height,
+        );
         for g in groups {
             let group_ids: Vec<u64> = g.iter().map(|t| t.id).collect();
-            let (ids, rej) =
-                pre_execute_group_parallel(state, group_ids, picked, workers, candidate_height);
+            let (ids, rej) = pre_execute_group_parallel(&pool, group_ids);
             ordered.extend(ids);
             rejected += rej;
         }
@@ -2150,6 +2345,36 @@ mod tests {
     }
 
     #[test]
+    fn preexec_parallel_workers_match_single_worker_results() {
+        let state = StateStore::new();
+        let picked = vec![
+            MockTx::CreateTask {
+                task_id: 4051,
+                creator: "alice".into(),
+                bounty: 10,
+            },
+            MockTx::CreateTask {
+                task_id: 4052,
+                creator: "bob".into(),
+                bounty: 20,
+            },
+            MockTx::AcceptTask {
+                task_id: 999_999,
+                worker: "worker4053".into(),
+            },
+        ];
+
+        let pool_single = PreExecPool::new(Arc::new(state.clone()), Arc::new(picked.clone()), 1, 1);
+        let single = pre_execute_group_parallel(&pool_single, vec![1, 2, 3]);
+
+        let pool_parallel = PreExecPool::new(Arc::new(state), Arc::new(picked), 3, 1);
+        let parallel = pre_execute_group_parallel(&pool_parallel, vec![1, 2, 3]);
+
+        assert_eq!(single, (vec![1, 2], 1));
+        assert_eq!(parallel, single);
+    }
+
+    #[test]
     fn preexec_uses_candidate_height_for_deadline_sensitive_reveal() {
         let mut state = StateStore::new();
         state.set_balance("worker4100", 1_000);
@@ -2213,6 +2438,42 @@ mod tests {
     }
 
     #[test]
+    fn preexec_pool_reuses_workers_across_multiple_groups() {
+        let state = Arc::new(StateStore::new());
+        let picked = Arc::new(vec![
+            MockTx::CreateTask {
+                task_id: 4201,
+                creator: "alice".into(),
+                bounty: 10,
+            },
+            MockTx::CreateTask {
+                task_id: 4202,
+                creator: "bob".into(),
+                bounty: 20,
+            },
+            MockTx::CreateTask {
+                task_id: 4203,
+                creator: "carol".into(),
+                bounty: 30,
+            },
+            MockTx::CreateTask {
+                task_id: 4204,
+                creator: "dave".into(),
+                bounty: 40,
+            },
+        ]);
+
+        let pool = PreExecPool::new(Arc::clone(&state), Arc::clone(&picked), 2, 1);
+        let first = pre_execute_group_parallel(&pool, vec![1, 2]);
+        let second = pre_execute_group_parallel(&pool, vec![3, 4]);
+
+        assert_eq!(first.0, vec![1, 2]);
+        assert_eq!(first.1, 0);
+        assert_eq!(second.0, vec![3, 4]);
+        assert_eq!(second.1, 0);
+    }
+
+    #[test]
     fn rl_shadow_advisor_only_suggests_and_does_not_mutate_baseline_order() {
         let baseline = vec![1, 2, 3, 4];
         let advisor = ShadowOnlyRlAdvisor { topk: 2 };
@@ -2240,15 +2501,20 @@ mod tests {
                 task_id: 1,
                 worker: "w1".into(),
             },
-            MockTx::Challenge {
-                task_id: 1,
-                challenger: "c1".into(),
-                bond: 10,
-            },
             MockTx::Commit {
                 task_id: 1,
                 worker: "w1".into(),
                 committed_hash: [3u8; 32],
+            },
+            MockTx::CreateTask {
+                task_id: 2,
+                creator: "bob".into(),
+                bounty: 20,
+            },
+            MockTx::Challenge {
+                task_id: 1,
+                challenger: "c1".into(),
+                bond: 10,
             },
             MockTx::Resolve {
                 task_id: 1,
@@ -2259,7 +2525,10 @@ mod tests {
 
         let picked = pick_txs_with_critical_guard(&mut mempool, 2);
         assert_eq!(picked.len(), 2);
-        assert!(picked.iter().any(is_critical_tx));
+        assert!(matches!(picked[0], MockTx::Challenge { .. }));
+        assert!(matches!(picked[1], MockTx::CreateTask { task_id: 1, .. }));
+        assert_eq!(mempool.len(), 4);
+        assert!(mempool.iter().any(|tx| matches!(tx, MockTx::Resolve { .. })));
     }
 
     #[test]
@@ -2318,6 +2587,46 @@ mod tests {
         assert!(matches!(picked[0], MockTx::Challenge { .. }));
         assert!(matches!(picked[1], MockTx::CreateTask { .. }));
         assert!(matches!(picked[2], MockTx::Resolve { .. }));
+    }
+
+    #[test]
+    fn critical_guard_only_reorders_scanned_prefix_and_leaves_suffix_fifo() {
+        let mut mempool = VecDeque::from(vec![
+            MockTx::CreateTask {
+                task_id: 21,
+                creator: "alice".into(),
+                bounty: 10,
+            },
+            MockTx::AcceptTask {
+                task_id: 21,
+                worker: "w1".into(),
+            },
+            MockTx::Challenge {
+                task_id: 21,
+                challenger: "c1".into(),
+                bond: 10,
+            },
+            MockTx::Resolve {
+                task_id: 21,
+                slash_worker: false,
+                resolver: "gov".into(),
+            },
+            MockTx::CreateTask {
+                task_id: 22,
+                creator: "bob".into(),
+                bounty: 20,
+            },
+        ]);
+
+        let picked = pick_txs_with_critical_guard(&mut mempool, 3);
+        assert_eq!(picked.len(), 3);
+        assert!(matches!(picked[0], MockTx::Challenge { .. }));
+        assert!(matches!(picked[1], MockTx::CreateTask { task_id: 21, .. }));
+        assert!(matches!(picked[2], MockTx::AcceptTask { .. }));
+
+        assert_eq!(mempool.len(), 2);
+        assert!(matches!(mempool[0], MockTx::Resolve { .. }));
+        assert!(matches!(mempool[1], MockTx::CreateTask { task_id: 22, .. }));
     }
 
     #[test]
@@ -3449,6 +3758,51 @@ mod tests {
     }
 
     #[test]
+    fn rollback_snapshot_restores_task_balances_and_pending_resolve_state() {
+        let mut st = StateStore::new();
+        st.set_gov_param_bootstrap_unchecked(
+            9_499,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .unwrap();
+        let _ = challenged_task_fixture(&mut st, 8100);
+        st.stage_or_confirm_resolve_approval(8100, 1, true, "authority-a", "authority-a,authority-b")
+            .unwrap();
+        let before_task = st.get_task(8100).unwrap();
+        let before_worker = st.balance_of("worker8100");
+        let before_challenger = st.balance_of("challenger");
+        let before_escrow = st.balance_of("treasury.challenge_escrow");
+        let before_pending = st.pending_resolve_approval_snapshot(8100);
+
+        let snapshot = capture_rollback_snapshot(
+            &st,
+            &MockTx::Resolve {
+                task_id: 8100,
+                slash_worker: true,
+                resolver: "authority-b".into(),
+            },
+        );
+
+        st.set_balance("worker8100", 0);
+        st.set_balance("challenger", 0);
+        st.set_balance("treasury.challenge_escrow", 0);
+        let mut mutated_task = before_task.clone();
+        mutated_task.status = TaskStatus::Completed;
+        mutated_task.version += 1;
+        st.restore_task(8100, Some(mutated_task));
+        st.clear_pending_resolve_approval(8100);
+
+        rollback_tx_snapshot(&mut st, snapshot);
+
+        assert_eq!(st.get_task(8100).unwrap(), before_task);
+        assert_eq!(st.balance_of("worker8100"), before_worker);
+        assert_eq!(st.balance_of("challenger"), before_challenger);
+        assert_eq!(st.balance_of("treasury.challenge_escrow"), before_escrow);
+        assert_eq!(st.pending_resolve_approval_snapshot(8100), before_pending);
+    }
+
+    #[test]
     fn node_resolve_multisig_first_approval_persists_and_second_finalizes() {
         let mut st = StateStore::new();
         st.set_gov_param_bootstrap_unchecked(
@@ -3717,7 +4071,9 @@ mod tests {
         );
 
         assert_eq!(migrated, 1);
-        let task = st.get_task(7005).expect("task must exist after timeout scan");
+        let task = st
+            .get_task(7005)
+            .expect("task must exist after timeout scan");
         assert_eq!(task.status, TaskStatus::Completed);
         assert_eq!(task.challenge_bond_forfeited, None);
     }
@@ -3787,19 +4143,28 @@ mod tests {
             .get_task(8101)
             .and_then(|t| t.challenger)
             .expect("challenger must exist");
-        let resolve_authority = "authority8101".to_string();
+        let resolve_authority = "authority8101,authority8101b".to_string();
         st.set_gov_param_bootstrap_unchecked(
             18_101,
             "resolve_authority".into(),
             resolve_authority.clone(),
         )
         .unwrap();
-        let _r6 = apply_resolve(
+        let staged = apply_resolve(
+            &mut st,
+            r5.clone(),
+            true,
+            "authority8101".into(),
+            "authority8101".into(),
+        )
+        .expect_err("first multisig approver should stage only");
+        assert!(matches!(staged, trnm_pouw::PouwError::ResolveApprovalStaged));
+        let _r7 = apply_resolve(
             &mut st,
             r5,
             true,
-            resolve_authority.clone(),
-            resolve_authority,
+            "authority8101b".into(),
+            "authority8101b".into(),
         )
         .unwrap();
 
@@ -3845,19 +4210,28 @@ mod tests {
             .get_task(8102)
             .and_then(|t| t.challenger)
             .expect("challenger must exist");
-        let resolve_authority = "authority8102".to_string();
+        let resolve_authority = "authority8102,authority8102b".to_string();
         st.set_gov_param_bootstrap_unchecked(
             18_102,
             "resolve_authority".into(),
             resolve_authority.clone(),
         )
         .unwrap();
-        let _r6 = apply_resolve(
+        let staged = apply_resolve(
+            &mut st,
+            r5.clone(),
+            false,
+            "authority8102".into(),
+            "authority8102".into(),
+        )
+        .expect_err("first multisig approver should stage only");
+        assert!(matches!(staged, trnm_pouw::PouwError::ResolveApprovalStaged));
+        let _r7 = apply_resolve(
             &mut st,
             r5,
             false,
-            resolve_authority.clone(),
-            resolve_authority,
+            "authority8102b".into(),
+            "authority8102b".into(),
         )
         .unwrap();
 
@@ -4427,6 +4801,7 @@ fn main() -> Result<()> {
             );
         }
 
+        let mut last_state_root_hex: Option<String> = None;
         for id in ordering_decision.ordered_ids {
             let idx = (id - 1) as usize;
             let tx = picked[idx].clone();
@@ -4443,7 +4818,7 @@ fn main() -> Result<()> {
                 continue;
             }
 
-            let before = state.clone();
+            let before = capture_rollback_snapshot(&state, &tx);
             if let Err(e) = apply_one(&mut state, tx.clone(), height) {
                 let err_kind = classify_apply_error(&e);
                 let err_text = e.to_string();
@@ -4452,20 +4827,23 @@ fn main() -> Result<()> {
                     known_task_ids.insert(task_id);
                     let to_status = status_name(&state, task_id);
                     let root = hex::encode(state.state_root());
+                    last_state_root_hex = Some(root.clone());
                     let challenger_account: Option<String> = match &tx {
                         MockTx::Challenge { challenger, .. } => Some(challenger.clone()),
                         MockTx::Resolve { .. } => {
-                            before.get_task(task_id).and_then(|t| t.challenger)
+                            before.task.as_ref().and_then(|t| t.challenger.clone())
                         }
                         _ => None,
                     };
-                    let (treasury_delta, challenger_delta) = balance_deltas_for_transition(
-                        &before,
-                        &state,
-                        task_id,
-                        challenger_account.as_deref(),
-                    );
-                    let signer = verified_signer_of(&before, &tx);
+                    let treasury_delta = EventDelta {
+                        numeric: Some(0),
+                        text: "0".to_string(),
+                    };
+                    let challenger_delta = challenger_account.as_ref().map(|_| EventDelta {
+                        numeric: Some(0),
+                        text: "0".to_string(),
+                    });
+                    let signer = verified_signer_of(&state, &tx);
                     emit_event(
                         &state,
                         &tx,
@@ -4481,7 +4859,7 @@ fn main() -> Result<()> {
                         Some(err_kind),
                     );
                 } else {
-                    state = before; // rollback on failed commit
+                    rollback_tx_snapshot(&mut state, before);
                     apply_error_total += 1;
                     rollback_total += 1;
                     match err_kind {
@@ -4501,18 +4879,17 @@ fn main() -> Result<()> {
                 known_task_ids.insert(task_id);
                 let to_status = status_name(&state, task_id);
                 let root = hex::encode(state.state_root());
+                last_state_root_hex = Some(root.clone());
                 let challenger_account: Option<String> = match &tx {
                     MockTx::Challenge { challenger, .. } => Some(challenger.clone()),
-                    MockTx::Resolve { .. } => before.get_task(task_id).and_then(|t| t.challenger),
+                    MockTx::Resolve { .. } => {
+                        before.task.as_ref().and_then(|t| t.challenger.clone())
+                    }
                     _ => None,
                 };
-                let (treasury_delta, challenger_delta) = balance_deltas_for_transition(
-                    &before,
-                    &state,
-                    task_id,
-                    challenger_account.as_deref(),
-                );
-                let signer = verified_signer_of(&before, &tx);
+                let (treasury_delta, challenger_delta) =
+                    balance_deltas_from_snapshot(&before, &state, challenger_account.as_deref());
+                let signer = verified_signer_of(&state, &tx);
                 emit_event(
                     &state,
                     &tx,
@@ -4535,6 +4912,7 @@ fn main() -> Result<()> {
             let migrated = scan_and_apply_timeouts(&mut state, &known_task_ids, height, 9_000_000);
             timeout_migrated_total += migrated;
             if migrated > 0 {
+                last_state_root_hex = None;
                 println!(
                     "[timeout] height={} migrated={} cumulative_migrated={}",
                     height, migrated, timeout_migrated_total
@@ -4542,7 +4920,9 @@ fn main() -> Result<()> {
             }
         }
 
-        let root = hex::encode(state.state_root());
+        let root = last_state_root_hex
+            .clone()
+            .unwrap_or_else(|| hex::encode(state.state_root()));
         let elapsed_ms = block_start.elapsed().as_millis();
         finality_samples_ms.push(elapsed_ms);
         println!(

@@ -1,6 +1,6 @@
-# 文档中心（SSOT）
+# 文档中心（入口）
 
-本文档为 web4-frontend 的**单一入口**。所有规范以本目录为准。
+本文档为 web4-frontend 的文档入口。前端运行语义以本目录和 `lib/api-contract/*` / `lib/dashboard/source.ts` 为准；仓库级 release 判定仍以根级 `RELEASE_READINESS.md` 为准。
 
 ## 1. 上手与开发
 

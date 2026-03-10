@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::collections::BTreeMap;
+use std::sync::RwLock;
 use trnm_types::{
     GovParamObject, GovProposalObject, GovProposalStatus, Hash32, ObjectRef, TaskObject,
 };
@@ -12,7 +13,7 @@ pub enum ObjectValue {
     GovParam(GovParamObject),
 }
 
-#[derive(Debug, Default, Clone)]
+#[derive(Debug)]
 pub struct StateStore {
     objects: BTreeMap<u64, VersionedObject>,
     balances: BTreeMap<String, u128>,
@@ -20,6 +21,7 @@ pub struct StateStore {
     gov_param_key_index: BTreeMap<String, u64>,
     pending_resolve_approvals: BTreeMap<u64, PendingResolveApproval>,
     monetary_state: MonetaryState,
+    state_root_cache: RwLock<Option<Hash32>>,
 }
 
 #[derive(Debug, Clone)]
@@ -34,6 +36,40 @@ struct PendingResolveApproval {
     confirmations: u8,
     first_approver: String,
     authority_set: String,
+    task_version: u64,
+}
+
+impl Default for StateStore {
+    fn default() -> Self {
+        Self {
+            objects: BTreeMap::new(),
+            balances: BTreeMap::new(),
+            pending_gov_updates: BTreeMap::new(),
+            gov_param_key_index: BTreeMap::new(),
+            pending_resolve_approvals: BTreeMap::new(),
+            monetary_state: MonetaryState::default(),
+            state_root_cache: RwLock::new(None),
+        }
+    }
+}
+
+impl Clone for StateStore {
+    fn clone(&self) -> Self {
+        let cached = self
+            .state_root_cache
+            .read()
+            .expect("state root cache poisoned")
+            .clone();
+        Self {
+            objects: self.objects.clone(),
+            balances: self.balances.clone(),
+            pending_gov_updates: self.pending_gov_updates.clone(),
+            gov_param_key_index: self.gov_param_key_index.clone(),
+            pending_resolve_approvals: self.pending_resolve_approvals.clone(),
+            monetary_state: self.monetary_state.clone(),
+            state_root_cache: RwLock::new(cached),
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Default)]
@@ -103,6 +139,15 @@ pub struct PendingGovParamUpdate {
     pub key: String,
     pub value: String,
     pub activate_at_height: u64,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct PendingResolveApprovalSnapshot {
+    pub slash_worker: bool,
+    pub confirmations: u8,
+    pub first_approver: String,
+    pub authority_set: String,
+    pub task_version: u64,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -259,8 +304,16 @@ fn validate_gov_param_value(key: &str, value: &str) -> Result<(), String> {
                 ));
             }
 
+            let members: Vec<&str> = trimmed.split(',').collect();
+            if members.len() < 2 {
+                return Err(format!(
+                    "invalid governance value for {}: resolve authority set must include at least two members",
+                    key
+                ));
+            }
+
             let mut seen_lower = std::collections::BTreeSet::new();
-            for member in trimmed.split(',') {
+            for member in members {
                 if member.is_empty() {
                     return Err(format!(
                         "invalid governance value for {}: empty authority member is not allowed",
@@ -344,6 +397,7 @@ impl StateStore {
     pub fn stage_or_confirm_resolve_approval(
         &mut self,
         task_id: u64,
+        task_version: u64,
         slash_worker: bool,
         approver: &str,
         authority_set: &str,
@@ -421,11 +475,17 @@ impl StateStore {
 
         if let Some(entry) = self.pending_resolve_approvals.get(&task_id) {
             if entry.authority_set != authority_set {
+                self.invalidate_state_root_cache();
                 self.pending_resolve_approvals.remove(&task_id);
                 return Err("resolve approval authority set changed".into());
             }
+            if entry.task_version != task_version {
+                self.pending_resolve_approvals.remove(&task_id);
+                return Err("resolve approval task version changed".into());
+            }
         }
 
+        self.invalidate_state_root_cache();
         let entry =
             self.pending_resolve_approvals
                 .entry(task_id)
@@ -434,6 +494,7 @@ impl StateStore {
                     confirmations: 0,
                     first_approver: approver_trimmed.to_string(),
                     authority_set: authority_set.to_string(),
+                    task_version,
                 });
         if entry.slash_worker != slash_worker {
             return Err("resolve approval decision mismatch".into());
@@ -449,6 +510,7 @@ impl StateStore {
     }
 
     pub fn clear_pending_resolve_approval(&mut self, task_id: u64) {
+        self.invalidate_state_root_cache();
         self.pending_resolve_approvals.remove(&task_id);
     }
 
@@ -462,6 +524,76 @@ impl StateStore {
         self.pending_resolve_approvals
             .get(&task_id)
             .map(|entry| entry.first_approver.clone())
+    }
+
+    pub fn pending_resolve_approval_snapshot(
+        &self,
+        task_id: u64,
+    ) -> Option<PendingResolveApprovalSnapshot> {
+        self.pending_resolve_approvals
+            .get(&task_id)
+            .map(|entry| PendingResolveApprovalSnapshot {
+                slash_worker: entry.slash_worker,
+                confirmations: entry.confirmations,
+                first_approver: entry.first_approver.clone(),
+                authority_set: entry.authority_set.clone(),
+                task_version: entry.task_version,
+            })
+    }
+
+    pub fn restore_pending_resolve_approval(
+        &mut self,
+        task_id: u64,
+        snapshot: Option<PendingResolveApprovalSnapshot>,
+    ) {
+        self.invalidate_state_root_cache();
+        match snapshot {
+            Some(snapshot) => {
+                self.pending_resolve_approvals.insert(
+                    task_id,
+                    PendingResolveApproval {
+                        slash_worker: snapshot.slash_worker,
+                        confirmations: snapshot.confirmations,
+                        first_approver: snapshot.first_approver,
+                        authority_set: snapshot.authority_set,
+                        task_version: snapshot.task_version,
+                    },
+                );
+            }
+            None => {
+                self.pending_resolve_approvals.remove(&task_id);
+            }
+        }
+    }
+
+    pub fn restore_task(&mut self, id: u64, snapshot: Option<TaskObject>) {
+        self.invalidate_state_root_cache();
+        match snapshot {
+            Some(task) => {
+                self.objects.insert(
+                    id,
+                    VersionedObject {
+                        version: task.version,
+                        value: ObjectValue::Task(task),
+                    },
+                );
+            }
+            None => {
+                self.objects.remove(&id);
+            }
+        }
+    }
+
+    pub fn restore_balance(&mut self, address: &str, snapshot: Option<u128>) {
+        self.invalidate_state_root_cache();
+        match snapshot {
+            Some(amount) => {
+                self.balances.insert(address.to_string(), amount);
+            }
+            None => {
+                self.balances.remove(address);
+            }
+        }
     }
 
     pub fn get_ref(&self, id: u64) -> Option<ObjectRef> {
@@ -492,11 +624,19 @@ impl StateStore {
         })
     }
 
+    fn invalidate_state_root_cache(&self) {
+        self.state_root_cache
+            .write()
+            .expect("state root cache poisoned")
+            .take();
+    }
+
     pub fn put_task_new(&mut self, task: TaskObject) -> Result<ObjectRef, String> {
         if self.objects.contains_key(&task.task_id) {
             return Err("task already exists".into());
         }
         let id = task.task_id;
+        self.invalidate_state_root_cache();
         self.objects.insert(
             id,
             VersionedObject {
@@ -521,6 +661,7 @@ impl StateStore {
         }
         let new_version = current.version + 1;
         task.version = new_version;
+        self.invalidate_state_root_cache();
         self.objects.insert(
             expected.id,
             VersionedObject {
@@ -539,6 +680,7 @@ impl StateStore {
             return Err("proposal already exists".into());
         }
         let id = proposal.proposal_id;
+        self.invalidate_state_root_cache();
         self.objects.insert(
             id,
             VersionedObject {
@@ -563,6 +705,7 @@ impl StateStore {
         }
         let new_version = current.version + 1;
         proposal.version = new_version;
+        self.invalidate_state_root_cache();
         self.objects.insert(
             expected.id,
             VersionedObject {
@@ -646,6 +789,7 @@ impl StateStore {
                 ));
             }
 
+            self.invalidate_state_root_cache();
             self.gov_param_key_index.insert(key.clone(), key_id);
             self.objects.insert(
                 key_id,
@@ -664,6 +808,7 @@ impl StateStore {
                 version: new_version,
             })
         } else {
+            self.invalidate_state_root_cache();
             self.gov_param_key_index.insert(key.clone(), key_id);
             self.objects.insert(
                 key_id,
@@ -715,6 +860,7 @@ impl StateStore {
             // Idempotence guard: unchecked replay of identical non-sensitive values should
             // not churn object versions, but must still clear stale pending residue.
             if self.gov_param_value(&key) == Some(value.as_str()) {
+                self.invalidate_state_root_cache();
                 self.pending_gov_updates.remove(&key);
                 if let Some(existing_ref) = self
                     .gov_param_key_index
@@ -726,6 +872,7 @@ impl StateStore {
                 }
             }
             let out = self.upsert_gov_param_unchecked(key_id, key.clone(), value)?;
+            self.invalidate_state_root_cache();
             self.pending_gov_updates.remove(&key);
             return Ok(out);
         }
@@ -794,6 +941,7 @@ impl StateStore {
             // This keeps emergency_pause and other immediate keys deterministic even if
             // a legacy/corrupt snapshot left stale pending entries behind.
             if action == GovPendingUpdateAction::Cancel {
+                self.invalidate_state_root_cache();
                 self.pending_gov_updates.remove(&key);
                 return Err(format!(
                     "governance cancel not supported for non-sensitive key {}",
@@ -803,6 +951,7 @@ impl StateStore {
             // Idempotence guard: re-applying the exact same value should not churn object
             // versions, but still scrubs stale pending non-sensitive timelock residue.
             if self.gov_param_value(&key) == Some(value.as_str()) {
+                self.invalidate_state_root_cache();
                 self.pending_gov_updates.remove(&key);
                 if let Some(existing_ref) = self
                     .gov_param_key_index
@@ -814,6 +963,7 @@ impl StateStore {
                 }
             }
             let r = self.upsert_gov_param_unchecked(key_id, key.clone(), value)?;
+            self.invalidate_state_root_cache();
             self.pending_gov_updates.remove(&key);
             return Ok(GovParamUpdateOutcome::Applied(r));
         }
@@ -854,12 +1004,14 @@ impl StateStore {
             if current_height < pending.activate_at_height {
                 match action {
                     GovPendingUpdateAction::Cancel => {
+                        self.invalidate_state_root_cache();
                         self.pending_gov_updates.remove(&key);
                         return Ok(GovParamUpdateOutcome::Cancelled);
                     }
                     GovPendingUpdateAction::Replace => {
                         let activate_at_height =
                             current_height.saturating_add(GOV_SENSITIVE_PARAM_TIMELOCK_BLOCKS);
+                        self.invalidate_state_root_cache();
                         self.pending_gov_updates.insert(
                             key.clone(),
                             PendingGovParamUpdate {
@@ -900,6 +1052,7 @@ impl StateStore {
                     key, pending.activate_at_height
                 ));
             }
+            self.invalidate_state_root_cache();
             self.pending_gov_updates.remove(&key);
             let r = self.upsert_gov_param_unchecked(key_id, key, value)?;
             return Ok(GovParamUpdateOutcome::Applied(r));
@@ -910,6 +1063,7 @@ impl StateStore {
         }
 
         let activate_at_height = current_height.saturating_add(GOV_SENSITIVE_PARAM_TIMELOCK_BLOCKS);
+        self.invalidate_state_root_cache();
         self.pending_gov_updates.insert(
             key.clone(),
             PendingGovParamUpdate {
@@ -1042,6 +1196,7 @@ impl StateStore {
         }
         let net_delta = minted as i128 - burned as i128;
 
+        self.invalidate_state_root_cache();
         self.monetary_state.last_tick_height = block_height;
         self.monetary_state.tick_count = self.monetary_state.tick_count.saturating_add(1);
         self.monetary_state.total_minted = self.monetary_state.total_minted.saturating_add(minted);
@@ -1068,6 +1223,7 @@ impl StateStore {
     }
 
     pub fn set_balance(&mut self, address: impl Into<String>, amount: u128) {
+        self.invalidate_state_root_cache();
         self.balances.insert(address.into(), amount);
     }
 
@@ -1083,6 +1239,7 @@ impl StateStore {
                 address, cur, amount
             ));
         }
+        self.invalidate_state_root_cache();
         self.balances.insert(address.to_string(), cur - amount);
         Ok(())
     }
@@ -1095,11 +1252,21 @@ impl StateStore {
                 address, cur, amount
             )
         })?;
+        self.invalidate_state_root_cache();
         self.balances.insert(address.to_string(), next);
         Ok(())
     }
 
     pub fn state_root(&self) -> Hash32 {
+        if let Some(cached) = self
+            .state_root_cache
+            .read()
+            .expect("state root cache poisoned")
+            .clone()
+        {
+            return cached;
+        }
+
         let mut hasher = Sha256::new();
         for (id, v) in &self.objects {
             hasher.update(id.to_le_bytes());
@@ -1241,6 +1408,7 @@ impl StateStore {
             hasher.update([pending.confirmations]);
             hasher.update(pending.first_approver.as_bytes());
             hasher.update(pending.authority_set.as_bytes());
+            hasher.update(pending.task_version.to_le_bytes());
         }
         hasher.update(b"monetary_state");
         hasher.update(self.monetary_state.last_tick_height.to_le_bytes());
@@ -1248,7 +1416,12 @@ impl StateStore {
         hasher.update(self.monetary_state.total_minted.to_le_bytes());
         hasher.update(self.monetary_state.total_burned.to_le_bytes());
         hasher.update(self.monetary_state.net_issuance.to_le_bytes());
-        hasher.finalize().into()
+        let root: Hash32 = hasher.finalize().into();
+        *self
+            .state_root_cache
+            .write()
+            .expect("state root cache poisoned") = Some(root.clone());
+        root
     }
 }
 
@@ -1373,19 +1546,37 @@ mod tests {
         let mut st = StateStore::new();
 
         let first = st
-            .stage_or_confirm_resolve_approval(42, true, "authority-a", "authority-a,authority-b")
+            .stage_or_confirm_resolve_approval(
+                42,
+                1,
+                true,
+                "authority-a",
+                "authority-a,authority-b",
+            )
             .expect("first approval stage should succeed");
         assert!(!first, "single approver must not finalize resolve approval");
         assert_eq!(st.pending_resolve_approval(42), Some((true, 1)));
 
         let dup_err = st
-            .stage_or_confirm_resolve_approval(42, true, "authority-a", "authority-a,authority-b")
+            .stage_or_confirm_resolve_approval(
+                42,
+                1,
+                true,
+                "authority-a",
+                "authority-a,authority-b",
+            )
             .expect_err("same approver must not satisfy multi-party confirmation");
         assert!(dup_err.contains("distinct approver"));
         assert_eq!(st.pending_resolve_approval(42), Some((true, 1)));
 
         let second = st
-            .stage_or_confirm_resolve_approval(42, true, "authority-b", "authority-a,authority-b")
+            .stage_or_confirm_resolve_approval(
+                42,
+                1,
+                true,
+                "authority-b",
+                "authority-a,authority-b",
+            )
             .expect("second distinct approver should finalize");
         assert!(
             second,
@@ -1402,13 +1593,19 @@ mod tests {
         let mut st = StateStore::new();
 
         let first = st
-            .stage_or_confirm_resolve_approval(7, false, "authority-a", "authority-a,authority-b")
+            .stage_or_confirm_resolve_approval(
+                7,
+                1,
+                false,
+                "authority-a",
+                "authority-a,authority-b",
+            )
             .expect("initial non-slash approval should stage");
         assert!(!first);
         assert_eq!(st.pending_resolve_approval(7), Some((false, 1)));
 
         let mismatch = st
-            .stage_or_confirm_resolve_approval(7, true, "authority-b", "authority-a,authority-b")
+            .stage_or_confirm_resolve_approval(7, 1, true, "authority-b", "authority-a,authority-b")
             .expect_err("mismatched slash decision must fail closed");
         assert!(mismatch.contains("decision mismatch"));
         assert_eq!(
@@ -1423,18 +1620,36 @@ mod tests {
         let mut st = StateStore::new();
 
         let first = st
-            .stage_or_confirm_resolve_approval(88, true, "authority-a", "authority-a,authority-b")
+            .stage_or_confirm_resolve_approval(
+                88,
+                1,
+                true,
+                "authority-a",
+                "authority-a,authority-b",
+            )
             .expect("first approval stage should succeed");
         assert!(!first);
 
         let second = st
-            .stage_or_confirm_resolve_approval(88, true, "authority-b", "authority-a,authority-b")
+            .stage_or_confirm_resolve_approval(
+                88,
+                1,
+                true,
+                "authority-b",
+                "authority-a,authority-b",
+            )
             .expect("second distinct approver should finalize");
         assert!(second);
         assert_eq!(st.pending_resolve_approval(88), Some((true, 2)));
 
         let replay_err = st
-            .stage_or_confirm_resolve_approval(88, true, "authority-c", "authority-a,authority-b")
+            .stage_or_confirm_resolve_approval(
+                88,
+                1,
+                true,
+                "authority-c",
+                "authority-a,authority-b",
+            )
             .expect_err("post-quorum replay must be rejected");
         assert!(
             replay_err.contains("already finalized")
@@ -1452,13 +1667,25 @@ mod tests {
         let mut st = StateStore::new();
 
         let first = st
-            .stage_or_confirm_resolve_approval(77, true, "authority-a", "authority-a,authority-b")
+            .stage_or_confirm_resolve_approval(
+                77,
+                1,
+                true,
+                "authority-a",
+                "authority-a,authority-b",
+            )
             .expect("first approval stage should succeed");
         assert!(!first);
         assert_eq!(st.pending_resolve_approval(77), Some((true, 1)));
 
         let dup_err = st
-            .stage_or_confirm_resolve_approval(77, true, "Authority-A", "authority-a,authority-b")
+            .stage_or_confirm_resolve_approval(
+                77,
+                1,
+                true,
+                "Authority-A",
+                "authority-a,authority-b",
+            )
             .expect_err("case-drift duplicate approver must be rejected");
         assert!(
             dup_err.contains("distinct approver")
@@ -1476,13 +1703,25 @@ mod tests {
         let mut st = StateStore::new();
 
         let first = st
-            .stage_or_confirm_resolve_approval(78, true, "authority-a", "authority-a,authority-b")
+            .stage_or_confirm_resolve_approval(
+                78,
+                1,
+                true,
+                "authority-a",
+                "authority-a,authority-b",
+            )
             .expect("first approval stage should succeed");
         assert!(!first);
         assert_eq!(st.pending_resolve_approval(78), Some((true, 1)));
 
         let whitespace_err = st
-            .stage_or_confirm_resolve_approval(78, true, " authority-a ", "authority-a,authority-b")
+            .stage_or_confirm_resolve_approval(
+                78,
+                1,
+                true,
+                " authority-a ",
+                "authority-a,authority-b",
+            )
             .expect_err("whitespace-drift approver must be rejected");
         assert!(whitespace_err.contains("must not contain whitespace"));
         assert_eq!(
@@ -1497,14 +1736,26 @@ mod tests {
         let mut st = StateStore::new();
 
         let first = st
-            .stage_or_confirm_resolve_approval(79, true, "authority-a", "authority-a,authority-b")
+            .stage_or_confirm_resolve_approval(
+                79,
+                1,
+                true,
+                "authority-a",
+                "authority-a,authority-b",
+            )
             .expect("first approval stage should succeed");
         assert!(!first);
         assert_eq!(st.pending_resolve_approval(79), Some((true, 1)));
 
         for bad_actor in ["authority-a,authority-b", "authority-a;authority-b"] {
             let err = st
-                .stage_or_confirm_resolve_approval(79, true, bad_actor, "authority-a,authority-b")
+                .stage_or_confirm_resolve_approval(
+                    79,
+                    1,
+                    true,
+                    bad_actor,
+                    "authority-a,authority-b",
+                )
                 .expect_err("delimited approver id must be rejected");
             assert!(err.contains("single canonical actor id"));
             assert_eq!(
@@ -1520,7 +1771,13 @@ mod tests {
         let mut st = StateStore::new();
 
         let first = st
-            .stage_or_confirm_resolve_approval(80, true, "authority-a", "authority-a,authority-b")
+            .stage_or_confirm_resolve_approval(
+                80,
+                1,
+                true,
+                "authority-a",
+                "authority-a,authority-b",
+            )
             .expect("first approval stage should succeed");
         assert!(!first);
         assert_eq!(st.pending_resolve_approval(80), Some((true, 1)));
@@ -1532,7 +1789,13 @@ mod tests {
             "Treasury.Challenge_Forfeits",
         ] {
             let err = st
-                .stage_or_confirm_resolve_approval(80, true, bad_actor, "authority-a,authority-b")
+                .stage_or_confirm_resolve_approval(
+                    80,
+                    1,
+                    true,
+                    bad_actor,
+                    "authority-a,authority-b",
+                )
                 .expect_err("system/treasury approver must be rejected");
             assert!(err.contains("explicit non-system authority"));
             assert_eq!(
@@ -1556,7 +1819,7 @@ mod tests {
             "authority-a,system",
         ] {
             let err = st
-                .stage_or_confirm_resolve_approval(8_882, true, "authority-a", malformed_set)
+                .stage_or_confirm_resolve_approval(8_882, 1, true, "authority-a", malformed_set)
                 .expect_err("non-canonical authority set must fail closed");
             assert!(
                 err.contains("authority set"),
@@ -1571,17 +1834,59 @@ mod tests {
     }
 
     #[test]
+    fn resolve_approval_clears_stale_stage_on_task_version_change() {
+        let mut st = StateStore::new();
+
+        let first = st
+            .stage_or_confirm_resolve_approval(
+                82,
+                3,
+                true,
+                "authority-a",
+                "authority-a,authority-b",
+            )
+            .expect("first approval stage should succeed");
+        assert!(!first);
+        assert_eq!(st.pending_resolve_approval(82), Some((true, 1)));
+
+        let version_err = st
+            .stage_or_confirm_resolve_approval(
+                82,
+                4,
+                true,
+                "authority-b",
+                "authority-a,authority-b",
+            )
+            .expect_err("task version change must fail closed and clear stale stage");
+        assert!(version_err.contains("task version changed"));
+        assert_eq!(st.pending_resolve_approval(82), None);
+        assert_eq!(st.pending_resolve_first_approver(82), None);
+    }
+
+    #[test]
     fn resolve_approval_clears_stale_stage_on_authority_set_rotation() {
         let mut st = StateStore::new();
 
         let first = st
-            .stage_or_confirm_resolve_approval(81, true, "authority-a", "authority-a,authority-b")
+            .stage_or_confirm_resolve_approval(
+                81,
+                7,
+                true,
+                "authority-a",
+                "authority-a,authority-b",
+            )
             .expect("first approval stage should succeed");
         assert!(!first);
         assert_eq!(st.pending_resolve_approval(81), Some((true, 1)));
 
         let rotated_err = st
-            .stage_or_confirm_resolve_approval(81, true, "authority-c", "authority-a,authority-c")
+            .stage_or_confirm_resolve_approval(
+                81,
+                7,
+                true,
+                "authority-c",
+                "authority-a,authority-c",
+            )
             .expect_err("authority set rotation must fail closed and clear stale stage");
         assert!(rotated_err.contains("authority set changed"));
         assert_eq!(st.pending_resolve_approval(81), None);
@@ -2075,15 +2380,19 @@ mod tests {
     #[test]
     fn governance_resolve_authority_rejected_before_timelock_expiry() {
         let mut st = StateStore::new();
-        st.set_gov_param_unchecked(7310, "resolve_authority".into(), "resolver-v1".into())
-            .unwrap();
+        st.set_gov_param_unchecked(
+            7310,
+            "resolve_authority".into(),
+            "resolver-v1,resolver-v2".into(),
+        )
+        .unwrap();
 
         let scheduled = st
             .set_gov_param(
                 10_000,
                 7310,
                 "resolve_authority".into(),
-                "resolver-v2".into(),
+                "resolver-v3,resolver-v4".into(),
             )
             .unwrap();
         let activate_at_height = match scheduled {
@@ -2098,28 +2407,32 @@ mod tests {
                 10_019,
                 7310,
                 "resolve_authority".into(),
-                "resolver-v2".into(),
+                "resolver-v3,resolver-v4".into(),
             )
             .unwrap_err();
         assert!(err.contains("timelock active"));
         assert_eq!(
             st.gov_param_string("resolve_authority"),
-            Some("resolver-v1".into())
+            Some("resolver-v1,resolver-v2".into())
         );
     }
 
     #[test]
     fn governance_resolve_authority_applied_after_timelock() {
         let mut st = StateStore::new();
-        st.set_gov_param_unchecked(7311, "resolve_authority".into(), "resolver-v1".into())
-            .unwrap();
+        st.set_gov_param_unchecked(
+            7311,
+            "resolve_authority".into(),
+            "resolver-v1,resolver-v2".into(),
+        )
+        .unwrap();
 
         let _ = st
             .set_gov_param(
                 11_000,
                 7311,
                 "resolve_authority".into(),
-                "resolver-v2".into(),
+                "resolver-v3,resolver-v4".into(),
             )
             .unwrap();
 
@@ -2128,13 +2441,13 @@ mod tests {
                 11_020,
                 7311,
                 "resolve_authority".into(),
-                "resolver-v2".into(),
+                "resolver-v3,resolver-v4".into(),
             )
             .unwrap();
         assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
         assert_eq!(
             st.gov_param_string("resolve_authority"),
-            Some("resolver-v2".into())
+            Some("resolver-v3,resolver-v4".into())
         );
         assert!(st.pending_gov_update("resolve_authority").is_none());
     }
@@ -2142,8 +2455,12 @@ mod tests {
     #[test]
     fn governance_resolve_authority_rejects_non_canonical_value_without_mutation() {
         let mut st = StateStore::new();
-        st.set_gov_param_unchecked(7312, "resolve_authority".into(), "resolver-v1".into())
-            .unwrap();
+        st.set_gov_param_unchecked(
+            7312,
+            "resolve_authority".into(),
+            "resolver-v1,resolver-v2".into(),
+        )
+        .unwrap();
 
         let err = st
             .set_gov_param(
@@ -2157,7 +2474,7 @@ mod tests {
 
         assert_eq!(
             st.gov_param_string("resolve_authority"),
-            Some("resolver-v1".into())
+            Some("resolver-v1,resolver-v2".into())
         );
         assert!(st.pending_gov_update("resolve_authority").is_none());
     }
@@ -2165,8 +2482,12 @@ mod tests {
     #[test]
     fn governance_resolve_authority_rejects_forbidden_separator_without_mutation() {
         let mut st = StateStore::new();
-        st.set_gov_param_unchecked(7313, "resolve_authority".into(), "resolver-v1".into())
-            .unwrap();
+        st.set_gov_param_unchecked(
+            7313,
+            "resolve_authority".into(),
+            "resolver-v1,resolver-v2".into(),
+        )
+        .unwrap();
 
         let err = st
             .set_gov_param(
@@ -2180,7 +2501,7 @@ mod tests {
 
         assert_eq!(
             st.gov_param_string("resolve_authority"),
-            Some("resolver-v1".into())
+            Some("resolver-v1,resolver-v2".into())
         );
         assert!(st.pending_gov_update("resolve_authority").is_none());
     }
@@ -2188,22 +2509,55 @@ mod tests {
     #[test]
     fn governance_resolve_authority_rejects_non_ascii_without_mutation() {
         let mut st = StateStore::new();
-        st.set_gov_param_unchecked(7314, "resolve_authority".into(), "resolver-v1".into())
-            .unwrap();
+        st.set_gov_param_unchecked(
+            7314,
+            "resolve_authority".into(),
+            "resolver-v1,resolver-v2".into(),
+        )
+        .unwrap();
 
         let err = st
             .set_gov_param(
                 12_000,
                 7314,
                 "resolve_authority".into(),
-                "resolvér-v2".into(),
+                "resolver-a,resolvér-b".into(),
             )
             .unwrap_err();
-        assert!(err.contains("ASCII-only") || err.contains("whitespace") || err.contains("separator"));
+        assert!(
+            err.contains("ASCII-only") || err.contains("whitespace") || err.contains("separator")
+        );
 
         assert_eq!(
             st.gov_param_string("resolve_authority"),
-            Some("resolver-v1".into())
+            Some("resolver-v1,resolver-v2".into())
+        );
+        assert!(st.pending_gov_update("resolve_authority").is_none());
+    }
+
+    #[test]
+    fn governance_resolve_authority_rejects_single_member_update_without_mutation() {
+        let mut st = StateStore::new();
+        st.set_gov_param_unchecked(
+            7315,
+            "resolve_authority".into(),
+            "resolver-v1,resolver-v2".into(),
+        )
+        .unwrap();
+
+        let err = st
+            .set_gov_param(
+                12_500,
+                7315,
+                "resolve_authority".into(),
+                "resolver-v3".into(),
+            )
+            .expect_err("singleton resolve_authority update must be rejected");
+        assert!(err.contains("at least two members"), "{err}");
+
+        assert_eq!(
+            st.gov_param_string("resolve_authority"),
+            Some("resolver-v1,resolver-v2".into())
         );
         assert!(st.pending_gov_update("resolve_authority").is_none());
     }
@@ -2211,15 +2565,19 @@ mod tests {
     #[test]
     fn governance_resolve_authority_pending_mismatch_behaves_like_sensitive_keys() {
         let mut st = StateStore::new();
-        st.set_gov_param_unchecked(7312, "resolve_authority".into(), "resolver-v1".into())
-            .unwrap();
+        st.set_gov_param_unchecked(
+            7312,
+            "resolve_authority".into(),
+            "resolver-v1,resolver-v2".into(),
+        )
+        .unwrap();
 
         let scheduled = st
             .set_gov_param(
                 12_000,
                 7312,
                 "resolve_authority".into(),
-                "resolver-v2".into(),
+                "resolver-v3,resolver-v4".into(),
             )
             .unwrap();
         assert!(matches!(
@@ -2234,7 +2592,7 @@ mod tests {
                 12_005,
                 7312,
                 "resolve_authority".into(),
-                "resolver-v3".into(),
+                "resolver-v5,resolver-v6".into(),
             )
             .unwrap_err();
         assert!(err_value.contains("pending governance update exists"));
@@ -2244,25 +2602,29 @@ mod tests {
                 12_005,
                 9999,
                 "resolve_authority".into(),
-                "resolver-v2".into(),
+                "resolver-v3,resolver-v4".into(),
             )
             .unwrap_err();
         assert!(err_id.contains("governance key id mismatch for resolve_authority"));
 
         let pending = st.pending_gov_update("resolve_authority").unwrap();
         assert_eq!(pending.key_id, 7312);
-        assert_eq!(pending.value, "resolver-v2");
+        assert_eq!(pending.value, "resolver-v3,resolver-v4");
         assert_eq!(pending.activate_at_height, 12_020);
     }
 
     #[test]
     fn governance_resolve_authority_unchecked_path_rejects_key_id_shadowing() {
         let mut st = StateStore::new();
-        st.set_gov_param_unchecked(7313, "resolve_authority".into(), "resolver-v1".into())
-            .expect("initial unchecked resolve_authority write should succeed");
+        st.set_gov_param_unchecked(
+            7313,
+            "resolve_authority".into(),
+            "resolver-v1,resolver-v2".into(),
+        )
+        .expect("initial unchecked resolve_authority write should succeed");
 
         let err = st
-            .set_gov_param_unchecked(9001, "resolve_authority".into(), "resolver-v2".into())
+            .set_gov_param_unchecked(9001, "resolve_authority".into(), "resolver-v3,resolver-v4".into())
             .expect_err("unchecked key-id shadowing for resolve_authority must be rejected");
         assert!(
             err.contains("governance key id mismatch for resolve_authority"),
@@ -2270,22 +2632,26 @@ mod tests {
         );
         assert_eq!(
             st.gov_param_string("resolve_authority"),
-            Some("resolver-v1".into())
+            Some("resolver-v1,resolver-v2".into())
         );
     }
 
     #[test]
     fn governance_resolve_authority_checked_path_rejects_key_id_shadowing_without_state_mutation() {
         let mut st = StateStore::new();
-        st.set_gov_param_unchecked(7314, "resolve_authority".into(), "resolver-v1".into())
-            .expect("initial resolve_authority write should succeed");
+        st.set_gov_param_unchecked(
+            7314,
+            "resolve_authority".into(),
+            "resolver-v1,resolver-v2".into(),
+        )
+        .expect("initial resolve_authority write should succeed");
 
         let err = st
             .set_gov_param(
                 14_000,
                 9001,
                 "resolve_authority".into(),
-                "resolver-v2".into(),
+                "resolver-v3,resolver-v4".into(),
             )
             .expect_err("checked key-id shadowing for resolve_authority must be rejected");
         assert!(
@@ -2294,7 +2660,7 @@ mod tests {
         );
         assert_eq!(
             st.gov_param_string("resolve_authority"),
-            Some("resolver-v1".into())
+            Some("resolver-v1,resolver-v2".into())
         );
         assert!(
             st.pending_gov_update("resolve_authority").is_none(),
@@ -2305,15 +2671,19 @@ mod tests {
     #[test]
     fn emergency_pause_does_not_mutate_pending_resolve_authority_update() {
         let mut st = StateStore::new();
-        st.set_gov_param_unchecked(7313, "resolve_authority".into(), "resolver-v1".into())
-            .unwrap();
+        st.set_gov_param_unchecked(
+            7313,
+            "resolve_authority".into(),
+            "resolver-v1,resolver-v2".into(),
+        )
+        .unwrap();
 
         let scheduled = st
             .set_gov_param(
                 13_000,
                 7313,
                 "resolve_authority".into(),
-                "resolver-v2".into(),
+                "resolver-v3,resolver-v4".into(),
             )
             .unwrap();
         assert!(matches!(
@@ -2333,7 +2703,7 @@ mod tests {
             .pending_gov_update("resolve_authority")
             .expect("pending resolve_authority update should survive pause toggles");
         assert_eq!(pending.key_id, 7313);
-        assert_eq!(pending.value, "resolver-v2");
+        assert_eq!(pending.value, "resolver-v3,resolver-v4");
         assert_eq!(pending.activate_at_height, 13_020);
 
         let applied = st
@@ -2341,13 +2711,13 @@ mod tests {
                 13_020,
                 7313,
                 "resolve_authority".into(),
-                "resolver-v2".into(),
+                "resolver-v3,resolver-v4".into(),
             )
             .expect("resolve_authority should still activate at original timelock height");
         assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
         assert_eq!(
             st.gov_param_string("resolve_authority"),
-            Some("resolver-v2".into())
+            Some("resolver-v3,resolver-v4".into())
         );
         assert!(st.pending_gov_update("resolve_authority").is_none());
     }
@@ -3548,14 +3918,24 @@ mod tests {
     #[test]
     fn state_root_changes_when_pending_resolve_first_approver_changes() {
         let mut st_a = StateStore::new();
-        st_a
-            .stage_or_confirm_resolve_approval(500, true, "authority-a", "authority-a,authority-b")
-            .unwrap();
+        st_a.stage_or_confirm_resolve_approval(
+            500,
+            1,
+            true,
+            "authority-a",
+            "authority-a,authority-b",
+        )
+        .unwrap();
 
         let mut st_b = StateStore::new();
-        st_b
-            .stage_or_confirm_resolve_approval(500, true, "authority-b", "authority-a,authority-b")
-            .unwrap();
+        st_b.stage_or_confirm_resolve_approval(
+            500,
+            1,
+            true,
+            "authority-b",
+            "authority-a,authority-b",
+        )
+        .unwrap();
 
         assert_ne!(
             st_a.state_root(),
@@ -3565,21 +3945,55 @@ mod tests {
     }
 
     #[test]
-    fn state_root_changes_when_pending_resolve_authority_set_changes() {
+    fn state_root_changes_when_pending_resolve_task_version_changes() {
         let mut st_a = StateStore::new();
-        st_a
-            .stage_or_confirm_resolve_approval(501, true, "authority-a", "authority-a,authority-b")
-            .unwrap();
+        st_a.stage_or_confirm_resolve_approval(
+            501,
+            1,
+            true,
+            "authority-a",
+            "authority-a,authority-b",
+        )
+        .unwrap();
 
         let mut st_b = StateStore::new();
-        st_b
-            .stage_or_confirm_resolve_approval(
-                501,
-                true,
-                "authority-a",
-                "authority-a,authority-b,authority-c",
-            )
-            .unwrap();
+        st_b.stage_or_confirm_resolve_approval(
+            501,
+            2,
+            true,
+            "authority-a",
+            "authority-a,authority-b",
+        )
+        .unwrap();
+
+        assert_ne!(
+            st_a.state_root(),
+            st_b.state_root(),
+            "pending resolve task version snapshot must contribute to state root"
+        );
+    }
+
+    #[test]
+    fn state_root_changes_when_pending_resolve_authority_set_changes() {
+        let mut st_a = StateStore::new();
+        st_a.stage_or_confirm_resolve_approval(
+            501,
+            1,
+            true,
+            "authority-a",
+            "authority-a,authority-b",
+        )
+        .unwrap();
+
+        let mut st_b = StateStore::new();
+        st_b.stage_or_confirm_resolve_approval(
+            501,
+            1,
+            true,
+            "authority-a",
+            "authority-a,authority-b,authority-c",
+        )
+        .unwrap();
 
         assert_ne!(
             st_a.state_root(),
