@@ -19,5 +19,8 @@ cargo test -p trnm-pouw --lib zk_verifier_invalid_proof_path_rejects_mapped_publ
 # vector smokes that exercise the backend dispatch boundary end-to-end.
 cargo test -p trnm-pouw --lib registry_zk_vector_valid_payload_reaches_backend_path
 cargo test -p trnm-pouw --lib registry_zk_vector_invalid_payload_reaches_backend_rejection_path
+# Gate recovery: keep one fail-closed proof-envelope binding assertion in this backend gate
+# so backend vector checks cannot pass while task_id/worker/proof_type/result_hash contract regresses.
+cargo test -p trnm-pouw --lib registry_with_builtin_verifiers_fail_closed_when_task_id_binding_missing
 
 echo "[PASS] V1 proof backend CI gate"
