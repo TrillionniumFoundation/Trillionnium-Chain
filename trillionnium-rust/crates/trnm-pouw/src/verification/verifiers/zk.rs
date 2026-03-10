@@ -427,6 +427,18 @@ mod tests {
     }
 
     #[test]
+    fn zk_verifier_rejects_unexpected_worker_binding_without_context_fail_closed() {
+        let verifier = ZkVerifier::default();
+        let mut task = mock_task();
+        task.worker = None;
+        let payload = b"ZK:task_id=99,worker=worker-zk,proof_type=zk,result_hash=1111111111111111111111111111111111111111111111111111111111111111,proof=ok";
+        assert!(matches!(
+            verifier.verify_proof(&task, payload),
+            VerificationResult::Invalid(msg) if msg.contains("unexpected worker binding")
+        ));
+    }
+
+    #[test]
     fn zk_verifier_enforces_v0_schema_when_feature_enabled() {
         let mut backends = ZkBackendRegistry::new();
         backends.register(Arc::new(MockSuccessBackend));
