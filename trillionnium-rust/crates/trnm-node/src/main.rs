@@ -4154,7 +4154,7 @@ mod tests {
             &mut st,
             r5,
             true,
-            resolve_authority.clone(),
+            "authority8101".into(),
             "authority8101".into(),
         )
         .unwrap();
@@ -4162,7 +4162,7 @@ mod tests {
             &mut st,
             r6,
             true,
-            resolve_authority,
+            "authority8101b".into(),
             "authority8101b".into(),
         )
         .unwrap();
@@ -4220,7 +4220,7 @@ mod tests {
             &mut st,
             r5,
             false,
-            resolve_authority.clone(),
+            "authority8102".into(),
             "authority8102".into(),
         )
         .unwrap();
@@ -4228,7 +4228,7 @@ mod tests {
             &mut st,
             r6,
             false,
-            resolve_authority,
+            "authority8102b".into(),
             "authority8102b".into(),
         )
         .unwrap();
