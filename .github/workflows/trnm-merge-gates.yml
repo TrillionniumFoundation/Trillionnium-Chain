@@ -44,6 +44,9 @@ jobs:
       # Keep page-size/unit locale formatting deterministic for any helpers
       # emitting paper/print-related evidence text.
       LC_PAPER: C
+      # Keep locale-derived postal/address formatting deterministic for any
+      # helper serializing operator/site metadata into CI evidence.
+      LC_ADDRESS: C
       PYTHONHASHSEED: "0"
       # Prevent interpreter bytecode cache writes (.pyc/__pycache__) so
       # merge-gate CI workspaces remain side-effect free across reruns.
