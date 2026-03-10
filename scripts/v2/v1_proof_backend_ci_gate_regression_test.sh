@@ -19,6 +19,8 @@ required_tests=(
   "zk_verifier_valid_proof_path_with_mock_backend"
   "zk_verifier_invalid_proof_path_with_mock_backend"
   "zk_verifier_invalid_proof_path_rejects_mapped_public_inputs"
+  "registry_zk_vector_valid_payload_reaches_backend_path"
+  "registry_zk_vector_invalid_payload_reaches_backend_rejection_path"
 )
 
 for t in "${required_tests[@]}"; do
