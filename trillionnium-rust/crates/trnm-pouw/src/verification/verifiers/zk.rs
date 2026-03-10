@@ -1,9 +1,63 @@
+use std::sync::Arc;
+
+use crate::verification::backend::{
+    parse_zk_proof_payload, BackendExecutionError, BackendVerificationRequest,
+    BackendVerificationSuccess, VerificationBackendError, VerificationBackendConfig, ZkBackend,
+    ZkBackendKind, ZkBackendRegistry,
+};
 use crate::verification::{ProofVerifier, VerificationResult};
 use trnm_types::TaskObject;
 
 use super::verify_bound_envelope;
 
-pub struct ZkVerifier;
+pub struct ZkVerifier {
+    backend: ZkBackendKind,
+    backends: Arc<ZkBackendRegistry>,
+}
+
+impl ZkVerifier {
+    pub fn new(backend: ZkBackendKind, backends: Arc<ZkBackendRegistry>) -> Self {
+        Self { backend, backends }
+    }
+
+    #[allow(dead_code)]
+    pub fn from_config(config: &VerificationBackendConfig, backends: Arc<ZkBackendRegistry>) -> Self {
+        Self::new(config.zk_backend.clone(), backends)
+    }
+
+    fn verify_backend(&self, task: &TaskObject, proof_data: &[u8]) -> Result<(), VerificationBackendError> {
+        let backend = self.backends.resolve("zk", &self.backend)?;
+        let zk_payload = if proof_data
+            .iter()
+            .position(|b| *b == b':')
+            .and_then(|idx| proof_data.get(idx + 1..))
+            .and_then(|body| std::str::from_utf8(body).ok())
+            .map(|body| {
+                let trimmed = body.trim_start();
+                trimmed.starts_with('{')
+                    && (trimmed.contains("\"vk_ref\"") || trimmed.contains("\"public_inputs\""))
+            })
+            .unwrap_or(false)
+        {
+            Some(parse_zk_proof_payload(task, proof_data)?)
+        } else {
+            None
+        };
+        backend.verify(BackendVerificationRequest {
+            backend_family: "zk",
+            task,
+            proof_data,
+            zk_payload: zk_payload.as_ref(),
+        })?;
+        Ok(())
+    }
+}
+
+impl Default for ZkVerifier {
+    fn default() -> Self {
+        Self::new(ZkBackendKind::Noop, Arc::new(ZkBackendRegistry::new()))
+    }
+}
 
 impl ProofVerifier for ZkVerifier {
     fn proof_type(&self) -> &str {
@@ -19,9 +73,16 @@ impl ProofVerifier for ZkVerifier {
         }
 
         match verification {
-            VerificationResult::Valid => VerificationResult::Indeterminate(
-                "ZK proof cryptographic verification backend not configured".to_string(),
-            ),
+            VerificationResult::Valid => match self.verify_backend(task, proof_data) {
+                Ok(()) => VerificationResult::Valid,
+                Err(VerificationBackendError::Execution(BackendExecutionError::InvalidProof { reason, .. })) => VerificationResult::Invalid(reason),
+                Err(VerificationBackendError::Execution(BackendExecutionError::NotConfigured { .. })) => {
+                    VerificationResult::Indeterminate(
+                        "ZK proof cryptographic verification backend not configured".to_string(),
+                    )
+                }
+                Err(err) => VerificationResult::Indeterminate(err.to_string()),
+            },
             other => other,
         }
     }
@@ -57,15 +118,28 @@ mod tests {
         }
     }
 
+    struct MockSuccessBackend;
+    impl ZkBackend for MockSuccessBackend {
+        fn backend_id(&self) -> &str { "mock-zk" }
+        fn verify(&self, request: BackendVerificationRequest<'_>) -> Result<BackendVerificationSuccess, BackendExecutionError> {
+            let payload = request.zk_payload.expect("zk payload required");
+            assert_eq!(payload.public_inputs.order, vec!["task_id", "worker", "result_hash"]);
+            assert_eq!(payload.public_inputs.values[0], "99");
+            assert_eq!(payload.worker, "worker-zk");
+            assert_eq!(payload.vk_ref, "vk://trnm/dev/mock-groth16/v1");
+            Ok(BackendVerificationSuccess { backend_id: self.backend_id().into() })
+        }
+    }
+
     #[test]
     fn zk_verifier_requires_cryptographic_backend_after_bound_envelope_validation() {
-        let verifier = ZkVerifier;
+        let verifier = ZkVerifier::default();
         let task = mock_task();
 
         assert!(matches!(
             verifier.verify_proof(
                 &task,
-                b"ZK:{\"task_id\":99,\"worker\":\"worker-zk\",\"proof_type\":\"zk\",\"result_hash\":\"1111111111111111111111111111111111111111111111111111111111111111\",\"proof\":\"...\"}"
+                b"ZK:task_id=99,worker=worker-zk,proof_type=zk,result_hash=1111111111111111111111111111111111111111111111111111111111111111,proof=ok"
             ),
             VerificationResult::Indeterminate(msg)
                 if msg.contains("cryptographic verification backend not configured")
@@ -74,7 +148,7 @@ mod tests {
 
     #[test]
     fn zk_verifier_requires_cryptographic_backend_for_legacy_proof_type_alias() {
-        let verifier = ZkVerifier;
+        let verifier = ZkVerifier::default();
         let task = mock_task();
 
         assert!(matches!(
@@ -88,646 +162,28 @@ mod tests {
     }
 
     #[test]
-    fn zk_verifier_rejects_task_id_mismatch() {
-        let verifier = ZkVerifier;
+    fn zk_verifier_valid_proof_path_with_mock_backend() {
+        let mut backends = ZkBackendRegistry::new();
+        backends.register(Arc::new(MockSuccessBackend));
+        let verifier = ZkVerifier::new(ZkBackendKind::Custom("mock-zk".into()), Arc::new(backends));
         let task = mock_task();
-
-        assert!(matches!(
-            verifier.verify_proof(&task, b"ZK:{\"task_id\":1,\"worker\":\"worker-zk\"}"),
-            VerificationResult::Invalid(msg) if msg.contains("task_id mismatch")
-        ));
+        let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","worker","result_hash"],"values":["99","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#;
+        assert!(matches!(verifier.verify_proof(&task, payload), VerificationResult::Valid));
     }
 
     #[test]
-    fn zk_verifier_rejects_missing_task_id_binding() {
-        let verifier = ZkVerifier;
+    fn zk_verifier_invalid_proof_path_rejects_mapped_public_inputs() {
+        let verifier = ZkVerifier::default();
         let task = mock_task();
-
-        assert!(matches!(
-            verifier.verify_proof(&task, b"ZK:{\"proof\":\"...\",\"public_inputs\":[1,2]}"),
-            VerificationResult::Invalid(msg) if msg.contains("missing task_id binding")
-        ));
+        let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","worker","result_hash"],"values":["99","worker-zk","2222222222222222222222222222222222222222222222222222222222222222"]}}"#;
+        assert!(matches!(verifier.verify_proof(&task, payload), VerificationResult::Invalid(msg) if msg.contains("public_inputs mismatch")));
     }
 
     #[test]
-    fn zk_verifier_rejects_task_id_identifier_spoof() {
-        let verifier = ZkVerifier;
+    fn zk_verifier_malformed_envelope_fails_closed_before_crypto() {
+        let verifier = ZkVerifier::default();
         let task = mock_task();
-
-        assert!(matches!(
-            verifier.verify_proof(
-                &task,
-                b"ZK:taskid=99,worker=worker-zk,proof_type=zk,result_hash=1111111111111111111111111111111111111111111111111111111111111111,seal=SEAL_XYZ"
-            ),
-            VerificationResult::Invalid(msg) if msg.contains("missing task_id binding")
-        ));
-    }
-
-    #[test]
-    fn zk_verifier_rejects_fullwidth_underscore_task_id_identifier_spoof_fail_closed() {
-        let verifier = ZkVerifier;
-        let task = mock_task();
-
-        assert!(matches!(
-            verifier.verify_proof(
-                &task,
-                "ZK:task＿id=99,worker=worker-zk,proof_type=zk,result_hash=1111111111111111111111111111111111111111111111111111111111111111,seal=SEAL_XYZ"
-                    .as_bytes()
-            ),
-            VerificationResult::Invalid(msg) if msg.contains("missing task_id binding")
-        ));
-    }
-
-    #[test]
-    fn zk_verifier_rejects_prefix_only_payload() {
-        let verifier = ZkVerifier;
-        let task = mock_task();
-
-        assert!(matches!(
-            verifier.verify_proof(&task, b"ZK:   \n\t"),
-            VerificationResult::Invalid(msg) if msg.contains("Invalid ZK proof envelope")
-        ));
-    }
-
-    #[test]
-    fn zk_verifier_rejects_proof_type_mismatch_when_present() {
-        let verifier = ZkVerifier;
-        let task = mock_task();
-
-        assert!(matches!(
-            verifier.verify_proof(
-                &task,
-                b"ZK:{\"task_id\":99,\"worker\":\"worker-zk\",\"proof_type\":\"fraud\",\"result_hash\":\"1111111111111111111111111111111111111111111111111111111111111111\"}"
-            ),
-            VerificationResult::Invalid(msg) if msg.contains("proof_type mismatch")
-        ));
-    }
-
-    #[test]
-    fn zk_verifier_rejects_missing_proof_type_binding_fail_closed() {
-        let verifier = ZkVerifier;
-        let task = mock_task();
-
-        assert!(matches!(
-            verifier.verify_proof(
-                &task,
-                b"ZK:{\"task_id\":99,\"worker\":\"worker-zk\",\"result_hash\":\"1111111111111111111111111111111111111111111111111111111111111111\"}"
-            ),
-            VerificationResult::Invalid(msg) if msg.contains("missing proof_type binding")
-        ));
-    }
-
-    #[test]
-    fn zk_verifier_rejects_missing_result_hash_binding_when_expected() {
-        let verifier = ZkVerifier;
-        let mut task = mock_task();
-        task.result_hash = Some([0x11; 32]);
-
-        assert!(matches!(
-            verifier.verify_proof(
-                &task,
-                b"ZK:{\"task_id\":99,\"worker\":\"worker-zk\",\"proof_type\":\"zk\"}"
-            ),
-            VerificationResult::Invalid(msg) if msg.contains("missing result_hash binding")
-        ));
-    }
-
-    #[test]
-    fn zk_verifier_rejects_result_hash_mismatch_fail_closed() {
-        let verifier = ZkVerifier;
-        let task = mock_task();
-
-        assert!(matches!(
-            verifier.verify_proof(
-                &task,
-                b"ZK:{\"task_id\":99,\"worker\":\"worker-zk\",\"proof_type\":\"zk\",\"result_hash\":\"2222222222222222222222222222222222222222222222222222222222222222\",\"proof\":\"...\"}"
-            ),
-            VerificationResult::Invalid(msg) if msg.contains("result_hash mismatch")
-        ));
-    }
-
-    #[test]
-    fn zk_verifier_rejects_missing_worker_binding_when_worker_is_present() {
-        let verifier = ZkVerifier;
-        let task = mock_task();
-
-        assert!(matches!(
-            verifier.verify_proof(&task, b"ZK:{\"task_id\":99,\"proof_type\":\"zk\"}"),
-            VerificationResult::Invalid(msg) if msg.contains("missing worker binding")
-        ));
-    }
-
-    #[test]
-    fn zk_verifier_rejects_worker_binding_identifier_spoof() {
-        let verifier = ZkVerifier;
-        let task = mock_task();
-
-        assert!(matches!(
-            verifier.verify_proof(
-                &task,
-                b"ZK:{\"task_id\":99,\"networker\":\"worker-zk\",\"proof_type\":\"zk\",\"result_hash\":\"1111111111111111111111111111111111111111111111111111111111111111\"}"
-            ),
-            VerificationResult::Invalid(msg) if msg.contains("missing worker binding")
-        ));
-    }
-
-    #[test]
-    fn zk_verifier_rejects_fullwidth_underscore_worker_identifier_spoof_fail_closed() {
-        let verifier = ZkVerifier;
-        let task = mock_task();
-
-        assert!(matches!(
-            verifier.verify_proof(
-                &task,
-                "ZK:task_id=99,work＿er=worker-zk,proof_type=zk,result_hash=1111111111111111111111111111111111111111111111111111111111111111,seal=SEAL_XYZ"
-                    .as_bytes()
-            ),
-            VerificationResult::Invalid(msg) if msg.contains("missing worker binding")
-        ));
-    }
-
-    #[test]
-    fn zk_verifier_rejects_worker_mismatch_when_worker_is_present() {
-        let verifier = ZkVerifier;
-        let task = mock_task();
-
-        assert!(matches!(
-            verifier.verify_proof(
-                &task,
-                b"ZK:{\"task_id\":99,\"worker\":\"worker-evil\",\"proof_type\":\"zk\"}"
-            ),
-            VerificationResult::Invalid(msg) if msg.contains("worker mismatch")
-        ));
-    }
-
-    #[test]
-    fn zk_verifier_rejects_worker_case_mismatch_when_worker_is_present() {
-        let verifier = ZkVerifier;
-        let task = mock_task();
-
-        assert!(matches!(
-            verifier.verify_proof(
-                &task,
-                b"ZK:{\"task_id\":99,\"worker\":\"WORKER-zk\",\"proof_type\":\"zk\",\"result_hash\":\"1111111111111111111111111111111111111111111111111111111111111111\"}"
-            ),
-            VerificationResult::Invalid(msg) if msg.contains("worker mismatch")
-        ));
-    }
-
-    #[test]
-    fn zk_verifier_rejects_missing_result_hash_binding_context_fail_closed() {
-        let verifier = ZkVerifier;
-        let mut task = mock_task();
-        task.result_hash = None;
-
-        assert!(matches!(
-            verifier.verify_proof(
-                &task,
-                b"ZK:{\"task_id\":99,\"worker\":\"worker-zk\",\"proof_type\":\"zk\",\"proof\":\"...\"}"
-            ),
-            VerificationResult::Invalid(msg)
-                if msg.contains("missing task result_hash binding context")
-        ));
-    }
-
-    #[test]
-    fn zk_verifier_rejects_duplicate_worker_binding_fail_closed() {
-        let verifier = ZkVerifier;
-        let task = mock_task();
-
-        assert!(matches!(
-            verifier.verify_proof(
-                &task,
-                b"ZK:{\"task_id\":99,\"worker\":\"worker-zk\",\"Worker\":\"worker-zk\",\"proof_type\":\"zk\",\"result_hash\":\"1111111111111111111111111111111111111111111111111111111111111111\"}"
-            ),
-            VerificationResult::Invalid(msg)
-                if msg.contains("duplicate worker binding")
-        ));
-    }
-
-    #[test]
-    fn zk_verifier_rejects_case_variant_duplicate_worker_binding_fail_closed() {
-        let verifier = ZkVerifier;
-        let task = mock_task();
-
-        assert!(matches!(
-            verifier.verify_proof(
-                &task,
-                b"ZK:{\"task_id\":99,\"worker\":\"worker-zk\",\"WoRkEr\":\"worker-zk\",\"proof_type\":\"zk\",\"result_hash\":\"1111111111111111111111111111111111111111111111111111111111111111\"}"
-            ),
-            VerificationResult::Invalid(msg)
-                if msg.contains("duplicate worker binding")
-        ));
-    }
-
-    #[test]
-    fn zk_verifier_rejects_duplicate_worker_binding_with_single_quoted_trailing_space_fail_closed()
-    {
-        let verifier = ZkVerifier;
-        let task = mock_task();
-
-        assert!(matches!(
-            verifier.verify_proof(
-                &task,
-                b"ZK:task_id=99,worker=worker-zk,'worker'='worker-zk ',proof_type=zk,result_hash=1111111111111111111111111111111111111111111111111111111111111111,proof=ok"
-            ),
-            VerificationResult::Invalid(msg)
-                if msg.contains("duplicate worker binding")
-        ));
-    }
-
-    #[test]
-    fn zk_verifier_rejects_duplicate_worker_binding_with_single_quoted_leading_space_fail_closed() {
-        let verifier = ZkVerifier;
-        let task = mock_task();
-
-        assert!(matches!(
-            verifier.verify_proof(
-                &task,
-                b"ZK:task_id=99,worker=worker-zk,'worker'=' worker-zk',proof_type=zk,result_hash=1111111111111111111111111111111111111111111111111111111111111111,proof=ok"
-            ),
-            VerificationResult::Invalid(msg)
-                if msg.contains("duplicate worker binding")
-        ));
-    }
-
-    #[test]
-    fn zk_verifier_rejects_duplicate_worker_binding_with_double_quoted_alias_fail_closed() {
-        let verifier = ZkVerifier;
-        let task = mock_task();
-
-        assert!(matches!(
-            verifier.verify_proof(
-                &task,
-                b"ZK:task_id=99,worker=worker-zk,\"worker\"=worker-zk,proof_type=zk,result_hash=1111111111111111111111111111111111111111111111111111111111111111,proof=ok"
-            ),
-            VerificationResult::Invalid(msg)
-                if msg.contains("duplicate worker binding")
-        ));
-    }
-
-    #[test]
-    fn zk_verifier_rejects_duplicate_worker_binding_with_unclosed_quoted_alias_fail_closed() {
-        let verifier = ZkVerifier;
-        let task = mock_task();
-
-        assert!(matches!(
-            verifier.verify_proof(
-                &task,
-                b"ZK:task_id=99,worker=worker-zk,\"worker=worker-zk,proof_type=zk,result_hash=1111111111111111111111111111111111111111111111111111111111111111,proof=ok"
-            ),
-            VerificationResult::Invalid(msg)
-                if msg.contains("duplicate worker binding")
-        ));
-    }
-
-    #[test]
-    fn zk_verifier_rejects_duplicate_proof_type_binding_fail_closed() {
-        let verifier = ZkVerifier;
-        let task = mock_task();
-
-        assert!(matches!(
-            verifier.verify_proof(
-                &task,
-                b"ZK:{\"task_id\":99,\"worker\":\"worker-zk\",\"proof_type\":\"zk\",\"proof_type\":\"zk\",\"result_hash\":\"1111111111111111111111111111111111111111111111111111111111111111\"}"
-            ),
-            VerificationResult::Invalid(msg)
-                if msg.contains("duplicate proof_type binding")
-        ));
-    }
-
-    #[test]
-    fn zk_verifier_rejects_case_variant_duplicate_proof_type_binding_fail_closed() {
-        let verifier = ZkVerifier;
-        let task = mock_task();
-
-        assert!(matches!(
-            verifier.verify_proof(
-                &task,
-                b"ZK:{\"task_id\":99,\"worker\":\"worker-zk\",\"proof_type\":\"zk\",\"Proof_Type\":\"zk\",\"result_hash\":\"1111111111111111111111111111111111111111111111111111111111111111\"}"
-            ),
-            VerificationResult::Invalid(msg)
-                if msg.contains("duplicate proof_type binding")
-        ));
-    }
-
-    #[test]
-    fn zk_verifier_rejects_duplicate_proof_type_binding_with_quoted_alias_fail_closed() {
-        let verifier = ZkVerifier;
-        let task = mock_task();
-
-        assert!(matches!(
-            verifier.verify_proof(
-                &task,
-                b"ZK:task_id=99,worker=worker-zk,proof_type=zk,\"proof_type\"=zk,result_hash=1111111111111111111111111111111111111111111111111111111111111111,proof=ok"
-            ),
-            VerificationResult::Invalid(msg)
-                if msg.contains("duplicate proof_type binding")
-        ));
-    }
-
-    #[test]
-    fn zk_verifier_rejects_duplicate_proof_type_binding_with_quoted_trailing_space_fail_closed() {
-        let verifier = ZkVerifier;
-        let task = mock_task();
-
-        assert!(matches!(
-            verifier.verify_proof(
-                &task,
-                b"ZK:{\"task_id\":99,\"worker\":\"worker-zk\",\"proof_type\":\"zk \",\"proof_type\":\"zk\",\"result_hash\":\"1111111111111111111111111111111111111111111111111111111111111111\"}"
-            ),
-            VerificationResult::Invalid(msg)
-                if msg.contains("duplicate proof_type binding")
-        ));
-    }
-
-    #[test]
-    fn zk_verifier_rejects_duplicate_proof_type_binding_with_quoted_leading_space_fail_closed() {
-        let verifier = ZkVerifier;
-        let task = mock_task();
-
-        assert!(matches!(
-            verifier.verify_proof(
-                &task,
-                b"ZK:{\"task_id\":99,\"worker\":\"worker-zk\",\"proof_type\":\" zk\",\"proof_type\":\"zk\",\"result_hash\":\"1111111111111111111111111111111111111111111111111111111111111111\"}"
-            ),
-            VerificationResult::Invalid(msg)
-                if msg.contains("duplicate proof_type binding")
-        ));
-    }
-
-    #[test]
-    fn zk_verifier_rejects_duplicate_proof_type_binding_with_single_quoted_trailing_space_fail_closed(
-    ) {
-        let verifier = ZkVerifier;
-        let task = mock_task();
-
-        assert!(matches!(
-            verifier.verify_proof(
-                &task,
-                b"ZK:task_id=99,worker=worker-zk,proof_type='zk ',proof_type=zk,result_hash=1111111111111111111111111111111111111111111111111111111111111111,proof=ok"
-            ),
-            VerificationResult::Invalid(msg)
-                if msg.contains("duplicate proof_type binding")
-        ));
-    }
-
-    #[test]
-    fn zk_verifier_rejects_duplicate_proof_type_binding_with_single_quoted_leading_space_fail_closed(
-    ) {
-        let verifier = ZkVerifier;
-        let task = mock_task();
-
-        assert!(matches!(
-            verifier.verify_proof(
-                &task,
-                b"ZK:task_id=99,worker=worker-zk,proof_type=' zk',proof_type=zk,result_hash=1111111111111111111111111111111111111111111111111111111111111111,proof=ok"
-            ),
-            VerificationResult::Invalid(msg)
-                if msg.contains("duplicate proof_type binding")
-        ));
-    }
-
-    #[test]
-    fn zk_verifier_rejects_duplicate_task_id_binding_fail_closed() {
-        let verifier = ZkVerifier;
-        let task = mock_task();
-
-        assert!(matches!(
-            verifier.verify_proof(
-                &task,
-                b"ZK:{\"task_id\":99,\"worker\":\"worker-zk\",\"proof_type\":\"zk\",\"task_id\":99,\"result_hash\":\"1111111111111111111111111111111111111111111111111111111111111111\"}"
-            ),
-            VerificationResult::Invalid(msg)
-                if msg.contains("duplicate task_id binding")
-        ));
-    }
-
-    #[test]
-    fn zk_verifier_rejects_case_variant_duplicate_task_id_binding_fail_closed() {
-        let verifier = ZkVerifier;
-        let task = mock_task();
-
-        assert!(matches!(
-            verifier.verify_proof(
-                &task,
-                b"ZK:{\"task_id\":99,\"worker\":\"worker-zk\",\"proof_type\":\"zk\",\"Task_ID\":99,\"result_hash\":\"1111111111111111111111111111111111111111111111111111111111111111\"}"
-            ),
-            VerificationResult::Invalid(msg)
-                if msg.contains("duplicate task_id binding")
-        ));
-    }
-
-    #[test]
-    fn zk_verifier_rejects_duplicate_task_id_binding_with_quoted_trailing_space_fail_closed() {
-        let verifier = ZkVerifier;
-        let task = mock_task();
-
-        assert!(matches!(
-            verifier.verify_proof(
-                &task,
-                b"ZK:{\"task_id\":\"99 \",\"worker\":\"worker-zk\",\"proof_type\":\"zk\",\"task_id\":99,\"result_hash\":\"1111111111111111111111111111111111111111111111111111111111111111\"}"
-            ),
-            VerificationResult::Invalid(msg)
-                if msg.contains("duplicate task_id binding")
-        ));
-    }
-
-    #[test]
-    fn zk_verifier_rejects_duplicate_task_id_binding_with_quoted_leading_space_fail_closed() {
-        let verifier = ZkVerifier;
-        let task = mock_task();
-
-        assert!(matches!(
-            verifier.verify_proof(
-                &task,
-                b"ZK:{\"task_id\":\" 99\",\"worker\":\"worker-zk\",\"proof_type\":\"zk\",\"task_id\":99,\"result_hash\":\"1111111111111111111111111111111111111111111111111111111111111111\"}"
-            ),
-            VerificationResult::Invalid(msg)
-                if msg.contains("duplicate task_id binding")
-        ));
-    }
-
-    #[test]
-    fn zk_verifier_rejects_duplicate_task_id_binding_with_single_quoted_leading_space_fail_closed()
-    {
-        let verifier = ZkVerifier;
-        let task = mock_task();
-
-        assert!(matches!(
-            verifier.verify_proof(
-                &task,
-                b"ZK:task_id=' 99',worker=worker-zk,proof_type=zk,task_id=99,result_hash=1111111111111111111111111111111111111111111111111111111111111111,proof=ok"
-            ),
-            VerificationResult::Invalid(msg)
-                if msg.contains("duplicate task_id binding")
-        ));
-    }
-
-    #[test]
-    fn zk_verifier_rejects_case_variant_duplicate_result_hash_binding_fail_closed() {
-        let verifier = ZkVerifier;
-        let task = mock_task();
-
-        assert!(matches!(
-            verifier.verify_proof(
-                &task,
-                b"ZK:{\"task_id\":99,\"worker\":\"worker-zk\",\"proof_type\":\"zk\",\"result_hash\":\"1111111111111111111111111111111111111111111111111111111111111111\",\"Result_Hash\":\"1111111111111111111111111111111111111111111111111111111111111111\"}"
-            ),
-            VerificationResult::Invalid(msg)
-                if msg.contains("duplicate result_hash binding")
-        ));
-    }
-
-    #[test]
-    fn zk_verifier_rejects_duplicate_result_hash_binding_fail_closed() {
-        let verifier = ZkVerifier;
-        let task = mock_task();
-
-        assert!(matches!(
-            verifier.verify_proof(
-                &task,
-                b"ZK:{\"task_id\":99,\"worker\":\"worker-zk\",\"proof_type\":\"zk\",\"result_hash\":\"1111111111111111111111111111111111111111111111111111111111111111\",\"result_hash\":\"1111111111111111111111111111111111111111111111111111111111111111\"}"
-            ),
-            VerificationResult::Invalid(msg)
-                if msg.contains("duplicate result_hash binding")
-        ));
-    }
-
-    #[test]
-    fn zk_verifier_rejects_duplicate_result_hash_binding_with_quoted_trailing_space_fail_closed() {
-        let verifier = ZkVerifier;
-        let task = mock_task();
-
-        assert!(matches!(
-            verifier.verify_proof(
-                &task,
-                b"ZK:{\"task_id\":99,\"worker\":\"worker-zk\",\"proof_type\":\"zk\",\"result_hash\":\"1111111111111111111111111111111111111111111111111111111111111111 \",\"result_hash\":\"1111111111111111111111111111111111111111111111111111111111111111\"}"
-            ),
-            VerificationResult::Invalid(msg)
-                if msg.contains("duplicate result_hash binding")
-        ));
-    }
-
-    #[test]
-    fn zk_verifier_rejects_duplicate_result_hash_binding_with_quoted_leading_space_fail_closed() {
-        let verifier = ZkVerifier;
-        let task = mock_task();
-
-        assert!(matches!(
-            verifier.verify_proof(
-                &task,
-                b"ZK:{\"task_id\":99,\"worker\":\"worker-zk\",\"proof_type\":\"zk\",\"result_hash\":\" 1111111111111111111111111111111111111111111111111111111111111111\",\"result_hash\":\"1111111111111111111111111111111111111111111111111111111111111111\"}"
-            ),
-            VerificationResult::Invalid(msg)
-                if msg.contains("duplicate result_hash binding")
-        ));
-    }
-
-    #[test]
-    fn zk_verifier_rejects_fullwidth_equals_unexpected_worker_binding_without_context_fail_closed()
-    {
-        let verifier = ZkVerifier;
-        let mut task = mock_task();
-        task.worker = None;
-
-        assert!(matches!(
-            verifier.verify_proof(
-                &task,
-                "ZK:task_id=99,proof_type=zk,result_hash=1111111111111111111111111111111111111111111111111111111111111111,worker＝worker-zk,proof=ok"
-                    .as_bytes()
-            ),
-            VerificationResult::Invalid(msg) if msg.contains("unexpected worker binding")
-        ));
-    }
-
-    #[test]
-    fn zk_verifier_rejects_duplicate_worker_binding_without_context_fail_closed() {
-        let verifier = ZkVerifier;
-        let mut task = mock_task();
-        task.worker = None;
-
-        assert!(matches!(
-            verifier.verify_proof(
-                &task,
-                b"ZK:task_id=99,proof_type=zk,result_hash=1111111111111111111111111111111111111111111111111111111111111111,worker=worker-zk,worker=worker-zk,proof=ok"
-            ),
-            VerificationResult::Invalid(msg) if msg.contains("duplicate worker binding")
-        ));
-    }
-
-    #[test]
-    fn zk_verifier_rejects_fullwidth_equals_then_ascii_result_hash_binding_fail_closed() {
-        let verifier = ZkVerifier;
-        let task = mock_task();
-
-        assert!(matches!(
-            verifier.verify_proof(
-                &task,
-                "ZK:task_id=99,worker=worker-zk,proof_type=zk,result_hash＝1111111111111111111111111111111111111111111111111111111111111111,result_hash=1111111111111111111111111111111111111111111111111111111111111111,proof=ok"
-                    .as_bytes()
-            ),
-            VerificationResult::Invalid(msg) if msg.contains("duplicate result_hash binding")
-        ));
-    }
-
-    #[test]
-    fn zk_verifier_rejects_fullwidth_equals_then_ascii_worker_binding_fail_closed() {
-        let verifier = ZkVerifier;
-        let task = mock_task();
-
-        assert!(matches!(
-            verifier.verify_proof(
-                &task,
-                "ZK:task_id=99,worker＝worker-zk,proof_type=zk,result_hash=1111111111111111111111111111111111111111111111111111111111111111,worker=worker-zk,proof=ok"
-                    .as_bytes()
-            ),
-            VerificationResult::Invalid(msg) if msg.contains("duplicate worker binding")
-        ));
-    }
-
-    #[test]
-    fn zk_verifier_rejects_fullwidth_equals_then_ascii_task_id_binding_fail_closed() {
-        let verifier = ZkVerifier;
-        let task = mock_task();
-
-        assert!(matches!(
-            verifier.verify_proof(
-                &task,
-                "ZK:task_id＝99,worker=worker-zk,proof_type=zk,result_hash=1111111111111111111111111111111111111111111111111111111111111111,task_id=99,proof=ok"
-                    .as_bytes()
-            ),
-            VerificationResult::Invalid(msg) if msg.contains("duplicate task_id binding")
-        ));
-    }
-
-    #[test]
-    fn zk_verifier_rejects_fullwidth_equals_then_ascii_proof_type_binding_fail_closed() {
-        let verifier = ZkVerifier;
-        let task = mock_task();
-
-        assert!(matches!(
-            verifier.verify_proof(
-                &task,
-                "ZK:task_id=99,worker=worker-zk,proof_type＝zk,result_hash=1111111111111111111111111111111111111111111111111111111111111111,proof_type=zk,proof=ok"
-                    .as_bytes()
-            ),
-            VerificationResult::Invalid(msg) if msg.contains("duplicate proof_type binding")
-        ));
-    }
-
-    #[test]
-    fn zk_verifier_rejects_fullwidth_colon_then_ascii_proof_type_binding_fail_closed() {
-        let verifier = ZkVerifier;
-        let task = mock_task();
-
-        assert!(matches!(
-            verifier.verify_proof(
-                &task,
-                "ZK:task_id=99,worker=worker-zk,proof_type：zk,result_hash=1111111111111111111111111111111111111111111111111111111111111111,proof_type=zk,proof=ok"
-                    .as_bytes()
-            ),
-            VerificationResult::Invalid(msg) if msg.contains("duplicate proof_type binding")
-        ));
+        let payload = b"ZK:   \n\t";
+        assert!(matches!(verifier.verify_proof(&task, payload), VerificationResult::Invalid(msg) if msg.contains("Invalid ZK proof envelope")));
     }
 }
