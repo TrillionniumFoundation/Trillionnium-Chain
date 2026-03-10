@@ -279,7 +279,9 @@ fn validate_challenge_accounting_invariants(task: &TaskObject) -> Result<(), Pou
                 ));
             }
             if !has_bond
-                && (task.challenged_at_height.is_some() || task.resolve_deadline_height.is_some())
+                && (task.challenged_at_height.is_some()
+                    || task.challenge_deadline_height.is_some()
+                    || task.resolve_deadline_height.is_some())
             {
                 return Err(PouwError::State(
                     "terminal non-challenged task has stale challenge timing fields".into(),
@@ -1243,6 +1245,9 @@ pub fn apply_timeout(
                 return Err(PouwError::InvalidTransition);
             }
             task.status = TaskStatus::Completed;
+            task.challenge_deadline_height = None;
+            task.challenged_at_height = None;
+            task.resolve_deadline_height = None;
         }
         TaskStatus::Challenged => {
             require_deadline_exceeded(task.resolve_deadline_height, current_height)?;
@@ -5180,6 +5185,8 @@ mod tests {
         let task = st.get_task(r5.id).unwrap();
         assert_eq!(task.status, TaskStatus::Completed);
         assert_eq!(task.challenged_at_height, None);
+        assert_eq!(task.challenge_deadline_height, None);
+        assert_eq!(task.resolve_deadline_height, None);
     }
 
     #[test]
@@ -5836,7 +5843,7 @@ mod tests {
         // Simulate legacy/corrupted terminal object carrying stale challenge timing metadata.
         let mut bad = st.get_task(done.id).unwrap();
         assert_eq!(bad.status, TaskStatus::Completed);
-        bad.challenged_at_height = Some(120);
+        bad.challenge_deadline_height = Some(210);
         let bad_ref = st.update_task(done, bad).unwrap();
 
         let err = apply_timeout(&mut st, bad_ref, 212).unwrap_err();
