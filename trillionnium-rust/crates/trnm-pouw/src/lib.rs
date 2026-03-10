@@ -4843,6 +4843,9 @@ mod tests {
         assert!(matches!(stage_err, PouwError::ResolveApprovalStaged));
         let staged_before_pause = st.pending_resolve_approval(r5.id);
         assert!(matches!(staged_before_pause, Some((false, _))));
+        let before_paused_total = st.balance_of("challenger")
+            + st.balance_of(CHALLENGE_ESCROW_ACCOUNT)
+            + st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
 
         st.set_gov_param(9_228, 7_999, "emergency_pause".into(), "true".into())
             .expect("pause=true governance update must succeed");
@@ -4859,6 +4862,10 @@ mod tests {
         .expect_err("pause must reject resolve without mutating staged approvals");
         assert!(matches!(paused_err, PouwError::InvalidTransition));
         assert_eq!(st.pending_resolve_approval(r5.id), staged_before_pause);
+        let after_paused_total = st.balance_of("challenger")
+            + st.balance_of(CHALLENGE_ESCROW_ACCOUNT)
+            + st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+        assert_eq!(after_paused_total, before_paused_total);
 
         st.set_gov_param(9_229, 7_999, "emergency_pause".into(), "false".into())
             .expect("pause=false governance update must succeed");
