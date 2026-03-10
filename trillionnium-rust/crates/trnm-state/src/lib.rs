@@ -1928,6 +1928,36 @@ mod tests {
     }
 
     #[test]
+    fn resolve_approval_clears_stale_stage_on_authority_set_case_drift() {
+        let mut st = StateStore::new();
+
+        let first = st
+            .stage_or_confirm_resolve_approval(
+                8_181,
+                7,
+                true,
+                "authority-a",
+                "authority-a,authority-b",
+            )
+            .expect("first approval stage should succeed");
+        assert!(!first);
+        assert_eq!(st.pending_resolve_approval(8_181), Some((true, 1)));
+
+        let case_drift_err = st
+            .stage_or_confirm_resolve_approval(
+                8_181,
+                7,
+                true,
+                "Authority-B",
+                "authority-a,Authority-B",
+            )
+            .expect_err("authority set case drift must fail closed and clear stale stage");
+        assert!(case_drift_err.contains("authority set changed"));
+        assert_eq!(st.pending_resolve_approval(8_181), None);
+        assert_eq!(st.pending_resolve_first_approver(8_181), None);
+    }
+
+    #[test]
     fn governance_minimal_state_machine() {
         let mut st = StateStore::new();
         let p = GovProposalObject {
