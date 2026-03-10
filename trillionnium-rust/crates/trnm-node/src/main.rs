@@ -11,7 +11,7 @@ use std::{
     time::{Duration, Instant, SystemTime, UNIX_EPOCH},
 };
 use trnm_executor::build_parallel_groups;
-use trnm_mempool::{IngressClass, LaneAdmissionGate};
+use trnm_mempool::{AdmitOutcome, IngressClass, LaneAdmissionGate};
 use trnm_pouw::{
     apply_accept_task, apply_accept_task_at_height, apply_challenge, apply_challenge_at_height,
     apply_commit_result, apply_commit_result_at_height, apply_create_task, apply_resolve,
@@ -1426,22 +1426,45 @@ fn pick_txs_with_critical_guard(
 
     let mut lane = LaneAdmissionGate::new(txs_per_block, 1);
     let mut selected_pos = vec![None; mempool.len()];
-    for (idx, tx) in mempool.iter().enumerate() {
-        let class = if is_critical_tx(tx) {
+    let mut next_idx = 0usize;
+    let mut admit_order = 0usize;
+
+    while next_idx < mempool.len() && admit_order < txs_per_block {
+        let class = if is_critical_tx(&mempool[next_idx]) {
             IngressClass::Critical
         } else {
             IngressClass::Normal
         };
-        let _ = lane.admit(idx as u64, class);
+        match lane.admit(next_idx as u64, class) {
+            AdmitOutcome::Accepted | AdmitOutcome::Duplicate => {
+                next_idx += 1;
+            }
+            AdmitOutcome::Backpressured => {
+                if matches!(class, IngressClass::Normal) {
+                    // Keep scanning deeper so a late critical tx is not trapped behind
+                    // a saturated normal prefix.
+                    next_idx += 1;
+                    continue;
+                }
+
+                let Some(id) = lane.pop_ready() else {
+                    break;
+                };
+                let idx = id as usize;
+                if idx < selected_pos.len() && selected_pos[idx].is_none() {
+                    selected_pos[idx] = Some(admit_order);
+                    admit_order += 1;
+                }
+            }
+        }
     }
 
-    let mut admit_order = 0usize;
     while admit_order < txs_per_block {
         let Some(id) = lane.pop_ready() else {
             break;
         };
         let idx = id as usize;
-        if idx < selected_pos.len() {
+        if idx < selected_pos.len() && selected_pos[idx].is_none() {
             selected_pos[idx] = Some(admit_order);
             admit_order += 1;
         }
@@ -2318,6 +2341,38 @@ mod tests {
         assert!(matches!(picked[0], MockTx::Challenge { .. }));
         assert!(matches!(picked[1], MockTx::CreateTask { .. }));
         assert!(matches!(picked[2], MockTx::Resolve { .. }));
+    }
+
+    #[test]
+    fn critical_guard_refills_past_saturated_prefix_to_pick_late_critical_tx() {
+        let mut mempool = VecDeque::from(vec![
+            MockTx::CreateTask {
+                task_id: 21,
+                creator: "alice".into(),
+                bounty: 10,
+            },
+            MockTx::AcceptTask {
+                task_id: 21,
+                worker: "w1".into(),
+            },
+            MockTx::Commit {
+                task_id: 21,
+                worker: "w1".into(),
+                committed_hash: [7u8; 32],
+            },
+            MockTx::Challenge {
+                task_id: 21,
+                challenger: "c1".into(),
+                bond: 10,
+            },
+        ]);
+
+        let picked = pick_txs_with_critical_guard(&mut mempool, 2);
+        assert_eq!(picked.len(), 2);
+        assert!(picked.iter().any(|tx| matches!(tx, MockTx::Challenge { .. })));
+        assert!(picked.iter().any(|tx| !is_critical_tx(tx)));
+        assert_eq!(mempool.len(), 2);
+        assert!(mempool.iter().all(|tx| !is_critical_tx(tx)));
     }
 
     #[test]
@@ -3717,7 +3772,9 @@ mod tests {
         );
 
         assert_eq!(migrated, 1);
-        let task = st.get_task(7005).expect("task must exist after timeout scan");
+        let task = st
+            .get_task(7005)
+            .expect("task must exist after timeout scan");
         assert_eq!(task.status, TaskStatus::Completed);
         assert_eq!(task.challenge_bond_forfeited, None);
     }
