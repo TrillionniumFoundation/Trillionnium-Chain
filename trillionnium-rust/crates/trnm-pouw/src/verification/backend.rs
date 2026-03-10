@@ -575,16 +575,14 @@ pub fn parse_zk_proof_payload(
             reason: "invalid zk payload: proof bytes are required".to_string(),
         });
     }
-    let expected_public_inputs = vec![
-        task.task_id.to_string(),
-        task.worker.clone().unwrap_or_default(),
-        expected_hash.clone(),
-    ];
-    let expected_order = vec![
-        "task_id".to_string(),
-        "worker".to_string(),
-        "result_hash".to_string(),
-    ];
+    let mut expected_public_inputs = vec![task.task_id.to_string(), "zk".to_string()];
+    let mut expected_order = vec!["task_id".to_string(), "proof_type".to_string()];
+    if let Some(worker) = task.worker.as_ref() {
+        expected_public_inputs.push(worker.clone());
+        expected_order.push("worker".to_string());
+    }
+    expected_public_inputs.push(expected_hash.clone());
+    expected_order.push("result_hash".to_string());
     if payload.public_inputs.order != expected_order
         || payload.public_inputs.values != expected_public_inputs
     {
@@ -788,7 +786,7 @@ mod tests {
     #[test]
     fn parse_zk_proof_payload_accepts_canonical_json_vector() {
         let task = mock_task();
-        let payload = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"mock-zk","backend_version":"v1","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","worker","result_hash"],"values":["4242","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]},"meta":{"schema_version":"trnm.zk.payload.v0","circuit_id":"settlement-result-v1"}}"#).unwrap();
+        let payload = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"mock-zk","backend_version":"v1","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["4242","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]},"meta":{"schema_version":"trnm.zk.payload.v0","circuit_id":"settlement-result-v1"}}"#).unwrap();
         assert_eq!(payload.vk_ref, "vk://trnm/dev/mock-groth16/v1");
         assert_eq!(payload.backend_id.as_deref(), Some("mock-zk"));
         assert_eq!(payload.meta.schema_version, "trnm.zk.payload.v0");
@@ -798,7 +796,7 @@ mod tests {
     #[test]
     fn parse_zk_proof_payload_rejects_public_input_mismatch() {
         let task = mock_task();
-        let err = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","worker","result_hash"],"values":["4242","worker-zk","2222222222222222222222222222222222222222222222222222222222222222"]}}"#).unwrap_err();
+        let err = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["4242","zk","worker-zk","2222222222222222222222222222222222222222222222222222222222222222"]}}"#).unwrap_err();
         assert!(
             matches!(err, BackendExecutionError::InvalidProof { reason, .. } if reason.contains("public_inputs mismatch"))
         );
