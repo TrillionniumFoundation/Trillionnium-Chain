@@ -4007,6 +4007,7 @@ mod tests {
 
         let task_before = st.get_task(r5.id).expect("challenged task must exist");
         let pending_before = st.pending_resolve_approval(r5.id);
+        let first_approver_before = st.pending_resolve_first_approver(r5.id);
         let escrow_before = st.balance_of("treasury.challenge_escrow");
         let forfeit_before = st.balance_of("treasury.challenge_forfeits");
 
@@ -4019,6 +4020,11 @@ mod tests {
             st.pending_resolve_approval(r5.id),
             pending_before,
             "pause gate must preserve previously staged multisig approval"
+        );
+        assert_eq!(
+            st.pending_resolve_first_approver(r5.id),
+            first_approver_before,
+            "pause gate must preserve staged first approver identity"
         );
         assert_eq!(
             st.get_task(r5.id).expect("task should remain challenged"),
@@ -4052,6 +4058,7 @@ mod tests {
 
         let task_before = st.get_task(r5.id).expect("challenged task must exist");
         let pending_before = st.pending_resolve_approval(r5.id);
+        let first_approver_before = st.pending_resolve_first_approver(r5.id);
         let escrow_before = st.balance_of("treasury.challenge_escrow");
         let forfeit_before = st.balance_of("treasury.challenge_forfeits");
 
@@ -4063,6 +4070,11 @@ mod tests {
             st.pending_resolve_approval(r5.id),
             pending_before,
             "pause gate must block first multisig approval staging"
+        );
+        assert_eq!(
+            st.pending_resolve_first_approver(r5.id),
+            first_approver_before,
+            "pause gate must not synthesize staged first approver state"
         );
         assert_eq!(
             st.get_task(r5.id).expect("task should remain challenged"),
