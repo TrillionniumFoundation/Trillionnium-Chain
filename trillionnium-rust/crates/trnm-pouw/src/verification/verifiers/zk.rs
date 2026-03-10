@@ -642,6 +642,21 @@ mod tests {
     }
 
     #[test]
+    fn zk_verifier_rejects_duplicate_worker_binding_without_context_fail_closed() {
+        let verifier = ZkVerifier;
+        let mut task = mock_task();
+        task.worker = None;
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"ZK:task_id=99,proof_type=zk,result_hash=1111111111111111111111111111111111111111111111111111111111111111,worker=worker-zk,worker=worker-zk,proof=ok"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("duplicate worker binding")
+        ));
+    }
+
+    #[test]
     fn zk_verifier_rejects_fullwidth_equals_then_ascii_result_hash_binding_fail_closed() {
         let verifier = ZkVerifier;
         let task = mock_task();
