@@ -1,3 +1,4 @@
+pub mod backend;
 pub mod registry;
 pub mod verifiers;
 
@@ -14,6 +15,50 @@ pub enum VerificationResult {
     /// The verification could not be completed (e.g., network error, resource exhaustion).
     /// This might warrant a retry or a specific error state.
     Indeterminate(String),
+}
+
+/// Stable observability outcome bucket for proof verification metrics/logging.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum VerificationOutcomeLabel {
+    Valid,
+    Invalid,
+    Indeterminate,
+}
+
+impl VerificationOutcomeLabel {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::Valid => "valid",
+            Self::Invalid => "invalid",
+            Self::Indeterminate => "indeterminate",
+        }
+    }
+}
+
+impl std::fmt::Display for VerificationOutcomeLabel {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl VerificationResult {
+    /// Collapses runtime verification results into stable low-cardinality labels.
+    pub fn outcome_label(&self) -> VerificationOutcomeLabel {
+        match self {
+            Self::Valid => VerificationOutcomeLabel::Valid,
+            Self::Invalid(_) => VerificationOutcomeLabel::Invalid,
+            Self::Indeterminate(_) => VerificationOutcomeLabel::Indeterminate,
+        }
+    }
+
+    /// Returns the attached human-readable reason, when any.
+    pub fn reason(&self) -> Option<&str> {
+        match self {
+            Self::Valid => None,
+            Self::Invalid(reason) | Self::Indeterminate(reason) => Some(reason.as_str()),
+        }
+    }
 }
 
 /// A standardized receipt for verifiable execution.
@@ -523,6 +568,27 @@ impl ProofVerifier for MockVerifier {
 mod tests {
     use super::*;
     use trnm_types::{ProofType, TaskStatus};
+
+    #[test]
+    fn verification_result_observability_helpers_expose_stable_labels() {
+        assert_eq!(
+            VerificationResult::Valid.outcome_label(),
+            VerificationOutcomeLabel::Valid
+        );
+        assert_eq!(
+            VerificationResult::Invalid("bad proof".into()).outcome_label(),
+            VerificationOutcomeLabel::Invalid
+        );
+        assert_eq!(
+            VerificationResult::Indeterminate("backend offline".into()).outcome_label(),
+            VerificationOutcomeLabel::Indeterminate
+        );
+        assert_eq!(VerificationResult::Valid.reason(), None);
+        assert_eq!(
+            VerificationResult::Invalid("bad proof".into()).reason(),
+            Some("bad proof")
+        );
+    }
 
     fn mock_task() -> TaskObject {
         TaskObject {
