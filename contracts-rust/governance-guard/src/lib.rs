@@ -48,6 +48,7 @@ pub enum Error {
     AlreadyFinalized,
     WrongProposalKind,
     SelfExecutionForbidden,
+    PauseNotActive,
 }
 
 pub type Result<T> = std::result::Result<T, Error>;
@@ -213,6 +214,9 @@ impl GovernanceGuard {
         now: u64,
     ) -> Result<ProposalId> {
         self.require_guardian(caller)?;
+        if !self.bridge.emergency_paused {
+            return Err(Error::PauseNotActive);
+        }
         if eta < now.saturating_add(self.min_timelock_delay_secs) {
             return Err(Error::InvalidEta);
         }
@@ -253,6 +257,10 @@ impl GovernanceGuard {
             if proposal.proposer == caller {
                 return Err(Error::SelfExecutionForbidden);
             }
+        }
+
+        if !self.bridge.emergency_paused {
+            return Err(Error::PauseNotActive);
         }
 
         self.bridge.emergency_paused = false;
@@ -472,5 +480,37 @@ mod tests {
 
         gov.execute_unpause("exec", pid, eta).unwrap();
         assert!(!gov.bridge_state().emergency_paused);
+    }
+
+    #[test]
+    fn schedule_unpause_rejects_when_pause_is_not_active() {
+        let mut gov = setup();
+        let now = 6_000;
+        let eta = now + 60;
+
+        assert_eq!(
+            gov.schedule_unpause("guardian", eta, "noop-recover", now)
+                .unwrap_err(),
+            Error::PauseNotActive
+        );
+    }
+
+    #[test]
+    fn execute_unpause_rejects_if_pause_cleared_before_eta() {
+        let mut gov = setup();
+        let now = 7_000;
+        let eta = now + 60;
+
+        gov.emergency_pause("guardian", "incident-3").unwrap();
+        let pid = gov
+            .schedule_unpause("guardian", eta, "recover-3", now)
+            .unwrap();
+
+        gov.bridge.emergency_paused = false;
+
+        assert_eq!(
+            gov.execute_unpause("exec", pid, eta).unwrap_err(),
+            Error::PauseNotActive
+        );
     }
 }
