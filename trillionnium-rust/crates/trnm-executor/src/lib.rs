@@ -1030,6 +1030,10 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
                 return;
             }
 
+            // Reuse the precomputed first bucket hint instead of re-hashing the
+            // first tx on the hot-path round-robin seed selection.
+            let first_hint = tx_bucket_hints.first().copied().unwrap_or(0);
+
             let mut buckets: Vec<Vec<Tx>> = bucket_depths
                 .iter()
                 .map(|depth| Vec::with_capacity(*depth))
@@ -1049,7 +1053,6 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
             // Under highly skewed hot-bucket loads, start from the sparsest non-empty
             // bucket so low-volume conflict domains are serviced promptly instead of
             // always waiting behind the dominant lane at cycle start.
-            let first_hint = txs.first().map(|tx| hot_bucket_hint(tx, n)).unwrap_or(0);
             let sparse_start = {
                 let mut min_non_zero = usize::MAX;
                 let mut max_depth = 0usize;
