@@ -103,8 +103,9 @@ impl LaneAdmissionGate {
             .queue
             .len()
             .saturating_add(self.critical.queue.len());
+        let lane_was_empty = lane_total == 0;
 
-        if lane_total == 0 {
+        if lane_was_empty {
             // Defensive restored-state self-heal: with no queued work, lane-local and
             // lane-wide idempotency sets must be empty. Clearing here avoids stale
             // ghost ids being treated as duplicates on the first fresh ingress.
@@ -148,7 +149,11 @@ impl LaneAdmissionGate {
         // Defensive fallback: restored-state skew can theoretically keep cardinality
         // aligned while replacing one queued id with a ghost id in seen_global. In
         // that case, trust lane-local seen sets and repair lane-wide cache inline.
-        let mut is_duplicate = self.seen_global.contains(&tx_id);
+        let mut is_duplicate = if lane_was_empty {
+            false
+        } else {
+            self.seen_global.contains(&tx_id)
+        };
         if is_duplicate {
             let in_normal_seen = self.normal.seen.contains(&tx_id);
             let in_critical_seen = self.critical.seen.contains(&tx_id);
@@ -182,7 +187,7 @@ impl LaneAdmissionGate {
             }
         }
 
-        if !is_duplicate {
+        if !is_duplicate && !lane_was_empty {
             // Hot free-ingress path: lane-local idempotency sets are pre-synced with
             // queue truth above, so probe them first to avoid O(n) queue scans under
             // concurrent fresh-ingress bursts.
