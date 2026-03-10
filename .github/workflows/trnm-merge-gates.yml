@@ -63,6 +63,12 @@ jobs:
       PYTHONDONTWRITEBYTECODE: "1"
       PYTHONIOENCODING: "UTF-8"
       PYTHONUTF8: "1"
+      # Force unbuffered Python stdio so CI failure evidence ordering is stable
+      # under runner load and replayed logs.
+      PYTHONUNBUFFERED: "1"
+      # Ignore user-site Python packages so runner-local residue cannot alter
+      # module resolution during merge-gate probes.
+      PYTHONNOUSERSITE: "1"
       # Disable pip's periodic version check network call to avoid nondeterministic
       # stderr timing/noise and occasional flaky delays in shell-driven probes.
       PIP_DISABLE_PIP_VERSION_CHECK: "1"
