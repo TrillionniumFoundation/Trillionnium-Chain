@@ -187,7 +187,9 @@ impl InMemoryReliabilityStore {
     }
 }
 
-fn sanitize_store_config(mut config: InMemoryReliabilityStoreConfig) -> InMemoryReliabilityStoreConfig {
+fn sanitize_store_config(
+    mut config: InMemoryReliabilityStoreConfig,
+) -> InMemoryReliabilityStoreConfig {
     // Zeroed quotas create permanent capacity_exceeded responses for fresh ingress.
     // Clamp to a minimally live value so misconfigured operators retain recovery paths.
     fn clamp_zero(opt: Option<usize>) -> Option<usize> {
@@ -696,7 +698,8 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
                 message: msg,
                 attempts: 0,
                 created_at_unix_ms: now_unix_ms,
-                next_retry_at_unix_ms: now_unix_ms.saturating_add(self.retry.base_backoff_ms as u128),
+                next_retry_at_unix_ms: now_unix_ms
+                    .saturating_add(self.retry.base_backoff_ms as u128),
             },
         );
 
@@ -890,10 +893,7 @@ fn is_canonical_msg_type(msg_type: &str) -> bool {
         return false;
     }
 
-    !msg_type
-        .as_bytes()
-        .iter()
-        .any(|b| b.is_ascii_lowercase())
+    !msg_type.as_bytes().iter().any(|b| b.is_ascii_lowercase())
 }
 
 fn exp_backoff_ms(base: u64, max: u64, attempts: u32) -> u64 {
@@ -995,16 +995,37 @@ pub fn default_reliability_db_path() -> PathBuf {
 #[derive(Debug)]
 pub struct SqliteReliabilityStore {
     conn: Connection,
+    config: InMemoryReliabilityStoreConfig,
 }
 
 impl SqliteReliabilityStore {
     pub fn open(path: impl AsRef<std::path::Path>) -> Result<Self, ReliabilityStoreError> {
+        Self::open_with_config(path, Self::default_persistent_config())
+    }
+
+    pub fn open_with_config(
+        path: impl AsRef<std::path::Path>,
+        config: InMemoryReliabilityStoreConfig,
+    ) -> Result<Self, ReliabilityStoreError> {
         let conn = Connection::open(path).map_err(|e| ReliabilityStoreError::InvalidState {
             detail: format!("open sqlite failed: {e}"),
         })?;
         Self::configure_connection(&conn)?;
         Self::apply_migrations(&conn)?;
-        Ok(Self { conn })
+        Ok(Self {
+            conn,
+            config: sanitize_store_config(config),
+        })
+    }
+
+    fn default_persistent_config() -> InMemoryReliabilityStoreConfig {
+        InMemoryReliabilityStoreConfig {
+            max_sessions: Some(4_096),
+            max_pending_per_session: Some(1_024),
+            max_pending_total: Some(65_536),
+            max_dedup_entries: Some(65_536),
+            empty_session_cleanup: EmptySessionCleanupPolicy::RemoveImmediately,
+        }
     }
 
     fn configure_connection(conn: &Connection) -> Result<(), ReliabilityStoreError> {
@@ -1075,6 +1096,35 @@ impl SqliteReliabilityStore {
 
         Ok(())
     }
+
+    fn total_pending_items(&self) -> usize {
+        self.list_session_ids()
+            .into_iter()
+            .filter_map(|sid| self.get_session(&sid))
+            .map(|session| session.pending.len())
+            .sum()
+    }
+
+    fn cleanup_expired_sessions_only(
+        &mut self,
+        now_unix_ms: u128,
+        retention: &RetentionConfig,
+    ) {
+        let pending_cutoff = now_unix_ms.saturating_sub(retention.pending_ttl_ms as u128);
+        for sid in self.list_session_ids() {
+            let Some(mut session) = self.get_session(&sid) else {
+                continue;
+            };
+            session
+                .pending
+                .retain(|_, item| item.created_at_unix_ms >= pending_cutoff);
+            if session.pending.is_empty() {
+                self.remove_session(&sid);
+            } else {
+                let _ = self.try_upsert_session_with_ts(session, now_unix_ms);
+            }
+        }
+    }
 }
 
 impl ReliabilityStore for SqliteReliabilityStore {
@@ -1140,6 +1190,40 @@ impl ReliabilityStore for SqliteReliabilityStore {
         );
     }
 
+    fn try_remember_dedup_key_with_ts(
+        &mut self,
+        key: DedupKey,
+        now_unix_ms: u128,
+    ) -> Result<(), ReliabilityStoreError> {
+        if let Some(max) = self.config.max_dedup_entries {
+            let existing: i64 = self
+                .conn
+                .query_row(
+                    "SELECT EXISTS(SELECT 1 FROM reliability_dedup WHERE from_addr=?1 AND seq_or_nonce=?2)",
+                    rusqlite::params![key.from, key.seq_or_nonce],
+                    |r| r.get(0),
+                )
+                .map_err(|e| ReliabilityStoreError::InvalidState {
+                    detail: format!("check dedup row failed: {e}"),
+                })?;
+            if existing == 0 {
+                let count: i64 = self
+                    .conn
+                    .query_row("SELECT COUNT(*) FROM reliability_dedup", [], |r| r.get(0))
+                    .map_err(|e| ReliabilityStoreError::InvalidState {
+                        detail: format!("count dedup rows failed: {e}"),
+                    })?;
+                if usize::try_from(count).unwrap_or(usize::MAX) >= max {
+                    return Err(ReliabilityStoreError::CapacityExceeded {
+                        detail: format!("dedup limit reached ({max})"),
+                    });
+                }
+            }
+        }
+        self.remember_dedup_key_with_ts(key, now_unix_ms);
+        Ok(())
+    }
+
     fn forget_dedup_key(&mut self, key: &DedupKey) {
         let _ = self.conn.execute(
             "DELETE FROM reliability_dedup WHERE from_addr=?1 AND seq_or_nonce=?2",
@@ -1152,6 +1236,40 @@ impl ReliabilityStore for SqliteReliabilityStore {
         session: SessionState,
         now_unix_ms: u128,
     ) -> Result<(), ReliabilityStoreError> {
+        let session_id = session.session_id.clone();
+        let old_len = self
+            .get_session(&session_id)
+            .map(|s| s.pending.len())
+            .unwrap_or(0);
+        let new_len = session.pending.len();
+        let is_new_session = old_len == 0 && self.get_session(&session_id).is_none();
+
+        if let Some(max) = self.config.max_sessions {
+            if is_new_session && self.list_session_ids().len() >= max {
+                return Err(ReliabilityStoreError::CapacityExceeded {
+                    detail: format!("session limit reached ({max})"),
+                });
+            }
+        }
+
+        if let Some(max) = self.config.max_pending_per_session {
+            if new_len > max {
+                return Err(ReliabilityStoreError::CapacityExceeded {
+                    detail: format!("pending per-session limit reached ({max})"),
+                });
+            }
+        }
+
+        if let Some(max) = self.config.max_pending_total {
+            let total = self.total_pending_items();
+            let projected = total.saturating_sub(old_len).saturating_add(new_len);
+            if projected > max {
+                return Err(ReliabilityStoreError::CapacityExceeded {
+                    detail: format!("pending total limit reached ({max})"),
+                });
+            }
+        }
+
         let payload =
             serde_json::to_string(&session).map_err(|e| ReliabilityStoreError::InvalidState {
                 detail: format!("serialize session failed: {e}"),
@@ -1163,7 +1281,10 @@ impl ReliabilityStore for SqliteReliabilityStore {
                  VALUES(?1, ?2, ?3)
                  ON CONFLICT(session_id) DO UPDATE SET
                    session_json=excluded.session_json,
-                   updated_at_unix_ms=excluded.updated_at_unix_ms",
+                   updated_at_unix_ms=CASE
+                     WHEN excluded.updated_at_unix_ms = 0 THEN reliability_sessions.updated_at_unix_ms
+                     ELSE excluded.updated_at_unix_ms
+                   END",
                 rusqlite::params![session.session_id, payload, ts],
             )
             .map_err(|e| ReliabilityStoreError::InvalidState {
@@ -1173,12 +1294,84 @@ impl ReliabilityStore for SqliteReliabilityStore {
     }
 
     fn cleanup_expired(&mut self, now_unix_ms: u128, retention: &RetentionConfig) {
-        let cutoff = now_unix_ms.saturating_sub(retention.dedup_ttl_ms as u128);
-        let cutoff_i64 = i64::try_from(cutoff).unwrap_or(i64::MAX);
+        let dedup_cutoff = now_unix_ms.saturating_sub(retention.dedup_ttl_ms as u128);
+        let dedup_cutoff_i64 = i64::try_from(dedup_cutoff).unwrap_or(i64::MAX);
         let _ = self.conn.execute(
             "DELETE FROM reliability_dedup WHERE seen_at_unix_ms <> 0 AND seen_at_unix_ms < ?1",
-            [cutoff_i64],
+            [dedup_cutoff_i64],
         );
+
+        let pending_cutoff = now_unix_ms.saturating_sub(retention.pending_ttl_ms as u128);
+        let pending_cutoff_i64 = i64::try_from(pending_cutoff).unwrap_or(i64::MAX);
+
+        let mut stmt = match self.conn.prepare(
+            "SELECT session_id, session_json, updated_at_unix_ms FROM reliability_sessions",
+        ) {
+            Ok(stmt) => stmt,
+            Err(_) => return,
+        };
+        let rows = match stmt.query_map([], |row| {
+            Ok((
+                row.get::<_, String>(0)?,
+                row.get::<_, String>(1)?,
+                row.get::<_, i64>(2)?,
+            ))
+        }) {
+            Ok(rows) => rows,
+            Err(_) => return,
+        };
+
+        let mut remove_ids = Vec::new();
+        let mut updates = Vec::new();
+
+        for row in rows.filter_map(Result::ok) {
+            let (session_id, payload, updated_at_unix_ms) = row;
+            let Ok(mut session) = serde_json::from_str::<SessionState>(&payload) else {
+                remove_ids.push(session_id);
+                continue;
+            };
+
+            let before_len = session.pending.len();
+            session
+                .pending
+                .retain(|_, item| item.created_at_unix_ms >= pending_cutoff);
+
+            if session.pending.is_empty() {
+                if before_len != 0 || (updated_at_unix_ms != 0 && updated_at_unix_ms < pending_cutoff_i64)
+                {
+                    remove_ids.push(session_id);
+                }
+                continue;
+            }
+
+            if session.pending.len() != before_len {
+                updates.push((
+                    session_id,
+                    session,
+                    i64::try_from(now_unix_ms).unwrap_or(i64::MAX),
+                ));
+            }
+        }
+        drop(stmt);
+
+        for session_id in remove_ids {
+            let _ = self.conn.execute(
+                "DELETE FROM reliability_sessions WHERE session_id=?1",
+                [session_id],
+            );
+        }
+
+        for (session_id, session, updated_at_unix_ms) in updates {
+            if let Ok(payload) = serde_json::to_string(&session) {
+                let _ = self.conn.execute(
+                    "UPDATE reliability_sessions
+                     SET session_json=?2, updated_at_unix_ms=?3
+                     WHERE session_id=?1",
+                    rusqlite::params![session_id, payload, updated_at_unix_ms],
+                );
+            }
+        }
+        self.cleanup_expired_sessions_only(now_unix_ms, retention);
     }
 }
 
@@ -1747,8 +1940,7 @@ mod tests {
             .filter(|i| i.message.session_id == "hot")
             .count();
         assert_eq!(
-            hot_count_second,
-            MAX_DUE_RETRIES_PER_SESSION_PER_COLLECT,
+            hot_count_second, MAX_DUE_RETRIES_PER_SESSION_PER_COLLECT,
             "hot session should stay bounded per collect cycle"
         );
     }
@@ -1981,7 +2173,11 @@ mod tests {
 
         let store = engine.into_store();
         let session = store.get_session("s1").expect("session should exist");
-        assert_eq!(session.pending.len(), 1, "replay must not overwrite pending state");
+        assert_eq!(
+            session.pending.len(),
+            1,
+            "replay must not overwrite pending state"
+        );
 
         let item = session
             .pending
@@ -2263,7 +2459,10 @@ mod tests {
         let err = store
             .try_remember_dedup_key_with_ts(key2, 2)
             .expect_err("second unique key should hit clamped quota");
-        assert!(matches!(err, ReliabilityStoreError::CapacityExceeded { .. }));
+        assert!(matches!(
+            err,
+            ReliabilityStoreError::CapacityExceeded { .. }
+        ));
     }
 
     #[test]
@@ -2327,7 +2526,10 @@ mod tests {
         let err = store
             .try_upsert_session_with_ts(three, 2)
             .expect_err("per-session quota should be clamped to global total cap");
-        assert!(matches!(err, ReliabilityStoreError::CapacityExceeded { .. }));
+        assert!(matches!(
+            err,
+            ReliabilityStoreError::CapacityExceeded { .. }
+        ));
     }
 
     #[test]
@@ -2371,7 +2573,10 @@ mod tests {
         let err = store
             .try_upsert_session_with_ts(second, 2)
             .expect_err("second pending item should hit clamped global quota");
-        assert!(matches!(err, ReliabilityStoreError::CapacityExceeded { .. }));
+        assert!(matches!(
+            err,
+            ReliabilityStoreError::CapacityExceeded { .. }
+        ));
     }
 
     #[test]
