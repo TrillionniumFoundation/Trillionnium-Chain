@@ -157,6 +157,7 @@ impl ZkVerifier {
             task,
             proof_data,
             zk_payload: zk_payload.as_ref(),
+            resolved_vk_ref: None,
         })?;
         Ok(())
     }

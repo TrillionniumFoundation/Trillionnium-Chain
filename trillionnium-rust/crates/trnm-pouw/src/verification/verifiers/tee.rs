@@ -40,6 +40,7 @@ impl TeeVerifier {
             task,
             proof_data,
             zk_payload: None,
+            resolved_vk_ref: None,
         })?;
         Ok(())
     }

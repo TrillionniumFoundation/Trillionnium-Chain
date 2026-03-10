@@ -191,6 +191,9 @@ pub struct BackendVerificationRequest<'a> {
     /// Parsed canonical ZK payload, when the envelope is the structured JSON
     /// shape expected by platform backends.
     pub zk_payload: Option<&'a ParsedZkProofPayload>,
+    /// Resolved VK metadata, when the proof family is ZK and the vk_ref was
+    /// accepted by the platform registry.
+    pub resolved_vk_ref: Option<&'a ResolvedVkRef>,
 }
 
 impl<'a> BackendVerificationRequest<'a> {
@@ -438,6 +441,15 @@ pub fn parse_zk_proof_payload(
     Ok(payload)
 }
 
+pub fn resolve_zk_vk_ref(
+    resolver: &dyn VkRefResolver,
+    payload: &ParsedZkProofPayload,
+) -> Result<ResolvedVkRef, BackendExecutionError> {
+    resolver
+        .resolve(&payload.vk_ref)
+        .map_err(VkRefResolutionError::into_backend_execution_error)
+}
+
 fn decode_base64(raw: &str) -> Result<Vec<u8>, String> {
     let cleaned = raw
         .bytes()
@@ -554,6 +566,7 @@ mod tests {
                 task: &mock_task(),
                 proof_data: b"TEE:...",
                 zk_payload: None,
+                resolved_vk_ref: None,
             })
             .unwrap_err();
 
