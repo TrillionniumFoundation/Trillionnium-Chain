@@ -3,6 +3,7 @@
 Web4 前端项目（Next.js 16 + React 19）。
 
 > 文档统一入口：**[docs/README.md](./docs/README.md)**
+> 当前运行语义：默认使用 readonly API client；仅在显式 `?mode=mock` 时回退到本地 mock snapshot；不提供写路径。
 
 ## 快速开始（最小可执行）
 

@@ -1,10 +1,11 @@
 # TRNM Release Readiness
 
-更新日期：2026-03-09
-适用范围：仓库根目录当前状态（`fix/integrate-challenge-wave-20260309` / `fcfc0e5d` 基线衍生 worktree）
+更新日期：2026-03-10
+适用范围：`origin/main` 当前快照（`fde185a7`）
 
-> 本文件是当前**唯一权威**的发布/就绪状态摘要。
-> - `STATUS.md`：保留为历史推进日志，不作为当前 release truth source。
+> 本文件是当前 **release readiness truth source**，且仅对上面标明的 `origin/main` 快照负责。
+> - `STATUS.md`：历史推进日志 / working journal，不参与当前 release 判定。
+> - `docs/development/DEVELOPMENT_MASTER_UNIFIED_2026-03-04.md`：开发调度板，不覆盖发布口径。
 > - `docs/development/GO_READY_EVIDENCE_WEB4_2026-03-03.md`、`docs/release/web4-fix-sequence-2026-03-04-evidence.md`：仅表示当时那一轮修复/门禁证据，不等于今天整个仓库已可发布。
 
 ## 当前结论
@@ -17,7 +18,8 @@
 2. 根 `README.md` 曾把 Web4 发布前脚本写成仓库根 `scripts/*.sh`，但这些路径当前并不存在；实际脚本位于 `web4-frontend/scripts/`。
 3. Web4 的“GO-ready / PASS”文档是**历史轮次证据**，不能直接外推为整个仓库当前 release-ready。
 4. verifier 相关旧 PoC 本体（如 `rust/verifier`、`scripts/run_rust_verifier_poc.sh`）当前不存在；若文档仍给人“已内建并持续受保护”的印象，会造成错误预期。
-5. Web4 仪表盘仍存在本地数据源实现（`web4-frontend/app/dashboard-data.ts`），因此前端更接近“门禁与界面可演示/可校验”，而非默认可视为链上真实生产态。
+5. Web4 当前真实语义是“**readonly API client + explicit mock fallback**”：页面默认尝试只读查询客户端；只有在显式 `?mode=mock` 时才回退到本地 snapshot，因此不能把它写成“纯静态 mock 页面”，也不能写成“已接通仓内写路由的生产后台”。
+6. 文档中出现的 `/api/v0/web4/*` 属于历史 V0 草案命名；当前仓内并没有对应的 Next.js/仓内 route，实现语义应以 `web4-frontend/lib/api-contract/*` 与 `web4-frontend/lib/dashboard/source.ts` 的只读客户端为准。
 
 ## 分项状态
 
@@ -27,9 +29,9 @@
 - **当前不应宣称**：整个仓库已达到统一 release-ready。
 
 ### 2. Web4 前端
-- **状态**：有独立 `npm` 发布前检查链路，但就绪范围应限定为“前端子项目预检”。
-- **可确认事实**：`web4-frontend/package.json` 中 `ci:check` / `release:preflight` / `release:ready` 均存在，并调用 `web4-frontend/scripts/*.sh`。
-- **限制**：存在历史“GO-ready”证据包；同时文档明确保留过 `dashboard-data.ts` 本地数据源语义，因此不能把 Web4 当前状态笼统写成“生产就绪”。
+- **状态**：有独立 `npm` 发布前检查链路；前端运行语义为只读查询客户端，失败时 fail-closed，开发/演示场景可显式切到 mock fallback。
+- **可确认事实**：`web4-frontend/package.json` 中 `ci:check` / `release:preflight` / `release:ready` 均存在，并调用 `web4-frontend/scripts/*.sh`；`web4-frontend/lib/api-contract/client.ts` 实际消费 `GET /query-task/:taskId`、`GET /query-events/:taskId`、`GET /query-capability-audit/:subject`。
+- **限制**：存在历史“GO-ready”证据包；当前仓内也没有 `/api/v0/web4/*` 对应实现，因此不能把 Web4 当前状态笼统写成“生产就绪”或“仓内 dashboard API 已落地”。
 
 ### 3. Verifier / sidecar
 - **状态**：旧 Rust verifier PoC 本体不在当前仓库中。

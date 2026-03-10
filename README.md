@@ -145,10 +145,10 @@ TRNM_TX_CLI=./trillionnium-rust/target/debug/trnm-cli \
 
 ## 6. 文档入口
 
-- 当前发布/就绪真相源：[RELEASE_READINESS.md](RELEASE_READINESS.md)
-- 项目状态（历史推进日志）：[STATUS.md](STATUS.md)
-- 统一开发调度：[docs/development/DEVELOPMENT_MASTER_UNIFIED_2026-03-04.md](docs/development/DEVELOPMENT_MASTER_UNIFIED_2026-03-04.md)
-- Web4 基础设施总览：[docs/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md](docs/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md)
+- 当前发布/就绪真相源（绑定当前 `origin/main` 快照 `fde185a7`）：[RELEASE_READINESS.md](RELEASE_READINESS.md)
+- 项目状态（历史推进日志，不作为 release truth source）：[STATUS.md](STATUS.md)
+- 统一开发调度（planning board，不覆盖 release 判定）：[docs/development/DEVELOPMENT_MASTER_UNIFIED_2026-03-04.md](docs/development/DEVELOPMENT_MASTER_UNIFIED_2026-03-04.md)
+- Web4 基础设施总览（平台路线图）：[docs/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md](docs/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md)
 - PoUW 机制说明：[trillionnium-rust/docs/challenge-economics-minimal.md](trillionnium-rust/docs/challenge-economics-minimal.md)
 - A2A 适配契约：[docs/agent/a2a_adapter_contract_v1.md](docs/agent/a2a_adapter_contract_v1.md)
 - MCP 适配契约：[docs/agent/mcp_adapter_contract_v1.md](docs/agent/mcp_adapter_contract_v1.md)
@@ -178,6 +178,8 @@ TRNM_TX_CLI=./trillionnium-rust/target/debug/trnm-cli \
 - 主线开发入口为 `trillionnium-rust/`。
 - `legacy/` 仅作归档，不作为当前开发入口。
 - 当前是否“可发布 / release-ready”请以 [RELEASE_READINESS.md](RELEASE_READINESS.md) 为准；历史证据文档不自动代表今日状态。
+- Web4 当前语义是：**前端默认走只读 API client；只在显式 `?mode=mock` 时回退到本地 mock snapshot；不暴露写路径。**
+- 文档中若出现 `/api/v0/web4/*`，应视为历史草案命名；当前仓内前端实际消费的是 `query-task` / `query-events` / `query-capability-audit` 这组只读接口，**不是仓内已实现的 Next.js route**。
 - 自动化脚本较多，优先使用本 README、`RELEASE_READINESS.md` 和 `docs/development` 下统一调度文档作为导航。
 
 ---

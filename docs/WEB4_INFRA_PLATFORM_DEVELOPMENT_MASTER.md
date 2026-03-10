@@ -287,7 +287,7 @@ Trillionnium 目标不是“单链功能齐全”，而是“可被开发者和�
 - development/* → 开发流程主指南
 
 ### 9.2 文档策略（精简后）
-- 本 Master 为唯一主入口与持续维护基线
+- 本 Master 为 Web4 平台路线图主入口与持续维护基线，不承担仓库级 release 判定
 - 历史 docs 保留为专题文档，审计必需信息同步维护在本文件 Appendix A
 - 新增或变更需求，优先更新本 Master，并在专题文档保持双向引用一致
 
@@ -311,9 +311,9 @@ Trillionnium 目标不是“单链功能齐全”，而是“可被开发者和�
   - `./scripts/v2/i2_token_lifecycle_gate.sh`
 
 ### 10.2 前端接口文档（2026-03-03）
-- 现状：`web4-frontend/app/dashboard-data.ts` 仍为本地 mock 数据源。
-- 接口契约基线：`docs/development/WEB4_FRONTEND_API_INTERFACE_V0.md`
-- 约束：Dashboard 仅消费只读聚合 API，不得绕过 XI 门禁结论（X2/I2 gate）。
+- 现状：前端默认走 `web4-frontend/lib/api-contract/*` 的只读查询客户端；仅在显式 `?mode=mock` 时回退到本地 snapshot fallback。
+- 接口契约基线：`docs/development/WEB4_FRONTEND_API_INTERFACE_V0.md` 与 `web4-frontend/docs/api-contract.md`
+- 约束：Dashboard 仅消费只读聚合 API，不得绕过 XI 门禁结论（X2/I2 gate）；`/api/v0/web4/*` 仅是历史草案命名，不是当前仓内 route。
 
 ### 10.3 Lane MV（2026-03-03）V2 回执契约冻结主文档锚点
 - 锚点目标：把 `fraud_proof | tee_receipt | zk_receipt` 的统一回执字段固定到 Master，避免仅在专题文档生效。
