@@ -106,6 +106,14 @@ pub struct PendingGovParamUpdate {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
+pub struct PendingResolveApprovalSnapshot {
+    pub slash_worker: bool,
+    pub confirmations: u8,
+    pub first_approver: String,
+    pub authority_set: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum GovParamUpdateOutcome {
     Applied(ObjectRef),
     Scheduled { activate_at_height: u64 },
@@ -462,6 +470,71 @@ impl StateStore {
         self.pending_resolve_approvals
             .get(&task_id)
             .map(|entry| entry.first_approver.clone())
+    }
+
+    pub fn pending_resolve_approval_snapshot(
+        &self,
+        task_id: u64,
+    ) -> Option<PendingResolveApprovalSnapshot> {
+        self.pending_resolve_approvals
+            .get(&task_id)
+            .map(|entry| PendingResolveApprovalSnapshot {
+                slash_worker: entry.slash_worker,
+                confirmations: entry.confirmations,
+                first_approver: entry.first_approver.clone(),
+                authority_set: entry.authority_set.clone(),
+            })
+    }
+
+    pub fn restore_pending_resolve_approval(
+        &mut self,
+        task_id: u64,
+        snapshot: Option<PendingResolveApprovalSnapshot>,
+    ) {
+        match snapshot {
+            Some(snapshot) => {
+                self.pending_resolve_approvals.insert(
+                    task_id,
+                    PendingResolveApproval {
+                        slash_worker: snapshot.slash_worker,
+                        confirmations: snapshot.confirmations,
+                        first_approver: snapshot.first_approver,
+                        authority_set: snapshot.authority_set,
+                    },
+                );
+            }
+            None => {
+                self.pending_resolve_approvals.remove(&task_id);
+            }
+        }
+    }
+
+    pub fn restore_task(&mut self, id: u64, snapshot: Option<TaskObject>) {
+        match snapshot {
+            Some(task) => {
+                self.objects.insert(
+                    id,
+                    VersionedObject {
+                        version: task.version,
+                        value: ObjectValue::Task(task),
+                    },
+                );
+            }
+            None => {
+                self.objects.remove(&id);
+            }
+        }
+    }
+
+    pub fn restore_balance(&mut self, address: &str, snapshot: Option<u128>) {
+        match snapshot {
+            Some(amount) => {
+                self.balances.insert(address.to_string(), amount);
+            }
+            None => {
+                self.balances.remove(address);
+            }
+        }
     }
 
     pub fn get_ref(&self, id: u64) -> Option<ObjectRef> {
@@ -2199,7 +2272,9 @@ mod tests {
                 "resolvér-v2".into(),
             )
             .unwrap_err();
-        assert!(err.contains("ASCII-only") || err.contains("whitespace") || err.contains("separator"));
+        assert!(
+            err.contains("ASCII-only") || err.contains("whitespace") || err.contains("separator")
+        );
 
         assert_eq!(
             st.gov_param_string("resolve_authority"),
@@ -3548,13 +3623,11 @@ mod tests {
     #[test]
     fn state_root_changes_when_pending_resolve_first_approver_changes() {
         let mut st_a = StateStore::new();
-        st_a
-            .stage_or_confirm_resolve_approval(500, true, "authority-a", "authority-a,authority-b")
+        st_a.stage_or_confirm_resolve_approval(500, true, "authority-a", "authority-a,authority-b")
             .unwrap();
 
         let mut st_b = StateStore::new();
-        st_b
-            .stage_or_confirm_resolve_approval(500, true, "authority-b", "authority-a,authority-b")
+        st_b.stage_or_confirm_resolve_approval(500, true, "authority-b", "authority-a,authority-b")
             .unwrap();
 
         assert_ne!(
@@ -3567,19 +3640,17 @@ mod tests {
     #[test]
     fn state_root_changes_when_pending_resolve_authority_set_changes() {
         let mut st_a = StateStore::new();
-        st_a
-            .stage_or_confirm_resolve_approval(501, true, "authority-a", "authority-a,authority-b")
+        st_a.stage_or_confirm_resolve_approval(501, true, "authority-a", "authority-a,authority-b")
             .unwrap();
 
         let mut st_b = StateStore::new();
-        st_b
-            .stage_or_confirm_resolve_approval(
-                501,
-                true,
-                "authority-a",
-                "authority-a,authority-b,authority-c",
-            )
-            .unwrap();
+        st_b.stage_or_confirm_resolve_approval(
+            501,
+            true,
+            "authority-a",
+            "authority-a,authority-b,authority-c",
+        )
+        .unwrap();
 
         assert_ne!(
             st_a.state_root(),
