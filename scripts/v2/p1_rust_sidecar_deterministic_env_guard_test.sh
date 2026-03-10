@@ -17,6 +17,7 @@ required_lines=(
   'LC_NUMERIC: C'
   'LC_COLLATE: C'
   'PYTHONHASHSEED: "0"'
+  'HOMEBREW_NO_AUTO_UPDATE: "1"'
   'CI: "true"'
 )
 
