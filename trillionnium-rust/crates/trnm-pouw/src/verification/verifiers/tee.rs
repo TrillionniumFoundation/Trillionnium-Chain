@@ -184,10 +184,8 @@ mod tests {
     fn tee_verifier_valid_receipt_path_with_mock_backend() {
         let mut backends = ZkBackendRegistry::new();
         backends.register(Arc::new(MockTeeSuccessBackend));
-        let verifier = TeeVerifier::new(
-            ZkBackendKind::Custom("mock-tee".into()),
-            Arc::new(backends),
-        );
+        let verifier =
+            TeeVerifier::new(ZkBackendKind::Custom("mock-tee".into()), Arc::new(backends));
         let task = mock_task();
 
         assert!(matches!(
@@ -324,6 +322,20 @@ mod tests {
             verifier.verify_proof(
                 &task,
                 b"TEE:task_id='42',task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,quote=abc"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("duplicate task_id binding")
+        ));
+    }
+
+    #[test]
+    fn tee_verifier_rejects_duplicate_task_id_binding_with_double_quoted_alias_fail_closed() {
+        let verifier = TeeVerifier::default();
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"TEE:task_id=\"42\",task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,quote=abc"
             ),
             VerificationResult::Invalid(msg) if msg.contains("duplicate task_id binding")
         ));
