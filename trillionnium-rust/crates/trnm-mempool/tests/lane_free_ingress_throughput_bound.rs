@@ -165,6 +165,26 @@ fn reserve_only_mixed_ingress_keeps_fifo_progress_without_fairness_detours() {
 }
 
 #[test]
+fn reserve_only_split_repeated_retry_noise_keeps_fresh_backpressured_id_recoverable() {
+    let mut gate = LaneAdmissionGate::new(2, 2);
+
+    assert_eq!(gate.admit(90, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(91, IngressClass::Critical), AdmitOutcome::Accepted);
+
+    // Saturation: fresh id must be backpressured, not duplicate-poisoned.
+    assert_eq!(gate.admit(92, IngressClass::Normal), AdmitOutcome::Backpressured);
+
+    // Retry noise should not change classification while saturated.
+    assert_eq!(gate.admit(90, IngressClass::Critical), AdmitOutcome::Duplicate);
+    assert_eq!(gate.admit(92, IngressClass::Critical), AdmitOutcome::Backpressured);
+    assert_eq!(gate.admit(92, IngressClass::Normal), AdmitOutcome::Backpressured);
+
+    // After one drain, the previously backpressured fresh id must still recover.
+    assert!(gate.pop_ready().is_some());
+    assert_eq!(gate.admit(92, IngressClass::Critical), AdmitOutcome::Accepted);
+}
+
+#[test]
 fn zero_reserve_critical_ingress_uses_free_normal_headroom_without_dedicated_critical_lane() {
     let mut gate = LaneAdmissionGate::new(1, 0);
 
