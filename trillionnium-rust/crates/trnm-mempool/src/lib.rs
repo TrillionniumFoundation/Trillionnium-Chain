@@ -131,14 +131,14 @@ impl LaneAdmissionGate {
                     .seen
                     .extend(self.critical.queue.iter().copied());
                 self.seen_global.clear();
-                self.seen_global.extend(self.normal.seen.iter().copied());
-                self.seen_global.extend(self.critical.seen.iter().copied());
+                self.seen_global.extend(self.normal.queue.iter().copied());
+                self.seen_global.extend(self.critical.queue.iter().copied());
             } else if self.seen_global.len() != lane_total {
                 // Defensive self-heal for transient restored-state skew: lane-local queues
                 // remain source of truth for saturation, and rebuild lane-wide id set.
                 self.seen_global.clear();
-                self.seen_global.extend(self.normal.seen.iter().copied());
-                self.seen_global.extend(self.critical.seen.iter().copied());
+                self.seen_global.extend(self.normal.queue.iter().copied());
+                self.seen_global.extend(self.critical.queue.iter().copied());
             }
         }
 
@@ -150,25 +150,31 @@ impl LaneAdmissionGate {
         // that case, trust lane-local seen sets and repair lane-wide cache inline.
         let mut is_duplicate = self.seen_global.contains(&tx_id);
         if is_duplicate
-            && !self.normal.seen.contains(&tx_id)
-            && !self.critical.seen.contains(&tx_id)
+            && !self.normal.queue.contains(&tx_id)
+            && !self.critical.queue.contains(&tx_id)
         {
             // Defensive self-heal: restored-state skew can preserve cardinality while
-            // leaving stale ids in the lane-wide cache. Rebuild from lane-local truth
-            // so fresh ingress is not misclassified as duplicate.
+            // leaving stale ids in lane-wide/lane-local caches. Verify against queue
+            // truth and rebuild so fresh ingress is not misclassified as duplicate.
+            self.normal.seen.clear();
+            self.normal.seen.extend(self.normal.queue.iter().copied());
+            self.critical.seen.clear();
+            self.critical
+                .seen
+                .extend(self.critical.queue.iter().copied());
             self.seen_global.clear();
-            self.seen_global.extend(self.normal.seen.iter().copied());
-            self.seen_global.extend(self.critical.seen.iter().copied());
+            self.seen_global.extend(self.normal.queue.iter().copied());
+            self.seen_global.extend(self.critical.queue.iter().copied());
             is_duplicate = self.seen_global.contains(&tx_id);
         }
 
         if !is_duplicate {
             // Defensive fallback for rare restored-state skew where lane-wide cache and
             // queue cardinality match but one queued id is missing from seen_global.
-            // Probe lane-local id sets (O(1)) rather than queue scans (O(n)) to keep
-            // free-ingress admission lightweight under bursty concurrency.
+            // Probe authoritative queues directly so stale lane-local seen caches do
+            // not spuriously classify fresh ingress as duplicate.
             let lane_local_duplicate =
-                self.normal.seen.contains(&tx_id) || self.critical.seen.contains(&tx_id);
+                self.normal.queue.contains(&tx_id) || self.critical.queue.contains(&tx_id);
             if lane_local_duplicate {
                 is_duplicate = true;
                 self.seen_global.insert(tx_id);
@@ -318,8 +324,8 @@ impl LaneAdmissionGate {
             // Defensive self-heal: restored-state skew can leave lane-wide cache
             // stale while lane-local queues remain authoritative.
             self.seen_global.clear();
-            self.seen_global.extend(self.normal.seen.iter().copied());
-            self.seen_global.extend(self.critical.seen.iter().copied());
+            self.seen_global.extend(self.normal.queue.iter().copied());
+            self.seen_global.extend(self.critical.queue.iter().copied());
         } else {
             let lane_total = self
                 .normal
@@ -335,8 +341,8 @@ impl LaneAdmissionGate {
                     self.seen_global.clear();
                 } else {
                     self.seen_global.clear();
-                    self.seen_global.extend(self.normal.seen.iter().copied());
-                    self.seen_global.extend(self.critical.seen.iter().copied());
+                    self.seen_global.extend(self.normal.queue.iter().copied());
+                    self.seen_global.extend(self.critical.queue.iter().copied());
                 }
             }
         }
@@ -1014,6 +1020,24 @@ mod tests {
 
         // Critical should not be spuriously preempted by stale fairness state.
         assert_eq!(g.pop_ready(), Some(1));
+    }
+
+    #[test]
+    fn equal_cardinality_lane_seen_skew_does_not_false_duplicate_fresh_id() {
+        let mut g = LaneAdmissionGate::new(3, 1);
+
+        assert_eq!(g.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(11, IngressClass::Normal), AdmitOutcome::Accepted);
+
+        // Simulate restored-state skew: lane-local seen/global caches keep cardinality
+        // but replace a queued id with a ghost id.
+        g.normal.seen.remove(&11);
+        g.normal.seen.insert(999);
+        g.seen_global.remove(&11);
+        g.seen_global.insert(999);
+
+        // Fresh ghost id must not be misclassified as duplicate.
+        assert_eq!(g.admit(999, IngressClass::Critical), AdmitOutcome::Accepted);
     }
 
     #[test]
