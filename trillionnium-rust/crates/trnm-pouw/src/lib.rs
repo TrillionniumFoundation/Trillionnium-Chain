@@ -7883,6 +7883,91 @@ mod tests {
     }
 
     #[test]
+    fn resolve_pause_masks_single_authority_downgrade_until_unpause_then_clears_staged_multisig() {
+        // Governance + decentralization hardening: pause must keep already-staged
+        // multisig approvals intact, then after unpause a downgraded single-authority
+        // resolver config must fail closed and clear stale staging without escrow drift.
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        set_resolve_authority(&mut st, "authority-a,authority-b");
+
+        let r1 = apply_create_task(&mut st, 8_961_17, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(8_961_17, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+        let r5 =
+            apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
+
+        let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+        let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+        let before_challenger = st.balance_of("challenger");
+
+        let first_err = apply_resolve(
+            &mut st,
+            r5.clone(),
+            true,
+            "authority-a".into(),
+            "authority-a".into(),
+        )
+        .expect_err("first multisig approval should stage only");
+        assert!(matches!(first_err, PouwError::ResolveApprovalStaged));
+        assert_eq!(
+            st.pending_resolve_first_approver(r5.id).as_deref(),
+            Some("authority-a")
+        );
+
+        st.set_gov_param(9_201_18, 7_999, "emergency_pause".into(), "true".into())
+            .expect("pause=true governance update must succeed");
+        assert!(st.is_emergency_paused());
+        set_resolve_authority(&mut st, "authority-b");
+
+        let paused_err = apply_resolve(
+            &mut st,
+            r5.clone(),
+            true,
+            "authority-b".into(),
+            "authority-b".into(),
+        )
+        .expect_err("pause must mask downgrade effects and freeze challenged settlement");
+        assert!(matches!(paused_err, PouwError::InvalidTransition));
+        assert_eq!(
+            st.pending_resolve_first_approver(r5.id).as_deref(),
+            Some("authority-a")
+        );
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
+        assert_eq!(st.balance_of("challenger"), before_challenger);
+
+        st.set_gov_param(9_201_19, 7_999, "emergency_pause".into(), "false".into())
+            .expect("pause=false governance update must succeed");
+        assert!(!st.is_emergency_paused());
+
+        let stale_err = apply_resolve(
+            &mut st,
+            r5,
+            true,
+            "authority-b".into(),
+            "authority-b".into(),
+        )
+        .expect_err("single-authority downgrade must clear stale multisig staging");
+        assert!(matches!(stale_err, PouwError::Unauthorized));
+        assert_eq!(st.pending_resolve_first_approver(8_961_17), None);
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
+        assert_eq!(st.balance_of("challenger"), before_challenger);
+    }
+
+    #[test]
     fn resolve_emergency_pause_precedes_authority_checks_without_escrow_mutation() {
         // Merge-gate hardening: emergency pause must fail-closed before signer/authority
         // checks, so challenged escrow cannot leak side-channel auth outcomes.
