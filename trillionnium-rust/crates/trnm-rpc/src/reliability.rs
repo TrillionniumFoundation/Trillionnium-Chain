@@ -294,13 +294,12 @@ impl ReliabilityStore for InMemoryReliabilityStore {
         now_unix_ms: u128,
     ) -> Result<(), ReliabilityStoreError> {
         let session_id = session.session_id.clone();
-        let old_len = self
-            .sessions
-            .get(&session_id)
-            .map(|s| s.pending.len())
-            .unwrap_or(0);
+        // Reuse a single session lookup for both old pending size and new-session
+        // detection. This path is hit on every ingress upsert under backpressure.
+        let old_len_opt = self.sessions.get(&session_id).map(|s| s.pending.len());
+        let old_len = old_len_opt.unwrap_or(0);
         let new_len = session.pending.len();
-        let is_new_session = !self.sessions.contains_key(&session_id);
+        let is_new_session = old_len_opt.is_none();
 
         if let Some(max) = self.config.max_sessions {
             if is_new_session && self.sessions.len() >= max {
