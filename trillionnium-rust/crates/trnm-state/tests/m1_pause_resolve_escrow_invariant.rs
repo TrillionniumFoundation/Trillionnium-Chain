@@ -879,3 +879,43 @@ fn clearing_staged_resolve_quorum_is_idempotent_and_side_effect_free_under_pause
     assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
     assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), forfeits_before);
 }
+
+#[test]
+fn unpause_does_not_bypass_pending_resolve_authority_timelock_or_escrow_conservation() {
+    // M1 micro-hardening: leaving emergency pause must not auto-apply a staged
+    // resolve_authority update. Governance timelock + custody conservation stay intact.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 64_000);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 940);
+
+    st.set_gov_param(98_207, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    let resolve_before = st.gov_param_string("resolve_authority");
+    let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+    let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+
+    let scheduled = st
+        .set_gov_param(
+            98_208,
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-c".into(),
+        )
+        .expect("resolve_authority should schedule while paused");
+    assert!(matches!(scheduled, GovParamUpdateOutcome::Scheduled { .. }));
+
+    st.set_gov_param(98_209, 7_999, "emergency_pause".into(), "false".into())
+        .expect("canonical unpause must apply immediately");
+    assert!(!st.is_emergency_paused());
+
+    let pending = st
+        .pending_gov_update("resolve_authority")
+        .expect("unpause must not auto-apply pending resolve_authority");
+    assert_eq!(pending.value, "authority-a,authority-c");
+    assert_eq!(st.gov_param_string("resolve_authority"), resolve_before);
+
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+    assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), forfeits_before);
+}
