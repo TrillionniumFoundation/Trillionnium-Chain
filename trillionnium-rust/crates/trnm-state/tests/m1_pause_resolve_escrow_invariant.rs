@@ -845,3 +845,37 @@ fn canonical_unpause_keeps_staged_multi_party_resolve_quorum_and_escrow_conserva
     assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
     assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), forfeits_before);
 }
+
+#[test]
+fn clearing_staged_resolve_quorum_is_idempotent_and_side_effect_free_under_pause() {
+    // M1 micro-hardening: stale multisig staging cleanup (used during authority
+    // downgrade/rotation fail-closed paths) must be idempotent, preserve pause,
+    // and keep escrow/treasury custody balances exactly conserved.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 63_000);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 930);
+
+    st.set_gov_param(98_206, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+    let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+
+    st.stage_or_confirm_resolve_approval(9_918, 1, true, "authority-a", "authority-a,authority-b")
+        .expect("first approval stage should succeed while paused");
+    assert_eq!(st.pending_resolve_approval(9_918), Some((true, 1)));
+    assert_eq!(
+        st.pending_resolve_first_approver(9_918).as_deref(),
+        Some("authority-a")
+    );
+
+    st.clear_pending_resolve_approval(9_918);
+    st.clear_pending_resolve_approval(9_918);
+
+    assert_eq!(st.pending_resolve_approval(9_918), None);
+    assert_eq!(st.pending_resolve_first_approver(9_918), None);
+    assert!(st.is_emergency_paused());
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+    assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), forfeits_before);
+}
