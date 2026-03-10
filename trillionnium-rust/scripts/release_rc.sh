@@ -4,6 +4,10 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+# Keep RC evidence timestamps/log formatting deterministic across runners/locales.
+export TZ=UTC
+export LC_ALL=C
+export LANG=C
 
 TS="$(date +%Y%m%d-%H%M%S)"
 OUT="release/rc-$TS"
