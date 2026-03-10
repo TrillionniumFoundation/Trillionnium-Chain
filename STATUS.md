@@ -6,7 +6,7 @@
 > 重要：本文件保留为 **2026-02-21 起的历史推进日志 / working journal**，**不是**当前 release readiness 的权威真相源。
 > 当前是否可发布、哪些“GO/PASS/ready”表述仍然有效，请先看：`RELEASE_READINESS.md`。
 >
-> 2026-02-21 增量对外摘要见：`docs/reports/changelog-and-next-milestones-20260221.md`
+> 注：此前引用的 `docs/reports/changelog-and-next-milestones-20260221.md` 已不在当前仓库；若需当前口径，请改看 `README.md` 与 `RELEASE_READINESS.md`。
 
 ## 1) 当时状态（历史记录：2026-02-21 的可发布基线视角）
 > 本节仅描述 2026-02-21 当时判断，不能直接外推为当前仓库状态。
