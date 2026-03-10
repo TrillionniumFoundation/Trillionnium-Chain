@@ -676,7 +676,13 @@ impl RelayService {
                 poisoned.into_inner()
             }
         };
-        q.consume(now_ms(), domain, session_id, source.as_str(), &self.risk_quota_cfg)
+        q.consume(
+            now_ms(),
+            domain,
+            session_id,
+            source.as_str(),
+            &self.risk_quota_cfg,
+        )
     }
 
     pub fn open(&self, req: RelayOpenRequest) -> Result<RelayOpenResponse> {
@@ -1932,25 +1938,42 @@ mod tests {
         };
 
         state
-            .consume(
-                1_000,
-                RiskDomain::Relay,
-                "zl-session",
-                "zl-source",
-                &cfg,
-            )
+            .consume(1_000, RiskDomain::Relay, "zl-session", "zl-source", &cfg)
             .expect("first request should pass because zero limits are clamped to one slot");
 
         let err = state
-            .consume(
-                1_000,
-                RiskDomain::Relay,
-                "zl-session",
-                "zl-source",
-                &cfg,
-            )
+            .consume(1_000, RiskDomain::Relay, "zl-session", "zl-source", &cfg)
             .expect_err("second request in same window should hit clamped quota");
         assert!(err.to_string().contains("too_many_requests/quota_exceeded"));
+    }
+
+    #[test]
+    fn source_quota_rejection_rolls_back_session_counter_to_avoid_false_backpressure() {
+        let mut state = RiskQuotaState::default();
+        let cfg = RiskQuotaConfig {
+            window_ms: 1_000,
+            per_session_limit: 3,
+            per_source_limit: 1,
+        };
+
+        state
+            .consume(1_000, RiskDomain::Relay, "rb-session", "src-a", &cfg)
+            .expect("seed consume");
+
+        let err = state
+            .consume(1_000, RiskDomain::Relay, "rb-session", "src-a", &cfg)
+            .expect_err("second consume should hit per-source quota");
+        assert!(err.to_string().contains("too_many_requests/quota_exceeded"));
+
+        // If session usage isn't rolled back on source-quota rejection, the next two
+        // distinct sources would exhaust the session quota early and the final consume
+        // below would fail with false backpressure.
+        state
+            .consume(1_000, RiskDomain::Relay, "rb-session", "src-b", &cfg)
+            .expect("source-b should pass after rollback");
+        state
+            .consume(1_000, RiskDomain::Relay, "rb-session", "src-c", &cfg)
+            .expect("source-c should pass after rollback");
     }
 
     #[test]
@@ -1975,13 +1998,7 @@ mod tests {
         }
 
         let err = state
-            .consume(
-                1_000,
-                RiskDomain::Relay,
-                "ks-session",
-                "src-over-cap",
-                &cfg,
-            )
+            .consume(1_000, RiskDomain::Relay, "ks-session", "src-over-cap", &cfg)
             .unwrap_err();
         assert!(err.to_string().contains("too_many_requests/quota_exceeded"));
         assert!(err.to_string().contains("keyspace_exhausted"));
@@ -2251,7 +2268,10 @@ mod tests {
         assert_eq!(canonical_nbsp, "bot worker");
 
         // Lowercase/no-whitespace aliases should keep byte shape for hot-path speed.
-        assert_eq!(canonicalize_risk_source(Some("relay-source-1")), "relay-source-1");
+        assert_eq!(
+            canonicalize_risk_source(Some("relay-source-1")),
+            "relay-source-1"
+        );
 
         // Non-ASCII uppercase aliases must canonicalize into the same lowercase bucket.
         let canonical_unicode_case = canonicalize_risk_source(Some("İSTANBUL source"));
@@ -2260,7 +2280,10 @@ mod tests {
         let exact = "A".repeat(RISK_SOURCE_MAX_CHARS);
         let with_suffix = format!("{}   z", exact);
         // Truncation should not keep a trailing separator when the next token is cut.
-        assert_eq!(canonicalize_risk_source(Some(&with_suffix)), exact.to_ascii_lowercase());
+        assert_eq!(
+            canonicalize_risk_source(Some(&with_suffix)),
+            exact.to_ascii_lowercase()
+        );
     }
 
     #[test]
@@ -2316,9 +2339,7 @@ mod tests {
                 source: Some(format!("{}-C", prefix)),
             })
             .unwrap_err();
-        assert!(err
-            .to_string()
-            .contains("too_many_requests/quota_exceeded"));
+        assert!(err.to_string().contains("too_many_requests/quota_exceeded"));
     }
 
     #[test]
