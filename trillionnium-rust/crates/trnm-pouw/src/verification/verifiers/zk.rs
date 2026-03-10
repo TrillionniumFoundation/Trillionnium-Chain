@@ -1,11 +1,21 @@
+#[cfg(feature = "real-zk-backend")]
 use std::sync::OnceLock;
 
+#[cfg(feature = "real-zk-backend")]
 use ark_bn254::{Bn254, Fr};
-use ark_ff::PrimeField;
-use ark_groth16::{prepare_verifying_key, Groth16, PreparedVerifyingKey, Proof, VerifyingKey};
+#[cfg(feature = "real-zk-backend")]
+use ark_groth16::{prepare_verifying_key, Groth16, PreparedVerifyingKey, Proof};
+#[cfg(all(test, feature = "real-zk-backend"))]
+use ark_groth16::VerifyingKey;
+#[cfg(feature = "real-zk-backend")]
 use ark_relations::r1cs::{ConstraintSynthesizer, ConstraintSystemRef, SynthesisError};
+#[cfg(feature = "real-zk-backend")]
 use ark_serialize::CanonicalDeserialize;
+#[cfg(all(test, feature = "real-zk-backend"))]
+use ark_serialize::CanonicalSerialize;
+#[cfg(feature = "real-zk-backend")]
 use ark_snark::{CircuitSpecificSetupSNARK, SNARK};
+#[cfg(feature = "real-zk-backend")]
 use rand::{rngs::StdRng, SeedableRng};
 
 use crate::verification::{ProofVerifier, VerificationResult};
@@ -19,12 +29,14 @@ const DEMO_PROOF_FIELD: &str = "proof";
 
 pub struct ZkVerifier;
 
+#[cfg(feature = "real-zk-backend")]
 #[derive(Clone)]
 struct DemoSquareCircuit {
     witness: Option<u64>,
     public_output: u64,
 }
 
+#[cfg(feature = "real-zk-backend")]
 impl ConstraintSynthesizer<Fr> for DemoSquareCircuit {
     fn generate_constraints(self, cs: ConstraintSystemRef<Fr>) -> Result<(), SynthesisError> {
         let witness = cs.new_witness_variable(|| {
@@ -42,10 +54,12 @@ impl ConstraintSynthesizer<Fr> for DemoSquareCircuit {
     }
 }
 
+#[cfg(feature = "real-zk-backend")]
 struct DemoBackendParams {
     vk: PreparedVerifyingKey<Bn254>,
 }
 
+#[cfg(feature = "real-zk-backend")]
 fn demo_backend_params() -> &'static DemoBackendParams {
     static PARAMS: OnceLock<DemoBackendParams> = OnceLock::new();
     PARAMS.get_or_init(|| {
@@ -62,6 +76,8 @@ fn demo_backend_params() -> &'static DemoBackendParams {
     })
 }
 
+#[allow(dead_code)]
+#[cfg(any(test, feature = "real-zk-backend"))]
 fn public_output_from_result_hash(task: &TaskObject) -> Option<u64> {
     let result_hash = task.result_hash?;
     let mut bytes = [0u8; 8];
@@ -149,6 +165,7 @@ fn find_token_field(body: &str, field: &str) -> Option<String> {
     None
 }
 
+#[cfg(feature = "real-zk-backend")]
 fn decode_proof_hex(hex_text: &str) -> Result<Proof<Bn254>, String> {
     let proof_bytes = hex::decode(hex_text)
         .map_err(|_| "Invalid ZK proof envelope: malformed proof encoding".to_string())?;
@@ -156,6 +173,7 @@ fn decode_proof_hex(hex_text: &str) -> Result<Proof<Bn254>, String> {
         .map_err(|_| "Invalid ZK proof envelope: malformed proof encoding".to_string())
 }
 
+#[cfg(feature = "real-zk-backend")]
 fn verify_demo_backend(task: &TaskObject, proof_hex: &str) -> VerificationResult {
     let Some(public_output) = public_output_from_result_hash(task) else {
         return VerificationResult::Invalid(
@@ -182,6 +200,13 @@ fn verify_demo_backend(task: &TaskObject, proof_hex: &str) -> VerificationResult
             "ZK proof backend unavailable: {DEMO_BACKEND_ID} verify error: {err}"
         )),
     }
+}
+
+#[cfg(not(feature = "real-zk-backend"))]
+fn verify_demo_backend(_task: &TaskObject, _proof_hex: &str) -> VerificationResult {
+    VerificationResult::Indeterminate(format!(
+        "ZK proof backend unavailable: {DEMO_BACKEND_ID} support compiled out (enable real-zk-backend)"
+    ))
 }
 
 impl ProofVerifier for ZkVerifier {
@@ -225,7 +250,7 @@ impl ProofVerifier for ZkVerifier {
     }
 }
 
-#[cfg(test)]
+#[cfg(all(test, feature = "real-zk-backend"))]
 pub(crate) fn demo_backend_proof_hex_for_public_output(public_output: u64) -> String {
     let circuit = DemoSquareCircuit {
         witness: Some(integer_square_root(public_output).expect("public output must be square")),
@@ -246,7 +271,7 @@ pub(crate) fn demo_backend_proof_hex_for_public_output(public_output: u64) -> St
     hex::encode(bytes)
 }
 
-#[cfg(test)]
+#[cfg(all(test, feature = "real-zk-backend"))]
 fn integer_square_root(value: u64) -> Option<u64> {
     let root = (value as f64).sqrt() as u64;
     [root.saturating_sub(1), root, root.saturating_add(1)]
@@ -302,6 +327,7 @@ mod tests {
         ));
     }
 
+    #[cfg(feature = "real-zk-backend")]
     #[test]
     fn zk_verifier_accepts_valid_real_groth16_proof() {
         let verifier = ZkVerifier;
@@ -318,6 +344,7 @@ mod tests {
         );
     }
 
+    #[cfg(feature = "real-zk-backend")]
     #[test]
     fn zk_verifier_rejects_invalid_real_groth16_proof() {
         let verifier = ZkVerifier;
@@ -354,6 +381,22 @@ mod tests {
                 b"ZK:task_id=99,worker=worker-zk,proof_type=zk,result_hash=0000000000000051000000000000000000000000000000000000000000000000,backend=ark-groth16-bn254-demo"
             ),
             VerificationResult::Invalid(msg) if msg.contains("missing proof binding")
+        ));
+    }
+
+    #[cfg(not(feature = "real-zk-backend"))]
+    #[test]
+    fn zk_verifier_reports_compiled_out_backend_for_demo_backend_id() {
+        let verifier = ZkVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"ZK:task_id=99,worker=worker-zk,proof_type=zk,result_hash=0000000000000051000000000000000000000000000000000000000000000000,backend=ark-groth16-bn254-demo,proof=abcd"
+            ),
+            VerificationResult::Indeterminate(msg)
+                if msg.contains("support compiled out") && msg.contains("real-zk-backend")
         ));
     }
 }
