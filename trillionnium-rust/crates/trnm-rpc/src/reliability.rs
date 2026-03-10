@@ -1105,11 +1105,7 @@ impl SqliteReliabilityStore {
             .sum()
     }
 
-    fn cleanup_expired_sessions_only(
-        &mut self,
-        now_unix_ms: u128,
-        retention: &RetentionConfig,
-    ) {
+    fn cleanup_expired_sessions_only(&mut self, now_unix_ms: u128, retention: &RetentionConfig) {
         let pending_cutoff = now_unix_ms.saturating_sub(retention.pending_ttl_ms as u128);
         for sid in self.list_session_ids() {
             let Some(mut session) = self.get_session(&sid) else {
@@ -1340,7 +1336,8 @@ impl ReliabilityStore for SqliteReliabilityStore {
                 .retain(|_, item| item.created_at_unix_ms >= pending_cutoff);
 
             if session.pending.is_empty() {
-                if before_len != 0 || (updated_at_unix_ms != 0 && updated_at_unix_ms < pending_cutoff_i64)
+                if before_len != 0
+                    || (updated_at_unix_ms != 0 && updated_at_unix_ms < pending_cutoff_i64)
                 {
                     remove_ids.push(session_id);
                 }
@@ -2038,6 +2035,40 @@ mod tests {
             second.first().map(|i| i.message.session_id.as_str()),
             Some("s-b"),
             "round-robin cursor should rebase on the active session set"
+        );
+    }
+
+    #[test]
+    fn global_cap_round_robin_still_grants_new_cold_session_a_turn_next_cycle() {
+        let store = InMemoryReliabilityStore::default();
+        let mut engine = ReliabilityEngine::new(
+            store,
+            RetryConfig {
+                base_backoff_ms: 1,
+                max_backoff_ms: 1,
+                ..RetryConfig::default()
+            },
+        );
+
+        // Start with one hot session so cursor is pinned to zero in the single-session path.
+        for seq in 1..=(MAX_DUE_RETRIES_PER_SESSION_PER_COLLECT as u64 + 8) {
+            let ack = engine.receive(mk_msg("alice", "s-hot", seq), 1_000 + seq as u128);
+            assert_eq!(ack.code, AckCode::Accepted);
+        }
+        let first = engine.collect_due_retries(2_000);
+        assert_eq!(first.len(), MAX_DUE_RETRIES_PER_SESSION_PER_COLLECT);
+        assert!(first.iter().all(|item| item.message.session_id == "s-hot"));
+
+        // A new cold session should not be starved indefinitely by the global cap:
+        // after one capped cycle, round-robin rotation must give it front-of-batch priority.
+        let cold = engine.receive(mk_msg("bob", "s-cold", 1), 2_001);
+        assert_eq!(cold.code, AckCode::Accepted);
+
+        let second = engine.collect_due_retries(2_002);
+        assert_eq!(
+            second.first().map(|item| item.message.session_id.as_str()),
+            Some("s-cold"),
+            "new cold session should get first dispatch on the next collect cycle"
         );
     }
 
