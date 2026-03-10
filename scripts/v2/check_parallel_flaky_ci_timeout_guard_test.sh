@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Stabilize locale/time behavior across CI runners for deterministic stderr matching.
+export LANG=C.UTF-8
+export LC_ALL=C.UTF-8
+export LC_NUMERIC=C
+export TZ=UTC
+
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 SCRIPT="$ROOT/trillionnium-rust/scripts/check_parallel_flaky.sh"
 
