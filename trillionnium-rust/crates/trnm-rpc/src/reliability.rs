@@ -317,12 +317,16 @@ impl ReliabilityStore for InMemoryReliabilityStore {
         }
 
         if let Some(max) = self.config.max_pending_total {
-            let total = self.total_pending_items();
-            let projected = total.saturating_sub(old_len).saturating_add(new_len);
-            if projected > max {
-                return Err(ReliabilityStoreError::CapacityExceeded {
-                    detail: format!("pending total limit reached ({max})"),
-                });
+            // Non-growing updates on an existing session cannot increase global
+            // pending pressure; skip O(session_count) total scans on this hot path.
+            if is_new_session || new_len > old_len {
+                let total = self.total_pending_items();
+                let projected = total.saturating_sub(old_len).saturating_add(new_len);
+                if projected > max {
+                    return Err(ReliabilityStoreError::CapacityExceeded {
+                        detail: format!("pending total limit reached ({max})"),
+                    });
+                }
             }
         }
 
