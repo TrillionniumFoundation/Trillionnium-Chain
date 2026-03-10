@@ -15,7 +15,7 @@ PASS_COUNT=0
 FAIL_COUNT=0
 
 log() {
-  echo "[$(date +%H:%M:%S)] $*"
+  echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] $*"
 }
 
 run_step() {
