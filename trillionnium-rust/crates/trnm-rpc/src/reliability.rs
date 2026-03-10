@@ -1237,12 +1237,10 @@ impl ReliabilityStore for SqliteReliabilityStore {
         now_unix_ms: u128,
     ) -> Result<(), ReliabilityStoreError> {
         let session_id = session.session_id.clone();
-        let old_len = self
-            .get_session(&session_id)
-            .map(|s| s.pending.len())
-            .unwrap_or(0);
+        let existing = self.get_session(&session_id);
+        let old_len = existing.as_ref().map(|s| s.pending.len()).unwrap_or(0);
         let new_len = session.pending.len();
-        let is_new_session = old_len == 0 && self.get_session(&session_id).is_none();
+        let is_new_session = existing.is_none();
 
         if let Some(max) = self.config.max_sessions {
             if is_new_session && self.list_session_ids().len() >= max {
@@ -1261,12 +1259,17 @@ impl ReliabilityStore for SqliteReliabilityStore {
         }
 
         if let Some(max) = self.config.max_pending_total {
-            let total = self.total_pending_items();
-            let projected = total.saturating_sub(old_len).saturating_add(new_len);
-            if projected > max {
-                return Err(ReliabilityStoreError::CapacityExceeded {
-                    detail: format!("pending total limit reached ({max})"),
-                });
+            // Keep sqlite parity with in-memory hot path: non-growing updates on an
+            // existing session cannot increase global pending pressure, so skip
+            // O(session_count) total scans under sustained ingress.
+            if is_new_session || new_len > old_len {
+                let total = self.total_pending_items();
+                let projected = total.saturating_sub(old_len).saturating_add(new_len);
+                if projected > max {
+                    return Err(ReliabilityStoreError::CapacityExceeded {
+                        detail: format!("pending total limit reached ({max})"),
+                    });
+                }
             }
         }
 
