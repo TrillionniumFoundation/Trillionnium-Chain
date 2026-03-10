@@ -1995,43 +1995,45 @@ fn pre_execute_group_parallel(
     let workers = workers.max(1).min(group_ids.len());
     let (tx, rx) = mpsc::channel::<(u64, bool, String)>();
 
-    let mut handles = Vec::with_capacity(workers);
-    for w in 0..workers {
-        let txc = tx.clone();
-        let ids: Vec<u64> = group_ids
-            .iter()
-            .copied()
-            .enumerate()
-            .filter_map(|(i, id)| if i % workers == w { Some(id) } else { None })
-            .collect();
-        let local_picked = picked.to_vec();
-        let base = snapshot.clone();
+    thread::scope(|scope| {
+        let mut handles = Vec::with_capacity(workers);
+        for w in 0..workers {
+            let txc = tx.clone();
+            let ids: Vec<u64> = group_ids
+                .iter()
+                .copied()
+                .enumerate()
+                .filter_map(|(i, id)| if i % workers == w { Some(id) } else { None })
+                .collect();
+            let local_picked = picked.to_vec();
+            let snapshot = snapshot;
 
-        handles.push(thread::spawn(move || {
-            for id in ids {
-                let idx = (id - 1) as usize;
-                let mut local_state = base.clone();
-                let res = apply_one(
-                    &mut local_state,
-                    local_picked[idx].clone(),
-                    candidate_height,
-                );
-                match res {
-                    Ok(_) => {
-                        let _ = txc.send((id, true, String::new()));
-                    }
-                    Err(e) => {
-                        let _ = txc.send((id, false, e.to_string()));
+            handles.push(scope.spawn(move || {
+                for id in ids {
+                    let idx = (id - 1) as usize;
+                    let mut local_state = snapshot.clone();
+                    let res = apply_one(
+                        &mut local_state,
+                        local_picked[idx].clone(),
+                        candidate_height,
+                    );
+                    match res {
+                        Ok(_) => {
+                            let _ = txc.send((id, true, String::new()));
+                        }
+                        Err(e) => {
+                            let _ = txc.send((id, false, e.to_string()));
+                        }
                     }
                 }
-            }
-        }));
-    }
-    drop(tx);
+            }));
+        }
+        drop(tx);
 
-    for h in handles {
-        let _ = h.join();
-    }
+        for h in handles {
+            let _ = h.join();
+        }
+    });
 
     let mut ok_ids = Vec::new();
     let mut rejected = 0u64;
@@ -2156,6 +2158,34 @@ mod tests {
         assert_eq!(decoupled.ordered_ids, legacy.ordered_ids);
         assert_eq!(legacy.rejected, 0);
         assert_eq!(decoupled.rejected, 0);
+    }
+
+    #[test]
+    fn preexec_parallel_workers_match_single_worker_results() {
+        let state = StateStore::new();
+        let picked = vec![
+            MockTx::CreateTask {
+                task_id: 4051,
+                creator: "alice".into(),
+                bounty: 10,
+            },
+            MockTx::CreateTask {
+                task_id: 4052,
+                creator: "bob".into(),
+                bounty: 20,
+            },
+            MockTx::AcceptTask {
+                task_id: 999_999,
+                worker: "worker4053".into(),
+            },
+        ];
+        let group_ids = vec![1, 2, 3];
+
+        let single = pre_execute_group_parallel(&state, group_ids.clone(), &picked, 1, 1);
+        let parallel = pre_execute_group_parallel(&state, group_ids, &picked, 3, 1);
+
+        assert_eq!(single, (vec![1, 2], 1));
+        assert_eq!(parallel, single);
     }
 
     #[test]
