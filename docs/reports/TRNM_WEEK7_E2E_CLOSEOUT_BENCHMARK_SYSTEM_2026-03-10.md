@@ -23,7 +23,8 @@ TRNM 现有 benchmark 资产已经足够回答：
 1. **承认 micro 与 E2E 是两层口径**；
 2. **建立桥接字段**，把 micro 结果翻译成系统预算语言；
 3. **统一产物**，让后续 E2E lane 只需要往同一套 JSON 里补链路时间戳与系统指标；
-4. **冻结复现命令与 benchmark profile**，避免“不同机器 / 不同窗口 / 不同热身方式”的结果混讲。
+4. **placeholder first**：在没有真实链路观测前，统一用 `null` 占位，禁止写入伪造 submit/finality 数字；
+5. **冻结复现命令与 benchmark profile**，避免“不同机器 / 不同窗口 / 不同热身方式”的结果混讲。
 
 ---
 
@@ -164,6 +165,7 @@ scheduler_window_share = elapsed_ms / required_window_ms
 - `benchmark_profile`
 - `summary`
 - `e2e_mapping_template`
+- `e2e_bridge`
 
 ### `benchmark_profile`
 
@@ -198,10 +200,23 @@ scheduler_window_share = elapsed_ms / required_window_ms
 - `finality_p99_ms`
 - `drop_rate`
 - `retry_rate`
+- `rollback_rate`
 - `scheduler_window_share`
 - `bottleneck_segment`
 
-这相当于给 Week 8 或后续 system benchmark 预留了稳定的落点。
+### `e2e_bridge`
+
+这是给 Lane 13 新增的统一落点，目的不是填数字，而是冻结**字段、状态、时间戳位点**：
+- `schema_version`: `trnm.benchmark-closeout.e2e-bridge.v1`
+- `status`: `placeholder_only | partial | complete`
+- `placeholder_policy`: 明确 `null` 仅代表“尚未观测”，禁止解释成 0 或 synthetic success
+- `system_timestamps.*`: 预留 run / submit window / finality observation 的 UTC 时间戳
+- `workloads.<name>.timestamps.*`: 预留每个 workload 的 submit / finalize 观察时间戳
+- `workloads.<name>.metrics.*`: 预留 submit/finalized TPS、finality P50/P95/P99、drop/retry/rollback rate
+- `workloads.<name>.segment_latency_ms.*`: 预留各链路分段耗时
+- `workloads.<name>.scheduler_window_share_reference`: 回指 micro closeout 中已观测到的 scheduler budget share
+
+这相当于给 Week 8 或后续 system benchmark 预留了稳定的落点，同时避免 placeholder 被误读成真实 E2E 结果。
 
 ---
 
