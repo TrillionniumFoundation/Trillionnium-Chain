@@ -56,6 +56,8 @@ jobs:
       CARGO_NET_RETRY: "5"
       CARGO_HTTP_TIMEOUT: "120"
       CARGO_NET_GIT_FETCH_WITH_CLI: "true"
+      # Prefer sparse index protocol to reduce crates.io index fetch flakiness.
+      CARGO_REGISTRIES_CRATES_IO_PROTOCOL: sparse
       CI: "true"
       # Stabilize created file permissions across runner/image defaults so
       # replay artifacts and git diffs keep deterministic mode bits.

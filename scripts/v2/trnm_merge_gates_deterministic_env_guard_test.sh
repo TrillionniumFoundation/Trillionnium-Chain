@@ -28,6 +28,7 @@ required_lines=(
   'CARGO_TERM_COLOR: never'
   'CARGO_INCREMENTAL: "0"'
   'CARGO_NET_GIT_FETCH_WITH_CLI: "true"'
+  'CARGO_REGISTRIES_CRATES_IO_PROTOCOL: sparse'
   'CI: "true"'
   'UMASK: "022"'
   'SOURCE_DATE_EPOCH: "1704067200"'
