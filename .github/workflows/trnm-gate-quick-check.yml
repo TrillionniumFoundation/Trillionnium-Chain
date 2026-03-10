@@ -52,6 +52,9 @@ jobs:
       # Keep page-size/unit locale formatting deterministic for any helpers
       # that emit print/paper-related evidence text.
       LC_PAPER: C
+      # Keep locale-derived postal/address formatting deterministic for any
+      # helper that may serialize operator/site metadata into evidence logs.
+      LC_ADDRESS: C
       # Freeze Python hash randomization so set/dict iteration in shell-driven
       # regression scripts stays deterministic across CI re-runs.
       PYTHONHASHSEED: "0"
