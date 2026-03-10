@@ -374,7 +374,9 @@ def send_with_retry(
     global_retry_budget: int = 0,
     global_retry_window_seconds: int = 300,
     global_retry_budget_state_file: str = "run/pr7-alert-delivery/retry-budget-state.json",
+    retry_jitter_seed: int | None = None,
 ) -> tuple[bool, int, str]:
+    rng = random.Random(retry_jitter_seed) if retry_jitter_seed is not None else random
     attempt = 0
     while True:
         attempt += 1
@@ -401,7 +403,7 @@ def send_with_retry(
                     )
 
             backoff_ms = min(max_backoff_ms, base_backoff_ms * (2 ** (attempt - 1)))
-            jitter_ms = random.randint(0, max(1, backoff_ms // 10))
+            jitter_ms = rng.randint(0, max(1, backoff_ms // 10))
             sleep_ms = backoff_ms + jitter_ms
             print(
                 f"[PR7][RETRY] channel={channel} attempt={attempt}/{max_retries + 1} "
@@ -468,6 +470,12 @@ def main() -> int:
     ap.add_argument("--global-retry-budget", type=int, default=int(os.environ.get("ALERT_NOTIFY_GLOBAL_RETRY_BUDGET", "0")))
     ap.add_argument("--global-retry-window-seconds", type=int, default=int(os.environ.get("ALERT_NOTIFY_GLOBAL_RETRY_WINDOW_SECONDS", "300")))
     ap.add_argument("--global-retry-budget-state-file", default=os.environ.get("ALERT_NOTIFY_GLOBAL_RETRY_BUDGET_STATE_FILE", "run/pr7-alert-delivery/retry-budget-state.json"))
+    ap.add_argument(
+        "--retry-jitter-seed",
+        type=int,
+        default=(int(os.environ["ALERT_NOTIFY_RETRY_JITTER_SEED"]) if "ALERT_NOTIFY_RETRY_JITTER_SEED" in os.environ else None),
+        help="optional deterministic seed for retry jitter (useful for CI replay/regression reproducibility)",
+    )
     ap.add_argument("--quiet-hours-enabled", action="store_true", default=os.environ.get("ALERT_NOTIFY_QUIET_HOURS_ENABLED", "0") == "1")
     ap.add_argument("--quiet-hours-start", default=os.environ.get("ALERT_NOTIFY_QUIET_HOURS_START", "23:00"))
     ap.add_argument("--quiet-hours-end", default=os.environ.get("ALERT_NOTIFY_QUIET_HOURS_END", "08:00"))
@@ -675,6 +683,7 @@ def main() -> int:
             global_retry_budget=max(0, args.global_retry_budget),
             global_retry_window_seconds=max(1, args.global_retry_window_seconds),
             global_retry_budget_state_file=args.global_retry_budget_state_file,
+            retry_jitter_seed=args.retry_jitter_seed,
         )
         route_results.append(
             {
