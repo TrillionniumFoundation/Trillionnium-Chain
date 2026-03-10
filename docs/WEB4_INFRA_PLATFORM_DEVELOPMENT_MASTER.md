@@ -322,6 +322,7 @@ Trillionnium 目标不是“单链功能齐全”，而是“可被开发者和�
 - 交界约束：M2↔V2 的错误码与状态迁移表必须与 gate 用例一一映射。
 - 最小错误码映射（冻结）：`proof_missing -> ERR_M2V2_PROOF_MISSING`、`proof_late -> ERR_M2V2_PROOF_LATE`、`proof_invalid -> ERR_M2V2_PROOF_INVALID`、`settlement_degraded -> ERR_M2V2_SETTLEMENT_DEGRADED`。
 - 最小状态迁移映射（冻结）：`pending_proof -> disputed(proof_missing|proof_late|proof_invalid) -> downgraded(settlement_degraded)`。
+- ZK 平台化冻结锚点：`docs/architecture/TRNM_ZKP_PLATFORM_V0.md`（backend 抽象、payload/public input、feature flag/config、错误分类、兼容策略）。
 
 ---
 
