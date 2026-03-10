@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
+use std::cell::RefCell;
 use std::collections::BTreeMap;
 use trnm_types::{
     GovParamObject, GovProposalObject, GovProposalStatus, Hash32, ObjectRef, TaskObject,
@@ -20,6 +21,7 @@ pub struct StateStore {
     gov_param_key_index: BTreeMap<String, u64>,
     pending_resolve_approvals: BTreeMap<u64, PendingResolveApproval>,
     monetary_state: MonetaryState,
+    state_root_cache: RefCell<Option<Hash32>>,
 }
 
 #[derive(Debug, Clone)]
@@ -421,11 +423,13 @@ impl StateStore {
 
         if let Some(entry) = self.pending_resolve_approvals.get(&task_id) {
             if entry.authority_set != authority_set {
+                self.invalidate_state_root_cache();
                 self.pending_resolve_approvals.remove(&task_id);
                 return Err("resolve approval authority set changed".into());
             }
         }
 
+        self.invalidate_state_root_cache();
         let entry =
             self.pending_resolve_approvals
                 .entry(task_id)
@@ -449,6 +453,7 @@ impl StateStore {
     }
 
     pub fn clear_pending_resolve_approval(&mut self, task_id: u64) {
+        self.invalidate_state_root_cache();
         self.pending_resolve_approvals.remove(&task_id);
     }
 
@@ -492,11 +497,16 @@ impl StateStore {
         })
     }
 
+    fn invalidate_state_root_cache(&self) {
+        self.state_root_cache.borrow_mut().take();
+    }
+
     pub fn put_task_new(&mut self, task: TaskObject) -> Result<ObjectRef, String> {
         if self.objects.contains_key(&task.task_id) {
             return Err("task already exists".into());
         }
         let id = task.task_id;
+        self.invalidate_state_root_cache();
         self.objects.insert(
             id,
             VersionedObject {
@@ -521,6 +531,7 @@ impl StateStore {
         }
         let new_version = current.version + 1;
         task.version = new_version;
+        self.invalidate_state_root_cache();
         self.objects.insert(
             expected.id,
             VersionedObject {
@@ -539,6 +550,7 @@ impl StateStore {
             return Err("proposal already exists".into());
         }
         let id = proposal.proposal_id;
+        self.invalidate_state_root_cache();
         self.objects.insert(
             id,
             VersionedObject {
@@ -563,6 +575,7 @@ impl StateStore {
         }
         let new_version = current.version + 1;
         proposal.version = new_version;
+        self.invalidate_state_root_cache();
         self.objects.insert(
             expected.id,
             VersionedObject {
@@ -646,6 +659,7 @@ impl StateStore {
                 ));
             }
 
+            self.invalidate_state_root_cache();
             self.gov_param_key_index.insert(key.clone(), key_id);
             self.objects.insert(
                 key_id,
@@ -664,6 +678,7 @@ impl StateStore {
                 version: new_version,
             })
         } else {
+            self.invalidate_state_root_cache();
             self.gov_param_key_index.insert(key.clone(), key_id);
             self.objects.insert(
                 key_id,
@@ -715,6 +730,7 @@ impl StateStore {
             // Idempotence guard: unchecked replay of identical non-sensitive values should
             // not churn object versions, but must still clear stale pending residue.
             if self.gov_param_value(&key) == Some(value.as_str()) {
+                self.invalidate_state_root_cache();
                 self.pending_gov_updates.remove(&key);
                 if let Some(existing_ref) = self
                     .gov_param_key_index
@@ -726,6 +742,7 @@ impl StateStore {
                 }
             }
             let out = self.upsert_gov_param_unchecked(key_id, key.clone(), value)?;
+            self.invalidate_state_root_cache();
             self.pending_gov_updates.remove(&key);
             return Ok(out);
         }
@@ -794,6 +811,7 @@ impl StateStore {
             // This keeps emergency_pause and other immediate keys deterministic even if
             // a legacy/corrupt snapshot left stale pending entries behind.
             if action == GovPendingUpdateAction::Cancel {
+                self.invalidate_state_root_cache();
                 self.pending_gov_updates.remove(&key);
                 return Err(format!(
                     "governance cancel not supported for non-sensitive key {}",
@@ -803,6 +821,7 @@ impl StateStore {
             // Idempotence guard: re-applying the exact same value should not churn object
             // versions, but still scrubs stale pending non-sensitive timelock residue.
             if self.gov_param_value(&key) == Some(value.as_str()) {
+                self.invalidate_state_root_cache();
                 self.pending_gov_updates.remove(&key);
                 if let Some(existing_ref) = self
                     .gov_param_key_index
@@ -814,6 +833,7 @@ impl StateStore {
                 }
             }
             let r = self.upsert_gov_param_unchecked(key_id, key.clone(), value)?;
+            self.invalidate_state_root_cache();
             self.pending_gov_updates.remove(&key);
             return Ok(GovParamUpdateOutcome::Applied(r));
         }
@@ -854,12 +874,14 @@ impl StateStore {
             if current_height < pending.activate_at_height {
                 match action {
                     GovPendingUpdateAction::Cancel => {
+                        self.invalidate_state_root_cache();
                         self.pending_gov_updates.remove(&key);
                         return Ok(GovParamUpdateOutcome::Cancelled);
                     }
                     GovPendingUpdateAction::Replace => {
                         let activate_at_height =
                             current_height.saturating_add(GOV_SENSITIVE_PARAM_TIMELOCK_BLOCKS);
+                        self.invalidate_state_root_cache();
                         self.pending_gov_updates.insert(
                             key.clone(),
                             PendingGovParamUpdate {
@@ -900,6 +922,7 @@ impl StateStore {
                     key, pending.activate_at_height
                 ));
             }
+            self.invalidate_state_root_cache();
             self.pending_gov_updates.remove(&key);
             let r = self.upsert_gov_param_unchecked(key_id, key, value)?;
             return Ok(GovParamUpdateOutcome::Applied(r));
@@ -910,6 +933,7 @@ impl StateStore {
         }
 
         let activate_at_height = current_height.saturating_add(GOV_SENSITIVE_PARAM_TIMELOCK_BLOCKS);
+        self.invalidate_state_root_cache();
         self.pending_gov_updates.insert(
             key.clone(),
             PendingGovParamUpdate {
@@ -1042,6 +1066,7 @@ impl StateStore {
         }
         let net_delta = minted as i128 - burned as i128;
 
+        self.invalidate_state_root_cache();
         self.monetary_state.last_tick_height = block_height;
         self.monetary_state.tick_count = self.monetary_state.tick_count.saturating_add(1);
         self.monetary_state.total_minted = self.monetary_state.total_minted.saturating_add(minted);
@@ -1068,6 +1093,7 @@ impl StateStore {
     }
 
     pub fn set_balance(&mut self, address: impl Into<String>, amount: u128) {
+        self.invalidate_state_root_cache();
         self.balances.insert(address.into(), amount);
     }
 
@@ -1083,6 +1109,7 @@ impl StateStore {
                 address, cur, amount
             ));
         }
+        self.invalidate_state_root_cache();
         self.balances.insert(address.to_string(), cur - amount);
         Ok(())
     }
@@ -1095,11 +1122,16 @@ impl StateStore {
                 address, cur, amount
             )
         })?;
+        self.invalidate_state_root_cache();
         self.balances.insert(address.to_string(), next);
         Ok(())
     }
 
     pub fn state_root(&self) -> Hash32 {
+        if let Some(cached) = self.state_root_cache.borrow().clone() {
+            return cached;
+        }
+
         let mut hasher = Sha256::new();
         for (id, v) in &self.objects {
             hasher.update(id.to_le_bytes());
@@ -1248,7 +1280,9 @@ impl StateStore {
         hasher.update(self.monetary_state.total_minted.to_le_bytes());
         hasher.update(self.monetary_state.total_burned.to_le_bytes());
         hasher.update(self.monetary_state.net_issuance.to_le_bytes());
-        hasher.finalize().into()
+        let root: Hash32 = hasher.finalize().into();
+        *self.state_root_cache.borrow_mut() = Some(root.clone());
+        root
     }
 }
 
@@ -2199,7 +2233,9 @@ mod tests {
                 "resolvér-v2".into(),
             )
             .unwrap_err();
-        assert!(err.contains("ASCII-only") || err.contains("whitespace") || err.contains("separator"));
+        assert!(
+            err.contains("ASCII-only") || err.contains("whitespace") || err.contains("separator")
+        );
 
         assert_eq!(
             st.gov_param_string("resolve_authority"),
@@ -3548,13 +3584,11 @@ mod tests {
     #[test]
     fn state_root_changes_when_pending_resolve_first_approver_changes() {
         let mut st_a = StateStore::new();
-        st_a
-            .stage_or_confirm_resolve_approval(500, true, "authority-a", "authority-a,authority-b")
+        st_a.stage_or_confirm_resolve_approval(500, true, "authority-a", "authority-a,authority-b")
             .unwrap();
 
         let mut st_b = StateStore::new();
-        st_b
-            .stage_or_confirm_resolve_approval(500, true, "authority-b", "authority-a,authority-b")
+        st_b.stage_or_confirm_resolve_approval(500, true, "authority-b", "authority-a,authority-b")
             .unwrap();
 
         assert_ne!(
@@ -3567,19 +3601,17 @@ mod tests {
     #[test]
     fn state_root_changes_when_pending_resolve_authority_set_changes() {
         let mut st_a = StateStore::new();
-        st_a
-            .stage_or_confirm_resolve_approval(501, true, "authority-a", "authority-a,authority-b")
+        st_a.stage_or_confirm_resolve_approval(501, true, "authority-a", "authority-a,authority-b")
             .unwrap();
 
         let mut st_b = StateStore::new();
-        st_b
-            .stage_or_confirm_resolve_approval(
-                501,
-                true,
-                "authority-a",
-                "authority-a,authority-b,authority-c",
-            )
-            .unwrap();
+        st_b.stage_or_confirm_resolve_approval(
+            501,
+            true,
+            "authority-a",
+            "authority-a,authority-b,authority-c",
+        )
+        .unwrap();
 
         assert_ne!(
             st_a.state_root(),
