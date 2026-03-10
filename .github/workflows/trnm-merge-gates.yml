@@ -57,6 +57,12 @@ jobs:
       # Keep locale-derived postal/address formatting deterministic for any
       # helper serializing operator/site metadata into CI evidence.
       LC_ADDRESS: C
+      # Keep locale-derived personal-name formatting deterministic for helpers
+      # that emit operator identity fields in CI evidence.
+      LC_NAME: C
+      # Keep locale-driven telephone formatting deterministic for helpers that
+      # serialize operator contact fields in CI evidence outputs.
+      LC_TELEPHONE: C
       PYTHONHASHSEED: "0"
       # Prevent interpreter bytecode cache writes (.pyc/__pycache__) so
       # merge-gate CI workspaces remain side-effect free across reruns.
