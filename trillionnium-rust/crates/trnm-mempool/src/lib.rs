@@ -165,22 +165,11 @@ impl LaneAdmissionGate {
             let in_normal_seen = self.normal.seen.contains(&tx_id);
             let in_critical_seen = self.critical.seen.contains(&tx_id);
 
-            // Duplicate probes are hot under replay pressure. Narrow queue probes to
-            // lanes that claim membership instead of always scanning both queues.
-            let queue_contains = if in_normal_seen && in_critical_seen {
-                self.normal.queue.contains(&tx_id) || self.critical.queue.contains(&tx_id)
-            } else if in_normal_seen {
-                self.normal.queue.contains(&tx_id)
-            } else if in_critical_seen {
-                self.critical.queue.contains(&tx_id)
-            } else {
-                self.normal.queue.contains(&tx_id) || self.critical.queue.contains(&tx_id)
-            };
-
-            if !queue_contains {
-                // Defensive self-heal: restored-state skew can preserve cardinality while
-                // leaving stale ids in lane-wide/lane-local caches. Queue membership is
-                // authoritative for duplicate classification.
+            // Restored-state skew can leave lane-wide and lane-local membership out
+            // of sync while preserving cardinality. When lane-local caches claim the
+            // id is absent, rebuild from authoritative queue state immediately instead
+            // of probing both queues first.
+            if !in_normal_seen && !in_critical_seen {
                 self.normal.seen.clear();
                 self.normal.seen.extend(self.normal.queue.iter().copied());
                 self.critical.seen.clear();
@@ -191,6 +180,32 @@ impl LaneAdmissionGate {
                 self.seen_global.extend(self.normal.queue.iter().copied());
                 self.seen_global.extend(self.critical.queue.iter().copied());
                 is_duplicate = self.seen_global.contains(&tx_id);
+            } else {
+                // Duplicate probes are hot under replay pressure. Narrow queue probes to
+                // lanes that claim membership instead of always scanning both queues.
+                let queue_contains = if in_normal_seen && in_critical_seen {
+                    self.normal.queue.contains(&tx_id) || self.critical.queue.contains(&tx_id)
+                } else if in_normal_seen {
+                    self.normal.queue.contains(&tx_id)
+                } else {
+                    self.critical.queue.contains(&tx_id)
+                };
+
+                if !queue_contains {
+                    // Defensive self-heal: restored-state skew can preserve cardinality while
+                    // leaving stale ids in lane-wide/lane-local caches. Queue membership is
+                    // authoritative for duplicate classification.
+                    self.normal.seen.clear();
+                    self.normal.seen.extend(self.normal.queue.iter().copied());
+                    self.critical.seen.clear();
+                    self.critical
+                        .seen
+                        .extend(self.critical.queue.iter().copied());
+                    self.seen_global.clear();
+                    self.seen_global.extend(self.normal.queue.iter().copied());
+                    self.seen_global.extend(self.critical.queue.iter().copied());
+                    is_duplicate = self.seen_global.contains(&tx_id);
+                }
             }
         }
 
@@ -1137,6 +1152,45 @@ mod tests {
 
         // Fresh ghost id must not be misclassified as duplicate.
         assert_eq!(g.admit(999, IngressClass::Critical), AdmitOutcome::Accepted);
+    }
+
+    #[test]
+    fn stale_cross_lane_seen_membership_self_heals_before_duplicate_classification() {
+        let mut g = LaneAdmissionGate::new(3, 1);
+
+        assert_eq!(g.admit(100, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(200, IngressClass::Normal), AdmitOutcome::Accepted);
+
+        // Simulate restored-state skew where lane-local seen membership is swapped
+        // across lanes while cardinalities remain unchanged.
+        g.normal.seen.remove(&200);
+        g.critical.seen.remove(&100);
+        g.normal.seen.insert(100);
+        g.critical.seen.insert(200);
+
+        // Duplicate for a queued tx must still be detected after inline self-heal.
+        assert_eq!(g.admit(100, IngressClass::Normal), AdmitOutcome::Duplicate);
+
+        // Fresh ingress remains admitted while global capacity is still available.
+        assert_eq!(g.admit(300, IngressClass::Critical), AdmitOutcome::Accepted);
+    }
+
+    #[test]
+    fn seen_global_duplicate_without_lane_local_membership_self_heals_and_stays_duplicate() {
+        let mut g = LaneAdmissionGate::new(4, 1);
+
+        assert_eq!(g.admit(1, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+
+        // Simulate restored-state skew: lane-wide cache still carries tx 1, while
+        // lane-local seen caches lose it.
+        g.critical.seen.remove(&1);
+
+        // Duplicate must still be preserved after inline self-heal.
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Duplicate);
+
+        // Fresh ingress should remain admissible while global capacity has headroom.
+        assert_eq!(g.admit(3, IngressClass::Critical), AdmitOutcome::Accepted);
     }
 
     #[test]
