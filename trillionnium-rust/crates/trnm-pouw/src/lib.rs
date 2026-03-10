@@ -4682,6 +4682,8 @@ mod tests {
         let task = st.get_task(r5.id).expect("task must exist after timeout");
         assert_eq!(task.status, TaskStatus::Completed);
         assert_eq!(task.challenge_bond_forfeited, None);
+        assert_eq!(st.pending_resolve_approval(r5.id), None);
+        assert_eq!(st.pending_resolve_first_approver(r5.id), None);
 
         // No challenged escrow path was entered; custodial balances remain unchanged.
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
