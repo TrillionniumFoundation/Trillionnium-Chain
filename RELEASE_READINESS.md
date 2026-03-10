@@ -45,6 +45,17 @@
    - 仓库总览：`README.md`
    - Web4 子项目：`web4-frontend/README.md`
 
+## RC 演练最小证据模板（不发布）
+
+> 目标：只做可回滚的 RC 就绪演练，禁止 release/tag/publish。
+
+- **CI/门禁命令**：记录本轮执行的最小命令（含退出码）。
+- **回放证据**：记录输入快照与输出摘要路径（例如 `run/local-release-evidence/` 下产物）。
+- **回滚命令**：每轮必须给出单行回滚命令（例如 `git revert <commit>` 或文档改动的 `git checkout -- <file>`）。
+- **根因标签**：失败时使用统一标签（建议：`CI_FLAKE` / `ENV_DRIFT` / `DOC_DRIFT` / `MISSING_FIXTURE`）。
+
+建议在每轮提交信息或随附说明中使用固定字段：`gate`、`evidence`、`rollback`、`root_cause`，便于后续审计与自动汇总。
+
 ## 仍然 deferred / 未在本次文档修正中解决
 
 1. 未重新执行整仓 release 级门禁，也未重新生成新的 closeout bundle。
