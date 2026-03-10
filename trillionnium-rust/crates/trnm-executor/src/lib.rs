@@ -213,6 +213,22 @@ fn vec_hashset_intersects(a: &[u64], b: &HashSet<u64>) -> bool {
         return false;
     }
 
+    // Medium probe vectors are still common on high-contention shards. Deduping
+    // in-place avoids repeated hash probes when the domain carries many duplicates
+    // while keeping allocation bounded for this path.
+    if a.len() <= 32 {
+        let mut seen: Vec<u64> = Vec::with_capacity(a.len());
+        for k in a {
+            if !seen.contains(k) {
+                if b.contains(k) {
+                    return true;
+                }
+                seen.push(*k);
+            }
+        }
+        return false;
+    }
+
     for k in a {
         if b.contains(k) {
             return true;
@@ -1211,6 +1227,23 @@ mod tests {
         // generic path while avoiding repeated hash probes for the same key.
         assert!(vec_hashset_intersects(&[9, 9, 9, 12, 12], &domain));
         assert!(!vec_hashset_intersects(&[9, 9, 10, 10], &domain));
+    }
+
+    #[test]
+    fn vec_hashset_intersects_medium_duplicate_probe_path_preserves_semantics() {
+        let domain: HashSet<u64> = [77u64, 88u64].into_iter().collect();
+
+        // Medium duplicate-heavy probe vectors should still preserve hit/miss
+        // correctness while capping repeated hash probes.
+        let hit = [
+            1, 1, 2, 2, 3, 3, 4, 4, 77, 77, 77, 5, 5, 6, 6, 7, 7, 8, 8, 9,
+        ];
+        let miss = [
+            1, 1, 2, 2, 3, 3, 4, 4, 55, 55, 56, 56, 57, 57, 58, 58, 59, 59, 60, 60,
+        ];
+
+        assert!(vec_hashset_intersects(&hit, &domain));
+        assert!(!vec_hashset_intersects(&miss, &domain));
     }
 
     #[test]
