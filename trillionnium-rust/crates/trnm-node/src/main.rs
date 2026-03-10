@@ -1452,15 +1452,20 @@ fn pick_txs_with_critical_guard(
     }
 
     let mut picked_slots: Vec<Option<MockTx>> = (0..admit_order).map(|_| None).collect();
-    let mut remain = VecDeque::with_capacity(mempool.len());
-    for (idx, tx) in mempool.drain(..).enumerate() {
-        if let Some(pos) = selected_pos[idx] {
-            picked_slots[pos] = Some(tx);
-        } else {
-            remain.push_back(tx);
+    let mut selected_indices_desc = Vec::with_capacity(admit_order);
+    for (idx, pos) in selected_pos.into_iter().enumerate() {
+        if let Some(pos) = pos {
+            selected_indices_desc.push((idx, pos));
         }
     }
-    *mempool = remain;
+    selected_indices_desc.sort_unstable_by(|(lhs, _), (rhs, _)| rhs.cmp(lhs));
+
+    for (idx, pos) in selected_indices_desc {
+        let tx = mempool
+            .remove(idx)
+            .expect("selected tx index must still exist during descending extraction");
+        picked_slots[pos] = Some(tx);
+    }
 
     picked_slots.into_iter().flatten().collect()
 }
@@ -2330,6 +2335,46 @@ mod tests {
         assert!(matches!(picked[0], MockTx::Challenge { .. }));
         assert!(matches!(picked[1], MockTx::CreateTask { .. }));
         assert!(matches!(picked[2], MockTx::Resolve { .. }));
+    }
+
+    #[test]
+    fn critical_guard_only_reorders_scanned_prefix_and_leaves_suffix_fifo() {
+        let mut mempool = VecDeque::from(vec![
+            MockTx::CreateTask {
+                task_id: 21,
+                creator: "alice".into(),
+                bounty: 10,
+            },
+            MockTx::AcceptTask {
+                task_id: 21,
+                worker: "w1".into(),
+            },
+            MockTx::Challenge {
+                task_id: 21,
+                challenger: "c1".into(),
+                bond: 10,
+            },
+            MockTx::Resolve {
+                task_id: 21,
+                slash_worker: false,
+                resolver: "gov".into(),
+            },
+            MockTx::CreateTask {
+                task_id: 22,
+                creator: "bob".into(),
+                bounty: 20,
+            },
+        ]);
+
+        let picked = pick_txs_with_critical_guard(&mut mempool, 3);
+        assert_eq!(picked.len(), 3);
+        assert!(matches!(picked[0], MockTx::Challenge { .. }));
+        assert!(matches!(picked[1], MockTx::CreateTask { task_id: 21, .. }));
+        assert!(matches!(picked[2], MockTx::AcceptTask { .. }));
+
+        assert_eq!(mempool.len(), 2);
+        assert!(matches!(mempool[0], MockTx::Resolve { .. }));
+        assert!(matches!(mempool[1], MockTx::CreateTask { task_id: 22, .. }));
     }
 
     #[test]
