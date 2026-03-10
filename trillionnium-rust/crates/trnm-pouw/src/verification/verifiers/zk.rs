@@ -21,8 +21,8 @@ use rand::{rngs::StdRng, SeedableRng};
 
 use crate::verification::backend::{
     parse_zk_proof_payload, BackendExecutionError, BackendVerificationRequest,
-    VerificationBackendConfig, VerificationBackendError, VerificationBackendFamily, ZkBackendKind,
-    ZkBackendRegistry,
+    VerificationBackendConfig, VerificationBackendError, VerificationBackendFamily,
+    VerificationErrorClass, ZkBackendKind, ZkBackendRegistry,
 };
 use crate::verification::{ProofVerifier, VerificationResult};
 use trnm_types::TaskObject;
@@ -338,7 +338,10 @@ impl ZkVerifier {
             }
             VerificationBackendError::Execution(BackendExecutionError::InvalidProof {
                 reason, ..
-            }) => VerificationResult::Invalid(reason),
+            }) => VerificationResult::Invalid(format!(
+                "{}: {reason}",
+                VerificationErrorClass::Invalid.as_str()
+            )),
             VerificationBackendError::Execution(BackendExecutionError::MalformedProof {
                 reason, ..
             }) => VerificationResult::Invalid(format!("malformed: {reason}")),
@@ -624,6 +627,42 @@ mod tests {
         }
     }
 
+    struct MockInternalBackend;
+    impl ZkBackend for MockInternalBackend {
+        fn backend_id(&self) -> &str {
+            "mock-zk-internal"
+        }
+
+        fn verify(
+            &self,
+            request: BackendVerificationRequest<'_>,
+        ) -> Result<BackendVerificationSuccess, BackendExecutionError> {
+            assert_eq!(request.family, VerificationBackendFamily::Zk);
+            Err(BackendExecutionError::Internal {
+                backend: request.backend_label(self.backend_id()),
+                reason: "mock zk backend panicked".to_string(),
+            })
+        }
+    }
+
+    struct MockMalformedBackend;
+    impl ZkBackend for MockMalformedBackend {
+        fn backend_id(&self) -> &str {
+            "mock-zk-malformed"
+        }
+
+        fn verify(
+            &self,
+            request: BackendVerificationRequest<'_>,
+        ) -> Result<BackendVerificationSuccess, BackendExecutionError> {
+            assert_eq!(request.family, VerificationBackendFamily::Zk);
+            Err(BackendExecutionError::MalformedProof {
+                backend: request.backend_label(self.backend_id()),
+                reason: "mock zk payload malformed downstream".to_string(),
+            })
+        }
+    }
+
     fn router_config() -> VerificationBackendConfig {
         VerificationBackendConfig {
             zk_backend: ZkBackendKind::Noop,
@@ -703,7 +742,50 @@ mod tests {
         let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"mock-zk-invalid","backend_version":"v1","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","worker","result_hash"],"values":["99","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]},"meta":{"schema_version":"trnm.zk.payload.v0"}}"#;
         assert!(matches!(
             verifier.verify_proof(&task, payload),
-            VerificationResult::Invalid(msg) if msg.contains("mock zk backend rejected proof")
+            VerificationResult::Invalid(msg) if msg.contains("invalid:") && msg.contains("mock zk backend rejected proof")
+        ));
+    }
+
+    #[test]
+    fn zk_verifier_unknown_backend_selection_maps_to_indeterminate_unavailable() {
+        let verifier =
+            ZkVerifier::from_config(&router_config(), Arc::new(ZkBackendRegistry::new()));
+        let task = mock_task();
+        let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"missing-zk-backend","backend_version":"v1","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","worker","result_hash"],"values":["99","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]},"meta":{"schema_version":"trnm.zk.payload.v0"}}"#;
+        assert!(matches!(
+            verifier.verify_proof(&task, payload),
+            VerificationResult::Indeterminate(msg)
+                if msg.contains("unavailable:")
+                    && msg.contains("family 'zk'")
+                    && msg.contains("missing-zk-backend")
+        ));
+    }
+
+    #[test]
+    fn zk_verifier_backend_internal_maps_to_backend_error_indeterminate() {
+        let mut backends = ZkBackendRegistry::new();
+        backends.register(Arc::new(MockInternalBackend));
+        let verifier = ZkVerifier::from_config(&router_config(), Arc::new(backends));
+        let task = mock_task();
+        let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"mock-zk-internal","backend_version":"v1","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","worker","result_hash"],"values":["99","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]},"meta":{"schema_version":"trnm.zk.payload.v0"}}"#;
+        assert!(matches!(
+            verifier.verify_proof(&task, payload),
+            VerificationResult::Indeterminate(msg)
+                if msg.contains("backend_error:") && msg.contains("mock zk backend panicked")
+        ));
+    }
+
+    #[test]
+    fn zk_verifier_backend_malformed_maps_to_invalid_malformed_taxonomy() {
+        let mut backends = ZkBackendRegistry::new();
+        backends.register(Arc::new(MockMalformedBackend));
+        let verifier = ZkVerifier::from_config(&router_config(), Arc::new(backends));
+        let task = mock_task();
+        let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"mock-zk-malformed","backend_version":"v1","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","worker","result_hash"],"values":["99","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]},"meta":{"schema_version":"trnm.zk.payload.v0"}}"#;
+        assert!(matches!(
+            verifier.verify_proof(&task, payload),
+            VerificationResult::Invalid(msg)
+                if msg.contains("malformed:") && msg.contains("mock zk payload malformed downstream")
         ));
     }
 
