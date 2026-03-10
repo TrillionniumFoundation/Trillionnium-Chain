@@ -45,13 +45,12 @@ impl VerifierRegistry {
         // Fraud is intentionally kept as the platform's built-in semantic verifier.
         // Only TEE/ZK consume configurable backend families today.
         registry.register(Arc::new(verifiers::FraudVerifier));
-        registry.register(Arc::new(verifiers::TeeVerifier::new(
-            config.tee_backend,
+        registry.register(Arc::new(verifiers::TeeVerifier::from_config(
+            &config,
             Arc::clone(&backends),
         )));
-        registry.register(Arc::new(verifiers::ZkVerifier::new(
-            config.zk_backend,
-            backends,
+        registry.register(Arc::new(verifiers::ZkVerifier::from_config(
+            &config, backends,
         )));
         registry
     }
@@ -370,7 +369,13 @@ impl VerifierRegistry {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::verification::normalize_receipt_proof_type;
+    use crate::verification::{
+        backend::{
+            BackendExecutionError, BackendVerificationRequest, BackendVerificationSuccess,
+            VerificationBackend, VerificationBackendConfig, ZkBackendKind, ZkBackendRegistry,
+        },
+        normalize_receipt_proof_type,
+    };
     use std::sync::Arc;
     use trnm_types::{TaskObject, TaskStatus};
 
@@ -426,6 +431,108 @@ mod tests {
             challenge_bond_forfeited: None,
             version: 1,
         }
+    }
+
+    struct MockVectorBackend;
+
+    impl VerificationBackend for MockVectorBackend {
+        fn backend_id(&self) -> &str {
+            "mock-zk-vectors"
+        }
+
+        fn verify(
+            &self,
+            request: BackendVerificationRequest<'_>,
+        ) -> Result<BackendVerificationSuccess, BackendExecutionError> {
+            let payload =
+                request
+                    .zk_payload
+                    .ok_or_else(|| BackendExecutionError::InvalidProof {
+                        backend: self.backend_id().into(),
+                        reason: "missing parsed zk payload".into(),
+                    })?;
+            if payload.vk_ref == "vk://trnm/dev/mock-groth16/invalid" {
+                return Err(BackendExecutionError::InvalidProof {
+                    backend: self.backend_id().into(),
+                    reason: "mock vector rejected by backend".into(),
+                });
+            }
+            Ok(BackendVerificationSuccess {
+                backend_id: self.backend_id().into(),
+            })
+        }
+    }
+
+    fn registry_with_mock_zk_backend() -> VerifierRegistry {
+        let mut backends = ZkBackendRegistry::new();
+        backends.register(Arc::new(MockVectorBackend));
+        VerifierRegistry::with_backends(
+            VerificationBackendConfig {
+                tee_backend: ZkBackendKind::Noop,
+                zk_backend: ZkBackendKind::Custom("mock-zk-vectors".into()),
+                zk_features: Default::default(),
+            },
+            Arc::new(backends),
+        )
+    }
+
+    #[test]
+    fn registry_zk_vector_valid_payload_reaches_backend_path() {
+        let registry = registry_with_mock_zk_backend();
+        let mut task = task_with_proof_type(ProofType::Zk);
+        task.status = TaskStatus::Committed;
+        task.worker = Some("worker-zk".into());
+        task.result_hash = Some([0x11; 32]);
+
+        let payload = br#"ZK:{"task_id":42,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","vk_ref":"vk://trnm/dev/mock-groth16/valid","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","worker","result_hash"],"values":["42","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#;
+
+        assert_eq!(registry.verify(&task, payload), VerificationResult::Valid);
+    }
+
+    #[test]
+    fn registry_zk_vector_invalid_payload_reaches_backend_rejection_path() {
+        let registry = registry_with_mock_zk_backend();
+        let mut task = task_with_proof_type(ProofType::Zk);
+        task.status = TaskStatus::Committed;
+        task.worker = Some("worker-zk".into());
+        task.result_hash = Some([0x11; 32]);
+
+        let payload = br#"ZK:{"task_id":42,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","vk_ref":"vk://trnm/dev/mock-groth16/invalid","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","worker","result_hash"],"values":["42","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#;
+
+        assert!(matches!(
+            registry.verify(&task, payload),
+            VerificationResult::Invalid(msg) if msg.contains("mock vector rejected by backend")
+        ));
+    }
+
+    #[test]
+    fn registry_zk_vector_malformed_envelope_fails_closed_before_crypto() {
+        let registry = registry_with_mock_zk_backend();
+        let mut task = task_with_proof_type(ProofType::Zk);
+        task.status = TaskStatus::Committed;
+        task.worker = Some("worker-zk".into());
+        task.result_hash = Some([0x11; 32]);
+
+        assert!(matches!(
+            registry.verify(&task, b"ZK:   \n\t"),
+            VerificationResult::Invalid(msg) if msg.contains("Invalid ZK proof envelope")
+        ));
+    }
+
+    #[test]
+    fn registry_zk_vector_proof_type_mismatch_fails_closed_before_crypto() {
+        let registry = registry_with_mock_zk_backend();
+        let mut task = task_with_proof_type(ProofType::Zk);
+        task.status = TaskStatus::Committed;
+        task.worker = Some("worker-zk".into());
+        task.result_hash = Some([0x11; 32]);
+
+        let payload = br#"ZK:{"task_id":42,"worker":"worker-zk","proof_type":"tee","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","vk_ref":"vk://trnm/dev/mock-groth16/valid","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","worker","result_hash"],"values":["42","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#;
+
+        assert!(matches!(
+            registry.verify(&task, payload),
+            VerificationResult::Invalid(msg) if msg.contains("proof_type mismatch")
+        ));
     }
 
     #[test]
@@ -1984,7 +2091,9 @@ mod tests {
         );
 
         let fraud_task = task_with_proof_type(ProofType::Fraud);
-        let tee_task = task_with_proof_type(ProofType::Tee);
+        let mut tee_task = task_with_proof_type(ProofType::Tee);
+        tee_task.worker = Some("worker1".to_string());
+        tee_task.result_hash = Some([0xab; 32]);
         let mut zk_task = task_with_proof_type(ProofType::Zk);
         zk_task.result_hash = Some([0x11; 32]);
 
@@ -1996,9 +2105,13 @@ mod tests {
             VerificationResult::Valid
         );
         assert!(matches!(
-            registry.verify(&tee_task, b"TEE:task_id=42,proof_type=tee,quote=ok"),
+            registry.verify(
+                &tee_task,
+                b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,quote=ok"
+            ),
             VerificationResult::Indeterminate(msg)
-                if msg.contains("cryptographic verification backend not configured")
+                if msg.contains("unavailable:")
+                    && msg.contains("TEE receipt cryptographic verification backend not configured")
         ));
         assert!(matches!(
             registry.verify(
@@ -2030,6 +2143,29 @@ mod tests {
             registry.verify(&zk_task, b"ZK:       "),
             VerificationResult::Invalid(msg) if msg.contains("Invalid ZK proof envelope")
         ));
+    }
+
+    #[test]
+    fn registry_with_backend_config_keeps_fraud_as_backendless_semantic_verifier() {
+        let registry = VerifierRegistry::with_backend_config(VerificationBackendConfig {
+            tee_backend: crate::verification::backend::ZkBackendKind::Custom(
+                "missing-tee-backend".into(),
+            ),
+            zk_backend: crate::verification::backend::ZkBackendKind::Custom(
+                "missing-zk-backend".into(),
+            ),
+            zk_features: Default::default(),
+        });
+        let mut fraud_task = task_with_proof_type(ProofType::Fraud);
+        fraud_task.worker = Some("worker-fraud".into());
+
+        assert_eq!(
+            registry.verify(
+                &fraud_task,
+                b"FRAUD:{\"task_id\":42,\"worker\":\"worker-fraud\",\"proof_type\":\"fraud\"}"
+            ),
+            VerificationResult::Valid
+        );
     }
 
     #[test]
