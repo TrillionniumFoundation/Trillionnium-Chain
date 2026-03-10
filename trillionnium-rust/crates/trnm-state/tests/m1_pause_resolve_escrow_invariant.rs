@@ -761,3 +761,57 @@ fn paused_cancel_resolve_authority_timelock_keeps_pause_boundary_and_escrow_cons
     assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
     assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), forfeits_before);
 }
+
+#[test]
+fn paused_replace_resolve_authority_timelock_keeps_pause_boundary_and_escrow_conservation() {
+    // M1 micro-hardening: replacing a pending resolve_authority update while paused must
+    // not leak custody balances or unset emergency pause, and must keep timelock active.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 61_000);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 900);
+
+    let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+    let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+
+    st.set_gov_param(98_201, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    let scheduled = st
+        .set_gov_param(
+            98_202,
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("resolve_authority should schedule while paused");
+    let old_activate_at = match scheduled {
+        GovParamUpdateOutcome::Scheduled { activate_at_height } => activate_at_height,
+        other => panic!("expected scheduled outcome, got {other:?}"),
+    };
+
+    let replaced = st
+        .set_gov_param_with_action(
+            98_203,
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-c".into(),
+            GovPendingUpdateAction::Replace,
+        )
+        .expect("replace should reschedule pending resolve_authority update");
+    let new_activate_at = match replaced {
+        GovParamUpdateOutcome::Scheduled { activate_at_height } => activate_at_height,
+        other => panic!("expected scheduled replacement, got {other:?}"),
+    };
+
+    let pending = st
+        .pending_gov_update("resolve_authority")
+        .expect("replace must keep a pending update");
+    assert_eq!(pending.value, "authority-a,authority-c");
+    assert_eq!(pending.activate_at_height, new_activate_at);
+    assert!(new_activate_at > old_activate_at);
+
+    assert!(st.is_emergency_paused());
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+    assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), forfeits_before);
+}
