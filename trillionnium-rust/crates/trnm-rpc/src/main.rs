@@ -372,30 +372,6 @@ struct ChallengeTreasuryQueryResponse {
     anomalies: Vec<ChallengeTreasuryAnomaly>,
     daily_summary: Option<ChallengeDailySummary>,
     window: Option<ChallengeWindowView>,
-    node_event_source_mode: String,
-    node_event_log_truncated: bool,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-enum NodeEventScanMode {
-    Authoritative,
-    RecentTail,
-}
-
-impl NodeEventScanMode {
-    fn as_str(self) -> &'static str {
-        match self {
-            Self::Authoritative => "authoritative",
-            Self::RecentTail => "recent_tail",
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
-struct LoadedNodeEvents {
-    events: Vec<NodeEventRecord>,
-    mode: NodeEventScanMode,
-    truncated: bool,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -669,28 +645,19 @@ fn load_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
     sources.into_iter().collect()
 }
 
-fn node_event_log_candidates(root: &Path) -> Vec<PathBuf> {
-    load_node_event_log_sources(root)
-}
+fn load_latest_node_events() -> Vec<NodeEventRecord> {
+    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .and_then(|p| p.parent())
+        .map(|p| p.to_path_buf())
+        .unwrap_or_else(|| PathBuf::from("."));
 
-fn load_node_events_from_root(root: &Path, mode: NodeEventScanMode) -> LoadedNodeEvents {
-    let candidates = node_event_log_candidates(root);
+    let candidates = load_node_event_log_sources(&root);
+
     let tail_bytes = node_event_log_tail_bytes();
     let mut lines = Vec::new();
-    let mut truncated = false;
     for p in candidates {
-        let raw = match mode {
-            NodeEventScanMode::Authoritative => fs::read_to_string(&p).ok(),
-            NodeEventScanMode::RecentTail => {
-                if let Ok(meta) = fs::metadata(&p) {
-                    if meta.len() > tail_bytes {
-                        truncated = true;
-                    }
-                }
-                read_log_tail(&p, tail_bytes)
-            }
-        };
-        if let Some(raw) = raw {
+        if let Some(raw) = read_log_tail(&p, tail_bytes) {
             lines.extend(raw.lines().map(str::to_string));
         }
     }
@@ -765,24 +732,7 @@ fn load_node_events_from_root(root: &Path, mode: NodeEventScanMode) -> LoadedNod
             bond_disposition: normalize_opt("bond_disposition"),
         });
     }
-    LoadedNodeEvents {
-        events: out,
-        mode,
-        truncated,
-    }
-}
-
-fn load_node_events(mode: NodeEventScanMode) -> LoadedNodeEvents {
-    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .parent()
-        .and_then(|p| p.parent())
-        .map(|p| p.to_path_buf())
-        .unwrap_or_else(|| PathBuf::from("."));
-    load_node_events_from_root(&root, mode)
-}
-
-fn load_latest_node_events() -> Vec<NodeEventRecord> {
-    load_node_events(NodeEventScanMode::RecentTail).events
+    out
 }
 
 fn governance_state() -> StateStore {
@@ -1902,8 +1852,6 @@ fn summarize_challenge_treasury(
     node_events: &[NodeEventRecord],
     limit: usize,
     summary_window: Option<(u128, u128, String)>,
-    node_event_source_mode: NodeEventScanMode,
-    node_event_log_truncated: bool,
 ) -> ChallengeTreasuryQueryResponse {
     let mut related: Vec<&NodeEventRecord> = node_events
         .iter()
@@ -2116,8 +2064,6 @@ fn summarize_challenge_treasury(
         anomalies,
         daily_summary,
         window,
-        node_event_source_mode: node_event_source_mode.as_str().to_string(),
-        node_event_log_truncated,
     }
 }
 
@@ -2276,9 +2222,9 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
                 let task_id = path.trim_start_matches("/query-task/").parse::<u64>();
                 match task_id {
                     Ok(task_id) => {
-                        let node_events = load_node_events(NodeEventScanMode::Authoritative);
+                        let node_events = load_latest_node_events();
                         let recs = load_latest_adapter_records();
-                        match query_task_response(task_id, &node_events.events, &recs) {
+                        match query_task_response(task_id, &node_events, &recs) {
                             Ok(out) => {
                                 let body = serde_json::to_string(&out).unwrap_or_else(|_| {
                                     "{\"ok\":false,\"code\":\"SERDE_ERROR\"}".to_string()
@@ -2301,12 +2247,12 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
                 let task_id = path.trim_start_matches("/query-events/").parse::<u64>();
                 match task_id {
                     Ok(task_id) => {
-                        let node_events = load_node_events(NodeEventScanMode::Authoritative);
+                        let node_events = load_latest_node_events();
                         let recs = load_latest_adapter_records();
                         match query_events_response(
                             task_id,
                             QUERY_EVENTS_LIMIT_DEFAULT,
-                            &node_events.events,
+                            &node_events,
                             &recs,
                         ) {
                             Ok(events) => {
@@ -2621,11 +2567,11 @@ fn main() -> Result<()> {
     let args = Args::parse();
     let st = governance_state();
     let recs = load_latest_adapter_records();
+    let node_events = load_latest_node_events();
 
     match args.cmd {
         Command::QueryTask { task_id } => {
-            let node_events = load_node_events(NodeEventScanMode::Authoritative);
-            let out = query_task_response(task_id, &node_events.events, &recs)?;
+            let out = query_task_response(task_id, &node_events, &recs)?;
             println!("{}", serde_json::to_string_pretty(&out)?);
         }
         Command::QueryProposal { proposal_id } => {
@@ -2663,8 +2609,7 @@ fn main() -> Result<()> {
             println!("{}", serde_json::to_string_pretty(&out)?);
         }
         Command::QueryEvents { task_id, limit } => {
-            let node_events = load_node_events(NodeEventScanMode::Authoritative);
-            let events = query_events_response(task_id, limit, &node_events.events, &recs)?;
+            let events = query_events_response(task_id, limit, &node_events, &recs)?;
             println!("{}", serde_json::to_string_pretty(&events)?);
         }
         Command::QueryCapabilityAudit { token_id } => {
@@ -2687,14 +2632,7 @@ fn main() -> Result<()> {
                 CHALLENGE_TREASURY_EVENTS_LIMIT_MAX,
             );
             let summary_window = resolve_ops_window(window, from_unix_ms, to_unix_ms, now_ms())?;
-            let node_events = load_node_events(NodeEventScanMode::Authoritative);
-            let out = summarize_challenge_treasury(
-                &node_events.events,
-                limit,
-                summary_window,
-                node_events.mode,
-                node_events.truncated,
-            );
+            let out = summarize_challenge_treasury(&node_events, limit, summary_window);
             if json {
                 println!("{}", serde_json::to_string_pretty(&out)?);
             } else {
@@ -3000,9 +2938,8 @@ fn main() -> Result<()> {
                 bail!("request not found: {}", request_id);
             };
 
-            let node_events = load_node_events(NodeEventScanMode::Authoritative);
             let mut events = Vec::new();
-            for e in filtered_node_events_for_task(rec.task_id, &node_events.events) {
+            for e in filtered_node_events_for_task(rec.task_id, &node_events) {
                 let Some(actor) = normalize_actor_or_signer(&e.actor) else {
                     continue;
                 };
@@ -4912,13 +4849,7 @@ mod tests {
             },
         ];
 
-        let out = summarize_challenge_treasury(
-            &events,
-            10,
-            None,
-            NodeEventScanMode::Authoritative,
-            false,
-        );
+        let out = summarize_challenge_treasury(&events, 10, None);
         assert_eq!(out.current_escrow_balance, 0);
         assert_eq!(out.current_forfeits_balance, 10);
         assert_eq!(out.cumulative_forfeited, 10);
@@ -4969,13 +4900,7 @@ mod tests {
             },
         ];
 
-        let out = summarize_challenge_treasury(
-            &events,
-            10,
-            Some((50, 200, "custom".into())),
-            NodeEventScanMode::Authoritative,
-            false,
-        );
+        let out = summarize_challenge_treasury(&events, 10, Some((50, 200, "custom".into())));
         assert_eq!(out.current_escrow_balance, 0);
         assert_eq!(out.current_forfeits_balance, 0);
         assert_eq!(out.cumulative_forfeited, 0);
@@ -5029,8 +4954,7 @@ mod tests {
             },
         ];
 
-        let out =
-            summarize_challenge_treasury(&events, 1, None, NodeEventScanMode::Authoritative, false);
+        let out = summarize_challenge_treasury(&events, 1, None);
         assert_eq!(out.events_total, 2);
         assert_eq!(out.events.len(), 1);
         assert_eq!(out.events[0].task_id, 2);
@@ -5116,13 +5040,8 @@ mod tests {
             },
         ];
 
-        let out = summarize_challenge_treasury(
-            &events,
-            10,
-            Some((500, 3_500, "custom".to_string())),
-            NodeEventScanMode::Authoritative,
-            false,
-        );
+        let out =
+            summarize_challenge_treasury(&events, 10, Some((500, 3_500, "custom".to_string())));
 
         let summary = out.daily_summary.expect("summary expected");
         assert_eq!(summary.posted, 2);
@@ -5153,13 +5072,7 @@ mod tests {
             bond_disposition: Some("posted".into()),
         }];
 
-        let out = summarize_challenge_treasury(
-            &events,
-            10,
-            Some((500, 1_500, "custom".into())),
-            NodeEventScanMode::Authoritative,
-            false,
-        );
+        let out = summarize_challenge_treasury(&events, 10, Some((500, 1_500, "custom".into())));
         assert_eq!(out.current_escrow_balance, 0);
         assert_eq!(out.current_forfeits_balance, 0);
         assert_eq!(out.cumulative_forfeited, 0);
@@ -5193,13 +5106,7 @@ mod tests {
             bond_disposition: Some("forfeited".into()),
         }];
 
-        let out = summarize_challenge_treasury(
-            &events,
-            10,
-            Some((500, 3_000, "custom".into())),
-            NodeEventScanMode::Authoritative,
-            false,
-        );
+        let out = summarize_challenge_treasury(&events, 10, Some((500, 3_000, "custom".into())));
         assert_eq!(out.current_escrow_balance, 0);
         assert_eq!(out.current_forfeits_balance, 0);
         assert_eq!(out.cumulative_forfeited, 0);
@@ -5272,13 +5179,7 @@ mod tests {
             },
         ];
 
-        let out = summarize_challenge_treasury(
-            &events,
-            10,
-            Some((500, 3_500, "custom".into())),
-            NodeEventScanMode::Authoritative,
-            false,
-        );
+        let out = summarize_challenge_treasury(&events, 10, Some((500, 3_500, "custom".into())));
         assert_eq!(out.current_escrow_balance, 0);
         assert_eq!(out.current_forfeits_balance, 9);
         assert_eq!(out.cumulative_forfeited, 9);
@@ -5351,13 +5252,7 @@ mod tests {
             },
         ];
 
-        let out = summarize_challenge_treasury(
-            &events,
-            10,
-            Some((500, 3_000, "custom".into())),
-            NodeEventScanMode::Authoritative,
-            false,
-        );
+        let out = summarize_challenge_treasury(&events, 10, Some((500, 3_000, "custom".into())));
         assert_eq!(out.current_escrow_balance, 0);
         assert_eq!(out.current_forfeits_balance, 6);
         assert_eq!(out.cumulative_forfeited, 6);
@@ -5429,13 +5324,7 @@ mod tests {
             },
         ];
 
-        let out = summarize_challenge_treasury(
-            &events,
-            10,
-            Some((500, 3_500, "custom".into())),
-            NodeEventScanMode::Authoritative,
-            false,
-        );
+        let out = summarize_challenge_treasury(&events, 10, Some((500, 3_500, "custom".into())));
         assert_eq!(out.current_escrow_balance, 0);
         assert_eq!(out.current_forfeits_balance, 8);
         assert_eq!(out.cumulative_forfeited, 8);
@@ -5845,39 +5734,6 @@ mod tests {
             kv.get("bond_disposition").map(String::as_str),
             Some("forfeit all")
         );
-    }
-
-    #[test]
-    fn load_node_events_recent_tail_marks_truncation_but_authoritative_keeps_history() {
-        let root = tempfile::tempdir().expect("tempdir");
-        let run = root.path().join("run");
-        fs::create_dir_all(&run).expect("create run dir");
-
-        let old_event = "2026-03-03T20:10:11Z INFO node [event] event_type=challenge task_id=7 from_status=Revealed to_status=Challenged actor=challenger-a tx_id=1 block_height=1 state_root=s1 ts_unix_ms=1000 challenger=challenger-a challenger_delta=-5 bond_disposition=posted\n";
-        let filler = "x".repeat(600);
-        let new_event = "2026-03-03T20:10:12Z INFO node [event] event_type=resolve task_id=7 from_status=Challenged to_status=Completed actor=authority tx_id=2 block_height=2 state_root=s2 ts_unix_ms=2000 signer=authority resolution_code=completed challenger=challenger-a challenger_delta=0 bond_disposition=forfeited\n";
-        fs::write(
-            run.join("node1.log"),
-            format!("{old_event}{filler}\n{new_event}"),
-        )
-        .expect("write log");
-
-        std::env::set_var("TRNM_RPC_NODE_EVENT_LOG_TAIL_BYTES", "400");
-        let recent = load_node_events_from_root(root.path(), NodeEventScanMode::RecentTail);
-        std::env::remove_var("TRNM_RPC_NODE_EVENT_LOG_TAIL_BYTES");
-
-        assert!(recent.truncated);
-        assert_eq!(recent.mode, NodeEventScanMode::RecentTail);
-        assert_eq!(recent.events.len(), 1);
-        assert_eq!(recent.events[0].event_type, "resolve");
-
-        let authoritative =
-            load_node_events_from_root(root.path(), NodeEventScanMode::Authoritative);
-        assert!(!authoritative.truncated);
-        assert_eq!(authoritative.mode, NodeEventScanMode::Authoritative);
-        assert_eq!(authoritative.events.len(), 2);
-        assert_eq!(authoritative.events[0].event_type, "challenge");
-        assert_eq!(authoritative.events[1].event_type, "resolve");
     }
 
     #[test]

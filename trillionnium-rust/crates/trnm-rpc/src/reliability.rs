@@ -187,9 +187,7 @@ impl InMemoryReliabilityStore {
     }
 }
 
-fn sanitize_store_config(
-    mut config: InMemoryReliabilityStoreConfig,
-) -> InMemoryReliabilityStoreConfig {
+fn sanitize_store_config(mut config: InMemoryReliabilityStoreConfig) -> InMemoryReliabilityStoreConfig {
     // Zeroed quotas create permanent capacity_exceeded responses for fresh ingress.
     // Clamp to a minimally live value so misconfigured operators retain recovery paths.
     fn clamp_zero(opt: Option<usize>) -> Option<usize> {
@@ -319,16 +317,12 @@ impl ReliabilityStore for InMemoryReliabilityStore {
         }
 
         if let Some(max) = self.config.max_pending_total {
-            // Non-growing updates on an existing session cannot increase global
-            // pending pressure; skip O(session_count) total scans on this hot path.
-            if is_new_session || new_len > old_len {
-                let total = self.total_pending_items();
-                let projected = total.saturating_sub(old_len).saturating_add(new_len);
-                if projected > max {
-                    return Err(ReliabilityStoreError::CapacityExceeded {
-                        detail: format!("pending total limit reached ({max})"),
-                    });
-                }
+            let total = self.total_pending_items();
+            let projected = total.saturating_sub(old_len).saturating_add(new_len);
+            if projected > max {
+                return Err(ReliabilityStoreError::CapacityExceeded {
+                    detail: format!("pending total limit reached ({max})"),
+                });
             }
         }
 
@@ -698,8 +692,7 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
                 message: msg,
                 attempts: 0,
                 created_at_unix_ms: now_unix_ms,
-                next_retry_at_unix_ms: now_unix_ms
-                    .saturating_add(self.retry.base_backoff_ms as u128),
+                next_retry_at_unix_ms: now_unix_ms.saturating_add(self.retry.base_backoff_ms as u128),
             },
         );
 
@@ -893,7 +886,10 @@ fn is_canonical_msg_type(msg_type: &str) -> bool {
         return false;
     }
 
-    !msg_type.as_bytes().iter().any(|b| b.is_ascii_lowercase())
+    !msg_type
+        .as_bytes()
+        .iter()
+        .any(|b| b.is_ascii_lowercase())
 }
 
 fn exp_backoff_ms(base: u64, max: u64, attempts: u32) -> u64 {
@@ -1237,10 +1233,12 @@ impl ReliabilityStore for SqliteReliabilityStore {
         now_unix_ms: u128,
     ) -> Result<(), ReliabilityStoreError> {
         let session_id = session.session_id.clone();
-        let existing = self.get_session(&session_id);
-        let old_len = existing.as_ref().map(|s| s.pending.len()).unwrap_or(0);
+        let old_len = self
+            .get_session(&session_id)
+            .map(|s| s.pending.len())
+            .unwrap_or(0);
         let new_len = session.pending.len();
-        let is_new_session = existing.is_none();
+        let is_new_session = old_len == 0 && self.get_session(&session_id).is_none();
 
         if let Some(max) = self.config.max_sessions {
             if is_new_session && self.list_session_ids().len() >= max {
@@ -1259,17 +1257,12 @@ impl ReliabilityStore for SqliteReliabilityStore {
         }
 
         if let Some(max) = self.config.max_pending_total {
-            // Keep sqlite parity with in-memory hot path: non-growing updates on an
-            // existing session cannot increase global pending pressure, so skip
-            // O(session_count) total scans under sustained ingress.
-            if is_new_session || new_len > old_len {
-                let total = self.total_pending_items();
-                let projected = total.saturating_sub(old_len).saturating_add(new_len);
-                if projected > max {
-                    return Err(ReliabilityStoreError::CapacityExceeded {
-                        detail: format!("pending total limit reached ({max})"),
-                    });
-                }
+            let total = self.total_pending_items();
+            let projected = total.saturating_sub(old_len).saturating_add(new_len);
+            if projected > max {
+                return Err(ReliabilityStoreError::CapacityExceeded {
+                    detail: format!("pending total limit reached ({max})"),
+                });
             }
         }
 
@@ -1334,25 +1327,20 @@ impl ReliabilityStore for SqliteReliabilityStore {
                 continue;
             };
 
-            let before_len = session.pending.len();
             session
                 .pending
                 .retain(|_, item| item.created_at_unix_ms >= pending_cutoff);
 
             if session.pending.is_empty() {
-                if before_len != 0 || (updated_at_unix_ms != 0 && updated_at_unix_ms < pending_cutoff_i64)
-                {
+                if updated_at_unix_ms == 0 || updated_at_unix_ms < pending_cutoff_i64 {
                     remove_ids.push(session_id);
                 }
                 continue;
             }
 
-            if session.pending.len() != before_len {
-                updates.push((
-                    session_id,
-                    session,
-                    i64::try_from(now_unix_ms).unwrap_or(i64::MAX),
-                ));
+            match serde_json::to_string(&session) {
+                Ok(updated_payload) => updates.push((session_id, updated_payload)),
+                Err(_) => remove_ids.push(session_id),
             }
         }
         drop(stmt);
@@ -1363,18 +1351,18 @@ impl ReliabilityStore for SqliteReliabilityStore {
                 [session_id],
             );
         }
-
-        for (session_id, session, updated_at_unix_ms) in updates {
-            if let Ok(payload) = serde_json::to_string(&session) {
-                let _ = self.conn.execute(
-                    "UPDATE reliability_sessions
-                     SET session_json=?2, updated_at_unix_ms=?3
-                     WHERE session_id=?1",
-                    rusqlite::params![session_id, payload, updated_at_unix_ms],
-                );
-            }
+        for (session_id, payload) in updates {
+            let _ = self.conn.execute(
+                "UPDATE reliability_sessions
+                 SET session_json=?2, updated_at_unix_ms=?3
+                 WHERE session_id=?1",
+                rusqlite::params![
+                    session_id,
+                    payload,
+                    i64::try_from(now_unix_ms).unwrap_or(i64::MAX),
+                ],
+            );
         }
-        self.cleanup_expired_sessions_only(now_unix_ms, retention);
     }
 }
 
@@ -1943,7 +1931,8 @@ mod tests {
             .filter(|i| i.message.session_id == "hot")
             .count();
         assert_eq!(
-            hot_count_second, MAX_DUE_RETRIES_PER_SESSION_PER_COLLECT,
+            hot_count_second,
+            MAX_DUE_RETRIES_PER_SESSION_PER_COLLECT,
             "hot session should stay bounded per collect cycle"
         );
     }
@@ -2176,11 +2165,7 @@ mod tests {
 
         let store = engine.into_store();
         let session = store.get_session("s1").expect("session should exist");
-        assert_eq!(
-            session.pending.len(),
-            1,
-            "replay must not overwrite pending state"
-        );
+        assert_eq!(session.pending.len(), 1, "replay must not overwrite pending state");
 
         let item = session
             .pending
@@ -2462,10 +2447,7 @@ mod tests {
         let err = store
             .try_remember_dedup_key_with_ts(key2, 2)
             .expect_err("second unique key should hit clamped quota");
-        assert!(matches!(
-            err,
-            ReliabilityStoreError::CapacityExceeded { .. }
-        ));
+        assert!(matches!(err, ReliabilityStoreError::CapacityExceeded { .. }));
     }
 
     #[test]
@@ -2529,10 +2511,7 @@ mod tests {
         let err = store
             .try_upsert_session_with_ts(three, 2)
             .expect_err("per-session quota should be clamped to global total cap");
-        assert!(matches!(
-            err,
-            ReliabilityStoreError::CapacityExceeded { .. }
-        ));
+        assert!(matches!(err, ReliabilityStoreError::CapacityExceeded { .. }));
     }
 
     #[test]
@@ -2576,10 +2555,7 @@ mod tests {
         let err = store
             .try_upsert_session_with_ts(second, 2)
             .expect_err("second pending item should hit clamped global quota");
-        assert!(matches!(
-            err,
-            ReliabilityStoreError::CapacityExceeded { .. }
-        ));
+        assert!(matches!(err, ReliabilityStoreError::CapacityExceeded { .. }));
     }
 
     #[test]
