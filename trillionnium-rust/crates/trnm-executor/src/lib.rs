@@ -1034,21 +1034,8 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
             // first tx on the hot-path round-robin seed selection.
             let first_hint = tx_bucket_hints.first().copied().unwrap_or(0);
 
-            let mut buckets: Vec<Vec<Tx>> = bucket_depths
-                .iter()
-                .map(|depth| Vec::with_capacity(*depth))
-                .collect();
-            for (tx, bucket) in txs.iter().cloned().zip(tx_bucket_hints.into_iter()) {
-                // Prefer write-set as stronger conflict signal; fold a second key when present
-                // to reduce bucket skew for mixed workloads.
-                buckets[bucket].push(tx);
-            }
-
-            // Keep insertion order inside each bucket (already stable by input stream);
-            // avoid extra O(n log n) sorting cost.
-
             // Stable round-robin with move semantics (avoid per-tx clone cost).
-            let n = buckets.len();
+            let n = buckets_n;
             let mut merged = Vec::with_capacity(txs.len());
             // Under highly skewed hot-bucket loads, start from the sparsest non-empty
             // bucket so low-volume conflict domains are serviced promptly instead of
@@ -1056,8 +1043,7 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
             let sparse_start = {
                 let mut min_non_zero = usize::MAX;
                 let mut max_depth = 0usize;
-                for bucket in &buckets {
-                    let depth = bucket.len();
+                for &depth in &bucket_depths {
                     if depth == 0 {
                         continue;
                     }
@@ -1072,8 +1058,7 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
                     let mut best_idx = None;
                     let mut best_distance = usize::MAX;
                     let mut best_counter_clockwise = usize::MAX;
-                    for (idx, bucket) in buckets.iter().enumerate() {
-                        let depth = bucket.len();
+                    for (idx, &depth) in bucket_depths.iter().enumerate() {
                         if depth != min_non_zero {
                             continue;
                         }
@@ -1094,6 +1079,19 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
                     None
                 }
             };
+
+            let mut buckets: Vec<Vec<Tx>> = bucket_depths
+                .iter()
+                .map(|depth| Vec::with_capacity(*depth))
+                .collect();
+            for (tx, bucket) in txs.iter().cloned().zip(tx_bucket_hints.into_iter()) {
+                // Prefer write-set as stronger conflict signal; fold a second key when present
+                // to reduce bucket skew for mixed workloads.
+                buckets[bucket].push(tx);
+            }
+
+            // Keep insertion order inside each bucket (already stable by input stream);
+            // avoid extra O(n log n) sorting cost.
             let mut iters: Vec<std::vec::IntoIter<Tx>> =
                 buckets.into_iter().map(|b| b.into_iter()).collect();
             // Seed the initial bucket probe from either sparse anti-starvation hint
