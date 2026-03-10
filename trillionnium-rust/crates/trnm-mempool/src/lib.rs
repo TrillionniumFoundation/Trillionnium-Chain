@@ -775,6 +775,28 @@ mod tests {
     }
 
     #[test]
+    fn normal_fairness_warmup_survives_active_critical_refill() {
+        let mut g = LaneAdmissionGate::new(5, 2);
+
+        // Keep critical lane active first.
+        assert_eq!(g.admit(100, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(101, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.pop_ready(), Some(100));
+
+        // Normal backlog appears while critical pressure is still active.
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+
+        // Refill critical immediately so pressure remains continuous.
+        assert_eq!(g.admit(102, IngressClass::Critical), AdmitOutcome::Accepted);
+
+        // Anti-starvation contract: fairness warmup must still force a normal turn
+        // immediately (or at worst within one additional dequeue) under active
+        // critical refill.
+        assert_eq!(g.pop_ready(), Some(1));
+        assert_eq!(g.pop_ready(), Some(101));
+    }
+
+    #[test]
     fn zero_capacity_admission_gate_does_not_poison_idempotency_after_backpressure() {
         let mut g = AdmissionGate::new(0);
 
