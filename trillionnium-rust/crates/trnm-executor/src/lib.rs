@@ -196,6 +196,22 @@ fn vec_hashset_intersects(a: &[u64], b: &HashSet<u64>) -> bool {
         return a.contains(&only);
     }
 
+    // Tiny vector fast path: duplicate-heavy conflict domains can repeatedly probe
+    // the same key in hot scheduling loops. Dedup the probe side in-place to keep
+    // hash lookups bounded without paying HashSet allocation cost.
+    if a.len() <= 8 {
+        let mut seen: Vec<u64> = Vec::with_capacity(a.len());
+        for k in a {
+            if !seen.contains(k) {
+                if b.contains(k) {
+                    return true;
+                }
+                seen.push(*k);
+            }
+        }
+        return false;
+    }
+
     for k in a {
         if b.contains(k) {
             return true;
@@ -1103,6 +1119,16 @@ mod tests {
 
         assert!(vec_hashset_intersects(&[7, 8, 42, 9], &singleton));
         assert!(!vec_hashset_intersects(&[7, 8, 9], &singleton));
+    }
+
+    #[test]
+    fn vec_hashset_intersects_tiny_duplicate_probe_path_preserves_semantics() {
+        let domain: HashSet<u64> = [11u64, 12u64].into_iter().collect();
+
+        // Duplicate-heavy tiny probe vectors should behave identically to the
+        // generic path while avoiding repeated hash probes for the same key.
+        assert!(vec_hashset_intersects(&[9, 9, 9, 12, 12], &domain));
+        assert!(!vec_hashset_intersects(&[9, 9, 10, 10], &domain));
     }
 
     #[test]
