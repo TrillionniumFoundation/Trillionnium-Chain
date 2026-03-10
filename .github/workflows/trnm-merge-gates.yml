@@ -78,6 +78,9 @@ jobs:
       # Disable pip's periodic version check network call to avoid nondeterministic
       # stderr timing/noise and occasional flaky delays in shell-driven probes.
       PIP_DISABLE_PIP_VERSION_CHECK: "1"
+      # Bound pip network waits so transient index stalls fail fast/retriable
+      # instead of hanging merge-gate jobs until global step timeout.
+      PIP_DEFAULT_TIMEOUT: "60"
       # Suppress pip interpreter lifecycle warning chatter for deterministic logs.
       PIP_NO_PYTHON_VERSION_WARNING: "1"
       # Disable dynamic pip progress rendering to keep stderr/stdout stable.
