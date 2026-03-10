@@ -1,12 +1,18 @@
 # TRNM vs Solana vs Sui 并发架构对比说明（对外审阅版）
 
-> 日期：2026-03-05  
+> 日期：2026-03-05（2026-03-10 口径复核）  
 > 范围：并发执行/冲突处理架构对比；TRNM 采用仓内最新 bench 证据（classic / mixed / hot-streak）  
+> 基线：当前仓库 `main` 快照 `0b209289`；本文是**对外对标口径文档**，不承担 release-ready 判定。  
 > 说明：本文不改业务代码，仅做证据归纳与路线建议。
 
 ---
 
 ## 0. 结论先行（Executive Summary）
+
+> 入口约定：
+> - 当前发布/就绪真相源：`RELEASE_READINESS.md`
+> - 当前并发瓶颈图与 8 周路线：`docs/reports/TRNM_CONCURRENCY_BOTTLENECK_MAP_AND_8W_ROADMAP_2026-03-10.md`
+> - 本文只回答“TRNM 相对 Solana / Sui 现在处在什么位置、该怎么说”，不回答“今天能不能发布”。
 
 1. **TRNM 当前微基准（micro-bench）在高冲突场景下可稳定完成分组，耗时集中在 33–46ms（20k tx）区间**，表现出“冲突越高、组数越多，但耗时并未线性恶化”的特征。  
 2. **策略层（original / aggressive-greedy / footprint-desc / hot-bucket-interleave）在最新数据中收益不显著，甚至部分策略退化**：

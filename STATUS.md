@@ -6,6 +6,8 @@
 > 重要：本文件保留为 **2026-02-21 起的历史推进日志 / working journal**，**不是**当前 release readiness 的权威真相源。
 > 当前是否可发布、哪些“GO/PASS/ready”表述仍然有效，请先看：`RELEASE_READINESS.md`。
 >
+> 额外提醒：本文中出现的“aligned / 已推送 / 已闭环 / 已通过”均默认是**对应日期当时**的历史记录；若与当前 `main`、当前 closeout、当前对外对标口径冲突，以 `README.md`、`RELEASE_READINESS.md`、`docs/reports/TRNM_CONCURRENCY_BOTTLENECK_MAP_AND_8W_ROADMAP_2026-03-10.md` 为准。
+>
 > 注：此前引用的 `docs/reports/changelog-and-next-milestones-20260221.md` 已不在当前仓库；若需当前口径，请改看 `README.md` 与 `RELEASE_READINESS.md`。
 
 ## 1) 当时状态（历史记录：2026-02-21 的可发布基线视角）
