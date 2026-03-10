@@ -3,21 +3,51 @@ use std::sync::Arc;
 
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
-use trnm_types::TaskObject;
+use trnm_types::{ProofType, TaskObject};
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum VerificationBackendFamily {
+    Tee,
+    Zk,
+}
+
+impl VerificationBackendFamily {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::Tee => "tee",
+            Self::Zk => "zk",
+        }
+    }
+
+    pub fn from_proof_type(proof_type: ProofType) -> Option<Self> {
+        match proof_type {
+            ProofType::Fraud => None,
+            ProofType::Tee => Some(Self::Tee),
+            ProofType::Zk => Some(Self::Zk),
+        }
+    }
+}
+
+impl std::fmt::Display for VerificationBackendFamily {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub enum ZkBackendKind {
+pub enum VerificationBackendKind {
     Noop,
     Custom(String),
 }
 
-impl Default for ZkBackendKind {
+impl Default for VerificationBackendKind {
     fn default() -> Self {
         Self::Noop
     }
 }
 
-impl ZkBackendKind {
+impl VerificationBackendKind {
     pub fn key(&self) -> &str {
         match self {
             Self::Noop => "noop",
@@ -26,18 +56,40 @@ impl ZkBackendKind {
     }
 }
 
+/// Back-compat alias kept because current verification wiring and tests already
+/// speak in ZK-oriented terms, even though the platform registry now serves both
+/// TEE and ZK families.
+pub type ZkBackendKind = VerificationBackendKind;
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct VerificationBackendConfig {
-    pub tee_backend: ZkBackendKind,
-    pub zk_backend: ZkBackendKind,
+    pub tee_backend: VerificationBackendKind,
+    pub zk_backend: VerificationBackendKind,
 }
 
 impl Default for VerificationBackendConfig {
     fn default() -> Self {
         Self {
-            tee_backend: ZkBackendKind::Noop,
-            zk_backend: ZkBackendKind::Noop,
+            tee_backend: VerificationBackendKind::Noop,
+            zk_backend: VerificationBackendKind::Noop,
         }
+    }
+}
+
+impl VerificationBackendConfig {
+    /// Selects the configured backend kind for a verification family.
+    pub fn kind_for_family(&self, family: VerificationBackendFamily) -> &VerificationBackendKind {
+        match family {
+            VerificationBackendFamily::Tee => &self.tee_backend,
+            VerificationBackendFamily::Zk => &self.zk_backend,
+        }
+    }
+
+    /// Returns the backend selector for a proof type when that proof family is
+    /// backend-capable. Fraud stays backendless by design.
+    pub fn kind_for_proof_type(&self, proof_type: ProofType) -> Option<&VerificationBackendKind> {
+        VerificationBackendFamily::from_proof_type(proof_type)
+            .map(|family| self.kind_for_family(family))
     }
 }
 
@@ -80,22 +132,34 @@ impl ParsedZkProofPayload {
                     reason,
                 })
             }
-            ProofBytesEncoding::Hex => hex::decode(self.proof.trim()).map_err(|_| {
-                BackendExecutionError::InvalidProof {
+            ProofBytesEncoding::Hex => {
+                hex::decode(self.proof.trim()).map_err(|_| BackendExecutionError::InvalidProof {
                     backend: "zk:payload".to_string(),
                     reason: "invalid zk payload: proof is not valid hex".to_string(),
-                }
-            }),
+                })
+            }
         }
     }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct BackendVerificationRequest<'a> {
-    pub backend_family: &'static str,
+    pub family: VerificationBackendFamily,
     pub task: &'a TaskObject,
     pub proof_data: &'a [u8],
+    /// Parsed canonical ZK payload, when the envelope is the structured JSON
+    /// shape expected by platform backends.
     pub zk_payload: Option<&'a ParsedZkProofPayload>,
+}
+
+impl<'a> BackendVerificationRequest<'a> {
+    pub fn backend_family(&self) -> &'static str {
+        self.family.as_str()
+    }
+
+    pub fn backend_label(&self, backend_id: &str) -> String {
+        format!("{}:{}", self.backend_family(), backend_id)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -106,7 +170,10 @@ pub struct BackendVerificationSuccess {
 #[derive(Debug, Error, Clone, PartialEq, Eq)]
 pub enum BackendSelectionError {
     #[error("verification backend '{backend}' is not registered for family '{family}'")]
-    UnknownBackend { family: &'static str, backend: String },
+    UnknownBackend {
+        family: VerificationBackendFamily,
+        backend: String,
+    },
 }
 
 #[derive(Debug, Error, Clone, PartialEq, Eq)]
@@ -127,31 +194,64 @@ pub enum VerificationBackendError {
     Execution(#[from] BackendExecutionError),
 }
 
+pub trait VerificationBackend: Send + Sync {
+    fn backend_id(&self) -> &str;
+    fn verify(
+        &self,
+        request: BackendVerificationRequest<'_>,
+    ) -> Result<BackendVerificationSuccess, BackendExecutionError>;
+}
+
+/// Back-compat shim: existing tests and local mock backends still import
+/// `ZkBackend`, but the registry is now family-agnostic.
 pub trait ZkBackend: Send + Sync {
     fn backend_id(&self) -> &str;
-    fn verify(&self, request: BackendVerificationRequest<'_>) -> Result<BackendVerificationSuccess, BackendExecutionError>;
+    fn verify(
+        &self,
+        request: BackendVerificationRequest<'_>,
+    ) -> Result<BackendVerificationSuccess, BackendExecutionError>;
+}
+
+impl<T> VerificationBackend for T
+where
+    T: ZkBackend + ?Sized,
+{
+    fn backend_id(&self) -> &str {
+        ZkBackend::backend_id(self)
+    }
+
+    fn verify(
+        &self,
+        request: BackendVerificationRequest<'_>,
+    ) -> Result<BackendVerificationSuccess, BackendExecutionError> {
+        ZkBackend::verify(self, request)
+    }
 }
 
 #[derive(Default)]
-pub struct ZkBackendRegistry {
-    backends: HashMap<String, Arc<dyn ZkBackend>>,
+pub struct VerificationBackendRegistry {
+    backends: HashMap<String, Arc<dyn VerificationBackend>>,
 }
 
-impl ZkBackendRegistry {
+impl VerificationBackendRegistry {
     pub fn new() -> Self {
         let mut registry = Self {
             backends: HashMap::new(),
         };
-        registry.register(Arc::new(NoopZkBackend));
+        registry.register(Arc::new(NoopVerificationBackend));
         registry
     }
 
-    pub fn register(&mut self, backend: Arc<dyn ZkBackend>) {
+    pub fn register(&mut self, backend: Arc<dyn VerificationBackend>) {
         self.backends
             .insert(backend.backend_id().trim().to_ascii_lowercase(), backend);
     }
 
-    pub fn resolve(&self, family: &'static str, kind: &ZkBackendKind) -> Result<Arc<dyn ZkBackend>, BackendSelectionError> {
+    pub fn resolve(
+        &self,
+        family: VerificationBackendFamily,
+        kind: &VerificationBackendKind,
+    ) -> Result<Arc<dyn VerificationBackend>, BackendSelectionError> {
         let key = kind.key().trim().to_ascii_lowercase();
         self.backends
             .get(&key)
@@ -163,67 +263,110 @@ impl ZkBackendRegistry {
     }
 }
 
-pub struct NoopZkBackend;
+/// Back-compat alias for the previous ZK-named registry type.
+pub type ZkBackendRegistry = VerificationBackendRegistry;
 
-impl ZkBackend for NoopZkBackend {
+pub struct NoopVerificationBackend;
+
+impl VerificationBackend for NoopVerificationBackend {
     fn backend_id(&self) -> &str {
         "noop"
     }
 
-    fn verify(&self, request: BackendVerificationRequest<'_>) -> Result<BackendVerificationSuccess, BackendExecutionError> {
+    fn verify(
+        &self,
+        request: BackendVerificationRequest<'_>,
+    ) -> Result<BackendVerificationSuccess, BackendExecutionError> {
         Err(BackendExecutionError::NotConfigured {
-            backend: format!("{}:{}", request.backend_family, self.backend_id()),
+            backend: request.backend_label(self.backend_id()),
         })
     }
 }
 
-pub fn parse_zk_proof_payload(task: &TaskObject, proof_data: &[u8]) -> Result<ParsedZkProofPayload, BackendExecutionError> {
+pub fn parse_zk_proof_payload(
+    task: &TaskObject,
+    proof_data: &[u8],
+) -> Result<ParsedZkProofPayload, BackendExecutionError> {
     let raw = std::str::from_utf8(proof_data).map_err(|_| BackendExecutionError::InvalidProof {
         backend: "zk:payload".to_string(),
         reason: "invalid zk payload: proof envelope is not valid utf-8".to_string(),
     })?;
-    let body = raw.strip_prefix("ZK:").or_else(|| raw.strip_prefix("zk:")).ok_or_else(|| {
-        BackendExecutionError::InvalidProof {
+    let body = raw
+        .strip_prefix("ZK:")
+        .or_else(|| raw.strip_prefix("zk:"))
+        .ok_or_else(|| BackendExecutionError::InvalidProof {
             backend: "zk:payload".to_string(),
             reason: "invalid zk payload: missing ZK: prefix".to_string(),
-        }
-    })?;
-    let payload: ParsedZkProofPayload = serde_json::from_str(body).map_err(|_| BackendExecutionError::InvalidProof {
-        backend: "zk:payload".to_string(),
-        reason: "invalid zk payload: body must be canonical JSON object".to_string(),
-    })?;
+        })?;
+    let payload: ParsedZkProofPayload =
+        serde_json::from_str(body).map_err(|_| BackendExecutionError::InvalidProof {
+            backend: "zk:payload".to_string(),
+            reason: "invalid zk payload: body must be canonical JSON object".to_string(),
+        })?;
 
-    let expected_hash = hex::encode(task.result_hash.ok_or_else(|| BackendExecutionError::InvalidProof {
-        backend: "zk:payload".to_string(),
-        reason: "invalid zk payload: missing task result_hash binding context".to_string(),
-    })?);
+    let expected_hash =
+        hex::encode(
+            task.result_hash
+                .ok_or_else(|| BackendExecutionError::InvalidProof {
+                    backend: "zk:payload".to_string(),
+                    reason: "invalid zk payload: missing task result_hash binding context"
+                        .to_string(),
+                })?,
+        );
 
     if payload.task_id != task.task_id {
-        return Err(BackendExecutionError::InvalidProof { backend: "zk:payload".to_string(), reason: "invalid zk payload: task_id mismatch".to_string() });
+        return Err(BackendExecutionError::InvalidProof {
+            backend: "zk:payload".to_string(),
+            reason: "invalid zk payload: task_id mismatch".to_string(),
+        });
     }
     if payload.worker != task.worker.as_deref().unwrap_or_default() {
-        return Err(BackendExecutionError::InvalidProof { backend: "zk:payload".to_string(), reason: "invalid zk payload: worker mismatch".to_string() });
+        return Err(BackendExecutionError::InvalidProof {
+            backend: "zk:payload".to_string(),
+            reason: "invalid zk payload: worker mismatch".to_string(),
+        });
     }
     if !payload.proof_type.eq_ignore_ascii_case("zk") {
-        return Err(BackendExecutionError::InvalidProof { backend: "zk:payload".to_string(), reason: "invalid zk payload: proof_type must be zk".to_string() });
+        return Err(BackendExecutionError::InvalidProof {
+            backend: "zk:payload".to_string(),
+            reason: "invalid zk payload: proof_type must be zk".to_string(),
+        });
     }
     if !payload.result_hash.eq_ignore_ascii_case(&expected_hash) {
-        return Err(BackendExecutionError::InvalidProof { backend: "zk:payload".to_string(), reason: "invalid zk payload: result_hash mismatch".to_string() });
+        return Err(BackendExecutionError::InvalidProof {
+            backend: "zk:payload".to_string(),
+            reason: "invalid zk payload: result_hash mismatch".to_string(),
+        });
     }
     if payload.vk_ref.trim().is_empty() {
-        return Err(BackendExecutionError::InvalidProof { backend: "zk:payload".to_string(), reason: "invalid zk payload: vk_ref is required".to_string() });
+        return Err(BackendExecutionError::InvalidProof {
+            backend: "zk:payload".to_string(),
+            reason: "invalid zk payload: vk_ref is required".to_string(),
+        });
     }
     if payload.proof.trim().is_empty() {
-        return Err(BackendExecutionError::InvalidProof { backend: "zk:payload".to_string(), reason: "invalid zk payload: proof bytes are required".to_string() });
+        return Err(BackendExecutionError::InvalidProof {
+            backend: "zk:payload".to_string(),
+            reason: "invalid zk payload: proof bytes are required".to_string(),
+        });
     }
     let expected_public_inputs = vec![
         task.task_id.to_string(),
         task.worker.clone().unwrap_or_default(),
         expected_hash.clone(),
     ];
-    let expected_order = vec!["task_id".to_string(), "worker".to_string(), "result_hash".to_string()];
-    if payload.public_inputs.order != expected_order || payload.public_inputs.values != expected_public_inputs {
-        return Err(BackendExecutionError::InvalidProof { backend: "zk:payload".to_string(), reason: "invalid zk payload: public_inputs mismatch".to_string() });
+    let expected_order = vec![
+        "task_id".to_string(),
+        "worker".to_string(),
+        "result_hash".to_string(),
+    ];
+    if payload.public_inputs.order != expected_order
+        || payload.public_inputs.values != expected_public_inputs
+    {
+        return Err(BackendExecutionError::InvalidProof {
+            backend: "zk:payload".to_string(),
+            reason: "invalid zk payload: public_inputs mismatch".to_string(),
+        });
     }
     let _ = payload.decode_proof_bytes()?;
     Ok(payload)
@@ -319,24 +462,65 @@ mod tests {
     }
 
     #[test]
+    fn backend_config_routes_backend_capable_families() {
+        let config = VerificationBackendConfig {
+            tee_backend: VerificationBackendKind::Custom("mock-tee".into()),
+            zk_backend: VerificationBackendKind::Custom("mock-zk".into()),
+        };
+
+        assert_eq!(
+            config.kind_for_family(VerificationBackendFamily::Tee),
+            &VerificationBackendKind::Custom("mock-tee".into())
+        );
+        assert_eq!(
+            config.kind_for_family(VerificationBackendFamily::Zk),
+            &VerificationBackendKind::Custom("mock-zk".into())
+        );
+        assert_eq!(config.kind_for_proof_type(ProofType::Fraud), None);
+    }
+
+    #[test]
+    fn noop_backend_uses_family_scoped_not_configured_error() {
+        let err = NoopVerificationBackend
+            .verify(BackendVerificationRequest {
+                family: VerificationBackendFamily::Tee,
+                task: &mock_task(),
+                proof_data: b"TEE:...",
+                zk_payload: None,
+            })
+            .unwrap_err();
+
+        assert_eq!(
+            err,
+            BackendExecutionError::NotConfigured {
+                backend: "tee:noop".into()
+            }
+        );
+    }
+
+    #[test]
     fn parse_zk_proof_payload_accepts_canonical_json_vector() {
         let task = mock_task();
         let payload = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","worker","result_hash"],"values":["4242","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#).unwrap();
         assert_eq!(payload.vk_ref, "vk://trnm/dev/mock-groth16/v1");
-        assert_eq!(payload.decode_proof_bytes().unwrap(), vec![1,2,3,4]);
+        assert_eq!(payload.decode_proof_bytes().unwrap(), vec![1, 2, 3, 4]);
     }
 
     #[test]
     fn parse_zk_proof_payload_rejects_public_input_mismatch() {
         let task = mock_task();
         let err = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","worker","result_hash"],"values":["4242","worker-zk","2222222222222222222222222222222222222222222222222222222222222222"]}}"#).unwrap_err();
-        assert!(matches!(err, BackendExecutionError::InvalidProof{reason, ..} if reason.contains("public_inputs mismatch")));
+        assert!(
+            matches!(err, BackendExecutionError::InvalidProof { reason, .. } if reason.contains("public_inputs mismatch"))
+        );
     }
 
     #[test]
     fn parse_zk_proof_payload_rejects_malformed_json_before_crypto() {
         let task = mock_task();
         let err = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"base64","proof":"!!!","public_inputs":{"order":["task_id"]"#).unwrap_err();
-        assert!(matches!(err, BackendExecutionError::InvalidProof{reason, ..} if reason.contains("canonical JSON object")));
+        assert!(
+            matches!(err, BackendExecutionError::InvalidProof { reason, .. } if reason.contains("canonical JSON object"))
+        );
     }
 }

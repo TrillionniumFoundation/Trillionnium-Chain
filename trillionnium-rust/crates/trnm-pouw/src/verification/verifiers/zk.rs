@@ -120,14 +120,21 @@ mod tests {
 
     struct MockSuccessBackend;
     impl ZkBackend for MockSuccessBackend {
-        fn backend_id(&self) -> &str { "mock-zk" }
-        fn verify(&self, request: BackendVerificationRequest<'_>) -> Result<BackendVerificationSuccess, BackendExecutionError> {
+        fn backend_id(&self) -> &str {
+            "mock-zk"
+        }
+        fn verify(
+            &self,
+            request: BackendVerificationRequest<'_>,
+        ) -> Result<BackendVerificationSuccess, BackendExecutionError> {
             let payload = request.zk_payload.expect("zk payload required");
             assert_eq!(payload.public_inputs.order, vec!["task_id", "worker", "result_hash"]);
             assert_eq!(payload.public_inputs.values[0], "99");
             assert_eq!(payload.worker, "worker-zk");
             assert_eq!(payload.vk_ref, "vk://trnm/dev/mock-groth16/v1");
-            Ok(BackendVerificationSuccess { backend_id: self.backend_id().into() })
+            Ok(BackendVerificationSuccess {
+                backend_id: self.backend_id().into(),
+            })
         }
     }
 

@@ -5,8 +5,8 @@ use trnm_types::TaskObject;
 
 use super::verify_bound_envelope;
 use crate::verification::backend::{
-    BackendExecutionError, BackendVerificationRequest, VerificationBackendError,
-    VerificationBackendConfig, ZkBackendKind, ZkBackendRegistry,
+    BackendExecutionError, BackendVerificationRequest, VerificationBackendConfig,
+    VerificationBackendError, VerificationBackendFamily, ZkBackendKind, ZkBackendRegistry,
 };
 
 pub struct TeeVerifier {
@@ -20,14 +20,23 @@ impl TeeVerifier {
     }
 
     #[allow(dead_code)]
-    pub fn from_config(config: &VerificationBackendConfig, backends: Arc<ZkBackendRegistry>) -> Self {
+    pub fn from_config(
+        config: &VerificationBackendConfig,
+        backends: Arc<ZkBackendRegistry>,
+    ) -> Self {
         Self::new(config.tee_backend.clone(), backends)
     }
 
-    fn verify_backend(&self, task: &TaskObject, proof_data: &[u8]) -> Result<(), VerificationBackendError> {
-        let backend = self.backends.resolve("tee", &self.backend)?;
+    fn verify_backend(
+        &self,
+        task: &TaskObject,
+        proof_data: &[u8],
+    ) -> Result<(), VerificationBackendError> {
+        let backend = self
+            .backends
+            .resolve(VerificationBackendFamily::Tee, &self.backend)?;
         backend.verify(BackendVerificationRequest {
-            backend_family: "tee",
+            family: VerificationBackendFamily::Tee,
             task,
             proof_data,
             zk_payload: None,
@@ -55,11 +64,11 @@ impl ProofVerifier for TeeVerifier {
                     reason,
                     ..
                 })) => VerificationResult::Invalid(reason),
-                Err(VerificationBackendError::Execution(BackendExecutionError::NotConfigured { .. })) => {
-                    VerificationResult::Indeterminate(
-                        "TEE receipt cryptographic verification backend not configured".to_string(),
-                    )
-                }
+                Err(VerificationBackendError::Execution(
+                    BackendExecutionError::NotConfigured { .. },
+                )) => VerificationResult::Indeterminate(
+                    "TEE receipt cryptographic verification backend not configured".to_string(),
+                ),
                 Err(err) => VerificationResult::Indeterminate(err.to_string()),
             },
             other => other,
@@ -683,4 +692,3 @@ mod tests {
         ));
     }
 }
-
