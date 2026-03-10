@@ -3710,7 +3710,7 @@ mod tests {
         )
         .unwrap();
         let _ = challenged_task_fixture(&mut st, 8100);
-        st.stage_or_confirm_resolve_approval(8100, true, "authority-a", "authority-a,authority-b")
+        st.stage_or_confirm_resolve_approval(8100, 1, true, "authority-a", "authority-a,authority-b")
             .unwrap();
         let before_task = st.get_task(8100).unwrap();
         let before_worker = st.balance_of("worker8100");

@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
-use std::cell::RefCell;
 use std::collections::BTreeMap;
+use std::sync::RwLock;
 use trnm_types::{
     GovParamObject, GovProposalObject, GovProposalStatus, Hash32, ObjectRef, TaskObject,
 };
@@ -13,7 +13,7 @@ pub enum ObjectValue {
     GovParam(GovParamObject),
 }
 
-#[derive(Debug, Default, Clone)]
+#[derive(Debug)]
 pub struct StateStore {
     objects: BTreeMap<u64, VersionedObject>,
     balances: BTreeMap<String, u128>,
@@ -21,7 +21,7 @@ pub struct StateStore {
     gov_param_key_index: BTreeMap<String, u64>,
     pending_resolve_approvals: BTreeMap<u64, PendingResolveApproval>,
     monetary_state: MonetaryState,
-    state_root_cache: RefCell<Option<Hash32>>,
+    state_root_cache: RwLock<Option<Hash32>>,
 }
 
 #[derive(Debug, Clone)]
@@ -37,6 +37,39 @@ struct PendingResolveApproval {
     first_approver: String,
     authority_set: String,
     task_version: u64,
+}
+
+impl Default for StateStore {
+    fn default() -> Self {
+        Self {
+            objects: BTreeMap::new(),
+            balances: BTreeMap::new(),
+            pending_gov_updates: BTreeMap::new(),
+            gov_param_key_index: BTreeMap::new(),
+            pending_resolve_approvals: BTreeMap::new(),
+            monetary_state: MonetaryState::default(),
+            state_root_cache: RwLock::new(None),
+        }
+    }
+}
+
+impl Clone for StateStore {
+    fn clone(&self) -> Self {
+        let cached = self
+            .state_root_cache
+            .read()
+            .expect("state root cache poisoned")
+            .clone();
+        Self {
+            objects: self.objects.clone(),
+            balances: self.balances.clone(),
+            pending_gov_updates: self.pending_gov_updates.clone(),
+            gov_param_key_index: self.gov_param_key_index.clone(),
+            pending_resolve_approvals: self.pending_resolve_approvals.clone(),
+            monetary_state: self.monetary_state.clone(),
+            state_root_cache: RwLock::new(cached),
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Default)]
@@ -592,7 +625,10 @@ impl StateStore {
     }
 
     fn invalidate_state_root_cache(&self) {
-        self.state_root_cache.borrow_mut().take();
+        self.state_root_cache
+            .write()
+            .expect("state root cache poisoned")
+            .take();
     }
 
     pub fn put_task_new(&mut self, task: TaskObject) -> Result<ObjectRef, String> {
@@ -1222,7 +1258,12 @@ impl StateStore {
     }
 
     pub fn state_root(&self) -> Hash32 {
-        if let Some(cached) = self.state_root_cache.borrow().clone() {
+        if let Some(cached) = self
+            .state_root_cache
+            .read()
+            .expect("state root cache poisoned")
+            .clone()
+        {
             return cached;
         }
 
@@ -1376,7 +1417,10 @@ impl StateStore {
         hasher.update(self.monetary_state.total_burned.to_le_bytes());
         hasher.update(self.monetary_state.net_issuance.to_le_bytes());
         let root: Hash32 = hasher.finalize().into();
-        *self.state_root_cache.borrow_mut() = Some(root.clone());
+        *self
+            .state_root_cache
+            .write()
+            .expect("state root cache poisoned") = Some(root.clone());
         root
     }
 }
