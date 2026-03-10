@@ -197,25 +197,10 @@ fn vec_hashset_intersects(a: &[u64], b: &HashSet<u64>) -> bool {
         return a.contains(&only);
     }
 
-    // Tiny vector fast path: duplicate-heavy conflict domains can repeatedly probe
-    // the same key in hot scheduling loops. Dedup the probe side in-place to keep
-    // hash lookups bounded without paying HashSet allocation cost.
-    if a.len() <= 8 {
-        let mut seen: Vec<u64> = Vec::with_capacity(a.len());
-        for k in a {
-            if !seen.contains(k) {
-                if b.contains(k) {
-                    return true;
-                }
-                seen.push(*k);
-            }
-        }
-        return false;
-    }
-
-    // Medium probe vectors are still common on high-contention shards. Deduping
-    // in-place avoids repeated hash probes when the domain carries many duplicates
-    // while keeping allocation bounded for this path.
+    // Small/medium vector fast path: duplicate-heavy conflict domains can
+    // repeatedly probe the same key in hot scheduling loops. Dedup the probe
+    // side in-place to keep hash lookups bounded without paying HashSet
+    // allocation cost.
     if a.len() <= 32 {
         let mut seen: Vec<u64> = Vec::with_capacity(a.len());
         for k in a {
