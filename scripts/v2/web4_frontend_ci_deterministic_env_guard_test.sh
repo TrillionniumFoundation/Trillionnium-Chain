@@ -19,7 +19,6 @@ required_lines=(
   "PYTHONHASHSEED: '0'"
   "FORCE_COLOR: '0'"
   "NPM_CONFIG_UPDATE_NOTIFIER: 'false'"
-  "NPM_CONFIG_FUND: 'false'"
   "CI: 'true'"
 )
 

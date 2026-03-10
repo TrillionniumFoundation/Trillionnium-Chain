@@ -35,8 +35,6 @@ jobs:
       FORCE_COLOR: '0'
       # Disable npm update notifier network check to avoid nondeterministic stderr timing/noise.
       NPM_CONFIG_UPDATE_NOTIFIER: 'false'
-      # Disable npm funding prompt/network hint output to keep CI stderr stable.
-      NPM_CONFIG_FUND: 'false'
       CI: 'true'
     defaults:
       run:
