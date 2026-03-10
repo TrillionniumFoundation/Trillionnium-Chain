@@ -259,8 +259,16 @@ fn validate_gov_param_value(key: &str, value: &str) -> Result<(), String> {
                 ));
             }
 
+            let members: Vec<&str> = trimmed.split(',').collect();
+            if members.len() < 2 {
+                return Err(format!(
+                    "invalid governance value for {}: resolve authority set must include at least two members",
+                    key
+                ));
+            }
+
             let mut seen_lower = std::collections::BTreeSet::new();
-            for member in trimmed.split(',') {
+            for member in members {
                 if member.is_empty() {
                     return Err(format!(
                         "invalid governance value for {}: empty authority member is not allowed",
@@ -2075,15 +2083,19 @@ mod tests {
     #[test]
     fn governance_resolve_authority_rejected_before_timelock_expiry() {
         let mut st = StateStore::new();
-        st.set_gov_param_unchecked(7310, "resolve_authority".into(), "resolver-v1".into())
-            .unwrap();
+        st.set_gov_param_unchecked(
+            7310,
+            "resolve_authority".into(),
+            "resolver-v1,resolver-v2".into(),
+        )
+        .unwrap();
 
         let scheduled = st
             .set_gov_param(
                 10_000,
                 7310,
                 "resolve_authority".into(),
-                "resolver-v2".into(),
+                "resolver-v3,resolver-v4".into(),
             )
             .unwrap();
         let activate_at_height = match scheduled {
@@ -2098,28 +2110,32 @@ mod tests {
                 10_019,
                 7310,
                 "resolve_authority".into(),
-                "resolver-v2".into(),
+                "resolver-v3,resolver-v4".into(),
             )
             .unwrap_err();
         assert!(err.contains("timelock active"));
         assert_eq!(
             st.gov_param_string("resolve_authority"),
-            Some("resolver-v1".into())
+            Some("resolver-v1,resolver-v2".into())
         );
     }
 
     #[test]
     fn governance_resolve_authority_applied_after_timelock() {
         let mut st = StateStore::new();
-        st.set_gov_param_unchecked(7311, "resolve_authority".into(), "resolver-v1".into())
-            .unwrap();
+        st.set_gov_param_unchecked(
+            7311,
+            "resolve_authority".into(),
+            "resolver-v1,resolver-v2".into(),
+        )
+        .unwrap();
 
         let _ = st
             .set_gov_param(
                 11_000,
                 7311,
                 "resolve_authority".into(),
-                "resolver-v2".into(),
+                "resolver-v3,resolver-v4".into(),
             )
             .unwrap();
 
@@ -2128,13 +2144,13 @@ mod tests {
                 11_020,
                 7311,
                 "resolve_authority".into(),
-                "resolver-v2".into(),
+                "resolver-v3,resolver-v4".into(),
             )
             .unwrap();
         assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
         assert_eq!(
             st.gov_param_string("resolve_authority"),
-            Some("resolver-v2".into())
+            Some("resolver-v3,resolver-v4".into())
         );
         assert!(st.pending_gov_update("resolve_authority").is_none());
     }
@@ -2142,8 +2158,12 @@ mod tests {
     #[test]
     fn governance_resolve_authority_rejects_non_canonical_value_without_mutation() {
         let mut st = StateStore::new();
-        st.set_gov_param_unchecked(7312, "resolve_authority".into(), "resolver-v1".into())
-            .unwrap();
+        st.set_gov_param_unchecked(
+            7312,
+            "resolve_authority".into(),
+            "resolver-v1,resolver-v2".into(),
+        )
+        .unwrap();
 
         let err = st
             .set_gov_param(
@@ -2157,7 +2177,7 @@ mod tests {
 
         assert_eq!(
             st.gov_param_string("resolve_authority"),
-            Some("resolver-v1".into())
+            Some("resolver-v1,resolver-v2".into())
         );
         assert!(st.pending_gov_update("resolve_authority").is_none());
     }
@@ -2165,8 +2185,12 @@ mod tests {
     #[test]
     fn governance_resolve_authority_rejects_forbidden_separator_without_mutation() {
         let mut st = StateStore::new();
-        st.set_gov_param_unchecked(7313, "resolve_authority".into(), "resolver-v1".into())
-            .unwrap();
+        st.set_gov_param_unchecked(
+            7313,
+            "resolve_authority".into(),
+            "resolver-v1,resolver-v2".into(),
+        )
+        .unwrap();
 
         let err = st
             .set_gov_param(
@@ -2180,7 +2204,7 @@ mod tests {
 
         assert_eq!(
             st.gov_param_string("resolve_authority"),
-            Some("resolver-v1".into())
+            Some("resolver-v1,resolver-v2".into())
         );
         assert!(st.pending_gov_update("resolve_authority").is_none());
     }
@@ -2188,22 +2212,53 @@ mod tests {
     #[test]
     fn governance_resolve_authority_rejects_non_ascii_without_mutation() {
         let mut st = StateStore::new();
-        st.set_gov_param_unchecked(7314, "resolve_authority".into(), "resolver-v1".into())
-            .unwrap();
+        st.set_gov_param_unchecked(
+            7314,
+            "resolve_authority".into(),
+            "resolver-v1,resolver-v2".into(),
+        )
+        .unwrap();
 
         let err = st
             .set_gov_param(
                 12_000,
                 7314,
                 "resolve_authority".into(),
-                "resolvér-v2".into(),
+                "resolver-a,resolvér-b".into(),
             )
             .unwrap_err();
         assert!(err.contains("ASCII-only") || err.contains("whitespace") || err.contains("separator"));
 
         assert_eq!(
             st.gov_param_string("resolve_authority"),
-            Some("resolver-v1".into())
+            Some("resolver-v1,resolver-v2".into())
+        );
+        assert!(st.pending_gov_update("resolve_authority").is_none());
+    }
+
+    #[test]
+    fn governance_resolve_authority_rejects_single_member_update_without_mutation() {
+        let mut st = StateStore::new();
+        st.set_gov_param_unchecked(
+            7315,
+            "resolve_authority".into(),
+            "resolver-v1,resolver-v2".into(),
+        )
+        .unwrap();
+
+        let err = st
+            .set_gov_param(
+                12_500,
+                7315,
+                "resolve_authority".into(),
+                "resolver-v3".into(),
+            )
+            .expect_err("singleton resolve_authority update must be rejected");
+        assert!(err.contains("at least two members"), "{err}");
+
+        assert_eq!(
+            st.gov_param_string("resolve_authority"),
+            Some("resolver-v1,resolver-v2".into())
         );
         assert!(st.pending_gov_update("resolve_authority").is_none());
     }
@@ -2211,15 +2266,19 @@ mod tests {
     #[test]
     fn governance_resolve_authority_pending_mismatch_behaves_like_sensitive_keys() {
         let mut st = StateStore::new();
-        st.set_gov_param_unchecked(7312, "resolve_authority".into(), "resolver-v1".into())
-            .unwrap();
+        st.set_gov_param_unchecked(
+            7312,
+            "resolve_authority".into(),
+            "resolver-v1,resolver-v2".into(),
+        )
+        .unwrap();
 
         let scheduled = st
             .set_gov_param(
                 12_000,
                 7312,
                 "resolve_authority".into(),
-                "resolver-v2".into(),
+                "resolver-v3,resolver-v4".into(),
             )
             .unwrap();
         assert!(matches!(
@@ -2234,7 +2293,7 @@ mod tests {
                 12_005,
                 7312,
                 "resolve_authority".into(),
-                "resolver-v3".into(),
+                "resolver-v5,resolver-v6".into(),
             )
             .unwrap_err();
         assert!(err_value.contains("pending governance update exists"));
@@ -2244,25 +2303,29 @@ mod tests {
                 12_005,
                 9999,
                 "resolve_authority".into(),
-                "resolver-v2".into(),
+                "resolver-v3,resolver-v4".into(),
             )
             .unwrap_err();
         assert!(err_id.contains("governance key id mismatch for resolve_authority"));
 
         let pending = st.pending_gov_update("resolve_authority").unwrap();
         assert_eq!(pending.key_id, 7312);
-        assert_eq!(pending.value, "resolver-v2");
+        assert_eq!(pending.value, "resolver-v3,resolver-v4");
         assert_eq!(pending.activate_at_height, 12_020);
     }
 
     #[test]
     fn governance_resolve_authority_unchecked_path_rejects_key_id_shadowing() {
         let mut st = StateStore::new();
-        st.set_gov_param_unchecked(7313, "resolve_authority".into(), "resolver-v1".into())
-            .expect("initial unchecked resolve_authority write should succeed");
+        st.set_gov_param_unchecked(
+            7313,
+            "resolve_authority".into(),
+            "resolver-v1,resolver-v2".into(),
+        )
+        .expect("initial unchecked resolve_authority write should succeed");
 
         let err = st
-            .set_gov_param_unchecked(9001, "resolve_authority".into(), "resolver-v2".into())
+            .set_gov_param_unchecked(9001, "resolve_authority".into(), "resolver-v3,resolver-v4".into())
             .expect_err("unchecked key-id shadowing for resolve_authority must be rejected");
         assert!(
             err.contains("governance key id mismatch for resolve_authority"),
@@ -2270,22 +2333,26 @@ mod tests {
         );
         assert_eq!(
             st.gov_param_string("resolve_authority"),
-            Some("resolver-v1".into())
+            Some("resolver-v1,resolver-v2".into())
         );
     }
 
     #[test]
     fn governance_resolve_authority_checked_path_rejects_key_id_shadowing_without_state_mutation() {
         let mut st = StateStore::new();
-        st.set_gov_param_unchecked(7314, "resolve_authority".into(), "resolver-v1".into())
-            .expect("initial resolve_authority write should succeed");
+        st.set_gov_param_unchecked(
+            7314,
+            "resolve_authority".into(),
+            "resolver-v1,resolver-v2".into(),
+        )
+        .expect("initial resolve_authority write should succeed");
 
         let err = st
             .set_gov_param(
                 14_000,
                 9001,
                 "resolve_authority".into(),
-                "resolver-v2".into(),
+                "resolver-v3,resolver-v4".into(),
             )
             .expect_err("checked key-id shadowing for resolve_authority must be rejected");
         assert!(
@@ -2294,7 +2361,7 @@ mod tests {
         );
         assert_eq!(
             st.gov_param_string("resolve_authority"),
-            Some("resolver-v1".into())
+            Some("resolver-v1,resolver-v2".into())
         );
         assert!(
             st.pending_gov_update("resolve_authority").is_none(),
@@ -2305,15 +2372,19 @@ mod tests {
     #[test]
     fn emergency_pause_does_not_mutate_pending_resolve_authority_update() {
         let mut st = StateStore::new();
-        st.set_gov_param_unchecked(7313, "resolve_authority".into(), "resolver-v1".into())
-            .unwrap();
+        st.set_gov_param_unchecked(
+            7313,
+            "resolve_authority".into(),
+            "resolver-v1,resolver-v2".into(),
+        )
+        .unwrap();
 
         let scheduled = st
             .set_gov_param(
                 13_000,
                 7313,
                 "resolve_authority".into(),
-                "resolver-v2".into(),
+                "resolver-v3,resolver-v4".into(),
             )
             .unwrap();
         assert!(matches!(
@@ -2333,7 +2404,7 @@ mod tests {
             .pending_gov_update("resolve_authority")
             .expect("pending resolve_authority update should survive pause toggles");
         assert_eq!(pending.key_id, 7313);
-        assert_eq!(pending.value, "resolver-v2");
+        assert_eq!(pending.value, "resolver-v3,resolver-v4");
         assert_eq!(pending.activate_at_height, 13_020);
 
         let applied = st
@@ -2341,13 +2412,13 @@ mod tests {
                 13_020,
                 7313,
                 "resolve_authority".into(),
-                "resolver-v2".into(),
+                "resolver-v3,resolver-v4".into(),
             )
             .expect("resolve_authority should still activate at original timelock height");
         assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
         assert_eq!(
             st.gov_param_string("resolve_authority"),
-            Some("resolver-v2".into())
+            Some("resolver-v3,resolver-v4".into())
         );
         assert!(st.pending_gov_update("resolve_authority").is_none());
     }

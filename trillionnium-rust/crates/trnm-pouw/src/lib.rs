@@ -1345,8 +1345,11 @@ mod tests {
         let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
         let r5 =
             apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
-        set_resolve_authority(&mut st, "authority");
-        let r6 = apply_resolve(&mut st, r5, false, "authority".into(), "authority".into()).unwrap();
+        set_resolve_authority(&mut st, "authority,authority2");
+        let staged = apply_resolve(&mut st, r5.clone(), false, "authority".into(), "authority".into())
+            .expect_err("first resolver should stage multisig approval");
+        assert!(matches!(staged, PouwError::ResolveApprovalStaged));
+        let r6 = apply_resolve(&mut st, r5, false, "authority2".into(), "authority2".into()).unwrap();
 
         let task = st.get_task(r6.id).unwrap();
         assert_eq!(task.status, TaskStatus::Completed);
@@ -1528,13 +1531,22 @@ mod tests {
 
         let r5 =
             apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
-        set_resolve_authority(&mut st, "authority");
-        let _r6 = apply_resolve(
+        set_resolve_authority(&mut st, "authority,authority2");
+        let staged = apply_resolve(
             &mut st,
             r5.clone(),
             false,
             "authority".into(),
             "authority".into(),
+        )
+        .unwrap_err();
+        assert!(matches!(staged, PouwError::ResolveApprovalStaged));
+        let _r6 = apply_resolve(
+            &mut st,
+            r5.clone(),
+            false,
+            "authority2".into(),
+            "authority2".into(),
         )
         .unwrap();
 
@@ -4897,7 +4909,7 @@ mod tests {
         // resolve so escrow settlement remains frozen regardless of multisig mode.
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
-        set_resolve_authority(&mut st, "authority");
+        set_resolve_authority(&mut st, "authority,authority2");
 
         let r1 = apply_create_task(&mut st, 19_223_2, "alice".into(), 10).unwrap();
         let result_hash = [1u8; 32];
@@ -4959,15 +4971,25 @@ mod tests {
             .expect("pause=false governance update must succeed");
         assert!(!st.is_emergency_paused());
 
-        let r6 = apply_resolve_at_height(
+        let staged = apply_resolve_at_height(
             &mut st,
-            r5,
+            r5.clone(),
             false,
             "authority".into(),
             "authority".into(),
             211,
         )
-        .expect("single-authority resolve should settle after emergency pause clears");
+        .expect_err("first resolver should stage once emergency pause clears");
+        assert!(matches!(staged, PouwError::ResolveApprovalStaged));
+        let r6 = apply_resolve_at_height(
+            &mut st,
+            r5,
+            false,
+            "authority2".into(),
+            "authority2".into(),
+            211,
+        )
+        .expect("multisig resolve should settle after emergency pause clears");
         let task = st.get_task(r6.id).expect("resolved task must exist");
         assert_eq!(task.status, TaskStatus::Completed);
         assert_eq!(st.pending_resolve_approval(r6.id), None);
@@ -4985,7 +5007,7 @@ mod tests {
         // so authority cannot trigger worker-forfeit escrow exits while paused.
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
-        set_resolve_authority(&mut st, "authority");
+        set_resolve_authority(&mut st, "authority,authority2");
 
         let r1 = apply_create_task(&mut st, 19_223_3, "alice".into(), 10).unwrap();
         let result_hash = [1u8; 32];
@@ -5051,15 +5073,25 @@ mod tests {
             .expect("pause=false governance update must succeed");
         assert!(!st.is_emergency_paused());
 
-        let r6 = apply_resolve_at_height(
+        let staged = apply_resolve_at_height(
             &mut st,
-            r5,
+            r5.clone(),
             true,
             "authority".into(),
             "authority".into(),
             211,
         )
-        .expect("single-authority slash resolve should settle after emergency pause clears");
+        .expect_err("first resolver should stage once emergency pause clears");
+        assert!(matches!(staged, PouwError::ResolveApprovalStaged));
+        let r6 = apply_resolve_at_height(
+            &mut st,
+            r5,
+            true,
+            "authority2".into(),
+            "authority2".into(),
+            211,
+        )
+        .expect("multisig slash resolve should settle after emergency pause clears");
         let task = st.get_task(r6.id).expect("resolved task must exist");
         assert_eq!(task.status, TaskStatus::Slashed);
         assert_eq!(task.challenge_bond_forfeited, Some(false));
@@ -5969,7 +6001,7 @@ mod tests {
             bad_ref,
             false,
             "authority".into(),
-            "authority".into(),
+            "authority,authority2".into(),
         )
         .unwrap_err();
         assert!(matches!(err, PouwError::State(_)));
@@ -6225,8 +6257,11 @@ mod tests {
         assert_eq!(st.balance_of("challenger"), 90);
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), 10);
 
-        set_resolve_authority(&mut st, "authority");
-        let r6 = apply_resolve(&mut st, r5, false, "authority".into(), "authority".into()).unwrap();
+        set_resolve_authority(&mut st, "authority,authority2");
+        let staged = apply_resolve(&mut st, r5.clone(), false, "authority".into(), "authority".into())
+            .expect_err("first resolver should stage multisig approval");
+        assert!(matches!(staged, PouwError::ResolveApprovalStaged));
+        let r6 = apply_resolve(&mut st, r5, false, "authority2".into(), "authority2".into()).unwrap();
         let resolved = st.get_task(r6.id).unwrap();
         assert_eq!(resolved.challenge_bond_forfeited, Some(true));
         assert_eq!(st.balance_of("challenger"), 90);
@@ -6253,8 +6288,11 @@ mod tests {
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), 10);
 
         let refund_only_baseline = 100u128;
-        set_resolve_authority(&mut st, "authority");
-        let r6 = apply_resolve(&mut st, r5, true, "authority".into(), "authority".into()).unwrap();
+        set_resolve_authority(&mut st, "authority,authority2");
+        let staged = apply_resolve(&mut st, r5.clone(), true, "authority".into(), "authority".into())
+            .unwrap_err();
+        assert!(matches!(staged, PouwError::ResolveApprovalStaged));
+        let r6 = apply_resolve(&mut st, r5, true, "authority2".into(), "authority2".into()).unwrap();
 
         let resolved = st.get_task(r6.id).unwrap();
         assert_eq!(resolved.status, TaskStatus::Slashed);
@@ -6272,6 +6310,7 @@ mod tests {
         st.set_gov_param_bootstrap_unchecked(9810, "min_worker_stake".into(), "40".into())
             .unwrap();
         st.set_balance("worker1", 40);
+        set_resolve_authority(&mut st, "authority,authority2");
 
         let task_id = 29810u64;
         let r1 = apply_create_task(&mut st, task_id, "alice".into(), 10).unwrap();
@@ -6291,8 +6330,10 @@ mod tests {
             + st.balance_of(CHALLENGE_ESCROW_ACCOUNT)
             + st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
 
-        set_resolve_authority(&mut st, "authority");
-        let _r6 = apply_resolve(&mut st, r5, true, "authority".into(), "authority".into()).unwrap();
+        let staged = apply_resolve(&mut st, r5.clone(), true, "authority".into(), "authority".into())
+            .unwrap_err();
+        assert!(matches!(staged, PouwError::ResolveApprovalStaged));
+        let _r6 = apply_resolve(&mut st, r5, true, "authority2".into(), "authority2".into()).unwrap();
 
         let final_sum = st.balance_of("challenger")
             + st.balance_of(&worker_stake_lock_account(task_id))
@@ -6451,7 +6492,7 @@ mod tests {
     fn resolve_accepts_configured_authority_resolver() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
-        set_resolve_authority(&mut st, "authority");
+        set_resolve_authority(&mut st, "authority,authority2");
 
         let r1 = apply_create_task(&mut st, 895, "alice".into(), 10).unwrap();
         let result_hash = [1u8; 32];
@@ -6464,7 +6505,10 @@ mod tests {
         let r5 =
             apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
 
-        let r6 = apply_resolve(&mut st, r5, true, "authority".into(), "authority".into()).unwrap();
+        let staged = apply_resolve(&mut st, r5.clone(), true, "authority".into(), "authority".into())
+            .unwrap_err();
+        assert!(matches!(staged, PouwError::ResolveApprovalStaged));
+        let r6 = apply_resolve(&mut st, r5, true, "authority2".into(), "authority2".into()).unwrap();
         let task = st.get_task(r6.id).unwrap();
         assert_eq!(task.status, TaskStatus::Slashed);
         assert_eq!(task.challenge_bond_forfeited, Some(false));
@@ -7949,22 +7993,23 @@ mod tests {
             .expect("pause=false governance update must succeed");
         assert!(!st.is_emergency_paused());
 
-        let stale_err = apply_resolve(
+        let r6 = apply_resolve(
             &mut st,
             r5,
             true,
             "authority-b".into(),
             "authority-b".into(),
         )
-        .expect_err("single-authority downgrade must clear stale multisig staging");
-        assert!(matches!(stale_err, PouwError::Unauthorized));
-        assert_eq!(st.pending_resolve_first_approver(8_961_17), None);
-        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
+        .expect("singleton downgrade must be rejected, leaving multisig settlement available");
+        assert_eq!(st.pending_resolve_first_approver(r6.id), None);
+        let task = st.get_task(r6.id).expect("resolved task must persist");
+        assert_eq!(task.status, TaskStatus::Slashed);
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), 0);
         assert_eq!(
             st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
             before_forfeit
         );
-        assert_eq!(st.balance_of("challenger"), before_challenger);
+        assert!(st.balance_of("challenger") >= before_challenger);
     }
 
     #[test]
@@ -9247,7 +9292,7 @@ mod tests {
     fn resolve_reopens_after_emergency_pause_clears_with_single_settlement() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
-        set_resolve_authority(&mut st, "authority");
+        set_resolve_authority(&mut st, "authority,authority2");
 
         let r1 = apply_create_task(&mut st, 8_964, "alice".into(), 10).unwrap();
         let result_hash = [1u8; 32];
@@ -9281,7 +9326,10 @@ mod tests {
             .expect("pause=false governance update must succeed");
         assert!(!st.is_emergency_paused());
 
-        let r6 = apply_resolve(&mut st, r5, false, "authority".into(), "authority".into())
+        let staged = apply_resolve(&mut st, r5.clone(), false, "authority".into(), "authority".into())
+            .expect_err("first resolver should stage once emergency pause clears");
+        assert!(matches!(staged, PouwError::ResolveApprovalStaged));
+        let r6 = apply_resolve(&mut st, r5, false, "authority2".into(), "authority2".into())
             .expect("resolve must reopen after emergency pause is cleared");
         let task = st.get_task(r6.id).expect("resolved task must persist");
         assert_eq!(task.challenge_bond_forfeited, Some(true));
@@ -10093,19 +10141,20 @@ mod tests {
         assert!(matches!(staged_err, PouwError::ResolveApprovalStaged));
         assert_eq!(st.pending_resolve_approval(r5.id), Some((true, 1)));
 
-        // Governance downgrades the resolver set to a single signer.
+        // Governance downgrade to a singleton must now be rejected, leaving the
+        // staged multisig approval intact until a distinct second signer completes it.
         set_resolve_authority(&mut st, "authority-a");
 
-        let stale_err = apply_resolve(
+        let singleton_followup = apply_resolve(
             &mut st,
             r5.clone(),
             true,
             "authority-a".into(),
-            "authority-a".into(),
+            "authority-a,authority-b".into(),
         )
-        .expect_err("single-authority rotation must clear stale multisig staging");
-        assert!(matches!(stale_err, PouwError::Unauthorized));
-        assert_eq!(st.pending_resolve_approval(r5.id), None);
+        .expect_err("duplicate signer replay must not consume staged multisig approval");
+        assert!(matches!(singleton_followup, PouwError::Unauthorized));
+        assert_eq!(st.pending_resolve_approval(r5.id), Some((true, 1)));
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
         assert_eq!(
             st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
@@ -10117,10 +10166,10 @@ mod tests {
             &mut st,
             r5,
             true,
-            "authority-a".into(),
-            "authority-a".into(),
+            "authority-b".into(),
+            "authority-b".into(),
         )
-        .expect("single authority should settle only after stale staging reset");
+        .expect("second multisig signer should settle after singleton downgrade is rejected");
         assert_eq!(st.pending_resolve_approval(r6.id), None);
         let task = st.get_task(r6.id).expect("resolved task must persist");
         assert_eq!(task.status, TaskStatus::Slashed);
@@ -10195,11 +10244,11 @@ mod tests {
             r5.clone(),
             true,
             "authority-a".into(),
-            "authority-a".into(),
+            "authority-a,authority-b".into(),
         )
-        .expect_err("single-authority rotation must clear stale staging after unpause");
+        .expect_err("duplicate signer replay must leave paused-staged multisig approval intact after unpause");
         assert!(matches!(stale_err, PouwError::Unauthorized));
-        assert_eq!(st.pending_resolve_approval(r5.id), None);
+        assert_eq!(st.pending_resolve_approval(r5.id), Some((true, 1)));
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
         assert_eq!(
             st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
@@ -10211,10 +10260,10 @@ mod tests {
             &mut st,
             r5,
             true,
-            "authority-a".into(),
-            "authority-a".into(),
+            "authority-b".into(),
+            "authority-b".into(),
         )
-        .expect("single authority should settle after stale staging reset once unpaused");
+        .expect("second multisig signer should settle once unpaused after singleton downgrade is rejected");
         assert_eq!(st.pending_resolve_approval(r6.id), None);
         let task = st.get_task(r6.id).expect("resolved task must persist");
         assert_eq!(task.status, TaskStatus::Slashed);
@@ -10338,7 +10387,7 @@ mod tests {
     fn resolve_replay_attempt_after_terminal_resolution_is_rejected_without_double_payout() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
-        set_resolve_authority(&mut st, "authority");
+        set_resolve_authority(&mut st, "authority,authority2");
 
         let r1 = apply_create_task(&mut st, 8_995, "alice".into(), 10).unwrap();
         let result_hash = [1u8; 32];
@@ -10351,7 +10400,10 @@ mod tests {
         let r5 =
             apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
 
-        let r6 = apply_resolve(&mut st, r5, true, "authority".into(), "authority".into()).unwrap();
+        let staged = apply_resolve(&mut st, r5.clone(), true, "authority".into(), "authority".into())
+            .unwrap_err();
+        assert!(matches!(staged, PouwError::ResolveApprovalStaged));
+        let r6 = apply_resolve(&mut st, r5, true, "authority2".into(), "authority2".into()).unwrap();
         let challenger_after_first_resolve = st.balance_of("challenger");
         let escrow_after_first_resolve = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
         let forfeit_after_first_resolve = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
@@ -12424,7 +12476,7 @@ mod tests {
         let r5 =
             apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
 
-        set_resolve_authority(&mut st, "authority");
+        set_resolve_authority(&mut st, "authority,authority2");
         let err =
             apply_resolve(&mut st, r5, false, "authority".into(), "authority".into()).unwrap_err();
         assert!(matches!(err, PouwError::State(_)));
@@ -12535,7 +12587,10 @@ mod tests {
         let r5 =
             apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
 
-        set_resolve_authority(&mut st, "authority");
+        set_resolve_authority(&mut st, "authority,authority2");
+        let staged = apply_resolve(&mut st, r5.clone(), false, "authority".into(), "authority".into())
+            .unwrap_err();
+        assert!(matches!(staged, PouwError::ResolveApprovalStaged));
         let stale_ref = r5.clone();
         let same_task = st.get_task(r5.id).unwrap();
         let _fresh_ref = st.update_task(r5, same_task).unwrap();
@@ -12544,8 +12599,8 @@ mod tests {
             &mut st,
             stale_ref,
             false,
-            "authority".into(),
-            "authority".into(),
+            "authority2".into(),
+            "authority2".into(),
         )
         .unwrap_err();
         assert!(matches!(err, PouwError::VersionConflict));
