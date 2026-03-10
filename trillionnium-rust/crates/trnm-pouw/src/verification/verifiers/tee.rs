@@ -79,6 +79,9 @@ impl ProofVerifier for TeeVerifier {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::verification::backend::{
+        BackendExecutionError, BackendVerificationSuccess, ZkBackend,
+    };
     use trnm_types::{ProofType, TaskObject, TaskStatus};
 
     fn mock_task() -> TaskObject {
@@ -106,6 +109,61 @@ mod tests {
         }
     }
 
+    struct MockTeeSuccessBackend;
+    impl ZkBackend for MockTeeSuccessBackend {
+        fn backend_id(&self) -> &str {
+            "mock-tee"
+        }
+
+        fn verify(
+            &self,
+            request: BackendVerificationRequest<'_>,
+        ) -> Result<BackendVerificationSuccess, BackendExecutionError> {
+            assert_eq!(request.family, VerificationBackendFamily::Tee);
+            assert_eq!(request.task.task_id, 42);
+            assert!(request.zk_payload.is_none());
+            Ok(BackendVerificationSuccess {
+                backend_id: self.backend_id().into(),
+            })
+        }
+    }
+
+    struct MockTeeInvalidBackend;
+    impl ZkBackend for MockTeeInvalidBackend {
+        fn backend_id(&self) -> &str {
+            "mock-tee-invalid"
+        }
+
+        fn verify(
+            &self,
+            request: BackendVerificationRequest<'_>,
+        ) -> Result<BackendVerificationSuccess, BackendExecutionError> {
+            assert_eq!(request.family, VerificationBackendFamily::Tee);
+            Err(BackendExecutionError::InvalidProof {
+                backend: request.backend_label(self.backend_id()),
+                reason: "mock tee backend rejected proof".to_string(),
+            })
+        }
+    }
+
+    struct MockTeeUnavailableBackend;
+    impl ZkBackend for MockTeeUnavailableBackend {
+        fn backend_id(&self) -> &str {
+            "mock-tee-unavailable"
+        }
+
+        fn verify(
+            &self,
+            request: BackendVerificationRequest<'_>,
+        ) -> Result<BackendVerificationSuccess, BackendExecutionError> {
+            assert_eq!(request.family, VerificationBackendFamily::Tee);
+            Err(BackendExecutionError::Unavailable {
+                backend: request.backend_label(self.backend_id()),
+                reason: "mock tee backend unavailable".to_string(),
+            })
+        }
+    }
+
     #[test]
     fn tee_verifier_requires_cryptographic_backend_after_bound_envelope_validation() {
         let verifier = TeeVerifier::default();
@@ -118,6 +176,63 @@ mod tests {
             ),
             VerificationResult::Indeterminate(msg)
                 if msg.contains("cryptographic verification backend not configured")
+        ));
+    }
+
+    #[test]
+    fn tee_verifier_valid_receipt_path_with_mock_backend() {
+        let mut backends = ZkBackendRegistry::new();
+        backends.register(Arc::new(MockTeeSuccessBackend));
+        let verifier = TeeVerifier::new(
+            ZkBackendKind::Custom("mock-tee".into()),
+            Arc::new(backends),
+        );
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,quote=abc"
+            ),
+            VerificationResult::Valid
+        ));
+    }
+
+    #[test]
+    fn tee_verifier_invalid_receipt_path_with_mock_backend() {
+        let mut backends = ZkBackendRegistry::new();
+        backends.register(Arc::new(MockTeeInvalidBackend));
+        let verifier = TeeVerifier::new(
+            ZkBackendKind::Custom("mock-tee-invalid".into()),
+            Arc::new(backends),
+        );
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,quote=abc"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("mock tee backend rejected proof")
+        ));
+    }
+
+    #[test]
+    fn tee_verifier_backend_unavailable_maps_to_indeterminate() {
+        let mut backends = ZkBackendRegistry::new();
+        backends.register(Arc::new(MockTeeUnavailableBackend));
+        let verifier = TeeVerifier::new(
+            ZkBackendKind::Custom("mock-tee-unavailable".into()),
+            Arc::new(backends),
+        );
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,quote=abc"
+            ),
+            VerificationResult::Indeterminate(msg) if msg.contains("mock tee backend unavailable")
         ));
     }
 
