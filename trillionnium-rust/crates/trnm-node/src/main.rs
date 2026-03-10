@@ -1447,7 +1447,7 @@ fn pick_txs_with_critical_guard(
     // long normal queue can never enter the fairness gate and is effectively
     // starved until the prefix drains.
     let mut lane = LaneAdmissionGate::new(mempool.len(), 1);
-    let mut selected_pos = vec![None; mempool.len()];
+    let mempool_len = mempool.len();
     for (idx, tx) in mempool.iter().enumerate() {
         let class = if is_critical_tx(tx) {
             IngressClass::Critical
@@ -1457,28 +1457,21 @@ fn pick_txs_with_critical_guard(
         let _ = lane.admit(idx as u64, class);
     }
 
-    let mut admit_order = 0usize;
-    while admit_order < txs_per_block {
+    let mut selected = Vec::with_capacity(txs_per_block);
+    while selected.len() < txs_per_block {
         let Some(id) = lane.pop_ready() else {
             break;
         };
         let idx = id as usize;
-        if idx < selected_pos.len() {
-            selected_pos[idx] = Some(admit_order);
-            admit_order += 1;
+        if idx < mempool_len {
+            selected.push((idx, selected.len()));
         }
     }
 
-    let mut picked_slots: Vec<Option<MockTx>> = (0..admit_order).map(|_| None).collect();
-    let mut selected_indices_desc = Vec::with_capacity(admit_order);
-    for (idx, pos) in selected_pos.into_iter().enumerate() {
-        if let Some(pos) = pos {
-            selected_indices_desc.push((idx, pos));
-        }
-    }
-    selected_indices_desc.sort_unstable_by(|(lhs, _), (rhs, _)| rhs.cmp(lhs));
+    let mut picked_slots: Vec<Option<MockTx>> = (0..selected.len()).map(|_| None).collect();
+    selected.sort_unstable_by(|(lhs, _), (rhs, _)| rhs.cmp(lhs));
 
-    for (idx, pos) in selected_indices_desc {
+    for (idx, pos) in selected {
         let tx = mempool
             .remove(idx)
             .expect("selected tx index must still exist during descending extraction");
