@@ -54,6 +54,42 @@ impl VerificationBackendKind {
             Self::Custom(key) => key.as_str(),
         }
     }
+
+    pub fn normalized_key(&self) -> String {
+        self.key().trim().to_ascii_lowercase()
+    }
+
+    pub fn system_hint(&self) -> Option<String> {
+        backend_system_hint(self.key())
+    }
+}
+
+fn normalize_backend_token(raw: &str) -> Option<String> {
+    let normalized = raw
+        .trim()
+        .to_ascii_lowercase()
+        .chars()
+        .map(|ch| if ch.is_ascii_alphanumeric() { ch } else { ' ' })
+        .collect::<String>();
+    let collapsed = normalized.split_whitespace().collect::<Vec<_>>().join(" ");
+    if collapsed.is_empty() {
+        None
+    } else {
+        Some(collapsed)
+    }
+}
+
+pub fn backend_system_hint(raw: &str) -> Option<String> {
+    let normalized = normalize_backend_token(raw)?;
+    let mut parts = normalized.split_whitespace();
+    let first = parts.next()?;
+    let second = parts.next();
+
+    match (first, second) {
+        ("zk", Some(system)) | ("tee", Some(system)) => Some(system.to_string()),
+        (system, _) if system != "noop" => Some(system.to_string()),
+        _ => None,
+    }
 }
 
 /// Back-compat alias kept because current verification wiring and tests already
@@ -184,6 +220,88 @@ impl ParsedZkProofPayload {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ResolvedVkRef {
+    pub vk_ref: String,
+    pub scope: String,
+}
+
+#[derive(Debug, Error, Clone, PartialEq, Eq)]
+pub enum VkRefResolutionError {
+    #[error("invalid zk payload: vk_ref is required")]
+    Missing,
+    #[error("invalid zk payload: unknown vk_ref '{vk_ref}'")]
+    Unknown { vk_ref: String },
+}
+
+impl VkRefResolutionError {
+    pub fn into_backend_execution_error(self) -> BackendExecutionError {
+        match self {
+            Self::Missing => BackendExecutionError::MalformedProof {
+                backend: "zk:payload".to_string(),
+                reason: "invalid zk payload: vk_ref is required".to_string(),
+            },
+            Self::Unknown { vk_ref } => BackendExecutionError::InvalidProof {
+                backend: "zk:payload".to_string(),
+                reason: format!("invalid zk payload: unknown vk_ref '{vk_ref}'"),
+            },
+        }
+    }
+}
+
+pub trait VkRefResolver: Send + Sync {
+    fn resolve(&self, vk_ref: &str) -> Result<ResolvedVkRef, VkRefResolutionError>;
+}
+
+#[derive(Default)]
+pub struct VkRefRegistry {
+    entries: HashMap<String, ResolvedVkRef>,
+}
+
+impl VkRefRegistry {
+    pub fn new() -> Self {
+        let mut registry = Self {
+            entries: HashMap::new(),
+        };
+        registry.register_demo_dev_defaults();
+        registry
+    }
+
+    pub fn register(&mut self, resolved: ResolvedVkRef) {
+        self.entries
+            .insert(resolved.vk_ref.trim().to_ascii_lowercase(), resolved);
+    }
+
+    fn register_demo_dev_defaults(&mut self) {
+        for vk_ref in [
+            "vk://trnm/dev/mock-groth16/v1",
+            "vk://trnm/dev/mock-groth16/valid",
+            "vk://trnm/dev/mock-groth16/invalid",
+        ] {
+            self.register(ResolvedVkRef {
+                vk_ref: vk_ref.to_string(),
+                scope: "dev".to_string(),
+            });
+        }
+    }
+}
+
+impl VkRefResolver for VkRefRegistry {
+    fn resolve(&self, vk_ref: &str) -> Result<ResolvedVkRef, VkRefResolutionError> {
+        let normalized = vk_ref.trim();
+        if normalized.is_empty() {
+            return Err(VkRefResolutionError::Missing);
+        }
+
+        self.entries
+            .get(&normalized.to_ascii_lowercase())
+            .cloned()
+            .ok_or_else(|| VkRefResolutionError::Unknown {
+                vk_ref: normalized.to_string(),
+            })
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct BackendVerificationRequest<'a> {
     pub family: VerificationBackendFamily,
     pub task: &'a TaskObject,
@@ -251,6 +369,26 @@ impl BackendExecutionError {
             Self::InvalidProof { .. } => VerificationErrorClass::Invalid,
             Self::MalformedProof { .. } => VerificationErrorClass::Malformed,
             Self::Internal { .. } => VerificationErrorClass::BackendError,
+        }
+    }
+
+    pub fn backend(&self) -> &str {
+        match self {
+            Self::NotConfigured { backend }
+            | Self::InvalidProof { backend, .. }
+            | Self::Unavailable { backend, .. }
+            | Self::MalformedProof { backend, .. }
+            | Self::Internal { backend, .. } => backend,
+        }
+    }
+
+    pub fn reason(&self) -> Option<&str> {
+        match self {
+            Self::NotConfigured { .. } => None,
+            Self::InvalidProof { reason, .. }
+            | Self::Unavailable { reason, .. }
+            | Self::MalformedProof { reason, .. }
+            | Self::Internal { reason, .. } => Some(reason),
         }
     }
 }
@@ -356,10 +494,11 @@ pub fn parse_zk_proof_payload(
     task: &TaskObject,
     proof_data: &[u8],
 ) -> Result<ParsedZkProofPayload, BackendExecutionError> {
-    let raw = std::str::from_utf8(proof_data).map_err(|_| BackendExecutionError::MalformedProof {
-        backend: "zk:payload".to_string(),
-        reason: "invalid zk payload: proof envelope is not valid utf-8".to_string(),
-    })?;
+    let raw =
+        std::str::from_utf8(proof_data).map_err(|_| BackendExecutionError::MalformedProof {
+            backend: "zk:payload".to_string(),
+            reason: "invalid zk payload: proof envelope is not valid utf-8".to_string(),
+        })?;
     let body = raw
         .strip_prefix("ZK:")
         .or_else(|| raw.strip_prefix("zk:"))
@@ -408,10 +547,7 @@ pub fn parse_zk_proof_payload(
         });
     }
     if payload.vk_ref.trim().is_empty() {
-        return Err(BackendExecutionError::MalformedProof {
-            backend: "zk:payload".to_string(),
-            reason: "invalid zk payload: vk_ref is required".to_string(),
-        });
+        return Err(VkRefResolutionError::Missing.into_backend_execution_error());
     }
     if payload.proof.trim().is_empty() {
         return Err(BackendExecutionError::MalformedProof {
@@ -603,6 +739,24 @@ mod tests {
         let err = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"base64","proof":"!!!","public_inputs":{"order":["task_id"]"#).unwrap_err();
         assert!(
             matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("canonical JSON object"))
+        );
+    }
+
+    #[test]
+    fn resolve_zk_vk_ref_rejects_unknown_vk_ref_fail_closed() {
+        let task = mock_task();
+        let payload = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","vk_ref":"vk://trnm/dev/mock-groth16/unknown","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","worker","result_hash"],"values":["4242","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#).unwrap();
+        let resolver = VkRefRegistry::new();
+
+        let err = resolve_zk_vk_ref(&resolver, &payload).unwrap_err();
+
+        assert_eq!(
+            err,
+            BackendExecutionError::InvalidProof {
+                backend: "zk:payload".into(),
+                reason: "invalid zk payload: unknown vk_ref 'vk://trnm/dev/mock-groth16/unknown'"
+                    .into(),
+            }
         );
     }
 }
