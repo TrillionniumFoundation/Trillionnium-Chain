@@ -5,6 +5,14 @@
 - 目标：把 TRNM 的 ZKP 从当前“fail-closed 壳”推进为**可插拔、多 backend 的验证平台骨架**
 - 适用边界：当前仓内 PoUW / Verification 路径，尤其是 `ProofType::Zk` 的验证入口与回执语义
 
+> 入口约定（防止专题文档彼此漂移）：
+> - 当前是否 release-ready：看仓库根 `RELEASE_READINESS.md`
+> - 开发排期 / owner / lane 调度：看 `docs/development/DEVELOPMENT_MASTER_UNIFIED_2026-03-04.md`
+> - benchmark closeout / micro→system bridge：看 `docs/reports/TRNM_WEEK7_E2E_CLOSEOUT_BENCHMARK_SYSTEM_2026-03-10.md`
+> - 并发瓶颈图 / 8 周路线 / 当前并发 closeout 真相源：看 `docs/reports/TRNM_CONCURRENCY_BOTTLENECK_MAP_AND_8W_ROADMAP_2026-03-10.md`
+>
+> 本文只负责 **ZKP 平台架构与契约冻结**；若出现“ready / GO / 已具备生产 ZK 后端”之类解读，以 `RELEASE_READINESS.md` 当前口径为准。
+
 ---
 
 ## 1. 背景与冻结目标

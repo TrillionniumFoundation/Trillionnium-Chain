@@ -7,6 +7,14 @@
 > 1. 明确 TRNM 当前并发架构的真实瓶颈  
 > 2. 给出与 Solana / Sui 对标时最该优先追的工程方向  
 > 3. 形成未来 8 周可拆解、可验收、可回滚的技术路线图
+>
+> 入口约定（避免 architecture / reports / development 互相越权）：
+> - 当前是否 release-ready：看仓库根 `RELEASE_READINESS.md`
+> - 开发排期 / lane 调度 / 下一步执行：看 `docs/development/DEVELOPMENT_MASTER_UNIFIED_2026-03-04.md`
+> - ZKP 平台专题真相源：看 `docs/architecture/TRNM_ZKP_PLATFORM_V0.md`
+> - benchmark closeout 方法、统一产物与 micro→system bridge：看 `docs/reports/TRNM_WEEK7_E2E_CLOSEOUT_BENCHMARK_SYSTEM_2026-03-10.md`
+>
+> 本文负责 **并发瓶颈判断、对外并发 closeout 口径、8 周路线**；若只需要 benchmark 方法，不要把本文当成 benchmark closeout 细节手册。
 
 ---
 
