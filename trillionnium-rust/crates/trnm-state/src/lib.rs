@@ -3903,8 +3903,6 @@ mod tests {
     #[test]
     fn state_root_changes_when_pending_resolve_task_version_changes() {
         let mut st_a = StateStore::new();
-<<<<<<< HEAD
-<<<<<<< HEAD
         st_a.stage_or_confirm_resolve_approval(
             501,
             1,
@@ -3913,18 +3911,10 @@ mod tests {
             "authority-a,authority-b",
         )
         .unwrap();
-=======
-=======
->>>>>>> 3cdcc0ae (perf: cache stable state_root results)
-        st_a.stage_or_confirm_resolve_approval(501, true, "authority-a", "authority-a,authority-b")
-            .unwrap();
->>>>>>> 3cdcc0ae (perf: cache stable state_root results)
 
         let mut st_b = StateStore::new();
         st_b.stage_or_confirm_resolve_approval(
             501,
-<<<<<<< HEAD
-<<<<<<< HEAD
             2,
             true,
             "authority-a",
@@ -3955,10 +3945,6 @@ mod tests {
         st_b.stage_or_confirm_resolve_approval(
             501,
             1,
-=======
->>>>>>> 3cdcc0ae (perf: cache stable state_root results)
-=======
->>>>>>> 3cdcc0ae (perf: cache stable state_root results)
             true,
             "authority-a",
             "authority-a,authority-b,authority-c",
