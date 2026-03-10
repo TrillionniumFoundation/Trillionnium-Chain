@@ -148,81 +148,28 @@ trait ZkpBackend {
 
 ## 5. Proof payload / public input 规范
 
-## 5.1 平台 canonical request
-对所有 `zk` 验证请求，Router 在进入 backend 前必须先形成同一形状的 canonical request：
+本章只保留平台层摘要；**字段级协议真相源**已经拆分到：
 
-```json
-{
-  "task_id": 123,
-  "proof_type": "zk",
-  "worker": "worker1",
-  "result_hash": "0x…32bytes",
-  "zk_system": "groth16",
-  "backend_id": "local-groth16-bn254",
-  "backend_version": "v1",
-  "proof_format": "base64",
-  "proof_blob": "...",
-  "public_inputs": ["..."],
-  "vk_ref": "vk://trnm/zk/groth16/main/v1",
-  "meta": {
-    "schema_version": "trnm.zk.payload.v0",
-    "circuit_id": "settlement-result-v1"
-  }
-}
-```
+- `docs/protocol/zk-proof-payload-public-input-v0.md`
 
-## 5.2 必填字段
-对 `zk` 路径，以下字段为 v0 必填：
+Router / backend 实现涉及 payload 形状、`public_inputs` 顺序、编码、`vk_ref` 与 binding 约束时，必须以该协议文档为准。
 
-- `task_id`
-- `proof_type`，固定为 `zk`
-- `zk_system`
-- `proof_blob`
-- `proof_format`
-- `public_inputs`
-- `meta.schema_version`
+## 5.1 平台层要求（摘要）
 
-以下字段为**条件必填**：
+对所有 `zk` 验证请求：
 
-- `worker`：当任务上下文中存在 worker 绑定时必填
-- `result_hash`：当任务上下文要求对 reveal 结果绑定时必填
-- `backend_id`：当开启显式 backend 选择时必填，否则可由配置默认补全
-- `vk_ref`：对需要 verification key / image id / method id 的系统必填
+1. Router 在进入 backend 前必须先形成 canonical request。
+2. Envelope 与 cryptographic payload 必须分离校验。
+3. `task_id / proof_type / worker / result_hash` 必须在平台层完成 fail-closed 绑定校验。
+4. `public_inputs` 的**顺序、编码、最小绑定集**不是 backend 私有约定，而是平台协议的一部分。
+5. `vk_ref` 是审计保留字段，backend 不得静默改写或忽略。
 
-## 5.3 Public inputs canonicalization
-`public_inputs` 的平台语义冻结如下：
+## 5.2 架构与协议分工
 
-1. **顺序敏感**：位置就是语义的一部分，不允许后端自由重排
-2. **字符串承载**：v0 统一以字符串数组表达，避免 JSON number 精度歧义
-3. **编码必须显式**：
-   - field element → 十进制字符串或 `0x` 十六进制字符串
-   - bytes32 → `0x` 前缀十六进制字符串
-   - address / id → 小写 canonical 字符串
-4. **绑定字段必须可重建**：`task_id / worker / result_hash / proof_type` 必须能从 public inputs 或等价 statement 中重建
+- 本架构文档负责：平台分层、抽象边界、错误分类、feature flag、兼容策略
+- 协议文档负责：canonical payload shape、`public_inputs.order/values`、字段编码、`vk_ref` 引用规则、`task_id/worker/result_hash/proof_type` binding
 
-## 5.4 Binding 规范
-平台要求 ZK statement 至少绑定以下最小集合：
-
-- `task_id`
-- `proof_type = zk`
-- `worker`（如上下文存在）
-- `result_hash`（如上下文存在）
-
-若某 proving system 无法直接把这些字段暴露为 public inputs，则必须通过：
-
-- statement digest
-- journal / receipt public output
-- verifier image + committed output
-
-提供**等价可验证绑定**。否则视为 `malformed`。
-
-## 5.5 Envelope 与 cryptographic payload 分离
-v0 明确区分：
-
-- **Envelope**：平台字段、binding、schema_version、backend selector、vk_ref
-- **Cryptographic payload**：proof blob、seal、receipt、journal、public inputs raw encoding
-
-平台先验证 envelope，再把 cryptographic payload 送给 backend。
+若未来代码实现与协议文档冲突，应先评审协议版本变更（例如新增 `trnm.zk.payload.v1`），不得在实现里静默漂移。
 
 ---
 
