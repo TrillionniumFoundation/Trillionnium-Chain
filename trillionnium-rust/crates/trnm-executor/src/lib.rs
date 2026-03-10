@@ -151,10 +151,10 @@ fn intersects(x: &[ObjectRef], y: &[ObjectRef]) -> bool {
         return false;
     }
 
-    // Medium-small skew path: for 5..=8 unique keys against a larger domain, avoid
-    // HashSet allocation and probe linearly. This keeps hot conflict checks in stack-
-    // local vectors under common transfer-vs-wide-read workloads.
-    if small.len() <= 8 && large.len() >= 16 {
+    // Medium-small skew path: for 5..=8 keys against a moderately larger domain,
+    // avoid HashSet allocation and probe linearly. Once domains grow beyond this
+    // range, fall back to the HashSet path below to avoid repeated full scans.
+    if small.len() <= 8 && (16..=64).contains(&large.len()) {
         let mut keys: Vec<u64> = Vec::with_capacity(small.len());
         for a in small {
             let key = access_key(a);
@@ -1129,6 +1129,24 @@ mod tests {
         assert!(!detect_conflict(
             &small_write,
             &tx(3, wide_read_miss, vec![])
+        ));
+    }
+
+    #[test]
+    fn medium_small_vs_very_large_conflict_path_preserves_semantics() {
+        let small_write = tx(1, vec![], vec![o(901), o(902), o(903), o(904), o(905)]);
+        let mut very_wide_read_hit: Vec<ObjectRef> = (1..=256).map(|id| o(30_000 + id)).collect();
+        very_wide_read_hit.push(o(904));
+        let very_wide_read_miss: Vec<ObjectRef> =
+            (1..=256).map(|id| o(40_000 + id)).collect();
+
+        assert!(detect_conflict(
+            &small_write,
+            &tx(2, very_wide_read_hit, vec![])
+        ));
+        assert!(!detect_conflict(
+            &small_write,
+            &tx(3, very_wide_read_miss, vec![])
         ));
     }
 
