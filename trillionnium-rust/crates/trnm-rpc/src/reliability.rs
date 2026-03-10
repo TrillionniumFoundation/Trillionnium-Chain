@@ -778,21 +778,30 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
             };
 
             let mut dispatched_for_session = 0usize;
-            session.pending.retain(|ack_id, item| {
-                if item.next_retry_at_unix_ms > now_unix_ms {
-                    return true;
-                }
+            let mut due_ack_ids = Vec::with_capacity(MAX_DUE_RETRIES_PER_SESSION_PER_COLLECT);
 
-                // Keep each collect cycle bounded under sustained ingress so retry
-                // scanning itself does not become a backpressure hotspot.
+            // Collect only as many due keys as we can dispatch in this round. This
+            // avoids full-map retain scans on hot sessions once per-session/global
+            // dispatch budgets are exhausted.
+            for (ack_id, item) in &session.pending {
                 if out.len() >= MAX_DUE_RETRIES_PER_COLLECT {
-                    return true;
+                    break;
                 }
-
-                // Prevent one hot session from monopolizing a collect cycle.
                 if dispatched_for_session >= MAX_DUE_RETRIES_PER_SESSION_PER_COLLECT {
-                    return true;
+                    break;
                 }
+                if item.next_retry_at_unix_ms > now_unix_ms {
+                    continue;
+                }
+                due_ack_ids.push(ack_id.clone());
+                dispatched_for_session = dispatched_for_session.saturating_add(1);
+            }
+
+            let mut exhausted_ack_ids = Vec::new();
+            for ack_id in due_ack_ids {
+                let Some(item) = session.pending.get_mut(&ack_id) else {
+                    continue;
+                };
 
                 if item.attempts >= self.retry.max_attempts {
                     exhausted_in_this_round = exhausted_in_this_round.saturating_add(1);
@@ -801,7 +810,8 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
                         ack_id, item.attempts
                     );
                     self.increment_retry_exhausted_total();
-                    return false;
+                    exhausted_ack_ids.push(ack_id);
+                    continue;
                 }
 
                 item.attempts = item.attempts.saturating_add(1);
@@ -812,9 +822,11 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
                 );
                 item.next_retry_at_unix_ms = now_unix_ms.saturating_add(delay as u128);
                 out.push(item.clone());
-                dispatched_for_session = dispatched_for_session.saturating_add(1);
-                true
-            });
+            }
+
+            for ack_id in exhausted_ack_ids {
+                session.pending.remove(&ack_id);
+            }
 
             if session.pending.is_empty() && self.store.should_remove_empty_session_immediately() {
                 self.store.remove_session(sid);
