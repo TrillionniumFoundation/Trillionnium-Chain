@@ -68,6 +68,8 @@ jobs:
       PIP_DISABLE_PIP_VERSION_CHECK: "1"
       # Suppress pip interpreter lifecycle warning chatter for deterministic logs.
       PIP_NO_PYTHON_VERSION_WARNING: "1"
+      # Disable dynamic pip progress rendering to keep stderr/stdout stable.
+      PIP_PROGRESS_BAR: "off"
       CARGO_TERM_COLOR: never
       CARGO_INCREMENTAL: "0"
       # Reduce transient crates.io/index fetch flakes during RC gate runs.
