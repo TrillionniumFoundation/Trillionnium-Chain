@@ -68,3 +68,18 @@ fn reserve_only_borrowed_normal_ingress_preserves_cross_class_idempotency_until_
     assert_eq!(gate.pop_ready(), Some(30));
     assert_eq!(gate.admit(30, IngressClass::Critical), AdmitOutcome::Accepted);
 }
+
+#[test]
+fn reserve_only_critical_ingress_preserves_cross_class_idempotency_until_drain() {
+    let mut gate = LaneAdmissionGate::new(2, 2);
+
+    // Critical ingress occupies reserve-only capacity directly.
+    assert_eq!(gate.admit(50, IngressClass::Critical), AdmitOutcome::Accepted);
+
+    // Same tx retried via normal class must still dedupe while queued.
+    assert_eq!(gate.admit(50, IngressClass::Normal), AdmitOutcome::Duplicate);
+
+    // After drain, cross-class retry should be fresh/admissible again.
+    assert_eq!(gate.pop_ready(), Some(50));
+    assert_eq!(gate.admit(50, IngressClass::Normal), AdmitOutcome::Accepted);
+}
