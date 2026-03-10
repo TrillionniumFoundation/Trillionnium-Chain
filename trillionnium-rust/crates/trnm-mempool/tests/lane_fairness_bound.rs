@@ -60,3 +60,20 @@ fn mixed_batch_after_full_drain_still_grants_normal_turn_within_one_pop() {
     let second = gate.pop_ready();
     assert!(first == Some(2) || second == Some(2));
 }
+
+#[test]
+fn reserve_only_borrowed_normal_does_not_preempt_already_queued_critical() {
+    let mut gate = LaneAdmissionGate::new(3, 3);
+
+    assert_eq!(gate.admit(900, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(901, IngressClass::Critical), AdmitOutcome::Accepted);
+
+    // In reserve-only mode, normal ingress borrows critical headroom.
+    assert_eq!(gate.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+
+    // Anti-starvation must not invert priority here: pre-existing critical work
+    // should still drain first.
+    assert_eq!(gate.pop_ready(), Some(900));
+    assert_eq!(gate.pop_ready(), Some(901));
+    assert_eq!(gate.pop_ready(), Some(1));
+}
