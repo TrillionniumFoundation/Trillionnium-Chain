@@ -18,3 +18,21 @@ fn saturated_lane_preserves_duplicate_vs_backpressure_contract() {
     assert!(drained == Some(10) || drained == Some(11));
     assert_eq!(gate.admit(12, IngressClass::Critical), AdmitOutcome::Accepted);
 }
+
+#[test]
+fn reserve_only_saturated_lane_keeps_borrowed_duplicate_classification() {
+    let mut gate = LaneAdmissionGate::new(2, 2);
+
+    // Reserve-only mode: normal ingress borrows critical headroom.
+    assert_eq!(gate.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(2, IngressClass::Critical), AdmitOutcome::Accepted);
+
+    // Under saturation, the borrowed id must still be globally deduped across
+    // classes instead of being downgraded to Backpressured.
+    assert_eq!(gate.admit(1, IngressClass::Critical), AdmitOutcome::Duplicate);
+    assert_eq!(gate.admit(3, IngressClass::Normal), AdmitOutcome::Backpressured);
+
+    // Once one slot drains, the previously fresh id can enter.
+    assert!(matches!(gate.pop_ready(), Some(1) | Some(2)));
+    assert_eq!(gate.admit(3, IngressClass::Critical), AdmitOutcome::Accepted);
+}
