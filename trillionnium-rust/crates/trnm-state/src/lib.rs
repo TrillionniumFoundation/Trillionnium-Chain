@@ -280,6 +280,12 @@ fn validate_gov_param_value(key: &str, value: &str) -> Result<(), String> {
                         key
                     ));
                 }
+                if member.chars().any(|c| c.is_control()) {
+                    return Err(format!(
+                        "invalid governance value for {}: control characters are not allowed",
+                        key
+                    ));
+                }
                 if !member.is_ascii() {
                     return Err(format!(
                         "invalid governance value for {}: must contain ASCII-only account ids",
@@ -3381,6 +3387,8 @@ mod tests {
             "authority；authority2",
             "authority，authority2",
             "authority、authority2",
+            "authority\u{0000}x",
+            "authority,\u{0007}authority2",
         ]
         .iter()
         .enumerate()
