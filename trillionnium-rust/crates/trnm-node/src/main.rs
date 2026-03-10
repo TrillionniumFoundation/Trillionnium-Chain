@@ -1424,7 +1424,11 @@ fn pick_txs_with_critical_guard(
         return mempool.drain(..).collect();
     }
 
-    let mut lane = LaneAdmissionGate::new(txs_per_block, 1);
+    // Selection fairness should consider the full queued backlog, not only the
+    // first block-sized prefix. Otherwise a critical tx that arrives behind a
+    // long normal queue can never enter the fairness gate and is effectively
+    // starved until the prefix drains.
+    let mut lane = LaneAdmissionGate::new(mempool.len(), 1);
     let mut selected_pos = vec![None; mempool.len()];
     for (idx, tx) in mempool.iter().enumerate() {
         let class = if is_critical_tx(tx) {
@@ -2240,15 +2244,20 @@ mod tests {
                 task_id: 1,
                 worker: "w1".into(),
             },
-            MockTx::Challenge {
-                task_id: 1,
-                challenger: "c1".into(),
-                bond: 10,
-            },
             MockTx::Commit {
                 task_id: 1,
                 worker: "w1".into(),
                 committed_hash: [3u8; 32],
+            },
+            MockTx::CreateTask {
+                task_id: 2,
+                creator: "bob".into(),
+                bounty: 20,
+            },
+            MockTx::Challenge {
+                task_id: 1,
+                challenger: "c1".into(),
+                bond: 10,
             },
             MockTx::Resolve {
                 task_id: 1,
@@ -2259,7 +2268,10 @@ mod tests {
 
         let picked = pick_txs_with_critical_guard(&mut mempool, 2);
         assert_eq!(picked.len(), 2);
-        assert!(picked.iter().any(is_critical_tx));
+        assert!(matches!(picked[0], MockTx::Challenge { .. }));
+        assert!(matches!(picked[1], MockTx::CreateTask { task_id: 1, .. }));
+        assert_eq!(mempool.len(), 4);
+        assert!(mempool.iter().any(|tx| matches!(tx, MockTx::Resolve { .. })));
     }
 
     #[test]
