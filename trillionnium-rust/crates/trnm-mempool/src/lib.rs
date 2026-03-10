@@ -150,8 +150,21 @@ impl LaneAdmissionGate {
         // that case, trust lane-local seen sets and repair lane-wide cache inline.
         let mut is_duplicate = self.seen_global.contains(&tx_id);
         if is_duplicate {
-            let queue_contains =
-                self.normal.queue.contains(&tx_id) || self.critical.queue.contains(&tx_id);
+            let in_normal_seen = self.normal.seen.contains(&tx_id);
+            let in_critical_seen = self.critical.seen.contains(&tx_id);
+
+            // Duplicate probes are hot under replay pressure. Narrow queue probes to
+            // lanes that claim membership instead of always scanning both queues.
+            let queue_contains = if in_normal_seen && in_critical_seen {
+                self.normal.queue.contains(&tx_id) || self.critical.queue.contains(&tx_id)
+            } else if in_normal_seen {
+                self.normal.queue.contains(&tx_id)
+            } else if in_critical_seen {
+                self.critical.queue.contains(&tx_id)
+            } else {
+                self.normal.queue.contains(&tx_id) || self.critical.queue.contains(&tx_id)
+            };
+
             if !queue_contains {
                 // Defensive self-heal: restored-state skew can preserve cardinality while
                 // leaving stale ids in lane-wide/lane-local caches. Queue membership is
