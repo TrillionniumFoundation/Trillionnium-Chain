@@ -1,7 +1,7 @@
 # TRNM Week 7 E2E Closeout / 对标口径 / Benchmark 体系
 
-> 日期：2026-03-10  
-> 目标：把 classic / mixed / hot-streak 的 micro-bench，桥接到更真实的系统链路指标；同时冻结可复现命令、统一结果产物、硬件/窗口/口径说明。  
+> 日期：2026-03-10
+> 目标：把 classic / mixed / hot-streak 的 micro-bench，桥接到更真实的系统链路指标；同时冻结可复现命令、统一结果产物、硬件/窗口/口径说明。
 > 状态：Week 7 closeout v1（先收口方法、产物、字段；不把 micro 数字冒充链级 TPS）
 
 ---

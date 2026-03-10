@@ -1,11 +1,11 @@
 # TRNM 并发架构瓶颈图与 8 周技术路线图
 
-> 日期：2026-03-10  
-> 基线：当前仓库 `main` 快照 `0b209289`（截至本文收口时 `origin/main` 同步）  
-> 口径：本文是**并发 closeout / 8 周路线 truth-source**；当前是否 release-ready 仍以仓库根 `RELEASE_READINESS.md` 为准。  
+> 日期：2026-03-10
+> 基线：当前仓库 `main` 快照 `0b209289`（截至本文收口时 `origin/main` 同步）
+> 口径：本文是**并发 closeout / 8 周路线 truth-source**；当前是否 release-ready 仍以仓库根 `RELEASE_READINESS.md` 为准。
 > 目的：
-> 1. 明确 TRNM 当前并发架构的真实瓶颈  
-> 2. 给出与 Solana / Sui 对标时最该优先追的工程方向  
+> 1. 明确 TRNM 当前并发架构的真实瓶颈
+> 2. 给出与 Solana / Sui 对标时最该优先追的工程方向
 > 3. 形成未来 8 周可拆解、可验收、可回滚的技术路线图
 
 ---

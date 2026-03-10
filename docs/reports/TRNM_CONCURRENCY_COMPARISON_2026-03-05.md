@@ -1,8 +1,8 @@
 # TRNM vs Solana vs Sui 并发架构对比说明（对外审阅版）
 
-> 日期：2026-03-05（2026-03-10 口径复核）  
-> 范围：并发执行/冲突处理架构对比；TRNM 采用仓内最新 bench 证据（classic / mixed / hot-streak）  
-> 基线：当前仓库 `main` 快照 `0b209289`；本文是**对外对标口径文档**，不承担 release-ready 判定。  
+> 日期：2026-03-05（2026-03-10 口径复核）
+> 范围：并发执行/冲突处理架构对比；TRNM 采用仓内最新 bench 证据（classic / mixed / hot-streak）
+> 基线：当前仓库 `main` 快照 `0b209289`；本文是**对外对标口径文档**，不承担 release-ready 判定。
 > 说明：本文不改业务代码，仅做证据归纳与路线建议。
 
 ---
@@ -14,11 +14,11 @@
 > - 当前并发瓶颈图与 8 周路线：`docs/reports/TRNM_CONCURRENCY_BOTTLENECK_MAP_AND_8W_ROADMAP_2026-03-10.md`
 > - 本文只回答“TRNM 相对 Solana / Sui 现在处在什么位置、该怎么说”，不回答“今天能不能发布”。
 
-1. **TRNM 当前微基准（micro-bench）在高冲突场景下可稳定完成分组，耗时集中在 33–46ms（20k tx）区间**，表现出“冲突越高、组数越多，但耗时并未线性恶化”的特征。  
+1. **TRNM 当前微基准（micro-bench）在高冲突场景下可稳定完成分组，耗时集中在 33–46ms（20k tx）区间**，表现出“冲突越高、组数越多，但耗时并未线性恶化”的特征。
 2. **策略层（original / aggressive-greedy / footprint-desc / hot-bucket-interleave）在最新数据中收益不显著，甚至部分策略退化**：
    - 最新回归矩阵中 `aggressive-greedy` 对 `original` 的差异：classic 平均 **+0.6ms**，mixed **+2.6ms**，hot-streak **-0.8ms**（基本同级）。
    - 历史完整策略对比中，`hot-bucket-interleave` 在 mixed 反而约 **+7~8ms** 慢于 original。
-3. **TRNM 的优势**在于“可解释的冲突画像 + 稳定分组基线 + 可复现实验链路”；**短板**在于“尚未形成端到端 TPS（含共识/网络/持久化）口径闭环”，因此与 Solana/Sui 的公开 TPS 不能直接同表比较。  
+3. **TRNM 的优势**在于“可解释的冲突画像 + 稳定分组基线 + 可复现实验链路”；**短板**在于“尚未形成端到端 TPS（含共识/网络/持久化）口径闭环”，因此与 Solana/Sui 的公开 TPS 不能直接同表比较。
 4. **4 周追平路线**建议聚焦三件事：
    - 建立 E2E TPS 基准面（P50/P95/P99、最终性延迟、回滚/重试率）；
    - 将 scheduler 优化从“策略名义切换”升级为“冲突画像驱动 + 自适应”；
@@ -40,9 +40,9 @@
 
 来自：`bench-regression-matrix-20260304-200728.csv`
 
-- **classic**：groups 从 10（keys=2000）到 200（keys=100），elapsed_ms 33–35。  
-- **mixed**：groups 从 41（keys=2000）到 669（keys=100），elapsed_ms 34–46。  
-- **hot-streak**：groups 从 579（keys=2000）到 6002（keys=100），elapsed_ms 35–46。  
+- **classic**：groups 从 10（keys=2000）到 200（keys=100），elapsed_ms 33–35。
+- **mixed**：groups 从 41（keys=2000）到 669（keys=100），elapsed_ms 34–46。
+- **hot-streak**：groups 从 579（keys=2000）到 6002（keys=100），elapsed_ms 35–46。
 
 解读：
 - workload 从 classic → mixed → hot-streak，冲突形态逐步恶化，**组数显著上升**；
@@ -133,14 +133,14 @@ E2E TPS 至少应包含：
 
 ## 4.1 当前优势
 
-1. **基线稳定**：在 20k tx 回归中，classic/mixed/hot-streak 耗时均在 33–46ms 区间。  
-2. **冲突建模能力强**：可通过 keys、write_every、read_fanout、workload 快速构造压力画像。  
+1. **基线稳定**：在 20k tx 回归中，classic/mixed/hot-streak 耗时均在 33–46ms 区间。
+2. **冲突建模能力强**：可通过 keys、write_every、read_fanout、workload 快速构造压力画像。
 3. **工程可复现**：已有 matrix/sweep/strategy 对照脚本与批量输出产物。
 
 ## 4.2 当前短板
 
-1. **策略收益不确定**：替代策略多数仅与 baseline 持平或退化。  
-2. **对外口径不足**：缺乏可持续更新的 E2E TPS 看板（含延迟分位与最终性）。  
+1. **策略收益不确定**：替代策略多数仅与 baseline 持平或退化。
+2. **对外口径不足**：缺乏可持续更新的 E2E TPS 看板（含延迟分位与最终性）。
 3. **跨链对标叙事缺口**：尚不能回答“同等硬件/同等负载下，TRNM 到底落后多少、差在哪一段链路”。
 
 ## 4.3 4 周追平路线（文档与评测口径优先）
@@ -168,7 +168,7 @@ E2E TPS 至少应包含：
 
 ## 5. 对外沟通建议（避免误导）
 
-1. 不直接用 micro-bench 的 `tx/elapsed_ms` 宣称链级 TPS。  
+1. 不直接用 micro-bench 的 `tx/elapsed_ms` 宣称链级 TPS。
 2. 明确区分：
    - 执行内核能力（scheduler/executor）
    - 系统吞吐能力（consensus+network+storage）
