@@ -135,6 +135,19 @@ fn reject_if_deadline_exceeded_optional(
     Ok(())
 }
 
+fn is_ignorable_proof_payload_char(c: char) -> bool {
+    c.is_whitespace()
+        || matches!(
+            c,
+            '\u{feff}' // BOM
+                | '\u{200b}' // ZERO WIDTH SPACE
+                | '\u{200c}' // ZERO WIDTH NON-JOINER
+                | '\u{200d}' // ZERO WIDTH JOINER
+                | '\u{2060}' // WORD JOINER
+                | '\u{180e}' // MONGOLIAN VOWEL SEPARATOR
+        )
+}
+
 fn actor_id_has_hidden_or_zero_width_chars(token: &str) -> bool {
     token.chars().any(|c| {
         matches!(
@@ -846,11 +859,7 @@ pub fn apply_reveal_result_at_height(
         let proof_payload_is_blank = proof_payload.is_empty()
             || proof_payload.iter().all(|b| b.is_ascii_whitespace())
             || std::str::from_utf8(proof_payload)
-                .map(|payload| {
-                    payload
-                        .trim_matches(|c: char| c.is_whitespace() || c == '\u{feff}')
-                        .is_empty()
-                })
+                .map(|payload| payload.trim_matches(is_ignorable_proof_payload_char).is_empty())
                 .unwrap_or(false);
         if proof_payload_is_blank {
             return Err(PouwError::State(format!(
@@ -14881,7 +14890,7 @@ mod tests {
     }
 
     #[test]
-    fn utf8_bom_only_tee_proof_payload_rejects_reveal_fail_closed_without_state_mutation() {
+    fn word_joiner_only_tee_proof_payload_rejects_reveal_fail_closed_without_state_mutation() {
         let mut st = seeded_state();
         let r1 = apply_create_task(&mut st, 7026, "alice".into(), 10).unwrap();
 
@@ -14892,6 +14901,38 @@ mod tests {
         let result_hash = [7u8; 32];
         let reveal_salt = [8u8; 32];
         let committed = compute_commitment(7026, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1_updated, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+
+        let err = apply_reveal_result(
+            &mut st,
+            r3.clone(),
+            result_hash,
+            reveal_salt,
+            Some("\u{2060}".as_bytes().to_vec()),
+        )
+        .unwrap_err();
+
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("missing proof payload")));
+
+        let task_after = st.get_task(r3.id).unwrap();
+        assert_eq!(task_after.status, TaskStatus::Committed);
+        assert!(task_after.result_hash.is_none());
+    }
+
+    #[test]
+    fn utf8_bom_only_tee_proof_payload_rejects_reveal_fail_closed_without_state_mutation() {
+        let mut st = seeded_state();
+        let r1 = apply_create_task(&mut st, 7027, "alice".into(), 10).unwrap();
+
+        let mut task = st.get_task(r1.id).unwrap();
+        task.proof_type = ProofType::Tee;
+        let r1_updated = st.update_task(r1, task).unwrap();
+
+        let result_hash = [7u8; 32];
+        let reveal_salt = [8u8; 32];
+        let committed = compute_commitment(7027, &result_hash, &reveal_salt, "worker1");
 
         let r2 = apply_accept_task(&mut st, r1_updated, "worker1".into()).unwrap();
         let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
