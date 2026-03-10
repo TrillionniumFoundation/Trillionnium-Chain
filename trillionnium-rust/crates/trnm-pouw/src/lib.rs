@@ -15402,4 +15402,64 @@ mod tests {
         );
         assert_eq!(st.balance_of("challenger"), before_challenger);
     }
+
+    #[test]
+    fn challenged_resolve_rejects_case_variant_duplicate_authority_members_without_escrow_drift() {
+        // Decentralization hardening: governance resolver sets must reject
+        // case-variant duplicate members, so one actor cannot satisfy the
+        // staged + final approval path by casing tricks.
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        set_resolve_authority(&mut st, "Authority,authority");
+
+        let r1 = apply_create_task(&mut st, 8_961_26, "alice".into(), 10).unwrap();
+        let result_hash = [5u8; 32];
+        let reveal_salt = [6u8; 32];
+        let committed = compute_commitment(8_961_26, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+        let r5 = apply_challenge_at_height(
+            &mut st,
+            r4,
+            "challenger".into(),
+            10,
+            "challenger".into(),
+            100,
+        )
+        .unwrap();
+
+        let before_task = st.get_task(r5.id).unwrap();
+        let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+        let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+        let before_challenger = st.balance_of("challenger");
+
+        let err = apply_resolve_at_height(
+            &mut st,
+            r5,
+            false,
+            "authority".into(),
+            "authority".into(),
+            311,
+        )
+        .expect_err("case-variant duplicate resolver members must fail closed");
+        assert!(matches!(err, PouwError::Unauthorized));
+
+        let after_task = st
+            .get_task(8_961_26)
+            .expect("task must remain challenged after duplicate-authority rejection");
+        assert_eq!(after_task.status, before_task.status);
+        assert_eq!(
+            after_task.challenge_bond_forfeited,
+            before_task.challenge_bond_forfeited
+        );
+        assert_eq!(st.pending_resolve_approval(8_961_26), None);
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
+        assert_eq!(st.balance_of("challenger"), before_challenger);
+    }
 }
