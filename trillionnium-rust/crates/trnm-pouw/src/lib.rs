@@ -9720,6 +9720,7 @@ mod tests {
         let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
         let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
         let before_challenger = st.balance_of("challenger");
+        let before_total = before_escrow + before_forfeit + before_challenger;
 
         let staged_err = apply_resolve(
             &mut st,
@@ -9796,6 +9797,13 @@ mod tests {
         assert_eq!(
             st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
             before_forfeit + 10
+        );
+        let after_total = st.balance_of("challenger")
+            + st.balance_of(CHALLENGE_ESCROW_ACCOUNT)
+            + st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+        assert_eq!(
+            after_total, before_total,
+            "slash=false rotation/unpause resolve must conserve challenger+escrow+forfeit totals"
         );
     }
 
