@@ -1905,7 +1905,6 @@ mod tests {
     }
 
     #[test]
-    fn tee_reveal_rejects_matching_legacy_committed_result_hash_binding_fail_closed_before_verification() {
     fn tee_reveal_rejects_matching_legacy_committed_result_hash_binding_fail_closed_before_verification(
     ) {
         let mut st = seeded_state();
