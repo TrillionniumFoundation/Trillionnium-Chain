@@ -10615,6 +10615,7 @@ mod tests {
         )
         .expect("second multisig signer should settle once unpaused after singleton downgrade is rejected");
         assert_eq!(st.pending_resolve_approval(r6.id), None);
+        assert_eq!(st.pending_resolve_first_approver(r6.id), None);
         let task = st.get_task(r6.id).expect("resolved task must persist");
         assert_eq!(task.status, TaskStatus::Slashed);
         assert_eq!(task.challenge_bond_forfeited, Some(false));
