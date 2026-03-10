@@ -77,3 +77,23 @@ fn reserve_only_borrowed_normal_does_not_preempt_already_queued_critical() {
     assert_eq!(gate.pop_ready(), Some(901));
     assert_eq!(gate.pop_ready(), Some(1));
 }
+
+#[test]
+fn sustained_critical_pressure_with_normal_backlog_keeps_normal_latency_bounded() {
+    let mut gate = LaneAdmissionGate::new(8, 3);
+
+    // Build mixed backlog where normal traffic arrives while critical traffic stays active.
+    assert_eq!(gate.admit(100, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(101, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(102, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+
+    // Contract: once fairness is warm under active critical pressure, normal backlog
+    // should receive service within at most one additional dequeue.
+    let p1 = gate.pop_ready();
+    let p2 = gate.pop_ready();
+    assert!(matches!((p1, p2),
+        (Some(1), _) | (_, Some(1)) | (Some(2), _) | (_, Some(2))
+    ));
+}
