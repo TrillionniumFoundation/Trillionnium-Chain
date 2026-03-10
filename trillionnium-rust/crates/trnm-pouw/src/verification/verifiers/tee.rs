@@ -416,6 +416,21 @@ mod tests {
     }
 
     #[test]
+    fn tee_verifier_rejects_fullwidth_underscore_worker_identifier_spoof_fail_closed() {
+        let verifier = TeeVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                "TEE:task_id=42,work＿er=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,quote=abc"
+                    .as_bytes()
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("missing worker binding")
+        ));
+    }
+
+    #[test]
     fn tee_verifier_rejects_worker_case_mismatch() {
         let verifier = TeeVerifier;
         let task = mock_task();
