@@ -5,7 +5,7 @@ use trnm_types::{Hash32, ObjectRef, ProofType, TaskMetadata, TaskObject, TaskSta
 
 pub mod verification;
 use verification::registry::VerifierRegistry;
-use verification::VerificationResult;
+use verification::{emit_proof_verification_observation, VerificationResult};
 
 fn get_default_registry() -> VerifierRegistry {
     VerifierRegistry::with_builtin_verifiers()
@@ -878,6 +878,15 @@ pub fn apply_reveal_result_at_height(
         verification_task.proof_type = task.proof_type;
         verification_task.result_hash = Some(result_hash);
         let verification = registry.verify(&verification_task, proof_payload);
+        let _ = emit_proof_verification_observation(
+            &verification_task,
+            &verification,
+            format!(
+                "builtin-{}-verifier",
+                verification::proof_type_key(verification_task.proof_type)
+            ),
+            proof_payload.len(),
+        );
         match verification {
             VerificationResult::Valid => {
                 // Immediate finality for verifiable execution.
