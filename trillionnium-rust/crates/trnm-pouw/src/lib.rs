@@ -1536,7 +1536,12 @@ mod tests {
             let mut st = seeded_state();
             st.set_balance("worker1", 10);
             st.set_balance("challenger", 1_000);
-            st.set_gov_param_bootstrap_unchecked(9_801 + i as u64, "resolve_authority".into(), "resolver1".into()).unwrap();
+            st.set_gov_param_bootstrap_unchecked(
+                9_801 + i as u64,
+                "resolve_authority".into(),
+                "resolver1,resolver2".into(),
+            )
+            .unwrap();
             let task_id = 21_500 + i as u64;
             let r1 = apply_create_task(&mut st, task_id, "alice".into(), 10).unwrap();
             let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
