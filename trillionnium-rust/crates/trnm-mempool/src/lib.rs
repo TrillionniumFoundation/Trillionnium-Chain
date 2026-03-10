@@ -319,11 +319,15 @@ impl LaneAdmissionGate {
             && !self.normal.queue.is_empty();
 
         let (id, served_critical) = if prefer_normal {
-            if let Some(id) = self.normal.pop_ready() {
-                (id, false)
-            } else {
-                (self.critical.pop_ready()?, true)
-            }
+            // prefer_normal is only true when normal queue is known non-empty.
+            // Use that invariant directly to avoid an extra branch on the hot
+            // dequeue path during fairness-enforced alternation windows.
+            (
+                self.normal
+                    .pop_ready()
+                    .expect("prefer_normal requires non-empty normal queue"),
+                false,
+            )
         } else if let Some(id) = self.critical.pop_ready() {
             (id, true)
         } else {
