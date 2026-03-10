@@ -2648,6 +2648,35 @@ mod tests {
     }
 
     #[test]
+    fn critical_guard_zero_block_budget_is_noop_and_preserves_queue_order() {
+        let mut mempool = VecDeque::from(vec![
+            MockTx::CreateTask {
+                task_id: 1,
+                creator: "alice".into(),
+                bounty: 10,
+            },
+            MockTx::Challenge {
+                task_id: 1,
+                challenger: "c1".into(),
+                bond: 10,
+            },
+            MockTx::AcceptTask {
+                task_id: 1,
+                worker: "w1".into(),
+            },
+        ]);
+
+        let picked = pick_txs_with_critical_guard(&mut mempool, 0);
+        assert!(picked.is_empty());
+
+        let remaining_task_ids: Vec<u64> = mempool.iter().map(task_id_of).collect();
+        assert_eq!(remaining_task_ids, vec![1, 1, 1]);
+        assert!(matches!(mempool[0], MockTx::CreateTask { .. }));
+        assert!(matches!(mempool[1], MockTx::Challenge { .. }));
+        assert!(matches!(mempool[2], MockTx::AcceptTask { .. }));
+    }
+
+    #[test]
     fn critical_guard_selection_respects_lane_fairness_pop_order() {
         let mut mempool = VecDeque::from(vec![
             MockTx::CreateTask {
