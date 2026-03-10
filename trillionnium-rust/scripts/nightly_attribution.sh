@@ -25,7 +25,8 @@ MIXED_HARD_MS="${BENCH_MIXED_MAX_MS:-$MIXED_HARD_DEFAULT}"
 
 TS="$(date +%Y%m%d-%H%M%S)"
 OUT_DIR="run/health"
-OUT="$OUT_DIR/nightly-attribution-$TS.txt"
+OUT="${NIGHTLY_ATTRIBUTION_OUT:-$OUT_DIR/nightly-attribution-$TS.txt}"
+OUT_DIR="$(dirname "$OUT")"
 mkdir -p "$OUT_DIR"
 
 latest_audit="$(ls -1dt run/audit/state-root-audit-*.txt 2>/dev/null | head -n 1 || true)"
