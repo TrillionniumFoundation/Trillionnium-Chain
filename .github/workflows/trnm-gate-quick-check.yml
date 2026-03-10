@@ -58,6 +58,9 @@ jobs:
       # Keep locale-derived personal-name formatting deterministic for any
       # helper that emits operator identity fields in evidence artifacts.
       LC_NAME: C
+      # Keep locale-driven telephone formatting deterministic for any helper
+      # that serializes operator contact fields into evidence outputs.
+      LC_TELEPHONE: C
       # Freeze Python hash randomization so set/dict iteration in shell-driven
       # regression scripts stays deterministic across CI re-runs.
       PYTHONHASHSEED: "0"
