@@ -21,8 +21,8 @@ use rand::{rngs::StdRng, SeedableRng};
 
 use crate::verification::backend::{
     parse_zk_proof_payload, BackendExecutionError, BackendVerificationRequest,
-    VerificationBackendConfig, VerificationBackendError, VerificationBackendFamily,
-    VerificationErrorClass, ZkBackendKind, ZkBackendRegistry,
+    ParsedZkProofPayload, VerificationBackendConfig, VerificationBackendError,
+    VerificationBackendFamily, VerificationErrorClass, ZkBackendKind, ZkBackendRegistry,
 };
 use crate::verification::{ProofVerifier, VerificationResult};
 use trnm_types::TaskObject;
@@ -40,6 +40,9 @@ fn expected_zk_system_for_backend(backend_id: &str) -> Option<&'static str> {
     }
     if normalized == DEMO_BACKEND_ID || normalized.starts_with("mock-zk") {
         return Some("groth16");
+    }
+    if normalized.starts_with("mock-plonk") {
+        return Some("plonk");
     }
     None
 }
@@ -411,6 +414,71 @@ impl ZkVerifier {
         }
     }
 
+    fn backend_system_for_kind(kind: &ZkBackendKind) -> Option<&'static str> {
+        match kind {
+            ZkBackendKind::Custom(id) => expected_zk_system_for_backend(id),
+            ZkBackendKind::Noop => None,
+        }
+    }
+
+    fn should_attempt_backend_fallback(err: &VerificationBackendError) -> bool {
+        matches!(
+            err,
+            VerificationBackendError::Selection(_)
+                | VerificationBackendError::Execution(BackendExecutionError::NotConfigured { .. })
+                | VerificationBackendError::Execution(BackendExecutionError::Unavailable { .. })
+        )
+    }
+
+    fn can_fallback_to(
+        &self,
+        primary: &ZkBackendKind,
+        fallback: &ZkBackendKind,
+        payload: Option<&ParsedZkProofPayload>,
+    ) -> bool {
+        if primary == fallback || matches!(fallback, ZkBackendKind::Noop) {
+            return false;
+        }
+        let payload_system = payload
+            .and_then(|payload| payload.zk_system.as_deref())
+            .map(str::trim)
+            .filter(|raw| !raw.is_empty());
+        let primary_system = Self::backend_system_for_kind(primary).or(payload_system);
+        let fallback_system = Self::backend_system_for_kind(fallback).or(payload_system);
+        matches!((primary_system, fallback_system), (Some(a), Some(b)) if a.eq_ignore_ascii_case(b))
+    }
+
+    fn verify_with_backend_kind(
+        &self,
+        selected_backend: &ZkBackendKind,
+        task: &TaskObject,
+        proof_data: &[u8],
+        zk_payload: Option<&ParsedZkProofPayload>,
+    ) -> Result<(), VerificationBackendError> {
+        if matches!(selected_backend, ZkBackendKind::Custom(id) if id.eq_ignore_ascii_case(DEMO_BACKEND_ID))
+        {
+            let proof_hex = zk_payload
+                .map(|payload| payload.proof.trim())
+                .filter(|proof| !proof.is_empty())
+                .ok_or_else(|| BackendExecutionError::InvalidProof {
+                    backend: format!("zk:{DEMO_BACKEND_ID}"),
+                    reason: "Invalid ZK proof envelope: missing proof binding".to_string(),
+                })?;
+            return verify_demo_backend(task, proof_hex);
+        }
+
+        let backend = self
+            .backends
+            .resolve(VerificationBackendFamily::Zk, selected_backend)?;
+        backend.verify(BackendVerificationRequest {
+            family: VerificationBackendFamily::Zk,
+            task,
+            proof_data,
+            zk_payload,
+        })?;
+        Ok(())
+    }
+
     fn verify_backend(
         &self,
         task: &TaskObject,
@@ -529,29 +597,26 @@ impl ZkVerifier {
             self.backend.clone()
         };
 
-        if matches!(&selected_backend, ZkBackendKind::Custom(id) if id.eq_ignore_ascii_case(DEMO_BACKEND_ID))
-        {
-            let proof_hex = zk_payload
-                .as_ref()
-                .map(|payload| payload.proof.trim())
-                .filter(|proof| !proof.is_empty())
-                .ok_or_else(|| BackendExecutionError::InvalidProof {
-                    backend: format!("zk:{DEMO_BACKEND_ID}"),
-                    reason: "Invalid ZK proof envelope: missing proof binding".to_string(),
-                })?;
-            return verify_demo_backend(task, proof_hex);
-        }
-
-        let backend = self
-            .backends
-            .resolve(VerificationBackendFamily::Zk, &selected_backend)?;
-        backend.verify(BackendVerificationRequest {
-            family: VerificationBackendFamily::Zk,
+        match self.verify_with_backend_kind(
+            &selected_backend,
             task,
             proof_data,
-            zk_payload: zk_payload.as_ref(),
-        })?;
-        Ok(())
+            zk_payload.as_ref(),
+        ) {
+            Ok(()) => Ok(()),
+            Err(err)
+                if flags.zk_allow_backend_fallback
+                    && Self::should_attempt_backend_fallback(&err)
+                    && self.can_fallback_to(
+                        &selected_backend,
+                        &self.backend,
+                        zk_payload.as_ref(),
+                    ) =>
+            {
+                self.verify_with_backend_kind(&self.backend, task, proof_data, zk_payload.as_ref())
+            }
+            Err(err) => Err(err),
+        }
     }
 }
 
@@ -636,6 +701,22 @@ mod tests {
             assert_eq!(payload.public_inputs.values[0], "99");
             assert_eq!(payload.worker, "worker-zk");
             assert_eq!(payload.vk_ref, "vk://trnm/dev/mock-groth16/v1");
+            Ok(BackendVerificationSuccess {
+                backend_id: self.backend_id().into(),
+            })
+        }
+    }
+
+    struct MockPlonkSuccessBackend;
+    impl ZkBackend for MockPlonkSuccessBackend {
+        fn backend_id(&self) -> &str {
+            "mock-plonk-success"
+        }
+        fn verify(
+            &self,
+            request: BackendVerificationRequest<'_>,
+        ) -> Result<BackendVerificationSuccess, BackendExecutionError> {
+            assert_eq!(request.family, VerificationBackendFamily::Zk);
             Ok(BackendVerificationSuccess {
                 backend_id: self.backend_id().into(),
             })
@@ -837,6 +918,59 @@ mod tests {
             verifier.verify_proof(&task, payload),
             VerificationResult::Invalid(msg)
                 if msg.contains("malformed:") && msg.contains("mock zk payload malformed downstream")
+        ));
+    }
+
+    #[test]
+    fn zk_verifier_fallback_disabled_does_not_silently_retry_configured_backend() {
+        let mut backends = ZkBackendRegistry::new();
+        backends.register(Arc::new(MockSuccessBackend));
+        backends.register(Arc::new(MockUnavailableBackend));
+        let mut config = router_config();
+        config.zk_backend = ZkBackendKind::Custom("mock-zk".into());
+        config.zk_features.zk_allow_backend_fallback = false;
+        let verifier = ZkVerifier::from_config(&config, Arc::new(backends));
+        let task = mock_task();
+        let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"mock-zk-unavailable","backend_version":"v1","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","worker","result_hash"],"values":["99","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]},"meta":{"schema_version":"trnm.zk.payload.v0"}}"#;
+        assert!(matches!(
+            verifier.verify_proof(&task, payload),
+            VerificationResult::Indeterminate(msg)
+                if msg.contains("unavailable:") && msg.contains("mock zk backend unavailable")
+        ));
+    }
+
+    #[test]
+    fn zk_verifier_fallback_enabled_retries_same_system_configured_backend() {
+        let mut backends = ZkBackendRegistry::new();
+        backends.register(Arc::new(MockSuccessBackend));
+        backends.register(Arc::new(MockUnavailableBackend));
+        let mut config = router_config();
+        config.zk_backend = ZkBackendKind::Custom("mock-zk".into());
+        config.zk_features.zk_allow_backend_fallback = true;
+        let verifier = ZkVerifier::from_config(&config, Arc::new(backends));
+        let task = mock_task();
+        let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"mock-zk-unavailable","backend_version":"v1","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","worker","result_hash"],"values":["99","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]},"meta":{"schema_version":"trnm.zk.payload.v0"}}"#;
+        assert_eq!(
+            verifier.verify_proof(&task, payload),
+            VerificationResult::Valid
+        );
+    }
+
+    #[test]
+    fn zk_verifier_fallback_enabled_does_not_cross_zk_systems() {
+        let mut backends = ZkBackendRegistry::new();
+        backends.register(Arc::new(MockUnavailableBackend));
+        backends.register(Arc::new(MockPlonkSuccessBackend));
+        let mut config = router_config();
+        config.zk_backend = ZkBackendKind::Custom("mock-plonk-success".into());
+        config.zk_features.zk_allow_backend_fallback = true;
+        let verifier = ZkVerifier::from_config(&config, Arc::new(backends));
+        let task = mock_task();
+        let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"mock-zk-unavailable","backend_version":"v1","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","worker","result_hash"],"values":["99","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]},"meta":{"schema_version":"trnm.zk.payload.v0"}}"#;
+        assert!(matches!(
+            verifier.verify_proof(&task, payload),
+            VerificationResult::Indeterminate(msg)
+                if msg.contains("unavailable:") && msg.contains("mock zk backend unavailable")
         ));
     }
 
