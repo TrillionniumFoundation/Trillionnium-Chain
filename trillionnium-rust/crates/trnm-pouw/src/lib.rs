@@ -135,6 +135,110 @@ fn reject_if_deadline_exceeded_optional(
     Ok(())
 }
 
+fn actor_id_has_hidden_or_zero_width_chars(token: &str) -> bool {
+    token.chars().any(|c| {
+        matches!(
+            c,
+            '\u{00ad}'
+                | '\u{034f}'
+                | '\u{061c}'
+                | '\u{115f}'
+                | '\u{1160}'
+                | '\u{17b4}'
+                | '\u{17b5}'
+                | '\u{180e}'
+                | '\u{200b}'
+                | '\u{200c}'
+                | '\u{200d}'
+                | '\u{200e}'
+                | '\u{200f}'
+                | '\u{202a}'
+                | '\u{202b}'
+                | '\u{202c}'
+                | '\u{202d}'
+                | '\u{202e}'
+                | '\u{2060}'
+                | '\u{2061}'
+                | '\u{2062}'
+                | '\u{2063}'
+                | '\u{2064}'
+                | '\u{2066}'
+                | '\u{2067}'
+                | '\u{2068}'
+                | '\u{2069}'
+                | '\u{206a}'
+                | '\u{206b}'
+                | '\u{206c}'
+                | '\u{206d}'
+                | '\u{206e}'
+                | '\u{206f}'
+                | '\u{3164}'
+                | '\u{fe00}'..='\u{fe0f}'
+                | '\u{feff}'
+                | '\u{ffa0}'
+        )
+    })
+}
+
+fn actor_id_has_forbidden_separator_alias(token: &str) -> bool {
+    token.chars().any(|c| {
+        matches!(
+            c,
+            ','
+                | ';'
+                | ':'
+                | '|'
+                | '/'
+                | '\\'
+                | '，'
+                | '；'
+                | '：'
+                | '｜'
+                | '／'
+                | '＼'
+                | '、'
+                | '﹐'
+                | '﹑'
+                | '﹔'
+                | '﹕'
+                | '︐'
+                | '︔'
+                | '︓'
+                | '⼁'
+                | '∕'
+                | '⁄'
+                | '╱'
+                | '╲'
+        )
+    })
+}
+
+fn is_canonical_actor_id(token: &str) -> bool {
+    !token.is_empty()
+        && token == token.trim()
+        && token.is_ascii()
+        && !token.chars().any(|c| c.is_whitespace())
+        && !token.chars().any(|c| c.is_control())
+        && !actor_id_has_hidden_or_zero_width_chars(token)
+        && !actor_id_has_forbidden_separator_alias(token)
+}
+
+fn require_canonical_actor_id(token: &str) -> Result<(), PouwError> {
+    if is_canonical_actor_id(token) {
+        Ok(())
+    } else {
+        Err(PouwError::Unauthorized)
+    }
+}
+
+fn require_canonical_actor_id_state(token: &str, field_name: &str) -> Result<(), PouwError> {
+    if is_canonical_actor_id(token) {
+        Ok(())
+    } else {
+        Err(PouwError::State(format!("non-canonical {}", field_name)))
+    }
+}
+
 fn ceil_mul_div(value: u128, numerator: u128, denominator: u128) -> u128 {
     if value == 0 || numerator == 0 {
         return 0;
@@ -472,10 +576,7 @@ pub fn apply_create_task_with_metadata(
 ) -> Result<ObjectRef, PouwError> {
     // Boundary hardening: creator account id must be canonical and non-blank
     // before task object is persisted into state.
-    let creator_trimmed = creator.trim();
-    if creator_trimmed.is_empty() || creator_trimmed != creator {
-        return Err(PouwError::Unauthorized);
-    }
+    require_canonical_actor_id(&creator)?;
 
     let task = TaskObject {
         task_id,
@@ -525,10 +626,7 @@ pub fn apply_accept_task_at_height(
 
     // Gate hardening: enforce canonical worker account ids at assignment so
     // malformed payloads cannot lock stake under blank/whitespace variants.
-    let worker_trimmed = worker.trim();
-    if worker_trimmed.is_empty() || worker_trimmed != worker {
-        return Err(PouwError::Unauthorized);
-    }
+    require_canonical_actor_id(&worker)?;
 
     let min_worker_stake = st
         .gov_param_u128("min_worker_stake")
@@ -703,13 +801,10 @@ pub fn apply_reveal_result_at_height(
     }
 
     let worker = task.worker.clone().ok_or(PouwError::MissingWorker)?;
-    let worker_trimmed = worker.trim();
-    if worker_trimmed.is_empty() || worker_trimmed != worker {
-        // Legacy-state hardening: fail closed on malformed assigned worker ids so
-        // commitment/proof envelope worker binding cannot be validated against
-        // non-canonical identity strings.
-        return Err(PouwError::State("non-canonical worker account".into()));
-    }
+    // Legacy-state hardening: fail closed on malformed assigned worker ids so
+    // commitment/proof envelope worker binding cannot be validated against
+    // non-canonical identity strings.
+    require_canonical_actor_id_state(&worker, "worker account")?;
 
     let committed = task.committed_hash.ok_or(PouwError::MissingCommitment)?;
     let expected = compute_commitment(task.task_id, &result_hash, &reveal_salt, &worker);
@@ -874,24 +969,19 @@ pub fn apply_challenge_at_height(
     // Authorization is bound to authenticated signer context.
     // Harden against blank actor/signer values so malformed payloads cannot
     // bind escrow/accounting updates to an empty account id.
-    let challenger_trimmed = challenger.trim();
-    let signer_trimmed = signer.trim();
-    if challenger_trimmed.is_empty()
-        || signer_trimmed.is_empty()
-        || challenger_trimmed != challenger
-        || signer_trimmed != signer
-        || signer_trimmed != challenger_trimmed
-    {
+    require_canonical_actor_id(&challenger)?;
+    require_canonical_actor_id(&signer)?;
+    let challenger_trimmed = challenger.as_str();
+    let signer_trimmed = signer.as_str();
+    if signer_trimmed != challenger_trimmed {
         return Err(PouwError::Unauthorized);
     }
 
     if let Some(worker) = task.worker.as_ref() {
-        let worker_trimmed = worker.trim();
-        if worker_trimmed.is_empty() || worker_trimmed != worker {
-            // Legacy-state hardening: reject malformed non-canonical worker ids
-            // so self-challenge and accounting gates cannot be bypassed.
-            return Err(PouwError::State("non-canonical worker account".into()));
-        }
+        // Legacy-state hardening: reject malformed non-canonical worker ids
+        // so self-challenge and accounting gates cannot be bypassed.
+        require_canonical_actor_id_state(worker, "worker account")?;
+        let worker_trimmed = worker;
         if worker_trimmed == challenger_trimmed {
             // Consensus safety hardening: disallow self-challenge to prevent
             // worker-controlled challenge/reveal loops from gaming resolve paths.
@@ -964,15 +1054,11 @@ pub fn apply_resolve_at_height(
     // is retained only for backward-compatible event fields.
     // Gate hardening: reject malformed or divergent resolver payloads so canonical
     // signer authorization cannot be paired with spoofed event actor metadata.
-    let resolver_trimmed = resolver.trim();
+    let resolver_trimmed = resolver.as_str();
     // Gate hardening: signer and configured authority must both be canonical
     // non-blank account identifiers (no surrounding whitespace).
-    let signer_trimmed = signer.trim();
+    let signer_trimmed = signer.as_str();
     let authority_trimmed = resolve_authority.trim();
-    // Canonical actor IDs must be single-token account identifiers.
-    let resolver_has_internal_whitespace = resolver_trimmed.chars().any(|c| c.is_whitespace());
-    let signer_has_internal_whitespace = signer_trimmed.chars().any(|c| c.is_whitespace());
-    let authority_has_internal_whitespace = authority_trimmed.chars().any(|c| c.is_whitespace());
     let authority_members: Vec<&str> = authority_trimmed.split(',').collect();
     let authority_has_empty_member = authority_members
         .iter()
@@ -984,33 +1070,11 @@ pub fn apply_resolve_at_height(
             .map(|member| member.to_ascii_lowercase())
             .any(|member| !seen.insert(member))
     };
-    // Canonical actor token hardening: reject delimiter-smuggled payloads so
-    // a single signer string cannot masquerade as an out-of-band authority list.
-    let has_forbidden_separator = |token: &str| {
-        token.contains(';')
-            || token.contains('|')
-            || token.contains('；')
-            || token.contains('，')
-            || token.contains('、')
-    };
-    let resolver_has_forbidden_separator = has_forbidden_separator(resolver_trimmed);
-    let signer_has_forbidden_separator = has_forbidden_separator(signer_trimmed);
-    let authority_has_forbidden_separator = authority_members
+    let resolver_is_canonical = is_canonical_actor_id(resolver_trimmed);
+    let signer_is_canonical = is_canonical_actor_id(signer_trimmed);
+    let authority_members_are_canonical = authority_members
         .iter()
-        .any(|member| has_forbidden_separator(member));
-    // Canonical identity hardening: reject control-byte payloads (e.g. NUL)
-    // so invisible token bytes cannot satisfy signer/member equality checks.
-    let has_control_chars = |token: &str| token.chars().any(|c| c.is_control());
-    let resolver_has_control_chars = has_control_chars(resolver_trimmed);
-    let signer_has_control_chars = has_control_chars(signer_trimmed);
-    let authority_has_control_chars = authority_members
-        .iter()
-        .any(|member| has_control_chars(member));
-    // Canonical identity hardening: resolver authorities must remain ASCII-only
-    // account ids to prevent homoglyph spoofing in signer/member matching.
-    let resolver_has_non_ascii = !resolver_trimmed.is_ascii();
-    let signer_has_non_ascii = !signer_trimmed.is_ascii();
-    let authority_has_non_ascii_member = authority_members.iter().any(|member| !member.is_ascii());
+        .all(|member| is_canonical_actor_id(member));
     let signer_matches_configured_member = authority_members
         .iter()
         .any(|member| *member == signer_trimmed);
@@ -1065,10 +1129,7 @@ pub fn apply_resolve_at_height(
     // before resolve authority checks, otherwise malformed worker ids could
     // bypass self-resolution separation gates.
     if let Some(worker) = task.worker.as_ref() {
-        let worker_trimmed = worker.trim();
-        if worker_trimmed.is_empty() || worker_trimmed != worker {
-            return Err(PouwError::State("non-canonical worker account".into()));
-        }
+        require_canonical_actor_id_state(worker, "worker account")?;
     }
     // Minimal multi-party control: assigned worker cannot self-authorize terminal
     // challenge resolution for their own disputed task.
@@ -1105,27 +1166,14 @@ pub fn apply_resolve_at_height(
                 .any(|member| member.eq_ignore_ascii_case(challenger))
         })
         .unwrap_or(false);
-    if resolver_trimmed.is_empty()
-        || resolver_trimmed != resolver
-        || signer_trimmed.is_empty()
+    if !resolver_is_canonical
+        || !signer_is_canonical
         || authority_trimmed.is_empty()
-        || signer_trimmed != signer
         || authority_trimmed != resolve_authority
         || !signer_matches_configured_member
-        || resolver_has_internal_whitespace
-        || signer_has_internal_whitespace
-        || authority_has_internal_whitespace
+        || !authority_members_are_canonical
         || authority_has_empty_member
         || authority_has_duplicate_member
-        || resolver_has_forbidden_separator
-        || signer_has_forbidden_separator
-        || authority_has_forbidden_separator
-        || resolver_has_control_chars
-        || signer_has_control_chars
-        || authority_has_control_chars
-        || resolver_has_non_ascii
-        || signer_has_non_ascii
-        || authority_has_non_ascii_member
         || resolver_trimmed != signer_trimmed
         || uses_reserved_system_actor
         || uses_escrow_account_as_authority
@@ -1424,6 +1472,77 @@ mod tests {
 
         let padded = apply_accept_task(&mut st, r1, " worker1 ".into()).unwrap_err();
         assert!(matches!(padded, PouwError::Unauthorized));
+    }
+
+    fn dirty_actor_ids() -> Vec<&'static str> {
+        vec![
+            "worker 1",
+            "worker\t1",
+            "worker\n1",
+            "worker\u{200b}1",
+            "worker\u{2060}1",
+            "wørker1",
+            "worker,1",
+            "worker，1",
+            "worker;1",
+            "worker；1",
+            "worker|1",
+            "worker｜1",
+            "worker/1",
+            "worker／1",
+            "worker:1",
+            "worker：1",
+        ]
+    }
+
+    #[test]
+    fn accept_task_rejects_dirty_worker_actor_ids() {
+        for (i, dirty_worker) in dirty_actor_ids().into_iter().enumerate() {
+            let mut st = seeded_state();
+            let r1 = apply_create_task(&mut st, 21_100 + i as u64, "alice".into(), 10).unwrap();
+            let err = apply_accept_task(&mut st, r1, dirty_worker.into()).unwrap_err();
+            assert!(matches!(err, PouwError::Unauthorized), "accept should reject dirty worker actor id: {:?}", dirty_worker);
+        }
+    }
+
+    #[test]
+    fn challenge_rejects_dirty_challenger_actor_ids() {
+        for (i, dirty_challenger) in dirty_actor_ids().into_iter().enumerate() {
+            let mut st = seeded_state();
+            st.set_balance("worker1", 10);
+            st.set_balance("challenger", 1_000);
+            let task_id = 21_300 + i as u64;
+            let r1 = apply_create_task(&mut st, task_id, "alice".into(), 10).unwrap();
+            let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+            let result_hash = [7u8; 32];
+            let reveal_salt = [9u8; 32];
+            let committed = compute_commitment(task_id, &result_hash, &reveal_salt, "worker1");
+            let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+            let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+            let err = apply_challenge(&mut st, r4, dirty_challenger.into(), 10, dirty_challenger.into()).unwrap_err();
+            assert!(matches!(err, PouwError::Unauthorized), "challenge should reject dirty challenger actor id: {:?}", dirty_challenger);
+        }
+    }
+
+    #[test]
+    fn resolve_rejects_dirty_resolver_actor_ids() {
+        for (i, dirty_resolver) in dirty_actor_ids().into_iter().enumerate() {
+            let mut st = seeded_state();
+            st.set_balance("worker1", 10);
+            st.set_balance("challenger", 1_000);
+            st.set_gov_param_bootstrap_unchecked(9_801 + i as u64, "resolve_authority".into(), "resolver1".into()).unwrap();
+            let task_id = 21_500 + i as u64;
+            let r1 = apply_create_task(&mut st, task_id, "alice".into(), 10).unwrap();
+            let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+            let result_hash = [7u8; 32];
+            let reveal_salt = [9u8; 32];
+            let committed = compute_commitment(task_id, &result_hash, &reveal_salt, "worker1");
+            let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+            let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+            let r5 = apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
+            let err = apply_resolve(&mut st, r5, false, dirty_resolver.into(), dirty_resolver.into()).unwrap_err();
+            assert!(matches!(err, PouwError::Unauthorized), "resolve should reject dirty resolver actor id: {:?}", dirty_resolver);
+        }
     }
 
     #[test]
