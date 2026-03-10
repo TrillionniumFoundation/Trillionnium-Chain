@@ -4150,17 +4150,18 @@ mod tests {
             resolve_authority.clone(),
         )
         .unwrap();
-        let r6 = apply_resolve(
+        let staged = apply_resolve(
             &mut st,
-            r5,
+            r5.clone(),
             true,
             "authority8101".into(),
             "authority8101".into(),
         )
-        .unwrap();
+        .expect_err("first multisig approver should stage only");
+        assert!(matches!(staged, trnm_pouw::PouwError::ResolveApprovalStaged));
         let _r7 = apply_resolve(
             &mut st,
-            r6,
+            r5,
             true,
             "authority8101b".into(),
             "authority8101b".into(),
@@ -4216,17 +4217,18 @@ mod tests {
             resolve_authority.clone(),
         )
         .unwrap();
-        let r6 = apply_resolve(
+        let staged = apply_resolve(
             &mut st,
-            r5,
+            r5.clone(),
             false,
             "authority8102".into(),
             "authority8102".into(),
         )
-        .unwrap();
+        .expect_err("first multisig approver should stage only");
+        assert!(matches!(staged, trnm_pouw::PouwError::ResolveApprovalStaged));
         let _r7 = apply_resolve(
             &mut st,
-            r6,
+            r5,
             false,
             "authority8102b".into(),
             "authority8102b".into(),
