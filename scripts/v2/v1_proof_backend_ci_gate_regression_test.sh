@@ -19,6 +19,7 @@ required_tests=(
   "zk_verifier_valid_proof_path_with_mock_backend"
   "zk_verifier_invalid_proof_path_with_mock_backend"
   "zk_verifier_invalid_proof_path_rejects_mapped_public_inputs"
+  "registry_with_builtin_verifiers_fail_closed_when_task_id_binding_missing"
 )
 
 for t in "${required_tests[@]}"; do

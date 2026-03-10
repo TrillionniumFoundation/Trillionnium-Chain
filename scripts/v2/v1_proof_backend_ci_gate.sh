@@ -13,5 +13,6 @@ cargo test -p trnm-pouw --lib zk_verifier_backend_unavailable_maps_to_indetermin
 cargo test -p trnm-pouw --lib zk_verifier_valid_proof_path_with_mock_backend
 cargo test -p trnm-pouw --lib zk_verifier_invalid_proof_path_with_mock_backend
 cargo test -p trnm-pouw --lib zk_verifier_invalid_proof_path_rejects_mapped_public_inputs
+cargo test -p trnm-pouw --lib registry_with_builtin_verifiers_fail_closed_when_task_id_binding_missing
 
 echo "[PASS] V1 proof backend CI gate"
