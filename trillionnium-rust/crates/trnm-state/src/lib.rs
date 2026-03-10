@@ -34,6 +34,7 @@ struct PendingResolveApproval {
     confirmations: u8,
     first_approver: String,
     authority_set: String,
+    task_version: u64,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Default)]
@@ -344,6 +345,7 @@ impl StateStore {
     pub fn stage_or_confirm_resolve_approval(
         &mut self,
         task_id: u64,
+        task_version: u64,
         slash_worker: bool,
         approver: &str,
         authority_set: &str,
@@ -424,6 +426,10 @@ impl StateStore {
                 self.pending_resolve_approvals.remove(&task_id);
                 return Err("resolve approval authority set changed".into());
             }
+            if entry.task_version != task_version {
+                self.pending_resolve_approvals.remove(&task_id);
+                return Err("resolve approval task version changed".into());
+            }
         }
 
         let entry =
@@ -434,6 +440,7 @@ impl StateStore {
                     confirmations: 0,
                     first_approver: approver_trimmed.to_string(),
                     authority_set: authority_set.to_string(),
+                    task_version,
                 });
         if entry.slash_worker != slash_worker {
             return Err("resolve approval decision mismatch".into());
@@ -1241,6 +1248,7 @@ impl StateStore {
             hasher.update([pending.confirmations]);
             hasher.update(pending.first_approver.as_bytes());
             hasher.update(pending.authority_set.as_bytes());
+            hasher.update(pending.task_version.to_le_bytes());
         }
         hasher.update(b"monetary_state");
         hasher.update(self.monetary_state.last_tick_height.to_le_bytes());
@@ -1373,19 +1381,37 @@ mod tests {
         let mut st = StateStore::new();
 
         let first = st
-            .stage_or_confirm_resolve_approval(42, true, "authority-a", "authority-a,authority-b")
+            .stage_or_confirm_resolve_approval(
+                42,
+                1,
+                true,
+                "authority-a",
+                "authority-a,authority-b",
+            )
             .expect("first approval stage should succeed");
         assert!(!first, "single approver must not finalize resolve approval");
         assert_eq!(st.pending_resolve_approval(42), Some((true, 1)));
 
         let dup_err = st
-            .stage_or_confirm_resolve_approval(42, true, "authority-a", "authority-a,authority-b")
+            .stage_or_confirm_resolve_approval(
+                42,
+                1,
+                true,
+                "authority-a",
+                "authority-a,authority-b",
+            )
             .expect_err("same approver must not satisfy multi-party confirmation");
         assert!(dup_err.contains("distinct approver"));
         assert_eq!(st.pending_resolve_approval(42), Some((true, 1)));
 
         let second = st
-            .stage_or_confirm_resolve_approval(42, true, "authority-b", "authority-a,authority-b")
+            .stage_or_confirm_resolve_approval(
+                42,
+                1,
+                true,
+                "authority-b",
+                "authority-a,authority-b",
+            )
             .expect("second distinct approver should finalize");
         assert!(
             second,
@@ -1402,13 +1428,19 @@ mod tests {
         let mut st = StateStore::new();
 
         let first = st
-            .stage_or_confirm_resolve_approval(7, false, "authority-a", "authority-a,authority-b")
+            .stage_or_confirm_resolve_approval(
+                7,
+                1,
+                false,
+                "authority-a",
+                "authority-a,authority-b",
+            )
             .expect("initial non-slash approval should stage");
         assert!(!first);
         assert_eq!(st.pending_resolve_approval(7), Some((false, 1)));
 
         let mismatch = st
-            .stage_or_confirm_resolve_approval(7, true, "authority-b", "authority-a,authority-b")
+            .stage_or_confirm_resolve_approval(7, 1, true, "authority-b", "authority-a,authority-b")
             .expect_err("mismatched slash decision must fail closed");
         assert!(mismatch.contains("decision mismatch"));
         assert_eq!(
@@ -1423,18 +1455,36 @@ mod tests {
         let mut st = StateStore::new();
 
         let first = st
-            .stage_or_confirm_resolve_approval(88, true, "authority-a", "authority-a,authority-b")
+            .stage_or_confirm_resolve_approval(
+                88,
+                1,
+                true,
+                "authority-a",
+                "authority-a,authority-b",
+            )
             .expect("first approval stage should succeed");
         assert!(!first);
 
         let second = st
-            .stage_or_confirm_resolve_approval(88, true, "authority-b", "authority-a,authority-b")
+            .stage_or_confirm_resolve_approval(
+                88,
+                1,
+                true,
+                "authority-b",
+                "authority-a,authority-b",
+            )
             .expect("second distinct approver should finalize");
         assert!(second);
         assert_eq!(st.pending_resolve_approval(88), Some((true, 2)));
 
         let replay_err = st
-            .stage_or_confirm_resolve_approval(88, true, "authority-c", "authority-a,authority-b")
+            .stage_or_confirm_resolve_approval(
+                88,
+                1,
+                true,
+                "authority-c",
+                "authority-a,authority-b",
+            )
             .expect_err("post-quorum replay must be rejected");
         assert!(
             replay_err.contains("already finalized")
@@ -1452,13 +1502,25 @@ mod tests {
         let mut st = StateStore::new();
 
         let first = st
-            .stage_or_confirm_resolve_approval(77, true, "authority-a", "authority-a,authority-b")
+            .stage_or_confirm_resolve_approval(
+                77,
+                1,
+                true,
+                "authority-a",
+                "authority-a,authority-b",
+            )
             .expect("first approval stage should succeed");
         assert!(!first);
         assert_eq!(st.pending_resolve_approval(77), Some((true, 1)));
 
         let dup_err = st
-            .stage_or_confirm_resolve_approval(77, true, "Authority-A", "authority-a,authority-b")
+            .stage_or_confirm_resolve_approval(
+                77,
+                1,
+                true,
+                "Authority-A",
+                "authority-a,authority-b",
+            )
             .expect_err("case-drift duplicate approver must be rejected");
         assert!(
             dup_err.contains("distinct approver")
@@ -1476,13 +1538,25 @@ mod tests {
         let mut st = StateStore::new();
 
         let first = st
-            .stage_or_confirm_resolve_approval(78, true, "authority-a", "authority-a,authority-b")
+            .stage_or_confirm_resolve_approval(
+                78,
+                1,
+                true,
+                "authority-a",
+                "authority-a,authority-b",
+            )
             .expect("first approval stage should succeed");
         assert!(!first);
         assert_eq!(st.pending_resolve_approval(78), Some((true, 1)));
 
         let whitespace_err = st
-            .stage_or_confirm_resolve_approval(78, true, " authority-a ", "authority-a,authority-b")
+            .stage_or_confirm_resolve_approval(
+                78,
+                1,
+                true,
+                " authority-a ",
+                "authority-a,authority-b",
+            )
             .expect_err("whitespace-drift approver must be rejected");
         assert!(whitespace_err.contains("must not contain whitespace"));
         assert_eq!(
@@ -1497,14 +1571,26 @@ mod tests {
         let mut st = StateStore::new();
 
         let first = st
-            .stage_or_confirm_resolve_approval(79, true, "authority-a", "authority-a,authority-b")
+            .stage_or_confirm_resolve_approval(
+                79,
+                1,
+                true,
+                "authority-a",
+                "authority-a,authority-b",
+            )
             .expect("first approval stage should succeed");
         assert!(!first);
         assert_eq!(st.pending_resolve_approval(79), Some((true, 1)));
 
         for bad_actor in ["authority-a,authority-b", "authority-a;authority-b"] {
             let err = st
-                .stage_or_confirm_resolve_approval(79, true, bad_actor, "authority-a,authority-b")
+                .stage_or_confirm_resolve_approval(
+                    79,
+                    1,
+                    true,
+                    bad_actor,
+                    "authority-a,authority-b",
+                )
                 .expect_err("delimited approver id must be rejected");
             assert!(err.contains("single canonical actor id"));
             assert_eq!(
@@ -1520,7 +1606,13 @@ mod tests {
         let mut st = StateStore::new();
 
         let first = st
-            .stage_or_confirm_resolve_approval(80, true, "authority-a", "authority-a,authority-b")
+            .stage_or_confirm_resolve_approval(
+                80,
+                1,
+                true,
+                "authority-a",
+                "authority-a,authority-b",
+            )
             .expect("first approval stage should succeed");
         assert!(!first);
         assert_eq!(st.pending_resolve_approval(80), Some((true, 1)));
@@ -1532,7 +1624,13 @@ mod tests {
             "Treasury.Challenge_Forfeits",
         ] {
             let err = st
-                .stage_or_confirm_resolve_approval(80, true, bad_actor, "authority-a,authority-b")
+                .stage_or_confirm_resolve_approval(
+                    80,
+                    1,
+                    true,
+                    bad_actor,
+                    "authority-a,authority-b",
+                )
                 .expect_err("system/treasury approver must be rejected");
             assert!(err.contains("explicit non-system authority"));
             assert_eq!(
@@ -1556,7 +1654,7 @@ mod tests {
             "authority-a,system",
         ] {
             let err = st
-                .stage_or_confirm_resolve_approval(8_882, true, "authority-a", malformed_set)
+                .stage_or_confirm_resolve_approval(8_882, 1, true, "authority-a", malformed_set)
                 .expect_err("non-canonical authority set must fail closed");
             assert!(
                 err.contains("authority set"),
@@ -1571,17 +1669,59 @@ mod tests {
     }
 
     #[test]
+    fn resolve_approval_clears_stale_stage_on_task_version_change() {
+        let mut st = StateStore::new();
+
+        let first = st
+            .stage_or_confirm_resolve_approval(
+                82,
+                3,
+                true,
+                "authority-a",
+                "authority-a,authority-b",
+            )
+            .expect("first approval stage should succeed");
+        assert!(!first);
+        assert_eq!(st.pending_resolve_approval(82), Some((true, 1)));
+
+        let version_err = st
+            .stage_or_confirm_resolve_approval(
+                82,
+                4,
+                true,
+                "authority-b",
+                "authority-a,authority-b",
+            )
+            .expect_err("task version change must fail closed and clear stale stage");
+        assert!(version_err.contains("task version changed"));
+        assert_eq!(st.pending_resolve_approval(82), None);
+        assert_eq!(st.pending_resolve_first_approver(82), None);
+    }
+
+    #[test]
     fn resolve_approval_clears_stale_stage_on_authority_set_rotation() {
         let mut st = StateStore::new();
 
         let first = st
-            .stage_or_confirm_resolve_approval(81, true, "authority-a", "authority-a,authority-b")
+            .stage_or_confirm_resolve_approval(
+                81,
+                7,
+                true,
+                "authority-a",
+                "authority-a,authority-b",
+            )
             .expect("first approval stage should succeed");
         assert!(!first);
         assert_eq!(st.pending_resolve_approval(81), Some((true, 1)));
 
         let rotated_err = st
-            .stage_or_confirm_resolve_approval(81, true, "authority-c", "authority-a,authority-c")
+            .stage_or_confirm_resolve_approval(
+                81,
+                7,
+                true,
+                "authority-c",
+                "authority-a,authority-c",
+            )
             .expect_err("authority set rotation must fail closed and clear stale stage");
         assert!(rotated_err.contains("authority set changed"));
         assert_eq!(st.pending_resolve_approval(81), None);
@@ -2199,7 +2339,9 @@ mod tests {
                 "resolvér-v2".into(),
             )
             .unwrap_err();
-        assert!(err.contains("ASCII-only") || err.contains("whitespace") || err.contains("separator"));
+        assert!(
+            err.contains("ASCII-only") || err.contains("whitespace") || err.contains("separator")
+        );
 
         assert_eq!(
             st.gov_param_string("resolve_authority"),
@@ -3548,14 +3690,24 @@ mod tests {
     #[test]
     fn state_root_changes_when_pending_resolve_first_approver_changes() {
         let mut st_a = StateStore::new();
-        st_a
-            .stage_or_confirm_resolve_approval(500, true, "authority-a", "authority-a,authority-b")
-            .unwrap();
+        st_a.stage_or_confirm_resolve_approval(
+            500,
+            1,
+            true,
+            "authority-a",
+            "authority-a,authority-b",
+        )
+        .unwrap();
 
         let mut st_b = StateStore::new();
-        st_b
-            .stage_or_confirm_resolve_approval(500, true, "authority-b", "authority-a,authority-b")
-            .unwrap();
+        st_b.stage_or_confirm_resolve_approval(
+            500,
+            1,
+            true,
+            "authority-b",
+            "authority-a,authority-b",
+        )
+        .unwrap();
 
         assert_ne!(
             st_a.state_root(),
@@ -3565,21 +3717,55 @@ mod tests {
     }
 
     #[test]
-    fn state_root_changes_when_pending_resolve_authority_set_changes() {
+    fn state_root_changes_when_pending_resolve_task_version_changes() {
         let mut st_a = StateStore::new();
-        st_a
-            .stage_or_confirm_resolve_approval(501, true, "authority-a", "authority-a,authority-b")
-            .unwrap();
+        st_a.stage_or_confirm_resolve_approval(
+            501,
+            1,
+            true,
+            "authority-a",
+            "authority-a,authority-b",
+        )
+        .unwrap();
 
         let mut st_b = StateStore::new();
-        st_b
-            .stage_or_confirm_resolve_approval(
-                501,
-                true,
-                "authority-a",
-                "authority-a,authority-b,authority-c",
-            )
-            .unwrap();
+        st_b.stage_or_confirm_resolve_approval(
+            501,
+            2,
+            true,
+            "authority-a",
+            "authority-a,authority-b",
+        )
+        .unwrap();
+
+        assert_ne!(
+            st_a.state_root(),
+            st_b.state_root(),
+            "pending resolve task version snapshot must contribute to state root"
+        );
+    }
+
+    #[test]
+    fn state_root_changes_when_pending_resolve_authority_set_changes() {
+        let mut st_a = StateStore::new();
+        st_a.stage_or_confirm_resolve_approval(
+            501,
+            1,
+            true,
+            "authority-a",
+            "authority-a,authority-b",
+        )
+        .unwrap();
+
+        let mut st_b = StateStore::new();
+        st_b.stage_or_confirm_resolve_approval(
+            501,
+            1,
+            true,
+            "authority-a",
+            "authority-a,authority-b,authority-c",
+        )
+        .unwrap();
 
         assert_ne!(
             st_a.state_root(),
