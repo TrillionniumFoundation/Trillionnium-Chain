@@ -1204,7 +1204,10 @@ pub fn apply_resolve_at_height(
     // Minimal multi-party control: if governance downgrades a multisig resolver
     // set to single-authority after a first staged approval, fail closed and
     // clear stale staging so one signer cannot inherit partially-approved state.
-    if authority_members.len() <= 1 && st.pending_resolve_approval(task_ref.id).is_some() {
+    if authority_members.len() <= 1
+        && (st.pending_resolve_approval(task_ref.id).is_some()
+            || st.pending_resolve_first_approver(task_ref.id).is_some())
+    {
         st.clear_pending_resolve_approval(task_ref.id);
         return Err(PouwError::Unauthorized);
     }
