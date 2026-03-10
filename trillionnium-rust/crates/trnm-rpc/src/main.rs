@@ -3,11 +3,11 @@ use clap::{Parser, Subcommand, ValueEnum};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::{
-    collections::{BTreeMap, HashSet},
+    collections::{BTreeMap, BTreeSet, HashSet},
     fs::{self, OpenOptions},
     hash::{Hash, Hasher},
     io::{Read, Seek, SeekFrom, Write},
-    net::TcpListener,
+    net::{TcpListener, TcpStream},
     path::{Path, PathBuf},
     time::{Duration, Instant, SystemTime, UNIX_EPOCH},
 };
@@ -36,6 +36,8 @@ const CHALLENGE_ESCROW_ACCOUNT: &str = "treasury.challenge_escrow";
 const CHALLENGE_FORFEIT_TREASURY_ACCOUNT: &str = "treasury.challenge_forfeits";
 const NODE_EVENT_LOG_TAIL_BYTES_DEFAULT: u64 = 4 * 1024 * 1024;
 const NODE_EVENT_LOG_TAIL_BYTES_MAX: u64 = 16 * 1024 * 1024;
+const NODE_EVENT_LOG_SOURCES_ENV: &str = "TRNM_RPC_NODE_EVENT_LOG_SOURCES";
+const NODE_EVENT_LOG_MANIFEST_ENV: &str = "TRNM_RPC_NODE_EVENT_LOG_MANIFEST";
 const OPS_WINDOW_CUSTOM_MAX_MS: u128 = 31 * 24 * 60 * 60 * 1000;
 const FAUCET_WINDOW_SECONDS_DEFAULT: u64 = 60;
 const FAUCET_WINDOW_SECONDS_MIN: u64 = 1;
@@ -58,6 +60,9 @@ const MARKET_LOCK_TIMEOUT_MS_MIN: u64 = 100;
 const MARKET_LOCK_TIMEOUT_MS_MAX: u64 = 60_000;
 const SUBMIT_MESSAGE_MAX_BYTES_ENV: &str = "TRNM_RPC_SUBMIT_MESSAGE_MAX_BYTES";
 const SUBMIT_MESSAGE_MAX_BYTES_DEFAULT: u64 = 256 * 1024;
+const HEALTH_SOCKET_READ_TIMEOUT_MS: u64 = 2_000;
+const HEALTH_SOCKET_WRITE_TIMEOUT_MS: u64 = 2_000;
+const HEALTH_REQUEST_HEADER_MAX_BYTES: usize = 4 * 1024;
 const SUBMIT_MESSAGE_MAX_BYTES_MIN: u64 = 1;
 
 #[derive(Debug, Parser)]
@@ -367,6 +372,30 @@ struct ChallengeTreasuryQueryResponse {
     anomalies: Vec<ChallengeTreasuryAnomaly>,
     daily_summary: Option<ChallengeDailySummary>,
     window: Option<ChallengeWindowView>,
+    node_event_source_mode: String,
+    node_event_log_truncated: bool,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum NodeEventScanMode {
+    Authoritative,
+    RecentTail,
+}
+
+impl NodeEventScanMode {
+    fn as_str(self) -> &'static str {
+        match self {
+            Self::Authoritative => "authoritative",
+            Self::RecentTail => "recent_tail",
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+struct LoadedNodeEvents {
+    events: Vec<NodeEventRecord>,
+    mode: NodeEventScanMode,
+    truncated: bool,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -561,25 +590,107 @@ fn parse_event_log_kv(line: &str) -> BTreeMap<String, String> {
     kv
 }
 
-fn load_latest_node_events() -> Vec<NodeEventRecord> {
-    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .parent()
-        .and_then(|p| p.parent())
-        .map(|p| p.to_path_buf())
-        .unwrap_or_else(|| PathBuf::from("."));
+fn parse_node_event_log_sources_list(raw: &str) -> Vec<PathBuf> {
+    raw.split(|c: char| c == ',' || c == ';' || c == '\n')
+        .filter_map(|part| {
+            let trimmed = part.trim();
+            if trimmed.is_empty() {
+                None
+            } else {
+                Some(PathBuf::from(trimmed))
+            }
+        })
+        .collect()
+}
 
-    let candidates = [
-        root.join("run/event-field-check.log"),
-        root.join("run/parallel-sanity.log"),
-        root.join("run/node1.log"),
-        root.join("run/node2.log"),
-        root.join("run/node3.log"),
-    ];
+fn discover_default_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
+    let run_dir = root.join("run");
+    let mut out = BTreeSet::<PathBuf>::new();
+    for seed in ["event-field-check.log", "parallel-sanity.log"] {
+        let candidate = run_dir.join(seed);
+        if candidate.is_file() {
+            out.insert(candidate);
+        }
+    }
+    if let Ok(entries) = fs::read_dir(&run_dir) {
+        for entry in entries.flatten() {
+            let path = entry.path();
+            if !path.is_file() {
+                continue;
+            }
+            let Some(name) = path.file_name().and_then(|v| v.to_str()) else {
+                continue;
+            };
+            if name.ends_with(".log") {
+                out.insert(path);
+            }
+        }
+    }
+    out.into_iter().collect()
+}
 
+fn load_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
+    let mut sources = BTreeSet::<PathBuf>::new();
+
+    if let Some(manifest_path) = normalized_path_from_env(NODE_EVENT_LOG_MANIFEST_ENV) {
+        if let Ok(raw) = fs::read_to_string(&manifest_path) {
+            let manifest_dir = manifest_path.parent().unwrap_or_else(|| Path::new("."));
+            for line in raw.lines() {
+                let trimmed = line.trim();
+                if trimmed.is_empty() || trimmed.starts_with('#') {
+                    continue;
+                }
+                let path = PathBuf::from(trimmed);
+                let resolved = if path.is_absolute() {
+                    path
+                } else {
+                    manifest_dir.join(path)
+                };
+                sources.insert(resolved);
+            }
+        }
+    }
+
+    if let Ok(raw) = std::env::var(NODE_EVENT_LOG_SOURCES_ENV) {
+        for path in parse_node_event_log_sources_list(&raw) {
+            let resolved = if path.is_absolute() {
+                path
+            } else {
+                root.join(path)
+            };
+            sources.insert(resolved);
+        }
+    }
+
+    if sources.is_empty() {
+        return discover_default_node_event_log_sources(root);
+    }
+
+    sources.into_iter().collect()
+}
+
+fn node_event_log_candidates(root: &Path) -> Vec<PathBuf> {
+    load_node_event_log_sources(root)
+}
+
+fn load_node_events_from_root(root: &Path, mode: NodeEventScanMode) -> LoadedNodeEvents {
+    let candidates = node_event_log_candidates(root);
     let tail_bytes = node_event_log_tail_bytes();
     let mut lines = Vec::new();
+    let mut truncated = false;
     for p in candidates {
-        if let Some(raw) = read_log_tail(&p, tail_bytes) {
+        let raw = match mode {
+            NodeEventScanMode::Authoritative => fs::read_to_string(&p).ok(),
+            NodeEventScanMode::RecentTail => {
+                if let Ok(meta) = fs::metadata(&p) {
+                    if meta.len() > tail_bytes {
+                        truncated = true;
+                    }
+                }
+                read_log_tail(&p, tail_bytes)
+            }
+        };
+        if let Some(raw) = raw {
             lines.extend(raw.lines().map(str::to_string));
         }
     }
@@ -654,7 +765,24 @@ fn load_latest_node_events() -> Vec<NodeEventRecord> {
             bond_disposition: normalize_opt("bond_disposition"),
         });
     }
-    out
+    LoadedNodeEvents {
+        events: out,
+        mode,
+        truncated,
+    }
+}
+
+fn load_node_events(mode: NodeEventScanMode) -> LoadedNodeEvents {
+    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .and_then(|p| p.parent())
+        .map(|p| p.to_path_buf())
+        .unwrap_or_else(|| PathBuf::from("."));
+    load_node_events_from_root(&root, mode)
+}
+
+fn load_latest_node_events() -> Vec<NodeEventRecord> {
+    load_node_events(NodeEventScanMode::RecentTail).events
 }
 
 fn governance_state() -> StateStore {
@@ -1774,6 +1902,8 @@ fn summarize_challenge_treasury(
     node_events: &[NodeEventRecord],
     limit: usize,
     summary_window: Option<(u128, u128, String)>,
+    node_event_source_mode: NodeEventScanMode,
+    node_event_log_truncated: bool,
 ) -> ChallengeTreasuryQueryResponse {
     let mut related: Vec<&NodeEventRecord> = node_events
         .iter()
@@ -1986,6 +2116,8 @@ fn summarize_challenge_treasury(
         anomalies,
         daily_summary,
         window,
+        node_event_source_mode: node_event_source_mode.as_str().to_string(),
+        node_event_log_truncated,
     }
 }
 
@@ -1995,6 +2127,34 @@ fn http_json_response(status_line: &str, body: &str) -> String {
         body.len(),
         body
     )
+}
+
+fn configure_health_stream(stream: &TcpStream) -> std::io::Result<()> {
+    stream.set_read_timeout(Some(Duration::from_millis(HEALTH_SOCKET_READ_TIMEOUT_MS)))?;
+    stream.set_write_timeout(Some(Duration::from_millis(HEALTH_SOCKET_WRITE_TIMEOUT_MS)))?;
+    Ok(())
+}
+
+fn read_http_request_head(stream: &mut TcpStream) -> std::io::Result<Vec<u8>> {
+    let mut buf = Vec::with_capacity(512);
+    let mut chunk = [0u8; 512];
+
+    while buf.len() < HEALTH_REQUEST_HEADER_MAX_BYTES {
+        let remaining = HEALTH_REQUEST_HEADER_MAX_BYTES - buf.len();
+        let to_read = remaining.min(chunk.len());
+        let n = stream.read(&mut chunk[..to_read])?;
+        if n == 0 {
+            break;
+        }
+        buf.extend_from_slice(&chunk[..n]);
+        if buf.windows(4).any(|window| window == b"\r\n\r\n")
+            || buf.windows(2).any(|window| window == b"\n\n")
+        {
+            break;
+        }
+    }
+
+    Ok(buf)
 }
 
 fn parse_http_get_path(first_line: &str) -> Option<&str> {
@@ -2081,10 +2241,23 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
             Ok(s) => s,
             Err(_) => continue,
         };
+        if configure_health_stream(&stream).is_err() {
+            continue;
+        }
 
-        let mut buf = [0u8; 4096];
-        let n = stream.read(&mut buf).unwrap_or(0);
-        let req = String::from_utf8_lossy(&buf[..n]);
+        let req = match read_http_request_head(&mut stream) {
+            Ok(req) => req,
+            Err(err)
+                if matches!(
+                    err.kind(),
+                    std::io::ErrorKind::TimedOut | std::io::ErrorKind::WouldBlock
+                ) =>
+            {
+                continue;
+            }
+            Err(_) => continue,
+        };
+        let req = String::from_utf8_lossy(&req);
         let first = req.lines().next().unwrap_or("");
         let path = parse_http_get_path(first);
 
@@ -2103,9 +2276,9 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
                 let task_id = path.trim_start_matches("/query-task/").parse::<u64>();
                 match task_id {
                     Ok(task_id) => {
-                        let node_events = load_latest_node_events();
+                        let node_events = load_node_events(NodeEventScanMode::Authoritative);
                         let recs = load_latest_adapter_records();
-                        match query_task_response(task_id, &node_events, &recs) {
+                        match query_task_response(task_id, &node_events.events, &recs) {
                             Ok(out) => {
                                 let body = serde_json::to_string(&out).unwrap_or_else(|_| {
                                     "{\"ok\":false,\"code\":\"SERDE_ERROR\"}".to_string()
@@ -2128,12 +2301,12 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
                 let task_id = path.trim_start_matches("/query-events/").parse::<u64>();
                 match task_id {
                     Ok(task_id) => {
-                        let node_events = load_latest_node_events();
+                        let node_events = load_node_events(NodeEventScanMode::Authoritative);
                         let recs = load_latest_adapter_records();
                         match query_events_response(
                             task_id,
                             QUERY_EVENTS_LIMIT_DEFAULT,
-                            &node_events,
+                            &node_events.events,
                             &recs,
                         ) {
                             Ok(events) => {
@@ -2448,11 +2621,11 @@ fn main() -> Result<()> {
     let args = Args::parse();
     let st = governance_state();
     let recs = load_latest_adapter_records();
-    let node_events = load_latest_node_events();
 
     match args.cmd {
         Command::QueryTask { task_id } => {
-            let out = query_task_response(task_id, &node_events, &recs)?;
+            let node_events = load_node_events(NodeEventScanMode::Authoritative);
+            let out = query_task_response(task_id, &node_events.events, &recs)?;
             println!("{}", serde_json::to_string_pretty(&out)?);
         }
         Command::QueryProposal { proposal_id } => {
@@ -2490,7 +2663,8 @@ fn main() -> Result<()> {
             println!("{}", serde_json::to_string_pretty(&out)?);
         }
         Command::QueryEvents { task_id, limit } => {
-            let events = query_events_response(task_id, limit, &node_events, &recs)?;
+            let node_events = load_node_events(NodeEventScanMode::Authoritative);
+            let events = query_events_response(task_id, limit, &node_events.events, &recs)?;
             println!("{}", serde_json::to_string_pretty(&events)?);
         }
         Command::QueryCapabilityAudit { token_id } => {
@@ -2513,7 +2687,14 @@ fn main() -> Result<()> {
                 CHALLENGE_TREASURY_EVENTS_LIMIT_MAX,
             );
             let summary_window = resolve_ops_window(window, from_unix_ms, to_unix_ms, now_ms())?;
-            let out = summarize_challenge_treasury(&node_events, limit, summary_window);
+            let node_events = load_node_events(NodeEventScanMode::Authoritative);
+            let out = summarize_challenge_treasury(
+                &node_events.events,
+                limit,
+                summary_window,
+                node_events.mode,
+                node_events.truncated,
+            );
             if json {
                 println!("{}", serde_json::to_string_pretty(&out)?);
             } else {
@@ -2819,8 +3000,9 @@ fn main() -> Result<()> {
                 bail!("request not found: {}", request_id);
             };
 
+            let node_events = load_node_events(NodeEventScanMode::Authoritative);
             let mut events = Vec::new();
-            for e in filtered_node_events_for_task(rec.task_id, &node_events) {
+            for e in filtered_node_events_for_task(rec.task_id, &node_events.events) {
                 let Some(actor) = normalize_actor_or_signer(&e.actor) else {
                     continue;
                 };
@@ -3417,6 +3599,35 @@ mod tests {
         assert_eq!(parse_http_get_path("GET /health"), None);
         assert_eq!(parse_http_get_path("GET health HTTP/1.1"), None);
         assert_eq!(parse_http_get_path("GET /health\u{0001} HTTP/1.1"), None);
+    }
+
+    #[test]
+    fn read_http_request_head_times_out_on_partial_slowloris_client() {
+        use std::net::{Shutdown, TcpListener, TcpStream};
+        use std::thread;
+
+        let listener = TcpListener::bind("127.0.0.1:0").expect("bind test listener");
+        let addr = listener.local_addr().expect("listener addr");
+
+        let client = thread::spawn(move || {
+            let mut client = TcpStream::connect(addr).expect("connect test listener");
+            client
+                .write_all(b"GET /health HTTP/1.1")
+                .expect("write partial request");
+            thread::sleep(Duration::from_millis(HEALTH_SOCKET_READ_TIMEOUT_MS + 250));
+            let _ = client.shutdown(Shutdown::Both);
+        });
+
+        let (mut server_stream, _) = listener.accept().expect("accept test client");
+        configure_health_stream(&server_stream).expect("configure timeouts");
+        let err =
+            read_http_request_head(&mut server_stream).expect_err("partial request must time out");
+        assert!(matches!(
+            err.kind(),
+            std::io::ErrorKind::TimedOut | std::io::ErrorKind::WouldBlock
+        ));
+
+        client.join().expect("client thread join");
     }
 
     #[test]
@@ -4701,7 +4912,13 @@ mod tests {
             },
         ];
 
-        let out = summarize_challenge_treasury(&events, 10, None);
+        let out = summarize_challenge_treasury(
+            &events,
+            10,
+            None,
+            NodeEventScanMode::Authoritative,
+            false,
+        );
         assert_eq!(out.current_escrow_balance, 0);
         assert_eq!(out.current_forfeits_balance, 10);
         assert_eq!(out.cumulative_forfeited, 10);
@@ -4752,7 +4969,13 @@ mod tests {
             },
         ];
 
-        let out = summarize_challenge_treasury(&events, 10, Some((50, 200, "custom".into())));
+        let out = summarize_challenge_treasury(
+            &events,
+            10,
+            Some((50, 200, "custom".into())),
+            NodeEventScanMode::Authoritative,
+            false,
+        );
         assert_eq!(out.current_escrow_balance, 0);
         assert_eq!(out.current_forfeits_balance, 0);
         assert_eq!(out.cumulative_forfeited, 0);
@@ -4806,7 +5029,8 @@ mod tests {
             },
         ];
 
-        let out = summarize_challenge_treasury(&events, 1, None);
+        let out =
+            summarize_challenge_treasury(&events, 1, None, NodeEventScanMode::Authoritative, false);
         assert_eq!(out.events_total, 2);
         assert_eq!(out.events.len(), 1);
         assert_eq!(out.events[0].task_id, 2);
@@ -4892,8 +5116,13 @@ mod tests {
             },
         ];
 
-        let out =
-            summarize_challenge_treasury(&events, 10, Some((500, 3_500, "custom".to_string())));
+        let out = summarize_challenge_treasury(
+            &events,
+            10,
+            Some((500, 3_500, "custom".to_string())),
+            NodeEventScanMode::Authoritative,
+            false,
+        );
 
         let summary = out.daily_summary.expect("summary expected");
         assert_eq!(summary.posted, 2);
@@ -4924,7 +5153,13 @@ mod tests {
             bond_disposition: Some("posted".into()),
         }];
 
-        let out = summarize_challenge_treasury(&events, 10, Some((500, 1_500, "custom".into())));
+        let out = summarize_challenge_treasury(
+            &events,
+            10,
+            Some((500, 1_500, "custom".into())),
+            NodeEventScanMode::Authoritative,
+            false,
+        );
         assert_eq!(out.current_escrow_balance, 0);
         assert_eq!(out.current_forfeits_balance, 0);
         assert_eq!(out.cumulative_forfeited, 0);
@@ -4958,7 +5193,13 @@ mod tests {
             bond_disposition: Some("forfeited".into()),
         }];
 
-        let out = summarize_challenge_treasury(&events, 10, Some((500, 3_000, "custom".into())));
+        let out = summarize_challenge_treasury(
+            &events,
+            10,
+            Some((500, 3_000, "custom".into())),
+            NodeEventScanMode::Authoritative,
+            false,
+        );
         assert_eq!(out.current_escrow_balance, 0);
         assert_eq!(out.current_forfeits_balance, 0);
         assert_eq!(out.cumulative_forfeited, 0);
@@ -5031,7 +5272,13 @@ mod tests {
             },
         ];
 
-        let out = summarize_challenge_treasury(&events, 10, Some((500, 3_500, "custom".into())));
+        let out = summarize_challenge_treasury(
+            &events,
+            10,
+            Some((500, 3_500, "custom".into())),
+            NodeEventScanMode::Authoritative,
+            false,
+        );
         assert_eq!(out.current_escrow_balance, 0);
         assert_eq!(out.current_forfeits_balance, 9);
         assert_eq!(out.cumulative_forfeited, 9);
@@ -5104,7 +5351,13 @@ mod tests {
             },
         ];
 
-        let out = summarize_challenge_treasury(&events, 10, Some((500, 3_000, "custom".into())));
+        let out = summarize_challenge_treasury(
+            &events,
+            10,
+            Some((500, 3_000, "custom".into())),
+            NodeEventScanMode::Authoritative,
+            false,
+        );
         assert_eq!(out.current_escrow_balance, 0);
         assert_eq!(out.current_forfeits_balance, 6);
         assert_eq!(out.cumulative_forfeited, 6);
@@ -5176,7 +5429,13 @@ mod tests {
             },
         ];
 
-        let out = summarize_challenge_treasury(&events, 10, Some((500, 3_500, "custom".into())));
+        let out = summarize_challenge_treasury(
+            &events,
+            10,
+            Some((500, 3_500, "custom".into())),
+            NodeEventScanMode::Authoritative,
+            false,
+        );
         assert_eq!(out.current_escrow_balance, 0);
         assert_eq!(out.current_forfeits_balance, 8);
         assert_eq!(out.cumulative_forfeited, 8);
@@ -5589,6 +5848,39 @@ mod tests {
     }
 
     #[test]
+    fn load_node_events_recent_tail_marks_truncation_but_authoritative_keeps_history() {
+        let root = tempfile::tempdir().expect("tempdir");
+        let run = root.path().join("run");
+        fs::create_dir_all(&run).expect("create run dir");
+
+        let old_event = "2026-03-03T20:10:11Z INFO node [event] event_type=challenge task_id=7 from_status=Revealed to_status=Challenged actor=challenger-a tx_id=1 block_height=1 state_root=s1 ts_unix_ms=1000 challenger=challenger-a challenger_delta=-5 bond_disposition=posted\n";
+        let filler = "x".repeat(600);
+        let new_event = "2026-03-03T20:10:12Z INFO node [event] event_type=resolve task_id=7 from_status=Challenged to_status=Completed actor=authority tx_id=2 block_height=2 state_root=s2 ts_unix_ms=2000 signer=authority resolution_code=completed challenger=challenger-a challenger_delta=0 bond_disposition=forfeited\n";
+        fs::write(
+            run.join("node1.log"),
+            format!("{old_event}{filler}\n{new_event}"),
+        )
+        .expect("write log");
+
+        std::env::set_var("TRNM_RPC_NODE_EVENT_LOG_TAIL_BYTES", "400");
+        let recent = load_node_events_from_root(root.path(), NodeEventScanMode::RecentTail);
+        std::env::remove_var("TRNM_RPC_NODE_EVENT_LOG_TAIL_BYTES");
+
+        assert!(recent.truncated);
+        assert_eq!(recent.mode, NodeEventScanMode::RecentTail);
+        assert_eq!(recent.events.len(), 1);
+        assert_eq!(recent.events[0].event_type, "resolve");
+
+        let authoritative =
+            load_node_events_from_root(root.path(), NodeEventScanMode::Authoritative);
+        assert!(!authoritative.truncated);
+        assert_eq!(authoritative.mode, NodeEventScanMode::Authoritative);
+        assert_eq!(authoritative.events.len(), 2);
+        assert_eq!(authoritative.events[0].event_type, "challenge");
+        assert_eq!(authoritative.events[1].event_type, "resolve");
+    }
+
+    #[test]
     fn parse_event_log_kv_supports_prefixed_runtime_noise() {
         let line = "2026-03-03T20:10:11Z INFO node [event] event_type=commit task_id=7 from_status=Accepted to_status=Committed actor=did:trnm:worker tx_id=9 block_height=12 state_root=abc ts_unix_ms=1000";
         let event_line = &line[line.find("[event]").expect("event marker")..];
@@ -5728,6 +6020,115 @@ line2
         let tail = read_log_tail(&tmp, 1024).expect("tail text");
         assert!(tail.contains("[event] event_type=commit task_id=9"));
         let _ = fs::remove_file(tmp);
+    }
+
+    #[test]
+    fn discover_default_node_event_log_sources_includes_dynamic_node4_and_nightly_logs() {
+        let root = unique_tmp_path("trnm-rpc-log-root", "dir");
+        let run_dir = root.join("run");
+        fs::create_dir_all(&run_dir).expect("create run dir");
+        fs::write(run_dir.join("node1.log"), "").expect("write node1");
+        fs::write(run_dir.join("node4.log"), "").expect("write node4");
+        fs::write(run_dir.join("nightly-bft.log"), "").expect("write nightly");
+        fs::write(run_dir.join("notes.txt"), "").expect("write txt");
+
+        let got = discover_default_node_event_log_sources(&root);
+
+        assert!(got.contains(&run_dir.join("node1.log")));
+        assert!(got.contains(&run_dir.join("node4.log")));
+        assert!(got.contains(&run_dir.join("nightly-bft.log")));
+        assert!(!got.contains(&run_dir.join("notes.txt")));
+
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn load_node_event_log_sources_prefers_manifest_and_env_over_fixed_defaults() {
+        let _guard = lock_env();
+        let root = unique_tmp_path("trnm-rpc-log-sources", "dir");
+        let run_dir = root.join("run");
+        let manifest_dir = root.join("cfg");
+        fs::create_dir_all(&run_dir).expect("create run dir");
+        fs::create_dir_all(&manifest_dir).expect("create manifest dir");
+
+        let env_log = root.join("env-node4.log");
+        let manifest_log = manifest_dir.join("nightly.log");
+        let manifest = manifest_dir.join("sources.txt");
+        fs::write(&env_log, "").expect("write env log");
+        fs::write(&manifest_log, "").expect("write manifest log");
+        fs::write(&manifest, "# comment\nnightly.log\n").expect("write manifest");
+
+        let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+        let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+        unsafe {
+            std::env::set_var(
+                NODE_EVENT_LOG_SOURCES_ENV,
+                env_log.to_string_lossy().to_string(),
+            );
+            std::env::set_var(
+                NODE_EVENT_LOG_MANIFEST_ENV,
+                manifest.to_string_lossy().to_string(),
+            );
+        }
+
+        let got = load_node_event_log_sources(&root);
+
+        match prev_sources {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+        }
+        match prev_manifest {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+        }
+
+        assert!(got.contains(&env_log));
+        assert!(got.contains(&manifest_log));
+        assert_eq!(got.len(), 2, "custom sources should replace defaults");
+
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn load_latest_node_events_reads_events_from_configured_node4_source() {
+        let _guard = lock_env();
+        let path = unique_tmp_path("trnm-rpc-node4", "log");
+        fs::write(
+            &path,
+            "[event] event_type=commit task_id=44 tx_id=7 block_height=9 actor=node4 from_status=ASSIGNED to_status=COMPLETED state_root=abc signer=node4\n",
+        )
+        .expect("write node4 log");
+
+        let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+        let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+        unsafe {
+            std::env::set_var(
+                NODE_EVENT_LOG_SOURCES_ENV,
+                path.to_string_lossy().to_string(),
+            );
+            std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV);
+        }
+
+        let got = load_latest_node_events();
+
+        match prev_sources {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+        }
+        match prev_manifest {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+        }
+
+        assert!(got.iter().any(|evt| {
+            evt.task_id == 44
+                && evt.tx_id == 7
+                && evt.block_height == 9
+                && evt.actor == "node4"
+                && evt.signer.as_deref() == Some("node4")
+        }));
+
+        let _ = fs::remove_file(path);
     }
 
     #[test]
