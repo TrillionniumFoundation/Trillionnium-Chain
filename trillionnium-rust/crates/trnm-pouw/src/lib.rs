@@ -547,6 +547,20 @@ pub fn apply_accept_task_at_height(
     Ok(next_ref)
 }
 
+fn finalize_verifiable_reveal(
+    st: &mut StateStore,
+    task_ref: ObjectRef,
+    task: &TaskObject,
+) -> Result<ObjectRef, PouwError> {
+    let next_ref = st.update_task(task_ref, task.clone()).map_err(map_state_err)?;
+
+    // Keep verifiable-reveal terminal settlement ordering aligned with other
+    // terminal paths: persist terminal task state before releasing locked stake.
+    settle_worker_stake_for_terminal_state(st, task)?;
+
+    Ok(next_ref)
+}
+
 fn settle_worker_stake_for_terminal_state(
     st: &mut StateStore,
     task: &TaskObject,
@@ -767,10 +781,7 @@ pub fn apply_reveal_result_at_height(
                 task.challenge_deadline_height = None;
                 task.resolve_deadline_height = None;
 
-                // Settle payment immediately.
-                settle_worker_stake_for_terminal_state(st, &task)?;
-
-                return st.update_task(task_ref, task).map_err(map_state_err);
+                return finalize_verifiable_reveal(st, task_ref, &task);
             }
             VerificationResult::Invalid(reason) => {
                 // Return error to reject the transaction, allowing retry with correct proof
@@ -12433,6 +12444,48 @@ mod tests {
         assert_eq!(st.balance_of("challenger"), 100);
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), 0);
         assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), 0);
+    }
+
+    #[test]
+    fn verifiable_reveal_version_conflict_does_not_move_funds() {
+        let mut st = seeded_state();
+
+        let r1 = apply_create_task(&mut st, 9904, "alice".into(), 10).unwrap();
+        let mut tee_task = st.get_task(r1.id).unwrap();
+        tee_task.proof_type = ProofType::Tee;
+        let r1 = st.update_task(r1, tee_task).unwrap();
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(9904, &result_hash, &reveal_salt, "worker1");
+        let stale_ref = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+
+        let same_task = st.get_task(stale_ref.id).unwrap();
+        let _fresh_ref = st.update_task(stale_ref.clone(), same_task).unwrap();
+
+        let worker_balance_before = st.balance_of("worker1");
+        let lock_balance_before = st.balance_of(&worker_stake_lock_account(9904));
+
+        let mut finalized_task = st.get_task(stale_ref.id).unwrap();
+        finalized_task.status = TaskStatus::Completed;
+        finalized_task.result_hash = Some(result_hash);
+        finalized_task.reveal_salt = Some(reveal_salt);
+        finalized_task.challenge_deadline_height = None;
+        finalized_task.resolve_deadline_height = None;
+
+        let err = finalize_verifiable_reveal(&mut st, stale_ref.clone(), &finalized_task).unwrap_err();
+        assert!(matches!(err, PouwError::VersionConflict));
+
+        let task = st.get_task(stale_ref.id).unwrap();
+        assert_eq!(task.status, TaskStatus::Committed);
+        assert!(task.result_hash.is_none());
+        assert!(task.reveal_salt.is_none());
+        assert_eq!(st.balance_of("worker1"), worker_balance_before);
+        assert_eq!(
+            st.balance_of(&worker_stake_lock_account(9904)),
+            lock_balance_before
+        );
     }
 
     #[test]
