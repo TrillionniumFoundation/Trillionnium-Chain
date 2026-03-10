@@ -195,7 +195,9 @@ impl AdmissionGate {
             self.last_fairness_deferred = None;
             // Hot saturated retry path: if this tx id is already tracked as backpressured,
             // classify immediately as duplicate and skip bounded retry-cache churn.
-            if self.backpressured_ids.contains(&tx_id) {
+            // Guard the hash probe with known_retry_count so fully drained retry state
+            // stays on the no-retry fast path under sustained full-queue ingress.
+            if known_retry_count != 0 && self.backpressured_ids.contains(&tx_id) {
                 self.metrics.duplicates = self.metrics.duplicates.saturating_add(1);
                 self.metrics.backpressure_duplicates =
                     self.metrics.backpressure_duplicates.saturating_add(1);
