@@ -590,7 +590,6 @@ fn parse_event_log_kv(line: &str) -> BTreeMap<String, String> {
     kv
 }
 
-<<<<<<< HEAD
 fn parse_node_event_log_sources_list(raw: &str) -> Vec<PathBuf> {
     raw.split(|c: char| c == ',' || c == ';' || c == '\n')
         .filter_map(|part| {
@@ -780,6 +779,10 @@ fn load_node_events(mode: NodeEventScanMode) -> LoadedNodeEvents {
         .map(|p| p.to_path_buf())
         .unwrap_or_else(|| PathBuf::from("."));
     load_node_events_from_root(&root, mode)
+}
+
+fn load_latest_node_events() -> Vec<NodeEventRecord> {
+    load_node_events(NodeEventScanMode::RecentTail).events
 }
 
 fn governance_state() -> StateStore {
