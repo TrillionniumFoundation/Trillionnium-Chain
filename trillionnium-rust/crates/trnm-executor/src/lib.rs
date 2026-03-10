@@ -968,12 +968,14 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
             // and probing empty buckets while preserving the same interleave semantics.
             let buckets_n = hot_bucket_count().min(txs.len());
             let mut bucket_depths = vec![0usize; buckets_n];
+            let mut tx_bucket_hints = Vec::with_capacity(txs.len());
             let mut non_empty_buckets = 0usize;
 
             for tx in txs.iter() {
                 // First pass: count occupancy only. This lets hotspot/singleton
                 // short-circuits bail out before cloning tx payloads into buckets.
                 let bucket = hot_bucket_hint(tx, buckets_n);
+                tx_bucket_hints.push(bucket);
                 if bucket_depths[bucket] == 0 {
                     non_empty_buckets += 1;
                 }
@@ -999,10 +1001,9 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
                 .iter()
                 .map(|depth| Vec::with_capacity(*depth))
                 .collect();
-            for tx in txs.iter().cloned() {
+            for (tx, bucket) in txs.iter().cloned().zip(tx_bucket_hints.into_iter()) {
                 // Prefer write-set as stronger conflict signal; fold a second key when present
                 // to reduce bucket skew for mixed workloads.
-                let bucket = hot_bucket_hint(&tx, buckets_n);
                 buckets[bucket].push(tx);
             }
 
