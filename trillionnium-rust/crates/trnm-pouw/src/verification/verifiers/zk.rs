@@ -415,6 +415,18 @@ mod tests {
     }
 
     #[test]
+    fn zk_verifier_rejects_missing_result_hash_binding_context_fail_closed() {
+        let verifier = ZkVerifier::default();
+        let mut task = mock_task();
+        task.result_hash = None;
+        let payload = b"ZK:task_id=99,worker=worker-zk,proof_type=zk,proof=ok";
+        assert!(matches!(
+            verifier.verify_proof(&task, payload),
+            VerificationResult::Invalid(msg) if msg.contains("missing task result_hash binding context")
+        ));
+    }
+
+    #[test]
     fn zk_verifier_enforces_v0_schema_when_feature_enabled() {
         let mut backends = ZkBackendRegistry::new();
         backends.register(Arc::new(MockSuccessBackend));
