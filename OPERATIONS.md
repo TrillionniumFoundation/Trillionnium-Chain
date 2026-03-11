@@ -390,9 +390,18 @@ DRY_RUN=1 ALERT_NOTIFY_CHANNEL=slack ./scripts/v2/pr7_alert_delivery_gate.sh
 - `ALERT_NOTIFY_MIN_LEVEL=WARN|FAIL`
 - `ALERT_NOTIFY_DEDUP_SECONDS=1800`
 - `ALERT_NOTIFY_STATE_FILE=run/pr7-alert-delivery/state.json`
+- `PR7_DELIVERY_FAIL_MODE=ignore|warn|escalate`（默认 `ignore`；`escalate` 时投递失败会把 gate 最终返回码提升为 `4`）
 - `DRY_RUN=1`（本地演示，不依赖真实密钥）
 - Slack: `SLACK_WEBHOOK_URL`
 - Telegram: `TELEGRAM_BOT_TOKEN` + `TELEGRAM_CHAT_ID`
+
+排障产物：
+- `run/pr7-alerts/<timestamp>-pid*/summary.txt`：PR-6 生成的原始告警摘要
+- `run/pr7-alerts/<timestamp>-pid*/pr7-delivery-status.env`：PR-7 最终状态（`status/pr6_rc/pr7_rc/final_rc/fail_mode/report/lock_dir/generated_at_utc`）
+
+建议：
+- 本地 dry-run 默认用 `PR7_DELIVERY_FAIL_MODE=warn`，既保留 `pr7_rc` 可观测性，又不把临时通道故障误判成规则引擎失败。
+- CI / cron 若要求“规则通过但投递失败也要报警”，改用 `PR7_DELIVERY_FAIL_MODE=escalate`。
 
 Runbook：`docs/runbooks/pr7-alert-delivery.md`
 
