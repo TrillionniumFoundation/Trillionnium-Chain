@@ -703,7 +703,7 @@ fn access_map_capacity_hint(txs: &[Tx]) -> usize {
 }
 
 #[inline]
-fn parse_env_usize(name: &str) -> Option<usize> {
+fn parse_env_numeric(name: &str) -> Option<String> {
     std::env::var(name).ok().and_then(|v| {
         let trimmed = v.trim();
         if trimmed.is_empty() {
@@ -717,11 +717,25 @@ fn parse_env_usize(name: &str) -> Option<usize> {
                     compact.push(ch);
                 }
             }
-            compact.parse::<usize>().ok()
+            if compact.is_empty() {
+                None
+            } else {
+                Some(compact)
+            }
         } else {
-            trimmed.parse::<usize>().ok()
+            Some(trimmed.to_owned())
         }
     })
+}
+
+#[inline]
+fn parse_env_usize(name: &str) -> Option<usize> {
+    parse_env_numeric(name).and_then(|v| v.parse::<usize>().ok())
+}
+
+#[inline]
+fn parse_env_f64(name: &str) -> Option<f64> {
+    parse_env_numeric(name).and_then(|v| v.parse::<f64>().ok())
 }
 
 fn aggr_scan_window() -> usize {
@@ -777,25 +791,19 @@ fn aggr_scan_round_robin_seed() -> usize {
 }
 
 fn auto_hot_streak_threshold() -> f64 {
-    std::env::var("TRNM_AUTO_HOT_STREAK_RATIO")
-        .ok()
-        .and_then(|v| v.trim().parse::<f64>().ok())
+    parse_env_f64("TRNM_AUTO_HOT_STREAK_RATIO")
         .map(|v| v.clamp(0.0, 1.0))
         .unwrap_or(0.22)
 }
 
 fn auto_reorder_min_margin() -> f64 {
-    std::env::var("TRNM_AUTO_REORDER_MIN_MARGIN")
-        .ok()
-        .and_then(|v| v.trim().parse::<f64>().ok())
+    parse_env_f64("TRNM_AUTO_REORDER_MIN_MARGIN")
         .map(|v| v.clamp(0.0, 1.0))
         .unwrap_or(0.04)
 }
 
 fn auto_reorder_min_hot_key_share() -> f64 {
-    std::env::var("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE")
-        .ok()
-        .and_then(|v| v.trim().parse::<f64>().ok())
+    parse_env_f64("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE")
         .map(|v| v.clamp(0.0, 1.0))
         .unwrap_or(0.0075)
 }
@@ -1830,6 +1838,20 @@ mod tests {
         assert!((auto_reorder_min_margin() - 0.12).abs() < f64::EPSILON);
         assert!((auto_reorder_min_hot_key_share() - 0.018).abs() < f64::EPSILON);
         assert!((auto_min_expected_gain_score() - 0.03).abs() < f64::EPSILON);
+    }
+
+    #[test]
+    fn auto_threshold_env_parsers_accept_grouped_numeric_values() {
+        let _env = env_lock();
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.2_5");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0,1");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.0_125");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0,0_5");
+
+        assert!((auto_hot_streak_threshold() - 0.25).abs() < f64::EPSILON);
+        assert!((auto_reorder_min_margin() - 0.1).abs() < f64::EPSILON);
+        assert!((auto_reorder_min_hot_key_share() - 0.0125).abs() < f64::EPSILON);
+        assert!((auto_min_expected_gain_score() - 0.05).abs() < f64::EPSILON);
     }
 
     #[test]
