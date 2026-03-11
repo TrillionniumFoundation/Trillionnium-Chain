@@ -2000,6 +2000,34 @@ mod tests {
     }
 
     #[test]
+    fn auto_adaptive_expected_gain_gate_blocks_low_value_hotspot_switches() {
+        let _env = env_lock();
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.0");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.0007");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.001");
+
+        // Same endpoint-visible hotspot shape as the tail-sampling regression,
+        // but with a gain threshold slightly above the observed streak*share.
+        // Adaptive mode should fail closed instead of switching strategies on a
+        // low-value hotspot signal.
+        let mut txs = Vec::with_capacity(3000);
+        txs.push(tx(1, vec![], vec![o(777)]));
+        for i in 1..2999u64 {
+            txs.push(tx(10_000 + i, vec![], vec![o(20_000 + i)]));
+        }
+        txs.push(tx(9_999, vec![], vec![o(777)]));
+
+        let d = auto_adaptive_decision(&txs);
+        assert!(d.expected_gain_score < d.min_expected_gain_score);
+        assert!(
+            !d.use_hot_bucket,
+            "low-value hotspot signal should not switch adaptive strategy"
+        );
+        assert_eq!(d.reason, "low_expected_gain");
+    }
+
+    #[test]
     fn free_ingress_batches_short_circuit_to_single_group_after_strategy_reorder() {
         let txs = vec![
             tx(9, vec![], vec![]),
