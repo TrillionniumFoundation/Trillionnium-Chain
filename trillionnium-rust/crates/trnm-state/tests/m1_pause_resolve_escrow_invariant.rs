@@ -1143,6 +1143,72 @@ fn unpause_does_not_bypass_pending_resolve_authority_timelock_or_escrow_conserva
 }
 
 #[test]
+fn paused_matured_resolve_authority_timelock_rejects_cancel_and_replace_without_side_effects() {
+    // M1 micro-hardening: once a sensitive resolve_authority update has reached its
+    // activation height, pause-time cancel/replace attempts must fail closed until the
+    // staged value is explicitly applied. They must not clear pause or perturb custody.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 64_100);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 941);
+
+    st.set_gov_param(98_210, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    let resolve_before = st.gov_param_string("resolve_authority");
+    let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+    let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+
+    let scheduled = st
+        .set_gov_param(
+            98_211,
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-c".into(),
+        )
+        .expect("resolve_authority should schedule while paused");
+    let activate_at_height = match scheduled {
+        GovParamUpdateOutcome::Scheduled { activate_at_height } => activate_at_height,
+        other => panic!("expected scheduled outcome, got {other:?}"),
+    };
+
+    let cancel_err = st
+        .set_gov_param_with_action(
+            activate_at_height,
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-c".into(),
+            GovPendingUpdateAction::Cancel,
+        )
+        .expect_err("matured resolve_authority update must reject cancel until applied");
+    assert!(cancel_err.contains("must be applied"), "unexpected error: {cancel_err}");
+
+    let replace_err = st
+        .set_gov_param_with_action(
+            activate_at_height,
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+            GovPendingUpdateAction::Replace,
+        )
+        .expect_err("matured resolve_authority update must reject replacement until applied");
+    assert!(replace_err.contains("must be applied"), "unexpected error: {replace_err}");
+
+    let pending = st
+        .pending_gov_update("resolve_authority")
+        .expect("matured update must remain staged after cancel/replace rejection");
+    assert_eq!(pending.value, "authority-a,authority-c");
+    assert_eq!(pending.activate_at_height, activate_at_height);
+    assert_eq!(st.gov_param_string("resolve_authority"), resolve_before);
+    assert!(st.is_emergency_paused());
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
+}
+
+#[test]
 fn paused_state_rejects_case_variant_challenge_escrow_member_without_side_effects() {
     // M1 micro-hardening: custody-account reservation must be case-insensitive so
     // mixed-case aliases cannot bypass resolver-set quarantine under emergency pause.
