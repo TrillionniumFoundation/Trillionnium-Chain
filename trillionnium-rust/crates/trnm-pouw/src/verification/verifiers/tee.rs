@@ -40,7 +40,7 @@ impl TeeVerifier {
             VerificationBackendError::Execution(BackendExecutionError::MalformedProof {
                 reason, ..
             }) => VerificationResult::Invalid(format!(
-                "malformed TEE attestation receipt: {reason}"
+                "malformed TEE attestation payload: {reason}"
             )),
             VerificationBackendError::Execution(BackendExecutionError::NotConfigured { .. }) => {
                 VerificationResult::Indeterminate(
@@ -319,7 +319,29 @@ mod tests {
                 b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,quote=abc"
             ),
             VerificationResult::Invalid(msg)
-                if msg.contains("malformed TEE attestation receipt:") && msg.contains("mock tee receipt malformed")
+                if msg.contains("malformed TEE attestation payload:") && msg.contains("mock tee receipt malformed")
+        ));
+    }
+
+    #[test]
+    fn tee_verifier_backend_malformed_quote_claims_maps_to_payload_invalid_fail_closed() {
+        let mut backends = ZkBackendRegistry::new();
+        backends.register(Arc::new(MockTeeMalformedBackend));
+        let verifier = TeeVerifier::new(
+            ZkBackendKind::Custom("mock-tee-malformed".into()),
+            Arc::new(backends),
+        );
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,report=claims"
+            ),
+            VerificationResult::Invalid(msg)
+                if msg.contains("malformed TEE attestation payload:")
+                    && !msg.contains("receipt:")
+                    && msg.contains("mock tee receipt malformed")
         ));
     }
 
