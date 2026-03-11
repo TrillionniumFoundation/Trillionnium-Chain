@@ -73,15 +73,41 @@ def main():
                 elif line.startswith("[consensus] "):
                     consensus_rows.append(parse_kv_line(line))
 
+    def input_status(path: str | None) -> str:
+        if not path:
+            return "missing"
+        return "present" if os.path.exists(path) else "missing"
+
     lines = ["# Profiling Closeout Baseline", f"generated_at={datetime.now().isoformat()}", "", "## Inputs"]
     lines += [
         f"- node_log: {node_log}",
+        f"- node_log_status: {input_status(node_log)}",
         f"- classic_bench: {classic}",
+        f"- classic_bench_status: {input_status(classic)}",
         f"- mixed_bench: {mixed}",
+        f"- mixed_bench_status: {input_status(mixed)}",
         f"- executor_profile: {executor_profile}",
+        f"- executor_profile_status: {input_status(executor_profile)}",
         "",
-        "## Block Metrics",
+        "## Data Completeness",
     ]
+
+    missing_inputs = []
+    for label, path in [
+        ("node_log", node_log),
+        ("classic_bench", classic),
+        ("mixed_bench", mixed),
+        ("executor_profile", executor_profile),
+    ]:
+        if not path or not os.path.exists(path):
+            missing_inputs.append(label)
+
+    if missing_inputs:
+        lines.append(f"- status: PARTIAL ({', '.join(missing_inputs)} missing)")
+    else:
+        lines.append("- status: COMPLETE")
+
+    lines += ["", "## Block Metrics"]
     for key in [
         "scheduler_elapsed_ms",
         "preexec_elapsed_ms",
