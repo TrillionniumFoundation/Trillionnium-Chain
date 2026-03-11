@@ -1237,6 +1237,13 @@ pub fn apply_resolve_at_height(
             }
         }
 
+        if let Some((pending_slash_worker, _)) = st.pending_resolve_approval(task_ref.id) {
+            if pending_slash_worker != slash_worker {
+                st.clear_pending_resolve_approval(task_ref.id);
+                return Err(PouwError::Unauthorized);
+            }
+        }
+
         let approved = st
             .stage_or_confirm_resolve_approval(
                 task_ref.id,
@@ -7386,11 +7393,12 @@ mod tests {
     }
 
     #[test]
-    fn resolve_multisig_rejects_decision_flip_and_preserves_staged_approval_without_escrow_mutation(
+    fn resolve_multisig_rejects_decision_flip_and_clears_stale_staged_approval_without_escrow_mutation(
     ) {
         // Economic + governance hardening: once one multisig signer stages a
         // slashing/non-slashing decision, a second signer cannot flip that
-        // terminal settlement decision in-flight.
+        // terminal settlement decision in-flight. Fail closed by clearing the
+        // stale staged approval so governance must restart from a clean quorum.
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
         set_resolve_authority(&mut st, "authority-a,authority-b");
@@ -7433,8 +7441,13 @@ mod tests {
         assert!(matches!(decision_flip_err, PouwError::Unauthorized));
         assert_eq!(
             st.pending_resolve_approval(r5.id),
-            Some((true, 1)),
-            "decision mismatch must not mutate staged multisig approval",
+            None,
+            "decision mismatch must clear stale staged multisig approval",
+        );
+        assert_eq!(
+            st.pending_resolve_first_approver(r5.id),
+            None,
+            "decision mismatch must clear stale first approver metadata",
         );
 
         let task = st
@@ -10599,7 +10612,8 @@ mod tests {
         );
         assert!(matches!(flip_err, PouwError::Unauthorized));
 
-        assert_eq!(st.pending_resolve_approval(r5.id), Some((true, 1)));
+        assert_eq!(st.pending_resolve_approval(r5.id), None);
+        assert_eq!(st.pending_resolve_first_approver(r5.id), None);
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
         assert_eq!(
             st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
@@ -10607,8 +10621,23 @@ mod tests {
         );
         assert_eq!(st.balance_of("challenger"), before_challenger);
 
-        let r6 = apply_resolve(&mut st, r5, true, "authority".into(), "authority".into())
-            .expect("matching staged slash decision should finalize after pause clear");
+        let restaged_err = apply_resolve(
+            &mut st,
+            r5.clone(),
+            true,
+            "authority".into(),
+            "authority".into(),
+        )
+        .expect_err("after decision flip clears staging, quorum must restart from a fresh first approval");
+        assert!(matches!(restaged_err, PouwError::ResolveApprovalStaged));
+        assert_eq!(st.pending_resolve_approval(r5.id), Some((true, 1)));
+        assert_eq!(
+            st.pending_resolve_first_approver(r5.id).as_deref(),
+            Some("authority")
+        );
+
+        let r6 = apply_resolve(&mut st, r5, true, "authority2".into(), "authority2".into())
+            .expect("fresh second signer should finalize restarted slash quorum after pause clear");
         let task = st.get_task(r6.id).expect("resolved task must persist");
         assert_eq!(task.status, TaskStatus::Slashed);
         assert_eq!(task.challenge_bond_forfeited, Some(false));
