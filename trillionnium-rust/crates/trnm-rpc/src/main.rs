@@ -2187,18 +2187,46 @@ fn parse_http_get_path(first_line: &str) -> Option<&str> {
         return None;
     }
 
-    let path = path.split('?').next().unwrap_or(path);
     let normalized = path.to_ascii_lowercase();
-    if path.contains('\\')
-        || normalized.contains("%2f")
-        || normalized.contains("%5c")
-        || normalized.contains("%2e")
-        || path.split('/').any(|segment| segment == "." || segment == "..")
+    if path.contains('\\') || normalized.contains("%5c") {
+        return None;
+    }
+
+    let path_without_query = path.split('?').next().unwrap_or(path);
+    let normalized_path = path_without_query.to_ascii_lowercase();
+    if normalized_path.contains("%2f")
+        || normalized_path.contains("%2e")
+        || path_without_query
+            .split('/')
+            .any(|segment| segment == "." || segment == "..")
     {
         return None;
     }
 
     Some(path)
+}
+
+fn parse_query_events_limit_from_path(path: &str) -> std::result::Result<usize, String> {
+    let Some(query) = path.split_once('?').map(|(_, query)| query) else {
+        return Ok(QUERY_EVENTS_LIMIT_DEFAULT);
+    };
+
+    for pair in query.split('&') {
+        let Some((key, value)) = pair.split_once('=') else {
+            continue;
+        };
+        if key != "limit" {
+            continue;
+        }
+        return value.parse::<usize>().map_err(|_| {
+            http_json_response(
+                "400 Bad Request",
+                "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}",
+            )
+        });
+    }
+
+    Ok(QUERY_EVENTS_LIMIT_DEFAULT)
 }
 
 fn normalize_capability_subject_lookup(raw: &str) -> Option<String> {
@@ -2312,17 +2340,22 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
                 }
             }
             Some(path) if path.starts_with("/query-events/") => {
-                let task_id = path.trim_start_matches("/query-events/").parse::<u64>();
+                let path_without_query = path.split('?').next().unwrap_or(path);
+                let task_id = path_without_query
+                    .trim_start_matches("/query-events/")
+                    .parse::<u64>();
                 match task_id {
                     Ok(task_id) => {
+                        let limit = match parse_query_events_limit_from_path(path) {
+                            Ok(limit) => limit,
+                            Err(response) => {
+                                stream.write_all(response.as_bytes())?;
+                                continue;
+                            }
+                        };
                         let node_events = load_node_events(NodeEventScanMode::Authoritative);
                         let recs = load_latest_adapter_records();
-                        match query_events_response(
-                            task_id,
-                            QUERY_EVENTS_LIMIT_DEFAULT,
-                            &node_events.events,
-                            &recs,
-                        ) {
+                        match query_events_response(task_id, limit, &node_events.events, &recs) {
                             Ok(events) => {
                                 let body = serde_json::to_string(&events).unwrap_or_else(|_| {
                                     "{\"ok\":false,\"code\":\"SERDE_ERROR\"}".to_string()
@@ -3604,8 +3637,34 @@ mod tests {
     fn parse_http_get_path_accepts_canonical_request_line() {
         assert_eq!(
             parse_http_get_path("GET /query-task/42?verbose=1 HTTP/1.1"),
-            Some("/query-task/42")
+            Some("/query-task/42?verbose=1")
         );
+    }
+
+    #[test]
+    fn parse_query_events_limit_from_path_defaults_and_accepts_explicit_limit() {
+        assert_eq!(
+            parse_query_events_limit_from_path("/query-events/42").expect("default limit"),
+            QUERY_EVENTS_LIMIT_DEFAULT
+        );
+        assert_eq!(
+            parse_query_events_limit_from_path("/query-events/42?limit=7")
+                .expect("explicit limit"),
+            7
+        );
+        assert_eq!(
+            parse_query_events_limit_from_path("/query-events/42?foo=bar&limit=9")
+                .expect("limit after unrelated query"),
+            9
+        );
+    }
+
+    #[test]
+    fn parse_query_events_limit_from_path_rejects_invalid_limit() {
+        let err = parse_query_events_limit_from_path("/query-events/42?limit=bogus")
+            .expect_err("invalid limit must fail closed");
+        assert!(err.contains("400 Bad Request"));
+        assert!(err.contains("invalid limit"));
     }
 
     #[test]
