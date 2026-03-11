@@ -1566,6 +1566,14 @@ fn average_or_zero(vals: &[u128]) -> u128 {
     }
 }
 
+fn ratio_ppm(numerator: u128, denominator: u128) -> u128 {
+    if denominator == 0 {
+        0
+    } else {
+        numerator.saturating_mul(1_000_000) / denominator
+    }
+}
+
 fn treasury_total(st: &StateStore) -> u128 {
     st.balance_of(CHALLENGE_ESCROW_ACCOUNT)
         .saturating_add(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT))
@@ -2744,6 +2752,25 @@ mod tests {
 
         assert_eq!(rollback_block_total, 2);
         assert!((rollback_block_rate - 0.5).abs() < f64::EPSILON);
+    }
+
+    #[test]
+    fn consensus_share_ppm_is_zero_when_finality_avg_is_zero() {
+        assert_eq!(ratio_ppm(10, 0), 0);
+    }
+
+    #[test]
+    fn consensus_share_ppm_makes_component_regressions_visible() {
+        let finality_avg = 200u128;
+        let scheduler_avg = 50u128;
+        let preexec_avg = 120u128;
+        let commit_avg = 20u128;
+        let state_root_total_avg = 10u128;
+
+        assert_eq!(ratio_ppm(scheduler_avg, finality_avg), 250_000);
+        assert_eq!(ratio_ppm(preexec_avg, finality_avg), 600_000);
+        assert_eq!(ratio_ppm(commit_avg, finality_avg), 100_000);
+        assert_eq!(ratio_ppm(state_root_total_avg, finality_avg), 50_000);
     }
 
     #[test]
@@ -5385,6 +5412,10 @@ fn main() -> Result<()> {
     let rollback_avg = average_or_zero(&rollback_samples);
     let avg_group_size_avg = average_or_zero(&avg_group_size_samples);
     let hot_object_share_avg_ppm = average_or_zero(&hot_object_share_samples_ppm);
+    let scheduler_share_avg_ppm = ratio_ppm(scheduler_avg, finality_avg);
+    let preexec_share_avg_ppm = ratio_ppm(preexec_avg, finality_avg);
+    let commit_share_avg_ppm = ratio_ppm(commit_avg, finality_avg);
+    let state_root_total_share_avg_ppm = ratio_ppm(state_root_total_avg, finality_avg);
     let rollback_block_rate = if finality_samples_ms.is_empty() {
         0.0
     } else {
@@ -5401,7 +5432,7 @@ fn main() -> Result<()> {
         .map(|h| h.missed_proposals)
         .collect();
     println!(
-        "[consensus] finality_avg_ms={} finality_p50_ms={} finality_p95_ms={} finality_max_ms={} scheduler_elapsed_avg_ms={} scheduler_elapsed_p50_ms={} scheduler_elapsed_p95_ms={} scheduler_elapsed_max_ms={} preexec_elapsed_avg_ms={} preexec_elapsed_p50_ms={} preexec_elapsed_p95_ms={} preexec_elapsed_max_ms={} commit_elapsed_avg_ms={} commit_elapsed_p50_ms={} commit_elapsed_p95_ms={} commit_elapsed_max_ms={} state_root_total_avg_ms={} state_root_total_p50_ms={} state_root_total_p95_ms={} state_root_total_max_ms={} critical_wait_blocks_avg={} critical_wait_blocks_p50={} critical_wait_blocks_p95={} critical_wait_blocks_max={} block_txs_p50={} block_txs_p95={} block_txs_max={} block_groups_p50={} block_groups_p95={} block_groups_max={} avg_group_size_avg_milli={} avg_group_size_p50_milli={} avg_group_size_p95_milli={} avg_group_size_max_milli={} hot_object_share_avg_ppm={} hot_object_share_p50_ppm={} hot_object_share_p95_ppm={} hot_object_share_max_ppm={} rollback_count_avg={} rollback_count_p50={} rollback_count_p95={} rollback_count_max={} rollback_block_total={} rollback_block_rate={:.6} preexec_reject_total={} apply_error_total={} apply_error_preexec_conflict_miss_total={} apply_error_version_conflict_total={} apply_error_invalid_transition_total={} apply_error_deadline_exceeded_total={} apply_error_semantic_fail_total={} rollback_total={} timeout_migrated_total={} recovery_error_rate={:.6} bft_committed_heights={} bft_round_change_total={} bft_round_change_backoff_total_ms={} bft_leader_missed_proposals={:?} bft_double_vote_total={} bft_auth_reject_bad_sig_total={} bft_auth_reject_replay_total={} bft_auth_reject_stale_nonce_total={}",
+        "[consensus] finality_avg_ms={} finality_p50_ms={} finality_p95_ms={} finality_max_ms={} scheduler_elapsed_avg_ms={} scheduler_elapsed_p50_ms={} scheduler_elapsed_p95_ms={} scheduler_elapsed_max_ms={} scheduler_share_avg_ppm={} preexec_elapsed_avg_ms={} preexec_elapsed_p50_ms={} preexec_elapsed_p95_ms={} preexec_elapsed_max_ms={} preexec_share_avg_ppm={} commit_elapsed_avg_ms={} commit_elapsed_p50_ms={} commit_elapsed_p95_ms={} commit_elapsed_max_ms={} commit_share_avg_ppm={} state_root_total_avg_ms={} state_root_total_p50_ms={} state_root_total_p95_ms={} state_root_total_max_ms={} state_root_total_share_avg_ppm={} critical_wait_blocks_avg={} critical_wait_blocks_p50={} critical_wait_blocks_p95={} critical_wait_blocks_max={} block_txs_p50={} block_txs_p95={} block_txs_max={} block_groups_p50={} block_groups_p95={} block_groups_max={} avg_group_size_avg_milli={} avg_group_size_p50_milli={} avg_group_size_p95_milli={} avg_group_size_max_milli={} hot_object_share_avg_ppm={} hot_object_share_p50_ppm={} hot_object_share_p95_ppm={} hot_object_share_max_ppm={} rollback_count_avg={} rollback_count_p50={} rollback_count_p95={} rollback_count_max={} rollback_block_total={} rollback_block_rate={:.6} preexec_reject_total={} apply_error_total={} apply_error_preexec_conflict_miss_total={} apply_error_version_conflict_total={} apply_error_invalid_transition_total={} apply_error_deadline_exceeded_total={} apply_error_semantic_fail_total={} rollback_total={} timeout_migrated_total={} recovery_error_rate={:.6} bft_committed_heights={} bft_round_change_total={} bft_round_change_backoff_total_ms={} bft_leader_missed_proposals={:?} bft_double_vote_total={} bft_auth_reject_bad_sig_total={} bft_auth_reject_replay_total={} bft_auth_reject_stale_nonce_total={}",
         finality_avg,
         finality_p50,
         finality_p95,
@@ -5410,18 +5441,22 @@ fn main() -> Result<()> {
         scheduler_p50,
         scheduler_p95,
         scheduler_max,
+        scheduler_share_avg_ppm,
         preexec_avg,
         preexec_p50,
         preexec_p95,
         preexec_max,
+        preexec_share_avg_ppm,
         commit_avg,
         commit_p50,
         commit_p95,
         commit_max,
+        commit_share_avg_ppm,
         state_root_total_avg,
         state_root_total_p50,
         state_root_total_p95,
         state_root_total_max,
+        state_root_total_share_avg_ppm,
         critical_wait_blocks_avg,
         critical_wait_blocks_p50,
         critical_wait_blocks_p95,
