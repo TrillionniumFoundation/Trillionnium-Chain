@@ -255,6 +255,19 @@ def main():
         "- benchmark_artifact_coverage_note: benchmark_artifact_coverage below excludes node_log by design; use total_evidence_coverage for the full closeout evidence set"
     )
 
+    lines += ["", "## Curator Verdict"]
+    verdict = autopilot_severity(missing_inputs, stale_inputs, old_inputs)
+    if verdict == "GREEN":
+        verdict_reason = "all expected closeout inputs are present and fresh"
+    elif missing_inputs:
+        verdict_reason = f"missing inputs: {', '.join(missing_inputs)}"
+    elif old_inputs:
+        verdict_reason = f"old inputs: {', '.join(old_inputs)}"
+    else:
+        verdict_reason = f"stale inputs: {', '.join(stale_inputs)}"
+    lines.append(f"- curator_verdict: {verdict}")
+    lines.append(f"- curator_reason: {verdict_reason}")
+
     lines += ["", "## Autopilot Recommended Next Steps"]
     if missing_inputs:
         for label, status, producer in readiness_rows:
