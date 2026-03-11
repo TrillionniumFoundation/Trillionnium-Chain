@@ -840,9 +840,10 @@ fn main() -> Result<()> {
                     cmd = tpl(cmd, "amount", &req.amount);
                     cmd = tpl(cmd, "denom", &req.denom);
                     let tx_hash = run_template(&cmd)?;
+                    persist_local_pending_tx(&tx_hash)?;
                     let out = TransferTxResponse {
                         tx_hash,
-                        status: "submitted".into(),
+                        status: "pending".into(),
                     };
                     println!("{}", serde_json::to_string_pretty(&out)?);
                 } else {
@@ -1331,6 +1332,42 @@ mod tests {
 
         assert_eq!(query_local_tx_status(ok_hash).as_deref(), Some("committed"));
         assert_eq!(query_local_tx_status(bad_hash), None);
+
+        let _ = std::fs::remove_file(&path);
+        std::env::remove_var("TRNM_RPC_TX_FILE");
+    }
+
+    #[test]
+    fn persist_local_pending_tx_overwrites_existing_terminal_state_with_pending() {
+        let _guard = ENV_LOCK.lock().unwrap();
+        let unique = format!(
+            "trnm-cli-test-{}-{}.json",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        );
+        let path = std::env::temp_dir().join(unique);
+        std::env::set_var("TRNM_RPC_TX_FILE", &path);
+
+        let tx_hash = "0xcccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc";
+        let payload = format!(
+            "{{\n  \"{}\": {{\"status\": \"committed\", \"updated_at_unix_ms\": 1}}\n}}",
+            tx_hash
+        );
+        std::fs::write(&path, payload).unwrap();
+
+        persist_local_pending_tx(tx_hash).unwrap();
+
+        let raw = std::fs::read_to_string(&path).unwrap();
+        let parsed: serde_json::Value = serde_json::from_str(&raw).unwrap();
+        assert_eq!(
+            parsed[tx_hash]["status"].as_str(),
+            Some("pending"),
+            "persist_local_pending_tx should reset tracked txs to pending on fresh submit"
+        );
+        assert_eq!(query_local_tx_status(tx_hash).as_deref(), Some("pending"));
 
         let _ = std::fs::remove_file(&path);
         std::env::remove_var("TRNM_RPC_TX_FILE");
