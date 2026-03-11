@@ -827,13 +827,24 @@ fn auto_min_expected_gain_score() -> f64 {
         .unwrap_or(0.01)
 }
 
+fn auto_adaptive_min_batch_len() -> usize {
+    const DEFAULT_MIN_BATCH_LEN: usize = 512;
+    const MIN_BATCH_LEN_FLOOR: usize = 64;
+    const MIN_BATCH_LEN_CEIL: usize = 4096;
+
+    parse_env_usize("TRNM_AUTO_MIN_BATCH_LEN")
+        .map(|v| v.clamp(MIN_BATCH_LEN_FLOOR, MIN_BATCH_LEN_CEIL))
+        .unwrap_or(DEFAULT_MIN_BATCH_LEN)
+}
+
 pub fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
     let threshold = auto_hot_streak_threshold();
     let min_margin = auto_reorder_min_margin();
     let min_hot_key_share = auto_reorder_min_hot_key_share();
     let min_expected_gain_score = auto_min_expected_gain_score();
+    let min_batch_len = auto_adaptive_min_batch_len();
 
-    if txs.len() < 512 {
+    if txs.len() < min_batch_len {
         return AutoAdaptiveDecision {
             use_hot_bucket: false,
             reason: "small_batch",
@@ -1921,6 +1932,7 @@ mod tests {
         let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "\"0.0_125\"");
         let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "'0.05'");
         let _buckets = EnvGuard::set("TRNM_HOT_BUCKETS", "\"1,6\"");
+        let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "'2_048'");
 
         assert_eq!(aggr_scan_window(), 1024);
         assert_eq!(aggr_scan_round_robin_seed(), 9001);
@@ -1929,6 +1941,7 @@ mod tests {
         assert_eq!(auto_reorder_min_hot_key_share(), 0.0125);
         assert_eq!(auto_min_expected_gain_score(), 0.05);
         assert_eq!(hot_bucket_count(), 16);
+        assert_eq!(auto_adaptive_min_batch_len(), 2048);
     }
 
     #[test]
@@ -1942,6 +1955,7 @@ mod tests {
         let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", " +0.0_125 ");
         let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", " '+0.05' ");
         let _buckets = EnvGuard::set("TRNM_HOT_BUCKETS", " '+1,6' ");
+        let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", " '+1_024' ");
 
         assert_eq!(aggr_scan_window(), 1024);
         assert_eq!(aggr_scan_round_robin_seed(), 9001);
@@ -1950,6 +1964,7 @@ mod tests {
         assert_eq!(auto_reorder_min_hot_key_share(), 0.0125);
         assert_eq!(auto_min_expected_gain_score(), 0.05);
         assert_eq!(hot_bucket_count(), 16);
+        assert_eq!(auto_adaptive_min_batch_len(), 1024);
     }
 
     #[test]
@@ -1963,6 +1978,7 @@ mod tests {
         let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "share");
         let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "gain");
         let _buckets = EnvGuard::set("TRNM_HOT_BUCKETS", "bucket-count");
+        let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "batch??");
 
         assert_eq!(aggr_scan_window(), 0);
         assert_eq!(aggr_scan_round_robin_seed(), 0);
@@ -1971,6 +1987,7 @@ mod tests {
         assert_eq!(auto_reorder_min_hot_key_share(), 0.0075);
         assert_eq!(auto_min_expected_gain_score(), 0.01);
         assert_eq!(hot_bucket_count(), 8);
+        assert_eq!(auto_adaptive_min_batch_len(), 512);
     }
 
     #[test]
@@ -1984,6 +2001,7 @@ mod tests {
         let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", " _,_ ");
         let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", " '__,,__' ");
         let _buckets = EnvGuard::set("TRNM_HOT_BUCKETS", " \"_,,\" ");
+        let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", " '__,,__' ");
 
         assert_eq!(aggr_scan_window(), 0);
         assert_eq!(aggr_scan_round_robin_seed(), 0);
@@ -1992,6 +2010,39 @@ mod tests {
         assert_eq!(auto_reorder_min_hot_key_share(), 0.0075);
         assert_eq!(auto_min_expected_gain_score(), 0.01);
         assert_eq!(hot_bucket_count(), 8);
+        assert_eq!(auto_adaptive_min_batch_len(), 512);
+    }
+
+    #[test]
+    fn auto_adaptive_min_batch_len_is_clamped_to_safe_bounds() {
+        let _env = env_lock();
+
+        let _low = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "8");
+        assert_eq!(auto_adaptive_min_batch_len(), 64);
+        drop(_low);
+
+        let _high = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "99999");
+        assert_eq!(auto_adaptive_min_batch_len(), 4096);
+    }
+
+    #[test]
+    fn auto_adaptive_small_batch_threshold_is_env_tunable() {
+        let _env = env_lock();
+        let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "64");
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.0");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.2");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.0");
+
+        let mut txs = Vec::with_capacity(64);
+        for i in 0..64u64 {
+            txs.push(tx(i, vec![], vec![o(42)]));
+        }
+
+        let d = auto_adaptive_decision(&txs);
+        assert_eq!(d.sample_len, 64);
+        assert!(d.use_hot_bucket, "env-tuned min batch should allow small-batch hotspot detection");
+        assert_eq!(d.reason, "hotspot_detected");
     }
 
     #[test]
