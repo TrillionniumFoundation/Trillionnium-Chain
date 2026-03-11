@@ -488,6 +488,21 @@ mod tests {
     }
 
     #[test]
+    fn tee_verifier_backend_unavailable_quote_claims_keeps_quote_claims_surface_without_legacy_evidence_suffix() {
+        let result = TeeVerifier::classify_execution_err(BackendExecutionError::Unavailable {
+            backend: "tee:mock-tee-unavailable".to_string(),
+            reason: "quote claims verifier unavailable".to_string(),
+        });
+
+        assert!(matches!(result, VerificationResult::Indeterminate(_)), "unexpected result: {result:?}");
+        let VerificationResult::Indeterminate(msg) = result else { unreachable!() };
+        assert!(msg.contains("unavailable:"), "message: {msg}");
+        assert!(msg.contains("quote claims"), "message: {msg}");
+        assert!(!msg.contains("evidence/claims"), "message: {msg}");
+        assert!(!msg.contains("legacy:"), "message: {msg}");
+    }
+
+    #[test]
     fn tee_verifier_backend_malformed_report_claims_collapses_to_payload_claims_surface() {
         let mut backends = ZkBackendRegistry::new();
         backends.register(Arc::new(MockTeeMalformedBackend));
