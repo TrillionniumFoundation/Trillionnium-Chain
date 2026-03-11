@@ -1443,7 +1443,6 @@ mod tests {
     }
 
     #[test]
-    #[test]
     fn resolve_rejects_creator_as_authority_member_or_signer() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
