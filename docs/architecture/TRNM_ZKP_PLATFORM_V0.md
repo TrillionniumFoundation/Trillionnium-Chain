@@ -397,6 +397,23 @@ v0 **不承诺**：
 
 原则：**新增 proving system 不改 Router 对外契约，只新增 backend capability。**
 
+### 10.1 `vk_ref` / `zk_system` / backend router 一致性约束（v0 fail-closed）
+
+为防止 canonical payload、registry 元数据与 backend router 语义漂移，v0 额外冻结以下约束：
+
+1. `vk_ref` 不是纯展示字段；当 router 进入 ZK backend 路径时，`vk_ref` 必须可解析到稳定 verifier 元数据。
+2. 对 ZK 路径，`vk_ref` 解析结果至少必须包含 canonical `zk_system` 元数据；若缺失，则视为输入契约不满足并 fail-closed。
+3. payload 中声明的 `zk_system` 必须与 `vk_ref` 解析结果一致。
+4. 若 payload 显式携带 `backend_id`，且该 token 可推断 proving-system hint，则该 hint 必须与 `vk_ref` 的 canonical `zk_system` 一致。
+5. router 最终选中的 backend 若带有可推断 proving-system hint，也必须与 `vk_ref` 的 canonical `zk_system` 一致。
+6. 不允许因为 `allow_backend_fallback`、默认 backend、或历史别名兼容而跨 proving system 静默改道。
+
+设计意图：
+
+- 防止 payload 说自己是 `plonk`，却引用 `groth16` verification key
+- 防止 payload `backend_id` / router backend selection 与 `vk_ref` 各说各话
+- 把 `vk_ref` 从“仅审计字符串”提升为 router contract 的 fail-closed 锚点之一
+
 ---
 
 ## 11. 统一回执与观测字段
