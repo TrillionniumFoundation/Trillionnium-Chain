@@ -93,9 +93,11 @@ impl TeeVerifier {
 
     fn malformed_surface_label(surface: &'static str) -> &'static str {
         match surface {
-            "quote claims" | "report claims" | "quote/report claims" | "claims" => {
-                "payload/claims"
-            }
+            "quote claims"
+            | "report claims"
+            | "quote/report claims"
+            | "claims"
+            | "evidence/claims" => "payload/claims",
             other => other,
         }
     }
@@ -111,6 +113,8 @@ impl TeeVerifier {
         let mentions_claims = normalized.contains("claim");
         let mentions_payload = normalized.contains("payload");
         let mentions_evidence = normalized.contains("evidence");
+        let mentions_attestation = normalized.contains("attestation");
+        let mentions_receipt = normalized.contains("receipt");
 
         if mentions_unavailable && !mentions_quote && !mentions_report && !mentions_claims {
             return "evidence/claims";
@@ -120,7 +124,7 @@ impl TeeVerifier {
             return if mentions_claims {
                 "quote/report claims"
             } else {
-                "payload/claims"
+                "quote/report evidence"
             };
         }
 
@@ -141,14 +145,18 @@ impl TeeVerifier {
         }
 
         if mentions_claims {
-            return "claims";
+            return if mentions_attestation || mentions_receipt {
+                "evidence/claims"
+            } else {
+                "claims"
+            };
         }
 
         if mentions_payload {
             return "payload/claims";
         }
 
-        if mentions_evidence {
+        if mentions_evidence || mentions_attestation || mentions_receipt {
             return "evidence/claims";
         }
 
@@ -297,7 +305,7 @@ mod tests {
             assert_eq!(request.family, VerificationBackendFamily::Tee);
             Err(BackendExecutionError::MalformedProof {
                 backend: request.backend_label(self.backend_id()),
-                reason: "mock tee receipt malformed".to_string(),
+                reason: "mock tee attestation receipt malformed".to_string(),
             })
         }
     }
@@ -411,7 +419,7 @@ mod tests {
                 b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,quote=abc"
             ),
             VerificationResult::Invalid(msg)
-                if msg.contains("malformed TEE attestation payload/claims:") && msg.contains("mock tee receipt malformed")
+                if msg.contains("malformed TEE attestation payload/claims:") && msg.contains("mock tee attestation receipt malformed")
         ));
     }
 
@@ -433,7 +441,7 @@ mod tests {
             VerificationResult::Invalid(msg)
                 if msg.contains("malformed TEE attestation payload/claims:")
                     && !msg.contains("receipt:")
-                    && msg.contains("mock tee receipt malformed")
+                    && msg.contains("mock tee attestation receipt malformed")
         ));
     }
 
@@ -488,6 +496,21 @@ mod tests {
     }
 
     #[test]
+    fn tee_verifier_backend_internal_quote_report_evidence_keeps_combined_evidence_surface_without_claims_legacy_suffix() {
+        let result = TeeVerifier::classify_execution_err(BackendExecutionError::Internal {
+            backend: "tee:mock-tee-internal".to_string(),
+            reason: "quote/report evidence verifier crashed".to_string(),
+        });
+
+        assert!(matches!(result, VerificationResult::Indeterminate(_)), "unexpected result: {result:?}");
+        let VerificationResult::Indeterminate(msg) = result else { unreachable!() };
+        assert!(msg.contains("backend_error:"), "message: {msg}");
+        assert!(msg.contains("quote/report evidence"), "message: {msg}");
+        assert!(!msg.contains("payload/claims"), "message: {msg}");
+        assert!(!msg.contains("legacy:"), "message: {msg}");
+    }
+
+    #[test]
     fn tee_verifier_backend_unavailable_quote_claims_keeps_quote_claims_surface_without_legacy_evidence_suffix() {
         let result = TeeVerifier::classify_execution_err(BackendExecutionError::Unavailable {
             backend: "tee:mock-tee-unavailable".to_string(),
@@ -520,7 +543,7 @@ mod tests {
             VerificationResult::Invalid(msg)
                 if msg.contains("malformed TEE attestation payload/claims:")
                     && !msg.contains("report claims")
-                    && msg.contains("mock tee receipt malformed")
+                    && msg.contains("mock tee attestation receipt malformed")
         ));
     }
 
