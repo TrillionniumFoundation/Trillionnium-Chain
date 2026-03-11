@@ -443,6 +443,23 @@ mod tests {
     }
 
     #[test]
+    fn zk_verifier_rejects_backend_router_system_mismatch_with_vk_ref_without_payload_system() {
+        let mut backends = ZkBackendRegistry::new();
+        backends.register(Arc::new(MockSystemSuccessBackend {
+            backend_id: "groth16-demo",
+            expected_system: "groth16",
+        }));
+        let verifier = ZkVerifier::from_config(&router_config(), Arc::new(backends));
+        let task = mock_task();
+        let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","backend_id":"groth16-demo","backend_version":"v1","vk_ref":"vk://trnm/dev/mock-plonk/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["99","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]},"meta":{"schema_version":"trnm.zk.payload.v0"}}"#;
+        assert!(matches!(
+            verifier.verify_proof(&task, payload),
+            VerificationResult::Invalid(msg)
+                if msg.contains("backend 'groth16-demo'") && msg.contains("does not match vk_ref")
+        ));
+    }
+
+    #[test]
     fn zk_verifier_invalid_proof_path_with_mock_backend() {
         let mut backends = ZkBackendRegistry::new();
         backends.register(Arc::new(MockInvalidBackend));
