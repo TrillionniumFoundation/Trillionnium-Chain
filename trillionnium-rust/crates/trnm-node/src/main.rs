@@ -4951,6 +4951,9 @@ fn main() -> Result<()> {
     let mut commit_samples_ms: Vec<u128> = Vec::new();
     let mut state_root_total_samples_ms: Vec<u128> = Vec::new();
     let mut critical_wait_blocks_samples: Vec<u128> = Vec::new();
+    let mut block_txs_samples: Vec<u128> = Vec::new();
+    let mut block_groups_samples: Vec<u128> = Vec::new();
+    let mut rollback_samples: Vec<u128> = Vec::new();
     let mut preexec_reject_total: u64 = 0;
     let mut apply_error_total: u64 = 0;
     let mut apply_error_preexec_conflict_miss_total: u64 = 0;
@@ -5234,6 +5237,9 @@ fn main() -> Result<()> {
         let commit_elapsed_ms = commit_start.elapsed().as_millis();
         commit_samples_ms.push(commit_elapsed_ms);
         state_root_total_samples_ms.push(state_root_total_ms);
+        block_txs_samples.push(applied as u128);
+        block_groups_samples.push(group_count as u128);
+        rollback_samples.push(rollback_count as u128);
         let elapsed_ms = block_start.elapsed().as_millis();
         finality_samples_ms.push(elapsed_ms);
         println!(
@@ -5308,6 +5314,12 @@ fn main() -> Result<()> {
     let state_root_total_p95 = percentile(state_root_total_samples_ms.clone(), 0.95);
     let critical_wait_blocks_p50 = percentile(critical_wait_blocks_samples.clone(), 0.50);
     let critical_wait_blocks_p95 = percentile(critical_wait_blocks_samples.clone(), 0.95);
+    let block_txs_p50 = percentile(block_txs_samples.clone(), 0.50);
+    let block_txs_p95 = percentile(block_txs_samples.clone(), 0.95);
+    let block_groups_p50 = percentile(block_groups_samples.clone(), 0.50);
+    let block_groups_p95 = percentile(block_groups_samples.clone(), 0.95);
+    let rollback_p50 = percentile(rollback_samples.clone(), 0.50);
+    let rollback_p95 = percentile(rollback_samples.clone(), 0.95);
     let recovery_error_rate = if finality_samples_ms.is_empty() {
         0.0
     } else {
@@ -5319,7 +5331,7 @@ fn main() -> Result<()> {
         .map(|h| h.missed_proposals)
         .collect();
     println!(
-        "[consensus] finality_p50_ms={} finality_p95_ms={} scheduler_elapsed_p50_ms={} scheduler_elapsed_p95_ms={} preexec_elapsed_p50_ms={} preexec_elapsed_p95_ms={} commit_elapsed_p50_ms={} commit_elapsed_p95_ms={} state_root_total_p50_ms={} state_root_total_p95_ms={} critical_wait_blocks_p50={} critical_wait_blocks_p95={} preexec_reject_total={} apply_error_total={} apply_error_preexec_conflict_miss_total={} apply_error_version_conflict_total={} apply_error_invalid_transition_total={} apply_error_deadline_exceeded_total={} apply_error_semantic_fail_total={} rollback_total={} timeout_migrated_total={} recovery_error_rate={:.6} bft_committed_heights={} bft_round_change_total={} bft_round_change_backoff_total_ms={} bft_leader_missed_proposals={:?} bft_double_vote_total={} bft_auth_reject_bad_sig_total={} bft_auth_reject_replay_total={} bft_auth_reject_stale_nonce_total={}",
+        "[consensus] finality_p50_ms={} finality_p95_ms={} scheduler_elapsed_p50_ms={} scheduler_elapsed_p95_ms={} preexec_elapsed_p50_ms={} preexec_elapsed_p95_ms={} commit_elapsed_p50_ms={} commit_elapsed_p95_ms={} state_root_total_p50_ms={} state_root_total_p95_ms={} critical_wait_blocks_p50={} critical_wait_blocks_p95={} block_txs_p50={} block_txs_p95={} block_groups_p50={} block_groups_p95={} rollback_count_p50={} rollback_count_p95={} preexec_reject_total={} apply_error_total={} apply_error_preexec_conflict_miss_total={} apply_error_version_conflict_total={} apply_error_invalid_transition_total={} apply_error_deadline_exceeded_total={} apply_error_semantic_fail_total={} rollback_total={} timeout_migrated_total={} recovery_error_rate={:.6} bft_committed_heights={} bft_round_change_total={} bft_round_change_backoff_total_ms={} bft_leader_missed_proposals={:?} bft_double_vote_total={} bft_auth_reject_bad_sig_total={} bft_auth_reject_replay_total={} bft_auth_reject_stale_nonce_total={}",
         finality_p50,
         finality_p95,
         scheduler_p50,
@@ -5332,6 +5344,12 @@ fn main() -> Result<()> {
         state_root_total_p95,
         critical_wait_blocks_p50,
         critical_wait_blocks_p95,
+        block_txs_p50,
+        block_txs_p95,
+        block_groups_p50,
+        block_groups_p95,
+        rollback_p50,
+        rollback_p95,
         preexec_reject_total,
         apply_error_total,
         apply_error_preexec_conflict_miss_total,
