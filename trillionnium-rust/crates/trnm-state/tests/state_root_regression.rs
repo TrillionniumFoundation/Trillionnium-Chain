@@ -598,3 +598,65 @@ fn restore_monetary_state_rewinds_state_root_after_zero_net_tick_roundtrip() {
         "repeated reads after zero-net monetary restore should deterministically reuse the rewound cached root"
     );
 }
+
+#[test]
+fn restore_combined_pending_and_monetary_none_roundtrip_rewinds_state_root() {
+    let mut state = StateStore::new();
+    state
+        .set_gov_param(
+            0,
+            1,
+            "monetary_policy_tick_interval_blocks".to_string(),
+            "10".to_string(),
+        )
+        .unwrap();
+    state
+        .set_gov_param(
+            0,
+            2,
+            "monetary_policy_tick_cooldown_blocks".to_string(),
+            "1".to_string(),
+        )
+        .unwrap();
+    state
+        .set_gov_param(0, 3, "monetary_base_issuance_per_tick".to_string(), "7".to_string())
+        .unwrap();
+    state
+        .set_gov_param(0, 4, "monetary_base_burn_per_tick".to_string(), "5".to_string())
+        .unwrap();
+
+    let baseline_root = state.state_root();
+    let baseline_monetary = state.monetary_state_snapshot();
+    let baseline_pending = state.pending_gov_update("challenge_min_bond");
+
+    let outcome = state
+        .set_gov_param(
+            1_000,
+            7_001,
+            "challenge_min_bond".to_string(),
+            "5000".to_string(),
+        )
+        .expect("staging a sensitive governance update should succeed");
+    assert!(matches!(outcome, GovParamUpdateOutcome::Scheduled { .. }));
+    state.policy_tick(10).expect("policy tick should succeed");
+
+    let mutated_root = state.state_root();
+    assert_ne!(
+        mutated_root, baseline_root,
+        "sanity: combined pending governance and monetary mutations must perturb the root"
+    );
+
+    state.restore_pending_gov_update("challenge_min_bond", baseline_pending);
+    state.restore_monetary_state(baseline_monetary);
+
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "restoring both pending governance and monetary snapshots must rewind state_root exactly"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "post-restore repeated reads should deterministically reuse the exact rewound root"
+    );
+}
