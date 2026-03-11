@@ -2231,7 +2231,16 @@ fn parse_query_events_limit_from_path(path: &str) -> std::result::Result<usize, 
                 "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"duplicate limit\"}",
             ));
         }
-        parsed_limit = Some(value.parse::<usize>().map_err(|_| {
+
+        let normalized = normalize_wrapped_env_value(value);
+        if normalized.is_empty() {
+            return Err(http_json_response(
+                "400 Bad Request",
+                "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}",
+            ));
+        }
+
+        parsed_limit = Some(normalized.parse::<usize>().map_err(|_| {
             http_json_response(
                 "400 Bad Request",
                 "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}",
@@ -3680,6 +3689,20 @@ mod tests {
             .expect_err("invalid limit must fail closed");
         assert!(err.contains("400 Bad Request"));
         assert!(err.contains("invalid limit"));
+    }
+
+    #[test]
+    fn parse_query_events_limit_from_path_accepts_wrapped_numeric_limit() {
+        assert_eq!(
+            parse_query_events_limit_from_path("/query-events/42?limit=\"7\"")
+                .expect("quoted numeric limit should parse"),
+            7
+        );
+        assert_eq!(
+            parse_query_events_limit_from_path("/query-events/42?limit=  `9`  ")
+                .expect("backtick-wrapped numeric limit should parse"),
+            9
+        );
     }
 
     #[test]
