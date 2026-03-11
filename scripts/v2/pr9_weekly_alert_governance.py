@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+import hashlib
 import json
 import re
 from pathlib import Path
@@ -181,6 +182,13 @@ def snapshot_timestamp(path: Path) -> dt.datetime | None:
         return None
 
 
+def payload_history_fingerprint(payload: dict[str, Any]) -> str:
+    stable_payload = dict(payload)
+    stable_payload.pop("generated_at_utc", None)
+    encoded = json.dumps(stable_payload, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
+
+
 def find_previous_week_json(history_dir: Path, current_json_out: Path, now_dt: dt.datetime, lookback_days: int) -> Path | None:
     if not history_dir.exists():
         return None
@@ -321,6 +329,8 @@ def main() -> int:
             "missing_threshold_advice_source": latest_advice is None,
         },
     }
+    history_fingerprint = payload_history_fingerprint(payload)
+    payload["history_fingerprint_sha256"] = history_fingerprint
 
     lines: list[str] = []
     lines.append("# PR9 Weekly Alert Governance Report")
@@ -455,15 +465,34 @@ def main() -> int:
     out_md.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
     out_json.parent.mkdir(parents=True, exist_ok=True)
-    out_json.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    rendered_json = json.dumps(payload, ensure_ascii=False, indent=2) + "\n"
+    out_json.write_text(rendered_json, encoding="utf-8")
 
     history_dir.mkdir(parents=True, exist_ok=True)
     snapshot_name = f"weekly-alert-governance-{now_dt.strftime('%Y%m%dT%H%M%SZ')}.json"
-    (history_dir / snapshot_name).write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    snapshot_path = history_dir / snapshot_name
+    latest_snapshot = None
+    history_candidates = sorted(history_dir.glob("weekly-alert-governance-*.json"))
+    if history_candidates:
+        latest_snapshot = history_candidates[-1]
+
+    wrote_snapshot = False
+    if latest_snapshot is None:
+        snapshot_path.write_text(rendered_json, encoding="utf-8")
+        wrote_snapshot = True
+    else:
+        latest_payload = safe_json(latest_snapshot)
+        latest_fingerprint = latest_payload.get("history_fingerprint_sha256") if isinstance(latest_payload, dict) else None
+        if latest_fingerprint != history_fingerprint:
+            snapshot_path.write_text(rendered_json, encoding="utf-8")
+            wrote_snapshot = True
 
     print(f"[OK] wrote {out_md}")
     print(f"[OK] wrote {out_json}")
-    print(f"[OK] wrote {history_dir / snapshot_name}")
+    if wrote_snapshot:
+        print(f"[OK] wrote {snapshot_path}")
+    else:
+        print(f"[OK] skipped duplicate history snapshot (fingerprint={history_fingerprint})")
     return 0
 
 
