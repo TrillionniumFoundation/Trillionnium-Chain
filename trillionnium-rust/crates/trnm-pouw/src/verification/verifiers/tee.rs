@@ -48,13 +48,13 @@ impl TeeVerifier {
                 backend,
                 reason,
             }) => VerificationResult::Indeterminate(format!(
-                "unavailable: verification backend '{backend}' cannot currently verify receipt: {reason}"
+                "unavailable: verification backend '{backend}' cannot currently verify TEE attestation receipt: {reason}"
             )),
             VerificationBackendError::Execution(BackendExecutionError::Internal {
                 backend,
                 reason,
             }) => VerificationResult::Indeterminate(format!(
-                "backend_error: verification backend '{backend}' failed: {reason}"
+                "backend_error: verification backend '{backend}' failed while verifying TEE attestation receipt: {reason}"
             )),
         }
     }
@@ -293,7 +293,7 @@ mod tests {
             VerificationResult::Indeterminate(msg)
                 if msg.contains("unavailable:")
                     && msg.contains("mock-tee-unavailable")
-                    && msg.contains("cannot currently verify receipt")
+                    && msg.contains("cannot currently verify TEE attestation receipt")
         ));
     }
 
@@ -335,6 +335,7 @@ mod tests {
             VerificationResult::Indeterminate(msg)
                 if msg.contains("backend_error:")
                     && msg.contains("mock-tee-internal")
+                    && msg.contains("failed while verifying TEE attestation receipt")
                     && msg.contains("mock tee backend internal failure")
         ));
     }
