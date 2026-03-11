@@ -127,8 +127,9 @@ rollback_cmd="rm -rf $(printf '%q' "$EVIDENCE_DIR")"
   else
     echo "result=FAIL"
   fi
-  echo "replay_command=env TZ=${TZ:-UTC} LC_ALL=${LC_ALL:-C} LANG=${LANG:-C} SOURCE_DATE_EPOCH=${SOURCE_DATE_EPOCH:-1704067200} OUT_DIR='${OUT_DIR:-$BASE_OUT}' ./scripts/run_local_release_evidence.sh"
+  echo "replay_command=env TZ=${TZ:-UTC} LC_ALL=${LC_ALL:-C} LANG=${LANG:-C} SOURCE_DATE_EPOCH=${SOURCE_DATE_EPOCH:-1704067200} CARGO_TERM_COLOR=${CARGO_TERM_COLOR:-never} RUST_BACKTRACE=${RUST_BACKTRACE:-1} CARGO_BUILD_JOBS=${CARGO_BUILD_JOBS:-1} OUT_DIR='${OUT_DIR:-$BASE_OUT}' ./scripts/run_local_release_evidence.sh"
   echo "rollback_command=$rollback_cmd"
+  echo "root_cause_hint=CI_FLAKE|ENV_DRIFT|DOC_DRIFT|MISSING_FIXTURE|NON_DETERMINISTIC_TEST"
 } >> "$SUMMARY"
 
 log "evidence_dir=$EVIDENCE_DIR"

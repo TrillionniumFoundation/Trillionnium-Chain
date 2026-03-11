@@ -835,11 +835,16 @@ fn parse_tx_hash(text: &str) -> Option<String> {
             })
             .trim();
 
-        if cleaned.starts_with("0x")
-            && cleaned.len() == 66
-            && cleaned[2..].chars().all(|c| c.is_ascii_hexdigit())
-        {
-            Some(cleaned.to_ascii_lowercase())
+        if cleaned.len() == 64 && cleaned.chars().all(|c| c.is_ascii_hexdigit()) {
+            return Some(cleaned.to_ascii_lowercase());
+        }
+
+        let normalized = cleaned
+            .strip_prefix("0x")
+            .or_else(|| cleaned.strip_prefix("0X"))?;
+
+        if normalized.len() == 64 && normalized.chars().all(|c| c.is_ascii_hexdigit()) {
+            Some(format!("0x{}", normalized.to_ascii_lowercase()))
         } else {
             None
         }
