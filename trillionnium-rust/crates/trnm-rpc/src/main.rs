@@ -2176,7 +2176,7 @@ fn parse_http_get_path(first_line: &str) -> Option<&str> {
 
     let second_sp = rest.find(' ')?;
     let path = &rest[..second_sp];
-    if !path.starts_with('/') {
+    if !path.starts_with('/') || path.starts_with("//") {
         return None;
     }
     rest = rest[second_sp + 1..].trim_start_matches([' ', '\t']);
@@ -3675,7 +3675,7 @@ mod tests {
         assert_eq!(parse_http_get_path("GET /health\u{0001} HTTP/1.1"), None);
         assert_eq!(parse_http_get_path("GET /health HTTP/1.1 extra"), None);
         assert_eq!(parse_http_get_path("GET /health HTTP/1.1\tjunk"), None);
-        assert_eq!(parse_http_get_path("GET //health HTTP/1.1"), Some("//health"));
+        assert_eq!(parse_http_get_path("GET //health HTTP/1.1"), None);
     }
 
     #[test]
@@ -3685,6 +3685,7 @@ mod tests {
         assert_eq!(parse_http_get_path("GET /query-events\\42 HTTP/1.1"), None);
         assert_eq!(parse_http_get_path("GET /query-events/%2e%2e/health HTTP/1.1"), None);
         assert_eq!(parse_http_get_path("GET /query-events/%2Fhealth HTTP/1.1"), None);
+        assert_eq!(parse_http_get_path("GET //query-events/42 HTTP/1.1"), None);
     }
 
     #[test]
