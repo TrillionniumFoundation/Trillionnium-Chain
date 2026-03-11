@@ -96,6 +96,7 @@ fn is_disallowed_invisible_char(ch: char) -> bool {
     matches!(
         ch,
         '\u{00AD}'
+            | '\u{034F}'
             | '\u{061C}'
             | '\u{180E}'
             | '\u{200B}'
@@ -121,15 +122,12 @@ fn normalize_failure_reason(reason: &str) -> String {
     let sanitized: String = reason
         .chars()
         .map(|ch| {
-            if ch.is_whitespace() {
+            if ch.is_whitespace() || ch.is_control() || is_disallowed_invisible_char(ch) {
                 ' '
-            } else if ch.is_control() || is_disallowed_invisible_char(ch) {
-                '\0'
             } else {
                 ch
             }
         })
-        .filter(|ch| *ch != '\0')
         .collect();
     let collapsed = sanitized.split_whitespace().collect::<Vec<_>>().join(" ");
     if collapsed.is_empty() {
@@ -145,4 +143,16 @@ fn normalize_failure_reason(reason: &str) -> String {
         normalized.push(ch);
     }
     normalized
+}
+
+#[cfg(test)]
+mod tests {
+    use super::normalize_failure_reason;
+
+    #[test]
+    fn normalize_failure_reason_strips_cgj_for_replay_stability() {
+        let raw = "target\u{034F} relay timeout";
+        let normalized = normalize_failure_reason(raw);
+        assert_eq!(normalized, "target relay timeout");
+    }
 }
