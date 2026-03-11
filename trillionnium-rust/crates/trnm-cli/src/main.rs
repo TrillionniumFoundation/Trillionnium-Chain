@@ -629,6 +629,9 @@ fn wait_for_tx<F>(
 where
     F: FnMut(&str) -> Result<TxQueryResponse>,
 {
+    if timeout.is_zero() {
+        bail!("tx wait timeout must be greater than 0s");
+    }
     if interval.is_zero() {
         bail!("tx wait interval must be greater than 0s");
     }
@@ -1262,6 +1265,24 @@ mod tests {
                 .contains("invalid tx_hash field in tx query response"),
             "unexpected: {err_kv}"
         );
+    }
+
+    #[test]
+    fn wait_for_tx_rejects_zero_timeout() {
+        let result = wait_for_tx(
+            "0xabc123",
+            Duration::from_secs(0),
+            Duration::from_secs(1),
+            |_| {
+                Ok(TxQueryResponse {
+                    tx_hash: "0xabc123".to_string(),
+                    status: "pending".to_string(),
+                    error: None,
+                })
+            },
+        );
+        let msg = result.unwrap_err().to_string();
+        assert!(msg.contains("tx wait timeout must be greater than 0s"));
     }
 
     #[test]
