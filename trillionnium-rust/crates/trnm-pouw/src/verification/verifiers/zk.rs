@@ -59,6 +59,7 @@ fn resolve_vk_ref(
 
     let is_mock_groth16 = vk_ref_lower.starts_with("vk://trnm/dev/mock-groth16/");
     let is_demo_groth16 = vk_ref_lower.starts_with("vk://trnm/dev/ark-groth16-bn254-demo/");
+    let is_mock_plonk = vk_ref_lower.starts_with("vk://trnm/dev/mock-plonk/");
 
     if is_mock_groth16 || is_demo_groth16 {
         if let Some(system) = zk_system {
@@ -81,6 +82,30 @@ fn resolve_vk_ref(
                         ),
                     });
                 }
+            }
+        }
+        return Ok(());
+    }
+
+    if is_mock_plonk {
+        if let Some(system) = zk_system {
+            if !system.eq_ignore_ascii_case("plonk") {
+                return Err(BackendExecutionError::MalformedProof {
+                    backend: format!("zk:{}", backend_id.unwrap_or("payload")),
+                    reason: format!(
+                        "invalid zk payload: vk_ref '{vk_ref}' requires zk_system 'plonk', got '{system}'"
+                    ),
+                });
+            }
+        }
+        if let Some(backend_id) = backend_id {
+            if !backend_id.to_ascii_lowercase().starts_with("mock-plonk") {
+                return Err(BackendExecutionError::MalformedProof {
+                    backend: format!("zk:{backend_id}"),
+                    reason: format!(
+                        "invalid zk payload: vk_ref '{vk_ref}' is reserved for mock-plonk backends"
+                    ),
+                });
             }
         }
         return Ok(());
@@ -955,6 +980,48 @@ mod tests {
             verifier.verify_proof(&task, payload),
             VerificationResult::Valid
         );
+    }
+
+    #[test]
+    fn zk_verifier_accepts_second_system_mock_plonk_backend() {
+        let mut backends = ZkBackendRegistry::new();
+        backends.register(Arc::new(MockPlonkSuccessBackend));
+        let verifier = ZkVerifier::from_config(&router_config(), Arc::new(backends));
+        let task = mock_task();
+        let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"plonk","backend_id":"mock-plonk-success","backend_version":"v1","vk_ref":"vk://trnm/dev/mock-plonk/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["99","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]},"meta":{"schema_version":"trnm.zk.payload.v0"}}"#;
+        assert_eq!(
+            verifier.verify_proof(&task, payload),
+            VerificationResult::Valid
+        );
+    }
+
+    #[test]
+    fn zk_verifier_rejects_second_system_vk_ref_mismatch_fail_closed() {
+        let config = VerificationBackendConfig {
+            zk_backend: ZkBackendKind::Custom("mock-plonk-success".into()),
+            zk_features: ZkFeatureFlags {
+                zk_platform_v0: true,
+                zk_backend_router: true,
+                zk_payload_v0_envelope: true,
+                zk_explicit_backend_required: false,
+                ..ZkFeatureFlags::default()
+            },
+            ..VerificationBackendConfig::default()
+        };
+        let mut backends = ZkBackendRegistry::new();
+        backends.register(Arc::new(MockPlonkSuccessBackend));
+        let verifier = ZkVerifier::from_config(&config, Arc::new(backends));
+        let task = mock_task();
+        let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_version":"v1","vk_ref":"vk://trnm/dev/mock-plonk/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["99","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]},"meta":{"schema_version":"trnm.zk.payload.v0"}}"#;
+        let verdict = verifier.verify_proof(&task, payload);
+        match verdict {
+            VerificationResult::Invalid(msg) => {
+                assert!(msg.contains("malformed:"));
+                assert!(msg.contains("vk_ref 'vk://trnm/dev/mock-plonk/v1'"));
+                assert!(msg.contains("requires zk_system 'plonk'"));
+            }
+            other => panic!("unexpected verdict: {other:?}"),
+        }
     }
 
     #[test]
