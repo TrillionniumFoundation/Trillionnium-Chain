@@ -2188,6 +2188,39 @@ mod tests {
     }
 
     #[test]
+    fn auto_adaptive_sampling_with_sparse_window_keeps_duplicate_indices_fail_closed() {
+        let _env = env_lock();
+        let _sample_len = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", "2048");
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.25");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.10");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.03");
+
+        // When sample_len exceeds batch_len, the adaptive sampler falls back to
+        // direct scanning. Keep a regression with a just-over-half window to
+        // exercise sparse integer-step sampling, where nearby sample points can
+        // collapse onto the same tx index. The decision should remain fail-closed
+        // for a broad unique-key batch instead of overestimating hotspot streaks.
+        let mut txs = Vec::with_capacity(3000);
+        for i in 0..3000u64 {
+            txs.push(tx(50_000 + i, vec![], vec![o(100_000 + i)]));
+        }
+
+        let d = auto_adaptive_decision(&txs);
+        assert_eq!(d.sample_len, 2048);
+        assert_eq!(d.reason, "low_hot_key_share");
+        assert!(!d.use_hot_bucket);
+        assert!(
+            d.hot_key_share <= (2.0 / d.sample_len as f64),
+            "duplicate sparse-sample indices must not inflate hot-key share"
+        );
+        assert!(
+            d.streak_ratio <= (1.0 / (d.sample_len - 1) as f64),
+            "duplicate sparse-sample indices must not manufacture streak runs"
+        );
+    }
+
+    #[test]
     fn free_ingress_batches_short_circuit_to_single_group_after_strategy_reorder() {
         let txs = vec![
             tx(9, vec![], vec![]),
