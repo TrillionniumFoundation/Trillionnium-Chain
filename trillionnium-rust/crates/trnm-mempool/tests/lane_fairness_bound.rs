@@ -170,3 +170,4 @@ fn full_drain_resets_fairness_streak_so_next_critical_is_not_delayed() {
     );
     assert_eq!(gate.pop_ready(), Some(200));
 }
+
