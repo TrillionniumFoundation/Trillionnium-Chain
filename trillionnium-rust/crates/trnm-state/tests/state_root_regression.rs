@@ -120,3 +120,64 @@ fn treasury_balances_and_monetary_counters_should_affect_state_root_even_when_ne
         "State root must include treasury balance placement and full monetary counters, not only net issuance"
     );
 }
+
+#[test]
+fn restoring_pending_and_monetary_state_rewinds_state_root_symmetrically() {
+    let mut baseline = StateStore::new();
+    baseline
+        .set_gov_param(
+            0,
+            1,
+            "monetary_policy_tick_interval_blocks".to_string(),
+            "10".to_string(),
+        )
+        .unwrap();
+    baseline
+        .set_gov_param(
+            0,
+            2,
+            "monetary_policy_tick_cooldown_blocks".to_string(),
+            "1".to_string(),
+        )
+        .unwrap();
+    baseline
+        .set_gov_param(0, 3, "monetary_base_issuance_per_tick".to_string(), "7".to_string())
+        .unwrap();
+    baseline
+        .set_gov_param(0, 4, "monetary_base_burn_per_tick".to_string(), "5".to_string())
+        .unwrap();
+    baseline.policy_tick(10).unwrap();
+    baseline.set_balance("treasury.challenge_forfeits", 11);
+
+    let root_before = baseline.state_root();
+    let snapshot = baseline.clone();
+
+    baseline
+        .set_gov_param(1000, 7001, "max_block_ms".to_string(), "5000".to_string())
+        .unwrap();
+    baseline
+        .stage_or_confirm_resolve_approval(42, 1, true, "resolver-a", "resolver-a,resolver-b")
+        .unwrap();
+    baseline.set_balance("treasury.worker_slashes", 23);
+    baseline.policy_tick(20).unwrap();
+
+    let root_after_mutation = baseline.state_root();
+    assert_ne!(
+        root_before, root_after_mutation,
+        "sanity: pending/treasury/monetary mutations must change the state root"
+    );
+
+    let restored = snapshot.state_root();
+    assert_eq!(
+        root_before, restored,
+        "cloned snapshot root should remain stable before explicit restore"
+    );
+
+    baseline = snapshot;
+
+    assert_eq!(
+        baseline.state_root(),
+        root_before,
+        "restoring the pre-mutation snapshot must rewind state_root exactly"
+    );
+}
