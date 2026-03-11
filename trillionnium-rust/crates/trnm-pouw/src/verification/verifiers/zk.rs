@@ -443,7 +443,7 @@ mod tests {
     }
 
     #[test]
-    fn zk_verifier_rejects_backend_router_system_mismatch_with_vk_ref_without_payload_system() {
+    fn zk_verifier_rejects_missing_zk_system_before_backend_router_mismatch_checks() {
         let mut backends = ZkBackendRegistry::new();
         backends.register(Arc::new(MockSystemSuccessBackend {
             backend_id: "groth16-demo",
@@ -455,7 +455,7 @@ mod tests {
         assert!(matches!(
             verifier.verify_proof(&task, payload),
             VerificationResult::Invalid(msg)
-                if msg.contains("backend 'groth16-demo'") && msg.contains("does not match vk_ref")
+                if msg.contains("malformed:") && msg.contains("zk_system is required")
         ));
     }
 
