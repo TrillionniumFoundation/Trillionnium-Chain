@@ -1976,6 +1976,37 @@ mod tests {
         }
     }
 
+    #[test]
+    fn auto_adaptive_profile_strategy_matches_decision_output() {
+        let txs = (0..64)
+            .map(|i| tx(
+                i as u64,
+                vec![o((i % 8) as u64), o(((i + 1) % 8) as u64)],
+                vec![o((i % 8) as u64)],
+            ))
+            .collect::<Vec<_>>();
+
+        let decision = auto_adaptive_decision(&txs);
+        let (_groups, profile) =
+            build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::AutoAdaptive);
+
+        assert_eq!(profile.tx_count, txs.len());
+        if decision.use_hot_bucket {
+            assert!(
+                profile.candidate_groups_scanned == 0
+                    && profile.stage_ww_checks == 0
+                    && profile.stage_wr_checks == 0
+                    && profile.stage_rw_checks == 0,
+                "hot-bucket path should preserve non-aggressive zeroed conflict-stage counters"
+            );
+        } else {
+            assert!(
+                profile.conflict_checks > 0 || profile.group_count <= 1,
+                "original path should preserve normal grouping/conflict accounting"
+            );
+        }
+    }
+
     struct EnvGuard {
         key: &'static str,
         old: Option<String>,
