@@ -2737,6 +2737,59 @@ mod tests {
     }
 
     #[test]
+    fn governance_resolve_authority_cancel_wrong_key_id_preserves_pending_update() {
+        // Merge-gate guard: cancel for a sensitive resolve_authority timelock must reject
+        // key-id drift before any pending queue mutation.
+        let mut st = StateStore::new();
+        st.set_gov_param_unchecked(
+            7314,
+            "resolve_authority".into(),
+            "resolver-v1,resolver-v2".into(),
+        )
+        .expect("initial resolve_authority write should succeed");
+
+        let scheduled = st
+            .set_gov_param(
+                14_500,
+                7314,
+                "resolve_authority".into(),
+                "resolver-v3,resolver-v4".into(),
+            )
+            .expect("resolve_authority update should schedule");
+        assert!(matches!(
+            scheduled,
+            GovParamUpdateOutcome::Scheduled {
+                activate_at_height: 14_520
+            }
+        ));
+
+        let err = st
+            .set_gov_param_with_action(
+                14_505,
+                9001,
+                "resolve_authority".into(),
+                "ignored-on-cancel".into(),
+                GovPendingUpdateAction::Cancel,
+            )
+            .expect_err("cancel with wrong key id must be rejected");
+        assert!(
+            err.contains("governance key id mismatch for resolve_authority"),
+            "{err}"
+        );
+
+        let pending = st
+            .pending_gov_update("resolve_authority")
+            .expect("wrong-key cancel must not clear pending resolve_authority update");
+        assert_eq!(pending.key_id, 7314);
+        assert_eq!(pending.value, "resolver-v3,resolver-v4");
+        assert_eq!(pending.activate_at_height, 14_520);
+        assert_eq!(
+            st.gov_param_string("resolve_authority"),
+            Some("resolver-v1,resolver-v2".into())
+        );
+    }
+
+    #[test]
     fn emergency_pause_does_not_mutate_pending_resolve_authority_update() {
         let mut st = StateStore::new();
         st.set_gov_param_unchecked(
