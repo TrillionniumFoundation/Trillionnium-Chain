@@ -89,8 +89,35 @@ def main():
         f"- executor_profile: {executor_profile}",
         f"- executor_profile_status: {input_status(executor_profile)}",
         "",
-        "## Data Completeness",
+        "## Input Readiness",
     ]
+
+    readiness_rows = [
+        (
+            "node_log",
+            input_status(node_log),
+            "cargo run -q -p trnm-node -- --config configs/node1.toml --block-ms 5 --max-blocks 3 --demo-tasks 8 --demo-keys 3 --parallel-workers 4 > run/parallel-sanity.log",
+        ),
+        (
+            "classic_bench",
+            input_status(classic),
+            "TXS=1000 ./scripts/run_bench_matrix.sh",
+        ),
+        (
+            "mixed_bench",
+            input_status(mixed),
+            "TXS=1000 ./scripts/run_bench_mixed_matrix.sh",
+        ),
+        (
+            "executor_profile",
+            input_status(executor_profile),
+            "python3 scripts/executor_profile_report.py",
+        ),
+    ]
+    for label, status, producer in readiness_rows:
+        lines.append(f"- {label}: {status} | producer={producer}")
+
+    lines += ["", "## Data Completeness"]
 
     missing_inputs = []
     for label, path in [
@@ -106,6 +133,14 @@ def main():
         lines.append(f"- status: PARTIAL ({', '.join(missing_inputs)} missing)")
     else:
         lines.append("- status: COMPLETE")
+
+    lines += ["", "## Autopilot Recommended Next Steps"]
+    if missing_inputs:
+        for label, status, producer in readiness_rows:
+            if status != "present":
+                lines.append(f"- produce {label}: {producer}")
+    else:
+        lines.append("- none: all expected closeout inputs are present")
 
     lines += ["", "## Block Metrics"]
     for key in [
