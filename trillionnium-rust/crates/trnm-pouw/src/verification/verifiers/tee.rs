@@ -92,7 +92,10 @@ impl TeeVerifier {
     }
 
     fn malformed_surface_label(surface: &'static str) -> &'static str {
-        surface
+        match surface {
+            "quote claims" | "report claims" | "quote/report claims" => "payload/claims",
+            other => other,
+        }
     }
 
     fn attestation_evidence_surface(reason: Option<&str>) -> &'static str {
@@ -421,6 +424,28 @@ mod tests {
         assert!(msg.contains("backend_error:"), "message: {msg}");
         assert!(msg.contains("mock-tee-internal"), "message: {msg}");
         assert!(msg.contains("mock tee backend internal failure"), "message: {msg}");
+    }
+
+    #[test]
+    fn tee_verifier_backend_malformed_report_claims_collapses_to_payload_claims_surface() {
+        let mut backends = ZkBackendRegistry::new();
+        backends.register(Arc::new(MockTeeMalformedBackend));
+        let verifier = TeeVerifier::new(
+            ZkBackendKind::Custom("mock-tee-malformed".into()),
+            Arc::new(backends),
+        );
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,report=claims"
+            ),
+            VerificationResult::Invalid(msg)
+                if msg.contains("malformed TEE attestation payload/claims:")
+                    && !msg.contains("report claims")
+                    && msg.contains("mock tee receipt malformed")
+        ));
     }
 
     #[test]
