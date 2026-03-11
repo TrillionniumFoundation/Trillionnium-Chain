@@ -2183,6 +2183,9 @@ fn parse_http_get_path(first_line: &str) -> Option<&str> {
     if rest.is_empty() || !rest.starts_with("HTTP/") {
         return None;
     }
+    if rest.contains(' ') || rest.contains('\t') {
+        return None;
+    }
 
     Some(path.split('?').next().unwrap_or(path))
 }
@@ -3600,6 +3603,8 @@ mod tests {
         assert_eq!(parse_http_get_path("GET /health"), None);
         assert_eq!(parse_http_get_path("GET health HTTP/1.1"), None);
         assert_eq!(parse_http_get_path("GET /health\u{0001} HTTP/1.1"), None);
+        assert_eq!(parse_http_get_path("GET /health HTTP/1.1 extra"), None);
+        assert_eq!(parse_http_get_path("GET /health HTTP/1.1\tjunk"), None);
     }
 
     #[test]
