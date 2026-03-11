@@ -624,6 +624,19 @@ mod tests {
     }
 
     #[test]
+    fn zk_verifier_rejects_fullwidth_colon_then_ascii_worker_binding_fail_closed() {
+        let verifier = ZkVerifier::default();
+        let task = mock_task();
+        let payload = "ZK:task_id=99,worker：worker-zk,worker=worker-zk,proof_type=zk,result_hash=1111111111111111111111111111111111111111111111111111111111111111,proof=ok"
+            .as_bytes();
+
+        assert!(matches!(
+            verifier.verify_proof(&task, payload),
+            VerificationResult::Invalid(msg) if msg.contains("duplicate worker binding")
+        ));
+    }
+
+    #[test]
     fn zk_verifier_enforces_v0_schema_when_feature_enabled() {
         let mut backends = ZkBackendRegistry::new();
         backends.register(Arc::new(MockSuccessBackend));
