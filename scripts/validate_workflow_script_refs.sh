@@ -47,7 +47,7 @@ for wf in "${WORKFLOW_FILES[@]}"; do
   while IFS= read -r ref; do
     [[ -n "$ref" ]] || continue
     printf '%s\n' "$ref" >>"$refs_file"
-  done < <(LC_ALL=C grep -Eo '\./scripts/[[:alnum:]_./-]+\.(sh|py)' "$wf" || true)
+  done < <(LC_ALL=C grep -Eo '(\./scripts|trillionnium-rust/scripts)/[[:alnum:]_./-]+\.(sh|py)' "$wf" || true)
 done
 
 mapfile -t SCRIPT_REFS < <(LC_ALL=C sort -u "$refs_file")
