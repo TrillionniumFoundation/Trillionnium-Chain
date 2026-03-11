@@ -302,10 +302,19 @@ v0 将 ZK 平台错误归并为四大类：
 - `VerificationResult::Invalid(reason)` → `invalid` 或 `malformed`（取决于 reason 来源）
 - `VerificationResult::Indeterminate(reason)` → `unavailable` 或 `backend_error`
 
+当前 v0 基线实现细化为：
+
+- backend selection miss / backend 未注册 → `Indeterminate`，对应 `unavailable`
+- `BackendExecutionError::NotConfigured` / `Unavailable` → `Indeterminate`，对应 `unavailable`
+- `BackendExecutionError::Internal` → `Indeterminate`，对应 `backend_error`
+- `BackendExecutionError::InvalidProof` → `Invalid`，对应 `invalid`
+- `BackendExecutionError::MalformedProof` → `Invalid("malformed: ...")`，对应 `malformed`
+
 v0 冻结要求：
 
 - 未来实现必须把 `Indeterminate` **继续细分落盘/可观测化**，不能长期只保留一个模糊桶
 - 对外稳定错误 contract 以四类为准
+- backend/router/doc 三处对上述映射必须保持一致，避免把 malformed 或 unavailable 漂移成 proof invalid
 
 ---
 
