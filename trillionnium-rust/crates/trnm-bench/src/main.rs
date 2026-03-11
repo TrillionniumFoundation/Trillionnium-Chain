@@ -131,25 +131,23 @@ fn main() {
         };
         println!("profile.conflict_hit_rate={:.4}", hit_rate);
 
-        if matches!(args.strategy, StrategyArg::AutoAdaptive) {
-            let d = auto_adaptive_decision(&txs);
-            println!("profile.auto.use_hot_bucket={}", d.use_hot_bucket);
-            println!("profile.auto.reason={}", d.reason);
-            println!("profile.auto.sample_len={}", d.sample_len);
-            println!("profile.auto.streak_ratio={:.4}", d.streak_ratio);
-            println!("profile.auto.streak_threshold={:.4}", d.streak_threshold);
-            println!("profile.auto.min_margin={:.4}", d.min_margin);
-            println!("profile.auto.hot_key_share={:.4}", d.hot_key_share);
-            println!("profile.auto.min_hot_key_share={:.4}", d.min_hot_key_share);
-            println!(
-                "profile.auto.expected_gain_score={:.4}",
-                d.expected_gain_score
-            );
-            println!(
-                "profile.auto.min_expected_gain_score={:.4}",
-                d.min_expected_gain_score
-            );
-        }
+        let d = auto_adaptive_decision(&txs);
+        println!("profile.auto.use_hot_bucket={}", d.use_hot_bucket);
+        println!("profile.auto.reason={}", d.reason);
+        println!("profile.auto.sample_len={}", d.sample_len);
+        println!("profile.auto.streak_ratio={:.4}", d.streak_ratio);
+        println!("profile.auto.streak_threshold={:.4}", d.streak_threshold);
+        println!("profile.auto.min_margin={:.4}", d.min_margin);
+        println!("profile.auto.hot_key_share={:.4}", d.hot_key_share);
+        println!("profile.auto.min_hot_key_share={:.4}", d.min_hot_key_share);
+        println!(
+            "profile.auto.expected_gain_score={:.4}",
+            d.expected_gain_score
+        );
+        println!(
+            "profile.auto.min_expected_gain_score={:.4}",
+            d.min_expected_gain_score
+        );
     }
 }
 
