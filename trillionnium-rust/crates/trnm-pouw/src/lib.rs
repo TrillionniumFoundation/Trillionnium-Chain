@@ -1613,6 +1613,7 @@ mod tests {
         assert!(matches!(staged, PouwError::ResolveApprovalStaged));
 
         let challenger_before = st.balance_of("challenger");
+        let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
         let slash_treasury_before = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
         let r6 = apply_resolve_at_height(
             &mut st,
@@ -1627,7 +1628,12 @@ mod tests {
         let task = st.get_task(r6.id).unwrap();
         assert_eq!(task.status, TaskStatus::Slashed);
         assert_eq!(task.challenge_bond_forfeited, Some(false));
-        assert_eq!(st.balance_of("challenger"), challenger_before + 10);
+        assert_eq!(
+            st.balance_of("challenger"),
+            challenger_before + 10,
+            "challenger should only recover the bonded escrow when no task-local slash lock remains"
+        );
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before - 10);
         assert_eq!(
             st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
             slash_treasury_before,
