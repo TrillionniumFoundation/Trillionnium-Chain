@@ -1932,6 +1932,27 @@ mod tests {
     }
 
     #[test]
+    fn auto_adaptive_numeric_env_parser_accepts_plus_prefixed_values() {
+        let _env = env_lock();
+
+        let _window = EnvGuard::set("TRNM_AGGR_SCAN_WINDOW", " +1_024 ");
+        let _seed = EnvGuard::set("TRNM_AGGR_SCAN_RR_SEED", " '+9_001' ");
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", " +0.2_5 ");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", " '+0.1' ");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", " +0.0_125 ");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", " '+0.05' ");
+        let _buckets = EnvGuard::set("TRNM_HOT_BUCKETS", " '+1,6' ");
+
+        assert_eq!(aggr_scan_window(), 1024);
+        assert_eq!(aggr_scan_round_robin_seed(), 9001);
+        assert_eq!(auto_hot_streak_threshold(), 0.25);
+        assert_eq!(auto_reorder_min_margin(), 0.1);
+        assert_eq!(auto_reorder_min_hot_key_share(), 0.0125);
+        assert_eq!(auto_min_expected_gain_score(), 0.05);
+        assert_eq!(hot_bucket_count(), 16);
+    }
+
+    #[test]
     fn auto_adaptive_numeric_env_parser_falls_back_to_defaults_on_invalid_values() {
         let _env = env_lock();
 
