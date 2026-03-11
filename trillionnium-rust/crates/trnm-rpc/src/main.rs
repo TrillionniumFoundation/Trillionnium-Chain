@@ -3748,6 +3748,22 @@ mod tests {
     }
 
     #[test]
+    fn parse_query_events_limit_from_path_rejects_duplicate_limit_key_with_empty_value() {
+        let err = parse_query_events_limit_from_path("/query-events/42?limit=7&limit=")
+            .expect_err("duplicate limit key with empty value must still fail closed");
+        assert!(err.contains("400 Bad Request"));
+        assert!(err.contains("duplicate limit"));
+    }
+
+    #[test]
+    fn parse_query_events_limit_from_path_rejects_duplicate_limit_key_after_quoted_value() {
+        let err = parse_query_events_limit_from_path("/query-events/42?limit=\"7\"&limit=9")
+            .expect_err("duplicate limit key after wrapped numeric value must fail closed");
+        assert!(err.contains("400 Bad Request"));
+        assert!(err.contains("duplicate limit"));
+    }
+
+    #[test]
     fn parse_http_get_path_rejects_non_get_or_malformed_lines() {
         assert_eq!(parse_http_get_path("POST /health HTTP/1.1"), None);
         assert_eq!(parse_http_get_path("GET /health"), None);
