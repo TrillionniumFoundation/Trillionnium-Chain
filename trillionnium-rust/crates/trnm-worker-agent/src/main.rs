@@ -1822,6 +1822,7 @@ fn classify_adapter_error(err: &AdapterError) -> (&'static str, &'static str) {
     if context_matches_token(&err.context, "proof-invalid")
         || context_matches_token(&err.context, "missing-adapter-label")
         || context_matches_token(&err.context, "no-json-line")
+        || context_matches_token(&err.context, "invalid-json")
     {
         return ("ERR_M2V2_PROOF_INVALID", "proof_invalid");
     }
@@ -2182,7 +2183,7 @@ mod tests {
         );
         assert_eq!(
             classify_adapter_error(&non_retriable),
-            ("adapter_error", "non_retriable")
+            ("ERR_M2V2_PROOF_INVALID", "proof_invalid")
         );
     }
 

@@ -119,6 +119,10 @@ fn has_non_empty_auditable_value(value: Option<&str>) -> bool {
 fn parse_response_with_standard_rules(stdout: &str) -> Result<LlmAdapterResponse, String> {
     let normalized = stdout.trim_start().trim_start_matches('\u{feff}');
 
+    if normalized.starts_with('{') && serde_json::from_str::<serde_json::Value>(normalized).is_err() {
+        return Err("invalid-json".to_string());
+    }
+
     if let Ok(parsed) = serde_json::from_str(normalized) {
         return Ok(parsed);
     }
