@@ -200,3 +200,28 @@ fn zero_reserve_critical_ingress_uses_free_normal_headroom_without_dedicated_cri
     assert_eq!(gate.admit(81, IngressClass::Normal), AdmitOutcome::Backpressured);
     assert_eq!(gate.pop_ready(), Some(80));
 }
+
+#[test]
+fn reserve_only_full_drain_resets_idempotency_for_immediate_free_ingress_reuse() {
+    let mut gate = LaneAdmissionGate::new(2, 2);
+
+    // Reserve-only split: mixed classes share the critical queue.
+    assert_eq!(gate.admit(500, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(501, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
+
+    // Drain fully so no stale idempotency/fairness state survives.
+    assert_eq!(gate.pop_ready(), Some(500));
+    assert_eq!(gate.pop_ready(), Some(501));
+    assert_eq!(gate.pop_ready(), None);
+
+    // Same id should be immediately reusable as fresh ingress after full drain.
+    assert_eq!(
+        gate.admit(500, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
+    // And free-ingress borrowing for normal should remain live in the same cycle.
+    assert_eq!(gate.admit(502, IngressClass::Normal), AdmitOutcome::Accepted);
+}
