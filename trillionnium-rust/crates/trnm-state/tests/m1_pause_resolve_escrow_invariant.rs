@@ -720,7 +720,8 @@ fn paused_state_rejects_duplicate_multisig_member_authority_set_without_side_eff
 }
 
 #[test]
-fn paused_state_rejects_case_variant_duplicate_multisig_member_authority_set_without_side_effects() {
+fn paused_state_rejects_case_variant_duplicate_multisig_member_authority_set_without_side_effects()
+{
     // M1 merge-gate invariant: emergency pause must not permit case-variant duplicates
     // (same signer with different casing) to bypass multi-party resolve quorum.
     let mut st = StateStore::new();
@@ -735,13 +736,7 @@ fn paused_state_rejects_case_variant_duplicate_multisig_member_authority_set_wit
     let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
 
     let err = st
-        .stage_or_confirm_resolve_approval(
-            9_917,
-            1,
-            true,
-            "authority-a",
-            "authority-a,Authority-A",
-        )
+        .stage_or_confirm_resolve_approval(9_917, 1, true, "authority-a", "authority-a,Authority-A")
         .expect_err("case-variant duplicate members must be rejected while paused");
     assert!(
         err.contains("duplicate")
@@ -800,7 +795,10 @@ fn paused_cancel_resolve_authority_timelock_keeps_pause_boundary_and_escrow_cons
     assert!(st.is_emergency_paused());
     assert_eq!(st.pending_gov_update("resolve_authority"), None);
     assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
-    assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), forfeits_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
 }
 
 #[test]
@@ -854,7 +852,10 @@ fn paused_replace_resolve_authority_timelock_keeps_pause_boundary_and_escrow_con
 
     assert!(st.is_emergency_paused());
     assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
-    assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), forfeits_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
 }
 
 #[test]
@@ -884,7 +885,10 @@ fn canonical_unpause_keeps_staged_multi_party_resolve_quorum_and_escrow_conserva
     assert_eq!(st.pending_resolve_approval(9_917), Some((true, 1)));
     assert_eq!(st.pending_gov_update("resolve_authority"), None);
     assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
-    assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), forfeits_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
 }
 
 #[test]
@@ -918,7 +922,10 @@ fn clearing_staged_resolve_quorum_is_idempotent_and_side_effect_free_under_pause
     assert_eq!(st.pending_resolve_first_approver(9_918), None);
     assert!(st.is_emergency_paused());
     assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
-    assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), forfeits_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
 }
 
 #[test]
@@ -958,7 +965,10 @@ fn unpause_does_not_bypass_pending_resolve_authority_timelock_or_escrow_conserva
     assert_eq!(st.gov_param_string("resolve_authority"), resolve_before);
 
     assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
-    assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), forfeits_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
 }
 
 #[test]
@@ -992,7 +1002,10 @@ fn paused_state_rejects_case_variant_challenge_escrow_member_without_side_effect
     assert_eq!(st.pending_resolve_approval(9_915), None);
     assert_eq!(st.pending_gov_update("resolve_authority"), None);
     assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
-    assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), forfeits_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
 }
 
 #[test]
@@ -1013,8 +1026,7 @@ fn paused_state_rejects_case_variant_worker_slash_treasury_member_without_side_e
     let worker_slash_before = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
 
     let mixed_case_worker_slash = WORKER_SLASH_TREASURY_ACCOUNT.to_ascii_uppercase();
-    let authority_with_case_variant_worker_slash =
-        format!("authority-a,{mixed_case_worker_slash}");
+    let authority_with_case_variant_worker_slash = format!("authority-a,{mixed_case_worker_slash}");
     let err = st
         .stage_or_confirm_resolve_approval(
             9_916,
@@ -1029,9 +1041,49 @@ fn paused_state_rejects_case_variant_worker_slash_treasury_member_without_side_e
     assert_eq!(st.pending_resolve_approval(9_916), None);
     assert_eq!(st.pending_gov_update("resolve_authority"), None);
     assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
-    assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), forfeits_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
     assert_eq!(
         st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
         worker_slash_before
+    );
+}
+
+#[test]
+fn paused_state_rejects_case_variant_forfeit_treasury_member_without_side_effects() {
+    // M1 micro-hardening: forfeits treasury reservation must stay case-insensitive
+    // so mixed-case aliases cannot enter resolve quorum under emergency pause.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 9_930);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 993);
+
+    st.set_gov_param(98_212, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+    let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+
+    let mixed_case_forfeits = CHALLENGE_FORFEIT_TREASURY_ACCOUNT.to_ascii_uppercase();
+    let authority_with_case_variant_forfeits = format!("authority-a,{mixed_case_forfeits}");
+    let err = st
+        .stage_or_confirm_resolve_approval(
+            9_917,
+            1,
+            true,
+            "authority-a",
+            &authority_with_case_variant_forfeits,
+        )
+        .expect_err("case-variant forfeits treasury member must be rejected while paused");
+    assert!(err.contains("reserved") || err.contains("authority set"));
+
+    assert_eq!(st.pending_resolve_approval(9_917), None);
+    assert_eq!(st.pending_gov_update("resolve_authority"), None);
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
     );
 }
