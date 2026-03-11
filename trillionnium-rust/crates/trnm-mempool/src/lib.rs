@@ -382,9 +382,15 @@ impl LaneAdmissionGate {
         if !self.seen_global.remove(&id) {
             // Defensive self-heal: restored-state skew can leave lane-wide cache
             // stale while lane-local queues remain authoritative.
-            self.seen_global.clear();
-            self.seen_global.extend(self.normal.queue.iter().copied());
-            self.seen_global.extend(self.critical.queue.iter().copied());
+            if self.normal.queue.is_empty() && self.critical.queue.is_empty() {
+                // Hot full-drain skew path: avoid redundant iterator setup when no
+                // queued survivors exist after dequeue.
+                self.seen_global.clear();
+            } else {
+                self.seen_global.clear();
+                self.seen_global.extend(self.normal.queue.iter().copied());
+                self.seen_global.extend(self.critical.queue.iter().copied());
+            }
         } else {
             let lane_total = self
                 .normal
