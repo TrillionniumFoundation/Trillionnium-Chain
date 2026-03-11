@@ -4978,7 +4978,7 @@ mod tests {
         )
         .expect_err("first multisig signer should only stage pending approval");
         assert!(matches!(staged_err, PouwError::ResolveApprovalStaged));
-        assert!(matches!(st.pending_resolve_approval(r5.id), Some((_, 1))));
+        assert_eq!(st.pending_resolve_approval(r5.id), Some((false, 1)));
 
         st.set_gov_param(9_224, 7_999, "emergency_pause".into(), "true".into())
             .expect("pause=true governance update must succeed");
@@ -4999,7 +4999,7 @@ mod tests {
         )
         .expect_err("emergency pause must freeze multisig resolve settlement path");
         assert!(matches!(paused_err, PouwError::InvalidTransition));
-        assert!(matches!(st.pending_resolve_approval(r5.id), Some((_, 1))));
+        assert_eq!(st.pending_resolve_approval(r5.id), Some((false, 1)));
 
         let after_paused_task = st
             .get_task(r5.id)
