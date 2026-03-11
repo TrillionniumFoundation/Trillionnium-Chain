@@ -45,7 +45,7 @@ def validate_snapshot(s, min_sources, max_staleness_ms, max_deviation_bps):
 
     lim = abs(m) * (max_deviation_bps / 10000.0)
     for v in values:
-        if abs(v - m) > lim:
+        if abs(v - m) >= lim:
             return "drift", len(uniq)
 
     return "ok", len(uniq)
@@ -133,6 +133,23 @@ def main():
     print(json.dumps(run_baseline(cases, args), ensure_ascii=False, indent=2))
 
 
+
+
+def _test_deviation_equal_to_threshold_rejects_as_drift():
+    status, cardinality = validate_snapshot(
+        {
+            "snapshot_ts_ms": 1_000,
+            "sources": [
+                {"source": "s1", "value": 100.0, "ts_unix_ms": 1_000},
+                {"source": "s2", "value": 110.0, "ts_unix_ms": 1_000},
+            ],
+        },
+        min_sources=2,
+        max_staleness_ms=60_000,
+        max_deviation_bps=500,
+    )
+    assert status == "drift"
+    assert cardinality == 2
 
 
 def _test_zero_median_still_rejects_drift():
