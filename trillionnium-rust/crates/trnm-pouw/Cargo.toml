@@ -5,6 +5,7 @@ edition = "2021"
 
 [features]
 default = []
+real-tee-backend = []
 real-zk-backend = [
     "dep:ark-bn254",
     "dep:ark-ff",

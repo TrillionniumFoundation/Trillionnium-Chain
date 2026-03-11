@@ -1,0 +1,7 @@
+{
+  "backend_id": "real-tee-backend",
+  "attestation_target": "sgx-dcap",
+  "measurement": "mrenclave:demo-sgx-v1",
+  "quote": "quote-sgx-dcap-demo-v1",
+  "report_data_hash": "1111111111111111111111111111111111111111111111111111111111111111"
+}

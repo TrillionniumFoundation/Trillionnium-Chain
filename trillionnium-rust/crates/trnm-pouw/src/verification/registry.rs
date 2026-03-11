@@ -3,8 +3,8 @@ use std::sync::Arc;
 
 use trnm_types::{ProofType, TaskObject};
 
-#[cfg(feature = "real-zk-backend")]
-use super::real_zk_backend;
+#[cfg(feature = "real-tee-backend")]
+use super::real_tee_backend;
 use super::{
     backend::{VerificationBackendConfig, ZkBackendRegistry},
     proof_type_key, verifiers, ProofVerifier, VerificationResult,
@@ -34,7 +34,10 @@ impl VerifierRegistry {
     }
 
     pub fn with_backend_config(config: VerificationBackendConfig) -> Self {
-        let backend_registry = Arc::new(ZkBackendRegistry::new());
+        let mut backend_registry = ZkBackendRegistry::new();
+        #[cfg(feature = "real-tee-backend")]
+        real_tee_backend::register_optional_backends(&mut backend_registry);
+        let backend_registry = Arc::new(backend_registry);
         Self::with_backends(config, backend_registry)
     }
 

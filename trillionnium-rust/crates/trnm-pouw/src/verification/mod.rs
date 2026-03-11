@@ -1,4 +1,6 @@
 pub mod backend;
+#[cfg(feature = "real-tee-backend")]
+pub mod real_tee_backend;
 pub mod registry;
 pub mod verifiers;
 
