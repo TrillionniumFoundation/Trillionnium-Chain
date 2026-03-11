@@ -427,6 +427,8 @@ python3 ./scripts/v2/pr9_weekly_alert_governance.py
 
 默认输出：
 - `run/pr9/weekly-alert-governance.md`
+- `run/pr9/weekly-alert-governance.json`
+- `run/pr9/history/weekly-alert-governance-YYYYMMDDTHHMMSSZ.json`
 
 nightly 接入建议：
 - workflow step 使用 `continue-on-error: true`
