@@ -761,24 +761,32 @@ fn aggr_scan_window() -> usize {
         .unwrap_or(0)
 }
 
-fn aggr_skip_empty_stage_checks() -> bool {
-    std::env::var("TRNM_AGGR_SKIP_EMPTY_STAGE_CHECKS")
+fn env_toggle_enabled(name: &str, default: bool) -> bool {
+    std::env::var(name)
         .ok()
         .map(|v| {
-            let s = v.trim().to_ascii_lowercase();
+            let trimmed = v.trim();
+            let unquoted = trimmed
+                .strip_prefix('"')
+                .and_then(|inner| inner.strip_suffix('"'))
+                .or_else(|| {
+                    trimmed
+                        .strip_prefix('\'')
+                        .and_then(|inner| inner.strip_suffix('\''))
+                })
+                .unwrap_or(trimmed);
+            let s = unquoted.trim().to_ascii_lowercase();
             !(s == "0" || s == "false" || s == "off" || s == "no")
         })
-        .unwrap_or(true)
+        .unwrap_or(default)
+}
+
+fn aggr_skip_empty_stage_checks() -> bool {
+    env_toggle_enabled("TRNM_AGGR_SKIP_EMPTY_STAGE_CHECKS", true)
 }
 
 fn aggr_deep_scan_enabled() -> bool {
-    std::env::var("TRNM_AGGR_DEEP_SCAN")
-        .ok()
-        .map(|v| {
-            let s = v.trim().to_ascii_lowercase();
-            !(s == "0" || s == "false" || s == "off" || s == "no")
-        })
-        .unwrap_or(false)
+    env_toggle_enabled("TRNM_AGGR_DEEP_SCAN", false)
 }
 
 fn aggr_scan_round_robin_enabled() -> bool {
@@ -1837,6 +1845,26 @@ mod tests {
 
         let _on = EnvGuard::set("TRNM_AGGR_SCAN_ROUND_ROBIN", " 'on' ");
         assert!(aggr_scan_round_robin_enabled());
+    }
+
+    #[test]
+    fn aggressive_toggle_parsers_accept_quoted_tokens_for_skip_empty_and_deep_scan() {
+        let _env = env_lock();
+
+        let _skip_off = EnvGuard::set("TRNM_AGGR_SKIP_EMPTY_STAGE_CHECKS", " \"off\" ");
+        assert!(!aggr_skip_empty_stage_checks());
+        drop(_skip_off);
+
+        let _skip_on = EnvGuard::set("TRNM_AGGR_SKIP_EMPTY_STAGE_CHECKS", " 'on' ");
+        assert!(aggr_skip_empty_stage_checks());
+        drop(_skip_on);
+
+        let _deep_off = EnvGuard::set("TRNM_AGGR_DEEP_SCAN", " 'off' ");
+        assert!(!aggr_deep_scan_enabled());
+        drop(_deep_off);
+
+        let _deep_on = EnvGuard::set("TRNM_AGGR_DEEP_SCAN", " \"on\" ");
+        assert!(aggr_deep_scan_enabled());
     }
 
     #[test]
