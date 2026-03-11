@@ -878,6 +878,47 @@ fn paused_resolve_approval_accepts_case_variant_approver_alias_without_escrow_si
 }
 
 #[test]
+fn paused_state_rejects_control_character_authority_member_without_side_effects() {
+    // M1 micro-hardening: authority-set members must reject hidden ASCII control bytes
+    // just like approver ids do, so pause-time resolver quorum cannot be spoofed via
+    // non-printable actor ids. Rejection must preserve custody balances and staged state.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 9_940);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 994);
+
+    st.set_gov_param(98_213, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+    let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+
+    let err = st
+        .stage_or_confirm_resolve_approval(
+            9_919,
+            1,
+            true,
+            "authority-a",
+            &format!("authority-a,authority-b{}", '\u{0007}'),
+        )
+        .expect_err("control-character authority member must be rejected while paused");
+    assert!(
+        err.contains("control characters") || err.contains("authority set"),
+        "unexpected error: {err}"
+    );
+
+    assert_eq!(st.pending_resolve_approval(9_919), None);
+    assert_eq!(st.pending_resolve_first_approver(9_919), None);
+    assert_eq!(st.pending_gov_update("resolve_authority"), None);
+    assert!(st.is_emergency_paused());
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
+}
+
+#[test]
 fn paused_state_rejects_control_character_approver_without_mutating_quorum_or_escrow() {
     // M1 micro-hardening: resolve approver ids must reject hidden ASCII control bytes
     // just like governance authority members do, so pause-time multisig confirmation
@@ -1143,10 +1184,12 @@ fn unpause_does_not_bypass_pending_resolve_authority_timelock_or_escrow_conserva
 }
 
 #[test]
-fn paused_matured_resolve_authority_timelock_rejects_cancel_and_replace_without_side_effects() {
+fn paused_matured_resolve_authority_timelock_rejects_cancel_replace_and_mismatched_enforce_without_side_effects() {
     // M1 micro-hardening: once a sensitive resolve_authority update has reached its
     // activation height, pause-time cancel/replace attempts must fail closed until the
-    // staged value is explicitly applied. They must not clear pause or perturb custody.
+    // staged value is explicitly applied. A mismatched enforce attempt must also fail
+    // closed instead of overwriting the matured staged value. None of these paths may
+    // clear pause or perturb custody.
     let mut st = StateStore::new();
     st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 64_100);
     st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 941);
@@ -1194,9 +1237,23 @@ fn paused_matured_resolve_authority_timelock_rejects_cancel_and_replace_without_
         .expect_err("matured resolve_authority update must reject replacement until applied");
     assert!(replace_err.contains("must be applied"), "unexpected error: {replace_err}");
 
+    let enforce_err = st
+        .set_gov_param(
+            activate_at_height,
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect_err("matured resolve_authority update must reject mismatched enforce until staged value is applied");
+    assert!(
+        enforce_err.contains("pending governance update exists for resolve_authority")
+            || enforce_err.contains("must be applied"),
+        "unexpected error: {enforce_err}"
+    );
+
     let pending = st
         .pending_gov_update("resolve_authority")
-        .expect("matured update must remain staged after cancel/replace rejection");
+        .expect("matured update must remain staged after cancel/replace/mismatched-enforce rejection");
     assert_eq!(pending.value, "authority-a,authority-c");
     assert_eq!(pending.activate_at_height, activate_at_height);
     assert_eq!(st.gov_param_string("resolve_authority"), resolve_before);

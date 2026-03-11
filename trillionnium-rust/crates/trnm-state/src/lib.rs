@@ -450,6 +450,7 @@ impl StateStore {
             if member_trimmed.is_empty()
                 || member_trimmed != *member
                 || member_trimmed.chars().any(|c| c.is_whitespace())
+                || member_trimmed.chars().any(|c| c.is_control())
                 || has_forbidden_separator(member_trimmed)
                 || !member_trimmed.is_ascii()
                 || member_trimmed.eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER)
