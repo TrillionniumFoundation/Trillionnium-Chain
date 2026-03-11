@@ -187,15 +187,106 @@ elif [[ "$PR7_DELIVERY_FAIL_MODE" == "warn" && "$pr7_rc" -ne 0 ]]; then
   echo "[PR7][WARN] delivery failed with rc=$pr7_rc (mode=warn, preserving pr6 rc=$pr6_rc)" >&2
 fi
 
+AUDIT_FILE="${ALERT_NOTIFY_AUDIT_FILE:-$ROOT/run/pr7-alert-delivery/audit.jsonl}"
+DELIVERY_EVENT="unknown"
+PRIMARY_CHANNEL="${ALERT_NOTIFY_PRIMARY_CHANNEL:-${ALERT_NOTIFY_CHANNEL:-imessage}}"
+BACKUP_CHANNEL="${ALERT_NOTIFY_BACKUP_CHANNEL:-}"
+SUCCESS_CHANNELS=""
+FAILED_CHANNELS=""
+CHANNELS_OK="0"
+CHANNELS_FAILED="0"
+PARTIAL_SUCCESS="0"
+if [[ -f "$AUDIT_FILE" ]]; then
+  DELIVERY_SUMMARY_JSON="$(python3 - "$AUDIT_FILE" "$REPORT" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+audit = Path(sys.argv[1])
+report = sys.argv[2]
+summary = None
+for line in audit.read_text(encoding='utf-8').splitlines():
+    line = line.strip()
+    if not line:
+        continue
+    try:
+        item = json.loads(line)
+    except json.JSONDecodeError:
+        continue
+    if item.get('record_type') == 'delivery_summary' and item.get('report_path') == report:
+        summary = item
+if summary is None:
+    print('{}')
+else:
+    print(json.dumps(summary, ensure_ascii=False))
+PY
+)"
+  if [[ -n "$DELIVERY_SUMMARY_JSON" && "$DELIVERY_SUMMARY_JSON" != "{}" ]]; then
+    DELIVERY_EVENT="$(python3 -c 'import json,sys; print(json.loads(sys.stdin.read()).get("event","unknown"))' <<<"$DELIVERY_SUMMARY_JSON")"
+    PRIMARY_CHANNEL="$(python3 -c 'import json,sys; print(json.loads(sys.stdin.read()).get("primary_channel",""))' <<<"$DELIVERY_SUMMARY_JSON")"
+    CHANNELS_OK="$(python3 -c 'import json,sys; print(json.loads(sys.stdin.read()).get("channels_ok",0))' <<<"$DELIVERY_SUMMARY_JSON")"
+    CHANNELS_FAILED="$(python3 -c 'import json,sys; print(json.loads(sys.stdin.read()).get("channels_failed",0))' <<<"$DELIVERY_SUMMARY_JSON")"
+    if [[ "$DELIVERY_EVENT" == "partial_success" ]]; then
+      PARTIAL_SUCCESS="1"
+    fi
+  fi
+
+  ROUTE_LINES="$(python3 - "$AUDIT_FILE" "$REPORT" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+audit = Path(sys.argv[1])
+report = sys.argv[2]
+rows = []
+for line in audit.read_text(encoding='utf-8').splitlines():
+    line = line.strip()
+    if not line:
+        continue
+    try:
+        item = json.loads(line)
+    except json.JSONDecodeError:
+        continue
+    if item.get('record_type') == 'delivery_summary':
+        continue
+    if item.get('report_path') != report:
+        continue
+    ch = str(item.get('channel','')).strip()
+    if not ch:
+        continue
+    ok = bool(item.get('ok'))
+    rows.append((ch, ok))
+seen = {}
+for ch, ok in rows:
+    seen[ch] = ok
+succ = [ch for ch, ok in seen.items() if ok]
+fail = [ch for ch, ok in seen.items() if not ok]
+print('success=' + ','.join(succ))
+print('failed=' + ','.join(fail))
+PY
+)"
+  SUCCESS_CHANNELS="$(printf '%s\n' "$ROUTE_LINES" | sed -n 's/^success=//p' | head -n1)"
+  FAILED_CHANNELS="$(printf '%s\n' "$ROUTE_LINES" | sed -n 's/^failed=//p' | head -n1)"
+fi
+
 cat >"$STATUS_FILE" <<EOF
 status=${status}
 pr6_rc=${pr6_rc}
 pr7_rc=${pr7_rc}
 final_rc=${final_rc}
 fail_mode=${PR7_DELIVERY_FAIL_MODE}
+delivery_event=${DELIVERY_EVENT}
+primary_channel=${PRIMARY_CHANNEL}
+backup_channel=${BACKUP_CHANNEL}
+success_channels=${SUCCESS_CHANNELS}
+failed_channels=${FAILED_CHANNELS}
+channels_ok=${CHANNELS_OK}
+channels_failed=${CHANNELS_FAILED}
+partial_success=${PARTIAL_SUCCESS}
 run_dir=${RUN_DIR}
 lock_dir=${LOCK_DIR}
 report=${REPORT}
+audit_file=${AUDIT_FILE}
 generated_at_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 EOF
 
