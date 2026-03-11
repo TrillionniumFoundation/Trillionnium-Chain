@@ -643,9 +643,9 @@ fn paused_state_rejects_reserved_system_singleton_authority_without_side_effects
 }
 
 #[test]
-fn paused_state_rejects_placeholder_singleton_authority_without_side_effects() {
+fn paused_state_rejects_placeholder_authority_member_inside_multisig_without_side_effects() {
     // M1 merge-gate invariant: pause must not permit the default placeholder
-    // authority identity to stage resolve approvals or touch custody balances.
+    // authority identity to participate in a multisig resolver set or touch custody balances.
     let mut st = StateStore::new();
     st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 8_380);
     st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 838);
@@ -657,15 +657,17 @@ fn paused_state_rejects_placeholder_singleton_authority_without_side_effects() {
     let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
     let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
 
+    let authority_with_placeholder =
+        format!("authority-a,{DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER}");
     let err = st
         .stage_or_confirm_resolve_approval(
             9_915,
             1,
             true,
-            DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER,
-            DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER,
+            "authority-a",
+            &authority_with_placeholder,
         )
-        .expect_err("placeholder singleton authority must be rejected while paused");
+        .expect_err("placeholder authority member must be rejected while paused");
     assert!(
         err.contains("placeholder")
             || err.contains("authority set")
