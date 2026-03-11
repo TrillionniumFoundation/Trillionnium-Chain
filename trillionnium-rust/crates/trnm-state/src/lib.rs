@@ -1091,7 +1091,10 @@ impl StateStore {
         self.invalidate_state_root_cache();
         match snapshot {
             Some(snapshot) => {
-                self.pending_gov_updates.insert(key.to_string(), snapshot);
+                if snapshot.key != key {
+                    self.pending_gov_updates.remove(key);
+                }
+                self.pending_gov_updates.insert(snapshot.key.clone(), snapshot);
             }
             None => {
                 self.pending_gov_updates.remove(key);

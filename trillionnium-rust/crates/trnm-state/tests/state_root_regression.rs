@@ -703,3 +703,59 @@ fn restore_combined_pending_and_monetary_none_roundtrip_rewinds_state_root() {
         "post-restore repeated reads should deterministically reuse the exact rewound root"
     );
 }
+
+#[test]
+fn restore_pending_gov_update_uses_snapshot_key_identity_for_state_root_roundtrip() {
+    let mut state = StateStore::new();
+    let baseline_root = state.state_root();
+
+    let outcome = state
+        .set_gov_param(
+            1_000,
+            7_001,
+            "challenge_min_bond".to_string(),
+            "5000".to_string(),
+        )
+        .expect("staging a sensitive governance update should succeed");
+    assert!(matches!(outcome, GovParamUpdateOutcome::Scheduled { .. }));
+
+    let baseline_snapshot = state
+        .pending_gov_update("challenge_min_bond")
+        .expect("sanity: pending snapshot should exist");
+    let pending_root = state.state_root();
+    assert_ne!(
+        pending_root, baseline_root,
+        "sanity: staged governance update must perturb the root"
+    );
+
+    state.restore_pending_gov_update(
+        "max_block_ms",
+        Some(PendingGovParamUpdate {
+            key_id: baseline_snapshot.key_id,
+            key: baseline_snapshot.key.clone(),
+            value: baseline_snapshot.value.clone(),
+            activate_at_height: baseline_snapshot.activate_at_height,
+        }),
+    );
+
+    assert!(
+        state.pending_gov_update("max_block_ms").is_none(),
+        "restore should not materialize a pending update under a mismatched key slot"
+    );
+    assert!(
+        state.pending_gov_update("challenge_min_bond").is_some(),
+        "restore should preserve the original logical pending key"
+    );
+    assert_eq!(
+        state.state_root(),
+        pending_root,
+        "restoring an identical pending snapshot through a mismatched caller key should preserve the same deterministic root"
+    );
+
+    state.restore_pending_gov_update("challenge_min_bond", None);
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "removing the pending update after the mismatched-key restore roundtrip must return to the original baseline root"
+    );
+}
