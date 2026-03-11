@@ -1241,8 +1241,8 @@ mod tests {
     fn wait_for_tx_timeout() {
         let result = wait_for_tx(
             "0xaaa",
-            Duration::from_millis(0),
-            Duration::from_millis(0),
+            Duration::from_millis(1),
+            Duration::from_millis(1),
             |_| {
                 Ok(TxQueryResponse {
                     tx_hash: "0xaaa".to_string(),
@@ -1251,7 +1251,11 @@ mod tests {
                 })
             },
         );
-        assert!(result.is_err());
+        let msg = result.unwrap_err().to_string();
+        assert!(
+            msg.contains("tx wait timeout"),
+            "expected timeout error, got: {msg}"
+        );
     }
 
     #[test]

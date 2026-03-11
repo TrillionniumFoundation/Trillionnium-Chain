@@ -175,5 +175,5 @@ fn smoke_tx_transfer_template_path() {
     assert!(out2.status.success());
     let s = String::from_utf8_lossy(&out2.stdout);
     assert!(s.contains("0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"));
-    assert!(s.contains("submitted"));
+    assert!(s.contains("\"status\": \"pending\""));
 }
