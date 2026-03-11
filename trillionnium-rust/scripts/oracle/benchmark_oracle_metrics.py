@@ -19,13 +19,13 @@ def median(vals):
 def validate_snapshot(s, min_sources, max_staleness_ms, max_deviation_bps):
     now_ms = int(s.get("snapshot_ts_ms", 0))
     uniq = set()
-    values = []
+    latest_value_by_source = {}
     for src in s.get("sources", []):
         sid = src.get("source", "").strip().lower()
         if not sid:
             continue
         uniq.add(sid)
-        values.append(float(src.get("value", 0.0)))
+        latest_value_by_source[sid] = float(src.get("value", 0.0))
         ts = int(src.get("ts_unix_ms", now_ms))
         age_ms = now_ms - ts
         if age_ms < 0 or age_ms > max_staleness_ms:
@@ -34,6 +34,7 @@ def validate_snapshot(s, min_sources, max_staleness_ms, max_deviation_bps):
     if len(uniq) < min_sources:
         return "quorum", len(uniq)
 
+    values = list(latest_value_by_source.values())
     m = median(values)
     if m is None:
         return "quorum", len(uniq)
@@ -184,6 +185,24 @@ def _test_future_dated_source_rejects_as_stale():
     )
     assert status == "stale"
     assert cardinality == 1
+
+
+def _test_duplicate_sources_count_once_for_quorum_and_drift():
+    status, cardinality = validate_snapshot(
+        {
+            "snapshot_ts_ms": 1_000,
+            "sources": [
+                {"source": "s1", "value": 100.0, "ts_unix_ms": 1_000},
+                {"source": "s1", "value": 100.0, "ts_unix_ms": 1_000},
+                {"source": "s2", "value": 100.0, "ts_unix_ms": 1_000},
+            ],
+        },
+        min_sources=2,
+        max_staleness_ms=60_000,
+        max_deviation_bps=500,
+    )
+    assert status == "ok"
+    assert cardinality == 2
 
 
 if __name__ == "__main__":
