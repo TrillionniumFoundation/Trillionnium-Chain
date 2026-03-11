@@ -364,4 +364,13 @@ mod tests {
         assert_eq!(s1.snapshot_hash, s2.snapshot_hash);
         assert!(s1.validate_hash().is_ok());
     }
+
+    #[test]
+    fn policy_accepts_snapshot_exactly_at_staleness_boundary() {
+        let p = policy();
+        let snap = snapshot_with(100_000, Some(100_100), 10_000);
+
+        p.validate_snapshot(&snap, 15_000)
+            .expect("boundary staleness should remain valid");
+    }
 }
