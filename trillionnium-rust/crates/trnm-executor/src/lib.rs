@@ -1953,6 +1953,27 @@ mod tests {
     }
 
     #[test]
+    fn auto_adaptive_numeric_env_parser_ignores_empty_or_separator_only_values() {
+        let _env = env_lock();
+
+        let _window = EnvGuard::set("TRNM_AGGR_SCAN_WINDOW", "   ");
+        let _seed = EnvGuard::set("TRNM_AGGR_SCAN_RR_SEED", "__,,__");
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", " '' ");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", " \"\" ");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", " _,_ ");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", " '__,,__' ");
+        let _buckets = EnvGuard::set("TRNM_HOT_BUCKETS", " \"_,,\" ");
+
+        assert_eq!(aggr_scan_window(), 0);
+        assert_eq!(aggr_scan_round_robin_seed(), 0);
+        assert_eq!(auto_hot_streak_threshold(), 0.22);
+        assert_eq!(auto_reorder_min_margin(), 0.04);
+        assert_eq!(auto_reorder_min_hot_key_share(), 0.0075);
+        assert_eq!(auto_min_expected_gain_score(), 0.01);
+        assert_eq!(hot_bucket_count(), 8);
+    }
+
+    #[test]
     fn auto_adaptive_sampling_detects_late_batch_hotspots() {
         let _env = env_lock();
         let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.20");
