@@ -179,4 +179,11 @@ mod tests {
         let normalized = normalize_failure_reason(raw);
         assert_eq!(normalized, "target relay timeout signal");
     }
+
+    #[test]
+    fn normalize_failure_reason_strips_soft_hyphen_for_replay_stability() {
+        let raw = "target\u{00AD}relay timeout";
+        let normalized = normalize_failure_reason(raw);
+        assert_eq!(normalized, "target relay timeout");
+    }
 }
