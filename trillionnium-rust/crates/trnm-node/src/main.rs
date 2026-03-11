@@ -4719,6 +4719,11 @@ mod tests {
         assert!(recovered.truncated);
         assert!(recovered.metadata_only_recovery);
         assert_eq!(recovered.wal_entries_retained, 2);
+        assert_eq!(
+            recovered.last_checkpoint.as_ref().map(|cp| cp.height),
+            Some(2)
+        );
+        assert_eq!(recovered.restored_lock.as_deref(), Some("h2"));
 
         let entries = load_wal_meta_entries(&wal_dir).unwrap();
         assert_eq!(entries.len(), 2);
