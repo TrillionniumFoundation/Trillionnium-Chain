@@ -43,24 +43,33 @@ trap cleanup EXIT
 refs_file="$TMP_DIR/refs.txt"
 missing_file="$TMP_DIR/missing.txt"
 non_exec_file="$TMP_DIR/non_exec.txt"
+non_dot_refs_file="$TMP_DIR/non_dot_refs.txt"
 
 : >"$refs_file"
 : >"$missing_file"
 : >"$non_exec_file"
+: >"$non_dot_refs_file"
 
 for wf in "${WORKFLOW_FILES[@]}"; do
   while IFS= read -r ref; do
     [[ -n "$ref" ]] || continue
     printf '%s\n' "$ref" >>"$refs_file"
+    if [[ "$ref" != ./* ]]; then
+      printf '%s\n' "$ref" >>"$non_dot_refs_file"
+    fi
   done < <(LC_ALL=C grep -Eo '(\./scripts|scripts|trillionnium-rust/scripts)/[[:alnum:]_./-]+\.(sh|py)' "$wf" || true)
 done
 
 total_script_ref_count="$(wc -l <"$refs_file" | tr -d ' ')"
+non_dot_script_ref_count="$(wc -l <"$non_dot_refs_file" | tr -d ' ')"
 mapfile -t SCRIPT_REFS < <(LC_ALL=C sort -u "$refs_file")
+mapfile -t NON_DOT_SCRIPT_REFS < <(LC_ALL=C sort -u "$non_dot_refs_file")
 
 echo "[workflow-ref] workflow_count=${#WORKFLOW_FILES[@]}"
 echo "[workflow-ref] script_ref_total_count=${total_script_ref_count}"
 echo "[workflow-ref] script_ref_count=${#SCRIPT_REFS[@]}"
+echo "[workflow-ref] non_dot_script_ref_total_count=${non_dot_script_ref_count}"
+echo "[workflow-ref] non_dot_script_ref_count=${#NON_DOT_SCRIPT_REFS[@]}"
 
 audit_ts="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
@@ -127,6 +136,8 @@ if [[ -n "$SUMMARY_PATH" ]]; then
   "workflow_file_count": ${#WORKFLOW_FILES[@]},
   "script_ref_total_count": ${total_script_ref_count},
   "script_ref_count": ${#SCRIPT_REFS[@]},
+  "non_dot_script_ref_total_count": ${non_dot_script_ref_count},
+  "non_dot_script_ref_count": ${#NON_DOT_SCRIPT_REFS[@]},
   "git_head": "${git_head}",
   "missing_count": ${missing_count},
   "non_exec_count": ${non_exec_count},

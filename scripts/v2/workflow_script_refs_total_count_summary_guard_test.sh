@@ -46,8 +46,14 @@ if int(data.get('script_ref_total_count', 0)) != 4:
     raise SystemExit(f"[FAIL] expected total duplicate-aware ref count 4, got: {data}")
 if int(data.get('script_ref_count', 0)) != 3:
     raise SystemExit(f"[FAIL] expected unique ref count 3, got: {data}")
+if int(data.get('non_dot_script_ref_total_count', 0)) != 1:
+    raise SystemExit(f"[FAIL] expected non-dot total ref count 1, got: {data}")
+if int(data.get('non_dot_script_ref_count', 0)) != 1:
+    raise SystemExit(f"[FAIL] expected non-dot unique ref count 1, got: {data}")
 stdout = open(stdout_path, 'r', encoding='utf-8').read()
 if '[workflow-ref] script_ref_total_count=4' not in stdout:
     raise SystemExit('[FAIL] missing total ref count log line in stdout')
-print('[PASS] workflow script ref validator reports total and unique workflow script refs')
+if '[workflow-ref] non_dot_script_ref_total_count=1' not in stdout:
+    raise SystemExit('[FAIL] missing non-dot total ref count log line in stdout')
+print('[PASS] workflow script ref validator reports total/unique refs and non-dot workflow script refs')
 PY

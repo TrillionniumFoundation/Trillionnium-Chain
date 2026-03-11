@@ -56,5 +56,9 @@ if data.get('status') != 'ok':
     raise SystemExit(f"[FAIL] expected ok status, got: {data}")
 if int(data.get('script_ref_count', 0)) != 2:
     raise SystemExit(f"[FAIL] expected exactly 2 relative scripts refs, got: {data}")
-print('[PASS] workflow script ref validator covers scripts/ refs used without ./ prefix')
+if int(data.get('non_dot_script_ref_total_count', 0)) != 2:
+    raise SystemExit(f"[FAIL] expected non-dot total ref count 2, got: {data}")
+if int(data.get('non_dot_script_ref_count', 0)) != 2:
+    raise SystemExit(f"[FAIL] expected non-dot unique ref count 2, got: {data}")
+print('[PASS] workflow script ref validator covers scripts/ refs used without ./ prefix and reports them explicitly')
 PY
