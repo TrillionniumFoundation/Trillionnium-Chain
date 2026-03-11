@@ -11,12 +11,15 @@ use std::{
     path::{Path, PathBuf},
     time::{Duration, Instant, SystemTime, UNIX_EPOCH},
 };
+use trnm_oracle::{
+    emit_oracle_validation_observation, validate_snapshot_observed, OraclePolicy, OracleSnapshot,
+};
 use trnm_rpc::{
     get_tx, query_account_state, submit_tx, validate_trnm_address, AccountBalanceQueryResponse,
     AccountNonceQueryResponse, AccountState, EventQueryResponse, FaucetRequestResponse, GetTxError,
     GovParamQueryResponse, GovProposalQueryResponse, InMemoryTransferLedger,
-    MessageRequestQueryResponse, RequestFullQueryResponse, RpcErrorResponse, TaskQueryResponse,
-    TxLifecycleRecord,
+    MessageRequestQueryResponse, OracleValidateSnapshotRequest, OracleValidateSnapshotResponse,
+    RequestFullQueryResponse, RpcErrorResponse, TaskQueryResponse, TxLifecycleRecord,
 };
 use trnm_state::StateStore;
 use trnm_types::{
@@ -195,6 +198,18 @@ enum Command {
         worker_id: String,
         #[arg(long, default_value_t = DISPATCH_OPEN_LIMIT_DEFAULT)]
         limit: usize,
+    },
+    #[command(
+        name = "oracle.validate_snapshot",
+        visible_alias = "oracle-validate-snapshot"
+    )]
+    OracleValidateSnapshot {
+        #[arg(long)]
+        snapshot: PathBuf,
+        #[arg(long)]
+        policy: PathBuf,
+        #[arg(long)]
+        now_ts_ms: Option<u64>,
     },
     /// Run minimal RPC health server for service mode
     Serve {
@@ -969,6 +984,30 @@ fn normalized_path_from_env(name: &str) -> Option<PathBuf> {
     } else {
         Some(PathBuf::from(normalized))
     }
+}
+
+fn read_json_file<T: for<'de> Deserialize<'de>>(path: &Path) -> Result<T> {
+    let raw = fs::read_to_string(path)
+        .map_err(|err| anyhow!("failed to read {}: {}", path.display(), err))?;
+    serde_json::from_str(&raw).map_err(|err| anyhow!("failed to parse {}: {}", path.display(), err))
+}
+
+fn oracle_validate_snapshot_response(
+    snapshot_path: &Path,
+    policy_path: &Path,
+    now_ts_ms: u64,
+) -> Result<OracleValidateSnapshotResponse> {
+    let snapshot: OracleSnapshot = read_json_file(snapshot_path)?;
+    let policy: OraclePolicy = read_json_file(policy_path)?;
+    let report = validate_snapshot_observed(&policy, &snapshot, now_ts_ms);
+
+    Ok(OracleValidateSnapshotResponse {
+        ok: report.ok,
+        now_ts_ms,
+        observation: report.observation,
+        metrics: report.metrics,
+        error: report.error,
+    })
 }
 
 fn market_tasks_file() -> PathBuf {
@@ -2129,6 +2168,14 @@ fn http_json_response(status_line: &str, body: &str) -> String {
     )
 }
 
+fn http_text_response(status_line: &str, body: &str) -> String {
+    format!(
+        "HTTP/1.1 {status_line}\r\nContent-Type: text/plain; version=0.0.4; charset=utf-8\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{}",
+        body.len(),
+        body
+    )
+}
+
 fn configure_health_stream(stream: &TcpStream) -> std::io::Result<()> {
     stream.set_read_timeout(Some(Duration::from_millis(HEALTH_SOCKET_READ_TIMEOUT_MS)))?;
     stream.set_write_timeout(Some(Duration::from_millis(HEALTH_SOCKET_WRITE_TIMEOUT_MS)))?;
@@ -2157,7 +2204,7 @@ fn read_http_request_head(stream: &mut TcpStream) -> std::io::Result<Vec<u8>> {
     Ok(buf)
 }
 
-fn parse_http_get_path(first_line: &str) -> Option<&str> {
+fn parse_http_get_target(first_line: &str) -> Option<&str> {
     let line = first_line.trim_end_matches(['\r', '\n']);
     if line.is_empty() || line.chars().any(|ch| ch.is_control() && ch != '\t') {
         return None;
@@ -2175,8 +2222,8 @@ fn parse_http_get_path(first_line: &str) -> Option<&str> {
     }
 
     let second_sp = rest.find(' ')?;
-    let path = &rest[..second_sp];
-    if !path.starts_with('/') {
+    let target = &rest[..second_sp];
+    if !target.starts_with('/') {
         return None;
     }
     rest = rest[second_sp + 1..].trim_start_matches([' ', '\t']);
@@ -2184,7 +2231,337 @@ fn parse_http_get_path(first_line: &str) -> Option<&str> {
         return None;
     }
 
-    Some(path.split('?').next().unwrap_or(path))
+    Some(target)
+}
+
+fn parse_http_get_path(first_line: &str) -> Option<&str> {
+    let target = parse_http_get_target(first_line)?;
+    Some(target.split('?').next().unwrap_or(target))
+}
+
+fn decode_http_query_component(raw: &str) -> Option<String> {
+    let bytes = raw.as_bytes();
+    let mut out = Vec::with_capacity(bytes.len());
+    let mut i = 0usize;
+    while i < bytes.len() {
+        match bytes[i] {
+            b'+' => {
+                out.push(b' ');
+                i += 1;
+            }
+            b'%' if i + 2 < bytes.len() => {
+                let hi = (bytes[i + 1] as char).to_digit(16)?;
+                let lo = (bytes[i + 2] as char).to_digit(16)?;
+                out.push(((hi << 4) | lo) as u8);
+                i += 3;
+            }
+            b'%' => return None,
+            byte => {
+                out.push(byte);
+                i += 1;
+            }
+        }
+    }
+    String::from_utf8(out).ok()
+}
+
+fn parse_http_query_params(target: &str) -> Option<BTreeMap<String, String>> {
+    let (_, query) = target.split_once('?')?;
+    let mut out = BTreeMap::new();
+    for pair in query.split('&') {
+        if pair.is_empty() {
+            continue;
+        }
+        let (raw_key, raw_value) = pair.split_once('=').unwrap_or((pair, ""));
+        let key = decode_http_query_component(raw_key)?;
+        if key.is_empty() {
+            return None;
+        }
+        let value = decode_http_query_component(raw_value)?;
+        if out.insert(key, value).is_some() {
+            // Fail-closed on duplicate keys to keep query parsing deterministic.
+            return None;
+        }
+    }
+    Some(out)
+}
+
+fn http_json_error(status_line: &str, code: &str, message: &str) -> String {
+    let body = serde_json::json!({
+        "ok": false,
+        "code": code,
+        "message": message,
+    })
+    .to_string();
+    http_json_response(status_line, &body)
+}
+
+fn parse_oracle_validate_snapshot_target(
+    target: &str,
+) -> Result<OracleValidateSnapshotRequest, String> {
+    let Some(query) = parse_http_query_params(target) else {
+        return Err("invalid query string".to_string());
+    };
+
+    for key in query.keys() {
+        if !matches!(key.as_str(), "snapshot" | "policy" | "now_ts_ms") {
+            return Err(format!("unknown query parameter: {}", key));
+        }
+    }
+
+    let Some(snapshot) = query.get("snapshot") else {
+        return Err("missing snapshot".to_string());
+    };
+    if snapshot.trim().is_empty() {
+        return Err("empty snapshot".to_string());
+    }
+
+    let Some(policy) = query.get("policy") else {
+        return Err("missing policy".to_string());
+    };
+    if policy.trim().is_empty() {
+        return Err("empty policy".to_string());
+    }
+
+    let now_ts_ms = match query.get("now_ts_ms") {
+        Some(raw) => Some(
+            raw.parse::<u64>()
+                .map_err(|_| "invalid now_ts_ms".to_string())?,
+        ),
+        None => None,
+    };
+
+    Ok(OracleValidateSnapshotRequest {
+        snapshot: snapshot.clone(),
+        policy: policy.clone(),
+        now_ts_ms,
+    })
+}
+
+fn prometheus_escape_label_value(raw: &str) -> String {
+    raw.replace('\\', "\\\\")
+        .replace('\n', "\\n")
+        .replace('"', "\\\"")
+}
+
+fn rpc_service_prometheus_text() -> String {
+    "# HELP trnm_rpc_service_up Trnm RPC service liveness flag.\n# TYPE trnm_rpc_service_up gauge\ntrnm_rpc_service_up{service=\"trnm-rpc\"} 1\n# HELP trnm_rpc_service_info Trnm RPC service info metric.\n# TYPE trnm_rpc_service_info gauge\ntrnm_rpc_service_info{service=\"trnm-rpc\",version=\"1\"} 1\n".to_string()
+}
+
+fn oracle_metrics_prometheus_text(out: &OracleValidateSnapshotResponse) -> String {
+    let feed_id = prometheus_escape_label_value(&out.observation.feed_id);
+    let outcome = prometheus_escape_label_value(&out.observation.outcome);
+    let labels = format!("feed_id=\"{feed_id}\",outcome=\"{outcome}\"");
+    let ok = if out.ok { 1 } else { 0 };
+
+    format!(
+        "# HELP oracle_validation_ok Oracle validation success flag for the supplied snapshot.\n# TYPE oracle_validation_ok gauge\noracle_validation_ok{{{labels}}} {ok}\n# HELP oracle_stale_reject_total Oracle stale snapshot rejection counter.\n# TYPE oracle_stale_reject_total counter\noracle_stale_reject_total{{{labels}}} {}\n# HELP oracle_quorum_reject_total Oracle insufficient-source rejection counter.\n# TYPE oracle_quorum_reject_total counter\noracle_quorum_reject_total{{{labels}}} {}\n# HELP oracle_drift_reject_total Oracle deviation rejection counter.\n# TYPE oracle_drift_reject_total counter\noracle_drift_reject_total{{{labels}}} {}\n# HELP oracle_source_cardinality Oracle source cardinality observed for the snapshot.\n# TYPE oracle_source_cardinality gauge\noracle_source_cardinality{{{labels}}} {}\n# HELP accepted_total Accepted snapshot counter using baseline naming.\n# TYPE accepted_total counter\naccepted_total{{{labels}}} {}\n# HELP sample_count Sample counter using baseline naming.\n# TYPE sample_count counter\nsample_count{{{labels}}} {}\n# HELP oracle_snapshot_ts_ms Snapshot timestamp in unix milliseconds.\n# TYPE oracle_snapshot_ts_ms gauge\noracle_snapshot_ts_ms{{{labels}}} {}\n",
+        out.metrics.oracle_stale_reject_total,
+        out.metrics.oracle_quorum_reject_total,
+        out.metrics.oracle_drift_reject_total,
+        out.metrics.oracle_source_cardinality,
+        out.metrics.accepted_total,
+        out.metrics.sample_count,
+        out.observation.snapshot_ts_ms,
+    )
+}
+
+fn http_oracle_validate_snapshot_response(target: &str) -> String {
+    let request = match parse_oracle_validate_snapshot_target(target) {
+        Ok(request) => request,
+        Err(message) => return http_json_error("400 Bad Request", "BAD_REQUEST", &message),
+    };
+    let now_ts_ms = request.now_ts_ms.unwrap_or_else(|| now_ms() as u64);
+
+    match oracle_validate_snapshot_response(
+        Path::new(&request.snapshot),
+        Path::new(&request.policy),
+        now_ts_ms,
+    ) {
+        Ok(out) => {
+            let _ = emit_oracle_validation_observation(&out.observation, &out.metrics);
+            let body = serde_json::to_string(&out)
+                .unwrap_or_else(|_| "{\"ok\":false,\"code\":\"SERDE_ERROR\"}".to_string());
+            http_json_response("200 OK", &body)
+        }
+        Err(err) => http_json_error("400 Bad Request", "BAD_REQUEST", &err.to_string()),
+    }
+}
+
+fn http_oracle_metrics_response(target: &str) -> String {
+    let request = match parse_oracle_validate_snapshot_target(target) {
+        Ok(request) => request,
+        Err(message) => return http_json_error("400 Bad Request", "BAD_REQUEST", &message),
+    };
+    let now_ts_ms = request.now_ts_ms.unwrap_or_else(|| now_ms() as u64);
+
+    match oracle_validate_snapshot_response(
+        Path::new(&request.snapshot),
+        Path::new(&request.policy),
+        now_ts_ms,
+    ) {
+        Ok(out) => {
+            let _ = emit_oracle_validation_observation(&out.observation, &out.metrics);
+            http_text_response("200 OK", &oracle_metrics_prometheus_text(&out))
+        }
+        Err(err) => http_json_error("400 Bad Request", "BAD_REQUEST", &err.to_string()),
+    }
+}
+
+fn http_metrics_response(target: &str) -> String {
+    let mut body = rpc_service_prometheus_text();
+
+    match parse_http_query_params(target) {
+        None if target.contains('?') => {
+            return http_json_error("400 Bad Request", "BAD_REQUEST", "invalid query string")
+        }
+        None => return http_text_response("200 OK", &body),
+        Some(query) => {
+            let has_oracle_query = query.contains_key("snapshot")
+                || query.contains_key("policy")
+                || query.contains_key("now_ts_ms");
+            if !has_oracle_query {
+                return http_text_response("200 OK", &body);
+            }
+        }
+    }
+
+    let request = match parse_oracle_validate_snapshot_target(target) {
+        Ok(request) => request,
+        Err(message) => return http_json_error("400 Bad Request", "BAD_REQUEST", &message),
+    };
+    let now_ts_ms = request.now_ts_ms.unwrap_or_else(|| now_ms() as u64);
+
+    match oracle_validate_snapshot_response(
+        Path::new(&request.snapshot),
+        Path::new(&request.policy),
+        now_ts_ms,
+    ) {
+        Ok(out) => {
+            let _ = emit_oracle_validation_observation(&out.observation, &out.metrics);
+            body.push_str(&oracle_metrics_prometheus_text(&out));
+            http_text_response("200 OK", &body)
+        }
+        Err(err) => http_json_error("400 Bad Request", "BAD_REQUEST", &err.to_string()),
+    }
+}
+
+fn http_service_response_for_target(target: Option<&str>) -> String {
+    match target {
+        Some("/health") => {
+            let body = serde_json::json!({
+                "ok": true,
+                "service": "trnm-rpc",
+                "ts_unix_ms": now_ms(),
+                "version": 1
+            })
+            .to_string();
+            http_json_response("200 OK", &body)
+        }
+        Some(target) => {
+            let path = target.split('?').next().unwrap_or(target);
+            match path {
+                "/metrics" => http_metrics_response(target),
+                "/oracle/validate_snapshot" => http_oracle_validate_snapshot_response(target),
+                "/oracle/metrics" => http_oracle_metrics_response(target),
+                _ => {
+                    if path.starts_with("/query-task/") {
+                        let task_id = path.trim_start_matches("/query-task/").parse::<u64>();
+                        match task_id {
+                            Ok(task_id) => {
+                                let node_events =
+                                    load_node_events(NodeEventScanMode::Authoritative);
+                                let recs = load_latest_adapter_records();
+                                match query_task_response(task_id, &node_events.events, &recs) {
+                                    Ok(out) => {
+                                        let body =
+                                            serde_json::to_string(&out).unwrap_or_else(|_| {
+                                                "{\"ok\":false,\"code\":\"SERDE_ERROR\"}"
+                                                    .to_string()
+                                            });
+                                        http_json_response("200 OK", &body)
+                                    }
+                                    Err(err) => http_json_error(
+                                        "404 Not Found",
+                                        "NOT_FOUND",
+                                        &err.to_string(),
+                                    ),
+                                }
+                            }
+                            Err(_) => {
+                                http_json_error("400 Bad Request", "BAD_REQUEST", "invalid task_id")
+                            }
+                        }
+                    } else if path.starts_with("/query-events/") {
+                        let task_id = path.trim_start_matches("/query-events/").parse::<u64>();
+                        match task_id {
+                            Ok(task_id) => {
+                                let node_events =
+                                    load_node_events(NodeEventScanMode::Authoritative);
+                                let recs = load_latest_adapter_records();
+                                match query_events_response(
+                                    task_id,
+                                    QUERY_EVENTS_LIMIT_DEFAULT,
+                                    &node_events.events,
+                                    &recs,
+                                ) {
+                                    Ok(events) => {
+                                        let body =
+                                            serde_json::to_string(&events).unwrap_or_else(|_| {
+                                                "{\"ok\":false,\"code\":\"SERDE_ERROR\"}"
+                                                    .to_string()
+                                            });
+                                        http_json_response("200 OK", &body)
+                                    }
+                                    Err(err) => http_json_error(
+                                        "404 Not Found",
+                                        "NOT_FOUND",
+                                        &err.to_string(),
+                                    ),
+                                }
+                            }
+                            Err(_) => {
+                                http_json_error("400 Bad Request", "BAD_REQUEST", "invalid task_id")
+                            }
+                        }
+                    } else if path.starts_with("/query-capability-audit/") {
+                        let subject_or_token = path.trim_start_matches("/query-capability-audit/");
+                        let registry = load_identity_registry(&identity_registry_file());
+                        if let Some(token_id) =
+                            resolve_capability_token_subject_or_token(&registry, subject_or_token)
+                        {
+                            match query_capability_audit(&registry, token_id) {
+                                Ok(out) => {
+                                    let body = serde_json::to_string(&out).unwrap_or_else(|_| {
+                                        "{\"ok\":false,\"code\":\"SERDE_ERROR\"}".to_string()
+                                    });
+                                    http_json_response("200 OK", &body)
+                                }
+                                Err(err) => http_json_error(
+                                    "404 Not Found",
+                                    "NOT_FOUND",
+                                    &err.to_rpc_error().message,
+                                ),
+                            }
+                        } else {
+                            http_json_error(
+                                "404 Not Found",
+                                "NOT_FOUND",
+                                "token or subject not found",
+                            )
+                        }
+                    } else {
+                        let body = "{\"ok\":false,\"code\":\"NOT_FOUND\"}";
+                        http_json_response("404 Not Found", body)
+                    }
+                }
+            }
+        }
+        None => {
+            let body = "{\"ok\":false,\"code\":\"NOT_FOUND\"}";
+            http_json_response("404 Not Found", body)
+        }
+    }
 }
 
 fn normalize_capability_subject_lookup(raw: &str) -> Option<String> {
@@ -2259,102 +2636,8 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
         };
         let req = String::from_utf8_lossy(&req);
         let first = req.lines().next().unwrap_or("");
-        let path = parse_http_get_path(first);
-
-        let response = match path {
-            Some("/health") => {
-                let body = serde_json::json!({
-                    "ok": true,
-                    "service": "trnm-rpc",
-                    "ts_unix_ms": now_ms(),
-                    "version": 1
-                })
-                .to_string();
-                http_json_response("200 OK", &body)
-            }
-            Some(path) if path.starts_with("/query-task/") => {
-                let task_id = path.trim_start_matches("/query-task/").parse::<u64>();
-                match task_id {
-                    Ok(task_id) => {
-                        let node_events = load_node_events(NodeEventScanMode::Authoritative);
-                        let recs = load_latest_adapter_records();
-                        match query_task_response(task_id, &node_events.events, &recs) {
-                            Ok(out) => {
-                                let body = serde_json::to_string(&out).unwrap_or_else(|_| {
-                                    "{\"ok\":false,\"code\":\"SERDE_ERROR\"}".to_string()
-                                });
-                                http_json_response("200 OK", &body)
-                            }
-                            Err(err) => {
-                                let body = serde_json::json!({"ok": false, "code": "NOT_FOUND", "message": err.to_string()}).to_string();
-                                http_json_response("404 Not Found", &body)
-                            }
-                        }
-                    }
-                    Err(_) => {
-                        let body = "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid task_id\"}";
-                        http_json_response("400 Bad Request", body)
-                    }
-                }
-            }
-            Some(path) if path.starts_with("/query-events/") => {
-                let task_id = path.trim_start_matches("/query-events/").parse::<u64>();
-                match task_id {
-                    Ok(task_id) => {
-                        let node_events = load_node_events(NodeEventScanMode::Authoritative);
-                        let recs = load_latest_adapter_records();
-                        match query_events_response(
-                            task_id,
-                            QUERY_EVENTS_LIMIT_DEFAULT,
-                            &node_events.events,
-                            &recs,
-                        ) {
-                            Ok(events) => {
-                                let body = serde_json::to_string(&events).unwrap_or_else(|_| {
-                                    "{\"ok\":false,\"code\":\"SERDE_ERROR\"}".to_string()
-                                });
-                                http_json_response("200 OK", &body)
-                            }
-                            Err(err) => {
-                                let body = serde_json::json!({"ok": false, "code": "NOT_FOUND", "message": err.to_string()}).to_string();
-                                http_json_response("404 Not Found", &body)
-                            }
-                        }
-                    }
-                    Err(_) => {
-                        let body = "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid task_id\"}";
-                        http_json_response("400 Bad Request", body)
-                    }
-                }
-            }
-            Some(path) if path.starts_with("/query-capability-audit/") => {
-                let subject_or_token = path.trim_start_matches("/query-capability-audit/");
-                let registry = load_identity_registry(&identity_registry_file());
-                if let Some(token_id) =
-                    resolve_capability_token_subject_or_token(&registry, subject_or_token)
-                {
-                    match query_capability_audit(&registry, token_id) {
-                        Ok(out) => {
-                            let body = serde_json::to_string(&out).unwrap_or_else(|_| {
-                                "{\"ok\":false,\"code\":\"SERDE_ERROR\"}".to_string()
-                            });
-                            http_json_response("200 OK", &body)
-                        }
-                        Err(err) => {
-                            let body = serde_json::json!({"ok": false, "code": "NOT_FOUND", "message": err.to_rpc_error().message}).to_string();
-                            http_json_response("404 Not Found", &body)
-                        }
-                    }
-                } else {
-                    let body = "{\"ok\":false,\"code\":\"NOT_FOUND\",\"message\":\"token or subject not found\"}";
-                    http_json_response("404 Not Found", body)
-                }
-            }
-            _ => {
-                let body = "{\"ok\":false,\"code\":\"NOT_FOUND\"}";
-                http_json_response("404 Not Found", body)
-            }
-        };
+        let target = parse_http_get_target(first);
+        let response = http_service_response_for_target(target);
 
         let _ = stream.write_all(response.as_bytes());
     }
@@ -3382,6 +3665,19 @@ fn main() -> Result<()> {
             save_ingress_records(&records)?;
             println!("{}", serde_json::to_string_pretty(&assigned)?);
         }
+        Command::OracleValidateSnapshot {
+            snapshot,
+            policy,
+            now_ts_ms,
+        } => {
+            let out = oracle_validate_snapshot_response(
+                &snapshot,
+                &policy,
+                now_ts_ms.unwrap_or_else(|| now_ms() as u64),
+            )?;
+            let _ = emit_oracle_validation_observation(&out.observation, &out.metrics);
+            println!("{}", serde_json::to_string_pretty(&out)?);
+        }
         Command::Serve { host, port } => {
             serve_health(&host, port)?;
         }
@@ -3422,6 +3718,44 @@ mod tests {
             seq,
             ext
         ))
+    }
+
+    fn write_json_fixture<T: Serialize>(prefix: &str, value: &T) -> PathBuf {
+        let path = unique_tmp_path(prefix, "json");
+        let raw = serde_json::to_string_pretty(value).expect("serialize fixture");
+        fs::write(&path, raw).expect("write fixture");
+        path
+    }
+
+    fn oracle_policy_fixture() -> OraclePolicy {
+        OraclePolicy {
+            min_sources: 2,
+            max_staleness_ms: 5_000,
+            max_deviation_bps: 500,
+            max_update_rate_per_window: 60,
+        }
+    }
+
+    fn oracle_snapshot_fixture(
+        value: i128,
+        median: Option<i128>,
+        snapshot_ts_ms: u64,
+    ) -> OracleSnapshot {
+        OracleSnapshot::new(
+            "btc/usd",
+            value,
+            vec![
+                trnm_oracle::OracleSourceId::parse("coingecko").expect("source"),
+                trnm_oracle::OracleSourceId::parse("chainlink").expect("source"),
+            ],
+            2,
+            median,
+            Some(120),
+            1_000,
+            2_000,
+            snapshot_ts_ms,
+        )
+        .expect("snapshot fixture")
     }
 
     fn with_market_score_env(vars: &[(&str, &str)], f: impl FnOnce()) {
@@ -3486,6 +3820,285 @@ mod tests {
         if let Err(panic) = run {
             std::panic::resume_unwind(panic);
         }
+    }
+
+    #[test]
+    fn oracle_validate_snapshot_response_accepts_valid_snapshot() {
+        let policy_path = write_json_fixture("oracle-policy-accepted", &oracle_policy_fixture());
+        let snapshot_path = write_json_fixture(
+            "oracle-snapshot-accepted",
+            &oracle_snapshot_fixture(100_000, Some(100_000), 10_000),
+        );
+
+        let out = oracle_validate_snapshot_response(&snapshot_path, &policy_path, 10_100)
+            .expect("accepted oracle validation response");
+
+        assert!(out.ok);
+        assert_eq!(out.now_ts_ms, 10_100);
+        assert_eq!(out.observation.outcome, "accepted");
+        assert_eq!(out.observation.feed_id, "btc/usd");
+        assert_eq!(out.metrics.accepted_total, 1);
+        assert_eq!(out.metrics.sample_count, 1);
+        assert_eq!(out.metrics.oracle_source_cardinality, 2);
+        assert!(out.error.is_none());
+
+        let _ = fs::remove_file(snapshot_path);
+        let _ = fs::remove_file(policy_path);
+    }
+
+    #[test]
+    fn oracle_validate_snapshot_response_reports_drift_rejection() {
+        let policy_path = write_json_fixture("oracle-policy-drift", &oracle_policy_fixture());
+        let snapshot_path = write_json_fixture(
+            "oracle-snapshot-drift",
+            &oracle_snapshot_fixture(120_000, Some(100_000), 10_000),
+        );
+
+        let out = oracle_validate_snapshot_response(&snapshot_path, &policy_path, 10_100)
+            .expect("drift oracle validation response");
+
+        assert!(!out.ok);
+        assert_eq!(out.now_ts_ms, 10_100);
+        assert_eq!(out.observation.outcome, "drift");
+        assert_eq!(out.metrics.oracle_drift_reject_total, 1);
+        assert_eq!(out.metrics.sample_count, 1);
+        assert_eq!(out.metrics.accepted_total, 0);
+        assert!(out
+            .error
+            .as_deref()
+            .unwrap_or_default()
+            .contains("deviation exceeded"));
+
+        let _ = fs::remove_file(snapshot_path);
+        let _ = fs::remove_file(policy_path);
+    }
+
+    #[test]
+    fn parse_http_query_params_decodes_percent_and_plus() {
+        let params = parse_http_query_params(
+            "/oracle/validate_snapshot?snapshot=%2Ftmp%2Foracle+snapshot.json&policy=%2Ftmp%2Fpolicy.json&now_ts_ms=10100",
+        )
+        .expect("query params");
+
+        assert_eq!(
+            params.get("snapshot").map(String::as_str),
+            Some("/tmp/oracle snapshot.json")
+        );
+        assert_eq!(
+            params.get("policy").map(String::as_str),
+            Some("/tmp/policy.json")
+        );
+        assert_eq!(params.get("now_ts_ms").map(String::as_str), Some("10100"));
+    }
+
+    #[test]
+    fn parse_http_query_params_rejects_duplicate_keys() {
+        assert!(
+            parse_http_query_params(
+                "/oracle/validate_snapshot?snapshot=/tmp/a.json&snapshot=/tmp/b.json&policy=/tmp/p.json"
+            )
+            .is_none(),
+            "duplicate query keys must fail closed"
+        );
+    }
+
+    #[test]
+    fn parse_oracle_validate_snapshot_target_returns_stable_request_schema() {
+        let request = parse_oracle_validate_snapshot_target(
+            "/oracle/validate_snapshot?snapshot=%2Ftmp%2Foracle+snapshot.json&policy=%2Ftmp%2Fpolicy.json&now_ts_ms=10100",
+        )
+        .expect("oracle request");
+
+        assert_eq!(request.snapshot, "/tmp/oracle snapshot.json");
+        assert_eq!(request.policy, "/tmp/policy.json");
+        assert_eq!(request.now_ts_ms, Some(10_100));
+    }
+
+    #[test]
+    fn parse_oracle_validate_snapshot_target_rejects_unknown_query_keys() {
+        let err = parse_oracle_validate_snapshot_target(
+            "/oracle/validate_snapshot?snapshot=/tmp/s.json&policy=/tmp/p.json&feed_id=btc%2Fusd",
+        )
+        .expect_err("unknown key must fail closed");
+
+        assert!(err.contains("unknown query parameter: feed_id"), "{err}");
+    }
+
+    #[test]
+    fn parse_oracle_validate_snapshot_target_rejects_empty_snapshot_or_policy() {
+        let snapshot_err = parse_oracle_validate_snapshot_target(
+            "/oracle/validate_snapshot?snapshot=&policy=/tmp/p.json",
+        )
+        .expect_err("empty snapshot must fail closed");
+        assert_eq!(snapshot_err, "empty snapshot");
+
+        let policy_err = parse_oracle_validate_snapshot_target(
+            "/oracle/validate_snapshot?snapshot=/tmp/s.json&policy=+",
+        )
+        .expect_err("empty policy must fail closed");
+        assert_eq!(policy_err, "empty policy");
+    }
+
+    #[test]
+    fn http_service_response_for_oracle_validate_snapshot_returns_structured_json() {
+        let policy_path = write_json_fixture("oracle-policy-http", &oracle_policy_fixture());
+        let snapshot_path = write_json_fixture(
+            "oracle-snapshot-http",
+            &oracle_snapshot_fixture(100_000, Some(100_000), 10_000),
+        );
+        let target = format!(
+            "/oracle/validate_snapshot?snapshot={}&policy={}&now_ts_ms=10100",
+            snapshot_path.display(),
+            policy_path.display()
+        );
+
+        let response = http_service_response_for_target(Some(&target));
+
+        assert!(
+            response.starts_with("HTTP/1.1 200 OK\r\n"),
+            "unexpected response: {}",
+            response
+        );
+        assert!(
+            response.contains("\"ok\":true"),
+            "unexpected response: {}",
+            response
+        );
+        assert!(
+            response.contains("\"outcome\":\"accepted\""),
+            "unexpected response: {}",
+            response
+        );
+        assert!(
+            response.contains("\"accepted_total\":1"),
+            "unexpected response: {}",
+            response
+        );
+
+        let _ = fs::remove_file(snapshot_path);
+        let _ = fs::remove_file(policy_path);
+    }
+
+    #[test]
+    fn http_service_response_for_oracle_metrics_returns_prometheus_text() {
+        let policy_path = write_json_fixture("oracle-policy-metrics", &oracle_policy_fixture());
+        let snapshot_path = write_json_fixture(
+            "oracle-snapshot-metrics",
+            &oracle_snapshot_fixture(100_000, Some(100_000), 10_000),
+        );
+        let target = format!(
+            "/oracle/metrics?snapshot={}&policy={}&now_ts_ms=10100",
+            snapshot_path.display(),
+            policy_path.display()
+        );
+
+        let response = http_service_response_for_target(Some(&target));
+
+        assert!(
+            response.starts_with(
+                "HTTP/1.1 200 OK\r\nContent-Type: text/plain; version=0.0.4; charset=utf-8\r\n"
+            ),
+            "unexpected response: {}",
+            response
+        );
+        assert!(
+            response.contains("oracle_validation_ok{feed_id=\"btc/usd\",outcome=\"accepted\"} 1"),
+            "unexpected response: {}",
+            response
+        );
+        assert!(
+            response.contains("accepted_total{feed_id=\"btc/usd\",outcome=\"accepted\"} 1"),
+            "unexpected response: {}",
+            response
+        );
+        assert!(
+            response
+                .contains("oracle_source_cardinality{feed_id=\"btc/usd\",outcome=\"accepted\"} 2"),
+            "unexpected response: {}",
+            response
+        );
+
+        let _ = fs::remove_file(snapshot_path);
+        let _ = fs::remove_file(policy_path);
+    }
+
+    #[test]
+    fn http_service_response_for_oracle_metrics_rejects_unknown_query_keys() {
+        let response = http_service_response_for_target(Some(
+            "/oracle/metrics?snapshot=/tmp/s.json&policy=/tmp/p.json&feed_id=btc%2Fusd",
+        ));
+
+        assert!(response.starts_with("HTTP/1.1 400 Bad Request\r\n"), "{response}");
+        assert!(response.contains("unknown query parameter: feed_id"), "{response}");
+    }
+
+    #[test]
+    fn http_service_response_for_metrics_rejects_empty_oracle_query_values() {
+        let response = http_service_response_for_target(Some(
+            "/metrics?snapshot=&policy=/tmp/p.json",
+        ));
+
+        assert!(response.starts_with("HTTP/1.1 400 Bad Request\r\n"), "{response}");
+        assert!(response.contains("\"message\":\"empty snapshot\""), "{response}");
+    }
+
+    #[test]
+    fn http_service_response_for_metrics_returns_base_prometheus_text() {
+        let response = http_service_response_for_target(Some("/metrics"));
+
+        assert!(
+            response.starts_with(
+                "HTTP/1.1 200 OK\r\nContent-Type: text/plain; version=0.0.4; charset=utf-8\r\n"
+            ),
+            "unexpected response: {}",
+            response
+        );
+        assert!(
+            response.contains("trnm_rpc_service_up{service=\"trnm-rpc\"} 1"),
+            "unexpected response: {}",
+            response
+        );
+        assert!(
+            response.contains("trnm_rpc_service_info{service=\"trnm-rpc\",version=\"1\"} 1"),
+            "unexpected response: {}",
+            response
+        );
+    }
+
+    #[test]
+    fn http_service_response_for_metrics_appends_oracle_metrics_when_queried() {
+        let policy_path =
+            write_json_fixture("oracle-policy-global-metrics", &oracle_policy_fixture());
+        let snapshot_path = write_json_fixture(
+            "oracle-snapshot-global-metrics",
+            &oracle_snapshot_fixture(100_000, Some(100_000), 10_000),
+        );
+        let target = format!(
+            "/metrics?snapshot={}&policy={}&now_ts_ms=10100",
+            snapshot_path.display(),
+            policy_path.display()
+        );
+
+        let response = http_service_response_for_target(Some(&target));
+
+        assert!(
+            response.contains("trnm_rpc_service_up{service=\"trnm-rpc\"} 1"),
+            "unexpected response: {}",
+            response
+        );
+        assert!(
+            response.contains("oracle_validation_ok{feed_id=\"btc/usd\",outcome=\"accepted\"} 1"),
+            "unexpected response: {}",
+            response
+        );
+        assert!(
+            response.contains("accepted_total{feed_id=\"btc/usd\",outcome=\"accepted\"} 1"),
+            "unexpected response: {}",
+            response
+        );
+
+        let _ = fs::remove_file(snapshot_path);
+        let _ = fs::remove_file(policy_path);
     }
 
     #[test]
@@ -3590,6 +4203,10 @@ mod tests {
         assert_eq!(
             parse_http_get_path("GET /query-task/42?verbose=1 HTTP/1.1"),
             Some("/query-task/42")
+        );
+        assert_eq!(
+            parse_http_get_target("GET /oracle/validate_snapshot?snapshot=%2Ftmp%2Fs.json&policy=%2Ftmp%2Fp.json HTTP/1.1"),
+            Some("/oracle/validate_snapshot?snapshot=%2Ftmp%2Fs.json&policy=%2Ftmp%2Fp.json")
         );
     }
 
