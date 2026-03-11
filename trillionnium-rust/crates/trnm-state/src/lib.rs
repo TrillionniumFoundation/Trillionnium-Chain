@@ -2807,6 +2807,47 @@ mod tests {
     }
 
     #[test]
+    fn emergency_pause_does_not_cancel_pending_sensitive_update_for_same_key() {
+        let mut st = StateStore::new();
+        st.set_gov_param_unchecked(7_320, "challenge_window_blocks".into(), "100".into())
+            .unwrap();
+
+        let scheduled = st
+            .set_gov_param(21_000, 7_320, "challenge_window_blocks".into(), "120".into())
+            .expect("sensitive update should enqueue under timelock");
+        assert!(matches!(
+            scheduled,
+            GovParamUpdateOutcome::Scheduled {
+                activate_at_height: 21_020
+            }
+        ));
+
+        st.set_gov_param(21_001, 7_999, "emergency_pause".into(), "true".into())
+            .expect("pause toggle must apply immediately");
+        st.set_gov_param(21_002, 7_999, "emergency_pause".into(), "false".into())
+            .expect("unpause toggle must apply immediately");
+
+        let pending = st
+            .pending_gov_update("challenge_window_blocks")
+            .expect("pending sensitive update must survive pause toggles");
+        assert_eq!(pending.key_id, 7_320);
+        assert_eq!(pending.value, "120");
+        assert_eq!(pending.activate_at_height, 21_020);
+
+        let err = st
+            .set_gov_param(21_019, 7_320, "challenge_window_blocks".into(), "120".into())
+            .expect_err("timelock must still be active before scheduled height");
+        assert!(err.contains("timelock active"), "{err}");
+
+        let applied = st
+            .set_gov_param(21_020, 7_320, "challenge_window_blocks".into(), "120".into())
+            .expect("pending sensitive update should apply at original scheduled height");
+        assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+        assert_eq!(st.gov_param_u64("challenge_window_blocks"), Some(120));
+        assert!(st.pending_gov_update("challenge_window_blocks").is_none());
+    }
+
+    #[test]
     fn governance_sensitive_pending_replace_before_activation_resets_timelock() {
         let mut st = StateStore::new();
         st.set_gov_param_unchecked(7320, "challenge_window_blocks".into(), "100".into())
