@@ -211,7 +211,7 @@ fn build_hot_streak_txs(n: usize, keys: usize, read_fanout: usize, write_every: 
     let mut txs = Vec::with_capacity(n);
     let streak = 16usize;
     let hotspot_pool = keys.clamp(1, 8);
-    let side_domain = keys.max(hotspot_pool + 1) - hotspot_pool;
+    let side_domain = keys.saturating_sub(hotspot_pool);
     for i in 0..n {
         // Keep hot-streak workloads concentrated on a tiny rotating hotspot pool so
         // the named scenario continues to exercise auto-adaptive hotspot detection
@@ -225,8 +225,14 @@ fn build_hot_streak_txs(n: usize, keys: usize, read_fanout: usize, write_every: 
 
         for j in 1..read_fanout {
             // Offset side reads away from the hotspot pool while keeping them inside
-            // the declared key budget.
-            let side = hotspot_pool as u64 + ((i + j * 11) % side_domain) as u64;
+            // the declared key budget. When the key budget is fully consumed by the
+            // hotspot pool (e.g. keys=1), fall back to the hot key instead of probing
+            // a zero-width side domain.
+            let side = if side_domain == 0 {
+                hot
+            } else {
+                hotspot_pool as u64 + ((i + j * 11) % side_domain) as u64
+            };
             read_set.push(ObjectRef {
                 id: side,
                 version: 1,
@@ -266,6 +272,15 @@ mod tests {
             "default hot-streak bench should exercise adaptive hotspot path"
         );
         assert_eq!(decision.reason, "hotspot_detected");
+    }
+
+    #[test]
+    fn hot_streak_single_key_budget_stays_in_hot_domain_without_panicking() {
+        let txs = build_hot_streak_txs(64, 1, 3, 1);
+
+        assert_eq!(txs.len(), 64);
+        assert!(txs.iter().all(|tx| tx.read_set.iter().all(|obj| obj.id == 0)));
+        assert!(txs.iter().all(|tx| tx.write_set.iter().all(|obj| obj.id == 0)));
     }
 
     #[test]
