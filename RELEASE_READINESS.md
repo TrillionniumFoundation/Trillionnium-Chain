@@ -58,7 +58,7 @@
 
 > 目标：只做可回滚的 RC 就绪演练，禁止 release/tag/publish。
 
-- **CI/门禁命令**：记录本轮执行的最小命令（含退出码）。建议统一加 deterministic 前缀：`env TZ=UTC LC_ALL=C LANG=C`。
+- **CI/门禁命令**：记录本轮执行的最小命令（含退出码）。建议统一加 deterministic 前缀：`env TZ=UTC LC_ALL=C LANG=C SOURCE_DATE_EPOCH=1704067200`。
 - **确定性复跑**：同一 gate 至少连续执行 2 次（命令与环境完全一致）并记录结果，避免一次性绿灯掩盖 flaky。
 - **回放证据**：记录输入快照与输出摘要路径（例如 `run/local-release-evidence/` 下产物），并附 `date -u +"%Y-%m-%dT%H:%M:%SZ"` 时间戳。
 - **回滚命令**：每轮必须给出单行回滚命令（例如 `git revert <commit>` 或文档改动的 `git checkout -- <file>`）。
