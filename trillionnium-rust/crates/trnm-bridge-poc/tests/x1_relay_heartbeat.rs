@@ -134,6 +134,32 @@ fn relay_heartbeat_failure_reason_strips_soft_hyphen_and_mongolian_vowel_separat
 }
 
 #[test]
+fn relay_heartbeat_failure_reason_strips_invisible_math_and_legacy_bidi_controls() {
+    let mut hb = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 3));
+
+    let out = hb.record_failure(
+        "rpc\u{2061} timeout\u{2062} bridge\u{2063} degraded\u{2064} \u{206A}\u{206B}\u{206C}\u{206D}\u{206E}\u{206F}",
+    );
+    assert_eq!(out.message, "rpc timeout bridge degraded");
+}
+
+#[test]
+fn relay_heartbeat_failure_reason_strips_variation_selectors_and_plane14_tags() {
+    let mut hb = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 3));
+
+    let out = hb.record_failure("rpc\u{FE0E} timeout\u{FE0F} bridge\u{E0100}\u{E0101}");
+    assert_eq!(out.message, "rpc timeout bridge");
+}
+
+#[test]
+fn relay_heartbeat_failure_reason_collapses_unicode_line_separators() {
+    let mut hb = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 3));
+
+    let out = hb.record_failure("rpc\u{2028} timeout\u{2029} bridge");
+    assert_eq!(out.message, "rpc timeout bridge");
+}
+
+#[test]
 fn relay_heartbeat_failure_reason_is_capped_for_log_safety() {
     let mut hb = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 3));
     let long_reason = "x".repeat(220);

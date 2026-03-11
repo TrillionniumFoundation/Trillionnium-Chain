@@ -104,18 +104,32 @@ fn is_disallowed_invisible_char(ch: char) -> bool {
             | '\u{200D}'
             | '\u{200E}'
             | '\u{200F}'
+            | '\u{2028}'
+            | '\u{2029}'
             | '\u{202A}'
             | '\u{202B}'
             | '\u{202C}'
             | '\u{202D}'
             | '\u{202E}'
             | '\u{2060}'
+            | '\u{2061}'
+            | '\u{2062}'
+            | '\u{2063}'
+            | '\u{2064}'
             | '\u{2066}'
             | '\u{2067}'
             | '\u{2068}'
             | '\u{2069}'
+            | '\u{206A}'
+            | '\u{206B}'
+            | '\u{206C}'
+            | '\u{206D}'
+            | '\u{206E}'
+            | '\u{206F}'
             | '\u{FEFF}'
     )
+        || ('\u{FE00}'..='\u{FE0F}').contains(&ch)
+        || ('\u{E0100}'..='\u{E01EF}').contains(&ch)
 }
 
 fn normalize_failure_reason(reason: &str) -> String {
