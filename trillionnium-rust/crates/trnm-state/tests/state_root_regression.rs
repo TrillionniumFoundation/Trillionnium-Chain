@@ -374,3 +374,35 @@ fn idempotent_non_sensitive_gov_reapply_keeps_state_root_stable() {
         "repeated reads after idempotent governance reapply should stay on the same cached root"
     );
 }
+
+#[test]
+fn restore_balance_none_rewinds_state_root_after_removing_existing_treasury_entry() {
+    let mut state = StateStore::new();
+    let baseline_root = state.state_root();
+
+    state.set_balance("treasury.challenge_forfeits", 11);
+    let balance_snapshot = None;
+    let funded_root = state.state_root();
+    assert_ne!(
+        funded_root, baseline_root,
+        "sanity: adding a treasury balance entry must perturb the state root"
+    );
+
+    state.restore_balance("treasury.challenge_forfeits", balance_snapshot);
+
+    assert_eq!(
+        state.balance_of("treasury.challenge_forfeits"),
+        0,
+        "restoring a missing balance snapshot should remove the treasury entry"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "restore_balance(None) must rewind state_root exactly after deleting a previously added treasury entry"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "repeated reads after restore_balance(None) should deterministically reuse the rewound cached root"
+    );
+}
