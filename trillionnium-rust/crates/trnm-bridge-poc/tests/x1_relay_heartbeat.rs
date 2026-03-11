@@ -160,6 +160,14 @@ fn relay_heartbeat_failure_reason_collapses_unicode_line_separators() {
 }
 
 #[test]
+fn relay_heartbeat_failure_reason_collapses_general_punctuation_spaces() {
+    let mut hb = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 3));
+
+    let out = hb.record_failure("rpc\u{2000} timeout\u{2001} bridge\u{2002} degraded");
+    assert_eq!(out.message, "rpc timeout bridge degraded");
+}
+
+#[test]
 fn relay_heartbeat_failure_reason_is_capped_for_log_safety() {
     let mut hb = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 3));
     let long_reason = "x".repeat(220);
