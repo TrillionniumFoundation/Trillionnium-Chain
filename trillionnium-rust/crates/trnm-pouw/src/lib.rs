@@ -1190,6 +1190,15 @@ pub fn apply_resolve_at_height(
                 .any(|member| member.eq_ignore_ascii_case(challenger))
         })
         .unwrap_or(false);
+    // Minimal multi-party control: task creator (beneficiary of the work result)
+    // must stay separate from adjudicator authority to avoid beneficiary+judge
+    // role collapse when challenge settlement can decide bounty/slash outcomes.
+    let resolver_is_creator = task
+        .creator
+        .eq_ignore_ascii_case(signer_trimmed);
+    let authority_includes_creator = authority_members
+        .iter()
+        .any(|member| member.eq_ignore_ascii_case(&task.creator));
     if !resolver_is_canonical
         || !signer_is_canonical
         || authority_trimmed.is_empty()
@@ -1208,6 +1217,8 @@ pub fn apply_resolve_at_height(
         || authority_includes_assigned_worker
         || resolver_is_challenger
         || authority_includes_challenger
+        || resolver_is_creator
+        || authority_includes_creator
     {
         return Err(PouwError::Unauthorized);
     }
@@ -1432,6 +1443,32 @@ mod tests {
     }
 
     #[test]
+    #[test]
+    fn resolve_rejects_creator_as_authority_member_or_signer() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        let r1 = apply_create_task(&mut st, 420, "alice".into(), 100).unwrap();
+
+        let result_hash = [7u8; 32];
+        let reveal_salt = [9u8; 32];
+        let committed = compute_commitment(420, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+        let r5 =
+            apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
+
+        set_resolve_authority(&mut st, "alice,authority2");
+        let err = apply_resolve(&mut st, r5.clone(), false, "authority2".into(), "authority2".into())
+            .unwrap_err();
+        assert!(matches!(err, PouwError::Unauthorized));
+
+        set_resolve_authority(&mut st, "authority,authority2");
+        let err = apply_resolve(&mut st, r5, false, "alice".into(), "alice".into()).unwrap_err();
+        assert!(matches!(err, PouwError::Unauthorized));
+    }
+
     fn full_happy_path_to_completed() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
