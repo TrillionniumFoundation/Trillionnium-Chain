@@ -854,6 +854,37 @@ mod tests {
         ));
     }
 
+
+    #[test]
+    fn tee_verifier_requires_cryptographic_backend_for_attestation_report_alias() {
+        let verifier = TeeVerifier::default();
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"TEE:task_id=42,worker=worker1,proof_type=attestation_report,result_hash=abababababababababababababababababababababababababababababababab,quote=abc"
+            ),
+            VerificationResult::Indeterminate(msg)
+                if msg.contains("cryptographic verification backend not configured")
+        ));
+    }
+
+    #[test]
+    fn tee_verifier_requires_cryptographic_backend_for_ra_quote_alias() {
+        let verifier = TeeVerifier::default();
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"TEE:task_id=42,worker=worker1,proof_type=ra_quote,result_hash=abababababababababababababababababababababababababababababababab,quote=abc"
+            ),
+            VerificationResult::Indeterminate(msg)
+                if msg.contains("cryptographic verification backend not configured")
+        ));
+    }
+
     #[test]
     fn tee_verifier_rejects_fullwidth_equals_unexpected_worker_binding_without_context_fail_closed()
     {
