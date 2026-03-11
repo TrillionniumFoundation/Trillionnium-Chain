@@ -846,6 +846,18 @@ fn auto_adaptive_min_batch_len() -> usize {
         .unwrap_or(DEFAULT_MIN_BATCH_LEN)
 }
 
+fn auto_adaptive_sample_len(batch_len: usize) -> usize {
+    const MAX_SAMPLE_LEN: usize = 2048;
+    const MIN_SAMPLE_LEN_FLOOR: usize = 64;
+    const MIN_SAMPLE_LEN_CEIL: usize = MAX_SAMPLE_LEN;
+
+    let configured = parse_env_usize("TRNM_AUTO_SAMPLE_LEN")
+        .map(|v| v.clamp(MIN_SAMPLE_LEN_FLOOR, MIN_SAMPLE_LEN_CEIL))
+        .unwrap_or(MAX_SAMPLE_LEN);
+
+    batch_len.min(configured)
+}
+
 pub fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
     let threshold = auto_hot_streak_threshold();
     let min_margin = auto_reorder_min_margin();
@@ -869,8 +881,10 @@ pub fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
     }
 
     // Sample a bounded, evenly-spaced window across the whole batch to avoid
-    // first-window bias when hotspots arrive later in queue order.
-    let sample_len = txs.len().min(2048);
+    // first-window bias when hotspots arrive later in queue order. Keep the
+    // sample window env-tunable for experimental adaptive lanes, but clamp it
+    // fail-closed so misconfiguration cannot trigger unbounded scan work.
+    let sample_len = auto_adaptive_sample_len(txs.len());
     let mut same_key_streak_hits = 0usize;
     let mut total_pairs = 0usize;
     let mut prev_key: Option<u64> = None;
@@ -1942,6 +1956,7 @@ mod tests {
         let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "'0.05'");
         let _buckets = EnvGuard::set("TRNM_HOT_BUCKETS", "\"1,6\"");
         let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "'2_048'");
+        let _sample_len = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", "\"1_024\"");
 
         assert_eq!(aggr_scan_window(), 1024);
         assert_eq!(aggr_scan_round_robin_seed(), 9001);
@@ -1951,6 +1966,7 @@ mod tests {
         assert_eq!(auto_min_expected_gain_score(), 0.05);
         assert_eq!(hot_bucket_count(), 16);
         assert_eq!(auto_adaptive_min_batch_len(), 2048);
+        assert_eq!(auto_adaptive_sample_len(5000), 1024);
     }
 
     #[test]
@@ -2047,6 +2063,27 @@ mod tests {
 
         let _high = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "99999");
         assert_eq!(auto_adaptive_min_batch_len(), 4096);
+    }
+
+    #[test]
+    fn auto_adaptive_sample_len_is_env_tunable_and_clamped() {
+        let _env = env_lock();
+
+        let _default = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", "batch??");
+        assert_eq!(auto_adaptive_sample_len(5000), 2048);
+        drop(_default);
+
+        let _low = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", "8");
+        assert_eq!(auto_adaptive_sample_len(5000), 64);
+        drop(_low);
+
+        let _high = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", "99999");
+        assert_eq!(auto_adaptive_sample_len(5000), 2048);
+        drop(_high);
+
+        let _trimmed = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", " '1_024' ");
+        assert_eq!(auto_adaptive_sample_len(5000), 1024);
+        assert_eq!(auto_adaptive_sample_len(256), 256);
     }
 
     #[test]
