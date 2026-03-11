@@ -540,9 +540,10 @@ fn recover_wal_state(wal_dir: &Path) -> Result<RecoveredWalState> {
 
     if let Some(last) = valid_entries.last() {
         let retained_checkpoint_height = last_checkpoint.as_ref().map(|cp| cp.height);
+        let retained_entry_count = valid_entries.len();
         let metadata_only_recovery = retained_checkpoint_height
             .map(|checkpoint_height| checkpoint_height < last.height)
-            .unwrap_or(true);
+            .unwrap_or(retained_entry_count > 0);
         return Ok(RecoveredWalState {
             next_height: last.height + 1,
             restored_lock: Some(last.proposal_hash.clone()),
@@ -550,7 +551,7 @@ fn recover_wal_state(wal_dir: &Path) -> Result<RecoveredWalState> {
             last_checkpoint,
             truncated,
             metadata_only_recovery,
-            wal_entries_retained: valid_entries.len(),
+            wal_entries_retained: retained_entry_count,
         });
     }
 
@@ -5093,6 +5094,23 @@ locked_block_hash = "stale-lock"
         .to_string();
 
         assert!(err.contains("last retained checkpoint: none"));
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn recover_without_checkpoint_and_without_retained_wal_is_not_metadata_only() {
+        let wal_dir = temp_wal_dir("recover-no-checkpoint-no-retained-wal");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let recovered = recover_wal_state(&wal_dir).unwrap();
+        assert_eq!(recovered.next_height, 1);
+        assert!(recovered.restored_lock.is_none());
+        assert!(recovered.last_checkpoint.is_none());
+        assert!(!recovered.truncated);
+        assert!(!recovered.metadata_only_recovery);
+        assert_eq!(recovered.wal_entries_retained, 0);
+        assert_eq!(recovered.checkpoint_height_retained, None);
 
         let _ = fs::remove_dir_all(&wal_dir);
     }
