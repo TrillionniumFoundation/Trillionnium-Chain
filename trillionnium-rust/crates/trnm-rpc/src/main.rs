@@ -2210,6 +2210,12 @@ fn parse_query_events_limit_from_path(path: &str) -> std::result::Result<usize, 
 
     let mut parsed_limit: Option<usize> = None;
     for pair in query.split('&') {
+        if pair.is_empty() {
+            return Err(http_json_response(
+                "400 Bad Request",
+                "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}",
+            ));
+        }
         let Some((key, value)) = pair.split_once('=') else {
             if pair == "limit" {
                 return Err(http_json_response(
@@ -3758,6 +3764,20 @@ mod tests {
             .expect_err("duplicate limit key after wrapped numeric value must fail closed");
         assert!(err.contains("400 Bad Request"));
         assert!(err.contains("duplicate limit"));
+    }
+
+    #[test]
+    fn parse_query_events_limit_from_path_rejects_leading_or_trailing_empty_pairs() {
+        for path in [
+            "/query-events/42?&limit=7",
+            "/query-events/42?limit=7&",
+            "/query-events/42?foo=bar&&limit=7",
+        ] {
+            let err = parse_query_events_limit_from_path(path)
+                .expect_err("empty query pairs must fail closed for noisy HTTP inputs");
+            assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+            assert!(err.contains("invalid limit"), "path={path} err={err}");
+        }
     }
 
     #[test]
