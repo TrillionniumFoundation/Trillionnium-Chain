@@ -660,3 +660,6 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: v1-
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: p1-rust-sidecar-deterministic-env-guard-test" "./scripts/v2/p1_rust_sidecar_deterministic_env_guard_test.sh" "ci(gate): add p1-rust-sidecar-deterministic-env-guard-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e3-enterprise-runbook-deterministic-env-prefix-test" "./scripts/v2/e3_enterprise_runbook_deterministic_env_prefix_test.sh" "ci(gate): add e3-enterprise-runbook-deterministic-env-prefix-test regression to quick-check"
