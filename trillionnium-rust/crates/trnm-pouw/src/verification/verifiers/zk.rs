@@ -157,14 +157,24 @@ impl ZkVerifier {
 
             if let Some(payload_system) = payload.zk_system.as_deref().and_then(normalize_zk_system)
             {
-                if let Some(resolved_system) =
-                    resolved.zk_system.as_deref().and_then(normalize_zk_system)
-                {
-                    if payload_system != resolved_system {
+                match resolved.zk_system.as_deref().and_then(normalize_zk_system) {
+                    Some(resolved_system) => {
+                        if payload_system != resolved_system {
+                            return Err(BackendExecutionError::InvalidProof {
+                                backend: "zk:payload".to_string(),
+                                reason: format!(
+                                    "invalid zk payload: zk_system '{payload_system}' does not match vk_ref '{}'",
+                                    resolved.vk_ref
+                                ),
+                            }
+                            .into());
+                        }
+                    }
+                    None => {
                         return Err(BackendExecutionError::InvalidProof {
                             backend: "zk:payload".to_string(),
                             reason: format!(
-                                "invalid zk payload: zk_system '{payload_system}' does not match vk_ref '{}'",
+                                "invalid zk payload: vk_ref '{}' is missing canonical zk_system metadata",
                                 resolved.vk_ref
                             ),
                         }
@@ -177,15 +187,25 @@ impl ZkVerifier {
                 .system_hint()
                 .and_then(|system| normalize_zk_system(&system))
             {
-                if let Some(resolved_system) =
-                    resolved.zk_system.as_deref().and_then(normalize_zk_system)
-                {
-                    if selected_backend_system != resolved_system {
+                match resolved.zk_system.as_deref().and_then(normalize_zk_system) {
+                    Some(resolved_system) => {
+                        if selected_backend_system != resolved_system {
+                            return Err(BackendExecutionError::InvalidProof {
+                                backend: "zk:payload".to_string(),
+                                reason: format!(
+                                    "invalid zk payload: backend '{}' does not match vk_ref '{}'",
+                                    selected_backend.key(),
+                                    resolved.vk_ref
+                                ),
+                            }
+                            .into());
+                        }
+                    }
+                    None => {
                         return Err(BackendExecutionError::InvalidProof {
                             backend: "zk:payload".to_string(),
                             reason: format!(
-                                "invalid zk payload: backend '{}' does not match vk_ref '{}'",
-                                selected_backend.key(),
+                                "invalid zk payload: vk_ref '{}' is missing canonical zk_system metadata",
                                 resolved.vk_ref
                             ),
                         }
@@ -456,6 +476,39 @@ mod tests {
             verifier.verify_proof(&task, payload),
             VerificationResult::Invalid(msg)
                 if msg.contains("malformed:") && msg.contains("zk_system is required")
+        ));
+    }
+
+    #[test]
+    fn zk_verifier_rejects_vk_ref_without_canonical_system_metadata_when_payload_declares_system() {
+        let mut backends = ZkBackendRegistry::new();
+        backends.register(Arc::new(MockSuccessBackend));
+        let verifier = ZkVerifier::from_config(&router_config(), Arc::new(backends));
+        let task = mock_task();
+        let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"mock-zk","backend_version":"v1","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-no-system/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["99","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#;
+        assert!(matches!(
+            verifier.verify_proof(&task, payload),
+            VerificationResult::Invalid(msg)
+                if msg.contains("missing canonical zk_system metadata")
+                    && msg.contains("vk://trnm/dev/mock-no-system/v1")
+        ));
+    }
+
+    #[test]
+    fn zk_verifier_rejects_backend_system_hint_when_vk_ref_lacks_canonical_system_metadata() {
+        let mut backends = ZkBackendRegistry::new();
+        backends.register(Arc::new(MockSystemSuccessBackend {
+            backend_id: "groth16-demo",
+            expected_system: "groth16",
+        }));
+        let verifier = ZkVerifier::from_config(&router_config(), Arc::new(backends));
+        let task = mock_task();
+        let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"groth16-demo","backend_version":"v1","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-no-system/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["99","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#;
+        assert!(matches!(
+            verifier.verify_proof(&task, payload),
+            VerificationResult::Invalid(msg)
+                if msg.contains("missing canonical zk_system metadata")
+                    && msg.contains("vk://trnm/dev/mock-no-system/v1")
         ));
     }
 

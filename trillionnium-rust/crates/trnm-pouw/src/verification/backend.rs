@@ -287,17 +287,18 @@ impl VkRefRegistry {
 
     fn register_demo_dev_defaults(&mut self) {
         for (vk_ref, zk_system) in [
-            ("vk://trnm/dev/mock-groth16/v1", "groth16"),
-            ("vk://trnm/dev/mock-groth16/valid", "groth16"),
-            ("vk://trnm/dev/mock-groth16/invalid", "groth16"),
-            ("vk://trnm/dev/mock-plonk/v1", "plonk"),
-            ("vk://trnm/dev/mock-plonk/valid", "plonk"),
-            ("vk://trnm/dev/mock-plonk/invalid", "plonk"),
+            ("vk://trnm/dev/mock-groth16/v1", Some("groth16")),
+            ("vk://trnm/dev/mock-groth16/valid", Some("groth16")),
+            ("vk://trnm/dev/mock-groth16/invalid", Some("groth16")),
+            ("vk://trnm/dev/mock-plonk/v1", Some("plonk")),
+            ("vk://trnm/dev/mock-plonk/valid", Some("plonk")),
+            ("vk://trnm/dev/mock-plonk/invalid", Some("plonk")),
+            ("vk://trnm/dev/mock-no-system/v1", None),
         ] {
             self.register(ResolvedVkRef {
                 vk_ref: vk_ref.to_string(),
                 scope: "dev".to_string(),
-                zk_system: Some(zk_system.to_string()),
+                zk_system: zk_system.map(str::to_string),
             });
         }
     }
