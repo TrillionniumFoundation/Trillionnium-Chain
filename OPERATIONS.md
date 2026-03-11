@@ -430,10 +430,38 @@ python3 ./scripts/v2/pr9_weekly_alert_governance.py
 - `run/pr9/weekly-alert-governance.json`
 - `run/pr9/history/weekly-alert-governance-YYYYMMDDTHHMMSSZ.json`
 
+输入来源（best effort，缺失时不会阻断）：
+- `run/pr7-alert-delivery/state.json`：投递统计（`alerts_sent / alerts_suppressed / alerts_failed`）
+- `run/pr7-alert-delivery/dead-letter.jsonl`：近 `--lookback-days` 窗口内 dead letter 计数
+- `run/pr7-topn/*/topn-anomaly-summary.md`：最新 TopN unresolved / forfeit / escrow 摘要
+- `run/pr7-threshold-advisor/*/threshold-advice.json`：最新阈值建议
+- `run/pr9/alert-thresholds.env` / `run/pr9/alert-thresholds.previous.env`：当前/上一版阈值 env diff
+- `run/pr9/history/weekly-alert-governance-*.json`：上一周 baseline（用于 week-over-week diff）
+
+可选参数：
+- `--lookback-days <n>`：dead letter / 周对比窗口，默认 `7`
+- `--top-n <n>`：报告中保留的 TopN 数量，默认 `5`
+- `--out <path>`：Markdown 输出路径
+- `--json-out <path>`：JSON 输出路径
+- `--history-dir <path>`：历史快照目录
+
+降级/缺失行为：
+- 若缺少上一周 baseline，报告会标记 `baseline unavailable`，但仍输出本周 `.md/.json`。
+- 若缺少 PR7 TopN 或 threshold advice，报告会在 JSON 的 `degraded.*` 字段中标出，并在 Markdown 中写明 `MISSING` / `unavailable`。
+- 若本轮 JSON 负载与最新历史快照完全相同，history 目录会跳过重复快照写入，仅刷新当前 `weekly-alert-governance.md/.json`。
+
 nightly 接入建议：
 - workflow step 使用 `continue-on-error: true`
 - 上传 `run/pr9/**` 到 artifacts
 - Step Summary 增加 `PR-9 Weekly Alert Governance`
+
+推荐前置（便于得到更完整的 PR-9 报告，而非硬依赖）：
+
+```bash
+./scripts/v2/pr7_topn_summary_gate.sh
+python3 ./scripts/v2/pr7_threshold_advisor.py
+python3 ./scripts/v2/pr9_weekly_alert_governance.py
+```
 
 Runbook：当前以本节说明与 `python3 ./scripts/v2/pr9_weekly_alert_governance.py` 生成的 `run/pr9/weekly-alert-governance.md` / `.json` 为准；专门 runbook 文档待补。
 
