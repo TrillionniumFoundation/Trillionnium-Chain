@@ -116,6 +116,7 @@ if [[ -n "$SUMMARY_PATH" ]]; then
   "workflow_root": "${WORKFLOW_ROOT}",
   "strict_mode": ${STRICT_MODE},
   "workflow_count": ${#WORKFLOW_FILES[@]},
+  "workflow_file_count": ${#WORKFLOW_FILES[@]},
   "script_ref_total_count": ${total_script_ref_count},
   "script_ref_count": ${#SCRIPT_REFS[@]},
   "missing_count": ${missing_count},
