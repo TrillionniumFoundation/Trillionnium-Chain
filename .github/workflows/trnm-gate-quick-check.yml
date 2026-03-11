@@ -138,6 +138,10 @@ jobs:
           WORKFLOW_SCRIPT_REF_SUMMARY_PATH=run/quick-gate/workflow-script-refs-summary.json \
           ./scripts/validate_workflow_script_refs.sh
 
+      - name: Workflow script refs summary path guard regression
+        run: |
+          ./scripts/v2/workflow_script_refs_summary_path_guard_test.sh
+
       - name: Quick gate summary path guard regression
         run: |
           ./scripts/v2/quick_gate_summary_path_guard_test.sh
