@@ -790,23 +790,7 @@ fn aggr_deep_scan_enabled() -> bool {
 }
 
 fn aggr_scan_round_robin_enabled() -> bool {
-    std::env::var("TRNM_AGGR_SCAN_ROUND_ROBIN")
-        .ok()
-        .map(|v| {
-            let trimmed = v.trim();
-            let unquoted = trimmed
-                .strip_prefix('"')
-                .and_then(|inner| inner.strip_suffix('"'))
-                .or_else(|| {
-                    trimmed
-                        .strip_prefix('\'')
-                        .and_then(|inner| inner.strip_suffix('\''))
-                })
-                .unwrap_or(trimmed);
-            let s = unquoted.trim().to_ascii_lowercase();
-            !(s == "0" || s == "false" || s == "off" || s == "no")
-        })
-        .unwrap_or(true)
+    env_toggle_enabled("TRNM_AGGR_SCAN_ROUND_ROBIN", true)
 }
 
 fn aggr_scan_round_robin_seed() -> usize {
