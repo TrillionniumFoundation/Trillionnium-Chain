@@ -62,6 +62,13 @@ echo "[workflow-ref] workflow_count=${#WORKFLOW_FILES[@]}"
 echo "[workflow-ref] script_ref_total_count=${total_script_ref_count}"
 echo "[workflow-ref] script_ref_count=${#SCRIPT_REFS[@]}"
 
+audit_ts="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+
+git_head=""
+if command -v git >/dev/null 2>&1; then
+  git_head="$(git rev-parse --short=12 HEAD 2>/dev/null || true)"
+fi
+
 if [[ ${#SCRIPT_REFS[@]} -eq 0 ]]; then
   echo "[workflow-ref][WARN] no ./scripts/*.sh references found in workflows"
 fi
@@ -113,12 +120,14 @@ if [[ -n "$SUMMARY_PATH" ]]; then
   mkdir -p "$(dirname "$SUMMARY_PATH")"
   cat >"$SUMMARY_PATH" <<EOF
 {
+  "ts_utc": "${audit_ts}",
   "workflow_root": "${WORKFLOW_ROOT}",
   "strict_mode": ${STRICT_MODE},
   "workflow_count": ${#WORKFLOW_FILES[@]},
   "workflow_file_count": ${#WORKFLOW_FILES[@]},
   "script_ref_total_count": ${total_script_ref_count},
   "script_ref_count": ${#SCRIPT_REFS[@]},
+  "git_head": "${git_head}",
   "missing_count": ${missing_count},
   "non_exec_count": ${non_exec_count},
   "status": "${status}",
