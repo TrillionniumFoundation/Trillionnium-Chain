@@ -1236,7 +1236,12 @@ impl StateStore {
 
     pub fn set_balance(&mut self, address: impl Into<String>, amount: u128) {
         self.invalidate_state_root_cache();
-        self.balances.insert(address.into(), amount);
+        let address = address.into();
+        if amount == 0 {
+            self.balances.remove(&address);
+        } else {
+            self.balances.insert(address, amount);
+        }
     }
 
     pub fn balance_of(&self, address: &str) -> u128 {
@@ -1252,7 +1257,12 @@ impl StateStore {
             ));
         }
         self.invalidate_state_root_cache();
-        self.balances.insert(address.to_string(), cur - amount);
+        let next = cur - amount;
+        if next == 0 {
+            self.balances.remove(address);
+        } else {
+            self.balances.insert(address.to_string(), next);
+        }
         Ok(())
     }
 

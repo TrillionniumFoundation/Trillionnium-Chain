@@ -443,3 +443,51 @@ fn restore_pending_none_rewinds_state_root_after_removing_staged_resolve_approva
         "repeated reads after restore_pending_resolve_approval(None) should deterministically reuse the rewound cached root"
     );
 }
+
+#[test]
+fn zero_balance_and_missing_balance_have_identical_state_root() {
+    let missing = StateStore::new();
+    let missing_root = missing.state_root();
+
+    let mut explicit_zero = StateStore::new();
+    explicit_zero.set_balance("treasury.challenge_forfeits", 0);
+
+    assert_eq!(
+        explicit_zero.balance_of("treasury.challenge_forfeits"),
+        0,
+        "sanity: explicit zero balance should still read back as zero"
+    );
+    assert_eq!(
+        explicit_zero.state_root(),
+        missing_root,
+        "state root must treat explicit zero treasury balances the same as missing entries"
+    );
+}
+
+#[test]
+fn debiting_balance_to_zero_removes_treasury_entry_without_perturbing_restore_root() {
+    let mut state = StateStore::new();
+    let baseline_root = state.state_root();
+
+    state.set_balance("treasury.worker_slashes", 9);
+    let funded_root = state.state_root();
+    assert_ne!(
+        funded_root, baseline_root,
+        "sanity: funding a treasury entry must perturb the root"
+    );
+
+    state
+        .debit_balance("treasury.worker_slashes", 9)
+        .expect("debit to zero should succeed");
+
+    assert_eq!(
+        state.balance_of("treasury.worker_slashes"),
+        0,
+        "debiting to zero should read back as zero"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "debiting a treasury balance to zero must remove the entry so state_root returns to the missing-entry baseline"
+    );
+}
