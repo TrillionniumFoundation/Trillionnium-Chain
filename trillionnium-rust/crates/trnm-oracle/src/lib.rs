@@ -191,6 +191,13 @@ impl OraclePolicy {
             });
         }
 
+        if snapshot.sample_count > self.max_update_rate_per_window {
+            return Err(OracleError::UpdateRateExceeded {
+                sample_count: snapshot.sample_count,
+                max_update_rate_per_window: self.max_update_rate_per_window,
+            });
+        }
+
         if let Some(median) = snapshot.median {
             let deviation = deviation_bps(snapshot.value, median);
             if deviation >= self.max_deviation_bps {
@@ -254,6 +261,13 @@ pub enum OracleError {
     DeviationExceeded {
         deviation_bps: u32,
         max_deviation_bps: u32,
+    },
+    #[error(
+        "update rate exceeded: sample_count={sample_count}, max_update_rate_per_window={max_update_rate_per_window}"
+    )]
+    UpdateRateExceeded {
+        sample_count: u32,
+        max_update_rate_per_window: u32,
     },
 }
 
@@ -320,6 +334,29 @@ mod tests {
             .validate_snapshot(&snap, 10_100)
             .expect_err("snapshot should fail quorum");
         assert!(matches!(err, OracleError::InsufficientSources { .. }));
+    }
+
+
+    #[test]
+    fn rejects_sample_count_above_update_rate_cap() {
+        let p = policy();
+        let snap = OracleSnapshot::new(
+            "btc/usd",
+            100_000,
+            vec![source("coingecko"), source("chainlink")],
+            61,
+            Some(100_000),
+            Some(120),
+            1_000,
+            2_000,
+            10_000,
+        )
+        .expect("snapshot build");
+
+        let err = p
+            .validate_snapshot(&snap, 10_100)
+            .expect_err("snapshot should fail update-rate cap");
+        assert!(matches!(err, OracleError::UpdateRateExceeded { .. }));
     }
 
     #[test]
