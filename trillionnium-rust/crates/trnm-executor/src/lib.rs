@@ -1833,6 +1833,20 @@ mod tests {
     }
 
     #[test]
+    fn auto_threshold_env_parsers_reject_grouped_numeric_tokens_and_fall_back_to_defaults() {
+        let _env = env_lock();
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.2_5");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0,12");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.0_75");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0,01");
+
+        assert!((auto_hot_streak_threshold() - 0.22).abs() < f64::EPSILON);
+        assert!((auto_reorder_min_margin() - 0.04).abs() < f64::EPSILON);
+        assert!((auto_reorder_min_hot_key_share() - 0.0075).abs() < f64::EPSILON);
+        assert!((auto_min_expected_gain_score() - 0.01).abs() < f64::EPSILON);
+    }
+
+    #[test]
     fn hot_bucket_count_parser_accepts_trimmed_numeric_values() {
         let _env = env_lock();
         let _buckets = EnvGuard::set("TRNM_HOT_BUCKETS", " 16 ");
@@ -1924,7 +1938,10 @@ mod tests {
         assert_eq!(groups.len(), 1);
         assert_eq!(groups[0].len(), txs.len());
         // WriteFirst tie-breaks by tx id; fast path must preserve strategy reorder.
-        assert_eq!(groups[0].iter().map(|t| t.id).collect::<Vec<_>>(), vec![3, 7, 9]);
+        assert_eq!(
+            groups[0].iter().map(|t| t.id).collect::<Vec<_>>(),
+            vec![3, 7, 9]
+        );
         assert_eq!(profile.conflict_checks, 0);
         assert_eq!(profile.conflict_hits, 0);
         assert_eq!(profile.group_count, 1);
