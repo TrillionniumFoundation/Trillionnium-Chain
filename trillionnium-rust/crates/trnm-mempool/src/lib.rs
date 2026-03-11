@@ -988,6 +988,29 @@ mod tests {
     }
 
     #[test]
+    fn stale_seen_global_ghost_id_cross_class_retry_stays_backpressured_until_drain() {
+        let mut g = LaneAdmissionGate::new(2, 1);
+
+        assert_eq!(g.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(20, IngressClass::Normal), AdmitOutcome::Accepted);
+
+        // Simulate restored-state skew with preserved saturation cardinality: the
+        // lane-wide cache drops the queued normal id and replaces it with a ghost id.
+        g.seen_global.remove(&20);
+        g.seen_global.insert(99);
+        assert_eq!(g.seen_global.len(), 2);
+
+        // Cross-class retries for the ghost id must remain Backpressured while the
+        // lane is full; the ghost cache entry must not poison classification.
+        assert_eq!(g.admit(99, IngressClass::Critical), AdmitOutcome::Backpressured);
+        assert_eq!(g.admit(99, IngressClass::Normal), AdmitOutcome::Backpressured);
+
+        // Once a real queued tx drains, the ghost id should admit as fresh on retry.
+        assert!(matches!(g.pop_ready(), Some(10) | Some(20)));
+        assert_eq!(g.admit(99, IngressClass::Normal), AdmitOutcome::Accepted);
+    }
+
+    #[test]
     fn queued_counts_track_spillover_and_drain() {
         let mut g = LaneAdmissionGate::new(4, 1);
 
