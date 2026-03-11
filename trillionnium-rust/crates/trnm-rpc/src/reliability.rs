@@ -174,11 +174,22 @@ pub struct InMemoryReliabilityStore {
 
 impl InMemoryReliabilityStore {
     pub fn with_config(config: InMemoryReliabilityStoreConfig) -> Self {
+        let config = sanitize_store_config(config);
+
+        // Pre-size hot reliability maps from configured quotas to reduce allocator
+        // churn during sustained ingress bursts. Caps are hints only; semantics are
+        // unchanged when quotas are unset.
+        let session_cap = config.max_sessions.unwrap_or(0);
+        let dedup_cap = config
+            .max_dedup_entries
+            .or(config.max_pending_total)
+            .unwrap_or(0);
+
         Self {
-            sessions: HashMap::new(),
-            dedup: HashMap::new(),
-            meta: HashMap::new(),
-            config: sanitize_store_config(config),
+            sessions: HashMap::with_capacity(session_cap),
+            dedup: HashMap::with_capacity(dedup_cap),
+            meta: HashMap::with_capacity(session_cap),
+            config,
         }
     }
 
