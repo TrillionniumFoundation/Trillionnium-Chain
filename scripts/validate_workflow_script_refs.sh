@@ -52,7 +52,7 @@ for wf in "${WORKFLOW_FILES[@]}"; do
   while IFS= read -r ref; do
     [[ -n "$ref" ]] || continue
     printf '%s\n' "$ref" >>"$refs_file"
-  done < <(LC_ALL=C grep -Eo '((\./)?scripts|trillionnium-rust/scripts)/[[:alnum:]_./-]+\.(sh|py)' "$wf" || true)
+  done < <(LC_ALL=C grep -Eo '(\./scripts|scripts|trillionnium-rust/scripts)/[[:alnum:]_./-]+\.(sh|py)' "$wf" || true)
 done
 
 total_script_ref_count="$(wc -l <"$refs_file" | tr -d ' ')"
