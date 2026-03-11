@@ -368,4 +368,33 @@ mod tests {
         assert!((bench_profile.avg_group_size - executor_profile.avg_group_size).abs() < f64::EPSILON);
         assert!((bench_profile.hot_object_share - executor_profile.hot_object_share).abs() < f64::EPSILON);
     }
+
+    #[test]
+    fn hot_streak_bench_default_path_matches_executor_original_strategy_output() {
+        let txs = build_hot_streak_txs(20_000, 2_000, 3, 1);
+        let (bench_groups, bench_profile) = StrategyArg::Default.resolve_profile(&txs);
+        let (executor_groups, executor_profile) =
+            build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::Original);
+
+        assert_eq!(bench_groups, executor_groups);
+        assert_eq!(bench_profile.tx_count, executor_profile.tx_count);
+        assert_eq!(bench_profile.group_count, executor_profile.group_count);
+        assert_eq!(bench_profile.grouped_count, executor_profile.grouped_count);
+        assert_eq!(bench_profile.max_group_size, executor_profile.max_group_size);
+        assert_eq!(bench_profile.min_group_size, executor_profile.min_group_size);
+        assert_eq!(bench_profile.conflict_checks, executor_profile.conflict_checks);
+        assert_eq!(bench_profile.conflict_hits, executor_profile.conflict_hits);
+        assert_eq!(
+            bench_profile.candidate_groups_scanned,
+            executor_profile.candidate_groups_scanned
+        );
+        assert_eq!(bench_profile.stage_ww_checks, executor_profile.stage_ww_checks);
+        assert_eq!(bench_profile.stage_ww_hits, executor_profile.stage_ww_hits);
+        assert_eq!(bench_profile.stage_wr_checks, executor_profile.stage_wr_checks);
+        assert_eq!(bench_profile.stage_wr_hits, executor_profile.stage_wr_hits);
+        assert_eq!(bench_profile.stage_rw_checks, executor_profile.stage_rw_checks);
+        assert_eq!(bench_profile.stage_rw_hits, executor_profile.stage_rw_hits);
+        assert!((bench_profile.avg_group_size - executor_profile.avg_group_size).abs() < f64::EPSILON);
+        assert!((bench_profile.hot_object_share - executor_profile.hot_object_share).abs() < f64::EPSILON);
+    }
 }
