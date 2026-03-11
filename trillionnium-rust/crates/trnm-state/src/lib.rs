@@ -478,7 +478,7 @@ impl StateStore {
         }
 
         if let Some(entry) = self.pending_resolve_approvals.get(&task_id) {
-            if entry.authority_set != authority_set {
+            if !entry.authority_set.eq_ignore_ascii_case(authority_set) {
                 self.invalidate_state_root_cache();
                 self.pending_resolve_approvals.remove(&task_id);
                 return Err("resolve approval authority set changed".into());
@@ -1959,7 +1959,7 @@ mod tests {
         assert!(!first);
         assert_eq!(st.pending_resolve_approval(8_181), Some((true, 1)));
 
-        let case_drift_err = st
+        let second = st
             .stage_or_confirm_resolve_approval(
                 8_181,
                 7,
@@ -1967,10 +1967,13 @@ mod tests {
                 "Authority-B",
                 "authority-a,Authority-B",
             )
-            .expect_err("authority set case drift must fail closed and clear stale stage");
-        assert!(case_drift_err.contains("authority set changed"));
-        assert_eq!(st.pending_resolve_approval(8_181), None);
-        assert_eq!(st.pending_resolve_first_approver(8_181), None);
+            .expect("authority set case drift should preserve staged quorum");
+        assert!(second, "second distinct approver should finalize quorum");
+        assert_eq!(st.pending_resolve_approval(8_181), Some((true, 2)));
+        assert_eq!(
+            st.pending_resolve_first_approver(8_181).as_deref(),
+            Some("authority-a")
+        );
     }
 
     #[test]
