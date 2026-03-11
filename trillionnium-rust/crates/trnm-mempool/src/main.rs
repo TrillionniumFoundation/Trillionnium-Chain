@@ -264,12 +264,13 @@ impl AdmissionGate {
             return AdmitOutcome::Backpressured;
         }
 
-        // Fast-path fresh ingress: skip retry-set remove hash probe when we already
-        // know this tx id was not tracked as a deferred retry candidate. When
-        // fairness probing already confirmed membership, reuse that signal to avoid
-        // a second hash lookup on the acceptance path.
+        // Fast-path fresh ingress: when fairness is armed we already probed retry
+        // membership above. Reuse that signal to avoid a second hash-table lookup
+        // on the common non-retry acceptance path.
         let accepted_was_retry = if is_known_retry_for_fairness {
             self.backpressured_ids.remove(&tx_id)
+        } else if self.retry_reservations > 0 {
+            false
         } else {
             has_known_retries && self.backpressured_ids.remove(&tx_id)
         };
@@ -645,6 +646,25 @@ mod tests {
         assert_eq!(gate.metrics().fairness_deferrals, 0);
 
         // Known retry can still consume the reserved slot.
+        assert_eq!(gate.admit(9), AdmitOutcome::Accepted);
+    }
+
+    #[test]
+    fn fairness_armed_fresh_acceptance_keeps_known_retry_memory_intact() {
+        let mut gate = AdmissionGate::new(3);
+        assert_eq!(gate.admit(1), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(2), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(3), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(9), AdmitOutcome::Backpressured);
+
+        // Two slots open; fairness remains armed with a single known retry id.
+        assert_eq!(gate.pop_ready(), Some(1));
+        assert_eq!(gate.pop_ready(), Some(2));
+
+        // Fresh ingress is accepted because free_slots > retry_reservations.
+        assert_eq!(gate.admit(10), AdmitOutcome::Accepted);
+        // Retry memory must remain intact so id=9 is still admitted later.
+        assert!(gate.backpressured_ids.contains(&9));
         assert_eq!(gate.admit(9), AdmitOutcome::Accepted);
     }
 
