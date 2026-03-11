@@ -491,6 +491,20 @@ mod tests {
     }
 
     #[test]
+    fn zk_verifier_rejects_unsupported_payload_zk_system_fail_closed() {
+        let mut backends = ZkBackendRegistry::new();
+        backends.register(Arc::new(MockSuccessBackend));
+        let verifier = ZkVerifier::from_config(&router_config(), Arc::new(backends));
+        let task = mock_task();
+        let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"bulletproofs","backend_id":"mock-zk","backend_version":"v1","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","worker","result_hash"],"values":["99","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]},"meta":{"schema_version":"trnm.zk.payload.v0"}}"#;
+        assert!(matches!(
+            verifier.verify_proof(&task, payload),
+            VerificationResult::Invalid(msg)
+                if msg.contains("malformed:") && msg.contains("unsupported zk_system 'bulletproofs'")
+        ));
+    }
+
+    #[test]
     fn zk_verifier_invalid_proof_path_with_mock_backend() {
         let mut backends = ZkBackendRegistry::new();
         backends.register(Arc::new(MockInvalidBackend));
@@ -580,6 +594,32 @@ mod tests {
         assert!(matches!(
             verifier.verify_proof(&task, payload),
             VerificationResult::Invalid(msg) if msg.contains("unexpected worker binding")
+        ));
+    }
+
+    #[test]
+    fn zk_verifier_rejects_unexpected_result_hash_binding_without_context_fail_closed() {
+        let verifier = ZkVerifier::default();
+        let mut task = mock_task();
+        task.result_hash = None;
+        let payload = b"ZK:task_id=99,worker=worker-zk,proof_type=zk,result_hash=1111111111111111111111111111111111111111111111111111111111111111,proof=ok";
+
+        assert!(matches!(
+            verifier.verify_proof(&task, payload),
+            VerificationResult::Invalid(msg) if msg.contains("unexpected result_hash binding")
+        ));
+    }
+
+    #[test]
+    fn zk_verifier_rejects_fullwidth_equals_then_ascii_worker_binding_fail_closed() {
+        let verifier = ZkVerifier::default();
+        let task = mock_task();
+        let payload = "ZK:task_id=99,worker＝worker-zk,worker=worker-zk,proof_type=zk,result_hash=1111111111111111111111111111111111111111111111111111111111111111,proof=ok"
+            .as_bytes();
+
+        assert!(matches!(
+            verifier.verify_proof(&task, payload),
+            VerificationResult::Invalid(msg) if msg.contains("duplicate worker binding")
         ));
     }
 
