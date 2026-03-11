@@ -193,7 +193,7 @@ impl OraclePolicy {
 
         if let Some(median) = snapshot.median {
             let deviation = deviation_bps(snapshot.value, median);
-            if deviation > self.max_deviation_bps {
+            if deviation >= self.max_deviation_bps {
                 return Err(OracleError::DeviationExceeded {
                     deviation_bps: deviation,
                     max_deviation_bps: self.max_deviation_bps,
@@ -330,6 +330,17 @@ mod tests {
         let err = p
             .validate_snapshot(&snap, 10_100)
             .expect_err("snapshot should fail drift check");
+        assert!(matches!(err, OracleError::DeviationExceeded { .. }));
+    }
+
+    #[test]
+    fn rejects_deviation_exactly_at_threshold() {
+        let p = policy();
+        let snap = snapshot_with(105_000, Some(100_000), 10_000); // 500 bps
+
+        let err = p
+            .validate_snapshot(&snap, 10_100)
+            .expect_err("snapshot at drift threshold should fail");
         assert!(matches!(err, OracleError::DeviationExceeded { .. }));
     }
 
