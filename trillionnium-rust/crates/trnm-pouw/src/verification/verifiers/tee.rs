@@ -35,16 +35,16 @@ impl TeeVerifier {
             VerificationBackendError::Execution(BackendExecutionError::InvalidProof {
                 reason, ..
             }) => VerificationResult::Invalid(format!(
-                "invalid TEE attestation evidence: {reason}"
+                "invalid TEE attestation claims: {reason}"
             )),
             VerificationBackendError::Execution(BackendExecutionError::MalformedProof {
                 reason, ..
             }) => VerificationResult::Invalid(format!(
-                "malformed TEE attestation payload: {reason}"
+                "malformed TEE attestation payload/claims: {reason}"
             )),
             VerificationBackendError::Execution(BackendExecutionError::NotConfigured { .. }) => {
                 VerificationResult::Indeterminate(
-                    "unavailable: TEE receipt cryptographic verification backend not configured"
+                    "unavailable: TEE attestation cryptographic verification backend not configured"
                         .to_string(),
                 )
             }
@@ -52,13 +52,13 @@ impl TeeVerifier {
                 backend,
                 reason,
             }) => VerificationResult::Indeterminate(format!(
-                "unavailable: verification backend '{backend}' cannot currently verify TEE attestation receipt: {reason}"
+                "unavailable: verification backend '{backend}' cannot currently verify TEE attestation evidence/claims: {reason}"
             )),
             VerificationBackendError::Execution(BackendExecutionError::Internal {
                 backend,
                 reason,
             }) => VerificationResult::Indeterminate(format!(
-                "backend_error: verification backend '{backend}' failed while verifying TEE quote/report claims: {reason}"
+                "backend_error: verification backend '{backend}' failed while verifying TEE attestation quote/report claims: {reason}"
             )),
         }
     }
@@ -239,7 +239,7 @@ mod tests {
                 b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,quote=abc"
             ),
             VerificationResult::Indeterminate(msg)
-                if msg.contains("cryptographic verification backend not configured")
+                if msg.contains("TEE attestation cryptographic verification backend not configured")
         ));
     }
 
@@ -261,7 +261,7 @@ mod tests {
     }
 
     #[test]
-    fn tee_verifier_invalid_receipt_path_with_mock_backend() {
+    fn tee_verifier_invalid_attestation_claims_path_with_mock_backend() {
         let mut backends = ZkBackendRegistry::new();
         backends.register(Arc::new(MockTeeInvalidBackend));
         let verifier = TeeVerifier::new(
@@ -276,7 +276,7 @@ mod tests {
                 b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,quote=abc"
             ),
             VerificationResult::Invalid(msg)
-                if msg.contains("invalid TEE attestation evidence:")
+                if msg.contains("invalid TEE attestation claims:")
                     && msg.contains("mock tee backend rejected proof")
         ));
     }
@@ -299,12 +299,12 @@ mod tests {
             VerificationResult::Indeterminate(msg)
                 if msg.contains("unavailable:")
                     && msg.contains("mock-tee-unavailable")
-                    && msg.contains("cannot currently verify TEE attestation receipt")
+                    && msg.contains("cannot currently verify TEE attestation evidence/claims")
         ));
     }
 
     #[test]
-    fn tee_verifier_backend_malformed_maps_to_invalid_fail_closed() {
+    fn tee_verifier_backend_malformed_attestation_payload_or_claims_maps_to_invalid_fail_closed() {
         let mut backends = ZkBackendRegistry::new();
         backends.register(Arc::new(MockTeeMalformedBackend));
         let verifier = TeeVerifier::new(
@@ -319,12 +319,12 @@ mod tests {
                 b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,quote=abc"
             ),
             VerificationResult::Invalid(msg)
-                if msg.contains("malformed TEE attestation payload:") && msg.contains("mock tee receipt malformed")
+                if msg.contains("malformed TEE attestation payload/claims:") && msg.contains("mock tee receipt malformed")
         ));
     }
 
     #[test]
-    fn tee_verifier_backend_malformed_quote_claims_maps_to_payload_invalid_fail_closed() {
+    fn tee_verifier_backend_malformed_quote_or_report_claims_maps_to_payload_invalid_fail_closed() {
         let mut backends = ZkBackendRegistry::new();
         backends.register(Arc::new(MockTeeMalformedBackend));
         let verifier = TeeVerifier::new(
@@ -339,7 +339,7 @@ mod tests {
                 b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,report=claims"
             ),
             VerificationResult::Invalid(msg)
-                if msg.contains("malformed TEE attestation payload:")
+                if msg.contains("malformed TEE attestation payload/claims:")
                     && !msg.contains("receipt:")
                     && msg.contains("mock tee receipt malformed")
         ));
@@ -363,7 +363,7 @@ mod tests {
             VerificationResult::Indeterminate(msg)
                 if msg.contains("backend_error:")
                     && msg.contains("mock-tee-internal")
-                    && msg.contains("failed while verifying TEE quote/report claims")
+                    && msg.contains("failed while verifying TEE attestation quote/report claims")
                     && msg.contains("mock tee backend internal failure")
         ));
     }
@@ -876,7 +876,7 @@ mod tests {
                 b"TEE:task_id=42,worker=worker1,proof_type=tee_receipt,result_hash=abababababababababababababababababababababababababababababababab,quote=abc"
             ),
             VerificationResult::Indeterminate(msg)
-                if msg.contains("cryptographic verification backend not configured")
+                if msg.contains("TEE attestation cryptographic verification backend not configured")
         ));
     }
 
@@ -892,7 +892,7 @@ mod tests {
                 b"TEE:task_id=42,worker=worker1,proof_type=attestation_report,result_hash=abababababababababababababababababababababababababababababababab,quote=abc"
             ),
             VerificationResult::Indeterminate(msg)
-                if msg.contains("cryptographic verification backend not configured")
+                if msg.contains("TEE attestation cryptographic verification backend not configured")
         ));
     }
 
@@ -907,7 +907,7 @@ mod tests {
                 b"TEE:task_id=42,worker=worker1,proof_type=ra_quote,result_hash=abababababababababababababababababababababababababababababababab,quote=abc"
             ),
             VerificationResult::Indeterminate(msg)
-                if msg.contains("cryptographic verification backend not configured")
+                if msg.contains("TEE attestation cryptographic verification backend not configured")
         ));
     }
 
