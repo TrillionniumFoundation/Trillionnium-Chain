@@ -252,3 +252,23 @@ fn reserve_only_full_drain_resets_idempotency_for_immediate_free_ingress_reuse()
         AdmitOutcome::Accepted
     );
 }
+
+
+#[test]
+fn zero_capacity_duplicate_probe_noise_does_not_poison_cross_class_retry_after_recovery() {
+    let mut gate = LaneAdmissionGate::new(0, 0);
+
+    // Hard-stop mode: fresh ingress is backpressured, but repeated retries for the
+    // same id across classes must stay fresh/backpressured rather than becoming a
+    // synthetic duplicate while capacity remains zero.
+    assert_eq!(gate.admit(700, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(gate.admit(700, IngressClass::Critical), AdmitOutcome::Backpressured);
+    assert_eq!(gate.admit(700, IngressClass::Normal), AdmitOutcome::Backpressured);
+
+    // Once capacity is restored in a fresh lane instance, that previously rejected
+    // id must remain admissible across either class.
+    let mut recovered = LaneAdmissionGate::new(1, 1);
+    assert_eq!(recovered.admit(700, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(recovered.pop_ready(), Some(700));
+    assert_eq!(recovered.admit(700, IngressClass::Normal), AdmitOutcome::Accepted);
+}
