@@ -616,6 +616,10 @@ fn wait_for_tx<F>(
 where
     F: FnMut(&str) -> Result<TxQueryResponse>,
 {
+    if interval.is_zero() {
+        bail!("tx wait interval must be greater than 0s");
+    }
+
     let started = Instant::now();
     loop {
         let resp = query_fn(tx_hash)?;
@@ -1197,6 +1201,24 @@ mod tests {
     }
 
     #[test]
+    fn wait_for_tx_rejects_zero_interval() {
+        let result = wait_for_tx(
+            "0xabc123",
+            Duration::from_secs(1),
+            Duration::from_secs(0),
+            |_| {
+                Ok(TxQueryResponse {
+                    tx_hash: "0xabc123".to_string(),
+                    status: "pending".to_string(),
+                    error: None,
+                })
+            },
+        );
+        let msg = result.unwrap_err().to_string();
+        assert!(msg.contains("tx wait interval must be greater than 0s"));
+    }
+
+    #[test]
     fn wait_for_tx_timeout() {
         let result = wait_for_tx(
             "0xaaa",
@@ -1218,7 +1240,7 @@ mod tests {
         let result = wait_for_tx(
             "0xbbb",
             Duration::from_millis(10),
-            Duration::from_millis(0),
+            Duration::from_millis(1),
             |_| {
                 Ok(TxQueryResponse {
                     tx_hash: "0xbbb".to_string(),
