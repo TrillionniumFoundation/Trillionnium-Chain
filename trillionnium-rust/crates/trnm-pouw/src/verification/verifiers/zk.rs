@@ -163,7 +163,7 @@ impl ZkVerifier {
             {
                 Some(system) => system,
                 None => {
-                    return Err(BackendExecutionError::InvalidProof {
+                    return Err(BackendExecutionError::MalformedProof {
                         backend: "zk:payload".to_string(),
                         reason: format!(
                             "invalid zk payload: vk_ref '{}' is missing canonical zk_system metadata",
@@ -510,7 +510,8 @@ mod tests {
         assert!(matches!(
             verifier.verify_proof(&task, payload),
             VerificationResult::Invalid(msg)
-                if msg.contains("missing canonical zk_system metadata")
+                if msg.contains("malformed:")
+                    && msg.contains("missing canonical zk_system metadata")
                     && msg.contains("vk://trnm/dev/mock-no-system/v1")
         ));
     }
@@ -528,7 +529,8 @@ mod tests {
         assert!(matches!(
             verifier.verify_proof(&task, payload),
             VerificationResult::Invalid(msg)
-                if msg.contains("missing canonical zk_system metadata")
+                if msg.contains("malformed:")
+                    && msg.contains("missing canonical zk_system metadata")
                     && msg.contains("vk://trnm/dev/mock-no-system/v1")
         ));
     }
