@@ -176,7 +176,28 @@ case "$sub" in
 
     seen_hash=$(printf "%s" "$out" | sed -n 's/.*"txhash"[[:space:]]*:[[:space:]]*"\([0-9A-Fa-f]\{16,128\}\)".*/\1/p' | head -n1 || true)
     if [[ -z "$seen_hash" ]]; then
+      seen_hash=$(printf "%s" "$out" | sed -n 's/.*"tx_hash"[[:space:]]*:[[:space:]]*"\([0-9A-Fa-f]\{16,128\}\)".*/\1/p' | head -n1 || true)
+    fi
+    if [[ -z "$seen_hash" ]]; then
+      seen_hash=$(printf "%s" "$out" | sed -n 's/.*"txHash"[[:space:]]*:[[:space:]]*"\([0-9A-Fa-f]\{16,128\}\)".*/\1/p' | head -n1 || true)
+    fi
+    if [[ -z "$seen_hash" ]]; then
+      seen_hash=$(printf "%s" "$out" | sed -n 's/.*"transaction_hash"[[:space:]]*:[[:space:]]*"\([0-9A-Fa-f]\{16,128\}\)".*/\1/p' | head -n1 || true)
+    fi
+    if [[ -z "$seen_hash" ]]; then
+      seen_hash=$(printf "%s" "$out" | sed -n 's/.*"transactionHash"[[:space:]]*:[[:space:]]*"\([0-9A-Fa-f]\{16,128\}\)".*/\1/p' | head -n1 || true)
+    fi
+    if [[ -z "$seen_hash" ]]; then
       seen_hash=$(printf "%s" "$out" | sed -n 's/.*tx_hash[[:space:]]*[:=][[:space:]]*\([0-9A-Fa-f]\{16,128\}\).*/\1/p' | head -n1 || true)
+    fi
+    if [[ -z "$seen_hash" ]]; then
+      seen_hash=$(printf "%s" "$out" | sed -n 's/.*txHash[[:space:]]*[:=][[:space:]]*\([0-9A-Fa-f]\{16,128\}\).*/\1/p' | head -n1 || true)
+    fi
+    if [[ -z "$seen_hash" ]]; then
+      seen_hash=$(printf "%s" "$out" | sed -n 's/.*transaction_hash[[:space:]]*[:=][[:space:]]*\([0-9A-Fa-f]\{16,128\}\).*/\1/p' | head -n1 || true)
+    fi
+    if [[ -z "$seen_hash" ]]; then
+      seen_hash=$(printf "%s" "$out" | sed -n 's/.*transactionHash[[:space:]]*[:=][[:space:]]*\([0-9A-Fa-f]\{16,128\}\).*/\1/p' | head -n1 || true)
     fi
     status=$(printf "%s" "$out" | sed -n 's/.*"status"[[:space:]]*:[[:space:]]*"\([^"]\+\)".*/\1/p' | head -n1 || true)
     if [[ -z "$status" ]]; then
