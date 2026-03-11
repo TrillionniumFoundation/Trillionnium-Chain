@@ -1301,8 +1301,14 @@ fn normalized_provider_request_id(value: Option<&str>) -> Option<String> {
     let normalized = normalized_optional_field(value)?;
     let is_allowed = normalized
         .chars()
-        .all(|c| c.is_ascii_alphanumeric() || matches!(c, '-' | '_' | '.' | ':'));
-    if is_allowed && normalized.len() <= 128 {
+        .all(|c| c.is_ascii_alphanumeric() || matches!(c, '-' | '_' | '.'));
+    let starts_and_ends_alnum = normalized
+        .chars()
+        .next()
+        .zip(normalized.chars().last())
+        .map(|(start, end)| start.is_ascii_alphanumeric() && end.is_ascii_alphanumeric())
+        .unwrap_or(false);
+    if is_allowed && starts_and_ends_alnum && normalized.len() <= 128 {
         Some(normalized)
     } else {
         None
@@ -4289,6 +4295,21 @@ mod tests {
 
         let overflow = "a".repeat(129);
         assert_eq!(normalized_provider_request_id(Some(&overflow)), None);
+    }
+
+    #[test]
+    fn normalized_provider_request_id_rejects_colon_and_non_alnum_edges() {
+        assert_eq!(
+            normalized_provider_request_id(Some("req:123")),
+            None,
+            "colon-delimited ids are ambiguous in downstream audit consumers"
+        );
+        assert_eq!(normalized_provider_request_id(Some("-req123")), None);
+        assert_eq!(normalized_provider_request_id(Some("req123.")), None);
+        assert_eq!(
+            normalized_provider_request_id(Some("req_123-abc.DEF")).as_deref(),
+            Some("req_123-abc.DEF")
+        );
     }
 
     #[test]
