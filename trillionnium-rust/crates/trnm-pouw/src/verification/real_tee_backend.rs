@@ -623,16 +623,92 @@ fn verify_fixture_input(
     }
 }
 
-#[derive(Debug, Default)]
-pub struct RealTeeBackend {
+trait VendorVerifierExecutor: Send + Sync {
+    fn verify_intel_quote_bundle(
+        &self,
+        input: &QuoteVerifierInput,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<BackendVerificationSuccess, BackendExecutionError>;
+
+    fn verify_amd_report_bundle(
+        &self,
+        input: &ReportVerifierInput,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<BackendVerificationSuccess, BackendExecutionError>;
+}
+
+struct FixtureBackedVendorVerifierExecutor {
     fixtures: Vec<TeeFixture>,
+}
+
+impl FixtureBackedVendorVerifierExecutor {
+    fn new(fixtures: Vec<TeeFixture>) -> Self {
+        Self { fixtures }
+    }
+
+    fn fixture_for_target<'a>(
+        &'a self,
+        attestation_target: &str,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<&'a TeeFixture, BackendExecutionError> {
+        self.fixtures
+            .iter()
+            .find(|fixture| fixture.verifier_input.attestation_target() == attestation_target)
+            .ok_or_else(|| BackendExecutionError::Unavailable {
+                backend: request.backend_label(RealTeeBackend::backend_id_static()),
+                reason: format!(
+                    "no embedded attestation vector registered for target '{}'",
+                    attestation_target
+                ),
+            })
+    }
+}
+
+impl VendorVerifierExecutor for FixtureBackedVendorVerifierExecutor {
+    fn verify_intel_quote_bundle(
+        &self,
+        input: &QuoteVerifierInput,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<BackendVerificationSuccess, BackendExecutionError> {
+        let fixture = self.fixture_for_target(&input.attestation_target, request)?;
+        verify_fixture_input(&TeeVerifierInput::Quote(input.clone()), fixture, request)?;
+        Ok(BackendVerificationSuccess {
+            backend_id: fixture.backend_id.clone(),
+        })
+    }
+
+    fn verify_amd_report_bundle(
+        &self,
+        input: &ReportVerifierInput,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<BackendVerificationSuccess, BackendExecutionError> {
+        let fixture = self.fixture_for_target(&input.attestation_target, request)?;
+        verify_fixture_input(&TeeVerifierInput::Report(input.clone()), fixture, request)?;
+        Ok(BackendVerificationSuccess {
+            backend_id: fixture.backend_id.clone(),
+        })
+    }
+}
+
+pub struct RealTeeBackend {
+    executor: Arc<dyn VendorVerifierExecutor>,
+}
+
+impl Default for RealTeeBackend {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl RealTeeBackend {
     pub fn new() -> Self {
-        Self {
-            fixtures: load_embedded_fixtures(),
-        }
+        Self::with_executor(Arc::new(FixtureBackedVendorVerifierExecutor::new(
+            load_embedded_fixtures(),
+        )))
+    }
+
+    fn with_executor(executor: Arc<dyn VendorVerifierExecutor>) -> Self {
+        Self { executor }
     }
 
     const fn backend_id_static() -> &'static str {
@@ -689,25 +765,15 @@ impl VerificationBackend for RealTeeBackend {
             }
         })?;
         let verifier_input = adapter.build_verifier_input(&handoff, Some(&request))?;
-        let Some(fixture) = self
-            .fixtures
-            .iter()
-            .find(|fixture| fixture.verifier_input.attestation_target() == handoff.attestation_target)
-        else {
-            return Err(BackendExecutionError::Unavailable {
-                backend: request.backend_label(self.backend_id()),
-                reason: format!(
-                    "no embedded attestation vector registered for target '{}'",
-                    handoff.attestation_target
-                ),
-            });
-        };
 
-        verify_fixture_input(&verifier_input, fixture, &request)?;
-
-        Ok(BackendVerificationSuccess {
-            backend_id: fixture.backend_id.clone(),
-        })
+        match &verifier_input {
+            TeeVerifierInput::Quote(input) => {
+                self.executor.verify_intel_quote_bundle(input, &request)
+            }
+            TeeVerifierInput::Report(input) => {
+                self.executor.verify_amd_report_bundle(input, &request)
+            }
+        }
     }
 }
 
@@ -864,6 +930,114 @@ mod tests {
                 && amd_signer.vcek == "amd-vcek-demo-v1"
                 && amd_signer.cert_chain == "amd-cert-chain-demo-v1"
                 && amd_signer.report_signer == "amd"
+        ));
+    }
+
+    struct AssertingIntelQuoteExecutor;
+
+    impl VendorVerifierExecutor for AssertingIntelQuoteExecutor {
+        fn verify_intel_quote_bundle(
+            &self,
+            input: &QuoteVerifierInput,
+            _request: &BackendVerificationRequest<'_>,
+        ) -> Result<BackendVerificationSuccess, BackendExecutionError> {
+            assert_eq!(input.attestation_target, "sgx-dcap");
+            assert_eq!(input.verifier_kind, "quote-verifier");
+            assert_eq!(input.measurement_field, "mrenclave");
+            assert_eq!(input.quote, "quote-sgx-dcap-demo-v1");
+            assert_eq!(input.intel_collateral.collateral, "intel-dcap-collateral-demo-v1");
+            assert_eq!(input.intel_collateral.cert_chain, "intel-dcap-cert-chain-demo-v1");
+            assert_eq!(input.intel_collateral.issuer, "intel");
+            Ok(BackendVerificationSuccess {
+                backend_id: "intel-mock-executor".into(),
+            })
+        }
+
+        fn verify_amd_report_bundle(
+            &self,
+            _input: &ReportVerifierInput,
+            request: &BackendVerificationRequest<'_>,
+        ) -> Result<BackendVerificationSuccess, BackendExecutionError> {
+            Err(BackendExecutionError::Internal {
+                backend: request.backend_label(RealTeeBackend::backend_id_static()),
+                reason: "unexpected amd report path in intel executor test".to_string(),
+            })
+        }
+    }
+
+    struct AssertingAmdReportExecutor;
+
+    impl VendorVerifierExecutor for AssertingAmdReportExecutor {
+        fn verify_intel_quote_bundle(
+            &self,
+            _input: &QuoteVerifierInput,
+            request: &BackendVerificationRequest<'_>,
+        ) -> Result<BackendVerificationSuccess, BackendExecutionError> {
+            Err(BackendExecutionError::Internal {
+                backend: request.backend_label(RealTeeBackend::backend_id_static()),
+                reason: "unexpected intel quote path in amd executor test".to_string(),
+            })
+        }
+
+        fn verify_amd_report_bundle(
+            &self,
+            input: &ReportVerifierInput,
+            _request: &BackendVerificationRequest<'_>,
+        ) -> Result<BackendVerificationSuccess, BackendExecutionError> {
+            assert_eq!(input.attestation_target, "sev-snp");
+            assert_eq!(input.verifier_kind, "report-verifier");
+            assert_eq!(input.measurement_field, "measurement");
+            assert_eq!(input.report, "report-sev-snp-demo-v1");
+            assert_eq!(input.amd_signer.vcek, "amd-vcek-demo-v1");
+            assert_eq!(input.amd_signer.cert_chain, "amd-cert-chain-demo-v1");
+            assert_eq!(input.amd_signer.report_signer, "amd");
+            Ok(BackendVerificationSuccess {
+                backend_id: "amd-mock-executor".into(),
+            })
+        }
+    }
+
+    #[test]
+    fn real_tee_backend_delegates_intel_quote_bundle_to_executor() {
+        let task = mock_task();
+        let proof_data = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=sgx-dcap,measurement=mrenclave:demo-sgx-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,quote=quote-sgx-dcap-demo-v1,collateral=intel-dcap-collateral-demo-v1,cert_chain=intel-dcap-cert-chain-demo-v1,issuer=intel";
+        let payload = parse_tee_attestation_payload(proof_data).unwrap();
+        let backend = RealTeeBackend::with_executor(Arc::new(AssertingIntelQuoteExecutor));
+
+        let result = backend.verify(BackendVerificationRequest {
+            family: VerificationBackendFamily::Tee,
+            task: &task,
+            proof_data,
+            tee_payload: Some(&payload),
+            zk_payload: None,
+            resolved_vk_ref: None,
+        });
+
+        assert!(matches!(
+            result,
+            Ok(BackendVerificationSuccess { backend_id }) if backend_id == "intel-mock-executor"
+        ));
+    }
+
+    #[test]
+    fn real_tee_backend_delegates_amd_report_bundle_to_executor() {
+        let task = mock_task();
+        let proof_data = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=sev-snp,measurement=measurement:demo-snp-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,report=report-sev-snp-demo-v1,vcek=amd-vcek-demo-v1,cert_chain=amd-cert-chain-demo-v1,report_signer=amd";
+        let payload = parse_tee_attestation_payload(proof_data).unwrap();
+        let backend = RealTeeBackend::with_executor(Arc::new(AssertingAmdReportExecutor));
+
+        let result = backend.verify(BackendVerificationRequest {
+            family: VerificationBackendFamily::Tee,
+            task: &task,
+            proof_data,
+            tee_payload: Some(&payload),
+            zk_payload: None,
+            resolved_vk_ref: None,
+        });
+
+        assert!(matches!(
+            result,
+            Ok(BackendVerificationSuccess { backend_id }) if backend_id == "amd-mock-executor"
         ));
     }
 

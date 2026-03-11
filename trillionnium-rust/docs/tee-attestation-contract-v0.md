@@ -27,11 +27,11 @@ The feature-gated real TEE backend additionally owns:
 
 ## Canonical attestation target matrix
 
-| target | adapter | verifier kind | evidence field | measurement prefix | required verifier metadata | downstream bundle shape | notes |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| `sgx-dcap` | `SgxDcapAdapter` | `quote-verifier` | `quote` | `mrenclave:` | `collateral`, `cert_chain`, `issuer` | `IntelQuoteCollateralBundle` | Intel SGX DCAP-style quote path |
-| `tdx-qgs` | `TdxQgsAdapter` | `quote-verifier` | `quote` | `mrtd:` | `collateral`, `cert_chain`, `issuer` | `IntelQuoteCollateralBundle` | Intel TDX QGS quote path |
-| `sev-snp` | `SevSnpAdapter` | `report-verifier` | `report` | `measurement:` | `vcek`, `cert_chain`, `report_signer` | `AmdSnpSignerBundle` | AMD SEV-SNP report path |
+| target | adapter | verifier kind | evidence field | measurement prefix | required verifier metadata | downstream bundle shape | executor path | notes |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `sgx-dcap` | `SgxDcapAdapter` | `quote-verifier` | `quote` | `mrenclave:` | `collateral`, `cert_chain`, `issuer` | `IntelQuoteCollateralBundle` | `verify_intel_quote_bundle(...)` | Intel SGX DCAP-style quote path |
+| `tdx-qgs` | `TdxQgsAdapter` | `quote-verifier` | `quote` | `mrtd:` | `collateral`, `cert_chain`, `issuer` | `IntelQuoteCollateralBundle` | `verify_intel_quote_bundle(...)` | Intel TDX QGS quote path |
+| `sev-snp` | `SevSnpAdapter` | `report-verifier` | `report` | `measurement:` | `vcek`, `cert_chain`, `report_signer` | `AmdSnpSignerBundle` | `verify_amd_report_bundle(...)` | AMD SEV-SNP report path |
 
 Unknown values must fail closed before any cryptographic verification attempt.
 
@@ -51,7 +51,7 @@ Target-specific verifier metadata is explicit:
   - `collateral`
   - `cert_chain`
   - `issuer`
-- report-based target (`sev-snp`) requires:
+- report-based targets (`sev-snp`) require:
   - `vcek`
   - `cert_chain`
   - `report_signer`
@@ -116,6 +116,19 @@ Used by SEV-SNP adapter.
 ```
 
 This vendor-shaped bundle is intended to match the seam a future AMD SNP report verifier would consume.
+
+## Executor seam
+After adapter construction, `real-tee-backend` now dispatches concrete verifier inputs into a dedicated executor trait:
+
+- `verify_intel_quote_bundle(&QuoteVerifierInput, ...)`
+- `verify_amd_report_bundle(&ReportVerifierInput, ...)`
+
+This separates three concerns cleanly:
+1. receipt parsing / normalization
+2. target-specific request shaping
+3. vendor-specific verification execution
+
+The current implementation uses a fixture-backed executor, but a future real backend should replace only the executor layer.
 
 ## report_data_hash binding
 `report_data_hash` must match the task `result_hash` carried by the bound envelope.
