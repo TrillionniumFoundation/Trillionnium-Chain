@@ -2007,6 +2007,53 @@ mod tests {
         }
     }
 
+    #[test]
+    fn default_profile_strategy_matches_original_strategy_output() {
+        let txs = (0..64)
+            .map(|i| {
+                tx(
+                    i as u64,
+                    vec![o((i % 8) as u64), o(((i * 3) % 11) as u64)],
+                    if i % 3 == 0 {
+                        vec![o((i % 8) as u64)]
+                    } else {
+                        vec![]
+                    },
+                )
+            })
+            .collect::<Vec<_>>();
+
+        let (default_groups, default_profile) = build_parallel_groups_profile(&txs);
+        let (original_groups, original_profile) =
+            build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::Original);
+
+        assert_eq!(default_groups, original_groups);
+        assert_eq!(default_profile.tx_count, original_profile.tx_count);
+        assert_eq!(default_profile.group_count, original_profile.group_count);
+        assert_eq!(default_profile.grouped_count, original_profile.grouped_count);
+        assert_eq!(default_profile.max_group_size, original_profile.max_group_size);
+        assert_eq!(default_profile.min_group_size, original_profile.min_group_size);
+        assert_eq!(default_profile.conflict_checks, original_profile.conflict_checks);
+        assert_eq!(default_profile.conflict_hits, original_profile.conflict_hits);
+        assert_eq!(
+            default_profile.candidate_groups_scanned,
+            original_profile.candidate_groups_scanned
+        );
+        assert_eq!(default_profile.stage_ww_checks, original_profile.stage_ww_checks);
+        assert_eq!(default_profile.stage_ww_hits, original_profile.stage_ww_hits);
+        assert_eq!(default_profile.stage_wr_checks, original_profile.stage_wr_checks);
+        assert_eq!(default_profile.stage_wr_hits, original_profile.stage_wr_hits);
+        assert_eq!(default_profile.stage_rw_checks, original_profile.stage_rw_checks);
+        assert_eq!(default_profile.stage_rw_hits, original_profile.stage_rw_hits);
+        assert!(
+            (default_profile.avg_group_size - original_profile.avg_group_size).abs() < f64::EPSILON
+        );
+        assert!(
+            (default_profile.hot_object_share - original_profile.hot_object_share).abs()
+                < f64::EPSILON
+        );
+    }
+
     struct EnvGuard {
         key: &'static str,
         old: Option<String>,
