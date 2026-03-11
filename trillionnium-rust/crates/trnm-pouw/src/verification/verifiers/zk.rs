@@ -410,7 +410,8 @@ mod tests {
                 b"ZK:task_id=99,worker=worker-zk,proof_type=zk_snark,result_hash=1111111111111111111111111111111111111111111111111111111111111111,proof=ok"
             ),
             VerificationResult::Indeterminate(msg)
-                if msg.contains("cryptographic verification backend not configured")
+                if msg.contains("unavailable:")
+                    && msg.contains("cryptographic verification backend not configured")
         ));
     }
 
