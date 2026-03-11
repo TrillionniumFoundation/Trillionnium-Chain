@@ -53,6 +53,17 @@ python3 scripts/oracle/benchmark_oracle_metrics.py \
 }
 ```
 
+## 指标契约
+
+机器可读契约文件：`docs/reports/oracle-metrics-contract.json`
+
+该文件固定了：
+
+- 指标名（append-stable，不随意改名）
+- 类型与单位
+- 离线 bridge 口径与 bench 口径的边界
+- 基本一致性约束（例如 reject/accept 与 `sample_count` 的守恒关系）
+
 ## 本地/CI 执行建议
 
 - 本地：直接运行 `./scripts/run_oracle_baseline.sh`
