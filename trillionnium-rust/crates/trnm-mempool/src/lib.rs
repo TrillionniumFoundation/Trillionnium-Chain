@@ -1095,6 +1095,36 @@ mod tests {
     }
 
     #[test]
+    fn drained_ghost_id_from_repaired_seen_global_can_reenter_as_fresh() {
+        let mut g = LaneAdmissionGate::new(3, 1);
+
+        assert_eq!(g.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(11, IngressClass::Normal), AdmitOutcome::Accepted);
+
+        // Simulate restored-state skew with preserved cardinality: lane-wide cache
+        // drops one real queued id and replaces it with a ghost id.
+        g.seen_global.remove(&11);
+        g.seen_global.insert(99);
+        assert_eq!(g.seen_global.len(), 2);
+
+        // The ghost id must not be treated as duplicate while the lane still has room.
+        assert_eq!(g.admit(99, IngressClass::Critical), AdmitOutcome::Accepted);
+        // Repair also restores duplicate semantics for the real queued id.
+        assert_eq!(g.admit(11, IngressClass::Critical), AdmitOutcome::Duplicate);
+
+        // Once the repaired ghost-backed tx drains, the same id should be admitted
+        // again as fresh instead of being poisoned by prior cache skew.
+        let first = g.pop_ready();
+        let second = g.pop_ready();
+        let third = g.pop_ready();
+        assert_eq!(first, Some(11));
+        assert!(second == Some(10) || second == Some(99));
+        assert!(third == Some(10) || third == Some(99));
+        assert_ne!(second, third);
+        assert_eq!(g.admit(99, IngressClass::Normal), AdmitOutcome::Accepted);
+    }
+
+    #[test]
     fn equal_cardinality_seen_global_skew_still_preserves_duplicate_semantics() {
         let mut g = LaneAdmissionGate::new(3, 1);
 
