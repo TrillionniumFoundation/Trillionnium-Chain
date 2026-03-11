@@ -994,3 +994,44 @@ fn paused_state_rejects_case_variant_challenge_escrow_member_without_side_effect
     assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
     assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), forfeits_before);
 }
+
+#[test]
+fn paused_state_rejects_case_variant_worker_slash_treasury_member_without_side_effects() {
+    // M1 micro-hardening: worker slash treasury reservation must stay
+    // case-insensitive so mixed-case aliases cannot enter resolve quorum.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 9_920);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 992);
+    st.set_balance(WORKER_SLASH_TREASURY_ACCOUNT, 551);
+
+    st.set_gov_param(98_211, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+    let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+    let worker_slash_before = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
+
+    let mixed_case_worker_slash = WORKER_SLASH_TREASURY_ACCOUNT.to_ascii_uppercase();
+    let authority_with_case_variant_worker_slash =
+        format!("authority-a,{mixed_case_worker_slash}");
+    let err = st
+        .stage_or_confirm_resolve_approval(
+            9_916,
+            1,
+            true,
+            "authority-a",
+            &authority_with_case_variant_worker_slash,
+        )
+        .expect_err("case-variant worker slash treasury member must be rejected while paused");
+    assert!(err.contains("reserved") || err.contains("authority set"));
+
+    assert_eq!(st.pending_resolve_approval(9_916), None);
+    assert_eq!(st.pending_gov_update("resolve_authority"), None);
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+    assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), forfeits_before);
+    assert_eq!(
+        st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
+        worker_slash_before
+    );
+}
