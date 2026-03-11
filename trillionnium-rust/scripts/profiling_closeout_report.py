@@ -45,6 +45,21 @@ def fmt_metric(name: str, vals):
     return f"- {name}: min={mn} p50={p50} p95={p95} max={mx}"
 
 
+def recommended_producer(label: str) -> str:
+    if label == "node_log":
+        return (
+            "cargo run -q -p trnm-node -- --config configs/node1.toml --block-ms 5 "
+            "--max-blocks 3 --demo-tasks 8 --demo-keys 3 --parallel-workers 4 > run/parallel-sanity.log"
+        )
+    if label == "classic_bench":
+        return "./scripts/run_bench_matrix.sh"
+    if label == "mixed_bench":
+        return "./scripts/run_bench_mixed_matrix.sh"
+    if label == "executor_profile":
+        return "python3 scripts/executor_profile_report.py"
+    return "unknown"
+
+
 def main():
     p = argparse.ArgumentParser(description="Render profiling closeout baseline from node/bench outputs")
     p.add_argument("--node-log", default=None)
@@ -121,25 +136,13 @@ def main():
     lines += ["", "## Input Readiness"]
 
     readiness_rows = [
-        (
-            "node_log",
-            input_status(node_log),
-            "cargo run -q -p trnm-node -- --config configs/node1.toml --block-ms 5 --max-blocks 3 --demo-tasks 8 --demo-keys 3 --parallel-workers 4 > run/parallel-sanity.log",
-        ),
-        (
-            "classic_bench",
-            input_status(classic),
-            "TXS=1000 ./scripts/run_bench_matrix.sh",
-        ),
-        (
-            "mixed_bench",
-            input_status(mixed),
-            "TXS=1000 ./scripts/run_bench_mixed_matrix.sh",
-        ),
+        ("node_log", input_status(node_log), recommended_producer("node_log")),
+        ("classic_bench", input_status(classic), recommended_producer("classic_bench")),
+        ("mixed_bench", input_status(mixed), recommended_producer("mixed_bench")),
         (
             "executor_profile",
             input_status(executor_profile),
-            "python3 scripts/executor_profile_report.py",
+            recommended_producer("executor_profile"),
         ),
     ]
     for label, status, producer in readiness_rows:
@@ -147,16 +150,23 @@ def main():
 
     lines += ["", "## Data Completeness"]
 
-    if not any([node_log, classic, mixed, executor_profile]):
-        lines.append("- autopilot_assessment: BENCH_ONLY_RUN (must-run gate passed, but no persisted closeout artifacts were found)")
-        lines.append("- note: `cargo run -q -p trnm-bench -- --profile` prints useful immediate telemetry, but closeout files must be produced separately for curator/autopilot consumption")
-
     inputs = [
         ("node_log", node_log),
         ("classic_bench", classic),
         ("mixed_bench", mixed),
         ("executor_profile", executor_profile),
     ]
+    present_count = sum(1 for _, path in inputs if path and os.path.exists(path))
+
+    if present_count == 0:
+        lines.append("- autopilot_assessment: BENCH_ONLY_RUN (must-run gate passed, but no persisted closeout artifacts were found)")
+        lines.append("- note: `cargo run -q -p trnm-bench -- --profile` prints useful immediate telemetry, but closeout files must be produced separately for curator/autopilot consumption")
+    elif present_count < len(inputs):
+        lines.append("- autopilot_assessment: PARTIAL_CLOSEOUT (some persisted closeout artifacts are present, but the evidence set is incomplete)")
+        lines.append("- note: closeout is usable for directional review, but curator/autopilot decisions should prefer a full 4/4 evidence set")
+    else:
+        lines.append("- autopilot_assessment: COMPLETE_CLOSEOUT (all persisted closeout artifacts are present)")
+
     missing_inputs = []
     present_inputs = []
     for label, path in inputs:
@@ -221,10 +231,29 @@ def main():
         lines.append("- consensus summary: missing")
 
     lines += ["", "## Benchmark Summary"]
+    lines.append(
+        f"- benchmark_artifact_coverage: {len([p for p in [classic, mixed, executor_profile] if p and os.path.exists(p)])}/3"
+    )
+    if classic and os.path.exists(classic):
+        lines.append(
+            f"- classic_bench_freshness: {freshness_label(file_age_seconds(classic))}"
+        )
+    else:
+        lines.append("- classic_bench_freshness: missing")
+    if mixed and os.path.exists(mixed):
+        lines.append(
+            f"- mixed_bench_freshness: {freshness_label(file_age_seconds(mixed))}"
+        )
+    else:
+        lines.append("- mixed_bench_freshness: missing")
     if executor_profile and os.path.exists(executor_profile):
+        lines.append(
+            f"- executor_profile_freshness: {freshness_label(file_age_seconds(executor_profile))}"
+        )
         with open(executor_profile, "r", encoding="utf-8") as f:
             lines.extend([line.rstrip() for line in f])
     else:
+        lines.append("- executor_profile_freshness: missing")
         lines.append("- executor profile summary: missing")
 
     os.makedirs(os.path.dirname(out), exist_ok=True)
