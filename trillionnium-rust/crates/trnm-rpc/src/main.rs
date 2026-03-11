@@ -2240,12 +2240,18 @@ fn parse_query_events_limit_from_path(path: &str) -> std::result::Result<usize, 
             ));
         }
 
-        parsed_limit = Some(normalized.parse::<usize>().map_err(|_| {
+        let requested = normalized.parse::<usize>().map_err(|_| {
             http_json_response(
                 "400 Bad Request",
                 "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}",
             )
-        })?);
+        })?;
+        parsed_limit = Some(clamp_limit(
+            "QueryEventsHttp",
+            requested,
+            QUERY_EVENTS_LIMIT_DEFAULT,
+            QUERY_EVENTS_LIMIT_MAX,
+        ));
     }
 
     Ok(parsed_limit.unwrap_or(QUERY_EVENTS_LIMIT_DEFAULT))
@@ -3702,6 +3708,18 @@ mod tests {
             parse_query_events_limit_from_path("/query-events/42?limit=  `9`  ")
                 .expect("backtick-wrapped numeric limit should parse"),
             9
+        );
+    }
+
+    #[test]
+    fn parse_query_events_limit_from_path_clamps_to_hardcap() {
+        assert_eq!(
+            parse_query_events_limit_from_path(&format!(
+                "/query-events/42?limit={}",
+                QUERY_EVENTS_LIMIT_MAX + 99
+            ))
+            .expect("oversized limit should clamp to hardcap"),
+            QUERY_EVENTS_LIMIT_MAX
         );
     }
 
