@@ -750,7 +750,16 @@ fn parse_env_usize(name: &str) -> Option<usize> {
 
 #[inline]
 fn parse_env_f64(name: &str) -> Option<f64> {
-    parse_env_numeric(name).and_then(|v| v.parse::<f64>().ok())
+    parse_env_numeric(name).and_then(|v| {
+        let percent = v.ends_with('%');
+        let numeric = if percent { v.strip_suffix('%').unwrap_or(&v) } else { &v };
+        let parsed = numeric.parse::<f64>().ok()?;
+        if !parsed.is_finite() {
+            return None;
+        }
+        let value = if percent { parsed / 100.0 } else { parsed };
+        value.is_finite().then_some(value)
+    })
 }
 
 fn aggr_scan_window() -> usize {
@@ -1965,6 +1974,21 @@ mod tests {
         assert_eq!(auto_min_expected_gain_score(), 0.05);
         assert_eq!(hot_bucket_count(), 16);
         assert_eq!(auto_adaptive_min_batch_len(), 1024);
+    }
+
+    #[test]
+    fn auto_adaptive_numeric_env_parser_accepts_percent_suffix_for_ratio_knobs() {
+        let _env = env_lock();
+
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "25%");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", " 10% ");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "'1.25%' ");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", " \"5%\" ");
+
+        assert_eq!(auto_hot_streak_threshold(), 0.25);
+        assert_eq!(auto_reorder_min_margin(), 0.1);
+        assert_eq!(auto_reorder_min_hot_key_share(), 0.0125);
+        assert_eq!(auto_min_expected_gain_score(), 0.05);
     }
 
     #[test]
