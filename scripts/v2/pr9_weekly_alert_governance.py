@@ -171,12 +171,33 @@ def topn_diff(curr: list[str], prev: list[str]) -> dict[str, Any]:
     }
 
 
-def find_previous_week_json(history_dir: Path, current_json_out: Path) -> Path | None:
+def snapshot_timestamp(path: Path) -> dt.datetime | None:
+    m = re.match(r"weekly-alert-governance-(\d{8}T\d{6}Z)\.json$", path.name)
+    if not m:
+        return None
+    try:
+        return dt.datetime.strptime(m.group(1), "%Y%m%dT%H%M%SZ").replace(tzinfo=dt.timezone.utc)
+    except ValueError:
+        return None
+
+
+def find_previous_week_json(history_dir: Path, current_json_out: Path, now_dt: dt.datetime, lookback_days: int) -> Path | None:
     if not history_dir.exists():
         return None
-    files = sorted(history_dir.glob("weekly-alert-governance-*.json"))
-    files = [p for p in files if p.resolve() != current_json_out.resolve()]
-    return files[-1] if files else None
+    target_cutoff = now_dt - dt.timedelta(days=max(1, lookback_days))
+    candidates: list[tuple[float, Path]] = []
+    for p in sorted(history_dir.glob("weekly-alert-governance-*.json")):
+        if p.resolve() == current_json_out.resolve():
+            continue
+        ts = snapshot_timestamp(p)
+        if ts is None or ts > now_dt:
+            continue
+        distance = abs((ts - target_cutoff).total_seconds())
+        candidates.append((distance, p))
+    if not candidates:
+        return None
+    candidates.sort(key=lambda item: (item[0], item[1].name))
+    return candidates[0][1]
 
 
 def main() -> int:
@@ -192,6 +213,7 @@ def main() -> int:
     out_md = root / args.out
     out_json = root / args.json_out
     history_dir = root / args.history_dir
+    now_dt = dt.datetime.now(dt.timezone.utc)
 
     state_path = root / "run/pr7-alert-delivery/state.json"
     dead_letter_path = root / "run/pr7-alert-delivery/dead-letter.jsonl"
@@ -231,7 +253,7 @@ def main() -> int:
             changed_keys.append({"key": k, "old": env_prev.get(k, "(missing)"), "new": env_now.get(k, "(missing)")})
 
     # Week-over-week baseline from history json.
-    prev_week_json_path = find_previous_week_json(history_dir, out_json)
+    prev_week_json_path = find_previous_week_json(history_dir, out_json, now_dt, args.lookback_days)
     prev_week = safe_json(prev_week_json_path) if prev_week_json_path else {}
     prev_metrics = prev_week.get("metrics", {}) if isinstance(prev_week.get("metrics", {}), dict) else {}
     prev_topn = prev_week.get("topn", {}) if isinstance(prev_week.get("topn", {}), dict) else {}
@@ -259,7 +281,6 @@ def main() -> int:
         "threshold_removed_keys_vs_last_week": sorted(prev_threshold_keys - {x["key"] for x in changed_keys}) if has_prev else [],
     }
 
-    now_dt = dt.datetime.now(dt.timezone.utc)
     now_utc = now_dt.strftime("%Y-%m-%d %H:%M:%SZ")
 
     payload: dict[str, Any] = {
