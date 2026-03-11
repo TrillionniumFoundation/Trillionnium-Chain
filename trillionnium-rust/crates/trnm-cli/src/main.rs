@@ -306,6 +306,15 @@ fn extract_tx_hash(text: &str) -> Option<String> {
         if let Some(h) = v.get("txhash").and_then(|x| x.as_str()) {
             return normalize_tx_hash(h);
         }
+        if let Some(h) = v.get("txHash").and_then(|x| x.as_str()) {
+            return normalize_tx_hash(h);
+        }
+        if let Some(h) = v.get("transaction_hash").and_then(|x| x.as_str()) {
+            return normalize_tx_hash(h);
+        }
+        if let Some(h) = v.get("transactionHash").and_then(|x| x.as_str()) {
+            return normalize_tx_hash(h);
+        }
     }
 
     None
@@ -1000,6 +1009,18 @@ mod tests {
         assert_eq!(
             extract_tx_hash("meta txHash=0xcafe02;").as_deref(),
             Some("0xcafe02")
+        );
+    }
+
+    #[test]
+    fn extract_tx_hash_accepts_uppercase_prefixed_hashes_and_json_aliases() {
+        assert_eq!(
+            extract_tx_hash("tx_hash=0xDEADBEEFCAFEBABE").as_deref(),
+            Some("0xdeadbeefcafebabe")
+        );
+        assert_eq!(
+            extract_tx_hash("{\"txHash\":\"ABCDEF012345\",\"status\":\"ok\"}").as_deref(),
+            Some("abcdef012345")
         );
     }
 
