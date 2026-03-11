@@ -49,6 +49,20 @@ struct TeeVerifierHandoff {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
+struct IntelQuoteCollateralBundle {
+    collateral: String,
+    cert_chain: String,
+    issuer: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct AmdSnpSignerBundle {
+    vcek: String,
+    cert_chain: String,
+    report_signer: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
 struct QuoteVerifierInput {
     attestation_target: String,
     verifier_kind: String,
@@ -56,9 +70,7 @@ struct QuoteVerifierInput {
     measurement: String,
     report_data_hash: String,
     quote: String,
-    collateral: String,
-    cert_chain: String,
-    issuer: String,
+    intel_collateral: IntelQuoteCollateralBundle,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -69,9 +81,7 @@ struct ReportVerifierInput {
     measurement: String,
     report_data_hash: String,
     report: String,
-    vcek: String,
-    cert_chain: String,
-    report_signer: String,
+    amd_signer: AmdSnpSignerBundle,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -201,24 +211,26 @@ impl TeeTargetAdapter for SgxDcapAdapter {
             measurement: handoff.measurement.clone(),
             report_data_hash: handoff.report_data_hash.clone(),
             quote: handoff.evidence.clone(),
-            collateral: required_metadata(
-                handoff.verifier_metadata.collateral.as_deref(),
-                "collateral",
-                handoff.attestation_target.as_str(),
-                request,
-            )?,
-            cert_chain: required_metadata(
-                handoff.verifier_metadata.cert_chain.as_deref(),
-                "cert_chain",
-                handoff.attestation_target.as_str(),
-                request,
-            )?,
-            issuer: required_metadata(
-                handoff.verifier_metadata.issuer.as_deref(),
-                "issuer",
-                handoff.attestation_target.as_str(),
-                request,
-            )?,
+            intel_collateral: IntelQuoteCollateralBundle {
+                collateral: required_metadata(
+                    handoff.verifier_metadata.collateral.as_deref(),
+                    "collateral",
+                    handoff.attestation_target.as_str(),
+                    request,
+                )?,
+                cert_chain: required_metadata(
+                    handoff.verifier_metadata.cert_chain.as_deref(),
+                    "cert_chain",
+                    handoff.attestation_target.as_str(),
+                    request,
+                )?,
+                issuer: required_metadata(
+                    handoff.verifier_metadata.issuer.as_deref(),
+                    "issuer",
+                    handoff.attestation_target.as_str(),
+                    request,
+                )?,
+            },
         }))
     }
 }
@@ -253,24 +265,26 @@ impl TeeTargetAdapter for TdxQgsAdapter {
             measurement: handoff.measurement.clone(),
             report_data_hash: handoff.report_data_hash.clone(),
             quote: handoff.evidence.clone(),
-            collateral: required_metadata(
-                handoff.verifier_metadata.collateral.as_deref(),
-                "collateral",
-                handoff.attestation_target.as_str(),
-                request,
-            )?,
-            cert_chain: required_metadata(
-                handoff.verifier_metadata.cert_chain.as_deref(),
-                "cert_chain",
-                handoff.attestation_target.as_str(),
-                request,
-            )?,
-            issuer: required_metadata(
-                handoff.verifier_metadata.issuer.as_deref(),
-                "issuer",
-                handoff.attestation_target.as_str(),
-                request,
-            )?,
+            intel_collateral: IntelQuoteCollateralBundle {
+                collateral: required_metadata(
+                    handoff.verifier_metadata.collateral.as_deref(),
+                    "collateral",
+                    handoff.attestation_target.as_str(),
+                    request,
+                )?,
+                cert_chain: required_metadata(
+                    handoff.verifier_metadata.cert_chain.as_deref(),
+                    "cert_chain",
+                    handoff.attestation_target.as_str(),
+                    request,
+                )?,
+                issuer: required_metadata(
+                    handoff.verifier_metadata.issuer.as_deref(),
+                    "issuer",
+                    handoff.attestation_target.as_str(),
+                    request,
+                )?,
+            },
         }))
     }
 }
@@ -305,24 +319,26 @@ impl TeeTargetAdapter for SevSnpAdapter {
             measurement: handoff.measurement.clone(),
             report_data_hash: handoff.report_data_hash.clone(),
             report: handoff.evidence.clone(),
-            vcek: required_metadata(
-                handoff.verifier_metadata.vcek.as_deref(),
-                "vcek",
-                handoff.attestation_target.as_str(),
-                request,
-            )?,
-            cert_chain: required_metadata(
-                handoff.verifier_metadata.cert_chain.as_deref(),
-                "cert_chain",
-                handoff.attestation_target.as_str(),
-                request,
-            )?,
-            report_signer: required_metadata(
-                handoff.verifier_metadata.report_signer.as_deref(),
-                "report_signer",
-                handoff.attestation_target.as_str(),
-                request,
-            )?,
+            amd_signer: AmdSnpSignerBundle {
+                vcek: required_metadata(
+                    handoff.verifier_metadata.vcek.as_deref(),
+                    "vcek",
+                    handoff.attestation_target.as_str(),
+                    request,
+                )?,
+                cert_chain: required_metadata(
+                    handoff.verifier_metadata.cert_chain.as_deref(),
+                    "cert_chain",
+                    handoff.attestation_target.as_str(),
+                    request,
+                )?,
+                report_signer: required_metadata(
+                    handoff.verifier_metadata.report_signer.as_deref(),
+                    "report_signer",
+                    handoff.attestation_target.as_str(),
+                    request,
+                )?,
+            },
         }))
     }
 }
@@ -492,7 +508,7 @@ fn verify_fixture_input(
                     ),
                 });
             }
-            if input.collateral != expected.collateral {
+            if input.intel_collateral.collateral != expected.intel_collateral.collateral {
                 return Err(BackendExecutionError::InvalidProof {
                     backend: request.backend_label(RealTeeBackend::backend_id_static()),
                     reason: format!(
@@ -501,7 +517,7 @@ fn verify_fixture_input(
                     ),
                 });
             }
-            if input.cert_chain != expected.cert_chain {
+            if input.intel_collateral.cert_chain != expected.intel_collateral.cert_chain {
                 return Err(BackendExecutionError::InvalidProof {
                     backend: request.backend_label(RealTeeBackend::backend_id_static()),
                     reason: format!(
@@ -510,7 +526,7 @@ fn verify_fixture_input(
                     ),
                 });
             }
-            if input.issuer != expected.issuer {
+            if input.intel_collateral.issuer != expected.intel_collateral.issuer {
                 return Err(BackendExecutionError::InvalidProof {
                     backend: request.backend_label(RealTeeBackend::backend_id_static()),
                     reason: format!(
@@ -558,7 +574,7 @@ fn verify_fixture_input(
                     ),
                 });
             }
-            if input.vcek != expected.vcek {
+            if input.amd_signer.vcek != expected.amd_signer.vcek {
                 return Err(BackendExecutionError::InvalidProof {
                     backend: request.backend_label(RealTeeBackend::backend_id_static()),
                     reason: format!(
@@ -567,7 +583,7 @@ fn verify_fixture_input(
                     ),
                 });
             }
-            if input.cert_chain != expected.cert_chain {
+            if input.amd_signer.cert_chain != expected.amd_signer.cert_chain {
                 return Err(BackendExecutionError::InvalidProof {
                     backend: request.backend_label(RealTeeBackend::backend_id_static()),
                     reason: format!(
@@ -576,7 +592,7 @@ fn verify_fixture_input(
                     ),
                 });
             }
-            if input.report_signer != expected.report_signer {
+            if input.amd_signer.report_signer != expected.amd_signer.report_signer {
                 return Err(BackendExecutionError::InvalidProof {
                     backend: request.backend_label(RealTeeBackend::backend_id_static()),
                     reason: format!(
@@ -815,17 +831,15 @@ mod tests {
                 verifier_kind,
                 measurement_field,
                 quote,
-                collateral,
-                cert_chain,
-                issuer,
+                intel_collateral,
                 ..
             }) if attestation_target == "sgx-dcap"
                 && verifier_kind == "quote-verifier"
                 && measurement_field == "mrenclave"
                 && quote == "quote-sgx-dcap-demo-v1"
-                && collateral == "intel-dcap-collateral-demo-v1"
-                && cert_chain == "intel-dcap-cert-chain-demo-v1"
-                && issuer == "intel"
+                && intel_collateral.collateral == "intel-dcap-collateral-demo-v1"
+                && intel_collateral.cert_chain == "intel-dcap-cert-chain-demo-v1"
+                && intel_collateral.issuer == "intel"
         ));
     }
 
@@ -841,17 +855,15 @@ mod tests {
                 verifier_kind,
                 measurement_field,
                 report,
-                vcek,
-                cert_chain,
-                report_signer,
+                amd_signer,
                 ..
             }) if attestation_target == "sev-snp"
                 && verifier_kind == "report-verifier"
                 && measurement_field == "measurement"
                 && report == "report-sev-snp-demo-v1"
-                && vcek == "amd-vcek-demo-v1"
-                && cert_chain == "amd-cert-chain-demo-v1"
-                && report_signer == "amd"
+                && amd_signer.vcek == "amd-vcek-demo-v1"
+                && amd_signer.cert_chain == "amd-cert-chain-demo-v1"
+                && amd_signer.report_signer == "amd"
         ));
     }
 

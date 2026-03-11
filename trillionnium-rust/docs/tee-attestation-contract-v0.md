@@ -27,11 +27,11 @@ The feature-gated real TEE backend additionally owns:
 
 ## Canonical attestation target matrix
 
-| target | adapter | verifier kind | evidence field | measurement prefix | required verifier metadata | notes |
-| --- | --- | --- | --- | --- | --- | --- |
-| `sgx-dcap` | `SgxDcapAdapter` | `quote-verifier` | `quote` | `mrenclave:` | `collateral`, `cert_chain`, `issuer` | Intel SGX DCAP-style quote path |
-| `tdx-qgs` | `TdxQgsAdapter` | `quote-verifier` | `quote` | `mrtd:` | `collateral`, `cert_chain`, `issuer` | Intel TDX QGS quote path |
-| `sev-snp` | `SevSnpAdapter` | `report-verifier` | `report` | `measurement:` | `vcek`, `cert_chain`, `report_signer` | AMD SEV-SNP report path |
+| target | adapter | verifier kind | evidence field | measurement prefix | required verifier metadata | downstream bundle shape | notes |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| `sgx-dcap` | `SgxDcapAdapter` | `quote-verifier` | `quote` | `mrenclave:` | `collateral`, `cert_chain`, `issuer` | `IntelQuoteCollateralBundle` | Intel SGX DCAP-style quote path |
+| `tdx-qgs` | `TdxQgsAdapter` | `quote-verifier` | `quote` | `mrtd:` | `collateral`, `cert_chain`, `issuer` | `IntelQuoteCollateralBundle` | Intel TDX QGS quote path |
+| `sev-snp` | `SevSnpAdapter` | `report-verifier` | `report` | `measurement:` | `vcek`, `cert_chain`, `report_signer` | `AmdSnpSignerBundle` | AMD SEV-SNP report path |
 
 Unknown values must fail closed before any cryptographic verification attempt.
 
@@ -46,7 +46,7 @@ Target-specific evidence is also required:
 - `tdx-qgs` → `quote`
 - `sev-snp` → `report`
 
-Target-specific verifier metadata is now explicit:
+Target-specific verifier metadata is explicit:
 - quote-based targets (`sgx-dcap`, `tdx-qgs`) require:
   - `collateral`
   - `cert_chain`
@@ -86,11 +86,15 @@ Used by SGX DCAP and TDX QGS adapters.
   measurement,
   report_data_hash,
   quote,
-  collateral,
-  cert_chain,
-  issuer
+  intel_collateral: {
+    collateral,
+    cert_chain,
+    issuer
+  }
 }
 ```
+
+This vendor-shaped bundle is intended to match the seam a future Intel quote verifier would consume.
 
 ### Report verifier input
 Used by SEV-SNP adapter.
@@ -103,13 +107,15 @@ Used by SEV-SNP adapter.
   measurement,
   report_data_hash,
   report,
-  vcek,
-  cert_chain,
-  report_signer
+  amd_signer: {
+    vcek,
+    cert_chain,
+    report_signer
+  }
 }
 ```
 
-This is the seam future real quote/report verifiers should consume.
+This vendor-shaped bundle is intended to match the seam a future AMD SNP report verifier would consume.
 
 ## report_data_hash binding
 `report_data_hash` must match the task `result_hash` carried by the bound envelope.
