@@ -439,6 +439,35 @@ mod tests {
     }
 
     #[test]
+    fn registry_zk_vector_valid_payload_reaches_backend_path_with_real_backend_feature() {
+        let registry = registry_with_mock_zk_backend();
+        let mut task = task_with_proof_type(ProofType::Zk);
+        task.status = TaskStatus::Committed;
+        task.worker = Some("worker-zk".into());
+        task.result_hash = Some([0x11; 32]);
+
+        let payload = br#"ZK:{"task_id":42,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"mock-zk-vectors","backend_version":"v1","vk_ref":"vk://trnm/dev/mock-groth16/valid","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["42","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]},"meta":{"schema_version":"trnm.zk.payload.v0","circuit_id":"fixture-registry-valid"}}"#;
+
+        assert_eq!(registry.verify(&task, payload), VerificationResult::Valid);
+    }
+
+    #[test]
+    fn registry_zk_vector_plonk_payload_reaches_backend_path_with_real_backend_feature() {
+        let registry = registry_with_mock_zk_backend();
+        let mut task = task_with_proof_type(ProofType::Zk);
+        task.status = TaskStatus::Committed;
+        task.worker = Some("worker-zk".into());
+        task.result_hash = Some([0x11; 32]);
+
+        let payload = br#"ZK:{"task_id":42,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"plonk","backend_id":"mock-zk-vectors","backend_version":"v1","vk_ref":"vk://trnm/dev/mock-plonk/valid","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["42","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]},"meta":{"schema_version":"trnm.zk.payload.v0","circuit_id":"fixture-registry-plonk"}}"#;
+
+        assert!(matches!(
+            registry.verify(&task, payload),
+            VerificationResult::Invalid(msg) if msg.contains("unexpected vk_ref 'vk://trnm/dev/mock-plonk/valid'")
+        ));
+    }
+
+    #[test]
     fn registry_zk_vector_proof_type_mismatch_fails_closed_before_crypto() {
         let registry = registry_with_mock_zk_backend();
         let mut task = task_with_proof_type(ProofType::Zk);
