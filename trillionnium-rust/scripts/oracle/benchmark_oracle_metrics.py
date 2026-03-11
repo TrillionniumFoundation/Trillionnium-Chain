@@ -27,7 +27,8 @@ def validate_snapshot(s, min_sources, max_staleness_ms, max_deviation_bps):
         uniq.add(sid)
         values.append(float(src.get("value", 0.0)))
         ts = int(src.get("ts_unix_ms", now_ms))
-        if now_ms - ts > max_staleness_ms:
+        age_ms = now_ms - ts
+        if age_ms < 0 or age_ms > max_staleness_ms:
             return "stale", len(uniq)
 
     if len(uniq) < min_sources:
@@ -149,6 +150,23 @@ def _test_zero_median_still_rejects_drift():
     )
     assert status == "drift"
     assert cardinality == 2
+
+
+def _test_future_dated_source_rejects_as_stale():
+    status, cardinality = validate_snapshot(
+        {
+            "snapshot_ts_ms": 1_000,
+            "sources": [
+                {"source": "s1", "value": 1.0, "ts_unix_ms": 1_001},
+                {"source": "s2", "value": 1.0, "ts_unix_ms": 1_000},
+            ],
+        },
+        min_sources=2,
+        max_staleness_ms=60_000,
+        max_deviation_bps=500,
+    )
+    assert status == "stale"
+    assert cardinality == 1
 
 
 if __name__ == "__main__":
