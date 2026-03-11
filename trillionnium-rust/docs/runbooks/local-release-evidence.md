@@ -10,6 +10,8 @@
 
 脚本会串联以下检查：
 
+> 注意：该脚本生成的是 **release evidence bundle**，不是“必定通过”的绿色证明。任一步骤失败时，脚本会 **fail-closed**，并在 `summary.txt` 中把对应步骤记为 `FAIL(...)`；是否可用于当前 release/readiness 判断，必须结合仓库根 `RELEASE_READINESS.md` 与本次 `summary.txt` 一起看。
+
 1. `cargo test`（关键包：`trnm-node` / `trnm-worker-agent` / `trnm-rpc` / `trnm-pouw` / `trnm-state`）
 2. `scripts/check_request_tx_binding.sh`
 3. `scripts/run_request_fault_injection.sh`
@@ -21,6 +23,11 @@
 - 汇总文件：`run/health/evidence-<timestamp>/summary.txt`
 - 各步骤日志：`*.log`
 - 子脚本证据文件（例如 `request-tx-binding-*.txt`、`request-fault-injection-*.txt`）
+
+判读规则：
+- `summary.txt` 是本次证据包的**唯一汇总入口**。
+- 只要任一步骤记为 `FAIL(...)`，本次证据包就只能作为失败/差距留痕，**不能**被表述为“当前 release-ready 证明”。
+- 若需要引用历史成功证据，必须明确它是历史轮次产物，不能覆盖当前 truth-source。
 
 可选：通过 `OUT_DIR` 指定证据根目录：
 
