@@ -144,6 +144,8 @@ fn is_sanitized_to_space(ch: char) -> bool {
                 | '\u{202D}'
                 | '\u{202E}'
                 | '\u{202F}'
+                | '\u{205F}'
+                | '\u{3000}'
                 | '\u{2060}'
                 | '\u{2061}'
                 | '\u{2062}'
@@ -273,5 +275,12 @@ mod tests {
         let raw = "target\u{00A0}relay\u{2007}timeout\u{202F}signal";
         let normalized = normalize_compensation_reason(raw, "fallback");
         assert_eq!(normalized, "target relay timeout signal");
+    }
+
+    #[test]
+    fn normalize_compensation_reason_collapses_medium_math_and_ideographic_spaces() {
+        let raw = "target\u{205F}relay\u{3000}timeout";
+        let normalized = normalize_compensation_reason(raw, "fallback");
+        assert_eq!(normalized, "target relay timeout");
     }
 }

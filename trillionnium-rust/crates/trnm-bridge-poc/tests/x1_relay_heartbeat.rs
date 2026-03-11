@@ -187,3 +187,11 @@ fn relay_heartbeat_failure_reason_at_limit_does_not_append_ellipsis() {
     assert!(!out.message.ends_with('…'));
     assert_eq!(out.message, exact_limit_reason);
 }
+
+#[test]
+fn relay_heartbeat_failure_reason_collapses_medium_math_and_ideographic_spaces() {
+    let mut hb = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 3));
+
+    let out = hb.record_failure("rpc\u{205F} timeout\u{3000}bridge");
+    assert_eq!(out.message, "rpc timeout bridge");
+}

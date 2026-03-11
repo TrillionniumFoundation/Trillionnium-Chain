@@ -114,6 +114,8 @@ fn is_disallowed_invisible_char(ch: char) -> bool {
             | '\u{202D}'
             | '\u{202E}'
             | '\u{202F}'
+            | '\u{205F}'
+            | '\u{3000}'
             | '\u{2060}'
             | '\u{2061}'
             | '\u{2062}'
@@ -186,4 +188,12 @@ mod tests {
         let normalized = normalize_failure_reason(raw);
         assert_eq!(normalized, "target relay timeout");
     }
+
+    #[test]
+    fn normalize_failure_reason_collapses_medium_math_and_ideographic_spaces() {
+        let raw = "target\u{205F}relay\u{3000}timeout";
+        let normalized = normalize_failure_reason(raw);
+        assert_eq!(normalized, "target relay timeout");
+    }
 }
+
