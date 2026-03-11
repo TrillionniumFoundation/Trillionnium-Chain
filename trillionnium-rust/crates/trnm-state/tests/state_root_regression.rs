@@ -498,3 +498,60 @@ fn debiting_balance_to_zero_removes_treasury_entry_without_perturbing_restore_ro
         "debiting a treasury balance to zero must remove the entry so state_root returns to the missing-entry baseline"
     );
 }
+
+#[test]
+fn restore_monetary_state_rewinds_state_root_after_zero_net_tick_roundtrip() {
+    let mut state = StateStore::new();
+    state
+        .set_gov_param(
+            0,
+            1,
+            "monetary_policy_tick_interval_blocks".to_string(),
+            "10".to_string(),
+        )
+        .unwrap();
+    state
+        .set_gov_param(
+            0,
+            2,
+            "monetary_policy_tick_cooldown_blocks".to_string(),
+            "1".to_string(),
+        )
+        .unwrap();
+    state
+        .set_gov_param(0, 3, "monetary_base_issuance_per_tick".to_string(), "5".to_string())
+        .unwrap();
+    state
+        .set_gov_param(0, 4, "monetary_base_burn_per_tick".to_string(), "5".to_string())
+        .unwrap();
+
+    let baseline_root = state.state_root();
+    let monetary_snapshot = state.monetary_state_snapshot();
+
+    let event = state.policy_tick(10).unwrap();
+    assert_eq!(event.net_delta, 0, "sanity: tick should have zero net issuance");
+    assert_eq!(
+        state.monetary_state().net_issuance,
+        monetary_snapshot.net_issuance,
+        "sanity: zero-net tick should preserve net issuance even while other counters advance"
+    );
+
+    let mutated_root = state.state_root();
+    assert_ne!(
+        mutated_root, baseline_root,
+        "zero-net monetary ticks must still perturb state_root because gross counters and tick metadata changed"
+    );
+
+    state.restore_monetary_state(monetary_snapshot);
+
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "restore_monetary_state must rewind state_root exactly even after a zero-net issuance tick"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "repeated reads after zero-net monetary restore should deterministically reuse the rewound cached root"
+    );
+}
