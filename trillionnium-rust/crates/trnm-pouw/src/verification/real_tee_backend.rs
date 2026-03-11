@@ -623,6 +623,22 @@ fn verify_fixture_input(
     }
 }
 
+trait IntelQuoteVerifierProvider: Send + Sync {
+    fn verify_intel_quote_bundle(
+        &self,
+        input: &QuoteVerifierInput,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<BackendVerificationSuccess, BackendExecutionError>;
+}
+
+trait AmdReportVerifierProvider: Send + Sync {
+    fn verify_amd_report_bundle(
+        &self,
+        input: &ReportVerifierInput,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<BackendVerificationSuccess, BackendExecutionError>;
+}
+
 trait VendorVerifierExecutor: Send + Sync {
     fn verify_intel_quote_bundle(
         &self,
@@ -637,11 +653,11 @@ trait VendorVerifierExecutor: Send + Sync {
     ) -> Result<BackendVerificationSuccess, BackendExecutionError>;
 }
 
-struct FixtureBackedVendorVerifierExecutor {
+struct FixtureBackedIntelQuoteVerifierProvider {
     fixtures: Vec<TeeFixture>,
 }
 
-impl FixtureBackedVendorVerifierExecutor {
+impl FixtureBackedIntelQuoteVerifierProvider {
     fn new(fixtures: Vec<TeeFixture>) -> Self {
         Self { fixtures }
     }
@@ -664,7 +680,7 @@ impl FixtureBackedVendorVerifierExecutor {
     }
 }
 
-impl VendorVerifierExecutor for FixtureBackedVendorVerifierExecutor {
+impl IntelQuoteVerifierProvider for FixtureBackedIntelQuoteVerifierProvider {
     fn verify_intel_quote_bundle(
         &self,
         input: &QuoteVerifierInput,
@@ -676,7 +692,36 @@ impl VendorVerifierExecutor for FixtureBackedVendorVerifierExecutor {
             backend_id: fixture.backend_id.clone(),
         })
     }
+}
 
+struct FixtureBackedAmdReportVerifierProvider {
+    fixtures: Vec<TeeFixture>,
+}
+
+impl FixtureBackedAmdReportVerifierProvider {
+    fn new(fixtures: Vec<TeeFixture>) -> Self {
+        Self { fixtures }
+    }
+
+    fn fixture_for_target<'a>(
+        &'a self,
+        attestation_target: &str,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<&'a TeeFixture, BackendExecutionError> {
+        self.fixtures
+            .iter()
+            .find(|fixture| fixture.verifier_input.attestation_target() == attestation_target)
+            .ok_or_else(|| BackendExecutionError::Unavailable {
+                backend: request.backend_label(RealTeeBackend::backend_id_static()),
+                reason: format!(
+                    "no embedded attestation vector registered for target '{}'",
+                    attestation_target
+                ),
+            })
+    }
+}
+
+impl AmdReportVerifierProvider for FixtureBackedAmdReportVerifierProvider {
     fn verify_amd_report_bundle(
         &self,
         input: &ReportVerifierInput,
@@ -687,6 +732,51 @@ impl VendorVerifierExecutor for FixtureBackedVendorVerifierExecutor {
         Ok(BackendVerificationSuccess {
             backend_id: fixture.backend_id.clone(),
         })
+    }
+}
+
+struct ProviderBackedVendorVerifierExecutor {
+    intel_quote_provider: Arc<dyn IntelQuoteVerifierProvider>,
+    amd_report_provider: Arc<dyn AmdReportVerifierProvider>,
+}
+
+impl ProviderBackedVendorVerifierExecutor {
+    fn new(
+        intel_quote_provider: Arc<dyn IntelQuoteVerifierProvider>,
+        amd_report_provider: Arc<dyn AmdReportVerifierProvider>,
+    ) -> Self {
+        Self {
+            intel_quote_provider,
+            amd_report_provider,
+        }
+    }
+
+    fn fixture_backed() -> Self {
+        let fixtures = load_embedded_fixtures();
+        Self::new(
+            Arc::new(FixtureBackedIntelQuoteVerifierProvider::new(fixtures.clone())),
+            Arc::new(FixtureBackedAmdReportVerifierProvider::new(fixtures)),
+        )
+    }
+}
+
+impl VendorVerifierExecutor for ProviderBackedVendorVerifierExecutor {
+    fn verify_intel_quote_bundle(
+        &self,
+        input: &QuoteVerifierInput,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<BackendVerificationSuccess, BackendExecutionError> {
+        self.intel_quote_provider
+            .verify_intel_quote_bundle(input, request)
+    }
+
+    fn verify_amd_report_bundle(
+        &self,
+        input: &ReportVerifierInput,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<BackendVerificationSuccess, BackendExecutionError> {
+        self.amd_report_provider
+            .verify_amd_report_bundle(input, request)
     }
 }
 
@@ -702,9 +792,7 @@ impl Default for RealTeeBackend {
 
 impl RealTeeBackend {
     pub fn new() -> Self {
-        Self::with_executor(Arc::new(FixtureBackedVendorVerifierExecutor::new(
-            load_embedded_fixtures(),
-        )))
+        Self::with_executor(Arc::new(ProviderBackedVendorVerifierExecutor::fixture_backed()))
     }
 
     fn with_executor(executor: Arc<dyn VendorVerifierExecutor>) -> Self {
@@ -930,6 +1018,144 @@ mod tests {
                 && amd_signer.vcek == "amd-vcek-demo-v1"
                 && amd_signer.cert_chain == "amd-cert-chain-demo-v1"
                 && amd_signer.report_signer == "amd"
+        ));
+    }
+
+    struct AssertingIntelQuoteProvider;
+
+    impl IntelQuoteVerifierProvider for AssertingIntelQuoteProvider {
+        fn verify_intel_quote_bundle(
+            &self,
+            input: &QuoteVerifierInput,
+            _request: &BackendVerificationRequest<'_>,
+        ) -> Result<BackendVerificationSuccess, BackendExecutionError> {
+            assert_eq!(input.attestation_target, "sgx-dcap");
+            assert_eq!(input.verifier_kind, "quote-verifier");
+            assert_eq!(input.measurement_field, "mrenclave");
+            assert_eq!(input.quote, "quote-sgx-dcap-demo-v1");
+            assert_eq!(input.intel_collateral.collateral, "intel-dcap-collateral-demo-v1");
+            assert_eq!(input.intel_collateral.cert_chain, "intel-dcap-cert-chain-demo-v1");
+            assert_eq!(input.intel_collateral.issuer, "intel");
+            Ok(BackendVerificationSuccess {
+                backend_id: "intel-mock-provider".into(),
+            })
+        }
+    }
+
+    struct AssertingAmdReportProvider;
+
+    impl AmdReportVerifierProvider for AssertingAmdReportProvider {
+        fn verify_amd_report_bundle(
+            &self,
+            input: &ReportVerifierInput,
+            _request: &BackendVerificationRequest<'_>,
+        ) -> Result<BackendVerificationSuccess, BackendExecutionError> {
+            assert_eq!(input.attestation_target, "sev-snp");
+            assert_eq!(input.verifier_kind, "report-verifier");
+            assert_eq!(input.measurement_field, "measurement");
+            assert_eq!(input.report, "report-sev-snp-demo-v1");
+            assert_eq!(input.amd_signer.vcek, "amd-vcek-demo-v1");
+            assert_eq!(input.amd_signer.cert_chain, "amd-cert-chain-demo-v1");
+            assert_eq!(input.amd_signer.report_signer, "amd");
+            Ok(BackendVerificationSuccess {
+                backend_id: "amd-mock-provider".into(),
+            })
+        }
+    }
+
+    struct RejectingIntelQuoteProvider;
+
+    impl IntelQuoteVerifierProvider for RejectingIntelQuoteProvider {
+        fn verify_intel_quote_bundle(
+            &self,
+            _input: &QuoteVerifierInput,
+            request: &BackendVerificationRequest<'_>,
+        ) -> Result<BackendVerificationSuccess, BackendExecutionError> {
+            Err(BackendExecutionError::Internal {
+                backend: request.backend_label(RealTeeBackend::backend_id_static()),
+                reason: "unexpected intel quote path in amd provider test".to_string(),
+            })
+        }
+    }
+
+    struct RejectingAmdReportProvider;
+
+    impl AmdReportVerifierProvider for RejectingAmdReportProvider {
+        fn verify_amd_report_bundle(
+            &self,
+            _input: &ReportVerifierInput,
+            request: &BackendVerificationRequest<'_>,
+        ) -> Result<BackendVerificationSuccess, BackendExecutionError> {
+            Err(BackendExecutionError::Internal {
+                backend: request.backend_label(RealTeeBackend::backend_id_static()),
+                reason: "unexpected amd report path in intel provider test".to_string(),
+            })
+        }
+    }
+
+    #[test]
+    fn provider_backed_executor_delegates_intel_quote_bundle_to_provider() {
+        let task = mock_task();
+        let proof_data = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=sgx-dcap,measurement=mrenclave:demo-sgx-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,quote=quote-sgx-dcap-demo-v1,collateral=intel-dcap-collateral-demo-v1,cert_chain=intel-dcap-cert-chain-demo-v1,issuer=intel";
+        let payload = parse_tee_attestation_payload(proof_data).unwrap();
+        let handoff = TeeVerifierHandoff::from_payload(&payload, None).unwrap();
+        let input = match SGX_DCAP_ADAPTER.build_verifier_input(&handoff, None).unwrap() {
+            TeeVerifierInput::Quote(input) => input,
+            TeeVerifierInput::Report(_) => panic!("expected intel quote verifier input"),
+        };
+        let executor = ProviderBackedVendorVerifierExecutor::new(
+            Arc::new(AssertingIntelQuoteProvider),
+            Arc::new(RejectingAmdReportProvider),
+        );
+
+        let result = executor.verify_intel_quote_bundle(
+            &input,
+            &BackendVerificationRequest {
+                family: VerificationBackendFamily::Tee,
+                task: &task,
+                proof_data,
+                tee_payload: Some(&payload),
+                zk_payload: None,
+                resolved_vk_ref: None,
+            },
+        );
+
+        assert!(matches!(
+            result,
+            Ok(BackendVerificationSuccess { backend_id }) if backend_id == "intel-mock-provider"
+        ));
+    }
+
+    #[test]
+    fn provider_backed_executor_delegates_amd_report_bundle_to_provider() {
+        let task = mock_task();
+        let proof_data = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=sev-snp,measurement=measurement:demo-snp-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,report=report-sev-snp-demo-v1,vcek=amd-vcek-demo-v1,cert_chain=amd-cert-chain-demo-v1,report_signer=amd";
+        let payload = parse_tee_attestation_payload(proof_data).unwrap();
+        let handoff = TeeVerifierHandoff::from_payload(&payload, None).unwrap();
+        let input = match SEV_SNP_ADAPTER.build_verifier_input(&handoff, None).unwrap() {
+            TeeVerifierInput::Report(input) => input,
+            TeeVerifierInput::Quote(_) => panic!("expected amd report verifier input"),
+        };
+        let executor = ProviderBackedVendorVerifierExecutor::new(
+            Arc::new(RejectingIntelQuoteProvider),
+            Arc::new(AssertingAmdReportProvider),
+        );
+
+        let result = executor.verify_amd_report_bundle(
+            &input,
+            &BackendVerificationRequest {
+                family: VerificationBackendFamily::Tee,
+                task: &task,
+                proof_data,
+                tee_payload: Some(&payload),
+                zk_payload: None,
+                resolved_vk_ref: None,
+            },
+        );
+
+        assert!(matches!(
+            result,
+            Ok(BackendVerificationSuccess { backend_id }) if backend_id == "amd-mock-provider"
         ));
     }
 

@@ -123,12 +123,19 @@ After adapter construction, `real-tee-backend` now dispatches concrete verifier 
 - `verify_intel_quote_bundle(&QuoteVerifierInput, ...)`
 - `verify_amd_report_bundle(&ReportVerifierInput, ...)`
 
-This separates three concerns cleanly:
+The default executor is now provider-backed rather than directly fixture-bound.
+It delegates to vendor-specific provider traits:
+
+- `IntelQuoteVerifierProvider`
+- `AmdReportVerifierProvider`
+
+The current fixture-backed path therefore has four explicit layers:
 1. receipt parsing / normalization
 2. target-specific request shaping
-3. vendor-specific verification execution
+3. executor dispatch
+4. vendor-specific provider verification
 
-The current implementation uses a fixture-backed executor, but a future real backend should replace only the executor layer.
+The current implementation uses fixture-backed providers behind the executor, but a future real backend should replace only the provider layer (or the executor wiring if it needs a different dispatch strategy).
 
 ## report_data_hash binding
 `report_data_hash` must match the task `result_hash` carried by the bound envelope.
