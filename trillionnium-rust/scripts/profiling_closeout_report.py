@@ -119,20 +119,27 @@ def main():
 
     lines += ["", "## Data Completeness"]
 
-    missing_inputs = []
-    for label, path in [
+    inputs = [
         ("node_log", node_log),
         ("classic_bench", classic),
         ("mixed_bench", mixed),
         ("executor_profile", executor_profile),
-    ]:
+    ]
+    missing_inputs = []
+    present_inputs = []
+    for label, path in inputs:
         if not path or not os.path.exists(path):
             missing_inputs.append(label)
+        else:
+            present_inputs.append(label)
 
     if missing_inputs:
         lines.append(f"- status: PARTIAL ({', '.join(missing_inputs)} missing)")
     else:
         lines.append("- status: COMPLETE")
+    lines.append(f"- present_inputs: {', '.join(present_inputs) if present_inputs else 'none'}")
+    lines.append(f"- missing_inputs: {', '.join(missing_inputs) if missing_inputs else 'none'}")
+    lines.append(f"- readiness_score: {len(present_inputs)}/{len(inputs)}")
 
     lines += ["", "## Autopilot Recommended Next Steps"]
     if missing_inputs:
