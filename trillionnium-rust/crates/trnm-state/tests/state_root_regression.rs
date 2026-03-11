@@ -759,3 +759,87 @@ fn restore_pending_gov_update_uses_snapshot_key_identity_for_state_root_roundtri
         "removing the pending update after the mismatched-key restore roundtrip must return to the original baseline root"
     );
 }
+
+#[test]
+fn restore_pending_gov_update_mismatched_slot_clears_stale_entry_and_preserves_snapshot_identity() {
+    let mut state = StateStore::new();
+    let baseline_root = state.state_root();
+
+    state
+        .set_gov_param(0, 111, "max_block_ms".to_string(), "500".to_string())
+        .expect("non-sensitive baseline update should apply");
+    let challenge_outcome = state
+        .set_gov_param(
+            1_000,
+            7_002,
+            "challenge_min_bond".to_string(),
+            "6000".to_string(),
+        )
+        .expect("sensitive governance update should stage successfully");
+    assert!(matches!(challenge_outcome, GovParamUpdateOutcome::Scheduled { .. }));
+
+    let challenge_snapshot = state
+        .pending_gov_update("challenge_min_bond")
+        .expect("sanity: pending challenge snapshot should exist");
+    let challenge_root = state.state_root();
+    assert_ne!(
+        challenge_root, baseline_root,
+        "sanity: pending challenge update must perturb the root"
+    );
+
+    state
+        .set_gov_param(0, 111, "max_block_ms".to_string(), "650".to_string())
+        .expect("updating a non-sensitive key should succeed");
+    let root_before_restore = state.state_root();
+    assert_ne!(
+        root_before_restore, challenge_root,
+        "sanity: mutating the mismatched caller slot should perturb the root before restore"
+    );
+
+    state.restore_pending_gov_update(
+        "max_block_ms",
+        Some(PendingGovParamUpdate {
+            key_id: challenge_snapshot.key_id,
+            key: challenge_snapshot.key.clone(),
+            value: challenge_snapshot.value.clone(),
+            activate_at_height: challenge_snapshot.activate_at_height,
+        }),
+    );
+
+    assert!(
+        state.pending_gov_update("max_block_ms").is_none(),
+        "restore through a mismatched slot must scrub any stale entry under the caller key"
+    );
+    let restored_snapshot = state
+        .pending_gov_update("challenge_min_bond")
+        .expect("challenge snapshot should remain addressable by its own key");
+    assert_eq!(
+        restored_snapshot.key, challenge_snapshot.key,
+        "restore should preserve snapshot key identity"
+    );
+    assert_eq!(
+        restored_snapshot.key_id, challenge_snapshot.key_id,
+        "restore should preserve the staged governance key id"
+    );
+    assert_eq!(
+        restored_snapshot.value, challenge_snapshot.value,
+        "restore should preserve the staged governance value"
+    );
+    assert_eq!(
+        restored_snapshot.activate_at_height, challenge_snapshot.activate_at_height,
+        "restore should preserve the staged activation height"
+    );
+    assert_eq!(
+        state.state_root(),
+        root_before_restore,
+        "re-inserting the identical logical snapshot while the caller slot is already non-pending should leave the deterministic root unchanged"
+    );
+
+    state.restore_pending_gov_update("challenge_min_bond", None);
+    state.restore_task(111, None);
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "clearing the preserved pending snapshot and reverting the helper mutation must return to the original baseline root"
+    );
+}
