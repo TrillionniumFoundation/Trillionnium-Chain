@@ -2184,7 +2184,8 @@ fn parse_http_get_path(first_line: &str) -> Option<&str> {
         return None;
     }
 
-    Some(path.split('?').next().unwrap_or(path))
+    let path = path.split('?').next().unwrap_or(path);
+    Some(path.split('#').next().unwrap_or(path))
 }
 
 fn normalize_capability_subject_lookup(raw: &str) -> Option<String> {
@@ -3590,6 +3591,18 @@ mod tests {
         assert_eq!(
             parse_http_get_path("GET /query-task/42?verbose=1 HTTP/1.1"),
             Some("/query-task/42")
+        );
+    }
+
+    #[test]
+    fn parse_http_get_path_strips_fragment_suffix_from_health_bridge_path() {
+        assert_eq!(
+            parse_http_get_path("GET /health#bridge HTTP/1.1"),
+            Some("/health")
+        );
+        assert_eq!(
+            parse_http_get_path("GET /query-events/7?limit=5#tail HTTP/1.1"),
+            Some("/query-events/7")
         );
     }
 
