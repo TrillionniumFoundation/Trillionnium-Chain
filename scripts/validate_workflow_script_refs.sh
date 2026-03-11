@@ -47,7 +47,7 @@ for wf in "${WORKFLOW_FILES[@]}"; do
   while IFS= read -r ref; do
     [[ -n "$ref" ]] || continue
     printf '%s\n' "$ref" >>"$refs_file"
-  done < <(LC_ALL=C grep -Eo '\./scripts/[[:alnum:]_./-]+\.sh' "$wf" || true)
+  done < <(LC_ALL=C grep -Eo '\./scripts/[[:alnum:]_./-]+\.(sh|py)' "$wf" || true)
 done
 
 mapfile -t SCRIPT_REFS < <(LC_ALL=C sort -u "$refs_file")
@@ -74,7 +74,7 @@ for ref in "${SCRIPT_REFS[@]}"; do
     continue
   fi
 
-  if [[ ! -x "$resolved" ]]; then
+  if [[ "$resolved" == *.sh && ! -x "$resolved" ]]; then
     printf '%s -> %s\n' "$ref" "$resolved" >>"$non_exec_file"
   fi
 done
