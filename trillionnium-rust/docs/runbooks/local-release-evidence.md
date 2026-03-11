@@ -37,14 +37,17 @@ OUT_DIR=/tmp/trnm-evidence ./scripts/run_local_release_evidence.sh
 
 ## RC 复现与回滚留痕（M3）
 
-为减少“同命令不同结果”的波动，建议在采集证据前固定环境：
+为减少“同命令不同结果”的波动，建议在采集证据前固定环境，并优先使用与 `RELEASE_READINESS.md` 一致的 deterministic 前缀：
 
 ```bash
-export CARGO_TERM_COLOR=never
-export RUST_BACKTRACE=1
-export CARGO_BUILD_JOBS=1
-./scripts/run_local_release_evidence.sh
+env TZ=UTC LC_ALL=C LANG=C SOURCE_DATE_EPOCH=1704067200 \
+  CARGO_TERM_COLOR=never \
+  RUST_BACKTRACE=1 \
+  CARGO_BUILD_JOBS=1 \
+  ./scripts/run_local_release_evidence.sh
 ```
+
+如需二次复跑比对，请保持命令与环境完全一致，再连续执行一次相同命令，避免把一次性绿灯误判为稳定 release 证据。
 
 执行完成后，在 `summary.txt` 末尾追加：
 

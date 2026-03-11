@@ -5,6 +5,8 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
 
+REPO_ROOT="$(cd "$ROOT/.." && pwd)"
+
 TS="$(date -u +%Y%m%d-%H%M%S)"
 BASE_OUT="${OUT_DIR:-$ROOT/run/health}"
 EVIDENCE_DIR="$BASE_OUT/evidence-$TS"
@@ -80,6 +82,9 @@ find_challenge_reexec_entry() {
   echo "generated_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
   echo "workspace=$ROOT"
   echo "evidence_dir=$EVIDENCE_DIR"
+  echo "truth_source=$REPO_ROOT/RELEASE_READINESS.md"
+  echo "historical_evidence_only=true"
+  echo "evidence_scope=local_rc_rehearsal_not_current_release_ready_claim"
   echo "env_tz=${TZ:-<unset>}"
   echo "env_lc_all=${LC_ALL:-<unset>}"
   echo "env_source_date_epoch=${SOURCE_DATE_EPOCH:-<unset>}"
@@ -122,7 +127,7 @@ rollback_cmd="rm -rf $(printf '%q' "$EVIDENCE_DIR")"
   else
     echo "result=FAIL"
   fi
-  echo "replay_command=OUT_DIR='${OUT_DIR:-$BASE_OUT}' ./scripts/run_local_release_evidence.sh"
+  echo "replay_command=env TZ=${TZ:-UTC} LC_ALL=${LC_ALL:-C} LANG=${LANG:-C} SOURCE_DATE_EPOCH=${SOURCE_DATE_EPOCH:-1704067200} OUT_DIR='${OUT_DIR:-$BASE_OUT}' ./scripts/run_local_release_evidence.sh"
   echo "rollback_command=$rollback_cmd"
 } >> "$SUMMARY"
 
