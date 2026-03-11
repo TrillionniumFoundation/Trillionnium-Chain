@@ -11,6 +11,24 @@ mkdir -p "$OUT_DIR"
 TS="$(date +%Y%m%d-%H%M%S)"
 REPORT="$OUT_DIR/worker-real-cli-readiness-$TS.md"
 
+resolve_tx_cli() {
+  local candidate="$1"
+  if command -v "$candidate" >/dev/null 2>&1; then
+    command -v "$candidate"
+    return 0
+  fi
+
+  if [[ "$candidate" == "trnm-cli" ]]; then
+    local cargo_bin="$ROOT/trillionnium-rust/target/debug/trnm-cli"
+    if [[ -x "$cargo_bin" ]]; then
+      printf "%s\n" "$cargo_bin"
+      return 0
+    fi
+  fi
+
+  return 1
+}
+
 status="NOT_READY"
 reason=""
 cmd_exists="no"
@@ -57,7 +75,8 @@ extract_query_status() {
   printf "%s" "$s"
 }
 
-if command -v "$TX_CLI" >/dev/null 2>&1; then
+if TX_CLI_RESOLVED="$(resolve_tx_cli "$TX_CLI")"; then
+  TX_CLI="$TX_CLI_RESOLVED"
   cmd_exists="yes"
   if "$TX_CLI" tx --help >/dev/null 2>&1; then
     supports_tx="yes"
@@ -126,7 +145,11 @@ if command -v "$TX_CLI" >/dev/null 2>&1; then
     reason="tx subcommand missing: '$TX_CLI tx --help' failed"
   fi
 else
-  reason="tx cli not found in PATH: $TX_CLI"
+  if [[ "$TX_CLI" == "trnm-cli" ]]; then
+    reason="tx cli not found via PATH or fallback build artifact: $TX_CLI"
+  else
+    reason="tx cli not found in PATH: $TX_CLI"
+  fi
 fi
 
 cat > "$REPORT" <<EOF
