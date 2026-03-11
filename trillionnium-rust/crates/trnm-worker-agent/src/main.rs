@@ -1764,9 +1764,22 @@ fn attach_llm_provenance(rec: &mut MessageIngressRecord, llm: &LlmAdapterRespons
     });
 }
 
+fn collapse_contract_match_delimiters(value: &str) -> String {
+    value
+        .chars()
+        .filter_map(|ch| match ch {
+            '\u{200b}' | '\u{200c}' | '\u{200d}' | '\u{2060}' | '\u{2063}' | '\u{feff}' => {
+                None
+            }
+            '‐' | '‑' | '‒' | '–' | '—' | '―' | '−' | '－' => Some('-'),
+            other => Some(other),
+        })
+        .collect()
+}
+
 fn context_matches_token(context: &str, token: &str) -> bool {
     fn normalize_for_contract_match(value: &str) -> String {
-        let lowered = value.to_ascii_lowercase();
+        let lowered = collapse_contract_match_delimiters(value).to_ascii_lowercase();
         let mut out = String::with_capacity(lowered.len());
         let mut prev_space = false;
         for ch in lowered.chars() {
@@ -1781,8 +1794,8 @@ fn context_matches_token(context: &str, token: &str) -> bool {
         out.trim().to_string()
     }
 
-    let normalized_context = context.to_ascii_lowercase();
-    let normalized_token = token.to_ascii_lowercase();
+    let normalized_context = collapse_contract_match_delimiters(context).to_ascii_lowercase();
+    let normalized_token = collapse_contract_match_delimiters(token).to_ascii_lowercase();
     let context_with_spaces = normalized_context.replace(['-', '_'], " ");
     let token_with_spaces = normalized_token.replace(['-', '_'], " ");
     let normalized_context_relaxed = normalize_for_contract_match(context);
@@ -1854,6 +1867,7 @@ fn adapter_error_signal(kind: AdapterErrorKind) -> ReputationSignal {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::proof_adapter::StandardProofAdapter;
 
     #[test]
     fn transition_request_status_accepts_benign_formatting_variants() {

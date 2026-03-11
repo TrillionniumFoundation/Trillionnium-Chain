@@ -68,8 +68,13 @@ import time
 print(int(time.time()*1000))
 PY
 )
+DEFAULT_TX_CLI="${TRNM_TX_CLI:-$ROOT/trillionnium-rust/target/debug/trnm-cli}"
+if [[ "$DEFAULT_TX_CLI" == ./* || "$DEFAULT_TX_CLI" == scripts/* ]]; then
+  DEFAULT_TX_CLI="$ROOT/${DEFAULT_TX_CLI#./}"
+fi
+
 TRNM_TX_ADAPTER_MODE=command \
-TRNM_TX_CLI="${TRNM_TX_CLI:-./target/debug/trnm-cli}" \
+TRNM_TX_CLI="$DEFAULT_TX_CLI" \
 TRNM_TX_ADAPTER_OUT_LOG="$OUT_LOG" \
 ATTEMPT_FILE="$ATTEMPT_FILE" \
 "$CARGO_BIN" run -q -p trnm-worker-agent -- flush-submissions \
