@@ -124,8 +124,8 @@ EOF
   echo "[workflow-ref] summary_json=${SUMMARY_PATH}"
 fi
 
+echo "[workflow-ref] status=${status} strict_mode=${STRICT_MODE} elapsed_sec=$((end_epoch - START_EPOCH))"
+
 if [[ "$status" == "fail" ]]; then
   exit 1
 fi
-
-echo "[workflow-ref] status=${status} strict_mode=${STRICT_MODE} elapsed_sec=$((end_epoch - START_EPOCH))"
