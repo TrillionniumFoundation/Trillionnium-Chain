@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use std::sync::Arc;
 
-use trnm_types::{ProofType, TaskObject};
+use trnm_types::TaskObject;
 
 #[cfg(feature = "real-zk-backend")]
 use super::real_zk_backend;
