@@ -622,6 +622,10 @@ jobs:
         run: |
           ./scripts/v2/e3_enterprise_runbook_replay_deterministic_env_prefix_test.sh
 
+      - name: Auto regression: e3-enterprise-runbook-deterministic-env-prefix-test
+        run: |
+          ./scripts/v2/e3_enterprise_runbook_deterministic_env_prefix_test.sh
+
       - name: Auto regression: e3-enterprise-onboarding-runbook-rollback-contract-test
         run: |
           ./scripts/v2/e3_enterprise_onboarding_runbook_rollback_contract_test.sh
