@@ -893,6 +893,7 @@ pub fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
 
     let batch_len = txs.len();
     let direct_scan = sample_len == batch_len;
+    let mut prev_idx: Option<usize> = None;
     for i in 0..sample_len {
         // Keep endpoints visible in bounded sampling windows so late-batch
         // hotspots contribute to adaptive scheduler decisions.
@@ -905,6 +906,10 @@ pub fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
         } else {
             0
         };
+        if prev_idx == Some(idx) {
+            continue;
+        }
+        prev_idx = Some(idx);
         let tx = &txs[idx];
         let key = tx
             .write_set
@@ -2196,11 +2201,10 @@ mod tests {
         let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.10");
         let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.03");
 
-        // When sample_len exceeds batch_len, the adaptive sampler falls back to
-        // direct scanning. Keep a regression with a just-over-half window to
-        // exercise sparse integer-step sampling, where nearby sample points can
-        // collapse onto the same tx index. The decision should remain fail-closed
-        // for a broad unique-key batch instead of overestimating hotspot streaks.
+        // Keep a regression with a just-over-half window to exercise sparse
+        // integer-step sampling, where nearby sample points can collapse onto
+        // the same tx index. The decision should remain fail-closed for a broad
+        // unique-key batch instead of overestimating hotspot streaks.
         let mut txs = Vec::with_capacity(3000);
         for i in 0..3000u64 {
             txs.push(tx(50_000 + i, vec![], vec![o(100_000 + i)]));
@@ -2211,11 +2215,11 @@ mod tests {
         assert_eq!(d.reason, "low_hot_key_share");
         assert!(!d.use_hot_bucket);
         assert!(
-            d.hot_key_share <= (2.0 / d.sample_len as f64),
+            d.hot_key_share <= (1.0 / d.sample_len as f64),
             "duplicate sparse-sample indices must not inflate hot-key share"
         );
-        assert!(
-            d.streak_ratio <= (1.0 / (d.sample_len - 1) as f64),
+        assert_eq!(
+            d.streak_ratio, 0.0,
             "duplicate sparse-sample indices must not manufacture streak runs"
         );
     }
