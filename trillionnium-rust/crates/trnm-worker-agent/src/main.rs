@@ -37,6 +37,12 @@ const RC_NONCE_REJECTED: i32 = 10;
 const RC_SLO_VIOLATION: i32 = 11;
 const RC_SKIPPED: i32 = -1;
 
+#[derive(Debug, Clone)]
+struct PersistedAckHashes {
+    commit_tx_hash: Option<String>,
+    reveal_tx_hash: Option<String>,
+}
+
 #[derive(Debug, Parser)]
 #[command(
     name = "trnm-worker-agent",
@@ -888,6 +894,30 @@ fn is_idempotent_duplicate_ok(rc: i32) -> bool {
 
 fn should_execute_reveal(commit_res: &AdapterExecResult) -> bool {
     commit_res.ok || is_idempotent_duplicate_ok(commit_res.rc)
+}
+
+fn persisted_ack_hashes_for_task(ack_log: &PathBuf, task_id: u64) -> PersistedAckHashes {
+    let mut hashes = PersistedAckHashes {
+        commit_tx_hash: None,
+        reveal_tx_hash: None,
+    };
+
+    for ack in load_ack_records(ack_log).into_iter().rev() {
+        if ack.task_id != task_id {
+            continue;
+        }
+        if hashes.commit_tx_hash.is_none() {
+            hashes.commit_tx_hash = ack.commit_tx_hash;
+        }
+        if hashes.reveal_tx_hash.is_none() {
+            hashes.reveal_tx_hash = ack.reveal_tx_hash;
+        }
+        if hashes.commit_tx_hash.is_some() && hashes.reveal_tx_hash.is_some() {
+            break;
+        }
+    }
+
+    hashes
 }
 
 fn backoff_delay_ms(base_ms: u64, attempt: u32) -> u64 {
@@ -2784,16 +2814,16 @@ mod tests {
             terminal: true,
         };
 
-        let commit_hash_observed = commit_res.tx_hash.is_some()
-            || (is_idempotent_duplicate_ok(commit_res.rc) && Some("commitbeef").is_some());
-        let reveal_hash_observed = reveal_res.tx_hash.is_some()
-            || (is_idempotent_duplicate_ok(reveal_res.rc) && Option::<&str>::None.is_some());
+        let previous_commit_tx_hash = Some("commitbeef".to_string());
+        let previous_reveal_tx_hash = None;
 
-        let commit_tx_hash_for_ack = commit_res
-            .tx_hash
-            .clone()
-            .or_else(|| Some("commitbeef".to_string()));
-        let reveal_tx_hash_for_ack = reveal_res.tx_hash.clone();
+        let commit_hash_observed = commit_res.tx_hash.is_some()
+            || (is_idempotent_duplicate_ok(commit_res.rc) && previous_commit_tx_hash.is_some());
+        let reveal_hash_observed = reveal_res.tx_hash.is_some()
+            || (is_idempotent_duplicate_ok(reveal_res.rc) && previous_reveal_tx_hash.is_some());
+
+        let commit_tx_hash_for_ack = commit_res.tx_hash.clone().or(previous_commit_tx_hash);
+        let reveal_tx_hash_for_ack = reveal_res.tx_hash.clone().or(previous_reveal_tx_hash);
 
         assert!(should_execute_reveal(&commit_res));
         assert!(reveal_res.ok || is_idempotent_duplicate_ok(reveal_res.rc));
@@ -2801,6 +2831,43 @@ mod tests {
         assert!(reveal_hash_observed);
         assert_eq!(commit_tx_hash_for_ack.as_deref(), Some("commitbeef"));
         assert_eq!(reveal_tx_hash_for_ack.as_deref(), Some("revealbeef"));
+    }
+
+    #[test]
+    fn persisted_ack_hashes_for_task_merges_hashes_across_failed_resume_attempts() {
+        let ack_log = std::env::temp_dir().join(format!(
+            "trnm-worker-agent-persisted-ack-hashes-{}-{}.jsonl",
+            std::process::id(),
+            now_ms()
+        ));
+        let _ = fs::remove_file(&ack_log);
+
+        append_ack(
+            &ack_log,
+            77,
+            "failed",
+            Some("commit-old".to_string()),
+            None,
+            Some("missing_tx_hash_receipt".to_string()),
+            Some("run-1".to_string()),
+        )
+        .expect("write first ack");
+        append_ack(
+            &ack_log,
+            77,
+            "accepted",
+            None,
+            Some("reveal-new".to_string()),
+            Some("idempotent_ok".to_string()),
+            Some("run-2".to_string()),
+        )
+        .expect("write second ack");
+
+        let hashes = persisted_ack_hashes_for_task(&ack_log, 77);
+        assert_eq!(hashes.commit_tx_hash.as_deref(), Some("commit-old"));
+        assert_eq!(hashes.reveal_tx_hash.as_deref(), Some("reveal-new"));
+
+        let _ = fs::remove_file(&ack_log);
     }
 
     #[test]
@@ -5794,17 +5861,9 @@ fn main() -> Result<()> {
                     let reveal_idempotent_ok =
                         reveal_res.ok || is_idempotent_duplicate_ok(reveal_res.rc);
 
-                    let previous_ack_hashes = load_ack_records(&ack_log)
-                        .into_iter()
-                        .rev()
-                        .find(|ack| ack.task_id == rec.task_id)
-                        .map(|ack| (ack.commit_tx_hash, ack.reveal_tx_hash));
-                    let previous_commit_tx_hash = previous_ack_hashes
-                        .as_ref()
-                        .and_then(|pair| pair.0.clone());
-                    let previous_reveal_tx_hash = previous_ack_hashes
-                        .as_ref()
-                        .and_then(|pair| pair.1.clone());
+                    let previous_ack_hashes = persisted_ack_hashes_for_task(&ack_log, rec.task_id);
+                    let previous_commit_tx_hash = previous_ack_hashes.commit_tx_hash;
+                    let previous_reveal_tx_hash = previous_ack_hashes.reveal_tx_hash;
 
                     let commit_hash_observed = commit_res.tx_hash.is_some()
                         || (is_idempotent_duplicate_ok(commit_res.rc)
