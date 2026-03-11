@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::sync::Arc;
 
 use serde::{Deserialize, Serialize};
@@ -603,9 +603,32 @@ pub fn parse_zk_proof_payload(
     }
     expected_public_inputs.push(expected_hash.clone());
     expected_order.push("result_hash".to_string());
-    if payload.public_inputs.order != expected_order
-        || payload.public_inputs.values != expected_public_inputs
-    {
+
+    if payload.public_inputs.order.len() != payload.public_inputs.values.len() {
+        return Err(BackendExecutionError::MalformedProof {
+            backend: "zk:payload".to_string(),
+            reason: "invalid zk payload: public_inputs order/value length mismatch".to_string(),
+        });
+    }
+
+    let mut seen_fields = HashSet::with_capacity(payload.public_inputs.order.len());
+    for field in &payload.public_inputs.order {
+        if !seen_fields.insert(field.as_str()) {
+            return Err(BackendExecutionError::MalformedProof {
+                backend: "zk:payload".to_string(),
+                reason: format!("invalid zk payload: duplicate public_inputs field '{field}'"),
+            });
+        }
+    }
+
+    if payload.public_inputs.order != expected_order {
+        return Err(BackendExecutionError::MalformedProof {
+            backend: "zk:payload".to_string(),
+            reason: "invalid zk payload: public_inputs order is not canonical".to_string(),
+        });
+    }
+
+    if payload.public_inputs.values != expected_public_inputs {
         return Err(BackendExecutionError::InvalidProof {
             backend: "zk:payload".to_string(),
             reason: "invalid zk payload: public_inputs mismatch".to_string(),
@@ -768,6 +791,33 @@ mod tests {
         let err = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["4242","zk","worker-zk","2222222222222222222222222222222222222222222222222222222222222222"]}}"#).unwrap_err();
         assert!(
             matches!(err, BackendExecutionError::InvalidProof { reason, .. } if reason.contains("public_inputs mismatch"))
+        );
+    }
+
+    #[test]
+    fn parse_zk_proof_payload_rejects_public_input_length_mismatch_as_malformed() {
+        let task = mock_task();
+        let err = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["4242","zk","worker-zk"]}}"#).unwrap_err();
+        assert!(
+            matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("order/value length mismatch"))
+        );
+    }
+
+    #[test]
+    fn parse_zk_proof_payload_rejects_duplicate_public_input_field_as_malformed() {
+        let task = mock_task();
+        let err = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","worker"],"values":["4242","zk","worker-zk","worker-zk"]}}"#).unwrap_err();
+        assert!(
+            matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("duplicate public_inputs field 'worker'"))
+        );
+    }
+
+    #[test]
+    fn parse_zk_proof_payload_rejects_non_canonical_public_input_order_as_malformed() {
+        let task = mock_task();
+        let err = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["worker","task_id","proof_type","result_hash"],"values":["worker-zk","4242","zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#).unwrap_err();
+        assert!(
+            matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("public_inputs order is not canonical"))
         );
     }
 

@@ -309,6 +309,7 @@ v0 将 ZK 平台错误归并为四大类：
 - `BackendExecutionError::Internal` → `Indeterminate`，对应 `backend_error`
 - `BackendExecutionError::InvalidProof` → `Invalid`，对应 `invalid`
 - `BackendExecutionError::MalformedProof` → `Invalid("malformed: ...")`，对应 `malformed`
+- 其中 `public_inputs.order/values` 长度不一致、重复字段、非 canonical 顺序，属于 router-side schema / contract violation，必须归入 `MalformedProof`，不得与 statement 值不一致的 `InvalidProof` 混淆
 
 v0 冻结要求：
 
