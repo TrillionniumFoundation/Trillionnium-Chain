@@ -93,12 +93,15 @@ def main():
     args = p.parse_args()
 
     root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    bench_dir = os.path.join(root, "run", "bench")
     node_log = args.node_log or latest(os.path.join(root, "run", "parallel-sanity.log"))
-    classic = args.classic or latest(os.path.join(root, "run", "bench", "bench-matrix-*.txt"))
-    mixed = args.mixed or latest(os.path.join(root, "run", "bench", "bench-mixed-matrix-*.txt"))
-    executor_profile = args.executor_profile or latest(os.path.join(root, "run", "bench", "executor-profile-summary-*.txt"))
+    classic = args.classic or latest(os.path.join(bench_dir, "bench-matrix-*.txt"))
+    mixed = args.mixed or latest(os.path.join(bench_dir, "bench-mixed-matrix-*.txt"))
+    executor_profile = args.executor_profile or latest(os.path.join(bench_dir, "executor-profile-summary-*.txt"))
     ts = datetime.now().strftime("%Y%m%d-%H%M%S")
     out = args.out or os.path.join(root, "docs", "reports", f"profiling-closeout-baseline-{ts}.md")
+
+    bench_dir_exists = os.path.isdir(bench_dir)
 
     block_rows = []
     consensus_rows = []
@@ -136,6 +139,8 @@ def main():
     lines += [
         f"- node_log: {node_log}",
         f"- node_log_status: {input_status(node_log)}",
+        f"- bench_dir: {bench_dir}",
+        f"- bench_dir_status: {'present' if bench_dir_exists else 'missing'}",
         f"- classic_bench: {classic}",
         f"- classic_bench_status: {input_status(classic)}",
         f"- mixed_bench: {mixed}",
@@ -191,8 +196,12 @@ def main():
     present_count = sum(1 for _, path in inputs if path and os.path.exists(path))
 
     if present_count == 0:
-        lines.append("- autopilot_assessment: BENCH_ONLY_RUN (must-run gate passed, but no persisted closeout artifacts were found)")
-        lines.append("- note: `cargo run -q -p trnm-bench -- --profile` prints useful immediate telemetry, but closeout files must be produced separately for curator/autopilot consumption")
+        if not bench_dir_exists:
+            lines.append("- autopilot_assessment: BENCH_DIR_MISSING (must-run gate may have passed, but the persisted bench artifact directory does not exist yet)")
+            lines.append("- note: create `run/bench/` and persist bench outputs before treating closeout evidence as reviewable")
+        else:
+            lines.append("- autopilot_assessment: BENCH_ONLY_RUN (must-run gate passed, but no persisted closeout artifacts were found)")
+            lines.append("- note: `cargo run -q -p trnm-bench -- --profile` prints useful immediate telemetry, but closeout files must be produced separately for curator/autopilot consumption")
     elif present_count < len(inputs):
         lines.append("- autopilot_assessment: PARTIAL_CLOSEOUT (some persisted closeout artifacts are present, but the evidence set is incomplete)")
         lines.append("- note: closeout is usable for directional review, but curator/autopilot decisions should prefer a full 4/4 evidence set")
