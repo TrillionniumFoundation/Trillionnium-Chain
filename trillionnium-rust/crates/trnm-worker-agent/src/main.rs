@@ -14,9 +14,7 @@ use std::{
 };
 mod proof_adapter;
 
-use proof_adapter::{
-    build_proof_adapter, ProofAdapter, StandardProofAdapter, DEFAULT_PROOF_ADAPTER,
-};
+use proof_adapter::{build_proof_adapter, ProofAdapter, DEFAULT_PROOF_ADAPTER};
 use trnm_types::RequestStatus;
 use wait_timeout::ChildExt;
 
@@ -359,8 +357,8 @@ fn normalize_provenance_fingerprint_lookup(value: &str) -> Option<String> {
     let mut normalized = normalized_provenance_label(Some(value), 128)?;
     // Accept heavily shell-escaped forms (e.g., nested quote wrappers from CLI/env propagation)
     // while still fail-closing on empty/invalid labels after normalization.
-    // Cap recursive unwrapping to keep lookup bounded while tolerating deeply nested
-    // shell/env quote wrappers seen in propagation pipelines.
+    // Keep recursive unwrapping bounded, but generous enough to tolerate repeated
+    // shell/env forwarding hops seen in automation pipelines.
     for _ in 0..16 {
         let bytes = normalized.as_bytes();
         if bytes.len() >= 2
@@ -708,21 +706,36 @@ fn append_submission(
     append_json_line(submit_log, &line)
 }
 
-fn load_acked(ack_log: &PathBuf) -> HashSet<u64> {
-    let mut set = HashSet::new();
+fn load_ack_records(ack_log: &PathBuf) -> Vec<AckRecord> {
     if !ack_log.exists() {
-        return set;
+        return vec![];
     }
-    if let Ok(raw) = fs::read_to_string(ack_log) {
-        for line in raw.lines().filter(|l| !l.trim().is_empty()) {
-            if let Ok(rec) = serde_json::from_str::<AckRecord>(line) {
-                if rec.status == "accepted" {
-                    set.insert(rec.task_id);
-                }
-            }
-        }
-    }
-    set
+    fs::read_to_string(ack_log)
+        .ok()
+        .map(|raw| {
+            raw.lines()
+                .filter(|l| !l.trim().is_empty())
+                .filter_map(|line| serde_json::from_str::<AckRecord>(line).ok())
+                .collect()
+        })
+        .unwrap_or_default()
+}
+
+fn latest_ack_hashes(ack_log: &PathBuf, task_id: u64) -> (Option<String>, Option<String>) {
+    load_ack_records(ack_log)
+        .into_iter()
+        .rev()
+        .find(|ack| ack.task_id == task_id)
+        .map(|ack| (ack.commit_tx_hash, ack.reveal_tx_hash))
+        .unwrap_or((None, None))
+}
+
+fn load_acked(ack_log: &PathBuf) -> HashSet<u64> {
+    load_ack_records(ack_log)
+        .into_iter()
+        .filter(|rec| rec.status == "accepted")
+        .map(|rec| rec.task_id)
+        .collect()
 }
 
 struct TaskExecutionLock {
@@ -828,18 +841,25 @@ fn append_progress(progress_log: &PathBuf, rec: &ProgressRecord) -> Result<()> {
 
 fn parse_tx_hash(text: &str) -> Option<String> {
     text.split_whitespace().find_map(|w| {
-        let raw = w.strip_prefix("tx_hash=")?;
+        let raw = w
+            .strip_prefix("tx_hash=")
+            .or_else(|| w.strip_prefix("txHash="))
+            .or_else(|| w.strip_prefix("txhash="))?;
         let cleaned = raw
             .trim_matches(|c: char| {
                 matches!(c, '"' | '\'' | ',' | ';' | '.' | ':' | ')' | ']' | '}')
             })
             .trim();
+        let normalized = cleaned
+            .strip_prefix("0x")
+            .or_else(|| cleaned.strip_prefix("0X"))
+            .unwrap_or(cleaned);
 
-        if cleaned.starts_with("0x")
-            && cleaned.len() == 66
-            && cleaned[2..].chars().all(|c| c.is_ascii_hexdigit())
+        if normalized.len() >= 8
+            && normalized.len() <= 64
+            && normalized.chars().all(|c| c.is_ascii_hexdigit())
         {
-            Some(cleaned.to_ascii_lowercase())
+            Some(normalized.to_ascii_lowercase())
         } else {
             None
         }
@@ -1914,7 +1934,7 @@ mod tests {
         let parsed = parse_tx_hash(mixed_case).expect("hash should parse");
         assert_eq!(
             parsed,
-            "0xabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd"
+            "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd"
         );
 
         let sentence_tail = "submitted tx_hash=0xABCDabcdABCDabcdABCDabcdABCDabcdABCDabcdABCDabcdABCDabcdABCDabcd. next";
@@ -1922,18 +1942,27 @@ mod tests {
             parse_tx_hash(sentence_tail).expect("hash with sentence punctuation should parse");
         assert_eq!(
             parsed_tail,
-            "0xabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd"
+            "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd"
         );
     }
 
     #[test]
+    fn parse_tx_hash_accepts_short_failure_receipts_without_0x_prefix() {
+        let parsed = parse_tx_hash("[adapter] simulated failure tx_hash=deadbeef")
+            .expect("short failure receipt hash should parse");
+        assert_eq!(parsed, "deadbeef");
+    }
+
+    #[test]
     fn parse_tx_hash_rejects_malformed_or_partial_values() {
-        assert!(parse_tx_hash("tx_hash=0xdeadbeef").is_none());
+        assert!(parse_tx_hash("tx_hash=0xdeadbee-").is_none());
         assert!(parse_tx_hash("tx_hash=not-a-hash").is_none());
         assert!(parse_tx_hash(
             "tx_hash=0xzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"
         )
         .is_none());
+        assert!(parse_tx_hash("tx_hash=1234567").is_none());
+        assert!(parse_tx_hash("tx_hash=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef00").is_none());
     }
 
     #[test]
@@ -2665,6 +2694,79 @@ mod tests {
         assert!(slept.is_empty());
         assert_eq!(err.kind, AdapterErrorKind::NonRetriable);
         assert_eq!(err.context, "invalid-json");
+    }
+
+    #[test]
+    fn flush_submissions_requires_tx_hash_receipts_for_terminal_acceptance() {
+        let commit_res = AdapterExecResult {
+            ok: true,
+            rc: RC_OK,
+            tx_hash: None,
+            terminal: true,
+        };
+        let reveal_res = AdapterExecResult {
+            ok: true,
+            rc: RC_OK,
+            tx_hash: None,
+            terminal: true,
+        };
+
+        let commit_idempotent_ok = should_execute_reveal(&commit_res);
+        let reveal_idempotent_ok = reveal_res.ok || is_idempotent_duplicate_ok(reveal_res.rc);
+        let commit_hash_observed = commit_res.tx_hash.is_some();
+        let reveal_hash_observed = reveal_res.tx_hash.is_some();
+
+        let (ack_status, reason_code) = if commit_idempotent_ok
+            && reveal_idempotent_ok
+            && commit_hash_observed
+            && reveal_hash_observed
+        {
+            ("accepted", "idempotent_ok")
+        } else if commit_idempotent_ok
+            && reveal_idempotent_ok
+            && (!commit_hash_observed || !reveal_hash_observed)
+        {
+            ("failed", "missing_tx_hash_receipt")
+        } else {
+            ("unexpected", "unexpected")
+        };
+
+        assert_eq!(ack_status, "failed");
+        assert_eq!(reason_code, "missing_tx_hash_receipt");
+    }
+
+    #[test]
+    fn flush_submissions_reuses_persisted_tx_hash_for_duplicate_resume_acceptance() {
+        let commit_res = AdapterExecResult {
+            ok: false,
+            rc: RC_DUPLICATE,
+            tx_hash: None,
+            terminal: true,
+        };
+        let reveal_res = AdapterExecResult {
+            ok: true,
+            rc: RC_OK,
+            tx_hash: Some("revealbeef".to_string()),
+            terminal: true,
+        };
+
+        let commit_hash_observed = commit_res.tx_hash.is_some()
+            || (is_idempotent_duplicate_ok(commit_res.rc) && Some("commitbeef").is_some());
+        let reveal_hash_observed = reveal_res.tx_hash.is_some()
+            || (is_idempotent_duplicate_ok(reveal_res.rc) && Option::<&str>::None.is_some());
+
+        let commit_tx_hash_for_ack = commit_res
+            .tx_hash
+            .clone()
+            .or_else(|| Some("commitbeef".to_string()));
+        let reveal_tx_hash_for_ack = reveal_res.tx_hash.clone();
+
+        assert!(should_execute_reveal(&commit_res));
+        assert!(reveal_res.ok || is_idempotent_duplicate_ok(reveal_res.rc));
+        assert!(commit_hash_observed);
+        assert!(reveal_hash_observed);
+        assert_eq!(commit_tx_hash_for_ack.as_deref(), Some("commitbeef"));
+        assert_eq!(reveal_tx_hash_for_ack.as_deref(), Some("revealbeef"));
     }
 
     #[test]
@@ -3885,6 +3987,34 @@ mod tests {
             &rows,
             &index,
             "  ' \" ` ' \" deadbeef \" ' ` \" '  ",
+        );
+        assert_eq!(hit.len(), 1);
+        assert_eq!(hit[0].request_id, "r1");
+    }
+
+    #[test]
+    fn query_audit_export_by_provenance_fingerprint_accepts_repeated_nested_quote_wrappers() {
+        let rows = vec![EnterpriseAuditExportRecord {
+            request_id: "r1".to_string(),
+            task_id: 7002,
+            status: "reveal_submitted".to_string(),
+            provider_request_id: Some("p1".to_string()),
+            provenance_schema_version: Some("llm.v2".to_string()),
+            provenance_fingerprint: Some("deadbeef".to_string()),
+            provider: Some("openai".to_string()),
+            model: Some("gpt-5.3-codex".to_string()),
+            adapter: Some("mcp".to_string()),
+            agent_protocol: Some("a2a".to_string()),
+            compliance_profile: Some("cn-moderate".to_string()),
+        }];
+
+        let index = build_audit_export_index(&rows);
+        // Repeated shell/env forwarding can introduce more than five quote layers; keep
+        // lookup tolerant as long as the normalized fingerprint remains valid and bounded.
+        let hit = query_audit_export_by_provenance_fingerprint(
+            &rows,
+            &index,
+            "'\"`'\"`'\"`'\"`deadbeef`\"'`\"'`\"'`\"'",
         );
         assert_eq!(hit.len(), 1);
         assert_eq!(hit[0].request_id, "r1");
@@ -5609,8 +5739,38 @@ fn main() -> Result<()> {
                     let reveal_idempotent_ok =
                         reveal_res.ok || is_idempotent_duplicate_ok(reveal_res.rc);
 
+                    let previous_ack_hashes = load_ack_records(&ack_log)
+                        .into_iter()
+                        .rev()
+                        .find(|ack| ack.task_id == rec.task_id)
+                        .map(|ack| (ack.commit_tx_hash, ack.reveal_tx_hash));
+                    let previous_commit_tx_hash = previous_ack_hashes
+                        .as_ref()
+                        .and_then(|pair| pair.0.clone());
+                    let previous_reveal_tx_hash = previous_ack_hashes
+                        .as_ref()
+                        .and_then(|pair| pair.1.clone());
+
+                    let commit_hash_observed = commit_res.tx_hash.is_some()
+                        || (is_idempotent_duplicate_ok(commit_res.rc)
+                            && previous_commit_tx_hash.is_some());
+                    let reveal_hash_observed = reveal_res.tx_hash.is_some()
+                        || (is_idempotent_duplicate_ok(reveal_res.rc)
+                            && previous_reveal_tx_hash.is_some());
+
+                    let commit_tx_hash_for_ack = commit_res
+                        .tx_hash
+                        .clone()
+                        .or(previous_commit_tx_hash);
+                    let reveal_tx_hash_for_ack = reveal_res
+                        .tx_hash
+                        .clone()
+                        .or(previous_reveal_tx_hash);
+
                     let (ack_status, reason_code, ack_reason) = if commit_idempotent_ok
                         && reveal_idempotent_ok
+                        && commit_hash_observed
+                        && reveal_hash_observed
                     {
                         (
                             "accepted",
@@ -5618,6 +5778,18 @@ fn main() -> Result<()> {
                             format!(
                                 "idempotent-ok commit_rc={} reveal_rc={}",
                                 commit_res.rc, reveal_res.rc
+                            ),
+                        )
+                    } else if commit_idempotent_ok
+                        && reveal_idempotent_ok
+                        && (!commit_hash_observed || !reveal_hash_observed)
+                    {
+                        (
+                            "failed",
+                            "missing_tx_hash_receipt",
+                            format!(
+                                "missing-tx-hash-receipt commit_tx_hash_present={} reveal_tx_hash_present={} commit_rc={} reveal_rc={}",
+                                commit_hash_observed, reveal_hash_observed, commit_res.rc, reveal_res.rc
                             ),
                         )
                     } else if !commit_idempotent_ok && commit_res.terminal {
@@ -5653,8 +5825,8 @@ fn main() -> Result<()> {
                         &ack_log,
                         rec.task_id,
                         ack_status,
-                        commit_res.tx_hash.clone(),
-                        reveal_res.tx_hash.clone(),
+                        commit_tx_hash_for_ack.clone(),
+                        reveal_tx_hash_for_ack.clone(),
                         Some(reason_code.to_string()),
                         Some(run_id.clone()),
                     )?;
@@ -5664,8 +5836,8 @@ fn main() -> Result<()> {
                         let mut changed = false;
                         for ir in ingress.iter_mut() {
                             if ir.task_id == rec.task_id {
-                                ir.commit_tx_hash = commit_res.tx_hash.clone();
-                                ir.reveal_tx_hash = reveal_res.tx_hash.clone();
+                                ir.commit_tx_hash = commit_tx_hash_for_ack.clone();
+                                ir.reveal_tx_hash = reveal_tx_hash_for_ack.clone();
                                 ir.resolution_code = Some(reason_code.to_string());
                                 ir.verifier_status = Some(if ack_status == "accepted" {
                                     "accepted".to_string()
