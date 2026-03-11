@@ -815,9 +815,7 @@ fn hot_bucket_count() -> usize {
 }
 
 fn auto_min_expected_gain_score() -> f64 {
-    std::env::var("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE")
-        .ok()
-        .and_then(|v| v.trim().parse::<f64>().ok())
+    parse_env_f64("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE")
         .map(|v| v.clamp(0.0, 1.0))
         .unwrap_or(0.01)
 }
