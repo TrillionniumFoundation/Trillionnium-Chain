@@ -155,31 +155,50 @@ impl ZkVerifier {
         let resolved_vk_ref = if let Some(payload) = zk_payload.as_ref() {
             let resolved = resolve_zk_vk_ref(self.vk_refs.as_ref(), payload)?;
 
+            let resolved_system = match resolved.zk_system.as_deref().and_then(normalize_zk_system)
+            {
+                Some(system) => system,
+                None => {
+                    return Err(BackendExecutionError::InvalidProof {
+                        backend: "zk:payload".to_string(),
+                        reason: format!(
+                            "invalid zk payload: vk_ref '{}' is missing canonical zk_system metadata",
+                            resolved.vk_ref
+                        ),
+                    }
+                    .into())
+                }
+            };
+
             if let Some(payload_system) = payload.zk_system.as_deref().and_then(normalize_zk_system)
             {
-                match resolved.zk_system.as_deref().and_then(normalize_zk_system) {
-                    Some(resolved_system) => {
-                        if payload_system != resolved_system {
-                            return Err(BackendExecutionError::InvalidProof {
-                                backend: "zk:payload".to_string(),
-                                reason: format!(
-                                    "invalid zk payload: zk_system '{payload_system}' does not match vk_ref '{}'",
-                                    resolved.vk_ref
-                                ),
-                            }
-                            .into());
-                        }
+                if payload_system != resolved_system {
+                    return Err(BackendExecutionError::InvalidProof {
+                        backend: "zk:payload".to_string(),
+                        reason: format!(
+                            "invalid zk payload: zk_system '{payload_system}' does not match vk_ref '{}'",
+                            resolved.vk_ref
+                        ),
                     }
-                    None => {
-                        return Err(BackendExecutionError::InvalidProof {
-                            backend: "zk:payload".to_string(),
-                            reason: format!(
-                                "invalid zk payload: vk_ref '{}' is missing canonical zk_system metadata",
-                                resolved.vk_ref
-                            ),
-                        }
-                        .into());
+                    .into());
+                }
+            }
+
+            if let Some(payload_backend_system) = payload
+                .backend_id
+                .as_deref()
+                .and_then(|backend| normalize_zk_system(backend))
+            {
+                if payload_backend_system != resolved_system {
+                    return Err(BackendExecutionError::InvalidProof {
+                        backend: "zk:payload".to_string(),
+                        reason: format!(
+                            "invalid zk payload: backend_id '{}' does not match vk_ref '{}'",
+                            payload.backend_id.as_deref().unwrap_or_default().trim(),
+                            resolved.vk_ref
+                        ),
                     }
+                    .into());
                 }
             }
 
@@ -187,30 +206,16 @@ impl ZkVerifier {
                 .system_hint()
                 .and_then(|system| normalize_zk_system(&system))
             {
-                match resolved.zk_system.as_deref().and_then(normalize_zk_system) {
-                    Some(resolved_system) => {
-                        if selected_backend_system != resolved_system {
-                            return Err(BackendExecutionError::InvalidProof {
-                                backend: "zk:payload".to_string(),
-                                reason: format!(
-                                    "invalid zk payload: backend '{}' does not match vk_ref '{}'",
-                                    selected_backend.key(),
-                                    resolved.vk_ref
-                                ),
-                            }
-                            .into());
-                        }
+                if selected_backend_system != resolved_system {
+                    return Err(BackendExecutionError::InvalidProof {
+                        backend: "zk:payload".to_string(),
+                        reason: format!(
+                            "invalid zk payload: backend '{}' does not match vk_ref '{}'",
+                            selected_backend.key(),
+                            resolved.vk_ref
+                        ),
                     }
-                    None => {
-                        return Err(BackendExecutionError::InvalidProof {
-                            backend: "zk:payload".to_string(),
-                            reason: format!(
-                                "invalid zk payload: vk_ref '{}' is missing canonical zk_system metadata",
-                                resolved.vk_ref
-                            ),
-                        }
-                        .into());
-                    }
+                    .into());
                 }
             }
 
@@ -454,11 +459,11 @@ mod tests {
         }));
         let verifier = ZkVerifier::from_config(&router_config(), Arc::new(backends));
         let task = mock_task();
-        let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"plonk","backend_id":"groth16-demo","backend_version":"v1","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-plonk/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["99","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#;
+        let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"groth16-demo","backend_version":"v1","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-plonk/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["99","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#;
         assert!(matches!(
             verifier.verify_proof(&task, payload),
             VerificationResult::Invalid(msg)
-                if msg.contains("backend 'groth16-demo'") && msg.contains("does not match vk_ref")
+                if msg.contains("zk_system 'groth16'") && msg.contains("does not match vk_ref")
         ));
     }
 
