@@ -414,10 +414,13 @@ fn normalize_tx_status(raw: &str) -> Option<String> {
         .trim_end_matches(|c: char| c.is_ascii_punctuation())
         .to_ascii_lowercase();
     match cleaned.as_str() {
-        "pending" => Some("pending".to_string()),
-        "committed" | "confirmed" | "success" | "succeeded" | "ok" => Some("committed".to_string()),
+        "pending" | "submitted" | "accepted" | "queued" | "broadcast" | "broadcasted" => {
+            Some("pending".to_string())
+        }
+        "committed" | "confirmed" | "success" | "succeeded" | "ok" | "included"
+        | "finalized" => Some("committed".to_string()),
         "fail" | "failed" | "error" | "rejected" | "reverted" | "aborted" | "dropped"
-        | "timeout" | "timed_out" | "timed-out" => Some("fail".to_string()),
+        | "timeout" | "timed_out" | "timed-out" | "expired" => Some("fail".to_string()),
         _ => None,
     }
 }
@@ -1161,6 +1164,26 @@ mod tests {
         let parsed_timed_out_hyphen =
             parse_tx_query_response(timed_out_hyphen_alias, "0xfallback").unwrap();
         assert_eq!(parsed_timed_out_hyphen.status, "fail");
+
+        let submitted_alias = "tx_hash=0xef3\nstatus=submitted\n";
+        let parsed_submitted = parse_tx_query_response(submitted_alias, "0xfallback").unwrap();
+        assert_eq!(parsed_submitted.status, "pending");
+
+        let accepted_alias = "tx_hash=0xef4\nstatus=accepted\n";
+        let parsed_accepted = parse_tx_query_response(accepted_alias, "0xfallback").unwrap();
+        assert_eq!(parsed_accepted.status, "pending");
+
+        let included_alias = "tx_hash=0xef5\nstatus=included\n";
+        let parsed_included = parse_tx_query_response(included_alias, "0xfallback").unwrap();
+        assert_eq!(parsed_included.status, "committed");
+
+        let finalized_alias = "tx_hash=0xef6\nstatus=finalized\n";
+        let parsed_finalized = parse_tx_query_response(finalized_alias, "0xfallback").unwrap();
+        assert_eq!(parsed_finalized.status, "committed");
+
+        let expired_alias = "tx_hash=0xef7\nstatus=expired\n";
+        let parsed_expired = parse_tx_query_response(expired_alias, "0xfallback").unwrap();
+        assert_eq!(parsed_expired.status, "fail");
     }
 
     #[test]
