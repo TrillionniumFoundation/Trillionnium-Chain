@@ -60,6 +60,18 @@ def recommended_producer(label: str) -> str:
     return "unknown"
 
 
+def autopilot_severity(missing_inputs, stale_inputs, old_inputs) -> str:
+    if not missing_inputs and not stale_inputs and not old_inputs:
+        return "GREEN"
+    if missing_inputs:
+        if len(missing_inputs) >= 3:
+            return "RED"
+        return "YELLOW"
+    if old_inputs:
+        return "YELLOW"
+    return "GREEN"
+
+
 def main():
     p = argparse.ArgumentParser(description="Render profiling closeout baseline from node/bench outputs")
     p.add_argument("--node-log", default=None)
@@ -127,10 +139,17 @@ def main():
         ("mixed_bench", mixed),
         ("executor_profile", executor_profile),
     ]
+    stale_inputs = []
+    old_inputs = []
     for label, path in freshness_rows:
         age_seconds = file_age_seconds(path)
+        freshness = freshness_label(age_seconds)
+        if freshness == "stale":
+            stale_inputs.append(label)
+        elif freshness == "old":
+            old_inputs.append(label)
         lines.append(
-            f"- {label}: freshness={freshness_label(age_seconds)} age_seconds={age_seconds if age_seconds is not None else 'n/a'}"
+            f"- {label}: freshness={freshness} age_seconds={age_seconds if age_seconds is not None else 'n/a'}"
         )
 
     lines += ["", "## Input Readiness"]
@@ -181,15 +200,26 @@ def main():
         lines.append("- status: COMPLETE")
     lines.append(f"- present_inputs: {', '.join(present_inputs) if present_inputs else 'none'}")
     lines.append(f"- missing_inputs: {', '.join(missing_inputs) if missing_inputs else 'none'}")
+    lines.append(f"- stale_inputs: {', '.join(stale_inputs) if stale_inputs else 'none'}")
+    lines.append(f"- old_inputs: {', '.join(old_inputs) if old_inputs else 'none'}")
     lines.append(f"- readiness_score: {len(present_inputs)}/{len(inputs)}")
+    lines.append(
+        f"- autopilot_severity: {autopilot_severity(missing_inputs, stale_inputs, old_inputs)}"
+    )
 
     lines += ["", "## Autopilot Recommended Next Steps"]
     if missing_inputs:
         for label, status, producer in readiness_rows:
             if status != "present":
                 lines.append(f"- produce {label}: {producer}")
-    else:
-        lines.append("- none: all expected closeout inputs are present")
+    if stale_inputs:
+        for label in stale_inputs:
+            lines.append(f"- refresh {label}: existing artifact is stale; regenerate before curator/autopilot review")
+    if old_inputs:
+        for label in old_inputs:
+            lines.append(f"- refresh {label}: existing artifact is old; do not treat as current evidence")
+    if not missing_inputs and not stale_inputs and not old_inputs:
+        lines.append("- none: all expected closeout inputs are present and fresh")
 
     lines += ["", "## Block Metrics"]
     for key in [
