@@ -1928,11 +1928,22 @@ mod tests {
             groups[0].iter().map(|t| t.id).collect::<Vec<_>>(),
             vec![3, 7, 9]
         );
+        assert_eq!(profile.tx_count, txs.len());
+        assert_eq!(profile.grouped_count, txs.len());
+        assert_eq!(profile.hot_object_share, 0.0);
         assert_eq!(profile.conflict_checks, 0);
         assert_eq!(profile.conflict_hits, 0);
+        assert_eq!(profile.candidate_groups_scanned, 0);
+        assert_eq!(profile.stage_ww_checks, 0);
+        assert_eq!(profile.stage_ww_hits, 0);
+        assert_eq!(profile.stage_wr_checks, 0);
+        assert_eq!(profile.stage_wr_hits, 0);
+        assert_eq!(profile.stage_rw_checks, 0);
+        assert_eq!(profile.stage_rw_hits, 0);
         assert_eq!(profile.group_count, 1);
         assert_eq!(profile.max_group_size, txs.len());
         assert_eq!(profile.min_group_size, txs.len());
+        assert_eq!(profile.avg_group_size, txs.len() as f64);
     }
 
     #[test]
