@@ -2,6 +2,47 @@ pub mod bridge_status {
     use serde::{Deserialize, Serialize};
     use trnm_types::IdentityRegistry;
 
+    fn has_disallowed_request_char(ch: char) -> bool {
+        ch.is_control()
+            || matches!(
+                ch,
+                '\u{00AD}'
+                    | '\u{034F}'
+                    | '\u{061C}'
+                    | '\u{180E}'
+                    | '\u{200B}'
+                    | '\u{200C}'
+                    | '\u{200D}'
+                    | '\u{200E}'
+                    | '\u{200F}'
+                    | '\u{2028}'
+                    | '\u{2029}'
+                    | '\u{202A}'
+                    | '\u{202B}'
+                    | '\u{202C}'
+                    | '\u{202D}'
+                    | '\u{202E}'
+                    | '\u{2060}'
+                    | '\u{2061}'
+                    | '\u{2062}'
+                    | '\u{2063}'
+                    | '\u{2064}'
+                    | '\u{2066}'
+                    | '\u{2067}'
+                    | '\u{2068}'
+                    | '\u{2069}'
+                    | '\u{206A}'
+                    | '\u{206B}'
+                    | '\u{206C}'
+                    | '\u{206D}'
+                    | '\u{206E}'
+                    | '\u{206F}'
+                    | '\u{FEFF}'
+            )
+            || ('\u{FE00}'..='\u{FE0F}').contains(&ch)
+            || ('\u{E0100}'..='\u{E01EF}').contains(&ch)
+    }
+
     #[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
     pub enum BridgeStatus {
         Pending,
@@ -77,7 +118,9 @@ pub mod bridge_status {
                     reason: "empty tx_hash",
                 });
             }
-            if self.tx_hash.trim() != self.tx_hash || self.tx_hash.chars().any(char::is_control) {
+            if self.tx_hash.trim() != self.tx_hash
+                || self.tx_hash.chars().any(has_disallowed_request_char)
+            {
                 return Err(SettlementError::MalformedRequest {
                     reason: "non-canonical tx_hash",
                 });

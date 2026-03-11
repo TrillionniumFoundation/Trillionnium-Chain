@@ -125,10 +125,12 @@ fn is_sanitized_to_space(ch: char) -> bool {
     ch.is_control()
         || matches!(
             ch,
-            '\u{00AD}'
+            '\u{00A0}'
+                | '\u{00AD}'
                 | '\u{034F}'
                 | '\u{061C}'
                 | '\u{180E}'
+                | '\u{2007}'
                 | '\u{200B}'
                 | '\u{200C}'
                 | '\u{200D}'
@@ -141,6 +143,7 @@ fn is_sanitized_to_space(ch: char) -> bool {
                 | '\u{202C}'
                 | '\u{202D}'
                 | '\u{202E}'
+                | '\u{202F}'
                 | '\u{2060}'
                 | '\u{2061}'
                 | '\u{2062}'
@@ -261,6 +264,13 @@ mod tests {
     #[test]
     fn normalize_compensation_reason_strips_variation_selectors_and_cgj_for_log_consensus() {
         let raw = "target\u{FE0F} relay\u{E0100} timeout\u{034F} signal";
+        let normalized = normalize_compensation_reason(raw, "fallback");
+        assert_eq!(normalized, "target relay timeout signal");
+    }
+
+    #[test]
+    fn normalize_compensation_reason_collapses_nbsp_family_for_replay_stability() {
+        let raw = "target\u{00A0}relay\u{2007}timeout\u{202F}signal";
         let normalized = normalize_compensation_reason(raw, "fallback");
         assert_eq!(normalized, "target relay timeout signal");
     }
