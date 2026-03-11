@@ -416,6 +416,9 @@ impl LaneAdmissionGate {
             // restored-state ghost markers cannot survive until the next admit().
             self.normal.seen.clear();
             self.critical.seen.clear();
+            // Also cold-reset fairness bookkeeping immediately on idle so no stale
+            // streak survives between dequeue loops in long-lived schedulers.
+            self.critical_served_streak = 0;
         }
 
         Some(id)
@@ -1140,6 +1143,27 @@ mod tests {
 
         // Critical should not be spuriously preempted by stale fairness state.
         assert_eq!(g.pop_ready(), Some(1));
+    }
+
+    #[test]
+    fn full_drain_resets_fairness_streak_immediately_without_waiting_for_next_admit() {
+        let mut g = LaneAdmissionGate::new(4, 1);
+
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(3, IngressClass::Critical), AdmitOutcome::Accepted);
+
+        // Build non-zero fairness streak during critical service.
+        assert_eq!(g.pop_ready(), Some(2));
+        assert!(g.critical_served_streak > 0);
+
+        // Drain remaining backlog completely.
+        assert_eq!(g.pop_ready(), Some(1));
+        assert_eq!(g.pop_ready(), Some(3));
+        assert_eq!(g.queued_counts(), (0, 0, 0));
+
+        // Full-drain boundary should cold-reset fairness immediately.
+        assert_eq!(g.critical_served_streak, 0);
     }
 
     #[test]
