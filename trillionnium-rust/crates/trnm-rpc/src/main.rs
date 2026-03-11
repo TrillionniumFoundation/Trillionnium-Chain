@@ -2375,7 +2375,9 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
                 }
             }
             Some(path) if path.starts_with("/query-capability-audit/") => {
-                let subject_or_token = path.trim_start_matches("/query-capability-audit/");
+                let path_without_query = path.split('?').next().unwrap_or(path);
+                let subject_or_token = path_without_query
+                    .trim_start_matches("/query-capability-audit/");
                 let registry = load_identity_registry(&identity_registry_file());
                 if let Some(token_id) =
                     resolve_capability_token_subject_or_token(&registry, subject_or_token)
