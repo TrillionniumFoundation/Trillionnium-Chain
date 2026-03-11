@@ -314,26 +314,7 @@ mod tests {
         let (default_groups, default_profile) = StrategyArg::Default.resolve_profile(&txs);
         let (executor_groups, executor_profile) = trnm_executor::build_parallel_groups_profile(&txs);
 
-        assert_eq!(default_groups, executor_groups);
-        assert_eq!(default_profile.tx_count, executor_profile.tx_count);
-        assert_eq!(default_profile.group_count, executor_profile.group_count);
-        assert_eq!(default_profile.grouped_count, executor_profile.grouped_count);
-        assert_eq!(default_profile.max_group_size, executor_profile.max_group_size);
-        assert_eq!(default_profile.min_group_size, executor_profile.min_group_size);
-        assert_eq!(default_profile.conflict_checks, executor_profile.conflict_checks);
-        assert_eq!(default_profile.conflict_hits, executor_profile.conflict_hits);
-        assert_eq!(
-            default_profile.candidate_groups_scanned,
-            executor_profile.candidate_groups_scanned
-        );
-        assert_eq!(default_profile.stage_ww_checks, executor_profile.stage_ww_checks);
-        assert_eq!(default_profile.stage_ww_hits, executor_profile.stage_ww_hits);
-        assert_eq!(default_profile.stage_wr_checks, executor_profile.stage_wr_checks);
-        assert_eq!(default_profile.stage_wr_hits, executor_profile.stage_wr_hits);
-        assert_eq!(default_profile.stage_rw_checks, executor_profile.stage_rw_checks);
-        assert_eq!(default_profile.stage_rw_hits, executor_profile.stage_rw_hits);
-        assert!((default_profile.avg_group_size - executor_profile.avg_group_size).abs() < f64::EPSILON);
-        assert!((default_profile.hot_object_share - executor_profile.hot_object_share).abs() < f64::EPSILON);
+        assert_profiles_match(&default_groups, &default_profile, &executor_groups, &executor_profile);
     }
 
     #[test]
@@ -347,26 +328,7 @@ mod tests {
 
         assert!(decision.use_hot_bucket, "expected hot-streak bench to stay on hot-bucket path");
         assert_eq!(decision.reason, "hotspot_detected");
-        assert_eq!(bench_groups, executor_groups);
-        assert_eq!(bench_profile.tx_count, executor_profile.tx_count);
-        assert_eq!(bench_profile.group_count, executor_profile.group_count);
-        assert_eq!(bench_profile.grouped_count, executor_profile.grouped_count);
-        assert_eq!(bench_profile.max_group_size, executor_profile.max_group_size);
-        assert_eq!(bench_profile.min_group_size, executor_profile.min_group_size);
-        assert_eq!(bench_profile.conflict_checks, executor_profile.conflict_checks);
-        assert_eq!(bench_profile.conflict_hits, executor_profile.conflict_hits);
-        assert_eq!(
-            bench_profile.candidate_groups_scanned,
-            executor_profile.candidate_groups_scanned
-        );
-        assert_eq!(bench_profile.stage_ww_checks, executor_profile.stage_ww_checks);
-        assert_eq!(bench_profile.stage_ww_hits, executor_profile.stage_ww_hits);
-        assert_eq!(bench_profile.stage_wr_checks, executor_profile.stage_wr_checks);
-        assert_eq!(bench_profile.stage_wr_hits, executor_profile.stage_wr_hits);
-        assert_eq!(bench_profile.stage_rw_checks, executor_profile.stage_rw_checks);
-        assert_eq!(bench_profile.stage_rw_hits, executor_profile.stage_rw_hits);
-        assert!((bench_profile.avg_group_size - executor_profile.avg_group_size).abs() < f64::EPSILON);
-        assert!((bench_profile.hot_object_share - executor_profile.hot_object_share).abs() < f64::EPSILON);
+        assert_profiles_match(&bench_groups, &bench_profile, &executor_groups, &executor_profile);
     }
 
     #[test]
@@ -376,25 +338,34 @@ mod tests {
         let (executor_groups, executor_profile) =
             build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::Original);
 
-        assert_eq!(bench_groups, executor_groups);
-        assert_eq!(bench_profile.tx_count, executor_profile.tx_count);
-        assert_eq!(bench_profile.group_count, executor_profile.group_count);
-        assert_eq!(bench_profile.grouped_count, executor_profile.grouped_count);
-        assert_eq!(bench_profile.max_group_size, executor_profile.max_group_size);
-        assert_eq!(bench_profile.min_group_size, executor_profile.min_group_size);
-        assert_eq!(bench_profile.conflict_checks, executor_profile.conflict_checks);
-        assert_eq!(bench_profile.conflict_hits, executor_profile.conflict_hits);
+        assert_profiles_match(&bench_groups, &bench_profile, &executor_groups, &executor_profile);
+    }
+
+    fn assert_profiles_match(
+        left_groups: &[Vec<trnm_executor::Tx>],
+        left_profile: &trnm_executor::GroupingProfile,
+        right_groups: &[Vec<trnm_executor::Tx>],
+        right_profile: &trnm_executor::GroupingProfile,
+    ) {
+        assert_eq!(left_groups, right_groups);
+        assert_eq!(left_profile.tx_count, right_profile.tx_count);
+        assert_eq!(left_profile.group_count, right_profile.group_count);
+        assert_eq!(left_profile.grouped_count, right_profile.grouped_count);
+        assert_eq!(left_profile.max_group_size, right_profile.max_group_size);
+        assert_eq!(left_profile.min_group_size, right_profile.min_group_size);
+        assert_eq!(left_profile.conflict_checks, right_profile.conflict_checks);
+        assert_eq!(left_profile.conflict_hits, right_profile.conflict_hits);
         assert_eq!(
-            bench_profile.candidate_groups_scanned,
-            executor_profile.candidate_groups_scanned
+            left_profile.candidate_groups_scanned,
+            right_profile.candidate_groups_scanned
         );
-        assert_eq!(bench_profile.stage_ww_checks, executor_profile.stage_ww_checks);
-        assert_eq!(bench_profile.stage_ww_hits, executor_profile.stage_ww_hits);
-        assert_eq!(bench_profile.stage_wr_checks, executor_profile.stage_wr_checks);
-        assert_eq!(bench_profile.stage_wr_hits, executor_profile.stage_wr_hits);
-        assert_eq!(bench_profile.stage_rw_checks, executor_profile.stage_rw_checks);
-        assert_eq!(bench_profile.stage_rw_hits, executor_profile.stage_rw_hits);
-        assert!((bench_profile.avg_group_size - executor_profile.avg_group_size).abs() < f64::EPSILON);
-        assert!((bench_profile.hot_object_share - executor_profile.hot_object_share).abs() < f64::EPSILON);
+        assert_eq!(left_profile.stage_ww_checks, right_profile.stage_ww_checks);
+        assert_eq!(left_profile.stage_ww_hits, right_profile.stage_ww_hits);
+        assert_eq!(left_profile.stage_wr_checks, right_profile.stage_wr_checks);
+        assert_eq!(left_profile.stage_wr_hits, right_profile.stage_wr_hits);
+        assert_eq!(left_profile.stage_rw_checks, right_profile.stage_rw_checks);
+        assert_eq!(left_profile.stage_rw_hits, right_profile.stage_rw_hits);
+        assert!((left_profile.avg_group_size - right_profile.avg_group_size).abs() < f64::EPSILON);
+        assert!((left_profile.hot_object_share - right_profile.hot_object_share).abs() < f64::EPSILON);
     }
 }

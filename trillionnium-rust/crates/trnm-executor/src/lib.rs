@@ -2027,31 +2027,35 @@ mod tests {
         let (original_groups, original_profile) =
             build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::Original);
 
-        assert_eq!(default_groups, original_groups);
-        assert_eq!(default_profile.tx_count, original_profile.tx_count);
-        assert_eq!(default_profile.group_count, original_profile.group_count);
-        assert_eq!(default_profile.grouped_count, original_profile.grouped_count);
-        assert_eq!(default_profile.max_group_size, original_profile.max_group_size);
-        assert_eq!(default_profile.min_group_size, original_profile.min_group_size);
-        assert_eq!(default_profile.conflict_checks, original_profile.conflict_checks);
-        assert_eq!(default_profile.conflict_hits, original_profile.conflict_hits);
+        assert_profiles_match(&default_groups, &default_profile, &original_groups, &original_profile);
+    }
+
+    fn assert_profiles_match(
+        left_groups: &[Vec<Tx>],
+        left_profile: &GroupingProfile,
+        right_groups: &[Vec<Tx>],
+        right_profile: &GroupingProfile,
+    ) {
+        assert_eq!(left_groups, right_groups);
+        assert_eq!(left_profile.tx_count, right_profile.tx_count);
+        assert_eq!(left_profile.group_count, right_profile.group_count);
+        assert_eq!(left_profile.grouped_count, right_profile.grouped_count);
+        assert_eq!(left_profile.max_group_size, right_profile.max_group_size);
+        assert_eq!(left_profile.min_group_size, right_profile.min_group_size);
+        assert_eq!(left_profile.conflict_checks, right_profile.conflict_checks);
+        assert_eq!(left_profile.conflict_hits, right_profile.conflict_hits);
         assert_eq!(
-            default_profile.candidate_groups_scanned,
-            original_profile.candidate_groups_scanned
+            left_profile.candidate_groups_scanned,
+            right_profile.candidate_groups_scanned
         );
-        assert_eq!(default_profile.stage_ww_checks, original_profile.stage_ww_checks);
-        assert_eq!(default_profile.stage_ww_hits, original_profile.stage_ww_hits);
-        assert_eq!(default_profile.stage_wr_checks, original_profile.stage_wr_checks);
-        assert_eq!(default_profile.stage_wr_hits, original_profile.stage_wr_hits);
-        assert_eq!(default_profile.stage_rw_checks, original_profile.stage_rw_checks);
-        assert_eq!(default_profile.stage_rw_hits, original_profile.stage_rw_hits);
-        assert!(
-            (default_profile.avg_group_size - original_profile.avg_group_size).abs() < f64::EPSILON
-        );
-        assert!(
-            (default_profile.hot_object_share - original_profile.hot_object_share).abs()
-                < f64::EPSILON
-        );
+        assert_eq!(left_profile.stage_ww_checks, right_profile.stage_ww_checks);
+        assert_eq!(left_profile.stage_ww_hits, right_profile.stage_ww_hits);
+        assert_eq!(left_profile.stage_wr_checks, right_profile.stage_wr_checks);
+        assert_eq!(left_profile.stage_wr_hits, right_profile.stage_wr_hits);
+        assert_eq!(left_profile.stage_rw_checks, right_profile.stage_rw_checks);
+        assert_eq!(left_profile.stage_rw_hits, right_profile.stage_rw_hits);
+        assert!((left_profile.avg_group_size - right_profile.avg_group_size).abs() < f64::EPSILON);
+        assert!((left_profile.hot_object_share - right_profile.hot_object_share).abs() < f64::EPSILON);
     }
 
     struct EnvGuard {
