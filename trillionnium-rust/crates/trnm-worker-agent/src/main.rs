@@ -4078,6 +4078,27 @@ mod tests {
     }
 
     #[test]
+    fn query_audit_output_serializes_normalized_fingerprint_only_when_present() {
+        let with_fp = QueryAuditOutput {
+            hit_indexes: vec![1, 3],
+            records: vec![],
+            provenance_fingerprint: Some("deadbeef".to_string()),
+        };
+        let with_fp_json = serde_json::to_value(&with_fp).expect("serialize query output");
+        assert_eq!(with_fp_json["provenance_fingerprint"], "deadbeef");
+        assert_eq!(with_fp_json["hit_indexes"], serde_json::json!([1, 3]));
+
+        let without_fp = QueryAuditOutput {
+            hit_indexes: vec![],
+            records: vec![],
+            provenance_fingerprint: None,
+        };
+        let without_fp_json = serde_json::to_value(&without_fp).expect("serialize query output");
+        assert!(without_fp_json.get("provenance_fingerprint").is_none());
+        assert_eq!(without_fp_json["hit_indexes"], serde_json::json!([]));
+    }
+
+    #[test]
     fn attach_llm_provenance_persists_provider_request_id() {
         let mut rec = MessageIngressRecord {
             request_id: "r1".to_string(),
