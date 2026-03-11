@@ -540,8 +540,15 @@ fn recover_wal_state(wal_dir: &Path) -> Result<RecoveredWalState> {
 
     if let Some(last) = valid_entries.last() {
         let retained_checkpoint_height = last_checkpoint.as_ref().map(|cp| cp.height);
+        let checkpoint_covers_last_retained_entry = last_checkpoint
+            .as_ref()
+            .map(|cp| cp.height == last.height)
+            .unwrap_or(false);
         let metadata_only_recovery = retained_checkpoint_height
-            .map(|checkpoint_height| checkpoint_height.saturating_add(1) < last.height)
+            .map(|checkpoint_height| {
+                checkpoint_height.saturating_add(1) < last.height
+                    && !checkpoint_covers_last_retained_entry
+            })
             .unwrap_or(true);
         return Ok(RecoveredWalState {
             next_height: last.height + 1,
