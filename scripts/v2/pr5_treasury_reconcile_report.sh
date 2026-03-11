@@ -252,6 +252,9 @@ echo "[PR5][reconcile] json=$OUT_DIR/reconcile.json"
 status=$(awk -F= '/^status=/{print $2; exit}' "$OUT_DIR/summary.txt" 2>/dev/null || true)
 if [[ "$status" == "FAIL" ]]; then
   echo "[PR5][reconcile][FAIL] status=FAIL; blocking with non-zero exit" >&2
+  if [[ -f "$OUT_DIR/summary.txt" ]]; then
+    sed 's/^/[PR5][reconcile][summary] /' "$OUT_DIR/summary.txt" >&2
+  fi
   if [[ "${PR5_RECONCILE_SOFT_FAIL:-0}" == "1" ]]; then
     echo "[PR5][reconcile][WARN] PR5_RECONCILE_SOFT_FAIL=1 set; return 0 for compatibility" >&2
     exit 0
