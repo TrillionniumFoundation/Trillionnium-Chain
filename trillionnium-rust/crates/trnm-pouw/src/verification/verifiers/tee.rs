@@ -474,6 +474,20 @@ mod tests {
     }
 
     #[test]
+    fn tee_verifier_backend_internal_quote_report_claims_keeps_combined_claims_surface_and_legacy_suffix() {
+        let result = TeeVerifier::classify_execution_err(BackendExecutionError::Internal {
+            backend: "tee:mock-tee-internal".to_string(),
+            reason: "quote/report claims verifier crashed".to_string(),
+        });
+
+        assert!(matches!(result, VerificationResult::Indeterminate(_)), "unexpected result: {result:?}");
+        let VerificationResult::Indeterminate(msg) = result else { unreachable!() };
+        assert!(msg.contains("backend_error:"), "message: {msg}");
+        assert!(msg.contains("quote/report claims"), "message: {msg}");
+        assert!(msg.contains("legacy: failed while verifying TEE attestation quote/report claims"), "message: {msg}");
+    }
+
+    #[test]
     fn tee_verifier_backend_malformed_report_claims_collapses_to_payload_claims_surface() {
         let mut backends = ZkBackendRegistry::new();
         backends.register(Arc::new(MockTeeMalformedBackend));
