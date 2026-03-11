@@ -417,7 +417,7 @@ Runbook：当前以本节说明与 `python3 ./scripts/v2/pr6_daily_security_summ
 
 ## PR-9 Weekly Alert Governance（每周告警治理）
 
-每周治理报告（非阻断）聚合以下指标：告警总量、抑制率、失败率、TopN异常、阈值建议变更。
+每周治理报告（非阻断）聚合以下指标：告警总量、抑制率、失败率、实际投递成功率、suppression share、TopN异常、阈值建议变更。
 
 执行：
 

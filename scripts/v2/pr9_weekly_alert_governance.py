@@ -245,6 +245,9 @@ def main() -> int:
 
     suppression_rate = pct(suppressed, total)
     failure_rate = pct(failed, total)
+    delivery_attempted = max(0, sent + failed)
+    delivery_success_rate = pct(sent, delivery_attempted)
+    suppression_share_pct = pct(suppressed, total)
 
     dead_letters = read_dead_letters(dead_letter_path, lookback_days=args.lookback_days)
     dead_letters_week = len(dead_letters)
@@ -278,6 +281,8 @@ def main() -> int:
     prev_total = int(prev_metrics.get("alerts_total", 0) or 0) if has_prev else 0
     prev_suppression_rate = float(prev_metrics.get("suppression_rate_pct", 0.0) or 0.0) if has_prev else 0.0
     prev_failure_rate = float(prev_metrics.get("failure_rate_pct", 0.0) or 0.0) if has_prev else 0.0
+    prev_delivery_success_rate = float(prev_metrics.get("delivery_success_rate_pct", 0.0) or 0.0) if has_prev else 0.0
+    prev_suppression_share_pct = float(prev_metrics.get("suppression_share_pct", 0.0) or 0.0) if has_prev else 0.0
 
     wow = {
         "available": has_prev,
@@ -285,6 +290,8 @@ def main() -> int:
         "alerts_total_delta": delta(total, prev_total) if has_prev else None,
         "suppression_rate_pct_delta": pct_delta(suppression_rate, prev_suppression_rate) if has_prev else None,
         "failure_rate_pct_delta": pct_delta(failure_rate, prev_failure_rate) if has_prev else None,
+        "delivery_success_rate_pct_delta": pct_delta(delivery_success_rate, prev_delivery_success_rate) if has_prev else None,
+        "suppression_share_pct_delta": pct_delta(suppression_share_pct, prev_suppression_share_pct) if has_prev else None,
         "topn": {
             "unresolved": topn_diff(sections["unresolved"], prev_topn.get("unresolved", []) if isinstance(prev_topn.get("unresolved", []), list) else []) if has_prev else {"entered": [], "exited": [], "rank_shift": []},
             "forfeit": topn_diff(sections["forfeit"], prev_topn.get("forfeit", []) if isinstance(prev_topn.get("forfeit", []), list) else []) if has_prev else {"entered": [], "exited": [], "rank_shift": []},
@@ -313,8 +320,11 @@ def main() -> int:
             "alerts_sent": sent,
             "alerts_suppressed": suppressed,
             "alerts_failed": failed,
+            "delivery_attempted": delivery_attempted,
             "suppression_rate_pct": round(suppression_rate, 4),
             "failure_rate_pct": round(failure_rate, 4),
+            "delivery_success_rate_pct": round(delivery_success_rate, 4),
+            "suppression_share_pct": round(suppression_share_pct, 4),
             "dead_letter_entries": dead_letters_week,
         },
         "topn": sections,
@@ -350,6 +360,9 @@ def main() -> int:
     lines.append(f"- alerts.failed: `{failed}`")
     lines.append(f"- suppression_rate: `{suppression_rate:.2f}%`")
     lines.append(f"- failure_rate: `{failure_rate:.2f}%`")
+    lines.append(f"- delivery_attempted: `{delivery_attempted}`")
+    lines.append(f"- delivery_success_rate: `{delivery_success_rate:.2f}%`")
+    lines.append(f"- suppression_share: `{suppression_share_pct:.2f}%`")
     lines.append(f"- dead_letter_entries_last_{args.lookback_days}d: `{dead_letters_week}`")
     lines.append("")
 
@@ -359,6 +372,8 @@ def main() -> int:
         lines.append(f"- alerts.total Δ: `{fmt_delta(wow['alerts_total_delta'])}`")
         lines.append(f"- suppression_rate Δ: `{fmt_delta(float(wow['suppression_rate_pct_delta']), 'pp')}`")
         lines.append(f"- failure_rate Δ: `{fmt_delta(float(wow['failure_rate_pct_delta']), 'pp')}`")
+        lines.append(f"- delivery_success_rate Δ: `{fmt_delta(float(wow['delivery_success_rate_pct_delta']), 'pp')}`")
+        lines.append(f"- suppression_share Δ: `{fmt_delta(float(wow['suppression_share_pct_delta']), 'pp')}`")
         lines.append(f"- threshold_changed_keys Δ: `{fmt_delta(int(wow['threshold_changed_keys_delta']))}`")
     else:
         lines.append("- baseline unavailable: no previous weekly JSON snapshot found (`run/pr9/history/weekly-alert-governance-*.json`).")
