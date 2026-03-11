@@ -54,6 +54,16 @@ pub fn detect_conflict(a: &Tx, b: &Tx) -> bool {
         return false;
     }
 
+    // Asymmetric fast paths: when one side is read-only, only a single probe can
+    // produce a write/read hazard. This trims two unnecessary intersections from
+    // hot free-ingress scheduling probes under mixed read-only traffic.
+    if a.write_set.is_empty() {
+        return intersects(&a.read_set, &b.write_set);
+    }
+    if b.write_set.is_empty() {
+        return intersects(&a.write_set, &b.read_set);
+    }
+
     intersects(&a.write_set, &b.write_set)
         || intersects(&a.write_set, &b.read_set)
         || intersects(&a.read_set, &b.write_set)
