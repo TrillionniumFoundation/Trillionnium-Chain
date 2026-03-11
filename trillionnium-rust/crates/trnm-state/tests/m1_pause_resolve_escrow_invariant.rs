@@ -584,3 +584,51 @@ fn paused_state_rejects_case_variant_worker_slash_treasury_member_without_side_e
         worker_slash_before
     );
 }
+
+
+#[test]
+fn paused_state_rejects_case_variant_emergency_pause_placeholder_member_without_side_effects() {
+    // M1 micro-hardening: resolve quorum parsing must keep the emergency pause placeholder
+    // reserved under case drift, so paused mode cannot smuggle control-plane aliases into
+    // multi-party resolve approval.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 9_930);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 993);
+    st.set_balance(WORKER_SLASH_TREASURY_ACCOUNT, 553);
+
+    st.set_gov_param(98_212, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+    let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+    let worker_slash_before = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
+
+    let mixed_case_pause_placeholder = "Governance.Emergency_Pause";
+    let authority_with_case_variant_pause_placeholder =
+        format!("authority-a,{mixed_case_pause_placeholder}");
+    let err = st
+        .stage_or_confirm_resolve_approval(
+            9_920,
+            1,
+            true,
+            "authority-a",
+            &authority_with_case_variant_pause_placeholder,
+        )
+        .expect_err(
+            "case-variant emergency_pause placeholder member must be rejected while paused",
+        );
+    assert!(err.contains("reserved") || err.contains("authority set"));
+
+    assert_eq!(st.pending_resolve_approval(9_920), None);
+    assert_eq!(st.pending_gov_update("resolve_authority"), None);
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
+    assert_eq!(
+        st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
+        worker_slash_before
+    );
+}

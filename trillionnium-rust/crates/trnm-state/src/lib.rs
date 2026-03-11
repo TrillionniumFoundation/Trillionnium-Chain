@@ -193,6 +193,7 @@ const GOV_SENSITIVE_KEYS: &[&str] = &[
     "resolve_authority",
 ];
 const DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER: &str = "governance.resolve_authority";
+const EMERGENCY_PAUSE_PLACEHOLDER: &str = "governance.emergency_pause";
 const RESERVED_SYSTEM_AUTHORITY: &str = "system";
 const CHALLENGE_ESCROW_ACCOUNT: &str = "treasury.challenge_escrow";
 const CHALLENGE_FORFEIT_TREASURY_ACCOUNT: &str = "treasury.challenge_forfeits";
@@ -416,6 +417,7 @@ impl StateStore {
             return Err("resolve approval approver must be a single canonical actor id".into());
         }
         if approver_trimmed.eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER)
+            || approver_trimmed.eq_ignore_ascii_case(EMERGENCY_PAUSE_PLACEHOLDER)
             || approver_trimmed.eq_ignore_ascii_case(RESERVED_SYSTEM_AUTHORITY)
             || approver_trimmed.eq_ignore_ascii_case(CHALLENGE_ESCROW_ACCOUNT)
             || approver_trimmed.eq_ignore_ascii_case(CHALLENGE_FORFEIT_TREASURY_ACCOUNT)
@@ -454,6 +456,7 @@ impl StateStore {
                 || has_forbidden_separator(member_trimmed)
                 || !member_trimmed.is_ascii()
                 || member_trimmed.eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER)
+                || member_trimmed.eq_ignore_ascii_case(EMERGENCY_PAUSE_PLACEHOLDER)
                 || member_trimmed.eq_ignore_ascii_case(RESERVED_SYSTEM_AUTHORITY)
                 || member_trimmed.eq_ignore_ascii_case(CHALLENGE_ESCROW_ACCOUNT)
                 || member_trimmed.eq_ignore_ascii_case(CHALLENGE_FORFEIT_TREASURY_ACCOUNT)
@@ -490,28 +493,32 @@ impl StateStore {
             }
         }
 
-        let entry = self
-            .pending_resolve_approvals
-            .entry(task_id)
-            .or_insert_with(|| PendingResolveApproval {
-                slash_worker,
-                confirmations: 0,
-                first_approver: approver_trimmed.to_string(),
-                authority_set: authority_set.to_string(),
-                task_version,
-            });
-        if entry.slash_worker != slash_worker {
-            return Err("resolve approval decision mismatch".into());
-        }
-        if entry.confirmations >= 2 {
-            return Err("resolve approval already finalized; clear pending approval first".into());
-        }
-        if entry.confirmations > 0 && entry.first_approver.eq_ignore_ascii_case(approver_trimmed) {
-            return Err("resolve approval requires distinct approver".into());
-        }
+        let next_confirmations = {
+            let entry = self
+                .pending_resolve_approvals
+                .entry(task_id)
+                .or_insert_with(|| PendingResolveApproval {
+                    slash_worker,
+                    confirmations: 0,
+                    first_approver: approver_trimmed.to_string(),
+                    authority_set: authority_set.to_string(),
+                    task_version,
+                });
+            if entry.slash_worker != slash_worker {
+                return Err("resolve approval decision mismatch".into());
+            }
+            if entry.confirmations >= 2 {
+                return Err("resolve approval already finalized; clear pending approval first".into());
+            }
+            if entry.confirmations > 0 && entry.first_approver.eq_ignore_ascii_case(approver_trimmed) {
+                return Err("resolve approval requires distinct approver".into());
+            }
+            let next_confirmations = entry.confirmations.saturating_add(1);
+            entry.confirmations = next_confirmations;
+            next_confirmations
+        };
         self.invalidate_state_root_cache();
-        entry.confirmations = entry.confirmations.saturating_add(1);
-        Ok(entry.confirmations >= 2)
+        Ok(next_confirmations >= 2)
     }
 
     pub fn clear_pending_resolve_approval(&mut self, task_id: u64) {
