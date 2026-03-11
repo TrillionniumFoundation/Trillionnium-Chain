@@ -58,6 +58,29 @@ extract_tx_hash() {
   return 1
 }
 
+normalize_status() {
+  local raw="$1"
+  local cleaned
+  cleaned=$(printf "%s" "$raw" \
+    | tr '[:upper:]' '[:lower:]' \
+    | sed -E "s/^[[:space:]\"'\0`]+//; s/[[:space:]\"'\0`[:punct:]]+$//")
+
+  case "$cleaned" in
+    pending|submitted|accepted|queued|broadcast|broadcasted)
+      printf "pending"
+      ;;
+    committed|confirmed|success|succeeded|ok|included|finalized)
+      printf "committed"
+      ;;
+    fail|failed|error|rejected|reverted|aborted|dropped|timeout|timed_out|timed-out|expired)
+      printf "fail"
+      ;;
+    *)
+      printf "%s" "$cleaned"
+      ;;
+  esac
+}
+
 run_cmd() {
   local cmd="$1"
   set +e
@@ -157,7 +180,12 @@ case "$sub" in
     fi
     status=$(printf "%s" "$out" | sed -n 's/.*"status"[[:space:]]*:[[:space:]]*"\([^"]\+\)".*/\1/p' | head -n1 || true)
     if [[ -z "$status" ]]; then
+      status=$(printf "%s" "$out" | sed -n 's/.*\([Tt][Xx]_\)\?[Ss][Tt][Aa][Tt][Uu][Ss][[:space:]]*[:=][[:space:]]*\([^[:space:]}\",]\+\).*/\2/p' | head -n1 || true)
+    fi
+    if [[ -z "$status" ]]; then
       status="committed"
+    else
+      status="$(normalize_status "$status")"
     fi
 
     echo "tx_hash=${seen_hash:-$tx_hash}"
