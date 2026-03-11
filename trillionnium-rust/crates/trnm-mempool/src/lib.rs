@@ -1260,6 +1260,26 @@ mod tests {
     }
 
     #[test]
+    fn saturated_cross_lane_seen_membership_skew_keeps_duplicate_semantics() {
+        let mut g = LaneAdmissionGate::new(2, 1);
+
+        assert_eq!(g.admit(100, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(200, IngressClass::Normal), AdmitOutcome::Accepted);
+
+        // Simulate restored-state skew where lane-local seen membership is swapped
+        // across lanes while cardinalities remain unchanged under saturation.
+        g.normal.seen.remove(&200);
+        g.critical.seen.remove(&100);
+        g.normal.seen.insert(100);
+        g.critical.seen.insert(200);
+
+        // Duplicate for a queued tx must still be preserved even on the saturated
+        // fast path, and a fresh id must remain backpressured instead of duplicate.
+        assert_eq!(g.admit(100, IngressClass::Normal), AdmitOutcome::Duplicate);
+        assert_eq!(g.admit(300, IngressClass::Critical), AdmitOutcome::Backpressured);
+    }
+
+    #[test]
     fn seen_global_duplicate_without_lane_local_membership_self_heals_and_stays_duplicate() {
         let mut g = LaneAdmissionGate::new(4, 1);
 
