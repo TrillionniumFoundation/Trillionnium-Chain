@@ -490,17 +490,16 @@ impl StateStore {
             }
         }
 
-        self.invalidate_state_root_cache();
-        let entry =
-            self.pending_resolve_approvals
-                .entry(task_id)
-                .or_insert(PendingResolveApproval {
-                    slash_worker,
-                    confirmations: 0,
-                    first_approver: approver_trimmed.to_string(),
-                    authority_set: authority_set.to_string(),
-                    task_version,
-                });
+        let entry = self
+            .pending_resolve_approvals
+            .entry(task_id)
+            .or_insert_with(|| PendingResolveApproval {
+                slash_worker,
+                confirmations: 0,
+                first_approver: approver_trimmed.to_string(),
+                authority_set: authority_set.to_string(),
+                task_version,
+            });
         if entry.slash_worker != slash_worker {
             return Err("resolve approval decision mismatch".into());
         }
@@ -510,6 +509,7 @@ impl StateStore {
         if entry.confirmations > 0 && entry.first_approver.eq_ignore_ascii_case(approver_trimmed) {
             return Err("resolve approval requires distinct approver".into());
         }
+        self.invalidate_state_root_cache();
         entry.confirmations = entry.confirmations.saturating_add(1);
         Ok(entry.confirmations >= 2)
     }
@@ -1814,6 +1814,31 @@ mod tests {
                 "reserved approver id must not mutate staged confirmations"
             );
         }
+    }
+
+    #[test]
+    fn resolve_approval_rejects_decision_mismatch_without_invalidating_cached_state_root() {
+        let mut st = StateStore::new();
+
+        st.stage_or_confirm_resolve_approval(8_080, 3, true, "authority-a", "authority-a,authority-b")
+            .expect("first approval stage should succeed");
+        let root_before = st.state_root();
+
+        let err = st
+            .stage_or_confirm_resolve_approval(8_080, 3, false, "authority-b", "authority-a,authority-b")
+            .expect_err("decision mismatch must be rejected without mutating staged approval");
+        assert!(err.contains("decision mismatch"));
+
+        assert_eq!(st.pending_resolve_approval(8_080), Some((true, 1)));
+        assert_eq!(
+            st.pending_resolve_first_approver(8_080).as_deref(),
+            Some("authority-a")
+        );
+        assert_eq!(
+            st.state_root(),
+            root_before,
+            "rejected decision mismatch must not churn cached state root"
+        );
     }
 
     #[test]
