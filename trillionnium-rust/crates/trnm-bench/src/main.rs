@@ -280,4 +280,33 @@ mod tests {
             "hot-streak auto-adaptive profile should report a non-zero hot-object share"
         );
     }
+
+    #[test]
+    fn classic_bench_default_path_matches_executor_default_strategy_output() {
+        let txs = build_classic_txs(2_048, 256);
+        let (default_groups, default_profile) =
+            build_parallel_groups_profile_with_strategy(&txs, StrategyArg::Original.into());
+        let (executor_groups, executor_profile) = trnm_executor::build_parallel_groups_profile(&txs);
+
+        assert_eq!(default_groups, executor_groups);
+        assert_eq!(default_profile.tx_count, executor_profile.tx_count);
+        assert_eq!(default_profile.group_count, executor_profile.group_count);
+        assert_eq!(default_profile.grouped_count, executor_profile.grouped_count);
+        assert_eq!(default_profile.max_group_size, executor_profile.max_group_size);
+        assert_eq!(default_profile.min_group_size, executor_profile.min_group_size);
+        assert_eq!(default_profile.conflict_checks, executor_profile.conflict_checks);
+        assert_eq!(default_profile.conflict_hits, executor_profile.conflict_hits);
+        assert_eq!(
+            default_profile.candidate_groups_scanned,
+            executor_profile.candidate_groups_scanned
+        );
+        assert_eq!(default_profile.stage_ww_checks, executor_profile.stage_ww_checks);
+        assert_eq!(default_profile.stage_ww_hits, executor_profile.stage_ww_hits);
+        assert_eq!(default_profile.stage_wr_checks, executor_profile.stage_wr_checks);
+        assert_eq!(default_profile.stage_wr_hits, executor_profile.stage_wr_hits);
+        assert_eq!(default_profile.stage_rw_checks, executor_profile.stage_rw_checks);
+        assert_eq!(default_profile.stage_rw_hits, executor_profile.stage_rw_hits);
+        assert!((default_profile.avg_group_size - executor_profile.avg_group_size).abs() < f64::EPSILON);
+        assert!((default_profile.hot_object_share - executor_profile.hot_object_share).abs() < f64::EPSILON);
+    }
 }
