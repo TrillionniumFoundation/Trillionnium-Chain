@@ -406,3 +406,40 @@ fn restore_balance_none_rewinds_state_root_after_removing_existing_treasury_entr
         "repeated reads after restore_balance(None) should deterministically reuse the rewound cached root"
     );
 }
+
+#[test]
+fn restore_pending_none_rewinds_state_root_after_removing_staged_resolve_approval() {
+    let mut state = StateStore::new();
+    let baseline_root = state.state_root();
+
+    state
+        .stage_or_confirm_resolve_approval(88, 4, true, "resolver-a", "resolver-a,resolver-b")
+        .expect("staging resolve approval should succeed");
+    let pending_root = state.state_root();
+    assert_ne!(
+        pending_root, baseline_root,
+        "sanity: staged resolve approval must perturb the state root"
+    );
+
+    state.restore_pending_resolve_approval(88, None);
+
+    assert!(
+        state.pending_resolve_approval(88).is_none(),
+        "restoring a missing pending snapshot should remove the staged resolve approval"
+    );
+    assert_eq!(
+        state.pending_resolve_first_approver(88),
+        None,
+        "restoring a missing pending snapshot should also clear cached approver metadata"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "restore_pending_resolve_approval(None) must rewind state_root exactly after deleting a staged approval"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "repeated reads after restore_pending_resolve_approval(None) should deterministically reuse the rewound cached root"
+    );
+}
