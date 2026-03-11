@@ -335,6 +335,43 @@ fn paused_state_rejects_case_variant_resolve_authority_placeholder_without_side_
 }
 
 #[test]
+fn paused_state_rejects_case_variant_duplicate_authority_members_without_side_effects() {
+    // M1 micro-hardening: duplicate resolve members must stay fail-closed under case drift
+    // so emergency pause cannot collapse a nominal 2-of-N approval set into one actor.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 15_050);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 519);
+
+    st.set_gov_param(98_151, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+    let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+
+    let err = st
+        .stage_or_confirm_resolve_approval(
+            9_918,
+            1,
+            true,
+            "authority-a",
+            "authority-a,Authority-A",
+        )
+        .expect_err("case-variant duplicate authority members must be rejected while paused");
+    assert!(err.contains("duplicate") || err.contains("authority set"));
+
+    assert_eq!(st.pending_resolve_approval(9_918), None);
+    assert_eq!(st.pending_resolve_first_approver(9_918), None);
+    assert_eq!(st.pending_gov_update("resolve_authority"), None);
+    assert!(st.is_emergency_paused());
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
+}
+
+#[test]
 fn paused_state_rejects_case_variant_system_member_without_side_effects() {
     // M1 micro-hardening: reserved system authorities remain forbidden under case drift,
     // preventing mixed-case aliases from collapsing multisig resolve control.
