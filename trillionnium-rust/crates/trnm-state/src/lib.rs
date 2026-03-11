@@ -409,6 +409,9 @@ impl StateStore {
         if approver_trimmed != approver || approver_trimmed.chars().any(|c| c.is_whitespace()) {
             return Err("resolve approval approver must not contain whitespace".into());
         }
+        if approver_trimmed.chars().any(|c| c.is_control()) {
+            return Err("resolve approval approver must not contain control characters".into());
+        }
         if approver_trimmed.contains(',') || approver_trimmed.contains(';') {
             return Err("resolve approval approver must be a single canonical actor id".into());
         }

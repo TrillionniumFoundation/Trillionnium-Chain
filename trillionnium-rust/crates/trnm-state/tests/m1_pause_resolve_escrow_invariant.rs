@@ -878,6 +878,55 @@ fn paused_resolve_approval_accepts_case_variant_approver_alias_without_escrow_si
 }
 
 #[test]
+fn paused_state_rejects_control_character_approver_without_mutating_quorum_or_escrow() {
+    // M1 micro-hardening: resolve approver ids must reject hidden ASCII control bytes
+    // just like governance authority members do, so pause-time multisig confirmation
+    // cannot be spoofed by non-printable actor ids.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 54_100);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 641);
+
+    st.set_gov_param(98_197, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    st.stage_or_confirm_resolve_approval(9_918_1, 1, true, "authority-a", "authority-a,authority-b")
+        .expect("first approval stage should succeed while paused");
+    assert_eq!(st.pending_resolve_approval(9_918_1), Some((true, 1)));
+    assert_eq!(
+        st.pending_resolve_first_approver(9_918_1).as_deref(),
+        Some("authority-a")
+    );
+
+    let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+    let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+
+    let err = st
+        .stage_or_confirm_resolve_approval(
+            9_918_1,
+            1,
+            true,
+            "authority-b\u{0007}",
+            "authority-a,authority-b",
+        )
+        .expect_err("control-character approver must fail closed while paused");
+    assert!(err.contains("control characters"), "unexpected error: {err}");
+
+    assert_eq!(st.pending_resolve_approval(9_918_1), Some((true, 1)));
+    assert_eq!(
+        st.pending_resolve_first_approver(9_918_1).as_deref(),
+        Some("authority-a")
+    );
+    assert_eq!(st.pending_gov_update("resolve_authority"), None);
+    assert!(st.is_emergency_paused());
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
+}
+
+#[test]
 fn paused_cancel_resolve_authority_timelock_keeps_pause_boundary_and_escrow_conservation() {
     // M1 micro-hardening: cancel path for sensitive resolve_authority must remain
     // side-effect free for pause state and custody balances.
