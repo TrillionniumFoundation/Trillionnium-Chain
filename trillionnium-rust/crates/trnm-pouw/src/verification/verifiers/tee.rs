@@ -5,8 +5,9 @@ use trnm_types::TaskObject;
 
 use super::verify_bound_envelope;
 use crate::verification::backend::{
-    BackendExecutionError, BackendVerificationRequest, VerificationBackendConfig,
-    VerificationBackendError, VerificationBackendFamily, ZkBackendKind, ZkBackendRegistry,
+    parse_tee_attestation_payload, BackendExecutionError, BackendVerificationRequest,
+    VerificationBackendConfig, VerificationBackendError, VerificationBackendFamily,
+    ZkBackendKind, ZkBackendRegistry,
 };
 
 pub struct TeeVerifier {
@@ -67,10 +68,16 @@ impl TeeVerifier {
         let backend = self
             .backends
             .resolve(VerificationBackendFamily::Tee, &self.backend)?;
+        let tee_payload = if matches!(self.backend, ZkBackendKind::Noop) {
+            None
+        } else {
+            Some(parse_tee_attestation_payload(proof_data)?)
+        };
         backend.verify(BackendVerificationRequest {
             family: VerificationBackendFamily::Tee,
             task,
             proof_data,
+            tee_payload: tee_payload.as_ref(),
             zk_payload: None,
             resolved_vk_ref: None,
         })?;
@@ -133,6 +140,10 @@ mod tests {
         }
     }
 
+    fn mock_attested_receipt() -> &'static [u8] {
+        b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,attestation_target=sgx-dcap,measurement=mrenclave:demo-sgx-v1,report_data_hash=abababababababababababababababababababababababababababababababab,quote=quote-sgx-dcap-demo-v1,endorsements=intel-dcap-collateral-demo-v1"
+    }
+
     struct MockTeeSuccessBackend;
     impl ZkBackend for MockTeeSuccessBackend {
         fn backend_id(&self) -> &str {
@@ -145,6 +156,11 @@ mod tests {
         ) -> Result<BackendVerificationSuccess, BackendExecutionError> {
             assert_eq!(request.family, VerificationBackendFamily::Tee);
             assert_eq!(request.task.task_id, 42);
+            let tee_payload = request.tee_payload.expect("tee handoff payload must be present");
+            assert_eq!(tee_payload.attestation_target, "sgx-dcap");
+            assert_eq!(tee_payload.verifier_kind, "quote-verifier");
+            assert_eq!(tee_payload.measurement_field, "mrenclave");
+            assert_eq!(tee_payload.evidence(), Some("quote-sgx-dcap-demo-v1"));
             assert!(request.zk_payload.is_none());
             Ok(BackendVerificationSuccess {
                 backend_id: self.backend_id().into(),
@@ -250,7 +266,7 @@ mod tests {
         assert!(matches!(
             verifier.verify_proof(
                 &task,
-                b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,quote=abc"
+                mock_attested_receipt()
             ),
             VerificationResult::Valid
         ));
@@ -269,7 +285,7 @@ mod tests {
         assert!(matches!(
             verifier.verify_proof(
                 &task,
-                b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,quote=abc"
+                mock_attested_receipt()
             ),
             VerificationResult::Invalid(msg) if msg.contains("mock tee backend rejected proof")
         ));
@@ -288,7 +304,7 @@ mod tests {
         assert!(matches!(
             verifier.verify_proof(
                 &task,
-                b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,quote=abc"
+                mock_attested_receipt()
             ),
             VerificationResult::Indeterminate(msg)
                 if msg.contains("unavailable:")
@@ -310,7 +326,7 @@ mod tests {
         assert!(matches!(
             verifier.verify_proof(
                 &task,
-                b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,quote=abc"
+                mock_attested_receipt()
             ),
             VerificationResult::Invalid(msg)
                 if msg.contains("malformed:") && msg.contains("mock tee receipt malformed")
@@ -330,7 +346,7 @@ mod tests {
         assert!(matches!(
             verifier.verify_proof(
                 &task,
-                b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,quote=abc"
+                mock_attested_receipt()
             ),
             VerificationResult::Indeterminate(msg)
                 if msg.contains("backend_error:")

@@ -206,6 +206,7 @@ impl ZkVerifier {
             family: VerificationBackendFamily::Zk,
             task,
             proof_data,
+            tee_payload: None,
             zk_payload: zk_payload.as_ref(),
             resolved_vk_ref: resolved_vk_ref.as_ref(),
         })?;

@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use std::sync::Arc;
 
-use trnm_types::{ProofType, TaskObject};
+use trnm_types::TaskObject;
 
 #[cfg(feature = "real-tee-backend")]
 use super::real_tee_backend;

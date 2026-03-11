@@ -1,0 +1,8 @@
+{
+  "backend_id": "amd-sev-snp-report-verifier",
+  "attestation_target": "sev-snp",
+  "measurement": "measurement:demo-snp-v1",
+  "report": "report-sev-snp-demo-v1",
+  "endorsements": "amd-vcek-demo-v1",
+  "report_data_hash": "1111111111111111111111111111111111111111111111111111111111111111"
+}

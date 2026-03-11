@@ -1,11 +1,11 @@
-use std::collections::BTreeMap;
 use std::sync::Arc;
 
 use serde::Deserialize;
 
 use crate::verification::backend::{
-    BackendExecutionError, BackendVerificationRequest, BackendVerificationSuccess,
-    VerificationBackend, VerificationBackendFamily, ZkBackendRegistry,
+    parse_tee_attestation_payload, BackendExecutionError, BackendVerificationRequest,
+    BackendVerificationSuccess, ParsedTeeProofPayload, TeeEvidenceKind, VerificationBackend,
+    VerificationBackendFamily, ZkBackendRegistry,
 };
 #[cfg(test)]
 use crate::verification::backend::{VerificationBackendConfig, VerificationBackendKind};
@@ -19,40 +19,75 @@ struct TeeFixtureManifest {
     backend_id: String,
     attestation_target: String,
     measurement: String,
-    quote: String,
     report_data_hash: String,
+    #[serde(default)]
+    quote: Option<String>,
+    #[serde(default)]
+    report: Option<String>,
+    #[serde(default)]
+    endorsements: Option<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct TeeVerifierHandoff {
+    attestation_target: String,
+    verifier_kind: String,
+    measurement_field: String,
+    measurement: String,
+    report_data_hash: String,
+    evidence_kind: TeeEvidenceKind,
+    evidence: String,
+    endorsements: Option<String>,
 }
 
 #[derive(Debug, Clone)]
 struct TeeFixture {
     backend_id: String,
-    attestation_target: String,
-    measurement: String,
-    quote: String,
-    report_data_hash: String,
+    handoff: TeeVerifierHandoff,
 }
 
 impl TeeFixture {
     fn from_embedded_json(raw: &str) -> Self {
         let manifest: TeeFixtureManifest =
             serde_json::from_str(raw).expect("embedded tee fixture manifest must be valid json");
+        let receipt = synthetic_receipt_for_manifest(&manifest);
+        let payload = parse_tee_attestation_payload(receipt.as_bytes())
+            .expect("embedded tee fixture must satisfy TEE payload contract");
         Self {
             backend_id: manifest.backend_id,
-            attestation_target: normalize_attestation_target(&manifest.attestation_target)
-                .expect("embedded tee fixture target must be supported"),
-            measurement: manifest.measurement,
-            quote: manifest.quote,
-            report_data_hash: manifest.report_data_hash.trim().to_ascii_lowercase(),
+            handoff: TeeVerifierHandoff::from_payload(&payload, None)
+                .expect("embedded tee fixture payload must build handoff"),
         }
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-struct ParsedTeeAttestation {
-    attestation_target: String,
-    measurement: String,
-    report_data_hash: String,
-    quote: String,
+impl TeeVerifierHandoff {
+    fn from_payload(
+        payload: &ParsedTeeProofPayload,
+        request: Option<&BackendVerificationRequest<'_>>,
+    ) -> Result<Self, BackendExecutionError> {
+        let evidence = payload.evidence().ok_or_else(|| BackendExecutionError::MalformedProof {
+            backend: request
+                .map(|request| request.backend_label(RealTeeBackend::backend_id_static()))
+                .unwrap_or_else(|| "tee:payload".to_string()),
+            reason: format!(
+                "invalid tee receipt: target '{}' requires {} evidence",
+                payload.attestation_target,
+                payload.evidence_kind.as_str()
+            ),
+        })?;
+
+        Ok(Self {
+            attestation_target: payload.attestation_target.clone(),
+            verifier_kind: payload.verifier_kind.clone(),
+            measurement_field: payload.measurement_field.clone(),
+            measurement: payload.measurement.clone(),
+            report_data_hash: payload.report_data_hash.clone(),
+            evidence_kind: payload.evidence_kind,
+            evidence: evidence.to_string(),
+            endorsements: payload.endorsements.clone(),
+        })
+    }
 }
 
 #[derive(Debug, Default)]
@@ -67,46 +102,6 @@ impl RealTeeBackend {
         }
     }
 
-    fn parse_attestation_fields(
-        request: &BackendVerificationRequest<'_>,
-    ) -> Result<ParsedTeeAttestation, BackendExecutionError> {
-        let raw = std::str::from_utf8(request.proof_data).map_err(|_| {
-            BackendExecutionError::MalformedProof {
-                backend: request.backend_label(Self::backend_id_static()),
-                reason: "tee receipt must be valid utf-8".to_string(),
-            }
-        })?;
-        let body =
-            raw.strip_prefix("TEE:")
-                .ok_or_else(|| BackendExecutionError::MalformedProof {
-                    backend: request.backend_label(Self::backend_id_static()),
-                    reason: "tee receipt must start with TEE:".to_string(),
-                })?;
-        let fields = parse_kv_fields(body, request)?;
-
-        let raw_target = required_field(&fields, "attestation_target", request)?;
-        let attestation_target = normalize_attestation_target(raw_target).ok_or_else(|| {
-            BackendExecutionError::MalformedProof {
-                backend: request.backend_label(Self::backend_id_static()),
-                reason: format!(
-                    "invalid tee receipt: unsupported attestation_target '{}'",
-                    raw_target.trim()
-                ),
-            }
-        })?;
-        let measurement = required_field(&fields, "measurement", request)?.to_string();
-        let report_data_hash =
-            required_field(&fields, "report_data_hash", request)?.to_ascii_lowercase();
-        let quote = required_field(&fields, "quote", request)?.to_string();
-
-        Ok(ParsedTeeAttestation {
-            attestation_target,
-            measurement,
-            report_data_hash,
-            quote,
-        })
-    }
-
     const fn backend_id_static() -> &'static str {
         "real-tee-backend"
     }
@@ -115,10 +110,6 @@ impl RealTeeBackend {
 impl VerificationBackend for RealTeeBackend {
     fn backend_id(&self) -> &str {
         Self::backend_id_static()
-    }
-
-    fn family(&self) -> VerificationBackendFamily {
-        VerificationBackendFamily::Tee
     }
 
     fn verify(
@@ -132,7 +123,11 @@ impl VerificationBackend for RealTeeBackend {
             });
         }
 
-        let parsed = Self::parse_attestation_fields(&request)?;
+        let parsed = if let Some(payload) = request.tee_payload {
+            payload.clone()
+        } else {
+            parse_tee_attestation_payload(request.proof_data)?
+        };
         let expected_hash = request.task.result_hash.map(hex::encode).ok_or_else(|| {
             BackendExecutionError::InvalidProof {
                 backend: request.backend_label(self.backend_id()),
@@ -150,36 +145,71 @@ impl VerificationBackend for RealTeeBackend {
             });
         }
 
+        let handoff = TeeVerifierHandoff::from_payload(&parsed, Some(&request))?;
         let Some(fixture) = self
             .fixtures
             .iter()
-            .find(|fixture| fixture.attestation_target == parsed.attestation_target)
+            .find(|fixture| fixture.handoff.attestation_target == handoff.attestation_target)
         else {
             return Err(BackendExecutionError::Unavailable {
                 backend: request.backend_label(self.backend_id()),
                 reason: format!(
                     "no embedded attestation vector registered for target '{}'",
-                    parsed.attestation_target
+                    handoff.attestation_target
                 ),
             });
         };
 
-        if parsed.measurement != fixture.measurement {
+        if handoff.measurement != fixture.handoff.measurement {
             return Err(BackendExecutionError::InvalidProof {
                 backend: request.backend_label(self.backend_id()),
                 reason: format!(
-                    "tee attestation measurement '{}' does not match target '{}' fixture",
-                    parsed.measurement, parsed.attestation_target
+                    "tee attestation {} '{}' does not match target '{}' fixture",
+                    handoff.measurement_field, handoff.measurement, handoff.attestation_target
                 ),
             });
         }
 
-        if parsed.quote != fixture.quote {
+        if handoff.evidence_kind != fixture.handoff.evidence_kind
+            || handoff.verifier_kind != fixture.handoff.verifier_kind
+        {
             return Err(BackendExecutionError::InvalidProof {
                 backend: request.backend_label(self.backend_id()),
                 reason: format!(
-                    "tee attestation quote does not match target '{}' fixture",
-                    parsed.attestation_target
+                    "tee attestation target '{}' requires {} handoff",
+                    handoff.attestation_target, fixture.handoff.verifier_kind
+                ),
+            });
+        }
+
+        if handoff.evidence != fixture.handoff.evidence {
+            return Err(BackendExecutionError::InvalidProof {
+                backend: request.backend_label(self.backend_id()),
+                reason: format!(
+                    "tee attestation {} does not match target '{}' fixture",
+                    handoff.evidence_kind.as_str(), handoff.attestation_target
+                ),
+            });
+        }
+
+        if handoff.report_data_hash != fixture.handoff.report_data_hash {
+            return Err(BackendExecutionError::InvalidProof {
+                backend: request.backend_label(self.backend_id()),
+                reason: format!(
+                    "tee attestation report_data_hash does not match target '{}' fixture",
+                    handoff.attestation_target
+                ),
+            });
+        }
+
+        if fixture.handoff.endorsements.is_some()
+            && handoff.endorsements != fixture.handoff.endorsements
+        {
+            return Err(BackendExecutionError::InvalidProof {
+                backend: request.backend_label(self.backend_id()),
+                reason: format!(
+                    "tee attestation endorsements do not match target '{}' fixture",
+                    handoff.attestation_target
                 ),
             });
         }
@@ -188,6 +218,28 @@ impl VerificationBackend for RealTeeBackend {
             backend_id: fixture.backend_id.clone(),
         })
     }
+}
+
+fn synthetic_receipt_for_manifest(manifest: &TeeFixtureManifest) -> String {
+    let mut receipt = format!(
+        "TEE:task_id=0,worker=fixture,proof_type=tee,result_hash={hash},attestation_target={target},measurement={measurement},report_data_hash={hash}",
+        hash = manifest.report_data_hash.trim().to_ascii_lowercase(),
+        target = manifest.attestation_target,
+        measurement = manifest.measurement,
+    );
+    if let Some(quote) = manifest.quote.as_deref() {
+        receipt.push_str(",quote=");
+        receipt.push_str(quote);
+    }
+    if let Some(report) = manifest.report.as_deref() {
+        receipt.push_str(",report=");
+        receipt.push_str(report);
+    }
+    if let Some(endorsements) = manifest.endorsements.as_deref() {
+        receipt.push_str(",endorsements=");
+        receipt.push_str(endorsements);
+    }
+    receipt
 }
 
 fn load_embedded_fixtures() -> Vec<TeeFixture> {
@@ -200,6 +252,10 @@ fn load_embedded_fixtures() -> Vec<TeeFixture> {
             env!("CARGO_MANIFEST_DIR"),
             "/fixtures/tee/tdx_qgs_valid.json"
         )),
+        include_str!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/fixtures/tee/sev_snp_valid.json"
+        )),
     ]
     .into_iter()
     .map(TeeFixture::from_embedded_json)
@@ -208,74 +264,6 @@ fn load_embedded_fixtures() -> Vec<TeeFixture> {
 
 pub fn register_optional_backends(registry: &mut ZkBackendRegistry) {
     registry.register(Arc::new(RealTeeBackend::new()));
-}
-
-fn parse_kv_fields(
-    body: &str,
-    request: &BackendVerificationRequest<'_>,
-) -> Result<BTreeMap<String, String>, BackendExecutionError> {
-    let mut fields = BTreeMap::new();
-    for entry in body.split(',') {
-        let trimmed = entry.trim();
-        if trimmed.is_empty() {
-            continue;
-        }
-        let Some((raw_key, raw_value)) = trimmed.split_once('=') else {
-            return Err(BackendExecutionError::MalformedProof {
-                backend: request.backend_label(RealTeeBackend::backend_id_static()),
-                reason: format!("invalid tee receipt field '{}'", trimmed),
-            });
-        };
-        let key = raw_key.trim().to_ascii_lowercase();
-        let value = raw_value
-            .trim()
-            .trim_matches('"')
-            .trim_matches('\'')
-            .to_string();
-        if key.is_empty() || value.is_empty() {
-            return Err(BackendExecutionError::MalformedProof {
-                backend: request.backend_label(RealTeeBackend::backend_id_static()),
-                reason: format!("invalid tee receipt field '{}'", trimmed),
-            });
-        }
-        if fields.insert(key.clone(), value).is_some() {
-            return Err(BackendExecutionError::MalformedProof {
-                backend: request.backend_label(RealTeeBackend::backend_id_static()),
-                reason: format!("duplicate tee receipt field '{}'", key),
-            });
-        }
-    }
-    Ok(fields)
-}
-
-fn required_field<'a>(
-    fields: &'a BTreeMap<String, String>,
-    key: &str,
-    request: &BackendVerificationRequest<'_>,
-) -> Result<&'a str, BackendExecutionError> {
-    fields
-        .get(key)
-        .map(String::as_str)
-        .ok_or_else(|| BackendExecutionError::MalformedProof {
-            backend: request.backend_label(RealTeeBackend::backend_id_static()),
-            reason: format!("invalid tee receipt: missing {key}"),
-        })
-}
-
-fn normalize_attestation_target(raw: &str) -> Option<String> {
-    let normalized = raw
-        .trim()
-        .to_ascii_lowercase()
-        .chars()
-        .filter(|ch| ch.is_ascii_alphanumeric())
-        .collect::<String>();
-
-    match normalized.as_str() {
-        "sgx" | "sgxdcap" => Some("sgx-dcap".to_string()),
-        "tdx" | "tdxqgs" => Some("tdx-qgs".to_string()),
-        "snp" | "sevsnp" => Some("sev-snp".to_string()),
-        _ => None,
-    }
 }
 
 #[cfg(test)]
@@ -318,7 +306,7 @@ mod tests {
     fn real_tee_backend_accepts_valid_sgx_vector() {
         let registry = VerifierRegistry::with_backend_config(tee_config());
         let task = mock_task();
-        let receipt = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=sgx-dcap,measurement=mrenclave:demo-sgx-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,quote=quote-sgx-dcap-demo-v1";
+        let receipt = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=sgx-dcap,measurement=mrenclave:demo-sgx-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,quote=quote-sgx-dcap-demo-v1,endorsements=intel-dcap-collateral-demo-v1";
 
         assert_eq!(registry.verify(&task, receipt), VerificationResult::Valid);
     }
@@ -327,7 +315,16 @@ mod tests {
     fn real_tee_backend_accepts_valid_tdx_vector() {
         let registry = VerifierRegistry::with_backend_config(tee_config());
         let task = mock_task();
-        let receipt = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=tdx-qgs,measurement=mrtd:demo-tdx-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,quote=quote-tdx-qgs-demo-v1";
+        let receipt = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=tdx-qgs,measurement=mrtd:demo-tdx-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,quote=quote-tdx-qgs-demo-v1,endorsements=intel-tdx-qgs-collateral-demo-v1";
+
+        assert_eq!(registry.verify(&task, receipt), VerificationResult::Valid);
+    }
+
+    #[test]
+    fn real_tee_backend_accepts_valid_sev_snp_vector() {
+        let registry = VerifierRegistry::with_backend_config(tee_config());
+        let task = mock_task();
+        let receipt = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=sev-snp,measurement=measurement:demo-snp-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,report=report-sev-snp-demo-v1,endorsements=amd-vcek-demo-v1";
 
         assert_eq!(registry.verify(&task, receipt), VerificationResult::Valid);
     }
@@ -346,15 +343,41 @@ mod tests {
     }
 
     #[test]
+    fn real_tee_backend_rejects_missing_report_for_report_verifier_target_fail_closed() {
+        let registry = VerifierRegistry::with_backend_config(tee_config());
+        let task = mock_task();
+        let receipt = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=sev-snp,measurement=measurement:demo-snp-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,quote=wrong-evidence-kind";
+
+        assert!(matches!(
+            registry.verify(&task, receipt),
+            VerificationResult::Invalid(msg)
+                if msg.contains("requires report evidence")
+        ));
+    }
+
+    #[test]
     fn real_tee_backend_rejects_report_data_hash_mismatch_fail_closed() {
         let registry = VerifierRegistry::with_backend_config(tee_config());
         let task = mock_task();
-        let receipt = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=sgx-dcap,measurement=mrenclave:demo-sgx-v1,report_data_hash=2222222222222222222222222222222222222222222222222222222222222222,quote=quote-sgx-dcap-demo-v1";
+        let receipt = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=sgx-dcap,measurement=mrenclave:demo-sgx-v1,report_data_hash=2222222222222222222222222222222222222222222222222222222222222222,quote=quote-sgx-dcap-demo-v1,endorsements=intel-dcap-collateral-demo-v1";
 
         assert!(matches!(
             registry.verify(&task, receipt),
             VerificationResult::Invalid(msg)
                 if msg.contains("report_data_hash") && msg.contains("does not match task result hash")
+        ));
+    }
+
+    #[test]
+    fn real_tee_backend_rejects_endorsements_mismatch_fail_closed() {
+        let registry = VerifierRegistry::with_backend_config(tee_config());
+        let task = mock_task();
+        let receipt = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=tdx-qgs,measurement=mrtd:demo-tdx-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,quote=quote-tdx-qgs-demo-v1,endorsements=wrong-collateral";
+
+        assert!(matches!(
+            registry.verify(&task, receipt),
+            VerificationResult::Invalid(msg)
+                if msg.contains("endorsements") && msg.contains("tdx-qgs")
         ));
     }
 }

@@ -1,6 +1,6 @@
 # TEE Attestation Contract v0
 
-This document defines the minimal feature-gated TEE attestation contract used by `trnm-pouw` when `real-tee-backend` is enabled.
+This document defines the feature-gated TEE attestation contract used by `trnm-pouw` when `real-tee-backend` is enabled.
 
 ## Purpose
 The current goal is **not** to ship a production SGX/TDX/SNP verifier yet.
@@ -10,7 +10,7 @@ The goal is to freeze the backend handoff surface so future real attestation bac
 TEE receipts continue to use the bound envelope form:
 
 ```text
-TEE:task_id=<u64>,worker=<id>,proof_type=tee,result_hash=<hex>,attestation_target=<token>,measurement=<value>,report_data_hash=<hex>,quote=<value>
+TEE:task_id=<u64>,worker=<id>,proof_type=tee,result_hash=<hex>,attestation_target=<token>,measurement=<value>,report_data_hash=<hex>,<evidence-field>=<value>[,endorsements=<value>]
 ```
 
 The semantic verifier still owns:
@@ -19,26 +19,49 @@ The semantic verifier still owns:
 
 The feature-gated real TEE backend additionally owns:
 - `attestation_target` canonicalization
+- target-specific measurement slot validation
+- target-specific evidence kind validation (`quote` vs `report`)
 - required attestation fields
-- minimal target-specific fixture matching
 - `report_data_hash` ↔ task `result_hash` consistency
+- optional `endorsements` handoff
 
-## Canonical attestation_target tokens
-If `attestation_target` is provided, it must normalize to one of:
-- `sgx-dcap`
-- `tdx-qgs`
-- `sev-snp`
+## Canonical attestation target matrix
+
+| target | verifier kind | evidence field | measurement prefix | notes |
+| --- | --- | --- | --- | --- |
+| `sgx-dcap` | `quote-verifier` | `quote` | `mrenclave:` | Intel SGX DCAP-style quote path |
+| `tdx-qgs` | `quote-verifier` | `quote` | `mrtd:` | Intel TDX QGS quote path |
+| `sev-snp` | `report-verifier` | `report` | `measurement:` | AMD SEV-SNP report path |
 
 Unknown values must fail closed before any cryptographic verification attempt.
 
 ## Required fields
-The backend currently requires:
+All targets require:
 - `attestation_target`
 - `measurement`
 - `report_data_hash`
-- `quote`
+
+Target-specific evidence is also required:
+- `sgx-dcap` → `quote`
+- `tdx-qgs` → `quote`
+- `sev-snp` → `report`
+
+`endorsements` is optional in the generic contract, but the scaffold may require it for specific fixture vectors to model downstream verifier collateral/VCEK handoff.
 
 Missing or empty values are malformed receipts.
+
+## Backend handoff contract
+The scaffold now canonicalizes TEE receipts into a structured backend handoff with these fields:
+
+- `attestation_target`
+- `verifier_kind` (`quote-verifier` or `report-verifier`)
+- `measurement_field` (`mrenclave` / `mrtd` / `measurement`)
+- `measurement`
+- `report_data_hash`
+- target-specific evidence (`quote` or `report`)
+- optional `endorsements`
+
+This handoff is what future real quote/report verifiers should consume.
 
 ## report_data_hash binding
 `report_data_hash` must match the task `result_hash` carried by the bound envelope.
@@ -46,5 +69,9 @@ This keeps the future attestation path aligned with the task result binding alre
 
 ## Current implementation scope
 With `real-tee-backend`, `trnm-pouw` registers a fixture-backed `real-tee-backend` implementation.
-It validates the contract above against embedded SGX and TDX fixture vectors.
+It validates the contract above against embedded fixture vectors for:
+- SGX DCAP quote verifier handoff
+- TDX QGS quote verifier handoff
+- SEV-SNP report verifier handoff
+
 This is a **readiness scaffold**, not a production verifier.

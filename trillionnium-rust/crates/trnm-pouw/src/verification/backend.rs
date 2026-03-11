@@ -233,6 +233,89 @@ impl ParsedZkProofPayload {
     }
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum TeeEvidenceKind {
+    Quote,
+    Report,
+}
+
+impl TeeEvidenceKind {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::Quote => "quote",
+            Self::Report => "report",
+        }
+    }
+
+    pub fn verifier_kind(self) -> &'static str {
+        match self {
+            Self::Quote => "quote-verifier",
+            Self::Report => "report-verifier",
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ParsedTeeProofPayload {
+    pub attestation_target: String,
+    pub verifier_kind: String,
+    pub measurement_field: String,
+    pub measurement: String,
+    pub report_data_hash: String,
+    pub evidence_kind: TeeEvidenceKind,
+    pub quote: Option<String>,
+    pub report: Option<String>,
+    pub endorsements: Option<String>,
+}
+
+impl ParsedTeeProofPayload {
+    pub fn evidence(&self) -> Option<&str> {
+        match self.evidence_kind {
+            TeeEvidenceKind::Quote => self.quote.as_deref(),
+            TeeEvidenceKind::Report => self.report.as_deref(),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+struct TeeAttestationTargetSpec {
+    canonical: &'static str,
+    measurement_field: &'static str,
+    measurement_prefix: &'static str,
+    evidence_kind: TeeEvidenceKind,
+}
+
+fn resolve_tee_attestation_target(raw: &str) -> Option<TeeAttestationTargetSpec> {
+    let normalized = raw
+        .trim()
+        .to_ascii_lowercase()
+        .chars()
+        .filter(|ch| ch.is_ascii_alphanumeric())
+        .collect::<String>();
+
+    match normalized.as_str() {
+        "sgx" | "sgxdcap" => Some(TeeAttestationTargetSpec {
+            canonical: "sgx-dcap",
+            measurement_field: "mrenclave",
+            measurement_prefix: "mrenclave:",
+            evidence_kind: TeeEvidenceKind::Quote,
+        }),
+        "tdx" | "tdxqgs" => Some(TeeAttestationTargetSpec {
+            canonical: "tdx-qgs",
+            measurement_field: "mrtd",
+            measurement_prefix: "mrtd:",
+            evidence_kind: TeeEvidenceKind::Quote,
+        }),
+        "snp" | "sevsnp" => Some(TeeAttestationTargetSpec {
+            canonical: "sev-snp",
+            measurement_field: "measurement",
+            measurement_prefix: "measurement:",
+            evidence_kind: TeeEvidenceKind::Report,
+        }),
+        _ => None,
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ResolvedVkRef {
     pub vk_ref: String,
@@ -325,6 +408,9 @@ pub struct BackendVerificationRequest<'a> {
     pub family: VerificationBackendFamily,
     pub task: &'a TaskObject,
     pub proof_data: &'a [u8],
+    /// Parsed canonical TEE attestation payload, when the verifier/backend pair
+    /// opts into the structured quote/report handoff contract.
+    pub tee_payload: Option<&'a ParsedTeeProofPayload>,
     /// Parsed canonical ZK payload, when the envelope is the structured JSON
     /// shape expected by platform backends.
     pub zk_payload: Option<&'a ParsedZkProofPayload>,
@@ -507,6 +593,135 @@ impl VerificationBackend for NoopVerificationBackend {
             backend: request.backend_label(self.backend_id()),
         })
     }
+}
+
+fn parse_tee_kv_fields(body: &str) -> Result<HashMap<String, String>, BackendExecutionError> {
+    let mut fields = HashMap::new();
+    for entry in body.split(',') {
+        let trimmed = entry.trim();
+        if trimmed.is_empty() {
+            continue;
+        }
+        let Some((raw_key, raw_value)) = trimmed.split_once('=') else {
+            return Err(BackendExecutionError::MalformedProof {
+                backend: "tee:payload".to_string(),
+                reason: format!("invalid tee receipt field '{trimmed}'"),
+            });
+        };
+        let key = raw_key.trim().to_ascii_lowercase();
+        let value = raw_value
+            .trim()
+            .trim_matches('"')
+            .trim_matches('\'')
+            .to_string();
+        if key.is_empty() || value.is_empty() {
+            return Err(BackendExecutionError::MalformedProof {
+                backend: "tee:payload".to_string(),
+                reason: format!("invalid tee receipt field '{trimmed}'"),
+            });
+        }
+        if fields.insert(key.clone(), value).is_some() {
+            return Err(BackendExecutionError::MalformedProof {
+                backend: "tee:payload".to_string(),
+                reason: format!("duplicate tee receipt field '{key}'"),
+            });
+        }
+    }
+    Ok(fields)
+}
+
+fn required_tee_field<'a>(fields: &'a HashMap<String, String>, key: &str) -> Result<&'a str, BackendExecutionError> {
+    fields
+        .get(key)
+        .map(String::as_str)
+        .ok_or_else(|| BackendExecutionError::MalformedProof {
+            backend: "tee:payload".to_string(),
+            reason: format!("invalid tee receipt: missing {key}"),
+        })
+}
+
+pub fn parse_tee_attestation_payload(
+    proof_data: &[u8],
+) -> Result<ParsedTeeProofPayload, BackendExecutionError> {
+    let raw = std::str::from_utf8(proof_data).map_err(|_| BackendExecutionError::MalformedProof {
+        backend: "tee:payload".to_string(),
+        reason: "tee receipt must be valid utf-8".to_string(),
+    })?;
+    let body = raw
+        .strip_prefix("TEE:")
+        .or_else(|| raw.strip_prefix("tee:"))
+        .ok_or_else(|| BackendExecutionError::MalformedProof {
+            backend: "tee:payload".to_string(),
+            reason: "tee receipt must start with TEE:".to_string(),
+        })?;
+    let fields = parse_tee_kv_fields(body)?;
+
+    let raw_target = required_tee_field(&fields, "attestation_target")?;
+    let target = resolve_tee_attestation_target(raw_target).ok_or_else(|| {
+        BackendExecutionError::MalformedProof {
+            backend: "tee:payload".to_string(),
+            reason: format!(
+                "invalid tee receipt: unsupported attestation_target '{}'",
+                raw_target.trim()
+            ),
+        }
+    })?;
+
+    let measurement = required_tee_field(&fields, "measurement")?.to_string();
+    if !measurement
+        .trim()
+        .to_ascii_lowercase()
+        .starts_with(target.measurement_prefix)
+    {
+        return Err(BackendExecutionError::MalformedProof {
+            backend: "tee:payload".to_string(),
+            reason: format!(
+                "invalid tee receipt: target '{}' requires measurement prefix '{}'",
+                target.canonical, target.measurement_prefix
+            ),
+        });
+    }
+
+    let report_data_hash = required_tee_field(&fields, "report_data_hash")?
+        .trim()
+        .to_ascii_lowercase();
+    let quote = fields.get("quote").cloned();
+    let report = fields.get("report").cloned();
+    let endorsements = fields.get("endorsements").cloned();
+
+    match target.evidence_kind {
+        TeeEvidenceKind::Quote if quote.is_none() => {
+            return Err(BackendExecutionError::MalformedProof {
+                backend: "tee:payload".to_string(),
+                reason: format!(
+                    "invalid tee receipt: target '{}' requires quote evidence",
+                    target.canonical
+                ),
+            })
+        }
+        TeeEvidenceKind::Report if report.is_none() => {
+            return Err(BackendExecutionError::MalformedProof {
+                backend: "tee:payload".to_string(),
+                reason: format!(
+                    "invalid tee receipt: target '{}' requires report evidence",
+                    target.canonical
+                ),
+            })
+        }
+        _ => {}
+    }
+
+    Ok(ParsedTeeProofPayload {
+        attestation_target: target.canonical.to_string(),
+        verifier_kind: target.evidence_kind.verifier_kind().to_string(),
+        measurement_field: target.measurement_field.to_string(),
+        measurement,
+        report_data_hash,
+        evidence_kind: target.evidence_kind,
+        quote,
+        report,
+        endorsements,
+    })
 }
 
 pub fn parse_zk_proof_payload(
@@ -729,6 +944,7 @@ mod tests {
                 family: VerificationBackendFamily::Tee,
                 task: &mock_task(),
                 proof_data: b"TEE:...",
+                tee_payload: None,
                 zk_payload: None,
                 resolved_vk_ref: None,
             })
@@ -740,6 +956,56 @@ mod tests {
                 backend: "tee:noop".into()
             }
         );
+    }
+
+    #[test]
+    fn parse_tee_attestation_payload_accepts_quote_verifier_target_matrix() {
+        let payload = parse_tee_attestation_payload(
+            b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,attestation_target=sgx-dcap,measurement=mrenclave:demo-sgx-v1,report_data_hash=abababababababababababababababababababababababababababababababab,quote=quote-sgx-dcap-demo-v1,endorsements=intel-dcap-collateral-demo-v1"
+        )
+        .unwrap();
+
+        assert_eq!(payload.attestation_target, "sgx-dcap");
+        assert_eq!(payload.verifier_kind, "quote-verifier");
+        assert_eq!(payload.measurement_field, "mrenclave");
+        assert_eq!(payload.evidence_kind, TeeEvidenceKind::Quote);
+        assert_eq!(payload.evidence(), Some("quote-sgx-dcap-demo-v1"));
+        assert_eq!(payload.endorsements.as_deref(), Some("intel-dcap-collateral-demo-v1"));
+    }
+
+    #[test]
+    fn parse_tee_attestation_payload_accepts_report_verifier_target_matrix() {
+        let payload = parse_tee_attestation_payload(
+            b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,attestation_target=sev-snp,measurement=measurement:demo-snp-v1,report_data_hash=abababababababababababababababababababababababababababababababab,report=report-sev-snp-demo-v1,endorsements=amd-vcek-demo-v1"
+        )
+        .unwrap();
+
+        assert_eq!(payload.attestation_target, "sev-snp");
+        assert_eq!(payload.verifier_kind, "report-verifier");
+        assert_eq!(payload.measurement_field, "measurement");
+        assert_eq!(payload.evidence_kind, TeeEvidenceKind::Report);
+        assert_eq!(payload.evidence(), Some("report-sev-snp-demo-v1"));
+        assert_eq!(payload.endorsements.as_deref(), Some("amd-vcek-demo-v1"));
+    }
+
+    #[test]
+    fn parse_tee_attestation_payload_rejects_quote_target_without_quote_fail_closed() {
+        let err = parse_tee_attestation_payload(
+            b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,attestation_target=tdx-qgs,measurement=mrtd:demo-tdx-v1,report_data_hash=abababababababababababababababababababababababababababababababab"
+        )
+        .unwrap_err();
+
+        assert!(matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("requires quote evidence")));
+    }
+
+    #[test]
+    fn parse_tee_attestation_payload_rejects_measurement_prefix_mismatch_fail_closed() {
+        let err = parse_tee_attestation_payload(
+            b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,attestation_target=tdx-qgs,measurement=mrenclave:wrong-slot,report_data_hash=abababababababababababababababababababababababababababababababab,quote=quote-tdx-qgs-demo-v1"
+        )
+        .unwrap_err();
+
+        assert!(matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("requires measurement prefix 'mrtd:'")));
     }
 
     #[test]
