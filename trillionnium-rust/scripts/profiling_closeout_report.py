@@ -238,6 +238,12 @@ def main():
     lines.append(
         f"- autopilot_severity: {autopilot_severity(missing_inputs, stale_inputs, old_inputs)}"
     )
+    lines.append(
+        f"- total_evidence_coverage: {len(present_inputs)}/{len(inputs)} (node_log + classic_bench + mixed_bench + executor_profile)"
+    )
+    lines.append(
+        "- benchmark_artifact_coverage_note: benchmark_artifact_coverage below excludes node_log by design; use total_evidence_coverage for the full closeout evidence set"
+    )
 
     lines += ["", "## Autopilot Recommended Next Steps"]
     if missing_inputs:

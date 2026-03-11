@@ -40,6 +40,9 @@ python3 scripts/profiling_closeout_report.py
 
 输出：
 - `docs/reports/profiling-closeout-baseline-<timestamp>.md`
+- 报告会同时给出：
+  - `total_evidence_coverage`：完整 closeout 证据覆盖率（`node_log + classic_bench + mixed_bench + executor_profile`）
+  - `benchmark_artifact_coverage`：仅 bench 侧产物覆盖率（不含 `node_log`）
 
 ## 字段解释
 - `scheduler_elapsed_ms`：从 block 内开始做 commit ordering，到拿到 `OrderingDecision` 的耗时
