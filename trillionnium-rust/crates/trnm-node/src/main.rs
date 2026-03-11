@@ -2893,6 +2893,21 @@ mod tests {
     }
 
     #[test]
+    fn round_change_backoff_share_metric_uses_height_level_denominator() {
+        let bft_round_change_backoff_total_ms = 18u64;
+        let bft_committed_heights = 4u64;
+        let bft_round_change_total = 6u64;
+        let share_per_height_ppm =
+            ratio_ppm_u64(bft_round_change_backoff_total_ms, bft_committed_heights);
+        let share_per_round_ppm =
+            ratio_ppm_u64(bft_round_change_backoff_total_ms, bft_round_change_total);
+
+        assert_eq!(share_per_height_ppm, 4_500_000);
+        assert_eq!(share_per_round_ppm, 3_000_000);
+        assert_ne!(share_per_height_ppm, share_per_round_ppm);
+    }
+
+    #[test]
     fn round_change_active_height_rate_metrics_make_jitter_concentration_visible() {
         let bft_round_change_total = 6u64;
         let bft_round_change_active_heights = 2u64;
