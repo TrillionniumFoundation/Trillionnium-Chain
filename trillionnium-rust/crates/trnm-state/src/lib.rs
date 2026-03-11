@@ -1287,6 +1287,100 @@ impl StateStore {
                     hasher.update(t.creator.as_bytes());
                     hasher.update(t.bounty.to_le_bytes());
                     hasher.update((t.status as u8).to_le_bytes());
+                    hasher.update((t.proof_type as u8).to_le_bytes());
+
+                    match &t.metadata {
+                        Some(metadata) => {
+                            hasher.update([1]);
+                            match &metadata.note {
+                                Some(note) => {
+                                    hasher.update([1]);
+                                    hasher.update(note.as_bytes());
+                                }
+                                None => hasher.update([0]),
+                            }
+                            match &metadata.task_type {
+                                Some(task_type) => {
+                                    hasher.update([1]);
+                                    hasher.update(task_type.as_bytes());
+                                }
+                                None => hasher.update([0]),
+                            }
+                            match &metadata.input_hash {
+                                Some(input_hash) => {
+                                    hasher.update([1]);
+                                    hasher.update(input_hash.as_bytes());
+                                }
+                                None => hasher.update([0]),
+                            }
+                            match &metadata.model {
+                                Some(model) => {
+                                    hasher.update([1]);
+                                    match &model.model_id {
+                                        Some(model_id) => {
+                                            hasher.update([1]);
+                                            hasher.update(model_id.as_bytes());
+                                        }
+                                        None => hasher.update([0]),
+                                    }
+                                    match &model.model_digest {
+                                        Some(model_digest) => {
+                                            hasher.update([1]);
+                                            hasher.update(model_digest.as_bytes());
+                                        }
+                                        None => hasher.update([0]),
+                                    }
+                                    match &model.version {
+                                        Some(version) => {
+                                            hasher.update([1]);
+                                            hasher.update(version.as_bytes());
+                                        }
+                                        None => hasher.update([0]),
+                                    }
+                                }
+                                None => hasher.update([0]),
+                            }
+                            match &metadata.provenance {
+                                Some(provenance) => {
+                                    hasher.update([1]);
+                                    match &provenance.producer_did {
+                                        Some(producer_did) => {
+                                            hasher.update([1]);
+                                            hasher.update(producer_did.as_bytes());
+                                        }
+                                        None => hasher.update([0]),
+                                    }
+                                    match &provenance.produced_at {
+                                        Some(produced_at) => {
+                                            hasher.update([1]);
+                                            hasher.update(produced_at.as_bytes());
+                                        }
+                                        None => hasher.update([0]),
+                                    }
+                                    match &provenance.provenance_index {
+                                        Some(provenance_index) => {
+                                            hasher.update([1]);
+                                            hasher.update(provenance_index.as_bytes());
+                                        }
+                                        None => hasher.update([0]),
+                                    }
+                                    match &provenance.privacy_tier {
+                                        Some(privacy_tier) => {
+                                            hasher.update([1]);
+                                            hasher.update(match privacy_tier {
+                                                trnm_types::PrivacyTier::Public => b"public".as_slice(),
+                                                trnm_types::PrivacyTier::Internal => b"internal".as_slice(),
+                                                trnm_types::PrivacyTier::Restricted => b"restricted".as_slice(),
+                                            });
+                                        }
+                                        None => hasher.update([0]),
+                                    }
+                                }
+                                None => hasher.update([0]),
+                            }
+                        }
+                        None => hasher.update([0]),
+                    }
 
                     match &t.worker {
                         Some(worker) => {
