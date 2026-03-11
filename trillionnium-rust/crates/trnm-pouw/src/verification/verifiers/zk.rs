@@ -206,6 +206,21 @@ impl ZkVerifier {
                         }
                         .into());
                     }
+                } else if let Some(payload_backend_system) = normalize_backend_token(payload_backend_id)
+                    .and_then(|token| token.split_whitespace().next().map(str::to_string))
+                    .and_then(|token| normalize_zk_system(&token))
+                {
+                    if payload_backend_system != resolved_system {
+                        return Err(BackendExecutionError::InvalidProof {
+                            backend: "zk:payload".to_string(),
+                            reason: format!(
+                                "invalid zk payload: backend_id '{}' does not match vk_ref '{}'",
+                                payload_backend_id,
+                                resolved.vk_ref
+                            ),
+                        }
+                        .into());
+                    }
                 } else if flags.zk_explicit_backend_required {
                     return Err(BackendExecutionError::MalformedProof {
                         backend: "zk:payload".to_string(),
@@ -606,6 +621,41 @@ mod tests {
             VerificationResult::Invalid(msg)
                 if msg.contains("backend_id 'mock-zk'")
                     && msg.contains("canonical zk_system hint")
+        ));
+    }
+
+    #[test]
+    fn zk_verifier_accepts_backend_id_prefix_system_hint_when_it_matches_vk_ref() {
+        let mut backends = ZkBackendRegistry::new();
+        backends.register(Arc::new(MockSystemSuccessBackend {
+            backend_id: "groth16-demo",
+            expected_system: "groth16",
+        }));
+
+        let verifier = ZkVerifier::from_config(&router_config(), Arc::new(backends));
+        let task = mock_task();
+        let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"groth16-demo","backend_version":"v1","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["99","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#;
+        assert_eq!(
+            verifier.verify_proof(&task, payload),
+            VerificationResult::Valid
+        );
+    }
+
+    #[test]
+    fn zk_verifier_rejects_backend_id_prefix_system_hint_when_it_mismatches_vk_ref() {
+        let mut backends = ZkBackendRegistry::new();
+        backends.register(Arc::new(MockSystemSuccessBackend {
+            backend_id: "plonk-demo",
+            expected_system: "plonk",
+        }));
+
+        let verifier = ZkVerifier::from_config(&router_config(), Arc::new(backends));
+        let task = mock_task();
+        let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"plonk-demo","backend_version":"v1","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["99","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#;
+        assert!(matches!(
+            verifier.verify_proof(&task, payload),
+            VerificationResult::Invalid(msg)
+                if msg.contains("backend_id 'plonk-demo'") && msg.contains("does not match vk_ref")
         ));
     }
 
