@@ -1332,6 +1332,44 @@ fn paused_state_rejects_case_variant_reserved_system_member_without_side_effects
 }
 
 #[test]
+fn paused_state_rejects_reserved_system_member_in_non_terminal_authority_position() {
+    // M1 micro-hardening: reserved/system identities must be rejected no matter where they
+    // appear in the multisig authority set, so pause-time quorum cannot be bypassed by
+    // burying a control-plane member between valid-looking authorities.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 9_931);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 994);
+
+    st.set_gov_param(98_212_1, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+    let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+
+    let err = st
+        .stage_or_confirm_resolve_approval(
+            9_917_1,
+            1,
+            true,
+            "authority-a",
+            "authority-a,SYSTEM,authority-b",
+        )
+        .expect_err("reserved system member in middle of authority set must be rejected");
+    assert!(err.contains("reserved") || err.contains("authority set"));
+
+    assert_eq!(st.pending_resolve_approval(9_917_1), None);
+    assert_eq!(st.pending_resolve_first_approver(9_917_1), None);
+    assert_eq!(st.pending_gov_update("resolve_authority"), None);
+    assert!(st.is_emergency_paused());
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
+}
+
+#[test]
 fn paused_state_rejects_case_variant_worker_slash_treasury_member_without_side_effects() {
     // M1 micro-hardening: worker slash treasury reservation must stay
     // case-insensitive so mixed-case aliases cannot enter resolve quorum.
