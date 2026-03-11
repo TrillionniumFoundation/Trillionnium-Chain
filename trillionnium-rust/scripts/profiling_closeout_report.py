@@ -78,6 +78,20 @@ def main():
             return "missing"
         return "present" if os.path.exists(path) else "missing"
 
+    def file_age_seconds(path: str | None):
+        if not path or not os.path.exists(path):
+            return None
+        return max(0, int((datetime.now() - datetime.fromtimestamp(os.path.getmtime(path))).total_seconds()))
+
+    def freshness_label(age_seconds: int | None) -> str:
+        if age_seconds is None:
+            return "missing"
+        if age_seconds <= 15 * 60:
+            return "fresh"
+        if age_seconds <= 2 * 60 * 60:
+            return "stale"
+        return "old"
+
     lines = ["# Profiling Closeout Baseline", f"generated_at={datetime.now().isoformat()}", "", "## Inputs"]
     lines += [
         f"- node_log: {node_log}",
@@ -89,8 +103,22 @@ def main():
         f"- executor_profile: {executor_profile}",
         f"- executor_profile_status: {input_status(executor_profile)}",
         "",
-        "## Input Readiness",
+        "## Input Freshness",
     ]
+
+    freshness_rows = [
+        ("node_log", node_log),
+        ("classic_bench", classic),
+        ("mixed_bench", mixed),
+        ("executor_profile", executor_profile),
+    ]
+    for label, path in freshness_rows:
+        age_seconds = file_age_seconds(path)
+        lines.append(
+            f"- {label}: freshness={freshness_label(age_seconds)} age_seconds={age_seconds if age_seconds is not None else 'n/a'}"
+        )
+
+    lines += ["", "## Input Readiness"]
 
     readiness_rows = [
         (
