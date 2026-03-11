@@ -725,19 +725,9 @@ fn maybe_pay_challenge_success_bounty(
             .map_err(PouwError::State)?;
         st.credit_balance(challenger, from_lock)
             .map_err(PouwError::State)?;
-        return Ok(from_lock);
     }
 
-    let slash_treasury_available = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
-    let from_slash_treasury = configured_bounty.min(slash_treasury_available);
-    if from_slash_treasury > 0 {
-        st.debit_balance(WORKER_SLASH_TREASURY_ACCOUNT, from_slash_treasury)
-            .map_err(PouwError::State)?;
-        st.credit_balance(challenger, from_slash_treasury)
-            .map_err(PouwError::State)?;
-    }
-
-    Ok(from_slash_treasury)
+    Ok(from_lock)
 }
 
 pub fn apply_commit_result(
@@ -1572,6 +1562,70 @@ mod tests {
                 dirty_challenger
             );
         }
+    }
+
+    #[test]
+    fn resolve_slash_pays_success_bounty_only_from_task_lock_not_global_slash_treasury() {
+        let mut st = seeded_state();
+        st.set_balance("worker1", 10);
+        st.set_balance("challenger", 1_000);
+        st.set_balance(WORKER_SLASH_TREASURY_ACCOUNT, 77);
+        st.set_gov_param_bootstrap_unchecked(
+            9_990,
+            "challenge_success_bounty".into(),
+            "5".into(),
+        )
+        .unwrap();
+
+        let task_id = 21_499;
+        let r1 = apply_create_task(&mut st, task_id, "alice".into(), 10).unwrap();
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let result_hash = [7u8; 32];
+        let reveal_salt = [9u8; 32];
+        let committed = compute_commitment(task_id, &result_hash, &reveal_salt, "worker1");
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+        let r5 =
+            apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
+
+        let lock_account = worker_stake_lock_account(task_id);
+        st.debit_balance(&lock_account, 1).unwrap();
+        st.credit_balance("drain", 1).unwrap();
+        assert_eq!(st.balance_of(&lock_account), 0);
+
+        set_resolve_authority(&mut st, "authority,authority2");
+        let staged = apply_resolve_at_height(
+            &mut st,
+            r5.clone(),
+            true,
+            "authority".into(),
+            "authority".into(),
+            1,
+        )
+        .expect_err("first resolver should stage multisig approval");
+        assert!(matches!(staged, PouwError::ResolveApprovalStaged));
+
+        let challenger_before = st.balance_of("challenger");
+        let slash_treasury_before = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
+        let r6 = apply_resolve_at_height(
+            &mut st,
+            r5,
+            true,
+            "authority2".into(),
+            "authority2".into(),
+            1,
+        )
+        .unwrap();
+
+        let task = st.get_task(r6.id).unwrap();
+        assert_eq!(task.status, TaskStatus::Slashed);
+        assert_eq!(task.challenge_bond_forfeited, Some(false));
+        assert_eq!(st.balance_of("challenger"), challenger_before + 10);
+        assert_eq!(
+            st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
+            slash_treasury_before,
+            "challenge success bounty must not fall back to global worker slash treasury"
+        );
     }
 
     #[test]
