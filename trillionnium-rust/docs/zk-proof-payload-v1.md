@@ -76,8 +76,13 @@ Any mismatch between top-level fields and `public_inputs` MUST fail closed befor
 - parser/backend are not reached
 
 ## Backend integration note
-`BackendVerificationRequest` now carries `zk_payload: Option<&ParsedZkProofPayload>`, so a real Groth16/Plonk/STARK adapter can consume already-validated:
+`BackendVerificationRequest` now carries:
+- `zk_payload: Option<&ParsedZkProofPayload>`
+- `resolved_vk_ref: Option<&ResolvedVkRef>`
+
+So a real Groth16/Plonk/STARK adapter can consume already-validated:
 - `vk_ref`
+- registry-resolved VK metadata (for example `scope` / proving-system hint)
 - decoded proof bytes
 - minimal public inputs
 

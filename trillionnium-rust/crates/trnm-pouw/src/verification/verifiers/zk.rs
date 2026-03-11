@@ -1,9 +1,9 @@
 use std::sync::Arc;
 
 use crate::verification::backend::{
-    parse_zk_proof_payload, BackendExecutionError, BackendVerificationRequest,
-    VerificationBackendConfig, VerificationBackendError, VerificationBackendFamily, ZkBackendKind,
-    ZkBackendRegistry,
+    normalize_zk_system, parse_zk_proof_payload, resolve_zk_vk_ref, BackendExecutionError,
+    BackendVerificationRequest, VerificationBackendConfig, VerificationBackendError,
+    VerificationBackendFamily, VkRefRegistry, ZkBackendKind, ZkBackendRegistry,
 };
 use crate::verification::{ProofVerifier, VerificationResult};
 use trnm_types::TaskObject;
@@ -13,6 +13,7 @@ use super::verify_bound_envelope;
 pub struct ZkVerifier {
     backend: ZkBackendKind,
     backends: Arc<ZkBackendRegistry>,
+    vk_refs: Arc<VkRefRegistry>,
     config: VerificationBackendConfig,
 }
 
@@ -21,6 +22,7 @@ impl ZkVerifier {
         Self {
             backend: backend.clone(),
             backends,
+            vk_refs: Arc::new(VkRefRegistry::new()),
             config: VerificationBackendConfig {
                 zk_backend: backend,
                 ..VerificationBackendConfig::default()
@@ -36,6 +38,7 @@ impl ZkVerifier {
         Self {
             backend: config.zk_backend.clone(),
             backends,
+            vk_refs: Arc::new(VkRefRegistry::new()),
             config: config.clone(),
         }
     }
@@ -149,6 +152,53 @@ impl ZkVerifier {
             self.backend.clone()
         };
 
+        let resolved_vk_ref = if let Some(payload) = zk_payload.as_ref() {
+            let resolved = resolve_zk_vk_ref(self.vk_refs.as_ref(), payload)?;
+
+            if let Some(payload_system) = payload.zk_system.as_deref().and_then(normalize_zk_system)
+            {
+                if let Some(resolved_system) =
+                    resolved.zk_system.as_deref().and_then(normalize_zk_system)
+                {
+                    if payload_system != resolved_system {
+                        return Err(BackendExecutionError::InvalidProof {
+                            backend: "zk:payload".to_string(),
+                            reason: format!(
+                                "invalid zk payload: zk_system '{payload_system}' does not match vk_ref '{}'",
+                                resolved.vk_ref
+                            ),
+                        }
+                        .into());
+                    }
+                }
+            }
+
+            if let Some(selected_backend_system) = selected_backend
+                .system_hint()
+                .and_then(|system| normalize_zk_system(&system))
+            {
+                if let Some(resolved_system) =
+                    resolved.zk_system.as_deref().and_then(normalize_zk_system)
+                {
+                    if selected_backend_system != resolved_system {
+                        return Err(BackendExecutionError::InvalidProof {
+                            backend: "zk:payload".to_string(),
+                            reason: format!(
+                                "invalid zk payload: backend '{}' does not match vk_ref '{}'",
+                                selected_backend.key(),
+                                resolved.vk_ref
+                            ),
+                        }
+                        .into());
+                    }
+                }
+            }
+
+            Some(resolved)
+        } else {
+            None
+        };
+
         let backend = self
             .backends
             .resolve(VerificationBackendFamily::Zk, &selected_backend)?;
@@ -157,7 +207,7 @@ impl ZkVerifier {
             task,
             proof_data,
             zk_payload: zk_payload.as_ref(),
-            resolved_vk_ref: None,
+            resolved_vk_ref: resolved_vk_ref.as_ref(),
         })?;
         Ok(())
     }
@@ -236,6 +286,9 @@ mod tests {
             request: BackendVerificationRequest<'_>,
         ) -> Result<BackendVerificationSuccess, BackendExecutionError> {
             let payload = request.zk_payload.expect("zk payload required");
+            let resolved_vk_ref = request
+                .resolved_vk_ref
+                .expect("resolved vk_ref metadata required");
             assert_eq!(request.family, VerificationBackendFamily::Zk);
             assert_eq!(
                 payload.public_inputs.order,
@@ -244,6 +297,37 @@ mod tests {
             assert_eq!(payload.public_inputs.values[0], "99");
             assert_eq!(payload.worker, "worker-zk");
             assert_eq!(payload.vk_ref, "vk://trnm/dev/mock-groth16/v1");
+            assert_eq!(resolved_vk_ref.zk_system.as_deref(), Some("groth16"));
+            Ok(BackendVerificationSuccess {
+                backend_id: self.backend_id().into(),
+            })
+        }
+    }
+
+    struct MockSystemSuccessBackend {
+        backend_id: &'static str,
+        expected_system: &'static str,
+    }
+
+    impl ZkBackend for MockSystemSuccessBackend {
+        fn backend_id(&self) -> &str {
+            self.backend_id
+        }
+
+        fn verify(
+            &self,
+            request: BackendVerificationRequest<'_>,
+        ) -> Result<BackendVerificationSuccess, BackendExecutionError> {
+            let payload = request.zk_payload.expect("zk payload required");
+            let resolved_vk_ref = request
+                .resolved_vk_ref
+                .expect("resolved vk_ref metadata required");
+            assert_eq!(request.family, VerificationBackendFamily::Zk);
+            assert_eq!(payload.zk_system.as_deref(), Some(self.expected_system));
+            assert_eq!(
+                resolved_vk_ref.zk_system.as_deref(),
+                Some(self.expected_system)
+            );
             Ok(BackendVerificationSuccess {
                 backend_id: self.backend_id().into(),
             })
@@ -354,6 +438,56 @@ mod tests {
             verifier.verify_proof(&task, payload),
             VerificationResult::Valid
         );
+    }
+
+    #[test]
+    fn zk_verifier_accepts_second_system_mock_plonk_backend() {
+        let mut backends = ZkBackendRegistry::new();
+        backends.register(Arc::new(MockSystemSuccessBackend {
+            backend_id: "plonk-demo",
+            expected_system: "plonk",
+        }));
+        let verifier = ZkVerifier::from_config(&router_config(), Arc::new(backends));
+        let task = mock_task();
+        let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"plonk","backend_id":"plonk-demo","backend_version":"v1","vk_ref":"vk://trnm/dev/mock-plonk/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","worker","result_hash"],"values":["99","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]},"meta":{"schema_version":"trnm.zk.payload.v0"}}"#;
+        assert_eq!(
+            verifier.verify_proof(&task, payload),
+            VerificationResult::Valid
+        );
+    }
+
+    #[test]
+    fn zk_verifier_rejects_second_system_vk_ref_mismatch_fail_closed() {
+        let mut backends = ZkBackendRegistry::new();
+        backends.register(Arc::new(MockSystemSuccessBackend {
+            backend_id: "plonk-demo",
+            expected_system: "plonk",
+        }));
+        let verifier = ZkVerifier::from_config(&router_config(), Arc::new(backends));
+        let task = mock_task();
+        let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"plonk","backend_id":"plonk-demo","backend_version":"v1","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","worker","result_hash"],"values":["99","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]},"meta":{"schema_version":"trnm.zk.payload.v0"}}"#;
+        assert!(matches!(
+            verifier.verify_proof(&task, payload),
+            VerificationResult::Invalid(msg)
+                if msg.contains("zk_system 'plonk'") && msg.contains("does not match vk_ref")
+        ));
+    }
+
+    #[test]
+    fn zk_verifier_rejects_backend_router_system_mismatch_with_vk_ref_fail_closed() {
+        let mut backends = ZkBackendRegistry::new();
+        backends.register(Arc::new(MockSystemSuccessBackend {
+            backend_id: "groth16-demo",
+            expected_system: "groth16",
+        }));
+        let verifier = ZkVerifier::from_config(&router_config(), Arc::new(backends));
+        let task = mock_task();
+        let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"plonk","backend_id":"groth16-demo","backend_version":"v1","vk_ref":"vk://trnm/dev/mock-plonk/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","worker","result_hash"],"values":["99","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]},"meta":{"schema_version":"trnm.zk.payload.v0"}}"#;
+        assert!(matches!(
+            verifier.verify_proof(&task, payload),
+            VerificationResult::Invalid(msg)
+                if msg.contains("backend 'groth16-demo'") && msg.contains("does not match vk_ref")
+        ));
     }
 
     #[test]

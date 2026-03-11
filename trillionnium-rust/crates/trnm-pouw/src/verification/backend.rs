@@ -92,6 +92,20 @@ pub fn backend_system_hint(raw: &str) -> Option<String> {
     }
 }
 
+pub fn normalize_zk_system(raw: &str) -> Option<String> {
+    let normalized = raw
+        .trim()
+        .to_ascii_lowercase()
+        .chars()
+        .filter(|ch| ch.is_ascii_alphanumeric())
+        .collect::<String>();
+
+    match normalized.as_str() {
+        "groth16" | "plonk" | "halo2" | "stark" | "risc0" | "sp1" => Some(normalized),
+        _ => None,
+    }
+}
+
 /// Back-compat alias kept because current verification wiring and tests already
 /// speak in ZK-oriented terms, even though the platform registry now serves both
 /// TEE and ZK families.
@@ -223,6 +237,7 @@ impl ParsedZkProofPayload {
 pub struct ResolvedVkRef {
     pub vk_ref: String,
     pub scope: String,
+    pub zk_system: Option<String>,
 }
 
 #[derive(Debug, Error, Clone, PartialEq, Eq)]
@@ -272,14 +287,18 @@ impl VkRefRegistry {
     }
 
     fn register_demo_dev_defaults(&mut self) {
-        for vk_ref in [
-            "vk://trnm/dev/mock-groth16/v1",
-            "vk://trnm/dev/mock-groth16/valid",
-            "vk://trnm/dev/mock-groth16/invalid",
+        for (vk_ref, zk_system) in [
+            ("vk://trnm/dev/mock-groth16/v1", "groth16"),
+            ("vk://trnm/dev/mock-groth16/valid", "groth16"),
+            ("vk://trnm/dev/mock-groth16/invalid", "groth16"),
+            ("vk://trnm/dev/mock-plonk/v1", "plonk"),
+            ("vk://trnm/dev/mock-plonk/valid", "plonk"),
+            ("vk://trnm/dev/mock-plonk/invalid", "plonk"),
         ] {
             self.register(ResolvedVkRef {
                 vk_ref: vk_ref.to_string(),
                 scope: "dev".to_string(),
+                zk_system: Some(zk_system.to_string()),
             });
         }
     }
@@ -758,5 +777,26 @@ mod tests {
                     .into(),
             }
         );
+    }
+
+    #[test]
+    fn resolve_zk_vk_ref_returns_registered_system_metadata() {
+        let task = mock_task();
+        let payload = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"plonk","backend_id":"plonk-demo","backend_version":"v1","vk_ref":"vk://trnm/dev/mock-plonk/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","worker","result_hash"],"values":["4242","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]},"meta":{"schema_version":"trnm.zk.payload.v0"}}"#).unwrap();
+        let resolver = VkRefRegistry::new();
+
+        let resolved = resolve_zk_vk_ref(&resolver, &payload).unwrap();
+
+        assert_eq!(resolved.vk_ref, "vk://trnm/dev/mock-plonk/v1");
+        assert_eq!(resolved.scope, "dev");
+        assert_eq!(resolved.zk_system.as_deref(), Some("plonk"));
+    }
+
+    #[test]
+    fn normalize_zk_system_accepts_common_aliases() {
+        assert_eq!(normalize_zk_system("groth16"), Some("groth16".into()));
+        assert_eq!(normalize_zk_system(" Groth-16 "), Some("groth16".into()));
+        assert_eq!(normalize_zk_system("PLONK"), Some("plonk".into()));
+        assert_eq!(normalize_zk_system("mock-zk"), None);
     }
 }
