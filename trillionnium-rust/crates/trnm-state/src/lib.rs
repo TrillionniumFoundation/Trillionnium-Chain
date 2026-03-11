@@ -468,7 +468,7 @@ impl StateStore {
         }
         if !authority_members
             .iter()
-            .any(|member| *member == approver_trimmed)
+            .any(|member| member.eq_ignore_ascii_case(approver_trimmed))
         {
             return Err("resolve approval approver must be a configured authority member".into());
         }

@@ -231,6 +231,41 @@ fn pause_toggle_rejects_non_boolean_value_without_releasing_escrow_or_centralizi
 }
 
 #[test]
+fn paused_resolve_approval_accepts_case_variant_approver_spelling_without_releasing_escrow() {
+    // M1 micro-hardening: stored authority-set membership is canonicalized case-insensitively
+    // for approver lookup, so an approver spelling variant cannot spuriously fail closed.
+    // Custody balances and staged quorum state must still remain unchanged.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 12_345);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 678);
+
+    st.set_gov_param(98_149, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+    let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+
+    let first = st
+        .stage_or_confirm_resolve_approval(9_906, 1, false, "Authority-A", "authority-a,authority-b")
+        .expect("case-variant approver should match configured authority member");
+    assert!(!first, "first distinct approver should only stage quorum");
+    assert_eq!(st.pending_resolve_approval(9_906), Some((false, 1)));
+    assert_eq!(
+        st.pending_resolve_first_approver(9_906).as_deref(),
+        Some("Authority-A"),
+        "first approver spelling should be preserved for auditability"
+    );
+
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
+    assert_eq!(st.pending_gov_update("resolve_authority"), None);
+}
+
+#[test]
 fn paused_unpause_rejects_noncanonical_key_id_without_mutating_custody_or_quorum_state() {
     // M1 merge-gate invariant: emergency pause exit path must keep canonical key-id guard.
     // A wrong-key unpause attempt must fail closed: pause state, escrow custody, and
@@ -749,6 +784,45 @@ fn paused_state_rejects_case_variant_duplicate_multisig_member_authority_set_wit
     );
 
     assert_eq!(st.pending_resolve_approval(9_917), None);
+    assert_eq!(st.pending_gov_update("resolve_authority"), None);
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
+}
+
+#[test]
+fn paused_resolve_approval_accepts_case_variant_approver_alias_without_escrow_side_effects() {
+    // M1 micro-hardening: resolve approval membership check should follow the same
+    // case-insensitive canonical set semantics used by duplicate detection, without
+    // mutating custody balances or pending governance state.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 54_000);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 640);
+
+    let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+    let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+
+    st.set_gov_param(98_197, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    let staged = st
+        .stage_or_confirm_resolve_approval(
+            9_918,
+            1,
+            true,
+            "Authority-A",
+            "authority-a,authority-b",
+        )
+        .expect("case-variant approver alias should still match canonical authority member");
+    assert!(!staged, "first approval should stage but not finalize");
+    assert_eq!(st.pending_resolve_approval(9_918), Some((true, 1)));
+    assert_eq!(
+        st.pending_resolve_first_approver(9_918).as_deref(),
+        Some("Authority-A")
+    );
     assert_eq!(st.pending_gov_update("resolve_authority"), None);
     assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
     assert_eq!(
