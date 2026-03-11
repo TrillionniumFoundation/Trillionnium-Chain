@@ -59,22 +59,29 @@ fn task_metadata_and_proof_type_should_affect_state_root() {
 }
 
 #[test]
-fn pending_gov_updates_should_affect_state_root() {
+fn pending_sensitive_gov_updates_should_affect_state_root() {
     let mut st1 = StateStore::new();
     let st2 = StateStore::new();
 
     // Base states are identical
     assert_eq!(st1.state_root(), st2.state_root());
 
-    // Add a pending update to st1 only
-    st1.set_gov_param(1000, 7001, "max_block_ms".to_string(), "5000".to_string())
+    // Add a timelocked sensitive pending update to st1 only.
+    let outcome = st1
+        .set_gov_param(
+            1000,
+            7001,
+            "challenge_min_bond".to_string(),
+            "5000".to_string(),
+        )
         .unwrap();
+    assert!(matches!(outcome, GovParamUpdateOutcome::Scheduled { .. }));
 
-    // Roots should now differ because of pending_gov_updates
+    // Roots should now differ because pending_gov_updates contributes to state_root.
     assert_ne!(
         st1.state_root(),
         st2.state_root(),
-        "State root should incorporate pending governance updates"
+        "State root should incorporate pending sensitive governance updates"
     );
 }
 
