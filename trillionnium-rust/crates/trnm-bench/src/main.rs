@@ -257,4 +257,29 @@ mod tests {
         );
         assert_eq!(decision.reason, "hotspot_detected");
     }
+
+    #[test]
+    fn hot_streak_auto_adaptive_profile_keeps_hot_bucket_fast_path_counters_zeroed() {
+        let txs = build_hot_streak_txs(20_000, 2_000, 3, 1);
+        let decision = auto_adaptive_decision(&txs);
+        let (_groups, profile) =
+            build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::AutoAdaptive);
+
+        assert!(decision.use_hot_bucket, "expected hot-streak workload to stay on hot-bucket path");
+        assert_eq!(profile.tx_count, txs.len());
+        assert_eq!(profile.grouped_count, txs.len());
+        assert_eq!(profile.candidate_groups_scanned, 0);
+        assert_eq!(profile.conflict_checks, 0);
+        assert_eq!(profile.conflict_hits, 0);
+        assert_eq!(profile.stage_ww_checks, 0);
+        assert_eq!(profile.stage_ww_hits, 0);
+        assert_eq!(profile.stage_wr_checks, 0);
+        assert_eq!(profile.stage_wr_hits, 0);
+        assert_eq!(profile.stage_rw_checks, 0);
+        assert_eq!(profile.stage_rw_hits, 0);
+        assert!(
+            profile.hot_object_share > 0.0,
+            "hot-streak auto-adaptive profile should report a non-zero hot-object share"
+        );
+    }
 }
