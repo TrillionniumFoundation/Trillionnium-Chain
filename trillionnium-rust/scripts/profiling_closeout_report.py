@@ -18,6 +18,17 @@ def parse_kv_line(line: str):
     return {k: v for k, v in KV.findall(line)}
 
 
+def load_kv_rows(path: str | None):
+    rows = []
+    if path and os.path.exists(path):
+        with open(path, "r", encoding="utf-8") as f:
+            for raw in f:
+                parsed = parse_kv_line(raw.strip())
+                if parsed:
+                    rows.append(parsed)
+    return rows
+
+
 def as_num(v):
     try:
         return int(v)
@@ -91,6 +102,8 @@ def main():
 
     block_rows = []
     consensus_rows = []
+    classic_rows = load_kv_rows(classic)
+    mixed_rows = load_kv_rows(mixed)
     if node_log and os.path.exists(node_log):
         with open(node_log, "r", encoding="utf-8") as f:
             for raw in f:
@@ -264,6 +277,30 @@ def main():
     lines.append(
         f"- benchmark_artifact_coverage: {len([p for p in [classic, mixed, executor_profile] if p and os.path.exists(p)])}/3"
     )
+    bench_metric_labels = [
+        ("classic", classic_rows),
+        ("mixed", mixed_rows),
+    ]
+    bench_metric_keys = [
+        "elapsed_ms",
+        "groups",
+        "grouped",
+        "estimated_conflict_rate",
+        "profile.report.coverage_ratio",
+        "profile.report.groups_per_1k_txs",
+        "profile.report.grouping_efficiency",
+        "profile.conflict_hit_rate",
+        "profile.hot_object_share",
+    ]
+    for label, rows in bench_metric_labels:
+        if rows:
+            lines.append(f"- {label}_bench_rows: {len(rows)}")
+            latest_row = rows[-1]
+            for key in bench_metric_keys:
+                if key in latest_row:
+                    lines.append(f"- {label}_bench.{key}: {latest_row[key]}")
+        else:
+            lines.append(f"- {label}_bench_rows: 0")
     if classic and os.path.exists(classic):
         lines.append(
             f"- classic_bench_freshness: {freshness_label(file_age_seconds(classic))}"
