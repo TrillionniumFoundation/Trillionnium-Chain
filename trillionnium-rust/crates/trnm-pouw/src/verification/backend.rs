@@ -811,6 +811,53 @@ mod tests {
     }
 
     #[test]
+    fn resolve_zk_vk_ref_accepts_trimmed_and_case_insensitive_registered_reference() {
+        let mut resolver = VkRefRegistry::new();
+        resolver.register(ResolvedVkRef {
+            vk_ref: "vk://trnm/dev/mock-groth16/mixedcase".into(),
+            scope: "dev".into(),
+            zk_system: Some("groth16".into()),
+        });
+
+        let payload = ParsedZkProofPayload {
+            task_id: 4242,
+            worker: "worker-zk".into(),
+            proof_type: "zk".into(),
+            result_hash: "1111111111111111111111111111111111111111111111111111111111111111".into(),
+            zk_system: Some("groth16".into()),
+            backend_id: Some("mock-zk".into()),
+            backend_version: Some("v1".into()),
+            vk_ref: "  VK://TRNM/DEV/MOCK-GROTH16/MIXEDCASE  ".into(),
+            proof_encoding: ProofBytesEncoding::Hex,
+            proof: "01020304".into(),
+            public_inputs: ZkPublicInputs {
+                order: vec![
+                    "task_id".into(),
+                    "proof_type".into(),
+                    "worker".into(),
+                    "result_hash".into(),
+                ],
+                values: vec![
+                    "4242".into(),
+                    "zk".into(),
+                    "worker-zk".into(),
+                    "1111111111111111111111111111111111111111111111111111111111111111".into(),
+                ],
+            },
+            meta: ZkPayloadMeta {
+                schema_version: "trnm.zk.payload.v0".into(),
+                circuit_id: Some("settlement-result-v1".into()),
+            },
+        };
+
+        let resolved = resolve_zk_vk_ref(&resolver, &payload).unwrap();
+
+        assert_eq!(resolved.vk_ref, "vk://trnm/dev/mock-groth16/mixedcase");
+        assert_eq!(resolved.scope, "dev");
+        assert_eq!(resolved.zk_system.as_deref(), Some("groth16"));
+    }
+
+    #[test]
     fn normalize_zk_system_accepts_common_aliases() {
         assert_eq!(normalize_zk_system("groth16"), Some("groth16".into()));
         assert_eq!(normalize_zk_system(" Groth-16 "), Some("groth16".into()));
