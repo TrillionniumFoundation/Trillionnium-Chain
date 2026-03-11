@@ -9,7 +9,7 @@ set -euo pipefail
 #   trnm_tx_cli_wrapper.sh tx query <tx_hash>
 
 if [[ "${1:-}" != "tx" ]]; then
-  echo "usage: $0 tx <commit-result|reveal-result|--help> ..." >&2
+  echo "usage: $0 tx <commit-result|reveal-result|query|--help> ..." >&2
   exit 2
 fi
 
@@ -22,6 +22,10 @@ Usage:
   tx commit-result <task_id> <worker> <commit_hash> <nonce>
   tx reveal-result <task_id> <result_hash> <salt_hex>
   tx query <tx_hash>
+
+Delegated to trnm-cli (not emulated by this minimal wrapper):
+  tx wait <tx_hash> [--timeout <sec>] [--interval <sec>]
+  tx transfer --from <name> --to <address> --amount <n> [--denom <denom>] [--store <path>]
 EOF
   exit 0
 fi
