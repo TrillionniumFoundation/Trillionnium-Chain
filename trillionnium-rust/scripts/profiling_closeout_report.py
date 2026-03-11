@@ -119,6 +119,10 @@ def main():
 
     lines += ["", "## Data Completeness"]
 
+    if not any([node_log, classic, mixed, executor_profile]):
+        lines.append("- autopilot_assessment: BENCH_ONLY_RUN (must-run gate passed, but no persisted closeout artifacts were found)")
+        lines.append("- note: `cargo run -q -p trnm-bench -- --profile` prints useful immediate telemetry, but closeout files must be produced separately for curator/autopilot consumption")
+
     inputs = [
         ("node_log", node_log),
         ("classic_bench", classic),
