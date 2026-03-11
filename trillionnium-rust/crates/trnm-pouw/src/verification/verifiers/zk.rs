@@ -500,4 +500,18 @@ mod tests {
             VerificationResult::Invalid(msg) if msg.contains("backend_id is required")
         ));
     }
+
+    #[test]
+    fn zk_verifier_does_not_silently_fallback_when_payload_backend_is_unknown() {
+        let mut backends = ZkBackendRegistry::new();
+        backends.register(Arc::new(MockSuccessBackend));
+        let verifier = ZkVerifier::from_config(&router_config(), Arc::new(backends));
+        let task = mock_task();
+        let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"missing-backend","backend_version":"v1","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["99","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]},"meta":{"schema_version":"trnm.zk.payload.v0"}}"#;
+        assert!(matches!(
+            verifier.verify_proof(&task, payload),
+            VerificationResult::Indeterminate(msg)
+                if msg.contains("verification backend 'missing-backend' is not registered")
+        ));
+    }
 }
