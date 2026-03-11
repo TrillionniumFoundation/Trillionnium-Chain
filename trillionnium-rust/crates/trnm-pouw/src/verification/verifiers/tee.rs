@@ -141,7 +141,7 @@ mod tests {
     }
 
     fn mock_attested_receipt() -> &'static [u8] {
-        b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,attestation_target=sgx-dcap,measurement=mrenclave:demo-sgx-v1,report_data_hash=abababababababababababababababababababababababababababababababab,quote=quote-sgx-dcap-demo-v1,endorsements=intel-dcap-collateral-demo-v1"
+        b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,attestation_target=sgx-dcap,measurement=mrenclave:demo-sgx-v1,report_data_hash=abababababababababababababababababababababababababababababababab,quote=quote-sgx-dcap-demo-v1,collateral=intel-dcap-collateral-demo-v1,cert_chain=intel-dcap-cert-chain-demo-v1,issuer=intel"
     }
 
     struct MockTeeSuccessBackend;
@@ -161,6 +161,9 @@ mod tests {
             assert_eq!(tee_payload.verifier_kind, "quote-verifier");
             assert_eq!(tee_payload.measurement_field, "mrenclave");
             assert_eq!(tee_payload.evidence(), Some("quote-sgx-dcap-demo-v1"));
+            assert_eq!(tee_payload.verifier_metadata.collateral.as_deref(), Some("intel-dcap-collateral-demo-v1"));
+            assert_eq!(tee_payload.verifier_metadata.cert_chain.as_deref(), Some("intel-dcap-cert-chain-demo-v1"));
+            assert_eq!(tee_payload.verifier_metadata.issuer.as_deref(), Some("intel"));
             assert!(request.zk_payload.is_none());
             Ok(BackendVerificationSuccess {
                 backend_id: self.backend_id().into(),

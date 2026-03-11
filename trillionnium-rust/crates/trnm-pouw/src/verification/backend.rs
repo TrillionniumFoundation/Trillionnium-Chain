@@ -255,6 +255,15 @@ impl TeeEvidenceKind {
     }
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Default)]
+pub struct TeeVerifierMetadata {
+    pub collateral: Option<String>,
+    pub cert_chain: Option<String>,
+    pub issuer: Option<String>,
+    pub vcek: Option<String>,
+    pub report_signer: Option<String>,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ParsedTeeProofPayload {
     pub attestation_target: String,
@@ -265,7 +274,7 @@ pub struct ParsedTeeProofPayload {
     pub evidence_kind: TeeEvidenceKind,
     pub quote: Option<String>,
     pub report: Option<String>,
-    pub endorsements: Option<String>,
+    pub verifier_metadata: TeeVerifierMetadata,
 }
 
 impl ParsedTeeProofPayload {
@@ -687,7 +696,13 @@ pub fn parse_tee_attestation_payload(
         .to_ascii_lowercase();
     let quote = fields.get("quote").cloned();
     let report = fields.get("report").cloned();
-    let endorsements = fields.get("endorsements").cloned();
+    let verifier_metadata = TeeVerifierMetadata {
+        collateral: fields.get("collateral").cloned(),
+        cert_chain: fields.get("cert_chain").cloned(),
+        issuer: fields.get("issuer").cloned(),
+        vcek: fields.get("vcek").cloned(),
+        report_signer: fields.get("report_signer").cloned(),
+    };
 
     match target.evidence_kind {
         TeeEvidenceKind::Quote if quote.is_none() => {
@@ -711,6 +726,85 @@ pub fn parse_tee_attestation_payload(
         _ => {}
     }
 
+    match target.evidence_kind {
+        TeeEvidenceKind::Quote => {
+            if verifier_metadata.collateral.is_none() {
+                return Err(BackendExecutionError::MalformedProof {
+                    backend: "tee:payload".to_string(),
+                    reason: format!(
+                        "invalid tee receipt: target '{}' requires collateral metadata",
+                        target.canonical
+                    ),
+                });
+            }
+            if verifier_metadata.cert_chain.is_none() {
+                return Err(BackendExecutionError::MalformedProof {
+                    backend: "tee:payload".to_string(),
+                    reason: format!(
+                        "invalid tee receipt: target '{}' requires cert_chain metadata",
+                        target.canonical
+                    ),
+                });
+            }
+            if verifier_metadata.issuer.is_none() {
+                return Err(BackendExecutionError::MalformedProof {
+                    backend: "tee:payload".to_string(),
+                    reason: format!(
+                        "invalid tee receipt: target '{}' requires issuer metadata",
+                        target.canonical
+                    ),
+                });
+            }
+            if verifier_metadata.vcek.is_some() || verifier_metadata.report_signer.is_some() {
+                return Err(BackendExecutionError::MalformedProof {
+                    backend: "tee:payload".to_string(),
+                    reason: format!(
+                        "invalid tee receipt: target '{}' does not accept report verifier metadata",
+                        target.canonical
+                    ),
+                });
+            }
+        }
+        TeeEvidenceKind::Report => {
+            if verifier_metadata.vcek.is_none() {
+                return Err(BackendExecutionError::MalformedProof {
+                    backend: "tee:payload".to_string(),
+                    reason: format!(
+                        "invalid tee receipt: target '{}' requires vcek metadata",
+                        target.canonical
+                    ),
+                });
+            }
+            if verifier_metadata.cert_chain.is_none() {
+                return Err(BackendExecutionError::MalformedProof {
+                    backend: "tee:payload".to_string(),
+                    reason: format!(
+                        "invalid tee receipt: target '{}' requires cert_chain metadata",
+                        target.canonical
+                    ),
+                });
+            }
+            if verifier_metadata.report_signer.is_none() {
+                return Err(BackendExecutionError::MalformedProof {
+                    backend: "tee:payload".to_string(),
+                    reason: format!(
+                        "invalid tee receipt: target '{}' requires report_signer metadata",
+                        target.canonical
+                    ),
+                });
+            }
+            if verifier_metadata.collateral.is_some() || verifier_metadata.issuer.is_some() {
+                return Err(BackendExecutionError::MalformedProof {
+                    backend: "tee:payload".to_string(),
+                    reason: format!(
+                        "invalid tee receipt: target '{}' does not accept quote verifier metadata",
+                        target.canonical
+                    ),
+                });
+            }
+        }
+    }
+
     Ok(ParsedTeeProofPayload {
         attestation_target: target.canonical.to_string(),
         verifier_kind: target.evidence_kind.verifier_kind().to_string(),
@@ -720,7 +814,7 @@ pub fn parse_tee_attestation_payload(
         evidence_kind: target.evidence_kind,
         quote,
         report,
-        endorsements,
+        verifier_metadata,
     })
 }
 
@@ -961,7 +1055,7 @@ mod tests {
     #[test]
     fn parse_tee_attestation_payload_accepts_quote_verifier_target_matrix() {
         let payload = parse_tee_attestation_payload(
-            b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,attestation_target=sgx-dcap,measurement=mrenclave:demo-sgx-v1,report_data_hash=abababababababababababababababababababababababababababababababab,quote=quote-sgx-dcap-demo-v1,endorsements=intel-dcap-collateral-demo-v1"
+            b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,attestation_target=sgx-dcap,measurement=mrenclave:demo-sgx-v1,report_data_hash=abababababababababababababababababababababababababababababababab,quote=quote-sgx-dcap-demo-v1,collateral=intel-dcap-collateral-demo-v1,cert_chain=intel-dcap-cert-chain-demo-v1,issuer=intel"
         )
         .unwrap();
 
@@ -970,13 +1064,15 @@ mod tests {
         assert_eq!(payload.measurement_field, "mrenclave");
         assert_eq!(payload.evidence_kind, TeeEvidenceKind::Quote);
         assert_eq!(payload.evidence(), Some("quote-sgx-dcap-demo-v1"));
-        assert_eq!(payload.endorsements.as_deref(), Some("intel-dcap-collateral-demo-v1"));
+        assert_eq!(payload.verifier_metadata.collateral.as_deref(), Some("intel-dcap-collateral-demo-v1"));
+        assert_eq!(payload.verifier_metadata.cert_chain.as_deref(), Some("intel-dcap-cert-chain-demo-v1"));
+        assert_eq!(payload.verifier_metadata.issuer.as_deref(), Some("intel"));
     }
 
     #[test]
     fn parse_tee_attestation_payload_accepts_report_verifier_target_matrix() {
         let payload = parse_tee_attestation_payload(
-            b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,attestation_target=sev-snp,measurement=measurement:demo-snp-v1,report_data_hash=abababababababababababababababababababababababababababababababab,report=report-sev-snp-demo-v1,endorsements=amd-vcek-demo-v1"
+            b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,attestation_target=sev-snp,measurement=measurement:demo-snp-v1,report_data_hash=abababababababababababababababababababababababababababababababab,report=report-sev-snp-demo-v1,vcek=amd-vcek-demo-v1,cert_chain=amd-cert-chain-demo-v1,report_signer=amd"
         )
         .unwrap();
 
@@ -985,13 +1081,15 @@ mod tests {
         assert_eq!(payload.measurement_field, "measurement");
         assert_eq!(payload.evidence_kind, TeeEvidenceKind::Report);
         assert_eq!(payload.evidence(), Some("report-sev-snp-demo-v1"));
-        assert_eq!(payload.endorsements.as_deref(), Some("amd-vcek-demo-v1"));
+        assert_eq!(payload.verifier_metadata.vcek.as_deref(), Some("amd-vcek-demo-v1"));
+        assert_eq!(payload.verifier_metadata.cert_chain.as_deref(), Some("amd-cert-chain-demo-v1"));
+        assert_eq!(payload.verifier_metadata.report_signer.as_deref(), Some("amd"));
     }
 
     #[test]
     fn parse_tee_attestation_payload_rejects_quote_target_without_quote_fail_closed() {
         let err = parse_tee_attestation_payload(
-            b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,attestation_target=tdx-qgs,measurement=mrtd:demo-tdx-v1,report_data_hash=abababababababababababababababababababababababababababababababab"
+            b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,attestation_target=tdx-qgs,measurement=mrtd:demo-tdx-v1,report_data_hash=abababababababababababababababababababababababababababababababab,collateral=intel-tdx-qgs-collateral-demo-v1,cert_chain=intel-tdx-qgs-cert-chain-demo-v1,issuer=intel"
         )
         .unwrap_err();
 
@@ -999,9 +1097,29 @@ mod tests {
     }
 
     #[test]
+    fn parse_tee_attestation_payload_rejects_quote_target_without_collateral_metadata_fail_closed() {
+        let err = parse_tee_attestation_payload(
+            b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,attestation_target=sgx-dcap,measurement=mrenclave:demo-sgx-v1,report_data_hash=abababababababababababababababababababababababababababababababab,quote=quote-sgx-dcap-demo-v1,cert_chain=intel-dcap-cert-chain-demo-v1,issuer=intel"
+        )
+        .unwrap_err();
+
+        assert!(matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("requires collateral metadata")));
+    }
+
+    #[test]
+    fn parse_tee_attestation_payload_rejects_report_target_with_quote_metadata_fail_closed() {
+        let err = parse_tee_attestation_payload(
+            b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,attestation_target=sev-snp,measurement=measurement:demo-snp-v1,report_data_hash=abababababababababababababababababababababababababababababababab,report=report-sev-snp-demo-v1,collateral=wrong-shape,cert_chain=amd-cert-chain-demo-v1,issuer=intel,vcek=amd-vcek-demo-v1,report_signer=amd"
+        )
+        .unwrap_err();
+
+        assert!(matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("does not accept quote verifier metadata")));
+    }
+
+    #[test]
     fn parse_tee_attestation_payload_rejects_measurement_prefix_mismatch_fail_closed() {
         let err = parse_tee_attestation_payload(
-            b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,attestation_target=tdx-qgs,measurement=mrenclave:wrong-slot,report_data_hash=abababababababababababababababababababababababababababababababab,quote=quote-tdx-qgs-demo-v1"
+            b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,attestation_target=tdx-qgs,measurement=mrenclave:wrong-slot,report_data_hash=abababababababababababababababababababababababababababababababab,quote=quote-tdx-qgs-demo-v1,collateral=intel-tdx-qgs-collateral-demo-v1,cert_chain=intel-tdx-qgs-cert-chain-demo-v1,issuer=intel"
         )
         .unwrap_err();
 

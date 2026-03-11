@@ -10,7 +10,7 @@ The goal is to freeze the backend handoff surface so future real attestation bac
 TEE receipts continue to use the bound envelope form:
 
 ```text
-TEE:task_id=<u64>,worker=<id>,proof_type=tee,result_hash=<hex>,attestation_target=<token>,measurement=<value>,report_data_hash=<hex>,<evidence-field>=<value>[,endorsements=<value>]
+TEE:task_id=<u64>,worker=<id>,proof_type=tee,result_hash=<hex>,attestation_target=<token>,measurement=<value>,report_data_hash=<hex>,<evidence-field>=<value>[,<target-specific-verifier-metadata>]
 ```
 
 The semantic verifier still owns:
@@ -22,16 +22,16 @@ The feature-gated real TEE backend additionally owns:
 - target-specific measurement slot validation
 - target-specific evidence kind validation (`quote` vs `report`)
 - required attestation fields
+- target-specific verifier metadata validation
 - `report_data_hash` ↔ task `result_hash` consistency
-- optional `endorsements` handoff
 
 ## Canonical attestation target matrix
 
-| target | adapter | verifier kind | evidence field | measurement prefix | notes |
-| --- | --- | --- | --- | --- | --- |
-| `sgx-dcap` | `SgxDcapAdapter` | `quote-verifier` | `quote` | `mrenclave:` | Intel SGX DCAP-style quote path |
-| `tdx-qgs` | `TdxQgsAdapter` | `quote-verifier` | `quote` | `mrtd:` | Intel TDX QGS quote path |
-| `sev-snp` | `SevSnpAdapter` | `report-verifier` | `report` | `measurement:` | AMD SEV-SNP report path |
+| target | adapter | verifier kind | evidence field | measurement prefix | required verifier metadata | notes |
+| --- | --- | --- | --- | --- | --- | --- |
+| `sgx-dcap` | `SgxDcapAdapter` | `quote-verifier` | `quote` | `mrenclave:` | `collateral`, `cert_chain`, `issuer` | Intel SGX DCAP-style quote path |
+| `tdx-qgs` | `TdxQgsAdapter` | `quote-verifier` | `quote` | `mrtd:` | `collateral`, `cert_chain`, `issuer` | Intel TDX QGS quote path |
+| `sev-snp` | `SevSnpAdapter` | `report-verifier` | `report` | `measurement:` | `vcek`, `cert_chain`, `report_signer` | AMD SEV-SNP report path |
 
 Unknown values must fail closed before any cryptographic verification attempt.
 
@@ -46,7 +46,19 @@ Target-specific evidence is also required:
 - `tdx-qgs` → `quote`
 - `sev-snp` → `report`
 
-`endorsements` is optional in the generic contract, but the scaffold may require it for specific fixture vectors to model downstream verifier collateral/VCEK handoff.
+Target-specific verifier metadata is now explicit:
+- quote-based targets (`sgx-dcap`, `tdx-qgs`) require:
+  - `collateral`
+  - `cert_chain`
+  - `issuer`
+- report-based target (`sev-snp`) requires:
+  - `vcek`
+  - `cert_chain`
+  - `report_signer`
+
+Cross-family metadata must fail closed:
+- quote-based targets must not rely on `vcek` / `report_signer`
+- report-based targets must not rely on `collateral` / `issuer`
 
 Missing or empty values are malformed receipts.
 
@@ -59,7 +71,7 @@ The scaffold canonicalizes TEE receipts into an intermediate `TeeVerifierHandoff
 - `measurement`
 - `report_data_hash`
 - target-specific evidence (`quote` or `report`)
-- optional `endorsements`
+- structured verifier metadata
 
 A target-specific adapter then turns that handoff into one of two concrete verifier inputs.
 
@@ -74,7 +86,9 @@ Used by SGX DCAP and TDX QGS adapters.
   measurement,
   report_data_hash,
   quote,
-  endorsements?
+  collateral,
+  cert_chain,
+  issuer
 }
 ```
 
@@ -89,7 +103,9 @@ Used by SEV-SNP adapter.
   measurement,
   report_data_hash,
   report,
-  endorsements?
+  vcek,
+  cert_chain,
+  report_signer
 }
 ```
 

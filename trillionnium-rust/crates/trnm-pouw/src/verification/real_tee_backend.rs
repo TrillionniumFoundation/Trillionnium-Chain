@@ -4,8 +4,8 @@ use serde::Deserialize;
 
 use crate::verification::backend::{
     parse_tee_attestation_payload, BackendExecutionError, BackendVerificationRequest,
-    BackendVerificationSuccess, ParsedTeeProofPayload, TeeEvidenceKind, VerificationBackend,
-    VerificationBackendFamily, ZkBackendRegistry,
+    BackendVerificationSuccess, ParsedTeeProofPayload, TeeEvidenceKind, TeeVerifierMetadata,
+    VerificationBackend, VerificationBackendFamily, ZkBackendRegistry,
 };
 #[cfg(test)]
 use crate::verification::backend::{VerificationBackendConfig, VerificationBackendKind};
@@ -25,7 +25,15 @@ struct TeeFixtureManifest {
     #[serde(default)]
     report: Option<String>,
     #[serde(default)]
-    endorsements: Option<String>,
+    collateral: Option<String>,
+    #[serde(default)]
+    cert_chain: Option<String>,
+    #[serde(default)]
+    issuer: Option<String>,
+    #[serde(default)]
+    vcek: Option<String>,
+    #[serde(default)]
+    report_signer: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -37,7 +45,7 @@ struct TeeVerifierHandoff {
     report_data_hash: String,
     evidence_kind: TeeEvidenceKind,
     evidence: String,
-    endorsements: Option<String>,
+    verifier_metadata: TeeVerifierMetadata,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -48,7 +56,9 @@ struct QuoteVerifierInput {
     measurement: String,
     report_data_hash: String,
     quote: String,
-    endorsements: Option<String>,
+    collateral: String,
+    cert_chain: String,
+    issuer: String,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -59,7 +69,9 @@ struct ReportVerifierInput {
     measurement: String,
     report_data_hash: String,
     report: String,
-    endorsements: Option<String>,
+    vcek: String,
+    cert_chain: String,
+    report_signer: String,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -133,7 +145,7 @@ impl TeeVerifierHandoff {
             report_data_hash: payload.report_data_hash.clone(),
             evidence_kind: payload.evidence_kind,
             evidence: evidence.to_string(),
-            endorsements: payload.endorsements.clone(),
+            verifier_metadata: payload.verifier_metadata.clone(),
         })
     }
 }
@@ -189,7 +201,24 @@ impl TeeTargetAdapter for SgxDcapAdapter {
             measurement: handoff.measurement.clone(),
             report_data_hash: handoff.report_data_hash.clone(),
             quote: handoff.evidence.clone(),
-            endorsements: handoff.endorsements.clone(),
+            collateral: required_metadata(
+                handoff.verifier_metadata.collateral.as_deref(),
+                "collateral",
+                handoff.attestation_target.as_str(),
+                request,
+            )?,
+            cert_chain: required_metadata(
+                handoff.verifier_metadata.cert_chain.as_deref(),
+                "cert_chain",
+                handoff.attestation_target.as_str(),
+                request,
+            )?,
+            issuer: required_metadata(
+                handoff.verifier_metadata.issuer.as_deref(),
+                "issuer",
+                handoff.attestation_target.as_str(),
+                request,
+            )?,
         }))
     }
 }
@@ -224,7 +253,24 @@ impl TeeTargetAdapter for TdxQgsAdapter {
             measurement: handoff.measurement.clone(),
             report_data_hash: handoff.report_data_hash.clone(),
             quote: handoff.evidence.clone(),
-            endorsements: handoff.endorsements.clone(),
+            collateral: required_metadata(
+                handoff.verifier_metadata.collateral.as_deref(),
+                "collateral",
+                handoff.attestation_target.as_str(),
+                request,
+            )?,
+            cert_chain: required_metadata(
+                handoff.verifier_metadata.cert_chain.as_deref(),
+                "cert_chain",
+                handoff.attestation_target.as_str(),
+                request,
+            )?,
+            issuer: required_metadata(
+                handoff.verifier_metadata.issuer.as_deref(),
+                "issuer",
+                handoff.attestation_target.as_str(),
+                request,
+            )?,
         }))
     }
 }
@@ -259,7 +305,24 @@ impl TeeTargetAdapter for SevSnpAdapter {
             measurement: handoff.measurement.clone(),
             report_data_hash: handoff.report_data_hash.clone(),
             report: handoff.evidence.clone(),
-            endorsements: handoff.endorsements.clone(),
+            vcek: required_metadata(
+                handoff.verifier_metadata.vcek.as_deref(),
+                "vcek",
+                handoff.attestation_target.as_str(),
+                request,
+            )?,
+            cert_chain: required_metadata(
+                handoff.verifier_metadata.cert_chain.as_deref(),
+                "cert_chain",
+                handoff.attestation_target.as_str(),
+                request,
+            )?,
+            report_signer: required_metadata(
+                handoff.verifier_metadata.report_signer.as_deref(),
+                "report_signer",
+                handoff.attestation_target.as_str(),
+                request,
+            )?,
         }))
     }
 }
@@ -322,6 +385,35 @@ fn ensure_handoff_contract(
         ));
     }
 
+    match adapter.evidence_kind() {
+        TeeEvidenceKind::Quote => {
+            if handoff.verifier_metadata.vcek.is_some()
+                || handoff.verifier_metadata.report_signer.is_some()
+            {
+                return Err(invalid_backend_input_err(
+                    request,
+                    format!(
+                        "tee attestation target '{}' does not accept report verifier metadata",
+                        handoff.attestation_target
+                    ),
+                ));
+            }
+        }
+        TeeEvidenceKind::Report => {
+            if handoff.verifier_metadata.collateral.is_some()
+                || handoff.verifier_metadata.issuer.is_some()
+            {
+                return Err(invalid_backend_input_err(
+                    request,
+                    format!(
+                        "tee attestation target '{}' does not accept quote verifier metadata",
+                        handoff.attestation_target
+                    ),
+                ));
+            }
+        }
+    }
+
     Ok(())
 }
 
@@ -347,6 +439,23 @@ fn invalid_backend_input_err(
             .unwrap_or_else(|| "tee:payload".to_string()),
         reason,
     }
+}
+
+fn required_metadata(
+    value: Option<&str>,
+    field: &str,
+    attestation_target: &str,
+    request: Option<&BackendVerificationRequest<'_>>,
+) -> Result<String, BackendExecutionError> {
+    value
+        .map(str::to_string)
+        .ok_or_else(|| invalid_backend_input_err(
+            request,
+            format!(
+                "tee attestation target '{}' requires {} metadata",
+                attestation_target, field
+            ),
+        ))
 }
 
 fn verify_fixture_input(
@@ -383,20 +492,38 @@ fn verify_fixture_input(
                     ),
                 });
             }
+            if input.collateral != expected.collateral {
+                return Err(BackendExecutionError::InvalidProof {
+                    backend: request.backend_label(RealTeeBackend::backend_id_static()),
+                    reason: format!(
+                        "tee attestation collateral does not match target '{}' fixture",
+                        input.attestation_target
+                    ),
+                });
+            }
+            if input.cert_chain != expected.cert_chain {
+                return Err(BackendExecutionError::InvalidProof {
+                    backend: request.backend_label(RealTeeBackend::backend_id_static()),
+                    reason: format!(
+                        "tee attestation cert_chain does not match target '{}' fixture",
+                        input.attestation_target
+                    ),
+                });
+            }
+            if input.issuer != expected.issuer {
+                return Err(BackendExecutionError::InvalidProof {
+                    backend: request.backend_label(RealTeeBackend::backend_id_static()),
+                    reason: format!(
+                        "tee attestation issuer does not match target '{}' fixture",
+                        input.attestation_target
+                    ),
+                });
+            }
             if input.report_data_hash != expected.report_data_hash {
                 return Err(BackendExecutionError::InvalidProof {
                     backend: request.backend_label(RealTeeBackend::backend_id_static()),
                     reason: format!(
                         "tee attestation report_data_hash does not match target '{}' fixture",
-                        input.attestation_target
-                    ),
-                });
-            }
-            if expected.endorsements.is_some() && input.endorsements != expected.endorsements {
-                return Err(BackendExecutionError::InvalidProof {
-                    backend: request.backend_label(RealTeeBackend::backend_id_static()),
-                    reason: format!(
-                        "tee attestation endorsements do not match target '{}' fixture",
                         input.attestation_target
                     ),
                 });
@@ -431,20 +558,38 @@ fn verify_fixture_input(
                     ),
                 });
             }
+            if input.vcek != expected.vcek {
+                return Err(BackendExecutionError::InvalidProof {
+                    backend: request.backend_label(RealTeeBackend::backend_id_static()),
+                    reason: format!(
+                        "tee attestation vcek does not match target '{}' fixture",
+                        input.attestation_target
+                    ),
+                });
+            }
+            if input.cert_chain != expected.cert_chain {
+                return Err(BackendExecutionError::InvalidProof {
+                    backend: request.backend_label(RealTeeBackend::backend_id_static()),
+                    reason: format!(
+                        "tee attestation cert_chain does not match target '{}' fixture",
+                        input.attestation_target
+                    ),
+                });
+            }
+            if input.report_signer != expected.report_signer {
+                return Err(BackendExecutionError::InvalidProof {
+                    backend: request.backend_label(RealTeeBackend::backend_id_static()),
+                    reason: format!(
+                        "tee attestation report_signer does not match target '{}' fixture",
+                        input.attestation_target
+                    ),
+                });
+            }
             if input.report_data_hash != expected.report_data_hash {
                 return Err(BackendExecutionError::InvalidProof {
                     backend: request.backend_label(RealTeeBackend::backend_id_static()),
                     reason: format!(
                         "tee attestation report_data_hash does not match target '{}' fixture",
-                        input.attestation_target
-                    ),
-                });
-            }
-            if expected.endorsements.is_some() && input.endorsements != expected.endorsements {
-                return Err(BackendExecutionError::InvalidProof {
-                    backend: request.backend_label(RealTeeBackend::backend_id_static()),
-                    reason: format!(
-                        "tee attestation endorsements do not match target '{}' fixture",
                         input.attestation_target
                     ),
                 });
@@ -565,9 +710,25 @@ fn synthetic_receipt_for_manifest(manifest: &TeeFixtureManifest) -> String {
         receipt.push_str(",report=");
         receipt.push_str(report);
     }
-    if let Some(endorsements) = manifest.endorsements.as_deref() {
-        receipt.push_str(",endorsements=");
-        receipt.push_str(endorsements);
+    if let Some(collateral) = manifest.collateral.as_deref() {
+        receipt.push_str(",collateral=");
+        receipt.push_str(collateral);
+    }
+    if let Some(cert_chain) = manifest.cert_chain.as_deref() {
+        receipt.push_str(",cert_chain=");
+        receipt.push_str(cert_chain);
+    }
+    if let Some(issuer) = manifest.issuer.as_deref() {
+        receipt.push_str(",issuer=");
+        receipt.push_str(issuer);
+    }
+    if let Some(vcek) = manifest.vcek.as_deref() {
+        receipt.push_str(",vcek=");
+        receipt.push_str(vcek);
+    }
+    if let Some(report_signer) = manifest.report_signer.as_deref() {
+        receipt.push_str(",report_signer=");
+        receipt.push_str(report_signer);
     }
     receipt
 }
@@ -633,12 +794,12 @@ mod tests {
     }
 
     fn sgx_handoff() -> TeeVerifierHandoff {
-        let payload = parse_tee_attestation_payload(b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=sgx-dcap,measurement=mrenclave:demo-sgx-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,quote=quote-sgx-dcap-demo-v1,endorsements=intel-dcap-collateral-demo-v1").unwrap();
+        let payload = parse_tee_attestation_payload(b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=sgx-dcap,measurement=mrenclave:demo-sgx-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,quote=quote-sgx-dcap-demo-v1,collateral=intel-dcap-collateral-demo-v1,cert_chain=intel-dcap-cert-chain-demo-v1,issuer=intel").unwrap();
         TeeVerifierHandoff::from_payload(&payload, None).unwrap()
     }
 
     fn snp_handoff() -> TeeVerifierHandoff {
-        let payload = parse_tee_attestation_payload(b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=sev-snp,measurement=measurement:demo-snp-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,report=report-sev-snp-demo-v1,endorsements=amd-vcek-demo-v1").unwrap();
+        let payload = parse_tee_attestation_payload(b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=sev-snp,measurement=measurement:demo-snp-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,report=report-sev-snp-demo-v1,vcek=amd-vcek-demo-v1,cert_chain=amd-cert-chain-demo-v1,report_signer=amd").unwrap();
         TeeVerifierHandoff::from_payload(&payload, None).unwrap()
     }
 
@@ -654,13 +815,17 @@ mod tests {
                 verifier_kind,
                 measurement_field,
                 quote,
-                endorsements,
+                collateral,
+                cert_chain,
+                issuer,
                 ..
             }) if attestation_target == "sgx-dcap"
                 && verifier_kind == "quote-verifier"
                 && measurement_field == "mrenclave"
                 && quote == "quote-sgx-dcap-demo-v1"
-                && endorsements.as_deref() == Some("intel-dcap-collateral-demo-v1")
+                && collateral == "intel-dcap-collateral-demo-v1"
+                && cert_chain == "intel-dcap-cert-chain-demo-v1"
+                && issuer == "intel"
         ));
     }
 
@@ -676,13 +841,17 @@ mod tests {
                 verifier_kind,
                 measurement_field,
                 report,
-                endorsements,
+                vcek,
+                cert_chain,
+                report_signer,
                 ..
             }) if attestation_target == "sev-snp"
                 && verifier_kind == "report-verifier"
                 && measurement_field == "measurement"
                 && report == "report-sev-snp-demo-v1"
-                && endorsements.as_deref() == Some("amd-vcek-demo-v1")
+                && vcek == "amd-vcek-demo-v1"
+                && cert_chain == "amd-cert-chain-demo-v1"
+                && report_signer == "amd"
         ));
     }
 
@@ -690,7 +859,7 @@ mod tests {
     fn real_tee_backend_accepts_valid_sgx_vector() {
         let registry = VerifierRegistry::with_backend_config(tee_config());
         let task = mock_task();
-        let receipt = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=sgx-dcap,measurement=mrenclave:demo-sgx-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,quote=quote-sgx-dcap-demo-v1,endorsements=intel-dcap-collateral-demo-v1";
+        let receipt = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=sgx-dcap,measurement=mrenclave:demo-sgx-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,quote=quote-sgx-dcap-demo-v1,collateral=intel-dcap-collateral-demo-v1,cert_chain=intel-dcap-cert-chain-demo-v1,issuer=intel";
 
         assert_eq!(registry.verify(&task, receipt), VerificationResult::Valid);
     }
@@ -699,7 +868,7 @@ mod tests {
     fn real_tee_backend_accepts_valid_tdx_vector() {
         let registry = VerifierRegistry::with_backend_config(tee_config());
         let task = mock_task();
-        let receipt = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=tdx-qgs,measurement=mrtd:demo-tdx-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,quote=quote-tdx-qgs-demo-v1,endorsements=intel-tdx-qgs-collateral-demo-v1";
+        let receipt = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=tdx-qgs,measurement=mrtd:demo-tdx-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,quote=quote-tdx-qgs-demo-v1,collateral=intel-tdx-qgs-collateral-demo-v1,cert_chain=intel-tdx-qgs-cert-chain-demo-v1,issuer=intel";
 
         assert_eq!(registry.verify(&task, receipt), VerificationResult::Valid);
     }
@@ -708,7 +877,7 @@ mod tests {
     fn real_tee_backend_accepts_valid_sev_snp_vector() {
         let registry = VerifierRegistry::with_backend_config(tee_config());
         let task = mock_task();
-        let receipt = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=sev-snp,measurement=measurement:demo-snp-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,report=report-sev-snp-demo-v1,endorsements=amd-vcek-demo-v1";
+        let receipt = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=sev-snp,measurement=measurement:demo-snp-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,report=report-sev-snp-demo-v1,vcek=amd-vcek-demo-v1,cert_chain=amd-cert-chain-demo-v1,report_signer=amd";
 
         assert_eq!(registry.verify(&task, receipt), VerificationResult::Valid);
     }
@@ -730,7 +899,7 @@ mod tests {
     fn real_tee_backend_rejects_missing_report_for_report_verifier_target_fail_closed() {
         let registry = VerifierRegistry::with_backend_config(tee_config());
         let task = mock_task();
-        let receipt = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=sev-snp,measurement=measurement:demo-snp-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,quote=wrong-evidence-kind";
+        let receipt = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=sev-snp,measurement=measurement:demo-snp-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,vcek=amd-vcek-demo-v1,cert_chain=amd-cert-chain-demo-v1,report_signer=amd";
 
         assert!(matches!(
             registry.verify(&task, receipt),
@@ -743,7 +912,7 @@ mod tests {
     fn real_tee_backend_rejects_report_data_hash_mismatch_fail_closed() {
         let registry = VerifierRegistry::with_backend_config(tee_config());
         let task = mock_task();
-        let receipt = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=sgx-dcap,measurement=mrenclave:demo-sgx-v1,report_data_hash=2222222222222222222222222222222222222222222222222222222222222222,quote=quote-sgx-dcap-demo-v1,endorsements=intel-dcap-collateral-demo-v1";
+        let receipt = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=sgx-dcap,measurement=mrenclave:demo-sgx-v1,report_data_hash=2222222222222222222222222222222222222222222222222222222222222222,quote=quote-sgx-dcap-demo-v1,collateral=intel-dcap-collateral-demo-v1,cert_chain=intel-dcap-cert-chain-demo-v1,issuer=intel";
 
         assert!(matches!(
             registry.verify(&task, receipt),
@@ -753,15 +922,28 @@ mod tests {
     }
 
     #[test]
-    fn real_tee_backend_rejects_endorsements_mismatch_fail_closed() {
+    fn real_tee_backend_rejects_quote_metadata_mismatch_fail_closed() {
         let registry = VerifierRegistry::with_backend_config(tee_config());
         let task = mock_task();
-        let receipt = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=tdx-qgs,measurement=mrtd:demo-tdx-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,quote=quote-tdx-qgs-demo-v1,endorsements=wrong-collateral";
+        let receipt = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=tdx-qgs,measurement=mrtd:demo-tdx-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,quote=quote-tdx-qgs-demo-v1,collateral=wrong-collateral,cert_chain=intel-tdx-qgs-cert-chain-demo-v1,issuer=intel";
 
         assert!(matches!(
             registry.verify(&task, receipt),
             VerificationResult::Invalid(msg)
-                if msg.contains("endorsements") && msg.contains("tdx-qgs")
+                if msg.contains("collateral") && msg.contains("tdx-qgs")
+        ));
+    }
+
+    #[test]
+    fn real_tee_backend_rejects_report_signer_mismatch_fail_closed() {
+        let registry = VerifierRegistry::with_backend_config(tee_config());
+        let task = mock_task();
+        let receipt = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=sev-snp,measurement=measurement:demo-snp-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,report=report-sev-snp-demo-v1,vcek=amd-vcek-demo-v1,cert_chain=amd-cert-chain-demo-v1,report_signer=wrong-signer";
+
+        assert!(matches!(
+            registry.verify(&task, receipt),
+            VerificationResult::Invalid(msg)
+                if msg.contains("report_signer") && msg.contains("sev-snp")
         ));
     }
 }
