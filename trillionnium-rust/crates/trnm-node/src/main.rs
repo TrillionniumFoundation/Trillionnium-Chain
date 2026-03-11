@@ -1558,6 +1558,14 @@ fn max_or_zero(vals: &[u128]) -> u128 {
     vals.iter().copied().max().unwrap_or(0)
 }
 
+fn average_or_zero(vals: &[u128]) -> u128 {
+    if vals.is_empty() {
+        0
+    } else {
+        vals.iter().copied().sum::<u128>() / vals.len() as u128
+    }
+}
+
 fn treasury_total(st: &StateStore) -> u128 {
     st.balance_of(CHALLENGE_ESCROW_ACCOUNT)
         .saturating_add(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT))
@@ -5333,6 +5341,13 @@ fn main() -> Result<()> {
     let block_txs_max = max_or_zero(&block_txs_samples);
     let block_groups_max = max_or_zero(&block_groups_samples);
     let rollback_max = max_or_zero(&rollback_samples);
+    let finality_avg = average_or_zero(&finality_samples_ms);
+    let scheduler_avg = average_or_zero(&scheduler_samples_ms);
+    let preexec_avg = average_or_zero(&preexec_samples_ms);
+    let commit_avg = average_or_zero(&commit_samples_ms);
+    let state_root_total_avg = average_or_zero(&state_root_total_samples_ms);
+    let critical_wait_blocks_avg = average_or_zero(&critical_wait_blocks_samples);
+    let rollback_avg = average_or_zero(&rollback_samples);
     let recovery_error_rate = if finality_samples_ms.is_empty() {
         0.0
     } else {
@@ -5344,22 +5359,28 @@ fn main() -> Result<()> {
         .map(|h| h.missed_proposals)
         .collect();
     println!(
-        "[consensus] finality_p50_ms={} finality_p95_ms={} finality_max_ms={} scheduler_elapsed_p50_ms={} scheduler_elapsed_p95_ms={} scheduler_elapsed_max_ms={} preexec_elapsed_p50_ms={} preexec_elapsed_p95_ms={} preexec_elapsed_max_ms={} commit_elapsed_p50_ms={} commit_elapsed_p95_ms={} commit_elapsed_max_ms={} state_root_total_p50_ms={} state_root_total_p95_ms={} state_root_total_max_ms={} critical_wait_blocks_p50={} critical_wait_blocks_p95={} critical_wait_blocks_max={} block_txs_p50={} block_txs_p95={} block_txs_max={} block_groups_p50={} block_groups_p95={} block_groups_max={} rollback_count_p50={} rollback_count_p95={} rollback_count_max={} preexec_reject_total={} apply_error_total={} apply_error_preexec_conflict_miss_total={} apply_error_version_conflict_total={} apply_error_invalid_transition_total={} apply_error_deadline_exceeded_total={} apply_error_semantic_fail_total={} rollback_total={} timeout_migrated_total={} recovery_error_rate={:.6} bft_committed_heights={} bft_round_change_total={} bft_round_change_backoff_total_ms={} bft_leader_missed_proposals={:?} bft_double_vote_total={} bft_auth_reject_bad_sig_total={} bft_auth_reject_replay_total={} bft_auth_reject_stale_nonce_total={}",
+        "[consensus] finality_avg_ms={} finality_p50_ms={} finality_p95_ms={} finality_max_ms={} scheduler_elapsed_avg_ms={} scheduler_elapsed_p50_ms={} scheduler_elapsed_p95_ms={} scheduler_elapsed_max_ms={} preexec_elapsed_avg_ms={} preexec_elapsed_p50_ms={} preexec_elapsed_p95_ms={} preexec_elapsed_max_ms={} commit_elapsed_avg_ms={} commit_elapsed_p50_ms={} commit_elapsed_p95_ms={} commit_elapsed_max_ms={} state_root_total_avg_ms={} state_root_total_p50_ms={} state_root_total_p95_ms={} state_root_total_max_ms={} critical_wait_blocks_avg={} critical_wait_blocks_p50={} critical_wait_blocks_p95={} critical_wait_blocks_max={} block_txs_p50={} block_txs_p95={} block_txs_max={} block_groups_p50={} block_groups_p95={} block_groups_max={} rollback_count_avg={} rollback_count_p50={} rollback_count_p95={} rollback_count_max={} preexec_reject_total={} apply_error_total={} apply_error_preexec_conflict_miss_total={} apply_error_version_conflict_total={} apply_error_invalid_transition_total={} apply_error_deadline_exceeded_total={} apply_error_semantic_fail_total={} rollback_total={} timeout_migrated_total={} recovery_error_rate={:.6} bft_committed_heights={} bft_round_change_total={} bft_round_change_backoff_total_ms={} bft_leader_missed_proposals={:?} bft_double_vote_total={} bft_auth_reject_bad_sig_total={} bft_auth_reject_replay_total={} bft_auth_reject_stale_nonce_total={}",
+        finality_avg,
         finality_p50,
         finality_p95,
         finality_max,
+        scheduler_avg,
         scheduler_p50,
         scheduler_p95,
         scheduler_max,
+        preexec_avg,
         preexec_p50,
         preexec_p95,
         preexec_max,
+        commit_avg,
         commit_p50,
         commit_p95,
         commit_max,
+        state_root_total_avg,
         state_root_total_p50,
         state_root_total_p95,
         state_root_total_max,
+        critical_wait_blocks_avg,
         critical_wait_blocks_p50,
         critical_wait_blocks_p95,
         critical_wait_blocks_max,
@@ -5369,6 +5390,7 @@ fn main() -> Result<()> {
         block_groups_p50,
         block_groups_p95,
         block_groups_max,
+        rollback_avg,
         rollback_p50,
         rollback_p95,
         rollback_max,
