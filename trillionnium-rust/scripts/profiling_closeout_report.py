@@ -84,6 +84,18 @@ def benchmark_producer_for(label: str) -> str:
     return "unknown"
 
 
+def must_run_gate_artifact_posture(bench_dir_exists: bool, classic, mixed, executor_profile) -> str:
+    benchmark_artifacts = [classic, mixed, executor_profile]
+    persisted_count = sum(1 for path in benchmark_artifacts if path and os.path.exists(path))
+    if persisted_count == 0:
+        if not bench_dir_exists:
+            return "stdout_only_bench_gate_without_artifact_dir"
+        return "stdout_only_bench_gate_without_persisted_artifacts"
+    if persisted_count < len(benchmark_artifacts):
+        return "partial_persisted_bench_artifacts"
+    return "persisted_bench_artifacts_present"
+
+
 def autopilot_severity(missing_inputs, stale_inputs, old_inputs) -> str:
     if not missing_inputs and not stale_inputs and not old_inputs:
         return "GREEN"
@@ -206,6 +218,9 @@ def main():
         lines.append(f"- {label}: {status} | producer={producer}")
 
     lines += ["", "## Data Completeness"]
+    lines.append(
+        f"- must_run_gate_artifact_posture: {must_run_gate_artifact_posture(bench_dir_exists, classic, mixed, executor_profile)}"
+    )
 
     inputs = [
         ("node_log", node_log),
