@@ -191,7 +191,7 @@ v0 建议冻结以下 feature flag 名称：
 - `zk_backend_router`：启用 backend 路由层
 - `zk_payload_v0_envelope`：强制要求 canonical payload v0
 - `zk_allow_legacy_receipt_aliases`：允许旧 receipt alias 映射到 `zk`
-- `zk_allow_backend_fallback`：允许从首选 backend 回退到同系统备 backend
+- `zk_allow_backend_fallback`：允许从首选 backend 回退到同系统备 backend（**v0 当前作为保留位冻结；在 payload 显式声明 `backend_id` 的 router 路径中，默认仍必须 fail-closed，不能静默猜测式回退**）
 - `zk_explicit_backend_required`：要求 payload 显式带 `backend_id`
 
 ## 6.2 Config 结构
