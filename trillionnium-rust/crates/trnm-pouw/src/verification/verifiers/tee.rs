@@ -93,7 +93,9 @@ impl TeeVerifier {
 
     fn malformed_surface_label(surface: &'static str) -> &'static str {
         match surface {
-            "quote claims" | "report claims" | "quote/report claims" => "payload/claims",
+            "quote claims" | "report claims" | "quote/report claims" | "claims" => {
+                "payload/claims"
+            }
             other => other,
         }
     }
