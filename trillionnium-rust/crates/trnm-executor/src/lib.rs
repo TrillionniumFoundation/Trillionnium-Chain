@@ -2073,6 +2073,10 @@ mod tests {
         assert_eq!(auto_adaptive_sample_len(5000), 2048);
         drop(_default);
 
+        let _zero = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", "0");
+        assert_eq!(auto_adaptive_sample_len(5000), 64);
+        drop(_zero);
+
         let _low = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", "8");
         assert_eq!(auto_adaptive_sample_len(5000), 64);
         drop(_low);
