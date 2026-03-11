@@ -689,7 +689,8 @@ fn x3_prep_stale_pending_degraded_reason_strips_mongolian_vowel_separator_for_re
 
 #[test]
 fn x3_prep_stale_pending_degraded_reason_strips_variation_selectors_for_replay_stability() {
-    let mut request = SettlementRequest::new(20, "0xmatrix-sanitize-variation-selectors".to_string());
+    let mut request =
+        SettlementRequest::new(20, "0xmatrix-sanitize-variation-selectors".to_string());
     let token = operator_token();
 
     let degraded = HeartbeatOutcome {
@@ -757,7 +758,8 @@ fn x3_prep_stale_pending_degraded_reason_collapses_figure_and_narrow_nbsp_for_re
 
 #[test]
 fn x3_prep_stale_pending_degraded_reason_strips_invisible_separator_for_replay_stability() {
-    let mut request = SettlementRequest::new(22, "0xmatrix-sanitize-invisible-separator".to_string());
+    let mut request =
+        SettlementRequest::new(22, "0xmatrix-sanitize-invisible-separator".to_string());
     let token = operator_token();
 
     let degraded = HeartbeatOutcome {

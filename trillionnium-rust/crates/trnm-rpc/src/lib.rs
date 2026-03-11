@@ -329,17 +329,13 @@ mod tests {
 
         let short = format!("trnm1{}", "1".repeat(39));
         assert_eq!(
-            query_account_state(&accounts, &short)
-                .unwrap_err()
-                .code(),
+            query_account_state(&accounts, &short).unwrap_err().code(),
             "INVALID_ADDRESS"
         );
 
         let long = format!("trnm1{}", "1".repeat(41));
         assert_eq!(
-            query_account_state(&accounts, &long)
-                .unwrap_err()
-                .code(),
+            query_account_state(&accounts, &long).unwrap_err().code(),
             "INVALID_ADDRESS"
         );
     }

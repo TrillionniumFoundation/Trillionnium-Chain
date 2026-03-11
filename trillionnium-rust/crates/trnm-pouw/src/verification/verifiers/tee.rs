@@ -12,19 +12,11 @@ use crate::verification::backend::{
 pub struct TeeVerifier {
     backend: ZkBackendKind,
     backends: Arc<ZkBackendRegistry>,
-    config: VerificationBackendConfig,
 }
 
 impl TeeVerifier {
     pub fn new(backend: ZkBackendKind, backends: Arc<ZkBackendRegistry>) -> Self {
-        Self {
-            backend: backend.clone(),
-            backends,
-            config: VerificationBackendConfig {
-                tee_backend: backend,
-                ..VerificationBackendConfig::default()
-            },
-        }
+        Self { backend, backends }
     }
 
     #[allow(dead_code)]
@@ -32,11 +24,7 @@ impl TeeVerifier {
         config: &VerificationBackendConfig,
         backends: Arc<ZkBackendRegistry>,
     ) -> Self {
-        Self {
-            backend: config.tee_backend.clone(),
-            backends,
-            config: config.clone(),
-        }
+        Self::new(config.tee_backend.clone(), backends)
     }
 
     fn classify_backend_err(err: VerificationBackendError) -> VerificationResult {
@@ -60,7 +48,7 @@ impl TeeVerifier {
                 backend,
                 reason,
             }) => VerificationResult::Indeterminate(format!(
-                "unavailable: verification backend '{backend}' cannot currently verify proof: {reason}"
+                "unavailable: verification backend '{backend}' cannot currently verify receipt: {reason}"
             )),
             VerificationBackendError::Execution(BackendExecutionError::Internal {
                 backend,
@@ -78,12 +66,13 @@ impl TeeVerifier {
     ) -> Result<(), VerificationBackendError> {
         let backend = self
             .backends
-            .resolve(VerificationBackendFamily::Tee, &self.config.tee_backend)?;
+            .resolve(VerificationBackendFamily::Tee, &self.backend)?;
         backend.verify(BackendVerificationRequest {
             family: VerificationBackendFamily::Tee,
             task,
             proof_data,
             zk_payload: None,
+            resolved_vk_ref: None,
         })?;
         Ok(())
     }
@@ -91,10 +80,7 @@ impl TeeVerifier {
 
 impl Default for TeeVerifier {
     fn default() -> Self {
-        Self::from_config(
-            &VerificationBackendConfig::default(),
-            Arc::new(ZkBackendRegistry::new()),
-        )
+        Self::new(ZkBackendKind::Noop, Arc::new(ZkBackendRegistry::new()))
     }
 }
 
@@ -104,15 +90,7 @@ impl ProofVerifier for TeeVerifier {
     }
 
     fn verify_proof(&self, task: &TaskObject, proof_data: &[u8]) -> VerificationResult {
-        let verification = verify_bound_envelope(task, proof_data, b"TEE:", "TEE receipt");
-        if matches!(verification, VerificationResult::Valid) && task.result_hash.is_none() {
-            return VerificationResult::Invalid(
-                "Invalid TEE receipt envelope: missing task result_hash binding context"
-                    .to_string(),
-            );
-        }
-
-        match verification {
+        match verify_bound_envelope(task, proof_data, b"TEE:", "TEE receipt") {
             VerificationResult::Valid => match self.verify_backend(task, proof_data) {
                 Ok(()) => VerificationResult::Valid,
                 Err(err) => Self::classify_backend_err(err),
@@ -126,7 +104,7 @@ impl ProofVerifier for TeeVerifier {
 mod tests {
     use super::*;
     use crate::verification::backend::{
-        BackendExecutionError, BackendVerificationSuccess, VerificationBackendConfig, ZkBackend,
+        BackendExecutionError, BackendVerificationSuccess, ZkBackend,
     };
     use trnm_types::{ProofType, TaskObject, TaskStatus};
 
@@ -210,24 +188,6 @@ mod tests {
         }
     }
 
-    struct MockTeeInternalBackend;
-    impl ZkBackend for MockTeeInternalBackend {
-        fn backend_id(&self) -> &str {
-            "mock-tee-internal"
-        }
-
-        fn verify(
-            &self,
-            request: BackendVerificationRequest<'_>,
-        ) -> Result<BackendVerificationSuccess, BackendExecutionError> {
-            assert_eq!(request.family, VerificationBackendFamily::Tee);
-            Err(BackendExecutionError::Internal {
-                backend: request.backend_label(self.backend_id()),
-                reason: "mock tee backend panicked".to_string(),
-            })
-        }
-    }
-
     struct MockTeeMalformedBackend;
     impl ZkBackend for MockTeeMalformedBackend {
         fn backend_id(&self) -> &str {
@@ -246,6 +206,24 @@ mod tests {
         }
     }
 
+    struct MockTeeInternalBackend;
+    impl ZkBackend for MockTeeInternalBackend {
+        fn backend_id(&self) -> &str {
+            "mock-tee-internal"
+        }
+
+        fn verify(
+            &self,
+            request: BackendVerificationRequest<'_>,
+        ) -> Result<BackendVerificationSuccess, BackendExecutionError> {
+            assert_eq!(request.family, VerificationBackendFamily::Tee);
+            Err(BackendExecutionError::Internal {
+                backend: request.backend_label(self.backend_id()),
+                reason: "mock tee backend internal failure".to_string(),
+            })
+        }
+    }
+
     #[test]
     fn tee_verifier_requires_cryptographic_backend_after_bound_envelope_validation() {
         let verifier = TeeVerifier::default();
@@ -257,8 +235,7 @@ mod tests {
                 b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,quote=abc"
             ),
             VerificationResult::Indeterminate(msg)
-                if msg.contains("unavailable:")
-                    && msg.contains("cryptographic verification backend not configured")
+                if msg.contains("cryptographic verification backend not configured")
         ));
     }
 
@@ -313,52 +290,15 @@ mod tests {
                 &task,
                 b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,quote=abc"
             ),
-            VerificationResult::Indeterminate(msg) if msg.contains("unavailable:") && msg.contains("mock tee backend unavailable")
-        ));
-    }
-
-    #[test]
-    fn tee_verifier_unknown_backend_selection_maps_to_indeterminate_unavailable() {
-        let verifier = TeeVerifier::new(
-            ZkBackendKind::Custom("missing-tee-backend".into()),
-            Arc::new(ZkBackendRegistry::new()),
-        );
-        let task = mock_task();
-
-        assert!(matches!(
-            verifier.verify_proof(
-                &task,
-                b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,quote=abc"
-            ),
             VerificationResult::Indeterminate(msg)
                 if msg.contains("unavailable:")
-                    && msg.contains("family 'tee'")
-                    && msg.contains("missing-tee-backend")
+                    && msg.contains("mock-tee-unavailable")
+                    && msg.contains("cannot currently verify receipt")
         ));
     }
 
     #[test]
-    fn tee_verifier_internal_backend_maps_to_backend_error_indeterminate() {
-        let mut backends = ZkBackendRegistry::new();
-        backends.register(Arc::new(MockTeeInternalBackend));
-        let verifier = TeeVerifier::new(
-            ZkBackendKind::Custom("mock-tee-internal".into()),
-            Arc::new(backends),
-        );
-        let task = mock_task();
-
-        assert!(matches!(
-            verifier.verify_proof(
-                &task,
-                b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,quote=abc"
-            ),
-            VerificationResult::Indeterminate(msg)
-                if msg.contains("backend_error:") && msg.contains("mock tee backend panicked")
-        ));
-    }
-
-    #[test]
-    fn tee_verifier_malformed_backend_maps_to_invalid_malformed_taxonomy() {
+    fn tee_verifier_backend_malformed_maps_to_invalid_fail_closed() {
         let mut backends = ZkBackendRegistry::new();
         backends.register(Arc::new(MockTeeMalformedBackend));
         let verifier = TeeVerifier::new(
@@ -378,40 +318,42 @@ mod tests {
     }
 
     #[test]
-    fn tee_verifier_from_config_uses_family_scoped_backend_selector() {
+    fn tee_verifier_backend_internal_maps_to_indeterminate_with_backend_error_prefix() {
         let mut backends = ZkBackendRegistry::new();
-        backends.register(Arc::new(MockTeeSuccessBackend));
-        let verifier = TeeVerifier::from_config(
-            &VerificationBackendConfig {
-                tee_backend: ZkBackendKind::Custom("mock-tee".into()),
-                ..VerificationBackendConfig::default()
-            },
+        backends.register(Arc::new(MockTeeInternalBackend));
+        let verifier = TeeVerifier::new(
+            ZkBackendKind::Custom("mock-tee-internal".into()),
             Arc::new(backends),
         );
         let task = mock_task();
 
-        assert_eq!(
+        assert!(matches!(
             verifier.verify_proof(
                 &task,
                 b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,quote=abc"
             ),
-            VerificationResult::Valid
-        );
+            VerificationResult::Indeterminate(msg)
+                if msg.contains("backend_error:")
+                    && msg.contains("mock-tee-internal")
+                    && msg.contains("mock tee backend internal failure")
+        ));
     }
 
     #[test]
-    fn tee_verifier_rejects_missing_result_hash_binding_context_even_before_backend() {
-        let verifier = TeeVerifier::default();
-        let mut task = mock_task();
-        task.result_hash = None;
+    fn tee_verifier_selection_error_maps_to_unavailable_prefix() {
+        let verifier = TeeVerifier::new(
+            ZkBackendKind::Custom("missing-tee-backend".into()),
+            Arc::new(ZkBackendRegistry::new()),
+        );
+        let task = mock_task();
 
         assert!(matches!(
             verifier.verify_proof(
                 &task,
-                b"TEE:task_id=42,worker=worker1,proof_type=tee,quote=abc"
+                b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,quote=abc"
             ),
-            VerificationResult::Invalid(msg)
-                if msg.contains("missing task result_hash binding context")
+            VerificationResult::Indeterminate(msg)
+                if msg.contains("unavailable:") && msg.contains("missing-tee-backend")
         ));
     }
 
@@ -845,6 +787,21 @@ mod tests {
             verifier.verify_proof(
                 &task,
                 b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,\"worker\"=worker1,quote=abc"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("duplicate worker binding")
+        ));
+    }
+
+    #[test]
+    fn tee_verifier_rejects_duplicate_worker_binding_with_single_quoted_trailing_space_alias_fail_closed(
+    ) {
+        let verifier = TeeVerifier::default();
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,'worker '=worker1,quote=abc"
             ),
             VerificationResult::Invalid(msg) if msg.contains("duplicate worker binding")
         ));

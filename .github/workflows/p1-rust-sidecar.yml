@@ -30,6 +30,15 @@ jobs:
     # Requires a self-hosted runner with local Trillionnium dev chain environment.
     runs-on: [self-hosted, macOS]
     timeout-minutes: 45
+    env:
+      TZ: UTC
+      LANG: C.UTF-8
+      LC_ALL: C.UTF-8
+      LC_NUMERIC: C
+      LC_COLLATE: C
+      PYTHONHASHSEED: "0"
+      HOMEBREW_NO_AUTO_UPDATE: "1"
+      CI: "true"
 
     steps:
       - uses: actions/checkout@v4

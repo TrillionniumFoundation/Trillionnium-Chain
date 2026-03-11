@@ -174,11 +174,22 @@ pub struct InMemoryReliabilityStore {
 
 impl InMemoryReliabilityStore {
     pub fn with_config(config: InMemoryReliabilityStoreConfig) -> Self {
+        let config = sanitize_store_config(config);
+
+        // Pre-size hot reliability maps from configured quotas to reduce allocator
+        // churn during sustained ingress bursts. Caps are hints only; semantics are
+        // unchanged when quotas are unset.
+        let session_cap = config.max_sessions.unwrap_or(0);
+        let dedup_cap = config
+            .max_dedup_entries
+            .or(config.max_pending_total)
+            .unwrap_or(0);
+
         Self {
-            sessions: HashMap::new(),
-            dedup: HashMap::new(),
-            meta: HashMap::new(),
-            config: sanitize_store_config(config),
+            sessions: HashMap::with_capacity(session_cap),
+            dedup: HashMap::with_capacity(dedup_cap),
+            meta: HashMap::with_capacity(session_cap),
+            config,
         }
     }
 
@@ -294,13 +305,12 @@ impl ReliabilityStore for InMemoryReliabilityStore {
         now_unix_ms: u128,
     ) -> Result<(), ReliabilityStoreError> {
         let session_id = session.session_id.clone();
-        let old_len = self
-            .sessions
-            .get(&session_id)
-            .map(|s| s.pending.len())
-            .unwrap_or(0);
+        // Reuse a single session lookup for both old pending size and new-session
+        // detection. This path is hit on every ingress upsert under backpressure.
+        let old_len_opt = self.sessions.get(&session_id).map(|s| s.pending.len());
+        let old_len = old_len_opt.unwrap_or(0);
         let new_len = session.pending.len();
-        let is_new_session = !self.sessions.contains_key(&session_id);
+        let is_new_session = old_len_opt.is_none();
 
         if let Some(max) = self.config.max_sessions {
             if is_new_session && self.sessions.len() >= max {
@@ -763,6 +773,10 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
         let session_count = session_ids.len();
 
         if session_count == 0 {
+            // Idle-cycle self-heal: keep cursor anchored so the first session after
+            // a full drain starts from deterministic index 0 rather than carrying
+            // stale high values across long idle gaps.
+            self.collect_rr_cursor = 0;
             self.on_retry_round_finished(exhausted_in_this_round, now_unix_ms);
             return out;
         }
@@ -780,21 +794,30 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
             };
 
             let mut dispatched_for_session = 0usize;
-            session.pending.retain(|ack_id, item| {
-                if item.next_retry_at_unix_ms > now_unix_ms {
-                    return true;
-                }
+            let mut due_ack_ids = Vec::with_capacity(MAX_DUE_RETRIES_PER_SESSION_PER_COLLECT);
 
-                // Keep each collect cycle bounded under sustained ingress so retry
-                // scanning itself does not become a backpressure hotspot.
+            // Collect only as many due keys as we can dispatch in this round. This
+            // avoids full-map retain scans on hot sessions once per-session/global
+            // dispatch budgets are exhausted.
+            for (ack_id, item) in &session.pending {
                 if out.len() >= MAX_DUE_RETRIES_PER_COLLECT {
-                    return true;
+                    break;
                 }
-
-                // Prevent one hot session from monopolizing a collect cycle.
                 if dispatched_for_session >= MAX_DUE_RETRIES_PER_SESSION_PER_COLLECT {
-                    return true;
+                    break;
                 }
+                if item.next_retry_at_unix_ms > now_unix_ms {
+                    continue;
+                }
+                due_ack_ids.push(ack_id.clone());
+                dispatched_for_session = dispatched_for_session.saturating_add(1);
+            }
+
+            let mut exhausted_ack_ids = Vec::new();
+            for ack_id in due_ack_ids {
+                let Some(item) = session.pending.get_mut(&ack_id) else {
+                    continue;
+                };
 
                 if item.attempts >= self.retry.max_attempts {
                     exhausted_in_this_round = exhausted_in_this_round.saturating_add(1);
@@ -803,7 +826,8 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
                         ack_id, item.attempts
                     );
                     self.increment_retry_exhausted_total();
-                    return false;
+                    exhausted_ack_ids.push(ack_id);
+                    continue;
                 }
 
                 item.attempts = item.attempts.saturating_add(1);
@@ -814,9 +838,11 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
                 );
                 item.next_retry_at_unix_ms = now_unix_ms.saturating_add(delay as u128);
                 out.push(item.clone());
-                dispatched_for_session = dispatched_for_session.saturating_add(1);
-                true
-            });
+            }
+
+            for ack_id in exhausted_ack_ids {
+                session.pending.remove(&ack_id);
+            }
 
             if session.pending.is_empty() && self.store.should_remove_empty_session_immediately() {
                 self.store.remove_session(sid);
@@ -2044,6 +2070,40 @@ mod tests {
     }
 
     #[test]
+    fn global_cap_round_robin_still_grants_new_cold_session_a_turn_next_cycle() {
+        let store = InMemoryReliabilityStore::default();
+        let mut engine = ReliabilityEngine::new(
+            store,
+            RetryConfig {
+                base_backoff_ms: 1,
+                max_backoff_ms: 1,
+                ..RetryConfig::default()
+            },
+        );
+
+        // Start with one hot session so cursor is pinned to zero in the single-session path.
+        for seq in 1..=(MAX_DUE_RETRIES_PER_SESSION_PER_COLLECT as u64 + 8) {
+            let ack = engine.receive(mk_msg("alice", "s-hot", seq), 1_000 + seq as u128);
+            assert_eq!(ack.code, AckCode::Accepted);
+        }
+        let first = engine.collect_due_retries(2_000);
+        assert_eq!(first.len(), MAX_DUE_RETRIES_PER_SESSION_PER_COLLECT);
+        assert!(first.iter().all(|item| item.message.session_id == "s-hot"));
+
+        // A new cold session should not be starved indefinitely by the global cap:
+        // after one capped cycle, round-robin rotation must give it front-of-batch priority.
+        let cold = engine.receive(mk_msg("bob", "s-cold", 1), 2_001);
+        assert_eq!(cold.code, AckCode::Accepted);
+
+        let second = engine.collect_due_retries(2_002);
+        assert_eq!(
+            second.first().map(|item| item.message.session_id.as_str()),
+            Some("s-cold"),
+            "new cold session should get first dispatch on the next collect cycle"
+        );
+    }
+
+    #[test]
     fn collect_due_retries_single_session_keeps_cursor_stable_at_zero() {
         let store = InMemoryReliabilityStore::default();
         let mut engine = ReliabilityEngine::new(
@@ -2095,6 +2155,38 @@ mod tests {
         );
 
         assert_eq!(engine.collect_rr_cursor, 0);
+    }
+
+    #[test]
+    fn collect_due_retries_resets_cursor_after_idle_full_drain() {
+        let store = InMemoryReliabilityStore::default();
+        let mut engine = ReliabilityEngine::new(
+            store,
+            RetryConfig {
+                base_backoff_ms: 1,
+                max_backoff_ms: 1,
+                ..RetryConfig::default()
+            },
+        );
+
+        let ack = engine.receive(mk_msg("alice", "s-a", 1), 1_000);
+        assert_eq!(ack.code, AckCode::Accepted);
+
+        engine.collect_rr_cursor = usize::MAX;
+        assert!(engine.mark_acked("s-a", &ack.ack_id));
+
+        let idle = engine.collect_due_retries(2_000);
+        assert!(idle.is_empty());
+        assert_eq!(
+            engine.collect_rr_cursor, 0,
+            "idle collect should reset stale cursor state"
+        );
+
+        let cold = engine.receive(mk_msg("bob", "s-b", 1), 2_001);
+        assert_eq!(cold.code, AckCode::Accepted);
+        let due = engine.collect_due_retries(2_002);
+        assert_eq!(due.len(), 1);
+        assert_eq!(due[0].message.session_id, "s-b");
     }
 
     #[test]
@@ -2582,6 +2674,54 @@ mod tests {
             err,
             ReliabilityStoreError::CapacityExceeded { .. }
         ));
+    }
+
+    #[test]
+    fn pending_total_quota_does_not_block_empty_session_touch_at_capacity() {
+        let mut store = InMemoryReliabilityStore::with_config(InMemoryReliabilityStoreConfig {
+            max_pending_total: Some(1),
+            ..InMemoryReliabilityStoreConfig::default()
+        });
+
+        let mut pending = BTreeMap::new();
+        pending.insert(
+            "ack-1".to_string(),
+            PendingItem {
+                ack_id: "ack-1".to_string(),
+                message: ReliableMessage {
+                    from: "alice".to_string(),
+                    chain_id: "trnm-testnet".to_string(),
+                    session_id: "s1".to_string(),
+                    seq: Some(1),
+                    nonce: None,
+                    msg_type: "INPUT_CHUNK".to_string(),
+                    payload: "x".to_string(),
+                },
+                attempts: 0,
+                created_at_unix_ms: 1,
+                next_retry_at_unix_ms: 1,
+            },
+        );
+
+        assert!(store
+            .try_upsert_session_with_ts(
+                SessionState {
+                    session_id: "s1".to_string(),
+                    pending,
+                },
+                1,
+            )
+            .is_ok());
+
+        assert!(store
+            .try_upsert_session_with_ts(
+                SessionState {
+                    session_id: "s2".to_string(),
+                    pending: BTreeMap::new(),
+                },
+                2,
+            )
+            .is_ok());
     }
 
     #[test]

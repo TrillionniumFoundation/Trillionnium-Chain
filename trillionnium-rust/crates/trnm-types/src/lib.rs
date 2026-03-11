@@ -227,7 +227,8 @@ mod tests {
             "version": 1
         }"#;
 
-        let task: TaskObject = serde_json::from_str(raw).expect("legacy task payload should deserialize");
+        let task: TaskObject =
+            serde_json::from_str(raw).expect("legacy task payload should deserialize");
         assert_eq!(task.proof_type, ProofType::Fraud);
         assert!(task.metadata.is_none());
     }

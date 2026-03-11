@@ -120,7 +120,10 @@ fn did_revoke_same_height_replay_is_idempotent_without_duplicate_cascade_audit()
     reg.revoke_did(actor.clone(), &did, 30).unwrap();
 
     assert_eq!(reg.did(&did).expect("did exists").revoked_at, Some(30));
-    assert_eq!(reg.capability(token).expect("token exists").revoked_at, first_token_revoked_at);
+    assert_eq!(
+        reg.capability(token).expect("token exists").revoked_at,
+        first_token_revoked_at
+    );
     assert_eq!(reg.audit_trail().len(), audit_len_after_first_revoke);
 
     let cascade_revokes: Vec<_> = reg

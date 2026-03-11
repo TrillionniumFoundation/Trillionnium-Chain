@@ -58,6 +58,9 @@ jobs:
       # Keep locale-derived personal-name formatting deterministic for any
       # helper that emits operator identity fields in evidence artifacts.
       LC_NAME: C
+      # Keep locale-driven telephone formatting deterministic for any helper
+      # that serializes operator contact fields into evidence outputs.
+      LC_TELEPHONE: C
       # Freeze Python hash randomization so set/dict iteration in shell-driven
       # regression scripts stays deterministic across CI re-runs.
       PYTHONHASHSEED: "0"
@@ -154,6 +157,10 @@ jobs:
       - name: Agent-user phaseA gate deterministic env guard regression
         run: |
           ./scripts/v2/agent_user_phasea_gate_deterministic_env_guard_test.sh
+
+      - name: P1 rust sidecar deterministic env guard regression
+        run: |
+          ./scripts/v2/p1_rust_sidecar_deterministic_env_guard_test.sh
 
       - name: PR5 reconcile skip-when-missing-log regression
         run: |
@@ -610,6 +617,14 @@ jobs:
       - name: Auto regression: e3-enterprise-runbook-rollback-request-id-anchor-test
         run: |
           ./scripts/v2/e3_enterprise_runbook_rollback_request_id_anchor_test.sh
+
+      - name: Auto regression: e3-enterprise-runbook-replay-deterministic-env-prefix-test
+        run: |
+          ./scripts/v2/e3_enterprise_runbook_replay_deterministic_env_prefix_test.sh
+
+      - name: Auto regression: e3-enterprise-runbook-deterministic-env-prefix-test
+        run: |
+          ./scripts/v2/e3_enterprise_runbook_deterministic_env_prefix_test.sh
 
       - name: Auto regression: e3-enterprise-onboarding-runbook-rollback-contract-test
         run: |

@@ -319,7 +319,11 @@ fn submit_message_idempotent_replay_survives_runtime_quota_tightening() {
         .map(|line| serde_json::from_str(line).expect("valid ingress json line"))
         .collect();
 
-    assert_eq!(records.len(), 1, "idempotent replay must not create new record");
+    assert_eq!(
+        records.len(),
+        1,
+        "idempotent replay must not create new record"
+    );
     assert_eq!(
         records[0]["idempotency_key"].as_str(),
         Some("k-tighten"),

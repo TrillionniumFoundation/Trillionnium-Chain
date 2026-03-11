@@ -1,7 +1,6 @@
 use trnm_rpc::reliability::{
     AckCode, InMemoryReliabilityStoreConfig, ReliabilityEngine, ReliabilityStore,
-    ReliabilityStoreMode, ReliableMessage, RetentionConfig, RetryConfig,
-    SqliteReliabilityStore,
+    ReliabilityStoreMode, ReliableMessage, RetentionConfig, RetryConfig, SqliteReliabilityStore,
 };
 
 #[test]
@@ -271,7 +270,9 @@ fn sqlite_cleanup_reclaims_pending_capacity_after_ttl_expiry() {
     };
     let blocked_ack = engine.receive(blocked.clone(), 2);
     assert_eq!(blocked_ack.code, AckCode::BadRequest);
-    assert!(blocked_ack.detail.contains("pending total limit reached (1)"));
+    assert!(blocked_ack
+        .detail
+        .contains("pending total limit reached (1)"));
 
     let recovered = engine.receive(blocked, 20);
     assert_eq!(recovered.code, AckCode::Accepted);

@@ -153,7 +153,9 @@ impl OraclePolicy {
             return Err(OracleError::InvalidPolicy("max_staleness_ms must be > 0"));
         }
         if self.max_deviation_bps > MAX_DEVIATION_BPS_CAP {
-            return Err(OracleError::InvalidPolicy("max_deviation_bps must be <= 10000"));
+            return Err(OracleError::InvalidPolicy(
+                "max_deviation_bps must be <= 10000",
+            ));
         }
         if self.max_update_rate_per_window == 0 {
             return Err(OracleError::InvalidPolicy(
@@ -232,7 +234,9 @@ pub enum OracleError {
     SnapshotHashMismatch { expected: String, actual: String },
     #[error("invalid policy: {0}")]
     InvalidPolicy(&'static str),
-    #[error("stale snapshot: ts={snapshot_ts_ms}, now={now_ts_ms}, max_staleness={max_staleness_ms}")]
+    #[error(
+        "stale snapshot: ts={snapshot_ts_ms}, now={now_ts_ms}, max_staleness={max_staleness_ms}"
+    )]
     StaleSnapshot {
         snapshot_ts_ms: u64,
         now_ts_ms: u64,

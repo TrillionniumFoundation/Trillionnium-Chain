@@ -57,13 +57,38 @@ jobs:
       # Keep locale-derived postal/address formatting deterministic for any
       # helper serializing operator/site metadata into CI evidence.
       LC_ADDRESS: C
+      # Keep locale-derived personal-name formatting deterministic for helpers
+      # that emit operator identity fields in CI evidence.
+      LC_NAME: C
+      # Keep locale-driven telephone formatting deterministic for helpers that
+      # serialize operator contact fields in CI evidence outputs.
+      LC_TELEPHONE: C
       PYTHONHASHSEED: "0"
       # Prevent interpreter bytecode cache writes (.pyc/__pycache__) so
       # merge-gate CI workspaces remain side-effect free across reruns.
       PYTHONDONTWRITEBYTECODE: "1"
       PYTHONIOENCODING: "UTF-8"
       PYTHONUTF8: "1"
+      # Force unbuffered Python stdio so CI failure evidence ordering is stable
+      # under runner load and replayed logs.
+      PYTHONUNBUFFERED: "1"
+      # Ignore user-site Python packages so runner-local residue cannot alter
+      # module resolution during merge-gate probes.
+      PYTHONNOUSERSITE: "1"
+      # Disable pip's periodic version check network call to avoid nondeterministic
+      # stderr timing/noise and occasional flaky delays in shell-driven probes.
+      PIP_DISABLE_PIP_VERSION_CHECK: "1"
+      # Bound pip network waits so transient index stalls fail fast/retriable
+      # instead of hanging merge-gate jobs until global step timeout.
+      PIP_DEFAULT_TIMEOUT: "60"
+      # Suppress pip interpreter lifecycle warning chatter for deterministic logs.
+      PIP_NO_PYTHON_VERSION_WARNING: "1"
+      # Disable dynamic pip progress rendering to keep stderr/stdout stable.
+      PIP_PROGRESS_BAR: "off"
       CARGO_TERM_COLOR: never
+      # Disable dynamic progress rendering to keep cargo logs deterministic
+      # across reruns and runner load variance.
+      CARGO_TERM_PROGRESS_WHEN: never
       CARGO_INCREMENTAL: "0"
       # Reduce transient crates.io/index fetch flakes during RC gate runs.
       CARGO_NET_RETRY: "5"
@@ -88,6 +113,11 @@ jobs:
         run: |
           set -euo pipefail
           ./scripts/v2/trnm_merge_gates_deterministic_env_guard_test.sh
+
+      - name: Testnet preflight deterministic env guard drift check (hard gate)
+        run: |
+          set -euo pipefail
+          ./scripts/v2/rust_l1_testnet_preflight_deterministic_env_guard_test.sh
 
       - name: PoUW proof-binding fail-closed gate (hard gate)
         run: |

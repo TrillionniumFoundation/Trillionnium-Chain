@@ -51,6 +51,8 @@ def summarize_rows(rows, title):
     elapsed = [r.get("elapsed_ms", 0) for r in rows]
     groups = [r.get("groups", 0) for r in rows]
     hit_rate = [r.get("profile.conflict_hit_rate", 0.0) for r in rows if "profile.conflict_hit_rate" in r]
+    avg_group_size = [r.get("profile.avg_group_size", 0.0) for r in rows if "profile.avg_group_size" in r]
+    hot_object_share = [r.get("profile.hot_object_share", 0.0) for r in rows if "profile.hot_object_share" in r]
 
     out.append(f"rows={len(rows)}")
     out.append(
@@ -63,6 +65,18 @@ def summarize_rows(rows, title):
             min(groups), int(statistics.median(groups)), max(groups)
         )
     )
+    if avg_group_size:
+        out.append(
+            "avg_group_size: min={:.4f} p50={:.4f} max={:.4f}".format(
+                min(avg_group_size), statistics.median(avg_group_size), max(avg_group_size)
+            )
+        )
+    if hot_object_share:
+        out.append(
+            "hot_object_share: min={:.4f} p50={:.4f} max={:.4f}".format(
+                min(hot_object_share), statistics.median(hot_object_share), max(hot_object_share)
+            )
+        )
     if hit_rate:
         out.append(
             "conflict_hit_rate: min={:.4f} p50={:.4f} max={:.4f}".format(

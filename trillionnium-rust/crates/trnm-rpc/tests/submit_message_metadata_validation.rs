@@ -166,7 +166,8 @@ fn submit_message_rejects_non_canonical_produced_at_timestamp() {
 
     let stderr = String::from_utf8_lossy(&output.stderr);
     assert!(
-        stderr.contains("metadata.provenance.produced_at must be canonical RFC3339 UTC Z timestamp"),
+        stderr
+            .contains("metadata.provenance.produced_at must be canonical RFC3339 UTC Z timestamp"),
         "stderr: {}",
         stderr
     );
@@ -188,7 +189,8 @@ fn submit_message_rejects_calendar_invalid_produced_at_timestamp() {
 
     let stderr = String::from_utf8_lossy(&output.stderr);
     assert!(
-        stderr.contains("metadata.provenance.produced_at must be canonical RFC3339 UTC Z timestamp"),
+        stderr
+            .contains("metadata.provenance.produced_at must be canonical RFC3339 UTC Z timestamp"),
         "stderr: {}",
         stderr
     );

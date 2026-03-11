@@ -30,6 +30,7 @@ fn has_visible_payload_bytes(payload: &[u8]) -> bool {
                             | '\u{200c}'
                             | '\u{200d}'
                             | '\u{2060}'
+                            | '\u{2063}'
                             | '\u{feff}'
                             | '\u{200e}'
                             | '\u{200f}'
@@ -626,6 +627,12 @@ mod tests {
     #[test]
     fn find_numeric_field_rejects_quoted_value_with_leading_space() {
         let body = r#"{"task_id":" 7","worker":"w1"}"#;
+        assert_eq!(find_numeric_field(body, "task_id"), None);
+    }
+
+    #[test]
+    fn find_numeric_field_rejects_quoted_value_with_trailing_space() {
+        let body = r#"{"task_id":"7 ","worker":"w1"}"#;
         assert_eq!(find_numeric_field(body, "task_id"), None);
     }
 
@@ -1265,7 +1272,8 @@ mod tests {
     }
 
     #[test]
-    fn verify_bound_envelope_rejects_semicolon_delimited_duplicate_proof_type_binding_fail_closed() {
+    fn verify_bound_envelope_rejects_semicolon_delimited_duplicate_proof_type_binding_fail_closed()
+    {
         let task = TaskObject {
             task_id: 42,
             creator: "alice".into(),
@@ -1413,7 +1421,8 @@ mod tests {
     }
 
     #[test]
-    fn verify_bound_envelope_rejects_semicolon_delimited_duplicate_result_hash_binding_fail_closed() {
+    fn verify_bound_envelope_rejects_semicolon_delimited_duplicate_result_hash_binding_fail_closed()
+    {
         let task = TaskObject {
             task_id: 42,
             creator: "alice".into(),
@@ -1635,6 +1644,44 @@ mod tests {
     }
 
     #[test]
+    fn verify_bound_envelope_rejects_fullwidth_separator_then_canonical_worker_binding_fail_closed()
+    {
+        let task = TaskObject {
+            task_id: 42,
+            creator: "alice".into(),
+            bounty: 1,
+            status: TaskStatus::Committed,
+            proof_type: ProofType::Tee,
+            metadata: None,
+            worker: Some("worker1".into()),
+            committed_hash: None,
+            result_hash: Some([0xabu8; 32]),
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        };
+
+        assert!(matches!(
+            verify_bound_envelope(
+                &task,
+                "TEE:task_id=42,worker＝worker1,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,quote=ok"
+                    .as_bytes(),
+                b"TEE:",
+                "TEE receipt"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("duplicate worker binding")
+        ));
+    }
+
+    #[test]
     fn verify_bound_envelope_rejects_fullwidth_colon_then_ascii_task_id_binding_fail_closed() {
         let task = TaskObject {
             task_id: 42,
@@ -1708,7 +1755,8 @@ mod tests {
     }
 
     #[test]
-    fn verify_bound_envelope_rejects_case_variant_duplicate_task_id_binding_with_quoted_alias_fail_closed() {
+    fn verify_bound_envelope_rejects_case_variant_duplicate_task_id_binding_with_quoted_alias_fail_closed(
+    ) {
         let task = TaskObject {
             task_id: 42,
             creator: "alice".into(),
@@ -1965,8 +2013,8 @@ mod tests {
     }
 
     #[test]
-    fn verify_bound_envelope_rejects_malformed_primary_then_canonical_task_id_binding_fail_closed(
-    ) {
+    fn verify_bound_envelope_rejects_malformed_primary_then_canonical_task_id_binding_fail_closed()
+    {
         let task = TaskObject {
             task_id: 42,
             creator: "alice".into(),
@@ -2797,6 +2845,43 @@ mod tests {
             verify_bound_envelope(
                 &task,
                 b"ZK:task_id=42,worker=worker1,proof_type=zk,result_hash=abababababababababababababababababababababababababababababababab,'result_hash'=abababababababababababababababababababababababababababababababab,proof=ok",
+                b"ZK:",
+                "ZK receipt"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("duplicate result_hash binding")
+        ));
+    }
+
+    #[test]
+    fn verify_bound_envelope_rejects_duplicate_result_hash_binding_with_single_quoted_leading_space_fail_closed(
+    ) {
+        let task = TaskObject {
+            task_id: 42,
+            creator: "alice".into(),
+            bounty: 1,
+            status: TaskStatus::Committed,
+            proof_type: ProofType::Zk,
+            metadata: None,
+            worker: Some("worker1".into()),
+            committed_hash: None,
+            result_hash: Some([0xabu8; 32]),
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        };
+
+        assert!(matches!(
+            verify_bound_envelope(
+                &task,
+                b"ZK:task_id=42,worker=worker1,proof_type=zk,result_hash=abababababababababababababababababababababababababababababababab,' result_hash'=abababababababababababababababababababababababababababababababab,proof=ok",
                 b"ZK:",
                 "ZK receipt"
             ),
@@ -3715,6 +3800,43 @@ mod tests {
     }
 
     #[test]
+    fn verify_bound_envelope_rejects_quoted_fullwidth_plus_signed_task_id_binding_fail_closed() {
+        let task = TaskObject {
+            task_id: 42,
+            creator: "alice".into(),
+            bounty: 1,
+            status: TaskStatus::Committed,
+            proof_type: ProofType::Tee,
+            metadata: None,
+            worker: Some("worker1".into()),
+            committed_hash: None,
+            result_hash: Some([0xabu8; 32]),
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        };
+
+        assert!(matches!(
+            verify_bound_envelope(
+                &task,
+                "TEE:task_id=\"＋42\",worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,quote=ok"
+                    .as_bytes(),
+                b"TEE:",
+                "TEE receipt"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("missing task_id binding")
+        ));
+    }
+
+    #[test]
     fn verify_bound_envelope_rejects_quoted_task_id_with_leading_space_fail_closed() {
         let task = TaskObject {
             task_id: 42,
@@ -3823,7 +3945,8 @@ mod tests {
     }
 
     #[test]
-    fn verify_bound_envelope_rejects_fullwidth_underscore_result_hash_identifier_spoof_fail_closed() {
+    fn verify_bound_envelope_rejects_fullwidth_underscore_result_hash_identifier_spoof_fail_closed()
+    {
         let task = TaskObject {
             task_id: 42,
             creator: "alice".into(),
@@ -3896,7 +4019,8 @@ mod tests {
     }
 
     #[test]
-    fn verify_bound_envelope_rejects_fullwidth_underscore_proof_type_identifier_spoof_fail_closed() {
+    fn verify_bound_envelope_rejects_fullwidth_underscore_proof_type_identifier_spoof_fail_closed()
+    {
         let task = TaskObject {
             task_id: 42,
             creator: "alice".into(),
@@ -4339,6 +4463,43 @@ mod tests {
     }
 
     #[test]
+    fn verify_bound_envelope_rejects_fullwidth_equals_unexpected_result_hash_binding_without_hash_context_for_tee_fail_closed(
+    ) {
+        let task = TaskObject {
+            task_id: 42,
+            creator: "alice".into(),
+            bounty: 1,
+            status: TaskStatus::Committed,
+            proof_type: ProofType::Tee,
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        };
+
+        assert!(matches!(
+            verify_bound_envelope(
+                &task,
+                "TEE:task_id=42,proof_type=tee,result_hash＝aa,quote=ok".as_bytes(),
+                b"TEE:",
+                "TEE receipt"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("unexpected result_hash binding")
+        ));
+    }
+
+    #[test]
     fn verify_bound_envelope_rejects_fullwidth_equals_unexpected_worker_binding_without_worker_context_fail_closed(
     ) {
         let task = TaskObject {
@@ -4487,6 +4648,44 @@ mod tests {
     }
 
     #[test]
+    fn verify_bound_envelope_rejects_fullwidth_equals_then_ascii_worker_binding_for_zk_fail_closed()
+    {
+        let task = TaskObject {
+            task_id: 42,
+            creator: "alice".into(),
+            bounty: 1,
+            status: TaskStatus::Committed,
+            proof_type: ProofType::Zk,
+            metadata: None,
+            worker: Some("worker1".into()),
+            committed_hash: None,
+            result_hash: Some([0xabu8; 32]),
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        };
+
+        assert!(matches!(
+            verify_bound_envelope(
+                &task,
+                "ZK:task_id=42,worker＝worker1,worker=worker1,proof_type=zk,result_hash=abababababababababababababababababababababababababababababababab,proof=ok"
+                    .as_bytes(),
+                b"ZK:",
+                "ZK receipt"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("duplicate worker binding")
+        ));
+    }
+
+    #[test]
     fn verify_bound_envelope_rejects_fullwidth_equals_then_ascii_proof_type_binding_fail_closed() {
         let task = TaskObject {
             task_id: 42,
@@ -4598,8 +4797,7 @@ mod tests {
     }
 
     #[test]
-    fn verify_bound_envelope_rejects_fullwidth_equals_then_ascii_result_hash_binding_fail_closed(
-    ) {
+    fn verify_bound_envelope_rejects_fullwidth_equals_then_ascii_result_hash_binding_fail_closed() {
         let task = TaskObject {
             task_id: 42,
             creator: "alice".into(),
@@ -4912,7 +5110,39 @@ mod tests {
     }
 
     #[test]
-    fn verify_bound_envelope_rejects_fullwidth_colon_unexpected_worker_binding_without_worker_context_for_fraud_fail_closed() {
+    fn verify_bound_envelope_rejects_invisible_separator_only_payload_fail_closed() {
+        let task = TaskObject {
+            task_id: 42,
+            creator: "alice".into(),
+            bounty: 1,
+            status: TaskStatus::Committed,
+            proof_type: ProofType::Tee,
+            metadata: None,
+            worker: Some("worker1".into()),
+            committed_hash: None,
+            result_hash: Some([0xabu8; 32]),
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        };
+
+        assert!(matches!(
+            verify_bound_envelope(&task, "TEE:\u{2063}".as_bytes(), b"TEE:", "TEE receipt"),
+            VerificationResult::Invalid(msg) if msg.contains("Invalid TEE receipt envelope")
+        ));
+    }
+
+    #[test]
+    fn verify_bound_envelope_rejects_fullwidth_colon_unexpected_worker_binding_without_worker_context_for_fraud_fail_closed(
+    ) {
         let task = TaskObject {
             task_id: 42,
             creator: "alice".into(),
@@ -4948,7 +5178,8 @@ mod tests {
     }
 
     #[test]
-    fn verify_bound_envelope_rejects_fullwidth_equals_unexpected_worker_binding_without_worker_context_for_fraud_fail_closed() {
+    fn verify_bound_envelope_rejects_fullwidth_equals_unexpected_worker_binding_without_worker_context_for_fraud_fail_closed(
+    ) {
         let task = TaskObject {
             task_id: 42,
             creator: "alice".into(),
@@ -4984,7 +5215,8 @@ mod tests {
     }
 
     #[test]
-    fn verify_bound_envelope_rejects_fullwidth_colon_unexpected_result_hash_binding_without_hash_context_for_fraud_fail_closed() {
+    fn verify_bound_envelope_rejects_fullwidth_colon_unexpected_result_hash_binding_without_hash_context_for_fraud_fail_closed(
+    ) {
         let task = TaskObject {
             task_id: 42,
             creator: "alice".into(),
@@ -5020,7 +5252,8 @@ mod tests {
     }
 
     #[test]
-    fn verify_bound_envelope_rejects_fullwidth_equals_unexpected_result_hash_binding_without_hash_context_for_fraud_fail_closed() {
+    fn verify_bound_envelope_rejects_fullwidth_equals_unexpected_result_hash_binding_without_hash_context_for_fraud_fail_closed(
+    ) {
         let task = TaskObject {
             task_id: 42,
             creator: "alice".into(),
@@ -5048,6 +5281,80 @@ mod tests {
             verify_bound_envelope(
                 &task,
                 "FRAUD:task_id=42,proof_type=fraud,result_hash＝aa,proof=ok".as_bytes(),
+                b"FRAUD:",
+                "Fraud proof"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("unexpected result_hash binding")
+        ));
+    }
+
+    #[test]
+    fn verify_bound_envelope_rejects_fullwidth_equals_unexpected_quoted_result_hash_binding_without_hash_context_fail_closed(
+    ) {
+        let task = TaskObject {
+            task_id: 42,
+            creator: "alice".into(),
+            bounty: 1,
+            status: TaskStatus::Committed,
+            proof_type: ProofType::Zk,
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        };
+
+        assert!(matches!(
+            verify_bound_envelope(
+                &task,
+                "ZK:task_id=42,proof_type=zk,\"result_hash\"＝aa,proof=ok".as_bytes(),
+                b"ZK:",
+                "ZK receipt"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("unexpected result_hash binding")
+        ));
+    }
+
+    #[test]
+    fn verify_bound_envelope_rejects_fullwidth_equals_unexpected_quoted_result_hash_binding_without_hash_context_for_fraud_fail_closed(
+    ) {
+        let task = TaskObject {
+            task_id: 42,
+            creator: "alice".into(),
+            bounty: 1,
+            status: TaskStatus::Committed,
+            proof_type: ProofType::Fraud,
+            metadata: None,
+            worker: None,
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 1,
+        };
+
+        assert!(matches!(
+            verify_bound_envelope(
+                &task,
+                "FRAUD:task_id=42,proof_type=fraud,\"result_hash\"＝aa,proof=ok".as_bytes(),
                 b"FRAUD:",
                 "Fraud proof"
             ),

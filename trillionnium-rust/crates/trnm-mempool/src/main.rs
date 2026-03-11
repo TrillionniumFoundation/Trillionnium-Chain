@@ -30,7 +30,7 @@ pub struct AdmissionGate {
 
 impl AdmissionGate {
     fn compact_backpressured_fifo(&mut self) {
-        if self.backpressured_fifo.len() <= self.capacity.saturating_mul(4) {
+        if self.backpressured_fifo.len() < self.capacity.saturating_mul(4) {
             return;
         }
 
@@ -195,7 +195,9 @@ impl AdmissionGate {
             self.last_fairness_deferred = None;
             // Hot saturated retry path: if this tx id is already tracked as backpressured,
             // classify immediately as duplicate and skip bounded retry-cache churn.
-            if self.backpressured_ids.contains(&tx_id) {
+            // Guard the hash probe with known_retry_count so fully drained retry state
+            // stays on the no-retry fast path under sustained full-queue ingress.
+            if known_retry_count != 0 && self.backpressured_ids.contains(&tx_id) {
                 self.metrics.duplicates = self.metrics.duplicates.saturating_add(1);
                 self.metrics.backpressure_duplicates =
                     self.metrics.backpressure_duplicates.saturating_add(1);
@@ -262,12 +264,13 @@ impl AdmissionGate {
             return AdmitOutcome::Backpressured;
         }
 
-        // Fast-path fresh ingress: skip retry-set remove hash probe when we already
-        // know this tx id was not tracked as a deferred retry candidate. When
-        // fairness probing already confirmed membership, reuse that signal to avoid
-        // a second hash lookup on the acceptance path.
+        // Fast-path fresh ingress: when fairness is armed we already probed retry
+        // membership above. Reuse that signal to avoid a second hash-table lookup
+        // on the common non-retry acceptance path.
         let accepted_was_retry = if is_known_retry_for_fairness {
             self.backpressured_ids.remove(&tx_id)
+        } else if self.retry_reservations > 0 {
+            false
         } else {
             has_known_retries && self.backpressured_ids.remove(&tx_id)
         };
@@ -647,6 +650,25 @@ mod tests {
     }
 
     #[test]
+    fn fairness_armed_fresh_acceptance_keeps_known_retry_memory_intact() {
+        let mut gate = AdmissionGate::new(3);
+        assert_eq!(gate.admit(1), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(2), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(3), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(9), AdmitOutcome::Backpressured);
+
+        // Two slots open; fairness remains armed with a single known retry id.
+        assert_eq!(gate.pop_ready(), Some(1));
+        assert_eq!(gate.pop_ready(), Some(2));
+
+        // Fresh ingress is accepted because free_slots > retry_reservations.
+        assert_eq!(gate.admit(10), AdmitOutcome::Accepted);
+        // Retry memory must remain intact so id=9 is still admitted later.
+        assert!(gate.backpressured_ids.contains(&9));
+        assert_eq!(gate.admit(9), AdmitOutcome::Accepted);
+    }
+
+    #[test]
     fn repeated_single_slot_fairness_deferral_stays_idempotent() {
         let mut gate = AdmissionGate::new(2);
         assert_eq!(gate.admit(1), AdmitOutcome::Accepted);
@@ -946,6 +968,22 @@ mod tests {
             .extend([42, 43, 42, 43, 42, 43, 42, 43, 42]);
         gate.backpressured_ids.clear();
         assert!(gate.backpressured_fifo.len() > gate.capacity.saturating_mul(4));
+
+        gate.compact_backpressured_fifo();
+        assert!(gate.backpressured_fifo.is_empty());
+    }
+
+    #[test]
+    fn compaction_triggers_at_threshold_to_bound_stale_fifo_growth() {
+        let mut gate = AdmissionGate::new(2);
+        // Exactly 4x stale markers should compact immediately instead of waiting
+        // for an extra insert above threshold.
+        gate.backpressured_fifo.extend([1, 2, 1, 2, 1, 2, 1, 2]);
+        gate.backpressured_ids.clear();
+        assert_eq!(
+            gate.backpressured_fifo.len(),
+            gate.capacity.saturating_mul(4)
+        );
 
         gate.compact_backpressured_fifo();
         assert!(gate.backpressured_fifo.is_empty());

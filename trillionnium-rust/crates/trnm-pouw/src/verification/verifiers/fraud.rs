@@ -3,6 +3,11 @@ use trnm_types::TaskObject;
 
 use super::verify_bound_envelope;
 
+/// Fraud stays as a semantic verifier in the V1 verification platform.
+///
+/// Unlike TEE/ZK, Fraud does not dispatch into a configurable cryptographic
+/// backend family: verification is the fail-closed envelope/binding check
+/// itself until a real fraud-proof backend contract exists.
 pub struct FraudVerifier;
 
 impl ProofVerifier for FraudVerifier {
@@ -190,6 +195,20 @@ mod tests {
     }
 
     #[test]
+    fn fraud_verifier_rejects_duplicate_task_id_binding_with_double_quoted_alias_fail_closed() {
+        let verifier = FraudVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"FRAUD:{\"task_id\":7,\"task_id\":\"7\",\"worker\":\"worker-fraud\",\"proof_type\":\"fraud\"}"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("duplicate task_id binding")
+        ));
+    }
+
+    #[test]
     fn fraud_verifier_rejects_proof_type_mismatch_when_present() {
         let verifier = FraudVerifier;
         let task = mock_task();
@@ -327,7 +346,8 @@ mod tests {
     }
 
     #[test]
-    fn fraud_verifier_rejects_duplicate_proof_type_binding_with_quoted_trailing_space_fail_closed() {
+    fn fraud_verifier_rejects_duplicate_proof_type_binding_with_quoted_trailing_space_fail_closed()
+    {
         let verifier = FraudVerifier;
         let task = mock_task();
 
@@ -429,7 +449,8 @@ mod tests {
     }
 
     #[test]
-    fn fraud_verifier_rejects_duplicate_result_hash_binding_with_quoted_leading_space_fail_closed() {
+    fn fraud_verifier_rejects_duplicate_result_hash_binding_with_quoted_leading_space_fail_closed()
+    {
         let verifier = FraudVerifier;
         let mut task = mock_task();
         task.result_hash = Some([9u8; 32]);
@@ -444,7 +465,8 @@ mod tests {
     }
 
     #[test]
-    fn fraud_verifier_rejects_duplicate_result_hash_binding_with_unclosed_quoted_alias_fail_closed() {
+    fn fraud_verifier_rejects_duplicate_result_hash_binding_with_unclosed_quoted_alias_fail_closed()
+    {
         let verifier = FraudVerifier;
         let mut task = mock_task();
         task.result_hash = Some([9u8; 32]);
@@ -487,6 +509,20 @@ mod tests {
     }
 
     #[test]
+    fn fraud_verifier_rejects_fullwidth_underscore_proof_type_identifier_spoof_fail_closed() {
+        let verifier = FraudVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"FRAUD:{\"task_id\":7,\"worker\":\"worker-fraud\",\"proof\xef\xbc\xbftype\":\"fraud\"}"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("missing proof_type binding")
+        ));
+    }
+
+    #[test]
     fn fraud_verifier_rejects_fullwidth_equals_then_ascii_proof_type_binding_fail_closed() {
         let verifier = FraudVerifier;
         let task = mock_task();
@@ -499,7 +535,6 @@ mod tests {
             VerificationResult::Invalid(msg) if msg.contains("duplicate proof_type binding")
         ));
     }
-
 
     #[test]
     fn fraud_verifier_rejects_fullwidth_equals_then_ascii_task_id_binding_fail_closed() {
@@ -588,7 +623,8 @@ mod tests {
     }
 
     #[test]
-    fn fraud_verifier_rejects_fullwidth_semicolon_delimited_duplicate_proof_type_binding_fail_closed() {
+    fn fraud_verifier_rejects_fullwidth_semicolon_delimited_duplicate_proof_type_binding_fail_closed(
+    ) {
         let verifier = FraudVerifier;
         let task = mock_task();
 
@@ -602,7 +638,8 @@ mod tests {
     }
 
     #[test]
-    fn fraud_verifier_rejects_fullwidth_colon_unexpected_result_hash_binding_without_context_fail_closed() {
+    fn fraud_verifier_rejects_fullwidth_colon_unexpected_result_hash_binding_without_context_fail_closed(
+    ) {
         let verifier = FraudVerifier;
         let task = mock_task();
 
@@ -614,5 +651,4 @@ mod tests {
             VerificationResult::Invalid(msg) if msg.contains("unexpected result_hash binding")
         ));
     }
-
 }

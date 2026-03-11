@@ -480,6 +480,7 @@ impl StateStore {
                 return Err("resolve approval authority set changed".into());
             }
             if entry.task_version != task_version {
+                self.invalidate_state_root_cache();
                 self.pending_resolve_approvals.remove(&task_id);
                 return Err("resolve approval task version changed".into());
             }
@@ -1869,6 +1870,46 @@ mod tests {
     }
 
     #[test]
+    fn resolve_approval_task_version_mismatch_invalidates_cached_state_root() {
+        let mut st = StateStore::new();
+
+        st.stage_or_confirm_resolve_approval(
+            8_283,
+            3,
+            true,
+            "authority-a",
+            "authority-a,authority-b",
+        )
+        .expect("first approval stage should succeed");
+
+        let root_with_pending = st.state_root();
+
+        let err = st
+            .stage_or_confirm_resolve_approval(
+                8_283,
+                4,
+                true,
+                "authority-b",
+                "authority-a,authority-b",
+            )
+            .expect_err("task-version mismatch should clear staged approval");
+        assert!(err.contains("task version changed"));
+
+        let root_after_clear = st.state_root();
+
+        let baseline = StateStore::new().state_root();
+        assert_eq!(st.pending_resolve_approval(8_283), None);
+        assert_ne!(
+            root_with_pending, root_after_clear,
+            "clearing stale pending resolve approval must invalidate cached state root"
+        );
+        assert_eq!(
+            root_after_clear, baseline,
+            "after stale-stage clear, state root should match an empty store"
+        );
+    }
+
+    #[test]
     fn resolve_approval_clears_stale_stage_on_authority_set_rotation() {
         let mut st = StateStore::new();
 
@@ -1896,6 +1937,36 @@ mod tests {
         assert!(rotated_err.contains("authority set changed"));
         assert_eq!(st.pending_resolve_approval(81), None);
         assert_eq!(st.pending_resolve_first_approver(81), None);
+    }
+
+    #[test]
+    fn resolve_approval_clears_stale_stage_on_authority_set_case_drift() {
+        let mut st = StateStore::new();
+
+        let first = st
+            .stage_or_confirm_resolve_approval(
+                8_181,
+                7,
+                true,
+                "authority-a",
+                "authority-a,authority-b",
+            )
+            .expect("first approval stage should succeed");
+        assert!(!first);
+        assert_eq!(st.pending_resolve_approval(8_181), Some((true, 1)));
+
+        let case_drift_err = st
+            .stage_or_confirm_resolve_approval(
+                8_181,
+                7,
+                true,
+                "Authority-B",
+                "authority-a,Authority-B",
+            )
+            .expect_err("authority set case drift must fail closed and clear stale stage");
+        assert!(case_drift_err.contains("authority set changed"));
+        assert_eq!(st.pending_resolve_approval(8_181), None);
+        assert_eq!(st.pending_resolve_first_approver(8_181), None);
     }
 
     #[test]
