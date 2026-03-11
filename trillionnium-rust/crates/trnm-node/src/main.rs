@@ -4959,7 +4959,12 @@ fn main() -> Result<()> {
     let mut apply_error_deadline_exceeded_total: u64 = 0;
     let mut apply_error_semantic_fail_total: u64 = 0;
     let mut rollback_total: u64 = 0;
+    let mut rollback_blocks_total: u64 = 0;
+    let mut rollback_peak_per_block: u64 = 0;
     let mut timeout_migrated_total: u64 = 0;
+    let mut timeout_scan_runs: u64 = 0;
+    let mut timeout_scan_migrating_runs: u64 = 0;
+    let mut timeout_scan_skipped_total: u64 = 0;
     let mut bft_committed_heights: u64 = 0;
     let mut bft_round_change_total: u64 = 0;
     let mut bft_double_vote_total: u64 = 0;
@@ -5210,16 +5215,30 @@ fn main() -> Result<()> {
             }
         }
 
+        rollback_blocks_total += u64::from(rollback_count > 0);
+        rollback_peak_per_block = rollback_peak_per_block.max(rollback_count);
+
         let scan_every = args.pouw_timeout_scan_every_blocks.max(1);
-        if args.pouw_timeout_scan && height % scan_every == 0 {
-            let migrated = scan_and_apply_timeouts(&mut state, &known_task_ids, height, 9_000_000);
-            timeout_migrated_total += migrated;
-            if migrated > 0 {
-                last_state_root_hex = None;
-                println!(
-                    "[timeout] height={} migrated={} cumulative_migrated={}",
-                    height, migrated, timeout_migrated_total
-                );
+        if args.pouw_timeout_scan {
+            if height % scan_every == 0 {
+                timeout_scan_runs += 1;
+                let migrated =
+                    scan_and_apply_timeouts(&mut state, &known_task_ids, height, 9_000_000);
+                timeout_migrated_total += migrated;
+                if migrated > 0 {
+                    timeout_scan_migrating_runs += 1;
+                    last_state_root_hex = None;
+                    println!(
+                        "[timeout] height={} migrated={} cumulative_migrated={} scan_runs={} scan_every_blocks={}",
+                        height,
+                        migrated,
+                        timeout_migrated_total,
+                        timeout_scan_runs,
+                        scan_every
+                    );
+                }
+            } else {
+                timeout_scan_skipped_total += 1;
             }
         }
 
@@ -5319,7 +5338,7 @@ fn main() -> Result<()> {
         .map(|h| h.missed_proposals)
         .collect();
     println!(
-        "[consensus] finality_p50_ms={} finality_p95_ms={} scheduler_elapsed_p50_ms={} scheduler_elapsed_p95_ms={} preexec_elapsed_p50_ms={} preexec_elapsed_p95_ms={} commit_elapsed_p50_ms={} commit_elapsed_p95_ms={} state_root_total_p50_ms={} state_root_total_p95_ms={} critical_wait_blocks_p50={} critical_wait_blocks_p95={} preexec_reject_total={} apply_error_total={} apply_error_preexec_conflict_miss_total={} apply_error_version_conflict_total={} apply_error_invalid_transition_total={} apply_error_deadline_exceeded_total={} apply_error_semantic_fail_total={} rollback_total={} timeout_migrated_total={} recovery_error_rate={:.6} bft_committed_heights={} bft_round_change_total={} bft_round_change_backoff_total_ms={} bft_leader_missed_proposals={:?} bft_double_vote_total={} bft_auth_reject_bad_sig_total={} bft_auth_reject_replay_total={} bft_auth_reject_stale_nonce_total={}",
+        "[consensus] finality_p50_ms={} finality_p95_ms={} scheduler_elapsed_p50_ms={} scheduler_elapsed_p95_ms={} preexec_elapsed_p50_ms={} preexec_elapsed_p95_ms={} commit_elapsed_p50_ms={} commit_elapsed_p95_ms={} state_root_total_p50_ms={} state_root_total_p95_ms={} critical_wait_blocks_p50={} critical_wait_blocks_p95={} preexec_reject_total={} apply_error_total={} apply_error_preexec_conflict_miss_total={} apply_error_version_conflict_total={} apply_error_invalid_transition_total={} apply_error_deadline_exceeded_total={} apply_error_semantic_fail_total={} rollback_total={} rollback_blocks_total={} rollback_peak_per_block={} timeout_scan_runs={} timeout_scan_migrating_runs={} timeout_scan_skipped_total={} timeout_migrated_total={} recovery_error_rate={:.6} bft_committed_heights={} bft_round_change_total={} bft_round_change_backoff_total_ms={} bft_leader_missed_proposals={:?} bft_double_vote_total={} bft_auth_reject_bad_sig_total={} bft_auth_reject_replay_total={} bft_auth_reject_stale_nonce_total={}",
         finality_p50,
         finality_p95,
         scheduler_p50,
@@ -5340,6 +5359,11 @@ fn main() -> Result<()> {
         apply_error_deadline_exceeded_total,
         apply_error_semantic_fail_total,
         rollback_total,
+        rollback_blocks_total,
+        rollback_peak_per_block,
+        timeout_scan_runs,
+        timeout_scan_migrating_runs,
+        timeout_scan_skipped_total,
         timeout_migrated_total,
         recovery_error_rate,
         bft_committed_heights,
