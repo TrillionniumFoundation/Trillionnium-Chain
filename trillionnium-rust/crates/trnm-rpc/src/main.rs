@@ -2211,6 +2211,7 @@ fn parse_query_events_limit_from_path(path: &str) -> std::result::Result<usize, 
         return Ok(QUERY_EVENTS_LIMIT_DEFAULT);
     };
 
+    let mut parsed_limit: Option<usize> = None;
     for pair in query.split('&') {
         let Some((key, value)) = pair.split_once('=') else {
             if pair == "limit" {
@@ -2224,15 +2225,21 @@ fn parse_query_events_limit_from_path(path: &str) -> std::result::Result<usize, 
         if key != "limit" {
             continue;
         }
-        return value.parse::<usize>().map_err(|_| {
+        if parsed_limit.is_some() {
+            return Err(http_json_response(
+                "400 Bad Request",
+                "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"duplicate limit\"}",
+            ));
+        }
+        parsed_limit = Some(value.parse::<usize>().map_err(|_| {
             http_json_response(
                 "400 Bad Request",
                 "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}",
             )
-        });
+        })?);
     }
 
-    Ok(QUERY_EVENTS_LIMIT_DEFAULT)
+    Ok(parsed_limit.unwrap_or(QUERY_EVENTS_LIMIT_DEFAULT))
 }
 
 fn normalize_capability_subject_lookup(raw: &str) -> Option<String> {
@@ -3689,6 +3696,14 @@ mod tests {
             .expect_err("empty limit value must fail closed");
         assert!(err.contains("400 Bad Request"));
         assert!(err.contains("invalid limit"));
+    }
+
+    #[test]
+    fn parse_query_events_limit_from_path_rejects_duplicate_limit_keys() {
+        let err = parse_query_events_limit_from_path("/query-events/42?limit=7&limit=9")
+            .expect_err("duplicate limit keys must fail closed");
+        assert!(err.contains("400 Bad Request"));
+        assert!(err.contains("duplicate limit"));
     }
 
     #[test]
