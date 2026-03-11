@@ -332,13 +332,17 @@ mod tests {
                         reason: "missing parsed payload".to_string(),
                     })?;
             match payload.vk_ref.as_str() {
-                "vk://trnm/dev/mock-groth16/valid" => Ok(BackendVerificationSuccess {
-                    backend_id: self.backend_id().into(),
-                }),
-                "vk://trnm/dev/mock-groth16/invalid" => Err(BackendExecutionError::InvalidProof {
-                    backend: request.backend_label(self.backend_id()),
-                    reason: "mock vector rejected by backend".to_string(),
-                }),
+                "vk://trnm/dev/mock-groth16/valid" | "vk://trnm/dev/mock-plonk/valid" => {
+                    Ok(BackendVerificationSuccess {
+                        backend_id: self.backend_id().into(),
+                    })
+                }
+                "vk://trnm/dev/mock-groth16/invalid" | "vk://trnm/dev/mock-plonk/invalid" => {
+                    Err(BackendExecutionError::InvalidProof {
+                        backend: request.backend_label(self.backend_id()),
+                        reason: "mock vector rejected by backend".to_string(),
+                    })
+                }
                 other => Err(BackendExecutionError::MalformedProof {
                     backend: request.backend_label(self.backend_id()),
                     reason: format!("unexpected vk_ref '{other}'"),
@@ -461,10 +465,7 @@ mod tests {
 
         let payload = br#"ZK:{"task_id":42,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"plonk","backend_id":"mock-zk-vectors","backend_version":"v1","vk_ref":"vk://trnm/dev/mock-plonk/valid","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["42","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]},"meta":{"schema_version":"trnm.zk.payload.v0","circuit_id":"fixture-registry-plonk"}}"#;
 
-        assert!(matches!(
-            registry.verify(&task, payload),
-            VerificationResult::Invalid(msg) if msg.contains("unexpected vk_ref 'vk://trnm/dev/mock-plonk/valid'")
-        ));
+        assert_eq!(registry.verify(&task, payload), VerificationResult::Valid);
     }
 
     #[test]
