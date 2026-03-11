@@ -3684,6 +3684,14 @@ mod tests {
     }
 
     #[test]
+    fn parse_query_events_limit_from_path_rejects_empty_limit_value() {
+        let err = parse_query_events_limit_from_path("/query-events/42?limit=")
+            .expect_err("empty limit value must fail closed");
+        assert!(err.contains("400 Bad Request"));
+        assert!(err.contains("invalid limit"));
+    }
+
+    #[test]
     fn parse_http_get_path_rejects_non_get_or_malformed_lines() {
         assert_eq!(parse_http_get_path("POST /health HTTP/1.1"), None);
         assert_eq!(parse_http_get_path("GET /health"), None);
