@@ -2213,6 +2213,12 @@ fn parse_query_events_limit_from_path(path: &str) -> std::result::Result<usize, 
 
     for pair in query.split('&') {
         let Some((key, value)) = pair.split_once('=') else {
+            if pair == "limit" {
+                return Err(http_json_response(
+                    "400 Bad Request",
+                    "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}",
+                ));
+            }
             continue;
         };
         if key != "limit" {
@@ -3665,6 +3671,14 @@ mod tests {
     fn parse_query_events_limit_from_path_rejects_invalid_limit() {
         let err = parse_query_events_limit_from_path("/query-events/42?limit=bogus")
             .expect_err("invalid limit must fail closed");
+        assert!(err.contains("400 Bad Request"));
+        assert!(err.contains("invalid limit"));
+    }
+
+    #[test]
+    fn parse_query_events_limit_from_path_rejects_missing_limit_value() {
+        let err = parse_query_events_limit_from_path("/query-events/42?limit")
+            .expect_err("missing limit value must fail closed");
         assert!(err.contains("400 Bad Request"));
         assert!(err.contains("invalid limit"));
     }
