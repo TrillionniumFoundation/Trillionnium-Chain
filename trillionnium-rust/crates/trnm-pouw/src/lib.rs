@@ -1281,8 +1281,9 @@ pub fn apply_resolve_at_height(
     }
 
     if slash_worker {
-        // Success incentive: pay a fixed minimal bounty to challenger from slashed worker stake
-        // lock first, with fallback to worker-slash treasury if lock is empty.
+        // Success incentive: pay a fixed minimal bounty to challenger strictly from the
+        // task-local slashed worker stake lock. Never fall back to the global worker-slash
+        // treasury, which is custody-only and must not subsidize historical challenge payouts.
         let _ = maybe_pay_challenge_success_bounty(st, &task)?;
     }
 
