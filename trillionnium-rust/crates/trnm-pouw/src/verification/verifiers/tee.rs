@@ -109,20 +109,50 @@ impl TeeVerifier {
         let mentions_quote = normalized.contains("quote");
         let mentions_report = normalized.contains("report");
         let mentions_claims = normalized.contains("claim");
+        let mentions_payload = normalized.contains("payload");
+        let mentions_evidence = normalized.contains("evidence");
 
         if mentions_unavailable && !mentions_quote && !mentions_report && !mentions_claims {
             return "evidence/claims";
         }
 
-        match (mentions_quote, mentions_report, mentions_claims) {
-            (true, true, _) => "quote/report claims",
-            (true, false, true) => "quote claims",
-            (false, true, true) => "report claims",
-            (true, false, false) => "quote evidence",
-            (false, true, false) => "report evidence",
-            (false, false, true) => "claims",
-            (false, false, false) => "payload/claims",
+        if mentions_quote && mentions_report {
+            return if mentions_claims {
+                "quote/report claims"
+            } else {
+                "payload/claims"
+            };
         }
+
+        if mentions_quote {
+            return if mentions_claims {
+                "quote claims"
+            } else {
+                "quote evidence"
+            };
+        }
+
+        if mentions_report {
+            return if mentions_claims {
+                "report claims"
+            } else {
+                "report evidence"
+            };
+        }
+
+        if mentions_claims {
+            return "claims";
+        }
+
+        if mentions_payload {
+            return "payload/claims";
+        }
+
+        if mentions_evidence {
+            return "evidence/claims";
+        }
+
+        "payload/claims"
     }
 
     fn verify_backend(
@@ -426,6 +456,21 @@ mod tests {
         assert!(msg.contains("backend_error:"), "message: {msg}");
         assert!(msg.contains("mock-tee-internal"), "message: {msg}");
         assert!(msg.contains("mock tee backend internal failure"), "message: {msg}");
+    }
+
+    #[test]
+    fn tee_verifier_backend_internal_report_evidence_keeps_report_surface_without_legacy_claims_suffix() {
+        let result = TeeVerifier::classify_execution_err(BackendExecutionError::Internal {
+            backend: "tee:mock-tee-internal".to_string(),
+            reason: "report evidence verifier crashed".to_string(),
+        });
+
+        assert!(matches!(result, VerificationResult::Indeterminate(_)), "unexpected result: {result:?}");
+        let VerificationResult::Indeterminate(msg) = result else { unreachable!() };
+        assert!(msg.contains("backend_error:"), "message: {msg}");
+        assert!(msg.contains("report evidence"), "message: {msg}");
+        assert!(!msg.contains("quote/report claims"), "message: {msg}");
+        assert!(!msg.contains("legacy:"), "message: {msg}");
     }
 
     #[test]
