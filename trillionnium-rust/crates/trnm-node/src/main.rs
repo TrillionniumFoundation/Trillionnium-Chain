@@ -539,14 +539,6 @@ fn recover_wal_state(wal_dir: &Path) -> Result<RecoveredWalState> {
     }
 
     if let Some(last) = valid_entries.last() {
-        persist_consensus_wal(
-            wal_dir,
-            &ConsensusWal {
-                next_height: last.height + 1,
-                last_round: last.round,
-                locked_block_hash: Some(last.proposal_hash.clone()),
-            },
-        )?;
         return Ok(RecoveredWalState {
             next_height: last.height + 1,
             restored_lock: Some(last.proposal_hash.clone()),
@@ -4858,6 +4850,50 @@ mod tests {
         .to_string();
         assert!(err.contains("retained 1 committed WAL entry through height 1"));
         assert!(err.contains("last retained checkpoint: 1"));
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn recover_metadata_only_does_not_rewrite_consensus_wal_file() {
+        let wal_dir = temp_wal_dir("recover-metadata-only-no-wal-rewrite");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let e1 = WalMeta {
+            height: 1,
+            round: 7,
+            proposal_hash: "h1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        persist_wal_meta_entries(&wal_dir, &[e1]).unwrap();
+        persist_checkpoint_meta(
+            &wal_dir,
+            &[CheckpointMeta {
+                height: 1,
+                wal_entry_hash_hex: h1,
+                state_root_hex: "r1".into(),
+            }],
+        )
+        .unwrap();
+        fs::write(
+            wal_file(&wal_dir),
+            r#"next_height = 99
+last_round = 42
+locked_block_hash = "stale-lock"
+"#,
+        )
+        .unwrap();
+
+        let recovered = recover_wal_state(&wal_dir).unwrap();
+        assert!(recovered.metadata_only_recovery);
+
+        let wal_raw = fs::read_to_string(wal_file(&wal_dir)).unwrap();
+        assert!(wal_raw.contains("next_height = 99"));
+        assert!(wal_raw.contains("last_round = 42"));
+        assert!(wal_raw.contains("\"stale-lock\""));
 
         let _ = fs::remove_dir_all(&wal_dir);
     }
