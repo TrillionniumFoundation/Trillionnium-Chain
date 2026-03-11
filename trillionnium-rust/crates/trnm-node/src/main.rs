@@ -3,7 +3,7 @@ use clap::{Parser, ValueEnum};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::{
-    collections::{HashMap, HashSet, VecDeque},
+    collections::{BTreeMap, HashMap, HashSet, VecDeque},
     fs,
     path::{Path, PathBuf},
     sync::{mpsc, Arc, Condvar, Mutex},
@@ -219,6 +219,14 @@ struct BftHeightResult {
 const CHALLENGE_ESCROW_ACCOUNT: &str = "treasury.challenge_escrow";
 const CHALLENGE_FORFEIT_TREASURY_ACCOUNT: &str = "treasury.challenge_forfeits";
 const WORKER_SLASH_TREASURY_ACCOUNT: &str = "treasury.worker_slashes";
+const RESOLVE_PENDING_APPROVAL_HOT_LABEL: &str = "resolve.pending_approval";
+const RESOLVE_AUTHORITY_HOT_LABEL: &str = "governance.resolve_authority";
+
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+struct HotObjectSummary {
+    hot_tx_count: usize,
+    labels: BTreeMap<String, usize>,
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct ConsensusWal {
@@ -257,6 +265,9 @@ struct DaBatch {
 struct OrderingDecision {
     ordered_ids: Vec<u64>,
     rejected: u64,
+    preexec_elapsed_ms: u128,
+    group_count: usize,
+    critical_wait_blocks: u64,
 }
 
 #[derive(Debug, Clone)]
@@ -313,10 +324,14 @@ impl OrderingEngine for PreexecOrderingEngine {
             workers,
             candidate_height,
         );
+        let preexec_started = Instant::now();
         let (ordered_ids, rejected) = pre_execute_group_parallel(&pool, da_batch.tx_ids.clone());
         OrderingDecision {
             ordered_ids,
             rejected,
+            preexec_elapsed_ms: preexec_started.elapsed().as_millis(),
+            group_count: usize::from(!da_batch.tx_ids.is_empty()),
+            critical_wait_blocks: 0,
         }
     }
 }
@@ -1427,12 +1442,26 @@ fn pick_txs_with_critical_guard(
         return mempool.drain(..).collect();
     }
 
+    if !mempool.iter().any(is_critical_tx) {
+        // Normal-only backlog has no critical-lane anti-starvation requirement.
+        // Keep FIFO prefix drain and skip lane gate bookkeeping to reduce
+        // free-ingress selection overhead on the hot path.
+        let mut picked = Vec::with_capacity(txs_per_block);
+        for _ in 0..txs_per_block {
+            let Some(tx) = mempool.pop_front() else {
+                break;
+            };
+            picked.push(tx);
+        }
+        return picked;
+    }
+
     // Selection fairness should consider the full queued backlog, not only the
     // first block-sized prefix. Otherwise a critical tx that arrives behind a
     // long normal queue can never enter the fairness gate and is effectively
     // starved until the prefix drains.
     let mut lane = LaneAdmissionGate::new(mempool.len(), 1);
-    let mut selected_pos = vec![None; mempool.len()];
+    let mempool_len = mempool.len();
     for (idx, tx) in mempool.iter().enumerate() {
         let class = if is_critical_tx(tx) {
             IngressClass::Critical
@@ -1442,28 +1471,21 @@ fn pick_txs_with_critical_guard(
         let _ = lane.admit(idx as u64, class);
     }
 
-    let mut admit_order = 0usize;
-    while admit_order < txs_per_block {
+    let mut selected = Vec::with_capacity(txs_per_block);
+    while selected.len() < txs_per_block {
         let Some(id) = lane.pop_ready() else {
             break;
         };
         let idx = id as usize;
-        if idx < selected_pos.len() {
-            selected_pos[idx] = Some(admit_order);
-            admit_order += 1;
+        if idx < mempool_len {
+            selected.push((idx, selected.len()));
         }
     }
 
-    let mut picked_slots: Vec<Option<MockTx>> = (0..admit_order).map(|_| None).collect();
-    let mut selected_indices_desc = Vec::with_capacity(admit_order);
-    for (idx, pos) in selected_pos.into_iter().enumerate() {
-        if let Some(pos) = pos {
-            selected_indices_desc.push((idx, pos));
-        }
-    }
-    selected_indices_desc.sort_unstable_by(|(lhs, _), (rhs, _)| rhs.cmp(lhs));
+    let mut picked_slots: Vec<Option<MockTx>> = (0..selected.len()).map(|_| None).collect();
+    selected.sort_unstable_by(|(lhs, _), (rhs, _)| rhs.cmp(lhs));
 
-    for (idx, pos) in selected_indices_desc {
+    for (idx, pos) in selected {
         let tx = mempool
             .remove(idx)
             .expect("selected tx index must still exist during descending extraction");
@@ -1991,6 +2013,34 @@ fn pseudo_object_id_for_account(account: &str) -> u64 {
     u64::from_le_bytes(bytes) | (1u64 << 63)
 }
 
+fn summarize_hot_objects(st: &StateStore, txs: &[MockTx]) -> HotObjectSummary {
+    let mut labels = BTreeMap::new();
+    let mut hot_tx_count = 0usize;
+
+    for tx in txs {
+        if let MockTx::Resolve { task_id, .. } = tx {
+            hot_tx_count += 1;
+            for label in [
+                CHALLENGE_ESCROW_ACCOUNT,
+                CHALLENGE_FORFEIT_TREASURY_ACCOUNT,
+                WORKER_SLASH_TREASURY_ACCOUNT,
+                RESOLVE_PENDING_APPROVAL_HOT_LABEL,
+                RESOLVE_AUTHORITY_HOT_LABEL,
+            ] {
+                *labels.entry(label.to_string()).or_insert(0) += 1;
+            }
+            if let Some(challenger) = st.get_task(*task_id).and_then(|t| t.challenger) {
+                *labels.entry(challenger).or_insert(0) += 1;
+            }
+        }
+    }
+
+    HotObjectSummary {
+        hot_tx_count,
+        labels,
+    }
+}
+
 fn read_write_decl(st: &StateStore, tx: &MockTx, tx_id: u64) -> Tx {
     let task_id = match tx {
         MockTx::CreateTask { task_id, .. }
@@ -2244,6 +2294,8 @@ fn decide_order_for_commit(
             .map(|(i, tx)| read_write_decl(state, tx, (i as u64) + 1))
             .collect();
         let groups = build_parallel_groups(&plan);
+        let group_count = groups.len();
+        let critical_wait_blocks = group_count.saturating_sub(1) as u64;
         let mut ordered = Vec::new();
         let mut rejected = 0u64;
         let pool = PreExecPool::new(
@@ -2252,6 +2304,7 @@ fn decide_order_for_commit(
             workers,
             candidate_height,
         );
+        let preexec_started = Instant::now();
         for g in groups {
             let group_ids: Vec<u64> = g.iter().map(|t| t.id).collect();
             let (ids, rej) = pre_execute_group_parallel(&pool, group_ids);
@@ -2261,6 +2314,9 @@ fn decide_order_for_commit(
         return OrderingDecision {
             ordered_ids: ordered,
             rejected,
+            preexec_elapsed_ms: preexec_started.elapsed().as_millis(),
+            group_count,
+            critical_wait_blocks,
         };
     }
 
@@ -2273,6 +2329,50 @@ fn decide_order_for_commit(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn resolve_hotspot_summary_includes_shared_treasury_and_approval_labels() {
+        let mut state = StateStore::new();
+        state.set_balance("worker5001", 1_000);
+        state.set_balance("challenger5001", 1_000);
+
+        let r1 = apply_create_task(&mut state, 5001, "alice".into(), 100).unwrap();
+        let r2 = apply_accept_task_at_height(&mut state, r1, "worker5001".into(), 10).unwrap();
+        let committed = compute_commitment(5001, &[1u8; 32], &[2u8; 32], "worker5001");
+        let r3 = apply_commit_result_at_height(&mut state, r2, "worker5001".into(), committed, 10)
+            .unwrap();
+        let r4 =
+            apply_reveal_result_at_height(&mut state, r3, [1u8; 32], [2u8; 32], None, 11).unwrap();
+        let _r5 = apply_challenge_at_height(
+            &mut state,
+            r4,
+            "challenger5001".into(),
+            10,
+            "challenger5001".into(),
+            12,
+        )
+        .unwrap();
+
+        let summary = summarize_hot_objects(
+            &state,
+            &[MockTx::Resolve {
+                task_id: 5001,
+                slash_worker: true,
+                resolver: "authority-a".into(),
+            }],
+        );
+
+        assert_eq!(summary.hot_tx_count, 1);
+        assert!(summary.labels.contains_key(CHALLENGE_ESCROW_ACCOUNT));
+        assert!(summary
+            .labels
+            .contains_key(CHALLENGE_FORFEIT_TREASURY_ACCOUNT));
+        assert!(summary.labels.contains_key(WORKER_SLASH_TREASURY_ACCOUNT));
+        assert!(summary
+            .labels
+            .contains_key(RESOLVE_PENDING_APPROVAL_HOT_LABEL));
+        assert!(summary.labels.contains_key(RESOLVE_AUTHORITY_HOT_LABEL));
+    }
 
     #[test]
     fn requeue_uncommitted_txs_preserves_order_at_tail() {
@@ -2529,7 +2629,9 @@ mod tests {
         assert!(matches!(picked[0], MockTx::Challenge { .. }));
         assert!(matches!(picked[1], MockTx::CreateTask { task_id: 1, .. }));
         assert_eq!(mempool.len(), 4);
-        assert!(mempool.iter().any(|tx| matches!(tx, MockTx::Resolve { .. })));
+        assert!(mempool
+            .iter()
+            .any(|tx| matches!(tx, MockTx::Resolve { .. })));
     }
 
     #[test]
@@ -2557,6 +2659,69 @@ mod tests {
         assert!(matches!(picked[0], MockTx::CreateTask { .. }));
         assert!(matches!(picked[1], MockTx::Challenge { .. }));
         assert!(matches!(picked[2], MockTx::AcceptTask { .. }));
+    }
+
+    #[test]
+    fn critical_guard_zero_block_budget_is_noop_and_preserves_queue_order() {
+        let mut mempool = VecDeque::from(vec![
+            MockTx::CreateTask {
+                task_id: 1,
+                creator: "alice".into(),
+                bounty: 10,
+            },
+            MockTx::Challenge {
+                task_id: 1,
+                challenger: "c1".into(),
+                bond: 10,
+            },
+            MockTx::AcceptTask {
+                task_id: 1,
+                worker: "w1".into(),
+            },
+        ]);
+
+        let picked = pick_txs_with_critical_guard(&mut mempool, 0);
+        assert!(picked.is_empty());
+
+        let remaining_task_ids: Vec<u64> = mempool.iter().map(task_id_of).collect();
+        assert_eq!(remaining_task_ids, vec![1, 1, 1]);
+        assert!(matches!(mempool[0], MockTx::CreateTask { .. }));
+        assert!(matches!(mempool[1], MockTx::Challenge { .. }));
+        assert!(matches!(mempool[2], MockTx::AcceptTask { .. }));
+    }
+
+    #[test]
+    fn critical_guard_normal_only_backlog_drains_fifo_prefix_without_reordering() {
+        let mut mempool = VecDeque::from(vec![
+            MockTx::CreateTask {
+                task_id: 31,
+                creator: "alice".into(),
+                bounty: 10,
+            },
+            MockTx::AcceptTask {
+                task_id: 31,
+                worker: "w31".into(),
+            },
+            MockTx::Commit {
+                task_id: 31,
+                worker: "w31".into(),
+                committed_hash: [1u8; 32],
+            },
+            MockTx::CreateTask {
+                task_id: 32,
+                creator: "bob".into(),
+                bounty: 20,
+            },
+        ]);
+
+        let picked = pick_txs_with_critical_guard(&mut mempool, 2);
+        assert_eq!(picked.len(), 2);
+        assert!(matches!(picked[0], MockTx::CreateTask { task_id: 31, .. }));
+        assert!(matches!(picked[1], MockTx::AcceptTask { task_id: 31, .. }));
+
+        assert_eq!(mempool.len(), 2);
+        assert!(matches!(mempool[0], MockTx::Commit { task_id: 31, .. }));
+        assert!(matches!(mempool[1], MockTx::CreateTask { task_id: 32, .. }));
     }
 
     #[test]
@@ -3768,8 +3933,14 @@ mod tests {
         )
         .unwrap();
         let _ = challenged_task_fixture(&mut st, 8100);
-        st.stage_or_confirm_resolve_approval(8100, 1, true, "authority-a", "authority-a,authority-b")
-            .unwrap();
+        st.stage_or_confirm_resolve_approval(
+            8100,
+            1,
+            true,
+            "authority-a",
+            "authority-a,authority-b",
+        )
+        .unwrap();
         let before_task = st.get_task(8100).unwrap();
         let before_worker = st.balance_of("worker8100");
         let before_challenger = st.balance_of("challenger");
@@ -3843,6 +4014,122 @@ mod tests {
         assert_eq!(st.pending_resolve_approval(r5.id), None);
         assert_eq!(st.get_task(r5.id).unwrap().status, TaskStatus::Slashed);
         assert!(st.get_ref(r5.id).unwrap().version > r5.version);
+    }
+
+    #[test]
+    fn paused_node_gate_skips_second_multisig_resolve_without_mutating_staged_or_escrow_state() {
+        let mut st = StateStore::new();
+        st.set_gov_param_bootstrap_unchecked(
+            9_500,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .unwrap();
+        let (r5, _, _) = challenged_task_fixture(&mut st, 8109);
+
+        let first = apply_one(
+            &mut st,
+            MockTx::Resolve {
+                task_id: r5.id,
+                slash_worker: true,
+                resolver: "authority-a".into(),
+            },
+            130,
+        );
+        assert!(matches!(
+            first.unwrap_err().downcast::<trnm_pouw::PouwError>(),
+            Ok(trnm_pouw::PouwError::ResolveApprovalStaged)
+        ));
+        assert_eq!(st.pending_resolve_approval(r5.id), Some((true, 1)));
+
+        st.set_gov_param(9_999, 7_999, "emergency_pause".into(), "true".into())
+            .expect("pause toggle must apply immediately");
+        assert!(st.is_emergency_paused());
+
+        let paused_tx = MockTx::Resolve {
+            task_id: r5.id,
+            slash_worker: true,
+            resolver: "authority-b".into(),
+        };
+        assert!(is_rejected_by_emergency_pause(true, &paused_tx));
+
+        let task_before = st.get_task(r5.id).expect("challenged task must exist");
+        let pending_before = st.pending_resolve_approval(r5.id);
+        let first_approver_before = st.pending_resolve_first_approver(r5.id);
+        let escrow_before = st.balance_of("treasury.challenge_escrow");
+        let forfeit_before = st.balance_of("treasury.challenge_forfeits");
+
+        // Commit-loop behavior under pause is to reject/skip high-risk tx before apply_one.
+        if !is_rejected_by_emergency_pause(st.is_emergency_paused(), &paused_tx) {
+            let _ = apply_one(&mut st, paused_tx, 131);
+        }
+
+        assert_eq!(
+            st.pending_resolve_approval(r5.id),
+            pending_before,
+            "pause gate must preserve previously staged multisig approval"
+        );
+        assert_eq!(
+            st.pending_resolve_first_approver(r5.id),
+            first_approver_before,
+            "pause gate must preserve staged first approver identity"
+        );
+        assert_eq!(
+            st.get_task(r5.id).expect("task should remain challenged"),
+            task_before
+        );
+        assert_eq!(st.balance_of("treasury.challenge_escrow"), escrow_before);
+        assert_eq!(st.balance_of("treasury.challenge_forfeits"), forfeit_before);
+    }
+
+    #[test]
+    fn paused_node_gate_skips_first_multisig_resolve_without_staging_or_escrow_drift() {
+        let mut st = StateStore::new();
+        st.set_gov_param_bootstrap_unchecked(
+            9_500,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .unwrap();
+        let (r5, _, _) = challenged_task_fixture(&mut st, 8_109_1);
+
+        st.set_gov_param(9_999, 7_999, "emergency_pause".into(), "true".into())
+            .expect("pause toggle must apply immediately");
+        assert!(st.is_emergency_paused());
+
+        let paused_tx = MockTx::Resolve {
+            task_id: r5.id,
+            slash_worker: true,
+            resolver: "authority-a".into(),
+        };
+        assert!(is_rejected_by_emergency_pause(true, &paused_tx));
+
+        let task_before = st.get_task(r5.id).expect("challenged task must exist");
+        let pending_before = st.pending_resolve_approval(r5.id);
+        let first_approver_before = st.pending_resolve_first_approver(r5.id);
+        let escrow_before = st.balance_of("treasury.challenge_escrow");
+        let forfeit_before = st.balance_of("treasury.challenge_forfeits");
+
+        if !is_rejected_by_emergency_pause(st.is_emergency_paused(), &paused_tx) {
+            let _ = apply_one(&mut st, paused_tx, 131);
+        }
+
+        assert_eq!(
+            st.pending_resolve_approval(r5.id),
+            pending_before,
+            "pause gate must block first multisig approval staging"
+        );
+        assert_eq!(
+            st.pending_resolve_first_approver(r5.id),
+            first_approver_before,
+            "pause gate must not synthesize staged first approver state"
+        );
+        assert_eq!(
+            st.get_task(r5.id).expect("task should remain challenged"),
+            task_before
+        );
+        assert_eq!(st.balance_of("treasury.challenge_escrow"), escrow_before);
+        assert_eq!(st.balance_of("treasury.challenge_forfeits"), forfeit_before);
     }
 
     #[test]
@@ -4159,7 +4446,10 @@ mod tests {
             "authority8101".into(),
         )
         .expect_err("first multisig approver should stage only");
-        assert!(matches!(staged, trnm_pouw::PouwError::ResolveApprovalStaged));
+        assert!(matches!(
+            staged,
+            trnm_pouw::PouwError::ResolveApprovalStaged
+        ));
         let _r7 = apply_resolve(
             &mut st,
             r5,
@@ -4226,7 +4516,10 @@ mod tests {
             "authority8102".into(),
         )
         .expect_err("first multisig approver should stage only");
-        assert!(matches!(staged, trnm_pouw::PouwError::ResolveApprovalStaged));
+        assert!(matches!(
+            staged,
+            trnm_pouw::PouwError::ResolveApprovalStaged
+        ));
         let _r7 = apply_resolve(
             &mut st,
             r5,
@@ -4653,6 +4946,11 @@ fn main() -> Result<()> {
     }
     let mut known_task_ids: HashSet<u64> = HashSet::new();
     let mut finality_samples_ms: Vec<u128> = Vec::new();
+    let mut scheduler_samples_ms: Vec<u128> = Vec::new();
+    let mut preexec_samples_ms: Vec<u128> = Vec::new();
+    let mut commit_samples_ms: Vec<u128> = Vec::new();
+    let mut state_root_total_samples_ms: Vec<u128> = Vec::new();
+    let mut critical_wait_blocks_samples: Vec<u128> = Vec::new();
     let mut preexec_reject_total: u64 = 0;
     let mut apply_error_total: u64 = 0;
     let mut apply_error_preexec_conflict_miss_total: u64 = 0;
@@ -4763,6 +5061,7 @@ fn main() -> Result<()> {
         bft_committed_heights += 1;
 
         let mut applied = 0u64;
+        let scheduler_start = Instant::now();
         let ordering_decision = decide_order_for_commit(
             &state,
             &picked,
@@ -4770,17 +5069,12 @@ fn main() -> Result<()> {
             args.enable_da_ordering_decouple,
             height,
         );
+        let scheduler_elapsed_ms = scheduler_start.elapsed().as_millis();
+        scheduler_samples_ms.push(scheduler_elapsed_ms);
+        preexec_samples_ms.push(ordering_decision.preexec_elapsed_ms);
+        critical_wait_blocks_samples.push(ordering_decision.critical_wait_blocks as u128);
         preexec_reject_total += ordering_decision.rejected;
-        let group_count = if args.enable_da_ordering_decouple {
-            usize::from(!ordering_decision.ordered_ids.is_empty())
-        } else {
-            let plan: Vec<Tx> = picked
-                .iter()
-                .enumerate()
-                .map(|(i, tx)| read_write_decl(&state, tx, (i as u64) + 1))
-                .collect();
-            build_parallel_groups(&plan).len()
-        };
+        let group_count = ordering_decision.group_count;
 
         let rl_advisor: Box<dyn RlAdvisor> = if args.rl_advisor_shadow {
             Box::new(ShadowOnlyRlAdvisor {
@@ -4802,7 +5096,10 @@ fn main() -> Result<()> {
             );
         }
 
+        let commit_start = Instant::now();
         let mut last_state_root_hex: Option<String> = None;
+        let mut state_root_total_ms = 0u128;
+        let mut rollback_count = 0u64;
         for id in ordering_decision.ordered_ids {
             let idx = (id - 1) as usize;
             let tx = picked[idx].clone();
@@ -4827,7 +5124,9 @@ fn main() -> Result<()> {
                     applied += 1;
                     known_task_ids.insert(task_id);
                     let to_status = status_name(&state, task_id);
+                    let state_root_start = Instant::now();
                     let root = hex::encode(state.state_root());
+                    state_root_total_ms += state_root_start.elapsed().as_millis();
                     last_state_root_hex = Some(root.clone());
                     let challenger_account: Option<String> = match &tx {
                         MockTx::Challenge { challenger, .. } => Some(challenger.clone()),
@@ -4863,6 +5162,7 @@ fn main() -> Result<()> {
                     rollback_tx_snapshot(&mut state, before);
                     apply_error_total += 1;
                     rollback_total += 1;
+                    rollback_count += 1;
                     match err_kind {
                         "version_conflict" => apply_error_version_conflict_total += 1,
                         "preexec_conflict_miss" => apply_error_preexec_conflict_miss_total += 1,
@@ -4879,7 +5179,9 @@ fn main() -> Result<()> {
                 applied += 1;
                 known_task_ids.insert(task_id);
                 let to_status = status_name(&state, task_id);
+                let state_root_start = Instant::now();
                 let root = hex::encode(state.state_root());
+                state_root_total_ms += state_root_start.elapsed().as_millis();
                 last_state_root_hex = Some(root.clone());
                 let challenger_account: Option<String> = match &tx {
                     MockTx::Challenge { challenger, .. } => Some(challenger.clone()),
@@ -4921,14 +5223,33 @@ fn main() -> Result<()> {
             }
         }
 
-        let root = last_state_root_hex
-            .clone()
-            .unwrap_or_else(|| hex::encode(state.state_root()));
+        let root = if let Some(root) = last_state_root_hex.clone() {
+            root
+        } else {
+            let state_root_start = Instant::now();
+            let root = hex::encode(state.state_root());
+            state_root_total_ms += state_root_start.elapsed().as_millis();
+            root
+        };
+        let commit_elapsed_ms = commit_start.elapsed().as_millis();
+        commit_samples_ms.push(commit_elapsed_ms);
+        state_root_total_samples_ms.push(state_root_total_ms);
         let elapsed_ms = block_start.elapsed().as_millis();
         finality_samples_ms.push(elapsed_ms);
         println!(
-            "[block] node={} height={} txs={} groups={} state_root={} elapsed_ms={}",
-            cfg.node_id, height, applied, group_count, root, elapsed_ms
+            "[block] node={} height={} txs={} groups={} rollback_count={} critical_wait_blocks={} scheduler_elapsed_ms={} preexec_elapsed_ms={} commit_elapsed_ms={} state_root_total_ms={} state_root={} elapsed_ms={}",
+            cfg.node_id,
+            height,
+            applied,
+            group_count,
+            rollback_count,
+            ordering_decision.critical_wait_blocks,
+            scheduler_elapsed_ms,
+            ordering_decision.preexec_elapsed_ms,
+            commit_elapsed_ms,
+            state_root_total_ms,
+            root,
+            elapsed_ms
         );
 
         let wal_entry = WalMeta {
@@ -4977,6 +5298,16 @@ fn main() -> Result<()> {
 
     let finality_p50 = percentile(finality_samples_ms.clone(), 0.50);
     let finality_p95 = percentile(finality_samples_ms.clone(), 0.95);
+    let scheduler_p50 = percentile(scheduler_samples_ms.clone(), 0.50);
+    let scheduler_p95 = percentile(scheduler_samples_ms.clone(), 0.95);
+    let preexec_p50 = percentile(preexec_samples_ms.clone(), 0.50);
+    let preexec_p95 = percentile(preexec_samples_ms.clone(), 0.95);
+    let commit_p50 = percentile(commit_samples_ms.clone(), 0.50);
+    let commit_p95 = percentile(commit_samples_ms.clone(), 0.95);
+    let state_root_total_p50 = percentile(state_root_total_samples_ms.clone(), 0.50);
+    let state_root_total_p95 = percentile(state_root_total_samples_ms.clone(), 0.95);
+    let critical_wait_blocks_p50 = percentile(critical_wait_blocks_samples.clone(), 0.50);
+    let critical_wait_blocks_p95 = percentile(critical_wait_blocks_samples.clone(), 0.95);
     let recovery_error_rate = if finality_samples_ms.is_empty() {
         0.0
     } else {
@@ -4988,9 +5319,19 @@ fn main() -> Result<()> {
         .map(|h| h.missed_proposals)
         .collect();
     println!(
-        "[consensus] finality_p50_ms={} finality_p95_ms={} preexec_reject_total={} apply_error_total={} apply_error_preexec_conflict_miss_total={} apply_error_version_conflict_total={} apply_error_invalid_transition_total={} apply_error_deadline_exceeded_total={} apply_error_semantic_fail_total={} rollback_total={} timeout_migrated_total={} recovery_error_rate={:.6} bft_committed_heights={} bft_round_change_total={} bft_round_change_backoff_total_ms={} bft_leader_missed_proposals={:?} bft_double_vote_total={} bft_auth_reject_bad_sig_total={} bft_auth_reject_replay_total={} bft_auth_reject_stale_nonce_total={}",
+        "[consensus] finality_p50_ms={} finality_p95_ms={} scheduler_elapsed_p50_ms={} scheduler_elapsed_p95_ms={} preexec_elapsed_p50_ms={} preexec_elapsed_p95_ms={} commit_elapsed_p50_ms={} commit_elapsed_p95_ms={} state_root_total_p50_ms={} state_root_total_p95_ms={} critical_wait_blocks_p50={} critical_wait_blocks_p95={} preexec_reject_total={} apply_error_total={} apply_error_preexec_conflict_miss_total={} apply_error_version_conflict_total={} apply_error_invalid_transition_total={} apply_error_deadline_exceeded_total={} apply_error_semantic_fail_total={} rollback_total={} timeout_migrated_total={} recovery_error_rate={:.6} bft_committed_heights={} bft_round_change_total={} bft_round_change_backoff_total_ms={} bft_leader_missed_proposals={:?} bft_double_vote_total={} bft_auth_reject_bad_sig_total={} bft_auth_reject_replay_total={} bft_auth_reject_stale_nonce_total={}",
         finality_p50,
         finality_p95,
+        scheduler_p50,
+        scheduler_p95,
+        preexec_p50,
+        preexec_p95,
+        commit_p50,
+        commit_p95,
+        state_root_total_p50,
+        state_root_total_p95,
+        critical_wait_blocks_p50,
+        critical_wait_blocks_p95,
         preexec_reject_total,
         apply_error_total,
         apply_error_preexec_conflict_miss_total,

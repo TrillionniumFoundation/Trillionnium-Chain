@@ -20,6 +20,7 @@ pub struct GroupingProfile {
     pub max_group_size: usize,
     pub min_group_size: usize,
     pub avg_group_size: f64,
+    pub hot_object_share: f64,
     pub conflict_checks: usize,
     pub conflict_hits: usize,
     pub candidate_groups_scanned: usize,
@@ -51,6 +52,16 @@ pub fn detect_conflict(a: &Tx, b: &Tx) -> bool {
     // the common telemetry/transfer path where writes are absent.
     if a.write_set.is_empty() && b.write_set.is_empty() {
         return false;
+    }
+
+    // Asymmetric fast paths: when one side is read-only, only a single probe can
+    // produce a write/read hazard. This trims two unnecessary intersections from
+    // hot free-ingress scheduling probes under mixed read-only traffic.
+    if a.write_set.is_empty() {
+        return intersects(&a.read_set, &b.write_set);
+    }
+    if b.write_set.is_empty() {
+        return intersects(&a.write_set, &b.read_set);
     }
 
     intersects(&a.write_set, &b.write_set)
@@ -196,10 +207,11 @@ fn vec_hashset_intersects(a: &[u64], b: &HashSet<u64>) -> bool {
         return a.contains(&only);
     }
 
-    // Tiny vector fast path: duplicate-heavy conflict domains can repeatedly probe
-    // the same key in hot scheduling loops. Dedup the probe side in-place to keep
-    // hash lookups bounded without paying HashSet allocation cost.
-    if a.len() <= 8 {
+    // Small/medium vector fast path: duplicate-heavy conflict domains can
+    // repeatedly probe the same key in hot scheduling loops. Dedup the probe
+    // side in-place to keep hash lookups bounded without paying HashSet
+    // allocation cost.
+    if a.len() <= 32 {
         let mut seen: Vec<u64> = Vec::with_capacity(a.len());
         for k in a {
             if !seen.contains(k) {
@@ -227,6 +239,31 @@ pub fn build_parallel_groups(txs: &[Tx]) -> Vec<Vec<Tx>> {
     build_parallel_groups_profile(txs).0
 }
 
+fn hot_object_share(txs: &[Tx]) -> f64 {
+    let mut counts: HashMap<u64, usize> = HashMap::new();
+    let mut total = 0usize;
+
+    for tx in txs {
+        let mut keys = dedup_access_keys(&tx.read_set);
+        for key in dedup_access_keys(&tx.write_set) {
+            if !keys.contains(&key) {
+                keys.push(key);
+            }
+        }
+        total += keys.len();
+        for key in keys {
+            *counts.entry(key).or_insert(0) += 1;
+        }
+    }
+
+    if total == 0 {
+        return 0.0;
+    }
+
+    let hottest = counts.values().copied().max().unwrap_or(0);
+    hottest as f64 / total as f64
+}
+
 pub fn build_parallel_groups_profile(txs: &[Tx]) -> (Vec<Vec<Tx>>, GroupingProfile) {
     build_parallel_groups_profile_with_strategy(txs, GroupingStrategy::Original)
 }
@@ -245,6 +282,7 @@ pub fn build_parallel_groups_profile_with_strategy(
                 max_group_size: 0,
                 min_group_size: 0,
                 avg_group_size: 0.0,
+                hot_object_share: 0.0,
                 conflict_checks: 0,
                 conflict_hits: 0,
                 candidate_groups_scanned: 0,
@@ -270,6 +308,38 @@ pub fn build_parallel_groups_profile_with_strategy(
 
     let mut ordered: Vec<Tx> = txs.to_vec();
     reorder_for_strategy(&mut ordered, selected);
+
+    // Free-ingress fast path: when no tx carries read/write footprint, all txs are
+    // conflict-independent and land in a single execution group. Skip per-key map
+    // bookkeeping in this hot path to reduce scheduler overhead at high ingress.
+    if ordered
+        .iter()
+        .all(|tx| tx.read_set.is_empty() && tx.write_set.is_empty())
+    {
+        let grouped_count = ordered.len();
+        let avg_group_size = grouped_count as f64;
+        return (
+            vec![ordered],
+            GroupingProfile {
+                tx_count: txs.len(),
+                group_count: 1,
+                grouped_count,
+                max_group_size: grouped_count,
+                min_group_size: grouped_count,
+                avg_group_size,
+                hot_object_share: 0.0,
+                conflict_checks: 0,
+                conflict_hits: 0,
+                candidate_groups_scanned: 0,
+                stage_ww_checks: 0,
+                stage_ww_hits: 0,
+                stage_wr_checks: 0,
+                stage_wr_hits: 0,
+                stage_rw_checks: 0,
+                stage_rw_hits: 0,
+            },
+        );
+    }
 
     if matches!(selected, GroupingStrategy::AggressiveGreedy) {
         return build_parallel_groups_aggressive_profile(txs, ordered);
@@ -342,6 +412,7 @@ pub fn build_parallel_groups_profile_with_strategy(
     } else {
         grouped_count as f64 / group_count as f64
     };
+    let hot_object_share = hot_object_share(txs);
 
     (
         groups,
@@ -352,6 +423,7 @@ pub fn build_parallel_groups_profile_with_strategy(
             max_group_size,
             min_group_size,
             avg_group_size,
+            hot_object_share,
             conflict_checks,
             conflict_hits,
             candidate_groups_scanned: 0,
@@ -427,6 +499,7 @@ fn build_parallel_groups_aggressive_profile(
         } else {
             grouped_count as f64 / group_count as f64
         };
+        let hot_object_share = hot_object_share(original_txs);
 
         return (
             groups,
@@ -437,6 +510,7 @@ fn build_parallel_groups_aggressive_profile(
                 max_group_size,
                 min_group_size,
                 avg_group_size,
+                hot_object_share,
                 conflict_checks,
                 conflict_hits,
                 candidate_groups_scanned: 0,
@@ -582,6 +656,7 @@ fn build_parallel_groups_aggressive_profile(
     } else {
         grouped_count as f64 / group_count as f64
     };
+    let hot_object_share = hot_object_share(original_txs);
 
     (
         groups,
@@ -592,6 +667,7 @@ fn build_parallel_groups_aggressive_profile(
             max_group_size,
             min_group_size,
             avg_group_size,
+            hot_object_share,
             conflict_checks,
             conflict_hits,
             candidate_groups_scanned,
@@ -922,21 +998,36 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
             if txs.len() < 4 {
                 return;
             }
+            // Free-ingress (empty read/write sets) has no conflict-domain signal to
+            // interleave on. Skip bucket materialization/probing and preserve stable
+            // order to reduce scheduler overhead on the no-access hot path.
+            if txs
+                .iter()
+                .all(|tx| tx.read_set.is_empty() && tx.write_set.is_empty())
+            {
+                return;
+            }
             // Cap bucket fanout by input size: for tiny batches this avoids allocating
             // and probing empty buckets while preserving the same interleave semantics.
             let buckets_n = hot_bucket_count().min(txs.len());
-            let mut buckets: Vec<Vec<Tx>> = vec![Vec::new(); buckets_n];
+            // Misconfigured/trimmed bucket fanout can collapse to a single bucket,
+            // where interleave degenerates to identity while still paying probe cost.
+            if buckets_n <= 1 {
+                return;
+            }
+            let mut bucket_depths = vec![0usize; buckets_n];
+            let mut tx_bucket_hints = Vec::with_capacity(txs.len());
             let mut non_empty_buckets = 0usize;
 
-            for tx in txs.iter().cloned() {
-                // Prefer write-set as stronger conflict signal; fold a second key when present
-                // to reduce bucket skew for mixed workloads.
-                let bucket = hot_bucket_hint(&tx, buckets_n);
-                let target = &mut buckets[bucket];
-                if target.is_empty() {
+            for tx in txs.iter() {
+                // First pass: count occupancy only. This lets hotspot/singleton
+                // short-circuits bail out before cloning tx payloads into buckets.
+                let bucket = hot_bucket_hint(tx, buckets_n);
+                tx_bucket_hints.push(bucket);
+                if bucket_depths[bucket] == 0 {
                     non_empty_buckets += 1;
                 }
-                target.push(tx);
+                bucket_depths[bucket] += 1;
             }
 
             // Degenerate hotspot fast path: if all txs landed in the same bucket,
@@ -954,24 +1045,20 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
                 return;
             }
 
-            // Keep insertion order inside each bucket (already stable by input stream);
-            // avoid extra O(n log n) sorting cost.
+            // Reuse the precomputed first bucket hint instead of re-hashing the
+            // first tx on the hot-path round-robin seed selection.
+            let first_hint = tx_bucket_hints.first().copied().unwrap_or(0);
 
             // Stable round-robin with move semantics (avoid per-tx clone cost).
-            let n = buckets.len();
+            let n = buckets_n;
             let mut merged = Vec::with_capacity(txs.len());
             // Under highly skewed hot-bucket loads, start from the sparsest non-empty
             // bucket so low-volume conflict domains are serviced promptly instead of
             // always waiting behind the dominant lane at cycle start.
-            let first_hint = txs
-                .first()
-                .map(|tx| hot_bucket_hint(tx, n))
-                .unwrap_or(0);
             let sparse_start = {
                 let mut min_non_zero = usize::MAX;
                 let mut max_depth = 0usize;
-                for bucket in &buckets {
-                    let depth = bucket.len();
+                for &depth in &bucket_depths {
                     if depth == 0 {
                         continue;
                     }
@@ -986,8 +1073,7 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
                     let mut best_idx = None;
                     let mut best_distance = usize::MAX;
                     let mut best_counter_clockwise = usize::MAX;
-                    for (idx, bucket) in buckets.iter().enumerate() {
-                        let depth = bucket.len();
+                    for (idx, &depth) in bucket_depths.iter().enumerate() {
                         if depth != min_non_zero {
                             continue;
                         }
@@ -1008,6 +1094,19 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
                     None
                 }
             };
+
+            let mut buckets: Vec<Vec<Tx>> = bucket_depths
+                .iter()
+                .map(|depth| Vec::with_capacity(*depth))
+                .collect();
+            for (tx, bucket) in txs.iter().cloned().zip(tx_bucket_hints.into_iter()) {
+                // Prefer write-set as stronger conflict signal; fold a second key when present
+                // to reduce bucket skew for mixed workloads.
+                buckets[bucket].push(tx);
+            }
+
+            // Keep insertion order inside each bucket (already stable by input stream);
+            // avoid extra O(n log n) sorting cost.
             let mut iters: Vec<std::vec::IntoIter<Tx>> =
                 buckets.into_iter().map(|b| b.into_iter()).collect();
             // Seed the initial bucket probe from either sparse anti-starvation hint
@@ -1132,6 +1231,23 @@ mod tests {
     }
 
     #[test]
+    fn vec_hashset_intersects_medium_duplicate_probe_path_preserves_semantics() {
+        let domain: HashSet<u64> = [77u64, 88u64].into_iter().collect();
+
+        // Medium duplicate-heavy probe vectors should still preserve hit/miss
+        // correctness while capping repeated hash probes.
+        let hit = [
+            1, 1, 2, 2, 3, 3, 4, 4, 77, 77, 77, 5, 5, 6, 6, 7, 7, 8, 8, 9,
+        ];
+        let miss = [
+            1, 1, 2, 2, 3, 3, 4, 4, 55, 55, 56, 56, 57, 57, 58, 58, 59, 59, 60, 60,
+        ];
+
+        assert!(vec_hashset_intersects(&hit, &domain));
+        assert!(!vec_hashset_intersects(&miss, &domain));
+    }
+
+    #[test]
     fn skewed_small_vs_large_conflict_path_handles_large_domains() {
         let small_write = tx(1, vec![], vec![o(101), o(202), o(303), o(404)]);
         let mut wide_read_hit: Vec<ObjectRef> = (1..=64).map(o).collect();
@@ -1168,8 +1284,7 @@ mod tests {
         let small_write = tx(1, vec![], vec![o(901), o(902), o(903), o(904), o(905)]);
         let mut very_wide_read_hit: Vec<ObjectRef> = (1..=256).map(|id| o(30_000 + id)).collect();
         very_wide_read_hit.push(o(904));
-        let very_wide_read_miss: Vec<ObjectRef> =
-            (1..=256).map(|id| o(40_000 + id)).collect();
+        let very_wide_read_miss: Vec<ObjectRef> = (1..=256).map(|id| o(40_000 + id)).collect();
 
         assert!(detect_conflict(
             &small_write,
@@ -1349,8 +1464,11 @@ mod tests {
 
         reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
         // Sparse anti-starvation seeding should only engage at >=2x skew. For 3:2,
-        // keep first-hot-hint ordering to avoid unnecessary lane rotation overhead.
-        assert_eq!(txs.first().map(|t| t.id), Some(391));
+        // keep first-hot-hint ordering and deterministic pass rotation from bucket 0.
+        assert_eq!(
+            txs.iter().map(|t| t.id).collect::<Vec<_>>(),
+            vec![391, 393, 392, 395, 394]
+        );
     }
 
     #[test]
@@ -1371,10 +1489,10 @@ mod tests {
     #[test]
     fn hot_bucket_interleave_sparse_tie_prefers_nearest_bucket_across_ring_wrap() {
         let mut txs = vec![
-            tx(411, vec![], vec![o(0)]),  // first hot hint bucket 0
-            tx(412, vec![], vec![o(8)]),  // same hot bucket (depth 2)
-            tx(413, vec![], vec![o(1)]),  // sparse bucket +1 clockwise
-            tx(414, vec![], vec![o(7)]),  // sparse bucket -1 counter-clockwise
+            tx(411, vec![], vec![o(0)]), // first hot hint bucket 0
+            tx(412, vec![], vec![o(8)]), // same hot bucket (depth 2)
+            tx(413, vec![], vec![o(1)]), // sparse bucket +1 clockwise
+            tx(414, vec![], vec![o(7)]), // sparse bucket -1 counter-clockwise
         ];
 
         reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
@@ -1420,6 +1538,24 @@ mod tests {
     }
 
     #[test]
+    fn hot_bucket_interleave_short_circuits_empty_access_batches() {
+        let mut txs = vec![
+            tx(31, vec![], vec![]),
+            tx(32, vec![], vec![]),
+            tx(33, vec![], vec![]),
+            tx(34, vec![], vec![]),
+        ];
+
+        reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
+        // Empty-access free-ingress has no conflict-domain signal; keep stable
+        // order and avoid bucket allocation/probing overhead.
+        assert_eq!(
+            txs.iter().map(|t| t.id).collect::<Vec<_>>(),
+            vec![31, 32, 33, 34]
+        );
+    }
+
+    #[test]
     fn hot_bucket_interleave_short_circuits_single_bucket_hotspot() {
         let mut txs = vec![
             tx(61, vec![], vec![o(8)]),
@@ -1431,7 +1567,10 @@ mod tests {
         reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
         // All keys map to bucket 0 under the default 8-bucket layout; interleave
         // is a no-op and should return early without extra round-robin passes.
-        assert_eq!(txs.iter().map(|t| t.id).collect::<Vec<_>>(), vec![61, 62, 63, 64]);
+        assert_eq!(
+            txs.iter().map(|t| t.id).collect::<Vec<_>>(),
+            vec![61, 62, 63, 64]
+        );
     }
 
     #[test]
@@ -1446,7 +1585,10 @@ mod tests {
         reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
         // With singleton occupancy across non-empty buckets there are no same-key
         // streaks to break; keep ingress order and avoid extra round-robin probing.
-        assert_eq!(txs.iter().map(|t| t.id).collect::<Vec<_>>(), vec![71, 72, 73, 74]);
+        assert_eq!(
+            txs.iter().map(|t| t.id).collect::<Vec<_>>(),
+            vec![71, 72, 73, 74]
+        );
     }
 
     #[test]
@@ -1766,6 +1908,28 @@ mod tests {
         let d = auto_adaptive_decision(&txs);
         assert!(d.use_hot_bucket, "tail hotspot should be counted in sample");
         assert_eq!(d.reason, "hotspot_detected");
+    }
+
+    #[test]
+    fn free_ingress_batches_short_circuit_to_single_group_after_strategy_reorder() {
+        let txs = vec![
+            tx(9, vec![], vec![]),
+            tx(3, vec![], vec![]),
+            tx(7, vec![], vec![]),
+        ];
+
+        let (groups, profile) =
+            build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::WriteFirst);
+
+        assert_eq!(groups.len(), 1);
+        assert_eq!(groups[0].len(), txs.len());
+        // WriteFirst tie-breaks by tx id; fast path must preserve strategy reorder.
+        assert_eq!(groups[0].iter().map(|t| t.id).collect::<Vec<_>>(), vec![3, 7, 9]);
+        assert_eq!(profile.conflict_checks, 0);
+        assert_eq!(profile.conflict_hits, 0);
+        assert_eq!(profile.group_count, 1);
+        assert_eq!(profile.max_group_size, txs.len());
+        assert_eq!(profile.min_group_size, txs.len());
     }
 
     #[test]

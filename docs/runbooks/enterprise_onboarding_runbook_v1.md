@@ -53,6 +53,8 @@
   - `trnm-onboard rollback --org-id <org_id> --env <env> --change-ticket-id <change_ticket_id> --operator-id <operator_id> --root-cause-tag <root_cause_tag>`
 - 先执行一次 `--dry-run` 预演，确认参数与目标环境一致后再执行真实回滚：
   - `trnm-onboard rollback --org-id <org_id> --env <env> --change-ticket-id <change_ticket_id> --operator-id <operator_id> --root-cause-tag <root_cause_tag> --dry-run`
+- 为避免 CI/主机本地化差异导致证据漂移，建议 dry-run 一律使用 deterministic 前缀（`TZ=UTC LC_ALL=C LANG=C`）：
+  - `env TZ=UTC LC_ALL=C LANG=C trnm-onboard rollback --org-id <org_id> --env <env> --change-ticket-id <change_ticket_id> --root-cause-tag <root_cause_tag> --dry-run`
 - 单事件回滚建议追加 `--request-id <request_id>` 形成审计锚点（与 root_cause_tag 一起固化）。
   - `trnm-onboard rollback --org-id <org_id> --env <env> --change-ticket-id <change_ticket_id> --root-cause-tag <root_cause_tag> --request-id <request_id>`
   - `trnm-onboard rollback --org-id <org_id> --env <env> --change-ticket-id <change_ticket_id> --root-cause-tag <root_cause_tag> --request-id <request_id> --dry-run`
@@ -66,6 +68,7 @@
 - 回滚后必须执行一次按 `request_id` 的回放校验，确认目标事件状态已转为 `reverted` 且不再可重复回滚（幂等）。
   - `trnm-onboard replay --request-id <request_id> --expect-status reverted --expect-idempotent`
   - `trnm-onboard replay --request-id <request_id> --expect-status reverted --expect-idempotent --dry-run`
+  - `env TZ=UTC LC_ALL=C LANG=C trnm-onboard replay --request-id <request_id> --expect-status reverted --expect-idempotent --dry-run`
 
 ## 6. 证据清单（Evidence Checklist）
 

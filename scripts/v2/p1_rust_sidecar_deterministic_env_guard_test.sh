@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
-WF="$ROOT/.github/workflows/agent-user-phasea-gate.yml"
+WF="$ROOT/.github/workflows/p1-rust-sidecar.yml"
 
 if [[ ! -f "$WF" ]]; then
   echo "[FAIL] missing workflow: $WF" >&2
@@ -10,22 +10,22 @@ if [[ ! -f "$WF" ]]; then
 fi
 
 required_lines=(
-  'timeout-minutes: 20'
+  'timeout-minutes: 45'
   'TZ: UTC'
   'LANG: C.UTF-8'
   'LC_ALL: C.UTF-8'
   'LC_NUMERIC: C'
   'LC_COLLATE: C'
-  'LC_TIME: C'
-  "PYTHONHASHSEED: '0'"
-  "CI: 'true'"
+  'PYTHONHASHSEED: "0"'
+  'HOMEBREW_NO_AUTO_UPDATE: "1"'
+  'CI: "true"'
 )
 
 for line in "${required_lines[@]}"; do
   if ! grep -Fq -- "$line" "$WF"; then
-    echo "[FAIL] missing deterministic agent-user-phasea-gate guard: $line" >&2
+    echo "[FAIL] missing deterministic p1-rust-sidecar guard: $line" >&2
     exit 1
   fi
 done
 
-echo "[PASS] agent-user-phasea-gate keeps deterministic env + timeout guards"
+echo "[PASS] p1-rust-sidecar keeps deterministic env + timeout guards"

@@ -23,6 +23,7 @@ required_lines=(
   'LC_PAPER: C'
   'LC_ADDRESS: C'
   'LC_NAME: C'
+  'LC_TELEPHONE: C'
   'PYTHONHASHSEED: "0"'
   'PYTHONDONTWRITEBYTECODE: "1"'
   'CI: "true"'

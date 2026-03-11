@@ -5,15 +5,27 @@ fn normal_backlog_gets_service_within_one_pop_after_arrival_under_critical_press
     let mut gate = LaneAdmissionGate::new(8, 3);
 
     // Establish sustained critical pressure and consume a few critical turns.
-    assert_eq!(gate.admit(100, IngressClass::Critical), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(101, IngressClass::Critical), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(102, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(100, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
+    assert_eq!(
+        gate.admit(101, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
+    assert_eq!(
+        gate.admit(102, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.pop_ready(), Some(100));
     assert_eq!(gate.pop_ready(), Some(101));
 
     // Normal traffic appears while critical backlog is still active.
     assert_eq!(gate.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(103, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(103, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
 
     // Anti-starvation contract: normal gets a turn no later than the next dequeue.
     // (Immediate service is acceptable and currently expected.)
@@ -27,12 +39,21 @@ fn critical_spillover_in_normal_lane_gets_turn_within_one_pop_under_critical_pre
     let mut gate = LaneAdmissionGate::new(6, 2);
 
     // Saturate reserved critical capacity.
-    assert_eq!(gate.admit(200, IngressClass::Critical), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(201, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(200, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
+    assert_eq!(
+        gate.admit(201, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
 
     // Keep some critical backlog active while admitting one overflow critical tx
     // via normal-lane spillover.
-    assert_eq!(gate.admit(202, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(202, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
 
     // Overflowed critical tx in normal lane should not wait through a full burst.
     let first = gate.pop_ready();
@@ -46,15 +67,24 @@ fn mixed_batch_after_full_drain_still_grants_normal_turn_within_one_pop() {
 
     // Warm fairness with dual-lane backlog and drain everything.
     assert_eq!(gate.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(100, IngressClass::Critical), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(101, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(100, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
+    assert_eq!(
+        gate.admit(101, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     let mut drained = vec![gate.pop_ready(), gate.pop_ready(), gate.pop_ready()];
     drained.sort_unstable();
     assert_eq!(drained, vec![Some(1), Some(100), Some(101)]);
 
     // Contract guard: after a full drain, the next mixed batch should still
     // preserve bounded normal latency under critical pressure.
-    assert_eq!(gate.admit(200, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(200, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
     let first = gate.pop_ready();
     let second = gate.pop_ready();
@@ -65,8 +95,14 @@ fn mixed_batch_after_full_drain_still_grants_normal_turn_within_one_pop() {
 fn reserve_only_borrowed_normal_does_not_preempt_already_queued_critical() {
     let mut gate = LaneAdmissionGate::new(3, 3);
 
-    assert_eq!(gate.admit(900, IngressClass::Critical), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(901, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(900, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
+    assert_eq!(
+        gate.admit(901, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
 
     // In reserve-only mode, normal ingress borrows critical headroom.
     assert_eq!(gate.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
@@ -83,17 +119,54 @@ fn sustained_critical_pressure_with_normal_backlog_keeps_normal_latency_bounded(
     let mut gate = LaneAdmissionGate::new(8, 3);
 
     // Build mixed backlog where normal traffic arrives while critical traffic stays active.
-    assert_eq!(gate.admit(100, IngressClass::Critical), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(101, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(100, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
+    assert_eq!(
+        gate.admit(101, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(102, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(102, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
 
     // Contract: once fairness is warm under active critical pressure, normal backlog
     // should receive service within at most one additional dequeue.
     let p1 = gate.pop_ready();
     let p2 = gate.pop_ready();
-    assert!(matches!((p1, p2),
+    assert!(matches!(
+        (p1, p2),
         (Some(1), _) | (_, Some(1)) | (Some(2), _) | (_, Some(2))
     ));
+}
+
+#[test]
+fn full_drain_resets_fairness_streak_so_next_critical_is_not_delayed() {
+    let mut gate = LaneAdmissionGate::new(6, 2);
+
+    // Warm a non-zero critical streak with active critical dequeues.
+    assert_eq!(
+        gate.admit(100, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
+    assert_eq!(
+        gate.admit(101, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
+    assert_eq!(gate.pop_ready(), Some(100));
+
+    // Drain fully so the scheduler should reset warm fairness state.
+    assert_eq!(gate.pop_ready(), Some(101));
+    assert_eq!(gate.pop_ready(), None);
+
+    // After idle reset, a fresh critical item should be served immediately.
+    assert_eq!(
+        gate.admit(200, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
+    assert_eq!(gate.pop_ready(), Some(200));
 }

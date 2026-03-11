@@ -5,7 +5,7 @@ use trnm_types::{Hash32, ObjectRef, ProofType, TaskMetadata, TaskObject, TaskSta
 
 pub mod verification;
 use verification::registry::VerifierRegistry;
-use verification::VerificationResult;
+use verification::{emit_proof_verification_observation, VerificationResult};
 
 fn get_default_registry() -> VerifierRegistry {
     VerifierRegistry::with_builtin_verifiers()
@@ -133,6 +133,19 @@ fn reject_if_deadline_exceeded_optional(
         }
     }
     Ok(())
+}
+
+fn is_ignorable_proof_payload_char(c: char) -> bool {
+    c.is_whitespace()
+        || matches!(
+            c,
+            '\u{feff}' // BOM
+                | '\u{200b}' // ZERO WIDTH SPACE
+                | '\u{200c}' // ZERO WIDTH NON-JOINER
+                | '\u{200d}' // ZERO WIDTH JOINER
+                | '\u{2060}' // WORD JOINER
+                | '\u{180e}' // MONGOLIAN VOWEL SEPARATOR
+        )
 }
 
 fn actor_id_has_hidden_or_zero_width_chars(token: &str) -> bool {
@@ -846,11 +859,7 @@ pub fn apply_reveal_result_at_height(
         let proof_payload_is_blank = proof_payload.is_empty()
             || proof_payload.iter().all(|b| b.is_ascii_whitespace())
             || std::str::from_utf8(proof_payload)
-                .map(|payload| {
-                    payload
-                        .trim_matches(|c: char| c.is_whitespace() || c == '\u{feff}')
-                        .is_empty()
-                })
+                .map(|payload| payload.trim_matches(is_ignorable_proof_payload_char).is_empty())
                 .unwrap_or(false);
         if proof_payload_is_blank {
             return Err(PouwError::State(format!(
@@ -869,6 +878,15 @@ pub fn apply_reveal_result_at_height(
         verification_task.proof_type = task.proof_type;
         verification_task.result_hash = Some(result_hash);
         let verification = registry.verify(&verification_task, proof_payload);
+        let _ = emit_proof_verification_observation(
+            &verification_task,
+            &verification,
+            format!(
+                "builtin-{}-verifier",
+                verification::proof_type_key(verification_task.proof_type)
+            ),
+            proof_payload.len(),
+        );
         match verification {
             VerificationResult::Valid => {
                 // Immediate finality for verifiable execution.
@@ -1204,7 +1222,10 @@ pub fn apply_resolve_at_height(
     // Minimal multi-party control: if governance downgrades a multisig resolver
     // set to single-authority after a first staged approval, fail closed and
     // clear stale staging so one signer cannot inherit partially-approved state.
-    if authority_members.len() <= 1 && st.pending_resolve_approval(task_ref.id).is_some() {
+    if authority_members.len() <= 1
+        && (st.pending_resolve_approval(task_ref.id).is_some()
+            || st.pending_resolve_first_approver(task_ref.id).is_some())
+    {
         st.clear_pending_resolve_approval(task_ref.id);
         return Err(PouwError::Unauthorized);
     }
@@ -1940,6 +1961,33 @@ mod tests {
     }
 
     #[test]
+    fn tee_reveal_rejects_malformed_secondary_task_id_binding_fail_closed_before_verification() {
+        let mut st = seeded_state();
+        let r1 = apply_create_task(&mut st, 7882, "alice".into(), 10).unwrap();
+        let mut tee_task = st.get_task(r1.id).unwrap();
+        tee_task.proof_type = ProofType::Tee;
+        let r1 = st.update_task(r1, tee_task).unwrap();
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+
+        let result_hash = [2u8; 32];
+        let reveal_salt = [3u8; 32];
+        let committed = compute_commitment(7882, &result_hash, &reveal_salt, "worker1");
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+
+        // Fail closed when the proof envelope repeats task_id with a malformed
+        // secondary value, even if the first binding appears canonical.
+        let proof = b"TEE:task_id=7882,task_id=7882x,worker=worker1,proof_type=tee,result_hash=0202020202020202020202020202020202020202020202020202020202020202,quote=QUOTE_XYZ".to_vec();
+        let err = apply_reveal_result(&mut st, r3.clone(), result_hash, reveal_salt, Some(proof))
+            .unwrap_err();
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("duplicate task_id binding")));
+
+        let task_after = st.get_task(r3.id).unwrap();
+        assert_eq!(task_after.status, TaskStatus::Committed);
+        assert!(task_after.result_hash.is_none());
+        assert!(task_after.reveal_salt.is_none());
+    }
+
+    #[test]
     fn zk_reveal_rejects_matching_legacy_committed_result_hash_binding_fail_closed_before_verification(
     ) {
         let mut st = seeded_state();
@@ -2132,6 +2180,33 @@ mod tests {
         let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
 
         let proof = "TEE:task_id=78923,worker=worker1,proof_type=tee,result_hash：0202020202020202020202020202020202020202020202020202020202020202,quote=QUOTE_XYZ"
+            .as_bytes()
+            .to_vec();
+        let err = apply_reveal_result(&mut st, r3.clone(), result_hash, reveal_salt, Some(proof))
+            .unwrap_err();
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("Proof verification")));
+
+        let task_after = st.get_task(r3.id).unwrap();
+        assert_eq!(task_after.status, TaskStatus::Committed);
+        assert!(task_after.result_hash.is_none());
+        assert!(task_after.reveal_salt.is_none());
+    }
+
+    #[test]
+    fn tee_reveal_rejects_fullwidth_colon_proof_type_binding_fail_closed_without_state_mutation() {
+        let mut st = seeded_state();
+        let r1 = apply_create_task(&mut st, 78924, "alice".into(), 10).unwrap();
+        let mut tee_task = st.get_task(r1.id).unwrap();
+        tee_task.proof_type = ProofType::Tee;
+        let r1 = st.update_task(r1, tee_task).unwrap();
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+
+        let result_hash = [2u8; 32];
+        let reveal_salt = [3u8; 32];
+        let committed = compute_commitment(78924, &result_hash, &reveal_salt, "worker1");
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+
+        let proof = "TEE:task_id=78924,worker=worker1,proof_type：tee,result_hash=0202020202020202020202020202020202020202020202020202020202020202,quote=QUOTE_XYZ"
             .as_bytes()
             .to_vec();
         let err = apply_reveal_result(&mut st, r3.clone(), result_hash, reveal_salt, Some(proof))
@@ -2439,6 +2514,33 @@ mod tests {
         let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
 
         let proof = "ZK:task_id=79122,worker=worker1,proof_type=zk,result_hash：0202020202020202020202020202020202020202020202020202020202020202,seal=SEAL_XYZ"
+            .as_bytes()
+            .to_vec();
+        let err = apply_reveal_result(&mut st, r3.clone(), result_hash, reveal_salt, Some(proof))
+            .unwrap_err();
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("Proof verification")));
+
+        let task_after = st.get_task(r3.id).unwrap();
+        assert_eq!(task_after.status, TaskStatus::Committed);
+        assert!(task_after.result_hash.is_none());
+        assert!(task_after.reveal_salt.is_none());
+    }
+
+    #[test]
+    fn zk_reveal_rejects_fullwidth_colon_proof_type_binding_fail_closed_without_state_mutation() {
+        let mut st = seeded_state();
+        let r1 = apply_create_task(&mut st, 79124, "alice".into(), 10).unwrap();
+        let mut zk_task = st.get_task(r1.id).unwrap();
+        zk_task.proof_type = ProofType::Zk;
+        let r1 = st.update_task(r1, zk_task).unwrap();
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+
+        let result_hash = [2u8; 32];
+        let reveal_salt = [3u8; 32];
+        let committed = compute_commitment(79124, &result_hash, &reveal_salt, "worker1");
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+
+        let proof = "ZK:task_id=79124,worker=worker1,proof_type：zk,result_hash=0202020202020202020202020202020202020202020202020202020202020202,seal=SEAL_XYZ"
             .as_bytes()
             .to_vec();
         let err = apply_reveal_result(&mut st, r3.clone(), result_hash, reveal_salt, Some(proof))
@@ -4541,6 +4643,7 @@ mod tests {
         assert_eq!(task.status, TaskStatus::Completed);
         assert_eq!(task.challenge_bond_forfeited, Some(false));
         assert_eq!(st.pending_resolve_approval(r6.id), None);
+        assert_eq!(st.pending_resolve_first_approver(r6.id), None);
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), 0);
 
         let after_total = st.balance_of("challenger")
@@ -4634,6 +4737,7 @@ mod tests {
         assert_eq!(task.status, TaskStatus::Completed);
         assert_eq!(task.challenge_bond_forfeited, Some(false));
         assert_eq!(st.pending_resolve_approval(r6.id), None);
+        assert_eq!(st.pending_resolve_first_approver(r6.id), None);
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), 0);
     }
 
@@ -4668,6 +4772,8 @@ mod tests {
         let task = st.get_task(r5.id).expect("task must exist after timeout");
         assert_eq!(task.status, TaskStatus::Completed);
         assert_eq!(task.challenge_bond_forfeited, None);
+        assert_eq!(st.pending_resolve_approval(r5.id), None);
+        assert_eq!(st.pending_resolve_first_approver(r5.id), None);
 
         // No challenged escrow path was entered; custodial balances remain unchanged.
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
@@ -4872,7 +4978,7 @@ mod tests {
         )
         .expect_err("first multisig signer should only stage pending approval");
         assert!(matches!(staged_err, PouwError::ResolveApprovalStaged));
-        assert!(matches!(st.pending_resolve_approval(r5.id), Some((_, 1))));
+        assert_eq!(st.pending_resolve_approval(r5.id), Some((false, 1)));
 
         st.set_gov_param(9_224, 7_999, "emergency_pause".into(), "true".into())
             .expect("pause=true governance update must succeed");
@@ -4893,7 +4999,7 @@ mod tests {
         )
         .expect_err("emergency pause must freeze multisig resolve settlement path");
         assert!(matches!(paused_err, PouwError::InvalidTransition));
-        assert!(matches!(st.pending_resolve_approval(r5.id), Some((_, 1))));
+        assert_eq!(st.pending_resolve_approval(r5.id), Some((false, 1)));
 
         let after_paused_task = st
             .get_task(r5.id)
@@ -5101,6 +5207,95 @@ mod tests {
         let task = st.get_task(r6.id).expect("resolved task must exist");
         assert_eq!(task.status, TaskStatus::Completed);
         assert_eq!(st.pending_resolve_approval(r6.id), None);
+    }
+
+    #[test]
+    fn challenged_pause_governance_downgrade_to_single_authority_clears_staged_multisig_on_unpause() {
+        // Decentralization boundary: if governance downgrades resolver set to
+        // single signer while paused, unpaused resolve must fail closed and wipe
+        // stale staged approvals so one actor cannot inherit partial consensus.
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        set_resolve_authority(&mut st, "authority-a,authority-b");
+
+        let r1 = apply_create_task(&mut st, 19_223_2, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(19_223_2, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 =
+            apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
+        let r4 = apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110)
+            .unwrap();
+        let r5 = apply_challenge_at_height(
+            &mut st,
+            r4,
+            "challenger".into(),
+            10,
+            "challenger".into(),
+            210,
+        )
+        .unwrap();
+
+        let stage_err = apply_resolve_at_height(
+            &mut st,
+            r5.clone(),
+            false,
+            "authority-a".into(),
+            "authority-a".into(),
+            211,
+        )
+        .expect_err("first signer should stage pending multisig approval");
+        assert!(matches!(stage_err, PouwError::ResolveApprovalStaged));
+        assert!(matches!(st.pending_resolve_approval(r5.id), Some((false, _))));
+
+        st.set_gov_param(9_230, 7_999, "emergency_pause".into(), "true".into())
+            .expect("pause=true governance update must succeed");
+        assert!(st.is_emergency_paused());
+
+        // Governance downgrade to single-signer authority must be rejected even
+        // while paused; staged approvals and escrow must remain unchanged.
+        let downgrade_err = st
+            .set_gov_param(
+                9_232,
+                9_500,
+                "resolve_authority".into(),
+                "authority-b".into(),
+            )
+            .expect_err("single-signer resolve_authority must be rejected");
+        assert!(
+            downgrade_err.contains("at least two members"),
+            "unexpected governance rejection: {downgrade_err}"
+        );
+        assert!(matches!(st.pending_resolve_approval(r5.id), Some((false, _))));
+
+        let before_total = st.balance_of("challenger")
+            + st.balance_of(CHALLENGE_ESCROW_ACCOUNT)
+            + st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+
+        st.set_gov_param(9_231, 7_999, "emergency_pause".into(), "false".into())
+            .expect("pause=false governance update must succeed");
+        assert!(!st.is_emergency_paused());
+
+        let r6 = apply_resolve_at_height(
+            &mut st,
+            r5,
+            false,
+            "authority-b".into(),
+            "authority-b".into(),
+            212,
+        )
+        .expect("distinct second signer should finalize once pause clears");
+        assert_eq!(st.pending_resolve_approval(r6.id), None);
+        assert_eq!(st.pending_resolve_first_approver(r6.id), None);
+
+        let task = st.get_task(r6.id).expect("resolved task must persist");
+        assert_eq!(task.status, TaskStatus::Completed);
+        let after_total = st.balance_of("challenger")
+            + st.balance_of(CHALLENGE_ESCROW_ACCOUNT)
+            + st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+        assert_eq!(after_total, before_total);
     }
 
     #[test]
@@ -5379,6 +5574,247 @@ mod tests {
         )
         .expect_err("case-drift duplicate resolver config should be rejected after unpause");
         assert!(matches!(duplicate_err, PouwError::Unauthorized));
+        assert_eq!(st.pending_resolve_approval(before_task.task_id), None);
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
+        assert_eq!(st.balance_of("challenger"), before_challenger);
+    }
+
+    #[test]
+    fn challenged_resolve_exact_duplicate_authority_config_rejects_without_escrow_drift() {
+        // Governance hardening: exact duplicate resolver entries must fail closed
+        // so challenged escrow settlement never relies on a single duplicated actor.
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        set_resolve_authority(&mut st, "authority,authority");
+
+        let r1 = apply_create_task(&mut st, 19_223_4_1, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(19_223_4_1, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 =
+            apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
+        let r4 = apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110)
+            .unwrap();
+        let r5 = apply_challenge_at_height(
+            &mut st,
+            r4,
+            "challenger".into(),
+            10,
+            "challenger".into(),
+            210,
+        )
+        .unwrap();
+
+        let before_task = st.get_task(r5.id).expect("challenged task must persist");
+        let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+        let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+        let before_challenger = st.balance_of("challenger");
+
+        let duplicate_err = apply_resolve_at_height(
+            &mut st,
+            r5,
+            false,
+            "authority".into(),
+            "authority".into(),
+            211,
+        )
+        .expect_err("duplicate resolver config should be rejected before settlement");
+        assert!(matches!(duplicate_err, PouwError::Unauthorized));
+        assert_eq!(st.pending_resolve_approval(before_task.task_id), None);
+
+        let after_task = st
+            .get_task(before_task.task_id)
+            .expect("task must remain unchanged after rejected resolve");
+        assert_eq!(after_task.status, before_task.status);
+        assert_eq!(
+            after_task.challenge_bond_forfeited,
+            before_task.challenge_bond_forfeited
+        );
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
+        assert_eq!(st.balance_of("challenger"), before_challenger);
+    }
+
+    #[test]
+    fn challenged_resolve_exact_duplicate_authority_config_is_masked_by_pause_without_escrow_drift(
+    ) {
+        // Safety boundary: emergency pause must fail before duplicate-authority
+        // validation so paused challenged escrow paths do not leak governance
+        // misconfiguration details or mutate custodial balances.
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        set_resolve_authority(&mut st, "authority,authority");
+
+        let r1 = apply_create_task(&mut st, 19_223_4_2, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(19_223_4_2, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 =
+            apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
+        let r4 = apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110)
+            .unwrap();
+        let r5 = apply_challenge_at_height(
+            &mut st,
+            r4,
+            "challenger".into(),
+            10,
+            "challenger".into(),
+            210,
+        )
+        .unwrap();
+
+        st.set_gov_param(9_232_1, 7_999, "emergency_pause".into(), "true".into())
+            .expect("pause=true governance update must succeed");
+        assert!(st.is_emergency_paused());
+
+        let before_task = st.get_task(r5.id).expect("challenged task must persist");
+        let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+        let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+        let before_challenger = st.balance_of("challenger");
+
+        let paused_err = apply_resolve_at_height(
+            &mut st,
+            r5.clone(),
+            false,
+            "authority".into(),
+            "authority".into(),
+            211,
+        )
+        .expect_err("pause must mask duplicate-authority resolver validation");
+        assert!(matches!(paused_err, PouwError::InvalidTransition));
+        assert_eq!(st.pending_resolve_approval(r5.id), None);
+
+        let after_paused_task = st
+            .get_task(r5.id)
+            .expect("task must remain unchanged while paused");
+        assert_eq!(after_paused_task.status, before_task.status);
+        assert_eq!(
+            after_paused_task.challenge_bond_forfeited,
+            before_task.challenge_bond_forfeited
+        );
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
+        assert_eq!(st.balance_of("challenger"), before_challenger);
+
+        st.set_gov_param(9_232_2, 7_999, "emergency_pause".into(), "false".into())
+            .expect("pause=false governance update must succeed");
+        assert!(!st.is_emergency_paused());
+
+        let duplicate_err = apply_resolve_at_height(
+            &mut st,
+            r5,
+            false,
+            "authority".into(),
+            "authority".into(),
+            212,
+        )
+        .expect_err("duplicate resolver config should be rejected after unpause");
+        assert!(matches!(duplicate_err, PouwError::Unauthorized));
+        assert_eq!(st.pending_resolve_approval(before_task.task_id), None);
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
+        assert_eq!(st.balance_of("challenger"), before_challenger);
+    }
+
+    #[test]
+    fn challenged_resolve_escrow_authority_overlap_is_masked_by_pause_without_escrow_drift() {
+        // Safety boundary: emergency pause must fail closed before resolver/escrow
+        // overlap checks so paused challenged flows cannot leak authority validation
+        // behavior or mutate custodial balances.
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        set_resolve_authority(
+            &mut st,
+            &format!("{},authority2", CHALLENGE_ESCROW_ACCOUNT),
+        );
+
+        let r1 = apply_create_task(&mut st, 19_223_5, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(19_223_5, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 =
+            apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
+        let r4 = apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110)
+            .unwrap();
+        let r5 = apply_challenge_at_height(
+            &mut st,
+            r4,
+            "challenger".into(),
+            10,
+            "challenger".into(),
+            210,
+        )
+        .unwrap();
+
+        st.set_gov_param(9_234, 7_999, "emergency_pause".into(), "true".into())
+            .expect("pause=true governance update must succeed");
+        assert!(st.is_emergency_paused());
+
+        let before_task = st.get_task(r5.id).expect("challenged task must persist");
+        let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+        let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+        let before_challenger = st.balance_of("challenger");
+
+        let paused_err = apply_resolve_at_height(
+            &mut st,
+            r5.clone(),
+            false,
+            "authority2".into(),
+            "authority2".into(),
+            211,
+        )
+        .expect_err("pause must mask escrow-authority overlap validation");
+        assert!(matches!(paused_err, PouwError::InvalidTransition));
+        assert_eq!(st.pending_resolve_approval(r5.id), None);
+
+        let after_paused_task = st
+            .get_task(r5.id)
+            .expect("task must remain unchanged while paused");
+        assert_eq!(after_paused_task.status, before_task.status);
+        assert_eq!(
+            after_paused_task.challenge_bond_forfeited,
+            before_task.challenge_bond_forfeited
+        );
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
+        assert_eq!(st.balance_of("challenger"), before_challenger);
+
+        st.set_gov_param(9_235, 7_999, "emergency_pause".into(), "false".into())
+            .expect("pause=false governance update must succeed");
+        assert!(!st.is_emergency_paused());
+
+        let overlap_err = apply_resolve_at_height(
+            &mut st,
+            r5,
+            false,
+            "authority2".into(),
+            "authority2".into(),
+            212,
+        )
+        .expect_err("escrow-authority overlap config should be rejected after unpause");
+        assert!(matches!(overlap_err, PouwError::Unauthorized));
         assert_eq!(st.pending_resolve_approval(before_task.task_id), None);
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
         assert_eq!(
@@ -7115,6 +7551,50 @@ mod tests {
     }
 
     #[test]
+    fn resolve_rejects_non_ascii_separator_in_authority_set_without_escrow_mutation() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        set_resolve_authority(&mut st, "authority-a，authority-b");
+
+        let r1 = apply_create_task(&mut st, 8_962_1, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(8_962_1, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+        let r5 =
+            apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
+        let pending_task_id = r5.id;
+
+        let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+        let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+        let err = apply_resolve(
+            &mut st,
+            r5,
+            true,
+            "authority-a".into(),
+            "authority-a".into(),
+        )
+        .expect_err(
+            "non-ASCII separator must be rejected so resolver sets cannot degrade into ambiguous single-signer authority",
+        );
+        assert!(matches!(err, PouwError::Unauthorized));
+
+        let task = st.get_task(8_962_1).unwrap();
+        assert_eq!(task.status, TaskStatus::Challenged);
+        assert_eq!(task.challenge_bond_forfeited, None);
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
+        assert_eq!(st.balance_of("challenger"), 90);
+        assert_eq!(st.pending_resolve_approval(pending_task_id), None);
+    }
+
+    #[test]
     fn resolve_rejects_control_char_authority_member_without_escrow_mutation() {
         // Canonical signer hardening: invisible control bytes must never be
         // accepted as authority members.
@@ -8359,6 +8839,55 @@ mod tests {
     }
 
     #[test]
+    fn resolve_emergency_pause_precedes_leading_empty_multisig_member_validation_without_escrow_mutation(
+    ) {
+        // Merge-gate hardening: emergency pause must fail-closed before leading-empty
+        // authority-member validation to avoid leaking parser/shape policy details.
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        set_resolve_authority(&mut st, ",authority");
+
+        let r1 = apply_create_task(&mut st, 8_961_2_0, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(8_961_2_0, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+        let r5 =
+            apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
+
+        st.set_gov_param(9_201_2_0, 7_999, "emergency_pause".into(), "true".into())
+            .expect("pause=true governance update must succeed");
+        assert!(st.is_emergency_paused());
+
+        let before_task = st.get_task(8_961_2_0).unwrap();
+        let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+        let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+        let before_challenger = st.balance_of("challenger");
+
+        let err = apply_resolve(&mut st, r5, true, "authority".into(), "authority".into())
+            .expect_err(
+                "emergency pause must mask leading-empty authority-member validation and freeze settlement",
+            );
+        assert!(matches!(err, PouwError::InvalidTransition));
+
+        let after_task = st.get_task(8_961_2_0).unwrap();
+        assert_eq!(after_task.status, before_task.status);
+        assert_eq!(
+            after_task.challenge_bond_forfeited,
+            before_task.challenge_bond_forfeited
+        );
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
+        assert_eq!(st.balance_of("challenger"), before_challenger);
+    }
+
+    #[test]
     fn resolve_emergency_pause_precedes_duplicate_multisig_member_validation_without_escrow_mutation(
     ) {
         // Merge-gate hardening: emergency pause must fail-closed before duplicate
@@ -9027,6 +9556,65 @@ mod tests {
         assert!(matches!(err, PouwError::InvalidTransition));
 
         let after_task = st.get_task(8_961_24_1).unwrap();
+        assert_eq!(after_task.status, before_task.status);
+        assert_eq!(
+            after_task.challenge_bond_forfeited,
+            before_task.challenge_bond_forfeited
+        );
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
+        assert_eq!(st.balance_of("challenger"), before_challenger);
+    }
+
+    #[test]
+    fn resolve_emergency_pause_precedes_challenged_invariant_validation_without_escrow_mutation() {
+        // Merge-gate hardening: emergency pause must fail-closed before challenged
+        // accounting invariant checks so malformed challenged metadata cannot leak
+        // resolver-policy validation outcomes while escrow settlement is frozen.
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        set_resolve_authority(&mut st, "authority");
+
+        let r1 = apply_create_task(&mut st, 8_961_24_15, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(8_961_24_15, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+        let r5 =
+            apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
+
+        // Corrupt challenged object to violate resolve challenged-accounting invariants.
+        let mut bad = st.get_task(r5.id).unwrap();
+        assert_eq!(bad.status, TaskStatus::Challenged);
+        bad.challenge_bond_forfeited = Some(false);
+        let bad_ref = st.update_task(r5, bad).unwrap();
+
+        st.set_gov_param(9_201_24_15, 7_999, "emergency_pause".into(), "true".into())
+            .expect("pause=true governance update must succeed");
+        assert!(st.is_emergency_paused());
+
+        let before_task = st.get_task(8_961_24_15).unwrap();
+        let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+        let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+        let before_challenger = st.balance_of("challenger");
+
+        let err = apply_resolve(
+            &mut st,
+            bad_ref,
+            true,
+            "authority".into(),
+            "authority".into(),
+        )
+        .expect_err("emergency pause must mask challenged invariant validation path");
+        assert!(matches!(err, PouwError::InvalidTransition));
+
+        let after_task = st.get_task(8_961_24_15).unwrap();
         assert_eq!(after_task.status, before_task.status);
         assert_eq!(
             after_task.challenge_bond_forfeited,
@@ -10612,6 +11200,7 @@ mod tests {
         )
         .expect("second multisig signer should settle once unpaused after singleton downgrade is rejected");
         assert_eq!(st.pending_resolve_approval(r6.id), None);
+        assert_eq!(st.pending_resolve_first_approver(r6.id), None);
         let task = st.get_task(r6.id).expect("resolved task must persist");
         assert_eq!(task.status, TaskStatus::Slashed);
         assert_eq!(task.challenge_bond_forfeited, Some(false));
@@ -11522,17 +12111,23 @@ mod tests {
         // checks can silently degrade into centralized/single-party control.
         let escrow = CHALLENGE_ESCROW_ACCOUNT.trim();
         let forfeits = CHALLENGE_FORFEIT_TREASURY_ACCOUNT.trim();
+        let worker_slash = WORKER_SLASH_TREASURY_ACCOUNT.trim();
         let placeholder = DEFAULT_RESOLVE_AUTHORITY.trim();
         let system = "system";
 
         assert!(!escrow.is_empty());
         assert!(!forfeits.is_empty());
+        assert!(!worker_slash.is_empty());
         assert!(!placeholder.is_empty());
         assert_ne!(escrow, forfeits);
+        assert_ne!(escrow, worker_slash);
+        assert_ne!(forfeits, worker_slash);
         assert_ne!(escrow, placeholder);
         assert_ne!(forfeits, placeholder);
+        assert_ne!(worker_slash, placeholder);
         assert_ne!(escrow, system);
         assert_ne!(forfeits, system);
+        assert_ne!(worker_slash, system);
         assert_ne!(placeholder, system);
         assert_ne!(placeholder.to_ascii_lowercase(), system);
     }
@@ -11547,6 +12142,7 @@ mod tests {
             CHALLENGE_FORFEIT_TREASURY_ACCOUNT
                 .trim()
                 .to_ascii_lowercase(),
+            WORKER_SLASH_TREASURY_ACCOUNT.trim().to_ascii_lowercase(),
             DEFAULT_RESOLVE_AUTHORITY.trim().to_ascii_lowercase(),
             "system".to_string(),
         ];
@@ -12004,6 +12600,51 @@ mod tests {
     }
 
     #[test]
+    fn resolve_rejects_multisig_authority_when_forfeit_treasury_member_has_whitespace_without_escrow_mutation(
+    ) {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        let authority_with_whitespace_forfeit_member =
+            format!("authority, {}", CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+        set_resolve_authority(&mut st, &authority_with_whitespace_forfeit_member);
+
+        let r1 = apply_create_task(&mut st, 9_001_17, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(9_001_17, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+        let r5 =
+            apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
+
+        let before = st.clone();
+        let err = apply_resolve(&mut st, r5, false, "authority".into(), "authority".into())
+            .expect_err(
+                "authority sets including whitespace forfeit treasury member must be rejected",
+            );
+        assert!(matches!(err, PouwError::Unauthorized));
+
+        let task = st.get_task(9_001_17).unwrap();
+        assert_eq!(task.status, TaskStatus::Challenged);
+        assert_eq!(task.challenge_bond_forfeited, None);
+        assert_eq!(st.balance_of("challenger"), before.balance_of("challenger"));
+        assert_eq!(
+            st.balance_of(CHALLENGE_ESCROW_ACCOUNT),
+            before.balance_of(CHALLENGE_ESCROW_ACCOUNT)
+        );
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT)
+        );
+        assert_eq!(
+            st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
+            before.balance_of(WORKER_SLASH_TREASURY_ACCOUNT)
+        );
+    }
+
+    #[test]
     fn resolve_rejects_worker_slash_treasury_account_authority_without_escrow_mutation() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
@@ -12124,6 +12765,98 @@ mod tests {
         assert!(matches!(err, PouwError::Unauthorized));
 
         let task = st.get_task(9_001_15).unwrap();
+        assert_eq!(task.status, TaskStatus::Challenged);
+        assert_eq!(task.challenge_bond_forfeited, None);
+        assert_eq!(st.balance_of("challenger"), before.balance_of("challenger"));
+        assert_eq!(
+            st.balance_of(CHALLENGE_ESCROW_ACCOUNT),
+            before.balance_of(CHALLENGE_ESCROW_ACCOUNT)
+        );
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT)
+        );
+        assert_eq!(
+            st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
+            before.balance_of(WORKER_SLASH_TREASURY_ACCOUNT)
+        );
+    }
+
+    #[test]
+    fn resolve_rejects_multisig_authority_when_worker_slash_treasury_member_has_case_drift_without_escrow_mutation(
+    ) {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        let authority_with_case_drift_worker_slash_member = "Treasury.Worker_Slashes";
+        set_resolve_authority(
+            &mut st,
+            &format!("authority,{}", authority_with_case_drift_worker_slash_member),
+        );
+
+        let r1 = apply_create_task(&mut st, 9_001_16, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(9_001_16, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+        let r5 =
+            apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
+
+        let before = st.clone();
+        let err = apply_resolve(&mut st, r5, true, "authority".into(), "authority".into())
+            .expect_err(
+                "authority sets including case-drifted worker-slash treasury member must be rejected",
+            );
+        assert!(matches!(err, PouwError::Unauthorized));
+
+        let task = st.get_task(9_001_16).unwrap();
+        assert_eq!(task.status, TaskStatus::Challenged);
+        assert_eq!(task.challenge_bond_forfeited, None);
+        assert_eq!(st.balance_of("challenger"), before.balance_of("challenger"));
+        assert_eq!(
+            st.balance_of(CHALLENGE_ESCROW_ACCOUNT),
+            before.balance_of(CHALLENGE_ESCROW_ACCOUNT)
+        );
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT)
+        );
+        assert_eq!(
+            st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
+            before.balance_of(WORKER_SLASH_TREASURY_ACCOUNT)
+        );
+    }
+
+    #[test]
+    fn resolve_rejects_multisig_authority_when_worker_slash_treasury_member_has_whitespace_without_escrow_mutation(
+    ) {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        let authority_with_whitespace_worker_slash_member =
+            format!("authority, {}", WORKER_SLASH_TREASURY_ACCOUNT);
+        set_resolve_authority(&mut st, &authority_with_whitespace_worker_slash_member);
+
+        let r1 = apply_create_task(&mut st, 9_001_19, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(9_001_19, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+        let r5 =
+            apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
+
+        let before = st.clone();
+        let err = apply_resolve(&mut st, r5, true, "authority".into(), "authority".into())
+            .expect_err(
+                "authority sets including whitespace worker-slash treasury member must be rejected",
+            );
+        assert!(matches!(err, PouwError::Unauthorized));
+
+        let task = st.get_task(9_001_19).unwrap();
         assert_eq!(task.status, TaskStatus::Challenged);
         assert_eq!(task.challenge_bond_forfeited, None);
         assert_eq!(st.balance_of("challenger"), before.balance_of("challenger"));
@@ -12330,6 +13063,43 @@ mod tests {
         assert!(matches!(err, PouwError::Unauthorized));
 
         let task = st.get_task(9_001_5_1).unwrap();
+        assert_eq!(task.status, TaskStatus::Challenged);
+        assert_eq!(task.challenge_bond_forfeited, None);
+        assert_eq!(st.balance_of("challenger"), before.balance_of("challenger"));
+        assert_eq!(
+            st.balance_of(CHALLENGE_ESCROW_ACCOUNT),
+            before.balance_of(CHALLENGE_ESCROW_ACCOUNT)
+        );
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT)
+        );
+    }
+
+    #[test]
+    fn resolve_rejects_multisig_set_that_contains_escrow_member_case_drift_without_escrow_mutation() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        let mixed_authority = format!("authority,{}", CHALLENGE_ESCROW_ACCOUNT.to_ascii_uppercase());
+        set_resolve_authority(&mut st, &mixed_authority);
+
+        let r1 = apply_create_task(&mut st, 9_001_5_2, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(9_001_5_2, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+        let r5 =
+            apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
+
+        let before = st.clone();
+        let err = apply_resolve(&mut st, r5, true, "authority".into(), "authority".into())
+            .expect_err("multisig authority containing escrow account with case drift must fail closed");
+        assert!(matches!(err, PouwError::Unauthorized));
+
+        let task = st.get_task(9_001_5_2).unwrap();
         assert_eq!(task.status, TaskStatus::Challenged);
         assert_eq!(task.challenge_bond_forfeited, None);
         assert_eq!(st.balance_of("challenger"), before.balance_of("challenger"));
@@ -13537,6 +14307,38 @@ mod tests {
     }
 
     #[test]
+    fn invalid_utf8_zk_proof_rejects_reveal_fail_closed_without_missing_payload_mapping() {
+        let mut st = seeded_state();
+        let r1 = apply_create_task(&mut st, 7004, "alice".into(), 10).unwrap();
+
+        let mut task = st.get_task(r1.id).unwrap();
+        task.proof_type = ProofType::Zk;
+        let r1_updated = st.update_task(r1, task).unwrap();
+
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(7004, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1_updated, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+
+        // Invalid UTF-8 payload should still be treated as present proof data and
+        // fail through verifier path (not remapped to missing payload).
+        let proof = vec![0xff, 0xfe, 0xfd];
+        let err = apply_reveal_result(&mut st, r3.clone(), result_hash, reveal_salt, Some(proof))
+            .unwrap_err();
+
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("Proof verification failed") && !msg.contains("missing proof payload"))
+        );
+
+        let task_after = st.get_task(r3.id).unwrap();
+        assert_eq!(task_after.status, TaskStatus::Committed);
+        assert!(task_after.result_hash.is_none());
+        assert!(task_after.challenge_deadline_height.is_none());
+    }
+
+    #[test]
     fn tee_reveal_rejects_proof_type_mismatch_fail_closed() {
         let mut st = seeded_state();
         let r1 = apply_create_task(&mut st, 7005, "alice".into(), 10).unwrap();
@@ -14514,6 +15316,36 @@ mod tests {
     }
 
     #[test]
+    fn zk_reveal_rejects_duplicate_result_hash_binding_with_single_quoted_leading_space_fail_closed() {
+        let mut st = seeded_state();
+        let r1 = apply_create_task(&mut st, 7020, "alice".into(), 10).unwrap();
+
+        let mut task = st.get_task(r1.id).unwrap();
+        task.proof_type = ProofType::Zk;
+        let r1_updated = st.update_task(r1, task).unwrap();
+
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(7020, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1_updated, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+
+        // Single-quoted leading-space alias plus canonical result_hash must
+        // still be treated as duplicate result_hash binding and fail closed.
+        let proof = b"ZK:task_id=7020,worker=worker1,proof_type=zk,result_hash=0101010101010101010101010101010101010101010101010101010101010101,'result_hash'=' 0101010101010101010101010101010101010101010101010101010101010101',receipt=VALID_PROOF".to_vec();
+        let err = apply_reveal_result(&mut st, r3.clone(), result_hash, reveal_salt, Some(proof))
+            .unwrap_err();
+
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("Proof verification failed")));
+
+        // Ensure task does not advance on malformed envelope bindings.
+        let task_after = st.get_task(r3.id).unwrap();
+        assert_eq!(task_after.status, TaskStatus::Committed);
+        assert!(task_after.result_hash.is_none());
+    }
+
+    #[test]
     fn tee_reveal_rejects_legacy_task_id_binding_mismatch_fail_closed() {
         let mut st = seeded_state();
         let r1 = apply_create_task(&mut st, 7003, "alice".into(), 10).unwrap();
@@ -14562,6 +15394,62 @@ mod tests {
 
         // Signed numeric task_id is non-canonical and must fail closed.
         let proof = b"TEE:task_id=+7011,worker=worker1,proof_type=tee,result_hash=0101010101010101010101010101010101010101010101010101010101010101,quote=VALID_QUOTE".to_vec();
+        let err = apply_reveal_result(&mut st, r3.clone(), result_hash, reveal_salt, Some(proof))
+            .unwrap_err();
+
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("Proof verification failed")));
+
+        let task_after = st.get_task(r3.id).unwrap();
+        assert_eq!(task_after.status, TaskStatus::Committed);
+        assert!(task_after.result_hash.is_none());
+    }
+
+    #[test]
+    fn tee_reveal_rejects_negative_signed_task_id_binding_fail_closed_without_state_mutation() {
+        let mut st = seeded_state();
+        let r1 = apply_create_task(&mut st, 70115, "alice".into(), 10).unwrap();
+
+        let mut task = st.get_task(r1.id).unwrap();
+        task.proof_type = ProofType::Tee;
+        let r1_updated = st.update_task(r1, task).unwrap();
+
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(70115, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1_updated, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+
+        // Negative signed task_id is non-canonical and must fail closed.
+        let proof = b"TEE:task_id=-70115,worker=worker1,proof_type=tee,result_hash=0101010101010101010101010101010101010101010101010101010101010101,quote=VALID_QUOTE".to_vec();
+        let err = apply_reveal_result(&mut st, r3.clone(), result_hash, reveal_salt, Some(proof))
+            .unwrap_err();
+
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("Proof verification failed")));
+
+        let task_after = st.get_task(r3.id).unwrap();
+        assert_eq!(task_after.status, TaskStatus::Committed);
+        assert!(task_after.result_hash.is_none());
+    }
+
+    #[test]
+    fn tee_reveal_rejects_quoted_signed_task_id_binding_fail_closed_without_state_mutation() {
+        let mut st = seeded_state();
+        let r1 = apply_create_task(&mut st, 70115, "alice".into(), 10).unwrap();
+
+        let mut task = st.get_task(r1.id).unwrap();
+        task.proof_type = ProofType::Tee;
+        let r1_updated = st.update_task(r1, task).unwrap();
+
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(70115, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1_updated, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+
+        // Quoted signed numeric task_id is non-canonical and must fail closed.
+        let proof = b"TEE:task_id='+70115',worker=worker1,proof_type=tee,result_hash=0101010101010101010101010101010101010101010101010101010101010101,quote=VALID_QUOTE".to_vec();
         let err = apply_reveal_result(&mut st, r3.clone(), result_hash, reveal_salt, Some(proof))
             .unwrap_err();
 
@@ -14652,6 +15540,62 @@ mod tests {
 
         // Signed numeric task_id is non-canonical and must fail closed.
         let proof = b"ZK:task_id=+7012,worker=worker1,proof_type=zk,result_hash=0101010101010101010101010101010101010101010101010101010101010101,receipt=VALID_PROOF".to_vec();
+        let err = apply_reveal_result(&mut st, r3.clone(), result_hash, reveal_salt, Some(proof))
+            .unwrap_err();
+
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("Proof verification failed")));
+
+        let task_after = st.get_task(r3.id).unwrap();
+        assert_eq!(task_after.status, TaskStatus::Committed);
+        assert!(task_after.result_hash.is_none());
+    }
+
+    #[test]
+    fn zk_reveal_rejects_negative_signed_task_id_binding_fail_closed_without_state_mutation() {
+        let mut st = seeded_state();
+        let r1 = apply_create_task(&mut st, 70125, "alice".into(), 10).unwrap();
+
+        let mut task = st.get_task(r1.id).unwrap();
+        task.proof_type = ProofType::Zk;
+        let r1_updated = st.update_task(r1, task).unwrap();
+
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(70125, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1_updated, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+
+        // Negative signed numeric task_id is non-canonical and must fail closed.
+        let proof = b"ZK:task_id=-70125,worker=worker1,proof_type=zk,result_hash=0101010101010101010101010101010101010101010101010101010101010101,receipt=VALID_PROOF".to_vec();
+        let err = apply_reveal_result(&mut st, r3.clone(), result_hash, reveal_salt, Some(proof))
+            .unwrap_err();
+
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("Proof verification failed")));
+
+        let task_after = st.get_task(r3.id).unwrap();
+        assert_eq!(task_after.status, TaskStatus::Committed);
+        assert!(task_after.result_hash.is_none());
+    }
+
+    #[test]
+    fn zk_reveal_rejects_quoted_signed_task_id_binding_fail_closed_without_state_mutation() {
+        let mut st = seeded_state();
+        let r1 = apply_create_task(&mut st, 70126, "alice".into(), 10).unwrap();
+
+        let mut task = st.get_task(r1.id).unwrap();
+        task.proof_type = ProofType::Zk;
+        let r1_updated = st.update_task(r1, task).unwrap();
+
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(70126, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1_updated, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+
+        // Quoted signed numeric task_id is non-canonical and must fail closed.
+        let proof = b"ZK:task_id='+70126',worker=worker1,proof_type=zk,result_hash=0101010101010101010101010101010101010101010101010101010101010101,receipt=VALID_PROOF".to_vec();
         let err = apply_reveal_result(&mut st, r3.clone(), result_hash, reveal_salt, Some(proof))
             .unwrap_err();
 
@@ -14818,7 +15762,7 @@ mod tests {
     }
 
     #[test]
-    fn utf8_bom_only_tee_proof_payload_rejects_reveal_fail_closed_without_state_mutation() {
+    fn word_joiner_only_tee_proof_payload_rejects_reveal_fail_closed_without_state_mutation() {
         let mut st = seeded_state();
         let r1 = apply_create_task(&mut st, 7026, "alice".into(), 10).unwrap();
 
@@ -14829,6 +15773,38 @@ mod tests {
         let result_hash = [7u8; 32];
         let reveal_salt = [8u8; 32];
         let committed = compute_commitment(7026, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1_updated, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+
+        let err = apply_reveal_result(
+            &mut st,
+            r3.clone(),
+            result_hash,
+            reveal_salt,
+            Some("\u{2060}".as_bytes().to_vec()),
+        )
+        .unwrap_err();
+
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("missing proof payload")));
+
+        let task_after = st.get_task(r3.id).unwrap();
+        assert_eq!(task_after.status, TaskStatus::Committed);
+        assert!(task_after.result_hash.is_none());
+    }
+
+    #[test]
+    fn utf8_bom_only_tee_proof_payload_rejects_reveal_fail_closed_without_state_mutation() {
+        let mut st = seeded_state();
+        let r1 = apply_create_task(&mut st, 7027, "alice".into(), 10).unwrap();
+
+        let mut task = st.get_task(r1.id).unwrap();
+        task.proof_type = ProofType::Tee;
+        let r1_updated = st.update_task(r1, task).unwrap();
+
+        let result_hash = [7u8; 32];
+        let reveal_salt = [8u8; 32];
+        let committed = compute_commitment(7027, &result_hash, &reveal_salt, "worker1");
 
         let r2 = apply_accept_task(&mut st, r1_updated, "worker1".into()).unwrap();
         let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
@@ -14943,7 +15919,7 @@ mod tests {
     }
 
     #[test]
-    fn utf8_bom_only_zk_proof_payload_rejects_reveal_fail_closed_without_state_mutation() {
+    fn word_joiner_only_zk_proof_payload_rejects_reveal_fail_closed_without_state_mutation() {
         let mut st = seeded_state();
         let r1 = apply_create_task(&mut st, 7027, "alice".into(), 10).unwrap();
 
@@ -14954,6 +15930,38 @@ mod tests {
         let result_hash = [9u8; 32];
         let reveal_salt = [1u8; 32];
         let committed = compute_commitment(7027, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1_updated, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+
+        let err = apply_reveal_result(
+            &mut st,
+            r3.clone(),
+            result_hash,
+            reveal_salt,
+            Some("\u{2060}".as_bytes().to_vec()),
+        )
+        .unwrap_err();
+
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("missing proof payload")));
+
+        let task_after = st.get_task(r3.id).unwrap();
+        assert_eq!(task_after.status, TaskStatus::Committed);
+        assert!(task_after.result_hash.is_none());
+    }
+
+    #[test]
+    fn utf8_bom_only_zk_proof_payload_rejects_reveal_fail_closed_without_state_mutation() {
+        let mut st = seeded_state();
+        let r1 = apply_create_task(&mut st, 7029, "alice".into(), 10).unwrap();
+
+        let mut task = st.get_task(r1.id).unwrap();
+        task.proof_type = ProofType::Zk;
+        let r1_updated = st.update_task(r1, task).unwrap();
+
+        let result_hash = [9u8; 32];
+        let reveal_salt = [1u8; 32];
+        let committed = compute_commitment(7029, &result_hash, &reveal_salt, "worker1");
 
         let r2 = apply_accept_task(&mut st, r1_updated, "worker1".into()).unwrap();
         let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
@@ -15037,5 +16045,129 @@ mod tests {
         assert!(final_task.reveal_salt.is_none());
         assert!(final_task.challenge_deadline_height.is_none());
         assert!(final_task.resolve_deadline_height.is_none());
+    }
+
+    #[test]
+    fn resolve_emergency_pause_precedes_deadline_checks_without_escrow_mutation() {
+        // Merge-gate hardening: pause must fail-closed before resolve-deadline checks,
+        // so challenged escrow paths do not leak timing-policy outcomes while frozen.
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        set_resolve_authority(&mut st, "authority");
+
+        let r1 = apply_create_task(&mut st, 8_961_25, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(8_961_25, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+        let r5 = apply_challenge_at_height(
+            &mut st,
+            r4,
+            "challenger".into(),
+            10,
+            "challenger".into(),
+            100,
+        )
+        .unwrap();
+
+        let task_before_pause = st.get_task(r5.id).unwrap();
+        let resolve_deadline = task_before_pause
+            .resolve_deadline_height
+            .expect("challenge must set resolve deadline");
+
+        st.set_gov_param(9_201_25, 7_999, "emergency_pause".into(), "true".into())
+            .expect("pause=true governance update must succeed");
+        assert!(st.is_emergency_paused());
+
+        let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+        let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+        let before_challenger = st.balance_of("challenger");
+
+        let err = apply_resolve_at_height(
+            &mut st,
+            r5,
+            true,
+            "authority".into(),
+            "authority".into(),
+            resolve_deadline.saturating_add(1),
+        )
+        .expect_err("pause must mask deadline-check result and freeze challenged settlement");
+        assert!(matches!(err, PouwError::InvalidTransition));
+
+        let after_task = st.get_task(8_961_25).unwrap();
+        assert_eq!(after_task.status, task_before_pause.status);
+        assert_eq!(
+            after_task.challenge_bond_forfeited,
+            task_before_pause.challenge_bond_forfeited
+        );
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
+        assert_eq!(st.balance_of("challenger"), before_challenger);
+    }
+
+    #[test]
+    fn challenged_resolve_rejects_case_variant_duplicate_authority_members_without_escrow_drift() {
+        // Decentralization hardening: governance resolver sets must reject
+        // case-variant duplicate members, so one actor cannot satisfy the
+        // staged + final approval path by casing tricks.
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        set_resolve_authority(&mut st, "Authority,authority");
+
+        let r1 = apply_create_task(&mut st, 8_961_26, "alice".into(), 10).unwrap();
+        let result_hash = [5u8; 32];
+        let reveal_salt = [6u8; 32];
+        let committed = compute_commitment(8_961_26, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+        let r5 = apply_challenge_at_height(
+            &mut st,
+            r4,
+            "challenger".into(),
+            10,
+            "challenger".into(),
+            100,
+        )
+        .unwrap();
+
+        let before_task = st.get_task(r5.id).unwrap();
+        let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+        let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+        let before_challenger = st.balance_of("challenger");
+
+        let err = apply_resolve_at_height(
+            &mut st,
+            r5,
+            false,
+            "authority".into(),
+            "authority".into(),
+            311,
+        )
+        .expect_err("case-variant duplicate resolver members must fail closed");
+        assert!(matches!(err, PouwError::Unauthorized));
+
+        let after_task = st
+            .get_task(8_961_26)
+            .expect("task must remain challenged after duplicate-authority rejection");
+        assert_eq!(after_task.status, before_task.status);
+        assert_eq!(
+            after_task.challenge_bond_forfeited,
+            before_task.challenge_bond_forfeited
+        );
+        assert_eq!(st.pending_resolve_approval(8_961_26), None);
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
+        assert_eq!(st.balance_of("challenger"), before_challenger);
     }
 }
