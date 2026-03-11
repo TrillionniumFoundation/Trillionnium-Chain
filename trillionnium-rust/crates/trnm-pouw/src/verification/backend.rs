@@ -565,6 +565,17 @@ pub fn parse_zk_proof_payload(
             reason: "invalid zk payload: result_hash mismatch".to_string(),
         });
     }
+    if let Some(raw_zk_system) = payload.zk_system.as_deref() {
+        if normalize_zk_system(raw_zk_system).is_none() {
+            return Err(BackendExecutionError::MalformedProof {
+                backend: "zk:payload".to_string(),
+                reason: format!(
+                    "invalid zk payload: unsupported zk_system '{}'",
+                    raw_zk_system.trim()
+                ),
+            });
+        }
+    }
     if payload.vk_ref.trim().is_empty() {
         return Err(VkRefResolutionError::Missing.into_backend_execution_error());
     }
@@ -749,6 +760,15 @@ mod tests {
         let err = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","worker","result_hash"],"values":["4242","worker-zk","2222222222222222222222222222222222222222222222222222222222222222"]}}"#).unwrap_err();
         assert!(
             matches!(err, BackendExecutionError::InvalidProof { reason, .. } if reason.contains("public_inputs mismatch"))
+        );
+    }
+
+    #[test]
+    fn parse_zk_proof_payload_rejects_unsupported_zk_system_fail_closed() {
+        let task = mock_task();
+        let err = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"bulletproofs","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","worker","result_hash"],"values":["4242","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#).unwrap_err();
+        assert!(
+            matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("unsupported zk_system 'bulletproofs'"))
         );
     }
 
