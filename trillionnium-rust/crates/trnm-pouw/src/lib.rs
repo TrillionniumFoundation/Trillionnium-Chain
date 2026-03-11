@@ -716,6 +716,19 @@ fn maybe_pay_challenge_success_bounty(
         return Ok(0);
     }
 
+    let min_worker_stake = st
+        .gov_param_u128("min_worker_stake")
+        .unwrap_or(DEFAULT_MIN_WORKER_STAKE);
+    // Economics hardening: challenge-success bounty is paid only from the
+    // slashed task-local worker stake lock, so governance must not configure a
+    // bounty that can exceed the maximum intended slash principal.
+    if configured_bounty > min_worker_stake {
+        return Err(PouwError::State(format!(
+            "challenge success bounty {} exceeds min_worker_stake {}",
+            configured_bounty, min_worker_stake
+        )));
+    }
+
     let lock_account = worker_stake_lock_account(task.task_id);
     let lock_available = st.balance_of(&lock_account);
     let from_lock = configured_bounty.min(lock_available);
@@ -1578,10 +1591,12 @@ mod tests {
         st.set_balance("worker1", 10);
         st.set_balance("challenger", 1_000);
         st.set_balance(WORKER_SLASH_TREASURY_ACCOUNT, 77);
+        st.set_gov_param_bootstrap_unchecked(9_989, "min_worker_stake".into(), "1".into())
+            .unwrap();
         st.set_gov_param_bootstrap_unchecked(
             9_990,
             "challenge_success_bounty".into(),
-            "5".into(),
+            "1".into(),
         )
         .unwrap();
 
@@ -1640,6 +1655,62 @@ mod tests {
             slash_treasury_before,
             "challenge success bounty must not fall back to global worker slash treasury"
         );
+    }
+
+    #[test]
+    fn resolve_slash_rejects_challenge_success_bounty_above_min_worker_stake_without_escrow_mutation() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 1_000);
+        st.set_gov_param_bootstrap_unchecked(9_991, "min_worker_stake".into(), "3".into())
+            .unwrap();
+        st.set_gov_param_bootstrap_unchecked(
+            9_992,
+            "challenge_success_bounty".into(),
+            "4".into(),
+        )
+        .unwrap();
+        set_resolve_authority(&mut st, "authority,authority2");
+
+        let task_id = 21_500;
+        let r1 = apply_create_task(&mut st, task_id, "alice".into(), 10).unwrap();
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let result_hash = [7u8; 32];
+        let reveal_salt = [9u8; 32];
+        let committed = compute_commitment(task_id, &result_hash, &reveal_salt, "worker1");
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+        let r5 =
+            apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
+
+        let before_task = st.get_task(task_id).unwrap();
+        let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+        let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+        let before_worker_slash = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
+        let before_challenger = st.balance_of("challenger");
+        let before_worker = st.balance_of("worker1");
+        let before_lock = st.balance_of(&worker_stake_lock_account(task_id));
+
+        let err = apply_resolve_at_height(
+            &mut st,
+            r5.clone(),
+            true,
+            "authority".into(),
+            "authority".into(),
+            1,
+        )
+        .expect_err("slash resolve must fail closed when bounty exceeds task-local slash principal");
+        assert!(matches!(err, PouwError::State(_)));
+        assert_eq!(st.pending_resolve_approval(r5.id), None);
+
+        let after_task = st.get_task(task_id).unwrap();
+        assert_eq!(after_task.status, before_task.status);
+        assert_eq!(after_task.challenge_bond_forfeited, before_task.challenge_bond_forfeited);
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
+        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
+        assert_eq!(st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT), before_worker_slash);
+        assert_eq!(st.balance_of("challenger"), before_challenger);
+        assert_eq!(st.balance_of("worker1"), before_worker);
+        assert_eq!(st.balance_of(&worker_stake_lock_account(task_id)), before_lock);
     }
 
     #[test]
