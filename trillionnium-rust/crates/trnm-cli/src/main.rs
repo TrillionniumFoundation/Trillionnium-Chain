@@ -468,6 +468,8 @@ fn parse_tx_query_response(raw: &str, requested_tx_hash: &str) -> Result<TxQuery
         };
         let status = payload
             .get("status")
+            .or_else(|| payload.get("tx_status"))
+            .or_else(|| payload.get("txStatus"))
             .and_then(|x| x.as_str())
             .and_then(normalize_tx_status)
             .ok_or_else(|| anyhow!("missing/invalid status field in tx query response"))?;
@@ -501,7 +503,7 @@ fn parse_tx_query_response(raw: &str, requested_tx_hash: &str) -> Result<TxQuery
                         None => bail!("invalid tx_hash field in tx query response"),
                     }
                 }
-                "status" => {
+                "status" | "tx_status" | "txstatus" => {
                     if let Some(normalized) = normalize_tx_status(&value) {
                         status = Some(normalized);
                     }
@@ -1031,6 +1033,16 @@ mod tests {
         let parsed_transaction = parse_tx_query_response(transaction, "0xfallback").unwrap();
         assert_eq!(parsed_transaction.tx_hash, "0xdef");
         assert_eq!(parsed_transaction.status, "committed");
+
+        let tx_status_snake = "{\"tx_hash\":\"0xaaa\",\"tx_status\":\"accepted\"}";
+        let parsed_tx_status_snake = parse_tx_query_response(tx_status_snake, "0xfallback").unwrap();
+        assert_eq!(parsed_tx_status_snake.tx_hash, "0xaaa");
+        assert_eq!(parsed_tx_status_snake.status, "pending");
+
+        let tx_status_camel = "{\"txHash\":\"0xbbb\",\"txStatus\":\"finalized\"}";
+        let parsed_tx_status_camel = parse_tx_query_response(tx_status_camel, "0xfallback").unwrap();
+        assert_eq!(parsed_tx_status_camel.tx_hash, "0xbbb");
+        assert_eq!(parsed_tx_status_camel.status, "committed");
     }
 
     #[test]
@@ -1219,6 +1231,16 @@ mod tests {
         let compact = "transactionHash=0xdef456\nstatus=committed\n";
         let parsed_compact = parse_tx_query_response(compact, "0xfallback").unwrap();
         assert_eq!(parsed_compact.tx_hash, "0xdef456");
+
+        let tx_status_snake = "tx_hash=0xaaa111\ntx_status=queued\n";
+        let parsed_tx_status_snake = parse_tx_query_response(tx_status_snake, "0xfallback").unwrap();
+        assert_eq!(parsed_tx_status_snake.tx_hash, "0xaaa111");
+        assert_eq!(parsed_tx_status_snake.status, "pending");
+
+        let tx_status_compact = "txhash=0xbbb222\ntxStatus=timed-out\n";
+        let parsed_tx_status_compact = parse_tx_query_response(tx_status_compact, "0xfallback").unwrap();
+        assert_eq!(parsed_tx_status_compact.tx_hash, "0xbbb222");
+        assert_eq!(parsed_tx_status_compact.status, "fail");
     }
 
     #[test]
