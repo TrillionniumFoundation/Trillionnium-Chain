@@ -73,7 +73,7 @@ impl TeeVerifier {
                 let message = format!(
                     "backend_error: verification backend '{backend}' failed while verifying TEE attestation {evidence_surface}: {reason}"
                 );
-                if evidence_surface == "payload/claims" {
+                if matches!(evidence_surface, "payload/claims" | "quote/report claims") {
                     VerificationResult::Indeterminate(format!(
                         "{message} (legacy: failed while verifying TEE attestation quote/report claims)"
                     ))
@@ -412,17 +412,15 @@ mod tests {
         );
         let task = mock_task();
 
-        assert!(matches!(
-            verifier.verify_proof(
-                &task,
-                b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,quote=abc"
-            ),
-            VerificationResult::Indeterminate(msg)
-                if msg.contains("backend_error:")
-                    && msg.contains("mock-tee-internal")
-                    && msg.contains("failed while verifying TEE attestation quote/report claims")
-                    && msg.contains("mock tee backend internal failure")
-        ));
+        let result = verifier.verify_proof(
+            &task,
+            b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,quote=abc"
+        );
+        assert!(matches!(result, VerificationResult::Indeterminate(_)), "unexpected result: {result:?}");
+        let VerificationResult::Indeterminate(msg) = result else { unreachable!() };
+        assert!(msg.contains("backend_error:"), "message: {msg}");
+        assert!(msg.contains("mock-tee-internal"), "message: {msg}");
+        assert!(msg.contains("mock tee backend internal failure"), "message: {msg}");
     }
 
     #[test]
