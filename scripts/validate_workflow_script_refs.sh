@@ -55,9 +55,11 @@ for wf in "${WORKFLOW_FILES[@]}"; do
   done < <(LC_ALL=C grep -Eo '((\./)?scripts|trillionnium-rust/scripts)/[[:alnum:]_./-]+\.(sh|py)' "$wf" || true)
 done
 
+total_script_ref_count="$(wc -l <"$refs_file" | tr -d ' ')"
 mapfile -t SCRIPT_REFS < <(LC_ALL=C sort -u "$refs_file")
 
 echo "[workflow-ref] workflow_count=${#WORKFLOW_FILES[@]}"
+echo "[workflow-ref] script_ref_total_count=${total_script_ref_count}"
 echo "[workflow-ref] script_ref_count=${#SCRIPT_REFS[@]}"
 
 if [[ ${#SCRIPT_REFS[@]} -eq 0 ]]; then
@@ -114,6 +116,7 @@ if [[ -n "$SUMMARY_PATH" ]]; then
   "workflow_root": "${WORKFLOW_ROOT}",
   "strict_mode": ${STRICT_MODE},
   "workflow_count": ${#WORKFLOW_FILES[@]},
+  "script_ref_total_count": ${total_script_ref_count},
   "script_ref_count": ${#SCRIPT_REFS[@]},
   "missing_count": ${missing_count},
   "non_exec_count": ${non_exec_count},
