@@ -2940,6 +2940,25 @@ mod tests {
     }
 
     #[test]
+    fn round_change_backoff_share_metric_handles_empty_consensus_samples() {
+        assert_eq!(ratio_ppm_u64(18, 0), 0);
+        assert_eq!(ratio_ppm_u64(0, 0), 0);
+    }
+
+    #[test]
+    fn round_change_density_avg_handles_empty_active_height_set() {
+        let bft_round_change_total = 6u64;
+        let bft_round_change_active_heights = 0u64;
+        let bft_round_change_density_avg = if bft_round_change_active_heights == 0 {
+            0
+        } else {
+            bft_round_change_total / bft_round_change_active_heights
+        };
+
+        assert_eq!(bft_round_change_density_avg, 0);
+    }
+
+    #[test]
     fn critical_guard_selection_respects_lane_fairness_pop_order() {
         let mut mempool = VecDeque::from(vec![
             MockTx::CreateTask {
