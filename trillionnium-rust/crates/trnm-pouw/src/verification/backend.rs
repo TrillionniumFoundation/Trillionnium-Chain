@@ -64,7 +64,7 @@ impl VerificationBackendKind {
     }
 }
 
-fn normalize_backend_token(raw: &str) -> Option<String> {
+pub fn normalize_backend_token(raw: &str) -> Option<String> {
     let normalized = raw
         .trim()
         .to_ascii_lowercase()

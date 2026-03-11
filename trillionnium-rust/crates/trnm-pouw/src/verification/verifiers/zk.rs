@@ -1,9 +1,10 @@
 use std::sync::Arc;
 
 use crate::verification::backend::{
-    normalize_zk_system, parse_zk_proof_payload, resolve_zk_vk_ref, BackendExecutionError,
-    BackendVerificationRequest, VerificationBackendConfig, VerificationBackendError,
-    VerificationBackendFamily, VkRefRegistry, ZkBackendKind, ZkBackendRegistry,
+    normalize_backend_token, normalize_zk_system, parse_zk_proof_payload, resolve_zk_vk_ref,
+    BackendExecutionError, BackendVerificationRequest, VerificationBackendConfig,
+    VerificationBackendError, VerificationBackendFamily, VkRefRegistry, ZkBackendKind,
+    ZkBackendRegistry,
 };
 use crate::verification::{ProofVerifier, VerificationResult};
 use trnm_types::TaskObject;
@@ -121,9 +122,8 @@ impl ZkVerifier {
                 && payload
                     .backend_id
                     .as_deref()
-                    .map(str::trim)
-                    .unwrap_or_default()
-                    .is_empty()
+                    .and_then(normalize_backend_token)
+                    .is_none()
             {
                 return Err(BackendExecutionError::MalformedProof {
                     backend: "zk:payload".to_string(),
@@ -495,6 +495,19 @@ mod tests {
         let verifier = ZkVerifier::from_config(&config, Arc::new(ZkBackendRegistry::new()));
         let task = mock_task();
         let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_version":"v1","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["99","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]},"meta":{"schema_version":"trnm.zk.payload.v0"}}"#;
+        assert!(matches!(
+            verifier.verify_proof(&task, payload),
+            VerificationResult::Invalid(msg) if msg.contains("backend_id is required")
+        ));
+    }
+
+    #[test]
+    fn zk_verifier_requires_non_noise_backend_when_feature_enabled() {
+        let mut config = router_config();
+        config.zk_features.zk_explicit_backend_required = true;
+        let verifier = ZkVerifier::from_config(&config, Arc::new(ZkBackendRegistry::new()));
+        let task = mock_task();
+        let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":" --- ","backend_version":"v1","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["99","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]},"meta":{"schema_version":"trnm.zk.payload.v0"}}"#;
         assert!(matches!(
             verifier.verify_proof(&task, payload),
             VerificationResult::Invalid(msg) if msg.contains("backend_id is required")
