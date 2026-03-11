@@ -185,7 +185,9 @@ def find_previous_week_json(history_dir: Path, current_json_out: Path, now_dt: d
     if not history_dir.exists():
         return None
     target_cutoff = now_dt - dt.timedelta(days=max(1, lookback_days))
+    min_age = dt.timedelta(days=max(1, lookback_days) // 2)
     candidates: list[tuple[float, Path]] = []
+    fallback_candidates: list[tuple[float, Path]] = []
     for p in sorted(history_dir.glob("weekly-alert-governance-*.json")):
         if p.resolve() == current_json_out.resolve():
             continue
@@ -193,7 +195,11 @@ def find_previous_week_json(history_dir: Path, current_json_out: Path, now_dt: d
         if ts is None or ts > now_dt:
             continue
         distance = abs((ts - target_cutoff).total_seconds())
-        candidates.append((distance, p))
+        fallback_candidates.append((distance, p))
+        if now_dt - ts >= min_age:
+            candidates.append((distance, p))
+    if not candidates:
+        candidates = fallback_candidates
     if not candidates:
         return None
     candidates.sort(key=lambda item: (item[0], item[1].name))
