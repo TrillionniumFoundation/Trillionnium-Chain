@@ -1981,6 +1981,7 @@ mod tests {
         let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", " '+0.05' ");
         let _buckets = EnvGuard::set("TRNM_HOT_BUCKETS", " '+1,6' ");
         let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", " '+1_024' ");
+        let _sample_len = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", " '+0' ");
 
         assert_eq!(aggr_scan_window(), 1024);
         assert_eq!(aggr_scan_round_robin_seed(), 9001);
@@ -1990,6 +1991,7 @@ mod tests {
         assert_eq!(auto_min_expected_gain_score(), 0.05);
         assert_eq!(hot_bucket_count(), 16);
         assert_eq!(auto_adaptive_min_batch_len(), 1024);
+        assert_eq!(auto_adaptive_sample_len(5000), 64);
     }
 
     #[test]
