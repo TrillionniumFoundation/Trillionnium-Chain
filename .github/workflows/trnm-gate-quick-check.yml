@@ -642,6 +642,10 @@ jobs:
         run: |
           ./scripts/v2/workflow_script_refs_trillionnium_rust_coverage_guard_test.sh
 
+      - name: Auto regression: workflow-script-refs-summary-path-guard-test
+        run: |
+          ./scripts/v2/workflow_script_refs_summary_path_guard_test.sh
+
       - name: Auto regression: trnm-merge-gates-deterministic-env-guard-test
         run: |
           ./scripts/v2/trnm_merge_gates_deterministic_env_guard_test.sh

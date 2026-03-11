@@ -23,6 +23,11 @@ if [[ ! -d "$WORKFLOW_ROOT" ]]; then
   exit 2
 fi
 
+if [[ -n "$SUMMARY_PATH" && -d "$SUMMARY_PATH" ]]; then
+  echo "[workflow-ref][FAIL] WORKFLOW_SCRIPT_REF_SUMMARY_PATH points to a directory: $SUMMARY_PATH" >&2
+  exit 2
+fi
+
 mapfile -t WORKFLOW_FILES < <(find "$WORKFLOW_ROOT" -type f \( -name '*.yml' -o -name '*.yaml' \) -print | LC_ALL=C sort)
 if [[ ${#WORKFLOW_FILES[@]} -eq 0 ]]; then
   echo "[workflow-ref][FAIL] no workflow files found under: $WORKFLOW_ROOT" >&2
