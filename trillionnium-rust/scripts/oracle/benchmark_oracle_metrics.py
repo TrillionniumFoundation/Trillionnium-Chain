@@ -18,38 +18,40 @@ def median(vals):
 
 def validate_snapshot(s, min_sources, max_staleness_ms, max_deviation_bps):
     now_ms = int(s.get("snapshot_ts_ms", 0))
-    uniq = set()
-    latest_value_by_source = {}
+    latest_sample_by_source = {}
     for src in s.get("sources", []):
         sid = src.get("source", "").strip().lower()
         if not sid:
             continue
-        uniq.add(sid)
-        latest_value_by_source[sid] = float(src.get("value", 0.0))
         ts = int(src.get("ts_unix_ms", now_ms))
+        current = latest_sample_by_source.get(sid)
+        if current is None or ts >= current[0]:
+            latest_sample_by_source[sid] = (ts, float(src.get("value", 0.0)))
+
+    for ts, _value in latest_sample_by_source.values():
         age_ms = now_ms - ts
         if age_ms < 0 or age_ms > max_staleness_ms:
-            return "stale", len(uniq)
+            return "stale", len(latest_sample_by_source)
 
-    if len(uniq) < min_sources:
-        return "quorum", len(uniq)
+    if len(latest_sample_by_source) < min_sources:
+        return "quorum", len(latest_sample_by_source)
 
-    values = list(latest_value_by_source.values())
+    values = [value for _ts, value in latest_sample_by_source.values()]
     m = median(values)
     if m is None:
-        return "quorum", len(uniq)
+        return "quorum", len(latest_sample_by_source)
 
     if abs(m) <= 1e-12:
         if any(abs(v - m) > 1e-12 for v in values):
-            return "drift", len(uniq)
-        return "ok", len(uniq)
+            return "drift", len(latest_sample_by_source)
+        return "ok", len(latest_sample_by_source)
 
     lim = abs(m) * (max_deviation_bps / 10000.0)
     for v in values:
         if abs(v - m) >= lim:
-            return "drift", len(uniq)
+            return "drift", len(latest_sample_by_source)
 
-    return "ok", len(uniq)
+    return "ok", len(latest_sample_by_source)
 
 
 def run_baseline(cases, args):
