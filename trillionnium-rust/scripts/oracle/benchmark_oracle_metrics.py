@@ -49,7 +49,7 @@ def validate_snapshot(s, min_sources, max_staleness_ms, max_deviation_bps):
 def run_baseline(cases, args):
     t0 = time.perf_counter_ns()
     stale = quorum = drift = 0
-    source_cardinality = 0
+    accepted_source_cardinalities = []
     oks = 0
     for s in cases:
         r, card = validate_snapshot(s, args.min_sources, args.max_staleness_ms, args.max_deviation_bps)
@@ -61,8 +61,9 @@ def run_baseline(cases, args):
             drift += 1
         else:
             oks += 1
-            source_cardinality = card
+            accepted_source_cardinalities.append(card)
     elapsed_ms = (time.perf_counter_ns() - t0) / 1_000_000.0
+    source_cardinality = max(accepted_source_cardinalities, default=0)
     return {
         "oracle_ingest_latency_ms": round(elapsed_ms, 3),
         "oracle_stale_reject_total": stale,

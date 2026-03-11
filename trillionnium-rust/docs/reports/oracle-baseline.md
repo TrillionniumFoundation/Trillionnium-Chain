@@ -10,7 +10,7 @@
 - `oracle_stale_reject_total`
 - `oracle_quorum_reject_total`
 - `oracle_drift_reject_total`
-- `oracle_source_cardinality`
+- `oracle_source_cardinality`（所有通过校验样本中的最大 source 基数，避免被最后一个通过样本覆盖）
 
 ## 可复现命令
 
