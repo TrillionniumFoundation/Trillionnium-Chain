@@ -3680,6 +3680,17 @@ mod tests {
     }
 
     #[test]
+    fn clamp_limit_query_request_full_enforces_max() {
+        let got = clamp_limit(
+            "QueryRequestFull",
+            QUERY_FULL_LIMIT_MAX + 1,
+            QUERY_FULL_LIMIT_DEFAULT,
+            QUERY_FULL_LIMIT_MAX,
+        );
+        assert_eq!(got, QUERY_FULL_LIMIT_MAX);
+    }
+
+    #[test]
     fn clamp_limit_keeps_in_range_value() {
         let got = clamp_limit(
             "QueryRequestFull",
