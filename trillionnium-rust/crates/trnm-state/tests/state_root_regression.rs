@@ -242,3 +242,106 @@ fn explicit_restore_apis_rewind_state_root_after_task_balance_and_pending_resolv
         "explicit restore APIs must rewind state_root exactly to the pre-mutation root"
     );
 }
+
+#[test]
+fn restore_roundtrip_stays_deterministic_even_after_cached_state_root_reads() {
+    let mut state = StateStore::new();
+    let task = TaskObject {
+        task_id: 10,
+        creator: "alice".into(),
+        bounty: 100,
+        status: TaskStatus::Open,
+        proof_type: ProofType::Fraud,
+        metadata: None,
+        worker: None,
+        committed_hash: None,
+        result_hash: None,
+        reveal_salt: None,
+        committed_at_height: None,
+        reveal_deadline_height: None,
+        challenge_deadline_height: None,
+        challenge_window_blocks_snapshot: None,
+        challenged_at_height: None,
+        resolve_deadline_height: None,
+        challenge_bond: None,
+        challenger: None,
+        challenge_bond_forfeited: None,
+        version: 1,
+    };
+
+    let task_ref = state.put_task_new(task.clone()).unwrap();
+    state.set_balance("treasury.challenge_forfeits", 11);
+    state
+        .set_gov_param(
+            0,
+            1,
+            "monetary_policy_tick_interval_blocks".to_string(),
+            "10".to_string(),
+        )
+        .unwrap();
+    state
+        .set_gov_param(
+            0,
+            2,
+            "monetary_policy_tick_cooldown_blocks".to_string(),
+            "1".to_string(),
+        )
+        .unwrap();
+    state
+        .set_gov_param(0, 3, "monetary_base_issuance_per_tick".to_string(), "7".to_string())
+        .unwrap();
+    state
+        .set_gov_param(0, 4, "monetary_base_burn_per_tick".to_string(), "5".to_string())
+        .unwrap();
+    state.policy_tick(10).unwrap();
+
+    let task_snapshot = state.get_task(task_ref.id);
+    let balance_snapshot = Some(state.balance_of("treasury.challenge_forfeits"));
+    let pending_snapshot = state.pending_resolve_approval_snapshot(task.task_id);
+    let monetary_snapshot = state.monetary_state_snapshot();
+    let baseline_root = state.state_root();
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "sanity: repeated reads should hit the cached baseline root deterministically"
+    );
+
+    let mut changed_task = state.get_task(task_ref.id).unwrap();
+    changed_task.status = TaskStatus::Challenged;
+    changed_task.challenger = Some("bob".into());
+    changed_task.challenge_bond = Some(17);
+    state.update_task(task_ref, changed_task).unwrap();
+    state.set_balance("treasury.challenge_forfeits", 19);
+    state
+        .stage_or_confirm_resolve_approval(10, 2, true, "resolver-a", "resolver-a,resolver-b")
+        .unwrap();
+    state.policy_tick(20).unwrap();
+
+    let mutated_root = state.state_root();
+    assert_ne!(
+        mutated_root, baseline_root,
+        "sanity: task/balance/pending/monetary mutations must perturb the cached state root"
+    );
+    assert_eq!(
+        state.state_root(),
+        mutated_root,
+        "sanity: repeated reads should hit the cached mutated root deterministically"
+    );
+
+    state.restore_task(10, task_snapshot);
+    state.restore_balance("treasury.challenge_forfeits", balance_snapshot);
+    state.restore_pending_resolve_approval(10, pending_snapshot);
+    state.restore_monetary_state(monetary_snapshot);
+    state = state.clone();
+
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "restore path must invalidate caches so cloned/restored state returns to the exact baseline root"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "post-restore repeated reads should deterministically reuse the rewound cached root"
+    );
+}

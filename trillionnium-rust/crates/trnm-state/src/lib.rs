@@ -81,6 +81,8 @@ pub struct MonetaryState {
     pub net_issuance: i128,
 }
 
+pub type MonetaryStateSnapshot = MonetaryState;
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PolicyTickEvent {
     pub block_height: u64,
@@ -1150,6 +1152,15 @@ impl StateStore {
 
     pub fn monetary_state(&self) -> &MonetaryState {
         &self.monetary_state
+    }
+
+    pub fn monetary_state_snapshot(&self) -> MonetaryStateSnapshot {
+        self.monetary_state.clone()
+    }
+
+    pub fn restore_monetary_state(&mut self, snapshot: MonetaryStateSnapshot) {
+        self.invalidate_state_root_cache();
+        self.monetary_state = snapshot;
     }
 
     pub fn should_trigger_policy_tick(&self, block_height: u64) -> bool {
