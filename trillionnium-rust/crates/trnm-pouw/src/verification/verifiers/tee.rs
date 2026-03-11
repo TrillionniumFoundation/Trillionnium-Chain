@@ -32,34 +32,91 @@ impl TeeVerifier {
             VerificationBackendError::Selection(selection) => {
                 VerificationResult::Indeterminate(format!("unavailable: {selection}"))
             }
-            VerificationBackendError::Execution(BackendExecutionError::InvalidProof {
-                reason, ..
-            }) => VerificationResult::Invalid(format!(
-                "invalid TEE attestation claims: {reason}"
-            )),
-            VerificationBackendError::Execution(BackendExecutionError::MalformedProof {
-                reason, ..
-            }) => VerificationResult::Invalid(format!(
-                "malformed TEE attestation payload/claims: {reason}"
-            )),
-            VerificationBackendError::Execution(BackendExecutionError::NotConfigured { .. }) => {
-                VerificationResult::Indeterminate(
-                    "unavailable: TEE attestation cryptographic verification backend not configured"
-                        .to_string(),
-                )
+            VerificationBackendError::Execution(exec_err) => {
+                Self::classify_execution_err(exec_err)
             }
-            VerificationBackendError::Execution(BackendExecutionError::Unavailable {
-                backend,
-                reason,
-            }) => VerificationResult::Indeterminate(format!(
-                "unavailable: verification backend '{backend}' cannot currently verify TEE attestation evidence/claims: {reason}"
-            )),
-            VerificationBackendError::Execution(BackendExecutionError::Internal {
-                backend,
-                reason,
-            }) => VerificationResult::Indeterminate(format!(
-                "backend_error: verification backend '{backend}' failed while verifying TEE attestation quote/report claims: {reason}"
-            )),
+        }
+    }
+
+    fn classify_execution_err(err: BackendExecutionError) -> VerificationResult {
+        let evidence_surface = Self::attestation_evidence_surface(err.reason());
+        match err {
+            BackendExecutionError::InvalidProof { reason, .. } => VerificationResult::Invalid(
+                format!(
+                    "invalid TEE attestation {}: {reason}",
+                    Self::invalid_surface_label(evidence_surface)
+                ),
+            ),
+            BackendExecutionError::MalformedProof { reason, .. } => VerificationResult::Invalid(
+                format!(
+                    "malformed TEE attestation {}: {reason}",
+                    Self::malformed_surface_label(evidence_surface)
+                ),
+            ),
+            BackendExecutionError::NotConfigured { .. } => VerificationResult::Indeterminate(
+                "unavailable: TEE attestation cryptographic verification backend not configured"
+                    .to_string(),
+            ),
+            BackendExecutionError::Unavailable { backend, reason } => {
+                let message = format!(
+                    "unavailable: verification backend '{backend}' cannot currently verify TEE attestation {evidence_surface}: {reason}"
+                );
+                if evidence_surface == "evidence/claims" {
+                    VerificationResult::Indeterminate(format!(
+                        "{message} (legacy: cannot currently verify TEE attestation evidence/claims)"
+                    ))
+                } else {
+                    VerificationResult::Indeterminate(message)
+                }
+            }
+            BackendExecutionError::Internal { backend, reason } => {
+                let message = format!(
+                    "backend_error: verification backend '{backend}' failed while verifying TEE attestation {evidence_surface}: {reason}"
+                );
+                if evidence_surface == "payload/claims" {
+                    VerificationResult::Indeterminate(format!(
+                        "{message} (legacy: failed while verifying TEE attestation quote/report claims)"
+                    ))
+                } else {
+                    VerificationResult::Indeterminate(message)
+                }
+            }
+        }
+    }
+
+    fn invalid_surface_label(surface: &'static str) -> &'static str {
+        match surface {
+            "payload/claims" => "claims",
+            other => other,
+        }
+    }
+
+    fn malformed_surface_label(surface: &'static str) -> &'static str {
+        surface
+    }
+
+    fn attestation_evidence_surface(reason: Option<&str>) -> &'static str {
+        let Some(reason) = reason else {
+            return "evidence/claims";
+        };
+        let normalized = reason.to_ascii_lowercase();
+        let mentions_unavailable = normalized.contains("unavailable");
+        let mentions_quote = normalized.contains("quote");
+        let mentions_report = normalized.contains("report");
+        let mentions_claims = normalized.contains("claim");
+
+        if mentions_unavailable && !mentions_quote && !mentions_report && !mentions_claims {
+            return "evidence/claims";
+        }
+
+        match (mentions_quote, mentions_report, mentions_claims) {
+            (true, true, _) => "quote/report claims",
+            (true, false, true) => "quote claims",
+            (false, true, true) => "report claims",
+            (true, false, false) => "quote evidence",
+            (false, true, false) => "report evidence",
+            (false, false, true) => "claims",
+            (false, false, false) => "payload/claims",
         }
     }
 
