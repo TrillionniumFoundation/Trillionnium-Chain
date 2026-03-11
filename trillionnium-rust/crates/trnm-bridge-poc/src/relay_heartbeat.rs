@@ -95,10 +95,12 @@ const MAX_FAILURE_REASON_CHARS: usize = 160;
 fn is_disallowed_invisible_char(ch: char) -> bool {
     matches!(
         ch,
-        '\u{00AD}'
+        '\u{00A0}'
+            | '\u{00AD}'
             | '\u{034F}'
             | '\u{061C}'
             | '\u{180E}'
+            | '\u{2007}'
             | '\u{200B}'
             | '\u{200C}'
             | '\u{200D}'
@@ -111,6 +113,7 @@ fn is_disallowed_invisible_char(ch: char) -> bool {
             | '\u{202C}'
             | '\u{202D}'
             | '\u{202E}'
+            | '\u{202F}'
             | '\u{2060}'
             | '\u{2061}'
             | '\u{2062}'
@@ -168,5 +171,12 @@ mod tests {
         let raw = "target\u{034F} relay timeout";
         let normalized = normalize_failure_reason(raw);
         assert_eq!(normalized, "target relay timeout");
+    }
+
+    #[test]
+    fn normalize_failure_reason_collapses_nbsp_family_for_replay_stability() {
+        let raw = "target\u{00A0}relay\u{2007}timeout\u{202F}signal";
+        let normalized = normalize_failure_reason(raw);
+        assert_eq!(normalized, "target relay timeout signal");
     }
 }
