@@ -1751,6 +1751,57 @@ mod tests {
     }
 
     #[test]
+    fn timeout_rejects_challenged_task_with_missing_challenger_metadata_without_escrow_mutation() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 1_000);
+
+        let task_id = 21_501;
+        let r1 = apply_create_task(&mut st, task_id, "alice".into(), 10).unwrap();
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let result_hash = [7u8; 32];
+        let reveal_salt = [9u8; 32];
+        let committed = compute_commitment(task_id, &result_hash, &reveal_salt, "worker1");
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+        let _ = apply_challenge_at_height(
+            &mut st,
+            r4,
+            "challenger".into(),
+            10,
+            "challenger".into(),
+            1,
+        )
+        .unwrap();
+
+        let mut task = st.get_task(task_id).unwrap();
+        task.challenger = None;
+        let challenged_ref = st
+            .update_task(
+                ObjectRef {
+                    id: task_id,
+                    version: task.version,
+                },
+                task.clone(),
+            )
+            .unwrap();
+
+        let before_task = st.get_task(task_id).unwrap();
+        let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+        let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+
+        let err = apply_timeout(&mut st, challenged_ref, 999)
+            .expect_err("timeout must fail closed when challenged task is missing challenger metadata");
+        assert!(matches!(err, PouwError::State(_)));
+
+        let after_task = st.get_task(task_id).unwrap();
+        assert_eq!(after_task.status, before_task.status);
+        assert_eq!(after_task.challenger, before_task.challenger);
+        assert_eq!(after_task.challenge_bond_forfeited, before_task.challenge_bond_forfeited);
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
+        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
+    }
+
+    #[test]
     fn resolve_rejects_dirty_resolver_actor_ids() {
         for (i, dirty_resolver) in dirty_actor_ids().into_iter().enumerate() {
             let mut st = seeded_state();
