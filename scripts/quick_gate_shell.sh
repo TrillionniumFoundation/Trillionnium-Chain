@@ -41,8 +41,12 @@ if [[ -n "$SUMMARY_PATH" && -d "$SUMMARY_PATH" ]]; then
 fi
 
 if [[ "$SKIP_SHELLCHECK" != "1" ]] && ! command -v shellcheck >/dev/null 2>&1; then
-  echo "[quick-gate][FAIL] shellcheck not found in PATH (set QUICK_GATE_SKIP_SHELLCHECK=1 for syntax-only local run)" >&2
-  exit 2
+  if [[ "${CI:-}" == "true" ]]; then
+    echo "[quick-gate][FAIL] shellcheck not found in PATH under CI" >&2
+    exit 2
+  fi
+  echo "[quick-gate][WARN] shellcheck not found in PATH -> falling back to bash -n only for non-CI local run" >&2
+  SKIP_SHELLCHECK="1"
 fi
 
 mapfile -t NORMALIZED_TARGET_DIRS < <(printf '%s\n' "${TARGET_DIRS[@]}" | awk 'NF {print}' | LC_ALL=C sort -u)
