@@ -540,15 +540,8 @@ fn recover_wal_state(wal_dir: &Path) -> Result<RecoveredWalState> {
 
     if let Some(last) = valid_entries.last() {
         let retained_checkpoint_height = last_checkpoint.as_ref().map(|cp| cp.height);
-        let checkpoint_covers_last_retained_entry = last_checkpoint
-            .as_ref()
-            .map(|cp| cp.height == last.height)
-            .unwrap_or(false);
         let metadata_only_recovery = retained_checkpoint_height
-            .map(|checkpoint_height| {
-                checkpoint_height.saturating_add(1) < last.height
-                    && !checkpoint_covers_last_retained_entry
-            })
+            .map(|checkpoint_height| checkpoint_height < last.height)
             .unwrap_or(true);
         return Ok(RecoveredWalState {
             next_height: last.height + 1,
@@ -4970,6 +4963,52 @@ locked_block_hash = "stale-lock"
         assert!(wal_raw.contains("next_height = 99"));
         assert!(wal_raw.contains("last_round = 42"));
         assert!(wal_raw.contains("\"stale-lock\""));
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn recover_truncates_uncheckpointed_tail_without_claiming_metadata_recovery() {
+        let wal_dir = temp_wal_dir("recover-truncates-uncheckpointed-tail");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "h1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "h2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1.clone()),
+        };
+        persist_wal_meta_entries(&wal_dir, &[e1, e2]).unwrap();
+        persist_checkpoint_meta(
+            &wal_dir,
+            &[CheckpointMeta {
+                height: 1,
+                state_root_hex: "r1".into(),
+                wal_entry_hash_hex: h1,
+            }],
+        )
+        .unwrap();
+
+        let recovered = recover_wal_state(&wal_dir).unwrap();
+        assert!(recovered.truncated);
+        assert!(!recovered.metadata_only_recovery);
+        assert_eq!(recovered.next_height, 2);
+        assert_eq!(recovered.checkpoint_height_retained, Some(1));
+        assert_eq!(recovered.restored_lock.as_deref(), Some("h1"));
+        assert_eq!(recovered.wal_entries_retained, 1);
+        assert_eq!(load_wal_meta_entries(&wal_dir).unwrap().len(), 1);
+        assert_eq!(load_checkpoint_meta(&wal_dir).unwrap().len(), 1);
 
         let _ = fs::remove_dir_all(&wal_dir);
     }
