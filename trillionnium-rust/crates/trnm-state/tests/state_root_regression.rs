@@ -345,3 +345,32 @@ fn restore_roundtrip_stays_deterministic_even_after_cached_state_root_reads() {
         "post-restore repeated reads should deterministically reuse the rewound cached root"
     );
 }
+
+#[test]
+fn idempotent_non_sensitive_gov_reapply_keeps_state_root_stable() {
+    let mut state = StateStore::new();
+    state
+        .set_gov_param(77_700, 7_401, "max_block_ms".into(), "15".into())
+        .expect("initial non-sensitive apply should succeed");
+
+    let baseline_root = state.state_root();
+
+    state
+        .set_gov_param(77_701, 7_401, "max_block_ms".into(), "15".into())
+        .expect("idempotent reapply should succeed");
+
+    assert!(
+        state.pending_gov_update("max_block_ms").is_none(),
+        "non-sensitive idempotent reapply should not leave pending state behind"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "idempotent non-sensitive governance reapply must not perturb the deterministic state root"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "repeated reads after idempotent governance reapply should stay on the same cached root"
+    );
+}
