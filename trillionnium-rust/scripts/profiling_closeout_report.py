@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import argparse
 import glob
+import math
 import os
 import re
 import statistics
@@ -44,7 +45,7 @@ def summarize(vals):
     if not vals:
         return None
     vals = sorted(vals)
-    p95 = vals[min(len(vals) - 1, int(len(vals) * 0.95))]
+    p95 = vals[min(len(vals) - 1, max(0, math.ceil(len(vals) * 0.95) - 1))]
     return vals[0], statistics.median(vals), p95, vals[-1]
 
 
@@ -300,6 +301,7 @@ def main():
         "profile.report.grouping_efficiency",
         "profile.conflict_hit_rate",
         "profile.hot_object_share",
+        "profile.candidate_groups_scanned",
     ]
     for label, rows in bench_metric_labels:
         if rows:
