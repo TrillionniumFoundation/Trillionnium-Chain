@@ -266,6 +266,52 @@ fn paused_resolve_approval_accepts_case_variant_approver_spelling_without_releas
 }
 
 #[test]
+fn paused_state_rejects_case_variant_duplicate_second_approver_without_releasing_escrow() {
+    // M1 micro-hardening: case-insensitive membership matching must not accidentally
+    // allow the same authority to satisfy quorum twice via spelling variants while paused.
+    // Rejection must leave custody balances and staged quorum state unchanged.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 12_346);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 679);
+
+    st.set_gov_param(98_149, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+    let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+
+    let first = st
+        .stage_or_confirm_resolve_approval(9_906_1, 1, false, "Authority-A", "authority-a,authority-b")
+        .expect("first case-variant approver should match configured authority member");
+    assert!(!first, "first distinct approver should only stage quorum");
+    assert_eq!(st.pending_resolve_approval(9_906_1), Some((false, 1)));
+    assert_eq!(
+        st.pending_resolve_first_approver(9_906_1).as_deref(),
+        Some("Authority-A"),
+        "first approver spelling should be preserved for auditability"
+    );
+
+    let err = st
+        .stage_or_confirm_resolve_approval(9_906_1, 1, false, "authority-a", "authority-a,authority-b")
+        .expect_err("same authority with different case must not satisfy quorum twice");
+    assert!(err.contains("distinct approver"));
+
+    assert_eq!(st.pending_resolve_approval(9_906_1), Some((false, 1)));
+    assert_eq!(
+        st.pending_resolve_first_approver(9_906_1).as_deref(),
+        Some("Authority-A"),
+        "duplicate case-variant rejection must preserve original audit spelling"
+    );
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
+    assert_eq!(st.pending_gov_update("resolve_authority"), None);
+}
+
+#[test]
 fn paused_unpause_rejects_noncanonical_key_id_without_mutating_custody_or_quorum_state() {
     // M1 merge-gate invariant: emergency pause exit path must keep canonical key-id guard.
     // A wrong-key unpause attempt must fail closed: pause state, escrow custody, and
