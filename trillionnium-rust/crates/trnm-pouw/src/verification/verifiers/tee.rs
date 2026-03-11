@@ -34,7 +34,9 @@ impl TeeVerifier {
             }
             VerificationBackendError::Execution(BackendExecutionError::InvalidProof {
                 reason, ..
-            }) => VerificationResult::Invalid(reason),
+            }) => VerificationResult::Invalid(format!(
+                "invalid TEE attestation evidence: {reason}"
+            )),
             VerificationBackendError::Execution(BackendExecutionError::MalformedProof {
                 reason, ..
             }) => VerificationResult::Invalid(format!(
@@ -273,7 +275,9 @@ mod tests {
                 &task,
                 b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,quote=abc"
             ),
-            VerificationResult::Invalid(msg) if msg.contains("mock tee backend rejected proof")
+            VerificationResult::Invalid(msg)
+                if msg.contains("invalid TEE attestation evidence:")
+                    && msg.contains("mock tee backend rejected proof")
         ));
     }
 
