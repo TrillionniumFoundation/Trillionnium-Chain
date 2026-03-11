@@ -4202,6 +4202,46 @@ mod tests {
     }
 
     #[test]
+    fn wal_checkpoint_verification_falls_back_when_height_regresses() {
+        let e1 = WalMeta {
+            height: 10,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: 9,
+            round: 1,
+            proposal_hash: "p2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1.clone()),
+        };
+
+        let checkpoints = vec![
+            CheckpointMeta {
+                height: 10,
+                state_root_hex: "r1".into(),
+                wal_entry_hash_hex: h1,
+            },
+            CheckpointMeta {
+                height: 9,
+                state_root_hex: "r2".into(),
+                wal_entry_hash_hex: e2.content_hash_hex(),
+            },
+        ];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2])
+            .unwrap()
+            .expect("checkpoint");
+        assert_eq!(got.height, 10);
+        assert_eq!(got.state_root_hex, "r1");
+    }
+
+    #[test]
     fn wal_checkpoint_verification_is_height_ordered_even_if_checkpoint_list_is_not() {
         let e1 = WalMeta {
             height: 1,
