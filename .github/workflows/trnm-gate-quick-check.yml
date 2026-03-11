@@ -158,6 +158,10 @@ jobs:
         run: |
           ./scripts/v2/agent_user_phasea_gate_deterministic_env_guard_test.sh
 
+      - name: P1 rust sidecar deterministic env guard regression
+        run: |
+          ./scripts/v2/p1_rust_sidecar_deterministic_env_guard_test.sh
+
       - name: PR5 reconcile skip-when-missing-log regression
         run: |
           ./scripts/v2/pr5_treasury_reconcile_skip_when_missing_log_test.sh
