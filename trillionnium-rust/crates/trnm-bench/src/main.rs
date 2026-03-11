@@ -105,6 +105,21 @@ fn main() {
     println!("elapsed_ms={}", dt.as_millis());
 
     if args.profile {
+        let coverage_ratio = grouped as f64 / n as f64;
+        let groups_per_1k_txs = groups.len() as f64 * 1000.0 / n as f64;
+        let grouping_efficiency = if groups.is_empty() {
+            0.0
+        } else {
+            grouped as f64 / groups.len() as f64
+        };
+        println!("profile.report.workload={:?}", args.workload);
+        println!("profile.report.strategy={:?}", args.strategy);
+        println!("profile.report.elapsed_ms={}", dt.as_millis());
+        println!("profile.report.estimated_conflict_rate={:.4}", conflict_rate);
+        println!("profile.report.coverage_ratio={:.4}", coverage_ratio);
+        println!("profile.report.groups_per_1k_txs={:.4}", groups_per_1k_txs);
+        println!("profile.report.grouping_efficiency={:.4}", grouping_efficiency);
+        println!("profile.report.autopilot_hint=stdout_only_profile_capture");
         println!("profile.tx_count={}", profile.tx_count);
         println!("profile.group_count={}", profile.group_count);
         println!("profile.grouped_count={}", profile.grouped_count);
