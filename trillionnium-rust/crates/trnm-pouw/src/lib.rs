@@ -1283,35 +1283,46 @@ pub fn apply_resolve_at_height(
     }
 
     let task_id = task_ref.id;
+    let before_task = task.clone();
     let next_ref = st
         .update_task(task_ref, task.clone())
         .map_err(map_state_err)?;
 
-    if let Some(bond) = task.challenge_bond {
-        // Funds always flow out of escrow at resolve for auditability.
-        st.debit_balance(CHALLENGE_ESCROW_ACCOUNT, bond)
-            .map_err(PouwError::State)?;
-        if slash_worker {
-            // Challenge succeeds: return challenger bond.
-            if let Some(ref challenger) = task.challenger {
-                st.credit_balance(challenger, bond)
+    let settle_result = (|| -> Result<(), PouwError> {
+        if let Some(bond) = task.challenge_bond {
+            // Funds always flow out of escrow at resolve for auditability.
+            st.debit_balance(CHALLENGE_ESCROW_ACCOUNT, bond)
+                .map_err(PouwError::State)?;
+            if slash_worker {
+                // Challenge succeeds: return challenger bond.
+                if let Some(ref challenger) = task.challenger {
+                    st.credit_balance(challenger, bond)
+                        .map_err(PouwError::State)?;
+                }
+            } else {
+                // Challenge fails: forfeit bond into treasury pool.
+                st.credit_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, bond)
                     .map_err(PouwError::State)?;
             }
-        } else {
-            // Challenge fails: forfeit bond into treasury pool.
-            st.credit_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, bond)
-                .map_err(PouwError::State)?;
         }
+
+        if slash_worker {
+            // Success incentive: pay a fixed minimal bounty to challenger strictly from the
+            // task-local slashed worker stake lock. Never fall back to the global worker-slash
+            // treasury, which is custody-only and must not subsidize historical challenge payouts.
+            let _ = maybe_pay_challenge_success_bounty(st, &task)?;
+        }
+
+        settle_worker_stake_for_terminal_state(st, &task)?;
+        Ok(())
+    })();
+
+    if let Err(err) = settle_result {
+        st.update_task(next_ref.clone(), before_task).map_err(map_state_err)?;
+        st.clear_pending_resolve_approval(task_id);
+        return Err(err);
     }
 
-    if slash_worker {
-        // Success incentive: pay a fixed minimal bounty to challenger strictly from the
-        // task-local slashed worker stake lock. Never fall back to the global worker-slash
-        // treasury, which is custody-only and must not subsidize historical challenge payouts.
-        let _ = maybe_pay_challenge_success_bounty(st, &task)?;
-    }
-
-    settle_worker_stake_for_terminal_state(st, &task)?;
     st.clear_pending_resolve_approval(task_id);
 
     Ok(next_ref)
