@@ -404,6 +404,23 @@ mod tests {
     }
 
     #[test]
+    fn registry_zk_vector_unknown_vk_ref_fails_closed_before_backend_execution() {
+        let registry = registry_with_mock_zk_backend();
+        let mut task = task_with_proof_type(ProofType::Zk);
+        task.status = TaskStatus::Committed;
+        task.worker = Some("worker-zk".into());
+        task.result_hash = Some([0x11; 32]);
+
+        let payload = br#"ZK:{"task_id":42,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","vk_ref":"vk://trnm/dev/mock-groth16/unknown","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["42","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#;
+
+        assert!(matches!(
+            registry.verify(&task, payload),
+            VerificationResult::Invalid(msg)
+                if msg.contains("unknown vk_ref 'vk://trnm/dev/mock-groth16/unknown'")
+        ));
+    }
+
+    #[test]
     fn registry_zk_vector_proof_type_mismatch_fails_closed_before_crypto() {
         let registry = registry_with_mock_zk_backend();
         let mut task = task_with_proof_type(ProofType::Zk);
