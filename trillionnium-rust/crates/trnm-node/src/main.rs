@@ -4839,6 +4839,8 @@ mod tests {
         let recovered = recover_wal_state(&wal_dir).unwrap();
         assert!(!recovered.metadata_only_recovery);
         assert_eq!(recovered.wal_entries_retained, 1);
+        assert_eq!(recovered.checkpoint_height_retained, Some(1));
+        assert_eq!(recovered.next_height, 2);
 
         let err = anyhow::anyhow!(
             "refusing metadata-only recovery from {}: verified WAL/checkpoint metadata retained {} committed WAL entr{} through height {} (last retained checkpoint: {}) but trnm-node does not yet restore application StateStore snapshots or replay committed blocks; start from a fresh --bft-wal-dir / --bft-wal-mode auto isolated run, or implement state snapshot+replay recovery first",
@@ -4854,6 +4856,14 @@ mod tests {
         .to_string();
         assert!(err.contains("retained 1 committed WAL entry through height 1"));
         assert!(err.contains("last retained checkpoint: 1"));
+
+        let would_require_snapshot_restore = recovered.checkpoint_height_retained
+            .map(|checkpoint_height| checkpoint_height < recovered.next_height.saturating_sub(1))
+            .unwrap_or(recovered.wal_entries_retained > 0);
+        assert!(
+            !would_require_snapshot_restore,
+            "fully checkpointed WAL metadata must not be escalated to metadata-only recovery misuse"
+        );
 
         let _ = fs::remove_dir_all(&wal_dir);
     }
