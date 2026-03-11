@@ -830,30 +830,51 @@ fn append_progress(progress_log: &PathBuf, rec: &ProgressRecord) -> Result<()> {
     append_json_line(progress_log, &line)
 }
 
-fn parse_tx_hash(text: &str) -> Option<String> {
-    text.split_whitespace().find_map(|w| {
-        let raw = w
-            .strip_prefix("tx_hash=")
-            .or_else(|| w.strip_prefix("txHash="))
-            .or_else(|| w.strip_prefix("txhash="))?;
-        let cleaned = raw
-            .trim_matches(|c: char| {
-                matches!(c, '"' | '\'' | ',' | ';' | '.' | ':' | ')' | ']' | '}')
-            })
-            .trim();
-        let normalized = cleaned
-            .strip_prefix("0x")
-            .or_else(|| cleaned.strip_prefix("0X"))
-            .unwrap_or(cleaned);
+fn normalize_candidate_tx_hash(raw: &str) -> Option<String> {
+    let cleaned = raw
+        .trim_matches(|c: char| {
+            matches!(
+                c,
+                '"' | '\'' | ',' | ';' | '.' | ':' | ')' | ']' | '}' | '(' | '[' | '{'
+            )
+        })
+        .trim_end_matches(|c: char| matches!(c, '"' | '\'' | ',' | ';' | '}' | ']'))
+        .trim();
+    let normalized = cleaned
+        .strip_prefix("0x")
+        .or_else(|| cleaned.strip_prefix("0X"))
+        .unwrap_or(cleaned);
 
-        if normalized.len() >= 8
-            && normalized.len() <= 64
-            && normalized.chars().all(|c| c.is_ascii_hexdigit())
-        {
-            Some(normalized.to_ascii_lowercase())
-        } else {
-            None
-        }
+    if normalized.len() >= 8
+        && normalized.len() <= 64
+        && normalized.chars().all(|c| c.is_ascii_hexdigit())
+    {
+        Some(normalized.to_ascii_lowercase())
+    } else {
+        None
+    }
+}
+
+fn parse_tx_hash(text: &str) -> Option<String> {
+    const PREFIXES: &[&str] = &[
+        "tx_hash=",
+        "tx_hash:",
+        "tx-hash=",
+        "tx-hash:",
+        "txHash=",
+        "txHash:",
+        "txhash=",
+        "txhash:",
+        "\"tx_hash\":",
+        "\"txHash\":",
+        "\"txhash\":",
+    ];
+
+    text.split_whitespace().find_map(|w| {
+        PREFIXES
+            .iter()
+            .find_map(|prefix| w.strip_prefix(prefix))
+            .and_then(normalize_candidate_tx_hash)
     })
 }
 
@@ -1957,6 +1978,13 @@ mod tests {
         let parsed = parse_tx_hash("[adapter] simulated failure tx_hash=deadbeef")
             .expect("short failure receipt hash should parse");
         assert_eq!(parsed, "deadbeef");
+    }
+
+    #[test]
+    fn parse_tx_hash_accepts_colon_style_receipts() {
+        let colon = parse_tx_hash("[adapter] commit accepted tx-hash:0xDEADBEEF")
+            .expect("colon-delimited receipt hash should parse");
+        assert_eq!(colon, "deadbeef");
     }
 
     #[test]
