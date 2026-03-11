@@ -1412,4 +1412,34 @@ mod tests {
         // The real queued id must still be deduped correctly.
         assert_eq!(g.admit(20, IngressClass::Critical), AdmitOutcome::Duplicate);
     }
+
+    #[test]
+    fn equal_cardinality_cross_lane_and_global_skew_self_heals_without_false_duplicate_or_poisoned_retry() {
+        let mut g = LaneAdmissionGate::new(3, 1);
+
+        assert_eq!(g.admit(100, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(200, IngressClass::Normal), AdmitOutcome::Accepted);
+
+        // Simulate restored-state skew where lane-local membership is swapped across
+        // lanes and lane-wide cache mirrors the same ghost replacement while keeping
+        // total cardinality unchanged.
+        g.normal.seen.remove(&200);
+        g.critical.seen.remove(&100);
+        g.normal.seen.insert(100);
+        g.critical.seen.insert(999);
+        g.seen_global.remove(&100);
+        g.seen_global.remove(&200);
+        g.seen_global.insert(100);
+        g.seen_global.insert(999);
+        assert_eq!(g.normal.seen.len() + g.critical.seen.len(), 2);
+        assert_eq!(g.seen_global.len(), 2);
+
+        // Fresh ghost id must not be misclassified as duplicate while lane still has room.
+        assert_eq!(g.admit(999, IngressClass::Critical), AdmitOutcome::Accepted);
+
+        // Inline self-heal must also restore duplicate semantics for the real queued ids.
+        assert_eq!(g.admit(100, IngressClass::Normal), AdmitOutcome::Duplicate);
+        assert_eq!(g.admit(200, IngressClass::Critical), AdmitOutcome::Duplicate);
+        assert_eq!(g.queued_counts(), (2, 1, 3));
+    }
 }
