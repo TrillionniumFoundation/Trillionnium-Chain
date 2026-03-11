@@ -721,15 +721,6 @@ fn load_ack_records(ack_log: &PathBuf) -> Vec<AckRecord> {
         .unwrap_or_default()
 }
 
-fn latest_ack_hashes(ack_log: &PathBuf, task_id: u64) -> (Option<String>, Option<String>) {
-    load_ack_records(ack_log)
-        .into_iter()
-        .rev()
-        .find(|ack| ack.task_id == task_id)
-        .map(|ack| (ack.commit_tx_hash, ack.reveal_tx_hash))
-        .unwrap_or((None, None))
-}
-
 fn load_acked(ack_log: &PathBuf) -> HashSet<u64> {
     load_ack_records(ack_log)
         .into_iter()
