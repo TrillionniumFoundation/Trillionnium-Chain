@@ -693,6 +693,14 @@ fn persist_local_pending_tx(tx_hash: &str) -> Result<()> {
         tx_hash.to_string(),
         serde_json::json!({
             "tx_hash": tx_hash,
+            "tx": {
+                "from": "trnm1pendingplaceholderfrom",
+                "to": "trnm1pendingplaceholderto",
+                "amount": 0,
+                "fee": 0,
+                "nonce": 0,
+                "signature": "pending"
+            },
             "status": "pending",
             "error": null,
             "submitted_at_unix_ms": now_ms,
