@@ -1011,6 +1011,35 @@ fn paused_state_rejects_case_variant_challenge_escrow_member_without_side_effect
 }
 
 #[test]
+fn paused_state_rejects_case_variant_reserved_system_member_without_side_effects() {
+    // M1 micro-hardening: reserved system identity quarantine must stay case-insensitive
+    // so mixed-case aliases cannot enter resolve quorum while emergency pause is active.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 9_930);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 993);
+
+    st.set_gov_param(98_212, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+    let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+
+    let err = st
+        .stage_or_confirm_resolve_approval(9_917, 1, true, "authority-a", "authority-a,SYSTEM")
+        .expect_err("case-variant reserved system member must be rejected while paused");
+    assert!(err.contains("reserved") || err.contains("authority set"));
+
+    assert_eq!(st.pending_resolve_approval(9_917), None);
+    assert_eq!(st.pending_gov_update("resolve_authority"), None);
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
+}
+
+#[test]
 fn paused_state_rejects_case_variant_worker_slash_treasury_member_without_side_effects() {
     // M1 micro-hardening: worker slash treasury reservation must stay
     // case-insensitive so mixed-case aliases cannot enter resolve quorum.
