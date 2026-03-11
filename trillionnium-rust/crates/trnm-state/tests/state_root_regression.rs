@@ -61,7 +61,7 @@ fn task_metadata_and_proof_type_should_affect_state_root() {
 #[test]
 fn pending_gov_updates_should_affect_state_root() {
     let mut st1 = StateStore::new();
-    let mut st2 = StateStore::new();
+    let st2 = StateStore::new();
 
     // Base states are identical
     assert_eq!(st1.state_root(), st2.state_root());
@@ -75,5 +75,48 @@ fn pending_gov_updates_should_affect_state_root() {
         st1.state_root(),
         st2.state_root(),
         "State root should incorporate pending governance updates"
+    );
+}
+
+#[test]
+fn treasury_balances_and_monetary_counters_should_affect_state_root_even_when_net_issuance_matches() {
+    let mut st1 = StateStore::new();
+    let mut st2 = StateStore::new();
+
+    for st in [&mut st1, &mut st2] {
+        st.set_gov_param(0, 1, "monetary_policy_tick_interval_blocks".to_string(), "10".to_string())
+            .unwrap();
+        st.set_gov_param(0, 2, "monetary_policy_tick_cooldown_blocks".to_string(), "1".to_string())
+            .unwrap();
+    }
+
+    st1.set_gov_param(0, 3, "monetary_base_issuance_per_tick".to_string(), "7".to_string())
+        .unwrap();
+    st1.set_gov_param(0, 4, "monetary_base_burn_per_tick".to_string(), "5".to_string())
+        .unwrap();
+    st2.set_gov_param(0, 3, "monetary_base_issuance_per_tick".to_string(), "9".to_string())
+        .unwrap();
+    st2.set_gov_param(0, 4, "monetary_base_burn_per_tick".to_string(), "7".to_string())
+        .unwrap();
+
+    let e1 = st1.policy_tick(10).unwrap();
+    let e2 = st2.policy_tick(10).unwrap();
+    assert_eq!(e1.net_delta, e2.net_delta, "sanity: net issuance matches");
+    assert_ne!(
+        e1.total_minted, e2.total_minted,
+        "sanity: gross minted amount differs"
+    );
+    assert_ne!(
+        e1.total_burned, e2.total_burned,
+        "sanity: gross burned amount differs"
+    );
+
+    st1.set_balance("treasury.challenge_forfeits", 11);
+    st2.set_balance("treasury.worker_slashes", 11);
+
+    assert_ne!(
+        st1.state_root(),
+        st2.state_root(),
+        "State root must include treasury balance placement and full monetary counters, not only net issuance"
     );
 }
