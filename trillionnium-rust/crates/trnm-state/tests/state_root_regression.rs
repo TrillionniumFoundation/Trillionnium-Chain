@@ -181,3 +181,64 @@ fn restoring_pending_and_monetary_state_rewinds_state_root_symmetrically() {
         "restoring the pre-mutation snapshot must rewind state_root exactly"
     );
 }
+
+#[test]
+fn explicit_restore_apis_rewind_state_root_after_task_balance_and_pending_resolve_mutation() {
+    let mut state = StateStore::new();
+    let task = TaskObject {
+        task_id: 9,
+        creator: "alice".into(),
+        bounty: 100,
+        status: TaskStatus::Open,
+        proof_type: ProofType::Fraud,
+        metadata: None,
+        worker: None,
+        committed_hash: None,
+        result_hash: None,
+        reveal_salt: None,
+        committed_at_height: None,
+        reveal_deadline_height: None,
+        challenge_deadline_height: None,
+        challenge_window_blocks_snapshot: None,
+        challenged_at_height: None,
+        resolve_deadline_height: None,
+        challenge_bond: None,
+        challenger: None,
+        challenge_bond_forfeited: None,
+        version: 1,
+    };
+
+    let task_ref = state.put_task_new(task.clone()).unwrap();
+    state.set_balance("treasury.worker_slashes", 3);
+
+    let task_snapshot = state.get_task(task_ref.id);
+    let balance_snapshot = Some(state.balance_of("treasury.worker_slashes"));
+    let pending_snapshot = state.pending_resolve_approval_snapshot(task.task_id);
+    let root_before = state.state_root();
+
+    let mut changed_task = state.get_task(task_ref.id).unwrap();
+    changed_task.status = TaskStatus::Challenged;
+    changed_task.challenger = Some("bob".into());
+    changed_task.challenge_bond = Some(17);
+    state.update_task(task_ref, changed_task).unwrap();
+    state.set_balance("treasury.worker_slashes", 44);
+    state
+        .stage_or_confirm_resolve_approval(9, 2, true, "resolver-a", "resolver-a,resolver-b")
+        .unwrap();
+
+    let root_after_mutation = state.state_root();
+    assert_ne!(
+        root_before, root_after_mutation,
+        "sanity: explicit task/balance/pending mutations must perturb the state root"
+    );
+
+    state.restore_task(9, task_snapshot);
+    state.restore_balance("treasury.worker_slashes", balance_snapshot);
+    state.restore_pending_resolve_approval(9, pending_snapshot);
+
+    assert_eq!(
+        state.state_root(),
+        root_before,
+        "explicit restore APIs must rewind state_root exactly to the pre-mutation root"
+    );
+}
