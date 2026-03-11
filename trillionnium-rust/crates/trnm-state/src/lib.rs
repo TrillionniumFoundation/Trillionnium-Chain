@@ -2697,6 +2697,49 @@ mod tests {
     }
 
     #[test]
+    fn governance_sensitive_replace_preserves_existing_pending_when_new_resolve_authority_is_invalid() {
+        let mut st = StateStore::new();
+        st.set_gov_param_unchecked(7_311, "resolve_authority".into(), "resolver-v1,resolver-v2".into())
+            .unwrap();
+
+        let scheduled = st
+            .set_gov_param(14_000, 7_311, "resolve_authority".into(), "resolver-v3,resolver-v4".into())
+            .expect("initial resolve_authority update should schedule");
+        let activate_at_height = match scheduled {
+            GovParamUpdateOutcome::Scheduled { activate_at_height } => activate_at_height,
+            GovParamUpdateOutcome::Applied(_) => panic!("expected schedule"),
+            GovParamUpdateOutcome::Cancelled => panic!("expected schedule"),
+        };
+        assert_eq!(activate_at_height, 14_020);
+
+        let pending_before = st
+            .pending_gov_update("resolve_authority")
+            .expect("pending resolve_authority update should exist");
+
+        let err = st
+            .set_gov_param_with_action(
+                14_005,
+                7_311,
+                "resolve_authority".into(),
+                "resolver-v5,SYSTEM".into(),
+                GovPendingUpdateAction::Replace,
+            )
+            .expect_err("invalid replacement authority set must be rejected");
+        assert!(err.contains("invalid governance value for resolve_authority"), "{err}");
+
+        let pending_after = st
+            .pending_gov_update("resolve_authority")
+            .expect("invalid replace must preserve previously scheduled update");
+        assert_eq!(pending_after.key_id, pending_before.key_id);
+        assert_eq!(pending_after.value, pending_before.value);
+        assert_eq!(pending_after.activate_at_height, pending_before.activate_at_height);
+        assert_eq!(
+            st.gov_param_string("resolve_authority"),
+            Some("resolver-v1,resolver-v2".into())
+        );
+    }
+
+    #[test]
     fn governance_resolve_authority_unchecked_path_rejects_key_id_shadowing() {
         let mut st = StateStore::new();
         st.set_gov_param_unchecked(
