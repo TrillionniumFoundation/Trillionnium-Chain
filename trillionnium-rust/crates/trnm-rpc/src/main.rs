@@ -2187,7 +2187,18 @@ fn parse_http_get_path(first_line: &str) -> Option<&str> {
         return None;
     }
 
-    Some(path.split('?').next().unwrap_or(path))
+    let path = path.split('?').next().unwrap_or(path);
+    let normalized = path.to_ascii_lowercase();
+    if path.contains('\\')
+        || normalized.contains("%2f")
+        || normalized.contains("%5c")
+        || normalized.contains("%2e")
+        || path.split('/').any(|segment| segment == "." || segment == "..")
+    {
+        return None;
+    }
+
+    Some(path)
 }
 
 fn normalize_capability_subject_lookup(raw: &str) -> Option<String> {
@@ -3605,6 +3616,16 @@ mod tests {
         assert_eq!(parse_http_get_path("GET /health\u{0001} HTTP/1.1"), None);
         assert_eq!(parse_http_get_path("GET /health HTTP/1.1 extra"), None);
         assert_eq!(parse_http_get_path("GET /health HTTP/1.1\tjunk"), None);
+        assert_eq!(parse_http_get_path("GET //health HTTP/1.1"), Some("//health"));
+    }
+
+    #[test]
+    fn parse_http_get_path_rejects_path_traversal_and_backslash_forms() {
+        assert_eq!(parse_http_get_path("GET /../health HTTP/1.1"), None);
+        assert_eq!(parse_http_get_path("GET /query-events/../../etc/passwd HTTP/1.1"), None);
+        assert_eq!(parse_http_get_path("GET /query-events\\42 HTTP/1.1"), None);
+        assert_eq!(parse_http_get_path("GET /query-events/%2e%2e/health HTTP/1.1"), None);
+        assert_eq!(parse_http_get_path("GET /query-events/%2Fhealth HTTP/1.1"), None);
     }
 
     #[test]
