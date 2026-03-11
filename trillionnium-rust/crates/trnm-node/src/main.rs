@@ -242,6 +242,7 @@ struct RecoveredWalState {
     last_checkpoint: Option<CheckpointMeta>,
     truncated: bool,
     metadata_only_recovery: bool,
+    wal_entries_retained: usize,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
@@ -507,6 +508,7 @@ fn recover_wal_state(wal_dir: &Path) -> Result<RecoveredWalState> {
             last_checkpoint: None,
             truncated,
             metadata_only_recovery: false,
+            wal_entries_retained: 0,
         });
     }
 
@@ -545,6 +547,7 @@ fn recover_wal_state(wal_dir: &Path) -> Result<RecoveredWalState> {
             last_checkpoint,
             truncated,
             metadata_only_recovery: true,
+            wal_entries_retained: valid_entries.len(),
         });
     }
 
@@ -554,6 +557,7 @@ fn recover_wal_state(wal_dir: &Path) -> Result<RecoveredWalState> {
         last_checkpoint,
         truncated,
         metadata_only_recovery: false,
+        wal_entries_retained: 0,
     })
 }
 
@@ -4653,6 +4657,7 @@ mod tests {
         assert!(recovered.last_checkpoint.is_none());
         assert!(recovered.truncated);
         assert!(!recovered.metadata_only_recovery);
+        assert_eq!(recovered.wal_entries_retained, 0);
 
         let checkpoints = load_checkpoint_meta(&wal_dir).unwrap();
         assert!(checkpoints.is_empty());
@@ -4713,6 +4718,7 @@ mod tests {
         assert_eq!(recovered.next_height, 3);
         assert!(recovered.truncated);
         assert!(recovered.metadata_only_recovery);
+        assert_eq!(recovered.wal_entries_retained, 2);
 
         let entries = load_wal_meta_entries(&wal_dir).unwrap();
         assert_eq!(entries.len(), 2);
@@ -4741,7 +4747,50 @@ mod tests {
         assert!(recovered.last_checkpoint.is_none());
         assert!(recovered.truncated);
         assert!(!recovered.metadata_only_recovery);
+        assert_eq!(recovered.wal_entries_retained, 0);
         assert!(load_wal_meta_entries(&wal_dir).unwrap().is_empty());
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn recover_metadata_only_error_reports_retained_wal_entries() {
+        let wal_dir = temp_wal_dir("recover-metadata-only-error");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "h1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        persist_wal_meta_entries(&wal_dir, &[e1]).unwrap();
+        persist_checkpoint_meta(
+            &wal_dir,
+            &[CheckpointMeta {
+                height: 1,
+                state_root_hex: "r1".into(),
+                wal_entry_hash_hex: h1,
+            }],
+        )
+        .unwrap();
+
+        let recovered = recover_wal_state(&wal_dir).unwrap();
+        assert!(recovered.metadata_only_recovery);
+        assert_eq!(recovered.wal_entries_retained, 1);
+
+        let err = anyhow::anyhow!(
+            "refusing metadata-only recovery from {}: verified WAL/checkpoint metadata retained {} committed WAL entr{} through height {} but trnm-node does not yet restore application StateStore snapshots or replay committed blocks; start from a fresh --bft-wal-dir / --bft-wal-mode auto isolated run, or implement state snapshot+replay recovery first",
+            wal_dir.display(),
+            recovered.wal_entries_retained,
+            if recovered.wal_entries_retained == 1 { "y" } else { "ies" },
+            recovered.next_height.saturating_sub(1)
+        )
+        .to_string();
+        assert!(err.contains("retained 1 committed WAL entry through height 1"));
 
         let _ = fs::remove_dir_all(&wal_dir);
     }
@@ -4931,8 +4980,10 @@ fn main() -> Result<()> {
     );
     if recovered.metadata_only_recovery {
         anyhow::bail!(
-            "refusing metadata-only recovery from {}: WAL/checkpoint metadata advanced consensus to height {} but trnm-node does not yet restore application StateStore snapshots or replay committed blocks; start from a fresh --bft-wal-dir / --bft-wal-mode auto isolated run, or implement state snapshot+replay recovery first",
+            "refusing metadata-only recovery from {}: verified WAL/checkpoint metadata retained {} committed WAL entr{} through height {} but trnm-node does not yet restore application StateStore snapshots or replay committed blocks; start from a fresh --bft-wal-dir / --bft-wal-mode auto isolated run, or implement state snapshot+replay recovery first",
             wal_dir.display(),
+            recovered.wal_entries_retained,
+            if recovered.wal_entries_retained == 1 { "y" } else { "ies" },
             height.saturating_sub(1)
         );
     }
