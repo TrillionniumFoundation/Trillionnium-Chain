@@ -2521,6 +2521,7 @@ fn query_events_response(
         QUERY_EVENTS_LIMIT_MAX,
     );
     let mut events = Vec::new();
+    let saw_authoritative_event = node_events.iter().any(|event| event.task_id == task_id);
 
     for e in filtered_node_events_for_task(task_id, node_events) {
         let Some(actor) = normalize_actor_or_signer(&e.actor) else {
@@ -2551,7 +2552,7 @@ fn query_events_response(
         });
     }
 
-    if events.is_empty() {
+    if !saw_authoritative_event && events.is_empty() {
         let mut tx_id = 1u64;
         let mut has_commit = false;
         for r in recs
@@ -5829,6 +5830,42 @@ mod tests {
         let out = query_events_response(9, 20, &events, &[]).expect("events expected");
         assert_eq!(out.len(), 1);
         assert_eq!(out[0].event_type, "accept");
+    }
+
+    #[test]
+    fn query_events_response_fails_closed_when_authoritative_events_all_filter_out() {
+        let events = vec![
+            NodeEventRecord {
+                event_type: "commit".into(),
+                task_id: 77,
+                from_status: "Open".into(),
+                to_status: "Committed".into(),
+                actor: "worker-a".into(),
+                tx_id: 1,
+                block_height: 1,
+                state_root: "s1".into(),
+                ts_unix_ms: 1,
+                signer: Some("worker-a".into()),
+                challenger: None,
+                tx_hash: None,
+                resolution_code: None,
+                treasury_delta: None,
+                challenger_delta: None,
+                bond_disposition: None,
+            },
+        ];
+        let recs = vec![AdapterRecord {
+            ts: 1,
+            kind: "commit".into(),
+            task_id: 77,
+            worker: Some("worker-a".into()),
+            result_hash: None,
+            status: "accepted".into(),
+            tx_hash: Some("0xabc123".into()),
+        }];
+
+        let err = query_events_response(77, 20, &events, &recs).unwrap_err();
+        assert_eq!(err.to_string(), "events not found for task_id=77");
     }
 
     #[test]
