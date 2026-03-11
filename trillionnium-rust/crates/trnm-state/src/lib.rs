@@ -1083,6 +1083,22 @@ impl StateStore {
         self.pending_gov_updates.get(key).cloned()
     }
 
+    pub fn restore_pending_gov_update(
+        &mut self,
+        key: &str,
+        snapshot: Option<PendingGovParamUpdate>,
+    ) {
+        self.invalidate_state_root_cache();
+        match snapshot {
+            Some(snapshot) => {
+                self.pending_gov_updates.insert(key.to_string(), snapshot);
+            }
+            None => {
+                self.pending_gov_updates.remove(key);
+            }
+        }
+    }
+
     fn gov_param_value(&self, key: &str) -> Option<&str> {
         let id = self.gov_param_key_index.get(key)?;
         let object = self.objects.get(id)?;

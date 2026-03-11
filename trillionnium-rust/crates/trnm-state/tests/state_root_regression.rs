@@ -452,6 +452,49 @@ fn restore_pending_none_rewinds_state_root_after_removing_staged_resolve_approva
 }
 
 #[test]
+fn restore_pending_gov_update_none_rewinds_state_root_after_removing_timelocked_update() {
+    let mut state = StateStore::new();
+    let baseline_root = state.state_root();
+
+    let outcome = state
+        .set_gov_param(
+            1_000,
+            7_001,
+            "challenge_min_bond".to_string(),
+            "5000".to_string(),
+        )
+        .expect("staging a sensitive governance update should succeed");
+    assert!(matches!(outcome, GovParamUpdateOutcome::Scheduled { .. }));
+
+    let pending_root = state.state_root();
+    assert_ne!(
+        pending_root, baseline_root,
+        "sanity: a staged governance update must perturb the state root"
+    );
+    assert!(
+        state.pending_gov_update("challenge_min_bond").is_some(),
+        "sanity: the pending governance update should be visible before restore"
+    );
+
+    state.restore_pending_gov_update("challenge_min_bond", None);
+
+    assert!(
+        state.pending_gov_update("challenge_min_bond").is_none(),
+        "restoring a missing governance snapshot should remove the staged update"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "restore_gov_param_update(None) must rewind state_root exactly after deleting a staged governance update"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "repeated reads after restore_gov_param_update(None) should deterministically reuse the rewound cached root"
+    );
+}
+
+#[test]
 fn zero_balance_and_missing_balance_have_identical_state_root() {
     let missing = StateStore::new();
     let missing_root = missing.state_root();
