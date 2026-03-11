@@ -1010,6 +1010,11 @@ fn reorder_for_strategy(txs: &mut [Tx], strategy: GroupingStrategy) {
             // Cap bucket fanout by input size: for tiny batches this avoids allocating
             // and probing empty buckets while preserving the same interleave semantics.
             let buckets_n = hot_bucket_count().min(txs.len());
+            // Misconfigured/trimmed bucket fanout can collapse to a single bucket,
+            // where interleave degenerates to identity while still paying probe cost.
+            if buckets_n <= 1 {
+                return;
+            }
             let mut bucket_depths = vec![0usize; buckets_n];
             let mut tx_bucket_hints = Vec::with_capacity(txs.len());
             let mut non_empty_buckets = 0usize;
