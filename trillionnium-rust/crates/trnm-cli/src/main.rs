@@ -533,6 +533,14 @@ fn tx_query(tx_hash: &str) -> Result<TxQueryResponse> {
     let requested = normalize_tx_hash(tx_hash)
         .ok_or_else(|| anyhow!("invalid tx hash for query (expected hex-like tx hash)"))?;
 
+    if let Some(status) = query_local_tx_status(&requested) {
+        return Ok(TxQueryResponse {
+            tx_hash: requested,
+            status,
+            error: None,
+        });
+    }
+
     if let Ok(template) = std::env::var("TRNM_TX_QUERY_CMD") {
         let cmd = tpl(template, "tx_hash", &requested);
         let raw = run_template_raw(&cmd)?;
@@ -739,6 +747,7 @@ fn main() -> Result<()> {
                     cmd = tpl(cmd, "commit_hash", &commit_hash);
                     cmd = tpl(cmd, "nonce", &nonce.to_string());
                     let tx_hash = run_template(&cmd)?;
+                    persist_local_pending_tx(&tx_hash)?;
                     println!("tx_hash={}", tx_hash);
                 } else {
                     let tx_hash = hash(&[
@@ -748,6 +757,7 @@ fn main() -> Result<()> {
                         &commit_hash,
                         &nonce.to_string(),
                     ]);
+                    persist_local_pending_tx(&tx_hash)?;
                     println!("tx_hash={}", tx_hash);
                 }
             }
