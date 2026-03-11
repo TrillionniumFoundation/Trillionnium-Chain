@@ -14,6 +14,7 @@ enum Workload {
 
 #[derive(Debug, Clone, Copy, clap::ValueEnum)]
 enum StrategyArg {
+    Default,
     Original,
     FootprintDesc,
     WriteFirst,
@@ -23,10 +24,21 @@ enum StrategyArg {
     AggressiveGreedy,
 }
 
+impl StrategyArg {
+    fn resolve_profile(self, txs: &[Tx]) -> (Vec<Vec<Tx>>, trnm_executor::GroupingProfile) {
+        match self {
+            StrategyArg::Default => trnm_executor::build_parallel_groups_profile(txs),
+            explicit => {
+                build_parallel_groups_profile_with_strategy(txs, GroupingStrategy::from(explicit))
+            }
+        }
+    }
+}
+
 impl From<StrategyArg> for GroupingStrategy {
     fn from(v: StrategyArg) -> Self {
         match v {
-            StrategyArg::Original => GroupingStrategy::Original,
+            StrategyArg::Default | StrategyArg::Original => GroupingStrategy::Original,
             StrategyArg::FootprintDesc => GroupingStrategy::FootprintDesc,
             StrategyArg::WriteFirst => GroupingStrategy::WriteFirst,
             StrategyArg::WriteLast => GroupingStrategy::WriteLast,
@@ -56,7 +68,7 @@ struct Args {
     workload: Workload,
 
     /// Grouping strategy
-    #[arg(long, value_enum, default_value_t = StrategyArg::Original)]
+    #[arg(long, value_enum, default_value_t = StrategyArg::Default)]
     strategy: StrategyArg,
 
     /// Read-set fanout for mixed workload
@@ -88,7 +100,7 @@ fn main() {
     };
 
     let t0 = Instant::now();
-    let (groups, profile) = build_parallel_groups_profile_with_strategy(&txs, args.strategy.into());
+    let (groups, profile) = args.strategy.resolve_profile(&txs);
     let dt = t0.elapsed();
 
     let grouped: usize = groups.iter().map(|g| g.len()).sum();
@@ -284,8 +296,7 @@ mod tests {
     #[test]
     fn classic_bench_default_path_matches_executor_default_strategy_output() {
         let txs = build_classic_txs(2_048, 256);
-        let (default_groups, default_profile) =
-            build_parallel_groups_profile_with_strategy(&txs, StrategyArg::Original.into());
+        let (default_groups, default_profile) = StrategyArg::Default.resolve_profile(&txs);
         let (executor_groups, executor_profile) = trnm_executor::build_parallel_groups_profile(&txs);
 
         assert_eq!(default_groups, executor_groups);
