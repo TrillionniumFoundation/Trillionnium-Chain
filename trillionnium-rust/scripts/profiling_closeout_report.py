@@ -63,6 +63,8 @@ def recommended_producer(label: str) -> str:
             "cargo run -q -p trnm-node -- --config configs/node1.toml --block-ms 5 "
             "--max-blocks 3 --demo-tasks 8 --demo-keys 3 --parallel-workers 4 > run/parallel-sanity.log"
         )
+    if label == "bench_dir":
+        return "mkdir -p run/bench"
     if label == "classic_bench":
         return "./scripts/run_bench_matrix.sh"
     if label == "mixed_bench":
@@ -142,6 +144,7 @@ def main():
         f"- node_log_status: {input_status(node_log)}",
         f"- bench_dir: {bench_dir}",
         f"- bench_dir_status: {'present' if bench_dir_exists else 'missing'}",
+        f"- bench_dir_producer: {recommended_producer('bench_dir')}",
         f"- classic_bench: {classic}",
         f"- classic_bench_status: {input_status(classic)}",
         f"- mixed_bench: {mixed}",
@@ -153,6 +156,7 @@ def main():
     ]
 
     freshness_rows = [
+        ("bench_dir", bench_dir if bench_dir_exists else None),
         ("node_log", node_log),
         ("classic_bench", classic),
         ("mixed_bench", mixed),
@@ -174,6 +178,11 @@ def main():
     lines += ["", "## Input Readiness"]
 
     readiness_rows = [
+        (
+            "bench_dir",
+            "present" if bench_dir_exists else "missing",
+            recommended_producer("bench_dir"),
+        ),
         ("node_log", input_status(node_log), recommended_producer("node_log")),
         ("classic_bench", input_status(classic), recommended_producer("classic_bench")),
         ("mixed_bench", input_status(mixed), recommended_producer("mixed_bench")),
