@@ -663,3 +663,6 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: p1-
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e3-enterprise-runbook-deterministic-env-prefix-test" "./scripts/v2/e3_enterprise_runbook_deterministic_env_prefix_test.sh" "ci(gate): add e3-enterprise-runbook-deterministic-env-prefix-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: m3-release-readiness-deterministic-prefix-guard-test" "./scripts/v2/m3_release_readiness_deterministic_prefix_guard_test.sh" "ci(gate): add m3-release-readiness-deterministic-prefix-guard-test regression to quick-check"
