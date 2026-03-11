@@ -4966,6 +4966,8 @@ fn main() -> Result<()> {
     let mut block_txs_samples: Vec<u128> = Vec::new();
     let mut block_groups_samples: Vec<u128> = Vec::new();
     let mut rollback_samples: Vec<u128> = Vec::new();
+    let mut avg_group_size_samples: Vec<u128> = Vec::new();
+    let mut hot_object_share_samples_ppm: Vec<u128> = Vec::new();
     let mut preexec_reject_total: u64 = 0;
     let mut apply_error_total: u64 = 0;
     let mut apply_error_preexec_conflict_miss_total: u64 = 0;
@@ -5090,6 +5092,19 @@ fn main() -> Result<()> {
         critical_wait_blocks_samples.push(ordering_decision.critical_wait_blocks as u128);
         preexec_reject_total += ordering_decision.rejected;
         let group_count = ordering_decision.group_count;
+        let avg_group_size = if group_count == 0 {
+            0u128
+        } else {
+            ((picked.len() as u128) * 1000) / (group_count as u128)
+        };
+        avg_group_size_samples.push(avg_group_size);
+        let hot_object_summary = summarize_hot_objects(&state, &picked);
+        let hot_object_share_ppm = if picked.is_empty() {
+            0u128
+        } else {
+            ((hot_object_summary.hot_tx_count as u128) * 1_000_000) / (picked.len() as u128)
+        };
+        hot_object_share_samples_ppm.push(hot_object_share_ppm);
 
         let rl_advisor: Box<dyn RlAdvisor> = if args.rl_advisor_shadow {
             Box::new(ShadowOnlyRlAdvisor {
@@ -5332,6 +5347,10 @@ fn main() -> Result<()> {
     let block_groups_p95 = percentile(block_groups_samples.clone(), 0.95);
     let rollback_p50 = percentile(rollback_samples.clone(), 0.50);
     let rollback_p95 = percentile(rollback_samples.clone(), 0.95);
+    let avg_group_size_p50 = percentile(avg_group_size_samples.clone(), 0.50);
+    let avg_group_size_p95 = percentile(avg_group_size_samples.clone(), 0.95);
+    let hot_object_share_p50_ppm = percentile(hot_object_share_samples_ppm.clone(), 0.50);
+    let hot_object_share_p95_ppm = percentile(hot_object_share_samples_ppm.clone(), 0.95);
     let finality_max = max_or_zero(&finality_samples_ms);
     let scheduler_max = max_or_zero(&scheduler_samples_ms);
     let preexec_max = max_or_zero(&preexec_samples_ms);
@@ -5341,6 +5360,8 @@ fn main() -> Result<()> {
     let block_txs_max = max_or_zero(&block_txs_samples);
     let block_groups_max = max_or_zero(&block_groups_samples);
     let rollback_max = max_or_zero(&rollback_samples);
+    let avg_group_size_max = max_or_zero(&avg_group_size_samples);
+    let hot_object_share_max_ppm = max_or_zero(&hot_object_share_samples_ppm);
     let finality_avg = average_or_zero(&finality_samples_ms);
     let scheduler_avg = average_or_zero(&scheduler_samples_ms);
     let preexec_avg = average_or_zero(&preexec_samples_ms);
@@ -5348,6 +5369,8 @@ fn main() -> Result<()> {
     let state_root_total_avg = average_or_zero(&state_root_total_samples_ms);
     let critical_wait_blocks_avg = average_or_zero(&critical_wait_blocks_samples);
     let rollback_avg = average_or_zero(&rollback_samples);
+    let avg_group_size_avg = average_or_zero(&avg_group_size_samples);
+    let hot_object_share_avg_ppm = average_or_zero(&hot_object_share_samples_ppm);
     let recovery_error_rate = if finality_samples_ms.is_empty() {
         0.0
     } else {
@@ -5359,7 +5382,7 @@ fn main() -> Result<()> {
         .map(|h| h.missed_proposals)
         .collect();
     println!(
-        "[consensus] finality_avg_ms={} finality_p50_ms={} finality_p95_ms={} finality_max_ms={} scheduler_elapsed_avg_ms={} scheduler_elapsed_p50_ms={} scheduler_elapsed_p95_ms={} scheduler_elapsed_max_ms={} preexec_elapsed_avg_ms={} preexec_elapsed_p50_ms={} preexec_elapsed_p95_ms={} preexec_elapsed_max_ms={} commit_elapsed_avg_ms={} commit_elapsed_p50_ms={} commit_elapsed_p95_ms={} commit_elapsed_max_ms={} state_root_total_avg_ms={} state_root_total_p50_ms={} state_root_total_p95_ms={} state_root_total_max_ms={} critical_wait_blocks_avg={} critical_wait_blocks_p50={} critical_wait_blocks_p95={} critical_wait_blocks_max={} block_txs_p50={} block_txs_p95={} block_txs_max={} block_groups_p50={} block_groups_p95={} block_groups_max={} rollback_count_avg={} rollback_count_p50={} rollback_count_p95={} rollback_count_max={} preexec_reject_total={} apply_error_total={} apply_error_preexec_conflict_miss_total={} apply_error_version_conflict_total={} apply_error_invalid_transition_total={} apply_error_deadline_exceeded_total={} apply_error_semantic_fail_total={} rollback_total={} timeout_migrated_total={} recovery_error_rate={:.6} bft_committed_heights={} bft_round_change_total={} bft_round_change_backoff_total_ms={} bft_leader_missed_proposals={:?} bft_double_vote_total={} bft_auth_reject_bad_sig_total={} bft_auth_reject_replay_total={} bft_auth_reject_stale_nonce_total={}",
+        "[consensus] finality_avg_ms={} finality_p50_ms={} finality_p95_ms={} finality_max_ms={} scheduler_elapsed_avg_ms={} scheduler_elapsed_p50_ms={} scheduler_elapsed_p95_ms={} scheduler_elapsed_max_ms={} preexec_elapsed_avg_ms={} preexec_elapsed_p50_ms={} preexec_elapsed_p95_ms={} preexec_elapsed_max_ms={} commit_elapsed_avg_ms={} commit_elapsed_p50_ms={} commit_elapsed_p95_ms={} commit_elapsed_max_ms={} state_root_total_avg_ms={} state_root_total_p50_ms={} state_root_total_p95_ms={} state_root_total_max_ms={} critical_wait_blocks_avg={} critical_wait_blocks_p50={} critical_wait_blocks_p95={} critical_wait_blocks_max={} block_txs_p50={} block_txs_p95={} block_txs_max={} block_groups_p50={} block_groups_p95={} block_groups_max={} avg_group_size_avg_milli={} avg_group_size_p50_milli={} avg_group_size_p95_milli={} avg_group_size_max_milli={} hot_object_share_avg_ppm={} hot_object_share_p50_ppm={} hot_object_share_p95_ppm={} hot_object_share_max_ppm={} rollback_count_avg={} rollback_count_p50={} rollback_count_p95={} rollback_count_max={} preexec_reject_total={} apply_error_total={} apply_error_preexec_conflict_miss_total={} apply_error_version_conflict_total={} apply_error_invalid_transition_total={} apply_error_deadline_exceeded_total={} apply_error_semantic_fail_total={} rollback_total={} timeout_migrated_total={} recovery_error_rate={:.6} bft_committed_heights={} bft_round_change_total={} bft_round_change_backoff_total_ms={} bft_leader_missed_proposals={:?} bft_double_vote_total={} bft_auth_reject_bad_sig_total={} bft_auth_reject_replay_total={} bft_auth_reject_stale_nonce_total={}",
         finality_avg,
         finality_p50,
         finality_p95,
@@ -5390,6 +5413,14 @@ fn main() -> Result<()> {
         block_groups_p50,
         block_groups_p95,
         block_groups_max,
+        avg_group_size_avg,
+        avg_group_size_p50,
+        avg_group_size_p95,
+        avg_group_size_max,
+        hot_object_share_avg_ppm,
+        hot_object_share_p50_ppm,
+        hot_object_share_p95_ppm,
+        hot_object_share_max_ppm,
         rollback_avg,
         rollback_p50,
         rollback_p95,
