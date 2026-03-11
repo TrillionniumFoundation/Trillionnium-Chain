@@ -74,6 +74,16 @@ def recommended_producer(label: str) -> str:
     return "unknown"
 
 
+def benchmark_producer_for(label: str) -> str:
+    if label == "classic_bench":
+        return recommended_producer(label)
+    if label == "mixed_bench":
+        return recommended_producer(label)
+    if label == "executor_profile":
+        return recommended_producer(label)
+    return "unknown"
+
+
 def autopilot_severity(missing_inputs, stale_inputs, old_inputs) -> str:
     if not missing_inputs and not stale_inputs and not old_inputs:
         return "GREEN"
@@ -258,6 +268,31 @@ def main():
             lines.append(f"- refresh {label}: existing artifact is old; do not treat as current evidence")
     if not missing_inputs and not stale_inputs and not old_inputs:
         lines.append("- none: all expected closeout inputs are present and fresh")
+
+    lines += ["", "## Benchmark Next Step Matrix"]
+    benchmark_inputs = [
+        ("classic_bench", classic),
+        ("mixed_bench", mixed),
+        ("executor_profile", executor_profile),
+    ]
+    for label, path in benchmark_inputs:
+        status = input_status(path)
+        freshness = freshness_label(file_age_seconds(path))
+        if status != "present":
+            action = "produce"
+            reason = "missing benchmark artifact"
+        elif freshness == "fresh":
+            action = "keep"
+            reason = "artifact is fresh enough for curator/autopilot review"
+        elif freshness == "stale":
+            action = "refresh"
+            reason = "artifact is stale and should be regenerated before review"
+        else:
+            action = "refresh"
+            reason = "artifact is old and should not be treated as current evidence"
+        lines.append(
+            f"- {label}: action={action} freshness={freshness} producer={benchmark_producer_for(label)} reason={reason}"
+        )
 
     lines += ["", "## Block Metrics"]
     for key in [
