@@ -761,6 +761,64 @@ fn restore_pending_gov_update_uses_snapshot_key_identity_for_state_root_roundtri
 }
 
 #[test]
+fn restore_pending_gov_update_none_on_mismatched_slot_keeps_canonical_pending_root() {
+    let mut state = StateStore::new();
+    let baseline_root = state.state_root();
+
+    let outcome = state
+        .set_gov_param(
+            1_000,
+            7_011,
+            "challenge_min_bond".to_string(),
+            "6100".to_string(),
+        )
+        .expect("sensitive governance update should stage successfully");
+    assert!(matches!(outcome, GovParamUpdateOutcome::Scheduled { .. }));
+
+    let snapshot = state
+        .pending_gov_update("challenge_min_bond")
+        .expect("sanity: canonical pending snapshot should exist");
+    let canonical_pending_root = state.state_root();
+    assert_ne!(
+        canonical_pending_root, baseline_root,
+        "sanity: staged pending governance update must perturb the root"
+    );
+
+    state.restore_pending_gov_update("max_block_ms", Some(snapshot.clone()));
+    assert!(
+        state.pending_gov_update("max_block_ms").is_none(),
+        "mismatched-slot restore must not materialize a stale caller-key entry"
+    );
+    assert!(
+        state.pending_gov_update("challenge_min_bond").is_some(),
+        "mismatched-slot restore must preserve the canonical pending key"
+    );
+    assert_eq!(
+        state.state_root(),
+        canonical_pending_root,
+        "replaying the same snapshot through a mismatched slot must preserve the canonical pending root"
+    );
+
+    state.restore_pending_gov_update("max_block_ms", None);
+    assert!(
+        state.pending_gov_update("challenge_min_bond").is_some(),
+        "clearing a mismatched slot with None must not delete the canonical pending key"
+    );
+    assert_eq!(
+        state.state_root(),
+        canonical_pending_root,
+        "clearing a mismatched slot with None must preserve the canonical pending root"
+    );
+
+    state.restore_pending_gov_update("challenge_min_bond", None);
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "clearing the canonical pending key must return the state root to baseline"
+    );
+}
+
+#[test]
 fn restore_pending_gov_update_mismatched_slot_clears_stale_entry_and_preserves_snapshot_identity() {
     let mut state = StateStore::new();
     let baseline_root = state.state_root();
