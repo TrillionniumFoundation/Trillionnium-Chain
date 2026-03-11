@@ -415,6 +415,17 @@ mod tests {
     }
 
     #[test]
+    fn zk_verifier_rejects_duplicate_proof_type_binding_fail_closed() {
+        let verifier = ZkVerifier::default();
+        let task = mock_task();
+        let payload = b"ZK:task_id=99,worker=worker-zk,proof_type=zk,result_hash=1111111111111111111111111111111111111111111111111111111111111111,proof_type=zk,proof=ok";
+        assert!(matches!(
+            verifier.verify_proof(&task, payload),
+            VerificationResult::Invalid(msg) if msg.contains("duplicate proof_type binding")
+        ));
+    }
+
+    #[test]
     fn zk_verifier_rejects_missing_result_hash_binding_context_fail_closed() {
         let verifier = ZkVerifier::default();
         let mut task = mock_task();
