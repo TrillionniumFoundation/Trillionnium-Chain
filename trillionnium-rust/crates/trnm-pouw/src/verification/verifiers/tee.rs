@@ -37,7 +37,9 @@ impl TeeVerifier {
             }) => VerificationResult::Invalid(reason),
             VerificationBackendError::Execution(BackendExecutionError::MalformedProof {
                 reason, ..
-            }) => VerificationResult::Invalid(format!("malformed: {reason}")),
+            }) => VerificationResult::Invalid(format!(
+                "malformed TEE attestation receipt: {reason}"
+            )),
             VerificationBackendError::Execution(BackendExecutionError::NotConfigured { .. }) => {
                 VerificationResult::Indeterminate(
                     "unavailable: TEE receipt cryptographic verification backend not configured"
@@ -54,7 +56,7 @@ impl TeeVerifier {
                 backend,
                 reason,
             }) => VerificationResult::Indeterminate(format!(
-                "backend_error: verification backend '{backend}' failed while verifying TEE attestation receipt: {reason}"
+                "backend_error: verification backend '{backend}' failed while verifying TEE quote/report claims: {reason}"
             )),
         }
     }
@@ -313,7 +315,7 @@ mod tests {
                 b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,quote=abc"
             ),
             VerificationResult::Invalid(msg)
-                if msg.contains("malformed:") && msg.contains("mock tee receipt malformed")
+                if msg.contains("malformed TEE attestation receipt:") && msg.contains("mock tee receipt malformed")
         ));
     }
 
@@ -335,7 +337,7 @@ mod tests {
             VerificationResult::Indeterminate(msg)
                 if msg.contains("backend_error:")
                     && msg.contains("mock-tee-internal")
-                    && msg.contains("failed while verifying TEE attestation receipt")
+                    && msg.contains("failed while verifying TEE quote/report claims")
                     && msg.contains("mock tee backend internal failure")
         ));
     }
