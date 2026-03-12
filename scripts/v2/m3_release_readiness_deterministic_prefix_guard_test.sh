@@ -7,6 +7,7 @@ DOC="$ROOT/RELEASE_READINESS.md"
 required_lines=(
   'env TZ=UTC LC_ALL=C LANG=C SOURCE_DATE_EPOCH=1704067200'
   '同一 gate 至少连续执行 2 次'
+  '必须连同 `truth_source=`、`historical_evidence_only=true`、`evidence_scope=` 一起引用'
   '每轮必须给出单行回滚命令'
 )
 
