@@ -403,6 +403,7 @@ DRY_RUN=1 ALERT_NOTIFY_CHANNEL=slack ./scripts/v2/pr7_alert_delivery_gate.sh
 
 排障产物：
 - `run/pr7-alerts/<timestamp>-pid*/summary.txt`：PR-6 生成的原始告警摘要
+- `run/pr7-alerts/<timestamp>-pid*/policy.env`：本次 PR-6/PR-7 链路生效的阈值/策略快照（便于复盘告警为何命中或未命中）
 - `run/pr7-alerts/<timestamp>-pid*/pr7-delivery-status.env`：PR-7 最终状态（`status/pr6_rc/pr7_rc/final_rc/fail_mode/delivery_event/primary_channel/backup_channel/success_channels/failed_channels/channels_ok/channels_failed/partial_success/run_dir/lock_dir/report/audit_file/generated_at_utc`）
 - `run/pr7-alert-delivery/state.json`：累计投递/抑制/失败统计与最近一次投递元数据
 - `run/pr7-alert-delivery/audit.jsonl`：逐次投递/抑制/失败审计流

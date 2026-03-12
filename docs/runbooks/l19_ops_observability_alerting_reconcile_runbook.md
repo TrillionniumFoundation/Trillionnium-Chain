@@ -148,6 +148,7 @@ DRY_RUN=1 ALERT_NOTIFY_CHANNEL=slack PR7_DELIVERY_FAIL_MODE=warn \
 
 ### Outputs
 - `run/pr7-alerts/<timestamp>-pid*/summary.txt`
+- `run/pr7-alerts/<timestamp>-pid*/policy.env`（PR-6/PR-7 本次实际生效的策略快照）
 - `run/pr7-alerts/<timestamp>-pid*/pr7-delivery-status.env`
 - `run/pr7-alert-delivery/state.json`
 - `run/pr7-alert-delivery/audit.jsonl`
