@@ -321,6 +321,32 @@ def main():
             preview.append(f"  - remaining_candidates: {len(candidates) - max_items}")
         return preview
 
+    def candidate_pool_health(label: str, selected: str | None, candidates: list[str]) -> str:
+        if not candidates:
+            return f"- {label}: status=empty selected={selected or 'None'} candidate_count=0 action=produce"
+        freshness_counts = {"fresh": 0, "stale": 0, "old": 0}
+        for path in candidates:
+            freshness_counts[freshness_label(file_age_seconds(path))] += 1
+        selected_freshness = freshness_label(file_age_seconds(selected)) if selected else "missing"
+        old_backlog = freshness_counts["stale"] + freshness_counts["old"]
+        if freshness_counts["fresh"] == 0:
+            status = "refresh_required"
+            action = "refresh"
+        elif len(candidates) >= 12 or old_backlog >= 8:
+            status = "backlog_heavy"
+            action = "keep_latest_and_consider_archive"
+        elif len(candidates) >= 5 or old_backlog >= 3:
+            status = "backlog_present"
+            action = "keep_latest"
+        else:
+            status = "tight"
+            action = "keep_latest"
+        return (
+            f"- {label}: status={status} action={action} selected={os.path.basename(selected) if selected else 'None'} "
+            f"selected_freshness={selected_freshness} candidate_count={len(candidates)} fresh={freshness_counts['fresh']} "
+            f"stale={freshness_counts['stale']} old={freshness_counts['old']}"
+        )
+
     def latest_benchmark_artifact():
         artifact_candidates = [path for path in [classic, mixed, executor_profile] if path and os.path.exists(path)]
         if not artifact_candidates:
@@ -409,6 +435,11 @@ def main():
     lines.extend(candidate_preview("classic_bench_candidates", classic, classic_candidates))
     lines.extend(candidate_preview("mixed_bench_candidates", mixed, mixed_candidates))
     lines.extend(candidate_preview("executor_profile_candidates", executor_profile, executor_profile_candidates))
+
+    lines += ["", "## Benchmark Artifact Pool Health"]
+    lines.append(candidate_pool_health("classic_bench_candidates", classic, classic_candidates))
+    lines.append(candidate_pool_health("mixed_bench_candidates", mixed, mixed_candidates))
+    lines.append(candidate_pool_health("executor_profile_candidates", executor_profile, executor_profile_candidates))
 
     lines += ["", "## Data Completeness"]
     lines.append(
