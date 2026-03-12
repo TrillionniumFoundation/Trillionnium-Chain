@@ -1603,7 +1603,9 @@ fn ratio_milli_u64(numerator: u64, denominator: u64) -> u64 {
 }
 
 fn finality_budget_share_ppm(density_avg_milli: u64, finality_avg_ms: u128) -> u64 {
-    ratio_ppm_u64(density_avg_milli, (finality_avg_ms as u64) * 1_000)
+    let finality_avg_ms_u64 = u64::try_from(finality_avg_ms).unwrap_or(u64::MAX);
+    let finality_budget_milli = finality_avg_ms_u64.saturating_mul(1_000);
+    ratio_ppm_u64(density_avg_milli, finality_budget_milli)
 }
 
 fn gap_percent_bps(total: u128, component_a: u128, component_b: u128) -> u128 {
@@ -3360,6 +3362,17 @@ mod tests {
         assert_eq!(
             finality_budget_share_ppm(bft_round_change_density_avg_milli, finality_avg),
             250_000
+        );
+    }
+
+    #[test]
+    fn finality_budget_share_helper_saturates_huge_finality_budgets_without_overflow() {
+        let bft_round_change_density_avg_milli = 2_500u64;
+        let finality_avg = (u64::MAX as u128) + 1;
+
+        assert_eq!(
+            finality_budget_share_ppm(bft_round_change_density_avg_milli, finality_avg),
+            0
         );
     }
 
