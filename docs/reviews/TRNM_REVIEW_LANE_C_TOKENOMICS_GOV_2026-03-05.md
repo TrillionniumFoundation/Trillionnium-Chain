@@ -18,6 +18,7 @@
 - 因此，原 Challenge 3 所描述的“从全局 slash treasury 回退支付 bounty、形成库余额抽取面”已不再是当前代码状态的准确表述。
 - 当前更准确的残余风险是：**`default_slash_on_unresolved_challenge` 的治理控制面仍未完全打通**。也就是说，代码里已经预留了 challenged-timeout → slash 的治理开关，但 state 层 allowlist / governance schema 仍可能让该控制面在实际治理路径中不可达。
 - 经济语义上还需要继续保持明确：当前 challenged-timeout 即使未来切到 `Slashed` 分支，也**不会自动发放 challenge-success bounty**；若产品后续要把 timeout-slash 也定义为 challenger 胜诉并发 bounty，需要单独设计 payout 来源、额度上限与防 farming 约束。
+- 本轮 L05 补充了一条 fail-closed 回归：若 challenged task 的 `resolve_deadline_height` 元数据缺失，`apply_timeout` 必须在任何 escrow / slash treasury 余额变动前直接拒绝，避免脏状态被误终结。
 
 ---
 
