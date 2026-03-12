@@ -75,9 +75,12 @@ EOF
     # Example placeholder:
     # out="$($TX_BIN query tx "$tx_hash" --node "$RPC" --output json 2>&1)"
     # status=$(printf "%s" "$out" | sed -n 's/.*"status"[[:space:]]*:[[:space:]]*"\([^"]\+\)".*/\1/p' | head -n1)
+    # IMPORTANT: do not default to status=committed when the chain response omits lifecycle
+    # state entirely. Prefer deriving from explicit code/status fields, otherwise emit
+    # status=unknown so readiness checks fail closed instead of reporting a false READY.
 
     echo "tx_hash=$tx_hash"
-    echo "status=committed"
+    echo "status=unknown"
     ;;
   *)
     echo "unknown subcommand: ${2:-}" >&2

@@ -105,6 +105,26 @@ normalize_status() {
   esac
 }
 
+infer_status_from_code() {
+  local out="$1"
+  local code=""
+
+  code=$(printf "%s" "$out" | sed -n 's/.*"code"[[:space:]]*:[[:space:]]*\([0-9][0-9]*\).*/\1/p' | head -n1 || true)
+  if [[ -z "$code" ]]; then
+    code=$(printf "%s" "$out" | sed -n 's/.*\b\(deliver_tx_code\|check_tx_code\|tx_code\|code\)[[:space:]]*[:=][[:space:]]*\([0-9][0-9]*\).*/\2/p' | head -n1 || true)
+  fi
+
+  if [[ -z "$code" ]]; then
+    return 1
+  fi
+
+  if [[ "$code" == "0" ]]; then
+    printf "committed"
+  else
+    printf "fail"
+  fi
+}
+
 run_cmd() {
   local cmd="$1"
   set +e
@@ -198,31 +218,7 @@ case "$sub" in
       exit $rc
     fi
 
-    seen_hash=$(printf "%s" "$out" | sed -n 's/.*"txhash"[[:space:]]*:[[:space:]]*"\([0-9A-Fa-f]\{16,128\}\)".*/\1/p' | head -n1 || true)
-    if [[ -z "$seen_hash" ]]; then
-      seen_hash=$(printf "%s" "$out" | sed -n 's/.*"tx_hash"[[:space:]]*:[[:space:]]*"\([0-9A-Fa-f]\{16,128\}\)".*/\1/p' | head -n1 || true)
-    fi
-    if [[ -z "$seen_hash" ]]; then
-      seen_hash=$(printf "%s" "$out" | sed -n 's/.*"txHash"[[:space:]]*:[[:space:]]*"\([0-9A-Fa-f]\{16,128\}\)".*/\1/p' | head -n1 || true)
-    fi
-    if [[ -z "$seen_hash" ]]; then
-      seen_hash=$(printf "%s" "$out" | sed -n 's/.*"transaction_hash"[[:space:]]*:[[:space:]]*"\([0-9A-Fa-f]\{16,128\}\)".*/\1/p' | head -n1 || true)
-    fi
-    if [[ -z "$seen_hash" ]]; then
-      seen_hash=$(printf "%s" "$out" | sed -n 's/.*"transactionHash"[[:space:]]*:[[:space:]]*"\([0-9A-Fa-f]\{16,128\}\)".*/\1/p' | head -n1 || true)
-    fi
-    if [[ -z "$seen_hash" ]]; then
-      seen_hash=$(printf "%s" "$out" | sed -n 's/.*tx_hash[[:space:]]*[:=][[:space:]]*\([0-9A-Fa-f]\{16,128\}\).*/\1/p' | head -n1 || true)
-    fi
-    if [[ -z "$seen_hash" ]]; then
-      seen_hash=$(printf "%s" "$out" | sed -n 's/.*txHash[[:space:]]*[:=][[:space:]]*\([0-9A-Fa-f]\{16,128\}\).*/\1/p' | head -n1 || true)
-    fi
-    if [[ -z "$seen_hash" ]]; then
-      seen_hash=$(printf "%s" "$out" | sed -n 's/.*transaction_hash[[:space:]]*[:=][[:space:]]*\([0-9A-Fa-f]\{16,128\}\).*/\1/p' | head -n1 || true)
-    fi
-    if [[ -z "$seen_hash" ]]; then
-      seen_hash=$(printf "%s" "$out" | sed -n 's/.*transactionHash[[:space:]]*[:=][[:space:]]*\([0-9A-Fa-f]\{16,128\}\).*/\1/p' | head -n1 || true)
-    fi
+    seen_hash=$(extract_tx_hash "$out" || true)
     status=$(printf "%s" "$out" | sed -n 's/.*"status"[[:space:]]*:[[:space:]]*"\([^"]\+\)".*/\1/p' | head -n1 || true)
     if [[ -z "$status" ]]; then
       status=$(printf "%s" "$out" | sed -n 's/.*"tx_status"[[:space:]]*:[[:space:]]*"\([^"]\+\)".*/\1/p' | head -n1 || true)
@@ -258,9 +254,12 @@ case "$sub" in
       status=$(printf "%s" "$out" | sed -n 's/.*\([Tt][Xx]_\|[Tt][Rr][Aa][Nn][Ss][Aa][Cc][Tt][Ii][Oo][Nn]_\)\?[Ss][Tt][Aa][Tt][Ee][[:space:]]*[:=][[:space:]]*\([^[:space:]}\",]\+\).*/\2/p' | head -n1 || true)
     fi
     if [[ -z "$status" ]]; then
-      status="committed"
+      status=$(infer_status_from_code "$out" || true)
     else
       status="$(normalize_status "$status")"
+    fi
+    if [[ -z "$status" ]]; then
+      status="unknown"
     fi
 
     echo "tx_hash=${seen_hash:-$tx_hash}"
