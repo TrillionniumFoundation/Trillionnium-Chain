@@ -6397,6 +6397,35 @@ mod tests {
     }
 
     #[test]
+    fn query_events_response_zero_limit_uses_default_cap_instead_of_returning_empty() {
+        let recs = vec![
+            AdapterRecord {
+                ts: 10,
+                kind: "commit".into(),
+                task_id: 99,
+                worker: Some("worker-a".into()),
+                result_hash: None,
+                status: "accepted".into(),
+                tx_hash: Some("0x1111".into()),
+            },
+            AdapterRecord {
+                ts: 20,
+                kind: "reveal".into(),
+                task_id: 99,
+                worker: Some("worker-a".into()),
+                result_hash: None,
+                status: "accepted".into(),
+                tx_hash: Some("0x2222".into()),
+            },
+        ];
+
+        let out = query_events_response(99, 0, &[], &recs).expect("fallback events expected");
+        assert_eq!(out.len(), 2);
+        assert_eq!(out[0].event_type, "commit");
+        assert_eq!(out[1].event_type, "reveal");
+    }
+
+    #[test]
     fn parse_event_log_kv_preserves_quoted_values_with_spaces() {
         let line = "[event] event_type=resolve task_id=7 from_status=Challenged to_status=Completed actor=authority tx_id=9 block_height=12 state_root=abc ts_unix_ms=1000 resolution_code=\"timeout reached\" bond_disposition='forfeit all'";
         let kv = parse_event_log_kv(line);
