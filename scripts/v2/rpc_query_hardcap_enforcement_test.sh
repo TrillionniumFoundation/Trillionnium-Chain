@@ -14,4 +14,7 @@ cargo test -q -p trnm-rpc parse_query_events_limit_from_path_zero_uses_default_l
 echo "[TEST] rpc_query_hardcap_enforcement: duplicate limit query keys fail closed"
 cargo test -q -p trnm-rpc parse_query_events_limit_from_path_rejects_duplicate_limit_keys -- --nocapture
 
+echo "[TEST] rpc_query_hardcap_enforcement: malformed limit keys fail closed"
+cargo test -q -p trnm-rpc parse_query_events_limit_from_path_rejects_malformed_limit_keys -- --nocapture
+
 echo "[OK] rpc_query_hardcap_enforcement passed"
