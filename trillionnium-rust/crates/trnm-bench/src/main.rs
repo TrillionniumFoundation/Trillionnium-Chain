@@ -379,14 +379,21 @@ mod tests {
             StrategyArg::Default,
             GroupingStrategy::Original,
         ));
-        assert!(!default_has_adaptive_opportunity(
-            StrategyArg::AutoAdaptive,
-            GroupingStrategy::HotBucketInterleave,
-        ));
-        assert!(!default_has_adaptive_opportunity(
+
+        for explicit in [
+            StrategyArg::Original,
+            StrategyArg::FootprintDesc,
+            StrategyArg::WriteFirst,
+            StrategyArg::WriteLast,
             StrategyArg::HotBucketInterleave,
-            GroupingStrategy::HotBucketInterleave,
-        ));
+            StrategyArg::AutoAdaptive,
+            StrategyArg::AggressiveGreedy,
+        ] {
+            assert!(
+                !default_has_adaptive_opportunity(explicit, GroupingStrategy::HotBucketInterleave),
+                "only the default strategy may advertise adaptive headroom"
+            );
+        }
     }
 
     #[test]
