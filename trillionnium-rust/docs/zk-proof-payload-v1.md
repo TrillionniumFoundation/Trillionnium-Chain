@@ -18,6 +18,7 @@ Current canonical payload proof byte encoding field used by router / backend tes
 
 - `proof_encoding` (`hex | base64`)
 - `proof_encoding` is required in `trnm.zk.payload.v0`; the router must fail closed on omission rather than defaulting silently to `base64`
+- `proof_encoding` literals are lowercase canonical tokens in v0; non-canonical spellings such as `HEX` must fail closed rather than being normalized implicitly
 
 Additional v0 parser / router contract reminders already enforced by tests and code:
 
