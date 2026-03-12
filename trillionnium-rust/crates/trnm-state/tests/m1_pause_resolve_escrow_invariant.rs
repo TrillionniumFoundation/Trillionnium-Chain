@@ -623,6 +623,107 @@ fn paused_state_matured_resolve_authority_timelock_cannot_be_replaced_instead_of
 }
 
 #[test]
+fn paused_state_matured_resolve_authority_apply_scrubs_staged_pending_quorum() {
+    // M1 micro-hardening: when a paused resolve_authority timelock reaches its apply
+    // boundary, enforcing the mature value must rotate the configured authority, scrub any
+    // staged quorum bound to that pending boundary, and leave pause/escrow state untouched.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 42_445);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 905);
+
+    let bootstrap = st
+        .set_gov_param(
+            98_160,
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("bootstrap resolve_authority write should succeed");
+    assert!(matches!(bootstrap, GovParamUpdateOutcome::Scheduled { .. }));
+
+    let applied = st
+        .set_gov_param(
+            98_180,
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("bootstrap resolve_authority should apply after timelock");
+    assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+
+    let scheduled = st
+        .set_gov_param(
+            98_181,
+            7_310,
+            "resolve_authority".into(),
+            "authority-c,authority-d".into(),
+        )
+        .expect("replacement resolve_authority update should be timelocked");
+    assert!(matches!(
+        scheduled,
+        GovParamUpdateOutcome::Scheduled {
+            activate_at_height: 98_201
+        }
+    ));
+
+    st.set_gov_param(98_182, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    let staged = st
+        .stage_or_confirm_resolve_approval(
+            9_820_1,
+            4,
+            true,
+            "authority-c",
+            "authority-c,authority-d",
+        )
+        .expect("approval matching pending paused resolve authority should stage");
+    assert!(!staged, "single approver should only stage pending quorum");
+    assert_eq!(st.pending_resolve_approval(9_820_1), Some((true, 1)));
+    assert_eq!(
+        st.pending_resolve_first_approver(9_820_1).as_deref(),
+        Some("authority-c")
+    );
+    let root_with_pending = st.state_root();
+    let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+    let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+
+    let applied_pending = st
+        .set_gov_param(
+            98_201,
+            7_310,
+            "resolve_authority".into(),
+            "authority-c,authority-d".into(),
+        )
+        .expect("mature paused resolve_authority timelock should apply");
+    assert!(matches!(applied_pending, GovParamUpdateOutcome::Applied(_)));
+
+    assert_eq!(
+        st.gov_param_string("resolve_authority"),
+        Some("authority-c,authority-d".into())
+    );
+    assert_eq!(st.pending_gov_update("resolve_authority"), None);
+    assert_eq!(st.pending_resolve_approval(9_820_1), None);
+    assert_eq!(st.pending_resolve_first_approver(9_820_1), None);
+    assert_eq!(st.pending_resolve_approval_snapshot(9_820_1), None);
+    assert_ne!(
+        st.state_root(),
+        root_with_pending,
+        "applying paused resolve_authority must invalidate staged pending resolve quorum state root"
+    );
+    assert!(
+        st.is_emergency_paused(),
+        "applying mature resolve_authority must not unpause state"
+    );
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
+}
+
+#[test]
 fn paused_state_keeps_multi_party_resolve_quorum_and_escrow_conservation() {
     // M1 merge-gate invariant: emergency pause must not centralize resolve authority.
     // Even under pause, resolve confirmation remains 2-of-N distinct approvers and
