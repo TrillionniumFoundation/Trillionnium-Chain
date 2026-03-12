@@ -1539,6 +1539,7 @@ impl StateStore {
                 }
                 ObjectValue::GovParam(p) => {
                     hasher.update(b"gov_param");
+                    hasher.update(p.key_id.to_le_bytes());
                     hash_len_prefixed_str(&mut hasher, &p.key);
                     hash_len_prefixed_str(&mut hasher, &p.value);
                     hasher.update(p.version.to_le_bytes());
@@ -4226,6 +4227,43 @@ mod tests {
             st_a.state_root(),
             st_b.state_root(),
             "pending resolve authority set must contribute to state root"
+        );
+    }
+
+    #[test]
+    fn state_root_changes_when_embedded_gov_param_key_id_changes() {
+        let mut st_a = StateStore::new();
+        st_a.objects.insert(
+            7001,
+            VersionedObject {
+                version: 1,
+                value: ObjectValue::GovParam(GovParamObject {
+                    key_id: 7001,
+                    key: "challenge_min_bond".into(),
+                    value: "5000".into(),
+                    version: 1,
+                }),
+            },
+        );
+
+        let mut st_b = StateStore::new();
+        st_b.objects.insert(
+            7001,
+            VersionedObject {
+                version: 1,
+                value: ObjectValue::GovParam(GovParamObject {
+                    key_id: 7002,
+                    key: "challenge_min_bond".into(),
+                    value: "5000".into(),
+                    version: 1,
+                }),
+            },
+        );
+
+        assert_ne!(
+            st_a.state_root(),
+            st_b.state_root(),
+            "embedded governance key_id must contribute to state_root so corrupt/mismatched governance snapshots cannot hash identically"
         );
     }
 
