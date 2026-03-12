@@ -12,7 +12,9 @@ fn spillover_warm_fairness_survives_saturated_fresh_probe_noise_before_first_rea
     assert_eq!(gate.admit(102, IngressClass::Critical), AdmitOutcome::Accepted);
 
     // Add one real normal item and refill critical pressure so the lane reaches
-    // global saturation before the first real normal anti-starvation turn.
+    // global saturation before the first real normal anti-starvation turn. Tx 103
+    // also spills into the normal queue, leaving three normal-queue items and two
+    // items in the dedicated critical reserve.
     assert_eq!(gate.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
     assert_eq!(gate.admit(103, IngressClass::Critical), AdmitOutcome::Accepted);
     assert_eq!(gate.queued_counts(), (3, 2, 5));
