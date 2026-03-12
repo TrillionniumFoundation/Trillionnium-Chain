@@ -351,6 +351,45 @@ mod tests {
         }
     }
 
+    #[cfg(feature = "real-zk-backend")]
+    struct MockFixtureBridgeBackend;
+    #[cfg(feature = "real-zk-backend")]
+    impl crate::verification::backend::ZkBackend for MockFixtureBridgeBackend {
+        fn backend_id(&self) -> &str {
+            "real-zk-backend"
+        }
+
+        fn verify(
+            &self,
+            request: BackendVerificationRequest<'_>,
+        ) -> Result<BackendVerificationSuccess, BackendExecutionError> {
+            assert_eq!(request.task.task_id, 42);
+            let payload = request
+                .zk_payload
+                .ok_or_else(|| BackendExecutionError::MalformedProof {
+                    backend: request.backend_label(self.backend_id()),
+                    reason: "missing parsed payload".to_string(),
+                })?;
+            match payload.vk_ref.as_str() {
+                "vk://trnm/dev/mock-groth16/valid" | "vk://trnm/dev/mock-plonk/valid" => {
+                    Ok(BackendVerificationSuccess {
+                        backend_id: self.backend_id().into(),
+                    })
+                }
+                "vk://trnm/dev/mock-groth16/invalid" | "vk://trnm/dev/mock-plonk/invalid" => {
+                    Err(BackendExecutionError::InvalidProof {
+                        backend: request.backend_label(self.backend_id()),
+                        reason: "mock vector rejected by backend".to_string(),
+                    })
+                }
+                other => Err(BackendExecutionError::MalformedProof {
+                    backend: request.backend_label(self.backend_id()),
+                    reason: format!("unexpected vk_ref '{other}'"),
+                }),
+            }
+        }
+    }
+
     fn registry_with_mock_zk_backend() -> VerifierRegistry {
         let mut backends = ZkBackendRegistry::new();
         backends.register(Arc::new(MockVectorBackend));
@@ -362,6 +401,24 @@ mod tests {
             },
             Arc::new(backends),
         )
+    }
+
+    #[cfg(feature = "real-zk-backend")]
+    fn registry_with_feature_on_fixture_bridge_backend() -> VerifierRegistry {
+        let mut backends = ZkBackendRegistry::new();
+        backends.register(Arc::new(MockFixtureBridgeBackend));
+
+        let mut config = VerificationBackendConfig {
+            tee_backend: ZkBackendKind::Noop,
+            zk_backend: ZkBackendKind::Custom("mock-zk-vectors".into()),
+            zk_features: Default::default(),
+        };
+        config.zk_features.zk_platform_v0 = true;
+        config.zk_features.zk_backend_router = true;
+        config.zk_features.zk_payload_v0_envelope = true;
+        config.zk_features.zk_explicit_backend_required = true;
+
+        VerifierRegistry::with_backends(config, Arc::new(backends))
     }
 
     #[test]
@@ -505,6 +562,20 @@ mod tests {
         task.result_hash = Some([0x11; 32]);
 
         let payload = br#"ZK:{"task_id":42,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"real-zk-backend","vk_ref":"vk://trnm/dev/mock-groth16/valid","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["42","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]},"meta":{"schema_version":"trnm.zk.payload.v0","circuit_id":"fixture-bridge-groth16-versionless-feature-on"}}"#;
+
+        assert_eq!(registry.verify(&task, payload), VerificationResult::Valid);
+    }
+
+    #[cfg(feature = "real-zk-backend")]
+    #[test]
+    fn registry_zk_vector_fixture_style_payload_routes_mixed_case_real_backend_id_when_feature_enabled() {
+        let registry = registry_with_feature_on_fixture_bridge_backend();
+        let mut task = task_with_proof_type(ProofType::Zk);
+        task.status = TaskStatus::Committed;
+        task.worker = Some("worker-zk".into());
+        task.result_hash = Some([0x11; 32]);
+
+        let payload = br#"ZK:{"task_id":42,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"  REAL-ZK-BACKEND  ","vk_ref":"vk://trnm/dev/mock-groth16/valid","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["42","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]},"meta":{"schema_version":"trnm.zk.payload.v0","circuit_id":"fixture-bridge-groth16-mixed-case-backend-id"}}"#;
 
         assert_eq!(registry.verify(&task, payload), VerificationResult::Valid);
     }
