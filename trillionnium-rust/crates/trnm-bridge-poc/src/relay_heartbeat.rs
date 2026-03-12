@@ -192,6 +192,13 @@ mod tests {
     }
 
     #[test]
+    fn normalize_failure_reason_strips_alm_and_zwnj_for_replay_stability() {
+        let raw = "target\u{061C} relay\u{200C} timeout";
+        let normalized = normalize_failure_reason(raw);
+        assert_eq!(normalized, "target relay timeout");
+    }
+
+    #[test]
     fn normalize_failure_reason_collapses_nbsp_family_for_replay_stability() {
         let raw = "target\u{00A0}relay\u{2007}timeout\u{202F}signal";
         let normalized = normalize_failure_reason(raw);
