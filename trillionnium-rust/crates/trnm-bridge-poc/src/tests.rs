@@ -1,4 +1,38 @@
-// Integration-style unit test module placeholder.
-//
-// Kept intentionally minimal to satisfy `#[cfg(test)] mod tests;`
-// in `lib.rs` without changing runtime behavior.
+use crate::bridge_status::{
+    BridgeStatus, CapabilityToken, SettlementCapability, SettlementError, SettlementRequest,
+};
+
+fn settlement_operator() -> CapabilityToken {
+    CapabilityToken {
+        subject: "did:trn:settlement-operator".to_string(),
+        capabilities: vec![SettlementCapability::Revert],
+    }
+}
+
+#[test]
+fn settlement_request_rejects_ogham_space_mark_in_tx_hash() {
+    let mut request = SettlementRequest::new(7, "0xabc\u{1680}def".to_string());
+    let err = request.revert_authorized(&settlement_operator(), "target relay timeout".to_string());
+    assert_eq!(
+        err,
+        Err(SettlementError::MalformedRequest {
+            reason: "non-canonical tx_hash",
+        })
+    );
+}
+
+#[test]
+fn settlement_request_collapses_ogham_space_mark_in_revert_reason() {
+    let mut request = SettlementRequest::new(7, "0xabcdef".to_string());
+    request
+        .revert_authorized(
+            &settlement_operator(),
+            "target\u{1680}relay timeout".to_string(),
+        )
+        .expect("ogham-only spacing should be normalized in revert reason");
+
+    assert_eq!(
+        request.status,
+        BridgeStatus::Reverted("target relay timeout".to_string())
+    );
+}

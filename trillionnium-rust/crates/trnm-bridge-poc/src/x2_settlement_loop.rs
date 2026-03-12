@@ -131,6 +131,7 @@ fn is_sanitized_to_space(ch: char) -> bool {
                 | '\u{061C}'
                 | '\u{115F}'
                 | '\u{1160}'
+                | '\u{1680}'
                 | '\u{180E}'
                 | '\u{3164}'
                 | '\u{2007}'
@@ -320,5 +321,12 @@ mod tests {
         let raw = "target\u{115F}relay\u{1160}timeout\u{3164}signal";
         let normalized = normalize_compensation_reason(raw, "fallback");
         assert_eq!(normalized, "target relay timeout signal");
+    }
+
+    #[test]
+    fn normalize_compensation_reason_collapses_ogham_space_mark_for_replay_stability() {
+        let raw = "target\u{1680}relay timeout";
+        let normalized = normalize_compensation_reason(raw, "fallback");
+        assert_eq!(normalized, "target relay timeout");
     }
 }

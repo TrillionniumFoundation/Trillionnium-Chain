@@ -101,6 +101,7 @@ fn is_disallowed_invisible_char(ch: char) -> bool {
             | '\u{061C}'
             | '\u{115F}'
             | '\u{1160}'
+            | '\u{1680}'
             | '\u{180E}'
             | '\u{3164}'
             | '\u{2000}'
@@ -261,6 +262,13 @@ mod tests {
         let raw = "target\u{FFF9}relay\u{FFFA}timeout\u{FFFB}signal";
         let normalized = normalize_failure_reason(raw);
         assert_eq!(normalized, "target relay timeout signal");
+    }
+
+    #[test]
+    fn normalize_failure_reason_collapses_ogham_space_mark_for_replay_stability() {
+        let raw = "target\u{1680}relay timeout";
+        let normalized = normalize_failure_reason(raw);
+        assert_eq!(normalized, "target relay timeout");
     }
 }
 
