@@ -49,8 +49,12 @@ split_shell_words() {
 import shlex
 import sys
 
-for item in shlex.split(sys.argv[1]):
-    print(item)
+try:
+    for item in shlex.split(sys.argv[1]):
+        print(item)
+except ValueError as exc:
+    print(f"[PR7][FAIL] invalid PR7_DELIVERY_CMD: {exc}", file=sys.stderr)
+    raise SystemExit(2)
 PY
 }
 
@@ -71,7 +75,10 @@ if [[ -z "${PR7_DELIVERY_CMD// }" ]]; then
   exit 2
 fi
 
-mapfile -t PR7_DELIVERY_CMD_ARR < <(split_shell_words "$PR7_DELIVERY_CMD")
+if ! PR7_DELIVERY_CMD_LINES="$(split_shell_words "$PR7_DELIVERY_CMD")"; then
+  exit 2
+fi
+mapfile -t PR7_DELIVERY_CMD_ARR <<<"$PR7_DELIVERY_CMD_LINES"
 if (( ${#PR7_DELIVERY_CMD_ARR[@]} == 0 )); then
   echo "[PR7][FAIL] PR7_DELIVERY_CMD resolved to zero argv entries" >&2
   exit 2
