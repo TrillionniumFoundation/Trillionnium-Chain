@@ -6321,6 +6321,18 @@ line2
     }
 
     #[test]
+    fn read_log_tail_returns_empty_when_tail_contains_only_partial_line() {
+        let tmp = unique_tmp_path("trnm-rpc-tail-partial", "log");
+        let content = "prefix-noise-without-newline[event] event_type=commit task_id=12 tx_id=5";
+        fs::write(&tmp, content).expect("write temp log");
+
+        let tail = read_log_tail(&tmp, 24).expect("tail text");
+
+        assert!(tail.is_empty(), "partial tail should fail closed: {tail:?}");
+        let _ = fs::remove_file(tmp);
+    }
+
+    #[test]
     fn discover_default_node_event_log_sources_includes_dynamic_node4_and_nightly_logs() {
         let root = unique_tmp_path("trnm-rpc-log-root", "dir");
         let run_dir = root.join("run");
