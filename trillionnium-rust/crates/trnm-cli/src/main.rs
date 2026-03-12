@@ -1386,6 +1386,17 @@ mod tests {
             parse_tx_query_response(json_nested_numeric, "0xfallback").unwrap();
         assert_eq!(parsed_nested_numeric.tx_hash, "0x781");
         assert_eq!(parsed_nested_numeric.status, "fail");
+
+        let json_bool = "{\"tx_hash\":\"0x782\",\"status\":true}";
+        let parsed_bool = parse_tx_query_response(json_bool, "0xfallback").unwrap();
+        assert_eq!(parsed_bool.tx_hash, "0x782");
+        assert_eq!(parsed_bool.status, "committed");
+
+        let json_nested_bool =
+            "{\"result\":{\"response\":{\"tx_response\":{\"transactionHash\":\"0x783\",\"transactionState\":false}}}}";
+        let parsed_nested_bool = parse_tx_query_response(json_nested_bool, "0xfallback").unwrap();
+        assert_eq!(parsed_nested_bool.tx_hash, "0x783");
+        assert_eq!(parsed_nested_bool.status, "fail");
     }
 
     #[test]
