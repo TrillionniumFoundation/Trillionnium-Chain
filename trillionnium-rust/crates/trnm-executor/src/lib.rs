@@ -951,7 +951,7 @@ fn aggr_scan_round_robin_enabled() -> bool {
 }
 
 fn aggr_scan_round_robin_seed() -> usize {
-    parse_env_usize("TRNM_AGGR_SCAN_RR_SEED").unwrap_or(0)
+    parse_grouped_env_usize("TRNM_AGGR_SCAN_RR_SEED").unwrap_or(0)
 }
 
 fn auto_hot_streak_threshold() -> f64 {
@@ -999,7 +999,7 @@ fn auto_adaptive_sample_len(batch_len: usize) -> usize {
     const MIN_SAMPLE_LEN_FLOOR: usize = 64;
     const MIN_SAMPLE_LEN_CEIL: usize = MAX_SAMPLE_LEN;
 
-    let configured = parse_env_usize("TRNM_AUTO_SAMPLE_LEN")
+    let configured = parse_grouped_env_usize("TRNM_AUTO_SAMPLE_LEN")
         .map(|v| v.clamp(MIN_SAMPLE_LEN_FLOOR, MIN_SAMPLE_LEN_CEIL))
         .unwrap_or(MAX_SAMPLE_LEN);
 
@@ -2056,6 +2056,14 @@ mod tests {
     }
 
     #[test]
+    fn aggressive_round_robin_seed_rejects_ambiguous_comma_decimal_values() {
+        let _env = env_lock();
+        let _seed = EnvGuard::set("TRNM_AGGR_SCAN_RR_SEED", "1,5");
+
+        assert_eq!(aggr_scan_round_robin_seed(), 0);
+    }
+
+    #[test]
     fn integer_env_parsers_accept_plus_prefixed_grouped_values() {
         let _env = env_lock();
         let _window = EnvGuard::set("TRNM_AGGR_SCAN_WINDOW", " '+1_536' ");
@@ -2479,6 +2487,11 @@ mod tests {
         let _default = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", "batch??");
         assert_eq!(auto_adaptive_sample_len(5000), 2048);
         drop(_default);
+
+        let _ambiguous = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", "1,5");
+        assert_eq!(auto_adaptive_sample_len(5000), 2048);
+        assert_eq!(auto_adaptive_sample_len(128), 128);
+        drop(_ambiguous);
 
         let _zero = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", "0");
         assert_eq!(auto_adaptive_sample_len(5000), 64);
