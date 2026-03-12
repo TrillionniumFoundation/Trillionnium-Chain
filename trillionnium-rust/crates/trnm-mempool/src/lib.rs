@@ -1536,4 +1536,31 @@ mod tests {
         assert_eq!(g.admit(200, IngressClass::Critical), AdmitOutcome::Duplicate);
         assert_eq!(g.queued_counts(), (2, 1, 3));
     }
+
+    #[test]
+    fn pop_self_heal_prunes_ghost_seen_global_so_cross_class_retry_can_admit_after_drain() {
+        let mut g = LaneAdmissionGate::new(3, 1);
+
+        assert_eq!(g.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(20, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(21, IngressClass::Normal), AdmitOutcome::Accepted);
+
+        // Simulate restored-state skew while globally full: lane-wide membership drops
+        // one real queued id and replaces it with a ghost id, preserving cardinality.
+        g.seen_global.remove(&21);
+        g.seen_global.insert(99);
+        assert_eq!(g.seen_global.len(), 3);
+
+        // While saturated, the ghost id must stay fresh/backpressured rather than duplicate.
+        assert_eq!(g.admit(99, IngressClass::Critical), AdmitOutcome::Backpressured);
+
+        // Drain once to trigger pop-side self-heal and remove the saturation boundary.
+        assert!(matches!(g.pop_ready(), Some(10) | Some(20)));
+        assert_eq!(g.seen_global.len(), 2);
+        assert!(!g.seen_global.contains(&99));
+
+        // After self-heal plus freed capacity, the same ghost id must admit cleanly on a
+        // cross-class retry instead of remaining poisoned by stale lane-wide membership.
+        assert_eq!(g.admit(99, IngressClass::Normal), AdmitOutcome::Accepted);
+    }
 }
