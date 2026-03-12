@@ -2274,6 +2274,8 @@ fn parse_query_events_limit_from_path(path: &str) -> std::result::Result<usize, 
         || normalized_query.contains("%3d")
         || normalized_query.contains("%23")
         || normalized_query.contains("%3f")
+        || normalized_query.contains("%0d")
+        || normalized_query.contains("%0a")
     {
         return Err(http_json_response(
             "400 Bad Request",
@@ -3857,6 +3859,8 @@ mod tests {
             "/query-events/42?limit%3d9",
             "/query-events/42?limit=7%23tail",
             "/query-events/42?foo=bar%3flimit=9",
+            "/query-events/42?foo=bar%0d%0alimit=9",
+            "/query-events/42?limit=7%0d%0aextra",
         ] {
             let err = parse_query_events_limit_from_path(path)
                 .expect_err("encoded query delimiters must fail closed");
