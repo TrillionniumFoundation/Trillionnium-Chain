@@ -365,8 +365,11 @@ def main():
         )
 
     def candidate_preview(label: str, selected: str | None, candidates: list[str], max_items: int = 3) -> list[str]:
-        preview = [f"- {label}: selected={selected or 'None'} candidate_count={len(candidates)}"]
         existing_candidates = [path for path in candidates if os.path.exists(path)]
+        missing_candidates = max(0, len(candidates) - len(existing_candidates))
+        preview = [
+            f"- {label}: selected={selected or 'None'} matched_count={len(candidates)} existing_count={len(existing_candidates)} missing_count={missing_candidates}"
+        ]
         if not existing_candidates:
             preview.append(f"  - none: pattern produced no matches")
             return preview
@@ -412,8 +415,8 @@ def main():
                 f"  - recent_{idx}: basename={os.path.basename(path)} "
                 f"updated_at={file_mtime_iso(path) or 'n/a'} freshness={freshness_label(file_age_seconds(path))} path={path}"
             )
-        if len(candidates) > max_items:
-            preview.append(f"  - remaining_candidates: {len(candidates) - max_items}")
+        if len(existing_candidates) > max_items:
+            preview.append(f"  - remaining_candidates: {len(existing_candidates) - max_items}")
         return preview
 
     def candidate_pool_health_struct(label: str, selected: str | None, candidates: list[str]) -> dict[str, str | int]:
