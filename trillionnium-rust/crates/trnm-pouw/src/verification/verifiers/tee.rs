@@ -93,11 +93,18 @@ impl TeeVerifier {
 
     fn malformed_surface_label(surface: &'static str) -> &'static str {
         match surface {
+            // For malformed TEE attestations we intentionally collapse all
+            // evidence/claim variants to a single fail-closed surface so callers
+            // do not accidentally build report-vs-quote branching on malformed
+            // input text.
             "quote claims"
             | "report claims"
             | "quote/report claims"
             | "claims"
-            | "evidence/claims" => "payload/claims",
+            | "evidence/claims"
+            | "quote evidence"
+            | "report evidence"
+            | "quote/report evidence" => "payload/claims",
             other => other,
         }
     }
@@ -545,6 +552,32 @@ mod tests {
         assert!(msg.contains("quote claims"), "message: {msg}");
         assert!(!msg.contains("evidence/claims"), "message: {msg}");
         assert!(!msg.contains("legacy:"), "message: {msg}");
+    }
+
+    #[test]
+    fn tee_verifier_backend_malformed_quote_evidence_collapses_to_payload_claims_surface() {
+        let result = TeeVerifier::classify_execution_err(BackendExecutionError::MalformedProof {
+            backend: "tee:mock-tee-malformed".to_string(),
+            reason: "quote evidence malformed".to_string(),
+        });
+
+        assert!(matches!(result, VerificationResult::Invalid(_)), "unexpected result: {result:?}");
+        let VerificationResult::Invalid(msg) = result else { unreachable!() };
+        assert!(msg.contains("malformed TEE attestation payload/claims:"), "message: {msg}");
+        assert!(msg.contains("quote evidence malformed"), "message: {msg}");
+    }
+
+    #[test]
+    fn tee_verifier_backend_malformed_quote_report_evidence_collapses_to_payload_claims_surface() {
+        let result = TeeVerifier::classify_execution_err(BackendExecutionError::MalformedProof {
+            backend: "tee:mock-tee-malformed".to_string(),
+            reason: "quote/report evidence malformed".to_string(),
+        });
+
+        assert!(matches!(result, VerificationResult::Invalid(_)), "unexpected result: {result:?}");
+        let VerificationResult::Invalid(msg) = result else { unreachable!() };
+        assert!(msg.contains("malformed TEE attestation payload/claims:"), "message: {msg}");
+        assert!(msg.contains("quote/report evidence malformed"), "message: {msg}");
     }
 
     #[test]
