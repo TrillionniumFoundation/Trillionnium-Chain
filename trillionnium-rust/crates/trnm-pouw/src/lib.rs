@@ -14673,6 +14673,61 @@ mod tests {
     }
 
     #[test]
+    fn resolve_preflight_rejects_challenge_success_bounty_above_task_local_slashable_stake() {
+        let mut st = seeded_state();
+        st.set_gov_param_bootstrap_unchecked(9_508, "challenge_success_bounty".into(), "10".into())
+            .expect("challenge success bounty governance seed must succeed");
+        st.set_gov_param_bootstrap_unchecked(9_509, "min_worker_stake".into(), "40".into())
+            .expect("min worker stake governance seed must succeed");
+
+        st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 10);
+        st.set_balance(&worker_stake_lock_account(78), 9);
+
+        let task = TaskObject {
+            task_id: 78,
+            creator: "alice".into(),
+            bounty: 10,
+            status: TaskStatus::Slashed,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker1".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: Some(1),
+            reveal_deadline_height: Some(10),
+            challenge_deadline_height: Some(20),
+            challenge_window_blocks_snapshot: Some(10),
+            challenged_at_height: Some(11),
+            resolve_deadline_height: Some(30),
+            challenge_bond: Some(10),
+            challenge_bond_forfeited: None,
+            challenger: Some("challenger".into()),
+            version: 0,
+        };
+
+        let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+        let before_lock = st.balance_of(&worker_stake_lock_account(78));
+        let before_slash_treasury = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
+
+        let err = preflight_resolve_transfers(&st, &task, true)
+            .expect_err("slash resolve preflight must fail closed when task-local slashable stake is underfunded");
+        match err {
+            PouwError::State(msg) => {
+                assert!(
+                    msg.contains("task-local slashable stake"),
+                    "unexpected state error: {msg}"
+                );
+            }
+            other => panic!("unexpected error variant: {other:?}"),
+        }
+
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
+        assert_eq!(st.balance_of(&worker_stake_lock_account(78)), before_lock);
+        assert_eq!(st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT), before_slash_treasury);
+    }
+
+    #[test]
     fn resolve_preflight_rejects_forfeit_without_challenger() {
         let st = seeded_state();
         let task = TaskObject {
