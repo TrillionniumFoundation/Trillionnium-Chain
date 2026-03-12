@@ -300,6 +300,11 @@ impl OracleValidationReport {
         self.metrics.classified_outcome_conserves_sample_count()
     }
 
+    pub fn observation_classified_outcome_conserves_sample_count(&self) -> bool {
+        self.observation
+            .classified_outcome_conserves_sample_count(self.metrics.sample_count)
+    }
+
     pub fn observation_matches_metrics(&self) -> bool {
         self.observation.stale_reject_total == self.metrics.oracle_stale_reject_total
             && self.observation.quorum_reject_total == self.metrics.oracle_quorum_reject_total
@@ -308,7 +313,8 @@ impl OracleValidationReport {
     }
 
     pub fn bridge_contract_consistent(&self) -> bool {
-        self.observation_matches_metrics() && self.classified_outcome_conserves_sample_count()
+        self.observation_matches_metrics()
+            && self.observation_classified_outcome_conserves_sample_count()
     }
 }
 

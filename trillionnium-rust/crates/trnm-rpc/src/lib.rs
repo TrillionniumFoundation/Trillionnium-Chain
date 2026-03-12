@@ -85,7 +85,9 @@ impl OracleValidateSnapshotResponse {
     }
 
     pub fn bridge_contract_consistent(&self) -> bool {
-        self.observation_matches_metrics() && self.classified_outcome_conserves_sample_count()
+        self.observation_matches_metrics()
+            && self.classified_outcome_conserves_sample_count()
+            && self.observation_classified_outcome_conserves_sample_count()
     }
 }
 
@@ -988,7 +990,8 @@ mod tests {
     }
 
     #[test]
-    fn oracle_validate_snapshot_response_deserializes_canonical_bridge_payload_without_error_field() {
+    fn oracle_validate_snapshot_response_deserializes_canonical_bridge_payload_without_error_field()
+    {
         let payload = json!({
             "ok": true,
             "now_ts_ms": 1_710_000_000_123u64,
