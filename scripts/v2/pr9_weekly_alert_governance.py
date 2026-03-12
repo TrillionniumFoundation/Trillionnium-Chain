@@ -310,7 +310,7 @@ def main() -> int:
     delivery_success_rate = pct_or_none(sent, delivery_attempted)
     suppression_share_pct = pct(suppressed, total)
 
-    dead_letters = read_dead_letters(dead_letter_path, lookback_days=args.lookback_days)
+    dead_letters = read_dead_letters(dead_letter_path, lookback_days=args.lookback_days, now_dt=now_dt)
     dead_letters_week = len(dead_letters)
 
     sections_raw = extract_topn_sections(latest_topn) if latest_topn else {"unresolved": [], "forfeit": [], "escrow": []}
