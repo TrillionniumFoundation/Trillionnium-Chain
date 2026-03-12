@@ -2237,6 +2237,16 @@ fn parse_query_events_limit_from_path(path: &str) -> std::result::Result<usize, 
             "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}",
         ));
     }
+    let normalized_query = query.to_ascii_lowercase();
+    if normalized_query.contains("%26")
+        || normalized_query.contains("%3d")
+        || normalized_query.contains("%23")
+    {
+        return Err(http_json_response(
+            "400 Bad Request",
+            "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}",
+        ));
+    }
 
     let mut parsed_limit: Option<usize> = None;
     for pair in query.split('&') {
@@ -3786,6 +3796,20 @@ mod tests {
         ] {
             let err = parse_query_events_limit_from_path(path)
                 .expect_err("malformed unrelated query pairs must fail closed");
+            assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+            assert!(err.contains("invalid limit"), "path={path} err={err}");
+        }
+    }
+
+    #[test]
+    fn parse_query_events_limit_from_path_rejects_percent_encoded_query_delimiters() {
+        for path in [
+            "/query-events/42?foo=bar%26limit=9",
+            "/query-events/42?limit%3d9",
+            "/query-events/42?limit=7%23tail",
+        ] {
+            let err = parse_query_events_limit_from_path(path)
+                .expect_err("encoded query delimiters must fail closed");
             assert!(err.contains("400 Bad Request"), "path={path} err={err}");
             assert!(err.contains("invalid limit"), "path={path} err={err}");
         }
