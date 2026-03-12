@@ -554,26 +554,39 @@ mod tests {
             .parse_response(stdout)
             .expect("should parse json with raw control-byte noise around it");
         assert_eq!(parsed.output_text, "ok");
-        assert_eq!(parsed.provider_request_id.as_deref(), Some("r3-control-noise"));
+        assert_eq!(
+            parsed.provider_request_id.as_deref(),
+            Some("r3-control-noise")
+        );
     }
 
     #[test]
     fn standard_proof_adapter_parse_response_accepts_json_with_raw_control_byte_prefix() {
         let adapter = StandardProofAdapter;
-        let stdout = "\0\u{2}{\"output_text\":\"ok\",\"provider_request_id\":\"r3-control-prefix\"}";
+        let stdout =
+            "\0\u{2}{\"output_text\":\"ok\",\"provider_request_id\":\"r3-control-prefix\"}";
 
         let parsed = adapter
             .parse_response(stdout)
             .expect("should parse json with raw control-byte prefix");
         assert_eq!(parsed.output_text, "ok");
-        assert_eq!(parsed.provider_request_id.as_deref(), Some("r3-control-prefix"));
+        assert_eq!(
+            parsed.provider_request_id.as_deref(),
+            Some("r3-control-prefix")
+        );
     }
 
     #[test]
     fn adapter_label_normalization_peels_nested_and_shell_escaped_quote_wrappers() {
-        assert_eq!(normalize_adapter_label(" '\"TEE_RECEIPT\"' "), "tee-receipt");
+        assert_eq!(
+            normalize_adapter_label(" '\"TEE_RECEIPT\"' "),
+            "tee-receipt"
+        );
         assert_eq!(normalize_adapter_value(" '\"ZK_PROOF\"' "), "zk-proof");
-        assert_eq!(normalize_adapter_label(r#"\"TEE-ATTESTATION\""#), "tee-attestation");
+        assert_eq!(
+            normalize_adapter_label(r#"\"TEE-ATTESTATION\""#),
+            "tee-attestation"
+        );
         assert_eq!(normalize_adapter_value(r#"\"ZK-RECEIPT\""#), "zk-receipt");
     }
 
@@ -791,7 +804,9 @@ mod tests {
             )
             .expect("tee receipt label with nested quote wrappers should parse");
         assert_eq!(
-            tee_with_nested_quote_wrappers.provider_request_id.as_deref(),
+            tee_with_nested_quote_wrappers
+                .provider_request_id
+                .as_deref(),
             Some("pr-2k")
         );
 
@@ -950,7 +965,9 @@ mod tests {
             )
             .expect("zk receipt label with combining grapheme joiner should parse");
         assert_eq!(
-            zk_with_combining_grapheme_joiner.provider_request_id.as_deref(),
+            zk_with_combining_grapheme_joiner
+                .provider_request_id
+                .as_deref(),
             Some("pr-zk-2d0")
         );
 
@@ -1313,8 +1330,8 @@ mod tests {
         assert!(ok);
         assert_eq!(code, "tee_receipt_ok");
 
-        let adapter = build_proof_adapter("TEE\u{200F}_RECEIPT")
-            .expect("tee alias should strip rtl mark");
+        let adapter =
+            build_proof_adapter("TEE\u{200F}_RECEIPT").expect("tee alias should strip rtl mark");
         let (ok, code) = adapter.verify("hello", 8);
         assert!(ok);
         assert_eq!(code, "tee_receipt_ok");

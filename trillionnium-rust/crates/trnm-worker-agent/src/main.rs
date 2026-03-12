@@ -362,7 +362,8 @@ fn query_audit_export_by_task_id<'a>(
 }
 
 fn normalize_provenance_fingerprint_lookup(value: &str) -> Option<String> {
-    let mut normalized = normalized_optional_field(Some(value))?.to_string();
+    let mut normalized =
+        trim_boundary_audit_fillers(normalized_optional_field(Some(value))?.as_str()).to_string();
 
     // Accept heavily shell-escaped forms (e.g., nested quote wrappers from CLI/env propagation)
     // while still fail-closing on empty/invalid labels after normalization.
@@ -1550,8 +1551,16 @@ fn normalized_optional_field(value: Option<&str>) -> Option<String> {
         .map(ToOwned::to_owned)
 }
 
+fn trim_boundary_audit_fillers(value: &str) -> &str {
+    value.trim_matches(|c: char| c.is_whitespace() || c.is_control() || is_invisible_filler(c))
+}
+
 fn normalized_provider_request_id(value: Option<&str>) -> Option<String> {
-    let normalized = normalized_optional_field(value)?;
+    let normalized =
+        trim_boundary_audit_fillers(normalized_optional_field(value)?.as_str()).to_string();
+    if normalized.is_empty() {
+        return None;
+    }
     let is_allowed = normalized
         .chars()
         .all(|c| c.is_ascii_alphanumeric() || matches!(c, '-' | '_' | '.'));
@@ -2289,9 +2298,10 @@ mod tests {
             .expect("uppercase space-separated receipt hash should parse");
         assert_eq!(uppercase, "abcd1234");
 
-        let uppercase_with_spacing =
-            parse_tx_hash("[adapter] commit accepted TX HASH : 0xFACECAFE")
-                .expect("uppercase space-separated receipt hash with spaced delimiter should parse");
+        let uppercase_with_spacing = parse_tx_hash(
+            "[adapter] commit accepted TX HASH : 0xFACECAFE",
+        )
+        .expect("uppercase space-separated receipt hash with spaced delimiter should parse");
         assert_eq!(uppercase_with_spacing, "facecafe");
 
         let json = parse_tx_hash("{\"tx hash\": \"0xBADDCAFE\", \"status\": \"accepted\"}")
@@ -2334,10 +2344,8 @@ mod tests {
 
     #[test]
     fn parse_tx_hash_strips_bom_and_zero_width_fillers_around_receipt_value() {
-        let json = parse_tx_hash(
-            "receipt={\"tx_hash\":\"\u{feff}\u{200b}0xDEADBEEF\u{2060}\"}",
-        )
-        .expect("json receipt hash with bom and zero-width fillers should parse");
+        let json = parse_tx_hash("receipt={\"tx_hash\":\"\u{feff}\u{200b}0xDEADBEEF\u{2060}\"}")
+            .expect("json receipt hash with bom and zero-width fillers should parse");
         assert_eq!(json, "deadbeef");
     }
 
@@ -2347,9 +2355,8 @@ mod tests {
             .expect("hyphenated json receipt hash should parse");
         assert_eq!(json, "deadbeef");
 
-        let uppercase =
-            parse_tx_hash("{\"TX-HASH\" : \"ABCD1234\", \"status\": \"accepted\"}")
-                .expect("uppercase hyphenated json receipt hash should parse");
+        let uppercase = parse_tx_hash("{\"TX-HASH\" : \"ABCD1234\", \"status\": \"accepted\"}")
+            .expect("uppercase hyphenated json receipt hash should parse");
         assert_eq!(uppercase, "abcd1234");
     }
 
@@ -3367,6 +3374,37 @@ mod tests {
 
         let export = to_enterprise_audit_export(&rec);
         assert_eq!(export.provider_request_id, None);
+    }
+
+    #[test]
+    fn enterprise_audit_export_trims_boundary_bom_from_provider_request_id() {
+        let rec = MessageIngressRecord {
+            request_id: "r-audit-provider-request-id-bom".to_string(),
+            task_id: 7001,
+            channel: "telegram".to_string(),
+            user_id: "u1".to_string(),
+            session_id: "s1".to_string(),
+            text: "hello".to_string(),
+            idempotency_key: "ik-audit-provider-request-id-bom".to_string(),
+            status: RequestStatus::Assigned.as_str().to_string(),
+            created_at_unix_ms: 1,
+            assigned_worker: Some("worker-1".to_string()),
+            assigned_at_unix_ms: Some(2),
+            model_output: None,
+            provider_request_id: Some("\u{feff}provider-701\u{200b}".to_string()),
+            provenance_schema_version: None,
+            llm_provenance: None,
+            result_hash: None,
+            verifier_status: None,
+            resolution_code: None,
+            commit_tx_hash: None,
+            reveal_tx_hash: None,
+            adapter_error: None,
+            reputation_delta: None,
+        };
+
+        let export = to_enterprise_audit_export(&rec);
+        assert_eq!(export.provider_request_id.as_deref(), Some("provider-701"));
     }
 
     #[test]
@@ -4622,17 +4660,38 @@ mod tests {
         }];
 
         let index = build_audit_export_index(&rows);
-        let hit = query_audit_export_by_provenance_fingerprint(
-            &rows,
-            &index,
-            r#"  \"'deadbeef'\"  "#,
-        );
+        let hit =
+            query_audit_export_by_provenance_fingerprint(&rows, &index, r#"  \"'deadbeef'\"  "#);
         assert_eq!(hit.len(), 1);
         assert_eq!(hit[0].request_id, "r1");
     }
 
     #[test]
-    fn query_audit_export_by_provenance_fingerprint_accepts_repeated_shell_escaped_quote_wrappers() {
+    fn query_audit_export_by_provenance_fingerprint_trims_boundary_bom_before_lookup() {
+        let rows = vec![EnterpriseAuditExportRecord {
+            request_id: "r-bom-lookup".to_string(),
+            task_id: 70081,
+            status: "assigned".to_string(),
+            provider_request_id: None,
+            provenance_schema_version: Some("llm.v2".to_string()),
+            provenance_fingerprint: Some("deadbeef".to_string()),
+            provider: Some("openai".to_string()),
+            model: Some("gpt-5".to_string()),
+            adapter: Some("mcp".to_string()),
+            agent_protocol: Some("a2a".to_string()),
+            compliance_profile: Some("cn-pii-restricted".to_string()),
+        }];
+
+        let index = build_audit_export_index(&rows);
+        let hit =
+            query_audit_export_by_provenance_fingerprint(&rows, &index, "\u{feff}DEADBEEF\u{200b}");
+        assert_eq!(hit.len(), 1);
+        assert_eq!(hit[0].request_id, "r-bom-lookup");
+    }
+
+    #[test]
+    fn query_audit_export_by_provenance_fingerprint_accepts_repeated_shell_escaped_quote_wrappers()
+    {
         let rows = vec![EnterpriseAuditExportRecord {
             request_id: "r1".to_string(),
             task_id: 7005,
@@ -4648,11 +4707,8 @@ mod tests {
         }];
 
         let index = build_audit_export_index(&rows);
-        let hit = query_audit_export_by_provenance_fingerprint(
-            &rows,
-            &index,
-            r#"\"\"\"deadbeef\"\"\""#,
-        );
+        let hit =
+            query_audit_export_by_provenance_fingerprint(&rows, &index, r#"\"\"\"deadbeef\"\"\""#);
         assert_eq!(hit.len(), 1);
         assert_eq!(hit[0].request_id, "r1");
     }
