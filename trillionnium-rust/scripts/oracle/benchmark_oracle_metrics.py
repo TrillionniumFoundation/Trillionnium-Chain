@@ -112,6 +112,9 @@ def _validate_bench_output_contract(out):
 
 
 def run_baseline(cases, args):
+    if not cases:
+        raise SystemExit("baseline input must contain at least one case")
+
     t0 = time.perf_counter_ns()
     stale = quorum = drift = 0
     accepted_source_cardinalities = []
@@ -317,6 +320,19 @@ def _test_run_baseline_enforces_sample_count_conservation_contract():
         + out["oracle_drift_reject_total"]
     )
     assert out["accepted_total"] + rejected_total == out["sample_count"]
+
+
+def _test_run_baseline_rejects_empty_fixture_list_with_stable_error():
+    args = argparse.Namespace(
+        min_sources=2,
+        max_staleness_ms=60_000,
+        max_deviation_bps=500,
+    )
+    try:
+        run_baseline([], args)
+        raise AssertionError("empty baseline input should fail closed")
+    except SystemExit as exc:
+        assert str(exc) == "baseline input must contain at least one case"
 
 
 def _test_duplicate_source_uses_latest_sample_for_staleness_and_drift():
