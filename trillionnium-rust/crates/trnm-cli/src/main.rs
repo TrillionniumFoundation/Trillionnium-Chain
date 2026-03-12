@@ -364,7 +364,10 @@ fn run_template_raw(cmd: &str) -> Result<String> {
             stderr
         );
     }
-    Ok(stdout.to_string())
+
+    let mut merged = stdout.to_string();
+    merged.push_str(&stderr);
+    Ok(merged)
 }
 
 fn parse_kv_line(line: &str) -> Option<(String, String)> {
@@ -1174,6 +1177,16 @@ mod tests {
         let got = tx_query("0xbbbb");
         std::env::remove_var("TRNM_TX_QUERY_CMD");
         assert!(got.is_err());
+    }
+
+    #[test]
+    fn run_template_raw_merges_successful_stdout_and_stderr() {
+        let merged = run_template_raw(
+            "python3 -c \"import sys; print('tx_hash=0xabc123'); sys.stderr.write('status=committed\\n')\"",
+        )
+        .unwrap();
+        assert!(merged.contains("tx_hash=0xabc123"), "unexpected: {merged}");
+        assert!(merged.contains("status=committed"), "unexpected: {merged}");
     }
 
     #[test]
