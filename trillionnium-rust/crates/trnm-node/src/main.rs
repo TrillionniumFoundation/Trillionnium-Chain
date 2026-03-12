@@ -3185,6 +3185,44 @@ mod tests {
     }
 
     #[test]
+    fn consensus_log_contract_keeps_round_change_density_milli_fields() {
+        let field_name = "bft_round_change_density_avg_milli";
+        let integer_avg_field_name = "bft_round_change_density_avg";
+        let backoff_field_name = "bft_round_change_backoff_density_avg_milli";
+        let backoff_integer_avg_field_name = "bft_round_change_backoff_density_avg_ms";
+
+        assert!(field_name.ends_with("_avg_milli"));
+        assert!(backoff_field_name.ends_with("_avg_milli"));
+        assert!(backoff_integer_avg_field_name.ends_with("_avg_ms"));
+        assert_ne!(field_name, integer_avg_field_name);
+        assert_ne!(backoff_field_name, backoff_integer_avg_field_name);
+    }
+
+    #[test]
+    fn round_change_density_milli_fields_preserve_sub_integer_signal_vs_integer_averages() {
+        let bft_round_change_total = 5u64;
+        let bft_round_change_backoff_total_ms = 5u64;
+        let bft_round_change_active_heights = 2u64;
+
+        let density_avg = bft_round_change_total / bft_round_change_active_heights;
+        let density_avg_milli =
+            ratio_milli_u64(bft_round_change_total, bft_round_change_active_heights);
+        let backoff_density_avg_ms =
+            bft_round_change_backoff_total_ms / bft_round_change_active_heights;
+        let backoff_density_avg_milli = ratio_milli_u64(
+            bft_round_change_backoff_total_ms,
+            bft_round_change_active_heights,
+        );
+
+        assert_eq!(density_avg, 2);
+        assert_eq!(density_avg_milli, 2_500);
+        assert!(density_avg_milli > density_avg * 1_000);
+        assert_eq!(backoff_density_avg_ms, 2);
+        assert_eq!(backoff_density_avg_milli, 2_500);
+        assert!(backoff_density_avg_milli > backoff_density_avg_ms * 1_000);
+    }
+
+    #[test]
     fn hot_object_active_share_metrics_avoid_zero_block_dilution() {
         let all_block_top_label_share_samples_ppm = vec![0u128, 500_000, 800_000];
         let all_block_tail_share_samples_ppm = vec![0u128, 500_000, 200_000];
