@@ -234,7 +234,7 @@ Monetary policy 仅记账不铸销到账户，且节点主循环未触发 policy
 1. **timelock 绕过**：见 Challenge 2（`set_gov_param_bootstrap_unchecked`）。
 2. **参数蠕变**：见 Challenge 4（20% 复合漂移 + replace 重排）。
 3. **奖励/惩罚守恒**：见 Challenge 7（policy tick 未落账、节点未触发）。
-4. **库余额抽取风险**：见 Challenge 3（challenge bounty fallback 到全局 slash treasury）。
+4. **库余额抽取风险**：Challenge 3 反映的是历史高风险面，但按 2026-03-12 的补充核查，当前 `trnm-pouw` 已不再允许 challenge-success bounty 回退抽取全局 `treasury.worker_slashes`；现阶段更准确的遗留风险是 Challenge 8 补充段指出的 **timeout-slash 治理控制面未真正打通**，即 `default_slash_on_unresolved_challenge` 仍停留在代码预留、治理侧不可达。
 
 ---
 
