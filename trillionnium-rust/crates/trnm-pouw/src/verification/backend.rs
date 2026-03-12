@@ -560,7 +560,7 @@ pub fn parse_zk_proof_payload(
             backend: "zk:payload".to_string(),
             reason: "invalid zk payload: missing ZK: prefix".to_string(),
         })?;
-    let mut payload: ParsedZkProofPayload =
+    let payload: ParsedZkProofPayload =
         serde_json::from_str(body).map_err(|_| BackendExecutionError::MalformedProof {
             backend: "zk:payload".to_string(),
             reason: "invalid zk payload: body must be canonical JSON object".to_string(),
@@ -625,8 +625,14 @@ pub fn parse_zk_proof_payload(
             ),
         }
     })?;
-    if payload.zk_system.as_deref() != Some(normalized_zk_system.as_str()) {
-        payload.zk_system = Some(normalized_zk_system);
+    if raw_zk_system != normalized_zk_system {
+        return Err(BackendExecutionError::MalformedProof {
+            backend: "zk:payload".to_string(),
+            reason: format!(
+                "invalid zk payload: zk_system must use canonical token '{}'",
+                normalized_zk_system
+            ),
+        });
     }
     if payload.schema_version != "trnm.zk.payload.v0" {
         return Err(BackendExecutionError::MalformedProof {
@@ -937,11 +943,11 @@ mod tests {
     }
 
     #[test]
-    fn parse_zk_proof_payload_canonicalizes_supported_zk_system_aliases() {
+    fn parse_zk_proof_payload_rejects_non_canonical_zk_system_aliases_fail_closed() {
         let task = mock_task();
-        let payload = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":" Groth-16 ","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["4242","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#).unwrap();
+        let err = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":" Groth-16 ","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["4242","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#).unwrap_err();
 
-        assert_eq!(payload.zk_system.as_deref(), Some("groth16"));
+        assert!(matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("zk_system must use canonical token 'groth16'")));
     }
 
     #[test]

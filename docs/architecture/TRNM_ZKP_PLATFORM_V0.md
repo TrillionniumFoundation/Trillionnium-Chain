@@ -415,7 +415,7 @@ v0 **不承诺**：
 
 1. `vk_ref` 不是纯展示字段；当 router 进入 ZK backend 路径时，`vk_ref` 必须可解析到稳定 verifier 元数据。
 2. 对 ZK 路径，`vk_ref` 解析结果至少必须包含 canonical `zk_system` 元数据；若缺失，则视为输入契约不满足并 fail-closed。
-3. payload 中声明的 `zk_system` 必须与 `vk_ref` 解析结果一致；router 在进入 backend 前应先将其规范化为 canonical token（例如 `Groth-16` → `groth16`），避免实现/文档/registry 因别名形态发生漂移。
+3. payload 中声明的 `zk_system` 必须与 `vk_ref` 解析结果一致；在 `trnm.zk.payload.v0` 中该字段本身就必须已经是 canonical token（例如只能写 `groth16`，不能写 `Groth-16` 后再指望 router 静默规范化），避免实现/文档/registry 因别名形态发生漂移。
 4. 若 payload 显式携带 `backend_id`，且该 token 可推断 proving-system hint，则该 hint 必须与 `vk_ref` 的 canonical `zk_system` 一致；若同一 token 中出现多个**不同的** canonical system hint（例如 `groth16-plonk-demo` 或带显式 family 前缀的 `zk-groth16-plonk-demo`），router 必须按 invalid fail-closed 拒绝，而不是猜测使用其中之一。
 5. 若 payload 显式携带的 `backend_id` 只是 family-only router token（例如 `zk`、`zk-demo`，即显式声明了 ZK family 但没有任何 canonical zk-system hint），router 必须按 malformed fail-closed 拒绝，而不是把它当成 backend alias 或继续猜测式路由。
 6. 若 payload `backend_id` 是不带显式 family 前缀、也不携带 canonical zk-system hint 的 opaque token（例如 `mock-zk`），v0 允许它作为精确 backend selector 存在，但 router 只能把它当作 registry/config 中的显式后端名，不能把它升级为隐式 proving-system 选择器。
