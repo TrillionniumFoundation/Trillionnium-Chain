@@ -6,7 +6,7 @@ use trnm_types::TaskObject;
 #[cfg(feature = "real-zk-backend")]
 use super::real_zk_backend;
 use super::{
-    backend::{VerificationBackendConfig, ZkBackendRegistry},
+    backend::{TeeBackendRegistry, VerificationBackendConfig},
     proof_type_key, verifiers, ProofVerifier, VerificationResult,
 };
 
@@ -34,13 +34,16 @@ impl VerifierRegistry {
     }
 
     pub fn with_backend_config(config: VerificationBackendConfig) -> Self {
-        let backend_registry = Arc::new(ZkBackendRegistry::new());
+        // The underlying platform registry is shared, but TEE wiring should
+        // speak in family-scoped terms so attestation call sites do not look
+        // like they are configured through a ZK-only contract.
+        let backend_registry = Arc::new(TeeBackendRegistry::new());
         Self::with_backends(config, backend_registry)
     }
 
     pub fn with_backends(
         config: VerificationBackendConfig,
-        backends: Arc<ZkBackendRegistry>,
+        backends: Arc<TeeBackendRegistry>,
     ) -> Self {
         let mut registry = Self::new();
 
