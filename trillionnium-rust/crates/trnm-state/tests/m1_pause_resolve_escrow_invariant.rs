@@ -2212,6 +2212,50 @@ fn paused_state_rejects_oversized_resolve_approver_without_side_effects() {
 }
 
 #[test]
+fn paused_state_rejects_oversized_resolve_authority_member_without_side_effects() {
+    // M1 micro-hardening: paused live resolve approval must reject oversized authority-set
+    // members just like oversized approvers, so malformed quorum members cannot stage pending
+    // resolve state or perturb custody balances.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 10_042);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 1_009);
+    st.set_balance(WORKER_SLASH_TREASURY_ACCOUNT, 509);
+
+    st.set_gov_param(98_222, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    let oversized_member = "a".repeat(129);
+    let authority_set = format!("authority-a,{}", oversized_member);
+    let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+    let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+    let worker_slash_before = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
+
+    let err = st
+        .stage_or_confirm_resolve_approval(9_933, 1, true, "authority-a", &authority_set)
+        .expect_err("oversized paused resolve authority member must be rejected");
+    assert!(
+        err.contains("authority set") || err.contains("forbidden member"),
+        "unexpected error: {err}"
+    );
+
+    assert_eq!(st.pending_resolve_approval(9_933), None);
+    assert_eq!(st.pending_resolve_first_approver(9_933), None);
+    assert_eq!(st.pending_resolve_approval_snapshot(9_933), None);
+    assert_eq!(st.pending_gov_update("resolve_authority"), None);
+    assert!(st.is_emergency_paused());
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
+    assert_eq!(
+        st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
+        worker_slash_before
+    );
+}
+
+#[test]
 fn paused_state_restore_pending_resolve_snapshot_scrubs_oversized_approver_boundary() {
     // M1 micro-hardening: paused rollback/restore must scrub oversized approver ids so
     // malformed quorum snapshots cannot bypass live approver-size validation.

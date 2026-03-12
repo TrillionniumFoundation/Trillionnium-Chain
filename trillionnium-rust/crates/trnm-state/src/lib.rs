@@ -543,6 +543,7 @@ impl StateStore {
             let member_trimmed = member.trim();
             if member_trimmed.is_empty()
                 || member_trimmed != *member
+                || member_trimmed.len() > RESOLVE_APPROVER_MAX_LEN
                 || member_trimmed.chars().any(|c| c.is_whitespace())
                 || member_trimmed.chars().any(|c| c.is_control())
                 || has_forbidden_separator(member_trimmed)
