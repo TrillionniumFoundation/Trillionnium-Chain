@@ -1226,6 +1226,13 @@ mod tests {
         assert_eq!(parsed_nested_response_data.tx_hash, "0xfeed99");
         assert_eq!(parsed_nested_response_data.status, "committed");
         assert_eq!(parsed_nested_response_data.error, None);
+
+        let result_response_data = "{\"result\":{\"responseData\":{\"txHash\":\"0xbeef77\",\"txStatus\":\"accepted\",\"rawLog\":\"null\"}}}";
+        let parsed_result_response_data =
+            parse_tx_query_response(result_response_data, "0xfallback").unwrap();
+        assert_eq!(parsed_result_response_data.tx_hash, "0xbeef77");
+        assert_eq!(parsed_result_response_data.status, "pending");
+        assert_eq!(parsed_result_response_data.error, None);
     }
 
     #[test]
