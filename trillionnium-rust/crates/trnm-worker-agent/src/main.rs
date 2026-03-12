@@ -853,7 +853,7 @@ fn normalize_candidate_tx_hash(raw: &str) -> Option<String> {
         .unwrap_or(cleaned);
 
     if normalized.len() >= 8
-        && normalized.len() <= 64
+        && normalized.len() <= 128
         && normalized.chars().all(|c| c.is_ascii_hexdigit())
     {
         Some(normalized.to_ascii_lowercase())
@@ -2025,6 +2025,20 @@ mod tests {
     }
 
     #[test]
+    fn parse_tx_hash_accepts_128_char_receipts_for_real_cli_compat() {
+        let long_hash = format!("0x{}", "AB".repeat(64));
+        let parsed = parse_tx_hash(&format!("tx_hash={long_hash}"))
+            .expect("128-char tx hash should parse");
+        assert_eq!(parsed, "ab".repeat(64));
+    }
+
+    #[test]
+    fn parse_tx_hash_rejects_receipts_over_128_chars() {
+        let too_long_hash = format!("0x{}", "AB".repeat(65));
+        assert!(parse_tx_hash(&format!("tx_hash={too_long_hash}")).is_none());
+    }
+
+    #[test]
     fn parse_tx_hash_rejects_malformed_or_partial_values() {
         assert!(parse_tx_hash("tx_hash=0xdeadbee-").is_none());
         assert!(parse_tx_hash("tx_hash=not-a-hash").is_none());
@@ -2033,7 +2047,8 @@ mod tests {
         )
         .is_none());
         assert!(parse_tx_hash("tx_hash=1234567").is_none());
-        assert!(parse_tx_hash("tx_hash=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef00").is_none());
+        let overflow_hash = format!("tx_hash=0x{}", "ab".repeat(65));
+        assert!(parse_tx_hash(&overflow_hash).is_none());
     }
 
     #[test]
