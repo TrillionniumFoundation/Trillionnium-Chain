@@ -711,8 +711,10 @@ def main():
             "profile.report.keys",
             "profile.report.read_fanout",
             "profile.report.write_every",
+            "profile.report.persist_profile",
             "profile.report.elapsed_ms",
             "profile.report.path",
+            "profile.report.persist_error",
             "profile.report.autopilot_hint",
         ]
         executor_context_lines = [
