@@ -25,6 +25,7 @@ export CARGO_BUILD_JOBS="${CARGO_BUILD_JOBS:-$replay_cargo_build_jobs}"
 TS="$(date +%Y%m%d-%H%M%S)"
 OUT="release/rc-$TS"
 mkdir -p "$OUT"
+RC_OUT_DIR="$(cd "$OUT" && pwd)"
 
 GIT_HEAD="$(git rev-parse HEAD 2>/dev/null || echo unknown)"
 GIT_BRANCH="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo unknown)"
@@ -129,6 +130,7 @@ cat > "$OUT/manifest.txt" <<EOF
 release_id=rc-$TS
 generated_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 workspace=$ROOT
+rc_out_dir=$RC_OUT_DIR
 git_branch=$GIT_BRANCH
 git_head=$GIT_HEAD
 truth_source=$TRUTH_SOURCE

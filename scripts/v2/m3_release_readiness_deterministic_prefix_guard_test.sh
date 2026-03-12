@@ -26,6 +26,7 @@ fi
 rc_required_lines=(
   'replay_command=$replay_command'
   'rollback_command=$rollback_command'
+  'rc_out_dir=$RC_OUT_DIR'
   'truth_source=$TRUTH_SOURCE'
   'historical_evidence_only=true'
   'evidence_scope=$EVIDENCE_SCOPE'
