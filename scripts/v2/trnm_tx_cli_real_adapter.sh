@@ -6,6 +6,9 @@ set -euo pipefail
 #   $0 tx --help
 #   $0 tx commit-result <task_id> <worker> <commit_hash> <nonce>
 #   $0 tx reveal-result <task_id> <result_hash> <salt_hex>
+#   $0 tx query <tx_hash>
+#   $0 tx wait <tx_hash> [--timeout <sec>] [--interval <sec>]
+#   $0 tx transfer --from <name> --to <address> --amount <n> [--denom <denom>] [--store <path>]
 
 RPC="${TRNM_RPC:-http://127.0.0.1:26657}"
 CHAIN_ID="${TRNM_CHAIN_ID:-trnm-localnet}"
@@ -32,12 +35,42 @@ Usage:
   tx commit-result <task_id> <worker> <commit_hash> <nonce>
   tx reveal-result <task_id> <result_hash> <salt_hex>
   tx query <tx_hash>
+  tx wait <tx_hash> [--timeout <sec>] [--interval <sec>]
+  tx transfer --from <name> --to <address> --amount <n> [--denom <denom>] [--store <path>]
 
 Env:
   TRNM_TX_BIN, TRNM_RPC, TRNM_CHAIN_ID, TRNM_KEY_NAME, TRNM_KEYRING_BACKEND
   TRNM_GAS, TRNM_GAS_ADJUSTMENT, TRNM_FEES, TRNM_BROADCAST_MODE
   TRNM_TX_COMMIT_CMD, TRNM_TX_REVEAL_CMD, TRNM_TX_QUERY_CMD
+  TRNM_TX_WRAPPER_DELEGATE_BIN, TRNM_TX_WRAPPER_CLI
 EOF
+}
+
+resolve_delegate_bin() {
+  local candidate="${TRNM_TX_WRAPPER_DELEGATE_BIN:-${TRNM_TX_WRAPPER_CLI:-trnm-cli}}"
+  if command -v "$candidate" >/dev/null 2>&1; then
+    command -v "$candidate"
+    return 0
+  fi
+
+  local root
+  root="$(cd "$(dirname "$0")/../.." && pwd)"
+  local cargo_bin="$root/trillionnium-rust/target/debug/trnm-cli"
+  if [[ "$candidate" == "trnm-cli" && -x "$cargo_bin" ]]; then
+    printf "%s\n" "$cargo_bin"
+    return 0
+  fi
+
+  return 1
+}
+
+delegate_to_cli() {
+  local delegate_bin
+  if ! delegate_bin="$(resolve_delegate_bin)"; then
+    echo "delegated tx subcommand requires trnm-cli (set TRNM_TX_WRAPPER_DELEGATE_BIN if needed)" >&2
+    exit 127
+  fi
+  exec "$delegate_bin" tx "$@"
 }
 
 extract_tx_hash() {
@@ -175,6 +208,9 @@ if [[ "$sub" == "--help" || "$sub" == "-h" || -z "$sub" ]]; then
 fi
 
 case "$sub" in
+  wait|transfer)
+    delegate_to_cli "${@:3}"
+    ;;
   commit-result)
     if [[ "$#" -ne 6 ]]; then
       echo "invalid args for commit-result: expected 4 payload args" >&2
