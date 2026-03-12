@@ -1192,6 +1192,41 @@ fn restore_balance_none_rewinds_state_root_after_removing_existing_treasury_entr
 }
 
 #[test]
+fn restore_balance_rewinds_state_root_after_value_mutation() {
+    let mut state = StateStore::new();
+
+    state.set_balance("treasury.challenge_forfeits", 25);
+    let baseline_snapshot = Some(state.balance_of("treasury.challenge_forfeits"));
+    let root_before = state.state_root();
+
+    state.set_balance("treasury.challenge_forfeits", 40);
+    let root_after = state.state_root();
+
+    assert_ne!(
+        root_before, root_after,
+        "state_root should incorporate treasury balance amounts so distinct funded values cannot hash identically"
+    );
+
+    state.restore_balance("treasury.challenge_forfeits", baseline_snapshot);
+
+    assert_eq!(
+        state.balance_of("treasury.challenge_forfeits"),
+        25,
+        "restore_balance(Some(amount)) should restore the prior treasury balance amount"
+    );
+    assert_eq!(
+        state.state_root(),
+        root_before,
+        "restore_balance(Some(amount)) must rewind state_root exactly after a treasury balance value mutation"
+    );
+    assert_eq!(
+        state.state_root(),
+        root_before,
+        "repeated reads after restore_balance(Some(amount)) should deterministically reuse the rewound cached root"
+    );
+}
+
+#[test]
 fn restore_task_none_on_mismatched_slot_keeps_canonical_task_root() {
     let mut state = StateStore::new();
     let task = TaskObject {
