@@ -133,8 +133,8 @@ impl TeeVerifier {
         // surfaces unless the reason is explicitly payload-bound and lacks any
         // attestation context.
         let mentions_unavailable = mentions(|token| token == "unavailable");
-        let mentions_quote = mentions(|token| token == "quote");
-        let mentions_report = mentions(|token| token == "report");
+        let mentions_quote = mentions(|token| token == "quote" || token == "quotes");
+        let mentions_report = mentions(|token| token == "report" || token == "reports");
         let mentions_claims = mentions(|token| token.starts_with("claim"));
         let mentions_payload = mentions(|token| token == "payload");
         let mentions_evidence = mentions(|token| token == "evidence");
@@ -655,6 +655,57 @@ mod tests {
             "message: {msg}"
         );
         assert!(!msg.contains("quote/report evidence"), "message: {msg}");
+    }
+
+    #[test]
+    fn tee_verifier_backend_internal_pluralized_quotes_reports_claims_still_map_to_combined_claims_surface(
+    ) {
+        let result = TeeVerifier::classify_execution_err(BackendExecutionError::Internal {
+            backend: "tee:mock-tee-internal".to_string(),
+            reason: "quotes reports claims verifier crashed".to_string(),
+        });
+
+        assert!(
+            matches!(result, VerificationResult::Indeterminate(_)),
+            "unexpected result: {result:?}"
+        );
+        let VerificationResult::Indeterminate(msg) = result else {
+            unreachable!()
+        };
+        assert!(msg.contains("backend_error:"), "message: {msg}");
+        assert!(
+            msg.contains("failed while verifying TEE attestation quote/report claims:"),
+            "message: {msg}"
+        );
+        assert!(
+            msg.contains("legacy: failed while verifying TEE attestation quote/report claims"),
+            "message: {msg}"
+        );
+        assert!(!msg.contains("quote/report evidence"), "message: {msg}");
+    }
+
+    #[test]
+    fn tee_verifier_backend_unavailable_pluralized_quotes_reports_certificate_still_map_to_combined_evidence_surface(
+    ) {
+        let result = TeeVerifier::classify_execution_err(BackendExecutionError::Unavailable {
+            backend: "tee:mock-tee-unavailable".to_string(),
+            reason: "quotes reports certificate verifier unavailable".to_string(),
+        });
+
+        assert!(
+            matches!(result, VerificationResult::Indeterminate(_)),
+            "unexpected result: {result:?}"
+        );
+        let VerificationResult::Indeterminate(msg) = result else {
+            unreachable!()
+        };
+        assert!(msg.contains("unavailable:"), "message: {msg}");
+        assert!(
+            msg.contains("cannot currently verify TEE attestation quote/report evidence:"),
+            "message: {msg}"
+        );
+        assert!(!msg.contains("quote/report claims"), "message: {msg}");
+        assert!(!msg.contains("legacy:"), "message: {msg}");
     }
 
     #[test]
