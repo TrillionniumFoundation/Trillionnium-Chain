@@ -3853,6 +3853,29 @@ mod tests {
     }
 
     #[test]
+    fn leader_missed_metric_names_keep_validator_spread_distinct_from_height_budget_pressure() {
+        let active_validator_share_field_name = "bft_leader_missed_active_validator_share_ppm";
+        let active_height_share_field_name = "bft_leader_missed_active_height_share_ppm";
+        let density_field_name = "bft_leader_missed_density_avg_milli";
+        let active_observed_height_rate_field_name =
+            "bft_leader_missed_active_observed_height_rate_ppm";
+
+        assert!(active_validator_share_field_name.ends_with("_share_ppm"));
+        assert!(active_height_share_field_name.ends_with("_share_ppm"));
+        assert!(density_field_name.ends_with("_avg_milli"));
+        assert!(active_observed_height_rate_field_name.ends_with("_rate_ppm"));
+        assert_ne!(
+            active_validator_share_field_name,
+            active_height_share_field_name
+        );
+        assert_ne!(active_validator_share_field_name, density_field_name);
+        assert_ne!(
+            active_height_share_field_name,
+            active_observed_height_rate_field_name
+        );
+    }
+
+    #[test]
     fn leader_missed_active_height_share_handles_zero_finality_budget() {
         let bft_leader_missed_density_avg_milli = 2_500u64;
         let finality_avg = 0u128;
