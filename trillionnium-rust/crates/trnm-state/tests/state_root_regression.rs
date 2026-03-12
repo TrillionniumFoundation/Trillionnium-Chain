@@ -463,6 +463,25 @@ fn embedded_pending_gov_update_key_should_affect_state_root() {
 }
 
 #[test]
+fn pending_resolve_string_field_boundaries_should_affect_state_root() {
+    let mut st_a = StateStore::new();
+    let mut st_b = StateStore::new();
+
+    st_a
+        .stage_or_confirm_resolve_approval(9_101, 1, true, "ab", "ab,c")
+        .expect("first pending resolve snapshot should be valid");
+    st_b
+        .stage_or_confirm_resolve_approval(9_101, 1, true, "a", "a,bc")
+        .expect("second pending resolve snapshot should be valid");
+
+    assert_ne!(
+        st_a.state_root(),
+        st_b.state_root(),
+        "state_root should length-frame pending resolve approver and authority-set strings so field-boundary collisions cannot hash identically"
+    );
+}
+
+#[test]
 fn treasury_balances_and_monetary_counters_should_affect_state_root_even_when_net_issuance_matches() {
     let mut st1 = StateStore::new();
     let mut st2 = StateStore::new();
