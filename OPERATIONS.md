@@ -447,7 +447,7 @@ python3 ./scripts/v2/pr9_weekly_alert_governance.py
 - `run/pr7-topn/*/topn-anomaly-summary.md`：最新 TopN unresolved / forfeit / escrow 摘要
 - `run/pr7-threshold-advisor/*/threshold-advice.json`：最新阈值建议
 - `run/pr9/alert-thresholds.env` / `run/pr9/alert-thresholds.previous.env`：当前/上一版阈值 env diff
-- `run/pr9/history/weekly-alert-governance-*.json`：上一周 baseline（用于 week-over-week diff）
+- `run/pr9/history/weekly-alert-governance-*.json`：上一周 baseline（用于 week-over-week diff；会忽略未来时间戳的 stray snapshot）
 
 可选参数：
 - `--lookback-days <n>`：dead letter / 周对比窗口，默认 `7`
@@ -460,6 +460,7 @@ python3 ./scripts/v2/pr9_weekly_alert_governance.py
 - 若缺少上一周 baseline，报告会标记 `baseline unavailable`，但仍输出本周 `.md/.json`。
 - 若缺少 PR7 TopN 或 threshold advice，报告会在 JSON 的 `degraded.*` 字段中标出，并在 Markdown 中写明 `MISSING` / `unavailable`。
 - 若本轮 JSON 负载与最新历史快照完全相同，history 目录会跳过重复快照写入，仅刷新当前 `weekly-alert-governance.md/.json`。
+- 选择 baseline 时会忽略未来时间戳的 stray history snapshot，避免 week-over-week diff 被未来产物污染。
 
 nightly 接入建议：
 - workflow step 使用 `continue-on-error: true`

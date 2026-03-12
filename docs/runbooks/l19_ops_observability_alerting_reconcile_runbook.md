@@ -230,6 +230,7 @@ python3 ./scripts/v2/pr9_weekly_alert_governance.py
 - 无上一周 baseline：Markdown/JSON 仍输出，但写 `baseline unavailable`
 - 无 TopN 或 threshold advice：在 JSON `degraded.*` 中标记，并在 Markdown 写 `MISSING` / `unavailable`
 - 若当前 JSON 与最新历史快照完全相同：跳过新的 history snapshot，仅刷新当前周 `.md/.json`
+- 选择 week-over-week baseline 时会忽略未来时间戳的 stray history snapshot，避免被未来产物污染
 
 ### Triage fields
 - `metrics.alerts_sent` / `metrics.alerts_suppressed` / `metrics.alerts_failed`
