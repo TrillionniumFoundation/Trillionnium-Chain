@@ -505,8 +505,19 @@ fn infer_kv_tx_status(key: &str, value: &str) -> Option<String> {
 fn parse_tx_query_response(raw: &str, requested_tx_hash: &str) -> Result<TxQueryResponse> {
     if let Ok(v) = serde_json::from_str::<serde_json::Value>(raw) {
         let payload = v.get("result").unwrap_or(&v);
-        let raw_tx_hash = payload
+        let nested_tx_response = payload
+            .get("tx_response")
+            .or_else(|| payload.get("txResponse"))
+            .or_else(|| payload.get("response").and_then(|r| r.get("tx_response")))
+            .or_else(|| payload.get("response").and_then(|r| r.get("txResponse")));
+        let primary = nested_tx_response.unwrap_or(payload);
+        let raw_tx_hash = primary
             .get("tx_hash")
+            .or_else(|| primary.get("txhash"))
+            .or_else(|| primary.get("txHash"))
+            .or_else(|| primary.get("transaction_hash"))
+            .or_else(|| primary.get("transactionHash"))
+            .or_else(|| payload.get("tx_hash"))
             .or_else(|| payload.get("txhash"))
             .or_else(|| payload.get("txHash"))
             .or_else(|| payload.get("transaction_hash"))
@@ -518,8 +529,18 @@ fn parse_tx_query_response(raw: &str, requested_tx_hash: &str) -> Result<TxQuery
             None => normalize_tx_hash(requested_tx_hash)
                 .unwrap_or_else(|| requested_tx_hash.to_string()),
         };
-        let status = payload
+        let status = primary
             .get("status")
+            .or_else(|| primary.get("tx_status"))
+            .or_else(|| primary.get("txStatus"))
+            .or_else(|| primary.get("transaction_status"))
+            .or_else(|| primary.get("transactionStatus"))
+            .or_else(|| primary.get("state"))
+            .or_else(|| primary.get("tx_state"))
+            .or_else(|| primary.get("txState"))
+            .or_else(|| primary.get("transaction_state"))
+            .or_else(|| primary.get("transactionState"))
+            .or_else(|| payload.get("status"))
             .or_else(|| payload.get("tx_status"))
             .or_else(|| payload.get("txStatus"))
             .or_else(|| payload.get("transaction_status"))
@@ -531,9 +552,13 @@ fn parse_tx_query_response(raw: &str, requested_tx_hash: &str) -> Result<TxQuery
             .or_else(|| payload.get("transactionState"))
             .and_then(|x| x.as_str())
             .and_then(normalize_tx_status)
+            .or_else(|| infer_json_tx_status(primary))
             .or_else(|| infer_json_tx_status(payload))
             .ok_or_else(|| anyhow!("missing/invalid status field in tx query response"))?;
-        let error = payload.get("error").and_then(normalize_json_error);
+        let error = primary
+            .get("error")
+            .or_else(|| payload.get("error"))
+            .and_then(normalize_json_error);
         return Ok(TxQueryResponse {
             tx_hash,
             status,
@@ -1122,6 +1147,21 @@ mod tests {
         assert_eq!(parsed.tx_hash, "0xabc");
         assert_eq!(parsed.status, "committed");
         assert_eq!(parsed.error, None);
+    }
+
+    #[test]
+    fn tx_query_parse_json_accepts_nested_tx_response_wrappers() {
+        let wrapped = "{\"tx_response\":{\"txhash\":\"ABC123\",\"code\":0}}";
+        let parsed_wrapped = parse_tx_query_response(wrapped, "0xfallback").unwrap();
+        assert_eq!(parsed_wrapped.tx_hash, "abc123");
+        assert_eq!(parsed_wrapped.status, "committed");
+        assert_eq!(parsed_wrapped.error, None);
+
+        let nested = "{\"result\":{\"response\":{\"tx_response\":{\"transactionHash\":\"0xdef456\",\"transactionState\":\"FINALIZED\",\"error\":\"NULL\"}}}}";
+        let parsed_nested = parse_tx_query_response(nested, "0xfallback").unwrap();
+        assert_eq!(parsed_nested.tx_hash, "0xdef456");
+        assert_eq!(parsed_nested.status, "committed");
+        assert_eq!(parsed_nested.error, None);
     }
 
     #[test]
