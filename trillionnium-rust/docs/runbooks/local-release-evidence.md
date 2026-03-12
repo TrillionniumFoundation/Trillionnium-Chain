@@ -15,7 +15,7 @@
 1. `cargo test`（关键包：`trnm-node` / `trnm-worker-agent` / `trnm-rpc` / `trnm-pouw` / `trnm-state`）
 2. `scripts/check_request_tx_binding.sh`
 3. `scripts/run_request_fault_injection.sh`
-4. challenge reexec 入口（必跑；若未找到 `*challenge*reexec*.sh` 则直接记为 FAIL）
+4. challenge reexec 入口（必跑；优先使用 `TRNM_CHALLENGE_REEXEC_ENTRY` 显式固定入口，否则按脚本内置候选列表做确定性解析；若仍无法解析到入口则直接记为 FAIL）
 
 输出目录统一为：
 
