@@ -978,6 +978,10 @@ fn parse_tx_hash(text: &str) -> Option<String> {
         "\"tx-hash\" :",
         "\"TX-HASH\":",
         "\"TX-HASH\" :",
+        "\"tx hash\":",
+        "\"tx hash\" :",
+        "\"TX HASH\":",
+        "\"TX HASH\" :",
         "\"txHash\":",
         "\"txHash\" :",
         "\"TXHASH\":",
@@ -992,6 +996,10 @@ fn parse_tx_hash(text: &str) -> Option<String> {
         "'tx-hash' :",
         "'TX-HASH':",
         "'TX-HASH' :",
+        "'tx hash':",
+        "'tx hash' :",
+        "'TX HASH':",
+        "'TX HASH' :",
         "'txHash':",
         "'txHash' :",
         "'TXHASH':",
@@ -2206,6 +2214,14 @@ mod tests {
             parse_tx_hash("[adapter] commit accepted TX HASH : 0xFACECAFE")
                 .expect("uppercase space-separated receipt hash with spaced delimiter should parse");
         assert_eq!(uppercase_with_spacing, "facecafe");
+
+        let json = parse_tx_hash("{\"tx hash\": \"0xBADDCAFE\", \"status\": \"accepted\"}")
+            .expect("space-separated json receipt hash should parse");
+        assert_eq!(json, "baddcafe");
+
+        let single_quoted = parse_tx_hash("adapter stdout: {'TX HASH' : 'ABCD1234'}")
+            .expect("single-quoted uppercase space-separated receipt hash should parse");
+        assert_eq!(single_quoted, "abcd1234");
     }
 
     #[test]
