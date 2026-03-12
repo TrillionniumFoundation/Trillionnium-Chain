@@ -42,6 +42,29 @@ json_escape() {
   printf '%s' "$s"
 }
 
+sha256_text() {
+  if command -v sha256sum >/dev/null 2>&1; then
+    sha256sum | awk '{print $1}'
+  elif command -v shasum >/dev/null 2>&1; then
+    shasum -a 256 | awk '{print $1}'
+  else
+    echo "[quick-gate][FAIL] missing sha256 utility (need sha256sum or shasum)" >&2
+    exit 2
+  fi
+}
+
+sha256_file() {
+  local path=${1:?path required}
+  if command -v sha256sum >/dev/null 2>&1; then
+    sha256sum "$path" | awk '{print $1}'
+  elif command -v shasum >/dev/null 2>&1; then
+    shasum -a 256 "$path" | awk '{print $1}'
+  else
+    echo "[quick-gate][FAIL] missing sha256 utility (need sha256sum or shasum)" >&2
+    exit 2
+  fi
+}
+
 if [[ "$SKIP_SHELLCHECK" != "0" && "$SKIP_SHELLCHECK" != "1" ]]; then
   echo "[quick-gate][FAIL] QUICK_GATE_SKIP_SHELLCHECK must be 0 or 1 (got: $SKIP_SHELLCHECK)" >&2
   exit 2
@@ -94,11 +117,11 @@ fi
 
 manifest_sha256=""
 if [[ ${#FILES[@]} -gt 0 ]]; then
-  if command -v sha256sum >/dev/null 2>&1; then
-    manifest_sha256="$(printf '%s\n' "${FILES[@]}" | sha256sum | awk '{print $1}')"
-  elif command -v shasum >/dev/null 2>&1; then
-    manifest_sha256="$(printf '%s\n' "${FILES[@]}" | shasum -a 256 | awk '{print $1}')"
-  fi
+  manifest_lines=()
+  for f in "${FILES[@]}"; do
+    manifest_lines+=("$(sha256_file "$f")  $f")
+  done
+  manifest_sha256="$(printf '%s\n' "${manifest_lines[@]}" | sha256_text)"
 fi
 
 if [[ ${#FILES[@]} -eq 0 ]]; then
