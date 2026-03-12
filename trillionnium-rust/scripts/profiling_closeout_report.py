@@ -1190,7 +1190,6 @@ def main():
         )
         with open(executor_profile, "r", encoding="utf-8") as f:
             executor_profile_lines = [line.rstrip() for line in f]
-        lines.extend(executor_profile_lines)
 
         executor_profile_metrics = {}
         for line in executor_profile_lines:
@@ -1235,43 +1234,85 @@ def main():
         embedded_profile_path = executor_profile_metrics.get("profile.report.path")
         embedded_profile_basename = executor_profile_metrics.get("profile.report.artifact_basename")
         embedded_capture_epoch = executor_profile_metrics.get("profile.report.capture_started_at_epoch")
-        if executor_profile:
-            selected_basename = os.path.basename(executor_profile)
-            selected_capture_stamp = detect_capture_stamp(executor_profile)
-            selected_capture_epoch = "unavailable"
-            if selected_capture_stamp:
-                normalized_selected_epoch = normalize_capture_stamp(*selected_capture_stamp)
-                if normalized_selected_epoch is not None:
-                    selected_capture_epoch = str(normalized_selected_epoch)
-            executor_context_lines.extend([
-                f"- executor_profile.selected_artifact_path: {executor_profile}",
-                f"- executor_profile.selected_artifact_exists: {'true' if os.path.exists(executor_profile) else 'false'}",
-                f"- executor_profile.selected_artifact_basename: {selected_basename}",
-                f"- executor_profile.selected_capture_stamp_epoch: {selected_capture_epoch}",
-            ])
-            if embedded_profile_basename:
-                executor_context_lines.append(
-                    "- executor_profile.embedded_artifact_basename_matches_selected: "
-                    f"{'true' if embedded_profile_basename == selected_basename else 'false'}"
-                )
-            if embedded_capture_epoch:
-                executor_context_lines.append(
-                    "- executor_profile.embedded_capture_epoch_matches_selected: "
-                    f"{'true' if embedded_capture_epoch == selected_capture_epoch else 'false'}"
-                )
+        selected_basename = os.path.basename(executor_profile)
+        selected_capture_stamp = detect_capture_stamp(executor_profile)
+        selected_capture_epoch = "unavailable"
+        if selected_capture_stamp:
+            normalized_selected_epoch = normalize_capture_stamp(*selected_capture_stamp)
+            if normalized_selected_epoch is not None:
+                selected_capture_epoch = str(normalized_selected_epoch)
+        basename_match = None
+        capture_epoch_match = None
+        embedded_report_path_exists = None
+        embedded_report_path_match = None
+        executor_context_lines.extend([
+            f"- executor_profile.selected_artifact_path: {executor_profile}",
+            f"- executor_profile.selected_artifact_exists: {'true' if os.path.exists(executor_profile) else 'false'}",
+            f"- executor_profile.selected_artifact_basename: {selected_basename}",
+            f"- executor_profile.selected_capture_stamp_epoch: {selected_capture_epoch}",
+            f"- executor_profile.raw_line_count: {len(executor_profile_lines)}",
+        ])
+        if embedded_profile_basename:
+            basename_match = embedded_profile_basename == selected_basename
+            executor_context_lines.append(
+                "- executor_profile.embedded_artifact_basename_matches_selected: "
+                f"{'true' if basename_match else 'false'}"
+            )
+        if embedded_capture_epoch:
+            capture_epoch_match = embedded_capture_epoch == selected_capture_epoch
+            executor_context_lines.append(
+                "- executor_profile.embedded_capture_epoch_matches_selected: "
+                f"{'true' if capture_epoch_match else 'false'}"
+            )
         if embedded_profile_path:
-            embedded_profile_exists = os.path.exists(embedded_profile_path)
+            embedded_report_path_exists = os.path.exists(embedded_profile_path)
+            embedded_report_path_match = bool(
+                executor_profile
+                and os.path.abspath(embedded_profile_path) == os.path.abspath(executor_profile)
+            )
             executor_context_lines.extend([
-                f"- executor_profile.embedded_report_path_exists: {'true' if embedded_profile_exists else 'false'}",
+                f"- executor_profile.embedded_report_path_exists: {'true' if embedded_report_path_exists else 'false'}",
                 (
                     "- executor_profile.embedded_report_path_matches_selected: "
-                    f"{'true' if executor_profile and os.path.abspath(embedded_profile_path) == os.path.abspath(executor_profile) else 'false'}"
+                    f"{'true' if embedded_report_path_match else 'false'}"
                 ),
             ])
+        integrity_checks = []
+        if basename_match is not None:
+            integrity_checks.append(basename_match)
+        if capture_epoch_match is not None:
+            integrity_checks.append(capture_epoch_match)
+        if embedded_report_path_match is not None:
+            integrity_checks.append(embedded_report_path_match)
+        integrity_status = (
+            "OK"
+            if integrity_checks and all(integrity_checks)
+            else "PARTIAL"
+            if integrity_checks
+            else "UNVERIFIED"
+        )
+        integrity_reason_parts = []
+        if basename_match is not None:
+            integrity_reason_parts.append(
+                f"basename_match={'true' if basename_match else 'false'}"
+            )
+        if capture_epoch_match is not None:
+            integrity_reason_parts.append(
+                f"capture_epoch_match={'true' if capture_epoch_match else 'false'}"
+            )
+        if embedded_report_path_match is not None:
+            integrity_reason_parts.append(
+                f"report_path_match={'true' if embedded_report_path_match else 'false'}"
+            )
         if executor_context_lines:
             lines.append("")
             lines.append("### Executor Profile Context")
             lines.extend(executor_context_lines)
+            lines.append(f"- executor_profile.integrity_status: {integrity_status}")
+            lines.append(
+                "- executor_profile.integrity_reason: "
+                + (", ".join(integrity_reason_parts) if integrity_reason_parts else "no embedded integrity keys available")
+            )
 
         auto_metric_lines = [
             f"- executor_profile.{key}: {executor_profile_metrics[key]}"
@@ -1282,6 +1323,10 @@ def main():
             lines.append("")
             lines.append("### Executor Auto-Adaptive Decision Summary")
             lines.extend(auto_metric_lines)
+
+        lines.append("")
+        lines.append("### Executor Profile Raw KV")
+        lines.extend(executor_profile_lines)
     else:
         lines.append("- executor_profile_freshness: missing")
         lines.append("- executor profile summary: missing")
