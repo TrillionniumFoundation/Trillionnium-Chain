@@ -3873,8 +3873,13 @@ mod tests {
     fn parse_query_events_limit_from_path_accepts_wrapped_numeric_limit() {
         assert_eq!(
             parse_query_events_limit_from_path("/query-events/42?limit=\"7\"")
-                .expect("quoted numeric limit should parse"),
+                .expect("double-quoted numeric limit should parse"),
             7
+        );
+        assert_eq!(
+            parse_query_events_limit_from_path("/query-events/42?limit='8'")
+                .expect("single-quoted numeric limit should parse"),
+            8
         );
         assert_eq!(
             parse_query_events_limit_from_path("/query-events/42?limit=  `9`  ")
