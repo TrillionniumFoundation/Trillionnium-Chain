@@ -56,6 +56,49 @@ fn paused_state_preserves_escrow_and_keeps_resolve_authority_timelocked() {
 }
 
 #[test]
+fn paused_state_rejects_case_variant_resolve_authority_placeholder_update_without_side_effects() {
+    // M1 micro-hardening: the governance entrypoint must keep placeholder authority aliases
+    // fail-closed under case drift even while paused, without staging a deferred update or
+    // perturbing custody balances.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 31_100);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 778);
+
+    st.set_gov_param(98_159, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+    let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+
+    let err = st
+        .set_gov_param(
+            98_160,
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,Governance.Resolve_Authority".into(),
+        )
+        .expect_err("case-variant placeholder member must be rejected at governance entrypoint");
+    assert!(
+        err.contains("placeholder authority") || err.contains("governance value"),
+        "unexpected error: {err}"
+    );
+
+    assert_eq!(st.pending_gov_update("resolve_authority"), None);
+    assert_eq!(
+        st.gov_param_string("resolve_authority"),
+        None,
+        "rejected placeholder update must not stage or apply a resolve authority value"
+    );
+    assert!(st.is_emergency_paused());
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
+}
+
+#[test]
 fn paused_state_pending_resolve_authority_conflict_keeps_original_timelock_and_pause_state() {
     // M1 micro-hardening: while paused, conflicting resolve_authority re-submission must fail
     // closed without mutating the already staged timelock entry or pause state.
