@@ -775,6 +775,29 @@ mod tests {
     }
 
     #[test]
+    fn classic_default_path_does_not_advertise_adaptive_headroom_without_hotspot_signal() {
+        let txs = build_classic_txs(2_048, 256);
+        let decision = auto_adaptive_decision(&txs);
+        let adaptive_candidate = adaptive_candidate_strategy_for(&txs);
+
+        assert!(!decision.use_hot_bucket);
+        assert_eq!(decision.reason, "low_hot_key_share");
+        assert!(matches!(adaptive_candidate, GroupingStrategy::Original));
+        assert!(!default_has_adaptive_opportunity(
+            StrategyArg::Default,
+            adaptive_candidate,
+        ));
+        assert!(!emits_auto_profile(
+            StrategyArg::Default,
+            default_has_adaptive_opportunity(StrategyArg::Default, adaptive_candidate),
+        ));
+        assert!(matches!(
+            effective_strategy_for(StrategyArg::Default, &txs),
+            GroupingStrategy::Original
+        ));
+    }
+
+    #[test]
     fn hot_streak_bench_default_path_matches_executor_original_strategy_output() {
         let txs = build_hot_streak_txs(20_000, 2_000, 3, 1);
         let (bench_groups, bench_profile) = StrategyArg::Default.resolve_profile(&txs);
