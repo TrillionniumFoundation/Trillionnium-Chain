@@ -45,6 +45,10 @@ missing_baseline = sorted(required_baseline - baseline.keys())
 if missing_baseline:
     raise SystemExit(f"baseline contract missing keys: {missing_baseline}")
 
+extra_baseline = sorted(set(baseline.keys()) - required_baseline)
+if extra_baseline:
+    raise SystemExit(f"baseline contract has unexpected keys: {extra_baseline}")
+
 rejected_total = (
     baseline["oracle_stale_reject_total"]
     + baseline["oracle_quorum_reject_total"]
@@ -75,6 +79,10 @@ required_bench = {
 missing_bench = sorted(required_bench - bench.keys())
 if missing_bench:
     raise SystemExit(f"bench contract missing keys: {missing_bench}")
+
+extra_bench = sorted(set(bench.keys()) - required_bench)
+if extra_bench:
+    raise SystemExit(f"bench contract has unexpected keys: {extra_bench}")
 
 if not (bench["ingest_latency_p50_ms"] <= bench["ingest_latency_p95_ms"] <= bench["ingest_latency_max_ms"]):
     raise SystemExit(
