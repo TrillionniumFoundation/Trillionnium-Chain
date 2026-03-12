@@ -983,6 +983,8 @@ mod tests {
             ("tee remote attestation quote sgx", "sgx"),
             ("tee intel dcap quote sgx", "sgx"),
             ("tee amd sev quote snp", "snp"),
+            ("tee remote attestation amd sev snp", "snp"),
+            ("tee remote attestation amd-sev-snp", "snp"),
             ("tee enclave report sgx", "sgx"),
             ("tee enclave evidence tdx", "tdx"),
             ("tee attestations receipts reports sgx", "sgx"),
