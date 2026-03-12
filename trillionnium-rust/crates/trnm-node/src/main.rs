@@ -596,16 +596,14 @@ fn recover_wal_state(wal_dir: &Path) -> Result<RecoveredWalState> {
         } else {
             Some(last.proposal_hash.clone())
         };
-        if truncated {
-            persist_consensus_wal(
-                wal_dir,
-                &ConsensusWal {
-                    next_height: last.height + 1,
-                    last_round: last.round,
-                    locked_block_hash: restored_lock.clone(),
-                },
-            )?;
-        }
+        persist_consensus_wal(
+            wal_dir,
+            &ConsensusWal {
+                next_height: last.height + 1,
+                last_round: last.round,
+                locked_block_hash: restored_lock.clone(),
+            },
+        )?;
         return Ok(RecoveredWalState {
             next_height: last.height + 1,
             restored_lock,
@@ -6288,7 +6286,7 @@ locked_block_hash = "stale-lock"
     }
 
     #[test]
-    fn recover_fully_checkpointed_wal_ignores_stale_consensus_wal_lock_without_rewriting_file() {
+    fn recover_fully_checkpointed_wal_rewrites_stale_consensus_wal_lock_to_retained_tip() {
         let wal_dir = temp_wal_dir("recover-fully-checkpointed-no-wal-rewrite");
         fs::create_dir_all(&wal_dir).unwrap();
 
@@ -6328,15 +6326,16 @@ locked_block_hash = "stale-lock"
         assert_ne!(recovered.restored_lock.as_deref(), Some("stale-lock"));
 
         let wal_raw = fs::read_to_string(wal_file(&wal_dir)).unwrap();
-        assert!(wal_raw.contains("next_height = 99"));
-        assert!(wal_raw.contains("last_round = 42"));
-        assert!(wal_raw.contains("\"stale-lock\""));
+        let wal: ConsensusWal = toml::from_str(&wal_raw).unwrap();
+        assert_eq!(wal.next_height, 2);
+        assert_eq!(wal.last_round, 7);
+        assert_eq!(wal.locked_block_hash.as_deref(), Some("h1"));
 
         let _ = fs::remove_dir_all(&wal_dir);
     }
 
     #[test]
-    fn recover_fully_checkpointed_multiple_entries_ignore_stale_consensus_wal_without_rewriting_file() {
+    fn recover_fully_checkpointed_multiple_entries_rewrite_stale_consensus_wal_to_retained_tip() {
         let wal_dir = temp_wal_dir("recover-fully-checkpointed-multi-no-wal-rewrite");
         fs::create_dir_all(&wal_dir).unwrap();
 
@@ -6393,9 +6392,10 @@ locked_block_hash = "stale-lock"
         assert_ne!(recovered.restored_lock.as_deref(), Some("stale-lock"));
 
         let wal_raw = fs::read_to_string(wal_file(&wal_dir)).unwrap();
-        assert!(wal_raw.contains("next_height = 99"));
-        assert!(wal_raw.contains("last_round = 42"));
-        assert!(wal_raw.contains("\"stale-lock\""));
+        let wal: ConsensusWal = toml::from_str(&wal_raw).unwrap();
+        assert_eq!(wal.next_height, 3);
+        assert_eq!(wal.last_round, 4);
+        assert_eq!(wal.locked_block_hash.as_deref(), Some("h2"));
 
         let _ = fs::remove_dir_all(&wal_dir);
     }
