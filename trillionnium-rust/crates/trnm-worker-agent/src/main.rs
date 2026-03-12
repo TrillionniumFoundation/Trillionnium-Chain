@@ -2480,6 +2480,13 @@ mod tests {
     }
 
     #[test]
+    fn parse_tx_hash_accepts_smart_quoted_transaction_hash_alias_with_fullwidth_colon() {
+        let smart_quoted = parse_tx_hash("receipt={“transaction hash”： “0xDEADBEEF”}")
+            .expect("smart-quoted transaction hash alias with fullwidth colon should parse");
+        assert_eq!(smart_quoted, "deadbeef");
+    }
+
+    #[test]
     fn parse_tx_hash_accepts_json_receipts_without_quotes_around_hash() {
         let json = parse_tx_hash("{\"txhash\":0xDEADBEEF,\"status\":\"accepted\"}")
             .expect("json receipt hash without quotes should parse");
