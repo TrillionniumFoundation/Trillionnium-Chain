@@ -64,6 +64,7 @@ python3 scripts/oracle/benchmark_oracle_metrics.py \
 - 离线 bridge 口径与 bench 口径的边界
 - bench 配置回显字段 `bench_count` / `bench_rounds`，用于固定基准输出上下文
 - 基本一致性约束（例如 reject/accept 与 `sample_count` 的守恒关系）
+- baseline/bench 参数 fail-closed 边界：`min_sources > 0`、`max_staleness_ms > 0`、`max_deviation_bps` 必须位于 `[0, 10000]`
 
 ## 本地/CI 执行建议
 

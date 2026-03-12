@@ -101,8 +101,16 @@ def _require_positive(name, value):
         raise SystemExit(f"{name} must be > 0")
 
 
+def _validate_contract_args(args):
+    _require_positive("min_sources", args.min_sources)
+    _require_positive("max_staleness_ms", args.max_staleness_ms)
+    if args.max_deviation_bps < 0 or args.max_deviation_bps > 10_000:
+        raise SystemExit("max_deviation_bps must be between 0 and 10000")
+
+
 
 def run_bench(args):
+    _validate_contract_args(args)
     _require_positive("bench_count", args.bench_count)
     _require_positive("bench_rounds", args.bench_rounds)
 
@@ -134,6 +142,8 @@ def main():
     ap.add_argument("--bench-count", type=int, default=500)
     ap.add_argument("--bench-rounds", type=int, default=20)
     args = ap.parse_args()
+
+    _validate_contract_args(args)
 
     if args.bench:
         print(json.dumps(run_bench(args), ensure_ascii=False, indent=2))
@@ -421,6 +431,43 @@ def _test_run_baseline_rejected_canonicalized_duplicates_do_not_inflate_accepted
     assert out["oracle_drift_reject_total"] == 1
     assert out["oracle_source_cardinality"] == 2
     assert out["sample_count"] == 2
+
+
+
+def _test_validate_contract_args_fail_closed_on_invalid_policy_bounds():
+    class Args:
+        min_sources = 0
+        max_staleness_ms = 60_000
+        max_deviation_bps = 500
+
+    try:
+        _validate_contract_args(Args())
+        raise AssertionError("min_sources=0 should fail closed")
+    except SystemExit as exc:
+        assert str(exc) == "min_sources must be > 0"
+
+    Args.min_sources = 2
+    Args.max_staleness_ms = 0
+    try:
+        _validate_contract_args(Args())
+        raise AssertionError("max_staleness_ms=0 should fail closed")
+    except SystemExit as exc:
+        assert str(exc) == "max_staleness_ms must be > 0"
+
+    Args.max_staleness_ms = 60_000
+    Args.max_deviation_bps = -1
+    try:
+        _validate_contract_args(Args())
+        raise AssertionError("negative max_deviation_bps should fail closed")
+    except SystemExit as exc:
+        assert str(exc) == "max_deviation_bps must be between 0 and 10000"
+
+    Args.max_deviation_bps = 10_001
+    try:
+        _validate_contract_args(Args())
+        raise AssertionError("max_deviation_bps > 10000 should fail closed")
+    except SystemExit as exc:
+        assert str(exc) == "max_deviation_bps must be between 0 and 10000"
 
 
 
