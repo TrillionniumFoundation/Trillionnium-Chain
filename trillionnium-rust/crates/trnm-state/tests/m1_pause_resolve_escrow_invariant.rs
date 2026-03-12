@@ -1,6 +1,7 @@
 use trnm_state::{
     GovParamUpdateOutcome, GovPendingUpdateAction, PendingResolveApprovalSnapshot, StateStore,
 };
+use trnm_types::{TaskObject, TaskStatus};
 
 #[test]
 fn resolve_authority_timelock_transition_scrubs_pending_resolve_approvals() {
@@ -1991,6 +1992,32 @@ fn paused_state_restore_pending_resolve_snapshot_accepts_case_and_order_equivale
     let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
     let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
     let worker_slash_before = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
+
+    st.restore_task(
+        9_930,
+        Some(TaskObject {
+            task_id: 9_930,
+            creator: "creator-paused".into(),
+            bounty: 1,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-paused".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: Some("challenger-paused".into()),
+            challenge_bond_forfeited: None,
+            version: 2,
+        }),
+    );
 
     st.restore_pending_resolve_approval(
         9_930,

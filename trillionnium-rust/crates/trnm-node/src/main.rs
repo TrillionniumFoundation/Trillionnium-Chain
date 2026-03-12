@@ -3941,9 +3941,13 @@ mod tests {
         )
         .unwrap();
         let _ = challenged_task_fixture(&mut st, 8100);
+        let current_task_version = st
+            .get_task(8100)
+            .expect("challenged task must exist before staging approval")
+            .version;
         st.stage_or_confirm_resolve_approval(
             8100,
-            1,
+            current_task_version,
             true,
             "authority-a",
             "authority-a,authority-b",
@@ -3992,10 +3996,7 @@ mod tests {
         let snapshot = TxRollbackSnapshot {
             task_id: 8_110,
             task: Some(before_task.clone()),
-            balances: vec![(
-                "treasury.challenge_escrow".into(),
-                Some(before_escrow),
-            )],
+            balances: vec![("treasury.challenge_escrow".into(), Some(before_escrow))],
             pending_resolve_approval: Some(PendingResolveApprovalSnapshot {
                 slash_worker: true,
                 confirmations: 3,
@@ -4018,6 +4019,44 @@ mod tests {
     }
 
     #[test]
+    fn rollback_snapshot_scrubs_pending_resolve_state_when_task_version_drifts() {
+        let mut st = StateStore::new();
+        st.set_gov_param_bootstrap_unchecked(
+            9_501,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .unwrap();
+        let _ = challenged_task_fixture(&mut st, 8_111);
+        let before_task = st.get_task(8_111).unwrap();
+        let before_escrow = st.balance_of("treasury.challenge_escrow");
+
+        let snapshot = TxRollbackSnapshot {
+            task_id: 8_111,
+            task: Some(before_task.clone()),
+            balances: vec![("treasury.challenge_escrow".into(), Some(before_escrow))],
+            pending_resolve_approval: Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                second_approver: None,
+                authority_set: "authority-a,authority-b".into(),
+                task_version: before_task.version + 1,
+            }),
+        };
+
+        rollback_tx_snapshot(&mut st, snapshot);
+
+        assert_eq!(st.get_task(8_111).unwrap(), before_task);
+        assert_eq!(st.balance_of("treasury.challenge_escrow"), before_escrow);
+        assert_eq!(
+            st.pending_resolve_approval(8_111),
+            None,
+            "rollback must not revive staged resolve quorum for a stale task version"
+        );
+    }
+
+    #[test]
     fn rollback_snapshot_scrubs_finalized_pending_resolve_snapshot_missing_second_approver() {
         let mut st = StateStore::new();
         let _ = challenged_task_fixture(&mut st, 8_112);
@@ -4027,10 +4066,7 @@ mod tests {
         let snapshot = TxRollbackSnapshot {
             task_id: 8_112,
             task: Some(before_task.clone()),
-            balances: vec![(
-                "treasury.challenge_escrow".into(),
-                Some(before_escrow),
-            )],
+            balances: vec![("treasury.challenge_escrow".into(), Some(before_escrow))],
             pending_resolve_approval: Some(PendingResolveApprovalSnapshot {
                 slash_worker: true,
                 confirmations: 2,
@@ -4062,10 +4098,7 @@ mod tests {
         let snapshot = TxRollbackSnapshot {
             task_id: 8_111,
             task: Some(before_task.clone()),
-            balances: vec![(
-                "treasury.challenge_escrow".into(),
-                Some(before_escrow),
-            )],
+            balances: vec![("treasury.challenge_escrow".into(), Some(before_escrow))],
             pending_resolve_approval: Some(PendingResolveApprovalSnapshot {
                 slash_worker: true,
                 confirmations: 1,
@@ -4098,10 +4131,7 @@ mod tests {
         let snapshot = TxRollbackSnapshot {
             task_id: 8_113,
             task: Some(before_task.clone()),
-            balances: vec![(
-                "treasury.challenge_escrow".into(),
-                Some(before_escrow),
-            )],
+            balances: vec![("treasury.challenge_escrow".into(), Some(before_escrow))],
             pending_resolve_approval: Some(PendingResolveApprovalSnapshot {
                 slash_worker: true,
                 confirmations: 2,
@@ -4641,7 +4671,10 @@ mod tests {
             211,
         )
         .expect_err("first resolve approval should only stage quorum");
-        assert!(matches!(staged, trnm_pouw::PouwError::ResolveApprovalStaged));
+        assert!(matches!(
+            staged,
+            trnm_pouw::PouwError::ResolveApprovalStaged
+        ));
         assert_eq!(st.pending_resolve_approval(r5.id), Some((true, 1)));
         assert_eq!(
             st.pending_resolve_first_approver(r5.id).as_deref(),
@@ -4685,10 +4718,7 @@ mod tests {
             Some("authority-a")
         );
         assert_eq!(st.balance_of("treasury.challenge_escrow"), before_escrow);
-        assert_eq!(
-            st.balance_of("treasury.challenge_forfeits"),
-            before_forfeit
-        );
+        assert_eq!(st.balance_of("treasury.challenge_forfeits"), before_forfeit);
         assert_eq!(
             st.balance_of("treasury.worker_slashes"),
             before_worker_slash

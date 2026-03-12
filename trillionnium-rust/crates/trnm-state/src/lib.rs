@@ -818,7 +818,9 @@ impl StateStore {
                         self.pending_resolve_approvals.remove(&task_id);
                         return;
                     }
-                } else if let Some(configured_authority_set) = self.gov_param_string("resolve_authority") {
+                } else if let Some(configured_authority_set) =
+                    self.gov_param_string("resolve_authority")
+                {
                     if !resolve_authority_sets_match(
                         &configured_authority_set,
                         &snapshot.authority_set,
@@ -827,6 +829,14 @@ impl StateStore {
                         return;
                     }
                 } else {
+                    self.pending_resolve_approvals.remove(&task_id);
+                    return;
+                }
+                let task_version_matches = self
+                    .get_task(task_id)
+                    .map(|task| task.version == snapshot.task_version)
+                    .unwrap_or(false);
+                if !task_version_matches {
                     self.pending_resolve_approvals.remove(&task_id);
                     return;
                 }
@@ -2673,6 +2683,31 @@ mod tests {
         assert_eq!(st.pending_resolve_approval(9_319), None);
         assert_eq!(st.pending_resolve_first_approver(9_319), None);
 
+        st.restore_task(
+            9_320,
+            Some(TaskObject {
+                task_id: 9_320,
+                creator: "creator-a".into(),
+                bounty: 1,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-a".into()),
+                committed_hash: None,
+                result_hash: None,
+                reveal_salt: None,
+                committed_at_height: None,
+                reveal_deadline_height: None,
+                challenge_deadline_height: None,
+                challenge_window_blocks_snapshot: None,
+                challenged_at_height: None,
+                resolve_deadline_height: None,
+                challenge_bond: None,
+                challenger: Some("challenger-a".into()),
+                challenge_bond_forfeited: None,
+                version: 9,
+            }),
+        );
         st.restore_pending_resolve_approval(
             9_320,
             Some(PendingResolveApprovalSnapshot {
@@ -2710,6 +2745,83 @@ mod tests {
         assert_eq!(st.pending_resolve_approval(9_321), None);
         assert_eq!(st.pending_resolve_first_approver(9_321), None);
         assert_eq!(st.pending_resolve_approval_snapshot(9_321), None);
+    }
+
+    #[test]
+    fn restore_pending_resolve_approval_scrubs_snapshot_when_task_version_drifts() {
+        let mut st = StateStore::new();
+        st.set_gov_param_unchecked(
+            9_322,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("bootstrap resolve_authority write should succeed");
+        st.put_task_new(TaskObject {
+            task_id: 93_220,
+            creator: "creator-a".into(),
+            bounty: 1,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-a".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: Some("challenger-a".into()),
+            challenge_bond_forfeited: None,
+            version: 1,
+        })
+        .expect("task must exist before restore");
+
+        st.restore_pending_resolve_approval(
+            93_220,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                second_approver: None,
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 2,
+            }),
+        );
+
+        assert_eq!(st.pending_resolve_approval(93_220), None);
+        assert_eq!(st.pending_resolve_first_approver(93_220), None);
+        assert_eq!(st.pending_resolve_approval_snapshot(93_220), None);
+    }
+
+    #[test]
+    fn restore_pending_resolve_approval_scrubs_snapshot_when_task_missing() {
+        let mut st = StateStore::new();
+        st.set_gov_param_unchecked(
+            9_323,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("bootstrap resolve_authority write should succeed");
+
+        st.restore_pending_resolve_approval(
+            9_323,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                second_approver: None,
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 1,
+            }),
+        );
+
+        assert_eq!(st.pending_resolve_approval(9_323), None);
+        assert_eq!(st.pending_resolve_first_approver(9_323), None);
+        assert_eq!(st.pending_resolve_approval_snapshot(9_323), None);
     }
 
     #[test]
@@ -2786,7 +2898,10 @@ mod tests {
                 "authority-c,authority-d".into(),
             )
             .expect("replacement resolve_authority update should be scheduled");
-        assert!(matches!(replacement, GovParamUpdateOutcome::Scheduled { .. }));
+        assert!(matches!(
+            replacement,
+            GovParamUpdateOutcome::Scheduled { .. }
+        ));
 
         let first = st
             .stage_or_confirm_resolve_approval(
@@ -2806,7 +2921,8 @@ mod tests {
     }
 
     #[test]
-    fn restore_pending_resolve_approval_accepts_pending_replacement_authority_over_active_configured_set() {
+    fn restore_pending_resolve_approval_accepts_pending_replacement_authority_over_active_configured_set(
+    ) {
         let mut st = StateStore::new();
         let bootstrap = st
             .set_gov_param(
@@ -2835,8 +2951,36 @@ mod tests {
                 "authority-c,authority-d".into(),
             )
             .expect("replacement resolve_authority update should be scheduled");
-        assert!(matches!(replacement, GovParamUpdateOutcome::Scheduled { .. }));
+        assert!(matches!(
+            replacement,
+            GovParamUpdateOutcome::Scheduled { .. }
+        ));
 
+        st.restore_task(
+            9_321,
+            Some(TaskObject {
+                task_id: 9_321,
+                creator: "creator-c".into(),
+                bounty: 1,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-c".into()),
+                committed_hash: None,
+                result_hash: None,
+                reveal_salt: None,
+                committed_at_height: None,
+                reveal_deadline_height: None,
+                challenge_deadline_height: None,
+                challenge_window_blocks_snapshot: None,
+                challenged_at_height: None,
+                resolve_deadline_height: None,
+                challenge_bond: None,
+                challenger: Some("challenger-c".into()),
+                challenge_bond_forfeited: None,
+                version: 3,
+            }),
+        );
         st.restore_pending_resolve_approval(
             9_321,
             Some(PendingResolveApprovalSnapshot {
