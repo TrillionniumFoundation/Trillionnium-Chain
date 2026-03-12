@@ -27,6 +27,8 @@ extract_tx_hash() {
   while IFS= read -r tok; do
     tok="${tok#\"}"
     tok="${tok%\"}"
+    tok="${tok#\'}"
+    tok="${tok%\'}"
     tok="${tok#0x}"
     tok="${tok#0X}"
     if [[ "$tok" =~ ^[0-9A-Fa-f]{16,128}$ ]]; then
@@ -35,7 +37,7 @@ extract_tx_hash() {
     fi
   done < <(
     printf "%s\n" "$raw" \
-      | grep -Eio '"?([Tt][Xx]([_-]?[Hh][Aa][Ss][Hh])|[Tt][Xx][Hh][Aa][Ss][Hh])"?[[:space:]]*[:=][[:space:]]*"?(0[xX])?[0-9A-Fa-f]{16,128}"?' \
+      | grep -Eio "['\"]?((tx|transaction)[[:space:]_-]*hash)['\"]?[[:space:]]*[:=][[:space:]]*['\"]?(0[xX])?[0-9A-Fa-f]{16,128}['\"]?" \
       | sed -E 's/.*[:=][[:space:]]*//'
   )
   printf "%s" "$h"
