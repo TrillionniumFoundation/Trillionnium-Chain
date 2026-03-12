@@ -30,6 +30,8 @@ const LLM_ADAPTER_MAX_RETRIES_ENV: &str = "TRNM_LLM_ADAPTER_MAX_RETRIES";
 const LLM_ADAPTER_BACKOFF_MS_ENV: &str = "TRNM_LLM_ADAPTER_BACKOFF_MS";
 const LLM_ADAPTER_TIMEOUT_ENV: &str = "TRNM_LLM_ADAPTER_TIMEOUT_MS";
 const PROOF_ADAPTER_ENV: &str = "TRNM_PROOF_ADAPTER";
+const WORKER_EVENT_LOG_ENV: &str = "TRNM_WORKER_EVENT_LOG";
+const WORKER_PROGRESS_LOG_ENV: &str = "TRNM_WORKER_PROGRESS_LOG";
 
 const RC_OK: i32 = 0;
 const RC_DUPLICATE: i32 = 9;
@@ -871,6 +873,17 @@ fn append_event(event_log: &PathBuf, event: &WorkerEvent) -> Result<()> {
 fn append_progress(progress_log: &PathBuf, rec: &ProgressRecord) -> Result<()> {
     let line = serde_json::to_string(rec)?;
     append_json_line(progress_log, &line)
+}
+
+fn resolve_path_arg_from_env(path: PathBuf, env_name: &str, default_path: &str) -> PathBuf {
+    if path == PathBuf::from(default_path) {
+        if let Some(value) = env::var_os(env_name) {
+            if !value.is_empty() {
+                return PathBuf::from(value);
+            }
+        }
+    }
+    path
 }
 
 fn normalize_candidate_tx_hash(raw: &str) -> Option<String> {
@@ -1894,9 +1907,7 @@ fn collapse_contract_match_delimiters(value: &str) -> String {
     value
         .chars()
         .filter_map(|ch| match ch {
-            '\u{200b}' | '\u{200c}' | '\u{200d}' | '\u{2060}' | '\u{2063}' | '\u{feff}' => {
-                None
-            }
+            '\u{200b}' | '\u{200c}' | '\u{200d}' | '\u{2060}' | '\u{2063}' | '\u{feff}' => None,
             '‐' | '‑' | '‒' | '–' | '—' | '―' | '−' | '－' => Some('-'),
             other => Some(other),
         })
@@ -2146,16 +2157,18 @@ mod tests {
 
     #[test]
     fn parse_tx_hash_accepts_json_receipts_embedded_in_log_lines() {
-        let json = parse_tx_hash("info: adapter response payload={\"tx_hash\": \"deadbeef\"} next=cleanup")
-            .expect("embedded json receipt hash should parse");
+        let json = parse_tx_hash(
+            "info: adapter response payload={\"tx_hash\": \"deadbeef\"} next=cleanup",
+        )
+        .expect("embedded json receipt hash should parse");
         assert_eq!(json, "deadbeef");
     }
 
     #[test]
     fn parse_tx_hash_accepts_128_char_receipts_for_real_cli_compat() {
         let long_hash = format!("0x{}", "AB".repeat(64));
-        let parsed = parse_tx_hash(&format!("tx_hash={long_hash}"))
-            .expect("128-char tx hash should parse");
+        let parsed =
+            parse_tx_hash(&format!("tx_hash={long_hash}")).expect("128-char tx hash should parse");
         assert_eq!(parsed, "ab".repeat(64));
     }
 
@@ -3807,9 +3820,9 @@ mod tests {
 
         let err = validate_audit_export_index(&index, 1)
             .expect_err("out-of-bounds index offsets must fail closed");
-        assert!(err
-            .to_string()
-            .contains("audit index offset out of bounds: map=by_task_id key=7001 idx=1 total_records=1"));
+        assert!(err.to_string().contains(
+            "audit index offset out of bounds: map=by_task_id key=7001 idx=1 total_records=1"
+        ));
     }
 
     #[test]
@@ -4214,7 +4227,8 @@ mod tests {
     }
 
     #[test]
-    fn query_audit_export_by_provenance_fingerprint_accepts_outer_quote_wrappers_before_validation() {
+    fn query_audit_export_by_provenance_fingerprint_accepts_outer_quote_wrappers_before_validation()
+    {
         let rows = vec![EnterpriseAuditExportRecord {
             request_id: "r1".to_string(),
             task_id: 7003,
@@ -5985,6 +5999,16 @@ fn main() -> Result<()> {
             progress_log,
         } => {
             let tx_retry = resolve_tx_retry_policy(max_retries, backoff_ms);
+            let event_log = resolve_path_arg_from_env(
+                event_log,
+                WORKER_EVENT_LOG_ENV,
+                "/tmp/trnm-worker-agent-events.jsonl",
+            );
+            let progress_log = resolve_path_arg_from_env(
+                progress_log,
+                WORKER_PROGRESS_LOG_ENV,
+                "/tmp/trnm-worker-agent-progress.jsonl",
+            );
             if !submit_log.exists() {
                 println!("[agent] no submit log found: {}", submit_log.display());
                 return Ok(());
@@ -6151,14 +6175,10 @@ fn main() -> Result<()> {
                         || (is_idempotent_duplicate_ok(reveal_res.rc)
                             && previous_reveal_tx_hash.is_some());
 
-                    let commit_tx_hash_for_ack = commit_res
-                        .tx_hash
-                        .clone()
-                        .or(previous_commit_tx_hash);
-                    let reveal_tx_hash_for_ack = reveal_res
-                        .tx_hash
-                        .clone()
-                        .or(previous_reveal_tx_hash);
+                    let commit_tx_hash_for_ack =
+                        commit_res.tx_hash.clone().or(previous_commit_tx_hash);
+                    let reveal_tx_hash_for_ack =
+                        reveal_res.tx_hash.clone().or(previous_reveal_tx_hash);
 
                     let (ack_status, reason_code, ack_reason) = if commit_idempotent_ok
                         && reveal_idempotent_ok
