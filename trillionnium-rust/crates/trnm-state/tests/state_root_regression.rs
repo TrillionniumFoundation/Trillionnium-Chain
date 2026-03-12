@@ -819,6 +819,50 @@ fn restore_pending_gov_update_none_on_mismatched_slot_keeps_canonical_pending_ro
 }
 
 #[test]
+fn restore_pending_gov_update_none_is_slot_scoped_even_with_multiple_pending_entries() {
+    let mut state = StateStore::new();
+
+    state.restore_pending_gov_update(
+        "challenge_min_bond",
+        Some(PendingGovParamUpdate {
+            key_id: 7_011,
+            key: "challenge_min_bond".to_string(),
+            value: "6000".to_string(),
+            activate_at_height: 1_020,
+        }),
+    );
+    state.restore_pending_gov_update(
+        "challenge_success_bounty",
+        Some(PendingGovParamUpdate {
+            key_id: 7_012,
+            key: "challenge_success_bounty".to_string(),
+            value: "12".to_string(),
+            activate_at_height: 1_020,
+        }),
+    );
+
+    let root_with_both = state.state_root();
+    assert!(state.pending_gov_update("challenge_min_bond").is_some());
+    assert!(state.pending_gov_update("challenge_success_bounty").is_some());
+
+    state.restore_pending_gov_update("challenge_min_bond", None);
+
+    assert!(
+        state.pending_gov_update("challenge_min_bond").is_none(),
+        "slot-scoped restore should remove the targeted pending key"
+    );
+    assert!(
+        state.pending_gov_update("challenge_success_bounty").is_some(),
+        "slot-scoped restore must preserve unrelated pending keys"
+    );
+    assert_ne!(
+        state.state_root(),
+        root_with_both,
+        "removing only one pending key should perturb the root while preserving unrelated pending state"
+    );
+}
+
+#[test]
 fn restore_pending_gov_update_mismatched_slot_clears_stale_entry_and_preserves_snapshot_identity() {
     let mut state = StateStore::new();
     let baseline_root = state.state_root();
