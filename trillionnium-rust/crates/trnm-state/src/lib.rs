@@ -2591,6 +2591,35 @@ mod tests {
     }
 
     #[test]
+    fn restore_pending_resolve_approval_scrubs_delimited_second_approver_boundary() {
+        let mut st = StateStore::new();
+        for (task_id, bad_second_approver) in [
+            (9_321, "authority-a,authority-b"),
+            (9_322, "authority-b;shadow"),
+            (9_323, "authority-b|shadow"),
+        ] {
+            st.restore_pending_resolve_approval(
+                task_id,
+                Some(PendingResolveApprovalSnapshot {
+                    slash_worker: true,
+                    confirmations: 2,
+                    first_approver: "authority-a".into(),
+                    second_approver: Some(bad_second_approver.into()),
+                    authority_set: "authority-a,authority-b".into(),
+                    task_version: 9,
+                }),
+            );
+            assert_eq!(
+                st.pending_resolve_approval(task_id),
+                None,
+                "snapshot second approver {bad_second_approver:?} must be scrubbed"
+            );
+            assert_eq!(st.pending_resolve_first_approver(task_id), None);
+            assert_eq!(st.pending_resolve_approval_snapshot(task_id), None);
+        }
+    }
+
+    #[test]
     fn restore_pending_resolve_approval_scrubs_snapshot_when_pending_governance_authority_differs() {
         let mut st = StateStore::new();
         let scheduled = st
