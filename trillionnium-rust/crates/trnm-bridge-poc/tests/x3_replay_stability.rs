@@ -369,6 +369,70 @@ fn x3_prep_degraded_over_cap_reason_replay_keeps_truncated_reason_stable() {
 }
 
 #[test]
+fn x3_prep_confirm_failed_unicode_controls_replay_keeps_first_sanitized_reason_stable() {
+    let mut request = SettlementRequest::new(15, "0xreplay-confirm-failed-unicode-controls".to_string());
+    let token = operator_token();
+
+    let healthy = HeartbeatOutcome {
+        heartbeat: None,
+        should_retry: false,
+        degraded: false,
+        message: "healthy".to_string(),
+    };
+
+    let first = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &healthy,
+        SettlementConfirm::Failed {
+            reason: "target\u{2065}\r\nrelay\u{2028}timeout\u{2029}signal\u{FE0F}\u{E0100}\u{FFF9}\u{FFFA}\u{FFFB}".to_string(),
+        },
+    )
+    .unwrap();
+
+    assert_eq!(
+        first,
+        SettlementStep::Compensated {
+            reason: "settlement confirm failed: target relay timeout signal".to_string(),
+            event: trnm_bridge_poc::x2_settlement_loop::SettlementEvent {
+                phase: "settlement_confirm_failed",
+                heartbeat_source_height: None,
+                heartbeat_target_height: None,
+                heartbeat_latency_ms: None,
+                confirm_height: None,
+                confirm_reason: Some(
+                    "settlement confirm failed: target relay timeout signal".to_string(),
+                ),
+            },
+        }
+    );
+
+    let replay_err = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &healthy,
+        SettlementConfirm::Failed {
+            reason: "mutated replay reason should not replace canonical first reason".to_string(),
+        },
+    )
+    .unwrap_err();
+
+    assert_eq!(
+        replay_err,
+        trnm_bridge_poc::bridge_status::SettlementError::InvalidTransition {
+            from: "reverted",
+            to: "reverted",
+        }
+    );
+    assert_eq!(
+        current_status(&request),
+        &BridgeStatus::Reverted(
+            "settlement confirm failed: target relay timeout signal".to_string(),
+        )
+    );
+}
+
+#[test]
 fn x3_prep_duplicate_or_reordered_degraded_after_finalize_is_rejected_without_state_drift() {
     let mut request = SettlementRequest::new(13, "0xreplay-after-finalize".to_string());
     let token = operator_token();
