@@ -22,9 +22,9 @@
 
 ## closeout 产物
 
-### 1. bench 汇总
+### 1. executor profile 汇总产物
 ```bash
-python3 scripts/executor_profile_report.py
+cargo run -q -p trnm-bench -- --profile
 ```
 
 ### 2. node + bench 统一 closeout
@@ -36,7 +36,7 @@ python3 scripts/profiling_closeout_report.py
 - `trillionnium-rust/run/parallel-sanity.log`
 - `trillionnium-rust/run/bench/bench-matrix-*.txt`（优先）
 - `trillionnium-rust/run/bench/bench-mixed-matrix-*.txt`（优先）
-- `trillionnium-rust/run/bench/executor-profile-summary-*.txt`（优先）
+- `trillionnium-rust/run/bench/executor-profile-summary-*.txt`（优先，由 `cargo run -q -p trnm-bench -- --profile` 生成）
 - 若 `trillionnium-rust/run/bench/` 不存在，则回退读取仓库根 `run/bench/*.txt`
 
 输出：

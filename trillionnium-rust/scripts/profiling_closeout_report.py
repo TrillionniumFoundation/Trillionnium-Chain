@@ -77,7 +77,7 @@ def recommended_producer(label: str) -> str:
     if label == "mixed_bench":
         return "./scripts/run_bench_mixed_matrix.sh"
     if label == "executor_profile":
-        return "python3 scripts/executor_profile_report.py"
+        return "cargo run -q -p trnm-bench -- --profile"
     return "unknown"
 
 
