@@ -5,9 +5,7 @@ mod transfer;
 
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
-use trnm_oracle::{
-    OracleValidationMetrics, OracleValidationObservation, OracleValidationReport,
-};
+use trnm_oracle::{OracleValidationMetrics, OracleValidationObservation, OracleValidationReport};
 use trnm_types::{GovProposalStatus, TaskStatus};
 
 pub use relay::*;
@@ -327,6 +325,42 @@ mod tests {
     }
 
     #[test]
+    fn oracle_validation_report_into_rpc_response_omits_success_error_field() {
+        let report = OracleValidationReport {
+            ok: true,
+            now_ts_ms: 457,
+            observation: OracleValidationObservation {
+                stale_reject_total: 0,
+                quorum_reject_total: 0,
+                drift_reject_total: 0,
+                accepted_total: 1,
+            },
+            metrics: OracleValidationMetrics {
+                oracle_stale_reject_total: 0,
+                oracle_quorum_reject_total: 0,
+                oracle_drift_reject_total: 0,
+                oracle_source_cardinality: 2,
+                accepted_total: 1,
+                sample_count: 1,
+            },
+            error: None,
+        };
+
+        let out: OracleValidateSnapshotResponse = report.clone().into();
+        assert_eq!(out.ok, report.ok);
+        assert_eq!(out.now_ts_ms, report.now_ts_ms);
+        assert_eq!(out.observation, report.observation);
+        assert_eq!(out.metrics, report.metrics);
+        assert_eq!(out.error, None);
+
+        let v = serde_json::to_value(out).unwrap();
+        let obj = v.as_object().unwrap();
+        assert!(!obj.contains_key("error"));
+        assert_eq!(v["observation"]["accepted_total"], 1);
+        assert_eq!(v["metrics"]["accepted_total"], 1);
+    }
+
+    #[test]
     fn oracle_validation_report_into_rpc_response_preserves_rate_error_label() {
         let report = OracleValidationReport {
             ok: false,
@@ -379,7 +413,10 @@ mod tests {
 
         let out: OracleValidateSnapshotResponse = report.into();
         let v = serde_json::to_value(out).unwrap();
-        assert_eq!(v["error"], "snapshot hash mismatch: expected=abc, actual=def");
+        assert_eq!(
+            v["error"],
+            "snapshot hash mismatch: expected=abc, actual=def"
+        );
         assert_eq!(v["metrics"]["sample_count"], 1);
         assert_eq!(v["metrics"]["oracle_source_cardinality"], 2);
     }

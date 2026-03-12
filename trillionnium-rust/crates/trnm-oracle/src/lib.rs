@@ -414,7 +414,6 @@ mod tests {
         assert!(matches!(err, OracleError::InsufficientSources { .. }));
     }
 
-
     #[test]
     fn rejects_sample_count_above_update_rate_cap() {
         let p = policy();
@@ -615,6 +614,34 @@ mod tests {
             report.error.as_deref(),
             Some(err) if err.starts_with("snapshot hash mismatch:")
         ));
+        assert_eq!(report.observation.stale_reject_total, 0);
+        assert_eq!(report.observation.quorum_reject_total, 0);
+        assert_eq!(report.observation.drift_reject_total, 0);
+        assert_eq!(report.observation.accepted_total, 0);
+        assert_eq!(report.metrics.oracle_stale_reject_total, 0);
+        assert_eq!(report.metrics.oracle_quorum_reject_total, 0);
+        assert_eq!(report.metrics.oracle_drift_reject_total, 0);
+        assert_eq!(report.metrics.oracle_source_cardinality, 2);
+        assert_eq!(report.metrics.accepted_total, 0);
+        assert_eq!(report.metrics.sample_count, 1);
+    }
+
+    #[test]
+    fn observed_report_preserves_invalid_policy_error_without_counter_drift() {
+        let p = OraclePolicy {
+            min_sources: 2,
+            max_staleness_ms: 5_000,
+            max_deviation_bps: 10_001,
+            max_update_rate_per_window: 60,
+        };
+        let snap = snapshot_with(100_000, Some(100_100), 10_000);
+
+        let report = validate_snapshot_observed(&p, &snap, 10_100);
+        assert!(!report.ok);
+        assert_eq!(
+            report.error.as_deref(),
+            Some("invalid policy: max_deviation_bps must be <= 10000")
+        );
         assert_eq!(report.observation.stale_reject_total, 0);
         assert_eq!(report.observation.quorum_reject_total, 0);
         assert_eq!(report.observation.drift_reject_total, 0);
