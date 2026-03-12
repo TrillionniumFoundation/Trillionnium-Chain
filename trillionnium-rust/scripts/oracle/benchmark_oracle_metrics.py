@@ -447,5 +447,21 @@ def _test_run_bench_rejects_zero_count_and_rounds_with_stable_error():
         assert str(exc) == "bench_rounds must be > 0"
 
 
+def _test_run_bench_reports_ordered_non_negative_latency_percentiles():
+    class Args:
+        min_sources = 2
+        max_staleness_ms = 60_000
+        max_deviation_bps = 500
+        bench_count = 8
+        bench_rounds = 4
+
+    out = run_bench(Args())
+    assert out["bench_count"] == 8
+    assert out["bench_rounds"] == 4
+    assert out["ingest_latency_p50_ms"] >= 0.0
+    assert out["ingest_latency_p50_ms"] <= out["ingest_latency_p95_ms"]
+    assert out["ingest_latency_p95_ms"] <= out["ingest_latency_max_ms"]
+
+
 if __name__ == "__main__":
     main()
