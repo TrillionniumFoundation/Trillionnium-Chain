@@ -5633,6 +5633,14 @@ locked_block_hash = "stale-lock"
             ],
         )
         .unwrap();
+        fs::write(
+            wal_file(&wal_dir),
+            r#"next_height = 99
+last_round = 42
+locked_block_hash = "stale-replay-lock"
+"#,
+        )
+        .unwrap();
 
         let recovered = recover_wal_state(&wal_dir).unwrap();
         assert_eq!(recovered.next_height, 3);
@@ -5650,6 +5658,12 @@ locked_block_hash = "stale-lock"
         assert_eq!(retained[0].height, 1);
         assert_eq!(retained[1].height, 2);
         assert_eq!(retained[1].proposal_hash, "h2");
+
+        let wal = fs::read_to_string(wal_file(&wal_dir)).unwrap();
+        let wal: ConsensusWal = toml::from_str(&wal).unwrap();
+        assert_eq!(wal.next_height, 3);
+        assert_eq!(wal.last_round, 0);
+        assert_eq!(wal.locked_block_hash.as_deref(), Some("h2"));
 
         let _ = fs::remove_dir_all(&wal_dir);
     }
