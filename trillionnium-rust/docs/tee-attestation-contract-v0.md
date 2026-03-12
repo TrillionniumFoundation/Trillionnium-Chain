@@ -335,6 +335,11 @@ And the protocol-transport-exchange layer is now further split into bytes/envelo
 - `VerifierHttpClientSessionProtocolBytesTransportExchange`
 - `VerifierHttpClientSessionProtocolEnvelopeParser`
 
+And the protocol-bytes-transport layer is now further split into chunking / assembly seams:
+- `VerifierHttpClientSessionProtocolByteStreamChunker`
+- `VerifierHttpClientSessionProtocolChunkTransportExchange`
+- `VerifierHttpClientSessionProtocolByteStreamAssembler`
+
 The default wiring remains fail-closed:
 - `AdapterBackedVerifierHttpRequestExecutor`
   - `DirectVerifierHttpRequestPlanner`
@@ -361,7 +366,13 @@ The default wiring remains fail-closed:
                             - `DirectVerifierHttpClientSessionProtocolRequestCodec`
                             - `BytesBackedVerifierHttpClientSessionProtocolTransportExchange`
                               - `DirectVerifierHttpClientSessionProtocolBytesEncoder`
-                              - `FailClosedVerifierHttpClientSessionProtocolBytesTransportExchange`
+                              - `FramedBytesBackedVerifierHttpClientSessionProtocolBytesTransportExchange`
+                                - `DirectVerifierHttpClientSessionProtocolByteStreamFramer`
+                                - `ChunkedByteStreamBackedVerifierHttpClientSessionProtocolByteStreamExchange`
+                                  - `DirectVerifierHttpClientSessionProtocolByteStreamChunker`
+                                  - `FailClosedVerifierHttpClientSessionProtocolChunkTransportExchange`
+                                  - `PassthroughVerifierHttpClientSessionProtocolByteStreamAssembler`
+                                - `PassthroughVerifierHttpClientSessionProtocolEnvelopeNormalizer`
                               - `PassthroughVerifierHttpClientSessionProtocolEnvelopeParser`
                             - `PassthroughVerifierHttpClientSessionProtocolResponseCodec`
                           - `PassthroughVerifierHttpClientSessionFrameDecoder`
@@ -375,7 +386,7 @@ The default wiring remains fail-closed:
 - `NoopVerifierHttpTimeoutHook`
 
 This freezes a future real transport path as:
-- timeout hook -> request executor -> request planner -> client adapter -> client config resolver -> client handle -> runtime request builder -> client runtime -> session factory -> session -> session request executor -> wire request builder -> wire executor -> call builder -> call executor -> transport request builder -> transport adapter -> socket request builder -> socket adapter -> connection opener -> byte channel -> frame encoder -> protocol request codec -> bytes encoder -> bytes transport exchange -> envelope parser -> protocol response codec -> frame decoder -> byte stream response parser -> raw io response parser -> call response parser -> wire response parser -> session response reader -> runtime response adapter -> raw response -> body reader -> normalized `HttpVerifierResponse`
+- timeout hook -> request executor -> request planner -> client adapter -> client config resolver -> client handle -> runtime request builder -> client runtime -> session factory -> session -> session request executor -> wire request builder -> wire executor -> call builder -> call executor -> transport request builder -> transport adapter -> socket request builder -> socket adapter -> connection opener -> byte channel -> frame encoder -> protocol request codec -> bytes encoder -> byte-stream framer -> byte-stream chunker -> chunk transport exchange -> byte-stream assembler -> envelope normalizer -> protocol envelope parser -> protocol response codec -> frame decoder -> byte stream response parser -> raw io response parser -> call response parser -> wire response parser -> session response reader -> runtime response adapter -> raw response -> body reader -> normalized `HttpVerifierResponse`
 
 So the scaffold now separates:
 1. HTTP request planning / profile + auth resolution
@@ -393,19 +404,23 @@ So the scaffold now separates:
 13. frame encoding
 14. protocol request coding
 15. protocol bytes encoding
-16. protocol bytes transport exchange
-17. envelope parsing
-18. protocol response decoding
-19. frame decoding
-20. byte-stream response parsing
-21. raw-I/O response parsing
-22. call-level response parsing
-23. wire-level response parsing
-24. session-level response readback
-25. runtime-response adaptation
-26. timeout/guard hook behavior
-27. body decoding / normalization
-28. verifier response decode + backend mapping
+16. byte-stream framing
+17. byte-stream chunking
+18. chunk transport exchange
+19. byte-stream assembly
+20. envelope normalization
+21. protocol envelope parsing
+22. protocol response decoding
+23. frame decoding
+24. byte-stream response parsing
+25. raw-I/O response parsing
+26. call-level response parsing
+27. wire-level response parsing
+28. session-level response readback
+29. runtime-response adaptation
+30. timeout/guard hook behavior
+31. body decoding / normalization
+32. verifier response decode + backend mapping
 
 ### HTTP payload skeletons
 The current adapter layer freezes two JSON request shapes:
