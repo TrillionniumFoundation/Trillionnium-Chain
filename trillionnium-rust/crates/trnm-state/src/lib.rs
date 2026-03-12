@@ -4322,6 +4322,47 @@ mod tests {
     }
 
     #[test]
+    fn state_root_changes_when_gov_param_key_index_key_changes() {
+        let mut st_a = StateStore::new();
+        st_a.objects.insert(
+            7001,
+            VersionedObject {
+                version: 1,
+                value: ObjectValue::GovParam(GovParamObject {
+                    key_id: 7001,
+                    key: "monetary_base_issuance_per_tick".into(),
+                    value: "7".into(),
+                    version: 1,
+                }),
+            },
+        );
+        st_a.gov_param_key_index
+            .insert("monetary_base_issuance_per_tick".into(), 7001);
+
+        let mut st_b = StateStore::new();
+        st_b.objects.insert(
+            7001,
+            VersionedObject {
+                version: 1,
+                value: ObjectValue::GovParam(GovParamObject {
+                    key_id: 7001,
+                    key: "monetary_base_issuance_per_tick".into(),
+                    value: "7".into(),
+                    version: 1,
+                }),
+            },
+        );
+        st_b.gov_param_key_index
+            .insert("monetary_base_burn_per_tick".into(), 7001);
+
+        assert_ne!(
+            st_a.state_root(),
+            st_b.state_root(),
+            "governance key-index key strings must contribute to state_root so mismatched restore/rollback routing aliases cannot hash identically even when key_id stays constant"
+        );
+    }
+
+    #[test]
     fn wal_checkpoint_verification_picks_latest_valid() {
         let e1 = WalMeta {
             height: 1,
