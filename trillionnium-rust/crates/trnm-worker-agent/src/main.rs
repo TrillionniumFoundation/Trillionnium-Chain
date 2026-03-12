@@ -877,6 +877,34 @@ fn parse_tx_hash(text: &str) -> Option<String> {
         "\"txhash\":",
     ];
 
+    fn parse_hash_from_suffix(suffix: &str) -> Option<String> {
+        let trimmed = suffix.trim_start();
+        if trimmed.is_empty() {
+            return None;
+        }
+
+        let candidate_end = trimmed
+            .char_indices()
+            .find_map(|(idx, ch)| {
+                let is_hash_char = ch.is_ascii_hexdigit() || matches!(ch, 'x' | 'X' | '"' | '\'');
+                (!is_hash_char).then_some(idx)
+            })
+            .unwrap_or(trimmed.len());
+
+        normalize_candidate_tx_hash(&trimmed[..candidate_end])
+    }
+
+    for prefix in PREFIXES {
+        let mut remainder = text;
+        while let Some(idx) = remainder.find(prefix) {
+            let suffix = &remainder[idx + prefix.len()..];
+            if let Some(parsed) = parse_hash_from_suffix(suffix) {
+                return Some(parsed);
+            }
+            remainder = &suffix[1.min(suffix.len())..];
+        }
+    }
+
     text.split_whitespace().find_map(|w| {
         PREFIXES
             .iter()
@@ -2022,6 +2050,34 @@ mod tests {
         let colon = parse_tx_hash("[adapter] commit accepted tx-hash:0xDEADBEEF")
             .expect("colon-delimited receipt hash should parse");
         assert_eq!(colon, "deadbeef");
+    }
+
+    #[test]
+    fn parse_tx_hash_accepts_json_style_receipts_with_whitespace_after_colon() {
+        let json = parse_tx_hash("{\"tx_hash\": \"0xDEADBEEF\", \"status\": \"accepted\"}")
+            .expect("json receipt hash with whitespace after colon should parse");
+        assert_eq!(json, "deadbeef");
+    }
+
+    #[test]
+    fn parse_tx_hash_accepts_mixed_case_json_alias_receipts() {
+        let json = parse_tx_hash("adapter stdout: {\"txHash\": \"ABCD1234\"}")
+            .expect("camelCase json receipt hash should parse");
+        assert_eq!(json, "abcd1234");
+    }
+
+    #[test]
+    fn parse_tx_hash_accepts_json_receipts_without_quotes_around_hash() {
+        let json = parse_tx_hash("{\"txhash\":0xDEADBEEF,\"status\":\"accepted\"}")
+            .expect("json receipt hash without quotes should parse");
+        assert_eq!(json, "deadbeef");
+    }
+
+    #[test]
+    fn parse_tx_hash_accepts_json_receipts_embedded_in_log_lines() {
+        let json = parse_tx_hash("info: adapter response payload={\"tx_hash\": \"deadbeef\"} next=cleanup")
+            .expect("embedded json receipt hash should parse");
+        assert_eq!(json, "deadbeef");
     }
 
     #[test]
