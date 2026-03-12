@@ -571,12 +571,10 @@ pub fn apply_create_task(
     creator: String,
     bounty: u128,
 ) -> Result<ObjectRef, PouwError> {
-    // Boundary hardening: creator account id must be canonical and non-blank
-    // before task object is persisted into state.
-    let creator_trimmed = creator.trim();
-    if creator_trimmed.is_empty() || creator_trimmed != creator {
-        return Err(PouwError::Unauthorized);
-    }
+    // Boundary hardening: creator account id must use the same canonical
+    // actor-id gate as the metadata-bearing create path so malformed account
+    // aliases cannot enter PoUW state through the legacy task creation entry.
+    require_canonical_actor_id(&creator)?;
 
     let task = TaskObject {
         task_id,
@@ -1623,6 +1621,20 @@ mod tests {
 
         let padded = apply_create_task(&mut st, 210, " alice ".into(), 10).unwrap_err();
         assert!(matches!(padded, PouwError::Unauthorized));
+    }
+
+    #[test]
+    fn create_task_rejects_dirty_creator_actor_ids() {
+        for (i, dirty_creator) in dirty_actor_ids().into_iter().enumerate() {
+            let mut st = seeded_state();
+            let err = apply_create_task(&mut st, 21_050 + i as u64, dirty_creator.into(), 10)
+                .unwrap_err();
+            assert!(
+                matches!(err, PouwError::Unauthorized),
+                "create_task should reject dirty creator actor id: {:?}",
+                dirty_creator
+            );
+        }
     }
 
     #[test]
