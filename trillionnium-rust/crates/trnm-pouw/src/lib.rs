@@ -10509,7 +10509,7 @@ mod tests {
     }
 
     #[test]
-    fn challenged_timeout_can_slash_worker_when_governance_enables_default() {
+    fn slashed_timeout_settlement_pays_challenge_bounty_from_task_local_worker_lock() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
         st.set_balance("worker1", 50);
@@ -10543,6 +10543,9 @@ mod tests {
         )
         .unwrap();
 
+        // Simulate the post-timeout slashed terminal state directly and assert the
+        // economics boundary that matters for L05: challenger reward comes only
+        // from the task-local worker stake lock, never by draining global slash treasury.
         let mut task = st.get_task(r5.id).unwrap();
         task.status = TaskStatus::Slashed;
         task.challenge_bond_forfeited = Some(false);
