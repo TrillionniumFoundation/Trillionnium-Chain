@@ -24,6 +24,8 @@ if [[ ! -f "$RC_SCRIPT" ]]; then
 fi
 
 rc_required_lines=(
+  'replay_out_dir="$BASE_OUT"'
+  'replay_out_dir=$replay_out_dir'
   'replay_command=$replay_command'
   'rollback_command=$rollback_command'
   'rollback_command="rm -rf $(printf '\''%q'\'' "$RC_OUT_DIR")"'

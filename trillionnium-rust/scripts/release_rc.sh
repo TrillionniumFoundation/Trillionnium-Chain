@@ -127,7 +127,7 @@ THRESHOLD_PROFILE=${THRESHOLD_PROFILE:-stage1} ./scripts/enforce_ci_thresholds.s
 cargo build --workspace | tee "$OUT/cargo-build.log"
 
 rollback_command="rm -rf $(printf '%q' "$RC_OUT_DIR")"
-replay_out_dir="${OUT_DIR:-$BASE_OUT}"
+replay_out_dir="$BASE_OUT"
 replay_command="env TZ=$replay_tz LC_ALL=$replay_lc_all LANG=$replay_lang SOURCE_DATE_EPOCH=$replay_source_date_epoch CARGO_TERM_COLOR=$replay_cargo_term_color RUST_BACKTRACE=$replay_rust_backtrace CARGO_BUILD_JOBS=$replay_cargo_build_jobs OUT_DIR='${replay_out_dir}' MVP_MODE='${MVP_MODE:-prod}' TXS='${TXS:-5000}' THRESHOLD_PROFILE='${THRESHOLD_PROFILE:-stage1}' ./scripts/release_rc.sh"
 
 cat > "$OUT/manifest.txt" <<EOF
@@ -162,6 +162,7 @@ replay_env_source_date_epoch=$replay_source_date_epoch
 replay_env_cargo_term_color=$replay_cargo_term_color
 replay_env_rust_backtrace=$replay_rust_backtrace
 replay_env_cargo_build_jobs=$replay_cargo_build_jobs
+replay_out_dir=$replay_out_dir
 replay_command=$replay_command
 rollback_command=$rollback_command
 
