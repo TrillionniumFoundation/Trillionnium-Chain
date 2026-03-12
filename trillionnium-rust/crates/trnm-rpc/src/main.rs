@@ -2224,6 +2224,13 @@ fn parse_query_events_limit_from_path(path: &str) -> std::result::Result<usize, 
         return Ok(QUERY_EVENTS_LIMIT_DEFAULT);
     };
 
+    if query.contains('?') {
+        return Err(http_json_response(
+            "400 Bad Request",
+            "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}",
+        ));
+    }
+
     let mut parsed_limit: Option<usize> = None;
     for pair in query.split('&') {
         if pair.is_empty() {
@@ -3768,6 +3775,7 @@ mod tests {
             "/query-events/42?foo&limit=7",
             "/query-events/42?foo=bar&baz",
             "/query-events/42?foo=bar&limit=7&qux",
+            "/query-events/42??limit=7",
         ] {
             let err = parse_query_events_limit_from_path(path)
                 .expect_err("malformed unrelated query pairs must fail closed");
