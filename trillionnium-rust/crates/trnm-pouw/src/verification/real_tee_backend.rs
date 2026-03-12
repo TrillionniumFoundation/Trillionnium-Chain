@@ -477,7 +477,140 @@ impl VerifierAuthInjector for HeaderVerifierAuthInjector {
 }
 
 #[allow(dead_code)]
-struct RealVerifierHttpTransport;
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct RawHttpVerifierResponse {
+    status_code: u16,
+    headers: BTreeMap<String, String>,
+    body: Vec<u8>,
+}
+
+#[allow(dead_code)]
+trait VerifierHttpRequestExecutor: Send + Sync {
+    fn execute_request(
+        &self,
+        http_request: &HttpVerifierRequest,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<RawHttpVerifierResponse, BackendExecutionError>;
+}
+
+#[allow(dead_code)]
+trait VerifierHttpResponseBodyReader: Send + Sync {
+    fn read_body(
+        &self,
+        raw_response: RawHttpVerifierResponse,
+        http_request: &HttpVerifierRequest,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<HttpVerifierResponse, BackendExecutionError>;
+}
+
+#[allow(dead_code)]
+trait VerifierHttpTimeoutHook: Send + Sync {
+    fn before_execute(
+        &self,
+        http_request: &HttpVerifierRequest,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<(), BackendExecutionError>;
+
+    fn after_response(
+        &self,
+        http_request: &HttpVerifierRequest,
+        raw_response: &RawHttpVerifierResponse,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<(), BackendExecutionError>;
+}
+
+#[allow(dead_code)]
+struct FailClosedVerifierHttpRequestExecutor;
+
+impl VerifierHttpRequestExecutor for FailClosedVerifierHttpRequestExecutor {
+    fn execute_request(
+        &self,
+        http_request: &HttpVerifierRequest,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<RawHttpVerifierResponse, BackendExecutionError> {
+        Err(BackendExecutionError::Unavailable {
+            backend: request.backend_label(RealTeeBackend::backend_id_static()),
+            reason: format!(
+                "real http request executor for profile '{}' is not wired",
+                http_request.profile
+            ),
+        })
+    }
+}
+
+#[allow(dead_code)]
+struct Utf8HttpResponseBodyReader;
+
+impl VerifierHttpResponseBodyReader for Utf8HttpResponseBodyReader {
+    fn read_body(
+        &self,
+        raw_response: RawHttpVerifierResponse,
+        _http_request: &HttpVerifierRequest,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<HttpVerifierResponse, BackendExecutionError> {
+        let body = String::from_utf8(raw_response.body).map_err(|err| BackendExecutionError::MalformedProof {
+            backend: request.backend_label(RealTeeBackend::backend_id_static()),
+            reason: format!("http transport returned non-utf8 body: {err}"),
+        })?;
+        Ok(HttpVerifierResponse {
+            status_code: raw_response.status_code,
+            body,
+        })
+    }
+}
+
+#[allow(dead_code)]
+struct NoopVerifierHttpTimeoutHook;
+
+impl VerifierHttpTimeoutHook for NoopVerifierHttpTimeoutHook {
+    fn before_execute(
+        &self,
+        _http_request: &HttpVerifierRequest,
+        _request: &BackendVerificationRequest<'_>,
+    ) -> Result<(), BackendExecutionError> {
+        Ok(())
+    }
+
+    fn after_response(
+        &self,
+        _http_request: &HttpVerifierRequest,
+        _raw_response: &RawHttpVerifierResponse,
+        _request: &BackendVerificationRequest<'_>,
+    ) -> Result<(), BackendExecutionError> {
+        Ok(())
+    }
+}
+
+#[allow(dead_code)]
+struct RealVerifierHttpTransport {
+    request_executor: Arc<dyn VerifierHttpRequestExecutor>,
+    body_reader: Arc<dyn VerifierHttpResponseBodyReader>,
+    timeout_hook: Arc<dyn VerifierHttpTimeoutHook>,
+}
+
+#[allow(dead_code)]
+impl RealVerifierHttpTransport {
+    fn new() -> Self {
+        Self {
+            request_executor: Arc::new(FailClosedVerifierHttpRequestExecutor),
+            body_reader: Arc::new(Utf8HttpResponseBodyReader),
+            timeout_hook: Arc::new(NoopVerifierHttpTimeoutHook),
+        }
+    }
+
+    #[cfg(test)]
+    fn with_components(
+        request_executor: Arc<dyn VerifierHttpRequestExecutor>,
+        body_reader: Arc<dyn VerifierHttpResponseBodyReader>,
+        timeout_hook: Arc<dyn VerifierHttpTimeoutHook>,
+    ) -> Self {
+        Self {
+            request_executor,
+            body_reader,
+            timeout_hook,
+        }
+    }
+}
 
 impl VerifierHttpTransport for RealVerifierHttpTransport {
     fn send(
@@ -485,13 +618,13 @@ impl VerifierHttpTransport for RealVerifierHttpTransport {
         http_request: &HttpVerifierRequest,
         request: &BackendVerificationRequest<'_>,
     ) -> Result<HttpVerifierResponse, BackendExecutionError> {
-        Err(BackendExecutionError::Unavailable {
-            backend: request.backend_label(RealTeeBackend::backend_id_static()),
-            reason: format!(
-                "real http transport stub for profile '{}' is not wired",
-                http_request.profile
-            ),
-        })
+        self.timeout_hook.before_execute(http_request, request)?;
+        let raw_response = self
+            .request_executor
+            .execute_request(http_request, request)?;
+        self.timeout_hook
+            .after_response(http_request, &raw_response, request)?;
+        self.body_reader.read_body(raw_response, http_request, request)
     }
 }
 
@@ -2949,6 +3082,117 @@ mod tests {
         }
     }
 
+    #[derive(Default)]
+    struct RecordingHttpRequestExecutor {
+        urls: Mutex<Vec<String>>,
+    }
+
+    impl VerifierHttpRequestExecutor for RecordingHttpRequestExecutor {
+        fn execute_request(
+            &self,
+            http_request: &HttpVerifierRequest,
+            _request: &BackendVerificationRequest<'_>,
+        ) -> Result<RawHttpVerifierResponse, BackendExecutionError> {
+            self.urls.lock().unwrap().push(http_request.url.clone());
+            assert_eq!(http_request.transport_mode, VerifierTransportMode::External);
+            assert_eq!(http_request.profile, "intel-dcap-external-default");
+            assert_eq!(http_request.headers.get("authorization").map(String::as_str), Some("bearer tee.intel.external-token.sgx-dcap"));
+            Ok(RawHttpVerifierResponse {
+                status_code: 200,
+                headers: BTreeMap::new(),
+                body: b"{\"transport\":\"ok\"}".to_vec(),
+            })
+        }
+    }
+
+    #[derive(Default)]
+    struct RecordingHttpBodyReader {
+        bodies: Mutex<Vec<Vec<u8>>>,
+    }
+
+    impl VerifierHttpResponseBodyReader for RecordingHttpBodyReader {
+        fn read_body(
+            &self,
+            raw_response: RawHttpVerifierResponse,
+            _http_request: &HttpVerifierRequest,
+            _request: &BackendVerificationRequest<'_>,
+        ) -> Result<HttpVerifierResponse, BackendExecutionError> {
+            self.bodies.lock().unwrap().push(raw_response.body.clone());
+            Ok(HttpVerifierResponse {
+                status_code: raw_response.status_code,
+                body: String::from_utf8(raw_response.body).unwrap(),
+            })
+        }
+    }
+
+    #[derive(Default)]
+    struct RecordingHttpTimeoutHook {
+        calls: Mutex<Vec<String>>,
+    }
+
+    impl VerifierHttpTimeoutHook for RecordingHttpTimeoutHook {
+        fn before_execute(
+            &self,
+            http_request: &HttpVerifierRequest,
+            _request: &BackendVerificationRequest<'_>,
+        ) -> Result<(), BackendExecutionError> {
+            self.calls.lock().unwrap().push(format!(
+                "before:{}:{}",
+                http_request.profile, http_request.timeout_ms
+            ));
+            Ok(())
+        }
+
+        fn after_response(
+            &self,
+            http_request: &HttpVerifierRequest,
+            raw_response: &RawHttpVerifierResponse,
+            _request: &BackendVerificationRequest<'_>,
+        ) -> Result<(), BackendExecutionError> {
+            self.calls.lock().unwrap().push(format!(
+                "after:{}:{}",
+                http_request.profile, raw_response.status_code
+            ));
+            Ok(())
+        }
+    }
+
+    struct RejectingHttpTimeoutHook;
+
+    impl VerifierHttpTimeoutHook for RejectingHttpTimeoutHook {
+        fn before_execute(
+            &self,
+            _http_request: &HttpVerifierRequest,
+            request: &BackendVerificationRequest<'_>,
+        ) -> Result<(), BackendExecutionError> {
+            Err(BackendExecutionError::Unavailable {
+                backend: request.backend_label(RealTeeBackend::backend_id_static()),
+                reason: "timeout hook rejected transport execution".into(),
+            })
+        }
+
+        fn after_response(
+            &self,
+            _http_request: &HttpVerifierRequest,
+            _raw_response: &RawHttpVerifierResponse,
+            _request: &BackendVerificationRequest<'_>,
+        ) -> Result<(), BackendExecutionError> {
+            Ok(())
+        }
+    }
+
+    struct PanicHttpRequestExecutor;
+
+    impl VerifierHttpRequestExecutor for PanicHttpRequestExecutor {
+        fn execute_request(
+            &self,
+            _http_request: &HttpVerifierRequest,
+            _request: &BackendVerificationRequest<'_>,
+        ) -> Result<RawHttpVerifierResponse, BackendExecutionError> {
+            panic!("request executor should not be called when timeout hook fails")
+        }
+    }
+
     struct AssertingExternalIntelQuoteClient;
 
     impl IntelQuoteVerifierClient for AssertingExternalIntelQuoteClient {
@@ -3411,9 +3655,96 @@ mod tests {
     }
 
     #[test]
+    fn real_http_transport_execution_skeleton_delegates_to_components() {
+        let task = mock_task();
+        let request_executor = Arc::new(RecordingHttpRequestExecutor::default());
+        let body_reader = Arc::new(RecordingHttpBodyReader::default());
+        let timeout_hook = Arc::new(RecordingHttpTimeoutHook::default());
+        let transport = RealVerifierHttpTransport::with_components(
+            request_executor.clone(),
+            body_reader.clone(),
+            timeout_hook.clone(),
+        );
+        let response = transport
+            .send(
+                &HttpVerifierRequest {
+                    method: HttpMethod::Post,
+                    transport_mode: VerifierTransportMode::External,
+                    profile: "intel-dcap-external-default".into(),
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::from([(
+                        "authorization".to_string(),
+                        "bearer tee.intel.external-token.sgx-dcap".to_string(),
+                    )]),
+                    body: "{}".into(),
+                    timeout_ms: 5_000,
+                    retry_policy: RetryBackoffPolicy {
+                        max_attempts: 3,
+                        backoff_ms: 250,
+                        strategy: RetryBackoffStrategy::Exponential,
+                    },
+                },
+                &BackendVerificationRequest {
+                    family: VerificationBackendFamily::Tee,
+                    task: &task,
+                    proof_data: b"TEE:...",
+                    tee_payload: None,
+                    zk_payload: None,
+                    resolved_vk_ref: None,
+                },
+            )
+            .unwrap();
+        assert_eq!(response.status_code, 200);
+        assert_eq!(response.body, "{\"transport\":\"ok\"}");
+        assert_eq!(request_executor.urls.lock().unwrap().clone(), vec!["https://intel-verifier.invalid/v1/quote/sgx-dcap".to_string()]);
+        assert_eq!(body_reader.bodies.lock().unwrap().clone(), vec![b"{\"transport\":\"ok\"}".to_vec()]);
+        assert_eq!(timeout_hook.calls.lock().unwrap().clone(), vec![
+            "before:intel-dcap-external-default:5000".to_string(),
+            "after:intel-dcap-external-default:200".to_string(),
+        ]);
+    }
+
+    #[test]
+    fn real_http_transport_timeout_hook_fails_closed_before_execute() {
+        let task = mock_task();
+        let transport = RealVerifierHttpTransport::with_components(
+            Arc::new(PanicHttpRequestExecutor),
+            Arc::new(Utf8HttpResponseBodyReader),
+            Arc::new(RejectingHttpTimeoutHook),
+        );
+        let err = transport
+            .send(
+                &HttpVerifierRequest {
+                    method: HttpMethod::Post,
+                    transport_mode: VerifierTransportMode::External,
+                    profile: "intel-dcap-external-default".into(),
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: "{}".into(),
+                    timeout_ms: 5_000,
+                    retry_policy: RetryBackoffPolicy {
+                        max_attempts: 3,
+                        backoff_ms: 250,
+                        strategy: RetryBackoffStrategy::Exponential,
+                    },
+                },
+                &BackendVerificationRequest {
+                    family: VerificationBackendFamily::Tee,
+                    task: &task,
+                    proof_data: b"TEE:...",
+                    tee_payload: None,
+                    zk_payload: None,
+                    resolved_vk_ref: None,
+                },
+            )
+            .unwrap_err();
+        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("timeout hook rejected transport execution")));
+    }
+
+    #[test]
     fn real_http_transport_stub_fails_closed_unavailable() {
         let task = mock_task();
-        let err = RealVerifierHttpTransport
+        let err = RealVerifierHttpTransport::new()
             .send(
                 &HttpVerifierRequest {
                     method: HttpMethod::Post,

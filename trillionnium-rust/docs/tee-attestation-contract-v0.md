@@ -261,6 +261,27 @@ The default HTTP-backed adapter path is therefore now:
 
 A fail-closed `RealVerifierHttpTransport` stub is also present now. It intentionally returns `Unavailable` until a real outbound HTTP implementation is wired in.
 
+That transport stub is now internally split into three explicit seams:
+- `VerifierHttpRequestExecutor`
+- `VerifierHttpResponseBodyReader`
+- `VerifierHttpTimeoutHook`
+
+The default wiring remains fail-closed:
+- `FailClosedVerifierHttpRequestExecutor`
+- `Utf8HttpResponseBodyReader`
+- `NoopVerifierHttpTimeoutHook`
+
+This freezes a future real transport path as:
+- timeout hook -> request executor -> raw response -> body reader -> normalized `HttpVerifierResponse`
+
+So the scaffold now separates:
+1. HTTP request planning / profile + auth resolution
+2. retry policy execution
+3. raw outbound transport execution
+4. timeout/guard hook behavior
+5. body decoding / normalization
+6. verifier response decode + backend mapping
+
 ### HTTP payload skeletons
 The current adapter layer freezes two JSON request shapes:
 - `IntelQuoteVerifierHttpPayload`
