@@ -703,57 +703,149 @@ fn access_map_capacity_hint(txs: &[Tx]) -> usize {
 }
 
 #[inline]
-fn parse_env_usize(name: &str) -> Option<usize> {
+fn parse_env_numeric(name: &str) -> Option<String> {
     std::env::var(name).ok().and_then(|v| {
         let trimmed = v.trim();
         if trimmed.is_empty() {
             return None;
         }
+
+        let unquoted = trimmed
+            .strip_prefix('"')
+            .and_then(|inner| inner.strip_suffix('"'))
+            .or_else(|| {
+                trimmed
+                    .strip_prefix('\'')
+                    .and_then(|inner| inner.strip_suffix('\''))
+            })
+            .map(str::trim)
+            .unwrap_or(trimmed);
+        if unquoted.is_empty() {
+            return None;
+        }
+
         // Accept common human-friendly separators in ops configs.
-        if trimmed.contains('_') || trimmed.contains(',') {
-            let mut compact = String::with_capacity(trimmed.len());
-            for ch in trimmed.chars() {
+        if unquoted.contains('_') || unquoted.contains(',') {
+            let mut compact = String::with_capacity(unquoted.len());
+            for ch in unquoted.chars() {
                 if ch != '_' && ch != ',' {
                     compact.push(ch);
                 }
             }
-            compact.parse::<usize>().ok()
+            if compact.is_empty() {
+                None
+            } else {
+                Some(compact)
+            }
         } else {
-            trimmed.parse::<usize>().ok()
+            Some(unquoted.to_owned())
         }
     })
 }
 
+#[inline]
+fn parse_env_usize(name: &str) -> Option<usize> {
+    parse_env_numeric(name).and_then(|v| {
+        let normalized = v.strip_prefix('+').unwrap_or(&v);
+        (!normalized.is_empty())
+            .then(|| normalized.parse::<usize>().ok())
+            .flatten()
+    })
+}
+
+#[inline]
+fn parse_env_f64(name: &str) -> Option<f64> {
+    std::env::var(name).ok().and_then(|v| {
+        let trimmed = v.trim();
+        if trimmed.is_empty() {
+            return None;
+        }
+
+        let unquoted = trimmed
+            .strip_prefix('"')
+            .and_then(|inner| inner.strip_suffix('"'))
+            .or_else(|| {
+                trimmed
+                    .strip_prefix('\'')
+                    .and_then(|inner| inner.strip_suffix('\''))
+            })
+            .map(str::trim)
+            .unwrap_or(trimmed);
+        if unquoted.is_empty() {
+            return None;
+        }
+
+        let mut compact = String::with_capacity(unquoted.len());
+        for ch in unquoted.chars() {
+            if ch != '_' {
+                compact.push(ch);
+            }
+        }
+        if compact.is_empty() || compact.chars().all(|ch| ch == ',') {
+            return None;
+        }
+
+        let percent = compact.ends_with('%');
+        let numeric = if percent {
+            compact.strip_suffix('%').unwrap_or(&compact)
+        } else {
+            &compact
+        };
+        if numeric.is_empty() {
+            return None;
+        }
+
+        let normalized = if numeric.contains(',') && !numeric.contains('.') {
+            let comma_count = numeric.chars().filter(|&ch| ch == ',').count();
+            if comma_count == 1 {
+                let (whole, frac) = numeric.split_once(',').unwrap_or((numeric, ""));
+                if !whole.is_empty()
+                    && !frac.is_empty()
+                    && whole.chars().all(|ch| ch == '+' || ch == '-' || ch.is_ascii_digit())
+                    && frac.chars().all(|ch| ch.is_ascii_digit())
+                {
+                    if frac.len() == 3 && whole.chars().any(|ch| ch.is_ascii_digit()) {
+                        numeric.replace(',', "")
+                    } else {
+                        numeric.replace(',', ".")
+                    }
+                } else {
+                    numeric.replace(',', "")
+                }
+            } else {
+                numeric.replace(',', "")
+            }
+        } else {
+            numeric.replace(',', "")
+        };
+
+        let parsed = normalized.parse::<f64>().ok()?;
+        if !parsed.is_finite() {
+            return None;
+        }
+        let value = if percent { parsed / 100.0 } else { parsed };
+        value.is_finite().then_some(value)
+    })
+}
+
 fn aggr_scan_window() -> usize {
+    const DEFAULT_SCAN_WINDOW: usize = 0;
     const MAX_SCAN_WINDOW: usize = 4096;
 
     parse_env_usize("TRNM_AGGR_SCAN_WINDOW")
         .map(|v| v.min(MAX_SCAN_WINDOW))
-        .unwrap_or(0)
-}
-
-fn aggr_skip_empty_stage_checks() -> bool {
-    std::env::var("TRNM_AGGR_SKIP_EMPTY_STAGE_CHECKS")
-        .ok()
-        .map(|v| {
-            let s = v.trim().to_ascii_lowercase();
-            !(s == "0" || s == "false" || s == "off" || s == "no")
+        .filter(|&v| v > 0)
+        .unwrap_or_else(|| {
+            if aggr_deep_scan_enabled() {
+                DEFAULT_SCAN_WINDOW
+            } else {
+                0
+            }
         })
-        .unwrap_or(true)
 }
 
-fn aggr_deep_scan_enabled() -> bool {
-    std::env::var("TRNM_AGGR_DEEP_SCAN")
-        .ok()
-        .map(|v| {
-            let s = v.trim().to_ascii_lowercase();
-            !(s == "0" || s == "false" || s == "off" || s == "no")
-        })
-        .unwrap_or(false)
-}
-
-fn aggr_scan_round_robin_enabled() -> bool {
-    std::env::var("TRNM_AGGR_SCAN_ROUND_ROBIN")
+fn env_toggle_enabled(name: &str, default: bool) -> bool {
+    std::env::var(name)
         .ok()
         .map(|v| {
             let trimmed = v.trim();
@@ -767,9 +859,24 @@ fn aggr_scan_round_robin_enabled() -> bool {
                 })
                 .unwrap_or(trimmed);
             let s = unquoted.trim().to_ascii_lowercase();
+            if s.is_empty() || s.chars().all(|ch| ch == '_' || ch == ',') {
+                return default;
+            }
             !(s == "0" || s == "false" || s == "off" || s == "no")
         })
-        .unwrap_or(true)
+        .unwrap_or(default)
+}
+
+fn aggr_skip_empty_stage_checks() -> bool {
+    env_toggle_enabled("TRNM_AGGR_SKIP_EMPTY_STAGE_CHECKS", true)
+}
+
+fn aggr_deep_scan_enabled() -> bool {
+    env_toggle_enabled("TRNM_AGGR_DEEP_SCAN", false)
+}
+
+fn aggr_scan_round_robin_enabled() -> bool {
+    env_toggle_enabled("TRNM_AGGR_SCAN_ROUND_ROBIN", true)
 }
 
 fn aggr_scan_round_robin_seed() -> usize {
@@ -777,25 +884,19 @@ fn aggr_scan_round_robin_seed() -> usize {
 }
 
 fn auto_hot_streak_threshold() -> f64 {
-    std::env::var("TRNM_AUTO_HOT_STREAK_RATIO")
-        .ok()
-        .and_then(|v| v.trim().parse::<f64>().ok())
+    parse_env_f64("TRNM_AUTO_HOT_STREAK_RATIO")
         .map(|v| v.clamp(0.0, 1.0))
         .unwrap_or(0.22)
 }
 
 fn auto_reorder_min_margin() -> f64 {
-    std::env::var("TRNM_AUTO_REORDER_MIN_MARGIN")
-        .ok()
-        .and_then(|v| v.trim().parse::<f64>().ok())
+    parse_env_f64("TRNM_AUTO_REORDER_MIN_MARGIN")
         .map(|v| v.clamp(0.0, 1.0))
         .unwrap_or(0.04)
 }
 
 fn auto_reorder_min_hot_key_share() -> f64 {
-    std::env::var("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE")
-        .ok()
-        .and_then(|v| v.trim().parse::<f64>().ok())
+    parse_env_f64("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE")
         .map(|v| v.clamp(0.0, 1.0))
         .unwrap_or(0.0075)
 }
@@ -807,11 +908,31 @@ fn hot_bucket_count() -> usize {
 }
 
 fn auto_min_expected_gain_score() -> f64 {
-    std::env::var("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE")
-        .ok()
-        .and_then(|v| v.trim().parse::<f64>().ok())
+    parse_env_f64("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE")
         .map(|v| v.clamp(0.0, 1.0))
         .unwrap_or(0.01)
+}
+
+fn auto_adaptive_min_batch_len() -> usize {
+    const DEFAULT_MIN_BATCH_LEN: usize = 512;
+    const MIN_BATCH_LEN_FLOOR: usize = 64;
+    const MIN_BATCH_LEN_CEIL: usize = 4096;
+
+    parse_env_usize("TRNM_AUTO_MIN_BATCH_LEN")
+        .map(|v| v.clamp(MIN_BATCH_LEN_FLOOR, MIN_BATCH_LEN_CEIL))
+        .unwrap_or(DEFAULT_MIN_BATCH_LEN)
+}
+
+fn auto_adaptive_sample_len(batch_len: usize) -> usize {
+    const MAX_SAMPLE_LEN: usize = 2048;
+    const MIN_SAMPLE_LEN_FLOOR: usize = 64;
+    const MIN_SAMPLE_LEN_CEIL: usize = MAX_SAMPLE_LEN;
+
+    let configured = parse_env_usize("TRNM_AUTO_SAMPLE_LEN")
+        .map(|v| v.clamp(MIN_SAMPLE_LEN_FLOOR, MIN_SAMPLE_LEN_CEIL))
+        .unwrap_or(MAX_SAMPLE_LEN);
+
+    batch_len.min(configured)
 }
 
 pub fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
@@ -819,8 +940,9 @@ pub fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
     let min_margin = auto_reorder_min_margin();
     let min_hot_key_share = auto_reorder_min_hot_key_share();
     let min_expected_gain_score = auto_min_expected_gain_score();
+    let min_batch_len = auto_adaptive_min_batch_len();
 
-    if txs.len() < 512 {
+    if txs.len() < min_batch_len {
         return AutoAdaptiveDecision {
             use_hot_bucket: false,
             reason: "small_batch",
@@ -836,8 +958,10 @@ pub fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
     }
 
     // Sample a bounded, evenly-spaced window across the whole batch to avoid
-    // first-window bias when hotspots arrive later in queue order.
-    let sample_len = txs.len().min(2048);
+    // first-window bias when hotspots arrive later in queue order. Keep the
+    // sample window env-tunable for experimental adaptive lanes, but clamp it
+    // fail-closed so misconfiguration cannot trigger unbounded scan work.
+    let sample_len = auto_adaptive_sample_len(txs.len());
     let mut same_key_streak_hits = 0usize;
     let mut total_pairs = 0usize;
     let mut prev_key: Option<u64> = None;
@@ -846,6 +970,7 @@ pub fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
 
     let batch_len = txs.len();
     let direct_scan = sample_len == batch_len;
+    let mut prev_idx: Option<usize> = None;
     for i in 0..sample_len {
         // Keep endpoints visible in bounded sampling windows so late-batch
         // hotspots contribute to adaptive scheduler decisions.
@@ -858,6 +983,10 @@ pub fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
         } else {
             0
         };
+        if prev_idx == Some(idx) {
+            continue;
+        }
+        prev_idx = Some(idx);
         let tx = &txs[idx];
         let key = tx
             .write_set
@@ -874,6 +1003,10 @@ pub fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
                 }
             }
             prev_key = Some(k);
+        } else {
+            // Keyless txs should break streak continuity instead of allowing
+            // later keyed samples to look adjacent in the hotspot probe.
+            prev_key = None;
         }
     }
 
@@ -1374,6 +1507,47 @@ mod tests {
         }
     }
 
+    #[test]
+    fn aggressive_fast_path_matches_original_when_deep_scan_is_disabled() {
+        let _env = env_lock();
+        let _deep = EnvGuard::set("TRNM_AGGR_DEEP_SCAN", "0");
+
+        let txs = vec![
+            tx(1, vec![], vec![o(10)]),
+            tx(2, vec![o(10)], vec![]),
+            tx(3, vec![o(30)], vec![o(40)]),
+            tx(4, vec![o(40)], vec![]),
+            tx(5, vec![], vec![]),
+            tx(6, vec![o(90)], vec![o(91)]),
+        ];
+
+        let (original_groups, original_profile) =
+            build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::Original);
+        let (aggressive_groups, aggressive_profile) =
+            build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::AggressiveGreedy);
+
+        let original_ids: Vec<Vec<u64>> = original_groups
+            .iter()
+            .map(|group| group.iter().map(|tx| tx.id).collect())
+            .collect();
+        let aggressive_ids: Vec<Vec<u64>> = aggressive_groups
+            .iter()
+            .map(|group| group.iter().map(|tx| tx.id).collect())
+            .collect();
+
+        assert_eq!(aggressive_ids, original_ids);
+        assert_eq!(aggressive_profile.group_count, original_profile.group_count);
+        assert_eq!(aggressive_profile.grouped_count, original_profile.grouped_count);
+        assert_eq!(aggressive_profile.max_group_size, original_profile.max_group_size);
+        assert_eq!(aggressive_profile.min_group_size, original_profile.min_group_size);
+        assert_eq!(aggressive_profile.conflict_checks, original_profile.conflict_checks);
+        assert_eq!(aggressive_profile.conflict_hits, original_profile.conflict_hits);
+        assert_eq!(aggressive_profile.candidate_groups_scanned, 0);
+        assert_eq!(aggressive_profile.stage_ww_checks, 0);
+        assert_eq!(aggressive_profile.stage_wr_checks, 0);
+        assert_eq!(aggressive_profile.stage_rw_checks, 0);
+    }
+
     fn env_lock() -> MutexGuard<'static, ()> {
         static ENV_LOCK: OnceLock<Mutex<()>> = OnceLock::new();
         ENV_LOCK
@@ -1763,6 +1937,18 @@ mod tests {
     }
 
     #[test]
+    fn aggressive_scan_window_ignores_zero_and_separator_only_values() {
+        let _env = env_lock();
+
+        let _zero = EnvGuard::set("TRNM_AGGR_SCAN_WINDOW", "0");
+        assert_eq!(aggr_scan_window(), 0);
+        drop(_zero);
+
+        let _underscores = EnvGuard::set("TRNM_AGGR_SCAN_WINDOW", "__,,__");
+        assert_eq!(aggr_scan_window(), 0);
+    }
+
+    #[test]
     fn aggressive_round_robin_seed_parses_trimmed_numeric_env_values() {
         let _env = env_lock();
         let _seed = EnvGuard::set("TRNM_AGGR_SCAN_RR_SEED", " 7 ");
@@ -1779,6 +1965,18 @@ mod tests {
 
         assert_eq!(aggr_scan_window(), 1024);
         assert_eq!(aggr_scan_round_robin_seed(), 9001);
+        assert_eq!(hot_bucket_count(), 32);
+    }
+
+    #[test]
+    fn integer_env_parsers_accept_plus_prefixed_grouped_values() {
+        let _env = env_lock();
+        let _window = EnvGuard::set("TRNM_AGGR_SCAN_WINDOW", " '+1_536' ");
+        let _seed = EnvGuard::set("TRNM_AGGR_SCAN_RR_SEED", " '+1_024' ");
+        let _buckets = EnvGuard::set("TRNM_HOT_BUCKETS", " '+3_2' ");
+
+        assert_eq!(aggr_scan_window(), 1536);
+        assert_eq!(aggr_scan_round_robin_seed(), 1024);
         assert_eq!(hot_bucket_count(), 32);
     }
 
@@ -1819,6 +2017,46 @@ mod tests {
     }
 
     #[test]
+    fn aggressive_toggle_parsers_accept_quoted_tokens_for_skip_empty_and_deep_scan() {
+        let _env = env_lock();
+
+        let _skip_off = EnvGuard::set("TRNM_AGGR_SKIP_EMPTY_STAGE_CHECKS", " \"off\" ");
+        assert!(!aggr_skip_empty_stage_checks());
+        drop(_skip_off);
+
+        let _skip_on = EnvGuard::set("TRNM_AGGR_SKIP_EMPTY_STAGE_CHECKS", " 'on' ");
+        assert!(aggr_skip_empty_stage_checks());
+        drop(_skip_on);
+
+        let _deep_off = EnvGuard::set("TRNM_AGGR_DEEP_SCAN", " 'off' ");
+        assert!(!aggr_deep_scan_enabled());
+        drop(_deep_off);
+
+        let _deep_on = EnvGuard::set("TRNM_AGGR_DEEP_SCAN", " \"on\" ");
+        assert!(aggr_deep_scan_enabled());
+    }
+
+    #[test]
+    fn aggressive_toggle_parsers_fall_back_to_defaults_on_empty_or_separator_only_values() {
+        let _env = env_lock();
+
+        let _rr_empty = EnvGuard::set("TRNM_AGGR_SCAN_ROUND_ROBIN", "  ''  ");
+        assert!(aggr_scan_round_robin_enabled());
+        drop(_rr_empty);
+
+        let _rr_separators = EnvGuard::set("TRNM_AGGR_SCAN_ROUND_ROBIN", " __,,__ ");
+        assert!(aggr_scan_round_robin_enabled());
+        drop(_rr_separators);
+
+        let _deep_empty = EnvGuard::set("TRNM_AGGR_DEEP_SCAN", "  \"\"  ");
+        assert!(!aggr_deep_scan_enabled());
+        drop(_deep_empty);
+
+        let _skip_separators = EnvGuard::set("TRNM_AGGR_SKIP_EMPTY_STAGE_CHECKS", " _,,_ ");
+        assert!(aggr_skip_empty_stage_checks());
+    }
+
+    #[test]
     fn auto_threshold_env_parsers_accept_trimmed_numeric_values() {
         let _env = env_lock();
         let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", " 0.35 ");
@@ -1830,6 +2068,20 @@ mod tests {
         assert!((auto_reorder_min_margin() - 0.12).abs() < f64::EPSILON);
         assert!((auto_reorder_min_hot_key_share() - 0.018).abs() < f64::EPSILON);
         assert!((auto_min_expected_gain_score() - 0.03).abs() < f64::EPSILON);
+    }
+
+    #[test]
+    fn auto_threshold_env_parsers_accept_grouped_numeric_values() {
+        let _env = env_lock();
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.2_5");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0,1");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.0_125");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0,0_5");
+
+        assert!((auto_hot_streak_threshold() - 0.25).abs() < f64::EPSILON);
+        assert!((auto_reorder_min_margin() - 0.1).abs() < f64::EPSILON);
+        assert!((auto_reorder_min_hot_key_share() - 0.0125).abs() < f64::EPSILON);
+        assert!((auto_min_expected_gain_score() - 0.05).abs() < f64::EPSILON);
     }
 
     #[test]
@@ -1864,6 +2116,257 @@ mod tests {
     }
 
     #[test]
+    fn auto_adaptive_numeric_env_parser_accepts_quoted_values() {
+        let _env = env_lock();
+
+        let _window = EnvGuard::set("TRNM_AGGR_SCAN_WINDOW", "\"1_024\"");
+        let _seed = EnvGuard::set("TRNM_AGGR_SCAN_RR_SEED", "'9_001'");
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "\"0.2_5\"");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "'0.1'");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "\"0.0_125\"");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "'0.05'");
+        let _buckets = EnvGuard::set("TRNM_HOT_BUCKETS", "\"1,6\"");
+        let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "'2_048'");
+        let _sample_len = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", "\"1_024\"");
+
+        assert_eq!(aggr_scan_window(), 1024);
+        assert_eq!(aggr_scan_round_robin_seed(), 9001);
+        assert_eq!(auto_hot_streak_threshold(), 0.25);
+        assert_eq!(auto_reorder_min_margin(), 0.1);
+        assert_eq!(auto_reorder_min_hot_key_share(), 0.0125);
+        assert_eq!(auto_min_expected_gain_score(), 0.05);
+        assert_eq!(hot_bucket_count(), 16);
+        assert_eq!(auto_adaptive_min_batch_len(), 2048);
+        assert_eq!(auto_adaptive_sample_len(5000), 1024);
+    }
+
+    #[test]
+    fn auto_adaptive_numeric_env_parser_accepts_plus_prefixed_values() {
+        let _env = env_lock();
+
+        let _window = EnvGuard::set("TRNM_AGGR_SCAN_WINDOW", " +1_024 ");
+        let _seed = EnvGuard::set("TRNM_AGGR_SCAN_RR_SEED", " '+9_001' ");
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", " +0.2_5 ");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", " '+0.1' ");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", " +0.0_125 ");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", " '+0.05' ");
+        let _buckets = EnvGuard::set("TRNM_HOT_BUCKETS", " '+1,6' ");
+        let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", " '+1_024' ");
+        let _sample_len = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", " '+0' ");
+
+        assert_eq!(aggr_scan_window(), 1024);
+        assert_eq!(aggr_scan_round_robin_seed(), 9001);
+        assert_eq!(auto_hot_streak_threshold(), 0.25);
+        assert_eq!(auto_reorder_min_margin(), 0.1);
+        assert_eq!(auto_reorder_min_hot_key_share(), 0.0125);
+        assert_eq!(auto_min_expected_gain_score(), 0.05);
+        assert_eq!(hot_bucket_count(), 16);
+        assert_eq!(auto_adaptive_min_batch_len(), 1024);
+        assert_eq!(auto_adaptive_sample_len(5000), 64);
+    }
+
+    #[test]
+    fn auto_adaptive_numeric_env_parser_accepts_percent_suffix_for_ratio_knobs() {
+        let _env = env_lock();
+
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "25%");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", " 10% ");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "'1.25%' ");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", " \"5%\" ");
+
+        assert_eq!(auto_hot_streak_threshold(), 0.25);
+        assert_eq!(auto_reorder_min_margin(), 0.1);
+        assert_eq!(auto_reorder_min_hot_key_share(), 0.0125);
+        assert_eq!(auto_min_expected_gain_score(), 0.05);
+    }
+
+    #[test]
+    fn auto_adaptive_numeric_env_parser_accepts_comma_decimal_percent_values() {
+        let _env = env_lock();
+
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "25,5%");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", " '10,5%' ");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "\"1,25%\"");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", " 0,5% ");
+
+        assert_eq!(auto_hot_streak_threshold(), 0.255);
+        assert_eq!(auto_reorder_min_margin(), 0.105);
+        assert_eq!(auto_reorder_min_hot_key_share(), 0.0125);
+        assert_eq!(auto_min_expected_gain_score(), 0.005);
+    }
+
+    #[test]
+    fn auto_adaptive_numeric_env_parser_accepts_quoted_plus_prefixed_comma_decimal_percent_values() {
+        let _env = env_lock();
+
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", " '+25,5%' ");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", " \"+10,5%\" ");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", " '+1,25%' ");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", " \"+0,5%\" ");
+
+        assert_eq!(auto_hot_streak_threshold(), 0.255);
+        assert_eq!(auto_reorder_min_margin(), 0.105);
+        assert_eq!(auto_reorder_min_hot_key_share(), 0.0125);
+        assert_eq!(auto_min_expected_gain_score(), 0.005);
+    }
+
+    #[test]
+    fn auto_adaptive_numeric_env_parser_accepts_grouped_comma_decimal_percent_values() {
+        let _env = env_lock();
+
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", " '+2_5,5%' ");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", " \"+1_0,5%\" ");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", " '+1,2_5%' ");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", " \"+0,5_0%\" ");
+
+        assert_eq!(auto_hot_streak_threshold(), 0.255);
+        assert_eq!(auto_reorder_min_margin(), 0.105);
+        assert_eq!(auto_reorder_min_hot_key_share(), 0.0125);
+        assert_eq!(auto_min_expected_gain_score(), 0.005);
+    }
+
+    #[test]
+    fn auto_adaptive_numeric_env_parser_falls_back_to_defaults_on_invalid_values() {
+        let _env = env_lock();
+
+        let _window = EnvGuard::set("TRNM_AGGR_SCAN_WINDOW", "not-a-number");
+        let _seed = EnvGuard::set("TRNM_AGGR_SCAN_RR_SEED", "seed??");
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "NaN%");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "margin");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "share");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "gain");
+        let _buckets = EnvGuard::set("TRNM_HOT_BUCKETS", "bucket-count");
+        let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "batch??");
+
+        assert_eq!(aggr_scan_window(), 0);
+        assert_eq!(aggr_scan_round_robin_seed(), 0);
+        assert_eq!(auto_hot_streak_threshold(), 0.22);
+        assert_eq!(auto_reorder_min_margin(), 0.04);
+        assert_eq!(auto_reorder_min_hot_key_share(), 0.0075);
+        assert_eq!(auto_min_expected_gain_score(), 0.01);
+        assert_eq!(hot_bucket_count(), 8);
+        assert_eq!(auto_adaptive_min_batch_len(), 512);
+    }
+
+    #[test]
+    fn auto_adaptive_numeric_env_parser_ignores_empty_or_separator_only_values() {
+        let _env = env_lock();
+
+        let _window = EnvGuard::set("TRNM_AGGR_SCAN_WINDOW", "   ");
+        let _seed = EnvGuard::set("TRNM_AGGR_SCAN_RR_SEED", "__,,__");
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", " '' ");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", " \"\" ");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", " _,_ ");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", " '__,,__' ");
+        let _buckets = EnvGuard::set("TRNM_HOT_BUCKETS", " \"_,,\" ");
+        let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", " '__,,__' ");
+
+        assert_eq!(aggr_scan_window(), 0);
+        assert_eq!(aggr_scan_round_robin_seed(), 0);
+        assert_eq!(auto_hot_streak_threshold(), 0.22);
+        assert_eq!(auto_reorder_min_margin(), 0.04);
+        assert_eq!(auto_reorder_min_hot_key_share(), 0.0075);
+        assert_eq!(auto_min_expected_gain_score(), 0.01);
+        assert_eq!(hot_bucket_count(), 8);
+        assert_eq!(auto_adaptive_min_batch_len(), 512);
+    }
+
+    #[test]
+    fn auto_adaptive_min_batch_len_is_clamped_to_safe_bounds() {
+        let _env = env_lock();
+
+        let _low = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "8");
+        assert_eq!(auto_adaptive_min_batch_len(), 64);
+        drop(_low);
+
+        let _high = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "99999");
+        assert_eq!(auto_adaptive_min_batch_len(), 4096);
+    }
+
+    #[test]
+    fn auto_adaptive_sample_len_is_env_tunable_and_clamped() {
+        let _env = env_lock();
+
+        let _default = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", "batch??");
+        assert_eq!(auto_adaptive_sample_len(5000), 2048);
+        drop(_default);
+
+        let _zero = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", "0");
+        assert_eq!(auto_adaptive_sample_len(5000), 64);
+        drop(_zero);
+
+        let _low = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", "8");
+        assert_eq!(auto_adaptive_sample_len(5000), 64);
+        drop(_low);
+
+        let _high = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", "99999");
+        assert_eq!(auto_adaptive_sample_len(5000), 2048);
+        drop(_high);
+
+        let _trimmed = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", " '1_024' ");
+        assert_eq!(auto_adaptive_sample_len(5000), 1024);
+        assert_eq!(auto_adaptive_sample_len(256), 256);
+        drop(_trimmed);
+
+        let _comma_grouped = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", " '1,0_2_4' ");
+        assert_eq!(auto_adaptive_sample_len(5000), 1024);
+        assert_eq!(auto_adaptive_sample_len(768), 768);
+        drop(_comma_grouped);
+
+        let _separator_only = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", " '__,,__' ");
+        assert_eq!(auto_adaptive_sample_len(5000), 2048);
+        assert_eq!(auto_adaptive_sample_len(128), 128);
+        drop(_separator_only);
+
+        let _plus = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", " '+1_536' ");
+        assert_eq!(auto_adaptive_sample_len(5000), 1536);
+        assert_eq!(auto_adaptive_sample_len(1024), 1024);
+    }
+
+    #[test]
+    fn auto_adaptive_small_batch_threshold_accepts_quoted_grouped_env_values() {
+        let _env = env_lock();
+        let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", " '6_4' ");
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0%");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "20%");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0%");
+
+        let mut txs = Vec::with_capacity(64);
+        for i in 0..64u64 {
+            txs.push(tx(i, vec![], vec![o(42)]));
+        }
+
+        let d = auto_adaptive_decision(&txs);
+        assert_eq!(d.sample_len, 64);
+        assert!(
+            d.use_hot_bucket,
+            "quoted/grouped env values should preserve small-batch hotspot detection"
+        );
+        assert_eq!(d.reason, "hotspot_detected");
+    }
+
+    #[test]
+    fn auto_adaptive_small_batch_threshold_is_env_tunable() {
+        let _env = env_lock();
+        let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "64");
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.0");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.2");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.0");
+
+        let mut txs = Vec::with_capacity(64);
+        for i in 0..64u64 {
+            txs.push(tx(i, vec![], vec![o(42)]));
+        }
+
+        let d = auto_adaptive_decision(&txs);
+        assert_eq!(d.sample_len, 64);
+        assert!(d.use_hot_bucket, "env-tuned min batch should allow small-batch hotspot detection");
+        assert_eq!(d.reason, "hotspot_detected");
+    }
+
+    #[test]
     fn auto_adaptive_sampling_detects_late_batch_hotspots() {
         let _env = env_lock();
         let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.20");
@@ -1883,6 +2386,116 @@ mod tests {
         assert!(
             d.use_hot_bucket,
             "late hotspot should be visible in adaptive sample"
+        );
+        assert_eq!(d.reason, "hotspot_detected");
+    }
+
+    #[test]
+    fn auto_adaptive_min_clamped_sample_len_still_detects_tail_hotspots() {
+        let _env = env_lock();
+        let _sample = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", "8");
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.20");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.10");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.01");
+
+        // Experimental sample tuning clamps to a 64-item floor. Keep a tail-hotspot
+        // regression here so overly small requested windows do not lose batch-tail
+        // visibility while adaptive experimentation changes probe sizing.
+        let mut txs = Vec::with_capacity(5000);
+        for i in 0..2500u64 {
+            txs.push(tx(i, vec![], vec![o(10_000 + i)]));
+        }
+        for i in 0..2500u64 {
+            txs.push(tx(4_000 + i, vec![], vec![o(42)]));
+        }
+
+        let d = auto_adaptive_decision(&txs);
+        assert_eq!(d.sample_len, 64);
+        assert!(
+            d.use_hot_bucket,
+            "clamped minimum sample should still preserve tail hotspot visibility"
+        );
+        assert_eq!(d.reason, "hotspot_detected");
+    }
+
+    #[test]
+    fn auto_adaptive_direct_scan_detects_tail_hotspots_in_medium_batches() {
+        let _env = env_lock();
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.20");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.20");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.05");
+
+        // Medium batches stay on the direct-scan fast path (sample_len == batch_len).
+        // Keep a late-batch hotspot regression here so the optimized path does not
+        // reintroduce first-window bias while adaptive tuning evolves.
+        let mut txs = Vec::with_capacity(600);
+        for i in 0..300u64 {
+            txs.push(tx(i, vec![], vec![o(10_000 + i)]));
+        }
+        for i in 0..300u64 {
+            txs.push(tx(1_000 + i, vec![], vec![o(42)]));
+        }
+
+        let d = auto_adaptive_decision(&txs);
+        assert_eq!(d.sample_len, txs.len());
+        assert!(d.use_hot_bucket, "direct-scan path should see tail hotspot runs");
+        assert_eq!(d.reason, "hotspot_detected");
+    }
+
+    #[test]
+    fn auto_adaptive_sampling_detects_late_batch_hotspots_for_read_only_batches() {
+        let _env = env_lock();
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.20");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.10");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.01");
+
+        // Large adaptive batches use the bounded evenly-spaced sampling path.
+        // Keep a read-only late-hotspot regression here so experiments around
+        // sampling windows do not reintroduce first-window bias when write_set
+        // is empty and the detector falls back to read_set keys.
+        let mut txs = Vec::with_capacity(4096);
+        for i in 0..2048u64 {
+            txs.push(tx(i, vec![o(10_000 + i)], vec![]));
+        }
+        for i in 0..2048u64 {
+            txs.push(tx(3_000 + i, vec![o(42)], vec![]));
+        }
+
+        let d = auto_adaptive_decision(&txs);
+        assert!(
+            d.use_hot_bucket,
+            "late read-only hotspot should be visible in adaptive sample"
+        );
+        assert_eq!(d.reason, "hotspot_detected");
+    }
+
+    #[test]
+    fn auto_adaptive_direct_scan_detects_tail_hotspots_for_read_only_batches() {
+        let _env = env_lock();
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.20");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.20");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.05");
+
+        // Experimental adaptive detection falls back to read_set when write_set is
+        // empty. Keep a read-only late-hotspot regression so future tuning of the
+        // direct-scan path does not silently lose this signal.
+        let mut txs = Vec::with_capacity(600);
+        for i in 0..300u64 {
+            txs.push(tx(i, vec![o(10_000 + i)], vec![]));
+        }
+        for i in 0..300u64 {
+            txs.push(tx(1_000 + i, vec![o(42)], vec![]));
+        }
+
+        let d = auto_adaptive_decision(&txs);
+        assert_eq!(d.sample_len, txs.len());
+        assert!(
+            d.use_hot_bucket,
+            "direct-scan path should preserve read-only tail hotspot detection"
         );
         assert_eq!(d.reason, "hotspot_detected");
     }
@@ -1908,6 +2521,311 @@ mod tests {
         let d = auto_adaptive_decision(&txs);
         assert!(d.use_hot_bucket, "tail hotspot should be counted in sample");
         assert_eq!(d.reason, "hotspot_detected");
+    }
+
+    #[test]
+    fn auto_adaptive_sampling_includes_batch_tail_for_read_only_hotspot_estimate() {
+        let _env = env_lock();
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.0");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.0007");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.0");
+
+        // Keep the read-only counterpart to the endpoint-inclusive sampling
+        // regression so adaptive tuning does not lose tail visibility when the
+        // detector falls back from write_set to read_set keys.
+        let mut txs = Vec::with_capacity(3000);
+        txs.push(tx(1, vec![o(777)], vec![]));
+        for i in 1..2999u64 {
+            txs.push(tx(10_000 + i, vec![o(20_000 + i)], vec![]));
+        }
+        txs.push(tx(9_999, vec![o(777)], vec![]));
+
+        let d = auto_adaptive_decision(&txs);
+        assert!(d.use_hot_bucket, "read-only tail hotspot should be counted in sample");
+        assert_eq!(d.reason, "hotspot_detected");
+    }
+
+    #[test]
+    fn auto_adaptive_expected_gain_gate_blocks_low_value_hotspot_switches() {
+        let _env = env_lock();
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.0");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.0007");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.001");
+
+        // Same endpoint-visible hotspot shape as the tail-sampling regression,
+        // but with a gain threshold slightly above the observed streak*share.
+        // Adaptive mode should fail closed instead of switching strategies on a
+        // low-value hotspot signal.
+        let mut txs = Vec::with_capacity(3000);
+        txs.push(tx(1, vec![], vec![o(777)]));
+        for i in 1..2999u64 {
+            txs.push(tx(10_000 + i, vec![], vec![o(20_000 + i)]));
+        }
+        txs.push(tx(9_999, vec![], vec![o(777)]));
+
+        let d = auto_adaptive_decision(&txs);
+        assert!(d.expected_gain_score < d.min_expected_gain_score);
+        assert!(
+            !d.use_hot_bucket,
+            "low-value hotspot signal should not switch adaptive strategy"
+        );
+        assert_eq!(d.reason, "low_expected_gain");
+    }
+
+    #[test]
+    fn auto_adaptive_read_only_expected_gain_gate_blocks_low_value_hotspot_switches() {
+        let _env = env_lock();
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.0");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.0007");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.001");
+
+        // Mirror the low-value endpoint-hotspot regression for read-only
+        // batches, where adaptive detection falls back to read_set keys.
+        // Endpoint-visible sampling should stay fail-closed instead of
+        // switching strategies on a trivial read-domain signal.
+        let mut txs = Vec::with_capacity(3000);
+        txs.push(tx(1, vec![o(777)], vec![]));
+        for i in 1..2999u64 {
+            txs.push(tx(10_000 + i, vec![o(20_000 + i)], vec![]));
+        }
+        txs.push(tx(9_999, vec![o(777)], vec![]));
+
+        let d = auto_adaptive_decision(&txs);
+        assert!(d.expected_gain_score < d.min_expected_gain_score);
+        assert!(
+            !d.use_hot_bucket,
+            "low-value read-only hotspot signal should not switch adaptive strategy"
+        );
+        assert_eq!(d.reason, "low_expected_gain");
+    }
+
+    #[test]
+    fn auto_adaptive_sampling_with_sparse_window_keeps_duplicate_indices_fail_closed() {
+        let _env = env_lock();
+        let _sample_len = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", "2048");
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.25");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.10");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.03");
+
+        // Keep a regression with a just-over-half window to exercise sparse
+        // integer-step sampling, where nearby sample points can collapse onto
+        // the same tx index. The decision should remain fail-closed for a broad
+        // unique-key batch instead of overestimating hotspot streaks.
+        let mut txs = Vec::with_capacity(3000);
+        for i in 0..3000u64 {
+            txs.push(tx(50_000 + i, vec![], vec![o(100_000 + i)]));
+        }
+
+        let d = auto_adaptive_decision(&txs);
+        assert_eq!(d.sample_len, 2048);
+        assert_eq!(d.reason, "low_hot_key_share");
+        assert!(!d.use_hot_bucket);
+        assert!(
+            d.hot_key_share <= (1.0 / d.sample_len as f64),
+            "duplicate sparse-sample indices must not inflate hot-key share"
+        );
+        assert_eq!(
+            d.streak_ratio, 0.0,
+            "duplicate sparse-sample indices must not manufacture streak runs"
+        );
+    }
+
+    #[test]
+    fn auto_adaptive_read_only_sparse_sampling_keeps_duplicate_indices_fail_closed() {
+        let _env = env_lock();
+        let _sample_len = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", "2048");
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.25");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.10");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.03");
+
+        // Mirror the sparse-window duplicate-index regression for read-only
+        // batches, where adaptive detection falls back to read_set keys.
+        // Duplicate sample indices must stay fail-closed instead of creating
+        // artificial hotspot share or streaks under broad unique-key traffic.
+        let mut txs = Vec::with_capacity(3000);
+        for i in 0..3000u64 {
+            txs.push(tx(80_000 + i, vec![o(130_000 + i)], vec![]));
+        }
+
+        let d = auto_adaptive_decision(&txs);
+        assert_eq!(d.sample_len, 2048);
+        assert_eq!(d.reason, "low_hot_key_share");
+        assert!(!d.use_hot_bucket);
+        assert!(
+            d.hot_key_share <= (1.0 / d.sample_len as f64),
+            "duplicate sparse-sample indices must not inflate read-only hot-key share"
+        );
+        assert_eq!(
+            d.streak_ratio, 0.0,
+            "duplicate sparse-sample indices must not manufacture read-only streak runs"
+        );
+    }
+
+    #[test]
+    fn auto_adaptive_keyless_batches_fail_closed_as_insufficient_sample() {
+        let _env = env_lock();
+        let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "64");
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.0");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.0");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.0");
+
+        // Experimental adaptive probes must stay fail-closed when a batch has
+        // no observable read/write keys at all. Even with permissive thresholds,
+        // keyless traffic should never manufacture a hotspot switch.
+        let mut txs = Vec::with_capacity(600);
+        for i in 0..600u64 {
+            txs.push(tx(90_000 + i, vec![], vec![]));
+        }
+
+        let d = auto_adaptive_decision(&txs);
+        assert_eq!(d.sample_len, txs.len());
+        assert_eq!(d.reason, "insufficient_sample");
+        assert!(!d.use_hot_bucket);
+        assert_eq!(d.hot_key_share, 0.0);
+        assert_eq!(d.streak_ratio, 0.0);
+        assert_eq!(d.expected_gain_score, 0.0);
+    }
+
+    #[test]
+    fn auto_adaptive_keyless_gaps_break_same_key_streaks_fail_closed() {
+        let _env = env_lock();
+        let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "64");
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.5");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.0");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.0");
+
+        // Keyless txs should break streak continuity instead of letting the
+        // detector count two same-key observations as adjacent when they are
+        // separated by empty-access traffic.
+        let mut txs = Vec::with_capacity(64);
+        for i in 0..32u64 {
+            txs.push(tx(100_000 + i * 2, vec![], vec![o(42)]));
+            txs.push(tx(100_001 + i * 2, vec![], vec![]));
+        }
+
+        let d = auto_adaptive_decision(&txs);
+        assert_eq!(d.sample_len, txs.len());
+        assert_eq!(d.hot_key_share, 0.0);
+        assert_eq!(d.streak_ratio, 0.0);
+        assert!(!d.use_hot_bucket);
+        assert_eq!(d.reason, "insufficient_sample");
+        assert_eq!(d.expected_gain_score, 0.0);
+    }
+
+    #[test]
+    fn auto_adaptive_read_only_keyless_gaps_break_same_key_streaks_fail_closed() {
+        let _env = env_lock();
+        let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "64");
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.5");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.0");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.0");
+
+        // Mirror the keyless-gap regression for read-only batches, where the
+        // experimental detector falls back to read_set keys.
+        let mut txs = Vec::with_capacity(64);
+        for i in 0..32u64 {
+            txs.push(tx(110_000 + i * 2, vec![o(42)], vec![]));
+            txs.push(tx(110_001 + i * 2, vec![], vec![]));
+        }
+
+        let d = auto_adaptive_decision(&txs);
+        assert_eq!(d.sample_len, txs.len());
+        assert_eq!(d.hot_key_share, 0.0);
+        assert_eq!(d.streak_ratio, 0.0);
+        assert!(!d.use_hot_bucket);
+        assert_eq!(d.reason, "insufficient_sample");
+        assert_eq!(d.expected_gain_score, 0.0);
+    }
+
+    #[test]
+    fn auto_adaptive_prefers_write_hotspot_signal_over_shared_read_domains() {
+        let _env = env_lock();
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.20");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.20");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.05");
+
+        // Mixed read/write batches often share a broad read dependency (e.g. a
+        // common config object) while writes stay unique. Adaptive detection
+        // should prefer write_set keys when present so experiments do not switch
+        // strategies based only on a shared read domain that does not imply a
+        // write hotspot.
+        let mut txs = Vec::with_capacity(600);
+        for i in 0..600u64 {
+            txs.push(tx(i, vec![o(42)], vec![o(10_000 + i)]));
+        }
+
+        let d = auto_adaptive_decision(&txs);
+        assert_eq!(d.sample_len, txs.len());
+        assert!(!d.use_hot_bucket);
+        assert_eq!(d.reason, "low_hot_key_share");
+        assert!(d.hot_key_share <= (1.0 / d.sample_len as f64));
+        assert_eq!(d.streak_ratio, 0.0);
+        assert_eq!(d.expected_gain_score, 0.0);
+    }
+
+    #[test]
+    fn auto_adaptive_large_sample_prefers_write_signal_over_shared_read_domains() {
+        let _env = env_lock();
+        let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "64");
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.20");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.20");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.05");
+
+        // Mirror the shared-read-domain regression on the large-batch sampled
+        // path. Even when adaptive mode samples a wide queue, unique writes
+        // must prevent a false hotspot switch caused only by a common read key.
+        let mut txs = Vec::with_capacity(3_000);
+        for i in 0..3_000u64 {
+            txs.push(tx(i, vec![o(42)], vec![o(10_000 + i)]));
+        }
+
+        let d = auto_adaptive_decision(&txs);
+        assert_eq!(d.sample_len, 2048);
+        assert!(!d.use_hot_bucket);
+        assert_eq!(d.reason, "low_hot_key_share");
+        assert!(d.hot_key_share <= (1.0 / d.sample_len as f64));
+        assert_eq!(d.streak_ratio, 0.0);
+        assert_eq!(d.expected_gain_score, 0.0);
+    }
+
+    #[test]
+    fn auto_adaptive_detects_write_hotspots_even_with_shared_read_domains() {
+        let _env = env_lock();
+        let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "64");
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.20");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.20");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.05");
+
+        // Large mixed batches can share a broad read dependency while only a
+        // late contiguous region develops a true write hotspot. Adaptive
+        // experiments should still switch based on the write signal rather than
+        // being diluted by the shared read domain.
+        let mut txs = Vec::with_capacity(3_000);
+        for i in 0..1_800u64 {
+            txs.push(tx(i, vec![o(42)], vec![o(10_000 + i)]));
+        }
+        for i in 1_800..3_000u64 {
+            txs.push(tx(i, vec![o(42)], vec![o(7)]));
+        }
+
+        let d = auto_adaptive_decision(&txs);
+        assert_eq!(d.sample_len, 2048);
+        assert!(d.use_hot_bucket);
+        assert_eq!(d.reason, "hotspot_detected");
+        assert!(d.hot_key_share >= 0.20);
+        assert!(d.streak_ratio >= 0.20);
+        assert!(d.expected_gain_score >= 0.05);
     }
 
     #[test]
