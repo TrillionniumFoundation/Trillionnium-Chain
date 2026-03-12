@@ -194,6 +194,7 @@ const GOV_SENSITIVE_KEYS: &[&str] = &[
 ];
 const DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER: &str = "governance.resolve_authority";
 const EMERGENCY_PAUSE_PLACEHOLDER: &str = "governance.emergency_pause";
+const RESOLVE_AUTHORITY_SET_MAX_LEN: usize = 128;
 const RESERVED_SYSTEM_AUTHORITY: &str = "system";
 const CHALLENGE_ESCROW_ACCOUNT: &str = "treasury.challenge_escrow";
 const CHALLENGE_FORFEIT_TREASURY_ACCOUNT: &str = "treasury.challenge_forfeits";
@@ -452,6 +453,12 @@ impl StateStore {
                     .into(),
             );
         }
+        if authority_trimmed.len() > RESOLVE_AUTHORITY_SET_MAX_LEN {
+            return Err(format!(
+                "resolve approval authority set exceeds max length {}",
+                RESOLVE_AUTHORITY_SET_MAX_LEN
+            ));
+        }
         let authority_members: Vec<&str> = authority_trimmed.split(',').collect();
         if authority_members.len() < 2 {
             return Err("resolve approval authority set must include at least two members".into());
@@ -611,6 +618,9 @@ impl StateStore {
 
         let authority_set = snapshot.authority_set.trim();
         if authority_set.is_empty() || authority_set != snapshot.authority_set {
+            return false;
+        }
+        if authority_set.len() > RESOLVE_AUTHORITY_SET_MAX_LEN {
             return false;
         }
 

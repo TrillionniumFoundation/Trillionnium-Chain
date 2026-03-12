@@ -1003,6 +1003,81 @@ fn paused_state_rejects_case_variant_emergency_pause_placeholder_member_without_
 }
 
 #[test]
+fn paused_state_rejects_oversized_resolve_authority_set_without_side_effects() {
+    // M1 micro-hardening: paused resolve approval must enforce the same authority-set length
+    // boundary as governance storage so oversized authority payloads cannot stage quorum state.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 10_021);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 1_003);
+    st.set_balance(WORKER_SLASH_TREASURY_ACCOUNT, 503);
+
+    st.set_gov_param(98_217, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+    let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+    let worker_slash_before = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
+
+    let oversized_authority_set = format!("authority-a,{}", "b".repeat(117));
+    assert!(oversized_authority_set.len() > 128);
+
+    let err = st
+        .stage_or_confirm_resolve_approval(9_928, 1, true, "authority-a", &oversized_authority_set)
+        .expect_err("oversized paused resolve authority set must be rejected");
+    assert!(err.contains("max length") || err.contains("authority set"), "unexpected error: {err}");
+
+    assert_eq!(st.pending_resolve_approval(9_928), None);
+    assert_eq!(st.pending_resolve_first_approver(9_928), None);
+    assert_eq!(st.pending_gov_update("resolve_authority"), None);
+    assert!(st.is_emergency_paused());
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+    assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), forfeits_before);
+    assert_eq!(st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT), worker_slash_before);
+}
+
+#[test]
+fn paused_state_restore_pending_resolve_snapshot_scrubs_oversized_authority_set_boundary() {
+    // M1 micro-hardening: paused rollback/restore must scrub oversized authority-set snapshots
+    // so resolve quorum state cannot bypass the canonical governance length boundary.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 10_022);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 1_004);
+    st.set_balance(WORKER_SLASH_TREASURY_ACCOUNT, 504);
+
+    st.set_gov_param(98_218, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+    let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+    let worker_slash_before = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
+
+    let oversized_authority_set = format!("authority-a,{}", "b".repeat(117));
+    assert!(oversized_authority_set.len() > 128);
+
+    st.restore_pending_resolve_approval(
+        9_929,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "authority-a".into(),
+            authority_set: oversized_authority_set,
+            task_version: 1,
+        }),
+    );
+
+    assert_eq!(st.pending_resolve_approval(9_929), None);
+    assert_eq!(st.pending_resolve_first_approver(9_929), None);
+    assert_eq!(st.pending_resolve_approval_snapshot(9_929), None);
+    assert_eq!(st.pending_gov_update("resolve_authority"), None);
+    assert!(st.is_emergency_paused());
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+    assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), forfeits_before);
+    assert_eq!(st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT), worker_slash_before);
+}
+
+#[test]
 fn paused_state_restore_pending_resolve_snapshot_scrubs_zero_task_version_boundary() {
     // M1 micro-hardening: paused rollback/restore must reject versionless pending resolve
     // snapshots so governance/resolve flow cannot revive an unversioned approval quorum.
