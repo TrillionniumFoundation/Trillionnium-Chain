@@ -151,6 +151,27 @@ fn test_authorized_revert_preserves_long_reason_without_second_truncation() {
 }
 
 #[test]
+fn test_authorized_revert_normalizes_hangul_fillers_for_replay_stability() {
+    let mut request = SettlementRequest::new(1, "0xbbc2a".to_string());
+    let token = CapabilityToken {
+        subject: "did:trn:worker-b".to_string(),
+        capabilities: vec![SettlementCapability::Revert],
+    };
+
+    request
+        .revert_authorized(
+            &token,
+            "target\u{115F}receipt\u{1160}timeout\u{3164}signal".to_string(),
+        )
+        .unwrap();
+
+    assert_eq!(
+        request.status,
+        BridgeStatus::Reverted("target receipt timeout signal".to_string())
+    );
+}
+
+#[test]
 fn test_authorized_revert_rejects_missing_capability() {
     let mut request = SettlementRequest::new(1, "0xbbd".to_string());
     let token = CapabilityToken {

@@ -99,7 +99,10 @@ fn is_disallowed_invisible_char(ch: char) -> bool {
             | '\u{00AD}'
             | '\u{034F}'
             | '\u{061C}'
+            | '\u{115F}'
+            | '\u{1160}'
             | '\u{180E}'
+            | '\u{3164}'
             | '\u{2000}'
             | '\u{2001}'
             | '\u{2002}'
@@ -219,6 +222,13 @@ mod tests {
     #[test]
     fn normalize_failure_reason_collapses_crlf_and_unicode_separators_for_replay_stability() {
         let raw = "target\r\nrelay\u{2028}timeout\u{2029}signal\n";
+        let normalized = normalize_failure_reason(raw);
+        assert_eq!(normalized, "target relay timeout signal");
+    }
+
+    #[test]
+    fn normalize_failure_reason_strips_hangul_fillers_for_replay_stability() {
+        let raw = "target\u{115F}relay\u{1160}timeout\u{3164}signal";
         let normalized = normalize_failure_reason(raw);
         assert_eq!(normalized, "target relay timeout signal");
     }
