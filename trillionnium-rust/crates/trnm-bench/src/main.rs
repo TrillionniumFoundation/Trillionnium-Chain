@@ -402,6 +402,42 @@ mod tests {
     }
 
     #[test]
+    fn hot_streak_read_mostly_profile_still_resolves_auto_adaptive_to_hot_bucket() {
+        let txs = build_hot_streak_txs(4_096, 2_000, 3, 64);
+        let decision = auto_adaptive_decision(&txs);
+        let (auto_groups, auto_profile) =
+            build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::AutoAdaptive);
+        let (explicit_groups, explicit_profile) = build_parallel_groups_profile_with_strategy(
+            &txs,
+            GroupingStrategy::HotBucketInterleave,
+        );
+
+        assert!(
+            decision.use_hot_bucket,
+            "read-mostly hot-streak workload should still surface hotspot scheduling"
+        );
+        assert_eq!(decision.reason, "hotspot_detected");
+        assert!(matches!(
+            resolve_grouping_strategy(&txs, GroupingStrategy::AutoAdaptive),
+            GroupingStrategy::HotBucketInterleave
+        ));
+        assert!(
+            auto_profile.group_count > 1,
+            "read-mostly hot-streak workload should still produce a non-trivial grouped profile"
+        );
+        assert!(
+            auto_profile.hot_object_share > 0.0,
+            "read-mostly hot-streak workload should retain hotspot visibility in profiling"
+        );
+        assert_profiles_match(
+            &auto_groups,
+            &auto_profile,
+            &explicit_groups,
+            &explicit_profile,
+        );
+    }
+
+    #[test]
     fn classic_builder_clamps_zero_key_budget_to_single_safe_domain() {
         let txs = build_classic_txs(16, 0);
 
