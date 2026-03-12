@@ -110,6 +110,7 @@ jobs:
 
       - name: Install shellcheck
         run: |
+          set -euo pipefail
           retry() {
             local attempts="$1"; shift
             local n=1
@@ -169,6 +170,10 @@ jobs:
       - name: Quick gate shellcheck install deterministic apt guard regression
         run: |
           ./scripts/v2/trnm_gate_quick_check_shellcheck_install_deterministic_apt_guard_test.sh
+
+      - name: Quick gate pipefail guard regression
+        run: |
+          ./scripts/v2/trnm_gate_quick_check_pipefail_guard_test.sh
 
       - name: Quick gate CI shellcheck required guard regression
         run: |
