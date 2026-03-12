@@ -2439,6 +2439,36 @@ mod tests {
     }
 
     #[test]
+    fn auto_adaptive_min_clamped_sample_len_still_detects_tail_hotspots_for_read_only_batches() {
+        let _env = env_lock();
+        let _sample = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", "8");
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.20");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.10");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.01");
+
+        // Mirror the clamped-minimum tail-hotspot regression for read-only
+        // batches. Experimental sample tuning still clamps to a 64-item floor,
+        // and the detector must preserve late-batch visibility when it falls
+        // back from write_set to read_set keys.
+        let mut txs = Vec::with_capacity(5000);
+        for i in 0..2500u64 {
+            txs.push(tx(i, vec![o(10_000 + i)], vec![]));
+        }
+        for i in 0..2500u64 {
+            txs.push(tx(4_000 + i, vec![o(42)], vec![]));
+        }
+
+        let d = auto_adaptive_decision(&txs);
+        assert_eq!(d.sample_len, 64);
+        assert!(
+            d.use_hot_bucket,
+            "clamped minimum sample should still preserve read-only tail hotspot visibility"
+        );
+        assert_eq!(d.reason, "hotspot_detected");
+    }
+
+    #[test]
     fn auto_adaptive_direct_scan_detects_tail_hotspots_in_medium_batches() {
         let _env = env_lock();
         let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.20");
