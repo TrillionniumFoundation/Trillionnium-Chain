@@ -149,10 +149,7 @@ fn main() {
         };
         println!("profile.conflict_hit_rate={:.4}", hit_rate);
 
-        if matches!(
-            args.strategy,
-            StrategyArg::Default | StrategyArg::AutoAdaptive
-        ) {
+        if emits_auto_profile(args.strategy) {
             let d = auto_adaptive_decision(&txs);
             println!("profile.auto.use_hot_bucket={}", d.use_hot_bucket);
             println!("profile.auto.reason={}", d.reason);
@@ -172,6 +169,10 @@ fn main() {
             );
         }
     }
+}
+
+fn emits_auto_profile(strategy: StrategyArg) -> bool {
+    matches!(strategy, StrategyArg::AutoAdaptive)
 }
 
 fn build_classic_txs(n: usize, keys: usize) -> Vec<Tx> {
@@ -272,6 +273,18 @@ fn build_hot_streak_txs(n: usize, keys: usize, read_fanout: usize, write_every: 
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn auto_profile_output_is_reserved_for_explicit_auto_adaptive_strategy() {
+        assert!(!emits_auto_profile(StrategyArg::Default));
+        assert!(!emits_auto_profile(StrategyArg::Original));
+        assert!(!emits_auto_profile(StrategyArg::FootprintDesc));
+        assert!(!emits_auto_profile(StrategyArg::WriteFirst));
+        assert!(!emits_auto_profile(StrategyArg::WriteLast));
+        assert!(!emits_auto_profile(StrategyArg::HotBucketInterleave));
+        assert!(emits_auto_profile(StrategyArg::AutoAdaptive));
+        assert!(!emits_auto_profile(StrategyArg::AggressiveGreedy));
+    }
 
     #[test]
     fn hot_streak_default_workload_triggers_auto_adaptive_hotspot_detection() {
