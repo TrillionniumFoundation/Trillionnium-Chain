@@ -43,6 +43,10 @@ pub mod bridge_status {
             || ('\u{E0100}'..='\u{E01EF}').contains(&ch)
     }
 
+    fn has_disallowed_subject_char(ch: char) -> bool {
+        has_disallowed_request_char(ch)
+    }
+
     #[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
     pub enum BridgeStatus {
         Pending,
@@ -134,7 +138,8 @@ pub mod bridge_status {
                     reason: "empty subject",
                 });
             }
-            if token.subject.trim() != token.subject || token.subject.chars().any(char::is_control)
+            if token.subject.trim() != token.subject
+                || token.subject.chars().any(has_disallowed_subject_char)
             {
                 return Err(SettlementError::MalformedToken {
                     reason: "non-canonical subject",

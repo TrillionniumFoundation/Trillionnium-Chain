@@ -262,6 +262,35 @@ fn test_authorized_calls_reject_non_did_subject_token() {
 }
 
 #[test]
+fn test_authorized_calls_reject_subject_token_with_invisible_unicode_controls() {
+    let mut request = SettlementRequest::new(432, "0xeee2".to_string());
+    let malformed = CapabilityToken {
+        subject: "did:trn:worker\u{200B}\u{2060}-g".to_string(),
+        capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
+    };
+
+    let finalize_err = request.settle_authorized(&malformed, 601).unwrap_err();
+    assert_eq!(
+        finalize_err,
+        SettlementError::MalformedToken {
+            reason: "non-canonical subject",
+        }
+    );
+    assert_eq!(request.status, BridgeStatus::Pending);
+
+    let revert_err = request
+        .revert_authorized(&malformed, "bridge timeout".to_string())
+        .unwrap_err();
+    assert_eq!(
+        revert_err,
+        SettlementError::MalformedToken {
+            reason: "non-canonical subject",
+        }
+    );
+    assert_eq!(request.status, BridgeStatus::Pending);
+}
+
+#[test]
 fn test_authorized_calls_reject_empty_tx_hash() {
     let mut request = SettlementRequest::new(44, "   ".to_string());
     let token = CapabilityToken {
