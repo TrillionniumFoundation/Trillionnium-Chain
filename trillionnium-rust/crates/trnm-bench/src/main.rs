@@ -1,7 +1,8 @@
 use clap::Parser;
 use std::time::Instant;
 use trnm_executor::{
-    auto_adaptive_decision, build_parallel_groups_profile_with_strategy, GroupingStrategy,
+    auto_adaptive_decision, build_parallel_groups_profile_with_strategy, resolve_grouping_strategy,
+    GroupingStrategy,
 };
 use trnm_types::{ObjectRef, Tx};
 
@@ -102,6 +103,10 @@ fn main() {
     let t0 = Instant::now();
     let (groups, profile) = args.strategy.resolve_profile(&txs);
     let dt = t0.elapsed();
+    let effective_strategy = match args.strategy {
+        StrategyArg::Default => GroupingStrategy::Original,
+        explicit => resolve_grouping_strategy(&txs, explicit.into()),
+    };
 
     let grouped: usize = groups.iter().map(|g| g.len()).sum();
     let conflict_rate = 1.0f64 - (keys as f64 / n as f64).min(1.0);
@@ -109,6 +114,7 @@ fn main() {
     println!("bench_parallel_grouping");
     println!("workload={:?}", args.workload);
     println!("strategy={:?}", args.strategy);
+    println!("effective_strategy={:?}", effective_strategy);
     println!("txs={}", n);
     println!("keys={}", keys);
     println!("estimated_conflict_rate={:.4}", conflict_rate);
@@ -143,7 +149,10 @@ fn main() {
         };
         println!("profile.conflict_hit_rate={:.4}", hit_rate);
 
-        if matches!(args.strategy, StrategyArg::Default | StrategyArg::AutoAdaptive) {
+        if matches!(
+            args.strategy,
+            StrategyArg::Default | StrategyArg::AutoAdaptive
+        ) {
             let d = auto_adaptive_decision(&txs);
             println!("profile.auto.use_hot_bucket={}", d.use_hot_bucket);
             println!("profile.auto.reason={}", d.reason);
@@ -281,8 +290,12 @@ mod tests {
         let txs = build_hot_streak_txs(64, 1, 3, 1);
 
         assert_eq!(txs.len(), 64);
-        assert!(txs.iter().all(|tx| tx.read_set.iter().all(|obj| obj.id == 0)));
-        assert!(txs.iter().all(|tx| tx.write_set.iter().all(|obj| obj.id == 0)));
+        assert!(txs
+            .iter()
+            .all(|tx| tx.read_set.iter().all(|obj| obj.id == 0)));
+        assert!(txs
+            .iter()
+            .all(|tx| tx.write_set.iter().all(|obj| obj.id == 0)));
     }
 
     #[test]
@@ -292,7 +305,10 @@ mod tests {
         let (_groups, profile) =
             build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::AutoAdaptive);
 
-        assert!(decision.use_hot_bucket, "expected hot-streak workload to stay on hot-bucket path");
+        assert!(
+            decision.use_hot_bucket,
+            "expected hot-streak workload to stay on hot-bucket path"
+        );
         assert_eq!(profile.tx_count, txs.len());
         assert_eq!(profile.grouped_count, txs.len());
         assert_eq!(profile.candidate_groups_scanned, 0);
@@ -314,9 +330,15 @@ mod tests {
     fn classic_bench_default_path_matches_executor_default_strategy_output() {
         let txs = build_classic_txs(2_048, 256);
         let (default_groups, default_profile) = StrategyArg::Default.resolve_profile(&txs);
-        let (executor_groups, executor_profile) = trnm_executor::build_parallel_groups_profile(&txs);
+        let (executor_groups, executor_profile) =
+            trnm_executor::build_parallel_groups_profile(&txs);
 
-        assert_profiles_match(&default_groups, &default_profile, &executor_groups, &executor_profile);
+        assert_profiles_match(
+            &default_groups,
+            &default_profile,
+            &executor_groups,
+            &executor_profile,
+        );
     }
 
     #[test]
@@ -328,18 +350,32 @@ mod tests {
         let (executor_groups, executor_profile) =
             build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::AutoAdaptive);
 
-        assert!(decision.use_hot_bucket, "expected hot-streak bench to stay on hot-bucket path");
+        assert!(
+            decision.use_hot_bucket,
+            "expected hot-streak bench to stay on hot-bucket path"
+        );
         assert_eq!(decision.reason, "hotspot_detected");
-        assert_profiles_match(&bench_groups, &bench_profile, &executor_groups, &executor_profile);
+        assert_profiles_match(
+            &bench_groups,
+            &bench_profile,
+            &executor_groups,
+            &executor_profile,
+        );
     }
 
     #[test]
     fn mixed_bench_default_path_matches_executor_default_strategy_output() {
         let txs = build_mixed_txs(2_048, 256, 3, 2);
         let (bench_groups, bench_profile) = StrategyArg::Default.resolve_profile(&txs);
-        let (executor_groups, executor_profile) = trnm_executor::build_parallel_groups_profile(&txs);
+        let (executor_groups, executor_profile) =
+            trnm_executor::build_parallel_groups_profile(&txs);
 
-        assert_profiles_match(&bench_groups, &bench_profile, &executor_groups, &executor_profile);
+        assert_profiles_match(
+            &bench_groups,
+            &bench_profile,
+            &executor_groups,
+            &executor_profile,
+        );
     }
 
     #[test]
@@ -349,7 +385,12 @@ mod tests {
         let (executor_groups, executor_profile) =
             build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::Original);
 
-        assert_profiles_match(&bench_groups, &bench_profile, &executor_groups, &executor_profile);
+        assert_profiles_match(
+            &bench_groups,
+            &bench_profile,
+            &executor_groups,
+            &executor_profile,
+        );
     }
 
     #[test]
@@ -365,6 +406,21 @@ mod tests {
             auto_profile.hot_object_share > bench_profile.hot_object_share,
             "auto-adaptive hot-streak path should surface a stronger hotspot signal than default"
         );
+    }
+
+    #[test]
+    fn effective_strategy_reports_real_auto_adaptive_resolution() {
+        let hot_streak = build_hot_streak_txs(20_000, 2_000, 3, 1);
+        assert!(matches!(
+            resolve_grouping_strategy(&hot_streak, StrategyArg::AutoAdaptive.into()),
+            GroupingStrategy::HotBucketInterleave
+        ));
+
+        let classic = build_classic_txs(2_048, 256);
+        assert!(matches!(
+            resolve_grouping_strategy(&classic, StrategyArg::Default.into()),
+            GroupingStrategy::Original
+        ));
     }
 
     fn assert_profiles_match(
@@ -392,6 +448,8 @@ mod tests {
         assert_eq!(left_profile.stage_rw_checks, right_profile.stage_rw_checks);
         assert_eq!(left_profile.stage_rw_hits, right_profile.stage_rw_hits);
         assert!((left_profile.avg_group_size - right_profile.avg_group_size).abs() < f64::EPSILON);
-        assert!((left_profile.hot_object_share - right_profile.hot_object_share).abs() < f64::EPSILON);
+        assert!(
+            (left_profile.hot_object_share - right_profile.hot_object_share).abs() < f64::EPSILON
+        );
     }
 }

@@ -268,6 +268,20 @@ pub fn build_parallel_groups_profile(txs: &[Tx]) -> (Vec<Vec<Tx>>, GroupingProfi
     build_parallel_groups_profile_with_strategy(txs, GroupingStrategy::Original)
 }
 
+pub fn resolve_grouping_strategy(txs: &[Tx], strategy: GroupingStrategy) -> GroupingStrategy {
+    match strategy {
+        GroupingStrategy::AutoAdaptive => {
+            let d = auto_adaptive_decision(txs);
+            if d.use_hot_bucket {
+                GroupingStrategy::HotBucketInterleave
+            } else {
+                GroupingStrategy::Original
+            }
+        }
+        other => other,
+    }
+}
+
 pub fn build_parallel_groups_profile_with_strategy(
     txs: &[Tx],
     strategy: GroupingStrategy,
@@ -296,15 +310,7 @@ pub fn build_parallel_groups_profile_with_strategy(
         );
     }
 
-    let mut selected = strategy;
-    if matches!(selected, GroupingStrategy::AutoAdaptive) {
-        let d = auto_adaptive_decision(txs);
-        selected = if d.use_hot_bucket {
-            GroupingStrategy::HotBucketInterleave
-        } else {
-            GroupingStrategy::Original
-        };
-    }
+    let selected = resolve_grouping_strategy(txs, strategy);
 
     let mut ordered: Vec<Tx> = txs.to_vec();
     reorder_for_strategy(&mut ordered, selected);
@@ -1979,11 +1985,13 @@ mod tests {
     #[test]
     fn auto_adaptive_profile_strategy_matches_decision_output() {
         let txs = (0..64)
-            .map(|i| tx(
-                i as u64,
-                vec![o((i % 8) as u64), o(((i + 1) % 8) as u64)],
-                vec![o((i % 8) as u64)],
-            ))
+            .map(|i| {
+                tx(
+                    i as u64,
+                    vec![o((i % 8) as u64), o(((i + 1) % 8) as u64)],
+                    vec![o((i % 8) as u64)],
+                )
+            })
             .collect::<Vec<_>>();
 
         let decision = auto_adaptive_decision(&txs);
@@ -2027,7 +2035,29 @@ mod tests {
         let (original_groups, original_profile) =
             build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::Original);
 
-        assert_profiles_match(&default_groups, &default_profile, &original_groups, &original_profile);
+        assert_profiles_match(
+            &default_groups,
+            &default_profile,
+            &original_groups,
+            &original_profile,
+        );
+    }
+
+    #[test]
+    fn resolve_grouping_strategy_maps_auto_adaptive_to_hot_bucket_on_hotspot_workloads() {
+        let txs = (0..1_024)
+            .map(|i| tx(i as u64, vec![o(0)], vec![o(0)]))
+            .collect::<Vec<_>>();
+
+        assert!(auto_adaptive_decision(&txs).use_hot_bucket);
+        assert!(matches!(
+            resolve_grouping_strategy(&txs, GroupingStrategy::AutoAdaptive),
+            GroupingStrategy::HotBucketInterleave
+        ));
+        assert!(matches!(
+            resolve_grouping_strategy(&txs, GroupingStrategy::Original),
+            GroupingStrategy::Original
+        ));
     }
 
     fn assert_profiles_match(
@@ -2055,7 +2085,9 @@ mod tests {
         assert_eq!(left_profile.stage_rw_checks, right_profile.stage_rw_checks);
         assert_eq!(left_profile.stage_rw_hits, right_profile.stage_rw_hits);
         assert!((left_profile.avg_group_size - right_profile.avg_group_size).abs() < f64::EPSILON);
-        assert!((left_profile.hot_object_share - right_profile.hot_object_share).abs() < f64::EPSILON);
+        assert!(
+            (left_profile.hot_object_share - right_profile.hot_object_share).abs() < f64::EPSILON
+        );
     }
 
     struct EnvGuard {
