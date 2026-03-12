@@ -63,7 +63,7 @@ normalize_status() {
   local cleaned
   cleaned=$(printf "%s" "$raw" \
     | tr '[:upper:]' '[:lower:]' \
-    | sed -E "s/^[[:space:]\"'\0`]+//; s/[[:space:]\"'\0`[:punct:]]+$//")
+    | sed -E 's/^[[:space:]"'"'"'`]+//; s/[[:space:]"'"'"'`[:punct:]]+$//')
 
   case "$cleaned" in
     pending|submitted|accepted|queued|broadcast|broadcasted)
