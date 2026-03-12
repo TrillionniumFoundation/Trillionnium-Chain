@@ -99,13 +99,14 @@ def rows_within_lookback(
         if not isinstance(obj, dict):
             continue
         ts = obj.get(timestamp_field, "")
-        in_window = True
+        in_window = False
         if isinstance(ts, str) and ts:
             try:
                 t = dt.datetime.fromisoformat(ts.replace("Z", "+00:00"))
-                in_window = cutoff <= t <= now_dt
+                if t.tzinfo is not None:
+                    in_window = cutoff <= t <= now_dt
             except Exception:
-                in_window = True
+                in_window = False
         if in_window:
             rows.append(obj)
     return rows
