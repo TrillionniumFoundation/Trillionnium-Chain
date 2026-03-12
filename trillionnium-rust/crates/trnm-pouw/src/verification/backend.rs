@@ -334,16 +334,15 @@ impl VkRefRegistry {
 
 impl VkRefResolver for VkRefRegistry {
     fn resolve(&self, vk_ref: &str) -> Result<ResolvedVkRef, VkRefResolutionError> {
-        let normalized = vk_ref.trim();
-        if normalized.is_empty() {
+        if vk_ref.trim().is_empty() {
             return Err(VkRefResolutionError::Missing);
         }
 
         self.entries
-            .get(normalized)
+            .get(vk_ref)
             .cloned()
             .ok_or_else(|| VkRefResolutionError::Unknown {
-                vk_ref: normalized.to_string(),
+                vk_ref: vk_ref.to_string(),
             })
     }
 }
@@ -1112,6 +1111,22 @@ mod tests {
                 backend: "zk:payload".into(),
                 reason: "invalid zk payload: unknown vk_ref 'VK://TRNM/DEV/MOCK-GROTH16/V1'"
                     .into(),
+            }
+        );
+    }
+
+    #[test]
+    fn vk_ref_registry_rejects_surrounding_whitespace_without_silent_trim() {
+        let resolver = VkRefRegistry::new();
+
+        let err = resolver
+            .resolve("  vk://trnm/dev/mock-groth16/v1  ")
+            .unwrap_err();
+
+        assert_eq!(
+            err,
+            VkRefResolutionError::Unknown {
+                vk_ref: "  vk://trnm/dev/mock-groth16/v1  ".into(),
             }
         );
     }
