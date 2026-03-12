@@ -499,6 +499,10 @@ fn infer_json_tx_status(value: &serde_json::Value) -> Option<String> {
         ["deliver_tx", "code"].as_slice(),
         ["check_tx", "code"].as_slice(),
         ["code"].as_slice(),
+        ["tx_code"].as_slice(),
+        ["transaction_code"].as_slice(),
+        ["deliver_tx_code"].as_slice(),
+        ["check_tx_code"].as_slice(),
     ] {
         if let Some(code) = json_u64_at_path(value, path) {
             return Some(if code == 0 { "committed" } else { "fail" }.to_string());
@@ -1445,6 +1449,30 @@ mod tests {
             parse_tx_query_response(json_nested_string_code, "0xfallback").unwrap();
         assert_eq!(parsed_nested_string_code.tx_hash, "0x704");
         assert_eq!(parsed_nested_string_code.status, "fail");
+
+        let json_tx_code = "{\"tx_hash\":\"0x7041\",\"tx_code\":0}";
+        let parsed_json_tx_code = parse_tx_query_response(json_tx_code, "0xfallback").unwrap();
+        assert_eq!(parsed_json_tx_code.tx_hash, "0x7041");
+        assert_eq!(parsed_json_tx_code.status, "committed");
+
+        let json_transaction_code = "{\"transactionHash\":\"0x7042\",\"transaction_code\":7}";
+        let parsed_json_transaction_code =
+            parse_tx_query_response(json_transaction_code, "0xfallback").unwrap();
+        assert_eq!(parsed_json_transaction_code.tx_hash, "0x7042");
+        assert_eq!(parsed_json_transaction_code.status, "fail");
+
+        let json_deliver_tx_code = "{\"result\":{\"tx_hash\":\"0x7043\",\"deliver_tx_code\":\"0\"}}";
+        let parsed_json_deliver_tx_code =
+            parse_tx_query_response(json_deliver_tx_code, "0xfallback").unwrap();
+        assert_eq!(parsed_json_deliver_tx_code.tx_hash, "0x7043");
+        assert_eq!(parsed_json_deliver_tx_code.status, "committed");
+
+        let json_check_tx_code =
+            "{\"result\":{\"tx_hash\":\"0x7044\",\"check_tx_code\":\"19\"}}";
+        let parsed_json_check_tx_code =
+            parse_tx_query_response(json_check_tx_code, "0xfallback").unwrap();
+        assert_eq!(parsed_json_check_tx_code.tx_hash, "0x7044");
+        assert_eq!(parsed_json_check_tx_code.status, "fail");
 
         let kv_root_code = "tx_hash=0x705\ncode=0\n";
         let parsed_kv_root_code = parse_tx_query_response(kv_root_code, "0xfallback").unwrap();
