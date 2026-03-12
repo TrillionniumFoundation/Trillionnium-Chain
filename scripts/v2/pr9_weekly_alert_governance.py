@@ -393,7 +393,13 @@ def main() -> int:
     prev_metrics = prev_week.get("metrics", {}) if isinstance(prev_week.get("metrics", {}), dict) else {}
     prev_topn = prev_week.get("topn", {}) if isinstance(prev_week.get("topn", {}), dict) else {}
     prev_threshold_changes = prev_week.get("threshold", {}).get("changed_keys", []) if isinstance(prev_week.get("threshold", {}), dict) else []
-    prev_threshold_keys = {x.get("key") for x in prev_threshold_changes if isinstance(x, dict) and x.get("key")}
+    prev_threshold_keys = {
+        key
+        for x in prev_threshold_changes
+        if isinstance(x, dict)
+        for key in [x.get("key")]
+        if isinstance(key, str) and key
+    }
 
     has_prev = bool(prev_week_json_path and prev_metrics)
     prev_total = non_negative_int(prev_metrics.get("alerts_total", 0)) if has_prev else 0
