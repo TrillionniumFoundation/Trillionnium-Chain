@@ -4126,6 +4126,17 @@ mod tests {
     }
 
     #[test]
+    fn clamp_limit_query_request_full_uses_default_when_zero() {
+        let got = clamp_limit(
+            "QueryRequestFull",
+            0,
+            QUERY_FULL_LIMIT_DEFAULT,
+            QUERY_FULL_LIMIT_MAX,
+        );
+        assert_eq!(got, QUERY_FULL_LIMIT_DEFAULT);
+    }
+
+    #[test]
     fn clamp_limit_query_challenge_treasury_enforces_max() {
         let got = clamp_limit(
             "QueryChallengeTreasury",
@@ -4134,6 +4145,17 @@ mod tests {
             CHALLENGE_TREASURY_EVENTS_LIMIT_MAX,
         );
         assert_eq!(got, CHALLENGE_TREASURY_EVENTS_LIMIT_MAX);
+    }
+
+    #[test]
+    fn clamp_limit_query_challenge_treasury_uses_default_when_zero() {
+        let got = clamp_limit(
+            "QueryChallengeTreasury",
+            0,
+            CHALLENGE_TREASURY_EVENTS_LIMIT_DEFAULT,
+            CHALLENGE_TREASURY_EVENTS_LIMIT_MAX,
+        );
+        assert_eq!(got, CHALLENGE_TREASURY_EVENTS_LIMIT_DEFAULT);
     }
 
     #[test]
