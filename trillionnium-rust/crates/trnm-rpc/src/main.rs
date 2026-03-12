@@ -653,21 +653,30 @@ fn load_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
     let mut sources = BTreeSet::<PathBuf>::new();
 
     if let Some(manifest_path) = normalized_path_from_env(NODE_EVENT_LOG_MANIFEST_ENV) {
-        if let Ok(raw) = fs::read_to_string(&manifest_path) {
-            let manifest_dir = manifest_path.parent().unwrap_or_else(|| Path::new("."));
-            for line in raw.lines() {
-                let trimmed = line.trim();
-                if trimmed.is_empty() || trimmed.starts_with('#') {
-                    continue;
-                }
-                let path = PathBuf::from(trimmed);
-                let resolved = if path.is_absolute() {
-                    path
-                } else {
-                    manifest_dir.join(path)
-                };
-                if let Some(resolved) = resolve_bounded_node_event_log_source(root, resolved) {
-                    sources.insert(resolved);
+        let resolved_manifest_path = if manifest_path.is_absolute() {
+            manifest_path
+        } else {
+            root.join(manifest_path)
+        };
+        if let Some(manifest_path) =
+            resolve_bounded_node_event_log_source(root, resolved_manifest_path)
+        {
+            if let Ok(raw) = fs::read_to_string(&manifest_path) {
+                let manifest_dir = manifest_path.parent().unwrap_or_else(|| Path::new("."));
+                for line in raw.lines() {
+                    let trimmed = line.trim();
+                    if trimmed.is_empty() || trimmed.starts_with('#') {
+                        continue;
+                    }
+                    let path = PathBuf::from(trimmed);
+                    let resolved = if path.is_absolute() {
+                        path
+                    } else {
+                        manifest_dir.join(path)
+                    };
+                    if let Some(resolved) = resolve_bounded_node_event_log_source(root, resolved) {
+                        sources.insert(resolved);
+                    }
                 }
             }
         }
@@ -6801,7 +6810,8 @@ line2
         }
 
         let canonical_env_log = fs::canonicalize(&env_log).expect("canonical env log");
-        let canonical_manifest_log = fs::canonicalize(&manifest_log).expect("canonical manifest log");
+        let canonical_manifest_log =
+            fs::canonicalize(&manifest_log).expect("canonical manifest log");
         assert!(got.contains(&canonical_env_log));
         assert!(got.contains(&canonical_manifest_log));
         assert_eq!(got.len(), 2, "custom sources should replace defaults");
@@ -6889,8 +6899,15 @@ line2
             None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
         }
 
-        assert_eq!(got.len(), 1, "alias paths to the same log must collapse to one bounded source");
-        assert_eq!(got[0], fs::canonicalize(&shared_log).expect("canonical shared log"));
+        assert_eq!(
+            got.len(),
+            1,
+            "alias paths to the same log must collapse to one bounded source"
+        );
+        assert_eq!(
+            got[0],
+            fs::canonicalize(&shared_log).expect("canonical shared log")
+        );
 
         let _ = fs::remove_dir_all(root);
     }
@@ -6992,6 +7009,58 @@ line2
             "manifest entries outside the RPC root must be ignored so event scans stay bounded"
         );
         assert_eq!(got.len(), 1);
+
+        let _ = fs::remove_dir_all(root);
+        let _ = fs::remove_dir_all(outside_dir);
+    }
+
+    #[test]
+    fn load_node_event_log_sources_rejects_manifest_path_outside_root_fail_closed() {
+        let _guard = lock_env();
+        let root = unique_tmp_path("trnm-rpc-log-sources-manifest-path-root", "dir");
+        let run_dir = root.join("run");
+        let outside_dir = unique_tmp_path("trnm-rpc-log-sources-manifest-path-outside", "dir");
+        fs::create_dir_all(&run_dir).expect("create run dir");
+        fs::create_dir_all(&outside_dir).expect("create outside dir");
+
+        let inside_log = run_dir.join("inside.log");
+        let outside_log = outside_dir.join("outside.log");
+        let outside_manifest = outside_dir.join("sources.txt");
+        fs::write(&inside_log, "").expect("write inside log");
+        fs::write(&outside_log, "").expect("write outside log");
+        fs::write(&outside_manifest, format!("{}\n", outside_log.display()))
+            .expect("write outside manifest");
+
+        let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+        let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+        unsafe {
+            std::env::set_var(
+                NODE_EVENT_LOG_SOURCES_ENV,
+                inside_log.to_string_lossy().to_string(),
+            );
+            std::env::set_var(
+                NODE_EVENT_LOG_MANIFEST_ENV,
+                outside_manifest.to_string_lossy().to_string(),
+            );
+        }
+
+        let got = load_node_event_log_sources(&root);
+
+        match prev_sources {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+        }
+        match prev_manifest {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+        }
+
+        let canonical_inside_log = fs::canonicalize(&inside_log).expect("canonical inside log");
+        assert_eq!(got, vec![canonical_inside_log]);
+        assert!(
+            !got.contains(&outside_log),
+            "manifest path outside the RPC root must be ignored before reading any entries"
+        );
 
         let _ = fs::remove_dir_all(root);
         let _ = fs::remove_dir_all(outside_dir);
