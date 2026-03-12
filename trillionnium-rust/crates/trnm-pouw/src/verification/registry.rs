@@ -916,6 +916,23 @@ mod tests {
 
     #[cfg(feature = "real-zk-backend")]
     #[test]
+    fn registry_zk_vector_fixture_file_routes_mixed_case_empty_string_backend_version_real_backend_id_when_feature_enabled() {
+        let registry = registry_with_feature_on_fixture_bridge_backend();
+        let mut task = task_with_proof_type(ProofType::Zk);
+        task.status = TaskStatus::Committed;
+        task.worker = Some("worker-zk".into());
+        task.result_hash = Some([0x11; 32]);
+
+        let payload = format!(
+            "ZK:{}",
+            include_str!("../../fixtures/zk/real_backend_bridge_groth16_feature_on_mixed_case_empty_string_version.json").trim()
+        );
+
+        assert_eq!(registry.verify(&task, payload.as_bytes()), VerificationResult::Valid);
+    }
+
+    #[cfg(feature = "real-zk-backend")]
+    #[test]
     fn registry_zk_vector_fixture_file_routes_mixed_case_whitespace_only_backend_version_real_backend_id_when_feature_enabled() {
         let registry = registry_with_feature_on_fixture_bridge_backend();
         let mut task = task_with_proof_type(ProofType::Zk);
@@ -926,6 +943,23 @@ mod tests {
         let payload = format!(
             "ZK:{}",
             include_str!("../../fixtures/zk/real_backend_bridge_groth16_feature_on_mixed_case_whitespace_version.json").trim()
+        );
+
+        assert_eq!(registry.verify(&task, payload.as_bytes()), VerificationResult::Valid);
+    }
+
+    #[cfg(feature = "real-zk-backend")]
+    #[test]
+    fn registry_zk_vector_fixture_file_routes_mixed_case_empty_string_backend_version_real_backend_id_for_plonk_when_feature_enabled() {
+        let registry = registry_with_feature_on_fixture_bridge_backend();
+        let mut task = task_with_proof_type(ProofType::Zk);
+        task.status = TaskStatus::Committed;
+        task.worker = Some("worker-zk".into());
+        task.result_hash = Some([0x11; 32]);
+
+        let payload = format!(
+            "ZK:{}",
+            include_str!("../../fixtures/zk/real_backend_bridge_plonk_feature_on_mixed_case_empty_string_version.json").trim()
         );
 
         assert_eq!(registry.verify(&task, payload.as_bytes()), VerificationResult::Valid);
