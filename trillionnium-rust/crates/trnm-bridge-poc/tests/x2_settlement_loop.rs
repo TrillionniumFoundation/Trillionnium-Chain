@@ -165,6 +165,62 @@ fn x3_prep_degraded_heartbeat_takes_precedence_over_timeout_confirm_failure() {
 }
 
 #[test]
+fn x3_prep_degraded_heartbeat_without_revert_capability_fails_closed_without_state_change() {
+    let mut request = SettlementRequest::new(1, "0xdegraded-unauthorized".to_string());
+    let token = CapabilityToken {
+        subject: "did:trn:settlement-operator".to_string(),
+        capabilities: vec![SettlementCapability::Finalize],
+    };
+
+    let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 2));
+    let _ = monitor.record_failure("target relay timeout #1");
+    let degraded = monitor.record_failure("target relay timeout #2");
+
+    let err = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &degraded,
+        SettlementConfirm::Confirmed { height: 412 },
+    )
+    .unwrap_err();
+
+    assert_eq!(
+        err,
+        trnm_bridge_poc::bridge_status::SettlementError::Unauthorized {
+            subject: "did:trn:settlement-operator".to_string(),
+            action: "revert",
+        }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Pending);
+}
+
+#[test]
+fn x3_prep_degraded_heartbeat_with_non_canonical_tx_hash_fails_closed_without_state_change() {
+    let mut request = SettlementRequest::new(1, "0xabc\u{200B}def".to_string());
+    let token = operator_token();
+
+    let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 2));
+    let _ = monitor.record_failure("target relay timeout #1");
+    let degraded = monitor.record_failure("target relay timeout #2");
+
+    let err = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &degraded,
+        SettlementConfirm::Confirmed { height: 413 },
+    )
+    .unwrap_err();
+
+    assert_eq!(
+        err,
+        trnm_bridge_poc::bridge_status::SettlementError::MalformedRequest {
+            reason: "non-canonical tx_hash",
+        }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Pending);
+}
+
+#[test]
 fn x3_prep_duplicate_confirm_after_finalize_is_rejected_without_state_change() {
     let mut request = SettlementRequest::new(1, "0xdup00f".to_string());
     let token = operator_token();
