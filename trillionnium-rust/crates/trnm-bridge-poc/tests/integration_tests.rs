@@ -190,6 +190,48 @@ fn test_authorized_revert_normalizes_hangul_fillers_for_replay_stability() {
 }
 
 #[test]
+fn test_authorized_revert_normalizes_variation_selectors_and_plane14_tags_for_replay_stability() {
+    let mut request = SettlementRequest::new(1, "0xbbc2b".to_string());
+    let token = CapabilityToken {
+        subject: "did:trn:worker-b".to_string(),
+        capabilities: vec![SettlementCapability::Revert],
+    };
+
+    request
+        .revert_authorized(
+            &token,
+            "target\u{FE0F}receipt\u{E0100}timeout\u{E0101}signal".to_string(),
+        )
+        .unwrap();
+
+    assert_eq!(
+        request.status,
+        BridgeStatus::Reverted("target receipt timeout signal".to_string())
+    );
+}
+
+#[test]
+fn test_authorized_revert_normalizes_legacy_bidi_isolates_for_replay_stability() {
+    let mut request = SettlementRequest::new(1, "0xbbc2c".to_string());
+    let token = CapabilityToken {
+        subject: "did:trn:worker-b".to_string(),
+        capabilities: vec![SettlementCapability::Revert],
+    };
+
+    request
+        .revert_authorized(
+            &token,
+            "target\u{206A}receipt\u{206B}timeout\u{206C}signal\u{206D}\u{206E}\u{206F}".to_string(),
+        )
+        .unwrap();
+
+    assert_eq!(
+        request.status,
+        BridgeStatus::Reverted("target receipt timeout signal".to_string())
+    );
+}
+
+#[test]
 fn test_authorized_revert_rejects_missing_capability() {
     let mut request = SettlementRequest::new(1, "0xbbd".to_string());
     let token = CapabilityToken {
