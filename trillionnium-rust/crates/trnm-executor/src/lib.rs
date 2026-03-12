@@ -2495,6 +2495,29 @@ mod tests {
     }
 
     #[test]
+    fn auto_adaptive_sampling_includes_batch_tail_for_read_only_hotspot_estimate() {
+        let _env = env_lock();
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.0");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.0007");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.0");
+
+        // Keep the read-only counterpart to the endpoint-inclusive sampling
+        // regression so adaptive tuning does not lose tail visibility when the
+        // detector falls back from write_set to read_set keys.
+        let mut txs = Vec::with_capacity(3000);
+        txs.push(tx(1, vec![o(777)], vec![]));
+        for i in 1..2999u64 {
+            txs.push(tx(10_000 + i, vec![o(20_000 + i)], vec![]));
+        }
+        txs.push(tx(9_999, vec![o(777)], vec![]));
+
+        let d = auto_adaptive_decision(&txs);
+        assert!(d.use_hot_bucket, "read-only tail hotspot should be counted in sample");
+        assert_eq!(d.reason, "hotspot_detected");
+    }
+
+    #[test]
     fn auto_adaptive_expected_gain_gate_blocks_low_value_hotspot_switches() {
         let _env = env_lock();
         let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.0");
