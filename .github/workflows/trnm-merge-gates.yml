@@ -338,7 +338,7 @@ jobs:
           AGGRESSIVE_MAX_RATIO_HOT_STREAK=${AGGRESSIVE_MAX_RATIO_HOT_STREAK:-3.75} \
           ./scripts/check_aggressive_regression.sh 2>&1 | tee "$REPORT"
           rc=${PIPESTATUS[0]}
-          set -e
+          set -euo pipefail
 
           python3 scripts/summarize_aggressive_profile.py
           python3 scripts/analyze_aggressive_scan_correlation.py

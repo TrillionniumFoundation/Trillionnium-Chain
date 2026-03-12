@@ -48,9 +48,26 @@ required_lines=(
   'export RUST_TEST_THREADS="${RUST_TEST_THREADS:-1}"'
 )
 
+required_pipefail_lines=(
+  'set -euo pipefail'
+)
+
 for line in "${required_lines[@]}"; do
   if ! grep -Fq -- "$line" "$WF"; then
     echo "[FAIL] missing deterministic merge-gates guard: $line" >&2
+    exit 1
+  fi
+done
+
+pipefail_count=$(grep -Fc -- 'set -euo pipefail' "$WF" || true)
+if [[ "$pipefail_count" -lt 30 ]]; then
+  echo "[FAIL] expected broad pipefail coverage in merge-gates workflow, got count=$pipefail_count" >&2
+  exit 1
+fi
+
+for line in "${required_pipefail_lines[@]}"; do
+  if ! grep -Fq -- "$line" "$WF"; then
+    echo "[FAIL] missing pipefail merge-gates guard: $line" >&2
     exit 1
   fi
 done
