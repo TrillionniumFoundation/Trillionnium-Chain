@@ -799,6 +799,80 @@ fn restore_balance_none_rewinds_state_root_after_removing_existing_treasury_entr
 }
 
 #[test]
+fn restore_task_none_on_mismatched_slot_keeps_canonical_task_root() {
+    let mut state = StateStore::new();
+    let task = TaskObject {
+        task_id: 10_202,
+        creator: "alice".into(),
+        bounty: 100,
+        status: TaskStatus::Open,
+        proof_type: ProofType::Fraud,
+        metadata: Some(TaskMetadata {
+            note: Some("canonical task".into()),
+            task_type: Some("inference".into()),
+            input_hash: Some("ab".repeat(32)),
+            model: Some(TaskModelMetadata {
+                model_id: Some("trnm-model-a".into()),
+                model_digest: Some("cd".repeat(32)),
+                version: Some("v1".into()),
+            }),
+            provenance: Some(TaskProvenanceMetadata {
+                producer_did: Some("did:trnm:test:alice".into()),
+                produced_at: Some("2026-03-12T10:00:00Z".into()),
+                provenance_index: Some("prov-task-10202".into()),
+                privacy_tier: Some(PrivacyTier::Internal),
+            }),
+        }),
+        worker: Some("worker-a".into()),
+        committed_hash: Some([0x21; 32]),
+        result_hash: Some([0x34; 32]),
+        reveal_salt: Some([0x55; 32]),
+        committed_at_height: Some(20),
+        reveal_deadline_height: Some(30),
+        challenge_deadline_height: Some(40),
+        challenge_window_blocks_snapshot: Some(12),
+        challenged_at_height: Some(28),
+        resolve_deadline_height: Some(52),
+        challenge_bond: Some(17),
+        challenger: Some("bob".into()),
+        challenge_bond_forfeited: Some(false),
+        version: 3,
+    };
+
+    let task_ref = state.put_task_new(task).expect("task insert should succeed");
+    let canonical_root = state.state_root();
+    let snapshot = state.get_task(task_ref.id).expect("canonical task snapshot should exist");
+
+    state.restore_task(task_ref.id + 1, Some(snapshot.clone()));
+    assert!(
+        state.get_task(task_ref.id + 1).is_some(),
+        "restoring the task snapshot through a second object slot should materialize a distinct slot"
+    );
+    assert_ne!(
+        state.state_root(),
+        canonical_root,
+        "restoring an identical task snapshot through a mismatched object slot must perturb the root because the object slot id is part of state identity"
+    );
+
+    state.restore_task(task_ref.id + 1, None);
+
+    assert!(
+        state.get_task(task_ref.id).is_some(),
+        "clearing a mismatched task slot with None must preserve the canonical task slot"
+    );
+    assert_eq!(
+        state.state_root(),
+        canonical_root,
+        "clearing the extra mismatched task slot must return to the canonical deterministic task root"
+    );
+    assert_eq!(
+        state.state_root(),
+        canonical_root,
+        "repeated reads after clearing the mismatched task slot should deterministically reuse the canonical cached root"
+    );
+}
+
+#[test]
 fn restore_balance_zero_snapshot_canonicalizes_to_missing_entry_for_state_root() {
     let mut state = StateStore::new();
     let baseline_root = state.state_root();
