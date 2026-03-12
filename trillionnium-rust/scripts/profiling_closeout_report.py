@@ -121,6 +121,30 @@ def build_followup_command_chain(labels: list[str], producer_for) -> str:
     return " && ".join(commands)
 
 
+def archive_review_command_for(label: str) -> str:
+    if label == "classic_bench_candidates":
+        return "ls -1t run/bench/bench-matrix-*.txt | sed -n '3,$p'"
+    if label == "mixed_bench_candidates":
+        return "ls -1t run/bench/bench-mixed-matrix-*.txt | sed -n '3,$p'"
+    if label == "executor_profile_candidates":
+        return "ls -1t run/bench/executor-profile-summary-*.txt | sed -n '3,$p'"
+    if label == "baseline_closeout_report_candidates":
+        return "ls -1t docs/reports/profiling-closeout-baseline-*.md | sed -n '3,$p'"
+    return "unknown"
+
+
+def build_archive_review_command_chain(labels: list[str]) -> str:
+    commands = []
+    for label in labels:
+        command = archive_review_command_for(label)
+        if command != "unknown":
+            commands.append(command)
+    commands = dedupe_preserve_order(commands)
+    if not commands:
+        return "none"
+    return " && ".join(commands)
+
+
 def benchmark_capture_cohesion(paths: list[str | None]) -> tuple[str, int | None]:
     mtimes = [os.path.getmtime(path) for path in paths if path and os.path.exists(path)]
     if len(mtimes) < 2:
@@ -825,6 +849,12 @@ def main():
             else "review_archive_candidates_before_manual_cleanup"
         )
     )
+    lines.append(
+        "- benchmark_archive_review_command_chain: "
+        + build_archive_review_command_chain(
+            [label for label, count in archive_candidate_counts.items() if count > 0]
+        )
+    )
 
     lines += ["", "## Baseline Report Pool Health"]
     lines.append(candidate_pool_health_line(baseline_report_pool))
@@ -880,6 +910,14 @@ def main():
     )
     lines.append(
         f"- baseline_closeout_report_followup_command_chain: {baseline_followup_command_chain}"
+    )
+    lines.append(
+        "- baseline_closeout_report_archive_review_command_chain: "
+        + (
+            build_archive_review_command_chain(["baseline_closeout_report_candidates"])
+            if baseline_report_archive_candidates
+            else "none"
+        )
     )
     lines.append(f"- baseline_closeout_report_followup: {baseline_report_followup}")
 
