@@ -61,7 +61,7 @@
 - **CI/门禁命令**：记录本轮执行的最小命令（含退出码）。建议统一加 deterministic 前缀：`env TZ=UTC LC_ALL=C LANG=C SOURCE_DATE_EPOCH=1704067200`。
   - Rust 侧示例：`env TZ=UTC LC_ALL=C LANG=C SOURCE_DATE_EPOCH=1704067200 cargo test -p trnm-rpc --test reliability_persistent_smoke -- --nocapture`
 - **确定性复跑**：同一 gate 至少连续执行 2 次（命令与环境完全一致）并记录结果，避免一次性绿灯掩盖 flaky。
-- **回放证据**：记录输入快照与输出摘要路径（例如 `run/local-release-evidence/` 下产物），并附 `date -u +"%Y-%m-%dT%H:%M:%SZ"` 时间戳。
+- **回放证据**：记录输入快照与输出摘要路径（例如 `trillionnium-rust/run/health/evidence-<timestamp>/` 下产物），并附 `date -u +"%Y-%m-%dT%H:%M:%SZ"` 时间戳。
 - **复放命令来源**：若使用 `run_local_release_evidence.sh` 生成证据，优先直接引用 `summary.txt` 中生成的 `replay_command=` 字段，不要手工重写为缺少 deterministic 前缀或缺少 `TRNM_CHALLENGE_REEXEC_ENTRY` 固定值的裸命令。
 - **环境字段判读**：`summary.txt` 中的 `env_*` 表示本次实际执行时生效的环境，可能保留调用者外层 shell 的预设值；`replay_env_*` 才是用于二次复放/审计引用的确定性基线。需要复跑或在文档中引用命令时，应优先采用 `replay_env_*` 与 `replay_command=`，不要把一次性本地继承环境当作统一发布口径。
 - **回滚命令**：每轮必须给出单行回滚命令（例如 `git revert <commit>` 或文档改动的 `git checkout -- <file>`）。
