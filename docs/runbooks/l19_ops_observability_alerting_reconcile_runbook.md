@@ -228,10 +228,10 @@ python3 ./scripts/v2/pr9_weekly_alert_governance.py
 - 若当前 JSON 与最新历史快照完全相同：跳过新的 history snapshot，仅刷新当前周 `.md/.json`
 
 ### Triage fields
-- `summary.alerts_sent` / `summary.alerts_suppressed` / `summary.alerts_failed`
-- `dead_letter.count`
+- `metrics.alerts_sent` / `metrics.alerts_suppressed` / `metrics.alerts_failed`
+- `metrics.dead_letter_entries`
 - `degraded.*`
-- `diff.week_over_week.*`
+- `week_over_week.*`
 
 ---
 
