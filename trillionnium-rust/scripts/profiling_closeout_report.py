@@ -321,9 +321,20 @@ def main():
             preview.append(f"  - remaining_candidates: {len(candidates) - max_items}")
         return preview
 
-    def candidate_pool_health(label: str, selected: str | None, candidates: list[str]) -> str:
+    def candidate_pool_health_struct(label: str, selected: str | None, candidates: list[str]) -> dict[str, str | int]:
         if not candidates:
-            return f"- {label}: status=empty selected={selected or 'None'} candidate_count=0 action=produce"
+            return {
+                "label": label,
+                "status": "empty",
+                "action": "produce",
+                "selected": selected or "None",
+                "selected_freshness": "missing",
+                "candidate_count": 0,
+                "fresh": 0,
+                "stale": 0,
+                "old": 0,
+                "old_backlog": 0,
+            }
         freshness_counts = {"fresh": 0, "stale": 0, "old": 0}
         for path in candidates:
             freshness_counts[freshness_label(file_age_seconds(path))] += 1
@@ -341,10 +352,24 @@ def main():
         else:
             status = "tight"
             action = "keep_latest"
+        return {
+            "label": label,
+            "status": status,
+            "action": action,
+            "selected": os.path.basename(selected) if selected else "None",
+            "selected_freshness": selected_freshness,
+            "candidate_count": len(candidates),
+            "fresh": freshness_counts["fresh"],
+            "stale": freshness_counts["stale"],
+            "old": freshness_counts["old"],
+            "old_backlog": old_backlog,
+        }
+
+    def candidate_pool_health_line(pool: dict[str, str | int]) -> str:
         return (
-            f"- {label}: status={status} action={action} selected={os.path.basename(selected) if selected else 'None'} "
-            f"selected_freshness={selected_freshness} candidate_count={len(candidates)} fresh={freshness_counts['fresh']} "
-            f"stale={freshness_counts['stale']} old={freshness_counts['old']}"
+            f"- {pool['label']}: status={pool['status']} action={pool['action']} selected={pool['selected']} "
+            f"selected_freshness={pool['selected_freshness']} candidate_count={pool['candidate_count']} fresh={pool['fresh']} "
+            f"stale={pool['stale']} old={pool['old']} old_backlog={pool['old_backlog']}"
         )
 
     def latest_benchmark_artifact():
@@ -436,10 +461,64 @@ def main():
     lines.extend(candidate_preview("mixed_bench_candidates", mixed, mixed_candidates))
     lines.extend(candidate_preview("executor_profile_candidates", executor_profile, executor_profile_candidates))
 
+    benchmark_pools = [
+        candidate_pool_health_struct("classic_bench_candidates", classic, classic_candidates),
+        candidate_pool_health_struct("mixed_bench_candidates", mixed, mixed_candidates),
+        candidate_pool_health_struct("executor_profile_candidates", executor_profile, executor_profile_candidates),
+    ]
+
     lines += ["", "## Benchmark Artifact Pool Health"]
-    lines.append(candidate_pool_health("classic_bench_candidates", classic, classic_candidates))
-    lines.append(candidate_pool_health("mixed_bench_candidates", mixed, mixed_candidates))
-    lines.append(candidate_pool_health("executor_profile_candidates", executor_profile, executor_profile_candidates))
+    for pool in benchmark_pools:
+        lines.append(candidate_pool_health_line(pool))
+
+    pool_status_counts = {
+        "empty": sum(1 for pool in benchmark_pools if pool["status"] == "empty"),
+        "refresh_required": sum(1 for pool in benchmark_pools if pool["status"] == "refresh_required"),
+        "backlog_present": sum(1 for pool in benchmark_pools if pool["status"] == "backlog_present"),
+        "backlog_heavy": sum(1 for pool in benchmark_pools if pool["status"] == "backlog_heavy"),
+        "tight": sum(1 for pool in benchmark_pools if pool["status"] == "tight"),
+    }
+    pool_action_counts = {
+        "produce": sum(1 for pool in benchmark_pools if pool["action"] == "produce"),
+        "refresh": sum(1 for pool in benchmark_pools if pool["action"] == "refresh"),
+        "keep_latest": sum(1 for pool in benchmark_pools if pool["action"] == "keep_latest"),
+        "keep_latest_and_consider_archive": sum(
+            1 for pool in benchmark_pools if pool["action"] == "keep_latest_and_consider_archive"
+        ),
+    }
+    pool_attention = [
+        f"{pool['label']}:{pool['status']}:{pool['action']}"
+        for pool in benchmark_pools
+        if pool["status"] in {"empty", "refresh_required", "backlog_present", "backlog_heavy"}
+    ]
+    pool_followup_labels = []
+    for pool in benchmark_pools:
+        if pool["action"] == "produce":
+            pool_followup_labels.append(str(pool["label"]).replace("_candidates", ""))
+        elif pool["action"] == "refresh":
+            pool_followup_labels.append(str(pool["label"]).replace("_candidates", ""))
+    if any(pool["action"] == "keep_latest_and_consider_archive" for pool in benchmark_pools):
+        pool_followup_labels.append("bench_dir")
+
+    lines += ["", "## Benchmark Pool Action Summary"]
+    lines.append(
+        "- benchmark_pool_status_counts: "
+        f"empty={pool_status_counts['empty']} refresh_required={pool_status_counts['refresh_required']} "
+        f"backlog_present={pool_status_counts['backlog_present']} backlog_heavy={pool_status_counts['backlog_heavy']} "
+        f"tight={pool_status_counts['tight']}"
+    )
+    lines.append(
+        "- benchmark_pool_action_counts: "
+        f"produce={pool_action_counts['produce']} refresh={pool_action_counts['refresh']} "
+        f"keep_latest={pool_action_counts['keep_latest']} "
+        f"keep_latest_and_consider_archive={pool_action_counts['keep_latest_and_consider_archive']}"
+    )
+    lines.append(
+        f"- benchmark_pool_attention: {', '.join(pool_attention) if pool_attention else 'none'}"
+    )
+    lines.append(
+        f"- benchmark_pool_followup_command_chain: {build_followup_command_chain(pool_followup_labels, recommended_producer)}"
+    )
 
     lines += ["", "## Data Completeness"]
     lines.append(
