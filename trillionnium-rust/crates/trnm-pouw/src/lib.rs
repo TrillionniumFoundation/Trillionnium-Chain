@@ -10832,6 +10832,21 @@ mod tests {
     }
 
     #[test]
+    fn unresolved_challenge_slash_on_timeout_defaults_false_when_param_absent() {
+        let st = seeded_state();
+        assert_eq!(unresolved_challenge_slash_on_timeout(&st).unwrap(), false);
+    }
+
+    #[test]
+    fn parse_governed_bool_param_rejects_blank_governance_value_fail_closed() {
+        let err = parse_governed_bool_param("", "default_slash_on_unresolved_challenge")
+            .expect_err("blank timeout-slash governance value must be rejected");
+        assert!(matches!(err, PouwError::State(msg) if msg.contains(
+            "invalid boolean governance value for default_slash_on_unresolved_challenge"
+        )));
+    }
+
+    #[test]
     fn slashed_terminal_settlement_without_explicit_bounty_payout_only_credits_global_slash_treasury(
     ) {
         let mut st = seeded_state();
