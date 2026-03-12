@@ -2273,13 +2273,172 @@ impl VerifierHttpClientSessionProtocolChunkAckPolicy
 }
 
 #[allow(dead_code)]
-struct FailClosedVerifierHttpClientSessionProtocolChunkRetransmitExchange;
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct VerifierHttpClientSessionProtocolChunkRetransmitBudgetRequest {
+    method: HttpMethod,
+    url: String,
+    headers: BTreeMap<String, String>,
+    frames: Vec<Vec<u8>>,
+    window_start_sequence: u64,
+    window_frame_count: usize,
+    expected_ack_sequence: u64,
+    retransmit_budget: usize,
+    timeout_ms: u64,
+    profile: String,
+    transport_mode: VerifierTransportMode,
+}
 
-impl VerifierHttpClientSessionProtocolChunkRetransmitExchange
-    for FailClosedVerifierHttpClientSessionProtocolChunkRetransmitExchange
-{
-    fn exchange_retransmit(
+#[allow(dead_code)]
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct VerifierHttpClientSessionProtocolChunkRetransmitBudgetResponse {
+    status_code: u16,
+    headers: BTreeMap<String, String>,
+    frames: Vec<Vec<u8>>,
+    window_start_sequence: u64,
+    window_frame_count: usize,
+    acked_through_sequence: u64,
+    retransmit_count: usize,
+    budget_remaining: usize,
+}
+
+#[allow(dead_code)]
+trait VerifierHttpClientSessionProtocolChunkRetransmitBudgetPlanner: Send + Sync {
+    fn plan_retransmit_budget(
         &self,
+        ack_request: &VerifierHttpClientSessionProtocolChunkAckRequest,
+        window_request: &VerifierHttpClientSessionProtocolChunkSequenceWindowRequest,
+        frames_request: &VerifierHttpClientSessionProtocolChunkFramesRequest,
+        chunked_request: &VerifierHttpClientSessionProtocolByteChunksRequest,
+        framed_request: &VerifierHttpClientSessionProtocolByteStreamFrameRequest,
+        bytes_request: &VerifierHttpClientSessionProtocolBytesRequest,
+        protocol_request: &VerifierHttpClientSessionProtocolRequest,
+        frame_request: &VerifierHttpClientSessionFrameRequest,
+        connection_config: &ResolvedVerifierHttpClientSessionSocketConnectionConfig,
+        socket_request: &VerifierHttpClientSessionSocketRequest,
+        transport_request: &VerifierHttpClientSessionTransportRequest,
+        call_request: &VerifierHttpClientSessionCallRequest,
+        wire_request: &VerifierHttpClientSessionWireRequest,
+        session_request: &VerifierHttpClientSessionRequest,
+        session_config: &ResolvedVerifierHttpClientSessionConfig,
+        runtime_request: &VerifierHttpClientRuntimeRequest,
+        config: &ResolvedVerifierHttpClientConfig,
+        client_request: &VerifierHttpClientRequest,
+        http_request: &HttpVerifierRequest,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<VerifierHttpClientSessionProtocolChunkRetransmitBudgetRequest, BackendExecutionError>;
+}
+
+#[allow(dead_code)]
+trait VerifierHttpClientSessionProtocolChunkRetransmitBudgetExchange: Send + Sync {
+    fn exchange_retransmit_budget(
+        &self,
+        budget_request: &VerifierHttpClientSessionProtocolChunkRetransmitBudgetRequest,
+        ack_request: &VerifierHttpClientSessionProtocolChunkAckRequest,
+        window_request: &VerifierHttpClientSessionProtocolChunkSequenceWindowRequest,
+        frames_request: &VerifierHttpClientSessionProtocolChunkFramesRequest,
+        chunked_request: &VerifierHttpClientSessionProtocolByteChunksRequest,
+        framed_request: &VerifierHttpClientSessionProtocolByteStreamFrameRequest,
+        bytes_request: &VerifierHttpClientSessionProtocolBytesRequest,
+        protocol_request: &VerifierHttpClientSessionProtocolRequest,
+        frame_request: &VerifierHttpClientSessionFrameRequest,
+        connection_config: &ResolvedVerifierHttpClientSessionSocketConnectionConfig,
+        socket_request: &VerifierHttpClientSessionSocketRequest,
+        transport_request: &VerifierHttpClientSessionTransportRequest,
+        call_request: &VerifierHttpClientSessionCallRequest,
+        wire_request: &VerifierHttpClientSessionWireRequest,
+        session_request: &VerifierHttpClientSessionRequest,
+        session_config: &ResolvedVerifierHttpClientSessionConfig,
+        runtime_request: &VerifierHttpClientRuntimeRequest,
+        config: &ResolvedVerifierHttpClientConfig,
+        client_request: &VerifierHttpClientRequest,
+        http_request: &HttpVerifierRequest,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<VerifierHttpClientSessionProtocolChunkRetransmitBudgetResponse, BackendExecutionError>;
+}
+
+#[allow(dead_code)]
+trait VerifierHttpClientSessionProtocolChunkAckSettlementValidator: Send + Sync {
+    fn validate_ack_settlement(
+        &self,
+        budget_response: VerifierHttpClientSessionProtocolChunkRetransmitBudgetResponse,
+        budget_request: &VerifierHttpClientSessionProtocolChunkRetransmitBudgetRequest,
+        ack_request: &VerifierHttpClientSessionProtocolChunkAckRequest,
+        window_request: &VerifierHttpClientSessionProtocolChunkSequenceWindowRequest,
+        frames_request: &VerifierHttpClientSessionProtocolChunkFramesRequest,
+        chunked_request: &VerifierHttpClientSessionProtocolByteChunksRequest,
+        framed_request: &VerifierHttpClientSessionProtocolByteStreamFrameRequest,
+        bytes_request: &VerifierHttpClientSessionProtocolBytesRequest,
+        protocol_request: &VerifierHttpClientSessionProtocolRequest,
+        frame_request: &VerifierHttpClientSessionFrameRequest,
+        connection_config: &ResolvedVerifierHttpClientSessionSocketConnectionConfig,
+        socket_request: &VerifierHttpClientSessionSocketRequest,
+        transport_request: &VerifierHttpClientSessionTransportRequest,
+        call_request: &VerifierHttpClientSessionCallRequest,
+        wire_request: &VerifierHttpClientSessionWireRequest,
+        session_request: &VerifierHttpClientSessionRequest,
+        session_config: &ResolvedVerifierHttpClientSessionConfig,
+        runtime_request: &VerifierHttpClientRuntimeRequest,
+        config: &ResolvedVerifierHttpClientConfig,
+        client_request: &VerifierHttpClientRequest,
+        http_request: &HttpVerifierRequest,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<VerifierHttpClientSessionProtocolChunkAckResponse, BackendExecutionError>;
+}
+
+#[allow(dead_code)]
+struct DirectVerifierHttpClientSessionProtocolChunkRetransmitBudgetPlanner;
+
+impl VerifierHttpClientSessionProtocolChunkRetransmitBudgetPlanner
+    for DirectVerifierHttpClientSessionProtocolChunkRetransmitBudgetPlanner
+{
+    fn plan_retransmit_budget(
+        &self,
+        ack_request: &VerifierHttpClientSessionProtocolChunkAckRequest,
+        _window_request: &VerifierHttpClientSessionProtocolChunkSequenceWindowRequest,
+        _frames_request: &VerifierHttpClientSessionProtocolChunkFramesRequest,
+        _chunked_request: &VerifierHttpClientSessionProtocolByteChunksRequest,
+        _framed_request: &VerifierHttpClientSessionProtocolByteStreamFrameRequest,
+        _bytes_request: &VerifierHttpClientSessionProtocolBytesRequest,
+        _protocol_request: &VerifierHttpClientSessionProtocolRequest,
+        _frame_request: &VerifierHttpClientSessionFrameRequest,
+        _connection_config: &ResolvedVerifierHttpClientSessionSocketConnectionConfig,
+        _socket_request: &VerifierHttpClientSessionSocketRequest,
+        _transport_request: &VerifierHttpClientSessionTransportRequest,
+        _call_request: &VerifierHttpClientSessionCallRequest,
+        _wire_request: &VerifierHttpClientSessionWireRequest,
+        _session_request: &VerifierHttpClientSessionRequest,
+        _session_config: &ResolvedVerifierHttpClientSessionConfig,
+        _runtime_request: &VerifierHttpClientRuntimeRequest,
+        _config: &ResolvedVerifierHttpClientConfig,
+        _client_request: &VerifierHttpClientRequest,
+        _http_request: &HttpVerifierRequest,
+        _request: &BackendVerificationRequest<'_>,
+    ) -> Result<VerifierHttpClientSessionProtocolChunkRetransmitBudgetRequest, BackendExecutionError> {
+        Ok(VerifierHttpClientSessionProtocolChunkRetransmitBudgetRequest {
+            method: ack_request.method,
+            url: ack_request.url.clone(),
+            headers: ack_request.headers.clone(),
+            frames: ack_request.frames.clone(),
+            window_start_sequence: ack_request.window_start_sequence,
+            window_frame_count: ack_request.window_frame_count,
+            expected_ack_sequence: ack_request.expected_ack_sequence,
+            retransmit_budget: ack_request.retransmit_budget,
+            timeout_ms: ack_request.timeout_ms,
+            profile: ack_request.profile.clone(),
+            transport_mode: ack_request.transport_mode.clone(),
+        })
+    }
+}
+
+#[allow(dead_code)]
+struct FailClosedVerifierHttpClientSessionProtocolChunkRetransmitBudgetExchange;
+
+impl VerifierHttpClientSessionProtocolChunkRetransmitBudgetExchange
+    for FailClosedVerifierHttpClientSessionProtocolChunkRetransmitBudgetExchange
+{
+    fn exchange_retransmit_budget(
+        &self,
+        _budget_request: &VerifierHttpClientSessionProtocolChunkRetransmitBudgetRequest,
         _ack_request: &VerifierHttpClientSessionProtocolChunkAckRequest,
         _window_request: &VerifierHttpClientSessionProtocolChunkSequenceWindowRequest,
         _frames_request: &VerifierHttpClientSessionProtocolChunkFramesRequest,
@@ -2300,14 +2459,190 @@ impl VerifierHttpClientSessionProtocolChunkRetransmitExchange
         _client_request: &VerifierHttpClientRequest,
         http_request: &HttpVerifierRequest,
         request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolChunkAckResponse, BackendExecutionError> {
+    ) -> Result<VerifierHttpClientSessionProtocolChunkRetransmitBudgetResponse, BackendExecutionError> {
         Err(BackendExecutionError::Unavailable {
             backend: request.backend_label(RealTeeBackend::backend_id_static()),
             reason: format!(
-                "real http client session protocol chunk retransmit exchange for profile '{}' is not wired",
+                "real http client session protocol chunk retransmit budget exchange for profile '{}' is not wired",
                 http_request.profile
             ),
         })
+    }
+}
+
+#[allow(dead_code)]
+struct PassthroughVerifierHttpClientSessionProtocolChunkAckSettlementValidator;
+
+impl VerifierHttpClientSessionProtocolChunkAckSettlementValidator
+    for PassthroughVerifierHttpClientSessionProtocolChunkAckSettlementValidator
+{
+    fn validate_ack_settlement(
+        &self,
+        budget_response: VerifierHttpClientSessionProtocolChunkRetransmitBudgetResponse,
+        _budget_request: &VerifierHttpClientSessionProtocolChunkRetransmitBudgetRequest,
+        _ack_request: &VerifierHttpClientSessionProtocolChunkAckRequest,
+        _window_request: &VerifierHttpClientSessionProtocolChunkSequenceWindowRequest,
+        _frames_request: &VerifierHttpClientSessionProtocolChunkFramesRequest,
+        _chunked_request: &VerifierHttpClientSessionProtocolByteChunksRequest,
+        _framed_request: &VerifierHttpClientSessionProtocolByteStreamFrameRequest,
+        _bytes_request: &VerifierHttpClientSessionProtocolBytesRequest,
+        _protocol_request: &VerifierHttpClientSessionProtocolRequest,
+        _frame_request: &VerifierHttpClientSessionFrameRequest,
+        _connection_config: &ResolvedVerifierHttpClientSessionSocketConnectionConfig,
+        _socket_request: &VerifierHttpClientSessionSocketRequest,
+        _transport_request: &VerifierHttpClientSessionTransportRequest,
+        _call_request: &VerifierHttpClientSessionCallRequest,
+        _wire_request: &VerifierHttpClientSessionWireRequest,
+        _session_request: &VerifierHttpClientSessionRequest,
+        _session_config: &ResolvedVerifierHttpClientSessionConfig,
+        _runtime_request: &VerifierHttpClientRuntimeRequest,
+        _config: &ResolvedVerifierHttpClientConfig,
+        _client_request: &VerifierHttpClientRequest,
+        _http_request: &HttpVerifierRequest,
+        _request: &BackendVerificationRequest<'_>,
+    ) -> Result<VerifierHttpClientSessionProtocolChunkAckResponse, BackendExecutionError> {
+        Ok(VerifierHttpClientSessionProtocolChunkAckResponse {
+            status_code: budget_response.status_code,
+            headers: budget_response.headers,
+            frames: budget_response.frames,
+            window_start_sequence: budget_response.window_start_sequence,
+            window_frame_count: budget_response.window_frame_count,
+            acked_through_sequence: budget_response.acked_through_sequence,
+            retransmit_count: budget_response.retransmit_count,
+        })
+    }
+}
+
+#[allow(dead_code)]
+struct BudgetedRetransmitBackedVerifierHttpClientSessionProtocolChunkRetransmitExchange {
+    budget_planner: Arc<dyn VerifierHttpClientSessionProtocolChunkRetransmitBudgetPlanner>,
+    budget_exchange: Arc<dyn VerifierHttpClientSessionProtocolChunkRetransmitBudgetExchange>,
+    ack_settlement_validator: Arc<dyn VerifierHttpClientSessionProtocolChunkAckSettlementValidator>,
+}
+
+#[allow(dead_code)]
+impl BudgetedRetransmitBackedVerifierHttpClientSessionProtocolChunkRetransmitExchange {
+    fn new() -> Self {
+        Self {
+            budget_planner: Arc::new(DirectVerifierHttpClientSessionProtocolChunkRetransmitBudgetPlanner),
+            budget_exchange: Arc::new(
+                FailClosedVerifierHttpClientSessionProtocolChunkRetransmitBudgetExchange,
+            ),
+            ack_settlement_validator: Arc::new(
+                PassthroughVerifierHttpClientSessionProtocolChunkAckSettlementValidator,
+            ),
+        }
+    }
+
+    #[cfg(test)]
+    fn with_components(
+        budget_planner: Arc<dyn VerifierHttpClientSessionProtocolChunkRetransmitBudgetPlanner>,
+        budget_exchange: Arc<dyn VerifierHttpClientSessionProtocolChunkRetransmitBudgetExchange>,
+        ack_settlement_validator: Arc<dyn VerifierHttpClientSessionProtocolChunkAckSettlementValidator>,
+    ) -> Self {
+        Self {
+            budget_planner,
+            budget_exchange,
+            ack_settlement_validator,
+        }
+    }
+}
+
+impl VerifierHttpClientSessionProtocolChunkRetransmitExchange
+    for BudgetedRetransmitBackedVerifierHttpClientSessionProtocolChunkRetransmitExchange
+{
+    fn exchange_retransmit(
+        &self,
+        ack_request: &VerifierHttpClientSessionProtocolChunkAckRequest,
+        window_request: &VerifierHttpClientSessionProtocolChunkSequenceWindowRequest,
+        frames_request: &VerifierHttpClientSessionProtocolChunkFramesRequest,
+        chunked_request: &VerifierHttpClientSessionProtocolByteChunksRequest,
+        framed_request: &VerifierHttpClientSessionProtocolByteStreamFrameRequest,
+        bytes_request: &VerifierHttpClientSessionProtocolBytesRequest,
+        protocol_request: &VerifierHttpClientSessionProtocolRequest,
+        frame_request: &VerifierHttpClientSessionFrameRequest,
+        connection_config: &ResolvedVerifierHttpClientSessionSocketConnectionConfig,
+        socket_request: &VerifierHttpClientSessionSocketRequest,
+        transport_request: &VerifierHttpClientSessionTransportRequest,
+        call_request: &VerifierHttpClientSessionCallRequest,
+        wire_request: &VerifierHttpClientSessionWireRequest,
+        session_request: &VerifierHttpClientSessionRequest,
+        session_config: &ResolvedVerifierHttpClientSessionConfig,
+        runtime_request: &VerifierHttpClientRuntimeRequest,
+        config: &ResolvedVerifierHttpClientConfig,
+        client_request: &VerifierHttpClientRequest,
+        http_request: &HttpVerifierRequest,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<VerifierHttpClientSessionProtocolChunkAckResponse, BackendExecutionError> {
+        let budget_request = self.budget_planner.plan_retransmit_budget(
+            ack_request,
+            window_request,
+            frames_request,
+            chunked_request,
+            framed_request,
+            bytes_request,
+            protocol_request,
+            frame_request,
+            connection_config,
+            socket_request,
+            transport_request,
+            call_request,
+            wire_request,
+            session_request,
+            session_config,
+            runtime_request,
+            config,
+            client_request,
+            http_request,
+            request,
+        )?;
+        let budget_response = self.budget_exchange.exchange_retransmit_budget(
+            &budget_request,
+            ack_request,
+            window_request,
+            frames_request,
+            chunked_request,
+            framed_request,
+            bytes_request,
+            protocol_request,
+            frame_request,
+            connection_config,
+            socket_request,
+            transport_request,
+            call_request,
+            wire_request,
+            session_request,
+            session_config,
+            runtime_request,
+            config,
+            client_request,
+            http_request,
+            request,
+        )?;
+        self.ack_settlement_validator.validate_ack_settlement(
+            budget_response,
+            &budget_request,
+            ack_request,
+            window_request,
+            frames_request,
+            chunked_request,
+            framed_request,
+            bytes_request,
+            protocol_request,
+            frame_request,
+            connection_config,
+            socket_request,
+            transport_request,
+            call_request,
+            wire_request,
+            session_request,
+            session_config,
+            runtime_request,
+            config,
+            client_request,
+            http_request,
+            request,
+        )
     }
 }
 
@@ -2364,7 +2699,7 @@ impl AckedWindowBackedVerifierHttpClientSessionProtocolChunkSequenceWindowExchan
         Self {
             ack_policy: Arc::new(DirectVerifierHttpClientSessionProtocolChunkAckPolicy),
             retransmit_exchange: Arc::new(
-                FailClosedVerifierHttpClientSessionProtocolChunkRetransmitExchange,
+                BudgetedRetransmitBackedVerifierHttpClientSessionProtocolChunkRetransmitExchange::new(),
             ),
             ack_validator: Arc::new(PassthroughVerifierHttpClientSessionProtocolChunkAckValidator),
         }
@@ -8388,6 +8723,210 @@ mod tests {
     }
 
     #[derive(Default)]
+    struct RecordingHttpClientSessionProtocolChunkRetransmitBudgetPlanner {
+        requests: Mutex<Vec<VerifierHttpClientSessionProtocolChunkRetransmitBudgetRequest>>,
+    }
+
+    impl VerifierHttpClientSessionProtocolChunkRetransmitBudgetPlanner for RecordingHttpClientSessionProtocolChunkRetransmitBudgetPlanner {
+        fn plan_retransmit_budget(
+            &self,
+            ack_request: &VerifierHttpClientSessionProtocolChunkAckRequest,
+            _window_request: &VerifierHttpClientSessionProtocolChunkSequenceWindowRequest,
+            _frames_request: &VerifierHttpClientSessionProtocolChunkFramesRequest,
+            _chunked_request: &VerifierHttpClientSessionProtocolByteChunksRequest,
+            _framed_request: &VerifierHttpClientSessionProtocolByteStreamFrameRequest,
+            _bytes_request: &VerifierHttpClientSessionProtocolBytesRequest,
+            _protocol_request: &VerifierHttpClientSessionProtocolRequest,
+            _frame_request: &VerifierHttpClientSessionFrameRequest,
+            _connection_config: &ResolvedVerifierHttpClientSessionSocketConnectionConfig,
+            _socket_request: &VerifierHttpClientSessionSocketRequest,
+            _transport_request: &VerifierHttpClientSessionTransportRequest,
+            _call_request: &VerifierHttpClientSessionCallRequest,
+            _wire_request: &VerifierHttpClientSessionWireRequest,
+            _session_request: &VerifierHttpClientSessionRequest,
+            _session_config: &ResolvedVerifierHttpClientSessionConfig,
+            _runtime_request: &VerifierHttpClientRuntimeRequest,
+            _config: &ResolvedVerifierHttpClientConfig,
+            _client_request: &VerifierHttpClientRequest,
+            _http_request: &HttpVerifierRequest,
+            _request: &BackendVerificationRequest<'_>,
+        ) -> Result<VerifierHttpClientSessionProtocolChunkRetransmitBudgetRequest, BackendExecutionError> {
+            let budget = VerifierHttpClientSessionProtocolChunkRetransmitBudgetRequest {
+                method: ack_request.method,
+                url: ack_request.url.clone(),
+                headers: ack_request.headers.clone(),
+                frames: ack_request.frames.clone(),
+                window_start_sequence: ack_request.window_start_sequence,
+                window_frame_count: ack_request.window_frame_count,
+                expected_ack_sequence: ack_request.expected_ack_sequence,
+                retransmit_budget: ack_request.retransmit_budget,
+                timeout_ms: ack_request.timeout_ms,
+                profile: ack_request.profile.clone(),
+                transport_mode: ack_request.transport_mode.clone(),
+            };
+            self.requests.lock().unwrap().push(budget.clone());
+            Ok(budget)
+        }
+    }
+
+    #[derive(Default)]
+    struct RecordingHttpClientSessionProtocolChunkRetransmitBudgetExchange {
+        requests: Mutex<Vec<VerifierHttpClientSessionProtocolChunkRetransmitBudgetRequest>>,
+    }
+
+    impl VerifierHttpClientSessionProtocolChunkRetransmitBudgetExchange for RecordingHttpClientSessionProtocolChunkRetransmitBudgetExchange {
+        fn exchange_retransmit_budget(
+            &self,
+            budget_request: &VerifierHttpClientSessionProtocolChunkRetransmitBudgetRequest,
+            _ack_request: &VerifierHttpClientSessionProtocolChunkAckRequest,
+            _window_request: &VerifierHttpClientSessionProtocolChunkSequenceWindowRequest,
+            _frames_request: &VerifierHttpClientSessionProtocolChunkFramesRequest,
+            _chunked_request: &VerifierHttpClientSessionProtocolByteChunksRequest,
+            _framed_request: &VerifierHttpClientSessionProtocolByteStreamFrameRequest,
+            _bytes_request: &VerifierHttpClientSessionProtocolBytesRequest,
+            _protocol_request: &VerifierHttpClientSessionProtocolRequest,
+            _frame_request: &VerifierHttpClientSessionFrameRequest,
+            connection_config: &ResolvedVerifierHttpClientSessionSocketConnectionConfig,
+            _socket_request: &VerifierHttpClientSessionSocketRequest,
+            _transport_request: &VerifierHttpClientSessionTransportRequest,
+            _call_request: &VerifierHttpClientSessionCallRequest,
+            _wire_request: &VerifierHttpClientSessionWireRequest,
+            _session_request: &VerifierHttpClientSessionRequest,
+            _session_config: &ResolvedVerifierHttpClientSessionConfig,
+            _runtime_request: &VerifierHttpClientRuntimeRequest,
+            _config: &ResolvedVerifierHttpClientConfig,
+            _client_request: &VerifierHttpClientRequest,
+            _http_request: &HttpVerifierRequest,
+            _request: &BackendVerificationRequest<'_>,
+        ) -> Result<VerifierHttpClientSessionProtocolChunkRetransmitBudgetResponse, BackendExecutionError> {
+            self.requests.lock().unwrap().push(budget_request.clone());
+            assert_eq!(budget_request.profile, connection_config.profile);
+            assert_eq!(budget_request.transport_mode, connection_config.transport_mode);
+            assert_eq!(budget_request.timeout_ms, connection_config.timeout_ms);
+            Ok(VerifierHttpClientSessionProtocolChunkRetransmitBudgetResponse {
+                status_code: 224,
+                headers: BTreeMap::from([("x-budget".to_string(), "ok".to_string())]),
+                frames: vec![b"settled-".to_vec(), b"ack-ok".to_vec()],
+                window_start_sequence: budget_request.window_start_sequence,
+                window_frame_count: budget_request.window_frame_count,
+                acked_through_sequence: budget_request.expected_ack_sequence,
+                retransmit_count: 0,
+                budget_remaining: budget_request.retransmit_budget,
+            })
+        }
+    }
+
+    #[derive(Default)]
+    struct RecordingHttpClientSessionProtocolChunkAckSettlementValidator {
+        responses: Mutex<Vec<VerifierHttpClientSessionProtocolChunkRetransmitBudgetResponse>>,
+    }
+
+    impl VerifierHttpClientSessionProtocolChunkAckSettlementValidator for RecordingHttpClientSessionProtocolChunkAckSettlementValidator {
+        fn validate_ack_settlement(
+            &self,
+            budget_response: VerifierHttpClientSessionProtocolChunkRetransmitBudgetResponse,
+            _budget_request: &VerifierHttpClientSessionProtocolChunkRetransmitBudgetRequest,
+            _ack_request: &VerifierHttpClientSessionProtocolChunkAckRequest,
+            _window_request: &VerifierHttpClientSessionProtocolChunkSequenceWindowRequest,
+            _frames_request: &VerifierHttpClientSessionProtocolChunkFramesRequest,
+            _chunked_request: &VerifierHttpClientSessionProtocolByteChunksRequest,
+            _framed_request: &VerifierHttpClientSessionProtocolByteStreamFrameRequest,
+            _bytes_request: &VerifierHttpClientSessionProtocolBytesRequest,
+            _protocol_request: &VerifierHttpClientSessionProtocolRequest,
+            _frame_request: &VerifierHttpClientSessionFrameRequest,
+            _connection_config: &ResolvedVerifierHttpClientSessionSocketConnectionConfig,
+            _socket_request: &VerifierHttpClientSessionSocketRequest,
+            _transport_request: &VerifierHttpClientSessionTransportRequest,
+            _call_request: &VerifierHttpClientSessionCallRequest,
+            _wire_request: &VerifierHttpClientSessionWireRequest,
+            _session_request: &VerifierHttpClientSessionRequest,
+            _session_config: &ResolvedVerifierHttpClientSessionConfig,
+            _runtime_request: &VerifierHttpClientRuntimeRequest,
+            _config: &ResolvedVerifierHttpClientConfig,
+            _client_request: &VerifierHttpClientRequest,
+            _http_request: &HttpVerifierRequest,
+            _request: &BackendVerificationRequest<'_>,
+        ) -> Result<VerifierHttpClientSessionProtocolChunkAckResponse, BackendExecutionError> {
+            self.responses.lock().unwrap().push(budget_response.clone());
+            Ok(VerifierHttpClientSessionProtocolChunkAckResponse {
+                status_code: budget_response.status_code,
+                headers: budget_response.headers,
+                frames: budget_response.frames,
+                window_start_sequence: budget_response.window_start_sequence,
+                window_frame_count: budget_response.window_frame_count,
+                acked_through_sequence: budget_response.acked_through_sequence,
+                retransmit_count: budget_response.retransmit_count,
+            })
+        }
+    }
+
+    struct RejectingHttpClientSessionProtocolChunkRetransmitBudgetExchange;
+
+    impl VerifierHttpClientSessionProtocolChunkRetransmitBudgetExchange for RejectingHttpClientSessionProtocolChunkRetransmitBudgetExchange {
+        fn exchange_retransmit_budget(
+            &self,
+            _budget_request: &VerifierHttpClientSessionProtocolChunkRetransmitBudgetRequest,
+            _ack_request: &VerifierHttpClientSessionProtocolChunkAckRequest,
+            _window_request: &VerifierHttpClientSessionProtocolChunkSequenceWindowRequest,
+            _frames_request: &VerifierHttpClientSessionProtocolChunkFramesRequest,
+            _chunked_request: &VerifierHttpClientSessionProtocolByteChunksRequest,
+            _framed_request: &VerifierHttpClientSessionProtocolByteStreamFrameRequest,
+            _bytes_request: &VerifierHttpClientSessionProtocolBytesRequest,
+            _protocol_request: &VerifierHttpClientSessionProtocolRequest,
+            _frame_request: &VerifierHttpClientSessionFrameRequest,
+            _connection_config: &ResolvedVerifierHttpClientSessionSocketConnectionConfig,
+            _socket_request: &VerifierHttpClientSessionSocketRequest,
+            _transport_request: &VerifierHttpClientSessionTransportRequest,
+            _call_request: &VerifierHttpClientSessionCallRequest,
+            _wire_request: &VerifierHttpClientSessionWireRequest,
+            _session_request: &VerifierHttpClientSessionRequest,
+            _session_config: &ResolvedVerifierHttpClientSessionConfig,
+            _runtime_request: &VerifierHttpClientRuntimeRequest,
+            _config: &ResolvedVerifierHttpClientConfig,
+            _client_request: &VerifierHttpClientRequest,
+            _http_request: &HttpVerifierRequest,
+            request: &BackendVerificationRequest<'_>,
+        ) -> Result<VerifierHttpClientSessionProtocolChunkRetransmitBudgetResponse, BackendExecutionError> {
+            Err(BackendExecutionError::Unavailable {
+                backend: request.backend_label(RealTeeBackend::backend_id_static()),
+                reason: "client session protocol chunk retransmit budget exchange rejected retransmit budget".into(),
+            })
+        }
+    }
+
+    struct PanicHttpClientSessionProtocolChunkAckSettlementValidator;
+
+    impl VerifierHttpClientSessionProtocolChunkAckSettlementValidator for PanicHttpClientSessionProtocolChunkAckSettlementValidator {
+        fn validate_ack_settlement(
+            &self,
+            _budget_response: VerifierHttpClientSessionProtocolChunkRetransmitBudgetResponse,
+            _budget_request: &VerifierHttpClientSessionProtocolChunkRetransmitBudgetRequest,
+            _ack_request: &VerifierHttpClientSessionProtocolChunkAckRequest,
+            _window_request: &VerifierHttpClientSessionProtocolChunkSequenceWindowRequest,
+            _frames_request: &VerifierHttpClientSessionProtocolChunkFramesRequest,
+            _chunked_request: &VerifierHttpClientSessionProtocolByteChunksRequest,
+            _framed_request: &VerifierHttpClientSessionProtocolByteStreamFrameRequest,
+            _bytes_request: &VerifierHttpClientSessionProtocolBytesRequest,
+            _protocol_request: &VerifierHttpClientSessionProtocolRequest,
+            _frame_request: &VerifierHttpClientSessionFrameRequest,
+            _connection_config: &ResolvedVerifierHttpClientSessionSocketConnectionConfig,
+            _socket_request: &VerifierHttpClientSessionSocketRequest,
+            _transport_request: &VerifierHttpClientSessionTransportRequest,
+            _call_request: &VerifierHttpClientSessionCallRequest,
+            _wire_request: &VerifierHttpClientSessionWireRequest,
+            _session_request: &VerifierHttpClientSessionRequest,
+            _session_config: &ResolvedVerifierHttpClientSessionConfig,
+            _runtime_request: &VerifierHttpClientRuntimeRequest,
+            _config: &ResolvedVerifierHttpClientConfig,
+            _client_request: &VerifierHttpClientRequest,
+            _http_request: &HttpVerifierRequest,
+            _request: &BackendVerificationRequest<'_>,
+        ) -> Result<VerifierHttpClientSessionProtocolChunkAckResponse, BackendExecutionError> {
+            panic!("chunk ack settlement validator should not be called when retransmit budget exchange fails")
+        }
+    }
+
+    #[derive(Default)]
     struct RecordingHttpClientSessionProtocolRequestCodec {
         requests: Mutex<Vec<VerifierHttpClientSessionProtocolRequest>>,
     }
@@ -9954,6 +10493,404 @@ mod tests {
         assert_eq!(events[2].kind, VerifierTelemetryEventKind::ResponseMapped);
         assert_eq!(events[0].request_id, events[1].request_id);
         assert_eq!(events[1].request_id, events[2].request_id);
+    }
+
+    #[test]
+    fn budgeted_retransmit_exchange_plans_budget_exchanges_and_validates_ack_settlement() {
+        let task = mock_task();
+        let budget_planner = Arc::new(RecordingHttpClientSessionProtocolChunkRetransmitBudgetPlanner::default());
+        let budget_exchange = Arc::new(RecordingHttpClientSessionProtocolChunkRetransmitBudgetExchange::default());
+        let ack_settlement_validator = Arc::new(RecordingHttpClientSessionProtocolChunkAckSettlementValidator::default());
+        let exchange = BudgetedRetransmitBackedVerifierHttpClientSessionProtocolChunkRetransmitExchange::with_components(
+            budget_planner.clone(),
+            budget_exchange.clone(),
+            ack_settlement_validator.clone(),
+        );
+        let response = exchange
+            .exchange_retransmit(
+                &VerifierHttpClientSessionProtocolChunkAckRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    frames: vec![b"settled-".to_vec(), b"budget".to_vec()],
+                    window_start_sequence: 61,
+                    window_frame_count: 2,
+                    expected_ack_sequence: 62,
+                    retransmit_budget: 1,
+                    timeout_ms: 5_000,
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                },
+                &VerifierHttpClientSessionProtocolChunkSequenceWindowRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    frames: vec![b"settled-".to_vec(), b"budget".to_vec()],
+                    window_start_sequence: 61,
+                    window_frame_count: 2,
+                    timeout_ms: 5_000,
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                },
+                &VerifierHttpClientSessionProtocolChunkFramesRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    frames: vec![b"settled-".to_vec(), b"budget".to_vec()],
+                    timeout_ms: 5_000,
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                },
+                &VerifierHttpClientSessionProtocolByteChunksRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    chunks: vec![b"settled-".to_vec(), b"budget".to_vec()],
+                    timeout_ms: 5_000,
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                },
+                &VerifierHttpClientSessionProtocolByteStreamFrameRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    encoded_body: b"settled-budget".to_vec(),
+                    timeout_ms: 5_000,
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                },
+                &VerifierHttpClientSessionProtocolBytesRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    encoded_body: b"settled-budget".to_vec(),
+                    timeout_ms: 5_000,
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                },
+                &VerifierHttpClientSessionProtocolRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: b"settled-budget".to_vec(),
+                    timeout_ms: 5_000,
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                },
+                &VerifierHttpClientSessionFrameRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: b"settled-budget".to_vec(),
+                    timeout_ms: 5_000,
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                },
+                &ResolvedVerifierHttpClientSessionSocketConnectionConfig {
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                    timeout_ms: 5_000,
+                },
+                &VerifierHttpClientSessionSocketRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: b"settled-budget".to_vec(),
+                    timeout_ms: 5_000,
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                },
+                &VerifierHttpClientSessionTransportRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: b"settled-budget".to_vec(),
+                    timeout_ms: 5_000,
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                },
+                &VerifierHttpClientSessionCallRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: b"settled-budget".to_vec(),
+                    timeout_ms: 5_000,
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                },
+                &VerifierHttpClientSessionWireRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: b"settled-budget".to_vec(),
+                    timeout_ms: 5_000,
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                },
+                &VerifierHttpClientSessionRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: b"settled-budget".to_vec(),
+                    timeout_ms: 5_000,
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                },
+                &ResolvedVerifierHttpClientSessionConfig {
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                    timeout_ms: 5_000,
+                },
+                &VerifierHttpClientRuntimeRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: b"settled-budget".to_vec(),
+                    timeout_ms: 5_000,
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                },
+                &ResolvedVerifierHttpClientConfig {
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                    timeout_ms: 5_000,
+                },
+                &VerifierHttpClientRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: b"settled-budget".to_vec(),
+                    timeout_ms: 5_000,
+                },
+                &HttpVerifierRequest {
+                    method: HttpMethod::Post,
+                    transport_mode: VerifierTransportMode::External,
+                    profile: "intel-dcap-external-default".into(),
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: "settled-budget".into(),
+                    timeout_ms: 5_000,
+                    retry_policy: RetryBackoffPolicy {
+                        max_attempts: 3,
+                        backoff_ms: 250,
+                        strategy: RetryBackoffStrategy::Exponential,
+                    },
+                },
+                &BackendVerificationRequest {
+                    family: VerificationBackendFamily::Tee,
+                    task: &task,
+                    proof_data: b"TEE:...",
+                    tee_payload: None,
+                    zk_payload: None,
+                    resolved_vk_ref: None,
+                },
+            )
+            .unwrap();
+        assert_eq!(response.status_code, 224);
+        assert_eq!(response.frames, vec![b"settled-".to_vec(), b"ack-ok".to_vec()]);
+        let planned = budget_planner.requests.lock().unwrap().clone();
+        assert_eq!(planned.len(), 1);
+        assert_eq!(planned[0].expected_ack_sequence, 62);
+        assert_eq!(planned[0].retransmit_budget, 1);
+        let exchanged = budget_exchange.requests.lock().unwrap().clone();
+        assert_eq!(exchanged.len(), 1);
+        assert_eq!(exchanged[0], planned[0]);
+        let validated = ack_settlement_validator.responses.lock().unwrap().clone();
+        assert_eq!(validated.len(), 1);
+        assert_eq!(validated[0].status_code, 224);
+        assert_eq!(validated[0].acked_through_sequence, 62);
+        assert_eq!(validated[0].budget_remaining, 1);
+    }
+
+    #[test]
+    fn budgeted_retransmit_exchange_fails_closed_when_retransmit_budget_exchange_rejects() {
+        let task = mock_task();
+        let exchange = BudgetedRetransmitBackedVerifierHttpClientSessionProtocolChunkRetransmitExchange::with_components(
+            Arc::new(DirectVerifierHttpClientSessionProtocolChunkRetransmitBudgetPlanner),
+            Arc::new(RejectingHttpClientSessionProtocolChunkRetransmitBudgetExchange),
+            Arc::new(PanicHttpClientSessionProtocolChunkAckSettlementValidator),
+        );
+        let err = exchange
+            .exchange_retransmit(
+                &VerifierHttpClientSessionProtocolChunkAckRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    frames: vec![],
+                    window_start_sequence: 0,
+                    window_frame_count: 0,
+                    expected_ack_sequence: 0,
+                    retransmit_budget: 0,
+                    timeout_ms: 5_000,
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                },
+                &VerifierHttpClientSessionProtocolChunkSequenceWindowRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    frames: vec![],
+                    window_start_sequence: 0,
+                    window_frame_count: 0,
+                    timeout_ms: 5_000,
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                },
+                &VerifierHttpClientSessionProtocolChunkFramesRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    frames: vec![],
+                    timeout_ms: 5_000,
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                },
+                &VerifierHttpClientSessionProtocolByteChunksRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    chunks: vec![],
+                    timeout_ms: 5_000,
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                },
+                &VerifierHttpClientSessionProtocolByteStreamFrameRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    encoded_body: vec![],
+                    timeout_ms: 5_000,
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                },
+                &VerifierHttpClientSessionProtocolBytesRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    encoded_body: vec![],
+                    timeout_ms: 5_000,
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                },
+                &VerifierHttpClientSessionProtocolRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: vec![],
+                    timeout_ms: 5_000,
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                },
+                &VerifierHttpClientSessionFrameRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: vec![],
+                    timeout_ms: 5_000,
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                },
+                &ResolvedVerifierHttpClientSessionSocketConnectionConfig {
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                    timeout_ms: 5_000,
+                },
+                &VerifierHttpClientSessionSocketRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: vec![],
+                    timeout_ms: 5_000,
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                },
+                &VerifierHttpClientSessionTransportRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: vec![],
+                    timeout_ms: 5_000,
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                },
+                &VerifierHttpClientSessionCallRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: vec![],
+                    timeout_ms: 5_000,
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                },
+                &VerifierHttpClientSessionWireRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: vec![],
+                    timeout_ms: 5_000,
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                },
+                &VerifierHttpClientSessionRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: vec![],
+                    timeout_ms: 5_000,
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                },
+                &ResolvedVerifierHttpClientSessionConfig {
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                    timeout_ms: 5_000,
+                },
+                &VerifierHttpClientRuntimeRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: vec![],
+                    timeout_ms: 5_000,
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                },
+                &ResolvedVerifierHttpClientConfig {
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                    timeout_ms: 5_000,
+                },
+                &VerifierHttpClientRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: vec![],
+                    timeout_ms: 5_000,
+                },
+                &HttpVerifierRequest {
+                    method: HttpMethod::Post,
+                    transport_mode: VerifierTransportMode::External,
+                    profile: "intel-dcap-external-default".into(),
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: String::new(),
+                    timeout_ms: 5_000,
+                    retry_policy: RetryBackoffPolicy {
+                        max_attempts: 3,
+                        backoff_ms: 250,
+                        strategy: RetryBackoffStrategy::Exponential,
+                    },
+                },
+                &BackendVerificationRequest {
+                    family: VerificationBackendFamily::Tee,
+                    task: &task,
+                    proof_data: b"TEE:...",
+                    tee_payload: None,
+                    zk_payload: None,
+                    resolved_vk_ref: None,
+                },
+            )
+            .unwrap_err();
+        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session protocol chunk retransmit budget exchange rejected retransmit budget")));
     }
 
     #[test]
@@ -14021,7 +14958,7 @@ mod tests {
                 },
             )
             .unwrap_err();
-        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("intel-dcap-external-default") && reason.contains("client session protocol chunk retransmit exchange")));
+        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("intel-dcap-external-default") && reason.contains("client session protocol chunk retransmit budget exchange")));
     }
 
     #[test]
