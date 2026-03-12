@@ -23,9 +23,9 @@ Current canonical payload proof byte encoding field used by router / backend tes
 
 Additional v0 parser / router contract reminders already enforced by tests and code:
 
-- `vk_ref` is required, case-sensitive as an opaque verifier reference, must not rely on silent surrounding-whitespace trimming, and must be a single opaque token without embedded ASCII whitespace/control characters.
-- `backend_id`, when present, must be a non-empty canonical token without surrounding whitespace and must remain a single opaque token without embedded ASCII whitespace/control characters.
-- `backend_version`, when present, must be a non-empty canonical token without surrounding whitespace, must remain a single opaque token without embedded ASCII whitespace/control characters, and must not appear without `backend_id`.
+- `vk_ref` is required, case-sensitive as an opaque verifier reference, must not rely on silent surrounding-whitespace trimming, and must be a single opaque token without embedded whitespace or control characters (including Unicode whitespace).
+- `backend_id`, when present, must be a non-empty canonical token without surrounding whitespace and must remain a single opaque token without embedded whitespace or control characters (including Unicode whitespace).
+- `backend_version`, when present, must be a non-empty canonical token without surrounding whitespace, must remain a single opaque token without embedded whitespace or control characters (including Unicode whitespace), and must not appear without `backend_id`.
 - If a payload `backend_id` token carries canonical zk-system hints, all distinct hints must collapse to exactly one canonical system before routing; repeated identical hints (for example `groth16-groth16-demo`) are tolerated, but mixed hints (for example `groth16-plonk-demo`) must fail closed rather than being routed opportunistically.
 - Family-only router tokens are not canonical payload selectors: a payload `backend_id` like `zk`, `zk-demo`, or other explicit `zk-*` family-only token without a canonical zk-system hint must be rejected as malformed rather than routed or treated as an implicit backend alias.
 - By contrast, an opaque payload `backend_id` that carries no explicit family prefix and no canonical zk-system hint (for example `mock-zk`) remains an allowed backend selector in v0; it must be resolved only through explicit registry/config wiring and must not be upgraded into an implicit system guess by the router.
