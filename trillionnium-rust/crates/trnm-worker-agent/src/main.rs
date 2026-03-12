@@ -392,6 +392,7 @@ fn normalize_provenance_fingerprint_lookup(value: &str) -> Option<String> {
         }
 
         if peeled {
+            normalized = trim_boundary_audit_fillers(normalized.as_str()).to_string();
             if normalized.is_empty() {
                 return None;
             }
@@ -4744,6 +4745,32 @@ mod tests {
             query_audit_export_by_provenance_fingerprint(&rows, &index, "\u{feff}DEADBEEF\u{200b}");
         assert_eq!(hit.len(), 1);
         assert_eq!(hit[0].request_id, "r-bom-lookup");
+    }
+
+    #[test]
+    fn query_audit_export_by_provenance_fingerprint_trims_fillers_after_quote_peeling() {
+        let rows = vec![EnterpriseAuditExportRecord {
+            request_id: "r-bom-after-peel".to_string(),
+            task_id: 70082,
+            status: "assigned".to_string(),
+            provider_request_id: None,
+            provenance_schema_version: Some("llm.v2".to_string()),
+            provenance_fingerprint: Some("deadbeef".to_string()),
+            provider: Some("openai".to_string()),
+            model: Some("gpt-5".to_string()),
+            adapter: Some("mcp".to_string()),
+            agent_protocol: Some("a2a".to_string()),
+            compliance_profile: Some("cn-pii-restricted".to_string()),
+        }];
+
+        let index = build_audit_export_index(&rows);
+        let hit = query_audit_export_by_provenance_fingerprint(
+            &rows,
+            &index,
+            " '\"\u{feff}DEADBEEF\u{200b}\"' ",
+        );
+        assert_eq!(hit.len(), 1);
+        assert_eq!(hit[0].request_id, "r-bom-after-peel");
     }
 
     #[test]
