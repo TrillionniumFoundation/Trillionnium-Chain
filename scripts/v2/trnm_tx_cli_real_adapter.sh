@@ -126,7 +126,7 @@ normalize_status() {
     pending|submitted|accepted|queued|broadcast|broadcasted|processing|in_progress|in-progress|inflight|in-flight)
       printf "pending"
       ;;
-    committed|confirmed|success|succeeded|ok|included|finalized)
+    committed|confirmed|success|succeeded|ok|included|finalized|complete|completed|done)
       printf "committed"
       ;;
     fail|failed|error|rejected|reverted|aborted|dropped|timeout|timed_out|timed-out|expired)

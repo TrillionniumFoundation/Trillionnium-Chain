@@ -431,7 +431,8 @@ fn normalize_tx_status(raw: &str) -> Option<String> {
         | "processing" | "in_progress" | "in-progress" | "inflight" | "in-flight" => {
             Some("pending".to_string())
         }
-        "committed" | "confirmed" | "success" | "succeeded" | "ok" | "included" | "finalized" => {
+        "committed" | "confirmed" | "success" | "succeeded" | "ok" | "included"
+        | "finalized" | "complete" | "completed" | "done" => {
             Some("committed".to_string())
         }
         "fail" | "failed" | "error" | "rejected" | "reverted" | "aborted" | "dropped"
@@ -1712,17 +1713,19 @@ mod tests {
         std::env::set_var("TRNM_RPC_TX_FILE", &path);
 
         let ok_hash = "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-        let bad_hash = "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
+        let completed_hash = "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
         let inflight_hash = "0xcccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc";
+        let unknown_hash = "0xdddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd";
         let payload = format!(
-            "{{\n  \"{}\": {{\"status\": \"success!\"}},\n  \"{}\": {{\"status\": \"done\"}},\n  \"{}\": {{\"status\": \"in_progress\"}}\n}}",
-            ok_hash, bad_hash, inflight_hash
+            "{{\n  \"{}\": {{\"status\": \"success!\"}},\n  \"{}\": {{\"status\": \"done\"}},\n  \"{}\": {{\"status\": \"in_progress\"}},\n  \"{}\": {{\"status\": \"mystery\"}}\n}}",
+            ok_hash, completed_hash, inflight_hash, unknown_hash
         );
         std::fs::write(&path, payload).unwrap();
 
         assert_eq!(query_local_tx_status(ok_hash).as_deref(), Some("committed"));
+        assert_eq!(query_local_tx_status(completed_hash).as_deref(), Some("committed"));
         assert_eq!(query_local_tx_status(inflight_hash).as_deref(), Some("pending"));
-        assert_eq!(query_local_tx_status(bad_hash), None);
+        assert_eq!(query_local_tx_status(unknown_hash), None);
 
         let _ = std::fs::remove_file(&path);
         std::env::remove_var("TRNM_RPC_TX_FILE");
