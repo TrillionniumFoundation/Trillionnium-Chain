@@ -753,7 +753,17 @@ fn maybe_pay_challenge_success_bounty(
 
     let lock_account = worker_stake_lock_account(task.task_id);
     let lock_available = st.balance_of(&lock_account);
-    let from_lock = configured_bounty.min(lock_available);
+    // Fail closed on underfunded per-task slash principal: challenge-success
+    // bounty semantics must remain deterministic and fully task-local instead of
+    // silently degrading into a partial payout when governance bounty exceeds the
+    // actual slashable stake locked on this challenged task.
+    if configured_bounty > lock_available {
+        return Err(PouwError::State(format!(
+            "challenge success bounty {} exceeds task-local slashable stake {}",
+            configured_bounty, lock_available
+        )));
+    }
+    let from_lock = configured_bounty;
 
     if from_lock > 0 {
         st.debit_balance(&lock_account, from_lock)
@@ -1695,8 +1705,12 @@ mod tests {
         st.credit_balance("drain", 1).unwrap();
         assert_eq!(st.balance_of(&lock_account), 0);
 
-        set_resolve_authority(&mut st, "authority,authority2");
-        let staged = apply_resolve_at_height(
+        set_resolve_authority(&mut st, "authority");
+
+        let challenger_before = st.balance_of("challenger");
+        let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+        let slash_treasury_before = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
+        let err = apply_resolve_at_height(
             &mut st,
             r5.clone(),
             true,
@@ -1704,31 +1718,21 @@ mod tests {
             "authority".into(),
             1,
         )
-        .expect_err("first resolver should stage multisig approval");
-        assert!(matches!(staged, PouwError::ResolveApprovalStaged));
+        .expect_err("resolve must fail closed when configured bounty exceeds remaining task-local slashable stake");
 
-        let challenger_before = st.balance_of("challenger");
-        let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
-        let slash_treasury_before = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
-        let r6 = apply_resolve_at_height(
-            &mut st,
-            r5,
-            true,
-            "authority2".into(),
-            "authority2".into(),
-            1,
-        )
-        .unwrap();
-
-        let task = st.get_task(r6.id).unwrap();
-        assert_eq!(task.status, TaskStatus::Slashed);
-        assert_eq!(task.challenge_bond_forfeited, Some(false));
+        assert!(
+            matches!(err, PouwError::State(_)) || matches!(err, PouwError::Unauthorized),
+            "unexpected resolve failure variant: {err:?}"
+        );
+        let task = st.get_task(r5.id).unwrap();
+        assert_eq!(task.status, TaskStatus::Challenged);
+        assert_eq!(task.challenge_bond_forfeited, None);
         assert_eq!(
             st.balance_of("challenger"),
-            challenger_before + 10,
-            "challenger should only recover the bonded escrow when no task-local slash lock remains"
+            challenger_before,
+            "challenger balance must remain unchanged when resolve settlement aborts"
         );
-        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before - 10);
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
         assert_eq!(
             st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
             slash_treasury_before,
@@ -10623,6 +10627,60 @@ mod tests {
     }
 
     #[test]
+    fn challenge_success_bounty_rejects_underfunded_task_local_slashable_stake() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        st.set_balance("worker1", 1);
+        st.set_gov_param_bootstrap_unchecked(40_211, "challenge_success_bounty".into(), "1".into())
+            .unwrap();
+        st.set_gov_param_bootstrap_unchecked(40_212, "min_worker_stake".into(), "1".into())
+            .unwrap();
+
+        let r1 = apply_create_task(&mut st, 40_213, "alice".into(), 10).unwrap();
+        let result_hash = [4u8; 32];
+        let reveal_salt = [8u8; 32];
+        let committed = compute_commitment(40_213, &result_hash, &reveal_salt, "worker1");
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
+        let r4 = apply_reveal_result_at_height(
+            &mut st,
+            r3,
+            result_hash,
+            reveal_salt,
+            None,
+            110,
+        )
+        .unwrap();
+        let r5 = apply_challenge_at_height(
+            &mut st,
+            r4,
+            "challenger".into(),
+            10,
+            "challenger".into(),
+            120,
+        )
+        .unwrap();
+
+        let mut task = st.get_task(r5.id).unwrap();
+        task.status = TaskStatus::Slashed;
+        task.challenge_bond_forfeited = Some(false);
+        let next = st.update_task(r5, task).unwrap();
+        let task = st.get_task(next.id).unwrap();
+        let lock_account = worker_stake_lock_account(40_213);
+        st.debit_balance(&lock_account, 1).unwrap();
+
+        let before_challenger = st.balance_of("challenger");
+        let before_worker_slash_treasury = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
+
+        let err = maybe_pay_challenge_success_bounty(&mut st, &task)
+            .expect_err("challenge success bounty must fail closed when task-local slashable stake is depleted");
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("task-local slashable stake")));
+        assert_eq!(st.balance_of("challenger"), before_challenger);
+        assert_eq!(st.balance_of(&lock_account), 0);
+        assert_eq!(st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT), before_worker_slash_treasury);
+    }
+
+    #[test]
     fn timeout_revealed_path_remains_available_while_emergency_pause_active() {
         let mut st = seeded_state();
 
@@ -14585,6 +14643,7 @@ mod tests {
             .expect("min worker stake governance seed must succeed");
 
         st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 10);
+        st.set_balance(&worker_stake_lock_account(77), 10);
 
         let task = TaskObject {
             task_id: 77,
