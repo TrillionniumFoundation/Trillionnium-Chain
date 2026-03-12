@@ -123,7 +123,7 @@ THRESHOLD_PROFILE=${THRESHOLD_PROFILE:-stage1} ./scripts/enforce_ci_thresholds.s
 # optional build artifact
 cargo build --workspace | tee "$OUT/cargo-build.log"
 
-rollback_command="rm -rf $(printf '%q' "$OUT")"
+rollback_command="rm -rf $(printf '%q' "$RC_OUT_DIR")"
 replay_command="env TZ=$replay_tz LC_ALL=$replay_lc_all LANG=$replay_lang SOURCE_DATE_EPOCH=$replay_source_date_epoch CARGO_TERM_COLOR=$replay_cargo_term_color RUST_BACKTRACE=$replay_rust_backtrace CARGO_BUILD_JOBS=$replay_cargo_build_jobs MVP_MODE='${MVP_MODE:-prod}' TXS='${TXS:-5000}' THRESHOLD_PROFILE='${THRESHOLD_PROFILE:-stage1}' ./scripts/release_rc.sh"
 
 cat > "$OUT/manifest.txt" <<EOF

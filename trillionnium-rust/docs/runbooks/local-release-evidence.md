@@ -74,6 +74,6 @@ env TZ=UTC LC_ALL=C LANG=C SOURCE_DATE_EPOCH=1704067200 \
 - 建议复放环境（`replay_env_*`）
 - 影响 RC 结果的关键执行旋钮（至少 `env_mvp_mode` / `env_txs` / `env_threshold_profile` 及对应 `replay_env_*`）
 - 单行 `replay_command=`
-- 单行 `rollback_command=`
+- 单行 `rollback_command=`（RC manifest 中应优先回滚 `rc_out_dir` 的绝对路径，而不是依赖调用目录的相对路径）
 
 这样可以避免 RC 证据包只有产物列表、却缺少“如何按同一环境重放”这一关键链路，保证当前 truth-source 与历史/本地证据之间的审计接口一致。
