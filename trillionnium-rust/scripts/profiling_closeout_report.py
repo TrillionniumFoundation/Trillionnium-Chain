@@ -173,6 +173,11 @@ def main():
             return "stale"
         return "old"
 
+    def file_mtime_iso(path: str | None) -> str | None:
+        if not path or not os.path.exists(path):
+            return None
+        return datetime.fromtimestamp(os.path.getmtime(path)).isoformat()
+
     def latest_benchmark_artifact():
         artifact_candidates = [path for path in [classic, mixed, executor_profile] if path and os.path.exists(path)]
         if not artifact_candidates:
@@ -338,7 +343,9 @@ def main():
     benchmark_actions = []
     for label, path in benchmark_inputs:
         status = input_status(path)
-        freshness = freshness_label(file_age_seconds(path))
+        age_seconds = file_age_seconds(path)
+        freshness = freshness_label(age_seconds)
+        updated_at = file_mtime_iso(path)
         if status != "present":
             action = "produce"
             reason = "missing benchmark artifact"
@@ -353,7 +360,7 @@ def main():
             reason = "artifact is old and should not be treated as current evidence"
         benchmark_actions.append((label, action, freshness, reason))
         lines.append(
-            f"- {label}: action={action} freshness={freshness} producer={benchmark_producer_for(label)} reason={reason}"
+            f"- {label}: action={action} freshness={freshness} age_seconds={age_seconds if age_seconds is not None else 'n/a'} updated_at={updated_at or 'n/a'} path={path or 'None'} producer={benchmark_producer_for(label)} reason={reason}"
         )
 
     benchmark_action_counts = {
