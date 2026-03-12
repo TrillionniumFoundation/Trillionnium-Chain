@@ -299,6 +299,17 @@ impl OracleValidationReport {
     pub fn classified_outcome_conserves_sample_count(&self) -> bool {
         self.metrics.classified_outcome_conserves_sample_count()
     }
+
+    pub fn observation_matches_metrics(&self) -> bool {
+        self.observation.stale_reject_total == self.metrics.oracle_stale_reject_total
+            && self.observation.quorum_reject_total == self.metrics.oracle_quorum_reject_total
+            && self.observation.drift_reject_total == self.metrics.oracle_drift_reject_total
+            && self.observation.accepted_total == self.metrics.accepted_total
+    }
+
+    pub fn bridge_contract_consistent(&self) -> bool {
+        self.observation_matches_metrics() && self.classified_outcome_conserves_sample_count()
+    }
 }
 
 pub fn validate_snapshot_observed(
@@ -932,6 +943,16 @@ mod tests {
                     .classified_outcome_conserves_sample_count(report.metrics.sample_count),
                 report.classified_outcome_conserves_sample_count(),
                 "classified sample-count conservation drifted for error {:?}",
+                report.error
+            );
+            assert!(
+                report.observation_matches_metrics(),
+                "observation/metrics bridge mapping drifted for error {:?}",
+                report.error
+            );
+            assert!(
+                report.bridge_contract_consistent(),
+                "bridge contract drifted for error {:?}",
                 report.error
             );
         }

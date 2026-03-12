@@ -76,6 +76,17 @@ impl OracleValidateSnapshotResponse {
         self.observation
             .classified_outcome_conserves_sample_count(self.metrics.sample_count)
     }
+
+    pub fn observation_matches_metrics(&self) -> bool {
+        self.observation.stale_reject_total == self.metrics.oracle_stale_reject_total
+            && self.observation.quorum_reject_total == self.metrics.oracle_quorum_reject_total
+            && self.observation.drift_reject_total == self.metrics.oracle_drift_reject_total
+            && self.observation.accepted_total == self.metrics.accepted_total
+    }
+
+    pub fn bridge_contract_consistent(&self) -> bool {
+        self.observation_matches_metrics() && self.classified_outcome_conserves_sample_count()
+    }
 }
 
 impl From<OracleValidationReport> for OracleValidateSnapshotResponse {
@@ -822,6 +833,94 @@ mod tests {
         assert_eq!(out.observation_classified_outcome_total(), 0);
         assert!(!out.classified_outcome_conserves_sample_count());
         assert!(!out.observation_classified_outcome_conserves_sample_count());
+    }
+
+    #[test]
+    fn oracle_validation_response_bridge_contract_consistent_for_classified_outcomes() {
+        let reports = [
+            OracleValidationReport {
+                ok: true,
+                now_ts_ms: 790,
+                observation: OracleValidationObservation {
+                    stale_reject_total: 0,
+                    quorum_reject_total: 0,
+                    drift_reject_total: 0,
+                    accepted_total: 1,
+                },
+                metrics: OracleValidationMetrics {
+                    oracle_stale_reject_total: 0,
+                    oracle_quorum_reject_total: 0,
+                    oracle_drift_reject_total: 0,
+                    oracle_source_cardinality: 2,
+                    accepted_total: 1,
+                    sample_count: 1,
+                },
+                error: None,
+            },
+            OracleValidationReport {
+                ok: false,
+                now_ts_ms: 791,
+                observation: OracleValidationObservation {
+                    stale_reject_total: 1,
+                    quorum_reject_total: 0,
+                    drift_reject_total: 0,
+                    accepted_total: 0,
+                },
+                metrics: OracleValidationMetrics {
+                    oracle_stale_reject_total: 1,
+                    oracle_quorum_reject_total: 0,
+                    oracle_drift_reject_total: 0,
+                    oracle_source_cardinality: 2,
+                    accepted_total: 0,
+                    sample_count: 1,
+                },
+                error: Some("stale".into()),
+            },
+            OracleValidationReport {
+                ok: false,
+                now_ts_ms: 792,
+                observation: OracleValidationObservation {
+                    stale_reject_total: 0,
+                    quorum_reject_total: 1,
+                    drift_reject_total: 0,
+                    accepted_total: 0,
+                },
+                metrics: OracleValidationMetrics {
+                    oracle_stale_reject_total: 0,
+                    oracle_quorum_reject_total: 1,
+                    oracle_drift_reject_total: 0,
+                    oracle_source_cardinality: 1,
+                    accepted_total: 0,
+                    sample_count: 1,
+                },
+                error: Some("quorum".into()),
+            },
+            OracleValidationReport {
+                ok: false,
+                now_ts_ms: 793,
+                observation: OracleValidationObservation {
+                    stale_reject_total: 0,
+                    quorum_reject_total: 0,
+                    drift_reject_total: 1,
+                    accepted_total: 0,
+                },
+                metrics: OracleValidationMetrics {
+                    oracle_stale_reject_total: 0,
+                    oracle_quorum_reject_total: 0,
+                    oracle_drift_reject_total: 1,
+                    oracle_source_cardinality: 2,
+                    accepted_total: 0,
+                    sample_count: 1,
+                },
+                error: Some("drift".into()),
+            },
+        ];
+
+        for report in reports {
+            let out: OracleValidateSnapshotResponse = report.into();
+            assert!(out.observation_matches_metrics());
+            assert!(out.bridge_contract_consistent());
+        }
     }
 
     #[test]
