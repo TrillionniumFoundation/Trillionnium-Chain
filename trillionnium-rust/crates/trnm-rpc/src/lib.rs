@@ -63,6 +63,19 @@ impl OracleValidateSnapshotResponse {
     pub fn classified_outcome_conserves_sample_count(&self) -> bool {
         self.metrics.classified_outcome_conserves_sample_count()
     }
+
+    pub fn observation_classified_reject_total(&self) -> u32 {
+        self.observation.classified_reject_total()
+    }
+
+    pub fn observation_classified_outcome_total(&self) -> u32 {
+        self.observation.classified_outcome_total()
+    }
+
+    pub fn observation_classified_outcome_conserves_sample_count(&self) -> bool {
+        self.observation
+            .classified_outcome_conserves_sample_count(self.metrics.sample_count)
+    }
 }
 
 impl From<OracleValidationReport> for OracleValidateSnapshotResponse {
@@ -634,12 +647,18 @@ mod tests {
         let stale_out: OracleValidateSnapshotResponse = stale_report.into();
 
         assert_eq!(ok_out.classified_reject_total(), 0);
+        assert_eq!(ok_out.observation_classified_reject_total(), 0);
         assert_eq!(ok_out.classified_outcome_total(), 1);
+        assert_eq!(ok_out.observation_classified_outcome_total(), 1);
         assert!(ok_out.classified_outcome_conserves_sample_count());
+        assert!(ok_out.observation_classified_outcome_conserves_sample_count());
 
         assert_eq!(stale_out.classified_reject_total(), 1);
+        assert_eq!(stale_out.observation_classified_reject_total(), 1);
         assert_eq!(stale_out.classified_outcome_total(), 1);
+        assert_eq!(stale_out.observation_classified_outcome_total(), 1);
         assert!(stale_out.classified_outcome_conserves_sample_count());
+        assert!(stale_out.observation_classified_outcome_conserves_sample_count());
     }
 
     #[test]
@@ -771,5 +790,37 @@ mod tests {
         assert_eq!(out.metrics.oracle_source_cardinality, 2);
         let v = serde_json::to_value(out).unwrap();
         assert_eq!(v["metrics"]["oracle_source_cardinality"], 2);
+    }
+
+    #[test]
+    fn oracle_validation_response_observation_helpers_keep_unclassified_errors_out_of_classified_totals(
+    ) {
+        let report = OracleValidationReport {
+            ok: false,
+            now_ts_ms: 792,
+            observation: OracleValidationObservation {
+                stale_reject_total: 0,
+                quorum_reject_total: 0,
+                drift_reject_total: 0,
+                accepted_total: 0,
+            },
+            metrics: OracleValidationMetrics {
+                oracle_stale_reject_total: 0,
+                oracle_quorum_reject_total: 0,
+                oracle_drift_reject_total: 0,
+                oracle_source_cardinality: 3,
+                accepted_total: 0,
+                sample_count: 1,
+            },
+            error: Some("rate".into()),
+        };
+
+        let out: OracleValidateSnapshotResponse = report.into();
+        assert_eq!(out.classified_reject_total(), 0);
+        assert_eq!(out.observation_classified_reject_total(), 0);
+        assert_eq!(out.classified_outcome_total(), 0);
+        assert_eq!(out.observation_classified_outcome_total(), 0);
+        assert!(!out.classified_outcome_conserves_sample_count());
+        assert!(!out.observation_classified_outcome_conserves_sample_count());
     }
 }
