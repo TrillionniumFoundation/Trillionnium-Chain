@@ -619,10 +619,40 @@ def main():
         f"- benchmark_pool_followup_command_chain: {build_followup_command_chain(pool_followup_labels, recommended_producer)}"
     )
 
+    archive_pools = [
+        ("classic_bench_candidates", classic_candidates),
+        ("mixed_bench_candidates", mixed_candidates),
+        ("executor_profile_candidates", executor_profile_candidates),
+    ]
+    archive_candidate_counts = {
+        label: len(archive_candidates_for_pool(candidates))
+        for label, candidates in archive_pools
+    }
+    archive_attention = [
+        f"{label}:{archive_candidate_counts[label]}"
+        for label, _ in archive_pools
+        if archive_candidate_counts[label] > 0
+    ]
+
     lines += ["", "## Benchmark Archive Candidates"]
-    lines.append(archive_candidate_line("classic_bench_candidates", classic_candidates))
-    lines.append(archive_candidate_line("mixed_bench_candidates", mixed_candidates))
-    lines.append(archive_candidate_line("executor_profile_candidates", executor_profile_candidates))
+    for label, candidates in archive_pools:
+        lines.append(archive_candidate_line(label, candidates))
+
+    lines += ["", "## Benchmark Archive Summary"]
+    lines.append(
+        f"- benchmark_archive_candidate_total: {sum(archive_candidate_counts.values())}"
+    )
+    lines.append(
+        f"- benchmark_archive_attention: {', '.join(archive_attention) if archive_attention else 'none'}"
+    )
+    lines.append(
+        "- benchmark_archive_recommendation: "
+        + (
+            "keep_latest_only_no_archive_action"
+            if not archive_attention
+            else "review_archive_candidates_before_manual_cleanup"
+        )
+    )
 
     lines += ["", "## Data Completeness"]
     lines.append(
