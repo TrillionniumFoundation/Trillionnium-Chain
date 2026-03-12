@@ -89,6 +89,13 @@ pub fn backend_system_hint(raw: &str) -> Option<String> {
         _ => (None, 0usize),
     };
 
+    fn tee_platform<'a>(tokens: &'a [&'a str]) -> Option<&'a str> {
+        tokens
+            .iter()
+            .copied()
+            .find(|token| matches!(*token, "sgx" | "tdx" | "snp"))
+    }
+
     if family == Some("tee") {
         while let Some(token) = parts.get(idx).copied() {
             if matches!(
@@ -120,11 +127,16 @@ pub fn backend_system_hint(raw: &str) -> Option<String> {
         // identifiers include both a vendor/family label and a more specific
         // platform token, e.g. `amd-sev-snp` should resolve to `snp` rather
         // than the broader `sev` family marker.
-        if let Some(platform) = parts[idx..]
-            .iter()
-            .copied()
-            .find(|token| matches!(*token, "sgx" | "tdx" | "snp"))
-        {
+        if let Some(platform) = tee_platform(&parts[idx..]) {
+            return Some(platform.to_string());
+        }
+    }
+
+    // Some backend ids are already family-scoped by path or config key and omit
+    // the explicit `tee` prefix, e.g. `intel-sgx-dcap` / `amd-sev-snp`. Keep
+    // those on the same concrete-platform contract as the prefixed forms.
+    if family.is_none() && matches!(first, "intel" | "amd") {
+        if let Some(platform) = tee_platform(&parts[1..]) {
             return Some(platform.to_string());
         }
     }
@@ -883,7 +895,9 @@ mod tests {
             backend_system_hint("tee:intel-sgx-dcap"),
             Some("sgx".into())
         );
+        assert_eq!(backend_system_hint("intel-sgx-dcap"), Some("sgx".into()));
         assert_eq!(backend_system_hint("TEE amd-sev-snp"), Some("snp".into()));
+        assert_eq!(backend_system_hint("amd-sev-snp"), Some("snp".into()));
         assert_eq!(backend_system_hint("tee attestation report"), None);
         assert_eq!(backend_system_hint("tee receipt quote"), None);
         assert_eq!(backend_system_hint("tee evidence snp"), Some("snp".into()));
@@ -933,6 +947,8 @@ mod tests {
 
         assert_eq!(backend_system_hint("tee amd sev snp"), Some("snp".into()));
         assert_eq!(backend_system_hint("TEE AMD-SEV-SNP quote"), Some("snp".into()));
+        assert_eq!(backend_system_hint("amd sev snp"), Some("snp".into()));
+        assert_eq!(backend_system_hint("intel sgx dcap"), Some("sgx".into()));
     }
 
     #[test]
