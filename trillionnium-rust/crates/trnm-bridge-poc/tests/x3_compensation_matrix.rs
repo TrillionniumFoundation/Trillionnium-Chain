@@ -757,6 +757,41 @@ fn x3_prep_stale_pending_degraded_reason_collapses_figure_and_narrow_nbsp_for_re
 }
 
 #[test]
+fn x3_prep_stale_pending_degraded_reason_collapses_thin_space_family_for_replay_stability() {
+    let mut request = SettlementRequest::new(22, "0xmatrix-sanitize-thin-space-family".to_string());
+    let token = operator_token();
+
+    let degraded = HeartbeatOutcome {
+        heartbeat: None,
+        should_retry: false,
+        degraded: true,
+        message: "target\u{2008}relay\u{2009}timeout\u{200A}signal".to_string(),
+    };
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &degraded,
+        SettlementConfirm::Confirmed { height: 6275 },
+    )
+    .unwrap();
+
+    let SettlementStep::Compensated { reason, event } = out else {
+        panic!("expected compensated branch");
+    };
+
+    assert_eq!(reason, "heartbeat degraded: target relay timeout signal");
+    assert!(!reason.contains('\u{2008}'));
+    assert!(!reason.contains('\u{2009}'));
+    assert!(!reason.contains('\u{200A}'));
+
+    assert_eq!(event.phase, "relay_heartbeat_degraded");
+    assert_eq!(event.confirm_height, None);
+    assert_eq!(event.confirm_reason, Some(reason.clone()));
+    assert_eq!(current_status(&request), &BridgeStatus::Reverted(reason));
+}
+
+#[test]
 fn x3_prep_stale_pending_degraded_reason_strips_invisible_separator_for_replay_stability() {
     let mut request =
         SettlementRequest::new(22, "0xmatrix-sanitize-invisible-separator".to_string());
