@@ -11041,6 +11041,15 @@ mod tests {
     }
 
     #[test]
+    fn parse_governed_bool_param_rejects_numeric_and_punctuation_lookalikes_fail_closed() {
+        for raw in ["2", "-1", "true.", "false,", "yes/", "off:"] {
+            let err = parse_governed_bool_param(raw, "default_slash_on_unresolved_challenge")
+                .expect_err("numeric or punctuation boolean lookalikes must be rejected");
+            assert!(matches!(err, PouwError::State(msg) if msg.contains(raw)));
+        }
+    }
+
+    #[test]
     fn slashed_terminal_settlement_without_explicit_bounty_payout_only_credits_global_slash_treasury(
     ) {
         let mut st = seeded_state();
