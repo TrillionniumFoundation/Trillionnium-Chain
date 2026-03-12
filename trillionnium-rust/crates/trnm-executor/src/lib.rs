@@ -282,6 +282,35 @@ pub fn resolve_grouping_strategy(txs: &[Tx], strategy: GroupingStrategy) -> Grou
     }
 }
 
+pub fn hot_bucket_interleave_would_reorder(txs: &[Tx]) -> bool {
+    if txs.len() < 4 {
+        return false;
+    }
+    if txs
+        .iter()
+        .all(|tx| tx.read_set.is_empty() && tx.write_set.is_empty())
+    {
+        return false;
+    }
+
+    let buckets_n = hot_bucket_count().min(txs.len());
+    if buckets_n <= 1 {
+        return false;
+    }
+
+    let mut bucket_depths = vec![0usize; buckets_n];
+    let mut non_empty_buckets = 0usize;
+    for tx in txs {
+        let bucket = hot_bucket_hint(tx, buckets_n);
+        if bucket_depths[bucket] == 0 {
+            non_empty_buckets += 1;
+        }
+        bucket_depths[bucket] += 1;
+    }
+
+    non_empty_buckets > 1 && non_empty_buckets != txs.len()
+}
+
 pub fn build_parallel_groups_profile_with_strategy(
     txs: &[Tx],
     strategy: GroupingStrategy,
@@ -1921,6 +1950,44 @@ mod tests {
 
         let _high = EnvGuard::set("TRNM_HOT_BUCKETS", "999");
         assert_eq!(hot_bucket_count(), 64);
+    }
+
+    #[test]
+    fn hot_bucket_interleave_reorder_probe_fails_closed_on_single_bucket_hotspots() {
+        let txs = (0..64)
+            .map(|i| tx(i as u64, vec![o(0)], vec![o(0)]))
+            .collect::<Vec<_>>();
+
+        assert!(matches!(
+            resolve_grouping_strategy(&txs, GroupingStrategy::AutoAdaptive),
+            GroupingStrategy::HotBucketInterleave
+        ));
+        assert!(
+            !hot_bucket_interleave_would_reorder(&txs),
+            "single-bucket hotspot batches should report no effective hot-bucket reorder"
+        );
+    }
+
+    #[test]
+    fn hot_bucket_interleave_reorder_probe_stays_enabled_on_multi_bucket_hot_streaks() {
+        let txs = (0..1024)
+            .map(|i| {
+                tx(
+                    i as u64,
+                    vec![o(((i / 16) % 4) as u64)],
+                    vec![o(((i / 16) % 4) as u64)],
+                )
+            })
+            .collect::<Vec<_>>();
+
+        assert!(matches!(
+            resolve_grouping_strategy(&txs, GroupingStrategy::AutoAdaptive),
+            GroupingStrategy::HotBucketInterleave
+        ));
+        assert!(
+            hot_bucket_interleave_would_reorder(&txs),
+            "multi-bucket hotspot batches should retain real hot-bucket reorder headroom"
+        );
     }
 
     #[test]

@@ -1,8 +1,8 @@
 use clap::Parser;
 use std::time::Instant;
 use trnm_executor::{
-    auto_adaptive_decision, build_parallel_groups_profile_with_strategy, resolve_grouping_strategy,
-    GroupingStrategy,
+    auto_adaptive_decision, build_parallel_groups_profile_with_strategy,
+    hot_bucket_interleave_would_reorder, resolve_grouping_strategy, GroupingStrategy,
 };
 use trnm_types::{ObjectRef, Tx};
 
@@ -183,7 +183,14 @@ fn emits_auto_profile(strategy: StrategyArg, default_has_adaptive_opportunity: b
 }
 
 fn adaptive_candidate_strategy_for(txs: &[Tx]) -> GroupingStrategy {
-    resolve_grouping_strategy(txs, GroupingStrategy::AutoAdaptive)
+    let resolved = resolve_grouping_strategy(txs, GroupingStrategy::AutoAdaptive);
+    if matches!(resolved, GroupingStrategy::HotBucketInterleave)
+        && !hot_bucket_interleave_would_reorder(txs)
+    {
+        GroupingStrategy::Original
+    } else {
+        resolved
+    }
 }
 
 fn default_has_adaptive_opportunity(
@@ -197,7 +204,16 @@ fn default_has_adaptive_opportunity(
 fn effective_strategy_for(strategy: StrategyArg, txs: &[Tx]) -> GroupingStrategy {
     match strategy {
         StrategyArg::Default => GroupingStrategy::Original,
-        explicit => resolve_grouping_strategy(txs, explicit.into()),
+        explicit => {
+            let resolved = resolve_grouping_strategy(txs, explicit.into());
+            if matches!(resolved, GroupingStrategy::HotBucketInterleave)
+                && !hot_bucket_interleave_would_reorder(txs)
+            {
+                GroupingStrategy::Original
+            } else {
+                resolved
+            }
+        }
     }
 }
 
@@ -344,14 +360,21 @@ mod tests {
 
     #[test]
     fn effective_strategy_reporting_stays_honest_for_default_and_auto_adaptive() {
-        let txs = (0..64).map(|i| tx(i as u64, vec![0], vec![0])).collect::<Vec<_>>();
+        let degenerate_hotspot = (0..64)
+            .map(|i| tx(i as u64, vec![0], vec![0]))
+            .collect::<Vec<_>>();
+        let hot_streak = build_hot_streak_txs(20_000, 2_000, 3, 1);
 
         assert!(matches!(
-            effective_strategy_for(StrategyArg::Default, &txs),
+            effective_strategy_for(StrategyArg::Default, &degenerate_hotspot),
             GroupingStrategy::Original
         ));
         assert!(matches!(
-            effective_strategy_for(StrategyArg::AutoAdaptive, &txs),
+            effective_strategy_for(StrategyArg::AutoAdaptive, &degenerate_hotspot),
+            GroupingStrategy::Original
+        ));
+        assert!(matches!(
+            effective_strategy_for(StrategyArg::AutoAdaptive, &hot_streak),
             GroupingStrategy::HotBucketInterleave
         ));
     }
@@ -551,6 +574,35 @@ mod tests {
         assert!(
             profile.hot_object_share > 0.0,
             "single-key hotspot workload should retain non-zero hotspot visibility"
+        );
+    }
+
+    #[test]
+    fn single_key_hot_streak_reporting_fails_closed_when_hot_bucket_cannot_reorder() {
+        let txs = build_hot_streak_txs(64, 1, 3, 1);
+
+        assert!(matches!(
+            resolve_grouping_strategy(&txs, GroupingStrategy::AutoAdaptive),
+            GroupingStrategy::HotBucketInterleave
+        ));
+        assert!(matches!(
+            effective_strategy_for(StrategyArg::AutoAdaptive, &txs),
+            GroupingStrategy::Original
+        ));
+        assert!(matches!(
+            adaptive_candidate_strategy_for(&txs),
+            GroupingStrategy::Original
+        ));
+        assert!(matches!(
+            effective_strategy_for(StrategyArg::HotBucketInterleave, &txs),
+            GroupingStrategy::Original
+        ));
+        assert!(
+            !default_has_adaptive_opportunity(
+                StrategyArg::Default,
+                adaptive_candidate_strategy_for(&txs),
+            ),
+            "single-bucket no-op hotspot batches should not advertise adaptive headroom"
         );
     }
 
