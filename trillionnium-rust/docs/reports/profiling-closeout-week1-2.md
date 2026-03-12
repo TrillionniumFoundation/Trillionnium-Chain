@@ -46,6 +46,7 @@ python3 scripts/profiling_closeout_report.py
   - `benchmark_artifact_coverage`：仅 bench 侧产物覆盖率（不含 `node_log`）
   - `Benchmark Next Step Matrix`：对 `classic_bench` / `mixed_bench` / `executor_profile` 分别输出 `action=produce|keep|refresh`，并附带 `age_seconds`、`updated_at`、`path`
   - `Benchmark Action Summary`：聚合给出 `benchmark_decision=INCOMPLETE|REFRESH_RECOMMENDED|READY` 与 action 计数，便于 autopilot/curator 直接决定是否需要先补产物、刷新产物，还是可以进入 review
+- `Executor Auto-Adaptive Decision Summary`：当 `executor_profile` 含 `profile.auto.*` 字段时，额外汇总 `use_hot_bucket`、`reason`、`hot_key_share`、`expected_gain_score` 等自动策略决策字段，减少人工回看原始 profile txt 的需要
 
 ## 字段解释
 - `scheduler_elapsed_ms`：从 block 内开始做 commit ordering，到拿到 `OrderingDecision` 的耗时

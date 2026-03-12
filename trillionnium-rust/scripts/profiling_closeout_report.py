@@ -507,7 +507,37 @@ def main():
             f"- executor_profile_freshness: {freshness_label(file_age_seconds(executor_profile))}"
         )
         with open(executor_profile, "r", encoding="utf-8") as f:
-            lines.extend([line.rstrip() for line in f])
+            executor_profile_lines = [line.rstrip() for line in f]
+        lines.extend(executor_profile_lines)
+
+        executor_profile_metrics = {}
+        for line in executor_profile_lines:
+            if "=" not in line:
+                continue
+            key, value = line.split("=", 1)
+            executor_profile_metrics[key.strip()] = value.strip()
+
+        auto_metric_keys = [
+            "profile.auto.use_hot_bucket",
+            "profile.auto.reason",
+            "profile.auto.sample_len",
+            "profile.auto.streak_ratio",
+            "profile.auto.streak_threshold",
+            "profile.auto.min_margin",
+            "profile.auto.hot_key_share",
+            "profile.auto.min_hot_key_share",
+            "profile.auto.expected_gain_score",
+            "profile.auto.min_expected_gain_score",
+        ]
+        auto_metric_lines = [
+            f"- executor_profile.{key}: {executor_profile_metrics[key]}"
+            for key in auto_metric_keys
+            if key in executor_profile_metrics
+        ]
+        if auto_metric_lines:
+            lines.append("")
+            lines.append("### Executor Auto-Adaptive Decision Summary")
+            lines.extend(auto_metric_lines)
     else:
         lines.append("- executor_profile_freshness: missing")
         lines.append("- executor profile summary: missing")
