@@ -2291,6 +2291,36 @@ mod tests {
     }
 
     #[test]
+    fn auto_adaptive_ratio_knobs_are_clamped_to_safe_bounds() {
+        let _env = env_lock();
+
+        let _streak_low = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "-25%");
+        let _margin_low = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "-0.5");
+        let _share_low = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "-1");
+        let _gain_low = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "-2%");
+
+        assert_eq!(auto_hot_streak_threshold(), 0.0);
+        assert_eq!(auto_reorder_min_margin(), 0.0);
+        assert_eq!(auto_reorder_min_hot_key_share(), 0.0);
+        assert_eq!(auto_min_expected_gain_score(), 0.0);
+
+        drop(_streak_low);
+        drop(_margin_low);
+        drop(_share_low);
+        drop(_gain_low);
+
+        let _streak_high = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "250%");
+        let _margin_high = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "5");
+        let _share_high = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "125%");
+        let _gain_high = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "3.5");
+
+        assert_eq!(auto_hot_streak_threshold(), 1.0);
+        assert_eq!(auto_reorder_min_margin(), 1.0);
+        assert_eq!(auto_reorder_min_hot_key_share(), 1.0);
+        assert_eq!(auto_min_expected_gain_score(), 1.0);
+    }
+
+    #[test]
     fn auto_adaptive_min_batch_len_is_clamped_to_safe_bounds() {
         let _env = env_lock();
 
