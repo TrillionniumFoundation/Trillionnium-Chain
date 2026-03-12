@@ -39,6 +39,83 @@ fn new_governance_proposals_canonicalize_embedded_version_for_state_root() {
 }
 
 #[test]
+fn governance_proposal_status_transition_should_affect_state_root_and_match_equivalent_update_path() {
+    let proposal = GovProposalObject {
+        proposal_id: 9_002,
+        title: "Raise challenge success bounty".into(),
+        proposer: "governance.alice".into(),
+        status: GovProposalStatus::Draft,
+        version: 1,
+    };
+
+    let mut transitioned = StateStore::new();
+    let mut updated = StateStore::new();
+
+    let transitioned_ref = transitioned.put_proposal_new(proposal.clone()).unwrap();
+    let updated_ref = updated.put_proposal_new(proposal).unwrap();
+    let baseline_root = transitioned.state_root();
+    assert_eq!(
+        baseline_root,
+        updated.state_root(),
+        "sanity: identical baseline proposal states should hash identically"
+    );
+
+    transitioned
+        .transition_proposal_status(transitioned_ref, GovProposalStatus::Voting)
+        .expect("proposal status transition should succeed");
+
+    let mut manually_updated = updated
+        .get_proposal(9_002)
+        .expect("baseline proposal snapshot should exist");
+    manually_updated.status = GovProposalStatus::Voting;
+    updated
+        .update_proposal(updated_ref, manually_updated)
+        .expect("equivalent manual proposal status update should succeed");
+
+    let transitioned_root = transitioned.state_root();
+    assert_ne!(
+        transitioned_root, baseline_root,
+        "state_root should incorporate governance proposal status so draft and voting states cannot hash identically"
+    );
+    assert_eq!(
+        transitioned_root,
+        updated.state_root(),
+        "equivalent proposal status transitions should produce the same deterministic root regardless of whether they use the transition helper or direct update path"
+    );
+}
+
+#[test]
+fn governance_proposal_title_and_proposer_boundaries_should_affect_state_root() {
+    let mut state_a = StateStore::new();
+    let mut state_b = StateStore::new();
+
+    state_a
+        .put_proposal_new(GovProposalObject {
+            proposal_id: 9_003,
+            title: "ab".into(),
+            proposer: "c".into(),
+            status: GovProposalStatus::Draft,
+            version: 1,
+        })
+        .unwrap();
+    state_b
+        .put_proposal_new(GovProposalObject {
+            proposal_id: 9_003,
+            title: "a".into(),
+            proposer: "bc".into(),
+            status: GovProposalStatus::Draft,
+            version: 1,
+        })
+        .unwrap();
+
+    assert_ne!(
+        state_a.state_root(),
+        state_b.state_root(),
+        "state_root should length-frame governance proposal title and proposer so field-boundary collisions cannot hash identically"
+    );
+}
+
+#[test]
 fn task_metadata_string_field_boundaries_should_affect_state_root() {
     let mut st1 = StateStore::new();
     let mut st2 = StateStore::new();
