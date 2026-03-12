@@ -769,6 +769,15 @@ fn load_node_events_from_root(root: &Path, mode: NodeEventScanMode) -> LoadedNod
             bond_disposition: normalize_opt("bond_disposition"),
         });
     }
+    out.sort_by(|a, b| {
+        a.block_height
+            .cmp(&b.block_height)
+            .then(a.tx_id.cmp(&b.tx_id))
+            .then(a.ts_unix_ms.cmp(&b.ts_unix_ms))
+            .then(a.task_id.cmp(&b.task_id))
+            .then(a.event_type.cmp(&b.event_type))
+            .then(a.actor.cmp(&b.actor))
+    });
     LoadedNodeEvents {
         events: out,
         mode,
@@ -6498,6 +6507,57 @@ line2
         }));
 
         let _ = fs::remove_file(path);
+    }
+
+    #[test]
+    fn load_node_events_authoritative_sorts_events_across_multiple_sources() {
+        let _guard = lock_env();
+        let root = unique_tmp_path("trnm-rpc-node-order-root", "dir");
+        fs::create_dir_all(&root).expect("create root dir");
+
+        let later_path = root.join("a-later.log");
+        let earlier_path = root.join("z-earlier.log");
+        fs::write(
+            &later_path,
+            "[event] event_type=resolve task_id=92 tx_id=9 block_height=9 actor=node4 from_status=COMMITTED to_status=RESOLVED state_root=bbb signer=node4 ts_unix_ms=900\n",
+        )
+        .expect("write later log");
+        fs::write(
+            &earlier_path,
+            "[event] event_type=commit task_id=92 tx_id=3 block_height=4 actor=node4 from_status=ASSIGNED to_status=COMPLETED state_root=aaa signer=node4 ts_unix_ms=400\n",
+        )
+        .expect("write earlier log");
+
+        let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+        let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+        unsafe {
+            std::env::set_var(
+                NODE_EVENT_LOG_SOURCES_ENV,
+                format!("{},{}", later_path.display(), earlier_path.display()),
+            );
+            std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV);
+        }
+
+        let got = load_node_events_from_root(&root, NodeEventScanMode::Authoritative);
+
+        match prev_sources {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+        }
+        match prev_manifest {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+        }
+
+        assert_eq!(got.events.len(), 2);
+        assert_eq!(got.events[0].block_height, 4);
+        assert_eq!(got.events[0].tx_id, 3);
+        assert_eq!(got.events[0].event_type, "commit");
+        assert_eq!(got.events[1].block_height, 9);
+        assert_eq!(got.events[1].tx_id, 9);
+        assert_eq!(got.events[1].event_type, "resolve");
+
+        let _ = fs::remove_dir_all(root);
     }
 
     #[test]
