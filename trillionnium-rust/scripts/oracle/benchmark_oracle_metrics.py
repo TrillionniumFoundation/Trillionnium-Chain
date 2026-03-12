@@ -391,6 +391,39 @@ def _test_run_baseline_zeros_source_cardinality_when_no_sample_is_accepted():
 
 
 
+def _test_run_baseline_rejected_canonicalized_duplicates_do_not_inflate_accepted_aggregate_cardinality():
+    cases = [
+        {
+            "snapshot_ts_ms": 1_000,
+            "sources": [
+                {"source": "s1", "value": 100.0, "ts_unix_ms": 1_000},
+                {"source": "s2", "value": 100.0, "ts_unix_ms": 1_000},
+            ],
+        },
+        {
+            "snapshot_ts_ms": 2_000,
+            "sources": [
+                {"source": " S1 ", "value": 100.0, "ts_unix_ms": 2_000},
+                {"source": "s1", "value": 100.0, "ts_unix_ms": 2_000},
+                {"source": "S2", "value": 100.0, "ts_unix_ms": 2_000},
+                {"source": "s3", "value": 130.0, "ts_unix_ms": 2_000},
+            ],
+        },
+    ]
+
+    class Args:
+        min_sources = 2
+        max_staleness_ms = 60_000
+        max_deviation_bps = 500
+
+    out = run_baseline(cases, Args())
+    assert out["accepted_total"] == 1
+    assert out["oracle_drift_reject_total"] == 1
+    assert out["oracle_source_cardinality"] == 2
+    assert out["sample_count"] == 2
+
+
+
 def _test_run_bench_rejects_zero_count_and_rounds_with_stable_error():
     class Args:
         min_sources = 2
