@@ -2299,7 +2299,10 @@ fn parse_query_events_limit_from_path(path: &str) -> std::result::Result<usize, 
         };
         let normalized_key = normalize_wrapped_env_value(key);
         if !normalized_key.eq_ignore_ascii_case("limit") {
-            continue;
+            return Err(http_json_response(
+                "400 Bad Request",
+                "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}",
+            ));
         }
         if key != "limit" {
             return Err(http_json_response(
@@ -3766,11 +3769,21 @@ mod tests {
             parse_query_events_limit_from_path("/query-events/42?limit=7").expect("explicit limit"),
             7
         );
-        assert_eq!(
-            parse_query_events_limit_from_path("/query-events/42?foo=bar&limit=9")
-                .expect("limit after unrelated query"),
-            9
-        );
+    }
+
+    #[test]
+    fn parse_query_events_limit_from_path_rejects_unrelated_query_keys() {
+        for path in [
+            "/query-events/42?foo=bar&limit=9",
+            "/query-events/42?limit=9&foo=bar",
+            "/query-events/42?foo=bar",
+            "/query-events/42?limit=9&bar=baz",
+        ] {
+            let err = parse_query_events_limit_from_path(path)
+                .expect_err("unrelated query keys must fail closed instead of being ignored");
+            assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+            assert!(err.contains("invalid limit"), "path={path} err={err}");
+        }
     }
 
     #[test]
