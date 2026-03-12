@@ -170,7 +170,8 @@ emergency_pause 与结算路径语义冲突：挑战任务可能被冻结
 
 ### 2026-03-12 补充核查
 - 当前 `trnm-pouw` 在 challenged task 进入 timeout 终态后，已经会主动 `clear_pending_resolve_approval(task_id)`，因此“过期后仍残留半完成审批对象、可被后续终态复用”的那条 stale-approval 风险已较之前收敛。
-- 但这**不改变**本 Challenge 的主结论：所谓“二次确认”目前仍然没有形成真实的 signer-bound committee control。也就是说，staged approval 的生命周期 hygiene 有所改善，但审批身份绑定与执行前强制校验仍需要继续作为主修复方向。
+- 当前 `trnm-pouw` 也已经把 staged approval 真正接入 `apply_resolve_at_height`：当 `resolve_authority` 配置为多成员集合时，PoUW 侧会要求两个不同成员完成 staged/confirm 流程后才允许终态结算；若治理在首个 staged approval 之后把 resolver 集合改成单成员，或把首个 approver 从集合中移除，代码会 fail-closed 并清掉陈旧 staged state。
+- 但这**不改变**本 Challenge 的主结论：所谓“二次确认”目前仍然没有形成真实的 signer-bound committee control。也就是说，staged approval 的生命周期 hygiene 与部分执行前校验已经增强，但审批身份仍主要绑定在字符串 actor / signer surface 上，而不是更强的 committee-auth context；这仍需要继续作为主修复方向。
 
 ---
 
