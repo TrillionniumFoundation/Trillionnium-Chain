@@ -989,7 +989,7 @@ fn auto_adaptive_min_batch_len() -> usize {
     const MIN_BATCH_LEN_FLOOR: usize = 64;
     const MIN_BATCH_LEN_CEIL: usize = 4096;
 
-    parse_env_usize("TRNM_AUTO_MIN_BATCH_LEN")
+    parse_grouped_env_usize("TRNM_AUTO_MIN_BATCH_LEN")
         .map(|v| v.clamp(MIN_BATCH_LEN_FLOOR, MIN_BATCH_LEN_CEIL))
         .unwrap_or(DEFAULT_MIN_BATCH_LEN)
 }
@@ -2413,6 +2413,15 @@ mod tests {
         assert_eq!(auto_reorder_min_margin(), 0.04);
         assert_eq!(auto_reorder_min_hot_key_share(), 0.0075);
         assert_eq!(auto_min_expected_gain_score(), 0.01);
+    }
+
+    #[test]
+    fn auto_adaptive_min_batch_len_rejects_ambiguous_grouped_comma_values() {
+        let _env = env_lock();
+
+        let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "'+5,1,2'");
+
+        assert_eq!(auto_adaptive_min_batch_len(), 512);
     }
 
     #[test]
