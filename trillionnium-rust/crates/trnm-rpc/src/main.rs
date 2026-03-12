@@ -6457,6 +6457,52 @@ line2
     }
 
     #[test]
+    fn load_latest_node_events_recent_tail_keeps_only_recent_complete_events() {
+        let _guard = lock_env();
+        let path = unique_tmp_path("trnm-rpc-node4-tail", "log");
+        let older = "[event] event_type=commit task_id=41 tx_id=1 block_height=3 actor=node4 from_status=ASSIGNED to_status=COMPLETED state_root=aaa signer=node4\n";
+        let recent = "[event] event_type=resolve task_id=42 tx_id=2 block_height=4 actor=node4 from_status=COMMITTED to_status=RESOLVED state_root=bbb signer=node4\n";
+        fs::write(&path, format!("{}{}", older, recent)).expect("write node4 log");
+
+        let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+        let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+        let prev_tail = std::env::var("TRNM_RPC_NODE_EVENT_LOG_TAIL_BYTES").ok();
+        unsafe {
+            std::env::set_var(
+                NODE_EVENT_LOG_SOURCES_ENV,
+                path.to_string_lossy().to_string(),
+            );
+            std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV);
+            std::env::set_var(
+                "TRNM_RPC_NODE_EVENT_LOG_TAIL_BYTES",
+                recent.len().to_string(),
+            );
+        }
+
+        let got = load_latest_node_events();
+
+        match prev_sources {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+        }
+        match prev_manifest {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+        }
+        match prev_tail {
+            Some(v) => unsafe { std::env::set_var("TRNM_RPC_NODE_EVENT_LOG_TAIL_BYTES", v) },
+            None => unsafe { std::env::remove_var("TRNM_RPC_NODE_EVENT_LOG_TAIL_BYTES") },
+        }
+
+        assert_eq!(got.len(), 1, "tail scan should drop truncated older events");
+        assert_eq!(got[0].task_id, 42);
+        assert_eq!(got[0].tx_id, 2);
+        assert_eq!(got[0].event_type, "resolve");
+
+        let _ = fs::remove_file(path);
+    }
+
+    #[test]
     fn load_ingress_records_quarantines_malformed_lines_with_accounting() {
         let _guard = lock_env();
         let path = unique_tmp_path("ingress-quarantine", "jsonl");
