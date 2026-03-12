@@ -59,10 +59,17 @@ impl TeeVerifier {
                 let message = format!(
                     "unavailable: verification backend '{backend}' cannot currently verify TEE attestation {evidence_surface}: {reason}"
                 );
-                if evidence_surface == "evidence/claims" {
-                    VerificationResult::Indeterminate(format!(
-                        "{message} (legacy: cannot currently verify TEE attestation evidence/claims)"
-                    ))
+                let legacy_suffix = match evidence_surface {
+                    "evidence/claims" => {
+                        Some("legacy: cannot currently verify TEE attestation evidence/claims")
+                    }
+                    "quote/report claims" => Some(
+                        "legacy: cannot currently verify TEE attestation quote/report claims",
+                    ),
+                    _ => None,
+                };
+                if let Some(legacy_suffix) = legacy_suffix {
+                    VerificationResult::Indeterminate(format!("{message} ({legacy_suffix})"))
                 } else {
                     VerificationResult::Indeterminate(message)
                 }
@@ -598,6 +605,33 @@ mod tests {
     }
 
     #[test]
+    fn tee_verifier_backend_unavailable_quote_report_receipt_claims_keeps_combined_claims_surface_and_legacy_suffix(
+    ) {
+        let result = TeeVerifier::classify_execution_err(BackendExecutionError::Unavailable {
+            backend: "tee:mock-tee-unavailable".to_string(),
+            reason: "quote report receipt claims verifier unavailable".to_string(),
+        });
+
+        assert!(
+            matches!(result, VerificationResult::Indeterminate(_)),
+            "unexpected result: {result:?}"
+        );
+        let VerificationResult::Indeterminate(msg) = result else {
+            unreachable!()
+        };
+        assert!(msg.contains("unavailable:"), "message: {msg}");
+        assert!(
+            msg.contains("cannot currently verify TEE attestation quote/report claims:"),
+            "message: {msg}"
+        );
+        assert!(
+            msg.contains("legacy: cannot currently verify TEE attestation quote/report claims"),
+            "message: {msg}"
+        );
+        assert!(!msg.contains("quote/report evidence"), "message: {msg}");
+    }
+
+    #[test]
     fn tee_verifier_backend_internal_quote_report_evidence_keeps_combined_evidence_surface_without_claims_legacy_suffix(
     ) {
         let result = TeeVerifier::classify_execution_err(BackendExecutionError::Internal {
@@ -970,7 +1004,10 @@ mod tests {
         assert!(msg.contains("quote/report claims"), "message: {msg}");
         assert!(!msg.contains("quote/report evidence"), "message: {msg}");
         assert!(!msg.contains("payload/claims"), "message: {msg}");
-        assert!(!msg.contains("legacy:"), "message: {msg}");
+        assert!(
+            msg.contains("legacy: cannot currently verify TEE attestation quote/report claims"),
+            "message: {msg}"
+        );
     }
 
     #[test]
