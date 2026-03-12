@@ -4362,6 +4362,48 @@ mod tests {
     }
 
     #[test]
+    fn wal_checkpoint_verification_rejects_identical_duplicate_height_tail() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "p2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1.clone()),
+        };
+        let h2 = e2.content_hash_hex();
+        let duplicated_e2 = e2.clone();
+
+        let checkpoints = vec![
+            CheckpointMeta {
+                height: 1,
+                state_root_hex: "r1".into(),
+                wal_entry_hash_hex: h1,
+            },
+            CheckpointMeta {
+                height: 2,
+                state_root_hex: "r2".into(),
+                wal_entry_hash_hex: h2,
+            },
+        ];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2, duplicated_e2])
+            .unwrap()
+            .expect("checkpoint");
+        assert_eq!(got.height, 2);
+        assert_eq!(got.state_root_hex, "r2");
+    }
+
+    #[test]
     fn wal_checkpoint_verification_is_height_ordered_even_if_checkpoint_list_is_not() {
         let e1 = WalMeta {
             height: 1,
