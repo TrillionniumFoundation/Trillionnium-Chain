@@ -262,7 +262,9 @@ fn strip_terminal_control_sequences(input: &str) -> String {
 
 fn parse_response_with_standard_rules(stdout: &str) -> Result<LlmAdapterResponse, String> {
     let sanitized = strip_terminal_control_sequences(stdout);
-    let normalized = sanitized.trim_start().trim_start_matches('\u{feff}');
+    let normalized = sanitized
+        .trim_start()
+        .trim_start_matches(is_invisible_receipt_filler);
     let starts_with_json_object = normalized.starts_with('{');
 
     if let Ok(parsed) = serde_json::from_str(normalized) {
@@ -1209,6 +1211,19 @@ mod tests {
             .expect("should parse json with whitespace before utf-8 bom");
         assert_eq!(parsed.output_text, "ok");
         assert_eq!(parsed.provider_request_id.as_deref(), Some("r6"));
+    }
+
+    #[test]
+    fn standard_proof_adapter_parse_response_accepts_json_with_zero_width_filler_prefix() {
+        let adapter = StandardProofAdapter;
+        let stdout =
+            "\u{200b}\u{200c}\u{2060}{\"output_text\":\"ok\",\"provider_request_id\":\"r6-zwsp\"}";
+
+        let parsed = adapter
+            .parse_response(stdout)
+            .expect("should parse json with zero-width filler prefix");
+        assert_eq!(parsed.output_text, "ok");
+        assert_eq!(parsed.provider_request_id.as_deref(), Some("r6-zwsp"));
     }
 
     #[test]
