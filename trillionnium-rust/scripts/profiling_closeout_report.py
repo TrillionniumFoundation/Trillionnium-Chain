@@ -303,6 +303,7 @@ def main():
     executor_profile = args.executor_profile or latest(executor_profile_pattern)
     ts = datetime.now().strftime("%Y%m%d-%H%M%S")
     out = args.out or os.path.join(root, "docs", "reports", f"profiling-closeout-baseline-{ts}.md")
+    baseline_report_candidates_with_out = [out] + [path for path in baseline_report_candidates if path != out]
 
     bench_dir_exists = os.path.isdir(bench_dir)
 
@@ -365,15 +366,18 @@ def main():
 
     def candidate_preview(label: str, selected: str | None, candidates: list[str], max_items: int = 3) -> list[str]:
         preview = [f"- {label}: selected={selected or 'None'} candidate_count={len(candidates)}"]
-        if not candidates:
+        existing_candidates = [path for path in candidates if os.path.exists(path)]
+        if not existing_candidates:
             preview.append(f"  - none: pattern produced no matches")
             return preview
-        newest = candidates[0]
-        oldest = candidates[-1]
-        spread_seconds = int(os.path.getmtime(newest) - os.path.getmtime(oldest)) if len(candidates) >= 2 else 0
+        newest = existing_candidates[0]
+        oldest = existing_candidates[-1]
+        spread_seconds = int(os.path.getmtime(newest) - os.path.getmtime(oldest)) if len(existing_candidates) >= 2 else 0
         freshness_counts = {"fresh": 0, "stale": 0, "old": 0}
-        for path in candidates:
-            freshness_counts[freshness_label(file_age_seconds(path))] += 1
+        for path in existing_candidates:
+            freshness = freshness_label(file_age_seconds(path))
+            if freshness in freshness_counts:
+                freshness_counts[freshness] += 1
         preview.append(
             f"  - candidate_window: newest={os.path.basename(newest)} oldest={os.path.basename(oldest)} "
             f"spread_seconds={spread_seconds} newest_freshness={freshness_label(file_age_seconds(newest))} "
@@ -383,14 +387,19 @@ def main():
             "  - candidate_freshness_counts: "
             f"fresh={freshness_counts['fresh']} stale={freshness_counts['stale']} old={freshness_counts['old']}"
         )
-        if selected and selected in candidates:
-            selected_rank = candidates.index(selected) + 1
+        if selected and selected in candidates and os.path.exists(selected):
+            selected_rank = existing_candidates.index(selected) + 1 if selected in existing_candidates else "n/a"
             selected_vs_newest_seconds = max(0, int(os.path.getmtime(newest) - os.path.getmtime(selected)))
             preview.append(
                 f"  - selected_status: is_newest={'true' if selected_rank == 1 else 'false'} "
-                f"rank={selected_rank}/{len(candidates)} freshness={freshness_label(file_age_seconds(selected))} "
+                f"rank={selected_rank}/{len(existing_candidates)} freshness={freshness_label(file_age_seconds(selected))} "
                 f"updated_at={file_mtime_iso(selected) or 'n/a'} age_seconds={file_age_seconds(selected) if file_age_seconds(selected) is not None else 'n/a'} "
                 f"delta_vs_newest_seconds={selected_vs_newest_seconds}"
+            )
+        elif selected and selected in candidates:
+            preview.append(
+                f"  - selected_status: is_newest=pending_write rank=pending_write freshness=missing "
+                f"updated_at=n/a age_seconds=n/a delta_vs_newest_seconds=n/a"
             )
         elif selected:
             preview.append(
@@ -398,7 +407,7 @@ def main():
                 f"updated_at={file_mtime_iso(selected) or 'n/a'} age_seconds={file_age_seconds(selected) if file_age_seconds(selected) is not None else 'n/a'} "
                 f"delta_vs_newest_seconds=n/a"
             )
-        for idx, path in enumerate(candidates[:max_items], start=1):
+        for idx, path in enumerate(existing_candidates[:max_items], start=1):
             preview.append(
                 f"  - recent_{idx}: basename={os.path.basename(path)} "
                 f"updated_at={file_mtime_iso(path) or 'n/a'} freshness={freshness_label(file_age_seconds(path))} path={path}"
@@ -422,17 +431,24 @@ def main():
                 "old_backlog": 0,
             }
         freshness_counts = {"fresh": 0, "stale": 0, "old": 0}
+        present_candidate_count = 0
         for path in candidates:
-            freshness_counts[freshness_label(file_age_seconds(path))] += 1
+            freshness = freshness_label(file_age_seconds(path))
+            if freshness in freshness_counts:
+                freshness_counts[freshness] += 1
+                present_candidate_count += 1
         selected_freshness = freshness_label(file_age_seconds(selected)) if selected else "missing"
         old_backlog = freshness_counts["stale"] + freshness_counts["old"]
-        if freshness_counts["fresh"] == 0:
+        if present_candidate_count == 0:
+            status = "empty"
+            action = "produce"
+        elif freshness_counts["fresh"] == 0:
             status = "refresh_required"
             action = "refresh"
-        elif len(candidates) >= 12 or old_backlog >= 8:
+        elif present_candidate_count >= 12 or old_backlog >= 8:
             status = "backlog_heavy"
             action = "keep_latest_and_consider_archive"
-        elif len(candidates) >= 5 or old_backlog >= 3:
+        elif present_candidate_count >= 5 or old_backlog >= 3:
             status = "backlog_present"
             action = "keep_latest"
         else:
@@ -444,7 +460,7 @@ def main():
             "action": action,
             "selected": os.path.basename(selected) if selected else "None",
             "selected_freshness": selected_freshness,
-            "candidate_count": len(candidates),
+            "candidate_count": present_candidate_count,
             "fresh": freshness_counts["fresh"],
             "stale": freshness_counts["stale"],
             "old": freshness_counts["old"],
@@ -654,8 +670,8 @@ def main():
     ]
     baseline_report_pool = candidate_pool_health_struct(
         "baseline_closeout_reports",
-        out if os.path.exists(out) else (baseline_report_candidates[0] if baseline_report_candidates else None),
-        baseline_report_candidates,
+        out,
+        baseline_report_candidates_with_out,
     )
     archive_candidates_by_pool = {
         label: archive_candidates_for_pool(candidates)
@@ -717,9 +733,9 @@ def main():
 
     lines += ["", "## Baseline Report Pool Health"]
     lines.append(candidate_pool_health_line(baseline_report_pool))
-    lines.extend(candidate_preview("baseline_closeout_report_candidates", out, baseline_report_candidates))
+    lines.extend(candidate_preview("baseline_closeout_report_candidates", out, baseline_report_candidates_with_out))
     baseline_report_archive_line = archive_candidate_line(
-        "baseline_closeout_report_candidates", baseline_report_candidates
+        "baseline_closeout_report_candidates", baseline_report_candidates_with_out
     )
     lines.append(baseline_report_archive_line)
     baseline_report_followup = {
@@ -730,7 +746,7 @@ def main():
     }.get(str(baseline_report_pool["action"]), "review_archive_candidates_before_manual_cleanup")
     lines.append(f"- baseline_closeout_report_followup: {baseline_report_followup}")
 
-    baseline_report_archive_candidates = archive_candidates_for_pool(baseline_report_candidates)
+    baseline_report_archive_candidates = archive_candidates_for_pool(baseline_report_candidates_with_out)
     lines += ["", "## Baseline Report Action Summary"]
     lines.append(
         "- baseline_closeout_report_decision: "
