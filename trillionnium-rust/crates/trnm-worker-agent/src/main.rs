@@ -935,23 +935,41 @@ fn normalize_candidate_tx_hash(raw: &str) -> Option<String> {
 fn parse_tx_hash(text: &str) -> Option<String> {
     const PREFIXES: &[&str] = &[
         "tx_hash=",
+        "tx_hash =",
         "tx_hash:",
+        "tx_hash :",
         "TX_HASH=",
+        "TX_HASH =",
         "TX_HASH:",
+        "TX_HASH :",
         "tx-hash=",
+        "tx-hash =",
         "tx-hash:",
+        "tx-hash :",
         "TX-HASH=",
+        "TX-HASH =",
         "TX-HASH:",
+        "TX-HASH :",
         "tx hash=",
+        "tx hash =",
         "tx hash:",
+        "tx hash :",
         "TX HASH=",
+        "TX HASH =",
         "TX HASH:",
+        "TX HASH :",
         "txHash=",
+        "txHash =",
         "txHash:",
+        "txHash :",
         "TXHASH=",
+        "TXHASH =",
         "TXHASH:",
+        "TXHASH :",
         "txhash=",
+        "txhash =",
         "txhash:",
+        "txhash :",
         "\"tx_hash\":",
         "\"tx_hash\" :",
         "\"TX_HASH\":",
@@ -2162,9 +2180,18 @@ mod tests {
             .expect("space-separated shell receipt hash should parse");
         assert_eq!(shell, "deadbeef");
 
+        let shell_with_spacing = parse_tx_hash("[adapter] commit accepted tx hash = 0xC0FFEE12")
+            .expect("space-separated shell receipt hash with spaced delimiter should parse");
+        assert_eq!(shell_with_spacing, "c0ffee12");
+
         let uppercase = parse_tx_hash("[adapter] commit accepted TX HASH:0xABCD1234")
             .expect("uppercase space-separated receipt hash should parse");
         assert_eq!(uppercase, "abcd1234");
+
+        let uppercase_with_spacing =
+            parse_tx_hash("[adapter] commit accepted TX HASH : 0xFACECAFE")
+                .expect("uppercase space-separated receipt hash with spaced delimiter should parse");
+        assert_eq!(uppercase_with_spacing, "facecafe");
     }
 
     #[test]
