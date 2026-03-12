@@ -82,10 +82,13 @@ fn last_balanced_json_object(input: &str) -> Option<String> {
     last
 }
 
-fn collapse_adapter_delimiters(raw: &str) -> String {
-    raw.chars()
-        .filter_map(|ch| match ch {
-            '\u{061c}'
+fn is_invisible_receipt_filler(ch: char) -> bool {
+    matches!(
+        ch,
+        '\u{061c}'
+            | '\u{00ad}'
+            | '\u{034f}'
+            | '\u{180e}'
             | '\u{200b}'
             | '\u{200c}'
             | '\u{200d}'
@@ -96,7 +99,20 @@ fn collapse_adapter_delimiters(raw: &str) -> String {
             | '\u{2062}'
             | '\u{2063}'
             | '\u{2064}'
-            | '\u{feff}' => None,
+            | '\u{2066}'
+            | '\u{2067}'
+            | '\u{2068}'
+            | '\u{2069}'
+            | '\u{fe0e}'
+            | '\u{fe0f}'
+            | '\u{feff}'
+    )
+}
+
+fn collapse_adapter_delimiters(raw: &str) -> String {
+    raw.chars()
+        .filter_map(|ch| match ch {
+            other if is_invisible_receipt_filler(other) => None,
             '‐' | '‑' | '‒' | '–' | '—' | '―' | '−' | '－' => Some('-'),
             '_' | '/' | '\\' | ':' | '.' => Some('-'),
             other if other.is_whitespace() => Some('-'),
@@ -121,23 +137,7 @@ fn has_non_empty_auditable_value(value: Option<&str>) -> bool {
     value
         .map(|v| {
             v.chars()
-                .filter(|c| {
-                    !matches!(
-                        c,
-                        '\u{061c}'
-                            | '\u{200b}'
-                            | '\u{200c}'
-                            | '\u{200d}'
-                            | '\u{200e}'
-                            | '\u{200f}'
-                            | '\u{2060}'
-                            | '\u{2061}'
-                            | '\u{2062}'
-                            | '\u{2063}'
-                            | '\u{2064}'
-                            | '\u{feff}'
-                    )
-                })
+                .filter(|c| !is_invisible_receipt_filler(*c))
                 .collect::<String>()
         })
         .map(|v| v.chars().any(|c| !c.is_whitespace() && !c.is_control()))
@@ -445,6 +445,16 @@ mod tests {
             Some("pr-2e")
         );
 
+        let tee_with_directional_isolates = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-2e0\",\"adapter\":\"TEE\u{2066}_RECEIPT\u{2069}\"}",
+            )
+            .expect("tee receipt label with directional isolates should parse");
+        assert_eq!(
+            tee_with_directional_isolates.provider_request_id.as_deref(),
+            Some("pr-2e0")
+        );
+
         let tee_with_left_to_right_mark = adapter
             .parse_response(
                 "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-2eaa\",\"adapter\":\"TEE\u{200E}_RECEIPT\"}",
@@ -550,6 +560,16 @@ mod tests {
             .expect_err("zero-width-only provider_request_id must fail closed");
         assert_eq!(
             zero_width_only_request_id,
+            "tee-receipt-missing-provider-request-id"
+        );
+
+        let directional_isolate_only_request_id = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"\\u2066\\u2069\\u180E\",\"adapter\":\"tee-receipt\"}",
+            )
+            .expect_err("directional-isolate-only provider_request_id must fail closed");
+        assert_eq!(
+            directional_isolate_only_request_id,
             "tee-receipt-missing-provider-request-id"
         );
 
@@ -674,6 +694,16 @@ mod tests {
             Some("pr-zk-2e")
         );
 
+        let zk_with_directional_isolates = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-zk-2e0\",\"adapter\":\"ZK\u{2066}_RECEIPT\u{2069}\"}",
+            )
+            .expect("zk receipt label with directional isolates should parse");
+        assert_eq!(
+            zk_with_directional_isolates.provider_request_id.as_deref(),
+            Some("pr-zk-2e0")
+        );
+
         let zk_with_invisible_separator = adapter
             .parse_response(
                 "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-zk-2eaa\",\"adapter\":\"ZK\u{2063}_RECEIPT\"}",
@@ -776,6 +806,16 @@ mod tests {
             .expect_err("zero-width-only provider_request_id must fail closed");
         assert_eq!(
             zero_width_only_request_id,
+            "zk-receipt-missing-provider-request-id"
+        );
+
+        let directional_isolate_only_request_id = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"\\u2066\\u2069\\u180E\",\"adapter\":\"zk-receipt\"}",
+            )
+            .expect_err("directional-isolate-only provider_request_id must fail closed");
+        assert_eq!(
+            directional_isolate_only_request_id,
             "zk-receipt-missing-provider-request-id"
         );
 
@@ -945,6 +985,12 @@ mod tests {
         assert!(ok);
         assert_eq!(code, "tee_receipt_ok");
 
+        let adapter = build_proof_adapter("TEE\u{2066}_RECEIPT\u{2069}")
+            .expect("tee alias should strip directional isolates");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "tee_receipt_ok");
+
         let adapter = build_proof_adapter("TEE\u{2062}_RECEIPT")
             .expect("tee alias should strip invisible times");
         let (ok, code) = adapter.verify("hello", 8);
@@ -984,6 +1030,12 @@ mod tests {
 
         let adapter = build_proof_adapter("ZK\u{200d}_RECEIPT")
             .expect("zk alias should strip zero-width joiner");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "zk_receipt_ok");
+
+        let adapter = build_proof_adapter("ZK\u{2066}_RECEIPT\u{2069}")
+            .expect("zk alias should strip directional isolates");
         let (ok, code) = adapter.verify("hello", 8);
         assert!(ok);
         assert_eq!(code, "zk_receipt_ok");
