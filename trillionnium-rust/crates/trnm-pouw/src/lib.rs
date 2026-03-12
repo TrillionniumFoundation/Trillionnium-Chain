@@ -17713,4 +17713,68 @@ mod tests {
         );
         assert_eq!(st.balance_of("challenger"), before_challenger);
     }
+
+    #[test]
+    fn challenged_timeout_clears_staged_multisig_resolve_approval_on_terminalization() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+
+        let task_id = 8_961_27;
+        let r1 = apply_create_task(&mut st, task_id, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(task_id, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 =
+            apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100)
+                .unwrap();
+        let r4 =
+            apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110)
+                .unwrap();
+        let r5 = apply_challenge_at_height(
+            &mut st,
+            r4,
+            "challenger".into(),
+            10,
+            "challenger".into(),
+            210,
+        )
+        .unwrap();
+
+        set_resolve_authority(&mut st, "authority-a,authority-b");
+        let staged_err = apply_resolve_at_height(
+            &mut st,
+            r5.clone(),
+            true,
+            "authority-a".into(),
+            "authority-a".into(),
+            309,
+        )
+        .expect_err("first multisig resolve must stage approval before timeout finalizes");
+        assert!(matches!(staged_err, PouwError::ResolveApprovalStaged));
+        assert_eq!(st.pending_resolve_approval(task_id), Some((true, 1)));
+
+        let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+        let before_challenger = st.balance_of("challenger");
+        let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+        let before_slash_treasury = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
+
+        let done = apply_timeout(&mut st, r5, 311)
+            .expect("timed-out challenged task must terminalize and clear staged approval");
+        let task = st.get_task(done.id).unwrap();
+        assert_eq!(task.status, TaskStatus::Completed);
+        assert_eq!(task.challenge_bond_forfeited, Some(false));
+        assert_eq!(st.pending_resolve_approval(task_id), None);
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow - 10);
+        assert_eq!(st.balance_of("challenger"), before_challenger + 10);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
+        assert_eq!(
+            st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
+            before_slash_treasury
+        );
+    }
 }
