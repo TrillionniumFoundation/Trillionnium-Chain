@@ -49,14 +49,14 @@ struct TeeVerifierHandoff {
     verifier_metadata: TeeVerifierMetadata,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 struct IntelQuoteCollateralBundle {
     collateral: String,
     cert_chain: String,
     issuer: String,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 struct AmdSnpSignerBundle {
     vcek: String,
     cert_chain: String,
@@ -153,6 +153,67 @@ enum MockVerifierResponseStatus {
     Unavailable,
     Malformed,
     Internal,
+}
+
+#[allow(dead_code)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "UPPERCASE")]
+enum HttpMethod {
+    Post,
+}
+
+#[allow(dead_code)]
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct HttpVerifierRequest {
+    method: HttpMethod,
+    url: String,
+    headers: BTreeMap<String, String>,
+    body: String,
+    timeout_ms: u64,
+}
+
+#[allow(dead_code)]
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct HttpVerifierResponse {
+    status_code: u16,
+    body: String,
+}
+
+#[allow(dead_code)]
+trait VerifierHttpTransport: Send + Sync {
+    fn send(
+        &self,
+        http_request: &HttpVerifierRequest,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<HttpVerifierResponse, BackendExecutionError>;
+}
+
+#[allow(dead_code)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+struct IntelQuoteVerifierHttpPayload {
+    request_id: String,
+    telemetry_scope: String,
+    attestation_target: String,
+    measurement_field: String,
+    measurement: String,
+    report_data_hash: String,
+    quote: String,
+    intel_collateral: IntelQuoteCollateralBundle,
+    retry_policy: RetryBackoffPolicy,
+}
+
+#[allow(dead_code)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+struct AmdReportVerifierHttpPayload {
+    request_id: String,
+    telemetry_scope: String,
+    attestation_target: String,
+    measurement_field: String,
+    measurement: String,
+    report_data_hash: String,
+    report: String,
+    amd_signer: AmdSnpSignerBundle,
+    retry_policy: RetryBackoffPolicy,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -1061,6 +1122,113 @@ fn mock_response_from_fixture_result(
     }
 }
 
+#[allow(dead_code)]
+fn build_http_headers(
+    transport: &VerifierTransportConfig,
+    metadata: &ExternalCallMetadata,
+) -> BTreeMap<String, String> {
+    let mut headers = BTreeMap::new();
+    headers.insert("content-type".to_string(), "application/json".to_string());
+    headers.insert("x-request-id".to_string(), metadata.request_id.clone());
+    headers.insert(
+        "x-telemetry-scope".to_string(),
+        metadata.telemetry_scope.clone(),
+    );
+    headers.insert("x-transport-profile".to_string(), transport.profile.clone());
+    if let (Some(scheme), Some(auth_ref)) = (
+        transport.auth_scheme.as_deref(),
+        transport.auth_ref.as_deref(),
+    ) {
+        if !scheme.trim().is_empty() && !auth_ref.trim().is_empty() {
+            headers.insert(
+                "authorization".to_string(),
+                format!("{} {}", scheme.trim(), auth_ref.trim()),
+            );
+        }
+    }
+    headers
+}
+
+#[allow(dead_code)]
+fn build_intel_quote_http_request(
+    request_input: &IntelQuoteVerifierClientRequest,
+) -> Result<HttpVerifierRequest, BackendExecutionError> {
+    let payload = IntelQuoteVerifierHttpPayload {
+        request_id: request_input.call_metadata.request_id.clone(),
+        telemetry_scope: request_input.call_metadata.telemetry_scope.clone(),
+        attestation_target: request_input.attestation_target.clone(),
+        measurement_field: request_input.measurement_field.clone(),
+        measurement: request_input.measurement.clone(),
+        report_data_hash: request_input.report_data_hash.clone(),
+        quote: request_input.quote.clone(),
+        intel_collateral: request_input.intel_collateral.clone(),
+        retry_policy: request_input.call_metadata.retry_policy.clone(),
+    };
+    let body = serde_json::to_string(&payload).map_err(|err| BackendExecutionError::Internal {
+        backend: RealTeeBackend::backend_id_static().to_string(),
+        reason: format!("failed to encode intel verifier http payload: {err}"),
+    })?;
+    Ok(HttpVerifierRequest {
+        method: HttpMethod::Post,
+        url: request_input.transport.endpoint.clone(),
+        headers: build_http_headers(&request_input.transport, &request_input.call_metadata),
+        body,
+        timeout_ms: request_input.transport.timeout_ms,
+    })
+}
+
+#[allow(dead_code)]
+fn build_amd_report_http_request(
+    request_input: &AmdReportVerifierClientRequest,
+) -> Result<HttpVerifierRequest, BackendExecutionError> {
+    let payload = AmdReportVerifierHttpPayload {
+        request_id: request_input.call_metadata.request_id.clone(),
+        telemetry_scope: request_input.call_metadata.telemetry_scope.clone(),
+        attestation_target: request_input.attestation_target.clone(),
+        measurement_field: request_input.measurement_field.clone(),
+        measurement: request_input.measurement.clone(),
+        report_data_hash: request_input.report_data_hash.clone(),
+        report: request_input.report.clone(),
+        amd_signer: request_input.amd_signer.clone(),
+        retry_policy: request_input.call_metadata.retry_policy.clone(),
+    };
+    let body = serde_json::to_string(&payload).map_err(|err| BackendExecutionError::Internal {
+        backend: RealTeeBackend::backend_id_static().to_string(),
+        reason: format!("failed to encode amd verifier http payload: {err}"),
+    })?;
+    Ok(HttpVerifierRequest {
+        method: HttpMethod::Post,
+        url: request_input.transport.endpoint.clone(),
+        headers: build_http_headers(&request_input.transport, &request_input.call_metadata),
+        body,
+        timeout_ms: request_input.transport.timeout_ms,
+    })
+}
+
+#[allow(dead_code)]
+fn decode_http_verifier_response(
+    http_response: &HttpVerifierResponse,
+    request: &BackendVerificationRequest<'_>,
+) -> Result<MockVerifierResponse, BackendExecutionError> {
+    match http_response.status_code {
+        200..=299 => decode_mock_verifier_response_json(&http_response.body, request),
+        400..=499 => Err(BackendExecutionError::MalformedProof {
+            backend: request.backend_label(RealTeeBackend::backend_id_static()),
+            reason: format!(
+                "http verifier request rejected with status {}",
+                http_response.status_code
+            ),
+        }),
+        _ => Err(BackendExecutionError::Unavailable {
+            backend: request.backend_label(RealTeeBackend::backend_id_static()),
+            reason: format!(
+                "http verifier transport returned status {}",
+                http_response.status_code
+            ),
+        }),
+    }
+}
+
 trait IntelQuoteVerifierClient: Send + Sync {
     fn verify_intel_quote_request(
         &self,
@@ -1270,6 +1438,54 @@ fn verify_fixture_amd_client_request(
                 expected.verifier_kind
             ),
         }),
+    }
+}
+
+#[allow(dead_code)]
+struct HttpBackedIntelQuoteVerifierClient {
+    transport: Arc<dyn VerifierHttpTransport>,
+}
+
+impl HttpBackedIntelQuoteVerifierClient {
+    #[allow(dead_code)]
+    fn new(transport: Arc<dyn VerifierHttpTransport>) -> Self {
+        Self { transport }
+    }
+}
+
+impl IntelQuoteVerifierClient for HttpBackedIntelQuoteVerifierClient {
+    fn verify_intel_quote_request(
+        &self,
+        request_input: &IntelQuoteVerifierClientRequest,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<MockVerifierResponse, BackendExecutionError> {
+        let http_request = build_intel_quote_http_request(request_input)?;
+        let http_response = self.transport.send(&http_request, request)?;
+        decode_http_verifier_response(&http_response, request)
+    }
+}
+
+#[allow(dead_code)]
+struct HttpBackedAmdReportVerifierClient {
+    transport: Arc<dyn VerifierHttpTransport>,
+}
+
+impl HttpBackedAmdReportVerifierClient {
+    #[allow(dead_code)]
+    fn new(transport: Arc<dyn VerifierHttpTransport>) -> Self {
+        Self { transport }
+    }
+}
+
+impl AmdReportVerifierClient for HttpBackedAmdReportVerifierClient {
+    fn verify_amd_report_request(
+        &self,
+        request_input: &AmdReportVerifierClientRequest,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<MockVerifierResponse, BackendExecutionError> {
+        let http_request = build_amd_report_http_request(request_input)?;
+        let http_response = self.transport.send(&http_request, request)?;
+        decode_http_verifier_response(&http_response, request)
     }
 }
 
@@ -1936,6 +2152,107 @@ mod tests {
         }
     }
 
+    struct AssertingIntelHttpTransport;
+
+    impl VerifierHttpTransport for AssertingIntelHttpTransport {
+        fn send(
+            &self,
+            http_request: &HttpVerifierRequest,
+            _request: &BackendVerificationRequest<'_>,
+        ) -> Result<HttpVerifierResponse, BackendExecutionError> {
+            assert_eq!(http_request.method, HttpMethod::Post);
+            assert_eq!(http_request.url, "https://intel-verifier.invalid/v1/quote/sgx-dcap");
+            assert_eq!(http_request.timeout_ms, 5_000);
+            assert_eq!(http_request.headers.get("content-type").map(String::as_str), Some("application/json"));
+            assert_eq!(http_request.headers.get("x-request-id").map(String::as_str), Some("tee:quote-verifier:sgx-dcap:task-42:attempt-1"));
+            assert_eq!(http_request.headers.get("x-transport-profile").map(String::as_str), Some("intel-dcap-external-default"));
+            assert_eq!(http_request.headers.get("authorization").map(String::as_str), Some("bearer tee.intel.external-token.sgx-dcap"));
+            let payload: IntelQuoteVerifierHttpPayload = serde_json::from_str(&http_request.body).unwrap();
+            assert_eq!(payload.attestation_target, "sgx-dcap");
+            assert_eq!(payload.measurement_field, "mrenclave");
+            assert_eq!(payload.measurement, "mrenclave:demo-sgx-v1");
+            assert_eq!(payload.quote, "quote-sgx-dcap-demo-v1");
+            assert_eq!(payload.retry_policy.max_attempts, 3);
+            let response = MockVerifierResponse {
+                status: MockVerifierResponseStatus::Verified,
+                backend_id: "intel-http-transport".into(),
+                detail: None,
+                telemetry_event: Some(VerifierTelemetryEvent {
+                    kind: VerifierTelemetryEventKind::ResponseReceived,
+                    request_id: payload.request_id.clone(),
+                    telemetry_scope: payload.telemetry_scope.clone(),
+                    transport_mode: VerifierTransportMode::External,
+                    profile: "intel-dcap-external-default".into(),
+                    backend_id: Some("intel-http-transport".into()),
+                    status: Some(MockVerifierResponseStatus::Verified),
+                    detail: None,
+                }),
+            };
+            Ok(HttpVerifierResponse {
+                status_code: 200,
+                body: encode_mock_verifier_response_json(&response).unwrap(),
+            })
+        }
+    }
+
+    struct AssertingAmdHttpTransport;
+
+    impl VerifierHttpTransport for AssertingAmdHttpTransport {
+        fn send(
+            &self,
+            http_request: &HttpVerifierRequest,
+            _request: &BackendVerificationRequest<'_>,
+        ) -> Result<HttpVerifierResponse, BackendExecutionError> {
+            assert_eq!(http_request.method, HttpMethod::Post);
+            assert_eq!(http_request.url, "https://amd-verifier.invalid/v1/report/sev-snp");
+            assert_eq!(http_request.timeout_ms, 5_000);
+            assert_eq!(http_request.headers.get("content-type").map(String::as_str), Some("application/json"));
+            assert_eq!(http_request.headers.get("x-request-id").map(String::as_str), Some("tee:report-verifier:sev-snp:task-42:attempt-1"));
+            assert_eq!(http_request.headers.get("x-transport-profile").map(String::as_str), Some("amd-sev-snp-external-default"));
+            assert_eq!(http_request.headers.get("authorization").map(String::as_str), Some("bearer tee.amd.external-token.sev-snp"));
+            let payload: AmdReportVerifierHttpPayload = serde_json::from_str(&http_request.body).unwrap();
+            assert_eq!(payload.attestation_target, "sev-snp");
+            assert_eq!(payload.measurement_field, "measurement");
+            assert_eq!(payload.measurement, "measurement:demo-snp-v1");
+            assert_eq!(payload.report, "report-sev-snp-demo-v1");
+            assert_eq!(payload.retry_policy.max_attempts, 3);
+            let response = MockVerifierResponse {
+                status: MockVerifierResponseStatus::Verified,
+                backend_id: "amd-http-transport".into(),
+                detail: None,
+                telemetry_event: Some(VerifierTelemetryEvent {
+                    kind: VerifierTelemetryEventKind::ResponseReceived,
+                    request_id: payload.request_id.clone(),
+                    telemetry_scope: payload.telemetry_scope.clone(),
+                    transport_mode: VerifierTransportMode::External,
+                    profile: "amd-sev-snp-external-default".into(),
+                    backend_id: Some("amd-http-transport".into()),
+                    status: Some(MockVerifierResponseStatus::Verified),
+                    detail: None,
+                }),
+            };
+            Ok(HttpVerifierResponse {
+                status_code: 200,
+                body: encode_mock_verifier_response_json(&response).unwrap(),
+            })
+        }
+    }
+
+    struct Http503IntelTransport;
+
+    impl VerifierHttpTransport for Http503IntelTransport {
+        fn send(
+            &self,
+            _http_request: &HttpVerifierRequest,
+            _request: &BackendVerificationRequest<'_>,
+        ) -> Result<HttpVerifierResponse, BackendExecutionError> {
+            Ok(HttpVerifierResponse {
+                status_code: 503,
+                body: "upstream unavailable".into(),
+            })
+        }
+    }
+
     struct AssertingExternalIntelQuoteClient;
 
     impl IntelQuoteVerifierClient for AssertingExternalIntelQuoteClient {
@@ -2276,6 +2593,109 @@ mod tests {
             },
         );
         assert!(matches!(result, Err(BackendExecutionError::MalformedProof { reason, .. }) if reason.contains("telemetry does not match request metadata")));
+    }
+
+    #[test]
+    fn http_backed_intel_client_skeleton_encodes_request_and_decodes_response() {
+        let task = mock_task();
+        let proof_data = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=sgx-dcap,measurement=mrenclave:demo-sgx-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,quote=quote-sgx-dcap-demo-v1,collateral=intel-dcap-collateral-demo-v1,cert_chain=intel-dcap-cert-chain-demo-v1,issuer=intel";
+        let payload = parse_tee_attestation_payload(proof_data).unwrap();
+        let handoff = TeeVerifierHandoff::from_payload(&payload, None).unwrap();
+        let input = match SGX_DCAP_ADAPTER.build_verifier_input(&handoff, None).unwrap() {
+            TeeVerifierInput::Quote(input) => input,
+            TeeVerifierInput::Report(_) => panic!("expected intel quote verifier input"),
+        };
+        let provider = ClientBackedIntelQuoteVerifierProvider::new(
+            Arc::new(HttpBackedIntelQuoteVerifierClient::new(Arc::new(AssertingIntelHttpTransport))),
+            Arc::new(StaticVerifierTransportConfigSource::external_defaults()),
+        );
+        let result = provider.verify_intel_quote_bundle(
+            &input,
+            &BackendVerificationRequest {
+                family: VerificationBackendFamily::Tee,
+                task: &task,
+                proof_data,
+                tee_payload: Some(&payload),
+                zk_payload: None,
+                resolved_vk_ref: None,
+            },
+        );
+        assert!(matches!(result, Ok(BackendVerificationSuccess { backend_id }) if backend_id == "intel-http-transport"));
+    }
+
+    #[test]
+    fn http_backed_amd_client_skeleton_encodes_request_and_decodes_response() {
+        let task = mock_task();
+        let proof_data = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=sev-snp,measurement=measurement:demo-snp-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,report=report-sev-snp-demo-v1,vcek=amd-vcek-demo-v1,cert_chain=amd-cert-chain-demo-v1,report_signer=amd";
+        let payload = parse_tee_attestation_payload(proof_data).unwrap();
+        let handoff = TeeVerifierHandoff::from_payload(&payload, None).unwrap();
+        let input = match SEV_SNP_ADAPTER.build_verifier_input(&handoff, None).unwrap() {
+            TeeVerifierInput::Report(input) => input,
+            TeeVerifierInput::Quote(_) => panic!("expected amd report verifier input"),
+        };
+        let provider = ClientBackedAmdReportVerifierProvider::new(
+            Arc::new(HttpBackedAmdReportVerifierClient::new(Arc::new(AssertingAmdHttpTransport))),
+            Arc::new(StaticVerifierTransportConfigSource::external_defaults()),
+        );
+        let result = provider.verify_amd_report_bundle(
+            &input,
+            &BackendVerificationRequest {
+                family: VerificationBackendFamily::Tee,
+                task: &task,
+                proof_data,
+                tee_payload: Some(&payload),
+                zk_payload: None,
+                resolved_vk_ref: None,
+            },
+        );
+        assert!(matches!(result, Ok(BackendVerificationSuccess { backend_id }) if backend_id == "amd-http-transport"));
+    }
+
+    #[test]
+    fn http_backed_intel_client_maps_http_503_to_unavailable() {
+        let task = mock_task();
+        let payload = parse_tee_attestation_payload(b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=sgx-dcap,measurement=mrenclave:demo-sgx-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,quote=quote-sgx-dcap-demo-v1,collateral=intel-dcap-collateral-demo-v1,cert_chain=intel-dcap-cert-chain-demo-v1,issuer=intel").unwrap();
+        let client = HttpBackedIntelQuoteVerifierClient::new(Arc::new(Http503IntelTransport));
+        let result = client.verify_intel_quote_request(
+            &IntelQuoteVerifierClientRequest {
+                transport: StaticVerifierTransportConfigSource::external_defaults().intel_quote_transport_config("sgx-dcap"),
+                call_metadata: ExternalCallMetadata {
+                    request_id: "tee:quote-verifier:sgx-dcap:task-42:attempt-1".into(),
+                    telemetry_scope: "trnm.pouw.tee.quote_verifier.sgx_dcap".into(),
+                    attempt: 1,
+                    retry_policy: RetryBackoffPolicy { max_attempts: 3, backoff_ms: 250, strategy: RetryBackoffStrategy::Exponential },
+                },
+                request_event: VerifierTelemetryEvent {
+                    kind: VerifierTelemetryEventKind::RequestPrepared,
+                    request_id: "tee:quote-verifier:sgx-dcap:task-42:attempt-1".into(),
+                    telemetry_scope: "trnm.pouw.tee.quote_verifier.sgx_dcap".into(),
+                    transport_mode: VerifierTransportMode::External,
+                    profile: "intel-dcap-external-default".into(),
+                    backend_id: None,
+                    status: None,
+                    detail: None,
+                },
+                attestation_target: "sgx-dcap".into(),
+                measurement_field: "mrenclave".into(),
+                measurement: "mrenclave:demo-sgx-v1".into(),
+                report_data_hash: hex::encode(task.result_hash.unwrap()),
+                quote: "quote-sgx-dcap-demo-v1".into(),
+                intel_collateral: IntelQuoteCollateralBundle {
+                    collateral: "intel-dcap-collateral-demo-v1".into(),
+                    cert_chain: "intel-dcap-cert-chain-demo-v1".into(),
+                    issuer: "intel".into(),
+                },
+            },
+            &BackendVerificationRequest {
+                family: VerificationBackendFamily::Tee,
+                task: &task,
+                proof_data: b"TEE:...",
+                tee_payload: Some(&payload),
+                zk_payload: None,
+                resolved_vk_ref: None,
+            },
+        );
+        assert!(matches!(result, Err(BackendExecutionError::Unavailable { reason, .. }) if reason.contains("status 503")));
     }
 
     #[test]

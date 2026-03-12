@@ -212,6 +212,39 @@ The current fixture-backed path therefore has five explicit layers:
 
 The current implementation uses fixture-backed clients behind client-backed providers, but a future real backend should mainly replace the client layer (or swap providers if vendor orchestration itself changes).
 
+## Pluggable HTTP client / provider adapter skeleton
+The scaffold now also includes a thin HTTP transport skeleton behind the client layer.
+
+### Generic HTTP transport seam
+A future external verifier integration can plug into:
+- `VerifierHttpTransport`
+- `HttpVerifierRequest`
+- `HttpVerifierResponse`
+
+This seam is intentionally vendor-agnostic.
+
+### Provider -> HTTP adapter path
+The scaffold now includes HTTP-backed client implementations for both vendor paths:
+- `HttpBackedIntelQuoteVerifierClient`
+- `HttpBackedAmdReportVerifierClient`
+
+These adapters are responsible for:
+1. converting vendor-specific client requests into HTTP requests
+2. injecting headers (`authorization`, `x-request-id`, `x-telemetry-scope`, `x-transport-profile`)
+3. encoding the HTTP body as JSON payload
+4. decoding the HTTP response body back into the normalized verifier response schema
+
+### HTTP payload skeletons
+The current adapter layer freezes two JSON request shapes:
+- `IntelQuoteVerifierHttpPayload`
+- `AmdReportVerifierHttpPayload`
+
+These carry the already-normalized verifier input plus request metadata and retry policy.
+
+### HTTP response handling
+The adapter currently expects the HTTP body to decode into the same normalized verifier response schema used by mock clients.
+This means mock and future HTTP-backed clients share the same response contract, while transport-level failures remain isolated at the HTTP seam.
+
 ## report_data_hash binding
 `report_data_hash` must match the task `result_hash` carried by the bound envelope.
 This keeps the future attestation path aligned with the task result binding already enforced by the semantic verifier.
