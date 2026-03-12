@@ -330,6 +330,42 @@ case "$sub" in
       status=$(printf "%s" "$out" | sed -n 's/.*[Tt][Rr][Aa][Nn][Ss][Aa][Cc][Tt][Ii][Oo][Nn][Ss][Tt][Aa][Tt][Ee][[:space:]]*[:=][[:space:]]*\([^[:space:]}\",]\+\).*/\1/p' | head -n1 || true)
     fi
     if [[ -z "$status" ]]; then
+      scalar_status=$(printf "%s" "$out" | python3 -c '
+import json, sys
+raw = sys.stdin.read()
+try:
+    value = json.loads(raw)
+except Exception:
+    raise SystemExit(0)
+payload = value.get("result", value) if isinstance(value, dict) else value
+primary = payload
+if isinstance(payload, dict):
+    nested = payload.get("tx_response") or payload.get("txResponse") or ((payload.get("response") or {}).get("tx_response") if isinstance(payload.get("response"), dict) else None) or ((payload.get("response") or {}).get("txResponse") if isinstance(payload.get("response"), dict) else None)
+    if isinstance(nested, dict):
+        primary = nested
+for container in [primary, payload]:
+    if not isinstance(container, dict):
+        continue
+    for key in ["status", "tx_status", "txStatus", "transaction_status", "transactionStatus", "state", "tx_state", "txState", "transaction_state", "transactionState"]:
+        if key not in container:
+            continue
+        field = container[key]
+        if isinstance(field, bool):
+            print("committed" if field else "fail")
+            raise SystemExit(0)
+        if isinstance(field, int):
+            print("committed" if field == 0 else "fail")
+            raise SystemExit(0)
+        if isinstance(field, str):
+            print(field)
+            raise SystemExit(0)
+raise SystemExit(0)
+' || true)
+      if [[ -n "$scalar_status" ]]; then
+        status="$scalar_status"
+      fi
+    fi
+    if [[ -z "$status" ]]; then
       status=$(infer_status_from_code "$out" || true)
     else
       status="$(normalize_status "$status")"
