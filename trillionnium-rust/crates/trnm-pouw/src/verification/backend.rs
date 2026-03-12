@@ -933,6 +933,18 @@ mod tests {
     }
 
     #[test]
+    fn backend_system_hint_extracts_concrete_tee_platform_after_mixed_attestation_surface_tokens() {
+        for (raw, expected) in [
+            ("tee certificate quote sgx", "sgx"),
+            ("tee attestation receipt report tdx", "tdx"),
+            ("tee evidence cert snp", "snp"),
+            ("tee remote attestation receipt sgx", "sgx"),
+        ] {
+            assert_eq!(backend_system_hint(raw), Some(expected.into()), "raw={raw}");
+        }
+    }
+
+    #[test]
     fn verification_backend_kind_system_hint_respects_family_prefixes_without_cross_family_assumptions(
     ) {
         assert_eq!(
