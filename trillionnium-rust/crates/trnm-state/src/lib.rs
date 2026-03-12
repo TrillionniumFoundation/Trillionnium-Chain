@@ -572,14 +572,6 @@ impl StateStore {
         {
             return Err("resolve approval approver must be a configured authority member".into());
         }
-        if let Some(configured_authority_set) = self.gov_param_string("resolve_authority") {
-            if !resolve_authority_sets_match(&configured_authority_set, authority_set) {
-                return Err(
-                    "resolve approval authority set must match configured governance authority"
-                        .into(),
-                );
-            }
-        }
         if let Some(pending_authority_set) = self
             .pending_gov_update("resolve_authority")
             .map(|pending| pending.value)
@@ -587,6 +579,13 @@ impl StateStore {
             if !resolve_authority_sets_match(&pending_authority_set, authority_set) {
                 return Err(
                     "resolve approval authority set must match pending governance authority".into(),
+                );
+            }
+        } else if let Some(configured_authority_set) = self.gov_param_string("resolve_authority") {
+            if !resolve_authority_sets_match(&configured_authority_set, authority_set) {
+                return Err(
+                    "resolve approval authority set must match configured governance authority"
+                        .into(),
                 );
             }
         }
@@ -808,21 +807,20 @@ impl StateStore {
         }
         match snapshot {
             Some(snapshot) if Self::is_valid_pending_resolve_snapshot(&snapshot) => {
-                if let Some(configured_authority_set) = self.gov_param_string("resolve_authority") {
-                    if !resolve_authority_sets_match(
-                        &configured_authority_set,
-                        &snapshot.authority_set,
-                    ) {
-                        self.pending_resolve_approvals.remove(&task_id);
-                        return;
-                    }
-                }
                 if let Some(pending_authority_set) = self
                     .pending_gov_update("resolve_authority")
                     .map(|pending| pending.value)
                 {
                     if !resolve_authority_sets_match(
                         &pending_authority_set,
+                        &snapshot.authority_set,
+                    ) {
+                        self.pending_resolve_approvals.remove(&task_id);
+                        return;
+                    }
+                } else if let Some(configured_authority_set) = self.gov_param_string("resolve_authority") {
+                    if !resolve_authority_sets_match(
+                        &configured_authority_set,
                         &snapshot.authority_set,
                     ) {
                         self.pending_resolve_approvals.remove(&task_id);
@@ -2731,6 +2729,106 @@ mod tests {
         assert_eq!(
             st.pending_resolve_first_approver(8_322).as_deref(),
             Some("authority-a")
+        );
+    }
+
+    #[test]
+    fn resolve_approval_accepts_pending_replacement_authority_over_active_configured_set() {
+        let mut st = StateStore::new();
+        let bootstrap = st
+            .set_gov_param(
+                98_160,
+                7_310,
+                "resolve_authority".into(),
+                "authority-a,authority-b".into(),
+            )
+            .expect("bootstrap resolve_authority write should succeed");
+        assert!(matches!(bootstrap, GovParamUpdateOutcome::Scheduled { .. }));
+        let applied = st
+            .set_gov_param(
+                98_180,
+                7_310,
+                "resolve_authority".into(),
+                "authority-a,authority-b".into(),
+            )
+            .expect("bootstrap resolve_authority should apply after timelock");
+        assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+
+        let replacement = st
+            .set_gov_param(
+                98_181,
+                7_310,
+                "resolve_authority".into(),
+                "authority-c,authority-d".into(),
+            )
+            .expect("replacement resolve_authority update should be scheduled");
+        assert!(matches!(replacement, GovParamUpdateOutcome::Scheduled { .. }));
+
+        let first = st
+            .stage_or_confirm_resolve_approval(
+                8_323,
+                1,
+                true,
+                "authority-c",
+                "authority-c,authority-d",
+            )
+            .expect("pending replacement authority should stage approval before timelock matures");
+        assert!(!first);
+        assert_eq!(st.pending_resolve_approval(8_323), Some((true, 1)));
+        assert_eq!(
+            st.pending_resolve_first_approver(8_323).as_deref(),
+            Some("authority-c")
+        );
+    }
+
+    #[test]
+    fn restore_pending_resolve_approval_accepts_pending_replacement_authority_over_active_configured_set() {
+        let mut st = StateStore::new();
+        let bootstrap = st
+            .set_gov_param(
+                98_160,
+                7_310,
+                "resolve_authority".into(),
+                "authority-a,authority-b".into(),
+            )
+            .expect("bootstrap resolve_authority write should succeed");
+        assert!(matches!(bootstrap, GovParamUpdateOutcome::Scheduled { .. }));
+        let applied = st
+            .set_gov_param(
+                98_180,
+                7_310,
+                "resolve_authority".into(),
+                "authority-a,authority-b".into(),
+            )
+            .expect("bootstrap resolve_authority should apply after timelock");
+        assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+
+        let replacement = st
+            .set_gov_param(
+                98_181,
+                7_310,
+                "resolve_authority".into(),
+                "authority-c,authority-d".into(),
+            )
+            .expect("replacement resolve_authority update should be scheduled");
+        assert!(matches!(replacement, GovParamUpdateOutcome::Scheduled { .. }));
+
+        st.restore_pending_resolve_approval(
+            9_321,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-c".into(),
+                second_approver: None,
+                authority_set: "authority-c,authority-d".into(),
+                task_version: 3,
+            }),
+        );
+
+        assert_eq!(st.pending_resolve_approval(9_321), Some((true, 1)));
+        assert_eq!(
+            st.pending_resolve_first_approver(9_321).as_deref(),
+            Some("authority-c")
         );
     }
 
