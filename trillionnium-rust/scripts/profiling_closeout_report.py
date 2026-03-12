@@ -148,6 +148,11 @@ def closeout_decision(missing_inputs, stale_inputs, old_inputs, capture_status: 
             "REFRESH_RECOMMENDED",
             "all evidence inputs exist, but at least one is stale",
         )
+    if capture_status == "mixed_capture_window":
+        return (
+            "REFRESH_RECOMMENDED",
+            "all evidence inputs are present and individually fresh, but they were not captured tightly enough to treat as a strong single closeout set",
+        )
     if capture_status == "divergent_capture_window":
         return (
             "REFRESH_RECOMMENDED",
@@ -396,7 +401,9 @@ def main():
         f"- closeout_capture_spread_seconds: {closeout_capture_spread_seconds if closeout_capture_spread_seconds is not None else 'n/a'}"
     )
     closeout_blockers = missing_inputs + stale_inputs + old_inputs
-    if closeout_capture_status == "divergent_capture_window":
+    if closeout_capture_status == "mixed_capture_window":
+        closeout_blockers.append("capture_window:mixed")
+    elif closeout_capture_status == "divergent_capture_window":
         closeout_blockers.append("capture_window:divergent")
     lines.append(
         f"- closeout_blockers: {', '.join(closeout_blockers) if closeout_blockers else 'none'}"
@@ -416,9 +423,9 @@ def main():
     if old_inputs:
         for label in old_inputs:
             lines.append(f"- refresh {label}: existing artifact is old; do not treat as current evidence")
-    if closeout_capture_status == "divergent_capture_window":
+    if closeout_capture_status in {"mixed_capture_window", "divergent_capture_window"}:
         lines.append("- refresh closeout capture set: regenerate node_log and benchmark artifacts in one tighter capture window before curator/autopilot review")
-    if not missing_inputs and not stale_inputs and not old_inputs and closeout_capture_status != "divergent_capture_window":
+    if not missing_inputs and not stale_inputs and not old_inputs and closeout_capture_status not in {"mixed_capture_window", "divergent_capture_window"}:
         lines.append("- none: all expected closeout inputs are present and fresh")
 
     lines += ["", "## Benchmark Next Step Matrix"]
@@ -472,6 +479,9 @@ def main():
     elif benchmark_action_counts["refresh"]:
         benchmark_decision = "REFRESH_RECOMMENDED"
         benchmark_decision_reason = "all benchmark artifacts exist, but at least one is stale or old"
+    elif benchmark_capture_status == "mixed_capture_window":
+        benchmark_decision = "REFRESH_RECOMMENDED"
+        benchmark_decision_reason = "benchmark artifacts are fresh enough individually, but they were not captured tightly enough to treat as a strong single closeout set"
     elif benchmark_capture_status == "divergent_capture_window":
         benchmark_decision = "REFRESH_RECOMMENDED"
         benchmark_decision_reason = "benchmark artifacts are fresh enough individually, but they were captured too far apart to treat as one coherent closeout set"

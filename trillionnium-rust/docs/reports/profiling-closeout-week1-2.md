@@ -45,10 +45,10 @@ python3 scripts/profiling_closeout_report.py
   - `total_evidence_coverage`：完整 closeout 证据覆盖率（`node_log + classic_bench + mixed_bench + executor_profile`）
   - `benchmark_artifact_coverage`：仅 bench 侧产物覆盖率（不含 `node_log`）
   - `Closeout Action Summary`：聚合完整 4/4 证据集，输出 `closeout_decision=INCOMPLETE|REFRESH_REQUIRED|REFRESH_RECOMMENDED|READY`、blockers 与 ready_inputs，便于 autopilot/curator 直接判断是否可进入 review
-  - `closeout_capture_cohesion` / `closeout_capture_spread_seconds`：额外判断 `node_log`、`classic_bench`、`mixed_bench`、`executor_profile` 是否来自同一 capture window，避免把“单个文件都不旧但相互时间差过大”的 4/4 证据误判为可直接 closeout
+  - `closeout_capture_cohesion` / `closeout_capture_spread_seconds`：额外判断 `node_log`、`classic_bench`、`mixed_bench`、`executor_profile` 是否来自同一 capture window；当结果为 `mixed_capture_window` 或 `divergent_capture_window` 时，都会建议 refresh，避免把“单个文件都不旧但采集窗口不够紧”的 4/4 证据误判为可直接 closeout
   - `Benchmark Next Step Matrix`：对 `classic_bench` / `mixed_bench` / `executor_profile` 分别输出 `action=produce|keep|refresh`，并附带 `age_seconds`、`updated_at`、`path`
   - `Benchmark Action Summary`：聚合给出 `benchmark_decision=INCOMPLETE|REFRESH_RECOMMENDED|READY` 与 action 计数，便于 autopilot/curator 直接决定是否需要先补产物、刷新产物，还是可以进入 review
-  - `benchmark_capture_cohesion` / `benchmark_capture_spread_seconds`：额外判断 `classic_bench`、`mixed_bench`、`executor_profile` 是否来自同一 capture window，避免把时间上相距过远但“单个文件看起来都很新”的产物误当成一组可直接 closeout 的证据
+  - `benchmark_capture_cohesion` / `benchmark_capture_spread_seconds`：额外判断 `classic_bench`、`mixed_bench`、`executor_profile` 是否来自同一 capture window；当结果为 `mixed_capture_window` 或 `divergent_capture_window` 时，都会建议 refresh，避免把时间上不够集中但“单个文件看起来都很新”的产物误当成一组可直接 closeout 的证据
 - `Executor Auto-Adaptive Decision Summary`：当 `executor_profile` 含 `profile.auto.*` 字段时，额外汇总 `use_hot_bucket`、`reason`、`hot_key_share`、`expected_gain_score` 等自动策略决策字段，减少人工回看原始 profile txt 的需要
 
 ## 字段解释
