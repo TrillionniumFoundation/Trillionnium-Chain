@@ -393,6 +393,67 @@ fn task_metadata_presence_bit_should_affect_state_root_even_when_nested_fields_a
 }
 
 #[test]
+fn task_model_metadata_string_field_boundaries_should_affect_state_root() {
+    let mut st1 = StateStore::new();
+    let mut st2 = StateStore::new();
+
+    let base_task = TaskObject {
+        task_id: 6_502,
+        creator: "alice".into(),
+        bounty: 42,
+        status: TaskStatus::Open,
+        proof_type: ProofType::Fraud,
+        metadata: Some(TaskMetadata {
+            note: None,
+            task_type: None,
+            input_hash: None,
+            model: Some(TaskModelMetadata {
+                model_id: Some("ab".into()),
+                model_digest: Some("c".into()),
+                version: None,
+            }),
+            provenance: None,
+        }),
+        worker: None,
+        committed_hash: None,
+        result_hash: None,
+        reveal_salt: None,
+        committed_at_height: None,
+        reveal_deadline_height: None,
+        challenge_deadline_height: None,
+        challenge_window_blocks_snapshot: None,
+        challenged_at_height: None,
+        resolve_deadline_height: None,
+        challenge_bond: None,
+        challenger: None,
+        challenge_bond_forfeited: None,
+        version: 1,
+    };
+
+    let mut changed_task = base_task.clone();
+    changed_task.metadata = Some(TaskMetadata {
+        note: None,
+        task_type: None,
+        input_hash: None,
+        model: Some(TaskModelMetadata {
+            model_id: Some("a".into()),
+            model_digest: Some("bc".into()),
+            version: None,
+        }),
+        provenance: None,
+    });
+
+    st1.put_task_new(base_task).unwrap();
+    st2.put_task_new(changed_task).unwrap();
+
+    assert_ne!(
+        st1.state_root(),
+        st2.state_root(),
+        "State root should length-frame nested task model metadata strings so field-boundary collisions cannot hash identically"
+    );
+}
+
+#[test]
 fn task_metadata_and_proof_type_should_affect_state_root() {
     let mut st1 = StateStore::new();
     let mut st2 = StateStore::new();
