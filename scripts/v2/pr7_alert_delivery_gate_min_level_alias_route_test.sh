@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
-TMP="$(mktemp -d /tmp/trnm-pr7-gate-min-level-alias-route.XXXXXX)"
+TMP="$(mktemp -d "${TMPDIR:-/tmp}/trnm-pr7-gate-min-level-alias-route.XXXXXX")"
 trap 'rm -rf "$TMP"' EXIT
 
 RUN_DIR="$TMP/run"

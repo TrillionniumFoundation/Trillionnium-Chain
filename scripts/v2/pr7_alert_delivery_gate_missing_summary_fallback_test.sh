@@ -4,7 +4,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 cd "$ROOT"
 
-TMP="$(mktemp -d /tmp/trnm-pr7-gate-missing-summary.XXXXXX)"
+TMP="$(mktemp -d "${TMPDIR:-/tmp}/trnm-pr7-gate-missing-summary.XXXXXX")"
 trap 'rm -rf "$TMP"' EXIT
 
 MOCK_PR6="$TMP/mock_pr6.sh"

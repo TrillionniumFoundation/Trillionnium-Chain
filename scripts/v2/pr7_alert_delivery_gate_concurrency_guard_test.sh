@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
-TMP="$(mktemp -d /tmp/trnm-pr7-gate-concurrency.XXXXXX)"
+TMP="$(mktemp -d "${TMPDIR:-/tmp}/trnm-pr7-gate-concurrency.XXXXXX")"
 trap 'rm -rf "$TMP"' EXIT
 
 MOCK_PR6_SLEEP="$TMP/mock_pr6_sleep.sh"
