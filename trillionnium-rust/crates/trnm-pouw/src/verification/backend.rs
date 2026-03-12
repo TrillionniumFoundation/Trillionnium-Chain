@@ -911,4 +911,48 @@ mod tests {
         assert_eq!(normalize_backend_token("noop!!!"), None);
         assert_eq!(normalize_backend_token("groth16-demo"), Some("groth16 demo".into()));
     }
+
+    #[test]
+    fn backend_execution_error_classification_matches_v0_taxonomy() {
+        let cases = vec![
+            (
+                BackendExecutionError::NotConfigured {
+                    backend: "zk:noop".into(),
+                },
+                VerificationErrorClass::Unavailable,
+            ),
+            (
+                BackendExecutionError::Unavailable {
+                    backend: "zk:groth16-demo".into(),
+                    reason: "registry temporarily unavailable".into(),
+                },
+                VerificationErrorClass::Unavailable,
+            ),
+            (
+                BackendExecutionError::InvalidProof {
+                    backend: "zk:groth16-demo".into(),
+                    reason: "proof/vk mismatch".into(),
+                },
+                VerificationErrorClass::Invalid,
+            ),
+            (
+                BackendExecutionError::MalformedProof {
+                    backend: "zk:payload".into(),
+                    reason: "public_inputs order is not canonical".into(),
+                },
+                VerificationErrorClass::Malformed,
+            ),
+            (
+                BackendExecutionError::Internal {
+                    backend: "zk:groth16-demo".into(),
+                    reason: "ffi panic".into(),
+                },
+                VerificationErrorClass::BackendError,
+            ),
+        ];
+
+        for (err, expected_class) in cases {
+            assert_eq!(err.error_class(), expected_class);
+        }
+    }
 }
