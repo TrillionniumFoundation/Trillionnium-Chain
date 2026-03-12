@@ -3089,13 +3089,28 @@ mod tests {
         let height_count_field_name = "rollback_active_heights";
         let compatibility_rate_field_name = "rollback_block_rate_ppm";
         let height_rate_field_name = "rollback_active_height_rate_ppm";
+        let observed_height_rate_field_name = "rollback_active_observed_height_rate_ppm";
 
         assert!(compatibility_count_field_name.ends_with("_total"));
         assert!(height_count_field_name.ends_with("_heights"));
         assert!(compatibility_rate_field_name.ends_with("_rate_ppm"));
         assert!(height_rate_field_name.ends_with("_height_rate_ppm"));
+        assert!(observed_height_rate_field_name.ends_with("_rate_ppm"));
         assert_ne!(compatibility_count_field_name, height_count_field_name);
         assert_ne!(compatibility_rate_field_name, height_rate_field_name);
+        assert_ne!(height_rate_field_name, observed_height_rate_field_name);
+        assert_ne!(compatibility_rate_field_name, observed_height_rate_field_name);
+    }
+
+    #[test]
+    fn rollback_observed_height_rate_exposes_skipped_height_coverage_gap() {
+        let rollback_active_heights = 2u64;
+        let rollback_committed_height_rate_ppm = ratio_ppm_u64(rollback_active_heights, 2u64);
+        let rollback_observed_height_rate_ppm = ratio_ppm_u64(rollback_active_heights, 5u64);
+
+        assert_eq!(rollback_committed_height_rate_ppm, 1_000_000);
+        assert_eq!(rollback_observed_height_rate_ppm, 400_000);
+        assert!(rollback_observed_height_rate_ppm < rollback_committed_height_rate_ppm);
     }
 
     #[test]
@@ -3430,6 +3445,21 @@ mod tests {
         assert_eq!(bft_leader_missed_active_heights, 3);
         assert_eq!(bft_leader_missed_active_height_rate_ppm, 750_000);
         assert_eq!(bft_leader_missed_active_observed_height_rate_ppm, 500_000);
+    }
+
+    #[test]
+    fn leader_missed_observed_height_rate_exposes_skipped_height_coverage_gap() {
+        let bft_leader_missed_active_heights = 2u64;
+        let bft_committed_heights = 2u64;
+        let bft_observed_heights = 5u64;
+        let committed_height_rate_ppm =
+            ratio_ppm_u64(bft_leader_missed_active_heights, bft_committed_heights);
+        let observed_height_rate_ppm =
+            ratio_ppm_u64(bft_leader_missed_active_heights, bft_observed_heights);
+
+        assert_eq!(committed_height_rate_ppm, 1_000_000);
+        assert_eq!(observed_height_rate_ppm, 400_000);
+        assert!(observed_height_rate_ppm < committed_height_rate_ppm);
     }
 
     #[test]
