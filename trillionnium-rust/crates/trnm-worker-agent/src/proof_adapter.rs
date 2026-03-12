@@ -94,6 +94,11 @@ fn is_invisible_receipt_filler(ch: char) -> bool {
             | '\u{200d}'
             | '\u{200e}'
             | '\u{200f}'
+            | '\u{202a}'
+            | '\u{202b}'
+            | '\u{202c}'
+            | '\u{202d}'
+            | '\u{202e}'
             | '\u{2060}'
             | '\u{2061}'
             | '\u{2062}'
@@ -551,6 +556,16 @@ mod tests {
             Some("pr-2eaa")
         );
 
+        let tee_with_bidi_override = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-2eab\",\"adapter\":\"TEE\u{202E}_RECEIPT\"}",
+            )
+            .expect("tee receipt label with bidi override should parse");
+        assert_eq!(
+            tee_with_bidi_override.provider_request_id.as_deref(),
+            Some("pr-2eab")
+        );
+
         let tee_with_word_joiner = adapter
             .parse_response(
                 "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-2ea\",\"adapter\":\"TEE\u{2060}_RECEIPT\"}",
@@ -818,6 +833,16 @@ mod tests {
         assert_eq!(
             zk_with_invisible_separator.provider_request_id.as_deref(),
             Some("pr-zk-2eaa")
+        );
+
+        let zk_with_bidi_embedding = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-zk-2eab\",\"adapter\":\"ZK\u{202A}_RECEIPT\"}",
+            )
+            .expect("zk receipt label with bidi embedding should parse");
+        assert_eq!(
+            zk_with_bidi_embedding.provider_request_id.as_deref(),
+            Some("pr-zk-2eab")
         );
 
         let zk_with_word_joiner = adapter
@@ -1117,6 +1142,12 @@ mod tests {
         assert!(ok);
         assert_eq!(code, "tee_receipt_ok");
 
+        let adapter = build_proof_adapter("TEE\u{202E}_RECEIPT")
+            .expect("tee alias should strip bidi override controls");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "tee_receipt_ok");
+
         let adapter = build_proof_adapter("TEE\u{2062}_RECEIPT")
             .expect("tee alias should strip invisible times");
         let (ok, code) = adapter.verify("hello", 8);
@@ -1174,6 +1205,12 @@ mod tests {
 
         let adapter = build_proof_adapter("ZK\u{2066}_RECEIPT\u{2069}")
             .expect("zk alias should strip directional isolates");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "zk_receipt_ok");
+
+        let adapter = build_proof_adapter("ZK\u{202A}_RECEIPT")
+            .expect("zk alias should strip bidi embedding controls");
         let (ok, code) = adapter.verify("hello", 8);
         assert!(ok);
         assert_eq!(code, "zk_receipt_ok");
