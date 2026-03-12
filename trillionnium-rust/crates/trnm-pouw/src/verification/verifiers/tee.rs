@@ -135,7 +135,7 @@ impl TeeVerifier {
         let mentions_unavailable = mentions(|token| token == "unavailable");
         let mentions_quote = mentions(|token| token == "quote" || token == "quotes");
         let mentions_report = mentions(|token| token == "report" || token == "reports");
-        let mentions_claims = mentions(|token| token.starts_with("claim"));
+        let mentions_claims = mentions(|token| token == "claim" || token == "claims");
         let mentions_payload = mentions(|token| token == "payload");
         let mentions_evidence = mentions(|token| token == "evidence" || token == "evidences");
         let mentions_certificate =
@@ -1290,6 +1290,27 @@ mod tests {
         assert!(!msg.contains("report claims"), "message: {msg}");
         assert!(!msg.contains("report evidence"), "message: {msg}");
         assert!(!msg.contains("evidence/claims"), "message: {msg}");
+    }
+
+    #[test]
+    fn tee_verifier_backend_internal_claimant_terms_do_not_spoof_claims_surface() {
+        let result = TeeVerifier::classify_execution_err(BackendExecutionError::Internal {
+            backend: "tee:mock-tee-internal".to_string(),
+            reason: "quote claimant verifier crashed".to_string(),
+        });
+
+        assert!(
+            matches!(result, VerificationResult::Indeterminate(_)),
+            "unexpected result: {result:?}"
+        );
+        let VerificationResult::Indeterminate(msg) = result else {
+            unreachable!()
+        };
+        assert!(msg.contains("backend_error:"), "message: {msg}");
+        assert!(msg.contains("quote evidence"), "message: {msg}");
+        assert!(!msg.contains("quote claims"), "message: {msg}");
+        assert!(!msg.contains("payload/claims"), "message: {msg}");
+        assert!(!msg.contains("legacy:"), "message: {msg}");
     }
 
     #[test]
