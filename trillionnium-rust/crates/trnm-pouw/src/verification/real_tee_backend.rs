@@ -1477,11 +1477,132 @@ impl VerifierHttpClientSessionProtocolRequestCodec for DirectVerifierHttpClientS
 }
 
 #[allow(dead_code)]
-struct FailClosedVerifierHttpClientSessionProtocolTransportExchange;
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct VerifierHttpClientSessionProtocolBytesRequest {
+    method: HttpMethod,
+    url: String,
+    headers: BTreeMap<String, String>,
+    encoded_body: Vec<u8>,
+    timeout_ms: u64,
+    profile: String,
+    transport_mode: VerifierTransportMode,
+}
 
-impl VerifierHttpClientSessionProtocolTransportExchange for FailClosedVerifierHttpClientSessionProtocolTransportExchange {
-    fn exchange_protocol(
+#[allow(dead_code)]
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct VerifierHttpClientSessionProtocolEnvelopeResponse {
+    status_code: u16,
+    headers: BTreeMap<String, String>,
+    encoded_body: Vec<u8>,
+}
+
+#[allow(dead_code)]
+trait VerifierHttpClientSessionProtocolBytesEncoder: Send + Sync {
+    fn encode_bytes_request(
         &self,
+        protocol_request: &VerifierHttpClientSessionProtocolRequest,
+        frame_request: &VerifierHttpClientSessionFrameRequest,
+        connection_config: &ResolvedVerifierHttpClientSessionSocketConnectionConfig,
+        socket_request: &VerifierHttpClientSessionSocketRequest,
+        transport_request: &VerifierHttpClientSessionTransportRequest,
+        call_request: &VerifierHttpClientSessionCallRequest,
+        wire_request: &VerifierHttpClientSessionWireRequest,
+        session_request: &VerifierHttpClientSessionRequest,
+        session_config: &ResolvedVerifierHttpClientSessionConfig,
+        runtime_request: &VerifierHttpClientRuntimeRequest,
+        config: &ResolvedVerifierHttpClientConfig,
+        client_request: &VerifierHttpClientRequest,
+        http_request: &HttpVerifierRequest,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<VerifierHttpClientSessionProtocolBytesRequest, BackendExecutionError>;
+}
+
+#[allow(dead_code)]
+trait VerifierHttpClientSessionProtocolBytesTransportExchange: Send + Sync {
+    fn exchange_bytes(
+        &self,
+        bytes_request: &VerifierHttpClientSessionProtocolBytesRequest,
+        protocol_request: &VerifierHttpClientSessionProtocolRequest,
+        frame_request: &VerifierHttpClientSessionFrameRequest,
+        connection_config: &ResolvedVerifierHttpClientSessionSocketConnectionConfig,
+        socket_request: &VerifierHttpClientSessionSocketRequest,
+        transport_request: &VerifierHttpClientSessionTransportRequest,
+        call_request: &VerifierHttpClientSessionCallRequest,
+        wire_request: &VerifierHttpClientSessionWireRequest,
+        session_request: &VerifierHttpClientSessionRequest,
+        session_config: &ResolvedVerifierHttpClientSessionConfig,
+        runtime_request: &VerifierHttpClientRuntimeRequest,
+        config: &ResolvedVerifierHttpClientConfig,
+        client_request: &VerifierHttpClientRequest,
+        http_request: &HttpVerifierRequest,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<VerifierHttpClientSessionProtocolEnvelopeResponse, BackendExecutionError>;
+}
+
+#[allow(dead_code)]
+trait VerifierHttpClientSessionProtocolEnvelopeParser: Send + Sync {
+    fn parse_envelope_response(
+        &self,
+        envelope_response: VerifierHttpClientSessionProtocolEnvelopeResponse,
+        protocol_request: &VerifierHttpClientSessionProtocolRequest,
+        frame_request: &VerifierHttpClientSessionFrameRequest,
+        connection_config: &ResolvedVerifierHttpClientSessionSocketConnectionConfig,
+        socket_request: &VerifierHttpClientSessionSocketRequest,
+        transport_request: &VerifierHttpClientSessionTransportRequest,
+        call_request: &VerifierHttpClientSessionCallRequest,
+        wire_request: &VerifierHttpClientSessionWireRequest,
+        session_request: &VerifierHttpClientSessionRequest,
+        session_config: &ResolvedVerifierHttpClientSessionConfig,
+        runtime_request: &VerifierHttpClientRuntimeRequest,
+        config: &ResolvedVerifierHttpClientConfig,
+        client_request: &VerifierHttpClientRequest,
+        http_request: &HttpVerifierRequest,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<VerifierHttpClientSessionProtocolResponse, BackendExecutionError>;
+}
+
+#[allow(dead_code)]
+struct DirectVerifierHttpClientSessionProtocolBytesEncoder;
+
+impl VerifierHttpClientSessionProtocolBytesEncoder for DirectVerifierHttpClientSessionProtocolBytesEncoder {
+    fn encode_bytes_request(
+        &self,
+        protocol_request: &VerifierHttpClientSessionProtocolRequest,
+        _frame_request: &VerifierHttpClientSessionFrameRequest,
+        _connection_config: &ResolvedVerifierHttpClientSessionSocketConnectionConfig,
+        _socket_request: &VerifierHttpClientSessionSocketRequest,
+        _transport_request: &VerifierHttpClientSessionTransportRequest,
+        _call_request: &VerifierHttpClientSessionCallRequest,
+        _wire_request: &VerifierHttpClientSessionWireRequest,
+        _session_request: &VerifierHttpClientSessionRequest,
+        _session_config: &ResolvedVerifierHttpClientSessionConfig,
+        _runtime_request: &VerifierHttpClientRuntimeRequest,
+        _config: &ResolvedVerifierHttpClientConfig,
+        _client_request: &VerifierHttpClientRequest,
+        _http_request: &HttpVerifierRequest,
+        _request: &BackendVerificationRequest<'_>,
+    ) -> Result<VerifierHttpClientSessionProtocolBytesRequest, BackendExecutionError> {
+        Ok(VerifierHttpClientSessionProtocolBytesRequest {
+            method: protocol_request.method,
+            url: protocol_request.url.clone(),
+            headers: protocol_request.headers.clone(),
+            encoded_body: protocol_request.body.clone(),
+            timeout_ms: protocol_request.timeout_ms,
+            profile: protocol_request.profile.clone(),
+            transport_mode: protocol_request.transport_mode.clone(),
+        })
+    }
+}
+
+#[allow(dead_code)]
+struct FailClosedVerifierHttpClientSessionProtocolBytesTransportExchange;
+
+impl VerifierHttpClientSessionProtocolBytesTransportExchange
+    for FailClosedVerifierHttpClientSessionProtocolBytesTransportExchange
+{
+    fn exchange_bytes(
+        &self,
+        _bytes_request: &VerifierHttpClientSessionProtocolBytesRequest,
         _protocol_request: &VerifierHttpClientSessionProtocolRequest,
         _frame_request: &VerifierHttpClientSessionFrameRequest,
         _connection_config: &ResolvedVerifierHttpClientSessionSocketConnectionConfig,
@@ -1496,14 +1617,152 @@ impl VerifierHttpClientSessionProtocolTransportExchange for FailClosedVerifierHt
         _client_request: &VerifierHttpClientRequest,
         http_request: &HttpVerifierRequest,
         request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionProtocolResponse, BackendExecutionError> {
+    ) -> Result<VerifierHttpClientSessionProtocolEnvelopeResponse, BackendExecutionError> {
         Err(BackendExecutionError::Unavailable {
             backend: request.backend_label(RealTeeBackend::backend_id_static()),
             reason: format!(
-                "real http client session protocol transport exchange for profile '{}' is not wired",
+                "real http client session protocol bytes transport exchange for profile '{}' is not wired",
                 http_request.profile
             ),
         })
+    }
+}
+
+#[allow(dead_code)]
+struct PassthroughVerifierHttpClientSessionProtocolEnvelopeParser;
+
+impl VerifierHttpClientSessionProtocolEnvelopeParser
+    for PassthroughVerifierHttpClientSessionProtocolEnvelopeParser
+{
+    fn parse_envelope_response(
+        &self,
+        envelope_response: VerifierHttpClientSessionProtocolEnvelopeResponse,
+        _protocol_request: &VerifierHttpClientSessionProtocolRequest,
+        _frame_request: &VerifierHttpClientSessionFrameRequest,
+        _connection_config: &ResolvedVerifierHttpClientSessionSocketConnectionConfig,
+        _socket_request: &VerifierHttpClientSessionSocketRequest,
+        _transport_request: &VerifierHttpClientSessionTransportRequest,
+        _call_request: &VerifierHttpClientSessionCallRequest,
+        _wire_request: &VerifierHttpClientSessionWireRequest,
+        _session_request: &VerifierHttpClientSessionRequest,
+        _session_config: &ResolvedVerifierHttpClientSessionConfig,
+        _runtime_request: &VerifierHttpClientRuntimeRequest,
+        _config: &ResolvedVerifierHttpClientConfig,
+        _client_request: &VerifierHttpClientRequest,
+        _http_request: &HttpVerifierRequest,
+        _request: &BackendVerificationRequest<'_>,
+    ) -> Result<VerifierHttpClientSessionProtocolResponse, BackendExecutionError> {
+        Ok(VerifierHttpClientSessionProtocolResponse {
+            status_code: envelope_response.status_code,
+            headers: envelope_response.headers,
+            body: envelope_response.encoded_body,
+        })
+    }
+}
+
+#[allow(dead_code)]
+struct BytesBackedVerifierHttpClientSessionProtocolTransportExchange {
+    bytes_encoder: Arc<dyn VerifierHttpClientSessionProtocolBytesEncoder>,
+    bytes_transport_exchange: Arc<dyn VerifierHttpClientSessionProtocolBytesTransportExchange>,
+    envelope_parser: Arc<dyn VerifierHttpClientSessionProtocolEnvelopeParser>,
+}
+
+#[allow(dead_code)]
+impl BytesBackedVerifierHttpClientSessionProtocolTransportExchange {
+    fn new() -> Self {
+        Self {
+            bytes_encoder: Arc::new(DirectVerifierHttpClientSessionProtocolBytesEncoder),
+            bytes_transport_exchange: Arc::new(
+                FailClosedVerifierHttpClientSessionProtocolBytesTransportExchange,
+            ),
+            envelope_parser: Arc::new(PassthroughVerifierHttpClientSessionProtocolEnvelopeParser),
+        }
+    }
+
+    #[cfg(test)]
+    fn with_components(
+        bytes_encoder: Arc<dyn VerifierHttpClientSessionProtocolBytesEncoder>,
+        bytes_transport_exchange: Arc<dyn VerifierHttpClientSessionProtocolBytesTransportExchange>,
+        envelope_parser: Arc<dyn VerifierHttpClientSessionProtocolEnvelopeParser>,
+    ) -> Self {
+        Self {
+            bytes_encoder,
+            bytes_transport_exchange,
+            envelope_parser,
+        }
+    }
+}
+
+impl VerifierHttpClientSessionProtocolTransportExchange
+    for BytesBackedVerifierHttpClientSessionProtocolTransportExchange
+{
+    fn exchange_protocol(
+        &self,
+        protocol_request: &VerifierHttpClientSessionProtocolRequest,
+        frame_request: &VerifierHttpClientSessionFrameRequest,
+        connection_config: &ResolvedVerifierHttpClientSessionSocketConnectionConfig,
+        socket_request: &VerifierHttpClientSessionSocketRequest,
+        transport_request: &VerifierHttpClientSessionTransportRequest,
+        call_request: &VerifierHttpClientSessionCallRequest,
+        wire_request: &VerifierHttpClientSessionWireRequest,
+        session_request: &VerifierHttpClientSessionRequest,
+        session_config: &ResolvedVerifierHttpClientSessionConfig,
+        runtime_request: &VerifierHttpClientRuntimeRequest,
+        config: &ResolvedVerifierHttpClientConfig,
+        client_request: &VerifierHttpClientRequest,
+        http_request: &HttpVerifierRequest,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<VerifierHttpClientSessionProtocolResponse, BackendExecutionError> {
+        let bytes_request = self.bytes_encoder.encode_bytes_request(
+            protocol_request,
+            frame_request,
+            connection_config,
+            socket_request,
+            transport_request,
+            call_request,
+            wire_request,
+            session_request,
+            session_config,
+            runtime_request,
+            config,
+            client_request,
+            http_request,
+            request,
+        )?;
+        let envelope_response = self.bytes_transport_exchange.exchange_bytes(
+            &bytes_request,
+            protocol_request,
+            frame_request,
+            connection_config,
+            socket_request,
+            transport_request,
+            call_request,
+            wire_request,
+            session_request,
+            session_config,
+            runtime_request,
+            config,
+            client_request,
+            http_request,
+            request,
+        )?;
+        self.envelope_parser.parse_envelope_response(
+            envelope_response,
+            protocol_request,
+            frame_request,
+            connection_config,
+            socket_request,
+            transport_request,
+            call_request,
+            wire_request,
+            session_request,
+            session_config,
+            runtime_request,
+            config,
+            client_request,
+            http_request,
+            request,
+        )
     }
 }
 
@@ -1548,7 +1807,9 @@ impl CodecBackedVerifierHttpClientSessionFrameIoAdapter {
     fn new() -> Self {
         Self {
             protocol_request_codec: Arc::new(DirectVerifierHttpClientSessionProtocolRequestCodec),
-            protocol_transport_exchange: Arc::new(FailClosedVerifierHttpClientSessionProtocolTransportExchange),
+            protocol_transport_exchange: Arc::new(
+                BytesBackedVerifierHttpClientSessionProtocolTransportExchange::new(),
+            ),
             protocol_response_codec: Arc::new(PassthroughVerifierHttpClientSessionProtocolResponseCodec),
         }
     }
@@ -5624,6 +5885,165 @@ mod tests {
     }
 
     #[derive(Default)]
+    struct RecordingHttpClientSessionProtocolBytesEncoder {
+        requests: Mutex<Vec<VerifierHttpClientSessionProtocolBytesRequest>>,
+    }
+
+    impl VerifierHttpClientSessionProtocolBytesEncoder for RecordingHttpClientSessionProtocolBytesEncoder {
+        fn encode_bytes_request(
+            &self,
+            protocol_request: &VerifierHttpClientSessionProtocolRequest,
+            _frame_request: &VerifierHttpClientSessionFrameRequest,
+            _connection_config: &ResolvedVerifierHttpClientSessionSocketConnectionConfig,
+            _socket_request: &VerifierHttpClientSessionSocketRequest,
+            _transport_request: &VerifierHttpClientSessionTransportRequest,
+            _call_request: &VerifierHttpClientSessionCallRequest,
+            _wire_request: &VerifierHttpClientSessionWireRequest,
+            _session_request: &VerifierHttpClientSessionRequest,
+            _session_config: &ResolvedVerifierHttpClientSessionConfig,
+            _runtime_request: &VerifierHttpClientRuntimeRequest,
+            _config: &ResolvedVerifierHttpClientConfig,
+            _client_request: &VerifierHttpClientRequest,
+            _http_request: &HttpVerifierRequest,
+            _request: &BackendVerificationRequest<'_>,
+        ) -> Result<VerifierHttpClientSessionProtocolBytesRequest, BackendExecutionError> {
+            let bytes_request = VerifierHttpClientSessionProtocolBytesRequest {
+                method: protocol_request.method,
+                url: protocol_request.url.clone(),
+                headers: protocol_request.headers.clone(),
+                encoded_body: protocol_request.body.clone(),
+                timeout_ms: protocol_request.timeout_ms,
+                profile: protocol_request.profile.clone(),
+                transport_mode: protocol_request.transport_mode.clone(),
+            };
+            self.requests.lock().unwrap().push(bytes_request.clone());
+            Ok(bytes_request)
+        }
+    }
+
+    #[derive(Default)]
+    struct RecordingHttpClientSessionProtocolBytesTransportExchange {
+        requests: Mutex<Vec<VerifierHttpClientSessionProtocolBytesRequest>>,
+    }
+
+    impl VerifierHttpClientSessionProtocolBytesTransportExchange for RecordingHttpClientSessionProtocolBytesTransportExchange {
+        fn exchange_bytes(
+            &self,
+            bytes_request: &VerifierHttpClientSessionProtocolBytesRequest,
+            _protocol_request: &VerifierHttpClientSessionProtocolRequest,
+            _frame_request: &VerifierHttpClientSessionFrameRequest,
+            connection_config: &ResolvedVerifierHttpClientSessionSocketConnectionConfig,
+            _socket_request: &VerifierHttpClientSessionSocketRequest,
+            _transport_request: &VerifierHttpClientSessionTransportRequest,
+            _call_request: &VerifierHttpClientSessionCallRequest,
+            _wire_request: &VerifierHttpClientSessionWireRequest,
+            _session_request: &VerifierHttpClientSessionRequest,
+            _session_config: &ResolvedVerifierHttpClientSessionConfig,
+            _runtime_request: &VerifierHttpClientRuntimeRequest,
+            _config: &ResolvedVerifierHttpClientConfig,
+            _client_request: &VerifierHttpClientRequest,
+            _http_request: &HttpVerifierRequest,
+            _request: &BackendVerificationRequest<'_>,
+        ) -> Result<VerifierHttpClientSessionProtocolEnvelopeResponse, BackendExecutionError> {
+            self.requests.lock().unwrap().push(bytes_request.clone());
+            assert_eq!(bytes_request.profile, connection_config.profile);
+            assert_eq!(bytes_request.transport_mode, connection_config.transport_mode);
+            assert_eq!(bytes_request.timeout_ms, connection_config.timeout_ms);
+            Ok(VerifierHttpClientSessionProtocolEnvelopeResponse {
+                status_code: 218,
+                headers: BTreeMap::from([("x-envelope".to_string(), "ok".to_string())]),
+                encoded_body: b"envelope-ok".to_vec(),
+            })
+        }
+    }
+
+    #[derive(Default)]
+    struct RecordingHttpClientSessionProtocolEnvelopeParser {
+        responses: Mutex<Vec<VerifierHttpClientSessionProtocolEnvelopeResponse>>,
+    }
+
+    impl VerifierHttpClientSessionProtocolEnvelopeParser for RecordingHttpClientSessionProtocolEnvelopeParser {
+        fn parse_envelope_response(
+            &self,
+            envelope_response: VerifierHttpClientSessionProtocolEnvelopeResponse,
+            _protocol_request: &VerifierHttpClientSessionProtocolRequest,
+            _frame_request: &VerifierHttpClientSessionFrameRequest,
+            _connection_config: &ResolvedVerifierHttpClientSessionSocketConnectionConfig,
+            _socket_request: &VerifierHttpClientSessionSocketRequest,
+            _transport_request: &VerifierHttpClientSessionTransportRequest,
+            _call_request: &VerifierHttpClientSessionCallRequest,
+            _wire_request: &VerifierHttpClientSessionWireRequest,
+            _session_request: &VerifierHttpClientSessionRequest,
+            _session_config: &ResolvedVerifierHttpClientSessionConfig,
+            _runtime_request: &VerifierHttpClientRuntimeRequest,
+            _config: &ResolvedVerifierHttpClientConfig,
+            _client_request: &VerifierHttpClientRequest,
+            _http_request: &HttpVerifierRequest,
+            _request: &BackendVerificationRequest<'_>,
+        ) -> Result<VerifierHttpClientSessionProtocolResponse, BackendExecutionError> {
+            self.responses.lock().unwrap().push(envelope_response.clone());
+            Ok(VerifierHttpClientSessionProtocolResponse {
+                status_code: envelope_response.status_code,
+                headers: envelope_response.headers,
+                body: envelope_response.encoded_body,
+            })
+        }
+    }
+
+    struct RejectingHttpClientSessionProtocolBytesTransportExchange;
+
+    impl VerifierHttpClientSessionProtocolBytesTransportExchange for RejectingHttpClientSessionProtocolBytesTransportExchange {
+        fn exchange_bytes(
+            &self,
+            _bytes_request: &VerifierHttpClientSessionProtocolBytesRequest,
+            _protocol_request: &VerifierHttpClientSessionProtocolRequest,
+            _frame_request: &VerifierHttpClientSessionFrameRequest,
+            _connection_config: &ResolvedVerifierHttpClientSessionSocketConnectionConfig,
+            _socket_request: &VerifierHttpClientSessionSocketRequest,
+            _transport_request: &VerifierHttpClientSessionTransportRequest,
+            _call_request: &VerifierHttpClientSessionCallRequest,
+            _wire_request: &VerifierHttpClientSessionWireRequest,
+            _session_request: &VerifierHttpClientSessionRequest,
+            _session_config: &ResolvedVerifierHttpClientSessionConfig,
+            _runtime_request: &VerifierHttpClientRuntimeRequest,
+            _config: &ResolvedVerifierHttpClientConfig,
+            _client_request: &VerifierHttpClientRequest,
+            _http_request: &HttpVerifierRequest,
+            request: &BackendVerificationRequest<'_>,
+        ) -> Result<VerifierHttpClientSessionProtocolEnvelopeResponse, BackendExecutionError> {
+            Err(BackendExecutionError::Unavailable {
+                backend: request.backend_label(RealTeeBackend::backend_id_static()),
+                reason: "client session protocol bytes transport exchange rejected protocol bytes".into(),
+            })
+        }
+    }
+
+    struct PanicHttpClientSessionProtocolEnvelopeParser;
+
+    impl VerifierHttpClientSessionProtocolEnvelopeParser for PanicHttpClientSessionProtocolEnvelopeParser {
+        fn parse_envelope_response(
+            &self,
+            _envelope_response: VerifierHttpClientSessionProtocolEnvelopeResponse,
+            _protocol_request: &VerifierHttpClientSessionProtocolRequest,
+            _frame_request: &VerifierHttpClientSessionFrameRequest,
+            _connection_config: &ResolvedVerifierHttpClientSessionSocketConnectionConfig,
+            _socket_request: &VerifierHttpClientSessionSocketRequest,
+            _transport_request: &VerifierHttpClientSessionTransportRequest,
+            _call_request: &VerifierHttpClientSessionCallRequest,
+            _wire_request: &VerifierHttpClientSessionWireRequest,
+            _session_request: &VerifierHttpClientSessionRequest,
+            _session_config: &ResolvedVerifierHttpClientSessionConfig,
+            _runtime_request: &VerifierHttpClientRuntimeRequest,
+            _config: &ResolvedVerifierHttpClientConfig,
+            _client_request: &VerifierHttpClientRequest,
+            _http_request: &HttpVerifierRequest,
+            _request: &BackendVerificationRequest<'_>,
+        ) -> Result<VerifierHttpClientSessionProtocolResponse, BackendExecutionError> {
+            panic!("protocol envelope parser should not be called when bytes transport exchange fails")
+        }
+    }
+
+    #[derive(Default)]
     struct RecordingHttpClientSessionProtocolRequestCodec {
         requests: Mutex<Vec<VerifierHttpClientSessionProtocolRequest>>,
     }
@@ -7190,6 +7610,282 @@ mod tests {
         assert_eq!(events[2].kind, VerifierTelemetryEventKind::ResponseMapped);
         assert_eq!(events[0].request_id, events[1].request_id);
         assert_eq!(events[1].request_id, events[2].request_id);
+    }
+
+    #[test]
+    fn bytes_backed_protocol_transport_exchange_encodes_exchanges_and_parses_envelope_response() {
+        let task = mock_task();
+        let bytes_encoder = Arc::new(RecordingHttpClientSessionProtocolBytesEncoder::default());
+        let bytes_transport_exchange = Arc::new(RecordingHttpClientSessionProtocolBytesTransportExchange::default());
+        let envelope_parser = Arc::new(RecordingHttpClientSessionProtocolEnvelopeParser::default());
+        let exchange = BytesBackedVerifierHttpClientSessionProtocolTransportExchange::with_components(
+            bytes_encoder.clone(),
+            bytes_transport_exchange.clone(),
+            envelope_parser.clone(),
+        );
+        let response = exchange
+            .exchange_protocol(
+                &VerifierHttpClientSessionProtocolRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: b"envelope-body".to_vec(),
+                    timeout_ms: 5_000,
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                },
+                &VerifierHttpClientSessionFrameRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: b"envelope-body".to_vec(),
+                    timeout_ms: 5_000,
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                },
+                &ResolvedVerifierHttpClientSessionSocketConnectionConfig {
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                    timeout_ms: 5_000,
+                },
+                &VerifierHttpClientSessionSocketRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: b"envelope-body".to_vec(),
+                    timeout_ms: 5_000,
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                },
+                &VerifierHttpClientSessionTransportRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: b"envelope-body".to_vec(),
+                    timeout_ms: 5_000,
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                },
+                &VerifierHttpClientSessionCallRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: b"envelope-body".to_vec(),
+                    timeout_ms: 5_000,
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                },
+                &VerifierHttpClientSessionWireRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: b"envelope-body".to_vec(),
+                    timeout_ms: 5_000,
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                },
+                &VerifierHttpClientSessionRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: b"envelope-body".to_vec(),
+                    timeout_ms: 5_000,
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                },
+                &ResolvedVerifierHttpClientSessionConfig {
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                    timeout_ms: 5_000,
+                },
+                &VerifierHttpClientRuntimeRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: b"envelope-body".to_vec(),
+                    timeout_ms: 5_000,
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                },
+                &ResolvedVerifierHttpClientConfig {
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                    timeout_ms: 5_000,
+                },
+                &VerifierHttpClientRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: b"envelope-body".to_vec(),
+                    timeout_ms: 5_000,
+                },
+                &HttpVerifierRequest {
+                    method: HttpMethod::Post,
+                    transport_mode: VerifierTransportMode::External,
+                    profile: "intel-dcap-external-default".into(),
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: "envelope-body".into(),
+                    timeout_ms: 5_000,
+                    retry_policy: RetryBackoffPolicy {
+                        max_attempts: 3,
+                        backoff_ms: 250,
+                        strategy: RetryBackoffStrategy::Exponential,
+                    },
+                },
+                &BackendVerificationRequest {
+                    family: VerificationBackendFamily::Tee,
+                    task: &task,
+                    proof_data: b"TEE:...",
+                    tee_payload: None,
+                    zk_payload: None,
+                    resolved_vk_ref: None,
+                },
+            )
+            .unwrap();
+        assert_eq!(response.status_code, 218);
+        assert_eq!(response.body, b"envelope-ok".to_vec());
+        let encoded = bytes_encoder.requests.lock().unwrap().clone();
+        assert_eq!(encoded.len(), 1);
+        assert_eq!(encoded[0].profile, "intel-dcap-external-default");
+        let exchanged = bytes_transport_exchange.requests.lock().unwrap().clone();
+        assert_eq!(exchanged.len(), 1);
+        assert_eq!(exchanged[0], encoded[0]);
+        let parsed = envelope_parser.responses.lock().unwrap().clone();
+        assert_eq!(parsed.len(), 1);
+        assert_eq!(parsed[0].status_code, 218);
+        assert_eq!(parsed[0].encoded_body, b"envelope-ok".to_vec());
+    }
+
+    #[test]
+    fn bytes_backed_protocol_transport_exchange_fails_closed_when_bytes_exchange_rejects() {
+        let task = mock_task();
+        let exchange = BytesBackedVerifierHttpClientSessionProtocolTransportExchange::with_components(
+            Arc::new(DirectVerifierHttpClientSessionProtocolBytesEncoder),
+            Arc::new(RejectingHttpClientSessionProtocolBytesTransportExchange),
+            Arc::new(PanicHttpClientSessionProtocolEnvelopeParser),
+        );
+        let err = exchange
+            .exchange_protocol(
+                &VerifierHttpClientSessionProtocolRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: Vec::new(),
+                    timeout_ms: 5_000,
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                },
+                &VerifierHttpClientSessionFrameRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: Vec::new(),
+                    timeout_ms: 5_000,
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                },
+                &ResolvedVerifierHttpClientSessionSocketConnectionConfig {
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                    timeout_ms: 5_000,
+                },
+                &VerifierHttpClientSessionSocketRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: Vec::new(),
+                    timeout_ms: 5_000,
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                },
+                &VerifierHttpClientSessionTransportRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: Vec::new(),
+                    timeout_ms: 5_000,
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                },
+                &VerifierHttpClientSessionCallRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: Vec::new(),
+                    timeout_ms: 5_000,
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                },
+                &VerifierHttpClientSessionWireRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: Vec::new(),
+                    timeout_ms: 5_000,
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                },
+                &VerifierHttpClientSessionRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: Vec::new(),
+                    timeout_ms: 5_000,
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                },
+                &ResolvedVerifierHttpClientSessionConfig {
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                    timeout_ms: 5_000,
+                },
+                &VerifierHttpClientRuntimeRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: Vec::new(),
+                    timeout_ms: 5_000,
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                },
+                &ResolvedVerifierHttpClientConfig {
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                    timeout_ms: 5_000,
+                },
+                &VerifierHttpClientRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: Vec::new(),
+                    timeout_ms: 5_000,
+                },
+                &HttpVerifierRequest {
+                    method: HttpMethod::Post,
+                    transport_mode: VerifierTransportMode::External,
+                    profile: "intel-dcap-external-default".into(),
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: String::new(),
+                    timeout_ms: 5_000,
+                    retry_policy: RetryBackoffPolicy {
+                        max_attempts: 3,
+                        backoff_ms: 250,
+                        strategy: RetryBackoffStrategy::Exponential,
+                    },
+                },
+                &BackendVerificationRequest {
+                    family: VerificationBackendFamily::Tee,
+                    task: &task,
+                    proof_data: b"TEE:...",
+                    tee_payload: None,
+                    zk_payload: None,
+                    resolved_vk_ref: None,
+                },
+            )
+            .unwrap_err();
+        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session protocol bytes transport exchange rejected protocol bytes")));
     }
 
     #[test]
@@ -9323,7 +10019,7 @@ mod tests {
                 },
             )
             .unwrap_err();
-        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("intel-dcap-external-default") && reason.contains("client session protocol transport exchange")));
+        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("intel-dcap-external-default") && reason.contains("client session protocol bytes transport exchange")));
     }
 
     #[test]
