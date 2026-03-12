@@ -1,5 +1,7 @@
 # TRNM ZKP Backend Mainline Promotion Note — 2026-03-10
 
+> Scope note: this document summarizes a historical ZKP backend promotion wave for local mainline review on 2026-03-10. It is **not** the current release-readiness truth source and must not be read as current release sign-off. For current release/readiness status, see `RELEASE_READINESS.md`.
+
 ## Snapshot
 
 - Local `main`: `ac9caf9e`
