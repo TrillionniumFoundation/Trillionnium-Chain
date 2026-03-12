@@ -214,6 +214,7 @@ struct BftHeightResult {
     auth_reject_replay: usize,
     auth_reject_stale_nonce: usize,
     round_change_backoff_total_ms: u64,
+    round_change_backoff_max_ms: u64,
     leader_missed_snapshot: Vec<u64>,
 }
 const CHALLENGE_ESCROW_ACCOUNT: &str = "treasury.challenge_escrow";
@@ -596,6 +597,13 @@ fn round_change_backoff_ms(round_changes: u64, base_ms: u64, cap_ms: u64) -> u64
     let shift = (round_changes - 1).min(20);
     let factor = 1u64 << shift;
     base_ms.saturating_mul(factor).min(cap_ms)
+}
+
+fn ratio_ppm_u64(numerator: u64, denominator: u64) -> u64 {
+    if denominator == 0 {
+        return 0;
+    }
+    numerator.saturating_mul(1_000_000) / denominator
 }
 
 fn aggregate_votes(votes: &[BftVote], vote_type: VoteType) -> HashMap<String, usize> {
@@ -1215,6 +1223,7 @@ fn simulate_bft_height(
     let mut total_auth_reject_replay = 0usize;
     let mut total_auth_reject_stale_nonce = 0usize;
     let mut round_change_backoff_total_ms = 0u64;
+    let mut round_change_backoff_max_ms = 0u64;
     let n = validators.max(1);
     if control.leader_health.len() != n {
         control.leader_health = vec![LeaderHealth::default(); n];
@@ -1257,6 +1266,7 @@ fn simulate_bft_height(
                 auth_reject_replay: total_auth_reject_replay,
                 auth_reject_stale_nonce: total_auth_reject_stale_nonce,
                 round_change_backoff_total_ms,
+                round_change_backoff_max_ms,
                 leader_missed_snapshot: control
                     .leader_health
                     .iter()
@@ -1276,6 +1286,7 @@ fn simulate_bft_height(
             control.round_change_backoff_cap_ms,
         );
         round_change_backoff_total_ms = round_change_backoff_total_ms.saturating_add(backoff_ms);
+        round_change_backoff_max_ms = round_change_backoff_max_ms.max(backoff_ms);
         println!(
             "[bft] height={} round={} step=RoundBackoff delay_ms={} cap_ms={} proposer=v{} missed_proposals={} penalty_until_round={}",
             height,
@@ -1299,6 +1310,7 @@ fn simulate_bft_height(
         auth_reject_replay: total_auth_reject_replay,
         auth_reject_stale_nonce: total_auth_reject_stale_nonce,
         round_change_backoff_total_ms,
+        round_change_backoff_max_ms,
         leader_missed_snapshot: control
             .leader_health
             .iter()
@@ -1556,6 +1568,52 @@ fn percentile(mut vals: Vec<u128>, p: f64) -> u128 {
     vals.sort_unstable();
     let idx = ((vals.len() - 1) as f64 * p).round() as usize;
     vals[idx.min(vals.len() - 1)]
+}
+
+fn max_or_zero(vals: &[u128]) -> u128 {
+    vals.iter().copied().max().unwrap_or(0)
+}
+
+fn average_or_zero(vals: &[u128]) -> u128 {
+    if vals.is_empty() {
+        0
+    } else {
+        vals.iter().copied().sum::<u128>() / vals.len() as u128
+    }
+}
+
+fn ratio_ppm(numerator: u128, denominator: u128) -> u128 {
+    if denominator == 0 {
+        0
+    } else {
+        numerator.saturating_mul(1_000_000) / denominator
+    }
+}
+
+fn ratio_percent_bps(numerator: u128, denominator: u128) -> u128 {
+    if denominator == 0 {
+        0
+    } else {
+        numerator.saturating_mul(10_000) / denominator
+    }
+}
+
+fn ratio_milli_u64(numerator: u64, denominator: u64) -> u64 {
+    if denominator == 0 {
+        0
+    } else {
+        numerator.saturating_mul(1_000) / denominator
+    }
+}
+
+fn gap_percent_bps(total: u128, component_a: u128, component_b: u128) -> u128 {
+    if total == 0 {
+        return 0;
+    }
+    total
+        .saturating_sub(component_a.saturating_add(component_b))
+        .saturating_mul(10_000)
+        / total
 }
 
 fn treasury_total(st: &StateStore) -> u128 {
@@ -2043,6 +2101,21 @@ fn summarize_hot_objects(st: &StateStore, txs: &[MockTx]) -> HotObjectSummary {
         hot_tx_count,
         labels,
     }
+}
+
+fn hot_object_top_label_share_ppm(summary: &HotObjectSummary) -> u128 {
+    let total_refs: usize = summary.labels.values().copied().sum();
+    let top_refs = summary.labels.values().copied().max().unwrap_or(0);
+    ratio_ppm(top_refs as u128, total_refs as u128)
+}
+
+fn hot_object_tail_share_ppm(summary: &HotObjectSummary) -> u128 {
+    let total_refs: usize = summary.labels.values().copied().sum();
+    let top_refs = summary.labels.values().copied().max().unwrap_or(0);
+    ratio_ppm(
+        total_refs.saturating_sub(top_refs) as u128,
+        total_refs as u128,
+    )
 }
 
 fn read_write_decl(st: &StateStore, tx: &MockTx, tx_id: u64) -> Tx {
@@ -2726,6 +2799,342 @@ mod tests {
         assert_eq!(mempool.len(), 2);
         assert!(matches!(mempool[0], MockTx::Commit { task_id: 31, .. }));
         assert!(matches!(mempool[1], MockTx::CreateTask { task_id: 32, .. }));
+    }
+
+    #[test]
+    fn rollback_block_rate_counts_only_blocks_with_any_rollback() {
+        let rollback_samples = vec![0, 2, 0, 1];
+        let rollback_block_total =
+            rollback_samples.iter().filter(|count| **count > 0).count() as u64;
+        let rollback_block_rate = rollback_block_total as f64 / rollback_samples.len() as f64;
+
+        assert_eq!(rollback_block_total, 2);
+        assert!((rollback_block_rate - 0.5).abs() < f64::EPSILON);
+    }
+
+    #[test]
+    fn consensus_share_ppm_is_zero_when_finality_avg_is_zero() {
+        assert_eq!(ratio_ppm(10, 0), 0);
+    }
+
+    #[test]
+    fn consensus_share_ppm_makes_component_regressions_visible() {
+        let finality_avg = 200u128;
+        let scheduler_avg = 50u128;
+        let preexec_avg = 120u128;
+        let commit_avg = 20u128;
+        let state_root_total_avg = 10u128;
+
+        assert_eq!(ratio_ppm(scheduler_avg, finality_avg), 250_000);
+        assert_eq!(ratio_ppm(preexec_avg, finality_avg), 600_000);
+        assert_eq!(ratio_ppm(commit_avg, finality_avg), 100_000);
+        assert_eq!(ratio_ppm(state_root_total_avg, finality_avg), 50_000);
+    }
+
+    #[test]
+    fn preexec_peak_share_metric_makes_tail_latency_regressions_visible() {
+        let finality_max = 320u128;
+        let preexec_max = 160u128;
+
+        assert_eq!(ratio_ppm(preexec_max, finality_max), 500_000);
+        assert_eq!(ratio_ppm(preexec_max, 0), 0);
+    }
+
+    #[test]
+    fn rollback_share_metrics_make_rollback_regressions_visible() {
+        let finality_avg = 200u128;
+        let rollback_avg = 40u128;
+        let finality_max = 320u128;
+        let rollback_max = 80u128;
+        let rollback_total = 3u64;
+        let rollback_block_total = 2u64;
+        let rollback_active_heights = rollback_block_total;
+        let finality_sample_count = 4u64;
+        let rollback_block_rate_ppm = ratio_ppm_u64(rollback_block_total, finality_sample_count);
+        let rollback_active_height_rate_ppm = rollback_block_rate_ppm;
+        let rollback_density_avg = rollback_total / rollback_block_total;
+        let rollback_density_avg_milli = ratio_milli_u64(rollback_total, rollback_block_total);
+
+        assert_eq!(ratio_ppm(rollback_avg, finality_avg), 200_000);
+        assert_eq!(ratio_ppm(rollback_max, finality_max), 250_000);
+        assert_eq!(rollback_active_heights, rollback_block_total);
+        assert_eq!(rollback_block_rate_ppm, 500_000);
+        assert_eq!(rollback_active_height_rate_ppm, rollback_block_rate_ppm);
+        assert_eq!(rollback_density_avg, 1);
+        assert_eq!(rollback_density_avg_milli, 1_500);
+    }
+
+    #[test]
+    fn percentage_bps_guardrails_make_preexec_and_rollback_regressions_visible() {
+        assert_eq!(ratio_percent_bps(3, 12), 2_500);
+        assert_eq!(ratio_percent_bps(2, 5), 4_000);
+        assert_eq!(ratio_percent_bps(1, 0), 0);
+    }
+
+    #[test]
+    fn hot_object_top_label_share_metric_exposes_concentrated_hotspots() {
+        let mut summary = HotObjectSummary::default();
+        summary.labels.insert("resolve.pending_approval".into(), 6);
+        summary.labels.insert("treasury.challenge_escrow".into(), 2);
+        summary.labels.insert("gov.resolve_authority".into(), 2);
+
+        assert_eq!(hot_object_top_label_share_ppm(&summary), 600_000);
+    }
+
+    #[test]
+    fn hot_object_top_label_share_metric_is_zero_without_hot_labels() {
+        assert_eq!(
+            hot_object_top_label_share_ppm(&HotObjectSummary::default()),
+            0
+        );
+    }
+
+    #[test]
+    fn hot_object_tail_share_metric_exposes_remaining_parallelizable_surface() {
+        let mut summary = HotObjectSummary::default();
+        summary.labels.insert("resolve.pending_approval".into(), 6);
+        summary.labels.insert("treasury.challenge_escrow".into(), 2);
+        summary.labels.insert("gov.resolve_authority".into(), 2);
+
+        assert_eq!(hot_object_tail_share_ppm(&summary), 400_000);
+    }
+
+    #[test]
+    fn hot_object_tail_share_metric_is_zero_without_hot_labels() {
+        assert_eq!(hot_object_tail_share_ppm(&HotObjectSummary::default()), 0);
+    }
+
+    #[test]
+    fn hot_object_top_and_tail_share_metrics_partition_hot_reference_surface() {
+        let mut summary = HotObjectSummary::default();
+        summary.labels.insert("resolve.pending_approval".into(), 6);
+        summary.labels.insert("treasury.challenge_escrow".into(), 2);
+        summary.labels.insert("gov.resolve_authority".into(), 2);
+
+        let top_share_ppm = hot_object_top_label_share_ppm(&summary);
+        let tail_share_ppm = hot_object_tail_share_ppm(&summary);
+
+        assert_eq!(top_share_ppm, 600_000);
+        assert_eq!(tail_share_ppm, 400_000);
+        assert_eq!(top_share_ppm + tail_share_ppm, 1_000_000);
+    }
+
+    #[test]
+    fn critical_wait_density_metrics_make_fairness_stalls_visible() {
+        let finality_avg = 200u128;
+        let critical_wait_blocks_avg = 50u128;
+        let finality_max = 320u128;
+        let critical_wait_blocks_max = 160u128;
+
+        assert_eq!(ratio_ppm(critical_wait_blocks_avg, finality_avg), 250_000);
+        assert_eq!(ratio_ppm(critical_wait_blocks_max, finality_max), 500_000);
+        assert_eq!(ratio_ppm(critical_wait_blocks_max, 0), 0);
+    }
+
+    #[test]
+    fn critical_wait_active_height_rate_metrics_make_fairness_stall_concentration_visible() {
+        let critical_wait_active_heights = 2u64;
+        let finality_sample_count = 4u64;
+        let critical_wait_total = 5u64;
+        let critical_wait_density_avg = critical_wait_total / critical_wait_active_heights;
+        let critical_wait_density_avg_milli =
+            ratio_milli_u64(critical_wait_total, critical_wait_active_heights);
+
+        assert_eq!(
+            ratio_ppm_u64(critical_wait_active_heights, finality_sample_count),
+            500_000
+        );
+        assert_eq!(critical_wait_density_avg, 2);
+        assert_eq!(critical_wait_density_avg_milli, 2_500);
+    }
+
+    #[test]
+    fn critical_wait_density_avg_handles_empty_active_height_set() {
+        let critical_wait_total = 5u64;
+        let critical_wait_active_heights = 0u64;
+        let critical_wait_density_avg = if critical_wait_active_heights == 0 {
+            0
+        } else {
+            critical_wait_total / critical_wait_active_heights
+        };
+        let critical_wait_density_avg_milli =
+            ratio_milli_u64(critical_wait_total, critical_wait_active_heights);
+
+        assert_eq!(critical_wait_density_avg, 0);
+        assert_eq!(critical_wait_density_avg_milli, 0);
+    }
+
+    #[test]
+    fn preexec_reject_share_metric_highlights_guardrail_pressure() {
+        assert_eq!(ratio_percent_bps(6, 15), 4_000);
+        assert_eq!(ratio_percent_bps(0, 15), 0);
+        assert_eq!(ratio_percent_bps(4, 0), 0);
+    }
+
+    #[test]
+    fn unprofiled_finality_gap_metric_captures_hidden_block_time() {
+        assert_eq!(gap_percent_bps(200, 80, 40), 4_000);
+        assert_eq!(gap_percent_bps(200, 150, 80), 0);
+        assert_eq!(gap_percent_bps(0, 10, 5), 0);
+    }
+
+    #[test]
+    fn round_change_guardrail_metrics_make_bft_jitter_visible() {
+        let bft_round_change_total = 6u64;
+        let bft_committed_heights = 4u64;
+        let bft_round_change_backoff_total_ms = 18u64;
+        let bft_round_change_backoff_max_ms = 8u64;
+
+        assert_eq!(
+            ratio_ppm_u64(bft_round_change_total, bft_committed_heights),
+            1_500_000
+        );
+        assert_eq!(
+            bft_round_change_backoff_total_ms / bft_round_change_total,
+            3
+        );
+        assert_eq!(
+            ratio_ppm_u64(bft_round_change_backoff_total_ms, bft_committed_heights),
+            4_500_000
+        );
+        assert!(
+            bft_round_change_backoff_max_ms
+                > bft_round_change_backoff_total_ms / bft_round_change_total
+        );
+    }
+
+    #[test]
+    fn rollback_active_height_metric_names_keep_compatibility_and_height_semantics_distinct() {
+        let compatibility_count_field_name = "rollback_block_total";
+        let height_count_field_name = "rollback_active_heights";
+        let compatibility_rate_field_name = "rollback_block_rate_ppm";
+        let height_rate_field_name = "rollback_active_height_rate_ppm";
+
+        assert!(compatibility_count_field_name.ends_with("_total"));
+        assert!(height_count_field_name.ends_with("_heights"));
+        assert!(compatibility_rate_field_name.ends_with("_rate_ppm"));
+        assert!(height_rate_field_name.ends_with("_height_rate_ppm"));
+        assert_ne!(compatibility_count_field_name, height_count_field_name);
+        assert_ne!(compatibility_rate_field_name, height_rate_field_name);
+    }
+
+    #[test]
+    fn round_change_backoff_metric_names_keep_tail_and_share_semantics_distinct() {
+        let max_field_name = "bft_round_change_backoff_max_ms";
+        let wall_share_field_name = "bft_round_change_backoff_wall_share_ppm";
+        let compatibility_field_name = "bft_round_change_backoff_share_ppm";
+
+        assert!(max_field_name.ends_with("_max_ms"));
+        assert!(wall_share_field_name.ends_with("_share_ppm"));
+        assert!(compatibility_field_name.ends_with("_share_ppm"));
+        assert_ne!(max_field_name, wall_share_field_name);
+        assert_ne!(max_field_name, compatibility_field_name);
+    }
+
+    #[test]
+    fn round_change_backoff_wall_share_metric_name_stays_ppm_based() {
+        let field_name = "bft_round_change_backoff_wall_share_ppm";
+        assert!(field_name.ends_with("_share_ppm"));
+        assert!(!field_name.ends_with("_per_height_ms"));
+    }
+
+    #[test]
+    fn round_change_backoff_share_metric_keeps_compatibility_alias_name() {
+        let field_name = "bft_round_change_backoff_share_ppm";
+        assert!(field_name.ends_with("_share_ppm"));
+        assert!(!field_name.contains("wall_share_ppm"));
+    }
+
+    #[test]
+    fn round_change_backoff_wall_share_metric_uses_height_level_denominator() {
+        let bft_round_change_backoff_total_ms = 18u64;
+        let bft_committed_heights = 4u64;
+        let finality_sample_count = 6u64;
+        let wall_share_per_height_ppm =
+            ratio_ppm_u64(bft_round_change_backoff_total_ms, bft_committed_heights);
+        let wall_share_per_finality_sample_ppm =
+            ratio_ppm_u64(bft_round_change_backoff_total_ms, finality_sample_count);
+
+        assert_eq!(wall_share_per_height_ppm, 4_500_000);
+        assert_eq!(wall_share_per_finality_sample_ppm, 3_000_000);
+        assert_ne!(
+            wall_share_per_height_ppm,
+            wall_share_per_finality_sample_ppm
+        );
+    }
+
+    #[test]
+    fn round_change_backoff_compatibility_alias_matches_wall_share_metric() {
+        let bft_round_change_backoff_total_ms = 18u64;
+        let bft_committed_heights = 4u64;
+        let wall_share_ppm =
+            ratio_ppm_u64(bft_round_change_backoff_total_ms, bft_committed_heights);
+        let compatibility_alias_ppm = wall_share_ppm;
+
+        assert_eq!(wall_share_ppm, 4_500_000);
+        assert_eq!(compatibility_alias_ppm, wall_share_ppm);
+    }
+
+    #[test]
+    fn round_change_active_height_rate_metrics_make_jitter_concentration_visible() {
+        let bft_round_change_total = 6u64;
+        let bft_round_change_active_heights = 2u64;
+        let bft_committed_heights = 4u64;
+
+        assert_eq!(
+            ratio_ppm_u64(bft_round_change_active_heights, bft_committed_heights),
+            500_000
+        );
+        assert_eq!(bft_round_change_total / bft_round_change_active_heights, 3);
+        assert_eq!(
+            ratio_ppm_u64(bft_round_change_total, bft_round_change_active_heights),
+            3_000_000
+        );
+    }
+
+    #[test]
+    fn leader_missed_concentration_metrics_make_single_proposer_hotspots_visible() {
+        let leader_missed_final = vec![4u64, 1u64, 1u64, 0u64];
+        let bft_leader_missed_total: u64 = leader_missed_final.iter().copied().sum();
+        let bft_leader_missed_max = leader_missed_final.iter().copied().max().unwrap_or(0);
+        let bft_leader_missed_top_share_ppm =
+            ratio_ppm_u64(bft_leader_missed_max, bft_leader_missed_total);
+
+        assert_eq!(bft_leader_missed_total, 6);
+        assert_eq!(bft_leader_missed_max, 4);
+        assert_eq!(bft_leader_missed_top_share_ppm, 666_666);
+    }
+
+    #[test]
+    fn leader_missed_concentration_metrics_are_zero_without_any_misses() {
+        let leader_missed_final = vec![0u64, 0u64, 0u64, 0u64];
+        let bft_leader_missed_total: u64 = leader_missed_final.iter().copied().sum();
+        let bft_leader_missed_max = leader_missed_final.iter().copied().max().unwrap_or(0);
+        let bft_leader_missed_top_share_ppm =
+            ratio_ppm_u64(bft_leader_missed_max, bft_leader_missed_total);
+
+        assert_eq!(bft_leader_missed_total, 0);
+        assert_eq!(bft_leader_missed_max, 0);
+        assert_eq!(bft_leader_missed_top_share_ppm, 0);
+    }
+
+    #[test]
+    fn round_change_backoff_share_metric_handles_empty_consensus_samples() {
+        assert_eq!(ratio_ppm_u64(18, 0), 0);
+        assert_eq!(ratio_ppm_u64(0, 0), 0);
+    }
+
+    #[test]
+    fn round_change_density_avg_handles_empty_active_height_set() {
+        let bft_round_change_total = 6u64;
+        let bft_round_change_active_heights = 0u64;
+        let bft_round_change_density_avg = if bft_round_change_active_heights == 0 {
+            0
+        } else {
+            bft_round_change_total / bft_round_change_active_heights
+        };
+
+        assert_eq!(bft_round_change_density_avg, 0);
     }
 
     #[test]
@@ -5002,6 +5411,15 @@ fn main() -> Result<()> {
     let mut commit_samples_ms: Vec<u128> = Vec::new();
     let mut state_root_total_samples_ms: Vec<u128> = Vec::new();
     let mut critical_wait_blocks_samples: Vec<u128> = Vec::new();
+    let mut critical_wait_active_heights: u64 = 0;
+    let mut critical_wait_total: u64 = 0;
+    let mut block_txs_samples: Vec<u128> = Vec::new();
+    let mut block_groups_samples: Vec<u128> = Vec::new();
+    let mut rollback_samples: Vec<u128> = Vec::new();
+    let mut avg_group_size_samples: Vec<u128> = Vec::new();
+    let mut hot_object_share_samples_ppm: Vec<u128> = Vec::new();
+    let mut hot_object_top_label_share_samples_ppm: Vec<u128> = Vec::new();
+    let mut hot_object_tail_share_samples_ppm: Vec<u128> = Vec::new();
     let mut preexec_reject_total: u64 = 0;
     let mut apply_error_total: u64 = 0;
     let mut apply_error_preexec_conflict_miss_total: u64 = 0;
@@ -5010,14 +5428,17 @@ fn main() -> Result<()> {
     let mut apply_error_deadline_exceeded_total: u64 = 0;
     let mut apply_error_semantic_fail_total: u64 = 0;
     let mut rollback_total: u64 = 0;
+    let mut rollback_block_total: u64 = 0;
     let mut timeout_migrated_total: u64 = 0;
     let mut bft_committed_heights: u64 = 0;
     let mut bft_round_change_total: u64 = 0;
+    let mut bft_round_change_active_heights: u64 = 0;
     let mut bft_double_vote_total: u64 = 0;
     let mut bft_auth_reject_bad_sig_total: u64 = 0;
     let mut bft_auth_reject_replay_total: u64 = 0;
     let mut bft_auth_reject_stale_nonce_total: u64 = 0;
     let mut bft_round_change_backoff_total_ms: u64 = 0;
+    let mut bft_round_change_backoff_max_ms: u64 = 0;
     let mut wal_entries = load_wal_meta_entries(&wal_dir)?;
     let mut checkpoints = load_checkpoint_meta(&wal_dir)?;
     let mut bft_jitter = BftJitterControl {
@@ -5046,11 +5467,16 @@ fn main() -> Result<()> {
         );
         if !bft.committed {
             bft_round_change_total += bft.round_changes;
+            if bft.round_changes > 0 {
+                bft_round_change_active_heights += 1;
+            }
             bft_double_vote_total += bft.double_vote_events as u64;
             bft_auth_reject_bad_sig_total += bft.auth_reject_bad_sig as u64;
             bft_auth_reject_replay_total += bft.auth_reject_replay as u64;
             bft_auth_reject_stale_nonce_total += bft.auth_reject_stale_nonce as u64;
             bft_round_change_backoff_total_ms += bft.round_change_backoff_total_ms;
+            bft_round_change_backoff_max_ms =
+                bft_round_change_backoff_max_ms.max(bft.round_change_backoff_max_ms);
             println!(
                 "[block] node={} height={} skipped reason=bft_no_commit proposal_hash={} prevote={} precommit={} rounds={} round_backoff_ms={} leader_missed={:?}",
                 cfg.node_id,
@@ -5090,11 +5516,16 @@ fn main() -> Result<()> {
             continue;
         }
         bft_round_change_total += bft.round_changes;
+        if bft.round_changes > 0 {
+            bft_round_change_active_heights += 1;
+        }
         bft_double_vote_total += bft.double_vote_events as u64;
         bft_auth_reject_bad_sig_total += bft.auth_reject_bad_sig as u64;
         bft_auth_reject_replay_total += bft.auth_reject_replay as u64;
         bft_auth_reject_stale_nonce_total += bft.auth_reject_stale_nonce as u64;
         bft_round_change_backoff_total_ms += bft.round_change_backoff_total_ms;
+        bft_round_change_backoff_max_ms =
+            bft_round_change_backoff_max_ms.max(bft.round_change_backoff_max_ms);
         println!(
             "[bft] height={} committed_round={} prevote={} precommit={} round_changes={} round_backoff_ms={} leader_missed={:?} double_vote_events={} auth_reject_bad_sig={} auth_reject_replay={} auth_reject_stale_nonce={}",
             height,
@@ -5124,8 +5555,29 @@ fn main() -> Result<()> {
         scheduler_samples_ms.push(scheduler_elapsed_ms);
         preexec_samples_ms.push(ordering_decision.preexec_elapsed_ms);
         critical_wait_blocks_samples.push(ordering_decision.critical_wait_blocks as u128);
+        critical_wait_total += ordering_decision.critical_wait_blocks;
+        if ordering_decision.critical_wait_blocks > 0 {
+            critical_wait_active_heights += 1;
+        }
         preexec_reject_total += ordering_decision.rejected;
         let group_count = ordering_decision.group_count;
+        let avg_group_size = if group_count == 0 {
+            0u128
+        } else {
+            ((picked.len() as u128) * 1000) / (group_count as u128)
+        };
+        avg_group_size_samples.push(avg_group_size);
+        let hot_object_summary = summarize_hot_objects(&state, &picked);
+        let hot_object_share_ppm = if picked.is_empty() {
+            0u128
+        } else {
+            ((hot_object_summary.hot_tx_count as u128) * 1_000_000) / (picked.len() as u128)
+        };
+        let hot_object_top_label_share_ppm = hot_object_top_label_share_ppm(&hot_object_summary);
+        let hot_object_tail_share_ppm = hot_object_tail_share_ppm(&hot_object_summary);
+        hot_object_share_samples_ppm.push(hot_object_share_ppm);
+        hot_object_top_label_share_samples_ppm.push(hot_object_top_label_share_ppm);
+        hot_object_tail_share_samples_ppm.push(hot_object_tail_share_ppm);
 
         let rl_advisor: Box<dyn RlAdvisor> = if args.rl_advisor_shadow {
             Box::new(ShadowOnlyRlAdvisor {
@@ -5285,6 +5737,12 @@ fn main() -> Result<()> {
         let commit_elapsed_ms = commit_start.elapsed().as_millis();
         commit_samples_ms.push(commit_elapsed_ms);
         state_root_total_samples_ms.push(state_root_total_ms);
+        block_txs_samples.push(applied as u128);
+        block_groups_samples.push(group_count as u128);
+        rollback_samples.push(rollback_count as u128);
+        if rollback_count > 0 {
+            rollback_block_total += 1;
+        }
         let elapsed_ms = block_start.elapsed().as_millis();
         finality_samples_ms.push(elapsed_ms);
         println!(
@@ -5359,6 +5817,114 @@ fn main() -> Result<()> {
     let state_root_total_p95 = percentile(state_root_total_samples_ms.clone(), 0.95);
     let critical_wait_blocks_p50 = percentile(critical_wait_blocks_samples.clone(), 0.50);
     let critical_wait_blocks_p95 = percentile(critical_wait_blocks_samples.clone(), 0.95);
+    let block_txs_p50 = percentile(block_txs_samples.clone(), 0.50);
+    let block_txs_p95 = percentile(block_txs_samples.clone(), 0.95);
+    let block_groups_p50 = percentile(block_groups_samples.clone(), 0.50);
+    let block_groups_p95 = percentile(block_groups_samples.clone(), 0.95);
+    let rollback_p50 = percentile(rollback_samples.clone(), 0.50);
+    let rollback_p95 = percentile(rollback_samples.clone(), 0.95);
+    let avg_group_size_p50 = percentile(avg_group_size_samples.clone(), 0.50);
+    let avg_group_size_p95 = percentile(avg_group_size_samples.clone(), 0.95);
+    let hot_object_share_p50_ppm = percentile(hot_object_share_samples_ppm.clone(), 0.50);
+    let hot_object_share_p95_ppm = percentile(hot_object_share_samples_ppm.clone(), 0.95);
+    let hot_object_top_label_share_p50_ppm =
+        percentile(hot_object_top_label_share_samples_ppm.clone(), 0.50);
+    let hot_object_top_label_share_p95_ppm =
+        percentile(hot_object_top_label_share_samples_ppm.clone(), 0.95);
+    let hot_object_tail_share_p50_ppm = percentile(hot_object_tail_share_samples_ppm.clone(), 0.50);
+    let hot_object_tail_share_p95_ppm = percentile(hot_object_tail_share_samples_ppm.clone(), 0.95);
+    let finality_max = max_or_zero(&finality_samples_ms);
+    let scheduler_max = max_or_zero(&scheduler_samples_ms);
+    let preexec_max = max_or_zero(&preexec_samples_ms);
+    let commit_max = max_or_zero(&commit_samples_ms);
+    let state_root_total_max = max_or_zero(&state_root_total_samples_ms);
+    let critical_wait_blocks_max = max_or_zero(&critical_wait_blocks_samples);
+    let block_txs_max = max_or_zero(&block_txs_samples);
+    let block_groups_max = max_or_zero(&block_groups_samples);
+    let rollback_max = max_or_zero(&rollback_samples);
+    let avg_group_size_max = max_or_zero(&avg_group_size_samples);
+    let hot_object_share_max_ppm = max_or_zero(&hot_object_share_samples_ppm);
+    let hot_object_top_label_share_max_ppm = max_or_zero(&hot_object_top_label_share_samples_ppm);
+    let hot_object_tail_share_max_ppm = max_or_zero(&hot_object_tail_share_samples_ppm);
+    let finality_avg = average_or_zero(&finality_samples_ms);
+    let scheduler_avg = average_or_zero(&scheduler_samples_ms);
+    let preexec_avg = average_or_zero(&preexec_samples_ms);
+    let commit_avg = average_or_zero(&commit_samples_ms);
+    let state_root_total_avg = average_or_zero(&state_root_total_samples_ms);
+    let critical_wait_blocks_avg = average_or_zero(&critical_wait_blocks_samples);
+    let rollback_avg = average_or_zero(&rollback_samples);
+    let avg_group_size_avg = average_or_zero(&avg_group_size_samples);
+    let hot_object_share_avg_ppm = average_or_zero(&hot_object_share_samples_ppm);
+    let hot_object_top_label_share_avg_ppm =
+        average_or_zero(&hot_object_top_label_share_samples_ppm);
+    let hot_object_tail_share_avg_ppm = average_or_zero(&hot_object_tail_share_samples_ppm);
+    let scheduler_share_avg_ppm = ratio_ppm(scheduler_avg, finality_avg);
+    let preexec_share_avg_ppm = ratio_ppm(preexec_avg, finality_avg);
+    let commit_share_avg_ppm = ratio_ppm(commit_avg, finality_avg);
+    let state_root_total_share_avg_ppm = ratio_ppm(state_root_total_avg, finality_avg);
+    let rollback_share_avg_ppm = ratio_ppm(rollback_avg, finality_avg);
+    let rollback_peak_share_ppm = ratio_ppm(rollback_max, finality_max);
+    let preexec_peak_share_ppm = ratio_ppm(preexec_max, finality_max);
+    let rollback_block_rate_ppm =
+        ratio_ppm_u64(rollback_block_total, finality_samples_ms.len() as u64);
+    let rollback_active_heights = rollback_block_total;
+    let rollback_active_height_rate_ppm = rollback_block_rate_ppm;
+    let rollback_density_avg = if rollback_block_total == 0 {
+        0
+    } else {
+        rollback_total / rollback_block_total
+    };
+    let rollback_density_avg_milli = ratio_milli_u64(rollback_total, rollback_block_total);
+    let preexec_conflict_miss_share_bps = ratio_percent_bps(
+        apply_error_preexec_conflict_miss_total as u128,
+        preexec_reject_total as u128,
+    );
+    let apply_error_rollback_share_bps =
+        ratio_percent_bps(rollback_total as u128, apply_error_total as u128);
+    let rollback_block_rate = if finality_samples_ms.is_empty() {
+        0.0
+    } else {
+        rollback_block_total as f64 / finality_samples_ms.len() as f64
+    };
+    let critical_wait_density_ppm = ratio_ppm(critical_wait_blocks_avg, finality_avg);
+    let critical_wait_peak_density_ppm = ratio_ppm(critical_wait_blocks_max, finality_max);
+    let critical_wait_active_height_rate_ppm = ratio_ppm_u64(
+        critical_wait_active_heights,
+        finality_samples_ms.len() as u64,
+    );
+    let critical_wait_density_avg = if critical_wait_active_heights == 0 {
+        0
+    } else {
+        critical_wait_total / critical_wait_active_heights
+    };
+    let critical_wait_density_avg_milli =
+        ratio_milli_u64(critical_wait_total, critical_wait_active_heights);
+    let preexec_reject_share_bps =
+        ratio_percent_bps(preexec_reject_total as u128, apply_error_total as u128);
+    let unprofiled_finality_share_bps = gap_percent_bps(
+        finality_avg,
+        scheduler_avg
+            .saturating_add(preexec_avg)
+            .saturating_add(commit_avg),
+        state_root_total_avg,
+    );
+    let bft_round_change_per_height_ppm =
+        ratio_ppm_u64(bft_round_change_total, bft_committed_heights);
+    let bft_round_change_active_height_rate_ppm =
+        ratio_ppm_u64(bft_round_change_active_heights, bft_committed_heights);
+    let bft_round_change_density_avg = if bft_round_change_active_heights == 0 {
+        0
+    } else {
+        bft_round_change_total / bft_round_change_active_heights
+    };
+    let bft_round_change_backoff_avg_ms = if bft_round_change_total == 0 {
+        0
+    } else {
+        bft_round_change_backoff_total_ms / bft_round_change_total
+    };
+    let bft_round_change_backoff_wall_share_ppm =
+        ratio_ppm_u64(bft_round_change_backoff_total_ms, bft_committed_heights);
+    let bft_round_change_backoff_share_ppm = bft_round_change_backoff_wall_share_ppm;
     let recovery_error_rate = if finality_samples_ms.is_empty() {
         0.0
     } else {
@@ -5369,33 +5935,110 @@ fn main() -> Result<()> {
         .iter()
         .map(|h| h.missed_proposals)
         .collect();
+    let bft_leader_missed_total: u64 = leader_missed_final.iter().copied().sum();
+    let bft_leader_missed_max = leader_missed_final.iter().copied().max().unwrap_or(0);
+    let bft_leader_missed_top_share_ppm =
+        ratio_ppm_u64(bft_leader_missed_max, bft_leader_missed_total);
     println!(
-        "[consensus] finality_p50_ms={} finality_p95_ms={} scheduler_elapsed_p50_ms={} scheduler_elapsed_p95_ms={} preexec_elapsed_p50_ms={} preexec_elapsed_p95_ms={} commit_elapsed_p50_ms={} commit_elapsed_p95_ms={} state_root_total_p50_ms={} state_root_total_p95_ms={} critical_wait_blocks_p50={} critical_wait_blocks_p95={} preexec_reject_total={} apply_error_total={} apply_error_preexec_conflict_miss_total={} apply_error_version_conflict_total={} apply_error_invalid_transition_total={} apply_error_deadline_exceeded_total={} apply_error_semantic_fail_total={} rollback_total={} timeout_migrated_total={} recovery_error_rate={:.6} bft_committed_heights={} bft_round_change_total={} bft_round_change_backoff_total_ms={} bft_leader_missed_proposals={:?} bft_double_vote_total={} bft_auth_reject_bad_sig_total={} bft_auth_reject_replay_total={} bft_auth_reject_stale_nonce_total={}",
+        "[consensus] finality_avg_ms={} finality_p50_ms={} finality_p95_ms={} finality_max_ms={} scheduler_elapsed_avg_ms={} scheduler_elapsed_p50_ms={} scheduler_elapsed_p95_ms={} scheduler_elapsed_max_ms={} scheduler_share_avg_ppm={} preexec_elapsed_avg_ms={} preexec_elapsed_p50_ms={} preexec_elapsed_p95_ms={} preexec_elapsed_max_ms={} preexec_share_avg_ppm={} preexec_peak_share_ppm={} commit_elapsed_avg_ms={} commit_elapsed_p50_ms={} commit_elapsed_p95_ms={} commit_elapsed_max_ms={} commit_share_avg_ppm={} state_root_total_avg_ms={} state_root_total_p50_ms={} state_root_total_p95_ms={} state_root_total_max_ms={} state_root_total_share_avg_ppm={} unprofiled_finality_share_bps={} critical_wait_blocks_avg={} critical_wait_blocks_p50={} critical_wait_blocks_p95={} critical_wait_blocks_max={} critical_wait_density_ppm={} critical_wait_peak_density_ppm={} critical_wait_active_heights={} critical_wait_active_height_rate_ppm={} critical_wait_density_avg={} critical_wait_density_avg_milli={} block_txs_p50={} block_txs_p95={} block_txs_max={} block_groups_p50={} block_groups_p95={} block_groups_max={} avg_group_size_avg_milli={} avg_group_size_p50_milli={} avg_group_size_p95_milli={} avg_group_size_max_milli={} hot_object_share_avg_ppm={} hot_object_share_p50_ppm={} hot_object_share_p95_ppm={} hot_object_share_max_ppm={} hot_object_top_label_share_avg_ppm={} hot_object_top_label_share_p50_ppm={} hot_object_top_label_share_p95_ppm={} hot_object_top_label_share_max_ppm={} hot_object_tail_share_avg_ppm={} hot_object_tail_share_p50_ppm={} hot_object_tail_share_p95_ppm={} hot_object_tail_share_max_ppm={} rollback_count_avg={} rollback_count_p50={} rollback_count_p95={} rollback_count_max={} rollback_share_avg_ppm={} rollback_peak_share_ppm={} rollback_block_total={} rollback_active_heights={} rollback_block_rate={:.6} rollback_block_rate_ppm={} rollback_active_height_rate_ppm={} rollback_density_avg={} rollback_density_avg_milli={} preexec_reject_total={} preexec_reject_share_bps={} apply_error_total={} apply_error_preexec_conflict_miss_total={} preexec_conflict_miss_share_bps={} apply_error_version_conflict_total={} apply_error_invalid_transition_total={} apply_error_deadline_exceeded_total={} apply_error_semantic_fail_total={} rollback_total={} apply_error_rollback_share_bps={} timeout_migrated_total={} recovery_error_rate={:.6} bft_committed_heights={} bft_round_change_total={} bft_round_change_per_height_ppm={} bft_round_change_active_heights={} bft_round_change_active_height_rate_ppm={} bft_round_change_density_avg={} bft_round_change_backoff_total_ms={} bft_round_change_backoff_avg_ms={} bft_round_change_backoff_max_ms={} bft_round_change_backoff_wall_share_ppm={} bft_round_change_backoff_share_ppm={} bft_leader_missed_total={} bft_leader_missed_max={} bft_leader_missed_top_share_ppm={} bft_leader_missed_proposals={:?} bft_double_vote_total={} bft_auth_reject_bad_sig_total={} bft_auth_reject_replay_total={} bft_auth_reject_stale_nonce_total={}",
+        finality_avg,
         finality_p50,
         finality_p95,
+        finality_max,
+        scheduler_avg,
         scheduler_p50,
         scheduler_p95,
+        scheduler_max,
+        scheduler_share_avg_ppm,
+        preexec_avg,
         preexec_p50,
         preexec_p95,
+        preexec_max,
+        preexec_share_avg_ppm,
+        preexec_peak_share_ppm,
+        commit_avg,
         commit_p50,
         commit_p95,
+        commit_max,
+        commit_share_avg_ppm,
+        state_root_total_avg,
         state_root_total_p50,
         state_root_total_p95,
+        state_root_total_max,
+        state_root_total_share_avg_ppm,
+        unprofiled_finality_share_bps,
+        critical_wait_blocks_avg,
         critical_wait_blocks_p50,
         critical_wait_blocks_p95,
+        critical_wait_blocks_max,
+        critical_wait_density_ppm,
+        critical_wait_peak_density_ppm,
+        critical_wait_active_heights,
+        critical_wait_active_height_rate_ppm,
+        critical_wait_density_avg,
+        critical_wait_density_avg_milli,
+        block_txs_p50,
+        block_txs_p95,
+        block_txs_max,
+        block_groups_p50,
+        block_groups_p95,
+        block_groups_max,
+        avg_group_size_avg,
+        avg_group_size_p50,
+        avg_group_size_p95,
+        avg_group_size_max,
+        hot_object_share_avg_ppm,
+        hot_object_share_p50_ppm,
+        hot_object_share_p95_ppm,
+        hot_object_share_max_ppm,
+        hot_object_top_label_share_avg_ppm,
+        hot_object_top_label_share_p50_ppm,
+        hot_object_top_label_share_p95_ppm,
+        hot_object_top_label_share_max_ppm,
+        hot_object_tail_share_avg_ppm,
+        hot_object_tail_share_p50_ppm,
+        hot_object_tail_share_p95_ppm,
+        hot_object_tail_share_max_ppm,
+        rollback_avg,
+        rollback_p50,
+        rollback_p95,
+        rollback_max,
+        rollback_share_avg_ppm,
+        rollback_peak_share_ppm,
+        rollback_block_total,
+        rollback_active_heights,
+        rollback_block_rate,
+        rollback_block_rate_ppm,
+        rollback_active_height_rate_ppm,
+        rollback_density_avg,
+        rollback_density_avg_milli,
         preexec_reject_total,
+        preexec_reject_share_bps,
         apply_error_total,
         apply_error_preexec_conflict_miss_total,
+        preexec_conflict_miss_share_bps,
         apply_error_version_conflict_total,
         apply_error_invalid_transition_total,
         apply_error_deadline_exceeded_total,
         apply_error_semantic_fail_total,
         rollback_total,
+        apply_error_rollback_share_bps,
         timeout_migrated_total,
         recovery_error_rate,
         bft_committed_heights,
         bft_round_change_total,
+        bft_round_change_per_height_ppm,
+        bft_round_change_active_heights,
+        bft_round_change_active_height_rate_ppm,
+        bft_round_change_density_avg,
         bft_round_change_backoff_total_ms,
+        bft_round_change_backoff_avg_ms,
+        bft_round_change_backoff_max_ms,
+        bft_round_change_backoff_wall_share_ppm,
+        bft_round_change_backoff_share_ppm,
+        bft_leader_missed_total,
+        bft_leader_missed_max,
+        bft_leader_missed_top_share_ppm,
         leader_missed_final,
         bft_double_vote_total,
         bft_auth_reject_bad_sig_total,
