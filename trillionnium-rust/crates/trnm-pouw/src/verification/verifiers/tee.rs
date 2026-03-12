@@ -2038,4 +2038,34 @@ mod tests {
             VerificationResult::Invalid(msg) if msg.contains("duplicate worker binding")
         ));
     }
+
+    #[test]
+    fn tee_verifier_rejects_fullwidth_colon_then_ascii_task_id_binding_fail_closed() {
+        let verifier = TeeVerifier::default();
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                "TEE:task_id：42,task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,quote=abc"
+                    .as_bytes()
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("duplicate task_id binding")
+        ));
+    }
+
+    #[test]
+    fn tee_verifier_rejects_fullwidth_colon_then_ascii_proof_type_binding_fail_closed() {
+        let verifier = TeeVerifier::default();
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                "TEE:task_id=42,worker=worker1,proof_type：tee,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,quote=abc"
+                    .as_bytes()
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("duplicate proof_type binding")
+        ));
+    }
 }
