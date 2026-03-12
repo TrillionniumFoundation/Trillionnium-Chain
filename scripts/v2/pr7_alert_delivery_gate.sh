@@ -76,6 +76,17 @@ fi
 
 require_enum "ALERT_NOTIFY_MIN_LEVEL" "${ALERT_NOTIFY_MIN_LEVEL:-WARN}" INFO WARN CRITICAL PASS FAIL
 
+split_shell_words() {
+  local text="$1"
+  python3 - "$text" <<'PY'
+import shlex
+import sys
+
+for item in shlex.split(sys.argv[1]):
+    print(item)
+PY
+}
+
 write_status_file() {
   mkdir -p "$(dirname "$STATUS_FILE")"
   cat >"$STATUS_FILE" <<EOF
@@ -172,7 +183,11 @@ if [[ -n "${ALERT_NOTIFY_BACKUP_CHANNEL:-}" ]]; then
   BACKUP_CHANNEL_ARG=(--backup-channel "$ALERT_NOTIFY_BACKUP_CHANNEL")
 fi
 
-read -r -a PR7_DELIVERY_CMD_ARR <<<"$PR7_DELIVERY_CMD"
+mapfile -t PR7_DELIVERY_CMD_ARR < <(split_shell_words "$PR7_DELIVERY_CMD")
+if (( ${#PR7_DELIVERY_CMD_ARR[@]} == 0 )); then
+  echo "[PR7][FAIL] PR7_DELIVERY_CMD resolved to zero argv entries" >&2
+  exit 2
+fi
 set +e
 IMESSAGE_TO="${IMESSAGE_TO:-qiqianpkugsm@gmail.com}" \
   "${PR7_DELIVERY_CMD_ARR[@]}" \
