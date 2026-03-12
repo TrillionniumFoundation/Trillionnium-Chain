@@ -162,13 +162,16 @@ DRY_RUN=1 ALERT_NOTIFY_CHANNEL=slack PR7_DELIVERY_FAIL_MODE=warn \
 - `delivery_event`
 - `primary_channel` / `backup_channel`
 - `success_channels` / `failed_channels`
+- `channels_ok` / `channels_failed`
 - `partial_success`
+- `lock_dir`
 - `audit_file`
 
 ### Triage notes
 - 若 `status=PASS` 且 `ALERT_NOTIFY_MIN_LEVEL=WARN`，出现 `skip: level=INFO below min_level=WARN` 属预期。
 - 若需要“规则通过但投递失败也升级”，用 `PR7_DELIVERY_FAIL_MODE=escalate`。
 - 若只想保留可观测性、不阻断本地 smoke，用 `PR7_DELIVERY_FAIL_MODE=warn`。
+- 若 `status=LOCK_TIMEOUT` / `pr7_rc=5`，优先检查并清理遗留锁目录 `run/pr7-alert-delivery/.gate-lock`，再确认是否存在并发 gate run 导致的锁竞争。
 
 ---
 
