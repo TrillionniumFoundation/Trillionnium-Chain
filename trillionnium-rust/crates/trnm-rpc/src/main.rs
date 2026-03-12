@@ -3772,6 +3772,15 @@ mod tests {
     }
 
     #[test]
+    fn parse_query_events_limit_from_path_zero_uses_default_limit() {
+        assert_eq!(
+            parse_query_events_limit_from_path("/query-events/42?limit=0")
+                .expect("zero limit should fall back to the bounded default"),
+            QUERY_EVENTS_LIMIT_DEFAULT
+        );
+    }
+
+    #[test]
     fn parse_query_events_limit_from_path_rejects_unrelated_query_keys() {
         for path in [
             "/query-events/42?foo=bar&limit=9",
