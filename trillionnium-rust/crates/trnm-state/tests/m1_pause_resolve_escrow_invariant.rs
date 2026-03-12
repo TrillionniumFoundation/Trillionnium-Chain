@@ -626,6 +626,7 @@ fn paused_state_rejects_case_variant_challenge_forfeit_treasury_member_without_s
     assert_eq!(st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT), slashed_before);
 }
 
+#[test]
 fn paused_state_rejects_post_quorum_resolve_replay_while_paused_without_escrow_drift() {
     // M1 micro-hardening: once a resolve quorum is already finalized, emergency pause must not
     // let replay attempts resurrect or mutate staged resolve approval state.
