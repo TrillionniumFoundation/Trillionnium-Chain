@@ -165,7 +165,7 @@ def pct(numer: int, denom: int) -> float:
 def non_negative_int(value: Any) -> int:
     try:
         parsed = int(value or 0)
-    except (TypeError, ValueError):
+    except (TypeError, ValueError, OverflowError):
         return 0
     return max(0, parsed)
 
