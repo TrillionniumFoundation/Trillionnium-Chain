@@ -266,9 +266,13 @@ impl VerifierRegistry {
             "remote attestation v2" | "remoteattestationv2" | "remote attestation v 2" => "tee",
             "remote attestation v3" | "remoteattestationv3" | "remote attestation v 3" => "tee",
             "remote attestation quote" | "remoteattestationquote" => "tee",
+            "tee remote attestation quote" | "teeremoteattestationquote" => "tee",
             "remote attestation report" | "remoteattestationreport" => "tee",
+            "tee remote attestation report" | "teeremoteattestationreport" => "tee",
             "remote attestation receipt" | "remoteattestationreceipt" => "tee",
+            "tee remote attestation receipt" | "teeremoteattestationreceipt" => "tee",
             "remote attestation evidence" | "remoteattestationevidence" => "tee",
+            "tee remote attestation evidence" | "teeremoteattestationevidence" => "tee",
             "remote attestation cert" | "remoteattestationcert" => "tee",
             "remote attestation certificate" | "remoteattestationcertificate" => "tee",
             "tee remote attestation cert" | "teeremoteattestationcert" => "tee",
@@ -606,9 +610,13 @@ mod tests {
             "tee attestation quote",
             "tee attestation quote v2",
             "remote attestation quote",
+            "tee remote attestation quote",
             "remote attestation report",
+            "tee remote attestation report",
             "remote attestation receipt",
+            "tee remote attestation receipt",
             "remote attestation evidence",
+            "tee remote attestation evidence",
             "remote attestation cert",
             "remote attestation certificate",
             "tee remote attestation cert",
@@ -644,6 +652,24 @@ mod tests {
             assert_eq!(
                 VerifierRegistry::normalize_key(alias).as_deref(),
                 Some("tee")
+            );
+        }
+    }
+
+    #[test]
+    fn registry_normalize_key_maps_separator_heavy_tee_attestation_aliases_to_tee() {
+        for alias in [
+            "TEE／attestation－receipt＋v２",
+            "remote\u{200b}attestation\u{3000}certificate",
+            "tee:remote_attestation/report",
+            "TEE（attestation）quote",
+            "attestation
+report",
+        ] {
+            assert_eq!(
+                VerifierRegistry::normalize_key(alias).as_deref(),
+                Some("tee"),
+                "alias={alias:?}"
             );
         }
     }
