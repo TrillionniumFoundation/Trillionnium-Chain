@@ -103,10 +103,7 @@ fn main() {
     let t0 = Instant::now();
     let (groups, profile) = args.strategy.resolve_profile(&txs);
     let dt = t0.elapsed();
-    let effective_strategy = match args.strategy {
-        StrategyArg::Default => GroupingStrategy::Original,
-        explicit => resolve_grouping_strategy(&txs, explicit.into()),
-    };
+    let effective_strategy = effective_strategy_for(args.strategy, &txs);
 
     let grouped: usize = groups.iter().map(|g| g.len()).sum();
     let conflict_rate = 1.0f64 - (keys as f64 / n as f64).min(1.0);
@@ -142,12 +139,10 @@ fn main() {
         println!("profile.stage_wr_hits={}", profile.stage_wr_hits);
         println!("profile.stage_rw_checks={}", profile.stage_rw_checks);
         println!("profile.stage_rw_hits={}", profile.stage_rw_hits);
-        let hit_rate = if profile.conflict_checks == 0 {
-            0.0
-        } else {
-            profile.conflict_hits as f64 / profile.conflict_checks as f64
-        };
-        println!("profile.conflict_hit_rate={:.4}", hit_rate);
+        println!(
+            "profile.conflict_hit_rate={:.4}",
+            conflict_hit_rate(&profile)
+        );
 
         if emits_auto_profile(args.strategy) {
             let d = auto_adaptive_decision(&txs);
@@ -173,6 +168,21 @@ fn main() {
 
 fn emits_auto_profile(strategy: StrategyArg) -> bool {
     matches!(strategy, StrategyArg::AutoAdaptive)
+}
+
+fn effective_strategy_for(strategy: StrategyArg, txs: &[Tx]) -> GroupingStrategy {
+    match strategy {
+        StrategyArg::Default => GroupingStrategy::Original,
+        explicit => resolve_grouping_strategy(txs, explicit.into()),
+    }
+}
+
+fn conflict_hit_rate(profile: &trnm_executor::GroupingProfile) -> f64 {
+    if profile.conflict_checks == 0 {
+        0.0
+    } else {
+        profile.conflict_hits as f64 / profile.conflict_checks as f64
+    }
 }
 
 fn build_classic_txs(n: usize, keys: usize) -> Vec<Tx> {
@@ -554,15 +564,40 @@ mod tests {
     fn effective_strategy_reports_real_auto_adaptive_resolution() {
         let hot_streak = build_hot_streak_txs(20_000, 2_000, 3, 1);
         assert!(matches!(
-            resolve_grouping_strategy(&hot_streak, StrategyArg::AutoAdaptive.into()),
+            effective_strategy_for(StrategyArg::AutoAdaptive, &hot_streak),
             GroupingStrategy::HotBucketInterleave
         ));
 
         let classic = build_classic_txs(2_048, 256);
         assert!(matches!(
-            resolve_grouping_strategy(&classic, StrategyArg::Default.into()),
+            effective_strategy_for(StrategyArg::Default, &classic),
             GroupingStrategy::Original
         ));
+    }
+
+    #[test]
+    fn default_effective_strategy_stays_original_on_hot_streak_workload() {
+        let hot_streak = build_hot_streak_txs(20_000, 2_000, 3, 1);
+
+        assert!(matches!(
+            effective_strategy_for(StrategyArg::Default, &hot_streak),
+            GroupingStrategy::Original
+        ));
+        assert!(matches!(
+            effective_strategy_for(StrategyArg::AutoAdaptive, &hot_streak),
+            GroupingStrategy::HotBucketInterleave
+        ));
+    }
+
+    #[test]
+    fn conflict_hit_rate_fails_closed_to_zero_without_conflict_checks() {
+        let txs = vec![tx(1, vec![], vec![]), tx(2, vec![], vec![])];
+        let (_groups, profile) =
+            build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::Original);
+
+        assert_eq!(profile.conflict_checks, 0);
+        assert_eq!(profile.conflict_hits, 0);
+        assert_eq!(conflict_hit_rate(&profile), 0.0);
     }
 
     fn assert_profiles_match(
