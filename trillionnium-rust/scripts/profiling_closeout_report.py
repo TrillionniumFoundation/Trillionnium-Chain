@@ -509,13 +509,14 @@ def main():
         missing_count = sum(
             1 for path in candidates if not os.path.exists(path) and path != selected
         )
+        selected_freshness = freshness_label(file_age_seconds(selected)) if selected else "missing"
         if not existing_candidates:
             return {
                 "label": label,
                 "status": "empty",
                 "action": "produce",
                 "selected": selected or "None",
-                "selected_freshness": "missing",
+                "selected_freshness": selected_freshness,
                 "pending_selected": pending_selected,
                 "candidate_count": 0,
                 "missing_count": missing_count,
@@ -529,13 +530,15 @@ def main():
             freshness = freshness_label(file_age_seconds(path))
             if freshness in freshness_counts:
                 freshness_counts[freshness] += 1
-        selected_freshness = freshness_label(file_age_seconds(selected)) if selected else "missing"
+        effective_fresh_count = freshness_counts["fresh"]
+        if pending_selected and selected_freshness == "fresh":
+            effective_fresh_count += 1
         old_backlog = freshness_counts["stale"] + freshness_counts["old"]
         candidate_count = len(existing_candidates)
         if candidate_count == 0:
             status = "empty"
             action = "produce"
-        elif freshness_counts["fresh"] == 0:
+        elif effective_fresh_count == 0:
             status = "refresh_required"
             action = "refresh"
         elif candidate_count >= 12 or old_backlog >= 8:
