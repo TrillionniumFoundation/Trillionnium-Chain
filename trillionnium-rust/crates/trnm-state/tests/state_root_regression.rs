@@ -219,6 +219,87 @@ fn applied_gov_param_string_field_boundaries_should_affect_state_root() {
 }
 
 #[test]
+fn restore_pending_gov_update_rewinds_state_root_after_value_mutation() {
+    let mut state = StateStore::new();
+
+    let baseline_snapshot = PendingGovParamUpdate {
+        key_id: 114,
+        key: "challenge_min_bond".into(),
+        value: "120".into(),
+        activate_at_height: 250,
+    };
+    state.restore_pending_gov_update("challenge_min_bond", Some(baseline_snapshot.clone()));
+    let root_before = state.state_root();
+
+    state.restore_pending_gov_update(
+        "challenge_min_bond",
+        Some(PendingGovParamUpdate {
+            key_id: 114,
+            key: "challenge_min_bond".into(),
+            value: "150".into(),
+            activate_at_height: 275,
+        }),
+    );
+    let root_after = state.state_root();
+
+    assert_ne!(
+        root_before, root_after,
+        "state_root should incorporate pending governance queue payloads so changed staged values/timelocks cannot hash identically"
+    );
+
+    state.restore_pending_gov_update("challenge_min_bond", Some(baseline_snapshot));
+    assert_eq!(
+        state.state_root(),
+        root_before,
+        "restore_pending_gov_update must rewind state_root exactly after a pending governance payload mutation"
+    );
+    assert_eq!(
+        state.state_root(),
+        root_before,
+        "repeated reads after restore_pending_gov_update should deterministically reuse the rewound cached root"
+    );
+}
+
+#[test]
+fn restore_pending_gov_update_none_rewinds_state_root_after_removal() {
+    let mut state = StateStore::new();
+
+    let empty_root = state.state_root();
+    state.restore_pending_gov_update(
+        "challenge_min_bond",
+        Some(PendingGovParamUpdate {
+            key_id: 115,
+            key: "challenge_min_bond".into(),
+            value: "120".into(),
+            activate_at_height: 300,
+        }),
+    );
+    let queued_root = state.state_root();
+
+    assert_ne!(
+        queued_root, empty_root,
+        "state_root should incorporate pending governance queue entries so staged updates cannot be omitted from root accounting"
+    );
+
+    state.restore_pending_gov_update("challenge_min_bond", None);
+
+    assert_eq!(
+        state.state_root(),
+        empty_root,
+        "restore_pending_gov_update(None) must rewind state_root exactly after deleting a pending governance queue entry"
+    );
+    assert!(
+        state.pending_gov_update("challenge_min_bond").is_none(),
+        "restore_pending_gov_update(None) should remove the staged governance queue entry"
+    );
+    assert_eq!(
+        state.state_root(),
+        empty_root,
+        "repeated reads after restore_pending_gov_update(None) should deterministically reuse the rewound cached root"
+    );
+}
+
+#[test]
 fn task_metadata_string_field_boundaries_should_affect_state_root() {
     let mut st1 = StateStore::new();
     let mut st2 = StateStore::new();
