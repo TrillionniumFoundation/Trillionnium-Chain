@@ -292,9 +292,7 @@ fn extract_tx_hash(text: &str) -> Option<String> {
             .split_once('=')
             .or_else(|| trimmed.split_once(':'))?;
         match k.trim().to_ascii_lowercase().as_str() {
-            "tx_hash" | "txhash" | "transaction_hash" | "transactionhash" => {
-                normalize_tx_hash(v)
-            }
+            "tx_hash" | "txhash" | "transaction_hash" | "transactionhash" => normalize_tx_hash(v),
             _ => None,
         }
     }) {
@@ -428,8 +426,9 @@ fn normalize_tx_status(raw: &str) -> Option<String> {
         "pending" | "submitted" | "accepted" | "queued" | "broadcast" | "broadcasted" => {
             Some("pending".to_string())
         }
-        "committed" | "confirmed" | "success" | "succeeded" | "ok" | "included"
-        | "finalized" => Some("committed".to_string()),
+        "committed" | "confirmed" | "success" | "succeeded" | "ok" | "included" | "finalized" => {
+            Some("committed".to_string())
+        }
         "fail" | "failed" | "error" | "rejected" | "reverted" | "aborted" | "dropped"
         | "timeout" | "timed_out" | "timed-out" | "expired" => Some("fail".to_string()),
         _ => None,
@@ -561,29 +560,15 @@ fn parse_tx_query_response(raw: &str, requested_tx_hash: &str) -> Result<TxQuery
                         None => bail!("invalid tx_hash field in tx query response"),
                     }
                 }
-                "status"
-                | "tx_status"
-                | "txstatus"
-                | "transaction_status"
-                | "transactionstatus"
-                | "state"
-                | "tx_state"
-                | "txstate"
-                | "transaction_state"
+                "status" | "tx_status" | "txstatus" | "transaction_status"
+                | "transactionstatus" | "state" | "tx_state" | "txstate" | "transaction_state"
                 | "transactionstate" => {
                     if let Some(normalized) = normalize_tx_status(&value) {
                         status = Some(normalized);
                     }
                 }
-                "code"
-                | "tx_code"
-                | "txcode"
-                | "transaction_code"
-                | "transactioncode"
-                | "deliver_tx_code"
-                | "delivertxcode"
-                | "check_tx_code"
-                | "checktxcode" => {
+                "code" | "tx_code" | "txcode" | "transaction_code" | "transactioncode"
+                | "deliver_tx_code" | "delivertxcode" | "check_tx_code" | "checktxcode" => {
                     if status.is_none() {
                         status = infer_kv_tx_status(&key, &value);
                     }
@@ -716,9 +701,20 @@ where
         bail!("tx wait interval must be greater than 0s");
     }
 
+    let requested = normalize_tx_hash(tx_hash)
+        .ok_or_else(|| anyhow!("invalid tx hash for wait (expected hex-like tx hash)"))?;
     let started = Instant::now();
     loop {
-        let resp = query_fn(tx_hash)?;
+        let resp = query_fn(&requested)?;
+        if let Some(got) = normalize_tx_hash(&resp.tx_hash) {
+            if got != requested {
+                bail!(
+                    "tx wait response hash mismatch: requested={}, got={}",
+                    requested,
+                    got
+                );
+            }
+        }
         if is_terminal_tx_status(&resp.status) {
             return Ok(resp);
         }
@@ -1138,22 +1134,26 @@ mod tests {
         assert_eq!(parsed_transaction.status, "committed");
 
         let tx_status_snake = "{\"tx_hash\":\"0xaaa\",\"tx_status\":\"accepted\"}";
-        let parsed_tx_status_snake = parse_tx_query_response(tx_status_snake, "0xfallback").unwrap();
+        let parsed_tx_status_snake =
+            parse_tx_query_response(tx_status_snake, "0xfallback").unwrap();
         assert_eq!(parsed_tx_status_snake.tx_hash, "0xaaa");
         assert_eq!(parsed_tx_status_snake.status, "pending");
 
         let tx_status_camel = "{\"txHash\":\"0xbbb\",\"txStatus\":\"finalized\"}";
-        let parsed_tx_status_camel = parse_tx_query_response(tx_status_camel, "0xfallback").unwrap();
+        let parsed_tx_status_camel =
+            parse_tx_query_response(tx_status_camel, "0xfallback").unwrap();
         assert_eq!(parsed_tx_status_camel.tx_hash, "0xbbb");
         assert_eq!(parsed_tx_status_camel.status, "committed");
 
-        let transaction_status_snake = "{\"transactionHash\":\"0xccc\",\"transaction_status\":\"confirmed\"}";
+        let transaction_status_snake =
+            "{\"transactionHash\":\"0xccc\",\"transaction_status\":\"confirmed\"}";
         let parsed_transaction_status_snake =
             parse_tx_query_response(transaction_status_snake, "0xfallback").unwrap();
         assert_eq!(parsed_transaction_status_snake.tx_hash, "0xccc");
         assert_eq!(parsed_transaction_status_snake.status, "committed");
 
-        let transaction_status_camel = "{\"transaction_hash\":\"0xddd\",\"transactionStatus\":\"timed-out\"}";
+        let transaction_status_camel =
+            "{\"transaction_hash\":\"0xddd\",\"transactionStatus\":\"timed-out\"}";
         let parsed_transaction_status_camel =
             parse_tx_query_response(transaction_status_camel, "0xfallback").unwrap();
         assert_eq!(parsed_transaction_status_camel.tx_hash, "0xddd");
@@ -1264,8 +1264,7 @@ mod tests {
         assert_eq!(parsed_root_code.tx_hash, "0x701");
         assert_eq!(parsed_root_code.status, "committed");
 
-        let json_nested_code =
-            "{\"result\":{\"tx_hash\":\"0x702\",\"tx_result\":{\"code\":9}}}";
+        let json_nested_code = "{\"result\":{\"tx_hash\":\"0x702\",\"tx_result\":{\"code\":9}}}";
         let parsed_nested_code = parse_tx_query_response(json_nested_code, "0xfallback").unwrap();
         assert_eq!(parsed_nested_code.tx_hash, "0x702");
         assert_eq!(parsed_nested_code.status, "fail");
@@ -1276,7 +1275,8 @@ mod tests {
         assert_eq!(parsed_kv_root_code.status, "committed");
 
         let kv_deliver_code = "tx_hash=0x704\ndeliver_tx_code=12\n";
-        let parsed_kv_deliver_code = parse_tx_query_response(kv_deliver_code, "0xfallback").unwrap();
+        let parsed_kv_deliver_code =
+            parse_tx_query_response(kv_deliver_code, "0xfallback").unwrap();
         assert_eq!(parsed_kv_deliver_code.tx_hash, "0x704");
         assert_eq!(parsed_kv_deliver_code.status, "fail");
     }
@@ -1377,12 +1377,14 @@ mod tests {
         assert_eq!(parsed_compact.tx_hash, "0xdef456");
 
         let tx_status_snake = "tx_hash=0xaaa111\ntx_status=queued\n";
-        let parsed_tx_status_snake = parse_tx_query_response(tx_status_snake, "0xfallback").unwrap();
+        let parsed_tx_status_snake =
+            parse_tx_query_response(tx_status_snake, "0xfallback").unwrap();
         assert_eq!(parsed_tx_status_snake.tx_hash, "0xaaa111");
         assert_eq!(parsed_tx_status_snake.status, "pending");
 
         let tx_status_compact = "txhash=0xbbb222\ntxStatus=timed-out\n";
-        let parsed_tx_status_compact = parse_tx_query_response(tx_status_compact, "0xfallback").unwrap();
+        let parsed_tx_status_compact =
+            parse_tx_query_response(tx_status_compact, "0xfallback").unwrap();
         assert_eq!(parsed_tx_status_compact.tx_hash, "0xbbb222");
         assert_eq!(parsed_tx_status_compact.status, "fail");
 
@@ -1499,6 +1501,27 @@ mod tests {
         )
         .unwrap();
         assert_eq!(result.status, "committed");
+    }
+
+    #[test]
+    fn wait_for_tx_rejects_hash_mismatch() {
+        let result = wait_for_tx(
+            "0xbbb",
+            Duration::from_millis(10),
+            Duration::from_millis(1),
+            |_| {
+                Ok(TxQueryResponse {
+                    tx_hash: "0xccc".to_string(),
+                    status: "committed".to_string(),
+                    error: None,
+                })
+            },
+        );
+        let msg = result.unwrap_err().to_string();
+        assert!(
+            msg.contains("tx wait response hash mismatch"),
+            "unexpected: {msg}"
+        );
     }
 
     #[test]
