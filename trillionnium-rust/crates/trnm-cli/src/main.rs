@@ -286,7 +286,13 @@ fn normalize_tx_hash(raw: &str) -> Option<String> {
 }
 
 fn json_value_tx_hash(v: &serde_json::Value) -> Option<String> {
-    let direct = ["tx_hash", "txhash", "txHash", "transaction_hash", "transactionHash"];
+    let direct = [
+        "tx_hash",
+        "txhash",
+        "txHash",
+        "transaction_hash",
+        "transactionHash",
+    ];
     for key in direct {
         if let Some(h) = v.get(key).and_then(|x| x.as_str()) {
             if let Some(normalized) = normalize_tx_hash(h) {
@@ -427,7 +433,10 @@ fn normalize_tx_status(raw: &str) -> Option<String> {
         .trim()
         .trim_matches(|c: char| {
             c.is_ascii_whitespace()
-                || matches!(c, '"' | '\'' | '`' | '(' | ')' | '[' | ']' | '{' | '}' | ',' | ';' | ':')
+                || matches!(
+                    c,
+                    '"' | '\'' | '`' | '(' | ')' | '[' | ']' | '{' | '}' | ',' | ';' | ':'
+                )
         })
         .trim_end_matches(|c: char| c.is_ascii_punctuation())
         .to_ascii_lowercase();
@@ -436,9 +445,10 @@ fn normalize_tx_status(raw: &str) -> Option<String> {
         "pending" | "submitted" | "accepted" | "queued" | "broadcast" | "broadcasted"
         | "broadcasting" | "processing" | "executing" | "in_progress" | "inflight"
         | "in_flight" => Some("pending".to_string()),
-        "committed" | "confirmed" | "success" | "succeeded" | "ok" | "included"
-        | "finalized" | "finalising" | "finalizing" | "complete" | "completed"
-        | "done" => Some("committed".to_string()),
+        "committed" | "confirmed" | "success" | "succeeded" | "ok" | "included" | "finalized"
+        | "finalising" | "finalizing" | "complete" | "completed" | "done" => {
+            Some("committed".to_string())
+        }
         "fail" | "failed" | "error" | "rejected" | "reverted" | "aborted" | "dropped"
         | "timeout" | "timed_out" | "expired" => Some("fail".to_string()),
         _ => None,
@@ -880,9 +890,18 @@ fn format_tx_hash_line(tx_hash: &str) -> String {
     format!("tx_hash=\"{}\"", tx_hash)
 }
 
+fn format_tx_hash_alias_line(tx_hash: &str) -> String {
+    format!("txhash={}", tx_hash)
+}
+
+fn emit_tx_hash_lines(tx_hash: &str) {
+    println!("{}", format_tx_hash_line(tx_hash));
+    println!("{}", format_tx_hash_alias_line(tx_hash));
+}
+
 fn emit_pending_tx_hash(tx_hash: &str) -> Result<()> {
     persist_local_pending_tx(tx_hash)?;
-    println!("{}", format_tx_hash_line(tx_hash));
+    emit_tx_hash_lines(tx_hash);
     Ok(())
 }
 
@@ -965,7 +984,7 @@ fn main() -> Result<()> {
             }
             TxCommand::Query { tx_hash } => {
                 let resp = tx_query(&tx_hash)?;
-                println!("{}", format_tx_hash_line(&resp.tx_hash));
+                emit_tx_hash_lines(&resp.tx_hash);
                 println!("status={}", resp.status);
                 if let Some(err) = resp.error {
                     println!("error={}", err);
@@ -982,7 +1001,7 @@ fn main() -> Result<()> {
                     Duration::from_secs(interval),
                     tx_query,
                 )?;
-                println!("{}", format_tx_hash_line(&resp.tx_hash));
+                emit_tx_hash_lines(&resp.tx_hash);
                 println!("status={}", resp.status);
                 if let Some(err) = resp.error {
                     println!("error={}", err);
@@ -1162,7 +1181,15 @@ mod tests {
             "tx_hash=\"0xabc123\"".to_string()
         );
         assert_eq!(
+            format_tx_hash_alias_line("0xabc123"),
+            "txhash=0xabc123".to_string()
+        );
+        assert_eq!(
             extract_tx_hash(&format_tx_hash_line("0xabc123")).as_deref(),
+            Some("0xabc123")
+        );
+        assert_eq!(
+            extract_tx_hash(&format_tx_hash_alias_line("0xabc123")).as_deref(),
             Some("0xabc123")
         );
     }
@@ -1436,7 +1463,8 @@ mod tests {
         assert_eq!(parsed_numeric.tx_hash, "0x780");
         assert_eq!(parsed_numeric.status, "committed");
 
-        let json_nested_numeric = "{\"result\":{\"transactionHash\":\"0x781\",\"transactionState\":12}}";
+        let json_nested_numeric =
+            "{\"result\":{\"transactionHash\":\"0x781\",\"transactionState\":12}}";
         let parsed_nested_numeric =
             parse_tx_query_response(json_nested_numeric, "0xfallback").unwrap();
         assert_eq!(parsed_nested_numeric.tx_hash, "0x781");
@@ -1471,7 +1499,8 @@ mod tests {
         assert_eq!(parsed_string_code.tx_hash, "0x703");
         assert_eq!(parsed_string_code.status, "committed");
 
-        let json_nested_string_code = "{\"result\":{\"tx_hash\":\"0x704\",\"deliver_tx\":{\"code\":\"12\"}}}";
+        let json_nested_string_code =
+            "{\"result\":{\"tx_hash\":\"0x704\",\"deliver_tx\":{\"code\":\"12\"}}}";
         let parsed_nested_string_code =
             parse_tx_query_response(json_nested_string_code, "0xfallback").unwrap();
         assert_eq!(parsed_nested_string_code.tx_hash, "0x704");
@@ -1488,14 +1517,14 @@ mod tests {
         assert_eq!(parsed_json_transaction_code.tx_hash, "0x7042");
         assert_eq!(parsed_json_transaction_code.status, "fail");
 
-        let json_deliver_tx_code = "{\"result\":{\"tx_hash\":\"0x7043\",\"deliver_tx_code\":\"0\"}}";
+        let json_deliver_tx_code =
+            "{\"result\":{\"tx_hash\":\"0x7043\",\"deliver_tx_code\":\"0\"}}";
         let parsed_json_deliver_tx_code =
             parse_tx_query_response(json_deliver_tx_code, "0xfallback").unwrap();
         assert_eq!(parsed_json_deliver_tx_code.tx_hash, "0x7043");
         assert_eq!(parsed_json_deliver_tx_code.status, "committed");
 
-        let json_check_tx_code =
-            "{\"result\":{\"tx_hash\":\"0x7044\",\"check_tx_code\":\"19\"}}";
+        let json_check_tx_code = "{\"result\":{\"tx_hash\":\"0x7044\",\"check_tx_code\":\"19\"}}";
         let parsed_json_check_tx_code =
             parse_tx_query_response(json_check_tx_code, "0xfallback").unwrap();
         assert_eq!(parsed_json_check_tx_code.tx_hash, "0x7044");
@@ -1889,9 +1918,18 @@ mod tests {
         std::fs::write(&path, payload).unwrap();
 
         assert_eq!(query_local_tx_status(ok_hash).as_deref(), Some("committed"));
-        assert_eq!(query_local_tx_status(completed_hash).as_deref(), Some("committed"));
-        assert_eq!(query_local_tx_status(inflight_hash).as_deref(), Some("pending"));
-        assert_eq!(query_local_tx_status(scalar_hash).as_deref(), Some("committed"));
+        assert_eq!(
+            query_local_tx_status(completed_hash).as_deref(),
+            Some("committed")
+        );
+        assert_eq!(
+            query_local_tx_status(inflight_hash).as_deref(),
+            Some("pending")
+        );
+        assert_eq!(
+            query_local_tx_status(scalar_hash).as_deref(),
+            Some("committed")
+        );
         assert_eq!(query_local_tx_status(bool_hash).as_deref(), Some("fail"));
         assert_eq!(query_local_tx_status(unknown_hash), None);
 
@@ -1959,5 +1997,25 @@ mod tests {
 
         let _ = std::fs::remove_file(&path);
         std::env::remove_var("TRNM_RPC_TX_FILE");
+    }
+
+    #[test]
+    fn query_and_wait_stdout_include_plain_txhash_alias_for_shell_adapters() {
+        let query = TxQueryResponse {
+            tx_hash: "0xabc123".to_string(),
+            status: "pending".to_string(),
+            error: None,
+        };
+
+        let emitted = format!(
+            "{}\n{}\nstatus={}\n",
+            format_tx_hash_line(&query.tx_hash),
+            format_tx_hash_alias_line(&query.tx_hash),
+            query.status
+        );
+
+        assert!(emitted.contains("tx_hash=\"0xabc123\""));
+        assert!(emitted.contains("txhash=0xabc123"));
+        assert_eq!(extract_tx_hash(&emitted).as_deref(), Some("0xabc123"));
     }
 }
