@@ -153,10 +153,19 @@ run_step "run_request_fault_injection" "OUT_DIR='$EVIDENCE_DIR' ./scripts/run_re
 
 CHALLENGE_REEXEC_ENTRY=""
 if CHALLENGE_REEXEC_ENTRY="$(find_challenge_reexec_entry)"; then
-  {
-    echo "challenge_reexec_entry=$CHALLENGE_REEXEC_ENTRY"
-    echo "replay_env_trnm_challenge_reexec_entry=$CHALLENGE_REEXEC_ENTRY"
-  } >> "$SUMMARY"
+  summary_tmp="$EVIDENCE_DIR/summary.header.tmp"
+  awk -v entry="$CHALLENGE_REEXEC_ENTRY" '
+    /^replay_env_trnm_challenge_reexec_entry=<entry_not_found>$/ {
+      print "replay_env_trnm_challenge_reexec_entry=" entry
+      next
+    }
+    /^challenge_reexec_entry=<entry_not_found>$/ {
+      print "challenge_reexec_entry=" entry
+      next
+    }
+    { print }
+  ' "$SUMMARY" > "$summary_tmp"
+  mv "$summary_tmp" "$SUMMARY"
   run_step "challenge_reexec" "OUT_DIR='$EVIDENCE_DIR' bash '$CHALLENGE_REEXEC_ENTRY'"
 else
   FAIL_COUNT=$((FAIL_COUNT + 1))
