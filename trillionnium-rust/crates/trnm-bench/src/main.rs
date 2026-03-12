@@ -209,7 +209,7 @@ fn persist_profile_report(lines: &[String]) -> std::io::Result<PathBuf> {
     fs::create_dir_all(&out_dir)?;
     let out_path = out_dir.join(format!("executor-profile-summary-{ts}.txt"));
     fs::write(&out_path, format!("{}\n", lines.join("\n")))?;
-    Ok(out_path)
+    fs::canonicalize(&out_path).or(Ok(out_path))
 }
 
 fn build_classic_txs(n: usize, keys: usize) -> Vec<Tx> {
