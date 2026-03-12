@@ -203,10 +203,6 @@ pub enum ProofBytesEncoding {
     Hex,
 }
 
-fn default_proof_bytes_encoding() -> ProofBytesEncoding {
-    ProofBytesEncoding::Base64
-}
-
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
 #[serde(deny_unknown_fields)]
 pub struct ZkPayloadMeta {
@@ -229,8 +225,8 @@ pub struct ParsedZkProofPayload {
     pub backend_version: Option<String>,
     pub schema_version: String,
     pub vk_ref: String,
-    #[serde(default = "default_proof_bytes_encoding")]
-    pub proof_encoding: ProofBytesEncoding,
+    #[serde(default)]
+    pub proof_encoding: Option<ProofBytesEncoding>,
     pub proof: String,
     pub public_inputs: ZkPublicInputs,
     #[serde(default)]
@@ -238,8 +234,17 @@ pub struct ParsedZkProofPayload {
 }
 
 impl ParsedZkProofPayload {
+    pub fn proof_encoding(&self) -> Result<ProofBytesEncoding, BackendExecutionError> {
+        self.proof_encoding
+            .clone()
+            .ok_or_else(|| BackendExecutionError::MalformedProof {
+                backend: "zk:payload".to_string(),
+                reason: "invalid zk payload: proof_encoding is required".to_string(),
+            })
+    }
+
     pub fn decode_proof_bytes(&self) -> Result<Vec<u8>, BackendExecutionError> {
-        match self.proof_encoding {
+        match self.proof_encoding()? {
             ProofBytesEncoding::Base64 => {
                 decode_base64(&self.proof).map_err(|reason| BackendExecutionError::MalformedProof {
                     backend: "zk:payload".to_string(),
@@ -1008,6 +1013,13 @@ mod tests {
         let task = mock_task();
         let err = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"mock-zk","backend_version":"v1","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["4242","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]},"meta":{"circuit_id":"settlement-result-v1"}}"#).unwrap_err();
         assert!(matches!(err, BackendExecutionError::MalformedProof { .. }));
+    }
+
+    #[test]
+    fn parse_zk_proof_payload_rejects_missing_proof_encoding_per_protocol_v0() {
+        let task = mock_task();
+        let err = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["4242","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#).unwrap_err();
+        assert!(matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("proof_encoding is required")));
     }
 
     #[test]
