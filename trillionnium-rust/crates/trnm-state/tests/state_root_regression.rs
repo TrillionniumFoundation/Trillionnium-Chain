@@ -116,6 +116,42 @@ fn governance_proposal_title_and_proposer_boundaries_should_affect_state_root() 
 }
 
 #[test]
+fn governance_proposal_version_must_affect_state_root_even_for_noop_payload_update() {
+    let proposal = GovProposalObject {
+        proposal_id: 9_004,
+        title: "Raise challenge timeout".into(),
+        proposer: "governance.alice".into(),
+        status: GovProposalStatus::Draft,
+        version: 1,
+    };
+
+    let mut baseline = StateStore::new();
+    let mut updated = StateStore::new();
+
+    baseline.put_proposal_new(proposal.clone()).unwrap();
+    let updated_ref = updated.put_proposal_new(proposal).unwrap();
+    let root_before = updated.state_root();
+
+    let unchanged_payload = updated
+        .get_proposal(9_004)
+        .expect("proposal snapshot should exist before noop update");
+    updated
+        .update_proposal(updated_ref, unchanged_payload)
+        .expect("noop payload update should still advance the stored proposal version");
+
+    let root_after = updated.state_root();
+    assert_ne!(
+        root_after, root_before,
+        "state_root must include governance proposal version so a no-op payload rewrite cannot hash identically to the original stored object"
+    );
+    assert_ne!(
+        root_after,
+        baseline.state_root(),
+        "equivalent proposal payloads with different canonical stored versions must not share a state root"
+    );
+}
+
+#[test]
 fn restore_applied_gov_param_rewinds_state_root_after_value_mutation() {
     let mut state = StateStore::new();
 
