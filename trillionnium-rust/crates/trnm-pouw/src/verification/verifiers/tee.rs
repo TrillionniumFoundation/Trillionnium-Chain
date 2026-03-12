@@ -738,6 +738,28 @@ mod tests {
     }
 
     #[test]
+    fn tee_verifier_backend_unavailable_quote_certificate_prefers_quote_evidence_surface_without_claims_or_legacy_suffix(
+    ) {
+        let result = TeeVerifier::classify_execution_err(BackendExecutionError::Unavailable {
+            backend: "tee:mock-tee-unavailable".to_string(),
+            reason: "quote certificate verifier unavailable".to_string(),
+        });
+
+        assert!(
+            matches!(result, VerificationResult::Indeterminate(_)),
+            "unexpected result: {result:?}"
+        );
+        let VerificationResult::Indeterminate(msg) = result else {
+            unreachable!()
+        };
+        assert!(msg.contains("unavailable:"), "message: {msg}");
+        assert!(msg.contains("quote evidence"), "message: {msg}");
+        assert!(!msg.contains("quote claims"), "message: {msg}");
+        assert!(!msg.contains("payload/claims"), "message: {msg}");
+        assert!(!msg.contains("legacy:"), "message: {msg}");
+    }
+
+    #[test]
     fn tee_verifier_backend_unavailable_report_receipt_prefers_report_evidence_surface_without_claims_or_legacy_suffix(
     ) {
         let result = TeeVerifier::classify_execution_err(BackendExecutionError::Unavailable {
