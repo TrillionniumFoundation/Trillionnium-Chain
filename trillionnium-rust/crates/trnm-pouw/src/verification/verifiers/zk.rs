@@ -183,9 +183,31 @@ impl ZkVerifier {
         let resolved_vk_ref = if let Some(payload) = zk_payload.as_ref() {
             let resolved = resolve_zk_vk_ref(self.vk_refs.as_ref(), payload)?;
 
-            let resolved_system = match resolved.zk_system.as_deref().and_then(normalize_zk_system)
-            {
-                Some(system) => system,
+            let resolved_system = match resolved.zk_system.as_deref() {
+                Some(raw_system) => {
+                    let normalized = normalize_zk_system(raw_system).ok_or_else(|| {
+                        BackendExecutionError::MalformedProof {
+                            backend: "zk:payload".to_string(),
+                            reason: format!(
+                                "invalid zk payload: vk_ref '{}' is missing canonical zk_system metadata",
+                                resolved.vk_ref
+                            ),
+                        }
+                    })?;
+
+                    if raw_system != normalized {
+                        return Err(BackendExecutionError::MalformedProof {
+                            backend: "zk:payload".to_string(),
+                            reason: format!(
+                                "invalid zk payload: vk_ref '{}' must use canonical zk_system metadata '{}'",
+                                resolved.vk_ref, normalized
+                            ),
+                        }
+                        .into());
+                    }
+
+                    normalized
+                }
                 None => {
                     return Err(BackendExecutionError::MalformedProof {
                         backend: "zk:payload".to_string(),
@@ -674,6 +696,35 @@ mod tests {
                 if msg.contains("malformed:")
                     && msg.contains("missing canonical zk_system metadata")
                     && msg.contains("vk://trnm/dev/mock-no-system/v1")
+        ));
+    }
+
+    #[test]
+    fn zk_verifier_rejects_vk_ref_metadata_with_non_canonical_system_token_drift() {
+        let mut backends = ZkBackendRegistry::new();
+        backends.register(Arc::new(MockSystemSuccessBackend {
+            backend_id: "groth16-demo",
+            expected_system: "groth16",
+        }));
+        let mut verifier = ZkVerifier::from_config(&router_config(), Arc::new(backends));
+
+        let mut vk_refs = crate::verification::backend::VkRefRegistry::default();
+        vk_refs.register(crate::verification::backend::ResolvedVkRef {
+            vk_ref: "vk://trnm/dev/mock-groth16/noncanonical".into(),
+            scope: "dev".into(),
+            zk_system: Some(" Groth-16 ".into()),
+        });
+        verifier.vk_refs = Arc::new(vk_refs);
+
+        let task = mock_task();
+        let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"groth16-demo","backend_version":"v1","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/noncanonical","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["99","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#;
+
+        assert!(matches!(
+            verifier.verify_proof(&task, payload),
+            VerificationResult::Invalid(msg)
+                if msg.contains("malformed:")
+                    && msg.contains("must use canonical zk_system metadata 'groth16'")
+                    && msg.contains("vk://trnm/dev/mock-groth16/noncanonical")
         ));
     }
 
