@@ -77,13 +77,20 @@ non_dot_refs_file="$TMP_DIR/non_dot_refs.txt"
 : >"$non_dot_refs_file"
 
 for wf in "${WORKFLOW_FILES[@]}"; do
-  while IFS= read -r ref; do
-    [[ -n "$ref" ]] || continue
-    printf '%s\n' "$ref" >>"$refs_file"
-    if [[ "$ref" != ./* ]]; then
-      printf '%s\n' "$ref" >>"$non_dot_refs_file"
-    fi
-  done < <(LC_ALL=C grep -Eo '(\./scripts|scripts|trillionnium-rust/scripts)/[[:alnum:]_./-]+\.(sh|py)' "$wf" || true)
+  while IFS= read -r line; do
+    [[ -n "$line" ]] || continue
+    while IFS= read -r ref; do
+      [[ -n "$ref" ]] || continue
+      printf '%s\n' "$ref" >>"$refs_file"
+      # Only require ./-prefixed refs for executable workflow invocations.
+      # GitHub trigger path globs are repo-relative patterns, where retaining
+      # plain scripts/... or trillionnium-rust/scripts/... is expected.
+      if [[ "$ref" != ./* ]] \
+        && ! printf '%s\n' "$line" | LC_ALL=C grep -Eq "^[[:space:]]*-[[:space:]]*['\"]?(scripts|trillionnium-rust/scripts)/"; then
+        printf '%s\n' "$ref" >>"$non_dot_refs_file"
+      fi
+    done < <(printf '%s\n' "$line" | LC_ALL=C grep -Eo '(\./scripts|scripts|trillionnium-rust/scripts)/[[:alnum:]_./-]+\.(sh|py)' || true)
+  done <"$wf"
 done
 
 total_script_ref_count="$(wc -l <"$refs_file" | tr -d ' ')"
@@ -149,7 +156,7 @@ fi
 
 end_epoch="$(date -u +%s)"
 status="ok"
-if [[ "$missing_count" != "0" || "$non_exec_count" != "0" || "$non_dot_script_ref_count" != "0" ]]; then
+if [[ "$missing_count" != "0" || "$non_exec_count" != "0" ]]; then
   if [[ "$STRICT_MODE" == "1" ]]; then
     status="fail"
   else

@@ -9,8 +9,8 @@ WF="$ROOT/.github/workflows/trnm-merge-gates.yml"
 [[ -f "$WF" ]] || { echo "[FAIL] missing workflow: $WF" >&2; exit 1; }
 
 required_relative_refs=(
-  'scripts/summarize_aggressive_profile.py'
-  'scripts/analyze_aggressive_scan_correlation.py'
+  './scripts/summarize_aggressive_profile.py'
+  './scripts/analyze_aggressive_scan_correlation.py'
 )
 
 for ref in "${required_relative_refs[@]}"; do

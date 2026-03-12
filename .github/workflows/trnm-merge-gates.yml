@@ -340,8 +340,8 @@ jobs:
           rc=${PIPESTATUS[0]}
           set -euo pipefail
 
-          python3 scripts/summarize_aggressive_profile.py
-          python3 scripts/analyze_aggressive_scan_correlation.py
+          python3 ./scripts/summarize_aggressive_profile.py
+          python3 ./scripts/analyze_aggressive_scan_correlation.py
 
           shopt -s nullglob
           profile_candidates=(run/bench/aggressive-profile-summary-*.md)
