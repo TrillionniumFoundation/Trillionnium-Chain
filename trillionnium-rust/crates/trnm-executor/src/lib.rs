@@ -2208,6 +2208,31 @@ mod tests {
     }
 
     #[test]
+    fn auto_adaptive_direct_scan_detects_tail_hotspots_in_medium_batches() {
+        let _env = env_lock();
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.20");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.20");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.05");
+
+        // Medium batches stay on the direct-scan fast path (sample_len == batch_len).
+        // Keep a late-batch hotspot regression here so the optimized path does not
+        // reintroduce first-window bias while adaptive tuning evolves.
+        let mut txs = Vec::with_capacity(600);
+        for i in 0..300u64 {
+            txs.push(tx(i, vec![], vec![o(10_000 + i)]));
+        }
+        for i in 0..300u64 {
+            txs.push(tx(1_000 + i, vec![], vec![o(42)]));
+        }
+
+        let d = auto_adaptive_decision(&txs);
+        assert_eq!(d.sample_len, txs.len());
+        assert!(d.use_hot_bucket, "direct-scan path should see tail hotspot runs");
+        assert_eq!(d.reason, "hotspot_detected");
+    }
+
+    #[test]
     fn auto_adaptive_sampling_includes_batch_tail_for_hotspot_estimate() {
         let _env = env_lock();
         let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.0");
