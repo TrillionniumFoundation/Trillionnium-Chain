@@ -4540,6 +4540,47 @@ mod tests {
     }
 
     #[test]
+    fn wal_checkpoint_verification_falls_back_on_gap_skipping_committed_tail() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e3 = WalMeta {
+            height: 3,
+            round: 0,
+            proposal_hash: "p3".into(),
+            committed: true,
+            state_root_hex: "r3".into(),
+            prev_hash_hex: Some(h1.clone()),
+        };
+
+        let checkpoints = vec![
+            CheckpointMeta {
+                height: 1,
+                state_root_hex: "r1".into(),
+                wal_entry_hash_hex: h1.clone(),
+            },
+            CheckpointMeta {
+                height: 3,
+                state_root_hex: "r3".into(),
+                wal_entry_hash_hex: e3.content_hash_hex(),
+            },
+        ];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e3])
+            .unwrap()
+            .expect("checkpoint");
+        assert_eq!(got.height, 1);
+        assert_eq!(got.state_root_hex, "r1");
+        assert_eq!(got.wal_entry_hash_hex, h1);
+    }
+
+    #[test]
     fn wal_checkpoint_verification_rejects_metadata_only_tail_after_checkpoint() {
         let e1 = WalMeta {
             height: 1,
