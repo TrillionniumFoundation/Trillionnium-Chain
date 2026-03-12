@@ -740,6 +740,26 @@ mod tests {
     }
 
     #[test]
+    fn explicit_auto_adaptive_sparse_workload_reports_original_without_default_headroom() {
+        let txs = build_mixed_txs(20_000, 2_000, 3, 1);
+        let decision = auto_adaptive_decision(&txs);
+        let adaptive_candidate = adaptive_candidate_strategy_for(&txs);
+
+        assert!(!decision.use_hot_bucket);
+        assert_eq!(decision.reason, "low_hot_key_share");
+        assert!(matches!(adaptive_candidate, GroupingStrategy::Original));
+        assert!(matches!(
+            effective_strategy_for(StrategyArg::AutoAdaptive, &txs),
+            GroupingStrategy::Original
+        ));
+        assert!(emits_auto_profile(StrategyArg::AutoAdaptive, false));
+        assert!(
+            !default_has_adaptive_opportunity(StrategyArg::AutoAdaptive, adaptive_candidate),
+            "explicit auto-adaptive should not claim default-only adaptive headroom on sparse workloads"
+        );
+    }
+
+    #[test]
     fn mixed_bench_default_path_matches_executor_default_strategy_output() {
         let txs = build_mixed_txs(2_048, 256, 3, 2);
         let (bench_groups, bench_profile) = StrategyArg::Default.resolve_profile(&txs);
