@@ -6,9 +6,19 @@ set -euo pipefail
 export TZ="${TZ:-UTC}"
 export LANG="${LANG:-C.UTF-8}"
 export LC_ALL="${LC_ALL:-C.UTF-8}"
-# Ensure bytewise collation even when callers only set LANG/LC_ALL,
-# keeping file manifest ordering reproducible for replay evidence.
+export LC_NUMERIC="${LC_NUMERIC:-C}"
+# Mirror the workflow locale envelope so local shell gates stay deterministic
+# even when subprocesses inspect category-specific locale variables directly.
 export LC_COLLATE="${LC_COLLATE:-C}"
+export LC_TIME="${LC_TIME:-C}"
+export LC_CTYPE="${LC_CTYPE:-C}"
+export LC_MESSAGES="${LC_MESSAGES:-C}"
+export LC_MONETARY="${LC_MONETARY:-C}"
+export LC_MEASUREMENT="${LC_MEASUREMENT:-C}"
+export LC_PAPER="${LC_PAPER:-C}"
+export LC_ADDRESS="${LC_ADDRESS:-C}"
+export LC_NAME="${LC_NAME:-C}"
+export LC_TELEPHONE="${LC_TELEPHONE:-C}"
 
 if [[ $# -eq 0 ]]; then
   TARGET_DIRS=("scripts")

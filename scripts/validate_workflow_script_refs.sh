@@ -6,7 +6,19 @@ set -euo pipefail
 export TZ="${TZ:-UTC}"
 export LANG="${LANG:-C.UTF-8}"
 export LC_ALL="${LC_ALL:-C.UTF-8}"
+export LC_NUMERIC="${LC_NUMERIC:-C}"
+# Mirror the workflow locale envelope so local reference scans and workflow
+# runners sort/log consistently even when tools honor per-category locales.
 export LC_COLLATE="${LC_COLLATE:-C}"
+export LC_TIME="${LC_TIME:-C}"
+export LC_CTYPE="${LC_CTYPE:-C}"
+export LC_MESSAGES="${LC_MESSAGES:-C}"
+export LC_MONETARY="${LC_MONETARY:-C}"
+export LC_MEASUREMENT="${LC_MEASUREMENT:-C}"
+export LC_PAPER="${LC_PAPER:-C}"
+export LC_ADDRESS="${LC_ADDRESS:-C}"
+export LC_NAME="${LC_NAME:-C}"
+export LC_TELEPHONE="${LC_TELEPHONE:-C}"
 
 WORKFLOW_ROOT="${WORKFLOW_ROOT:-.github/workflows}"
 SUMMARY_PATH="${WORKFLOW_SCRIPT_REF_SUMMARY_PATH:-}"
