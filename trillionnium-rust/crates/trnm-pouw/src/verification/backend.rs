@@ -1289,6 +1289,22 @@ mod tests {
     }
 
     #[test]
+    fn vk_ref_registry_rejects_surrounding_unicode_whitespace_without_silent_trim() {
+        let resolver = VkRefRegistry::new();
+
+        let err = resolver
+            .resolve("\u{2003}vk://trnm/dev/mock-groth16/v1\u{2003}")
+            .unwrap_err();
+
+        assert_eq!(
+            err,
+            VkRefResolutionError::Unknown {
+                vk_ref: "\u{2003}vk://trnm/dev/mock-groth16/v1\u{2003}".into(),
+            }
+        );
+    }
+
+    #[test]
     fn resolve_zk_vk_ref_returns_registered_system_metadata() {
         let task = mock_task();
         let payload = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"plonk","backend_id":"plonk-demo","backend_version":"v1","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-plonk/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["4242","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#).unwrap();
