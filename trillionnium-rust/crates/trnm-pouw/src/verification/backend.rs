@@ -107,12 +107,14 @@ pub fn normalize_zk_system(raw: &str) -> Option<String> {
 }
 
 pub fn backend_token_zk_system_hints(raw: &str) -> Vec<String> {
+    let mut seen = HashSet::new();
     normalize_backend_token(raw)
         .into_iter()
         .flat_map(|token| {
             token
                 .split_whitespace()
                 .filter_map(normalize_zk_system)
+                .filter(|system| seen.insert(system.clone()))
                 .collect::<Vec<_>>()
         })
         .collect()
@@ -930,6 +932,10 @@ mod tests {
         assert_eq!(
             backend_token_zk_system_hints("groth16-plonk-demo"),
             vec!["groth16", "plonk"]
+        );
+        assert_eq!(
+            backend_token_zk_system_hints("groth16-groth16-demo"),
+            vec!["groth16"]
         );
         assert!(backend_token_zk_system_hints("mock-zk").is_empty());
     }
