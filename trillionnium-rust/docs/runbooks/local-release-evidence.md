@@ -54,6 +54,7 @@ env TZ=UTC LC_ALL=C LANG=C SOURCE_DATE_EPOCH=1704067200 \
 > 说明：`env_*` 记录的是**本次实际执行时生效的环境**，因此如果调用者在外层 shell 已经导出了某个变量（例如 `LANG=zh_CN.UTF-8`），这里会如实保留该值；`replay_env_*` 才是脚本写入的**确定性复放基线**。做 RC 复放、审计引用或文档摘录时，应优先引用 `replay_env_*` 与 `replay_command=`，不要把一次性本地继承环境误写成可复放标准环境。
 
 - 本次证据目录绝对路径：`evidence_dir=<abs-path>`
+- 复放输出根目录：`replay_out_dir=<abs-path>`（应为固定、可审计的绝对路径；`replay_command=` 中的 `OUT_DIR` 应与之对应）
 - 生成该证据包的分支与提交：`git_branch=<branch>` / `git_head=<sha>`
 - UTC 时间戳：`generated_at=<utc-ts>`
 - 实际覆盖环境：`env_trnm_challenge_reexec_entry=<value|<unset>>`

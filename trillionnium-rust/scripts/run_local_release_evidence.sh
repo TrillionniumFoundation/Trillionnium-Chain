@@ -116,6 +116,7 @@ find_challenge_reexec_entry() {
   echo "git_branch=$GIT_BRANCH"
   echo "git_head=$GIT_HEAD"
   echo "evidence_dir=$EVIDENCE_DIR"
+  echo "replay_out_dir=$BASE_OUT"
   echo "truth_source=$REPO_ROOT/RELEASE_READINESS.md"
   echo "historical_evidence_only=true"
   echo "evidence_scope=local_rc_rehearsal_not_current_release_ready_claim"

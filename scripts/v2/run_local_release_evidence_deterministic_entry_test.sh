@@ -29,6 +29,11 @@ if ! grep -q 'challenge_reexec_entry=' "$TARGET"; then
   exit 1
 fi
 
+if ! grep -q 'replay_out_dir=' "$TARGET"; then
+  echo "[FAIL] expected summary to record normalized replay output root" >&2
+  exit 1
+fi
+
 if ! grep -q 'env_trnm_challenge_reexec_entry=' "$TARGET"; then
   echo "[FAIL] expected summary to record effective challenge reexec override env" >&2
   exit 1
@@ -48,6 +53,7 @@ fi
 runbook_required_lines=(
   '`replay_env_*` 才是脚本写入的**确定性复放基线**'
   '做 RC 复放、审计引用或文档摘录时，应优先引用 `replay_env_*` 与 `replay_command=`'
+  '复放输出根目录：`replay_out_dir=<abs-path>`（应为固定、可审计的绝对路径；`replay_command=` 中的 `OUT_DIR` 应与之对应）'
   '实际覆盖环境：`env_trnm_challenge_reexec_entry=<value|<unset>>`'
   '复放环境：`replay_env_trnm_challenge_reexec_entry=<resolved-entry-absolute-path>`'
   '解析后的入口：`challenge_reexec_entry=<resolved-entry-absolute-path>`'
