@@ -161,9 +161,9 @@ infer_status_from_code() {
   local out="$1"
   local code=""
 
-  code=$(printf "%s" "$out" | sed -n 's/.*"code"[[:space:]]*:[[:space:]]*\([0-9][0-9]*\).*/\1/p' | head -n1 || true)
+  code=$(printf "%s" "$out" | sed -n 's/.*"code"[[:space:]]*:[[:space:]]*"\{0,1\}\([0-9][0-9]*\)"\{0,1\}.*/\1/p' | head -n1 || true)
   if [[ -z "$code" ]]; then
-    code=$(printf "%s" "$out" | sed -n 's/.*\b\(deliver_tx_code\|check_tx_code\|tx_code\|code\)[[:space:]]*[:=][[:space:]]*\([0-9][0-9]*\).*/\2/p' | head -n1 || true)
+    code=$(printf "%s" "$out" | sed -n 's/.*\b\(deliver_tx_code\|check_tx_code\|tx_code\|code\)[[:space:]]*[:=][[:space:]]*"\{0,1\}\([0-9][0-9]*\)"\{0,1\}.*/\2/p' | head -n1 || true)
   fi
 
   if [[ -z "$code" ]]; then
