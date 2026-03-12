@@ -9,6 +9,63 @@ BASE_OUT="$(python3 scripts/oracle/benchmark_oracle_metrics.py \
 BENCH_OUT="$(python3 scripts/oracle/benchmark_oracle_metrics.py \
   --bench --bench-count 1000 --bench-rounds 10)"
 
+python3 - <<'PY' "${BASE_OUT}" "${BENCH_OUT}"
+import json
+import sys
+
+baseline = json.loads(sys.argv[1])
+bench = json.loads(sys.argv[2])
+
+required_baseline = {
+    "oracle_ingest_latency_ms",
+    "oracle_stale_reject_total",
+    "oracle_quorum_reject_total",
+    "oracle_drift_reject_total",
+    "oracle_source_cardinality",
+    "accepted_total",
+    "sample_count",
+}
+missing_baseline = sorted(required_baseline - baseline.keys())
+if missing_baseline:
+    raise SystemExit(f"baseline contract missing keys: {missing_baseline}")
+
+rejected_total = (
+    baseline["oracle_stale_reject_total"]
+    + baseline["oracle_quorum_reject_total"]
+    + baseline["oracle_drift_reject_total"]
+)
+if baseline["accepted_total"] + rejected_total != baseline["sample_count"]:
+    raise SystemExit(
+        "baseline contract violated: accepted_total + rejected_total must equal sample_count"
+    )
+
+if baseline["accepted_total"] == 0 and baseline["oracle_source_cardinality"] != 0:
+    raise SystemExit(
+        "baseline contract violated: oracle_source_cardinality must be 0 when accepted_total is 0"
+    )
+
+if baseline["oracle_source_cardinality"] > baseline["sample_count"]:
+    raise SystemExit(
+        "baseline contract violated: oracle_source_cardinality cannot exceed sample_count"
+    )
+
+required_bench = {
+    "bench_rounds",
+    "bench_count",
+    "ingest_latency_p50_ms",
+    "ingest_latency_p95_ms",
+    "ingest_latency_max_ms",
+}
+missing_bench = sorted(required_bench - bench.keys())
+if missing_bench:
+    raise SystemExit(f"bench contract missing keys: {missing_bench}")
+
+if not (bench["ingest_latency_p50_ms"] <= bench["ingest_latency_p95_ms"] <= bench["ingest_latency_max_ms"]):
+    raise SystemExit(
+        "bench contract violated: latency ordering must satisfy p50 <= p95 <= max"
+    )
+PY
+
 echo "[oracle-baseline] baseline"
 echo "${BASE_OUT}"
 echo "[oracle-baseline] bench"
