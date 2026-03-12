@@ -4996,6 +4996,48 @@ mod tests {
     }
 
     #[test]
+    fn recover_rejects_checkpointed_wal_chain_without_genesis_base() {
+        let wal_dir = temp_wal_dir("recover-no-genesis-base");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let e10 = WalMeta {
+            height: 10,
+            round: 0,
+            proposal_hash: "h10".into(),
+            committed: true,
+            state_root_hex: "r10".into(),
+            prev_hash_hex: None,
+        };
+
+        persist_wal_meta_entries(&wal_dir, &[e10.clone()]).unwrap();
+        persist_checkpoint_meta(
+            &wal_dir,
+            &[CheckpointMeta {
+                height: 10,
+                state_root_hex: "r10".into(),
+                wal_entry_hash_hex: e10.content_hash_hex(),
+            }],
+        )
+        .unwrap();
+
+        let recovered = recover_wal_state(&wal_dir).unwrap();
+        assert_eq!(recovered.next_height, 1);
+        assert!(recovered.restored_lock.is_none());
+        assert!(recovered.last_checkpoint.is_none());
+        assert!(recovered.truncated);
+        assert!(!recovered.metadata_only_recovery);
+        assert_eq!(recovered.wal_entries_retained, 0);
+        assert_eq!(recovered.checkpoint_height_retained, None);
+
+        let retained = load_wal_meta_entries(&wal_dir).unwrap();
+        assert!(retained.is_empty());
+        let checkpoints = load_checkpoint_meta(&wal_dir).unwrap();
+        assert!(checkpoints.is_empty());
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
     fn recover_prunes_future_checkpoints_even_without_extra_wal_entries() {
         let wal_dir = temp_wal_dir("recover-prune-future-checkpoints");
         fs::create_dir_all(&wal_dir).unwrap();

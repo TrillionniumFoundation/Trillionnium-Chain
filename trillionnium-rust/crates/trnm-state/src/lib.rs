@@ -1447,6 +1447,11 @@ pub fn verify_wal_and_find_checkpoint(
             if e.height != last_height.saturating_add(1) {
                 return Ok(best_checkpoint);
             }
+        } else if e.height != 1 {
+            // Until StateStore snapshot restore/replay exists, a checkpointed WAL chain
+            // that starts above genesis height is metadata-only and must not be used to
+            // claim safe application-state recovery.
+            return Ok(best_checkpoint);
         }
         if e.prev_hash_hex != prev_hash {
             return Ok(best_checkpoint);
@@ -4162,6 +4167,29 @@ mod tests {
     }
 
     #[test]
+    fn wal_checkpoint_verification_rejects_checkpointed_chain_without_genesis_base() {
+        let e1 = WalMeta {
+            height: 10,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let checkpoints = vec![CheckpointMeta {
+            height: 10,
+            state_root_hex: "r1".into(),
+            wal_entry_hash_hex: e1.content_hash_hex(),
+        }];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1]).unwrap();
+        assert!(
+            got.is_none(),
+            "checkpoint-only recovery must fail closed when WAL metadata does not start at genesis height"
+        );
+    }
+
+    #[test]
     fn wal_checkpoint_verification_falls_back_on_non_monotonic_height() {
         let e1 = WalMeta {
             height: 10,
@@ -4195,10 +4223,11 @@ mod tests {
             },
         ];
 
-        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2])
-            .unwrap()
-            .expect("checkpoint");
-        assert_eq!(got.state_root_hex, "r1");
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2]).unwrap();
+        assert!(
+            got.is_none(),
+            "non-genesis WAL bases must not be accepted during checkpoint-only recovery"
+        );
     }
 
     #[test]
@@ -4234,11 +4263,11 @@ mod tests {
             },
         ];
 
-        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2])
-            .unwrap()
-            .expect("checkpoint");
-        assert_eq!(got.height, 10);
-        assert_eq!(got.state_root_hex, "r1");
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2]).unwrap();
+        assert!(
+            got.is_none(),
+            "regressing non-genesis WAL chains must fail closed instead of falling back to a checkpoint"
+        );
     }
 
     #[test]
