@@ -2312,6 +2312,102 @@ fn paused_state_restore_pending_resolve_snapshot_accepts_case_and_order_equivale
 }
 
 #[test]
+fn paused_state_restore_pending_resolve_snapshot_scrubs_case_variant_emergency_pause_placeholder_approver() {
+    // M1 micro-hardening: paused rollback/restore must also reject control-plane
+    // emergency_pause placeholder aliases when they appear as the first approver itself,
+    // not only inside authority-set membership or second-approver slots.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 10_019);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 1_005);
+    st.set_balance(WORKER_SLASH_TREASURY_ACCOUNT, 505);
+
+    let bootstrap = st
+        .set_gov_param(
+            98_219,
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("bootstrap resolve_authority write should succeed");
+    assert!(matches!(bootstrap, GovParamUpdateOutcome::Scheduled { .. }));
+    let applied = st
+        .set_gov_param(
+            98_239,
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("bootstrap resolve_authority should apply after timelock");
+    assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+
+    st.set_gov_param(98_240, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+    let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+    let worker_slash_before = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
+
+    st.restore_task(
+        9_926,
+        Some(TaskObject {
+            task_id: 9_926,
+            creator: "creator-paused".into(),
+            bounty: 1,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-paused".into()),
+            committed_hash: None,
+            result_hash: None,
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: Some("challenger-paused".into()),
+            challenge_bond_forfeited: None,
+            version: 2,
+        }),
+    );
+
+    st.restore_pending_resolve_approval(
+        9_926,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "Governance.Emergency_Pause".into(),
+            second_approver: None,
+            authority_set: "authority-a,authority-b".into(),
+            task_version: 2,
+        }),
+    );
+
+    assert_eq!(
+        st.pending_resolve_approval(9_926),
+        None,
+        "paused restore must scrub emergency_pause placeholder approver aliases under case drift"
+    );
+    assert_eq!(st.pending_resolve_first_approver(9_926), None);
+    assert_eq!(st.pending_resolve_approval_snapshot(9_926), None);
+    assert_eq!(st.gov_param_string("resolve_authority"), Some("authority-a,authority-b".into()));
+    assert_eq!(st.pending_gov_update("resolve_authority"), None);
+    assert!(st.is_emergency_paused());
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
+    assert_eq!(
+        st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
+        worker_slash_before
+    );
+}
+
+#[test]
 fn paused_state_restore_pending_resolve_snapshot_scrubs_zero_task_version_boundary() {
     // M1 micro-hardening: paused rollback/restore must reject versionless pending resolve
     // snapshots so governance/resolve flow cannot revive an unversioned approval quorum.
