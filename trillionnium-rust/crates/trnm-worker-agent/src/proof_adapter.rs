@@ -110,15 +110,34 @@ fn is_invisible_receipt_filler(ch: char) -> bool {
 }
 
 fn collapse_adapter_delimiters(raw: &str) -> String {
-    raw.chars()
-        .filter_map(|ch| match ch {
+    let mut collapsed = String::with_capacity(raw.len());
+    let mut last_was_delimiter = false;
+
+    for ch in raw.chars() {
+        let mapped = match ch {
             other if is_invisible_receipt_filler(other) => None,
             '‐' | '‑' | '‒' | '–' | '—' | '―' | '−' | '－' => Some('-'),
             '_' | '/' | '\\' | ':' | '.' => Some('-'),
             other if other.is_whitespace() => Some('-'),
             other => Some(other),
-        })
-        .collect()
+        };
+
+        match mapped {
+            Some('-') => {
+                if !last_was_delimiter {
+                    collapsed.push('-');
+                    last_was_delimiter = true;
+                }
+            }
+            Some(other) => {
+                collapsed.push(other);
+                last_was_delimiter = false;
+            }
+            None => {}
+        }
+    }
+
+    collapsed
 }
 
 fn normalize_adapter_label(label: &str) -> String {
@@ -535,6 +554,16 @@ mod tests {
             Some("pr-2i")
         );
 
+        let tee_with_spaced_separators = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-2j\",\"adapter\":\" TEE / RECEIPT \"}",
+            )
+            .expect("tee receipt label with spaced separators should parse");
+        assert_eq!(
+            tee_with_spaced_separators.provider_request_id.as_deref(),
+            Some("pr-2j")
+        );
+
         let missing_request_id = adapter
             .parse_response("{\"output_text\":\"ok\",\"adapter\":\"tee-receipt\"}")
             .expect_err("provider_request_id is required");
@@ -782,6 +811,16 @@ mod tests {
         assert_eq!(
             zk_with_colon_separator.provider_request_id.as_deref(),
             Some("pr-zk-2i")
+        );
+
+        let zk_with_spaced_separators = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-zk-2j\",\"adapter\":\" ZK - RECEIPT \"}",
+            )
+            .expect("zk receipt label with spaced separators should parse");
+        assert_eq!(
+            zk_with_spaced_separators.provider_request_id.as_deref(),
+            Some("pr-zk-2j")
         );
 
         let missing_request_id = adapter
@@ -1101,7 +1140,13 @@ mod tests {
 
     #[test]
     fn build_proof_adapter_accepts_separator_aliases_for_receipt_modes() {
-        for label in ["TEE RECEIPT", "TEE/RECEIPT", "TEE:RECEIPT"] {
+        for label in [
+            "TEE RECEIPT",
+            "TEE/RECEIPT",
+            "TEE:RECEIPT",
+            " TEE / RECEIPT ",
+            "TEE - RECEIPT",
+        ] {
             let adapter = build_proof_adapter(label)
                 .unwrap_or_else(|_| panic!("tee separator alias should parse: {label}"));
             let (ok, code) = adapter.verify("hello", 8);
@@ -1109,7 +1154,13 @@ mod tests {
             assert_eq!(code, "tee_receipt_ok", "tee alias code mismatch: {label}");
         }
 
-        for label in ["ZK RECEIPT", "ZK/RECEIPT", "ZK:RECEIPT"] {
+        for label in [
+            "ZK RECEIPT",
+            "ZK/RECEIPT",
+            "ZK:RECEIPT",
+            " ZK / RECEIPT ",
+            "ZK - RECEIPT",
+        ] {
             let adapter = build_proof_adapter(label)
                 .unwrap_or_else(|_| panic!("zk separator alias should parse: {label}"));
             let (ok, code) = adapter.verify("hello", 8);
