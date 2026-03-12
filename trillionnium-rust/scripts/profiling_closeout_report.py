@@ -913,8 +913,20 @@ def main():
     lines.append(
         f"- baseline_closeout_report_selected: {baseline_report_pool['selected']}"
     )
+    baseline_refresh_labels = [
+        str(pool["label"]).replace("_candidates", "")
+        for pool in benchmark_pools
+        if pool["action"] in {"produce", "refresh"}
+    ]
+    baseline_refresh_command_chain = build_followup_command_chain(
+        baseline_refresh_labels, benchmark_producer_for
+    )
     baseline_followup_command_chain = (
-        f"{recommended_producer('executor_profile')} && python3 scripts/profiling_closeout_report.py"
+        (
+            "python3 scripts/profiling_closeout_report.py"
+            if baseline_refresh_command_chain == "none"
+            else f"{baseline_refresh_command_chain} && python3 scripts/profiling_closeout_report.py"
+        )
         if baseline_report_pool["action"] in {"produce", "refresh"}
         else "none"
     )
@@ -1133,8 +1145,11 @@ def main():
     ]
     if benchmark_capture_status in {"mixed_capture_window", "divergent_capture_window"}:
         benchmark_followup_labels = ["classic_bench", "mixed_bench", "executor_profile"]
+    benchmark_followup_command_chain = build_followup_command_chain(
+        benchmark_followup_labels, benchmark_producer_for
+    )
     lines.append(
-        f"- benchmark_followup_command_chain: {build_followup_command_chain(benchmark_followup_labels, benchmark_producer_for)}"
+        f"- benchmark_followup_command_chain: {benchmark_followup_command_chain}"
     )
 
     lines += ["", "## Block Metrics"]
