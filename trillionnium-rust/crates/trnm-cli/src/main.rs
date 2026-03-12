@@ -292,7 +292,9 @@ fn extract_tx_hash(text: &str) -> Option<String> {
             .split_once('=')
             .or_else(|| trimmed.split_once(':'))?;
         match k.trim().to_ascii_lowercase().as_str() {
-            "tx_hash" | "txhash" => normalize_tx_hash(v),
+            "tx_hash" | "txhash" | "transaction_hash" | "transactionhash" => {
+                normalize_tx_hash(v)
+            }
             _ => None,
         }
     }) {
@@ -1011,6 +1013,14 @@ mod tests {
         assert_eq!(
             extract_tx_hash("meta txHash=0xcafe02;").as_deref(),
             Some("0xcafe02")
+        );
+        assert_eq!(
+            extract_tx_hash("operator transaction_hash:0xface03,").as_deref(),
+            Some("0xface03")
+        );
+        assert_eq!(
+            extract_tx_hash("note transactionHash=0xbabe04").as_deref(),
+            Some("0xbabe04")
         );
     }
 

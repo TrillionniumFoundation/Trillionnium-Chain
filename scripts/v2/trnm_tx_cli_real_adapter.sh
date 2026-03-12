@@ -42,15 +42,39 @@ EOF
 
 extract_tx_hash() {
   local out="$1"
-  # JSON: {"txhash":"..."}
+  # JSON: {"txhash":"..."} and common aliases used by tx/query tooling.
   local h
   h=$(printf "%s" "$out" | sed -n 's/.*"txhash"[[:space:]]*:[[:space:]]*"\([^"]\+\)".*/\1/p' | head -n1 || true)
+  if [[ -z "$h" ]]; then
+    h=$(printf "%s" "$out" | sed -n 's/.*"tx_hash"[[:space:]]*:[[:space:]]*"\([^"]\+\)".*/\1/p' | head -n1 || true)
+  fi
+  if [[ -z "$h" ]]; then
+    h=$(printf "%s" "$out" | sed -n 's/.*"txHash"[[:space:]]*:[[:space:]]*"\([^"]\+\)".*/\1/p' | head -n1 || true)
+  fi
+  if [[ -z "$h" ]]; then
+    h=$(printf "%s" "$out" | sed -n 's/.*"transaction_hash"[[:space:]]*:[[:space:]]*"\([^"]\+\)".*/\1/p' | head -n1 || true)
+  fi
+  if [[ -z "$h" ]]; then
+    h=$(printf "%s" "$out" | sed -n 's/.*"transactionHash"[[:space:]]*:[[:space:]]*"\([^"]\+\)".*/\1/p' | head -n1 || true)
+  fi
   if [[ -n "$h" ]]; then
     printf "%s" "$h"
     return 0
   fi
-  # text: txhash: XXXXX
+  # text: txhash: XXXXX and common aliases.
   h=$(printf "%s" "$out" | sed -n 's/.*txhash[[:space:]]*[:=][[:space:]]*\([0-9A-Fa-f]\{16,\}\).*/\1/p' | head -n1 || true)
+  if [[ -z "$h" ]]; then
+    h=$(printf "%s" "$out" | sed -n 's/.*tx_hash[[:space:]]*[:=][[:space:]]*\([0-9A-Fa-f]\{16,\}\).*/\1/p' | head -n1 || true)
+  fi
+  if [[ -z "$h" ]]; then
+    h=$(printf "%s" "$out" | sed -n 's/.*txHash[[:space:]]*[:=][[:space:]]*\([0-9A-Fa-f]\{16,\}\).*/\1/p' | head -n1 || true)
+  fi
+  if [[ -z "$h" ]]; then
+    h=$(printf "%s" "$out" | sed -n 's/.*transaction_hash[[:space:]]*[:=][[:space:]]*\([0-9A-Fa-f]\{16,\}\).*/\1/p' | head -n1 || true)
+  fi
+  if [[ -z "$h" ]]; then
+    h=$(printf "%s" "$out" | sed -n 's/.*transactionHash[[:space:]]*[:=][[:space:]]*\([0-9A-Fa-f]\{16,\}\).*/\1/p' | head -n1 || true)
+  fi
   if [[ -n "$h" ]]; then
     printf "%s" "$h"
     return 0
