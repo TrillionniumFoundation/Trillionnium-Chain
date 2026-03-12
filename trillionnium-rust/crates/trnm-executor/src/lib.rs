@@ -745,7 +745,12 @@ fn parse_env_numeric(name: &str) -> Option<String> {
 
 #[inline]
 fn parse_env_usize(name: &str) -> Option<usize> {
-    parse_env_numeric(name).and_then(|v| v.parse::<usize>().ok())
+    parse_env_numeric(name).and_then(|v| {
+        let normalized = v.strip_prefix('+').unwrap_or(&v);
+        (!normalized.is_empty())
+            .then(|| normalized.parse::<usize>().ok())
+            .flatten()
+    })
 }
 
 #[inline]
@@ -1960,6 +1965,18 @@ mod tests {
     }
 
     #[test]
+    fn integer_env_parsers_accept_plus_prefixed_grouped_values() {
+        let _env = env_lock();
+        let _window = EnvGuard::set("TRNM_AGGR_SCAN_WINDOW", " '+1_536' ");
+        let _seed = EnvGuard::set("TRNM_AGGR_SCAN_RR_SEED", " '+1_024' ");
+        let _buckets = EnvGuard::set("TRNM_HOT_BUCKETS", " '+3_2' ");
+
+        assert_eq!(aggr_scan_window(), 1536);
+        assert_eq!(aggr_scan_round_robin_seed(), 1024);
+        assert_eq!(hot_bucket_count(), 32);
+    }
+
+    #[test]
     fn aggressive_round_robin_toggle_parser_handles_trimmed_false_and_true_tokens() {
         let _env = env_lock();
 
@@ -2255,6 +2272,11 @@ mod tests {
         let _trimmed = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", " '1_024' ");
         assert_eq!(auto_adaptive_sample_len(5000), 1024);
         assert_eq!(auto_adaptive_sample_len(256), 256);
+        drop(_trimmed);
+
+        let _plus = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", " '+1_536' ");
+        assert_eq!(auto_adaptive_sample_len(5000), 1536);
+        assert_eq!(auto_adaptive_sample_len(1024), 1024);
     }
 
     #[test]
