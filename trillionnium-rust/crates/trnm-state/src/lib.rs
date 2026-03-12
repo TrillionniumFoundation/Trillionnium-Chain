@@ -2277,6 +2277,33 @@ mod tests {
     }
 
     #[test]
+    fn restore_pending_resolve_approval_scrubs_invalid_snapshot_duplicate_authority_members() {
+        let mut st = StateStore::new();
+        for (task_id, authority_set) in [
+            (9_312, "authority-a,authority-a"),
+            (9_313, "authority-a,Authority-A"),
+            (9_314, "authority-a,authority-b,AUTHORITY-B"),
+        ] {
+            st.restore_pending_resolve_approval(
+                task_id,
+                Some(PendingResolveApprovalSnapshot {
+                    slash_worker: true,
+                    confirmations: 1,
+                    first_approver: "authority-a".into(),
+                    second_approver: None,
+                    authority_set: authority_set.into(),
+                    task_version: 9,
+                }),
+            );
+            assert_eq!(
+                st.pending_resolve_approval(task_id),
+                None,
+                "snapshot authority_set {authority_set:?} must be scrubbed"
+            );
+        }
+    }
+
+    #[test]
     fn restore_pending_resolve_approval_scrubs_invalid_snapshot_approver_separator_boundary() {
         let mut st = StateStore::new();
         for (task_id, bad_approver) in [
