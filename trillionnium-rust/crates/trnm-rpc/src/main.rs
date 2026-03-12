@@ -2304,6 +2304,10 @@ fn parse_query_events_limit_from_path(path: &str) -> std::result::Result<usize, 
         || normalized_query.contains("%3f")
         || normalized_query.contains("%0d")
         || normalized_query.contains("%0a")
+        || normalized_query.contains("%09")
+        || normalized_query.contains("%0b")
+        || normalized_query.contains("%0c")
+        || normalized_query.contains("%20")
     {
         return Err(http_json_response(
             "400 Bad Request",
@@ -3987,6 +3991,21 @@ mod tests {
                 .expect_err("raw control characters must fail closed");
             assert!(err.contains("400 Bad Request"), "path={path:?} err={err}");
             assert!(err.contains("invalid limit"), "path={path:?} err={err}");
+        }
+    }
+
+    #[test]
+    fn parse_query_events_limit_from_path_rejects_percent_encoded_horizontal_whitespace() {
+        for path in [
+            "/query-events/42?limit=7%09tail",
+            "/query-events/42?limit=7%20tail",
+            "/query-events/42?limit=7%0bextra",
+            "/query-events/42?limit=7%0Cextra",
+        ] {
+            let err = parse_query_events_limit_from_path(path)
+                .expect_err("percent-encoded horizontal whitespace must fail closed");
+            assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+            assert!(err.contains("invalid limit"), "path={path} err={err}");
         }
     }
 
