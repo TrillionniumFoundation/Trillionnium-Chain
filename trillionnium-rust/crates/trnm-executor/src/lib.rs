@@ -2543,6 +2543,32 @@ mod tests {
     }
 
     #[test]
+    fn auto_adaptive_keyless_batches_fail_closed_as_insufficient_sample() {
+        let _env = env_lock();
+        let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "64");
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.0");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.0");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.0");
+
+        // Experimental adaptive probes must stay fail-closed when a batch has
+        // no observable read/write keys at all. Even with permissive thresholds,
+        // keyless traffic should never manufacture a hotspot switch.
+        let mut txs = Vec::with_capacity(600);
+        for i in 0..600u64 {
+            txs.push(tx(90_000 + i, vec![], vec![]));
+        }
+
+        let d = auto_adaptive_decision(&txs);
+        assert_eq!(d.sample_len, txs.len());
+        assert_eq!(d.reason, "insufficient_sample");
+        assert!(!d.use_hot_bucket);
+        assert_eq!(d.hot_key_share, 0.0);
+        assert_eq!(d.streak_ratio, 0.0);
+        assert_eq!(d.expected_gain_score, 0.0);
+    }
+
+    #[test]
     fn free_ingress_batches_short_circuit_to_single_group_after_strategy_reorder() {
         let txs = vec![
             tx(9, vec![], vec![]),
