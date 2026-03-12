@@ -24,6 +24,7 @@ if [[ ! -f "$RC_SCRIPT" ]]; then
 fi
 
 rc_required_lines=(
+  'BASE_OUT="$(cd "$BASE_OUT_INPUT" && pwd)"'
   'replay_out_dir="$BASE_OUT"'
   'replay_out_dir=$replay_out_dir'
   'replay_command=$replay_command'
