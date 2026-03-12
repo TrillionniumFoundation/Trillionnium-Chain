@@ -2260,7 +2260,11 @@ fn parse_http_get_path(first_line: &str) -> Option<&str> {
     if path.contains('#') || normalized.contains("%23") {
         return None;
     }
-    if normalized.contains("%0d") || normalized.contains("%0a") {
+    if normalized.contains("%0d")
+        || normalized.contains("%0a")
+        || normalized.contains("%09")
+        || normalized.contains("%20")
+    {
         return None;
     }
 
@@ -4108,6 +4112,20 @@ mod tests {
         assert_eq!(parse_http_get_path("GET /health%0A HTTP/1.1"), None);
         assert_eq!(
             parse_http_get_path("GET /query-events/42?limit=7%0d%0aextra HTTP/1.1"),
+            None
+        );
+    }
+
+    #[test]
+    fn parse_http_get_path_rejects_percent_encoded_horizontal_whitespace_forms() {
+        assert_eq!(parse_http_get_path("GET /health%09 HTTP/1.1"), None);
+        assert_eq!(parse_http_get_path("GET /health%20 HTTP/1.1"), None);
+        assert_eq!(
+            parse_http_get_path("GET /query-events/42?limit=7%09extra HTTP/1.1"),
+            None
+        );
+        assert_eq!(
+            parse_http_get_path("GET /query-events/42%20tail HTTP/1.1"),
             None
         );
     }
