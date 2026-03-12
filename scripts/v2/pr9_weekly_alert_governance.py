@@ -151,11 +151,24 @@ def extract_topn_sections(md_path: Path) -> dict[str, list[str]]:
     return sections
 
 
-def clean_topn_line(line: str) -> str:
+def clean_topn_line(line: Any) -> str:
+    if not isinstance(line, str):
+        return ""
     cleaned = line.strip()
     cleaned = re.sub(r"^\d+\.\s*", "", cleaned)
     cleaned = re.sub(r"^-\s*", "", cleaned)
     return cleaned
+
+
+def normalize_topn_rows(rows: Any) -> list[str]:
+    if not isinstance(rows, list):
+        return []
+    normalized: list[str] = []
+    for row in rows:
+        cleaned = clean_topn_line(row)
+        if cleaned:
+            normalized.append(cleaned)
+    return normalized
 
 
 def pct(numer: int, denom: int) -> float:
@@ -396,9 +409,9 @@ def main() -> int:
         ),
         "suppression_share_pct_delta": pct_delta(suppression_share_pct, prev_suppression_share_pct) if has_prev else None,
         "topn": {
-            "unresolved": topn_diff(sections["unresolved"], prev_topn.get("unresolved", []) if isinstance(prev_topn.get("unresolved", []), list) else []) if has_prev else {"entered": [], "exited": [], "rank_shift": []},
-            "forfeit": topn_diff(sections["forfeit"], prev_topn.get("forfeit", []) if isinstance(prev_topn.get("forfeit", []), list) else []) if has_prev else {"entered": [], "exited": [], "rank_shift": []},
-            "escrow": topn_diff(sections["escrow"], prev_topn.get("escrow", []) if isinstance(prev_topn.get("escrow", []), list) else []) if has_prev else {"entered": [], "exited": [], "rank_shift": []},
+            "unresolved": topn_diff(sections["unresolved"], normalize_topn_rows(prev_topn.get("unresolved", []))) if has_prev else {"entered": [], "exited": [], "rank_shift": []},
+            "forfeit": topn_diff(sections["forfeit"], normalize_topn_rows(prev_topn.get("forfeit", []))) if has_prev else {"entered": [], "exited": [], "rank_shift": []},
+            "escrow": topn_diff(sections["escrow"], normalize_topn_rows(prev_topn.get("escrow", []))) if has_prev else {"entered": [], "exited": [], "rank_shift": []},
         },
         "threshold_changed_keys_delta": (len(changed_keys) - len(prev_threshold_keys)) if has_prev else None,
         "threshold_new_keys_vs_last_week": sorted({x["key"] for x in changed_keys} - prev_threshold_keys) if has_prev else [],
