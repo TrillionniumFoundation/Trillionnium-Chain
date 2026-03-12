@@ -517,6 +517,14 @@ def main():
         f"- benchmark_pool_attention: {', '.join(pool_attention) if pool_attention else 'none'}"
     )
     lines.append(
+        "- benchmark_pool_backlog_totals: "
+        f"candidate_count={sum(int(pool['candidate_count']) for pool in benchmark_pools)} "
+        f"fresh={sum(int(pool['fresh']) for pool in benchmark_pools)} "
+        f"stale={sum(int(pool['stale']) for pool in benchmark_pools)} "
+        f"old={sum(int(pool['old']) for pool in benchmark_pools)} "
+        f"old_backlog={sum(int(pool['old_backlog']) for pool in benchmark_pools)}"
+    )
+    lines.append(
         f"- benchmark_pool_followup_command_chain: {build_followup_command_chain(pool_followup_labels, recommended_producer)}"
     )
 
