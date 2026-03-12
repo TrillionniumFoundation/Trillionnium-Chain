@@ -597,16 +597,14 @@ fn recover_wal_state(wal_dir: &Path) -> Result<RecoveredWalState> {
         } else {
             Some(last.proposal_hash.clone())
         };
-        if truncated {
-            persist_consensus_wal(
-                wal_dir,
-                &ConsensusWal {
-                    next_height: last.height + 1,
-                    last_round: last.round,
-                    locked_block_hash: restored_lock.clone(),
-                },
-            )?;
-        }
+        persist_consensus_wal(
+            wal_dir,
+            &ConsensusWal {
+                next_height: last.height + 1,
+                last_round: last.round,
+                locked_block_hash: restored_lock.clone(),
+            },
+        )?;
         return Ok(RecoveredWalState {
             next_height: last.height + 1,
             restored_lock,
@@ -5538,6 +5536,53 @@ mod tests {
     }
 
     #[test]
+    fn recover_clears_checkpoint_only_snapshot_even_when_empty_wal_meta_file_exists() {
+        let wal_dir = temp_wal_dir("recover-checkpoint-only-with-empty-wal-meta");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        persist_consensus_wal(
+            &wal_dir,
+            &ConsensusWal {
+                next_height: 15,
+                last_round: 2,
+                locked_block_hash: Some("stale-lock".into()),
+            },
+        )
+        .unwrap();
+        persist_wal_meta_entries(&wal_dir, &[]).unwrap();
+        persist_checkpoint_meta(
+            &wal_dir,
+            &[CheckpointMeta {
+                height: 14,
+                state_root_hex: "stale-root".into(),
+                wal_entry_hash_hex: "stale-hash".into(),
+            }],
+        )
+        .unwrap();
+
+        let recovered = recover_wal_state(&wal_dir).unwrap();
+        assert_eq!(recovered.next_height, 1);
+        assert!(recovered.restored_lock.is_none());
+        assert!(recovered.last_checkpoint.is_none());
+        assert!(recovered.truncated);
+        assert!(!recovered.metadata_only_recovery);
+        assert_eq!(recovered.wal_entries_retained, 0);
+        assert_eq!(recovered.checkpoint_height_retained, None);
+
+        let entries = load_wal_meta_entries(&wal_dir).unwrap();
+        assert!(entries.is_empty());
+        let checkpoints = load_checkpoint_meta(&wal_dir).unwrap();
+        assert!(checkpoints.is_empty());
+        let wal = fs::read_to_string(wal_file(&wal_dir)).unwrap();
+        let wal: ConsensusWal = toml::from_str(&wal).unwrap();
+        assert_eq!(wal.next_height, 1);
+        assert_eq!(wal.last_round, 0);
+        assert!(wal.locked_block_hash.is_none());
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
     fn recover_resets_stale_consensus_wal_when_metadata_files_are_empty() {
         let wal_dir = temp_wal_dir("recover-stale-consensus-wal-without-metadata");
         fs::create_dir_all(&wal_dir).unwrap();
@@ -6151,6 +6196,91 @@ locked_block_hash = "stale-lock"
         assert_eq!(wal.next_height, 3);
         assert_eq!(wal.last_round, 0);
         assert!(wal.locked_block_hash.is_none());
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn recover_committed_tail_beyond_checkpoint_prunes_stale_duplicate_checkpoint_at_retained_height() {
+        let wal_dir = temp_wal_dir("recover-committed-tail-beyond-checkpoint-prunes-stale-duplicate-checkpoint");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "h1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "h2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1.clone()),
+        };
+        let h2 = e2.content_hash_hex();
+        let e3 = WalMeta {
+            height: 3,
+            round: 0,
+            proposal_hash: "stale-committed-tail".into(),
+            committed: true,
+            state_root_hex: "r3".into(),
+            prev_hash_hex: Some(h2.clone()),
+        };
+
+        persist_wal_meta_entries(&wal_dir, &[e1, e2, e3.clone()]).unwrap();
+        persist_checkpoint_meta(
+            &wal_dir,
+            &[
+                CheckpointMeta {
+                    height: 1,
+                    state_root_hex: "r1".into(),
+                    wal_entry_hash_hex: h1,
+                },
+                CheckpointMeta {
+                    height: 2,
+                    state_root_hex: "stale-r2".into(),
+                    wal_entry_hash_hex: "stale-h2".into(),
+                },
+                CheckpointMeta {
+                    height: 2,
+                    state_root_hex: "r2".into(),
+                    wal_entry_hash_hex: h2.clone(),
+                },
+                CheckpointMeta {
+                    height: 3,
+                    state_root_hex: "stale-r3".into(),
+                    wal_entry_hash_hex: "stale-h3".into(),
+                },
+            ],
+        )
+        .unwrap();
+
+        let recovered = recover_wal_state(&wal_dir).unwrap();
+        assert_eq!(recovered.next_height, 3);
+        assert!(recovered.truncated);
+        assert!(recovered.metadata_only_recovery);
+        assert_eq!(recovered.wal_entries_retained, 2);
+        assert_eq!(recovered.checkpoint_height_retained, Some(2));
+        assert_eq!(recovered.last_checkpoint.as_ref().map(|cp| cp.height), Some(2));
+        assert!(recovered.restored_lock.is_none());
+
+        let entries = load_wal_meta_entries(&wal_dir).unwrap();
+        assert_eq!(entries.len(), 2);
+        assert!(entries.iter().all(|entry| entry.height <= 2));
+
+        let checkpoints = load_checkpoint_meta(&wal_dir).unwrap();
+        assert_eq!(checkpoints.len(), 2);
+        assert_eq!(checkpoints[0].height, 1);
+        assert_eq!(checkpoints[1].height, 2);
+        assert_eq!(checkpoints[1].state_root_hex, "r2");
+        assert_eq!(checkpoints[1].wal_entry_hash_hex, h2);
+        assert!(checkpoints.iter().all(|cp| cp.height <= 2));
+        assert!(checkpoints.iter().all(|cp| cp.wal_entry_hash_hex != e3.content_hash_hex()));
 
         let _ = fs::remove_dir_all(&wal_dir);
     }
@@ -7039,7 +7169,7 @@ locked_block_hash = "stale-lock"
     }
 
     #[test]
-    fn recover_fully_checkpointed_wal_ignores_stale_consensus_wal_lock_without_rewriting_file() {
+    fn recover_fully_checkpointed_wal_rewrites_stale_consensus_wal_lock_to_retained_tip() {
         let wal_dir = temp_wal_dir("recover-fully-checkpointed-no-wal-rewrite");
         fs::create_dir_all(&wal_dir).unwrap();
 
@@ -7079,15 +7209,16 @@ locked_block_hash = "stale-lock"
         assert_ne!(recovered.restored_lock.as_deref(), Some("stale-lock"));
 
         let wal_raw = fs::read_to_string(wal_file(&wal_dir)).unwrap();
-        assert!(wal_raw.contains("next_height = 99"));
-        assert!(wal_raw.contains("last_round = 42"));
-        assert!(wal_raw.contains("\"stale-lock\""));
+        let wal: ConsensusWal = toml::from_str(&wal_raw).unwrap();
+        assert_eq!(wal.next_height, 2);
+        assert_eq!(wal.last_round, 7);
+        assert_eq!(wal.locked_block_hash.as_deref(), Some("h1"));
 
         let _ = fs::remove_dir_all(&wal_dir);
     }
 
     #[test]
-    fn recover_fully_checkpointed_multiple_entries_ignore_stale_consensus_wal_without_rewriting_file() {
+    fn recover_fully_checkpointed_multiple_entries_rewrite_stale_consensus_wal_to_retained_tip() {
         let wal_dir = temp_wal_dir("recover-fully-checkpointed-multi-no-wal-rewrite");
         fs::create_dir_all(&wal_dir).unwrap();
 
@@ -7144,9 +7275,10 @@ locked_block_hash = "stale-lock"
         assert_ne!(recovered.restored_lock.as_deref(), Some("stale-lock"));
 
         let wal_raw = fs::read_to_string(wal_file(&wal_dir)).unwrap();
-        assert!(wal_raw.contains("next_height = 99"));
-        assert!(wal_raw.contains("last_round = 42"));
-        assert!(wal_raw.contains("\"stale-lock\""));
+        let wal: ConsensusWal = toml::from_str(&wal_raw).unwrap();
+        assert_eq!(wal.next_height, 3);
+        assert_eq!(wal.last_round, 4);
+        assert_eq!(wal.locked_block_hash.as_deref(), Some("h2"));
 
         let _ = fs::remove_dir_all(&wal_dir);
     }
