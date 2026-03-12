@@ -2,6 +2,43 @@ use trnm_state::*;
 use trnm_types::*;
 
 #[test]
+fn new_governance_proposals_canonicalize_embedded_version_for_state_root() {
+    let mut state_a = StateStore::new();
+    let mut state_b = StateStore::new();
+
+    let proposal = GovProposalObject {
+        proposal_id: 9_001,
+        title: "Raise challenge bond".into(),
+        proposer: "governance.alice".into(),
+        status: GovProposalStatus::Draft,
+        version: 1,
+    };
+    let mut mismatched_version = proposal.clone();
+    mismatched_version.version = 99;
+
+    let ref_a = state_a.put_proposal_new(proposal).unwrap();
+    let ref_b = state_b.put_proposal_new(mismatched_version).unwrap();
+
+    assert_eq!(ref_a.version, 1);
+    assert_eq!(ref_b.version, 1);
+    assert_eq!(
+        state_a.get_proposal(9_001).unwrap().version,
+        1,
+        "new proposals should canonicalize embedded version to the initial stored object version"
+    );
+    assert_eq!(
+        state_b.get_proposal(9_001).unwrap().version,
+        1,
+        "caller-supplied proposal version must not perturb the canonical initial stored version"
+    );
+    assert_eq!(
+        state_a.state_root(),
+        state_b.state_root(),
+        "state_root should ignore caller-supplied proposal version noise on initial proposal insertion"
+    );
+}
+
+#[test]
 fn task_metadata_string_field_boundaries_should_affect_state_root() {
     let mut st1 = StateStore::new();
     let mut st2 = StateStore::new();

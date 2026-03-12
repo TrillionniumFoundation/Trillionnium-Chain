@@ -693,11 +693,12 @@ impl StateStore {
         })
     }
 
-    pub fn put_proposal_new(&mut self, proposal: GovProposalObject) -> Result<ObjectRef, String> {
+    pub fn put_proposal_new(&mut self, mut proposal: GovProposalObject) -> Result<ObjectRef, String> {
         if self.objects.contains_key(&proposal.proposal_id) {
             return Err("proposal already exists".into());
         }
         let id = proposal.proposal_id;
+        proposal.version = 1;
         self.invalidate_state_root_cache();
         self.objects.insert(
             id,
