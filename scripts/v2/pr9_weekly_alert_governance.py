@@ -591,11 +591,17 @@ def main() -> int:
         removed_keys = wow.get("threshold_removed_keys_vs_last_week", [])
         lines.append("### changed keys vs last week")
         lines.append(f"- newly_changed_keys: `{len(new_keys)}`")
-        for k in new_keys:
-            lines.append(f"  - {k}")
+        if new_keys:
+            for k in new_keys:
+                lines.append(f"  - {k}")
+        else:
+            lines.append("  - none")
         lines.append(f"- no_longer_changed_keys: `{len(removed_keys)}`")
-        for k in removed_keys:
-            lines.append(f"  - {k}")
+        if removed_keys:
+            for k in removed_keys:
+                lines.append(f"  - {k}")
+        else:
+            lines.append("  - none")
         lines.append("")
 
     if sug:
