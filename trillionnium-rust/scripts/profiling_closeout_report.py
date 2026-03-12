@@ -262,11 +262,19 @@ def main():
         age_seconds = file_age_seconds(path)
         freshness = freshness_label(age_seconds)
         basename = os.path.basename(path) if path else "None"
+        anchor_path = path
+        anchor_note = ""
+        if label == "bench_dir" and bench_dir_exists and newest_benchmark_artifact:
+            anchor_path = newest_benchmark_artifact
+            age_seconds = bench_dir_age_seconds()
+            freshness = "empty" if age_seconds is None else freshness_label(age_seconds)
+            basename = os.path.basename(newest_benchmark_artifact)
+            anchor_note = f" anchor={newest_benchmark_artifact}"
         return (
             f"- {label}: status={status} freshness={freshness} "
             f"age_seconds={age_seconds if age_seconds is not None else 'n/a'} "
-            f"updated_at={file_mtime_iso(path) or 'n/a'} basename={basename} "
-            f"path={path or 'None'} producer={producer}"
+            f"updated_at={file_mtime_iso(anchor_path) or 'n/a'} basename={basename} "
+            f"path={path or 'None'} producer={producer}{anchor_note}"
         )
 
     def candidate_preview(label: str, selected: str | None, candidates: list[str], max_items: int = 3) -> list[str]:
