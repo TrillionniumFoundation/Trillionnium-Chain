@@ -2908,6 +2908,38 @@ mod tests {
     }
 
     #[test]
+    fn auto_adaptive_expected_gain_gate_accepts_percent_form_env_values() {
+        let _env = env_lock();
+        let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "64");
+        let _sample_len = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", "64");
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "25%");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "25%");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "25.5%");
+
+        // Experimental lanes tune the expected-gain guard via env knobs. Keep
+        // percent-form values wired through the parser so operators can raise
+        // the gain floor without accidentally enabling adaptive mode.
+        let mut txs = Vec::with_capacity(64);
+        for i in 0..16u64 {
+            txs.push(tx(120_000 + i * 4, vec![], vec![o(42)]));
+            txs.push(tx(120_001 + i * 4, vec![], vec![o(42)]));
+            txs.push(tx(120_002 + i * 4, vec![], vec![o(1_000 + i)]));
+            txs.push(tx(120_003 + i * 4, vec![], vec![o(2_000 + i)]));
+        }
+
+        let d = auto_adaptive_decision(&txs);
+        assert_eq!(d.sample_len, 64);
+        assert!((d.streak_ratio - (16.0 / 63.0)).abs() < f64::EPSILON);
+        assert!((d.hot_key_share - 0.5).abs() < f64::EPSILON);
+        assert!((d.expected_gain_score - ((16.0 / 63.0) * 0.5)).abs() < f64::EPSILON);
+        assert!((d.min_expected_gain_score - 0.255).abs() < f64::EPSILON);
+        assert!(d.expected_gain_score < d.min_expected_gain_score);
+        assert!(!d.use_hot_bucket);
+        assert_eq!(d.reason, "low_expected_gain");
+    }
+
+    #[test]
     fn auto_adaptive_sampling_with_sparse_window_keeps_duplicate_indices_fail_closed() {
         let _env = env_lock();
         let _sample_len = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", "2048");
