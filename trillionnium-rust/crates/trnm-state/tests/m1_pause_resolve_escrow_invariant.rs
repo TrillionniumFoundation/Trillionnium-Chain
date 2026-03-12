@@ -63,6 +63,74 @@ fn resolve_authority_timelock_transition_scrubs_pending_resolve_approvals() {
     assert_eq!(pending.value, "authority-c,authority-d");
 }
 
+#[test]
+fn resolve_authority_pending_cancel_scrubs_pending_resolve_approvals() {
+    // L03 boundary hardening: cancelling a staged resolve_authority timelock is still a
+    // governance boundary transition and must scrub any staged resolve quorum immediately.
+    let mut st = StateStore::new();
+
+    let bootstrap = st
+        .set_gov_param(
+            98_330,
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("bootstrap resolve_authority write should succeed");
+    assert!(matches!(bootstrap, GovParamUpdateOutcome::Scheduled { .. }));
+    let applied = st
+        .set_gov_param(
+            98_350,
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("bootstrap resolve_authority should apply after timelock");
+    assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+
+    let replacement = st
+        .set_gov_param(
+            98_351,
+            7_310,
+            "resolve_authority".into(),
+            "authority-c,authority-d".into(),
+        )
+        .expect("replacement resolve_authority update should be scheduled");
+    assert!(matches!(replacement, GovParamUpdateOutcome::Scheduled { .. }));
+
+    let first = st
+        .stage_or_confirm_resolve_approval(9_981, 1, true, "authority-c", "authority-c,authority-d")
+        .expect("pending replacement authority should stage approval before cancellation");
+    assert!(!first);
+    assert_eq!(st.pending_resolve_approval(9_981), Some((true, 1)));
+    let root_with_pending = st.state_root();
+
+    let cancelled = st
+        .set_gov_param_with_action(
+            98_352,
+            7_310,
+            "resolve_authority".into(),
+            String::new(),
+            GovPendingUpdateAction::Cancel,
+        )
+        .expect("pending resolve_authority update should cancel cleanly");
+    assert!(matches!(cancelled, GovParamUpdateOutcome::Cancelled));
+
+    assert_eq!(st.pending_gov_update("resolve_authority"), None);
+    assert_eq!(
+        st.gov_param_string("resolve_authority").as_deref(),
+        Some("authority-a,authority-b")
+    );
+    assert_eq!(st.pending_resolve_approval(9_981), None);
+    assert_eq!(st.pending_resolve_first_approver(9_981), None);
+    assert_eq!(st.pending_resolve_approval_snapshot(9_981), None);
+    assert_ne!(
+        root_with_pending,
+        st.state_root(),
+        "cancelling a pending resolve_authority boundary must invalidate cached state root"
+    );
+}
+
 const CHALLENGE_ESCROW_ACCOUNT: &str = "treasury.challenge_escrow";
 const CHALLENGE_FORFEIT_TREASURY_ACCOUNT: &str = "treasury.challenge_forfeits";
 const WORKER_SLASH_TREASURY_ACCOUNT: &str = "treasury.worker_slashes";
