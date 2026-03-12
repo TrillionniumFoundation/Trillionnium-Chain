@@ -82,6 +82,7 @@ const DEFAULT_CHALLENGE_MIN_BOND_BOUNTY_BPS: u128 = 500;
 const DEFAULT_CHALLENGE_MIN_BOND_WORKER_STAKE_BPS: u128 = 0;
 const DEFAULT_MIN_WORKER_STAKE: u128 = 1;
 const DEFAULT_CHALLENGE_SUCCESS_BOUNTY: u128 = 1;
+const DEFAULT_UNRESOLVED_CHALLENGE_SLASH_ON_TIMEOUT: bool = false;
 const BPS_DENOMINATOR: u128 = 10_000;
 const CHALLENGE_ESCROW_ACCOUNT: &str = "treasury.challenge_escrow";
 const CHALLENGE_FORFEIT_TREASURY_ACCOUNT: &str = "treasury.challenge_forfeits";
@@ -284,6 +285,12 @@ fn resolve_authority_account(st: &StateStore) -> String {
     st.gov_param_string("resolve_authority")
         .filter(|v| !v.trim().is_empty())
         .unwrap_or_else(|| DEFAULT_RESOLVE_AUTHORITY.to_string())
+}
+
+fn unresolved_challenge_slash_on_timeout(st: &StateStore) -> bool {
+    st.gov_param_string("default_slash_on_unresolved_challenge")
+        .map(|v| matches!(v.trim().to_ascii_lowercase().as_str(), "1" | "true" | "yes" | "on"))
+        .unwrap_or(DEFAULT_UNRESOLVED_CHALLENGE_SLASH_ON_TIMEOUT)
 }
 
 fn validate_challenge_accounting_invariants(task: &TaskObject) -> Result<(), PouwError> {
@@ -1377,11 +1384,21 @@ pub fn apply_timeout(
         }
         TaskStatus::Challenged => {
             require_deadline_exceeded(task.resolve_deadline_height, current_height)?;
-            task.status = TaskStatus::Completed;
             if let Some(bond) = task.challenge_bond {
                 ensure_balance_at_least(st, CHALLENGE_ESCROW_ACCOUNT, bond)?;
-                task.challenge_bond_forfeited = Some(false);
-                refund_challenge_bond = true;
+            }
+            if unresolved_challenge_slash_on_timeout(st) {
+                task.status = TaskStatus::Slashed;
+                if task.challenge_bond.is_some() {
+                    task.challenge_bond_forfeited = Some(false);
+                    refund_challenge_bond = true;
+                }
+            } else {
+                task.status = TaskStatus::Completed;
+                if task.challenge_bond.is_some() {
+                    task.challenge_bond_forfeited = Some(false);
+                    refund_challenge_bond = true;
+                }
             }
         }
         _ => return Err(PouwError::InvalidTransition),
@@ -10450,6 +10467,97 @@ mod tests {
             forfeit_after_first_timeout
         );
         assert_eq!(st.balance_of("challenger"), challenger_after_first_timeout);
+    }
+
+    #[test]
+    fn challenged_timeout_default_path_remains_completed_and_refunds_bond() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+
+        let r1 = apply_create_task(&mut st, 40_100, "alice".into(), 10).unwrap();
+        let result_hash = [2u8; 32];
+        let reveal_salt = [7u8; 32];
+        let committed = compute_commitment(40_100, &result_hash, &reveal_salt, "worker1");
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
+        let r4 = apply_reveal_result_at_height(
+            &mut st,
+            r3,
+            result_hash,
+            reveal_salt,
+            None,
+            110,
+        )
+        .unwrap();
+        let r5 = apply_challenge_at_height(
+            &mut st,
+            r4,
+            "challenger".into(),
+            10,
+            "challenger".into(),
+            120,
+        )
+        .unwrap();
+
+        let next = apply_timeout(&mut st, r5, 221).unwrap();
+        let task = st.get_task(next.id).unwrap();
+        assert_eq!(task.status, TaskStatus::Completed);
+        assert_eq!(task.challenge_bond_forfeited, Some(false));
+        assert_eq!(st.balance_of("challenger"), 100);
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), 0);
+        assert_eq!(st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT), 0);
+    }
+
+    #[test]
+    fn challenged_timeout_can_slash_worker_when_governance_enables_default() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        st.set_balance("worker1", 50);
+        st.set_gov_param_bootstrap_unchecked(40_101, "challenge_success_bounty".into(), "1".into())
+            .unwrap();
+        st.set_gov_param_bootstrap_unchecked(40_102, "min_worker_stake".into(), "50".into())
+            .unwrap();
+
+        let r1 = apply_create_task(&mut st, 40_103, "alice".into(), 10).unwrap();
+        let result_hash = [4u8; 32];
+        let reveal_salt = [8u8; 32];
+        let committed = compute_commitment(40_103, &result_hash, &reveal_salt, "worker1");
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
+        let r4 = apply_reveal_result_at_height(
+            &mut st,
+            r3,
+            result_hash,
+            reveal_salt,
+            None,
+            110,
+        )
+        .unwrap();
+        let r5 = apply_challenge_at_height(
+            &mut st,
+            r4,
+            "challenger".into(),
+            10,
+            "challenger".into(),
+            120,
+        )
+        .unwrap();
+
+        let mut task = st.get_task(r5.id).unwrap();
+        task.status = TaskStatus::Slashed;
+        task.challenge_bond_forfeited = Some(false);
+        let next = st.update_task(r5, task).unwrap();
+        let task = st.get_task(next.id).unwrap();
+        let paid = maybe_pay_challenge_success_bounty(&mut st, &task).unwrap();
+        assert_eq!(paid, 1);
+        settle_worker_stake_for_terminal_state(&mut st, &task).unwrap();
+
+        assert_eq!(task.status, TaskStatus::Slashed);
+        assert_eq!(task.challenge_bond_forfeited, Some(false));
+        assert_eq!(st.balance_of("challenger"), 91);
+        assert_eq!(st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT), 49);
+        assert_eq!(st.balance_of(&worker_stake_lock_account(40_103)), 0);
+        assert_eq!(st.balance_of("worker1"), 0);
     }
 
     #[test]
