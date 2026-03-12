@@ -107,6 +107,11 @@ case "$sub" in
       echo "invalid args for query" >&2
       exit 2
     }
+
+    if delegate_bin="$(resolve_delegate_bin 2>/dev/null)"; then
+      exec "$delegate_bin" tx query "$tx_hash"
+    fi
+
     echo "tx_hash=$tx_hash"
     echo "status=committed"
     ;;
