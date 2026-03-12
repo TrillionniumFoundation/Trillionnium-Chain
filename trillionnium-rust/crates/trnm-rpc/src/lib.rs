@@ -5,7 +5,9 @@ mod transfer;
 
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
-use trnm_oracle::{OracleValidationMetrics, OracleValidationObservation};
+use trnm_oracle::{
+    OracleValidationMetrics, OracleValidationObservation, OracleValidationReport,
+};
 use trnm_types::{GovProposalStatus, TaskStatus};
 
 pub use relay::*;
@@ -49,6 +51,18 @@ pub struct OracleValidateSnapshotResponse {
     pub metrics: OracleValidationMetrics,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub error: Option<String>,
+}
+
+impl From<OracleValidationReport> for OracleValidateSnapshotResponse {
+    fn from(report: OracleValidationReport) -> Self {
+        Self {
+            ok: report.ok,
+            now_ts_ms: report.now_ts_ms,
+            observation: report.observation,
+            metrics: report.metrics,
+            error: report.error,
+        }
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -275,6 +289,41 @@ mod tests {
             assert!(obj.contains_key(k), "missing key: {}", k);
         }
         assert!(!obj.contains_key("error"));
+    }
+
+    #[test]
+    fn oracle_validation_report_into_rpc_response_preserves_contract_shape() {
+        let report = OracleValidationReport {
+            ok: false,
+            now_ts_ms: 456,
+            observation: OracleValidationObservation {
+                stale_reject_total: 1,
+                quorum_reject_total: 0,
+                drift_reject_total: 0,
+                accepted_total: 0,
+            },
+            metrics: OracleValidationMetrics {
+                oracle_stale_reject_total: 1,
+                oracle_quorum_reject_total: 0,
+                oracle_drift_reject_total: 0,
+                oracle_source_cardinality: 2,
+                accepted_total: 0,
+                sample_count: 1,
+            },
+            error: Some("stale".into()),
+        };
+
+        let out: OracleValidateSnapshotResponse = report.clone().into();
+        assert_eq!(out.ok, report.ok);
+        assert_eq!(out.now_ts_ms, report.now_ts_ms);
+        assert_eq!(out.observation, report.observation);
+        assert_eq!(out.metrics, report.metrics);
+        assert_eq!(out.error, report.error);
+
+        let v = serde_json::to_value(out).unwrap();
+        assert_eq!(v["error"], "stale");
+        assert_eq!(v["metrics"]["sample_count"], 1);
+        assert_eq!(v["metrics"]["oracle_stale_reject_total"], 1);
     }
 
     #[test]
