@@ -36,9 +36,22 @@ jobs:
       LC_ALL: C.UTF-8
       LC_NUMERIC: C
       LC_COLLATE: C
+      LC_TIME: C
+      LC_CTYPE: C
+      LC_MESSAGES: C
+      LC_MONETARY: C
+      LC_MEASUREMENT: C
+      LC_NAME: C
+      LC_PAPER: C
+      LC_ADDRESS: C
+      LC_TELEPHONE: C
       PYTHONHASHSEED: "0"
+      PYTHONDONTWRITEBYTECODE: "1"
+      PYTHONIOENCODING: "UTF-8"
+      PYTHONUTF8: "1"
       HOMEBREW_NO_AUTO_UPDATE: "1"
       CI: "true"
+      UMASK: "022"
 
     steps:
       - uses: actions/checkout@v4
