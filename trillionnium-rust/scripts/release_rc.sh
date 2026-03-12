@@ -129,7 +129,7 @@ cargo build --workspace | tee "$OUT/cargo-build.log"
 
 rollback_command="rm -rf $(printf '%q' "$OUT")"
 replay_out_dir="$BASE_OUT"
-replay_command="env TZ=$replay_tz LC_ALL=$replay_lc_all LANG=$replay_lang SOURCE_DATE_EPOCH=$replay_source_date_epoch CARGO_TERM_COLOR=$replay_cargo_term_color RUST_BACKTRACE=$replay_rust_backtrace CARGO_BUILD_JOBS=$replay_cargo_build_jobs OUT_DIR='${replay_out_dir}' MVP_MODE='${MVP_MODE:-prod}' TXS='${TXS:-5000}' THRESHOLD_PROFILE='${THRESHOLD_PROFILE:-stage1}' ./scripts/release_rc.sh"
+replay_command="env TZ=$replay_tz LC_ALL=$replay_lc_all LANG=$replay_lang SOURCE_DATE_EPOCH=$replay_source_date_epoch CARGO_TERM_COLOR=$replay_cargo_term_color RUST_BACKTRACE=$replay_rust_backtrace CARGO_BUILD_JOBS=$replay_cargo_build_jobs OUT_DIR='${replay_out_dir}' MVP_MODE='${MVP_MODE:-prod}' ALLOW_MISSING_RESOLVE_EVENT='${ALLOW_MISSING_RESOLVE_EVENT}' ALLOW_PARTIAL_EVENT_REPLAY='${ALLOW_PARTIAL_EVENT_REPLAY}' TXS='${TXS:-5000}' THRESHOLD_PROFILE='${THRESHOLD_PROFILE:-stage1}' ./scripts/release_rc.sh"
 
 cat > "$OUT/manifest.txt" <<EOF
 release_id=rc-$TS
@@ -144,6 +144,8 @@ evidence_scope=$EVIDENCE_SCOPE
 threshold_profile=${THRESHOLD_PROFILE:-stage1}
 txs=${TXS:-5000}
 env_mvp_mode=${MVP_MODE:-prod}
+env_allow_missing_resolve_event=${ALLOW_MISSING_RESOLVE_EVENT}
+env_allow_partial_event_replay=${ALLOW_PARTIAL_EVENT_REPLAY}
 env_txs=${TXS:-5000}
 env_threshold_profile=${THRESHOLD_PROFILE:-stage1}
 env_tz=${TZ:-<unset>}
@@ -154,6 +156,8 @@ env_cargo_term_color=${CARGO_TERM_COLOR:-<unset>}
 env_rust_backtrace=${RUST_BACKTRACE:-<unset>}
 env_cargo_build_jobs=${CARGO_BUILD_JOBS:-<unset>}
 replay_env_mvp_mode=${MVP_MODE:-prod}
+replay_env_allow_missing_resolve_event=${ALLOW_MISSING_RESOLVE_EVENT}
+replay_env_allow_partial_event_replay=${ALLOW_PARTIAL_EVENT_REPLAY}
 replay_env_txs=${TXS:-5000}
 replay_env_threshold_profile=${THRESHOLD_PROFILE:-stage1}
 replay_env_tz=$replay_tz
