@@ -234,11 +234,20 @@ The scaffold now includes HTTP-backed client implementations for both vendor pat
 - `HttpBackedIntelQuoteVerifierClient`
 - `HttpBackedAmdReportVerifierClient`
 
-These adapters are responsible for:
-1. converting vendor-specific client requests into HTTP requests
-2. injecting headers (`authorization`, `x-request-id`, `x-telemetry-scope`, `x-transport-profile`)
-3. encoding the HTTP body as JSON payload
-4. decoding the HTTP response body back into the normalized verifier response schema
+These adapters are now explicitly layered behind two additional seams:
+- `VerifierProfileResolver`
+- `VerifierAuthInjector`
+
+This lets the scaffold separate:
+1. profile / endpoint resolution
+2. auth header injection
+3. HTTP transport execution
+4. response decoding
+
+The default HTTP-backed adapter path is therefore now:
+- provider -> profile resolver -> auth injector -> HTTP request encode -> retry executor -> transport -> response decode
+
+A fail-closed `RealVerifierHttpTransport` stub is also present now. It intentionally returns `Unavailable` until a real outbound HTTP implementation is wired in.
 
 ### HTTP payload skeletons
 The current adapter layer freezes two JSON request shapes:
