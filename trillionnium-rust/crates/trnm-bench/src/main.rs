@@ -399,6 +399,31 @@ mod tests {
     }
 
     #[test]
+    fn default_hot_streak_reporting_keeps_original_strategy_but_surfaces_adaptive_headroom() {
+        let txs = build_hot_streak_txs(20_000, 2_000, 3, 1);
+
+        assert!(matches!(
+            effective_strategy_for(StrategyArg::Default, &txs),
+            GroupingStrategy::Original
+        ));
+        assert!(matches!(
+            adaptive_candidate_strategy_for(&txs),
+            GroupingStrategy::HotBucketInterleave
+        ));
+        assert!(default_has_adaptive_opportunity(
+            StrategyArg::Default,
+            adaptive_candidate_strategy_for(&txs),
+        ));
+        assert!(emits_auto_profile(
+            StrategyArg::Default,
+            default_has_adaptive_opportunity(
+                StrategyArg::Default,
+                adaptive_candidate_strategy_for(&txs),
+            ),
+        ));
+    }
+
+    #[test]
     fn hot_streak_default_workload_triggers_auto_adaptive_hotspot_detection() {
         let txs = build_hot_streak_txs(20_000, 2_000, 3, 1);
         let decision = auto_adaptive_decision(&txs);
