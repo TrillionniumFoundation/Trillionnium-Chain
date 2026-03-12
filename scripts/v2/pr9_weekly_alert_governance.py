@@ -35,9 +35,19 @@ def normalize_env_value(raw: str) -> str:
         return ""
     if value[0] in {'"', "'"}:
         quote = value[0]
-        end = value.find(quote, 1)
-        if end != -1:
-            return value[1:end]
+        chars: list[str] = []
+        escaped = False
+        for ch in value[1:]:
+            if escaped:
+                chars.append(ch)
+                escaped = False
+                continue
+            if ch == "\\":
+                escaped = True
+                continue
+            if ch == quote:
+                return "".join(chars)
+            chars.append(ch)
     value = re.sub(r"\s+#.*$", "", value)
     return value.rstrip()
 
