@@ -211,3 +211,11 @@ fn relay_heartbeat_failure_reason_collapses_medium_math_and_ideographic_spaces()
     let out = hb.record_failure("rpc\u{205F} timeout\u{3000}bridge");
     assert_eq!(out.message, "rpc timeout bridge");
 }
+
+#[test]
+fn relay_heartbeat_failure_reason_collapses_thin_space_family_for_replay_stability() {
+    let mut hb = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 3));
+
+    let out = hb.record_failure("rpc\u{2008} timeout\u{2009}bridge\u{200A}degraded");
+    assert_eq!(out.message, "rpc timeout bridge degraded");
+}
