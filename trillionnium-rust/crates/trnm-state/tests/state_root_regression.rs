@@ -111,6 +111,47 @@ fn task_metadata_and_proof_type_should_affect_state_root() {
 }
 
 #[test]
+fn task_challenge_window_snapshot_should_affect_state_root() {
+    let mut st1 = StateStore::new();
+    let mut st2 = StateStore::new();
+
+    let base_task = TaskObject {
+        task_id: 8,
+        creator: "alice".into(),
+        bounty: 42,
+        status: TaskStatus::Revealed,
+        proof_type: ProofType::Fraud,
+        metadata: None,
+        worker: Some("worker-1".into()),
+        committed_hash: Some([0x11; 32]),
+        result_hash: None,
+        reveal_salt: None,
+        committed_at_height: Some(10),
+        reveal_deadline_height: Some(20),
+        challenge_deadline_height: Some(30),
+        challenge_window_blocks_snapshot: Some(12),
+        challenged_at_height: None,
+        resolve_deadline_height: Some(42),
+        challenge_bond: None,
+        challenger: None,
+        challenge_bond_forfeited: None,
+        version: 2,
+    };
+
+    let mut changed_task = base_task.clone();
+    changed_task.challenge_window_blocks_snapshot = Some(24);
+
+    st1.put_task_new(base_task).unwrap();
+    st2.put_task_new(changed_task).unwrap();
+
+    assert_ne!(
+        st1.state_root(),
+        st2.state_root(),
+        "State root should incorporate task challenge_window_blocks_snapshot so reveal-time resolve semantics remain deterministic"
+    );
+}
+
+#[test]
 fn pending_sensitive_gov_updates_should_affect_state_root() {
     let mut st1 = StateStore::new();
     let st2 = StateStore::new();
