@@ -1076,6 +1076,50 @@ fn x3_prep_manual_degraded_reason_is_length_capped_for_replayable_compensation()
 }
 
 #[test]
+fn x3_prep_manual_degraded_heartbeat_preserves_last_observed_metrics_in_compensation_event() {
+    let mut request = SettlementRequest::new(1, "0xmanual-hbmetrics".to_string());
+    let token = operator_token();
+
+    let degraded = trnm_bridge_poc::relay_heartbeat::HeartbeatOutcome {
+        heartbeat: Some(trnm_bridge_poc::relay_heartbeat::RelayHeartbeat {
+            source_height: 812,
+            target_height: 807,
+            latency_ms: 91,
+        }),
+        should_retry: false,
+        degraded: true,
+        message: "target relay timeout".to_string(),
+    };
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &degraded,
+        SettlementConfirm::Confirmed { height: 813 },
+    )
+    .unwrap();
+
+    assert_eq!(
+        out,
+        SettlementStep::Compensated {
+            reason: "heartbeat degraded: target relay timeout".to_string(),
+            event: trnm_bridge_poc::x2_settlement_loop::SettlementEvent {
+                phase: "relay_heartbeat_degraded",
+                heartbeat_source_height: Some(812),
+                heartbeat_target_height: Some(807),
+                heartbeat_latency_ms: Some(91),
+                confirm_height: None,
+                confirm_reason: Some("heartbeat degraded: target relay timeout".to_string()),
+            },
+        }
+    );
+    assert_eq!(
+        current_status(&request),
+        &BridgeStatus::Reverted("heartbeat degraded: target relay timeout".to_string())
+    );
+}
+
+#[test]
 fn x3_prep_confirm_failure_reason_sanitizes_invisible_controls_for_replay_stability() {
     let mut request = SettlementRequest::new(1, "0xconfirm-sanitize".to_string());
     let token = operator_token();
