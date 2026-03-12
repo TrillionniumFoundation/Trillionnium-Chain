@@ -11027,6 +11027,15 @@ mod tests {
     }
 
     #[test]
+    fn parse_governed_bool_param_rejects_hidden_zero_width_aliases_fail_closed() {
+        for raw in ["tr\u{200b}ue", "fa\u{200d}lse", "o\u{2060}n", "of\u{feff}f"] {
+            let err = parse_governed_bool_param(raw, "default_slash_on_unresolved_challenge")
+                .expect_err("zero-width boolean alias must be rejected");
+            assert!(matches!(err, PouwError::State(msg) if msg.contains(raw)));
+        }
+    }
+
+    #[test]
     fn unresolved_challenge_slash_on_timeout_defaults_false_when_param_absent() {
         let st = seeded_state();
         assert_eq!(unresolved_challenge_slash_on_timeout(&st).unwrap(), false);
