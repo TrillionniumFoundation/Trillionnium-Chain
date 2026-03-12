@@ -10806,6 +10806,14 @@ mod tests {
     }
 
     #[test]
+    fn parse_governed_bool_param_accepts_mixed_case_aliases_without_whitespace() {
+        for raw in ["TRUE", "Yes", "On", "FALSE", "No", "oFf"] {
+            parse_governed_bool_param(raw, "default_slash_on_unresolved_challenge")
+                .expect("case-insensitive boolean alias must parse when canonicalized without whitespace");
+        }
+    }
+
+    #[test]
     fn parse_governed_bool_param_rejects_malformed_boolean_aliases_fail_closed() {
         let err = parse_governed_bool_param("maybe", "default_slash_on_unresolved_challenge")
             .expect_err("malformed boolean alias must be rejected");
