@@ -693,7 +693,7 @@ impl StateStore {
         }
 
         let approver = snapshot.first_approver.trim();
-        if !is_valid_resolve_actor(approver) {
+        if approver != snapshot.first_approver || !is_valid_resolve_actor(approver) {
             return false;
         }
 
@@ -703,7 +703,8 @@ impl StateStore {
             (None, 2) => return false,
             (Some(second), 2) => {
                 let second_trimmed = second.trim();
-                if !is_valid_resolve_actor(second_trimmed)
+                if second_trimmed != second
+                    || !is_valid_resolve_actor(second_trimmed)
                     || second_trimmed.eq_ignore_ascii_case(approver)
                 {
                     return false;
@@ -2446,6 +2447,34 @@ mod tests {
                 st.pending_resolve_approval(task_id),
                 None,
                 "snapshot approver {bad_approver:?} must be scrubbed"
+            );
+        }
+    }
+
+    #[test]
+    fn restore_pending_resolve_approval_scrubs_whitespace_drifted_approver_boundary() {
+        let mut st = StateStore::new();
+        for (task_id, first_approver, second_approver) in [
+            (9_315, " authority-a", None),
+            (9_316, "authority-a ", None),
+            (9_317, "authority-a", Some(" authority-b")),
+            (9_318, "authority-a", Some("authority-b ")),
+        ] {
+            st.restore_pending_resolve_approval(
+                task_id,
+                Some(PendingResolveApprovalSnapshot {
+                    slash_worker: true,
+                    confirmations: if second_approver.is_some() { 2 } else { 1 },
+                    first_approver: first_approver.into(),
+                    second_approver: second_approver.map(|value| value.into()),
+                    authority_set: "authority-a,authority-b".into(),
+                    task_version: 9,
+                }),
+            );
+            assert_eq!(
+                st.pending_resolve_approval(task_id),
+                None,
+                "snapshot approvers with whitespace drift must be scrubbed"
             );
         }
     }
