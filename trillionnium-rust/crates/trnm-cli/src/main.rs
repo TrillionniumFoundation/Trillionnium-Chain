@@ -465,12 +465,16 @@ fn normalize_json_error(value: &serde_json::Value) -> Option<String> {
     }
 }
 
-fn json_u64_at_path<'a>(value: &'a serde_json::Value, path: &[&str]) -> Option<u64> {
+fn json_u64_at_path(value: &serde_json::Value, path: &[&str]) -> Option<u64> {
     let mut current = value;
     for key in path {
         current = current.get(*key)?;
     }
-    current.as_u64()
+    match current {
+        serde_json::Value::Number(n) => n.as_u64(),
+        serde_json::Value::String(s) => s.trim().parse::<u64>().ok(),
+        _ => None,
+    }
 }
 
 fn infer_json_tx_status(value: &serde_json::Value) -> Option<String> {
@@ -1347,15 +1351,26 @@ mod tests {
         assert_eq!(parsed_nested_code.tx_hash, "0x702");
         assert_eq!(parsed_nested_code.status, "fail");
 
-        let kv_root_code = "tx_hash=0x703\ncode=0\n";
+        let json_string_code = "{\"tx_hash\":\"0x703\",\"code\":\"0\"}";
+        let parsed_string_code = parse_tx_query_response(json_string_code, "0xfallback").unwrap();
+        assert_eq!(parsed_string_code.tx_hash, "0x703");
+        assert_eq!(parsed_string_code.status, "committed");
+
+        let json_nested_string_code = "{\"result\":{\"tx_hash\":\"0x704\",\"deliver_tx\":{\"code\":\"12\"}}}";
+        let parsed_nested_string_code =
+            parse_tx_query_response(json_nested_string_code, "0xfallback").unwrap();
+        assert_eq!(parsed_nested_string_code.tx_hash, "0x704");
+        assert_eq!(parsed_nested_string_code.status, "fail");
+
+        let kv_root_code = "tx_hash=0x705\ncode=0\n";
         let parsed_kv_root_code = parse_tx_query_response(kv_root_code, "0xfallback").unwrap();
-        assert_eq!(parsed_kv_root_code.tx_hash, "0x703");
+        assert_eq!(parsed_kv_root_code.tx_hash, "0x705");
         assert_eq!(parsed_kv_root_code.status, "committed");
 
-        let kv_deliver_code = "tx_hash=0x704\ndeliver_tx_code=12\n";
+        let kv_deliver_code = "tx_hash=0x706\ndeliver_tx_code=12\n";
         let parsed_kv_deliver_code =
             parse_tx_query_response(kv_deliver_code, "0xfallback").unwrap();
-        assert_eq!(parsed_kv_deliver_code.tx_hash, "0x704");
+        assert_eq!(parsed_kv_deliver_code.tx_hash, "0x706");
         assert_eq!(parsed_kv_deliver_code.status, "fail");
     }
 
