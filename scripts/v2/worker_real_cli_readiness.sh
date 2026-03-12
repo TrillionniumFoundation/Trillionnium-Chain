@@ -58,6 +58,9 @@ extract_query_status() {
     # Also accept non-string JSON scalar status values (number/bool), preserving guardrail against empty/null.
     s=$(printf "%s\n" "$raw" | grep -Eio '"(tx_)?status"[[:space:]]*:[[:space:]]*(true|false|[0-9]+)' | sed -E 's/.*:[[:space:]]*(true|false|[0-9]+).*/\1/' | head -n1 || true)
   fi
+
+  s="$(printf "%s" "$s" | sed -E 's/^[[:space:]"'"'"'\[\](){}<>]+//; s/[[:space:]"'"'"'\[\](){}<>]+$//; s/[.,;:!?]+$//')"
+
   printf "%s" "$s"
 }
 
