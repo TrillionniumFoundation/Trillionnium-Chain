@@ -251,7 +251,7 @@ TRNM 当前不是“高 TPS 公链的仿制品”，而是：
 > - 解释 `bft_round_change_backoff_active_height_share_ppm` 时，不要把它当成强制封顶在 100% 的“占比”。
 > - 当 round-change backoff 的活跃高度密度已经超过平均 finality budget 时，该指标**应该允许大于 `1_000_000`**，这样共识抖动/退避主导区间才不会被误读为“只是高一点”。
 > - 与 `bft_round_change_density_avg_milli`、`bft_round_change_backoff_density_avg_milli` 一起看，优先判断是否出现了 clustered jitter / sustained backoff，而不是只看全局均值。
-> - 对 proposer fairness hotspot，不要只盯 `bft_leader_missed_total` 或最终 miss 分布；应同时查看 `bft_leader_missed_top_share_ppm`、`bft_leader_missed_active_validators`、`bft_leader_missed_active_validator_share_ppm`，以及 `bft_leader_missed_active_heights` / `bft_leader_missed_active_height_rate_ppm`，避免把集中在少数 proposer 或少数高度的 miss 误读成“总体分布还行”。
+> - 对 proposer fairness hotspot，不要只盯 `bft_leader_missed_total` 或最终 miss 分布；应同时查看 `bft_leader_missed_top_share_ppm`、`bft_leader_missed_active_validators`、`bft_leader_missed_active_validator_share_ppm`，以及 `bft_leader_missed_active_heights` / `bft_leader_missed_active_height_rate_ppm` 和 `bft_leader_missed_density_avg_milli`，避免把集中在少数 proposer 或少数高度的 miss 误读成“总体分布还行”。
 
 ---
 
