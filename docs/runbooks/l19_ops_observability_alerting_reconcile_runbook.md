@@ -131,12 +131,13 @@ DRY_RUN=1 ALERT_NOTIFY_CHANNEL=slack PR7_DELIVERY_FAIL_MODE=warn \
 - `ALERT_NOTIFY_CHANNEL=slack|telegram|imessage`
 - `ALERT_NOTIFY_PRIMARY_CHANNEL`
 - `ALERT_NOTIFY_BACKUP_CHANNEL`
-- `ALERT_NOTIFY_MIN_LEVEL=WARN|FAIL`
+- `ALERT_NOTIFY_MIN_LEVEL=INFO|WARN|CRITICAL`（兼容 `PASS->INFO`、`FAIL->CRITICAL` 别名）
 - `ALERT_NOTIFY_DEDUP_SECONDS`
 - `ALERT_NOTIFY_AGGREGATE_SECONDS`
 - `ALERT_NOTIFY_STATE_FILE`：默认 `run/pr7-alert-delivery/state.json`
 - `ALERT_NOTIFY_AUDIT_FILE`：默认 `run/pr7-alert-delivery/audit.jsonl`
 - `ALERT_NOTIFY_DEAD_LETTER_FILE`：默认 `run/pr7-alert-delivery/dead-letter.jsonl`
+- `ALERT_NOTIFY_GLOBAL_RETRY_BUDGET_STATE_FILE`：默认 `run/pr7-alert-delivery/retry-budget-state.json`
 - `PR7_DELIVERY_FAIL_MODE=ignore|warn|escalate`
 - `DRY_RUN=1`
 
@@ -151,6 +152,7 @@ DRY_RUN=1 ALERT_NOTIFY_CHANNEL=slack PR7_DELIVERY_FAIL_MODE=warn \
 - `run/pr7-alert-delivery/state.json`
 - `run/pr7-alert-delivery/audit.jsonl`
 - `run/pr7-alert-delivery/dead-letter.jsonl`
+- `run/pr7-alert-delivery/retry-budget-state.json`
 
 ### Status file fields worth checking
 - `status`

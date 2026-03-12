@@ -389,9 +389,12 @@ DRY_RUN=1 ALERT_NOTIFY_CHANNEL=slack ./scripts/v2/pr7_alert_delivery_gate.sh
 - `ALERT_NOTIFY_CHANNEL=slack|telegram|imessage`
 - `ALERT_NOTIFY_PRIMARY_CHANNEL`
 - `ALERT_NOTIFY_BACKUP_CHANNEL`
-- `ALERT_NOTIFY_MIN_LEVEL=WARN|FAIL`
+- `ALERT_NOTIFY_MIN_LEVEL=INFO|WARN|CRITICAL`（兼容 `PASS->INFO`、`FAIL->CRITICAL` 别名）
 - `ALERT_NOTIFY_DEDUP_SECONDS=1800`
 - `ALERT_NOTIFY_STATE_FILE=run/pr7-alert-delivery/state.json`
+- `ALERT_NOTIFY_AUDIT_FILE=run/pr7-alert-delivery/audit.jsonl`
+- `ALERT_NOTIFY_DEAD_LETTER_FILE=run/pr7-alert-delivery/dead-letter.jsonl`
+- `ALERT_NOTIFY_GLOBAL_RETRY_BUDGET_STATE_FILE=run/pr7-alert-delivery/retry-budget-state.json`
 - `PR7_DELIVERY_FAIL_MODE=ignore|warn|escalate`（默认 `ignore`；`escalate` 时投递失败会把 gate 最终返回码提升为 `4`）
 - `DRY_RUN=1`（本地演示，不依赖真实密钥）
 - Slack: `SLACK_WEBHOOK_URL`
@@ -401,6 +404,10 @@ DRY_RUN=1 ALERT_NOTIFY_CHANNEL=slack ./scripts/v2/pr7_alert_delivery_gate.sh
 排障产物：
 - `run/pr7-alerts/<timestamp>-pid*/summary.txt`：PR-6 生成的原始告警摘要
 - `run/pr7-alerts/<timestamp>-pid*/pr7-delivery-status.env`：PR-7 最终状态（`status/pr6_rc/pr7_rc/final_rc/fail_mode/delivery_event/primary_channel/backup_channel/success_channels/failed_channels/channels_ok/channels_failed/partial_success/run_dir/lock_dir/report/audit_file/generated_at_utc`）
+- `run/pr7-alert-delivery/state.json`：累计投递/抑制/失败统计与最近一次投递元数据
+- `run/pr7-alert-delivery/audit.jsonl`：逐次投递/抑制/失败审计流
+- `run/pr7-alert-delivery/dead-letter.jsonl`：重试耗尽后的 dead-letter 记录
+- `run/pr7-alert-delivery/retry-budget-state.json`：跨运行的全局重试预算状态
 
 建议：
 - 本地 dry-run 默认用 `PR7_DELIVERY_FAIL_MODE=warn`，既保留 `pr7_rc` 可观测性，又不把临时通道故障误判成规则引擎失败。
