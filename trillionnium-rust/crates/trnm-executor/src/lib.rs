@@ -2588,6 +2588,33 @@ mod tests {
     }
 
     #[test]
+    fn auto_adaptive_small_batch_threshold_accepts_comma_grouped_env_values() {
+        let _env = env_lock();
+        let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "1,024");
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.0");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.0");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.0");
+
+        // Experimental lanes tune adaptive entry thresholds via env knobs.
+        // Comma-grouped numeric values should parse for min-batch gating so a
+        // medium hotspot batch still stays fail-closed below the configured
+        // threshold instead of switching strategies early.
+        let mut txs = Vec::with_capacity(600);
+        for i in 0..600u64 {
+            txs.push(tx(i, vec![], vec![o(42)]));
+        }
+
+        let d = auto_adaptive_decision(&txs);
+        assert_eq!(d.sample_len, txs.len());
+        assert!(!d.use_hot_bucket);
+        assert_eq!(d.reason, "small_batch");
+        assert_eq!(d.streak_ratio, 0.0);
+        assert_eq!(d.hot_key_share, 0.0);
+        assert_eq!(d.expected_gain_score, 0.0);
+    }
+
+    #[test]
     fn auto_adaptive_sub_min_batch_hotspots_stay_fail_closed() {
         let _env = env_lock();
         let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "64");
