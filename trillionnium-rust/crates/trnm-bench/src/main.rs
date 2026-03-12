@@ -314,6 +314,22 @@ mod tests {
     }
 
     #[test]
+    fn hot_streak_zero_key_budget_fails_closed_to_single_hot_domain() {
+        let txs = build_hot_streak_txs(64, 0, 3, 1);
+        let decision = auto_adaptive_decision(&txs);
+
+        assert_eq!(txs.len(), 64);
+        assert!(txs
+            .iter()
+            .all(|tx| tx.read_set.iter().all(|obj| obj.id == 0)));
+        assert!(txs
+            .iter()
+            .all(|tx| tx.write_set.iter().all(|obj| obj.id == 0)));
+        assert!(decision.use_hot_bucket);
+        assert_eq!(decision.reason, "hotspot_detected");
+    }
+
+    #[test]
     fn hot_streak_builder_clamps_zero_direct_inputs_to_safe_minima() {
         let txs = build_hot_streak_txs(32, 4, 0, 0);
 
