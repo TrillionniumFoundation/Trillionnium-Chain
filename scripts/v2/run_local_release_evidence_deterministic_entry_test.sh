@@ -39,6 +39,27 @@ if ! grep -q 'replay_env_trnm_challenge_reexec_entry=' "$TARGET"; then
   exit 1
 fi
 
+RUNBOOK="$ROOT/trillionnium-rust/docs/runbooks/local-release-evidence.md"
+if [[ ! -f "$RUNBOOK" ]]; then
+  echo "[FAIL] missing runbook: $RUNBOOK" >&2
+  exit 1
+fi
+
+runbook_required_lines=(
+  '`replay_env_*` 才是脚本写入的**确定性复放基线**'
+  '做 RC 复放、审计引用或文档摘录时，应优先引用 `replay_env_*` 与 `replay_command=`'
+  '实际覆盖环境：`env_trnm_challenge_reexec_entry=<value|<unset>>`'
+  '复放环境：`replay_env_trnm_challenge_reexec_entry=<resolved-entry-absolute-path>`'
+  '解析后的入口：`challenge_reexec_entry=<resolved-entry-absolute-path>`'
+)
+
+for line in "${runbook_required_lines[@]}"; do
+  if ! grep -Fq "$line" "$RUNBOOK"; then
+    echo "[FAIL] missing runbook replay/env guard phrase: $line" >&2
+    exit 1
+  fi
+done
+
 if ! grep -q 'truth_source=$REPO_ROOT/RELEASE_READINESS.md' "$TARGET"; then
   echo "[FAIL] expected summary truth_source to stay pinned to RELEASE_READINESS.md" >&2
   exit 1
