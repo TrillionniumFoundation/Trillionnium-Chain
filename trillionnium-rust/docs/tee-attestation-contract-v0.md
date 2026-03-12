@@ -238,14 +238,20 @@ These adapters are now explicitly layered behind two additional seams:
 - `VerifierProfileResolver`
 - `VerifierAuthInjector`
 
+The profile resolver seam is no longer just a placeholder. The scaffold now includes:
+- `RuntimeVerifierProfileRegistry`
+- `RegistryBackedVerifierProfileResolver`
+
+This lets the system validate that a named transport profile actually exists, matches the expected transport mode, and matches the expected endpoint family before any outbound call is attempted.
+
 This lets the scaffold separate:
-1. profile / endpoint resolution
+1. runtime profile / endpoint resolution
 2. auth header injection
 3. HTTP transport execution
 4. response decoding
 
 The default HTTP-backed adapter path is therefore now:
-- provider -> profile resolver -> auth injector -> HTTP request encode -> retry executor -> transport -> response decode
+- provider -> registry-backed profile resolver -> auth injector -> HTTP request encode -> retry executor -> transport -> response decode
 
 A fail-closed `RealVerifierHttpTransport` stub is also present now. It intentionally returns `Unavailable` until a real outbound HTTP implementation is wired in.
 
@@ -264,6 +270,8 @@ This means mock and future HTTP-backed clients share the same response contract,
 Provider-backed clients now also support a telemetry recorder seam:
 - `VerifierTelemetrySink`
 - default sink: `NoopVerifierTelemetrySink`
+- recorder adapter: `JsonEncodingTelemetrySink`
+- recorder backend trait: `VerifierTelemetryRecorder`
 
 The provider layer emits three event stages into the sink:
 1. `RequestPrepared`
@@ -271,6 +279,7 @@ The provider layer emits three event stages into the sink:
 3. `ResponseMapped`
 
 This makes request/response telemetry observable without coupling the transport or provider layers to a concrete logging backend.
+The current scaffold can already serialize those events into a recorder-friendly JSON line shape via the recorder adapter.
 
 ## report_data_hash binding
 `report_data_hash` must match the task `result_hash` carried by the bound envelope.
