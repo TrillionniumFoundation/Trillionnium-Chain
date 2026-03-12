@@ -528,4 +528,43 @@ mod tests {
         assert_eq!(report.metrics.oracle_stale_reject_total, 1);
         assert_eq!(report.metrics.accepted_total, 0);
     }
+
+    #[test]
+    fn observed_report_maps_quorum_rejection_to_stable_error_label() {
+        let p = policy();
+        let snap = OracleSnapshot::new(
+            "btc/usd",
+            100_000,
+            vec![source("coingecko")],
+            1,
+            Some(100_000),
+            Some(120),
+            1_000,
+            2_000,
+            10_000,
+        )
+        .expect("snapshot build");
+
+        let report = validate_snapshot_observed(&p, &snap, 10_100);
+        assert!(!report.ok);
+        assert_eq!(report.error.as_deref(), Some("quorum"));
+        assert_eq!(report.observation.quorum_reject_total, 1);
+        assert_eq!(report.metrics.oracle_quorum_reject_total, 1);
+        assert_eq!(report.metrics.oracle_source_cardinality, 1);
+        assert_eq!(report.metrics.accepted_total, 0);
+    }
+
+    #[test]
+    fn observed_report_maps_drift_rejection_to_stable_error_label() {
+        let p = policy();
+        let snap = snapshot_with(120_000, Some(100_000), 10_000);
+
+        let report = validate_snapshot_observed(&p, &snap, 10_100);
+        assert!(!report.ok);
+        assert_eq!(report.error.as_deref(), Some("drift"));
+        assert_eq!(report.observation.drift_reject_total, 1);
+        assert_eq!(report.metrics.oracle_drift_reject_total, 1);
+        assert_eq!(report.metrics.oracle_source_cardinality, 2);
+        assert_eq!(report.metrics.accepted_total, 0);
+    }
 }
