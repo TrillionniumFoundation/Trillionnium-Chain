@@ -677,6 +677,39 @@ mod tests {
     }
 
     #[test]
+    fn observed_report_keeps_single_snapshot_source_cardinality_on_unclassified_error() {
+        let p = OraclePolicy {
+            min_sources: 2,
+            max_staleness_ms: 5_000,
+            max_deviation_bps: 10_001,
+            max_update_rate_per_window: 60,
+        };
+        let snap = OracleSnapshot::new(
+            "btc/usd",
+            100_000,
+            vec![source("coingecko"), source("binance"), source("chainlink")],
+            3,
+            Some(100_100),
+            Some(120),
+            1_000,
+            2_000,
+            10_000,
+        )
+        .expect("snapshot should be valid");
+
+        let report = validate_snapshot_observed(&p, &snap, 10_100);
+        assert!(!report.ok);
+        assert_eq!(
+            report.error.as_deref(),
+            Some("invalid policy: max_deviation_bps must be <= 10000")
+        );
+        assert_eq!(report.metrics.oracle_source_cardinality, 3);
+        assert_eq!(report.metrics.accepted_total, 0);
+        assert_eq!(report.metrics.classified_reject_total(), 0);
+        assert_eq!(report.metrics.sample_count, 1);
+    }
+
+    #[test]
     fn observed_report_preserves_single_snapshot_counter_conservation_for_classified_outcomes() {
         let reports = vec![
             validate_snapshot_observed(&policy(), &snapshot_with(100_000, Some(100_100), 10_000), 10_100),
