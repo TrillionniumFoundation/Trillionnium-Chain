@@ -737,6 +737,21 @@ def main():
             for key in executor_context_keys
             if key in executor_profile_metrics
         ]
+        embedded_profile_path = executor_profile_metrics.get("profile.report.path")
+        if executor_profile:
+            executor_context_lines.extend([
+                f"- executor_profile.selected_artifact_path: {executor_profile}",
+                f"- executor_profile.selected_artifact_exists: {'true' if os.path.exists(executor_profile) else 'false'}",
+            ])
+        if embedded_profile_path:
+            embedded_profile_exists = os.path.exists(embedded_profile_path)
+            executor_context_lines.extend([
+                f"- executor_profile.embedded_report_path_exists: {'true' if embedded_profile_exists else 'false'}",
+                (
+                    "- executor_profile.embedded_report_path_matches_selected: "
+                    f"{'true' if executor_profile and os.path.abspath(embedded_profile_path) == os.path.abspath(executor_profile) else 'false'}"
+                ),
+            ])
         if executor_context_lines:
             lines.append("")
             lines.append("### Executor Profile Context")
