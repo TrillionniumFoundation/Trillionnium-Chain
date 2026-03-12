@@ -272,6 +272,50 @@ def capture_stamp_alignment_status(paths_by_label: list[tuple[str, str | None]])
     )
 
 
+def capture_epoch_span_summary(paths_by_label: list[tuple[str, str | None]]) -> tuple[str, int | None, str]:
+    normalized = []
+    missing = []
+    for label, path in paths_by_label:
+        stamp = detect_capture_stamp(path)
+        if not stamp:
+            missing.append(label)
+            continue
+        normalized_epoch = normalize_capture_stamp(*stamp)
+        if normalized_epoch is None:
+            missing.append(label)
+            continue
+        normalized.append((label, normalized_epoch))
+    if not normalized:
+        return ("unavailable", None, "no selected artifacts expose a normalizable capture stamp")
+    if missing:
+        return (
+            "partial",
+            None,
+            f"some selected artifacts do not expose a normalizable capture epoch: {', '.join(missing)}",
+        )
+    epochs = [epoch for _, epoch in normalized]
+    span_seconds = max(epochs) - min(epochs)
+    if span_seconds == 0:
+        return ("identical", span_seconds, "all selected artifacts normalize to the same capture second")
+    if span_seconds <= 15 * 60:
+        return (
+            "tight",
+            span_seconds,
+            "selected artifacts normalize to a tight capture window suitable for closeout review",
+        )
+    if span_seconds <= 2 * 60 * 60:
+        return (
+            "loose",
+            span_seconds,
+            "selected artifacts normalize to a loose capture window; refresh recommended before strong closeout claims",
+        )
+    return (
+        "divergent",
+        span_seconds,
+        "selected artifacts normalize to a divergent capture window and should not be treated as one coherent closeout set",
+    )
+
+
 def must_run_gate_artifact_posture(bench_dir_exists: bool, classic, mixed, executor_profile) -> str:
     benchmark_artifacts = [classic, mixed, executor_profile]
     persisted_count = sum(1 for path in benchmark_artifacts if path and os.path.exists(path))
@@ -731,8 +775,16 @@ def main():
     benchmark_capture_stamp_status, benchmark_capture_stamp_reason = capture_stamp_alignment_status(
         benchmark_capture_paths
     )
+    benchmark_capture_epoch_status, benchmark_capture_epoch_span_seconds, benchmark_capture_epoch_reason = capture_epoch_span_summary(
+        benchmark_capture_paths
+    )
     lines.append(f"- selected_capture_stamp_alignment: {capture_stamp_status}")
     lines.append(f"- selected_capture_stamp_alignment_reason: {capture_stamp_reason}")
+    lines.append(f"- benchmark_selected_capture_epoch_window: {benchmark_capture_epoch_status}")
+    lines.append(
+        f"- benchmark_selected_capture_epoch_window_span_seconds: {benchmark_capture_epoch_span_seconds if benchmark_capture_epoch_span_seconds is not None else 'n/a'}"
+    )
+    lines.append(f"- benchmark_selected_capture_epoch_window_reason: {benchmark_capture_epoch_reason}")
 
     benchmark_pools = [
         candidate_pool_health_struct("classic_bench_candidates", classic, classic_candidates),
