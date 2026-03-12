@@ -580,6 +580,7 @@ impl StateStore {
 
     pub fn restore_task(&mut self, id: u64, snapshot: Option<TaskObject>) {
         self.invalidate_state_root_cache();
+        self.remove_gov_param_key_index_for_id(id);
         match snapshot {
             Some(task) => {
                 self.objects.insert(
@@ -641,6 +642,10 @@ impl StateStore {
             .write()
             .expect("state root cache poisoned")
             .take();
+    }
+
+    fn remove_gov_param_key_index_for_id(&mut self, id: u64) {
+        self.gov_param_key_index.retain(|_, mapped_id| *mapped_id != id);
     }
 
     pub fn put_task_new(&mut self, task: TaskObject) -> Result<ObjectRef, String> {
@@ -1550,6 +1555,11 @@ impl StateStore {
             hasher.update(b"balance");
             hash_len_prefixed_str(&mut hasher, addr);
             hasher.update(bal.to_le_bytes());
+        }
+        for (key, key_id) in &self.gov_param_key_index {
+            hasher.update(b"gov_param_key_index");
+            hash_len_prefixed_str(&mut hasher, key);
+            hasher.update(key_id.to_le_bytes());
         }
         for (key, pending) in &self.pending_gov_updates {
             hasher.update(b"gov_pending");
@@ -4265,6 +4275,47 @@ mod tests {
             st_a.state_root(),
             st_b.state_root(),
             "embedded governance key_id must contribute to state_root so corrupt/mismatched governance snapshots cannot hash identically"
+        );
+    }
+
+    #[test]
+    fn state_root_changes_when_gov_param_key_index_mapping_changes() {
+        let mut st_a = StateStore::new();
+        st_a.objects.insert(
+            7001,
+            VersionedObject {
+                version: 1,
+                value: ObjectValue::GovParam(GovParamObject {
+                    key_id: 7001,
+                    key: "monetary_base_issuance_per_tick".into(),
+                    value: "7".into(),
+                    version: 1,
+                }),
+            },
+        );
+        st_a.gov_param_key_index
+            .insert("monetary_base_issuance_per_tick".into(), 7001);
+
+        let mut st_b = StateStore::new();
+        st_b.objects.insert(
+            7001,
+            VersionedObject {
+                version: 1,
+                value: ObjectValue::GovParam(GovParamObject {
+                    key_id: 7001,
+                    key: "monetary_base_issuance_per_tick".into(),
+                    value: "7".into(),
+                    version: 1,
+                }),
+            },
+        );
+        st_b.gov_param_key_index
+            .insert("monetary_base_issuance_per_tick".into(), 7999);
+
+        assert_ne!(
+            st_a.state_root(),
+            st_b.state_root(),
+            "governance key-index mapping must contribute to state_root so restore/rollback snapshots with different effective monetary routing cannot hash identically"
         );
     }
 
