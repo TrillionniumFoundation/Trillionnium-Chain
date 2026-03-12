@@ -3393,6 +3393,28 @@ mod tests {
     }
 
     #[test]
+    fn active_height_budget_share_metrics_can_exceed_one_million_when_jitter_or_fairness_dominates_finality() {
+        let finality_avg = 2u128;
+        let round_change_density_avg_milli = 3_000u64;
+        let round_change_backoff_density_avg_milli = 4_500u64;
+        let leader_missed_density_avg_milli = 2_500u64;
+
+        let round_change_active_height_share_ppm =
+            finality_budget_share_ppm(round_change_density_avg_milli, finality_avg);
+        let round_change_backoff_active_height_share_ppm =
+            finality_budget_share_ppm(round_change_backoff_density_avg_milli, finality_avg);
+        let leader_missed_active_height_share_ppm =
+            finality_budget_share_ppm(leader_missed_density_avg_milli, finality_avg);
+
+        assert_eq!(round_change_active_height_share_ppm, 1_500_000);
+        assert_eq!(round_change_backoff_active_height_share_ppm, 2_250_000);
+        assert_eq!(leader_missed_active_height_share_ppm, 1_250_000);
+        assert!(round_change_active_height_share_ppm > 1_000_000);
+        assert!(round_change_backoff_active_height_share_ppm > 1_000_000);
+        assert!(leader_missed_active_height_share_ppm > 1_000_000);
+    }
+
+    #[test]
     fn hot_object_active_share_metrics_avoid_zero_block_dilution() {
         let all_block_top_label_share_samples_ppm = vec![0u128, 500_000, 800_000];
         let all_block_tail_share_samples_ppm = vec![0u128, 500_000, 200_000];
