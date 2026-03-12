@@ -386,7 +386,9 @@ DRY_RUN=1 ALERT_NOTIFY_CHANNEL=slack ./scripts/v2/pr7_alert_delivery_gate.sh
 ```
 
 常用环境变量：
-- `ALERT_NOTIFY_CHANNEL=slack|telegram`
+- `ALERT_NOTIFY_CHANNEL=slack|telegram|imessage`
+- `ALERT_NOTIFY_PRIMARY_CHANNEL`
+- `ALERT_NOTIFY_BACKUP_CHANNEL`
 - `ALERT_NOTIFY_MIN_LEVEL=WARN|FAIL`
 - `ALERT_NOTIFY_DEDUP_SECONDS=1800`
 - `ALERT_NOTIFY_STATE_FILE=run/pr7-alert-delivery/state.json`
@@ -394,6 +396,7 @@ DRY_RUN=1 ALERT_NOTIFY_CHANNEL=slack ./scripts/v2/pr7_alert_delivery_gate.sh
 - `DRY_RUN=1`（本地演示，不依赖真实密钥）
 - Slack: `SLACK_WEBHOOK_URL`
 - Telegram: `TELEGRAM_BOT_TOKEN` + `TELEGRAM_CHAT_ID`
+- iMessage: `IMESSAGE_TO`
 
 排障产物：
 - `run/pr7-alerts/<timestamp>-pid*/summary.txt`：PR-6 生成的原始告警摘要
