@@ -1,5 +1,7 @@
 use std::collections::BTreeMap;
 use std::sync::Arc;
+#[cfg(test)]
+use std::sync::Mutex;
 
 use serde::{Deserialize, Serialize};
 
@@ -170,6 +172,7 @@ struct HttpVerifierRequest {
     headers: BTreeMap<String, String>,
     body: String,
     timeout_ms: u64,
+    retry_policy: RetryBackoffPolicy,
 }
 
 #[allow(dead_code)]
@@ -186,6 +189,73 @@ trait VerifierHttpTransport: Send + Sync {
         http_request: &HttpVerifierRequest,
         request: &BackendVerificationRequest<'_>,
     ) -> Result<HttpVerifierResponse, BackendExecutionError>;
+}
+
+#[allow(dead_code)]
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct HttpRetryExecution {
+    attempts: u32,
+    response: HttpVerifierResponse,
+}
+
+#[allow(dead_code)]
+trait VerifierHttpRetryExecutor: Send + Sync {
+    fn execute(
+        &self,
+        transport: &dyn VerifierHttpTransport,
+        http_request: &HttpVerifierRequest,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<HttpRetryExecution, BackendExecutionError>;
+}
+
+#[allow(dead_code)]
+struct PolicyAwareHttpRetryExecutor;
+
+impl VerifierHttpRetryExecutor for PolicyAwareHttpRetryExecutor {
+    fn execute(
+        &self,
+        transport: &dyn VerifierHttpTransport,
+        http_request: &HttpVerifierRequest,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<HttpRetryExecution, BackendExecutionError> {
+        let max_attempts = http_request.retry_policy.max_attempts.max(1);
+        let mut last_retryable_error: Option<BackendExecutionError> = None;
+        for attempt in 1..=max_attempts {
+            let mut attempt_request = http_request.clone();
+            attempt_request
+                .headers
+                .insert("x-attempt".to_string(), attempt.to_string());
+            match transport.send(&attempt_request, request) {
+                Ok(response) if response.status_code >= 500 && attempt < max_attempts => continue,
+                Ok(response) => {
+                    return Ok(HttpRetryExecution {
+                        attempts: attempt,
+                        response,
+                    })
+                }
+                Err(err @ BackendExecutionError::Unavailable { .. })
+                | Err(err @ BackendExecutionError::Internal { .. }) if attempt < max_attempts => {
+                    last_retryable_error = Some(err);
+                    continue;
+                }
+                Err(err) => return Err(err),
+            }
+        }
+        Err(last_retryable_error.unwrap_or_else(|| BackendExecutionError::Unavailable {
+            backend: request.backend_label(RealTeeBackend::backend_id_static()),
+            reason: "http retry executor exhausted all attempts".to_string(),
+        }))
+    }
+}
+
+trait VerifierTelemetrySink: Send + Sync {
+    fn emit(&self, event: VerifierTelemetryEvent);
+}
+
+struct NoopVerifierTelemetrySink;
+
+impl VerifierTelemetrySink for NoopVerifierTelemetrySink {
+    fn emit(&self, _event: VerifierTelemetryEvent) {}
 }
 
 #[allow(dead_code)]
@@ -952,6 +1022,23 @@ fn build_response_telemetry_event(
     }
 }
 
+fn build_mapped_telemetry_event(
+    metadata: &ExternalCallMetadata,
+    transport: &VerifierTransportConfig,
+    response: &MockVerifierResponse,
+) -> VerifierTelemetryEvent {
+    VerifierTelemetryEvent {
+        kind: VerifierTelemetryEventKind::ResponseMapped,
+        request_id: metadata.request_id.clone(),
+        telemetry_scope: metadata.telemetry_scope.clone(),
+        transport_mode: transport.mode.clone(),
+        profile: transport.profile.clone(),
+        backend_id: Some(response.backend_id.clone()),
+        status: Some(response.status),
+        detail: response.detail.clone(),
+    }
+}
+
 fn validate_response_telemetry_event(
     response: &MockVerifierResponse,
     metadata: &ExternalCallMetadata,
@@ -1174,6 +1261,7 @@ fn build_intel_quote_http_request(
         headers: build_http_headers(&request_input.transport, &request_input.call_metadata),
         body,
         timeout_ms: request_input.transport.timeout_ms,
+        retry_policy: request_input.transport.retry_policy.clone(),
     })
 }
 
@@ -1202,6 +1290,7 @@ fn build_amd_report_http_request(
         headers: build_http_headers(&request_input.transport, &request_input.call_metadata),
         body,
         timeout_ms: request_input.transport.timeout_ms,
+        retry_policy: request_input.transport.retry_policy.clone(),
     })
 }
 
@@ -1444,12 +1533,24 @@ fn verify_fixture_amd_client_request(
 #[allow(dead_code)]
 struct HttpBackedIntelQuoteVerifierClient {
     transport: Arc<dyn VerifierHttpTransport>,
+    retry_executor: Arc<dyn VerifierHttpRetryExecutor>,
 }
 
 impl HttpBackedIntelQuoteVerifierClient {
     #[allow(dead_code)]
     fn new(transport: Arc<dyn VerifierHttpTransport>) -> Self {
-        Self { transport }
+        Self::with_retry_executor(transport, Arc::new(PolicyAwareHttpRetryExecutor))
+    }
+
+    #[allow(dead_code)]
+    fn with_retry_executor(
+        transport: Arc<dyn VerifierHttpTransport>,
+        retry_executor: Arc<dyn VerifierHttpRetryExecutor>,
+    ) -> Self {
+        Self {
+            transport,
+            retry_executor,
+        }
     }
 }
 
@@ -1460,20 +1561,34 @@ impl IntelQuoteVerifierClient for HttpBackedIntelQuoteVerifierClient {
         request: &BackendVerificationRequest<'_>,
     ) -> Result<MockVerifierResponse, BackendExecutionError> {
         let http_request = build_intel_quote_http_request(request_input)?;
-        let http_response = self.transport.send(&http_request, request)?;
-        decode_http_verifier_response(&http_response, request)
+        let execution = self
+            .retry_executor
+            .execute(self.transport.as_ref(), &http_request, request)?;
+        decode_http_verifier_response(&execution.response, request)
     }
 }
 
 #[allow(dead_code)]
 struct HttpBackedAmdReportVerifierClient {
     transport: Arc<dyn VerifierHttpTransport>,
+    retry_executor: Arc<dyn VerifierHttpRetryExecutor>,
 }
 
 impl HttpBackedAmdReportVerifierClient {
     #[allow(dead_code)]
     fn new(transport: Arc<dyn VerifierHttpTransport>) -> Self {
-        Self { transport }
+        Self::with_retry_executor(transport, Arc::new(PolicyAwareHttpRetryExecutor))
+    }
+
+    #[allow(dead_code)]
+    fn with_retry_executor(
+        transport: Arc<dyn VerifierHttpTransport>,
+        retry_executor: Arc<dyn VerifierHttpRetryExecutor>,
+    ) -> Self {
+        Self {
+            transport,
+            retry_executor,
+        }
     }
 }
 
@@ -1484,8 +1599,10 @@ impl AmdReportVerifierClient for HttpBackedAmdReportVerifierClient {
         request: &BackendVerificationRequest<'_>,
     ) -> Result<MockVerifierResponse, BackendExecutionError> {
         let http_request = build_amd_report_http_request(request_input)?;
-        let http_response = self.transport.send(&http_request, request)?;
-        decode_http_verifier_response(&http_response, request)
+        let execution = self
+            .retry_executor
+            .execute(self.transport.as_ref(), &http_request, request)?;
+        decode_http_verifier_response(&execution.response, request)
     }
 }
 
@@ -1588,6 +1705,7 @@ impl AmdReportVerifierClient for FixtureBackedAmdReportVerifierClient {
 struct ClientBackedIntelQuoteVerifierProvider {
     client: Arc<dyn IntelQuoteVerifierClient>,
     config_source: Arc<dyn VerifierTransportConfigSource>,
+    telemetry_sink: Arc<dyn VerifierTelemetrySink>,
 }
 
 impl ClientBackedIntelQuoteVerifierProvider {
@@ -1595,7 +1713,19 @@ impl ClientBackedIntelQuoteVerifierProvider {
         client: Arc<dyn IntelQuoteVerifierClient>,
         config_source: Arc<dyn VerifierTransportConfigSource>,
     ) -> Self {
-        Self { client, config_source }
+        Self::with_telemetry_sink(client, config_source, Arc::new(NoopVerifierTelemetrySink))
+    }
+
+    fn with_telemetry_sink(
+        client: Arc<dyn IntelQuoteVerifierClient>,
+        config_source: Arc<dyn VerifierTransportConfigSource>,
+        telemetry_sink: Arc<dyn VerifierTelemetrySink>,
+    ) -> Self {
+        Self {
+            client,
+            config_source,
+            telemetry_sink,
+        }
     }
 }
 
@@ -1620,8 +1750,10 @@ impl IntelQuoteVerifierProvider for ClientBackedIntelQuoteVerifierProvider {
             &input.attestation_target,
             &transport,
         );
+        let request_event = build_request_telemetry_event(&call_metadata, &transport);
+        self.telemetry_sink.emit(request_event.clone());
         let client_request = IntelQuoteVerifierClientRequest {
-            request_event: build_request_telemetry_event(&call_metadata, &transport),
+            request_event,
             call_metadata,
             transport,
             attestation_target: input.attestation_target.clone(),
@@ -1633,6 +1765,11 @@ impl IntelQuoteVerifierProvider for ClientBackedIntelQuoteVerifierProvider {
         };
         let response = self.client.verify_intel_quote_request(&client_request, request)?;
         validate_response_telemetry_event(&response, &client_request.call_metadata, request)?;
+        if let Some(event) = response.telemetry_event.clone() {
+            self.telemetry_sink.emit(event);
+        }
+        let mapped_event = build_mapped_telemetry_event(&client_request.call_metadata, &client_request.transport, &response);
+        self.telemetry_sink.emit(mapped_event);
         map_mock_verifier_response(response, request)
     }
 }
@@ -1640,6 +1777,7 @@ impl IntelQuoteVerifierProvider for ClientBackedIntelQuoteVerifierProvider {
 struct ClientBackedAmdReportVerifierProvider {
     client: Arc<dyn AmdReportVerifierClient>,
     config_source: Arc<dyn VerifierTransportConfigSource>,
+    telemetry_sink: Arc<dyn VerifierTelemetrySink>,
 }
 
 impl ClientBackedAmdReportVerifierProvider {
@@ -1647,7 +1785,19 @@ impl ClientBackedAmdReportVerifierProvider {
         client: Arc<dyn AmdReportVerifierClient>,
         config_source: Arc<dyn VerifierTransportConfigSource>,
     ) -> Self {
-        Self { client, config_source }
+        Self::with_telemetry_sink(client, config_source, Arc::new(NoopVerifierTelemetrySink))
+    }
+
+    fn with_telemetry_sink(
+        client: Arc<dyn AmdReportVerifierClient>,
+        config_source: Arc<dyn VerifierTransportConfigSource>,
+        telemetry_sink: Arc<dyn VerifierTelemetrySink>,
+    ) -> Self {
+        Self {
+            client,
+            config_source,
+            telemetry_sink,
+        }
     }
 }
 
@@ -1672,8 +1822,10 @@ impl AmdReportVerifierProvider for ClientBackedAmdReportVerifierProvider {
             &input.attestation_target,
             &transport,
         );
+        let request_event = build_request_telemetry_event(&call_metadata, &transport);
+        self.telemetry_sink.emit(request_event.clone());
         let client_request = AmdReportVerifierClientRequest {
-            request_event: build_request_telemetry_event(&call_metadata, &transport),
+            request_event,
             call_metadata,
             transport,
             attestation_target: input.attestation_target.clone(),
@@ -1685,6 +1837,11 @@ impl AmdReportVerifierProvider for ClientBackedAmdReportVerifierProvider {
         };
         let response = self.client.verify_amd_report_request(&client_request, request)?;
         validate_response_telemetry_event(&response, &client_request.call_metadata, request)?;
+        if let Some(event) = response.telemetry_event.clone() {
+            self.telemetry_sink.emit(event);
+        }
+        let mapped_event = build_mapped_telemetry_event(&client_request.call_metadata, &client_request.transport, &response);
+        self.telemetry_sink.emit(mapped_event);
         map_mock_verifier_response(response, request)
     }
 }
@@ -2238,6 +2395,62 @@ mod tests {
         }
     }
 
+    struct FlakyIntelHttpTransport {
+        calls: Arc<Mutex<Vec<String>>>,
+    }
+
+    impl VerifierHttpTransport for FlakyIntelHttpTransport {
+        fn send(
+            &self,
+            http_request: &HttpVerifierRequest,
+            _request: &BackendVerificationRequest<'_>,
+        ) -> Result<HttpVerifierResponse, BackendExecutionError> {
+            let attempt = http_request
+                .headers
+                .get("x-attempt")
+                .cloned()
+                .unwrap_or_else(|| "?".to_string());
+            self.calls.lock().unwrap().push(attempt.clone());
+            if attempt == "1" {
+                Ok(HttpVerifierResponse {
+                    status_code: 503,
+                    body: "upstream unavailable".into(),
+                })
+            } else {
+                let response = MockVerifierResponse {
+                    status: MockVerifierResponseStatus::Verified,
+                    backend_id: "intel-http-retry".into(),
+                    detail: None,
+                    telemetry_event: Some(VerifierTelemetryEvent {
+                        kind: VerifierTelemetryEventKind::ResponseReceived,
+                        request_id: "tee:quote-verifier:sgx-dcap:task-42:attempt-1".into(),
+                        telemetry_scope: "trnm.pouw.tee.quote_verifier.sgx_dcap".into(),
+                        transport_mode: VerifierTransportMode::External,
+                        profile: "intel-dcap-external-default".into(),
+                        backend_id: Some("intel-http-retry".into()),
+                        status: Some(MockVerifierResponseStatus::Verified),
+                        detail: None,
+                    }),
+                };
+                Ok(HttpVerifierResponse {
+                    status_code: 200,
+                    body: encode_mock_verifier_response_json(&response).unwrap(),
+                })
+            }
+        }
+    }
+
+    #[derive(Default)]
+    struct RecordingTelemetrySink {
+        events: Mutex<Vec<VerifierTelemetryEvent>>,
+    }
+
+    impl VerifierTelemetrySink for RecordingTelemetrySink {
+        fn emit(&self, event: VerifierTelemetryEvent) {
+            self.events.lock().unwrap().push(event);
+        }
+    }
+
     struct Http503IntelTransport;
 
     impl VerifierHttpTransport for Http503IntelTransport {
@@ -2593,6 +2806,95 @@ mod tests {
             },
         );
         assert!(matches!(result, Err(BackendExecutionError::MalformedProof { reason, .. }) if reason.contains("telemetry does not match request metadata")));
+    }
+
+    #[test]
+    fn http_retry_executor_retries_503_then_succeeds() {
+        let task = mock_task();
+        let payload = parse_tee_attestation_payload(b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=sgx-dcap,measurement=mrenclave:demo-sgx-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,quote=quote-sgx-dcap-demo-v1,collateral=intel-dcap-collateral-demo-v1,cert_chain=intel-dcap-cert-chain-demo-v1,issuer=intel").unwrap();
+        let calls = Arc::new(Mutex::new(Vec::new()));
+        let client = HttpBackedIntelQuoteVerifierClient::with_retry_executor(
+            Arc::new(FlakyIntelHttpTransport { calls: calls.clone() }),
+            Arc::new(PolicyAwareHttpRetryExecutor),
+        );
+        let result = client.verify_intel_quote_request(
+            &IntelQuoteVerifierClientRequest {
+                transport: StaticVerifierTransportConfigSource::external_defaults().intel_quote_transport_config("sgx-dcap"),
+                call_metadata: ExternalCallMetadata {
+                    request_id: "tee:quote-verifier:sgx-dcap:task-42:attempt-1".into(),
+                    telemetry_scope: "trnm.pouw.tee.quote_verifier.sgx_dcap".into(),
+                    attempt: 1,
+                    retry_policy: RetryBackoffPolicy { max_attempts: 3, backoff_ms: 250, strategy: RetryBackoffStrategy::Exponential },
+                },
+                request_event: VerifierTelemetryEvent {
+                    kind: VerifierTelemetryEventKind::RequestPrepared,
+                    request_id: "tee:quote-verifier:sgx-dcap:task-42:attempt-1".into(),
+                    telemetry_scope: "trnm.pouw.tee.quote_verifier.sgx_dcap".into(),
+                    transport_mode: VerifierTransportMode::External,
+                    profile: "intel-dcap-external-default".into(),
+                    backend_id: None,
+                    status: None,
+                    detail: None,
+                },
+                attestation_target: "sgx-dcap".into(),
+                measurement_field: "mrenclave".into(),
+                measurement: "mrenclave:demo-sgx-v1".into(),
+                report_data_hash: hex::encode(task.result_hash.unwrap()),
+                quote: "quote-sgx-dcap-demo-v1".into(),
+                intel_collateral: IntelQuoteCollateralBundle {
+                    collateral: "intel-dcap-collateral-demo-v1".into(),
+                    cert_chain: "intel-dcap-cert-chain-demo-v1".into(),
+                    issuer: "intel".into(),
+                },
+            },
+            &BackendVerificationRequest {
+                family: VerificationBackendFamily::Tee,
+                task: &task,
+                proof_data: b"TEE:...",
+                tee_payload: Some(&payload),
+                zk_payload: None,
+                resolved_vk_ref: None,
+            },
+        );
+        assert!(matches!(result, Ok(MockVerifierResponse { backend_id, .. }) if backend_id == "intel-http-retry"));
+        assert_eq!(&*calls.lock().unwrap(), &["1".to_string(), "2".to_string()]);
+    }
+
+    #[test]
+    fn telemetry_sink_records_request_response_and_mapped_events() {
+        let task = mock_task();
+        let proof_data = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=sgx-dcap,measurement=mrenclave:demo-sgx-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,quote=quote-sgx-dcap-demo-v1,collateral=intel-dcap-collateral-demo-v1,cert_chain=intel-dcap-cert-chain-demo-v1,issuer=intel";
+        let payload = parse_tee_attestation_payload(proof_data).unwrap();
+        let handoff = TeeVerifierHandoff::from_payload(&payload, None).unwrap();
+        let input = match SGX_DCAP_ADAPTER.build_verifier_input(&handoff, None).unwrap() {
+            TeeVerifierInput::Quote(input) => input,
+            TeeVerifierInput::Report(_) => panic!("expected intel quote verifier input"),
+        };
+        let sink = Arc::new(RecordingTelemetrySink::default());
+        let provider = ClientBackedIntelQuoteVerifierProvider::with_telemetry_sink(
+            Arc::new(AssertingExternalIntelQuoteClient),
+            Arc::new(StaticVerifierTransportConfigSource::external_defaults()),
+            sink.clone(),
+        );
+        let result = provider.verify_intel_quote_bundle(
+            &input,
+            &BackendVerificationRequest {
+                family: VerificationBackendFamily::Tee,
+                task: &task,
+                proof_data,
+                tee_payload: Some(&payload),
+                zk_payload: None,
+                resolved_vk_ref: None,
+            },
+        );
+        assert!(matches!(result, Ok(BackendVerificationSuccess { backend_id }) if backend_id == "intel-external-mock-client"));
+        let events = sink.events.lock().unwrap().clone();
+        assert_eq!(events.len(), 3);
+        assert_eq!(events[0].kind, VerifierTelemetryEventKind::RequestPrepared);
+        assert_eq!(events[1].kind, VerifierTelemetryEventKind::ResponseReceived);
+        assert_eq!(events[2].kind, VerifierTelemetryEventKind::ResponseMapped);
+        assert_eq!(events[0].request_id, events[1].request_id);
+        assert_eq!(events[1].request_id, events[2].request_id);
     }
 
     #[test]

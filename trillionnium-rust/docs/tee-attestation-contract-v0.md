@@ -223,6 +223,12 @@ A future external verifier integration can plug into:
 
 This seam is intentionally vendor-agnostic.
 
+The scaffold now also includes a retry executor seam above raw transport:
+- `VerifierHttpRetryExecutor`
+- default stub: `PolicyAwareHttpRetryExecutor`
+
+The current retry executor is intentionally thin: it retries retryable transport failures / `5xx` responses according to `RetryBackoffPolicy`, without yet adding real sleep/backoff execution. That keeps the policy surface stable while leaving actual wall-clock retry behavior pluggable.
+
 ### Provider -> HTTP adapter path
 The scaffold now includes HTTP-backed client implementations for both vendor paths:
 - `HttpBackedIntelQuoteVerifierClient`
@@ -244,6 +250,18 @@ These carry the already-normalized verifier input plus request metadata and retr
 ### HTTP response handling
 The adapter currently expects the HTTP body to decode into the same normalized verifier response schema used by mock clients.
 This means mock and future HTTP-backed clients share the same response contract, while transport-level failures remain isolated at the HTTP seam.
+
+### Telemetry sink seam
+Provider-backed clients now also support a telemetry recorder seam:
+- `VerifierTelemetrySink`
+- default sink: `NoopVerifierTelemetrySink`
+
+The provider layer emits three event stages into the sink:
+1. `RequestPrepared`
+2. `ResponseReceived`
+3. `ResponseMapped`
+
+This makes request/response telemetry observable without coupling the transport or provider layers to a concrete logging backend.
 
 ## report_data_hash binding
 `report_data_hash` must match the task `result_hash` carried by the bound envelope.
