@@ -320,6 +320,11 @@ And the socket-adapter layer is now further split into connection / byte-channel
 - `VerifierHttpClientSessionSocketConnectionOpener`
 - `VerifierHttpClientSessionSocketByteChannel`
 
+And the byte-channel layer is now further split into frame-level seams:
+- `VerifierHttpClientSessionFrameEncoder`
+- `VerifierHttpClientSessionFrameIoAdapter`
+- `VerifierHttpClientSessionFrameDecoder`
+
 The default wiring remains fail-closed:
 - `AdapterBackedVerifierHttpRequestExecutor`
   - `DirectVerifierHttpRequestPlanner`
@@ -339,7 +344,11 @@ The default wiring remains fail-closed:
                   - `SocketBackedVerifierHttpClientSessionTransportAdapter`
                     - `DirectVerifierHttpClientSessionSocketRequestBuilder`
                     - `ConnectionBackedVerifierHttpClientSessionSocketAdapter`
-                      - `FailClosedVerifierHttpClientSessionSocketConnectionOpener`
+                      - `StaticVerifierHttpClientSessionSocketConnectionOpener`
+                        - `FrameBackedVerifierHttpClientSessionSocketByteChannel`
+                          - `DirectVerifierHttpClientSessionFrameEncoder`
+                          - `FailClosedVerifierHttpClientSessionFrameIoAdapter`
+                          - `PassthroughVerifierHttpClientSessionFrameDecoder`
                     - `PassthroughVerifierHttpClientSessionByteStreamResponseParser`
                   - `PassthroughVerifierHttpClientSessionRawIoResponseParser`
                 - `PassthroughVerifierHttpClientSessionCallResponseParser`
@@ -350,7 +359,7 @@ The default wiring remains fail-closed:
 - `NoopVerifierHttpTimeoutHook`
 
 This freezes a future real transport path as:
-- timeout hook -> request executor -> request planner -> client adapter -> client config resolver -> client handle -> runtime request builder -> client runtime -> session factory -> session -> session request executor -> wire request builder -> wire executor -> call builder -> call executor -> transport request builder -> transport adapter -> socket request builder -> socket adapter -> connection opener -> byte channel -> byte stream response parser -> raw io response parser -> call response parser -> wire response parser -> session response reader -> runtime response adapter -> raw response -> body reader -> normalized `HttpVerifierResponse`
+- timeout hook -> request executor -> request planner -> client adapter -> client config resolver -> client handle -> runtime request builder -> client runtime -> session factory -> session -> session request executor -> wire request builder -> wire executor -> call builder -> call executor -> transport request builder -> transport adapter -> socket request builder -> socket adapter -> connection opener -> byte channel -> frame encoder -> frame io adapter -> frame decoder -> byte stream response parser -> raw io response parser -> call response parser -> wire response parser -> session response reader -> runtime response adapter -> raw response -> body reader -> normalized `HttpVerifierResponse`
 
 So the scaffold now separates:
 1. HTTP request planning / profile + auth resolution
@@ -365,15 +374,18 @@ So the scaffold now separates:
 10. transport-request shaping
 11. socket connection setup
 12. byte-channel exchange
-13. byte-stream response parsing
-14. raw-I/O response parsing
-15. call-level response parsing
-16. wire-level response parsing
-17. session-level response readback
-18. runtime-response adaptation
-19. timeout/guard hook behavior
-20. body decoding / normalization
-21. verifier response decode + backend mapping
+13. frame encoding
+14. frame-level I/O execution
+15. frame decoding
+16. byte-stream response parsing
+17. raw-I/O response parsing
+18. call-level response parsing
+19. wire-level response parsing
+20. session-level response readback
+21. runtime-response adaptation
+22. timeout/guard hook behavior
+23. body decoding / normalization
+24. verifier response decode + backend mapping
 
 ### HTTP payload skeletons
 The current adapter layer freezes two JSON request shapes:
