@@ -2652,6 +2652,36 @@ mod tests {
     }
 
     #[test]
+    fn auto_adaptive_detects_write_hotspots_even_with_shared_read_domains() {
+        let _env = env_lock();
+        let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "64");
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.20");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.20");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.05");
+
+        // Large mixed batches can share a broad read dependency while only a
+        // late contiguous region develops a true write hotspot. Adaptive
+        // experiments should still switch based on the write signal rather than
+        // being diluted by the shared read domain.
+        let mut txs = Vec::with_capacity(3_000);
+        for i in 0..1_800u64 {
+            txs.push(tx(i, vec![o(42)], vec![o(10_000 + i)]));
+        }
+        for i in 1_800..3_000u64 {
+            txs.push(tx(i, vec![o(42)], vec![o(7)]));
+        }
+
+        let d = auto_adaptive_decision(&txs);
+        assert_eq!(d.sample_len, 2048);
+        assert!(d.use_hot_bucket);
+        assert_eq!(d.reason, "hotspot_detected");
+        assert!(d.hot_key_share >= 0.20);
+        assert!(d.streak_ratio >= 0.20);
+        assert!(d.expected_gain_score >= 0.05);
+    }
+
+    #[test]
     fn free_ingress_batches_short_circuit_to_single_group_after_strategy_reorder() {
         let txs = vec![
             tx(9, vec![], vec![]),
