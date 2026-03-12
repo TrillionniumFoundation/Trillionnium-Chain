@@ -251,6 +251,9 @@ fn canonical_resolve_authority_members(authority_set: &str) -> Option<Vec<String
     if trimmed.is_empty() || trimmed != authority_set {
         return None;
     }
+    if trimmed.len() > RESOLVE_AUTHORITY_SET_MAX_LEN {
+        return None;
+    }
     let members: Vec<&str> = trimmed.split(',').collect();
     if members.len() < 2 {
         return None;
@@ -261,6 +264,7 @@ fn canonical_resolve_authority_members(authority_set: &str) -> Option<Vec<String
         let member_trimmed = member.trim();
         if member_trimmed.is_empty()
             || member_trimmed != member
+            || member_trimmed.len() > RESOLVE_APPROVER_MAX_LEN
             || member_trimmed.chars().any(|c| c.is_whitespace())
             || member_trimmed.chars().any(|c| c.is_control())
             || member_trimmed.contains(';')
@@ -1795,6 +1799,29 @@ mod tests {
         let _ = st.update_task(r1.clone(), t.clone()).unwrap();
         let err = st.update_task(r1, t).unwrap_err();
         assert!(err.contains("version conflict"));
+    }
+
+    #[test]
+    fn canonical_resolve_authority_match_rejects_oversized_set_and_member_lengths() {
+        let oversized_member = "a".repeat(RESOLVE_APPROVER_MAX_LEN + 1);
+        let oversized_set = format!("{},b", "a".repeat(RESOLVE_AUTHORITY_SET_MAX_LEN));
+
+        assert!(
+            canonical_resolve_authority_members(&format!("{},authority-b", oversized_member))
+                .is_none(),
+            "internal canonical matcher must reject authority members beyond approver max length"
+        );
+        assert!(
+            canonical_resolve_authority_members(&oversized_set).is_none(),
+            "internal canonical matcher must reject authority sets beyond the public max length"
+        );
+        assert!(
+            !resolve_authority_sets_match(
+                &format!("{},authority-b", oversized_member),
+                &format!("{},authority-b", oversized_member)
+            ),
+            "oversized internal authority aliases must never compare equal"
+        );
     }
 
     #[test]
