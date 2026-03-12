@@ -2282,7 +2282,7 @@ fn parse_query_events_limit_from_path(path: &str) -> std::result::Result<usize, 
             ));
         };
         let normalized_key = normalize_wrapped_env_value(key);
-        if normalized_key != "limit" {
+        if !normalized_key.eq_ignore_ascii_case("limit") {
             continue;
         }
         if key != "limit" {
@@ -3881,6 +3881,8 @@ mod tests {
             "/query-events/42? limit=7",
             "/query-events/42?limit =7",
             "/query-events/42?`limit`=7",
+            "/query-events/42?LIMIT=7",
+            "/query-events/42?Limit=7",
         ] {
             let err = parse_query_events_limit_from_path(path)
                 .expect_err("malformed limit keys must fail closed instead of defaulting");
