@@ -134,6 +134,7 @@ fn is_disallowed_invisible_char(ch: char) -> bool {
             | '\u{2062}'
             | '\u{2063}'
             | '\u{2064}'
+            | '\u{2065}'
             | '\u{2066}'
             | '\u{2067}'
             | '\u{2068}'

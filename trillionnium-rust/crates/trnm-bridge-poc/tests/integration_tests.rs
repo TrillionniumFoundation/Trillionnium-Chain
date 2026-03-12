@@ -98,6 +98,24 @@ fn test_authorized_finalize_rejects_zero_chain_id() {
 }
 
 #[test]
+fn test_authorized_finalize_rejects_tx_hash_with_u2065_for_canonical_replay() {
+    let mut request = SettlementRequest::new(1, "0xabc\u{2065}def".to_string());
+    let token = CapabilityToken {
+        subject: "did:trn:worker-a".to_string(),
+        capabilities: vec![SettlementCapability::Finalize],
+    };
+
+    let err = request.settle_authorized(&token, 128).unwrap_err();
+    assert_eq!(
+        err,
+        SettlementError::MalformedRequest {
+            reason: "non-canonical tx_hash",
+        }
+    );
+    assert_eq!(request.status, BridgeStatus::Pending);
+}
+
+#[test]
 fn test_authorized_finalize_rejects_missing_capability() {
     let mut request = SettlementRequest::new(1, "0xbbb".to_string());
     let token = CapabilityToken {
