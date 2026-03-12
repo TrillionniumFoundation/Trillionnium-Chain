@@ -265,10 +265,12 @@ def main():
     classic_pattern = os.path.join(bench_dir, "bench-matrix-*.txt")
     mixed_pattern = os.path.join(bench_dir, "bench-mixed-matrix-*.txt")
     executor_profile_pattern = os.path.join(bench_dir, "executor-profile-summary-*.txt")
+    baseline_report_pattern = os.path.join(root, "docs", "reports", "profiling-closeout-baseline-*.md")
     node_log_candidates = matching_files(node_log_pattern)
     classic_candidates = matching_files(classic_pattern)
     mixed_candidates = matching_files(mixed_pattern)
     executor_profile_candidates = matching_files(executor_profile_pattern)
+    baseline_report_candidates = matching_files(baseline_report_pattern)
     node_log = args.node_log or latest(node_log_pattern)
     classic = args.classic or latest(classic_pattern)
     mixed = args.mixed or latest(mixed_pattern)
@@ -624,6 +626,11 @@ def main():
         ("mixed_bench_candidates", mixed_candidates),
         ("executor_profile_candidates", executor_profile_candidates),
     ]
+    baseline_report_pool = candidate_pool_health_struct(
+        "baseline_closeout_reports",
+        out if os.path.exists(out) else (baseline_report_candidates[0] if baseline_report_candidates else None),
+        baseline_report_candidates,
+    )
     archive_candidates_by_pool = {
         label: archive_candidates_for_pool(candidates)
         for label, candidates in archive_pools
@@ -681,6 +688,20 @@ def main():
             else "review_archive_candidates_before_manual_cleanup"
         )
     )
+
+    lines += ["", "## Baseline Report Pool Health"]
+    lines.append(candidate_pool_health_line(baseline_report_pool))
+    lines.extend(candidate_preview("baseline_closeout_report_candidates", out, baseline_report_candidates))
+    lines.append(
+        archive_candidate_line("baseline_closeout_report_candidates", baseline_report_candidates)
+    )
+    baseline_report_followup = {
+        "produce": "produce_new_closeout_report",
+        "refresh": "refresh_closeout_report_set",
+        "keep_latest": "keep_latest_only_no_archive_action",
+        "keep_latest_and_consider_archive": "review_archive_candidates_before_manual_cleanup",
+    }.get(str(baseline_report_pool["action"]), "review_archive_candidates_before_manual_cleanup")
+    lines.append(f"- baseline_closeout_report_followup: {baseline_report_followup}")
 
     lines += ["", "## Data Completeness"]
     lines.append(
