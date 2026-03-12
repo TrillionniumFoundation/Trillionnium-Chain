@@ -970,6 +970,42 @@ fn parse_tx_hash(text: &str) -> Option<String> {
         "txhash =",
         "txhash:",
         "txhash :",
+        "transaction_hash=",
+        "transaction_hash =",
+        "transaction_hash:",
+        "transaction_hash :",
+        "TRANSACTION_HASH=",
+        "TRANSACTION_HASH =",
+        "TRANSACTION_HASH:",
+        "TRANSACTION_HASH :",
+        "transaction-hash=",
+        "transaction-hash =",
+        "transaction-hash:",
+        "transaction-hash :",
+        "TRANSACTION-HASH=",
+        "TRANSACTION-HASH =",
+        "TRANSACTION-HASH:",
+        "TRANSACTION-HASH :",
+        "transaction hash=",
+        "transaction hash =",
+        "transaction hash:",
+        "transaction hash :",
+        "TRANSACTION HASH=",
+        "TRANSACTION HASH =",
+        "TRANSACTION HASH:",
+        "TRANSACTION HASH :",
+        "transactionHash=",
+        "transactionHash =",
+        "transactionHash:",
+        "transactionHash :",
+        "TRANSACTIONHASH=",
+        "TRANSACTIONHASH =",
+        "TRANSACTIONHASH:",
+        "TRANSACTIONHASH :",
+        "transactionhash=",
+        "transactionhash =",
+        "transactionhash:",
+        "transactionhash :",
         "\"tx_hash\":",
         "\"tx_hash\" :",
         "\"TX_HASH\":",
@@ -988,6 +1024,24 @@ fn parse_tx_hash(text: &str) -> Option<String> {
         "\"TXHASH\" :",
         "\"txhash\":",
         "\"txhash\" :",
+        "\"transaction_hash\":",
+        "\"transaction_hash\" :",
+        "\"TRANSACTION_HASH\":",
+        "\"TRANSACTION_HASH\" :",
+        "\"transaction-hash\":",
+        "\"transaction-hash\" :",
+        "\"TRANSACTION-HASH\":",
+        "\"TRANSACTION-HASH\" :",
+        "\"transaction hash\":",
+        "\"transaction hash\" :",
+        "\"TRANSACTION HASH\":",
+        "\"TRANSACTION HASH\" :",
+        "\"transactionHash\":",
+        "\"transactionHash\" :",
+        "\"TRANSACTIONHASH\":",
+        "\"TRANSACTIONHASH\" :",
+        "\"transactionhash\":",
+        "\"transactionhash\" :",
         "'tx_hash':",
         "'tx_hash' :",
         "'TX_HASH':",
@@ -1006,6 +1060,24 @@ fn parse_tx_hash(text: &str) -> Option<String> {
         "'TXHASH' :",
         "'txhash':",
         "'txhash' :",
+        "'transaction_hash':",
+        "'transaction_hash' :",
+        "'TRANSACTION_HASH':",
+        "'TRANSACTION_HASH' :",
+        "'transaction-hash':",
+        "'transaction-hash' :",
+        "'TRANSACTION-HASH':",
+        "'TRANSACTION-HASH' :",
+        "'transaction hash':",
+        "'transaction hash' :",
+        "'TRANSACTION HASH':",
+        "'TRANSACTION HASH' :",
+        "'transactionHash':",
+        "'transactionHash' :",
+        "'TRANSACTIONHASH':",
+        "'TRANSACTIONHASH' :",
+        "'transactionhash':",
+        "'transactionhash' :",
     ];
 
     fn parse_hash_from_suffix(suffix: &str) -> Option<String> {
@@ -2279,6 +2351,25 @@ mod tests {
         let json = parse_tx_hash("adapter stdout: {\"txHash\": \"ABCD1234\"}")
             .expect("camelCase json receipt hash should parse");
         assert_eq!(json, "abcd1234");
+    }
+
+    #[test]
+    fn parse_tx_hash_accepts_transaction_hash_alias_receipts() {
+        let shell = parse_tx_hash("[adapter] commit accepted transaction_hash=0xDEADBEEF")
+            .expect("transaction_hash shell receipt hash should parse");
+        assert_eq!(shell, "deadbeef");
+
+        let hyphenated = parse_tx_hash("[adapter] commit accepted transaction-hash : 0xC0FFEE12")
+            .expect("transaction-hash shell receipt hash with spaced delimiter should parse");
+        assert_eq!(hyphenated, "c0ffee12");
+
+        let spaced = parse_tx_hash("adapter stdout: {'TRANSACTION HASH' : 'ABCD1234'}")
+            .expect("space-separated single-quoted transaction hash receipt should parse");
+        assert_eq!(spaced, "abcd1234");
+
+        let camel = parse_tx_hash("adapter stdout: {\"transactionHash\": \"0xBADDCAFE\"}")
+            .expect("camelCase transaction hash json receipt should parse");
+        assert_eq!(camel, "baddcafe");
     }
 
     #[test]
