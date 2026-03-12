@@ -799,7 +799,11 @@ fn parse_env_f64(name: &str) -> Option<f64> {
             let comma_count = numeric.chars().filter(|&ch| ch == ',').count();
             if comma_count == 1 {
                 let (whole, frac) = numeric.split_once(',').unwrap_or((numeric, ""));
-                if !whole.is_empty()
+                let whole_is_optional_sign = whole.is_empty() || whole == "+" || whole == "-";
+                if whole_is_optional_sign && !frac.is_empty() && frac.chars().all(|ch| ch.is_ascii_digit()) {
+                    let sign = if whole == "-" { "-" } else { "" };
+                    format!("{sign}0.{frac}")
+                } else if !whole.is_empty()
                     && !frac.is_empty()
                     && whole.chars().all(|ch| ch == '+' || ch == '-' || ch.is_ascii_digit())
                     && frac.chars().all(|ch| ch.is_ascii_digit())
@@ -2266,6 +2270,36 @@ mod tests {
         assert_eq!(auto_reorder_min_margin(), 0.125);
         assert_eq!(auto_reorder_min_hot_key_share(), 0.375);
         assert_eq!(auto_min_expected_gain_score(), 0.05);
+    }
+
+    #[test]
+    fn auto_adaptive_numeric_env_parser_treats_leading_comma_values_as_decimals() {
+        let _env = env_lock();
+
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", ",250");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", " '+,125' ");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "\",375\"");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", " '-,050' ");
+
+        assert_eq!(auto_hot_streak_threshold(), 0.25);
+        assert_eq!(auto_reorder_min_margin(), 0.125);
+        assert_eq!(auto_reorder_min_hot_key_share(), 0.375);
+        assert_eq!(auto_min_expected_gain_score(), 0.0);
+    }
+
+    #[test]
+    fn auto_adaptive_numeric_env_parser_treats_leading_comma_percent_values_as_decimals() {
+        let _env = env_lock();
+
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", ",25%");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", " '+,5%' ");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "\",75%\"");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", " '-,5%' ");
+
+        assert_eq!(auto_hot_streak_threshold(), 0.0025);
+        assert_eq!(auto_reorder_min_margin(), 0.005);
+        assert_eq!(auto_reorder_min_hot_key_share(), 0.0075);
+        assert_eq!(auto_min_expected_gain_score(), 0.0);
     }
 
     #[test]
