@@ -161,16 +161,36 @@ def normalize_capture_stamp(family: str, value: str) -> int | None:
     return None
 
 
-def capture_stamp_line(label: str, path: str | None) -> str:
+def capture_stamp_metadata(path: str | None) -> dict[str, str]:
+    exists = bool(path and os.path.exists(path))
+    basename = os.path.basename(path) if path else "None"
     stamp = detect_capture_stamp(path)
-    if not stamp:
-        return f"- {label}: capture_stamp=unavailable path={path or 'None'}"
-    family, value = stamp
-    normalized_epoch = normalize_capture_stamp(family, value)
-    normalized = normalized_epoch if normalized_epoch is not None else "unavailable"
+    family = "unavailable"
+    value = "unavailable"
+    normalized = "unavailable"
+    if stamp:
+        family, value = stamp
+        normalized_epoch = normalize_capture_stamp(family, value)
+        if normalized_epoch is not None:
+            normalized = str(normalized_epoch)
+    return {
+        "path": path or "None",
+        "exists": "true" if exists else "false",
+        "basename": basename,
+        "capture_stamp_family": family,
+        "capture_stamp": value,
+        "capture_stamp_epoch": normalized,
+    }
+
+
+
+def capture_stamp_line(label: str, path: str | None) -> str:
+    metadata = capture_stamp_metadata(path)
     return (
-        f"- {label}: capture_stamp_family={family} capture_stamp={value} "
-        f"capture_stamp_epoch={normalized} path={path}"
+        f"- {label}: exists={metadata['exists']} basename={metadata['basename']} "
+        f"capture_stamp_family={metadata['capture_stamp_family']} "
+        f"capture_stamp={metadata['capture_stamp']} "
+        f"capture_stamp_epoch={metadata['capture_stamp_epoch']} path={metadata['path']}"
     )
 
 
@@ -594,6 +614,9 @@ def main():
         ("mixed_bench", mixed),
         ("executor_profile", executor_profile),
     ]
+    selected_capture_metadata = {
+        label: capture_stamp_metadata(path) for label, path in selected_capture_paths
+    }
     for label, path in selected_capture_paths:
         lines.append(capture_stamp_line(label, path))
     capture_stamp_status, capture_stamp_reason = capture_stamp_alignment_status(selected_capture_paths)
@@ -1034,6 +1057,18 @@ def main():
     )
     lines.append(
         f"- benchmark_artifact_coverage: {benchmark_artifact_count}/3 (classic_bench + mixed_bench + executor_profile)"
+    )
+    lines.append(
+        f"- benchmark_selected_capture_alignment: {capture_stamp_status}"
+    )
+    lines.append(
+        f"- benchmark_selected_capture_alignment_reason: {capture_stamp_reason}"
+    )
+    lines.append(
+        "- benchmark_selected_capture_epochs: "
+        f"classic={selected_capture_metadata['classic_bench']['capture_stamp_epoch']} "
+        f"mixed={selected_capture_metadata['mixed_bench']['capture_stamp_epoch']} "
+        f"executor_profile={selected_capture_metadata['executor_profile']['capture_stamp_epoch']}"
     )
     bench_metric_labels = [
         ("classic", classic_rows),
