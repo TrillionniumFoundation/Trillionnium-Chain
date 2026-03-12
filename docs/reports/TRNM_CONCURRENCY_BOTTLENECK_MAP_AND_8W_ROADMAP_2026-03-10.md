@@ -134,6 +134,10 @@ TRNM 当前已经具备：
    - 不是纯 scheduler 时间。
    - 一旦状态规模扩大，收益仍可能被快照成本吃掉。
 
+3. **Consensus jitter 需要按 active height 观察，而不是只看全局均值**
+   - round-change/backoff 若集中爆发在少数高度，`per_height` 或全局平均很容易稀释真实抖动；
+   - 因此 block-loop closeout 应优先看 `bft_round_change_density_avg_milli`、`bft_round_change_backoff_density_avg_milli`，并结合 `bft_round_change_active_height_share_ppm` / `bft_round_change_backoff_active_height_share_ppm` 判断它们占平均 finality budget 的比例。
+
 #### 对 Solana/Sui 的差距
 - **比 Solana**：缺少更成熟的 runtime / bank / lock / cache 联动。
 - **比 Sui**：对象级执行隔离还不够原生，仍依赖较厚的共享状态层。
