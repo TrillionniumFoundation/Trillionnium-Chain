@@ -113,7 +113,7 @@ if command -v git >/dev/null 2>&1; then
 fi
 
 if [[ ${#SCRIPT_REFS[@]} -eq 0 ]]; then
-  echo "[workflow-ref][WARN] no ./scripts/*.sh references found in workflows"
+  echo "[workflow-ref][WARN] no workflow script references found in workflows (expected ./scripts, scripts, or trillionnium-rust/scripts .sh/.py refs)"
 fi
 
 for ref in "${SCRIPT_REFS[@]}"; do
