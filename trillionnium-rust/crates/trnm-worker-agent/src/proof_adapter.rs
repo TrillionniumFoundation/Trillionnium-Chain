@@ -98,37 +98,49 @@ fn collapse_adapter_delimiters(raw: &str) -> String {
             | '\u{2064}'
             | '\u{feff}' => None,
             '‐' | '‑' | '‒' | '–' | '—' | '―' | '−' | '－' => Some('-'),
+            '_' | '/' | '\\' | ':' | '.' => Some('-'),
+            other if other.is_whitespace() => Some('-'),
             other => Some(other),
         })
         .collect()
 }
 
 fn normalize_adapter_label(label: &str) -> String {
-    collapse_adapter_delimiters(label)
-        .trim()
-        .trim_start_matches('\u{feff}')
-        .trim()
+    collapse_adapter_delimiters(label.trim().trim_start_matches('\u{feff}').trim())
+        .trim_matches('-')
         .to_ascii_lowercase()
 }
 
 fn normalize_adapter_value(value: &str) -> String {
-    collapse_adapter_delimiters(value)
-        .trim()
-        .trim_start_matches('\u{feff}')
-        .trim()
+    collapse_adapter_delimiters(value.trim().trim_start_matches('\u{feff}').trim())
+        .trim_matches('-')
         .to_ascii_lowercase()
 }
 
 fn has_non_empty_auditable_value(value: Option<&str>) -> bool {
     value
-        .map(collapse_adapter_delimiters)
         .map(|v| {
-            v.trim()
-                .trim_start_matches('\u{feff}')
-                .trim()
-                .chars()
-                .any(|c| !c.is_whitespace() && !c.is_control())
+            v.chars()
+                .filter(|c| {
+                    !matches!(
+                        c,
+                        '\u{061c}'
+                            | '\u{200b}'
+                            | '\u{200c}'
+                            | '\u{200d}'
+                            | '\u{200e}'
+                            | '\u{200f}'
+                            | '\u{2060}'
+                            | '\u{2061}'
+                            | '\u{2062}'
+                            | '\u{2063}'
+                            | '\u{2064}'
+                            | '\u{feff}'
+                    )
+                })
+                .collect::<String>()
         })
+        .map(|v| v.chars().any(|c| !c.is_whitespace() && !c.is_control()))
         .unwrap_or(false)
 }
 
@@ -459,6 +471,26 @@ mod tests {
             Some("pr-2f")
         );
 
+        let tee_with_space_separator = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-2g\",\"adapter\":\"TEE RECEIPT\"}",
+            )
+            .expect("tee receipt label with space separator should parse");
+        assert_eq!(
+            tee_with_space_separator.provider_request_id.as_deref(),
+            Some("pr-2g")
+        );
+
+        let tee_with_colon_separator = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-2h\",\"adapter\":\"TEE:RECEIPT\"}",
+            )
+            .expect("tee receipt label with colon separator should parse");
+        assert_eq!(
+            tee_with_colon_separator.provider_request_id.as_deref(),
+            Some("pr-2h")
+        );
+
         let missing_request_id = adapter
             .parse_response("{\"output_text\":\"ok\",\"adapter\":\"tee-receipt\"}")
             .expect_err("provider_request_id is required");
@@ -646,6 +678,26 @@ mod tests {
         assert_eq!(
             zk_with_embedded_bom.provider_request_id.as_deref(),
             Some("pr-zk-2f")
+        );
+
+        let zk_with_space_separator = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-zk-2g\",\"adapter\":\"ZK RECEIPT\"}",
+            )
+            .expect("zk receipt label with space separator should parse");
+        assert_eq!(
+            zk_with_space_separator.provider_request_id.as_deref(),
+            Some("pr-zk-2g")
+        );
+
+        let zk_with_slash_separator = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-zk-2h\",\"adapter\":\"ZK/RECEIPT\"}",
+            )
+            .expect("zk receipt label with slash separator should parse");
+        assert_eq!(
+            zk_with_slash_separator.provider_request_id.as_deref(),
+            Some("pr-zk-2h")
         );
 
         let missing_request_id = adapter
@@ -934,10 +986,10 @@ mod tests {
         assert!(ok);
         assert_eq!(code, "zk_receipt_ok");
 
-        let err = match build_proof_adapter("tee attestation") {
-            Ok(_) => panic!("unknown plugin must fail closed"),
-            Err(err) => err,
-        };
-        assert_eq!(err, "unsupported-proof-adapter:tee attestation");
+        let adapter = build_proof_adapter("tee attestation")
+            .expect("tee attestation space-separated alias should parse");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "tee_receipt_ok");
     }
 }
