@@ -36,9 +36,22 @@ jobs:
       LC_ALL: C.UTF-8
       LC_NUMERIC: C
       LC_COLLATE: C
+      LC_TIME: C
+      LC_CTYPE: C
+      LC_MESSAGES: C
+      LC_MONETARY: C
+      LC_MEASUREMENT: C
+      LC_NAME: C
+      LC_PAPER: C
+      LC_ADDRESS: C
+      LC_TELEPHONE: C
       PYTHONHASHSEED: "0"
+      PYTHONDONTWRITEBYTECODE: "1"
+      PYTHONIOENCODING: "UTF-8"
+      PYTHONUTF8: "1"
       HOMEBREW_NO_AUTO_UPDATE: "1"
       CI: "true"
+      UMASK: "022"
 
     steps:
       - uses: actions/checkout@v4
@@ -60,15 +73,36 @@ jobs:
 
       - name: Summarize integration gate result
         if: always()
+        id: p1-summary
         run: |
           set -euo pipefail
+          P1_SUMMARY_PATH="run/p1-integration-gate/summary-${GITHUB_RUN_ID:-local}-${GITHUB_RUN_ATTEMPT:-1}.json"
+          mkdir -p "$(dirname "$P1_SUMMARY_PATH")"
           latest_dir=$(ls -1dt run/p1-integration-gate/* 2>/dev/null | head -n 1 || true)
           if [[ -z "$latest_dir" ]]; then
             echo "::warning::No run/p1-integration-gate artifacts found"
+            cat >"$P1_SUMMARY_PATH" <<EOF
+          {
+            "status": "warn-missing-artifacts",
+            "run_dir": "",
+            "github_run_id": "${GITHUB_RUN_ID:-local}",
+            "github_run_attempt": "${GITHUB_RUN_ATTEMPT:-1}"
+          }
+          EOF
+            echo "p1_summary_json=$P1_SUMMARY_PATH" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           echo "Using run dir: $latest_dir"
           ls -1 "$latest_dir" || true
+          cat >"$P1_SUMMARY_PATH" <<EOF
+          {
+            "status": "ok",
+            "run_dir": "$latest_dir",
+            "github_run_id": "${GITHUB_RUN_ID:-local}",
+            "github_run_attempt": "${GITHUB_RUN_ATTEMPT:-1}"
+          }
+          EOF
+          echo "p1_summary_json=$P1_SUMMARY_PATH" >> "$GITHUB_OUTPUT"
 
       - name: Upload P1 integration artifacts
         if: always()
@@ -78,3 +112,13 @@ jobs:
           path: |
             run/p1-integration-gate/**
           if-no-files-found: warn
+
+      - name: Upload P1 summary artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: p1-rust-sidecar-summary-${{ github.run_id }}
+          summary_json: ${{ steps.p1-summary.outputs.p1_summary_json }}
+          path: |
+            ${{ steps.p1-summary.outputs.p1_summary_json }}
+          if-no-files-found: error

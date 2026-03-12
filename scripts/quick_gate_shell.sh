@@ -6,9 +6,28 @@ set -euo pipefail
 export TZ="${TZ:-UTC}"
 export LANG="${LANG:-C.UTF-8}"
 export LC_ALL="${LC_ALL:-C.UTF-8}"
-# Ensure bytewise collation even when callers only set LANG/LC_ALL,
-# keeping file manifest ordering reproducible for replay evidence.
+export LC_NUMERIC="${LC_NUMERIC:-C}"
+# Mirror the workflow locale envelope so local shell gates stay deterministic
+# even when subprocesses inspect category-specific locale variables directly.
 export LC_COLLATE="${LC_COLLATE:-C}"
+export LC_TIME="${LC_TIME:-C}"
+export LC_CTYPE="${LC_CTYPE:-C}"
+export LC_MESSAGES="${LC_MESSAGES:-C}"
+export LC_MONETARY="${LC_MONETARY:-C}"
+export LC_MEASUREMENT="${LC_MEASUREMENT:-C}"
+export LC_PAPER="${LC_PAPER:-C}"
+export LC_ADDRESS="${LC_ADDRESS:-C}"
+export LC_NAME="${LC_NAME:-C}"
+export LC_TELEPHONE="${LC_TELEPHONE:-C}"
+
+# Mirror CI's deterministic file-mode contract so local summaries/artifacts do
+# not drift from workflow runs when scripts create files/directories.
+UMASK_VALUE="${UMASK:-022}"
+if [[ ! "$UMASK_VALUE" =~ ^[0-7]{3,4}$ ]]; then
+  echo "[quick-gate][FAIL] UMASK must be a 3- or 4-digit octal value (got: $UMASK_VALUE)" >&2
+  exit 2
+fi
+umask "$UMASK_VALUE"
 
 if [[ $# -eq 0 ]]; then
   TARGET_DIRS=("scripts")
@@ -19,6 +38,8 @@ fi
 SKIP_SHELLCHECK="${QUICK_GATE_SKIP_SHELLCHECK:-0}"
 SUMMARY_PATH="${QUICK_GATE_SUMMARY_PATH:-}"
 START_EPOCH="$(date -u +%s)"
+SHELLCHECK_REQUESTED="${QUICK_GATE_SKIP_SHELLCHECK:-0}"
+SHELLCHECK_FALLBACK_REASON=""
 
 json_escape() {
   local s=${1-}
@@ -28,6 +49,29 @@ json_escape() {
   s=${s//$'\r'/\\r}
   s=${s//$'\t'/\\t}
   printf '%s' "$s"
+}
+
+sha256_text() {
+  if command -v sha256sum >/dev/null 2>&1; then
+    sha256sum | awk '{print $1}'
+  elif command -v shasum >/dev/null 2>&1; then
+    shasum -a 256 | awk '{print $1}'
+  else
+    echo "[quick-gate][FAIL] missing sha256 utility (need sha256sum or shasum)" >&2
+    exit 2
+  fi
+}
+
+sha256_file() {
+  local path=${1:?path required}
+  if command -v sha256sum >/dev/null 2>&1; then
+    sha256sum "$path" | awk '{print $1}'
+  elif command -v shasum >/dev/null 2>&1; then
+    shasum -a 256 "$path" | awk '{print $1}'
+  else
+    echo "[quick-gate][FAIL] missing sha256 utility (need sha256sum or shasum)" >&2
+    exit 2
+  fi
 }
 
 if [[ "$SKIP_SHELLCHECK" != "0" && "$SKIP_SHELLCHECK" != "1" ]]; then
@@ -41,8 +85,13 @@ if [[ -n "$SUMMARY_PATH" && -d "$SUMMARY_PATH" ]]; then
 fi
 
 if [[ "$SKIP_SHELLCHECK" != "1" ]] && ! command -v shellcheck >/dev/null 2>&1; then
-  echo "[quick-gate][FAIL] shellcheck not found in PATH (set QUICK_GATE_SKIP_SHELLCHECK=1 for syntax-only local run)" >&2
-  exit 2
+  if [[ "${CI:-}" == "true" ]]; then
+    echo "[quick-gate][FAIL] shellcheck not found in PATH under CI" >&2
+    exit 2
+  fi
+  echo "[quick-gate][WARN] shellcheck not found in PATH -> falling back to bash -n only for non-CI local run" >&2
+  SKIP_SHELLCHECK="1"
+  SHELLCHECK_FALLBACK_REASON="shellcheck-missing-local-fallback"
 fi
 
 mapfile -t NORMALIZED_TARGET_DIRS < <(printf '%s\n' "${TARGET_DIRS[@]}" | awk 'NF {print}' | LC_ALL=C sort -u)
@@ -53,6 +102,10 @@ if [[ ${#NORMALIZED_TARGET_DIRS[@]} -eq 0 ]]; then
 fi
 
 for target_dir in "${NORMALIZED_TARGET_DIRS[@]}"; do
+  if [[ -e "$target_dir" && ! -d "$target_dir" ]]; then
+    echo "[quick-gate][FAIL] target path is not a directory: $target_dir" >&2
+    exit 2
+  fi
   if [[ ! -d "$target_dir" ]]; then
     echo "[quick-gate][FAIL] target directory not found: $target_dir" >&2
     exit 2
@@ -65,26 +118,8 @@ mapfile -t FILES < <(
   done | LC_ALL=C sort -u
 )
 
-if [[ ${#FILES[@]} -eq 0 ]]; then
-  echo "[quick-gate][WARN] no shell scripts found under target directories: ${NORMALIZED_TARGET_DIRS[*]}"
-  if [[ -n "$SUMMARY_PATH" ]]; then
-    mkdir -p "$(dirname "$SUMMARY_PATH")"
-    cat >"$SUMMARY_PATH" <<EOF
-{
-  "target_dirs_csv": "$(json_escape "$(IFS=,; printf '%s' "${NORMALIZED_TARGET_DIRS[*]}")")",
-  "target_dir_count": ${#NORMALIZED_TARGET_DIRS[@]},
-  "script_count": 0,
-  "skip_shellcheck": ${SKIP_SHELLCHECK},
-  "status": "warn-empty"
-}
-EOF
-  fi
-  exit 0
-fi
-
 echo "[quick-gate] target_dirs=${NORMALIZED_TARGET_DIRS[*]}"
 echo "[quick-gate] target_dir_count=${#NORMALIZED_TARGET_DIRS[@]}"
-echo "[quick-gate] script_count=${#FILES[@]}"
 
 audit_ts="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
@@ -94,11 +129,43 @@ if command -v git >/dev/null 2>&1; then
 fi
 
 manifest_sha256=""
-if command -v sha256sum >/dev/null 2>&1; then
-  manifest_sha256="$(printf '%s\n' "${FILES[@]}" | sha256sum | awk '{print $1}')"
-elif command -v shasum >/dev/null 2>&1; then
-  manifest_sha256="$(printf '%s\n' "${FILES[@]}" | shasum -a 256 | awk '{print $1}')"
+if [[ ${#FILES[@]} -gt 0 ]]; then
+  manifest_lines=()
+  for f in "${FILES[@]}"; do
+    manifest_lines+=("$(sha256_file "$f")  $f")
+  done
+  manifest_sha256="$(printf '%s\n' "${manifest_lines[@]}" | sha256_text)"
 fi
+
+if [[ ${#FILES[@]} -eq 0 ]]; then
+  echo "[quick-gate][WARN] no shell scripts found under target directories: ${NORMALIZED_TARGET_DIRS[*]}"
+  if [[ -n "$SUMMARY_PATH" ]]; then
+    end_epoch="$(date -u +%s)"
+    mkdir -p "$(dirname "$SUMMARY_PATH")"
+    cat >"$SUMMARY_PATH" <<EOF
+{
+  "ts_utc": "${audit_ts}",
+  "target_dirs_csv": "$(json_escape "$(IFS=,; printf '%s' "${NORMALIZED_TARGET_DIRS[*]}")")",
+  "target_dir_count": ${#NORMALIZED_TARGET_DIRS[@]},
+  "script_count": 0,
+  "git_head": "$(json_escape "${git_head}")",
+  "file_manifest_sha256": "$(json_escape "${manifest_sha256}")",
+  "skip_shellcheck": ${SKIP_SHELLCHECK},
+  "shellcheck_requested": ${SHELLCHECK_REQUESTED},
+  "shellcheck_fallback_reason": "$(json_escape "${SHELLCHECK_FALLBACK_REASON}")",
+  "bash_n_elapsed_sec": 0,
+  "shellcheck_status": "skipped",
+  "shellcheck_version": "",
+  "shellcheck_elapsed_sec": 0,
+  "total_elapsed_sec": $((end_epoch - START_EPOCH)),
+  "status": "warn-empty"
+}
+EOF
+  fi
+  exit 0
+fi
+
+echo "[quick-gate] script_count=${#FILES[@]}"
 
 bashn_start="$(date -u +%s)"
 for f in "${FILES[@]}"; do
@@ -113,7 +180,12 @@ shellcheck_elapsed=0
 shellcheck_status="skipped"
 shellcheck_version=""
 if [[ "$SKIP_SHELLCHECK" == "1" ]]; then
-  echo "[quick-gate][WARN] QUICK_GATE_SKIP_SHELLCHECK=1 -> shellcheck skipped"
+  if [[ -n "$SHELLCHECK_FALLBACK_REASON" ]]; then
+    shellcheck_status="$SHELLCHECK_FALLBACK_REASON"
+    echo "[quick-gate][WARN] shellcheck unavailable -> ${SHELLCHECK_FALLBACK_REASON}"
+  else
+    echo "[quick-gate][WARN] QUICK_GATE_SKIP_SHELLCHECK=1 -> shellcheck skipped"
+  fi
 else
   shellcheck_version="$(shellcheck --version | awk '/version:/ {print $2}')"
   sc_start="$(date -u +%s)"
@@ -124,6 +196,13 @@ else
   echo "[quick-gate] shellcheck -S error passed"
   echo "[quick-gate] shellcheck_elapsed_sec=${shellcheck_elapsed}"
   echo "[quick-gate] shellcheck_version=${shellcheck_version}"
+fi
+
+summary_status="ok"
+if [[ "$shellcheck_status" == "skipped" ]]; then
+  summary_status="warn-shellcheck-skipped"
+elif [[ "$shellcheck_status" == "shellcheck-missing-local-fallback" ]]; then
+  summary_status="warn-shellcheck-unavailable-local-fallback"
 fi
 
 end_epoch="$(date -u +%s)"
@@ -140,12 +219,14 @@ if [[ -n "$SUMMARY_PATH" ]]; then
   "git_head": "$(json_escape "${git_head}")",
   "file_manifest_sha256": "$(json_escape "${manifest_sha256}")",
   "skip_shellcheck": ${SKIP_SHELLCHECK},
+  "shellcheck_requested": ${SHELLCHECK_REQUESTED},
+  "shellcheck_fallback_reason": "$(json_escape "${SHELLCHECK_FALLBACK_REASON}")",
   "bash_n_elapsed_sec": $((bashn_end - bashn_start)),
   "shellcheck_status": "$(json_escape "${shellcheck_status}")",
   "shellcheck_version": "$(json_escape "${shellcheck_version}")",
   "shellcheck_elapsed_sec": ${shellcheck_elapsed},
   "total_elapsed_sec": ${total_elapsed},
-  "status": "ok"
+  "status": "$(json_escape "${summary_status}")"
 }
 EOF
   echo "[quick-gate] summary_json=${SUMMARY_PATH}"
