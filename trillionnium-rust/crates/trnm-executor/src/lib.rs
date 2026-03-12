@@ -2144,6 +2144,22 @@ mod tests {
     }
 
     #[test]
+    fn aggressive_toggle_parsers_accept_quoted_no_tokens() {
+        let _env = env_lock();
+
+        let _rr_no = EnvGuard::set("TRNM_AGGR_SCAN_ROUND_ROBIN", " \"no\" ");
+        assert!(!aggr_scan_round_robin_enabled());
+        drop(_rr_no);
+
+        let _deep_no = EnvGuard::set("TRNM_AGGR_DEEP_SCAN", " 'no' ");
+        assert!(!aggr_deep_scan_enabled());
+        drop(_deep_no);
+
+        let _skip_no = EnvGuard::set("TRNM_AGGR_SKIP_EMPTY_STAGE_CHECKS", " \"no\" ");
+        assert!(!aggr_skip_empty_stage_checks());
+    }
+
+    #[test]
     fn aggressive_toggle_parsers_fall_back_to_defaults_on_empty_or_separator_only_values() {
         let _env = env_lock();
 
