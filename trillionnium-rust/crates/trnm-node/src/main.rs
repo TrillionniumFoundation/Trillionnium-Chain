@@ -5423,7 +5423,7 @@ mod tests {
                 CheckpointMeta {
                     height: 1,
                     state_root_hex: "r1".into(),
-                    wal_entry_hash_hex: h1,
+                    wal_entry_hash_hex: h1.clone(),
                 },
                 CheckpointMeta {
                     height: 3,
@@ -5449,6 +5449,12 @@ mod tests {
         assert_eq!(retained.len(), 1);
         assert_eq!(retained[0].height, 1);
         assert_eq!(retained[0].proposal_hash, "h1");
+
+        let retained_checkpoints = load_checkpoint_meta(&wal_dir).unwrap();
+        assert_eq!(retained_checkpoints.len(), 1);
+        assert_eq!(retained_checkpoints[0].height, 1);
+        assert_eq!(retained_checkpoints[0].state_root_hex, "r1");
+        assert_eq!(retained_checkpoints[0].wal_entry_hash_hex, h1);
 
         let _ = fs::remove_dir_all(&wal_dir);
     }
