@@ -248,5 +248,12 @@ mod tests {
         let normalized = normalize_failure_reason(raw);
         assert_eq!(normalized, "target relay timeout signal");
     }
+
+    #[test]
+    fn normalize_failure_reason_strips_inhibit_symmetric_swapping_for_replay_stability() {
+        let raw = "target\u{2065} relay timeout";
+        let normalized = normalize_failure_reason(raw);
+        assert_eq!(normalized, "target relay timeout");
+    }
 }
 
