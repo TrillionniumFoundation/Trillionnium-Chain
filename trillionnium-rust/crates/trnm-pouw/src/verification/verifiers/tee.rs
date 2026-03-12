@@ -575,6 +575,22 @@ mod tests {
     }
 
     #[test]
+    fn tee_verifier_backend_internal_report_payload_prefers_report_claims_surface_over_report_evidence() {
+        let result = TeeVerifier::classify_execution_err(BackendExecutionError::Internal {
+            backend: "tee:mock-tee-internal".to_string(),
+            reason: "report payload verifier crashed".to_string(),
+        });
+
+        assert!(matches!(result, VerificationResult::Indeterminate(_)), "unexpected result: {result:?}");
+        let VerificationResult::Indeterminate(msg) = result else { unreachable!() };
+        assert!(msg.contains("backend_error:"), "message: {msg}");
+        assert!(msg.contains("report claims"), "message: {msg}");
+        assert!(!msg.contains("report evidence"), "message: {msg}");
+        assert!(!msg.contains("payload/claims"), "message: {msg}");
+        assert!(!msg.contains("legacy:"), "message: {msg}");
+    }
+
+    #[test]
     fn tee_verifier_backend_unavailable_quote_claims_keeps_quote_claims_surface_without_legacy_evidence_suffix() {
         let result = TeeVerifier::classify_execution_err(BackendExecutionError::Unavailable {
             backend: "tee:mock-tee-unavailable".to_string(),
