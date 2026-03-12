@@ -2690,6 +2690,32 @@ mod tests {
     }
 
     #[test]
+    fn auto_adaptive_large_sample_prefers_write_signal_over_shared_read_domains() {
+        let _env = env_lock();
+        let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "64");
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.20");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.20");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.05");
+
+        // Mirror the shared-read-domain regression on the large-batch sampled
+        // path. Even when adaptive mode samples a wide queue, unique writes
+        // must prevent a false hotspot switch caused only by a common read key.
+        let mut txs = Vec::with_capacity(3_000);
+        for i in 0..3_000u64 {
+            txs.push(tx(i, vec![o(42)], vec![o(10_000 + i)]));
+        }
+
+        let d = auto_adaptive_decision(&txs);
+        assert_eq!(d.sample_len, 2048);
+        assert!(!d.use_hot_bucket);
+        assert_eq!(d.reason, "low_hot_key_share");
+        assert!(d.hot_key_share <= (1.0 / d.sample_len as f64));
+        assert_eq!(d.streak_ratio, 0.0);
+        assert_eq!(d.expected_gain_score, 0.0);
+    }
+
+    #[test]
     fn auto_adaptive_detects_write_hotspots_even_with_shared_read_domains() {
         let _env = env_lock();
         let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "64");
