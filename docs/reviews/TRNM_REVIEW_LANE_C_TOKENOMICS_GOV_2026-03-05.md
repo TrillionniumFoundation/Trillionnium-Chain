@@ -212,6 +212,7 @@ Monetary policy 仅记账不铸销到账户，且节点主循环未触发 policy
 - 若要把超时惩戒真正落成可治理经济规则，需要同步打通 state allowlist / governance schema 与对应回归测试，否则会形成“名义可配置、实际不可达”的控制面错觉。
 - 另一个需要显式记录的经济语义是：当前 `trnm-pouw` 的 challenge-success bounty 只在**显式 slash resolve** 路径发放，且资金来源被限制为**当前任务的 worker stake lock**；challenged timeout 即使未来切到 `Slashed` 分支，也不会从全局 `treasury.worker_slashes` 或 timeout 路径额外发放 bounty。
 - 这意味着“无人裁决超时 → 自动 slash → 直接领 bounty”的激励链路当前并不存在；若后续产品语义希望把 timeout-slash 也视为 challenger 胜诉，需要在设计上额外说明是否允许 payout、由谁承担，以及如何避免把无人裁决路径重新变成 bounty farming 面。
+- 另外，原 Challenge 3 所述“challenge-success bounty 可从全局 `treasury.worker_slashes` 回退支付”的 P0 经济面，已不再符合当前 `trnm-pouw` 实现：现有实现只允许从**当前任务的 worker stake lock**支付 bounty，并在 task-local slash principal 不足时 fail-closed，而不会回退抽取全局 slash treasury。当前遗留风险更准确地说是：**timeout-slash 的治理控制面仍未真正打通**，而不是 bounty 仍可直接抽取全局 slash 库。
 
 ---
 
