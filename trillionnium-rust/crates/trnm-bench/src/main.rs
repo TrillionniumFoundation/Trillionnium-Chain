@@ -352,6 +352,21 @@ mod tests {
         assert_profiles_match(&bench_groups, &bench_profile, &executor_groups, &executor_profile);
     }
 
+    #[test]
+    fn hot_streak_bench_default_path_stays_distinct_from_auto_adaptive_executor_output() {
+        let txs = build_hot_streak_txs(20_000, 2_000, 3, 1);
+        let (bench_groups, bench_profile) = StrategyArg::Default.resolve_profile(&txs);
+        let (auto_groups, auto_profile) =
+            build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::AutoAdaptive);
+
+        assert_ne!(bench_groups, auto_groups);
+        assert_ne!(bench_profile.group_count, auto_profile.group_count);
+        assert!(
+            auto_profile.hot_object_share > bench_profile.hot_object_share,
+            "auto-adaptive hot-streak path should surface a stronger hotspot signal than default"
+        );
+    }
+
     fn assert_profiles_match(
         left_groups: &[Vec<trnm_executor::Tx>],
         left_profile: &trnm_executor::GroupingProfile,
