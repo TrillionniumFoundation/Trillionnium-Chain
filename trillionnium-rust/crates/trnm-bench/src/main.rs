@@ -312,6 +312,34 @@ mod tests {
     }
 
     #[test]
+    fn hot_streak_single_key_budget_still_resolves_auto_adaptive_to_hot_bucket() {
+        let txs = build_hot_streak_txs(64, 1, 3, 1);
+        let decision = auto_adaptive_decision(&txs);
+        let (_groups, profile) =
+            build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::AutoAdaptive);
+
+        assert!(
+            decision.use_hot_bucket,
+            "single-key hot-streak workload should keep the adaptive hotspot path enabled"
+        );
+        assert_eq!(decision.reason, "hotspot_detected");
+        assert!(matches!(
+            resolve_grouping_strategy(&txs, GroupingStrategy::AutoAdaptive),
+            GroupingStrategy::HotBucketInterleave
+        ));
+        assert_eq!(profile.tx_count, txs.len());
+        assert_eq!(profile.grouped_count, txs.len());
+        assert_eq!(profile.candidate_groups_scanned, 0);
+        assert_eq!(profile.stage_ww_checks, 0);
+        assert_eq!(profile.stage_wr_checks, 0);
+        assert_eq!(profile.stage_rw_checks, 0);
+        assert!(
+            profile.hot_object_share > 0.0,
+            "single-key hotspot workload should retain non-zero hotspot visibility"
+        );
+    }
+
+    #[test]
     fn hot_streak_auto_adaptive_profile_keeps_hot_bucket_stage_counters_zeroed() {
         let txs = build_hot_streak_txs(20_000, 2_000, 3, 1);
         let decision = auto_adaptive_decision(&txs);
