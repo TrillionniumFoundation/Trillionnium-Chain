@@ -67,7 +67,7 @@
 
 建议在每轮提交信息或随附说明中使用固定字段：`gate`、`evidence`、`rollback`、`root_cause`，便于后续审计与自动汇总。
 
-L04 observability note: when reviewing consensus-loop regressions, prefer height-aware jitter indicators such as `bft_round_change_density_avg_milli` together with `bft_round_change_backoff_density_avg_milli`, and use `bft_round_change_active_height_share_ppm` / `bft_round_change_backoff_active_height_share_ppm` to relate clustered jitter to average finality budget instead of letting it disappear inside global averages.
+L04 observability note: when reviewing consensus-loop regressions, prefer height-aware jitter indicators such as `bft_round_change_density_avg_milli` together with `bft_round_change_backoff_density_avg_milli`, and use `bft_round_change_active_height_share_ppm` / `bft_round_change_backoff_active_height_share_ppm` to relate clustered jitter to average finality budget instead of letting it disappear inside global averages. For proposer fairness hotspots, also review `bft_leader_missed_active_validators` and `bft_leader_missed_active_validator_share_ppm` alongside `bft_leader_missed_top_share_ppm` so concentrated misses do not hide behind raw totals.
 
 ## 仍然 deferred / 未在本次文档修正中解决
 
