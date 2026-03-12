@@ -1580,6 +1580,13 @@ impl StateStore {
             hasher.update([pending.slash_worker as u8]);
             hasher.update([pending.confirmations]);
             hasher.update(pending.first_approver.as_bytes());
+            match &pending.second_approver {
+                Some(second_approver) => {
+                    hasher.update([1]);
+                    hasher.update(second_approver.as_bytes());
+                }
+                None => hasher.update([0]),
+            }
             hasher.update(pending.authority_set.as_bytes());
             hasher.update(pending.task_version.to_le_bytes());
         }
@@ -4558,6 +4565,51 @@ mod tests {
             st_a.state_root(),
             st_b.state_root(),
             "pending resolve authority set must contribute to state root"
+        );
+    }
+
+    #[test]
+    fn state_root_changes_when_pending_resolve_second_approver_changes() {
+        let mut st_a = StateStore::new();
+        st_a.stage_or_confirm_resolve_approval(
+            502,
+            1,
+            true,
+            "authority-a",
+            "authority-a,authority-b,authority-c",
+        )
+        .unwrap();
+        st_a.stage_or_confirm_resolve_approval(
+            502,
+            1,
+            true,
+            "authority-b",
+            "authority-a,authority-b,authority-c",
+        )
+        .unwrap();
+
+        let mut st_b = StateStore::new();
+        st_b.stage_or_confirm_resolve_approval(
+            502,
+            1,
+            true,
+            "authority-a",
+            "authority-a,authority-b,authority-c",
+        )
+        .unwrap();
+        st_b.stage_or_confirm_resolve_approval(
+            502,
+            1,
+            true,
+            "authority-c",
+            "authority-a,authority-b,authority-c",
+        )
+        .unwrap();
+
+        assert_ne!(
+            st_a.state_root(),
+            st_b.state_root(),
+            "pending resolve second approver must contribute to state root"
         );
     }
 
