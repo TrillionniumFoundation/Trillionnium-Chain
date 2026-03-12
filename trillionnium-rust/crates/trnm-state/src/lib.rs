@@ -567,6 +567,14 @@ impl StateStore {
         {
             return Err("resolve approval approver must be a configured authority member".into());
         }
+        if let Some(configured_authority_set) = self.gov_param_string("resolve_authority") {
+            if !resolve_authority_sets_match(&configured_authority_set, authority_set) {
+                return Err(
+                    "resolve approval authority set must match configured governance authority"
+                        .into(),
+                );
+            }
+        }
 
         if let Some(entry) = self.pending_resolve_approvals.get(&task_id) {
             if entry.confirmations >= 2 {
@@ -2091,6 +2099,48 @@ mod tests {
             st.state_root(),
             root_before,
             "rejected decision mismatch must not churn cached state root"
+        );
+    }
+
+    #[test]
+    fn resolve_approval_rejects_authority_set_drift_from_configured_governance_without_mutation() {
+        let mut st = StateStore::new();
+        let applied = st
+            .set_gov_param(
+                9_180,
+                7_310,
+                "resolve_authority".into(),
+                "authority-a,authority-b".into(),
+            )
+            .expect("resolve_authority update should be scheduled");
+        assert!(matches!(applied, GovParamUpdateOutcome::Scheduled { .. }));
+        let applied = st
+            .set_gov_param(
+                9_200,
+                7_310,
+                "resolve_authority".into(),
+                "authority-a,authority-b".into(),
+            )
+            .expect("resolve_authority update should apply after timelock");
+        assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+
+        let root_before = st.state_root();
+        let err = st
+            .stage_or_confirm_resolve_approval(
+                8_081,
+                3,
+                true,
+                "authority-a",
+                "authority-a,authority-c",
+            )
+            .expect_err("authority-set drift from governance config must be rejected");
+        assert!(err.contains("must match configured governance authority"));
+        assert_eq!(st.pending_resolve_approval(8_081), None);
+        assert_eq!(st.pending_resolve_first_approver(8_081), None);
+        assert_eq!(
+            st.state_root(),
+            root_before,
+            "rejected authority-set drift must not churn cached state root"
         );
     }
 

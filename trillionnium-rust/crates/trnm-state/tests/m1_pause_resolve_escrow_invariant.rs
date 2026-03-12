@@ -154,6 +154,65 @@ fn paused_state_rejects_system_or_treasury_resolve_authority_members_without_sid
 }
 
 #[test]
+fn paused_state_rejects_resolve_approval_authority_set_drift_without_side_effects() {
+    // M1 boundary hardening: once governance has a configured resolve_authority set, staged
+    // resolve approvals must match it exactly even while paused so callers cannot smuggle a
+    // drifted approval quorum into pending resolve state.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 31_102);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 780);
+    st.set_balance(WORKER_SLASH_TREASURY_ACCOUNT, 20);
+
+    let bootstrap = st
+        .set_gov_param(
+            98_160,
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("bootstrap resolve_authority write should succeed");
+    assert!(matches!(bootstrap, GovParamUpdateOutcome::Scheduled { .. }));
+    let applied = st
+        .set_gov_param(
+            98_180,
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("bootstrap resolve_authority should apply after timelock");
+    assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+
+    st.set_gov_param(98_181, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+    let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+    let slashes_before = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
+
+    let err = st
+        .stage_or_confirm_resolve_approval(
+            8_182,
+            3,
+            true,
+            "authority-a",
+            "authority-a,authority-c",
+        )
+        .expect_err("drifted paused resolve approval authority set must be rejected");
+    assert!(err.contains("must match configured governance authority"));
+
+    assert_eq!(st.pending_resolve_approval(8_182), None);
+    assert_eq!(st.pending_resolve_first_approver(8_182), None);
+    assert!(st.is_emergency_paused());
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
+    assert_eq!(st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT), slashes_before);
+}
+
+#[test]
 fn paused_state_pending_resolve_authority_conflict_keeps_original_timelock_and_pause_state() {
     // M1 micro-hardening: while paused, conflicting resolve_authority re-submission must fail
     // closed without mutating the already staged timelock entry or pause state.
