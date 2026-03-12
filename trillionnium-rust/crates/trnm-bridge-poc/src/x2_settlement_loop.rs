@@ -308,6 +308,13 @@ mod tests {
     }
 
     #[test]
+    fn normalize_compensation_reason_collapses_thin_space_family_for_replay_stability() {
+        let raw = "target\u{2008}relay\u{2009}timeout\u{200A}signal";
+        let normalized = normalize_compensation_reason(raw, "fallback");
+        assert_eq!(normalized, "target relay timeout signal");
+    }
+
+    #[test]
     fn normalize_compensation_reason_strips_hangul_fillers_for_replay_stability() {
         let raw = "target\u{115F}relay\u{1160}timeout\u{3164}signal";
         let normalized = normalize_compensation_reason(raw, "fallback");
