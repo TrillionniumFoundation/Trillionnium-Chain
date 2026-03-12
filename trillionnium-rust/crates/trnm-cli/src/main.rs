@@ -559,7 +559,13 @@ fn parse_tx_query_response(raw: &str, requested_tx_hash: &str) -> Result<TxQuery
             .ok_or_else(|| anyhow!("missing/invalid status field in tx query response"))?;
         let error = primary
             .get("error")
+            .or_else(|| primary.get("raw_log"))
+            .or_else(|| primary.get("rawLog"))
+            .or_else(|| primary.get("log"))
             .or_else(|| payload.get("error"))
+            .or_else(|| payload.get("raw_log"))
+            .or_else(|| payload.get("rawLog"))
+            .or_else(|| payload.get("log"))
             .and_then(normalize_json_error);
         return Ok(TxQueryResponse {
             tx_hash,
@@ -603,7 +609,7 @@ fn parse_tx_query_response(raw: &str, requested_tx_hash: &str) -> Result<TxQuery
                         status = infer_kv_tx_status(&key, &value);
                     }
                 }
-                "error" => {
+                "error" | "raw_log" | "rawlog" | "log" => {
                     // Manual quote trimming since parse_kv_line no longer does it aggressively
                     let cleaned = value.trim_matches(|c| matches!(c, '"' | '\'' | '`'));
                     if !is_nullish_kv_value(cleaned) {
@@ -1280,6 +1286,14 @@ mod tests {
         let backtick = "tx_hash=0x782\nstatus=fail\nerror=`signature invalid`\n";
         let parsed_backtick = parse_tx_query_response(backtick, "0xfallback").unwrap();
         assert_eq!(parsed_backtick.error.as_deref(), Some("signature invalid"));
+
+        let raw_log = "tx_hash=0x783\nstatus=fail\nraw_log='deliver tx failed'\n";
+        let parsed_raw_log = parse_tx_query_response(raw_log, "0xfallback").unwrap();
+        assert_eq!(parsed_raw_log.error.as_deref(), Some("deliver tx failed"));
+
+        let log_alias = "tx_hash=0x784\nstatus=fail\nlog=`check tx failed`\n";
+        let parsed_log_alias = parse_tx_query_response(log_alias, "0xfallback").unwrap();
+        assert_eq!(parsed_log_alias.error.as_deref(), Some("check tx failed"));
     }
 
     #[test]
@@ -1310,6 +1324,15 @@ mod tests {
             "{\"tx_hash\":\"0x777\",\"status\":\"fail\",\"error\":{\"code\":\"E_NONCE\"}}";
         let parsed_obj = parse_tx_query_response(json_obj, "0xfallback").unwrap();
         assert_eq!(parsed_obj.error.as_deref(), Some("{\"code\":\"E_NONCE\"}"));
+
+        let json_raw_log =
+            "{\"tx_hash\":\"0x778\",\"status\":\"fail\",\"raw_log\":\"deliver tx failed\"}";
+        let parsed_raw_log = parse_tx_query_response(json_raw_log, "0xfallback").unwrap();
+        assert_eq!(parsed_raw_log.error.as_deref(), Some("deliver tx failed"));
+
+        let json_log = "{\"tx_hash\":\"0x779\",\"status\":\"fail\",\"log\":\"check tx failed\"}";
+        let parsed_log = parse_tx_query_response(json_log, "0xfallback").unwrap();
+        assert_eq!(parsed_log.error.as_deref(), Some("check tx failed"));
     }
 
     #[test]
