@@ -863,7 +863,7 @@ fn persist_local_pending_tx(tx_hash: &str) -> Result<()> {
 
 fn emit_pending_tx_hash(tx_hash: &str) -> Result<()> {
     persist_local_pending_tx(tx_hash)?;
-    println!("tx_hash={} ", tx_hash);
+    println!("tx_hash={}", tx_hash);
     Ok(())
 }
 
@@ -946,7 +946,7 @@ fn main() -> Result<()> {
             }
             TxCommand::Query { tx_hash } => {
                 let resp = tx_query(&tx_hash)?;
-                println!("tx_hash={} ", resp.tx_hash);
+                println!("tx_hash={}", resp.tx_hash);
                 println!("status={}", resp.status);
                 if let Some(err) = resp.error {
                     println!("error={}", err);
@@ -963,7 +963,7 @@ fn main() -> Result<()> {
                     Duration::from_secs(interval),
                     tx_query,
                 )?;
-                println!("tx_hash={} ", resp.tx_hash);
+                println!("tx_hash={}", resp.tx_hash);
                 println!("status={}", resp.status);
                 if let Some(err) = resp.error {
                     println!("error={}", err);
