@@ -579,7 +579,8 @@ impl StateStore {
                         .into(),
                 );
             }
-        } else if let Some(pending_authority_set) = self
+        }
+        if let Some(pending_authority_set) = self
             .pending_gov_update("resolve_authority")
             .map(|pending| pending.value)
         {
@@ -806,7 +807,8 @@ impl StateStore {
                         self.pending_resolve_approvals.remove(&task_id);
                         return;
                     }
-                } else if let Some(pending_authority_set) = self
+                }
+                if let Some(pending_authority_set) = self
                     .pending_gov_update("resolve_authority")
                     .map(|pending| pending.value)
                 {

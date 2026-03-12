@@ -213,6 +213,84 @@ fn paused_state_rejects_resolve_approval_authority_set_drift_without_side_effect
 }
 
 #[test]
+fn paused_state_rejects_resolve_approval_against_stale_configured_authority_when_pending_timelock_exists() {
+    // M1 boundary hardening: once a replacement resolve_authority set is already pending,
+    // paused resolve approvals must fail closed against the stale configured quorum instead of
+    // letting callers keep staging approvals against the soon-to-be-replaced authority set.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 31_103);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 781);
+    st.set_balance(WORKER_SLASH_TREASURY_ACCOUNT, 21);
+
+    let bootstrap = st
+        .set_gov_param(
+            98_160,
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("bootstrap resolve_authority write should succeed");
+    assert!(matches!(bootstrap, GovParamUpdateOutcome::Scheduled { .. }));
+    let applied = st
+        .set_gov_param(
+            98_180,
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("bootstrap resolve_authority should apply after timelock");
+    assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+
+    let replacement = st
+        .set_gov_param(
+            98_181,
+            7_310,
+            "resolve_authority".into(),
+            "authority-c,authority-d".into(),
+        )
+        .expect("replacement resolve_authority update should be scheduled");
+    assert!(matches!(replacement, GovParamUpdateOutcome::Scheduled { .. }));
+
+    st.set_gov_param(98_182, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+    let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+    let slashes_before = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
+
+    let err = st
+        .stage_or_confirm_resolve_approval(
+            8_183,
+            3,
+            true,
+            "authority-a",
+            "authority-a,authority-b",
+        )
+        .expect_err("stale configured resolve authority must be rejected once a pending replacement exists");
+    assert!(err.contains("must match pending governance authority"));
+
+    assert_eq!(st.pending_resolve_approval(8_183), None);
+    assert_eq!(st.pending_resolve_first_approver(8_183), None);
+    assert!(st.is_emergency_paused());
+    assert_eq!(
+        st.gov_param_string("resolve_authority"),
+        Some("authority-a,authority-b".into()),
+        "rejecting stale approval must not mutate the active configured authority set"
+    );
+    assert_eq!(
+        st.balance_of(CHALLENGE_ESCROW_ACCOUNT),
+        escrow_before,
+        "rejecting stale approval must not perturb challenge escrow"
+    );
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
+    assert_eq!(st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT), slashes_before);
+}
+
+#[test]
 fn paused_state_pending_resolve_authority_conflict_keeps_original_timelock_and_pause_state() {
     // M1 micro-hardening: while paused, conflicting resolve_authority re-submission must fail
     // closed without mutating the already staged timelock entry or pause state.
