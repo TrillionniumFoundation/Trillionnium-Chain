@@ -924,6 +924,38 @@ mod tests {
     }
 
     #[test]
+    fn oracle_validation_response_bridge_contract_consistent_rejects_counter_mismatch() {
+        let report = OracleValidationReport {
+            ok: false,
+            now_ts_ms: 794,
+            observation: OracleValidationObservation {
+                stale_reject_total: 1,
+                quorum_reject_total: 0,
+                drift_reject_total: 0,
+                accepted_total: 0,
+            },
+            metrics: OracleValidationMetrics {
+                oracle_stale_reject_total: 0,
+                oracle_quorum_reject_total: 1,
+                oracle_drift_reject_total: 0,
+                oracle_source_cardinality: 2,
+                accepted_total: 0,
+                sample_count: 1,
+            },
+            error: Some("stale".into()),
+        };
+
+        let out: OracleValidateSnapshotResponse = report.into();
+
+        assert!(!out.observation_matches_metrics());
+        assert_eq!(out.classified_outcome_total(), 1);
+        assert_eq!(out.observation_classified_outcome_total(), 1);
+        assert!(out.classified_outcome_conserves_sample_count());
+        assert!(out.observation_classified_outcome_conserves_sample_count());
+        assert!(!out.bridge_contract_consistent());
+    }
+
+    #[test]
     fn oracle_validate_snapshot_response_deserializes_canonical_bridge_payload_without_error_field() {
         let payload = json!({
             "ok": true,
