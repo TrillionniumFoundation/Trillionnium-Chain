@@ -137,11 +137,12 @@ impl TeeVerifier {
         let mentions_report = mentions(|token| token == "report" || token == "reports");
         let mentions_claims = mentions(|token| token.starts_with("claim"));
         let mentions_payload = mentions(|token| token == "payload");
-        let mentions_evidence = mentions(|token| token == "evidence");
+        let mentions_evidence = mentions(|token| token == "evidence" || token == "evidences");
         let mentions_certificate =
-            mentions(|token| token == "certificate" || token.starts_with("cert"));
-        let mentions_attestation = mentions(|token| token == "attestation");
-        let mentions_receipt = mentions(|token| token == "receipt");
+            mentions(|token| token == "certificate" || token == "certificates" || token.starts_with("cert"));
+        let mentions_attestation =
+            mentions(|token| token == "attestation" || token == "attestations");
+        let mentions_receipt = mentions(|token| token == "receipt" || token == "receipts");
 
         if mentions_unavailable && !mentions_quote && !mentions_report && !mentions_claims {
             return "evidence/claims";
@@ -792,6 +793,55 @@ mod tests {
         assert!(msg.contains("evidence/claims"), "message: {msg}");
         assert!(!msg.contains("payload/claims"), "message: {msg}");
         assert!(!msg.contains("legacy:"), "message: {msg}");
+    }
+
+    #[test]
+    fn tee_verifier_backend_internal_pluralized_attestations_payload_still_prefers_evidence_claims_surface(
+    ) {
+        let result = TeeVerifier::classify_execution_err(BackendExecutionError::Internal {
+            backend: "tee:mock-tee-internal".to_string(),
+            reason: "TEE attestations payload verifier crashed".to_string(),
+        });
+
+        assert!(
+            matches!(result, VerificationResult::Indeterminate(_)),
+            "unexpected result: {result:?}"
+        );
+        let VerificationResult::Indeterminate(msg) = result else {
+            unreachable!()
+        };
+        assert!(msg.contains("backend_error:"), "message: {msg}");
+        assert!(msg.contains("evidence/claims"), "message: {msg}");
+        assert!(!msg.contains("payload/claims"), "message: {msg}");
+        assert!(!msg.contains("quote claims"), "message: {msg}");
+        assert!(!msg.contains("report claims"), "message: {msg}");
+        assert!(!msg.contains("legacy:"), "message: {msg}");
+    }
+
+    #[test]
+    fn tee_verifier_backend_unavailable_pluralized_receipts_payload_still_prefers_evidence_claims_surface(
+    ) {
+        let result = TeeVerifier::classify_execution_err(BackendExecutionError::Unavailable {
+            backend: "tee:mock-tee-unavailable".to_string(),
+            reason: "TEE receipts payload verifier unavailable".to_string(),
+        });
+
+        assert!(
+            matches!(result, VerificationResult::Indeterminate(_)),
+            "unexpected result: {result:?}"
+        );
+        let VerificationResult::Indeterminate(msg) = result else {
+            unreachable!()
+        };
+        assert!(msg.contains("unavailable:"), "message: {msg}");
+        assert!(msg.contains("evidence/claims"), "message: {msg}");
+        assert!(!msg.contains("payload/claims"), "message: {msg}");
+        assert!(!msg.contains("quote claims"), "message: {msg}");
+        assert!(!msg.contains("report claims"), "message: {msg}");
+        assert!(
+            msg.contains("legacy: cannot currently verify TEE attestation evidence/claims"),
+            "message: {msg}"
+        );
     }
 
     #[test]
