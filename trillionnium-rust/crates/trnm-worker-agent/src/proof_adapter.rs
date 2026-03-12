@@ -599,6 +599,16 @@ mod tests {
             Some("pr-2d")
         );
 
+        let tee_with_soft_hyphen = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-2d0\",\"adapter\":\"TEE\u{00AD}_RECEIPT\"}",
+            )
+            .expect("tee receipt label with soft hyphen should parse");
+        assert_eq!(
+            tee_with_soft_hyphen.provider_request_id.as_deref(),
+            Some("pr-2d0")
+        );
+
         let tee_with_zero_width_joiner = adapter
             .parse_response(
                 "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-2e\",\"adapter\":\"TEE\u{200d}_RECEIPT\"}",
@@ -876,6 +886,16 @@ mod tests {
         assert_eq!(
             zk_with_non_breaking_hyphen.provider_request_id.as_deref(),
             Some("pr-zk-2d")
+        );
+
+        let zk_with_combining_grapheme_joiner = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-zk-2d0\",\"adapter\":\"ZK\u{034F}_RECEIPT\"}",
+            )
+            .expect("zk receipt label with combining grapheme joiner should parse");
+        assert_eq!(
+            zk_with_combining_grapheme_joiner.provider_request_id.as_deref(),
+            Some("pr-zk-2d0")
         );
 
         let zk_with_zero_width_joiner = adapter
