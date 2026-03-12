@@ -873,8 +873,11 @@ fn parse_tx_hash(text: &str) -> Option<String> {
         "txhash=",
         "txhash:",
         "\"tx_hash\":",
+        "\"tx_hash\" :",
         "\"txHash\":",
+        "\"txHash\" :",
         "\"txhash\":",
+        "\"txhash\" :",
     ];
 
     fn parse_hash_from_suffix(suffix: &str) -> Option<String> {
@@ -2056,6 +2059,13 @@ mod tests {
     fn parse_tx_hash_accepts_json_style_receipts_with_whitespace_after_colon() {
         let json = parse_tx_hash("{\"tx_hash\": \"0xDEADBEEF\", \"status\": \"accepted\"}")
             .expect("json receipt hash with whitespace after colon should parse");
+        assert_eq!(json, "deadbeef");
+    }
+
+    #[test]
+    fn parse_tx_hash_accepts_json_style_receipts_with_whitespace_before_colon() {
+        let json = parse_tx_hash("{\"tx_hash\" : \"0xDEADBEEF\", \"status\": \"accepted\"}")
+            .expect("json receipt hash with whitespace before colon should parse");
         assert_eq!(json, "deadbeef");
     }
 
