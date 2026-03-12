@@ -140,6 +140,11 @@ else
   echo "[quick-gate] shellcheck_version=${shellcheck_version}"
 fi
 
+summary_status="ok"
+if [[ "$shellcheck_status" == "skipped" ]]; then
+  summary_status="warn-shellcheck-skipped"
+fi
+
 end_epoch="$(date -u +%s)"
 total_elapsed="$((end_epoch - START_EPOCH))"
 
@@ -159,7 +164,7 @@ if [[ -n "$SUMMARY_PATH" ]]; then
   "shellcheck_version": "$(json_escape "${shellcheck_version}")",
   "shellcheck_elapsed_sec": ${shellcheck_elapsed},
   "total_elapsed_sec": ${total_elapsed},
-  "status": "ok"
+  "status": "$(json_escape "${summary_status}")"
 }
 EOF
   echo "[quick-gate] summary_json=${SUMMARY_PATH}"

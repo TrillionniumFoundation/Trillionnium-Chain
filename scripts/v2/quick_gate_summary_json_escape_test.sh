@@ -23,7 +23,8 @@ summary = json.load(open(sys.argv[1], 'r', encoding='utf-8'))
 needle = sys.argv[2]
 csv = summary.get('target_dirs_csv', '')
 assert needle in csv, (needle, csv)
-assert summary.get('status') == 'ok', summary
+assert summary.get('status') == 'warn-shellcheck-skipped', summary
+assert summary.get('shellcheck_status') == 'skipped', summary
 print('ok')
 PY
 
