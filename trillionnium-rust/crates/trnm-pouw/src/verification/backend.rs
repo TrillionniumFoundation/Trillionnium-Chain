@@ -831,6 +831,25 @@ mod tests {
         }
     }
 
+    struct MockRegistryBackend {
+        backend_id: &'static str,
+    }
+
+    impl ZkBackend for MockRegistryBackend {
+        fn backend_id(&self) -> &str {
+            self.backend_id
+        }
+
+        fn verify(
+            &self,
+            _request: BackendVerificationRequest<'_>,
+        ) -> Result<BackendVerificationSuccess, BackendExecutionError> {
+            Ok(BackendVerificationSuccess {
+                backend_id: self.backend_id.into(),
+            })
+        }
+    }
+
     #[test]
     fn backend_config_routes_backend_capable_families() {
         let config = VerificationBackendConfig {
@@ -1182,6 +1201,36 @@ mod tests {
             vec!["groth16"]
         );
         assert!(backend_token_zk_system_hints("mock-zk").is_empty());
+    }
+
+    #[test]
+    fn backend_registry_resolves_canonicalized_backend_aliases_fail_closed_without_guessing() {
+        let mut registry = VerificationBackendRegistry::new();
+        registry.register(Arc::new(MockRegistryBackend {
+            backend_id: "zk groth16 demo",
+        }));
+
+        let backend = registry
+            .resolve(
+                VerificationBackendFamily::Zk,
+                &VerificationBackendKind::Custom("zk-groth16-demo".into()),
+            )
+            .unwrap();
+        assert_eq!(backend.backend_id(), "zk groth16 demo");
+
+        let err = match registry.resolve(
+            VerificationBackendFamily::Zk,
+            &VerificationBackendKind::Custom("zk-groth16-plonk-demo".into()),
+        ) {
+            Ok(found) => panic!("expected unknown backend, got {}", found.backend_id()),
+            Err(err) => err,
+        };
+        assert!(matches!(
+            err,
+            BackendSelectionError::UnknownBackend { family, backend }
+                if family == VerificationBackendFamily::Zk
+                    && backend == "zk-groth16-plonk-demo"
+        ));
     }
 
     #[test]
