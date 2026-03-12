@@ -672,8 +672,8 @@ def main():
     ]
     baseline_report_pool = candidate_pool_health_struct(
         "baseline_closeout_reports",
-        out,
-        baseline_report_candidates_with_out,
+        baseline_report_candidates[0] if baseline_report_candidates else None,
+        baseline_report_candidates,
     )
     archive_candidates_by_pool = {
         label: archive_candidates_for_pool(candidates)
