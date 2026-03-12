@@ -593,7 +593,7 @@ fn parse_event_log_kv(line: &str) -> BTreeMap<String, String> {
 fn parse_node_event_log_sources_list(raw: &str) -> Vec<PathBuf> {
     let normalized = normalize_wrapped_env_value(raw);
     normalized
-        .split(|c: char| c == ',' || c == ';' || c == '\n')
+        .split(|c: char| c == ',' || c == ';' || c == '\n' || c == '\r')
         .filter_map(|part| {
             let trimmed = part.trim();
             if trimmed.is_empty() {
@@ -7077,6 +7077,50 @@ line2
             got,
             vec![canonical_rel_log],
             "outer shell/config wrapping must not cause the bounded source list to fall back to defaults"
+        );
+
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn load_node_event_log_sources_accepts_crlf_separated_env_entries() {
+        let _guard = lock_env();
+        let root = unique_tmp_path("trnm-rpc-log-sources-crlf-env", "dir");
+        let run_dir = root.join("run");
+        fs::create_dir_all(&run_dir).expect("create run dir");
+
+        let first_log = run_dir.join("node4-crlf-a.log");
+        let second_log = run_dir.join("node4-crlf-b.log");
+        fs::write(&first_log, "").expect("write first CRLF env log");
+        fs::write(&second_log, "").expect("write second CRLF env log");
+
+        let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+        let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+        unsafe {
+            std::env::set_var(
+                NODE_EVENT_LOG_SOURCES_ENV,
+                "run/node4-crlf-a.log\r\nrun/node4-crlf-b.log\r\nrun/missing-relative.log\r\n",
+            );
+            std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV);
+        }
+
+        let got = load_node_event_log_sources(&root);
+
+        match prev_sources {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+        }
+        match prev_manifest {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+        }
+
+        let canonical_first_log = fs::canonicalize(&first_log).expect("canonical first CRLF env log");
+        let canonical_second_log = fs::canonicalize(&second_log).expect("canonical second CRLF env log");
+        assert_eq!(
+            got,
+            vec![canonical_first_log, canonical_second_log],
+            "CRLF-separated bounded source lists must parse without falling back to defaults or dropping valid entries"
         );
 
         let _ = fs::remove_dir_all(root);
