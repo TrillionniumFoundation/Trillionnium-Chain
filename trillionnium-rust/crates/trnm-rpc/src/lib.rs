@@ -290,6 +290,59 @@ mod tests {
     }
 
     #[test]
+    fn oracle_validate_snapshot_response_nested_metric_keys_remain_stable() {
+        let out = OracleValidateSnapshotResponse {
+            ok: false,
+            now_ts_ms: 456,
+            observation: OracleValidationObservation {
+                stale_reject_total: 1,
+                quorum_reject_total: 0,
+                drift_reject_total: 0,
+                accepted_total: 0,
+            },
+            metrics: OracleValidationMetrics {
+                oracle_stale_reject_total: 1,
+                oracle_quorum_reject_total: 0,
+                oracle_drift_reject_total: 0,
+                oracle_source_cardinality: 2,
+                accepted_total: 0,
+                sample_count: 1,
+            },
+            error: Some("stale".into()),
+        };
+
+        let v = serde_json::to_value(out).unwrap();
+        let observation = v["observation"].as_object().unwrap();
+        let metrics = v["metrics"].as_object().unwrap();
+
+        let mut observation_keys = observation.keys().map(String::as_str).collect::<Vec<_>>();
+        observation_keys.sort_unstable();
+        let mut metrics_keys = metrics.keys().map(String::as_str).collect::<Vec<_>>();
+        metrics_keys.sort_unstable();
+
+        assert_eq!(
+            observation_keys,
+            vec![
+                "accepted_total",
+                "drift_reject_total",
+                "quorum_reject_total",
+                "stale_reject_total",
+            ]
+        );
+        assert_eq!(
+            metrics_keys,
+            vec![
+                "accepted_total",
+                "oracle_drift_reject_total",
+                "oracle_quorum_reject_total",
+                "oracle_source_cardinality",
+                "oracle_stale_reject_total",
+                "sample_count",
+            ]
+        );
+    }
+
+    #[test]
     fn oracle_validation_report_into_rpc_response_preserves_contract_shape() {
         let report = OracleValidationReport {
             ok: false,
