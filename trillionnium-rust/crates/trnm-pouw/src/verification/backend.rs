@@ -96,6 +96,8 @@ pub fn backend_system_hint(raw: &str) -> Option<String> {
                 "intel"
                     | "amd"
                     | "attestation"
+                    | "remote"
+                    | "ra"
                     | "evidence"
                     | "receipt"
                     | "quote"
@@ -104,6 +106,8 @@ pub fn backend_system_hint(raw: &str) -> Option<String> {
                     | "claim"
                     | "cert"
                     | "certificate"
+                    | "dcap"
+                    | "sev"
             ) {
                 idx += 1;
                 continue;
@@ -902,6 +906,11 @@ mod tests {
             "tee certificate",
             "tee attestation receipt report",
             "tee evidence quote",
+            "tee ra quote",
+            "tee remote attestation quote",
+            "tee dcap quote",
+            "tee intel dcap quote",
+            "tee amd sev quote",
         ] {
             assert_eq!(backend_system_hint(raw), None, "raw={raw}");
         }
