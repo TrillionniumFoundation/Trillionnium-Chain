@@ -353,7 +353,7 @@ cargo run -q -p trnm-rpc -- query-events --task-id <TASK_ID> --limit 100
 - [ ] `pr5_treasury_reconcile_report.sh` 成功输出 `summary.txt`
 - [ ] `summary.txt` 中 `status=PASS`
 
-更多操作细节：当前以本节命令、产物路径与 `scripts/v2/pr5_*` 脚本内联帮助为准；专门 runbook 文档待补。
+更多操作细节：见 `docs/runbooks/l19_ops_observability_alerting_reconcile_runbook.md` 的 PR-5 小节；脚本内联帮助仍是最近实现细节的真值来源。
 
 ## PR-6 Alert Rules（Challenge Treasury 异常告警）
 
@@ -373,7 +373,7 @@ cargo run -q -p trnm-rpc -- query-events --task-id <TASK_ID> --limit 100
 - `FAIL_ESCROW_NONZERO_HOURS` / `WARN_ESCROW_NONZERO_HOURS`
 - `CI_HARD_FAIL_ON_WARN=1`（WARN 也返回非 0）
 
-Runbook：当前以本节说明、`./scripts/v2/pr6_alert_rules_gate.sh` 与生成的 `run/pr6-alerts/*/summary.txt` 为准；专门 runbook 文档待补。
+Runbook：见 `docs/runbooks/l19_ops_observability_alerting_reconcile_runbook.md` 的 PR-6 小节；若与脚本行为冲突，以 `./scripts/v2/pr6_alert_rules_gate.sh` 和生成的 `run/pr6-alerts/*/summary.txt` 为准。
 
 ## PR-7 Alert Delivery（告警投递）
 
@@ -403,7 +403,7 @@ DRY_RUN=1 ALERT_NOTIFY_CHANNEL=slack ./scripts/v2/pr7_alert_delivery_gate.sh
 - 本地 dry-run 默认用 `PR7_DELIVERY_FAIL_MODE=warn`，既保留 `pr7_rc` 可观测性，又不把临时通道故障误判成规则引擎失败。
 - CI / cron 若要求“规则通过但投递失败也要报警”，改用 `PR7_DELIVERY_FAIL_MODE=escalate`。
 
-Runbook：当前以本节说明、`./scripts/v2/pr7_alert_delivery_gate.sh` / `scripts/v2/pr7_alert_delivery.py` 及 `run/pr7-alerts/*` 产物为准；专门 runbook 文档待补。
+Runbook：见 `docs/runbooks/l19_ops_observability_alerting_reconcile_runbook.md` 的 PR-7 小节；若与脚本行为冲突，以 `./scripts/v2/pr7_alert_delivery_gate.sh` / `scripts/v2/pr7_alert_delivery.py` 及 `run/pr7-alerts/*` 产物为准。
 
 ## PR-6 Nightly Security 日报（自动化）
 
@@ -413,7 +413,7 @@ nightly 在流程末尾自动生成日报：
 - 本地手动重跑：`python3 ./scripts/v2/pr6_daily_security_summary.py`
 - Workflow Summary 小节：`PR-6 Daily Security Ops`
 
-Runbook：当前以本节说明与 `python3 ./scripts/v2/pr6_daily_security_summary.py` 生成的 `run/pr6-ops/daily-security-summary.md` 为准；专门 runbook 文档待补。
+Runbook：见 `docs/runbooks/l19_ops_observability_alerting_reconcile_runbook.md` 的 PR-6 Nightly Daily Security Summary 小节；若与脚本行为冲突，以 `python3 ./scripts/v2/pr6_daily_security_summary.py` 和生成的 `run/pr6-ops/daily-security-summary.md` 为准。
 
 ## PR-9 Weekly Alert Governance（每周告警治理）
 
@@ -463,7 +463,7 @@ python3 ./scripts/v2/pr7_threshold_advisor.py
 python3 ./scripts/v2/pr9_weekly_alert_governance.py
 ```
 
-Runbook：当前以本节说明与 `python3 ./scripts/v2/pr9_weekly_alert_governance.py` 生成的 `run/pr9/weekly-alert-governance.md` / `.json` 为准；专门 runbook 文档待补。
+Runbook：见 `docs/runbooks/l19_ops_observability_alerting_reconcile_runbook.md` 的 PR-9 小节；若与脚本行为冲突，以 `python3 ./scripts/v2/pr9_weekly_alert_governance.py` 生成的 `run/pr9/weekly-alert-governance.md` / `.json` 为准。
 
 ## Agent↔User P2P Phase A（MVP）
 
