@@ -613,6 +613,13 @@ pub fn parse_zk_proof_payload(
     if payload.vk_ref.trim().is_empty() {
         return Err(VkRefResolutionError::Missing.into_backend_execution_error());
     }
+    if payload.vk_ref != payload.vk_ref.trim() {
+        return Err(BackendExecutionError::MalformedProof {
+            backend: "zk:payload".to_string(),
+            reason: "invalid zk payload: vk_ref must not contain surrounding whitespace"
+                .to_string(),
+        });
+    }
     if payload.proof.trim().is_empty() {
         return Err(BackendExecutionError::MalformedProof {
             backend: "zk:payload".to_string(),
@@ -905,6 +912,13 @@ mod tests {
         let task = mock_task();
         let err = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"mock-zk","backend_version":"v1","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["4242","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]},"meta":{"circuit_id":"settlement-result-v1"}}"#).unwrap_err();
         assert!(matches!(err, BackendExecutionError::MalformedProof { .. }));
+    }
+
+    #[test]
+    fn parse_zk_proof_payload_rejects_vk_ref_with_surrounding_whitespace() {
+        let task = mock_task();
+        let err = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","schema_version":"trnm.zk.payload.v0","vk_ref":"  vk://trnm/dev/mock-groth16/v1  ","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["4242","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#).unwrap_err();
+        assert!(matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("vk_ref must not contain surrounding whitespace")));
     }
 
     #[test]
