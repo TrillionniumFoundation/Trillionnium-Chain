@@ -2,7 +2,7 @@
 
 ## 单命令生成证据包
 
-在仓库根目录执行：
+在 `trillionnium-rust` 子仓库根目录执行：
 
 ```bash
 ./scripts/run_local_release_evidence.sh
