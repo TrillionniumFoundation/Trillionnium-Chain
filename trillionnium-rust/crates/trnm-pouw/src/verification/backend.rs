@@ -106,6 +106,10 @@ pub fn normalize_zk_system(raw: &str) -> Option<String> {
     }
 }
 
+/// Family-scoped alias so TEE verifiers/config can speak in attestation terms
+/// without reusing the older ZK-oriented type name at call sites.
+pub type TeeBackendKind = VerificationBackendKind;
+
 /// Back-compat alias kept because current verification wiring and tests already
 /// speak in ZK-oriented terms, even though the platform registry now serves both
 /// TEE and ZK families.
@@ -488,6 +492,10 @@ impl VerificationBackendRegistry {
             })
     }
 }
+
+/// Family-scoped alias so TEE verifiers/config can speak in attestation terms
+/// without reusing the older ZK-oriented registry name at call sites.
+pub type TeeBackendRegistry = VerificationBackendRegistry;
 
 /// Back-compat alias for the previous ZK-named registry type.
 pub type ZkBackendRegistry = VerificationBackendRegistry;

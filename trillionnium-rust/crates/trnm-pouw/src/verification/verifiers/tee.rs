@@ -5,24 +5,24 @@ use trnm_types::TaskObject;
 
 use super::verify_bound_envelope;
 use crate::verification::backend::{
-    BackendExecutionError, BackendVerificationRequest, VerificationBackendConfig,
-    VerificationBackendError, VerificationBackendFamily, ZkBackendKind, ZkBackendRegistry,
+    BackendExecutionError, BackendVerificationRequest, TeeBackendKind, TeeBackendRegistry,
+    VerificationBackendConfig, VerificationBackendError, VerificationBackendFamily,
 };
 
 pub struct TeeVerifier {
-    backend: ZkBackendKind,
-    backends: Arc<ZkBackendRegistry>,
+    backend: TeeBackendKind,
+    backends: Arc<TeeBackendRegistry>,
 }
 
 impl TeeVerifier {
-    pub fn new(backend: ZkBackendKind, backends: Arc<ZkBackendRegistry>) -> Self {
+    pub fn new(backend: TeeBackendKind, backends: Arc<TeeBackendRegistry>) -> Self {
         Self { backend, backends }
     }
 
     #[allow(dead_code)]
     pub fn from_config(
         config: &VerificationBackendConfig,
-        backends: Arc<ZkBackendRegistry>,
+        backends: Arc<TeeBackendRegistry>,
     ) -> Self {
         Self::new(config.tee_backend.clone(), backends)
     }
@@ -204,7 +204,7 @@ impl TeeVerifier {
 
 impl Default for TeeVerifier {
     fn default() -> Self {
-        Self::new(ZkBackendKind::Noop, Arc::new(ZkBackendRegistry::new()))
+        Self::new(TeeBackendKind::Noop, Arc::new(TeeBackendRegistry::new()))
     }
 }
 
@@ -365,10 +365,10 @@ mod tests {
 
     #[test]
     fn tee_verifier_valid_receipt_path_with_mock_backend() {
-        let mut backends = ZkBackendRegistry::new();
+        let mut backends = TeeBackendRegistry::new();
         backends.register(Arc::new(MockTeeSuccessBackend));
         let verifier =
-            TeeVerifier::new(ZkBackendKind::Custom("mock-tee".into()), Arc::new(backends));
+            TeeVerifier::new(TeeBackendKind::Custom("mock-tee".into()), Arc::new(backends));
         let task = mock_task();
 
         assert!(matches!(
@@ -382,10 +382,10 @@ mod tests {
 
     #[test]
     fn tee_verifier_invalid_attestation_claims_path_with_mock_backend() {
-        let mut backends = ZkBackendRegistry::new();
+        let mut backends = TeeBackendRegistry::new();
         backends.register(Arc::new(MockTeeInvalidBackend));
         let verifier = TeeVerifier::new(
-            ZkBackendKind::Custom("mock-tee-invalid".into()),
+            TeeBackendKind::Custom("mock-tee-invalid".into()),
             Arc::new(backends),
         );
         let task = mock_task();
@@ -403,10 +403,10 @@ mod tests {
 
     #[test]
     fn tee_verifier_backend_unavailable_maps_to_indeterminate() {
-        let mut backends = ZkBackendRegistry::new();
+        let mut backends = TeeBackendRegistry::new();
         backends.register(Arc::new(MockTeeUnavailableBackend));
         let verifier = TeeVerifier::new(
-            ZkBackendKind::Custom("mock-tee-unavailable".into()),
+            TeeBackendKind::Custom("mock-tee-unavailable".into()),
             Arc::new(backends),
         );
         let task = mock_task();
@@ -425,10 +425,10 @@ mod tests {
 
     #[test]
     fn tee_verifier_backend_malformed_attestation_payload_or_claims_maps_to_invalid_fail_closed() {
-        let mut backends = ZkBackendRegistry::new();
+        let mut backends = TeeBackendRegistry::new();
         backends.register(Arc::new(MockTeeMalformedBackend));
         let verifier = TeeVerifier::new(
-            ZkBackendKind::Custom("mock-tee-malformed".into()),
+            TeeBackendKind::Custom("mock-tee-malformed".into()),
             Arc::new(backends),
         );
         let task = mock_task();
@@ -445,10 +445,10 @@ mod tests {
 
     #[test]
     fn tee_verifier_backend_malformed_quote_or_report_claims_maps_to_payload_invalid_fail_closed() {
-        let mut backends = ZkBackendRegistry::new();
+        let mut backends = TeeBackendRegistry::new();
         backends.register(Arc::new(MockTeeMalformedBackend));
         let verifier = TeeVerifier::new(
-            ZkBackendKind::Custom("mock-tee-malformed".into()),
+            TeeBackendKind::Custom("mock-tee-malformed".into()),
             Arc::new(backends),
         );
         let task = mock_task();
@@ -467,10 +467,10 @@ mod tests {
 
     #[test]
     fn tee_verifier_backend_internal_maps_to_indeterminate_with_backend_error_prefix() {
-        let mut backends = ZkBackendRegistry::new();
+        let mut backends = TeeBackendRegistry::new();
         backends.register(Arc::new(MockTeeInternalBackend));
         let verifier = TeeVerifier::new(
-            ZkBackendKind::Custom("mock-tee-internal".into()),
+            TeeBackendKind::Custom("mock-tee-internal".into()),
             Arc::new(backends),
         );
         let task = mock_task();
@@ -664,10 +664,10 @@ mod tests {
 
     #[test]
     fn tee_verifier_backend_malformed_report_claims_collapses_to_payload_claims_surface() {
-        let mut backends = ZkBackendRegistry::new();
+        let mut backends = TeeBackendRegistry::new();
         backends.register(Arc::new(MockTeeMalformedBackend));
         let verifier = TeeVerifier::new(
-            ZkBackendKind::Custom("mock-tee-malformed".into()),
+            TeeBackendKind::Custom("mock-tee-malformed".into()),
             Arc::new(backends),
         );
         let task = mock_task();
@@ -687,8 +687,8 @@ mod tests {
     #[test]
     fn tee_verifier_selection_error_maps_to_unavailable_prefix() {
         let verifier = TeeVerifier::new(
-            ZkBackendKind::Custom("missing-tee-backend".into()),
-            Arc::new(ZkBackendRegistry::new()),
+            TeeBackendKind::Custom("missing-tee-backend".into()),
+            Arc::new(TeeBackendRegistry::new()),
         );
         let task = mock_task();
 
