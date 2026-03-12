@@ -6329,6 +6329,57 @@ mod tests {
     }
 
     #[test]
+    fn query_events_response_replay_fallback_keeps_only_recent_events_with_limit() {
+        let recs = vec![
+            AdapterRecord {
+                ts: 10,
+                kind: "commit".into(),
+                task_id: 88,
+                worker: Some("worker-a".into()),
+                result_hash: None,
+                status: "accepted".into(),
+                tx_hash: Some("0x1111".into()),
+            },
+            AdapterRecord {
+                ts: 20,
+                kind: "reveal".into(),
+                task_id: 88,
+                worker: Some("worker-a".into()),
+                result_hash: None,
+                status: "accepted".into(),
+                tx_hash: Some("0x2222".into()),
+            },
+            AdapterRecord {
+                ts: 30,
+                kind: "commit".into(),
+                task_id: 88,
+                worker: Some("worker-b".into()),
+                result_hash: None,
+                status: "accepted".into(),
+                tx_hash: Some("0x3333".into()),
+            },
+            AdapterRecord {
+                ts: 40,
+                kind: "reveal".into(),
+                task_id: 88,
+                worker: Some("worker-b".into()),
+                result_hash: None,
+                status: "accepted".into(),
+                tx_hash: Some("0x4444".into()),
+            },
+        ];
+
+        let out = query_events_response(88, 2, &[], &recs).expect("fallback events expected");
+        assert_eq!(out.len(), 2);
+        assert_eq!(out[0].event_type, "commit");
+        assert_eq!(out[0].actor, "worker-b");
+        assert_eq!(out[0].tx_hash.as_deref(), Some("0x3333"));
+        assert_eq!(out[1].event_type, "reveal");
+        assert_eq!(out[1].actor, "worker-b");
+        assert_eq!(out[1].tx_hash.as_deref(), Some("0x4444"));
+    }
+
+    #[test]
     fn parse_event_log_kv_preserves_quoted_values_with_spaces() {
         let line = "[event] event_type=resolve task_id=7 from_status=Challenged to_status=Completed actor=authority tx_id=9 block_height=12 state_root=abc ts_unix_ms=1000 resolution_code=\"timeout reached\" bond_disposition='forfeit all'";
         let kv = parse_event_log_kv(line);
