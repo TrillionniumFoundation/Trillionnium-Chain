@@ -718,15 +718,47 @@ def main():
     lines += ["", "## Baseline Report Pool Health"]
     lines.append(candidate_pool_health_line(baseline_report_pool))
     lines.extend(candidate_preview("baseline_closeout_report_candidates", out, baseline_report_candidates))
-    lines.append(
-        archive_candidate_line("baseline_closeout_report_candidates", baseline_report_candidates)
+    baseline_report_archive_line = archive_candidate_line(
+        "baseline_closeout_report_candidates", baseline_report_candidates
     )
+    lines.append(baseline_report_archive_line)
     baseline_report_followup = {
         "produce": "produce_new_closeout_report",
         "refresh": "refresh_closeout_report_set",
         "keep_latest": "keep_latest_only_no_archive_action",
         "keep_latest_and_consider_archive": "review_archive_candidates_before_manual_cleanup",
     }.get(str(baseline_report_pool["action"]), "review_archive_candidates_before_manual_cleanup")
+    lines.append(f"- baseline_closeout_report_followup: {baseline_report_followup}")
+
+    baseline_report_archive_candidates = archive_candidates_for_pool(baseline_report_candidates)
+    lines += ["", "## Baseline Report Action Summary"]
+    lines.append(
+        "- baseline_closeout_report_decision: "
+        + (
+            "INCOMPLETE"
+            if baseline_report_pool["action"] == "produce"
+            else "REFRESH_RECOMMENDED"
+            if baseline_report_pool["action"] == "refresh"
+            else "ARCHIVE_RECOMMENDED"
+            if baseline_report_pool["action"] == "keep_latest_and_consider_archive"
+            else "READY"
+        )
+    )
+    lines.append(
+        f"- baseline_closeout_report_reason: status={baseline_report_pool['status']} action={baseline_report_pool['action']}"
+    )
+    lines.append(
+        "- baseline_closeout_report_action_counts: "
+        f"candidate_count={baseline_report_pool['candidate_count']} fresh={baseline_report_pool['fresh']} "
+        f"stale={baseline_report_pool['stale']} old={baseline_report_pool['old']} "
+        f"old_backlog={baseline_report_pool['old_backlog']} archive_candidate_count={len(baseline_report_archive_candidates)}"
+    )
+    lines.append(
+        f"- baseline_closeout_report_selected: {baseline_report_pool['selected']}"
+    )
+    lines.append(
+        f"- baseline_closeout_report_followup_command_chain: python3 scripts/profiling_closeout_report.py"
+    )
     lines.append(f"- baseline_closeout_report_followup: {baseline_report_followup}")
 
     lines += ["", "## Data Completeness"]
