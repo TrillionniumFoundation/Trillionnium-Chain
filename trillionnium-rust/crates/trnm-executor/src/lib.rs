@@ -860,9 +860,11 @@ fn parse_env_f64(name: &str) -> Option<f64> {
                     && frac.chars().all(|ch| ch.is_ascii_digit())
                 {
                     let whole_digits = whole.trim_start_matches(['+', '-']);
+                    let whole_is_zero = !whole_digits.is_empty()
+                        && whole_digits.chars().all(|ch| ch == '0');
                     let comma_is_grouping = frac.len() == 3
                         && whole.chars().any(|ch| ch.is_ascii_digit())
-                        && whole_digits != "0";
+                        && !whole_is_zero;
                     if comma_is_grouping {
                         numeric.replace(',', "")
                     } else {
@@ -2374,6 +2376,21 @@ mod tests {
         let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", " '+0,125' ");
         let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "\"0,375\"");
         let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", " '0,050' ");
+
+        assert_eq!(auto_hot_streak_threshold(), 0.25);
+        assert_eq!(auto_reorder_min_margin(), 0.125);
+        assert_eq!(auto_reorder_min_hot_key_share(), 0.375);
+        assert_eq!(auto_min_expected_gain_score(), 0.05);
+    }
+
+    #[test]
+    fn auto_adaptive_numeric_env_parser_treats_all_zero_whole_comma_values_as_decimals() {
+        let _env = env_lock();
+
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "000,250");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", " '+000,125' ");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "\"000,375\"");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", " '000,050' ");
 
         assert_eq!(auto_hot_streak_threshold(), 0.25);
         assert_eq!(auto_reorder_min_margin(), 0.125);
