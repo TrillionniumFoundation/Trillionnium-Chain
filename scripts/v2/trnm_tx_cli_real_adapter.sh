@@ -117,19 +117,20 @@ extract_tx_hash() {
 
 normalize_status() {
   local raw="$1"
-  local cleaned
+  local cleaned canonical
   cleaned=$(printf "%s" "$raw" \
     | tr '[:upper:]' '[:lower:]' \
     | sed -E 's/^[[:space:]"'"'"'`]+//; s/[[:space:]"'"'"'`[:punct:]]+$//')
+  canonical=$(printf "%s" "$cleaned" | tr ' -' '__')
 
-  case "$cleaned" in
-    pending|submitted|accepted|queued|broadcast|broadcasted|processing|in_progress|in-progress|inflight|in-flight)
+  case "$canonical" in
+    pending|submitted|accepted|queued|broadcast|broadcasted|processing|in_progress|inflight|in_flight)
       printf "pending"
       ;;
     committed|confirmed|success|succeeded|ok|included|finalized|complete|completed|done)
       printf "committed"
       ;;
-    fail|failed|error|rejected|reverted|aborted|dropped|timeout|timed_out|timed-out|expired)
+    fail|failed|error|rejected|reverted|aborted|dropped|timeout|timed_out|expired)
       printf "fail"
       ;;
     *)

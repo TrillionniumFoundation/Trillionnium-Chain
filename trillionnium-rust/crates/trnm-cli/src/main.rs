@@ -426,17 +426,16 @@ fn normalize_tx_status(raw: &str) -> Option<String> {
         })
         .trim_end_matches(|c: char| c.is_ascii_punctuation())
         .to_ascii_lowercase();
-    match cleaned.as_str() {
+    let canonical = cleaned.replace([' ', '-'], "_");
+    match canonical.as_str() {
         "pending" | "submitted" | "accepted" | "queued" | "broadcast" | "broadcasted"
-        | "processing" | "in_progress" | "in-progress" | "inflight" | "in-flight" => {
+        | "processing" | "in_progress" | "inflight" | "in_flight" => {
             Some("pending".to_string())
         }
         "committed" | "confirmed" | "success" | "succeeded" | "ok" | "included"
-        | "finalized" | "complete" | "completed" | "done" => {
-            Some("committed".to_string())
-        }
+        | "finalized" | "complete" | "completed" | "done" => Some("committed".to_string()),
         "fail" | "failed" | "error" | "rejected" | "reverted" | "aborted" | "dropped"
-        | "timeout" | "timed_out" | "timed-out" | "expired" => Some("fail".to_string()),
+        | "timeout" | "timed_out" | "expired" => Some("fail".to_string()),
         _ => None,
     }
 }
@@ -1447,6 +1446,11 @@ mod tests {
             parse_tx_query_response(timed_out_hyphen_alias, "0xfallback").unwrap();
         assert_eq!(parsed_timed_out_hyphen.status, "fail");
 
+        let timed_out_spaced_alias = "tx_hash=0xef21\nstatus='timed out'\n";
+        let parsed_timed_out_spaced =
+            parse_tx_query_response(timed_out_spaced_alias, "0xfallback").unwrap();
+        assert_eq!(parsed_timed_out_spaced.status, "fail");
+
         let submitted_alias = "tx_hash=0xef3\nstatus=submitted\n";
         let parsed_submitted = parse_tx_query_response(submitted_alias, "0xfallback").unwrap();
         assert_eq!(parsed_submitted.status, "pending");
@@ -1462,6 +1466,11 @@ mod tests {
         let in_progress_alias = "tx_hash=0xef42\nstatus=in_progress\n";
         let parsed_in_progress = parse_tx_query_response(in_progress_alias, "0xfallback").unwrap();
         assert_eq!(parsed_in_progress.status, "pending");
+
+        let in_progress_spaced_alias = "tx_hash=0xef421\nstatus='in progress'\n";
+        let parsed_in_progress_spaced =
+            parse_tx_query_response(in_progress_spaced_alias, "0xfallback").unwrap();
+        assert_eq!(parsed_in_progress_spaced.status, "pending");
 
         let in_flight_alias = "tx_hash=0xef43\nstatus=in-flight\n";
         let parsed_in_flight = parse_tx_query_response(in_flight_alias, "0xfallback").unwrap();
