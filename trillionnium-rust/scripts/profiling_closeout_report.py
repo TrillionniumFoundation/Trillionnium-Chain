@@ -173,14 +173,20 @@ def main():
             return "stale"
         return "old"
 
-    def bench_dir_age_seconds() -> int | None:
-        if not bench_dir_exists:
-            return None
+    def latest_benchmark_artifact():
         artifact_candidates = [path for path in [classic, mixed, executor_profile] if path and os.path.exists(path)]
         if not artifact_candidates:
             return None
-        newest_mtime = max(os.path.getmtime(path) for path in artifact_candidates)
+        return max(artifact_candidates, key=os.path.getmtime)
+
+    def bench_dir_age_seconds() -> int | None:
+        newest_artifact = latest_benchmark_artifact()
+        if not bench_dir_exists or not newest_artifact:
+            return None
+        newest_mtime = os.path.getmtime(newest_artifact)
         return max(0, int((datetime.now() - datetime.fromtimestamp(newest_mtime)).total_seconds()))
+
+    newest_benchmark_artifact = latest_benchmark_artifact()
 
     lines = ["# Profiling Closeout Baseline", f"generated_at={datetime.now().isoformat()}", "", "## Inputs"]
     lines += [
@@ -189,6 +195,7 @@ def main():
         f"- bench_dir: {bench_dir}",
         f"- bench_dir_status: {'present' if bench_dir_exists else 'missing'}",
         f"- bench_dir_producer: {recommended_producer('bench_dir')}",
+        f"- bench_dir_newest_artifact: {newest_benchmark_artifact or 'none'}",
         f"- classic_bench: {classic}",
         f"- classic_bench_status: {input_status(classic)}",
         f"- mixed_bench: {mixed}",
@@ -215,8 +222,11 @@ def main():
             stale_inputs.append(label)
         elif freshness == "old":
             old_inputs.append(label)
+        anchor = ""
+        if label == "bench_dir" and newest_benchmark_artifact:
+            anchor = f" anchor={os.path.basename(newest_benchmark_artifact)}"
         lines.append(
-            f"- {label}: freshness={freshness} age_seconds={age_seconds if age_seconds is not None else 'n/a'}"
+            f"- {label}: freshness={freshness} age_seconds={age_seconds if age_seconds is not None else 'n/a'}{anchor}"
         )
 
     lines += ["", "## Input Readiness"]
