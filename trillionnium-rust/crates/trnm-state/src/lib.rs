@@ -4588,6 +4588,30 @@ mod tests {
     }
 
     #[test]
+    fn wal_checkpoint_verification_rejects_uncommitted_genesis_entry_even_with_checkpoint() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: false,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+
+        let checkpoints = vec![CheckpointMeta {
+            height: 1,
+            state_root_hex: "r1".into(),
+            wal_entry_hash_hex: e1.content_hash_hex(),
+        }];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1]).unwrap();
+        assert!(
+            got.is_none(),
+            "an uncommitted genesis WAL entry must not be accepted as a recoverable checkpoint"
+        );
+    }
+
+    #[test]
     fn wal_checkpoint_verification_rejects_chain_that_starts_above_genesis_height() {
         let e2 = WalMeta {
             height: 2,
