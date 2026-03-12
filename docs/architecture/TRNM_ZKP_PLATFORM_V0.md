@@ -418,9 +418,10 @@ v0 **不承诺**：
 3. payload 中声明的 `zk_system` 必须与 `vk_ref` 解析结果一致；router 在进入 backend 前应先将其规范化为 canonical token（例如 `Groth-16` → `groth16`），避免实现/文档/registry 因别名形态发生漂移。
 4. 若 payload 显式携带 `backend_id`，且该 token 可推断 proving-system hint，则该 hint 必须与 `vk_ref` 的 canonical `zk_system` 一致；若同一 token 中出现多个**不同的** canonical system hint（例如 `groth16-plonk-demo` 或带显式 family 前缀的 `zk-groth16-plonk-demo`），router 必须按 invalid fail-closed 拒绝，而不是猜测使用其中之一。
 5. 若 payload 显式携带的 `backend_id` 只是 family-only router token（例如 `zk`、`zk-demo`，即显式声明了 ZK family 但没有任何 canonical zk-system hint），router 必须按 malformed fail-closed 拒绝，而不是把它当成 backend alias 或继续猜测式路由。
-6. 若 `backend_id` / router 选中的 backend token 里只是重复出现同一个 canonical system hint（例如 `groth16-groth16-demo`），可视为同一 system 的重复提示并去重后继续匹配，不应被当成多系统 payload 误杀。
-7. router 最终选中的 backend 若带有可推断 proving-system hint，也必须与 `vk_ref` 的 canonical `zk_system` 一致。
-8. 不允许因为 `allow_backend_fallback`、默认 backend、或历史别名兼容而跨 proving system 静默改道。
+6. router 最终选中的 backend token 也不得是 family-only `zk` / `zk-*` router token；若它没有任何 canonical zk-system hint，则必须按 malformed fail-closed 拒绝，而不是先落到 generic unknown-backend / unavailable 分支。
+7. 若 `backend_id` / router 选中的 backend token 里只是重复出现同一个 canonical system hint（例如 `groth16-groth16-demo`），可视为同一 system 的重复提示并去重后继续匹配，不应被当成多系统 payload 误杀。
+8. router 最终选中的 backend 若带有可推断 proving-system hint，也必须与 `vk_ref` 的 canonical `zk_system` 一致。
+9. 不允许因为 `allow_backend_fallback`、默认 backend、或历史别名兼容而跨 proving system 静默改道。
 
 设计意图：
 

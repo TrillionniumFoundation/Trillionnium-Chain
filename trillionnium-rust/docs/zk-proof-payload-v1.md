@@ -27,7 +27,7 @@ Additional v0 parser / router contract reminders already enforced by tests and c
 - `backend_version`, when present, must be a non-empty canonical token without surrounding whitespace and must not appear without `backend_id`.
 - If a payload `backend_id` token carries canonical zk-system hints, all distinct hints must collapse to exactly one canonical system before routing; repeated identical hints (for example `groth16-groth16-demo`) are tolerated, but mixed hints (for example `groth16-plonk-demo`) must fail closed rather than being routed opportunistically.
 - Family-only router tokens are not canonical payload selectors: a payload `backend_id` like `zk`, `zk-demo`, or other explicit `zk-*` family-only token without a canonical zk-system hint must be rejected as malformed rather than routed or treated as an implicit backend alias.
-- The same fail-closed vk/system consistency applies to the router-selected backend token, not just the payload field: an explicitly tee-family backend token on the ZK path must be rejected, repeated identical zk-system hints may be deduplicated, and mixed canonical system hints must fail closed rather than being guessed through.
+- The same fail-closed vk/system consistency applies to the router-selected backend token, not just the payload field: an explicitly tee-family backend token on the ZK path must be rejected, a family-only `zk` / `zk-*` router token without a canonical zk-system hint must be rejected as malformed rather than treated as an implicit backend alias, repeated identical zk-system hints may be deduplicated, and mixed canonical system hints must fail closed rather than being guessed through.
 
 v0 fail-closed boundary reminder:
 
