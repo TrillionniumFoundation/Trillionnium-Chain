@@ -75,10 +75,18 @@ def latest_file(pattern: str) -> Path | None:
     return matches[-1] if matches else None
 
 
-def read_dead_letters(path: Path, lookback_days: int) -> list[dict[str, Any]]:
+def rows_within_lookback(
+    path: Path,
+    lookback_days: int,
+    *,
+    timestamp_field: str,
+    now_dt: dt.datetime | None = None,
+) -> list[dict[str, Any]]:
     if not path.exists():
         return []
-    cutoff = dt.datetime.now(dt.timezone.utc) - dt.timedelta(days=max(1, lookback_days))
+    if now_dt is None:
+        now_dt = dt.datetime.now(dt.timezone.utc)
+    cutoff = now_dt - dt.timedelta(days=max(1, lookback_days))
     rows: list[dict[str, Any]] = []
     for raw in path.read_text(encoding="utf-8", errors="ignore").splitlines():
         s = raw.strip()
@@ -90,7 +98,7 @@ def read_dead_letters(path: Path, lookback_days: int) -> list[dict[str, Any]]:
             continue
         if not isinstance(obj, dict):
             continue
-        ts = obj.get("created_at_utc", "")
+        ts = obj.get(timestamp_field, "")
         in_window = True
         if isinstance(ts, str) and ts:
             try:
@@ -101,6 +109,15 @@ def read_dead_letters(path: Path, lookback_days: int) -> list[dict[str, Any]]:
         if in_window:
             rows.append(obj)
     return rows
+
+
+def read_dead_letters(path: Path, lookback_days: int, now_dt: dt.datetime | None = None) -> list[dict[str, Any]]:
+    return rows_within_lookback(path, lookback_days, timestamp_field="created_at_utc", now_dt=now_dt)
+
+
+def read_delivery_summaries(path: Path, lookback_days: int, now_dt: dt.datetime | None = None) -> list[dict[str, Any]]:
+    rows = rows_within_lookback(path, lookback_days, timestamp_field="at_utc", now_dt=now_dt)
+    return [row for row in rows if row.get("record_type") == "delivery_summary"]
 
 
 def extract_topn_sections(md_path: Path) -> dict[str, list[str]]:
@@ -271,11 +288,7 @@ def main() -> int:
     total = max(0, sent + suppressed + failed)
 
     audit_path = root / "run/pr7-alert-delivery/audit.jsonl"
-    audit_rows = safe_jsonl(audit_path)
-    delivery_summaries = [
-        row for row in audit_rows
-        if row.get("record_type") == "delivery_summary"
-    ]
+    delivery_summaries = read_delivery_summaries(audit_path, args.lookback_days, now_dt=now_dt)
     partial_success_count = sum(1 for row in delivery_summaries if row.get("event") == "partial_success")
     channels_ok_total = sum(int(row.get("channels_ok", 0) or 0) for row in delivery_summaries)
     channels_failed_total = sum(int(row.get("channels_failed", 0) or 0) for row in delivery_summaries)
