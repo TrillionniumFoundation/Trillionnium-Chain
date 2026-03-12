@@ -827,6 +827,60 @@ pub fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
     let min_expected_gain_score = auto_min_expected_gain_score();
 
     if txs.len() < 512 {
+        // Keep the default small-batch guardrail conservative, but fail closed to
+        // hot-bucket when the entire sampled batch collapses onto one key. That
+        // preserves the intended hotspot path for tiny synthetic/regression
+        // workloads without widening adaptive behavior for ordinary small batches.
+        let mut prev_key: Option<u64> = None;
+        let mut observed = 0usize;
+        let mut same_key_streak_hits = 0usize;
+        let mut total_pairs = 0usize;
+        let mut key_hist: HashMap<u64, usize> = HashMap::new();
+
+        for tx in txs {
+            let key = tx
+                .write_set
+                .first()
+                .or_else(|| tx.read_set.first())
+                .map(|o| o.id);
+            if let Some(k) = key {
+                observed += 1;
+                *key_hist.entry(k).or_insert(0) += 1;
+                if let Some(pk) = prev_key {
+                    total_pairs += 1;
+                    if pk == k {
+                        same_key_streak_hits += 1;
+                    }
+                }
+                prev_key = Some(k);
+            }
+        }
+
+        if observed > 0 && total_pairs > 0 {
+            let streak_ratio = same_key_streak_hits as f64 / total_pairs as f64;
+            let max_key_count = key_hist.values().copied().max().unwrap_or(0);
+            let hot_key_share = max_key_count as f64 / observed as f64;
+            let expected_gain_score = streak_ratio * hot_key_share;
+            let use_hot_bucket = txs.len() >= 32
+                && streak_ratio >= threshold + min_margin
+                && hot_key_share >= min_hot_key_share
+                && expected_gain_score >= min_expected_gain_score;
+            if use_hot_bucket {
+                return AutoAdaptiveDecision {
+                    use_hot_bucket: true,
+                    reason: "hotspot_detected",
+                    sample_len: txs.len(),
+                    streak_ratio,
+                    streak_threshold: threshold,
+                    min_margin,
+                    hot_key_share,
+                    min_hot_key_share,
+                    expected_gain_score,
+                    min_expected_gain_score,
+                };
+            }
+        }
+
         return AutoAdaptiveDecision {
             use_hot_bucket: false,
             reason: "small_batch",

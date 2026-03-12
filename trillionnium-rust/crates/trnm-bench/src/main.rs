@@ -186,6 +186,7 @@ fn conflict_hit_rate(profile: &trnm_executor::GroupingProfile) -> f64 {
 }
 
 fn build_classic_txs(n: usize, keys: usize) -> Vec<Tx> {
+    let keys = keys.max(1);
     let mut txs = Vec::with_capacity(n);
     for i in 0..n {
         let task_id = (i % keys) as u64;
@@ -204,6 +205,9 @@ fn build_classic_txs(n: usize, keys: usize) -> Vec<Tx> {
 }
 
 fn build_mixed_txs(n: usize, keys: usize, read_fanout: usize, write_every: usize) -> Vec<Tx> {
+    let keys = keys.max(1);
+    let read_fanout = read_fanout.max(1);
+    let write_every = write_every.max(1);
     let mut txs = Vec::with_capacity(n);
     for i in 0..n {
         let mut read_set = Vec::with_capacity(read_fanout);
@@ -285,6 +289,21 @@ fn build_hot_streak_txs(n: usize, keys: usize, read_fanout: usize, write_every: 
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn tx(id: u64, reads: Vec<u64>, writes: Vec<u64>) -> Tx {
+        Tx {
+            id,
+            read_set: reads
+                .into_iter()
+                .map(|id| ObjectRef { id, version: 1 })
+                .collect(),
+            write_set: writes
+                .into_iter()
+                .map(|id| ObjectRef { id, version: 1 })
+                .collect(),
+            payload: vec![],
+        }
+    }
 
     #[test]
     fn auto_profile_output_is_reserved_for_explicit_auto_adaptive_strategy() {
@@ -380,6 +399,34 @@ mod tests {
             profile.hot_object_share > 0.0,
             "single-key hotspot workload should retain non-zero hotspot visibility"
         );
+    }
+
+    #[test]
+    fn classic_builder_clamps_zero_key_budget_to_single_safe_domain() {
+        let txs = build_classic_txs(16, 0);
+
+        assert_eq!(txs.len(), 16);
+        assert!(txs
+            .iter()
+            .all(|tx| tx.read_set.iter().all(|obj| obj.id == 0)));
+        assert!(txs
+            .iter()
+            .all(|tx| tx.write_set.iter().all(|obj| obj.id == 0)));
+    }
+
+    #[test]
+    fn mixed_builder_clamps_zero_inputs_to_safe_minima() {
+        let txs = build_mixed_txs(16, 0, 0, 0);
+
+        assert_eq!(txs.len(), 16);
+        assert!(txs.iter().all(|tx| tx.read_set.len() == 1));
+        assert!(txs.iter().all(|tx| tx.write_set.len() == 1));
+        assert!(txs
+            .iter()
+            .all(|tx| tx.read_set.iter().all(|obj| obj.id == 0)));
+        assert!(txs
+            .iter()
+            .all(|tx| tx.write_set.iter().all(|obj| obj.id == 0)));
     }
 
     #[test]
