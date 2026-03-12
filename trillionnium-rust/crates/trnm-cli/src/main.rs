@@ -420,9 +420,10 @@ fn parse_inline_kv_token(token: &str) -> Option<(String, String)> {
 fn normalize_tx_status(raw: &str) -> Option<String> {
     let cleaned = raw
         .trim()
-        .trim_matches('"')
-        .trim_matches('\'')
-        .trim_matches('`')
+        .trim_matches(|c: char| {
+            c.is_ascii_whitespace()
+                || matches!(c, '"' | '\'' | '`' | '(' | ')' | '[' | ']' | '{' | '}' | ',' | ';' | ':')
+        })
         .trim_end_matches(|c: char| c.is_ascii_punctuation())
         .to_ascii_lowercase();
     match cleaned.as_str() {
@@ -1360,6 +1361,10 @@ mod tests {
         let single_quoted = "tx_hash=0xeff\nstatus='committed'\n";
         let parsed_single_quoted = parse_tx_query_response(single_quoted, "0xfallback").unwrap();
         assert_eq!(parsed_single_quoted.status, "committed");
+
+        let wrapped_status = "tx_hash=0xeff1\nstatus=(`confirmed`,)\n";
+        let parsed_wrapped_status = parse_tx_query_response(wrapped_status, "0xfallback").unwrap();
+        assert_eq!(parsed_wrapped_status.status, "committed");
 
         let rejected_alias = "tx_hash=0xef0\nstatus=REJECTED\n";
         let parsed_rejected = parse_tx_query_response(rejected_alias, "0xfallback").unwrap();
