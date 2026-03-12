@@ -5034,8 +5034,8 @@ mod tests {
     }
 
     #[test]
-    fn recover_metadata_only_does_not_rewrite_consensus_wal_file() {
-        let wal_dir = temp_wal_dir("recover-metadata-only-no-wal-rewrite");
+    fn recover_fully_checkpointed_wal_ignores_stale_consensus_wal_lock_without_rewriting_file() {
+        let wal_dir = temp_wal_dir("recover-fully-checkpointed-no-wal-rewrite");
         fs::create_dir_all(&wal_dir).unwrap();
 
         let e1 = WalMeta {
@@ -5071,6 +5071,7 @@ locked_block_hash = "stale-lock"
         assert_eq!(recovered.next_height, 2);
         assert_eq!(recovered.checkpoint_height_retained, Some(1));
         assert_eq!(recovered.restored_lock.as_deref(), Some("h1"));
+        assert_ne!(recovered.restored_lock.as_deref(), Some("stale-lock"));
 
         let wal_raw = fs::read_to_string(wal_file(&wal_dir)).unwrap();
         assert!(wal_raw.contains("next_height = 99"));
