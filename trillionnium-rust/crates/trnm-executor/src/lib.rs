@@ -1498,6 +1498,47 @@ mod tests {
         }
     }
 
+    #[test]
+    fn aggressive_fast_path_matches_original_when_deep_scan_is_disabled() {
+        let _env = env_lock();
+        let _deep = EnvGuard::set("TRNM_AGGR_DEEP_SCAN", "0");
+
+        let txs = vec![
+            tx(1, vec![], vec![o(10)]),
+            tx(2, vec![o(10)], vec![]),
+            tx(3, vec![o(30)], vec![o(40)]),
+            tx(4, vec![o(40)], vec![]),
+            tx(5, vec![], vec![]),
+            tx(6, vec![o(90)], vec![o(91)]),
+        ];
+
+        let (original_groups, original_profile) =
+            build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::Original);
+        let (aggressive_groups, aggressive_profile) =
+            build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::AggressiveGreedy);
+
+        let original_ids: Vec<Vec<u64>> = original_groups
+            .iter()
+            .map(|group| group.iter().map(|tx| tx.id).collect())
+            .collect();
+        let aggressive_ids: Vec<Vec<u64>> = aggressive_groups
+            .iter()
+            .map(|group| group.iter().map(|tx| tx.id).collect())
+            .collect();
+
+        assert_eq!(aggressive_ids, original_ids);
+        assert_eq!(aggressive_profile.group_count, original_profile.group_count);
+        assert_eq!(aggressive_profile.grouped_count, original_profile.grouped_count);
+        assert_eq!(aggressive_profile.max_group_size, original_profile.max_group_size);
+        assert_eq!(aggressive_profile.min_group_size, original_profile.min_group_size);
+        assert_eq!(aggressive_profile.conflict_checks, original_profile.conflict_checks);
+        assert_eq!(aggressive_profile.conflict_hits, original_profile.conflict_hits);
+        assert_eq!(aggressive_profile.candidate_groups_scanned, 0);
+        assert_eq!(aggressive_profile.stage_ww_checks, 0);
+        assert_eq!(aggressive_profile.stage_wr_checks, 0);
+        assert_eq!(aggressive_profile.stage_rw_checks, 0);
+    }
+
     fn env_lock() -> MutexGuard<'static, ()> {
         static ENV_LOCK: OnceLock<Mutex<()>> = OnceLock::new();
         ENV_LOCK
