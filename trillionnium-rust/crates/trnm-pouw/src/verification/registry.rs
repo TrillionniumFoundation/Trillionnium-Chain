@@ -1210,6 +1210,47 @@ mod tests {
         ));
     }
 
+    #[cfg(feature = "real-zk-backend")]
+    #[test]
+    fn registry_zk_vector_fixture_file_rejects_empty_string_backend_id_when_feature_enabled() {
+        let registry = registry_with_feature_on_fixture_bridge_backend();
+        let mut task = task_with_proof_type(ProofType::Zk);
+        task.status = TaskStatus::Committed;
+        task.worker = Some("worker-zk".into());
+        task.result_hash = Some([0x11; 32]);
+
+        let payload = format!(
+            "ZK:{}",
+            include_str!("../../fixtures/zk/real_backend_bridge_groth16_feature_on_empty_backend_id.json").trim()
+        );
+
+        assert!(matches!(
+            registry.verify(&task, payload.as_bytes()),
+            VerificationResult::Invalid(msg) if msg.contains("backend_id is required")
+        ));
+    }
+
+    #[cfg(feature = "real-zk-backend")]
+    #[test]
+    fn registry_zk_vector_fixture_file_rejects_empty_string_backend_id_for_plonk_when_feature_enabled(
+    ) {
+        let registry = registry_with_feature_on_fixture_bridge_backend();
+        let mut task = task_with_proof_type(ProofType::Zk);
+        task.status = TaskStatus::Committed;
+        task.worker = Some("worker-zk".into());
+        task.result_hash = Some([0x11; 32]);
+
+        let payload = format!(
+            "ZK:{}",
+            include_str!("../../fixtures/zk/real_backend_bridge_plonk_feature_on_empty_backend_id.json").trim()
+        );
+
+        assert!(matches!(
+            registry.verify(&task, payload.as_bytes()),
+            VerificationResult::Invalid(msg) if msg.contains("backend_id is required")
+        ));
+    }
+
     #[test]
     fn registry_zk_vector_proof_type_mismatch_fails_closed_before_crypto() {
         let registry = registry_with_mock_zk_backend();
