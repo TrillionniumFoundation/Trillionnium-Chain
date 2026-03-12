@@ -13,8 +13,12 @@ sys.dont_write_bytecode = True
 KV = re.compile(r"([a-zA-Z0-9_\.]+)=([^\s]+)")
 
 
+def matching_files(pattern: str) -> list[str]:
+    return sorted(glob.glob(pattern), key=os.path.getmtime, reverse=True)
+
+
 def latest(pattern: str):
-    files = sorted(glob.glob(pattern), key=os.path.getmtime, reverse=True)
+    files = matching_files(pattern)
     return files[0] if files else None
 
 
@@ -176,10 +180,18 @@ def main():
         os.path.join(root, "run", "bench"),
         os.path.join(repo_root, "run", "bench"),
     )
-    node_log = args.node_log or latest(os.path.join(root, "run", "parallel-sanity.log"))
-    classic = args.classic or latest(os.path.join(bench_dir, "bench-matrix-*.txt"))
-    mixed = args.mixed or latest(os.path.join(bench_dir, "bench-mixed-matrix-*.txt"))
-    executor_profile = args.executor_profile or latest(os.path.join(bench_dir, "executor-profile-summary-*.txt"))
+    node_log_pattern = os.path.join(root, "run", "parallel-sanity.log")
+    classic_pattern = os.path.join(bench_dir, "bench-matrix-*.txt")
+    mixed_pattern = os.path.join(bench_dir, "bench-mixed-matrix-*.txt")
+    executor_profile_pattern = os.path.join(bench_dir, "executor-profile-summary-*.txt")
+    node_log_candidates = matching_files(node_log_pattern)
+    classic_candidates = matching_files(classic_pattern)
+    mixed_candidates = matching_files(mixed_pattern)
+    executor_profile_candidates = matching_files(executor_profile_pattern)
+    node_log = args.node_log or latest(node_log_pattern)
+    classic = args.classic or latest(classic_pattern)
+    mixed = args.mixed or latest(mixed_pattern)
+    executor_profile = args.executor_profile or latest(executor_profile_pattern)
     ts = datetime.now().strftime("%Y%m%d-%H%M%S")
     out = args.out or os.path.join(root, "docs", "reports", f"profiling-closeout-baseline-{ts}.md")
 
@@ -233,6 +245,20 @@ def main():
             f"updated_at={file_mtime_iso(path) or 'n/a'} basename={basename} "
             f"path={path or 'None'} producer={producer}"
         )
+
+    def candidate_preview(label: str, selected: str | None, candidates: list[str], max_items: int = 3) -> list[str]:
+        preview = [f"- {label}: selected={selected or 'None'} candidate_count={len(candidates)}"]
+        if not candidates:
+            preview.append(f"  - none: pattern produced no matches")
+            return preview
+        for idx, path in enumerate(candidates[:max_items], start=1):
+            preview.append(
+                f"  - recent_{idx}: basename={os.path.basename(path)} "
+                f"updated_at={file_mtime_iso(path) or 'n/a'} freshness={freshness_label(file_age_seconds(path))} path={path}"
+            )
+        if len(candidates) > max_items:
+            preview.append(f"  - remaining_candidates: {len(candidates) - max_items}")
+        return preview
 
     def latest_benchmark_artifact():
         artifact_candidates = [path for path in [classic, mixed, executor_profile] if path and os.path.exists(path)]
@@ -316,6 +342,12 @@ def main():
     lines.append(artifact_lineage("classic_bench", classic, recommended_producer("classic_bench")))
     lines.append(artifact_lineage("mixed_bench", mixed, recommended_producer("mixed_bench")))
     lines.append(artifact_lineage("executor_profile", executor_profile, recommended_producer("executor_profile")))
+
+    lines += ["", "## Artifact Discovery"]
+    lines.extend(candidate_preview("node_log_candidates", node_log, node_log_candidates, max_items=1))
+    lines.extend(candidate_preview("classic_bench_candidates", classic, classic_candidates))
+    lines.extend(candidate_preview("mixed_bench_candidates", mixed, mixed_candidates))
+    lines.extend(candidate_preview("executor_profile_candidates", executor_profile, executor_profile_candidates))
 
     lines += ["", "## Data Completeness"]
     lines.append(
