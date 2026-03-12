@@ -72,30 +72,27 @@ Resolve 授权被节点层“配置回填 signer”绕过（任意调用者可�
 
 ---
 
-## Challenge 3 — P0（库余额抽取风险）
+## Challenge 3 — 已复核更正（原 P0“库余额抽取风险”描述失效）
 ### 标题
-挑战成功奖励可从全局 `treasury.worker_slashes` 支付，存在可编排抽取
+原“挑战成功奖励可从全局 `treasury.worker_slashes` 支付、存在可编排抽取”的描述已不再符合当前 `trnm-pouw` 实现；当前残余风险应改记为**challenged-timeout 的 slash 治理控制面仍未真正打通**。
 
-### 证据
-- `trnm-pouw/src/lib.rs:567-607`
-  - `maybe_pay_challenge_success_bounty`：若 task lock 不足，则从 `WORKER_SLASH_TREASURY_ACCOUNT` 回退支付。
-- `trnm-pouw/src/lib.rs:1018-1022`
-  - resolve(slash=true) 时触发该奖励逻辑。
-- `trnm-pouw/src/lib.rs:557-559`
-  - worker 被 slash 的 stake 进入同一 treasury 池。
+### 当前代码状态（2026-03-12 复核）
+- `trnm-pouw/src/lib.rs` 现行 `maybe_pay_challenge_success_bounty` 仅允许从**当前任务的 worker stake lock**支付。
+- 若 task-local slash principal 不足，当前实现会 **fail-closed**，不会回退抽取全局 `treasury.worker_slashes`。
+- challenged-timeout 路径即使未来切到 `Slashed` 分支，当前实现也**不会自动附带发放** challenge-success bounty。
 
-### 复现（最小）
-1. 使用协同账号（worker/challenger 非同一账号，满足当前校验）循环构造可 slash 任务。
-2. 在 worker 最小 stake 或 lock 可不足情况下，奖励从全局 slash 池补足。
-3. 重复后可持续搬运历史 slash 池余额到 challenger 侧。
+### 当前更准确的风险表述
+1. `default_slash_on_unresolved_challenge` 已在 `trnm-pouw` 中具备读取与 fail-closed 解析逻辑。
+2. 但 state / governance allowlist 仍可能阻断该 key 进入可执行状态，导致治理面“名义可配置、实际不可达”。
+3. 因而当前主要风险在**治理控制面接线不完整**，而不是 bounty 仍可从全局 slash treasury 被抽取。
 
 ### 影响
-- 全局惩罚库可被策略性“挖空”；惩罚资金不再服务公共安全缓冲。
-- 形成逆激励：攻击者偏好制造可 slash 事件以提取库资金。
+- 产品/治理层可能误以为 challenged-timeout 惩戒规则已可配置，实际仍固定停留在默认路径。
+- 经济语义上，timeout 是否应进入 slash、是否应发放 bounty、由谁承担 payout，仍未形成一条真正可治理且可验证的闭环。
 
 ### 修复
-- 挑战成功奖励仅允许来自**当前任务**可归属罚没，不得回退全局池。
-- 或引入全局奖励预算上限/epoch 配额与速率限制。
+- 在 state / governance schema 中同步打通 `default_slash_on_unresolved_challenge` 的 allowlist、治理流程与回归测试。
+- 若产品后续希望把 timeout-slash 也定义为 challenger 胜诉并发 bounty，需要单独设计 payout 来源、额度上限与 anti-farming 约束；不要复用或重新打开全局 treasury fallback。
 
 ---
 
