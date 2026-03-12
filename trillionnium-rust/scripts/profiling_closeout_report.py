@@ -1350,6 +1350,8 @@ def main():
         integrity_status = (
             "OK"
             if integrity_checks and all(integrity_checks)
+            else "FAIL"
+            if integrity_checks and any(check is False for check in integrity_checks)
             else "PARTIAL"
             if integrity_checks
             else "UNVERIFIED"
