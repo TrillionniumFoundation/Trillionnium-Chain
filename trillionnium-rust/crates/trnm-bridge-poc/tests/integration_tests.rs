@@ -546,3 +546,32 @@ fn test_authorized_calls_reject_subject_token_with_general_punctuation_spacing_v
     );
     assert_eq!(request.status, BridgeStatus::Pending);
 }
+
+#[test]
+fn test_authorized_calls_reject_subject_token_with_variation_selectors_and_plane14_tags() {
+    let mut request = SettlementRequest::new(491, "0xabc124".to_string());
+    let malformed = CapabilityToken {
+        subject: "did:trn:worker\u{FE0E}\u{FE0F}-i\u{E0100}\u{E0101}".to_string(),
+        capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
+    };
+
+    let finalize_err = request.settle_authorized(&malformed, 520).unwrap_err();
+    assert_eq!(
+        finalize_err,
+        SettlementError::MalformedToken {
+            reason: "non-canonical subject",
+        }
+    );
+    assert_eq!(request.status, BridgeStatus::Pending);
+
+    let revert_err = request
+        .revert_authorized(&malformed, "bridge timeout".to_string())
+        .unwrap_err();
+    assert_eq!(
+        revert_err,
+        SettlementError::MalformedToken {
+            reason: "non-canonical subject",
+        }
+    );
+    assert_eq!(request.status, BridgeStatus::Pending);
+}
