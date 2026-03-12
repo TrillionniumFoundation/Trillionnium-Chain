@@ -35,6 +35,7 @@ struct PendingResolveApproval {
     slash_worker: bool,
     confirmations: u8,
     first_approver: String,
+    second_approver: Option<String>,
     authority_set: String,
     task_version: u64,
 }
@@ -146,6 +147,7 @@ pub struct PendingResolveApprovalSnapshot {
     pub slash_worker: bool,
     pub confirmations: u8,
     pub first_approver: String,
+    pub second_approver: Option<String>,
     pub authority_set: String,
     pub task_version: u64,
 }
@@ -537,6 +539,7 @@ impl StateStore {
                     slash_worker,
                     confirmations: 0,
                     first_approver: approver_trimmed.to_string(),
+                    second_approver: None,
                     authority_set: authority_set.to_string(),
                     task_version,
                 });
@@ -553,8 +556,16 @@ impl StateStore {
             {
                 return Err("resolve approval requires distinct approver".into());
             }
+            if let Some(second_approver) = entry.second_approver.as_deref() {
+                if second_approver.eq_ignore_ascii_case(approver_trimmed) {
+                    return Err("resolve approval already finalized; clear pending approval first".into());
+                }
+            }
             let next_confirmations = entry.confirmations.saturating_add(1);
             entry.confirmations = next_confirmations;
+            if next_confirmations >= 2 {
+                entry.second_approver = Some(approver_trimmed.to_string());
+            }
             next_confirmations
         };
         self.invalidate_state_root_cache();
@@ -588,12 +599,35 @@ impl StateStore {
                 slash_worker: entry.slash_worker,
                 confirmations: entry.confirmations,
                 first_approver: entry.first_approver.clone(),
+                second_approver: entry.second_approver.clone(),
                 authority_set: entry.authority_set.clone(),
                 task_version: entry.task_version,
             })
     }
 
     fn is_valid_pending_resolve_snapshot(snapshot: &PendingResolveApprovalSnapshot) -> bool {
+        fn is_valid_resolve_actor(actor: &str) -> bool {
+            let trimmed = actor.trim();
+            !(trimmed.is_empty()
+                || trimmed != actor
+                || trimmed.len() > RESOLVE_APPROVER_MAX_LEN
+                || trimmed.chars().any(|c| c.is_whitespace())
+                || trimmed.chars().any(|c| c.is_control())
+                || trimmed.contains(',')
+                || trimmed.contains(';')
+                || trimmed.contains('|')
+                || trimmed.contains('；')
+                || trimmed.contains('，')
+                || trimmed.contains('、')
+                || !trimmed.is_ascii()
+                || trimmed.eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER)
+                || trimmed.eq_ignore_ascii_case(EMERGENCY_PAUSE_PLACEHOLDER)
+                || trimmed.eq_ignore_ascii_case(RESERVED_SYSTEM_AUTHORITY)
+                || trimmed.eq_ignore_ascii_case(CHALLENGE_ESCROW_ACCOUNT)
+                || trimmed.eq_ignore_ascii_case(CHALLENGE_FORFEIT_TREASURY_ACCOUNT)
+                || trimmed.eq_ignore_ascii_case(WORKER_SLASH_TREASURY_ACCOUNT))
+        }
+
         if !(1..=2).contains(&snapshot.confirmations) {
             return false;
         }
@@ -602,27 +636,25 @@ impl StateStore {
         }
 
         let approver = snapshot.first_approver.trim();
-        if approver.is_empty()
-            || approver != snapshot.first_approver
-            || approver.len() > RESOLVE_APPROVER_MAX_LEN
-            || approver.chars().any(|c| c.is_whitespace())
-            || approver.chars().any(|c| c.is_control())
-            || approver.contains(',')
-            || approver.contains(';')
-            || approver.contains('|')
-            || approver.contains('；')
-            || approver.contains('，')
-            || approver.contains('、')
-            || !approver.is_ascii()
-            || approver.eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER)
-            || approver.eq_ignore_ascii_case(EMERGENCY_PAUSE_PLACEHOLDER)
-            || approver.eq_ignore_ascii_case(RESERVED_SYSTEM_AUTHORITY)
-            || approver.eq_ignore_ascii_case(CHALLENGE_ESCROW_ACCOUNT)
-            || approver.eq_ignore_ascii_case(CHALLENGE_FORFEIT_TREASURY_ACCOUNT)
-            || approver.eq_ignore_ascii_case(WORKER_SLASH_TREASURY_ACCOUNT)
-        {
+        if !is_valid_resolve_actor(approver) {
             return false;
         }
+
+        let second_approver = match (&snapshot.second_approver, snapshot.confirmations) {
+            (None, 1) => None,
+            (Some(_), 1) => return false,
+            (None, 2) => return false,
+            (Some(second), 2) => {
+                let second_trimmed = second.trim();
+                if !is_valid_resolve_actor(second_trimmed)
+                    || second_trimmed.eq_ignore_ascii_case(approver)
+                {
+                    return false;
+                }
+                Some(second_trimmed)
+            }
+            _ => return false,
+        };
 
         let authority_set = snapshot.authority_set.trim();
         if authority_set.is_empty() || authority_set != snapshot.authority_set {
@@ -639,6 +671,7 @@ impl StateStore {
 
         let mut seen_members = std::collections::BTreeSet::new();
         let mut approver_present = false;
+        let mut second_approver_present = second_approver.is_none();
         for member in &members {
             let trimmed = member.trim();
             if trimmed.is_empty()
@@ -664,9 +697,12 @@ impl StateStore {
                 return false;
             }
             approver_present |= trimmed.eq_ignore_ascii_case(approver);
+            second_approver_present |= second_approver
+                .map(|second| trimmed.eq_ignore_ascii_case(second))
+                .unwrap_or(false);
         }
 
-        approver_present
+        approver_present && second_approver_present
     }
 
     pub fn restore_pending_resolve_approval(
@@ -683,6 +719,7 @@ impl StateStore {
                         slash_worker: snapshot.slash_worker,
                         confirmations: snapshot.confirmations,
                         first_approver: snapshot.first_approver,
+                        second_approver: snapshot.second_approver,
                         authority_set: snapshot.authority_set,
                         task_version: snapshot.task_version,
                     },
@@ -2145,6 +2182,7 @@ mod tests {
                 slash_worker: true,
                 confirmations: 0,
                 first_approver: "authority-a".into(),
+                second_approver: None,
                 authority_set: "authority-a,authority-b".into(),
                 task_version: 4,
             }),
@@ -2157,11 +2195,55 @@ mod tests {
                 slash_worker: false,
                 confirmations: 3,
                 first_approver: "authority-a".into(),
+                second_approver: None,
                 authority_set: "authority-a,authority-b".into(),
                 task_version: 4,
             }),
         );
         assert_eq!(st.pending_resolve_approval(9_302), None);
+    }
+
+    #[test]
+    fn restore_pending_resolve_approval_scrubs_invalid_snapshot_second_approver_boundary() {
+        let mut st = StateStore::new();
+        st.restore_pending_resolve_approval(
+            9_309,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 2,
+                first_approver: "authority-a".into(),
+                second_approver: None,
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 9,
+            }),
+        );
+        assert_eq!(st.pending_resolve_approval(9_309), None);
+
+        st.restore_pending_resolve_approval(
+            9_310,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 2,
+                first_approver: "authority-a".into(),
+                second_approver: Some("authority-a".into()),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 9,
+            }),
+        );
+        assert_eq!(st.pending_resolve_approval(9_310), None);
+
+        st.restore_pending_resolve_approval(
+            9_311,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 2,
+                first_approver: "authority-a".into(),
+                second_approver: Some("authority-c".into()),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 9,
+            }),
+        );
+        assert_eq!(st.pending_resolve_approval(9_311), None);
     }
 
     #[test]
@@ -2173,6 +2255,7 @@ mod tests {
                 slash_worker: true,
                 confirmations: 1,
                 first_approver: "authority-a".into(),
+                second_approver: None,
                 authority_set: "authority-a".into(),
                 task_version: 9,
             }),
@@ -2185,6 +2268,7 @@ mod tests {
                 slash_worker: true,
                 confirmations: 1,
                 first_approver: "authority-a".into(),
+                second_approver: None,
                 authority_set: "authority-b,authority-c".into(),
                 task_version: 9,
             }),
@@ -2207,6 +2291,7 @@ mod tests {
                     slash_worker: true,
                     confirmations: 1,
                     first_approver: bad_approver.into(),
+                    second_approver: None,
                     authority_set: "authority-a,authority-b".into(),
                     task_version: 9,
                 }),
