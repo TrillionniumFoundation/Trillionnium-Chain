@@ -94,6 +94,7 @@ Resolve 授权被节点层“配置回填 signer”绕过（任意调用者可�
 ### 修复
 - 在 state / governance schema 中同步打通 `default_slash_on_unresolved_challenge` 的 allowlist、治理流程与回归测试。
 - 若产品后续希望把 timeout-slash 也定义为 challenger 胜诉并发 bounty，需要单独设计 payout 来源、额度上限与 anti-farming 约束；不要复用或重新打开全局 treasury fallback。
+- 车道边界说明：该治理键的 allowlist / schema 接线位于 `trnm-state` 治理面，不属于当前 L05 owned paths；L05 这里应继续把 `trnm-pouw` 的 timeout / payout / slash 语义保持 fail-closed，并把治理面未接通明确记为跨-lane 依赖，而不是在本 lane 越权修改 state 层。
 
 ---
 
