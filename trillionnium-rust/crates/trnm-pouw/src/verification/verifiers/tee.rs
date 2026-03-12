@@ -86,7 +86,7 @@ impl TeeVerifier {
 
     fn invalid_surface_label(surface: &'static str) -> &'static str {
         match surface {
-            "payload/claims" => "claims",
+            "payload/claims" | "evidence/claims" => "claims",
             other => other,
         }
     }
@@ -177,7 +177,10 @@ impl TeeVerifier {
             return "evidence/claims";
         }
 
-        "payload/claims"
+        // Generic TEE backend failures without explicit quote/report/payload cues
+        // should still stay on attestation-oriented wording instead of falling
+        // back to ZK-style payload terminology.
+        "evidence/claims"
     }
 
     fn verify_backend(
@@ -556,6 +559,34 @@ mod tests {
         assert!(msg.contains("evidence/claims"), "message: {msg}");
         assert!(!msg.contains("payload/claims"), "message: {msg}");
         assert!(!msg.contains("legacy:"), "message: {msg}");
+    }
+
+    #[test]
+    fn tee_verifier_backend_internal_generic_reason_defaults_to_evidence_claims_surface() {
+        let result = TeeVerifier::classify_execution_err(BackendExecutionError::Internal {
+            backend: "tee:mock-tee-internal".to_string(),
+            reason: "signature mismatch".to_string(),
+        });
+
+        assert!(matches!(result, VerificationResult::Indeterminate(_)), "unexpected result: {result:?}");
+        let VerificationResult::Indeterminate(msg) = result else { unreachable!() };
+        assert!(msg.contains("backend_error:"), "message: {msg}");
+        assert!(msg.contains("evidence/claims"), "message: {msg}");
+        assert!(!msg.contains("payload/claims"), "message: {msg}");
+    }
+
+    #[test]
+    fn tee_verifier_backend_invalid_generic_reason_keeps_claims_wording_without_payload_leakage() {
+        let result = TeeVerifier::classify_execution_err(BackendExecutionError::InvalidProof {
+            backend: "tee:mock-tee-invalid".to_string(),
+            reason: "signature mismatch".to_string(),
+        });
+
+        assert!(matches!(result, VerificationResult::Invalid(_)), "unexpected result: {result:?}");
+        let VerificationResult::Invalid(msg) = result else { unreachable!() };
+        assert!(msg.contains("invalid TEE attestation claims:"), "message: {msg}");
+        assert!(!msg.contains("payload/claims"), "message: {msg}");
+        assert!(msg.contains("signature mismatch"), "message: {msg}");
     }
 
     #[test]
