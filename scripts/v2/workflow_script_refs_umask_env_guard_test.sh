@@ -7,7 +7,9 @@ SCRIPT="$ROOT/scripts/validate_workflow_script_refs.sh"
 [[ -f "$SCRIPT" ]] || { echo "[FAIL] missing script: $SCRIPT" >&2; exit 1; }
 
 required_lines=(
-  'umask "${UMASK:-022}"'
+  'UMASK_VALUE="${UMASK:-022}"'
+  'UMASK must be a 3- or 4-digit octal value'
+  'umask "$UMASK_VALUE"'
 )
 
 for line in "${required_lines[@]}"; do

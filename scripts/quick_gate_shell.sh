@@ -22,7 +22,12 @@ export LC_TELEPHONE="${LC_TELEPHONE:-C}"
 
 # Mirror CI's deterministic file-mode contract so local summaries/artifacts do
 # not drift from workflow runs when scripts create files/directories.
-umask "${UMASK:-022}"
+UMASK_VALUE="${UMASK:-022}"
+if [[ ! "$UMASK_VALUE" =~ ^[0-7]{3,4}$ ]]; then
+  echo "[quick-gate][FAIL] UMASK must be a 3- or 4-digit octal value (got: $UMASK_VALUE)" >&2
+  exit 2
+fi
+umask "$UMASK_VALUE"
 
 if [[ $# -eq 0 ]]; then
   TARGET_DIRS=("scripts")

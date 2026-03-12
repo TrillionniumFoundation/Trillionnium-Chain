@@ -146,6 +146,10 @@ jobs:
         run: |
           ./scripts/v2/workflow_script_refs_umask_env_guard_test.sh
 
+      - name: Workflow script refs invalid umask guard regression
+        run: |
+          ./scripts/v2/workflow_script_refs_invalid_umask_guard_test.sh
+
       - name: Workflow trigger path glob exemption guard regression
         run: |
           ./scripts/v2/workflow_script_refs_trigger_paths_exempt_from_non_dot_guard_test.sh
@@ -165,6 +169,10 @@ jobs:
       - name: Quick gate umask guard regression
         run: |
           ./scripts/v2/quick_gate_umask_env_guard_test.sh
+
+      - name: Quick gate invalid umask guard regression
+        run: |
+          ./scripts/v2/quick_gate_invalid_umask_guard_test.sh
 
       - name: Nightly health deterministic env guard regression
         run: |
