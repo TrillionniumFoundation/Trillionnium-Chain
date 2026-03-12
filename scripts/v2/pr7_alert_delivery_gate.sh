@@ -267,6 +267,18 @@ PY
 )"
   SUCCESS_CHANNELS="$(printf '%s\n' "$ROUTE_LINES" | sed -n 's/^success=//p' | head -n1)"
   FAILED_CHANNELS="$(printf '%s\n' "$ROUTE_LINES" | sed -n 's/^failed=//p' | head -n1)"
+
+  if [[ "$DELIVERY_EVENT" == "unknown" ]]; then
+    if [[ -n "$SUCCESS_CHANNELS" ]]; then
+      CHANNELS_OK="$(python3 -c 'import sys; s=sys.argv[1].strip(); print(0 if not s else len([p for p in s.split(",") if p]))' "$SUCCESS_CHANNELS")"
+    fi
+    if [[ -n "$FAILED_CHANNELS" ]]; then
+      CHANNELS_FAILED="$(python3 -c 'import sys; s=sys.argv[1].strip(); print(0 if not s else len([p for p in s.split(",") if p]))' "$FAILED_CHANNELS")"
+    fi
+    if [[ -n "$SUCCESS_CHANNELS" && -n "$FAILED_CHANNELS" ]]; then
+      PARTIAL_SUCCESS="1"
+    fi
+  fi
 fi
 
 cat >"$STATUS_FILE" <<EOF
