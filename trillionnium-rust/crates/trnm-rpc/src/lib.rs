@@ -327,6 +327,35 @@ mod tests {
     }
 
     #[test]
+    fn oracle_validation_report_into_rpc_response_preserves_rate_error_label() {
+        let report = OracleValidationReport {
+            ok: false,
+            now_ts_ms: 789,
+            observation: OracleValidationObservation {
+                stale_reject_total: 0,
+                quorum_reject_total: 0,
+                drift_reject_total: 0,
+                accepted_total: 0,
+            },
+            metrics: OracleValidationMetrics {
+                oracle_stale_reject_total: 0,
+                oracle_quorum_reject_total: 0,
+                oracle_drift_reject_total: 0,
+                oracle_source_cardinality: 2,
+                accepted_total: 0,
+                sample_count: 1,
+            },
+            error: Some("rate".into()),
+        };
+
+        let out: OracleValidateSnapshotResponse = report.into();
+        let v = serde_json::to_value(out).unwrap();
+        assert_eq!(v["error"], "rate");
+        assert_eq!(v["metrics"]["sample_count"], 1);
+        assert_eq!(v["metrics"]["oracle_source_cardinality"], 2);
+    }
+
+    #[test]
     fn rpc_schema_smoke_event_fields_stable() {
         let evt = EventQueryResponse {
             event_type: "commit".into(),

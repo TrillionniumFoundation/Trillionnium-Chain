@@ -283,6 +283,7 @@ pub fn validate_snapshot_observed(
             observation.drift_reject_total = 1;
             Some("drift".to_string())
         }
+        Err(OracleError::UpdateRateExceeded { .. }) => Some("rate".to_string()),
         Err(err) => Some(err.to_string()),
     };
 
@@ -566,6 +567,37 @@ mod tests {
         assert_eq!(report.error.as_deref(), Some("drift"));
         assert_eq!(report.observation.drift_reject_total, 1);
         assert_eq!(report.metrics.oracle_drift_reject_total, 1);
+        assert_eq!(report.metrics.oracle_source_cardinality, 2);
+        assert_eq!(report.metrics.accepted_total, 0);
+        assert_eq!(report.metrics.sample_count, 1);
+    }
+
+    #[test]
+    fn observed_report_maps_update_rate_rejection_to_stable_error_label() {
+        let p = policy();
+        let snap = OracleSnapshot::new(
+            "btc/usd",
+            100_000,
+            vec![source("coingecko"), source("chainlink")],
+            61,
+            Some(100_000),
+            Some(120),
+            1_000,
+            2_000,
+            10_000,
+        )
+        .expect("snapshot build");
+
+        let report = validate_snapshot_observed(&p, &snap, 10_100);
+        assert!(!report.ok);
+        assert_eq!(report.error.as_deref(), Some("rate"));
+        assert_eq!(report.observation.stale_reject_total, 0);
+        assert_eq!(report.observation.quorum_reject_total, 0);
+        assert_eq!(report.observation.drift_reject_total, 0);
+        assert_eq!(report.observation.accepted_total, 0);
+        assert_eq!(report.metrics.oracle_stale_reject_total, 0);
+        assert_eq!(report.metrics.oracle_quorum_reject_total, 0);
+        assert_eq!(report.metrics.oracle_drift_reject_total, 0);
         assert_eq!(report.metrics.oracle_source_cardinality, 2);
         assert_eq!(report.metrics.accepted_total, 0);
         assert_eq!(report.metrics.sample_count, 1);
