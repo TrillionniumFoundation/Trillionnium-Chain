@@ -1660,6 +1660,86 @@ fn restore_pending_gov_update_none_rewinds_state_root_after_removing_timelocked_
 }
 
 #[test]
+fn restore_gov_param_none_is_slot_scoped_even_with_multiple_applied_entries() {
+    let mut state = StateStore::new();
+    let empty_root = state.state_root();
+
+    state
+        .set_gov_param(0, 7_101, "max_block_ms".to_string(), "500".to_string())
+        .expect("first applied governance param should succeed");
+    let only_max_block_ms_root = state.state_root();
+
+    state
+        .set_gov_param(
+            0,
+            7_102,
+            "max_parallel_workers".to_string(),
+            "8".to_string(),
+        )
+        .expect("second applied governance param should succeed");
+    let root_with_both = state.state_root();
+
+    assert_ne!(
+        root_with_both, only_max_block_ms_root,
+        "sanity: adding a second applied governance param must perturb state_root"
+    );
+
+    state.restore_gov_param(7_101, None);
+
+    assert!(
+        state.get_param(7_101).is_none(),
+        "slot-scoped restore should remove the targeted applied governance param object"
+    );
+    assert_eq!(
+        state.gov_param_string("max_block_ms"),
+        None,
+        "slot-scoped restore should clear the targeted key-index mapping"
+    );
+    assert_eq!(
+        state.gov_param_string("max_parallel_workers").as_deref(),
+        Some("8"),
+        "slot-scoped restore must preserve unrelated applied governance params"
+    );
+    assert_ne!(
+        state.state_root(),
+        empty_root,
+        "removing one applied governance param must not collapse to the empty baseline while another applied entry still exists"
+    );
+
+    let mut expected = StateStore::new();
+    expected
+        .set_gov_param(
+            0,
+            7_102,
+            "max_parallel_workers".to_string(),
+            "8".to_string(),
+        )
+        .expect("canonical preserved applied governance param should succeed");
+    let only_max_parallel_workers_root = expected.state_root();
+
+    assert_eq!(
+        state.state_root(),
+        only_max_parallel_workers_root,
+        "restore_gov_param(None) should produce the same deterministic root as a canonical state containing only the preserved applied governance param"
+    );
+
+    state.restore_gov_param(
+        7_101,
+        Some(GovParamObject {
+            key_id: 7_101,
+            key: "max_block_ms".to_string(),
+            value: "500".to_string(),
+            version: 1,
+        }),
+    );
+    assert_eq!(
+        state.state_root(),
+        root_with_both,
+        "restoring the removed applied governance snapshot must rewind state_root exactly to the prior two-entry root"
+    );
+}
+
+#[test]
 fn zero_balance_and_missing_balance_have_identical_state_root() {
     let missing = StateStore::new();
     let missing_root = missing.state_root();
