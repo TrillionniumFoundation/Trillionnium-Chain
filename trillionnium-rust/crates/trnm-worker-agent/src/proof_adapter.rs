@@ -491,6 +491,16 @@ mod tests {
             Some("pr-2h")
         );
 
+        let tee_with_slash_separator = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-2i\",\"adapter\":\"TEE/RECEIPT\"}",
+            )
+            .expect("tee receipt label with slash separator should parse");
+        assert_eq!(
+            tee_with_slash_separator.provider_request_id.as_deref(),
+            Some("pr-2i")
+        );
+
         let missing_request_id = adapter
             .parse_response("{\"output_text\":\"ok\",\"adapter\":\"tee-receipt\"}")
             .expect_err("provider_request_id is required");
@@ -698,6 +708,16 @@ mod tests {
         assert_eq!(
             zk_with_slash_separator.provider_request_id.as_deref(),
             Some("pr-zk-2h")
+        );
+
+        let zk_with_colon_separator = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-zk-2i\",\"adapter\":\"ZK:RECEIPT\"}",
+            )
+            .expect("zk receipt label with colon separator should parse");
+        assert_eq!(
+            zk_with_colon_separator.provider_request_id.as_deref(),
+            Some("pr-zk-2i")
         );
 
         let missing_request_id = adapter
