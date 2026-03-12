@@ -18,6 +18,12 @@ Current canonical payload proof byte encoding field used by router / backend tes
 
 - `proof_encoding` (`hex | base64`)
 
+Additional v0 parser / router contract reminders already enforced by tests and code:
+
+- `vk_ref` is required and must not rely on silent surrounding-whitespace trimming.
+- `backend_id`, when present, must be a non-empty canonical token without surrounding whitespace.
+- `backend_version`, when present, must be a non-empty canonical token without surrounding whitespace and must not appear without `backend_id`.
+
 v0 fail-closed boundary reminder:
 
 - The current router/parser only accepts canonical `zk_system` tokens `groth16 | plonk | halo2 | stark | risc0 | sp1`.
