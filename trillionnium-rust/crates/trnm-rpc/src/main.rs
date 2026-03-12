@@ -591,7 +591,9 @@ fn parse_event_log_kv(line: &str) -> BTreeMap<String, String> {
 }
 
 fn parse_node_event_log_sources_list(raw: &str) -> Vec<PathBuf> {
-    raw.split(|c: char| c == ',' || c == ';' || c == '\n')
+    let normalized = normalize_wrapped_env_value(raw);
+    normalized
+        .split(|c: char| c == ',' || c == ';' || c == '\n')
         .filter_map(|part| {
             let trimmed = part.trim();
             if trimmed.is_empty() {
@@ -6927,6 +6929,47 @@ line2
             got.len(),
             1,
             "relative env entries must resolve against the RPC root and stay bounded to real files"
+        );
+
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn load_node_event_log_sources_accepts_outer_wrapped_env_list() {
+        let _guard = lock_env();
+        let root = unique_tmp_path("trnm-rpc-log-sources-wrapped-env", "dir");
+        let run_dir = root.join("run");
+        fs::create_dir_all(&run_dir).expect("create run dir");
+
+        let rel_log = run_dir.join("node4-wrapped.log");
+        fs::write(&rel_log, "").expect("write wrapped env log");
+
+        let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+        let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+        unsafe {
+            std::env::set_var(
+                NODE_EVENT_LOG_SOURCES_ENV,
+                "  \"run/node4-wrapped.log,run/missing-relative.log\"  ",
+            );
+            std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV);
+        }
+
+        let got = load_node_event_log_sources(&root);
+
+        match prev_sources {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+        }
+        match prev_manifest {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+        }
+
+        let canonical_rel_log = fs::canonicalize(&rel_log).expect("canonical wrapped env log");
+        assert_eq!(
+            got,
+            vec![canonical_rel_log],
+            "outer shell/config wrapping must not cause the bounded source list to fall back to defaults"
         );
 
         let _ = fs::remove_dir_all(root);
