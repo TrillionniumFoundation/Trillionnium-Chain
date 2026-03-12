@@ -464,12 +464,12 @@ fn load_latest_adapter_records() -> Vec<AdapterRecord> {
 }
 
 fn node_event_log_tail_bytes() -> u64 {
-    std::env::var("TRNM_RPC_NODE_EVENT_LOG_TAIL_BYTES")
-        .ok()
-        .and_then(|v| v.parse::<u64>().ok())
-        .map(|v| v.min(NODE_EVENT_LOG_TAIL_BYTES_MAX))
-        .filter(|v| *v > 0)
-        .unwrap_or(NODE_EVENT_LOG_TAIL_BYTES_DEFAULT)
+    env_u64_with_min(
+        "TRNM_RPC_NODE_EVENT_LOG_TAIL_BYTES",
+        NODE_EVENT_LOG_TAIL_BYTES_DEFAULT,
+        1,
+    )
+    .min(NODE_EVENT_LOG_TAIL_BYTES_MAX)
 }
 
 fn read_log_tail(path: &Path, tail_bytes: u64) -> Option<String> {
@@ -6227,6 +6227,30 @@ mod tests {
         assert_eq!(max_requests, 9);
 
         clear_faucet_env();
+    }
+
+    #[test]
+    fn node_event_log_tail_bytes_env_accepts_wrapped_numeric_values_and_caps_at_hard_limit() {
+        let _guard = lock_env();
+        let prev = std::env::var("TRNM_RPC_NODE_EVENT_LOG_TAIL_BYTES").ok();
+
+        unsafe {
+            std::env::set_var("TRNM_RPC_NODE_EVENT_LOG_TAIL_BYTES", "  `2048`  ");
+        }
+        assert_eq!(node_event_log_tail_bytes(), 2048);
+
+        unsafe {
+            std::env::set_var(
+                "TRNM_RPC_NODE_EVENT_LOG_TAIL_BYTES",
+                format!("{}", NODE_EVENT_LOG_TAIL_BYTES_MAX + 4096),
+            );
+        }
+        assert_eq!(node_event_log_tail_bytes(), NODE_EVENT_LOG_TAIL_BYTES_MAX);
+
+        match prev {
+            Some(value) => unsafe { std::env::set_var("TRNM_RPC_NODE_EVENT_LOG_TAIL_BYTES", value) },
+            None => unsafe { std::env::remove_var("TRNM_RPC_NODE_EVENT_LOG_TAIL_BYTES") },
+        }
     }
 
     #[test]
