@@ -212,6 +212,26 @@ impl VerifierRegistry {
             "tee attestation v1" | "teeattestationv1" | "tee attestation v 1" => "tee",
             "tee attestation v2" | "teeattestationv2" | "tee attestation v 2" => "tee",
             "tee attestation v3" | "teeattestationv3" | "tee attestation v 3" => "tee",
+            "attestation receipt" | "attestationreceipt" => "tee",
+            "attestation receipt v1" | "attestationreceiptv1" | "attestation receipt v 1" => {
+                "tee"
+            }
+            "attestation receipt v2" | "attestationreceiptv2" | "attestation receipt v 2" => {
+                "tee"
+            }
+            "attestation receipt v3" | "attestationreceiptv3" | "attestation receipt v 3" => {
+                "tee"
+            }
+            "tee attestation receipt" | "teeattestationreceipt" => "tee",
+            "tee attestation receipt v1"
+            | "teeattestationreceiptv1"
+            | "tee attestation receipt v 1" => "tee",
+            "tee attestation receipt v2"
+            | "teeattestationreceiptv2"
+            | "tee attestation receipt v 2" => "tee",
+            "tee attestation receipt v3"
+            | "teeattestationreceiptv3"
+            | "tee attestation receipt v 3" => "tee",
             "tee quote" | "teequote" => "tee",
             "tee quote v1" | "teequotev1" | "tee quote v 1" => "tee",
             "tee quote v2" | "teequotev2" | "tee quote v 2" => "tee",
@@ -552,6 +572,10 @@ mod tests {
             "enclave report",
             "enclave evidence",
             "tee attestation report",
+            "attestation receipt",
+            "attestation receipt v3",
+            "tee attestation receipt",
+            "tee attestation receipt v2",
             "attestation quote",
             "attestation quote v3",
             "tee attestation quote",
