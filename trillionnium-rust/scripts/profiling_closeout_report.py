@@ -554,6 +554,8 @@ def main():
             1 for path in candidates if not os.path.exists(path) and path != selected
         )
         selected_freshness = freshness_label(file_age_seconds(selected)) if selected else "missing"
+        selected_age_seconds = file_age_seconds(selected) if selected else None
+        selected_updated_at = file_mtime_iso(selected) if selected else None
         if not existing_candidates:
             return {
                 "label": label,
@@ -561,6 +563,8 @@ def main():
                 "action": "produce",
                 "selected": selected or "None",
                 "selected_freshness": selected_freshness,
+                "selected_age_seconds": selected_age_seconds if selected_age_seconds is not None else "n/a",
+                "selected_updated_at": selected_updated_at or "n/a",
                 "pending_selected": pending_selected,
                 "candidate_count": 0,
                 "missing_count": missing_count,
@@ -604,6 +608,8 @@ def main():
             "action": action,
             "selected": os.path.basename(selected) if selected else "None",
             "selected_freshness": selected_freshness,
+            "selected_age_seconds": selected_age_seconds if selected_age_seconds is not None else "n/a",
+            "selected_updated_at": selected_updated_at or "n/a",
             "pending_selected": pending_selected,
             "candidate_count": candidate_count,
             "missing_count": missing_count,
@@ -618,7 +624,8 @@ def main():
     def candidate_pool_health_line(pool: dict[str, str | int | bool]) -> str:
         return (
             f"- {pool['label']}: status={pool['status']} action={pool['action']} selected={pool['selected']} "
-            f"selected_freshness={pool['selected_freshness']} pending_selected={'true' if pool['pending_selected'] else 'false'} "
+            f"selected_freshness={pool['selected_freshness']} selected_age_seconds={pool['selected_age_seconds']} "
+            f"selected_updated_at={pool['selected_updated_at']} pending_selected={'true' if pool['pending_selected'] else 'false'} "
             f"candidate_count={pool['candidate_count']} missing_count={pool['missing_count']} fresh={pool['fresh']} "
             f"stale={pool['stale']} old={pool['old']} old_backlog={pool['old_backlog']} "
             f"fresh_ratio={pool['fresh_ratio']} old_backlog_ratio={pool['old_backlog_ratio']}"
