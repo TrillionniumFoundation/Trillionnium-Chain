@@ -163,8 +163,8 @@ else
 fi
 
 rollback_cmd="rm -rf $(printf '%q' "$EVIDENCE_DIR")"
-replay_out_dir="${OUT_DIR:-$BASE_OUT}"
-replay_challenge_entry="${TRNM_CHALLENGE_REEXEC_ENTRY:-$CHALLENGE_REEXEC_ENTRY}"
+replay_out_dir="$BASE_OUT"
+replay_challenge_entry="$CHALLENGE_REEXEC_ENTRY"
 
 {
   echo ""
