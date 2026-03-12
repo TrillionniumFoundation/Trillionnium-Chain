@@ -170,7 +170,7 @@ Router / backend 实现涉及 payload 形状、`public_inputs` 顺序、编码�
 
 1. Router 在进入 backend 前必须先形成 canonical request。
 2. Envelope 与 cryptographic payload 必须分离校验。
-3. `task_id / proof_type / worker / result_hash` 必须在平台层完成 fail-closed 绑定校验。
+3. `task_id / proof_type / worker / result_hash` 必须在平台层完成 fail-closed 绑定校验，其中 canonical payload 顶层 `proof_type` 在 v0 中必须精确等于小写 token `zk`，不得通过大小写归一化静默放宽。
 4. `public_inputs` 的**顺序、编码、最小绑定集**不是 backend 私有约定，而是平台协议的一部分。
 5. `vk_ref` 是审计保留字段，backend 不得静默改写或忽略。
 6. `meta` 若出现，当前 v0 只接受已冻结字段；未知 `meta` 字段必须按 malformed fail-closed 拒绝，避免实现/fixture/文档各自漂移。

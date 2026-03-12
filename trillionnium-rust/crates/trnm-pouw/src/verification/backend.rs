@@ -588,10 +588,15 @@ pub fn parse_zk_proof_payload(
             reason: "invalid zk payload: worker mismatch".to_string(),
         });
     }
-    if !payload.proof_type.eq_ignore_ascii_case("zk") {
+    if payload.proof_type != "zk" {
+        let reason = if payload.proof_type.eq_ignore_ascii_case("zk") {
+            "invalid zk payload: proof_type must use canonical lowercase token 'zk'".to_string()
+        } else {
+            "invalid zk payload: proof_type must be zk".to_string()
+        };
         return Err(BackendExecutionError::InvalidProof {
             backend: "zk:payload".to_string(),
-            reason: "invalid zk payload: proof_type must be zk".to_string(),
+            reason,
         });
     }
     if payload.result_hash != expected_hash {
@@ -945,6 +950,15 @@ mod tests {
         let err = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["4242","zk","worker-zk","2222222222222222222222222222222222222222222222222222222222222222"]}}"#).unwrap_err();
         assert!(
             matches!(err, BackendExecutionError::InvalidProof { reason, .. } if reason.contains("public_inputs mismatch"))
+        );
+    }
+
+    #[test]
+    fn parse_zk_proof_payload_rejects_non_canonical_top_level_proof_type_case() {
+        let task = mock_task();
+        let err = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"ZK","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["4242","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#).unwrap_err();
+        assert!(
+            matches!(err, BackendExecutionError::InvalidProof { reason, .. } if reason.contains("canonical lowercase token 'zk'"))
         );
     }
 
