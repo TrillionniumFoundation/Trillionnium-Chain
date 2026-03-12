@@ -710,6 +710,32 @@ fn debiting_balance_to_zero_removes_treasury_entry_without_perturbing_restore_ro
 }
 
 #[test]
+fn crediting_zero_to_missing_balance_keeps_state_root_on_missing_entry_baseline() {
+    let mut state = StateStore::new();
+    let baseline_root = state.state_root();
+
+    state
+        .credit_balance("treasury.challenge_forfeits", 0)
+        .expect("crediting zero should succeed");
+
+    assert_eq!(
+        state.balance_of("treasury.challenge_forfeits"),
+        0,
+        "crediting zero should still read back as zero"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "crediting zero to a missing treasury entry must not materialize a zero-balance row or perturb state_root"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "repeated reads after zero-credit should deterministically reuse the missing-entry baseline root"
+    );
+}
+
+#[test]
 fn restore_monetary_state_rewinds_state_root_after_zero_net_tick_roundtrip() {
     let mut state = StateStore::new();
     state

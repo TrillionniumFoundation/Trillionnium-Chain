@@ -1303,7 +1303,11 @@ impl StateStore {
             )
         })?;
         self.invalidate_state_root_cache();
-        self.balances.insert(address.to_string(), next);
+        if next == 0 {
+            self.balances.remove(address);
+        } else {
+            self.balances.insert(address.to_string(), next);
+        }
         Ok(())
     }
 
