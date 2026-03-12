@@ -104,6 +104,9 @@ fn main() {
     let (groups, profile) = args.strategy.resolve_profile(&txs);
     let dt = t0.elapsed();
     let effective_strategy = effective_strategy_for(args.strategy, &txs);
+    let adaptive_candidate_strategy = adaptive_candidate_strategy_for(&txs);
+    let default_has_adaptive_opportunity =
+        default_has_adaptive_opportunity(args.strategy, adaptive_candidate_strategy);
 
     let grouped: usize = groups.iter().map(|g| g.len()).sum();
     let conflict_rate = 1.0f64 - (keys as f64 / n as f64).min(1.0);
@@ -143,6 +146,14 @@ fn main() {
             "profile.conflict_hit_rate={:.4}",
             conflict_hit_rate(&profile)
         );
+        println!(
+            "profile.adaptive_candidate_strategy={:?}",
+            adaptive_candidate_strategy
+        );
+        println!(
+            "profile.default_has_adaptive_opportunity={}",
+            default_has_adaptive_opportunity
+        );
 
         if emits_auto_profile(args.strategy) {
             let d = auto_adaptive_decision(&txs);
@@ -168,6 +179,18 @@ fn main() {
 
 fn emits_auto_profile(strategy: StrategyArg) -> bool {
     matches!(strategy, StrategyArg::AutoAdaptive)
+}
+
+fn adaptive_candidate_strategy_for(txs: &[Tx]) -> GroupingStrategy {
+    resolve_grouping_strategy(txs, GroupingStrategy::AutoAdaptive)
+}
+
+fn default_has_adaptive_opportunity(
+    strategy: StrategyArg,
+    adaptive_candidate_strategy: GroupingStrategy,
+) -> bool {
+    matches!(strategy, StrategyArg::Default)
+        && !matches!(adaptive_candidate_strategy, GroupingStrategy::Original)
 }
 
 fn effective_strategy_for(strategy: StrategyArg, txs: &[Tx]) -> GroupingStrategy {
@@ -328,6 +351,41 @@ mod tests {
         assert!(matches!(
             effective_strategy_for(StrategyArg::AutoAdaptive, &txs),
             GroupingStrategy::HotBucketInterleave
+        ));
+    }
+
+    #[test]
+    fn adaptive_candidate_strategy_tracks_auto_adaptive_resolution() {
+        let hot_streak = build_hot_streak_txs(20_000, 2_000, 3, 1);
+        assert!(matches!(
+            adaptive_candidate_strategy_for(&hot_streak),
+            GroupingStrategy::HotBucketInterleave
+        ));
+
+        let mixed = build_mixed_txs(20_000, 2_000, 3, 1);
+        assert!(matches!(
+            adaptive_candidate_strategy_for(&mixed),
+            GroupingStrategy::Original
+        ));
+    }
+
+    #[test]
+    fn default_adaptive_opportunity_only_flags_when_default_leaves_headroom() {
+        assert!(default_has_adaptive_opportunity(
+            StrategyArg::Default,
+            GroupingStrategy::HotBucketInterleave,
+        ));
+        assert!(!default_has_adaptive_opportunity(
+            StrategyArg::Default,
+            GroupingStrategy::Original,
+        ));
+        assert!(!default_has_adaptive_opportunity(
+            StrategyArg::AutoAdaptive,
+            GroupingStrategy::HotBucketInterleave,
+        ));
+        assert!(!default_has_adaptive_opportunity(
+            StrategyArg::HotBucketInterleave,
+            GroupingStrategy::HotBucketInterleave,
         ));
     }
 
