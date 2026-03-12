@@ -2694,6 +2694,14 @@ fn query_task_response(
     })
 }
 
+fn replay_fallback_kind_rank(kind: &str) -> u8 {
+    match kind {
+        "commit" => 0,
+        "reveal" => 1,
+        _ => 2,
+    }
+}
+
 fn query_events_response(
     task_id: u64,
     limit: usize,
@@ -2745,10 +2753,21 @@ fn query_events_response(
     if !saw_authoritative_event && events.is_empty() {
         let mut tx_id = 1u64;
         let mut has_commit = false;
-        for r in recs
+        let mut fallback_recs = recs
             .iter()
             .filter(|r| r.task_id == task_id && r.status == "accepted")
-        {
+            .collect::<Vec<_>>();
+        fallback_recs.sort_by(|left, right| {
+            left.ts
+                .cmp(&right.ts)
+                .then_with(|| replay_fallback_kind_rank(&left.kind).cmp(&replay_fallback_kind_rank(&right.kind)))
+                .then_with(|| {
+                    market_worker_tie_break_key(left.worker.as_deref().unwrap_or(""))
+                        .cmp(&market_worker_tie_break_key(right.worker.as_deref().unwrap_or("")))
+                })
+                .then_with(|| left.tx_hash.cmp(&right.tx_hash))
+        });
+        for r in fallback_recs {
             let Some(actor) = r.worker.as_deref().and_then(normalize_actor_or_signer) else {
                 continue;
             };
@@ -6570,6 +6589,37 @@ mod tests {
         assert_eq!(out[1].event_type, "reveal");
         assert_eq!(out[1].actor, "worker-b");
         assert_eq!(out[1].tx_hash.as_deref(), Some("0x4444"));
+    }
+
+    #[test]
+    fn query_events_response_replay_fallback_sorts_unsorted_adapter_records_before_replay() {
+        let recs = vec![
+            AdapterRecord {
+                ts: 20,
+                kind: "reveal".into(),
+                task_id: 144,
+                worker: Some("worker-a".into()),
+                result_hash: None,
+                status: "accepted".into(),
+                tx_hash: Some("0x2222".into()),
+            },
+            AdapterRecord {
+                ts: 10,
+                kind: "commit".into(),
+                task_id: 144,
+                worker: Some("worker-a".into()),
+                result_hash: None,
+                status: "accepted".into(),
+                tx_hash: Some("0x1111".into()),
+            },
+        ];
+
+        let out = query_events_response(144, 20, &[], &recs).expect("fallback events expected");
+        assert_eq!(out.len(), 2, "unsorted replay input should still preserve the complete accepted commit/reveal sequence");
+        assert_eq!(out[0].event_type, "commit");
+        assert_eq!(out[0].tx_hash.as_deref(), Some("0x1111"));
+        assert_eq!(out[1].event_type, "reveal");
+        assert_eq!(out[1].tx_hash.as_deref(), Some("0x2222"));
     }
 
     #[test]
