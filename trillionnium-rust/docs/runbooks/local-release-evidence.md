@@ -58,3 +58,14 @@ env TZ=UTC LC_ALL=C LANG=C SOURCE_DATE_EPOCH=1704067200 \
 - 回滚命令：`rm -rf <evidence_dir>`（仅删除本次生成目录）
 
 若直接引用脚本生成的 `summary.txt`，应以其中的 `replay_command=` 字段为准；不要手写成缺少 deterministic 前缀的裸命令，避免把不可复现的本地环境差异带进 RC 证据链。
+
+## RC manifest 对齐要求
+
+`./scripts/release_rc.sh` 生成的 `release/rc-*/manifest.txt` 也应保持与本页一致的可复放字段，至少包括：
+
+- 实际执行时生效的 deterministic 环境（`env_*`）
+- 建议复放环境（`replay_env_*`）
+- 单行 `replay_command=`
+- 单行 `rollback_command=`
+
+这样可以避免 RC 证据包只有产物列表、却缺少“如何按同一环境重放”这一关键链路，保证当前 truth-source 与历史/本地证据之间的审计接口一致。
