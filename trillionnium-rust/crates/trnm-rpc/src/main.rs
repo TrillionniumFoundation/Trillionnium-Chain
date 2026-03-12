@@ -646,7 +646,9 @@ fn load_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
                 } else {
                     manifest_dir.join(path)
                 };
-                sources.insert(resolved);
+                if resolved.is_file() {
+                    sources.insert(resolved);
+                }
             }
         }
     }
@@ -658,7 +660,9 @@ fn load_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
             } else {
                 root.join(path)
             };
-            sources.insert(resolved);
+            if resolved.is_file() {
+                sources.insert(resolved);
+            }
         }
     }
 
@@ -6358,6 +6362,54 @@ line2
         assert!(got.contains(&env_log));
         assert!(got.contains(&manifest_log));
         assert_eq!(got.len(), 2, "custom sources should replace defaults");
+
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn load_node_event_log_sources_ignores_missing_manifest_entries_fail_closed() {
+        let _guard = lock_env();
+        let root = unique_tmp_path("trnm-rpc-log-sources-missing", "dir");
+        let manifest_dir = root.join("cfg");
+        fs::create_dir_all(&manifest_dir).expect("create manifest dir");
+
+        let present_log = manifest_dir.join("present.log");
+        let missing_log = manifest_dir.join("missing.log");
+        let manifest = manifest_dir.join("sources.txt");
+        fs::write(&present_log, "").expect("write present log");
+        fs::write(
+            &manifest,
+            format!("# comment\npresent.log\n{}\n", missing_log.display()),
+        )
+        .expect("write manifest");
+
+        let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+        let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+        unsafe {
+            std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV);
+            std::env::set_var(
+                NODE_EVENT_LOG_MANIFEST_ENV,
+                manifest.to_string_lossy().to_string(),
+            );
+        }
+
+        let got = load_node_event_log_sources(&root);
+
+        match prev_sources {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+        }
+        match prev_manifest {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+        }
+
+        assert!(got.contains(&present_log));
+        assert!(
+            !got.contains(&missing_log),
+            "missing manifest entries must be ignored to keep RPC scan inputs bounded to real files"
+        );
+        assert_eq!(got.len(), 1);
 
         let _ = fs::remove_dir_all(root);
     }
