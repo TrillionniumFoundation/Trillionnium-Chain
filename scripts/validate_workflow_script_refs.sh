@@ -142,9 +142,14 @@ if [[ "$non_exec_count" != "0" ]]; then
   cat "$non_exec_file" >&2
 fi
 
+if [[ "$non_dot_script_ref_count" != "0" ]]; then
+  echo "[workflow-ref][WARN] workflow script refs should prefer ./-prefixed paths for repo-root determinism:" >&2
+  cat "$non_dot_refs_file" >&2
+fi
+
 end_epoch="$(date -u +%s)"
 status="ok"
-if [[ "$missing_count" != "0" || "$non_exec_count" != "0" ]]; then
+if [[ "$missing_count" != "0" || "$non_exec_count" != "0" || "$non_dot_script_ref_count" != "0" ]]; then
   if [[ "$STRICT_MODE" == "1" ]]; then
     status="fail"
   else
