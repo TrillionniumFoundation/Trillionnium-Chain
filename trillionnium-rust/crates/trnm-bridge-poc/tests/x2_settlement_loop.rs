@@ -251,6 +251,36 @@ fn x3_prep_confirm_failure_with_non_canonical_operator_subject_fails_closed_with
 }
 
 #[test]
+fn x3_prep_degraded_heartbeat_with_non_canonical_operator_subject_fails_closed_without_state_change()
+{
+    let mut request = SettlementRequest::new(1, "0xdegraded-malformed-subject".to_string());
+    let token = CapabilityToken {
+        subject: "did:trn:settlement\u{200B}-operator".to_string(),
+        capabilities: vec![SettlementCapability::Revert],
+    };
+
+    let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 2));
+    let _ = monitor.record_failure("target relay timeout #1");
+    let degraded = monitor.record_failure("target relay timeout #2");
+
+    let err = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &degraded,
+        SettlementConfirm::Confirmed { height: 414 },
+    )
+    .unwrap_err();
+
+    assert_eq!(
+        err,
+        trnm_bridge_poc::bridge_status::SettlementError::MalformedToken {
+            reason: "non-canonical subject",
+        }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Pending);
+}
+
+#[test]
 fn x3_prep_duplicate_confirm_after_finalize_is_rejected_without_state_change() {
     let mut request = SettlementRequest::new(1, "0xdup00f".to_string());
     let token = operator_token();
