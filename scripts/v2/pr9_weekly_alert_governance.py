@@ -38,11 +38,11 @@ def normalize_env_value(raw: str) -> str:
         chars: list[str] = []
         escaped = False
         for ch in value[1:]:
-            if escaped:
+            if quote == '"' and escaped:
                 chars.append(ch)
                 escaped = False
                 continue
-            if ch == "\\":
+            if quote == '"' and ch == "\\":
                 escaped = True
                 continue
             if ch == quote:
