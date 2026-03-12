@@ -141,9 +141,9 @@ TRNM 当前已经具备：
    - 若存在 skipped / no-commit heights，还要把 committed-budget 视角的 `bft_round_change_active_height_rate_ppm` 与 coverage 视角的 `bft_round_change_active_observed_height_rate_ppm` 一起看，避免 jitter 因只按 committed heights 摊薄，或因只看 observed heights 而被误判为过度严重。
    - proposer fairness 也要把 validator 分布视角与 active-height 预算视角拆开看：`bft_leader_missed_active_validator_share_ppm` 反映 miss 是否已扩散到多数 proposer，`bft_leader_missed_active_observed_height_rate_ppm` 反映覆盖多少观察高度，而 `bft_leader_missed_active_height_share_ppm` 则衡量这些 bursts 对平均 finality budget 的压力；这三者不能互相替代。
 
-4. **Rollback 压力也需要看“活跃高度密度 + 预算占比 + 错误占比”，不能只看次数**
+4. **Rollback 压力也需要看“活跃高度密度 + 覆盖视角 + 预算占比 + 错误占比”，不能只看次数**
    - `rollback_total` 或 `rollback_count_avg` 只告诉你发生了多少回滚，不能说明它们是否集中压在少数高度，或是否已经开始主导 apply-error 面。
-   - closeout 时应把 `rollback_peak_share_ppm`、`rollback_density_avg_milli`、`rollback_active_height_share_ppm`、`rollback_active_height_rate_ppm`、`apply_error_rollback_share_bps` 一起看；若回滚主要集中在少数高度，还应优先把它解读为 block-loop 稳定性告警，而不是简单的总体错误率波动。
+   - closeout 时应把 `rollback_peak_share_ppm`、`rollback_density_avg_milli`、`rollback_active_height_share_ppm`、`rollback_active_height_rate_ppm`、`rollback_active_observed_height_rate_ppm`、`apply_error_rollback_share_bps` 一起看；若存在 skipped / no-commit heights，应优先比较 committed-budget 视角的 `rollback_active_height_rate_ppm` 与 coverage 视角的 `rollback_active_observed_height_rate_ppm`，避免把集中回滚压力因为只按 committed heights 摊薄，或因为只看 observed heights 而误判为更广泛失稳。若回滚主要集中在少数高度，还应优先把它解读为 block-loop 稳定性告警，而不是简单的总体错误率波动。
 
 #### 对 Solana/Sui 的差距
 - **比 Solana**：缺少更成熟的 runtime / bank / lock / cache 联动。
