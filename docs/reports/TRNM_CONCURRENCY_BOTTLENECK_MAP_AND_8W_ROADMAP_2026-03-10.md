@@ -138,7 +138,7 @@ TRNM 当前已经具备：
 3. **Consensus jitter 需要按 active height 观察，而不是只看全局均值**
    - round-change/backoff 若集中爆发在少数高度，`per_height` 或全局平均很容易稀释真实抖动；
    - 因此 block-loop closeout 应优先看 `bft_round_change_density_avg_milli`、`bft_round_change_backoff_density_avg_milli`，并结合 `bft_round_change_active_height_share_ppm` / `bft_round_change_backoff_active_height_share_ppm` 判断它们占平均 finality budget 的比例；
-   - 若存在 skipped / no-commit heights，还要把 committed-budget 视角的 `bft_round_change_active_height_rate_ppm` 与 coverage 视角的 `bft_round_change_active_observed_height_rate_ppm` 一起看，避免 jitter 因只按 committed heights 摊薄，或因只看 observed heights 而被误判为过度严重。
+   - 若存在 skipped / no-commit heights，还要把 committed-budget 视角的 `bft_round_change_active_height_rate_ppm` 与 coverage 视角的 `bft_round_change_active_observed_height_rate_ppm` 一起看，并同步核对 `bft_commit_observed_height_rate_ppm` / `bft_skipped_observed_height_rate_ppm`，避免 jitter 因只按 committed heights 摊薄，或因为 commit coverage 自身下降而被误判为“抖动变轻”。
    - proposer fairness 也要把 validator 分布视角与 active-height 预算视角拆开看：`bft_leader_missed_active_validator_share_ppm` 反映 miss 是否已扩散到多数 proposer，`bft_leader_missed_active_observed_height_rate_ppm` 反映覆盖多少观察高度，而 `bft_leader_missed_active_height_share_ppm` 则衡量这些 bursts 对平均 finality budget 的压力；这三者不能互相替代。
    - scheduler fairness stall 不应只看 `critical_wait_blocks_avg` 或全局 `critical_wait_density_ppm`：还要把 `critical_wait_active_heights`、`critical_wait_active_height_rate_ppm`、`critical_wait_active_observed_height_rate_ppm` 与 `critical_wait_density_avg_milli`、`critical_wait_peak_density_ppm`、`critical_wait_active_height_share_ppm` 一起读，避免把只发生在少数高度的 queueing burst 误判成“整体只是轻度等待”。
 
