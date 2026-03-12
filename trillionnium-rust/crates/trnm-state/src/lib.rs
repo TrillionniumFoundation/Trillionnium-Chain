@@ -758,6 +758,7 @@ impl StateStore {
             let trimmed = member.trim();
             if trimmed.is_empty()
                 || trimmed != *member
+                || trimmed.len() > RESOLVE_APPROVER_MAX_LEN
                 || trimmed.chars().any(|c| c.is_whitespace())
                 || trimmed.chars().any(|c| c.is_control())
                 || trimmed.contains(';')
