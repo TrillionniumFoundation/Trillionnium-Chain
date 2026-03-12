@@ -736,6 +736,7 @@ def main():
     lines += ["", "## Baseline Report Pool Health"]
     lines.append(candidate_pool_health_line(baseline_report_pool))
     lines.extend(candidate_preview("baseline_closeout_report_candidates", out, baseline_report_candidates_with_out))
+    baseline_report_archive_candidates = archive_candidates_for_pool(baseline_report_candidates_with_out)
     baseline_report_archive_line = archive_candidate_line(
         "baseline_closeout_report_candidates", baseline_report_candidates_with_out
     )
@@ -748,7 +749,6 @@ def main():
     }.get(str(baseline_report_pool["action"]), "review_archive_candidates_before_manual_cleanup")
     lines.append(f"- baseline_closeout_report_followup: {baseline_report_followup}")
 
-    baseline_report_archive_candidates = archive_candidates_for_pool(baseline_report_candidates_with_out)
     lines += ["", "## Baseline Report Action Summary"]
     lines.append(
         "- baseline_closeout_report_decision: "
@@ -775,7 +775,7 @@ def main():
         f"- baseline_closeout_report_selected: {baseline_report_pool['selected']}"
     )
     baseline_followup_command_chain = (
-        "python3 scripts/profiling_closeout_report.py"
+        f"{recommended_producer('executor_profile')} && python3 scripts/profiling_closeout_report.py"
         if baseline_report_pool["action"] in {"produce", "refresh"}
         else "none"
     )
