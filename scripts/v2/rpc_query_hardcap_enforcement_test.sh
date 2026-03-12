@@ -11,4 +11,7 @@ cargo test -q -p trnm-rpc clamp_limit_ -- --nocapture
 echo "[TEST] rpc_query_hardcap_enforcement: query-events HTTP limit parser fallback"
 cargo test -q -p trnm-rpc parse_query_events_limit_from_path_zero_uses_default_limit -- --nocapture
 
+echo "[TEST] rpc_query_hardcap_enforcement: duplicate limit query keys fail closed"
+cargo test -q -p trnm-rpc parse_query_events_limit_from_path_rejects_duplicate_limit_keys -- --nocapture
+
 echo "[OK] rpc_query_hardcap_enforcement passed"
