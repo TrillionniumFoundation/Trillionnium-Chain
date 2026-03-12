@@ -249,7 +249,7 @@ from pathlib import Path
 audit = Path(sys.argv[1])
 report = sys.argv[2]
 summary = None
-for line in audit.read_text(encoding='utf-8').splitlines():
+for line in audit.read_text(encoding='utf-8', errors='ignore').splitlines():
     line = line.strip()
     if not line:
         continue
@@ -283,7 +283,7 @@ from pathlib import Path
 audit = Path(sys.argv[1])
 report = sys.argv[2]
 rows = []
-for line in audit.read_text(encoding='utf-8').splitlines():
+for line in audit.read_text(encoding='utf-8', errors='ignore').splitlines():
     line = line.strip()
     if not line:
         continue
