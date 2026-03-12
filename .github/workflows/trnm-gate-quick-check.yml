@@ -227,6 +227,10 @@ jobs:
         run: |
           ./scripts/v2/quick_gate_summary_json_escape_test.sh
 
+      - name: Quick gate target-dir normalization regression
+        run: |
+          ./scripts/v2/quick_gate_target_dir_normalization_guard_test.sh
+
       - name: PR6 missing event log guard regression
         run: |
           ./scripts/v2/pr6_alert_rules_gate_missing_event_log_test.sh
