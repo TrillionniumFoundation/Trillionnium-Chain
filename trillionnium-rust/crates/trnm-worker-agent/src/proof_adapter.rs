@@ -146,10 +146,7 @@ fn has_non_empty_auditable_value(value: Option<&str>) -> bool {
 
 fn parse_response_with_standard_rules(stdout: &str) -> Result<LlmAdapterResponse, String> {
     let normalized = stdout.trim_start().trim_start_matches('\u{feff}');
-
-    if normalized.starts_with('{') && serde_json::from_str::<serde_json::Value>(normalized).is_err() {
-        return Err("invalid-json".to_string());
-    }
+    let starts_with_json_object = normalized.starts_with('{');
 
     if let Ok(parsed) = serde_json::from_str(normalized) {
         return Ok(parsed);
@@ -176,6 +173,10 @@ fn parse_response_with_standard_rules(stdout: &str) -> Result<LlmAdapterResponse
         if let Ok(parsed) = serde_json::from_str::<LlmAdapterResponse>(&candidate) {
             return Ok(parsed);
         }
+    }
+
+    if starts_with_json_object {
+        return Err("invalid-json".to_string());
     }
 
     Err("no-json-line".to_string())
@@ -327,6 +328,19 @@ mod tests {
             .expect("should parse json embedded in log line");
         assert_eq!(parsed.output_text, "ok");
         assert_eq!(parsed.provider_request_id.as_deref(), Some("r2"));
+    }
+
+    #[test]
+    fn standard_proof_adapter_parse_response_accepts_json_prefix_before_trailing_logs() {
+        let adapter = StandardProofAdapter;
+        let stdout =
+            "{\"output_text\":\"ok\",\"provider_request_id\":\"r2-prefix\"}\ninfo: cleanup complete\n";
+
+        let parsed = adapter
+            .parse_response(stdout)
+            .expect("should parse leading json object before trailing logs");
+        assert_eq!(parsed.output_text, "ok");
+        assert_eq!(parsed.provider_request_id.as_deref(), Some("r2-prefix"));
     }
 
     #[test]
