@@ -56,6 +56,21 @@ impl RelayHeartbeatMonitor {
         target_height: u64,
         latency_ms: u64,
     ) -> HeartbeatOutcome {
+        if source_height == 0 || target_height == 0 {
+            self.consecutive_failures = self.config.max_retry;
+            let message = "invalid heartbeat height".to_string();
+            eprintln!(
+                "[relay-heartbeat][degraded] failures={} reason={}",
+                self.consecutive_failures, message
+            );
+            return HeartbeatOutcome {
+                heartbeat: None,
+                should_retry: false,
+                degraded: true,
+                message,
+            };
+        }
+
         self.consecutive_failures = 0;
         HeartbeatOutcome {
             heartbeat: Some(RelayHeartbeat {

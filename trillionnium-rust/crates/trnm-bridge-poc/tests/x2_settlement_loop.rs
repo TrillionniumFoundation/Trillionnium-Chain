@@ -126,6 +126,42 @@ fn x3_prep_stale_pending_on_degraded_heartbeat_triggers_compensation_revert() {
 }
 
 #[test]
+fn x3_prep_zero_height_heartbeat_success_fails_closed_to_compensation() {
+    let mut request = SettlementRequest::new(1, "0xhb-zero-height".to_string());
+    let token = operator_token();
+
+    let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 2));
+    let degraded = monitor.record_success(0, 411, 29);
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &degraded,
+        SettlementConfirm::Confirmed { height: 412 },
+    )
+    .unwrap();
+
+    assert_eq!(
+        out,
+        SettlementStep::Compensated {
+            reason: "heartbeat degraded: invalid heartbeat height".to_string(),
+            event: trnm_bridge_poc::x2_settlement_loop::SettlementEvent {
+                phase: "relay_heartbeat_degraded",
+                heartbeat_source_height: None,
+                heartbeat_target_height: None,
+                heartbeat_latency_ms: None,
+                confirm_height: None,
+                confirm_reason: Some("heartbeat degraded: invalid heartbeat height".to_string()),
+            },
+        }
+    );
+    assert_eq!(
+        current_status(&request),
+        &BridgeStatus::Reverted("heartbeat degraded: invalid heartbeat height".to_string())
+    );
+}
+
+#[test]
 fn x3_prep_degraded_heartbeat_takes_precedence_over_timeout_confirm_failure() {
     let mut request = SettlementRequest::new(1, "0xstale-timeout".to_string());
     let token = operator_token();

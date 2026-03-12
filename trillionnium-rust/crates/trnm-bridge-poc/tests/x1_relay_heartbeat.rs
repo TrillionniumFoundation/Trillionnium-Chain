@@ -51,6 +51,25 @@ fn relay_heartbeat_flap_after_recovery_restarts_retry_budget() {
 }
 
 #[test]
+fn relay_heartbeat_zero_height_success_fails_closed_as_degraded() {
+    let mut hb = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 3));
+
+    let out = hb.record_success(0, 209, 6);
+    assert!(out.degraded);
+    assert!(!out.should_retry);
+    assert_eq!(out.message, "invalid heartbeat height");
+    assert!(out.heartbeat.is_none());
+    assert_eq!(hb.consecutive_failures(), 3);
+
+    let out = hb.record_success(210, 0, 6);
+    assert!(out.degraded);
+    assert!(!out.should_retry);
+    assert_eq!(out.message, "invalid heartbeat height");
+    assert!(out.heartbeat.is_none());
+    assert_eq!(hb.consecutive_failures(), 3);
+}
+
+#[test]
 fn relay_heartbeat_config_clamps_zero_to_safe_minimums() {
     let mut hb = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(0, 0));
     assert_eq!(hb.interval_secs(), 1);
