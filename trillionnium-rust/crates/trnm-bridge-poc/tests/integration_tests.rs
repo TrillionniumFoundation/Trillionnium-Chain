@@ -664,3 +664,34 @@ fn test_authorized_calls_reject_subject_token_with_variation_selectors_and_plane
     );
     assert_eq!(request.status, BridgeStatus::Pending);
 }
+
+#[test]
+fn test_authorized_calls_reject_legacy_bidi_isolates_in_tx_hash_and_subject() {
+    let mut request = SettlementRequest::new(493, "0xabc\u{206A}def\u{206B}ghi\u{206C}".to_string());
+    let malformed = CapabilityToken {
+        subject: "did:trn:worker\u{206D}-legacy\u{206E}bidi\u{206F}".to_string(),
+        capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
+    };
+
+    let finalize_err = request.settle_authorized(&malformed, 523).unwrap_err();
+    assert_eq!(
+        finalize_err,
+        SettlementError::MalformedRequest {
+            reason: "non-canonical tx_hash",
+        }
+    );
+    assert_eq!(request.status, BridgeStatus::Pending);
+
+    request.tx_hash = "0xabc126".to_string();
+
+    let revert_err = request
+        .revert_authorized(&malformed, "bridge timeout".to_string())
+        .unwrap_err();
+    assert_eq!(
+        revert_err,
+        SettlementError::MalformedToken {
+            reason: "non-canonical subject",
+        }
+    );
+    assert_eq!(request.status, BridgeStatus::Pending);
+}
