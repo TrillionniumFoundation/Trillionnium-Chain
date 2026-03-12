@@ -312,6 +312,7 @@ TRNM 当前不是“高 TPS 公链的仿制品”，而是：
    - `avg_group_size`
    - `hot_object_share`
    - `bft_round_change_density_avg_milli`（避免整数平均掩盖轻度共识抖动）
+   - `bft_round_change_backoff_density_avg_milli`（避免把 backoff wall time 聚合后看不出抖动集中在哪些 active heights）
 
 2. 为 `trnm-node` 增加块级 profiling 输出（默认关）
 3. 建立 benchmark 报表模板：

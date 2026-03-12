@@ -67,6 +67,8 @@
 
 建议在每轮提交信息或随附说明中使用固定字段：`gate`、`evidence`、`rollback`、`root_cause`，便于后续审计与自动汇总。
 
+L04 observability note: when reviewing consensus-loop regressions, prefer height-aware jitter indicators such as `bft_round_change_density_avg_milli` together with `bft_round_change_backoff_density_avg_milli`, so clustered round-change backoff does not disappear inside global averages.
+
 ## 仍然 deferred / 未在本次文档修正中解决
 
 1. 未重新执行整仓 release 级门禁，也未重新生成新的 closeout bundle。
