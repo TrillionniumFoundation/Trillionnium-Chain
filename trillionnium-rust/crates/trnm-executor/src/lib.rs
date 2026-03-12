@@ -2515,6 +2515,11 @@ mod tests {
         assert_eq!(auto_adaptive_sample_len(768), 768);
         drop(_comma_grouped);
 
+        let _plus_grouped = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", " '+1,5_3_6' ");
+        assert_eq!(auto_adaptive_sample_len(5000), 1536);
+        assert_eq!(auto_adaptive_sample_len(1400), 1400);
+        drop(_plus_grouped);
+
         let _separator_only = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", " '__,,__' ");
         assert_eq!(auto_adaptive_sample_len(5000), 2048);
         assert_eq!(auto_adaptive_sample_len(128), 128);
