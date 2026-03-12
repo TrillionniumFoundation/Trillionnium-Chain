@@ -144,6 +144,10 @@ cargo test -p trnm-bridge-poc --test x3_compensation_matrix \
   -- --nocapture
 
 cargo test -p trnm-bridge-poc --test x3_compensation_matrix \
+  x3_prep_stale_pending_degraded_reason_strips_plane14_tags_for_replay_stability \
+  -- --nocapture
+
+cargo test -p trnm-bridge-poc --test x3_compensation_matrix \
   x3_prep_stale_pending_degraded_reason_collapses_figure_and_narrow_nbsp_for_replay_stability \
   -- --nocapture
 

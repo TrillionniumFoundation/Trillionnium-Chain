@@ -723,8 +723,42 @@ fn x3_prep_stale_pending_degraded_reason_strips_variation_selectors_for_replay_s
 }
 
 #[test]
+fn x3_prep_stale_pending_degraded_reason_strips_plane14_tags_for_replay_stability() {
+    let mut request = SettlementRequest::new(21, "0xmatrix-sanitize-plane14-tags".to_string());
+    let token = operator_token();
+
+    let degraded = HeartbeatOutcome {
+        heartbeat: None,
+        should_retry: false,
+        degraded: true,
+        message: "target\u{E0100} relay\u{E0101} timeout".to_string(),
+    };
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &degraded,
+        SettlementConfirm::Confirmed { height: 6274 },
+    )
+    .unwrap();
+
+    let SettlementStep::Compensated { reason, event } = out else {
+        panic!("expected compensated branch");
+    };
+
+    assert_eq!(reason, "heartbeat degraded: target relay timeout");
+    assert!(!reason.contains('\u{E0100}'));
+    assert!(!reason.contains('\u{E0101}'));
+
+    assert_eq!(event.phase, "relay_heartbeat_degraded");
+    assert_eq!(event.confirm_height, None);
+    assert_eq!(event.confirm_reason, Some(reason.clone()));
+    assert_eq!(current_status(&request), &BridgeStatus::Reverted(reason));
+}
+
+#[test]
 fn x3_prep_stale_pending_degraded_reason_collapses_figure_and_narrow_nbsp_for_replay_stability() {
-    let mut request = SettlementRequest::new(21, "0xmatrix-sanitize-figure-nnbsp".to_string());
+    let mut request = SettlementRequest::new(22, "0xmatrix-sanitize-figure-nnbsp".to_string());
     let token = operator_token();
 
     let degraded = HeartbeatOutcome {
