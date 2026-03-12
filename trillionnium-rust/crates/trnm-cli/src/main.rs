@@ -483,6 +483,11 @@ fn parse_tx_query_response(raw: &str, requested_tx_hash: &str) -> Result<TxQuery
             .or_else(|| payload.get("txStatus"))
             .or_else(|| payload.get("transaction_status"))
             .or_else(|| payload.get("transactionStatus"))
+            .or_else(|| payload.get("state"))
+            .or_else(|| payload.get("tx_state"))
+            .or_else(|| payload.get("txState"))
+            .or_else(|| payload.get("transaction_state"))
+            .or_else(|| payload.get("transactionState"))
             .and_then(|x| x.as_str())
             .and_then(normalize_tx_status)
             .ok_or_else(|| anyhow!("missing/invalid status field in tx query response"))?;
@@ -516,7 +521,16 @@ fn parse_tx_query_response(raw: &str, requested_tx_hash: &str) -> Result<TxQuery
                         None => bail!("invalid tx_hash field in tx query response"),
                     }
                 }
-                "status" | "tx_status" | "txstatus" | "transaction_status" | "transactionstatus" => {
+                "status"
+                | "tx_status"
+                | "txstatus"
+                | "transaction_status"
+                | "transactionstatus"
+                | "state"
+                | "tx_state"
+                | "txstate"
+                | "transaction_state"
+                | "transactionstate" => {
                     if let Some(normalized) = normalize_tx_status(&value) {
                         status = Some(normalized);
                     }
@@ -1091,6 +1105,11 @@ mod tests {
             parse_tx_query_response(transaction_status_camel, "0xfallback").unwrap();
         assert_eq!(parsed_transaction_status_camel.tx_hash, "0xddd");
         assert_eq!(parsed_transaction_status_camel.status, "fail");
+
+        let state_alias = "{\"transactionHash\":\"0xeee\",\"transactionState\":\"included\"}";
+        let parsed_state_alias = parse_tx_query_response(state_alias, "0xfallback").unwrap();
+        assert_eq!(parsed_state_alias.tx_hash, "0xeee");
+        assert_eq!(parsed_state_alias.status, "committed");
     }
 
     #[test]
@@ -1301,6 +1320,12 @@ mod tests {
             parse_tx_query_response(transaction_status_camel, "0xfallback").unwrap();
         assert_eq!(parsed_transaction_status_camel.tx_hash, "0xddd444");
         assert_eq!(parsed_transaction_status_camel.status, "fail");
+
+        let transaction_state_camel = "transactionHash=0xeee555\ntransactionState=finalized\n";
+        let parsed_transaction_state_camel =
+            parse_tx_query_response(transaction_state_camel, "0xfallback").unwrap();
+        assert_eq!(parsed_transaction_state_camel.tx_hash, "0xeee555");
+        assert_eq!(parsed_transaction_state_camel.status, "committed");
     }
 
     #[test]
