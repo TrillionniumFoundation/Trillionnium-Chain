@@ -687,6 +687,46 @@ fn x3_prep_duplicate_confirmed_after_revert_is_rejected_without_state_change() {
 }
 
 #[test]
+fn x3_prep_confirm_failure_blank_reason_preserves_heartbeat_metrics() {
+    let mut request = SettlementRequest::new(1, "0xconfirm-blank-metrics".to_string());
+    let token = operator_token();
+
+    let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 2));
+    let heartbeat = monitor.record_success(701, 699, 21);
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Failed {
+            reason: "\u{200B}\n\t\u{202E}".to_string(),
+        },
+    )
+    .unwrap();
+
+    assert_eq!(
+        out,
+        SettlementStep::Compensated {
+            reason: "settlement confirm failed: unknown confirm failure".to_string(),
+            event: trnm_bridge_poc::x2_settlement_loop::SettlementEvent {
+                phase: "settlement_confirm_failed",
+                heartbeat_source_height: Some(701),
+                heartbeat_target_height: Some(699),
+                heartbeat_latency_ms: Some(21),
+                confirm_height: None,
+                confirm_reason: Some(
+                    "settlement confirm failed: unknown confirm failure".to_string(),
+                ),
+            },
+        }
+    );
+    assert_eq!(
+        current_status(&request),
+        &BridgeStatus::Reverted("settlement confirm failed: unknown confirm failure".to_string())
+    );
+}
+
+#[test]
 fn x3_prep_confirm_failure_reason_exact_cap_has_no_ellipsis_and_is_replay_stable() {
     let mut request = SettlementRequest::new(1, "0xcapexact".to_string());
     let token = operator_token();
