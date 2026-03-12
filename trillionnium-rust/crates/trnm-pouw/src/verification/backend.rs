@@ -307,8 +307,7 @@ impl VkRefRegistry {
     }
 
     pub fn register(&mut self, resolved: ResolvedVkRef) {
-        self.entries
-            .insert(resolved.vk_ref.trim().to_ascii_lowercase(), resolved);
+        self.entries.insert(resolved.vk_ref.clone(), resolved);
     }
 
     fn register_demo_dev_defaults(&mut self) {
@@ -338,7 +337,7 @@ impl VkRefResolver for VkRefRegistry {
         }
 
         self.entries
-            .get(&normalized.to_ascii_lowercase())
+            .get(normalized)
             .cloned()
             .ok_or_else(|| VkRefResolutionError::Unknown {
                 vk_ref: normalized.to_string(),
@@ -1075,6 +1074,24 @@ mod tests {
             BackendExecutionError::InvalidProof {
                 backend: "zk:payload".into(),
                 reason: "invalid zk payload: unknown vk_ref 'vk://trnm/dev/mock-groth16/unknown'"
+                    .into(),
+            }
+        );
+    }
+
+    #[test]
+    fn resolve_zk_vk_ref_rejects_case_drift_for_opaque_vk_refs() {
+        let task = mock_task();
+        let payload = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","schema_version":"trnm.zk.payload.v0","vk_ref":"VK://TRNM/DEV/MOCK-GROTH16/V1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["4242","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#).unwrap();
+        let resolver = VkRefRegistry::new();
+
+        let err = resolve_zk_vk_ref(&resolver, &payload).unwrap_err();
+
+        assert_eq!(
+            err,
+            BackendExecutionError::InvalidProof {
+                backend: "zk:payload".into(),
+                reason: "invalid zk payload: unknown vk_ref 'VK://TRNM/DEV/MOCK-GROTH16/V1'"
                     .into(),
             }
         );
