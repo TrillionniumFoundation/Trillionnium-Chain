@@ -4111,6 +4111,41 @@ mod tests {
     }
 
     #[test]
+    fn round_change_backoff_coverage_pair_with_commit_and_skip_rates_exposes_denominator_shift() {
+        let bft_round_change_backoff_active_heights = 2u64;
+        let bft_committed_heights = 2u64;
+        let bft_observed_heights = 5u64;
+        let bft_skipped_height_total = bft_observed_heights - bft_committed_heights;
+
+        let bft_round_change_backoff_active_height_rate_ppm =
+            ratio_ppm_u64(bft_round_change_backoff_active_heights, bft_committed_heights);
+        let bft_round_change_backoff_active_observed_height_rate_ppm =
+            ratio_ppm_u64(bft_round_change_backoff_active_heights, bft_observed_heights);
+        let bft_commit_observed_height_rate_ppm =
+            ratio_ppm_u64(bft_committed_heights, bft_observed_heights);
+        let bft_skipped_observed_height_rate_ppm =
+            ratio_ppm_u64(bft_skipped_height_total, bft_observed_heights);
+
+        assert_eq!(bft_round_change_backoff_active_height_rate_ppm, 1_000_000);
+        assert_eq!(bft_round_change_backoff_active_observed_height_rate_ppm, 400_000);
+        assert_eq!(bft_commit_observed_height_rate_ppm, 400_000);
+        assert_eq!(bft_skipped_observed_height_rate_ppm, 600_000);
+        assert_eq!(
+            bft_commit_observed_height_rate_ppm + bft_skipped_observed_height_rate_ppm,
+            1_000_000
+        );
+        assert!(
+            bft_round_change_backoff_active_observed_height_rate_ppm
+                < bft_round_change_backoff_active_height_rate_ppm
+        );
+        assert_eq!(
+            bft_round_change_backoff_active_observed_height_rate_ppm,
+            bft_commit_observed_height_rate_ppm
+        );
+        assert!(bft_skipped_observed_height_rate_ppm > bft_commit_observed_height_rate_ppm);
+    }
+
+    #[test]
     fn round_change_backoff_active_height_metric_names_stay_distinct_from_round_change_coverage() {
         let round_change_active_heights_field_name = "bft_round_change_active_heights";
         let backoff_active_heights_field_name = "bft_round_change_backoff_active_heights";
