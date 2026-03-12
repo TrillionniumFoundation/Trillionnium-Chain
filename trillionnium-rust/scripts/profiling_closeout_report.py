@@ -1352,6 +1352,9 @@ def main():
             "profile.report.persist_profile",
             "profile.report.capture_started_at_epoch",
             "profile.report.capture_started_at_iso",
+            "profile.report.capture_stamp_family",
+            "profile.report.capture_stamp",
+            "profile.report.capture_stamp_epoch",
             "profile.report.elapsed_ms",
             "profile.report.path",
             "profile.report.artifact_basename",
@@ -1368,6 +1371,7 @@ def main():
         embedded_profile_path = executor_profile_metrics.get("profile.report.path")
         embedded_profile_basename = executor_profile_metrics.get("profile.report.artifact_basename")
         embedded_capture_epoch = executor_profile_metrics.get("profile.report.capture_started_at_epoch")
+        embedded_capture_stamp_epoch = executor_profile_metrics.get("profile.report.capture_stamp_epoch")
         selected_basename = os.path.basename(executor_profile)
         selected_capture_stamp = detect_capture_stamp(executor_profile)
         selected_capture_epoch = "unavailable"
@@ -1377,6 +1381,7 @@ def main():
                 selected_capture_epoch = str(normalized_selected_epoch)
         basename_match = None
         capture_epoch_match = None
+        capture_stamp_epoch_match = None
         embedded_report_path_exists = None
         embedded_report_path_match = None
         executor_context_lines.extend([
@@ -1398,6 +1403,12 @@ def main():
                 "- executor_profile.embedded_capture_epoch_matches_selected: "
                 f"{'true' if capture_epoch_match else 'false'}"
             )
+        if embedded_capture_stamp_epoch:
+            capture_stamp_epoch_match = embedded_capture_stamp_epoch == selected_capture_epoch
+            executor_context_lines.append(
+                "- executor_profile.embedded_capture_stamp_epoch_matches_selected: "
+                f"{'true' if capture_stamp_epoch_match else 'false'}"
+            )
         if embedded_profile_path:
             embedded_report_path_exists = os.path.exists(embedded_profile_path)
             embedded_report_path_match = bool(
@@ -1416,6 +1427,8 @@ def main():
             integrity_checks.append(basename_match)
         if capture_epoch_match is not None:
             integrity_checks.append(capture_epoch_match)
+        if capture_stamp_epoch_match is not None:
+            integrity_checks.append(capture_stamp_epoch_match)
         if embedded_report_path_match is not None:
             integrity_checks.append(embedded_report_path_match)
         integrity_status = (
@@ -1435,6 +1448,10 @@ def main():
         if capture_epoch_match is not None:
             integrity_reason_parts.append(
                 f"capture_epoch_match={'true' if capture_epoch_match else 'false'}"
+            )
+        if capture_stamp_epoch_match is not None:
+            integrity_reason_parts.append(
+                f"capture_stamp_epoch_match={'true' if capture_stamp_epoch_match else 'false'}"
             )
         if embedded_report_path_match is not None:
             integrity_reason_parts.append(

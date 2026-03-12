@@ -140,15 +140,33 @@ fn main() {
             format!("profile.report.read_fanout={}", args.read_fanout.max(1)),
             format!("profile.report.write_every={}", args.write_every.max(1)),
             format!("profile.report.persist_profile={}", args.persist_profile),
-            format!("profile.report.capture_started_at_epoch={}", capture_started_at_epoch),
-            format!("profile.report.capture_started_at_iso={}", capture_started_at_iso),
+            format!(
+                "profile.report.capture_started_at_epoch={}",
+                capture_started_at_epoch
+            ),
+            format!(
+                "profile.report.capture_started_at_iso={}",
+                capture_started_at_iso
+            ),
+            "profile.report.capture_stamp_family=epoch".to_string(),
+            format!("profile.report.capture_stamp={}", capture_started_at_epoch),
+            format!(
+                "profile.report.capture_stamp_epoch={}",
+                capture_started_at_epoch
+            ),
             format!("profile.report.elapsed_ms={}", dt.as_millis()),
-            format!("profile.report.estimated_conflict_rate={:.4}", conflict_rate),
+            format!(
+                "profile.report.estimated_conflict_rate={:.4}",
+                conflict_rate
+            ),
             format!("profile.report.coverage_ratio={:.4}", coverage_ratio),
             format!("profile.report.ungrouped_count={}", ungrouped_count),
             format!("profile.report.grouping_complete={}", grouping_complete),
             format!("profile.report.groups_per_1k_txs={:.4}", groups_per_1k_txs),
-            format!("profile.report.grouping_efficiency={:.4}", grouping_efficiency),
+            format!(
+                "profile.report.grouping_efficiency={:.4}",
+                grouping_efficiency
+            ),
             "profile.report.autopilot_hint=persisted_profile_capture".to_string(),
             format!("profile.tx_count={}", profile.tx_count),
             format!("profile.group_count={}", profile.group_count),
@@ -188,7 +206,10 @@ fn main() {
                 format!("profile.auto.min_margin={:.4}", d.min_margin),
                 format!("profile.auto.hot_key_share={:.4}", d.hot_key_share),
                 format!("profile.auto.min_hot_key_share={:.4}", d.min_hot_key_share),
-                format!("profile.auto.expected_gain_score={:.4}", d.expected_gain_score),
+                format!(
+                    "profile.auto.expected_gain_score={:.4}",
+                    d.expected_gain_score
+                ),
                 format!(
                     "profile.auto.min_expected_gain_score={:.4}",
                     d.min_expected_gain_score
@@ -209,7 +230,10 @@ fn main() {
     }
 }
 
-fn persist_profile_report(lines: &mut Vec<String>, capture_started_at_epoch: u64) -> std::io::Result<PathBuf> {
+fn persist_profile_report(
+    lines: &mut Vec<String>,
+    capture_started_at_epoch: u64,
+) -> std::io::Result<PathBuf> {
     let out_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .join("..")
         .join("..")
@@ -238,19 +262,14 @@ fn persist_profile_report(lines: &mut Vec<String>, capture_started_at_epoch: u64
 }
 
 fn chrono_like_iso(ts: SystemTime) -> String {
-    let total_seconds = ts
-        .duration_since(UNIX_EPOCH)
-        .unwrap_or_default()
-        .as_secs() as i64;
+    let total_seconds = ts.duration_since(UNIX_EPOCH).unwrap_or_default().as_secs() as i64;
     let days = total_seconds.div_euclid(86_400);
     let seconds_of_day = total_seconds.rem_euclid(86_400);
     let (year, month, day) = civil_from_days(days);
     let hour = seconds_of_day / 3_600;
     let minute = (seconds_of_day % 3_600) / 60;
     let second = seconds_of_day % 60;
-    format!(
-        "{year:04}-{month:02}-{day:02}T{hour:02}:{minute:02}:{second:02}Z"
-    )
+    format!("{year:04}-{month:02}-{day:02}T{hour:02}:{minute:02}:{second:02}Z")
 }
 
 fn civil_from_days(days_since_unix_epoch: i64) -> (i64, i64, i64) {
