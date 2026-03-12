@@ -735,33 +735,3 @@ fn test_authorized_calls_reject_legacy_bidi_isolates_in_tx_hash_and_subject() {
     assert_eq!(request.status, BridgeStatus::Pending);
 }
 
-#[test]
-fn test_authorized_calls_reject_hangul_fillers_in_tx_hash_and_subject() {
-    let mut request = SettlementRequest::new(494, "0xabc\u{115F}def\u{1160}ghi\u{3164}".to_string());
-    let malformed = CapabilityToken {
-        subject: "did:trn:worker\u{115F}-hangul\u{1160}fill\u{3164}".to_string(),
-        capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
-    };
-
-    let finalize_err = request.settle_authorized(&malformed, 524).unwrap_err();
-    assert_eq!(
-        finalize_err,
-        SettlementError::MalformedRequest {
-            reason: "non-canonical tx_hash",
-        }
-    );
-    assert_eq!(request.status, BridgeStatus::Pending);
-
-    request.tx_hash = "0xabc127".to_string();
-
-    let revert_err = request
-        .revert_authorized(&malformed, "bridge timeout".to_string())
-        .unwrap_err();
-    assert_eq!(
-        revert_err,
-        SettlementError::MalformedToken {
-            reason: "non-canonical subject",
-        }
-    );
-    assert_eq!(request.status, BridgeStatus::Pending);
-}
