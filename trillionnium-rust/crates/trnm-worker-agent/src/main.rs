@@ -1133,8 +1133,26 @@ fn parse_tx_hash(text: &str) -> Option<String> {
             other => other,
         })
         .collect::<String>();
+    let mut normalized_whitespace = String::with_capacity(normalized_delimiters.len());
+    let mut last_was_space = false;
+    for ch in normalized_delimiters.chars() {
+        if ch.is_whitespace() {
+            if !last_was_space {
+                normalized_whitespace.push(' ');
+                last_was_space = true;
+            }
+        } else {
+            normalized_whitespace.push(ch);
+            last_was_space = false;
+        }
+    }
 
-    for haystack in [text, normalized_key_quotes.as_str(), normalized_delimiters.as_str()] {
+    for haystack in [
+        text,
+        normalized_key_quotes.as_str(),
+        normalized_delimiters.as_str(),
+        normalized_whitespace.as_str(),
+    ] {
         for prefix in PREFIXES {
             let mut remainder = haystack;
             while let Some(idx) = remainder.find(prefix) {
@@ -2401,6 +2419,20 @@ mod tests {
         let json = parse_tx_hash("{\"tx_hash\" : \"0xDEADBEEF\", \"status\": \"accepted\"}")
             .expect("json receipt hash with whitespace before colon should parse");
         assert_eq!(json, "deadbeef");
+    }
+
+    #[test]
+    fn parse_tx_hash_accepts_json_style_receipts_with_newlines_and_tabs_around_colon() {
+        let json = parse_tx_hash("{\n\t\"tx_hash\"\n\t:\n\t\"0xDEADBEEF\",\n\t\"status\":\n\t\"accepted\"\n}")
+            .expect("json receipt hash with newline/tab padding should parse");
+        assert_eq!(json, "deadbeef");
+    }
+
+    #[test]
+    fn parse_tx_hash_accepts_space_separated_receipt_keys_with_tab_delimiter_padding() {
+        let shell = parse_tx_hash("TX HASH\t=\t0xDEADBEEF")
+            .expect("space-separated receipt hash with tab delimiter padding should parse");
+        assert_eq!(shell, "deadbeef");
     }
 
     #[test]
