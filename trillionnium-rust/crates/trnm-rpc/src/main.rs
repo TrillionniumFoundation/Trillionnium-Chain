@@ -3822,6 +3822,20 @@ mod tests {
     }
 
     #[test]
+    fn parse_query_events_limit_from_path_rejects_encoded_query_smuggling() {
+        for path in [
+            "/query-events/42?limit=7%26limit=9",
+            "/query-events/42?limit%3d7",
+            "/query-events/42?foo=bar%26limit=9",
+        ] {
+            let err = parse_query_events_limit_from_path(path)
+                .expect_err("encoded delimiters must fail closed");
+            assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+            assert!(err.contains("invalid limit"), "path={path} err={err}");
+        }
+    }
+
+    #[test]
     fn parse_query_events_limit_from_path_rejects_malformed_unrelated_query_pairs() {
         for path in [
             "/query-events/42?foo&limit=7",
