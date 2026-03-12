@@ -216,15 +216,9 @@ impl VerifierRegistry {
             "tee attestation v2" | "teeattestationv2" | "tee attestation v 2" => "tee",
             "tee attestation v3" | "teeattestationv3" | "tee attestation v 3" => "tee",
             "attestation receipt" | "attestationreceipt" => "tee",
-            "attestation receipt v1" | "attestationreceiptv1" | "attestation receipt v 1" => {
-                "tee"
-            }
-            "attestation receipt v2" | "attestationreceiptv2" | "attestation receipt v 2" => {
-                "tee"
-            }
-            "attestation receipt v3" | "attestationreceiptv3" | "attestation receipt v 3" => {
-                "tee"
-            }
+            "attestation receipt v1" | "attestationreceiptv1" | "attestation receipt v 1" => "tee",
+            "attestation receipt v2" | "attestationreceiptv2" | "attestation receipt v 2" => "tee",
+            "attestation receipt v3" | "attestationreceiptv3" | "attestation receipt v 3" => "tee",
             "tee attestation receipt" | "teeattestationreceipt" => "tee",
             "tee attestation receipt v1"
             | "teeattestationreceiptv1"
@@ -274,9 +268,45 @@ impl VerifierRegistry {
             "remote attestation evidence" | "remoteattestationevidence" => "tee",
             "tee remote attestation evidence" | "teeremoteattestationevidence" => "tee",
             "remote attestation cert" | "remoteattestationcert" => "tee",
+            "remote attestation cert v1"
+            | "remoteattestationcertv1"
+            | "remote attestation cert v 1" => "tee",
+            "remote attestation cert v2"
+            | "remoteattestationcertv2"
+            | "remote attestation cert v 2" => "tee",
+            "remote attestation cert v3"
+            | "remoteattestationcertv3"
+            | "remote attestation cert v 3" => "tee",
             "remote attestation certificate" | "remoteattestationcertificate" => "tee",
+            "remote attestation certificate v1"
+            | "remoteattestationcertificatev1"
+            | "remote attestation certificate v 1" => "tee",
+            "remote attestation certificate v2"
+            | "remoteattestationcertificatev2"
+            | "remote attestation certificate v 2" => "tee",
+            "remote attestation certificate v3"
+            | "remoteattestationcertificatev3"
+            | "remote attestation certificate v 3" => "tee",
             "tee remote attestation cert" | "teeremoteattestationcert" => "tee",
+            "tee remote attestation cert v1"
+            | "teeremoteattestationcertv1"
+            | "tee remote attestation cert v 1" => "tee",
+            "tee remote attestation cert v2"
+            | "teeremoteattestationcertv2"
+            | "tee remote attestation cert v 2" => "tee",
+            "tee remote attestation cert v3"
+            | "teeremoteattestationcertv3"
+            | "tee remote attestation cert v 3" => "tee",
             "tee remote attestation certificate" | "teeremoteattestationcertificate" => "tee",
+            "tee remote attestation certificate v1"
+            | "teeremoteattestationcertificatev1"
+            | "tee remote attestation certificate v 1" => "tee",
+            "tee remote attestation certificate v2"
+            | "teeremoteattestationcertificatev2"
+            | "tee remote attestation certificate v 2" => "tee",
+            "tee remote attestation certificate v3"
+            | "teeremoteattestationcertificatev3"
+            | "tee remote attestation certificate v 3" => "tee",
             "attestation report" | "attestationreport" => "tee",
             "attestation report v1" | "attestationreportv1" | "attestation report v 1" => "tee",
             "attestation report v2" | "attestationreportv2" | "attestation report v 2" => "tee",
@@ -620,7 +650,10 @@ mod tests {
             "remote attestation cert",
             "remote attestation certificate",
             "tee remote attestation cert",
+            "tee remote attestation cert v2",
+            "remote attestation certificate v3",
             "tee remote attestation certificate",
+            "tee remote attestation certificate v1",
             "ra quote",
             "ra report v2",
             "dcap quote",
