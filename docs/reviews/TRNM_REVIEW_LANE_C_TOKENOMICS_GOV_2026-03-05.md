@@ -218,6 +218,7 @@ Monetary policy 仅记账不铸销到账户，且节点主循环未触发 policy
 
 ### 2026-03-12 补充核查
 - `trnm-pouw` 已读取 `default_slash_on_unresolved_challenge` 并按布尔值决定 challenged timeout 走 `Completed` 还是 `Slashed`。
+- 现有 `trnm-pouw` 侧布尔解析已经按 **fail-closed** 处理：仅接受规范化的 `1/0/true/false/yes/no/on/off`，对前后空白、零宽字符或其他畸形别名直接拒绝，而不是宽松回退到某个经济终态。
 - 但当前状态层 governance allowlist 仍未放行该 key；在测试环境尝试通过 `set_gov_param_bootstrap_unchecked(..., "default_slash_on_unresolved_challenge", "true")` 注入时，返回 `governance key not allowed: default_slash_on_unresolved_challenge`。
 - 因而，当前风险不是“布尔值格式可能被错误解析”，而是更基础的**治理控制面不可达**：`trnm-pouw` 已具备读取与 fail-closed 解析逻辑，但现有 state/governance schema 仍阻断该参数进入可执行状态。
 - 这意味着当前实现更接近“代码里预留了治理开关，但治理面实际上还无法配置”，默认路径仍然固定为 `Completed + refund challenger bond`。
