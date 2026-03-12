@@ -712,8 +712,15 @@ fn maybe_pay_challenge_success_bounty(
     if task.status != TaskStatus::Slashed {
         return Ok(0);
     }
+    if task.challenge_bond.is_none() || task.challenged_at_height.is_none() {
+        return Err(PouwError::State(
+            "challenge success bounty requires challenged-task settlement metadata".into(),
+        ));
+    }
     let Some(challenger) = task.challenger.as_ref() else {
-        return Ok(0);
+        return Err(PouwError::State(
+            "challenge success bounty requires challenger identity".into(),
+        ));
     };
 
     let configured_bounty = st
@@ -10561,6 +10568,58 @@ mod tests {
         assert_eq!(st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT), 49);
         assert_eq!(st.balance_of(&worker_stake_lock_account(40_103)), 0);
         assert_eq!(st.balance_of("worker1"), 0);
+    }
+
+    #[test]
+    fn challenge_success_bounty_rejects_slashed_task_missing_successful_challenge_metadata() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        st.set_balance("worker1", 50);
+        st.set_gov_param_bootstrap_unchecked(40_201, "challenge_success_bounty".into(), "1".into())
+            .unwrap();
+        st.set_gov_param_bootstrap_unchecked(40_202, "min_worker_stake".into(), "50".into())
+            .unwrap();
+
+        let r1 = apply_create_task(&mut st, 40_203, "alice".into(), 10).unwrap();
+        let result_hash = [4u8; 32];
+        let reveal_salt = [8u8; 32];
+        let committed = compute_commitment(40_203, &result_hash, &reveal_salt, "worker1");
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
+        let r4 = apply_reveal_result_at_height(
+            &mut st,
+            r3,
+            result_hash,
+            reveal_salt,
+            None,
+            110,
+        )
+        .unwrap();
+        let r5 = apply_challenge_at_height(
+            &mut st,
+            r4,
+            "challenger".into(),
+            10,
+            "challenger".into(),
+            120,
+        )
+        .unwrap();
+
+        let mut malformed = st.get_task(r5.id).unwrap();
+        malformed.status = TaskStatus::Slashed;
+        malformed.challenged_at_height = None;
+        let next = st.update_task(r5, malformed).unwrap();
+        let task = st.get_task(next.id).unwrap();
+        let before_challenger = st.balance_of("challenger");
+        let before_lock = st.balance_of(&worker_stake_lock_account(40_203));
+        let before_slash_treasury = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
+
+        let err = maybe_pay_challenge_success_bounty(&mut st, &task)
+            .expect_err("slashed payout must fail closed without challenged-task settlement metadata");
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("challenged-task settlement metadata")));
+        assert_eq!(st.balance_of("challenger"), before_challenger);
+        assert_eq!(st.balance_of(&worker_stake_lock_account(40_203)), before_lock);
+        assert_eq!(st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT), before_slash_treasury);
     }
 
     #[test]
