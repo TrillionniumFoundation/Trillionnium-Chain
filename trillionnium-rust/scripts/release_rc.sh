@@ -22,7 +22,8 @@ export CARGO_TERM_COLOR="${CARGO_TERM_COLOR:-$replay_cargo_term_color}"
 export RUST_BACKTRACE="${RUST_BACKTRACE:-$replay_rust_backtrace}"
 export CARGO_BUILD_JOBS="${CARGO_BUILD_JOBS:-$replay_cargo_build_jobs}"
 
-TS="$(date +%Y%m%d-%H%M%S)"
+# Keep RC directory names aligned with the UTC-based manifest/generated_at fields.
+TS="$(date -u +%Y%m%d-%H%M%S)"
 BASE_OUT_INPUT="${OUT_DIR:-$ROOT/release}"
 mkdir -p "$BASE_OUT_INPUT"
 BASE_OUT="$(cd "$BASE_OUT_INPUT" && pwd)"
