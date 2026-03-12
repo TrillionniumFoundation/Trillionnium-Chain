@@ -936,6 +936,35 @@ def main():
         "baseline_closeout_report_candidates", baseline_report_candidates_with_out
     )
     lines.append(baseline_report_archive_line)
+    baseline_report_archive_freshness_counts = {"stale": 0, "old": 0}
+    for path in baseline_report_archive_candidates:
+        freshness = freshness_label(file_age_seconds(path))
+        if freshness in baseline_report_archive_freshness_counts:
+            baseline_report_archive_freshness_counts[freshness] += 1
+    lines += ["", "## Baseline Report Archive Summary"]
+    lines.append(
+        f"- baseline_closeout_report_archive_candidate_total: {len(baseline_report_archive_candidates)}"
+    )
+    lines.append(
+        "- baseline_closeout_report_archive_freshness_counts: "
+        f"stale={baseline_report_archive_freshness_counts['stale']} old={baseline_report_archive_freshness_counts['old']}"
+    )
+    lines.append(
+        "- baseline_closeout_report_archive_attention: "
+        + (
+            "none"
+            if not baseline_report_archive_candidates
+            else f"baseline_closeout_report_candidates:{len(baseline_report_archive_candidates)}"
+        )
+    )
+    lines.append(
+        "- baseline_closeout_report_archive_recommendation: "
+        + (
+            "keep_latest_only_no_archive_action"
+            if not baseline_report_archive_candidates
+            else "review_archive_candidates_before_manual_cleanup"
+        )
+    )
     baseline_report_followup = {
         "produce": "produce_new_closeout_report",
         "refresh": "refresh_closeout_report_set",
