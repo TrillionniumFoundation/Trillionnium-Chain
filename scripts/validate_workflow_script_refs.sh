@@ -65,6 +65,7 @@ non_dot_script_ref_count="$(wc -l <"$non_dot_refs_file" | tr -d ' ')"
 mapfile -t SCRIPT_REFS < <(LC_ALL=C sort -u "$refs_file")
 mapfile -t NON_DOT_SCRIPT_REFS < <(LC_ALL=C sort -u "$non_dot_refs_file")
 
+echo "[workflow-ref] workflow_root=${WORKFLOW_ROOT}"
 echo "[workflow-ref] workflow_count=${#WORKFLOW_FILES[@]}"
 echo "[workflow-ref] script_ref_total_count=${total_script_ref_count}"
 echo "[workflow-ref] script_ref_count=${#SCRIPT_REFS[@]}"
