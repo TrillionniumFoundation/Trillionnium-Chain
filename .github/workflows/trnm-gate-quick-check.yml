@@ -199,6 +199,10 @@ jobs:
         run: |
           ./scripts/v2/trnm_gate_quick_check_shellcheck_install_deterministic_apt_guard_test.sh
 
+      - name: Quick gate invocation guard regression
+        run: |
+          ./scripts/v2/trnm_gate_quick_check_quick_gate_invocation_guard_test.sh
+
       - name: Quick gate pipefail guard regression
         run: |
           ./scripts/v2/trnm_gate_quick_check_pipefail_guard_test.sh
