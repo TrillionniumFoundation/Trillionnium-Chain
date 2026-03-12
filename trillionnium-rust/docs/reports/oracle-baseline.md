@@ -33,7 +33,7 @@ python3 scripts/oracle/benchmark_oracle_metrics.py \
 
 ```json
 {
-  "oracle_ingest_latency_ms": 0.013,
+  "oracle_ingest_latency_ms": 0.015,
   "oracle_stale_reject_total": 1,
   "oracle_quorum_reject_total": 1,
   "oracle_drift_reject_total": 1,
@@ -47,9 +47,9 @@ python3 scripts/oracle/benchmark_oracle_metrics.py \
 {
   "bench_rounds": 10,
   "bench_count": 1000,
-  "ingest_latency_p50_ms": 0.832,
-  "ingest_latency_p95_ms": 0.846,
-  "ingest_latency_max_ms": 0.846
+  "ingest_latency_p50_ms": 1.051,
+  "ingest_latency_p95_ms": 1.066,
+  "ingest_latency_max_ms": 1.066
 }
 ```
 
