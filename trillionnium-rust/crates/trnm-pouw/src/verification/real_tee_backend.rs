@@ -209,6 +209,7 @@ trait VerifierProfileResolver: Send + Sync {
     ) -> Result<ResolvedVerifierProfile, BackendExecutionError>;
 }
 
+#[allow(dead_code)]
 struct StaticVerifierProfileResolver;
 
 impl VerifierProfileResolver for StaticVerifierProfileResolver {
@@ -217,6 +218,208 @@ impl VerifierProfileResolver for StaticVerifierProfileResolver {
         transport: &VerifierTransportConfig,
         _request: &BackendVerificationRequest<'_>,
     ) -> Result<ResolvedVerifierProfile, BackendExecutionError> {
+        Ok(ResolvedVerifierProfile {
+            mode: transport.mode.clone(),
+            profile: transport.profile.clone(),
+            endpoint: transport.endpoint.clone(),
+            timeout_ms: transport.timeout_ms,
+        })
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+struct VerifierProfileRegistryEntry {
+    profile: String,
+    mode: VerifierTransportMode,
+    endpoint_prefix: String,
+    auth_required: bool,
+}
+
+#[derive(Debug, Clone, Default)]
+struct RuntimeVerifierProfileRegistry {
+    entries: BTreeMap<String, VerifierProfileRegistryEntry>,
+}
+
+impl RuntimeVerifierProfileRegistry {
+    fn with_builtin_defaults() -> Self {
+        let mut entries = BTreeMap::new();
+        for entry in [
+            VerifierProfileRegistryEntry {
+                profile: "intel-dcap-mock-default".into(),
+                mode: VerifierTransportMode::Mock,
+                endpoint_prefix: "mock://intel-quote-verifier/".into(),
+                auth_required: false,
+            },
+            VerifierProfileRegistryEntry {
+                profile: "intel-dcap-external-default".into(),
+                mode: VerifierTransportMode::External,
+                endpoint_prefix: "https://intel-verifier.invalid/v1/quote/".into(),
+                auth_required: true,
+            },
+            VerifierProfileRegistryEntry {
+                profile: "amd-sev-snp-mock-default".into(),
+                mode: VerifierTransportMode::Mock,
+                endpoint_prefix: "mock://amd-report-verifier/".into(),
+                auth_required: false,
+            },
+            VerifierProfileRegistryEntry {
+                profile: "amd-sev-snp-external-default".into(),
+                mode: VerifierTransportMode::External,
+                endpoint_prefix: "https://amd-verifier.invalid/v1/report/".into(),
+                auth_required: true,
+            },
+        ] {
+            entries.insert(entry.profile.clone(), entry);
+        }
+        Self { entries }
+    }
+
+    #[cfg(test)]
+    #[allow(dead_code)]
+    fn from_entries(entries: Vec<VerifierProfileRegistryEntry>) -> Self {
+        let mut map = BTreeMap::new();
+        for entry in entries {
+            map.insert(entry.profile.clone(), entry);
+        }
+        Self { entries: map }
+    }
+
+    fn resolve(&self, profile: &str) -> Option<&VerifierProfileRegistryEntry> {
+        self.entries.get(profile)
+    }
+}
+
+trait VerifierProfileRegistrySource: Send + Sync {
+    fn load(
+        &self,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<RuntimeVerifierProfileRegistry, BackendExecutionError>;
+}
+
+struct StaticVerifierProfileRegistrySource {
+    registry: RuntimeVerifierProfileRegistry,
+}
+
+impl StaticVerifierProfileRegistrySource {
+    fn with_builtin_defaults() -> Self {
+        Self {
+            registry: RuntimeVerifierProfileRegistry::with_builtin_defaults(),
+        }
+    }
+
+    #[cfg(test)]
+    #[allow(dead_code)]
+    fn from_registry(registry: RuntimeVerifierProfileRegistry) -> Self {
+        Self { registry }
+    }
+}
+
+impl VerifierProfileRegistrySource for StaticVerifierProfileRegistrySource {
+    fn load(
+        &self,
+        _request: &BackendVerificationRequest<'_>,
+    ) -> Result<RuntimeVerifierProfileRegistry, BackendExecutionError> {
+        Ok(self.registry.clone())
+    }
+}
+
+struct EnvJsonVerifierProfileRegistrySource {
+    defaults: RuntimeVerifierProfileRegistry,
+    vars: BTreeMap<String, String>,
+}
+
+impl EnvJsonVerifierProfileRegistrySource {
+    #[allow(dead_code)]
+    fn from_env(defaults: RuntimeVerifierProfileRegistry) -> Self {
+        Self {
+            defaults,
+            vars: std::env::vars().collect(),
+        }
+    }
+
+    #[cfg(test)]
+    fn from_vars(defaults: RuntimeVerifierProfileRegistry, vars: BTreeMap<String, String>) -> Self {
+        Self { defaults, vars }
+    }
+}
+
+impl VerifierProfileRegistrySource for EnvJsonVerifierProfileRegistrySource {
+    fn load(
+        &self,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<RuntimeVerifierProfileRegistry, BackendExecutionError> {
+        let mut registry = self.defaults.clone();
+        let Some(raw) = self.vars.get("TRNM_TEE_PROFILE_REGISTRY_JSON") else {
+            return Ok(registry);
+        };
+        let entries: Vec<VerifierProfileRegistryEntry> = serde_json::from_str(raw).map_err(|err| {
+            BackendExecutionError::Internal {
+                backend: request.backend_label(RealTeeBackend::backend_id_static()),
+                reason: format!("failed to decode TRNM_TEE_PROFILE_REGISTRY_JSON: {err}"),
+            }
+        })?;
+        for entry in entries {
+            registry.entries.insert(entry.profile.clone(), entry);
+        }
+        Ok(registry)
+    }
+}
+
+struct RegistryBackedVerifierProfileResolver {
+    source: Arc<dyn VerifierProfileRegistrySource>,
+}
+
+impl RegistryBackedVerifierProfileResolver {
+    fn with_builtin_defaults() -> Self {
+        Self {
+            source: Arc::new(StaticVerifierProfileRegistrySource::with_builtin_defaults()),
+        }
+    }
+
+    #[cfg(test)]
+    #[allow(dead_code)]
+    fn with_registry(registry: RuntimeVerifierProfileRegistry) -> Self {
+        Self {
+            source: Arc::new(StaticVerifierProfileRegistrySource::from_registry(registry)),
+        }
+    }
+}
+
+impl VerifierProfileResolver for RegistryBackedVerifierProfileResolver {
+    fn resolve(
+        &self,
+        transport: &VerifierTransportConfig,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<ResolvedVerifierProfile, BackendExecutionError> {
+        let registry = self.source.load(request)?;
+        let Some(entry) = registry.resolve(&transport.profile) else {
+            return Err(BackendExecutionError::NotConfigured {
+                backend: request.backend_label(RealTeeBackend::backend_id_static()),
+            });
+        };
+        if entry.mode != transport.mode {
+            return Err(BackendExecutionError::MalformedProof {
+                backend: request.backend_label(RealTeeBackend::backend_id_static()),
+                reason: format!(
+                    "verifier profile '{}' does not match transport mode",
+                    transport.profile
+                ),
+            });
+        }
+        if !transport.endpoint.starts_with(&entry.endpoint_prefix) {
+            return Err(BackendExecutionError::MalformedProof {
+                backend: request.backend_label(RealTeeBackend::backend_id_static()),
+                reason: format!(
+                    "verifier profile '{}' does not match endpoint prefix",
+                    transport.profile
+                ),
+            });
+        }
+        if entry.auth_required && transport.auth_ref.as_deref().unwrap_or("").trim().is_empty() {
+            return Err(BackendExecutionError::NotConfigured {
+                backend: request.backend_label(RealTeeBackend::backend_id_static()),
+            });
+        }
         Ok(ResolvedVerifierProfile {
             mode: transport.mode.clone(),
             profile: transport.profile.clone(),
@@ -273,6 +476,7 @@ impl VerifierAuthInjector for HeaderVerifierAuthInjector {
     }
 }
 
+#[allow(dead_code)]
 struct RealVerifierHttpTransport;
 
 impl VerifierHttpTransport for RealVerifierHttpTransport {
@@ -356,6 +560,62 @@ struct NoopVerifierTelemetrySink;
 
 impl VerifierTelemetrySink for NoopVerifierTelemetrySink {
     fn emit(&self, _event: VerifierTelemetryEvent) {}
+}
+
+#[allow(dead_code)]
+trait VerifierTelemetryRecorder: Send + Sync {
+    fn record(&self, encoded_event: String);
+}
+
+#[allow(dead_code)]
+trait VerifierTelemetryRecordWriter: Send + Sync {
+    fn write_record(&self, encoded_event: &str);
+}
+
+#[allow(dead_code)]
+struct NoopTelemetryRecordWriter;
+
+impl VerifierTelemetryRecordWriter for NoopTelemetryRecordWriter {
+    fn write_record(&self, _encoded_event: &str) {}
+}
+
+#[allow(dead_code)]
+struct JsonEncodingTelemetrySink {
+    recorder: Arc<dyn VerifierTelemetryRecorder>,
+}
+
+impl JsonEncodingTelemetrySink {
+    #[allow(dead_code)]
+    fn new(recorder: Arc<dyn VerifierTelemetryRecorder>) -> Self {
+        Self { recorder }
+    }
+}
+
+impl VerifierTelemetrySink for JsonEncodingTelemetrySink {
+    fn emit(&self, event: VerifierTelemetryEvent) {
+        if let Ok(encoded) = serde_json::to_string(&event) {
+            self.recorder.record(encoded);
+        }
+    }
+}
+
+#[allow(dead_code)]
+struct JsonlTelemetryRecorder {
+    writer: Arc<dyn VerifierTelemetryRecordWriter>,
+}
+
+#[allow(dead_code)]
+impl JsonlTelemetryRecorder {
+    fn new(writer: Arc<dyn VerifierTelemetryRecordWriter>) -> Self {
+        Self { writer }
+    }
+}
+
+impl VerifierTelemetryRecorder for JsonlTelemetryRecorder {
+    fn record(&self, encoded_event: String) {
+        self.writer.write_record(&(encoded_event + "
+"));
+    }
 }
 
 #[allow(dead_code)]
@@ -1311,7 +1571,7 @@ fn mock_response_from_fixture_result(
 
 #[allow(dead_code)]
 fn build_http_headers(
-    transport: &VerifierTransportConfig,
+    profile: &ResolvedVerifierProfile,
     metadata: &ExternalCallMetadata,
 ) -> BTreeMap<String, String> {
     let mut headers = BTreeMap::new();
@@ -1321,24 +1581,15 @@ fn build_http_headers(
         "x-telemetry-scope".to_string(),
         metadata.telemetry_scope.clone(),
     );
-    headers.insert("x-transport-profile".to_string(), transport.profile.clone());
-    if let (Some(scheme), Some(auth_ref)) = (
-        transport.auth_scheme.as_deref(),
-        transport.auth_ref.as_deref(),
-    ) {
-        if !scheme.trim().is_empty() && !auth_ref.trim().is_empty() {
-            headers.insert(
-                "authorization".to_string(),
-                format!("{} {}", scheme.trim(), auth_ref.trim()),
-            );
-        }
-    }
+    headers.insert("x-transport-profile".to_string(), profile.profile.clone());
     headers
 }
 
 #[allow(dead_code)]
 fn build_intel_quote_http_request(
     request_input: &IntelQuoteVerifierClientRequest,
+    profile: &ResolvedVerifierProfile,
+    headers: BTreeMap<String, String>,
 ) -> Result<HttpVerifierRequest, BackendExecutionError> {
     let payload = IntelQuoteVerifierHttpPayload {
         request_id: request_input.call_metadata.request_id.clone(),
@@ -1357,10 +1608,12 @@ fn build_intel_quote_http_request(
     })?;
     Ok(HttpVerifierRequest {
         method: HttpMethod::Post,
-        url: request_input.transport.endpoint.clone(),
-        headers: build_http_headers(&request_input.transport, &request_input.call_metadata),
+        transport_mode: profile.mode.clone(),
+        profile: profile.profile.clone(),
+        url: profile.endpoint.clone(),
+        headers,
         body,
-        timeout_ms: request_input.transport.timeout_ms,
+        timeout_ms: profile.timeout_ms,
         retry_policy: request_input.transport.retry_policy.clone(),
     })
 }
@@ -1368,6 +1621,8 @@ fn build_intel_quote_http_request(
 #[allow(dead_code)]
 fn build_amd_report_http_request(
     request_input: &AmdReportVerifierClientRequest,
+    profile: &ResolvedVerifierProfile,
+    headers: BTreeMap<String, String>,
 ) -> Result<HttpVerifierRequest, BackendExecutionError> {
     let payload = AmdReportVerifierHttpPayload {
         request_id: request_input.call_metadata.request_id.clone(),
@@ -1386,10 +1641,12 @@ fn build_amd_report_http_request(
     })?;
     Ok(HttpVerifierRequest {
         method: HttpMethod::Post,
-        url: request_input.transport.endpoint.clone(),
-        headers: build_http_headers(&request_input.transport, &request_input.call_metadata),
+        transport_mode: profile.mode.clone(),
+        profile: profile.profile.clone(),
+        url: profile.endpoint.clone(),
+        headers,
         body,
-        timeout_ms: request_input.transport.timeout_ms,
+        timeout_ms: profile.timeout_ms,
         retry_policy: request_input.transport.retry_policy.clone(),
     })
 }
@@ -1634,6 +1891,8 @@ fn verify_fixture_amd_client_request(
 struct HttpBackedIntelQuoteVerifierClient {
     transport: Arc<dyn VerifierHttpTransport>,
     retry_executor: Arc<dyn VerifierHttpRetryExecutor>,
+    profile_resolver: Arc<dyn VerifierProfileResolver>,
+    auth_injector: Arc<dyn VerifierAuthInjector>,
 }
 
 impl HttpBackedIntelQuoteVerifierClient {
@@ -1650,6 +1909,24 @@ impl HttpBackedIntelQuoteVerifierClient {
         Self {
             transport,
             retry_executor,
+            profile_resolver: Arc::new(RegistryBackedVerifierProfileResolver::with_builtin_defaults()),
+            auth_injector: Arc::new(HeaderVerifierAuthInjector),
+        }
+    }
+
+    #[cfg(test)]
+    #[allow(dead_code)]
+    fn with_components(
+        transport: Arc<dyn VerifierHttpTransport>,
+        retry_executor: Arc<dyn VerifierHttpRetryExecutor>,
+        profile_resolver: Arc<dyn VerifierProfileResolver>,
+        auth_injector: Arc<dyn VerifierAuthInjector>,
+    ) -> Self {
+        Self {
+            transport,
+            retry_executor,
+            profile_resolver,
+            auth_injector,
         }
     }
 }
@@ -1660,7 +1937,11 @@ impl IntelQuoteVerifierClient for HttpBackedIntelQuoteVerifierClient {
         request_input: &IntelQuoteVerifierClientRequest,
         request: &BackendVerificationRequest<'_>,
     ) -> Result<MockVerifierResponse, BackendExecutionError> {
-        let http_request = build_intel_quote_http_request(request_input)?;
+        let profile = self.profile_resolver.resolve(&request_input.transport, request)?;
+        let mut headers = build_http_headers(&profile, &request_input.call_metadata);
+        self.auth_injector
+            .inject(&request_input.transport, &mut headers, request)?;
+        let http_request = build_intel_quote_http_request(request_input, &profile, headers)?;
         let execution = self
             .retry_executor
             .execute(self.transport.as_ref(), &http_request, request)?;
@@ -1672,6 +1953,8 @@ impl IntelQuoteVerifierClient for HttpBackedIntelQuoteVerifierClient {
 struct HttpBackedAmdReportVerifierClient {
     transport: Arc<dyn VerifierHttpTransport>,
     retry_executor: Arc<dyn VerifierHttpRetryExecutor>,
+    profile_resolver: Arc<dyn VerifierProfileResolver>,
+    auth_injector: Arc<dyn VerifierAuthInjector>,
 }
 
 impl HttpBackedAmdReportVerifierClient {
@@ -1688,6 +1971,24 @@ impl HttpBackedAmdReportVerifierClient {
         Self {
             transport,
             retry_executor,
+            profile_resolver: Arc::new(RegistryBackedVerifierProfileResolver::with_builtin_defaults()),
+            auth_injector: Arc::new(HeaderVerifierAuthInjector),
+        }
+    }
+
+    #[cfg(test)]
+    #[allow(dead_code)]
+    fn with_components(
+        transport: Arc<dyn VerifierHttpTransport>,
+        retry_executor: Arc<dyn VerifierHttpRetryExecutor>,
+        profile_resolver: Arc<dyn VerifierProfileResolver>,
+        auth_injector: Arc<dyn VerifierAuthInjector>,
+    ) -> Self {
+        Self {
+            transport,
+            retry_executor,
+            profile_resolver,
+            auth_injector,
         }
     }
 }
@@ -1698,7 +1999,11 @@ impl AmdReportVerifierClient for HttpBackedAmdReportVerifierClient {
         request_input: &AmdReportVerifierClientRequest,
         request: &BackendVerificationRequest<'_>,
     ) -> Result<MockVerifierResponse, BackendExecutionError> {
-        let http_request = build_amd_report_http_request(request_input)?;
+        let profile = self.profile_resolver.resolve(&request_input.transport, request)?;
+        let mut headers = build_http_headers(&profile, &request_input.call_metadata);
+        self.auth_injector
+            .inject(&request_input.transport, &mut headers, request)?;
+        let http_request = build_amd_report_http_request(request_input, &profile, headers)?;
         let execution = self
             .retry_executor
             .execute(self.transport.as_ref(), &http_request, request)?;
@@ -2308,6 +2613,58 @@ mod tests {
     }
 
     #[test]
+    fn env_json_profile_registry_source_overrides_builtin_entry() {
+        let mut vars = BTreeMap::new();
+        vars.insert(
+            "TRNM_TEE_PROFILE_REGISTRY_JSON".to_string(),
+            serde_json::to_string(&vec![VerifierProfileRegistryEntry {
+                profile: "intel-dcap-external-default".into(),
+                mode: VerifierTransportMode::External,
+                endpoint_prefix: "https://override.intel.example/v9/quote/".into(),
+                auth_required: true,
+            }])
+            .unwrap(),
+        );
+        let source = EnvJsonVerifierProfileRegistrySource::from_vars(
+            RuntimeVerifierProfileRegistry::with_builtin_defaults(),
+            vars,
+        );
+        let task = mock_task();
+        let registry = source
+            .load(&BackendVerificationRequest {
+                family: VerificationBackendFamily::Tee,
+                task: &task,
+                proof_data: b"TEE:...",
+                tee_payload: None,
+                zk_payload: None,
+                resolved_vk_ref: None,
+            })
+            .unwrap();
+        let entry = registry.resolve("intel-dcap-external-default").unwrap();
+        assert_eq!(entry.endpoint_prefix, "https://override.intel.example/v9/quote/");
+        assert!(entry.auth_required);
+    }
+
+    #[test]
+    fn registry_backed_profile_resolver_rejects_unknown_profile_fail_closed() {
+        let task = mock_task();
+        let request = BackendVerificationRequest {
+            family: VerificationBackendFamily::Tee,
+            task: &task,
+            proof_data: b"TEE:...",
+            tee_payload: None,
+            zk_payload: None,
+            resolved_vk_ref: None,
+        };
+        let mut transport = StaticVerifierTransportConfigSource::external_defaults()
+            .intel_quote_transport_config("sgx-dcap");
+        transport.profile = "unknown-profile".into();
+        let resolver = RegistryBackedVerifierProfileResolver::with_builtin_defaults();
+        let err = resolver.resolve(&transport, &request).unwrap_err();
+        assert!(matches!(err, BackendExecutionError::NotConfigured { .. }));
+    }
+
+    #[test]
     fn mock_verifier_response_json_codec_roundtrip() {
         let response = MockVerifierResponse {
             status: MockVerifierResponseStatus::Verified,
@@ -2418,6 +2775,8 @@ mod tests {
             _request: &BackendVerificationRequest<'_>,
         ) -> Result<HttpVerifierResponse, BackendExecutionError> {
             assert_eq!(http_request.method, HttpMethod::Post);
+            assert_eq!(http_request.transport_mode, VerifierTransportMode::External);
+            assert_eq!(http_request.profile, "intel-dcap-external-default");
             assert_eq!(http_request.url, "https://intel-verifier.invalid/v1/quote/sgx-dcap");
             assert_eq!(http_request.timeout_ms, 5_000);
             assert_eq!(http_request.headers.get("content-type").map(String::as_str), Some("application/json"));
@@ -2461,6 +2820,8 @@ mod tests {
             _request: &BackendVerificationRequest<'_>,
         ) -> Result<HttpVerifierResponse, BackendExecutionError> {
             assert_eq!(http_request.method, HttpMethod::Post);
+            assert_eq!(http_request.transport_mode, VerifierTransportMode::External);
+            assert_eq!(http_request.profile, "amd-sev-snp-external-default");
             assert_eq!(http_request.url, "https://amd-verifier.invalid/v1/report/sev-snp");
             assert_eq!(http_request.timeout_ms, 5_000);
             assert_eq!(http_request.headers.get("content-type").map(String::as_str), Some("application/json"));
@@ -2548,6 +2909,28 @@ mod tests {
     impl VerifierTelemetrySink for RecordingTelemetrySink {
         fn emit(&self, event: VerifierTelemetryEvent) {
             self.events.lock().unwrap().push(event);
+        }
+    }
+
+    #[derive(Default)]
+    struct BufferingTelemetryRecorder {
+        records: Mutex<Vec<String>>,
+    }
+
+    impl VerifierTelemetryRecorder for BufferingTelemetryRecorder {
+        fn record(&self, encoded_event: String) {
+            self.records.lock().unwrap().push(encoded_event);
+        }
+    }
+
+    #[derive(Default)]
+    struct BufferingTelemetryLineWriter {
+        records: Mutex<Vec<String>>,
+    }
+
+    impl VerifierTelemetryRecordWriter for BufferingTelemetryLineWriter {
+        fn write_record(&self, encoded_event: &str) {
+            self.records.lock().unwrap().push(encoded_event.to_string());
         }
     }
 
@@ -2961,6 +3344,36 @@ mod tests {
     }
 
     #[test]
+    fn json_encoding_telemetry_sink_records_serialized_events() {
+        let recorder = Arc::new(BufferingTelemetryRecorder::default());
+        let sink = JsonEncodingTelemetrySink::new(recorder.clone());
+        let event = VerifierTelemetryEvent {
+            kind: VerifierTelemetryEventKind::ResponseMapped,
+            request_id: "req-1".into(),
+            telemetry_scope: "trnm.test.scope".into(),
+            transport_mode: VerifierTransportMode::External,
+            profile: "intel-dcap-external-default".into(),
+            backend_id: Some("intel-http".into()),
+            status: Some(MockVerifierResponseStatus::Verified),
+            detail: Some("ok".into()),
+        };
+        sink.emit(event.clone());
+        let records = recorder.records.lock().unwrap().clone();
+        assert_eq!(records.len(), 1);
+        let decoded: VerifierTelemetryEvent = serde_json::from_str(&records[0]).unwrap();
+        assert_eq!(decoded, event);
+    }
+
+    #[test]
+    fn jsonl_telemetry_recorder_writes_newline_delimited_records() {
+        let writer = Arc::new(BufferingTelemetryLineWriter::default());
+        let recorder = JsonlTelemetryRecorder::new(writer.clone());
+        recorder.record("{\"event\":1}".to_string());
+        let records = writer.records.lock().unwrap().clone();
+        assert_eq!(records, vec!["{\"event\":1}\n".to_string()]);
+    }
+
+    #[test]
     fn telemetry_sink_records_request_response_and_mapped_events() {
         let task = mock_task();
         let proof_data = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=sgx-dcap,measurement=mrenclave:demo-sgx-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,quote=quote-sgx-dcap-demo-v1,collateral=intel-dcap-collateral-demo-v1,cert_chain=intel-dcap-cert-chain-demo-v1,issuer=intel";
@@ -2995,6 +3408,38 @@ mod tests {
         assert_eq!(events[2].kind, VerifierTelemetryEventKind::ResponseMapped);
         assert_eq!(events[0].request_id, events[1].request_id);
         assert_eq!(events[1].request_id, events[2].request_id);
+    }
+
+    #[test]
+    fn real_http_transport_stub_fails_closed_unavailable() {
+        let task = mock_task();
+        let err = RealVerifierHttpTransport
+            .send(
+                &HttpVerifierRequest {
+                    method: HttpMethod::Post,
+                    transport_mode: VerifierTransportMode::External,
+                    profile: "intel-dcap-external-default".into(),
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: "{}".into(),
+                    timeout_ms: 5_000,
+                    retry_policy: RetryBackoffPolicy {
+                        max_attempts: 3,
+                        backoff_ms: 250,
+                        strategy: RetryBackoffStrategy::Exponential,
+                    },
+                },
+                &BackendVerificationRequest {
+                    family: VerificationBackendFamily::Tee,
+                    task: &task,
+                    proof_data: b"TEE:...",
+                    tee_payload: None,
+                    zk_payload: None,
+                    resolved_vk_ref: None,
+                },
+            )
+            .unwrap_err();
+        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("intel-dcap-external-default")));
     }
 
     #[test]
