@@ -183,6 +183,16 @@ def capture_stamp_metadata(path: str | None) -> dict[str, str]:
     }
 
 
+def infer_pending_capture_epoch(path: str | None) -> int | None:
+    if not path or os.path.exists(path):
+        return None
+    stamp = detect_capture_stamp(path)
+    if not stamp:
+        return None
+    family, value = stamp
+    return normalize_capture_stamp(family, value)
+
+
 
 def capture_stamp_line(label: str, path: str | None) -> str:
     metadata = capture_stamp_metadata(path)
@@ -347,9 +357,14 @@ def main():
         return "present" if os.path.exists(path) else "missing"
 
     def file_age_seconds(path: str | None):
-        if not path or not os.path.exists(path):
+        if not path:
             return None
-        return max(0, int((datetime.now() - datetime.fromtimestamp(os.path.getmtime(path))).total_seconds()))
+        if os.path.exists(path):
+            return max(0, int((datetime.now() - datetime.fromtimestamp(os.path.getmtime(path))).total_seconds()))
+        inferred_epoch = infer_pending_capture_epoch(path)
+        if inferred_epoch is None:
+            return None
+        return max(0, int((datetime.now() - datetime.fromtimestamp(inferred_epoch)).total_seconds()))
 
     def freshness_label(age_seconds: int | None) -> str:
         if age_seconds is None:
@@ -361,9 +376,14 @@ def main():
         return "old"
 
     def file_mtime_iso(path: str | None) -> str | None:
-        if not path or not os.path.exists(path):
+        if not path:
             return None
-        return datetime.fromtimestamp(os.path.getmtime(path)).isoformat()
+        if os.path.exists(path):
+            return datetime.fromtimestamp(os.path.getmtime(path)).isoformat()
+        inferred_epoch = infer_pending_capture_epoch(path)
+        if inferred_epoch is None:
+            return None
+        return datetime.fromtimestamp(inferred_epoch).isoformat()
 
     def artifact_lineage(label: str, path: str | None, producer: str) -> str:
         status = input_status(path)
@@ -421,9 +441,14 @@ def main():
                 f"delta_vs_newest_seconds={selected_vs_newest_seconds}"
             )
         elif selected and selected in candidates:
+            inferred_age_seconds = file_age_seconds(selected)
+            inferred_updated_at = file_mtime_iso(selected) or 'n/a'
             preview.append(
-                f"  - selected_status: is_newest=pending_write rank=pending_write freshness=missing "
-                f"updated_at=n/a age_seconds=n/a delta_vs_newest_seconds=n/a"
+                f"  - selected_status: is_newest={'pending_write_newest' if candidates and candidates[0] == selected else 'pending_write'} "
+                f"rank={'1' if candidates and candidates[0] == selected else 'pending_write'}/{len(existing_candidates)} "
+                f"freshness={freshness_label(inferred_age_seconds)} "
+                f"updated_at={inferred_updated_at} age_seconds={inferred_age_seconds if inferred_age_seconds is not None else 'n/a'} "
+                f"delta_vs_newest_seconds=n/a"
             )
         elif selected:
             preview.append(
@@ -530,8 +555,9 @@ def main():
             )
         if selected in candidates:
             return (
-                f"- {label}: selected={os.path.basename(selected)} rank=pending_write/{len(existing_candidates)} "
-                "newest=pending_write"
+                f"- {label}: selected={os.path.basename(selected)} "
+                f"rank={'1' if candidates and candidates[0] == selected else 'pending_write'}/{len(existing_candidates)} "
+                f"newest={'pending_write_newest' if candidates and candidates[0] == selected else 'pending_write'}"
             )
         return (
             f"- {label}: selected={os.path.basename(selected)} rank=not_in_candidate_set/{len(existing_candidates)} "
@@ -640,6 +666,14 @@ def main():
     for label, path in selected_capture_paths:
         lines.append(capture_stamp_line(label, path))
     capture_stamp_status, capture_stamp_reason = capture_stamp_alignment_status(selected_capture_paths)
+    benchmark_capture_paths = [
+        ("classic_bench", classic),
+        ("mixed_bench", mixed),
+        ("executor_profile", executor_profile),
+    ]
+    benchmark_capture_stamp_status, benchmark_capture_stamp_reason = capture_stamp_alignment_status(
+        benchmark_capture_paths
+    )
     lines.append(f"- selected_capture_stamp_alignment: {capture_stamp_status}")
     lines.append(f"- selected_capture_stamp_alignment_reason: {capture_stamp_reason}")
 
@@ -1089,10 +1123,10 @@ def main():
         f"- benchmark_artifact_coverage: {benchmark_artifact_count}/3 (classic_bench + mixed_bench + executor_profile)"
     )
     lines.append(
-        f"- benchmark_selected_capture_alignment: {capture_stamp_status}"
+        f"- benchmark_selected_capture_alignment: {benchmark_capture_stamp_status}"
     )
     lines.append(
-        f"- benchmark_selected_capture_alignment_reason: {capture_stamp_reason}"
+        f"- benchmark_selected_capture_alignment_reason: {benchmark_capture_stamp_reason}"
     )
     lines.append(
         "- benchmark_selected_capture_epochs: "
