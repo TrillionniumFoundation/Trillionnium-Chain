@@ -427,7 +427,8 @@ fn normalize_tx_status(raw: &str) -> Option<String> {
         .trim_end_matches(|c: char| c.is_ascii_punctuation())
         .to_ascii_lowercase();
     match cleaned.as_str() {
-        "pending" | "submitted" | "accepted" | "queued" | "broadcast" | "broadcasted" => {
+        "pending" | "submitted" | "accepted" | "queued" | "broadcast" | "broadcasted"
+        | "processing" | "in_progress" | "in-progress" | "inflight" | "in-flight" => {
             Some("pending".to_string())
         }
         "committed" | "confirmed" | "success" | "succeeded" | "ok" | "included" | "finalized" => {
@@ -1387,6 +1388,18 @@ mod tests {
         let parsed_accepted = parse_tx_query_response(accepted_alias, "0xfallback").unwrap();
         assert_eq!(parsed_accepted.status, "pending");
 
+        let processing_alias = "tx_hash=0xef41\nstatus=processing\n";
+        let parsed_processing = parse_tx_query_response(processing_alias, "0xfallback").unwrap();
+        assert_eq!(parsed_processing.status, "pending");
+
+        let in_progress_alias = "tx_hash=0xef42\nstatus=in_progress\n";
+        let parsed_in_progress = parse_tx_query_response(in_progress_alias, "0xfallback").unwrap();
+        assert_eq!(parsed_in_progress.status, "pending");
+
+        let in_flight_alias = "tx_hash=0xef43\nstatus=in-flight\n";
+        let parsed_in_flight = parse_tx_query_response(in_flight_alias, "0xfallback").unwrap();
+        assert_eq!(parsed_in_flight.status, "pending");
+
         let included_alias = "tx_hash=0xef5\nstatus=included\n";
         let parsed_included = parse_tx_query_response(included_alias, "0xfallback").unwrap();
         assert_eq!(parsed_included.status, "committed");
@@ -1634,13 +1647,15 @@ mod tests {
 
         let ok_hash = "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
         let bad_hash = "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
+        let inflight_hash = "0xcccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc";
         let payload = format!(
-            "{{\n  \"{}\": {{\"status\": \"success!\"}},\n  \"{}\": {{\"status\": \"done\"}}\n}}",
-            ok_hash, bad_hash
+            "{{\n  \"{}\": {{\"status\": \"success!\"}},\n  \"{}\": {{\"status\": \"done\"}},\n  \"{}\": {{\"status\": \"in_progress\"}}\n}}",
+            ok_hash, bad_hash, inflight_hash
         );
         std::fs::write(&path, payload).unwrap();
 
         assert_eq!(query_local_tx_status(ok_hash).as_deref(), Some("committed"));
+        assert_eq!(query_local_tx_status(inflight_hash).as_deref(), Some("pending"));
         assert_eq!(query_local_tx_status(bad_hash), None);
 
         let _ = std::fs::remove_file(&path);

@@ -123,7 +123,7 @@ normalize_status() {
     | sed -E 's/^[[:space:]"'"'"'`]+//; s/[[:space:]"'"'"'`[:punct:]]+$//')
 
   case "$cleaned" in
-    pending|submitted|accepted|queued|broadcast|broadcasted)
+    pending|submitted|accepted|queued|broadcast|broadcasted|processing|in_progress|in-progress|inflight|in-flight)
       printf "pending"
       ;;
     committed|confirmed|success|succeeded|ok|included|finalized)
