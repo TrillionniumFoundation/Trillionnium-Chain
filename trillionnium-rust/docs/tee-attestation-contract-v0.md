@@ -149,28 +149,54 @@ Providers now obtain transport settings from a dedicated config source seam:
 - `EnvVerifierTransportConfigSource::from_env(...)`
 
 This gives the scaffold a stable place to swap from mock profiles to future real external verifier profiles without changing adapter or provider request shapes.
-The env-backed source currently supports per-vendor overrides for mode / endpoint / timeout / auth ref / retry policy.
+The env-backed source currently supports per-vendor overrides for mode / profile / endpoint / timeout / auth ref / retry policy.
+
+Transport retry behavior is now grouped into an explicit policy object:
+- `RetryBackoffPolicy { max_attempts, backoff_ms, strategy }`
+- current scaffold strategies: `fixed` and `exponential`
 
 Client requests also now carry explicit external-call metadata:
 - `request_id`
 - `telemetry_scope`
 - `attempt`
-- `retry_max_attempts`
-- `retry_backoff_ms`
+- `retry_policy`
 
 This freezes a minimal request-observability / retry scaffold before any real outbound verifier integration is added.
+
+Request-side telemetry is now explicit via a `RequestPrepared` event.
+Response-side telemetry is also explicit via a `ResponseReceived` event returned in the client response payload.
+These events carry:
+- `request_id`
+- `telemetry_scope`
+- `transport_mode`
+- `profile`
+- optional `backend_id`
+- optional response `status`
+- optional `detail`
 
 Client responses are normalized into a mock external verifier response schema with:
 - `status` (`verified | invalid | unavailable | malformed | internal`)
 - `backend_id`
 - optional `detail`
+- optional `telemetry_event`
 
 Mock and future external clients are expected to converge on the same response decode contract.
 The scaffold now includes a unified JSON codec seam:
 - `encode_mock_verifier_response_json(...)`
 - `decode_mock_verifier_response_json(...)`
 
-Provider logic is responsible for fail-closed mapping from client response status into backend semantics:
+Provider logic is responsible for two fail-closed validations before mapping the response:
+1. **auth/profile validation** on the transport config
+   - external mode must provide non-empty `profile`, `auth_scheme`, `auth_ref`
+   - external mode must use `https://...` endpoints
+   - mock mode must use `mock://...` endpoints
+   - retry policy must have `max_attempts >= 1`
+2. **telemetry coherence validation** on the decoded client response
+   - response telemetry must exist
+   - response telemetry `request_id` / `telemetry_scope` must match the request metadata
+   - response telemetry kind must be `ResponseReceived`
+
+Only after those validations does provider logic map client response status into backend semantics:
 - `verified` -> backend success
 - `invalid` -> `InvalidProof`
 - `unavailable` -> `Unavailable`

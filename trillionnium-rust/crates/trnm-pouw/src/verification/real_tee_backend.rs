@@ -85,31 +85,64 @@ struct ReportVerifierInput {
     amd_signer: AmdSnpSignerBundle,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
 enum VerifierTransportMode {
     Mock,
-    #[allow(dead_code)]
     External,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+enum RetryBackoffStrategy {
+    Fixed,
+    Exponential,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+struct RetryBackoffPolicy {
+    max_attempts: u32,
+    backoff_ms: u64,
+    strategy: RetryBackoffStrategy,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 struct VerifierTransportConfig {
     mode: VerifierTransportMode,
+    profile: String,
     endpoint: String,
     timeout_ms: u64,
     auth_scheme: Option<String>,
     auth_ref: Option<String>,
-    retry_max_attempts: u32,
-    retry_backoff_ms: u64,
+    retry_policy: RetryBackoffPolicy,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 struct ExternalCallMetadata {
     request_id: String,
     telemetry_scope: String,
     attempt: u32,
-    retry_max_attempts: u32,
-    retry_backoff_ms: u64,
+    retry_policy: RetryBackoffPolicy,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+enum VerifierTelemetryEventKind {
+    RequestPrepared,
+    ResponseReceived,
+    ResponseMapped,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+struct VerifierTelemetryEvent {
+    kind: VerifierTelemetryEventKind,
+    request_id: String,
+    telemetry_scope: String,
+    transport_mode: VerifierTransportMode,
+    profile: String,
+    backend_id: Option<String>,
+    status: Option<MockVerifierResponseStatus>,
+    detail: Option<String>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -127,12 +160,14 @@ struct MockVerifierResponse {
     status: MockVerifierResponseStatus,
     backend_id: String,
     detail: Option<String>,
+    telemetry_event: Option<VerifierTelemetryEvent>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 struct IntelQuoteVerifierClientRequest {
     transport: VerifierTransportConfig,
     call_metadata: ExternalCallMetadata,
+    request_event: VerifierTelemetryEvent,
     attestation_target: String,
     measurement_field: String,
     measurement: String,
@@ -145,6 +180,7 @@ struct IntelQuoteVerifierClientRequest {
 struct AmdReportVerifierClientRequest {
     transport: VerifierTransportConfig,
     call_metadata: ExternalCallMetadata,
+    request_event: VerifierTelemetryEvent,
     attestation_target: String,
     measurement_field: String,
     measurement: String,
@@ -539,18 +575,19 @@ fn required_metadata(
 #[derive(Debug, Clone, PartialEq, Eq)]
 struct VerifierTransportTemplate {
     mode: VerifierTransportMode,
+    profile: String,
     endpoint_base: String,
     timeout_ms: u64,
     auth_scheme: Option<String>,
     auth_ref_prefix: Option<String>,
-    retry_max_attempts: u32,
-    retry_backoff_ms: u64,
+    retry_policy: RetryBackoffPolicy,
 }
 
 impl VerifierTransportTemplate {
     fn render(&self, attestation_target: &str) -> VerifierTransportConfig {
         VerifierTransportConfig {
             mode: self.mode.clone(),
+            profile: self.profile.clone(),
             endpoint: format!("{}/{}", self.endpoint_base.trim_end_matches('/'), attestation_target),
             timeout_ms: self.timeout_ms,
             auth_scheme: self.auth_scheme.clone(),
@@ -558,8 +595,7 @@ impl VerifierTransportTemplate {
                 .auth_ref_prefix
                 .as_ref()
                 .map(|prefix| format!("{prefix}.{attestation_target}")),
-            retry_max_attempts: self.retry_max_attempts,
-            retry_backoff_ms: self.retry_backoff_ms,
+            retry_policy: self.retry_policy.clone(),
         }
     }
 }
@@ -580,21 +616,29 @@ impl StaticVerifierTransportConfigSource {
         Self {
             intel_quote: VerifierTransportTemplate {
                 mode: VerifierTransportMode::Mock,
+                profile: "intel-dcap-mock-default".to_string(),
                 endpoint_base: "mock://intel-quote-verifier".to_string(),
                 timeout_ms: 1_500,
                 auth_scheme: Some("bearer".to_string()),
                 auth_ref_prefix: Some("tee.intel.mock-token".to_string()),
-                retry_max_attempts: 1,
-                retry_backoff_ms: 0,
+                retry_policy: RetryBackoffPolicy {
+                    max_attempts: 1,
+                    backoff_ms: 0,
+                    strategy: RetryBackoffStrategy::Fixed,
+                },
             },
             amd_report: VerifierTransportTemplate {
                 mode: VerifierTransportMode::Mock,
+                profile: "amd-sev-snp-mock-default".to_string(),
                 endpoint_base: "mock://amd-report-verifier".to_string(),
                 timeout_ms: 1_500,
                 auth_scheme: Some("bearer".to_string()),
                 auth_ref_prefix: Some("tee.amd.mock-token".to_string()),
-                retry_max_attempts: 1,
-                retry_backoff_ms: 0,
+                retry_policy: RetryBackoffPolicy {
+                    max_attempts: 1,
+                    backoff_ms: 0,
+                    strategy: RetryBackoffStrategy::Fixed,
+                },
             },
         }
     }
@@ -604,21 +648,29 @@ impl StaticVerifierTransportConfigSource {
         Self {
             intel_quote: VerifierTransportTemplate {
                 mode: VerifierTransportMode::External,
+                profile: "intel-dcap-external-default".to_string(),
                 endpoint_base: "https://intel-verifier.invalid/v1/quote".to_string(),
                 timeout_ms: 5_000,
                 auth_scheme: Some("bearer".to_string()),
                 auth_ref_prefix: Some("tee.intel.external-token".to_string()),
-                retry_max_attempts: 3,
-                retry_backoff_ms: 250,
+                retry_policy: RetryBackoffPolicy {
+                    max_attempts: 3,
+                    backoff_ms: 250,
+                    strategy: RetryBackoffStrategy::Exponential,
+                },
             },
             amd_report: VerifierTransportTemplate {
                 mode: VerifierTransportMode::External,
+                profile: "amd-sev-snp-external-default".to_string(),
                 endpoint_base: "https://amd-verifier.invalid/v1/report".to_string(),
                 timeout_ms: 5_000,
                 auth_scheme: Some("bearer".to_string()),
                 auth_ref_prefix: Some("tee.amd.external-token".to_string()),
-                retry_max_attempts: 3,
-                retry_backoff_ms: 250,
+                retry_policy: RetryBackoffPolicy {
+                    max_attempts: 3,
+                    backoff_ms: 250,
+                    strategy: RetryBackoffStrategy::Exponential,
+                },
             },
         }
     }
@@ -665,6 +717,11 @@ impl EnvVerifierTransportConfigSource {
             .get(&key("MODE"))
             .and_then(|value| parse_transport_mode(value))
             .unwrap_or_else(|| fallback.mode.clone());
+        let profile = self
+            .vars
+            .get(&key("PROFILE"))
+            .cloned()
+            .unwrap_or_else(|| fallback.profile.clone());
         let endpoint_base = self
             .vars
             .get(&key("ENDPOINT_BASE"))
@@ -679,12 +736,17 @@ impl EnvVerifierTransportConfigSource {
             .vars
             .get(&key("RETRY_MAX_ATTEMPTS"))
             .and_then(|value| value.parse::<u32>().ok())
-            .unwrap_or(fallback.retry_max_attempts);
+            .unwrap_or(fallback.retry_policy.max_attempts);
         let retry_backoff_ms = self
             .vars
             .get(&key("RETRY_BACKOFF_MS"))
             .and_then(|value| value.parse::<u64>().ok())
-            .unwrap_or(fallback.retry_backoff_ms);
+            .unwrap_or(fallback.retry_policy.backoff_ms);
+        let retry_strategy = self
+            .vars
+            .get(&key("RETRY_STRATEGY"))
+            .and_then(|value| parse_retry_backoff_strategy(value))
+            .unwrap_or(fallback.retry_policy.strategy);
         let auth_scheme = self
             .vars
             .get(&key("AUTH_SCHEME"))
@@ -697,12 +759,16 @@ impl EnvVerifierTransportConfigSource {
             .or_else(|| fallback.auth_ref_prefix.clone());
         VerifierTransportTemplate {
             mode,
+            profile,
             endpoint_base,
             timeout_ms,
             auth_scheme,
             auth_ref_prefix,
-            retry_max_attempts,
-            retry_backoff_ms,
+            retry_policy: RetryBackoffPolicy {
+                max_attempts: retry_max_attempts,
+                backoff_ms: retry_backoff_ms,
+                strategy: retry_strategy,
+            },
         }
         .render(attestation_target)
     }
@@ -726,6 +792,131 @@ fn parse_transport_mode(raw: &str) -> Option<VerifierTransportMode> {
     }
 }
 
+fn parse_retry_backoff_strategy(raw: &str) -> Option<RetryBackoffStrategy> {
+    match raw.trim().to_ascii_lowercase().as_str() {
+        "fixed" => Some(RetryBackoffStrategy::Fixed),
+        "exponential" => Some(RetryBackoffStrategy::Exponential),
+        _ => None,
+    }
+}
+
+fn validate_transport_auth_and_profile(
+    transport: &VerifierTransportConfig,
+    request: &BackendVerificationRequest<'_>,
+    verifier_kind: &str,
+    attestation_target: &str,
+) -> Result<(), BackendExecutionError> {
+    let backend = request.backend_label(&format!(
+        "{}-{}-client",
+        attestation_target,
+        verifier_kind.replace(':', "-")
+    ));
+    if transport.profile.trim().is_empty() {
+        return Err(BackendExecutionError::NotConfigured { backend });
+    }
+    if transport.endpoint.trim().is_empty() {
+        return Err(BackendExecutionError::NotConfigured { backend });
+    }
+    match transport.mode {
+        VerifierTransportMode::Mock => {
+            if !transport.endpoint.starts_with("mock://") {
+                return Err(BackendExecutionError::MalformedProof {
+                    backend,
+                    reason: format!(
+                        "mock verifier transport for '{}' must use mock:// endpoint",
+                        attestation_target
+                    ),
+                });
+            }
+        }
+        VerifierTransportMode::External => {
+            let auth_scheme = transport.auth_scheme.as_deref().unwrap_or("").trim();
+            let auth_ref = transport.auth_ref.as_deref().unwrap_or("").trim();
+            if auth_scheme.is_empty() || auth_ref.is_empty() {
+                return Err(BackendExecutionError::NotConfigured { backend });
+            }
+            if !transport.endpoint.starts_with("https://") {
+                return Err(BackendExecutionError::MalformedProof {
+                    backend,
+                    reason: format!(
+                        "external verifier transport for '{}' must use https:// endpoint",
+                        attestation_target
+                    ),
+                });
+            }
+        }
+    }
+    if transport.retry_policy.max_attempts == 0 {
+        return Err(BackendExecutionError::MalformedProof {
+            backend,
+            reason: format!(
+                "verifier transport for '{}' must set retry max_attempts >= 1",
+                attestation_target
+            ),
+        });
+    }
+    Ok(())
+}
+
+fn build_request_telemetry_event(
+    metadata: &ExternalCallMetadata,
+    transport: &VerifierTransportConfig,
+) -> VerifierTelemetryEvent {
+    VerifierTelemetryEvent {
+        kind: VerifierTelemetryEventKind::RequestPrepared,
+        request_id: metadata.request_id.clone(),
+        telemetry_scope: metadata.telemetry_scope.clone(),
+        transport_mode: transport.mode.clone(),
+        profile: transport.profile.clone(),
+        backend_id: None,
+        status: None,
+        detail: None,
+    }
+}
+
+fn build_response_telemetry_event(
+    metadata: &ExternalCallMetadata,
+    transport: &VerifierTransportConfig,
+    response: &MockVerifierResponse,
+) -> VerifierTelemetryEvent {
+    VerifierTelemetryEvent {
+        kind: VerifierTelemetryEventKind::ResponseReceived,
+        request_id: metadata.request_id.clone(),
+        telemetry_scope: metadata.telemetry_scope.clone(),
+        transport_mode: transport.mode.clone(),
+        profile: transport.profile.clone(),
+        backend_id: Some(response.backend_id.clone()),
+        status: Some(response.status),
+        detail: response.detail.clone(),
+    }
+}
+
+fn validate_response_telemetry_event(
+    response: &MockVerifierResponse,
+    metadata: &ExternalCallMetadata,
+    request: &BackendVerificationRequest<'_>,
+) -> Result<(), BackendExecutionError> {
+    let Some(event) = response.telemetry_event.as_ref() else {
+        return Err(BackendExecutionError::MalformedProof {
+            backend: request.backend_label(RealTeeBackend::backend_id_static()),
+            reason: "verifier response missing telemetry event".to_string(),
+        });
+    };
+    if event.request_id != metadata.request_id || event.telemetry_scope != metadata.telemetry_scope {
+        return Err(BackendExecutionError::MalformedProof {
+            backend: request.backend_label(RealTeeBackend::backend_id_static()),
+            reason: "verifier response telemetry does not match request metadata".to_string(),
+        });
+    }
+    if event.kind != VerifierTelemetryEventKind::ResponseReceived {
+        return Err(BackendExecutionError::MalformedProof {
+            backend: request.backend_label(RealTeeBackend::backend_id_static()),
+            reason: "verifier response telemetry kind is invalid".to_string(),
+        });
+    }
+    Ok(())
+}
+
 fn build_external_call_metadata(
     request: &BackendVerificationRequest<'_>,
     verifier_kind: &str,
@@ -745,8 +936,7 @@ fn build_external_call_metadata(
             attestation_target.replace('-', "_")
         ),
         attempt: 1,
-        retry_max_attempts: transport.retry_max_attempts,
-        retry_backoff_ms: transport.retry_backoff_ms,
+        retry_policy: transport.retry_policy.clone(),
     }
 }
 
@@ -836,31 +1026,37 @@ fn mock_response_from_fixture_result(
             status: MockVerifierResponseStatus::Verified,
             backend_id,
             detail: None,
+            telemetry_event: None,
         },
         Err(BackendExecutionError::InvalidProof { reason, .. }) => MockVerifierResponse {
             status: MockVerifierResponseStatus::Invalid,
             backend_id,
             detail: Some(reason),
+            telemetry_event: None,
         },
         Err(BackendExecutionError::Unavailable { reason, .. }) => MockVerifierResponse {
             status: MockVerifierResponseStatus::Unavailable,
             backend_id,
             detail: Some(reason),
+            telemetry_event: None,
         },
         Err(BackendExecutionError::NotConfigured { .. }) => MockVerifierResponse {
             status: MockVerifierResponseStatus::Unavailable,
             backend_id,
             detail: Some("external verifier backend not configured".to_string()),
+            telemetry_event: None,
         },
         Err(BackendExecutionError::MalformedProof { reason, .. }) => MockVerifierResponse {
             status: MockVerifierResponseStatus::Malformed,
             backend_id,
             detail: Some(reason),
+            telemetry_event: None,
         },
         Err(BackendExecutionError::Internal { reason, .. }) => MockVerifierResponse {
             status: MockVerifierResponseStatus::Internal,
             backend_id,
             detail: Some(reason),
+            telemetry_event: None,
         },
     }
 }
@@ -1111,10 +1307,15 @@ impl IntelQuoteVerifierClient for FixtureBackedIntelQuoteVerifierClient {
         request: &BackendVerificationRequest<'_>,
     ) -> Result<MockVerifierResponse, BackendExecutionError> {
         let fixture = self.fixture_for_target(&request_input.attestation_target, request)?;
-        let response = mock_response_from_fixture_result(
+        let mut response = mock_response_from_fixture_result(
             verify_fixture_intel_client_request(request_input, fixture, request),
             fixture.backend_id.clone(),
         );
+        response.telemetry_event = Some(build_response_telemetry_event(
+            &request_input.call_metadata,
+            &request_input.transport,
+            &response,
+        ));
         let raw = encode_mock_verifier_response_json(&response)?;
         decode_mock_verifier_response_json(&raw, request)
     }
@@ -1154,10 +1355,15 @@ impl AmdReportVerifierClient for FixtureBackedAmdReportVerifierClient {
         request: &BackendVerificationRequest<'_>,
     ) -> Result<MockVerifierResponse, BackendExecutionError> {
         let fixture = self.fixture_for_target(&request_input.attestation_target, request)?;
-        let response = mock_response_from_fixture_result(
+        let mut response = mock_response_from_fixture_result(
             verify_fixture_amd_client_request(request_input, fixture, request),
             fixture.backend_id.clone(),
         );
+        response.telemetry_event = Some(build_response_telemetry_event(
+            &request_input.call_metadata,
+            &request_input.transport,
+            &response,
+        ));
         let raw = encode_mock_verifier_response_json(&response)?;
         decode_mock_verifier_response_json(&raw, request)
     }
@@ -1186,13 +1392,21 @@ impl IntelQuoteVerifierProvider for ClientBackedIntelQuoteVerifierProvider {
         let transport = self
             .config_source
             .intel_quote_transport_config(&input.attestation_target);
+        validate_transport_auth_and_profile(
+            &transport,
+            request,
+            &input.verifier_kind,
+            &input.attestation_target,
+        )?;
+        let call_metadata = build_external_call_metadata(
+            request,
+            &input.verifier_kind,
+            &input.attestation_target,
+            &transport,
+        );
         let client_request = IntelQuoteVerifierClientRequest {
-            call_metadata: build_external_call_metadata(
-                request,
-                &input.verifier_kind,
-                &input.attestation_target,
-                &transport,
-            ),
+            request_event: build_request_telemetry_event(&call_metadata, &transport),
+            call_metadata,
             transport,
             attestation_target: input.attestation_target.clone(),
             measurement_field: input.measurement_field.clone(),
@@ -1202,6 +1416,7 @@ impl IntelQuoteVerifierProvider for ClientBackedIntelQuoteVerifierProvider {
             intel_collateral: input.intel_collateral.clone(),
         };
         let response = self.client.verify_intel_quote_request(&client_request, request)?;
+        validate_response_telemetry_event(&response, &client_request.call_metadata, request)?;
         map_mock_verifier_response(response, request)
     }
 }
@@ -1229,13 +1444,21 @@ impl AmdReportVerifierProvider for ClientBackedAmdReportVerifierProvider {
         let transport = self
             .config_source
             .amd_report_transport_config(&input.attestation_target);
+        validate_transport_auth_and_profile(
+            &transport,
+            request,
+            &input.verifier_kind,
+            &input.attestation_target,
+        )?;
+        let call_metadata = build_external_call_metadata(
+            request,
+            &input.verifier_kind,
+            &input.attestation_target,
+            &transport,
+        );
         let client_request = AmdReportVerifierClientRequest {
-            call_metadata: build_external_call_metadata(
-                request,
-                &input.verifier_kind,
-                &input.attestation_target,
-                &transport,
-            ),
+            request_event: build_request_telemetry_event(&call_metadata, &transport),
+            call_metadata,
             transport,
             attestation_target: input.attestation_target.clone(),
             measurement_field: input.measurement_field.clone(),
@@ -1245,6 +1468,7 @@ impl AmdReportVerifierProvider for ClientBackedAmdReportVerifierProvider {
             amd_signer: input.amd_signer.clone(),
         };
         let response = self.client.verify_amd_report_request(&client_request, request)?;
+        validate_response_telemetry_event(&response, &client_request.call_metadata, request)?;
         map_mock_verifier_response(response, request)
     }
 }
@@ -1554,6 +1778,10 @@ mod tests {
         );
         vars.insert("TRNM_TEE_INTEL_QUOTE_TIMEOUT_MS".to_string(), "7000".to_string());
         vars.insert(
+            "TRNM_TEE_INTEL_QUOTE_PROFILE".to_string(),
+            "intel-dcap-override-profile".to_string(),
+        );
+        vars.insert(
             "TRNM_TEE_INTEL_QUOTE_AUTH_REF_PREFIX".to_string(),
             "tee.intel.override-token".to_string(),
         );
@@ -1573,9 +1801,11 @@ mod tests {
         assert_eq!(intel.mode, VerifierTransportMode::External);
         assert_eq!(intel.endpoint, "https://override.intel.example/v2/quote/sgx-dcap");
         assert_eq!(intel.timeout_ms, 7_000);
+        assert_eq!(intel.profile, "intel-dcap-override-profile");
         assert_eq!(intel.auth_ref.as_deref(), Some("tee.intel.override-token.sgx-dcap"));
-        assert_eq!(intel.retry_max_attempts, 4);
-        assert_eq!(intel.retry_backoff_ms, 900);
+        assert_eq!(intel.retry_policy.max_attempts, 4);
+        assert_eq!(intel.retry_policy.backoff_ms, 900);
+        assert_eq!(intel.retry_policy.strategy, RetryBackoffStrategy::Fixed);
     }
 
     #[test]
@@ -1585,15 +1815,23 @@ mod tests {
         assert_eq!(intel.mode, VerifierTransportMode::External);
         assert_eq!(intel.endpoint, "https://intel-verifier.invalid/v1/quote/sgx-dcap");
         assert_eq!(intel.timeout_ms, 5_000);
+        assert_eq!(intel.profile, "intel-dcap-external-default");
         assert_eq!(intel.auth_scheme.as_deref(), Some("bearer"));
         assert_eq!(intel.auth_ref.as_deref(), Some("tee.intel.external-token.sgx-dcap"));
+        assert_eq!(intel.retry_policy.max_attempts, 3);
+        assert_eq!(intel.retry_policy.backoff_ms, 250);
+        assert_eq!(intel.retry_policy.strategy, RetryBackoffStrategy::Exponential);
 
         let amd = source.amd_report_transport_config("sev-snp");
         assert_eq!(amd.mode, VerifierTransportMode::External);
         assert_eq!(amd.endpoint, "https://amd-verifier.invalid/v1/report/sev-snp");
         assert_eq!(amd.timeout_ms, 5_000);
+        assert_eq!(amd.profile, "amd-sev-snp-external-default");
         assert_eq!(amd.auth_scheme.as_deref(), Some("bearer"));
         assert_eq!(amd.auth_ref.as_deref(), Some("tee.amd.external-token.sev-snp"));
+        assert_eq!(amd.retry_policy.max_attempts, 3);
+        assert_eq!(amd.retry_policy.backoff_ms, 250);
+        assert_eq!(amd.retry_policy.strategy, RetryBackoffStrategy::Exponential);
     }
 
     #[test]
@@ -1602,6 +1840,16 @@ mod tests {
             status: MockVerifierResponseStatus::Verified,
             backend_id: "intel-dcap-quote-verifier".into(),
             detail: Some("ok".into()),
+            telemetry_event: Some(VerifierTelemetryEvent {
+                kind: VerifierTelemetryEventKind::ResponseReceived,
+                request_id: "req-1".into(),
+                telemetry_scope: "trnm.test".into(),
+                transport_mode: VerifierTransportMode::Mock,
+                profile: "test-profile".into(),
+                backend_id: Some("intel-dcap-quote-verifier".into()),
+                status: Some(MockVerifierResponseStatus::Verified),
+                detail: Some("ok".into()),
+            }),
         };
         let raw = encode_mock_verifier_response_json(&response).unwrap();
         let task = mock_task();
@@ -1638,6 +1886,56 @@ mod tests {
         assert!(matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("invalid verifier response payload")));
     }
 
+    struct PanicIntelQuoteClient;
+
+    impl IntelQuoteVerifierClient for PanicIntelQuoteClient {
+        fn verify_intel_quote_request(
+            &self,
+            _request_input: &IntelQuoteVerifierClientRequest,
+            _request: &BackendVerificationRequest<'_>,
+        ) -> Result<MockVerifierResponse, BackendExecutionError> {
+            panic!("intel quote client should not be called when config validation fails")
+        }
+    }
+
+    struct PanicAmdReportClient;
+
+    impl AmdReportVerifierClient for PanicAmdReportClient {
+        fn verify_amd_report_request(
+            &self,
+            _request_input: &AmdReportVerifierClientRequest,
+            _request: &BackendVerificationRequest<'_>,
+        ) -> Result<MockVerifierResponse, BackendExecutionError> {
+            panic!("amd report client should not be called when config validation fails")
+        }
+    }
+
+    struct MismatchedTelemetryIntelQuoteClient;
+
+    impl IntelQuoteVerifierClient for MismatchedTelemetryIntelQuoteClient {
+        fn verify_intel_quote_request(
+            &self,
+            request_input: &IntelQuoteVerifierClientRequest,
+            _request: &BackendVerificationRequest<'_>,
+        ) -> Result<MockVerifierResponse, BackendExecutionError> {
+            Ok(MockVerifierResponse {
+                status: MockVerifierResponseStatus::Verified,
+                backend_id: "intel-dcap-quote-verifier".into(),
+                detail: None,
+                telemetry_event: Some(VerifierTelemetryEvent {
+                    kind: VerifierTelemetryEventKind::ResponseReceived,
+                    request_id: format!("{}-other", request_input.call_metadata.request_id),
+                    telemetry_scope: request_input.call_metadata.telemetry_scope.clone(),
+                    transport_mode: request_input.transport.mode.clone(),
+                    profile: request_input.transport.profile.clone(),
+                    backend_id: Some("intel-dcap-quote-verifier".into()),
+                    status: Some(MockVerifierResponseStatus::Verified),
+                    detail: None,
+                }),
+            })
+        }
+    }
+
     struct AssertingExternalIntelQuoteClient;
 
     impl IntelQuoteVerifierClient for AssertingExternalIntelQuoteClient {
@@ -1648,16 +1946,30 @@ mod tests {
         ) -> Result<MockVerifierResponse, BackendExecutionError> {
             assert_eq!(request_input.transport.mode, VerifierTransportMode::External);
             assert_eq!(request_input.transport.endpoint, "https://intel-verifier.invalid/v1/quote/sgx-dcap");
+            assert_eq!(request_input.transport.profile, "intel-dcap-external-default");
             assert_eq!(request_input.transport.timeout_ms, 5_000);
-            assert_eq!(request_input.transport.retry_max_attempts, 3);
-            assert_eq!(request_input.transport.retry_backoff_ms, 250);
+            assert_eq!(request_input.transport.retry_policy.max_attempts, 3);
+            assert_eq!(request_input.transport.retry_policy.backoff_ms, 250);
+            assert_eq!(request_input.transport.retry_policy.strategy, RetryBackoffStrategy::Exponential);
             assert_eq!(request_input.transport.auth_ref.as_deref(), Some("tee.intel.external-token.sgx-dcap"));
-            assert_eq!(request_input.call_metadata.retry_max_attempts, 3);
-            assert_eq!(request_input.call_metadata.retry_backoff_ms, 250);
+            assert_eq!(request_input.call_metadata.retry_policy.max_attempts, 3);
+            assert_eq!(request_input.call_metadata.retry_policy.backoff_ms, 250);
+            assert_eq!(request_input.request_event.kind, VerifierTelemetryEventKind::RequestPrepared);
+            assert_eq!(request_input.request_event.profile, "intel-dcap-external-default");
             Ok(MockVerifierResponse {
                 status: MockVerifierResponseStatus::Verified,
                 backend_id: "intel-external-mock-client".into(),
                 detail: None,
+                telemetry_event: Some(VerifierTelemetryEvent {
+                    kind: VerifierTelemetryEventKind::ResponseReceived,
+                    request_id: request_input.call_metadata.request_id.clone(),
+                    telemetry_scope: request_input.call_metadata.telemetry_scope.clone(),
+                    transport_mode: request_input.transport.mode.clone(),
+                    profile: request_input.transport.profile.clone(),
+                    backend_id: Some("intel-external-mock-client".into()),
+                    status: Some(MockVerifierResponseStatus::Verified),
+                    detail: None,
+                }),
             })
         }
     }
@@ -1672,16 +1984,30 @@ mod tests {
         ) -> Result<MockVerifierResponse, BackendExecutionError> {
             assert_eq!(request_input.transport.mode, VerifierTransportMode::External);
             assert_eq!(request_input.transport.endpoint, "https://amd-verifier.invalid/v1/report/sev-snp");
+            assert_eq!(request_input.transport.profile, "amd-sev-snp-external-default");
             assert_eq!(request_input.transport.timeout_ms, 5_000);
-            assert_eq!(request_input.transport.retry_max_attempts, 3);
-            assert_eq!(request_input.transport.retry_backoff_ms, 250);
+            assert_eq!(request_input.transport.retry_policy.max_attempts, 3);
+            assert_eq!(request_input.transport.retry_policy.backoff_ms, 250);
+            assert_eq!(request_input.transport.retry_policy.strategy, RetryBackoffStrategy::Exponential);
             assert_eq!(request_input.transport.auth_ref.as_deref(), Some("tee.amd.external-token.sev-snp"));
-            assert_eq!(request_input.call_metadata.retry_max_attempts, 3);
-            assert_eq!(request_input.call_metadata.retry_backoff_ms, 250);
+            assert_eq!(request_input.call_metadata.retry_policy.max_attempts, 3);
+            assert_eq!(request_input.call_metadata.retry_policy.backoff_ms, 250);
+            assert_eq!(request_input.request_event.kind, VerifierTelemetryEventKind::RequestPrepared);
+            assert_eq!(request_input.request_event.profile, "amd-sev-snp-external-default");
             Ok(MockVerifierResponse {
                 status: MockVerifierResponseStatus::Verified,
                 backend_id: "amd-external-mock-client".into(),
                 detail: None,
+                telemetry_event: Some(VerifierTelemetryEvent {
+                    kind: VerifierTelemetryEventKind::ResponseReceived,
+                    request_id: request_input.call_metadata.request_id.clone(),
+                    telemetry_scope: request_input.call_metadata.telemetry_scope.clone(),
+                    transport_mode: request_input.transport.mode.clone(),
+                    profile: request_input.transport.profile.clone(),
+                    backend_id: Some("amd-external-mock-client".into()),
+                    status: Some(MockVerifierResponseStatus::Verified),
+                    detail: None,
+                }),
             })
         }
     }
@@ -1696,16 +2022,20 @@ mod tests {
         ) -> Result<MockVerifierResponse, BackendExecutionError> {
             assert_eq!(request_input.transport.mode, VerifierTransportMode::Mock);
             assert_eq!(request_input.transport.endpoint, "mock://intel-quote-verifier/sgx-dcap");
+            assert_eq!(request_input.transport.profile, "intel-dcap-mock-default");
             assert_eq!(request_input.transport.timeout_ms, 1_500);
-            assert_eq!(request_input.transport.retry_max_attempts, 1);
-            assert_eq!(request_input.transport.retry_backoff_ms, 0);
+            assert_eq!(request_input.transport.retry_policy.max_attempts, 1);
+            assert_eq!(request_input.transport.retry_policy.backoff_ms, 0);
+            assert_eq!(request_input.transport.retry_policy.strategy, RetryBackoffStrategy::Fixed);
             assert_eq!(request_input.transport.auth_scheme.as_deref(), Some("bearer"));
             assert_eq!(request_input.transport.auth_ref.as_deref(), Some("tee.intel.mock-token.sgx-dcap"));
             assert_eq!(request_input.call_metadata.request_id, "tee:quote-verifier:sgx-dcap:task-42:attempt-1");
             assert_eq!(request_input.call_metadata.telemetry_scope, "trnm.pouw.tee.quote_verifier.sgx_dcap");
             assert_eq!(request_input.call_metadata.attempt, 1);
-            assert_eq!(request_input.call_metadata.retry_max_attempts, 1);
-            assert_eq!(request_input.call_metadata.retry_backoff_ms, 0);
+            assert_eq!(request_input.call_metadata.retry_policy.max_attempts, 1);
+            assert_eq!(request_input.call_metadata.retry_policy.backoff_ms, 0);
+            assert_eq!(request_input.request_event.kind, VerifierTelemetryEventKind::RequestPrepared);
+            assert_eq!(request_input.request_event.profile, "intel-dcap-mock-default");
             assert_eq!(request_input.attestation_target, "sgx-dcap");
             assert_eq!(request_input.measurement_field, "mrenclave");
             assert_eq!(request_input.measurement, "mrenclave:demo-sgx-v1");
@@ -1717,6 +2047,16 @@ mod tests {
                 status: MockVerifierResponseStatus::Verified,
                 backend_id: "intel-mock-client".into(),
                 detail: None,
+                telemetry_event: Some(VerifierTelemetryEvent {
+                    kind: VerifierTelemetryEventKind::ResponseReceived,
+                    request_id: request_input.call_metadata.request_id.clone(),
+                    telemetry_scope: request_input.call_metadata.telemetry_scope.clone(),
+                    transport_mode: request_input.transport.mode.clone(),
+                    profile: request_input.transport.profile.clone(),
+                    backend_id: Some("intel-mock-client".into()),
+                    status: Some(MockVerifierResponseStatus::Verified),
+                    detail: None,
+                }),
             })
         }
     }
@@ -1731,16 +2071,20 @@ mod tests {
         ) -> Result<MockVerifierResponse, BackendExecutionError> {
             assert_eq!(request_input.transport.mode, VerifierTransportMode::Mock);
             assert_eq!(request_input.transport.endpoint, "mock://amd-report-verifier/sev-snp");
+            assert_eq!(request_input.transport.profile, "amd-sev-snp-mock-default");
             assert_eq!(request_input.transport.timeout_ms, 1_500);
-            assert_eq!(request_input.transport.retry_max_attempts, 1);
-            assert_eq!(request_input.transport.retry_backoff_ms, 0);
+            assert_eq!(request_input.transport.retry_policy.max_attempts, 1);
+            assert_eq!(request_input.transport.retry_policy.backoff_ms, 0);
+            assert_eq!(request_input.transport.retry_policy.strategy, RetryBackoffStrategy::Fixed);
             assert_eq!(request_input.transport.auth_scheme.as_deref(), Some("bearer"));
             assert_eq!(request_input.transport.auth_ref.as_deref(), Some("tee.amd.mock-token.sev-snp"));
             assert_eq!(request_input.call_metadata.request_id, "tee:report-verifier:sev-snp:task-42:attempt-1");
             assert_eq!(request_input.call_metadata.telemetry_scope, "trnm.pouw.tee.report_verifier.sev_snp");
             assert_eq!(request_input.call_metadata.attempt, 1);
-            assert_eq!(request_input.call_metadata.retry_max_attempts, 1);
-            assert_eq!(request_input.call_metadata.retry_backoff_ms, 0);
+            assert_eq!(request_input.call_metadata.retry_policy.max_attempts, 1);
+            assert_eq!(request_input.call_metadata.retry_policy.backoff_ms, 0);
+            assert_eq!(request_input.request_event.kind, VerifierTelemetryEventKind::RequestPrepared);
+            assert_eq!(request_input.request_event.profile, "amd-sev-snp-mock-default");
             assert_eq!(request_input.attestation_target, "sev-snp");
             assert_eq!(request_input.measurement_field, "measurement");
             assert_eq!(request_input.measurement, "measurement:demo-snp-v1");
@@ -1752,6 +2096,16 @@ mod tests {
                 status: MockVerifierResponseStatus::Verified,
                 backend_id: "amd-mock-client".into(),
                 detail: None,
+                telemetry_event: Some(VerifierTelemetryEvent {
+                    kind: VerifierTelemetryEventKind::ResponseReceived,
+                    request_id: request_input.call_metadata.request_id.clone(),
+                    telemetry_scope: request_input.call_metadata.telemetry_scope.clone(),
+                    transport_mode: request_input.transport.mode.clone(),
+                    profile: request_input.transport.profile.clone(),
+                    backend_id: Some("amd-mock-client".into()),
+                    status: Some(MockVerifierResponseStatus::Verified),
+                    detail: None,
+                }),
             })
         }
     }
@@ -1823,6 +2177,108 @@ mod tests {
     }
 
     #[test]
+    fn client_backed_intel_provider_fails_closed_when_external_auth_missing() {
+        let task = mock_task();
+        let proof_data = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=sgx-dcap,measurement=mrenclave:demo-sgx-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,quote=quote-sgx-dcap-demo-v1,collateral=intel-dcap-collateral-demo-v1,cert_chain=intel-dcap-cert-chain-demo-v1,issuer=intel";
+        let payload = parse_tee_attestation_payload(proof_data).unwrap();
+        let handoff = TeeVerifierHandoff::from_payload(&payload, None).unwrap();
+        let input = match SGX_DCAP_ADAPTER.build_verifier_input(&handoff, None).unwrap() {
+            TeeVerifierInput::Quote(input) => input,
+            TeeVerifierInput::Report(_) => panic!("expected intel quote verifier input"),
+        };
+        let mut vars = BTreeMap::new();
+        vars.insert("TRNM_TEE_INTEL_QUOTE_MODE".to_string(), "external".to_string());
+        vars.insert("TRNM_TEE_INTEL_QUOTE_PROFILE".to_string(), "intel-dcap-external-override".to_string());
+        vars.insert("TRNM_TEE_INTEL_QUOTE_ENDPOINT_BASE".to_string(), "https://override.intel.example/v2/quote".to_string());
+        vars.insert("TRNM_TEE_INTEL_QUOTE_AUTH_SCHEME".to_string(), "".to_string());
+        vars.insert("TRNM_TEE_INTEL_QUOTE_AUTH_REF_PREFIX".to_string(), "".to_string());
+        let provider = ClientBackedIntelQuoteVerifierProvider::new(
+            Arc::new(PanicIntelQuoteClient),
+            Arc::new(EnvVerifierTransportConfigSource::from_vars(
+                StaticVerifierTransportConfigSource::mock_defaults(),
+                vars,
+            )),
+        );
+        let result = provider.verify_intel_quote_bundle(
+            &input,
+            &BackendVerificationRequest {
+                family: VerificationBackendFamily::Tee,
+                task: &task,
+                proof_data,
+                tee_payload: Some(&payload),
+                zk_payload: None,
+                resolved_vk_ref: None,
+            },
+        );
+        assert!(matches!(result, Err(BackendExecutionError::NotConfigured { backend }) if backend.contains("sgx-dcap") && backend.contains("quote-verifier")));
+    }
+
+    #[test]
+    fn client_backed_amd_provider_fails_closed_when_profile_missing() {
+        let task = mock_task();
+        let proof_data = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=sev-snp,measurement=measurement:demo-snp-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,report=report-sev-snp-demo-v1,vcek=amd-vcek-demo-v1,cert_chain=amd-cert-chain-demo-v1,report_signer=amd";
+        let payload = parse_tee_attestation_payload(proof_data).unwrap();
+        let handoff = TeeVerifierHandoff::from_payload(&payload, None).unwrap();
+        let input = match SEV_SNP_ADAPTER.build_verifier_input(&handoff, None).unwrap() {
+            TeeVerifierInput::Report(input) => input,
+            TeeVerifierInput::Quote(_) => panic!("expected amd report verifier input"),
+        };
+        let mut vars = BTreeMap::new();
+        vars.insert("TRNM_TEE_AMD_REPORT_MODE".to_string(), "external".to_string());
+        vars.insert("TRNM_TEE_AMD_REPORT_PROFILE".to_string(), "".to_string());
+        vars.insert("TRNM_TEE_AMD_REPORT_ENDPOINT_BASE".to_string(), "https://override.amd.example/v2/report".to_string());
+        vars.insert("TRNM_TEE_AMD_REPORT_AUTH_REF_PREFIX".to_string(), "tee.amd.override-token".to_string());
+        vars.insert("TRNM_TEE_AMD_REPORT_AUTH_SCHEME".to_string(), "bearer".to_string());
+        let provider = ClientBackedAmdReportVerifierProvider::new(
+            Arc::new(PanicAmdReportClient),
+            Arc::new(EnvVerifierTransportConfigSource::from_vars(
+                StaticVerifierTransportConfigSource::mock_defaults(),
+                vars,
+            )),
+        );
+        let result = provider.verify_amd_report_bundle(
+            &input,
+            &BackendVerificationRequest {
+                family: VerificationBackendFamily::Tee,
+                task: &task,
+                proof_data,
+                tee_payload: Some(&payload),
+                zk_payload: None,
+                resolved_vk_ref: None,
+            },
+        );
+        assert!(matches!(result, Err(BackendExecutionError::NotConfigured { backend }) if backend.contains("sev-snp") && backend.contains("report-verifier")));
+    }
+
+    #[test]
+    fn client_backed_intel_provider_rejects_mismatched_response_telemetry_fail_closed() {
+        let task = mock_task();
+        let proof_data = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=sgx-dcap,measurement=mrenclave:demo-sgx-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,quote=quote-sgx-dcap-demo-v1,collateral=intel-dcap-collateral-demo-v1,cert_chain=intel-dcap-cert-chain-demo-v1,issuer=intel";
+        let payload = parse_tee_attestation_payload(proof_data).unwrap();
+        let handoff = TeeVerifierHandoff::from_payload(&payload, None).unwrap();
+        let input = match SGX_DCAP_ADAPTER.build_verifier_input(&handoff, None).unwrap() {
+            TeeVerifierInput::Quote(input) => input,
+            TeeVerifierInput::Report(_) => panic!("expected intel quote verifier input"),
+        };
+        let provider = ClientBackedIntelQuoteVerifierProvider::new(
+            Arc::new(MismatchedTelemetryIntelQuoteClient),
+            Arc::new(StaticVerifierTransportConfigSource::mock_defaults()),
+        );
+        let result = provider.verify_intel_quote_bundle(
+            &input,
+            &BackendVerificationRequest {
+                family: VerificationBackendFamily::Tee,
+                task: &task,
+                proof_data,
+                tee_payload: Some(&payload),
+                zk_payload: None,
+                resolved_vk_ref: None,
+            },
+        );
+        assert!(matches!(result, Err(BackendExecutionError::MalformedProof { reason, .. }) if reason.contains("telemetry does not match request metadata")));
+    }
+
+    #[test]
     fn client_backed_intel_provider_uses_external_transport_profile_when_injected() {
         let task = mock_task();
         let proof_data = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=sgx-dcap,measurement=mrenclave:demo-sgx-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,quote=quote-sgx-dcap-demo-v1,collateral=intel-dcap-collateral-demo-v1,cert_chain=intel-dcap-cert-chain-demo-v1,issuer=intel";
@@ -1890,6 +2346,16 @@ mod tests {
                 status: MockVerifierResponseStatus::Invalid,
                 backend_id: "intel-dcap-quote-verifier".into(),
                 detail: Some("quote digest mismatch".into()),
+                telemetry_event: Some(VerifierTelemetryEvent {
+                    kind: VerifierTelemetryEventKind::ResponseReceived,
+                    request_id: "tee:quote-verifier:sgx-dcap:task-42:attempt-1".into(),
+                    telemetry_scope: "trnm.pouw.tee.quote_verifier.sgx_dcap".into(),
+                    transport_mode: VerifierTransportMode::Mock,
+                    profile: "intel-dcap-mock-default".into(),
+                    backend_id: Some("intel-dcap-quote-verifier".into()),
+                    status: Some(MockVerifierResponseStatus::Invalid),
+                    detail: Some("quote digest mismatch".into()),
+                }),
             })
         }
     }
@@ -1906,6 +2372,16 @@ mod tests {
                 status: MockVerifierResponseStatus::Unavailable,
                 backend_id: "amd-sev-snp-report-verifier".into(),
                 detail: Some("transport timeout contacting SNP verifier".into()),
+                telemetry_event: Some(VerifierTelemetryEvent {
+                    kind: VerifierTelemetryEventKind::ResponseReceived,
+                    request_id: "tee:report-verifier:sev-snp:task-42:attempt-1".into(),
+                    telemetry_scope: "trnm.pouw.tee.report_verifier.sev_snp".into(),
+                    transport_mode: VerifierTransportMode::Mock,
+                    profile: "amd-sev-snp-mock-default".into(),
+                    backend_id: Some("amd-sev-snp-report-verifier".into()),
+                    status: Some(MockVerifierResponseStatus::Unavailable),
+                    detail: Some("transport timeout contacting SNP verifier".into()),
+                }),
             })
         }
     }
