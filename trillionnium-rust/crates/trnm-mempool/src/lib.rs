@@ -687,6 +687,28 @@ mod tests {
     }
 
     #[test]
+    fn ghost_seen_global_entry_with_matching_cardinality_does_not_poison_fresh_admit() {
+        let mut g = LaneAdmissionGate::new(3, 1);
+
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (1, 0, 1));
+
+        // Simulate restored-state skew where lane-wide membership drifts while
+        // cardinality stays aligned with queued work.
+        g.seen_global.clear();
+        g.seen_global.insert(77);
+        assert_eq!(g.seen_global.len(), 1);
+
+        // Fresh ingress for the ghost id must self-heal lane-wide membership and
+        // admit cleanly instead of being misclassified as a duplicate.
+        assert_eq!(g.admit(77, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (1, 1, 2));
+
+        // The original queued id must remain globally deduped after the rebuild.
+        assert_eq!(g.admit(1, IngressClass::Critical), AdmitOutcome::Duplicate);
+    }
+
+    #[test]
     fn idle_lane_ghost_seen_entry_is_cleared_before_first_fresh_admission() {
         let mut g = LaneAdmissionGate::new(3, 1);
 
