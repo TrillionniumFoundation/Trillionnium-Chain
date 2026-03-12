@@ -48,6 +48,38 @@ if ! grep -q "pr7_rc=42" "$RUN_DIR/pr7-delivery-status.env"; then
   cat "$RUN_DIR/pr7-delivery-status.env"
   exit 1
 fi
+if ! grep -q "final_rc=0" "$RUN_DIR/pr7-delivery-status.env"; then
+  echo "[FAIL] ignore mode should record final_rc=0"
+  cat "$RUN_DIR/pr7-delivery-status.env"
+  exit 1
+fi
+
+set +e
+RUN_DIR="$RUN_DIR" PR6_GATE_CMD="$MOCK_PR6" PR7_DELIVERY_CMD="$MOCK_PR7" PR7_DELIVERY_FAIL_MODE=warn \
+  "$ROOT/scripts/v2/pr7_alert_delivery_gate.sh" >"$TMP/warn.out" 2>&1
+rc_warn=$?
+set -e
+
+if [[ $rc_warn -ne 0 ]]; then
+  echo "[FAIL] warn mode should preserve pr6_rc=0, got rc=$rc_warn"
+  cat "$TMP/warn.out"
+  exit 1
+fi
+if ! grep -q "\[PR7\]\[WARN\] delivery failed with rc=42 (mode=warn, preserving pr6 rc=0)" "$TMP/warn.out"; then
+  echo "[FAIL] warn mode should emit delivery warning"
+  cat "$TMP/warn.out"
+  exit 1
+fi
+if ! grep -q "fail_mode=warn" "$RUN_DIR/pr7-delivery-status.env"; then
+  echo "[FAIL] status file should record fail_mode=warn"
+  cat "$RUN_DIR/pr7-delivery-status.env"
+  exit 1
+fi
+if ! grep -q "final_rc=0" "$RUN_DIR/pr7-delivery-status.env"; then
+  echo "[FAIL] warn mode should preserve final_rc=0"
+  cat "$RUN_DIR/pr7-delivery-status.env"
+  exit 1
+fi
 
 set +e
 RUN_DIR="$RUN_DIR" PR6_GATE_CMD="$MOCK_PR6" PR7_DELIVERY_CMD="$MOCK_PR7" PR7_DELIVERY_FAIL_MODE=escalate \
@@ -66,4 +98,4 @@ if ! grep -q "final_rc=4" "$RUN_DIR/pr7-delivery-status.env"; then
   exit 1
 fi
 
-echo "[OK] pr7 gate preserves pr7_rc observability and supports escalation mode"
+echo "[OK] pr7 gate preserves pr7_rc observability across ignore/warn/escalate modes"
