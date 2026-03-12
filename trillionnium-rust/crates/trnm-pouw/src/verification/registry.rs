@@ -220,6 +220,7 @@ impl VerifierRegistry {
             "attestation report v1" | "attestationreportv1" | "attestation report v 1" => "tee",
             "attestation report v2" | "attestationreportv2" | "attestation report v 2" => "tee",
             "attestation report v3" | "attestationreportv3" | "attestation report v 3" => "tee",
+            "zkp" | "zk p" => "zk",
             "zk proof" | "zkproof" => "zk",
             "zk proof v1" | "zkproofv1" | "zk proof v 1" => "zk",
             "zk proof v2" | "zkproofv2" | "zk proof v 2" => "zk",
@@ -459,5 +460,17 @@ mod tests {
                 VerificationResult::Valid
             );
         }
+    }
+
+    #[test]
+    fn registry_supports_zkp_alias_from_platform_contract() {
+        let mut registry = VerifierRegistry::new();
+        registry.register(Arc::new(AlwaysValidVerifier { kind: "zkp" }));
+
+        let task = task_with_proof_type(ProofType::Zk);
+        assert_eq!(
+            registry.verify(&task, b"receipt"),
+            VerificationResult::Valid
+        );
     }
 }
