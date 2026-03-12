@@ -275,21 +275,28 @@ That transport stub is now internally split into three explicit seams:
 - `VerifierHttpResponseBodyReader`
 - `VerifierHttpTimeoutHook`
 
+The request-executor layer is itself now split into two lower-level seams:
+- `VerifierHttpRequestPlanner`
+- `VerifierHttpClientAdapter`
+
 The default wiring remains fail-closed:
-- `FailClosedVerifierHttpRequestExecutor`
+- `AdapterBackedVerifierHttpRequestExecutor`
+  - `DirectVerifierHttpRequestPlanner`
+  - `FailClosedVerifierHttpClientAdapter`
 - `Utf8HttpResponseBodyReader`
 - `NoopVerifierHttpTimeoutHook`
 
 This freezes a future real transport path as:
-- timeout hook -> request executor -> raw response -> body reader -> normalized `HttpVerifierResponse`
+- timeout hook -> request executor -> request planner -> client adapter -> raw response -> body reader -> normalized `HttpVerifierResponse`
 
 So the scaffold now separates:
 1. HTTP request planning / profile + auth resolution
 2. retry policy execution
-3. raw outbound transport execution
-4. timeout/guard hook behavior
-5. body decoding / normalization
-6. verifier response decode + backend mapping
+3. client-facing request planning
+4. raw outbound client adapter execution
+5. timeout/guard hook behavior
+6. body decoding / normalization
+7. verifier response decode + backend mapping
 
 ### HTTP payload skeletons
 The current adapter layer freezes two JSON request shapes:

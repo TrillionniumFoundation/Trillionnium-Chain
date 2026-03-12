@@ -580,21 +580,109 @@ trait VerifierHttpTimeoutHook: Send + Sync {
 }
 
 #[allow(dead_code)]
-struct FailClosedVerifierHttpRequestExecutor;
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct VerifierHttpClientRequest {
+    method: HttpMethod,
+    url: String,
+    headers: BTreeMap<String, String>,
+    body: Vec<u8>,
+    timeout_ms: u64,
+}
 
-impl VerifierHttpRequestExecutor for FailClosedVerifierHttpRequestExecutor {
-    fn execute_request(
+#[allow(dead_code)]
+trait VerifierHttpRequestPlanner: Send + Sync {
+    fn plan_request(
         &self,
+        http_request: &HttpVerifierRequest,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<VerifierHttpClientRequest, BackendExecutionError>;
+}
+
+#[allow(dead_code)]
+struct DirectVerifierHttpRequestPlanner;
+
+impl VerifierHttpRequestPlanner for DirectVerifierHttpRequestPlanner {
+    fn plan_request(
+        &self,
+        http_request: &HttpVerifierRequest,
+        _request: &BackendVerificationRequest<'_>,
+    ) -> Result<VerifierHttpClientRequest, BackendExecutionError> {
+        Ok(VerifierHttpClientRequest {
+            method: http_request.method,
+            url: http_request.url.clone(),
+            headers: http_request.headers.clone(),
+            body: http_request.body.as_bytes().to_vec(),
+            timeout_ms: http_request.timeout_ms,
+        })
+    }
+}
+
+#[allow(dead_code)]
+trait VerifierHttpClientAdapter: Send + Sync {
+    fn execute(
+        &self,
+        client_request: &VerifierHttpClientRequest,
+        http_request: &HttpVerifierRequest,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<RawHttpVerifierResponse, BackendExecutionError>;
+}
+
+#[allow(dead_code)]
+struct FailClosedVerifierHttpClientAdapter;
+
+impl VerifierHttpClientAdapter for FailClosedVerifierHttpClientAdapter {
+    fn execute(
+        &self,
+        _client_request: &VerifierHttpClientRequest,
         http_request: &HttpVerifierRequest,
         request: &BackendVerificationRequest<'_>,
     ) -> Result<RawHttpVerifierResponse, BackendExecutionError> {
         Err(BackendExecutionError::Unavailable {
             backend: request.backend_label(RealTeeBackend::backend_id_static()),
             reason: format!(
-                "real http request executor for profile '{}' is not wired",
+                "real http client adapter for profile '{}' is not wired",
                 http_request.profile
             ),
         })
+    }
+}
+
+#[allow(dead_code)]
+struct AdapterBackedVerifierHttpRequestExecutor {
+    planner: Arc<dyn VerifierHttpRequestPlanner>,
+    client_adapter: Arc<dyn VerifierHttpClientAdapter>,
+}
+
+#[allow(dead_code)]
+impl AdapterBackedVerifierHttpRequestExecutor {
+    fn new() -> Self {
+        Self {
+            planner: Arc::new(DirectVerifierHttpRequestPlanner),
+            client_adapter: Arc::new(FailClosedVerifierHttpClientAdapter),
+        }
+    }
+
+    #[cfg(test)]
+    fn with_components(
+        planner: Arc<dyn VerifierHttpRequestPlanner>,
+        client_adapter: Arc<dyn VerifierHttpClientAdapter>,
+    ) -> Self {
+        Self {
+            planner,
+            client_adapter,
+        }
+    }
+}
+
+impl VerifierHttpRequestExecutor for AdapterBackedVerifierHttpRequestExecutor {
+    fn execute_request(
+        &self,
+        http_request: &HttpVerifierRequest,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<RawHttpVerifierResponse, BackendExecutionError> {
+        let client_request = self.planner.plan_request(http_request, request)?;
+        self.client_adapter
+            .execute(&client_request, http_request, request)
     }
 }
 
@@ -652,7 +740,7 @@ struct RealVerifierHttpTransport {
 impl RealVerifierHttpTransport {
     fn new() -> Self {
         Self {
-            request_executor: Arc::new(FailClosedVerifierHttpRequestExecutor),
+            request_executor: Arc::new(AdapterBackedVerifierHttpRequestExecutor::new()),
             body_reader: Arc::new(Utf8HttpResponseBodyReader),
             timeout_hook: Arc::new(NoopVerifierHttpTimeoutHook),
         }
@@ -3262,6 +3350,83 @@ mod tests {
     }
 
     #[derive(Default)]
+    struct RecordingHttpRequestPlanner {
+        requests: Mutex<Vec<VerifierHttpClientRequest>>,
+    }
+
+    impl VerifierHttpRequestPlanner for RecordingHttpRequestPlanner {
+        fn plan_request(
+            &self,
+            http_request: &HttpVerifierRequest,
+            _request: &BackendVerificationRequest<'_>,
+        ) -> Result<VerifierHttpClientRequest, BackendExecutionError> {
+            let planned = VerifierHttpClientRequest {
+                method: http_request.method,
+                url: http_request.url.clone(),
+                headers: http_request.headers.clone(),
+                body: http_request.body.as_bytes().to_vec(),
+                timeout_ms: http_request.timeout_ms,
+            };
+            self.requests.lock().unwrap().push(planned.clone());
+            Ok(planned)
+        }
+    }
+
+    #[derive(Default)]
+    struct RecordingHttpClientAdapter {
+        requests: Mutex<Vec<VerifierHttpClientRequest>>,
+    }
+
+    impl VerifierHttpClientAdapter for RecordingHttpClientAdapter {
+        fn execute(
+            &self,
+            client_request: &VerifierHttpClientRequest,
+            http_request: &HttpVerifierRequest,
+            _request: &BackendVerificationRequest<'_>,
+        ) -> Result<RawHttpVerifierResponse, BackendExecutionError> {
+            self.requests.lock().unwrap().push(client_request.clone());
+            assert_eq!(client_request.method, HttpMethod::Post);
+            assert_eq!(client_request.url, http_request.url);
+            assert_eq!(client_request.timeout_ms, http_request.timeout_ms);
+            assert_eq!(client_request.headers, http_request.headers);
+            assert_eq!(client_request.body, http_request.body.as_bytes());
+            Ok(RawHttpVerifierResponse {
+                status_code: 202,
+                headers: BTreeMap::from([("x-source".to_string(), "adapter".to_string())]),
+                body: b"adapter-ok".to_vec(),
+            })
+        }
+    }
+
+    struct RejectingHttpRequestPlanner;
+
+    impl VerifierHttpRequestPlanner for RejectingHttpRequestPlanner {
+        fn plan_request(
+            &self,
+            _http_request: &HttpVerifierRequest,
+            request: &BackendVerificationRequest<'_>,
+        ) -> Result<VerifierHttpClientRequest, BackendExecutionError> {
+            Err(BackendExecutionError::Unavailable {
+                backend: request.backend_label(RealTeeBackend::backend_id_static()),
+                reason: "request planner rejected http request".into(),
+            })
+        }
+    }
+
+    struct PanicHttpClientAdapter;
+
+    impl VerifierHttpClientAdapter for PanicHttpClientAdapter {
+        fn execute(
+            &self,
+            _client_request: &VerifierHttpClientRequest,
+            _http_request: &HttpVerifierRequest,
+            _request: &BackendVerificationRequest<'_>,
+        ) -> Result<RawHttpVerifierResponse, BackendExecutionError> {
+            panic!("client adapter should not be called when planner fails")
+        }
+    }
+
+    #[derive(Default)]
     struct RecordingHttpBodyReader {
         bodies: Mutex<Vec<Vec<u8>>>,
     }
@@ -3811,6 +3976,91 @@ mod tests {
     }
 
     #[test]
+    fn adapter_backed_request_executor_plans_and_delegates_to_client_adapter() {
+        let task = mock_task();
+        let planner = Arc::new(RecordingHttpRequestPlanner::default());
+        let client_adapter = Arc::new(RecordingHttpClientAdapter::default());
+        let executor = AdapterBackedVerifierHttpRequestExecutor::with_components(
+            planner.clone(),
+            client_adapter.clone(),
+        );
+        let response = executor
+            .execute_request(
+                &HttpVerifierRequest {
+                    method: HttpMethod::Post,
+                    transport_mode: VerifierTransportMode::External,
+                    profile: "intel-dcap-external-default".into(),
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::from([(
+                        "content-type".to_string(),
+                        "application/json".to_string(),
+                    )]),
+                    body: "{\"hello\":\"world\"}".into(),
+                    timeout_ms: 5_000,
+                    retry_policy: RetryBackoffPolicy {
+                        max_attempts: 3,
+                        backoff_ms: 250,
+                        strategy: RetryBackoffStrategy::Exponential,
+                    },
+                },
+                &BackendVerificationRequest {
+                    family: VerificationBackendFamily::Tee,
+                    task: &task,
+                    proof_data: b"TEE:...",
+                    tee_payload: None,
+                    zk_payload: None,
+                    resolved_vk_ref: None,
+                },
+            )
+            .unwrap();
+        assert_eq!(response.status_code, 202);
+        assert_eq!(response.body, b"adapter-ok".to_vec());
+        let planned = planner.requests.lock().unwrap().clone();
+        assert_eq!(planned.len(), 1);
+        assert_eq!(planned[0].url, "https://intel-verifier.invalid/v1/quote/sgx-dcap");
+        assert_eq!(planned[0].body, b"{\"hello\":\"world\"}".to_vec());
+        let executed = client_adapter.requests.lock().unwrap().clone();
+        assert_eq!(executed.len(), 1);
+        assert_eq!(executed[0], planned[0]);
+    }
+
+    #[test]
+    fn adapter_backed_request_executor_fails_closed_when_planner_rejects() {
+        let task = mock_task();
+        let executor = AdapterBackedVerifierHttpRequestExecutor::with_components(
+            Arc::new(RejectingHttpRequestPlanner),
+            Arc::new(PanicHttpClientAdapter),
+        );
+        let err = executor
+            .execute_request(
+                &HttpVerifierRequest {
+                    method: HttpMethod::Post,
+                    transport_mode: VerifierTransportMode::External,
+                    profile: "intel-dcap-external-default".into(),
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: "{}".into(),
+                    timeout_ms: 5_000,
+                    retry_policy: RetryBackoffPolicy {
+                        max_attempts: 3,
+                        backoff_ms: 250,
+                        strategy: RetryBackoffStrategy::Exponential,
+                    },
+                },
+                &BackendVerificationRequest {
+                    family: VerificationBackendFamily::Tee,
+                    task: &task,
+                    proof_data: b"TEE:...",
+                    tee_payload: None,
+                    zk_payload: None,
+                    resolved_vk_ref: None,
+                },
+            )
+            .unwrap_err();
+        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("request planner rejected http request")));
+    }
+
+    #[test]
     fn real_http_transport_execution_skeleton_delegates_to_components() {
         let task = mock_task();
         let request_executor = Arc::new(RecordingHttpRequestExecutor::default());
@@ -3926,7 +4176,7 @@ mod tests {
                 },
             )
             .unwrap_err();
-        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("intel-dcap-external-default")));
+        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("intel-dcap-external-default") && reason.contains("client adapter")));
     }
 
     #[test]
