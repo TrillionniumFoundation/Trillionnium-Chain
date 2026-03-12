@@ -1,8 +1,8 @@
 use std::sync::Arc;
 
 use crate::verification::backend::{
-    backend_token_zk_system_hints, normalize_backend_token, normalize_zk_system,
-    parse_zk_proof_payload, resolve_zk_vk_ref, BackendExecutionError,
+    backend_token_family_hint, backend_token_zk_system_hints, normalize_backend_token,
+    normalize_zk_system, parse_zk_proof_payload, resolve_zk_vk_ref, BackendExecutionError,
     BackendVerificationRequest, VerificationBackendConfig, VerificationBackendError,
     VerificationBackendFamily, VkRefRegistry, ZkBackendKind, ZkBackendRegistry,
 };
@@ -194,6 +194,19 @@ impl ZkVerifier {
                 .map(str::trim)
                 .filter(|backend| !backend.is_empty())
             {
+                if let Some(VerificationBackendFamily::Tee) =
+                    backend_token_family_hint(payload_backend_id)
+                {
+                    return Err(BackendExecutionError::InvalidProof {
+                        backend: "zk:payload".to_string(),
+                        reason: format!(
+                            "invalid zk payload: backend_id '{}' declares tee family and does not match zk vk_ref '{}'",
+                            payload_backend_id, resolved.vk_ref
+                        ),
+                    }
+                    .into());
+                }
+
                 if let Some(payload_backend_system) = normalize_zk_system(payload_backend_id) {
                     if payload_backend_system != resolved_system {
                         return Err(BackendExecutionError::InvalidProof {
@@ -253,6 +266,20 @@ impl ZkVerifier {
                     }
                     .into());
                 }
+            }
+
+            if let Some(VerificationBackendFamily::Tee) =
+                backend_token_family_hint(selected_backend.key())
+            {
+                return Err(BackendExecutionError::InvalidProof {
+                    backend: "zk:payload".to_string(),
+                    reason: format!(
+                        "invalid zk payload: backend '{}' declares tee family and does not match zk vk_ref '{}'",
+                        selected_backend.key(),
+                        resolved.vk_ref
+                    ),
+                }
+                .into());
             }
 
             let selected_backend_hints = backend_token_zk_system_hints(selected_backend.key());
@@ -741,6 +768,48 @@ mod tests {
             verifier.verify_proof(&task, payload),
             VerificationResult::Invalid(msg)
                 if msg.contains("backend_id 'plonk-demo'") && msg.contains("does not match vk_ref")
+        ));
+    }
+
+    #[test]
+    fn zk_verifier_rejects_payload_backend_with_explicit_tee_family_prefix() {
+        let mut backends = ZkBackendRegistry::new();
+        backends.register(Arc::new(MockSystemSuccessBackend {
+            backend_id: "tee-groth16-demo",
+            expected_system: "groth16",
+        }));
+
+        let verifier = ZkVerifier::from_config(&router_config(), Arc::new(backends));
+        let task = mock_task();
+        let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"tee-groth16-demo","backend_version":"v1","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["99","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#;
+        assert!(matches!(
+            verifier.verify_proof(&task, payload),
+            VerificationResult::Invalid(msg)
+                if msg.contains("backend_id 'tee-groth16-demo'")
+                    && msg.contains("declares tee family")
+                    && msg.contains("does not match zk vk_ref")
+        ));
+    }
+
+    #[test]
+    fn zk_verifier_rejects_selected_backend_with_explicit_tee_family_prefix() {
+        let mut backends = ZkBackendRegistry::new();
+        backends.register(Arc::new(MockSystemSuccessBackend {
+            backend_id: "tee-groth16-demo",
+            expected_system: "groth16",
+        }));
+
+        let mut config = router_config();
+        config.zk_backend = ZkBackendKind::Custom("tee-groth16-demo".into());
+        let verifier = ZkVerifier::from_config(&config, Arc::new(backends));
+        let task = mock_task();
+        let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["99","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#;
+        assert!(matches!(
+            verifier.verify_proof(&task, payload),
+            VerificationResult::Invalid(msg)
+                if msg.contains("backend 'tee-groth16-demo'")
+                    && msg.contains("declares tee family")
+                    && msg.contains("does not match zk vk_ref")
         ));
     }
 

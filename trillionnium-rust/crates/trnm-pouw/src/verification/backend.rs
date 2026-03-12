@@ -79,6 +79,15 @@ pub fn normalize_backend_token(raw: &str) -> Option<String> {
     }
 }
 
+pub fn backend_token_family_hint(raw: &str) -> Option<VerificationBackendFamily> {
+    let normalized = normalize_backend_token(raw)?;
+    match normalized.split_whitespace().next()? {
+        "zk" => Some(VerificationBackendFamily::Zk),
+        "tee" => Some(VerificationBackendFamily::Tee),
+        _ => None,
+    }
+}
+
 pub fn backend_system_hint(raw: &str) -> Option<String> {
     let normalized = normalize_backend_token(raw)?;
     let mut parts = normalized.split_whitespace();
@@ -1071,7 +1080,25 @@ mod tests {
             backend_token_zk_system_hints("groth16-groth16-demo"),
             vec!["groth16"]
         );
+        assert_eq!(
+            backend_token_zk_system_hints("tee-groth16-demo"),
+            vec!["groth16"]
+        );
         assert!(backend_token_zk_system_hints("mock-zk").is_empty());
+    }
+
+    #[test]
+    fn backend_token_family_hint_detects_explicit_family_prefixes() {
+        assert_eq!(
+            backend_token_family_hint("zk-groth16-demo"),
+            Some(VerificationBackendFamily::Zk)
+        );
+        assert_eq!(
+            backend_token_family_hint(" tee-groth16-demo "),
+            Some(VerificationBackendFamily::Tee)
+        );
+        assert_eq!(backend_token_family_hint("groth16-demo"), None);
+        assert_eq!(backend_token_family_hint("noop"), None);
     }
 
     #[test]
