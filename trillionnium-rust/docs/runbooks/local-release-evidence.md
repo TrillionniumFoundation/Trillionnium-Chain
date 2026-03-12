@@ -49,17 +49,18 @@ env TZ=UTC LC_ALL=C LANG=C SOURCE_DATE_EPOCH=1704067200 \
 
 如需二次复跑比对，请保持命令与环境完全一致，再连续执行一次相同命令，避免把一次性绿灯误判为稳定 release 证据。
 
-执行完成后，在 `summary.txt` 末尾追加：
+执行完成后，`summary.txt` 末尾至少应包含以下字段（由脚本生成时，直接以生成值为准，不要手工改写）：
 
-- 本次证据目录绝对路径
+- 本次证据目录绝对路径：`evidence_dir=<abs-path>`
 - 生成该证据包的分支与提交：`git_branch=<branch>` / `git_head=<sha>`
-- UTC 时间戳：`date -u +"%Y-%m-%dT%H:%M:%SZ"`
+- UTC 时间戳：`generated_at=<utc-ts>`
 - 实际覆盖环境：`env_trnm_challenge_reexec_entry=<value|<unset>>`
 - 复放环境：`replay_env_trnm_challenge_reexec_entry=<resolved-entry-absolute-path>`
-- 复放命令：`env TZ=UTC LC_ALL=C LANG=C SOURCE_DATE_EPOCH=1704067200 CARGO_TERM_COLOR=never RUST_BACKTRACE=1 CARGO_BUILD_JOBS=1 ./scripts/run_local_release_evidence.sh`
-- 回滚命令：`rm -rf <evidence_dir>`（仅删除本次生成目录）
+- 解析后的入口：`challenge_reexec_entry=<resolved-entry-absolute-path>`
+- 复放命令：优先直接引用 `replay_command=` 字段；若需说明其结构，应是包含 deterministic 前缀、`OUT_DIR` 与固定 `TRNM_CHALLENGE_REEXEC_ENTRY` 的单行命令，例如：`env TZ=UTC LC_ALL=C LANG=C SOURCE_DATE_EPOCH=1704067200 CARGO_TERM_COLOR=never RUST_BACKTRACE=1 CARGO_BUILD_JOBS=1 OUT_DIR='<evidence-root>' TRNM_CHALLENGE_REEXEC_ENTRY='<resolved-entry-absolute-path>' ./scripts/run_local_release_evidence.sh`
+- 回滚命令：`rollback_command=rm -rf <evidence_dir>`（仅删除本次生成目录）
 
-若直接引用脚本生成的 `summary.txt`，应以其中的 `replay_command=` 字段为准；不要手写成缺少 deterministic 前缀的裸命令，避免把不可复现的本地环境差异带进 RC 证据链。
+若直接引用脚本生成的 `summary.txt`，应以其中的 `replay_command=` 字段为准；不要手写成缺少 deterministic 前缀、缺少 `OUT_DIR`、或缺少 `TRNM_CHALLENGE_REEXEC_ENTRY` 固定值的裸命令，避免把不可复现的本地环境差异带进 RC 证据链。
 
 ## RC manifest 对齐要求
 
