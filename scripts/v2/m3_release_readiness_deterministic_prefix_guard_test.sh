@@ -26,6 +26,9 @@ fi
 rc_required_lines=(
   'replay_command=$replay_command'
   'rollback_command=$rollback_command'
+  'truth_source=$TRUTH_SOURCE'
+  'historical_evidence_only=true'
+  'evidence_scope=$EVIDENCE_SCOPE'
   'env_mvp_mode=${MVP_MODE:-prod}'
   'env_txs=${TXS:-5000}'
   'env_threshold_profile=${THRESHOLD_PROFILE:-stage1}'

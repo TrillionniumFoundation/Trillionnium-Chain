@@ -66,6 +66,8 @@ env TZ=UTC LC_ALL=C LANG=C SOURCE_DATE_EPOCH=1704067200 \
 
 `./scripts/release_rc.sh` 生成的 `release/rc-*/manifest.txt` 也应保持与本页一致的可复放字段，至少包括：
 
+- 当前 truth-source 指针（`truth_source=`，应指向仓库根 `RELEASE_READINESS.md`）
+- 历史证据边界声明（例如 `historical_evidence_only=true`、`evidence_scope=local_rc_rehearsal_not_current_release_ready_claim`）
 - 实际执行时生效的 deterministic 环境（`env_*`）
 - 建议复放环境（`replay_env_*`）
 - 影响 RC 结果的关键执行旋钮（至少 `env_mvp_mode` / `env_txs` / `env_threshold_profile` 及对应 `replay_env_*`）

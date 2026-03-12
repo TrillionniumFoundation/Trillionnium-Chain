@@ -28,6 +28,9 @@ mkdir -p "$OUT"
 
 GIT_HEAD="$(git rev-parse HEAD 2>/dev/null || echo unknown)"
 GIT_BRANCH="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo unknown)"
+REPO_ROOT="$(cd "$ROOT/.." && pwd)"
+TRUTH_SOURCE="$REPO_ROOT/RELEASE_READINESS.md"
+EVIDENCE_SCOPE="local_rc_rehearsal_not_current_release_ready_claim"
 
 echo "[rc] output=$OUT"
 
@@ -128,6 +131,9 @@ generated_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 workspace=$ROOT
 git_branch=$GIT_BRANCH
 git_head=$GIT_HEAD
+truth_source=$TRUTH_SOURCE
+historical_evidence_only=true
+evidence_scope=$EVIDENCE_SCOPE
 threshold_profile=${THRESHOLD_PROFILE:-stage1}
 txs=${TXS:-5000}
 env_mvp_mode=${MVP_MODE:-prod}
