@@ -735,6 +735,38 @@ mod tests {
     }
 
     #[test]
+    fn tee_verifier_backend_unavailable_quote_attestation_receipt_claims_still_prefers_quote_claims_surface() {
+        let result = TeeVerifier::classify_execution_err(BackendExecutionError::Unavailable {
+            backend: "tee:mock-tee-unavailable".to_string(),
+            reason: "quote attestation receipt claims verifier unavailable".to_string(),
+        });
+
+        assert!(matches!(result, VerificationResult::Indeterminate(_)), "unexpected result: {result:?}");
+        let VerificationResult::Indeterminate(msg) = result else { unreachable!() };
+        assert!(msg.contains("unavailable:"), "message: {msg}");
+        assert!(msg.contains("quote claims"), "message: {msg}");
+        assert!(!msg.contains("evidence/claims"), "message: {msg}");
+        assert!(!msg.contains("payload/claims"), "message: {msg}");
+        assert!(!msg.contains("legacy:"), "message: {msg}");
+    }
+
+    #[test]
+    fn tee_verifier_backend_unavailable_report_attestation_receipt_claims_still_prefers_report_claims_surface() {
+        let result = TeeVerifier::classify_execution_err(BackendExecutionError::Unavailable {
+            backend: "tee:mock-tee-unavailable".to_string(),
+            reason: "report attestation receipt claims verifier unavailable".to_string(),
+        });
+
+        assert!(matches!(result, VerificationResult::Indeterminate(_)), "unexpected result: {result:?}");
+        let VerificationResult::Indeterminate(msg) = result else { unreachable!() };
+        assert!(msg.contains("unavailable:"), "message: {msg}");
+        assert!(msg.contains("report claims"), "message: {msg}");
+        assert!(!msg.contains("evidence/claims"), "message: {msg}");
+        assert!(!msg.contains("payload/claims"), "message: {msg}");
+        assert!(!msg.contains("legacy:"), "message: {msg}");
+    }
+
+    #[test]
     fn tee_verifier_backend_malformed_quote_evidence_collapses_to_payload_claims_surface() {
         let result = TeeVerifier::classify_execution_err(BackendExecutionError::MalformedProof {
             backend: "tee:mock-tee-malformed".to_string(),
