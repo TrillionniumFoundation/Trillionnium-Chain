@@ -96,7 +96,16 @@ def synth_case(ts):
     }
 
 
+def _require_positive(name, value):
+    if value <= 0:
+        raise SystemExit(f"{name} must be > 0")
+
+
+
 def run_bench(args):
+    _require_positive("bench_count", args.bench_count)
+    _require_positive("bench_rounds", args.bench_rounds)
+
     lat = []
     now = int(time.time() * 1000)
     for i in range(args.bench_rounds):
@@ -329,6 +338,30 @@ def _test_run_baseline_zeros_source_cardinality_when_no_sample_is_accepted():
     assert out["accepted_total"] == 0
     assert out["oracle_source_cardinality"] == 0
     assert out["sample_count"] == 2
+
+
+
+def _test_run_bench_rejects_zero_count_and_rounds_with_stable_error():
+    class Args:
+        min_sources = 2
+        max_staleness_ms = 60_000
+        max_deviation_bps = 500
+        bench_count = 0
+        bench_rounds = 1
+
+    try:
+        run_bench(Args())
+        raise AssertionError("zero bench_count should fail closed")
+    except SystemExit as exc:
+        assert str(exc) == "bench_count must be > 0"
+
+    Args.bench_count = 1
+    Args.bench_rounds = 0
+    try:
+        run_bench(Args())
+        raise AssertionError("zero bench_rounds should fail closed")
+    except SystemExit as exc:
+        assert str(exc) == "bench_rounds must be > 0"
 
 
 if __name__ == "__main__":
