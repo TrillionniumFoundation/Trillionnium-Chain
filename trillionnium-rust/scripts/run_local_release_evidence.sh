@@ -6,6 +6,8 @@ cd "$ROOT"
 export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
 
 REPO_ROOT="$(cd "$ROOT/.." && pwd)"
+GIT_HEAD="$(git rev-parse HEAD 2>/dev/null || echo unknown)"
+GIT_BRANCH="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo unknown)"
 
 TS="$(date -u +%Y%m%d-%H%M%S)"
 BASE_OUT="${OUT_DIR:-$ROOT/run/health}"
@@ -81,6 +83,8 @@ find_challenge_reexec_entry() {
   echo "local_release_evidence=evidence-$TS"
   echo "generated_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
   echo "workspace=$ROOT"
+  echo "git_branch=$GIT_BRANCH"
+  echo "git_head=$GIT_HEAD"
   echo "evidence_dir=$EVIDENCE_DIR"
   echo "truth_source=$REPO_ROOT/RELEASE_READINESS.md"
   echo "historical_evidence_only=true"
