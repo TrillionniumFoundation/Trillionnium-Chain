@@ -454,6 +454,7 @@ fn preflight_resolve_transfers(
     }
 
     let mut sim = st.clone();
+    let mut settlement_preview = task.clone();
 
     if let Some(bond) = task.challenge_bond {
         sim.debit_balance(CHALLENGE_ESCROW_ACCOUNT, bond)
@@ -463,14 +464,16 @@ fn preflight_resolve_transfers(
                 sim.credit_balance(challenger, bond)
                     .map_err(PouwError::State)?;
             }
+            settlement_preview.challenge_bond_forfeited = Some(false);
         } else {
             sim.credit_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, bond)
                 .map_err(PouwError::State)?;
+            settlement_preview.challenge_bond_forfeited = Some(true);
         }
     }
 
     if slash_worker {
-        let _ = maybe_pay_challenge_success_bounty(&mut sim, task)?;
+        let _ = maybe_pay_challenge_success_bounty(&mut sim, &settlement_preview)?;
     }
 
     settle_worker_stake_for_terminal_state(&mut sim, task)?;
@@ -723,9 +726,12 @@ fn maybe_pay_challenge_success_bounty(
     if task.status != TaskStatus::Slashed {
         return Ok(0);
     }
-    if task.challenge_bond.is_none() || task.challenged_at_height.is_none() {
+    if task.challenge_bond.is_none()
+        || task.challenged_at_height.is_none()
+        || !matches!(task.challenge_bond_forfeited, Some(false))
+    {
         return Err(PouwError::State(
-            "challenge success bounty requires challenged-task settlement metadata".into(),
+            "challenge success bounty requires successful challenge settlement metadata".into(),
         ));
     }
     let Some(challenger) = task.challenger.as_ref() else {
@@ -10710,14 +10716,67 @@ mod tests {
         let before_slash_treasury = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
 
         let err = maybe_pay_challenge_success_bounty(&mut st, &task).expect_err(
-            "slashed payout must fail closed without challenged-task settlement metadata",
+            "slashed payout must fail closed without successful challenge settlement metadata",
         );
         assert!(
-            matches!(err, PouwError::State(msg) if msg.contains("challenged-task settlement metadata"))
+            matches!(err, PouwError::State(msg) if msg.contains("successful challenge settlement metadata"))
         );
         assert_eq!(st.balance_of("challenger"), before_challenger);
         assert_eq!(
             st.balance_of(&worker_stake_lock_account(40_203)),
+            before_lock
+        );
+        assert_eq!(
+            st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
+            before_slash_treasury
+        );
+    }
+
+    #[test]
+    fn challenge_success_bounty_rejects_slashed_task_without_successful_forfeit_marker() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        st.set_balance("worker1", 50);
+        st.set_gov_param_bootstrap_unchecked(40_204, "challenge_success_bounty".into(), "1".into())
+            .unwrap();
+        st.set_gov_param_bootstrap_unchecked(40_205, "min_worker_stake".into(), "50".into())
+            .unwrap();
+
+        let r1 = apply_create_task(&mut st, 40_206, "alice".into(), 10).unwrap();
+        let result_hash = [5u8; 32];
+        let reveal_salt = [9u8; 32];
+        let committed = compute_commitment(40_206, &result_hash, &reveal_salt, "worker1");
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 =
+            apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
+        let r4 = apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110)
+            .unwrap();
+        let r5 = apply_challenge_at_height(
+            &mut st,
+            r4,
+            "challenger".into(),
+            10,
+            "challenger".into(),
+            120,
+        )
+        .unwrap();
+
+        let mut malformed = st.get_task(r5.id).unwrap();
+        malformed.status = TaskStatus::Slashed;
+        malformed.challenge_bond_forfeited = Some(true);
+        let next = st.update_task(r5, malformed).unwrap();
+        let task = st.get_task(next.id).unwrap();
+        let before_challenger = st.balance_of("challenger");
+        let before_lock = st.balance_of(&worker_stake_lock_account(40_206));
+        let before_slash_treasury = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
+
+        let err = maybe_pay_challenge_success_bounty(&mut st, &task).expect_err(
+            "slashed payout must fail closed without successful challenge forfeit marker",
+        );
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("successful challenge settlement metadata")));
+        assert_eq!(st.balance_of("challenger"), before_challenger);
+        assert_eq!(
+            st.balance_of(&worker_stake_lock_account(40_206)),
             before_lock
         );
         assert_eq!(
