@@ -10,7 +10,14 @@
 
 1. **P0-1 解析层“伪签名”导致 Resolve 权限可被任意提交者冒用**（`trnm-node`）
 2. **P0-2 `set_gov_param_bootstrap_unchecked` 可绕过敏感参数 timelock 与治理流程**（`trnm-state`）
-3. **P0-3 挑战奖励可从全局 slash treasury 回退支付，存在“库余额抽取”经济面**（`trnm-pouw`）
+3. **P0-3 挑战奖励可从全局 slash treasury 回退支付，存在“库余额抽取”经济面**（`trnm-pouw`，**见下方 2026-03-12 状态更新：当前实现已不再符合该描述**）
+
+### 2026-03-12 状态更新（L05 复核）
+
+- 现行 `trnm-pouw` 实现下，challenge-success bounty 仅允许从**当前任务的 worker stake lock**支付；task-local slash principal 不足时会 **fail-closed**，不会再回退抽取 `treasury.worker_slashes`。
+- 因此，原 Challenge 3 所描述的“从全局 slash treasury 回退支付 bounty、形成库余额抽取面”已不再是当前代码状态的准确表述。
+- 当前更准确的残余风险是：**`default_slash_on_unresolved_challenge` 的治理控制面仍未完全打通**。也就是说，代码里已经预留了 challenged-timeout → slash 的治理开关，但 state 层 allowlist / governance schema 仍可能让该控制面在实际治理路径中不可达。
+- 经济语义上还需要继续保持明确：当前 challenged-timeout 即使未来切到 `Slashed` 分支，也**不会自动发放 challenge-success bounty**；若产品后续要把 timeout-slash 也定义为 challenger 胜诉并发 bounty，需要单独设计 payout 来源、额度上限与防 farming 约束。
 
 ---
 
