@@ -3156,6 +3156,40 @@ mod tests {
     }
 
     #[test]
+    fn auto_adaptive_detects_late_write_hotspots_after_keyless_prefixes() {
+        let _env = env_lock();
+        let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "64");
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.20");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.20");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.05");
+
+        // Experimental adaptive sampling should stay fail-open for a real late
+        // write hotspot even when much of the earlier sampled region is keyless
+        // traffic. Keyless samples may break streak continuity locally, but they
+        // must not suppress a dense tail hotspot that still clears the adaptive
+        // switch thresholds.
+        let mut txs = Vec::with_capacity(3_000);
+        for i in 0..1_500u64 {
+            txs.push(tx(i, vec![], vec![]));
+        }
+        for i in 1_500..1_800u64 {
+            txs.push(tx(i, vec![], vec![o(10_000 + i)]));
+        }
+        for i in 1_800..3_000u64 {
+            txs.push(tx(i, vec![], vec![o(7)]));
+        }
+
+        let d = auto_adaptive_decision(&txs);
+        assert_eq!(d.sample_len, 2048);
+        assert!(d.use_hot_bucket);
+        assert_eq!(d.reason, "hotspot_detected");
+        assert!(d.hot_key_share >= 0.20);
+        assert!(d.streak_ratio >= 0.20);
+        assert!(d.expected_gain_score >= 0.05);
+    }
+
+    #[test]
     fn free_ingress_batches_short_circuit_to_single_group_after_strategy_reorder() {
         let txs = vec![
             tx(9, vec![], vec![]),
