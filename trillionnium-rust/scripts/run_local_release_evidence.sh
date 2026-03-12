@@ -112,7 +112,9 @@ run_step "cargo_test_key_packages" "$CARGO_TEST_CMD"
 run_step "check_request_tx_binding" "OUT_DIR='$EVIDENCE_DIR' ./scripts/check_request_tx_binding.sh"
 run_step "run_request_fault_injection" "OUT_DIR='$EVIDENCE_DIR' ./scripts/run_request_fault_injection.sh"
 
+CHALLENGE_REEXEC_ENTRY=""
 if CHALLENGE_REEXEC_ENTRY="$(find_challenge_reexec_entry)"; then
+  echo "challenge_reexec_entry=$CHALLENGE_REEXEC_ENTRY" >> "$SUMMARY"
   run_step "challenge_reexec" "OUT_DIR='$EVIDENCE_DIR' bash '$CHALLENGE_REEXEC_ENTRY'"
 else
   FAIL_COUNT=$((FAIL_COUNT + 1))
@@ -129,6 +131,7 @@ replay_cargo_term_color="never"
 replay_rust_backtrace="1"
 replay_cargo_build_jobs="1"
 replay_out_dir="${OUT_DIR:-$BASE_OUT}"
+replay_challenge_entry="${TRNM_CHALLENGE_REEXEC_ENTRY:-$CHALLENGE_REEXEC_ENTRY}"
 
 {
   echo ""
@@ -139,7 +142,11 @@ replay_out_dir="${OUT_DIR:-$BASE_OUT}"
   else
     echo "result=FAIL"
   fi
-  echo "replay_command=env TZ=$replay_tz LC_ALL=$replay_lc_all LANG=$replay_lang SOURCE_DATE_EPOCH=$replay_source_date_epoch CARGO_TERM_COLOR=$replay_cargo_term_color RUST_BACKTRACE=$replay_rust_backtrace CARGO_BUILD_JOBS=$replay_cargo_build_jobs OUT_DIR='${replay_out_dir}' ./scripts/run_local_release_evidence.sh"
+  if [[ -n "$replay_challenge_entry" ]]; then
+    echo "replay_command=env TZ=$replay_tz LC_ALL=$replay_lc_all LANG=$replay_lang SOURCE_DATE_EPOCH=$replay_source_date_epoch CARGO_TERM_COLOR=$replay_cargo_term_color RUST_BACKTRACE=$replay_rust_backtrace CARGO_BUILD_JOBS=$replay_cargo_build_jobs OUT_DIR='${replay_out_dir}' TRNM_CHALLENGE_REEXEC_ENTRY='${replay_challenge_entry}' ./scripts/run_local_release_evidence.sh"
+  else
+    echo "replay_command=env TZ=$replay_tz LC_ALL=$replay_lc_all LANG=$replay_lang SOURCE_DATE_EPOCH=$replay_source_date_epoch CARGO_TERM_COLOR=$replay_cargo_term_color RUST_BACKTRACE=$replay_rust_backtrace CARGO_BUILD_JOBS=$replay_cargo_build_jobs OUT_DIR='${replay_out_dir}' ./scripts/run_local_release_evidence.sh"
+  fi
   echo "rollback_command=$rollback_cmd"
   echo "root_cause_hint=CI_FLAKE|ENV_DRIFT|DOC_DRIFT|MISSING_FIXTURE|NON_DETERMINISTIC_TEST"
 } >> "$SUMMARY"
