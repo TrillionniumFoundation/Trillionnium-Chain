@@ -243,6 +243,22 @@ pub struct OracleValidationMetrics {
     pub sample_count: u32,
 }
 
+impl OracleValidationMetrics {
+    pub fn classified_reject_total(&self) -> u32 {
+        self.oracle_stale_reject_total
+            + self.oracle_quorum_reject_total
+            + self.oracle_drift_reject_total
+    }
+
+    pub fn classified_outcome_total(&self) -> u32 {
+        self.accepted_total + self.classified_reject_total()
+    }
+
+    pub fn classified_outcome_conserves_sample_count(&self) -> bool {
+        self.classified_outcome_total() == self.sample_count
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct OracleValidationReport {
     pub ok: bool,
@@ -251,6 +267,12 @@ pub struct OracleValidationReport {
     pub metrics: OracleValidationMetrics,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub error: Option<String>,
+}
+
+impl OracleValidationReport {
+    pub fn classified_outcome_conserves_sample_count(&self) -> bool {
+        self.metrics.classified_outcome_conserves_sample_count()
+    }
 }
 
 pub fn validate_snapshot_observed(
@@ -679,11 +701,12 @@ mod tests {
         ];
 
         for report in reports {
-            let rejection_total = report.metrics.oracle_stale_reject_total
-                + report.metrics.oracle_quorum_reject_total
-                + report.metrics.oracle_drift_reject_total;
             assert_eq!(report.metrics.sample_count, 1);
-            assert_eq!(report.metrics.accepted_total + rejection_total, report.metrics.sample_count);
+            assert!(report.classified_outcome_conserves_sample_count());
+            assert_eq!(
+                report.metrics.classified_outcome_total(),
+                report.metrics.sample_count
+            );
             assert_eq!(
                 report.observation.accepted_total,
                 report.metrics.accepted_total,
@@ -691,5 +714,31 @@ mod tests {
                 report.error
             );
         }
+    }
+
+    #[test]
+    fn observed_report_helpers_exclude_unclassified_errors_from_reject_total() {
+        let report = validate_snapshot_observed(
+            &policy(),
+            &OracleSnapshot::new(
+                "btc/usd",
+                100_000,
+                vec![source("coingecko"), source("chainlink")],
+                61,
+                Some(100_000),
+                Some(120),
+                1_000,
+                2_000,
+                10_000,
+            )
+            .expect("snapshot build"),
+            10_100,
+        );
+
+        assert_eq!(report.error.as_deref(), Some("rate"));
+        assert_eq!(report.metrics.classified_reject_total(), 0);
+        assert_eq!(report.metrics.classified_outcome_total(), 0);
+        assert!(!report.classified_outcome_conserves_sample_count());
+        assert_eq!(report.metrics.sample_count, 1);
     }
 }
