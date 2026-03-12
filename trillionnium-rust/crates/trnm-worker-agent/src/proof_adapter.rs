@@ -111,8 +111,13 @@ fn normalize_adapter_value(value: &str) -> String {
 fn has_non_empty_auditable_value(value: Option<&str>) -> bool {
     value
         .map(collapse_adapter_delimiters)
-        .map(|v| v.trim().trim_start_matches('\u{feff}').trim().to_string())
-        .map(|v| !v.is_empty())
+        .map(|v| {
+            v.trim()
+                .trim_start_matches('\u{feff}')
+                .trim()
+                .chars()
+                .any(|c| !c.is_whitespace() && !c.is_control())
+        })
         .unwrap_or(false)
 }
 
@@ -439,6 +444,16 @@ mod tests {
             "tee-receipt-missing-provider-request-id"
         );
 
+        let whitespace_only_request_id = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"   \\n\\t  \",\"adapter\":\"tee-receipt\"}",
+            )
+            .expect_err("whitespace-only provider_request_id must fail closed");
+        assert_eq!(
+            whitespace_only_request_id,
+            "tee-receipt-missing-provider-request-id"
+        );
+
         let missing_adapter = adapter
             .parse_response("{\"output_text\":\"ok\",\"provider_request_id\":\"pr-1\"}")
             .expect_err("adapter label is required");
@@ -592,6 +607,16 @@ mod tests {
             .expect_err("zero-width-only provider_request_id must fail closed");
         assert_eq!(
             zero_width_only_request_id,
+            "zk-receipt-missing-provider-request-id"
+        );
+
+        let whitespace_only_request_id = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"   \\n\\t  \",\"adapter\":\"zk-receipt\"}",
+            )
+            .expect_err("whitespace-only provider_request_id must fail closed");
+        assert_eq!(
+            whitespace_only_request_id,
             "zk-receipt-missing-provider-request-id"
         );
 
