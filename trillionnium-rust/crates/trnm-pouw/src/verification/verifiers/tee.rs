@@ -32,27 +32,25 @@ impl TeeVerifier {
             VerificationBackendError::Selection(selection) => {
                 VerificationResult::Indeterminate(format!("unavailable: {selection}"))
             }
-            VerificationBackendError::Execution(exec_err) => {
-                Self::classify_execution_err(exec_err)
-            }
+            VerificationBackendError::Execution(exec_err) => Self::classify_execution_err(exec_err),
         }
     }
 
     fn classify_execution_err(err: BackendExecutionError) -> VerificationResult {
         let evidence_surface = Self::attestation_evidence_surface(err.reason());
         match err {
-            BackendExecutionError::InvalidProof { reason, .. } => VerificationResult::Invalid(
-                format!(
+            BackendExecutionError::InvalidProof { reason, .. } => {
+                VerificationResult::Invalid(format!(
                     "invalid TEE attestation {}: {reason}",
                     Self::invalid_surface_label(evidence_surface)
-                ),
-            ),
-            BackendExecutionError::MalformedProof { reason, .. } => VerificationResult::Invalid(
-                format!(
+                ))
+            }
+            BackendExecutionError::MalformedProof { reason, .. } => {
+                VerificationResult::Invalid(format!(
                     "malformed TEE attestation {}: {reason}",
                     Self::malformed_surface_label(evidence_surface)
-                ),
-            ),
+                ))
+            }
             BackendExecutionError::NotConfigured { .. } => VerificationResult::Indeterminate(
                 "unavailable: TEE attestation cryptographic verification backend not configured"
                     .to_string(),
@@ -367,8 +365,10 @@ mod tests {
     fn tee_verifier_valid_receipt_path_with_mock_backend() {
         let mut backends = TeeBackendRegistry::new();
         backends.register(Arc::new(MockTeeSuccessBackend));
-        let verifier =
-            TeeVerifier::new(TeeBackendKind::Custom("mock-tee".into()), Arc::new(backends));
+        let verifier = TeeVerifier::new(
+            TeeBackendKind::Custom("mock-tee".into()),
+            Arc::new(backends),
+        );
         let task = mock_task();
 
         assert!(matches!(
@@ -479,22 +479,36 @@ mod tests {
             &task,
             b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=abababababababababababababababababababababababababababababababab,quote=abc"
         );
-        assert!(matches!(result, VerificationResult::Indeterminate(_)), "unexpected result: {result:?}");
-        let VerificationResult::Indeterminate(msg) = result else { unreachable!() };
+        assert!(
+            matches!(result, VerificationResult::Indeterminate(_)),
+            "unexpected result: {result:?}"
+        );
+        let VerificationResult::Indeterminate(msg) = result else {
+            unreachable!()
+        };
         assert!(msg.contains("backend_error:"), "message: {msg}");
         assert!(msg.contains("mock-tee-internal"), "message: {msg}");
-        assert!(msg.contains("mock tee backend internal failure"), "message: {msg}");
+        assert!(
+            msg.contains("mock tee backend internal failure"),
+            "message: {msg}"
+        );
     }
 
     #[test]
-    fn tee_verifier_backend_internal_report_evidence_keeps_report_surface_without_legacy_claims_suffix() {
+    fn tee_verifier_backend_internal_report_evidence_keeps_report_surface_without_legacy_claims_suffix(
+    ) {
         let result = TeeVerifier::classify_execution_err(BackendExecutionError::Internal {
             backend: "tee:mock-tee-internal".to_string(),
             reason: "report evidence verifier crashed".to_string(),
         });
 
-        assert!(matches!(result, VerificationResult::Indeterminate(_)), "unexpected result: {result:?}");
-        let VerificationResult::Indeterminate(msg) = result else { unreachable!() };
+        assert!(
+            matches!(result, VerificationResult::Indeterminate(_)),
+            "unexpected result: {result:?}"
+        );
+        let VerificationResult::Indeterminate(msg) = result else {
+            unreachable!()
+        };
         assert!(msg.contains("backend_error:"), "message: {msg}");
         assert!(msg.contains("report evidence"), "message: {msg}");
         assert!(!msg.contains("quote/report claims"), "message: {msg}");
@@ -502,28 +516,43 @@ mod tests {
     }
 
     #[test]
-    fn tee_verifier_backend_internal_quote_report_claims_keeps_combined_claims_surface_and_legacy_suffix() {
+    fn tee_verifier_backend_internal_quote_report_claims_keeps_combined_claims_surface_and_legacy_suffix(
+    ) {
         let result = TeeVerifier::classify_execution_err(BackendExecutionError::Internal {
             backend: "tee:mock-tee-internal".to_string(),
             reason: "quote/report claims verifier crashed".to_string(),
         });
 
-        assert!(matches!(result, VerificationResult::Indeterminate(_)), "unexpected result: {result:?}");
-        let VerificationResult::Indeterminate(msg) = result else { unreachable!() };
+        assert!(
+            matches!(result, VerificationResult::Indeterminate(_)),
+            "unexpected result: {result:?}"
+        );
+        let VerificationResult::Indeterminate(msg) = result else {
+            unreachable!()
+        };
         assert!(msg.contains("backend_error:"), "message: {msg}");
         assert!(msg.contains("quote/report claims"), "message: {msg}");
-        assert!(msg.contains("legacy: failed while verifying TEE attestation quote/report claims"), "message: {msg}");
+        assert!(
+            msg.contains("legacy: failed while verifying TEE attestation quote/report claims"),
+            "message: {msg}"
+        );
     }
 
     #[test]
-    fn tee_verifier_backend_internal_quote_report_evidence_keeps_combined_evidence_surface_without_claims_legacy_suffix() {
+    fn tee_verifier_backend_internal_quote_report_evidence_keeps_combined_evidence_surface_without_claims_legacy_suffix(
+    ) {
         let result = TeeVerifier::classify_execution_err(BackendExecutionError::Internal {
             backend: "tee:mock-tee-internal".to_string(),
             reason: "quote/report evidence verifier crashed".to_string(),
         });
 
-        assert!(matches!(result, VerificationResult::Indeterminate(_)), "unexpected result: {result:?}");
-        let VerificationResult::Indeterminate(msg) = result else { unreachable!() };
+        assert!(
+            matches!(result, VerificationResult::Indeterminate(_)),
+            "unexpected result: {result:?}"
+        );
+        let VerificationResult::Indeterminate(msg) = result else {
+            unreachable!()
+        };
         assert!(msg.contains("backend_error:"), "message: {msg}");
         assert!(msg.contains("quote/report evidence"), "message: {msg}");
         assert!(!msg.contains("payload/claims"), "message: {msg}");
@@ -531,14 +560,20 @@ mod tests {
     }
 
     #[test]
-    fn tee_verifier_backend_internal_attestation_claims_prefers_evidence_claims_surface_over_zk_payload_wording() {
+    fn tee_verifier_backend_internal_attestation_claims_prefers_evidence_claims_surface_over_zk_payload_wording(
+    ) {
         let result = TeeVerifier::classify_execution_err(BackendExecutionError::Internal {
             backend: "tee:mock-tee-internal".to_string(),
             reason: "TEE attestation claims payload verifier crashed".to_string(),
         });
 
-        assert!(matches!(result, VerificationResult::Indeterminate(_)), "unexpected result: {result:?}");
-        let VerificationResult::Indeterminate(msg) = result else { unreachable!() };
+        assert!(
+            matches!(result, VerificationResult::Indeterminate(_)),
+            "unexpected result: {result:?}"
+        );
+        let VerificationResult::Indeterminate(msg) = result else {
+            unreachable!()
+        };
         assert!(msg.contains("backend_error:"), "message: {msg}");
         assert!(msg.contains("evidence/claims"), "message: {msg}");
         assert!(!msg.contains("payload/claims"), "message: {msg}");
@@ -547,14 +582,20 @@ mod tests {
     }
 
     #[test]
-    fn tee_verifier_backend_internal_attestation_payload_without_claims_still_prefers_evidence_claims_surface() {
+    fn tee_verifier_backend_internal_attestation_payload_without_claims_still_prefers_evidence_claims_surface(
+    ) {
         let result = TeeVerifier::classify_execution_err(BackendExecutionError::Internal {
             backend: "tee:mock-tee-internal".to_string(),
             reason: "TEE attestation payload verifier crashed".to_string(),
         });
 
-        assert!(matches!(result, VerificationResult::Indeterminate(_)), "unexpected result: {result:?}");
-        let VerificationResult::Indeterminate(msg) = result else { unreachable!() };
+        assert!(
+            matches!(result, VerificationResult::Indeterminate(_)),
+            "unexpected result: {result:?}"
+        );
+        let VerificationResult::Indeterminate(msg) = result else {
+            unreachable!()
+        };
         assert!(msg.contains("backend_error:"), "message: {msg}");
         assert!(msg.contains("evidence/claims"), "message: {msg}");
         assert!(!msg.contains("payload/claims"), "message: {msg}");
@@ -568,8 +609,13 @@ mod tests {
             reason: "signature mismatch".to_string(),
         });
 
-        assert!(matches!(result, VerificationResult::Indeterminate(_)), "unexpected result: {result:?}");
-        let VerificationResult::Indeterminate(msg) = result else { unreachable!() };
+        assert!(
+            matches!(result, VerificationResult::Indeterminate(_)),
+            "unexpected result: {result:?}"
+        );
+        let VerificationResult::Indeterminate(msg) = result else {
+            unreachable!()
+        };
         assert!(msg.contains("backend_error:"), "message: {msg}");
         assert!(msg.contains("evidence/claims"), "message: {msg}");
         assert!(!msg.contains("payload/claims"), "message: {msg}");
@@ -582,37 +628,63 @@ mod tests {
             reason: "signature mismatch".to_string(),
         });
 
-        assert!(matches!(result, VerificationResult::Invalid(_)), "unexpected result: {result:?}");
-        let VerificationResult::Invalid(msg) = result else { unreachable!() };
-        assert!(msg.contains("invalid TEE attestation claims:"), "message: {msg}");
+        assert!(
+            matches!(result, VerificationResult::Invalid(_)),
+            "unexpected result: {result:?}"
+        );
+        let VerificationResult::Invalid(msg) = result else {
+            unreachable!()
+        };
+        assert!(
+            msg.contains("invalid TEE attestation claims:"),
+            "message: {msg}"
+        );
         assert!(!msg.contains("payload/claims"), "message: {msg}");
         assert!(msg.contains("signature mismatch"), "message: {msg}");
     }
 
     #[test]
-    fn tee_verifier_backend_invalid_attestation_payload_keeps_claims_wording_without_zk_payload_surface_leakage() {
+    fn tee_verifier_backend_invalid_attestation_payload_keeps_claims_wording_without_zk_payload_surface_leakage(
+    ) {
         let result = TeeVerifier::classify_execution_err(BackendExecutionError::InvalidProof {
             backend: "tee:mock-tee-invalid".to_string(),
             reason: "TEE attestation payload signature mismatch".to_string(),
         });
 
-        assert!(matches!(result, VerificationResult::Invalid(_)), "unexpected result: {result:?}");
-        let VerificationResult::Invalid(msg) = result else { unreachable!() };
-        assert!(msg.contains("invalid TEE attestation claims:"), "message: {msg}");
+        assert!(
+            matches!(result, VerificationResult::Invalid(_)),
+            "unexpected result: {result:?}"
+        );
+        let VerificationResult::Invalid(msg) = result else {
+            unreachable!()
+        };
+        assert!(
+            msg.contains("invalid TEE attestation claims:"),
+            "message: {msg}"
+        );
         assert!(!msg.contains("payload/claims"), "message: {msg}");
         assert!(!msg.contains("evidence/claims"), "message: {msg}");
-        assert!(msg.contains("TEE attestation payload signature mismatch"), "message: {msg}");
+        assert!(
+            msg.contains("TEE attestation payload signature mismatch"),
+            "message: {msg}"
+        );
     }
 
     #[test]
-    fn tee_verifier_backend_internal_quote_payload_prefers_quote_claims_surface_over_quote_evidence() {
+    fn tee_verifier_backend_internal_quote_payload_prefers_quote_claims_surface_over_quote_evidence(
+    ) {
         let result = TeeVerifier::classify_execution_err(BackendExecutionError::Internal {
             backend: "tee:mock-tee-internal".to_string(),
             reason: "quote payload verifier crashed".to_string(),
         });
 
-        assert!(matches!(result, VerificationResult::Indeterminate(_)), "unexpected result: {result:?}");
-        let VerificationResult::Indeterminate(msg) = result else { unreachable!() };
+        assert!(
+            matches!(result, VerificationResult::Indeterminate(_)),
+            "unexpected result: {result:?}"
+        );
+        let VerificationResult::Indeterminate(msg) = result else {
+            unreachable!()
+        };
         assert!(msg.contains("backend_error:"), "message: {msg}");
         assert!(msg.contains("quote claims"), "message: {msg}");
         assert!(!msg.contains("quote evidence"), "message: {msg}");
@@ -621,14 +693,20 @@ mod tests {
     }
 
     #[test]
-    fn tee_verifier_backend_unavailable_quote_receipt_prefers_quote_evidence_surface_without_claims_or_legacy_suffix() {
+    fn tee_verifier_backend_unavailable_quote_receipt_prefers_quote_evidence_surface_without_claims_or_legacy_suffix(
+    ) {
         let result = TeeVerifier::classify_execution_err(BackendExecutionError::Unavailable {
             backend: "tee:mock-tee-unavailable".to_string(),
             reason: "quote receipt verifier unavailable".to_string(),
         });
 
-        assert!(matches!(result, VerificationResult::Indeterminate(_)), "unexpected result: {result:?}");
-        let VerificationResult::Indeterminate(msg) = result else { unreachable!() };
+        assert!(
+            matches!(result, VerificationResult::Indeterminate(_)),
+            "unexpected result: {result:?}"
+        );
+        let VerificationResult::Indeterminate(msg) = result else {
+            unreachable!()
+        };
         assert!(msg.contains("unavailable:"), "message: {msg}");
         assert!(msg.contains("quote evidence"), "message: {msg}");
         assert!(!msg.contains("quote claims"), "message: {msg}");
@@ -637,14 +715,20 @@ mod tests {
     }
 
     #[test]
-    fn tee_verifier_backend_unavailable_report_receipt_prefers_report_evidence_surface_without_claims_or_legacy_suffix() {
+    fn tee_verifier_backend_unavailable_report_receipt_prefers_report_evidence_surface_without_claims_or_legacy_suffix(
+    ) {
         let result = TeeVerifier::classify_execution_err(BackendExecutionError::Unavailable {
             backend: "tee:mock-tee-unavailable".to_string(),
             reason: "report receipt verifier unavailable".to_string(),
         });
 
-        assert!(matches!(result, VerificationResult::Indeterminate(_)), "unexpected result: {result:?}");
-        let VerificationResult::Indeterminate(msg) = result else { unreachable!() };
+        assert!(
+            matches!(result, VerificationResult::Indeterminate(_)),
+            "unexpected result: {result:?}"
+        );
+        let VerificationResult::Indeterminate(msg) = result else {
+            unreachable!()
+        };
         assert!(msg.contains("unavailable:"), "message: {msg}");
         assert!(msg.contains("report evidence"), "message: {msg}");
         assert!(!msg.contains("report claims"), "message: {msg}");
@@ -653,14 +737,20 @@ mod tests {
     }
 
     #[test]
-    fn tee_verifier_backend_unavailable_quote_report_receipt_prefers_combined_evidence_surface_without_claims_or_legacy_suffix() {
+    fn tee_verifier_backend_unavailable_quote_report_receipt_prefers_combined_evidence_surface_without_claims_or_legacy_suffix(
+    ) {
         let result = TeeVerifier::classify_execution_err(BackendExecutionError::Unavailable {
             backend: "tee:mock-tee-unavailable".to_string(),
             reason: "quote/report receipt verifier unavailable".to_string(),
         });
 
-        assert!(matches!(result, VerificationResult::Indeterminate(_)), "unexpected result: {result:?}");
-        let VerificationResult::Indeterminate(msg) = result else { unreachable!() };
+        assert!(
+            matches!(result, VerificationResult::Indeterminate(_)),
+            "unexpected result: {result:?}"
+        );
+        let VerificationResult::Indeterminate(msg) = result else {
+            unreachable!()
+        };
         assert!(msg.contains("unavailable:"), "message: {msg}");
         assert!(msg.contains("quote/report evidence"), "message: {msg}");
         assert!(!msg.contains("quote/report claims"), "message: {msg}");
@@ -669,14 +759,20 @@ mod tests {
     }
 
     #[test]
-    fn tee_verifier_backend_unavailable_quote_report_attestation_payload_prefers_combined_claims_surface_without_zk_payload_leakage() {
+    fn tee_verifier_backend_unavailable_quote_report_attestation_payload_prefers_combined_claims_surface_without_zk_payload_leakage(
+    ) {
         let result = TeeVerifier::classify_execution_err(BackendExecutionError::Unavailable {
             backend: "tee:mock-tee-unavailable".to_string(),
             reason: "quote/report attestation payload verifier unavailable".to_string(),
         });
 
-        assert!(matches!(result, VerificationResult::Indeterminate(_)), "unexpected result: {result:?}");
-        let VerificationResult::Indeterminate(msg) = result else { unreachable!() };
+        assert!(
+            matches!(result, VerificationResult::Indeterminate(_)),
+            "unexpected result: {result:?}"
+        );
+        let VerificationResult::Indeterminate(msg) = result else {
+            unreachable!()
+        };
         assert!(msg.contains("unavailable:"), "message: {msg}");
         assert!(msg.contains("quote/report claims"), "message: {msg}");
         assert!(!msg.contains("quote/report evidence"), "message: {msg}");
@@ -685,31 +781,46 @@ mod tests {
     }
 
     #[test]
-    fn tee_verifier_backend_unavailable_generic_payload_wording_still_prefers_attestation_evidence_claims_surface() {
+    fn tee_verifier_backend_unavailable_generic_payload_wording_still_prefers_attestation_evidence_claims_surface(
+    ) {
         let result = TeeVerifier::classify_execution_err(BackendExecutionError::Unavailable {
             backend: "tee:mock-tee-unavailable".to_string(),
             reason: "payload verifier unavailable".to_string(),
         });
 
-        assert!(matches!(result, VerificationResult::Indeterminate(_)), "unexpected result: {result:?}");
-        let VerificationResult::Indeterminate(msg) = result else { unreachable!() };
+        assert!(
+            matches!(result, VerificationResult::Indeterminate(_)),
+            "unexpected result: {result:?}"
+        );
+        let VerificationResult::Indeterminate(msg) = result else {
+            unreachable!()
+        };
         assert!(msg.contains("unavailable:"), "message: {msg}");
         assert!(msg.contains("evidence/claims"), "message: {msg}");
         assert!(!msg.contains("payload/claims"), "message: {msg}");
         assert!(!msg.contains("quote claims"), "message: {msg}");
         assert!(!msg.contains("report claims"), "message: {msg}");
-        assert!(msg.contains("legacy: cannot currently verify TEE attestation evidence/claims"), "message: {msg}");
+        assert!(
+            msg.contains("legacy: cannot currently verify TEE attestation evidence/claims"),
+            "message: {msg}"
+        );
     }
 
     #[test]
-    fn tee_verifier_backend_internal_attestation_receipt_claims_prefers_evidence_claims_surface_without_quote_report_or_payload_leakage() {
+    fn tee_verifier_backend_internal_attestation_receipt_claims_prefers_evidence_claims_surface_without_quote_report_or_payload_leakage(
+    ) {
         let result = TeeVerifier::classify_execution_err(BackendExecutionError::Internal {
             backend: "tee:mock-tee-internal".to_string(),
             reason: "TEE attestation receipt claims verifier crashed".to_string(),
         });
 
-        assert!(matches!(result, VerificationResult::Indeterminate(_)), "unexpected result: {result:?}");
-        let VerificationResult::Indeterminate(msg) = result else { unreachable!() };
+        assert!(
+            matches!(result, VerificationResult::Indeterminate(_)),
+            "unexpected result: {result:?}"
+        );
+        let VerificationResult::Indeterminate(msg) = result else {
+            unreachable!()
+        };
         assert!(msg.contains("backend_error:"), "message: {msg}");
         assert!(msg.contains("evidence/claims"), "message: {msg}");
         assert!(!msg.contains("payload/claims"), "message: {msg}");
@@ -719,14 +830,20 @@ mod tests {
     }
 
     #[test]
-    fn tee_verifier_backend_internal_report_payload_prefers_report_claims_surface_over_report_evidence() {
+    fn tee_verifier_backend_internal_report_payload_prefers_report_claims_surface_over_report_evidence(
+    ) {
         let result = TeeVerifier::classify_execution_err(BackendExecutionError::Internal {
             backend: "tee:mock-tee-internal".to_string(),
             reason: "report payload verifier crashed".to_string(),
         });
 
-        assert!(matches!(result, VerificationResult::Indeterminate(_)), "unexpected result: {result:?}");
-        let VerificationResult::Indeterminate(msg) = result else { unreachable!() };
+        assert!(
+            matches!(result, VerificationResult::Indeterminate(_)),
+            "unexpected result: {result:?}"
+        );
+        let VerificationResult::Indeterminate(msg) = result else {
+            unreachable!()
+        };
         assert!(msg.contains("backend_error:"), "message: {msg}");
         assert!(msg.contains("report claims"), "message: {msg}");
         assert!(!msg.contains("report evidence"), "message: {msg}");
@@ -735,14 +852,20 @@ mod tests {
     }
 
     #[test]
-    fn tee_verifier_backend_unavailable_quote_claims_keeps_quote_claims_surface_without_legacy_evidence_suffix() {
+    fn tee_verifier_backend_unavailable_quote_claims_keeps_quote_claims_surface_without_legacy_evidence_suffix(
+    ) {
         let result = TeeVerifier::classify_execution_err(BackendExecutionError::Unavailable {
             backend: "tee:mock-tee-unavailable".to_string(),
             reason: "quote claims verifier unavailable".to_string(),
         });
 
-        assert!(matches!(result, VerificationResult::Indeterminate(_)), "unexpected result: {result:?}");
-        let VerificationResult::Indeterminate(msg) = result else { unreachable!() };
+        assert!(
+            matches!(result, VerificationResult::Indeterminate(_)),
+            "unexpected result: {result:?}"
+        );
+        let VerificationResult::Indeterminate(msg) = result else {
+            unreachable!()
+        };
         assert!(msg.contains("unavailable:"), "message: {msg}");
         assert!(msg.contains("quote claims"), "message: {msg}");
         assert!(!msg.contains("evidence/claims"), "message: {msg}");
@@ -750,14 +873,20 @@ mod tests {
     }
 
     #[test]
-    fn tee_verifier_backend_unavailable_quote_attestation_receipt_claims_still_prefers_quote_claims_surface() {
+    fn tee_verifier_backend_unavailable_quote_attestation_receipt_claims_still_prefers_quote_claims_surface(
+    ) {
         let result = TeeVerifier::classify_execution_err(BackendExecutionError::Unavailable {
             backend: "tee:mock-tee-unavailable".to_string(),
             reason: "quote attestation receipt claims verifier unavailable".to_string(),
         });
 
-        assert!(matches!(result, VerificationResult::Indeterminate(_)), "unexpected result: {result:?}");
-        let VerificationResult::Indeterminate(msg) = result else { unreachable!() };
+        assert!(
+            matches!(result, VerificationResult::Indeterminate(_)),
+            "unexpected result: {result:?}"
+        );
+        let VerificationResult::Indeterminate(msg) = result else {
+            unreachable!()
+        };
         assert!(msg.contains("unavailable:"), "message: {msg}");
         assert!(msg.contains("quote claims"), "message: {msg}");
         assert!(!msg.contains("evidence/claims"), "message: {msg}");
@@ -766,14 +895,20 @@ mod tests {
     }
 
     #[test]
-    fn tee_verifier_backend_unavailable_report_attestation_receipt_claims_still_prefers_report_claims_surface() {
+    fn tee_verifier_backend_unavailable_report_attestation_receipt_claims_still_prefers_report_claims_surface(
+    ) {
         let result = TeeVerifier::classify_execution_err(BackendExecutionError::Unavailable {
             backend: "tee:mock-tee-unavailable".to_string(),
             reason: "report attestation receipt claims verifier unavailable".to_string(),
         });
 
-        assert!(matches!(result, VerificationResult::Indeterminate(_)), "unexpected result: {result:?}");
-        let VerificationResult::Indeterminate(msg) = result else { unreachable!() };
+        assert!(
+            matches!(result, VerificationResult::Indeterminate(_)),
+            "unexpected result: {result:?}"
+        );
+        let VerificationResult::Indeterminate(msg) = result else {
+            unreachable!()
+        };
         assert!(msg.contains("unavailable:"), "message: {msg}");
         assert!(msg.contains("report claims"), "message: {msg}");
         assert!(!msg.contains("evidence/claims"), "message: {msg}");
@@ -788,9 +923,17 @@ mod tests {
             reason: "quote evidence malformed".to_string(),
         });
 
-        assert!(matches!(result, VerificationResult::Invalid(_)), "unexpected result: {result:?}");
-        let VerificationResult::Invalid(msg) = result else { unreachable!() };
-        assert!(msg.contains("malformed TEE attestation payload/claims:"), "message: {msg}");
+        assert!(
+            matches!(result, VerificationResult::Invalid(_)),
+            "unexpected result: {result:?}"
+        );
+        let VerificationResult::Invalid(msg) = result else {
+            unreachable!()
+        };
+        assert!(
+            msg.contains("malformed TEE attestation payload/claims:"),
+            "message: {msg}"
+        );
         assert!(msg.contains("quote evidence malformed"), "message: {msg}");
     }
 
@@ -801,10 +944,21 @@ mod tests {
             reason: "quote/report evidence malformed".to_string(),
         });
 
-        assert!(matches!(result, VerificationResult::Invalid(_)), "unexpected result: {result:?}");
-        let VerificationResult::Invalid(msg) = result else { unreachable!() };
-        assert!(msg.contains("malformed TEE attestation payload/claims:"), "message: {msg}");
-        assert!(msg.contains("quote/report evidence malformed"), "message: {msg}");
+        assert!(
+            matches!(result, VerificationResult::Invalid(_)),
+            "unexpected result: {result:?}"
+        );
+        let VerificationResult::Invalid(msg) = result else {
+            unreachable!()
+        };
+        assert!(
+            msg.contains("malformed TEE attestation payload/claims:"),
+            "message: {msg}"
+        );
+        assert!(
+            msg.contains("quote/report evidence malformed"),
+            "message: {msg}"
+        );
     }
 
     #[test]
@@ -814,25 +968,45 @@ mod tests {
             reason: "report receipt malformed".to_string(),
         });
 
-        assert!(matches!(result, VerificationResult::Invalid(_)), "unexpected result: {result:?}");
-        let VerificationResult::Invalid(msg) = result else { unreachable!() };
-        assert!(msg.contains("malformed TEE attestation payload/claims:"), "message: {msg}");
+        assert!(
+            matches!(result, VerificationResult::Invalid(_)),
+            "unexpected result: {result:?}"
+        );
+        let VerificationResult::Invalid(msg) = result else {
+            unreachable!()
+        };
+        assert!(
+            msg.contains("malformed TEE attestation payload/claims:"),
+            "message: {msg}"
+        );
         assert!(msg.contains("report receipt malformed"), "message: {msg}");
         assert!(!msg.contains("report evidence"), "message: {msg}");
         assert!(!msg.contains("report claims"), "message: {msg}");
     }
 
     #[test]
-    fn tee_verifier_backend_malformed_attestation_payload_without_quote_or_report_still_collapses_to_payload_claims_surface() {
+    fn tee_verifier_backend_malformed_attestation_payload_without_quote_or_report_still_collapses_to_payload_claims_surface(
+    ) {
         let result = TeeVerifier::classify_execution_err(BackendExecutionError::MalformedProof {
             backend: "tee:mock-tee-malformed".to_string(),
             reason: "TEE attestation payload malformed".to_string(),
         });
 
-        assert!(matches!(result, VerificationResult::Invalid(_)), "unexpected result: {result:?}");
-        let VerificationResult::Invalid(msg) = result else { unreachable!() };
-        assert!(msg.contains("malformed TEE attestation payload/claims:"), "message: {msg}");
-        assert!(msg.contains("TEE attestation payload malformed"), "message: {msg}");
+        assert!(
+            matches!(result, VerificationResult::Invalid(_)),
+            "unexpected result: {result:?}"
+        );
+        let VerificationResult::Invalid(msg) = result else {
+            unreachable!()
+        };
+        assert!(
+            msg.contains("malformed TEE attestation payload/claims:"),
+            "message: {msg}"
+        );
+        assert!(
+            msg.contains("TEE attestation payload malformed"),
+            "message: {msg}"
+        );
         assert!(!msg.contains("evidence/claims"), "message: {msg}");
     }
 
@@ -1369,7 +1543,6 @@ mod tests {
                 if msg.contains("TEE attestation cryptographic verification backend not configured")
         ));
     }
-
 
     #[test]
     fn tee_verifier_requires_cryptographic_backend_for_attestation_report_alias() {

@@ -247,13 +247,25 @@ impl VerifierRegistry {
             "attestation quote v2" | "attestationquotev2" | "attestation quote v 2" => "tee",
             "attestation quote v3" | "attestationquotev3" | "attestation quote v 3" => "tee",
             "tee attestation report" | "teeattestationreport" => "tee",
-            "tee attestation report v1" | "teeattestationreportv1" | "tee attestation report v 1" => "tee",
-            "tee attestation report v2" | "teeattestationreportv2" | "tee attestation report v 2" => "tee",
-            "tee attestation report v3" | "teeattestationreportv3" | "tee attestation report v 3" => "tee",
+            "tee attestation report v1"
+            | "teeattestationreportv1"
+            | "tee attestation report v 1" => "tee",
+            "tee attestation report v2"
+            | "teeattestationreportv2"
+            | "tee attestation report v 2" => "tee",
+            "tee attestation report v3"
+            | "teeattestationreportv3"
+            | "tee attestation report v 3" => "tee",
             "tee attestation quote" | "teeattestationquote" => "tee",
-            "tee attestation quote v1" | "teeattestationquotev1" | "tee attestation quote v 1" => "tee",
-            "tee attestation quote v2" | "teeattestationquotev2" | "tee attestation quote v 2" => "tee",
-            "tee attestation quote v3" | "teeattestationquotev3" | "tee attestation quote v 3" => "tee",
+            "tee attestation quote v1" | "teeattestationquotev1" | "tee attestation quote v 1" => {
+                "tee"
+            }
+            "tee attestation quote v2" | "teeattestationquotev2" | "tee attestation quote v 2" => {
+                "tee"
+            }
+            "tee attestation quote v3" | "teeattestationquotev3" | "tee attestation quote v 3" => {
+                "tee"
+            }
             "ra report" | "rareport" => "tee",
             "ra report v1" | "rareportv1" | "ra report v 1" => "tee",
             "ra report v2" | "rareportv2" | "ra report v 2" => "tee",
@@ -568,7 +580,10 @@ mod tests {
             "sevsnpreport",
             "teecert",
         ] {
-            assert_eq!(VerifierRegistry::normalize_key(alias).as_deref(), Some("tee"));
+            assert_eq!(
+                VerifierRegistry::normalize_key(alias).as_deref(),
+                Some("tee")
+            );
         }
     }
 }
