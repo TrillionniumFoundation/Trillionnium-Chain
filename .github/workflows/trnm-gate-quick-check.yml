@@ -751,6 +751,10 @@ jobs:
         run: |
           ./scripts/v2/workflow_script_refs_summary_path_guard_test.sh
 
+      - name: Auto regression: workflow-script-refs-missing-workflow-root-guard-test
+        run: |
+          ./scripts/v2/workflow_script_refs_missing_workflow_root_guard_test.sh
+
       - name: Auto regression: workflow-script-refs-invalid-strict-mode-guard-test
         run: |
           ./scripts/v2/workflow_script_refs_invalid_strict_mode_guard_test.sh
