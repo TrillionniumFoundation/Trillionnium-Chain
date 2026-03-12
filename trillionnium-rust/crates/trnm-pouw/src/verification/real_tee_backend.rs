@@ -775,25 +775,180 @@ trait VerifierHttpClientSession: Send + Sync {
 }
 
 #[allow(dead_code)]
-struct FailClosedVerifierHttpClientSessionFactory;
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct VerifierHttpClientSessionRequest {
+    method: HttpMethod,
+    url: String,
+    headers: BTreeMap<String, String>,
+    body: Vec<u8>,
+    timeout_ms: u64,
+    profile: String,
+    transport_mode: VerifierTransportMode,
+}
 
-impl VerifierHttpClientSessionFactory for FailClosedVerifierHttpClientSessionFactory {
-    fn open_session(
+#[allow(dead_code)]
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct VerifierHttpClientSessionResponse {
+    status_code: u16,
+    headers: BTreeMap<String, String>,
+    body: Vec<u8>,
+}
+
+#[allow(dead_code)]
+trait VerifierHttpClientSessionRequestExecutor: Send + Sync {
+    fn execute_request(
         &self,
+        session_request: &VerifierHttpClientSessionRequest,
+        session_config: &ResolvedVerifierHttpClientSessionConfig,
+        runtime_request: &VerifierHttpClientRuntimeRequest,
+        config: &ResolvedVerifierHttpClientConfig,
+        client_request: &VerifierHttpClientRequest,
+        http_request: &HttpVerifierRequest,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<VerifierHttpClientSessionResponse, BackendExecutionError>;
+}
+
+#[allow(dead_code)]
+trait VerifierHttpClientSessionResponseReader: Send + Sync {
+    fn read_response(
+        &self,
+        session_response: VerifierHttpClientSessionResponse,
+        session_config: &ResolvedVerifierHttpClientSessionConfig,
+        runtime_request: &VerifierHttpClientRuntimeRequest,
+        config: &ResolvedVerifierHttpClientConfig,
+        client_request: &VerifierHttpClientRequest,
+        http_request: &HttpVerifierRequest,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<VerifierHttpClientRuntimeResponse, BackendExecutionError>;
+}
+
+#[allow(dead_code)]
+struct FailClosedVerifierHttpClientSessionRequestExecutor;
+
+impl VerifierHttpClientSessionRequestExecutor for FailClosedVerifierHttpClientSessionRequestExecutor {
+    fn execute_request(
+        &self,
+        _session_request: &VerifierHttpClientSessionRequest,
         _session_config: &ResolvedVerifierHttpClientSessionConfig,
         _runtime_request: &VerifierHttpClientRuntimeRequest,
         _config: &ResolvedVerifierHttpClientConfig,
         _client_request: &VerifierHttpClientRequest,
         http_request: &HttpVerifierRequest,
         request: &BackendVerificationRequest<'_>,
-    ) -> Result<Box<dyn VerifierHttpClientSession>, BackendExecutionError> {
+    ) -> Result<VerifierHttpClientSessionResponse, BackendExecutionError> {
         Err(BackendExecutionError::Unavailable {
             backend: request.backend_label(RealTeeBackend::backend_id_static()),
             reason: format!(
-                "real http client session factory for profile '{}' is not wired",
+                "real http client session request executor for profile '{}' is not wired",
                 http_request.profile
             ),
         })
+    }
+}
+
+#[allow(dead_code)]
+struct PassthroughVerifierHttpClientSessionResponseReader;
+
+impl VerifierHttpClientSessionResponseReader for PassthroughVerifierHttpClientSessionResponseReader {
+    fn read_response(
+        &self,
+        session_response: VerifierHttpClientSessionResponse,
+        _session_config: &ResolvedVerifierHttpClientSessionConfig,
+        _runtime_request: &VerifierHttpClientRuntimeRequest,
+        _config: &ResolvedVerifierHttpClientConfig,
+        _client_request: &VerifierHttpClientRequest,
+        _http_request: &HttpVerifierRequest,
+        _request: &BackendVerificationRequest<'_>,
+    ) -> Result<VerifierHttpClientRuntimeResponse, BackendExecutionError> {
+        Ok(VerifierHttpClientRuntimeResponse {
+            status_code: session_response.status_code,
+            headers: session_response.headers,
+            body: session_response.body,
+        })
+    }
+}
+
+#[allow(dead_code)]
+struct ExecutorBackedVerifierHttpClientSession {
+    request_executor: Arc<dyn VerifierHttpClientSessionRequestExecutor>,
+    response_reader: Arc<dyn VerifierHttpClientSessionResponseReader>,
+}
+
+#[allow(dead_code)]
+impl ExecutorBackedVerifierHttpClientSession {
+    fn new() -> Self {
+        Self {
+            request_executor: Arc::new(FailClosedVerifierHttpClientSessionRequestExecutor),
+            response_reader: Arc::new(PassthroughVerifierHttpClientSessionResponseReader),
+        }
+    }
+
+    #[cfg(test)]
+    fn with_components(
+        request_executor: Arc<dyn VerifierHttpClientSessionRequestExecutor>,
+        response_reader: Arc<dyn VerifierHttpClientSessionResponseReader>,
+    ) -> Self {
+        Self {
+            request_executor,
+            response_reader,
+        }
+    }
+}
+
+impl VerifierHttpClientSession for ExecutorBackedVerifierHttpClientSession {
+    fn execute_session(
+        &self,
+        session_config: &ResolvedVerifierHttpClientSessionConfig,
+        runtime_request: &VerifierHttpClientRuntimeRequest,
+        config: &ResolvedVerifierHttpClientConfig,
+        client_request: &VerifierHttpClientRequest,
+        http_request: &HttpVerifierRequest,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<VerifierHttpClientRuntimeResponse, BackendExecutionError> {
+        let session_request = VerifierHttpClientSessionRequest {
+            method: runtime_request.method,
+            url: runtime_request.url.clone(),
+            headers: runtime_request.headers.clone(),
+            body: runtime_request.body.clone(),
+            timeout_ms: session_config.timeout_ms,
+            profile: session_config.profile.clone(),
+            transport_mode: session_config.transport_mode.clone(),
+        };
+        let session_response = self.request_executor.execute_request(
+            &session_request,
+            session_config,
+            runtime_request,
+            config,
+            client_request,
+            http_request,
+            request,
+        )?;
+        self.response_reader.read_response(
+            session_response,
+            session_config,
+            runtime_request,
+            config,
+            client_request,
+            http_request,
+            request,
+        )
+    }
+}
+
+#[allow(dead_code)]
+struct StaticVerifierHttpClientSessionFactory;
+
+impl VerifierHttpClientSessionFactory for StaticVerifierHttpClientSessionFactory {
+    fn open_session(
+        &self,
+        _session_config: &ResolvedVerifierHttpClientSessionConfig,
+        _runtime_request: &VerifierHttpClientRuntimeRequest,
+        _config: &ResolvedVerifierHttpClientConfig,
+        _client_request: &VerifierHttpClientRequest,
+        _http_request: &HttpVerifierRequest,
+        _request: &BackendVerificationRequest<'_>,
+    ) -> Result<Box<dyn VerifierHttpClientSession>, BackendExecutionError> {
+        Ok(Box::new(ExecutorBackedVerifierHttpClientSession::new()))
     }
 }
 
@@ -806,7 +961,7 @@ struct SessionBackedVerifierHttpClientRuntime {
 impl SessionBackedVerifierHttpClientRuntime {
     fn new() -> Self {
         Self {
-            session_factory: Arc::new(FailClosedVerifierHttpClientSessionFactory),
+            session_factory: Arc::new(StaticVerifierHttpClientSessionFactory),
         }
     }
 
@@ -4016,6 +4171,96 @@ mod tests {
         }
     }
 
+    #[derive(Default)]
+    struct RecordingHttpClientSessionRequestExecutor {
+        requests: Mutex<Vec<VerifierHttpClientSessionRequest>>,
+    }
+
+    impl VerifierHttpClientSessionRequestExecutor for RecordingHttpClientSessionRequestExecutor {
+        fn execute_request(
+            &self,
+            session_request: &VerifierHttpClientSessionRequest,
+            session_config: &ResolvedVerifierHttpClientSessionConfig,
+            _runtime_request: &VerifierHttpClientRuntimeRequest,
+            _config: &ResolvedVerifierHttpClientConfig,
+            _client_request: &VerifierHttpClientRequest,
+            _http_request: &HttpVerifierRequest,
+            _request: &BackendVerificationRequest<'_>,
+        ) -> Result<VerifierHttpClientSessionResponse, BackendExecutionError> {
+            self.requests.lock().unwrap().push(session_request.clone());
+            assert_eq!(session_request.profile, session_config.profile);
+            assert_eq!(session_request.transport_mode, session_config.transport_mode);
+            assert_eq!(session_request.timeout_ms, session_config.timeout_ms);
+            Ok(VerifierHttpClientSessionResponse {
+                status_code: 210,
+                headers: BTreeMap::from([("x-session-executor".to_string(), "ok".to_string())]),
+                body: b"session-executor-ok".to_vec(),
+            })
+        }
+    }
+
+    #[derive(Default)]
+    struct RecordingHttpClientSessionResponseReader {
+        responses: Mutex<Vec<VerifierHttpClientSessionResponse>>,
+    }
+
+    impl VerifierHttpClientSessionResponseReader for RecordingHttpClientSessionResponseReader {
+        fn read_response(
+            &self,
+            session_response: VerifierHttpClientSessionResponse,
+            _session_config: &ResolvedVerifierHttpClientSessionConfig,
+            _runtime_request: &VerifierHttpClientRuntimeRequest,
+            _config: &ResolvedVerifierHttpClientConfig,
+            _client_request: &VerifierHttpClientRequest,
+            _http_request: &HttpVerifierRequest,
+            _request: &BackendVerificationRequest<'_>,
+        ) -> Result<VerifierHttpClientRuntimeResponse, BackendExecutionError> {
+            self.responses.lock().unwrap().push(session_response.clone());
+            Ok(VerifierHttpClientRuntimeResponse {
+                status_code: session_response.status_code,
+                headers: session_response.headers,
+                body: session_response.body,
+            })
+        }
+    }
+
+    struct RejectingHttpClientSessionRequestExecutor;
+
+    impl VerifierHttpClientSessionRequestExecutor for RejectingHttpClientSessionRequestExecutor {
+        fn execute_request(
+            &self,
+            _session_request: &VerifierHttpClientSessionRequest,
+            _session_config: &ResolvedVerifierHttpClientSessionConfig,
+            _runtime_request: &VerifierHttpClientRuntimeRequest,
+            _config: &ResolvedVerifierHttpClientConfig,
+            _client_request: &VerifierHttpClientRequest,
+            _http_request: &HttpVerifierRequest,
+            request: &BackendVerificationRequest<'_>,
+        ) -> Result<VerifierHttpClientSessionResponse, BackendExecutionError> {
+            Err(BackendExecutionError::Unavailable {
+                backend: request.backend_label(RealTeeBackend::backend_id_static()),
+                reason: "client session request executor rejected session".into(),
+            })
+        }
+    }
+
+    struct PanicHttpClientSessionResponseReader;
+
+    impl VerifierHttpClientSessionResponseReader for PanicHttpClientSessionResponseReader {
+        fn read_response(
+            &self,
+            _session_response: VerifierHttpClientSessionResponse,
+            _session_config: &ResolvedVerifierHttpClientSessionConfig,
+            _runtime_request: &VerifierHttpClientRuntimeRequest,
+            _config: &ResolvedVerifierHttpClientConfig,
+            _client_request: &VerifierHttpClientRequest,
+            _http_request: &HttpVerifierRequest,
+            _request: &BackendVerificationRequest<'_>,
+        ) -> Result<VerifierHttpClientRuntimeResponse, BackendExecutionError> {
+            panic!("session response reader should not be called when request executor fails")
+        }
+    }
+
     struct PanicHttpClientRuntimeResponseAdapter;
 
     impl VerifierHttpClientRuntimeResponseAdapter for PanicHttpClientRuntimeResponseAdapter {
@@ -4581,6 +4826,141 @@ mod tests {
     }
 
     #[test]
+    fn executor_backed_session_executes_request_and_reads_response() {
+        let task = mock_task();
+        let request_executor = Arc::new(RecordingHttpClientSessionRequestExecutor::default());
+        let response_reader = Arc::new(RecordingHttpClientSessionResponseReader::default());
+        let session = ExecutorBackedVerifierHttpClientSession::with_components(
+            request_executor.clone(),
+            response_reader.clone(),
+        );
+        let response = session
+            .execute_session(
+                &ResolvedVerifierHttpClientSessionConfig {
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                    timeout_ms: 5_000,
+                },
+                &VerifierHttpClientRuntimeRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: b"session-request-body".to_vec(),
+                    timeout_ms: 5_000,
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                },
+                &ResolvedVerifierHttpClientConfig {
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                    timeout_ms: 5_000,
+                },
+                &VerifierHttpClientRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: b"session-request-body".to_vec(),
+                    timeout_ms: 5_000,
+                },
+                &HttpVerifierRequest {
+                    method: HttpMethod::Post,
+                    transport_mode: VerifierTransportMode::External,
+                    profile: "intel-dcap-external-default".into(),
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: "session-request-body".into(),
+                    timeout_ms: 5_000,
+                    retry_policy: RetryBackoffPolicy {
+                        max_attempts: 3,
+                        backoff_ms: 250,
+                        strategy: RetryBackoffStrategy::Exponential,
+                    },
+                },
+                &BackendVerificationRequest {
+                    family: VerificationBackendFamily::Tee,
+                    task: &task,
+                    proof_data: b"TEE:...",
+                    tee_payload: None,
+                    zk_payload: None,
+                    resolved_vk_ref: None,
+                },
+            )
+            .unwrap();
+        assert_eq!(response.status_code, 210);
+        assert_eq!(response.body, b"session-executor-ok".to_vec());
+        let requests = request_executor.requests.lock().unwrap().clone();
+        assert_eq!(requests.len(), 1);
+        assert_eq!(requests[0].profile, "intel-dcap-external-default");
+        assert_eq!(requests[0].body, b"session-request-body".to_vec());
+        let responses = response_reader.responses.lock().unwrap().clone();
+        assert_eq!(responses.len(), 1);
+        assert_eq!(responses[0].status_code, 210);
+        assert_eq!(responses[0].body, b"session-executor-ok".to_vec());
+    }
+
+    #[test]
+    fn executor_backed_session_fails_closed_when_request_executor_rejects() {
+        let task = mock_task();
+        let session = ExecutorBackedVerifierHttpClientSession::with_components(
+            Arc::new(RejectingHttpClientSessionRequestExecutor),
+            Arc::new(PanicHttpClientSessionResponseReader),
+        );
+        let err = session
+            .execute_session(
+                &ResolvedVerifierHttpClientSessionConfig {
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                    timeout_ms: 5_000,
+                },
+                &VerifierHttpClientRuntimeRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: Vec::new(),
+                    timeout_ms: 5_000,
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                },
+                &ResolvedVerifierHttpClientConfig {
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                    timeout_ms: 5_000,
+                },
+                &VerifierHttpClientRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: Vec::new(),
+                    timeout_ms: 5_000,
+                },
+                &HttpVerifierRequest {
+                    method: HttpMethod::Post,
+                    transport_mode: VerifierTransportMode::External,
+                    profile: "intel-dcap-external-default".into(),
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: String::new(),
+                    timeout_ms: 5_000,
+                    retry_policy: RetryBackoffPolicy {
+                        max_attempts: 3,
+                        backoff_ms: 250,
+                        strategy: RetryBackoffStrategy::Exponential,
+                    },
+                },
+                &BackendVerificationRequest {
+                    family: VerificationBackendFamily::Tee,
+                    task: &task,
+                    proof_data: b"TEE:...",
+                    tee_payload: None,
+                    zk_payload: None,
+                    resolved_vk_ref: None,
+                },
+            )
+            .unwrap_err();
+        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session request executor rejected session")));
+    }
+
+    #[test]
     fn session_backed_runtime_opens_session_and_executes_request() {
         let task = mock_task();
         let session_factory = Arc::new(RecordingHttpClientSessionFactory::default());
@@ -5119,7 +5499,7 @@ mod tests {
                 },
             )
             .unwrap_err();
-        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("intel-dcap-external-default") && reason.contains("client session factory")));
+        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("intel-dcap-external-default") && reason.contains("client session request executor")));
     }
 
     #[test]
