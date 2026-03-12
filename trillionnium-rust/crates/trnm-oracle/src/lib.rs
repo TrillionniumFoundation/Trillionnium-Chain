@@ -234,6 +234,20 @@ pub struct OracleValidationObservation {
     pub accepted_total: u32,
 }
 
+impl OracleValidationObservation {
+    pub fn classified_reject_total(&self) -> u32 {
+        self.stale_reject_total + self.quorum_reject_total + self.drift_reject_total
+    }
+
+    pub fn classified_outcome_total(&self) -> u32 {
+        self.accepted_total + self.classified_reject_total()
+    }
+
+    pub fn classified_outcome_conserves_sample_count(&self, sample_count: u32) -> bool {
+        self.classified_outcome_total() == sample_count
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct OracleValidationMetrics {
     pub oracle_stale_reject_total: u32,
@@ -820,5 +834,100 @@ mod tests {
             Some(error) if error.starts_with("snapshot hash mismatch:")
         ));
         assert_eq!(report.metrics.oracle_source_cardinality, 2);
+    }
+
+    #[test]
+    fn observation_helpers_match_metrics_helpers_for_classified_outcomes() {
+        let reports = vec![
+            validate_snapshot_observed(
+                &policy(),
+                &snapshot_with(100_000, Some(100_100), 10_000),
+                10_100,
+            ),
+            validate_snapshot_observed(
+                &policy(),
+                &snapshot_with(100_000, Some(100_100), 10_000),
+                16_000,
+            ),
+            validate_snapshot_observed(
+                &policy(),
+                &OracleSnapshot::new(
+                    "btc/usd",
+                    100_000,
+                    vec![source("coingecko")],
+                    1,
+                    Some(100_000),
+                    Some(120),
+                    1_000,
+                    2_000,
+                    10_000,
+                )
+                .expect("quorum snapshot build"),
+                10_100,
+            ),
+            validate_snapshot_observed(
+                &policy(),
+                &snapshot_with(120_000, Some(100_000), 10_000),
+                10_100,
+            ),
+        ];
+
+        for report in reports {
+            assert_eq!(
+                report.observation.classified_reject_total(),
+                report.metrics.classified_reject_total(),
+                "classified reject totals drifted for error {:?}",
+                report.error
+            );
+            assert_eq!(
+                report.observation.classified_outcome_total(),
+                report.metrics.classified_outcome_total(),
+                "classified outcome totals drifted for error {:?}",
+                report.error
+            );
+            assert_eq!(
+                report
+                    .observation
+                    .classified_outcome_conserves_sample_count(report.metrics.sample_count),
+                report.classified_outcome_conserves_sample_count(),
+                "classified sample-count conservation drifted for error {:?}",
+                report.error
+            );
+        }
+    }
+
+    #[test]
+    fn observation_helpers_keep_unclassified_errors_out_of_classified_totals() {
+        let report = validate_snapshot_observed(
+            &policy(),
+            &OracleSnapshot::new(
+                "btc/usd",
+                100_000,
+                vec![source("coingecko"), source("chainlink")],
+                61,
+                Some(100_000),
+                Some(120),
+                1_000,
+                2_000,
+                10_000,
+            )
+            .expect("snapshot build"),
+            10_100,
+        );
+
+        assert_eq!(report.error.as_deref(), Some("rate"));
+        assert_eq!(report.observation.classified_reject_total(), 0);
+        assert_eq!(report.observation.classified_outcome_total(), 0);
+        assert!(!report
+            .observation
+            .classified_outcome_conserves_sample_count(report.metrics.sample_count));
+        assert_eq!(
+            report.observation.classified_reject_total(),
+            report.metrics.classified_reject_total()
+        );
+        assert_eq!(
+            report.observation.classified_outcome_total(),
+            report.metrics.classified_outcome_total()
+        );
     }
 }
