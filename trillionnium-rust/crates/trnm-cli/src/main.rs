@@ -461,6 +461,45 @@ fn normalize_json_error(value: &serde_json::Value) -> Option<String> {
     }
 }
 
+fn json_u64_at_path<'a>(value: &'a serde_json::Value, path: &[&str]) -> Option<u64> {
+    let mut current = value;
+    for key in path {
+        current = current.get(*key)?;
+    }
+    current.as_u64()
+}
+
+fn infer_json_tx_status(value: &serde_json::Value) -> Option<String> {
+    for path in [
+        ["tx_result", "code"].as_slice(),
+        ["deliver_tx", "code"].as_slice(),
+        ["check_tx", "code"].as_slice(),
+        ["code"].as_slice(),
+    ] {
+        if let Some(code) = json_u64_at_path(value, path) {
+            return Some(if code == 0 { "committed" } else { "fail" }.to_string());
+        }
+    }
+    None
+}
+
+fn infer_kv_tx_status(key: &str, value: &str) -> Option<String> {
+    match key {
+        "code" | "tx_code" | "txcode" | "transaction_code" | "transactioncode"
+        | "deliver_tx_code" | "delivertxcode" | "check_tx_code" | "checktxcode" => {
+            let cleaned = value
+                .trim()
+                .trim_matches('"')
+                .trim_matches('\'')
+                .trim_matches('`')
+                .trim_end_matches(|c: char| c.is_ascii_punctuation());
+            let code = cleaned.parse::<u64>().ok()?;
+            Some(if code == 0 { "committed" } else { "fail" }.to_string())
+        }
+        _ => None,
+    }
+}
+
 fn parse_tx_query_response(raw: &str, requested_tx_hash: &str) -> Result<TxQueryResponse> {
     if let Ok(v) = serde_json::from_str::<serde_json::Value>(raw) {
         let payload = v.get("result").unwrap_or(&v);
@@ -490,6 +529,7 @@ fn parse_tx_query_response(raw: &str, requested_tx_hash: &str) -> Result<TxQuery
             .or_else(|| payload.get("transactionState"))
             .and_then(|x| x.as_str())
             .and_then(normalize_tx_status)
+            .or_else(|| infer_json_tx_status(payload))
             .ok_or_else(|| anyhow!("missing/invalid status field in tx query response"))?;
         let error = payload.get("error").and_then(normalize_json_error);
         return Ok(TxQueryResponse {
@@ -533,6 +573,19 @@ fn parse_tx_query_response(raw: &str, requested_tx_hash: &str) -> Result<TxQuery
                 | "transactionstate" => {
                     if let Some(normalized) = normalize_tx_status(&value) {
                         status = Some(normalized);
+                    }
+                }
+                "code"
+                | "tx_code"
+                | "txcode"
+                | "transaction_code"
+                | "transactioncode"
+                | "deliver_tx_code"
+                | "delivertxcode"
+                | "check_tx_code"
+                | "checktxcode" => {
+                    if status.is_none() {
+                        status = infer_kv_tx_status(&key, &value);
                     }
                 }
                 "error" => {
@@ -1202,6 +1255,30 @@ mod tests {
             "{\"tx_hash\":\"0x777\",\"status\":\"fail\",\"error\":{\"code\":\"E_NONCE\"}}";
         let parsed_obj = parse_tx_query_response(json_obj, "0xfallback").unwrap();
         assert_eq!(parsed_obj.error.as_deref(), Some("{\"code\":\"E_NONCE\"}"));
+    }
+
+    #[test]
+    fn tx_query_parse_infers_status_from_common_code_fields() {
+        let json_root_code = "{\"tx_hash\":\"0x701\",\"code\":0}";
+        let parsed_root_code = parse_tx_query_response(json_root_code, "0xfallback").unwrap();
+        assert_eq!(parsed_root_code.tx_hash, "0x701");
+        assert_eq!(parsed_root_code.status, "committed");
+
+        let json_nested_code =
+            "{\"result\":{\"tx_hash\":\"0x702\",\"tx_result\":{\"code\":9}}}";
+        let parsed_nested_code = parse_tx_query_response(json_nested_code, "0xfallback").unwrap();
+        assert_eq!(parsed_nested_code.tx_hash, "0x702");
+        assert_eq!(parsed_nested_code.status, "fail");
+
+        let kv_root_code = "tx_hash=0x703\ncode=0\n";
+        let parsed_kv_root_code = parse_tx_query_response(kv_root_code, "0xfallback").unwrap();
+        assert_eq!(parsed_kv_root_code.tx_hash, "0x703");
+        assert_eq!(parsed_kv_root_code.status, "committed");
+
+        let kv_deliver_code = "tx_hash=0x704\ndeliver_tx_code=12\n";
+        let parsed_kv_deliver_code = parse_tx_query_response(kv_deliver_code, "0xfallback").unwrap();
+        assert_eq!(parsed_kv_deliver_code.tx_hash, "0x704");
+        assert_eq!(parsed_kv_deliver_code.status, "fail");
     }
 
     #[test]
