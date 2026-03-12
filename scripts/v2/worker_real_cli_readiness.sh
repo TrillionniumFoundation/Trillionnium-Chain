@@ -45,6 +45,13 @@ extract_tx_hash() {
   while IFS= read -r tok; do
     tok="$(printf "%s" "$tok" | sed -E "s/.*[:=][[:space:]]*//")"
     tok="$(printf "%s" "$tok" | sed -E 's/^[[:space:]"'"'"'`({\[]+//; s/[[:space:]"'"'"'`,;:)}\]]+$//')"
+    # Keep readiness tolerant to shell-safe forms like tx_hash="..." emitted by
+    # the CLI/operator wrappers. A trailing quote can survive the trim path, so
+    # strip one more layer before validating the hash payload.
+    tok="${tok%\"}"
+    tok="${tok#\"}"
+    tok="${tok%\'}"
+    tok="${tok#\'}"
     tok="${tok#0x}"
     tok="${tok#0X}"
     if [[ "$tok" =~ ^[0-9A-Fa-f]{16,128}$ ]]; then
