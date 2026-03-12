@@ -440,6 +440,34 @@ mod tests {
     }
 
     #[test]
+    fn hot_streak_explicit_hot_bucket_matches_auto_adaptive_resolved_output() {
+        let txs = build_hot_streak_txs(20_000, 2_000, 3, 1);
+        let decision = auto_adaptive_decision(&txs);
+        let (auto_groups, auto_profile) =
+            build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::AutoAdaptive);
+        let (explicit_groups, explicit_profile) = build_parallel_groups_profile_with_strategy(
+            &txs,
+            GroupingStrategy::HotBucketInterleave,
+        );
+
+        assert!(
+            decision.use_hot_bucket,
+            "expected hot-streak bench to stay on hot-bucket path"
+        );
+        assert_eq!(decision.reason, "hotspot_detected");
+        assert!(matches!(
+            resolve_grouping_strategy(&txs, GroupingStrategy::AutoAdaptive),
+            GroupingStrategy::HotBucketInterleave
+        ));
+        assert_profiles_match(
+            &auto_groups,
+            &auto_profile,
+            &explicit_groups,
+            &explicit_profile,
+        );
+    }
+
+    #[test]
     fn mixed_bench_auto_adaptive_stays_on_original_strategy_without_hotspot_signal() {
         let txs = build_mixed_txs(20_000, 2_000, 3, 1);
         let decision = auto_adaptive_decision(&txs);
