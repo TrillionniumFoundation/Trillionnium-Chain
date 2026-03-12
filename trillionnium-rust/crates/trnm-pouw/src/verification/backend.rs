@@ -495,8 +495,12 @@ impl VerificationBackendRegistry {
     }
 
     pub fn register(&mut self, backend: Arc<dyn VerificationBackend>) {
-        self.backends
-            .insert(backend.backend_id().trim().to_ascii_lowercase(), backend);
+        let raw_key = backend.backend_id().trim().to_ascii_lowercase();
+        self.backends.insert(raw_key, Arc::clone(&backend));
+
+        if let Some(normalized_key) = normalize_backend_token(backend.backend_id()) {
+            self.backends.entry(normalized_key).or_insert(backend);
+        }
     }
 
     pub fn resolve(
@@ -508,6 +512,10 @@ impl VerificationBackendRegistry {
         self.backends
             .get(&key)
             .cloned()
+            .or_else(|| {
+                normalize_backend_token(kind.key())
+                    .and_then(|normalized_key| self.backends.get(&normalized_key).cloned())
+            })
             .ok_or_else(|| BackendSelectionError::UnknownBackend {
                 family,
                 backend: key,
