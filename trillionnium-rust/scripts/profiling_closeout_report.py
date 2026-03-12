@@ -1104,8 +1104,11 @@ def main():
             "profile.report.read_fanout",
             "profile.report.write_every",
             "profile.report.persist_profile",
+            "profile.report.capture_started_at_epoch",
+            "profile.report.capture_started_at_iso",
             "profile.report.elapsed_ms",
             "profile.report.path",
+            "profile.report.artifact_basename",
             "profile.report.persist_error",
             "profile.report.autopilot_hint",
         ]
@@ -1115,11 +1118,32 @@ def main():
             if key in executor_profile_metrics
         ]
         embedded_profile_path = executor_profile_metrics.get("profile.report.path")
+        embedded_profile_basename = executor_profile_metrics.get("profile.report.artifact_basename")
+        embedded_capture_epoch = executor_profile_metrics.get("profile.report.capture_started_at_epoch")
         if executor_profile:
+            selected_basename = os.path.basename(executor_profile)
+            selected_capture_stamp = detect_capture_stamp(executor_profile)
+            selected_capture_epoch = "unavailable"
+            if selected_capture_stamp:
+                normalized_selected_epoch = normalize_capture_stamp(*selected_capture_stamp)
+                if normalized_selected_epoch is not None:
+                    selected_capture_epoch = str(normalized_selected_epoch)
             executor_context_lines.extend([
                 f"- executor_profile.selected_artifact_path: {executor_profile}",
                 f"- executor_profile.selected_artifact_exists: {'true' if os.path.exists(executor_profile) else 'false'}",
+                f"- executor_profile.selected_artifact_basename: {selected_basename}",
+                f"- executor_profile.selected_capture_stamp_epoch: {selected_capture_epoch}",
             ])
+            if embedded_profile_basename:
+                executor_context_lines.append(
+                    "- executor_profile.embedded_artifact_basename_matches_selected: "
+                    f"{'true' if embedded_profile_basename == selected_basename else 'false'}"
+                )
+            if embedded_capture_epoch:
+                executor_context_lines.append(
+                    "- executor_profile.embedded_capture_epoch_matches_selected: "
+                    f"{'true' if embedded_capture_epoch == selected_capture_epoch else 'false'}"
+                )
         if embedded_profile_path:
             embedded_profile_exists = os.path.exists(embedded_profile_path)
             executor_context_lines.extend([
