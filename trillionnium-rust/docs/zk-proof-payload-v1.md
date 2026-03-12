@@ -14,6 +14,10 @@ Current canonical payload schema token used by router / backend tests / docs:
 
 - `trnm.zk.payload.v0`
 
+Current canonical payload proof byte encoding field used by router / backend tests / docs:
+
+- `proof_encoding` (`hex | base64`)
+
 v0 fail-closed boundary reminder:
 
 - The current router/parser only accepts canonical `zk_system` tokens `groth16 | plonk | halo2 | stark | risc0 | sp1`.
