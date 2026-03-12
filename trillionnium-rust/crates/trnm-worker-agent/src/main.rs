@@ -937,6 +937,10 @@ fn parse_tx_hash(text: &str) -> Option<String> {
         "tx-hash:",
         "TX-HASH=",
         "TX-HASH:",
+        "tx hash=",
+        "tx hash:",
+        "TX HASH=",
+        "TX HASH:",
         "txHash=",
         "txHash:",
         "TXHASH=",
@@ -947,6 +951,10 @@ fn parse_tx_hash(text: &str) -> Option<String> {
         "\"tx_hash\" :",
         "\"TX_HASH\":",
         "\"TX_HASH\" :",
+        "\"tx-hash\":",
+        "\"tx-hash\" :",
+        "\"TX-HASH\":",
+        "\"TX-HASH\" :",
         "\"txHash\":",
         "\"txHash\" :",
         "\"TXHASH\":",
@@ -2129,6 +2137,17 @@ mod tests {
     }
 
     #[test]
+    fn parse_tx_hash_accepts_space_separated_receipt_keys() {
+        let shell = parse_tx_hash("[adapter] commit accepted tx hash=0xDEADBEEF")
+            .expect("space-separated shell receipt hash should parse");
+        assert_eq!(shell, "deadbeef");
+
+        let uppercase = parse_tx_hash("[adapter] commit accepted TX HASH:0xABCD1234")
+            .expect("uppercase space-separated receipt hash should parse");
+        assert_eq!(uppercase, "abcd1234");
+    }
+
+    #[test]
     fn parse_tx_hash_accepts_uppercase_receipt_keys() {
         let shell = parse_tx_hash("[adapter] commit accepted TX_HASH=0xDEADBEEF")
             .expect("uppercase shell receipt hash should parse");
@@ -2155,6 +2174,18 @@ mod tests {
         let json = parse_tx_hash("{\"tx_hash\" : \"0xDEADBEEF\", \"status\": \"accepted\"}")
             .expect("json receipt hash with whitespace before colon should parse");
         assert_eq!(json, "deadbeef");
+    }
+
+    #[test]
+    fn parse_tx_hash_accepts_hyphenated_json_receipt_keys() {
+        let json = parse_tx_hash("{\"tx-hash\": \"0xDEADBEEF\", \"status\": \"accepted\"}")
+            .expect("hyphenated json receipt hash should parse");
+        assert_eq!(json, "deadbeef");
+
+        let uppercase =
+            parse_tx_hash("{\"TX-HASH\" : \"ABCD1234\", \"status\": \"accepted\"}")
+                .expect("uppercase hyphenated json receipt hash should parse");
+        assert_eq!(uppercase, "abcd1234");
     }
 
     #[test]
