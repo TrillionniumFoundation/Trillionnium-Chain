@@ -290,6 +290,21 @@ def main():
             f"spread_seconds={spread_seconds} newest_freshness={freshness_label(file_age_seconds(newest))} "
             f"oldest_freshness={freshness_label(file_age_seconds(oldest))}"
         )
+        if selected and selected in candidates:
+            selected_rank = candidates.index(selected) + 1
+            selected_vs_newest_seconds = max(0, int(os.path.getmtime(newest) - os.path.getmtime(selected)))
+            preview.append(
+                f"  - selected_status: is_newest={'true' if selected_rank == 1 else 'false'} "
+                f"rank={selected_rank}/{len(candidates)} freshness={freshness_label(file_age_seconds(selected))} "
+                f"updated_at={file_mtime_iso(selected) or 'n/a'} age_seconds={file_age_seconds(selected) if file_age_seconds(selected) is not None else 'n/a'} "
+                f"delta_vs_newest_seconds={selected_vs_newest_seconds}"
+            )
+        elif selected:
+            preview.append(
+                f"  - selected_status: is_newest=false rank=not_in_candidate_set freshness={freshness_label(file_age_seconds(selected))} "
+                f"updated_at={file_mtime_iso(selected) or 'n/a'} age_seconds={file_age_seconds(selected) if file_age_seconds(selected) is not None else 'n/a'} "
+                f"delta_vs_newest_seconds=n/a"
+            )
         for idx, path in enumerate(candidates[:max_items], start=1):
             preview.append(
                 f"  - recent_{idx}: basename={os.path.basename(path)} "
