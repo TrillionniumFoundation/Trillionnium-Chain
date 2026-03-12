@@ -10670,7 +10670,7 @@ mod tests {
     }
 
     #[test]
-    fn challenged_timeout_rejects_invalid_slash_on_timeout_governance_value_without_mutation() {
+    fn challenged_timeout_rejects_pre_forfeited_marker_without_mutation() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
         st.set_balance("worker1", 40);
@@ -10699,12 +10699,11 @@ mod tests {
         )
         .unwrap();
 
-        st.insert_object(
-            "gov_param/default_slash_on_unresolved_challenge".into(),
-            b"maybe".to_vec(),
-        );
+        let mut malformed = st.get_task(r5.id).unwrap();
+        malformed.challenge_bond_forfeited = Some(true);
+        let bad_ref = st.update_task(r5, malformed).unwrap();
 
-        let before_task = st.get_task(r5.id).unwrap();
+        let before_task = st.get_task(bad_ref.id).unwrap();
         let before_challenger = st.balance_of("challenger");
         let before_worker = st.balance_of("worker1");
         let before_lock = st.balance_of(&worker_stake_lock_account(40_119));
@@ -10712,14 +10711,13 @@ mod tests {
         let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
         let before_slash_treasury = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
 
-        let err = apply_timeout(&mut st, r5.clone(), 221).expect_err(
-            "invalid default_slash_on_unresolved_challenge value must fail closed",
-        );
+        let err = apply_timeout(&mut st, bad_ref, 221)
+            .expect_err("pre-forfeited challenged timeout metadata must fail closed");
         assert!(matches!(err, PouwError::State(msg) if msg.contains(
-            "invalid boolean governance value for default_slash_on_unresolved_challenge: maybe"
+            "challenged task cannot have terminal challenge bond outcome"
         )));
 
-        let after_task = st.get_task(r5.id).unwrap();
+        let after_task = st.get_task(before_task.task_id).unwrap();
         assert_eq!(after_task.status, before_task.status);
         assert_eq!(
             after_task.challenge_bond_forfeited,
