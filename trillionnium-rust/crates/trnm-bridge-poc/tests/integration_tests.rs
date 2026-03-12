@@ -577,6 +577,35 @@ fn test_authorized_calls_reject_subject_token_with_general_punctuation_spacing_v
 }
 
 #[test]
+fn test_authorized_calls_reject_subject_token_with_alm_and_zwnj_controls() {
+    let mut request = SettlementRequest::new(4910, "0xabc125".to_string());
+    let malformed = CapabilityToken {
+        subject: "did:trn:worker\u{061C}\u{200C}-j".to_string(),
+        capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
+    };
+
+    let finalize_err = request.settle_authorized(&malformed, 522).unwrap_err();
+    assert_eq!(
+        finalize_err,
+        SettlementError::MalformedToken {
+            reason: "non-canonical subject",
+        }
+    );
+    assert_eq!(request.status, BridgeStatus::Pending);
+
+    let revert_err = request
+        .revert_authorized(&malformed, "bridge timeout".to_string())
+        .unwrap_err();
+    assert_eq!(
+        revert_err,
+        SettlementError::MalformedToken {
+            reason: "non-canonical subject",
+        }
+    );
+    assert_eq!(request.status, BridgeStatus::Pending);
+}
+
+#[test]
 fn test_authorized_calls_reject_tx_hash_and_subject_with_interlinear_annotation_controls() {
     let mut request = SettlementRequest::new(492, "0xabc\u{FFF9}def\u{FFFA}ghi\u{FFFB}".to_string());
     let malformed = CapabilityToken {
