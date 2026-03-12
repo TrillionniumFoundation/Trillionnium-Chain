@@ -26,7 +26,7 @@ from pathlib import Path
 from typing import Any
 
 
-ENV_RE = re.compile(r"^([A-Z0-9_]+)=(.*)$")
+ENV_RE = re.compile(r"^(?:export\s+)?([A-Z0-9_]+)=(.*)$")
 
 
 def safe_json(path: Path) -> dict[str, Any]:
