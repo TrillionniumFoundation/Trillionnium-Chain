@@ -100,7 +100,17 @@ fn is_disallowed_invisible_char(ch: char) -> bool {
             | '\u{034F}'
             | '\u{061C}'
             | '\u{180E}'
+            | '\u{2000}'
+            | '\u{2001}'
+            | '\u{2002}'
+            | '\u{2003}'
+            | '\u{2004}'
+            | '\u{2005}'
+            | '\u{2006}'
             | '\u{2007}'
+            | '\u{2008}'
+            | '\u{2009}'
+            | '\u{200A}'
             | '\u{200B}'
             | '\u{200C}'
             | '\u{200D}'
@@ -194,6 +204,13 @@ mod tests {
         let raw = "target\u{205F}relay\u{3000}timeout";
         let normalized = normalize_failure_reason(raw);
         assert_eq!(normalized, "target relay timeout");
+    }
+
+    #[test]
+    fn normalize_failure_reason_collapses_general_punctuation_spaces_for_replay_stability() {
+        let raw = "target\u{2000}relay\u{2001}timeout\u{2002}signal";
+        let normalized = normalize_failure_reason(raw);
+        assert_eq!(normalized, "target relay timeout signal");
     }
 }
 
