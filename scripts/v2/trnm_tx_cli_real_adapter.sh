@@ -315,7 +315,19 @@ case "$sub" in
       status=$(printf "%s" "$out" | sed -n 's/.*\([Tt][Xx]_\|[Tt][Rr][Aa][Nn][Ss][Aa][Cc][Tt][Ii][Oo][Nn]_\)\?[Ss][Tt][Aa][Tt][Uu][Ss][[:space:]]*[:=][[:space:]]*\([^[:space:]}\",]\+\).*/\2/p' | head -n1 || true)
     fi
     if [[ -z "$status" ]]; then
+      status=$(printf "%s" "$out" | sed -n 's/.*[Tt][Xx][Ss][Tt][Aa][Tt][Uu][Ss][[:space:]]*[:=][[:space:]]*\([^[:space:]}\",]\+\).*/\1/p' | head -n1 || true)
+    fi
+    if [[ -z "$status" ]]; then
+      status=$(printf "%s" "$out" | sed -n 's/.*[Tt][Rr][Aa][Nn][Ss][Aa][Cc][Tt][Ii][Oo][Nn][Ss][Tt][Aa][Tt][Uu][Ss][[:space:]]*[:=][[:space:]]*\([^[:space:]}\",]\+\).*/\1/p' | head -n1 || true)
+    fi
+    if [[ -z "$status" ]]; then
       status=$(printf "%s" "$out" | sed -n 's/.*\([Tt][Xx]_\|[Tt][Rr][Aa][Nn][Ss][Aa][Cc][Tt][Ii][Oo][Nn]_\)\?[Ss][Tt][Aa][Tt][Ee][[:space:]]*[:=][[:space:]]*\([^[:space:]}\",]\+\).*/\2/p' | head -n1 || true)
+    fi
+    if [[ -z "$status" ]]; then
+      status=$(printf "%s" "$out" | sed -n 's/.*[Tt][Xx][Ss][Tt][Aa][Tt][Ee][[:space:]]*[:=][[:space:]]*\([^[:space:]}\",]\+\).*/\1/p' | head -n1 || true)
+    fi
+    if [[ -z "$status" ]]; then
+      status=$(printf "%s" "$out" | sed -n 's/.*[Tt][Rr][Aa][Nn][Ss][Aa][Cc][Tt][Ii][Oo][Nn][Ss][Tt][Aa][Tt][Ee][[:space:]]*[:=][[:space:]]*\([^[:space:]}\",]\+\).*/\1/p' | head -n1 || true)
     fi
     if [[ -z "$status" ]]; then
       status=$(infer_status_from_code "$out" || true)
