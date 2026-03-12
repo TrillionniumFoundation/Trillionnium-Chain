@@ -267,6 +267,23 @@ def find_previous_week_json(history_dir: Path, current_json_out: Path, now_dt: d
     return candidates[0][1]
 
 
+def latest_nonfuture_history_snapshot(history_dir: Path, current_json_out: Path, now_dt: dt.datetime) -> Path | None:
+    if not history_dir.exists():
+        return None
+    candidates: list[tuple[dt.datetime, str, Path]] = []
+    for p in history_dir.glob("weekly-alert-governance-*.json"):
+        if p.resolve() == current_json_out.resolve():
+            continue
+        ts = snapshot_timestamp(p)
+        if ts is None or ts > now_dt:
+            continue
+        candidates.append((ts, p.name, p))
+    if not candidates:
+        return None
+    candidates.sort(key=lambda item: (item[0], item[1]))
+    return candidates[-1][2]
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description="Generate PR9 weekly alert governance markdown+json")
     ap.add_argument("--lookback-days", type=int, default=7)
@@ -579,10 +596,7 @@ def main() -> int:
     history_dir.mkdir(parents=True, exist_ok=True)
     snapshot_name = f"weekly-alert-governance-{now_dt.strftime('%Y%m%dT%H%M%SZ')}.json"
     snapshot_path = history_dir / snapshot_name
-    latest_snapshot = None
-    history_candidates = sorted(history_dir.glob("weekly-alert-governance-*.json"))
-    if history_candidates:
-        latest_snapshot = history_candidates[-1]
+    latest_snapshot = latest_nonfuture_history_snapshot(history_dir, out_json, now_dt)
 
     wrote_snapshot = False
     if latest_snapshot is None:
