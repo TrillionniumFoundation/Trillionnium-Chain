@@ -57,6 +57,7 @@ python3 scripts/profiling_closeout_report.py
   - `Benchmark Action Summary`：聚合给出 `benchmark_decision=INCOMPLETE|REFRESH_RECOMMENDED|READY` 与 action 计数，便于 autopilot/curator 直接决定是否需要先补产物、刷新产物，还是可以进入 review
   - `benchmark_capture_cohesion` / `benchmark_capture_spread_seconds`：额外判断 `classic_bench`、`mixed_bench`、`executor_profile` 是否来自同一 capture window；当结果为 `mixed_capture_window` 或 `divergent_capture_window` 时，都会建议 refresh，避免把时间上不够集中但“单个文件看起来都很新”的产物误当成一组可直接 closeout 的证据
 - `Executor Profile Context`：额外汇总 `profile.report.persist_profile`、`profile.report.path`，并在存在持久化失败时显式带出 `profile.report.persist_error`，方便 autopilot/curator 区分“bench 跑过了”与“profile 产物是否真的成功落盘”
+- `profile.report.capture_started_at_iso`：executor profile 产物现在同时输出真实 UTC RFC3339 时间戳（不再是 `unix:<epoch>` 伪 ISO），便于 closeout 报告直接做人读时间线核对，同时保留 `profile.report.capture_started_at_epoch` 供脚本侧比较
 - `Executor Auto-Adaptive Decision Summary`：当 `executor_profile` 含 `profile.auto.*` 字段时，额外汇总 `use_hot_bucket`、`reason`、`hot_key_share`、`expected_gain_score` 等自动策略决策字段，减少人工回看原始 profile txt 的需要
 
 ## 字段解释
