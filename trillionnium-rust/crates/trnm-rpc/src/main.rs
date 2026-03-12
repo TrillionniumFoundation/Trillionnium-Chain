@@ -5720,6 +5720,18 @@ mod tests {
         )
         .is_err());
 
+        let exact_cap = resolve_ops_window(
+            Some(OpsWindowArg::Custom),
+            Some(10),
+            Some(10 + OPS_WINDOW_CUSTOM_MAX_MS),
+            10 + OPS_WINDOW_CUSTOM_MAX_MS,
+        )
+        .expect("exact hard-cap custom window should be accepted")
+        .expect("window expected");
+        assert_eq!(exact_cap.0, 10);
+        assert_eq!(exact_cap.1, 10 + OPS_WINDOW_CUSTOM_MAX_MS);
+        assert_eq!(exact_cap.2, "custom");
+
         let got = resolve_ops_window(Some(OpsWindowArg::H24), None, None, 1_000).unwrap();
         let (from, to, mode) = got.expect("window expected");
         assert_eq!(to, 1_000);
