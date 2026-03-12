@@ -2,6 +2,58 @@ use trnm_state::*;
 use trnm_types::*;
 
 #[test]
+fn task_metadata_string_field_boundaries_should_affect_state_root() {
+    let mut st1 = StateStore::new();
+    let mut st2 = StateStore::new();
+
+    let task1 = TaskObject {
+        task_id: 6,
+        creator: "alice".into(),
+        bounty: 42,
+        status: TaskStatus::Open,
+        proof_type: ProofType::Fraud,
+        metadata: Some(TaskMetadata {
+            note: Some("ab".into()),
+            task_type: Some("c".into()),
+            input_hash: None,
+            model: None,
+            provenance: None,
+        }),
+        worker: None,
+        committed_hash: None,
+        result_hash: None,
+        reveal_salt: None,
+        committed_at_height: None,
+        reveal_deadline_height: None,
+        challenge_deadline_height: None,
+        challenge_window_blocks_snapshot: None,
+        challenged_at_height: None,
+        resolve_deadline_height: None,
+        challenge_bond: None,
+        challenger: None,
+        challenge_bond_forfeited: None,
+        version: 1,
+    };
+    let mut task2 = task1.clone();
+    task2.metadata = Some(TaskMetadata {
+        note: Some("a".into()),
+        task_type: Some("bc".into()),
+        input_hash: None,
+        model: None,
+        provenance: None,
+    });
+
+    st1.put_task_new(task1).unwrap();
+    st2.put_task_new(task2).unwrap();
+
+    assert_ne!(
+        st1.state_root(),
+        st2.state_root(),
+        "State root should frame task metadata string lengths so distinct field boundaries cannot collide"
+    );
+}
+
+#[test]
 fn task_metadata_and_proof_type_should_affect_state_root() {
     let mut st1 = StateStore::new();
     let mut st2 = StateStore::new();

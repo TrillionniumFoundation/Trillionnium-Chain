@@ -216,6 +216,15 @@ fn check_sensitive_rate_limit(key: &str, old: u64, new: u64) -> Result<(), Strin
     }
     Ok(())
 }
+fn hash_len_prefixed_bytes(hasher: &mut Sha256, bytes: &[u8]) {
+    hasher.update((bytes.len() as u64).to_le_bytes());
+    hasher.update(bytes);
+}
+
+fn hash_len_prefixed_str(hasher: &mut Sha256, value: &str) {
+    hash_len_prefixed_bytes(hasher, value.as_bytes());
+}
+
 fn parse_u64_in_range(key: &str, value: &str, min: u64, max: u64) -> Result<u64, String> {
     let parsed = value.parse::<u64>().map_err(|_| {
         format!(
@@ -1324,7 +1333,7 @@ impl StateStore {
                 ObjectValue::Task(t) => {
                     hasher.update(b"task");
                     hasher.update(t.task_id.to_le_bytes());
-                    hasher.update(t.creator.as_bytes());
+                    hash_len_prefixed_str(&mut hasher, &t.creator);
                     hasher.update(t.bounty.to_le_bytes());
                     hasher.update((t.status as u8).to_le_bytes());
                     hasher.update((t.proof_type as u8).to_le_bytes());
@@ -1335,21 +1344,21 @@ impl StateStore {
                             match &metadata.note {
                                 Some(note) => {
                                     hasher.update([1]);
-                                    hasher.update(note.as_bytes());
+                                    hash_len_prefixed_str(&mut hasher, note);
                                 }
                                 None => hasher.update([0]),
                             }
                             match &metadata.task_type {
                                 Some(task_type) => {
                                     hasher.update([1]);
-                                    hasher.update(task_type.as_bytes());
+                                    hash_len_prefixed_str(&mut hasher, task_type);
                                 }
                                 None => hasher.update([0]),
                             }
                             match &metadata.input_hash {
                                 Some(input_hash) => {
                                     hasher.update([1]);
-                                    hasher.update(input_hash.as_bytes());
+                                    hash_len_prefixed_str(&mut hasher, input_hash);
                                 }
                                 None => hasher.update([0]),
                             }
@@ -1359,21 +1368,21 @@ impl StateStore {
                                     match &model.model_id {
                                         Some(model_id) => {
                                             hasher.update([1]);
-                                            hasher.update(model_id.as_bytes());
+                                            hash_len_prefixed_str(&mut hasher, model_id);
                                         }
                                         None => hasher.update([0]),
                                     }
                                     match &model.model_digest {
                                         Some(model_digest) => {
                                             hasher.update([1]);
-                                            hasher.update(model_digest.as_bytes());
+                                            hash_len_prefixed_str(&mut hasher, model_digest);
                                         }
                                         None => hasher.update([0]),
                                     }
                                     match &model.version {
                                         Some(version) => {
                                             hasher.update([1]);
-                                            hasher.update(version.as_bytes());
+                                            hash_len_prefixed_str(&mut hasher, version);
                                         }
                                         None => hasher.update([0]),
                                     }
@@ -1386,21 +1395,21 @@ impl StateStore {
                                     match &provenance.producer_did {
                                         Some(producer_did) => {
                                             hasher.update([1]);
-                                            hasher.update(producer_did.as_bytes());
+                                            hash_len_prefixed_str(&mut hasher, producer_did);
                                         }
                                         None => hasher.update([0]),
                                     }
                                     match &provenance.produced_at {
                                         Some(produced_at) => {
                                             hasher.update([1]);
-                                            hasher.update(produced_at.as_bytes());
+                                            hash_len_prefixed_str(&mut hasher, produced_at);
                                         }
                                         None => hasher.update([0]),
                                     }
                                     match &provenance.provenance_index {
                                         Some(provenance_index) => {
                                             hasher.update([1]);
-                                            hasher.update(provenance_index.as_bytes());
+                                            hash_len_prefixed_str(&mut hasher, provenance_index);
                                         }
                                         None => hasher.update([0]),
                                     }
@@ -1425,7 +1434,7 @@ impl StateStore {
                     match &t.worker {
                         Some(worker) => {
                             hasher.update([1]);
-                            hasher.update(worker.as_bytes());
+                            hash_len_prefixed_str(&mut hasher, worker);
                         }
                         None => hasher.update([0]),
                     }
@@ -1503,7 +1512,7 @@ impl StateStore {
                     match &t.challenger {
                         Some(challenger) => {
                             hasher.update([1]);
-                            hasher.update(challenger.as_bytes());
+                            hash_len_prefixed_str(&mut hasher, challenger);
                         }
                         None => hasher.update([0]),
                     }
@@ -1519,29 +1528,29 @@ impl StateStore {
                 ObjectValue::GovProposal(p) => {
                     hasher.update(b"gov_proposal");
                     hasher.update(p.proposal_id.to_le_bytes());
-                    hasher.update(p.title.as_bytes());
-                    hasher.update(p.proposer.as_bytes());
+                    hash_len_prefixed_str(&mut hasher, &p.title);
+                    hash_len_prefixed_str(&mut hasher, &p.proposer);
                     hasher.update((p.status as u8).to_le_bytes());
                     hasher.update(p.version.to_le_bytes());
                 }
                 ObjectValue::GovParam(p) => {
                     hasher.update(b"gov_param");
-                    hasher.update(p.key.as_bytes());
-                    hasher.update(p.value.as_bytes());
+                    hash_len_prefixed_str(&mut hasher, &p.key);
+                    hash_len_prefixed_str(&mut hasher, &p.value);
                     hasher.update(p.version.to_le_bytes());
                 }
             }
         }
         for (addr, bal) in &self.balances {
             hasher.update(b"balance");
-            hasher.update(addr.as_bytes());
+            hash_len_prefixed_str(&mut hasher, addr);
             hasher.update(bal.to_le_bytes());
         }
         for (key, pending) in &self.pending_gov_updates {
             hasher.update(b"gov_pending");
-            hasher.update(key.as_bytes());
+            hash_len_prefixed_str(&mut hasher, key);
             hasher.update(pending.key_id.to_le_bytes());
-            hasher.update(pending.value.as_bytes());
+            hash_len_prefixed_str(&mut hasher, &pending.value);
             hasher.update(pending.activate_at_height.to_le_bytes());
         }
         for (task_id, pending) in &self.pending_resolve_approvals {
@@ -1549,8 +1558,8 @@ impl StateStore {
             hasher.update(task_id.to_le_bytes());
             hasher.update([pending.slash_worker as u8]);
             hasher.update([pending.confirmations]);
-            hasher.update(pending.first_approver.as_bytes());
-            hasher.update(pending.authority_set.as_bytes());
+            hash_len_prefixed_str(&mut hasher, &pending.first_approver);
+            hash_len_prefixed_str(&mut hasher, &pending.authority_set);
             hasher.update(pending.task_version.to_le_bytes());
         }
         hasher.update(b"monetary_state");
