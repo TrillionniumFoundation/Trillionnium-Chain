@@ -817,4 +817,26 @@ mod tests {
         assert_eq!(normalize_zk_system("PLONK"), Some("plonk".into()));
         assert_eq!(normalize_zk_system("mock-zk"), None);
     }
+
+    #[test]
+    fn backend_system_hint_extracts_family_scoped_tee_and_zk_system_tokens() {
+        assert_eq!(backend_system_hint(" tee:sgx-dcap "), Some("sgx".into()));
+        assert_eq!(backend_system_hint("TEE report-snp"), Some("report".into()));
+        assert_eq!(backend_system_hint("zk:groth16"), Some("groth16".into()));
+        assert_eq!(backend_system_hint("plonk"), Some("plonk".into()));
+        assert_eq!(backend_system_hint("noop"), None);
+    }
+
+    #[test]
+    fn verification_backend_kind_system_hint_respects_family_prefixes_without_cross_family_assumptions() {
+        assert_eq!(
+            VerificationBackendKind::Custom("tee-tdx".into()).system_hint(),
+            Some("tdx".into())
+        );
+        assert_eq!(
+            VerificationBackendKind::Custom("zk_risc0".into()).system_hint(),
+            Some("risc0".into())
+        );
+        assert_eq!(VerificationBackendKind::Noop.system_hint(), None);
+    }
 }
