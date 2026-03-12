@@ -653,4 +653,43 @@ mod tests {
         assert_eq!(report.metrics.accepted_total, 0);
         assert_eq!(report.metrics.sample_count, 1);
     }
+
+    #[test]
+    fn observed_report_preserves_single_snapshot_counter_conservation_for_classified_outcomes() {
+        let reports = vec![
+            validate_snapshot_observed(&policy(), &snapshot_with(100_000, Some(100_100), 10_000), 10_100),
+            validate_snapshot_observed(&policy(), &snapshot_with(100_000, Some(100_100), 10_000), 16_000),
+            validate_snapshot_observed(&policy(), &snapshot_with(120_000, Some(100_000), 10_000), 10_100),
+            validate_snapshot_observed(
+                &policy(),
+                &OracleSnapshot::new(
+                    "btc/usd",
+                    100_000,
+                    vec![source("coingecko")],
+                    1,
+                    Some(100_000),
+                    Some(120),
+                    1_000,
+                    2_000,
+                    10_000,
+                )
+                .expect("snapshot build"),
+                10_100,
+            ),
+        ];
+
+        for report in reports {
+            let rejection_total = report.metrics.oracle_stale_reject_total
+                + report.metrics.oracle_quorum_reject_total
+                + report.metrics.oracle_drift_reject_total;
+            assert_eq!(report.metrics.sample_count, 1);
+            assert_eq!(report.metrics.accepted_total + rejection_total, report.metrics.sample_count);
+            assert_eq!(
+                report.observation.accepted_total,
+                report.metrics.accepted_total,
+                "observation/metrics accepted_total drifted for error {:?}",
+                report.error
+            );
+        }
+    }
 }

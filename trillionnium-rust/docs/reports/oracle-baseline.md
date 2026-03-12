@@ -97,6 +97,7 @@ L16 现已在 `crates/trnm-oracle/src/lib.rs` 暴露稳定 bridge 输出：
   - `sample_count`
 - 单次 snapshot bridge 报告中 `sample_count=1`
 - `oracle_source_cardinality` 口径为当前 snapshot 的 canonical source cardinality
+- 单次 snapshot bridge 的 reject counters 仅覆盖 `stale / quorum / drift` 三类已分类拒绝；`rate` 与原样透传的其它验证错误不会映射进上述 reject counters，因此 `accepted_total + classified_reject_total == sample_count` 这一守恒关系只保证在已分类结果上成立，不应误套到所有 bridge error 字符串。
 
 这样 RPC/HTTP bridge 后续只需要复用该稳定结构，不必各自再实现一套命名映射。
 
