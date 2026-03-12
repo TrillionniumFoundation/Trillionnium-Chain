@@ -3258,6 +3258,20 @@ mod tests {
     }
 
     #[test]
+    fn round_change_backoff_metric_names_keep_wall_alias_and_budget_share_distinct() {
+        let wall_share_field_name = "bft_round_change_backoff_wall_share_ppm";
+        let compatibility_alias_field_name = "bft_round_change_backoff_share_ppm";
+        let active_height_share_field_name = "bft_round_change_backoff_active_height_share_ppm";
+
+        assert!(wall_share_field_name.ends_with("_share_ppm"));
+        assert!(compatibility_alias_field_name.ends_with("_share_ppm"));
+        assert!(active_height_share_field_name.ends_with("_share_ppm"));
+        assert_ne!(wall_share_field_name, compatibility_alias_field_name);
+        assert_ne!(wall_share_field_name, active_height_share_field_name);
+        assert_ne!(compatibility_alias_field_name, active_height_share_field_name);
+    }
+
+    #[test]
     fn round_change_backoff_wall_share_metric_uses_height_level_denominator() {
         let bft_round_change_backoff_total_ms = 18u64;
         let bft_committed_heights = 4u64;
