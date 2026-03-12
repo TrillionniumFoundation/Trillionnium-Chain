@@ -288,6 +288,10 @@ The client-handle layer is now further split into runtime request/response seams
 - `VerifierHttpClientRuntime`
 - `VerifierHttpClientRuntimeResponseAdapter`
 
+And the runtime layer is now also split into session / connection seams:
+- `VerifierHttpClientSessionFactory`
+- `VerifierHttpClientSession`
+
 The default wiring remains fail-closed:
 - `AdapterBackedVerifierHttpRequestExecutor`
   - `DirectVerifierHttpRequestPlanner`
@@ -295,13 +299,14 @@ The default wiring remains fail-closed:
     - `StaticVerifierHttpClientConfigResolver`
     - `RuntimeBackedVerifierHttpClientHandle`
       - `DirectVerifierHttpClientRuntimeRequestBuilder`
-      - `FailClosedVerifierHttpClientRuntime`
+      - `SessionBackedVerifierHttpClientRuntime`
+        - `FailClosedVerifierHttpClientSessionFactory`
       - `PassthroughVerifierHttpClientRuntimeResponseAdapter`
 - `Utf8HttpResponseBodyReader`
 - `NoopVerifierHttpTimeoutHook`
 
 This freezes a future real transport path as:
-- timeout hook -> request executor -> request planner -> client adapter -> client config resolver -> client handle -> runtime request builder -> client runtime -> runtime response adapter -> raw response -> body reader -> normalized `HttpVerifierResponse`
+- timeout hook -> request executor -> request planner -> client adapter -> client config resolver -> client handle -> runtime request builder -> client runtime -> session factory -> session -> runtime response adapter -> raw response -> body reader -> normalized `HttpVerifierResponse`
 
 So the scaffold now separates:
 1. HTTP request planning / profile + auth resolution
@@ -309,11 +314,12 @@ So the scaffold now separates:
 3. client-facing request planning
 4. adapter-level client config resolution
 5. client-handle request shaping
-6. raw outbound client runtime execution
-7. runtime-response adaptation
-8. timeout/guard hook behavior
-9. body decoding / normalization
-10. verifier response decode + backend mapping
+6. runtime session / connection setup
+7. session-bound runtime execution
+8. runtime-response adaptation
+9. timeout/guard hook behavior
+10. body decoding / normalization
+11. verifier response decode + backend mapping
 
 ### HTTP payload skeletons
 The current adapter layer freezes two JSON request shapes:

@@ -741,24 +741,111 @@ trait VerifierHttpClientRuntime: Send + Sync {
 }
 
 #[allow(dead_code)]
-struct FailClosedVerifierHttpClientRuntime;
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct ResolvedVerifierHttpClientSessionConfig {
+    profile: String,
+    transport_mode: VerifierTransportMode,
+    timeout_ms: u64,
+}
 
-impl VerifierHttpClientRuntime for FailClosedVerifierHttpClientRuntime {
-    fn execute_runtime(
+#[allow(dead_code)]
+trait VerifierHttpClientSessionFactory: Send + Sync {
+    fn open_session(
         &self,
+        session_config: &ResolvedVerifierHttpClientSessionConfig,
+        runtime_request: &VerifierHttpClientRuntimeRequest,
+        config: &ResolvedVerifierHttpClientConfig,
+        client_request: &VerifierHttpClientRequest,
+        http_request: &HttpVerifierRequest,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<Box<dyn VerifierHttpClientSession>, BackendExecutionError>;
+}
+
+#[allow(dead_code)]
+trait VerifierHttpClientSession: Send + Sync {
+    fn execute_session(
+        &self,
+        session_config: &ResolvedVerifierHttpClientSessionConfig,
+        runtime_request: &VerifierHttpClientRuntimeRequest,
+        config: &ResolvedVerifierHttpClientConfig,
+        client_request: &VerifierHttpClientRequest,
+        http_request: &HttpVerifierRequest,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<VerifierHttpClientRuntimeResponse, BackendExecutionError>;
+}
+
+#[allow(dead_code)]
+struct FailClosedVerifierHttpClientSessionFactory;
+
+impl VerifierHttpClientSessionFactory for FailClosedVerifierHttpClientSessionFactory {
+    fn open_session(
+        &self,
+        _session_config: &ResolvedVerifierHttpClientSessionConfig,
         _runtime_request: &VerifierHttpClientRuntimeRequest,
         _config: &ResolvedVerifierHttpClientConfig,
         _client_request: &VerifierHttpClientRequest,
         http_request: &HttpVerifierRequest,
         request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientRuntimeResponse, BackendExecutionError> {
+    ) -> Result<Box<dyn VerifierHttpClientSession>, BackendExecutionError> {
         Err(BackendExecutionError::Unavailable {
             backend: request.backend_label(RealTeeBackend::backend_id_static()),
             reason: format!(
-                "real http client runtime for profile '{}' is not wired",
+                "real http client session factory for profile '{}' is not wired",
                 http_request.profile
             ),
         })
+    }
+}
+
+#[allow(dead_code)]
+struct SessionBackedVerifierHttpClientRuntime {
+    session_factory: Arc<dyn VerifierHttpClientSessionFactory>,
+}
+
+#[allow(dead_code)]
+impl SessionBackedVerifierHttpClientRuntime {
+    fn new() -> Self {
+        Self {
+            session_factory: Arc::new(FailClosedVerifierHttpClientSessionFactory),
+        }
+    }
+
+    #[cfg(test)]
+    fn with_session_factory(session_factory: Arc<dyn VerifierHttpClientSessionFactory>) -> Self {
+        Self { session_factory }
+    }
+}
+
+impl VerifierHttpClientRuntime for SessionBackedVerifierHttpClientRuntime {
+    fn execute_runtime(
+        &self,
+        runtime_request: &VerifierHttpClientRuntimeRequest,
+        config: &ResolvedVerifierHttpClientConfig,
+        client_request: &VerifierHttpClientRequest,
+        http_request: &HttpVerifierRequest,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<VerifierHttpClientRuntimeResponse, BackendExecutionError> {
+        let session_config = ResolvedVerifierHttpClientSessionConfig {
+            profile: config.profile.clone(),
+            transport_mode: config.transport_mode.clone(),
+            timeout_ms: runtime_request.timeout_ms,
+        };
+        let session = self.session_factory.open_session(
+            &session_config,
+            runtime_request,
+            config,
+            client_request,
+            http_request,
+            request,
+        )?;
+        session.execute_session(
+            &session_config,
+            runtime_request,
+            config,
+            client_request,
+            http_request,
+            request,
+        )
     }
 }
 
@@ -806,7 +893,7 @@ impl RuntimeBackedVerifierHttpClientHandle {
     fn new() -> Self {
         Self {
             request_builder: Arc::new(DirectVerifierHttpClientRuntimeRequestBuilder),
-            runtime: Arc::new(FailClosedVerifierHttpClientRuntime),
+            runtime: Arc::new(SessionBackedVerifierHttpClientRuntime::new()),
             response_adapter: Arc::new(PassthroughVerifierHttpClientRuntimeResponseAdapter),
         }
     }
@@ -3844,6 +3931,91 @@ mod tests {
         }
     }
 
+    #[derive(Default)]
+    struct RecordingHttpClientSessionFactory {
+        opened: Mutex<Vec<ResolvedVerifierHttpClientSessionConfig>>,
+        executed: Arc<Mutex<Vec<(ResolvedVerifierHttpClientSessionConfig, VerifierHttpClientRuntimeRequest)>>>,
+    }
+
+    struct RecordingHttpClientSession {
+        executed: Arc<Mutex<Vec<(ResolvedVerifierHttpClientSessionConfig, VerifierHttpClientRuntimeRequest)>>>,
+    }
+
+    impl VerifierHttpClientSessionFactory for RecordingHttpClientSessionFactory {
+        fn open_session(
+            &self,
+            session_config: &ResolvedVerifierHttpClientSessionConfig,
+            _runtime_request: &VerifierHttpClientRuntimeRequest,
+            _config: &ResolvedVerifierHttpClientConfig,
+            _client_request: &VerifierHttpClientRequest,
+            _http_request: &HttpVerifierRequest,
+            _request: &BackendVerificationRequest<'_>,
+        ) -> Result<Box<dyn VerifierHttpClientSession>, BackendExecutionError> {
+            self.opened.lock().unwrap().push(session_config.clone());
+            Ok(Box::new(RecordingHttpClientSession {
+                executed: self.executed.clone(),
+            }))
+        }
+    }
+
+    impl VerifierHttpClientSession for RecordingHttpClientSession {
+        fn execute_session(
+            &self,
+            session_config: &ResolvedVerifierHttpClientSessionConfig,
+            runtime_request: &VerifierHttpClientRuntimeRequest,
+            _config: &ResolvedVerifierHttpClientConfig,
+            _client_request: &VerifierHttpClientRequest,
+            _http_request: &HttpVerifierRequest,
+            _request: &BackendVerificationRequest<'_>,
+        ) -> Result<VerifierHttpClientRuntimeResponse, BackendExecutionError> {
+            self.executed
+                .lock()
+                .unwrap()
+                .push((session_config.clone(), runtime_request.clone()));
+            Ok(VerifierHttpClientRuntimeResponse {
+                status_code: 208,
+                headers: BTreeMap::from([("x-session".to_string(), "ok".to_string())]),
+                body: b"session-ok".to_vec(),
+            })
+        }
+    }
+
+    struct RejectingHttpClientSessionFactory;
+
+    impl VerifierHttpClientSessionFactory for RejectingHttpClientSessionFactory {
+        fn open_session(
+            &self,
+            _session_config: &ResolvedVerifierHttpClientSessionConfig,
+            _runtime_request: &VerifierHttpClientRuntimeRequest,
+            _config: &ResolvedVerifierHttpClientConfig,
+            _client_request: &VerifierHttpClientRequest,
+            _http_request: &HttpVerifierRequest,
+            request: &BackendVerificationRequest<'_>,
+        ) -> Result<Box<dyn VerifierHttpClientSession>, BackendExecutionError> {
+            Err(BackendExecutionError::Unavailable {
+                backend: request.backend_label(RealTeeBackend::backend_id_static()),
+                reason: "client session factory rejected runtime".into(),
+            })
+        }
+    }
+
+    #[allow(dead_code)]
+    struct PanicHttpClientSession;
+
+    impl VerifierHttpClientSession for PanicHttpClientSession {
+        fn execute_session(
+            &self,
+            _session_config: &ResolvedVerifierHttpClientSessionConfig,
+            _runtime_request: &VerifierHttpClientRuntimeRequest,
+            _config: &ResolvedVerifierHttpClientConfig,
+            _client_request: &VerifierHttpClientRequest,
+            _http_request: &HttpVerifierRequest,
+            _request: &BackendVerificationRequest<'_>,
+        ) -> Result<VerifierHttpClientRuntimeResponse, BackendExecutionError> {
+            panic!("client session should not be called when session factory fails")
+        }
+    }
+
     struct PanicHttpClientRuntimeResponseAdapter;
 
     impl VerifierHttpClientRuntimeResponseAdapter for PanicHttpClientRuntimeResponseAdapter {
@@ -4409,6 +4581,123 @@ mod tests {
     }
 
     #[test]
+    fn session_backed_runtime_opens_session_and_executes_request() {
+        let task = mock_task();
+        let session_factory = Arc::new(RecordingHttpClientSessionFactory::default());
+        let runtime = SessionBackedVerifierHttpClientRuntime::with_session_factory(session_factory.clone());
+        let response = runtime
+            .execute_runtime(
+                &VerifierHttpClientRuntimeRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: b"session-body".to_vec(),
+                    timeout_ms: 5_000,
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                },
+                &ResolvedVerifierHttpClientConfig {
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                    timeout_ms: 5_000,
+                },
+                &VerifierHttpClientRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: b"session-body".to_vec(),
+                    timeout_ms: 5_000,
+                },
+                &HttpVerifierRequest {
+                    method: HttpMethod::Post,
+                    transport_mode: VerifierTransportMode::External,
+                    profile: "intel-dcap-external-default".into(),
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: "session-body".into(),
+                    timeout_ms: 5_000,
+                    retry_policy: RetryBackoffPolicy {
+                        max_attempts: 3,
+                        backoff_ms: 250,
+                        strategy: RetryBackoffStrategy::Exponential,
+                    },
+                },
+                &BackendVerificationRequest {
+                    family: VerificationBackendFamily::Tee,
+                    task: &task,
+                    proof_data: b"TEE:...",
+                    tee_payload: None,
+                    zk_payload: None,
+                    resolved_vk_ref: None,
+                },
+            )
+            .unwrap();
+        assert_eq!(response.status_code, 208);
+        assert_eq!(response.body, b"session-ok".to_vec());
+        let opened = session_factory.opened.lock().unwrap().clone();
+        assert_eq!(opened.len(), 1);
+        assert_eq!(opened[0].profile, "intel-dcap-external-default");
+        let executed = session_factory.executed.lock().unwrap().clone();
+        assert_eq!(executed.len(), 1);
+        assert_eq!(executed[0].0, opened[0]);
+        assert_eq!(executed[0].1.body, b"session-body".to_vec());
+    }
+
+    #[test]
+    fn session_backed_runtime_fails_closed_when_session_factory_rejects() {
+        let task = mock_task();
+        let runtime = SessionBackedVerifierHttpClientRuntime::with_session_factory(Arc::new(RejectingHttpClientSessionFactory));
+        let err = runtime
+            .execute_runtime(
+                &VerifierHttpClientRuntimeRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: Vec::new(),
+                    timeout_ms: 5_000,
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                },
+                &ResolvedVerifierHttpClientConfig {
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                    timeout_ms: 5_000,
+                },
+                &VerifierHttpClientRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: Vec::new(),
+                    timeout_ms: 5_000,
+                },
+                &HttpVerifierRequest {
+                    method: HttpMethod::Post,
+                    transport_mode: VerifierTransportMode::External,
+                    profile: "intel-dcap-external-default".into(),
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: String::new(),
+                    timeout_ms: 5_000,
+                    retry_policy: RetryBackoffPolicy {
+                        max_attempts: 3,
+                        backoff_ms: 250,
+                        strategy: RetryBackoffStrategy::Exponential,
+                    },
+                },
+                &BackendVerificationRequest {
+                    family: VerificationBackendFamily::Tee,
+                    task: &task,
+                    proof_data: b"TEE:...",
+                    tee_payload: None,
+                    zk_payload: None,
+                    resolved_vk_ref: None,
+                },
+            )
+            .unwrap_err();
+        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session factory rejected runtime")));
+    }
+
+    #[test]
     fn runtime_backed_client_handle_builds_request_runs_runtime_and_adapts_response() {
         let task = mock_task();
         let request_builder = Arc::new(RecordingHttpClientRuntimeRequestBuilder::default());
@@ -4830,7 +5119,7 @@ mod tests {
                 },
             )
             .unwrap_err();
-        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("intel-dcap-external-default") && reason.contains("client runtime")));
+        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("intel-dcap-external-default") && reason.contains("client session factory")));
     }
 
     #[test]
