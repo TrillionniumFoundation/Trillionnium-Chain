@@ -346,7 +346,9 @@ fn validate_gov_param_value(key: &str, value: &str) -> Result<(), String> {
                         key
                     ));
                 }
-                if member.eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER) {
+                if member.eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER)
+                    || member.eq_ignore_ascii_case(EMERGENCY_PAUSE_PLACEHOLDER)
+                {
                     return Err(format!(
                         "invalid governance value for {}: placeholder authority is not allowed",
                         key
@@ -4111,6 +4113,8 @@ mod tests {
         for (i, bad_value) in [
             DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER,
             "Governance.Resolve_Authority",
+            EMERGENCY_PAUSE_PLACEHOLDER,
+            "Governance.Emergency_Pause",
             RESERVED_SYSTEM_AUTHORITY,
             "System",
             "authority,system",
