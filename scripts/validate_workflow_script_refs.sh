@@ -49,6 +49,11 @@ if [[ "$STRICT_MODE" != "0" && "$STRICT_MODE" != "1" ]]; then
   exit 2
 fi
 
+if [[ -e "$WORKFLOW_ROOT" && ! -d "$WORKFLOW_ROOT" ]]; then
+  echo "[workflow-ref][FAIL] workflow root is not a directory: $WORKFLOW_ROOT" >&2
+  exit 2
+fi
+
 if [[ ! -d "$WORKFLOW_ROOT" ]]; then
   echo "[workflow-ref][FAIL] workflow directory not found: $WORKFLOW_ROOT" >&2
   exit 2

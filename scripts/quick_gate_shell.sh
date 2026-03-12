@@ -102,6 +102,10 @@ if [[ ${#NORMALIZED_TARGET_DIRS[@]} -eq 0 ]]; then
 fi
 
 for target_dir in "${NORMALIZED_TARGET_DIRS[@]}"; do
+  if [[ -e "$target_dir" && ! -d "$target_dir" ]]; then
+    echo "[quick-gate][FAIL] target path is not a directory: $target_dir" >&2
+    exit 2
+  fi
   if [[ ! -d "$target_dir" ]]; then
     echo "[quick-gate][FAIL] target directory not found: $target_dir" >&2
     exit 2

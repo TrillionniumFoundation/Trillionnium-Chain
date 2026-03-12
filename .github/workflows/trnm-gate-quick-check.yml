@@ -143,6 +143,10 @@ jobs:
         run: |
           ./scripts/v2/workflow_script_refs_summary_path_guard_test.sh
 
+      - name: Workflow script refs non-directory root guard regression
+        run: |
+          ./scripts/v2/workflow_script_refs_non_directory_root_guard_test.sh
+
       - name: Workflow script-ref strict invocation guard regression
         run: |
           ./scripts/v2/trnm_gate_quick_check_workflow_script_ref_strict_invocation_guard_test.sh
@@ -186,6 +190,10 @@ jobs:
       - name: Quick gate summary path guard regression
         run: |
           ./scripts/v2/quick_gate_summary_path_guard_test.sh
+
+      - name: Quick gate non-directory target guard regression
+        run: |
+          ./scripts/v2/quick_gate_non_directory_target_guard_test.sh
 
       - name: Quick gate shellcheck install deterministic apt guard regression
         run: |
