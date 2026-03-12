@@ -554,6 +554,16 @@ mod tests {
             Some("pr-2i")
         );
 
+        let tee_with_backslash_separator = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-2ib\",\"adapter\":\"TEE\\\\RECEIPT\"}",
+            )
+            .expect("tee receipt label with backslash separator should parse");
+        assert_eq!(
+            tee_with_backslash_separator.provider_request_id.as_deref(),
+            Some("pr-2ib")
+        );
+
         let tee_with_spaced_separators = adapter
             .parse_response(
                 "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-2j\",\"adapter\":\" TEE / RECEIPT \"}",
@@ -813,6 +823,16 @@ mod tests {
             Some("pr-zk-2i")
         );
 
+        let zk_with_backslash_separator = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-zk-2ib\",\"adapter\":\"ZK\\\\RECEIPT\"}",
+            )
+            .expect("zk receipt label with backslash separator should parse");
+        assert_eq!(
+            zk_with_backslash_separator.provider_request_id.as_deref(),
+            Some("pr-zk-2ib")
+        );
+
         let zk_with_spaced_separators = adapter
             .parse_response(
                 "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-zk-2j\",\"adapter\":\" ZK - RECEIPT \"}",
@@ -1047,12 +1067,24 @@ mod tests {
         assert!(ok);
         assert_eq!(code, "tee_receipt_ok");
 
+        let adapter = build_proof_adapter("TEE\\RECEIPT")
+            .expect("tee backslash separator alias should normalize");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "tee_receipt_ok");
+
         let adapter = build_proof_adapter("zk-receipt").expect("zk receipt alias");
         let (ok, code) = adapter.verify("hello", 8);
         assert!(ok);
         assert_eq!(code, "zk_receipt_ok");
 
         let adapter = build_proof_adapter("ZK_RECEIPT").expect("zk receipt underscore alias");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "zk_receipt_ok");
+
+        let adapter = build_proof_adapter("ZK\\RECEIPT")
+            .expect("zk backslash separator alias should normalize");
         let (ok, code) = adapter.verify("hello", 8);
         assert!(ok);
         assert_eq!(code, "zk_receipt_ok");
