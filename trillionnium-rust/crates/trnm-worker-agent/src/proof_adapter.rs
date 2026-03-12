@@ -163,8 +163,51 @@ fn has_non_empty_auditable_value(value: Option<&str>) -> bool {
         .unwrap_or(false)
 }
 
+fn strip_terminal_control_sequences(input: &str) -> String {
+    let mut sanitized = String::with_capacity(input.len());
+    let mut chars = input.chars().peekable();
+
+    while let Some(ch) = chars.next() {
+        if ch != '\u{1b}' {
+            sanitized.push(ch);
+            continue;
+        }
+
+        match chars.peek().copied() {
+            Some('[') => {
+                chars.next();
+                while let Some(next) = chars.next() {
+                    if ('@'..='~').contains(&next) {
+                        break;
+                    }
+                }
+            }
+            Some(']') => {
+                chars.next();
+                let mut saw_esc = false;
+                while let Some(next) = chars.next() {
+                    if saw_esc && next == '\\' {
+                        break;
+                    }
+                    saw_esc = next == '\u{1b}';
+                    if !saw_esc && next == '\u{7}' {
+                        break;
+                    }
+                }
+            }
+            Some(_) => {
+                chars.next();
+            }
+            None => {}
+        }
+    }
+
+    sanitized
+}
+
 fn parse_response_with_standard_rules(stdout: &str) -> Result<LlmAdapterResponse, String> {
-    let normalized = stdout.trim_start().trim_start_matches('\u{feff}');
+    let sanitized = strip_terminal_control_sequences(stdout);
+    let normalized = sanitized.trim_start().trim_start_matches('\u{feff}');
     let starts_with_json_object = normalized.starts_with('{');
 
     if let Ok(parsed) = serde_json::from_str(normalized) {
@@ -384,6 +427,30 @@ mod tests {
             .expect("should parse CRLF multiline json payload");
         assert_eq!(parsed.output_text, "ok");
         assert_eq!(parsed.provider_request_id.as_deref(), Some("r3-crlf"));
+    }
+
+    #[test]
+    fn standard_proof_adapter_parse_response_accepts_json_after_ansi_csi_logs() {
+        let adapter = StandardProofAdapter;
+        let stdout = "\u{1b}[2K\u{1b}[32minfo\u{1b}[0m warmup\n\u{1b}[33m{\"output_text\":\"ok\",\"provider_request_id\":\"r3-ansi-csi\"}\u{1b}[0m\n";
+
+        let parsed = adapter
+            .parse_response(stdout)
+            .expect("should parse json wrapped in ansi csi sequences");
+        assert_eq!(parsed.output_text, "ok");
+        assert_eq!(parsed.provider_request_id.as_deref(), Some("r3-ansi-csi"));
+    }
+
+    #[test]
+    fn standard_proof_adapter_parse_response_accepts_json_after_ansi_osc_logs() {
+        let adapter = StandardProofAdapter;
+        let stdout = "\u{1b}]0;worker-agent\u{7}info: warmup\n{\"output_text\":\"ok\",\"provider_request_id\":\"r3-ansi-osc\"}\n\u{1b}]133;C\u{1b}\\";
+
+        let parsed = adapter
+            .parse_response(stdout)
+            .expect("should parse json with ansi osc noise around it");
+        assert_eq!(parsed.output_text, "ok");
+        assert_eq!(parsed.provider_request_id.as_deref(), Some("r3-ansi-osc"));
     }
 
     #[test]
