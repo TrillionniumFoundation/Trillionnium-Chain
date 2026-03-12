@@ -50,6 +50,25 @@ pub mod bridge_status {
         has_disallowed_request_char(ch)
     }
 
+    fn normalize_revert_reason(reason: &str) -> Option<String> {
+        let sanitized: String = reason
+            .chars()
+            .map(|ch| {
+                if ch.is_whitespace() || has_disallowed_request_char(ch) {
+                    ' '
+                } else {
+                    ch
+                }
+            })
+            .collect();
+        let collapsed = sanitized.split_whitespace().collect::<Vec<_>>().join(" ");
+        if collapsed.is_empty() {
+            return None;
+        }
+
+        Some(collapsed)
+    }
+
     #[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
     pub enum BridgeStatus {
         Pending,
@@ -221,9 +240,9 @@ pub mod bridge_status {
         }
 
         fn transition_to_reverted(&mut self, reason: String) -> Result<(), SettlementError> {
-            if reason.trim().is_empty() {
+            let Some(reason) = normalize_revert_reason(&reason) else {
                 return Err(SettlementError::InvalidRevertReason);
-            }
+            };
             match self.status {
                 BridgeStatus::Pending => {
                     self.status = BridgeStatus::Reverted(reason);

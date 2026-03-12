@@ -115,6 +115,42 @@ fn test_authorized_revert_rejects_empty_reason() {
 }
 
 #[test]
+fn test_authorized_revert_normalizes_invisible_reason_for_replay_stability() {
+    let mut request = SettlementRequest::new(1, "0xbbc1".to_string());
+    let token = CapabilityToken {
+        subject: "did:trn:worker-b".to_string(),
+        capabilities: vec![SettlementCapability::Revert],
+    };
+
+    request
+        .revert_authorized(&token, "target\u{200B}\nreceipt\t\u{202E}timeout".to_string())
+        .unwrap();
+
+    assert_eq!(
+        request.status,
+        BridgeStatus::Reverted("target receipt timeout".to_string())
+    );
+}
+
+#[test]
+fn test_authorized_revert_preserves_long_reason_without_second_truncation() {
+    let mut request = SettlementRequest::new(1, "0xbbc2".to_string());
+    let token = CapabilityToken {
+        subject: "did:trn:worker-b".to_string(),
+        capabilities: vec![SettlementCapability::Revert],
+    };
+
+    let raw = format!("timeout{}", "x".repeat(400));
+    request.revert_authorized(&token, raw.clone()).unwrap();
+
+    let BridgeStatus::Reverted(reason) = &request.status else {
+        panic!("expected reverted status");
+    };
+    assert_eq!(reason, &raw);
+    assert!(!reason.ends_with('…'));
+}
+
+#[test]
 fn test_authorized_revert_rejects_missing_capability() {
     let mut request = SettlementRequest::new(1, "0xbbd".to_string());
     let token = CapabilityToken {
