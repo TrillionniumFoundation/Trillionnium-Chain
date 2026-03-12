@@ -103,7 +103,7 @@ def rows_within_lookback(
         if isinstance(ts, str) and ts:
             try:
                 t = dt.datetime.fromisoformat(ts.replace("Z", "+00:00"))
-                in_window = t >= cutoff
+                in_window = cutoff <= t <= now_dt
             except Exception:
                 in_window = True
         if in_window:
