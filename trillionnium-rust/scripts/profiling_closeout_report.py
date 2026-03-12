@@ -149,28 +149,49 @@ def detect_capture_stamp(path: str | None) -> tuple[str, str] | None:
     return None
 
 
+def normalize_capture_stamp(family: str, value: str) -> int | None:
+    try:
+        if family == "epoch":
+            return int(value)
+        if family == "wall_clock":
+            return int(datetime.strptime(value, "%Y%m%d-%H%M%S").timestamp())
+    except Exception:
+        return None
+    return None
+
+
 def capture_stamp_line(label: str, path: str | None) -> str:
     stamp = detect_capture_stamp(path)
     if not stamp:
         return f"- {label}: capture_stamp=unavailable path={path or 'None'}"
     family, value = stamp
-    return f"- {label}: capture_stamp_family={family} capture_stamp={value} path={path}"
+    normalized_epoch = normalize_capture_stamp(family, value)
+    normalized = normalized_epoch if normalized_epoch is not None else "unavailable"
+    return (
+        f"- {label}: capture_stamp_family={family} capture_stamp={value} "
+        f"capture_stamp_epoch={normalized} path={path}"
+    )
 
 
 def capture_stamp_alignment_status(paths_by_label: list[tuple[str, str | None]]) -> tuple[str, str]:
     detected = []
     missing = []
-    families = set()
-    values = set()
+    raw_values = set()
+    normalized_values = set()
+    has_normalization_gap = False
     for label, path in paths_by_label:
         stamp = detect_capture_stamp(path)
         if not stamp:
             missing.append(label)
             continue
         family, value = stamp
-        detected.append((label, family, value))
-        families.add(family)
-        values.add(f"{family}:{value}")
+        normalized_epoch = normalize_capture_stamp(family, value)
+        if normalized_epoch is None:
+            has_normalization_gap = True
+        detected.append((label, family, value, normalized_epoch))
+        raw_values.add(f"{family}:{value}")
+        if normalized_epoch is not None:
+            normalized_values.add(normalized_epoch)
     if not detected:
         return ("unavailable", "no selected artifacts expose a recognizable capture stamp")
     if missing:
@@ -178,16 +199,21 @@ def capture_stamp_alignment_status(paths_by_label: list[tuple[str, str | None]])
             "partial",
             f"some selected artifacts do not expose a recognizable capture stamp: {', '.join(missing)}",
         )
-    if len(values) == 1:
+    if len(raw_values) == 1:
         return ("aligned", "all selected artifacts advertise the same capture stamp")
-    if len(families) > 1:
+    if normalized_values and len(normalized_values) == 1 and not has_normalization_gap:
+        return (
+            "aligned_normalized",
+            "selected artifacts use different capture stamp encodings, but they normalize to the same capture second",
+        )
+    if has_normalization_gap:
         return (
             "mixed_family",
-            "selected artifacts expose different capture stamp families, so stamp-level alignment cannot be asserted",
+            "selected artifacts expose different capture stamp families, and at least one stamp could not be normalized for cross-family comparison",
         )
     return (
         "misaligned",
-        "selected artifacts expose different capture stamps within the same family",
+        "selected artifacts expose different capture stamps after normalization",
     )
 
 
