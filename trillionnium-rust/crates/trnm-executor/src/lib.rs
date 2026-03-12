@@ -2154,6 +2154,26 @@ mod tests {
     }
 
     #[test]
+    fn default_profile_strategy_stays_on_original_even_when_auto_adaptive_prefers_hot_bucket() {
+        let txs = (0..1_024)
+            .map(|i| tx(i as u64, vec![o(0)], vec![o(0)]))
+            .collect::<Vec<_>>();
+
+        assert!(auto_adaptive_decision(&txs).use_hot_bucket);
+
+        let (default_groups, default_profile) = build_parallel_groups_profile(&txs);
+        let (original_groups, original_profile) =
+            build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::Original);
+
+        assert_profiles_match(
+            &default_groups,
+            &default_profile,
+            &original_groups,
+            &original_profile,
+        );
+    }
+
+    #[test]
     fn resolve_grouping_strategy_keeps_auto_adaptive_on_original_for_sparse_workloads() {
         let _env = env_lock();
         let txs = (0..1_024)
