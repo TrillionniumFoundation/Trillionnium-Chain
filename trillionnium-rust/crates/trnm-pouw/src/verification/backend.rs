@@ -653,7 +653,7 @@ pub fn parse_zk_proof_payload(
     if payload
         .vk_ref
         .chars()
-        .any(|ch| ch.is_ascii_whitespace() || ch.is_ascii_control())
+        .any(|ch| ch.is_whitespace() || ch.is_control())
     {
         return Err(BackendExecutionError::MalformedProof {
             backend: "zk:payload".to_string(),
@@ -678,7 +678,7 @@ pub fn parse_zk_proof_payload(
         }
         if backend_id
             .chars()
-            .any(|ch| ch.is_ascii_whitespace() || ch.is_ascii_control())
+            .any(|ch| ch.is_whitespace() || ch.is_control())
         {
             return Err(BackendExecutionError::MalformedProof {
                 backend: "zk:payload".to_string(),
@@ -705,7 +705,7 @@ pub fn parse_zk_proof_payload(
         }
         if backend_version
             .chars()
-            .any(|ch| ch.is_ascii_whitespace() || ch.is_ascii_control())
+            .any(|ch| ch.is_whitespace() || ch.is_control())
         {
             return Err(BackendExecutionError::MalformedProof {
                 backend: "zk:payload".to_string(),
@@ -1115,6 +1115,13 @@ mod tests {
     }
 
     #[test]
+    fn parse_zk_proof_payload_rejects_vk_ref_with_embedded_unicode_whitespace() {
+        let task = mock_task();
+        let err = parse_zk_proof_payload(&task, "ZK:{\"task_id\":4242,\"worker\":\"worker-zk\",\"proof_type\":\"zk\",\"result_hash\":\"1111111111111111111111111111111111111111111111111111111111111111\",\"zk_system\":\"groth16\",\"schema_version\":\"trnm.zk.payload.v0\",\"vk_ref\":\"vk://trnm/dev/mock-groth16/line\u{2003}break\",\"proof_encoding\":\"hex\",\"proof\":\"01020304\",\"public_inputs\":{\"order\":[\"task_id\",\"proof_type\",\"worker\",\"result_hash\"],\"values\":[\"4242\",\"zk\",\"worker-zk\",\"1111111111111111111111111111111111111111111111111111111111111111\"]}}".as_bytes()).unwrap_err();
+        assert!(matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("single opaque token") && reason.contains("embedded whitespace or control characters")));
+    }
+
+    #[test]
     fn parse_zk_proof_payload_rejects_backend_id_with_surrounding_whitespace() {
         let task = mock_task();
         let err = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"  groth16-demo  ","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["4242","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#).unwrap_err();
@@ -1129,6 +1136,13 @@ mod tests {
     }
 
     #[test]
+    fn parse_zk_proof_payload_rejects_backend_id_with_embedded_unicode_whitespace() {
+        let task = mock_task();
+        let err = parse_zk_proof_payload(&task, "ZK:{\"task_id\":4242,\"worker\":\"worker-zk\",\"proof_type\":\"zk\",\"result_hash\":\"1111111111111111111111111111111111111111111111111111111111111111\",\"zk_system\":\"groth16\",\"backend_id\":\"groth16-demo\u{2003}alt\",\"schema_version\":\"trnm.zk.payload.v0\",\"vk_ref\":\"vk://trnm/dev/mock-groth16/v1\",\"proof_encoding\":\"hex\",\"proof\":\"01020304\",\"public_inputs\":{\"order\":[\"task_id\",\"proof_type\",\"worker\",\"result_hash\"],\"values\":[\"4242\",\"zk\",\"worker-zk\",\"1111111111111111111111111111111111111111111111111111111111111111\"]}}".as_bytes()).unwrap_err();
+        assert!(matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("backend_id must be a single opaque token") && reason.contains("embedded whitespace or control characters")));
+    }
+
+    #[test]
     fn parse_zk_proof_payload_rejects_backend_version_with_surrounding_whitespace() {
         let task = mock_task();
         let err = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"groth16-demo","backend_version":"  v1  ","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["4242","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#).unwrap_err();
@@ -1139,6 +1153,13 @@ mod tests {
     fn parse_zk_proof_payload_rejects_backend_version_with_embedded_whitespace_or_control_chars() {
         let task = mock_task();
         let err = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"groth16-demo","backend_version":"v1\nnext","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["4242","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#).unwrap_err();
+        assert!(matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("backend_version must be a single opaque token") && reason.contains("embedded whitespace or control characters")));
+    }
+
+    #[test]
+    fn parse_zk_proof_payload_rejects_backend_version_with_embedded_unicode_whitespace() {
+        let task = mock_task();
+        let err = parse_zk_proof_payload(&task, "ZK:{\"task_id\":4242,\"worker\":\"worker-zk\",\"proof_type\":\"zk\",\"result_hash\":\"1111111111111111111111111111111111111111111111111111111111111111\",\"zk_system\":\"groth16\",\"backend_id\":\"groth16-demo\",\"backend_version\":\"v1\u{2003}next\",\"schema_version\":\"trnm.zk.payload.v0\",\"vk_ref\":\"vk://trnm/dev/mock-groth16/v1\",\"proof_encoding\":\"hex\",\"proof\":\"01020304\",\"public_inputs\":{\"order\":[\"task_id\",\"proof_type\",\"worker\",\"result_hash\"],\"values\":[\"4242\",\"zk\",\"worker-zk\",\"1111111111111111111111111111111111111111111111111111111111111111\"]}}".as_bytes()).unwrap_err();
         assert!(matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("backend_version must be a single opaque token") && reason.contains("embedded whitespace or control characters")));
     }
 
