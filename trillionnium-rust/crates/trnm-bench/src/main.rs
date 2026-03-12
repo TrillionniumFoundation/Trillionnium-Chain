@@ -193,15 +193,8 @@ fn main() {
         }
 
         if args.persist_profile {
-            match persist_profile_report(&lines, capture_started_at_epoch) {
-                Ok(path) => {
-                    let basename = path
-                        .file_name()
-                        .map(|name| name.to_string_lossy().into_owned())
-                        .unwrap_or_else(|| path.display().to_string());
-                    lines.push(format!("profile.report.path={}", path.display()));
-                    lines.push(format!("profile.report.artifact_basename={basename}"));
-                }
+            match persist_profile_report(&mut lines, capture_started_at_epoch) {
+                Ok(_) => {}
                 Err(err) => lines.push(format!("profile.report.persist_error={err}")),
             }
         }
@@ -212,7 +205,7 @@ fn main() {
     }
 }
 
-fn persist_profile_report(lines: &[String], capture_started_at_epoch: u64) -> std::io::Result<PathBuf> {
+fn persist_profile_report(lines: &mut Vec<String>, capture_started_at_epoch: u64) -> std::io::Result<PathBuf> {
     let out_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .join("..")
         .join("..")
@@ -222,6 +215,20 @@ fn persist_profile_report(lines: &[String], capture_started_at_epoch: u64) -> st
     let out_path = out_dir.join(format!(
         "executor-profile-summary-{capture_started_at_epoch}.txt"
     ));
+    let resolved_path = fs::canonicalize(&out_dir)
+        .unwrap_or_else(|_| out_dir.clone())
+        .join(
+            out_path
+                .file_name()
+                .map(|name| name.to_os_string())
+                .unwrap_or_default(),
+        );
+    let basename = out_path
+        .file_name()
+        .map(|name| name.to_string_lossy().into_owned())
+        .unwrap_or_else(|| out_path.display().to_string());
+    lines.push(format!("profile.report.path={}", resolved_path.display()));
+    lines.push(format!("profile.report.artifact_basename={basename}"));
     fs::write(&out_path, format!("{}\n", lines.join("\n")))?;
     fs::canonicalize(&out_path).or(Ok(out_path))
 }
