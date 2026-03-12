@@ -3586,6 +3586,28 @@ mod tests {
     }
 
     #[test]
+    fn round_change_backoff_budget_share_metric_stays_distinct_from_wall_share_signal() {
+        let bft_round_change_backoff_total_ms = 18u64;
+        let bft_round_change_active_heights = 2u64;
+        let bft_committed_heights = 4u64;
+        let finality_avg = 36u128;
+
+        let backoff_active_height_share_ppm = finality_budget_share_ppm(
+            ratio_milli_u64(
+                bft_round_change_backoff_total_ms,
+                bft_round_change_active_heights,
+            ),
+            finality_avg,
+        );
+        let backoff_wall_share_ppm =
+            ratio_ppm_u64(bft_round_change_backoff_total_ms, bft_committed_heights);
+
+        assert_eq!(backoff_active_height_share_ppm, 250_000);
+        assert_eq!(backoff_wall_share_ppm, 4_500_000);
+        assert_ne!(backoff_active_height_share_ppm, backoff_wall_share_ppm);
+    }
+
+    #[test]
     fn round_change_backoff_share_metric_handles_empty_consensus_samples() {
         assert_eq!(ratio_ppm_u64(18, 0), 0);
         assert_eq!(ratio_ppm_u64(0, 0), 0);
