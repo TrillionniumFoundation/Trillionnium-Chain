@@ -26,6 +26,9 @@ TS="$(date +%Y%m%d-%H%M%S)"
 OUT="release/rc-$TS"
 mkdir -p "$OUT"
 
+GIT_HEAD="$(git rev-parse HEAD 2>/dev/null || echo unknown)"
+GIT_BRANCH="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo unknown)"
+
 echo "[rc] output=$OUT"
 
 RELEASE_MODE="${MVP_MODE:-prod}"
@@ -123,6 +126,8 @@ cat > "$OUT/manifest.txt" <<EOF
 release_id=rc-$TS
 generated_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 workspace=$ROOT
+git_branch=$GIT_BRANCH
+git_head=$GIT_HEAD
 threshold_profile=${THRESHOLD_PROFILE:-stage1}
 txs=${TXS:-5000}
 env_tz=${TZ:-<unset>}
