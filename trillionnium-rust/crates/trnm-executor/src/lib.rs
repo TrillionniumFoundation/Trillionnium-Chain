@@ -817,6 +817,18 @@ fn parse_env_f64(name: &str) -> Option<f64> {
                     numeric.replace(',', "")
                 }
             } else {
+                let mut parts = numeric.split(',');
+                let whole = parts.next().unwrap_or("");
+                let frac_or_groups: Vec<&str> = parts.collect();
+                let comma_is_grouping = !whole.is_empty()
+                    && whole.chars().all(|ch| ch == '+' || ch == '-' || ch.is_ascii_digit())
+                    && whole.chars().any(|ch| ch.is_ascii_digit())
+                    && frac_or_groups
+                        .iter()
+                        .all(|segment| segment.len() == 3 && segment.chars().all(|ch| ch.is_ascii_digit()));
+                if !comma_is_grouping {
+                    return None;
+                }
                 numeric.replace(',', "")
             }
         } else {
@@ -2277,6 +2289,21 @@ mod tests {
         assert_eq!(auto_min_expected_gain_score(), 0.01);
         assert_eq!(hot_bucket_count(), 8);
         assert_eq!(auto_adaptive_min_batch_len(), 512);
+    }
+
+    #[test]
+    fn auto_adaptive_numeric_env_parser_rejects_ambiguous_multi_comma_ratio_values() {
+        let _env = env_lock();
+
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0,2,5");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "'+0,1,0'");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "1,2,5%");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "\"0,0,5\"");
+
+        assert_eq!(auto_hot_streak_threshold(), 0.22);
+        assert_eq!(auto_reorder_min_margin(), 0.04);
+        assert_eq!(auto_reorder_min_hot_key_share(), 0.0075);
+        assert_eq!(auto_min_expected_gain_score(), 0.01);
     }
 
     #[test]
