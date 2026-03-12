@@ -113,7 +113,10 @@ case "$sub" in
     fi
 
     echo "tx_hash=$tx_hash"
-    echo "status=committed"
+    # Fail closed when no real delegate is available. Reporting committed here can
+    # create a false-ready operator signal for environments that only have the
+    # minimal wrapper on PATH.
+    echo "status=unknown"
     ;;
   *)
     echo "unknown tx subcommand: $sub" >&2
