@@ -445,6 +445,16 @@ mod tests {
             Some("pr-2e")
         );
 
+        let tee_with_left_to_right_mark = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-2eaa\",\"adapter\":\"TEE\u{200E}_RECEIPT\"}",
+            )
+            .expect("tee receipt label with left-to-right mark should parse");
+        assert_eq!(
+            tee_with_left_to_right_mark.provider_request_id.as_deref(),
+            Some("pr-2eaa")
+        );
+
         let tee_with_word_joiner = adapter
             .parse_response(
                 "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-2ea\",\"adapter\":\"TEE\u{2060}_RECEIPT\"}",
@@ -662,6 +672,16 @@ mod tests {
         assert_eq!(
             zk_with_zero_width_joiner.provider_request_id.as_deref(),
             Some("pr-zk-2e")
+        );
+
+        let zk_with_invisible_separator = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-zk-2eaa\",\"adapter\":\"ZK\u{2063}_RECEIPT\"}",
+            )
+            .expect("zk receipt label with invisible separator should parse");
+        assert_eq!(
+            zk_with_invisible_separator.provider_request_id.as_deref(),
+            Some("pr-zk-2eaa")
         );
 
         let zk_with_word_joiner = adapter
