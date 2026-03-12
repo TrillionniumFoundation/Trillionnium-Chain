@@ -2164,6 +2164,59 @@ mod tests {
     }
 
     #[test]
+    fn resolve_approval_rejects_malformed_authority_set_without_mutation() {
+        let mut st = StateStore::new();
+
+        let first = st
+            .stage_or_confirm_resolve_approval(
+                8_101,
+                1,
+                true,
+                "authority-a",
+                "authority-a,authority-b",
+            )
+            .expect("first approval stage should succeed");
+        assert!(!first);
+        assert_eq!(st.pending_resolve_approval(8_101), Some((true, 1)));
+        assert_eq!(
+            st.pending_resolve_first_approver(8_101).as_deref(),
+            Some("authority-a")
+        );
+
+        for bad_authority_set in [
+            "authority-a,authority-a",
+            "authority-a, authority-b",
+            "authority-a,",
+            "authority-a,System",
+        ] {
+            let err = st
+                .stage_or_confirm_resolve_approval(
+                    8_101,
+                    1,
+                    true,
+                    "authority-b",
+                    bad_authority_set,
+                )
+                .expect_err("malformed authority set must be rejected");
+            assert!(
+                err.contains("duplicate members")
+                    || err.contains("non-canonical or forbidden member"),
+                "unexpected malformed authority-set error: {err}"
+            );
+            assert_eq!(
+                st.pending_resolve_approval(8_101),
+                Some((true, 1)),
+                "malformed authority set must not mutate staged confirmations"
+            );
+            assert_eq!(
+                st.pending_resolve_first_approver(8_101).as_deref(),
+                Some("authority-a"),
+                "malformed authority set must not replace the staged approver"
+            );
+        }
+    }
+
+    #[test]
     fn resolve_approval_rejects_decision_mismatch_without_invalidating_cached_state_root() {
         let mut st = StateStore::new();
 
