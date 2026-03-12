@@ -3167,6 +3167,17 @@ mod tests {
     }
 
     #[test]
+    fn round_change_backoff_wall_share_metric_can_exceed_one_million_when_backoff_dominates() {
+        let bft_round_change_backoff_total_ms = 12u64;
+        let bft_committed_heights = 3u64;
+        let wall_share_ppm =
+            ratio_ppm_u64(bft_round_change_backoff_total_ms, bft_committed_heights);
+
+        assert_eq!(wall_share_ppm, 4_000_000);
+        assert!(wall_share_ppm > 1_000_000);
+    }
+
+    #[test]
     fn round_change_active_height_rate_metrics_make_jitter_concentration_visible() {
         let bft_round_change_total = 6u64;
         let bft_round_change_active_heights = 2u64;
