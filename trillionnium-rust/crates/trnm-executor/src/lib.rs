@@ -2489,6 +2489,38 @@ mod tests {
     }
 
     #[test]
+    fn auto_adaptive_read_only_sparse_sampling_keeps_duplicate_indices_fail_closed() {
+        let _env = env_lock();
+        let _sample_len = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", "2048");
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.25");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.10");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.03");
+
+        // Mirror the sparse-window duplicate-index regression for read-only
+        // batches, where adaptive detection falls back to read_set keys.
+        // Duplicate sample indices must stay fail-closed instead of creating
+        // artificial hotspot share or streaks under broad unique-key traffic.
+        let mut txs = Vec::with_capacity(3000);
+        for i in 0..3000u64 {
+            txs.push(tx(80_000 + i, vec![o(130_000 + i)], vec![]));
+        }
+
+        let d = auto_adaptive_decision(&txs);
+        assert_eq!(d.sample_len, 2048);
+        assert_eq!(d.reason, "low_hot_key_share");
+        assert!(!d.use_hot_bucket);
+        assert!(
+            d.hot_key_share <= (1.0 / d.sample_len as f64),
+            "duplicate sparse-sample indices must not inflate read-only hot-key share"
+        );
+        assert_eq!(
+            d.streak_ratio, 0.0,
+            "duplicate sparse-sample indices must not manufacture read-only streak runs"
+        );
+    }
+
+    #[test]
     fn free_ingress_batches_short_circuit_to_single_group_after_strategy_reorder() {
         let txs = vec![
             tx(9, vec![], vec![]),
