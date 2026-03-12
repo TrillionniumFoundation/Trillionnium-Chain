@@ -58,19 +58,19 @@ extract_tx_hash() {
 extract_query_status() {
   local raw="$1"
   local s
-  # Accept plain-text variants like: status=ok / tx_status: committed,
-  # including log-prefixed lines (e.g. "[info] status=committed").
+  # Accept plain-text lifecycle aliases like: status=ok / tx_status: committed /
+  # state=finalized, including log-prefixed lines (e.g. "[info] state=committed").
   s=$(printf "%s\n" "$raw" \
-    | grep -Eio '(^|[^A-Za-z0-9_])([Tt][Xx]_)?[Ss][Tt][Aa][Tt][Uu][Ss][[:space:]]*[:=][[:space:]]*[^[:space:]]+' \
+    | grep -Eio '(^|[^A-Za-z0-9_])(([Tt][Xx]|[Tt][Rr][Aa][Nn][Ss][Aa][Cc][Tt][Ii][Oo][Nn])_)?([Ss][Tt][Aa][Tt][Uu][Ss]|[Ss][Tt][Aa][Tt][Ee])[[:space:]]*[:=][[:space:]]*[^[:space:]]+' \
     | head -n1 \
     | sed -E 's/.*[[:space:]:=]([^[:space:]]+).*/\1/' || true)
   if [[ -z "$s" ]]; then
-    # Accept JSON variants with either status / tx_status / transaction_status keys to avoid false negatives across adapters.
-    s=$(printf "%s\n" "$raw" | grep -Eio '"(tx_|transaction_)?status"[[:space:]]*:[[:space:]]*"[^"]+"|"transactionStatus"[[:space:]]*:[[:space:]]*"[^"]+"|"txStatus"[[:space:]]*:[[:space:]]*"[^"]+"' | sed -E 's/.*:[[:space:]]*"([^"]+)"/\1/' | head -n1 || true)
+    # Accept JSON variants with either status/state aliases to avoid false negatives across adapters.
+    s=$(printf "%s\n" "$raw" | grep -Eio '"((tx_|transaction_)?status|(tx_|transaction_)?state)"[[:space:]]*:[[:space:]]*"[^"]+"|"transactionStatus"[[:space:]]*:[[:space:]]*"[^"]+"|"txStatus"[[:space:]]*:[[:space:]]*"[^"]+"|"transactionState"[[:space:]]*:[[:space:]]*"[^"]+"|"txState"[[:space:]]*:[[:space:]]*"[^"]+"' | sed -E 's/.*:[[:space:]]*"([^"]+)"/\1/' | head -n1 || true)
   fi
   if [[ -z "$s" ]]; then
-    # Also accept non-string JSON scalar status values (number/bool), preserving guardrail against empty/null.
-    s=$(printf "%s\n" "$raw" | grep -Eio '"(tx_|transaction_)?status"[[:space:]]*:[[:space:]]*(true|false|[0-9]+)|"transactionStatus"[[:space:]]*:[[:space:]]*(true|false|[0-9]+)|"txStatus"[[:space:]]*:[[:space:]]*(true|false|[0-9]+)' | sed -E 's/.*:[[:space:]]*(true|false|[0-9]+).*/\1/' | head -n1 || true)
+    # Also accept non-string JSON scalar lifecycle values (number/bool), preserving guardrail against empty/null.
+    s=$(printf "%s\n" "$raw" | grep -Eio '"((tx_|transaction_)?status|(tx_|transaction_)?state)"[[:space:]]*:[[:space:]]*(true|false|[0-9]+)|"transactionStatus"[[:space:]]*:[[:space:]]*(true|false|[0-9]+)|"txStatus"[[:space:]]*:[[:space:]]*(true|false|[0-9]+)|"transactionState"[[:space:]]*:[[:space:]]*(true|false|[0-9]+)|"txState"[[:space:]]*:[[:space:]]*(true|false|[0-9]+)' | sed -E 's/.*:[[:space:]]*(true|false|[0-9]+).*/\1/' | head -n1 || true)
   fi
   printf "%s" "$s"
 }
