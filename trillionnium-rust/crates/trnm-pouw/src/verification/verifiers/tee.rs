@@ -1067,6 +1067,34 @@ mod tests {
     }
 
     #[test]
+    fn tee_verifier_backend_unavailable_fullwidth_slash_quote_report_claims_still_maps_to_combined_claims_surface(
+    ) {
+        let result = TeeVerifier::classify_execution_err(BackendExecutionError::Unavailable {
+            backend: "tee:mock-tee-unavailable".to_string(),
+            reason: "quote／report claims verifier unavailable".to_string(),
+        });
+
+        assert!(
+            matches!(result, VerificationResult::Indeterminate(_)),
+            "unexpected result: {result:?}"
+        );
+        let VerificationResult::Indeterminate(msg) = result else {
+            unreachable!()
+        };
+        assert!(msg.contains("unavailable:"), "message: {msg}");
+        assert!(
+            msg.contains("cannot currently verify TEE attestation quote/report claims:"),
+            "message: {msg}"
+        );
+        assert!(
+            msg.contains("legacy: cannot currently verify TEE attestation quote/report claims"),
+            "message: {msg}"
+        );
+        assert!(!msg.contains("quote/report evidence"), "message: {msg}");
+        assert!(!msg.contains("payload/claims"), "message: {msg}");
+    }
+
+    #[test]
     fn tee_verifier_backend_internal_quoted_reporting_terms_do_not_spoof_quote_or_report_surfaces(
     ) {
         let result = TeeVerifier::classify_execution_err(BackendExecutionError::Internal {
