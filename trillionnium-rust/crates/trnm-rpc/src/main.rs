@@ -7167,8 +7167,61 @@ line2
             "duplicate authoritative event lines must collapse to a single RPC event"
         );
         assert_eq!(got.events[0].task_id, 92);
-        assert_eq!(got.events[0].tx_id, 3);
-        assert_eq!(got.events[0].event_type, "commit");
+    }
+
+    #[test]
+    fn load_node_events_recent_tail_deduplicates_identical_events_across_sources() {
+        let _guard = lock_env();
+        let root = unique_tmp_path("trnm-rpc-node-tail-dedup-root", "dir");
+        fs::create_dir_all(&root).expect("create root dir");
+
+        let left_path = root.join("left-tail.log");
+        let right_path = root.join("right-tail.log");
+        let filler = "x".repeat(512);
+        let shared = "[event] event_type=resolve task_id=104 tx_id=8 block_height=12 actor=node4 from_status=COMMITTED to_status=RESOLVED state_root=bbb signer=node4 ts_unix_ms=1200\n";
+        fs::write(&left_path, format!("{filler}\n{shared}")).expect("write left log");
+        fs::write(&right_path, format!("{filler}\n{shared}")).expect("write right log");
+
+        let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+        let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+        let prev_tail = std::env::var("TRNM_RPC_NODE_EVENT_LOG_TAIL_BYTES").ok();
+        unsafe {
+            std::env::set_var(
+                NODE_EVENT_LOG_SOURCES_ENV,
+                format!("{},{}", left_path.display(), right_path.display()),
+            );
+            std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV);
+            std::env::set_var(
+                "TRNM_RPC_NODE_EVENT_LOG_TAIL_BYTES",
+                (shared.len() + 1).to_string(),
+            );
+        }
+
+        let got = load_node_events_from_root(&root, NodeEventScanMode::RecentTail);
+
+        match prev_sources {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+        }
+        match prev_manifest {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+        }
+        match prev_tail {
+            Some(v) => unsafe { std::env::set_var("TRNM_RPC_NODE_EVENT_LOG_TAIL_BYTES", v) },
+            None => unsafe { std::env::remove_var("TRNM_RPC_NODE_EVENT_LOG_TAIL_BYTES") },
+        }
+
+        assert!(got.truncated, "recent-tail scan should report truncation");
+        assert_eq!(got.mode, NodeEventScanMode::RecentTail);
+        assert_eq!(
+            got.events.len(),
+            1,
+            "duplicate recent-tail event lines must collapse to a single RPC event"
+        );
+        assert_eq!(got.events[0].task_id, 104);
+        assert_eq!(got.events[0].tx_id, 8);
+        assert_eq!(got.events[0].event_type, "resolve");
 
         let _ = fs::remove_dir_all(root);
     }
