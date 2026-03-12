@@ -212,5 +212,12 @@ mod tests {
         let normalized = normalize_failure_reason(raw);
         assert_eq!(normalized, "target relay timeout signal");
     }
+
+    #[test]
+    fn normalize_failure_reason_collapses_crlf_and_unicode_separators_for_replay_stability() {
+        let raw = "target\r\nrelay\u{2028}timeout\u{2029}signal\n";
+        let normalized = normalize_failure_reason(raw);
+        assert_eq!(normalized, "target relay timeout signal");
+    }
 }
 
