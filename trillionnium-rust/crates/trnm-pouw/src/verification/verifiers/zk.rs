@@ -50,11 +50,7 @@ impl ZkVerifier {
             .position(|b| *b == b':')
             .and_then(|idx| proof_data.get(idx + 1..))
             .and_then(|body| std::str::from_utf8(body).ok())
-            .map(|body| {
-                let trimmed = body.trim_start();
-                trimmed.starts_with('{')
-                    && (trimmed.contains("\"vk_ref\"") || trimmed.contains("\"public_inputs\""))
-            })
+            .map(|body| body.trim_start().starts_with('{'))
             .unwrap_or(false)
     }
 
@@ -1028,6 +1024,32 @@ mod tests {
             verifier.verify_proof(&task, payload),
             VerificationResult::Indeterminate(msg)
                 if msg.contains("verification backend 'missing-backend' is not registered")
+        ));
+    }
+
+    #[test]
+    fn zk_verifier_treats_json_shaped_payload_without_vk_ref_as_malformed_contract_error() {
+        let verifier = ZkVerifier::from_config(&router_config(), Arc::new(ZkBackendRegistry::new()));
+        let task = mock_task();
+        let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","schema_version":"trnm.zk.payload.v0","proof_encoding":"hex","proof":"01020304"}"#;
+
+        assert!(matches!(
+            verifier.verify_proof(&task, payload),
+            VerificationResult::Invalid(msg)
+                if msg.contains("malformed:") && msg.contains("canonical JSON object")
+        ));
+    }
+
+    #[test]
+    fn zk_verifier_treats_json_shaped_payload_without_public_inputs_as_malformed_contract_error() {
+        let verifier = ZkVerifier::from_config(&router_config(), Arc::new(ZkBackendRegistry::new()));
+        let task = mock_task();
+        let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304"}"#;
+
+        assert!(matches!(
+            verifier.verify_proof(&task, payload),
+            VerificationResult::Invalid(msg)
+                if msg.contains("malformed:") && msg.contains("canonical JSON object")
         ));
     }
 
