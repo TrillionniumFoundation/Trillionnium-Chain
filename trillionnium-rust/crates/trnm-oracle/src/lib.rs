@@ -314,6 +314,7 @@ impl OracleValidationReport {
 
     pub fn bridge_contract_consistent(&self) -> bool {
         self.observation_matches_metrics()
+            && self.classified_outcome_conserves_sample_count()
             && self.observation_classified_outcome_conserves_sample_count()
     }
 }
@@ -997,5 +998,22 @@ mod tests {
             report.observation.classified_outcome_total(),
             report.metrics.classified_outcome_total()
         );
+    }
+
+    #[test]
+    fn bridge_contract_consistent_rejects_metrics_sample_count_mismatch() {
+        let mut report = validate_snapshot_observed(
+            &policy(),
+            &snapshot_with(100_000, Some(100_100), 10_000),
+            10_100,
+        );
+
+        assert!(report.bridge_contract_consistent());
+        report.metrics.sample_count = 0;
+
+        assert!(!report.classified_outcome_conserves_sample_count());
+        assert!(report.observation_matches_metrics());
+        assert!(!report.observation_classified_outcome_conserves_sample_count());
+        assert!(!report.bridge_contract_consistent());
     }
 }
