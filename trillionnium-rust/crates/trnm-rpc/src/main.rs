@@ -2192,7 +2192,9 @@ fn parse_http_get_path(first_line: &str) -> Option<&str> {
     let path = &rest[..second_sp];
     if !path.starts_with('/')
         || path.starts_with("//")
-        || path.chars().any(|ch| ch.is_ascii_whitespace() || ch.is_control())
+        || path
+            .chars()
+            .any(|ch| ch.is_ascii_whitespace() || ch.is_control())
     {
         return None;
     }
@@ -2241,6 +2243,7 @@ fn parse_query_events_limit_from_path(path: &str) -> std::result::Result<usize, 
     if normalized_query.contains("%26")
         || normalized_query.contains("%3d")
         || normalized_query.contains("%23")
+        || normalized_query.contains("%3f")
     {
         return Err(http_json_response(
             "400 Bad Request",
@@ -2451,8 +2454,8 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
             }
             Some(path) if path.starts_with("/query-capability-audit/") => {
                 let path_without_query = path.split('?').next().unwrap_or(path);
-                let subject_or_token = path_without_query
-                    .trim_start_matches("/query-capability-audit/");
+                let subject_or_token =
+                    path_without_query.trim_start_matches("/query-capability-audit/");
                 let registry = load_identity_registry(&identity_registry_file());
                 if let Some(token_id) =
                     resolve_capability_token_subject_or_token(&registry, subject_or_token)
@@ -3725,8 +3728,7 @@ mod tests {
             QUERY_EVENTS_LIMIT_DEFAULT
         );
         assert_eq!(
-            parse_query_events_limit_from_path("/query-events/42?limit=7")
-                .expect("explicit limit"),
+            parse_query_events_limit_from_path("/query-events/42?limit=7").expect("explicit limit"),
             7
         );
         assert_eq!(
@@ -3807,6 +3809,7 @@ mod tests {
             "/query-events/42?foo=bar%26limit=9",
             "/query-events/42?limit%3d9",
             "/query-events/42?limit=7%23tail",
+            "/query-events/42?foo=bar%3flimit=9",
         ] {
             let err = parse_query_events_limit_from_path(path)
                 .expect_err("encoded query delimiters must fail closed");
@@ -3884,18 +3887,33 @@ mod tests {
     #[test]
     fn parse_http_get_path_rejects_path_traversal_and_backslash_forms() {
         assert_eq!(parse_http_get_path("GET /../health HTTP/1.1"), None);
-        assert_eq!(parse_http_get_path("GET /query-events/../../etc/passwd HTTP/1.1"), None);
+        assert_eq!(
+            parse_http_get_path("GET /query-events/../../etc/passwd HTTP/1.1"),
+            None
+        );
         assert_eq!(parse_http_get_path("GET /query-events\\42 HTTP/1.1"), None);
-        assert_eq!(parse_http_get_path("GET /query-events/%2e%2e/health HTTP/1.1"), None);
-        assert_eq!(parse_http_get_path("GET /query-events/%2Fhealth HTTP/1.1"), None);
+        assert_eq!(
+            parse_http_get_path("GET /query-events/%2e%2e/health HTTP/1.1"),
+            None
+        );
+        assert_eq!(
+            parse_http_get_path("GET /query-events/%2Fhealth HTTP/1.1"),
+            None
+        );
         assert_eq!(parse_http_get_path("GET //query-events/42 HTTP/1.1"), None);
     }
 
     #[test]
     fn parse_http_get_path_rejects_fragment_forms() {
         assert_eq!(parse_http_get_path("GET /health#ready HTTP/1.1"), None);
-        assert_eq!(parse_http_get_path("GET /query-events/42?limit=7#tail HTTP/1.1"), None);
-        assert_eq!(parse_http_get_path("GET /query-events/%23frag HTTP/1.1"), None);
+        assert_eq!(
+            parse_http_get_path("GET /query-events/42?limit=7#tail HTTP/1.1"),
+            None
+        );
+        assert_eq!(
+            parse_http_get_path("GET /query-events/%23frag HTTP/1.1"),
+            None
+        );
     }
 
     #[test]
@@ -6163,26 +6181,24 @@ mod tests {
 
     #[test]
     fn query_events_response_fails_closed_when_authoritative_events_all_filter_out() {
-        let events = vec![
-            NodeEventRecord {
-                event_type: "commit".into(),
-                task_id: 77,
-                from_status: "Open".into(),
-                to_status: "Committed".into(),
-                actor: "worker-a".into(),
-                tx_id: 1,
-                block_height: 1,
-                state_root: "s1".into(),
-                ts_unix_ms: 1,
-                signer: Some("worker-a".into()),
-                challenger: None,
-                tx_hash: None,
-                resolution_code: None,
-                treasury_delta: None,
-                challenger_delta: None,
-                bond_disposition: None,
-            },
-        ];
+        let events = vec![NodeEventRecord {
+            event_type: "commit".into(),
+            task_id: 77,
+            from_status: "Open".into(),
+            to_status: "Committed".into(),
+            actor: "worker-a".into(),
+            tx_id: 1,
+            block_height: 1,
+            state_root: "s1".into(),
+            ts_unix_ms: 1,
+            signer: Some("worker-a".into()),
+            challenger: None,
+            tx_hash: None,
+            resolution_code: None,
+            treasury_delta: None,
+            challenger_delta: None,
+            bond_disposition: None,
+        }];
         let recs = vec![AdapterRecord {
             ts: 1,
             kind: "commit".into(),
@@ -6365,7 +6381,9 @@ mod tests {
         assert_eq!(node_event_log_tail_bytes(), NODE_EVENT_LOG_TAIL_BYTES_MAX);
 
         match prev {
-            Some(value) => unsafe { std::env::set_var("TRNM_RPC_NODE_EVENT_LOG_TAIL_BYTES", value) },
+            Some(value) => unsafe {
+                std::env::set_var("TRNM_RPC_NODE_EVENT_LOG_TAIL_BYTES", value)
+            },
             None => unsafe { std::env::remove_var("TRNM_RPC_NODE_EVENT_LOG_TAIL_BYTES") },
         }
     }
@@ -6711,7 +6729,11 @@ line2
             None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
         }
 
-        assert_eq!(got.events.len(), 1, "duplicate authoritative event lines must collapse to a single RPC event");
+        assert_eq!(
+            got.events.len(),
+            1,
+            "duplicate authoritative event lines must collapse to a single RPC event"
+        );
         assert_eq!(got.events[0].task_id, 92);
         assert_eq!(got.events[0].tx_id, 3);
         assert_eq!(got.events[0].event_type, "commit");
