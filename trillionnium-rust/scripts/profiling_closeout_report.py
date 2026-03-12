@@ -477,7 +477,8 @@ def main():
         return preview
 
     def candidate_pool_health_struct(label: str, selected: str | None, candidates: list[str]) -> dict[str, str | int]:
-        if not candidates:
+        existing_candidates = [path for path in candidates if os.path.exists(path)]
+        if not existing_candidates:
             return {
                 "label": label,
                 "status": "empty",
@@ -485,30 +486,30 @@ def main():
                 "selected": selected or "None",
                 "selected_freshness": "missing",
                 "candidate_count": 0,
+                "missing_count": len(candidates),
                 "fresh": 0,
                 "stale": 0,
                 "old": 0,
                 "old_backlog": 0,
             }
         freshness_counts = {"fresh": 0, "stale": 0, "old": 0}
-        present_candidate_count = 0
-        for path in candidates:
+        for path in existing_candidates:
             freshness = freshness_label(file_age_seconds(path))
             if freshness in freshness_counts:
                 freshness_counts[freshness] += 1
-                present_candidate_count += 1
         selected_freshness = freshness_label(file_age_seconds(selected)) if selected else "missing"
         old_backlog = freshness_counts["stale"] + freshness_counts["old"]
-        if present_candidate_count == 0:
+        candidate_count = len(existing_candidates)
+        if candidate_count == 0:
             status = "empty"
             action = "produce"
         elif freshness_counts["fresh"] == 0:
             status = "refresh_required"
             action = "refresh"
-        elif present_candidate_count >= 12 or old_backlog >= 8:
+        elif candidate_count >= 12 or old_backlog >= 8:
             status = "backlog_heavy"
             action = "keep_latest_and_consider_archive"
-        elif present_candidate_count >= 5 or old_backlog >= 3:
+        elif candidate_count >= 5 or old_backlog >= 3:
             status = "backlog_present"
             action = "keep_latest"
         else:
@@ -520,7 +521,8 @@ def main():
             "action": action,
             "selected": os.path.basename(selected) if selected else "None",
             "selected_freshness": selected_freshness,
-            "candidate_count": present_candidate_count,
+            "candidate_count": candidate_count,
+            "missing_count": max(0, len(candidates) - candidate_count),
             "fresh": freshness_counts["fresh"],
             "stale": freshness_counts["stale"],
             "old": freshness_counts["old"],
@@ -530,7 +532,7 @@ def main():
     def candidate_pool_health_line(pool: dict[str, str | int]) -> str:
         return (
             f"- {pool['label']}: status={pool['status']} action={pool['action']} selected={pool['selected']} "
-            f"selected_freshness={pool['selected_freshness']} candidate_count={pool['candidate_count']} fresh={pool['fresh']} "
+            f"selected_freshness={pool['selected_freshness']} candidate_count={pool['candidate_count']} missing_count={pool['missing_count']} fresh={pool['fresh']} "
             f"stale={pool['stale']} old={pool['old']} old_backlog={pool['old_backlog']}"
         )
 
