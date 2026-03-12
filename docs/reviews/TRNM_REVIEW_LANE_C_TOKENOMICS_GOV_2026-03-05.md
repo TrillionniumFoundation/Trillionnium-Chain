@@ -222,6 +222,10 @@ Monetary policy 仅记账不铸销到账户，且节点主循环未触发 policy
 - 这意味着“无人裁决超时 → 自动 slash → 直接领 bounty”的激励链路当前并不存在；若后续产品语义希望把 timeout-slash 也视为 challenger 胜诉，需要在设计上额外说明是否允许 payout、由谁承担，以及如何避免把无人裁决路径重新变成 bounty farming 面。
 - 另外，原 Challenge 3 所述“challenge-success bounty 可从全局 `treasury.worker_slashes` 回退支付”的 P0 经济面，已不再符合当前 `trnm-pouw` 实现：现有实现只允许从**当前任务的 worker stake lock**支付 bounty，并在 task-local slash principal 不足时 fail-closed，而不会回退抽取全局 slash treasury。当前遗留风险更准确地说是：**timeout-slash 的治理控制面仍未真正打通**，而不是 bounty 仍可直接抽取全局 slash 库。
 - 当前 L05 代码侧已覆盖的语义应单独记账：默认 challenged-timeout 仍固定走 `Completed + refund challenger bond`，不会碰全局 slash treasury；而合成的 slash-path 校验也要求资金流保持 task-local，并且**不会**因为 timeout 自动附带发放 challenge-success bounty。换言之，当前 PoUW 剩余风险主要在**治理键可达性/控制面接线**，而不是 timeout 结算路径在 `trnm-pouw` 内部重新打开了全局赏金抽取面。
+- 2026-03-12 当前 L05 回归覆盖可明确锚定到两条语义测试：
+  - `challenged_timeout_default_path_does_not_pay_bounty_or_touch_global_slash_treasury`
+  - `challenged_timeout_slash_path_only_moves_task_local_stake_and_never_auto_pays_bounty`
+  这两条测试分别约束：默认 timeout 只能退还 challenger bond 且不得触碰 `treasury.worker_slashes`；以及进入 slash 结算语义时，资金流也只能搬运当前任务的 worker stake lock，且**不会**顺带自动发放 challenge-success bounty。
 
 ---
 
