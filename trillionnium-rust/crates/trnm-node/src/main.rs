@@ -3372,6 +3372,32 @@ mod tests {
     }
 
     #[test]
+    fn round_change_backoff_review_bundle_keeps_coverage_wall_and_budget_views_together() {
+        let jitter_review_fields = [
+            "bft_round_change_backoff_active_heights",
+            "bft_round_change_backoff_active_height_rate_ppm",
+            "bft_round_change_backoff_active_observed_height_rate_ppm",
+            "bft_round_change_backoff_density_avg_milli",
+            "bft_round_change_backoff_active_height_share_ppm",
+            "bft_round_change_backoff_wall_share_ppm",
+            "bft_round_change_backoff_share_ppm",
+        ];
+
+        assert_eq!(jitter_review_fields.len(), 7);
+        assert!(jitter_review_fields[0].ends_with("_heights"));
+        assert!(jitter_review_fields[1].ends_with("_rate_ppm"));
+        assert!(jitter_review_fields[2].ends_with("_rate_ppm"));
+        assert!(jitter_review_fields[3].ends_with("_avg_milli"));
+        assert!(jitter_review_fields[4].ends_with("_share_ppm"));
+        assert!(jitter_review_fields[5].ends_with("_share_ppm"));
+        assert!(jitter_review_fields[6].ends_with("_share_ppm"));
+        assert_ne!(jitter_review_fields[1], jitter_review_fields[2]);
+        assert_ne!(jitter_review_fields[4], jitter_review_fields[5]);
+        assert_ne!(jitter_review_fields[4], jitter_review_fields[6]);
+        assert_ne!(jitter_review_fields[5], jitter_review_fields[6]);
+    }
+
+    #[test]
     fn round_change_backoff_wall_share_metric_name_stays_ppm_based() {
         let field_name = "bft_round_change_backoff_wall_share_ppm";
         assert!(field_name.ends_with("_share_ppm"));
