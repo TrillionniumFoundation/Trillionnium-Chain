@@ -174,6 +174,9 @@ fn strip_terminal_control_sequences(input: &str) -> String {
 
     while let Some(ch) = chars.next() {
         if ch != '\u{1b}' {
+            if ch.is_control() && !matches!(ch, '\n' | '\r' | '\t') {
+                continue;
+            }
             sanitized.push(ch);
             continue;
         }
@@ -502,6 +505,30 @@ mod tests {
             .expect("should parse json with ansi pm noise around it");
         assert_eq!(parsed.output_text, "ok");
         assert_eq!(parsed.provider_request_id.as_deref(), Some("r3-ansi-pm"));
+    }
+
+    #[test]
+    fn standard_proof_adapter_parse_response_accepts_json_after_raw_control_byte_noise() {
+        let adapter = StandardProofAdapter;
+        let stdout = "\0\u{2}info: warmup\u{1f}\n{\"output_text\":\"ok\",\"provider_request_id\":\"r3-control-noise\"}\0\u{3}";
+
+        let parsed = adapter
+            .parse_response(stdout)
+            .expect("should parse json with raw control-byte noise around it");
+        assert_eq!(parsed.output_text, "ok");
+        assert_eq!(parsed.provider_request_id.as_deref(), Some("r3-control-noise"));
+    }
+
+    #[test]
+    fn standard_proof_adapter_parse_response_accepts_json_with_raw_control_byte_prefix() {
+        let adapter = StandardProofAdapter;
+        let stdout = "\0\u{2}{\"output_text\":\"ok\",\"provider_request_id\":\"r3-control-prefix\"}";
+
+        let parsed = adapter
+            .parse_response(stdout)
+            .expect("should parse json with raw control-byte prefix");
+        assert_eq!(parsed.output_text, "ok");
+        assert_eq!(parsed.provider_request_id.as_deref(), Some("r3-control-prefix"));
     }
 
     #[test]
