@@ -763,11 +763,19 @@ fn parse_env_f64(name: &str) -> Option<f64> {
 }
 
 fn aggr_scan_window() -> usize {
+    const DEFAULT_SCAN_WINDOW: usize = 0;
     const MAX_SCAN_WINDOW: usize = 4096;
 
     parse_env_usize("TRNM_AGGR_SCAN_WINDOW")
         .map(|v| v.min(MAX_SCAN_WINDOW))
-        .unwrap_or(0)
+        .filter(|&v| v > 0)
+        .unwrap_or_else(|| {
+            if aggr_deep_scan_enabled() {
+                DEFAULT_SCAN_WINDOW
+            } else {
+                0
+            }
+        })
 }
 
 fn env_toggle_enabled(name: &str, default: bool) -> bool {
@@ -1815,6 +1823,18 @@ mod tests {
     }
 
     #[test]
+    fn aggressive_scan_window_ignores_zero_and_separator_only_values() {
+        let _env = env_lock();
+
+        let _zero = EnvGuard::set("TRNM_AGGR_SCAN_WINDOW", "0");
+        assert_eq!(aggr_scan_window(), 0);
+        drop(_zero);
+
+        let _underscores = EnvGuard::set("TRNM_AGGR_SCAN_WINDOW", "__,,__");
+        assert_eq!(aggr_scan_window(), 0);
+    }
+
+    #[test]
     fn aggressive_round_robin_seed_parses_trimmed_numeric_env_values() {
         let _env = env_lock();
         let _seed = EnvGuard::set("TRNM_AGGR_SCAN_RR_SEED", " 7 ");
@@ -2095,6 +2115,29 @@ mod tests {
         let _trimmed = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", " '1_024' ");
         assert_eq!(auto_adaptive_sample_len(5000), 1024);
         assert_eq!(auto_adaptive_sample_len(256), 256);
+    }
+
+    #[test]
+    fn auto_adaptive_small_batch_threshold_accepts_quoted_grouped_env_values() {
+        let _env = env_lock();
+        let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", " '6_4' ");
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0%");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "20%");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0%");
+
+        let mut txs = Vec::with_capacity(64);
+        for i in 0..64u64 {
+            txs.push(tx(i, vec![], vec![o(42)]));
+        }
+
+        let d = auto_adaptive_decision(&txs);
+        assert_eq!(d.sample_len, 64);
+        assert!(
+            d.use_hot_bucket,
+            "quoted/grouped env values should preserve small-batch hotspot detection"
+        );
+        assert_eq!(d.reason, "hotspot_detected");
     }
 
     #[test]
