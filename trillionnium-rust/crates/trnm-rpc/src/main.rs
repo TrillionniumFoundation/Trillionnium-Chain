@@ -609,6 +609,20 @@ fn is_safe_node_event_log_source(path: &Path) -> bool {
         .unwrap_or(false)
 }
 
+fn resolve_bounded_node_event_log_source(root: &Path, candidate: PathBuf) -> Option<PathBuf> {
+    if !is_safe_node_event_log_source(&candidate) {
+        return None;
+    }
+
+    let canonical_root = fs::canonicalize(root).ok()?;
+    let canonical_candidate = fs::canonicalize(&candidate).ok()?;
+    if !canonical_candidate.starts_with(&canonical_root) {
+        return None;
+    }
+
+    Some(candidate)
+}
+
 fn discover_default_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
     let run_dir = root.join("run");
     let mut out = BTreeSet::<PathBuf>::new();
@@ -652,7 +666,7 @@ fn load_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
                 } else {
                     manifest_dir.join(path)
                 };
-                if is_safe_node_event_log_source(&resolved) {
+                if let Some(resolved) = resolve_bounded_node_event_log_source(root, resolved) {
                     sources.insert(resolved);
                 }
             }
@@ -666,7 +680,7 @@ fn load_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
             } else {
                 root.join(path)
             };
-            if is_safe_node_event_log_source(&resolved) {
+            if let Some(resolved) = resolve_bounded_node_event_log_source(root, resolved) {
                 sources.insert(resolved);
             }
         }
@@ -6318,6 +6332,7 @@ mod tests {
 
     #[test]
     fn load_node_events_recent_tail_marks_truncation_but_authoritative_keeps_history() {
+        let _guard = lock_env();
         let root = tempfile::tempdir().expect("tempdir");
         let run = root.path().join("run");
         fs::create_dir_all(&run).expect("create run dir");
@@ -6331,9 +6346,15 @@ mod tests {
         )
         .expect("write log");
 
-        std::env::set_var("TRNM_RPC_NODE_EVENT_LOG_TAIL_BYTES", "400");
+        let prev_tail = std::env::var("TRNM_RPC_NODE_EVENT_LOG_TAIL_BYTES").ok();
+        unsafe {
+            std::env::set_var("TRNM_RPC_NODE_EVENT_LOG_TAIL_BYTES", "400");
+        }
         let recent = load_node_events_from_root(root.path(), NodeEventScanMode::RecentTail);
-        std::env::remove_var("TRNM_RPC_NODE_EVENT_LOG_TAIL_BYTES");
+        match prev_tail {
+            Some(v) => unsafe { std::env::set_var("TRNM_RPC_NODE_EVENT_LOG_TAIL_BYTES", v) },
+            None => unsafe { std::env::remove_var("TRNM_RPC_NODE_EVENT_LOG_TAIL_BYTES") },
+        }
 
         assert!(recent.truncated);
         assert_eq!(recent.mode, NodeEventScanMode::RecentTail);
@@ -6686,6 +6707,58 @@ line2
     }
 
     #[test]
+    fn load_node_event_log_sources_rejects_manifest_entries_outside_root_fail_closed() {
+        let _guard = lock_env();
+        let root = unique_tmp_path("trnm-rpc-log-sources-manifest-outside", "dir");
+        let manifest_dir = root.join("cfg");
+        let outside_dir = unique_tmp_path("trnm-rpc-log-sources-outside", "dir");
+        fs::create_dir_all(&manifest_dir).expect("create manifest dir");
+        fs::create_dir_all(&outside_dir).expect("create outside dir");
+
+        let present_log = manifest_dir.join("present.log");
+        let outside_log = outside_dir.join("outside.log");
+        let manifest = manifest_dir.join("sources.txt");
+        fs::write(&present_log, "").expect("write present log");
+        fs::write(&outside_log, "").expect("write outside log");
+        fs::write(
+            &manifest,
+            format!("present.log\n{}\n", outside_log.display()),
+        )
+        .expect("write manifest");
+
+        let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+        let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+        unsafe {
+            std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV);
+            std::env::set_var(
+                NODE_EVENT_LOG_MANIFEST_ENV,
+                manifest.to_string_lossy().to_string(),
+            );
+        }
+
+        let got = load_node_event_log_sources(&root);
+
+        match prev_sources {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+        }
+        match prev_manifest {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+        }
+
+        assert!(got.contains(&present_log));
+        assert!(
+            !got.contains(&outside_log),
+            "manifest entries outside the RPC root must be ignored so event scans stay bounded"
+        );
+        assert_eq!(got.len(), 1);
+
+        let _ = fs::remove_dir_all(root);
+        let _ = fs::remove_dir_all(outside_dir);
+    }
+
+    #[test]
     fn load_node_event_log_sources_rejects_symlink_entries_fail_closed() {
         let _guard = lock_env();
         let root = unique_tmp_path("trnm-rpc-log-sources-symlink", "dir");
@@ -6738,9 +6811,58 @@ line2
     }
 
     #[test]
+    fn load_node_event_log_sources_rejects_env_entries_outside_root_fail_closed() {
+        let _guard = lock_env();
+        let root = unique_tmp_path("trnm-rpc-log-sources-env-outside", "dir");
+        let run_dir = root.join("run");
+        let outside_dir = unique_tmp_path("trnm-rpc-log-sources-env-outside-target", "dir");
+        fs::create_dir_all(&run_dir).expect("create run dir");
+        fs::create_dir_all(&outside_dir).expect("create outside dir");
+
+        let inside_log = run_dir.join("inside.log");
+        let outside_log = outside_dir.join("outside.log");
+        fs::write(&inside_log, "").expect("write inside log");
+        fs::write(&outside_log, "").expect("write outside log");
+
+        let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+        let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+        unsafe {
+            std::env::set_var(
+                NODE_EVENT_LOG_SOURCES_ENV,
+                format!("{},{}", inside_log.display(), outside_log.display()),
+            );
+            std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV);
+        }
+
+        let got = load_node_event_log_sources(&root);
+
+        match prev_sources {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+        }
+        match prev_manifest {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+        }
+
+        assert!(got.contains(&inside_log));
+        assert!(
+            !got.contains(&outside_log),
+            "env entries outside the RPC root must be ignored so event scans stay bounded"
+        );
+        assert_eq!(got.len(), 1);
+
+        let _ = fs::remove_dir_all(root);
+        let _ = fs::remove_dir_all(outside_dir);
+    }
+
+    #[test]
     fn load_latest_node_events_reads_events_from_configured_node4_source() {
         let _guard = lock_env();
-        let path = unique_tmp_path("trnm-rpc-node4", "log");
+        let root = unique_tmp_path("trnm-rpc-node4-root", "dir");
+        let run_dir = root.join("run");
+        let path = run_dir.join("node4.log");
+        fs::create_dir_all(&run_dir).expect("create run dir");
         fs::write(
             &path,
             "[event] event_type=commit task_id=44 tx_id=7 block_height=9 actor=node4 from_status=ASSIGNED to_status=COMPLETED state_root=abc signer=node4\n",
@@ -6750,14 +6872,11 @@ line2
         let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
         let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
         unsafe {
-            std::env::set_var(
-                NODE_EVENT_LOG_SOURCES_ENV,
-                path.to_string_lossy().to_string(),
-            );
+            std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, "run/node4.log");
             std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV);
         }
 
-        let got = load_latest_node_events();
+        let got = load_node_events_from_root(&root, NodeEventScanMode::RecentTail).events;
 
         match prev_sources {
             Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
@@ -6776,7 +6895,7 @@ line2
                 && evt.signer.as_deref() == Some("node4")
         }));
 
-        let _ = fs::remove_file(path);
+        let _ = fs::remove_dir_all(root);
     }
 
     #[test]
@@ -6833,19 +6952,19 @@ line2
     #[test]
     fn load_latest_node_events_recent_tail_keeps_only_recent_complete_events() {
         let _guard = lock_env();
-        let path = unique_tmp_path("trnm-rpc-node4-tail", "log");
+        let root = unique_tmp_path("trnm-rpc-node4-tail-root", "dir");
+        let run_dir = root.join("run");
+        let path = run_dir.join("node4-tail.log");
         let older = "[event] event_type=commit task_id=41 tx_id=1 block_height=3 actor=node4 from_status=ASSIGNED to_status=COMPLETED state_root=aaa signer=node4\n";
         let recent = "[event] event_type=resolve task_id=42 tx_id=2 block_height=4 actor=node4 from_status=COMMITTED to_status=RESOLVED state_root=bbb signer=node4\n";
+        fs::create_dir_all(&run_dir).expect("create run dir");
         fs::write(&path, format!("{}{}", older, recent)).expect("write node4 log");
 
         let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
         let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
         let prev_tail = std::env::var("TRNM_RPC_NODE_EVENT_LOG_TAIL_BYTES").ok();
         unsafe {
-            std::env::set_var(
-                NODE_EVENT_LOG_SOURCES_ENV,
-                path.to_string_lossy().to_string(),
-            );
+            std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, "run/node4-tail.log");
             std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV);
             std::env::set_var(
                 "TRNM_RPC_NODE_EVENT_LOG_TAIL_BYTES",
@@ -6853,7 +6972,7 @@ line2
             );
         }
 
-        let got = load_latest_node_events();
+        let got = load_node_events_from_root(&root, NodeEventScanMode::RecentTail).events;
 
         match prev_sources {
             Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
@@ -6873,7 +6992,7 @@ line2
         assert_eq!(got[0].tx_id, 2);
         assert_eq!(got[0].event_type, "resolve");
 
-        let _ = fs::remove_file(path);
+        let _ = fs::remove_dir_all(root);
     }
 
     #[test]
