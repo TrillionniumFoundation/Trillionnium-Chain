@@ -819,9 +819,20 @@ fn query_local_tx_status(tx_hash: &str) -> Option<String> {
     let raw = fs::read_to_string(path).ok()?;
     let v: serde_json::Value = serde_json::from_str(&raw).ok()?;
     let rec = v.get(tx_hash)?;
-    rec.get("status")
-        .and_then(|s| s.as_str())
-        .and_then(normalize_tx_status)
+    [
+        "status",
+        "tx_status",
+        "txStatus",
+        "transaction_status",
+        "transactionStatus",
+        "state",
+        "tx_state",
+        "txState",
+        "transaction_state",
+        "transactionState",
+    ]
+    .into_iter()
+    .find_map(|key| rec.get(key).and_then(normalize_json_status))
 }
 
 fn persist_local_pending_tx(tx_hash: &str) -> Result<()> {
@@ -1852,16 +1863,20 @@ mod tests {
         let ok_hash = "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
         let completed_hash = "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
         let inflight_hash = "0xcccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc";
+        let scalar_hash = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
+        let bool_hash = "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff";
         let unknown_hash = "0xdddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd";
         let payload = format!(
-            "{{\n  \"{}\": {{\"status\": \"success!\"}},\n  \"{}\": {{\"status\": \"done\"}},\n  \"{}\": {{\"status\": \"in_progress\"}},\n  \"{}\": {{\"status\": \"mystery\"}}\n}}",
-            ok_hash, completed_hash, inflight_hash, unknown_hash
+            "{{\n  \"{}\": {{\"status\": \"success!\"}},\n  \"{}\": {{\"tx_status\": \"done\"}},\n  \"{}\": {{\"state\": \"in_progress\"}},\n  \"{}\": {{\"transactionStatus\": 0}},\n  \"{}\": {{\"txState\": false}},\n  \"{}\": {{\"status\": \"mystery\"}}\n}}",
+            ok_hash, completed_hash, inflight_hash, scalar_hash, bool_hash, unknown_hash
         );
         std::fs::write(&path, payload).unwrap();
 
         assert_eq!(query_local_tx_status(ok_hash).as_deref(), Some("committed"));
         assert_eq!(query_local_tx_status(completed_hash).as_deref(), Some("committed"));
         assert_eq!(query_local_tx_status(inflight_hash).as_deref(), Some("pending"));
+        assert_eq!(query_local_tx_status(scalar_hash).as_deref(), Some("committed"));
+        assert_eq!(query_local_tx_status(bool_hash).as_deref(), Some("fail"));
         assert_eq!(query_local_tx_status(unknown_hash), None);
 
         let _ = std::fs::remove_file(&path);
