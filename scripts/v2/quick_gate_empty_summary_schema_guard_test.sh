@@ -23,6 +23,8 @@ required = {
     'git_head': str,
     'file_manifest_sha256': str,
     'skip_shellcheck': int,
+    'shellcheck_requested': int,
+    'shellcheck_fallback_reason': str,
     'bash_n_elapsed_sec': int,
     'shellcheck_status': str,
     'shellcheck_version': str,
