@@ -826,6 +826,9 @@ impl StateStore {
                         self.pending_resolve_approvals.remove(&task_id);
                         return;
                     }
+                } else {
+                    self.pending_resolve_approvals.remove(&task_id);
+                    return;
                 }
                 self.pending_resolve_approvals.insert(
                     task_id,
@@ -2686,6 +2689,27 @@ mod tests {
             st.pending_resolve_first_approver(9_320).as_deref(),
             Some("authority-a")
         );
+    }
+
+    #[test]
+    fn restore_pending_resolve_approval_scrubs_snapshot_without_governance_authority_anchor() {
+        let mut st = StateStore::new();
+
+        st.restore_pending_resolve_approval(
+            9_321,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                second_approver: None,
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 9,
+            }),
+        );
+
+        assert_eq!(st.pending_resolve_approval(9_321), None);
+        assert_eq!(st.pending_resolve_first_approver(9_321), None);
+        assert_eq!(st.pending_resolve_approval_snapshot(9_321), None);
     }
 
     #[test]
