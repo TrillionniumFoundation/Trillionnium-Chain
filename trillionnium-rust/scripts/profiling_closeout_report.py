@@ -518,6 +518,26 @@ def main():
             f"remaining={remaining}"
         )
 
+    def selected_candidate_rank(label: str, selected: str | None, candidates: list[str]) -> str:
+        existing_candidates = [path for path in candidates if os.path.exists(path)]
+        if not selected:
+            return f"- {label}: selected=none rank=missing newest=unknown candidate_count={len(existing_candidates)}"
+        if selected in existing_candidates:
+            rank = existing_candidates.index(selected) + 1
+            return (
+                f"- {label}: selected={os.path.basename(selected)} rank={rank}/{len(existing_candidates)} "
+                f"newest={'true' if rank == 1 else 'false'}"
+            )
+        if selected in candidates:
+            return (
+                f"- {label}: selected={os.path.basename(selected)} rank=pending_write/{len(existing_candidates)} "
+                "newest=pending_write"
+            )
+        return (
+            f"- {label}: selected={os.path.basename(selected)} rank=not_in_candidate_set/{len(existing_candidates)} "
+            "newest=false"
+        )
+
     def latest_benchmark_artifact():
         artifact_candidates = [path for path in [classic, mixed, executor_profile] if path and os.path.exists(path)]
         if not artifact_candidates:
@@ -661,6 +681,9 @@ def main():
             pool_followup_labels.append(str(pool["label"]).replace("_candidates", ""))
 
     lines += ["", "## Benchmark Pool Action Summary"]
+    lines.append(selected_candidate_rank("classic_bench_selection", classic, classic_candidates))
+    lines.append(selected_candidate_rank("mixed_bench_selection", mixed, mixed_candidates))
+    lines.append(selected_candidate_rank("executor_profile_selection", executor_profile, executor_profile_candidates))
     lines.append(
         "- benchmark_pool_status_counts: "
         f"empty={pool_status_counts['empty']} refresh_required={pool_status_counts['refresh_required']} "
@@ -772,6 +795,13 @@ def main():
     }.get(str(baseline_report_pool["action"]), "review_archive_candidates_before_manual_cleanup")
 
     lines += ["", "## Baseline Report Action Summary"]
+    lines.append(
+        selected_candidate_rank(
+            "baseline_closeout_report_selection",
+            out,
+            baseline_report_candidates_with_out,
+        )
+    )
     lines.append(
         "- baseline_closeout_report_decision: "
         + (
