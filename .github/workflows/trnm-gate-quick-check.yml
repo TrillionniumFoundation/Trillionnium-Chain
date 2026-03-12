@@ -219,6 +219,10 @@ jobs:
         run: |
           ./scripts/v2/quick_gate_explicit_skip_shellcheck_summary_test.sh
 
+      - name: Quick gate target-dir normalization summary regression
+        run: |
+          ./scripts/v2/quick_gate_target_dirs_normalized_summary_guard_test.sh
+
       - name: Quick gate umask guard regression
         run: |
           ./scripts/v2/quick_gate_umask_env_guard_test.sh
