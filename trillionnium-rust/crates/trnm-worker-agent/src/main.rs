@@ -912,13 +912,13 @@ fn normalize_candidate_tx_hash(raw: &str) -> Option<String> {
     let cleaned = raw
         .trim_matches(|c: char| {
             is_receipt_quote_wrapper(c)
-                || matches!(c, ',' | ';' | '.' | ':' | ')' | ']' | '}' | '(' | '[' | '{')
+                || matches!(c, ',' | ';' | '.' | ':' | ')' | ']' | '}' | '>' | '(' | '[' | '{' | '<')
                 || c.is_control()
                 || is_invisible_filler(c)
         })
         .trim_end_matches(|c: char| {
             is_receipt_quote_wrapper(c)
-                || matches!(c, ',' | ';' | '}' | ']')
+                || matches!(c, ',' | ';' | '}' | ']' | '>')
                 || c.is_control()
                 || is_invisible_filler(c)
         })
@@ -1099,7 +1099,7 @@ fn parse_tx_hash(text: &str) -> Option<String> {
                     || ch.is_control()
                     || is_invisible_filler(ch)
                     || is_receipt_quote_wrapper(ch)
-                    || matches!(ch, '(' | '[' | '{');
+                    || matches!(ch, '(' | '[' | '{' | '<');
                 (!is_leading_wrapper).then_some(idx)
             })
             .unwrap_or(trimmed.len());
@@ -2292,6 +2292,27 @@ mod tests {
         assert_eq!(
             parsed_backtick,
             "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd"
+        );
+    }
+
+    #[test]
+    fn parse_tx_hash_accepts_angle_bracket_wrapped_receipts() {
+        let shell = parse_tx_hash(
+            "[adapter] commit accepted tx_hash=<0xABCDabcdABCDabcdABCDabcdABCDabcdABCDabcdABCDabcdABCDabcdABCDabcd>",
+        )
+        .expect("angle-bracket shell receipt hash should parse");
+        assert_eq!(
+            shell,
+            "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd"
+        );
+
+        let json = parse_tx_hash(
+            "adapter stdout: {\"tx_hash\": \"<0xFACEfaceFACEfaceFACEfaceFACEfaceFACEfaceFACEfaceFACEfaceFACEface>\"}",
+        )
+        .expect("angle-bracket json receipt hash should parse");
+        assert_eq!(
+            json,
+            "facefacefacefacefacefacefacefacefacefacefacefacefacefacefaceface"
         );
     }
 
