@@ -155,7 +155,7 @@ fn main() {
             default_has_adaptive_opportunity
         );
 
-        if emits_auto_profile(args.strategy) {
+        if emits_auto_profile(args.strategy, default_has_adaptive_opportunity) {
             let d = auto_adaptive_decision(&txs);
             println!("profile.auto.use_hot_bucket={}", d.use_hot_bucket);
             println!("profile.auto.reason={}", d.reason);
@@ -177,8 +177,9 @@ fn main() {
     }
 }
 
-fn emits_auto_profile(strategy: StrategyArg) -> bool {
+fn emits_auto_profile(strategy: StrategyArg, default_has_adaptive_opportunity: bool) -> bool {
     matches!(strategy, StrategyArg::AutoAdaptive)
+        || (matches!(strategy, StrategyArg::Default) && default_has_adaptive_opportunity)
 }
 
 fn adaptive_candidate_strategy_for(txs: &[Tx]) -> GroupingStrategy {
@@ -329,15 +330,16 @@ mod tests {
     }
 
     #[test]
-    fn auto_profile_output_is_reserved_for_explicit_auto_adaptive_strategy() {
-        assert!(!emits_auto_profile(StrategyArg::Default));
-        assert!(!emits_auto_profile(StrategyArg::Original));
-        assert!(!emits_auto_profile(StrategyArg::FootprintDesc));
-        assert!(!emits_auto_profile(StrategyArg::WriteFirst));
-        assert!(!emits_auto_profile(StrategyArg::WriteLast));
-        assert!(!emits_auto_profile(StrategyArg::HotBucketInterleave));
-        assert!(emits_auto_profile(StrategyArg::AutoAdaptive));
-        assert!(!emits_auto_profile(StrategyArg::AggressiveGreedy));
+    fn auto_profile_output_is_emitted_for_explicit_auto_and_default_headroom() {
+        assert!(!emits_auto_profile(StrategyArg::Default, false));
+        assert!(emits_auto_profile(StrategyArg::Default, true));
+        assert!(!emits_auto_profile(StrategyArg::Original, false));
+        assert!(!emits_auto_profile(StrategyArg::FootprintDesc, false));
+        assert!(!emits_auto_profile(StrategyArg::WriteFirst, false));
+        assert!(!emits_auto_profile(StrategyArg::WriteLast, false));
+        assert!(!emits_auto_profile(StrategyArg::HotBucketInterleave, false));
+        assert!(emits_auto_profile(StrategyArg::AutoAdaptive, false));
+        assert!(!emits_auto_profile(StrategyArg::AggressiveGreedy, false));
     }
 
     #[test]
