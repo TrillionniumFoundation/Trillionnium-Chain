@@ -178,6 +178,18 @@ def main():
             return None
         return datetime.fromtimestamp(os.path.getmtime(path)).isoformat()
 
+    def artifact_lineage(label: str, path: str | None, producer: str) -> str:
+        status = input_status(path)
+        age_seconds = file_age_seconds(path)
+        freshness = freshness_label(age_seconds)
+        basename = os.path.basename(path) if path else "None"
+        return (
+            f"- {label}: status={status} freshness={freshness} "
+            f"age_seconds={age_seconds if age_seconds is not None else 'n/a'} "
+            f"updated_at={file_mtime_iso(path) or 'n/a'} basename={basename} "
+            f"path={path or 'None'} producer={producer}"
+        )
+
     def latest_benchmark_artifact():
         artifact_candidates = [path for path in [classic, mixed, executor_profile] if path and os.path.exists(path)]
         if not artifact_candidates:
@@ -253,6 +265,13 @@ def main():
     ]
     for label, status, producer in readiness_rows:
         lines.append(f"- {label}: {status} | producer={producer}")
+
+    lines += ["", "## Artifact Lineage"]
+    lines.append(artifact_lineage("bench_dir", bench_dir if bench_dir_exists else None, recommended_producer("bench_dir")))
+    lines.append(artifact_lineage("node_log", node_log, recommended_producer("node_log")))
+    lines.append(artifact_lineage("classic_bench", classic, recommended_producer("classic_bench")))
+    lines.append(artifact_lineage("mixed_bench", mixed, recommended_producer("mixed_bench")))
+    lines.append(artifact_lineage("executor_profile", executor_profile, recommended_producer("executor_profile")))
 
     lines += ["", "## Data Completeness"]
     lines.append(
