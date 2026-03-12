@@ -140,6 +140,7 @@ def detect_capture_stamp(path: str | None) -> tuple[str, str] | None:
     patterns = [
         (r"bench-(?:mixed-)?matrix-(\d{8}-\d{6})\.txt$", "wall_clock"),
         (r"executor-profile-summary-(\d+)\.txt$", "epoch"),
+        (r"executor-profile-summary-(\d{8}-\d{6})\.txt$", "wall_clock"),
         (r"profiling-closeout-baseline-(\d{8}-\d{6})\.md$", "wall_clock"),
     ]
     for pattern, family in patterns:
