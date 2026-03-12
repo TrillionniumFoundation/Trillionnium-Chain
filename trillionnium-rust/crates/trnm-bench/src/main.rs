@@ -93,6 +93,13 @@ fn main() {
         }
     };
 
+    let capture_started_at = SystemTime::now();
+    let capture_started_at_epoch = capture_started_at
+        .duration_since(UNIX_EPOCH)
+        .unwrap_or_default()
+        .as_secs();
+    let capture_started_at_iso = chrono_like_iso(capture_started_at);
+
     let t0 = Instant::now();
     let (groups, profile) = build_parallel_groups_profile_with_strategy(&txs, args.strategy.into());
     let dt = t0.elapsed();
@@ -131,6 +138,8 @@ fn main() {
             format!("profile.report.read_fanout={}", args.read_fanout.max(1)),
             format!("profile.report.write_every={}", args.write_every.max(1)),
             format!("profile.report.persist_profile={}", args.persist_profile),
+            format!("profile.report.capture_started_at_epoch={}", capture_started_at_epoch),
+            format!("profile.report.capture_started_at_iso={}", capture_started_at_iso),
             format!("profile.report.elapsed_ms={}", dt.as_millis()),
             format!("profile.report.estimated_conflict_rate={:.4}", conflict_rate),
             format!("profile.report.coverage_ratio={:.4}", coverage_ratio),
@@ -184,8 +193,15 @@ fn main() {
         }
 
         if args.persist_profile {
-            match persist_profile_report(&lines) {
-                Ok(path) => lines.push(format!("profile.report.path={}", path.display())),
+            match persist_profile_report(&lines, capture_started_at_epoch) {
+                Ok(path) => {
+                    let basename = path
+                        .file_name()
+                        .map(|name| name.to_string_lossy().into_owned())
+                        .unwrap_or_else(|| path.display().to_string());
+                    lines.push(format!("profile.report.path={}", path.display()));
+                    lines.push(format!("profile.report.artifact_basename={basename}"));
+                }
                 Err(err) => lines.push(format!("profile.report.persist_error={err}")),
             }
         }
@@ -196,20 +212,23 @@ fn main() {
     }
 }
 
-fn persist_profile_report(lines: &[String]) -> std::io::Result<PathBuf> {
-    let ts = SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .unwrap_or_default()
-        .as_secs();
+fn persist_profile_report(lines: &[String], capture_started_at_epoch: u64) -> std::io::Result<PathBuf> {
     let out_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .join("..")
         .join("..")
         .join("run")
         .join("bench");
     fs::create_dir_all(&out_dir)?;
-    let out_path = out_dir.join(format!("executor-profile-summary-{ts}.txt"));
+    let out_path = out_dir.join(format!(
+        "executor-profile-summary-{capture_started_at_epoch}.txt"
+    ));
     fs::write(&out_path, format!("{}\n", lines.join("\n")))?;
     fs::canonicalize(&out_path).or(Ok(out_path))
+}
+
+fn chrono_like_iso(ts: SystemTime) -> String {
+    let duration = ts.duration_since(UNIX_EPOCH).unwrap_or_default();
+    format!("unix:{}", duration.as_secs())
 }
 
 fn build_classic_txs(n: usize, keys: usize) -> Vec<Tx> {
