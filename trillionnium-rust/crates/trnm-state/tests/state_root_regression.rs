@@ -488,6 +488,48 @@ fn restore_pending_resolve_snapshot_with_same_counts_but_different_authority_met
 }
 
 #[test]
+fn restore_pending_resolve_snapshot_with_same_authority_metadata_but_different_task_version_rewinds_state_root() {
+    let mut state = StateStore::new();
+    state
+        .stage_or_confirm_resolve_approval(5_151, 7, true, "resolver-a", "resolver-a,resolver-b")
+        .expect("initial staged resolve approval should succeed");
+
+    let baseline_root = state.state_root();
+    let baseline_snapshot = state.pending_resolve_approval_snapshot(5_151);
+    assert!(baseline_snapshot.is_some(), "sanity: snapshot should capture staged approval");
+
+    state.restore_pending_resolve_approval(
+        5_151,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "resolver-a".into(),
+            authority_set: "resolver-a,resolver-b".into(),
+            task_version: 8,
+        }),
+    );
+
+    let mutated_root = state.state_root();
+    assert_ne!(
+        mutated_root, baseline_root,
+        "changing only pending resolve task_version must perturb state_root"
+    );
+
+    state.restore_pending_resolve_approval(5_151, baseline_snapshot);
+
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "restoring the original pending resolve snapshot must rewind state_root exactly even when only task_version changed"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "repeated reads after restoring pending resolve task_version should deterministically reuse the rewound cached root"
+    );
+}
+
+#[test]
 fn restore_pending_none_rewinds_state_root_after_removing_staged_resolve_approval() {
     let mut state = StateStore::new();
     let baseline_root = state.state_root();
