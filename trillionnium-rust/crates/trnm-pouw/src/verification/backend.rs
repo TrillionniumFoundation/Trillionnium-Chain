@@ -108,6 +108,18 @@ pub fn backend_system_hint(raw: &str) -> Option<String> {
             }
             break;
         }
+
+        // Prefer the concrete TEE attestation platform when compound backend
+        // identifiers include both a vendor/family label and a more specific
+        // platform token, e.g. `amd-sev-snp` should resolve to `snp` rather
+        // than the broader `sev` family marker.
+        if let Some(platform) = parts[idx..]
+            .iter()
+            .copied()
+            .find(|token| matches!(*token, "sgx" | "tdx" | "snp"))
+        {
+            return Some(platform.to_string());
+        }
     }
 
     match parts.get(idx).copied() {
@@ -864,7 +876,7 @@ mod tests {
             backend_system_hint("tee:intel-sgx-dcap"),
             Some("sgx".into())
         );
-        assert_eq!(backend_system_hint("TEE amd-sev-snp"), Some("sev".into()));
+        assert_eq!(backend_system_hint("TEE amd-sev-snp"), Some("snp".into()));
         assert_eq!(backend_system_hint("tee attestation report"), None);
         assert_eq!(backend_system_hint("tee receipt quote"), None);
         assert_eq!(backend_system_hint("tee evidence snp"), Some("snp".into()));
@@ -902,7 +914,7 @@ mod tests {
         );
         assert_eq!(
             VerificationBackendKind::Custom("TEE AMD-SEV-SNP".into()).system_hint(),
-            Some("sev".into())
+            Some("snp".into())
         );
         assert_eq!(
             VerificationBackendKind::Custom("zk_risc0".into()).system_hint(),
