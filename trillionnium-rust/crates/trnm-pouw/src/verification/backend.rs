@@ -252,7 +252,7 @@ impl ParsedZkProofPayload {
                 })
             }
             ProofBytesEncoding::Hex => {
-                hex::decode(self.proof.trim()).map_err(|_| BackendExecutionError::MalformedProof {
+                hex::decode(self.proof.as_str()).map_err(|_| BackendExecutionError::MalformedProof {
                     backend: "zk:payload".to_string(),
                     reason: "invalid zk payload: proof is not valid hex".to_string(),
                 })
@@ -732,6 +732,23 @@ pub fn parse_zk_proof_payload(
             reason: "invalid zk payload: proof bytes are required".to_string(),
         });
     }
+    if payload.proof != payload.proof.trim() {
+        return Err(BackendExecutionError::MalformedProof {
+            backend: "zk:payload".to_string(),
+            reason: "invalid zk payload: proof must not contain surrounding whitespace"
+                .to_string(),
+        });
+    }
+    if payload
+        .proof
+        .chars()
+        .any(|ch| ch.is_whitespace() || ch.is_control())
+    {
+        return Err(BackendExecutionError::MalformedProof {
+            backend: "zk:payload".to_string(),
+            reason: "invalid zk payload: proof must be encoded as a single token without embedded whitespace or control characters".to_string(),
+        });
+    }
     let mut expected_public_inputs = vec![task.task_id.to_string(), "zk".to_string()];
     let mut expected_order = vec!["task_id".to_string(), "proof_type".to_string()];
     if let Some(worker) = task.worker.as_ref() {
@@ -1098,6 +1115,20 @@ mod tests {
         let task = mock_task();
         let err = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["4242","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#).unwrap_err();
         assert!(matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("proof_encoding is required")));
+    }
+
+    #[test]
+    fn parse_zk_proof_payload_rejects_proof_with_surrounding_whitespace() {
+        let task = mock_task();
+        let err = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":" 01020304 ","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["4242","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#).unwrap_err();
+        assert!(matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("proof must not contain surrounding whitespace")));
+    }
+
+    #[test]
+    fn parse_zk_proof_payload_rejects_proof_with_embedded_unicode_whitespace() {
+        let task = mock_task();
+        let err = parse_zk_proof_payload(&task, "ZK:{\"task_id\":4242,\"worker\":\"worker-zk\",\"proof_type\":\"zk\",\"result_hash\":\"1111111111111111111111111111111111111111111111111111111111111111\",\"zk_system\":\"groth16\",\"schema_version\":\"trnm.zk.payload.v0\",\"vk_ref\":\"vk://trnm/dev/mock-groth16/v1\",\"proof_encoding\":\"hex\",\"proof\":\"0102\u{2003}0304\",\"public_inputs\":{\"order\":[\"task_id\",\"proof_type\",\"worker\",\"result_hash\"],\"values\":[\"4242\",\"zk\",\"worker-zk\",\"1111111111111111111111111111111111111111111111111111111111111111\"]}}".as_bytes()).unwrap_err();
+        assert!(matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("proof must be encoded as a single token without embedded whitespace or control characters")));
     }
 
     #[test]
