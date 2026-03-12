@@ -902,17 +902,21 @@ fn resolve_path_arg_from_env(path: PathBuf, env_name: &str, default_path: &str) 
     path
 }
 
+fn is_receipt_quote_wrapper(ch: char) -> bool {
+    matches!(ch, '"' | '\'' | '“' | '”' | '‘' | '’')
+}
+
 fn normalize_candidate_tx_hash(raw: &str) -> Option<String> {
     let cleaned = raw
         .trim_matches(|c: char| {
-            matches!(
-                c,
-                '"' | '\'' | ',' | ';' | '.' | ':' | ')' | ']' | '}' | '(' | '[' | '{'
-            ) || c.is_control()
+            is_receipt_quote_wrapper(c)
+                || matches!(c, ',' | ';' | '.' | ':' | ')' | ']' | '}' | '(' | '[' | '{')
+                || c.is_control()
                 || is_invisible_filler(c)
         })
         .trim_end_matches(|c: char| {
-            matches!(c, '"' | '\'' | ',' | ';' | '}' | ']')
+            is_receipt_quote_wrapper(c)
+                || matches!(c, ',' | ';' | '}' | ']')
                 || c.is_control()
                 || is_invisible_filler(c)
         })
@@ -1092,7 +1096,8 @@ fn parse_tx_hash(text: &str) -> Option<String> {
                 let is_leading_wrapper = ch.is_ascii_whitespace()
                     || ch.is_control()
                     || is_invisible_filler(ch)
-                    || matches!(ch, '"' | '\'' | '(' | '[' | '{');
+                    || is_receipt_quote_wrapper(ch)
+                    || matches!(ch, '(' | '[' | '{');
                 (!is_leading_wrapper).then_some(idx)
             })
             .unwrap_or(trimmed.len());
@@ -1104,7 +1109,9 @@ fn parse_tx_hash(text: &str) -> Option<String> {
         let candidate_end = candidate
             .char_indices()
             .find_map(|(idx, ch)| {
-                let is_hash_char = ch.is_ascii_hexdigit() || matches!(ch, 'x' | 'X' | '"' | '\'');
+                let is_hash_char = ch.is_ascii_hexdigit()
+                    || matches!(ch, 'x' | 'X')
+                    || is_receipt_quote_wrapper(ch);
                 (!is_hash_char).then_some(idx)
             })
             .unwrap_or(candidate.len());
@@ -2388,6 +2395,17 @@ mod tests {
         let uppercase = parse_tx_hash("adapter stdout: {'TX-HASH' : 'ABCD1234'}")
             .expect("single-quoted uppercase hyphenated receipt hash should parse");
         assert_eq!(uppercase, "abcd1234");
+    }
+
+    #[test]
+    fn parse_tx_hash_accepts_smart_quoted_receipts() {
+        let curly_double = parse_tx_hash("adapter stdout: {\"tx_hash\": “0xDEADBEEF”}")
+            .expect("smart double-quoted receipt hash should parse");
+        assert_eq!(curly_double, "deadbeef");
+
+        let curly_single = parse_tx_hash("adapter stdout: {'transaction_hash': ‘ABCD1234’}")
+            .expect("smart single-quoted receipt hash should parse");
+        assert_eq!(curly_single, "abcd1234");
     }
 
     #[test]
