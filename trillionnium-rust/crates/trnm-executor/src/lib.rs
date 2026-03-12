@@ -754,6 +754,57 @@ fn parse_env_usize(name: &str) -> Option<usize> {
 }
 
 #[inline]
+fn parse_grouped_env_usize(name: &str) -> Option<usize> {
+    std::env::var(name).ok().and_then(|v| {
+        let trimmed = v.trim();
+        if trimmed.is_empty() {
+            return None;
+        }
+
+        let unquoted = trimmed
+            .strip_prefix('"')
+            .and_then(|inner| inner.strip_suffix('"'))
+            .or_else(|| {
+                trimmed
+                    .strip_prefix('\'')
+                    .and_then(|inner| inner.strip_suffix('\''))
+            })
+            .map(str::trim)
+            .unwrap_or(trimmed);
+        if unquoted.is_empty() {
+            return None;
+        }
+
+        let compact: String = unquoted.chars().filter(|&ch| ch != '_').collect();
+        if compact.is_empty() || compact.chars().all(|ch| ch == ',') {
+            return None;
+        }
+
+        let normalized = compact.strip_prefix('+').unwrap_or(&compact);
+        if normalized.is_empty() {
+            return None;
+        }
+
+        if normalized.contains(',') {
+            let mut parts = normalized.split(',');
+            let first = parts.next().unwrap_or("");
+            let rest: Vec<&str> = parts.collect();
+            let comma_is_grouping = !first.is_empty()
+                && first.chars().all(|ch| ch.is_ascii_digit())
+                && rest
+                    .iter()
+                    .all(|segment| segment.len() == 3 && segment.chars().all(|ch| ch.is_ascii_digit()));
+            if !comma_is_grouping {
+                return None;
+            }
+            return normalized.replace(',', "").parse::<usize>().ok();
+        }
+
+        normalized.parse::<usize>().ok()
+    })
+}
+
+#[inline]
 fn parse_env_f64(name: &str) -> Option<f64> {
     std::env::var(name).ok().and_then(|v| {
         let trimmed = v.trim();
@@ -852,7 +903,7 @@ fn aggr_scan_window() -> usize {
     const DEFAULT_SCAN_WINDOW: usize = 0;
     const MAX_SCAN_WINDOW: usize = 4096;
 
-    parse_env_usize("TRNM_AGGR_SCAN_WINDOW")
+    parse_grouped_env_usize("TRNM_AGGR_SCAN_WINDOW")
         .map(|v| v.min(MAX_SCAN_WINDOW))
         .filter(|&v| v > 0)
         .unwrap_or_else(|| {
@@ -1986,6 +2037,22 @@ mod tests {
         assert_eq!(aggr_scan_window(), 1024);
         assert_eq!(aggr_scan_round_robin_seed(), 9001);
         assert_eq!(hot_bucket_count(), 32);
+    }
+
+    #[test]
+    fn aggressive_scan_window_accepts_comma_grouped_values() {
+        let _env = env_lock();
+        let _window = EnvGuard::set("TRNM_AGGR_SCAN_WINDOW", "1,024");
+
+        assert_eq!(aggr_scan_window(), 1024);
+    }
+
+    #[test]
+    fn aggressive_scan_window_rejects_ambiguous_comma_decimal_values() {
+        let _env = env_lock();
+        let _window = EnvGuard::set("TRNM_AGGR_SCAN_WINDOW", "1,5");
+
+        assert_eq!(aggr_scan_window(), 0);
     }
 
     #[test]
