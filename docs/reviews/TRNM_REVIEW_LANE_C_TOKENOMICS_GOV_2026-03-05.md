@@ -210,6 +210,8 @@ Monetary policy 仅记账不铸销到账户，且节点主循环未触发 policy
 - 但当前状态层 governance allowlist 似乎尚未放行该 key；在测试环境尝试通过 `set_gov_param_bootstrap_unchecked(..., "default_slash_on_unresolved_challenge", "true")` 注入时，返回 `governance key not allowed: default_slash_on_unresolved_challenge`。
 - 这意味着当前实现更接近“代码里预留了治理开关，但治理面实际上还无法配置”，默认路径仍然固定为 `Completed + refund challenger bond`。
 - 若要把超时惩戒真正落成可治理经济规则，需要同步打通 state allowlist / governance schema 与对应回归测试，否则会形成“名义可配置、实际不可达”的控制面错觉。
+- 另一个需要显式记录的经济语义是：当前 `trnm-pouw` 的 challenge-success bounty 只在**显式 slash resolve** 路径发放，且资金来源被限制为**当前任务的 worker stake lock**；challenged timeout 即使未来切到 `Slashed` 分支，也不会从全局 `treasury.worker_slashes` 或 timeout 路径额外发放 bounty。
+- 这意味着“无人裁决超时 → 自动 slash → 直接领 bounty”的激励链路当前并不存在；若后续产品语义希望把 timeout-slash 也视为 challenger 胜诉，需要在设计上额外说明是否允许 payout、由谁承担，以及如何避免把无人裁决路径重新变成 bounty farming 面。
 
 ---
 
