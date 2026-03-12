@@ -201,7 +201,9 @@ impl OraclePolicy {
 
         if let Some(median) = snapshot.median {
             let deviation = deviation_bps(snapshot.value, median);
-            if deviation >= self.max_deviation_bps {
+            let exceeds_deviation_boundary = deviation > self.max_deviation_bps
+                || (self.max_deviation_bps != 0 && deviation == self.max_deviation_bps);
+            if exceeds_deviation_boundary {
                 return Err(OracleError::DeviationExceeded {
                     deviation_bps: deviation,
                     max_deviation_bps: self.max_deviation_bps,
@@ -502,6 +504,45 @@ mod tests {
             .validate_snapshot(&snap, 10_100)
             .expect_err("snapshot at drift threshold should fail");
         assert!(matches!(err, OracleError::DeviationExceeded { .. }));
+    }
+
+    #[test]
+    fn zero_deviation_policy_accepts_only_exact_median_matches() {
+        let p = OraclePolicy {
+            min_sources: 2,
+            max_staleness_ms: 5_000,
+            max_deviation_bps: 0,
+            max_update_rate_per_window: 60,
+        };
+        let exact = snapshot_with(100_000, Some(100_000), 10_000);
+        let drifted = snapshot_with(100_100, Some(100_000), 10_000);
+
+        p.validate_snapshot(&exact, 10_100)
+            .expect("zero-deviation policy should accept exact median match");
+        let err = p
+            .validate_snapshot(&drifted, 10_100)
+            .expect_err("zero-deviation policy should reject any non-zero drift");
+        assert!(matches!(err, OracleError::DeviationExceeded { .. }));
+    }
+
+    #[test]
+    fn observed_report_preserves_zero_deviation_boundary_as_drift_label() {
+        let p = OraclePolicy {
+            min_sources: 2,
+            max_staleness_ms: 5_000,
+            max_deviation_bps: 0,
+            max_update_rate_per_window: 60,
+        };
+        let snap = snapshot_with(100_100, Some(100_000), 10_000);
+
+        let report = validate_snapshot_observed(&p, &snap, 10_100);
+        assert!(!report.ok);
+        assert_eq!(report.error.as_deref(), Some("drift"));
+        assert_eq!(report.observation.drift_reject_total, 1);
+        assert_eq!(report.metrics.oracle_drift_reject_total, 1);
+        assert_eq!(report.metrics.accepted_total, 0);
+        assert_eq!(report.metrics.sample_count, 1);
+        assert!(report.classified_outcome_conserves_sample_count());
     }
 
     #[test]
