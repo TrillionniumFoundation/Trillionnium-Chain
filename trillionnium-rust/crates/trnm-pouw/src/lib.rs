@@ -10663,6 +10663,65 @@ mod tests {
     }
 
     #[test]
+    fn challenged_timeout_slash_path_only_moves_task_local_stake_and_never_auto_pays_bounty() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        st.set_balance("worker1", 40);
+        st.set_gov_param_bootstrap_unchecked(40_114, "min_worker_stake".into(), "40".into())
+            .unwrap();
+        st.set_gov_param_bootstrap_unchecked(40_115, "challenge_success_bounty".into(), "1".into())
+            .unwrap();
+        st.set_balance(WORKER_SLASH_TREASURY_ACCOUNT, 9);
+
+        let r1 = apply_create_task(&mut st, 40_116, "alice".into(), 10).unwrap();
+        let result_hash = [5u8; 32];
+        let reveal_salt = [9u8; 32];
+        let committed = compute_commitment(40_116, &result_hash, &reveal_salt, "worker1");
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 =
+            apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
+        let r4 = apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110)
+            .unwrap();
+        let r5 = apply_challenge_at_height(
+            &mut st,
+            r4,
+            "challenger".into(),
+            10,
+            "challenger".into(),
+            120,
+        )
+        .unwrap();
+
+        let mut task = st.get_task(r5.id).unwrap();
+        task.resolve_deadline_height = Some(220);
+        task.status = TaskStatus::Challenged;
+        task.challenge_bond_forfeited = Some(false);
+        let r5 = st.update_task(r5, task).unwrap();
+
+        let before_challenger = st.balance_of("challenger");
+        let before_slash_treasury = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
+        let before_lock = st.balance_of(&worker_stake_lock_account(40_116));
+
+        let mut task = st.get_task(r5.id).unwrap();
+        task.status = TaskStatus::Slashed;
+        let r6 = st.update_task(r5, task).unwrap();
+        let timed_out = st.get_task(r6.id).unwrap();
+        settle_worker_stake_for_terminal_state(&mut st, &timed_out).unwrap();
+
+        assert_eq!(timed_out.status, TaskStatus::Slashed);
+        assert_eq!(timed_out.challenge_bond_forfeited, Some(false));
+        assert_eq!(st.balance_of("challenger"), before_challenger);
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), 10);
+        assert_eq!(st.balance_of(&worker_stake_lock_account(40_116)), 0);
+        assert_eq!(st.balance_of("worker1"), 0);
+        assert_eq!(
+            st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
+            before_slash_treasury + before_lock,
+            "slashed challenged-timeout settlement must only move task-local worker stake into global slash treasury"
+        );
+    }
+
+    #[test]
     fn parse_governed_bool_param_accepts_explicit_true_and_false_aliases() {
         for raw in ["1", "true", "yes", "on", "0", "false", "no", "off"] {
             parse_governed_bool_param(raw, "default_slash_on_unresolved_challenge")
