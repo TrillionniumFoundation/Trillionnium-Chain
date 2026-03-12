@@ -54,6 +54,47 @@ fn task_metadata_string_field_boundaries_should_affect_state_root() {
 }
 
 #[test]
+fn task_metadata_presence_bit_should_affect_state_root_even_when_nested_fields_are_empty() {
+    let mut st1 = StateStore::new();
+    let mut st2 = StateStore::new();
+
+    let base_task = TaskObject {
+        task_id: 6_501,
+        creator: "alice".into(),
+        bounty: 42,
+        status: TaskStatus::Open,
+        proof_type: ProofType::Fraud,
+        metadata: None,
+        worker: None,
+        committed_hash: None,
+        result_hash: None,
+        reveal_salt: None,
+        committed_at_height: None,
+        reveal_deadline_height: None,
+        challenge_deadline_height: None,
+        challenge_window_blocks_snapshot: None,
+        challenged_at_height: None,
+        resolve_deadline_height: None,
+        challenge_bond: None,
+        challenger: None,
+        challenge_bond_forfeited: None,
+        version: 1,
+    };
+
+    let mut with_empty_metadata = base_task.clone();
+    with_empty_metadata.metadata = Some(TaskMetadata::default());
+
+    st1.put_task_new(base_task).unwrap();
+    st2.put_task_new(with_empty_metadata).unwrap();
+
+    assert_ne!(
+        st1.state_root(),
+        st2.state_root(),
+        "State root should distinguish absent task metadata from an explicitly present empty metadata container"
+    );
+}
+
+#[test]
 fn task_metadata_and_proof_type_should_affect_state_root() {
     let mut st1 = StateStore::new();
     let mut st2 = StateStore::new();
