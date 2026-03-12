@@ -628,6 +628,13 @@ pub fn parse_zk_proof_payload(
                     .to_string(),
             });
         }
+        if backend_id.is_empty() {
+            return Err(BackendExecutionError::MalformedProof {
+                backend: "zk:payload".to_string(),
+                reason: "invalid zk payload: backend_id must not be empty when provided"
+                    .to_string(),
+            });
+        }
     }
     if let Some(backend_version) = payload.backend_version.as_deref() {
         if backend_version != backend_version.trim() {
@@ -636,6 +643,13 @@ pub fn parse_zk_proof_payload(
                 reason:
                     "invalid zk payload: backend_version must not contain surrounding whitespace"
                         .to_string(),
+            });
+        }
+        if backend_version.is_empty() {
+            return Err(BackendExecutionError::MalformedProof {
+                backend: "zk:payload".to_string(),
+                reason: "invalid zk payload: backend_version must not be empty when provided"
+                    .to_string(),
             });
         }
     }
@@ -970,6 +984,20 @@ mod tests {
         let task = mock_task();
         let err = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"groth16-demo","backend_version":"  v1  ","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["4242","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#).unwrap_err();
         assert!(matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("backend_version must not contain surrounding whitespace")));
+    }
+
+    #[test]
+    fn parse_zk_proof_payload_rejects_empty_backend_id_when_provided() {
+        let task = mock_task();
+        let err = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["4242","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#).unwrap_err();
+        assert!(matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("backend_id must not be empty when provided")));
+    }
+
+    #[test]
+    fn parse_zk_proof_payload_rejects_empty_backend_version_when_provided() {
+        let task = mock_task();
+        let err = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"groth16-demo","backend_version":"","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["4242","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#).unwrap_err();
+        assert!(matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("backend_version must not be empty when provided")));
     }
 
     #[test]
