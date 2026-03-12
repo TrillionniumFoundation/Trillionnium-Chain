@@ -590,6 +590,21 @@ mod tests {
     }
 
     #[test]
+    fn tee_verifier_backend_invalid_attestation_payload_keeps_claims_wording_without_zk_payload_surface_leakage() {
+        let result = TeeVerifier::classify_execution_err(BackendExecutionError::InvalidProof {
+            backend: "tee:mock-tee-invalid".to_string(),
+            reason: "TEE attestation payload signature mismatch".to_string(),
+        });
+
+        assert!(matches!(result, VerificationResult::Invalid(_)), "unexpected result: {result:?}");
+        let VerificationResult::Invalid(msg) = result else { unreachable!() };
+        assert!(msg.contains("invalid TEE attestation claims:"), "message: {msg}");
+        assert!(!msg.contains("payload/claims"), "message: {msg}");
+        assert!(!msg.contains("evidence/claims"), "message: {msg}");
+        assert!(msg.contains("TEE attestation payload signature mismatch"), "message: {msg}");
+    }
+
+    #[test]
     fn tee_verifier_backend_internal_quote_payload_prefers_quote_claims_surface_over_quote_evidence() {
         let result = TeeVerifier::classify_execution_err(BackendExecutionError::Internal {
             backend: "tee:mock-tee-internal".to_string(),
