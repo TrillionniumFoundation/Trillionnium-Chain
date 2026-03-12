@@ -2221,7 +2221,7 @@ fn parse_query_events_limit_from_path(path: &str) -> std::result::Result<usize, 
             ));
         }
         let Some((key, value)) = pair.split_once('=') else {
-            if pair == "limit" {
+            if pair == "limit" || normalize_wrapped_env_value(pair) == "limit" {
                 return Err(http_json_response(
                     "400 Bad Request",
                     "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}",
@@ -2229,8 +2229,15 @@ fn parse_query_events_limit_from_path(path: &str) -> std::result::Result<usize, 
             }
             continue;
         };
-        if key != "limit" {
+        let normalized_key = normalize_wrapped_env_value(key);
+        if normalized_key != "limit" {
             continue;
+        }
+        if key != "limit" {
+            return Err(http_json_response(
+                "400 Bad Request",
+                "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}",
+            ));
         }
         if parsed_limit.is_some() {
             return Err(http_json_response(
@@ -3779,6 +3786,20 @@ mod tests {
         ] {
             let err = parse_query_events_limit_from_path(path)
                 .expect_err("empty query pairs must fail closed for noisy HTTP inputs");
+            assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+            assert!(err.contains("invalid limit"), "path={path} err={err}");
+        }
+    }
+
+    #[test]
+    fn parse_query_events_limit_from_path_rejects_malformed_limit_keys() {
+        for path in [
+            "/query-events/42? limit=7",
+            "/query-events/42?limit =7",
+            "/query-events/42?`limit`=7",
+        ] {
+            let err = parse_query_events_limit_from_path(path)
+                .expect_err("malformed limit keys must fail closed instead of defaulting");
             assert!(err.contains("400 Bad Request"), "path={path} err={err}");
             assert!(err.contains("invalid limit"), "path={path} err={err}");
         }
