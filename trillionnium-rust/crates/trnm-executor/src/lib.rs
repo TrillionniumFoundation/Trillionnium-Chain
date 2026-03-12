@@ -2114,6 +2114,24 @@ mod tests {
         ));
     }
 
+    #[test]
+    fn resolve_grouping_strategy_keeps_auto_adaptive_on_original_for_sparse_workloads() {
+        let _env = env_lock();
+        let txs = (0..1_024)
+            .map(|i| tx(i as u64, vec![o(i as u64)], vec![o((10_000 + i) as u64)]))
+            .collect::<Vec<_>>();
+
+        let decision = auto_adaptive_decision(&txs);
+        assert!(
+            !decision.use_hot_bucket,
+            "sparse non-hot workload should stay on the stable original path"
+        );
+        assert!(matches!(
+            resolve_grouping_strategy(&txs, GroupingStrategy::AutoAdaptive),
+            GroupingStrategy::Original
+        ));
+    }
+
     fn assert_profiles_match(
         left_groups: &[Vec<Tx>],
         left_profile: &GroupingProfile,
