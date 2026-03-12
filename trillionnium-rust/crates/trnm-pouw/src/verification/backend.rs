@@ -102,6 +102,8 @@ pub fn backend_system_hint(raw: &str) -> Option<String> {
                     | "report"
                     | "claims"
                     | "claim"
+                    | "cert"
+                    | "certificate"
             ) {
                 idx += 1;
                 continue;
@@ -882,6 +884,8 @@ mod tests {
         assert_eq!(backend_system_hint("tee evidence snp"), Some("snp".into()));
         assert_eq!(backend_system_hint("tee quote tdx"), Some("tdx".into()));
         assert_eq!(backend_system_hint("tee claims sgx"), Some("sgx".into()));
+        assert_eq!(backend_system_hint("tee cert snp"), Some("snp".into()));
+        assert_eq!(backend_system_hint("tee certificate tdx"), Some("tdx".into()));
         assert_eq!(backend_system_hint("zk:groth16"), Some("groth16".into()));
         assert_eq!(backend_system_hint("plonk"), Some("plonk".into()));
         assert_eq!(backend_system_hint("noop"), None);
@@ -894,6 +898,8 @@ mod tests {
             "tee report",
             "tee claim",
             "tee claims",
+            "tee cert",
+            "tee certificate",
             "tee attestation receipt report",
             "tee evidence quote",
         ] {
