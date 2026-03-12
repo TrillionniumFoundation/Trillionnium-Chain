@@ -984,6 +984,91 @@ fn paused_state_matured_resolve_authority_timelock_cannot_be_replaced_instead_of
 }
 
 #[test]
+fn paused_state_matured_resolve_authority_apply_rejects_stale_old_quorum_without_residue() {
+    // M1 micro-hardening: once a paused resolve_authority timelock is applied, callers must
+    // not be able to keep staging approvals against the stale pre-rotation authority set.
+    // The new boundary must fail closed without leaving pending quorum residue or mutating
+    // pause / custody state.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 42_444);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 904);
+
+    let bootstrap = st
+        .set_gov_param(
+            98_160,
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("bootstrap resolve_authority write should succeed");
+    assert!(matches!(bootstrap, GovParamUpdateOutcome::Scheduled { .. }));
+
+    let applied = st
+        .set_gov_param(
+            98_180,
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("bootstrap resolve_authority should apply after timelock");
+    assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+
+    let scheduled = st
+        .set_gov_param(
+            98_181,
+            7_310,
+            "resolve_authority".into(),
+            "authority-c,authority-d".into(),
+        )
+        .expect("replacement resolve_authority update should be timelocked");
+    assert!(matches!(
+        scheduled,
+        GovParamUpdateOutcome::Scheduled {
+            activate_at_height: 98_201
+        }
+    ));
+
+    st.set_gov_param(98_182, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    let applied_pending = st
+        .set_gov_param(
+            98_201,
+            7_310,
+            "resolve_authority".into(),
+            "authority-c,authority-d".into(),
+        )
+        .expect("mature paused resolve_authority timelock should apply");
+    assert!(matches!(applied_pending, GovParamUpdateOutcome::Applied(_)));
+    assert_eq!(st.pending_gov_update("resolve_authority"), None);
+    assert_eq!(
+        st.gov_param_string("resolve_authority"),
+        Some("authority-c,authority-d".into())
+    );
+
+    let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+    let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+    let root_before = st.state_root();
+
+    let err = st
+        .stage_or_confirm_resolve_approval(9_820_0, 5, true, "authority-a", "authority-a,authority-b")
+        .expect_err("stale pre-rotation authority set must be rejected after paused apply");
+    assert!(err.contains("must match configured governance authority"));
+
+    assert_eq!(st.pending_resolve_approval(9_820_0), None);
+    assert_eq!(st.pending_resolve_first_approver(9_820_0), None);
+    assert_eq!(st.pending_resolve_approval_snapshot(9_820_0), None);
+    assert_eq!(st.state_root(), root_before);
+    assert!(st.is_emergency_paused());
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
+}
+
+#[test]
 fn paused_state_matured_resolve_authority_apply_scrubs_staged_pending_quorum() {
     // M1 micro-hardening: when a paused resolve_authority timelock reaches its apply
     // boundary, enforcing the mature value must rotate the configured authority, scrub any
