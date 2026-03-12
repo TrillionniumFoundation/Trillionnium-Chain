@@ -2540,6 +2540,17 @@ mod tests {
     }
 
     #[test]
+    fn auto_adaptive_sample_len_preserves_zero_for_empty_batches_even_with_env_floor() {
+        let _env = env_lock();
+        let _sample = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", "8");
+
+        // The experimental sample-size floor must not manufacture probe work
+        // for empty batches. Keep the helper fail-closed at zero so later
+        // callers cannot accidentally treat an empty batch as sampled.
+        assert_eq!(auto_adaptive_sample_len(0), 0);
+    }
+
+    #[test]
     fn auto_adaptive_unsigned_env_knobs_fail_closed_on_negative_values() {
         let _env = env_lock();
 
