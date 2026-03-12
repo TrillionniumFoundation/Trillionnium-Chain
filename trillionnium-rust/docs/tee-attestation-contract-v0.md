@@ -134,6 +134,25 @@ Each provider now delegates one step further into a client seam that models the 
 - `IntelQuoteVerifierClient`
 - `AmdReportVerifierClient`
 
+Client requests now also carry an explicit transport/config seam:
+- `mode` (`mock` today, `external` reserved as placeholder)
+- `endpoint`
+- `timeout_ms`
+- optional `auth_scheme`
+- optional `auth_ref`
+
+Client responses are normalized into a mock external verifier response schema with:
+- `status` (`verified | invalid | unavailable | malformed | internal`)
+- `backend_id`
+- optional `detail`
+
+Provider logic is responsible for fail-closed mapping from client response status into backend semantics:
+- `verified` -> backend success
+- `invalid` -> `InvalidProof`
+- `unavailable` -> `Unavailable`
+- `malformed` -> `MalformedProof`
+- `internal` -> `Internal`
+
 The current fixture-backed path therefore has five explicit layers:
 1. receipt parsing / normalization
 2. target-specific request shaping
