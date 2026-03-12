@@ -59,6 +59,7 @@ python3 scripts/profiling_closeout_report.py
   - `benchmark_capture_cohesion` / `benchmark_capture_spread_seconds`：额外判断 `classic_bench`、`mixed_bench`、`executor_profile` 是否来自同一 capture window；当结果为 `mixed_capture_window` 或 `divergent_capture_window` 时，都会建议 refresh，避免把时间上不够集中但“单个文件看起来都很新”的产物误当成一组可直接 closeout 的证据
   - `benchmark_selected_capture_alignment` / `benchmark_selected_capture_alignment_reason`：benchmark summary 里的对齐判断只看 `classic_bench`、`mixed_bench`、`executor_profile` 三类 bench 产物，不再混入 `node_log`，避免 benchmark-only 结论被完整 closeout 缺口污染
 - `Executor Profile Context`：额外汇总 `profile.report.persist_profile`、`profile.report.path`，并在存在持久化失败时显式带出 `profile.report.persist_error`，方便 autopilot/curator 区分“bench 跑过了”与“profile 产物是否真的成功落盘”
+- `profile.report.ungrouped_count` / `profile.report.grouping_complete`：executor profile 现在会显式给出未入组交易数与布尔完备性标记，便于 autopilot/curator 直接判断当前 profile 是否覆盖了全部 benchmark tx，而不必再手工比对 `grouped` 与 `txs`
 - `executor_profile.integrity_status`：当 embedded basename / capture epoch / report path 中任一可校验项与当前选中的 executor profile 产物不一致时，状态会显式落成 `FAIL`（而不是笼统 `PARTIAL`），便于 autopilot 更快识别“选中文件与嵌入元数据不匹配”的 closeout 风险
 - `profile.report.capture_started_at_iso`：executor profile 产物现在同时输出真实 UTC RFC3339 时间戳（不再是 `unix:<epoch>` 伪 ISO），便于 closeout 报告直接做人读时间线核对，同时保留 `profile.report.capture_started_at_epoch` 供脚本侧比较
 - `Executor Auto-Adaptive Decision Summary`：当 `executor_profile` 含 `profile.auto.*` 字段时，额外汇总 `use_hot_bucket`、`reason`、`hot_key_share`、`expected_gain_score` 等自动策略决策字段，减少人工回看原始 profile txt 的需要

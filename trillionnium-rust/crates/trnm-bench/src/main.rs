@@ -124,6 +124,8 @@ fn main() {
 
     if args.profile {
         let coverage_ratio = grouped as f64 / n as f64;
+        let ungrouped_count = n.saturating_sub(grouped);
+        let grouping_complete = ungrouped_count == 0;
         let groups_per_1k_txs = groups.len() as f64 * 1000.0 / n as f64;
         let grouping_efficiency = if groups.is_empty() {
             0.0
@@ -143,6 +145,8 @@ fn main() {
             format!("profile.report.elapsed_ms={}", dt.as_millis()),
             format!("profile.report.estimated_conflict_rate={:.4}", conflict_rate),
             format!("profile.report.coverage_ratio={:.4}", coverage_ratio),
+            format!("profile.report.ungrouped_count={}", ungrouped_count),
+            format!("profile.report.grouping_complete={}", grouping_complete),
             format!("profile.report.groups_per_1k_txs={:.4}", groups_per_1k_txs),
             format!("profile.report.grouping_efficiency={:.4}", grouping_efficiency),
             "profile.report.autopilot_hint=persisted_profile_capture".to_string(),

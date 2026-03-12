@@ -1286,6 +1286,8 @@ def main():
             "profile.report.elapsed_ms",
             "profile.report.path",
             "profile.report.artifact_basename",
+            "profile.report.ungrouped_count",
+            "profile.report.grouping_complete",
             "profile.report.persist_error",
             "profile.report.autopilot_hint",
         ]
