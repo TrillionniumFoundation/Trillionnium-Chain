@@ -74,6 +74,20 @@
   ],
   "bench_outputs": [
     {
+      "name": "bench_rounds",
+      "type": "config_echo",
+      "value_type": "u64",
+      "unit": "count",
+      "description": "Requested number of benchmark rounds executed for the offline oracle metrics benchmark entrypoint."
+    },
+    {
+      "name": "bench_count",
+      "type": "config_echo",
+      "value_type": "u64",
+      "unit": "count",
+      "description": "Requested per-round iteration count executed by the offline oracle metrics benchmark entrypoint."
+    },
+    {
       "name": "ingest_latency_p50_ms",
       "type": "gauge",
       "value_type": "float_ms",

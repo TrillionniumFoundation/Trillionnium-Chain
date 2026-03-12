@@ -62,6 +62,7 @@ python3 scripts/oracle/benchmark_oracle_metrics.py \
 - 指标名（append-stable，不随意改名）
 - 类型与单位
 - 离线 bridge 口径与 bench 口径的边界
+- bench 配置回显字段 `bench_count` / `bench_rounds`，用于固定基准输出上下文
 - 基本一致性约束（例如 reject/accept 与 `sample_count` 的守恒关系）
 
 ## 本地/CI 执行建议
