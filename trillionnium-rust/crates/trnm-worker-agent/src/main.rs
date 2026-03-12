@@ -908,9 +908,14 @@ fn normalize_candidate_tx_hash(raw: &str) -> Option<String> {
             matches!(
                 c,
                 '"' | '\'' | ',' | ';' | '.' | ':' | ')' | ']' | '}' | '(' | '[' | '{'
-            )
+            ) || c.is_control()
+                || is_invisible_filler(c)
         })
-        .trim_end_matches(|c: char| matches!(c, '"' | '\'' | ',' | ';' | '}' | ']'))
+        .trim_end_matches(|c: char| {
+            matches!(c, '"' | '\'' | ',' | ';' | '}' | ']')
+                || c.is_control()
+                || is_invisible_filler(c)
+        })
         .trim();
     let normalized = cleaned
         .strip_prefix("0x")
@@ -969,15 +974,30 @@ fn parse_tx_hash(text: &str) -> Option<String> {
             return None;
         }
 
-        let candidate_end = trimmed
+        let candidate_start = trimmed
+            .char_indices()
+            .find_map(|(idx, ch)| {
+                let is_leading_wrapper = ch.is_ascii_whitespace()
+                    || ch.is_control()
+                    || is_invisible_filler(ch)
+                    || matches!(ch, '"' | '\'' | '(' | '[' | '{');
+                (!is_leading_wrapper).then_some(idx)
+            })
+            .unwrap_or(trimmed.len());
+        let candidate = &trimmed[candidate_start..];
+        if candidate.is_empty() {
+            return None;
+        }
+
+        let candidate_end = candidate
             .char_indices()
             .find_map(|(idx, ch)| {
                 let is_hash_char = ch.is_ascii_hexdigit() || matches!(ch, 'x' | 'X' | '"' | '\'');
                 (!is_hash_char).then_some(idx)
             })
-            .unwrap_or(trimmed.len());
+            .unwrap_or(candidate.len());
 
-        normalize_candidate_tx_hash(&trimmed[..candidate_end])
+        normalize_candidate_tx_hash(&candidate[..candidate_end])
     }
 
     for prefix in PREFIXES {
@@ -2173,6 +2193,15 @@ mod tests {
     fn parse_tx_hash_accepts_json_style_receipts_with_whitespace_before_colon() {
         let json = parse_tx_hash("{\"tx_hash\" : \"0xDEADBEEF\", \"status\": \"accepted\"}")
             .expect("json receipt hash with whitespace before colon should parse");
+        assert_eq!(json, "deadbeef");
+    }
+
+    #[test]
+    fn parse_tx_hash_strips_bom_and_zero_width_fillers_around_receipt_value() {
+        let json = parse_tx_hash(
+            "receipt={\"tx_hash\":\"\u{feff}\u{200b}0xDEADBEEF\u{2060}\"}",
+        )
+        .expect("json receipt hash with bom and zero-width fillers should parse");
         assert_eq!(json, "deadbeef");
     }
 
