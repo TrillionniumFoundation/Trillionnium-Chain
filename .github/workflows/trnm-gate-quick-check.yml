@@ -154,6 +154,10 @@ jobs:
         run: |
           ./scripts/v2/workflow_script_refs_trigger_paths_exempt_from_non_dot_guard_test.sh
 
+      - name: Workflow script refs duplicate-count accounting guard regression
+        run: |
+          ./scripts/v2/workflow_script_refs_duplicate_count_guard_test.sh
+
       - name: Quick gate summary path guard regression
         run: |
           ./scripts/v2/quick_gate_summary_path_guard_test.sh
