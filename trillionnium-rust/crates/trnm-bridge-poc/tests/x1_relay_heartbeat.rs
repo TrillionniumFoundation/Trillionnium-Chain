@@ -118,6 +118,14 @@ fn relay_heartbeat_failure_reason_strips_zero_width_non_joiner() {
 }
 
 #[test]
+fn relay_heartbeat_failure_reason_strips_alm_and_zwnj_for_replay_stability() {
+    let mut hb = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 3));
+
+    let out = hb.record_failure("rpc\u{061C} timeout\u{200C} bridge");
+    assert_eq!(out.message, "rpc timeout bridge");
+}
+
+#[test]
 fn relay_heartbeat_failure_reason_strips_bidi_and_word_joiner_controls() {
     let mut hb = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 3));
 
