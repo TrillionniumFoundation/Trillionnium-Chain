@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 use crate::verification::backend::{
     parse_tee_attestation_payload, BackendExecutionError, BackendVerificationRequest,
@@ -100,7 +100,8 @@ struct VerifierTransportConfig {
     auth_ref: Option<String>,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
 enum MockVerifierResponseStatus {
     Verified,
     Invalid,
@@ -109,7 +110,7 @@ enum MockVerifierResponseStatus {
     Internal,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 struct MockVerifierResponse {
     status: MockVerifierResponseStatus,
     backend_id: String,
@@ -521,24 +522,109 @@ fn required_metadata(
         ))
 }
 
-fn default_intel_quote_transport_config(attestation_target: &str) -> VerifierTransportConfig {
-    VerifierTransportConfig {
-        mode: VerifierTransportMode::Mock,
-        endpoint: format!("mock://intel-quote-verifier/{attestation_target}"),
-        timeout_ms: 1_500,
-        auth_scheme: Some("bearer".to_string()),
-        auth_ref: Some(format!("tee.intel.{attestation_target}.mock-token")),
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct VerifierTransportTemplate {
+    mode: VerifierTransportMode,
+    endpoint_base: String,
+    timeout_ms: u64,
+    auth_scheme: Option<String>,
+    auth_ref_prefix: Option<String>,
+}
+
+impl VerifierTransportTemplate {
+    fn render(&self, attestation_target: &str) -> VerifierTransportConfig {
+        VerifierTransportConfig {
+            mode: self.mode.clone(),
+            endpoint: format!("{}/{}", self.endpoint_base.trim_end_matches('/'), attestation_target),
+            timeout_ms: self.timeout_ms,
+            auth_scheme: self.auth_scheme.clone(),
+            auth_ref: self
+                .auth_ref_prefix
+                .as_ref()
+                .map(|prefix| format!("{prefix}.{attestation_target}")),
+        }
     }
 }
 
-fn default_amd_report_transport_config(attestation_target: &str) -> VerifierTransportConfig {
-    VerifierTransportConfig {
-        mode: VerifierTransportMode::Mock,
-        endpoint: format!("mock://amd-report-verifier/{attestation_target}"),
-        timeout_ms: 1_500,
-        auth_scheme: Some("bearer".to_string()),
-        auth_ref: Some(format!("tee.amd.{attestation_target}.mock-token")),
+trait VerifierTransportConfigSource: Send + Sync {
+    fn intel_quote_transport_config(&self, attestation_target: &str) -> VerifierTransportConfig;
+    fn amd_report_transport_config(&self, attestation_target: &str) -> VerifierTransportConfig;
+}
+
+#[derive(Debug, Clone)]
+struct StaticVerifierTransportConfigSource {
+    intel_quote: VerifierTransportTemplate,
+    amd_report: VerifierTransportTemplate,
+}
+
+impl StaticVerifierTransportConfigSource {
+    fn mock_defaults() -> Self {
+        Self {
+            intel_quote: VerifierTransportTemplate {
+                mode: VerifierTransportMode::Mock,
+                endpoint_base: "mock://intel-quote-verifier".to_string(),
+                timeout_ms: 1_500,
+                auth_scheme: Some("bearer".to_string()),
+                auth_ref_prefix: Some("tee.intel.mock-token".to_string()),
+            },
+            amd_report: VerifierTransportTemplate {
+                mode: VerifierTransportMode::Mock,
+                endpoint_base: "mock://amd-report-verifier".to_string(),
+                timeout_ms: 1_500,
+                auth_scheme: Some("bearer".to_string()),
+                auth_ref_prefix: Some("tee.amd.mock-token".to_string()),
+            },
+        }
     }
+
+    #[allow(dead_code)]
+    fn external_defaults() -> Self {
+        Self {
+            intel_quote: VerifierTransportTemplate {
+                mode: VerifierTransportMode::External,
+                endpoint_base: "https://intel-verifier.invalid/v1/quote".to_string(),
+                timeout_ms: 5_000,
+                auth_scheme: Some("bearer".to_string()),
+                auth_ref_prefix: Some("tee.intel.external-token".to_string()),
+            },
+            amd_report: VerifierTransportTemplate {
+                mode: VerifierTransportMode::External,
+                endpoint_base: "https://amd-verifier.invalid/v1/report".to_string(),
+                timeout_ms: 5_000,
+                auth_scheme: Some("bearer".to_string()),
+                auth_ref_prefix: Some("tee.amd.external-token".to_string()),
+            },
+        }
+    }
+}
+
+impl VerifierTransportConfigSource for StaticVerifierTransportConfigSource {
+    fn intel_quote_transport_config(&self, attestation_target: &str) -> VerifierTransportConfig {
+        self.intel_quote.render(attestation_target)
+    }
+
+    fn amd_report_transport_config(&self, attestation_target: &str) -> VerifierTransportConfig {
+        self.amd_report.render(attestation_target)
+    }
+}
+
+fn encode_mock_verifier_response_json(
+    response: &MockVerifierResponse,
+) -> Result<String, BackendExecutionError> {
+    serde_json::to_string(response).map_err(|err| BackendExecutionError::Internal {
+        backend: RealTeeBackend::backend_id_static().to_string(),
+        reason: format!("failed to encode mock verifier response json: {err}"),
+    })
+}
+
+fn decode_mock_verifier_response_json(
+    raw: &str,
+    request: &BackendVerificationRequest<'_>,
+) -> Result<MockVerifierResponse, BackendExecutionError> {
+    serde_json::from_str(raw).map_err(|err| BackendExecutionError::MalformedProof {
+        backend: request.backend_label(RealTeeBackend::backend_id_static()),
+        reason: format!("invalid verifier response payload: {err}"),
+    })
 }
 
 fn backend_label_from_response(
@@ -883,10 +969,12 @@ impl IntelQuoteVerifierClient for FixtureBackedIntelQuoteVerifierClient {
         request: &BackendVerificationRequest<'_>,
     ) -> Result<MockVerifierResponse, BackendExecutionError> {
         let fixture = self.fixture_for_target(&request_input.attestation_target, request)?;
-        Ok(mock_response_from_fixture_result(
+        let response = mock_response_from_fixture_result(
             verify_fixture_intel_client_request(request_input, fixture, request),
             fixture.backend_id.clone(),
-        ))
+        );
+        let raw = encode_mock_verifier_response_json(&response)?;
+        decode_mock_verifier_response_json(&raw, request)
     }
 }
 
@@ -924,20 +1012,26 @@ impl AmdReportVerifierClient for FixtureBackedAmdReportVerifierClient {
         request: &BackendVerificationRequest<'_>,
     ) -> Result<MockVerifierResponse, BackendExecutionError> {
         let fixture = self.fixture_for_target(&request_input.attestation_target, request)?;
-        Ok(mock_response_from_fixture_result(
+        let response = mock_response_from_fixture_result(
             verify_fixture_amd_client_request(request_input, fixture, request),
             fixture.backend_id.clone(),
-        ))
+        );
+        let raw = encode_mock_verifier_response_json(&response)?;
+        decode_mock_verifier_response_json(&raw, request)
     }
 }
 
 struct ClientBackedIntelQuoteVerifierProvider {
     client: Arc<dyn IntelQuoteVerifierClient>,
+    config_source: Arc<dyn VerifierTransportConfigSource>,
 }
 
 impl ClientBackedIntelQuoteVerifierProvider {
-    fn new(client: Arc<dyn IntelQuoteVerifierClient>) -> Self {
-        Self { client }
+    fn new(
+        client: Arc<dyn IntelQuoteVerifierClient>,
+        config_source: Arc<dyn VerifierTransportConfigSource>,
+    ) -> Self {
+        Self { client, config_source }
     }
 }
 
@@ -948,7 +1042,9 @@ impl IntelQuoteVerifierProvider for ClientBackedIntelQuoteVerifierProvider {
         request: &BackendVerificationRequest<'_>,
     ) -> Result<BackendVerificationSuccess, BackendExecutionError> {
         let client_request = IntelQuoteVerifierClientRequest {
-            transport: default_intel_quote_transport_config(&input.attestation_target),
+            transport: self
+                .config_source
+                .intel_quote_transport_config(&input.attestation_target),
             attestation_target: input.attestation_target.clone(),
             measurement_field: input.measurement_field.clone(),
             measurement: input.measurement.clone(),
@@ -963,11 +1059,15 @@ impl IntelQuoteVerifierProvider for ClientBackedIntelQuoteVerifierProvider {
 
 struct ClientBackedAmdReportVerifierProvider {
     client: Arc<dyn AmdReportVerifierClient>,
+    config_source: Arc<dyn VerifierTransportConfigSource>,
 }
 
 impl ClientBackedAmdReportVerifierProvider {
-    fn new(client: Arc<dyn AmdReportVerifierClient>) -> Self {
-        Self { client }
+    fn new(
+        client: Arc<dyn AmdReportVerifierClient>,
+        config_source: Arc<dyn VerifierTransportConfigSource>,
+    ) -> Self {
+        Self { client, config_source }
     }
 }
 
@@ -978,7 +1078,9 @@ impl AmdReportVerifierProvider for ClientBackedAmdReportVerifierProvider {
         request: &BackendVerificationRequest<'_>,
     ) -> Result<BackendVerificationSuccess, BackendExecutionError> {
         let client_request = AmdReportVerifierClientRequest {
-            transport: default_amd_report_transport_config(&input.attestation_target),
+            transport: self
+                .config_source
+                .amd_report_transport_config(&input.attestation_target),
             attestation_target: input.attestation_target.clone(),
             measurement_field: input.measurement_field.clone(),
             measurement: input.measurement.clone(),
@@ -1009,13 +1111,16 @@ impl ProviderBackedVendorVerifierExecutor {
 
     fn fixture_backed() -> Self {
         let fixtures = load_embedded_fixtures();
+        let config_source = Arc::new(StaticVerifierTransportConfigSource::mock_defaults());
         Self::new(
-            Arc::new(ClientBackedIntelQuoteVerifierProvider::new(Arc::new(
-                FixtureBackedIntelQuoteVerifierClient::new(fixtures.clone()),
-            ))),
-            Arc::new(ClientBackedAmdReportVerifierProvider::new(Arc::new(
-                FixtureBackedAmdReportVerifierClient::new(fixtures),
-            ))),
+            Arc::new(ClientBackedIntelQuoteVerifierProvider::new(
+                Arc::new(FixtureBackedIntelQuoteVerifierClient::new(fixtures.clone())),
+                config_source.clone(),
+            )),
+            Arc::new(ClientBackedAmdReportVerifierProvider::new(
+                Arc::new(FixtureBackedAmdReportVerifierClient::new(fixtures)),
+                config_source,
+            )),
         )
     }
 }
@@ -1281,6 +1386,106 @@ mod tests {
         ));
     }
 
+    #[test]
+    fn static_transport_config_source_renders_external_profiles() {
+        let source = StaticVerifierTransportConfigSource::external_defaults();
+        let intel = source.intel_quote_transport_config("sgx-dcap");
+        assert_eq!(intel.mode, VerifierTransportMode::External);
+        assert_eq!(intel.endpoint, "https://intel-verifier.invalid/v1/quote/sgx-dcap");
+        assert_eq!(intel.timeout_ms, 5_000);
+        assert_eq!(intel.auth_scheme.as_deref(), Some("bearer"));
+        assert_eq!(intel.auth_ref.as_deref(), Some("tee.intel.external-token.sgx-dcap"));
+
+        let amd = source.amd_report_transport_config("sev-snp");
+        assert_eq!(amd.mode, VerifierTransportMode::External);
+        assert_eq!(amd.endpoint, "https://amd-verifier.invalid/v1/report/sev-snp");
+        assert_eq!(amd.timeout_ms, 5_000);
+        assert_eq!(amd.auth_scheme.as_deref(), Some("bearer"));
+        assert_eq!(amd.auth_ref.as_deref(), Some("tee.amd.external-token.sev-snp"));
+    }
+
+    #[test]
+    fn mock_verifier_response_json_codec_roundtrip() {
+        let response = MockVerifierResponse {
+            status: MockVerifierResponseStatus::Verified,
+            backend_id: "intel-dcap-quote-verifier".into(),
+            detail: Some("ok".into()),
+        };
+        let raw = encode_mock_verifier_response_json(&response).unwrap();
+        let task = mock_task();
+        let decoded = decode_mock_verifier_response_json(
+            &raw,
+            &BackendVerificationRequest {
+                family: VerificationBackendFamily::Tee,
+                task: &task,
+                proof_data: b"TEE:...",
+                tee_payload: None,
+                zk_payload: None,
+                resolved_vk_ref: None,
+            },
+        )
+        .unwrap();
+        assert_eq!(decoded, response);
+    }
+
+    #[test]
+    fn mock_verifier_response_json_codec_rejects_invalid_json() {
+        let task = mock_task();
+        let err = decode_mock_verifier_response_json(
+            "{not-json",
+            &BackendVerificationRequest {
+                family: VerificationBackendFamily::Tee,
+                task: &task,
+                proof_data: b"TEE:...",
+                tee_payload: None,
+                zk_payload: None,
+                resolved_vk_ref: None,
+            },
+        )
+        .unwrap_err();
+        assert!(matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("invalid verifier response payload")));
+    }
+
+    struct AssertingExternalIntelQuoteClient;
+
+    impl IntelQuoteVerifierClient for AssertingExternalIntelQuoteClient {
+        fn verify_intel_quote_request(
+            &self,
+            request_input: &IntelQuoteVerifierClientRequest,
+            _request: &BackendVerificationRequest<'_>,
+        ) -> Result<MockVerifierResponse, BackendExecutionError> {
+            assert_eq!(request_input.transport.mode, VerifierTransportMode::External);
+            assert_eq!(request_input.transport.endpoint, "https://intel-verifier.invalid/v1/quote/sgx-dcap");
+            assert_eq!(request_input.transport.timeout_ms, 5_000);
+            assert_eq!(request_input.transport.auth_ref.as_deref(), Some("tee.intel.external-token.sgx-dcap"));
+            Ok(MockVerifierResponse {
+                status: MockVerifierResponseStatus::Verified,
+                backend_id: "intel-external-mock-client".into(),
+                detail: None,
+            })
+        }
+    }
+
+    struct AssertingExternalAmdReportClient;
+
+    impl AmdReportVerifierClient for AssertingExternalAmdReportClient {
+        fn verify_amd_report_request(
+            &self,
+            request_input: &AmdReportVerifierClientRequest,
+            _request: &BackendVerificationRequest<'_>,
+        ) -> Result<MockVerifierResponse, BackendExecutionError> {
+            assert_eq!(request_input.transport.mode, VerifierTransportMode::External);
+            assert_eq!(request_input.transport.endpoint, "https://amd-verifier.invalid/v1/report/sev-snp");
+            assert_eq!(request_input.transport.timeout_ms, 5_000);
+            assert_eq!(request_input.transport.auth_ref.as_deref(), Some("tee.amd.external-token.sev-snp"));
+            Ok(MockVerifierResponse {
+                status: MockVerifierResponseStatus::Verified,
+                backend_id: "amd-external-mock-client".into(),
+                detail: None,
+            })
+        }
+    }
+
     struct AssertingIntelQuoteClient;
 
     impl IntelQuoteVerifierClient for AssertingIntelQuoteClient {
@@ -1293,7 +1498,7 @@ mod tests {
             assert_eq!(request_input.transport.endpoint, "mock://intel-quote-verifier/sgx-dcap");
             assert_eq!(request_input.transport.timeout_ms, 1_500);
             assert_eq!(request_input.transport.auth_scheme.as_deref(), Some("bearer"));
-            assert_eq!(request_input.transport.auth_ref.as_deref(), Some("tee.intel.sgx-dcap.mock-token"));
+            assert_eq!(request_input.transport.auth_ref.as_deref(), Some("tee.intel.mock-token.sgx-dcap"));
             assert_eq!(request_input.attestation_target, "sgx-dcap");
             assert_eq!(request_input.measurement_field, "mrenclave");
             assert_eq!(request_input.measurement, "mrenclave:demo-sgx-v1");
@@ -1321,7 +1526,7 @@ mod tests {
             assert_eq!(request_input.transport.endpoint, "mock://amd-report-verifier/sev-snp");
             assert_eq!(request_input.transport.timeout_ms, 1_500);
             assert_eq!(request_input.transport.auth_scheme.as_deref(), Some("bearer"));
-            assert_eq!(request_input.transport.auth_ref.as_deref(), Some("tee.amd.sev-snp.mock-token"));
+            assert_eq!(request_input.transport.auth_ref.as_deref(), Some("tee.amd.mock-token.sev-snp"));
             assert_eq!(request_input.attestation_target, "sev-snp");
             assert_eq!(request_input.measurement_field, "measurement");
             assert_eq!(request_input.measurement, "measurement:demo-snp-v1");
@@ -1347,7 +1552,10 @@ mod tests {
             TeeVerifierInput::Quote(input) => input,
             TeeVerifierInput::Report(_) => panic!("expected intel quote verifier input"),
         };
-        let provider = ClientBackedIntelQuoteVerifierProvider::new(Arc::new(AssertingIntelQuoteClient));
+        let provider = ClientBackedIntelQuoteVerifierProvider::new(
+            Arc::new(AssertingIntelQuoteClient),
+            Arc::new(StaticVerifierTransportConfigSource::mock_defaults()),
+        );
 
         let result = provider.verify_intel_quote_bundle(
             &input,
@@ -1377,7 +1585,10 @@ mod tests {
             TeeVerifierInput::Report(input) => input,
             TeeVerifierInput::Quote(_) => panic!("expected amd report verifier input"),
         };
-        let provider = ClientBackedAmdReportVerifierProvider::new(Arc::new(AssertingAmdReportClient));
+        let provider = ClientBackedAmdReportVerifierProvider::new(
+            Arc::new(AssertingAmdReportClient),
+            Arc::new(StaticVerifierTransportConfigSource::mock_defaults()),
+        );
 
         let result = provider.verify_amd_report_bundle(
             &input,
@@ -1395,6 +1606,62 @@ mod tests {
             result,
             Ok(BackendVerificationSuccess { backend_id }) if backend_id == "amd-mock-client"
         ));
+    }
+
+    #[test]
+    fn client_backed_intel_provider_uses_external_transport_profile_when_injected() {
+        let task = mock_task();
+        let proof_data = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=sgx-dcap,measurement=mrenclave:demo-sgx-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,quote=quote-sgx-dcap-demo-v1,collateral=intel-dcap-collateral-demo-v1,cert_chain=intel-dcap-cert-chain-demo-v1,issuer=intel";
+        let payload = parse_tee_attestation_payload(proof_data).unwrap();
+        let handoff = TeeVerifierHandoff::from_payload(&payload, None).unwrap();
+        let input = match SGX_DCAP_ADAPTER.build_verifier_input(&handoff, None).unwrap() {
+            TeeVerifierInput::Quote(input) => input,
+            TeeVerifierInput::Report(_) => panic!("expected intel quote verifier input"),
+        };
+        let provider = ClientBackedIntelQuoteVerifierProvider::new(
+            Arc::new(AssertingExternalIntelQuoteClient),
+            Arc::new(StaticVerifierTransportConfigSource::external_defaults()),
+        );
+        let result = provider.verify_intel_quote_bundle(
+            &input,
+            &BackendVerificationRequest {
+                family: VerificationBackendFamily::Tee,
+                task: &task,
+                proof_data,
+                tee_payload: Some(&payload),
+                zk_payload: None,
+                resolved_vk_ref: None,
+            },
+        );
+        assert!(matches!(result, Ok(BackendVerificationSuccess { backend_id }) if backend_id == "intel-external-mock-client"));
+    }
+
+    #[test]
+    fn client_backed_amd_provider_uses_external_transport_profile_when_injected() {
+        let task = mock_task();
+        let proof_data = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=sev-snp,measurement=measurement:demo-snp-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,report=report-sev-snp-demo-v1,vcek=amd-vcek-demo-v1,cert_chain=amd-cert-chain-demo-v1,report_signer=amd";
+        let payload = parse_tee_attestation_payload(proof_data).unwrap();
+        let handoff = TeeVerifierHandoff::from_payload(&payload, None).unwrap();
+        let input = match SEV_SNP_ADAPTER.build_verifier_input(&handoff, None).unwrap() {
+            TeeVerifierInput::Report(input) => input,
+            TeeVerifierInput::Quote(_) => panic!("expected amd report verifier input"),
+        };
+        let provider = ClientBackedAmdReportVerifierProvider::new(
+            Arc::new(AssertingExternalAmdReportClient),
+            Arc::new(StaticVerifierTransportConfigSource::external_defaults()),
+        );
+        let result = provider.verify_amd_report_bundle(
+            &input,
+            &BackendVerificationRequest {
+                family: VerificationBackendFamily::Tee,
+                task: &task,
+                proof_data,
+                tee_payload: Some(&payload),
+                zk_payload: None,
+                resolved_vk_ref: None,
+            },
+        );
+        assert!(matches!(result, Ok(BackendVerificationSuccess { backend_id }) if backend_id == "amd-external-mock-client"));
     }
 
     struct InvalidIntelQuoteClientResponse;
@@ -1511,7 +1778,10 @@ mod tests {
             TeeVerifierInput::Quote(input) => input,
             TeeVerifierInput::Report(_) => panic!("expected intel quote verifier input"),
         };
-        let provider = ClientBackedIntelQuoteVerifierProvider::new(Arc::new(InvalidIntelQuoteClientResponse));
+        let provider = ClientBackedIntelQuoteVerifierProvider::new(
+            Arc::new(InvalidIntelQuoteClientResponse),
+            Arc::new(StaticVerifierTransportConfigSource::mock_defaults()),
+        );
 
         let result = provider.verify_intel_quote_bundle(
             &input,
@@ -1542,7 +1812,10 @@ mod tests {
             TeeVerifierInput::Report(input) => input,
             TeeVerifierInput::Quote(_) => panic!("expected amd report verifier input"),
         };
-        let provider = ClientBackedAmdReportVerifierProvider::new(Arc::new(UnavailableAmdReportClientResponse));
+        let provider = ClientBackedAmdReportVerifierProvider::new(
+            Arc::new(UnavailableAmdReportClientResponse),
+            Arc::new(StaticVerifierTransportConfigSource::mock_defaults()),
+        );
 
         let result = provider.verify_amd_report_bundle(
             &input,

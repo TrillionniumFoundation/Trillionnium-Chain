@@ -141,10 +141,23 @@ Client requests now also carry an explicit transport/config seam:
 - optional `auth_scheme`
 - optional `auth_ref`
 
+Transport config is no longer hard-coded at the provider callsite.
+Providers now obtain transport settings from a dedicated config source seam:
+- `VerifierTransportConfigSource`
+- `StaticVerifierTransportConfigSource::mock_defaults()`
+- `StaticVerifierTransportConfigSource::external_defaults()`
+
+This gives the scaffold a stable place to swap from mock profiles to future real external verifier profiles without changing adapter or provider request shapes.
+
 Client responses are normalized into a mock external verifier response schema with:
 - `status` (`verified | invalid | unavailable | malformed | internal`)
 - `backend_id`
 - optional `detail`
+
+Mock and future external clients are expected to converge on the same response decode contract.
+The scaffold now includes a unified JSON codec seam:
+- `encode_mock_verifier_response_json(...)`
+- `decode_mock_verifier_response_json(...)`
 
 Provider logic is responsible for fail-closed mapping from client response status into backend semantics:
 - `verified` -> backend success
