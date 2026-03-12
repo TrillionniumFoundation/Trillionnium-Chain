@@ -2879,6 +2879,21 @@ mod tests {
     }
 
     #[test]
+    fn hot_object_top_and_tail_share_metrics_partition_hot_reference_surface() {
+        let mut summary = HotObjectSummary::default();
+        summary.labels.insert("resolve.pending_approval".into(), 6);
+        summary.labels.insert("treasury.challenge_escrow".into(), 2);
+        summary.labels.insert("gov.resolve_authority".into(), 2);
+
+        let top_share_ppm = hot_object_top_label_share_ppm(&summary);
+        let tail_share_ppm = hot_object_tail_share_ppm(&summary);
+
+        assert_eq!(top_share_ppm, 600_000);
+        assert_eq!(tail_share_ppm, 400_000);
+        assert_eq!(top_share_ppm + tail_share_ppm, 1_000_000);
+    }
+
+    #[test]
     fn critical_wait_density_metrics_make_fairness_stalls_visible() {
         let finality_avg = 200u128;
         let critical_wait_blocks_avg = 50u128;
