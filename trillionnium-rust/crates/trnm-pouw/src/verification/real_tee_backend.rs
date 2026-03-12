@@ -675,23 +675,177 @@ trait VerifierHttpClientHandle: Send + Sync {
 }
 
 #[allow(dead_code)]
-struct FailClosedVerifierHttpClientHandle;
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct VerifierHttpClientRuntimeRequest {
+    method: HttpMethod,
+    url: String,
+    headers: BTreeMap<String, String>,
+    body: Vec<u8>,
+    timeout_ms: u64,
+    profile: String,
+    transport_mode: VerifierTransportMode,
+}
 
-impl VerifierHttpClientHandle for FailClosedVerifierHttpClientHandle {
-    fn execute(
+#[allow(dead_code)]
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct VerifierHttpClientRuntimeResponse {
+    status_code: u16,
+    headers: BTreeMap<String, String>,
+    body: Vec<u8>,
+}
+
+#[allow(dead_code)]
+trait VerifierHttpClientRuntimeRequestBuilder: Send + Sync {
+    fn build_request(
         &self,
+        config: &ResolvedVerifierHttpClientConfig,
+        client_request: &VerifierHttpClientRequest,
+        http_request: &HttpVerifierRequest,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<VerifierHttpClientRuntimeRequest, BackendExecutionError>;
+}
+
+#[allow(dead_code)]
+struct DirectVerifierHttpClientRuntimeRequestBuilder;
+
+impl VerifierHttpClientRuntimeRequestBuilder for DirectVerifierHttpClientRuntimeRequestBuilder {
+    fn build_request(
+        &self,
+        config: &ResolvedVerifierHttpClientConfig,
+        client_request: &VerifierHttpClientRequest,
+        _http_request: &HttpVerifierRequest,
+        _request: &BackendVerificationRequest<'_>,
+    ) -> Result<VerifierHttpClientRuntimeRequest, BackendExecutionError> {
+        Ok(VerifierHttpClientRuntimeRequest {
+            method: client_request.method,
+            url: client_request.url.clone(),
+            headers: client_request.headers.clone(),
+            body: client_request.body.clone(),
+            timeout_ms: config.timeout_ms,
+            profile: config.profile.clone(),
+            transport_mode: config.transport_mode.clone(),
+        })
+    }
+}
+
+#[allow(dead_code)]
+trait VerifierHttpClientRuntime: Send + Sync {
+    fn execute_runtime(
+        &self,
+        runtime_request: &VerifierHttpClientRuntimeRequest,
+        config: &ResolvedVerifierHttpClientConfig,
+        client_request: &VerifierHttpClientRequest,
+        http_request: &HttpVerifierRequest,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<VerifierHttpClientRuntimeResponse, BackendExecutionError>;
+}
+
+#[allow(dead_code)]
+struct FailClosedVerifierHttpClientRuntime;
+
+impl VerifierHttpClientRuntime for FailClosedVerifierHttpClientRuntime {
+    fn execute_runtime(
+        &self,
+        _runtime_request: &VerifierHttpClientRuntimeRequest,
         _config: &ResolvedVerifierHttpClientConfig,
         _client_request: &VerifierHttpClientRequest,
         http_request: &HttpVerifierRequest,
         request: &BackendVerificationRequest<'_>,
-    ) -> Result<RawHttpVerifierResponse, BackendExecutionError> {
+    ) -> Result<VerifierHttpClientRuntimeResponse, BackendExecutionError> {
         Err(BackendExecutionError::Unavailable {
             backend: request.backend_label(RealTeeBackend::backend_id_static()),
             reason: format!(
-                "real http client handle for profile '{}' is not wired",
+                "real http client runtime for profile '{}' is not wired",
                 http_request.profile
             ),
         })
+    }
+}
+
+#[allow(dead_code)]
+trait VerifierHttpClientRuntimeResponseAdapter: Send + Sync {
+    fn adapt_response(
+        &self,
+        runtime_response: VerifierHttpClientRuntimeResponse,
+        config: &ResolvedVerifierHttpClientConfig,
+        client_request: &VerifierHttpClientRequest,
+        http_request: &HttpVerifierRequest,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<RawHttpVerifierResponse, BackendExecutionError>;
+}
+
+#[allow(dead_code)]
+struct PassthroughVerifierHttpClientRuntimeResponseAdapter;
+
+impl VerifierHttpClientRuntimeResponseAdapter for PassthroughVerifierHttpClientRuntimeResponseAdapter {
+    fn adapt_response(
+        &self,
+        runtime_response: VerifierHttpClientRuntimeResponse,
+        _config: &ResolvedVerifierHttpClientConfig,
+        _client_request: &VerifierHttpClientRequest,
+        _http_request: &HttpVerifierRequest,
+        _request: &BackendVerificationRequest<'_>,
+    ) -> Result<RawHttpVerifierResponse, BackendExecutionError> {
+        Ok(RawHttpVerifierResponse {
+            status_code: runtime_response.status_code,
+            headers: runtime_response.headers,
+            body: runtime_response.body,
+        })
+    }
+}
+
+#[allow(dead_code)]
+struct RuntimeBackedVerifierHttpClientHandle {
+    request_builder: Arc<dyn VerifierHttpClientRuntimeRequestBuilder>,
+    runtime: Arc<dyn VerifierHttpClientRuntime>,
+    response_adapter: Arc<dyn VerifierHttpClientRuntimeResponseAdapter>,
+}
+
+#[allow(dead_code)]
+impl RuntimeBackedVerifierHttpClientHandle {
+    fn new() -> Self {
+        Self {
+            request_builder: Arc::new(DirectVerifierHttpClientRuntimeRequestBuilder),
+            runtime: Arc::new(FailClosedVerifierHttpClientRuntime),
+            response_adapter: Arc::new(PassthroughVerifierHttpClientRuntimeResponseAdapter),
+        }
+    }
+
+    #[cfg(test)]
+    fn with_components(
+        request_builder: Arc<dyn VerifierHttpClientRuntimeRequestBuilder>,
+        runtime: Arc<dyn VerifierHttpClientRuntime>,
+        response_adapter: Arc<dyn VerifierHttpClientRuntimeResponseAdapter>,
+    ) -> Self {
+        Self {
+            request_builder,
+            runtime,
+            response_adapter,
+        }
+    }
+}
+
+impl VerifierHttpClientHandle for RuntimeBackedVerifierHttpClientHandle {
+    fn execute(
+        &self,
+        config: &ResolvedVerifierHttpClientConfig,
+        client_request: &VerifierHttpClientRequest,
+        http_request: &HttpVerifierRequest,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<RawHttpVerifierResponse, BackendExecutionError> {
+        let runtime_request = self
+            .request_builder
+            .build_request(config, client_request, http_request, request)?;
+        let runtime_response = self
+            .runtime
+            .execute_runtime(&runtime_request, config, client_request, http_request, request)?;
+        self.response_adapter.adapt_response(
+            runtime_response,
+            config,
+            client_request,
+            http_request,
+            request,
+        )
     }
 }
 
@@ -706,7 +860,7 @@ impl HandleBackedVerifierHttpClientAdapter {
     fn new() -> Self {
         Self {
             config_resolver: Arc::new(StaticVerifierHttpClientConfigResolver),
-            client_handle: Arc::new(FailClosedVerifierHttpClientHandle),
+            client_handle: Arc::new(RuntimeBackedVerifierHttpClientHandle::new()),
         }
     }
 
@@ -3597,6 +3751,115 @@ mod tests {
     }
 
     #[derive(Default)]
+    struct RecordingHttpClientRuntimeRequestBuilder {
+        requests: Mutex<Vec<VerifierHttpClientRuntimeRequest>>,
+    }
+
+    impl VerifierHttpClientRuntimeRequestBuilder for RecordingHttpClientRuntimeRequestBuilder {
+        fn build_request(
+            &self,
+            config: &ResolvedVerifierHttpClientConfig,
+            client_request: &VerifierHttpClientRequest,
+            _http_request: &HttpVerifierRequest,
+            _request: &BackendVerificationRequest<'_>,
+        ) -> Result<VerifierHttpClientRuntimeRequest, BackendExecutionError> {
+            let runtime_request = VerifierHttpClientRuntimeRequest {
+                method: client_request.method,
+                url: client_request.url.clone(),
+                headers: client_request.headers.clone(),
+                body: client_request.body.clone(),
+                timeout_ms: config.timeout_ms,
+                profile: config.profile.clone(),
+                transport_mode: config.transport_mode.clone(),
+            };
+            self.requests.lock().unwrap().push(runtime_request.clone());
+            Ok(runtime_request)
+        }
+    }
+
+    #[derive(Default)]
+    struct RecordingHttpClientRuntime {
+        requests: Mutex<Vec<VerifierHttpClientRuntimeRequest>>,
+    }
+
+    impl VerifierHttpClientRuntime for RecordingHttpClientRuntime {
+        fn execute_runtime(
+            &self,
+            runtime_request: &VerifierHttpClientRuntimeRequest,
+            config: &ResolvedVerifierHttpClientConfig,
+            _client_request: &VerifierHttpClientRequest,
+            _http_request: &HttpVerifierRequest,
+            _request: &BackendVerificationRequest<'_>,
+        ) -> Result<VerifierHttpClientRuntimeResponse, BackendExecutionError> {
+            self.requests.lock().unwrap().push(runtime_request.clone());
+            assert_eq!(runtime_request.profile, config.profile);
+            assert_eq!(runtime_request.transport_mode, config.transport_mode);
+            assert_eq!(runtime_request.timeout_ms, config.timeout_ms);
+            Ok(VerifierHttpClientRuntimeResponse {
+                status_code: 206,
+                headers: BTreeMap::from([("x-runtime".to_string(), "ok".to_string())]),
+                body: b"runtime-ok".to_vec(),
+            })
+        }
+    }
+
+    #[derive(Default)]
+    struct RecordingHttpClientRuntimeResponseAdapter {
+        responses: Mutex<Vec<VerifierHttpClientRuntimeResponse>>,
+    }
+
+    impl VerifierHttpClientRuntimeResponseAdapter for RecordingHttpClientRuntimeResponseAdapter {
+        fn adapt_response(
+            &self,
+            runtime_response: VerifierHttpClientRuntimeResponse,
+            _config: &ResolvedVerifierHttpClientConfig,
+            _client_request: &VerifierHttpClientRequest,
+            _http_request: &HttpVerifierRequest,
+            _request: &BackendVerificationRequest<'_>,
+        ) -> Result<RawHttpVerifierResponse, BackendExecutionError> {
+            self.responses.lock().unwrap().push(runtime_response.clone());
+            Ok(RawHttpVerifierResponse {
+                status_code: runtime_response.status_code,
+                headers: runtime_response.headers,
+                body: runtime_response.body,
+            })
+        }
+    }
+
+    struct RejectingHttpClientRuntime;
+
+    impl VerifierHttpClientRuntime for RejectingHttpClientRuntime {
+        fn execute_runtime(
+            &self,
+            _runtime_request: &VerifierHttpClientRuntimeRequest,
+            _config: &ResolvedVerifierHttpClientConfig,
+            _client_request: &VerifierHttpClientRequest,
+            _http_request: &HttpVerifierRequest,
+            request: &BackendVerificationRequest<'_>,
+        ) -> Result<VerifierHttpClientRuntimeResponse, BackendExecutionError> {
+            Err(BackendExecutionError::Unavailable {
+                backend: request.backend_label(RealTeeBackend::backend_id_static()),
+                reason: "client runtime rejected http handle".into(),
+            })
+        }
+    }
+
+    struct PanicHttpClientRuntimeResponseAdapter;
+
+    impl VerifierHttpClientRuntimeResponseAdapter for PanicHttpClientRuntimeResponseAdapter {
+        fn adapt_response(
+            &self,
+            _runtime_response: VerifierHttpClientRuntimeResponse,
+            _config: &ResolvedVerifierHttpClientConfig,
+            _client_request: &VerifierHttpClientRequest,
+            _http_request: &HttpVerifierRequest,
+            _request: &BackendVerificationRequest<'_>,
+        ) -> Result<RawHttpVerifierResponse, BackendExecutionError> {
+            panic!("response adapter should not be called when runtime fails")
+        }
+    }
+
+    #[derive(Default)]
     struct RecordingHttpBodyReader {
         bodies: Mutex<Vec<Vec<u8>>>,
     }
@@ -4146,6 +4409,125 @@ mod tests {
     }
 
     #[test]
+    fn runtime_backed_client_handle_builds_request_runs_runtime_and_adapts_response() {
+        let task = mock_task();
+        let request_builder = Arc::new(RecordingHttpClientRuntimeRequestBuilder::default());
+        let runtime = Arc::new(RecordingHttpClientRuntime::default());
+        let response_adapter = Arc::new(RecordingHttpClientRuntimeResponseAdapter::default());
+        let handle = RuntimeBackedVerifierHttpClientHandle::with_components(
+            request_builder.clone(),
+            runtime.clone(),
+            response_adapter.clone(),
+        );
+        let response = handle
+            .execute(
+                &ResolvedVerifierHttpClientConfig {
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                    timeout_ms: 5_000,
+                },
+                &VerifierHttpClientRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::from([(
+                        "content-type".to_string(),
+                        "application/json".to_string(),
+                    )]),
+                    body: b"runtime-body".to_vec(),
+                    timeout_ms: 5_000,
+                },
+                &HttpVerifierRequest {
+                    method: HttpMethod::Post,
+                    transport_mode: VerifierTransportMode::External,
+                    profile: "intel-dcap-external-default".into(),
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::from([(
+                        "content-type".to_string(),
+                        "application/json".to_string(),
+                    )]),
+                    body: "runtime-body".into(),
+                    timeout_ms: 5_000,
+                    retry_policy: RetryBackoffPolicy {
+                        max_attempts: 3,
+                        backoff_ms: 250,
+                        strategy: RetryBackoffStrategy::Exponential,
+                    },
+                },
+                &BackendVerificationRequest {
+                    family: VerificationBackendFamily::Tee,
+                    task: &task,
+                    proof_data: b"TEE:...",
+                    tee_payload: None,
+                    zk_payload: None,
+                    resolved_vk_ref: None,
+                },
+            )
+            .unwrap();
+        assert_eq!(response.status_code, 206);
+        assert_eq!(response.body, b"runtime-ok".to_vec());
+        let built = request_builder.requests.lock().unwrap().clone();
+        assert_eq!(built.len(), 1);
+        assert_eq!(built[0].profile, "intel-dcap-external-default");
+        assert_eq!(built[0].body, b"runtime-body".to_vec());
+        let ran = runtime.requests.lock().unwrap().clone();
+        assert_eq!(ran.len(), 1);
+        assert_eq!(ran[0], built[0]);
+        let adapted = response_adapter.responses.lock().unwrap().clone();
+        assert_eq!(adapted.len(), 1);
+        assert_eq!(adapted[0].status_code, 206);
+        assert_eq!(adapted[0].body, b"runtime-ok".to_vec());
+    }
+
+    #[test]
+    fn runtime_backed_client_handle_fails_closed_when_runtime_rejects() {
+        let task = mock_task();
+        let handle = RuntimeBackedVerifierHttpClientHandle::with_components(
+            Arc::new(DirectVerifierHttpClientRuntimeRequestBuilder),
+            Arc::new(RejectingHttpClientRuntime),
+            Arc::new(PanicHttpClientRuntimeResponseAdapter),
+        );
+        let err = handle
+            .execute(
+                &ResolvedVerifierHttpClientConfig {
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                    timeout_ms: 5_000,
+                },
+                &VerifierHttpClientRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: Vec::new(),
+                    timeout_ms: 5_000,
+                },
+                &HttpVerifierRequest {
+                    method: HttpMethod::Post,
+                    transport_mode: VerifierTransportMode::External,
+                    profile: "intel-dcap-external-default".into(),
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: String::new(),
+                    timeout_ms: 5_000,
+                    retry_policy: RetryBackoffPolicy {
+                        max_attempts: 3,
+                        backoff_ms: 250,
+                        strategy: RetryBackoffStrategy::Exponential,
+                    },
+                },
+                &BackendVerificationRequest {
+                    family: VerificationBackendFamily::Tee,
+                    task: &task,
+                    proof_data: b"TEE:...",
+                    tee_payload: None,
+                    zk_payload: None,
+                    resolved_vk_ref: None,
+                },
+            )
+            .unwrap_err();
+        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client runtime rejected http handle")));
+    }
+
+    #[test]
     fn handle_backed_client_adapter_resolves_config_and_delegates_to_handle() {
         let task = mock_task();
         let config_resolver = Arc::new(RecordingHttpClientConfigResolver::default());
@@ -4448,7 +4830,7 @@ mod tests {
                 },
             )
             .unwrap_err();
-        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("intel-dcap-external-default") && reason.contains("client handle")));
+        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("intel-dcap-external-default") && reason.contains("client runtime")));
     }
 
     #[test]

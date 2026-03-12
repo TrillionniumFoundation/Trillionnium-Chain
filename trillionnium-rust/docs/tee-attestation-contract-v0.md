@@ -283,27 +283,37 @@ And the client-adapter layer is now also split into two explicit seams:
 - `VerifierHttpClientConfigResolver`
 - `VerifierHttpClientHandle`
 
+The client-handle layer is now further split into runtime request/response seams:
+- `VerifierHttpClientRuntimeRequestBuilder`
+- `VerifierHttpClientRuntime`
+- `VerifierHttpClientRuntimeResponseAdapter`
+
 The default wiring remains fail-closed:
 - `AdapterBackedVerifierHttpRequestExecutor`
   - `DirectVerifierHttpRequestPlanner`
   - `HandleBackedVerifierHttpClientAdapter`
     - `StaticVerifierHttpClientConfigResolver`
-    - `FailClosedVerifierHttpClientHandle`
+    - `RuntimeBackedVerifierHttpClientHandle`
+      - `DirectVerifierHttpClientRuntimeRequestBuilder`
+      - `FailClosedVerifierHttpClientRuntime`
+      - `PassthroughVerifierHttpClientRuntimeResponseAdapter`
 - `Utf8HttpResponseBodyReader`
 - `NoopVerifierHttpTimeoutHook`
 
 This freezes a future real transport path as:
-- timeout hook -> request executor -> request planner -> client adapter -> client config resolver -> client handle -> raw response -> body reader -> normalized `HttpVerifierResponse`
+- timeout hook -> request executor -> request planner -> client adapter -> client config resolver -> client handle -> runtime request builder -> client runtime -> runtime response adapter -> raw response -> body reader -> normalized `HttpVerifierResponse`
 
 So the scaffold now separates:
 1. HTTP request planning / profile + auth resolution
 2. retry policy execution
 3. client-facing request planning
 4. adapter-level client config resolution
-5. raw outbound client handle execution
-6. timeout/guard hook behavior
-7. body decoding / normalization
-8. verifier response decode + backend mapping
+5. client-handle request shaping
+6. raw outbound client runtime execution
+7. runtime-response adaptation
+8. timeout/guard hook behavior
+9. body decoding / normalization
+10. verifier response decode + backend mapping
 
 ### HTTP payload skeletons
 The current adapter layer freezes two JSON request shapes:
