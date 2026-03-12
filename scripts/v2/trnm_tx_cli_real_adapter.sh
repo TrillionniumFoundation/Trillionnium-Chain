@@ -105,6 +105,24 @@ normalize_status() {
   esac
 }
 
+normalize_tx_hash() {
+  local raw="$1"
+  local cleaned
+  cleaned=$(printf "%s" "$raw" \
+    | tr '[:upper:]' '[:lower:]' \
+    | sed -E 's/^[[:space:]"'"'"'`({\[]+//; s/[[:space:]"'"'"'`,;:)}\]]+$//')
+
+  if [[ "$cleaned" =~ ^0x[0-9a-f]+$ ]]; then
+    printf "%s" "$cleaned"
+    return 0
+  fi
+  if [[ "$cleaned" =~ ^[0-9a-f]{6,}$ ]]; then
+    printf "%s" "$cleaned"
+    return 0
+  fi
+  return 1
+}
+
 infer_status_from_code() {
   local out="$1"
   local code=""
@@ -219,6 +237,15 @@ case "$sub" in
     fi
 
     seen_hash=$(extract_tx_hash "$out" || true)
+    if [[ -n "$seen_hash" ]]; then
+      normalized_seen_hash=$(normalize_tx_hash "$seen_hash" || true)
+      normalized_requested_hash=$(normalize_tx_hash "$tx_hash" || true)
+      if [[ -n "$normalized_seen_hash" && -n "$normalized_requested_hash" && "$normalized_seen_hash" != "$normalized_requested_hash" ]]; then
+        echo "tx query response hash mismatch: requested=$normalized_requested_hash got=$normalized_seen_hash" >&2
+        exit 1
+      fi
+    fi
+
     status=$(printf "%s" "$out" | sed -n 's/.*"status"[[:space:]]*:[[:space:]]*"\([^"]\+\)".*/\1/p' | head -n1 || true)
     if [[ -z "$status" ]]; then
       status=$(printf "%s" "$out" | sed -n 's/.*"tx_status"[[:space:]]*:[[:space:]]*"\([^"]\+\)".*/\1/p' | head -n1 || true)
