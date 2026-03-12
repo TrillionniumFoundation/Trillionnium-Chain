@@ -85,7 +85,8 @@ Resolve 授权被节点层“配置回填 signer”绕过（任意调用者可�
 ### 当前更准确的风险表述
 1. `default_slash_on_unresolved_challenge` 已在 `trnm-pouw` 中具备读取与 fail-closed 解析逻辑。
 2. 但 state / governance allowlist 仍可能阻断该 key 进入可执行状态，导致治理面“名义可配置、实际不可达”。
-3. 因而当前主要风险在**治理控制面接线不完整**，而不是 bounty 仍可从全局 slash treasury 被抽取。
+3. 2026-03-12 的 L05 复核里，连测试期使用的 `set_gov_param_bootstrap_unchecked(..., "default_slash_on_unresolved_challenge", ...)` 也仍返回 `governance key not allowed: default_slash_on_unresolved_challenge`；这进一步说明当前阻断点确实位于 state / governance 接线，而不是 `trnm-pouw` 内部布尔解析路径。
+4. 因而当前主要风险在**治理控制面接线不完整**，而不是 bounty 仍可从全局 slash treasury 被抽取。
 
 ### 影响
 - 产品/治理层可能误以为 challenged-timeout 惩戒规则已可配置，实际仍固定停留在默认路径。
