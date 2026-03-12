@@ -1813,6 +1813,47 @@ fn monetary_tick_metadata_should_affect_state_root_even_when_issuance_totals_mat
 }
 
 #[test]
+fn monetary_gross_totals_should_affect_state_root_even_when_tick_metadata_and_net_issuance_match() {
+    let mut state_a = StateStore::new();
+    let mut state_b = StateStore::new();
+
+    state_a.restore_monetary_state(MonetaryState {
+        last_tick_height: 10,
+        tick_count: 3,
+        total_minted: 9,
+        total_burned: 9,
+        net_issuance: 0,
+    });
+    state_b.restore_monetary_state(MonetaryState {
+        last_tick_height: 10,
+        tick_count: 3,
+        total_minted: 10,
+        total_burned: 10,
+        net_issuance: 0,
+    });
+
+    assert_ne!(
+        state_a.state_root(),
+        state_b.state_root(),
+        "state_root must include gross total_minted and total_burned, not only tick metadata or net_issuance"
+    );
+
+    state_b.restore_monetary_state(MonetaryState {
+        last_tick_height: 10,
+        tick_count: 3,
+        total_minted: 9,
+        total_burned: 9,
+        net_issuance: 0,
+    });
+
+    assert_eq!(
+        state_b.state_root(),
+        state_a.state_root(),
+        "restoring the original gross monetary totals should rewind the deterministic root exactly"
+    );
+}
+
+#[test]
 fn monetary_last_tick_height_should_affect_state_root_even_when_other_counters_match() {
     let mut state_a = StateStore::new();
     let mut state_b = StateStore::new();
