@@ -793,6 +793,9 @@ fn env_toggle_enabled(name: &str, default: bool) -> bool {
                 })
                 .unwrap_or(trimmed);
             let s = unquoted.trim().to_ascii_lowercase();
+            if s.is_empty() || s.chars().all(|ch| ch == '_' || ch == ',') {
+                return default;
+            }
             !(s == "0" || s == "false" || s == "off" || s == "no")
         })
         .unwrap_or(default)
@@ -1908,6 +1911,26 @@ mod tests {
 
         let _deep_on = EnvGuard::set("TRNM_AGGR_DEEP_SCAN", " \"on\" ");
         assert!(aggr_deep_scan_enabled());
+    }
+
+    #[test]
+    fn aggressive_toggle_parsers_fall_back_to_defaults_on_empty_or_separator_only_values() {
+        let _env = env_lock();
+
+        let _rr_empty = EnvGuard::set("TRNM_AGGR_SCAN_ROUND_ROBIN", "  ''  ");
+        assert!(aggr_scan_round_robin_enabled());
+        drop(_rr_empty);
+
+        let _rr_separators = EnvGuard::set("TRNM_AGGR_SCAN_ROUND_ROBIN", " __,,__ ");
+        assert!(aggr_scan_round_robin_enabled());
+        drop(_rr_separators);
+
+        let _deep_empty = EnvGuard::set("TRNM_AGGR_DEEP_SCAN", "  \"\"  ");
+        assert!(!aggr_deep_scan_enabled());
+        drop(_deep_empty);
+
+        let _skip_separators = EnvGuard::set("TRNM_AGGR_SKIP_EMPTY_STAGE_CHECKS", " _,,_ ");
+        assert!(aggr_skip_empty_stage_checks());
     }
 
     #[test]
