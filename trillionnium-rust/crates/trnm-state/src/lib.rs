@@ -195,6 +195,7 @@ const GOV_SENSITIVE_KEYS: &[&str] = &[
 const DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER: &str = "governance.resolve_authority";
 const EMERGENCY_PAUSE_PLACEHOLDER: &str = "governance.emergency_pause";
 const RESOLVE_AUTHORITY_SET_MAX_LEN: usize = 128;
+const RESOLVE_APPROVER_MAX_LEN: usize = 128;
 const RESERVED_SYSTEM_AUTHORITY: &str = "system";
 const CHALLENGE_ESCROW_ACCOUNT: &str = "treasury.challenge_escrow";
 const CHALLENGE_FORFEIT_TREASURY_ACCOUNT: &str = "treasury.challenge_forfeits";
@@ -420,6 +421,12 @@ impl StateStore {
         if approver_trimmed.chars().any(|c| c.is_control()) {
             return Err("resolve approval approver must not contain control characters".into());
         }
+        if approver_trimmed.len() > RESOLVE_APPROVER_MAX_LEN {
+            return Err(format!(
+                "resolve approval approver exceeds max length {}",
+                RESOLVE_APPROVER_MAX_LEN
+            ));
+        }
         let has_forbidden_separator = |token: &str| {
             token.contains(';')
                 || token.contains('|')
@@ -597,6 +604,7 @@ impl StateStore {
         let approver = snapshot.first_approver.trim();
         if approver.is_empty()
             || approver != snapshot.first_approver
+            || approver.len() > RESOLVE_APPROVER_MAX_LEN
             || approver.chars().any(|c| c.is_whitespace())
             || approver.chars().any(|c| c.is_control())
             || approver.contains(',')
