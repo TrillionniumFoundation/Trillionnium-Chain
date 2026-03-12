@@ -5,6 +5,7 @@ mod transfer;
 
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
+use trnm_oracle::{OracleValidationMetrics, OracleValidationObservation};
 use trnm_types::{GovProposalStatus, TaskStatus};
 
 pub use relay::*;
@@ -38,6 +39,16 @@ pub struct GovParamQueryResponse {
     pub key: String,
     pub value: String,
     pub version: u64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct OracleValidateSnapshotResponse {
+    pub ok: bool,
+    pub now_ts_ms: u64,
+    pub observation: OracleValidationObservation,
+    pub metrics: OracleValidationMetrics,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub error: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -235,6 +246,35 @@ mod tests {
         ] {
             assert!(obj.contains_key(k), "missing key: {}", k);
         }
+    }
+
+    #[test]
+    fn oracle_validate_snapshot_response_schema_smoke_stable() {
+        let out = OracleValidateSnapshotResponse {
+            ok: true,
+            now_ts_ms: 123,
+            observation: OracleValidationObservation {
+                stale_reject_total: 0,
+                quorum_reject_total: 0,
+                drift_reject_total: 0,
+                accepted_total: 1,
+            },
+            metrics: OracleValidationMetrics {
+                oracle_stale_reject_total: 0,
+                oracle_quorum_reject_total: 0,
+                oracle_drift_reject_total: 0,
+                oracle_source_cardinality: 2,
+                accepted_total: 1,
+                sample_count: 1,
+            },
+            error: None,
+        };
+        let v = serde_json::to_value(out).unwrap();
+        let obj = v.as_object().unwrap();
+        for k in ["ok", "now_ts_ms", "observation", "metrics"] {
+            assert!(obj.contains_key(k), "missing key: {}", k);
+        }
+        assert!(!obj.contains_key("error"));
     }
 
     #[test]
