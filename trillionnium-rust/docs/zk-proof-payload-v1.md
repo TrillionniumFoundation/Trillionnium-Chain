@@ -23,6 +23,7 @@ Additional v0 parser / router contract reminders already enforced by tests and c
 - `vk_ref` is required, case-sensitive as an opaque verifier reference, and must not rely on silent surrounding-whitespace trimming.
 - `backend_id`, when present, must be a non-empty canonical token without surrounding whitespace.
 - `backend_version`, when present, must be a non-empty canonical token without surrounding whitespace and must not appear without `backend_id`.
+- If a `backend_id` token carries canonical zk-system hints, all distinct hints must collapse to exactly one canonical system before routing; repeated identical hints (for example `groth16-groth16-demo`) are tolerated, but mixed hints (for example `groth16-plonk-demo`) must fail closed rather than being routed opportunistically.
 
 v0 fail-closed boundary reminder:
 
