@@ -553,6 +553,71 @@ impl StateStore {
             })
     }
 
+    fn is_valid_pending_resolve_snapshot(snapshot: &PendingResolveApprovalSnapshot) -> bool {
+        if !(1..=2).contains(&snapshot.confirmations) {
+            return false;
+        }
+
+        let approver = snapshot.first_approver.trim();
+        if approver.is_empty()
+            || approver != snapshot.first_approver
+            || approver.chars().any(|c| c.is_whitespace())
+            || approver.chars().any(|c| c.is_control())
+            || approver.contains(',')
+            || approver.contains(';')
+            || !approver.is_ascii()
+            || approver.eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER)
+            || approver.eq_ignore_ascii_case(EMERGENCY_PAUSE_PLACEHOLDER)
+            || approver.eq_ignore_ascii_case(RESERVED_SYSTEM_AUTHORITY)
+            || approver.eq_ignore_ascii_case(CHALLENGE_ESCROW_ACCOUNT)
+            || approver.eq_ignore_ascii_case(CHALLENGE_FORFEIT_TREASURY_ACCOUNT)
+            || approver.eq_ignore_ascii_case(WORKER_SLASH_TREASURY_ACCOUNT)
+        {
+            return false;
+        }
+
+        let authority_set = snapshot.authority_set.trim();
+        if authority_set.is_empty() || authority_set != snapshot.authority_set {
+            return false;
+        }
+
+        let members: Vec<&str> = authority_set.split(',').collect();
+        if members.len() < 2 {
+            return false;
+        }
+
+        let mut seen_members = std::collections::BTreeSet::new();
+        let mut approver_present = false;
+        for member in &members {
+            let trimmed = member.trim();
+            if trimmed.is_empty()
+                || trimmed != *member
+                || trimmed.chars().any(|c| c.is_whitespace())
+                || trimmed.chars().any(|c| c.is_control())
+                || trimmed.contains(';')
+                || trimmed.contains('|')
+                || trimmed.contains('；')
+                || trimmed.contains('，')
+                || trimmed.contains('、')
+                || !trimmed.is_ascii()
+                || trimmed.eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER)
+                || trimmed.eq_ignore_ascii_case(EMERGENCY_PAUSE_PLACEHOLDER)
+                || trimmed.eq_ignore_ascii_case(RESERVED_SYSTEM_AUTHORITY)
+                || trimmed.eq_ignore_ascii_case(CHALLENGE_ESCROW_ACCOUNT)
+                || trimmed.eq_ignore_ascii_case(CHALLENGE_FORFEIT_TREASURY_ACCOUNT)
+                || trimmed.eq_ignore_ascii_case(WORKER_SLASH_TREASURY_ACCOUNT)
+            {
+                return false;
+            }
+            if !seen_members.insert(trimmed.to_ascii_lowercase()) {
+                return false;
+            }
+            approver_present |= trimmed.eq_ignore_ascii_case(approver);
+        }
+
+        approver_present
+    }
+
     pub fn restore_pending_resolve_approval(
         &mut self,
         task_id: u64,
@@ -560,7 +625,7 @@ impl StateStore {
     ) {
         self.invalidate_state_root_cache();
         match snapshot {
-            Some(snapshot) => {
+            Some(snapshot) if Self::is_valid_pending_resolve_snapshot(&snapshot) => {
                 self.pending_resolve_approvals.insert(
                     task_id,
                     PendingResolveApproval {
@@ -572,7 +637,7 @@ impl StateStore {
                     },
                 );
             }
-            None => {
+            _ => {
                 self.pending_resolve_approvals.remove(&task_id);
             }
         }
@@ -2006,6 +2071,62 @@ mod tests {
             st.pending_resolve_first_approver(8_181).as_deref(),
             Some("authority-a")
         );
+    }
+
+    #[test]
+    fn restore_pending_resolve_approval_scrubs_invalid_snapshot_confirmation_boundary() {
+        let mut st = StateStore::new();
+        st.restore_pending_resolve_approval(
+            9_301,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 0,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 4,
+            }),
+        );
+        assert_eq!(st.pending_resolve_approval(9_301), None);
+
+        st.restore_pending_resolve_approval(
+            9_302,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: false,
+                confirmations: 3,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 4,
+            }),
+        );
+        assert_eq!(st.pending_resolve_approval(9_302), None);
+    }
+
+    #[test]
+    fn restore_pending_resolve_approval_scrubs_invalid_snapshot_authority_boundary() {
+        let mut st = StateStore::new();
+        st.restore_pending_resolve_approval(
+            9_303,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a".into(),
+                task_version: 9,
+            }),
+        );
+        assert_eq!(st.pending_resolve_approval(9_303), None);
+
+        st.restore_pending_resolve_approval(
+            9_304,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-b,authority-c".into(),
+                task_version: 9,
+            }),
+        );
+        assert_eq!(st.pending_resolve_approval(9_304), None);
     }
 
     #[test]
