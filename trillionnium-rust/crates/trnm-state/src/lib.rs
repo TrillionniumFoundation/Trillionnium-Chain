@@ -582,6 +582,10 @@ impl StateStore {
             || approver.chars().any(|c| c.is_control())
             || approver.contains(',')
             || approver.contains(';')
+            || approver.contains('|')
+            || approver.contains('；')
+            || approver.contains('，')
+            || approver.contains('、')
             || !approver.is_ascii()
             || approver.eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER)
             || approver.eq_ignore_ascii_case(EMERGENCY_PAUSE_PLACEHOLDER)
@@ -2156,6 +2160,33 @@ mod tests {
             }),
         );
         assert_eq!(st.pending_resolve_approval(9_304), None);
+    }
+
+    #[test]
+    fn restore_pending_resolve_approval_scrubs_invalid_snapshot_approver_separator_boundary() {
+        let mut st = StateStore::new();
+        for (task_id, bad_approver) in [
+            (9_305, "authority|a"),
+            (9_306, "authority；a"),
+            (9_307, "authority，a"),
+            (9_308, "authority、a"),
+        ] {
+            st.restore_pending_resolve_approval(
+                task_id,
+                Some(PendingResolveApprovalSnapshot {
+                    slash_worker: true,
+                    confirmations: 1,
+                    first_approver: bad_approver.into(),
+                    authority_set: "authority-a,authority-b".into(),
+                    task_version: 9,
+                }),
+            );
+            assert_eq!(
+                st.pending_resolve_approval(task_id),
+                None,
+                "snapshot approver {bad_approver:?} must be scrubbed"
+            );
+        }
     }
 
     #[test]
