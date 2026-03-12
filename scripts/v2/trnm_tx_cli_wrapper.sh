@@ -9,9 +9,36 @@ set -euo pipefail
 #   trnm_tx_cli_wrapper.sh tx query <tx_hash>
 
 if [[ "${1:-}" != "tx" ]]; then
-  echo "usage: $0 tx <commit-result|reveal-result|query|--help> ..." >&2
+  echo "usage: $0 tx <commit-result|reveal-result|query|wait|transfer|--help> ..." >&2
   exit 2
 fi
+
+resolve_delegate_bin() {
+  local candidate="${TRNM_TX_WRAPPER_DELEGATE_BIN:-${TRNM_TX_WRAPPER_CLI:-trnm-cli}}"
+  if command -v "$candidate" >/dev/null 2>&1; then
+    command -v "$candidate"
+    return 0
+  fi
+
+  local root
+  root="$(cd "$(dirname "$0")/../.." && pwd)"
+  local cargo_bin="$root/trillionnium-rust/target/debug/trnm-cli"
+  if [[ "$candidate" == "trnm-cli" && -x "$cargo_bin" ]]; then
+    printf "%s\n" "$cargo_bin"
+    return 0
+  fi
+
+  return 1
+}
+
+delegate_to_cli() {
+  local delegate_bin
+  if ! delegate_bin="$(resolve_delegate_bin)"; then
+    echo "delegated tx subcommand requires trnm-cli (set TRNM_TX_WRAPPER_DELEGATE_BIN if needed)" >&2
+    exit 127
+  fi
+  exec "$delegate_bin" tx "$@"
+}
 
 sub="${2:-}"
 if [[ "$sub" == "--help" || "$sub" == "-h" || -z "$sub" ]]; then
@@ -36,6 +63,9 @@ stable_tx_hash() {
 }
 
 case "$sub" in
+  wait|transfer)
+    delegate_to_cli "${@:3}"
+    ;;
   commit-result)
     if [[ "$#" -ne 6 ]]; then
       echo "invalid args for commit-result: expected 4 payload args" >&2
