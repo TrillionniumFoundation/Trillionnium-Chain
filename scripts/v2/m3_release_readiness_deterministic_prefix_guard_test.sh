@@ -17,4 +17,24 @@ for line in "${required_lines[@]}"; do
   fi
 done
 
-echo "[PASS] M3 release-readiness template keeps deterministic env + replay/rollback guard clauses"
+RC_SCRIPT="$ROOT/trillionnium-rust/scripts/release_rc.sh"
+if [[ ! -f "$RC_SCRIPT" ]]; then
+  echo "[FAIL] missing RC evidence script: $RC_SCRIPT" >&2
+  exit 1
+fi
+
+rc_required_lines=(
+  'replay_command=$replay_command'
+  'rollback_command=$rollback_command'
+  'env_tz=${TZ:-<unset>}'
+  'replay_env_tz=$replay_tz'
+)
+
+for line in "${rc_required_lines[@]}"; do
+  if ! grep -Fq "$line" "$RC_SCRIPT"; then
+    echo "[FAIL] missing RC manifest replay/rollback field: $line" >&2
+    exit 1
+  fi
+done
+
+echo "[PASS] M3 release-readiness template and RC manifest keep deterministic env + replay/rollback guard clauses"
