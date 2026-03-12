@@ -96,35 +96,39 @@ pub fn backend_system_hint(raw: &str) -> Option<String> {
             .find(|token| matches!(*token, "sgx" | "tdx" | "snp"))
     }
 
+    let is_tee_attestation_surface = |token: &str| {
+        matches!(
+            token,
+            "intel"
+                | "amd"
+                | "attestation"
+                | "attestations"
+                | "remote"
+                | "ra"
+                | "evidence"
+                | "evidences"
+                | "receipt"
+                | "receipts"
+                | "enclave"
+                | "enclaves"
+                | "quote"
+                | "quotes"
+                | "report"
+                | "reports"
+                | "claims"
+                | "claim"
+                | "cert"
+                | "certs"
+                | "certificate"
+                | "certificates"
+                | "dcap"
+                | "sev"
+        )
+    };
+
     if family == Some("tee") {
         while let Some(token) = parts.get(idx).copied() {
-            if matches!(
-                token,
-                "intel"
-                    | "amd"
-                    | "attestation"
-                    | "attestations"
-                    | "remote"
-                    | "ra"
-                    | "evidence"
-                    | "evidences"
-                    | "receipt"
-                    | "receipts"
-                    | "enclave"
-                    | "enclaves"
-                    | "quote"
-                    | "quotes"
-                    | "report"
-                    | "reports"
-                    | "claims"
-                    | "claim"
-                    | "cert"
-                    | "certs"
-                    | "certificate"
-                    | "certificates"
-                    | "dcap"
-                    | "sev"
-            ) {
+            if is_tee_attestation_surface(token) {
                 idx += 1;
                 continue;
             }
@@ -141,10 +145,14 @@ pub fn backend_system_hint(raw: &str) -> Option<String> {
     }
 
     // Some backend ids are already family-scoped by path or config key and omit
-    // the explicit `tee` prefix, e.g. `intel-sgx-dcap` / `amd-sev-snp`. Keep
-    // those on the same concrete-platform contract as the prefixed forms.
-    if family.is_none() && matches!(first, "intel" | "amd") {
-        if let Some(platform) = tee_platform(&parts[1..]) {
+    // the explicit `tee` prefix, e.g. `intel-sgx-dcap` / `amd-sev-snp`. Others
+    // arrive as attestation-oriented labels like `remote attestation quote sgx`
+    // or `attestation evidence snp`. Keep those on the same concrete-platform
+    // contract instead of falling back to a generic surface token such as
+    // `remote` or `attestation`.
+    if family.is_none() && is_tee_attestation_surface(first) {
+        let start = if matches!(first, "intel" | "amd") { 1 } else { 0 };
+        if let Some(platform) = tee_platform(&parts[start..]) {
             return Some(platform.to_string());
         }
     }
@@ -980,6 +988,9 @@ mod tests {
             ("tee attestations receipts reports sgx", "sgx"),
             ("tee evidences certs quotes tdx", "tdx"),
             ("tee remote attestations certificates snp", "snp"),
+            ("remote attestation quote sgx", "sgx"),
+            ("attestation evidence snp", "snp"),
+            ("receipt report tdx", "tdx"),
         ] {
             assert_eq!(backend_system_hint(raw), Some(expected.into()), "raw={raw}");
         }
