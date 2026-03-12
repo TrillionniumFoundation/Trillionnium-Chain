@@ -20,6 +20,7 @@ import argparse
 import datetime as dt
 import hashlib
 import json
+import math
 import re
 from pathlib import Path
 from typing import Any
@@ -173,6 +174,8 @@ def non_negative_float(value: Any) -> float:
     try:
         parsed = float(value or 0.0)
     except (TypeError, ValueError):
+        return 0.0
+    if not math.isfinite(parsed):
         return 0.0
     return max(0.0, parsed)
 
