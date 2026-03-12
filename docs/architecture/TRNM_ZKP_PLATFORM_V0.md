@@ -131,7 +131,7 @@ v0 在路由层保持当前顶层种类不变：
 ## 4.2 ZK backend descriptor
 对 `ProofType::Zk`，平台层引入如下概念字段：
 
-- `zk_system`：证明系统标识，例如 `groth16 | plonk | halo2 | risc0 | sp1 | custom`
+- `zk_system`：证明系统标识。当前 v0 router / payload parser 冻结接受的 canonical token 为 `groth16 | plonk | halo2 | stark | risc0 | sp1`；更宽的自定义命名空间先作为文档保留位，不得在 v0 实现中静默放开。
 - `backend_id`：具体 backend 实例标识，例如 `local-groth16-bn254`、`risc0-host-v1`
 - `backend_version`：backend 契约版本，例如 `v1`
 - `proof_format`：proof 编码格式，例如 `raw-bytes | hex | base64 | json-envelope`
@@ -403,7 +403,7 @@ v0 **不承诺**：
 - STARK / zkVM receipt
 - RISC Zero
 - SP1
-- 自定义 `custom:<org>:<system>`
+- 预留的自定义命名空间 `custom:<org>:<system>`（保留给未来版本；v0 当前仍应 fail-closed 拒绝，避免实现/文档/fixture 漂移）
 
 原则：**新增 proving system 不改 Router 对外契约，只新增 backend capability。**
 

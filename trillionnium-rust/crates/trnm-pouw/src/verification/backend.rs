@@ -968,6 +968,12 @@ mod tests {
     }
 
     #[test]
+    fn normalize_zk_system_rejects_reserved_custom_namespace_until_versioned_support_lands() {
+        assert_eq!(normalize_zk_system("custom:acme:sumcheck"), None);
+        assert_eq!(normalize_zk_system(" custom:acme:sumcheck "), None);
+    }
+
+    #[test]
     fn normalize_backend_token_rejects_noop_aliases_as_non_explicit_backend() {
         assert_eq!(normalize_backend_token("noop"), None);
         assert_eq!(normalize_backend_token(" NOOP "), None);
