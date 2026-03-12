@@ -623,6 +623,27 @@ mod tests {
     }
 
     #[test]
+    fn effective_strategy_keeps_explicit_non_adaptive_choices_stable() {
+        let hot_streak = build_hot_streak_txs(20_000, 2_000, 3, 1);
+
+        let explicit_cases = [
+            (StrategyArg::Original, GroupingStrategy::Original),
+            (StrategyArg::FootprintDesc, GroupingStrategy::FootprintDesc),
+            (StrategyArg::WriteFirst, GroupingStrategy::WriteFirst),
+            (StrategyArg::WriteLast, GroupingStrategy::WriteLast),
+            (
+                StrategyArg::HotBucketInterleave,
+                GroupingStrategy::HotBucketInterleave,
+            ),
+            (StrategyArg::AggressiveGreedy, GroupingStrategy::AggressiveGreedy),
+        ];
+
+        for (arg, expected) in explicit_cases {
+            assert_eq!(effective_strategy_for(arg, &hot_streak), expected);
+        }
+    }
+
+    #[test]
     fn default_effective_strategy_stays_original_on_hot_streak_workload() {
         let hot_streak = build_hot_streak_txs(20_000, 2_000, 3, 1);
 

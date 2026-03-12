@@ -1,7 +1,7 @@
 use std::collections::{HashMap, HashSet};
 use trnm_types::{ObjectRef, Tx};
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum GroupingStrategy {
     Original,
     FootprintDesc,
