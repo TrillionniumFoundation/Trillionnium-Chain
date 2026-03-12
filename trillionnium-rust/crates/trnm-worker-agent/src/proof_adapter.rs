@@ -200,6 +200,16 @@ fn strip_terminal_control_sequences(input: &str) -> String {
                     }
                 }
             }
+            Some('P' | '^' | '_') => {
+                chars.next();
+                let mut saw_esc = false;
+                while let Some(next) = chars.next() {
+                    if saw_esc && next == '\\' {
+                        break;
+                    }
+                    saw_esc = next == '\u{1b}';
+                }
+            }
             Some(_) => {
                 chars.next();
             }
@@ -456,6 +466,30 @@ mod tests {
             .expect("should parse json with ansi osc noise around it");
         assert_eq!(parsed.output_text, "ok");
         assert_eq!(parsed.provider_request_id.as_deref(), Some("r3-ansi-osc"));
+    }
+
+    #[test]
+    fn standard_proof_adapter_parse_response_accepts_json_after_ansi_dcs_logs() {
+        let adapter = StandardProofAdapter;
+        let stdout = "\u{1b}Ptmux;warmup=1\u{1b}\\info: warmup\n{\"output_text\":\"ok\",\"provider_request_id\":\"r3-ansi-dcs\"}\n\u{1b}Ptmux;cleanup=1\u{1b}\\";
+
+        let parsed = adapter
+            .parse_response(stdout)
+            .expect("should parse json with ansi dcs noise around it");
+        assert_eq!(parsed.output_text, "ok");
+        assert_eq!(parsed.provider_request_id.as_deref(), Some("r3-ansi-dcs"));
+    }
+
+    #[test]
+    fn standard_proof_adapter_parse_response_accepts_json_after_ansi_apc_logs() {
+        let adapter = StandardProofAdapter;
+        let stdout = "\u{1b}_apc warmup\u{1b}\\info: warmup\n{\"output_text\":\"ok\",\"provider_request_id\":\"r3-ansi-apc\"}\n\u{1b}_apc cleanup\u{1b}\\";
+
+        let parsed = adapter
+            .parse_response(stdout)
+            .expect("should parse json with ansi apc noise around it");
+        assert_eq!(parsed.output_text, "ok");
+        assert_eq!(parsed.provider_request_id.as_deref(), Some("r3-ansi-apc"));
     }
 
     #[test]
