@@ -603,19 +603,25 @@ fn parse_node_event_log_sources_list(raw: &str) -> Vec<PathBuf> {
         .collect()
 }
 
+fn is_safe_node_event_log_source(path: &Path) -> bool {
+    fs::symlink_metadata(path)
+        .map(|metadata| metadata.file_type().is_file())
+        .unwrap_or(false)
+}
+
 fn discover_default_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
     let run_dir = root.join("run");
     let mut out = BTreeSet::<PathBuf>::new();
     for seed in ["event-field-check.log", "parallel-sanity.log"] {
         let candidate = run_dir.join(seed);
-        if candidate.is_file() {
+        if is_safe_node_event_log_source(&candidate) {
             out.insert(candidate);
         }
     }
     if let Ok(entries) = fs::read_dir(&run_dir) {
         for entry in entries.flatten() {
             let path = entry.path();
-            if !path.is_file() {
+            if !is_safe_node_event_log_source(&path) {
                 continue;
             }
             let Some(name) = path.file_name().and_then(|v| v.to_str()) else {
@@ -646,7 +652,7 @@ fn load_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
                 } else {
                     manifest_dir.join(path)
                 };
-                if resolved.is_file() {
+                if is_safe_node_event_log_source(&resolved) {
                     sources.insert(resolved);
                 }
             }
@@ -660,7 +666,7 @@ fn load_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
             } else {
                 root.join(path)
             };
-            if resolved.is_file() {
+            if is_safe_node_event_log_source(&resolved) {
                 sources.insert(resolved);
             }
         }
@@ -6551,6 +6557,58 @@ line2
         assert!(
             !got.contains(&missing_log),
             "missing manifest entries must be ignored to keep RPC scan inputs bounded to real files"
+        );
+        assert_eq!(got.len(), 1);
+
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn load_node_event_log_sources_rejects_symlink_entries_fail_closed() {
+        let _guard = lock_env();
+        let root = unique_tmp_path("trnm-rpc-log-sources-symlink", "dir");
+        let manifest_dir = root.join("cfg");
+        fs::create_dir_all(&manifest_dir).expect("create manifest dir");
+
+        let real_log = manifest_dir.join("present.log");
+        let symlink_log = manifest_dir.join("present-link.log");
+        let manifest = manifest_dir.join("sources.txt");
+        fs::write(&real_log, "").expect("write real log");
+        std::os::unix::fs::symlink(&real_log, &symlink_log).expect("create symlink log");
+        fs::write(
+            &manifest,
+            format!("present.log\npresent-link.log\n{}\n", symlink_log.display()),
+        )
+        .expect("write manifest");
+
+        let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+        let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+        unsafe {
+            std::env::set_var(
+                NODE_EVENT_LOG_SOURCES_ENV,
+                format!("{},{}", real_log.display(), symlink_log.display()),
+            );
+            std::env::set_var(
+                NODE_EVENT_LOG_MANIFEST_ENV,
+                manifest.to_string_lossy().to_string(),
+            );
+        }
+
+        let got = load_node_event_log_sources(&root);
+
+        match prev_sources {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+        }
+        match prev_manifest {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+        }
+
+        assert!(got.contains(&real_log));
+        assert!(
+            !got.contains(&symlink_log),
+            "symlinked event logs must be ignored so configured RPC scans stay bounded to concrete files"
         );
         assert_eq!(got.len(), 1);
 
