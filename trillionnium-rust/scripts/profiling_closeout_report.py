@@ -524,6 +524,8 @@ def main():
                 "stale": 0,
                 "old": 0,
                 "old_backlog": 0,
+                "fresh_ratio": "0.0000",
+                "old_backlog_ratio": "0.0000",
             }
         freshness_counts = {"fresh": 0, "stale": 0, "old": 0}
         for path in existing_candidates:
@@ -535,6 +537,8 @@ def main():
             effective_fresh_count += 1
         old_backlog = freshness_counts["stale"] + freshness_counts["old"]
         candidate_count = len(existing_candidates)
+        fresh_ratio = effective_fresh_count / candidate_count if candidate_count else 0.0
+        old_backlog_ratio = old_backlog / candidate_count if candidate_count else 0.0
         if candidate_count == 0:
             status = "empty"
             action = "produce"
@@ -563,6 +567,8 @@ def main():
             "stale": freshness_counts["stale"],
             "old": freshness_counts["old"],
             "old_backlog": old_backlog,
+            "fresh_ratio": f"{fresh_ratio:.4f}",
+            "old_backlog_ratio": f"{old_backlog_ratio:.4f}",
         }
 
     def candidate_pool_health_line(pool: dict[str, str | int | bool]) -> str:
@@ -570,7 +576,8 @@ def main():
             f"- {pool['label']}: status={pool['status']} action={pool['action']} selected={pool['selected']} "
             f"selected_freshness={pool['selected_freshness']} pending_selected={'true' if pool['pending_selected'] else 'false'} "
             f"candidate_count={pool['candidate_count']} missing_count={pool['missing_count']} fresh={pool['fresh']} "
-            f"stale={pool['stale']} old={pool['old']} old_backlog={pool['old_backlog']}"
+            f"stale={pool['stale']} old={pool['old']} old_backlog={pool['old_backlog']} "
+            f"fresh_ratio={pool['fresh_ratio']} old_backlog_ratio={pool['old_backlog_ratio']}"
         )
 
     def archive_candidates_for_pool(candidates: list[str], keep_latest: int = 2) -> list[str]:
