@@ -575,10 +575,15 @@ pub fn parse_zk_proof_payload(
             reason: "invalid zk payload: proof_type must be zk".to_string(),
         });
     }
-    if !payload.result_hash.eq_ignore_ascii_case(&expected_hash) {
+    if payload.result_hash != expected_hash {
+        let reason = if payload.result_hash.eq_ignore_ascii_case(&expected_hash) {
+            "invalid zk payload: result_hash must use canonical lowercase hex".to_string()
+        } else {
+            "invalid zk payload: result_hash mismatch".to_string()
+        };
         return Err(BackendExecutionError::InvalidProof {
             backend: "zk:payload".to_string(),
-            reason: "invalid zk payload: result_hash mismatch".to_string(),
+            reason,
         });
     }
     let raw_zk_system = payload.zk_system.as_deref().ok_or_else(|| {
@@ -819,6 +824,16 @@ mod tests {
         let err = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["4242","zk","worker-zk","2222222222222222222222222222222222222222222222222222222222222222"]}}"#).unwrap_err();
         assert!(
             matches!(err, BackendExecutionError::InvalidProof { reason, .. } if reason.contains("public_inputs mismatch"))
+        );
+    }
+
+    #[test]
+    fn parse_zk_proof_payload_rejects_non_canonical_top_level_result_hash_case() {
+        let mut task = mock_task();
+        task.result_hash = Some([0xab; 32]);
+        let err = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"ABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABAB","zk_system":"groth16","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["4242","zk","worker-zk","abababababababababababababababababababababababababababababababab"]}}"#).unwrap_err();
+        assert!(
+            matches!(err, BackendExecutionError::InvalidProof { reason, .. } if reason.contains("canonical lowercase hex"))
         );
     }
 
