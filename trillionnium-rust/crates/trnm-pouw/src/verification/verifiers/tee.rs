@@ -71,7 +71,7 @@ impl TeeVerifier {
                 let message = format!(
                     "backend_error: verification backend '{backend}' failed while verifying TEE attestation {evidence_surface}: {reason}"
                 );
-                if matches!(evidence_surface, "payload/claims" | "quote/report claims") {
+                if evidence_surface == "quote/report claims" {
                     VerificationResult::Indeterminate(format!(
                         "{message} (legacy: failed while verifying TEE attestation quote/report claims)"
                     ))
@@ -111,22 +111,30 @@ impl TeeVerifier {
         let Some(reason) = reason else {
             return "evidence/claims";
         };
-        let normalized = reason.to_ascii_lowercase();
+
+        let tokens = reason
+            .split(|ch: char| !ch.is_ascii_alphanumeric())
+            .filter(|token| !token.is_empty())
+            .map(|token| token.to_ascii_lowercase())
+            .collect::<Vec<_>>();
+
+        let mentions = |predicate: fn(&str) -> bool| tokens.iter().any(|token| predicate(token));
 
         // Keep TEE attestation surface inference scoped to attestation-oriented
         // evidence labels first. ZK-style `payload` wording can appear in shared
         // backend plumbing, but for TEE we prefer quote/report/evidence/claims
         // surfaces unless the reason is explicitly payload-bound and lacks any
         // attestation context.
-        let mentions_unavailable = normalized.contains("unavailable");
-        let mentions_quote = normalized.contains("quote");
-        let mentions_report = normalized.contains("report");
-        let mentions_claims = normalized.contains("claim");
-        let mentions_payload = normalized.contains("payload");
-        let mentions_evidence = normalized.contains("evidence");
-        let mentions_certificate = normalized.contains("certificate") || normalized.contains("cert");
-        let mentions_attestation = normalized.contains("attestation");
-        let mentions_receipt = normalized.contains("receipt");
+        let mentions_unavailable = mentions(|token| token == "unavailable");
+        let mentions_quote = mentions(|token| token == "quote");
+        let mentions_report = mentions(|token| token == "report");
+        let mentions_claims = mentions(|token| token.starts_with("claim"));
+        let mentions_payload = mentions(|token| token == "payload");
+        let mentions_evidence = mentions(|token| token == "evidence");
+        let mentions_certificate =
+            mentions(|token| token == "certificate" || token.starts_with("cert"));
+        let mentions_attestation = mentions(|token| token == "attestation");
+        let mentions_receipt = mentions(|token| token == "receipt");
 
         if mentions_unavailable && !mentions_quote && !mentions_report && !mentions_claims {
             return "evidence/claims";
@@ -895,6 +903,30 @@ mod tests {
         assert!(!msg.contains("quote/report claims"), "message: {msg}");
         assert!(!msg.contains("payload/claims"), "message: {msg}");
         assert!(!msg.contains("legacy:"), "message: {msg}");
+    }
+
+    #[test]
+    fn tee_verifier_backend_internal_quoted_reporting_terms_do_not_spoof_quote_or_report_surfaces(
+    ) {
+        let result = TeeVerifier::classify_execution_err(BackendExecutionError::Internal {
+            backend: "tee:mock-tee-internal".to_string(),
+            reason: "quoted reporting payload verifier crashed".to_string(),
+        });
+
+        assert!(
+            matches!(result, VerificationResult::Indeterminate(_)),
+            "unexpected result: {result:?}"
+        );
+        let VerificationResult::Indeterminate(msg) = result else {
+            unreachable!()
+        };
+        assert!(msg.contains("backend_error:"), "message: {msg}");
+        assert!(msg.contains("payload/claims"), "message: {msg}");
+        assert!(!msg.contains("quote claims"), "message: {msg}");
+        assert!(!msg.contains("quote evidence"), "message: {msg}");
+        assert!(!msg.contains("report claims"), "message: {msg}");
+        assert!(!msg.contains("report evidence"), "message: {msg}");
+        assert!(!msg.contains("evidence/claims"), "message: {msg}");
     }
 
     #[test]
