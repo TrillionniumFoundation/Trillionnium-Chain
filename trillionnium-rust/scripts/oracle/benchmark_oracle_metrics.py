@@ -255,5 +255,35 @@ def _test_run_baseline_preserves_sample_accounting_contract():
     assert out["accepted_total"] + rejected_total == out["sample_count"]
 
 
+def _test_run_baseline_keeps_max_accepted_source_cardinality():
+    cases = [
+        {
+            "snapshot_ts_ms": 1_000,
+            "sources": [
+                {"source": "s1", "value": 100.0, "ts_unix_ms": 1_000},
+                {"source": "s2", "value": 100.0, "ts_unix_ms": 1_000},
+                {"source": "s3", "value": 100.0, "ts_unix_ms": 1_000},
+            ],
+        },
+        {
+            "snapshot_ts_ms": 2_000,
+            "sources": [
+                {"source": "s1", "value": 100.0, "ts_unix_ms": 2_000},
+                {"source": "s2", "value": 100.0, "ts_unix_ms": 2_000},
+            ],
+        },
+    ]
+
+    class Args:
+        min_sources = 2
+        max_staleness_ms = 60_000
+        max_deviation_bps = 500
+
+    out = run_baseline(cases, Args())
+    assert out["accepted_total"] == 2
+    assert out["oracle_source_cardinality"] == 3
+    assert out["sample_count"] == 2
+
+
 if __name__ == "__main__":
     main()
