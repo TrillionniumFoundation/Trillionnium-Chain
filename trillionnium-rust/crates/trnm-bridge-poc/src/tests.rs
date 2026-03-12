@@ -83,3 +83,32 @@ fn settlement_request_rejects_hangul_fillers_in_tx_hash_and_subject() {
     );
     assert_eq!(request.status, BridgeStatus::Pending);
 }
+
+#[test]
+fn settlement_request_rejects_plane14_tags_in_tx_hash_and_subject() {
+    let mut request = SettlementRequest::new(7, "0xabc\u{E0100}def\u{E0101}".to_string());
+    let token = CapabilityToken {
+        subject: "did:trn:settlement\u{E0100}-operator\u{E0101}".to_string(),
+        capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
+    };
+
+    let finalize_err = request.settle_authorized(&token, 88);
+    assert_eq!(
+        finalize_err,
+        Err(SettlementError::MalformedRequest {
+            reason: "non-canonical tx_hash",
+        })
+    );
+    assert_eq!(request.status, BridgeStatus::Pending);
+
+    request.tx_hash = "0xabcdef".to_string();
+
+    let revert_err = request.revert_authorized(&token, "target relay timeout".to_string());
+    assert_eq!(
+        revert_err,
+        Err(SettlementError::MalformedToken {
+            reason: "non-canonical subject",
+        })
+    );
+    assert_eq!(request.status, BridgeStatus::Pending);
+}
