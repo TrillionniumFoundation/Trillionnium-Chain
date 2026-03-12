@@ -335,6 +335,64 @@ impl VerifierRegistry {
             "tee attestation quote v3" | "teeattestationquotev3" | "tee attestation quote v 3" => {
                 "tee"
             }
+            "tee claims" | "teeclaims" => "tee",
+            "tee claims v1" | "teeclaimsv1" | "tee claims v 1" => "tee",
+            "tee claims v2" | "teeclaimsv2" | "tee claims v 2" => "tee",
+            "tee claims v3" | "teeclaimsv3" | "tee claims v 3" => "tee",
+            "attestation claims" | "attestationclaims" => "tee",
+            "attestation claims v1" | "attestationclaimsv1" | "attestation claims v 1" => {
+                "tee"
+            }
+            "attestation claims v2" | "attestationclaimsv2" | "attestation claims v 2" => {
+                "tee"
+            }
+            "attestation claims v3" | "attestationclaimsv3" | "attestation claims v 3" => {
+                "tee"
+            }
+            "tee attestation claims" | "teeattestationclaims" => "tee",
+            "tee attestation claims v1"
+            | "teeattestationclaimsv1"
+            | "tee attestation claims v 1" => "tee",
+            "tee attestation claims v2"
+            | "teeattestationclaimsv2"
+            | "tee attestation claims v 2" => "tee",
+            "tee attestation claims v3"
+            | "teeattestationclaimsv3"
+            | "tee attestation claims v 3" => "tee",
+            "remote attestation claims" | "remoteattestationclaims" => "tee",
+            "remote attestation claims v1"
+            | "remoteattestationclaimsv1"
+            | "remote attestation claims v 1" => "tee",
+            "remote attestation claims v2"
+            | "remoteattestationclaimsv2"
+            | "remote attestation claims v 2" => "tee",
+            "remote attestation claims v3"
+            | "remoteattestationclaimsv3"
+            | "remote attestation claims v 3" => "tee",
+            "tee remote attestation claims" | "teeremoteattestationclaims" => "tee",
+            "tee remote attestation claims v1"
+            | "teeremoteattestationclaimsv1"
+            | "tee remote attestation claims v 1" => "tee",
+            "tee remote attestation claims v2"
+            | "teeremoteattestationclaimsv2"
+            | "tee remote attestation claims v 2" => "tee",
+            "tee remote attestation claims v3"
+            | "teeremoteattestationclaimsv3"
+            | "tee remote attestation claims v 3" => "tee",
+            "ra claims" | "raclaims" => "tee",
+            "ra claims v1" | "raclaimsv1" | "ra claims v 1" => "tee",
+            "ra claims v2" | "raclaimsv2" | "ra claims v 2" => "tee",
+            "ra claims v3" | "raclaimsv3" | "ra claims v 3" => "tee",
+            "dcap claims" | "dcapclaims" => "tee",
+            "tee dcap claims" | "teedcapclaims" => "tee",
+            "tdx claims" | "tdxclaims" => "tee",
+            "tee tdx claims" | "teetdxclaims" => "tee",
+            "snp claims" | "snpclaims" => "tee",
+            "tee snp claims" | "teesnpclaims" => "tee",
+            "sev snp claims" | "sevsnpclaims" => "tee",
+            "amd sev snp claims" | "amdsevsnpclaims" => "tee",
+            "intel sgx claims" | "intelsgxclaims" => "tee",
+            "intel tdx claims" | "inteltdxclaims" => "tee",
             "ra report" | "rareport" => "tee",
             "ra report v1" | "rareportv1" | "ra report v 1" => "tee",
             "ra report v2" | "rareportv2" | "ra report v 2" => "tee",
@@ -635,6 +693,12 @@ mod tests {
             "attestation receipt v3",
             "tee attestation receipt",
             "tee attestation receipt v2",
+            "attestation claims",
+            "attestation claims v3",
+            "tee claims",
+            "tee claims v2",
+            "tee attestation claims",
+            "tee attestation claims v2",
             "attestation quote",
             "attestation quote v3",
             "tee attestation quote",
@@ -647,6 +711,8 @@ mod tests {
             "tee remote attestation receipt",
             "remote attestation evidence",
             "tee remote attestation evidence",
+            "remote attestation claims",
+            "tee remote attestation claims",
             "remote attestation cert",
             "remote attestation certificate",
             "tee remote attestation cert",
@@ -656,18 +722,28 @@ mod tests {
             "tee remote attestation certificate v1",
             "ra quote",
             "ra report v2",
+            "ra claims",
             "dcap quote",
+            "dcap claims",
             "intel dcap quote",
             "sgx dcap quote",
             "intel sgx dcap quote",
             "tdx quote",
             "td report",
+            "tdx claims",
+            "tee tdx claims",
             "snp report",
+            "snp claims",
+            "tee snp claims",
             "amd sev snp quote",
+            "amd sev snp claims",
             "intel sgx report",
+            "intel sgx claims",
             "tee dcap quote",
+            "tee dcap claims",
             "intel tdx quote",
             "intel tdx report",
+            "intel tdx claims",
             "tee tdx quote",
             "tee tdx report",
             "tee snp report",
@@ -698,6 +774,8 @@ mod tests {
             "TEE（attestation）quote",
             "attestation
 report",
+            "tee:remote_attestation/claims",
+            "TEE（attestation）claims",
         ] {
             assert_eq!(
                 VerifierRegistry::normalize_key(alias).as_deref(),
