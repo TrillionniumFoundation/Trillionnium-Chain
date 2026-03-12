@@ -516,13 +516,19 @@ fn recover_wal_state(wal_dir: &Path) -> Result<RecoveredWalState> {
 
     let mut valid_entries = entries.clone();
     let mut metadata_only_tail_discarded = false;
+    let mut committed_tail_beyond_checkpoint_discarded = false;
     if let Some(cp) = &last_checkpoint {
         if let Some(idx) = entries
             .iter()
             .position(|e| e.height == cp.height && e.content_hash_hex() == cp.wal_entry_hash_hex)
         {
             if idx + 1 < entries.len() {
-                metadata_only_tail_discarded = entries[idx + 1..].iter().any(|e| !e.committed);
+                let discarded_tail = &entries[idx + 1..];
+                metadata_only_tail_discarded = discarded_tail.iter().any(|e| !e.committed);
+                let retained_tip_hash = entries[idx].content_hash_hex();
+                committed_tail_beyond_checkpoint_discarded = discarded_tail.iter().any(|e| {
+                    e.committed && e.prev_hash_hex.as_deref() == Some(retained_tip_hash.as_str())
+                });
                 valid_entries.truncate(idx + 1);
                 persist_wal_meta_entries(wal_dir, &valid_entries)?;
                 truncated = true;
@@ -544,6 +550,7 @@ fn recover_wal_state(wal_dir: &Path) -> Result<RecoveredWalState> {
         let retained_checkpoint_height = last_checkpoint.as_ref().map(|cp| cp.height);
         let retained_entry_count = valid_entries.len();
         let metadata_only_recovery = metadata_only_tail_discarded
+            || committed_tail_beyond_checkpoint_discarded
             || retained_checkpoint_height
                 .map(|checkpoint_height| checkpoint_height < last.height)
                 .unwrap_or(retained_entry_count > 0);
@@ -4977,6 +4984,58 @@ mod tests {
     }
 
     #[test]
+    fn recover_committed_tail_beyond_checkpoint_is_metadata_only_recovery() {
+        let wal_dir = temp_wal_dir("recover-committed-tail-beyond-checkpoint");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "h1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "h2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(e1.content_hash_hex()),
+        };
+        let h1 = e1.content_hash_hex();
+
+        persist_wal_meta_entries(&wal_dir, &[e1, e2]).unwrap();
+        persist_checkpoint_meta(
+            &wal_dir,
+            &[CheckpointMeta {
+                height: 1,
+                state_root_hex: "r1".into(),
+                wal_entry_hash_hex: h1,
+            }],
+        )
+        .unwrap();
+
+        let recovered = recover_wal_state(&wal_dir).unwrap();
+        assert_eq!(recovered.next_height, 2);
+        assert_eq!(recovered.restored_lock.as_deref(), Some("h1"));
+        assert_eq!(recovered.checkpoint_height_retained, Some(1));
+        assert_eq!(recovered.wal_entries_retained, 1);
+        assert!(
+            recovered.metadata_only_recovery,
+            "committed WAL beyond last checkpoint must stay fail-closed until StateStore restore/replay exists"
+        );
+        assert!(recovered.truncated);
+
+        let retained = load_wal_meta_entries(&wal_dir).unwrap();
+        assert_eq!(retained.len(), 1);
+        assert_eq!(retained[0].height, 1);
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
     fn recover_metadata_only_error_reports_retained_wal_entries() {
         let wal_dir = temp_wal_dir("recover-metadata-only-error");
         fs::create_dir_all(&wal_dir).unwrap();
@@ -5116,7 +5175,10 @@ locked_block_hash = "stale-lock"
 
         let recovered = recover_wal_state(&wal_dir).unwrap();
         assert!(recovered.truncated);
-        assert!(!recovered.metadata_only_recovery);
+        assert!(
+            recovered.metadata_only_recovery,
+            "committed WAL beyond last checkpoint must stay fail-closed until StateStore restore/replay exists"
+        );
         assert_eq!(recovered.next_height, 2);
         assert_eq!(recovered.checkpoint_height_retained, Some(1));
         assert_eq!(recovered.restored_lock.as_deref(), Some("h1"));
