@@ -25,6 +25,16 @@ SUMMARY_PATH="${WORKFLOW_SCRIPT_REF_SUMMARY_PATH:-}"
 STRICT_MODE="${WORKFLOW_SCRIPT_REF_STRICT:-0}"
 START_EPOCH="$(date -u +%s)"
 
+json_escape() {
+  local s=${1-}
+  s=${s//\\/\\\\}
+  s=${s//\"/\\\"}
+  s=${s//$'\n'/\\n}
+  s=${s//$'\r'/\\r}
+  s=${s//$'\t'/\\t}
+  printf '%s' "$s"
+}
+
 if [[ "$STRICT_MODE" != "0" && "$STRICT_MODE" != "1" ]]; then
   echo "[workflow-ref][FAIL] WORKFLOW_SCRIPT_REF_STRICT must be 0 or 1 (got: $STRICT_MODE)" >&2
   exit 2
@@ -142,8 +152,8 @@ if [[ -n "$SUMMARY_PATH" ]]; then
   mkdir -p "$(dirname "$SUMMARY_PATH")"
   cat >"$SUMMARY_PATH" <<EOF
 {
-  "ts_utc": "${audit_ts}",
-  "workflow_root": "${WORKFLOW_ROOT}",
+  "ts_utc": "$(json_escape "${audit_ts}")",
+  "workflow_root": "$(json_escape "${WORKFLOW_ROOT}")",
   "strict_mode": ${STRICT_MODE},
   "workflow_count": ${#WORKFLOW_FILES[@]},
   "workflow_file_count": ${#WORKFLOW_FILES[@]},
@@ -151,10 +161,10 @@ if [[ -n "$SUMMARY_PATH" ]]; then
   "script_ref_count": ${#SCRIPT_REFS[@]},
   "non_dot_script_ref_total_count": ${non_dot_script_ref_count},
   "non_dot_script_ref_count": ${#NON_DOT_SCRIPT_REFS[@]},
-  "git_head": "${git_head}",
+  "git_head": "$(json_escape "${git_head}")",
   "missing_count": ${missing_count},
   "non_exec_count": ${non_exec_count},
-  "status": "${status}",
+  "status": "$(json_escape "${status}")",
   "elapsed_sec": $((end_epoch - START_EPOCH))
 }
 EOF
