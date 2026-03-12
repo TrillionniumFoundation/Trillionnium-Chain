@@ -145,14 +145,51 @@ fn collapse_adapter_delimiters(raw: &str) -> String {
     collapsed
 }
 
+fn peel_outer_quote_wrappers(value: &str) -> &str {
+    let mut current = value.trim().trim_start_matches('\u{feff}').trim();
+
+    for _ in 0..16 {
+        let bytes = current.as_bytes();
+        if bytes.len() >= 2
+            && ((bytes[0] == b'\'' && bytes[bytes.len() - 1] == b'\'')
+                || (bytes[0] == b'"' && bytes[bytes.len() - 1] == b'"')
+                || (bytes[0] == b'`' && bytes[bytes.len() - 1] == b'`'))
+        {
+            current = current[1..current.len() - 1]
+                .trim()
+                .trim_start_matches('\u{feff}')
+                .trim();
+            continue;
+        }
+
+        if bytes.len() >= 4
+            && bytes[0] == b'\\'
+            && bytes[bytes.len() - 2] == b'\\'
+            && ((bytes[1] == b'\'' && bytes[bytes.len() - 1] == b'\'')
+                || (bytes[1] == b'"' && bytes[bytes.len() - 1] == b'"')
+                || (bytes[1] == b'`' && bytes[bytes.len() - 1] == b'`'))
+        {
+            current = current[2..current.len() - 2]
+                .trim()
+                .trim_start_matches('\u{feff}')
+                .trim();
+            continue;
+        }
+
+        break;
+    }
+
+    current
+}
+
 fn normalize_adapter_label(label: &str) -> String {
-    collapse_adapter_delimiters(label.trim().trim_start_matches('\u{feff}').trim())
+    collapse_adapter_delimiters(peel_outer_quote_wrappers(label))
         .trim_matches('-')
         .to_ascii_lowercase()
 }
 
 fn normalize_adapter_value(value: &str) -> String {
-    collapse_adapter_delimiters(value.trim().trim_start_matches('\u{feff}').trim())
+    collapse_adapter_delimiters(peel_outer_quote_wrappers(value))
         .trim_matches('-')
         .to_ascii_lowercase()
 }
@@ -364,8 +401,9 @@ impl ProofAdapter for ZkReceiptProofAdapter {
 #[cfg(test)]
 mod tests {
     use super::{
-        build_proof_adapter, last_balanced_json_object, ProofAdapter, StandardProofAdapter,
-        TeeReceiptProofAdapter, ZkReceiptProofAdapter, DEFAULT_PROOF_ADAPTER,
+        build_proof_adapter, last_balanced_json_object, normalize_adapter_label,
+        normalize_adapter_value, ProofAdapter, StandardProofAdapter, TeeReceiptProofAdapter,
+        ZkReceiptProofAdapter, DEFAULT_PROOF_ADAPTER,
     };
 
     #[test]
@@ -529,6 +567,14 @@ mod tests {
             .expect("should parse json with raw control-byte prefix");
         assert_eq!(parsed.output_text, "ok");
         assert_eq!(parsed.provider_request_id.as_deref(), Some("r3-control-prefix"));
+    }
+
+    #[test]
+    fn adapter_label_normalization_peels_nested_and_shell_escaped_quote_wrappers() {
+        assert_eq!(normalize_adapter_label(" '\"TEE_RECEIPT\"' "), "tee-receipt");
+        assert_eq!(normalize_adapter_value(" '\"ZK_PROOF\"' "), "zk-proof");
+        assert_eq!(normalize_adapter_label(r#"\"TEE-ATTESTATION\""#), "tee-attestation");
+        assert_eq!(normalize_adapter_value(r#"\"ZK-RECEIPT\""#), "zk-receipt");
     }
 
     #[test]
@@ -737,6 +783,16 @@ mod tests {
         assert_eq!(
             tee_with_spaced_separators.provider_request_id.as_deref(),
             Some("pr-2j")
+        );
+
+        let tee_with_nested_quote_wrappers = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-2k\",\"adapter\":\" '\\\"TEE_RECEIPT\\\"' \"}",
+            )
+            .expect("tee receipt label with nested quote wrappers should parse");
+        assert_eq!(
+            tee_with_nested_quote_wrappers.provider_request_id.as_deref(),
+            Some("pr-2k")
         );
 
         let missing_request_id = adapter
@@ -1026,6 +1082,16 @@ mod tests {
         assert_eq!(
             zk_with_spaced_separators.provider_request_id.as_deref(),
             Some("pr-zk-2j")
+        );
+
+        let zk_with_nested_quote_wrappers = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-zk-2ic\",\"adapter\":\" '\\\"ZK_RECEIPT\\\"' \"}",
+            )
+            .expect("zk receipt label with nested quote wrappers should parse");
+        assert_eq!(
+            zk_with_nested_quote_wrappers.provider_request_id.as_deref(),
+            Some("pr-zk-2ic")
         );
 
         let missing_request_id = adapter
