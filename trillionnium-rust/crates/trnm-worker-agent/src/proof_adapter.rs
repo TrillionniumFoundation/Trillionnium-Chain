@@ -493,6 +493,18 @@ mod tests {
     }
 
     #[test]
+    fn standard_proof_adapter_parse_response_accepts_json_after_ansi_pm_logs() {
+        let adapter = StandardProofAdapter;
+        let stdout = "\u{1b}^pm warmup\u{1b}\\info: warmup\n{\"output_text\":\"ok\",\"provider_request_id\":\"r3-ansi-pm\"}\n\u{1b}^pm cleanup\u{1b}\\";
+
+        let parsed = adapter
+            .parse_response(stdout)
+            .expect("should parse json with ansi pm noise around it");
+        assert_eq!(parsed.output_text, "ok");
+        assert_eq!(parsed.provider_request_id.as_deref(), Some("r3-ansi-pm"));
+    }
+
+    #[test]
     fn tee_receipt_adapter_parse_response_requires_auditable_fields() {
         let adapter = TeeReceiptProofAdapter;
 
