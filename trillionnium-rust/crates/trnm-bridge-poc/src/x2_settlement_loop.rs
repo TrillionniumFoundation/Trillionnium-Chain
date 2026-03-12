@@ -144,6 +144,13 @@ fn is_sanitized_to_space(ch: char) -> bool {
                 | '\u{202D}'
                 | '\u{202E}'
                 | '\u{202F}'
+                | '\u{2000}'
+                | '\u{2001}'
+                | '\u{2002}'
+                | '\u{2003}'
+                | '\u{2004}'
+                | '\u{2005}'
+                | '\u{2006}'
                 | '\u{205F}'
                 | '\u{3000}'
                 | '\u{2060}'
@@ -282,5 +289,12 @@ mod tests {
         let raw = "target\u{205F}relay\u{3000}timeout";
         let normalized = normalize_compensation_reason(raw, "fallback");
         assert_eq!(normalized, "target relay timeout");
+    }
+
+    #[test]
+    fn normalize_compensation_reason_collapses_general_punctuation_spaces() {
+        let raw = "target\u{2000}relay\u{2001}timeout\u{2002}signal\u{2003}confirm\u{2004}lag\u{2005}audit\u{2006}trail";
+        let normalized = normalize_compensation_reason(raw, "fallback");
+        assert_eq!(normalized, "target relay timeout signal confirm lag audit trail");
     }
 }
