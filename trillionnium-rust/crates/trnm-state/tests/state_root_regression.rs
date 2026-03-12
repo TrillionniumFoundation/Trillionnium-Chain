@@ -763,6 +763,22 @@ fn pending_resolve_string_field_boundaries_should_affect_state_root() {
 }
 
 #[test]
+fn treasury_balance_address_boundaries_should_affect_state_root() {
+    let mut st1 = StateStore::new();
+    let mut st2 = StateStore::new();
+
+    st1.set_balance("treasury.ab", 11);
+    st2.set_balance("treasury.a", 11);
+    st2.set_balance("b", 0);
+
+    assert_ne!(
+        st1.state_root(),
+        st2.state_root(),
+        "state_root should length-frame treasury balance addresses so distinct address boundaries cannot hash identically"
+    );
+}
+
+#[test]
 fn treasury_balances_and_monetary_counters_should_affect_state_root_even_when_net_issuance_matches() {
     let mut st1 = StateStore::new();
     let mut st2 = StateStore::new();
