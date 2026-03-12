@@ -160,6 +160,14 @@ def pct(numer: int, denom: int) -> float:
     return (numer / denom * 100.0) if denom > 0 else 0.0
 
 
+def non_negative_int(value: Any) -> int:
+    try:
+        parsed = int(value or 0)
+    except (TypeError, ValueError):
+        return 0
+    return max(0, parsed)
+
+
 def pct_or_none(numer: int, denom: int) -> float | None:
     if denom <= 0:
         return None
@@ -290,8 +298,8 @@ def main() -> int:
     audit_path = root / "run/pr7-alert-delivery/audit.jsonl"
     delivery_summaries = read_delivery_summaries(audit_path, args.lookback_days, now_dt=now_dt)
     partial_success_count = sum(1 for row in delivery_summaries if row.get("event") == "partial_success")
-    channels_ok_total = sum(int(row.get("channels_ok", 0) or 0) for row in delivery_summaries)
-    channels_failed_total = sum(int(row.get("channels_failed", 0) or 0) for row in delivery_summaries)
+    channels_ok_total = sum(non_negative_int(row.get("channels_ok", 0)) for row in delivery_summaries)
+    channels_failed_total = sum(non_negative_int(row.get("channels_failed", 0)) for row in delivery_summaries)
     delivery_routes_total = channels_ok_total + channels_failed_total
     partial_success_rate = pct(partial_success_count, len(delivery_summaries))
     channel_delivery_success_rate = pct(channels_ok_total, delivery_routes_total)
