@@ -373,8 +373,11 @@ def main():
         lines.append("- consensus summary: missing")
 
     lines += ["", "## Benchmark Summary"]
+    benchmark_artifact_count = len(
+        [p for p in [classic, mixed, executor_profile] if p and os.path.exists(p)]
+    )
     lines.append(
-        f"- benchmark_artifact_coverage: {len([p for p in [classic, mixed, executor_profile] if p and os.path.exists(p)])}/3"
+        f"- benchmark_artifact_coverage: {benchmark_artifact_count}/3 (classic_bench + mixed_bench + executor_profile)"
     )
     bench_metric_labels = [
         ("classic", classic_rows),
