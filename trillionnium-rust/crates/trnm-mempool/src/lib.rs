@@ -1407,6 +1407,26 @@ mod tests {
     }
 
     #[test]
+    fn hard_stop_mode_lane_local_duplicate_survives_repeated_cross_class_probes_without_poisoning_fresh_ids() {
+        let mut g = LaneAdmissionGate::new(0, 0);
+
+        // Simulate restored-state duplicate knowledge carried only by lane-local
+        // caches while the lane-wide cache is temporarily empty.
+        g.normal.seen.insert(55);
+
+        // Repeated probes through either ingress class must continue to classify
+        // the restored tx id as Duplicate instead of degrading to Backpressured.
+        assert_eq!(g.admit(55, IngressClass::Critical), AdmitOutcome::Duplicate);
+        assert_eq!(g.admit(55, IngressClass::Normal), AdmitOutcome::Duplicate);
+        assert_eq!(g.admit(55, IngressClass::Critical), AdmitOutcome::Duplicate);
+
+        // Fresh ids must remain backpressured and must not become duplicate on
+        // subsequent retries just because hard-stop mode observed them before.
+        assert_eq!(g.admit(99, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(g.admit(99, IngressClass::Critical), AdmitOutcome::Backpressured);
+    }
+
+    #[test]
     fn saturated_equal_cardinality_lane_local_ghost_seen_id_stays_backpressured_not_duplicate() {
         let mut g = LaneAdmissionGate::new(2, 1);
 
