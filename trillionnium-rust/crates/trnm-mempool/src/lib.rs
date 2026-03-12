@@ -1389,6 +1389,24 @@ mod tests {
     }
 
     #[test]
+    fn hard_stop_mode_preserves_duplicate_semantics_across_ingress_classes() {
+        let mut g = LaneAdmissionGate::new(0, 0);
+
+        // Simulate restored-state backlog where duplicate knowledge spans the
+        // lane-wide cache and the opposite class's local cache.
+        g.seen_global.insert(42);
+        g.critical.seen.insert(42);
+
+        // Replaying the same tx through either class must stay Duplicate even
+        // though the queue itself is empty under temporary hard-stop mode.
+        assert_eq!(g.admit(42, IngressClass::Critical), AdmitOutcome::Duplicate);
+        assert_eq!(g.admit(42, IngressClass::Normal), AdmitOutcome::Duplicate);
+
+        // Distinct fresh ids must still be backpressured while the stop is active.
+        assert_eq!(g.admit(7, IngressClass::Normal), AdmitOutcome::Backpressured);
+    }
+
+    #[test]
     fn saturated_equal_cardinality_lane_local_ghost_seen_id_stays_backpressured_not_duplicate() {
         let mut g = LaneAdmissionGate::new(2, 1);
 
