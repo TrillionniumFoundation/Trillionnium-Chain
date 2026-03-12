@@ -67,6 +67,7 @@ env TZ=UTC LC_ALL=C LANG=C SOURCE_DATE_EPOCH=1704067200 \
 
 - 实际执行时生效的 deterministic 环境（`env_*`）
 - 建议复放环境（`replay_env_*`）
+- 影响 RC 结果的关键执行旋钮（至少 `env_mvp_mode` / `env_txs` / `env_threshold_profile` 及对应 `replay_env_*`）
 - 单行 `replay_command=`
 - 单行 `rollback_command=`
 
