@@ -79,26 +79,8 @@ mapfile -t FILES < <(
   done | LC_ALL=C sort -u
 )
 
-if [[ ${#FILES[@]} -eq 0 ]]; then
-  echo "[quick-gate][WARN] no shell scripts found under target directories: ${NORMALIZED_TARGET_DIRS[*]}"
-  if [[ -n "$SUMMARY_PATH" ]]; then
-    mkdir -p "$(dirname "$SUMMARY_PATH")"
-    cat >"$SUMMARY_PATH" <<EOF
-{
-  "target_dirs_csv": "$(json_escape "$(IFS=,; printf '%s' "${NORMALIZED_TARGET_DIRS[*]}")")",
-  "target_dir_count": ${#NORMALIZED_TARGET_DIRS[@]},
-  "script_count": 0,
-  "skip_shellcheck": ${SKIP_SHELLCHECK},
-  "status": "warn-empty"
-}
-EOF
-  fi
-  exit 0
-fi
-
 echo "[quick-gate] target_dirs=${NORMALIZED_TARGET_DIRS[*]}"
 echo "[quick-gate] target_dir_count=${#NORMALIZED_TARGET_DIRS[@]}"
-echo "[quick-gate] script_count=${#FILES[@]}"
 
 audit_ts="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
@@ -108,11 +90,41 @@ if command -v git >/dev/null 2>&1; then
 fi
 
 manifest_sha256=""
-if command -v sha256sum >/dev/null 2>&1; then
-  manifest_sha256="$(printf '%s\n' "${FILES[@]}" | sha256sum | awk '{print $1}')"
-elif command -v shasum >/dev/null 2>&1; then
-  manifest_sha256="$(printf '%s\n' "${FILES[@]}" | shasum -a 256 | awk '{print $1}')"
+if [[ ${#FILES[@]} -gt 0 ]]; then
+  if command -v sha256sum >/dev/null 2>&1; then
+    manifest_sha256="$(printf '%s\n' "${FILES[@]}" | sha256sum | awk '{print $1}')"
+  elif command -v shasum >/dev/null 2>&1; then
+    manifest_sha256="$(printf '%s\n' "${FILES[@]}" | shasum -a 256 | awk '{print $1}')"
+  fi
 fi
+
+if [[ ${#FILES[@]} -eq 0 ]]; then
+  echo "[quick-gate][WARN] no shell scripts found under target directories: ${NORMALIZED_TARGET_DIRS[*]}"
+  if [[ -n "$SUMMARY_PATH" ]]; then
+    end_epoch="$(date -u +%s)"
+    mkdir -p "$(dirname "$SUMMARY_PATH")"
+    cat >"$SUMMARY_PATH" <<EOF
+{
+  "ts_utc": "${audit_ts}",
+  "target_dirs_csv": "$(json_escape "$(IFS=,; printf '%s' "${NORMALIZED_TARGET_DIRS[*]}")")",
+  "target_dir_count": ${#NORMALIZED_TARGET_DIRS[@]},
+  "script_count": 0,
+  "git_head": "$(json_escape "${git_head}")",
+  "file_manifest_sha256": "$(json_escape "${manifest_sha256}")",
+  "skip_shellcheck": ${SKIP_SHELLCHECK},
+  "bash_n_elapsed_sec": 0,
+  "shellcheck_status": "skipped",
+  "shellcheck_version": "",
+  "shellcheck_elapsed_sec": 0,
+  "total_elapsed_sec": $((end_epoch - START_EPOCH)),
+  "status": "warn-empty"
+}
+EOF
+  fi
+  exit 0
+fi
+
+echo "[quick-gate] script_count=${#FILES[@]}"
 
 bashn_start="$(date -u +%s)"
 for f in "${FILES[@]}"; do
