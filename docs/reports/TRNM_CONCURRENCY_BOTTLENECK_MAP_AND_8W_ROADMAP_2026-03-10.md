@@ -258,6 +258,38 @@ TRNM 当前不是“高 TPS 公链的仿制品”，而是：
 > - 解释 `bft_round_change_backoff_active_height_share_ppm` 时，不要把它当成强制封顶在 100% 的“占比”。
 > - 当 round-change backoff 的活跃高度密度已经超过平均 finality budget 时，该指标**应该允许大于 `1_000_000`**，这样共识抖动/退避主导区间才不会被误读为“只是高一点”。
 > - `bft_round_change_backoff_wall_share_ppm` 与兼容别名 `bft_round_change_backoff_share_ppm` 表示的是“每个 committed height 的总 backoff wall-time 压力”，不要把它们和 `bft_round_change_backoff_active_height_share_ppm` 混为一谈；前者是 wall-share，后者才是按活跃高度密度折算到平均 finality budget 的信号。
+
+### 2.4 L04 block-loop observability review checklist
+
+为避免在 closeout / release 讨论里把“少数高度集中爆发的抖动”误读成“全局均值还行”，L04 侧建议把 block-loop 观测拆成下面几组一起看，而不是单看某一个 share / avg 字段：
+
+1. **Round-change cluster pressure**
+   - 密度：`bft_round_change_density_avg_milli`
+   - committed-height 覆盖：`bft_round_change_active_height_rate_ppm`
+   - observed-height 覆盖：`bft_round_change_active_observed_height_rate_ppm`
+   - budget pressure：`bft_round_change_active_height_share_ppm`
+   - 用法：先看 active height 覆盖，再看 density/share，避免 skipped / no-commit heights 把 jitter 稀释或放大。
+
+2. **Backoff severity must keep three views separate**
+   - 密度：`bft_round_change_backoff_density_avg_milli`
+   - committed-height 覆盖：`bft_round_change_backoff_active_height_rate_ppm`
+   - observed-height 覆盖：`bft_round_change_backoff_active_observed_height_rate_ppm`
+   - budget pressure：`bft_round_change_backoff_active_height_share_ppm`
+   - wall-share：`bft_round_change_backoff_wall_share_ppm`
+   - 兼容别名：`bft_round_change_backoff_share_ppm`
+   - 用法：`*_active_height_share_ppm` 代表活跃高度密度折算到平均 finality budget 的压力；`*_wall_share_ppm` / `*_share_ppm` 代表每个 committed height 的总 wall-time backoff 压力，不能互相替代。
+
+3. **Leader fairness hotspot review**
+   - proposer 扩散面：`bft_leader_missed_active_validators`、`bft_leader_missed_active_validator_share_ppm`
+   - height 覆盖：`bft_leader_missed_active_heights`、`bft_leader_missed_active_height_rate_ppm`、`bft_leader_missed_active_observed_height_rate_ppm`
+   - 密度 / budget pressure：`bft_leader_missed_density_avg_milli`、`bft_leader_missed_active_height_share_ppm`
+   - top-heavy 参考：`bft_leader_missed_top_share_ppm`
+   - 用法：不要只看最终 miss 分布；需要同时确认 miss 是少数 proposer 局部问题，还是已经扩散到多数 proposer 且持续压住多个高度。
+
+4. **Pre-exec / rollback guardrail pressure**
+   - preexec：`preexec_peak_share_ppm`、`preexec_reject_active_heights`、`preexec_reject_density_avg_milli`、`preexec_reject_active_height_rate_ppm`、`preexec_reject_active_observed_height_rate_ppm`、`preexec_reject_active_height_share_ppm`、`preexec_reject_share_bps`、`preexec_conflict_miss_share_bps`
+   - rollback：`rollback_peak_share_ppm`、`rollback_density_avg_milli`、`rollback_active_height_rate_ppm`、`rollback_active_observed_height_rate_ppm`、`rollback_active_height_share_ppm`、`apply_error_rollback_share_bps`
+   - 用法：先判断 guardrail 压力是否集中在少数高度，再判断它是否已经开始主导平均 finality budget / apply-error 面，而不是只看全局平均耗时或总次数。
 > - 因为 `bft_round_change_backoff_wall_share_ppm` 是按 **committed height** 摊开的 wall-time 强度，而不是封顶到平均 finality budget 的百分比，所以它在 sustained backoff 场景下**允许大于 `1_000_000`**；出现这种情况时，应把它解读为“每个已提交高度平均消耗了超过 1ms 的 backoff wall-time 压力”，而不是指标失真。
 > - 与 `bft_round_change_density_avg_milli`、`bft_round_change_backoff_density_avg_milli` 一起看，优先判断是否出现了 clustered jitter / sustained backoff，而不是只看全局均值。
 > - 若存在 skipped / no-commit heights，`bft_round_change_active_height_rate_ppm`、`bft_round_change_backoff_active_height_rate_ppm`、`bft_leader_missed_active_height_rate_ppm` 与 `rollback_active_height_rate_ppm` 反映的是“相对 committed budget 的压力”，应再对照 `bft_observed_heights` 分母下的 `bft_round_change_active_observed_height_rate_ppm`、`bft_round_change_backoff_active_observed_height_rate_ppm`、`bft_leader_missed_active_observed_height_rate_ppm` 与 `rollback_active_observed_height_rate_ppm`，避免把 coverage/backoff burst 覆盖面误读成纯 committed-height 占比，或把集中回滚错误误判成全局普遍抖动。
