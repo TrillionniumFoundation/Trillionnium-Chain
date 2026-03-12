@@ -370,17 +370,33 @@ fn normalize_provenance_fingerprint_lookup(value: &str) -> Option<String> {
     // shell/env forwarding hops seen in automation pipelines.
     for _ in 0..16 {
         let bytes = normalized.as_bytes();
+        let mut peeled = false;
+
         if bytes.len() >= 2
             && ((bytes[0] == b'\'' && bytes[bytes.len() - 1] == b'\'')
                 || (bytes[0] == b'"' && bytes[bytes.len() - 1] == b'"')
                 || (bytes[0] == b'`' && bytes[bytes.len() - 1] == b'`'))
         {
             normalized = normalized[1..normalized.len() - 1].trim().to_string();
+            peeled = true;
+        } else if bytes.len() >= 4
+            && bytes[0] == b'\\'
+            && bytes[bytes.len() - 2] == b'\\'
+            && ((bytes[1] == b'\'' && bytes[bytes.len() - 1] == b'\'')
+                || (bytes[1] == b'"' && bytes[bytes.len() - 1] == b'"')
+                || (bytes[1] == b'`' && bytes[bytes.len() - 1] == b'`'))
+        {
+            normalized = normalized[2..normalized.len() - 2].trim().to_string();
+            peeled = true;
+        }
+
+        if peeled {
             if normalized.is_empty() {
                 return None;
             }
             continue;
         }
+
         break;
     }
     normalized_provenance_label(Some(normalized.as_str()), 128).map(|v| v.to_ascii_lowercase())
@@ -4347,6 +4363,58 @@ mod tests {
             &rows,
             &index,
             "'\"`'\"`'\"`'\"`deadbeef`\"'`\"'`\"'`\"'",
+        );
+        assert_eq!(hit.len(), 1);
+        assert_eq!(hit[0].request_id, "r1");
+    }
+
+    #[test]
+    fn query_audit_export_by_provenance_fingerprint_accepts_shell_escaped_outer_quote_wrappers() {
+        let rows = vec![EnterpriseAuditExportRecord {
+            request_id: "r1".to_string(),
+            task_id: 7004,
+            status: "reveal_submitted".to_string(),
+            provider_request_id: Some("p1".to_string()),
+            provenance_schema_version: Some("llm.v2".to_string()),
+            provenance_fingerprint: Some("deadbeef".to_string()),
+            provider: Some("openai".to_string()),
+            model: Some("gpt-5.3-codex".to_string()),
+            adapter: Some("mcp".to_string()),
+            agent_protocol: Some("a2a".to_string()),
+            compliance_profile: Some("cn-moderate".to_string()),
+        }];
+
+        let index = build_audit_export_index(&rows);
+        let hit = query_audit_export_by_provenance_fingerprint(
+            &rows,
+            &index,
+            r#"  \"'deadbeef'\"  "#,
+        );
+        assert_eq!(hit.len(), 1);
+        assert_eq!(hit[0].request_id, "r1");
+    }
+
+    #[test]
+    fn query_audit_export_by_provenance_fingerprint_accepts_repeated_shell_escaped_quote_wrappers() {
+        let rows = vec![EnterpriseAuditExportRecord {
+            request_id: "r1".to_string(),
+            task_id: 7005,
+            status: "reveal_submitted".to_string(),
+            provider_request_id: Some("p1".to_string()),
+            provenance_schema_version: Some("llm.v2".to_string()),
+            provenance_fingerprint: Some("deadbeef".to_string()),
+            provider: Some("openai".to_string()),
+            model: Some("gpt-5.3-codex".to_string()),
+            adapter: Some("mcp".to_string()),
+            agent_protocol: Some("a2a".to_string()),
+            compliance_profile: Some("cn-moderate".to_string()),
+        }];
+
+        let index = build_audit_export_index(&rows);
+        let hit = query_audit_export_by_provenance_fingerprint(
+            &rows,
+            &index,
+            r#"\"\"\"deadbeef\"\"\""#,
         );
         assert_eq!(hit.len(), 1);
         assert_eq!(hit[0].request_id, "r1");
