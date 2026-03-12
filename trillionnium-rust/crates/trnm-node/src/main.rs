@@ -3800,6 +3800,41 @@ mod tests {
     }
 
     #[test]
+    fn leader_missed_active_height_share_stays_distinct_from_validator_distribution_share() {
+        let bft_leader_missed_total = 6u64;
+        let bft_leader_missed_active_heights = 2u64;
+        let bft_observed_heights = 8u64;
+        let leader_missed_final = vec![2u64, 2u64, 1u64, 1u64];
+        let finality_avg = 2u128;
+
+        let bft_leader_missed_active_validator_share_ppm = ratio_ppm_u64(
+            leader_missed_final
+                .iter()
+                .filter(|missed| **missed > 0)
+                .count() as u64,
+            leader_missed_final.len() as u64,
+        );
+        let bft_leader_missed_active_observed_height_rate_ppm =
+            ratio_ppm_u64(bft_leader_missed_active_heights, bft_observed_heights);
+        let bft_leader_missed_active_height_share_ppm = finality_budget_share_ppm(
+            ratio_milli_u64(bft_leader_missed_total, bft_leader_missed_active_heights),
+            finality_avg,
+        );
+
+        assert_eq!(bft_leader_missed_active_validator_share_ppm, 1_000_000);
+        assert_eq!(bft_leader_missed_active_observed_height_rate_ppm, 250_000);
+        assert_eq!(bft_leader_missed_active_height_share_ppm, 1_500_000);
+        assert_ne!(
+            bft_leader_missed_active_height_share_ppm,
+            bft_leader_missed_active_validator_share_ppm
+        );
+        assert!(
+            bft_leader_missed_active_height_share_ppm
+                > bft_leader_missed_active_validator_share_ppm
+        );
+    }
+
+    #[test]
     fn round_change_backoff_budget_share_metric_stays_distinct_from_wall_share_signal() {
         let bft_round_change_backoff_total_ms = 18u64;
         let bft_round_change_active_heights = 2u64;
