@@ -750,10 +750,71 @@ fn parse_env_usize(name: &str) -> Option<usize> {
 
 #[inline]
 fn parse_env_f64(name: &str) -> Option<f64> {
-    parse_env_numeric(name).and_then(|v| {
-        let percent = v.ends_with('%');
-        let numeric = if percent { v.strip_suffix('%').unwrap_or(&v) } else { &v };
-        let parsed = numeric.parse::<f64>().ok()?;
+    std::env::var(name).ok().and_then(|v| {
+        let trimmed = v.trim();
+        if trimmed.is_empty() {
+            return None;
+        }
+
+        let unquoted = trimmed
+            .strip_prefix('"')
+            .and_then(|inner| inner.strip_suffix('"'))
+            .or_else(|| {
+                trimmed
+                    .strip_prefix('\'')
+                    .and_then(|inner| inner.strip_suffix('\''))
+            })
+            .map(str::trim)
+            .unwrap_or(trimmed);
+        if unquoted.is_empty() {
+            return None;
+        }
+
+        let mut compact = String::with_capacity(unquoted.len());
+        for ch in unquoted.chars() {
+            if ch != '_' {
+                compact.push(ch);
+            }
+        }
+        if compact.is_empty() || compact.chars().all(|ch| ch == ',') {
+            return None;
+        }
+
+        let percent = compact.ends_with('%');
+        let numeric = if percent {
+            compact.strip_suffix('%').unwrap_or(&compact)
+        } else {
+            &compact
+        };
+        if numeric.is_empty() {
+            return None;
+        }
+
+        let normalized = if numeric.contains(',') && !numeric.contains('.') {
+            let comma_count = numeric.chars().filter(|&ch| ch == ',').count();
+            if comma_count == 1 {
+                let (whole, frac) = numeric.split_once(',').unwrap_or((numeric, ""));
+                if !whole.is_empty()
+                    && !frac.is_empty()
+                    && whole.chars().all(|ch| ch == '+' || ch == '-' || ch.is_ascii_digit())
+                    && frac.chars().all(|ch| ch.is_ascii_digit())
+                {
+                    if frac.len() == 3 && whole.chars().any(|ch| ch.is_ascii_digit()) {
+                        numeric.replace(',', "")
+                    } else {
+                        numeric.replace(',', ".")
+                    }
+                } else {
+                    numeric.replace(',', "")
+                }
+            } else {
+                numeric.replace(',', "")
+            }
+        } else {
+            numeric.replace(',', "")
+        };
+
+        let parsed = normalized.parse::<f64>().ok()?;
         if !parsed.is_finite() {
             return None;
         }
@@ -2055,6 +2116,21 @@ mod tests {
         assert_eq!(auto_reorder_min_margin(), 0.1);
         assert_eq!(auto_reorder_min_hot_key_share(), 0.0125);
         assert_eq!(auto_min_expected_gain_score(), 0.05);
+    }
+
+    #[test]
+    fn auto_adaptive_numeric_env_parser_accepts_comma_decimal_percent_values() {
+        let _env = env_lock();
+
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "25,5%");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", " '10,5%' ");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "\"1,25%\"");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", " 0,5% ");
+
+        assert_eq!(auto_hot_streak_threshold(), 0.255);
+        assert_eq!(auto_reorder_min_margin(), 0.105);
+        assert_eq!(auto_reorder_min_hot_key_share(), 0.0125);
+        assert_eq!(auto_min_expected_gain_score(), 0.005);
     }
 
     #[test]
