@@ -94,6 +94,18 @@ def benchmark_producer_for(label: str) -> str:
     return "unknown"
 
 
+def benchmark_capture_cohesion(paths: list[str | None]) -> tuple[str, int | None]:
+    mtimes = [os.path.getmtime(path) for path in paths if path and os.path.exists(path)]
+    if len(mtimes) < 2:
+        return ("insufficient_artifacts", None)
+    spread_seconds = int(max(mtimes) - min(mtimes))
+    if spread_seconds <= 15 * 60:
+        return ("same_capture_window", spread_seconds)
+    if spread_seconds <= 2 * 60 * 60:
+        return ("mixed_capture_window", spread_seconds)
+    return ("divergent_capture_window", spread_seconds)
+
+
 def must_run_gate_artifact_posture(bench_dir_exists: bool, classic, mixed, executor_profile) -> str:
     benchmark_artifacts = [classic, mixed, executor_profile]
     persisted_count = sum(1 for path in benchmark_artifacts if path and os.path.exists(path))
@@ -432,12 +444,18 @@ def main():
     benchmark_ready_inputs = [
         label for label, action, _, _ in benchmark_actions if action == "keep"
     ]
+    benchmark_capture_status, benchmark_capture_spread_seconds = benchmark_capture_cohesion(
+        [classic, mixed, executor_profile]
+    )
     if benchmark_action_counts["produce"]:
         benchmark_decision = "INCOMPLETE"
         benchmark_decision_reason = "missing benchmark artifacts must be produced before benchmark closeout is reviewable"
     elif benchmark_action_counts["refresh"]:
         benchmark_decision = "REFRESH_RECOMMENDED"
         benchmark_decision_reason = "all benchmark artifacts exist, but at least one is stale or old"
+    elif benchmark_capture_status == "divergent_capture_window":
+        benchmark_decision = "REFRESH_RECOMMENDED"
+        benchmark_decision_reason = "benchmark artifacts are fresh enough individually, but they were captured too far apart to treat as one coherent closeout set"
     else:
         benchmark_decision = "READY"
         benchmark_decision_reason = "all benchmark artifacts exist and are fresh enough for curator/autopilot review"
@@ -448,6 +466,12 @@ def main():
     lines.append(
         "- benchmark_action_counts: "
         f"produce={benchmark_action_counts['produce']} refresh={benchmark_action_counts['refresh']} keep={benchmark_action_counts['keep']}"
+    )
+    lines.append(
+        f"- benchmark_capture_cohesion: {benchmark_capture_status}"
+    )
+    lines.append(
+        f"- benchmark_capture_spread_seconds: {benchmark_capture_spread_seconds if benchmark_capture_spread_seconds is not None else 'n/a'}"
     )
     lines.append(
         f"- benchmark_blockers: {', '.join(benchmark_blockers) if benchmark_blockers else 'none'}"
