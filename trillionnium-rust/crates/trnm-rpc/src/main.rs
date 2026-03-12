@@ -6597,6 +6597,47 @@ line2
     }
 
     #[test]
+    fn load_node_event_log_sources_resolves_relative_env_entries_against_root() {
+        let _guard = lock_env();
+        let root = unique_tmp_path("trnm-rpc-log-sources-relative-env", "dir");
+        let run_dir = root.join("run");
+        fs::create_dir_all(&run_dir).expect("create run dir");
+
+        let rel_log = run_dir.join("node4-relative.log");
+        fs::write(&rel_log, "").expect("write relative env log");
+
+        let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+        let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+        unsafe {
+            std::env::set_var(
+                NODE_EVENT_LOG_SOURCES_ENV,
+                "run/node4-relative.log,run/missing-relative.log",
+            );
+            std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV);
+        }
+
+        let got = load_node_event_log_sources(&root);
+
+        match prev_sources {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+        }
+        match prev_manifest {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+        }
+
+        assert!(got.contains(&rel_log));
+        assert_eq!(
+            got.len(),
+            1,
+            "relative env entries must resolve against the RPC root and stay bounded to real files"
+        );
+
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
     fn load_node_event_log_sources_ignores_missing_manifest_entries_fail_closed() {
         let _guard = lock_env();
         let root = unique_tmp_path("trnm-rpc-log-sources-missing", "dir");
