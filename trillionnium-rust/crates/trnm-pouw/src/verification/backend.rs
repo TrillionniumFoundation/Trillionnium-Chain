@@ -969,6 +969,18 @@ mod tests {
     }
 
     #[test]
+    fn backend_system_hint_handles_separator_heavy_tee_attestation_backend_ids_without_falling_back_to_surface_tokens() {
+        for (raw, expected) in [
+            ("TEE::remote／attestation－quote＋SGX", "sgx"),
+            ("tee|attestation|receipt|TDX", "tdx"),
+            ("tee(remote attestation evidence)snp", "snp"),
+            ("amd／sev－snp", "snp"),
+        ] {
+            assert_eq!(backend_system_hint(raw), Some(expected.into()), "raw={raw}");
+        }
+    }
+
+    #[test]
     fn verification_backend_kind_system_hint_respects_family_prefixes_without_cross_family_assumptions(
     ) {
         assert_eq!(
