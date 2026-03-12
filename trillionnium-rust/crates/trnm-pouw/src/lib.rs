@@ -14582,6 +14582,53 @@ mod tests {
     }
 
     #[test]
+    fn timeout_challenged_worker_settlement_overflow_rejects_without_partial_timeout_mutation() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+
+        let r1 = apply_create_task(&mut st, 9_954, "alice".into(), 10).unwrap();
+        let result_hash = [4u8; 32];
+        let reveal_salt = [5u8; 32];
+        let committed = compute_commitment(9_954, &result_hash, &reveal_salt, "worker1");
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 =
+            apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
+        let r4 = apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110)
+            .unwrap();
+        let r5 = apply_challenge_at_height(
+            &mut st,
+            r4,
+            "challenger".into(),
+            10,
+            "challenger".into(),
+            120,
+        )
+        .unwrap();
+
+        let worker_lock = worker_stake_lock_account(9_954);
+        assert_eq!(st.balance_of(&worker_lock), 1);
+        st.set_balance("worker1", u128::MAX);
+
+        let before = st.clone();
+        let err = apply_timeout(&mut st, r5, 221).expect_err(
+            "timeout must fail closed when terminal worker settlement would overflow worker balance",
+        );
+        assert!(matches!(err, PouwError::State(_)));
+
+        let task = st.get_task(9_954).unwrap();
+        assert_eq!(task.status, TaskStatus::Challenged);
+        assert_eq!(task.challenge_bond_forfeited, None);
+        assert_eq!(st.balance_of("challenger"), before.balance_of("challenger"));
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before.balance_of(CHALLENGE_ESCROW_ACCOUNT));
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT)
+        );
+        assert_eq!(st.balance_of("worker1"), before.balance_of("worker1"));
+        assert_eq!(st.balance_of(&worker_lock), before.balance_of(&worker_lock));
+    }
+
+    #[test]
     fn state_error_mapping_version_conflict() {
         let err = map_state_err("version conflict".to_string());
         assert!(matches!(err, PouwError::VersionConflict));
