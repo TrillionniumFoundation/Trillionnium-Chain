@@ -428,6 +428,67 @@ mod tests {
     }
 
     #[test]
+    fn oracle_validation_report_into_rpc_response_preserves_quorum_and_drift_labels() {
+        let quorum_report = OracleValidationReport {
+            ok: false,
+            now_ts_ms: 788,
+            observation: OracleValidationObservation {
+                stale_reject_total: 0,
+                quorum_reject_total: 1,
+                drift_reject_total: 0,
+                accepted_total: 0,
+            },
+            metrics: OracleValidationMetrics {
+                oracle_stale_reject_total: 0,
+                oracle_quorum_reject_total: 1,
+                oracle_drift_reject_total: 0,
+                oracle_source_cardinality: 1,
+                accepted_total: 0,
+                sample_count: 1,
+            },
+            error: Some("quorum".into()),
+        };
+        let drift_report = OracleValidationReport {
+            ok: false,
+            now_ts_ms: 789,
+            observation: OracleValidationObservation {
+                stale_reject_total: 0,
+                quorum_reject_total: 0,
+                drift_reject_total: 1,
+                accepted_total: 0,
+            },
+            metrics: OracleValidationMetrics {
+                oracle_stale_reject_total: 0,
+                oracle_quorum_reject_total: 0,
+                oracle_drift_reject_total: 1,
+                oracle_source_cardinality: 2,
+                accepted_total: 0,
+                sample_count: 1,
+            },
+            error: Some("drift".into()),
+        };
+
+        let quorum_out: OracleValidateSnapshotResponse = quorum_report.into();
+        let drift_out: OracleValidateSnapshotResponse = drift_report.into();
+
+        assert_eq!(quorum_out.classified_reject_total(), 1);
+        assert_eq!(quorum_out.classified_outcome_total(), 1);
+        assert!(quorum_out.classified_outcome_conserves_sample_count());
+        let quorum_json = serde_json::to_value(quorum_out).unwrap();
+        assert_eq!(quorum_json["error"], "quorum");
+        assert_eq!(quorum_json["metrics"]["oracle_quorum_reject_total"], 1);
+        assert_eq!(quorum_json["metrics"]["oracle_source_cardinality"], 1);
+
+        assert_eq!(drift_out.classified_reject_total(), 1);
+        assert_eq!(drift_out.classified_outcome_total(), 1);
+        assert!(drift_out.classified_outcome_conserves_sample_count());
+        let drift_json = serde_json::to_value(drift_out).unwrap();
+        assert_eq!(drift_json["error"], "drift");
+        assert_eq!(drift_json["metrics"]["oracle_drift_reject_total"], 1);
+        assert_eq!(drift_json["metrics"]["oracle_source_cardinality"], 2);
+    }
+
+    #[test]
     fn oracle_validation_report_into_rpc_response_preserves_rate_error_label() {
         let report = OracleValidationReport {
             ok: false,
