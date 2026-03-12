@@ -820,28 +820,45 @@ fn paused_state_rejects_post_quorum_resolve_replay_while_paused_without_escrow_d
     let worker_slash_before = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
     let pending_before = st.pending_resolve_approval_snapshot(9_921);
 
-    let err = st
-        .stage_or_confirm_resolve_approval(9_921, 1, true, "authority-b", "authority-a,authority-b")
-        .expect_err("post-quorum replay must stay rejected while paused");
-    assert!(err.contains("already finalized") || err.contains("distinct approver"));
+    for (replayed_task_version, replayed_authority_set) in [
+        (1, "authority-a,authority-b"),
+        (2, "authority-a,authority-b"),
+        (1, "authority-a,authority-c"),
+    ] {
+        let err = st
+            .stage_or_confirm_resolve_approval(
+                9_921,
+                replayed_task_version,
+                true,
+                "authority-b",
+                replayed_authority_set,
+            )
+            .expect_err("post-quorum replay must stay rejected while paused");
+        assert!(
+            err.contains("already finalized")
+                || err.contains("distinct approver")
+                || err.contains("configured authority member"),
+            "unexpected error for replayed_task_version={replayed_task_version} authority_set={replayed_authority_set}: {err}"
+        );
 
-    assert_eq!(st.pending_resolve_approval_snapshot(9_921), pending_before);
-    assert_eq!(st.pending_resolve_approval(9_921), Some((true, 2)));
-    assert_eq!(
-        st.pending_resolve_first_approver(9_921).as_deref(),
-        Some("authority-a")
-    );
-    assert_eq!(st.pending_gov_update("resolve_authority"), None);
-    assert!(st.is_emergency_paused());
-    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
-    assert_eq!(
-        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
-        forfeits_before
-    );
-    assert_eq!(
-        st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
-        worker_slash_before
-    );
+        assert_eq!(st.pending_resolve_approval_snapshot(9_921), pending_before);
+        assert_eq!(st.pending_resolve_approval(9_921), Some((true, 2)));
+        assert_eq!(
+            st.pending_resolve_first_approver(9_921).as_deref(),
+            Some("authority-a")
+        );
+        assert_eq!(st.pending_gov_update("resolve_authority"), None);
+        assert!(st.is_emergency_paused());
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            forfeits_before
+        );
+        assert_eq!(
+            st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
+            worker_slash_before
+        );
+    }
 }
 
 #[test]

@@ -494,6 +494,11 @@ impl StateStore {
         }
 
         if let Some(entry) = self.pending_resolve_approvals.get(&task_id) {
+            if entry.confirmations >= 2 {
+                return Err(
+                    "resolve approval already finalized; clear pending approval first".into(),
+                );
+            }
             if !entry.authority_set.eq_ignore_ascii_case(authority_set) {
                 self.invalidate_state_root_cache();
                 self.pending_resolve_approvals.remove(&task_id);
