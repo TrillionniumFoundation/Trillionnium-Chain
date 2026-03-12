@@ -527,7 +527,9 @@ fn recover_wal_state(wal_dir: &Path) -> Result<RecoveredWalState> {
                 metadata_only_tail_discarded = discarded_tail.iter().any(|e| !e.committed);
                 let retained_tip_hash = entries[idx].content_hash_hex();
                 committed_tail_beyond_checkpoint_discarded = discarded_tail.iter().any(|e| {
-                    e.committed && e.prev_hash_hex.as_deref() == Some(retained_tip_hash.as_str())
+                    e.committed
+                        && e.height > cp.height
+                        && e.prev_hash_hex.as_deref() == Some(retained_tip_hash.as_str())
                 });
                 valid_entries.truncate(idx + 1);
                 persist_wal_meta_entries(wal_dir, &valid_entries)?;
@@ -5031,6 +5033,76 @@ mod tests {
         let retained = load_wal_meta_entries(&wal_dir).unwrap();
         assert_eq!(retained.len(), 1);
         assert_eq!(retained[0].height, 1);
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn recover_replayed_duplicate_height_tail_truncates_to_last_valid_checkpoint() {
+        let wal_dir = temp_wal_dir("recover-replayed-duplicate-height-tail");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "h1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "h2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1.clone()),
+        };
+        let h2 = e2.content_hash_hex();
+        let replayed_e2 = WalMeta {
+            height: 2,
+            round: 1,
+            proposal_hash: "h2-replay".into(),
+            committed: true,
+            state_root_hex: "r2-replay".into(),
+            prev_hash_hex: Some(h2.clone()),
+        };
+
+        persist_wal_meta_entries(&wal_dir, &[e1, e2, replayed_e2]).unwrap();
+        persist_checkpoint_meta(
+            &wal_dir,
+            &[
+                CheckpointMeta {
+                    height: 1,
+                    state_root_hex: "r1".into(),
+                    wal_entry_hash_hex: h1,
+                },
+                CheckpointMeta {
+                    height: 2,
+                    state_root_hex: "r2".into(),
+                    wal_entry_hash_hex: h2,
+                },
+            ],
+        )
+        .unwrap();
+
+        let recovered = recover_wal_state(&wal_dir).unwrap();
+        assert_eq!(recovered.next_height, 3);
+        assert_eq!(recovered.restored_lock.as_deref(), Some("h2"));
+        assert_eq!(recovered.checkpoint_height_retained, Some(2));
+        assert_eq!(recovered.wal_entries_retained, 2);
+        assert!(recovered.truncated);
+        assert!(
+            !recovered.metadata_only_recovery,
+            "duplicate-height replay tail should truncate back to the verified checkpoint without claiming application-state recovery"
+        );
+
+        let retained = load_wal_meta_entries(&wal_dir).unwrap();
+        assert_eq!(retained.len(), 2);
+        assert_eq!(retained[0].height, 1);
+        assert_eq!(retained[1].height, 2);
+        assert_eq!(retained[1].proposal_hash, "h2");
 
         let _ = fs::remove_dir_all(&wal_dir);
     }
