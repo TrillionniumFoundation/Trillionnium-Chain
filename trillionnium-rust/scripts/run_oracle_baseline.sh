@@ -44,9 +44,9 @@ if baseline["accepted_total"] == 0 and baseline["oracle_source_cardinality"] != 
         "baseline contract violated: oracle_source_cardinality must be 0 when accepted_total is 0"
     )
 
-if baseline["oracle_source_cardinality"] > baseline["sample_count"]:
+if baseline["accepted_total"] > 0 and baseline["oracle_source_cardinality"] == 0:
     raise SystemExit(
-        "baseline contract violated: oracle_source_cardinality cannot exceed sample_count"
+        "baseline contract violated: oracle_source_cardinality must be positive when accepted_total is non-zero"
     )
 
 required_bench = {
