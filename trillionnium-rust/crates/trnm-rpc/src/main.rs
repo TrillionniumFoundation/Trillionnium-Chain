@@ -620,7 +620,7 @@ fn resolve_bounded_node_event_log_source(root: &Path, candidate: PathBuf) -> Opt
         return None;
     }
 
-    Some(candidate)
+    Some(canonical_candidate)
 }
 
 fn discover_default_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
@@ -6624,8 +6624,10 @@ line2
             None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
         }
 
-        assert!(got.contains(&env_log));
-        assert!(got.contains(&manifest_log));
+        let canonical_env_log = fs::canonicalize(&env_log).expect("canonical env log");
+        let canonical_manifest_log = fs::canonicalize(&manifest_log).expect("canonical manifest log");
+        assert!(got.contains(&canonical_env_log));
+        assert!(got.contains(&canonical_manifest_log));
         assert_eq!(got.len(), 2, "custom sources should replace defaults");
 
         let _ = fs::remove_dir_all(root);
@@ -6662,12 +6664,57 @@ line2
             None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
         }
 
-        assert!(got.contains(&rel_log));
+        let canonical_rel_log = fs::canonicalize(&rel_log).expect("canonical relative env log");
+        assert!(got.contains(&canonical_rel_log));
         assert_eq!(
             got.len(),
             1,
             "relative env entries must resolve against the RPC root and stay bounded to real files"
         );
+
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn load_node_event_log_sources_deduplicates_same_file_referenced_by_aliases() {
+        let _guard = lock_env();
+        let root = unique_tmp_path("trnm-rpc-log-sources-alias-dedup", "dir");
+        let run_dir = root.join("run");
+        let manifest_dir = root.join("cfg");
+        fs::create_dir_all(&run_dir).expect("create run dir");
+        fs::create_dir_all(&manifest_dir).expect("create manifest dir");
+
+        let shared_log = run_dir.join("shared.log");
+        let manifest = manifest_dir.join("sources.txt");
+        fs::write(&shared_log, "").expect("write shared log");
+        fs::write(&manifest, "../run/./shared.log\n").expect("write manifest");
+
+        let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+        let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+        unsafe {
+            std::env::set_var(
+                NODE_EVENT_LOG_SOURCES_ENV,
+                "run/shared.log,run/../run/shared.log",
+            );
+            std::env::set_var(
+                NODE_EVENT_LOG_MANIFEST_ENV,
+                manifest.to_string_lossy().to_string(),
+            );
+        }
+
+        let got = load_node_event_log_sources(&root);
+
+        match prev_sources {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+        }
+        match prev_manifest {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+        }
+
+        assert_eq!(got.len(), 1, "alias paths to the same log must collapse to one bounded source");
+        assert_eq!(got[0], fs::canonicalize(&shared_log).expect("canonical shared log"));
 
         let _ = fs::remove_dir_all(root);
     }
@@ -6710,7 +6757,8 @@ line2
             None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
         }
 
-        assert!(got.contains(&present_log));
+        let canonical_present_log = fs::canonicalize(&present_log).expect("canonical present log");
+        assert!(got.contains(&canonical_present_log));
         assert!(
             !got.contains(&missing_log),
             "missing manifest entries must be ignored to keep RPC scan inputs bounded to real files"
@@ -6761,7 +6809,8 @@ line2
             None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
         }
 
-        assert!(got.contains(&present_log));
+        let canonical_present_log = fs::canonicalize(&present_log).expect("canonical present log");
+        assert!(got.contains(&canonical_present_log));
         assert!(
             !got.contains(&outside_log),
             "manifest entries outside the RPC root must be ignored so event scans stay bounded"
@@ -6814,7 +6863,8 @@ line2
             None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
         }
 
-        assert!(got.contains(&real_log));
+        let canonical_real_log = fs::canonicalize(&real_log).expect("canonical real log");
+        assert!(got.contains(&canonical_real_log));
         assert!(
             !got.contains(&symlink_log),
             "symlinked event logs must be ignored so configured RPC scans stay bounded to concrete files"
@@ -6859,7 +6909,8 @@ line2
             None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
         }
 
-        assert!(got.contains(&inside_log));
+        let canonical_inside_log = fs::canonicalize(&inside_log).expect("canonical inside log");
+        assert!(got.contains(&canonical_inside_log));
         assert!(
             !got.contains(&outside_log),
             "env entries outside the RPC root must be ignored so event scans stay bounded"
