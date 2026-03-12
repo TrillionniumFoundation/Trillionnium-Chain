@@ -117,6 +117,14 @@ else
 fi
 
 rollback_cmd="rm -rf $(printf '%q' "$EVIDENCE_DIR")"
+replay_tz="UTC"
+replay_lc_all="C"
+replay_lang="C"
+replay_source_date_epoch="1704067200"
+replay_cargo_term_color="never"
+replay_rust_backtrace="1"
+replay_cargo_build_jobs="1"
+replay_out_dir="${OUT_DIR:-$BASE_OUT}"
 
 {
   echo ""
@@ -127,7 +135,7 @@ rollback_cmd="rm -rf $(printf '%q' "$EVIDENCE_DIR")"
   else
     echo "result=FAIL"
   fi
-  echo "replay_command=env TZ=${TZ:-UTC} LC_ALL=${LC_ALL:-C} LANG=${LANG:-C} SOURCE_DATE_EPOCH=${SOURCE_DATE_EPOCH:-1704067200} CARGO_TERM_COLOR=${CARGO_TERM_COLOR:-never} RUST_BACKTRACE=${RUST_BACKTRACE:-1} CARGO_BUILD_JOBS=${CARGO_BUILD_JOBS:-1} OUT_DIR='${OUT_DIR:-$BASE_OUT}' ./scripts/run_local_release_evidence.sh"
+  echo "replay_command=env TZ=$replay_tz LC_ALL=$replay_lc_all LANG=$replay_lang SOURCE_DATE_EPOCH=$replay_source_date_epoch CARGO_TERM_COLOR=$replay_cargo_term_color RUST_BACKTRACE=$replay_rust_backtrace CARGO_BUILD_JOBS=$replay_cargo_build_jobs OUT_DIR='${replay_out_dir}' ./scripts/run_local_release_evidence.sh"
   echo "rollback_command=$rollback_cmd"
   echo "root_cause_hint=CI_FLAKE|ENV_DRIFT|DOC_DRIFT|MISSING_FIXTURE|NON_DETERMINISTIC_TEST"
 } >> "$SUMMARY"
