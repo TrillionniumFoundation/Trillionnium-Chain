@@ -44,6 +44,21 @@ if ! grep -q 'replay_env_trnm_challenge_reexec_entry=' "$TARGET"; then
   exit 1
 fi
 
+if ! grep -q 'replay_env_trnm_challenge_reexec_entry=<entry_not_found>' "$TARGET"; then
+  echo "[FAIL] expected unresolved replay challenge entry state to use a final explicit sentinel" >&2
+  exit 1
+fi
+
+if ! grep -q 'challenge_reexec_entry=<entry_not_found>' "$TARGET"; then
+  echo "[FAIL] expected unresolved challenge entry state to be written explicitly in the summary header" >&2
+  exit 1
+fi
+
+if grep -q '<pending_resolution>' "$TARGET"; then
+  echo "[FAIL] stale pending-resolution placeholder should not remain in deterministic evidence summary output" >&2
+  exit 1
+fi
+
 RUNBOOK="$ROOT/trillionnium-rust/docs/runbooks/local-release-evidence.md"
 if [[ ! -f "$RUNBOOK" ]]; then
   echo "[FAIL] missing runbook: $RUNBOOK" >&2

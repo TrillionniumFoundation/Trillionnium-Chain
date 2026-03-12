@@ -58,8 +58,8 @@ env TZ=UTC LC_ALL=C LANG=C SOURCE_DATE_EPOCH=1704067200 \
 - 生成该证据包的分支与提交：`git_branch=<branch>` / `git_head=<sha>`
 - UTC 时间戳：`generated_at=<utc-ts>`
 - 实际覆盖环境：`env_trnm_challenge_reexec_entry=<value|<unset>>`
-- 复放环境：`replay_env_trnm_challenge_reexec_entry=<resolved-entry-absolute-path>`
-- 解析后的入口：`challenge_reexec_entry=<resolved-entry-absolute-path>`
+- 复放环境：`replay_env_trnm_challenge_reexec_entry=<resolved-entry-absolute-path>`；若本轮未解析到入口，则显式记为 `<entry_not_found>`，不要保留待定占位符。
+- 解析后的入口：`challenge_reexec_entry=<resolved-entry-absolute-path>`；若未解析到入口，同样显式记为 `<entry_not_found>`，便于失败证据审计。
 - 复放命令：优先直接引用 `replay_command=` 字段；若需说明其结构，应是包含 deterministic 前缀、`OUT_DIR` 与固定 `TRNM_CHALLENGE_REEXEC_ENTRY` 的单行命令，例如：`env TZ=UTC LC_ALL=C LANG=C SOURCE_DATE_EPOCH=1704067200 CARGO_TERM_COLOR=never RUST_BACKTRACE=1 CARGO_BUILD_JOBS=1 OUT_DIR='<evidence-root>' TRNM_CHALLENGE_REEXEC_ENTRY='<resolved-entry-absolute-path>' ./scripts/run_local_release_evidence.sh`
 - 回滚命令：`rollback_command=rm -rf <evidence_dir>`（仅删除本次生成目录）
 
