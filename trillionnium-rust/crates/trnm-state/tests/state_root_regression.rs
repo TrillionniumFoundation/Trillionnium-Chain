@@ -116,6 +116,41 @@ fn governance_proposal_title_and_proposer_boundaries_should_affect_state_root() 
 }
 
 #[test]
+fn restore_applied_gov_param_rewinds_state_root_after_value_mutation() {
+    let mut state = StateStore::new();
+
+    state
+        .set_gov_param(0, 111, "max_block_ms".into(), "500".into())
+        .expect("initial governance param insertion should succeed");
+    let baseline_snapshot = state
+        .get_param(111)
+        .expect("baseline governance param snapshot should exist");
+    let root_before = state.state_root();
+
+    state
+        .set_gov_param(0, 111, "max_block_ms".into(), "650".into())
+        .expect("governance param update should succeed");
+    let root_after = state.state_root();
+
+    assert_ne!(
+        root_before, root_after,
+        "state_root should incorporate applied governance param values so distinct active config cannot hash identically"
+    );
+
+    state.restore_gov_param(111, Some(baseline_snapshot));
+    assert_eq!(
+        state.state_root(),
+        root_before,
+        "restore_gov_param must rewind state_root exactly after an applied governance value mutation"
+    );
+    assert_eq!(
+        state.state_root(),
+        root_before,
+        "repeated reads after restore_gov_param should deterministically reuse the rewound cached root"
+    );
+}
+
+#[test]
 fn task_metadata_string_field_boundaries_should_affect_state_root() {
     let mut st1 = StateStore::new();
     let mut st2 = StateStore::new();
