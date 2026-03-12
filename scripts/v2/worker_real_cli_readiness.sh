@@ -33,7 +33,11 @@ extract_tx_hash() {
       h="$tok"
       break
     fi
-  done < <(printf "%s\n" "$raw" | grep -Eo 'tx_hash"?[[:space:]]*[:=][[:space:]]*"?(0[xX])?[0-9A-Fa-f]{16,128}"?|txhash"?[[:space:]]*[:=][[:space:]]*"?(0[xX])?[0-9A-Fa-f]{16,128}"?|txHash"?[[:space:]]*[:=][[:space:]]*"?(0[xX])?[0-9A-Fa-f]{16,128}"?' | sed -E 's/.*[:=][[:space:]]*//')
+  done < <(
+    printf "%s\n" "$raw" \
+      | grep -Eio '"?tx[-_]?hash"?[[:space:]]*[:=][[:space:]]*"?(0[xX])?[0-9A-Fa-f]{16,128}"?' \
+      | sed -E 's/.*[:=][[:space:]]*//'
+  )
   printf "%s" "$h"
 }
 
