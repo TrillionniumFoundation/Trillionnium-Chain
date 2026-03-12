@@ -1,4 +1,6 @@
-use trnm_state::{GovParamUpdateOutcome, PendingResolveApprovalSnapshot, StateStore};
+use trnm_state::{
+    GovParamUpdateOutcome, GovPendingUpdateAction, PendingResolveApprovalSnapshot, StateStore,
+};
 
 const CHALLENGE_ESCROW_ACCOUNT: &str = "treasury.challenge_escrow";
 const CHALLENGE_FORFEIT_TREASURY_ACCOUNT: &str = "treasury.challenge_forfeits";
@@ -183,6 +185,93 @@ fn paused_state_pending_resolve_authority_conflict_keeps_original_timelock_and_p
         Some("authority-a,authority-b".into()),
         "paused conflicting submit must not apply pending authority set early"
     );
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
+}
+
+#[test]
+fn paused_state_matured_resolve_authority_timelock_cannot_be_canceled_instead_of_applied() {
+    // M1 micro-hardening: once a paused resolve_authority timelock has matured, governance
+    // must not be able to cancel the active pending entry and thereby dodge the apply boundary.
+    // The mature pending update, pause state, and custody balances must remain unchanged.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 42_333);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 903);
+
+    let bootstrap = st
+        .set_gov_param(
+            98_160,
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("bootstrap resolve_authority write should succeed");
+    assert!(matches!(bootstrap, GovParamUpdateOutcome::Scheduled { .. }));
+
+    let applied = st
+        .set_gov_param(
+            98_180,
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("bootstrap resolve_authority should apply after timelock");
+    assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+
+    let scheduled = st
+        .set_gov_param(
+            98_181,
+            7_310,
+            "resolve_authority".into(),
+            "authority-c,authority-d".into(),
+        )
+        .expect("replacement resolve_authority update should be timelocked");
+    assert!(matches!(
+        scheduled,
+        GovParamUpdateOutcome::Scheduled {
+            activate_at_height: 98_201
+        }
+    ));
+
+    st.set_gov_param(98_182, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    let pending_before = st
+        .pending_gov_update("resolve_authority")
+        .expect("pending resolve_authority update should exist before mature cancel attempt");
+    let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+    let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+
+    let err = st
+        .set_gov_param_with_action(
+            98_201,
+            7_310,
+            "resolve_authority".into(),
+            "authority-c,authority-d".into(),
+            GovPendingUpdateAction::Cancel,
+        )
+        .expect_err("mature paused resolve_authority update must not be cancelable");
+    assert!(
+        err.contains("already active") || err.contains("must be applied"),
+        "unexpected error: {err}"
+    );
+
+    let pending_after = st
+        .pending_gov_update("resolve_authority")
+        .expect("mature cancel rejection must preserve pending resolve_authority update");
+    assert_eq!(pending_after.key_id, pending_before.key_id);
+    assert_eq!(pending_after.value, pending_before.value);
+    assert_eq!(pending_after.activate_at_height, pending_before.activate_at_height);
+    assert_eq!(
+        st.gov_param_string("resolve_authority"),
+        Some("authority-a,authority-b".into()),
+        "mature cancel rejection must not change currently applied authority set"
+    );
+    assert!(st.is_emergency_paused(), "mature cancel rejection must not unpause state");
     assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
     assert_eq!(
         st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
