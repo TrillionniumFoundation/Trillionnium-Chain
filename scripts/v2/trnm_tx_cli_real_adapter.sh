@@ -207,7 +207,13 @@ case "$sub" in
       status=$(printf "%s" "$out" | sed -n 's/.*"txStatus"[[:space:]]*:[[:space:]]*"\([^"]\+\)".*/\1/p' | head -n1 || true)
     fi
     if [[ -z "$status" ]]; then
-      status=$(printf "%s" "$out" | sed -n 's/.*\([Tt][Xx]_\)\?[Ss][Tt][Aa][Tt][Uu][Ss][[:space:]]*[:=][[:space:]]*\([^[:space:]}\",]\+\).*/\2/p' | head -n1 || true)
+      status=$(printf "%s" "$out" | sed -n 's/.*"transaction_status"[[:space:]]*:[[:space:]]*"\([^"]\+\)".*/\1/p' | head -n1 || true)
+    fi
+    if [[ -z "$status" ]]; then
+      status=$(printf "%s" "$out" | sed -n 's/.*"transactionStatus"[[:space:]]*:[[:space:]]*"\([^"]\+\)".*/\1/p' | head -n1 || true)
+    fi
+    if [[ -z "$status" ]]; then
+      status=$(printf "%s" "$out" | sed -n 's/.*\([Tt][Xx]_\|[Tt][Rr][Aa][Nn][Ss][Aa][Cc][Tt][Ii][Oo][Nn]_\)\?[Ss][Tt][Aa][Tt][Uu][Ss][[:space:]]*[:=][[:space:]]*\([^[:space:]}\",]\+\).*/\2/p' | head -n1 || true)
     fi
     if [[ -z "$status" ]]; then
       status="committed"

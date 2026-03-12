@@ -479,6 +479,8 @@ fn parse_tx_query_response(raw: &str, requested_tx_hash: &str) -> Result<TxQuery
             .get("status")
             .or_else(|| payload.get("tx_status"))
             .or_else(|| payload.get("txStatus"))
+            .or_else(|| payload.get("transaction_status"))
+            .or_else(|| payload.get("transactionStatus"))
             .and_then(|x| x.as_str())
             .and_then(normalize_tx_status)
             .ok_or_else(|| anyhow!("missing/invalid status field in tx query response"))?;
@@ -512,7 +514,7 @@ fn parse_tx_query_response(raw: &str, requested_tx_hash: &str) -> Result<TxQuery
                         None => bail!("invalid tx_hash field in tx query response"),
                     }
                 }
-                "status" | "tx_status" | "txstatus" => {
+                "status" | "tx_status" | "txstatus" | "transaction_status" | "transactionstatus" => {
                     if let Some(normalized) = normalize_tx_status(&value) {
                         status = Some(normalized);
                     }
@@ -1067,6 +1069,18 @@ mod tests {
         let parsed_tx_status_camel = parse_tx_query_response(tx_status_camel, "0xfallback").unwrap();
         assert_eq!(parsed_tx_status_camel.tx_hash, "0xbbb");
         assert_eq!(parsed_tx_status_camel.status, "committed");
+
+        let transaction_status_snake = "{\"transactionHash\":\"0xccc\",\"transaction_status\":\"confirmed\"}";
+        let parsed_transaction_status_snake =
+            parse_tx_query_response(transaction_status_snake, "0xfallback").unwrap();
+        assert_eq!(parsed_transaction_status_snake.tx_hash, "0xccc");
+        assert_eq!(parsed_transaction_status_snake.status, "committed");
+
+        let transaction_status_camel = "{\"transaction_hash\":\"0xddd\",\"transactionStatus\":\"timed-out\"}";
+        let parsed_transaction_status_camel =
+            parse_tx_query_response(transaction_status_camel, "0xfallback").unwrap();
+        assert_eq!(parsed_transaction_status_camel.tx_hash, "0xddd");
+        assert_eq!(parsed_transaction_status_camel.status, "fail");
     }
 
     #[test]
@@ -1265,6 +1279,18 @@ mod tests {
         let parsed_tx_status_compact = parse_tx_query_response(tx_status_compact, "0xfallback").unwrap();
         assert_eq!(parsed_tx_status_compact.tx_hash, "0xbbb222");
         assert_eq!(parsed_tx_status_compact.status, "fail");
+
+        let transaction_status_snake = "transaction_hash=0xccc333\ntransaction_status=confirmed\n";
+        let parsed_transaction_status_snake =
+            parse_tx_query_response(transaction_status_snake, "0xfallback").unwrap();
+        assert_eq!(parsed_transaction_status_snake.tx_hash, "0xccc333");
+        assert_eq!(parsed_transaction_status_snake.status, "committed");
+
+        let transaction_status_camel = "transactionHash=0xddd444\ntransactionStatus=rejected\n";
+        let parsed_transaction_status_camel =
+            parse_tx_query_response(transaction_status_camel, "0xfallback").unwrap();
+        assert_eq!(parsed_transaction_status_camel.tx_hash, "0xddd444");
+        assert_eq!(parsed_transaction_status_camel.status, "fail");
     }
 
     #[test]
