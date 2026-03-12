@@ -133,7 +133,7 @@ TRNM 当前已经具备：
 2. **Pre-exec 仍然是“业务执行 + 状态快照”的复合成本**
    - 不是纯 scheduler 时间。
    - 一旦状态规模扩大，收益仍可能被快照成本吃掉。
-   - closeout 时不要只盯 `preexec_elapsed_*`；还应同步看 `preexec_peak_share_ppm`、`preexec_reject_density_avg_milli`、`preexec_reject_share_bps` 与 `preexec_conflict_miss_share_bps`，避免把 guardrail 压力误读成“只是平均耗时略高”。
+   - closeout 时不要只盯 `preexec_elapsed_*`；还应同步看 `preexec_peak_share_ppm`、`preexec_reject_density_avg_milli`、`preexec_reject_active_height_rate_ppm`、`preexec_reject_active_observed_height_rate_ppm`、`preexec_reject_active_height_share_ppm`、`preexec_reject_share_bps` 与 `preexec_conflict_miss_share_bps`，避免把 guardrail 压力误读成“只是平均耗时略高”，或因为 rejects 只集中在少数高度而被全局均值稀释。
 
 3. **Consensus jitter 需要按 active height 观察，而不是只看全局均值**
    - round-change/backoff 若集中爆发在少数高度，`per_height` 或全局平均很容易稀释真实抖动；
