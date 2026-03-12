@@ -132,7 +132,7 @@ def autopilot_severity(missing_inputs, stale_inputs, old_inputs) -> str:
     return "GREEN"
 
 
-def closeout_decision(missing_inputs, stale_inputs, old_inputs) -> tuple[str, str]:
+def closeout_decision(missing_inputs, stale_inputs, old_inputs, capture_status: str) -> tuple[str, str]:
     if missing_inputs:
         return (
             "INCOMPLETE",
@@ -147,6 +147,11 @@ def closeout_decision(missing_inputs, stale_inputs, old_inputs) -> tuple[str, st
         return (
             "REFRESH_RECOMMENDED",
             "all evidence inputs exist, but at least one is stale",
+        )
+    if capture_status == "divergent_capture_window":
+        return (
+            "REFRESH_RECOMMENDED",
+            "all evidence inputs are present and individually fresh, but they were captured too far apart to treat as one coherent closeout set",
         )
     return ("READY", "all expected closeout inputs are present and fresh enough for review")
 
@@ -373,7 +378,12 @@ def main():
     lines.append(f"- curator_verdict: {verdict}")
     lines.append(f"- curator_reason: {verdict_reason}")
 
-    closeout_status, closeout_reason = closeout_decision(missing_inputs, stale_inputs, old_inputs)
+    closeout_capture_status, closeout_capture_spread_seconds = benchmark_capture_cohesion(
+        [node_log, classic, mixed, executor_profile]
+    )
+    closeout_status, closeout_reason = closeout_decision(
+        missing_inputs, stale_inputs, old_inputs, closeout_capture_status
+    )
     lines += ["", "## Closeout Action Summary"]
     lines.append(f"- closeout_decision: {closeout_status}")
     lines.append(f"- closeout_decision_reason: {closeout_reason}")
@@ -381,8 +391,15 @@ def main():
         "- closeout_action_counts: "
         f"missing={len(missing_inputs)} stale={len(stale_inputs)} old={len(old_inputs)} ready={len(present_inputs) - len(stale_inputs) - len(old_inputs)}"
     )
+    lines.append(f"- closeout_capture_cohesion: {closeout_capture_status}")
     lines.append(
-        f"- closeout_blockers: {', '.join(missing_inputs + stale_inputs + old_inputs) if (missing_inputs or stale_inputs or old_inputs) else 'none'}"
+        f"- closeout_capture_spread_seconds: {closeout_capture_spread_seconds if closeout_capture_spread_seconds is not None else 'n/a'}"
+    )
+    closeout_blockers = missing_inputs + stale_inputs + old_inputs
+    if closeout_capture_status == "divergent_capture_window":
+        closeout_blockers.append("capture_window:divergent")
+    lines.append(
+        f"- closeout_blockers: {', '.join(closeout_blockers) if closeout_blockers else 'none'}"
     )
     lines.append(
         f"- closeout_ready_inputs: {', '.join(sorted(set(present_inputs) - set(stale_inputs) - set(old_inputs))) if present_inputs else 'none'}"
@@ -399,7 +416,9 @@ def main():
     if old_inputs:
         for label in old_inputs:
             lines.append(f"- refresh {label}: existing artifact is old; do not treat as current evidence")
-    if not missing_inputs and not stale_inputs and not old_inputs:
+    if closeout_capture_status == "divergent_capture_window":
+        lines.append("- refresh closeout capture set: regenerate node_log and benchmark artifacts in one tighter capture window before curator/autopilot review")
+    if not missing_inputs and not stale_inputs and not old_inputs and closeout_capture_status != "divergent_capture_window":
         lines.append("- none: all expected closeout inputs are present and fresh")
 
     lines += ["", "## Benchmark Next Step Matrix"]
