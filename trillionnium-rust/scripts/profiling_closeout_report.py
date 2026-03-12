@@ -325,6 +325,7 @@ def main():
         ("mixed_bench", mixed),
         ("executor_profile", executor_profile),
     ]
+    benchmark_actions = []
     for label, path in benchmark_inputs:
         status = input_status(path)
         freshness = freshness_label(file_age_seconds(path))
@@ -340,9 +341,33 @@ def main():
         else:
             action = "refresh"
             reason = "artifact is old and should not be treated as current evidence"
+        benchmark_actions.append((label, action, freshness, reason))
         lines.append(
             f"- {label}: action={action} freshness={freshness} producer={benchmark_producer_for(label)} reason={reason}"
         )
+
+    benchmark_action_counts = {
+        "produce": sum(1 for _, action, _, _ in benchmark_actions if action == "produce"),
+        "refresh": sum(1 for _, action, _, _ in benchmark_actions if action == "refresh"),
+        "keep": sum(1 for _, action, _, _ in benchmark_actions if action == "keep"),
+    }
+    if benchmark_action_counts["produce"]:
+        benchmark_decision = "INCOMPLETE"
+        benchmark_decision_reason = "missing benchmark artifacts must be produced before benchmark closeout is reviewable"
+    elif benchmark_action_counts["refresh"]:
+        benchmark_decision = "REFRESH_RECOMMENDED"
+        benchmark_decision_reason = "all benchmark artifacts exist, but at least one is stale or old"
+    else:
+        benchmark_decision = "READY"
+        benchmark_decision_reason = "all benchmark artifacts exist and are fresh enough for curator/autopilot review"
+
+    lines += ["", "## Benchmark Action Summary"]
+    lines.append(f"- benchmark_decision: {benchmark_decision}")
+    lines.append(f"- benchmark_decision_reason: {benchmark_decision_reason}")
+    lines.append(
+        "- benchmark_action_counts: "
+        f"produce={benchmark_action_counts['produce']} refresh={benchmark_action_counts['refresh']} keep={benchmark_action_counts['keep']}"
+    )
 
     lines += ["", "## Block Metrics"]
     for key in [
