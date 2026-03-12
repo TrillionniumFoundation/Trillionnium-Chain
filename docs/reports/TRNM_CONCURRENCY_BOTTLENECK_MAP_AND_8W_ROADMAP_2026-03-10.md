@@ -134,6 +134,10 @@ TRNM 当前已经具备：
    - 不是纯 scheduler 时间。
    - 一旦状态规模扩大，收益仍可能被快照成本吃掉。
 
+3. **Consensus jitter 需要按 active height 观察，而不是只看全局均值**
+   - round-change/backoff 若集中爆发在少数高度，`per_height` 或全局平均很容易稀释真实抖动；
+   - 因此 block-loop closeout 应优先看 `bft_round_change_density_avg_milli`、`bft_round_change_backoff_density_avg_milli`，并结合 `bft_round_change_active_height_share_ppm` / `bft_round_change_backoff_active_height_share_ppm` 判断它们占平均 finality budget 的比例。
+
 #### 对 Solana/Sui 的差距
 - **比 Solana**：缺少更成熟的 runtime / bank / lock / cache 联动。
 - **比 Sui**：对象级执行隔离还不够原生，仍依赖较厚的共享状态层。
@@ -242,6 +246,13 @@ TRNM 当前不是“高 TPS 公链的仿制品”，而是：
 - **比普通原型强**：是
 - **比大部分“只有 read/write set 概念”的学术原型更成熟**：是
 - **达到 Solana / Sui 生产级并发效率**：否
+
+> L04 observability note:
+> - 解释 `bft_round_change_backoff_active_height_share_ppm` 时，不要把它当成强制封顶在 100% 的“占比”。
+> - 当 round-change backoff 的活跃高度密度已经超过平均 finality budget 时，该指标**应该允许大于 `1_000_000`**，这样共识抖动/退避主导区间才不会被误读为“只是高一点”。
+> - 与 `bft_round_change_density_avg_milli`、`bft_round_change_backoff_density_avg_milli` 一起看，优先判断是否出现了 clustered jitter / sustained backoff，而不是只看全局均值。
+> - 若存在 skipped / no-commit heights，`bft_round_change_active_height_rate_ppm` 与 `bft_leader_missed_active_height_rate_ppm` 反映的是“相对 committed budget 的压力”，应再对照 `bft_observed_heights` 分母下的 `bft_round_change_active_observed_height_rate_ppm` 与 `bft_leader_missed_active_observed_height_rate_ppm`，避免把覆盖面误读成纯 committed-height 占比。
+> - 对 proposer fairness hotspot，不要只盯 `bft_leader_missed_total` 或最终 miss 分布；应同时查看 `bft_leader_missed_top_share_ppm`、`bft_leader_missed_active_validators`、`bft_leader_missed_active_validator_share_ppm`，以及 `bft_leader_missed_active_heights` / `bft_leader_missed_active_height_rate_ppm`、`bft_leader_missed_active_observed_height_rate_ppm` 和 `bft_leader_missed_density_avg_milli`，避免把集中在少数 proposer 或少数高度的 miss 误读成“总体分布还行”。
 
 ---
 
