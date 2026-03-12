@@ -2928,6 +2928,51 @@ mod tests {
     }
 
     #[test]
+    fn active_hot_object_share_averages_ignore_inactive_heights() {
+        let finality_sample_count = 4u64;
+        let hot_object_active_heights = 2u64;
+        let hot_object_top_label_share_samples_ppm = vec![0u128, 800_000, 0, 400_000];
+        let hot_object_tail_share_samples_ppm = vec![0u128, 200_000, 0, 600_000];
+        let hot_object_active_top_label_share_total_ppm = 1_200_000u128;
+        let hot_object_active_tail_share_total_ppm = 800_000u128;
+        let hot_object_top_label_share_avg_ppm =
+            average_or_zero(&hot_object_top_label_share_samples_ppm);
+        let hot_object_tail_share_avg_ppm = average_or_zero(&hot_object_tail_share_samples_ppm);
+        let hot_object_active_top_label_share_avg_ppm =
+            hot_object_active_top_label_share_total_ppm / hot_object_active_heights as u128;
+        let hot_object_active_tail_share_avg_ppm =
+            hot_object_active_tail_share_total_ppm / hot_object_active_heights as u128;
+        let hot_object_active_height_rate_ppm =
+            ratio_ppm_u64(hot_object_active_heights, finality_sample_count);
+
+        assert_eq!(hot_object_top_label_share_avg_ppm, 300_000);
+        assert_eq!(hot_object_tail_share_avg_ppm, 200_000);
+        assert_eq!(hot_object_active_top_label_share_avg_ppm, 600_000);
+        assert_eq!(hot_object_active_tail_share_avg_ppm, 400_000);
+        assert_eq!(hot_object_active_height_rate_ppm, 500_000);
+        assert!(hot_object_active_top_label_share_avg_ppm > hot_object_top_label_share_avg_ppm);
+        assert!(hot_object_active_tail_share_avg_ppm > hot_object_tail_share_avg_ppm);
+    }
+
+    #[test]
+    fn active_hot_object_share_averages_are_zero_without_hot_heights() {
+        let hot_object_active_heights = 0u64;
+        let hot_object_active_top_label_share_avg_ppm = if hot_object_active_heights == 0 {
+            0
+        } else {
+            1_200_000u128 / hot_object_active_heights as u128
+        };
+        let hot_object_active_tail_share_avg_ppm = if hot_object_active_heights == 0 {
+            0
+        } else {
+            800_000u128 / hot_object_active_heights as u128
+        };
+
+        assert_eq!(hot_object_active_top_label_share_avg_ppm, 0);
+        assert_eq!(hot_object_active_tail_share_avg_ppm, 0);
+    }
+
+    #[test]
     fn critical_wait_density_metrics_make_fairness_stalls_visible() {
         let finality_avg = 200u128;
         let critical_wait_blocks_avg = 50u128;
