@@ -905,7 +905,24 @@ fn resolve_path_arg_from_env(path: PathBuf, env_name: &str, default_path: &str) 
 }
 
 fn is_receipt_quote_wrapper(ch: char) -> bool {
-    matches!(ch, '"' | '\'' | '`' | '“' | '”' | '‘' | '’')
+    matches!(
+        ch,
+        '"'
+            | '\''
+            | '`'
+            | '“'
+            | '”'
+            | '‘'
+            | '’'
+            | '«'
+            | '»'
+            | '‹'
+            | '›'
+            | '「'
+            | '」'
+            | '『'
+            | '』'
+    )
 }
 
 fn normalize_candidate_tx_hash(raw: &str) -> Option<String> {
@@ -2524,6 +2541,17 @@ mod tests {
         let curly_single_key = parse_tx_hash("adapter stdout: {‘transaction_hash’: 'ABCD1234'}")
             .expect("smart single-quoted receipt key should parse");
         assert_eq!(curly_single_key, "abcd1234");
+    }
+
+    #[test]
+    fn parse_tx_hash_accepts_localized_quote_wrapped_receipts() {
+        let guillemet = parse_tx_hash("adapter stdout: {«tx_hash»: «0xDEADBEEF»}")
+            .expect("guillemet-quoted receipt hash should parse");
+        assert_eq!(guillemet, "deadbeef");
+
+        let corner_bracket = parse_tx_hash("adapter stdout: {「transaction hash」: 「0xFACECAFE」}")
+            .expect("corner-bracket-quoted transaction hash alias should parse");
+        assert_eq!(corner_bracket, "facecafe");
     }
 
     #[test]
