@@ -90,13 +90,11 @@ pub fn backend_token_family_hint(raw: &str) -> Option<VerificationBackendFamily>
 
 pub fn backend_system_hint(raw: &str) -> Option<String> {
     let normalized = normalize_backend_token(raw)?;
-    let mut parts = normalized.split_whitespace();
-    let first = parts.next()?;
-    let second = parts.next();
+    let parts = normalized.split_whitespace().collect::<Vec<_>>();
 
-    match (first, second) {
-        ("zk", Some(system)) | ("tee", Some(system)) => Some(system.to_string()),
-        (system, _) if system != "noop" => Some(system.to_string()),
+    match parts.as_slice() {
+        ["zk", system, ..] | ["tee", system, ..] => normalize_zk_system(system),
+        [system, ..] => normalize_zk_system(system),
         _ => None,
     }
 }
@@ -1148,6 +1146,17 @@ mod tests {
             vec!["groth16"]
         );
         assert!(backend_token_zk_system_hints("mock-zk").is_empty());
+    }
+
+    #[test]
+    fn backend_system_hint_only_returns_canonical_system_tokens() {
+        assert_eq!(backend_system_hint("groth16-demo"), Some("groth16".into()));
+        assert_eq!(
+            backend_system_hint("zk-groth16-demo"),
+            Some("groth16".into())
+        );
+        assert_eq!(backend_system_hint("zk-demo"), None);
+        assert_eq!(backend_system_hint("mock-zk"), None);
     }
 
     #[test]
