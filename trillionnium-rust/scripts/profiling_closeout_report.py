@@ -133,6 +133,64 @@ def benchmark_capture_cohesion(paths: list[str | None]) -> tuple[str, int | None
     return ("divergent_capture_window", spread_seconds)
 
 
+def detect_capture_stamp(path: str | None) -> tuple[str, str] | None:
+    if not path:
+        return None
+    basename = os.path.basename(path)
+    patterns = [
+        (r"bench-(?:mixed-)?matrix-(\d{8}-\d{6})\.txt$", "wall_clock"),
+        (r"executor-profile-summary-(\d+)\.txt$", "epoch"),
+        (r"profiling-closeout-baseline-(\d{8}-\d{6})\.md$", "wall_clock"),
+    ]
+    for pattern, family in patterns:
+        m = re.search(pattern, basename)
+        if m:
+            return family, m.group(1)
+    return None
+
+
+def capture_stamp_line(label: str, path: str | None) -> str:
+    stamp = detect_capture_stamp(path)
+    if not stamp:
+        return f"- {label}: capture_stamp=unavailable path={path or 'None'}"
+    family, value = stamp
+    return f"- {label}: capture_stamp_family={family} capture_stamp={value} path={path}"
+
+
+def capture_stamp_alignment_status(paths_by_label: list[tuple[str, str | None]]) -> tuple[str, str]:
+    detected = []
+    missing = []
+    families = set()
+    values = set()
+    for label, path in paths_by_label:
+        stamp = detect_capture_stamp(path)
+        if not stamp:
+            missing.append(label)
+            continue
+        family, value = stamp
+        detected.append((label, family, value))
+        families.add(family)
+        values.add(f"{family}:{value}")
+    if not detected:
+        return ("unavailable", "no selected artifacts expose a recognizable capture stamp")
+    if missing:
+        return (
+            "partial",
+            f"some selected artifacts do not expose a recognizable capture stamp: {', '.join(missing)}",
+        )
+    if len(values) == 1:
+        return ("aligned", "all selected artifacts advertise the same capture stamp")
+    if len(families) > 1:
+        return (
+            "mixed_family",
+            "selected artifacts expose different capture stamp families, so stamp-level alignment cannot be asserted",
+        )
+    return (
+        "misaligned",
+        "selected artifacts expose different capture stamps within the same family",
+    )
+
+
 def must_run_gate_artifact_posture(bench_dir_exists: bool, classic, mixed, executor_profile) -> str:
     benchmark_artifacts = [classic, mixed, executor_profile]
     persisted_count = sum(1 for path in benchmark_artifacts if path and os.path.exists(path))
@@ -480,6 +538,19 @@ def main():
     lines.extend(candidate_preview("classic_bench_candidates", classic, classic_candidates))
     lines.extend(candidate_preview("mixed_bench_candidates", mixed, mixed_candidates))
     lines.extend(candidate_preview("executor_profile_candidates", executor_profile, executor_profile_candidates))
+
+    lines += ["", "## Artifact Capture Stamps"]
+    selected_capture_paths = [
+        ("node_log", node_log),
+        ("classic_bench", classic),
+        ("mixed_bench", mixed),
+        ("executor_profile", executor_profile),
+    ]
+    for label, path in selected_capture_paths:
+        lines.append(capture_stamp_line(label, path))
+    capture_stamp_status, capture_stamp_reason = capture_stamp_alignment_status(selected_capture_paths)
+    lines.append(f"- selected_capture_stamp_alignment: {capture_stamp_status}")
+    lines.append(f"- selected_capture_stamp_alignment_reason: {capture_stamp_reason}")
 
     benchmark_pools = [
         candidate_pool_health_struct("classic_bench_candidates", classic, classic_candidates),
