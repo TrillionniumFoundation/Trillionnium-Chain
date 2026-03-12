@@ -288,7 +288,14 @@ fn resolve_authority_account(st: &StateStore) -> String {
 }
 
 fn parse_governed_bool_param(raw: &str, param_name: &str) -> Result<bool, PouwError> {
-    match raw.trim().to_ascii_lowercase().as_str() {
+    if raw.trim() != raw {
+        return Err(PouwError::State(format!(
+            "invalid boolean governance value for {}: {}",
+            param_name, raw
+        )));
+    }
+
+    match raw.to_ascii_lowercase().as_str() {
         "1" | "true" | "yes" | "on" => Ok(true),
         "0" | "false" | "no" | "off" => Ok(false),
         other => Err(PouwError::State(format!(
@@ -10663,6 +10670,77 @@ mod tests {
     }
 
     #[test]
+    fn challenged_timeout_rejects_invalid_slash_on_timeout_governance_value_without_mutation() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        st.set_balance("worker1", 40);
+        st.set_gov_param_bootstrap_unchecked(40_117, "min_worker_stake".into(), "40".into())
+            .unwrap();
+        st.set_gov_param_bootstrap_unchecked(40_118, "challenge_success_bounty".into(), "1".into())
+            .unwrap();
+        st.set_balance(WORKER_SLASH_TREASURY_ACCOUNT, 9);
+
+        let r1 = apply_create_task(&mut st, 40_119, "alice".into(), 10).unwrap();
+        let result_hash = [6u8; 32];
+        let reveal_salt = [10u8; 32];
+        let committed = compute_commitment(40_119, &result_hash, &reveal_salt, "worker1");
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 =
+            apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
+        let r4 = apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110)
+            .unwrap();
+        let r5 = apply_challenge_at_height(
+            &mut st,
+            r4,
+            "challenger".into(),
+            10,
+            "challenger".into(),
+            120,
+        )
+        .unwrap();
+
+        st.insert_object(
+            "gov_param/default_slash_on_unresolved_challenge".into(),
+            b"maybe".to_vec(),
+        );
+
+        let before_task = st.get_task(r5.id).unwrap();
+        let before_challenger = st.balance_of("challenger");
+        let before_worker = st.balance_of("worker1");
+        let before_lock = st.balance_of(&worker_stake_lock_account(40_119));
+        let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+        let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+        let before_slash_treasury = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
+
+        let err = apply_timeout(&mut st, r5.clone(), 221).expect_err(
+            "invalid default_slash_on_unresolved_challenge value must fail closed",
+        );
+        assert!(matches!(err, PouwError::State(msg) if msg.contains(
+            "invalid boolean governance value for default_slash_on_unresolved_challenge: maybe"
+        )));
+
+        let after_task = st.get_task(r5.id).unwrap();
+        assert_eq!(after_task.status, before_task.status);
+        assert_eq!(
+            after_task.challenge_bond_forfeited,
+            before_task.challenge_bond_forfeited
+        );
+        assert_eq!(after_task.resolve_deadline_height, before_task.resolve_deadline_height);
+        assert_eq!(st.balance_of("challenger"), before_challenger);
+        assert_eq!(st.balance_of("worker1"), before_worker);
+        assert_eq!(st.balance_of(&worker_stake_lock_account(40_119)), before_lock);
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
+        assert_eq!(
+            st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
+            before_slash_treasury
+        );
+    }
+
+    #[test]
     fn challenged_timeout_slash_path_only_moves_task_local_stake_and_never_auto_pays_bounty() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
@@ -10739,7 +10817,17 @@ mod tests {
     }
 
     #[test]
-    fn slashed_terminal_settlement_without_explicit_bounty_payout_only_credits_global_slash_treasury() {
+    fn parse_governed_bool_param_rejects_non_canonical_whitespace_wrapped_aliases() {
+        for raw in [" true", "true ", "\ttrue", "false\n"] {
+            let err = parse_governed_bool_param(raw, "default_slash_on_unresolved_challenge")
+                .expect_err("whitespace-wrapped boolean alias must be rejected");
+            assert!(matches!(err, PouwError::State(msg) if msg.contains(raw)));
+        }
+    }
+
+    #[test]
+    fn slashed_terminal_settlement_without_explicit_bounty_payout_only_credits_global_slash_treasury(
+    ) {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
         st.set_balance("worker1", 50);
@@ -10780,13 +10868,17 @@ mod tests {
         assert_eq!(task.status, TaskStatus::Slashed);
         assert_eq!(task.challenge_bond_forfeited, Some(false));
         assert_eq!(st.balance_of("challenger"), before_challenger);
-        assert_eq!(st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT), before_slash_treasury + 50);
+        assert_eq!(
+            st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
+            before_slash_treasury + 50
+        );
         assert_eq!(st.balance_of(&worker_stake_lock_account(40_093)), 0);
         assert_eq!(st.balance_of("worker1"), 0);
     }
 
     #[test]
-    fn slashed_terminal_settlement_pays_challenge_bounty_from_task_local_worker_lock_when_explicitly_invoked() {
+    fn slashed_terminal_settlement_pays_challenge_bounty_from_task_local_worker_lock_when_explicitly_invoked(
+    ) {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
         st.set_balance("worker1", 50);
@@ -10930,7 +11022,9 @@ mod tests {
         let err = maybe_pay_challenge_success_bounty(&mut st, &task).expect_err(
             "slashed payout must fail closed without successful challenge forfeit marker",
         );
-        assert!(matches!(err, PouwError::State(msg) if msg.contains("successful challenge settlement metadata")));
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("successful challenge settlement metadata"))
+        );
         assert_eq!(st.balance_of("challenger"), before_challenger);
         assert_eq!(
             st.balance_of(&worker_stake_lock_account(40_206)),
@@ -14619,7 +14713,10 @@ mod tests {
         assert_eq!(task.status, TaskStatus::Challenged);
         assert_eq!(task.challenge_bond_forfeited, None);
         assert_eq!(st.balance_of("challenger"), before.balance_of("challenger"));
-        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before.balance_of(CHALLENGE_ESCROW_ACCOUNT));
+        assert_eq!(
+            st.balance_of(CHALLENGE_ESCROW_ACCOUNT),
+            before.balance_of(CHALLENGE_ESCROW_ACCOUNT)
+        );
         assert_eq!(
             st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
             before.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT)
