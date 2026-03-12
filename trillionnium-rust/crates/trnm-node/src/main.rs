@@ -1961,6 +1961,14 @@ fn scan_and_apply_timeouts(
         ) {
             continue;
         }
+        if st.is_emergency_paused() && matches!(task.status, TaskStatus::Challenged) {
+            // Governance boundary hardening: the node-level timeout scanner must not even
+            // enter challenged settlement while emergency pause is active. The lower-level
+            // timeout path is already fail-closed, but skipping here keeps pause semantics
+            // explicit and preserves staged resolve approvals/escrow without touching the
+            // challenged settlement path at all.
+            continue;
+        }
         let from_status = format!("{:?}", task.status);
         let challenger = task.challenger.clone();
         let Some(task_ref) = st.get_ref(task_id) else {
@@ -4432,6 +4440,116 @@ mod tests {
             .expect("task must exist after timeout scan");
         assert_eq!(task.status, TaskStatus::Completed);
         assert_eq!(task.challenge_bond_forfeited, None);
+    }
+
+    #[test]
+    fn timeout_scan_skips_challenged_task_while_paused_without_mutating_staged_resolve_state() {
+        // Governance boundary hardening: the node-level timeout scanner must not touch
+        // challenged settlement while paused, preserving staged resolve quorum and escrow.
+        let mut st = StateStore::new();
+        st.set_balance("worker7006", 1_000);
+        st.set_balance("challenger7006", 100);
+        st.set_gov_param_bootstrap_unchecked(
+            9_500,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("bootstrap resolve authority should succeed");
+
+        let result_hash = [7u8; 32];
+        let reveal_salt = [9u8; 32];
+        let r1 = apply_create_task(&mut st, 7006, "alice".into(), 100).unwrap();
+        let committed = compute_commitment(7006, &result_hash, &reveal_salt, "worker7006");
+        let r2 = apply_accept_task(&mut st, r1, "worker7006".into()).unwrap();
+        let r3 = trnm_pouw::apply_commit_result_at_height(
+            &mut st,
+            r2,
+            "worker7006".into(),
+            committed,
+            100,
+        )
+        .unwrap();
+        let r4 = trnm_pouw::apply_reveal_result_at_height(
+            &mut st,
+            r3,
+            result_hash,
+            reveal_salt,
+            None,
+            110,
+        )
+        .unwrap();
+        let r5 = trnm_pouw::apply_challenge_at_height(
+            &mut st,
+            r4,
+            "challenger7006".into(),
+            10,
+            "challenger7006".into(),
+            210,
+        )
+        .unwrap();
+
+        let staged = apply_resolve_at_height(
+            &mut st,
+            r5.clone(),
+            true,
+            "authority-a".into(),
+            "authority-a".into(),
+            211,
+        )
+        .expect_err("first resolve approval should only stage quorum");
+        assert!(matches!(staged, trnm_pouw::PouwError::ResolveApprovalStaged));
+        assert_eq!(st.pending_resolve_approval(r5.id), Some((true, 1)));
+        assert_eq!(
+            st.pending_resolve_first_approver(r5.id).as_deref(),
+            Some("authority-a")
+        );
+
+        st.set_gov_param(9_231, 7_999, "emergency_pause".into(), "true".into())
+            .expect("pause=true governance update must succeed");
+        assert!(st.is_emergency_paused());
+
+        let resolve_deadline = st
+            .get_task(7006)
+            .and_then(|t| t.resolve_deadline_height)
+            .expect("resolve deadline must be present after challenge");
+        let before_task = st.get_task(7006).expect("challenged task must exist");
+        let before_escrow = st.balance_of("treasury.challenge_escrow");
+        let before_forfeit = st.balance_of("treasury.challenge_forfeits");
+        let before_worker_slash = st.balance_of("treasury.worker_slashes");
+        let before_challenger = st.balance_of("challenger7006");
+
+        let known: HashSet<u64> = [7006u64].into_iter().collect();
+        let migrated = scan_and_apply_timeouts(
+            &mut st,
+            &known,
+            resolve_deadline.saturating_add(1),
+            9_100_201,
+        );
+
+        assert_eq!(migrated, 0);
+        let after_task = st
+            .get_task(7006)
+            .expect("challenged task must remain after paused scan");
+        assert_eq!(after_task.status, before_task.status);
+        assert_eq!(
+            after_task.challenge_bond_forfeited,
+            before_task.challenge_bond_forfeited
+        );
+        assert_eq!(st.pending_resolve_approval(7006), Some((true, 1)));
+        assert_eq!(
+            st.pending_resolve_first_approver(7006).as_deref(),
+            Some("authority-a")
+        );
+        assert_eq!(st.balance_of("treasury.challenge_escrow"), before_escrow);
+        assert_eq!(
+            st.balance_of("treasury.challenge_forfeits"),
+            before_forfeit
+        );
+        assert_eq!(
+            st.balance_of("treasury.worker_slashes"),
+            before_worker_slash
+        );
+        assert_eq!(st.balance_of("challenger7006"), before_challenger);
     }
 
     #[test]
