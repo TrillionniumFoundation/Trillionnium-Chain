@@ -54,6 +54,63 @@ def validate_snapshot(s, min_sources, max_staleness_ms, max_deviation_bps):
     return "ok", len(latest_sample_by_source)
 
 
+def _validate_baseline_output_contract(out):
+    required = {
+        "oracle_ingest_latency_ms",
+        "oracle_stale_reject_total",
+        "oracle_quorum_reject_total",
+        "oracle_drift_reject_total",
+        "oracle_source_cardinality",
+        "accepted_total",
+        "sample_count",
+    }
+    missing = sorted(required - out.keys())
+    if missing:
+        raise SystemExit(f"baseline contract missing keys: {missing}")
+
+    rejected_total = (
+        out["oracle_stale_reject_total"]
+        + out["oracle_quorum_reject_total"]
+        + out["oracle_drift_reject_total"]
+    )
+    if out["accepted_total"] + rejected_total != out["sample_count"]:
+        raise SystemExit(
+            "baseline contract violated: accepted_total + rejected_total must equal sample_count"
+        )
+
+    if out["accepted_total"] == 0 and out["oracle_source_cardinality"] != 0:
+        raise SystemExit(
+            "baseline contract violated: oracle_source_cardinality must be 0 when accepted_total is 0"
+        )
+
+    if out["accepted_total"] > 0 and out["oracle_source_cardinality"] == 0:
+        raise SystemExit(
+            "baseline contract violated: oracle_source_cardinality must be positive when accepted_total is non-zero"
+        )
+
+
+def _validate_bench_output_contract(out):
+    required = {
+        "bench_rounds",
+        "bench_count",
+        "ingest_latency_p50_ms",
+        "ingest_latency_p95_ms",
+        "ingest_latency_max_ms",
+    }
+    missing = sorted(required - out.keys())
+    if missing:
+        raise SystemExit(f"bench contract missing keys: {missing}")
+
+    if not (
+        out["ingest_latency_p50_ms"]
+        <= out["ingest_latency_p95_ms"]
+        <= out["ingest_latency_max_ms"]
+    ):
+        raise SystemExit(
+            "bench contract violated: latency ordering must satisfy p50 <= p95 <= max"
+        )
+
+
 def run_baseline(cases, args):
     t0 = time.perf_counter_ns()
     stale = quorum = drift = 0
@@ -72,7 +129,7 @@ def run_baseline(cases, args):
             accepted_source_cardinalities.append(card)
     elapsed_ms = (time.perf_counter_ns() - t0) / 1_000_000.0
     source_cardinality = max(accepted_source_cardinalities, default=0)
-    return {
+    out = {
         "oracle_ingest_latency_ms": round(elapsed_ms, 3),
         "oracle_stale_reject_total": stale,
         "oracle_quorum_reject_total": quorum,
@@ -81,6 +138,8 @@ def run_baseline(cases, args):
         "accepted_total": oks,
         "sample_count": len(cases),
     }
+    _validate_baseline_output_contract(out)
+    return out
 
 
 def synth_case(ts):
@@ -123,13 +182,15 @@ def run_bench(args):
     lat_sorted = sorted(lat)
     p50 = statistics.median(lat_sorted)
     p95 = lat_sorted[min(len(lat_sorted) - 1, int(len(lat_sorted) * 0.95))]
-    return {
+    out = {
         "bench_rounds": args.bench_rounds,
         "bench_count": args.bench_count,
         "ingest_latency_p50_ms": round(p50, 3),
         "ingest_latency_p95_ms": round(p95, 3),
         "ingest_latency_max_ms": round(max(lat_sorted), 3),
     }
+    _validate_bench_output_contract(out)
+    return out
 
 
 def main():
@@ -224,6 +285,38 @@ def _test_duplicate_sources_count_once_for_quorum_and_drift():
     )
     assert status == "ok"
     assert cardinality == 2
+
+
+def _test_run_baseline_enforces_sample_count_conservation_contract():
+    args = argparse.Namespace(
+        min_sources=2,
+        max_staleness_ms=60_000,
+        max_deviation_bps=500,
+    )
+    out = run_baseline(
+        [
+            {
+                "snapshot_ts_ms": 1_000,
+                "sources": [
+                    {"source": "s1", "value": 100.0, "ts_unix_ms": 1_000},
+                    {"source": "s2", "value": 100.0, "ts_unix_ms": 1_000},
+                ],
+            },
+            {
+                "snapshot_ts_ms": 1_000,
+                "sources": [
+                    {"source": "s1", "value": 100.0, "ts_unix_ms": 1_000},
+                ],
+            },
+        ],
+        args,
+    )
+    rejected_total = (
+        out["oracle_stale_reject_total"]
+        + out["oracle_quorum_reject_total"]
+        + out["oracle_drift_reject_total"]
+    )
+    assert out["accepted_total"] + rejected_total == out["sample_count"]
 
 
 def _test_duplicate_source_uses_latest_sample_for_staleness_and_drift():
