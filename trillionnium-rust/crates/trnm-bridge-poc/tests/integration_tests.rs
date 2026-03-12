@@ -365,3 +365,32 @@ fn test_authorized_calls_reject_tx_hash_with_invisible_unicode_controls() {
     );
     assert_eq!(request.status, BridgeStatus::Pending);
 }
+
+#[test]
+fn test_authorized_calls_reject_tx_hash_with_unicode_spacing_variants() {
+    let mut request = SettlementRequest::new(47, "0xabc\u{00A0}\u{2007}\u{202F}def".to_string());
+    let token = CapabilityToken {
+        subject: "did:trn:worker-g".to_string(),
+        capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
+    };
+
+    let finalize_err = request.settle_authorized(&token, 517).unwrap_err();
+    assert_eq!(
+        finalize_err,
+        SettlementError::MalformedRequest {
+            reason: "non-canonical tx_hash",
+        }
+    );
+    assert_eq!(request.status, BridgeStatus::Pending);
+
+    let revert_err = request
+        .revert_authorized(&token, "bridge timeout".to_string())
+        .unwrap_err();
+    assert_eq!(
+        revert_err,
+        SettlementError::MalformedRequest {
+            reason: "non-canonical tx_hash",
+        }
+    );
+    assert_eq!(request.status, BridgeStatus::Pending);
+}

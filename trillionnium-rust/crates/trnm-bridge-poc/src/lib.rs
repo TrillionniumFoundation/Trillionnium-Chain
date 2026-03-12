@@ -6,10 +6,12 @@ pub mod bridge_status {
         ch.is_control()
             || matches!(
                 ch,
-                '\u{00AD}'
+                '\u{00A0}'
+                    | '\u{00AD}'
                     | '\u{034F}'
                     | '\u{061C}'
                     | '\u{180E}'
+                    | '\u{2007}'
                     | '\u{200B}'
                     | '\u{200C}'
                     | '\u{200D}'
@@ -22,6 +24,7 @@ pub mod bridge_status {
                     | '\u{202C}'
                     | '\u{202D}'
                     | '\u{202E}'
+                    | '\u{202F}'
                     | '\u{2060}'
                     | '\u{2061}'
                     | '\u{2062}'
