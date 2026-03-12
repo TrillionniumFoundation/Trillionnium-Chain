@@ -639,6 +639,17 @@ pub fn parse_zk_proof_payload(
                 .to_string(),
         });
     }
+    if payload
+        .vk_ref
+        .chars()
+        .any(|ch| ch.is_ascii_whitespace() || ch.is_ascii_control())
+    {
+        return Err(BackendExecutionError::MalformedProof {
+            backend: "zk:payload".to_string(),
+            reason: "invalid zk payload: vk_ref must be a single opaque token without embedded whitespace or control characters"
+                .to_string(),
+        });
+    }
     if let Some(backend_id) = payload.backend_id.as_deref() {
         if backend_id != backend_id.trim() {
             return Err(BackendExecutionError::MalformedProof {
@@ -1054,6 +1065,13 @@ mod tests {
         let task = mock_task();
         let err = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","schema_version":"trnm.zk.payload.v0","vk_ref":"  vk://trnm/dev/mock-groth16/v1  ","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["4242","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#).unwrap_err();
         assert!(matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("vk_ref must not contain surrounding whitespace")));
+    }
+
+    #[test]
+    fn parse_zk_proof_payload_rejects_vk_ref_with_embedded_whitespace_or_control_chars() {
+        let task = mock_task();
+        let err = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/line\nbreak","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["4242","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#).unwrap_err();
+        assert!(matches!(err, BackendExecutionError::MalformedProof { reason, .. } if reason.contains("single opaque token") && reason.contains("embedded whitespace or control characters")));
     }
 
     #[test]

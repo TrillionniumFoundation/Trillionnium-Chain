@@ -136,7 +136,7 @@ v0 在路由层保持当前顶层种类不变：
 - `backend_version`：backend 契约版本，例如 `v1`；若显式提供，也必须是去除首尾空白后的 canonical token，不能依赖 router 静默 trim；且在 `trnm.zk.payload.v0` 中不得脱离 `backend_id` 单独出现
 - `proof_encoding`：canonical payload 中的 proof 字节编码字段；当前 router / parser 冻结接受 `hex | base64`，且在 `trnm.zk.payload.v0` 中该字段为必填，必须使用小写 canonical token；缺失或使用非 canonical 大小写/别名时必须 fail-closed，不得静默默认到 `base64`
 - `proof_format`：backend/config 能力层的编码格式声明，例如 `raw-bytes | hex | base64 | json-envelope`
-- `vk_ref`：verification key / verifier image / method id / verifier config 的引用；在 canonical payload 中必须非空，按 opaque reference 语义区分大小写，且不得依赖 router 对首尾空白做静默 trim
+- `vk_ref`：verification key / verifier image / method id / verifier config 的引用；在 canonical payload 中必须非空，按 opaque reference 语义区分大小写，且不得依赖 router 对首尾空白做静默 trim；同时必须保持为单一 opaque token，不得夹带内嵌 ASCII 空白或控制字符，避免 payload/registry/router 对同一引用产生不同语义
 
 ### 4.3 推荐 trait 形态（文档冻结，不要求本次实现）
 

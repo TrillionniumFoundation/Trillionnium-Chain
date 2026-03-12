@@ -22,7 +22,7 @@ Current canonical payload proof byte encoding field used by router / backend tes
 
 Additional v0 parser / router contract reminders already enforced by tests and code:
 
-- `vk_ref` is required, case-sensitive as an opaque verifier reference, and must not rely on silent surrounding-whitespace trimming.
+- `vk_ref` is required, case-sensitive as an opaque verifier reference, must not rely on silent surrounding-whitespace trimming, and must be a single opaque token without embedded ASCII whitespace/control characters.
 - `backend_id`, when present, must be a non-empty canonical token without surrounding whitespace.
 - `backend_version`, when present, must be a non-empty canonical token without surrounding whitespace and must not appear without `backend_id`.
 - If a payload `backend_id` token carries canonical zk-system hints, all distinct hints must collapse to exactly one canonical system before routing; repeated identical hints (for example `groth16-groth16-demo`) are tolerated, but mixed hints (for example `groth16-plonk-demo`) must fail closed rather than being routed opportunistically.
