@@ -142,6 +142,10 @@ jobs:
         run: |
           ./scripts/v2/workflow_script_refs_summary_path_guard_test.sh
 
+      - name: Workflow script-ref strict invocation guard regression
+        run: |
+          ./scripts/v2/trnm_gate_quick_check_workflow_script_ref_strict_invocation_guard_test.sh
+
       - name: Workflow script refs umask guard regression
         run: |
           ./scripts/v2/workflow_script_refs_umask_env_guard_test.sh
