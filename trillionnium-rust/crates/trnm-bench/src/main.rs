@@ -332,6 +332,15 @@ mod tests {
     }
 
     #[test]
+    fn mixed_bench_default_path_matches_executor_default_strategy_output() {
+        let txs = build_mixed_txs(2_048, 256, 3, 2);
+        let (bench_groups, bench_profile) = StrategyArg::Default.resolve_profile(&txs);
+        let (executor_groups, executor_profile) = trnm_executor::build_parallel_groups_profile(&txs);
+
+        assert_profiles_match(&bench_groups, &bench_profile, &executor_groups, &executor_profile);
+    }
+
+    #[test]
     fn hot_streak_bench_default_path_matches_executor_original_strategy_output() {
         let txs = build_hot_streak_txs(20_000, 2_000, 3, 1);
         let (bench_groups, bench_profile) = StrategyArg::Default.resolve_profile(&txs);
