@@ -169,6 +169,14 @@ def non_negative_int(value: Any) -> int:
     return max(0, parsed)
 
 
+def non_negative_float(value: Any) -> float:
+    try:
+        parsed = float(value or 0.0)
+    except (TypeError, ValueError):
+        return 0.0
+    return max(0.0, parsed)
+
+
 def pct_or_none(numer: int, denom: int) -> float | None:
     if denom <= 0:
         return None
@@ -362,15 +370,15 @@ def main() -> int:
     prev_threshold_keys = {x.get("key") for x in prev_threshold_changes if isinstance(x, dict) and x.get("key")}
 
     has_prev = bool(prev_week_json_path and prev_metrics)
-    prev_total = int(prev_metrics.get("alerts_total", 0) or 0) if has_prev else 0
-    prev_suppression_rate = float(prev_metrics.get("suppression_rate_pct", 0.0) or 0.0) if has_prev else 0.0
-    prev_failure_rate = float(prev_metrics.get("failure_rate_pct", 0.0) or 0.0) if has_prev else 0.0
+    prev_total = non_negative_int(prev_metrics.get("alerts_total", 0)) if has_prev else 0
+    prev_suppression_rate = non_negative_float(prev_metrics.get("suppression_rate_pct", 0.0)) if has_prev else 0.0
+    prev_failure_rate = non_negative_float(prev_metrics.get("failure_rate_pct", 0.0)) if has_prev else 0.0
     prev_delivery_success_rate = (
-        float(prev_metrics.get("delivery_success_rate_pct", 0.0) or 0.0)
+        non_negative_float(prev_metrics.get("delivery_success_rate_pct", 0.0))
         if has_prev and prev_metrics.get("delivery_success_rate_pct") is not None
         else None
     )
-    prev_suppression_share_pct = float(prev_metrics.get("suppression_share_pct", 0.0) or 0.0) if has_prev else 0.0
+    prev_suppression_share_pct = non_negative_float(prev_metrics.get("suppression_share_pct", 0.0)) if has_prev else 0.0
 
     wow = {
         "available": has_prev,
