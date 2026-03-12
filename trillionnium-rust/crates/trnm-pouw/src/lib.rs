@@ -322,17 +322,13 @@ fn validate_challenge_accounting_invariants(task: &TaskObject) -> Result<(), Pou
     }
 
     if let Some(challenger) = task.challenger.as_ref() {
-        let challenger_trimmed = challenger.trim();
-        if challenger_trimmed.is_empty() {
+        if challenger.trim().is_empty() {
             return Err(PouwError::State(
                 "challenge metadata contains blank challenger identity".into(),
             ));
         }
-        if challenger_trimmed != challenger {
-            return Err(PouwError::State(
-                "challenge metadata contains non-canonical challenger identity".into(),
-            ));
-        }
+        require_canonical_actor_id_state(challenger, "challenger identity")
+            .map_err(|_| PouwError::State("challenge metadata contains non-canonical challenger identity".into()))?;
     }
 
     if has_bond != has_challenger {
@@ -746,6 +742,9 @@ fn maybe_pay_challenge_success_bounty(
             "challenge success bounty requires challenger identity".into(),
         ));
     };
+    require_canonical_actor_id_state(challenger, "challenger identity").map_err(|_| {
+        PouwError::State("challenge success bounty requires canonical challenger identity".into())
+    })?;
 
     let configured_bounty = st
         .gov_param_u128("challenge_success_bounty")
@@ -6933,6 +6932,51 @@ mod tests {
     }
 
     #[test]
+    fn resolve_rejects_hidden_char_challenger_identity_without_balance_mutation() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+
+        let r1 = apply_create_task(&mut st, 39003, "alice".into(), 100).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(39003, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+        let r5 =
+            apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
+
+        let mut bad = st.get_task(r5.id).unwrap();
+        bad.challenger = Some("challenger\u{200b}".into());
+        let bad_ref = st.update_task(r5, bad).unwrap();
+
+        let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+        let before_forfeit = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+
+        set_resolve_authority(&mut st, "authority");
+        let err = apply_resolve(
+            &mut st,
+            bad_ref,
+            true,
+            "authority".into(),
+            "authority".into(),
+        )
+        .unwrap_err();
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("non-canonical challenger identity"))
+        );
+
+        let task = st.get_task(39003).unwrap();
+        assert_eq!(task.status, TaskStatus::Challenged);
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
+    }
+
+    #[test]
     fn resolve_rejects_noncanonical_assigned_worker_identity_without_escrow_mutation() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
@@ -11132,6 +11176,61 @@ mod tests {
         assert_eq!(st.balance_of("challenger"), before_challenger);
         assert_eq!(
             st.balance_of(&worker_stake_lock_account(40_203)),
+            before_lock
+        );
+        assert_eq!(
+            st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
+            before_slash_treasury
+        );
+    }
+
+    #[test]
+    fn challenge_success_bounty_rejects_noncanonical_challenger_identity() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        st.set_balance("worker1", 50);
+        st.set_gov_param_bootstrap_unchecked(40_221, "challenge_success_bounty".into(), "1".into())
+            .unwrap();
+        st.set_gov_param_bootstrap_unchecked(40_222, "min_worker_stake".into(), "50".into())
+            .unwrap();
+
+        let r1 = apply_create_task(&mut st, 40_223, "alice".into(), 10).unwrap();
+        let result_hash = [4u8; 32];
+        let reveal_salt = [8u8; 32];
+        let committed = compute_commitment(40_223, &result_hash, &reveal_salt, "worker1");
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 =
+            apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
+        let r4 = apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110)
+            .unwrap();
+        let r5 = apply_challenge_at_height(
+            &mut st,
+            r4,
+            "challenger".into(),
+            10,
+            "challenger".into(),
+            120,
+        )
+        .unwrap();
+
+        let mut malformed = st.get_task(r5.id).unwrap();
+        malformed.status = TaskStatus::Slashed;
+        malformed.challenge_bond_forfeited = Some(false);
+        malformed.challenger = Some("challenger\u{200b}".into());
+        let next = st.update_task(r5, malformed).unwrap();
+        let task = st.get_task(next.id).unwrap();
+        let before_challenger = st.balance_of("challenger");
+        let before_lock = st.balance_of(&worker_stake_lock_account(40_223));
+        let before_slash_treasury = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
+
+        let err = maybe_pay_challenge_success_bounty(&mut st, &task)
+            .expect_err("challenge success bounty must fail closed for malformed challenger identity");
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("canonical challenger identity"))
+        );
+        assert_eq!(st.balance_of("challenger"), before_challenger);
+        assert_eq!(
+            st.balance_of(&worker_stake_lock_account(40_223)),
             before_lock
         );
         assert_eq!(
