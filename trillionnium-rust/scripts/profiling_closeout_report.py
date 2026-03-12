@@ -696,6 +696,27 @@ def main():
             "profile.auto.expected_gain_score",
             "profile.auto.min_expected_gain_score",
         ]
+        executor_context_keys = [
+            "profile.report.workload",
+            "profile.report.strategy",
+            "profile.report.txs",
+            "profile.report.keys",
+            "profile.report.read_fanout",
+            "profile.report.write_every",
+            "profile.report.elapsed_ms",
+            "profile.report.path",
+            "profile.report.autopilot_hint",
+        ]
+        executor_context_lines = [
+            f"- executor_profile.{key}: {executor_profile_metrics[key]}"
+            for key in executor_context_keys
+            if key in executor_profile_metrics
+        ]
+        if executor_context_lines:
+            lines.append("")
+            lines.append("### Executor Profile Context")
+            lines.extend(executor_context_lines)
+
         auto_metric_lines = [
             f"- executor_profile.{key}: {executor_profile_metrics[key]}"
             for key in auto_metric_keys
