@@ -282,6 +282,14 @@ def main():
         if not candidates:
             preview.append(f"  - none: pattern produced no matches")
             return preview
+        newest = candidates[0]
+        oldest = candidates[-1]
+        spread_seconds = int(os.path.getmtime(newest) - os.path.getmtime(oldest)) if len(candidates) >= 2 else 0
+        preview.append(
+            f"  - candidate_window: newest={os.path.basename(newest)} oldest={os.path.basename(oldest)} "
+            f"spread_seconds={spread_seconds} newest_freshness={freshness_label(file_age_seconds(newest))} "
+            f"oldest_freshness={freshness_label(file_age_seconds(oldest))}"
+        )
         for idx, path in enumerate(candidates[:max_items], start=1):
             preview.append(
                 f"  - recent_{idx}: basename={os.path.basename(path)} "
