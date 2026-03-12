@@ -112,6 +112,7 @@ def _validate_bench_output_contract(out):
 
 
 def run_baseline(cases, args):
+    _validate_contract_args(args)
     if not cases:
         raise SystemExit("baseline input must contain at least one case")
 
@@ -333,6 +334,30 @@ def _test_run_baseline_rejects_empty_fixture_list_with_stable_error():
         raise AssertionError("empty baseline input should fail closed")
     except SystemExit as exc:
         assert str(exc) == "baseline input must contain at least one case"
+
+
+def _test_run_baseline_fail_closed_on_invalid_policy_bounds_even_when_imported_directly():
+    args = argparse.Namespace(
+        min_sources=0,
+        max_staleness_ms=60_000,
+        max_deviation_bps=500,
+    )
+    try:
+        run_baseline(
+            [
+                {
+                    "snapshot_ts_ms": 1_000,
+                    "sources": [
+                        {"source": "s1", "value": 100.0, "ts_unix_ms": 1_000},
+                        {"source": "s2", "value": 100.0, "ts_unix_ms": 1_000},
+                    ],
+                }
+            ],
+            args,
+        )
+        raise AssertionError("run_baseline should fail closed on invalid imported policy args")
+    except SystemExit as exc:
+        assert str(exc) == "min_sources must be > 0"
 
 
 def _test_duplicate_source_uses_latest_sample_for_staleness_and_drift():
