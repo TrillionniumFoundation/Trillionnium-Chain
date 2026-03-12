@@ -1274,6 +1274,24 @@ mod tests {
     }
 
     #[test]
+    fn full_drain_cold_resets_fairness_even_when_pop_self_heals_seen_global() {
+        let mut g = LaneAdmissionGate::new(3, 1);
+
+        assert_eq!(g.admit(11, IngressClass::Normal), AdmitOutcome::Accepted);
+
+        // Simulate restored-state skew right before the final drain: the lane still
+        // has one real queued tx, but fairness bookkeeping is stale-hot and the
+        // lane-wide id cache carries an extra ghost id that post-pop self-heal must prune.
+        g.critical_served_streak = g.critical_burst_limit;
+        g.seen_global.insert(999);
+
+        assert_eq!(g.pop_ready(), Some(11));
+        assert_eq!(g.queued_counts(), (0, 0, 0));
+        assert!(g.seen_global.is_empty());
+        assert_eq!(g.critical_served_streak, 0);
+    }
+
+    #[test]
     fn idle_self_heal_resets_stale_fairness_streak_before_new_mixed_ingress() {
         let mut g = LaneAdmissionGate::new(4, 1);
 
