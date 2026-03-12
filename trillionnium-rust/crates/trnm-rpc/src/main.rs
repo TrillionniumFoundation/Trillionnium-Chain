@@ -4102,6 +4102,42 @@ mod tests {
     }
 
     #[test]
+    fn read_http_request_head_accepts_header_terminator_exactly_at_limit() {
+        use std::net::{TcpListener, TcpStream};
+        use std::thread;
+
+        let listener = TcpListener::bind("127.0.0.1:0").expect("bind test listener");
+        let addr = listener.local_addr().expect("listener addr");
+
+        let prefix = b"GET /health HTTP/1.1\r\nX-Fill: ";
+        let suffix = b"\r\n\r\n";
+        let filler_len = HEALTH_REQUEST_HEADER_MAX_BYTES
+            .checked_sub(prefix.len() + suffix.len())
+            .expect("prefix + suffix fit within cap");
+        let mut request = Vec::with_capacity(HEALTH_REQUEST_HEADER_MAX_BYTES);
+        request.extend_from_slice(prefix);
+        request.extend(std::iter::repeat_n(b'a', filler_len));
+        request.extend_from_slice(suffix);
+        assert_eq!(request.len(), HEALTH_REQUEST_HEADER_MAX_BYTES);
+
+        let client = thread::spawn(move || {
+            let mut client = TcpStream::connect(addr).expect("connect test listener");
+            client
+                .write_all(&request)
+                .expect("write exact-limit terminated header");
+        });
+
+        let (mut server_stream, _) = listener.accept().expect("accept test client");
+        configure_health_stream(&server_stream).expect("configure timeouts");
+        let head = read_http_request_head(&mut server_stream)
+            .expect("terminated headers at cap must remain accepted");
+        assert_eq!(head.len(), HEALTH_REQUEST_HEADER_MAX_BYTES);
+        assert!(head.ends_with(b"\r\n\r\n"));
+
+        client.join().expect("client thread join");
+    }
+
+    #[test]
     fn clamp_limit_enforces_max() {
         let got = clamp_limit(
             "QueryEvents",
