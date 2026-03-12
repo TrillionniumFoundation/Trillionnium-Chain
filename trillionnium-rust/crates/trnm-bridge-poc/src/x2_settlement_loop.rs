@@ -31,14 +31,10 @@ pub enum SettlementStep {
 
 const MAX_COMPENSATION_REASON_CHARS: usize = 160;
 
-pub fn drive_minimal_settlement(
-    request: &mut SettlementRequest,
-    token: &CapabilityToken,
-    heartbeat: &HeartbeatOutcome,
-    confirm: SettlementConfirm,
-) -> Result<SettlementStep, SettlementError> {
-    let (hb_src, hb_tgt, hb_latency) = heartbeat
+fn heartbeat_metrics_for_event(heartbeat: &HeartbeatOutcome) -> (Option<u64>, Option<u64>, Option<u64>) {
+    heartbeat
         .heartbeat
+        .filter(|h| h.source_height > 0 && h.target_height > 0 && h.target_height <= h.source_height)
         .map(|h| {
             (
                 Some(h.source_height),
@@ -46,7 +42,16 @@ pub fn drive_minimal_settlement(
                 Some(h.latency_ms),
             )
         })
-        .unwrap_or((None, None, None));
+        .unwrap_or((None, None, None))
+}
+
+pub fn drive_minimal_settlement(
+    request: &mut SettlementRequest,
+    token: &CapabilityToken,
+    heartbeat: &HeartbeatOutcome,
+    confirm: SettlementConfirm,
+) -> Result<SettlementStep, SettlementError> {
+    let (hb_src, hb_tgt, hb_latency) = heartbeat_metrics_for_event(heartbeat);
 
     if heartbeat.degraded {
         let degraded_reason =
