@@ -747,7 +747,6 @@ def main():
         "keep_latest": "keep_latest_only_no_archive_action",
         "keep_latest_and_consider_archive": "review_archive_candidates_before_manual_cleanup",
     }.get(str(baseline_report_pool["action"]), "review_archive_candidates_before_manual_cleanup")
-    lines.append(f"- baseline_closeout_report_followup: {baseline_report_followup}")
 
     lines += ["", "## Baseline Report Action Summary"]
     lines.append(
