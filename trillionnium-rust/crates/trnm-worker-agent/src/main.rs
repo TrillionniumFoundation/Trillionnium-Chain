@@ -918,6 +918,10 @@ fn is_receipt_quote_wrapper(ch: char) -> bool {
             | '»'
             | '‹'
             | '›'
+            | '〈'
+            | '〉'
+            | '《'
+            | '》'
             | '「'
             | '」'
             | '『'
@@ -2548,6 +2552,14 @@ mod tests {
         let guillemet = parse_tx_hash("adapter stdout: {«tx_hash»: «0xDEADBEEF»}")
             .expect("guillemet-quoted receipt hash should parse");
         assert_eq!(guillemet, "deadbeef");
+
+        let single_angle = parse_tx_hash("adapter stdout: {〈tx_hash〉: 〈0xBADDCAFE〉}")
+            .expect("single-angle-quoted receipt hash should parse");
+        assert_eq!(single_angle, "baddcafe");
+
+        let double_angle = parse_tx_hash("adapter stdout: {《transaction hash》: 《0xABCD1234》}")
+            .expect("double-angle-quoted transaction hash alias should parse");
+        assert_eq!(double_angle, "abcd1234");
 
         let corner_bracket = parse_tx_hash("adapter stdout: {「transaction hash」: 「0xFACECAFE」}")
             .expect("corner-bracket-quoted transaction hash alias should parse");
