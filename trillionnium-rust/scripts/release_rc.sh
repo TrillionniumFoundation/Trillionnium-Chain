@@ -23,9 +23,12 @@ export RUST_BACKTRACE="${RUST_BACKTRACE:-$replay_rust_backtrace}"
 export CARGO_BUILD_JOBS="${CARGO_BUILD_JOBS:-$replay_cargo_build_jobs}"
 
 TS="$(date +%Y%m%d-%H%M%S)"
-OUT="release/rc-$TS"
+BASE_OUT_INPUT="${OUT_DIR:-$ROOT/release}"
+mkdir -p "$BASE_OUT_INPUT"
+BASE_OUT="$(cd "$BASE_OUT_INPUT" && pwd)"
+OUT="$BASE_OUT/rc-$TS"
 mkdir -p "$OUT"
-RC_OUT_DIR="$(cd "$OUT" && pwd)"
+RC_OUT_DIR="$OUT"
 
 GIT_HEAD="$(git rev-parse HEAD 2>/dev/null || echo unknown)"
 GIT_BRANCH="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo unknown)"
@@ -124,7 +127,8 @@ THRESHOLD_PROFILE=${THRESHOLD_PROFILE:-stage1} ./scripts/enforce_ci_thresholds.s
 cargo build --workspace | tee "$OUT/cargo-build.log"
 
 rollback_command="rm -rf $(printf '%q' "$RC_OUT_DIR")"
-replay_command="env TZ=$replay_tz LC_ALL=$replay_lc_all LANG=$replay_lang SOURCE_DATE_EPOCH=$replay_source_date_epoch CARGO_TERM_COLOR=$replay_cargo_term_color RUST_BACKTRACE=$replay_rust_backtrace CARGO_BUILD_JOBS=$replay_cargo_build_jobs MVP_MODE='${MVP_MODE:-prod}' TXS='${TXS:-5000}' THRESHOLD_PROFILE='${THRESHOLD_PROFILE:-stage1}' ./scripts/release_rc.sh"
+replay_out_dir="${OUT_DIR:-$BASE_OUT}"
+replay_command="env TZ=$replay_tz LC_ALL=$replay_lc_all LANG=$replay_lang SOURCE_DATE_EPOCH=$replay_source_date_epoch CARGO_TERM_COLOR=$replay_cargo_term_color RUST_BACKTRACE=$replay_rust_backtrace CARGO_BUILD_JOBS=$replay_cargo_build_jobs OUT_DIR='${replay_out_dir}' MVP_MODE='${MVP_MODE:-prod}' TXS='${TXS:-5000}' THRESHOLD_PROFILE='${THRESHOLD_PROFILE:-stage1}' ./scripts/release_rc.sh"
 
 cat > "$OUT/manifest.txt" <<EOF
 release_id=rc-$TS
