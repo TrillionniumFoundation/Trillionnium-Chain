@@ -2673,6 +2673,32 @@ mod tests {
     }
 
     #[test]
+    fn auto_adaptive_default_min_batch_boundary_runs_hotspot_probe() {
+        let _env = env_lock();
+        let _sample = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", "2048");
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.20");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.20");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.05");
+
+        // The default adaptive entry gate is 512 txs. Keep an exact-boundary
+        // regression so future tuning does not accidentally treat this as a
+        // small batch and skip the hotspot probe on the first eligible batch.
+        let mut txs = Vec::with_capacity(512);
+        for i in 0..256u64 {
+            txs.push(tx(i, vec![], vec![o(10_000 + i)]));
+        }
+        for i in 0..256u64 {
+            txs.push(tx(1_000 + i, vec![], vec![o(42)]));
+        }
+
+        let d = auto_adaptive_decision(&txs);
+        assert_eq!(d.sample_len, txs.len());
+        assert!(d.use_hot_bucket, "default min-batch boundary should still run adaptive hotspot detection");
+        assert_eq!(d.reason, "hotspot_detected");
+    }
+
+    #[test]
     fn auto_adaptive_sub_min_batch_hotspots_stay_fail_closed() {
         let _env = env_lock();
         let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "64");
