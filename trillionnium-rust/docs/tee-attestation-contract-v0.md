@@ -296,6 +296,11 @@ And the session layer is now further split into per-request execution / readback
 - `VerifierHttpClientSessionRequestExecutor`
 - `VerifierHttpClientSessionResponseReader`
 
+And the session-request-executor layer is now further split into wire-level seams:
+- `VerifierHttpClientSessionWireRequestBuilder`
+- `VerifierHttpClientSessionWireExecutor`
+- `VerifierHttpClientSessionWireResponseParser`
+
 The default wiring remains fail-closed:
 - `AdapterBackedVerifierHttpRequestExecutor`
   - `DirectVerifierHttpRequestPlanner`
@@ -306,14 +311,17 @@ The default wiring remains fail-closed:
       - `SessionBackedVerifierHttpClientRuntime`
         - `StaticVerifierHttpClientSessionFactory`
           - `ExecutorBackedVerifierHttpClientSession`
-            - `FailClosedVerifierHttpClientSessionRequestExecutor`
+            - `WireBackedVerifierHttpClientSessionRequestExecutor`
+              - `DirectVerifierHttpClientSessionWireRequestBuilder`
+              - `FailClosedVerifierHttpClientSessionWireExecutor`
+              - `PassthroughVerifierHttpClientSessionWireResponseParser`
             - `PassthroughVerifierHttpClientSessionResponseReader`
       - `PassthroughVerifierHttpClientRuntimeResponseAdapter`
 - `Utf8HttpResponseBodyReader`
 - `NoopVerifierHttpTimeoutHook`
 
 This freezes a future real transport path as:
-- timeout hook -> request executor -> request planner -> client adapter -> client config resolver -> client handle -> runtime request builder -> client runtime -> session factory -> session -> session request executor -> session response reader -> runtime response adapter -> raw response -> body reader -> normalized `HttpVerifierResponse`
+- timeout hook -> request executor -> request planner -> client adapter -> client config resolver -> client handle -> runtime request builder -> client runtime -> session factory -> session -> session request executor -> wire request builder -> wire executor -> wire response parser -> session response reader -> runtime response adapter -> raw response -> body reader -> normalized `HttpVerifierResponse`
 
 So the scaffold now separates:
 1. HTTP request planning / profile + auth resolution
@@ -323,11 +331,13 @@ So the scaffold now separates:
 5. client-handle request shaping
 6. runtime session / connection setup
 7. session-level request execution
-8. session-level response readback
-9. runtime-response adaptation
-10. timeout/guard hook behavior
-11. body decoding / normalization
-12. verifier response decode + backend mapping
+8. wire-level request assembly / low-level execution
+9. wire-level response parsing
+10. session-level response readback
+11. runtime-response adaptation
+12. timeout/guard hook behavior
+13. body decoding / normalization
+14. verifier response decode + backend mapping
 
 ### HTTP payload skeletons
 The current adapter layer freezes two JSON request shapes:
