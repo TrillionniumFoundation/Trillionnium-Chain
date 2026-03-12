@@ -285,10 +285,17 @@ def main():
         newest = candidates[0]
         oldest = candidates[-1]
         spread_seconds = int(os.path.getmtime(newest) - os.path.getmtime(oldest)) if len(candidates) >= 2 else 0
+        freshness_counts = {"fresh": 0, "stale": 0, "old": 0}
+        for path in candidates:
+            freshness_counts[freshness_label(file_age_seconds(path))] += 1
         preview.append(
             f"  - candidate_window: newest={os.path.basename(newest)} oldest={os.path.basename(oldest)} "
             f"spread_seconds={spread_seconds} newest_freshness={freshness_label(file_age_seconds(newest))} "
             f"oldest_freshness={freshness_label(file_age_seconds(oldest))}"
+        )
+        preview.append(
+            "  - candidate_freshness_counts: "
+            f"fresh={freshness_counts['fresh']} stale={freshness_counts['stale']} old={freshness_counts['old']}"
         )
         if selected and selected in candidates:
             selected_rank = candidates.index(selected) + 1
