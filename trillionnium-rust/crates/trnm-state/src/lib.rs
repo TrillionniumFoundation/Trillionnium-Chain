@@ -4030,6 +4030,43 @@ mod tests {
     }
 
     #[test]
+    fn state_root_changes_when_pending_resolve_confirmation_count_changes() {
+        let mut st_a = StateStore::new();
+        st_a.stage_or_confirm_resolve_approval(
+            501,
+            1,
+            true,
+            "authority-a",
+            "authority-a,authority-b,authority-c",
+        )
+        .unwrap();
+
+        let mut st_b = StateStore::new();
+        st_b.stage_or_confirm_resolve_approval(
+            501,
+            1,
+            true,
+            "authority-a",
+            "authority-a,authority-b,authority-c",
+        )
+        .unwrap();
+        st_b.stage_or_confirm_resolve_approval(
+            501,
+            1,
+            true,
+            "authority-b",
+            "authority-a,authority-b,authority-c",
+        )
+        .unwrap();
+
+        assert_ne!(
+            st_a.state_root(),
+            st_b.state_root(),
+            "pending resolve confirmation count must contribute to state root"
+        );
+    }
+
+    #[test]
     fn state_root_changes_when_pending_resolve_task_version_changes() {
         let mut st_a = StateStore::new();
         st_a.stage_or_confirm_resolve_approval(
