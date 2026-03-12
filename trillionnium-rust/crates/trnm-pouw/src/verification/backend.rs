@@ -72,7 +72,7 @@ pub fn normalize_backend_token(raw: &str) -> Option<String> {
         .map(|ch| if ch.is_ascii_alphanumeric() { ch } else { ' ' })
         .collect::<String>();
     let collapsed = normalized.split_whitespace().collect::<Vec<_>>().join(" ");
-    if collapsed.is_empty() {
+    if collapsed.is_empty() || collapsed == "noop" {
         None
     } else {
         Some(collapsed)
@@ -902,5 +902,13 @@ mod tests {
         assert_eq!(normalize_zk_system(" Groth-16 "), Some("groth16".into()));
         assert_eq!(normalize_zk_system("PLONK"), Some("plonk".into()));
         assert_eq!(normalize_zk_system("mock-zk"), None);
+    }
+
+    #[test]
+    fn normalize_backend_token_rejects_noop_aliases_as_non_explicit_backend() {
+        assert_eq!(normalize_backend_token("noop"), None);
+        assert_eq!(normalize_backend_token(" NOOP "), None);
+        assert_eq!(normalize_backend_token("noop!!!"), None);
+        assert_eq!(normalize_backend_token("groth16-demo"), Some("groth16 demo".into()));
     }
 }
