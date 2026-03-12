@@ -124,6 +124,7 @@ impl TeeVerifier {
         let mentions_claims = normalized.contains("claim");
         let mentions_payload = normalized.contains("payload");
         let mentions_evidence = normalized.contains("evidence");
+        let mentions_certificate = normalized.contains("certificate") || normalized.contains("cert");
         let mentions_attestation = normalized.contains("attestation");
         let mentions_receipt = normalized.contains("receipt");
 
@@ -156,7 +157,7 @@ impl TeeVerifier {
         }
 
         if mentions_claims {
-            return if mentions_attestation || mentions_receipt {
+            return if mentions_attestation || mentions_receipt || mentions_certificate {
                 "evidence/claims"
             } else {
                 "claims"
@@ -164,14 +165,14 @@ impl TeeVerifier {
         }
 
         if mentions_payload {
-            return if mentions_attestation || mentions_receipt {
+            return if mentions_attestation || mentions_receipt || mentions_certificate {
                 "evidence/claims"
             } else {
                 "payload/claims"
             };
         }
 
-        if mentions_evidence || mentions_attestation || mentions_receipt {
+        if mentions_evidence || mentions_attestation || mentions_receipt || mentions_certificate {
             return "evidence/claims";
         }
 
@@ -893,6 +894,78 @@ mod tests {
         assert!(!msg.contains("quote claims"), "message: {msg}");
         assert!(!msg.contains("report claims"), "message: {msg}");
         assert!(!msg.contains("legacy:"), "message: {msg}");
+    }
+
+    #[test]
+    fn tee_verifier_backend_internal_certificate_payload_prefers_evidence_claims_surface() {
+        let result = TeeVerifier::classify_execution_err(BackendExecutionError::Internal {
+            backend: "tee:mock-tee-internal".to_string(),
+            reason: "TEE certificate payload verifier crashed".to_string(),
+        });
+
+        assert!(
+            matches!(result, VerificationResult::Indeterminate(_)),
+            "unexpected result: {result:?}"
+        );
+        let VerificationResult::Indeterminate(msg) = result else {
+            unreachable!()
+        };
+        assert!(msg.contains("backend_error:"), "message: {msg}");
+        assert!(msg.contains("evidence/claims"), "message: {msg}");
+        assert!(!msg.contains("payload/claims"), "message: {msg}");
+        assert!(!msg.contains("quote claims"), "message: {msg}");
+        assert!(!msg.contains("report claims"), "message: {msg}");
+        assert!(!msg.contains("legacy:"), "message: {msg}");
+    }
+
+    #[test]
+    fn tee_verifier_backend_unavailable_cert_claims_prefers_evidence_claims_surface_with_existing_legacy_suffix(
+    ) {
+        let result = TeeVerifier::classify_execution_err(BackendExecutionError::Unavailable {
+            backend: "tee:mock-tee-unavailable".to_string(),
+            reason: "cert claims verifier unavailable".to_string(),
+        });
+
+        assert!(
+            matches!(result, VerificationResult::Indeterminate(_)),
+            "unexpected result: {result:?}"
+        );
+        let VerificationResult::Indeterminate(msg) = result else {
+            unreachable!()
+        };
+        assert!(msg.contains("unavailable:"), "message: {msg}");
+        assert!(msg.contains("evidence/claims"), "message: {msg}");
+        assert!(!msg.contains("payload/claims"), "message: {msg}");
+        assert!(!msg.contains("quote claims"), "message: {msg}");
+        assert!(!msg.contains("report claims"), "message: {msg}");
+        assert!(
+            msg.contains("legacy: cannot currently verify TEE attestation evidence/claims"),
+            "message: {msg}"
+        );
+    }
+
+    #[test]
+    fn tee_verifier_backend_invalid_certificate_claims_maps_to_claims_wording_without_payload_leakage(
+    ) {
+        let result = TeeVerifier::classify_execution_err(BackendExecutionError::InvalidProof {
+            backend: "tee:mock-tee-invalid".to_string(),
+            reason: "certificate claims signature mismatch".to_string(),
+        });
+
+        assert!(
+            matches!(result, VerificationResult::Invalid(_)),
+            "unexpected result: {result:?}"
+        );
+        let VerificationResult::Invalid(msg) = result else {
+            unreachable!()
+        };
+        assert!(
+            msg.contains("invalid TEE attestation claims:"),
+            "message: {msg}"
+        );
+        assert!(!msg.contains("payload/claims"), "message: {msg}");
+        assert!(!msg.contains("evidence/claims"), "message: {msg}");
+        assert!(msg.contains("certificate claims signature mismatch"), "message: {msg}");
     }
 
     #[test]
