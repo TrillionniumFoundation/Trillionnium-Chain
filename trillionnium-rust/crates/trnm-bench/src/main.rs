@@ -224,6 +224,8 @@ fn build_hot_streak_txs(n: usize, keys: usize, read_fanout: usize, write_every: 
     let streak = 16usize;
     let hotspot_pool = keys.clamp(1, 8);
     let side_domain = keys.saturating_sub(hotspot_pool);
+    let read_fanout = read_fanout.max(1);
+    let write_every = write_every.max(1);
     for i in 0..n {
         // Keep hot-streak workloads concentrated on a tiny rotating hotspot pool so
         // the named scenario continues to exercise auto-adaptive hotspot detection
@@ -309,6 +311,21 @@ mod tests {
         assert!(txs
             .iter()
             .all(|tx| tx.write_set.iter().all(|obj| obj.id == 0)));
+    }
+
+    #[test]
+    fn hot_streak_builder_clamps_zero_direct_inputs_to_safe_minima() {
+        let txs = build_hot_streak_txs(32, 4, 0, 0);
+
+        assert_eq!(txs.len(), 32);
+        assert!(txs.iter().all(|tx| tx.read_set.len() == 1));
+        assert!(txs.iter().all(|tx| tx.write_set.len() == 1));
+        let decision = auto_adaptive_decision(&txs);
+        assert!(
+            decision.use_hot_bucket,
+            "zero direct inputs should still preserve the hot-streak hotspot profile"
+        );
+        assert_eq!(decision.reason, "hotspot_detected");
     }
 
     #[test]
