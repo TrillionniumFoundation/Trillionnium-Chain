@@ -31,6 +31,35 @@ impl ZkVerifier {
         }
     }
 
+    fn validate_selected_backend_token(raw: &str) -> Result<(), VerificationBackendError> {
+        if raw != raw.trim() {
+            return Err(BackendExecutionError::MalformedProof {
+                backend: "zk:payload".to_string(),
+                reason: format!(
+                    "invalid zk payload: backend '{}' must not contain surrounding whitespace",
+                    raw
+                ),
+            }
+            .into());
+        }
+
+        if raw
+            .chars()
+            .any(|ch| ch.is_ascii_whitespace() || ch.is_ascii_control())
+        {
+            return Err(BackendExecutionError::MalformedProof {
+                backend: "zk:payload".to_string(),
+                reason: format!(
+                    "invalid zk payload: backend '{}' must be a single opaque token without embedded whitespace or control characters",
+                    raw
+                ),
+            }
+            .into());
+        }
+
+        Ok(())
+    }
+
     #[allow(dead_code)]
     pub fn from_config(
         config: &VerificationBackendConfig,
@@ -146,9 +175,11 @@ impl ZkVerifier {
             {
                 ZkBackendKind::Custom(payload_backend_id.to_string())
             } else {
+                Self::validate_selected_backend_token(self.backend.key())?;
                 self.backend.clone()
             }
         } else {
+            Self::validate_selected_backend_token(self.backend.key())?;
             self.backend.clone()
         };
 
@@ -1053,6 +1084,52 @@ mod tests {
         let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["99","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#;
 
         assert_eq!(verifier.verify_proof(&task, payload), VerificationResult::Valid);
+    }
+
+    #[test]
+    fn zk_verifier_rejects_selected_backend_with_surrounding_whitespace_without_silent_trim() {
+        let mut backends = ZkBackendRegistry::new();
+        backends.register(Arc::new(MockSystemSuccessBackend {
+            backend_id: "groth16 demo",
+            expected_system: "groth16",
+        }));
+
+        let mut config = router_config();
+        config.zk_backend = ZkBackendKind::Custom("  groth16-demo  ".into());
+        let verifier = ZkVerifier::from_config(&config, Arc::new(backends));
+        let task = mock_task();
+        let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["99","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#;
+
+        assert!(matches!(
+            verifier.verify_proof(&task, payload),
+            VerificationResult::Invalid(msg)
+                if msg.contains("malformed:")
+                    && msg.contains("backend '  groth16-demo  '")
+                    && msg.contains("surrounding whitespace")
+        ));
+    }
+
+    #[test]
+    fn zk_verifier_rejects_selected_backend_with_embedded_control_whitespace() {
+        let mut backends = ZkBackendRegistry::new();
+        backends.register(Arc::new(MockSystemSuccessBackend {
+            backend_id: "groth16 demo",
+            expected_system: "groth16",
+        }));
+
+        let mut config = router_config();
+        config.zk_backend = ZkBackendKind::Custom("groth16-demo\nalt".into());
+        let verifier = ZkVerifier::from_config(&config, Arc::new(backends));
+        let task = mock_task();
+        let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["99","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#;
+
+        assert!(matches!(
+            verifier.verify_proof(&task, payload),
+            VerificationResult::Invalid(msg)
+                if msg.contains("malformed:")
+                    && msg.contains("backend 'groth16-demo")
+                    && msg.contains("single opaque token")
+        ));
     }
 
     #[test]

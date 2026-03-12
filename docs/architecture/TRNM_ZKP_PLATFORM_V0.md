@@ -419,7 +419,7 @@ v0 **不承诺**：
 4. 若 payload 显式携带 `backend_id`，且该 token 可推断 proving-system hint，则该 hint 必须与 `vk_ref` 的 canonical `zk_system` 一致；若同一 token 中出现多个**不同的** canonical system hint（例如 `groth16-plonk-demo` 或带显式 family 前缀的 `zk-groth16-plonk-demo`），router 必须按 invalid fail-closed 拒绝，而不是猜测使用其中之一。
 5. 若 payload 显式携带的 `backend_id` 只是 family-only router token（例如 `zk`、`zk-demo`，即显式声明了 ZK family 但没有任何 canonical zk-system hint），router 必须按 malformed fail-closed 拒绝，而不是把它当成 backend alias 或继续猜测式路由。
 6. 若 payload `backend_id` 是不带显式 family 前缀、也不携带 canonical zk-system hint 的 opaque token（例如 `mock-zk`），v0 允许它作为精确 backend selector 存在，但 router 只能把它当作 registry/config 中的显式后端名，不能把它升级为隐式 proving-system 选择器。
-7. router 最终选中的 backend token 也不得是 family-only `zk` / `zk-*` router token；若它没有任何 canonical zk-system hint，则必须按 malformed fail-closed 拒绝，而不是先落到 generic unknown-backend / unavailable 分支。
+7. router 最终选中的 backend token 也不得是 family-only `zk` / `zk-*` router token；若它没有任何 canonical zk-system hint，则必须按 malformed fail-closed 拒绝，而不是先落到 generic unknown-backend / unavailable 分支；同样不得依赖 silent surrounding-whitespace trim，且不得夹带内嵌 ASCII whitespace / control characters。
 8. 若 router 最终选中的 backend token 是不带显式 family 前缀、也不携带 canonical zk-system hint 的 opaque token，则 v0 仍允许其作为精确配置值存在，但同样不得被 reinterpret 为隐式 proving-system 选择器。
 9. 若 `backend_id` / router 选中的 backend token 里只是重复出现同一个 canonical system hint（例如 `groth16-groth16-demo`），可视为同一 system 的重复提示并去重后继续匹配，不应被当成多系统 payload 误杀。
 10. router 最终选中的 backend 若带有可推断 proving-system hint，也必须与 `vk_ref` 的 canonical `zk_system` 一致。
