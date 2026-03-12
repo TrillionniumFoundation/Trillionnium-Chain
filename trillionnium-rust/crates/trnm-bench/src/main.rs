@@ -503,6 +503,30 @@ mod tests {
     }
 
     #[test]
+    fn hot_streak_builder_caps_hotspot_pool_and_keeps_side_reads_outside_it() {
+        let txs = build_hot_streak_txs(256, 64, 4, 1);
+
+        assert_eq!(txs.len(), 256);
+        assert!(txs.iter().all(|tx| tx.read_set.len() == 4));
+        assert!(txs.iter().all(|tx| tx.write_set.len() == 1));
+        assert!(txs.iter().all(|tx| tx.write_set[0].id < 8));
+        assert!(txs.iter().all(|tx| tx.read_set[0].id < 8));
+        assert!(txs
+            .iter()
+            .all(|tx| tx.read_set[1..].iter().all(|obj| obj.id >= 8)));
+
+        let hotspot_ids = txs
+            .iter()
+            .flat_map(|tx| tx.write_set.iter().map(|obj| obj.id))
+            .collect::<std::collections::HashSet<_>>();
+        assert_eq!(hotspot_ids.len(), 8);
+
+        let decision = auto_adaptive_decision(&txs);
+        assert!(decision.use_hot_bucket);
+        assert_eq!(decision.reason, "hotspot_detected");
+    }
+
+    #[test]
     fn hot_streak_single_key_budget_still_resolves_auto_adaptive_to_hot_bucket() {
         let txs = build_hot_streak_txs(64, 1, 3, 1);
         let decision = auto_adaptive_decision(&txs);
