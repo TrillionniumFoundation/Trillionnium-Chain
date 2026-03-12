@@ -540,6 +540,56 @@ mod tests {
     }
 
     #[test]
+    fn tee_verifier_backend_internal_space_separated_quote_report_claims_still_maps_to_combined_claims_surface(
+    ) {
+        let result = TeeVerifier::classify_execution_err(BackendExecutionError::Internal {
+            backend: "tee:mock-tee-internal".to_string(),
+            reason: "quote report claims verifier crashed".to_string(),
+        });
+
+        assert!(
+            matches!(result, VerificationResult::Indeterminate(_)),
+            "unexpected result: {result:?}"
+        );
+        let VerificationResult::Indeterminate(msg) = result else {
+            unreachable!()
+        };
+        assert!(msg.contains("backend_error:"), "message: {msg}");
+        assert!(
+            msg.contains("failed while verifying TEE attestation quote/report claims:"),
+            "message: {msg}"
+        );
+        assert!(
+            msg.contains("legacy: failed while verifying TEE attestation quote/report claims"),
+            "message: {msg}"
+        );
+    }
+
+    #[test]
+    fn tee_verifier_backend_unavailable_space_separated_quote_report_certificate_still_maps_to_combined_evidence_surface(
+    ) {
+        let result = TeeVerifier::classify_execution_err(BackendExecutionError::Unavailable {
+            backend: "tee:mock-tee-unavailable".to_string(),
+            reason: "quote report certificate verifier unavailable".to_string(),
+        });
+
+        assert!(
+            matches!(result, VerificationResult::Indeterminate(_)),
+            "unexpected result: {result:?}"
+        );
+        let VerificationResult::Indeterminate(msg) = result else {
+            unreachable!()
+        };
+        assert!(msg.contains("unavailable:"), "message: {msg}");
+        assert!(
+            msg.contains("cannot currently verify TEE attestation quote/report evidence:"),
+            "message: {msg}"
+        );
+        assert!(!msg.contains("quote/report claims"), "message: {msg}");
+        assert!(!msg.contains("legacy:"), "message: {msg}");
+    }
+
+    #[test]
     fn tee_verifier_backend_internal_quote_report_evidence_keeps_combined_evidence_surface_without_claims_legacy_suffix(
     ) {
         let result = TeeVerifier::classify_execution_err(BackendExecutionError::Internal {
