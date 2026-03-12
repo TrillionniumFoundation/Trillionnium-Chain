@@ -2132,6 +2132,29 @@ mod tests {
         ));
     }
 
+    #[test]
+    fn resolve_grouping_strategy_keeps_explicit_non_auto_choices_stable_on_hotspot_workloads() {
+        let txs = (0..1_024)
+            .map(|i| tx(i as u64, vec![o(0)], vec![o(0)]))
+            .collect::<Vec<_>>();
+
+        assert!(auto_adaptive_decision(&txs).use_hot_bucket);
+        for strategy in [
+            GroupingStrategy::Original,
+            GroupingStrategy::FootprintDesc,
+            GroupingStrategy::WriteFirst,
+            GroupingStrategy::WriteLast,
+            GroupingStrategy::HotBucketInterleave,
+            GroupingStrategy::AggressiveGreedy,
+        ] {
+            assert_eq!(
+                resolve_grouping_strategy(&txs, strategy),
+                strategy,
+                "explicit non-auto strategy should never be remapped on hotspot workloads"
+            );
+        }
+    }
+
     fn assert_profiles_match(
         left_groups: &[Vec<Tx>],
         left_profile: &GroupingProfile,
