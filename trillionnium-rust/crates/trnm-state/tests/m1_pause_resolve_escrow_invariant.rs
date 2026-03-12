@@ -235,6 +235,44 @@ fn paused_state_keeps_multi_party_resolve_quorum_and_escrow_conservation() {
 }
 
 #[test]
+fn paused_state_authority_rotation_rejects_second_resolve_approval_without_escrow_drift() {
+    // M1 micro-hardening: while paused, a rotated resolve authority set must fail closed,
+    // clear the now-stale staged quorum, and leave custody balances untouched.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 42_111);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 901);
+    st.set_gov_param(98_111, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    let first = st
+        .stage_or_confirm_resolve_approval(9_901_1, 1, true, "authority-a", "authority-a,authority-b")
+        .expect("first paused approval stage should succeed");
+    assert!(!first, "first approver should only stage paused quorum");
+    assert_eq!(st.pending_resolve_approval(9_901_1), Some((true, 1)));
+    assert_eq!(
+        st.pending_resolve_first_approver(9_901_1).as_deref(),
+        Some("authority-a")
+    );
+
+    let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+    let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+
+    let rotated_err = st
+        .stage_or_confirm_resolve_approval(9_901_1, 1, true, "authority-c", "authority-a,authority-c")
+        .expect_err("paused authority rotation must fail closed and clear stale staged approval");
+    assert!(rotated_err.contains("authority set changed"), "unexpected error: {rotated_err}");
+    assert!(st.is_emergency_paused(), "authority rotation failure must not unpause state");
+    assert_eq!(st.pending_resolve_approval(9_901_1), None);
+    assert_eq!(st.pending_resolve_first_approver(9_901_1), None);
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
+}
+
+#[test]
 fn paused_state_rejects_noncanonical_resolve_authority_without_escrow_side_effects() {
     // M1 merge-gate invariant: emergency_pause cannot be used to slip malformed
     // authority sets into resolve flow, and any rejection must be side-effect free.
