@@ -1602,6 +1602,10 @@ fn ratio_milli_u64(numerator: u64, denominator: u64) -> u64 {
     }
 }
 
+fn finality_budget_share_ppm(density_avg_milli: u64, finality_avg_ms: u128) -> u64 {
+    ratio_ppm_u64(density_avg_milli, (finality_avg_ms as u64) * 1_000)
+}
+
 fn gap_percent_bps(total: u128, component_a: u128, component_b: u128) -> u128 {
     if total == 0 {
         return 0;
@@ -3331,10 +3335,8 @@ mod tests {
     fn round_change_backoff_active_height_share_handles_zero_finality_budget() {
         let bft_round_change_backoff_density_avg_milli = 2_500u64;
         let finality_avg = 0u128;
-        let backoff_active_height_share_ppm = ratio_ppm_u64(
-            bft_round_change_backoff_density_avg_milli,
-            (finality_avg as u64) * 1_000,
-        );
+        let backoff_active_height_share_ppm =
+            finality_budget_share_ppm(bft_round_change_backoff_density_avg_milli, finality_avg);
 
         assert_eq!(backoff_active_height_share_ppm, 0);
     }
@@ -3343,13 +3345,22 @@ mod tests {
     fn round_change_backoff_active_height_share_can_exceed_budget_when_jitter_dominates() {
         let bft_round_change_backoff_density_avg_milli = 6_000u64;
         let finality_avg = 4u128;
-        let backoff_active_height_share_ppm = ratio_ppm_u64(
-            bft_round_change_backoff_density_avg_milli,
-            (finality_avg as u64) * 1_000,
-        );
+        let backoff_active_height_share_ppm =
+            finality_budget_share_ppm(bft_round_change_backoff_density_avg_milli, finality_avg);
 
         assert_eq!(backoff_active_height_share_ppm, 1_500_000);
         assert!(backoff_active_height_share_ppm > 1_000_000);
+    }
+
+    #[test]
+    fn finality_budget_share_helper_matches_round_change_density_semantics() {
+        let bft_round_change_density_avg_milli = 2_500u64;
+        let finality_avg = 10u128;
+
+        assert_eq!(
+            finality_budget_share_ppm(bft_round_change_density_avg_milli, finality_avg),
+            250_000
+        );
     }
 
     #[test]
@@ -6113,7 +6124,7 @@ fn main() -> Result<()> {
     let bft_round_change_density_avg_milli =
         ratio_milli_u64(bft_round_change_total, bft_round_change_active_heights);
     let bft_round_change_active_height_share_ppm =
-        ratio_ppm_u64(bft_round_change_density_avg_milli, (finality_avg as u64) * 1_000);
+        finality_budget_share_ppm(bft_round_change_density_avg_milli, finality_avg);
     let bft_round_change_backoff_avg_ms = if bft_round_change_total == 0 {
         0
     } else {
@@ -6129,7 +6140,7 @@ fn main() -> Result<()> {
         bft_round_change_active_heights,
     );
     let bft_round_change_backoff_active_height_share_ppm =
-        ratio_ppm_u64(bft_round_change_backoff_density_avg_milli, (finality_avg as u64) * 1_000);
+        finality_budget_share_ppm(bft_round_change_backoff_density_avg_milli, finality_avg);
     let bft_round_change_backoff_wall_share_ppm =
         ratio_ppm_u64(bft_round_change_backoff_total_ms, bft_committed_heights);
     let bft_round_change_backoff_share_ppm = bft_round_change_backoff_wall_share_ppm;
