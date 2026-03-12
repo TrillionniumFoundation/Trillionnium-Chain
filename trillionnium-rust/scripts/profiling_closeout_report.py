@@ -98,6 +98,29 @@ def benchmark_producer_for(label: str) -> str:
     return "unknown"
 
 
+def dedupe_preserve_order(items: list[str]) -> list[str]:
+    seen = set()
+    out = []
+    for item in items:
+        if item in seen:
+            continue
+        seen.add(item)
+        out.append(item)
+    return out
+
+
+def build_followup_command_chain(labels: list[str], producer_for) -> str:
+    commands = []
+    for label in labels:
+        producer = producer_for(label)
+        if producer and producer != "unknown":
+            commands.append(producer)
+    commands = dedupe_preserve_order(commands)
+    if not commands:
+        return "none"
+    return " && ".join(commands)
+
+
 def benchmark_capture_cohesion(paths: list[str | None]) -> tuple[str, int | None]:
     mtimes = [os.path.getmtime(path) for path in paths if path and os.path.exists(path)]
     if len(mtimes) < 2:
@@ -443,6 +466,12 @@ def main():
     lines.append(
         f"- closeout_ready_inputs: {', '.join(sorted(set(present_inputs) - set(stale_inputs) - set(old_inputs))) if present_inputs else 'none'}"
     )
+    closeout_followup_labels = missing_inputs + stale_inputs + old_inputs
+    if closeout_capture_status in {"mixed_capture_window", "divergent_capture_window"}:
+        closeout_followup_labels = ["node_log", "classic_bench", "mixed_bench", "executor_profile"]
+    lines.append(
+        f"- closeout_followup_command_chain: {build_followup_command_chain(closeout_followup_labels, recommended_producer)}"
+    )
 
     lines += ["", "## Autopilot Recommended Next Steps"]
     if missing_inputs:
@@ -539,6 +568,14 @@ def main():
     )
     lines.append(
         f"- benchmark_ready_inputs: {', '.join(benchmark_ready_inputs) if benchmark_ready_inputs else 'none'}"
+    )
+    benchmark_followup_labels = [
+        label for label, action, _, _ in benchmark_actions if action in {"produce", "refresh"}
+    ]
+    if benchmark_capture_status in {"mixed_capture_window", "divergent_capture_window"}:
+        benchmark_followup_labels = ["classic_bench", "mixed_bench", "executor_profile"]
+    lines.append(
+        f"- benchmark_followup_command_chain: {build_followup_command_chain(benchmark_followup_labels, benchmark_producer_for)}"
     )
 
     lines += ["", "## Block Metrics"]
