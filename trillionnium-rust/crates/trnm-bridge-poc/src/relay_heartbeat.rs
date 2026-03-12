@@ -232,5 +232,13 @@ mod tests {
         let normalized = normalize_failure_reason(raw);
         assert_eq!(normalized, "target relay timeout signal");
     }
+
+    #[test]
+    fn normalize_failure_reason_strips_bom_word_joiner_and_variation_selectors_for_replay_stability()
+    {
+        let raw = "target\u{FEFF}relay\u{2060}timeout\u{FE0F}signal\u{E0100}";
+        let normalized = normalize_failure_reason(raw);
+        assert_eq!(normalized, "target relay timeout signal");
+    }
 }
 
