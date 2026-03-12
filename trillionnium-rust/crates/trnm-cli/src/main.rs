@@ -876,9 +876,13 @@ fn persist_local_pending_tx(tx_hash: &str) -> Result<()> {
     Ok(())
 }
 
+fn format_tx_hash_line(tx_hash: &str) -> String {
+    format!("tx_hash=\"{}\"", tx_hash)
+}
+
 fn emit_pending_tx_hash(tx_hash: &str) -> Result<()> {
     persist_local_pending_tx(tx_hash)?;
-    println!("tx_hash={}", tx_hash);
+    println!("{}", format_tx_hash_line(tx_hash));
     Ok(())
 }
 
@@ -961,7 +965,7 @@ fn main() -> Result<()> {
             }
             TxCommand::Query { tx_hash } => {
                 let resp = tx_query(&tx_hash)?;
-                println!("tx_hash={}", resp.tx_hash);
+                println!("{}", format_tx_hash_line(&resp.tx_hash));
                 println!("status={}", resp.status);
                 if let Some(err) = resp.error {
                     println!("error={}", err);
@@ -978,7 +982,7 @@ fn main() -> Result<()> {
                     Duration::from_secs(interval),
                     tx_query,
                 )?;
-                println!("tx_hash={}", resp.tx_hash);
+                println!("{}", format_tx_hash_line(&resp.tx_hash));
                 println!("status={}", resp.status);
                 if let Some(err) = resp.error {
                     println!("error={}", err);
@@ -1148,6 +1152,18 @@ mod tests {
         assert_eq!(
             extract_tx_hash("{\"tx_hash\":\"0xhash-not-hex\"}").as_deref(),
             None
+        );
+    }
+
+    #[test]
+    fn format_tx_hash_line_quotes_value_for_shell_readiness_probes() {
+        assert_eq!(
+            format_tx_hash_line("0xabc123"),
+            "tx_hash=\"0xabc123\"".to_string()
+        );
+        assert_eq!(
+            extract_tx_hash(&format_tx_hash_line("0xabc123")).as_deref(),
+            Some("0xabc123")
         );
     }
 
