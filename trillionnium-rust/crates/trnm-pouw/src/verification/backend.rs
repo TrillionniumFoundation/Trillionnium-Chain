@@ -81,14 +81,24 @@ fn normalize_backend_token(raw: &str) -> Option<String> {
 
 pub fn backend_system_hint(raw: &str) -> Option<String> {
     let normalized = normalize_backend_token(raw)?;
-    let mut parts = normalized.split_whitespace();
-    let first = parts.next()?;
-    let second = parts.next();
+    let parts = normalized.split_whitespace().collect::<Vec<_>>();
+    let first = *parts.first()?;
 
-    match (first, second) {
-        ("zk", Some(system)) | ("tee", Some(system)) => Some(system.to_string()),
-        (system, _) if system != "noop" => Some(system.to_string()),
-        _ => None,
+    let (family, mut idx) = match first {
+        "tee" | "zk" => (Some(first), 1usize),
+        _ => (None, 0usize),
+    };
+
+    if family == Some("tee")
+        && matches!(parts.get(idx).copied(), Some("intel" | "amd"))
+        && parts.get(idx + 1).is_some()
+    {
+        idx += 1;
+    }
+
+    match parts.get(idx).copied() {
+        Some("noop") | None => None,
+        Some(system) => Some(system.to_string()),
     }
 }
 
@@ -830,6 +840,8 @@ mod tests {
     fn backend_system_hint_extracts_family_scoped_tee_and_zk_system_tokens() {
         assert_eq!(backend_system_hint(" tee:sgx-dcap "), Some("sgx".into()));
         assert_eq!(backend_system_hint("TEE report-snp"), Some("report".into()));
+        assert_eq!(backend_system_hint("tee:intel-sgx-dcap"), Some("sgx".into()));
+        assert_eq!(backend_system_hint("TEE amd-sev-snp"), Some("sev".into()));
         assert_eq!(backend_system_hint("zk:groth16"), Some("groth16".into()));
         assert_eq!(backend_system_hint("plonk"), Some("plonk".into()));
         assert_eq!(backend_system_hint("noop"), None);
@@ -840,6 +852,14 @@ mod tests {
         assert_eq!(
             VerificationBackendKind::Custom("tee-tdx".into()).system_hint(),
             Some("tdx".into())
+        );
+        assert_eq!(
+            VerificationBackendKind::Custom("tee-intel-sgx-dcap".into()).system_hint(),
+            Some("sgx".into())
+        );
+        assert_eq!(
+            VerificationBackendKind::Custom("TEE AMD-SEV-SNP".into()).system_hint(),
+            Some("sev".into())
         );
         assert_eq!(
             VerificationBackendKind::Custom("zk_risc0".into()).system_hint(),
