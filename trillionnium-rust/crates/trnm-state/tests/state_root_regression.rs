@@ -414,6 +414,36 @@ fn restore_balance_none_rewinds_state_root_after_removing_existing_treasury_entr
     );
 }
 
+#[test]
+fn restore_balance_zero_snapshot_canonicalizes_to_missing_entry_for_state_root() {
+    let mut state = StateStore::new();
+    let baseline_root = state.state_root();
+
+    state.set_balance("treasury.challenge_forfeits", 11);
+    let funded_root = state.state_root();
+    assert_ne!(
+        funded_root, baseline_root,
+        "sanity: funding a treasury entry must perturb the state root"
+    );
+
+    state.restore_balance("treasury.challenge_forfeits", Some(0));
+
+    assert_eq!(
+        state.balance_of("treasury.challenge_forfeits"),
+        0,
+        "restoring a zero-balance snapshot should still read back as zero"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "restore_balance(Some(0)) must canonicalize to the missing-entry baseline root"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "repeated reads after restore_balance(Some(0)) should deterministically reuse the rewound cached root"
+    );
+}
 
 #[test]
 fn restore_pending_resolve_snapshot_with_same_counts_but_different_authority_metadata_rewinds_state_root() {
