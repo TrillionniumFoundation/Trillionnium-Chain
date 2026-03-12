@@ -547,9 +547,12 @@ mod tests {
         task.worker = Some("worker-zk".into());
         task.result_hash = Some([0x11; 32]);
 
-        let payload = br#"ZK:{"task_id":42,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"plonk","backend_id":"real-zk-backend","backend_version":"2026-03-12-fixture-bridge","vk_ref":"vk://trnm/dev/mock-plonk/valid","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["42","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]},"meta":{"schema_version":"trnm.zk.payload.v0","circuit_id":"fixture-bridge-plonk-feature-on"}}"#;
+        let payload = format!(
+            "ZK:{}",
+            include_str!("../../fixtures/zk/real_backend_bridge_plonk_feature_on.json").trim()
+        );
 
-        assert_eq!(registry.verify(&task, payload), VerificationResult::Valid);
+        assert_eq!(registry.verify(&task, payload.as_bytes()), VerificationResult::Valid);
     }
 
     #[cfg(feature = "real-zk-backend")]
