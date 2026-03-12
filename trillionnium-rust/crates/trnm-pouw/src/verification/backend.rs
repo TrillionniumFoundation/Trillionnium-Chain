@@ -904,7 +904,10 @@ mod tests {
         assert_eq!(backend_system_hint("tee quote tdx"), Some("tdx".into()));
         assert_eq!(backend_system_hint("tee claims sgx"), Some("sgx".into()));
         assert_eq!(backend_system_hint("tee cert snp"), Some("snp".into()));
-        assert_eq!(backend_system_hint("tee certificate tdx"), Some("tdx".into()));
+        assert_eq!(
+            backend_system_hint("tee certificate tdx"),
+            Some("tdx".into())
+        );
         assert_eq!(backend_system_hint("zk:groth16"), Some("groth16".into()));
         assert_eq!(backend_system_hint("plonk"), Some("plonk".into()));
         assert_eq!(backend_system_hint("noop"), None);
@@ -946,7 +949,10 @@ mod tests {
         }
 
         assert_eq!(backend_system_hint("tee amd sev snp"), Some("snp".into()));
-        assert_eq!(backend_system_hint("TEE AMD-SEV-SNP quote"), Some("snp".into()));
+        assert_eq!(
+            backend_system_hint("TEE AMD-SEV-SNP quote"),
+            Some("snp".into())
+        );
         assert_eq!(backend_system_hint("amd sev snp"), Some("snp".into()));
         assert_eq!(backend_system_hint("intel sgx dcap"), Some("sgx".into()));
     }
@@ -969,7 +975,8 @@ mod tests {
     }
 
     #[test]
-    fn backend_system_hint_handles_separator_heavy_tee_attestation_backend_ids_without_falling_back_to_surface_tokens() {
+    fn backend_system_hint_handles_separator_heavy_tee_attestation_backend_ids_without_falling_back_to_surface_tokens(
+    ) {
         for (raw, expected) in [
             ("TEE::remote／attestation－quote＋SGX", "sgx"),
             ("tee|attestation|receipt|TDX", "tdx"),

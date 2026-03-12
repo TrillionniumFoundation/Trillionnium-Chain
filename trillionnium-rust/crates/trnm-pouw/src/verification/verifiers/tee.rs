@@ -63,9 +63,9 @@ impl TeeVerifier {
                     "evidence/claims" => {
                         Some("legacy: cannot currently verify TEE attestation evidence/claims")
                     }
-                    "quote/report claims" => Some(
-                        "legacy: cannot currently verify TEE attestation quote/report claims",
-                    ),
+                    "quote/report claims" => {
+                        Some("legacy: cannot currently verify TEE attestation quote/report claims")
+                    }
                     _ => None,
                 };
                 if let Some(legacy_suffix) = legacy_suffix {
@@ -139,7 +139,7 @@ impl TeeVerifier {
         let mentions_payload = mentions(|token| token == "payload");
         let mentions_evidence = mentions(|token| token == "evidence" || token == "evidences");
         let mentions_certificate =
-            mentions(|token| token == "certificate" || token == "certificates" || token.starts_with("cert"));
+            mentions(|token| matches!(token, "cert" | "certs" | "certificate" | "certificates"));
         let mentions_attestation =
             mentions(|token| token == "attestation" || token == "attestations");
         let mentions_receipt = mentions(|token| token == "receipt" || token == "receipts");
@@ -796,6 +796,27 @@ mod tests {
     }
 
     #[test]
+    fn tee_verifier_backend_internal_certified_payload_does_not_leak_into_certificate_evidence_surface(
+    ) {
+        let result = TeeVerifier::classify_execution_err(BackendExecutionError::Internal {
+            backend: "tee:mock-tee-internal".to_string(),
+            reason: "TEE certified payload verifier crashed".to_string(),
+        });
+
+        assert!(
+            matches!(result, VerificationResult::Indeterminate(_)),
+            "unexpected result: {result:?}"
+        );
+        let VerificationResult::Indeterminate(msg) = result else {
+            unreachable!()
+        };
+        assert!(msg.contains("backend_error:"), "message: {msg}");
+        assert!(msg.contains("payload/claims"), "message: {msg}");
+        assert!(!msg.contains("evidence/claims"), "message: {msg}");
+        assert!(!msg.contains("legacy:"), "message: {msg}");
+    }
+
+    #[test]
     fn tee_verifier_backend_internal_pluralized_attestations_payload_still_prefers_evidence_claims_surface(
     ) {
         let result = TeeVerifier::classify_execution_err(BackendExecutionError::Internal {
@@ -1145,8 +1166,8 @@ mod tests {
     }
 
     #[test]
-    fn tee_verifier_backend_internal_quoted_reporting_terms_do_not_spoof_quote_or_report_surfaces(
-    ) {
+    fn tee_verifier_backend_internal_quoted_reporting_terms_do_not_spoof_quote_or_report_surfaces()
+    {
         let result = TeeVerifier::classify_execution_err(BackendExecutionError::Internal {
             backend: "tee:mock-tee-internal".to_string(),
             reason: "quoted reporting payload verifier crashed".to_string(),
@@ -1265,7 +1286,8 @@ mod tests {
     }
 
     #[test]
-    fn tee_verifier_backend_internal_generic_receipt_claims_still_prefers_evidence_claims_surface() {
+    fn tee_verifier_backend_internal_generic_receipt_claims_still_prefers_evidence_claims_surface()
+    {
         let result = TeeVerifier::classify_execution_err(BackendExecutionError::Internal {
             backend: "tee:mock-tee-internal".to_string(),
             reason: "receipt claims verifier crashed".to_string(),
@@ -1355,7 +1377,10 @@ mod tests {
         );
         assert!(!msg.contains("payload/claims"), "message: {msg}");
         assert!(!msg.contains("evidence/claims"), "message: {msg}");
-        assert!(msg.contains("certificate claims signature mismatch"), "message: {msg}");
+        assert!(
+            msg.contains("certificate claims signature mismatch"),
+            "message: {msg}"
+        );
     }
 
     #[test]
@@ -1509,7 +1534,10 @@ mod tests {
             msg.contains("malformed TEE attestation payload/claims:"),
             "message: {msg}"
         );
-        assert!(msg.contains("quote certificate malformed"), "message: {msg}");
+        assert!(
+            msg.contains("quote certificate malformed"),
+            "message: {msg}"
+        );
         assert!(!msg.contains("quote evidence"), "message: {msg}");
         assert!(!msg.contains("quote claims"), "message: {msg}");
         assert!(!msg.contains("evidence/claims"), "message: {msg}");
