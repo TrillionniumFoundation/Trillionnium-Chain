@@ -100,6 +100,7 @@ pub fn backend_system_hint(raw: &str) -> Option<String> {
                     | "ra"
                     | "evidence"
                     | "receipt"
+                    | "enclave"
                     | "quote"
                     | "report"
                     | "claims"
@@ -905,6 +906,8 @@ mod tests {
             "tee cert",
             "tee certificate",
             "tee attestation receipt report",
+            "tee enclave report",
+            "tee enclave evidence",
             "tee evidence quote",
             "tee ra quote",
             "tee remote attestation quote",
@@ -939,6 +942,8 @@ mod tests {
             ("tee attestation receipt report tdx", "tdx"),
             ("tee evidence cert snp", "snp"),
             ("tee remote attestation receipt sgx", "sgx"),
+            ("tee enclave report sgx", "sgx"),
+            ("tee enclave evidence tdx", "tdx"),
         ] {
             assert_eq!(backend_system_hint(raw), Some(expected.into()), "raw={raw}");
         }
