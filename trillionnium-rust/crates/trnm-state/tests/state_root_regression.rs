@@ -2012,6 +2012,26 @@ fn restore_balance_none_is_slot_scoped_even_with_multiple_treasury_entries() {
 }
 
 #[test]
+fn explicit_default_monetary_snapshot_has_same_state_root_as_empty_state() {
+    let empty = StateStore::new();
+    let empty_root = empty.state_root();
+
+    let mut explicit_default = StateStore::new();
+    explicit_default.restore_monetary_state(MonetaryState::default());
+
+    assert_eq!(
+        explicit_default.state_root(),
+        empty_root,
+        "state_root must treat an explicit default monetary snapshot the same as the canonical empty monetary state"
+    );
+    assert_eq!(
+        explicit_default.state_root(),
+        empty_root,
+        "repeated reads after restoring the default monetary snapshot should deterministically reuse the canonical empty root"
+    );
+}
+
+#[test]
 fn monetary_tick_metadata_should_affect_state_root_even_when_issuance_totals_match() {
     let mut state_a = StateStore::new();
     let mut state_b = StateStore::new();
