@@ -4238,15 +4238,38 @@ mod tests {
         unsafe { std::env::set_var("TRNM_RPC_MARKET_LOCK_TIMEOUT_MS", "  `50`  ") };
         assert_eq!(market_lock_timeout_ms(), MARKET_LOCK_TIMEOUT_MS_MIN);
 
-        unsafe { std::env::set_var("TRNM_RPC_MARKET_LOCK_TIMEOUT_MS", "  \"70000\"  ") };
+        unsafe { std::env::set_var("TRNM_RPC_MARKET_LOCK_TIMEOUT_MS", " '70000' ") };
         assert_eq!(market_lock_timeout_ms(), MARKET_LOCK_TIMEOUT_MS_MAX);
 
-        unsafe { std::env::set_var("TRNM_RPC_MARKET_LOCK_TIMEOUT_MS", "  not-a-number  ") };
+        unsafe { std::env::set_var("TRNM_RPC_MARKET_LOCK_TIMEOUT_MS", " not-a-number ") };
         assert_eq!(market_lock_timeout_ms(), MARKET_LOCK_TIMEOUT_MS_DEFAULT);
 
         match prev {
             Some(v) => unsafe { std::env::set_var("TRNM_RPC_MARKET_LOCK_TIMEOUT_MS", v) },
             None => unsafe { std::env::remove_var("TRNM_RPC_MARKET_LOCK_TIMEOUT_MS") },
+        }
+    }
+
+    #[test]
+    fn submit_message_max_bytes_uses_wrapped_env_with_min_and_fallback() {
+        let _guard = lock_env();
+        let prev = std::env::var(SUBMIT_MESSAGE_MAX_BYTES_ENV).ok();
+
+        unsafe { std::env::remove_var(SUBMIT_MESSAGE_MAX_BYTES_ENV) };
+        assert_eq!(submit_message_max_bytes(), SUBMIT_MESSAGE_MAX_BYTES_DEFAULT);
+
+        unsafe { std::env::set_var(SUBMIT_MESSAGE_MAX_BYTES_ENV, "  `0`  ") };
+        assert_eq!(submit_message_max_bytes(), SUBMIT_MESSAGE_MAX_BYTES_MIN);
+
+        unsafe { std::env::set_var(SUBMIT_MESSAGE_MAX_BYTES_ENV, "  '4096'  ") };
+        assert_eq!(submit_message_max_bytes(), 4096);
+
+        unsafe { std::env::set_var(SUBMIT_MESSAGE_MAX_BYTES_ENV, "not-a-number") };
+        assert_eq!(submit_message_max_bytes(), SUBMIT_MESSAGE_MAX_BYTES_DEFAULT);
+
+        match prev {
+            Some(v) => unsafe { std::env::set_var(SUBMIT_MESSAGE_MAX_BYTES_ENV, v) },
+            None => unsafe { std::env::remove_var(SUBMIT_MESSAGE_MAX_BYTES_ENV) },
         }
     }
 
