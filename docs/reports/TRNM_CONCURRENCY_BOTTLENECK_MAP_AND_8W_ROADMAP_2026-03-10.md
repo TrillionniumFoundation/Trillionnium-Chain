@@ -301,9 +301,10 @@ TRNM 当前不是“高 TPS 公链的仿制品”，而是：
 
 5. **Hot-object concentration review**
    - height 覆盖：`hot_object_active_heights`、`hot_object_active_height_rate_ppm`、`hot_object_active_observed_height_rate_ppm`
+   - active-height budget pressure：`hot_object_active_height_share_ppm`
    - 总热点占比：`hot_object_share_avg_ppm`、`hot_object_share_p95_ppm`、`hot_object_share_max_ppm`
    - top / tail 拆分：`hot_object_top_label_share_avg_ppm`、`hot_object_active_top_label_share_avg_ppm`、`hot_object_tail_share_avg_ppm`、`hot_object_active_tail_share_avg_ppm`
-   - 用法：不要只看平均 hotspot share；需要同时判断热点覆盖了多少高度，以及它是单一标签强主导还是长尾对象面一起升温，避免把 burst hotspot 误读成温和平均值。
+   - 用法：不要只看平均 hotspot share；需要同时判断热点覆盖了多少高度、这些 hotspot 在活跃高度上对平均 finality budget 施加了多大压力，以及它是单一标签强主导还是长尾对象面一起升温，避免把 burst hotspot 误读成温和平均值。
 
 6. **Pre-exec / rollback guardrail pressure**
    - preexec：`preexec_peak_share_ppm`、`preexec_reject_active_heights`、`preexec_reject_density_avg_milli`、`preexec_reject_active_height_rate_ppm`、`preexec_reject_active_observed_height_rate_ppm`、`preexec_reject_active_height_share_ppm`、`preexec_reject_share_bps`、`preexec_conflict_miss_share_bps`
@@ -332,9 +333,9 @@ TRNM 当前不是“高 TPS 公链的仿制品”，而是：
 
 3. **最后看密度 / budget / wall-share 严重度**
    - jitter / backoff：`bft_round_change_density_avg_milli`、`bft_round_change_backoff_density_avg_milli`、`bft_round_change_active_height_share_ppm`、`bft_round_change_backoff_active_height_share_ppm`、`bft_round_change_backoff_wall_share_ppm`
-   - fairness / stall / hotspot：`bft_leader_missed_density_avg_milli`、`bft_leader_missed_active_height_share_ppm`、`critical_wait_density_avg_milli`、`critical_wait_peak_density_ppm`、`critical_wait_active_height_share_ppm`、`hot_object_active_top_label_share_avg_ppm`、`hot_object_active_tail_share_avg_ppm`
+   - fairness / stall / hotspot：`bft_leader_missed_density_avg_milli`、`bft_leader_missed_active_height_share_ppm`、`critical_wait_density_avg_milli`、`critical_wait_peak_density_ppm`、`critical_wait_active_height_share_ppm`、`hot_object_active_height_share_ppm`、`hot_object_active_top_label_share_avg_ppm`、`hot_object_active_tail_share_avg_ppm`
    - guardrails：`preexec_peak_share_ppm`、`preexec_reject_density_avg_milli`、`preexec_reject_active_height_share_ppm`、`preexec_reject_share_bps`、`preexec_conflict_miss_share_bps`、`rollback_peak_share_ppm`、`rollback_density_avg_milli`、`rollback_active_height_share_ppm`、`apply_error_rollback_share_bps`
-   - 目的：确认问题到底是 coverage 扩散，还是少数高度上的高密度 budget 压力；这一步才适合判断 severity。
+   - 目的：确认问题到底是 coverage 扩散，还是少数高度上的高密度 budget 压力；这一步才适合判断 severity，并避免把热点只当成 top/tail 结构变化而漏掉它对平均 finality budget 的直接压力。
 
 > - 因为 `bft_round_change_backoff_wall_share_ppm` 是按 **committed height** 摊开的 wall-time 强度，而不是封顶到平均 finality budget 的百分比，所以它在 sustained backoff 场景下**允许大于 `1_000_000`**；出现这种情况时，应把它解读为“每个已提交高度平均消耗了超过 1ms 的 backoff wall-time 压力”，而不是指标失真。
 > - 与 `bft_round_change_density_avg_milli`、`bft_round_change_backoff_density_avg_milli` 一起看，优先判断是否出现了 clustered jitter / sustained backoff，而不是只看全局均值。
