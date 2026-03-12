@@ -19,6 +19,7 @@
 - 当前更准确的残余风险是：**`default_slash_on_unresolved_challenge` 的治理控制面仍未完全打通**。也就是说，代码里已经预留了 challenged-timeout → slash 的治理开关，但 state 层 allowlist / governance schema 仍可能让该控制面在实际治理路径中不可达。
 - 经济语义上还需要继续保持明确：当前 challenged-timeout 即使未来切到 `Slashed` 分支，也**不会自动发放 challenge-success bounty**；若产品后续要把 timeout-slash 也定义为 challenger 胜诉并发 bounty，需要单独设计 payout 来源、额度上限与防 farming 约束。
 - 本轮 L05 补充了一条 fail-closed 回归：若 challenged task 的 `resolve_deadline_height` 元数据缺失，`apply_timeout` 必须在任何 escrow / slash treasury 余额变动前直接拒绝，避免脏状态被误终结。
+- 同时，当前 fraud verifier 的 envelope 绑定面已对 `task_id` / `worker` / `proof_type` / `result_hash` 建立较完整的 fail-closed 回归覆盖：对大小写变体、全角分隔符、引号别名、重复绑定与缺失绑定都会直接拒绝，而不是尝试容错合并。这一收敛降低了挑战提交层通过 payload 歧义制造“看似同义、实则可绕过”的解释空间；当前 lane 的主要剩余风险仍更集中在 challenge timeout / resolve authority / governance wiring，而非 fraud envelope 再次回退到宽松解析。
 
 ---
 
