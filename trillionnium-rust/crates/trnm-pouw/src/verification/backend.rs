@@ -89,29 +89,35 @@ pub fn backend_system_hint(raw: &str) -> Option<String> {
         _ => (None, 0usize),
     };
 
-    if family == Some("tee")
-        && matches!(parts.get(idx).copied(), Some("intel" | "amd"))
-        && parts.get(idx + 1).is_some()
-    {
-        idx += 1;
-    }
-
-    if family == Some("tee")
-        && matches!(parts.get(idx).copied(), Some("attestation" | "evidence" | "receipt"))
-        && parts.get(idx + 1).is_some()
-    {
-        idx += 1;
-    }
-
-    if family == Some("tee")
-        && matches!(parts.get(idx).copied(), Some("quote" | "report" | "claims" | "claim"))
-        && parts.get(idx + 1).is_some()
-    {
-        idx += 1;
+    if family == Some("tee") {
+        while let Some(token) = parts.get(idx).copied() {
+            if matches!(
+                token,
+                "intel"
+                    | "amd"
+                    | "attestation"
+                    | "evidence"
+                    | "receipt"
+                    | "quote"
+                    | "report"
+                    | "claims"
+                    | "claim"
+            ) {
+                idx += 1;
+                continue;
+            }
+            break;
+        }
     }
 
     match parts.get(idx).copied() {
         Some("noop") | None => None,
+        Some(system)
+            if family == Some("tee")
+                && matches!(system, "quote" | "report" | "claims" | "claim") =>
+        {
+            None
+        }
         Some(system) => Some(system.to_string()),
     }
 }
@@ -854,10 +860,13 @@ mod tests {
     fn backend_system_hint_extracts_family_scoped_tee_and_zk_system_tokens() {
         assert_eq!(backend_system_hint(" tee:sgx-dcap "), Some("sgx".into()));
         assert_eq!(backend_system_hint("TEE report-snp"), Some("snp".into()));
-        assert_eq!(backend_system_hint("tee:intel-sgx-dcap"), Some("sgx".into()));
+        assert_eq!(
+            backend_system_hint("tee:intel-sgx-dcap"),
+            Some("sgx".into())
+        );
         assert_eq!(backend_system_hint("TEE amd-sev-snp"), Some("sev".into()));
-        assert_eq!(backend_system_hint("tee attestation report"), Some("report".into()));
-        assert_eq!(backend_system_hint("tee receipt quote"), Some("quote".into()));
+        assert_eq!(backend_system_hint("tee attestation report"), None);
+        assert_eq!(backend_system_hint("tee receipt quote"), None);
         assert_eq!(backend_system_hint("tee evidence snp"), Some("snp".into()));
         assert_eq!(backend_system_hint("tee quote tdx"), Some("tdx".into()));
         assert_eq!(backend_system_hint("tee claims sgx"), Some("sgx".into()));
@@ -867,7 +876,22 @@ mod tests {
     }
 
     #[test]
-    fn verification_backend_kind_system_hint_respects_family_prefixes_without_cross_family_assumptions() {
+    fn backend_system_hint_does_not_treat_tee_attestation_surfaces_as_backend_systems() {
+        for raw in [
+            "tee quote",
+            "tee report",
+            "tee claim",
+            "tee claims",
+            "tee attestation receipt report",
+            "tee evidence quote",
+        ] {
+            assert_eq!(backend_system_hint(raw), None, "raw={raw}");
+        }
+    }
+
+    #[test]
+    fn verification_backend_kind_system_hint_respects_family_prefixes_without_cross_family_assumptions(
+    ) {
         assert_eq!(
             VerificationBackendKind::Custom("tee-tdx".into()).system_hint(),
             Some("tdx".into())
