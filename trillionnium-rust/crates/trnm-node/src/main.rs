@@ -3156,6 +3156,25 @@ mod tests {
     }
 
     #[test]
+    fn preexec_metric_names_keep_tail_and_guardrail_semantics_distinct() {
+        let peak_field_name = "preexec_peak_share_ppm";
+        let reject_density_avg_milli_field_name = "preexec_reject_density_avg_milli";
+        let reject_share_field_name = "preexec_reject_share_bps";
+        let conflict_miss_share_field_name = "preexec_conflict_miss_share_bps";
+
+        assert!(peak_field_name.ends_with("_share_ppm"));
+        assert!(reject_density_avg_milli_field_name.ends_with("_avg_milli"));
+        assert!(reject_share_field_name.ends_with("_share_bps"));
+        assert!(conflict_miss_share_field_name.ends_with("_share_bps"));
+        assert_ne!(peak_field_name, reject_density_avg_milli_field_name);
+        assert_ne!(peak_field_name, reject_share_field_name);
+        assert_ne!(peak_field_name, conflict_miss_share_field_name);
+        assert_ne!(reject_density_avg_milli_field_name, reject_share_field_name);
+        assert_ne!(reject_density_avg_milli_field_name, conflict_miss_share_field_name);
+        assert_ne!(reject_share_field_name, conflict_miss_share_field_name);
+    }
+
+    #[test]
     fn rollback_active_height_metric_names_keep_compatibility_and_height_semantics_distinct() {
         let compatibility_count_field_name = "rollback_block_total";
         let height_count_field_name = "rollback_active_heights";
