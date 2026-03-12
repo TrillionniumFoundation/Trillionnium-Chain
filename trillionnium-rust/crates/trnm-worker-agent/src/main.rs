@@ -902,16 +902,26 @@ fn parse_tx_hash(text: &str) -> Option<String> {
     const PREFIXES: &[&str] = &[
         "tx_hash=",
         "tx_hash:",
+        "TX_HASH=",
+        "TX_HASH:",
         "tx-hash=",
         "tx-hash:",
+        "TX-HASH=",
+        "TX-HASH:",
         "txHash=",
         "txHash:",
+        "TXHASH=",
+        "TXHASH:",
         "txhash=",
         "txhash:",
         "\"tx_hash\":",
         "\"tx_hash\" :",
+        "\"TX_HASH\":",
+        "\"TX_HASH\" :",
         "\"txHash\":",
         "\"txHash\" :",
+        "\"TXHASH\":",
+        "\"TXHASH\" :",
         "\"txhash\":",
         "\"txhash\" :",
     ];
@@ -2089,6 +2099,21 @@ mod tests {
         let colon = parse_tx_hash("[adapter] commit accepted tx-hash:0xDEADBEEF")
             .expect("colon-delimited receipt hash should parse");
         assert_eq!(colon, "deadbeef");
+    }
+
+    #[test]
+    fn parse_tx_hash_accepts_uppercase_receipt_keys() {
+        let shell = parse_tx_hash("[adapter] commit accepted TX_HASH=0xDEADBEEF")
+            .expect("uppercase shell receipt hash should parse");
+        assert_eq!(shell, "deadbeef");
+
+        let json = parse_tx_hash("{\"TX_HASH\": \"0xDEADBEEF\", \"status\": \"accepted\"}")
+            .expect("uppercase json receipt hash should parse");
+        assert_eq!(json, "deadbeef");
+
+        let compact = parse_tx_hash("adapter stdout: {\"TXHASH\": \"ABCD1234\"}")
+            .expect("uppercase compact json receipt hash should parse");
+        assert_eq!(compact, "abcd1234");
     }
 
     #[test]
