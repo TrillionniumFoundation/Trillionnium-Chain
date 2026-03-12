@@ -151,6 +151,43 @@ fn restore_applied_gov_param_rewinds_state_root_after_value_mutation() {
 }
 
 #[test]
+fn restore_gov_param_none_rewinds_state_root_after_removing_applied_param_and_index() {
+    let mut state = StateStore::new();
+
+    let empty_root = state.state_root();
+    state
+        .set_gov_param(0, 112, "max_parallel_workers".into(), "8".into())
+        .expect("governance param insertion should succeed");
+    let applied_root = state.state_root();
+
+    assert_ne!(
+        applied_root, empty_root,
+        "state_root should incorporate both the applied governance param object and its key index mapping"
+    );
+
+    state.restore_gov_param(112, None);
+
+    assert_eq!(
+        state.state_root(),
+        empty_root,
+        "restore_gov_param(None) must rewind state_root exactly after deleting an applied governance param and its key index entry"
+    );
+    assert!(
+        state.get_param(112).is_none(),
+        "restore_gov_param(None) should remove the applied governance param object"
+    );
+    assert!(
+        state.gov_param_string("max_parallel_workers").is_none(),
+        "restore_gov_param(None) should also clear the gov_param_key_index mapping so readers cannot resolve a deleted key"
+    );
+    assert_eq!(
+        state.state_root(),
+        empty_root,
+        "repeated reads after restore_gov_param(None) should deterministically reuse the rewound cached root"
+    );
+}
+
+#[test]
 fn task_metadata_string_field_boundaries_should_affect_state_root() {
     let mut st1 = StateStore::new();
     let mut st2 = StateStore::new();
