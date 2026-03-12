@@ -146,8 +146,19 @@ Providers now obtain transport settings from a dedicated config source seam:
 - `VerifierTransportConfigSource`
 - `StaticVerifierTransportConfigSource::mock_defaults()`
 - `StaticVerifierTransportConfigSource::external_defaults()`
+- `EnvVerifierTransportConfigSource::from_env(...)`
 
 This gives the scaffold a stable place to swap from mock profiles to future real external verifier profiles without changing adapter or provider request shapes.
+The env-backed source currently supports per-vendor overrides for mode / endpoint / timeout / auth ref / retry policy.
+
+Client requests also now carry explicit external-call metadata:
+- `request_id`
+- `telemetry_scope`
+- `attempt`
+- `retry_max_attempts`
+- `retry_backoff_ms`
+
+This freezes a minimal request-observability / retry scaffold before any real outbound verifier integration is added.
 
 Client responses are normalized into a mock external verifier response schema with:
 - `status` (`verified | invalid | unavailable | malformed | internal`)
