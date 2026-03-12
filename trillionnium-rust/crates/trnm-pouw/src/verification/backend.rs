@@ -103,6 +103,13 @@ pub fn backend_system_hint(raw: &str) -> Option<String> {
         idx += 1;
     }
 
+    if family == Some("tee")
+        && matches!(parts.get(idx).copied(), Some("quote" | "report" | "claims" | "claim"))
+        && parts.get(idx + 1).is_some()
+    {
+        idx += 1;
+    }
+
     match parts.get(idx).copied() {
         Some("noop") | None => None,
         Some(system) => Some(system.to_string()),
@@ -846,12 +853,14 @@ mod tests {
     #[test]
     fn backend_system_hint_extracts_family_scoped_tee_and_zk_system_tokens() {
         assert_eq!(backend_system_hint(" tee:sgx-dcap "), Some("sgx".into()));
-        assert_eq!(backend_system_hint("TEE report-snp"), Some("report".into()));
+        assert_eq!(backend_system_hint("TEE report-snp"), Some("snp".into()));
         assert_eq!(backend_system_hint("tee:intel-sgx-dcap"), Some("sgx".into()));
         assert_eq!(backend_system_hint("TEE amd-sev-snp"), Some("sev".into()));
         assert_eq!(backend_system_hint("tee attestation report"), Some("report".into()));
         assert_eq!(backend_system_hint("tee receipt quote"), Some("quote".into()));
         assert_eq!(backend_system_hint("tee evidence snp"), Some("snp".into()));
+        assert_eq!(backend_system_hint("tee quote tdx"), Some("tdx".into()));
+        assert_eq!(backend_system_hint("tee claims sgx"), Some("sgx".into()));
         assert_eq!(backend_system_hint("zk:groth16"), Some("groth16".into()));
         assert_eq!(backend_system_hint("plonk"), Some("plonk".into()));
         assert_eq!(backend_system_hint("noop"), None);
