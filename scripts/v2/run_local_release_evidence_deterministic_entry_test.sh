@@ -29,4 +29,21 @@ if ! grep -Fq "TRNM_CHALLENGE_REEXEC_ENTRY='\${replay_challenge_entry}'" "$TARGE
   exit 1
 fi
 
-echo "[PASS] run_local_release_evidence uses deterministic challenge entry selection and replay pinning"
+required_exports=(
+  'export TZ="${TZ:-$replay_tz}"'
+  'export LC_ALL="${LC_ALL:-$replay_lc_all}"'
+  'export LANG="${LANG:-$replay_lang}"'
+  'export SOURCE_DATE_EPOCH="${SOURCE_DATE_EPOCH:-$replay_source_date_epoch}"'
+  'export CARGO_TERM_COLOR="${CARGO_TERM_COLOR:-$replay_cargo_term_color}"'
+  'export RUST_BACKTRACE="${RUST_BACKTRACE:-$replay_rust_backtrace}"'
+  'export CARGO_BUILD_JOBS="${CARGO_BUILD_JOBS:-$replay_cargo_build_jobs}"'
+)
+
+for line in "${required_exports[@]}"; do
+  if ! grep -Fq "$line" "$TARGET"; then
+    echo "[FAIL] expected deterministic env default export: $line" >&2
+    exit 1
+  fi
+done
+
+echo "[PASS] run_local_release_evidence uses deterministic challenge entry selection, replay pinning, and self-applied env defaults"

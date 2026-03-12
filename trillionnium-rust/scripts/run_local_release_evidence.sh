@@ -5,6 +5,22 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
 
+replay_tz="UTC"
+replay_lc_all="C"
+replay_lang="C"
+replay_source_date_epoch="1704067200"
+replay_cargo_term_color="never"
+replay_rust_backtrace="1"
+replay_cargo_build_jobs="1"
+
+export TZ="${TZ:-$replay_tz}"
+export LC_ALL="${LC_ALL:-$replay_lc_all}"
+export LANG="${LANG:-$replay_lang}"
+export SOURCE_DATE_EPOCH="${SOURCE_DATE_EPOCH:-$replay_source_date_epoch}"
+export CARGO_TERM_COLOR="${CARGO_TERM_COLOR:-$replay_cargo_term_color}"
+export RUST_BACKTRACE="${RUST_BACKTRACE:-$replay_rust_backtrace}"
+export CARGO_BUILD_JOBS="${CARGO_BUILD_JOBS:-$replay_cargo_build_jobs}"
+
 REPO_ROOT="$(cd "$ROOT/.." && pwd)"
 GIT_HEAD="$(git rev-parse HEAD 2>/dev/null || echo unknown)"
 GIT_BRANCH="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo unknown)"
@@ -17,14 +33,6 @@ mkdir -p "$EVIDENCE_DIR"
 
 PASS_COUNT=0
 FAIL_COUNT=0
-
-replay_tz="UTC"
-replay_lc_all="C"
-replay_lang="C"
-replay_source_date_epoch="1704067200"
-replay_cargo_term_color="never"
-replay_rust_backtrace="1"
-replay_cargo_build_jobs="1"
 
 log() {
   echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] $*"
