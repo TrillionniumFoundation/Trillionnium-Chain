@@ -1592,6 +1592,41 @@ mod tests {
         ));
     }
 
+    #[cfg(feature = "real-zk-backend")]
+    #[test]
+    fn registry_zk_vector_fixture_style_payload_rejects_null_backend_id_when_feature_enabled() {
+        let registry = registry_with_feature_on_fixture_bridge_backend();
+        let mut task = task_with_proof_type(ProofType::Zk);
+        task.status = TaskStatus::Committed;
+        task.worker = Some("worker-zk".into());
+        task.result_hash = Some([0x11; 32]);
+
+        let payload = br#"ZK:{"task_id":42,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":null,"backend_version":"v1","vk_ref":"vk://trnm/dev/mock-groth16/valid","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["42","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]},"meta":{"schema_version":"trnm.zk.payload.v0","circuit_id":"fixture-bridge-groth16-inline-null-backend-id-feature-on"}}"#;
+
+        assert!(matches!(
+            registry.verify(&task, payload),
+            VerificationResult::Invalid(msg) if msg.contains("backend_id is required")
+        ));
+    }
+
+    #[cfg(feature = "real-zk-backend")]
+    #[test]
+    fn registry_zk_vector_fixture_style_payload_rejects_null_backend_id_for_plonk_when_feature_enabled(
+    ) {
+        let registry = registry_with_feature_on_fixture_bridge_backend();
+        let mut task = task_with_proof_type(ProofType::Zk);
+        task.status = TaskStatus::Committed;
+        task.worker = Some("worker-zk".into());
+        task.result_hash = Some([0x11; 32]);
+
+        let payload = br#"ZK:{"task_id":42,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"plonk","backend_id":null,"backend_version":"v1","vk_ref":"vk://trnm/dev/mock-plonk/valid","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["42","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]},"meta":{"schema_version":"trnm.zk.payload.v0","circuit_id":"fixture-bridge-plonk-inline-null-backend-id-feature-on"}}"#;
+
+        assert!(matches!(
+            registry.verify(&task, payload),
+            VerificationResult::Invalid(msg) if msg.contains("backend_id is required")
+        ));
+    }
+
     #[test]
     fn registry_zk_vector_proof_type_mismatch_fails_closed_before_crypto() {
         let registry = registry_with_mock_zk_backend();
