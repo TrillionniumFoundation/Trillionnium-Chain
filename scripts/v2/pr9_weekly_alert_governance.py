@@ -48,8 +48,24 @@ def normalize_env_value(raw: str) -> str:
             if ch == quote:
                 return "".join(chars)
             chars.append(ch)
-    value = re.sub(r"\s+#.*$", "", value)
-    return value.rstrip()
+
+    chars = []
+    escaped = False
+    after_unescaped_space = False
+    for ch in value:
+        if escaped:
+            chars.append(ch)
+            escaped = False
+            after_unescaped_space = False
+            continue
+        if ch == "\\":
+            escaped = True
+            continue
+        if ch == "#" and after_unescaped_space:
+            break
+        chars.append(ch)
+        after_unescaped_space = ch.isspace()
+    return "".join(chars).rstrip()
 
 
 def safe_json(path: Path) -> dict[str, Any]:
