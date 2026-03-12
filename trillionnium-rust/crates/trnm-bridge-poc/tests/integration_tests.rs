@@ -374,6 +374,35 @@ fn test_authorized_calls_reject_non_canonical_tx_hash() {
 }
 
 #[test]
+fn test_authorized_calls_reject_tx_hash_with_ascii_internal_whitespace() {
+    let mut request = SettlementRequest::new(46, "0xabc def".to_string());
+    let token = CapabilityToken {
+        subject: "did:trn:worker-f".to_string(),
+        capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
+    };
+
+    let finalize_err = request.settle_authorized(&token, 516).unwrap_err();
+    assert_eq!(
+        finalize_err,
+        SettlementError::MalformedRequest {
+            reason: "non-canonical tx_hash",
+        }
+    );
+    assert_eq!(request.status, BridgeStatus::Pending);
+
+    let revert_err = request
+        .revert_authorized(&token, "bridge timeout".to_string())
+        .unwrap_err();
+    assert_eq!(
+        revert_err,
+        SettlementError::MalformedRequest {
+            reason: "non-canonical tx_hash",
+        }
+    );
+    assert_eq!(request.status, BridgeStatus::Pending);
+}
+
+#[test]
 fn test_authorized_calls_reject_tx_hash_with_invisible_unicode_controls() {
     let mut request = SettlementRequest::new(46, "0xabc\u{200B}\u{2060}def".to_string());
     let token = CapabilityToken {

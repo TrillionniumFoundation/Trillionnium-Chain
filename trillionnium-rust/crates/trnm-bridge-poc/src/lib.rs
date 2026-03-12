@@ -157,7 +157,7 @@ pub mod bridge_status {
                 });
             }
             if self.tx_hash.trim() != self.tx_hash
-                || self.tx_hash.chars().any(has_disallowed_request_char)
+                || self.tx_hash.chars().any(|ch| ch.is_whitespace() || has_disallowed_request_char(ch))
             {
                 return Err(SettlementError::MalformedRequest {
                     reason: "non-canonical tx_hash",
