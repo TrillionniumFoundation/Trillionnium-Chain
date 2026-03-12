@@ -6602,6 +6602,30 @@ mod tests {
     }
 
     #[test]
+    fn query_events_response_oversized_limit_clamps_replay_fallback_to_hardcap() {
+        let recs = (0..(QUERY_EVENTS_LIMIT_MAX + 25))
+            .map(|idx| AdapterRecord {
+                ts: idx as u64 + 1,
+                kind: if idx % 2 == 0 { "commit" } else { "reveal" }.into(),
+                task_id: 123,
+                worker: Some(format!("worker-{idx}")),
+                result_hash: None,
+                status: "accepted".into(),
+                tx_hash: Some(format!("0x{:064x}", idx + 1)),
+            })
+            .collect::<Vec<_>>();
+
+        let out = query_events_response(123, QUERY_EVENTS_LIMIT_MAX + 25, &[], &recs)
+            .expect("fallback events expected");
+        assert_eq!(out.len(), QUERY_EVENTS_LIMIT_MAX);
+        assert_eq!(out.first().and_then(|evt| evt.tx_hash.as_deref()), Some("0x000000000000000000000000000000000000000000000000000000000000001a"));
+        assert_eq!(
+            out.last().and_then(|evt| evt.tx_hash.as_deref()),
+            Some("0x000000000000000000000000000000000000000000000000000000000000020d")
+        );
+    }
+
+    #[test]
     fn parse_event_log_kv_preserves_quoted_values_with_spaces() {
         let line = "[event] event_type=resolve task_id=7 from_status=Challenged to_status=Completed actor=authority tx_id=9 block_height=12 state_root=abc ts_unix_ms=1000 resolution_code=\"timeout reached\" bond_disposition='forfeit all'";
         let kv = parse_event_log_kv(line);
