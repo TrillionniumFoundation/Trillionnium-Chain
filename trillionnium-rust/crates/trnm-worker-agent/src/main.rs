@@ -1120,14 +1120,21 @@ fn parse_tx_hash(text: &str) -> Option<String> {
         normalize_candidate_tx_hash(&candidate[..candidate_end])
     }
 
-    for prefix in PREFIXES {
-        let mut remainder = text;
-        while let Some(idx) = remainder.find(prefix) {
-            let suffix = &remainder[idx + prefix.len()..];
-            if let Some(parsed) = parse_hash_from_suffix(suffix) {
-                return Some(parsed);
+    let normalized_key_quotes = text
+        .chars()
+        .map(|ch| if is_receipt_quote_wrapper(ch) { '"' } else { ch })
+        .collect::<String>();
+
+    for haystack in [text, normalized_key_quotes.as_str()] {
+        for prefix in PREFIXES {
+            let mut remainder = haystack;
+            while let Some(idx) = remainder.find(prefix) {
+                let suffix = &remainder[idx + prefix.len()..];
+                if let Some(parsed) = parse_hash_from_suffix(suffix) {
+                    return Some(parsed);
+                }
+                remainder = &suffix[1.min(suffix.len())..];
             }
-            remainder = &suffix[1.min(suffix.len())..];
         }
     }
 
@@ -2422,6 +2429,24 @@ mod tests {
         let curly_single = parse_tx_hash("adapter stdout: {'transaction_hash': ‘ABCD1234’}")
             .expect("smart single-quoted receipt hash should parse");
         assert_eq!(curly_single, "abcd1234");
+    }
+
+    #[test]
+    fn parse_tx_hash_accepts_smart_quoted_receipt_keys() {
+        let curly_double_key = parse_tx_hash("adapter stdout: {“tx_hash”: \"0xDEADBEEF\"}")
+            .expect("smart double-quoted receipt key should parse");
+        assert_eq!(curly_double_key, "deadbeef");
+
+        let curly_single_key = parse_tx_hash("adapter stdout: {‘transaction_hash’: 'ABCD1234'}")
+            .expect("smart single-quoted receipt key should parse");
+        assert_eq!(curly_single_key, "abcd1234");
+    }
+
+    #[test]
+    fn parse_tx_hash_accepts_backtick_wrapped_receipt_keys() {
+        let backtick_key = parse_tx_hash("adapter stdout: {`tx_hash`: `0xFACECAFE`}")
+            .expect("backtick-wrapped receipt key should parse");
+        assert_eq!(backtick_key, "facecafe");
     }
 
     #[test]
