@@ -4010,6 +4010,17 @@ mod tests {
     }
 
     #[test]
+    fn clamp_limit_query_challenge_treasury_enforces_max() {
+        let got = clamp_limit(
+            "QueryChallengeTreasury",
+            CHALLENGE_TREASURY_EVENTS_LIMIT_MAX + 1,
+            CHALLENGE_TREASURY_EVENTS_LIMIT_DEFAULT,
+            CHALLENGE_TREASURY_EVENTS_LIMIT_MAX,
+        );
+        assert_eq!(got, CHALLENGE_TREASURY_EVENTS_LIMIT_MAX);
+    }
+
+    #[test]
     fn clamp_limit_keeps_in_range_value() {
         let got = clamp_limit(
             "QueryRequestFull",
