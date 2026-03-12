@@ -201,6 +201,12 @@ case "$sub" in
     fi
     status=$(printf "%s" "$out" | sed -n 's/.*"status"[[:space:]]*:[[:space:]]*"\([^"]\+\)".*/\1/p' | head -n1 || true)
     if [[ -z "$status" ]]; then
+      status=$(printf "%s" "$out" | sed -n 's/.*"tx_status"[[:space:]]*:[[:space:]]*"\([^"]\+\)".*/\1/p' | head -n1 || true)
+    fi
+    if [[ -z "$status" ]]; then
+      status=$(printf "%s" "$out" | sed -n 's/.*"txStatus"[[:space:]]*:[[:space:]]*"\([^"]\+\)".*/\1/p' | head -n1 || true)
+    fi
+    if [[ -z "$status" ]]; then
       status=$(printf "%s" "$out" | sed -n 's/.*\([Tt][Xx]_\)\?[Ss][Tt][Aa][Tt][Uu][Ss][[:space:]]*[:=][[:space:]]*\([^[:space:]}\",]\+\).*/\2/p' | head -n1 || true)
     fi
     if [[ -z "$status" ]]; then
