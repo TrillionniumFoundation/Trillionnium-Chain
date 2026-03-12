@@ -2624,6 +2624,55 @@ mod tests {
     }
 
     #[test]
+    fn auto_adaptive_threshold_boundaries_are_inclusive() {
+        let _env = env_lock();
+        let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "64");
+        let _sample = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", "64");
+
+        // Keep a precise boundary regression for the experimental adaptive lane:
+        // when observed streak/share/gain land exactly on the configured
+        // thresholds, the selector should stay inclusive (`>=`) instead of
+        // fail-closing one notch below due to future comparator drift.
+        let mut txs = Vec::with_capacity(64);
+        for i in 0..16u64 {
+            txs.push(tx(i, vec![], vec![o(7)]));
+        }
+        for i in 16..32u64 {
+            txs.push(tx(i, vec![], vec![o(100 + i)]));
+        }
+        for i in 32..64u64 {
+            txs.push(tx(i, vec![], vec![o(200 + i)]));
+        }
+
+        let _baseline_streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.0");
+        let _baseline_margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _baseline_share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.0");
+        let _baseline_gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.0");
+        let baseline = auto_adaptive_decision(&txs);
+        drop(_baseline_gain);
+        drop(_baseline_share);
+        drop(_baseline_margin);
+        drop(_baseline_streak);
+
+        let threshold = baseline.streak_ratio.to_string();
+        let hot_key_share = baseline.hot_key_share.to_string();
+        let gain = baseline.expected_gain_score.to_string();
+
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", &threshold);
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", &hot_key_share);
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", &gain);
+
+        let d = auto_adaptive_decision(&txs);
+        assert_eq!(d.sample_len, 64);
+        assert!(d.use_hot_bucket, "exact boundary match should still enable hot-bucket strategy");
+        assert_eq!(d.reason, "hotspot_detected");
+        assert!(d.streak_ratio >= d.streak_threshold + d.min_margin);
+        assert!(d.hot_key_share >= d.min_hot_key_share);
+        assert!(d.expected_gain_score >= d.min_expected_gain_score);
+    }
+
+    #[test]
     fn auto_adaptive_sub_min_batch_hotspots_stay_fail_closed() {
         let _env = env_lock();
         let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "64");
