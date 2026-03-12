@@ -4195,6 +4195,53 @@ mod tests {
     }
 
     #[test]
+    fn query_audit_rejects_markdown_exports_fail_closed() {
+        let output_file = std::env::temp_dir().join(format!(
+            "trnm-worker-agent-query-audit-markdown-{}-{}.md",
+            std::process::id(),
+            now_ms()
+        ));
+        let index_file = audit_export_index_path(&output_file);
+        let index = AuditExportIndex {
+            version: 1,
+            total_records: 0,
+            by_task_id: BTreeMap::new(),
+            by_status: BTreeMap::new(),
+            by_status_phase: BTreeMap::new(),
+            by_provider: BTreeMap::new(),
+            by_model: BTreeMap::new(),
+            by_agent_protocol: BTreeMap::new(),
+            by_compliance_profile: BTreeMap::new(),
+            by_provenance_fingerprint: BTreeMap::new(),
+        };
+
+        fs::write(&output_file, "# audit\n").expect("write markdown export");
+        fs::write(
+            &index_file,
+            serde_json::to_string_pretty(&index).expect("serialize index"),
+        )
+        .expect("write index");
+
+        let format = detect_audit_export_format(&output_file);
+        assert_eq!(format, AuditExportFormat::Markdown);
+        assert!(index_file.exists());
+        let err = if format != AuditExportFormat::Jsonl {
+            anyhow!(
+                "query-audit only supports JSONL audit exports: {}",
+                output_file.display()
+            )
+        } else {
+            anyhow!("unexpected jsonl format for markdown export")
+        };
+        assert!(err
+            .to_string()
+            .contains("query-audit only supports JSONL audit exports"));
+
+        let _ = fs::remove_file(&output_file);
+        let _ = fs::remove_file(&index_file);
+    }
+
+    #[test]
     fn attach_llm_provenance_persists_provider_request_id() {
         let mut rec = MessageIngressRecord {
             request_id: "r1".to_string(),
@@ -6132,6 +6179,13 @@ fn main() -> Result<()> {
                 return Err(anyhow!(
                     "query-audit missing index file: {}",
                     index_file.display()
+                ));
+            }
+
+            if detect_audit_export_format(&output_file) != AuditExportFormat::Jsonl {
+                return Err(anyhow!(
+                    "query-audit only supports JSONL audit exports: {}",
+                    output_file.display()
                 ));
             }
 
