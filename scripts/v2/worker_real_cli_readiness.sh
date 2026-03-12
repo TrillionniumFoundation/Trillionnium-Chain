@@ -43,15 +43,15 @@ extract_tx_hash() {
   local raw="$1"
   local h=""
   while IFS= read -r tok; do
-    tok="${tok#\"}"
-    tok="${tok%\"}"
+    tok="$(printf "%s" "$tok" | sed -E "s/.*[:=][[:space:]]*//")"
+    tok="$(printf "%s" "$tok" | sed -E 's/^[[:space:]"'"'"'`({\[]+//; s/[[:space:]"'"'"'`,;:)}\]]+$//')"
     tok="${tok#0x}"
     tok="${tok#0X}"
     if [[ "$tok" =~ ^[0-9A-Fa-f]{16,128}$ ]]; then
       h="$tok"
       break
     fi
-  done < <(printf "%s\n" "$raw" | grep -Eo 'tx_hash"?[[:space:]]*[:=][[:space:]]*"?(0[xX])?[0-9A-Fa-f]{16,128}"?|txhash"?[[:space:]]*[:=][[:space:]]*"?(0[xX])?[0-9A-Fa-f]{16,128}"?|txHash"?[[:space:]]*[:=][[:space:]]*"?(0[xX])?[0-9A-Fa-f]{16,128}"?|transaction_hash"?[[:space:]]*[:=][[:space:]]*"?(0[xX])?[0-9A-Fa-f]{16,128}"?|transactionHash"?[[:space:]]*[:=][[:space:]]*"?(0[xX])?[0-9A-Fa-f]{16,128}"?' | sed -E 's/.*[:=][[:space:]]*//')
+  done < <(printf "%s\n" "$raw" | grep -Eio '(tx_hash|txhash|txHash|transaction_hash|transactionHash)"?[[:space:]]*[:=][[:space:]]*["'"'"'`(\[{]*(0[xX])?[0-9A-Fa-f]{16,128}["'"'"'`,;:)}\]]*')
   printf "%s" "$h"
 }
 
