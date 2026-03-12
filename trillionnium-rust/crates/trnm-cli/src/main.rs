@@ -465,6 +465,17 @@ fn normalize_json_error(value: &serde_json::Value) -> Option<String> {
     }
 }
 
+fn normalize_json_status(value: &serde_json::Value) -> Option<String> {
+    match value {
+        serde_json::Value::String(s) => normalize_tx_status(s),
+        serde_json::Value::Number(n) => n
+            .as_i64()
+            .map(|code| if code == 0 { "committed" } else { "fail" }.to_string()),
+        serde_json::Value::Bool(b) => Some(if *b { "committed" } else { "fail" }.to_string()),
+        _ => None,
+    }
+}
+
 fn json_u64_at_path(value: &serde_json::Value, path: &[&str]) -> Option<u64> {
     let mut current = value;
     for key in path {
@@ -556,8 +567,7 @@ fn parse_tx_query_response(raw: &str, requested_tx_hash: &str) -> Result<TxQuery
             .or_else(|| payload.get("txState"))
             .or_else(|| payload.get("transaction_state"))
             .or_else(|| payload.get("transactionState"))
-            .and_then(|x| x.as_str())
-            .and_then(normalize_tx_status)
+            .and_then(normalize_json_status)
             .or_else(|| infer_json_tx_status(primary))
             .or_else(|| infer_json_tx_status(payload))
             .ok_or_else(|| anyhow!("missing/invalid status field in tx query response"))?;
@@ -1337,6 +1347,20 @@ mod tests {
         let json_log = "{\"tx_hash\":\"0x779\",\"status\":\"fail\",\"log\":\"check tx failed\"}";
         let parsed_log = parse_tx_query_response(json_log, "0xfallback").unwrap();
         assert_eq!(parsed_log.error.as_deref(), Some("check tx failed"));
+    }
+
+    #[test]
+    fn tx_query_parse_json_accepts_scalar_status_aliases() {
+        let json_numeric = "{\"tx_hash\":\"0x780\",\"status\":0}";
+        let parsed_numeric = parse_tx_query_response(json_numeric, "0xfallback").unwrap();
+        assert_eq!(parsed_numeric.tx_hash, "0x780");
+        assert_eq!(parsed_numeric.status, "committed");
+
+        let json_nested_numeric = "{\"result\":{\"transactionHash\":\"0x781\",\"transactionState\":12}}";
+        let parsed_nested_numeric =
+            parse_tx_query_response(json_nested_numeric, "0xfallback").unwrap();
+        assert_eq!(parsed_nested_numeric.tx_hash, "0x781");
+        assert_eq!(parsed_nested_numeric.status, "fail");
     }
 
     #[test]
