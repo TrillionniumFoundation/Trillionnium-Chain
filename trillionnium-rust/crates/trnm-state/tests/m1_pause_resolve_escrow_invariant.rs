@@ -1741,6 +1741,63 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_case_variant_placeholder
 }
 
 #[test]
+fn paused_state_restore_pending_resolve_snapshot_scrubs_delimiter_or_non_ascii_second_approver_boundary() {
+    // M1 micro-hardening: paused rollback/restore must scrub finalized quorum snapshots when
+    // the second approver uses delimiter smuggling or non-ASCII spellings, so malformed 2-of-N
+    // resolve history cannot be revived through restore.
+    for (task_id, malformed_second_approver) in [
+        (9_936, "authority|b"),
+        (9_937, "authority；b"),
+        (9_938, "authority，b"),
+        (9_939, "authorité-b"),
+    ] {
+        let mut st = StateStore::new();
+        st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 10_141);
+        st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 1_208);
+        st.set_balance(WORKER_SLASH_TREASURY_ACCOUNT, 708);
+
+        st.set_gov_param(98_221, 7_999, "emergency_pause".into(), "true".into())
+            .expect("pause toggle must apply immediately");
+        assert!(st.is_emergency_paused());
+
+        let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+        let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+        let worker_slash_before = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
+
+        st.restore_pending_resolve_approval(
+            task_id,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 2,
+                first_approver: "authority-a".into(),
+                second_approver: Some(malformed_second_approver.into()),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 1,
+            }),
+        );
+
+        assert_eq!(
+            st.pending_resolve_approval(task_id),
+            None,
+            "paused restore must scrub malformed finalized second approver ids"
+        );
+        assert_eq!(st.pending_resolve_first_approver(task_id), None);
+        assert_eq!(st.pending_resolve_approval_snapshot(task_id), None);
+        assert_eq!(st.pending_gov_update("resolve_authority"), None);
+        assert!(st.is_emergency_paused());
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            forfeits_before
+        );
+        assert_eq!(
+            st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
+            worker_slash_before
+        );
+    }
+}
+
+#[test]
 fn paused_state_restore_pending_resolve_snapshot_scrubs_oversized_second_approver_boundary() {
     // M1 micro-hardening: paused rollback/restore must scrub finalized quorum snapshots when
     // the second approver breaches the canonical actor-id length boundary, so malformed 2-of-N
