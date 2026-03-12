@@ -433,13 +433,49 @@ fn audit_export_index_path(output_file: &Path) -> PathBuf {
     PathBuf::from(format!("{}.index.json", output_file.display()))
 }
 
-fn validate_audit_export_index(index: &AuditExportIndex) -> Result<()> {
+fn validate_audit_export_index(index: &AuditExportIndex, exports_len: usize) -> Result<()> {
     if index.version != 1 {
         anyhow::bail!(
             "unsupported audit index version={} (expected=1)",
             index.version
         );
     }
+    if index.total_records != exports_len {
+        anyhow::bail!(
+            "audit index total_records mismatch: index={} exports={}",
+            index.total_records,
+            exports_len
+        );
+    }
+
+    for (label, offsets) in [
+        ("by_task_id", &index.by_task_id),
+        ("by_status", &index.by_status),
+        ("by_status_phase", &index.by_status_phase),
+        ("by_provider", &index.by_provider),
+        ("by_model", &index.by_model),
+        ("by_agent_protocol", &index.by_agent_protocol),
+        ("by_compliance_profile", &index.by_compliance_profile),
+        (
+            "by_provenance_fingerprint",
+            &index.by_provenance_fingerprint,
+        ),
+    ] {
+        for (key, rows) in offsets {
+            for idx in rows {
+                if *idx >= index.total_records {
+                    anyhow::bail!(
+                        "audit index offset out of bounds: map={} key={} idx={} total_records={}",
+                        label,
+                        key,
+                        idx,
+                        index.total_records
+                    );
+                }
+            }
+        }
+    }
+
     Ok(())
 }
 
@@ -3680,7 +3716,7 @@ mod tests {
             by_provenance_fingerprint: BTreeMap::new(),
         };
 
-        validate_audit_export_index(&index).expect("v1 index should be accepted");
+        validate_audit_export_index(&index, 0).expect("v1 index should be accepted");
     }
 
     #[test]
@@ -3698,11 +3734,57 @@ mod tests {
             by_provenance_fingerprint: BTreeMap::new(),
         };
 
-        let err = validate_audit_export_index(&index)
+        let err = validate_audit_export_index(&index, 0)
             .expect_err("unknown audit index version must fail closed");
         assert!(err
             .to_string()
             .contains("unsupported audit index version=2"));
+    }
+
+    #[test]
+    fn validate_audit_export_index_rejects_total_record_mismatch_fail_closed() {
+        let index = AuditExportIndex {
+            version: 1,
+            total_records: 2,
+            by_task_id: BTreeMap::new(),
+            by_status: BTreeMap::new(),
+            by_status_phase: BTreeMap::new(),
+            by_provider: BTreeMap::new(),
+            by_model: BTreeMap::new(),
+            by_agent_protocol: BTreeMap::new(),
+            by_compliance_profile: BTreeMap::new(),
+            by_provenance_fingerprint: BTreeMap::new(),
+        };
+
+        let err = validate_audit_export_index(&index, 1)
+            .expect_err("mismatched export length must fail closed");
+        assert!(err
+            .to_string()
+            .contains("audit index total_records mismatch: index=2 exports=1"));
+    }
+
+    #[test]
+    fn validate_audit_export_index_rejects_out_of_bounds_offsets_fail_closed() {
+        let mut by_task_id = BTreeMap::new();
+        by_task_id.insert("7001".to_string(), vec![1]);
+        let index = AuditExportIndex {
+            version: 1,
+            total_records: 1,
+            by_task_id,
+            by_status: BTreeMap::new(),
+            by_status_phase: BTreeMap::new(),
+            by_provider: BTreeMap::new(),
+            by_model: BTreeMap::new(),
+            by_agent_protocol: BTreeMap::new(),
+            by_compliance_profile: BTreeMap::new(),
+            by_provenance_fingerprint: BTreeMap::new(),
+        };
+
+        let err = validate_audit_export_index(&index, 1)
+            .expect_err("out-of-bounds index offsets must fail closed");
+        assert!(err
+            .to_string()
+            .contains("audit index offset out of bounds: map=by_task_id key=7001 idx=1 total_records=1"));
     }
 
     #[test]
@@ -6278,7 +6360,7 @@ fn main() -> Result<()> {
                 exports.push(serde_json::from_str::<EnterpriseAuditExportRecord>(line)?);
             }
             let index: AuditExportIndex = serde_json::from_str(&fs::read_to_string(&index_file)?)?;
-            validate_audit_export_index(&index)?;
+            validate_audit_export_index(&index, exports.len())?;
 
             let (hit_indexes, records, normalized_fp) = if let Some(task_id) = task_id {
                 let key = task_id.to_string();
