@@ -441,9 +441,12 @@ def main():
 
     def candidate_preview(label: str, selected: str | None, candidates: list[str], max_items: int = 3) -> list[str]:
         existing_candidates = [path for path in candidates if os.path.exists(path)]
-        missing_candidates = max(0, len(candidates) - len(existing_candidates))
+        pending_selected = bool(selected and selected in candidates and not os.path.exists(selected))
+        missing_candidates = sum(
+            1 for path in candidates if not os.path.exists(path) and path != selected
+        )
         preview = [
-            f"- {label}: selected={selected or 'None'} matched_count={len(candidates)} existing_count={len(existing_candidates)} missing_count={missing_candidates}"
+            f"- {label}: selected={selected or 'None'} matched_count={len(candidates)} existing_count={len(existing_candidates)} missing_count={missing_candidates} pending_selected={'true' if pending_selected else 'false'}"
         ]
         if not existing_candidates:
             preview.append(f"  - none: pattern produced no matches")
@@ -500,8 +503,12 @@ def main():
             preview.append(f"  - remaining_candidates: {len(existing_candidates) - max_items}")
         return preview
 
-    def candidate_pool_health_struct(label: str, selected: str | None, candidates: list[str]) -> dict[str, str | int]:
+    def candidate_pool_health_struct(label: str, selected: str | None, candidates: list[str]) -> dict[str, str | int | bool]:
         existing_candidates = [path for path in candidates if os.path.exists(path)]
+        pending_selected = bool(selected and selected in candidates and not os.path.exists(selected))
+        missing_count = sum(
+            1 for path in candidates if not os.path.exists(path) and path != selected
+        )
         if not existing_candidates:
             return {
                 "label": label,
@@ -509,8 +516,9 @@ def main():
                 "action": "produce",
                 "selected": selected or "None",
                 "selected_freshness": "missing",
+                "pending_selected": pending_selected,
                 "candidate_count": 0,
-                "missing_count": len(candidates),
+                "missing_count": missing_count,
                 "fresh": 0,
                 "stale": 0,
                 "old": 0,
@@ -545,18 +553,20 @@ def main():
             "action": action,
             "selected": os.path.basename(selected) if selected else "None",
             "selected_freshness": selected_freshness,
+            "pending_selected": pending_selected,
             "candidate_count": candidate_count,
-            "missing_count": max(0, len(candidates) - candidate_count),
+            "missing_count": missing_count,
             "fresh": freshness_counts["fresh"],
             "stale": freshness_counts["stale"],
             "old": freshness_counts["old"],
             "old_backlog": old_backlog,
         }
 
-    def candidate_pool_health_line(pool: dict[str, str | int]) -> str:
+    def candidate_pool_health_line(pool: dict[str, str | int | bool]) -> str:
         return (
             f"- {pool['label']}: status={pool['status']} action={pool['action']} selected={pool['selected']} "
-            f"selected_freshness={pool['selected_freshness']} candidate_count={pool['candidate_count']} missing_count={pool['missing_count']} fresh={pool['fresh']} "
+            f"selected_freshness={pool['selected_freshness']} pending_selected={'true' if pool['pending_selected'] else 'false'} "
+            f"candidate_count={pool['candidate_count']} missing_count={pool['missing_count']} fresh={pool['fresh']} "
             f"stale={pool['stale']} old={pool['old']} old_backlog={pool['old_backlog']}"
         )
 
