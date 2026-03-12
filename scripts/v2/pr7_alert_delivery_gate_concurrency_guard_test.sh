@@ -78,6 +78,20 @@ if ! grep -q "lock timeout" "$TMP/run-b.out"; then
   cat "$TMP/run-b.out"
   exit 1
 fi
+if ! grep -q "status_file=" "$TMP/run-b.out"; then
+  echo "[FAIL] lock-timeout path should still emit a status_file path"
+  cat "$TMP/run-b.out"
+  exit 1
+fi
+status_b="$(sed -n 's/.*status_file=\([^ ]*\).*/\1/p' "$TMP/run-b.out" | head -n1)"
+if [[ -z "$status_b" || ! -f "$status_b" ]]; then
+  echo "[FAIL] missing lock-timeout status file"
+  cat "$TMP/run-b.out"
+  exit 1
+fi
+grep -q '^status=LOCK_TIMEOUT$' "$status_b"
+grep -q '^final_rc=5$' "$status_b"
+grep -q '^delivery_event=lock_timeout$' "$status_b"
 
 # Case 2: default RUN_DIR should be collision-resistant.
 PR6_GATE_CMD="$MOCK_PR6_FAST" PR7_DELIVERY_CMD="$MOCK_PR7_OK" PR7_GATE_LOCK_DIR="$TMP/.pr7-lock-2" "$ROOT/scripts/v2/pr7_alert_delivery_gate.sh" >"$TMP/auto1.out" 2>&1

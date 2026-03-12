@@ -76,6 +76,30 @@ fi
 
 require_enum "ALERT_NOTIFY_MIN_LEVEL" "${ALERT_NOTIFY_MIN_LEVEL:-WARN}" INFO WARN CRITICAL PASS FAIL
 
+write_status_file() {
+  mkdir -p "$(dirname "$STATUS_FILE")"
+  cat >"$STATUS_FILE" <<EOF
+status=$1
+pr6_rc=$2
+pr7_rc=$3
+final_rc=$4
+fail_mode=${PR7_DELIVERY_FAIL_MODE}
+delivery_event=$5
+primary_channel=${ALERT_NOTIFY_PRIMARY_CHANNEL:-${ALERT_NOTIFY_CHANNEL:-}}
+backup_channel=${ALERT_NOTIFY_BACKUP_CHANNEL:-}
+success_channels=
+failed_channels=
+channels_ok=0
+channels_failed=0
+partial_success=0
+run_dir=${RUN_DIR}
+lock_dir=${LOCK_DIR}
+report=${6:-}
+audit_file=${ALERT_NOTIFY_AUDIT_FILE:-$ROOT/run/pr7-alert-delivery/audit.jsonl}
+generated_at_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+EOF
+}
+
 acquire_lock() {
   local start now elapsed jitter_range jitter
   mkdir -p "$(dirname "$LOCK_DIR")"
@@ -103,6 +127,8 @@ release_lock() {
 }
 
 if ! acquire_lock; then
+  write_status_file "LOCK_TIMEOUT" 0 5 5 "lock_timeout"
+  echo "[PR7][alert-delivery] status=LOCK_TIMEOUT pr6_rc=0 pr7_rc=5 final_rc=5 fail_mode=$PR7_DELIVERY_FAIL_MODE report= status_file=$STATUS_FILE"
   exit 5
 fi
 trap release_lock EXIT
