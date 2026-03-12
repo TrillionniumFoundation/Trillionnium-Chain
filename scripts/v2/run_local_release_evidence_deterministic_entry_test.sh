@@ -24,6 +24,16 @@ if ! grep -q 'challenge_reexec_entry=' "$TARGET"; then
   exit 1
 fi
 
+if ! grep -q 'env_trnm_challenge_reexec_entry=' "$TARGET"; then
+  echo "[FAIL] expected summary to record effective challenge reexec override env" >&2
+  exit 1
+fi
+
+if ! grep -q 'replay_env_trnm_challenge_reexec_entry=' "$TARGET"; then
+  echo "[FAIL] expected summary to record replay challenge reexec override env" >&2
+  exit 1
+fi
+
 if ! grep -Fq "TRNM_CHALLENGE_REEXEC_ENTRY='\${replay_challenge_entry}'" "$TARGET"; then
   echo "[FAIL] expected replay_command to pin deterministic challenge reexec entry" >&2
   exit 1

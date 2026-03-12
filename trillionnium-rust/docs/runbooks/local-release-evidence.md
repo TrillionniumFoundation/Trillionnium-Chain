@@ -54,6 +54,8 @@ env TZ=UTC LC_ALL=C LANG=C SOURCE_DATE_EPOCH=1704067200 \
 - 本次证据目录绝对路径
 - 生成该证据包的分支与提交：`git_branch=<branch>` / `git_head=<sha>`
 - UTC 时间戳：`date -u +"%Y-%m-%dT%H:%M:%SZ"`
+- 实际覆盖环境：`env_trnm_challenge_reexec_entry=<value|<unset>>`
+- 复放环境：`replay_env_trnm_challenge_reexec_entry=<resolved-entry-absolute-path>`
 - 复放命令：`env TZ=UTC LC_ALL=C LANG=C SOURCE_DATE_EPOCH=1704067200 CARGO_TERM_COLOR=never RUST_BACKTRACE=1 CARGO_BUILD_JOBS=1 ./scripts/run_local_release_evidence.sh`
 - 回滚命令：`rm -rf <evidence_dir>`（仅删除本次生成目录）
 

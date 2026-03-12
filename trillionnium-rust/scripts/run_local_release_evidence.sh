@@ -119,6 +119,8 @@ find_challenge_reexec_entry() {
   echo "replay_env_cargo_term_color=$replay_cargo_term_color"
   echo "replay_env_rust_backtrace=$replay_rust_backtrace"
   echo "replay_env_cargo_build_jobs=$replay_cargo_build_jobs"
+  echo "env_trnm_challenge_reexec_entry=${TRNM_CHALLENGE_REEXEC_ENTRY:-<unset>}"
+  echo "replay_env_trnm_challenge_reexec_entry=<pending_resolution>"
   echo ""
   echo "steps:"
 } > "$SUMMARY"
@@ -141,7 +143,10 @@ run_step "run_request_fault_injection" "OUT_DIR='$EVIDENCE_DIR' ./scripts/run_re
 
 CHALLENGE_REEXEC_ENTRY=""
 if CHALLENGE_REEXEC_ENTRY="$(find_challenge_reexec_entry)"; then
-  echo "challenge_reexec_entry=$CHALLENGE_REEXEC_ENTRY" >> "$SUMMARY"
+  {
+    echo "challenge_reexec_entry=$CHALLENGE_REEXEC_ENTRY"
+    echo "replay_env_trnm_challenge_reexec_entry=$CHALLENGE_REEXEC_ENTRY"
+  } >> "$SUMMARY"
   run_step "challenge_reexec" "OUT_DIR='$EVIDENCE_DIR' bash '$CHALLENGE_REEXEC_ENTRY'"
 else
   FAIL_COUNT=$((FAIL_COUNT + 1))
