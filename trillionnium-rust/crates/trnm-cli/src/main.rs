@@ -434,11 +434,11 @@ fn normalize_tx_status(raw: &str) -> Option<String> {
     let canonical = cleaned.replace([' ', '-'], "_");
     match canonical.as_str() {
         "pending" | "submitted" | "accepted" | "queued" | "broadcast" | "broadcasted"
-        | "processing" | "in_progress" | "inflight" | "in_flight" => {
-            Some("pending".to_string())
-        }
+        | "broadcasting" | "processing" | "executing" | "in_progress" | "inflight"
+        | "in_flight" => Some("pending".to_string()),
         "committed" | "confirmed" | "success" | "succeeded" | "ok" | "included"
-        | "finalized" | "complete" | "completed" | "done" => Some("committed".to_string()),
+        | "finalized" | "finalising" | "finalizing" | "complete" | "completed"
+        | "done" => Some("committed".to_string()),
         "fail" | "failed" | "error" | "rejected" | "reverted" | "aborted" | "dropped"
         | "timeout" | "timed_out" | "expired" => Some("fail".to_string()),
         _ => None,
@@ -1519,6 +1519,15 @@ mod tests {
         let parsed_processing = parse_tx_query_response(processing_alias, "0xfallback").unwrap();
         assert_eq!(parsed_processing.status, "pending");
 
+        let broadcasting_alias = "tx_hash=0xef411\nstatus=broadcasting\n";
+        let parsed_broadcasting =
+            parse_tx_query_response(broadcasting_alias, "0xfallback").unwrap();
+        assert_eq!(parsed_broadcasting.status, "pending");
+
+        let executing_alias = "tx_hash=0xef412\nstatus=executing\n";
+        let parsed_executing = parse_tx_query_response(executing_alias, "0xfallback").unwrap();
+        assert_eq!(parsed_executing.status, "pending");
+
         let in_progress_alias = "tx_hash=0xef42\nstatus=in_progress\n";
         let parsed_in_progress = parse_tx_query_response(in_progress_alias, "0xfallback").unwrap();
         assert_eq!(parsed_in_progress.status, "pending");
@@ -1539,6 +1548,14 @@ mod tests {
         let finalized_alias = "tx_hash=0xef6\nstatus=finalized\n";
         let parsed_finalized = parse_tx_query_response(finalized_alias, "0xfallback").unwrap();
         assert_eq!(parsed_finalized.status, "committed");
+
+        let finalising_alias = "tx_hash=0xef61\nstatus=finalising\n";
+        let parsed_finalising = parse_tx_query_response(finalising_alias, "0xfallback").unwrap();
+        assert_eq!(parsed_finalising.status, "committed");
+
+        let finalizing_alias = "tx_hash=0xef62\nstatus=finalizing\n";
+        let parsed_finalizing = parse_tx_query_response(finalizing_alias, "0xfallback").unwrap();
+        assert_eq!(parsed_finalizing.status, "committed");
 
         let expired_alias = "tx_hash=0xef7\nstatus=expired\n";
         let parsed_expired = parse_tx_query_response(expired_alias, "0xfallback").unwrap();

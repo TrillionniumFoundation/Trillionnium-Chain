@@ -124,10 +124,10 @@ normalize_status() {
   canonical=$(printf "%s" "$cleaned" | tr ' -' '__')
 
   case "$canonical" in
-    pending|submitted|accepted|queued|broadcast|broadcasted|processing|in_progress|inflight|in_flight)
+    pending|submitted|accepted|queued|broadcast|broadcasted|broadcasting|processing|executing|in_progress|inflight|in_flight)
       printf "pending"
       ;;
-    committed|confirmed|success|succeeded|ok|included|finalized|complete|completed|done)
+    committed|confirmed|success|succeeded|ok|included|finalized|finalising|finalizing|complete|completed|done)
       printf "committed"
       ;;
     fail|failed|error|rejected|reverted|aborted|dropped|timeout|timed_out|expired)
