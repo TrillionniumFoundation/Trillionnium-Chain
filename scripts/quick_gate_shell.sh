@@ -29,6 +29,8 @@ fi
 SKIP_SHELLCHECK="${QUICK_GATE_SKIP_SHELLCHECK:-0}"
 SUMMARY_PATH="${QUICK_GATE_SUMMARY_PATH:-}"
 START_EPOCH="$(date -u +%s)"
+SHELLCHECK_REQUESTED="${QUICK_GATE_SKIP_SHELLCHECK:-0}"
+SHELLCHECK_FALLBACK_REASON=""
 
 json_escape() {
   local s=${1-}
@@ -57,6 +59,7 @@ if [[ "$SKIP_SHELLCHECK" != "1" ]] && ! command -v shellcheck >/dev/null 2>&1; t
   fi
   echo "[quick-gate][WARN] shellcheck not found in PATH -> falling back to bash -n only for non-CI local run" >&2
   SKIP_SHELLCHECK="1"
+  SHELLCHECK_FALLBACK_REASON="shellcheck-missing-local-fallback"
 fi
 
 mapfile -t NORMALIZED_TARGET_DIRS < <(printf '%s\n' "${TARGET_DIRS[@]}" | awk 'NF {print}' | LC_ALL=C sort -u)
@@ -112,6 +115,8 @@ if [[ ${#FILES[@]} -eq 0 ]]; then
   "git_head": "$(json_escape "${git_head}")",
   "file_manifest_sha256": "$(json_escape "${manifest_sha256}")",
   "skip_shellcheck": ${SKIP_SHELLCHECK},
+  "shellcheck_requested": ${SHELLCHECK_REQUESTED},
+  "shellcheck_fallback_reason": "$(json_escape "${SHELLCHECK_FALLBACK_REASON}")",
   "bash_n_elapsed_sec": 0,
   "shellcheck_status": "skipped",
   "shellcheck_version": "",
@@ -139,7 +144,12 @@ shellcheck_elapsed=0
 shellcheck_status="skipped"
 shellcheck_version=""
 if [[ "$SKIP_SHELLCHECK" == "1" ]]; then
-  echo "[quick-gate][WARN] QUICK_GATE_SKIP_SHELLCHECK=1 -> shellcheck skipped"
+  if [[ -n "$SHELLCHECK_FALLBACK_REASON" ]]; then
+    shellcheck_status="$SHELLCHECK_FALLBACK_REASON"
+    echo "[quick-gate][WARN] shellcheck unavailable -> ${SHELLCHECK_FALLBACK_REASON}"
+  else
+    echo "[quick-gate][WARN] QUICK_GATE_SKIP_SHELLCHECK=1 -> shellcheck skipped"
+  fi
 else
   shellcheck_version="$(shellcheck --version | awk '/version:/ {print $2}')"
   sc_start="$(date -u +%s)"
@@ -155,6 +165,8 @@ fi
 summary_status="ok"
 if [[ "$shellcheck_status" == "skipped" ]]; then
   summary_status="warn-shellcheck-skipped"
+elif [[ "$shellcheck_status" == "shellcheck-missing-local-fallback" ]]; then
+  summary_status="warn-shellcheck-unavailable-local-fallback"
 fi
 
 end_epoch="$(date -u +%s)"
@@ -171,6 +183,8 @@ if [[ -n "$SUMMARY_PATH" ]]; then
   "git_head": "$(json_escape "${git_head}")",
   "file_manifest_sha256": "$(json_escape "${manifest_sha256}")",
   "skip_shellcheck": ${SKIP_SHELLCHECK},
+  "shellcheck_requested": ${SHELLCHECK_REQUESTED},
+  "shellcheck_fallback_reason": "$(json_escape "${SHELLCHECK_FALLBACK_REASON}")",
   "bash_n_elapsed_sec": $((bashn_end - bashn_start)),
   "shellcheck_status": "$(json_escape "${shellcheck_status}")",
   "shellcheck_version": "$(json_escape "${shellcheck_version}")",
