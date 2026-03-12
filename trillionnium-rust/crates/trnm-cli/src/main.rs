@@ -532,7 +532,13 @@ fn parse_tx_query_response(raw: &str, requested_tx_hash: &str) -> Result<TxQuery
             .or_else(|| payload.get("txResponse"))
             .or_else(|| payload.get("response").and_then(|r| r.get("tx_response")))
             .or_else(|| payload.get("response").and_then(|r| r.get("txResponse")));
-        let primary = nested_tx_response.unwrap_or(payload);
+        let nested_response_data = payload
+            .get("response")
+            .and_then(|r| r.get("data"))
+            .or_else(|| payload.get("responseData"));
+        let primary = nested_tx_response
+            .or(nested_response_data)
+            .unwrap_or(payload);
         let raw_tx_hash = primary
             .get("tx_hash")
             .or_else(|| primary.get("txhash"))
@@ -1209,6 +1215,13 @@ mod tests {
         assert_eq!(parsed_nested.tx_hash, "0xdef456");
         assert_eq!(parsed_nested.status, "committed");
         assert_eq!(parsed_nested.error, None);
+
+        let nested_response_data = "{\"result\":{\"response\":{\"data\":{\"transactionHash\":\"0xfeed99\",\"transactionStatus\":\"confirmed\",\"rawLog\":\"NULL\"}}}}";
+        let parsed_nested_response_data =
+            parse_tx_query_response(nested_response_data, "0xfallback").unwrap();
+        assert_eq!(parsed_nested_response_data.tx_hash, "0xfeed99");
+        assert_eq!(parsed_nested_response_data.status, "committed");
+        assert_eq!(parsed_nested_response_data.error, None);
     }
 
     #[test]
