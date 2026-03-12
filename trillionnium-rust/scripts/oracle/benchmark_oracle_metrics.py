@@ -143,8 +143,8 @@ def _test_deviation_equal_to_threshold_rejects_as_drift():
         {
             "snapshot_ts_ms": 1_000,
             "sources": [
-                {"source": "s1", "value": 100.0, "ts_unix_ms": 1_000},
-                {"source": "s2", "value": 110.0, "ts_unix_ms": 1_000},
+                {"source": "s1", "value": 95.0, "ts_unix_ms": 1_000},
+                {"source": "s2", "value": 105.0, "ts_unix_ms": 1_000},
             ],
         },
         min_sources=2,
@@ -186,7 +186,7 @@ def _test_future_dated_source_rejects_as_stale():
         max_deviation_bps=500,
     )
     assert status == "stale"
-    assert cardinality == 1
+    assert cardinality == 2
 
 
 def _test_duplicate_sources_count_once_for_quorum_and_drift():
@@ -205,6 +205,54 @@ def _test_duplicate_sources_count_once_for_quorum_and_drift():
     )
     assert status == "ok"
     assert cardinality == 2
+
+
+def _test_run_baseline_preserves_sample_accounting_contract():
+    cases = [
+        {
+            "snapshot_ts_ms": 1_000,
+            "sources": [
+                {"source": "s1", "value": 100.0, "ts_unix_ms": 1_000},
+                {"source": "s2", "value": 100.0, "ts_unix_ms": 1_000},
+            ],
+        },
+        {
+            "snapshot_ts_ms": 2_000,
+            "sources": [
+                {"source": "s1", "value": 100.0, "ts_unix_ms": 2_000},
+            ],
+        },
+        {
+            "snapshot_ts_ms": 3_000,
+            "sources": [
+                {"source": "s1", "value": 100.0, "ts_unix_ms": 3_000},
+                {"source": "s2", "value": 120.0, "ts_unix_ms": 3_000},
+            ],
+        },
+        {
+            "snapshot_ts_ms": 4_000,
+            "sources": [
+                {"source": "s1", "value": 100.0, "ts_unix_ms": 4_000 - 60_001},
+                {"source": "s2", "value": 100.0, "ts_unix_ms": 4_000},
+            ],
+        },
+    ]
+
+    class Args:
+        min_sources = 2
+        max_staleness_ms = 60_000
+        max_deviation_bps = 500
+
+    out = run_baseline(cases, Args())
+    rejected_total = (
+        out["oracle_stale_reject_total"]
+        + out["oracle_quorum_reject_total"]
+        + out["oracle_drift_reject_total"]
+    )
+    assert out["accepted_total"] == 1
+    assert rejected_total == 3
+    assert out["sample_count"] == 4
+    assert out["accepted_total"] + rejected_total == out["sample_count"]
 
 
 if __name__ == "__main__":
