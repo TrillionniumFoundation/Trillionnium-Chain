@@ -157,6 +157,11 @@ pub mod bridge_status {
         }
 
         fn validate_request(&self) -> Result<(), SettlementError> {
+            if self.chain_id == 0 {
+                return Err(SettlementError::MalformedRequest {
+                    reason: "invalid chain_id",
+                });
+            }
             if self.tx_hash.trim().is_empty() {
                 return Err(SettlementError::MalformedRequest {
                     reason: "empty tx_hash",

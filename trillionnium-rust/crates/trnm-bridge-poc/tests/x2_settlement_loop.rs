@@ -324,6 +324,31 @@ fn x3_prep_confirm_with_zero_height_fails_closed_without_state_change() {
 }
 
 #[test]
+fn x3_prep_confirm_with_zero_chain_id_fails_closed_without_state_change() {
+    let mut request = SettlementRequest::new(0, "0xzero-chain".to_string());
+    let token = operator_token();
+
+    let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 2));
+    let heartbeat = monitor.record_success(702, 701, 20);
+
+    let err = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Confirmed { height: 703 },
+    )
+    .unwrap_err();
+
+    assert_eq!(
+        err,
+        trnm_bridge_poc::bridge_status::SettlementError::MalformedRequest {
+            reason: "invalid chain_id",
+        }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Pending);
+}
+
+#[test]
 fn x3_prep_confirm_with_non_canonical_tx_hash_fails_closed_without_state_change() {
     let mut request = SettlementRequest::new(1, "0xabc\u{200B}def".to_string());
     let token = operator_token();
