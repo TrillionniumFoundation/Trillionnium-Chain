@@ -265,13 +265,19 @@ fn paused_state_matured_resolve_authority_timelock_cannot_be_canceled_instead_of
         .expect("mature cancel rejection must preserve pending resolve_authority update");
     assert_eq!(pending_after.key_id, pending_before.key_id);
     assert_eq!(pending_after.value, pending_before.value);
-    assert_eq!(pending_after.activate_at_height, pending_before.activate_at_height);
+    assert_eq!(
+        pending_after.activate_at_height,
+        pending_before.activate_at_height
+    );
     assert_eq!(
         st.gov_param_string("resolve_authority"),
         Some("authority-a,authority-b".into()),
         "mature cancel rejection must not change currently applied authority set"
     );
-    assert!(st.is_emergency_paused(), "mature cancel rejection must not unpause state");
+    assert!(
+        st.is_emergency_paused(),
+        "mature cancel rejection must not unpause state"
+    );
     assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
     assert_eq!(
         st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
@@ -352,13 +358,19 @@ fn paused_state_matured_resolve_authority_timelock_cannot_be_replaced_instead_of
         .expect("mature replace rejection must preserve pending resolve_authority update");
     assert_eq!(pending_after.key_id, pending_before.key_id);
     assert_eq!(pending_after.value, pending_before.value);
-    assert_eq!(pending_after.activate_at_height, pending_before.activate_at_height);
+    assert_eq!(
+        pending_after.activate_at_height,
+        pending_before.activate_at_height
+    );
     assert_eq!(
         st.gov_param_string("resolve_authority"),
         Some("authority-a,authority-b".into()),
         "mature replace rejection must not change currently applied authority set"
     );
-    assert!(st.is_emergency_paused(), "mature replace rejection must not unpause state");
+    assert!(
+        st.is_emergency_paused(),
+        "mature replace rejection must not unpause state"
+    );
     assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
     assert_eq!(
         st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
@@ -422,7 +434,13 @@ fn paused_state_authority_rotation_rejects_second_resolve_approval_without_escro
     assert!(st.is_emergency_paused());
 
     let first = st
-        .stage_or_confirm_resolve_approval(9_901_1, 1, true, "authority-a", "authority-a,authority-b")
+        .stage_or_confirm_resolve_approval(
+            9_901_1,
+            1,
+            true,
+            "authority-a",
+            "authority-a,authority-b",
+        )
         .expect("first paused approval stage should succeed");
     assert!(!first, "first approver should only stage paused quorum");
     assert_eq!(st.pending_resolve_approval(9_901_1), Some((true, 1)));
@@ -435,10 +453,22 @@ fn paused_state_authority_rotation_rejects_second_resolve_approval_without_escro
     let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
 
     let rotated_err = st
-        .stage_or_confirm_resolve_approval(9_901_1, 1, true, "authority-c", "authority-a,authority-c")
+        .stage_or_confirm_resolve_approval(
+            9_901_1,
+            1,
+            true,
+            "authority-c",
+            "authority-a,authority-c",
+        )
         .expect_err("paused authority rotation must fail closed and clear stale staged approval");
-    assert!(rotated_err.contains("authority set changed"), "unexpected error: {rotated_err}");
-    assert!(st.is_emergency_paused(), "authority rotation failure must not unpause state");
+    assert!(
+        rotated_err.contains("authority set changed"),
+        "unexpected error: {rotated_err}"
+    );
+    assert!(
+        st.is_emergency_paused(),
+        "authority rotation failure must not unpause state"
+    );
     assert_eq!(st.pending_resolve_approval(9_901_1), None);
     assert_eq!(st.pending_resolve_first_approver(9_901_1), None);
     assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
@@ -491,7 +521,10 @@ fn paused_state_rejects_resolve_decision_mismatch_without_escrow_or_quorum_mutat
         mismatch_err.contains("decision mismatch"),
         "unexpected error: {mismatch_err}"
     );
-    assert!(st.is_emergency_paused(), "decision mismatch must not unpause state");
+    assert!(
+        st.is_emergency_paused(),
+        "decision mismatch must not unpause state"
+    );
     assert_eq!(st.pending_resolve_approval(9_901_2), Some((true, 1)));
     assert_eq!(
         st.pending_resolve_first_approver(9_901_2).as_deref(),
@@ -793,6 +826,55 @@ fn paused_resolve_approval_rejects_delimiter_or_non_ascii_approver_without_mutat
         forfeits_before
     );
     assert!(st.is_emergency_paused());
+}
+
+#[test]
+fn paused_resolve_approval_keeps_staged_quorum_across_member_reordering() {
+    // M1 micro-hardening: a replay that only reorders the same authority members must not
+    // clear staged paused resolve quorum or force governance to restart approvals.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 55_450);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 443);
+
+    st.set_gov_param(98_148, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+    let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+
+    let first = st
+        .stage_or_confirm_resolve_approval(
+            9_905_1,
+            1,
+            true,
+            "authority-a",
+            "authority-a,authority-b",
+        )
+        .expect("first approval stage should succeed while paused");
+    assert!(!first);
+    assert_eq!(st.pending_resolve_approval(9_905_1), Some((true, 1)));
+
+    let second = st
+        .stage_or_confirm_resolve_approval(
+            9_905_1,
+            1,
+            true,
+            "authority-b",
+            "authority-b,authority-a",
+        )
+        .expect("member reordering should preserve staged quorum while paused");
+    assert!(second, "second distinct approver should finalize quorum");
+    assert_eq!(st.pending_resolve_approval(9_905_1), Some((true, 2)));
+    assert_eq!(
+        st.pending_resolve_first_approver(9_905_1).as_deref(),
+        Some("authority-a")
+    );
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
 }
 
 #[test]
@@ -1238,15 +1320,24 @@ fn paused_state_rejects_oversized_resolve_authority_set_without_side_effects() {
     let err = st
         .stage_or_confirm_resolve_approval(9_928, 1, true, "authority-a", &oversized_authority_set)
         .expect_err("oversized paused resolve authority set must be rejected");
-    assert!(err.contains("max length") || err.contains("authority set"), "unexpected error: {err}");
+    assert!(
+        err.contains("max length") || err.contains("authority set"),
+        "unexpected error: {err}"
+    );
 
     assert_eq!(st.pending_resolve_approval(9_928), None);
     assert_eq!(st.pending_resolve_first_approver(9_928), None);
     assert_eq!(st.pending_gov_update("resolve_authority"), None);
     assert!(st.is_emergency_paused());
     assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
-    assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), forfeits_before);
-    assert_eq!(st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT), worker_slash_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
+    assert_eq!(
+        st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
+        worker_slash_before
+    );
 }
 
 #[test]
@@ -1287,8 +1378,14 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_oversized_authority_set_
     assert_eq!(st.pending_gov_update("resolve_authority"), None);
     assert!(st.is_emergency_paused());
     assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
-    assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), forfeits_before);
-    assert_eq!(st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT), worker_slash_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
+    assert_eq!(
+        st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
+        worker_slash_before
+    );
 }
 
 #[test]
@@ -1337,8 +1434,14 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_zero_task_version_bounda
     assert_eq!(st.pending_gov_update("resolve_authority"), None);
     assert!(st.is_emergency_paused());
     assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
-    assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), forfeits_before);
-    assert_eq!(st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT), worker_slash_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
+    assert_eq!(
+        st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
+        worker_slash_before
+    );
 }
 
 #[test]
@@ -1430,8 +1533,14 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_case_variant_reserved_ap
     assert_eq!(st.pending_gov_update("resolve_authority"), None);
     assert!(st.is_emergency_paused());
     assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
-    assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), forfeits_before);
-    assert_eq!(st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT), worker_slash_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
+    assert_eq!(
+        st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
+        worker_slash_before
+    );
 }
 
 #[test]
@@ -1473,8 +1582,14 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_case_variant_placeholder
     assert_eq!(st.pending_gov_update("resolve_authority"), None);
     assert!(st.is_emergency_paused());
     assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
-    assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), forfeits_before);
-    assert_eq!(st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT), worker_slash_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
+    assert_eq!(
+        st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
+        worker_slash_before
+    );
 }
 
 #[test]
@@ -1517,8 +1632,14 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_case_variant_reserved_se
     assert_eq!(st.pending_gov_update("resolve_authority"), None);
     assert!(st.is_emergency_paused());
     assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
-    assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), forfeits_before);
-    assert_eq!(st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT), worker_slash_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
+    assert_eq!(
+        st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
+        worker_slash_before
+    );
 }
 
 #[test]
@@ -1561,8 +1682,14 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_case_variant_placeholder
     assert_eq!(st.pending_gov_update("resolve_authority"), None);
     assert!(st.is_emergency_paused());
     assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
-    assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), forfeits_before);
-    assert_eq!(st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT), worker_slash_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
+    assert_eq!(
+        st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
+        worker_slash_before
+    );
 }
 
 #[test]
@@ -1606,8 +1733,14 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_oversized_second_approve
     assert_eq!(st.pending_gov_update("resolve_authority"), None);
     assert!(st.is_emergency_paused());
     assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
-    assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), forfeits_before);
-    assert_eq!(st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT), worker_slash_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
+    assert_eq!(
+        st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
+        worker_slash_before
+    );
 }
 
 #[test]
@@ -1637,15 +1770,24 @@ fn paused_state_rejects_oversized_resolve_approver_without_side_effects() {
             "authority-a,authority-b",
         )
         .expect_err("oversized paused resolve approver must be rejected");
-    assert!(err.contains("max length") || err.contains("approver"), "unexpected error: {err}");
+    assert!(
+        err.contains("max length") || err.contains("approver"),
+        "unexpected error: {err}"
+    );
 
     assert_eq!(st.pending_resolve_approval(9_932), None);
     assert_eq!(st.pending_resolve_first_approver(9_932), None);
     assert_eq!(st.pending_gov_update("resolve_authority"), None);
     assert!(st.is_emergency_paused());
     assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
-    assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), forfeits_before);
-    assert_eq!(st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT), worker_slash_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
+    assert_eq!(
+        st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
+        worker_slash_before
+    );
 }
 
 #[test]
@@ -1684,6 +1826,12 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_oversized_approver_bound
     assert_eq!(st.pending_gov_update("resolve_authority"), None);
     assert!(st.is_emergency_paused());
     assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
-    assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), forfeits_before);
-    assert_eq!(st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT), worker_slash_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
+    assert_eq!(
+        st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
+        worker_slash_before
+    );
 }

@@ -246,6 +246,36 @@ fn parse_bool_strict(key: &str, value: &str) -> Result<bool, String> {
     }
 }
 
+fn canonical_resolve_authority_members(authority_set: &str) -> Option<Vec<String>> {
+    let trimmed = authority_set.trim();
+    if trimmed.is_empty() || trimmed != authority_set {
+        return None;
+    }
+    let members: Vec<&str> = trimmed.split(',').collect();
+    if members.len() < 2 {
+        return None;
+    }
+    let mut canonical = Vec::with_capacity(members.len());
+    let mut seen = std::collections::BTreeSet::new();
+    for member in members {
+        let member_trimmed = member.trim();
+        if member_trimmed.is_empty() {
+            return None;
+        }
+        let lowered = member_trimmed.to_ascii_lowercase();
+        if !seen.insert(lowered.clone()) {
+            return None;
+        }
+        canonical.push(lowered);
+    }
+    canonical.sort();
+    Some(canonical)
+}
+
+fn resolve_authority_sets_match(lhs: &str, rhs: &str) -> bool {
+    canonical_resolve_authority_members(lhs) == canonical_resolve_authority_members(rhs)
+}
+
 fn validate_gov_param_value(key: &str, value: &str) -> Result<(), String> {
     match key {
         "max_block_ms" => {
@@ -519,7 +549,7 @@ impl StateStore {
                     "resolve approval already finalized; clear pending approval first".into(),
                 );
             }
-            if !entry.authority_set.eq_ignore_ascii_case(authority_set) {
+            if !resolve_authority_sets_match(&entry.authority_set, authority_set) {
                 self.invalidate_state_root_cache();
                 self.pending_resolve_approvals.remove(&task_id);
                 return Err("resolve approval authority set changed".into());
@@ -558,7 +588,9 @@ impl StateStore {
             }
             if let Some(second_approver) = entry.second_approver.as_deref() {
                 if second_approver.eq_ignore_ascii_case(approver_trimmed) {
-                    return Err("resolve approval already finalized; clear pending approval first".into());
+                    return Err(
+                        "resolve approval already finalized; clear pending approval first".into(),
+                    );
                 }
             }
             let next_confirmations = entry.confirmations.saturating_add(1);
