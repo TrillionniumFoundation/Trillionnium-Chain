@@ -4,6 +4,20 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "${ROOT_DIR}"
 
+python3 - <<'PY'
+import importlib.util
+from pathlib import Path
+
+module_path = Path("scripts/oracle/benchmark_oracle_metrics.py")
+spec = importlib.util.spec_from_file_location("benchmark_oracle_metrics", module_path)
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+
+for name in sorted(dir(module)):
+    if name.startswith("_test_"):
+        getattr(module, name)()
+PY
+
 BASE_OUT="$(python3 scripts/oracle/benchmark_oracle_metrics.py \
   --input scripts/oracle/fixtures/oracle_baseline_cases.json)"
 BENCH_OUT="$(python3 scripts/oracle/benchmark_oracle_metrics.py \

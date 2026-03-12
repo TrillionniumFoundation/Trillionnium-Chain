@@ -207,6 +207,24 @@ def _test_duplicate_sources_count_once_for_quorum_and_drift():
     assert cardinality == 2
 
 
+def _test_duplicate_source_uses_latest_sample_for_staleness_and_drift():
+    status, cardinality = validate_snapshot(
+        {
+            "snapshot_ts_ms": 10_000,
+            "sources": [
+                {"source": "s1", "value": 100.0, "ts_unix_ms": 10_000 - 61_000},
+                {"source": "s1", "value": 100.0, "ts_unix_ms": 10_000},
+                {"source": "s2", "value": 100.2, "ts_unix_ms": 10_000},
+            ],
+        },
+        min_sources=2,
+        max_staleness_ms=60_000,
+        max_deviation_bps=500,
+    )
+    assert status == "ok"
+    assert cardinality == 2
+
+
 def _test_run_baseline_preserves_sample_accounting_contract():
     cases = [
         {

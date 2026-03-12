@@ -68,6 +68,7 @@ python3 scripts/oracle/benchmark_oracle_metrics.py \
 
 - 本地：直接运行 `./scripts/run_oracle_baseline.sh`
 - CI：增加一个 job 执行同一命令（仅依赖 `python3`，无额外系统包）
+- `run_oracle_baseline.sh` 现在会先执行 `scripts/oracle/benchmark_oracle_metrics.py` 内嵌的回归自检，再产出 baseline/bench JSON；这样 duplicate-source canonicalization、threshold 边界与 sample accounting 会在同一入口上被固定住。
 
 示例（CI step）：
 
