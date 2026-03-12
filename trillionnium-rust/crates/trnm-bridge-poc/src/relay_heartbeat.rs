@@ -255,5 +255,12 @@ mod tests {
         let normalized = normalize_failure_reason(raw);
         assert_eq!(normalized, "target relay timeout");
     }
+
+    #[test]
+    fn normalize_failure_reason_strips_interlinear_annotation_controls_for_replay_stability() {
+        let raw = "target\u{FFF9}relay\u{FFFA}timeout\u{FFFB}signal";
+        let normalized = normalize_failure_reason(raw);
+        assert_eq!(normalized, "target relay timeout signal");
+    }
 }
 
