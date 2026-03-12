@@ -103,17 +103,25 @@ pub fn backend_system_hint(raw: &str) -> Option<String> {
                 "intel"
                     | "amd"
                     | "attestation"
+                    | "attestations"
                     | "remote"
                     | "ra"
                     | "evidence"
+                    | "evidences"
                     | "receipt"
+                    | "receipts"
                     | "enclave"
+                    | "enclaves"
                     | "quote"
+                    | "quotes"
                     | "report"
+                    | "reports"
                     | "claims"
                     | "claim"
                     | "cert"
+                    | "certs"
                     | "certificate"
+                    | "certificates"
                     | "dcap"
                     | "sev"
             ) {
@@ -969,6 +977,9 @@ mod tests {
             ("tee amd sev quote snp", "snp"),
             ("tee enclave report sgx", "sgx"),
             ("tee enclave evidence tdx", "tdx"),
+            ("tee attestations receipts reports sgx", "sgx"),
+            ("tee evidences certs quotes tdx", "tdx"),
+            ("tee remote attestations certificates snp", "snp"),
         ] {
             assert_eq!(backend_system_hint(raw), Some(expected.into()), "raw={raw}");
         }
