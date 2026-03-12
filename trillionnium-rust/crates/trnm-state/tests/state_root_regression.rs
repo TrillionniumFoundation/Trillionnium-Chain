@@ -957,6 +957,33 @@ fn crediting_zero_to_missing_balance_keeps_state_root_on_missing_entry_baseline(
 }
 
 #[test]
+fn monetary_tick_metadata_should_affect_state_root_even_when_issuance_totals_match() {
+    let mut state_a = StateStore::new();
+    let mut state_b = StateStore::new();
+
+    state_a.restore_monetary_state(MonetaryState {
+        last_tick_height: 10,
+        tick_count: 1,
+        total_minted: 5,
+        total_burned: 5,
+        net_issuance: 0,
+    });
+    state_b.restore_monetary_state(MonetaryState {
+        last_tick_height: 20,
+        tick_count: 2,
+        total_minted: 5,
+        total_burned: 5,
+        net_issuance: 0,
+    });
+
+    assert_ne!(
+        state_a.state_root(),
+        state_b.state_root(),
+        "state_root must include monetary tick metadata, not only issuance totals or net issuance"
+    );
+}
+
+#[test]
 fn restore_monetary_state_rewinds_state_root_after_zero_net_tick_roundtrip() {
     let mut state = StateStore::new();
     state
