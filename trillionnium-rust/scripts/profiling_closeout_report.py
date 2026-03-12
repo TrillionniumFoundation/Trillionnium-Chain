@@ -849,18 +849,18 @@ def main():
             baseline_report_candidates_with_out,
         )
     )
-    lines.append(
-        "- baseline_closeout_report_decision: "
-        + (
-            "INCOMPLETE"
-            if baseline_report_pool["action"] == "produce"
-            else "REFRESH_RECOMMENDED"
-            if baseline_report_pool["action"] == "refresh"
-            else "ARCHIVE_RECOMMENDED"
-            if baseline_report_pool["action"] == "keep_latest_and_consider_archive"
-            else "READY"
-        )
+    baseline_closeout_report_decision = (
+        "INCOMPLETE"
+        if baseline_report_pool["action"] == "produce"
+        else "REFRESH_RECOMMENDED"
+        if baseline_report_pool["action"] == "refresh"
+        else "ARCHIVE_RECOMMENDED"
+        if baseline_report_pool["action"] == "keep_latest_and_consider_archive"
+        else "READY"
     )
+    lines.append(f"- baseline_closeout_report_status: {baseline_report_pool['status']}")
+    lines.append(f"- baseline_closeout_report_action: {baseline_report_pool['action']}")
+    lines.append(f"- baseline_closeout_report_decision: {baseline_closeout_report_decision}")
     lines.append(
         f"- baseline_closeout_report_reason: status={baseline_report_pool['status']} action={baseline_report_pool['action']}"
     )
