@@ -2221,13 +2221,10 @@ fn parse_query_events_limit_from_path(path: &str) -> std::result::Result<usize, 
             ));
         }
         let Some((key, value)) = pair.split_once('=') else {
-            if pair == "limit" || normalize_wrapped_env_value(pair) == "limit" {
-                return Err(http_json_response(
-                    "400 Bad Request",
-                    "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}",
-                ));
-            }
-            continue;
+            return Err(http_json_response(
+                "400 Bad Request",
+                "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}",
+            ));
         };
         let normalized_key = normalize_wrapped_env_value(key);
         if normalized_key != "limit" {
@@ -3751,6 +3748,20 @@ mod tests {
             .expect_err("empty limit value must fail closed");
         assert!(err.contains("400 Bad Request"));
         assert!(err.contains("invalid limit"));
+    }
+
+    #[test]
+    fn parse_query_events_limit_from_path_rejects_malformed_unrelated_query_pairs() {
+        for path in [
+            "/query-events/42?foo&limit=7",
+            "/query-events/42?foo=bar&baz",
+            "/query-events/42?foo=bar&limit=7&qux",
+        ] {
+            let err = parse_query_events_limit_from_path(path)
+                .expect_err("malformed unrelated query pairs must fail closed");
+            assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+            assert!(err.contains("invalid limit"), "path={path} err={err}");
+        }
     }
 
     #[test]
