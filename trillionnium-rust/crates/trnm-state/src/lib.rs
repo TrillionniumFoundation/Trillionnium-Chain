@@ -783,6 +783,15 @@ impl StateStore {
         }
         match snapshot {
             Some(snapshot) if Self::is_valid_pending_resolve_snapshot(&snapshot) => {
+                if let Some(configured_authority_set) = self.gov_param_string("resolve_authority") {
+                    if !resolve_authority_sets_match(
+                        &configured_authority_set,
+                        &snapshot.authority_set,
+                    ) {
+                        self.pending_resolve_approvals.remove(&task_id);
+                        return;
+                    }
+                }
                 self.pending_resolve_approvals.insert(
                     task_id,
                     PendingResolveApproval {
