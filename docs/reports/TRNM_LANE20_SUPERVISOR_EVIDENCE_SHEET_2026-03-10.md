@@ -1,5 +1,7 @@
 # TRNM Lane 20 Supervisor Rollup / Evidence Sheet — 2026-03-10
 
+> Scope note: this document is a **historical evidence rollup**, not the current release-readiness truth source. It must not be cited as current release sign-off. For current release/readiness status, see the repository-root `RELEASE_READINESS.md`.
+
 ## Scope
 
 This sheet consolidates **only verifiable evidence** for the expanded TRNM lanes currently present in the workspace.
