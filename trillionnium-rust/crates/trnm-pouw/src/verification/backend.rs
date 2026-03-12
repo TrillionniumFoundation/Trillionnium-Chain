@@ -917,6 +917,22 @@ mod tests {
     }
 
     #[test]
+    fn backend_system_hint_requires_concrete_tee_platform_not_broad_sev_family_marker() {
+        for raw in [
+            "tee sev",
+            "TEE amd-sev",
+            "tee amd sev attestation",
+            "tee remote attestation amd sev",
+            "tee evidence amd sev",
+        ] {
+            assert_eq!(backend_system_hint(raw), None, "raw={raw}");
+        }
+
+        assert_eq!(backend_system_hint("tee amd sev snp"), Some("snp".into()));
+        assert_eq!(backend_system_hint("TEE AMD-SEV-SNP quote"), Some("snp".into()));
+    }
+
+    #[test]
     fn verification_backend_kind_system_hint_respects_family_prefixes_without_cross_family_assumptions(
     ) {
         assert_eq!(
