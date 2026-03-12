@@ -35,7 +35,7 @@ extract_tx_hash() {
     fi
   done < <(
     printf "%s\n" "$raw" \
-      | grep -Eio '"?tx[-_]?hash"?[[:space:]]*[:=][[:space:]]*"?(0[xX])?[0-9A-Fa-f]{16,128}"?' \
+      | grep -Eio '"?([Tt][Xx]([_-]?[Hh][Aa][Ss][Hh])|[Tt][Xx][Hh][Aa][Ss][Hh])"?[[:space:]]*[:=][[:space:]]*"?(0[xX])?[0-9A-Fa-f]{16,128}"?' \
       | sed -E 's/.*[:=][[:space:]]*//'
   )
   printf "%s" "$h"
@@ -44,19 +44,19 @@ extract_tx_hash() {
 extract_query_status() {
   local raw="$1"
   local s
-  # Accept plain-text variants like: status=ok / tx_status: committed,
+  # Accept plain-text variants like: status=ok / tx_status: committed / tx-status=committed / txStatus=committed,
   # including log-prefixed lines (e.g. "[info] status=committed").
   s=$(printf "%s\n" "$raw" \
-    | grep -Eio '(^|[^A-Za-z0-9_])([Tt][Xx]_)?[Ss][Tt][Aa][Tt][Uu][Ss][[:space:]]*[:=][[:space:]]*[^[:space:]]+' \
+    | grep -Eio '(^|[^A-Za-z0-9_])(([Tt][Xx]([_-]?[Ss][Tt][Aa][Tt][Uu][Ss])|[Tt][Xx][Ss][Tt][Aa][Tt][Uu][Ss])|[Ss][Tt][Aa][Tt][Uu][Ss])[[:space:]]*[:=][[:space:]]*[^[:space:]]+' \
     | head -n1 \
     | sed -E 's/.*[[:space:]:=]([^[:space:]]+).*/\1/' || true)
   if [[ -z "$s" ]]; then
-    # Accept JSON variants with either "status" or "tx_status" key to avoid false negatives across adapters.
-    s=$(printf "%s\n" "$raw" | grep -Eio '"(tx_)?status"[[:space:]]*:[[:space:]]*"[^"]+"' | sed -E 's/.*:[[:space:]]*"([^"]+)"/\1/' | head -n1 || true)
+    # Accept JSON variants with status / tx_status / tx-status / txStatus keys to avoid false negatives across adapters.
+    s=$(printf "%s\n" "$raw" | grep -Eio '"(([Tt][Xx]([_-]?[Ss][Tt][Aa][Tt][Uu][Ss])|[Tt][Xx][Ss][Tt][Aa][Tt][Uu][Ss])|[Ss][Tt][Aa][Tt][Uu][Ss])"[[:space:]]*:[[:space:]]*"[^"]+"' | sed -E 's/.*:[[:space:]]*"([^"]+)"/\1/' | head -n1 || true)
   fi
   if [[ -z "$s" ]]; then
     # Also accept non-string JSON scalar status values (number/bool), preserving guardrail against empty/null.
-    s=$(printf "%s\n" "$raw" | grep -Eio '"(tx_)?status"[[:space:]]*:[[:space:]]*(true|false|[0-9]+)' | sed -E 's/.*:[[:space:]]*(true|false|[0-9]+).*/\1/' | head -n1 || true)
+    s=$(printf "%s\n" "$raw" | grep -Eio '"(([Tt][Xx]([_-]?[Ss][Tt][Aa][Tt][Uu][Ss])|[Tt][Xx][Ss][Tt][Aa][Tt][Uu][Ss])|[Ss][Tt][Aa][Tt][Uu][Ss])"[[:space:]]*:[[:space:]]*(true|false|[0-9]+)' | sed -E 's/.*:[[:space:]]*(true|false|[0-9]+).*/\1/' | head -n1 || true)
   fi
 
   s="$(printf "%s" "$s" | sed -E 's/^[[:space:]"'"'"'\[\](){}<>]+//; s/[[:space:]"'"'"'\[\](){}<>]+$//; s/[.,;:!?]+$//')"
