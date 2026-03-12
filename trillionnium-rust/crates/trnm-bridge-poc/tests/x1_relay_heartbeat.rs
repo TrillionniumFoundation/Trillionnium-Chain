@@ -126,6 +126,14 @@ fn relay_heartbeat_failure_reason_strips_bidi_and_word_joiner_controls() {
 }
 
 #[test]
+fn relay_heartbeat_failure_reason_strips_directional_marks_and_cgj() {
+    let mut hb = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 3));
+
+    let out = hb.record_failure("rpc\u{200E}\u{034F} timeout\u{200F} bridge");
+    assert_eq!(out.message, "rpc timeout bridge");
+}
+
+#[test]
 fn relay_heartbeat_failure_reason_strips_soft_hyphen_and_mongolian_vowel_separator() {
     let mut hb = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 3));
 
