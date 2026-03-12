@@ -1543,6 +1543,14 @@ mod tests {
     }
 
     #[test]
+    fn tx_query_parse_supports_nested_response_data_operator_state_aliases() {
+        let json = "{\"response\":{\"data\":{\"transactionHash\":\"`0xFACE55,`\",\"transactionState\":\"(in progress),\"}}}";
+        let parsed = parse_tx_query_response(json, "0xface55").unwrap();
+        assert_eq!(parsed.tx_hash, "0xface55");
+        assert_eq!(parsed.status, "pending");
+    }
+
+    #[test]
     fn tx_query_parse_normalizes_status_aliases_and_punctuation() {
         let kv = "txhash=0xabc\nstatus=FAILED,\n";
         let parsed = parse_tx_query_response(kv, "0xfallback").unwrap();
