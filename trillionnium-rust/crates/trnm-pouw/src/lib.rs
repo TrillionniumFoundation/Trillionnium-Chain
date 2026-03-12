@@ -1547,6 +1547,7 @@ mod tests {
         assert!(matches!(err, PouwError::Unauthorized));
     }
 
+    #[test]
     fn full_happy_path_to_completed() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
