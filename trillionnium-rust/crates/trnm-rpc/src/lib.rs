@@ -511,6 +511,8 @@ mod tests {
         };
 
         let out: OracleValidateSnapshotResponse = report.into();
+        assert_eq!(out.classified_reject_total(), 0);
+        assert_eq!(out.classified_outcome_total(), 0);
         assert!(!out.classified_outcome_conserves_sample_count());
         let v = serde_json::to_value(out).unwrap();
         assert_eq!(v["error"], "rate");
@@ -541,6 +543,8 @@ mod tests {
         };
 
         let out: OracleValidateSnapshotResponse = report.into();
+        assert_eq!(out.classified_reject_total(), 0);
+        assert_eq!(out.classified_outcome_total(), 0);
         assert!(!out.classified_outcome_conserves_sample_count());
         let v = serde_json::to_value(out).unwrap();
         assert_eq!(
