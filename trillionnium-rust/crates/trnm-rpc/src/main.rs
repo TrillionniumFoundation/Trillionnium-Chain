@@ -2205,6 +2205,9 @@ fn parse_http_get_path(first_line: &str) -> Option<&str> {
     if path.contains('#') || normalized.contains("%23") {
         return None;
     }
+    if normalized.contains("%0d") || normalized.contains("%0a") {
+        return None;
+    }
 
     let path_without_query = path.split('?').next().unwrap_or(path);
     let normalized_path = path_without_query.to_ascii_lowercase();
@@ -3865,6 +3868,16 @@ mod tests {
         assert_eq!(parse_http_get_path("GET /health#ready HTTP/1.1"), None);
         assert_eq!(parse_http_get_path("GET /query-events/42?limit=7#tail HTTP/1.1"), None);
         assert_eq!(parse_http_get_path("GET /query-events/%23frag HTTP/1.1"), None);
+    }
+
+    #[test]
+    fn parse_http_get_path_rejects_percent_encoded_crlf_forms() {
+        assert_eq!(parse_http_get_path("GET /health%0d HTTP/1.1"), None);
+        assert_eq!(parse_http_get_path("GET /health%0A HTTP/1.1"), None);
+        assert_eq!(
+            parse_http_get_path("GET /query-events/42?limit=7%0d%0aextra HTTP/1.1"),
+            None
+        );
     }
 
     #[test]
