@@ -846,6 +846,12 @@ fn persist_local_pending_tx(tx_hash: &str) -> Result<()> {
     Ok(())
 }
 
+fn emit_pending_tx_hash(tx_hash: &str) -> Result<()> {
+    persist_local_pending_tx(tx_hash)?;
+    println!("tx_hash={}", tx_hash);
+    Ok(())
+}
+
 fn wallet_create(name: String, out: Option<PathBuf>) -> Result<()> {
     let store = out.unwrap_or_else(default_wallet_store);
     let priv_hex = random_priv_hex()?;
@@ -889,8 +895,7 @@ fn main() -> Result<()> {
                     cmd = tpl(cmd, "commit_hash", &commit_hash);
                     cmd = tpl(cmd, "nonce", &nonce.to_string());
                     let tx_hash = run_template(&cmd)?;
-                    persist_local_pending_tx(&tx_hash)?;
-                    println!("tx_hash={}", tx_hash);
+                    emit_pending_tx_hash(&tx_hash)?;
                 } else {
                     let tx_hash = hash(&[
                         "commit-result",
@@ -899,8 +904,7 @@ fn main() -> Result<()> {
                         &commit_hash,
                         &nonce.to_string(),
                     ]);
-                    persist_local_pending_tx(&tx_hash)?;
-                    println!("tx_hash={}", tx_hash);
+                    emit_pending_tx_hash(&tx_hash)?;
                 }
             }
             TxCommand::RevealResult {
@@ -914,7 +918,7 @@ fn main() -> Result<()> {
                     cmd = tpl(cmd, "result_hash", &result_hash);
                     cmd = tpl(cmd, "salt_hex", &salt_hex);
                     let tx_hash = run_template(&cmd)?;
-                    println!("tx_hash={}", tx_hash);
+                    emit_pending_tx_hash(&tx_hash)?;
                 } else {
                     let tx_hash = hash(&[
                         "reveal-result",
@@ -922,7 +926,7 @@ fn main() -> Result<()> {
                         &result_hash,
                         &salt_hex,
                     ]);
-                    println!("tx_hash={}", tx_hash);
+                    emit_pending_tx_hash(&tx_hash)?;
                 }
             }
             TxCommand::Query { tx_hash } => {
@@ -1754,6 +1758,32 @@ mod tests {
             Some("pending"),
             "persist_local_pending_tx should reset tracked txs to pending on fresh submit"
         );
+        assert_eq!(query_local_tx_status(tx_hash).as_deref(), Some("pending"));
+
+        let _ = std::fs::remove_file(&path);
+        std::env::remove_var("TRNM_RPC_TX_FILE");
+    }
+
+    #[test]
+    fn emit_pending_tx_hash_tracks_reveal_like_submissions() {
+        let _guard = ENV_LOCK.lock().unwrap();
+        let unique = format!(
+            "trnm-cli-test-{}-{}.json",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        );
+        let path = std::env::temp_dir().join(unique);
+        std::env::set_var("TRNM_RPC_TX_FILE", &path);
+
+        let tx_hash = "0xdddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd";
+        emit_pending_tx_hash(tx_hash).unwrap();
+
+        let raw = std::fs::read_to_string(&path).unwrap();
+        let parsed: serde_json::Value = serde_json::from_str(&raw).unwrap();
+        assert_eq!(parsed[tx_hash]["tx_hash"].as_str(), Some(tx_hash));
         assert_eq!(query_local_tx_status(tx_hash).as_deref(), Some("pending"));
 
         let _ = std::fs::remove_file(&path);
