@@ -44,6 +44,7 @@ run_step() {
   local name="$1"
   local cmd="$2"
   local logfile="$EVIDENCE_DIR/${name}.log"
+  local tmpfile="$EVIDENCE_DIR/${name}.tmp"
 
   log "START $name"
   {
@@ -51,9 +52,12 @@ run_step() {
     echo "# command=$cmd"
     echo "# started_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
     bash -lc "$cmd"
-  } > >(tee "$logfile") 2>&1
+  } >"$tmpfile" 2>&1
+  local rc=$?
 
-  local rc=${PIPESTATUS[0]}
+  cat "$tmpfile" | tee "$logfile"
+  rm -f "$tmpfile"
+
   if [[ $rc -eq 0 ]]; then
     PASS_COUNT=$((PASS_COUNT + 1))
     echo "$name=PASS" >> "$SUMMARY"
@@ -65,16 +69,25 @@ run_step() {
   fi
 }
 
+resolve_existing_path() {
+  local target="$1"
+  if [[ ! -f "$target" ]]; then
+    return 1
+  fi
+
+  local dir base
+  dir="$(cd "$(dirname "$target")" && pwd)"
+  base="$(basename "$target")"
+  printf '%s/%s\n' "$dir" "$base"
+}
+
 find_challenge_reexec_entry() {
   local repo_root
   repo_root="$(cd "$ROOT/.." && pwd)"
 
   if [[ -n "${TRNM_CHALLENGE_REEXEC_ENTRY:-}" ]]; then
-    if [[ -f "$TRNM_CHALLENGE_REEXEC_ENTRY" ]]; then
-      echo "$TRNM_CHALLENGE_REEXEC_ENTRY"
-      return 0
-    fi
-    return 1
+    resolve_existing_path "$TRNM_CHALLENGE_REEXEC_ENTRY"
+    return $?
   fi
 
   local candidates=(
@@ -88,8 +101,7 @@ find_challenge_reexec_entry() {
 
   local f
   for f in "${candidates[@]}"; do
-    if [[ -f "$f" ]]; then
-      echo "$f"
+    if resolve_existing_path "$f"; then
       return 0
     fi
   done

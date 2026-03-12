@@ -44,6 +44,26 @@ if ! grep -Fq "TRNM_CHALLENGE_REEXEC_ENTRY='\${replay_challenge_entry}'" "$TARGE
   exit 1
 fi
 
+if ! grep -q '^resolve_existing_path() {' "$TARGET"; then
+  echo "[FAIL] expected helper to normalize resolved challenge entry paths" >&2
+  exit 1
+fi
+
+if ! grep -Fq "printf '%s/%s\\n' \"\$dir\" \"\$base\"" "$TARGET"; then
+  echo "[FAIL] expected resolved challenge entry helper to emit an absolute path" >&2
+  exit 1
+fi
+
+if ! grep -Fq 'resolve_existing_path "$TRNM_CHALLENGE_REEXEC_ENTRY"' "$TARGET"; then
+  echo "[FAIL] expected explicit challenge reexec override env to be normalized through the helper" >&2
+  exit 1
+fi
+
+if ! grep -Fq 'if resolve_existing_path "$f"; then' "$TARGET"; then
+  echo "[FAIL] expected discovered challenge reexec candidates to be normalized through the helper" >&2
+  exit 1
+fi
+
 required_exports=(
   'export TZ="${TZ:-$replay_tz}"'
   'export LC_ALL="${LC_ALL:-$replay_lc_all}"'
