@@ -243,12 +243,21 @@ The profile resolver seam is no longer just a placeholder. The scaffold now incl
 - `RegistryBackedVerifierProfileResolver`
 - `VerifierProfileRegistrySource`
 - `StaticVerifierProfileRegistrySource`
+- `FileJsonVerifierProfileRegistrySource`
 - `EnvJsonVerifierProfileRegistrySource`
 
 This lets the system validate that a named transport profile actually exists, matches the expected transport mode, and matches the expected endpoint family before any outbound call is attempted.
-It also gives the scaffold two explicit runtime-loading paths:
+It also gives the scaffold three explicit runtime-loading paths:
 - static/builtin registry defaults
+- file-backed JSON registry overlays
 - env-injected JSON registry overlays
+
+Current overlay order is:
+1. builtin defaults
+2. optional `TRNM_TEE_PROFILE_REGISTRY_PATH` file overlay
+3. optional `TRNM_TEE_PROFILE_REGISTRY_JSON` inline JSON overlay
+
+That means env JSON can still override file-backed entries when both are present.
 
 This lets the scaffold separate:
 1. runtime profile / endpoint resolution

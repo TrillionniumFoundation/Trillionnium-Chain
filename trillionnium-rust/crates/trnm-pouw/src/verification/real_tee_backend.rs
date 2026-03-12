@@ -242,8 +242,8 @@ struct RuntimeVerifierProfileRegistry {
 
 impl RuntimeVerifierProfileRegistry {
     fn with_builtin_defaults() -> Self {
-        let mut entries = BTreeMap::new();
-        for entry in [
+        let mut registry = Self::default();
+        registry.apply_entries(vec![
             VerifierProfileRegistryEntry {
                 profile: "intel-dcap-mock-default".into(),
                 mode: VerifierTransportMode::Mock,
@@ -268,20 +268,22 @@ impl RuntimeVerifierProfileRegistry {
                 endpoint_prefix: "https://amd-verifier.invalid/v1/report/".into(),
                 auth_required: true,
             },
-        ] {
-            entries.insert(entry.profile.clone(), entry);
+        ]);
+        registry
+    }
+
+    fn apply_entries(&mut self, entries: Vec<VerifierProfileRegistryEntry>) {
+        for entry in entries {
+            self.entries.insert(entry.profile.clone(), entry);
         }
-        Self { entries }
     }
 
     #[cfg(test)]
     #[allow(dead_code)]
     fn from_entries(entries: Vec<VerifierProfileRegistryEntry>) -> Self {
-        let mut map = BTreeMap::new();
-        for entry in entries {
-            map.insert(entry.profile.clone(), entry);
-        }
-        Self { entries: map }
+        let mut registry = Self::default();
+        registry.apply_entries(entries);
+        registry
     }
 
     fn resolve(&self, profile: &str) -> Option<&VerifierProfileRegistryEntry> {
@@ -323,6 +325,48 @@ impl VerifierProfileRegistrySource for StaticVerifierProfileRegistrySource {
     }
 }
 
+struct FileJsonVerifierProfileRegistrySource {
+    defaults: RuntimeVerifierProfileRegistry,
+    path: String,
+}
+
+impl FileJsonVerifierProfileRegistrySource {
+    #[allow(dead_code)]
+    fn from_path(defaults: RuntimeVerifierProfileRegistry, path: impl Into<String>) -> Self {
+        Self {
+            defaults,
+            path: path.into(),
+        }
+    }
+}
+
+impl VerifierProfileRegistrySource for FileJsonVerifierProfileRegistrySource {
+    fn load(
+        &self,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<RuntimeVerifierProfileRegistry, BackendExecutionError> {
+        let mut registry = self.defaults.clone();
+        let raw = std::fs::read_to_string(&self.path).map_err(|err| BackendExecutionError::Internal {
+            backend: request.backend_label(RealTeeBackend::backend_id_static()),
+            reason: format!(
+                "failed to read verifier profile registry file '{}': {err}",
+                self.path
+            ),
+        })?;
+        let entries: Vec<VerifierProfileRegistryEntry> = serde_json::from_str(&raw).map_err(|err| {
+            BackendExecutionError::Internal {
+                backend: request.backend_label(RealTeeBackend::backend_id_static()),
+                reason: format!(
+                    "failed to decode verifier profile registry file '{}': {err}",
+                    self.path
+                ),
+            }
+        })?;
+        registry.apply_entries(entries);
+        Ok(registry)
+    }
+}
+
 struct EnvJsonVerifierProfileRegistrySource {
     defaults: RuntimeVerifierProfileRegistry,
     vars: BTreeMap<String, String>,
@@ -349,6 +393,15 @@ impl VerifierProfileRegistrySource for EnvJsonVerifierProfileRegistrySource {
         request: &BackendVerificationRequest<'_>,
     ) -> Result<RuntimeVerifierProfileRegistry, BackendExecutionError> {
         let mut registry = self.defaults.clone();
+        if let Some(path) = self
+            .vars
+            .get("TRNM_TEE_PROFILE_REGISTRY_PATH")
+            .map(String::as_str)
+            .map(str::trim)
+            .filter(|value| !value.is_empty())
+        {
+            registry = FileJsonVerifierProfileRegistrySource::from_path(registry, path).load(request)?;
+        }
         let Some(raw) = self.vars.get("TRNM_TEE_PROFILE_REGISTRY_JSON") else {
             return Ok(registry);
         };
@@ -358,9 +411,7 @@ impl VerifierProfileRegistrySource for EnvJsonVerifierProfileRegistrySource {
                 reason: format!("failed to decode TRNM_TEE_PROFILE_REGISTRY_JSON: {err}"),
             }
         })?;
-        for entry in entries {
-            registry.entries.insert(entry.profile.clone(), entry);
-        }
+        registry.apply_entries(entries);
         Ok(registry)
     }
 }
@@ -373,6 +424,15 @@ impl RegistryBackedVerifierProfileResolver {
     fn with_builtin_defaults() -> Self {
         Self {
             source: Arc::new(StaticVerifierProfileRegistrySource::with_builtin_defaults()),
+        }
+    }
+
+    #[allow(dead_code)]
+    fn with_runtime_overlays_from_env() -> Self {
+        Self {
+            source: Arc::new(EnvJsonVerifierProfileRegistrySource::from_env(
+                RuntimeVerifierProfileRegistry::with_builtin_defaults(),
+            )),
         }
     }
 
@@ -2631,6 +2691,22 @@ mod tests {
         TeeVerifierHandoff::from_payload(&payload, None).unwrap()
     }
 
+    fn temp_profile_registry_path(label: &str) -> String {
+        let unique = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos();
+        std::env::temp_dir()
+            .join(format!(
+                "trnm-tee-profile-registry-{}-{}-{}.json",
+                label,
+                std::process::id(),
+                unique
+            ))
+            .display()
+            .to_string()
+    }
+
     #[test]
     fn sgx_adapter_builds_quote_verifier_input() {
         let input = SGX_DCAP_ADAPTER
@@ -2795,6 +2871,86 @@ mod tests {
         let resolver = RegistryBackedVerifierProfileResolver::with_builtin_defaults();
         let err = resolver.resolve(&transport, &request).unwrap_err();
         assert!(matches!(err, BackendExecutionError::NotConfigured { .. }));
+    }
+
+    #[test]
+    fn file_json_profile_registry_source_overrides_builtin_entry() {
+        let path = temp_profile_registry_path("file-only");
+        std::fs::write(
+            &path,
+            serde_json::to_string(&vec![VerifierProfileRegistryEntry {
+                profile: "intel-dcap-external-default".into(),
+                mode: VerifierTransportMode::External,
+                endpoint_prefix: "https://file.intel.example/v4/quote/".into(),
+                auth_required: true,
+            }])
+            .unwrap(),
+        )
+        .unwrap();
+        let source = FileJsonVerifierProfileRegistrySource::from_path(
+            RuntimeVerifierProfileRegistry::with_builtin_defaults(),
+            path.clone(),
+        );
+        let task = mock_task();
+        let registry = source
+            .load(&BackendVerificationRequest {
+                family: VerificationBackendFamily::Tee,
+                task: &task,
+                proof_data: b"TEE:...",
+                tee_payload: None,
+                zk_payload: None,
+                resolved_vk_ref: None,
+            })
+            .unwrap();
+        let _ = std::fs::remove_file(&path);
+        let entry = registry.resolve("intel-dcap-external-default").unwrap();
+        assert_eq!(entry.endpoint_prefix, "https://file.intel.example/v4/quote/");
+    }
+
+    #[test]
+    fn env_json_profile_registry_source_applies_file_overlay_before_json_overlay() {
+        let path = temp_profile_registry_path("file-then-json");
+        std::fs::write(
+            &path,
+            serde_json::to_string(&vec![VerifierProfileRegistryEntry {
+                profile: "intel-dcap-external-default".into(),
+                mode: VerifierTransportMode::External,
+                endpoint_prefix: "https://file.intel.example/v4/quote/".into(),
+                auth_required: true,
+            }])
+            .unwrap(),
+        )
+        .unwrap();
+        let mut vars = BTreeMap::new();
+        vars.insert("TRNM_TEE_PROFILE_REGISTRY_PATH".to_string(), path.clone());
+        vars.insert(
+            "TRNM_TEE_PROFILE_REGISTRY_JSON".to_string(),
+            serde_json::to_string(&vec![VerifierProfileRegistryEntry {
+                profile: "intel-dcap-external-default".into(),
+                mode: VerifierTransportMode::External,
+                endpoint_prefix: "https://json.intel.example/v5/quote/".into(),
+                auth_required: true,
+            }])
+            .unwrap(),
+        );
+        let source = EnvJsonVerifierProfileRegistrySource::from_vars(
+            RuntimeVerifierProfileRegistry::with_builtin_defaults(),
+            vars,
+        );
+        let task = mock_task();
+        let registry = source
+            .load(&BackendVerificationRequest {
+                family: VerificationBackendFamily::Tee,
+                task: &task,
+                proof_data: b"TEE:...",
+                tee_payload: None,
+                zk_payload: None,
+                resolved_vk_ref: None,
+            })
+            .unwrap();
+        let _ = std::fs::remove_file(&path);
+        let entry = registry.resolve("intel-dcap-external-default").unwrap();
+        assert_eq!(entry.endpoint_prefix, "https://json.intel.example/v5/quote/");
     }
 
     #[test]
