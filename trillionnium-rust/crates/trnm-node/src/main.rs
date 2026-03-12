@@ -3986,6 +3986,14 @@ mod tests {
     }
 
     #[test]
+    fn ratio_helpers_saturate_huge_metric_inputs_without_overflow() {
+        assert_eq!(ratio_ppm_u64(u64::MAX, 1), u64::MAX);
+        assert_eq!(ratio_milli_u64(u64::MAX, 1), u64::MAX);
+        assert_eq!(ratio_percent_bps(u128::MAX, 1), u128::MAX);
+        assert_eq!(ratio_ppm(u128::MAX, 1), u128::MAX);
+    }
+
+    #[test]
     fn critical_guard_selection_respects_lane_fairness_pop_order() {
         let mut mempool = VecDeque::from(vec![
             MockTx::CreateTask {
