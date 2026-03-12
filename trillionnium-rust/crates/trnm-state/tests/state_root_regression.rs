@@ -1190,6 +1190,58 @@ fn crediting_zero_to_missing_balance_keeps_state_root_on_missing_entry_baseline(
 }
 
 #[test]
+fn restore_balance_none_is_slot_scoped_even_with_multiple_treasury_entries() {
+    let mut state = StateStore::new();
+    let empty_root = state.state_root();
+
+    state.set_balance("treasury.challenge_forfeits", 11);
+    let only_forfeits_root = state.state_root();
+
+    state.set_balance("treasury.worker_slashes", 17);
+    let root_with_both = state.state_root();
+
+    assert_ne!(
+        root_with_both, only_forfeits_root,
+        "sanity: adding a second treasury entry must perturb state_root"
+    );
+
+    state.restore_balance("treasury.challenge_forfeits", None);
+
+    assert_eq!(
+        state.balance_of("treasury.challenge_forfeits"),
+        0,
+        "slot-scoped restore should remove the targeted treasury entry"
+    );
+    assert_eq!(
+        state.balance_of("treasury.worker_slashes"),
+        17,
+        "slot-scoped restore must preserve unrelated treasury entries"
+    );
+    assert_ne!(
+        state.state_root(),
+        empty_root,
+        "removing one treasury slot must not collapse state_root to the empty baseline while another treasury entry still exists"
+    );
+
+    let mut expected = StateStore::new();
+    expected.set_balance("treasury.worker_slashes", 17);
+    let only_worker_slashes_root = expected.state_root();
+
+    assert_eq!(
+        state.state_root(),
+        only_worker_slashes_root,
+        "restore_balance(None) should produce the same deterministic root as a canonical state containing only the preserved treasury entry"
+    );
+
+    state.restore_balance("treasury.challenge_forfeits", Some(11));
+    assert_eq!(
+        state.state_root(),
+        root_with_both,
+        "restoring the removed treasury snapshot must rewind state_root exactly to the prior two-entry root"
+    );
+}
+
+#[test]
 fn monetary_tick_metadata_should_affect_state_root_even_when_issuance_totals_match() {
     let mut state_a = StateStore::new();
     let mut state_b = StateStore::new();
