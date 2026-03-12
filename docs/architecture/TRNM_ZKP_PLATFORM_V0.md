@@ -134,7 +134,7 @@ v0 在路由层保持当前顶层种类不变：
 - `zk_system`：证明系统标识。当前 v0 router / payload parser 冻结接受的 canonical token 为 `groth16 | plonk | halo2 | stark | risc0 | sp1`；更宽的自定义命名空间（如 `custom:<org>:<system>`）先作为文档保留位，不得在 v0 实现中静默放开；若 payload 在 `trnm.zk.payload.v0` 中直接使用该类 token，router 必须按 malformed fail-closed 拒绝。
 - `backend_id`：具体 backend 实例标识，例如 `local-groth16-bn254`、`risc0-host-v1`；v0 canonical payload 中若显式提供，必须是去除首尾空白后的规范 token，不能依赖 router 静默 trim；若 token 携带 canonical zk-system hint，则所有 distinct hints 必须收敛为且仅为一个 canonical system：重复同值 hint 可去重接受，但混合 hint（如同时出现 `groth16` 与 `plonk`）必须 fail-closed，且仅有 `zk` / `zk-*` 这类 family-only token 不得被当作隐式系统选择器
 - `backend_version`：backend 契约版本，例如 `v1`；若显式提供，也必须是去除首尾空白后的 canonical token，不能依赖 router 静默 trim；且在 `trnm.zk.payload.v0` 中不得脱离 `backend_id` 单独出现
-- `proof_encoding`：canonical payload 中的 proof 字节编码字段；当前 router / parser 冻结接受 `hex | base64`
+- `proof_encoding`：canonical payload 中的 proof 字节编码字段；当前 router / parser 冻结接受 `hex | base64`，且在 `trnm.zk.payload.v0` 中该字段为必填，必须使用小写 canonical token；缺失或使用非 canonical 大小写/别名时必须 fail-closed，不得静默默认到 `base64`
 - `proof_format`：backend/config 能力层的编码格式声明，例如 `raw-bytes | hex | base64 | json-envelope`
 - `vk_ref`：verification key / verifier image / method id / verifier config 的引用；在 canonical payload 中必须非空，按 opaque reference 语义区分大小写，且不得依赖 router 对首尾空白做静默 trim
 
