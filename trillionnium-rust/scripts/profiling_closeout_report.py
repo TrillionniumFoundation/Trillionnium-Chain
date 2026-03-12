@@ -112,6 +112,8 @@ def autopilot_severity(missing_inputs, stale_inputs, old_inputs) -> str:
         return "YELLOW"
     if old_inputs:
         return "YELLOW"
+    if stale_inputs:
+        return "YELLOW"
     return "GREEN"
 
 
