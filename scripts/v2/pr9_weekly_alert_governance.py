@@ -262,8 +262,18 @@ def snapshot_timestamp(path: Path) -> dt.datetime | None:
 def payload_history_fingerprint(payload: dict[str, Any]) -> str:
     stable_payload = dict(payload)
     stable_payload.pop("generated_at_utc", None)
+    stable_payload.pop("history_fingerprint_sha256", None)
     encoded = json.dumps(stable_payload, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
     return hashlib.sha256(encoded).hexdigest()
+
+
+def history_snapshot_fingerprint(payload: dict[str, Any]) -> str | None:
+    explicit = payload.get("history_fingerprint_sha256")
+    if isinstance(explicit, str) and explicit:
+        return explicit
+    if not payload:
+        return None
+    return payload_history_fingerprint(payload)
 
 
 def find_previous_week_json(history_dir: Path, current_json_out: Path, now_dt: dt.datetime, lookback_days: int) -> Path | None:
@@ -628,7 +638,7 @@ def main() -> int:
         wrote_snapshot = True
     else:
         latest_payload = safe_json(latest_snapshot)
-        latest_fingerprint = latest_payload.get("history_fingerprint_sha256") if isinstance(latest_payload, dict) else None
+        latest_fingerprint = history_snapshot_fingerprint(latest_payload) if isinstance(latest_payload, dict) else None
         if latest_fingerprint != history_fingerprint:
             snapshot_path.write_text(rendered_json, encoding="utf-8")
             wrote_snapshot = True
