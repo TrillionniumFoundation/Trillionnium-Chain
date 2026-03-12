@@ -2373,6 +2373,20 @@ mod tests {
     }
 
     #[test]
+    fn auto_adaptive_unsigned_env_knobs_fail_closed_on_negative_values() {
+        let _env = env_lock();
+
+        let _buckets = EnvGuard::set("TRNM_HOT_BUCKETS", "-16");
+        let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", " '-512' ");
+        let _sample = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", "-1_024");
+
+        assert_eq!(hot_bucket_count(), 8);
+        assert_eq!(auto_adaptive_min_batch_len(), 512);
+        assert_eq!(auto_adaptive_sample_len(5000), 2048);
+        assert_eq!(auto_adaptive_sample_len(128), 128);
+    }
+
+    #[test]
     fn auto_adaptive_small_batch_threshold_accepts_quoted_grouped_env_values() {
         let _env = env_lock();
         let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", " '6_4' ");
