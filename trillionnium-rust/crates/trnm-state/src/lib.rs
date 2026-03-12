@@ -586,8 +586,7 @@ impl StateStore {
         {
             if !resolve_authority_sets_match(&pending_authority_set, authority_set) {
                 return Err(
-                    "resolve approval authority set must match pending governance authority"
-                        .into(),
+                    "resolve approval authority set must match pending governance authority".into(),
                 );
             }
         }
@@ -651,6 +650,15 @@ impl StateStore {
         };
         self.invalidate_state_root_cache();
         Ok(next_confirmations >= 2)
+    }
+
+    fn scrub_pending_resolve_approvals_for_authority_boundary(&mut self) {
+        if self.pending_resolve_approvals.is_empty() {
+            return;
+        }
+
+        self.invalidate_state_root_cache();
+        self.pending_resolve_approvals.clear();
     }
 
     pub fn clear_pending_resolve_approval(&mut self, task_id: u64) {
@@ -1279,6 +1287,9 @@ impl StateStore {
                     GovPendingUpdateAction::Cancel => {
                         self.invalidate_state_root_cache();
                         self.pending_gov_updates.remove(&key);
+                        if key == "resolve_authority" {
+                            self.scrub_pending_resolve_approvals_for_authority_boundary();
+                        }
                         return Ok(GovParamUpdateOutcome::Cancelled);
                     }
                     GovPendingUpdateAction::Replace => {
@@ -1289,11 +1300,14 @@ impl StateStore {
                             key.clone(),
                             PendingGovParamUpdate {
                                 key_id,
-                                key,
+                                key: key.clone(),
                                 value,
                                 activate_at_height,
                             },
                         );
+                        if key == "resolve_authority" {
+                            self.scrub_pending_resolve_approvals_for_authority_boundary();
+                        }
                         return Ok(GovParamUpdateOutcome::Scheduled { activate_at_height });
                     }
                     GovPendingUpdateAction::Enforce => {
@@ -1327,7 +1341,10 @@ impl StateStore {
             }
             self.invalidate_state_root_cache();
             self.pending_gov_updates.remove(&key);
-            let r = self.upsert_gov_param_unchecked(key_id, key, value)?;
+            let r = self.upsert_gov_param_unchecked(key_id, key.clone(), value)?;
+            if key == "resolve_authority" {
+                self.scrub_pending_resolve_approvals_for_authority_boundary();
+            }
             return Ok(GovParamUpdateOutcome::Applied(r));
         }
 
@@ -1341,11 +1358,14 @@ impl StateStore {
             key.clone(),
             PendingGovParamUpdate {
                 key_id,
-                key,
+                key: key.clone(),
                 value,
                 activate_at_height,
             },
         );
+        if key == "resolve_authority" {
+            self.scrub_pending_resolve_approvals_for_authority_boundary();
+        }
         Ok(GovParamUpdateOutcome::Scheduled { activate_at_height })
     }
 
@@ -2620,7 +2640,8 @@ mod tests {
     }
 
     #[test]
-    fn restore_pending_resolve_approval_scrubs_snapshot_when_pending_governance_authority_differs() {
+    fn restore_pending_resolve_approval_scrubs_snapshot_when_pending_governance_authority_differs()
+    {
         let mut st = StateStore::new();
         let scheduled = st
             .set_gov_param(

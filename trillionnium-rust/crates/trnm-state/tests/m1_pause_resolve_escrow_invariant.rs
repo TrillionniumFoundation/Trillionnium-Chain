@@ -2,6 +2,66 @@ use trnm_state::{
     GovParamUpdateOutcome, GovPendingUpdateAction, PendingResolveApprovalSnapshot, StateStore,
 };
 
+#[test]
+fn resolve_authority_timelock_transition_scrubs_pending_resolve_approvals() {
+    // L03 boundary hardening: once resolve_authority enters a timelock transition, any
+    // previously staged resolve quorum must be scrubbed immediately so stale approvals cannot
+    // linger across the governance boundary in paused or unpaused operation.
+    let mut st = StateStore::new();
+
+    let bootstrap = st
+        .set_gov_param(
+            98_300,
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("bootstrap resolve_authority write should succeed");
+    assert!(matches!(bootstrap, GovParamUpdateOutcome::Scheduled { .. }));
+    let applied = st
+        .set_gov_param(
+            98_320,
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("bootstrap resolve_authority should apply after timelock");
+    assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+
+    let first = st
+        .stage_or_confirm_resolve_approval(9_980, 1, true, "authority-a", "authority-a,authority-b")
+        .expect("first authority approval should stage successfully");
+    assert!(!first);
+    assert_eq!(st.pending_resolve_approval(9_980), Some((true, 1)));
+    let root_with_pending = st.state_root();
+
+    let replacement = st
+        .set_gov_param(
+            98_321,
+            7_310,
+            "resolve_authority".into(),
+            "authority-c,authority-d".into(),
+        )
+        .expect("replacement resolve_authority update should be scheduled");
+    assert!(matches!(
+        replacement,
+        GovParamUpdateOutcome::Scheduled { .. }
+    ));
+
+    assert_eq!(st.pending_resolve_approval(9_980), None);
+    assert_eq!(st.pending_resolve_first_approver(9_980), None);
+    assert_eq!(st.pending_resolve_approval_snapshot(9_980), None);
+    assert_ne!(
+        root_with_pending,
+        st.state_root(),
+        "scrubbing stale pending resolve approvals must invalidate cached state root"
+    );
+    let pending = st
+        .pending_gov_update("resolve_authority")
+        .expect("replacement resolve_authority timelock should remain staged");
+    assert_eq!(pending.value, "authority-c,authority-d");
+}
+
 const CHALLENGE_ESCROW_ACCOUNT: &str = "treasury.challenge_escrow";
 const CHALLENGE_FORFEIT_TREASURY_ACCOUNT: &str = "treasury.challenge_forfeits";
 const WORKER_SLASH_TREASURY_ACCOUNT: &str = "treasury.worker_slashes";
@@ -191,13 +251,7 @@ fn paused_state_rejects_resolve_approval_authority_set_drift_without_side_effect
     let slashes_before = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
 
     let err = st
-        .stage_or_confirm_resolve_approval(
-            8_182,
-            3,
-            true,
-            "authority-a",
-            "authority-a,authority-c",
-        )
+        .stage_or_confirm_resolve_approval(8_182, 3, true, "authority-a", "authority-a,authority-c")
         .expect_err("drifted paused resolve approval authority set must be rejected");
     assert!(err.contains("must match configured governance authority"));
 
@@ -213,7 +267,8 @@ fn paused_state_rejects_resolve_approval_authority_set_drift_without_side_effect
 }
 
 #[test]
-fn paused_state_rejects_resolve_approval_against_stale_configured_authority_when_pending_timelock_exists() {
+fn paused_state_rejects_resolve_approval_against_stale_configured_authority_when_pending_timelock_exists(
+) {
     // M1 boundary hardening: once a replacement resolve_authority set is already pending,
     // paused resolve approvals must fail closed against the stale configured quorum instead of
     // letting callers keep staging approvals against the soon-to-be-replaced authority set.
@@ -249,7 +304,10 @@ fn paused_state_rejects_resolve_approval_against_stale_configured_authority_when
             "authority-c,authority-d".into(),
         )
         .expect("replacement resolve_authority update should be scheduled");
-    assert!(matches!(replacement, GovParamUpdateOutcome::Scheduled { .. }));
+    assert!(matches!(
+        replacement,
+        GovParamUpdateOutcome::Scheduled { .. }
+    ));
 
     st.set_gov_param(98_182, 7_999, "emergency_pause".into(), "true".into())
         .expect("pause toggle must apply immediately");
@@ -260,14 +318,10 @@ fn paused_state_rejects_resolve_approval_against_stale_configured_authority_when
     let slashes_before = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
 
     let err = st
-        .stage_or_confirm_resolve_approval(
-            8_183,
-            3,
-            true,
-            "authority-a",
-            "authority-a,authority-b",
-        )
-        .expect_err("stale configured resolve authority must be rejected once a pending replacement exists");
+        .stage_or_confirm_resolve_approval(8_183, 3, true, "authority-a", "authority-a,authority-b")
+        .expect_err(
+            "stale configured resolve authority must be rejected once a pending replacement exists",
+        );
     assert!(err.contains("must match pending governance authority"));
 
     assert_eq!(st.pending_resolve_approval(8_183), None);
@@ -1643,7 +1697,8 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_oversized_authority_set_
 }
 
 #[test]
-fn paused_state_restore_pending_resolve_snapshot_scrubs_authority_set_drift_from_configured_governance_boundary() {
+fn paused_state_restore_pending_resolve_snapshot_scrubs_authority_set_drift_from_configured_governance_boundary(
+) {
     // M1 micro-hardening: paused rollback/restore must not revive a pending resolve quorum whose
     // authority set no longer matches the configured resolve_authority governance boundary.
     let mut st = StateStore::new();
@@ -1712,7 +1767,8 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_authority_set_drift_from
 }
 
 #[test]
-fn paused_state_restore_pending_resolve_snapshot_scrubs_stale_configured_authority_when_pending_replacement_exists() {
+fn paused_state_restore_pending_resolve_snapshot_scrubs_stale_configured_authority_when_pending_replacement_exists(
+) {
     // M1 boundary hardening: when a replacement resolve_authority set is already timelocked,
     // paused rollback/restore must fail closed against snapshots that still target the stale
     // configured quorum rather than reviving approvals that would cross the pending boundary.
@@ -1748,7 +1804,10 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_stale_configured_authori
             "authority-c,authority-d".into(),
         )
         .expect("replacement resolve_authority update should be scheduled");
-    assert!(matches!(replacement, GovParamUpdateOutcome::Scheduled { .. }));
+    assert!(matches!(
+        replacement,
+        GovParamUpdateOutcome::Scheduled { .. }
+    ));
 
     st.set_gov_param(98_262, 7_999, "emergency_pause".into(), "true".into())
         .expect("pause toggle must apply immediately");
@@ -1795,7 +1854,8 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_stale_configured_authori
 }
 
 #[test]
-fn paused_state_restore_pending_resolve_snapshot_accepts_case_and_order_equivalent_governance_authority() {
+fn paused_state_restore_pending_resolve_snapshot_accepts_case_and_order_equivalent_governance_authority(
+) {
     // M1 micro-hardening: paused rollback/restore must accept semantically identical
     // resolve-authority sets even if snapshot spelling differs by case or member order,
     // otherwise benign replay/restore drift would spuriously erase a valid staged quorum.
