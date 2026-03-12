@@ -51,7 +51,7 @@ extract_tx_hash() {
       h="$tok"
       break
     fi
-  done < <(printf "%s\n" "$raw" | grep -Eo 'tx_hash"?[[:space:]]*[:=][[:space:]]*"?(0[xX])?[0-9A-Fa-f]{16,128}"?|txhash"?[[:space:]]*[:=][[:space:]]*"?(0[xX])?[0-9A-Fa-f]{16,128}"?|txHash"?[[:space:]]*[:=][[:space:]]*"?(0[xX])?[0-9A-Fa-f]{16,128}"?' | sed -E 's/.*[:=][[:space:]]*//')
+  done < <(printf "%s\n" "$raw" | grep -Eo 'tx_hash"?[[:space:]]*[:=][[:space:]]*"?(0[xX])?[0-9A-Fa-f]{16,128}"?|txhash"?[[:space:]]*[:=][[:space:]]*"?(0[xX])?[0-9A-Fa-f]{16,128}"?|txHash"?[[:space:]]*[:=][[:space:]]*"?(0[xX])?[0-9A-Fa-f]{16,128}"?|transaction_hash"?[[:space:]]*[:=][[:space:]]*"?(0[xX])?[0-9A-Fa-f]{16,128}"?|transactionHash"?[[:space:]]*[:=][[:space:]]*"?(0[xX])?[0-9A-Fa-f]{16,128}"?' | sed -E 's/.*[:=][[:space:]]*//')
   printf "%s" "$h"
 }
 
@@ -65,12 +65,12 @@ extract_query_status() {
     | head -n1 \
     | sed -E 's/.*[[:space:]:=]([^[:space:]]+).*/\1/' || true)
   if [[ -z "$s" ]]; then
-    # Accept JSON variants with either "status" or "tx_status" key to avoid false negatives across adapters.
-    s=$(printf "%s\n" "$raw" | grep -Eio '"(tx_)?status"[[:space:]]*:[[:space:]]*"[^"]+"' | sed -E 's/.*:[[:space:]]*"([^"]+)"/\1/' | head -n1 || true)
+    # Accept JSON variants with either status / tx_status / transaction_status keys to avoid false negatives across adapters.
+    s=$(printf "%s\n" "$raw" | grep -Eio '"(tx_|transaction_)?status"[[:space:]]*:[[:space:]]*"[^"]+"|"transactionStatus"[[:space:]]*:[[:space:]]*"[^"]+"|"txStatus"[[:space:]]*:[[:space:]]*"[^"]+"' | sed -E 's/.*:[[:space:]]*"([^"]+)"/\1/' | head -n1 || true)
   fi
   if [[ -z "$s" ]]; then
     # Also accept non-string JSON scalar status values (number/bool), preserving guardrail against empty/null.
-    s=$(printf "%s\n" "$raw" | grep -Eio '"(tx_)?status"[[:space:]]*:[[:space:]]*(true|false|[0-9]+)' | sed -E 's/.*:[[:space:]]*(true|false|[0-9]+).*/\1/' | head -n1 || true)
+    s=$(printf "%s\n" "$raw" | grep -Eio '"(tx_|transaction_)?status"[[:space:]]*:[[:space:]]*(true|false|[0-9]+)|"transactionStatus"[[:space:]]*:[[:space:]]*(true|false|[0-9]+)|"txStatus"[[:space:]]*:[[:space:]]*(true|false|[0-9]+)' | sed -E 's/.*:[[:space:]]*(true|false|[0-9]+).*/\1/' | head -n1 || true)
   fi
   printf "%s" "$s"
 }
