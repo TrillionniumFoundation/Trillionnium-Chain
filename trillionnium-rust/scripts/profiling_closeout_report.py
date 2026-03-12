@@ -385,6 +385,14 @@ def main():
             return None
         return datetime.fromtimestamp(inferred_epoch).isoformat()
 
+    def file_size_bytes(path: str | None) -> int | None:
+        if not path or not os.path.exists(path):
+            return None
+        try:
+            return os.path.getsize(path)
+        except OSError:
+            return None
+
     def artifact_lineage(label: str, path: str | None, producer: str) -> str:
         status = input_status(path)
         age_seconds = file_age_seconds(path)
@@ -392,16 +400,18 @@ def main():
         basename = os.path.basename(path) if path else "None"
         anchor_path = path
         anchor_note = ""
+        size_bytes = file_size_bytes(path)
         if label == "bench_dir" and bench_dir_exists and newest_benchmark_artifact:
             anchor_path = newest_benchmark_artifact
             age_seconds = bench_dir_age_seconds()
             freshness = "empty" if age_seconds is None else freshness_label(age_seconds)
             basename = os.path.basename(newest_benchmark_artifact)
+            size_bytes = file_size_bytes(newest_benchmark_artifact)
             anchor_note = f" anchor={newest_benchmark_artifact}"
         return (
             f"- {label}: status={status} freshness={freshness} "
             f"age_seconds={age_seconds if age_seconds is not None else 'n/a'} "
-            f"updated_at={file_mtime_iso(anchor_path) or 'n/a'} basename={basename} "
+            f"updated_at={file_mtime_iso(anchor_path) or 'n/a'} size_bytes={size_bytes if size_bytes is not None else 'n/a'} basename={basename} "
             f"path={path or 'None'} producer={producer}{anchor_note}"
         )
 
@@ -437,7 +447,8 @@ def main():
             preview.append(
                 f"  - selected_status: is_newest={'true' if selected_rank == 1 else 'false'} "
                 f"rank={selected_rank}/{len(existing_candidates)} freshness={freshness_label(file_age_seconds(selected))} "
-                f"updated_at={file_mtime_iso(selected) or 'n/a'} age_seconds={file_age_seconds(selected) if file_age_seconds(selected) is not None else 'n/a'} "
+                f"updated_at={file_mtime_iso(selected) or 'n/a'} size_bytes={file_size_bytes(selected) if file_size_bytes(selected) is not None else 'n/a'} "
+                f"age_seconds={file_age_seconds(selected) if file_age_seconds(selected) is not None else 'n/a'} "
                 f"delta_vs_newest_seconds={selected_vs_newest_seconds}"
             )
         elif selected and selected in candidates:
@@ -447,18 +458,18 @@ def main():
                 f"  - selected_status: is_newest={'pending_write_newest' if candidates and candidates[0] == selected else 'pending_write'} "
                 f"rank={'1' if candidates and candidates[0] == selected else 'pending_write'}/{len(existing_candidates)} "
                 f"freshness={freshness_label(inferred_age_seconds)} "
-                f"updated_at={inferred_updated_at} age_seconds={inferred_age_seconds if inferred_age_seconds is not None else 'n/a'} "
+                f"updated_at={inferred_updated_at} size_bytes={file_size_bytes(selected) if file_size_bytes(selected) is not None else 'n/a'} age_seconds={inferred_age_seconds if inferred_age_seconds is not None else 'n/a'} "
                 f"delta_vs_newest_seconds=n/a"
             )
         elif selected:
             preview.append(
                 f"  - selected_status: is_newest=false rank=not_in_candidate_set freshness={freshness_label(file_age_seconds(selected))} "
-                f"updated_at={file_mtime_iso(selected) or 'n/a'} age_seconds={file_age_seconds(selected) if file_age_seconds(selected) is not None else 'n/a'} "
+                f"updated_at={file_mtime_iso(selected) or 'n/a'} size_bytes={file_size_bytes(selected) if file_size_bytes(selected) is not None else 'n/a'} age_seconds={file_age_seconds(selected) if file_age_seconds(selected) is not None else 'n/a'} "
                 f"delta_vs_newest_seconds=n/a"
             )
         for idx, path in enumerate(existing_candidates[:max_items], start=1):
             preview.append(
-                f"  - recent_{idx}: basename={os.path.basename(path)} "
+                f"  - recent_{idx}: basename={os.path.basename(path)} size_bytes={file_size_bytes(path) if file_size_bytes(path) is not None else 'n/a'} "
                 f"updated_at={file_mtime_iso(path) or 'n/a'} freshness={freshness_label(file_age_seconds(path))} path={path}"
             )
         if len(existing_candidates) > max_items:
