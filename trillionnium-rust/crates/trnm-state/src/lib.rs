@@ -259,7 +259,23 @@ fn canonical_resolve_authority_members(authority_set: &str) -> Option<Vec<String
     let mut seen = std::collections::BTreeSet::new();
     for member in members {
         let member_trimmed = member.trim();
-        if member_trimmed.is_empty() {
+        if member_trimmed.is_empty()
+            || member_trimmed != member
+            || member_trimmed.chars().any(|c| c.is_whitespace())
+            || member_trimmed.chars().any(|c| c.is_control())
+            || member_trimmed.contains(';')
+            || member_trimmed.contains('|')
+            || member_trimmed.contains('；')
+            || member_trimmed.contains('，')
+            || member_trimmed.contains('、')
+            || !member_trimmed.is_ascii()
+            || member_trimmed.eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER)
+            || member_trimmed.eq_ignore_ascii_case(EMERGENCY_PAUSE_PLACEHOLDER)
+            || member_trimmed.eq_ignore_ascii_case(RESERVED_SYSTEM_AUTHORITY)
+            || member_trimmed.eq_ignore_ascii_case(CHALLENGE_ESCROW_ACCOUNT)
+            || member_trimmed.eq_ignore_ascii_case(CHALLENGE_FORFEIT_TREASURY_ACCOUNT)
+            || member_trimmed.eq_ignore_ascii_case(WORKER_SLASH_TREASURY_ACCOUNT)
+        {
             return None;
         }
         let lowered = member_trimmed.to_ascii_lowercase();
@@ -273,7 +289,13 @@ fn canonical_resolve_authority_members(authority_set: &str) -> Option<Vec<String
 }
 
 fn resolve_authority_sets_match(lhs: &str, rhs: &str) -> bool {
-    canonical_resolve_authority_members(lhs) == canonical_resolve_authority_members(rhs)
+    match (
+        canonical_resolve_authority_members(lhs),
+        canonical_resolve_authority_members(rhs),
+    ) {
+        (Some(lhs), Some(rhs)) => lhs == rhs,
+        _ => false,
+    }
 }
 
 fn validate_gov_param_value(key: &str, value: &str) -> Result<(), String> {
@@ -2075,6 +2097,27 @@ mod tests {
                 st.pending_resolve_approval(8_882),
                 None,
                 "malformed authority set must not stage pending approvals"
+            );
+        }
+    }
+
+    #[test]
+    fn resolve_authority_set_match_rejects_malformed_members_fail_closed() {
+        for malformed_set in [
+            "authority-a,system",
+            "authority-a,treasury.challenge_escrow",
+            "authority-a,governance.resolve_authority",
+            "authority-a,authority-b;authority-c",
+            "authority-a,authority-b\u{0007}",
+            "authority-a,authority-b，authority-c",
+        ] {
+            assert!(
+                !resolve_authority_sets_match(malformed_set, malformed_set),
+                "malformed authority set must never self-match: {malformed_set:?}"
+            );
+            assert!(
+                canonical_resolve_authority_members(malformed_set).is_none(),
+                "malformed authority set must fail canonicalization: {malformed_set:?}"
             );
         }
     }
