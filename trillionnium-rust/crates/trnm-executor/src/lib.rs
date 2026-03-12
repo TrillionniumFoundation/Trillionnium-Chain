@@ -2037,6 +2037,45 @@ mod tests {
     }
 
     #[test]
+    fn free_ingress_fast_path_is_profile_stable_across_strategies() {
+        let txs = vec![
+            tx(1, vec![], vec![]),
+            tx(2, vec![], vec![]),
+            tx(3, vec![], vec![]),
+            tx(4, vec![], vec![]),
+        ];
+        let expected_ids = vec![1, 2, 3, 4];
+        let strategies = [
+            GroupingStrategy::Original,
+            GroupingStrategy::HotBucketInterleave,
+            GroupingStrategy::AggressiveGreedy,
+            GroupingStrategy::AutoAdaptive,
+        ];
+
+        for strategy in strategies {
+            let (groups, profile) = build_parallel_groups_profile_with_strategy(&txs, strategy);
+            assert_eq!(groups.len(), 1);
+            assert_eq!(groups[0].iter().map(|tx| tx.id).collect::<Vec<_>>(), expected_ids);
+            assert_eq!(profile.tx_count, txs.len());
+            assert_eq!(profile.group_count, 1);
+            assert_eq!(profile.grouped_count, txs.len());
+            assert_eq!(profile.max_group_size, txs.len());
+            assert_eq!(profile.min_group_size, txs.len());
+            assert_eq!(profile.avg_group_size, txs.len() as f64);
+            assert_eq!(profile.hot_object_share, 0.0);
+            assert_eq!(profile.conflict_checks, 0);
+            assert_eq!(profile.conflict_hits, 0);
+            assert_eq!(profile.candidate_groups_scanned, 0);
+            assert_eq!(profile.stage_ww_checks, 0);
+            assert_eq!(profile.stage_ww_hits, 0);
+            assert_eq!(profile.stage_wr_checks, 0);
+            assert_eq!(profile.stage_wr_hits, 0);
+            assert_eq!(profile.stage_rw_checks, 0);
+            assert_eq!(profile.stage_rw_hits, 0);
+        }
+    }
+
+    #[test]
     fn auto_adaptive_profile_strategy_matches_decision_output() {
         let txs = (0..64)
             .map(|i| {
