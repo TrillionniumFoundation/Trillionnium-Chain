@@ -172,6 +172,9 @@ fn is_sanitized_to_space(ch: char) -> bool {
                 | '\u{206E}'
                 | '\u{206F}'
                 | '\u{FEFF}'
+                | '\u{FFF9}'
+                | '\u{FFFA}'
+                | '\u{FFFB}'
         )
         || ('\u{FE00}'..='\u{FE0F}').contains(&ch)
         || ('\u{E0100}'..='\u{E01EF}').contains(&ch)
