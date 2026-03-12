@@ -4019,6 +4019,22 @@ mod tests {
     }
 
     #[test]
+    fn parse_http_get_path_rejects_mixed_case_percent_encoded_traversal_forms() {
+        assert_eq!(
+            parse_http_get_path("GET /query-events/%2E%2e/health HTTP/1.1"),
+            None
+        );
+        assert_eq!(
+            parse_http_get_path("GET /query-events/%2fhealth HTTP/1.1"),
+            None
+        );
+        assert_eq!(
+            parse_http_get_path("GET /query-events/%5C42 HTTP/1.1"),
+            None
+        );
+    }
+
+    #[test]
     fn parse_http_get_path_rejects_fragment_forms() {
         assert_eq!(parse_http_get_path("GET /health#ready HTTP/1.1"), None);
         assert_eq!(
