@@ -318,6 +318,20 @@ mod tests {
     }
 
     #[test]
+    fn effective_strategy_reporting_stays_honest_for_default_and_auto_adaptive() {
+        let txs = (0..64).map(|i| tx(i as u64, vec![0], vec![0])).collect::<Vec<_>>();
+
+        assert!(matches!(
+            effective_strategy_for(StrategyArg::Default, &txs),
+            GroupingStrategy::Original
+        ));
+        assert!(matches!(
+            effective_strategy_for(StrategyArg::AutoAdaptive, &txs),
+            GroupingStrategy::HotBucketInterleave
+        ));
+    }
+
+    #[test]
     fn hot_streak_default_workload_triggers_auto_adaptive_hotspot_detection() {
         let txs = build_hot_streak_txs(20_000, 2_000, 3, 1);
         let decision = auto_adaptive_decision(&txs);
