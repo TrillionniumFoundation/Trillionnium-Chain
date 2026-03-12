@@ -461,6 +461,9 @@ impl StateStore {
         approver: &str,
         authority_set: &str,
     ) -> Result<bool, String> {
+        if task_id == 0 {
+            return Err("resolve approval task id must be >= 1".into());
+        }
         if task_version == 0 {
             return Err("resolve approval task version must be >= 1".into());
         }
@@ -765,6 +768,10 @@ impl StateStore {
         snapshot: Option<PendingResolveApprovalSnapshot>,
     ) {
         self.invalidate_state_root_cache();
+        if task_id == 0 {
+            self.pending_resolve_approvals.remove(&task_id);
+            return;
+        }
         match snapshot {
             Some(snapshot) if Self::is_valid_pending_resolve_snapshot(&snapshot) => {
                 self.pending_resolve_approvals.insert(
@@ -1820,6 +1827,18 @@ mod tests {
     }
 
     #[test]
+    fn resolve_approval_rejects_zero_task_id_without_mutation() {
+        let mut st = StateStore::new();
+
+        let err = st
+            .stage_or_confirm_resolve_approval(0, 1, true, "authority-a", "authority-a,authority-b")
+            .expect_err("task id zero must be rejected");
+        assert!(err.contains("task id must be >= 1"));
+        assert_eq!(st.pending_resolve_approval(0), None);
+        assert_eq!(st.pending_resolve_first_approver(0), None);
+    }
+
+    #[test]
     fn resolve_approval_rejects_decision_mismatch_without_mutation() {
         let mut st = StateStore::new();
 
@@ -2253,6 +2272,24 @@ mod tests {
             st.pending_resolve_first_approver(8_181).as_deref(),
             Some("authority-a")
         );
+    }
+
+    #[test]
+    fn restore_pending_resolve_approval_scrubs_zero_task_id_boundary() {
+        let mut st = StateStore::new();
+        st.restore_pending_resolve_approval(
+            0,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                second_approver: None,
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 4,
+            }),
+        );
+        assert_eq!(st.pending_resolve_approval(0), None);
+        assert_eq!(st.pending_resolve_first_approver(0), None);
     }
 
     #[test]

@@ -123,7 +123,12 @@ fn paused_state_rejects_system_or_treasury_resolve_authority_members_without_sid
         "authority-a,treasury.worker_slashes",
     ] {
         let err = st
-            .set_gov_param(98_160, 7_310, "resolve_authority".into(), malformed_value.into())
+            .set_gov_param(
+                98_160,
+                7_310,
+                "resolve_authority".into(),
+                malformed_value.into(),
+            )
             .expect_err("reserved/system members must be rejected at governance entrypoint");
         assert!(
             err.contains("reserved system authority")
@@ -1741,7 +1746,8 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_case_variant_placeholder
 }
 
 #[test]
-fn paused_state_restore_pending_resolve_snapshot_scrubs_delimiter_or_non_ascii_second_approver_boundary() {
+fn paused_state_restore_pending_resolve_snapshot_scrubs_delimiter_or_non_ascii_second_approver_boundary(
+) {
     // M1 micro-hardening: paused rollback/restore must scrub finalized quorum snapshots when
     // the second approver uses delimiter smuggling or non-ASCII spellings, so malformed 2-of-N
     // resolve history cannot be revived through restore.
@@ -1835,6 +1841,46 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_oversized_second_approve
     );
     assert_eq!(st.pending_resolve_first_approver(9_935), None);
     assert_eq!(st.pending_resolve_approval_snapshot(9_935), None);
+    assert_eq!(st.pending_gov_update("resolve_authority"), None);
+    assert!(st.is_emergency_paused());
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
+    assert_eq!(
+        st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
+        worker_slash_before
+    );
+}
+
+#[test]
+fn paused_state_rejects_zero_task_id_resolve_approval_without_side_effects() {
+    // M1 micro-hardening: paused resolve flow must reject task-id zero so malformed governance
+    // or replay envelopes cannot stage quorum state outside the real challenged-task boundary.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 10_040);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 1_007);
+    st.set_balance(WORKER_SLASH_TREASURY_ACCOUNT, 507);
+
+    st.set_gov_param(98_220, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+    let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+    let worker_slash_before = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
+
+    let err = st
+        .stage_or_confirm_resolve_approval(0, 1, true, "authority-a", "authority-a,authority-b")
+        .expect_err("task-id zero must be rejected while paused");
+    assert!(
+        err.contains("task id must be >= 1"),
+        "unexpected error: {err}"
+    );
+
+    assert_eq!(st.pending_resolve_approval(0), None);
+    assert_eq!(st.pending_resolve_first_approver(0), None);
     assert_eq!(st.pending_gov_update("resolve_authority"), None);
     assert!(st.is_emergency_paused());
     assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
