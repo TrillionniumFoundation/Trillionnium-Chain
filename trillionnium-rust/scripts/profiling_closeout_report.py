@@ -636,8 +636,6 @@ def main():
             pool_followup_labels.append(str(pool["label"]).replace("_candidates", ""))
         elif pool["action"] == "refresh":
             pool_followup_labels.append(str(pool["label"]).replace("_candidates", ""))
-    if any(pool["action"] == "keep_latest_and_consider_archive" for pool in benchmark_pools):
-        pool_followup_labels.append("bench_dir")
 
     lines += ["", "## Benchmark Pool Action Summary"]
     lines.append(
@@ -776,8 +774,13 @@ def main():
     lines.append(
         f"- baseline_closeout_report_selected: {baseline_report_pool['selected']}"
     )
+    baseline_followup_command_chain = (
+        "python3 scripts/profiling_closeout_report.py"
+        if baseline_report_pool["action"] in {"produce", "refresh"}
+        else "none"
+    )
     lines.append(
-        f"- baseline_closeout_report_followup_command_chain: python3 scripts/profiling_closeout_report.py"
+        f"- baseline_closeout_report_followup_command_chain: {baseline_followup_command_chain}"
     )
     lines.append(f"- baseline_closeout_report_followup: {baseline_report_followup}")
 
