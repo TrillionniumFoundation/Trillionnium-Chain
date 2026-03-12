@@ -167,6 +167,10 @@ cargo test -p trnm-bridge-poc --test x3_compensation_unicode_controls \
   x3_prep_stale_pending_degraded_reason_strips_u2065_for_replay_stability \
   -- --nocapture
 
+cargo test -p trnm-bridge-poc \
+  normalize_compensation_reason_collapses_ogham_space_mark_for_replay_stability \
+  -- --nocapture
+
 cargo test -p trnm-bridge-poc --test x2_settlement_loop \
   x3_prep_degraded_heartbeat_with_non_canonical_operator_subject_fails_closed_without_state_change \
   -- --nocapture
