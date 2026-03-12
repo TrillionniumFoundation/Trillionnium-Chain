@@ -179,6 +179,37 @@ fn pending_sensitive_gov_updates_should_affect_state_root() {
 }
 
 #[test]
+fn embedded_pending_gov_update_key_should_affect_state_root() {
+    let mut st1 = StateStore::new();
+    let mut st2 = StateStore::new();
+
+    st1.restore_pending_gov_update(
+        "challenge_min_bond",
+        Some(PendingGovParamUpdate {
+            key_id: 7001,
+            key: "challenge_min_bond".into(),
+            value: "5000".into(),
+            activate_at_height: 1020,
+        }),
+    );
+    st2.restore_pending_gov_update(
+        "challenge_min_bond",
+        Some(PendingGovParamUpdate {
+            key_id: 7001,
+            key: "min_worker_stake".into(),
+            value: "5000".into(),
+            activate_at_height: 1020,
+        }),
+    );
+
+    assert_ne!(
+        st1.state_root(),
+        st2.state_root(),
+        "State root should incorporate embedded pending governance key names so mismatched restore snapshots cannot hash identically"
+    );
+}
+
+#[test]
 fn treasury_balances_and_monetary_counters_should_affect_state_root_even_when_net_issuance_matches() {
     let mut st1 = StateStore::new();
     let mut st2 = StateStore::new();

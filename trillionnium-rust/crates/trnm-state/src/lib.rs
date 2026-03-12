@@ -1555,6 +1555,7 @@ impl StateStore {
             hasher.update(b"gov_pending");
             hash_len_prefixed_str(&mut hasher, key);
             hasher.update(pending.key_id.to_le_bytes());
+            hash_len_prefixed_str(&mut hasher, &pending.key);
             hash_len_prefixed_str(&mut hasher, &pending.value);
             hasher.update(pending.activate_at_height.to_le_bytes());
         }
