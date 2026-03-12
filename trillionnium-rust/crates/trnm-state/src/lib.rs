@@ -1109,6 +1109,7 @@ impl StateStore {
             Some(snapshot) => {
                 if snapshot.key != key {
                     self.pending_gov_updates.remove(key);
+                    return;
                 }
                 self.pending_gov_updates.insert(snapshot.key.clone(), snapshot);
             }

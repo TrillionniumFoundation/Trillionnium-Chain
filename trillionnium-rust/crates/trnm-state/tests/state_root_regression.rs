@@ -1978,6 +1978,41 @@ fn restore_pending_gov_update_mismatched_slot_clears_stale_entry_and_preserves_s
 }
 
 #[test]
+fn restore_pending_gov_update_key_mismatch_fails_closed_without_aliasing_foreign_slot() {
+    let mut state = StateStore::new();
+    let baseline_root = state.state_root();
+
+    state.restore_pending_gov_update(
+        "challenge_min_bond",
+        Some(PendingGovParamUpdate {
+            key_id: 7_201,
+            key: "challenge_success_bounty".to_string(),
+            value: "6000".to_string(),
+            activate_at_height: 1_020,
+        }),
+    );
+
+    assert!(
+        state.pending_gov_update("challenge_min_bond").is_none(),
+        "mismatched restore snapshots must clear the requested slot instead of staging a corrupt alias"
+    );
+    assert!(
+        state.pending_gov_update("challenge_success_bounty").is_none(),
+        "mismatched restore snapshots must not materialize a foreign pending governance entry under snapshot.key"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "mismatched restore snapshots must fail closed without perturbing the deterministic root"
+    );
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "repeated reads after a mismatched restore must deterministically reuse the unchanged cached root"
+    );
+}
+
+#[test]
 fn pending_gov_update_key_id_changes_must_affect_state_root() {
     let mut state_a = StateStore::new();
     let mut state_b = StateStore::new();
