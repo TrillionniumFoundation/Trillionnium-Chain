@@ -64,6 +64,86 @@ fn resolve_authority_timelock_transition_scrubs_pending_resolve_approvals() {
 }
 
 #[test]
+fn resolve_authority_same_value_replace_preserves_pending_timelock_and_staged_quorum() {
+    // L03 boundary hardening: replaying an identical pre-activation resolve_authority replacement
+    // must be idempotent. It must not extend the timelock or scrub already staged quorum because
+    // the governance boundary itself did not change.
+    let mut st = StateStore::new();
+
+    let bootstrap = st
+        .set_gov_param(
+            98_325,
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("bootstrap resolve_authority write should succeed");
+    assert!(matches!(bootstrap, GovParamUpdateOutcome::Scheduled { .. }));
+    let applied = st
+        .set_gov_param(
+            98_345,
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("bootstrap resolve_authority should apply after timelock");
+    assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+
+    let first_replace = st
+        .set_gov_param_with_action(
+            98_346,
+            7_310,
+            "resolve_authority".into(),
+            "authority-c,authority-d".into(),
+            GovPendingUpdateAction::Replace,
+        )
+        .expect("replacement resolve_authority update should schedule");
+    let activate_at_height = match first_replace {
+        GovParamUpdateOutcome::Scheduled { activate_at_height } => activate_at_height,
+        other => panic!("expected Scheduled outcome, got {other:?}"),
+    };
+
+    let first = st
+        .stage_or_confirm_resolve_approval(9_982, 1, true, "authority-c", "authority-c,authority-d")
+        .expect("pending replacement authority should stage approval before idempotent replay");
+    assert!(!first);
+    let pending_before = st
+        .pending_resolve_approval_snapshot(9_982)
+        .expect("staged quorum should exist before replaying identical replace");
+    let root_with_pending = st.state_root();
+
+    let replayed = st
+        .set_gov_param_with_action(
+            98_347,
+            7_310,
+            "resolve_authority".into(),
+            "authority-c,authority-d".into(),
+            GovPendingUpdateAction::Replace,
+        )
+        .expect("identical replacement replay should be idempotent");
+    assert_eq!(
+        replayed,
+        GovParamUpdateOutcome::Scheduled { activate_at_height }
+    );
+
+    let pending = st
+        .pending_gov_update("resolve_authority")
+        .expect("pending resolve_authority timelock should remain staged");
+    assert_eq!(pending.value, "authority-c,authority-d");
+    assert_eq!(pending.activate_at_height, activate_at_height);
+    assert_eq!(
+        st.pending_resolve_approval_snapshot(9_982),
+        Some(pending_before),
+        "identical replace replay must preserve staged quorum"
+    );
+    assert_eq!(
+        st.state_root(),
+        root_with_pending,
+        "idempotent replace replay must not perturb state root"
+    );
+}
+
+#[test]
 fn resolve_authority_pending_cancel_scrubs_pending_resolve_approvals() {
     // L03 boundary hardening: cancelling a staged resolve_authority timelock is still a
     // governance boundary transition and must scrub any staged resolve quorum immediately.

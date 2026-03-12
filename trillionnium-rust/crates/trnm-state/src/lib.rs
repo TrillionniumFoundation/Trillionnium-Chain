@@ -1304,6 +1304,12 @@ impl StateStore {
                         return Ok(GovParamUpdateOutcome::Cancelled);
                     }
                     GovPendingUpdateAction::Replace => {
+                        if pending.value == value {
+                            return Ok(GovParamUpdateOutcome::Scheduled {
+                                activate_at_height: pending.activate_at_height,
+                            });
+                        }
+
                         let activate_at_height =
                             current_height.saturating_add(GOV_SENSITIVE_PARAM_TIMELOCK_BLOCKS);
                         self.invalidate_state_root_cache();
