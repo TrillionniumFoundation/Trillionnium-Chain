@@ -1815,6 +1815,16 @@ fn clamp_limit(op: &str, requested: usize, default_limit: usize, max_limit: usiz
     requested
 }
 
+fn push_tail_limited<T>(items: &mut Vec<T>, item: T, limit: usize) {
+    if limit == 0 {
+        return;
+    }
+    if items.len() == limit {
+        items.remove(0);
+    }
+    items.push(item);
+}
+
 fn normalize_tx_hash_lookup(raw: &str) -> String {
     let mut normalized = raw.trim_matches(|c: char| {
         c.is_ascii_whitespace() || matches!(c, ',' | ';' | '.' | '(' | ')' | '[' | ']' | '{' | '}')
@@ -2665,24 +2675,28 @@ fn query_events_response(
             .as_deref()
             .and_then(normalize_actor_or_signer)
             .or_else(|| Some(actor.clone()));
-        events.push(EventQueryResponse {
-            event_type: e.event_type.clone(),
-            task_id,
-            from_status: e.from_status.clone(),
-            to_status: e.to_status.clone(),
-            actor,
-            tx_id: e.tx_id,
-            block_height: e.block_height,
-            state_root: e.state_root.clone(),
-            ts_unix_ms: e.ts_unix_ms,
-            signer,
-            challenger: e.challenger.clone(),
-            tx_hash: e.tx_hash.clone(),
-            resolution_code: e.resolution_code.clone(),
-            treasury_delta: e.treasury_delta,
-            challenger_delta: e.challenger_delta,
-            bond_disposition: e.bond_disposition.clone(),
-        });
+        push_tail_limited(
+            &mut events,
+            EventQueryResponse {
+                event_type: e.event_type.clone(),
+                task_id,
+                from_status: e.from_status.clone(),
+                to_status: e.to_status.clone(),
+                actor,
+                tx_id: e.tx_id,
+                block_height: e.block_height,
+                state_root: e.state_root.clone(),
+                ts_unix_ms: e.ts_unix_ms,
+                signer,
+                challenger: e.challenger.clone(),
+                tx_hash: e.tx_hash.clone(),
+                resolution_code: e.resolution_code.clone(),
+                treasury_delta: e.treasury_delta,
+                challenger_delta: e.challenger_delta,
+                bond_disposition: e.bond_disposition.clone(),
+            },
+            limit,
+        );
     }
 
     if !saw_authoritative_event && events.is_empty() {
@@ -2716,24 +2730,28 @@ fn query_events_response(
                 }
             });
 
-            events.push(EventQueryResponse {
-                event_type: kind.clone(),
-                task_id,
-                from_status,
-                to_status,
-                actor: actor.clone(),
-                tx_id,
-                block_height: tx_id,
-                state_root: "adapter_state".into(),
-                ts_unix_ms: r.ts as u128,
-                signer: Some(actor),
-                challenger: None,
-                tx_hash,
-                resolution_code: None,
-                treasury_delta: None,
-                challenger_delta: None,
-                bond_disposition: None,
-            });
+            push_tail_limited(
+                &mut events,
+                EventQueryResponse {
+                    event_type: kind.clone(),
+                    task_id,
+                    from_status,
+                    to_status,
+                    actor: actor.clone(),
+                    tx_id,
+                    block_height: tx_id,
+                    state_root: "adapter_state".into(),
+                    ts_unix_ms: r.ts as u128,
+                    signer: Some(actor),
+                    challenger: None,
+                    tx_hash,
+                    resolution_code: None,
+                    treasury_delta: None,
+                    challenger_delta: None,
+                    bond_disposition: None,
+                },
+                limit,
+            );
             if kind == "commit" {
                 has_commit = true;
             }
@@ -2743,10 +2761,6 @@ fn query_events_response(
 
     if events.is_empty() {
         bail!("events not found for task_id={}", task_id);
-    }
-    if events.len() > limit {
-        let keep_from = events.len() - limit;
-        events = events.split_off(keep_from);
     }
     Ok(events)
 }
@@ -3157,29 +3171,28 @@ fn main() -> Result<()> {
                 } else {
                     e.resolution_code.clone()
                 };
-                events.push(EventQueryResponse {
-                    event_type: e.event_type.clone(),
-                    task_id: rec.task_id,
-                    from_status: e.from_status.clone(),
-                    to_status: e.to_status.clone(),
-                    actor,
-                    tx_id: e.tx_id,
-                    block_height: e.block_height,
-                    state_root: e.state_root.clone(),
-                    ts_unix_ms: e.ts_unix_ms,
-                    signer,
-                    challenger: e.challenger.clone(),
-                    tx_hash,
-                    resolution_code,
-                    treasury_delta: e.treasury_delta,
-                    challenger_delta: e.challenger_delta,
-                    bond_disposition: e.bond_disposition.clone(),
-                });
-            }
-
-            if events.len() > limit {
-                let keep_from = events.len() - limit;
-                events = events.split_off(keep_from);
+                push_tail_limited(
+                    &mut events,
+                    EventQueryResponse {
+                        event_type: e.event_type.clone(),
+                        task_id: rec.task_id,
+                        from_status: e.from_status.clone(),
+                        to_status: e.to_status.clone(),
+                        actor,
+                        tx_id: e.tx_id,
+                        block_height: e.block_height,
+                        state_root: e.state_root.clone(),
+                        ts_unix_ms: e.ts_unix_ms,
+                        signer,
+                        challenger: e.challenger.clone(),
+                        tx_hash,
+                        resolution_code,
+                        treasury_delta: e.treasury_delta,
+                        challenger_delta: e.challenger_delta,
+                        bond_disposition: e.bond_disposition.clone(),
+                    },
+                    limit,
+                );
             }
 
             let out = RequestFullQueryResponse {
@@ -4003,6 +4016,24 @@ mod tests {
             QUERY_FULL_LIMIT_MAX,
         );
         assert_eq!(got, 17);
+    }
+
+    #[test]
+    fn push_tail_limited_keeps_only_most_recent_items_in_order() {
+        let mut items = Vec::new();
+        push_tail_limited(&mut items, 1, 3);
+        push_tail_limited(&mut items, 2, 3);
+        push_tail_limited(&mut items, 3, 3);
+        push_tail_limited(&mut items, 4, 3);
+        push_tail_limited(&mut items, 5, 3);
+        assert_eq!(items, vec![3, 4, 5]);
+    }
+
+    #[test]
+    fn push_tail_limited_fail_closes_when_limit_is_zero() {
+        let mut items = vec![1, 2, 3];
+        push_tail_limited(&mut items, 4, 0);
+        assert_eq!(items, vec![1, 2, 3]);
     }
 
     #[test]
