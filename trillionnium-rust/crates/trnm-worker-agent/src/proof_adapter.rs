@@ -196,6 +196,13 @@ fn normalize_adapter_value(value: &str) -> String {
 
 fn has_non_empty_auditable_value(value: Option<&str>) -> bool {
     value
+        .map(strip_terminal_control_sequences)
+        .map(|v| {
+            v.chars()
+                .filter(|c| !is_invisible_receipt_filler(*c))
+                .collect::<String>()
+        })
+        .map(|v| peel_outer_quote_wrappers(v.as_str()).to_string())
         .map(|v| {
             v.chars()
                 .filter(|c| !is_invisible_receipt_filler(*c))
@@ -860,6 +867,16 @@ mod tests {
             "tee-receipt-missing-provider-request-id"
         );
 
+        let quote_only_request_id = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\" '\\\"\\\"' \",\"adapter\":\"tee-receipt\"}",
+            )
+            .expect_err("quote-only provider_request_id must fail closed");
+        assert_eq!(
+            quote_only_request_id,
+            "tee-receipt-missing-provider-request-id"
+        );
+
         let missing_adapter = adapter
             .parse_response("{\"output_text\":\"ok\",\"provider_request_id\":\"pr-1\"}")
             .expect_err("adapter label is required");
@@ -1155,6 +1172,16 @@ mod tests {
             .expect_err("whitespace-only provider_request_id must fail closed");
         assert_eq!(
             whitespace_only_request_id,
+            "zk-receipt-missing-provider-request-id"
+        );
+
+        let quote_only_request_id = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\" '\\\"\\\"' \",\"adapter\":\"zk-receipt\"}",
+            )
+            .expect_err("quote-only provider_request_id must fail closed");
+        assert_eq!(
+            quote_only_request_id,
             "zk-receipt-missing-provider-request-id"
         );
 
