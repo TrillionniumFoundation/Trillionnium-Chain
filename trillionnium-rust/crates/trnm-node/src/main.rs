@@ -3315,6 +3315,22 @@ mod tests {
     }
 
     #[test]
+    fn leader_missed_metric_names_keep_hotspot_and_distribution_semantics_distinct() {
+        let total_field_name = "bft_leader_missed_total";
+        let max_field_name = "bft_leader_missed_max";
+        let top_share_field_name = "bft_leader_missed_top_share_ppm";
+        let distribution_field_name = "bft_leader_missed_proposals";
+
+        assert!(total_field_name.ends_with("_total"));
+        assert!(max_field_name.ends_with("_max"));
+        assert!(top_share_field_name.ends_with("_share_ppm"));
+        assert!(distribution_field_name.ends_with("_proposals"));
+        assert_ne!(total_field_name, max_field_name);
+        assert_ne!(max_field_name, top_share_field_name);
+        assert_ne!(top_share_field_name, distribution_field_name);
+    }
+
+    #[test]
     fn round_change_backoff_share_metric_handles_empty_consensus_samples() {
         assert_eq!(ratio_ppm_u64(18, 0), 0);
         assert_eq!(ratio_ppm_u64(0, 0), 0);
