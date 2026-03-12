@@ -698,6 +698,20 @@ mod tests {
 
     #[cfg(feature = "real-zk-backend")]
     #[test]
+    fn registry_zk_vector_fixture_style_payload_routes_canonical_whitespace_padded_real_backend_id_with_whitespace_only_backend_version_for_plonk_when_feature_enabled() {
+        let registry = registry_with_feature_on_fixture_bridge_backend();
+        let mut task = task_with_proof_type(ProofType::Zk);
+        task.status = TaskStatus::Committed;
+        task.worker = Some("worker-zk".into());
+        task.result_hash = Some([0x11; 32]);
+
+        let payload = br#"ZK:{"task_id":42,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"plonk","backend_id":"  \n\treal-zk-backend\t ","backend_version":" \n\t ","vk_ref":"vk://trnm/dev/mock-plonk/valid","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["42","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]},"meta":{"schema_version":"trnm.zk.payload.v0","circuit_id":"fixture-bridge-plonk-inline-canonical-whitespace-backend-id-whitespace-version-feature-on"}}"#;
+
+        assert_eq!(registry.verify(&task, payload), VerificationResult::Valid);
+    }
+
+    #[cfg(feature = "real-zk-backend")]
+    #[test]
     fn registry_zk_vector_fixture_style_payload_routes_mixed_case_real_backend_id_with_padded_nonempty_backend_version_for_plonk_when_feature_enabled() {
         let registry = registry_with_feature_on_fixture_bridge_backend();
         let mut task = task_with_proof_type(ProofType::Zk);
