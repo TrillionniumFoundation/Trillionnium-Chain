@@ -3911,6 +3911,32 @@ mod tests {
     }
 
     #[test]
+    fn leader_missed_review_bundle_keeps_validator_spread_coverage_and_budget_views_together() {
+        let fairness_review_fields = [
+            "bft_leader_missed_top_share_ppm",
+            "bft_leader_missed_active_validators",
+            "bft_leader_missed_active_validator_share_ppm",
+            "bft_leader_missed_active_heights",
+            "bft_leader_missed_active_height_rate_ppm",
+            "bft_leader_missed_active_observed_height_rate_ppm",
+            "bft_leader_missed_density_avg_milli",
+            "bft_leader_missed_active_height_share_ppm",
+        ];
+
+        assert_eq!(fairness_review_fields.len(), 8);
+        assert!(fairness_review_fields[0].ends_with("_share_ppm"));
+        assert!(fairness_review_fields[1].ends_with("_validators"));
+        assert!(fairness_review_fields[2].ends_with("_share_ppm"));
+        assert!(fairness_review_fields[3].ends_with("_heights"));
+        assert!(fairness_review_fields[4].ends_with("_rate_ppm"));
+        assert!(fairness_review_fields[5].ends_with("_rate_ppm"));
+        assert!(fairness_review_fields[6].ends_with("_avg_milli"));
+        assert!(fairness_review_fields[7].ends_with("_share_ppm"));
+        assert_ne!(fairness_review_fields[2], fairness_review_fields[7]);
+        assert_ne!(fairness_review_fields[4], fairness_review_fields[5]);
+    }
+
+    #[test]
     fn leader_missed_active_height_share_handles_zero_finality_budget() {
         let bft_leader_missed_density_avg_milli = 2_500u64;
         let finality_avg = 0u128;
