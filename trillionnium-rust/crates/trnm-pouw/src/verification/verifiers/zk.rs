@@ -559,6 +559,23 @@ mod tests {
     }
 
     #[test]
+    fn zk_verifier_accepts_exact_configured_opaque_backend_when_payload_omits_backend_id() {
+        let mut backends = ZkBackendRegistry::new();
+        backends.register(Arc::new(MockSuccessBackend));
+
+        let mut config = router_config();
+        config.zk_backend = ZkBackendKind::Custom("mock-zk".into());
+        let verifier = ZkVerifier::from_config(&config, Arc::new(backends));
+        let task = mock_task();
+        let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["99","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#;
+
+        assert_eq!(
+            verifier.verify_proof(&task, payload),
+            VerificationResult::Valid
+        );
+    }
+
+    #[test]
     fn zk_verifier_accepts_second_system_mock_plonk_backend() {
         let mut backends = ZkBackendRegistry::new();
         backends.register(Arc::new(MockSystemSuccessBackend {
