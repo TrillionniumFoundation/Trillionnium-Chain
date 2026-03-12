@@ -29,6 +29,19 @@ from typing import Any
 ENV_RE = re.compile(r"^(?:export\s+)?([A-Z0-9_]+)=(.*)$")
 
 
+def normalize_env_value(raw: str) -> str:
+    value = raw.strip()
+    if not value:
+        return ""
+    if value[0] in {'"', "'"}:
+        quote = value[0]
+        end = value.find(quote, 1)
+        if end != -1:
+            return value[1:end]
+    value = re.sub(r"\s+#.*$", "", value)
+    return value.rstrip()
+
+
 def safe_json(path: Path) -> dict[str, Any]:
     if not path.exists():
         return {}
@@ -67,7 +80,7 @@ def parse_env(path: Path) -> dict[str, str]:
         m = ENV_RE.match(line)
         if not m:
             continue
-        out[m.group(1)] = m.group(2)
+        out[m.group(1)] = normalize_env_value(m.group(2))
     return out
 
 
