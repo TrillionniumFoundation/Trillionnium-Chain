@@ -285,6 +285,25 @@ fn normalize_tx_hash(raw: &str) -> Option<String> {
     None
 }
 
+fn json_value_tx_hash(v: &serde_json::Value) -> Option<String> {
+    let direct = ["tx_hash", "txhash", "txHash", "transaction_hash", "transactionHash"];
+    for key in direct {
+        if let Some(h) = v.get(key).and_then(|x| x.as_str()) {
+            if let Some(normalized) = normalize_tx_hash(h) {
+                return Some(normalized);
+            }
+        }
+    }
+
+    for key in ["result", "tx_response", "txResponse", "response", "data"] {
+        if let Some(found) = v.get(key).and_then(json_value_tx_hash) {
+            return Some(found);
+        }
+    }
+
+    None
+}
+
 fn extract_tx_hash(text: &str) -> Option<String> {
     if let Some(v) = text.split_whitespace().find_map(|w| {
         let trimmed = w.trim_matches(|c: char| c.is_ascii_whitespace());
@@ -300,21 +319,7 @@ fn extract_tx_hash(text: &str) -> Option<String> {
     }
 
     if let Ok(v) = serde_json::from_str::<serde_json::Value>(text) {
-        if let Some(h) = v.get("tx_hash").and_then(|x| x.as_str()) {
-            return normalize_tx_hash(h);
-        }
-        if let Some(h) = v.get("txhash").and_then(|x| x.as_str()) {
-            return normalize_tx_hash(h);
-        }
-        if let Some(h) = v.get("txHash").and_then(|x| x.as_str()) {
-            return normalize_tx_hash(h);
-        }
-        if let Some(h) = v.get("transaction_hash").and_then(|x| x.as_str()) {
-            return normalize_tx_hash(h);
-        }
-        if let Some(h) = v.get("transactionHash").and_then(|x| x.as_str()) {
-            return normalize_tx_hash(h);
-        }
+        return json_value_tx_hash(&v);
     }
 
     None
@@ -1151,6 +1156,22 @@ mod tests {
             extract_tx_hash("{\"txHash\":\"ABCDEF012345\",\"status\":\"ok\"}").as_deref(),
             Some("abcdef012345")
         );
+    }
+
+    #[test]
+    fn extract_tx_hash_accepts_nested_json_wrappers() {
+        let wrapped = "{\"result\":{\"tx_response\":{\"txhash\":\"0xABC123\"}}}";
+        assert_eq!(extract_tx_hash(wrapped).as_deref(), Some("0xabc123"));
+
+        let response = "{\"response\":{\"data\":{\"transactionHash\":\"BEEF4567\"}}}";
+        assert_eq!(extract_tx_hash(response).as_deref(), Some("beef4567"));
+    }
+
+    #[test]
+    fn run_template_extracts_nested_json_tx_hash_without_fallback_surrogate() {
+        let cmd = "python3 -c \"print('{\\\"result\\\":{\\\"tx_response\\\":{\\\"txhash\\\":\\\"0xABC123\\\"}}}')\"";
+        let extracted = run_template(cmd).unwrap();
+        assert_eq!(extracted, "0xabc123");
     }
 
     #[test]
