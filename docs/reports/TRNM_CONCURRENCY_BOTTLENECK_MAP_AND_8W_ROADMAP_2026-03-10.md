@@ -273,8 +273,9 @@ TRNM 当前不是“高 TPS 公链的仿制品”，而是：
    - 密度：`bft_round_change_density_avg_milli`
    - committed-height 覆盖：`bft_round_change_active_height_rate_ppm`
    - observed-height 覆盖：`bft_round_change_active_observed_height_rate_ppm`
+   - commit / skipped coverage 对照：`bft_commit_observed_height_rate_ppm`、`bft_skipped_observed_height_rate_ppm`
    - budget pressure：`bft_round_change_active_height_share_ppm`
-   - 用法：先看 active height 覆盖，再看 density/share，避免 skipped / no-commit heights 把 jitter 稀释或放大。
+   - 用法：先看 active height 覆盖，再用 `bft_commit_observed_height_rate_ppm` / `bft_skipped_observed_height_rate_ppm` 判断分母是否因为 no-commit heights 发生偏移，最后再看 density/share，避免把 jitter 因 committed-height 收缩而误读成真的变轻，或把 skipped-height 扰动误读成更广泛的不稳定。
 
 2. **Backoff severity must keep three views separate**
    - 密度：`bft_round_change_backoff_density_avg_milli`
@@ -307,7 +308,8 @@ TRNM 当前不是“高 TPS 公链的仿制品”，而是：
 6. **Pre-exec / rollback guardrail pressure**
    - preexec：`preexec_peak_share_ppm`、`preexec_reject_active_heights`、`preexec_reject_density_avg_milli`、`preexec_reject_active_height_rate_ppm`、`preexec_reject_active_observed_height_rate_ppm`、`preexec_reject_active_height_share_ppm`、`preexec_reject_share_bps`、`preexec_conflict_miss_share_bps`
    - rollback：`rollback_peak_share_ppm`、`rollback_density_avg_milli`、`rollback_active_height_rate_ppm`、`rollback_active_observed_height_rate_ppm`、`rollback_active_height_share_ppm`、`apply_error_rollback_share_bps`
-   - 用法：先判断 guardrail 压力是否集中在少数高度，再判断它是否已经开始主导平均 finality budget / apply-error 面，而不是只看全局平均耗时或总次数。
+   - denominator 对照：`bft_commit_observed_height_rate_ppm`、`bft_skipped_observed_height_rate_ppm`
+   - 用法：先判断 guardrail 压力是否集中在少数高度，再用 commit / skipped observed-height 对照确认 coverage 分母有没有因为 no-commit heights 变化而漂移，最后再判断它是否已经开始主导平均 finality budget / apply-error 面，而不是只看全局平均耗时或总次数。
 > - 因为 `bft_round_change_backoff_wall_share_ppm` 是按 **committed height** 摊开的 wall-time 强度，而不是封顶到平均 finality budget 的百分比，所以它在 sustained backoff 场景下**允许大于 `1_000_000`**；出现这种情况时，应把它解读为“每个已提交高度平均消耗了超过 1ms 的 backoff wall-time 压力”，而不是指标失真。
 > - 与 `bft_round_change_density_avg_milli`、`bft_round_change_backoff_density_avg_milli` 一起看，优先判断是否出现了 clustered jitter / sustained backoff，而不是只看全局均值。
 > - 若存在 skipped / no-commit heights，`bft_round_change_active_height_rate_ppm`、`bft_round_change_backoff_active_height_rate_ppm`、`bft_leader_missed_active_height_rate_ppm` 与 `rollback_active_height_rate_ppm` 反映的是“相对 committed budget 的压力”，应再对照 `bft_observed_heights` 分母下的 `bft_round_change_active_observed_height_rate_ppm`、`bft_round_change_backoff_active_observed_height_rate_ppm`、`bft_leader_missed_active_observed_height_rate_ppm` 与 `rollback_active_observed_height_rate_ppm`，避免把 coverage/backoff burst 覆盖面误读成纯 committed-height 占比，或把集中回滚错误误判成全局普遍抖动。
