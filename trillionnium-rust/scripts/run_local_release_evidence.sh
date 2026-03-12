@@ -139,16 +139,10 @@ find_challenge_reexec_entry() {
   echo "steps:"
 } > "$SUMMARY"
 
-KEY_PACKAGES=(
-  trnm-node
-  trnm-worker-agent
-  trnm-rpc
-  trnm-pouw
-  trnm-state
-)
+KEY_PACKAGES="trnm-node trnm-worker-agent trnm-rpc trnm-pouw trnm-state"
 
 CARGO_TEST_CMD="cargo test"
-for pkg in "${KEY_PACKAGES[@]}"; do
+for pkg in $KEY_PACKAGES; do
   CARGO_TEST_CMD+=" -p $pkg"
 done
 run_step "cargo_test_key_packages" "$CARGO_TEST_CMD"
