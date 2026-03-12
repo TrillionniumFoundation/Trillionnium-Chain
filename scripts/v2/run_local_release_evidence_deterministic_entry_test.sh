@@ -39,6 +39,21 @@ if ! grep -q 'replay_env_trnm_challenge_reexec_entry=' "$TARGET"; then
   exit 1
 fi
 
+if ! grep -q 'truth_source=$REPO_ROOT/RELEASE_READINESS.md' "$TARGET"; then
+  echo "[FAIL] expected summary truth_source to stay pinned to RELEASE_READINESS.md" >&2
+  exit 1
+fi
+
+if ! grep -q 'historical_evidence_only=true' "$TARGET"; then
+  echo "[FAIL] expected summary to keep historical evidence boundary flag" >&2
+  exit 1
+fi
+
+if ! grep -q 'evidence_scope=local_rc_rehearsal_not_current_release_ready_claim' "$TARGET"; then
+  echo "[FAIL] expected summary to keep local RC evidence scope boundary" >&2
+  exit 1
+fi
+
 if ! grep -Fq "TRNM_CHALLENGE_REEXEC_ENTRY='\${replay_challenge_entry}'" "$TARGET"; then
   echo "[FAIL] expected replay_command to pin deterministic challenge reexec entry" >&2
   exit 1
