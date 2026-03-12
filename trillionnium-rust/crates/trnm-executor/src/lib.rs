@@ -2476,6 +2476,16 @@ mod tests {
     }
 
     #[test]
+    fn auto_adaptive_sample_len_rejects_ambiguous_grouped_comma_values() {
+        let _env = env_lock();
+
+        let _sample_len = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", "'+1,5,3,6'");
+
+        assert_eq!(auto_adaptive_sample_len(5000), 2048);
+        assert_eq!(auto_adaptive_sample_len(128), 128);
+    }
+
+    #[test]
     fn auto_adaptive_numeric_env_parser_ignores_empty_or_separator_only_values() {
         let _env = env_lock();
 
