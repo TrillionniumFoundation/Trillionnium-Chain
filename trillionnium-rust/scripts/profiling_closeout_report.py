@@ -173,6 +173,15 @@ def main():
             return "stale"
         return "old"
 
+    def bench_dir_age_seconds() -> int | None:
+        if not bench_dir_exists:
+            return None
+        artifact_candidates = [path for path in [classic, mixed, executor_profile] if path and os.path.exists(path)]
+        if not artifact_candidates:
+            return None
+        newest_mtime = max(os.path.getmtime(path) for path in artifact_candidates)
+        return max(0, int((datetime.now() - datetime.fromtimestamp(newest_mtime)).total_seconds()))
+
     lines = ["# Profiling Closeout Baseline", f"generated_at={datetime.now().isoformat()}", "", "## Inputs"]
     lines += [
         f"- node_log: {node_log}",
@@ -200,8 +209,8 @@ def main():
     stale_inputs = []
     old_inputs = []
     for label, path in freshness_rows:
-        age_seconds = file_age_seconds(path)
-        freshness = freshness_label(age_seconds)
+        age_seconds = bench_dir_age_seconds() if label == "bench_dir" else file_age_seconds(path)
+        freshness = "empty" if label == "bench_dir" and bench_dir_exists and age_seconds is None else freshness_label(age_seconds)
         if freshness == "stale":
             stale_inputs.append(label)
         elif freshness == "old":
