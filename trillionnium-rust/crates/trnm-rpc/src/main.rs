@@ -3828,6 +3828,21 @@ mod tests {
     }
 
     #[test]
+    fn parse_query_events_limit_from_path_rejects_uppercase_percent_encoded_query_delimiters() {
+        for path in [
+            "/query-events/42?limit=7%26limit=9",
+            "/query-events/42?limit%3D9",
+            "/query-events/42?limit=7%23tail",
+            "/query-events/42?limit=7%0D%0Aextra",
+        ] {
+            let err = parse_query_events_limit_from_path(path)
+                .expect_err("uppercase encoded delimiters must fail closed");
+            assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+            assert!(err.contains("invalid limit"), "path={path} err={err}");
+        }
+    }
+
+    #[test]
     fn parse_query_events_limit_from_path_accepts_wrapped_numeric_limit() {
         assert_eq!(
             parse_query_events_limit_from_path("/query-events/42?limit=\"7\"")
