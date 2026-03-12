@@ -168,6 +168,10 @@ emergency_pause 与结算路径语义冲突：挑战任务可能被冻结
 - approver 必须绑定签名身份与委员会成员集；
 - 并在 resolve 执行前强制读取并验证审批对象。
 
+### 2026-03-12 补充核查
+- 当前 `trnm-pouw` 在 challenged task 进入 timeout 终态后，已经会主动 `clear_pending_resolve_approval(task_id)`，因此“过期后仍残留半完成审批对象、可被后续终态复用”的那条 stale-approval 风险已较之前收敛。
+- 但这**不改变**本 Challenge 的主结论：所谓“二次确认”目前仍然没有形成真实的 signer-bound committee control。也就是说，staged approval 的生命周期 hygiene 有所改善，但审批身份绑定与执行前强制校验仍需要继续作为主修复方向。
+
 ---
 
 ## Challenge 7 — P1（奖励/惩罚守恒）
