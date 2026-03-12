@@ -3465,6 +3465,28 @@ mod tests {
     }
 
     #[test]
+    fn round_change_active_height_share_handles_zero_finality_budget() {
+        let bft_round_change_density_avg_milli = 2_500u64;
+        let finality_avg = 0u128;
+
+        assert_eq!(
+            finality_budget_share_ppm(bft_round_change_density_avg_milli, finality_avg),
+            0
+        );
+    }
+
+    #[test]
+    fn round_change_active_height_share_can_exceed_budget_when_jitter_dominates() {
+        let bft_round_change_density_avg_milli = 6_000u64;
+        let finality_avg = 4u128;
+
+        assert_eq!(
+            finality_budget_share_ppm(bft_round_change_density_avg_milli, finality_avg),
+            1_500_000
+        );
+    }
+
+    #[test]
     fn finality_budget_share_helper_saturates_huge_finality_budgets_without_overflow() {
         let bft_round_change_density_avg_milli = 2_500u64;
         let finality_avg = (u64::MAX as u128) + 1;
