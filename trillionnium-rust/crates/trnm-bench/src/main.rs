@@ -424,6 +424,29 @@ mod tests {
     }
 
     #[test]
+    fn explicit_hot_bucket_reporting_does_not_advertise_default_only_adaptive_headroom() {
+        let txs = build_hot_streak_txs(20_000, 2_000, 3, 1);
+        let adaptive_candidate = adaptive_candidate_strategy_for(&txs);
+
+        assert!(matches!(
+            effective_strategy_for(StrategyArg::HotBucketInterleave, &txs),
+            GroupingStrategy::HotBucketInterleave
+        ));
+        assert!(matches!(adaptive_candidate, GroupingStrategy::HotBucketInterleave));
+        assert!(
+            !default_has_adaptive_opportunity(StrategyArg::HotBucketInterleave, adaptive_candidate),
+            "explicit hotspot selection should not masquerade as default-only adaptive headroom"
+        );
+        assert!(
+            !emits_auto_profile(
+                StrategyArg::HotBucketInterleave,
+                default_has_adaptive_opportunity(StrategyArg::HotBucketInterleave, adaptive_candidate),
+            ),
+            "explicit hotspot selection should not emit auto-profile-only headroom fields"
+        );
+    }
+
+    #[test]
     fn hot_streak_default_workload_triggers_auto_adaptive_hotspot_detection() {
         let txs = build_hot_streak_txs(20_000, 2_000, 3, 1);
         let decision = auto_adaptive_decision(&txs);
