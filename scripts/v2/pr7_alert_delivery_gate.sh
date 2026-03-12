@@ -74,6 +74,8 @@ if [[ -f "$POLICY_FILE" ]]; then
   source "$POLICY_ENV"
 fi
 
+require_enum "ALERT_NOTIFY_MIN_LEVEL" "${ALERT_NOTIFY_MIN_LEVEL:-WARN}" INFO WARN CRITICAL PASS FAIL
+
 acquire_lock() {
   local start now elapsed jitter_range jitter
   mkdir -p "$(dirname "$LOCK_DIR")"
