@@ -53,6 +53,18 @@ for src, dst in {
     "”": "\"",
     "‘": "'",
     "’": "'",
+    "«": "\"",
+    "»": "\"",
+    "‹": "\"",
+    "›": "\"",
+    "〈": "\"",
+    "〉": "\"",
+    "《": "\"",
+    "》": "\"",
+    "「": "\"",
+    "」": "\"",
+    "『": "\"",
+    "』": "\"",
 }.items():
     text = text.replace(src, dst)
 sys.stdout.write(text)
@@ -65,10 +77,7 @@ extract_tx_hash() {
   normalized="$(printf "%s" "$raw" | normalize_receipt_text)"
   local h=""
   while IFS= read -r tok; do
-    tok="${tok#\"}"
-    tok="${tok%\"}"
-    tok="${tok#\'}"
-    tok="${tok%\'}"
+    tok="$(printf "%s" "$tok" | sed -E 's/^[[:space:]"'"'"'«»‹›〈〉《》「」『』<>()\[\]{}]+//; s/[[:space:]"'"'"'«»‹›〈〉《》「」『』<>()\[\]{}]+$//')"
     tok="${tok#0x}"
     tok="${tok#0X}"
     if [[ "$tok" =~ ^[0-9A-Fa-f]{16,128}$ ]]; then
@@ -103,7 +112,7 @@ extract_query_status() {
     s=$(printf "%s\n" "$normalized" | grep -Eio '"(([Tt][Xx]([_-]?[Ss][Tt][Aa][Tt][Uu][Ss])|[Tt][Xx][Ss][Tt][Aa][Tt][Uu][Ss])|[Ss][Tt][Aa][Tt][Uu][Ss])"[[:space:]]*:[[:space:]]*(true|false|[0-9]+)' | sed -E 's/.*:[[:space:]]*(true|false|[0-9]+).*/\1/' | head -n1 || true)
   fi
 
-  s="$(printf "%s" "$s" | sed -E 's/^[[:space:]"'"'"'\[\](){}<>]+//; s/[[:space:]"'"'"'\[\](){}<>]+$//; s/[.,;:!?]+$//')"
+  s="$(printf "%s" "$s" | sed -E 's/^[[:space:]"'"'"'«»‹›〈〉《》「」『』\[\](){}<>]+//; s/[[:space:]"'"'"'«»‹›〈〉《》「」『』\[\](){}<>]+$//; s/[.,;:!?]+$//')"
 
   printf "%s" "$s"
 }
