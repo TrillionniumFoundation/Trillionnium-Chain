@@ -292,7 +292,19 @@ TRNM 当前不是“高 TPS 公链的仿制品”，而是：
    - top-heavy 参考：`bft_leader_missed_top_share_ppm`
    - 用法：不要只看最终 miss 分布；需要同时确认 miss 是少数 proposer 局部问题，还是已经扩散到多数 proposer 且持续压住多个高度。
 
-4. **Pre-exec / rollback guardrail pressure**
+4. **Scheduler fairness stall review**
+   - height 覆盖：`critical_wait_active_heights`、`critical_wait_active_height_rate_ppm`、`critical_wait_active_observed_height_rate_ppm`
+   - stall density / burst pressure：`critical_wait_density_avg_milli`、`critical_wait_peak_density_ppm`、`critical_wait_active_height_share_ppm`
+   - 兼容总量参考：`critical_wait_blocks_avg`、`critical_wait_blocks_max`
+   - 用法：先确认 stall 发生在多少 committed / observed heights，再判断这些 queueing burst 对平均 finality budget 的压力，避免把只打在少数高度的 fairness stall 误读成“整体只有轻度等待”。
+
+5. **Hot-object concentration review**
+   - height 覆盖：`hot_object_active_heights`、`hot_object_active_height_rate_ppm`、`hot_object_active_observed_height_rate_ppm`
+   - 总热点占比：`hot_object_share_avg_ppm`、`hot_object_share_p95_ppm`、`hot_object_share_max_ppm`
+   - top / tail 拆分：`hot_object_top_label_share_avg_ppm`、`hot_object_active_top_label_share_avg_ppm`、`hot_object_tail_share_avg_ppm`、`hot_object_active_tail_share_avg_ppm`
+   - 用法：不要只看平均 hotspot share；需要同时判断热点覆盖了多少高度，以及它是单一标签强主导还是长尾对象面一起升温，避免把 burst hotspot 误读成温和平均值。
+
+6. **Pre-exec / rollback guardrail pressure**
    - preexec：`preexec_peak_share_ppm`、`preexec_reject_active_heights`、`preexec_reject_density_avg_milli`、`preexec_reject_active_height_rate_ppm`、`preexec_reject_active_observed_height_rate_ppm`、`preexec_reject_active_height_share_ppm`、`preexec_reject_share_bps`、`preexec_conflict_miss_share_bps`
    - rollback：`rollback_peak_share_ppm`、`rollback_density_avg_milli`、`rollback_active_height_rate_ppm`、`rollback_active_observed_height_rate_ppm`、`rollback_active_height_share_ppm`、`apply_error_rollback_share_bps`
    - 用法：先判断 guardrail 压力是否集中在少数高度，再判断它是否已经开始主导平均 finality budget / apply-error 面，而不是只看全局平均耗时或总次数。
