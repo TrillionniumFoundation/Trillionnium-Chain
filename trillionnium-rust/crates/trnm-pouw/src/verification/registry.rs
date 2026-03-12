@@ -1627,6 +1627,61 @@ mod tests {
         ));
     }
 
+    #[cfg(feature = "real-zk-backend")]
+    #[test]
+    fn registry_zk_vector_all_feature_on_bridge_fixtures_route_cleanly_when_selected() {
+        use std::fs;
+        use std::path::PathBuf;
+
+        let registry = registry_with_feature_on_fixture_bridge_backend();
+        let fixtures_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("fixtures/zk");
+        let mut fixture_paths = fs::read_dir(&fixtures_dir)
+            .expect("fixtures/zk directory should exist")
+            .filter_map(|entry| entry.ok().map(|entry| entry.path()))
+            .filter(|path| {
+                path.file_name()
+                    .and_then(|name| name.to_str())
+                    .map(|name| {
+                        name.starts_with("real_backend_bridge_")
+                            && name.contains("_feature_on")
+                            && name.ends_with(".json")
+                            && !name.contains("empty_backend_id")
+                            && !name.contains("whitespace_backend_id")
+                    })
+                    .unwrap_or(false)
+            })
+            .collect::<Vec<_>>();
+        fixture_paths.sort();
+
+        assert!(
+            fixture_paths.len() >= 8,
+            "expected multiple feature-on bridge fixtures, found {}",
+            fixture_paths.len()
+        );
+
+        for fixture_path in fixture_paths {
+            let fixture_name = fixture_path
+                .file_name()
+                .and_then(|name| name.to_str())
+                .expect("fixture file name should be valid UTF-8")
+                .to_string();
+            let payload_json = fs::read_to_string(&fixture_path)
+                .unwrap_or_else(|err| panic!("failed reading {fixture_name}: {err}"));
+            let payload = format!("ZK:{}", payload_json.trim());
+
+            let mut task = task_with_proof_type(ProofType::Zk);
+            task.status = TaskStatus::Committed;
+            task.worker = Some("worker-zk".into());
+            task.result_hash = Some([0x11; 32]);
+
+            assert_eq!(
+                registry.verify(&task, payload.as_bytes()),
+                VerificationResult::Valid,
+                "fixture should verify cleanly: {fixture_name}"
+            );
+        }
+    }
+
     #[test]
     fn registry_zk_vector_proof_type_mismatch_fails_closed_before_crypto() {
         let registry = registry_with_mock_zk_backend();
