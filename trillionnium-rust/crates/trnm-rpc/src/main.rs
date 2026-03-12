@@ -2249,7 +2249,7 @@ fn parse_query_events_limit_from_path(path: &str) -> std::result::Result<usize, 
         return Ok(QUERY_EVENTS_LIMIT_DEFAULT);
     };
 
-    if query.contains('?') {
+    if query.contains('?') || query.contains('#') {
         return Err(http_json_response(
             "400 Bad Request",
             "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}",
@@ -3832,6 +3832,20 @@ mod tests {
         ] {
             let err = parse_query_events_limit_from_path(path)
                 .expect_err("encoded query delimiters must fail closed");
+            assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+            assert!(err.contains("invalid limit"), "path={path} err={err}");
+        }
+    }
+
+    #[test]
+    fn parse_query_events_limit_from_path_rejects_raw_fragment_delimiters() {
+        for path in [
+            "/query-events/42?limit=7#tail",
+            "/query-events/42?foo=bar#tail",
+            "/query-events/42?foo=bar&limit=7#tail",
+        ] {
+            let err = parse_query_events_limit_from_path(path)
+                .expect_err("raw fragment delimiters must fail closed");
             assert!(err.contains("400 Bad Request"), "path={path} err={err}");
             assert!(err.contains("invalid limit"), "path={path} err={err}");
         }
