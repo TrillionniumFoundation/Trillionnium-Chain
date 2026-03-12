@@ -2927,15 +2927,15 @@ mod tests {
     fn round_change_backoff_wall_share_metric_uses_height_level_denominator() {
         let bft_round_change_backoff_total_ms = 18u64;
         let bft_committed_heights = 4u64;
-        let bft_round_change_total = 6u64;
+        let finality_sample_count = 6u64;
         let wall_share_per_height_ppm =
             ratio_ppm_u64(bft_round_change_backoff_total_ms, bft_committed_heights);
-        let share_per_round_ppm =
-            ratio_ppm_u64(bft_round_change_backoff_total_ms, bft_round_change_total);
+        let wall_share_per_finality_sample_ppm =
+            ratio_ppm_u64(bft_round_change_backoff_total_ms, finality_sample_count);
 
         assert_eq!(wall_share_per_height_ppm, 4_500_000);
-        assert_eq!(share_per_round_ppm, 3_000_000);
-        assert_ne!(wall_share_per_height_ppm, share_per_round_ppm);
+        assert_eq!(wall_share_per_finality_sample_ppm, 3_000_000);
+        assert_ne!(wall_share_per_height_ppm, wall_share_per_finality_sample_ppm);
     }
 
     #[test]
@@ -5682,7 +5682,7 @@ fn main() -> Result<()> {
     };
     let bft_round_change_backoff_wall_share_ppm = ratio_ppm_u64(
         bft_round_change_backoff_total_ms,
-        finality_samples_ms.len() as u64,
+        bft_committed_heights,
     );
     let bft_round_change_backoff_share_ppm = bft_round_change_backoff_wall_share_ppm;
     let recovery_error_rate = if finality_samples_ms.is_empty() {
