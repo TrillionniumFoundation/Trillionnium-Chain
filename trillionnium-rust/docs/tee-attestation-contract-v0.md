@@ -241,8 +241,14 @@ These adapters are now explicitly layered behind two additional seams:
 The profile resolver seam is no longer just a placeholder. The scaffold now includes:
 - `RuntimeVerifierProfileRegistry`
 - `RegistryBackedVerifierProfileResolver`
+- `VerifierProfileRegistrySource`
+- `StaticVerifierProfileRegistrySource`
+- `EnvJsonVerifierProfileRegistrySource`
 
 This lets the system validate that a named transport profile actually exists, matches the expected transport mode, and matches the expected endpoint family before any outbound call is attempted.
+It also gives the scaffold two explicit runtime-loading paths:
+- static/builtin registry defaults
+- env-injected JSON registry overlays
 
 This lets the scaffold separate:
 1. runtime profile / endpoint resolution
@@ -272,6 +278,8 @@ Provider-backed clients now also support a telemetry recorder seam:
 - default sink: `NoopVerifierTelemetrySink`
 - recorder adapter: `JsonEncodingTelemetrySink`
 - recorder backend trait: `VerifierTelemetryRecorder`
+- writer/backend adapter trait: `VerifierTelemetryRecordWriter`
+- newline-delimited recorder: `JsonlTelemetryRecorder`
 
 The provider layer emits three event stages into the sink:
 1. `RequestPrepared`
@@ -279,7 +287,7 @@ The provider layer emits three event stages into the sink:
 3. `ResponseMapped`
 
 This makes request/response telemetry observable without coupling the transport or provider layers to a concrete logging backend.
-The current scaffold can already serialize those events into a recorder-friendly JSON line shape via the recorder adapter.
+The scaffold can now serialize those events into recorder-friendly JSON and also adapt them into newline-delimited record streams via the JSONL recorder adapter.
 
 ## report_data_hash binding
 `report_data_hash` must match the task `result_hash` carried by the bound envelope.
