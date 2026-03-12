@@ -984,6 +984,20 @@ fn parse_tx_hash(text: &str) -> Option<String> {
         "\"TXHASH\" :",
         "\"txhash\":",
         "\"txhash\" :",
+        "'tx_hash':",
+        "'tx_hash' :",
+        "'TX_HASH':",
+        "'TX_HASH' :",
+        "'tx-hash':",
+        "'tx-hash' :",
+        "'TX-HASH':",
+        "'TX-HASH' :",
+        "'txHash':",
+        "'txHash' :",
+        "'TXHASH':",
+        "'TXHASH' :",
+        "'txhash':",
+        "'txhash' :",
     ];
 
     fn parse_hash_from_suffix(suffix: &str) -> Option<String> {
@@ -2256,6 +2270,17 @@ mod tests {
         let json = parse_tx_hash("{\"txhash\":0xDEADBEEF,\"status\":\"accepted\"}")
             .expect("json receipt hash without quotes should parse");
         assert_eq!(json, "deadbeef");
+    }
+
+    #[test]
+    fn parse_tx_hash_accepts_single_quoted_json_style_receipts() {
+        let single_quoted = parse_tx_hash("{'tx_hash': '0xDEADBEEF', 'status': 'accepted'}")
+            .expect("single-quoted json-style receipt hash should parse");
+        assert_eq!(single_quoted, "deadbeef");
+
+        let uppercase = parse_tx_hash("adapter stdout: {'TX-HASH' : 'ABCD1234'}")
+            .expect("single-quoted uppercase hyphenated receipt hash should parse");
+        assert_eq!(uppercase, "abcd1234");
     }
 
     #[test]
