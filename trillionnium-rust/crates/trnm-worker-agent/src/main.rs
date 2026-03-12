@@ -904,7 +904,7 @@ fn resolve_path_arg_from_env(path: PathBuf, env_name: &str, default_path: &str) 
 }
 
 fn is_receipt_quote_wrapper(ch: char) -> bool {
-    matches!(ch, '"' | '\'' | '“' | '”' | '‘' | '’')
+    matches!(ch, '"' | '\'' | '`' | '“' | '”' | '‘' | '’')
 }
 
 fn normalize_candidate_tx_hash(raw: &str) -> Option<String> {
@@ -2266,6 +2266,15 @@ mod tests {
             parse_tx_hash(sentence_tail).expect("hash with sentence punctuation should parse");
         assert_eq!(
             parsed_tail,
+            "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd"
+        );
+
+        let backtick_wrapped =
+            "adapter stdout: tx_hash=`0xABCDabcdABCDabcdABCDabcdABCDabcdABCDabcdABCDabcdABCDabcdABCDabcd`";
+        let parsed_backtick =
+            parse_tx_hash(backtick_wrapped).expect("backtick-wrapped hash should parse");
+        assert_eq!(
+            parsed_backtick,
             "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd"
         );
     }
