@@ -1776,6 +1776,65 @@ fn restore_gov_param_none_is_slot_scoped_even_with_multiple_applied_entries() {
 }
 
 #[test]
+fn restore_gov_param_mismatched_slot_preserves_canonical_applied_root() {
+    let mut state = StateStore::new();
+
+    state
+        .set_gov_param(0, 7_201, "max_block_ms".to_string(), "500".to_string())
+        .expect("canonical applied governance param should succeed");
+    let canonical_snapshot = state
+        .get_param(7_201)
+        .expect("canonical applied governance param snapshot should exist");
+    let canonical_root = state.state_root();
+
+    state
+        .set_gov_param(
+            0,
+            7_202,
+            "max_parallel_workers".to_string(),
+            "8".to_string(),
+        )
+        .expect("stale foreign applied governance param should succeed");
+    let root_with_stale_foreign_slot = state.state_root();
+    assert_ne!(
+        root_with_stale_foreign_slot, canonical_root,
+        "sanity: adding a foreign applied governance param slot must perturb state_root"
+    );
+
+    state.restore_gov_param(7_202, Some(canonical_snapshot.clone()));
+
+    assert!(
+        state.get_param(7_202).is_none(),
+        "mismatched-slot restore should clear the targeted foreign applied governance slot"
+    );
+    assert_eq!(
+        state.get_param(7_201),
+        Some(canonical_snapshot.clone()),
+        "mismatched-slot restore must preserve the canonical applied governance object"
+    );
+    assert_eq!(
+        state.gov_param_string("max_block_ms").as_deref(),
+        Some("500"),
+        "mismatched-slot restore must preserve the canonical key-index mapping"
+    );
+    assert_eq!(
+        state.gov_param_string("max_parallel_workers"),
+        None,
+        "mismatched-slot restore must not alias the foreign slot into the canonical key index"
+    );
+    assert_eq!(
+        state.state_root(),
+        canonical_root,
+        "mismatched-slot restore should fail closed back to the canonical deterministic applied-param root"
+    );
+    assert_eq!(
+        state.state_root(),
+        canonical_root,
+        "repeated reads after mismatched-slot restore should deterministically reuse the canonical cached root"
+    );
+}
+
+#[test]
 fn zero_balance_and_missing_balance_have_identical_state_root() {
     let missing = StateStore::new();
     let missing_root = missing.state_root();
