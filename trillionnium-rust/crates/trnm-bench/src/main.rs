@@ -366,6 +366,32 @@ mod tests {
     }
 
     #[test]
+    fn mixed_bench_auto_adaptive_stays_on_original_strategy_without_hotspot_signal() {
+        let txs = build_mixed_txs(20_000, 2_000, 3, 1);
+        let decision = auto_adaptive_decision(&txs);
+        let (bench_groups, bench_profile) =
+            build_parallel_groups_profile_with_strategy(&txs, StrategyArg::AutoAdaptive.into());
+        let (original_groups, original_profile) =
+            build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::Original);
+
+        assert!(
+            !decision.use_hot_bucket,
+            "mixed bench default traffic should not silently promote to hot-bucket scheduling"
+        );
+        assert_eq!(decision.reason, "low_hot_key_share");
+        assert!(matches!(
+            resolve_grouping_strategy(&txs, StrategyArg::AutoAdaptive.into()),
+            GroupingStrategy::Original
+        ));
+        assert_profiles_match(
+            &bench_groups,
+            &bench_profile,
+            &original_groups,
+            &original_profile,
+        );
+    }
+
+    #[test]
     fn mixed_bench_default_path_matches_executor_default_strategy_output() {
         let txs = build_mixed_txs(2_048, 256, 3, 2);
         let (bench_groups, bench_profile) = StrategyArg::Default.resolve_profile(&txs);
