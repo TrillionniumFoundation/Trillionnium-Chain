@@ -38,6 +38,23 @@ def safe_json(path: Path) -> dict[str, Any]:
         return {}
 
 
+def safe_jsonl(path: Path) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    if not path.exists():
+        return rows
+    for raw in path.read_text(encoding="utf-8", errors="ignore").splitlines():
+        line = raw.strip()
+        if not line:
+            continue
+        try:
+            item = json.loads(line)
+        except Exception:
+            continue
+        if isinstance(item, dict):
+            rows.append(item)
+    return rows
+
+
 def parse_env(path: Path) -> dict[str, str]:
     out: dict[str, str] = {}
     if not path.exists():
@@ -243,6 +260,19 @@ def main() -> int:
     failed = int(stats.get("alerts_failed", 0) or 0)
     total = max(0, sent + suppressed + failed)
 
+    audit_path = root / "run/pr7-alert-delivery/audit.jsonl"
+    audit_rows = safe_jsonl(audit_path)
+    delivery_summaries = [
+        row for row in audit_rows
+        if row.get("record_type") == "delivery_summary"
+    ]
+    partial_success_count = sum(1 for row in delivery_summaries if row.get("event") == "partial_success")
+    channels_ok_total = sum(int(row.get("channels_ok", 0) or 0) for row in delivery_summaries)
+    channels_failed_total = sum(int(row.get("channels_failed", 0) or 0) for row in delivery_summaries)
+    delivery_routes_total = channels_ok_total + channels_failed_total
+    partial_success_rate = pct(partial_success_count, len(delivery_summaries))
+    channel_delivery_success_rate = pct(channels_ok_total, delivery_routes_total)
+
     suppression_rate = pct(suppressed, total)
     failure_rate = pct(failed, total)
     delivery_attempted = max(0, sent + failed)
@@ -310,6 +340,7 @@ def main() -> int:
         "sources": {
             "pr7_delivery_state": str(state_path) if state_path.exists() else None,
             "pr7_dead_letter": str(dead_letter_path) if dead_letter_path.exists() else None,
+            "pr7_delivery_audit": str(audit_path) if audit_path.exists() else None,
             "pr7_topn_latest": str(latest_topn) if latest_topn else None,
             "pr7_threshold_advice_latest": str(latest_advice) if latest_advice else None,
             "pr9_env_current": str(env_now_path) if env_now_path.exists() else None,
@@ -325,6 +356,12 @@ def main() -> int:
             "failure_rate_pct": round(failure_rate, 4),
             "delivery_success_rate_pct": round(delivery_success_rate, 4),
             "suppression_share_pct": round(suppression_share_pct, 4),
+            "delivery_summary_count": len(delivery_summaries),
+            "partial_success_count": partial_success_count,
+            "partial_success_rate_pct": round(partial_success_rate, 4),
+            "channel_delivery_success_rate_pct": round(channel_delivery_success_rate, 4),
+            "channels_ok_total": channels_ok_total,
+            "channels_failed_total": channels_failed_total,
             "dead_letter_entries": dead_letters_week,
         },
         "topn": sections,
@@ -349,6 +386,7 @@ def main() -> int:
     lines.append(f"- lookback_days: `{args.lookback_days}`")
     lines.append(f"- source.pr7_delivery_state: `{state_path if state_path.exists() else 'MISSING'}`")
     lines.append(f"- source.pr7_dead_letter: `{dead_letter_path if dead_letter_path.exists() else 'MISSING'}`")
+    lines.append(f"- source.pr7_delivery_audit: `{audit_path if audit_path.exists() else 'MISSING'}`")
     lines.append(f"- source.pr7_topn_latest: `{latest_topn if latest_topn else 'MISSING'}`")
     lines.append(f"- source.pr7_threshold_advice_latest: `{latest_advice if latest_advice else 'MISSING'}`")
     lines.append("")
@@ -362,6 +400,12 @@ def main() -> int:
     lines.append(f"- failure_rate: `{failure_rate:.2f}%`")
     lines.append(f"- delivery_attempted: `{delivery_attempted}`")
     lines.append(f"- delivery_success_rate: `{delivery_success_rate:.2f}%`")
+    lines.append(f"- delivery_summary_count: `{len(delivery_summaries)}`")
+    lines.append(f"- partial_success_count: `{partial_success_count}`")
+    lines.append(f"- partial_success_rate: `{partial_success_rate:.2f}%`")
+    lines.append(f"- channel_delivery_success_rate: `{channel_delivery_success_rate:.2f}%`")
+    lines.append(f"- channels_ok_total: `{channels_ok_total}`")
+    lines.append(f"- channels_failed_total: `{channels_failed_total}`")
     lines.append(f"- suppression_share: `{suppression_share_pct:.2f}%`")
     lines.append(f"- dead_letter_entries_last_{args.lookback_days}d: `{dead_letters_week}`")
     lines.append("")
