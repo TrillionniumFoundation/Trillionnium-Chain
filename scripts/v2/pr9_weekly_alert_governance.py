@@ -290,9 +290,9 @@ def main() -> int:
 
     state = safe_json(state_path)
     stats = state.get("stats", {}) if isinstance(state.get("stats", {}), dict) else {}
-    sent = int(stats.get("alerts_sent", 0) or 0)
-    suppressed = int(stats.get("alerts_suppressed", 0) or 0)
-    failed = int(stats.get("alerts_failed", 0) or 0)
+    sent = non_negative_int(stats.get("alerts_sent", 0))
+    suppressed = non_negative_int(stats.get("alerts_suppressed", 0))
+    failed = non_negative_int(stats.get("alerts_failed", 0))
     total = max(0, sent + suppressed + failed)
 
     audit_path = root / "run/pr7-alert-delivery/audit.jsonl"
