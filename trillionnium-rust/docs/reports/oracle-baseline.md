@@ -76,6 +76,30 @@ python3 --version
 ./scripts/run_oracle_baseline.sh
 ```
 
+## Rust crate bridge contract
+
+L16 现已在 `crates/trnm-oracle/src/lib.rs` 暴露稳定 bridge 输出：
+
+- `OracleValidationObservation`
+- `OracleValidationMetrics`
+- `OracleValidationReport`
+- `validate_snapshot_observed(...)`
+
+约束：
+
+- reject 维度继续固定为 `stale / quorum / drift`
+- metrics 命名继续固定为：
+  - `oracle_stale_reject_total`
+  - `oracle_quorum_reject_total`
+  - `oracle_drift_reject_total`
+  - `oracle_source_cardinality`
+  - `accepted_total`
+  - `sample_count`
+- 单次 snapshot bridge 报告中 `sample_count=1`
+- `oracle_source_cardinality` 口径为当前 snapshot 的 canonical source cardinality
+
+这样 RPC/HTTP bridge 后续只需要复用该稳定结构，不必各自再实现一套命名映射。
+
 ## 瓶颈与下一步
 
 ### 当前瓶颈

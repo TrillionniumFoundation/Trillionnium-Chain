@@ -225,6 +225,83 @@ fn deviation_bps(value: i128, baseline: i128) -> u32 {
     (numerator / denominator) as u32
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct OracleValidationObservation {
+    pub stale_reject_total: u32,
+    pub quorum_reject_total: u32,
+    pub drift_reject_total: u32,
+    pub accepted_total: u32,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct OracleValidationMetrics {
+    pub oracle_stale_reject_total: u32,
+    pub oracle_quorum_reject_total: u32,
+    pub oracle_drift_reject_total: u32,
+    pub oracle_source_cardinality: u32,
+    pub accepted_total: u32,
+    pub sample_count: u32,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct OracleValidationReport {
+    pub ok: bool,
+    pub now_ts_ms: u64,
+    pub observation: OracleValidationObservation,
+    pub metrics: OracleValidationMetrics,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub error: Option<String>,
+}
+
+pub fn validate_snapshot_observed(
+    policy: &OraclePolicy,
+    snapshot: &OracleSnapshot,
+    now_ts_ms: u64,
+) -> OracleValidationReport {
+    let mut observation = OracleValidationObservation {
+        stale_reject_total: 0,
+        quorum_reject_total: 0,
+        drift_reject_total: 0,
+        accepted_total: 0,
+    };
+
+    let result = policy.validate_snapshot(snapshot, now_ts_ms);
+    let error = match &result {
+        Ok(()) => {
+            observation.accepted_total = 1;
+            None
+        }
+        Err(OracleError::StaleSnapshot { .. }) => {
+            observation.stale_reject_total = 1;
+            Some("stale".to_string())
+        }
+        Err(OracleError::InsufficientSources { .. }) => {
+            observation.quorum_reject_total = 1;
+            Some("quorum".to_string())
+        }
+        Err(OracleError::DeviationExceeded { .. }) => {
+            observation.drift_reject_total = 1;
+            Some("drift".to_string())
+        }
+        Err(err) => Some(err.to_string()),
+    };
+
+    OracleValidationReport {
+        ok: result.is_ok(),
+        now_ts_ms,
+        metrics: OracleValidationMetrics {
+            oracle_stale_reject_total: observation.stale_reject_total,
+            oracle_quorum_reject_total: observation.quorum_reject_total,
+            oracle_drift_reject_total: observation.drift_reject_total,
+            oracle_source_cardinality: snapshot.sources.len() as u32,
+            accepted_total: observation.accepted_total,
+            sample_count: 1,
+        },
+        observation,
+        error,
+    }
+}
+
 #[derive(Debug, Error, Clone, PartialEq, Eq)]
 pub enum OracleError {
     #[error("source id is empty")]
@@ -420,5 +497,35 @@ mod tests {
 
         p.validate_snapshot(&snap, 15_000)
             .expect("boundary staleness should remain valid");
+    }
+
+    #[test]
+    fn observed_report_maps_success_to_stable_metrics_contract() {
+        let p = policy();
+        let snap = snapshot_with(100_000, Some(100_100), 10_000);
+
+        let report = validate_snapshot_observed(&p, &snap, 10_100);
+        assert!(report.ok);
+        assert_eq!(report.error, None);
+        assert_eq!(report.observation.accepted_total, 1);
+        assert_eq!(report.metrics.oracle_stale_reject_total, 0);
+        assert_eq!(report.metrics.oracle_quorum_reject_total, 0);
+        assert_eq!(report.metrics.oracle_drift_reject_total, 0);
+        assert_eq!(report.metrics.oracle_source_cardinality, 2);
+        assert_eq!(report.metrics.accepted_total, 1);
+        assert_eq!(report.metrics.sample_count, 1);
+    }
+
+    #[test]
+    fn observed_report_maps_stale_rejection_to_stable_error_label() {
+        let p = policy();
+        let snap = snapshot_with(100_000, Some(100_100), 10_000);
+
+        let report = validate_snapshot_observed(&p, &snap, 16_000);
+        assert!(!report.ok);
+        assert_eq!(report.error.as_deref(), Some("stale"));
+        assert_eq!(report.observation.stale_reject_total, 1);
+        assert_eq!(report.metrics.oracle_stale_reject_total, 1);
+        assert_eq!(report.metrics.accepted_total, 0);
     }
 }
