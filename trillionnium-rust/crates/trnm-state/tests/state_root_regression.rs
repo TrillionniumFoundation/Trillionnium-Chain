@@ -582,6 +582,104 @@ fn restore_pending_resolve_snapshot_with_same_authority_metadata_but_different_t
 }
 
 #[test]
+fn restore_pending_resolve_none_on_mismatched_slot_keeps_canonical_pending_root() {
+    let mut state = StateStore::new();
+    let baseline_root = state.state_root();
+
+    state
+        .stage_or_confirm_resolve_approval(5_200, 7, true, "resolver-a", "resolver-a,resolver-b")
+        .expect("initial staged resolve approval should succeed");
+
+    let snapshot = state
+        .pending_resolve_approval_snapshot(5_200)
+        .expect("sanity: canonical pending resolve snapshot should exist");
+    let canonical_pending_root = state.state_root();
+    assert_ne!(
+        canonical_pending_root, baseline_root,
+        "sanity: staged pending resolve approval must perturb the root"
+    );
+
+    state.restore_pending_resolve_approval(5_201, Some(snapshot.clone()));
+    assert!(
+        state.pending_resolve_approval_snapshot(5_201).is_some(),
+        "restoring a pending resolve snapshot through another task slot should materialize a distinct staged entry for that slot"
+    );
+    assert!(
+        state.pending_resolve_approval_snapshot(5_200).is_some(),
+        "mismatched-slot restore must preserve the canonical pending task slot"
+    );
+    assert_ne!(
+        state.state_root(),
+        canonical_pending_root,
+        "adding the same pending resolve snapshot under a second task slot must perturb the root because the task_id slot is part of state identity"
+    );
+
+    state.restore_pending_resolve_approval(5_201, None);
+    assert!(
+        state.pending_resolve_approval_snapshot(5_200).is_some(),
+        "clearing a mismatched pending resolve slot with None must not delete the canonical staged task slot"
+    );
+    assert_eq!(
+        state.state_root(),
+        canonical_pending_root,
+        "clearing the extra mismatched pending resolve slot must return to the canonical pending root"
+    );
+
+    state.restore_pending_resolve_approval(5_200, None);
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "clearing the canonical pending resolve slot must return the state root to baseline"
+    );
+}
+
+#[test]
+fn restore_pending_resolve_none_is_slot_scoped_even_with_multiple_pending_entries() {
+    let mut state = StateStore::new();
+
+    state.restore_pending_resolve_approval(
+        5_210,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "resolver-a".into(),
+            authority_set: "resolver-a,resolver-b".into(),
+            task_version: 7,
+        }),
+    );
+    state.restore_pending_resolve_approval(
+        5_211,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: false,
+            confirmations: 1,
+            first_approver: "resolver-c".into(),
+            authority_set: "resolver-c,resolver-d".into(),
+            task_version: 9,
+        }),
+    );
+
+    let root_with_both = state.state_root();
+    assert!(state.pending_resolve_approval_snapshot(5_210).is_some());
+    assert!(state.pending_resolve_approval_snapshot(5_211).is_some());
+
+    state.restore_pending_resolve_approval(5_210, None);
+
+    assert!(
+        state.pending_resolve_approval_snapshot(5_210).is_none(),
+        "slot-scoped restore should remove the targeted pending resolve entry"
+    );
+    assert!(
+        state.pending_resolve_approval_snapshot(5_211).is_some(),
+        "slot-scoped restore must preserve unrelated pending resolve entries"
+    );
+    assert_ne!(
+        state.state_root(),
+        root_with_both,
+        "removing only one pending resolve entry should perturb the root while preserving unrelated pending resolve state"
+    );
+}
+
+#[test]
 fn restore_pending_none_rewinds_state_root_after_removing_staged_resolve_approval() {
     let mut state = StateStore::new();
     let baseline_root = state.state_root();
