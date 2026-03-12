@@ -2078,6 +2078,18 @@ mod tests {
     }
 
     #[test]
+    fn aggressive_integer_env_parsers_accept_quoted_plus_prefixed_comma_grouped_values() {
+        let _env = env_lock();
+        let _window = EnvGuard::set("TRNM_AGGR_SCAN_WINDOW", " \"+1,024\" ");
+        let _seed = EnvGuard::set("TRNM_AGGR_SCAN_RR_SEED", " '+9,001' ");
+        let _buckets = EnvGuard::set("TRNM_HOT_BUCKETS", " \"+1,6\" ");
+
+        assert_eq!(aggr_scan_window(), 1024);
+        assert_eq!(aggr_scan_round_robin_seed(), 9001);
+        assert_eq!(hot_bucket_count(), 16);
+    }
+
+    #[test]
     fn aggressive_unsigned_env_knobs_fail_closed_on_negative_values() {
         let _env = env_lock();
         let _window = EnvGuard::set("TRNM_AGGR_SCAN_WINDOW", "-128");
