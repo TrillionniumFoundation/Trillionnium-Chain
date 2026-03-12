@@ -372,6 +372,26 @@ def main():
             f"stale={pool['stale']} old={pool['old']} old_backlog={pool['old_backlog']}"
         )
 
+    def archive_candidates_for_pool(candidates: list[str], keep_latest: int = 2) -> list[str]:
+        if len(candidates) <= keep_latest:
+            return []
+        archive_candidates = []
+        for path in candidates[keep_latest:]:
+            freshness = freshness_label(file_age_seconds(path))
+            if freshness in {"stale", "old"}:
+                archive_candidates.append(path)
+        return archive_candidates
+
+    def archive_candidate_line(label: str, candidates: list[str], limit: int = 5) -> str:
+        archive_candidates = archive_candidates_for_pool(candidates)
+        basenames = [os.path.basename(path) for path in archive_candidates[:limit]]
+        remaining = max(0, len(archive_candidates) - limit)
+        return (
+            f"- {label}: archive_candidate_count={len(archive_candidates)} "
+            f"keep_latest=2 preview={', '.join(basenames) if basenames else 'none'} "
+            f"remaining={remaining}"
+        )
+
     def latest_benchmark_artifact():
         artifact_candidates = [path for path in [classic, mixed, executor_profile] if path and os.path.exists(path)]
         if not artifact_candidates:
@@ -527,6 +547,11 @@ def main():
     lines.append(
         f"- benchmark_pool_followup_command_chain: {build_followup_command_chain(pool_followup_labels, recommended_producer)}"
     )
+
+    lines += ["", "## Benchmark Archive Candidates"]
+    lines.append(archive_candidate_line("classic_bench_candidates", classic_candidates))
+    lines.append(archive_candidate_line("mixed_bench_candidates", mixed_candidates))
+    lines.append(archive_candidate_line("executor_profile_candidates", executor_profile_candidates))
 
     lines += ["", "## Data Completeness"]
     lines.append(
