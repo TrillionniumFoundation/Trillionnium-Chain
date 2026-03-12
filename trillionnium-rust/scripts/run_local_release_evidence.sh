@@ -18,6 +18,14 @@ mkdir -p "$EVIDENCE_DIR"
 PASS_COUNT=0
 FAIL_COUNT=0
 
+replay_tz="UTC"
+replay_lc_all="C"
+replay_lang="C"
+replay_source_date_epoch="1704067200"
+replay_cargo_term_color="never"
+replay_rust_backtrace="1"
+replay_cargo_build_jobs="1"
+
 log() {
   echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] $*"
 }
@@ -91,7 +99,18 @@ find_challenge_reexec_entry() {
   echo "evidence_scope=local_rc_rehearsal_not_current_release_ready_claim"
   echo "env_tz=${TZ:-<unset>}"
   echo "env_lc_all=${LC_ALL:-<unset>}"
+  echo "env_lang=${LANG:-<unset>}"
   echo "env_source_date_epoch=${SOURCE_DATE_EPOCH:-<unset>}"
+  echo "env_cargo_term_color=${CARGO_TERM_COLOR:-<unset>}"
+  echo "env_rust_backtrace=${RUST_BACKTRACE:-<unset>}"
+  echo "env_cargo_build_jobs=${CARGO_BUILD_JOBS:-<unset>}"
+  echo "replay_env_tz=$replay_tz"
+  echo "replay_env_lc_all=$replay_lc_all"
+  echo "replay_env_lang=$replay_lang"
+  echo "replay_env_source_date_epoch=$replay_source_date_epoch"
+  echo "replay_env_cargo_term_color=$replay_cargo_term_color"
+  echo "replay_env_rust_backtrace=$replay_rust_backtrace"
+  echo "replay_env_cargo_build_jobs=$replay_cargo_build_jobs"
   echo ""
   echo "steps:"
 } > "$SUMMARY"
@@ -123,13 +142,6 @@ else
 fi
 
 rollback_cmd="rm -rf $(printf '%q' "$EVIDENCE_DIR")"
-replay_tz="UTC"
-replay_lc_all="C"
-replay_lang="C"
-replay_source_date_epoch="1704067200"
-replay_cargo_term_color="never"
-replay_rust_backtrace="1"
-replay_cargo_build_jobs="1"
 replay_out_dir="${OUT_DIR:-$BASE_OUT}"
 replay_challenge_entry="${TRNM_CHALLENGE_REEXEC_ENTRY:-$CHALLENGE_REEXEC_ENTRY}"
 
