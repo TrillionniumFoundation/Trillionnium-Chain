@@ -605,6 +605,90 @@ fn idempotent_non_sensitive_gov_reapply_keeps_state_root_stable() {
 }
 
 #[test]
+fn restore_task_snapshot_rewinds_state_root_after_proof_and_metadata_mutation() {
+    let mut state = StateStore::new();
+    let task = TaskObject {
+        task_id: 10_101,
+        creator: "alice".into(),
+        bounty: 100,
+        status: TaskStatus::Open,
+        proof_type: ProofType::Fraud,
+        metadata: Some(TaskMetadata {
+            note: Some("initial task".into()),
+            task_type: Some("inference".into()),
+            input_hash: Some("ab".repeat(32)),
+            model: Some(TaskModelMetadata {
+                model_id: Some("trnm-model-a".into()),
+                model_digest: Some("cd".repeat(32)),
+                version: Some("v1".into()),
+            }),
+            provenance: Some(TaskProvenanceMetadata {
+                producer_did: Some("did:trnm:test:alice".into()),
+                produced_at: Some("2026-03-12T08:00:00Z".into()),
+                provenance_index: Some("prov-task-10101".into()),
+                privacy_tier: Some(PrivacyTier::Internal),
+            }),
+        }),
+        worker: Some("worker-a".into()),
+        committed_hash: Some([0x11; 32]),
+        result_hash: None,
+        reveal_salt: None,
+        committed_at_height: Some(20),
+        reveal_deadline_height: Some(30),
+        challenge_deadline_height: Some(40),
+        challenge_window_blocks_snapshot: Some(12),
+        challenged_at_height: None,
+        resolve_deadline_height: Some(52),
+        challenge_bond: None,
+        challenger: None,
+        challenge_bond_forfeited: None,
+        version: 3,
+    };
+
+    let task_ref = state.put_task_new(task).expect("task insert should succeed");
+    let task_id = task_ref.id;
+    let task_snapshot = state.get_task(task_id);
+    let baseline_root = state.state_root();
+
+    let mut changed_task = state.get_task(task_ref.id).expect("task should exist");
+    changed_task.proof_type = ProofType::Zk;
+    changed_task.challenge_window_blocks_snapshot = Some(24);
+    changed_task.metadata = Some(TaskMetadata {
+        note: Some("mutated task".into()),
+        task_type: Some("verification".into()),
+        input_hash: Some("ef".repeat(32)),
+        model: Some(TaskModelMetadata {
+            model_id: Some("trnm-model-b".into()),
+            model_digest: Some("12".repeat(32)),
+            version: Some("v2".into()),
+        }),
+        provenance: Some(TaskProvenanceMetadata {
+            producer_did: Some("did:trnm:test:bob".into()),
+            produced_at: Some("2026-03-12T09:15:00Z".into()),
+            provenance_index: Some("prov-task-10101-mutated".into()),
+            privacy_tier: Some(PrivacyTier::Restricted),
+        }),
+    });
+    state
+        .update_task(task_ref, changed_task)
+        .expect("task mutation should succeed");
+
+    let mutated_root = state.state_root();
+    assert_ne!(
+        mutated_root, baseline_root,
+        "sanity: proof type and nested metadata mutations must perturb state_root"
+    );
+
+    state.restore_task(task_id, task_snapshot);
+
+    assert_eq!(
+        state.state_root(),
+        baseline_root,
+        "restoring the original task snapshot must rewind state_root exactly after proof/metadata mutations"
+    );
+}
+
+#[test]
 fn restore_balance_none_rewinds_state_root_after_removing_existing_treasury_entry() {
     let mut state = StateStore::new();
     let baseline_root = state.state_root();

@@ -648,11 +648,12 @@ impl StateStore {
         self.gov_param_key_index.retain(|_, mapped_id| *mapped_id != id);
     }
 
-    pub fn put_task_new(&mut self, task: TaskObject) -> Result<ObjectRef, String> {
+    pub fn put_task_new(&mut self, mut task: TaskObject) -> Result<ObjectRef, String> {
         if self.objects.contains_key(&task.task_id) {
             return Err("task already exists".into());
         }
         let id = task.task_id;
+        task.version = 1;
         self.invalidate_state_root_cache();
         self.objects.insert(
             id,
