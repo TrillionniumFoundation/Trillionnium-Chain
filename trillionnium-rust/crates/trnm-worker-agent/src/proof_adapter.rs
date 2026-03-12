@@ -319,6 +319,18 @@ mod tests {
     }
 
     #[test]
+    fn standard_proof_adapter_parse_response_accepts_crlf_fenced_multiline_json_payload() {
+        let adapter = StandardProofAdapter;
+        let stdout = "info: warmup\r\n```json\r\n{\r\n  \"output_text\": \"ok\",\r\n  \"provider_request_id\": \"r3-crlf\"\r\n}\r\n```\r\n";
+
+        let parsed = adapter
+            .parse_response(stdout)
+            .expect("should parse CRLF multiline json payload");
+        assert_eq!(parsed.output_text, "ok");
+        assert_eq!(parsed.provider_request_id.as_deref(), Some("r3-crlf"));
+    }
+
+    #[test]
     fn tee_receipt_adapter_parse_response_requires_auditable_fields() {
         let adapter = TeeReceiptProofAdapter;
 
