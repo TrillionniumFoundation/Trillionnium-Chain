@@ -303,5 +303,33 @@ def _test_run_baseline_keeps_max_accepted_source_cardinality():
     assert out["sample_count"] == 2
 
 
+def _test_run_baseline_zeros_source_cardinality_when_no_sample_is_accepted():
+    cases = [
+        {
+            "snapshot_ts_ms": 1_000,
+            "sources": [
+                {"source": "s1", "value": 100.0, "ts_unix_ms": 1_000},
+            ],
+        },
+        {
+            "snapshot_ts_ms": 2_000,
+            "sources": [
+                {"source": "s1", "value": 100.0, "ts_unix_ms": 2_000},
+                {"source": "s2", "value": 130.0, "ts_unix_ms": 2_000},
+            ],
+        },
+    ]
+
+    class Args:
+        min_sources = 2
+        max_staleness_ms = 60_000
+        max_deviation_bps = 500
+
+    out = run_baseline(cases, Args())
+    assert out["accepted_total"] == 0
+    assert out["oracle_source_cardinality"] == 0
+    assert out["sample_count"] == 2
+
+
 if __name__ == "__main__":
     main()
