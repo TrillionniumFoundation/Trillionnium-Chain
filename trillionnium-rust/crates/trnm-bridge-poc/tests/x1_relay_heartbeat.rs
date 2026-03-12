@@ -243,3 +243,11 @@ fn relay_heartbeat_failure_reason_with_only_invisible_unicode_falls_back_to_stab
     let out = hb.record_failure("\u{2061}\u{2062}\u{2063}\u{2064}\u{FE0F}\u{E0100}\u{FFF9}\u{FFFA}\u{FFFB}");
     assert_eq!(out.message, "unknown heartbeat failure");
 }
+
+#[test]
+fn relay_heartbeat_failure_reason_strips_hangul_fillers_for_replay_stability() {
+    let mut hb = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 3));
+
+    let out = hb.record_failure("rpc\u{115F} timeout\u{1160}bridge\u{3164}degraded");
+    assert_eq!(out.message, "rpc timeout bridge degraded");
+}
