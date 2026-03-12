@@ -265,6 +265,13 @@ mod tests {
     }
 
     #[test]
+    fn normalize_failure_reason_strips_directional_marks_and_legacy_bidi_isolates_for_replay_stability() {
+        let raw = "target\u{200E}\u{206A}relay\u{200F}timeout\u{206B}signal\u{206C}\u{206D}\u{206E}\u{206F}";
+        let normalized = normalize_failure_reason(raw);
+        assert_eq!(normalized, "target relay timeout signal");
+    }
+
+    #[test]
     fn normalize_failure_reason_collapses_ogham_space_mark_for_replay_stability() {
         let raw = "target\u{1680}relay timeout";
         let normalized = normalize_failure_reason(raw);
