@@ -71,6 +71,21 @@ impl RelayHeartbeatMonitor {
             };
         }
 
+        if target_height > source_height {
+            self.consecutive_failures = self.config.max_retry;
+            let message = "invalid heartbeat progression".to_string();
+            eprintln!(
+                "[relay-heartbeat][degraded] failures={} reason={}",
+                self.consecutive_failures, message
+            );
+            return HeartbeatOutcome {
+                heartbeat: None,
+                should_retry: false,
+                degraded: true,
+                message,
+            };
+        }
+
         self.consecutive_failures = 0;
         HeartbeatOutcome {
             heartbeat: Some(RelayHeartbeat {
