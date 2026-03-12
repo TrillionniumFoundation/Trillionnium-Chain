@@ -397,7 +397,7 @@ DRY_RUN=1 ALERT_NOTIFY_CHANNEL=slack ./scripts/v2/pr7_alert_delivery_gate.sh
 
 排障产物：
 - `run/pr7-alerts/<timestamp>-pid*/summary.txt`：PR-6 生成的原始告警摘要
-- `run/pr7-alerts/<timestamp>-pid*/pr7-delivery-status.env`：PR-7 最终状态（`status/pr6_rc/pr7_rc/final_rc/fail_mode/report/lock_dir/generated_at_utc`）
+- `run/pr7-alerts/<timestamp>-pid*/pr7-delivery-status.env`：PR-7 最终状态（`status/pr6_rc/pr7_rc/final_rc/fail_mode/delivery_event/primary_channel/backup_channel/success_channels/failed_channels/channels_ok/channels_failed/partial_success/run_dir/lock_dir/report/audit_file/generated_at_utc`）
 
 建议：
 - 本地 dry-run 默认用 `PR7_DELIVERY_FAIL_MODE=warn`，既保留 `pr7_rc` 可观测性，又不把临时通道故障误判成规则引擎失败。
