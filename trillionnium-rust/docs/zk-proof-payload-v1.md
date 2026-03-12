@@ -17,6 +17,7 @@ Current canonical payload schema token used by router / backend tests / docs:
 Current canonical payload proof byte encoding field used by router / backend tests / docs:
 
 - `proof_encoding` (`hex | base64`)
+- `proof_encoding` is required in `trnm.zk.payload.v0`; the router must fail closed on omission rather than defaulting silently to `base64`
 
 Additional v0 parser / router contract reminders already enforced by tests and code:
 
@@ -24,6 +25,7 @@ Additional v0 parser / router contract reminders already enforced by tests and c
 - `backend_id`, when present, must be a non-empty canonical token without surrounding whitespace.
 - `backend_version`, when present, must be a non-empty canonical token without surrounding whitespace and must not appear without `backend_id`.
 - If a `backend_id` token carries canonical zk-system hints, all distinct hints must collapse to exactly one canonical system before routing; repeated identical hints (for example `groth16-groth16-demo`) are tolerated, but mixed hints (for example `groth16-plonk-demo`) must fail closed rather than being routed opportunistically.
+- Family-only router tokens are not canonical payload selectors: a payload `backend_id` like `zk`, `zk-demo`, or other explicit `zk-*` family-only token without a canonical zk-system hint must be rejected as malformed rather than routed or treated as an implicit backend alias.
 
 v0 fail-closed boundary reminder:
 

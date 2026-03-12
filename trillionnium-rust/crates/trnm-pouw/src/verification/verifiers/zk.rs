@@ -194,17 +194,30 @@ impl ZkVerifier {
                 .map(str::trim)
                 .filter(|backend| !backend.is_empty())
             {
-                if let Some(VerificationBackendFamily::Tee) =
-                    backend_token_family_hint(payload_backend_id)
-                {
-                    return Err(BackendExecutionError::InvalidProof {
-                        backend: "zk:payload".to_string(),
-                        reason: format!(
-                            "invalid zk payload: backend_id '{}' declares tee family and does not match zk vk_ref '{}'",
-                            payload_backend_id, resolved.vk_ref
-                        ),
+                match backend_token_family_hint(payload_backend_id) {
+                    Some(VerificationBackendFamily::Tee) => {
+                        return Err(BackendExecutionError::InvalidProof {
+                            backend: "zk:payload".to_string(),
+                            reason: format!(
+                                "invalid zk payload: backend_id '{}' declares tee family and does not match zk vk_ref '{}'",
+                                payload_backend_id, resolved.vk_ref
+                            ),
+                        }
+                        .into());
                     }
-                    .into());
+                    Some(VerificationBackendFamily::Zk)
+                        if backend_token_zk_system_hints(payload_backend_id).is_empty() =>
+                    {
+                        return Err(BackendExecutionError::MalformedProof {
+                            backend: "zk:payload".to_string(),
+                            reason: format!(
+                                "invalid zk payload: backend_id '{}' must not be a family-only zk router token without a canonical zk_system hint",
+                                payload_backend_id
+                            ),
+                        }
+                        .into());
+                    }
+                    _ => {}
                 }
 
                 if let Some(payload_backend_system) = normalize_zk_system(payload_backend_id) {
@@ -827,6 +840,24 @@ mod tests {
                 if msg.contains("backend_id 'tee-groth16-demo'")
                     && msg.contains("declares tee family")
                     && msg.contains("does not match zk vk_ref")
+        ));
+    }
+
+    #[test]
+    fn zk_verifier_rejects_payload_backend_that_is_family_only_zk_router_token() {
+        let mut backends = ZkBackendRegistry::new();
+        backends.register(Arc::new(MockSuccessBackend));
+
+        let verifier = ZkVerifier::from_config(&router_config(), Arc::new(backends));
+        let task = mock_task();
+        let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"zk-demo","backend_version":"v1","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["99","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#;
+
+        assert!(matches!(
+            verifier.verify_proof(&task, payload),
+            VerificationResult::Invalid(msg)
+                if msg.contains("malformed:")
+                    && msg.contains("backend_id 'zk-demo'")
+                    && msg.contains("family-only zk router token")
         ));
     }
 
