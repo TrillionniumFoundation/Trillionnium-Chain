@@ -143,6 +143,12 @@ def pct(numer: int, denom: int) -> float:
     return (numer / denom * 100.0) if denom > 0 else 0.0
 
 
+def pct_or_none(numer: int, denom: int) -> float | None:
+    if denom <= 0:
+        return None
+    return numer / denom * 100.0
+
+
 def pct_delta(curr: float, prev: float) -> float:
     return curr - prev
 
@@ -157,6 +163,10 @@ def fmt_delta(v: int | float, unit: str = "") -> str:
         return f"{sign}{v:.2f}{unit}"
     sign = "+" if v >= 0 else ""
     return f"{sign}{v}{unit}"
+
+
+def fmt_pct(v: float | None) -> str:
+    return "n/a" if v is None else f"{v:.2f}%"
 
 
 def index_map(rows: list[str]) -> dict[str, int]:
@@ -276,7 +286,7 @@ def main() -> int:
     suppression_rate = pct(suppressed, total)
     failure_rate = pct(failed, total)
     delivery_attempted = max(0, sent + failed)
-    delivery_success_rate = pct(sent, delivery_attempted)
+    delivery_success_rate = pct_or_none(sent, delivery_attempted)
     suppression_share_pct = pct(suppressed, total)
 
     dead_letters = read_dead_letters(dead_letter_path, lookback_days=args.lookback_days)
@@ -311,7 +321,11 @@ def main() -> int:
     prev_total = int(prev_metrics.get("alerts_total", 0) or 0) if has_prev else 0
     prev_suppression_rate = float(prev_metrics.get("suppression_rate_pct", 0.0) or 0.0) if has_prev else 0.0
     prev_failure_rate = float(prev_metrics.get("failure_rate_pct", 0.0) or 0.0) if has_prev else 0.0
-    prev_delivery_success_rate = float(prev_metrics.get("delivery_success_rate_pct", 0.0) or 0.0) if has_prev else 0.0
+    prev_delivery_success_rate = (
+        float(prev_metrics.get("delivery_success_rate_pct", 0.0) or 0.0)
+        if has_prev and prev_metrics.get("delivery_success_rate_pct") is not None
+        else None
+    )
     prev_suppression_share_pct = float(prev_metrics.get("suppression_share_pct", 0.0) or 0.0) if has_prev else 0.0
 
     wow = {
@@ -320,7 +334,11 @@ def main() -> int:
         "alerts_total_delta": delta(total, prev_total) if has_prev else None,
         "suppression_rate_pct_delta": pct_delta(suppression_rate, prev_suppression_rate) if has_prev else None,
         "failure_rate_pct_delta": pct_delta(failure_rate, prev_failure_rate) if has_prev else None,
-        "delivery_success_rate_pct_delta": pct_delta(delivery_success_rate, prev_delivery_success_rate) if has_prev else None,
+        "delivery_success_rate_pct_delta": (
+            pct_delta(delivery_success_rate, prev_delivery_success_rate)
+            if has_prev and delivery_success_rate is not None and prev_delivery_success_rate is not None
+            else None
+        ),
         "suppression_share_pct_delta": pct_delta(suppression_share_pct, prev_suppression_share_pct) if has_prev else None,
         "topn": {
             "unresolved": topn_diff(sections["unresolved"], prev_topn.get("unresolved", []) if isinstance(prev_topn.get("unresolved", []), list) else []) if has_prev else {"entered": [], "exited": [], "rank_shift": []},
@@ -354,7 +372,7 @@ def main() -> int:
             "delivery_attempted": delivery_attempted,
             "suppression_rate_pct": round(suppression_rate, 4),
             "failure_rate_pct": round(failure_rate, 4),
-            "delivery_success_rate_pct": round(delivery_success_rate, 4),
+            "delivery_success_rate_pct": round(delivery_success_rate, 4) if delivery_success_rate is not None else None,
             "suppression_share_pct": round(suppression_share_pct, 4),
             "delivery_summary_count": len(delivery_summaries),
             "partial_success_count": partial_success_count,
@@ -399,7 +417,7 @@ def main() -> int:
     lines.append(f"- suppression_rate: `{suppression_rate:.2f}%`")
     lines.append(f"- failure_rate: `{failure_rate:.2f}%`")
     lines.append(f"- delivery_attempted: `{delivery_attempted}`")
-    lines.append(f"- delivery_success_rate: `{delivery_success_rate:.2f}%`")
+    lines.append(f"- delivery_success_rate: `{fmt_pct(delivery_success_rate)}`")
     lines.append(f"- delivery_summary_count: `{len(delivery_summaries)}`")
     lines.append(f"- partial_success_count: `{partial_success_count}`")
     lines.append(f"- partial_success_rate: `{partial_success_rate:.2f}%`")
@@ -416,7 +434,11 @@ def main() -> int:
         lines.append(f"- alerts.total Δ: `{fmt_delta(wow['alerts_total_delta'])}`")
         lines.append(f"- suppression_rate Δ: `{fmt_delta(float(wow['suppression_rate_pct_delta']), 'pp')}`")
         lines.append(f"- failure_rate Δ: `{fmt_delta(float(wow['failure_rate_pct_delta']), 'pp')}`")
-        lines.append(f"- delivery_success_rate Δ: `{fmt_delta(float(wow['delivery_success_rate_pct_delta']), 'pp')}`")
+        lines.append(
+            f"- delivery_success_rate Δ: `{fmt_delta(float(wow['delivery_success_rate_pct_delta']), 'pp')}`"
+            if wow["delivery_success_rate_pct_delta"] is not None
+            else "- delivery_success_rate Δ: `n/a`"
+        )
         lines.append(f"- suppression_share Δ: `{fmt_delta(float(wow['suppression_share_pct_delta']), 'pp')}`")
         lines.append(f"- threshold_changed_keys Δ: `{fmt_delta(int(wow['threshold_changed_keys_delta']))}`")
     else:
