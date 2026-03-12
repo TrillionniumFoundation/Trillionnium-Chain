@@ -578,6 +578,16 @@ impl StateStore {
                         .into(),
                 );
             }
+        } else if let Some(pending_authority_set) = self
+            .pending_gov_update("resolve_authority")
+            .map(|pending| pending.value)
+        {
+            if !resolve_authority_sets_match(&pending_authority_set, authority_set) {
+                return Err(
+                    "resolve approval authority set must match pending governance authority"
+                        .into(),
+                );
+            }
         }
 
         if let Some(entry) = self.pending_resolve_approvals.get(&task_id) {
@@ -790,6 +800,17 @@ impl StateStore {
                 if let Some(configured_authority_set) = self.gov_param_string("resolve_authority") {
                     if !resolve_authority_sets_match(
                         &configured_authority_set,
+                        &snapshot.authority_set,
+                    ) {
+                        self.pending_resolve_approvals.remove(&task_id);
+                        return;
+                    }
+                } else if let Some(pending_authority_set) = self
+                    .pending_gov_update("resolve_authority")
+                    .map(|pending| pending.value)
+                {
+                    if !resolve_authority_sets_match(
+                        &pending_authority_set,
                         &snapshot.authority_set,
                     ) {
                         self.pending_resolve_approvals.remove(&task_id);
@@ -2563,6 +2584,100 @@ mod tests {
                 "snapshot approvers with whitespace drift must be scrubbed"
             );
         }
+    }
+
+    #[test]
+    fn restore_pending_resolve_approval_scrubs_snapshot_when_pending_governance_authority_differs() {
+        let mut st = StateStore::new();
+        let scheduled = st
+            .set_gov_param(
+                98_160,
+                7_310,
+                "resolve_authority".into(),
+                "authority-a,authority-b".into(),
+            )
+            .expect("resolve_authority update should be scheduled");
+        assert!(matches!(scheduled, GovParamUpdateOutcome::Scheduled { .. }));
+        assert_eq!(
+            st.gov_param_string("resolve_authority"),
+            None,
+            "bootstrap authority should remain pending before timelock elapses"
+        );
+
+        st.restore_pending_resolve_approval(
+            9_319,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-c".into(),
+                second_approver: None,
+                authority_set: "authority-c,authority-d".into(),
+                task_version: 9,
+            }),
+        );
+        assert_eq!(st.pending_resolve_approval(9_319), None);
+        assert_eq!(st.pending_resolve_first_approver(9_319), None);
+
+        st.restore_pending_resolve_approval(
+            9_320,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                second_approver: None,
+                authority_set: "authority-a,authority-b".into(),
+                task_version: 9,
+            }),
+        );
+        assert_eq!(st.pending_resolve_approval(9_320), Some((true, 1)));
+        assert_eq!(
+            st.pending_resolve_first_approver(9_320).as_deref(),
+            Some("authority-a")
+        );
+    }
+
+    #[test]
+    fn resolve_approval_rejects_authority_set_drift_from_pending_governance_without_mutation() {
+        let mut st = StateStore::new();
+        let scheduled = st
+            .set_gov_param(
+                98_160,
+                7_310,
+                "resolve_authority".into(),
+                "authority-a,authority-b".into(),
+            )
+            .expect("resolve_authority update should be scheduled");
+        assert!(matches!(scheduled, GovParamUpdateOutcome::Scheduled { .. }));
+        assert_eq!(st.gov_param_string("resolve_authority"), None);
+
+        let err = st
+            .stage_or_confirm_resolve_approval(
+                8_321,
+                1,
+                true,
+                "authority-c",
+                "authority-c,authority-d",
+            )
+            .expect_err("pending governance authority drift must fail closed");
+        assert!(err.contains("must match pending governance authority"));
+        assert_eq!(st.pending_resolve_approval(8_321), None);
+        assert_eq!(st.pending_resolve_first_approver(8_321), None);
+
+        let first = st
+            .stage_or_confirm_resolve_approval(
+                8_322,
+                1,
+                true,
+                "authority-a",
+                "authority-a,authority-b",
+            )
+            .expect("pending governance authority match should stage approval");
+        assert!(!first);
+        assert_eq!(st.pending_resolve_approval(8_322), Some((true, 1)));
+        assert_eq!(
+            st.pending_resolve_first_approver(8_322).as_deref(),
+            Some("authority-a")
+        );
     }
 
     #[test]
