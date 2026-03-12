@@ -1350,6 +1350,23 @@ mod tests {
     #[test]
     fn build_proof_adapter_accepts_separator_aliases_for_receipt_modes() {
         for label in [
+            "FRAUD PROOF",
+            "FRAUD/PROOF",
+            "FRAUD:PROOF",
+            " FRAUD / PROOF ",
+            "FRAUD - PROOF",
+            "FRAUD PROOF V1",
+            "FRAUD/PROOF/V1",
+            "FRAUD:PROOF:V1",
+        ] {
+            let adapter = build_proof_adapter(label)
+                .unwrap_or_else(|_| panic!("fraud separator alias should parse: {label}"));
+            let (ok, code) = adapter.verify("hello", 8);
+            assert!(ok, "fraud separator alias should verify: {label}");
+            assert_eq!(code, "ok", "fraud alias code mismatch: {label}");
+        }
+
+        for label in [
             "TEE RECEIPT",
             "TEE/RECEIPT",
             "TEE:RECEIPT",
