@@ -368,6 +368,14 @@ def main():
         "refresh": sum(1 for _, action, _, _ in benchmark_actions if action == "refresh"),
         "keep": sum(1 for _, action, _, _ in benchmark_actions if action == "keep"),
     }
+    benchmark_blockers = [
+        f"{label}:{action}:{freshness}"
+        for label, action, freshness, _ in benchmark_actions
+        if action in {"produce", "refresh"}
+    ]
+    benchmark_ready_inputs = [
+        label for label, action, _, _ in benchmark_actions if action == "keep"
+    ]
     if benchmark_action_counts["produce"]:
         benchmark_decision = "INCOMPLETE"
         benchmark_decision_reason = "missing benchmark artifacts must be produced before benchmark closeout is reviewable"
@@ -384,6 +392,12 @@ def main():
     lines.append(
         "- benchmark_action_counts: "
         f"produce={benchmark_action_counts['produce']} refresh={benchmark_action_counts['refresh']} keep={benchmark_action_counts['keep']}"
+    )
+    lines.append(
+        f"- benchmark_blockers: {', '.join(benchmark_blockers) if benchmark_blockers else 'none'}"
+    )
+    lines.append(
+        f"- benchmark_ready_inputs: {', '.join(benchmark_ready_inputs) if benchmark_ready_inputs else 'none'}"
     )
 
     lines += ["", "## Block Metrics"]
