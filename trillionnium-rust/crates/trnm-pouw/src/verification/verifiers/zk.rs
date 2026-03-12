@@ -1,10 +1,10 @@
 use std::sync::Arc;
 
 use crate::verification::backend::{
-    normalize_backend_token, normalize_zk_system, parse_zk_proof_payload, resolve_zk_vk_ref,
-    BackendExecutionError, BackendVerificationRequest, VerificationBackendConfig,
-    VerificationBackendError, VerificationBackendFamily, VkRefRegistry, ZkBackendKind,
-    ZkBackendRegistry,
+    backend_token_zk_system_hints, normalize_backend_token, normalize_zk_system,
+    parse_zk_proof_payload, resolve_zk_vk_ref, BackendExecutionError,
+    BackendVerificationRequest, VerificationBackendConfig, VerificationBackendError,
+    VerificationBackendFamily, VkRefRegistry, ZkBackendKind, ZkBackendRegistry,
 };
 use crate::verification::{ProofVerifier, VerificationResult};
 use trnm_types::TaskObject;
@@ -206,11 +206,8 @@ impl ZkVerifier {
                         }
                         .into());
                     }
-                } else if let Some(payload_backend_token) = normalize_backend_token(payload_backend_id) {
-                    let hinted_systems = payload_backend_token
-                        .split_whitespace()
-                        .filter_map(normalize_zk_system)
-                        .collect::<Vec<_>>();
+                } else if normalize_backend_token(payload_backend_id).is_some() {
+                    let hinted_systems = backend_token_zk_system_hints(payload_backend_id);
 
                     if hinted_systems.len() > 1 {
                         return Err(BackendExecutionError::InvalidProof {
@@ -258,10 +255,20 @@ impl ZkVerifier {
                 }
             }
 
-            if let Some(selected_backend_system) = selected_backend
-                .system_hint()
-                .and_then(|system| normalize_zk_system(&system))
-            {
+            let selected_backend_hints = backend_token_zk_system_hints(selected_backend.key());
+            if selected_backend_hints.len() > 1 {
+                return Err(BackendExecutionError::InvalidProof {
+                    backend: "zk:payload".to_string(),
+                    reason: format!(
+                        "invalid zk payload: backend '{}' carries multiple zk_system hints and does not match vk_ref '{}'",
+                        selected_backend.key(),
+                        resolved.vk_ref
+                    ),
+                }
+                .into());
+            }
+
+            if let Some(selected_backend_system) = selected_backend_hints.into_iter().next() {
                 if selected_backend_system != resolved_system {
                     return Err(BackendExecutionError::InvalidProof {
                         backend: "zk:payload".to_string(),
@@ -694,7 +701,28 @@ mod tests {
             verifier.verify_proof(&task, payload),
             VerificationResult::Invalid(msg)
                 if msg.contains("backend_id 'groth16-plonk-demo'")
-                    && msg.contains("does not match vk_ref")
+                    && msg.contains("multiple zk_system hints")
+        ));
+    }
+
+    #[test]
+    fn zk_verifier_rejects_selected_backend_with_multiple_system_hints() {
+        let mut backends = ZkBackendRegistry::new();
+        backends.register(Arc::new(MockSystemSuccessBackend {
+            backend_id: "groth16 plonk demo",
+            expected_system: "groth16",
+        }));
+
+        let mut config = router_config();
+        config.zk_backend = ZkBackendKind::Custom("groth16-plonk-demo".into());
+        let verifier = ZkVerifier::from_config(&config, Arc::new(backends));
+        let task = mock_task();
+        let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["99","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#;
+        assert!(matches!(
+            verifier.verify_proof(&task, payload),
+            VerificationResult::Invalid(msg)
+                if msg.contains("backend 'groth16-plonk-demo'")
+                    && msg.contains("multiple zk_system hints")
         ));
     }
 

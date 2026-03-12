@@ -106,6 +106,18 @@ pub fn normalize_zk_system(raw: &str) -> Option<String> {
     }
 }
 
+pub fn backend_token_zk_system_hints(raw: &str) -> Vec<String> {
+    normalize_backend_token(raw)
+        .into_iter()
+        .flat_map(|token| {
+            token
+                .split_whitespace()
+                .filter_map(normalize_zk_system)
+                .collect::<Vec<_>>()
+        })
+        .collect()
+}
+
 /// Back-compat alias kept because current verification wiring and tests already
 /// speak in ZK-oriented terms, even though the platform registry now serves both
 /// TEE and ZK families.
@@ -910,6 +922,16 @@ mod tests {
         assert_eq!(normalize_backend_token(" NOOP "), None);
         assert_eq!(normalize_backend_token("noop!!!"), None);
         assert_eq!(normalize_backend_token("groth16-demo"), Some("groth16 demo".into()));
+    }
+
+    #[test]
+    fn backend_token_zk_system_hints_extracts_all_canonical_system_hints() {
+        assert_eq!(backend_token_zk_system_hints("groth16-demo"), vec!["groth16"]);
+        assert_eq!(
+            backend_token_zk_system_hints("groth16-plonk-demo"),
+            vec!["groth16", "plonk"]
+        );
+        assert!(backend_token_zk_system_hints("mock-zk").is_empty());
     }
 
     #[test]
