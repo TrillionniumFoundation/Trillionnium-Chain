@@ -5277,6 +5277,16 @@ mod tests {
         let wal_dir = temp_wal_dir("recover-uncheckpointed");
         fs::create_dir_all(&wal_dir).unwrap();
 
+        persist_consensus_wal(
+            &wal_dir,
+            &ConsensusWal {
+                next_height: 9,
+                last_round: 4,
+                locked_block_hash: Some("stale-lock".into()),
+            },
+        )
+        .unwrap();
+
         let e1 = WalMeta {
             height: 1,
             round: 0,
@@ -5295,6 +5305,12 @@ mod tests {
         assert!(!recovered.metadata_only_recovery);
         assert_eq!(recovered.wal_entries_retained, 0);
         assert!(load_wal_meta_entries(&wal_dir).unwrap().is_empty());
+
+        let wal = fs::read_to_string(wal_file(&wal_dir)).unwrap();
+        let wal: ConsensusWal = toml::from_str(&wal).unwrap();
+        assert_eq!(wal.next_height, 1);
+        assert_eq!(wal.last_round, 0);
+        assert!(wal.locked_block_hash.is_none());
 
         let _ = fs::remove_dir_all(&wal_dir);
     }
