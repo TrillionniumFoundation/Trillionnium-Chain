@@ -134,7 +134,7 @@ impl TeeVerifier {
         }
 
         if mentions_quote && mentions_report {
-            return if mentions_claims {
+            return if mentions_claims || mentions_payload {
                 "quote/report claims"
             } else {
                 "quote/report evidence"
@@ -142,7 +142,7 @@ impl TeeVerifier {
         }
 
         if mentions_quote {
-            return if mentions_claims {
+            return if mentions_claims || mentions_payload {
                 "quote claims"
             } else {
                 "quote evidence"
@@ -150,7 +150,7 @@ impl TeeVerifier {
         }
 
         if mentions_report {
-            return if mentions_claims {
+            return if mentions_claims || mentions_payload {
                 "report claims"
             } else {
                 "report evidence"
@@ -166,7 +166,11 @@ impl TeeVerifier {
         }
 
         if mentions_payload {
-            return "payload/claims";
+            return if mentions_attestation || mentions_receipt {
+                "evidence/claims"
+            } else {
+                "payload/claims"
+            };
         }
 
         if mentions_evidence || mentions_attestation || mentions_receipt {
@@ -536,6 +540,37 @@ mod tests {
         assert!(msg.contains("evidence/claims"), "message: {msg}");
         assert!(!msg.contains("payload/claims"), "message: {msg}");
         assert!(!msg.contains("quote/report claims"), "message: {msg}");
+        assert!(!msg.contains("legacy:"), "message: {msg}");
+    }
+
+    #[test]
+    fn tee_verifier_backend_internal_attestation_payload_without_claims_still_prefers_evidence_claims_surface() {
+        let result = TeeVerifier::classify_execution_err(BackendExecutionError::Internal {
+            backend: "tee:mock-tee-internal".to_string(),
+            reason: "TEE attestation payload verifier crashed".to_string(),
+        });
+
+        assert!(matches!(result, VerificationResult::Indeterminate(_)), "unexpected result: {result:?}");
+        let VerificationResult::Indeterminate(msg) = result else { unreachable!() };
+        assert!(msg.contains("backend_error:"), "message: {msg}");
+        assert!(msg.contains("evidence/claims"), "message: {msg}");
+        assert!(!msg.contains("payload/claims"), "message: {msg}");
+        assert!(!msg.contains("legacy:"), "message: {msg}");
+    }
+
+    #[test]
+    fn tee_verifier_backend_internal_quote_payload_prefers_quote_claims_surface_over_quote_evidence() {
+        let result = TeeVerifier::classify_execution_err(BackendExecutionError::Internal {
+            backend: "tee:mock-tee-internal".to_string(),
+            reason: "quote payload verifier crashed".to_string(),
+        });
+
+        assert!(matches!(result, VerificationResult::Indeterminate(_)), "unexpected result: {result:?}");
+        let VerificationResult::Indeterminate(msg) = result else { unreachable!() };
+        assert!(msg.contains("backend_error:"), "message: {msg}");
+        assert!(msg.contains("quote claims"), "message: {msg}");
+        assert!(!msg.contains("quote evidence"), "message: {msg}");
+        assert!(!msg.contains("payload/claims"), "message: {msg}");
         assert!(!msg.contains("legacy:"), "message: {msg}");
     }
 
