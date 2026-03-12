@@ -1003,6 +1003,10 @@ pub fn auto_adaptive_decision(txs: &[Tx]) -> AutoAdaptiveDecision {
                 }
             }
             prev_key = Some(k);
+        } else {
+            // Keyless txs should break streak continuity instead of allowing
+            // later keyed samples to look adjacent in the hotspot probe.
+            prev_key = None;
         }
     }
 
@@ -2590,6 +2594,33 @@ mod tests {
         assert!(!d.use_hot_bucket);
         assert_eq!(d.hot_key_share, 0.0);
         assert_eq!(d.streak_ratio, 0.0);
+        assert_eq!(d.expected_gain_score, 0.0);
+    }
+
+    #[test]
+    fn auto_adaptive_keyless_gaps_break_same_key_streaks_fail_closed() {
+        let _env = env_lock();
+        let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "64");
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.5");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.0");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.0");
+
+        // Keyless txs should break streak continuity instead of letting the
+        // detector count two same-key observations as adjacent when they are
+        // separated by empty-access traffic.
+        let mut txs = Vec::with_capacity(64);
+        for i in 0..32u64 {
+            txs.push(tx(100_000 + i * 2, vec![], vec![o(42)]));
+            txs.push(tx(100_001 + i * 2, vec![], vec![]));
+        }
+
+        let d = auto_adaptive_decision(&txs);
+        assert_eq!(d.sample_len, txs.len());
+        assert_eq!(d.hot_key_share, 0.0);
+        assert_eq!(d.streak_ratio, 0.0);
+        assert!(!d.use_hot_bucket);
+        assert_eq!(d.reason, "insufficient_sample");
         assert_eq!(d.expected_gain_score, 0.0);
     }
 
