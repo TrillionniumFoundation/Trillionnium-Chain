@@ -1985,6 +1985,18 @@ mod tests {
     }
 
     #[test]
+    fn aggressive_unsigned_env_knobs_fail_closed_on_negative_values() {
+        let _env = env_lock();
+        let _window = EnvGuard::set("TRNM_AGGR_SCAN_WINDOW", "-128");
+        let _seed = EnvGuard::set("TRNM_AGGR_SCAN_RR_SEED", "'-7'");
+        let _buckets = EnvGuard::set("TRNM_HOT_BUCKETS", "-32");
+
+        assert_eq!(aggr_scan_window(), 0);
+        assert_eq!(aggr_scan_round_robin_seed(), 0);
+        assert_eq!(hot_bucket_count(), 8);
+    }
+
+    #[test]
     fn aggressive_round_robin_toggle_parser_handles_trimmed_false_and_true_tokens() {
         let _env = env_lock();
 
