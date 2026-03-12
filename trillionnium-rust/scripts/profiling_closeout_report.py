@@ -1040,8 +1040,15 @@ def main():
     closeout_followup_labels = missing_inputs + stale_inputs + old_inputs
     if closeout_capture_status in {"mixed_capture_window", "divergent_capture_window"}:
         closeout_followup_labels = ["node_log", "classic_bench", "mixed_bench", "executor_profile"]
+    closeout_followup_command_chain = build_followup_command_chain(
+        closeout_followup_labels, recommended_producer
+    )
+    if closeout_followup_command_chain != "none":
+        closeout_followup_command_chain = (
+            f"{closeout_followup_command_chain} && python3 scripts/profiling_closeout_report.py"
+        )
     lines.append(
-        f"- closeout_followup_command_chain: {build_followup_command_chain(closeout_followup_labels, recommended_producer)}"
+        f"- closeout_followup_command_chain: {closeout_followup_command_chain}"
     )
 
     lines += ["", "## Autopilot Recommended Next Steps"]

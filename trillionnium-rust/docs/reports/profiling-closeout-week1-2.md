@@ -44,7 +44,7 @@ python3 scripts/profiling_closeout_report.py
 - 报告会同时给出：
   - `total_evidence_coverage`：完整 closeout 证据覆盖率（`node_log + classic_bench + mixed_bench + executor_profile`）
   - `benchmark_artifact_coverage`：仅 bench 侧产物覆盖率（不含 `node_log`）
-  - `Closeout Action Summary`：聚合完整 4/4 证据集，输出 `closeout_decision=INCOMPLETE|REFRESH_REQUIRED|REFRESH_RECOMMENDED|READY`、blockers 与 ready_inputs，便于 autopilot/curator 直接判断是否可进入 review
+  - `Closeout Action Summary`：聚合完整 4/4 证据集，输出 `closeout_decision=INCOMPLETE|REFRESH_REQUIRED|REFRESH_RECOMMENDED|READY`、blockers 与 ready_inputs，便于 autopilot/curator 直接判断是否可进入 review；当存在缺失/需刷新证据时，`closeout_followup_command_chain` 会把补采命令与最终 `python3 scripts/profiling_closeout_report.py` 重渲染串起来，避免只补产物却忘记刷新 markdown closeout
   - `closeout_capture_cohesion` / `closeout_capture_spread_seconds`：额外判断 `node_log`、`classic_bench`、`mixed_bench`、`executor_profile` 是否来自同一 capture window；当结果为 `mixed_capture_window` 或 `divergent_capture_window` 时，都会建议 refresh，避免把“单个文件都不旧但采集窗口不够紧”的 4/4 证据误判为可直接 closeout
   - `Artifact Capture Stamps`：现在会同时输出原始 `capture_stamp_family` / `capture_stamp` 与归一化后的 `capture_stamp_epoch`；对于 `bench-matrix-YYYYMMDD-HHMMSS.txt`、`executor-profile-summary-<epoch>.txt`，以及历史遗留的 `executor-profile-summary-YYYYMMDD-HHMMSS.txt` 这类不同命名族，会先归一化到同一秒级 epoch，再判断是否 `aligned_normalized`，避免因为文件名编码不同把同一次采样误判成 `mixed_family`
   - `Artifact Discovery`：列出 `classic_bench` / `mixed_bench` / `executor_profile`（以及 `node_log`）的候选文件数量、当前选中的 latest 文件、候选窗口的 newest/oldest 与 `spread_seconds`、整组候选的 `candidate_freshness_counts`，以及最近若干个候选产物，帮助 autopilot 判断 latest 选择是否稳定、候选池里新旧产物是否混杂、是否存在大量并行采样产物需要人工抽查
