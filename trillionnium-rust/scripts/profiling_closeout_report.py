@@ -624,15 +624,25 @@ def main():
         ("mixed_bench_candidates", mixed_candidates),
         ("executor_profile_candidates", executor_profile_candidates),
     ]
-    archive_candidate_counts = {
-        label: len(archive_candidates_for_pool(candidates))
+    archive_candidates_by_pool = {
+        label: archive_candidates_for_pool(candidates)
         for label, candidates in archive_pools
+    }
+    archive_candidate_counts = {
+        label: len(archive_candidates_by_pool[label])
+        for label, _ in archive_pools
     }
     archive_attention = [
         f"{label}:{archive_candidate_counts[label]}"
         for label, _ in archive_pools
         if archive_candidate_counts[label] > 0
     ]
+    archive_freshness_counts = {"stale": 0, "old": 0}
+    for archive_candidates in archive_candidates_by_pool.values():
+        for path in archive_candidates:
+            freshness = freshness_label(file_age_seconds(path))
+            if freshness in archive_freshness_counts:
+                archive_freshness_counts[freshness] += 1
 
     lines += ["", "## Benchmark Archive Candidates"]
     for label, candidates in archive_pools:
@@ -643,7 +653,25 @@ def main():
         f"- benchmark_archive_candidate_total: {sum(archive_candidate_counts.values())}"
     )
     lines.append(
+        "- benchmark_archive_freshness_counts: "
+        f"stale={archive_freshness_counts['stale']} old={archive_freshness_counts['old']}"
+    )
+    lines.append(
         f"- benchmark_archive_attention: {', '.join(archive_attention) if archive_attention else 'none'}"
+    )
+    lines.append(
+        "- benchmark_archive_hotspots: "
+        + (
+            "none"
+            if not archive_attention
+            else ", ".join(
+                sorted(
+                    archive_attention,
+                    key=lambda item: int(item.rsplit(":", 1)[1]),
+                    reverse=True,
+                )
+            )
+        )
     )
     lines.append(
         "- benchmark_archive_recommendation: "
