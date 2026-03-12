@@ -1124,8 +1124,16 @@ fn parse_tx_hash(text: &str) -> Option<String> {
         .chars()
         .map(|ch| if is_receipt_quote_wrapper(ch) { '"' } else { ch })
         .collect::<String>();
+    let normalized_delimiters = normalized_key_quotes
+        .chars()
+        .map(|ch| match ch {
+            '：' => ':',
+            '＝' => '=',
+            other => other,
+        })
+        .collect::<String>();
 
-    for haystack in [text, normalized_key_quotes.as_str()] {
+    for haystack in [text, normalized_key_quotes.as_str(), normalized_delimiters.as_str()] {
         for prefix in PREFIXES {
             let mut remainder = haystack;
             while let Some(idx) = remainder.find(prefix) {
@@ -2298,6 +2306,21 @@ mod tests {
         let colon = parse_tx_hash("[adapter] commit accepted tx-hash:0xDEADBEEF")
             .expect("colon-delimited receipt hash should parse");
         assert_eq!(colon, "deadbeef");
+    }
+
+    #[test]
+    fn parse_tx_hash_accepts_fullwidth_delimiter_receipts() {
+        let shell_equals = parse_tx_hash("[adapter] commit accepted tx_hash＝0xDEADBEEF")
+            .expect("fullwidth equals shell receipt hash should parse");
+        assert_eq!(shell_equals, "deadbeef");
+
+        let shell_colon = parse_tx_hash("[adapter] commit accepted tx-hash：0xFACECAFE")
+            .expect("fullwidth colon shell receipt hash should parse");
+        assert_eq!(shell_colon, "facecafe");
+
+        let json = parse_tx_hash("adapter stdout: {\"transaction_hash\"： \"0xBADDCAFE\"}")
+            .expect("fullwidth colon json receipt hash should parse");
+        assert_eq!(json, "baddcafe");
     }
 
     #[test]
