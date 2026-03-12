@@ -188,6 +188,37 @@ fn restore_gov_param_none_rewinds_state_root_after_removing_applied_param_and_in
 }
 
 #[test]
+fn applied_gov_param_string_field_boundaries_should_affect_state_root() {
+    let mut state_a = StateStore::new();
+    let mut state_b = StateStore::new();
+
+    state_a.restore_gov_param(
+        113,
+        Some(GovParamObject {
+            key_id: 113,
+            key: "ab".into(),
+            value: "c".into(),
+            version: 1,
+        }),
+    );
+    state_b.restore_gov_param(
+        113,
+        Some(GovParamObject {
+            key_id: 113,
+            key: "a".into(),
+            value: "bc".into(),
+            version: 1,
+        }),
+    );
+
+    assert_ne!(
+        state_a.state_root(),
+        state_b.state_root(),
+        "state_root should length-frame applied governance param key and value so field-boundary collisions cannot hash identically"
+    );
+}
+
+#[test]
 fn task_metadata_string_field_boundaries_should_affect_state_root() {
     let mut st1 = StateStore::new();
     let mut st2 = StateStore::new();
