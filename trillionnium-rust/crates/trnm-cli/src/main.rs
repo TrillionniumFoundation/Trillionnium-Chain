@@ -779,14 +779,18 @@ where
         if is_terminal_tx_status(&resp.status) {
             return Ok(resp);
         }
-        if started.elapsed() >= timeout {
+
+        let elapsed = started.elapsed();
+        if elapsed >= timeout {
             bail!(
                 "tx wait timeout after {}s (last_status={})",
                 timeout.as_secs(),
                 resp.status
             );
         }
-        thread::sleep(interval);
+
+        let remaining = timeout.saturating_sub(elapsed);
+        thread::sleep(interval.min(remaining));
     }
 }
 
@@ -1674,6 +1678,33 @@ mod tests {
         assert!(
             msg.contains("tx wait timeout"),
             "expected timeout error, got: {msg}"
+        );
+    }
+
+    #[test]
+    fn wait_for_tx_does_not_oversleep_past_remaining_timeout_window() {
+        let started = Instant::now();
+        let result = wait_for_tx(
+            "0xaaa",
+            Duration::from_millis(20),
+            Duration::from_millis(50),
+            |_| {
+                Ok(TxQueryResponse {
+                    tx_hash: "0xaaa".to_string(),
+                    status: "pending".to_string(),
+                    error: None,
+                })
+            },
+        );
+        let elapsed = started.elapsed();
+        let msg = result.unwrap_err().to_string();
+        assert!(
+            msg.contains("tx wait timeout"),
+            "expected timeout error, got: {msg}"
+        );
+        assert!(
+            elapsed < Duration::from_millis(45),
+            "tx wait should cap sleep to the remaining timeout window; elapsed={elapsed:?}"
         );
     }
 
