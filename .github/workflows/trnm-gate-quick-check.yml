@@ -171,6 +171,18 @@ jobs:
         run: |
           ./scripts/v2/workflow_script_refs_total_count_summary_guard_test.sh
 
+      - name: Workflow script refs workflow-file-count summary guard regression
+        run: |
+          ./scripts/v2/workflow_script_refs_workflow_file_count_summary_guard_test.sh
+
+      - name: Workflow script refs workflow-root log guard regression
+        run: |
+          ./scripts/v2/workflow_script_refs_workflow_root_log_guard_test.sh
+
+      - name: Workflow script refs summary JSON escape guard regression
+        run: |
+          ./scripts/v2/workflow_script_refs_summary_json_escape_guard_test.sh
+
       - name: Quick gate summary path guard regression
         run: |
           ./scripts/v2/quick_gate_summary_path_guard_test.sh
