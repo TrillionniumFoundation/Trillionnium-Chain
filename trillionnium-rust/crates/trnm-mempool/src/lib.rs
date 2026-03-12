@@ -933,6 +933,22 @@ mod tests {
     }
 
     #[test]
+    fn zero_total_capacity_preserves_duplicate_semantics_for_restored_seen_ids() {
+        let mut g = LaneAdmissionGate::new(0, 0);
+
+        // Simulate restored-state backlog metadata while ingress remains hard-stopped.
+        g.seen_global.insert(41);
+        g.normal.seen.insert(41);
+        g.critical.seen.insert(42);
+
+        assert_eq!(g.admit(41, IngressClass::Normal), AdmitOutcome::Duplicate);
+        assert_eq!(g.admit(41, IngressClass::Critical), AdmitOutcome::Duplicate);
+        assert_eq!(g.admit(42, IngressClass::Normal), AdmitOutcome::Duplicate);
+        assert_eq!(g.admit(99, IngressClass::Critical), AdmitOutcome::Backpressured);
+        assert_eq!(g.pop_ready(), None);
+    }
+
+    #[test]
     fn duplicate_stays_duplicate_when_lane_is_globally_full() {
         let mut g = LaneAdmissionGate::new(1, 1);
 
