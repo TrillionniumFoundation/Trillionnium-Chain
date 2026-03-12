@@ -405,6 +405,10 @@ impl StateStore {
         approver: &str,
         authority_set: &str,
     ) -> Result<bool, String> {
+        if task_version == 0 {
+            return Err("resolve approval task version must be >= 1".into());
+        }
+
         let approver_trimmed = approver.trim();
         if approver_trimmed.is_empty() {
             return Err("resolve approval approver must be non-empty".into());
@@ -577,6 +581,9 @@ impl StateStore {
 
     fn is_valid_pending_resolve_snapshot(snapshot: &PendingResolveApprovalSnapshot) -> bool {
         if !(1..=2).contains(&snapshot.confirmations) {
+            return false;
+        }
+        if snapshot.task_version == 0 {
             return false;
         }
 

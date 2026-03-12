@@ -947,6 +947,55 @@ fn paused_state_rejects_case_variant_emergency_pause_placeholder_member_without_
 }
 
 #[test]
+fn paused_state_restore_pending_resolve_snapshot_scrubs_zero_task_version_boundary() {
+    // M1 micro-hardening: paused rollback/restore must reject versionless pending resolve
+    // snapshots so governance/resolve flow cannot revive an unversioned approval quorum.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 10_020);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 1_002);
+    st.set_balance(WORKER_SLASH_TREASURY_ACCOUNT, 502);
+
+    st.set_gov_param(98_216, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+    let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+    let worker_slash_before = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
+
+    let err = st
+        .stage_or_confirm_resolve_approval(9_926, 0, true, "authority-a", "authority-a,authority-b")
+        .expect_err("paused live resolve approval must reject zero task version");
+    assert!(err.contains("task version"), "unexpected error: {err}");
+    assert_eq!(st.pending_resolve_approval(9_926), None);
+    assert_eq!(st.pending_resolve_first_approver(9_926), None);
+
+    st.restore_pending_resolve_approval(
+        9_927,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "authority-a".into(),
+            authority_set: "authority-a,authority-b".into(),
+            task_version: 0,
+        }),
+    );
+
+    assert_eq!(
+        st.pending_resolve_approval(9_927),
+        None,
+        "paused restore must scrub zero-version pending resolve snapshot"
+    );
+    assert_eq!(st.pending_resolve_first_approver(9_927), None);
+    assert_eq!(st.pending_resolve_approval_snapshot(9_927), None);
+    assert_eq!(st.pending_gov_update("resolve_authority"), None);
+    assert!(st.is_emergency_paused());
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+    assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), forfeits_before);
+    assert_eq!(st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT), worker_slash_before);
+}
+
+#[test]
 fn paused_state_restore_pending_resolve_snapshot_scrubs_case_variant_placeholder_member() {
     // M1 micro-hardening: rollback/restore must scrub malformed pending resolve snapshots even
     // while paused, so control-plane placeholder aliases cannot be revived into paused quorum.
