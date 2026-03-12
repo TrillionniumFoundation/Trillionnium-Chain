@@ -2272,7 +2272,7 @@ fn parse_query_events_limit_from_path(path: &str) -> std::result::Result<usize, 
         return Ok(QUERY_EVENTS_LIMIT_DEFAULT);
     };
 
-    if query.contains('?') || query.contains('#') {
+    if query.is_empty() || query.contains('?') || query.contains('#') {
         return Err(http_json_response(
             "400 Bad Request",
             "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}",
@@ -3842,6 +3842,14 @@ mod tests {
     fn parse_query_events_limit_from_path_rejects_missing_limit_value() {
         let err = parse_query_events_limit_from_path("/query-events/42?limit")
             .expect_err("missing limit value must fail closed");
+        assert!(err.contains("400 Bad Request"));
+        assert!(err.contains("invalid limit"));
+    }
+
+    #[test]
+    fn parse_query_events_limit_from_path_rejects_empty_query_suffix() {
+        let err = parse_query_events_limit_from_path("/query-events/42?")
+            .expect_err("empty query suffix must fail closed");
         assert!(err.contains("400 Bad Request"));
         assert!(err.contains("invalid limit"));
     }
