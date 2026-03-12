@@ -142,9 +142,17 @@ jobs:
         run: |
           ./scripts/v2/workflow_script_refs_summary_path_guard_test.sh
 
+      - name: Workflow script refs umask guard regression
+        run: |
+          ./scripts/v2/workflow_script_refs_umask_env_guard_test.sh
+
       - name: Quick gate summary path guard regression
         run: |
           ./scripts/v2/quick_gate_summary_path_guard_test.sh
+
+      - name: Quick gate umask guard regression
+        run: |
+          ./scripts/v2/quick_gate_umask_env_guard_test.sh
 
       - name: Nightly health deterministic env guard regression
         run: |

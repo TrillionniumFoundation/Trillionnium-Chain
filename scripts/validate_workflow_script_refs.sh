@@ -20,6 +20,10 @@ export LC_ADDRESS="${LC_ADDRESS:-C}"
 export LC_NAME="${LC_NAME:-C}"
 export LC_TELEPHONE="${LC_TELEPHONE:-C}"
 
+# Mirror CI's deterministic file-mode contract so local summaries/artifacts do
+# not drift from workflow runs when scripts create files/directories.
+umask "${UMASK:-022}"
+
 WORKFLOW_ROOT="${WORKFLOW_ROOT:-.github/workflows}"
 SUMMARY_PATH="${WORKFLOW_SCRIPT_REF_SUMMARY_PATH:-}"
 STRICT_MODE="${WORKFLOW_SCRIPT_REF_STRICT:-0}"
