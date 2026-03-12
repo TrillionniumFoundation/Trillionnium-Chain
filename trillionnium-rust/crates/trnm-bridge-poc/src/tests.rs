@@ -36,3 +36,21 @@ fn settlement_request_collapses_ogham_space_mark_in_revert_reason() {
         BridgeStatus::Reverted("target relay timeout".to_string())
     );
 }
+
+#[test]
+fn settlement_request_rejects_non_canonical_subject_with_word_joiner() {
+    let mut request = SettlementRequest::new(7, "0xabcdef".to_string());
+    let token = CapabilityToken {
+        subject: "did:trn:settlement\u{2060}-operator".to_string(),
+        capabilities: vec![SettlementCapability::Revert],
+    };
+
+    let err = request.revert_authorized(&token, "target relay timeout".to_string());
+    assert_eq!(
+        err,
+        Err(SettlementError::MalformedToken {
+            reason: "non-canonical subject",
+        })
+    );
+    assert_eq!(request.status, BridgeStatus::Pending);
+}
