@@ -5,7 +5,10 @@ import math
 import os
 import re
 import statistics
+import sys
 from datetime import datetime
+
+sys.dont_write_bytecode = True
 
 KV = re.compile(r"([a-zA-Z0-9_\.]+)=([^\s]+)")
 
@@ -115,6 +118,25 @@ def autopilot_severity(missing_inputs, stale_inputs, old_inputs) -> str:
     if stale_inputs:
         return "YELLOW"
     return "GREEN"
+
+
+def closeout_decision(missing_inputs, stale_inputs, old_inputs) -> tuple[str, str]:
+    if missing_inputs:
+        return (
+            "INCOMPLETE",
+            "missing evidence inputs must be produced before closeout is reviewable",
+        )
+    if old_inputs:
+        return (
+            "REFRESH_REQUIRED",
+            "at least one evidence input is old and should not be treated as current",
+        )
+    if stale_inputs:
+        return (
+            "REFRESH_RECOMMENDED",
+            "all evidence inputs exist, but at least one is stale",
+        )
+    return ("READY", "all expected closeout inputs are present and fresh enough for review")
 
 
 def main():
@@ -338,6 +360,21 @@ def main():
         verdict_reason = f"stale inputs: {', '.join(stale_inputs)}"
     lines.append(f"- curator_verdict: {verdict}")
     lines.append(f"- curator_reason: {verdict_reason}")
+
+    closeout_status, closeout_reason = closeout_decision(missing_inputs, stale_inputs, old_inputs)
+    lines += ["", "## Closeout Action Summary"]
+    lines.append(f"- closeout_decision: {closeout_status}")
+    lines.append(f"- closeout_decision_reason: {closeout_reason}")
+    lines.append(
+        "- closeout_action_counts: "
+        f"missing={len(missing_inputs)} stale={len(stale_inputs)} old={len(old_inputs)} ready={len(present_inputs) - len(stale_inputs) - len(old_inputs)}"
+    )
+    lines.append(
+        f"- closeout_blockers: {', '.join(missing_inputs + stale_inputs + old_inputs) if (missing_inputs or stale_inputs or old_inputs) else 'none'}"
+    )
+    lines.append(
+        f"- closeout_ready_inputs: {', '.join(sorted(set(present_inputs) - set(stale_inputs) - set(old_inputs))) if present_inputs else 'none'}"
+    )
 
     lines += ["", "## Autopilot Recommended Next Steps"]
     if missing_inputs:
