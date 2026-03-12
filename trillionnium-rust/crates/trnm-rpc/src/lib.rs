@@ -52,6 +52,14 @@ pub struct OracleValidateSnapshotResponse {
 }
 
 impl OracleValidateSnapshotResponse {
+    pub fn classified_reject_total(&self) -> u32 {
+        self.metrics.classified_reject_total()
+    }
+
+    pub fn classified_outcome_total(&self) -> u32 {
+        self.metrics.classified_outcome_total()
+    }
+
     pub fn classified_outcome_conserves_sample_count(&self) -> bool {
         self.metrics.classified_outcome_conserves_sample_count()
     }
@@ -526,7 +534,12 @@ mod tests {
         let ok_out: OracleValidateSnapshotResponse = ok_report.into();
         let stale_out: OracleValidateSnapshotResponse = stale_report.into();
 
+        assert_eq!(ok_out.classified_reject_total(), 0);
+        assert_eq!(ok_out.classified_outcome_total(), 1);
         assert!(ok_out.classified_outcome_conserves_sample_count());
+
+        assert_eq!(stale_out.classified_reject_total(), 1);
+        assert_eq!(stale_out.classified_outcome_total(), 1);
         assert!(stale_out.classified_outcome_conserves_sample_count());
     }
 
