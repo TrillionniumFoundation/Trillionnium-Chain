@@ -85,7 +85,18 @@ fn last_balanced_json_object(input: &str) -> Option<String> {
 fn collapse_adapter_delimiters(raw: &str) -> String {
     raw.chars()
         .filter_map(|ch| match ch {
-            '\u{200b}' | '\u{200c}' | '\u{200d}' | '\u{2060}' | '\u{2063}' | '\u{feff}' => None,
+            '\u{061c}'
+            | '\u{200b}'
+            | '\u{200c}'
+            | '\u{200d}'
+            | '\u{200e}'
+            | '\u{200f}'
+            | '\u{2060}'
+            | '\u{2061}'
+            | '\u{2062}'
+            | '\u{2063}'
+            | '\u{2064}'
+            | '\u{feff}' => None,
             '‐' | '‑' | '‒' | '–' | '—' | '―' | '−' | '－' => Some('-'),
             other => Some(other),
         })
@@ -418,6 +429,26 @@ mod tests {
             Some("pr-2ea")
         );
 
+        let tee_with_invisible_times = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-2eb\",\"adapter\":\"TEE\u{2062}_RECEIPT\"}",
+            )
+            .expect("tee receipt label with invisible times should parse");
+        assert_eq!(
+            tee_with_invisible_times.provider_request_id.as_deref(),
+            Some("pr-2eb")
+        );
+
+        let tee_with_rtl_mark = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-2ec\",\"adapter\":\"TEE\u{200F}_RECEIPT\"}",
+            )
+            .expect("tee receipt label with rtl mark should parse");
+        assert_eq!(
+            tee_with_rtl_mark.provider_request_id.as_deref(),
+            Some("pr-2ec")
+        );
+
         let tee_with_embedded_bom = adapter
             .parse_response(
                 "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-2f\",\"adapter\":\"TEE\u{feff}_RECEIPT\"}",
@@ -585,6 +616,26 @@ mod tests {
         assert_eq!(
             zk_with_word_joiner.provider_request_id.as_deref(),
             Some("pr-zk-2ea")
+        );
+
+        let zk_with_invisible_plus = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-zk-2eb\",\"adapter\":\"ZK\u{2064}_RECEIPT\"}",
+            )
+            .expect("zk receipt label with invisible plus should parse");
+        assert_eq!(
+            zk_with_invisible_plus.provider_request_id.as_deref(),
+            Some("pr-zk-2eb")
+        );
+
+        let zk_with_arabic_letter_mark = adapter
+            .parse_response(
+                "{\"output_text\":\"ok\",\"provider_request_id\":\"pr-zk-2ec\",\"adapter\":\"ZK\u{061C}_RECEIPT\"}",
+            )
+            .expect("zk receipt label with arabic letter mark should parse");
+        assert_eq!(
+            zk_with_arabic_letter_mark.provider_request_id.as_deref(),
+            Some("pr-zk-2ec")
         );
 
         let zk_with_embedded_bom = adapter
@@ -788,6 +839,18 @@ mod tests {
         assert!(ok);
         assert_eq!(code, "tee_receipt_ok");
 
+        let adapter = build_proof_adapter("TEE\u{2062}_RECEIPT")
+            .expect("tee alias should strip invisible times");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "tee_receipt_ok");
+
+        let adapter = build_proof_adapter("TEE\u{200F}_RECEIPT")
+            .expect("tee alias should strip rtl mark");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "tee_receipt_ok");
+
         let adapter = build_proof_adapter("TEE\u{feff}_RECEIPT").expect("tee embedded bom alias");
         let (ok, code) = adapter.verify("hello", 8);
         assert!(ok);
@@ -815,6 +878,18 @@ mod tests {
 
         let adapter = build_proof_adapter("ZK\u{200d}_RECEIPT")
             .expect("zk alias should strip zero-width joiner");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "zk_receipt_ok");
+
+        let adapter = build_proof_adapter("ZK\u{2064}_RECEIPT")
+            .expect("zk alias should strip invisible plus");
+        let (ok, code) = adapter.verify("hello", 8);
+        assert!(ok);
+        assert_eq!(code, "zk_receipt_ok");
+
+        let adapter = build_proof_adapter("ZK\u{061C}_RECEIPT")
+            .expect("zk alias should strip arabic letter mark");
         let (ok, code) = adapter.verify("hello", 8);
         assert!(ok);
         assert_eq!(code, "zk_receipt_ok");
