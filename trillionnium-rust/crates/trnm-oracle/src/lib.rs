@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
+use std::collections::BTreeSet;
 use thiserror::Error;
 
 const MAX_DEVIATION_BPS_CAP: u32 = 10_000;
@@ -259,6 +260,15 @@ impl OracleValidationMetrics {
     }
 }
 
+fn canonical_source_cardinality(snapshot: &OracleSnapshot) -> u32 {
+    snapshot
+        .sources
+        .iter()
+        .map(|source| source.as_str())
+        .collect::<BTreeSet<_>>()
+        .len() as u32
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct OracleValidationReport {
     pub ok: bool,
@@ -316,7 +326,7 @@ pub fn validate_snapshot_observed(
             oracle_stale_reject_total: observation.stale_reject_total,
             oracle_quorum_reject_total: observation.quorum_reject_total,
             oracle_drift_reject_total: observation.drift_reject_total,
-            oracle_source_cardinality: snapshot.sources.len() as u32,
+            oracle_source_cardinality: canonical_source_cardinality(snapshot),
             accepted_total: observation.accepted_total,
             sample_count: 1,
         },
@@ -712,9 +722,21 @@ mod tests {
     #[test]
     fn observed_report_preserves_single_snapshot_counter_conservation_for_classified_outcomes() {
         let reports = vec![
-            validate_snapshot_observed(&policy(), &snapshot_with(100_000, Some(100_100), 10_000), 10_100),
-            validate_snapshot_observed(&policy(), &snapshot_with(100_000, Some(100_100), 10_000), 16_000),
-            validate_snapshot_observed(&policy(), &snapshot_with(120_000, Some(100_000), 10_000), 10_100),
+            validate_snapshot_observed(
+                &policy(),
+                &snapshot_with(100_000, Some(100_100), 10_000),
+                10_100,
+            ),
+            validate_snapshot_observed(
+                &policy(),
+                &snapshot_with(100_000, Some(100_100), 10_000),
+                16_000,
+            ),
+            validate_snapshot_observed(
+                &policy(),
+                &snapshot_with(120_000, Some(100_000), 10_000),
+                10_100,
+            ),
             validate_snapshot_observed(
                 &policy(),
                 &OracleSnapshot::new(
@@ -741,8 +763,7 @@ mod tests {
                 report.metrics.sample_count
             );
             assert_eq!(
-                report.observation.accepted_total,
-                report.metrics.accepted_total,
+                report.observation.accepted_total, report.metrics.accepted_total,
                 "observation/metrics accepted_total drifted for error {:?}",
                 report.error
             );
@@ -773,5 +794,31 @@ mod tests {
         assert_eq!(report.metrics.classified_outcome_total(), 0);
         assert!(!report.classified_outcome_conserves_sample_count());
         assert_eq!(report.metrics.sample_count, 1);
+    }
+
+    #[test]
+    fn observed_report_uses_canonical_source_cardinality_for_deserialized_duplicates() {
+        let snapshot: OracleSnapshot = serde_json::from_value(serde_json::json!({
+            "feed_id": "btc/usd",
+            "value": 100000,
+            "sources": ["coingecko", "chainlink", "coingecko"],
+            "sample_count": 3,
+            "median": 100000,
+            "mad": 120,
+            "window_start_ms": 1000,
+            "window_end_ms": 2000,
+            "snapshot_ts_ms": 10000,
+            "snapshot_hash": "broken"
+        }))
+        .expect("snapshot deserialize");
+
+        let report = validate_snapshot_observed(&policy(), &snapshot, 10_100);
+
+        assert!(!report.ok);
+        assert!(matches!(
+            report.error.as_deref(),
+            Some(error) if error.starts_with("snapshot hash mismatch:")
+        ));
+        assert_eq!(report.metrics.oracle_source_cardinality, 2);
     }
 }

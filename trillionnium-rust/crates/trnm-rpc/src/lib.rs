@@ -552,7 +552,8 @@ mod tests {
     }
 
     #[test]
-    fn oracle_validation_report_into_rpc_response_keeps_single_snapshot_cardinality_on_unclassified_error() {
+    fn oracle_validation_report_into_rpc_response_keeps_single_snapshot_cardinality_on_unclassified_error(
+    ) {
         let report = OracleValidationReport {
             ok: false,
             now_ts_ms: 791,
@@ -575,7 +576,10 @@ mod tests {
 
         let out: OracleValidateSnapshotResponse = report.into();
         let v = serde_json::to_value(out).unwrap();
-        assert_eq!(v["error"], "invalid policy: max_deviation_bps must be <= 10000");
+        assert_eq!(
+            v["error"],
+            "invalid policy: max_deviation_bps must be <= 10000"
+        );
         assert_eq!(v["metrics"]["accepted_total"], 0);
         assert_eq!(v["metrics"]["oracle_source_cardinality"], 3);
         assert_eq!(v["metrics"]["sample_count"], 1);
@@ -735,5 +739,33 @@ mod tests {
             query_account_state(&accounts, &long).unwrap_err().code(),
             "INVALID_ADDRESS"
         );
+    }
+
+    #[test]
+    fn oracle_validation_response_preserves_canonical_source_cardinality_value() {
+        let report = OracleValidationReport {
+            ok: false,
+            now_ts_ms: 791,
+            observation: OracleValidationObservation {
+                stale_reject_total: 0,
+                quorum_reject_total: 1,
+                drift_reject_total: 0,
+                accepted_total: 0,
+            },
+            metrics: OracleValidationMetrics {
+                oracle_stale_reject_total: 0,
+                oracle_quorum_reject_total: 1,
+                oracle_drift_reject_total: 0,
+                oracle_source_cardinality: 2,
+                accepted_total: 0,
+                sample_count: 1,
+            },
+            error: Some("quorum".into()),
+        };
+
+        let out: OracleValidateSnapshotResponse = report.into();
+        assert_eq!(out.metrics.oracle_source_cardinality, 2);
+        let v = serde_json::to_value(out).unwrap();
+        assert_eq!(v["metrics"]["oracle_source_cardinality"], 2);
     }
 }
