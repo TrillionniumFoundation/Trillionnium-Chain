@@ -913,11 +913,106 @@ impl VerifierHttpClientSessionWireRequestBuilder for DirectVerifierHttpClientSes
 }
 
 #[allow(dead_code)]
-struct FailClosedVerifierHttpClientSessionWireExecutor;
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct VerifierHttpClientSessionCallRequest {
+    method: HttpMethod,
+    url: String,
+    headers: BTreeMap<String, String>,
+    body: Vec<u8>,
+    timeout_ms: u64,
+    profile: String,
+    transport_mode: VerifierTransportMode,
+}
 
-impl VerifierHttpClientSessionWireExecutor for FailClosedVerifierHttpClientSessionWireExecutor {
-    fn execute_wire(
+#[allow(dead_code)]
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct VerifierHttpClientSessionCallResponse {
+    status_code: u16,
+    headers: BTreeMap<String, String>,
+    body: Vec<u8>,
+}
+
+#[allow(dead_code)]
+trait VerifierHttpClientSessionCallBuilder: Send + Sync {
+    fn build_call(
         &self,
+        wire_request: &VerifierHttpClientSessionWireRequest,
+        session_request: &VerifierHttpClientSessionRequest,
+        session_config: &ResolvedVerifierHttpClientSessionConfig,
+        runtime_request: &VerifierHttpClientRuntimeRequest,
+        config: &ResolvedVerifierHttpClientConfig,
+        client_request: &VerifierHttpClientRequest,
+        http_request: &HttpVerifierRequest,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<VerifierHttpClientSessionCallRequest, BackendExecutionError>;
+}
+
+#[allow(dead_code)]
+trait VerifierHttpClientSessionCallExecutor: Send + Sync {
+    fn execute_call(
+        &self,
+        call_request: &VerifierHttpClientSessionCallRequest,
+        wire_request: &VerifierHttpClientSessionWireRequest,
+        session_request: &VerifierHttpClientSessionRequest,
+        session_config: &ResolvedVerifierHttpClientSessionConfig,
+        runtime_request: &VerifierHttpClientRuntimeRequest,
+        config: &ResolvedVerifierHttpClientConfig,
+        client_request: &VerifierHttpClientRequest,
+        http_request: &HttpVerifierRequest,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<VerifierHttpClientSessionCallResponse, BackendExecutionError>;
+}
+
+#[allow(dead_code)]
+trait VerifierHttpClientSessionCallResponseParser: Send + Sync {
+    fn parse_call_response(
+        &self,
+        call_response: VerifierHttpClientSessionCallResponse,
+        wire_request: &VerifierHttpClientSessionWireRequest,
+        session_request: &VerifierHttpClientSessionRequest,
+        session_config: &ResolvedVerifierHttpClientSessionConfig,
+        runtime_request: &VerifierHttpClientRuntimeRequest,
+        config: &ResolvedVerifierHttpClientConfig,
+        client_request: &VerifierHttpClientRequest,
+        http_request: &HttpVerifierRequest,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<VerifierHttpClientSessionWireResponse, BackendExecutionError>;
+}
+
+#[allow(dead_code)]
+struct DirectVerifierHttpClientSessionCallBuilder;
+
+impl VerifierHttpClientSessionCallBuilder for DirectVerifierHttpClientSessionCallBuilder {
+    fn build_call(
+        &self,
+        wire_request: &VerifierHttpClientSessionWireRequest,
+        _session_request: &VerifierHttpClientSessionRequest,
+        _session_config: &ResolvedVerifierHttpClientSessionConfig,
+        _runtime_request: &VerifierHttpClientRuntimeRequest,
+        _config: &ResolvedVerifierHttpClientConfig,
+        _client_request: &VerifierHttpClientRequest,
+        _http_request: &HttpVerifierRequest,
+        _request: &BackendVerificationRequest<'_>,
+    ) -> Result<VerifierHttpClientSessionCallRequest, BackendExecutionError> {
+        Ok(VerifierHttpClientSessionCallRequest {
+            method: wire_request.method,
+            url: wire_request.url.clone(),
+            headers: wire_request.headers.clone(),
+            body: wire_request.body.clone(),
+            timeout_ms: wire_request.timeout_ms,
+            profile: wire_request.profile.clone(),
+            transport_mode: wire_request.transport_mode.clone(),
+        })
+    }
+}
+
+#[allow(dead_code)]
+struct FailClosedVerifierHttpClientSessionCallExecutor;
+
+impl VerifierHttpClientSessionCallExecutor for FailClosedVerifierHttpClientSessionCallExecutor {
+    fn execute_call(
+        &self,
+        _call_request: &VerifierHttpClientSessionCallRequest,
         _wire_request: &VerifierHttpClientSessionWireRequest,
         _session_request: &VerifierHttpClientSessionRequest,
         _session_config: &ResolvedVerifierHttpClientSessionConfig,
@@ -926,14 +1021,116 @@ impl VerifierHttpClientSessionWireExecutor for FailClosedVerifierHttpClientSessi
         _client_request: &VerifierHttpClientRequest,
         http_request: &HttpVerifierRequest,
         request: &BackendVerificationRequest<'_>,
-    ) -> Result<VerifierHttpClientSessionWireResponse, BackendExecutionError> {
+    ) -> Result<VerifierHttpClientSessionCallResponse, BackendExecutionError> {
         Err(BackendExecutionError::Unavailable {
             backend: request.backend_label(RealTeeBackend::backend_id_static()),
             reason: format!(
-                "real http client session wire executor for profile '{}' is not wired",
+                "real http client session call executor for profile '{}' is not wired",
                 http_request.profile
             ),
         })
+    }
+}
+
+#[allow(dead_code)]
+struct PassthroughVerifierHttpClientSessionCallResponseParser;
+
+impl VerifierHttpClientSessionCallResponseParser for PassthroughVerifierHttpClientSessionCallResponseParser {
+    fn parse_call_response(
+        &self,
+        call_response: VerifierHttpClientSessionCallResponse,
+        _wire_request: &VerifierHttpClientSessionWireRequest,
+        _session_request: &VerifierHttpClientSessionRequest,
+        _session_config: &ResolvedVerifierHttpClientSessionConfig,
+        _runtime_request: &VerifierHttpClientRuntimeRequest,
+        _config: &ResolvedVerifierHttpClientConfig,
+        _client_request: &VerifierHttpClientRequest,
+        _http_request: &HttpVerifierRequest,
+        _request: &BackendVerificationRequest<'_>,
+    ) -> Result<VerifierHttpClientSessionWireResponse, BackendExecutionError> {
+        Ok(VerifierHttpClientSessionWireResponse {
+            status_code: call_response.status_code,
+            headers: call_response.headers,
+            body: call_response.body,
+        })
+    }
+}
+
+#[allow(dead_code)]
+struct CallBackedVerifierHttpClientSessionWireExecutor {
+    call_builder: Arc<dyn VerifierHttpClientSessionCallBuilder>,
+    call_executor: Arc<dyn VerifierHttpClientSessionCallExecutor>,
+    response_parser: Arc<dyn VerifierHttpClientSessionCallResponseParser>,
+}
+
+#[allow(dead_code)]
+impl CallBackedVerifierHttpClientSessionWireExecutor {
+    fn new() -> Self {
+        Self {
+            call_builder: Arc::new(DirectVerifierHttpClientSessionCallBuilder),
+            call_executor: Arc::new(FailClosedVerifierHttpClientSessionCallExecutor),
+            response_parser: Arc::new(PassthroughVerifierHttpClientSessionCallResponseParser),
+        }
+    }
+
+    #[cfg(test)]
+    fn with_components(
+        call_builder: Arc<dyn VerifierHttpClientSessionCallBuilder>,
+        call_executor: Arc<dyn VerifierHttpClientSessionCallExecutor>,
+        response_parser: Arc<dyn VerifierHttpClientSessionCallResponseParser>,
+    ) -> Self {
+        Self {
+            call_builder,
+            call_executor,
+            response_parser,
+        }
+    }
+}
+
+impl VerifierHttpClientSessionWireExecutor for CallBackedVerifierHttpClientSessionWireExecutor {
+    fn execute_wire(
+        &self,
+        wire_request: &VerifierHttpClientSessionWireRequest,
+        session_request: &VerifierHttpClientSessionRequest,
+        session_config: &ResolvedVerifierHttpClientSessionConfig,
+        runtime_request: &VerifierHttpClientRuntimeRequest,
+        config: &ResolvedVerifierHttpClientConfig,
+        client_request: &VerifierHttpClientRequest,
+        http_request: &HttpVerifierRequest,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<VerifierHttpClientSessionWireResponse, BackendExecutionError> {
+        let call_request = self.call_builder.build_call(
+            wire_request,
+            session_request,
+            session_config,
+            runtime_request,
+            config,
+            client_request,
+            http_request,
+            request,
+        )?;
+        let call_response = self.call_executor.execute_call(
+            &call_request,
+            wire_request,
+            session_request,
+            session_config,
+            runtime_request,
+            config,
+            client_request,
+            http_request,
+            request,
+        )?;
+        self.response_parser.parse_call_response(
+            call_response,
+            wire_request,
+            session_request,
+            session_config,
+            runtime_request,
+            config,
+            client_request,
+            http_request,
+            request,
+        )
     }
 }
 
@@ -972,7 +1169,7 @@ impl WireBackedVerifierHttpClientSessionRequestExecutor {
     fn new() -> Self {
         Self {
             request_builder: Arc::new(DirectVerifierHttpClientSessionWireRequestBuilder),
-            wire_executor: Arc::new(FailClosedVerifierHttpClientSessionWireExecutor),
+            wire_executor: Arc::new(CallBackedVerifierHttpClientSessionWireExecutor::new()),
             response_parser: Arc::new(PassthroughVerifierHttpClientSessionWireResponseParser),
         }
     }
@@ -4360,6 +4557,135 @@ mod tests {
     }
 
     #[derive(Default)]
+    struct RecordingHttpClientSessionCallBuilder {
+        requests: Mutex<Vec<VerifierHttpClientSessionCallRequest>>,
+    }
+
+    impl VerifierHttpClientSessionCallBuilder for RecordingHttpClientSessionCallBuilder {
+        fn build_call(
+            &self,
+            wire_request: &VerifierHttpClientSessionWireRequest,
+            _session_request: &VerifierHttpClientSessionRequest,
+            _session_config: &ResolvedVerifierHttpClientSessionConfig,
+            _runtime_request: &VerifierHttpClientRuntimeRequest,
+            _config: &ResolvedVerifierHttpClientConfig,
+            _client_request: &VerifierHttpClientRequest,
+            _http_request: &HttpVerifierRequest,
+            _request: &BackendVerificationRequest<'_>,
+        ) -> Result<VerifierHttpClientSessionCallRequest, BackendExecutionError> {
+            let call_request = VerifierHttpClientSessionCallRequest {
+                method: wire_request.method,
+                url: wire_request.url.clone(),
+                headers: wire_request.headers.clone(),
+                body: wire_request.body.clone(),
+                timeout_ms: wire_request.timeout_ms,
+                profile: wire_request.profile.clone(),
+                transport_mode: wire_request.transport_mode.clone(),
+            };
+            self.requests.lock().unwrap().push(call_request.clone());
+            Ok(call_request)
+        }
+    }
+
+    #[derive(Default)]
+    struct RecordingHttpClientSessionCallExecutor {
+        requests: Mutex<Vec<VerifierHttpClientSessionCallRequest>>,
+    }
+
+    impl VerifierHttpClientSessionCallExecutor for RecordingHttpClientSessionCallExecutor {
+        fn execute_call(
+            &self,
+            call_request: &VerifierHttpClientSessionCallRequest,
+            _wire_request: &VerifierHttpClientSessionWireRequest,
+            _session_request: &VerifierHttpClientSessionRequest,
+            session_config: &ResolvedVerifierHttpClientSessionConfig,
+            _runtime_request: &VerifierHttpClientRuntimeRequest,
+            _config: &ResolvedVerifierHttpClientConfig,
+            _client_request: &VerifierHttpClientRequest,
+            _http_request: &HttpVerifierRequest,
+            _request: &BackendVerificationRequest<'_>,
+        ) -> Result<VerifierHttpClientSessionCallResponse, BackendExecutionError> {
+            self.requests.lock().unwrap().push(call_request.clone());
+            assert_eq!(call_request.profile, session_config.profile);
+            assert_eq!(call_request.transport_mode, session_config.transport_mode);
+            assert_eq!(call_request.timeout_ms, session_config.timeout_ms);
+            Ok(VerifierHttpClientSessionCallResponse {
+                status_code: 212,
+                headers: BTreeMap::from([("x-call".to_string(), "ok".to_string())]),
+                body: b"call-ok".to_vec(),
+            })
+        }
+    }
+
+    #[derive(Default)]
+    struct RecordingHttpClientSessionCallResponseParser {
+        responses: Mutex<Vec<VerifierHttpClientSessionCallResponse>>,
+    }
+
+    impl VerifierHttpClientSessionCallResponseParser for RecordingHttpClientSessionCallResponseParser {
+        fn parse_call_response(
+            &self,
+            call_response: VerifierHttpClientSessionCallResponse,
+            _wire_request: &VerifierHttpClientSessionWireRequest,
+            _session_request: &VerifierHttpClientSessionRequest,
+            _session_config: &ResolvedVerifierHttpClientSessionConfig,
+            _runtime_request: &VerifierHttpClientRuntimeRequest,
+            _config: &ResolvedVerifierHttpClientConfig,
+            _client_request: &VerifierHttpClientRequest,
+            _http_request: &HttpVerifierRequest,
+            _request: &BackendVerificationRequest<'_>,
+        ) -> Result<VerifierHttpClientSessionWireResponse, BackendExecutionError> {
+            self.responses.lock().unwrap().push(call_response.clone());
+            Ok(VerifierHttpClientSessionWireResponse {
+                status_code: call_response.status_code,
+                headers: call_response.headers,
+                body: call_response.body,
+            })
+        }
+    }
+
+    struct RejectingHttpClientSessionCallExecutor;
+
+    impl VerifierHttpClientSessionCallExecutor for RejectingHttpClientSessionCallExecutor {
+        fn execute_call(
+            &self,
+            _call_request: &VerifierHttpClientSessionCallRequest,
+            _wire_request: &VerifierHttpClientSessionWireRequest,
+            _session_request: &VerifierHttpClientSessionRequest,
+            _session_config: &ResolvedVerifierHttpClientSessionConfig,
+            _runtime_request: &VerifierHttpClientRuntimeRequest,
+            _config: &ResolvedVerifierHttpClientConfig,
+            _client_request: &VerifierHttpClientRequest,
+            _http_request: &HttpVerifierRequest,
+            request: &BackendVerificationRequest<'_>,
+        ) -> Result<VerifierHttpClientSessionCallResponse, BackendExecutionError> {
+            Err(BackendExecutionError::Unavailable {
+                backend: request.backend_label(RealTeeBackend::backend_id_static()),
+                reason: "client session call executor rejected wire request".into(),
+            })
+        }
+    }
+
+    struct PanicHttpClientSessionCallResponseParser;
+
+    impl VerifierHttpClientSessionCallResponseParser for PanicHttpClientSessionCallResponseParser {
+        fn parse_call_response(
+            &self,
+            _call_response: VerifierHttpClientSessionCallResponse,
+            _wire_request: &VerifierHttpClientSessionWireRequest,
+            _session_request: &VerifierHttpClientSessionRequest,
+            _session_config: &ResolvedVerifierHttpClientSessionConfig,
+            _runtime_request: &VerifierHttpClientRuntimeRequest,
+            _config: &ResolvedVerifierHttpClientConfig,
+            _client_request: &VerifierHttpClientRequest,
+            _http_request: &HttpVerifierRequest,
+            _request: &BackendVerificationRequest<'_>,
+        ) -> Result<VerifierHttpClientSessionWireResponse, BackendExecutionError> {
+            panic!("call response parser should not be called when call executor fails")
+        }
+    }
+
+    #[derive(Default)]
     struct RecordingHttpClientSessionWireRequestBuilder {
         requests: Mutex<Vec<VerifierHttpClientSessionWireRequest>>,
     }
@@ -5135,6 +5461,182 @@ mod tests {
         assert_eq!(events[2].kind, VerifierTelemetryEventKind::ResponseMapped);
         assert_eq!(events[0].request_id, events[1].request_id);
         assert_eq!(events[1].request_id, events[2].request_id);
+    }
+
+    #[test]
+    fn call_backed_wire_executor_builds_executes_and_parses_call_response() {
+        let task = mock_task();
+        let call_builder = Arc::new(RecordingHttpClientSessionCallBuilder::default());
+        let call_executor = Arc::new(RecordingHttpClientSessionCallExecutor::default());
+        let response_parser = Arc::new(RecordingHttpClientSessionCallResponseParser::default());
+        let executor = CallBackedVerifierHttpClientSessionWireExecutor::with_components(
+            call_builder.clone(),
+            call_executor.clone(),
+            response_parser.clone(),
+        );
+        let response = executor
+            .execute_wire(
+                &VerifierHttpClientSessionWireRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: b"call-body".to_vec(),
+                    timeout_ms: 5_000,
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                },
+                &VerifierHttpClientSessionRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: b"call-body".to_vec(),
+                    timeout_ms: 5_000,
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                },
+                &ResolvedVerifierHttpClientSessionConfig {
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                    timeout_ms: 5_000,
+                },
+                &VerifierHttpClientRuntimeRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: b"call-body".to_vec(),
+                    timeout_ms: 5_000,
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                },
+                &ResolvedVerifierHttpClientConfig {
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                    timeout_ms: 5_000,
+                },
+                &VerifierHttpClientRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: b"call-body".to_vec(),
+                    timeout_ms: 5_000,
+                },
+                &HttpVerifierRequest {
+                    method: HttpMethod::Post,
+                    transport_mode: VerifierTransportMode::External,
+                    profile: "intel-dcap-external-default".into(),
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: "call-body".into(),
+                    timeout_ms: 5_000,
+                    retry_policy: RetryBackoffPolicy {
+                        max_attempts: 3,
+                        backoff_ms: 250,
+                        strategy: RetryBackoffStrategy::Exponential,
+                    },
+                },
+                &BackendVerificationRequest {
+                    family: VerificationBackendFamily::Tee,
+                    task: &task,
+                    proof_data: b"TEE:...",
+                    tee_payload: None,
+                    zk_payload: None,
+                    resolved_vk_ref: None,
+                },
+            )
+            .unwrap();
+        assert_eq!(response.status_code, 212);
+        assert_eq!(response.body, b"call-ok".to_vec());
+        let built = call_builder.requests.lock().unwrap().clone();
+        assert_eq!(built.len(), 1);
+        assert_eq!(built[0].profile, "intel-dcap-external-default");
+        let executed = call_executor.requests.lock().unwrap().clone();
+        assert_eq!(executed.len(), 1);
+        assert_eq!(executed[0], built[0]);
+        let parsed = response_parser.responses.lock().unwrap().clone();
+        assert_eq!(parsed.len(), 1);
+        assert_eq!(parsed[0].status_code, 212);
+        assert_eq!(parsed[0].body, b"call-ok".to_vec());
+    }
+
+    #[test]
+    fn call_backed_wire_executor_fails_closed_when_call_executor_rejects() {
+        let task = mock_task();
+        let executor = CallBackedVerifierHttpClientSessionWireExecutor::with_components(
+            Arc::new(DirectVerifierHttpClientSessionCallBuilder),
+            Arc::new(RejectingHttpClientSessionCallExecutor),
+            Arc::new(PanicHttpClientSessionCallResponseParser),
+        );
+        let err = executor
+            .execute_wire(
+                &VerifierHttpClientSessionWireRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: Vec::new(),
+                    timeout_ms: 5_000,
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                },
+                &VerifierHttpClientSessionRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: Vec::new(),
+                    timeout_ms: 5_000,
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                },
+                &ResolvedVerifierHttpClientSessionConfig {
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                    timeout_ms: 5_000,
+                },
+                &VerifierHttpClientRuntimeRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: Vec::new(),
+                    timeout_ms: 5_000,
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                },
+                &ResolvedVerifierHttpClientConfig {
+                    profile: "intel-dcap-external-default".into(),
+                    transport_mode: VerifierTransportMode::External,
+                    timeout_ms: 5_000,
+                },
+                &VerifierHttpClientRequest {
+                    method: HttpMethod::Post,
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: Vec::new(),
+                    timeout_ms: 5_000,
+                },
+                &HttpVerifierRequest {
+                    method: HttpMethod::Post,
+                    transport_mode: VerifierTransportMode::External,
+                    profile: "intel-dcap-external-default".into(),
+                    url: "https://intel-verifier.invalid/v1/quote/sgx-dcap".into(),
+                    headers: BTreeMap::new(),
+                    body: String::new(),
+                    timeout_ms: 5_000,
+                    retry_policy: RetryBackoffPolicy {
+                        max_attempts: 3,
+                        backoff_ms: 250,
+                        strategy: RetryBackoffStrategy::Exponential,
+                    },
+                },
+                &BackendVerificationRequest {
+                    family: VerificationBackendFamily::Tee,
+                    task: &task,
+                    proof_data: b"TEE:...",
+                    tee_payload: None,
+                    zk_payload: None,
+                    resolved_vk_ref: None,
+                },
+            )
+            .unwrap_err();
+        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("client session call executor rejected wire request")));
     }
 
     #[test]
@@ -5969,7 +6471,7 @@ mod tests {
                 },
             )
             .unwrap_err();
-        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("intel-dcap-external-default") && reason.contains("client session wire executor")));
+        assert!(matches!(err, BackendExecutionError::Unavailable { reason, .. } if reason.contains("intel-dcap-external-default") && reason.contains("client session call executor")));
     }
 
     #[test]
