@@ -33,10 +33,11 @@ python3 scripts/profiling_closeout_report.py
 ```
 
 默认读取：
-- `run/parallel-sanity.log`
-- `run/bench/bench-matrix-*.txt`
-- `run/bench/bench-mixed-matrix-*.txt`
-- `run/bench/executor-profile-summary-*.txt`
+- `trillionnium-rust/run/parallel-sanity.log`
+- `trillionnium-rust/run/bench/bench-matrix-*.txt`（优先）
+- `trillionnium-rust/run/bench/bench-mixed-matrix-*.txt`（优先）
+- `trillionnium-rust/run/bench/executor-profile-summary-*.txt`（优先）
+- 若 `trillionnium-rust/run/bench/` 不存在，则回退读取仓库根 `run/bench/*.txt`
 
 输出：
 - `docs/reports/profiling-closeout-baseline-<timestamp>.md`

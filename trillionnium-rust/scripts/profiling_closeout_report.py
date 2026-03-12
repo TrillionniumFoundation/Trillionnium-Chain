@@ -15,6 +15,13 @@ def latest(pattern: str):
     return files[0] if files else None
 
 
+def first_existing_dir(*paths: str) -> str:
+    for path in paths:
+        if os.path.isdir(path):
+            return path
+    return paths[0]
+
+
 def parse_kv_line(line: str):
     return {k: v for k, v in KV.findall(line)}
 
@@ -118,7 +125,11 @@ def main():
     args = p.parse_args()
 
     root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-    bench_dir = os.path.join(root, "run", "bench")
+    repo_root = os.path.abspath(os.path.join(root, ".."))
+    bench_dir = first_existing_dir(
+        os.path.join(root, "run", "bench"),
+        os.path.join(repo_root, "run", "bench"),
+    )
     node_log = args.node_log or latest(os.path.join(root, "run", "parallel-sanity.log"))
     classic = args.classic or latest(os.path.join(bench_dir, "bench-matrix-*.txt"))
     mixed = args.mixed or latest(os.path.join(bench_dir, "bench-mixed-matrix-*.txt"))
