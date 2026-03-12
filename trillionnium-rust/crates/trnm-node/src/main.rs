@@ -5769,17 +5769,33 @@ mod tests {
             ],
         )
         .unwrap();
+        persist_consensus_wal(
+            &wal_dir,
+            &ConsensusWal {
+                next_height: 99,
+                last_round: 7,
+                locked_block_hash: Some("stale-tail-lock".into()),
+            },
+        )
+        .unwrap();
 
         let recovered = recover_wal_state(&wal_dir).unwrap();
         assert_eq!(recovered.next_height, 3);
         assert!(recovered.truncated);
         assert!(recovered.metadata_only_recovery);
         assert_eq!(recovered.last_checkpoint.as_ref().map(|cp| cp.height), Some(2));
+        assert!(recovered.restored_lock.is_none());
 
         let checkpoints = load_checkpoint_meta(&wal_dir).unwrap();
         assert_eq!(checkpoints.len(), 2);
         assert!(checkpoints.iter().all(|cp| cp.height <= 2));
         assert!(checkpoints.iter().all(|cp| cp.wal_entry_hash_hex != e3.content_hash_hex()));
+
+        let wal = fs::read_to_string(wal_file(&wal_dir)).unwrap();
+        let wal: ConsensusWal = toml::from_str(&wal).unwrap();
+        assert_eq!(wal.next_height, 3);
+        assert_eq!(wal.last_round, 0);
+        assert!(wal.locked_block_hash.is_none());
 
         let _ = fs::remove_dir_all(&wal_dir);
     }
