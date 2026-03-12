@@ -2546,6 +2546,34 @@ mod tests {
     }
 
     #[test]
+    fn auto_adaptive_read_only_expected_gain_gate_blocks_low_value_hotspot_switches() {
+        let _env = env_lock();
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.0");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.0007");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.001");
+
+        // Mirror the low-value endpoint-hotspot regression for read-only
+        // batches, where adaptive detection falls back to read_set keys.
+        // Endpoint-visible sampling should stay fail-closed instead of
+        // switching strategies on a trivial read-domain signal.
+        let mut txs = Vec::with_capacity(3000);
+        txs.push(tx(1, vec![o(777)], vec![]));
+        for i in 1..2999u64 {
+            txs.push(tx(10_000 + i, vec![o(20_000 + i)], vec![]));
+        }
+        txs.push(tx(9_999, vec![o(777)], vec![]));
+
+        let d = auto_adaptive_decision(&txs);
+        assert!(d.expected_gain_score < d.min_expected_gain_score);
+        assert!(
+            !d.use_hot_bucket,
+            "low-value read-only hotspot signal should not switch adaptive strategy"
+        );
+        assert_eq!(d.reason, "low_expected_gain");
+    }
+
+    #[test]
     fn auto_adaptive_sampling_with_sparse_window_keeps_duplicate_indices_fail_closed() {
         let _env = env_lock();
         let _sample_len = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", "2048");
