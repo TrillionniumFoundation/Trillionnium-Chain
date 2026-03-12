@@ -145,6 +145,11 @@ TRNM 当前已经具备：
    - `rollback_total` 或 `rollback_count_avg` 只告诉你发生了多少回滚，不能说明它们是否集中压在少数高度，或是否已经开始主导 apply-error 面。
    - closeout 时应把 `rollback_peak_share_ppm`、`rollback_density_avg_milli`、`rollback_active_height_share_ppm`、`rollback_active_height_rate_ppm`、`rollback_active_observed_height_rate_ppm`、`apply_error_rollback_share_bps` 一起看；若存在 skipped / no-commit heights，应优先比较 committed-budget 视角的 `rollback_active_height_rate_ppm` 与 coverage 视角的 `rollback_active_observed_height_rate_ppm`，避免把集中回滚压力因为只按 committed heights 摊薄，或因为只看 observed heights 而误判为更广泛失稳。若回滚主要集中在少数高度，还应优先把它解读为 block-loop 稳定性告警，而不是简单的总体错误率波动。
 
+5. **Hot-object 热点也要按 active height + top/tail 拆开看，不能只盯平均 share**
+   - `hot_object_share_avg_ppm` 或 `hot_object_top_label_share_avg_ppm` 容易把“只在少数高度集中爆发”的热点摊薄成看起来温和的平均数。
+   - closeout 时应把 `hot_object_active_heights`、`hot_object_active_height_rate_ppm`、`hot_object_active_observed_height_rate_ppm` 与 `hot_object_share_*`、`hot_object_top_label_share_*`、`hot_object_active_top_label_share_avg_ppm`、`hot_object_tail_share_*`、`hot_object_active_tail_share_avg_ppm` 一起读：前者回答热点覆盖了多少 committed/observed heights，后者回答热点是“单一标签强主导”还是“长尾同时升温”。
+   - 若 skipped / no-commit heights 存在，应优先比较 `hot_object_active_height_rate_ppm` 与 `hot_object_active_observed_height_rate_ppm`；若两者差距明显，再结合 top/tail share 判断这是局部 burst hotspot，还是更广泛的对象面退化。这样可以避免把热点问题误判成平均上可接受，或把单一热点标签误读成整个对象面都同时恶化。
+
 #### 对 Solana/Sui 的差距
 - **比 Solana**：缺少更成熟的 runtime / bank / lock / cache 联动。
 - **比 Sui**：对象级执行隔离还不够原生，仍依赖较厚的共享状态层。
