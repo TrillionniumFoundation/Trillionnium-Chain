@@ -243,6 +243,11 @@ TRNM 当前不是“高 TPS 公链的仿制品”，而是：
 - **比大部分“只有 read/write set 概念”的学术原型更成熟**：是
 - **达到 Solana / Sui 生产级并发效率**：否
 
+> L04 observability note:
+> - 解释 `bft_round_change_backoff_active_height_share_ppm` 时，不要把它当成强制封顶在 100% 的“占比”。
+> - 当 round-change backoff 的活跃高度密度已经超过平均 finality budget 时，该指标**应该允许大于 `1_000_000`**，这样共识抖动/退避主导区间才不会被误读为“只是高一点”。
+> - 与 `bft_round_change_density_avg_milli`、`bft_round_change_backoff_density_avg_milli` 一起看，优先判断是否出现了 clustered jitter / sustained backoff，而不是只看全局均值。
+
 ---
 
 ## 3. 与 Solana 的对标路线：差在哪

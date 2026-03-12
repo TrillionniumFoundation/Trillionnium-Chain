@@ -3314,6 +3314,19 @@ mod tests {
     }
 
     #[test]
+    fn round_change_backoff_active_height_share_can_exceed_budget_when_jitter_dominates() {
+        let bft_round_change_backoff_density_avg_milli = 6_000u64;
+        let finality_avg = 4u128;
+        let backoff_active_height_share_ppm = ratio_ppm_u64(
+            bft_round_change_backoff_density_avg_milli,
+            (finality_avg as u64) * 1_000,
+        );
+
+        assert_eq!(backoff_active_height_share_ppm, 1_500_000);
+        assert!(backoff_active_height_share_ppm > 1_000_000);
+    }
+
+    #[test]
     fn critical_guard_selection_respects_lane_fairness_pop_order() {
         let mut mempool = VecDeque::from(vec![
             MockTx::CreateTask {
