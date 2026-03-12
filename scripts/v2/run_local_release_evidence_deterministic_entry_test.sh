@@ -19,6 +19,11 @@ if grep -q 'find "\$ROOT/scripts"' "$TARGET" || grep -q 'find "\$repo_root/scrip
   exit 1
 fi
 
+if ! grep -q 'BASE_OUT="$(cd "$BASE_OUT_INPUT" && pwd)"' "$TARGET"; then
+  echo "[FAIL] expected evidence root to be normalized to an absolute path" >&2
+  exit 1
+fi
+
 if ! grep -q 'challenge_reexec_entry=' "$TARGET"; then
   echo "[FAIL] expected summary to record resolved challenge reexec entry" >&2
   exit 1
