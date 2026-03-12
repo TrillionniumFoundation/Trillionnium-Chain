@@ -107,6 +107,7 @@ fn main() {
     let adaptive_candidate_strategy = adaptive_candidate_strategy_for(&txs);
     let default_has_adaptive_opportunity =
         default_has_adaptive_opportunity(args.strategy, adaptive_candidate_strategy);
+    let auto_profile_applied = auto_profile_applied(args.strategy, effective_strategy);
 
     let grouped: usize = groups.iter().map(|g| g.len()).sum();
     let conflict_rate = 1.0f64 - (keys as f64 / n as f64).min(1.0);
@@ -157,6 +158,7 @@ fn main() {
 
         if emits_auto_profile(args.strategy, default_has_adaptive_opportunity) {
             let d = auto_adaptive_decision(&txs);
+            println!("profile.auto.applied={}", auto_profile_applied);
             println!("profile.auto.use_hot_bucket={}", d.use_hot_bucket);
             println!("profile.auto.reason={}", d.reason);
             println!("profile.auto.sample_len={}", d.sample_len);
@@ -215,6 +217,11 @@ fn effective_strategy_for(strategy: StrategyArg, txs: &[Tx]) -> GroupingStrategy
             }
         }
     }
+}
+
+fn auto_profile_applied(strategy: StrategyArg, effective_strategy: GroupingStrategy) -> bool {
+    matches!(strategy, StrategyArg::AutoAdaptive)
+        && !matches!(effective_strategy, GroupingStrategy::Original)
 }
 
 fn conflict_hit_rate(profile: &trnm_executor::GroupingProfile) -> f64 {
@@ -359,6 +366,30 @@ mod tests {
     }
 
     #[test]
+    fn auto_profile_applied_only_flags_real_auto_adaptive_dispatch() {
+        assert!(!auto_profile_applied(
+            StrategyArg::Default,
+            GroupingStrategy::Original,
+        ));
+        assert!(!auto_profile_applied(
+            StrategyArg::Default,
+            GroupingStrategy::HotBucketInterleave,
+        ));
+        assert!(!auto_profile_applied(
+            StrategyArg::AutoAdaptive,
+            GroupingStrategy::Original,
+        ));
+        assert!(auto_profile_applied(
+            StrategyArg::AutoAdaptive,
+            GroupingStrategy::HotBucketInterleave,
+        ));
+        assert!(auto_profile_applied(
+            StrategyArg::AutoAdaptive,
+            GroupingStrategy::AggressiveGreedy,
+        ));
+    }
+
+    #[test]
     fn effective_strategy_reporting_stays_honest_for_default_and_auto_adaptive() {
         let degenerate_hotspot = (0..64)
             .map(|i| tx(i as u64, vec![0], vec![0]))
@@ -455,7 +486,10 @@ mod tests {
             effective_strategy_for(StrategyArg::HotBucketInterleave, &txs),
             GroupingStrategy::HotBucketInterleave
         ));
-        assert!(matches!(adaptive_candidate, GroupingStrategy::HotBucketInterleave));
+        assert!(matches!(
+            adaptive_candidate,
+            GroupingStrategy::HotBucketInterleave
+        ));
         assert!(
             !default_has_adaptive_opportunity(StrategyArg::HotBucketInterleave, adaptive_candidate),
             "explicit hotspot selection should not masquerade as default-only adaptive headroom"
@@ -463,7 +497,10 @@ mod tests {
         assert!(
             !emits_auto_profile(
                 StrategyArg::HotBucketInterleave,
-                default_has_adaptive_opportunity(StrategyArg::HotBucketInterleave, adaptive_candidate),
+                default_has_adaptive_opportunity(
+                    StrategyArg::HotBucketInterleave,
+                    adaptive_candidate
+                ),
             ),
             "explicit hotspot selection should not emit auto-profile-only headroom fields"
         );
@@ -896,10 +933,14 @@ mod tests {
         let txs = build_hot_streak_txs(20_000, 2_000, 3, 1);
         let decision = auto_adaptive_decision(&txs);
         let adaptive_candidate = adaptive_candidate_strategy_for(&txs);
+        let effective_strategy = effective_strategy_for(StrategyArg::Default, &txs);
 
         assert!(decision.use_hot_bucket);
         assert_eq!(decision.reason, "hotspot_detected");
-        assert!(matches!(adaptive_candidate, GroupingStrategy::HotBucketInterleave));
+        assert!(matches!(
+            adaptive_candidate,
+            GroupingStrategy::HotBucketInterleave
+        ));
         assert!(default_has_adaptive_opportunity(
             StrategyArg::Default,
             adaptive_candidate,
@@ -908,24 +949,32 @@ mod tests {
             StrategyArg::Default,
             default_has_adaptive_opportunity(StrategyArg::Default, adaptive_candidate),
         ));
-        assert!(matches!(
-            effective_strategy_for(StrategyArg::Default, &txs),
-            GroupingStrategy::Original
-        ));
+        assert!(matches!(effective_strategy, GroupingStrategy::Original));
+        assert!(
+            !auto_profile_applied(StrategyArg::Default, effective_strategy),
+            "default runs should expose adaptive diagnostics as advisory only"
+        );
     }
 
     #[test]
     fn effective_strategy_reports_real_auto_adaptive_resolution() {
         let hot_streak = build_hot_streak_txs(20_000, 2_000, 3, 1);
+        let hot_streak_effective = effective_strategy_for(StrategyArg::AutoAdaptive, &hot_streak);
         assert!(matches!(
-            effective_strategy_for(StrategyArg::AutoAdaptive, &hot_streak),
+            hot_streak_effective,
             GroupingStrategy::HotBucketInterleave
+        ));
+        assert!(auto_profile_applied(
+            StrategyArg::AutoAdaptive,
+            hot_streak_effective,
         ));
 
         let classic = build_classic_txs(2_048, 256);
-        assert!(matches!(
-            effective_strategy_for(StrategyArg::Default, &classic),
-            GroupingStrategy::Original
+        let classic_effective = effective_strategy_for(StrategyArg::Default, &classic);
+        assert!(matches!(classic_effective, GroupingStrategy::Original));
+        assert!(!auto_profile_applied(
+            StrategyArg::Default,
+            classic_effective,
         ));
     }
 
@@ -942,7 +991,10 @@ mod tests {
                 StrategyArg::HotBucketInterleave,
                 GroupingStrategy::HotBucketInterleave,
             ),
-            (StrategyArg::AggressiveGreedy, GroupingStrategy::AggressiveGreedy),
+            (
+                StrategyArg::AggressiveGreedy,
+                GroupingStrategy::AggressiveGreedy,
+            ),
         ];
 
         for (arg, expected) in explicit_cases {
