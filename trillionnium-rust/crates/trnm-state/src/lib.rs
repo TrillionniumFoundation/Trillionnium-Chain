@@ -413,9 +413,20 @@ impl StateStore {
         if approver_trimmed.chars().any(|c| c.is_control()) {
             return Err("resolve approval approver must not contain control characters".into());
         }
-        if approver_trimmed.contains(',') || approver_trimmed.contains(';') {
+        let has_forbidden_separator = |token: &str| {
+            token.contains(';')
+                || token.contains('|')
+                || token.contains('；')
+                || token.contains('，')
+                || token.contains('、')
+        };
+        if approver_trimmed.contains(',')
+            || has_forbidden_separator(approver_trimmed)
+            || !approver_trimmed.is_ascii()
+        {
             return Err("resolve approval approver must be a single canonical actor id".into());
         }
+
         if approver_trimmed.eq_ignore_ascii_case(DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER)
             || approver_trimmed.eq_ignore_ascii_case(EMERGENCY_PAUSE_PLACEHOLDER)
             || approver_trimmed.eq_ignore_ascii_case(RESERVED_SYSTEM_AUTHORITY)
@@ -508,9 +519,13 @@ impl StateStore {
                 return Err("resolve approval decision mismatch".into());
             }
             if entry.confirmations >= 2 {
-                return Err("resolve approval already finalized; clear pending approval first".into());
+                return Err(
+                    "resolve approval already finalized; clear pending approval first".into(),
+                );
             }
-            if entry.confirmations > 0 && entry.first_approver.eq_ignore_ascii_case(approver_trimmed) {
+            if entry.confirmations > 0
+                && entry.first_approver.eq_ignore_ascii_case(approver_trimmed)
+            {
                 return Err("resolve approval requires distinct approver".into());
             }
             let next_confirmations = entry.confirmations.saturating_add(1);
@@ -1892,12 +1907,24 @@ mod tests {
     fn resolve_approval_rejects_decision_mismatch_without_invalidating_cached_state_root() {
         let mut st = StateStore::new();
 
-        st.stage_or_confirm_resolve_approval(8_080, 3, true, "authority-a", "authority-a,authority-b")
-            .expect("first approval stage should succeed");
+        st.stage_or_confirm_resolve_approval(
+            8_080,
+            3,
+            true,
+            "authority-a",
+            "authority-a,authority-b",
+        )
+        .expect("first approval stage should succeed");
         let root_before = st.state_root();
 
         let err = st
-            .stage_or_confirm_resolve_approval(8_080, 3, false, "authority-b", "authority-a,authority-b")
+            .stage_or_confirm_resolve_approval(
+                8_080,
+                3,
+                false,
+                "authority-b",
+                "authority-a,authority-b",
+            )
             .expect_err("decision mismatch must be rejected without mutating staged approval");
         assert!(err.contains("decision mismatch"));
 
@@ -2850,13 +2877,23 @@ mod tests {
     }
 
     #[test]
-    fn governance_sensitive_replace_preserves_existing_pending_when_new_resolve_authority_is_invalid() {
+    fn governance_sensitive_replace_preserves_existing_pending_when_new_resolve_authority_is_invalid(
+    ) {
         let mut st = StateStore::new();
-        st.set_gov_param_unchecked(7_311, "resolve_authority".into(), "resolver-v1,resolver-v2".into())
-            .unwrap();
+        st.set_gov_param_unchecked(
+            7_311,
+            "resolve_authority".into(),
+            "resolver-v1,resolver-v2".into(),
+        )
+        .unwrap();
 
         let scheduled = st
-            .set_gov_param(14_000, 7_311, "resolve_authority".into(), "resolver-v3,resolver-v4".into())
+            .set_gov_param(
+                14_000,
+                7_311,
+                "resolve_authority".into(),
+                "resolver-v3,resolver-v4".into(),
+            )
             .expect("initial resolve_authority update should schedule");
         let activate_at_height = match scheduled {
             GovParamUpdateOutcome::Scheduled { activate_at_height } => activate_at_height,
@@ -2878,14 +2915,20 @@ mod tests {
                 GovPendingUpdateAction::Replace,
             )
             .expect_err("invalid replacement authority set must be rejected");
-        assert!(err.contains("invalid governance value for resolve_authority"), "{err}");
+        assert!(
+            err.contains("invalid governance value for resolve_authority"),
+            "{err}"
+        );
 
         let pending_after = st
             .pending_gov_update("resolve_authority")
             .expect("invalid replace must preserve previously scheduled update");
         assert_eq!(pending_after.key_id, pending_before.key_id);
         assert_eq!(pending_after.value, pending_before.value);
-        assert_eq!(pending_after.activate_at_height, pending_before.activate_at_height);
+        assert_eq!(
+            pending_after.activate_at_height,
+            pending_before.activate_at_height
+        );
         assert_eq!(
             st.gov_param_string("resolve_authority"),
             Some("resolver-v1,resolver-v2".into())
@@ -3012,7 +3055,12 @@ mod tests {
             .unwrap();
 
         let scheduled = st
-            .set_gov_param(21_000, 7_320, "challenge_window_blocks".into(), "120".into())
+            .set_gov_param(
+                21_000,
+                7_320,
+                "challenge_window_blocks".into(),
+                "120".into(),
+            )
             .expect("sensitive update should enqueue under timelock");
         assert!(matches!(
             scheduled,
@@ -3034,12 +3082,22 @@ mod tests {
         assert_eq!(pending.activate_at_height, 21_020);
 
         let err = st
-            .set_gov_param(21_019, 7_320, "challenge_window_blocks".into(), "120".into())
+            .set_gov_param(
+                21_019,
+                7_320,
+                "challenge_window_blocks".into(),
+                "120".into(),
+            )
             .expect_err("timelock must still be active before scheduled height");
         assert!(err.contains("timelock active"), "{err}");
 
         let applied = st
-            .set_gov_param(21_020, 7_320, "challenge_window_blocks".into(), "120".into())
+            .set_gov_param(
+                21_020,
+                7_320,
+                "challenge_window_blocks".into(),
+                "120".into(),
+            )
             .expect("pending sensitive update should apply at original scheduled height");
         assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
         assert_eq!(st.gov_param_u64("challenge_window_blocks"), Some(120));

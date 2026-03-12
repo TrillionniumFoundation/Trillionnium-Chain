@@ -128,11 +128,13 @@ fn paused_state_pending_resolve_authority_conflict_keeps_original_timelock_and_p
     assert_eq!(pending_after.key_id, pending_before.key_id);
     assert_eq!(pending_after.value, pending_before.value);
     assert_eq!(
-        pending_after.activate_at_height,
-        pending_before.activate_at_height,
+        pending_after.activate_at_height, pending_before.activate_at_height,
         "paused conflicting submit must not move timelock boundary"
     );
-    assert!(st.is_emergency_paused(), "paused conflicting submit must not unpause state");
+    assert!(
+        st.is_emergency_paused(),
+        "paused conflicting submit must not unpause state"
+    );
     assert_eq!(
         st.gov_param_string("resolve_authority"),
         Some("authority-a,authority-b".into()),
@@ -337,7 +339,13 @@ fn paused_resolve_approval_accepts_case_variant_approver_spelling_without_releas
     let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
 
     let first = st
-        .stage_or_confirm_resolve_approval(9_906, 1, false, "Authority-A", "authority-a,authority-b")
+        .stage_or_confirm_resolve_approval(
+            9_906,
+            1,
+            false,
+            "Authority-A",
+            "authority-a,authority-b",
+        )
         .expect("case-variant approver should match configured authority member");
     assert!(!first, "first distinct approver should only stage quorum");
     assert_eq!(st.pending_resolve_approval(9_906), Some((false, 1)));
@@ -372,11 +380,20 @@ fn paused_resolve_approval_rejects_control_or_whitespace_approver_without_mutati
     st.stage_or_confirm_resolve_approval(9_919, 1, true, "authority-a", "authority-a,authority-b")
         .expect("first approval stage should succeed while paused");
     assert_eq!(st.pending_resolve_approval(9_919), Some((true, 1)));
-    assert_eq!(st.pending_resolve_first_approver(9_919).as_deref(), Some("authority-a"));
+    assert_eq!(
+        st.pending_resolve_first_approver(9_919).as_deref(),
+        Some("authority-a")
+    );
 
     for bad_approver in ["authority-b ", "authority-\tb", "authority-b\u{0007}"] {
         let err = st
-            .stage_or_confirm_resolve_approval(9_919, 1, true, bad_approver, "authority-a,authority-b")
+            .stage_or_confirm_resolve_approval(
+                9_919,
+                1,
+                true,
+                bad_approver,
+                "authority-a,authority-b",
+            )
             .expect_err("malformed approver spelling must be rejected while paused");
         assert!(
             err.contains("whitespace") || err.contains("control characters"),
@@ -391,6 +408,67 @@ fn paused_resolve_approval_rejects_control_or_whitespace_approver_without_mutati
         );
         assert_eq!(
             st.pending_resolve_first_approver(9_919).as_deref(),
+            Some("authority-a"),
+            "rejected malformed approver must preserve first approver audit trail"
+        );
+    }
+
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
+    assert!(st.is_emergency_paused());
+}
+
+#[test]
+fn paused_resolve_approval_rejects_delimiter_or_non_ascii_approver_without_mutating_staged_quorum()
+{
+    // M1 micro-hardening: live resolve approval parsing must reject the same malformed approver
+    // spellings that rollback/restore scrubs, so paused mode cannot stage quorum with delimiter
+    // smuggling or non-ASCII actor ids.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 66_600);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 333);
+
+    st.set_gov_param(98_154, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+    let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+
+    st.stage_or_confirm_resolve_approval(9_923, 1, true, "authority-a", "authority-a,authority-b")
+        .expect("first approval stage should succeed while paused");
+    assert_eq!(st.pending_resolve_approval(9_923), Some((true, 1)));
+    assert_eq!(
+        st.pending_resolve_first_approver(9_923).as_deref(),
+        Some("authority-a")
+    );
+
+    for bad_approver in ["authority|b", "authority；b", "authority，b", "authorité-b"] {
+        let err = st
+            .stage_or_confirm_resolve_approval(
+                9_923,
+                1,
+                true,
+                bad_approver,
+                "authority-a,authority-b",
+            )
+            .expect_err("delimiter/non-ASCII approver must be rejected while paused");
+        assert!(
+            err.contains("single canonical actor id"),
+            "unexpected error for {:?}: {}",
+            bad_approver,
+            err
+        );
+        assert_eq!(
+            st.pending_resolve_approval(9_923),
+            Some((true, 1)),
+            "rejected malformed approver must preserve staged quorum"
+        );
+        assert_eq!(
+            st.pending_resolve_first_approver(9_923).as_deref(),
             Some("authority-a"),
             "rejected malformed approver must preserve first approver audit trail"
         );
@@ -490,13 +568,7 @@ fn paused_state_rejects_case_variant_duplicate_authority_members_without_side_ef
     let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
 
     let err = st
-        .stage_or_confirm_resolve_approval(
-            9_918,
-            1,
-            true,
-            "authority-a",
-            "authority-a,Authority-A",
-        )
+        .stage_or_confirm_resolve_approval(9_918, 1, true, "authority-a", "authority-a,Authority-A")
         .expect_err("case-variant duplicate authority members must be rejected while paused");
     assert!(err.contains("duplicate") || err.contains("authority set"));
 
@@ -527,7 +599,13 @@ fn paused_state_rejects_case_variant_system_member_without_side_effects() {
     let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
 
     let err = st
-        .stage_or_confirm_resolve_approval(9_917, 1, true, "authority-a", "authority-a,SYSTEM,authority-b")
+        .stage_or_confirm_resolve_approval(
+            9_917,
+            1,
+            true,
+            "authority-a",
+            "authority-a,SYSTEM,authority-b",
+        )
         .expect_err("reserved system member in middle of authority set must be rejected");
     assert!(err.contains("reserved") || err.contains("authority set"));
 
@@ -585,7 +663,6 @@ fn paused_state_rejects_case_variant_worker_slash_treasury_member_without_side_e
     );
 }
 
-
 #[test]
 
 fn paused_state_rejects_case_variant_challenge_forfeit_treasury_member_without_side_effects() {
@@ -609,9 +686,7 @@ fn paused_state_rejects_case_variant_challenge_forfeit_treasury_member_without_s
             "authority-a",
             &format!("authority-a,{mixed_case_forfeit_treasury}"),
         )
-        .expect_err(
-            "case-variant challenge forfeit treasury member must be rejected while paused",
-        );
+        .expect_err("case-variant challenge forfeit treasury member must be rejected while paused");
     assert!(
         err.contains("forbidden member") || err.contains("explicit non-system authority"),
         "unexpected error: {err}"
@@ -622,7 +697,10 @@ fn paused_state_rejects_case_variant_challenge_forfeit_treasury_member_without_s
     assert_eq!(st.pending_gov_update("resolve_authority"), None);
     assert!(st.is_emergency_paused());
     assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
-    assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), forfeited_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeited_before
+    );
     assert_eq!(st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT), slashed_before);
 }
 
@@ -642,7 +720,10 @@ fn paused_state_rejects_post_quorum_resolve_replay_while_paused_without_escrow_d
         .expect("second distinct approval should finalize quorum before pause");
     assert!(finalized);
     assert_eq!(st.pending_resolve_approval(9_921), Some((true, 2)));
-    assert_eq!(st.pending_resolve_first_approver(9_921).as_deref(), Some("authority-a"));
+    assert_eq!(
+        st.pending_resolve_first_approver(9_921).as_deref(),
+        Some("authority-a")
+    );
 
     st.set_gov_param(98_213, 7_999, "emergency_pause".into(), "true".into())
         .expect("pause toggle must apply immediately");
@@ -660,7 +741,10 @@ fn paused_state_rejects_post_quorum_resolve_replay_while_paused_without_escrow_d
 
     assert_eq!(st.pending_resolve_approval_snapshot(9_921), pending_before);
     assert_eq!(st.pending_resolve_approval(9_921), Some((true, 2)));
-    assert_eq!(st.pending_resolve_first_approver(9_921).as_deref(), Some("authority-a"));
+    assert_eq!(
+        st.pending_resolve_first_approver(9_921).as_deref(),
+        Some("authority-a")
+    );
     assert_eq!(st.pending_gov_update("resolve_authority"), None);
     assert!(st.is_emergency_paused());
     assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
