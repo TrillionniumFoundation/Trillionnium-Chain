@@ -378,7 +378,10 @@ The default wiring remains fail-closed:
                                         - `DirectVerifierHttpClientSessionProtocolChunkAckPolicy`
                                         - `BudgetedRetransmitBackedVerifierHttpClientSessionProtocolChunkRetransmitExchange`
                                           - `DirectVerifierHttpClientSessionProtocolChunkRetransmitBudgetPlanner`
-                                          - `FailClosedVerifierHttpClientSessionProtocolChunkRetransmitBudgetExchange`
+                                          - `ConvergingAckBackedVerifierHttpClientSessionProtocolChunkRetransmitBudgetExchange`
+                                            - `DirectVerifierHttpClientSessionProtocolChunkAckConvergencePlanner`
+                                            - `FailClosedVerifierHttpClientSessionProtocolChunkRetransmitTerminationExchange`
+                                            - `PassthroughVerifierHttpClientSessionProtocolChunkTerminationValidator`
                                           - `PassthroughVerifierHttpClientSessionProtocolChunkAckSettlementValidator`
                                         - `PassthroughVerifierHttpClientSessionProtocolChunkAckValidator`
                                       - `PassthroughVerifierHttpClientSessionProtocolChunkIntegrityValidator`
@@ -398,7 +401,7 @@ The default wiring remains fail-closed:
 - `NoopVerifierHttpTimeoutHook`
 
 This freezes a future real transport path as:
-- timeout hook -> request executor -> request planner -> client adapter -> client config resolver -> client handle -> runtime request builder -> client runtime -> session factory -> session -> session request executor -> wire request builder -> wire executor -> call builder -> call executor -> transport request builder -> transport adapter -> socket request builder -> socket adapter -> connection opener -> byte channel -> frame encoder -> protocol request codec -> bytes encoder -> byte-stream framer -> byte-stream chunker -> chunk framing policy -> chunk sequence window planner -> chunk ack policy -> chunk retransmit budget planner -> chunk retransmit budget exchange -> chunk ack settlement validator -> chunk ack validator -> chunk integrity validator -> stream reassembly validator -> byte-stream assembler -> envelope normalizer -> protocol envelope parser -> protocol response codec -> frame decoder -> byte stream response parser -> raw io response parser -> call response parser -> wire response parser -> session response reader -> runtime response adapter -> raw response -> body reader -> normalized `HttpVerifierResponse`
+- timeout hook -> request executor -> request planner -> client adapter -> client config resolver -> client handle -> runtime request builder -> client runtime -> session factory -> session -> session request executor -> wire request builder -> wire executor -> call builder -> call executor -> transport request builder -> transport adapter -> socket request builder -> socket adapter -> connection opener -> byte channel -> frame encoder -> protocol request codec -> bytes encoder -> byte-stream framer -> byte-stream chunker -> chunk framing policy -> chunk sequence window planner -> chunk ack policy -> chunk retransmit budget planner -> chunk ack convergence planner -> chunk retransmit termination exchange -> chunk termination validator -> chunk ack settlement validator -> chunk ack validator -> chunk integrity validator -> stream reassembly validator -> byte-stream assembler -> envelope normalizer -> protocol envelope parser -> protocol response codec -> frame decoder -> byte stream response parser -> raw io response parser -> call response parser -> wire response parser -> session response reader -> runtime response adapter -> raw response -> body reader -> normalized `HttpVerifierResponse`
 
 So the scaffold now separates:
 1. HTTP request planning / profile + auth resolution
@@ -422,25 +425,27 @@ So the scaffold now separates:
 19. chunk sequence window planning
 20. chunk ack policy
 21. chunk retransmit budget planning
-22. chunk retransmit budget exchange
-23. chunk ack settlement validation
-24. chunk ack validation
-25. chunk integrity validation
-26. stream reassembly validation
-27. byte-stream assembly
-28. envelope normalization
-29. protocol envelope parsing
-30. protocol response decoding
-31. frame decoding
-32. byte-stream response parsing
-33. raw-I/O response parsing
-34. call-level response parsing
-35. wire-level response parsing
-36. session-level response readback
-37. runtime-response adaptation
-38. timeout/guard hook behavior
-39. body decoding / normalization
-40. verifier response decode + backend mapping
+22. chunk ack convergence planning
+23. chunk retransmit termination exchange
+24. chunk termination validation
+25. chunk ack settlement validation
+26. chunk ack validation
+27. chunk integrity validation
+28. stream reassembly validation
+29. byte-stream assembly
+30. envelope normalization
+31. protocol envelope parsing
+32. protocol response decoding
+33. frame decoding
+34. byte-stream response parsing
+35. raw-I/O response parsing
+36. call-level response parsing
+37. wire-level response parsing
+38. session-level response readback
+39. runtime-response adaptation
+40. timeout/guard hook behavior
+41. body decoding / normalization
+42. verifier response decode + backend mapping
 
 ### HTTP payload skeletons
 The current adapter layer freezes two JSON request shapes:
