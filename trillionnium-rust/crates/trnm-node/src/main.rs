@@ -3121,9 +3121,9 @@ mod tests {
         let bft_committed_heights = 3u64;
         let bft_observed_heights = 5u64;
         let finality_avg = 200u128;
-        let preexec_reject_density_avg = preexec_reject_total / bft_committed_heights;
+        let preexec_reject_density_avg = preexec_reject_total / preexec_reject_active_heights;
         let preexec_reject_density_avg_milli =
-            ratio_milli_u64(preexec_reject_total, bft_committed_heights);
+            ratio_milli_u64(preexec_reject_total, preexec_reject_active_heights);
         let preexec_reject_active_height_rate_ppm =
             ratio_ppm_u64(preexec_reject_active_heights, bft_committed_heights);
         let preexec_reject_active_observed_height_rate_ppm =
@@ -3131,11 +3131,11 @@ mod tests {
         let preexec_reject_active_height_share_ppm =
             finality_budget_share_ppm(preexec_reject_density_avg_milli, finality_avg);
 
-        assert_eq!(preexec_reject_density_avg, 2);
-        assert_eq!(preexec_reject_density_avg_milli, 2_333);
+        assert_eq!(preexec_reject_density_avg, 3);
+        assert_eq!(preexec_reject_density_avg_milli, 3_500);
         assert_eq!(preexec_reject_active_height_rate_ppm, 666_666);
         assert_eq!(preexec_reject_active_observed_height_rate_ppm, 400_000);
-        assert_eq!(preexec_reject_active_height_share_ppm, 11_665);
+        assert_eq!(preexec_reject_active_height_share_ppm, 17_500);
         assert!(preexec_reject_active_observed_height_rate_ppm < preexec_reject_active_height_rate_ppm);
         assert_eq!(ratio_milli_u64(0, bft_committed_heights), 0);
         assert_eq!(ratio_milli_u64(preexec_reject_total, 0), 0);
@@ -6823,13 +6823,13 @@ fn main() -> Result<()> {
         apply_error_preexec_conflict_miss_total as u128,
         preexec_reject_total as u128,
     );
-    let preexec_reject_density_avg = if bft_committed_heights == 0 {
+    let preexec_reject_density_avg = if preexec_reject_active_heights == 0 {
         0
     } else {
-        preexec_reject_total / bft_committed_heights
+        preexec_reject_total / preexec_reject_active_heights
     };
     let preexec_reject_density_avg_milli =
-        ratio_milli_u64(preexec_reject_total, bft_committed_heights);
+        ratio_milli_u64(preexec_reject_total, preexec_reject_active_heights);
     let preexec_reject_active_height_rate_ppm =
         ratio_ppm_u64(preexec_reject_active_heights, bft_committed_heights);
     let preexec_reject_active_observed_height_rate_ppm =
