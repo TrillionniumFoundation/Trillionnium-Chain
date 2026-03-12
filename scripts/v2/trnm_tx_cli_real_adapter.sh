@@ -340,7 +340,15 @@ except Exception:
 payload = value.get("result", value) if isinstance(value, dict) else value
 primary = payload
 if isinstance(payload, dict):
-    nested = payload.get("tx_response") or payload.get("txResponse") or ((payload.get("response") or {}).get("tx_response") if isinstance(payload.get("response"), dict) else None) or ((payload.get("response") or {}).get("txResponse") if isinstance(payload.get("response"), dict) else None)
+    response = payload.get("response") if isinstance(payload.get("response"), dict) else None
+    nested = (
+        payload.get("tx_response")
+        or payload.get("txResponse")
+        or (response.get("tx_response") if response else None)
+        or (response.get("txResponse") if response else None)
+        or (response.get("data") if response and isinstance(response.get("data"), dict) else None)
+        or (payload.get("responseData") if isinstance(payload.get("responseData"), dict) else None)
+    )
     if isinstance(nested, dict):
         primary = nested
 for container in [primary, payload]:
