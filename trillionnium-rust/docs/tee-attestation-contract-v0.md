@@ -129,13 +129,19 @@ It delegates to vendor-specific provider traits:
 - `IntelQuoteVerifierProvider`
 - `AmdReportVerifierProvider`
 
-The current fixture-backed path therefore has four explicit layers:
+Each provider now delegates one step further into a client seam that models the external verifier call boundary:
+
+- `IntelQuoteVerifierClient`
+- `AmdReportVerifierClient`
+
+The current fixture-backed path therefore has five explicit layers:
 1. receipt parsing / normalization
 2. target-specific request shaping
 3. executor dispatch
 4. vendor-specific provider verification
+5. external verifier client call seam
 
-The current implementation uses fixture-backed providers behind the executor, but a future real backend should replace only the provider layer (or the executor wiring if it needs a different dispatch strategy).
+The current implementation uses fixture-backed clients behind client-backed providers, but a future real backend should mainly replace the client layer (or swap providers if vendor orchestration itself changes).
 
 ## report_data_hash binding
 `report_data_hash` must match the task `result_hash` carried by the bound envelope.

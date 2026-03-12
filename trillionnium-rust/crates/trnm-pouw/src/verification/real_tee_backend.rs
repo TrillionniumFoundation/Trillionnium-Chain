@@ -85,6 +85,26 @@ struct ReportVerifierInput {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
+struct IntelQuoteVerifierClientRequest {
+    attestation_target: String,
+    measurement_field: String,
+    measurement: String,
+    report_data_hash: String,
+    quote: String,
+    intel_collateral: IntelQuoteCollateralBundle,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct AmdReportVerifierClientRequest {
+    attestation_target: String,
+    measurement_field: String,
+    measurement: String,
+    report_data_hash: String,
+    report: String,
+    amd_signer: AmdSnpSignerBundle,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
 enum TeeVerifierInput {
     Quote(QuoteVerifierInput),
     Report(ReportVerifierInput),
@@ -95,13 +115,6 @@ impl TeeVerifierInput {
         match self {
             Self::Quote(input) => &input.attestation_target,
             Self::Report(input) => &input.attestation_target,
-        }
-    }
-
-    fn verifier_kind(&self) -> &str {
-        match self {
-            Self::Quote(input) => &input.verifier_kind,
-            Self::Report(input) => &input.verifier_kind,
         }
     }
 }
@@ -474,13 +487,59 @@ fn required_metadata(
         ))
 }
 
-fn verify_fixture_input(
-    input: &TeeVerifierInput,
+trait IntelQuoteVerifierClient: Send + Sync {
+    fn verify_intel_quote_request(
+        &self,
+        request_input: &IntelQuoteVerifierClientRequest,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<BackendVerificationSuccess, BackendExecutionError>;
+}
+
+trait AmdReportVerifierClient: Send + Sync {
+    fn verify_amd_report_request(
+        &self,
+        request_input: &AmdReportVerifierClientRequest,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<BackendVerificationSuccess, BackendExecutionError>;
+}
+
+trait IntelQuoteVerifierProvider: Send + Sync {
+    fn verify_intel_quote_bundle(
+        &self,
+        input: &QuoteVerifierInput,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<BackendVerificationSuccess, BackendExecutionError>;
+}
+
+trait AmdReportVerifierProvider: Send + Sync {
+    fn verify_amd_report_bundle(
+        &self,
+        input: &ReportVerifierInput,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<BackendVerificationSuccess, BackendExecutionError>;
+}
+
+trait VendorVerifierExecutor: Send + Sync {
+    fn verify_intel_quote_bundle(
+        &self,
+        input: &QuoteVerifierInput,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<BackendVerificationSuccess, BackendExecutionError>;
+
+    fn verify_amd_report_bundle(
+        &self,
+        input: &ReportVerifierInput,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<BackendVerificationSuccess, BackendExecutionError>;
+}
+
+fn verify_fixture_intel_client_request(
+    input: &IntelQuoteVerifierClientRequest,
     fixture: &TeeFixture,
     request: &BackendVerificationRequest<'_>,
 ) -> Result<(), BackendExecutionError> {
-    match (input, &fixture.verifier_input) {
-        (TeeVerifierInput::Quote(input), TeeVerifierInput::Quote(expected)) => {
+    match &fixture.verifier_input {
+        TeeVerifierInput::Quote(expected) => {
             if input.measurement_field != expected.measurement_field {
                 return Err(BackendExecutionError::InvalidProof {
                     backend: request.backend_label(RealTeeBackend::backend_id_static()),
@@ -546,7 +605,24 @@ fn verify_fixture_input(
             }
             Ok(())
         }
-        (TeeVerifierInput::Report(input), TeeVerifierInput::Report(expected)) => {
+        TeeVerifierInput::Report(expected) => Err(BackendExecutionError::InvalidProof {
+            backend: request.backend_label(RealTeeBackend::backend_id_static()),
+            reason: format!(
+                "tee attestation target '{}' requires {} handoff",
+                input.attestation_target,
+                expected.verifier_kind
+            ),
+        }),
+    }
+}
+
+fn verify_fixture_amd_client_request(
+    input: &AmdReportVerifierClientRequest,
+    fixture: &TeeFixture,
+    request: &BackendVerificationRequest<'_>,
+) -> Result<(), BackendExecutionError> {
+    match &fixture.verifier_input {
+        TeeVerifierInput::Report(expected) => {
             if input.measurement_field != expected.measurement_field {
                 return Err(BackendExecutionError::InvalidProof {
                     backend: request.backend_label(RealTeeBackend::backend_id_static()),
@@ -612,52 +688,22 @@ fn verify_fixture_input(
             }
             Ok(())
         }
-        (input, expected) => Err(BackendExecutionError::InvalidProof {
+        TeeVerifierInput::Quote(expected) => Err(BackendExecutionError::InvalidProof {
             backend: request.backend_label(RealTeeBackend::backend_id_static()),
             reason: format!(
                 "tee attestation target '{}' requires {} handoff",
-                input.attestation_target(),
-                expected.verifier_kind()
+                input.attestation_target,
+                expected.verifier_kind
             ),
         }),
     }
 }
 
-trait IntelQuoteVerifierProvider: Send + Sync {
-    fn verify_intel_quote_bundle(
-        &self,
-        input: &QuoteVerifierInput,
-        request: &BackendVerificationRequest<'_>,
-    ) -> Result<BackendVerificationSuccess, BackendExecutionError>;
-}
-
-trait AmdReportVerifierProvider: Send + Sync {
-    fn verify_amd_report_bundle(
-        &self,
-        input: &ReportVerifierInput,
-        request: &BackendVerificationRequest<'_>,
-    ) -> Result<BackendVerificationSuccess, BackendExecutionError>;
-}
-
-trait VendorVerifierExecutor: Send + Sync {
-    fn verify_intel_quote_bundle(
-        &self,
-        input: &QuoteVerifierInput,
-        request: &BackendVerificationRequest<'_>,
-    ) -> Result<BackendVerificationSuccess, BackendExecutionError>;
-
-    fn verify_amd_report_bundle(
-        &self,
-        input: &ReportVerifierInput,
-        request: &BackendVerificationRequest<'_>,
-    ) -> Result<BackendVerificationSuccess, BackendExecutionError>;
-}
-
-struct FixtureBackedIntelQuoteVerifierProvider {
+struct FixtureBackedIntelQuoteVerifierClient {
     fixtures: Vec<TeeFixture>,
 }
 
-impl FixtureBackedIntelQuoteVerifierProvider {
+impl FixtureBackedIntelQuoteVerifierClient {
     fn new(fixtures: Vec<TeeFixture>) -> Self {
         Self { fixtures }
     }
@@ -680,25 +726,25 @@ impl FixtureBackedIntelQuoteVerifierProvider {
     }
 }
 
-impl IntelQuoteVerifierProvider for FixtureBackedIntelQuoteVerifierProvider {
-    fn verify_intel_quote_bundle(
+impl IntelQuoteVerifierClient for FixtureBackedIntelQuoteVerifierClient {
+    fn verify_intel_quote_request(
         &self,
-        input: &QuoteVerifierInput,
+        request_input: &IntelQuoteVerifierClientRequest,
         request: &BackendVerificationRequest<'_>,
     ) -> Result<BackendVerificationSuccess, BackendExecutionError> {
-        let fixture = self.fixture_for_target(&input.attestation_target, request)?;
-        verify_fixture_input(&TeeVerifierInput::Quote(input.clone()), fixture, request)?;
+        let fixture = self.fixture_for_target(&request_input.attestation_target, request)?;
+        verify_fixture_intel_client_request(request_input, fixture, request)?;
         Ok(BackendVerificationSuccess {
             backend_id: fixture.backend_id.clone(),
         })
     }
 }
 
-struct FixtureBackedAmdReportVerifierProvider {
+struct FixtureBackedAmdReportVerifierClient {
     fixtures: Vec<TeeFixture>,
 }
 
-impl FixtureBackedAmdReportVerifierProvider {
+impl FixtureBackedAmdReportVerifierClient {
     fn new(fixtures: Vec<TeeFixture>) -> Self {
         Self { fixtures }
     }
@@ -721,17 +767,73 @@ impl FixtureBackedAmdReportVerifierProvider {
     }
 }
 
-impl AmdReportVerifierProvider for FixtureBackedAmdReportVerifierProvider {
+impl AmdReportVerifierClient for FixtureBackedAmdReportVerifierClient {
+    fn verify_amd_report_request(
+        &self,
+        request_input: &AmdReportVerifierClientRequest,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<BackendVerificationSuccess, BackendExecutionError> {
+        let fixture = self.fixture_for_target(&request_input.attestation_target, request)?;
+        verify_fixture_amd_client_request(request_input, fixture, request)?;
+        Ok(BackendVerificationSuccess {
+            backend_id: fixture.backend_id.clone(),
+        })
+    }
+}
+
+struct ClientBackedIntelQuoteVerifierProvider {
+    client: Arc<dyn IntelQuoteVerifierClient>,
+}
+
+impl ClientBackedIntelQuoteVerifierProvider {
+    fn new(client: Arc<dyn IntelQuoteVerifierClient>) -> Self {
+        Self { client }
+    }
+}
+
+impl IntelQuoteVerifierProvider for ClientBackedIntelQuoteVerifierProvider {
+    fn verify_intel_quote_bundle(
+        &self,
+        input: &QuoteVerifierInput,
+        request: &BackendVerificationRequest<'_>,
+    ) -> Result<BackendVerificationSuccess, BackendExecutionError> {
+        let client_request = IntelQuoteVerifierClientRequest {
+            attestation_target: input.attestation_target.clone(),
+            measurement_field: input.measurement_field.clone(),
+            measurement: input.measurement.clone(),
+            report_data_hash: input.report_data_hash.clone(),
+            quote: input.quote.clone(),
+            intel_collateral: input.intel_collateral.clone(),
+        };
+        self.client.verify_intel_quote_request(&client_request, request)
+    }
+}
+
+struct ClientBackedAmdReportVerifierProvider {
+    client: Arc<dyn AmdReportVerifierClient>,
+}
+
+impl ClientBackedAmdReportVerifierProvider {
+    fn new(client: Arc<dyn AmdReportVerifierClient>) -> Self {
+        Self { client }
+    }
+}
+
+impl AmdReportVerifierProvider for ClientBackedAmdReportVerifierProvider {
     fn verify_amd_report_bundle(
         &self,
         input: &ReportVerifierInput,
         request: &BackendVerificationRequest<'_>,
     ) -> Result<BackendVerificationSuccess, BackendExecutionError> {
-        let fixture = self.fixture_for_target(&input.attestation_target, request)?;
-        verify_fixture_input(&TeeVerifierInput::Report(input.clone()), fixture, request)?;
-        Ok(BackendVerificationSuccess {
-            backend_id: fixture.backend_id.clone(),
-        })
+        let client_request = AmdReportVerifierClientRequest {
+            attestation_target: input.attestation_target.clone(),
+            measurement_field: input.measurement_field.clone(),
+            measurement: input.measurement.clone(),
+            report_data_hash: input.report_data_hash.clone(),
+            report: input.report.clone(),
+            amd_signer: input.amd_signer.clone(),
+        };
+        self.client.verify_amd_report_request(&client_request, request)
     }
 }
 
@@ -754,8 +856,12 @@ impl ProviderBackedVendorVerifierExecutor {
     fn fixture_backed() -> Self {
         let fixtures = load_embedded_fixtures();
         Self::new(
-            Arc::new(FixtureBackedIntelQuoteVerifierProvider::new(fixtures.clone())),
-            Arc::new(FixtureBackedAmdReportVerifierProvider::new(fixtures)),
+            Arc::new(ClientBackedIntelQuoteVerifierProvider::new(Arc::new(
+                FixtureBackedIntelQuoteVerifierClient::new(fixtures.clone()),
+            ))),
+            Arc::new(ClientBackedAmdReportVerifierProvider::new(Arc::new(
+                FixtureBackedAmdReportVerifierClient::new(fixtures),
+            ))),
         )
     }
 }
@@ -1018,6 +1124,108 @@ mod tests {
                 && amd_signer.vcek == "amd-vcek-demo-v1"
                 && amd_signer.cert_chain == "amd-cert-chain-demo-v1"
                 && amd_signer.report_signer == "amd"
+        ));
+    }
+
+    struct AssertingIntelQuoteClient;
+
+    impl IntelQuoteVerifierClient for AssertingIntelQuoteClient {
+        fn verify_intel_quote_request(
+            &self,
+            request_input: &IntelQuoteVerifierClientRequest,
+            _request: &BackendVerificationRequest<'_>,
+        ) -> Result<BackendVerificationSuccess, BackendExecutionError> {
+            assert_eq!(request_input.attestation_target, "sgx-dcap");
+            assert_eq!(request_input.measurement_field, "mrenclave");
+            assert_eq!(request_input.measurement, "mrenclave:demo-sgx-v1");
+            assert_eq!(request_input.quote, "quote-sgx-dcap-demo-v1");
+            assert_eq!(request_input.intel_collateral.collateral, "intel-dcap-collateral-demo-v1");
+            assert_eq!(request_input.intel_collateral.cert_chain, "intel-dcap-cert-chain-demo-v1");
+            assert_eq!(request_input.intel_collateral.issuer, "intel");
+            Ok(BackendVerificationSuccess {
+                backend_id: "intel-mock-client".into(),
+            })
+        }
+    }
+
+    struct AssertingAmdReportClient;
+
+    impl AmdReportVerifierClient for AssertingAmdReportClient {
+        fn verify_amd_report_request(
+            &self,
+            request_input: &AmdReportVerifierClientRequest,
+            _request: &BackendVerificationRequest<'_>,
+        ) -> Result<BackendVerificationSuccess, BackendExecutionError> {
+            assert_eq!(request_input.attestation_target, "sev-snp");
+            assert_eq!(request_input.measurement_field, "measurement");
+            assert_eq!(request_input.measurement, "measurement:demo-snp-v1");
+            assert_eq!(request_input.report, "report-sev-snp-demo-v1");
+            assert_eq!(request_input.amd_signer.vcek, "amd-vcek-demo-v1");
+            assert_eq!(request_input.amd_signer.cert_chain, "amd-cert-chain-demo-v1");
+            assert_eq!(request_input.amd_signer.report_signer, "amd");
+            Ok(BackendVerificationSuccess {
+                backend_id: "amd-mock-client".into(),
+            })
+        }
+    }
+
+    #[test]
+    fn client_backed_intel_provider_delegates_request_to_client() {
+        let task = mock_task();
+        let proof_data = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=sgx-dcap,measurement=mrenclave:demo-sgx-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,quote=quote-sgx-dcap-demo-v1,collateral=intel-dcap-collateral-demo-v1,cert_chain=intel-dcap-cert-chain-demo-v1,issuer=intel";
+        let payload = parse_tee_attestation_payload(proof_data).unwrap();
+        let handoff = TeeVerifierHandoff::from_payload(&payload, None).unwrap();
+        let input = match SGX_DCAP_ADAPTER.build_verifier_input(&handoff, None).unwrap() {
+            TeeVerifierInput::Quote(input) => input,
+            TeeVerifierInput::Report(_) => panic!("expected intel quote verifier input"),
+        };
+        let provider = ClientBackedIntelQuoteVerifierProvider::new(Arc::new(AssertingIntelQuoteClient));
+
+        let result = provider.verify_intel_quote_bundle(
+            &input,
+            &BackendVerificationRequest {
+                family: VerificationBackendFamily::Tee,
+                task: &task,
+                proof_data,
+                tee_payload: Some(&payload),
+                zk_payload: None,
+                resolved_vk_ref: None,
+            },
+        );
+
+        assert!(matches!(
+            result,
+            Ok(BackendVerificationSuccess { backend_id }) if backend_id == "intel-mock-client"
+        ));
+    }
+
+    #[test]
+    fn client_backed_amd_provider_delegates_request_to_client() {
+        let task = mock_task();
+        let proof_data = b"TEE:task_id=42,worker=worker1,proof_type=tee,result_hash=1111111111111111111111111111111111111111111111111111111111111111,attestation_target=sev-snp,measurement=measurement:demo-snp-v1,report_data_hash=1111111111111111111111111111111111111111111111111111111111111111,report=report-sev-snp-demo-v1,vcek=amd-vcek-demo-v1,cert_chain=amd-cert-chain-demo-v1,report_signer=amd";
+        let payload = parse_tee_attestation_payload(proof_data).unwrap();
+        let handoff = TeeVerifierHandoff::from_payload(&payload, None).unwrap();
+        let input = match SEV_SNP_ADAPTER.build_verifier_input(&handoff, None).unwrap() {
+            TeeVerifierInput::Report(input) => input,
+            TeeVerifierInput::Quote(_) => panic!("expected amd report verifier input"),
+        };
+        let provider = ClientBackedAmdReportVerifierProvider::new(Arc::new(AssertingAmdReportClient));
+
+        let result = provider.verify_amd_report_bundle(
+            &input,
+            &BackendVerificationRequest {
+                family: VerificationBackendFamily::Tee,
+                task: &task,
+                proof_data,
+                tee_payload: Some(&payload),
+                zk_payload: None,
+                resolved_vk_ref: None,
+            },
+        );
+
+        assert!(matches!(
+            result,
+            Ok(BackendVerificationSuccess { backend_id }) if backend_id == "amd-mock-client"
         ));
     }
 
