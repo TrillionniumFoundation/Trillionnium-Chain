@@ -291,7 +291,7 @@ struct MessageIngressRecord {
     reveal_tx_hash: Option<String>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 struct NodeEventRecord {
     event_type: String,
     task_id: u64,
@@ -699,7 +699,7 @@ fn load_node_events_from_root(root: &Path, mode: NodeEventScanMode) -> LoadedNod
         }
     }
 
-    let mut out = Vec::new();
+    let mut out = BTreeSet::new();
     for line in lines {
         let Some(event_pos) = line.find("[event]") else {
             continue;
@@ -734,7 +734,7 @@ fn load_node_events_from_root(root: &Path, mode: NodeEventScanMode) -> LoadedNod
             })
         };
 
-        out.push(NodeEventRecord {
+        out.insert(NodeEventRecord {
             event_type: kv
                 .get("event_type")
                 .cloned()
@@ -769,6 +769,7 @@ fn load_node_events_from_root(root: &Path, mode: NodeEventScanMode) -> LoadedNod
             bond_disposition: normalize_opt("bond_disposition"),
         });
     }
+    let mut out: Vec<_> = out.into_iter().collect();
     out.sort_by(|a, b| {
         a.block_height
             .cmp(&b.block_height)
@@ -6634,6 +6635,47 @@ line2
         assert_eq!(got[0].event_type, "resolve");
 
         let _ = fs::remove_file(path);
+    }
+
+    #[test]
+    fn load_node_events_authoritative_deduplicates_identical_events_across_sources() {
+        let _guard = lock_env();
+        let root = unique_tmp_path("trnm-rpc-node-dedup-root", "dir");
+        fs::create_dir_all(&root).expect("create root dir");
+
+        let left_path = root.join("left.log");
+        let right_path = root.join("right.log");
+        let shared = "[event] event_type=commit task_id=92 tx_id=3 block_height=4 actor=node4 from_status=ASSIGNED to_status=COMPLETED state_root=aaa signer=node4 ts_unix_ms=400\n";
+        fs::write(&left_path, shared).expect("write left log");
+        fs::write(&right_path, shared).expect("write right log");
+
+        let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+        let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+        unsafe {
+            std::env::set_var(
+                NODE_EVENT_LOG_SOURCES_ENV,
+                format!("{},{}", left_path.display(), right_path.display()),
+            );
+            std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV);
+        }
+
+        let got = load_node_events_from_root(&root, NodeEventScanMode::Authoritative);
+
+        match prev_sources {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+        }
+        match prev_manifest {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+        }
+
+        assert_eq!(got.events.len(), 1, "duplicate authoritative event lines must collapse to a single RPC event");
+        assert_eq!(got.events[0].task_id, 92);
+        assert_eq!(got.events[0].tx_id, 3);
+        assert_eq!(got.events[0].event_type, "commit");
+
+        let _ = fs::remove_dir_all(root);
     }
 
     #[test]
