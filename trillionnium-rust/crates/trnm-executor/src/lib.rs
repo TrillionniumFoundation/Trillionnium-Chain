@@ -2289,6 +2289,24 @@ mod tests {
     }
 
     #[test]
+    fn grouped_integer_env_parsers_accept_quoted_comma_grouped_values() {
+        let _env = env_lock();
+
+        let _window = EnvGuard::set("TRNM_AGGR_SCAN_WINDOW", " \"1,024\" ");
+        let _seed = EnvGuard::set("TRNM_AGGR_SCAN_RR_SEED", " '9,001' ");
+        let _buckets = EnvGuard::set("TRNM_HOT_BUCKETS", " \"1,6\" ");
+        let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", " '2,048' ");
+        let _sample_len = EnvGuard::set("TRNM_AUTO_SAMPLE_LEN", " \"1,536\" ");
+
+        assert_eq!(aggr_scan_window(), 1024);
+        assert_eq!(aggr_scan_round_robin_seed(), 9001);
+        assert_eq!(hot_bucket_count(), 16);
+        assert_eq!(auto_adaptive_min_batch_len(), 2048);
+        assert_eq!(auto_adaptive_sample_len(5000), 1536);
+        assert_eq!(auto_adaptive_sample_len(1400), 1400);
+    }
+
+    #[test]
     fn auto_adaptive_numeric_env_parser_accepts_percent_suffix_for_ratio_knobs() {
         let _env = env_lock();
 
