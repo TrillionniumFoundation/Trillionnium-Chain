@@ -2786,6 +2786,28 @@ mod tests {
     }
 
     #[test]
+    fn auto_adaptive_empty_batches_fail_closed_even_with_permissive_env_knobs() {
+        let _env = env_lock();
+        let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "64");
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.0");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.0");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.0");
+
+        // Empty batches must stay fail-closed in the experimental lane even if
+        // every adaptive threshold is configured permissively.
+        let txs: Vec<Tx> = Vec::new();
+
+        let d = auto_adaptive_decision(&txs);
+        assert_eq!(d.sample_len, 0);
+        assert_eq!(d.reason, "small_batch");
+        assert!(!d.use_hot_bucket);
+        assert_eq!(d.hot_key_share, 0.0);
+        assert_eq!(d.streak_ratio, 0.0);
+        assert_eq!(d.expected_gain_score, 0.0);
+    }
+
+    #[test]
     fn auto_adaptive_keyless_gaps_break_same_key_streaks_fail_closed() {
         let _env = env_lock();
         let _min_batch = EnvGuard::set("TRNM_AUTO_MIN_BATCH_LEN", "64");
