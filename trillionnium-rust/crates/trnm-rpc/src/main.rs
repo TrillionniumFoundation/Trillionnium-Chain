@@ -2062,6 +2062,17 @@ fn clamp_limit(op: &str, requested: usize, default_limit: usize, max_limit: usiz
     requested
 }
 
+fn push_tail_limited<T>(items: &mut Vec<T>, item: T, limit: usize) {
+    if limit == 0 {
+        return;
+    }
+    items.push(item);
+    if items.len() > limit {
+        let keep_from = items.len() - limit;
+        items.drain(0..keep_from);
+    }
+}
+
 fn normalize_tx_hash_lookup(raw: &str) -> String {
     let mut normalized = raw.trim_matches(|c: char| {
         c.is_ascii_whitespace() || matches!(c, ',' | ';' | '.' | '(' | ')' | '[' | ']' | '{' | '}')
@@ -2424,7 +2435,7 @@ fn read_http_request_head(stream: &mut TcpStream) -> std::io::Result<Vec<u8>> {
     Ok(buf)
 }
 
-fn parse_http_get_path(first_line: &str) -> Option<&str> {
+fn parse_http_get_target(first_line: &str) -> Option<&str> {
     let line = first_line.trim_end_matches(['\r', '\n']);
     if line.is_empty() || line.chars().any(|ch| ch.is_control() && ch != '\t') {
         return None;
@@ -2451,8 +2462,150 @@ fn parse_http_get_path(first_line: &str) -> Option<&str> {
         return None;
     }
 
-    let path = path.split('?').next().unwrap_or(path);
-    Some(path.split('#').next().unwrap_or(path))
+    let normalized = path.to_ascii_lowercase();
+    if path.contains('\\') || normalized.contains("%5c") {
+        return None;
+    }
+    if path.contains('#') || normalized.contains("%23") {
+        return None;
+    }
+    if normalized.contains("%0d")
+        || normalized.contains("%0a")
+        || normalized.contains("%09")
+        || normalized.contains("%0b")
+        || normalized.contains("%0c")
+        || normalized.contains("%20")
+    {
+        return None;
+    }
+
+    let path_without_query = path.split('?').next().unwrap_or(path);
+    let normalized_path = path_without_query.to_ascii_lowercase();
+    if normalized_path.contains("%2f")
+        || normalized_path.contains("%2e")
+        || path_without_query
+            .split('/')
+            .any(|segment| segment == "." || segment == "..")
+    {
+        return None;
+    }
+
+    Some(path)
+}
+
+fn parse_http_get_path(first_line: &str) -> Option<&str> {
+    parse_http_get_target(first_line).map(|path| path.split('?').next().unwrap_or(path))
+}
+
+fn parse_query_events_limit_from_path(path: &str) -> std::result::Result<usize, String> {
+    let path_without_query = path.split('?').next().unwrap_or(path);
+    let normalized_path = path_without_query.to_ascii_lowercase();
+    if !path_without_query.starts_with('/')
+        || path_without_query.contains('\\')
+        || path_without_query.contains('#')
+        || normalized_path.contains("%5c")
+        || normalized_path.contains("%23")
+        || normalized_path.contains("%2f")
+        || normalized_path.contains("%2e")
+        || normalized_path.contains("%0d")
+        || normalized_path.contains("%0a")
+        || normalized_path.contains("%09")
+        || normalized_path.contains("%0b")
+        || normalized_path.contains("%0c")
+        || normalized_path.contains("%20")
+        || path_without_query
+            .split('/')
+            .any(|segment| segment == "." || segment == "..")
+    {
+        return Err(http_json_response(
+            "400 Bad Request",
+            "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}",
+        ));
+    }
+
+    let Some(query) = path.split_once('?').map(|(_, query)| query) else {
+        return Ok(QUERY_EVENTS_LIMIT_DEFAULT);
+    };
+
+    if query.is_empty()
+        || query.contains('?')
+        || query.contains('#')
+        || query.chars().any(|ch| ch.is_control())
+    {
+        return Err(http_json_response(
+            "400 Bad Request",
+            "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}",
+        ));
+    }
+    let normalized_query = query.to_ascii_lowercase();
+    if normalized_query.contains("%26")
+        || normalized_query.contains("%3d")
+        || normalized_query.contains("%23")
+        || normalized_query.contains("%3f")
+        || normalized_query.contains("%0d")
+        || normalized_query.contains("%0a")
+        || normalized_query.contains("%09")
+        || normalized_query.contains("%0b")
+        || normalized_query.contains("%0c")
+        || normalized_query.contains("%20")
+    {
+        return Err(http_json_response(
+            "400 Bad Request",
+            "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}",
+        ));
+    }
+
+    let mut parsed_limit: Option<usize> = None;
+    for pair in query.split('&') {
+        if pair.is_empty() {
+            return Err(http_json_response(
+                "400 Bad Request",
+                "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}",
+            ));
+        }
+        let Some((key, value)) = pair.split_once('=') else {
+            return Err(http_json_response(
+                "400 Bad Request",
+                "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}",
+            ));
+        };
+        let normalized_key = normalize_wrapped_env_value(key);
+        if !normalized_key.eq_ignore_ascii_case("limit") || key != "limit" {
+            return Err(http_json_response(
+                "400 Bad Request",
+                "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}",
+            ));
+        }
+        if parsed_limit.is_some() {
+            return Err(http_json_response(
+                "400 Bad Request",
+                "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"duplicate limit\"}",
+            ));
+        }
+
+        let normalized = normalize_wrapped_env_value(value);
+        if normalized.is_empty() {
+            return Err(http_json_response(
+                "400 Bad Request",
+                "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}",
+            ));
+        }
+
+        let requested = normalized.parse::<usize>().map_err(|_| {
+            http_json_response(
+                "400 Bad Request",
+                "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}",
+            )
+        })?;
+        parsed_limit = Some(clamp_limit(
+            "QueryEventsHttp",
+            requested,
+            QUERY_EVENTS_LIMIT_DEFAULT,
+            QUERY_EVENTS_LIMIT_MAX,
+        ));
+    }
+
+    Ok(parsed_limit.unwrap_or(QUERY_EVENTS_LIMIT_DEFAULT))
 }
 
 fn normalize_capability_subject_lookup(raw: &str) -> Option<String> {
@@ -2527,10 +2680,11 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
         };
         let req = String::from_utf8_lossy(&req);
         let first = req.lines().next().unwrap_or("");
-        let path = parse_http_get_path(first);
+        let target = parse_http_get_target(first);
+        let path = target.map(|raw| raw.split('?').next().unwrap_or(raw));
 
-        let response = match path {
-            Some("/health") => {
+        let response = match (path, target) {
+            (Some("/health"), _) => {
                 let body = serde_json::json!({
                     "ok": true,
                     "service": "trnm-rpc",
@@ -2540,7 +2694,7 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
                 .to_string();
                 http_json_response("200 OK", &body)
             }
-            Some(path) if path.starts_with("/query-task/") => {
+            (Some(path), _) if path.starts_with("/query-task/") => {
                 let task_id = path.trim_start_matches("/query-task/").parse::<u64>();
                 match task_id {
                     Ok(task_id) => {
@@ -2565,18 +2719,14 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
                     }
                 }
             }
-            Some(path) if path.starts_with("/query-events/") => {
+            (Some(path), Some(target)) if path.starts_with("/query-events/") => {
                 let task_id = path.trim_start_matches("/query-events/").parse::<u64>();
-                match task_id {
-                    Ok(task_id) => {
+                let limit = parse_query_events_limit_from_path(target);
+                match (task_id, limit) {
+                    (Ok(task_id), Ok(limit)) => {
                         let node_events = load_node_events(NodeEventScanMode::Authoritative);
                         let recs = load_latest_adapter_records();
-                        match query_events_response(
-                            task_id,
-                            QUERY_EVENTS_LIMIT_DEFAULT,
-                            &node_events.events,
-                            &recs,
-                        ) {
+                        match query_events_response(task_id, limit, &node_events.events, &recs) {
                             Ok(events) => {
                                 let body = serde_json::to_string(&events).unwrap_or_else(|_| {
                                     "{\"ok\":false,\"code\":\"SERDE_ERROR\"}".to_string()
@@ -2589,13 +2739,14 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
                             }
                         }
                     }
-                    Err(_) => {
+                    (_, Err(err)) => err,
+                    (Err(_), _) => {
                         let body = "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid task_id\"}";
                         http_json_response("400 Bad Request", body)
                     }
                 }
             }
-            Some(path) if path.starts_with("/query-capability-audit/") => {
+            (Some(path), _) if path.starts_with("/query-capability-audit/") => {
                 let subject_or_token = path.trim_start_matches("/query-capability-audit/");
                 let registry = load_identity_registry(&identity_registry_file());
                 if let Some(token_id) =
@@ -2805,25 +2956,29 @@ fn query_events_response(
             .as_deref()
             .and_then(normalize_actor_or_signer)
             .or_else(|| Some(actor.clone()));
-        events.push(EventQueryResponse {
-            event_type: e.event_type.clone(),
-            task_id,
-            from_status: e.from_status.clone(),
-            to_status: e.to_status.clone(),
-            actor,
-            tx_id: e.tx_id,
-            block_height: e.block_height,
-            state_root: e.state_root.clone(),
-            ts_unix_ms: e.ts_unix_ms,
-            signer,
-            challenger: e.challenger.clone(),
-            tx_hash: e.tx_hash.clone(),
-            resolution_code: e.resolution_code.clone(),
-            treasury_delta: e.treasury_delta,
-            challenger_delta: e.challenger_delta,
-            bond_disposition: e.bond_disposition.clone(),
-            metering: e.metering.clone(),
-        });
+        push_tail_limited(
+            &mut events,
+            EventQueryResponse {
+                event_type: e.event_type.clone(),
+                task_id,
+                from_status: e.from_status.clone(),
+                to_status: e.to_status.clone(),
+                actor,
+                tx_id: e.tx_id,
+                block_height: e.block_height,
+                state_root: e.state_root.clone(),
+                ts_unix_ms: e.ts_unix_ms,
+                signer,
+                challenger: e.challenger.clone(),
+                tx_hash: e.tx_hash.clone(),
+                resolution_code: e.resolution_code.clone(),
+                treasury_delta: e.treasury_delta,
+                challenger_delta: e.challenger_delta,
+                bond_disposition: e.bond_disposition.clone(),
+                metering: e.metering.clone(),
+            },
+            limit,
+        );
     }
 
     if events.is_empty() {
@@ -2857,25 +3012,29 @@ fn query_events_response(
                 }
             });
 
-            events.push(EventQueryResponse {
-                event_type: kind.clone(),
-                task_id,
-                from_status,
-                to_status,
-                actor: actor.clone(),
-                tx_id,
-                block_height: tx_id,
-                state_root: "adapter_state".into(),
-                ts_unix_ms: r.ts as u128,
-                signer: Some(actor),
-                challenger: None,
-                tx_hash,
-                resolution_code: None,
-                treasury_delta: None,
-                challenger_delta: None,
-                bond_disposition: None,
-                metering: None,
-            });
+            push_tail_limited(
+                &mut events,
+                EventQueryResponse {
+                    event_type: kind.clone(),
+                    task_id,
+                    from_status,
+                    to_status,
+                    actor: actor.clone(),
+                    tx_id,
+                    block_height: tx_id,
+                    state_root: "adapter_state".into(),
+                    ts_unix_ms: r.ts as u128,
+                    signer: Some(actor),
+                    challenger: None,
+                    tx_hash,
+                    resolution_code: None,
+                    treasury_delta: None,
+                    challenger_delta: None,
+                    bond_disposition: None,
+                    metering: None,
+                },
+                limit,
+            );
             if kind == "commit" {
                 has_commit = true;
             }
@@ -2885,10 +3044,6 @@ fn query_events_response(
 
     if events.is_empty() {
         bail!("events not found for task_id={}", task_id);
-    }
-    if events.len() > limit {
-        let keep_from = events.len() - limit;
-        events = events.split_off(keep_from);
     }
     Ok(events)
 }
@@ -3299,31 +3454,31 @@ fn main() -> Result<()> {
                 } else {
                     e.resolution_code.clone()
                 };
-                events.push(EventQueryResponse {
-                    event_type: e.event_type.clone(),
-                    task_id: rec.task_id,
-                    from_status: e.from_status.clone(),
-                    to_status: e.to_status.clone(),
-                    actor,
-                    tx_id: e.tx_id,
-                    block_height: e.block_height,
-                    state_root: e.state_root.clone(),
-                    ts_unix_ms: e.ts_unix_ms,
-                    signer,
-                    challenger: e.challenger.clone(),
-                    tx_hash,
-                    resolution_code,
-                    treasury_delta: e.treasury_delta,
-                    challenger_delta: e.challenger_delta,
-                    bond_disposition: e.bond_disposition.clone(),
-                    metering: e.metering.clone(),
-                });
+                push_tail_limited(
+                    &mut events,
+                    EventQueryResponse {
+                        event_type: e.event_type.clone(),
+                        task_id: rec.task_id,
+                        from_status: e.from_status.clone(),
+                        to_status: e.to_status.clone(),
+                        actor,
+                        tx_id: e.tx_id,
+                        block_height: e.block_height,
+                        state_root: e.state_root.clone(),
+                        ts_unix_ms: e.ts_unix_ms,
+                        signer,
+                        challenger: e.challenger.clone(),
+                        tx_hash,
+                        resolution_code,
+                        treasury_delta: e.treasury_delta,
+                        challenger_delta: e.challenger_delta,
+                        bond_disposition: e.bond_disposition.clone(),
+                        metering: e.metering.clone(),
+                    },
+                    limit,
+                );
             }
 
-            if events.len() > limit {
-                let keep_from = events.len() - limit;
-                events = events.split_off(keep_from);
-            }
 
             let out = RequestFullQueryResponse {
                 request: MessageRequestQueryResponse {
@@ -3872,15 +4027,201 @@ mod tests {
     }
 
     #[test]
-    fn parse_http_get_path_strips_fragment_suffix_from_health_bridge_path() {
-        assert_eq!(
-            parse_http_get_path("GET /health#bridge HTTP/1.1"),
-            Some("/health")
-        );
+    fn parse_http_get_path_rejects_fragment_suffixes_fail_closed() {
+        assert_eq!(parse_http_get_path("GET /health#bridge HTTP/1.1"), None);
         assert_eq!(
             parse_http_get_path("GET /query-events/7?limit=5#tail HTTP/1.1"),
-            Some("/query-events/7")
+            None
         );
+    }
+
+    #[test]
+    fn parse_query_events_limit_from_path_defaults_and_accepts_explicit_limit() {
+        assert_eq!(
+            parse_query_events_limit_from_path("/query-events/42").expect("default limit"),
+            QUERY_EVENTS_LIMIT_DEFAULT
+        );
+        assert_eq!(
+            parse_query_events_limit_from_path("/query-events/42?limit=7").expect("explicit limit"),
+            7
+        );
+    }
+
+    #[test]
+    fn parse_query_events_limit_from_path_zero_uses_default_limit() {
+        assert_eq!(
+            parse_query_events_limit_from_path("/query-events/42?limit=0")
+                .expect("zero limit should fall back to the bounded default"),
+            QUERY_EVENTS_LIMIT_DEFAULT
+        );
+    }
+
+    #[test]
+    fn parse_query_events_limit_from_path_rejects_unrelated_query_keys() {
+        for path in [
+            "/query-events/42?foo=bar&limit=9",
+            "/query-events/42?limit=9&foo=bar",
+            "/query-events/42?foo=bar",
+            "/query-events/42?limit=9&bar=baz",
+        ] {
+            let err = parse_query_events_limit_from_path(path)
+                .expect_err("unrelated query keys must fail closed instead of being ignored");
+            assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+            assert!(err.contains("invalid limit"), "path={path} err={err}");
+        }
+    }
+
+    #[test]
+    fn parse_query_events_limit_from_path_rejects_invalid_limit() {
+        let err = parse_query_events_limit_from_path("/query-events/42?limit=bogus")
+            .expect_err("invalid limit must fail closed");
+        assert!(err.contains("400 Bad Request"));
+        assert!(err.contains("invalid limit"));
+    }
+
+    #[test]
+    fn parse_query_events_limit_from_path_rejects_uppercase_percent_encoded_query_delimiters() {
+        for path in [
+            "/query-events/42?limit=7%26limit=9",
+            "/query-events/42?limit%3D9",
+            "/query-events/42?limit=7%23tail",
+            "/query-events/42?limit=7%0D%0Aextra",
+        ] {
+            let err = parse_query_events_limit_from_path(path)
+                .expect_err("uppercase encoded delimiters must fail closed");
+            assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+            assert!(err.contains("invalid limit"), "path={path} err={err}");
+        }
+    }
+
+    #[test]
+    fn parse_query_events_limit_from_path_accepts_wrapped_numeric_limit() {
+        assert_eq!(
+            parse_query_events_limit_from_path("/query-events/42?limit=\"7\"")
+                .expect("double-quoted numeric limit should parse"),
+            7
+        );
+        assert_eq!(
+            parse_query_events_limit_from_path("/query-events/42?limit='8'")
+                .expect("single-quoted numeric limit should parse"),
+            8
+        );
+        assert_eq!(
+            parse_query_events_limit_from_path("/query-events/42?limit=  `9`  ")
+                .expect("backtick-wrapped numeric limit should parse"),
+            9
+        );
+    }
+
+    #[test]
+    fn parse_query_events_limit_from_path_clamps_to_hardcap() {
+        assert_eq!(
+            parse_query_events_limit_from_path(&format!(
+                "/query-events/42?limit={}",
+                QUERY_EVENTS_LIMIT_MAX + 99
+            ))
+            .expect("oversized limit should clamp to hardcap"),
+            QUERY_EVENTS_LIMIT_MAX
+        );
+    }
+
+    #[test]
+    fn parse_query_events_limit_from_path_rejects_missing_limit_value() {
+        let err = parse_query_events_limit_from_path("/query-events/42?limit")
+            .expect_err("missing limit value must fail closed");
+        assert!(err.contains("400 Bad Request"));
+        assert!(err.contains("invalid limit"));
+    }
+
+    #[test]
+    fn parse_query_events_limit_from_path_rejects_empty_query_suffix() {
+        let err = parse_query_events_limit_from_path("/query-events/42?")
+            .expect_err("empty query suffix must fail closed");
+        assert!(err.contains("400 Bad Request"));
+        assert!(err.contains("invalid limit"));
+    }
+
+    #[test]
+    fn parse_query_events_limit_from_path_rejects_empty_limit_value() {
+        let err = parse_query_events_limit_from_path("/query-events/42?limit=")
+            .expect_err("empty limit value must fail closed");
+        assert!(err.contains("400 Bad Request"));
+        assert!(err.contains("invalid limit"));
+    }
+
+    #[test]
+    fn parse_query_events_limit_from_path_rejects_encoded_query_smuggling() {
+        for path in [
+            "/query-events/42?limit=7%26limit=9",
+            "/query-events/42?limit%3d7",
+            "/query-events/42?foo=bar%26limit=9",
+        ] {
+            let err = parse_query_events_limit_from_path(path)
+                .expect_err("encoded delimiters must fail closed");
+            assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+            assert!(err.contains("invalid limit"), "path={path} err={err}");
+        }
+    }
+
+    #[test]
+    fn parse_query_events_limit_from_path_rejects_malformed_unrelated_query_pairs() {
+        for path in [
+            "/query-events/42?foo&limit=7",
+            "/query-events/42?foo=bar&baz",
+            "/query-events/42?foo=bar&limit=7&qux",
+            "/query-events/42??limit=7",
+        ] {
+            let err = parse_query_events_limit_from_path(path)
+                .expect_err("malformed unrelated query pairs must fail closed");
+            assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+            assert!(err.contains("invalid limit"), "path={path} err={err}");
+        }
+    }
+
+    #[test]
+    fn parse_query_events_limit_from_path_rejects_percent_encoded_query_delimiters() {
+        for path in [
+            "/query-events/42?foo=bar%26limit=9",
+            "/query-events/42?limit%3d9",
+            "/query-events/42?limit=7%23tail",
+            "/query-events/42?foo=bar%3flimit=9",
+            "/query-events/42?foo=bar%0d%0alimit=9",
+            "/query-events/42?limit=7%0d%0aextra",
+        ] {
+            let err = parse_query_events_limit_from_path(path)
+                .expect_err("encoded query delimiters must fail closed");
+            assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+            assert!(err.contains("invalid limit"), "path={path} err={err}");
+        }
+    }
+
+    #[test]
+    fn parse_query_events_limit_from_path_rejects_raw_fragment_delimiters() {
+        for path in [
+            "/query-events/42?limit=7#tail",
+            "/query-events/42?foo=bar#tail",
+            "/query-events/42?foo=bar&limit=7#tail",
+        ] {
+            let err = parse_query_events_limit_from_path(path)
+                .expect_err("raw fragment delimiters must fail closed");
+            assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+            assert!(err.contains("invalid limit"), "path={path} err={err}");
+        }
+    }
+
+    #[test]
+    fn parse_query_events_limit_from_path_rejects_percent_encoded_path_smuggling() {
+        for path in [
+            "/query-events%2f42?limit=7",
+            "/query-events/..%2f42?limit=7",
+            "/query-events/%2e%2e/42?limit=7",
+            "/query-events/42%2ejson?limit=7",
+        ] {
+            let err = parse_query_events_limit_from_path(path)
+                .expect_err("percent encoded path delimiters must fail closed");
+            assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+            assert!(err.contains("invalid limit"), "path={path} err={err}");
+        }
     }
 
     #[test]
@@ -3958,6 +4299,24 @@ mod tests {
         with_market_path_env(&[(TASK_STATE_FILE_ENV, Some("  '/tmp/task-state.jsonl'  "))], || {
             assert_eq!(task_state_file(), Some(PathBuf::from("/tmp/task-state.jsonl")));
         });
+    }
+
+    #[test]
+    fn push_tail_limited_keeps_only_most_recent_items_in_order() {
+        let mut items = Vec::new();
+        push_tail_limited(&mut items, 1, 3);
+        push_tail_limited(&mut items, 2, 3);
+        push_tail_limited(&mut items, 3, 3);
+        push_tail_limited(&mut items, 4, 3);
+        push_tail_limited(&mut items, 5, 3);
+        assert_eq!(items, vec![3, 4, 5]);
+    }
+
+    #[test]
+    fn push_tail_limited_fail_closes_when_limit_is_zero() {
+        let mut items = vec![1, 2, 3];
+        push_tail_limited(&mut items, 4, 0);
+        assert_eq!(items, vec![1, 2, 3]);
     }
 
     #[test]

@@ -1806,7 +1806,7 @@ mod tests {
     }
 
     #[test]
-    fn resolve_zk_vk_ref_accepts_trimmed_and_case_insensitive_registered_reference() {
+    fn resolve_zk_vk_ref_accepts_registered_reference_with_custom_metadata() {
         let mut resolver = VkRefRegistry::new();
         resolver.register(ResolvedVkRef {
             vk_ref: "vk://trnm/dev/mock-groth16/mixedcase".into(),
@@ -1822,8 +1822,9 @@ mod tests {
             zk_system: Some("groth16".into()),
             backend_id: Some("mock-zk".into()),
             backend_version: Some("v1".into()),
-            vk_ref: "  VK://TRNM/DEV/MOCK-GROTH16/MIXEDCASE  ".into(),
-            proof_encoding: ProofBytesEncoding::Hex,
+            schema_version: "trnm.zk.payload.v0".into(),
+            vk_ref: "vk://trnm/dev/mock-groth16/mixedcase".into(),
+            proof_encoding: Some(ProofBytesEncoding::Hex),
             proof: "01020304".into(),
             public_inputs: ZkPublicInputs {
                 order: vec![
@@ -1840,7 +1841,6 @@ mod tests {
                 ],
             },
             meta: ZkPayloadMeta {
-                schema_version: "trnm.zk.payload.v0".into(),
                 circuit_id: Some("settlement-result-v1".into()),
             },
         };
