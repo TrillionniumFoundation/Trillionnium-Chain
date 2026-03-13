@@ -549,6 +549,39 @@ mod tests {
     }
 
     #[test]
+    fn subminimum_hotspot_batches_do_not_advertise_adaptive_headroom() {
+        let under_min = (0..31)
+            .map(|i| tx(i as u64, vec![0], vec![0]))
+            .collect::<Vec<_>>();
+        let adaptive_candidate = adaptive_candidate_strategy_for(&under_min);
+
+        assert!(matches!(adaptive_candidate, GroupingStrategy::Original));
+        assert!(matches!(
+            effective_strategy_for(StrategyArg::Default, &under_min),
+            GroupingStrategy::Original
+        ));
+        assert!(matches!(
+            effective_strategy_for(StrategyArg::AutoAdaptive, &under_min),
+            GroupingStrategy::Original
+        ));
+        assert!(
+            !default_has_adaptive_opportunity(StrategyArg::Default, adaptive_candidate),
+            "subminimum hotspot batches should not claim default-path adaptive headroom"
+        );
+        assert!(
+            !emits_auto_profile(
+                StrategyArg::Default,
+                default_has_adaptive_opportunity(StrategyArg::Default, adaptive_candidate)
+            ),
+            "subminimum hotspot batches should suppress auto-profile-only fields on the default path"
+        );
+        assert!(
+            emits_auto_profile(StrategyArg::AutoAdaptive, false),
+            "explicit auto-adaptive runs should still emit decision diagnostics even when they stay on the original path"
+        );
+    }
+
+    #[test]
     fn hot_streak_default_workload_triggers_auto_adaptive_hotspot_detection() {
         let txs = build_hot_streak_txs(20_000, 2_000, 3, 1);
         let decision = auto_adaptive_decision(&txs);
