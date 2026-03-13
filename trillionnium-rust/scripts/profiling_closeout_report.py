@@ -834,6 +834,36 @@ def main():
     lines.append(selected_candidate_rank("classic_bench_selection", classic, classic_candidates))
     lines.append(selected_candidate_rank("mixed_bench_selection", mixed, mixed_candidates))
     lines.append(selected_candidate_rank("executor_profile_selection", executor_profile, executor_profile_candidates))
+    selected_newest_count = sum(
+        1
+        for pool in benchmark_pools
+        if pool["selected"] != "None" and str(pool["selected"]) != "None" and pool["pending_selected"] is False
+        and pool["candidate_count"]
+        and pool["selected"] == os.path.basename(
+            next(
+                (
+                    path
+                    for path in (
+                        classic_candidates
+                        if pool["label"] == "classic_bench_candidates"
+                        else mixed_candidates
+                        if pool["label"] == "mixed_bench_candidates"
+                        else executor_profile_candidates
+                    )
+                    if os.path.exists(path)
+                ),
+                "",
+            )
+        )
+    )
+    selected_fresh_count = sum(1 for pool in benchmark_pools if pool["selected_freshness"] == "fresh")
+    selected_pending_count = sum(1 for pool in benchmark_pools if pool["pending_selected"])
+    lines.append(
+        "- benchmark_pool_selected_artifact_status: "
+        f"newest_selected={selected_newest_count}/{len(benchmark_pools)} "
+        f"fresh_selected={selected_fresh_count}/{len(benchmark_pools)} "
+        f"pending_selected={selected_pending_count}/{len(benchmark_pools)}"
+    )
     lines.append(
         "- benchmark_pool_status_counts: "
         f"empty={pool_status_counts['empty']} refresh_required={pool_status_counts['refresh_required']} "
