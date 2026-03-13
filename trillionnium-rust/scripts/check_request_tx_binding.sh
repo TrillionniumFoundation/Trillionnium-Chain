@@ -70,7 +70,7 @@ cargo run -q -p trnm-worker-agent -- flush-submissions \
   --event-log "$EVENT_LOG" \
   --progress-log "$PROGRESS_LOG" >/dev/null
 
-full="$(cargo run -q -p trnm-rpc -- query-request-full --request-id "$request_id")"
+full="$(TRNM_RPC_INGRESS_FILE="$INGRESS" cargo run -q -p trnm-rpc -- query-request-full --request-id "$request_id")"
 
 status="$(FULL_JSON="$full" python3 - <<'PY'
 import json,os

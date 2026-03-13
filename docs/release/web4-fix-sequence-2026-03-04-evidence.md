@@ -1,6 +1,12 @@
 # Web4 6点修复补丁序列收口证据（2026-03-04）
 
 > 历史证据说明：本文档仅证明 **2026-03-04 这组 Web4 修复序列** 当时通过了列出的门禁；不应被解读为当前整个仓库或当前 Web4 状态已自动 release-ready。当前口径请以仓库根 `RELEASE_READINESS.md` 为准。
+>
+> 审计边界字段（引用本页时建议连同以下字段一起引用，避免脱离当前 truth-source）：
+> - `truth_source=RELEASE_READINESS.md`
+> - `historical_evidence_only=true`
+> - `evidence_scope=web4_fix_sequence_2026-03-04_historical_gate_evidence_only`
+> - `evidence_date=2026-03-04`
 
 ## 固定补丁序列 SHA（本次6点任务）
 

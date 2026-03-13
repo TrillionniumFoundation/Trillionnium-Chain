@@ -5,8 +5,30 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
 
+replay_tz="UTC"
+replay_lc_all="C"
+replay_lang="C"
+replay_source_date_epoch="1704067200"
+replay_cargo_term_color="never"
+replay_rust_backtrace="1"
+replay_cargo_build_jobs="1"
+
+export TZ="${TZ:-$replay_tz}"
+export LC_ALL="${LC_ALL:-$replay_lc_all}"
+export LANG="${LANG:-$replay_lang}"
+export SOURCE_DATE_EPOCH="${SOURCE_DATE_EPOCH:-$replay_source_date_epoch}"
+export CARGO_TERM_COLOR="${CARGO_TERM_COLOR:-$replay_cargo_term_color}"
+export RUST_BACKTRACE="${RUST_BACKTRACE:-$replay_rust_backtrace}"
+export CARGO_BUILD_JOBS="${CARGO_BUILD_JOBS:-$replay_cargo_build_jobs}"
+
+REPO_ROOT="$(cd "$ROOT/.." && pwd)"
+GIT_HEAD="$(git rev-parse HEAD 2>/dev/null || echo unknown)"
+GIT_BRANCH="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo unknown)"
+
 TS="$(date -u +%Y%m%d-%H%M%S)"
-BASE_OUT="${OUT_DIR:-$ROOT/run/health}"
+BASE_OUT_INPUT="${OUT_DIR:-$ROOT/run/health}"
+mkdir -p "$BASE_OUT_INPUT"
+BASE_OUT="$(cd "$BASE_OUT_INPUT" && pwd)"
 EVIDENCE_DIR="$BASE_OUT/evidence-$TS"
 SUMMARY="$EVIDENCE_DIR/summary.txt"
 mkdir -p "$EVIDENCE_DIR"
@@ -22,6 +44,7 @@ run_step() {
   local name="$1"
   local cmd="$2"
   local logfile="$EVIDENCE_DIR/${name}.log"
+  local tmpfile="$EVIDENCE_DIR/${name}.tmp"
 
   log "START $name"
   {
@@ -29,9 +52,12 @@ run_step() {
     echo "# command=$cmd"
     echo "# started_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
     bash -lc "$cmd"
-  } > >(tee "$logfile") 2>&1
+  } >"$tmpfile" 2>&1
+  local rc=$?
 
-  local rc=${PIPESTATUS[0]}
+  cat "$tmpfile" | tee "$logfile"
+  rm -f "$tmpfile"
+
   if [[ $rc -eq 0 ]]; then
     PASS_COUNT=$((PASS_COUNT + 1))
     echo "$name=PASS" >> "$SUMMARY"
@@ -43,16 +69,25 @@ run_step() {
   fi
 }
 
+resolve_existing_path() {
+  local target="$1"
+  if [[ ! -f "$target" ]]; then
+    return 1
+  fi
+
+  local dir base
+  dir="$(cd "$(dirname "$target")" && pwd)"
+  base="$(basename "$target")"
+  printf '%s/%s\n' "$dir" "$base"
+}
+
 find_challenge_reexec_entry() {
   local repo_root
   repo_root="$(cd "$ROOT/.." && pwd)"
 
   if [[ -n "${TRNM_CHALLENGE_REEXEC_ENTRY:-}" ]]; then
-    if [[ -f "$TRNM_CHALLENGE_REEXEC_ENTRY" ]]; then
-      echo "$TRNM_CHALLENGE_REEXEC_ENTRY"
-      return 0
-    fi
-    return 1
+    resolve_existing_path "$TRNM_CHALLENGE_REEXEC_ENTRY"
+    return $?
   fi
 
   local candidates=(
@@ -66,8 +101,7 @@ find_challenge_reexec_entry() {
 
   local f
   for f in "${candidates[@]}"; do
-    if [[ -f "$f" ]]; then
-      echo "$f"
+    if resolve_existing_path "$f"; then
       return 0
     fi
   done
@@ -79,31 +113,59 @@ find_challenge_reexec_entry() {
   echo "local_release_evidence=evidence-$TS"
   echo "generated_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
   echo "workspace=$ROOT"
+  echo "git_branch=$GIT_BRANCH"
+  echo "git_head=$GIT_HEAD"
   echo "evidence_dir=$EVIDENCE_DIR"
+  echo "replay_out_dir=$BASE_OUT"
+  echo "truth_source=$REPO_ROOT/RELEASE_READINESS.md"
+  echo "historical_evidence_only=true"
+  echo "evidence_scope=local_rc_rehearsal_not_current_release_ready_claim"
   echo "env_tz=${TZ:-<unset>}"
   echo "env_lc_all=${LC_ALL:-<unset>}"
+  echo "env_lang=${LANG:-<unset>}"
   echo "env_source_date_epoch=${SOURCE_DATE_EPOCH:-<unset>}"
+  echo "env_cargo_term_color=${CARGO_TERM_COLOR:-<unset>}"
+  echo "env_rust_backtrace=${RUST_BACKTRACE:-<unset>}"
+  echo "env_cargo_build_jobs=${CARGO_BUILD_JOBS:-<unset>}"
+  echo "replay_env_tz=$replay_tz"
+  echo "replay_env_lc_all=$replay_lc_all"
+  echo "replay_env_lang=$replay_lang"
+  echo "replay_env_source_date_epoch=$replay_source_date_epoch"
+  echo "replay_env_cargo_term_color=$replay_cargo_term_color"
+  echo "replay_env_rust_backtrace=$replay_rust_backtrace"
+  echo "replay_env_cargo_build_jobs=$replay_cargo_build_jobs"
+  echo "env_trnm_challenge_reexec_entry=${TRNM_CHALLENGE_REEXEC_ENTRY:-<unset>}"
+  echo "replay_env_trnm_challenge_reexec_entry=<entry_not_found>"
+  echo "challenge_reexec_entry=<entry_not_found>"
   echo ""
   echo "steps:"
 } > "$SUMMARY"
 
-KEY_PACKAGES=(
-  trnm-node
-  trnm-worker-agent
-  trnm-rpc
-  trnm-pouw
-  trnm-state
-)
+KEY_PACKAGES="trnm-node trnm-worker-agent trnm-rpc trnm-pouw trnm-state"
 
 CARGO_TEST_CMD="cargo test"
-for pkg in "${KEY_PACKAGES[@]}"; do
+for pkg in $KEY_PACKAGES; do
   CARGO_TEST_CMD+=" -p $pkg"
 done
 run_step "cargo_test_key_packages" "$CARGO_TEST_CMD"
 run_step "check_request_tx_binding" "OUT_DIR='$EVIDENCE_DIR' ./scripts/check_request_tx_binding.sh"
 run_step "run_request_fault_injection" "OUT_DIR='$EVIDENCE_DIR' ./scripts/run_request_fault_injection.sh"
 
+CHALLENGE_REEXEC_ENTRY=""
 if CHALLENGE_REEXEC_ENTRY="$(find_challenge_reexec_entry)"; then
+  summary_tmp="$EVIDENCE_DIR/summary.header.tmp"
+  awk -v entry="$CHALLENGE_REEXEC_ENTRY" '
+    /^replay_env_trnm_challenge_reexec_entry=<entry_not_found>$/ {
+      print "replay_env_trnm_challenge_reexec_entry=" entry
+      next
+    }
+    /^challenge_reexec_entry=<entry_not_found>$/ {
+      print "challenge_reexec_entry=" entry
+      next
+    }
+    { print }
+  ' "$SUMMARY" > "$summary_tmp"
+  mv "$summary_tmp" "$SUMMARY"
   run_step "challenge_reexec" "OUT_DIR='$EVIDENCE_DIR' bash '$CHALLENGE_REEXEC_ENTRY'"
 else
   FAIL_COUNT=$((FAIL_COUNT + 1))
@@ -112,6 +174,8 @@ else
 fi
 
 rollback_cmd="rm -rf $(printf '%q' "$EVIDENCE_DIR")"
+replay_out_dir="$BASE_OUT"
+replay_challenge_entry="$CHALLENGE_REEXEC_ENTRY"
 
 {
   echo ""
@@ -122,8 +186,13 @@ rollback_cmd="rm -rf $(printf '%q' "$EVIDENCE_DIR")"
   else
     echo "result=FAIL"
   fi
-  echo "replay_command=OUT_DIR='${OUT_DIR:-$BASE_OUT}' ./scripts/run_local_release_evidence.sh"
+  if [[ -n "$replay_challenge_entry" ]]; then
+    echo "replay_command=env TZ=$replay_tz LC_ALL=$replay_lc_all LANG=$replay_lang SOURCE_DATE_EPOCH=$replay_source_date_epoch CARGO_TERM_COLOR=$replay_cargo_term_color RUST_BACKTRACE=$replay_rust_backtrace CARGO_BUILD_JOBS=$replay_cargo_build_jobs OUT_DIR='${replay_out_dir}' TRNM_CHALLENGE_REEXEC_ENTRY='${replay_challenge_entry}' ./scripts/run_local_release_evidence.sh"
+  else
+    echo "replay_command=env TZ=$replay_tz LC_ALL=$replay_lc_all LANG=$replay_lang SOURCE_DATE_EPOCH=$replay_source_date_epoch CARGO_TERM_COLOR=$replay_cargo_term_color RUST_BACKTRACE=$replay_rust_backtrace CARGO_BUILD_JOBS=$replay_cargo_build_jobs OUT_DIR='${replay_out_dir}' ./scripts/run_local_release_evidence.sh"
+  fi
   echo "rollback_command=$rollback_cmd"
+  echo "root_cause_hint=CI_FLAKE|ENV_DRIFT|DOC_DRIFT|MISSING_FIXTURE|NON_DETERMINISTIC_TEST"
 } >> "$SUMMARY"
 
 log "evidence_dir=$EVIDENCE_DIR"
