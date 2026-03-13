@@ -355,9 +355,14 @@ impl LaneAdmissionGate {
             // Idle dequeue polls are common in long-lived schedulers. Treat them as a
             // self-heal boundary too so restored-state ghost caches/fairness state do
             // not survive indefinitely when no fresh admit() arrives to reset them.
-            if !(self.normal.seen.is_empty()
-                && self.critical.seen.is_empty()
-                && self.seen_global.is_empty())
+            //
+            // Exception: zero-capacity hard-stop mode intentionally preserves restored
+            // duplicate knowledge even though no queue slots exist, so repeated idle
+            // polls must not erase that recovery metadata.
+            if self.total_capacity > 0
+                && !(self.normal.seen.is_empty()
+                    && self.critical.seen.is_empty()
+                    && self.seen_global.is_empty())
             {
                 self.normal.seen.clear();
                 self.critical.seen.clear();
@@ -1517,6 +1522,32 @@ mod tests {
 
         // Fresh ids must remain backpressured and must not become duplicate on
         // subsequent retries just because hard-stop mode observed them before.
+        assert_eq!(g.admit(99, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(g.admit(99, IngressClass::Critical), AdmitOutcome::Backpressured);
+    }
+
+    #[test]
+    fn hard_stop_idle_pop_preserves_restored_duplicate_metadata() {
+        let mut g = LaneAdmissionGate::new(0, 0);
+
+        // Simulate restored duplicate metadata while a temporary hard-stop keeps the
+        // lane queue empty. Idle scheduler polls must not erase this knowledge.
+        g.normal.seen.insert(41);
+        g.critical.seen.insert(42);
+        g.seen_global.insert(43);
+        g.critical_served_streak = 7;
+
+        assert_eq!(g.pop_ready(), None);
+        assert_eq!(g.pop_ready(), None);
+
+        // Duplicate semantics for restored ids must survive idle polling in hard-stop
+        // mode, while fairness bookkeeping still cold-resets.
+        assert_eq!(g.admit(41, IngressClass::Critical), AdmitOutcome::Duplicate);
+        assert_eq!(g.admit(42, IngressClass::Normal), AdmitOutcome::Duplicate);
+        assert_eq!(g.admit(43, IngressClass::Normal), AdmitOutcome::Duplicate);
+        assert_eq!(g.critical_served_streak, 0);
+
+        // Fresh ids remain backpressured rather than being poisoned into duplicate.
         assert_eq!(g.admit(99, IngressClass::Normal), AdmitOutcome::Backpressured);
         assert_eq!(g.admit(99, IngressClass::Critical), AdmitOutcome::Backpressured);
     }
