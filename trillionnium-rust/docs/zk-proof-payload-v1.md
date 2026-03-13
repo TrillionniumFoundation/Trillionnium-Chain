@@ -24,6 +24,7 @@ Current canonical payload proof byte encoding field used by router / backend tes
 Additional v0 parser / router contract reminders already enforced by tests and code:
 
 - `vk_ref` is required, case-sensitive as an opaque verifier reference, must not rely on silent surrounding-whitespace trimming, and must be a single opaque token without embedded whitespace or control characters (including Unicode whitespace).
+- `vk_ref` error taxonomy is frozen fail-closed in v0: shape / whitespace / missing-metadata violations are malformed contract errors, while a canonical-looking but unregistered `vk_ref` is an invalid proof reference rather than an unavailable backend.
 - `backend_id`, when present, must be a non-empty canonical token without surrounding whitespace and must remain a single opaque token without embedded whitespace or control characters (including Unicode whitespace).
 - `backend_version`, when present, must be a non-empty canonical token without surrounding whitespace, must remain a single opaque token without embedded whitespace or control characters (including Unicode whitespace), and must not appear without `backend_id`.
 - `proof` is required as encoded proof bytes and must not rely on silent surrounding-whitespace trimming; it must remain a single encoded token without embedded whitespace or control characters (including Unicode whitespace).

@@ -313,6 +313,8 @@ v0 将 ZK 平台错误归并为四大类：
 - `BackendExecutionError::InvalidProof` → `Invalid`，对应 `invalid`
 - `BackendExecutionError::MalformedProof` → `Invalid("malformed: ...")`，对应 `malformed`
 - 其中 `public_inputs.order/values` 长度不一致、重复字段、非 canonical 顺序，属于 router-side schema / contract violation，必须归入 `MalformedProof`，不得与 statement 值不一致的 `InvalidProof` 混淆
+- `vk_ref` 缺失、空白、夹带 whitespace/control、或 registry 元数据本身缺失 canonical `zk_system`，都属于 payload / router contract 破坏，必须归入 `MalformedProof`
+- `vk_ref` 已保持 canonical 形状但在 registry 中查无此引用，属于语义上“引用不存在”的 fail-closed 拒绝，必须归入 `InvalidProof`，不得被降级成 `MalformedProof` 或 `Indeterminate`
 
 v0 冻结要求：
 
