@@ -518,6 +518,37 @@ mod tests {
     }
 
     #[test]
+    fn explicit_hot_bucket_reporting_falls_back_to_original_when_reorder_would_be_a_no_op() {
+        let degenerate_hotspot = (0..64)
+            .map(|i| tx(i as u64, vec![0], vec![0]))
+            .collect::<Vec<_>>();
+        let adaptive_candidate = adaptive_candidate_strategy_for(&degenerate_hotspot);
+
+        assert!(matches!(
+            adaptive_candidate,
+            GroupingStrategy::Original
+        ));
+        assert!(matches!(
+            effective_strategy_for(StrategyArg::HotBucketInterleave, &degenerate_hotspot),
+            GroupingStrategy::Original
+        ));
+        assert!(
+            !default_has_adaptive_opportunity(StrategyArg::HotBucketInterleave, adaptive_candidate),
+            "explicit hotspot selection should still suppress default-only adaptive headroom when hot-bucket reorder is a no-op"
+        );
+        assert!(
+            !emits_auto_profile(
+                StrategyArg::HotBucketInterleave,
+                default_has_adaptive_opportunity(
+                    StrategyArg::HotBucketInterleave,
+                    adaptive_candidate
+                ),
+            ),
+            "explicit hotspot selection should not emit auto-profile-only fields after falling back to the original path"
+        );
+    }
+
+    #[test]
     fn hot_streak_default_workload_triggers_auto_adaptive_hotspot_detection() {
         let txs = build_hot_streak_txs(20_000, 2_000, 3, 1);
         let decision = auto_adaptive_decision(&txs);
