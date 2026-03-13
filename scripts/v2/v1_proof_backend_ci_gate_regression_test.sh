@@ -14,14 +14,14 @@ required_tests=(
   "tee_verifier_backend_unavailable_maps_to_indeterminate"
   "tee_verifier_valid_receipt_path_with_mock_backend"
   "tee_verifier_invalid_receipt_path_with_mock_backend"
-  "zk_verifier_requires_cryptographic_backend_after_bound_envelope_validation"
-  "zk_verifier_backend_unavailable_maps_to_indeterminate"
+  "zk_proof_without_crypto_backend_rejects_reveal_and_preserves_committed_state"
+  "zk_verifier_unavailable_backend_maps_to_indeterminate"
   "zk_verifier_valid_proof_path_with_mock_backend"
   "zk_verifier_invalid_proof_path_with_mock_backend"
-  "zk_verifier_invalid_proof_path_rejects_mapped_public_inputs"
+  "zk_verifier_requires_explicit_backend_when_feature_enabled"
   "registry_zk_vector_valid_payload_reaches_backend_path"
   "registry_zk_vector_invalid_payload_reaches_backend_rejection_path"
-  "registry_with_builtin_verifiers_fail_closed_when_task_id_binding_missing"
+  "registry_zk_vector_fixture_style_payload_ignores_backend_metadata_variation"
 )
 
 for t in "${required_tests[@]}"; do
@@ -36,7 +36,7 @@ trap 'rm -rf "$TMP_DIR"' EXIT
 
 CARGO_STUB="$TMP_DIR/cargo"
 CALLS_LOG="$TMP_DIR/cargo.calls.log"
-FAIL_TARGET="zk_verifier_backend_unavailable_maps_to_indeterminate"
+FAIL_TARGET="zk_verifier_unavailable_backend_maps_to_indeterminate"
 
 cat >"$CARGO_STUB" <<'EOF'
 #!/usr/bin/env bash
