@@ -1292,6 +1292,27 @@ mod tests {
     }
 
     #[test]
+    fn zk_verifier_rejects_case_drifted_family_only_selected_backend_even_without_json_payload() {
+        let mut backends = ZkBackendRegistry::new();
+        backends.register(Arc::new(MockSuccessBackend));
+
+        let mut config = router_config();
+        config.zk_backend = ZkBackendKind::Custom("ZK-DEMO".into());
+        config.zk_features.zk_payload_v0_envelope = false;
+        let verifier = ZkVerifier::from_config(&config, Arc::new(backends));
+        let task = mock_task();
+        let legacy_payload = b"ZK:task_id=99;worker=worker-zk;result_hash=1111111111111111111111111111111111111111111111111111111111111111;proof_type=zk;receipt=legacy";
+
+        assert!(matches!(
+            verifier.verify_proof(&task, legacy_payload),
+            VerificationResult::Invalid(msg)
+                if msg.contains("malformed:")
+                    && msg.contains("backend 'ZK-DEMO'")
+                    && msg.contains("family-only zk router token")
+        ));
+    }
+
+    #[test]
     fn zk_verifier_rejects_multi_hint_selected_backend_even_without_json_payload() {
         let mut backends = ZkBackendRegistry::new();
         backends.register(Arc::new(MockSystemSuccessBackend {
