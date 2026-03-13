@@ -2975,6 +2975,35 @@ mod tests {
     }
 
     #[test]
+    fn auto_adaptive_default_sample_boundary_uses_direct_scan_for_read_only_tail_hotspots() {
+        let _env = env_lock();
+        let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.20");
+        let _margin = EnvGuard::set("TRNM_AUTO_REORDER_MIN_MARGIN", "0.0");
+        let _share = EnvGuard::set("TRNM_AUTO_REORDER_MIN_HOT_KEY_SHARE", "0.20");
+        let _gain = EnvGuard::set("TRNM_AUTO_MIN_EXPECTED_GAIN_SCORE", "0.05");
+
+        // Mirror the exact 2048-tx default-sample boundary for read-only
+        // batches. The adaptive fast path should stay on direct scan here so a
+        // hotspot concentrated only in the batch tail cannot be lost when
+        // experimental sample-window tuning evolves.
+        let mut txs = Vec::with_capacity(2048);
+        for i in 0..1024u64 {
+            txs.push(tx(i, vec![o(10_000 + i)], vec![]));
+        }
+        for i in 0..1024u64 {
+            txs.push(tx(2_000 + i, vec![o(42)], vec![]));
+        }
+
+        let d = auto_adaptive_decision(&txs);
+        assert_eq!(d.sample_len, txs.len());
+        assert!(
+            d.use_hot_bucket,
+            "default sample boundary should stay on direct-scan and keep read-only tail hotspots visible"
+        );
+        assert_eq!(d.reason, "hotspot_detected");
+    }
+
+    #[test]
     fn auto_adaptive_direct_scan_detects_tail_hotspots_for_read_only_batches() {
         let _env = env_lock();
         let _streak = EnvGuard::set("TRNM_AUTO_HOT_STREAK_RATIO", "0.20");
