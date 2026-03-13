@@ -231,7 +231,28 @@ impl VerifierRegistry {
             "zk receipt v3" | "zkreceiptv3" | "zk receipt v 3" | "zk receiptv3" => "zk",
             "zero knowledge" | "zeroknowledge" => "zk",
             "zero knowledge proof" | "zeroknowledgeproof" => "zk",
+            "zero knowledge proof v1" | "zeroknowledgeproofv1" | "zero knowledge proof v 1" => {
+                "zk"
+            }
+            "zero knowledge proof v2" | "zeroknowledgeproofv2" | "zero knowledge proof v 2" => {
+                "zk"
+            }
+            "zero knowledge proof v3" | "zeroknowledgeproofv3" | "zero knowledge proof v 3" => {
+                "zk"
+            }
             "zero knowledge receipt" | "zeroknowledgereceipt" => "zk",
+            "zero knowledge receipt v1"
+            | "zeroknowledgereceiptv1"
+            | "zero knowledge receipt v 1"
+            | "zero knowledge receiptv1" => "zk",
+            "zero knowledge receipt v2"
+            | "zeroknowledgereceiptv2"
+            | "zero knowledge receipt v 2"
+            | "zero knowledge receiptv2" => "zk",
+            "zero knowledge receipt v3"
+            | "zeroknowledgereceiptv3"
+            | "zero knowledge receipt v 3"
+            | "zero knowledge receiptv3" => "zk",
             _ => collapsed.as_str(),
         };
 
@@ -466,6 +487,20 @@ mod tests {
     fn registry_supports_zkp_alias_from_platform_contract() {
         let mut registry = VerifierRegistry::new();
         registry.register(Arc::new(AlwaysValidVerifier { kind: "zkp" }));
+
+        let task = task_with_proof_type(ProofType::Zk);
+        assert_eq!(
+            registry.verify(&task, b"receipt"),
+            VerificationResult::Valid
+        );
+    }
+
+    #[test]
+    fn registry_supports_zero_knowledge_proof_v2_alias_with_mixed_separators() {
+        let mut registry = VerifierRegistry::new();
+        registry.register(Arc::new(AlwaysValidVerifier {
+            kind: "zero／knowledge-proof:v2",
+        }));
 
         let task = task_with_proof_type(ProofType::Zk);
         assert_eq!(
