@@ -3412,3 +3412,92 @@ fn cloned_cached_state_restore_roundtrip_rewinds_state_root_without_aliasing_ori
         "the original state's cached root must remain canonical after the clone completes its restore roundtrip"
     );
 }
+
+#[test]
+fn cloned_cached_state_restore_roundtrip_rewinds_applied_gov_param_root_without_aliasing_original_index() {
+    let mut original = StateStore::new();
+    original
+        .set_gov_param(0, 7_901, "max_block_ms".into(), "500".into())
+        .expect("baseline applied governance param should succeed");
+
+    let baseline_root = original.state_root();
+    let baseline_snapshot = original
+        .get_param(7_901)
+        .expect("baseline applied governance snapshot should exist");
+    let mut cloned = original.clone();
+
+    assert_eq!(
+        cloned.state_root(),
+        baseline_root,
+        "cloned state should preserve the canonical cached applied-governance root before mutation"
+    );
+    assert_eq!(
+        cloned.gov_param_string("max_block_ms").as_deref(),
+        Some("500"),
+        "cloned state should preserve the canonical key-index mapping before mutation"
+    );
+
+    cloned.restore_gov_param(
+        7_901,
+        Some(GovParamObject {
+            key_id: 7_901,
+            key: "max_parallel_workers".into(),
+            value: "8".into(),
+            version: baseline_snapshot.version,
+        }),
+    );
+
+    let mutated_clone_root = cloned.state_root();
+    assert_ne!(
+        mutated_clone_root, baseline_root,
+        "changing an applied governance key through restore_gov_param must perturb the cloned root because both object payload and key index are state-root inputs"
+    );
+    assert_eq!(
+        cloned.gov_param_string("max_block_ms"),
+        None,
+        "clone-local restore mutation should rewrite the clone key index away from the original key"
+    );
+    assert_eq!(
+        cloned.gov_param_string("max_parallel_workers").as_deref(),
+        Some("8"),
+        "clone-local restore mutation should expose the replacement applied governance key only inside the clone"
+    );
+    assert_eq!(
+        original.state_root(),
+        baseline_root,
+        "clone-local applied governance mutation must not alias back into the original cached root"
+    );
+    assert_eq!(
+        original.gov_param_string("max_block_ms").as_deref(),
+        Some("500"),
+        "clone-local applied governance mutation must not rewrite the original key-index mapping"
+    );
+
+    cloned.restore_gov_param(7_901, Some(baseline_snapshot.clone()));
+
+    assert_eq!(
+        cloned.gov_param_string("max_block_ms").as_deref(),
+        Some("500"),
+        "restoring the original applied governance snapshot should restore the canonical key-index mapping in the clone"
+    );
+    assert_eq!(
+        cloned.gov_param_string("max_parallel_workers"),
+        None,
+        "restoring the original applied governance snapshot should remove the clone-only replacement key"
+    );
+    assert_eq!(
+        cloned.state_root(),
+        baseline_root,
+        "restoring the cloned applied governance snapshot must rewind state_root exactly to the original canonical baseline"
+    );
+    assert_eq!(
+        cloned.state_root(),
+        baseline_root,
+        "repeated reads after clone-local applied governance restore should deterministically reuse the rewound cached root"
+    );
+    assert_eq!(
+        original.state_root(),
+        baseline_root,
+        "the original state's cached root must remain canonical after the clone restores its applied governance snapshot"
+    );
+}
