@@ -838,6 +838,54 @@ fn embedded_pending_gov_update_key_should_affect_state_root() {
 }
 
 #[test]
+fn pending_gov_update_key_id_should_affect_state_root_even_when_payload_matches() {
+    let mut state_a = StateStore::new();
+    let mut state_b = StateStore::new();
+
+    state_a.restore_pending_gov_update(
+        "challenge_min_bond",
+        Some(PendingGovParamUpdate {
+            key_id: 7001,
+            key: "challenge_min_bond".into(),
+            value: "5000".into(),
+            activate_at_height: 1020,
+        }),
+    );
+    state_b.restore_pending_gov_update(
+        "challenge_min_bond",
+        Some(PendingGovParamUpdate {
+            key_id: 7002,
+            key: "challenge_min_bond".into(),
+            value: "5000".into(),
+            activate_at_height: 1020,
+        }),
+    );
+
+    let root_a = state_a.state_root();
+    assert_ne!(
+        root_a,
+        state_b.state_root(),
+        "pending governance key_id must contribute to state_root so identical staged payloads under different canonical key slots cannot hash identically"
+    );
+
+    state_b.restore_pending_gov_update(
+        "challenge_min_bond",
+        Some(PendingGovParamUpdate {
+            key_id: 7001,
+            key: "challenge_min_bond".into(),
+            value: "5000".into(),
+            activate_at_height: 1020,
+        }),
+    );
+
+    assert_eq!(
+        state_b.state_root(),
+        root_a,
+        "restoring the original pending governance key_id should rewind the deterministic root exactly"
+    );
+}
+
+#[test]
 fn pending_resolve_string_field_boundaries_should_affect_state_root() {
     let mut st_a = StateStore::new();
     let mut st_b = StateStore::new();
