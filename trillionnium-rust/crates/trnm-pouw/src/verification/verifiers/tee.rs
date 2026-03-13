@@ -91,7 +91,17 @@ impl TeeVerifier {
 
     fn invalid_surface_label(surface: &'static str) -> &'static str {
         match surface {
-            "payload/claims" | "evidence/claims" => "claims",
+            // Invalid TEE attestations should collapse claim-oriented quote/report
+            // sub-surfaces to the generic `claims` contract. Unlike availability
+            // or internal backend errors, invalid proofs are caller-actionable
+            // validation failures, so exposing quote-vs-report branching here
+            // only encourages subtype-specific handling on a fail-closed path.
+            "payload/claims"
+            | "evidence/claims"
+            | "quote claims"
+            | "report claims"
+            | "quote/report claims"
+            | "claims" => "claims",
             other => other,
         }
     }
@@ -954,6 +964,60 @@ mod tests {
         assert!(!msg.contains("evidence/claims"), "message: {msg}");
         assert!(
             msg.contains("TEE attestation payload signature mismatch"),
+            "message: {msg}"
+        );
+    }
+
+    #[test]
+    fn tee_verifier_backend_invalid_quote_report_claims_collapse_to_generic_claims_surface() {
+        let result = TeeVerifier::classify_execution_err(BackendExecutionError::InvalidProof {
+            backend: "tee:mock-tee-invalid".to_string(),
+            reason: "quote/report claims signature mismatch".to_string(),
+        });
+
+        assert!(
+            matches!(result, VerificationResult::Invalid(_)),
+            "unexpected result: {result:?}"
+        );
+        let VerificationResult::Invalid(msg) = result else {
+            unreachable!()
+        };
+        assert!(
+            msg.starts_with("invalid TEE attestation claims:"),
+            "message: {msg}"
+        );
+        assert!(!msg.contains("invalid TEE attestation quote/report claims:"), "message: {msg}");
+        assert!(!msg.contains("payload/claims"), "message: {msg}");
+        assert!(
+            msg.contains("quote/report claims signature mismatch"),
+            "message: {msg}"
+        );
+    }
+
+    #[test]
+    fn tee_verifier_backend_invalid_quote_attestation_receipt_claims_collapse_to_generic_claims_surface(
+    ) {
+        let result = TeeVerifier::classify_execution_err(BackendExecutionError::InvalidProof {
+            backend: "tee:mock-tee-invalid".to_string(),
+            reason: "quote attestation receipt claims signature mismatch".to_string(),
+        });
+
+        assert!(
+            matches!(result, VerificationResult::Invalid(_)),
+            "unexpected result: {result:?}"
+        );
+        let VerificationResult::Invalid(msg) = result else {
+            unreachable!()
+        };
+        assert!(
+            msg.starts_with("invalid TEE attestation claims:"),
+            "message: {msg}"
+        );
+        assert!(!msg.contains("invalid TEE attestation quote claims:"), "message: {msg}");
+        assert!(!msg.contains("evidence/claims"), "message: {msg}");
+        assert!(!msg.contains("payload/claims"), "message: {msg}");
+        assert!(
+            msg.contains("quote attestation receipt claims signature mismatch"),
             "message: {msg}"
         );
     }
