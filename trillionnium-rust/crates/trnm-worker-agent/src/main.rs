@@ -14,9 +14,7 @@ use std::{
 };
 mod proof_adapter;
 
-use proof_adapter::{
-    build_proof_adapter, ProofAdapter, StandardProofAdapter, DEFAULT_PROOF_ADAPTER,
-};
+use proof_adapter::{build_proof_adapter, ProofAdapter, DEFAULT_PROOF_ADAPTER};
 use trnm_types::RequestStatus;
 use wait_timeout::ChildExt;
 
@@ -32,12 +30,20 @@ const LLM_ADAPTER_MAX_RETRIES_ENV: &str = "TRNM_LLM_ADAPTER_MAX_RETRIES";
 const LLM_ADAPTER_BACKOFF_MS_ENV: &str = "TRNM_LLM_ADAPTER_BACKOFF_MS";
 const LLM_ADAPTER_TIMEOUT_ENV: &str = "TRNM_LLM_ADAPTER_TIMEOUT_MS";
 const PROOF_ADAPTER_ENV: &str = "TRNM_PROOF_ADAPTER";
+const WORKER_EVENT_LOG_ENV: &str = "TRNM_WORKER_EVENT_LOG";
+const WORKER_PROGRESS_LOG_ENV: &str = "TRNM_WORKER_PROGRESS_LOG";
 
 const RC_OK: i32 = 0;
 const RC_DUPLICATE: i32 = 9;
 const RC_NONCE_REJECTED: i32 = 10;
 const RC_SLO_VIOLATION: i32 = 11;
 const RC_SKIPPED: i32 = -1;
+
+#[derive(Debug, Clone)]
+struct PersistedAckHashes {
+    commit_tx_hash: Option<String>,
+    reveal_tx_hash: Option<String>,
+}
 
 #[derive(Debug, Parser)]
 #[command(
@@ -356,24 +362,43 @@ fn query_audit_export_by_task_id<'a>(
 }
 
 fn normalize_provenance_fingerprint_lookup(value: &str) -> Option<String> {
-    let mut normalized = normalized_provenance_label(Some(value), 128)?;
+    let mut normalized =
+        trim_boundary_audit_fillers(normalized_optional_field(Some(value))?.as_str()).to_string();
+
     // Accept heavily shell-escaped forms (e.g., nested quote wrappers from CLI/env propagation)
     // while still fail-closing on empty/invalid labels after normalization.
-    // Cap recursive unwrapping to keep lookup bounded while tolerating deeply nested
-    // shell/env quote wrappers seen in propagation pipelines.
+    // Keep recursive unwrapping bounded, but generous enough to tolerate repeated
+    // shell/env forwarding hops seen in automation pipelines.
     for _ in 0..16 {
         let bytes = normalized.as_bytes();
+        let mut peeled = false;
+
         if bytes.len() >= 2
             && ((bytes[0] == b'\'' && bytes[bytes.len() - 1] == b'\'')
                 || (bytes[0] == b'"' && bytes[bytes.len() - 1] == b'"')
                 || (bytes[0] == b'`' && bytes[bytes.len() - 1] == b'`'))
         {
             normalized = normalized[1..normalized.len() - 1].trim().to_string();
+            peeled = true;
+        } else if bytes.len() >= 4
+            && bytes[0] == b'\\'
+            && bytes[bytes.len() - 2] == b'\\'
+            && ((bytes[1] == b'\'' && bytes[bytes.len() - 1] == b'\'')
+                || (bytes[1] == b'"' && bytes[bytes.len() - 1] == b'"')
+                || (bytes[1] == b'`' && bytes[bytes.len() - 1] == b'`'))
+        {
+            normalized = normalized[2..normalized.len() - 2].trim().to_string();
+            peeled = true;
+        }
+
+        if peeled {
+            normalized = trim_boundary_audit_fillers(normalized.as_str()).to_string();
             if normalized.is_empty() {
                 return None;
             }
             continue;
         }
+
         break;
     }
     normalized_provenance_label(Some(normalized.as_str()), 128).map(|v| v.to_ascii_lowercase())
@@ -428,13 +453,49 @@ fn audit_export_index_path(output_file: &Path) -> PathBuf {
     PathBuf::from(format!("{}.index.json", output_file.display()))
 }
 
-fn validate_audit_export_index(index: &AuditExportIndex) -> Result<()> {
+fn validate_audit_export_index(index: &AuditExportIndex, exports_len: usize) -> Result<()> {
     if index.version != 1 {
         anyhow::bail!(
             "unsupported audit index version={} (expected=1)",
             index.version
         );
     }
+    if index.total_records != exports_len {
+        anyhow::bail!(
+            "audit index total_records mismatch: index={} exports={}",
+            index.total_records,
+            exports_len
+        );
+    }
+
+    for (label, offsets) in [
+        ("by_task_id", &index.by_task_id),
+        ("by_status", &index.by_status),
+        ("by_status_phase", &index.by_status_phase),
+        ("by_provider", &index.by_provider),
+        ("by_model", &index.by_model),
+        ("by_agent_protocol", &index.by_agent_protocol),
+        ("by_compliance_profile", &index.by_compliance_profile),
+        (
+            "by_provenance_fingerprint",
+            &index.by_provenance_fingerprint,
+        ),
+    ] {
+        for (key, rows) in offsets {
+            for idx in rows {
+                if *idx >= index.total_records {
+                    anyhow::bail!(
+                        "audit index offset out of bounds: map={} key={} idx={} total_records={}",
+                        label,
+                        key,
+                        idx,
+                        index.total_records
+                    );
+                }
+            }
+        }
+    }
+
     Ok(())
 }
 
@@ -708,21 +769,27 @@ fn append_submission(
     append_json_line(submit_log, &line)
 }
 
-fn load_acked(ack_log: &PathBuf) -> HashSet<u64> {
-    let mut set = HashSet::new();
+fn load_ack_records(ack_log: &PathBuf) -> Vec<AckRecord> {
     if !ack_log.exists() {
-        return set;
+        return vec![];
     }
-    if let Ok(raw) = fs::read_to_string(ack_log) {
-        for line in raw.lines().filter(|l| !l.trim().is_empty()) {
-            if let Ok(rec) = serde_json::from_str::<AckRecord>(line) {
-                if rec.status == "accepted" {
-                    set.insert(rec.task_id);
-                }
-            }
-        }
-    }
-    set
+    fs::read_to_string(ack_log)
+        .ok()
+        .map(|raw| {
+            raw.lines()
+                .filter(|l| !l.trim().is_empty())
+                .filter_map(|line| serde_json::from_str::<AckRecord>(line).ok())
+                .collect()
+        })
+        .unwrap_or_default()
+}
+
+fn load_acked(ack_log: &PathBuf) -> HashSet<u64> {
+    load_ack_records(ack_log)
+        .into_iter()
+        .filter(|rec| rec.status == "accepted")
+        .map(|rec| rec.task_id)
+        .collect()
 }
 
 struct TaskExecutionLock {
@@ -826,23 +893,313 @@ fn append_progress(progress_log: &PathBuf, rec: &ProgressRecord) -> Result<()> {
     append_json_line(progress_log, &line)
 }
 
-fn parse_tx_hash(text: &str) -> Option<String> {
-    text.split_whitespace().find_map(|w| {
-        let raw = w.strip_prefix("tx_hash=")?;
-        let cleaned = raw
-            .trim_matches(|c: char| {
-                matches!(c, '"' | '\'' | ',' | ';' | '.' | ':' | ')' | ']' | '}')
-            })
-            .trim();
-
-        if cleaned.starts_with("0x")
-            && cleaned.len() == 66
-            && cleaned[2..].chars().all(|c| c.is_ascii_hexdigit())
-        {
-            Some(cleaned.to_ascii_lowercase())
-        } else {
-            None
+fn resolve_path_arg_from_env(path: PathBuf, env_name: &str, default_path: &str) -> PathBuf {
+    if path == PathBuf::from(default_path) {
+        if let Some(value) = env::var_os(env_name) {
+            if !value.is_empty() {
+                return PathBuf::from(value);
+            }
         }
+    }
+    path
+}
+
+fn is_receipt_quote_wrapper(ch: char) -> bool {
+    matches!(
+        ch,
+        '"' | '\''
+            | '`'
+            | '“'
+            | '”'
+            | '‘'
+            | '’'
+            | '«'
+            | '»'
+            | '‹'
+            | '›'
+            | '〈'
+            | '〉'
+            | '《'
+            | '》'
+            | '「'
+            | '」'
+            | '『'
+            | '』'
+    )
+}
+
+fn normalize_candidate_tx_hash(raw: &str) -> Option<String> {
+    let cleaned = raw
+        .trim_matches(|c: char| {
+            is_receipt_quote_wrapper(c)
+                || matches!(
+                    c,
+                    ',' | ';' | '.' | ':' | ')' | ']' | '}' | '>' | '(' | '[' | '{' | '<'
+                )
+                || c.is_control()
+                || is_invisible_filler(c)
+        })
+        .trim_end_matches(|c: char| {
+            is_receipt_quote_wrapper(c)
+                || matches!(c, ',' | ';' | '}' | ']' | '>')
+                || c.is_control()
+                || is_invisible_filler(c)
+        })
+        .trim();
+    let normalized = cleaned
+        .strip_prefix("0x")
+        .or_else(|| cleaned.strip_prefix("0X"))
+        .unwrap_or(cleaned);
+
+    if normalized.len() >= 8
+        && normalized.len() <= 128
+        && normalized.chars().all(|c| c.is_ascii_hexdigit())
+    {
+        Some(normalized.to_ascii_lowercase())
+    } else {
+        None
+    }
+}
+
+fn parse_tx_hash(text: &str) -> Option<String> {
+    const PREFIXES: &[&str] = &[
+        "tx_hash=",
+        "tx_hash =",
+        "tx_hash:",
+        "tx_hash :",
+        "TX_HASH=",
+        "TX_HASH =",
+        "TX_HASH:",
+        "TX_HASH :",
+        "tx-hash=",
+        "tx-hash =",
+        "tx-hash:",
+        "tx-hash :",
+        "TX-HASH=",
+        "TX-HASH =",
+        "TX-HASH:",
+        "TX-HASH :",
+        "tx hash=",
+        "tx hash =",
+        "tx hash:",
+        "tx hash :",
+        "TX HASH=",
+        "TX HASH =",
+        "TX HASH:",
+        "TX HASH :",
+        "txHash=",
+        "txHash =",
+        "txHash:",
+        "txHash :",
+        "TXHASH=",
+        "TXHASH =",
+        "TXHASH:",
+        "TXHASH :",
+        "txhash=",
+        "txhash =",
+        "txhash:",
+        "txhash :",
+        "transaction_hash=",
+        "transaction_hash =",
+        "transaction_hash:",
+        "transaction_hash :",
+        "TRANSACTION_HASH=",
+        "TRANSACTION_HASH =",
+        "TRANSACTION_HASH:",
+        "TRANSACTION_HASH :",
+        "transaction-hash=",
+        "transaction-hash =",
+        "transaction-hash:",
+        "transaction-hash :",
+        "TRANSACTION-HASH=",
+        "TRANSACTION-HASH =",
+        "TRANSACTION-HASH:",
+        "TRANSACTION-HASH :",
+        "transaction hash=",
+        "transaction hash =",
+        "transaction hash:",
+        "transaction hash :",
+        "TRANSACTION HASH=",
+        "TRANSACTION HASH =",
+        "TRANSACTION HASH:",
+        "TRANSACTION HASH :",
+        "transactionHash=",
+        "transactionHash =",
+        "transactionHash:",
+        "transactionHash :",
+        "TRANSACTIONHASH=",
+        "TRANSACTIONHASH =",
+        "TRANSACTIONHASH:",
+        "TRANSACTIONHASH :",
+        "transactionhash=",
+        "transactionhash =",
+        "transactionhash:",
+        "transactionhash :",
+        "\"tx_hash\":",
+        "\"tx_hash\" :",
+        "\"TX_HASH\":",
+        "\"TX_HASH\" :",
+        "\"tx-hash\":",
+        "\"tx-hash\" :",
+        "\"TX-HASH\":",
+        "\"TX-HASH\" :",
+        "\"tx hash\":",
+        "\"tx hash\" :",
+        "\"TX HASH\":",
+        "\"TX HASH\" :",
+        "\"txHash\":",
+        "\"txHash\" :",
+        "\"TXHASH\":",
+        "\"TXHASH\" :",
+        "\"txhash\":",
+        "\"txhash\" :",
+        "\"transaction_hash\":",
+        "\"transaction_hash\" :",
+        "\"TRANSACTION_HASH\":",
+        "\"TRANSACTION_HASH\" :",
+        "\"transaction-hash\":",
+        "\"transaction-hash\" :",
+        "\"TRANSACTION-HASH\":",
+        "\"TRANSACTION-HASH\" :",
+        "\"transaction hash\":",
+        "\"transaction hash\" :",
+        "\"TRANSACTION HASH\":",
+        "\"TRANSACTION HASH\" :",
+        "\"transactionHash\":",
+        "\"transactionHash\" :",
+        "\"TRANSACTIONHASH\":",
+        "\"TRANSACTIONHASH\" :",
+        "\"transactionhash\":",
+        "\"transactionhash\" :",
+        "'tx_hash':",
+        "'tx_hash' :",
+        "'TX_HASH':",
+        "'TX_HASH' :",
+        "'tx-hash':",
+        "'tx-hash' :",
+        "'TX-HASH':",
+        "'TX-HASH' :",
+        "'tx hash':",
+        "'tx hash' :",
+        "'TX HASH':",
+        "'TX HASH' :",
+        "'txHash':",
+        "'txHash' :",
+        "'TXHASH':",
+        "'TXHASH' :",
+        "'txhash':",
+        "'txhash' :",
+        "'transaction_hash':",
+        "'transaction_hash' :",
+        "'TRANSACTION_HASH':",
+        "'TRANSACTION_HASH' :",
+        "'transaction-hash':",
+        "'transaction-hash' :",
+        "'TRANSACTION-HASH':",
+        "'TRANSACTION-HASH' :",
+        "'transaction hash':",
+        "'transaction hash' :",
+        "'TRANSACTION HASH':",
+        "'TRANSACTION HASH' :",
+        "'transactionHash':",
+        "'transactionHash' :",
+        "'TRANSACTIONHASH':",
+        "'TRANSACTIONHASH' :",
+        "'transactionhash':",
+        "'transactionhash' :",
+    ];
+
+    fn parse_hash_from_suffix(suffix: &str) -> Option<String> {
+        let trimmed = suffix.trim_start();
+        if trimmed.is_empty() {
+            return None;
+        }
+
+        let candidate_start = trimmed
+            .char_indices()
+            .find_map(|(idx, ch)| {
+                let is_leading_wrapper = ch.is_ascii_whitespace()
+                    || ch.is_control()
+                    || is_invisible_filler(ch)
+                    || is_receipt_quote_wrapper(ch)
+                    || matches!(ch, '(' | '[' | '{' | '<');
+                (!is_leading_wrapper).then_some(idx)
+            })
+            .unwrap_or(trimmed.len());
+        let candidate = &trimmed[candidate_start..];
+        if candidate.is_empty() {
+            return None;
+        }
+
+        let candidate_end = candidate
+            .char_indices()
+            .find_map(|(idx, ch)| {
+                let is_hash_char = ch.is_ascii_hexdigit()
+                    || matches!(ch, 'x' | 'X')
+                    || is_receipt_quote_wrapper(ch);
+                (!is_hash_char).then_some(idx)
+            })
+            .unwrap_or(candidate.len());
+
+        normalize_candidate_tx_hash(&candidate[..candidate_end])
+    }
+
+    let normalized_key_quotes = text
+        .chars()
+        .map(|ch| {
+            if is_receipt_quote_wrapper(ch) {
+                '"'
+            } else {
+                ch
+            }
+        })
+        .collect::<String>();
+    let normalized_delimiters = normalized_key_quotes
+        .chars()
+        .map(|ch| match ch {
+            '：' => ':',
+            '＝' => '=',
+            '‐' | '‑' | '‒' | '–' | '—' | '―' | '−' | '－' => '-',
+            other => other,
+        })
+        .collect::<String>();
+    let mut normalized_whitespace = String::with_capacity(normalized_delimiters.len());
+    let mut last_was_space = false;
+    for ch in normalized_delimiters.chars() {
+        if ch.is_whitespace() {
+            if !last_was_space {
+                normalized_whitespace.push(' ');
+                last_was_space = true;
+            }
+        } else {
+            normalized_whitespace.push(ch);
+            last_was_space = false;
+        }
+    }
+
+    for haystack in [
+        text,
+        normalized_key_quotes.as_str(),
+        normalized_delimiters.as_str(),
+        normalized_whitespace.as_str(),
+    ] {
+        for prefix in PREFIXES {
+            let mut remainder = haystack;
+            while let Some(idx) = remainder.find(prefix) {
+                let suffix = &remainder[idx + prefix.len()..];
+                if let Some(parsed) = parse_hash_from_suffix(suffix) {
+                    return Some(parsed);
+                }
+                remainder = &suffix[1.min(suffix.len())..];
+            }
+        }
+    }
+
+    text.split_whitespace().find_map(|w| {
+        PREFIXES
+            .iter()
+            .find_map(|prefix| w.strip_prefix(prefix))
+            .and_then(normalize_candidate_tx_hash)
     })
 }
 
@@ -856,6 +1213,30 @@ fn is_idempotent_duplicate_ok(rc: i32) -> bool {
 
 fn should_execute_reveal(commit_res: &AdapterExecResult) -> bool {
     commit_res.ok || is_idempotent_duplicate_ok(commit_res.rc)
+}
+
+fn persisted_ack_hashes_for_task(ack_log: &PathBuf, task_id: u64) -> PersistedAckHashes {
+    let mut hashes = PersistedAckHashes {
+        commit_tx_hash: None,
+        reveal_tx_hash: None,
+    };
+
+    for ack in load_ack_records(ack_log).into_iter().rev() {
+        if ack.task_id != task_id {
+            continue;
+        }
+        if hashes.commit_tx_hash.is_none() {
+            hashes.commit_tx_hash = ack.commit_tx_hash;
+        }
+        if hashes.reveal_tx_hash.is_none() {
+            hashes.reveal_tx_hash = ack.reveal_tx_hash;
+        }
+        if hashes.commit_tx_hash.is_some() && hashes.reveal_tx_hash.is_some() {
+            break;
+        }
+    }
+
+    hashes
 }
 
 fn backoff_delay_ms(base_ms: u64, attempt: u32) -> u64 {
@@ -1234,12 +1615,26 @@ fn normalized_optional_field(value: Option<&str>) -> Option<String> {
         .map(ToOwned::to_owned)
 }
 
+fn trim_boundary_audit_fillers(value: &str) -> &str {
+    value.trim_matches(|c: char| c.is_whitespace() || c.is_control() || is_invisible_filler(c))
+}
+
 fn normalized_provider_request_id(value: Option<&str>) -> Option<String> {
-    let normalized = normalized_optional_field(value)?;
+    let normalized =
+        trim_boundary_audit_fillers(normalized_optional_field(value)?.as_str()).to_string();
+    if normalized.is_empty() {
+        return None;
+    }
     let is_allowed = normalized
         .chars()
-        .all(|c| c.is_ascii_alphanumeric() || matches!(c, '-' | '_' | '.' | ':'));
-    if is_allowed && normalized.len() <= 128 {
+        .all(|c| c.is_ascii_alphanumeric() || matches!(c, '-' | '_' | '.'));
+    let starts_and_ends_alnum = normalized
+        .chars()
+        .next()
+        .zip(normalized.chars().last())
+        .map(|(start, end)| start.is_ascii_alphanumeric() && end.is_ascii_alphanumeric())
+        .unwrap_or(false);
+    if is_allowed && starts_and_ends_alnum && normalized.len() <= 128 {
         Some(normalized)
     } else {
         None
@@ -1744,9 +2139,20 @@ fn attach_llm_provenance(rec: &mut MessageIngressRecord, llm: &LlmAdapterRespons
     });
 }
 
+fn collapse_contract_match_delimiters(value: &str) -> String {
+    value
+        .chars()
+        .filter_map(|ch| match ch {
+            '\u{200b}' | '\u{200c}' | '\u{200d}' | '\u{2060}' | '\u{2063}' | '\u{feff}' => None,
+            '‐' | '‑' | '‒' | '–' | '—' | '―' | '−' | '－' => Some('-'),
+            other => Some(other),
+        })
+        .collect()
+}
+
 fn context_matches_token(context: &str, token: &str) -> bool {
     fn normalize_for_contract_match(value: &str) -> String {
-        let lowered = value.to_ascii_lowercase();
+        let lowered = collapse_contract_match_delimiters(value).to_ascii_lowercase();
         let mut out = String::with_capacity(lowered.len());
         let mut prev_space = false;
         for ch in lowered.chars() {
@@ -1761,8 +2167,8 @@ fn context_matches_token(context: &str, token: &str) -> bool {
         out.trim().to_string()
     }
 
-    let normalized_context = context.to_ascii_lowercase();
-    let normalized_token = token.to_ascii_lowercase();
+    let normalized_context = collapse_contract_match_delimiters(context).to_ascii_lowercase();
+    let normalized_token = collapse_contract_match_delimiters(token).to_ascii_lowercase();
     let context_with_spaces = normalized_context.replace(['-', '_'], " ");
     let token_with_spaces = normalized_token.replace(['-', '_'], " ");
     let normalized_context_relaxed = normalize_for_contract_match(context);
@@ -1789,6 +2195,7 @@ fn classify_adapter_error(err: &AdapterError) -> (&'static str, &'static str) {
     if context_matches_token(&err.context, "proof-invalid")
         || context_matches_token(&err.context, "missing-adapter-label")
         || context_matches_token(&err.context, "no-json-line")
+        || context_matches_token(&err.context, "invalid-json")
     {
         return ("ERR_M2V2_PROOF_INVALID", "proof_invalid");
     }
@@ -1834,6 +2241,7 @@ fn adapter_error_signal(kind: AdapterErrorKind) -> ReputationSignal {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::proof_adapter::StandardProofAdapter;
 
     #[test]
     fn transition_request_status_accepts_benign_formatting_variants() {
@@ -1914,7 +2322,7 @@ mod tests {
         let parsed = parse_tx_hash(mixed_case).expect("hash should parse");
         assert_eq!(
             parsed,
-            "0xabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd"
+            "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd"
         );
 
         let sentence_tail = "submitted tx_hash=0xABCDabcdABCDabcdABCDabcdABCDabcdABCDabcdABCDabcdABCDabcdABCDabcd. next";
@@ -1922,18 +2330,311 @@ mod tests {
             parse_tx_hash(sentence_tail).expect("hash with sentence punctuation should parse");
         assert_eq!(
             parsed_tail,
-            "0xabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd"
+            "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd"
+        );
+
+        let backtick_wrapped =
+            "adapter stdout: tx_hash=`0xABCDabcdABCDabcdABCDabcdABCDabcdABCDabcdABCDabcdABCDabcdABCDabcd`";
+        let parsed_backtick =
+            parse_tx_hash(backtick_wrapped).expect("backtick-wrapped hash should parse");
+        assert_eq!(
+            parsed_backtick,
+            "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd"
         );
     }
 
     #[test]
+    fn parse_tx_hash_accepts_angle_bracket_wrapped_receipts() {
+        let shell = parse_tx_hash(
+            "[adapter] commit accepted tx_hash=<0xABCDabcdABCDabcdABCDabcdABCDabcdABCDabcdABCDabcdABCDabcdABCDabcd>",
+        )
+        .expect("angle-bracket shell receipt hash should parse");
+        assert_eq!(
+            shell,
+            "abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd"
+        );
+
+        let json = parse_tx_hash(
+            "adapter stdout: {\"tx_hash\": \"<0xFACEfaceFACEfaceFACEfaceFACEfaceFACEfaceFACEfaceFACEfaceFACEface>\"}",
+        )
+        .expect("angle-bracket json receipt hash should parse");
+        assert_eq!(
+            json,
+            "facefacefacefacefacefacefacefacefacefacefacefacefacefacefaceface"
+        );
+    }
+
+    #[test]
+    fn parse_tx_hash_accepts_short_failure_receipts_without_0x_prefix() {
+        let parsed = parse_tx_hash("[adapter] simulated failure tx_hash=deadbeef")
+            .expect("short failure receipt hash should parse");
+        assert_eq!(parsed, "deadbeef");
+    }
+
+    #[test]
+    fn parse_tx_hash_accepts_colon_style_receipts() {
+        let colon = parse_tx_hash("[adapter] commit accepted tx-hash:0xDEADBEEF")
+            .expect("colon-delimited receipt hash should parse");
+        assert_eq!(colon, "deadbeef");
+    }
+
+    #[test]
+    fn parse_tx_hash_accepts_fullwidth_delimiter_receipts() {
+        let shell_equals = parse_tx_hash("[adapter] commit accepted tx_hash＝0xDEADBEEF")
+            .expect("fullwidth equals shell receipt hash should parse");
+        assert_eq!(shell_equals, "deadbeef");
+
+        let shell_colon = parse_tx_hash("[adapter] commit accepted tx-hash：0xFACECAFE")
+            .expect("fullwidth colon shell receipt hash should parse");
+        assert_eq!(shell_colon, "facecafe");
+
+        let json = parse_tx_hash("adapter stdout: {\"transaction_hash\"： \"0xBADDCAFE\"}")
+            .expect("fullwidth colon json receipt hash should parse");
+        assert_eq!(json, "baddcafe");
+    }
+
+    #[test]
+    fn parse_tx_hash_accepts_unicode_dash_receipt_keys() {
+        let non_breaking_shell = parse_tx_hash("[adapter] commit accepted tx‑hash=0xDEADBEEF")
+            .expect("non-breaking hyphen shell receipt key should parse");
+        assert_eq!(non_breaking_shell, "deadbeef");
+
+        let em_dash_json = parse_tx_hash("adapter stdout: {\"transaction—hash\": \"0xFACECAFE\"}")
+            .expect("em dash json receipt key should parse");
+        assert_eq!(em_dash_json, "facecafe");
+
+        let fullwidth_shell =
+            parse_tx_hash("[adapter] commit accepted transaction－hash:0xBADDCAFE")
+                .expect("fullwidth hyphen shell receipt key should parse");
+        assert_eq!(fullwidth_shell, "baddcafe");
+    }
+
+    #[test]
+    fn parse_tx_hash_accepts_space_separated_receipt_keys() {
+        let shell = parse_tx_hash("[adapter] commit accepted tx hash=0xDEADBEEF")
+            .expect("space-separated shell receipt hash should parse");
+        assert_eq!(shell, "deadbeef");
+
+        let shell_with_spacing = parse_tx_hash("[adapter] commit accepted tx hash = 0xC0FFEE12")
+            .expect("space-separated shell receipt hash with spaced delimiter should parse");
+        assert_eq!(shell_with_spacing, "c0ffee12");
+
+        let uppercase = parse_tx_hash("[adapter] commit accepted TX HASH:0xABCD1234")
+            .expect("uppercase space-separated receipt hash should parse");
+        assert_eq!(uppercase, "abcd1234");
+
+        let uppercase_with_spacing = parse_tx_hash(
+            "[adapter] commit accepted TX HASH : 0xFACECAFE",
+        )
+        .expect("uppercase space-separated receipt hash with spaced delimiter should parse");
+        assert_eq!(uppercase_with_spacing, "facecafe");
+
+        let json = parse_tx_hash("{\"tx hash\": \"0xBADDCAFE\", \"status\": \"accepted\"}")
+            .expect("space-separated json receipt hash should parse");
+        assert_eq!(json, "baddcafe");
+
+        let single_quoted = parse_tx_hash("adapter stdout: {'TX HASH' : 'ABCD1234'}")
+            .expect("single-quoted uppercase space-separated receipt hash should parse");
+        assert_eq!(single_quoted, "abcd1234");
+    }
+
+    #[test]
+    fn parse_tx_hash_accepts_uppercase_receipt_keys() {
+        let shell = parse_tx_hash("[adapter] commit accepted TX_HASH=0xDEADBEEF")
+            .expect("uppercase shell receipt hash should parse");
+        assert_eq!(shell, "deadbeef");
+
+        let json = parse_tx_hash("{\"TX_HASH\": \"0xDEADBEEF\", \"status\": \"accepted\"}")
+            .expect("uppercase json receipt hash should parse");
+        assert_eq!(json, "deadbeef");
+
+        let compact = parse_tx_hash("adapter stdout: {\"TXHASH\": \"ABCD1234\"}")
+            .expect("uppercase compact json receipt hash should parse");
+        assert_eq!(compact, "abcd1234");
+    }
+
+    #[test]
+    fn parse_tx_hash_accepts_json_style_receipts_with_whitespace_after_colon() {
+        let json = parse_tx_hash("{\"tx_hash\": \"0xDEADBEEF\", \"status\": \"accepted\"}")
+            .expect("json receipt hash with whitespace after colon should parse");
+        assert_eq!(json, "deadbeef");
+    }
+
+    #[test]
+    fn parse_tx_hash_accepts_json_style_receipts_with_whitespace_before_colon() {
+        let json = parse_tx_hash("{\"tx_hash\" : \"0xDEADBEEF\", \"status\": \"accepted\"}")
+            .expect("json receipt hash with whitespace before colon should parse");
+        assert_eq!(json, "deadbeef");
+    }
+
+    #[test]
+    fn parse_tx_hash_accepts_json_style_receipts_with_newlines_and_tabs_around_colon() {
+        let json = parse_tx_hash(
+            "{\n\t\"tx_hash\"\n\t:\n\t\"0xDEADBEEF\",\n\t\"status\":\n\t\"accepted\"\n}",
+        )
+        .expect("json receipt hash with newline/tab padding should parse");
+        assert_eq!(json, "deadbeef");
+    }
+
+    #[test]
+    fn parse_tx_hash_accepts_space_separated_receipt_keys_with_tab_delimiter_padding() {
+        let shell = parse_tx_hash("TX HASH\t=\t0xDEADBEEF")
+            .expect("space-separated receipt hash with tab delimiter padding should parse");
+        assert_eq!(shell, "deadbeef");
+    }
+
+    #[test]
+    fn parse_tx_hash_strips_bom_and_zero_width_fillers_around_receipt_value() {
+        let json = parse_tx_hash("receipt={\"tx_hash\":\"\u{feff}\u{200b}0xDEADBEEF\u{2060}\"}")
+            .expect("json receipt hash with bom and zero-width fillers should parse");
+        assert_eq!(json, "deadbeef");
+    }
+
+    #[test]
+    fn parse_tx_hash_accepts_hyphenated_json_receipt_keys() {
+        let json = parse_tx_hash("{\"tx-hash\": \"0xDEADBEEF\", \"status\": \"accepted\"}")
+            .expect("hyphenated json receipt hash should parse");
+        assert_eq!(json, "deadbeef");
+
+        let uppercase = parse_tx_hash("{\"TX-HASH\" : \"ABCD1234\", \"status\": \"accepted\"}")
+            .expect("uppercase hyphenated json receipt hash should parse");
+        assert_eq!(uppercase, "abcd1234");
+    }
+
+    #[test]
+    fn parse_tx_hash_accepts_mixed_case_json_alias_receipts() {
+        let json = parse_tx_hash("adapter stdout: {\"txHash\": \"ABCD1234\"}")
+            .expect("camelCase json receipt hash should parse");
+        assert_eq!(json, "abcd1234");
+    }
+
+    #[test]
+    fn parse_tx_hash_accepts_transaction_hash_alias_receipts() {
+        let shell = parse_tx_hash("[adapter] commit accepted transaction_hash=0xDEADBEEF")
+            .expect("transaction_hash shell receipt hash should parse");
+        assert_eq!(shell, "deadbeef");
+
+        let hyphenated = parse_tx_hash("[adapter] commit accepted transaction-hash : 0xC0FFEE12")
+            .expect("transaction-hash shell receipt hash with spaced delimiter should parse");
+        assert_eq!(hyphenated, "c0ffee12");
+
+        let spaced = parse_tx_hash("adapter stdout: {'TRANSACTION HASH' : 'ABCD1234'}")
+            .expect("space-separated single-quoted transaction hash receipt should parse");
+        assert_eq!(spaced, "abcd1234");
+
+        let camel = parse_tx_hash("adapter stdout: {\"transactionHash\": \"0xBADDCAFE\"}")
+            .expect("camelCase transaction hash json receipt should parse");
+        assert_eq!(camel, "baddcafe");
+    }
+
+    #[test]
+    fn parse_tx_hash_accepts_smart_quoted_transaction_hash_alias_with_fullwidth_colon() {
+        let smart_quoted = parse_tx_hash("receipt={“transaction hash”： “0xDEADBEEF”}")
+            .expect("smart-quoted transaction hash alias with fullwidth colon should parse");
+        assert_eq!(smart_quoted, "deadbeef");
+    }
+
+    #[test]
+    fn parse_tx_hash_accepts_json_receipts_without_quotes_around_hash() {
+        let json = parse_tx_hash("{\"txhash\":0xDEADBEEF,\"status\":\"accepted\"}")
+            .expect("json receipt hash without quotes should parse");
+        assert_eq!(json, "deadbeef");
+    }
+
+    #[test]
+    fn parse_tx_hash_accepts_single_quoted_json_style_receipts() {
+        let single_quoted = parse_tx_hash("{'tx_hash': '0xDEADBEEF', 'status': 'accepted'}")
+            .expect("single-quoted json-style receipt hash should parse");
+        assert_eq!(single_quoted, "deadbeef");
+
+        let uppercase = parse_tx_hash("adapter stdout: {'TX-HASH' : 'ABCD1234'}")
+            .expect("single-quoted uppercase hyphenated receipt hash should parse");
+        assert_eq!(uppercase, "abcd1234");
+    }
+
+    #[test]
+    fn parse_tx_hash_accepts_smart_quoted_receipts() {
+        let curly_double = parse_tx_hash("adapter stdout: {\"tx_hash\": “0xDEADBEEF”}")
+            .expect("smart double-quoted receipt hash should parse");
+        assert_eq!(curly_double, "deadbeef");
+
+        let curly_single = parse_tx_hash("adapter stdout: {'transaction_hash': ‘ABCD1234’}")
+            .expect("smart single-quoted receipt hash should parse");
+        assert_eq!(curly_single, "abcd1234");
+    }
+
+    #[test]
+    fn parse_tx_hash_accepts_smart_quoted_receipt_keys() {
+        let curly_double_key = parse_tx_hash("adapter stdout: {“tx_hash”: \"0xDEADBEEF\"}")
+            .expect("smart double-quoted receipt key should parse");
+        assert_eq!(curly_double_key, "deadbeef");
+
+        let curly_single_key = parse_tx_hash("adapter stdout: {‘transaction_hash’: 'ABCD1234'}")
+            .expect("smart single-quoted receipt key should parse");
+        assert_eq!(curly_single_key, "abcd1234");
+    }
+
+    #[test]
+    fn parse_tx_hash_accepts_localized_quote_wrapped_receipts() {
+        let guillemet = parse_tx_hash("adapter stdout: {«tx_hash»: «0xDEADBEEF»}")
+            .expect("guillemet-quoted receipt hash should parse");
+        assert_eq!(guillemet, "deadbeef");
+
+        let single_angle = parse_tx_hash("adapter stdout: {〈tx_hash〉: 〈0xBADDCAFE〉}")
+            .expect("single-angle-quoted receipt hash should parse");
+        assert_eq!(single_angle, "baddcafe");
+
+        let double_angle = parse_tx_hash("adapter stdout: {《transaction hash》: 《0xABCD1234》}")
+            .expect("double-angle-quoted transaction hash alias should parse");
+        assert_eq!(double_angle, "abcd1234");
+
+        let corner_bracket =
+            parse_tx_hash("adapter stdout: {「transaction hash」: 「0xFACECAFE」}")
+                .expect("corner-bracket-quoted transaction hash alias should parse");
+        assert_eq!(corner_bracket, "facecafe");
+    }
+
+    #[test]
+    fn parse_tx_hash_accepts_backtick_wrapped_receipt_keys() {
+        let backtick_key = parse_tx_hash("adapter stdout: {`tx_hash`: `0xFACECAFE`}")
+            .expect("backtick-wrapped receipt key should parse");
+        assert_eq!(backtick_key, "facecafe");
+    }
+
+    #[test]
+    fn parse_tx_hash_accepts_json_receipts_embedded_in_log_lines() {
+        let json = parse_tx_hash(
+            "info: adapter response payload={\"tx_hash\": \"deadbeef\"} next=cleanup",
+        )
+        .expect("embedded json receipt hash should parse");
+        assert_eq!(json, "deadbeef");
+    }
+
+    #[test]
+    fn parse_tx_hash_accepts_128_char_receipts_for_real_cli_compat() {
+        let long_hash = format!("0x{}", "AB".repeat(64));
+        let parsed =
+            parse_tx_hash(&format!("tx_hash={long_hash}")).expect("128-char tx hash should parse");
+        assert_eq!(parsed, "ab".repeat(64));
+    }
+
+    #[test]
+    fn parse_tx_hash_rejects_receipts_over_128_chars() {
+        let too_long_hash = format!("0x{}", "AB".repeat(65));
+        assert!(parse_tx_hash(&format!("tx_hash={too_long_hash}")).is_none());
+    }
+
+    #[test]
     fn parse_tx_hash_rejects_malformed_or_partial_values() {
-        assert!(parse_tx_hash("tx_hash=0xdeadbeef").is_none());
+        assert!(parse_tx_hash("tx_hash=0xdeadbee-").is_none());
         assert!(parse_tx_hash("tx_hash=not-a-hash").is_none());
         assert!(parse_tx_hash(
             "tx_hash=0xzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"
         )
         .is_none());
+        assert!(parse_tx_hash("tx_hash=1234567").is_none());
+        let overflow_hash = format!("tx_hash=0x{}", "ab".repeat(65));
+        assert!(parse_tx_hash(&overflow_hash).is_none());
     }
 
     #[test]
@@ -2139,7 +2840,7 @@ mod tests {
         );
         assert_eq!(
             classify_adapter_error(&non_retriable),
-            ("adapter_error", "non_retriable")
+            ("ERR_M2V2_PROOF_INVALID", "proof_invalid")
         );
     }
 
@@ -2668,6 +3369,116 @@ mod tests {
     }
 
     #[test]
+    fn flush_submissions_requires_tx_hash_receipts_for_terminal_acceptance() {
+        let commit_res = AdapterExecResult {
+            ok: true,
+            rc: RC_OK,
+            tx_hash: None,
+            terminal: true,
+        };
+        let reveal_res = AdapterExecResult {
+            ok: true,
+            rc: RC_OK,
+            tx_hash: None,
+            terminal: true,
+        };
+
+        let commit_idempotent_ok = should_execute_reveal(&commit_res);
+        let reveal_idempotent_ok = reveal_res.ok || is_idempotent_duplicate_ok(reveal_res.rc);
+        let commit_hash_observed = commit_res.tx_hash.is_some();
+        let reveal_hash_observed = reveal_res.tx_hash.is_some();
+
+        let (ack_status, reason_code) = if commit_idempotent_ok
+            && reveal_idempotent_ok
+            && commit_hash_observed
+            && reveal_hash_observed
+        {
+            ("accepted", "idempotent_ok")
+        } else if commit_idempotent_ok
+            && reveal_idempotent_ok
+            && (!commit_hash_observed || !reveal_hash_observed)
+        {
+            ("failed", "missing_tx_hash_receipt")
+        } else {
+            ("unexpected", "unexpected")
+        };
+
+        assert_eq!(ack_status, "failed");
+        assert_eq!(reason_code, "missing_tx_hash_receipt");
+    }
+
+    #[test]
+    fn flush_submissions_reuses_persisted_tx_hash_for_duplicate_resume_acceptance() {
+        let commit_res = AdapterExecResult {
+            ok: false,
+            rc: RC_DUPLICATE,
+            tx_hash: None,
+            terminal: true,
+        };
+        let reveal_res = AdapterExecResult {
+            ok: true,
+            rc: RC_OK,
+            tx_hash: Some("revealbeef".to_string()),
+            terminal: true,
+        };
+
+        let previous_commit_tx_hash = Some("commitbeef".to_string());
+        let previous_reveal_tx_hash = None;
+
+        let commit_hash_observed = commit_res.tx_hash.is_some()
+            || (is_idempotent_duplicate_ok(commit_res.rc) && previous_commit_tx_hash.is_some());
+        let reveal_hash_observed = reveal_res.tx_hash.is_some()
+            || (is_idempotent_duplicate_ok(reveal_res.rc) && previous_reveal_tx_hash.is_some());
+
+        let commit_tx_hash_for_ack = commit_res.tx_hash.clone().or(previous_commit_tx_hash);
+        let reveal_tx_hash_for_ack = reveal_res.tx_hash.clone().or(previous_reveal_tx_hash);
+
+        assert!(should_execute_reveal(&commit_res));
+        assert!(reveal_res.ok || is_idempotent_duplicate_ok(reveal_res.rc));
+        assert!(commit_hash_observed);
+        assert!(reveal_hash_observed);
+        assert_eq!(commit_tx_hash_for_ack.as_deref(), Some("commitbeef"));
+        assert_eq!(reveal_tx_hash_for_ack.as_deref(), Some("revealbeef"));
+    }
+
+    #[test]
+    fn persisted_ack_hashes_for_task_merges_hashes_across_failed_resume_attempts() {
+        let ack_log = std::env::temp_dir().join(format!(
+            "trnm-worker-agent-persisted-ack-hashes-{}-{}.jsonl",
+            std::process::id(),
+            now_ms()
+        ));
+        let _ = fs::remove_file(&ack_log);
+
+        append_ack(
+            &ack_log,
+            77,
+            "failed",
+            Some("commit-old".to_string()),
+            None,
+            Some("missing_tx_hash_receipt".to_string()),
+            Some("run-1".to_string()),
+        )
+        .expect("write first ack");
+        append_ack(
+            &ack_log,
+            77,
+            "accepted",
+            None,
+            Some("reveal-new".to_string()),
+            Some("idempotent_ok".to_string()),
+            Some("run-2".to_string()),
+        )
+        .expect("write second ack");
+
+        let hashes = persisted_ack_hashes_for_task(&ack_log, 77);
+        assert_eq!(hashes.commit_tx_hash.as_deref(), Some("commit-old"));
+        assert_eq!(hashes.reveal_tx_hash.as_deref(), Some("reveal-new"));
+
+        let _ = fs::remove_file(&ack_log);
+    }
+
+    #[test]
     fn task_lock_prevents_parallel_replay_for_same_task() {
         let ack_log = std::env::temp_dir().join(format!(
             "trnm-worker-agent-ack-lock-{}-{}.jsonl",
@@ -2749,6 +3560,37 @@ mod tests {
 
         let export = to_enterprise_audit_export(&rec);
         assert_eq!(export.provider_request_id, None);
+    }
+
+    #[test]
+    fn enterprise_audit_export_trims_boundary_bom_from_provider_request_id() {
+        let rec = MessageIngressRecord {
+            request_id: "r-audit-provider-request-id-bom".to_string(),
+            task_id: 7001,
+            channel: "telegram".to_string(),
+            user_id: "u1".to_string(),
+            session_id: "s1".to_string(),
+            text: "hello".to_string(),
+            idempotency_key: "ik-audit-provider-request-id-bom".to_string(),
+            status: RequestStatus::Assigned.as_str().to_string(),
+            created_at_unix_ms: 1,
+            assigned_worker: Some("worker-1".to_string()),
+            assigned_at_unix_ms: Some(2),
+            model_output: None,
+            provider_request_id: Some("\u{feff}provider-701\u{200b}".to_string()),
+            provenance_schema_version: None,
+            llm_provenance: None,
+            result_hash: None,
+            verifier_status: None,
+            resolution_code: None,
+            commit_tx_hash: None,
+            reveal_tx_hash: None,
+            adapter_error: None,
+            reputation_delta: None,
+        };
+
+        let export = to_enterprise_audit_export(&rec);
+        assert_eq!(export.provider_request_id.as_deref(), Some("provider-701"));
     }
 
     #[test]
@@ -3389,7 +4231,7 @@ mod tests {
             by_provenance_fingerprint: BTreeMap::new(),
         };
 
-        validate_audit_export_index(&index).expect("v1 index should be accepted");
+        validate_audit_export_index(&index, 0).expect("v1 index should be accepted");
     }
 
     #[test]
@@ -3407,11 +4249,57 @@ mod tests {
             by_provenance_fingerprint: BTreeMap::new(),
         };
 
-        let err = validate_audit_export_index(&index)
+        let err = validate_audit_export_index(&index, 0)
             .expect_err("unknown audit index version must fail closed");
         assert!(err
             .to_string()
             .contains("unsupported audit index version=2"));
+    }
+
+    #[test]
+    fn validate_audit_export_index_rejects_total_record_mismatch_fail_closed() {
+        let index = AuditExportIndex {
+            version: 1,
+            total_records: 2,
+            by_task_id: BTreeMap::new(),
+            by_status: BTreeMap::new(),
+            by_status_phase: BTreeMap::new(),
+            by_provider: BTreeMap::new(),
+            by_model: BTreeMap::new(),
+            by_agent_protocol: BTreeMap::new(),
+            by_compliance_profile: BTreeMap::new(),
+            by_provenance_fingerprint: BTreeMap::new(),
+        };
+
+        let err = validate_audit_export_index(&index, 1)
+            .expect_err("mismatched export length must fail closed");
+        assert!(err
+            .to_string()
+            .contains("audit index total_records mismatch: index=2 exports=1"));
+    }
+
+    #[test]
+    fn validate_audit_export_index_rejects_out_of_bounds_offsets_fail_closed() {
+        let mut by_task_id = BTreeMap::new();
+        by_task_id.insert("7001".to_string(), vec![1]);
+        let index = AuditExportIndex {
+            version: 1,
+            total_records: 1,
+            by_task_id,
+            by_status: BTreeMap::new(),
+            by_status_phase: BTreeMap::new(),
+            by_provider: BTreeMap::new(),
+            by_model: BTreeMap::new(),
+            by_agent_protocol: BTreeMap::new(),
+            by_compliance_profile: BTreeMap::new(),
+            by_provenance_fingerprint: BTreeMap::new(),
+        };
+
+        let err = validate_audit_export_index(&index, 1)
+            .expect_err("out-of-bounds index offsets must fail closed");
+        assert!(err.to_string().contains(
+            "audit index offset out of bounds: map=by_task_id key=7001 idx=1 total_records=1"
+        ));
     }
 
     #[test]
@@ -3816,6 +4704,29 @@ mod tests {
     }
 
     #[test]
+    fn query_audit_export_by_provenance_fingerprint_accepts_outer_quote_wrappers_before_validation()
+    {
+        let rows = vec![EnterpriseAuditExportRecord {
+            request_id: "r1".to_string(),
+            task_id: 7003,
+            status: "reveal_submitted".to_string(),
+            provider_request_id: Some("p1".to_string()),
+            provenance_schema_version: Some("llm.v2".to_string()),
+            provenance_fingerprint: Some("deadbeef".to_string()),
+            provider: Some("openai".to_string()),
+            model: Some("gpt-5.3-codex".to_string()),
+            adapter: Some("mcp".to_string()),
+            agent_protocol: Some("a2a".to_string()),
+            compliance_profile: Some("cn-moderate".to_string()),
+        }];
+
+        let index = build_audit_export_index(&rows);
+        let hit = query_audit_export_by_provenance_fingerprint(&rows, &index, "'\"DEADBEEF\"'");
+        assert_eq!(hit.len(), 1);
+        assert_eq!(hit[0].request_id, "r1");
+    }
+
+    #[test]
     fn query_audit_export_by_provenance_fingerprint_accepts_quoted_lookup() {
         let rows = vec![EnterpriseAuditExportRecord {
             request_id: "r1".to_string(),
@@ -3891,6 +4802,130 @@ mod tests {
     }
 
     #[test]
+    fn query_audit_export_by_provenance_fingerprint_accepts_repeated_nested_quote_wrappers() {
+        let rows = vec![EnterpriseAuditExportRecord {
+            request_id: "r1".to_string(),
+            task_id: 7002,
+            status: "reveal_submitted".to_string(),
+            provider_request_id: Some("p1".to_string()),
+            provenance_schema_version: Some("llm.v2".to_string()),
+            provenance_fingerprint: Some("deadbeef".to_string()),
+            provider: Some("openai".to_string()),
+            model: Some("gpt-5.3-codex".to_string()),
+            adapter: Some("mcp".to_string()),
+            agent_protocol: Some("a2a".to_string()),
+            compliance_profile: Some("cn-moderate".to_string()),
+        }];
+
+        let index = build_audit_export_index(&rows);
+        // Repeated shell/env forwarding can introduce more than five quote layers; keep
+        // lookup tolerant as long as the normalized fingerprint remains valid and bounded.
+        let hit = query_audit_export_by_provenance_fingerprint(
+            &rows,
+            &index,
+            "'\"`'\"`'\"`'\"`deadbeef`\"'`\"'`\"'`\"'",
+        );
+        assert_eq!(hit.len(), 1);
+        assert_eq!(hit[0].request_id, "r1");
+    }
+
+    #[test]
+    fn query_audit_export_by_provenance_fingerprint_accepts_shell_escaped_outer_quote_wrappers() {
+        let rows = vec![EnterpriseAuditExportRecord {
+            request_id: "r1".to_string(),
+            task_id: 7004,
+            status: "reveal_submitted".to_string(),
+            provider_request_id: Some("p1".to_string()),
+            provenance_schema_version: Some("llm.v2".to_string()),
+            provenance_fingerprint: Some("deadbeef".to_string()),
+            provider: Some("openai".to_string()),
+            model: Some("gpt-5.3-codex".to_string()),
+            adapter: Some("mcp".to_string()),
+            agent_protocol: Some("a2a".to_string()),
+            compliance_profile: Some("cn-moderate".to_string()),
+        }];
+
+        let index = build_audit_export_index(&rows);
+        let hit =
+            query_audit_export_by_provenance_fingerprint(&rows, &index, r#"  \"'deadbeef'\"  "#);
+        assert_eq!(hit.len(), 1);
+        assert_eq!(hit[0].request_id, "r1");
+    }
+
+    #[test]
+    fn query_audit_export_by_provenance_fingerprint_trims_boundary_bom_before_lookup() {
+        let rows = vec![EnterpriseAuditExportRecord {
+            request_id: "r-bom-lookup".to_string(),
+            task_id: 70081,
+            status: "assigned".to_string(),
+            provider_request_id: None,
+            provenance_schema_version: Some("llm.v2".to_string()),
+            provenance_fingerprint: Some("deadbeef".to_string()),
+            provider: Some("openai".to_string()),
+            model: Some("gpt-5".to_string()),
+            adapter: Some("mcp".to_string()),
+            agent_protocol: Some("a2a".to_string()),
+            compliance_profile: Some("cn-pii-restricted".to_string()),
+        }];
+
+        let index = build_audit_export_index(&rows);
+        let hit =
+            query_audit_export_by_provenance_fingerprint(&rows, &index, "\u{feff}DEADBEEF\u{200b}");
+        assert_eq!(hit.len(), 1);
+        assert_eq!(hit[0].request_id, "r-bom-lookup");
+    }
+
+    #[test]
+    fn query_audit_export_by_provenance_fingerprint_trims_fillers_after_quote_peeling() {
+        let rows = vec![EnterpriseAuditExportRecord {
+            request_id: "r-bom-after-peel".to_string(),
+            task_id: 70082,
+            status: "assigned".to_string(),
+            provider_request_id: None,
+            provenance_schema_version: Some("llm.v2".to_string()),
+            provenance_fingerprint: Some("deadbeef".to_string()),
+            provider: Some("openai".to_string()),
+            model: Some("gpt-5".to_string()),
+            adapter: Some("mcp".to_string()),
+            agent_protocol: Some("a2a".to_string()),
+            compliance_profile: Some("cn-pii-restricted".to_string()),
+        }];
+
+        let index = build_audit_export_index(&rows);
+        let hit = query_audit_export_by_provenance_fingerprint(
+            &rows,
+            &index,
+            " '\"\u{feff}DEADBEEF\u{200b}\"' ",
+        );
+        assert_eq!(hit.len(), 1);
+        assert_eq!(hit[0].request_id, "r-bom-after-peel");
+    }
+
+    #[test]
+    fn query_audit_export_by_provenance_fingerprint_accepts_repeated_shell_escaped_quote_wrappers()
+    {
+        let rows = vec![EnterpriseAuditExportRecord {
+            request_id: "r1".to_string(),
+            task_id: 7005,
+            status: "reveal_submitted".to_string(),
+            provider_request_id: Some("p1".to_string()),
+            provenance_schema_version: Some("llm.v2".to_string()),
+            provenance_fingerprint: Some("deadbeef".to_string()),
+            provider: Some("openai".to_string()),
+            model: Some("gpt-5.3-codex".to_string()),
+            adapter: Some("mcp".to_string()),
+            agent_protocol: Some("a2a".to_string()),
+            compliance_profile: Some("cn-moderate".to_string()),
+        }];
+
+        let index = build_audit_export_index(&rows);
+        let hit =
+            query_audit_export_by_provenance_fingerprint(&rows, &index, r#"\"\"\"deadbeef\"\"\""#);
+        assert_eq!(hit.len(), 1);
+        assert_eq!(hit[0].request_id, "r1");
+    }
+
+    #[test]
     fn query_audit_export_by_provenance_fingerprint_rejects_blank_or_oversized_lookup() {
         let rows = vec![EnterpriseAuditExportRecord {
             request_id: "r1".to_string(),
@@ -3911,6 +4946,74 @@ mod tests {
 
         let oversized = "a".repeat(129);
         assert!(query_audit_export_by_provenance_fingerprint(&rows, &index, &oversized).is_empty());
+    }
+
+    #[test]
+    fn query_audit_output_serializes_normalized_fingerprint_only_when_present() {
+        let with_fp = QueryAuditOutput {
+            hit_indexes: vec![1, 3],
+            records: vec![],
+            provenance_fingerprint: Some("deadbeef".to_string()),
+        };
+        let with_fp_json = serde_json::to_value(&with_fp).expect("serialize query output");
+        assert_eq!(with_fp_json["provenance_fingerprint"], "deadbeef");
+        assert_eq!(with_fp_json["hit_indexes"], serde_json::json!([1, 3]));
+
+        let without_fp = QueryAuditOutput {
+            hit_indexes: vec![],
+            records: vec![],
+            provenance_fingerprint: None,
+        };
+        let without_fp_json = serde_json::to_value(&without_fp).expect("serialize query output");
+        assert!(without_fp_json.get("provenance_fingerprint").is_none());
+        assert_eq!(without_fp_json["hit_indexes"], serde_json::json!([]));
+    }
+
+    #[test]
+    fn query_audit_rejects_markdown_exports_fail_closed() {
+        let output_file = std::env::temp_dir().join(format!(
+            "trnm-worker-agent-query-audit-markdown-{}-{}.md",
+            std::process::id(),
+            now_ms()
+        ));
+        let index_file = audit_export_index_path(&output_file);
+        let index = AuditExportIndex {
+            version: 1,
+            total_records: 0,
+            by_task_id: BTreeMap::new(),
+            by_status: BTreeMap::new(),
+            by_status_phase: BTreeMap::new(),
+            by_provider: BTreeMap::new(),
+            by_model: BTreeMap::new(),
+            by_agent_protocol: BTreeMap::new(),
+            by_compliance_profile: BTreeMap::new(),
+            by_provenance_fingerprint: BTreeMap::new(),
+        };
+
+        fs::write(&output_file, "# audit\n").expect("write markdown export");
+        fs::write(
+            &index_file,
+            serde_json::to_string_pretty(&index).expect("serialize index"),
+        )
+        .expect("write index");
+
+        let format = detect_audit_export_format(&output_file);
+        assert_eq!(format, AuditExportFormat::Markdown);
+        assert!(index_file.exists());
+        let err = if format != AuditExportFormat::Jsonl {
+            anyhow!(
+                "query-audit only supports JSONL audit exports: {}",
+                output_file.display()
+            )
+        } else {
+            anyhow!("unexpected jsonl format for markdown export")
+        };
+        assert!(err
+            .to_string()
+            .contains("query-audit only supports JSONL audit exports"));
+
+        let _ = fs::remove_file(&output_file);
+        let _ = fs::remove_file(&index_file);
     }
 
     #[test]
@@ -4014,6 +5117,21 @@ mod tests {
 
         let overflow = "a".repeat(129);
         assert_eq!(normalized_provider_request_id(Some(&overflow)), None);
+    }
+
+    #[test]
+    fn normalized_provider_request_id_rejects_colon_and_non_alnum_edges() {
+        assert_eq!(
+            normalized_provider_request_id(Some("req:123")),
+            None,
+            "colon-delimited ids are ambiguous in downstream audit consumers"
+        );
+        assert_eq!(normalized_provider_request_id(Some("-req123")), None);
+        assert_eq!(normalized_provider_request_id(Some("req123.")), None);
+        assert_eq!(
+            normalized_provider_request_id(Some("req_123-abc.DEF")).as_deref(),
+            Some("req_123-abc.DEF")
+        );
     }
 
     #[test]
@@ -5454,6 +6572,16 @@ fn main() -> Result<()> {
             progress_log,
         } => {
             let tx_retry = resolve_tx_retry_policy(max_retries, backoff_ms);
+            let event_log = resolve_path_arg_from_env(
+                event_log,
+                WORKER_EVENT_LOG_ENV,
+                "/tmp/trnm-worker-agent-events.jsonl",
+            );
+            let progress_log = resolve_path_arg_from_env(
+                progress_log,
+                WORKER_PROGRESS_LOG_ENV,
+                "/tmp/trnm-worker-agent-progress.jsonl",
+            );
             if !submit_log.exists() {
                 println!("[agent] no submit log found: {}", submit_log.display());
                 return Ok(());
@@ -5609,8 +6737,26 @@ fn main() -> Result<()> {
                     let reveal_idempotent_ok =
                         reveal_res.ok || is_idempotent_duplicate_ok(reveal_res.rc);
 
+                    let previous_ack_hashes = persisted_ack_hashes_for_task(&ack_log, rec.task_id);
+                    let previous_commit_tx_hash = previous_ack_hashes.commit_tx_hash;
+                    let previous_reveal_tx_hash = previous_ack_hashes.reveal_tx_hash;
+
+                    let commit_hash_observed = commit_res.tx_hash.is_some()
+                        || (is_idempotent_duplicate_ok(commit_res.rc)
+                            && previous_commit_tx_hash.is_some());
+                    let reveal_hash_observed = reveal_res.tx_hash.is_some()
+                        || (is_idempotent_duplicate_ok(reveal_res.rc)
+                            && previous_reveal_tx_hash.is_some());
+
+                    let commit_tx_hash_for_ack =
+                        commit_res.tx_hash.clone().or(previous_commit_tx_hash);
+                    let reveal_tx_hash_for_ack =
+                        reveal_res.tx_hash.clone().or(previous_reveal_tx_hash);
+
                     let (ack_status, reason_code, ack_reason) = if commit_idempotent_ok
                         && reveal_idempotent_ok
+                        && commit_hash_observed
+                        && reveal_hash_observed
                     {
                         (
                             "accepted",
@@ -5618,6 +6764,18 @@ fn main() -> Result<()> {
                             format!(
                                 "idempotent-ok commit_rc={} reveal_rc={}",
                                 commit_res.rc, reveal_res.rc
+                            ),
+                        )
+                    } else if commit_idempotent_ok
+                        && reveal_idempotent_ok
+                        && (!commit_hash_observed || !reveal_hash_observed)
+                    {
+                        (
+                            "failed",
+                            "missing_tx_hash_receipt",
+                            format!(
+                                "missing-tx-hash-receipt commit_tx_hash_present={} reveal_tx_hash_present={} commit_rc={} reveal_rc={}",
+                                commit_hash_observed, reveal_hash_observed, commit_res.rc, reveal_res.rc
                             ),
                         )
                     } else if !commit_idempotent_ok && commit_res.terminal {
@@ -5653,8 +6811,8 @@ fn main() -> Result<()> {
                         &ack_log,
                         rec.task_id,
                         ack_status,
-                        commit_res.tx_hash.clone(),
-                        reveal_res.tx_hash.clone(),
+                        commit_tx_hash_for_ack.clone(),
+                        reveal_tx_hash_for_ack.clone(),
                         Some(reason_code.to_string()),
                         Some(run_id.clone()),
                     )?;
@@ -5664,8 +6822,8 @@ fn main() -> Result<()> {
                         let mut changed = false;
                         for ir in ingress.iter_mut() {
                             if ir.task_id == rec.task_id {
-                                ir.commit_tx_hash = commit_res.tx_hash.clone();
-                                ir.reveal_tx_hash = reveal_res.tx_hash.clone();
+                                ir.commit_tx_hash = commit_tx_hash_for_ack.clone();
+                                ir.reveal_tx_hash = reveal_tx_hash_for_ack.clone();
                                 ir.resolution_code = Some(reason_code.to_string());
                                 ir.verifier_status = Some(if ack_status == "accepted" {
                                     "accepted".to_string()
@@ -5805,6 +6963,13 @@ fn main() -> Result<()> {
                 ));
             }
 
+            if detect_audit_export_format(&output_file) != AuditExportFormat::Jsonl {
+                return Err(anyhow!(
+                    "query-audit only supports JSONL audit exports: {}",
+                    output_file.display()
+                ));
+            }
+
             let mut exports = Vec::new();
             for line in fs::read_to_string(&output_file)?.lines() {
                 if line.trim().is_empty() {
@@ -5813,7 +6978,7 @@ fn main() -> Result<()> {
                 exports.push(serde_json::from_str::<EnterpriseAuditExportRecord>(line)?);
             }
             let index: AuditExportIndex = serde_json::from_str(&fs::read_to_string(&index_file)?)?;
-            validate_audit_export_index(&index)?;
+            validate_audit_export_index(&index, exports.len())?;
 
             let (hit_indexes, records, normalized_fp) = if let Some(task_id) = task_id {
                 let key = task_id.to_string();
