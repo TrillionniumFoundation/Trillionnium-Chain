@@ -151,6 +151,7 @@ TRNM 当前已经具备：
    - `hot_object_share_avg_ppm` 或 `hot_object_top_label_share_avg_ppm` 容易把“只在少数高度集中爆发”的热点摊薄成看起来温和的平均数。
    - closeout 时应把 `hot_object_active_heights`、`hot_object_active_height_rate_ppm`、`hot_object_active_observed_height_rate_ppm`、`hot_object_active_height_share_ppm` 与 `hot_object_share_*`、`hot_object_top_label_share_*`、`hot_object_active_top_label_share_avg_ppm`、`hot_object_tail_share_*`、`hot_object_active_tail_share_avg_ppm` 一起读：前一组回答热点覆盖了多少 committed/observed heights、并对平均 finality budget 施加了多少 active-height 压力，后一组回答热点是“单一标签强主导”还是“长尾同时升温”。
    - 若 skipped / no-commit heights 存在，应优先比较 `hot_object_active_height_rate_ppm` 与 `hot_object_active_observed_height_rate_ppm`；若两者差距明显，再结合 `hot_object_active_height_share_ppm` 与 top/tail share 判断这是局部 burst hotspot，还是更广泛的对象面退化。这样可以避免把热点问题误判成平均上可接受，或把单一热点标签误读成整个对象面都同时恶化；同时也避免把 budget-pressure 视角与 top/tail concentration 视角混为一谈。
+   - 一次性 triage 时，先看 coverage（`hot_object_active_heights`、`hot_object_active_height_rate_ppm`、`hot_object_active_observed_height_rate_ppm`），再看 shape（`hot_object_top_label_share_*` / `hot_object_tail_share_*`），最后才用 `hot_object_active_height_share_ppm` 判断这些热点对平均 finality budget 的压力；不要直接把 top share 高低当成 burst 严重度结论。
 
 #### 对 Solana/Sui 的差距
 - **比 Solana**：缺少更成熟的 runtime / bank / lock / cache 联动。
