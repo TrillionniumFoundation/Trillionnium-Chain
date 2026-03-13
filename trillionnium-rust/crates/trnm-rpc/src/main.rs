@@ -15,13 +15,15 @@ use trnm_rpc::{
     get_tx, query_account_state, submit_tx, validate_trnm_address, AccountBalanceQueryResponse,
     AccountNonceQueryResponse, AccountState, EventQueryResponse, FaucetRequestResponse, GetTxError,
     GovParamQueryResponse, GovProposalQueryResponse, InMemoryTransferLedger,
-    MessageRequestQueryResponse, RequestFullQueryResponse, RpcErrorResponse, TaskQueryResponse,
+    MessageRequestQueryResponse, RequestFullQueryResponse, RpcErrorResponse,
+    TaskMeteringPolicyQueryResponse, TaskMeteringQueryResponse, TaskQueryResponse,
     TxLifecycleRecord,
 };
 use trnm_state::StateStore;
 use trnm_types::{
     AuditEvent, CapabilityToken, GovParamObject, GovProposalObject, GovProposalStatus,
-    IdentityRegistry, PrivacyTier, RequestStatus, TaskMetadata, TaskStatus, TransferTx,
+    IdentityRegistry, PrivacyTier, RequestStatus, TaskMetadata, TaskMeteringSnapshot, TaskObject,
+    TaskStatus, TransferTx,
 };
 
 const QUERY_EVENTS_LIMIT_DEFAULT: usize = 100;
@@ -45,6 +47,7 @@ const FAUCET_MAX_REQUESTS_DEFAULT: u32 = 1;
 const FAUCET_MAX_REQUESTS_MIN: u32 = 1;
 const EMERGENCY_PAUSE_KEY_ID: u64 = 7_999;
 const MARKET_REPUTATION_FILE_ENV: &str = "TRNM_RPC_MARKET_REPUTATION_FILE";
+const TASK_STATE_FILE_ENV: &str = "TRNM_RPC_TASK_STATE_FILE";
 const MARKET_PRICE_WEIGHT_ENV: &str = "TRNM_RPC_MARKET_PRICE_WEIGHT";
 const MARKET_REPUTATION_WEIGHT_ENV: &str = "TRNM_RPC_MARKET_REPUTATION_WEIGHT";
 const MARKET_REPUTATION_CLAMP_ENV: &str = "TRNM_RPC_MARKET_REPUTATION_CLAMP";
@@ -983,6 +986,99 @@ fn market_bids_file() -> PathBuf {
         return path;
     }
     run_root().join("run/market/bids.jsonl")
+}
+
+fn task_state_file() -> Option<PathBuf> {
+    normalized_path_from_env(TASK_STATE_FILE_ENV)
+}
+
+fn load_task_state_snapshot() -> Result<Vec<TaskObject>> {
+    let Some(path) = task_state_file() else {
+        return Ok(vec![]);
+    };
+    let raw = match fs::read_to_string(&path) {
+        Ok(raw) => raw,
+        Err(err) if err.kind() == std::io::ErrorKind::NotFound => return Ok(vec![]),
+        Err(err) => {
+            return Err(anyhow!(
+                "failed to read task state snapshot {}: {}",
+                path.display(),
+                err
+            ))
+        }
+    };
+
+    let mut tasks = Vec::new();
+    for (idx, line) in raw.lines().enumerate() {
+        if line.trim().is_empty() {
+            continue;
+        }
+        let task = serde_json::from_str::<TaskObject>(line).map_err(|err| {
+            anyhow!(
+                "failed to parse task state snapshot {} line {}: {}",
+                path.display(),
+                idx + 1,
+                err
+            )
+        })?;
+        tasks.push(task);
+    }
+    Ok(tasks)
+}
+
+fn task_metering_query_response(
+    snapshot: &TaskMeteringSnapshot,
+) -> TaskMeteringQueryResponse {
+    TaskMeteringQueryResponse {
+        workload_class: snapshot.workload_class.clone(),
+        metering_schema: snapshot.metering_schema.clone(),
+        receipt_hash: snapshot.receipt_hash.clone(),
+        prompt_tokens: snapshot.prompt_tokens,
+        generated_tokens: snapshot.generated_tokens,
+        decode_steps: snapshot.decode_steps,
+        kv_bytes_moved: snapshot.kv_bytes_moved,
+        normalized_work_units: snapshot.normalized_work_units,
+        prompt_token_weight: snapshot.prompt_token_weight,
+        generated_token_weight: snapshot.generated_token_weight,
+        decode_step_weight: snapshot.decode_step_weight,
+        kv_byte_weight: snapshot.kv_byte_weight,
+        policy: TaskMeteringPolicyQueryResponse {
+            snapshot_version: snapshot.policy_snapshot_version,
+            min_accept_work_units: snapshot.min_accept_work_units,
+            challenge_success_bounty_base: snapshot.challenge_success_bounty_base,
+            challenge_success_bounty_per_work_unit_num: snapshot
+                .challenge_success_bounty_per_work_unit_num,
+            challenge_success_bounty_per_work_unit_den: snapshot
+                .challenge_success_bounty_per_work_unit_den,
+            worker_completion_bonus_per_work_unit_num: snapshot
+                .worker_completion_bonus_per_work_unit_num,
+            worker_completion_bonus_per_work_unit_den: snapshot
+                .worker_completion_bonus_per_work_unit_den,
+            worker_slash_rebate_per_work_unit_num: snapshot.worker_slash_rebate_per_work_unit_num,
+            worker_slash_rebate_per_work_unit_den: snapshot.worker_slash_rebate_per_work_unit_den,
+        },
+    }
+}
+
+fn query_task_from_state_snapshot(task_id: u64, tasks: &[TaskObject]) -> Option<TaskQueryResponse> {
+    let task = tasks
+        .iter()
+        .filter(|task| task.task_id == task_id)
+        .max_by_key(|task| task.version)?;
+
+    Some(TaskQueryResponse {
+        task_id: task.task_id,
+        status: task.status,
+        worker: task.worker.clone(),
+        bounty: task.bounty,
+        result_hash_hex: task.result_hash.map(hex::encode),
+        version: task.version,
+        metering: task
+            .metadata
+            .as_ref()
+            .and_then(|metadata| metadata.metering.as_ref())
+            .map(task_metering_query_response),
+    })
 }
 
 struct MarketFileLock {
@@ -2454,6 +2550,7 @@ fn query_task_from_node_events(
         bounty: 100,
         result_hash_hex: None,
         version,
+        metering: None,
     })
 }
 
@@ -2462,6 +2559,10 @@ fn query_task_response(
     node_events: &[NodeEventRecord],
     recs: &[AdapterRecord],
 ) -> Result<TaskQueryResponse> {
+    let task_state_snapshot = load_task_state_snapshot()?;
+    if let Some(out) = query_task_from_state_snapshot(task_id, &task_state_snapshot) {
+        return Ok(out);
+    }
     if let Some(out) = query_task_from_node_events(task_id, node_events) {
         return Ok(out);
     }
@@ -2505,6 +2606,7 @@ fn query_task_response(
         bounty: 100,
         result_hash_hex,
         version: task_recs.len() as u64,
+        metering: None,
     })
 }
 
@@ -3461,6 +3563,7 @@ mod tests {
             "TRNM_RPC_MARKET_BIDS_FILE",
             "TRNM_RPC_INGRESS_FILE",
             MARKET_REPUTATION_FILE_ENV,
+            TASK_STATE_FILE_ENV,
         ];
         let prev: Vec<(String, Option<String>)> = keys
             .iter()
@@ -3661,6 +3764,13 @@ mod tests {
             QUERY_FULL_LIMIT_MAX,
         );
         assert_eq!(got, 17);
+    }
+
+    #[test]
+    fn task_state_file_uses_trimmed_env_path() {
+        with_market_path_env(&[(TASK_STATE_FILE_ENV, Some("  '/tmp/task-state.jsonl'  "))], || {
+            assert_eq!(task_state_file(), Some(PathBuf::from("/tmp/task-state.jsonl")));
+        });
     }
 
     #[test]
@@ -5605,6 +5715,71 @@ mod tests {
         assert_eq!(out.version, 3);
         assert_eq!(out.status, TaskStatus::Challenged);
         assert_eq!(out.worker.as_deref(), Some("worker-b"));
+    }
+
+    #[test]
+    fn query_task_from_state_snapshot_exposes_metering_audit_fields() {
+        let tasks = vec![TaskObject {
+            task_id: 42,
+            creator: "alice".into(),
+            bounty: 777,
+            status: TaskStatus::Revealed,
+            proof_type: trnm_types::ProofType::Fraud,
+            metadata: Some(TaskMetadata {
+                note: None,
+                task_type: None,
+                input_hash: None,
+                model: None,
+                provenance: None,
+                metering: Some(TaskMeteringSnapshot {
+                    workload_class: "llm_inference".into(),
+                    metering_schema: "llm_token_meter_v1".into(),
+                    policy_snapshot_version: 1,
+                    receipt_hash: "deadbeef".into(),
+                    prompt_tokens: 128,
+                    generated_tokens: 32,
+                    decode_steps: 32,
+                    kv_bytes_moved: 4096,
+                    normalized_work_units: 192,
+                    prompt_token_weight: 1,
+                    generated_token_weight: 1,
+                    decode_step_weight: 1,
+                    kv_byte_weight: 0,
+                    min_accept_work_units: 100,
+                    challenge_success_bounty_base: 1,
+                    challenge_success_bounty_per_work_unit_num: 1,
+                    challenge_success_bounty_per_work_unit_den: 192,
+                    worker_completion_bonus_per_work_unit_num: 1,
+                    worker_completion_bonus_per_work_unit_den: 256,
+                    worker_slash_rebate_per_work_unit_num: 1,
+                    worker_slash_rebate_per_work_unit_den: 384,
+                }),
+            }),
+            worker: Some("worker-a".into()),
+            committed_hash: None,
+            result_hash: Some([0xabu8; 32]),
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 9,
+        }];
+
+        let out = query_task_from_state_snapshot(42, &tasks).expect("task expected");
+        let expected_result_hash = hex::encode([0xabu8; 32]);
+        assert_eq!(out.bounty, 777);
+        assert_eq!(out.result_hash_hex.as_deref(), Some(expected_result_hash.as_str()));
+        let metering = out.metering.expect("metering expected");
+        assert_eq!(metering.normalized_work_units, 192);
+        assert_eq!(metering.policy.snapshot_version, 1);
+        assert_eq!(metering.policy.min_accept_work_units, 100);
+        assert_eq!(metering.policy.challenge_success_bounty_per_work_unit_den, 192);
     }
 
     #[test]

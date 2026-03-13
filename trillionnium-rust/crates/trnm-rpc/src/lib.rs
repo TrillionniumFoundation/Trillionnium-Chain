@@ -14,6 +14,36 @@ pub use transfer::{
     TxLifecycleRecord, TxStatus,
 };
 
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct TaskMeteringPolicyQueryResponse {
+    pub snapshot_version: u8,
+    pub min_accept_work_units: u128,
+    pub challenge_success_bounty_base: u128,
+    pub challenge_success_bounty_per_work_unit_num: u128,
+    pub challenge_success_bounty_per_work_unit_den: u128,
+    pub worker_completion_bonus_per_work_unit_num: u128,
+    pub worker_completion_bonus_per_work_unit_den: u128,
+    pub worker_slash_rebate_per_work_unit_num: u128,
+    pub worker_slash_rebate_per_work_unit_den: u128,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct TaskMeteringQueryResponse {
+    pub workload_class: String,
+    pub metering_schema: String,
+    pub receipt_hash: String,
+    pub prompt_tokens: u64,
+    pub generated_tokens: u64,
+    pub decode_steps: u64,
+    pub kv_bytes_moved: u64,
+    pub normalized_work_units: u128,
+    pub prompt_token_weight: u128,
+    pub generated_token_weight: u128,
+    pub decode_step_weight: u128,
+    pub kv_byte_weight: u128,
+    pub policy: TaskMeteringPolicyQueryResponse,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TaskQueryResponse {
     pub task_id: u64,
@@ -22,6 +52,8 @@ pub struct TaskQueryResponse {
     pub bounty: u128,
     pub result_hash_hex: Option<String>,
     pub version: u64,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub metering: Option<TaskMeteringQueryResponse>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -222,6 +254,7 @@ mod tests {
             bounty: 100,
             result_hash_hex: None,
             version: 1,
+            metering: None,
         };
         let v = serde_json::to_value(task).unwrap();
         let obj = v.as_object().unwrap();
@@ -235,6 +268,63 @@ mod tests {
         ] {
             assert!(obj.contains_key(k), "missing key: {}", k);
         }
+    }
+
+
+    #[test]
+    fn rpc_task_query_omits_metering_when_absent() {
+        let task = TaskQueryResponse {
+            task_id: 1,
+            status: TaskStatus::Open,
+            worker: None,
+            bounty: 100,
+            result_hash_hex: None,
+            version: 1,
+            metering: None,
+        };
+        let v = serde_json::to_value(task).unwrap();
+        assert!(v.get("metering").is_none());
+    }
+
+    #[test]
+    fn rpc_task_query_includes_metering_when_present() {
+        let task = TaskQueryResponse {
+            task_id: 1,
+            status: TaskStatus::Revealed,
+            worker: Some("worker-1".into()),
+            bounty: 100,
+            result_hash_hex: Some("abcd".into()),
+            version: 3,
+            metering: Some(TaskMeteringQueryResponse {
+                workload_class: "llm_inference".into(),
+                metering_schema: "llm_token_meter_v1".into(),
+                receipt_hash: "deadbeef".into(),
+                prompt_tokens: 128,
+                generated_tokens: 32,
+                decode_steps: 32,
+                kv_bytes_moved: 4096,
+                normalized_work_units: 192,
+                prompt_token_weight: 1,
+                generated_token_weight: 1,
+                decode_step_weight: 1,
+                kv_byte_weight: 0,
+                policy: TaskMeteringPolicyQueryResponse {
+                    snapshot_version: 1,
+                    min_accept_work_units: 0,
+                    challenge_success_bounty_base: 1,
+                    challenge_success_bounty_per_work_unit_num: 1,
+                    challenge_success_bounty_per_work_unit_den: 192,
+                    worker_completion_bonus_per_work_unit_num: 1,
+                    worker_completion_bonus_per_work_unit_den: 192,
+                    worker_slash_rebate_per_work_unit_num: 1,
+                    worker_slash_rebate_per_work_unit_den: 192,
+                },
+            }),
+        };
+        let v = serde_json::to_value(task).unwrap();
+        assert_eq!(v["metering"]["normalized_work_units"], json!(192));
+        assert_eq!(v["metering"]["policy"]["snapshot_version"], json!(1));
+        assert_eq!(v["metering"]["policy"]["challenge_success_bounty_base"], json!(1));
     }
 
     #[test]
