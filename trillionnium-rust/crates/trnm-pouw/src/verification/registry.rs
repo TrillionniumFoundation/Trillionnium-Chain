@@ -1647,6 +1647,7 @@ mod tests {
                             && name.ends_with(".json")
                             && !name.contains("empty_backend_id")
                             && !name.contains("whitespace_backend_id")
+                            && !name.contains("null_backend_id")
                     })
                     .unwrap_or(false)
             })
@@ -1701,7 +1702,8 @@ mod tests {
                             && name.contains("_feature_on")
                             && name.ends_with(".json")
                             && (name.ends_with("feature_on_empty_backend_id.json")
-                                || name.ends_with("feature_on_whitespace_backend_id.json"))
+                                || name.ends_with("feature_on_whitespace_backend_id.json")
+                                || name.ends_with("feature_on_null_backend_id.json"))
                     })
                     .unwrap_or(false)
             })
@@ -1709,7 +1711,7 @@ mod tests {
         fixture_paths.sort();
 
         assert!(
-            fixture_paths.len() >= 4,
+            fixture_paths.len() >= 6,
             "expected invalid feature-on bridge fixtures, found {}",
             fixture_paths.len()
         );
