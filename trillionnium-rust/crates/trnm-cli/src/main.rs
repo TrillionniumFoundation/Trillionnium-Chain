@@ -148,6 +148,12 @@ enum QueryCommand {
         #[arg(long, default_value_t = 20)]
         limit: usize,
     },
+    /// Query full request timeline / audit view via RPC
+    RequestFull {
+        request_id: String,
+        #[arg(long, default_value_t = 20)]
+        limit: usize,
+    },
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -252,6 +258,82 @@ fn events_query(task_id: u64, limit: usize) -> Result<serde_json::Value> {
         );
     }
     parse_events_query_response(&stdout, task_id)
+}
+
+fn parse_request_full_query_response(raw: &str, requested_request_id: &str) -> Result<serde_json::Value> {
+    let parsed: serde_json::Value = serde_json::from_str(raw)
+        .map_err(|err| anyhow!("failed to parse request-full response as json: {err}"))?;
+    let Some(request) = parsed.get("request") else {
+        bail!("request-full response missing request object");
+    };
+    let Some(request_id) = request.get("request_id").and_then(|v| v.as_str()) else {
+        bail!("request-full response missing string request.request_id");
+    };
+    if request_id != requested_request_id {
+        bail!(
+            "request-full response request_id mismatch: requested={}, got={}",
+            requested_request_id,
+            request_id
+        );
+    }
+    let Some(task_id) = request.get("task_id").and_then(|v| v.as_u64()) else {
+        bail!("request-full response missing numeric request.task_id");
+    };
+    let Some(events) = parsed.get("events").and_then(|v| v.as_array()) else {
+        bail!("request-full response missing events array");
+    };
+    for (idx, event) in events.iter().enumerate() {
+        let Some(event_task_id) = event.get("task_id").and_then(|v| v.as_u64()) else {
+            bail!("request-full response event {} missing numeric task_id", idx);
+        };
+        if event_task_id != task_id {
+            bail!(
+                "request-full response event task_id mismatch at item {}: request.task_id={}, got={}",
+                idx,
+                task_id,
+                event_task_id
+            );
+        }
+    }
+    Ok(parsed)
+}
+
+fn request_full_query(request_id: &str, limit: usize) -> Result<serde_json::Value> {
+    if let Ok(template) = std::env::var("TRNM_QUERY_REQUEST_FULL_CMD") {
+        let cmd = tpl(
+            tpl(template, "request_id", request_id),
+            "limit",
+            &limit.to_string(),
+        );
+        let raw = run_template_raw(&cmd)?;
+        return parse_request_full_query_response(&raw, request_id);
+    }
+
+    let rpc_workspace = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .and_then(|p| p.parent())
+        .map(|p| p.to_path_buf())
+        .unwrap_or_else(|| PathBuf::from("."));
+    let cmd = format!(
+        "cargo run -q -p trnm-rpc -- query-request-full --request-id {} --limit {}",
+        request_id, limit
+    );
+    let (program, args) = parse_template_command(&cmd)?;
+    let out = ProcCommand::new(program)
+        .args(args)
+        .current_dir(&rpc_workspace)
+        .output()?;
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    if !out.status.success() {
+        bail!(
+            "request-full query command failed rc={}: {}{}",
+            out.status.code().unwrap_or(1),
+            stdout,
+            stderr
+        );
+    }
+    parse_request_full_query_response(&stdout, request_id)
 }
 
 fn task_query(task_id: u64) -> Result<serde_json::Value> {
@@ -1033,6 +1115,10 @@ fn main() -> Result<()> {
                 let out = events_query(task_id, limit)?;
                 println!("{}", serde_json::to_string_pretty(&out)?);
             }
+            QueryCommand::RequestFull { request_id, limit } => {
+                let out = request_full_query(&request_id, limit)?;
+                println!("{}", serde_json::to_string_pretty(&out)?);
+            }
         },
     }
     Ok(())
@@ -1158,6 +1244,42 @@ mod tests {
         assert_eq!(got[0]["task_id"], serde_json::json!(42));
         assert_eq!(got[0]["metering"]["normalized_work_units"], serde_json::json!(192));
         assert_eq!(got[0]["metering"]["policy"]["snapshot_version"], serde_json::json!(1));
+    }
+
+    #[test]
+    fn request_full_query_parse_json_accepts_metering_timeline() {
+        let raw = r#"{"request":{"request_id":"req-42","task_id":42,"channel":"telegram","user_id":"u1","session_id":"s1","text":"hi","idempotency_key":"k1","status":"resolved","created_at_unix_ms":123},"verifier_status":"ok","resolution_code":"completed","result_hash":"abcd","commit_tx_hash":"0x1","reveal_tx_hash":"0x2","events":[{"event_type":"reveal","task_id":42,"from_status":"Committed","to_status":"Revealed","actor":"worker-a","tx_id":2,"block_height":2,"state_root":"0xdef","ts_unix_ms":124,"metering":{"normalized_work_units":192,"policy":{"snapshot_version":1}}}]}"#;
+        let parsed = parse_request_full_query_response(raw, "req-42").unwrap();
+        assert_eq!(parsed["request"]["request_id"], serde_json::json!("req-42"));
+        assert_eq!(parsed["events"][0]["metering"]["normalized_work_units"], serde_json::json!(192));
+        assert_eq!(parsed["events"][0]["metering"]["policy"]["snapshot_version"], serde_json::json!(1));
+    }
+
+    #[test]
+    fn request_full_query_rejects_mismatched_request_id() {
+        let raw = r#"{"request":{"request_id":"req-43","task_id":42},"events":[]}"#;
+        let err = parse_request_full_query_response(raw, "req-42").unwrap_err();
+        assert!(err.to_string().contains("request-full response request_id mismatch"));
+    }
+
+    #[test]
+    fn request_full_query_rejects_event_task_id_mismatch() {
+        let raw = r#"{"request":{"request_id":"req-42","task_id":42},"events":[{"task_id":43}]}"#;
+        let err = parse_request_full_query_response(raw, "req-42").unwrap_err();
+        assert!(err.to_string().contains("request-full response event task_id mismatch"));
+    }
+
+    #[test]
+    fn request_full_query_uses_template_override_and_preserves_metering_timeline() {
+        std::env::set_var(
+            "TRNM_QUERY_REQUEST_FULL_CMD",
+            r#"printf '%s' '{"request":{"request_id":"req-42","task_id":42,"channel":"telegram","user_id":"u1","session_id":"s1","text":"hi","idempotency_key":"k1","status":"resolved","created_at_unix_ms":123},"events":[{"event_type":"resolve","task_id":42,"from_status":"Challenged","to_status":"Completed","actor":"authority","tx_id":3,"block_height":3,"state_root":"0xghi","ts_unix_ms":125,"metering":{"normalized_work_units":192,"policy":{"snapshot_version":1}}}]}'"#,
+        );
+        let got = request_full_query("req-42", 5).unwrap();
+        std::env::remove_var("TRNM_QUERY_REQUEST_FULL_CMD");
+        assert_eq!(got["request"]["request_id"], serde_json::json!("req-42"));
+        assert_eq!(got["events"][0]["metering"]["normalized_work_units"], serde_json::json!(192));
+        assert_eq!(got["events"][0]["metering"]["policy"]["snapshot_version"], serde_json::json!(1));
     }
 
     #[test]
