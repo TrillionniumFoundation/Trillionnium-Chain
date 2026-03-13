@@ -369,14 +369,14 @@ TRNM 当前不是“高 TPS 公链的仿制品”，而是：
    - 目的：先确认本轮是否因为 no-commit heights 变多，导致后面的 committed-height coverage 看起来被“改善”或“恶化”。
 
 2. **再看 burst 覆盖面**
-   - jitter：`bft_round_change_active_height_rate_ppm` vs `bft_round_change_active_observed_height_rate_ppm`
-   - backoff：`bft_round_change_backoff_active_height_rate_ppm` vs `bft_round_change_backoff_active_observed_height_rate_ppm`
-   - fairness：`bft_leader_missed_active_height_rate_ppm` vs `bft_leader_missed_active_observed_height_rate_ppm`
-   - stall：`critical_wait_active_height_rate_ppm` vs `critical_wait_active_observed_height_rate_ppm`
-   - hotspot：`hot_object_active_height_rate_ppm` vs `hot_object_active_observed_height_rate_ppm`
-   - rollback：`rollback_active_height_rate_ppm` vs `rollback_active_observed_height_rate_ppm`
-   - preexec reject：`preexec_reject_active_height_rate_ppm` vs `preexec_reject_active_observed_height_rate_ppm`
-   - 目的：先分清“只是在 committed heights 上看起来很集中”与“在所有 observed heights 上其实已经扩散”。
+   - jitter：`bft_round_change_active_height_rate_ppm` vs `bft_round_change_active_observed_height_rate_ppm`（旁边保留 `bft_round_change_active_heights`）
+   - backoff：`bft_round_change_backoff_active_height_rate_ppm` vs `bft_round_change_backoff_active_observed_height_rate_ppm`（旁边保留 `bft_round_change_backoff_active_heights`）
+   - fairness：`bft_leader_missed_active_height_rate_ppm` vs `bft_leader_missed_active_observed_height_rate_ppm`（旁边保留 `bft_leader_missed_active_heights`）
+   - stall：`critical_wait_active_height_rate_ppm` vs `critical_wait_active_observed_height_rate_ppm`（旁边保留 `critical_wait_active_heights`）
+   - hotspot：`hot_object_active_height_rate_ppm` vs `hot_object_active_observed_height_rate_ppm`（旁边保留 `hot_object_active_heights`）
+   - rollback：`rollback_active_height_rate_ppm` vs `rollback_active_observed_height_rate_ppm`（旁边保留 `rollback_active_heights`）
+   - preexec reject：`preexec_reject_active_height_rate_ppm` vs `preexec_reject_active_observed_height_rate_ppm`（旁边保留 `preexec_reject_active_heights`）
+   - 目的：先分清“只是在 committed heights 上看起来很集中”与“在所有 observed heights 上其实已经扩散”，同时保留 burst 的绝对高度宽度，避免只靠 rate pair 就把少量高度上的尖峰误判成广泛退化，或把更宽但更稀的回归误判成轻微波动。
 
 3. **最后看密度 / budget / wall-share 严重度**
    - jitter / backoff：`bft_round_change_density_avg_milli`、`bft_round_change_backoff_density_avg_milli`、`bft_round_change_active_height_share_ppm`、`bft_round_change_backoff_active_height_share_ppm`、`bft_round_change_backoff_wall_share_ppm`
