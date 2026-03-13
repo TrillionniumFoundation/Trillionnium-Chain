@@ -750,6 +750,7 @@ fn validate_challenge_accounting_invariants(task: &TaskObject) -> Result<(), Pou
         TaskStatus::Open | TaskStatus::Assigned | TaskStatus::Committed => {
             if has_bond
                 || task.challenge_bond_forfeited.is_some()
+                || task.challenge_window_blocks_snapshot.is_some()
                 || task.challenged_at_height.is_some()
                 || task.challenge_deadline_height.is_some()
                 || task.resolve_deadline_height.is_some()
@@ -5588,6 +5589,28 @@ mod tests {
         let r4 = apply_timeout(&mut st, r3, 121).unwrap();
         let task = st.get_task(r4.id).unwrap();
         assert_eq!(task.status, TaskStatus::Slashed);
+    }
+
+    #[test]
+    fn timeout_rejects_committed_state_with_stale_challenge_window_snapshot() {
+        let mut st = seeded_state();
+
+        let r1 = apply_create_task(&mut st, 39019, "alice".into(), 100).unwrap();
+        let result_hash = [7u8; 32];
+        let reveal_salt = [8u8; 32];
+        let committed = compute_commitment(39019, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 =
+            apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
+
+        let mut bad = st.get_task(r3.id).unwrap();
+        assert_eq!(bad.status, TaskStatus::Committed);
+        bad.challenge_window_blocks_snapshot = Some(MIN_CHALLENGE_WINDOW_BLOCKS);
+        let bad_ref = st.update_task(r3, bad).unwrap();
+
+        let err = apply_timeout(&mut st, bad_ref, 211).unwrap_err();
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("stale challenge fields")));
     }
 
     #[test]
