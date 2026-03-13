@@ -194,7 +194,7 @@ v0 建议冻结以下 feature flag 名称：
 - `zk_backend_router`：启用 backend 路由层
 - `zk_payload_v0_envelope`：强制要求 canonical payload v0
 - `zk_allow_legacy_receipt_aliases`：允许旧 receipt alias 映射到 `zk`
-- `zk_allow_backend_fallback`：允许从首选 backend 回退到同系统备 backend（**v0 当前作为保留位冻结；在 payload 显式声明 `backend_id` 的 router 路径中，默认仍必须 fail-closed，不能静默猜测式回退**）
+- `zk_allow_backend_fallback`：允许从首选 backend 回退到同系统备 backend（**v0 当前作为保留位冻结；在 payload 显式声明 `backend_id` 的 router 路径中，默认仍必须 fail-closed，不能静默猜测式回退，也不能回落到配置默认 backend**）
 - `zk_explicit_backend_required`：要求 payload 显式带 `backend_id`
 
 ## 6.2 Config 结构
@@ -427,6 +427,7 @@ v0 **不承诺**：
 9. 若 `backend_id` / router 选中的 backend token 里只是重复出现同一个 canonical system hint（例如 `groth16-groth16-demo`），可视为同一 system 的重复提示并去重后继续匹配，不应被当成多系统 payload 误杀。
 10. router 最终选中的 backend 若带有可推断 proving-system hint，也必须与 `vk_ref` 的 canonical `zk_system` 一致。
 11. 不允许因为 `allow_backend_fallback`、默认 backend、或历史别名兼容而跨 proving system 静默改道。
+12. 若 canonical payload 已显式给出 `backend_id`，该选择器就是 router 的权威输入；即使开启/保留了 fallback 相关配置，遇到 unknown / disabled / unavailable backend 时也必须按 fail-closed unavailable 路径返回，不能静默回退到配置默认 backend。
 
 设计意图：
 
