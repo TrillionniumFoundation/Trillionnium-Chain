@@ -160,6 +160,80 @@ fn is_ignorable_proof_payload_char(c: char) -> bool {
         )
 }
 
+fn proof_payload_is_blank(proof_payload: &[u8]) -> bool {
+    proof_payload.is_empty()
+        || proof_payload.iter().all(|b| b.is_ascii_whitespace())
+        || std::str::from_utf8(proof_payload)
+            .map(|payload| {
+                payload
+                    .trim_matches(is_ignorable_proof_payload_char)
+                    .is_empty()
+            })
+            .unwrap_or(false)
+}
+
+fn normalize_hex_string(raw: &str) -> String {
+    raw.trim()
+        .strip_prefix("0x")
+        .unwrap_or(raw.trim())
+        .to_ascii_lowercase()
+}
+
+fn validate_llm_token_meter_receipt_for_reveal(
+    proof_type: ProofType,
+    task_id: u64,
+    worker: &str,
+    result_hash: &Hash32,
+    proof_payload: &[u8],
+) -> Result<(), PouwError> {
+    let payload = std::str::from_utf8(proof_payload)
+        .map(|payload| payload.trim_matches(is_ignorable_proof_payload_char))
+        .map_err(|_| {
+            PouwError::State(format!(
+                "unexpected proof payload for non-verifiable proof type: {:?}",
+                proof_type
+            ))
+        })?;
+
+    if !payload.starts_with('{') {
+        return Err(PouwError::State(format!(
+            "unexpected proof payload for non-verifiable proof type: {:?}",
+            proof_type
+        )));
+    }
+
+    let receipt = parse_and_validate_llm_token_meter_v1_receipt_json(
+        payload.as_bytes(),
+        DEFAULT_LLM_TOKEN_METER_JITTER_BUDGET_MS,
+    )
+    .map_err(|err| PouwError::State(format!("invalid llm token meter receipt: {}", err)))?;
+
+    if receipt.task_id != task_id {
+        return Err(PouwError::State(format!(
+            "llm token meter receipt task_id mismatch: expected {}, got {}",
+            task_id, receipt.task_id
+        )));
+    }
+
+    if receipt.worker_id != worker {
+        return Err(PouwError::State(format!(
+            "llm token meter receipt worker mismatch: expected {}, got {}",
+            worker, receipt.worker_id
+        )));
+    }
+
+    let expected_result_hash = hex::encode(result_hash);
+    let actual_result_hash = normalize_hex_string(&receipt.output_hash);
+    if actual_result_hash != expected_result_hash {
+        return Err(PouwError::State(format!(
+            "llm token meter receipt output_hash mismatch: expected {}, got {}",
+            expected_result_hash, actual_result_hash
+        )));
+    }
+
+    Ok(())
+}
+
 fn actor_id_has_hidden_or_zero_width_chars(token: &str) -> bool {
     token.chars().any(|c| {
         matches!(
@@ -857,29 +931,32 @@ pub fn apply_reveal_result_at_height(
     // For Fraud proofs, we rely on the challenge period (no immediate verification).
     // Fail closed if a proof payload is supplied for a non-verifiable proof type, so
     // legacy/corrupted proof_type drift cannot silently bypass envelope verification.
-    if proof_data.is_some() && !matches!(task.proof_type, ProofType::Tee | ProofType::Zk) {
-        return Err(PouwError::State(format!(
-            "unexpected proof payload for non-verifiable proof type: {:?}",
-            task.proof_type
-        )));
+    if let Some(proof_payload) = proof_data.as_deref() {
+        if matches!(task.proof_type, ProofType::Tee | ProofType::Zk) {
+            if proof_payload_is_blank(proof_payload) {
+                return Err(PouwError::State(format!(
+                    "Proof verification failed: missing proof payload for {:?}",
+                    task.proof_type
+                )));
+            }
+        } else {
+            if proof_payload_is_blank(proof_payload) {
+                return Err(PouwError::State(format!(
+                    "unexpected proof payload for non-verifiable proof type: {:?}",
+                    task.proof_type
+                )));
+            }
+            validate_llm_token_meter_receipt_for_reveal(
+                task.proof_type,
+                task.task_id,
+                &worker,
+                &result_hash,
+                proof_payload,
+            )?;
+        }
     }
     if matches!(task.proof_type, ProofType::Tee | ProofType::Zk) {
         let proof_payload = proof_data.as_deref().unwrap_or(&[]);
-        let proof_payload_is_blank = proof_payload.is_empty()
-            || proof_payload.iter().all(|b| b.is_ascii_whitespace())
-            || std::str::from_utf8(proof_payload)
-                .map(|payload| {
-                    payload
-                        .trim_matches(is_ignorable_proof_payload_char)
-                        .is_empty()
-                })
-                .unwrap_or(false);
-        if proof_payload_is_blank {
-            return Err(PouwError::State(format!(
-                "Proof verification failed: missing proof payload for {:?}",
-                task.proof_type
-            )));
-        }
 
         let registry = get_default_registry();
         let mut verification_task = task.clone();
@@ -1415,6 +1492,52 @@ mod tests {
             "resolve_authority".into(),
             authority.into(),
         );
+    }
+
+    fn sample_llm_token_meter_receipt_json(
+        task_id: u64,
+        worker: &str,
+        result_hash: Hash32,
+    ) -> Vec<u8> {
+        let receipt = LlmTokenMeterV1Receipt {
+            workload_class: LLM_INFERENCE_WORKLOAD_CLASS.to_string(),
+            metering_schema: LLM_TOKEN_METER_V1_SCHEMA.to_string(),
+            task_id,
+            worker_id: worker.to_string(),
+            assignment_id: format!("assign-{}", task_id),
+            model_family: "llm".to_string(),
+            model_id: "meta-llama-3.1-70b-instruct".to_string(),
+            tokenizer_id: "llama3-tokenizer".to_string(),
+            tokenizer_version: "1.0.0".to_string(),
+            prompt_hash: "0x1111".to_string(),
+            output_hash: hex::encode(result_hash),
+            prompt_tokens: 128,
+            generated_tokens: 32,
+            decode_steps: 32,
+            kv_bytes_moved: 4096,
+            prefill_ms: 20,
+            decode_ms: 80,
+            attested_started_at_unix_ms: 1_000,
+            attested_finished_at_unix_ms: 1_100,
+            attested_elapsed_ms: 100,
+            device_profile_id: "h100-sxm-bf16-v1".to_string(),
+            device_vendor: "nvidia".to_string(),
+            device_class: "h100-sxm".to_string(),
+            accelerator_kind: "gpu".to_string(),
+            quantization: "bf16".to_string(),
+            runtime_name: "vllm".to_string(),
+            runtime_version: "0.8.4".to_string(),
+            batch_size: 1,
+            tee_attestation: TeeAttestationEnvelope {
+                attester: "sgx-dcap".to_string(),
+                quote_hash: "0xaaaa".to_string(),
+                measurement: "0xbbbb".to_string(),
+            },
+            receipt_hash: String::new(),
+        }
+        .with_computed_receipt_hash()
+        .unwrap();
+        serde_json::to_vec(&receipt).unwrap()
     }
 
     #[test]
@@ -3344,6 +3467,74 @@ mod tests {
         );
 
         let task_after = st.get_task(r2.id).unwrap();
+        assert_eq!(task_after.status, TaskStatus::Committed);
+        assert!(task_after.result_hash.is_none());
+        assert!(task_after.reveal_salt.is_none());
+    }
+
+    #[test]
+    fn reveal_accepts_valid_llm_token_meter_receipt_for_fraud_task() {
+        let mut st = seeded_state();
+        let task_id = 78_903;
+        let r1 = apply_create_task(&mut st, task_id, "alice".into(), 10).unwrap();
+        let result_hash = [2u8; 32];
+        let reveal_salt = [3u8; 32];
+        let worker = "worker1".to_string();
+        let committed = compute_commitment(task_id, &result_hash, &reveal_salt, &worker);
+
+        let r2 = apply_accept_task(&mut st, r1, worker.clone()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, worker.clone(), committed).unwrap();
+        let proof = sample_llm_token_meter_receipt_json(task_id, &worker, result_hash);
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, Some(proof)).unwrap();
+
+        let task = st.get_task(r4.id).unwrap();
+        assert_eq!(task.status, TaskStatus::Revealed);
+        assert_eq!(task.result_hash, Some(result_hash));
+        assert_eq!(task.reveal_salt, Some(reveal_salt));
+        assert!(task.challenge_deadline_height.is_some());
+    }
+
+    #[test]
+    fn reveal_rejects_llm_token_meter_receipt_with_worker_mismatch_fail_closed() {
+        let mut st = seeded_state();
+        let task_id = 78_904;
+        let r1 = apply_create_task(&mut st, task_id, "alice".into(), 10).unwrap();
+        let result_hash = [2u8; 32];
+        let reveal_salt = [3u8; 32];
+        let worker = "worker1".to_string();
+        let committed = compute_commitment(task_id, &result_hash, &reveal_salt, &worker);
+
+        let r2 = apply_accept_task(&mut st, r1, worker.clone()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, worker.clone(), committed).unwrap();
+        let proof = sample_llm_token_meter_receipt_json(task_id, "worker2", result_hash);
+        let err = apply_reveal_result(&mut st, r3.clone(), result_hash, reveal_salt, Some(proof))
+            .unwrap_err();
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("llm token meter receipt worker mismatch")));
+
+        let task_after = st.get_task(r3.id).unwrap();
+        assert_eq!(task_after.status, TaskStatus::Committed);
+        assert!(task_after.result_hash.is_none());
+        assert!(task_after.reveal_salt.is_none());
+    }
+
+    #[test]
+    fn reveal_rejects_llm_token_meter_receipt_with_output_hash_mismatch_fail_closed() {
+        let mut st = seeded_state();
+        let task_id = 78_905;
+        let r1 = apply_create_task(&mut st, task_id, "alice".into(), 10).unwrap();
+        let result_hash = [2u8; 32];
+        let reveal_salt = [3u8; 32];
+        let worker = "worker1".to_string();
+        let committed = compute_commitment(task_id, &result_hash, &reveal_salt, &worker);
+
+        let r2 = apply_accept_task(&mut st, r1, worker.clone()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, worker.clone(), committed).unwrap();
+        let proof = sample_llm_token_meter_receipt_json(task_id, &worker, [4u8; 32]);
+        let err = apply_reveal_result(&mut st, r3.clone(), result_hash, reveal_salt, Some(proof))
+            .unwrap_err();
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("llm token meter receipt output_hash mismatch")));
+
+        let task_after = st.get_task(r3.id).unwrap();
         assert_eq!(task_after.status, TaskStatus::Committed);
         assert!(task_after.result_hash.is_none());
         assert!(task_after.reveal_salt.is_none());

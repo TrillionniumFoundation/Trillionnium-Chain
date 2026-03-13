@@ -343,6 +343,21 @@ Because the existing Rust L1 v1 interface semantics are frozen, the safest path 
 
 This avoids silently redefining old PoUW field meanings.
 
+### Current scaffold status (March 2026)
+
+The Rust scaffold now includes:
+
+- `trnm-pouw::metering` receipt/schema types
+- canonical receipt-hash generation + validation
+- `work_units` calculation for `prompt_tokens + generated_tokens + decode_steps + kv_bytes_moved`
+- reveal-side validation on the non-verifiable/Fraud path, where a supplied `llm_token_meter_v1` JSON receipt is accepted only if it validates and matches the canonical `task_id` / `worker_id` / `result_hash` binding
+
+Still pending:
+
+- challenge/resolve settlement integration
+- governance / Oracle coefficient wiring
+- TEE-side attested receipt generation
+
 ---
 
 ## 13. Suggested Rust-side schema skeleton
