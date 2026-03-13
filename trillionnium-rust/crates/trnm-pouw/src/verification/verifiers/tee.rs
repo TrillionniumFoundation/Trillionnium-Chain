@@ -1719,6 +1719,31 @@ mod tests {
     }
 
     #[test]
+    fn tee_verifier_backend_malformed_certificate_claims_still_collapses_to_payload_claims_surface(
+    ) {
+        let result = TeeVerifier::classify_execution_err(BackendExecutionError::MalformedProof {
+            backend: "tee:mock-tee-malformed".to_string(),
+            reason: "certificate claims malformed".to_string(),
+        });
+
+        assert!(
+            matches!(result, VerificationResult::Invalid(_)),
+            "unexpected result: {result:?}"
+        );
+        let VerificationResult::Invalid(msg) = result else {
+            unreachable!()
+        };
+        assert!(
+            msg.contains("malformed TEE attestation payload/claims:"),
+            "message: {msg}"
+        );
+        assert!(msg.contains("certificate claims malformed"), "message: {msg}");
+        assert!(!msg.contains("evidence/claims"), "message: {msg}");
+        assert!(!msg.contains("quote claims"), "message: {msg}");
+        assert!(!msg.contains("report claims"), "message: {msg}");
+    }
+
+    #[test]
     fn tee_verifier_backend_internal_report_payload_prefers_report_claims_surface_over_report_evidence(
     ) {
         let result = TeeVerifier::classify_execution_err(BackendExecutionError::Internal {
