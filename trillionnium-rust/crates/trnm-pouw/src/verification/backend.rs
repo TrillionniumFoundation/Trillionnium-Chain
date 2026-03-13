@@ -994,6 +994,8 @@ mod tests {
             ("tee remote attestation evidence sgx", "sgx"),
             ("tee remote attestation quote sgx", "sgx"),
             ("tee remote attestation certificate tdx", "tdx"),
+            ("tee remote attestation certificate claims sgx", "sgx"),
+            ("tee remote attestation certificates claims tdx", "tdx"),
             ("tee intel dcap quote sgx", "sgx"),
             ("tee amd sev quote snp", "snp"),
             ("tee remote attestation amd sev snp", "snp"),
