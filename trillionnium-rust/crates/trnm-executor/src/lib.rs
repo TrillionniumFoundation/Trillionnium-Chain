@@ -1969,6 +1969,34 @@ mod tests {
     }
 
     #[test]
+    fn auto_adaptive_single_bucket_hotspots_preserve_original_groups_and_profile() {
+        let txs = (0..64)
+            .map(|i| tx(i as u64, vec![o(0)], vec![o(0)]))
+            .collect::<Vec<_>>();
+
+        assert!(matches!(
+            resolve_grouping_strategy(&txs, GroupingStrategy::AutoAdaptive),
+            GroupingStrategy::HotBucketInterleave
+        ));
+        assert!(
+            !hot_bucket_interleave_would_reorder(&txs),
+            "single-bucket hotspot batches should stay on the original effective order"
+        );
+
+        let (original_groups, original_profile) =
+            build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::Original);
+        let (adaptive_groups, adaptive_profile) =
+            build_parallel_groups_profile_with_strategy(&txs, GroupingStrategy::AutoAdaptive);
+
+        assert_profiles_match(
+            &adaptive_groups,
+            &adaptive_profile,
+            &original_groups,
+            &original_profile,
+        );
+    }
+
+    #[test]
     fn hot_bucket_interleave_reorder_probe_stays_enabled_on_multi_bucket_hot_streaks() {
         let txs = (0..1024)
             .map(|i| {
