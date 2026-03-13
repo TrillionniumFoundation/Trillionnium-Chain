@@ -11,6 +11,12 @@ fn bin() -> String {
     if let Ok(v) = std::env::var("CARGO_BIN_EXE_trnm_cli") {
         return v;
     }
+    if let Ok(target_dir) = std::env::var("CARGO_TARGET_DIR") {
+        return PathBuf::from(target_dir)
+            .join("debug/trnm-cli")
+            .to_string_lossy()
+            .to_string();
+    }
     let manifest_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
     manifest_dir
         .join("../../target/debug/trnm-cli")

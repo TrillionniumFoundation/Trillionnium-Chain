@@ -358,6 +358,7 @@ The Rust scaffold now includes:
 - slash-path payout integration: challenge-success bounty can now include a metered bonus derived from `normalized_work_units`, using governance ratio keys `llm_meter_challenge_success_bounty_per_work_unit_num` / `llm_meter_challenge_success_bounty_per_work_unit_den`
 - for metered tasks, that challenge-success bounty policy is read from the **snapshotted reveal-time policy**, not re-read from live governance at resolve time
 - RPC audit visibility: when `trnm-rpc` is configured with a task-state snapshot source, `query-task` can now expose the persisted metering snapshot (`normalized_work_units`, counters, weights, and frozen payout/floor policy) as a nested audit block
+- CLI audit visibility: `trnm-cli query task <task_id>` now pretty-prints the same nested metering audit block when the underlying RPC response includes it
 - worker-side terminal accounting integration:
   - completed-path worker bonus can be paid from `CHALLENGE_FORFEIT_TREASURY_ACCOUNT`, using `llm_meter_worker_completion_bonus_per_work_unit_num` / `llm_meter_worker_completion_bonus_per_work_unit_den`
   - slashed-path worker rebate can return a metered share of locked worker stake back to the worker before the remainder is sent to `WORKER_SLASH_TREASURY_ACCOUNT`, using `llm_meter_worker_slash_rebate_per_work_unit_num` / `llm_meter_worker_slash_rebate_per_work_unit_den`
