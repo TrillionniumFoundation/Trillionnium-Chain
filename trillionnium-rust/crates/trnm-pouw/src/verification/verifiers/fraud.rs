@@ -882,4 +882,18 @@ mod tests {
             VerificationResult::Invalid(msg) if msg.contains("unexpected result_hash binding")
         ));
     }
+
+    #[test]
+    fn fraud_verifier_rejects_fullwidth_colon_proof_type_binding_fail_closed() {
+        let verifier = FraudVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"FRAUD:{\"task_id\":7,\"worker\":\"worker-fraud\",\"proof_type\"\xef\xbc\x9a\"fraud\"}"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("missing proof_type binding")
+        ));
+    }
 }
