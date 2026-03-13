@@ -3007,6 +3007,32 @@ mod tests {
     }
 
     #[test]
+    fn hot_object_review_bundle_keeps_commit_skip_coverage_pair_near_hotspot_pressure() {
+        let hotspot_review_fields = [
+            "hot_object_active_height_rate_ppm",
+            "hot_object_active_observed_height_rate_ppm",
+            "bft_commit_observed_height_rate_ppm",
+            "bft_skipped_observed_height_rate_ppm",
+            "hot_object_active_top_label_share_avg_ppm",
+            "hot_object_active_tail_share_avg_ppm",
+            "hot_object_active_height_share_ppm",
+        ];
+
+        assert_eq!(hotspot_review_fields.len(), 7);
+        assert!(hotspot_review_fields[0].ends_with("_rate_ppm"));
+        assert!(hotspot_review_fields[1].ends_with("_rate_ppm"));
+        assert!(hotspot_review_fields[2].ends_with("_rate_ppm"));
+        assert!(hotspot_review_fields[3].ends_with("_rate_ppm"));
+        assert!(hotspot_review_fields[4].ends_with("_share_avg_ppm"));
+        assert!(hotspot_review_fields[5].ends_with("_share_avg_ppm"));
+        assert!(hotspot_review_fields[6].ends_with("_share_ppm"));
+        assert_ne!(hotspot_review_fields[0], hotspot_review_fields[1]);
+        assert_ne!(hotspot_review_fields[2], hotspot_review_fields[3]);
+        assert_ne!(hotspot_review_fields[4], hotspot_review_fields[5]);
+        assert_ne!(hotspot_review_fields[5], hotspot_review_fields[6]);
+    }
+
+    #[test]
     fn active_hot_object_share_averages_are_zero_without_hot_heights() {
         let hot_object_active_heights = 0u64;
         let hot_object_active_top_label_share_avg_ppm = if hot_object_active_heights == 0 {
