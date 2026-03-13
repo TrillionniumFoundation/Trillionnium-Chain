@@ -2095,6 +2095,61 @@ mod tests {
                 "fixture circuit_id lost family tag '{expected_family}': {name} -> {circuit_id}"
             );
 
+            let backend_id = payload.get("backend_id");
+            if name.contains("_null_backend_id") {
+                assert!(
+                    matches!(backend_id, Some(serde_json::Value::Null)),
+                    "null-backend-id fixture drifted from filename semantics: {name}"
+                );
+            } else if name.contains("_empty_backend_id") {
+                assert_eq!(
+                    backend_id.and_then(|value| value.as_str()),
+                    Some(""),
+                    "empty-backend-id fixture drifted from filename semantics: {name}"
+                );
+            } else if name.contains("_canonical_whitespace_backend_id") {
+                let backend_id = backend_id
+                    .and_then(|value| value.as_str())
+                    .unwrap_or_else(|| panic!("canonical-whitespace-backend-id fixture missing string backend_id: {name}"));
+                assert_eq!(
+                    backend_id.trim(),
+                    "real-zk-backend",
+                    "canonical-whitespace-backend-id fixture lost canonical backend identity: {name}"
+                );
+                assert!(
+                    backend_id != backend_id.trim(),
+                    "canonical-whitespace-backend-id fixture lost surrounding whitespace semantics: {name}"
+                );
+            } else if name.contains("_whitespace_backend_id") {
+                let backend_id = backend_id
+                    .and_then(|value| value.as_str())
+                    .unwrap_or_else(|| panic!("whitespace-backend-id fixture missing string backend_id: {name}"));
+                assert!(
+                    !backend_id.is_empty() && backend_id.trim().is_empty(),
+                    "whitespace-backend-id fixture drifted from filename semantics: {name}"
+                );
+            } else if name.contains("_mixed_case") {
+                let backend_id = backend_id
+                    .and_then(|value| value.as_str())
+                    .unwrap_or_else(|| panic!("mixed-case fixture missing string backend_id: {name}"));
+                assert_eq!(
+                    backend_id.trim().to_ascii_lowercase(),
+                    "real-zk-backend",
+                    "mixed-case backend-id fixture lost real backend identity after normalization: {name}"
+                );
+                assert_ne!(
+                    backend_id.trim(),
+                    "real-zk-backend",
+                    "mixed-case backend-id fixture unexpectedly became canonical casing: {name}"
+                );
+            } else {
+                assert_eq!(
+                    backend_id.and_then(|value| value.as_str()),
+                    Some("real-zk-backend"),
+                    "feature-on bridge fixture drifted from canonical backend_id semantics: {name}"
+                );
+            }
+
             let backend_version = payload.get("backend_version");
             let has_named_backend_version_variant = name.contains("_versionless")
                 || name.contains("_null_backend_version")
