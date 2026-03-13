@@ -142,6 +142,12 @@ enum QueryCommand {
     Task {
         task_id: u64,
     },
+    /// Query task event timeline / audit view via RPC
+    Events {
+        task_id: u64,
+        #[arg(long, default_value_t = 20)]
+        limit: usize,
+    },
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -186,6 +192,66 @@ fn parse_task_query_response(raw: &str, requested_task_id: u64) -> Result<serde_
         );
     }
     Ok(parsed)
+}
+
+fn parse_events_query_response(raw: &str, requested_task_id: u64) -> Result<serde_json::Value> {
+    let parsed: serde_json::Value = serde_json::from_str(raw)
+        .map_err(|err| anyhow!("failed to parse events query response as json: {err}"))?;
+    let Some(events) = parsed.as_array() else {
+        bail!("events query response must be a json array");
+    };
+    for (idx, event) in events.iter().enumerate() {
+        let Some(task_id) = event.get("task_id").and_then(|v| v.as_u64()) else {
+            bail!("events query response item {} missing numeric task_id", idx);
+        };
+        if task_id != requested_task_id {
+            bail!(
+                "events query response task_id mismatch at item {}: requested={}, got={}",
+                idx,
+                requested_task_id,
+                task_id
+            );
+        }
+    }
+    Ok(parsed)
+}
+
+fn events_query(task_id: u64, limit: usize) -> Result<serde_json::Value> {
+    if let Ok(template) = std::env::var("TRNM_QUERY_EVENTS_CMD") {
+        let cmd = tpl(
+            tpl(template, "task_id", &task_id.to_string()),
+            "limit",
+            &limit.to_string(),
+        );
+        let raw = run_template_raw(&cmd)?;
+        return parse_events_query_response(&raw, task_id);
+    }
+
+    let rpc_workspace = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .and_then(|p| p.parent())
+        .map(|p| p.to_path_buf())
+        .unwrap_or_else(|| PathBuf::from("."));
+    let cmd = format!(
+        "cargo run -q -p trnm-rpc -- query-events {} --limit {}",
+        task_id, limit
+    );
+    let (program, args) = parse_template_command(&cmd)?;
+    let out = ProcCommand::new(program)
+        .args(args)
+        .current_dir(&rpc_workspace)
+        .output()?;
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    if !out.status.success() {
+        bail!(
+            "events query command failed rc={}: {}{}",
+            out.status.code().unwrap_or(1),
+            stdout,
+            stderr
+        );
+    }
+    parse_events_query_response(&stdout, task_id)
 }
 
 fn task_query(task_id: u64) -> Result<serde_json::Value> {
@@ -963,6 +1029,10 @@ fn main() -> Result<()> {
                 let out = task_query(task_id)?;
                 println!("{}", serde_json::to_string_pretty(&out)?);
             }
+            QueryCommand::Events { task_id, limit } => {
+                let out = events_query(task_id, limit)?;
+                println!("{}", serde_json::to_string_pretty(&out)?);
+            }
         },
     }
     Ok(())
@@ -1060,6 +1130,34 @@ mod tests {
         let parsed_transaction = parse_tx_query_response(transaction, "0xfallback").unwrap();
         assert_eq!(parsed_transaction.tx_hash, "0xdef");
         assert_eq!(parsed_transaction.status, "committed");
+    }
+
+    #[test]
+    fn events_query_parse_json_accepts_metering_audit_payloads() {
+        let raw = r#"[{"event_type":"resolve","task_id":42,"from_status":"Challenged","to_status":"Completed","actor":"authority","tx_id":12,"block_height":4,"state_root":"0xdef","ts_unix_ms":124,"metering":{"workload_class":"llm_inference","metering_schema":"llm_token_meter_v1","receipt_hash":"deadbeef","prompt_tokens":128,"generated_tokens":32,"decode_steps":32,"kv_bytes_moved":4096,"normalized_work_units":192,"prompt_token_weight":1,"generated_token_weight":1,"decode_step_weight":1,"kv_byte_weight":0,"policy":{"snapshot_version":1,"min_accept_work_units":100,"challenge_success_bounty_base":1,"challenge_success_bounty_per_work_unit_num":1,"challenge_success_bounty_per_work_unit_den":192,"worker_completion_bonus_per_work_unit_num":1,"worker_completion_bonus_per_work_unit_den":256,"worker_slash_rebate_per_work_unit_num":1,"worker_slash_rebate_per_work_unit_den":384}}}]"#;
+        let parsed = parse_events_query_response(raw, 42).unwrap();
+        assert_eq!(parsed[0]["metering"]["normalized_work_units"], serde_json::json!(192));
+        assert_eq!(parsed[0]["metering"]["policy"]["snapshot_version"], serde_json::json!(1));
+    }
+
+    #[test]
+    fn events_query_rejects_mismatched_task_id() {
+        let raw = r#"[{"event_type":"commit","task_id":43,"from_status":"Assigned","to_status":"Committed","actor":"worker-a","tx_id":1,"block_height":1,"state_root":"abc","ts_unix_ms":1}]"#;
+        let err = parse_events_query_response(raw, 42).unwrap_err();
+        assert!(err.to_string().contains("events query response task_id mismatch"));
+    }
+
+    #[test]
+    fn events_query_uses_template_override_and_preserves_metering_block() {
+        std::env::set_var(
+            "TRNM_QUERY_EVENTS_CMD",
+            r#"printf '%s' '[{"event_type":"resolve","task_id":42,"from_status":"Challenged","to_status":"Completed","actor":"authority","tx_id":12,"block_height":4,"state_root":"0xdef","ts_unix_ms":124,"metering":{"normalized_work_units":192,"policy":{"snapshot_version":1}}}]'"#,
+        );
+        let got = events_query(42, 5).unwrap();
+        std::env::remove_var("TRNM_QUERY_EVENTS_CMD");
+        assert_eq!(got[0]["task_id"], serde_json::json!(42));
+        assert_eq!(got[0]["metering"]["normalized_work_units"], serde_json::json!(192));
+        assert_eq!(got[0]["metering"]["policy"]["snapshot_version"], serde_json::json!(1));
     }
 
     #[test]
