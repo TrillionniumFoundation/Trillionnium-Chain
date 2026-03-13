@@ -11496,6 +11496,15 @@ mod tests {
     }
 
     #[test]
+    fn parse_governed_bool_param_rejects_ascii_internal_whitespace_aliases_fail_closed() {
+        for raw in ["tr ue", "fa\tlse", "o\nn", "of\rf"] {
+            let err = parse_governed_bool_param(raw, "default_slash_on_unresolved_challenge")
+                .expect_err("internal-whitespace boolean alias must be rejected");
+            assert!(matches!(err, PouwError::State(msg) if msg.contains(raw)));
+        }
+    }
+
+    #[test]
     fn parse_governed_bool_param_rejects_unicode_homoglyph_aliases_fail_closed() {
         for raw in ["truｅ", "fаlse", "οn", "оff"] {
             let err = parse_governed_bool_param(raw, "default_slash_on_unresolved_challenge")
