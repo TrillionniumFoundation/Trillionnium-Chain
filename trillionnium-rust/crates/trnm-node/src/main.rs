@@ -644,6 +644,20 @@ fn recover_wal_state(wal_dir: &Path) -> Result<RecoveredWalState> {
     })
 }
 
+fn metadata_only_recovery_error(wal_dir: &Path, recovered: &RecoveredWalState) -> String {
+    format!(
+        "refusing metadata-only recovery from {}: verified WAL/checkpoint metadata retained {} committed WAL entr{} through height {} (last retained checkpoint: {}) but trnm-node does not yet restore application StateStore snapshots or replay committed blocks; start from a fresh --bft-wal-dir / --bft-wal-mode auto isolated run, or implement state snapshot+replay recovery first",
+        wal_dir.display(),
+        recovered.wal_entries_retained,
+        if recovered.wal_entries_retained == 1 { "y" } else { "ies" },
+        recovered.next_height.saturating_sub(1),
+        recovered
+            .checkpoint_height_retained
+            .map(|checkpoint_height| checkpoint_height.to_string())
+            .unwrap_or_else(|| "none".into())
+    )
+}
+
 fn quorum_threshold(n: usize) -> usize {
     // 2f+1 where f = floor((n-1)/3)
     let f = n.saturating_sub(1) / 3;
@@ -6971,7 +6985,8 @@ locked_block_hash = "stale-lock"
     }
 
     #[test]
-    fn recover_metadata_only_tail_prunes_stale_lower_checkpoint_that_no_longer_matches_retained_wal() {
+    fn recover_metadata_only_tail_prunes_stale_lower_checkpoint_that_no_longer_matches_retained_wal(
+    ) {
         let wal_dir = temp_wal_dir("recover-metadata-only-tail-prune-stale-lower-checkpoint");
         fs::create_dir_all(&wal_dir).unwrap();
 
@@ -7216,6 +7231,96 @@ locked_block_hash = "stale-lock"
     }
 
     #[test]
+    fn recover_height_regression_tail_truncates_to_last_valid_checkpoint() {
+        let wal_dir = temp_wal_dir("recover-height-regression-tail");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+            committed: true,
+        };
+        let h1 = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "p2".into(),
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1.clone()),
+            committed: true,
+        };
+        let h2 = e2.content_hash_hex();
+        let regressed_e1 = WalMeta {
+            height: 1,
+            round: 1,
+            proposal_hash: "p1-regressed".into(),
+            state_root_hex: "r1-regressed".into(),
+            prev_hash_hex: Some(h2.clone()),
+            committed: true,
+        };
+
+        persist_wal_meta_entries(&wal_dir, &[e1.clone(), e2.clone(), regressed_e1]).unwrap();
+        persist_checkpoint_meta(
+            &wal_dir,
+            &[
+                CheckpointMeta {
+                    height: 1,
+                    state_root_hex: e1.state_root_hex.clone(),
+                    wal_entry_hash_hex: h1,
+                },
+                CheckpointMeta {
+                    height: 2,
+                    state_root_hex: e2.state_root_hex.clone(),
+                    wal_entry_hash_hex: h2,
+                },
+            ],
+        )
+        .unwrap();
+        persist_consensus_wal(
+            &wal_dir,
+            &ConsensusWal {
+                next_height: 99,
+                last_round: 7,
+                locked_block_hash: Some("stale-lock".into()),
+            },
+        )
+        .unwrap();
+
+        let recovered = recover_wal_state(&wal_dir).unwrap();
+        assert_eq!(recovered.next_height, 3);
+        assert_eq!(recovered.restored_lock, Some("p2".into()));
+        assert_eq!(
+            recovered.last_checkpoint.as_ref().map(|cp| cp.height),
+            Some(2)
+        );
+        assert!(recovered.truncated);
+        assert!(!recovered.metadata_only_recovery);
+        assert_eq!(recovered.wal_entries_retained, 2);
+        assert_eq!(recovered.checkpoint_height_retained, Some(2));
+
+        let retained_entries = load_wal_meta_entries(&wal_dir).unwrap();
+        assert_eq!(retained_entries.len(), 2);
+        assert_eq!(retained_entries[0].height, 1);
+        assert_eq!(retained_entries[1].height, 2);
+
+        let checkpoints = load_checkpoint_meta(&wal_dir).unwrap();
+        assert_eq!(checkpoints.len(), 2);
+        assert_eq!(checkpoints[0].height, 1);
+        assert_eq!(checkpoints[1].height, 2);
+
+        let wal = fs::read_to_string(wal_file(&wal_dir)).unwrap();
+        let wal: ConsensusWal = toml::from_str(&wal).unwrap();
+        assert_eq!(wal.next_height, 3);
+        assert_eq!(wal.last_round, 0);
+        assert_eq!(wal.locked_block_hash, Some("p2".into()));
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
     fn recover_replayed_duplicate_height_tail_truncates_to_last_valid_checkpoint() {
         let wal_dir = temp_wal_dir("recover-replayed-duplicate-height-tail");
         fs::create_dir_all(&wal_dir).unwrap();
@@ -7351,7 +7456,10 @@ locked_block_hash = "stale-genesis-replay-lock"
         let recovered = recover_wal_state(&wal_dir).unwrap();
         assert_eq!(recovered.next_height, 2);
         assert_eq!(recovered.restored_lock.as_deref(), Some("h1"));
-        assert_eq!(recovered.last_checkpoint.as_ref().map(|cp| cp.height), Some(1));
+        assert_eq!(
+            recovered.last_checkpoint.as_ref().map(|cp| cp.height),
+            Some(1)
+        );
         assert_eq!(recovered.checkpoint_height_retained, Some(1));
         assert_eq!(recovered.wal_entries_retained, 1);
         assert!(recovered.truncated);
@@ -7424,7 +7532,10 @@ locked_block_hash = "stale-duplicate-genesis-lock"
         let recovered = recover_wal_state(&wal_dir).unwrap();
         assert_eq!(recovered.next_height, 2);
         assert_eq!(recovered.restored_lock.as_deref(), Some("h1"));
-        assert_eq!(recovered.last_checkpoint.as_ref().map(|cp| cp.height), Some(1));
+        assert_eq!(
+            recovered.last_checkpoint.as_ref().map(|cp| cp.height),
+            Some(1)
+        );
         assert_eq!(recovered.checkpoint_height_retained, Some(1));
         assert_eq!(recovered.wal_entries_retained, 1);
         assert!(recovered.truncated);
@@ -8108,18 +8219,7 @@ locked_block_hash = "stale-lock"
         assert_eq!(recovered.checkpoint_height_retained, Some(1));
         assert_eq!(recovered.next_height, 2);
 
-        let err = anyhow::anyhow!(
-            "refusing metadata-only recovery from {}: verified WAL/checkpoint metadata retained {} committed WAL entr{} through height {} (last retained checkpoint: {}) but trnm-node does not yet restore application StateStore snapshots or replay committed blocks; start from a fresh --bft-wal-dir / --bft-wal-mode auto isolated run, or implement state snapshot+replay recovery first",
-            wal_dir.display(),
-            recovered.wal_entries_retained,
-            if recovered.wal_entries_retained == 1 { "y" } else { "ies" },
-            recovered.next_height.saturating_sub(1),
-            recovered
-                .checkpoint_height_retained
-                .map(|height| height.to_string())
-                .unwrap_or_else(|| "none".into())
-        )
-        .to_string();
+        let err = metadata_only_recovery_error(&wal_dir, &recovered);
         assert!(err.contains("retained 1 committed WAL entry through height 1"));
         assert!(err.contains("last retained checkpoint: 1"));
 
@@ -8421,20 +8521,39 @@ locked_block_hash = "stale-lock"
             checkpoint_height_retained: None,
         };
 
-        let err = anyhow::anyhow!(
-            "refusing metadata-only recovery from {}: verified WAL/checkpoint metadata retained {} committed WAL entr{} through height {} (last retained checkpoint: {}) but trnm-node does not yet restore application StateStore snapshots or replay committed blocks; start from a fresh --bft-wal-dir / --bft-wal-mode auto isolated run, or implement state snapshot+replay recovery first",
-            wal_dir.display(),
-            recovered.wal_entries_retained,
-            if recovered.wal_entries_retained == 1 { "y" } else { "ies" },
-            recovered.next_height.saturating_sub(1),
-            recovered
-                .checkpoint_height_retained
-                .map(|height| height.to_string())
-                .unwrap_or_else(|| "none".into())
-        )
-        .to_string();
+        let err = metadata_only_recovery_error(&wal_dir, &recovered);
 
         assert!(err.contains("last retained checkpoint: none"));
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn recover_metadata_only_error_reports_plural_retained_entries_and_height() {
+        let wal_dir = temp_wal_dir("recover-metadata-only-error-plural");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let recovered = RecoveredWalState {
+            next_height: 3,
+            restored_lock: None,
+            last_checkpoint: Some(CheckpointMeta {
+                height: 1,
+                state_root_hex: "r1".into(),
+                wal_entry_hash_hex: "h1".into(),
+            }),
+            truncated: true,
+            metadata_only_recovery: true,
+            wal_entries_retained: 2,
+            checkpoint_height_retained: Some(1),
+        };
+
+        let err = metadata_only_recovery_error(&wal_dir, &recovered);
+
+        assert!(err.contains("retained 2 committed WAL entries through height 2"));
+        assert!(err.contains("last retained checkpoint: 1"));
+        assert!(err.contains(
+            "does not yet restore application StateStore snapshots or replay committed blocks"
+        ));
 
         let _ = fs::remove_dir_all(&wal_dir);
     }
@@ -8657,7 +8776,7 @@ fn main() -> Result<()> {
     }
     println!("[bft-wal] using wal_dir={}", wal_dir.display());
     let recovered = recover_wal_state(&wal_dir)?;
-    let mut restored_lock: Option<String> = recovered.restored_lock;
+    let mut restored_lock: Option<String> = recovered.restored_lock.clone();
     let mut height: u64 = recovered.next_height.max(1);
     println!(
         "[bft-recover] restored height={} lock={} checkpoint={} truncated={} metadata_only_recovery={}",
@@ -8672,17 +8791,7 @@ fn main() -> Result<()> {
         recovered.metadata_only_recovery
     );
     if recovered.metadata_only_recovery {
-        anyhow::bail!(
-            "refusing metadata-only recovery from {}: verified WAL/checkpoint metadata retained {} committed WAL entr{} through height {} (last retained checkpoint: {}) but trnm-node does not yet restore application StateStore snapshots or replay committed blocks; start from a fresh --bft-wal-dir / --bft-wal-mode auto isolated run, or implement state snapshot+replay recovery first",
-            wal_dir.display(),
-            recovered.wal_entries_retained,
-            if recovered.wal_entries_retained == 1 { "y" } else { "ies" },
-            height.saturating_sub(1),
-            recovered
-                .checkpoint_height_retained
-                .map(|checkpoint_height| checkpoint_height.to_string())
-                .unwrap_or_else(|| "none".into())
-        );
+        anyhow::bail!(metadata_only_recovery_error(&wal_dir, &recovered));
     }
 
     let mut state = StateStore::new();
