@@ -51,6 +51,37 @@ fn relay_heartbeat_flap_after_recovery_restarts_retry_budget() {
 }
 
 #[test]
+fn relay_heartbeat_zero_height_success_fails_closed_as_degraded() {
+    let mut hb = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 3));
+
+    let out = hb.record_success(0, 209, 6);
+    assert!(out.degraded);
+    assert!(!out.should_retry);
+    assert_eq!(out.message, "invalid heartbeat height");
+    assert!(out.heartbeat.is_none());
+    assert_eq!(hb.consecutive_failures(), 3);
+
+    let out = hb.record_success(210, 0, 6);
+    assert!(out.degraded);
+    assert!(!out.should_retry);
+    assert_eq!(out.message, "invalid heartbeat height");
+    assert!(out.heartbeat.is_none());
+    assert_eq!(hb.consecutive_failures(), 3);
+}
+
+#[test]
+fn relay_heartbeat_target_ahead_of_source_fails_closed_as_degraded() {
+    let mut hb = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 3));
+
+    let out = hb.record_success(209, 210, 6);
+    assert!(out.degraded);
+    assert!(!out.should_retry);
+    assert_eq!(out.message, "invalid heartbeat progression");
+    assert!(out.heartbeat.is_none());
+    assert_eq!(hb.consecutive_failures(), 3);
+}
+
+#[test]
 fn relay_heartbeat_config_clamps_zero_to_safe_minimums() {
     let mut hb = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(0, 0));
     assert_eq!(hb.interval_secs(), 1);
@@ -118,10 +149,26 @@ fn relay_heartbeat_failure_reason_strips_zero_width_non_joiner() {
 }
 
 #[test]
+fn relay_heartbeat_failure_reason_strips_alm_and_zwnj_for_replay_stability() {
+    let mut hb = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 3));
+
+    let out = hb.record_failure("rpc\u{061C} timeout\u{200C} bridge");
+    assert_eq!(out.message, "rpc timeout bridge");
+}
+
+#[test]
 fn relay_heartbeat_failure_reason_strips_bidi_and_word_joiner_controls() {
     let mut hb = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 3));
 
     let out = hb.record_failure("rpc\u{202E} timeout\u{2060} bridge");
+    assert_eq!(out.message, "rpc timeout bridge");
+}
+
+#[test]
+fn relay_heartbeat_failure_reason_strips_directional_marks_and_cgj() {
+    let mut hb = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 3));
+
+    let out = hb.record_failure("rpc\u{200E}\u{034F} timeout\u{200F} bridge");
     assert_eq!(out.message, "rpc timeout bridge");
 }
 
@@ -160,6 +207,14 @@ fn relay_heartbeat_failure_reason_collapses_unicode_line_separators() {
 }
 
 #[test]
+fn relay_heartbeat_failure_reason_strips_interlinear_annotation_controls() {
+    let mut hb = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 3));
+
+    let out = hb.record_failure("rpc\u{FFF9} timeout\u{FFFA} bridge\u{FFFB} degraded");
+    assert_eq!(out.message, "rpc timeout bridge degraded");
+}
+
+#[test]
 fn relay_heartbeat_failure_reason_collapses_general_punctuation_spaces() {
     let mut hb = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 3));
 
@@ -178,6 +233,18 @@ fn relay_heartbeat_failure_reason_is_capped_for_log_safety() {
 }
 
 #[test]
+fn relay_heartbeat_failure_reason_unicode_over_cap_truncates_once_with_terminal_ellipsis() {
+    let mut hb = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 3));
+    let long_reason = format!("目标中继超时{}", "测".repeat(220));
+
+    let out = hb.record_failure(&long_reason);
+    assert!(out.message.starts_with("目标中继超时"));
+    assert!(out.message.ends_with('…'));
+    assert_eq!(out.message.matches('…').count(), 1);
+    assert_eq!(out.message.chars().count(), 161);
+}
+
+#[test]
 fn relay_heartbeat_failure_reason_at_limit_does_not_append_ellipsis() {
     let mut hb = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 3));
     let exact_limit_reason = "x".repeat(160);
@@ -186,4 +253,44 @@ fn relay_heartbeat_failure_reason_at_limit_does_not_append_ellipsis() {
     assert_eq!(out.message.chars().count(), 160);
     assert!(!out.message.ends_with('…'));
     assert_eq!(out.message, exact_limit_reason);
+}
+
+#[test]
+fn relay_heartbeat_failure_reason_collapses_medium_math_and_ideographic_spaces() {
+    let mut hb = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 3));
+
+    let out = hb.record_failure("rpc\u{205F} timeout\u{3000}bridge");
+    assert_eq!(out.message, "rpc timeout bridge");
+}
+
+#[test]
+fn relay_heartbeat_failure_reason_collapses_thin_space_family_for_replay_stability() {
+    let mut hb = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 3));
+
+    let out = hb.record_failure("rpc\u{2008} timeout\u{2009}bridge\u{200A}degraded");
+    assert_eq!(out.message, "rpc timeout bridge degraded");
+}
+
+#[test]
+fn relay_heartbeat_failure_reason_collapses_figure_and_narrow_nbsp_for_replay_stability() {
+    let mut hb = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 3));
+
+    let out = hb.record_failure("rpc\u{2007} timeout\u{202F}bridge");
+    assert_eq!(out.message, "rpc timeout bridge");
+}
+
+#[test]
+fn relay_heartbeat_failure_reason_with_only_invisible_unicode_falls_back_to_stable_message() {
+    let mut hb = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 3));
+
+    let out = hb.record_failure("\u{2061}\u{2062}\u{2063}\u{2064}\u{FE0F}\u{E0100}\u{FFF9}\u{FFFA}\u{FFFB}");
+    assert_eq!(out.message, "unknown heartbeat failure");
+}
+
+#[test]
+fn relay_heartbeat_failure_reason_strips_hangul_fillers_for_replay_stability() {
+    let mut hb = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 3));
+
+    let out = hb.record_failure("rpc\u{115F} timeout\u{1160}bridge\u{3164}degraded");
+    assert_eq!(out.message, "rpc timeout bridge degraded");
 }

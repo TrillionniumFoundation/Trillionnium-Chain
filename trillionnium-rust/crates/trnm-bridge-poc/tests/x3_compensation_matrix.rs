@@ -615,6 +615,41 @@ fn x3_prep_stale_pending_degraded_reason_collapses_non_breaking_spaces_for_repla
 }
 
 #[test]
+fn x3_prep_stale_pending_degraded_reason_strips_interlinear_annotation_markers_for_replay_stability() {
+    let mut request = SettlementRequest::new(23, "0xmatrix-sanitize-interlinear-markers".to_string());
+    let token = operator_token();
+
+    let degraded = HeartbeatOutcome {
+        heartbeat: None,
+        should_retry: false,
+        degraded: true,
+        message: "target\u{FFF9}relay\u{FFFA}timeout\u{FFFB}signal".to_string(),
+    };
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &degraded,
+        SettlementConfirm::Confirmed { height: 6271 },
+    )
+    .unwrap();
+
+    let SettlementStep::Compensated { reason, event } = out else {
+        panic!("expected compensated branch");
+    };
+
+    assert_eq!(reason, "heartbeat degraded: target relay timeout signal");
+    assert!(!reason.contains('\u{FFF9}'));
+    assert!(!reason.contains('\u{FFFA}'));
+    assert!(!reason.contains('\u{FFFB}'));
+
+    assert_eq!(event.phase, "relay_heartbeat_degraded");
+    assert_eq!(event.confirm_height, None);
+    assert_eq!(event.confirm_reason, Some(reason.clone()));
+    assert_eq!(current_status(&request), &BridgeStatus::Reverted(reason));
+}
+
+#[test]
 fn x3_prep_stale_pending_degraded_reason_strips_legacy_bidi_isolates_for_replay_stability() {
     let mut request =
         SettlementRequest::new(18, "0xmatrix-sanitize-legacy-bidi-isolates".to_string());
@@ -723,8 +758,42 @@ fn x3_prep_stale_pending_degraded_reason_strips_variation_selectors_for_replay_s
 }
 
 #[test]
+fn x3_prep_stale_pending_degraded_reason_strips_plane14_tags_for_replay_stability() {
+    let mut request = SettlementRequest::new(21, "0xmatrix-sanitize-plane14-tags".to_string());
+    let token = operator_token();
+
+    let degraded = HeartbeatOutcome {
+        heartbeat: None,
+        should_retry: false,
+        degraded: true,
+        message: "target\u{E0100} relay\u{E0101} timeout".to_string(),
+    };
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &degraded,
+        SettlementConfirm::Confirmed { height: 6274 },
+    )
+    .unwrap();
+
+    let SettlementStep::Compensated { reason, event } = out else {
+        panic!("expected compensated branch");
+    };
+
+    assert_eq!(reason, "heartbeat degraded: target relay timeout");
+    assert!(!reason.contains('\u{E0100}'));
+    assert!(!reason.contains('\u{E0101}'));
+
+    assert_eq!(event.phase, "relay_heartbeat_degraded");
+    assert_eq!(event.confirm_height, None);
+    assert_eq!(event.confirm_reason, Some(reason.clone()));
+    assert_eq!(current_status(&request), &BridgeStatus::Reverted(reason));
+}
+
+#[test]
 fn x3_prep_stale_pending_degraded_reason_collapses_figure_and_narrow_nbsp_for_replay_stability() {
-    let mut request = SettlementRequest::new(21, "0xmatrix-sanitize-figure-nnbsp".to_string());
+    let mut request = SettlementRequest::new(22, "0xmatrix-sanitize-figure-nnbsp".to_string());
     let token = operator_token();
 
     let degraded = HeartbeatOutcome {
@@ -749,6 +818,41 @@ fn x3_prep_stale_pending_degraded_reason_collapses_figure_and_narrow_nbsp_for_re
     assert_eq!(reason, "heartbeat degraded: target relay timeout");
     assert!(!reason.contains('\u{2007}'));
     assert!(!reason.contains('\u{202F}'));
+
+    assert_eq!(event.phase, "relay_heartbeat_degraded");
+    assert_eq!(event.confirm_height, None);
+    assert_eq!(event.confirm_reason, Some(reason.clone()));
+    assert_eq!(current_status(&request), &BridgeStatus::Reverted(reason));
+}
+
+#[test]
+fn x3_prep_stale_pending_degraded_reason_collapses_thin_space_family_for_replay_stability() {
+    let mut request = SettlementRequest::new(22, "0xmatrix-sanitize-thin-space-family".to_string());
+    let token = operator_token();
+
+    let degraded = HeartbeatOutcome {
+        heartbeat: None,
+        should_retry: false,
+        degraded: true,
+        message: "target\u{2008}relay\u{2009}timeout\u{200A}signal".to_string(),
+    };
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &degraded,
+        SettlementConfirm::Confirmed { height: 6275 },
+    )
+    .unwrap();
+
+    let SettlementStep::Compensated { reason, event } = out else {
+        panic!("expected compensated branch");
+    };
+
+    assert_eq!(reason, "heartbeat degraded: target relay timeout signal");
+    assert!(!reason.contains('\u{2008}'));
+    assert!(!reason.contains('\u{2009}'));
+    assert!(!reason.contains('\u{200A}'));
 
     assert_eq!(event.phase, "relay_heartbeat_degraded");
     assert_eq!(event.confirm_height, None);
@@ -783,6 +887,41 @@ fn x3_prep_stale_pending_degraded_reason_strips_invisible_separator_for_replay_s
 
     assert_eq!(reason, "heartbeat degraded: target relay timeout");
     assert!(!reason.contains('\u{2063}'));
+
+    assert_eq!(event.phase, "relay_heartbeat_degraded");
+    assert_eq!(event.confirm_height, None);
+    assert_eq!(event.confirm_reason, Some(reason.clone()));
+    assert_eq!(current_status(&request), &BridgeStatus::Reverted(reason));
+}
+
+#[test]
+fn x3_prep_stale_pending_degraded_reason_strips_interlinear_annotation_controls_for_replay_stability() {
+    let mut request = SettlementRequest::new(22, "0xmatrix-sanitize-interlinear-controls".to_string());
+    let token = operator_token();
+
+    let degraded = HeartbeatOutcome {
+        heartbeat: None,
+        should_retry: false,
+        degraded: true,
+        message: "target\u{FFF9}relay\u{FFFA}timeout\u{FFFB}signal".to_string(),
+    };
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &degraded,
+        SettlementConfirm::Confirmed { height: 6275 },
+    )
+    .unwrap();
+
+    let SettlementStep::Compensated { reason, event } = out else {
+        panic!("expected compensated branch");
+    };
+
+    assert_eq!(reason, "heartbeat degraded: target relay timeout signal");
+    assert!(!reason.contains('\u{FFF9}'));
+    assert!(!reason.contains('\u{FFFA}'));
+    assert!(!reason.contains('\u{FFFB}'));
 
     assert_eq!(event.phase, "relay_heartbeat_degraded");
     assert_eq!(event.confirm_height, None);

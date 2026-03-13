@@ -84,7 +84,19 @@ cargo test -p trnm-bridge-poc --test x2_settlement_loop \
   -- --nocapture
 
 cargo test -p trnm-bridge-poc --test x2_settlement_loop \
+  x3_prep_confirm_failure_reason_strips_u2065_for_replay_stability \
+  -- --nocapture
+
+cargo test -p trnm-bridge-poc --test x2_settlement_loop \
+  x3_prep_confirm_failure_reason_strips_mvs_for_replay_stability \
+  -- --nocapture
+
+cargo test -p trnm-bridge-poc --test x2_settlement_loop \
   x3_prep_degraded_heartbeat_reason_sanitizes_bom_and_word_joiner_controls_for_replay_stability \
+  -- --nocapture
+
+cargo test -p trnm-bridge-poc --test x2_settlement_loop \
+  x3_prep_degraded_heartbeat_reason_strips_directional_marks_and_cgj_for_replay_stability \
   -- --nocapture
 
 cargo test -p trnm-bridge-poc --test x2_settlement_loop \
@@ -93,6 +105,10 @@ cargo test -p trnm-bridge-poc --test x2_settlement_loop \
 
 cargo test -p trnm-bridge-poc --test x2_settlement_loop \
   x3_prep_confirm_failure_reason_unicode_over_cap_truncates_once_with_terminal_ellipsis \
+  -- --nocapture
+
+cargo test -p trnm-bridge-poc --test x2_settlement_loop \
+  x3_prep_confirm_failure_reason_strips_plane14_tags_for_replay_stability \
   -- --nocapture
 
 cargo test -p trnm-bridge-poc --test x2_settlement_loop \
@@ -144,7 +160,23 @@ cargo test -p trnm-bridge-poc --test x3_compensation_matrix \
   -- --nocapture
 
 cargo test -p trnm-bridge-poc --test x3_compensation_matrix \
+  x3_prep_stale_pending_degraded_reason_strips_plane14_tags_for_replay_stability \
+  -- --nocapture
+
+cargo test -p trnm-bridge-poc --test x3_compensation_matrix \
   x3_prep_stale_pending_degraded_reason_collapses_figure_and_narrow_nbsp_for_replay_stability \
+  -- --nocapture
+
+cargo test -p trnm-bridge-poc --test x3_compensation_unicode_controls \
+  x3_prep_stale_pending_degraded_reason_strips_u2065_for_replay_stability \
+  -- --nocapture
+
+cargo test -p trnm-bridge-poc \
+  normalize_compensation_reason_collapses_ogham_space_mark_for_replay_stability \
+  -- --nocapture
+
+cargo test -p trnm-bridge-poc --test x2_settlement_loop \
+  x3_prep_degraded_heartbeat_with_non_canonical_operator_subject_fails_closed_without_state_change \
   -- --nocapture
 
 echo "[X2][PASS] settlement contract gate"

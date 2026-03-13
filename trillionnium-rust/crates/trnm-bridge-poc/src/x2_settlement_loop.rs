@@ -31,14 +31,10 @@ pub enum SettlementStep {
 
 const MAX_COMPENSATION_REASON_CHARS: usize = 160;
 
-pub fn drive_minimal_settlement(
-    request: &mut SettlementRequest,
-    token: &CapabilityToken,
-    heartbeat: &HeartbeatOutcome,
-    confirm: SettlementConfirm,
-) -> Result<SettlementStep, SettlementError> {
-    let (hb_src, hb_tgt, hb_latency) = heartbeat
+fn heartbeat_metrics_for_event(heartbeat: &HeartbeatOutcome) -> (Option<u64>, Option<u64>, Option<u64>) {
+    heartbeat
         .heartbeat
+        .filter(|h| h.source_height > 0 && h.target_height > 0 && h.target_height <= h.source_height)
         .map(|h| {
             (
                 Some(h.source_height),
@@ -46,7 +42,16 @@ pub fn drive_minimal_settlement(
                 Some(h.latency_ms),
             )
         })
-        .unwrap_or((None, None, None));
+        .unwrap_or((None, None, None))
+}
+
+pub fn drive_minimal_settlement(
+    request: &mut SettlementRequest,
+    token: &CapabilityToken,
+    heartbeat: &HeartbeatOutcome,
+    confirm: SettlementConfirm,
+) -> Result<SettlementStep, SettlementError> {
+    let (hb_src, hb_tgt, hb_latency) = heartbeat_metrics_for_event(heartbeat);
 
     if heartbeat.degraded {
         let degraded_reason =
@@ -129,7 +134,11 @@ fn is_sanitized_to_space(ch: char) -> bool {
                 | '\u{00AD}'
                 | '\u{034F}'
                 | '\u{061C}'
+                | '\u{115F}'
+                | '\u{1160}'
+                | '\u{1680}'
                 | '\u{180E}'
+                | '\u{3164}'
                 | '\u{2007}'
                 | '\u{200B}'
                 | '\u{200C}'
@@ -144,11 +153,24 @@ fn is_sanitized_to_space(ch: char) -> bool {
                 | '\u{202D}'
                 | '\u{202E}'
                 | '\u{202F}'
+                | '\u{2000}'
+                | '\u{2001}'
+                | '\u{2002}'
+                | '\u{2003}'
+                | '\u{2004}'
+                | '\u{2005}'
+                | '\u{2006}'
+                | '\u{2008}'
+                | '\u{2009}'
+                | '\u{200A}'
+                | '\u{205F}'
+                | '\u{3000}'
                 | '\u{2060}'
                 | '\u{2061}'
                 | '\u{2062}'
                 | '\u{2063}'
                 | '\u{2064}'
+                | '\u{2065}'
                 | '\u{2066}'
                 | '\u{2067}'
                 | '\u{2068}'
@@ -160,6 +182,9 @@ fn is_sanitized_to_space(ch: char) -> bool {
                 | '\u{206E}'
                 | '\u{206F}'
                 | '\u{FEFF}'
+                | '\u{FFF9}'
+                | '\u{FFFA}'
+                | '\u{FFFB}'
         )
         || ('\u{FE00}'..='\u{FE0F}').contains(&ch)
         || ('\u{E0100}'..='\u{E01EF}').contains(&ch)
@@ -273,5 +298,47 @@ mod tests {
         let raw = "target\u{00A0}relay\u{2007}timeout\u{202F}signal";
         let normalized = normalize_compensation_reason(raw, "fallback");
         assert_eq!(normalized, "target relay timeout signal");
+    }
+
+    #[test]
+    fn normalize_compensation_reason_collapses_medium_math_and_ideographic_spaces() {
+        let raw = "target\u{205F}relay\u{3000}timeout";
+        let normalized = normalize_compensation_reason(raw, "fallback");
+        assert_eq!(normalized, "target relay timeout");
+    }
+
+    #[test]
+    fn normalize_compensation_reason_collapses_general_punctuation_spaces() {
+        let raw = "target\u{2000}relay\u{2001}timeout\u{2002}signal\u{2003}confirm\u{2004}lag\u{2005}audit\u{2006}trail";
+        let normalized = normalize_compensation_reason(raw, "fallback");
+        assert_eq!(normalized, "target relay timeout signal confirm lag audit trail");
+    }
+
+    #[test]
+    fn normalize_compensation_reason_collapses_thin_space_family_for_replay_stability() {
+        let raw = "target\u{2008}relay\u{2009}timeout\u{200A}signal";
+        let normalized = normalize_compensation_reason(raw, "fallback");
+        assert_eq!(normalized, "target relay timeout signal");
+    }
+
+    #[test]
+    fn normalize_compensation_reason_strips_hangul_fillers_for_replay_stability() {
+        let raw = "target\u{115F}relay\u{1160}timeout\u{3164}signal";
+        let normalized = normalize_compensation_reason(raw, "fallback");
+        assert_eq!(normalized, "target relay timeout signal");
+    }
+
+    #[test]
+    fn normalize_compensation_reason_strips_inhibit_symmetric_swapping_for_replay_stability() {
+        let raw = "target\u{2065} relay timeout";
+        let normalized = normalize_compensation_reason(raw, "fallback");
+        assert_eq!(normalized, "target relay timeout");
+    }
+
+    #[test]
+    fn normalize_compensation_reason_collapses_ogham_space_mark_for_replay_stability() {
+        let raw = "target\u{1680}relay timeout";
+        let normalized = normalize_compensation_reason(raw, "fallback");
+        assert_eq!(normalized, "target relay timeout");
     }
 }

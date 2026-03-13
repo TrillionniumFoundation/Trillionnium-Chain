@@ -6,10 +6,26 @@ pub mod bridge_status {
         ch.is_control()
             || matches!(
                 ch,
-                '\u{00AD}'
+                '\u{00A0}'
+                    | '\u{00AD}'
                     | '\u{034F}'
                     | '\u{061C}'
+                    | '\u{115F}'
+                    | '\u{1160}'
+                    | '\u{1680}'
                     | '\u{180E}'
+                    | '\u{3164}'
+                    | '\u{2000}'
+                    | '\u{2001}'
+                    | '\u{2002}'
+                    | '\u{2003}'
+                    | '\u{2004}'
+                    | '\u{2005}'
+                    | '\u{2006}'
+                    | '\u{2007}'
+                    | '\u{2008}'
+                    | '\u{2009}'
+                    | '\u{200A}'
                     | '\u{200B}'
                     | '\u{200C}'
                     | '\u{200D}'
@@ -22,11 +38,15 @@ pub mod bridge_status {
                     | '\u{202C}'
                     | '\u{202D}'
                     | '\u{202E}'
+                    | '\u{202F}'
+                    | '\u{205F}'
+                    | '\u{3000}'
                     | '\u{2060}'
                     | '\u{2061}'
                     | '\u{2062}'
                     | '\u{2063}'
                     | '\u{2064}'
+                    | '\u{2065}'
                     | '\u{2066}'
                     | '\u{2067}'
                     | '\u{2068}'
@@ -38,9 +58,35 @@ pub mod bridge_status {
                     | '\u{206E}'
                     | '\u{206F}'
                     | '\u{FEFF}'
+                    | '\u{FFF9}'
+                    | '\u{FFFA}'
+                    | '\u{FFFB}'
             )
             || ('\u{FE00}'..='\u{FE0F}').contains(&ch)
             || ('\u{E0100}'..='\u{E01EF}').contains(&ch)
+    }
+
+    fn has_disallowed_subject_char(ch: char) -> bool {
+        has_disallowed_request_char(ch)
+    }
+
+    fn normalize_revert_reason(reason: &str) -> Option<String> {
+        let sanitized: String = reason
+            .chars()
+            .map(|ch| {
+                if ch.is_whitespace() || has_disallowed_request_char(ch) {
+                    ' '
+                } else {
+                    ch
+                }
+            })
+            .collect();
+        let collapsed = sanitized.split_whitespace().collect::<Vec<_>>().join(" ");
+        if collapsed.is_empty() {
+            return None;
+        }
+
+        Some(collapsed)
     }
 
     #[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
@@ -113,13 +159,18 @@ pub mod bridge_status {
         }
 
         fn validate_request(&self) -> Result<(), SettlementError> {
+            if self.chain_id == 0 {
+                return Err(SettlementError::MalformedRequest {
+                    reason: "invalid chain_id",
+                });
+            }
             if self.tx_hash.trim().is_empty() {
                 return Err(SettlementError::MalformedRequest {
                     reason: "empty tx_hash",
                 });
             }
             if self.tx_hash.trim() != self.tx_hash
-                || self.tx_hash.chars().any(has_disallowed_request_char)
+                || self.tx_hash.chars().any(|ch| ch.is_whitespace() || has_disallowed_request_char(ch))
             {
                 return Err(SettlementError::MalformedRequest {
                     reason: "non-canonical tx_hash",
@@ -134,7 +185,8 @@ pub mod bridge_status {
                     reason: "empty subject",
                 });
             }
-            if token.subject.trim() != token.subject || token.subject.chars().any(char::is_control)
+            if token.subject.trim() != token.subject
+                || token.subject.chars().any(has_disallowed_subject_char)
             {
                 return Err(SettlementError::MalformedToken {
                     reason: "non-canonical subject",
@@ -213,9 +265,9 @@ pub mod bridge_status {
         }
 
         fn transition_to_reverted(&mut self, reason: String) -> Result<(), SettlementError> {
-            if reason.trim().is_empty() {
+            let Some(reason) = normalize_revert_reason(&reason) else {
                 return Err(SettlementError::InvalidRevertReason);
-            }
+            };
             match self.status {
                 BridgeStatus::Pending => {
                     self.status = BridgeStatus::Reverted(reason);
