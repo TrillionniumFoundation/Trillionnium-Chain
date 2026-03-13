@@ -355,6 +355,9 @@ The Rust scaffold now includes:
 - challenge/resolve-side reading of that persisted snapshot with fail-closed validation: malformed or internally inconsistent `normalized_work_units` snapshots are rejected before state transition
 - resolve-side governance adjudication gate: when `slash_worker = false`, an LLM-metered task must satisfy `normalized_work_units >= llm_meter_min_accept_work_units`; otherwise resolve is rejected fail-closed
 - slash-path payout integration: challenge-success bounty can now include a metered bonus derived from `normalized_work_units`, using governance ratio keys `llm_meter_challenge_success_bounty_per_work_unit_num` / `llm_meter_challenge_success_bounty_per_work_unit_den`
+- worker-side terminal accounting integration:
+  - completed-path worker bonus can be paid from `CHALLENGE_FORFEIT_TREASURY_ACCOUNT`, using `llm_meter_worker_completion_bonus_per_work_unit_num` / `llm_meter_worker_completion_bonus_per_work_unit_den`
+  - slashed-path worker rebate can return a metered share of locked worker stake back to the worker before the remainder is sent to `WORKER_SLASH_TREASURY_ACCOUNT`, using `llm_meter_worker_slash_rebate_per_work_unit_num` / `llm_meter_worker_slash_rebate_per_work_unit_den`
 - governance allowlist + schema validation for the coefficient/adjudication keys:
   - `llm_meter_prompt_token_weight`
   - `llm_meter_generated_token_weight`
@@ -363,11 +366,15 @@ The Rust scaffold now includes:
   - `llm_meter_min_accept_work_units`
   - `llm_meter_challenge_success_bounty_per_work_unit_num`
   - `llm_meter_challenge_success_bounty_per_work_unit_den`
+  - `llm_meter_worker_completion_bonus_per_work_unit_num`
+  - `llm_meter_worker_completion_bonus_per_work_unit_den`
+  - `llm_meter_worker_slash_rebate_per_work_unit_num`
+  - `llm_meter_worker_slash_rebate_per_work_unit_den`
 
 Still pending:
 
-- settlement integration that changes worker payout / slashing magnitudes beyond challenge-success bounty bonus and accept-path floor gating
 - TEE-side attested receipt generation
+- deeper settlement policy design beyond the current additive gates/bonuses/rebates (for example, making bounty sizing itself natively work-unit priced)
 
 ---
 
