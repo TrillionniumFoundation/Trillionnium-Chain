@@ -1184,12 +1184,19 @@ def main():
     closeout_status, closeout_reason = closeout_decision(
         missing_inputs, stale_inputs, old_inputs, closeout_capture_status
     )
+    closeout_present_set = set(present_inputs)
+    closeout_stale_inputs = [label for label in stale_inputs if label in closeout_present_set]
+    closeout_old_inputs = [label for label in old_inputs if label in closeout_present_set]
+    closeout_ready_count = max(
+        0,
+        len(present_inputs) - len(closeout_stale_inputs) - len(closeout_old_inputs),
+    )
     lines += ["", "## Closeout Action Summary"]
     lines.append(f"- closeout_decision: {closeout_status}")
     lines.append(f"- closeout_decision_reason: {closeout_reason}")
     lines.append(
         "- closeout_action_counts: "
-        f"missing={len(missing_inputs)} stale={len(stale_inputs)} old={len(old_inputs)} ready={len(present_inputs) - len(stale_inputs) - len(old_inputs)}"
+        f"missing={len(missing_inputs)} stale={len(closeout_stale_inputs)} old={len(closeout_old_inputs)} ready={closeout_ready_count}"
     )
     lines.append(f"- closeout_capture_cohesion: {closeout_capture_status}")
     lines.append(
