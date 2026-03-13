@@ -301,7 +301,26 @@ TRNM 当前不是“高 TPS 公链的仿制品”，而是：
      - `bft_leader_missed_active_height_share_ppm`
    - validator spread 回答“miss 扩散到了多少 proposer”，active-height share 回答“这些 burst 对平均 finality budget 施加了多大压力”。
 
-6. **Commit coverage before declaring improvement**
+6. **Read proposer fairness in three views, not one**
+   - `bft_leader_missed_top_share_ppm` 回答“是否由单个 proposer 主导 miss surface”。
+   - `bft_leader_missed_active_validator_share_ppm` 回答“这些 misses 已扩散到多大 proposer 面”。
+   - `bft_leader_missed_active_height_share_ppm` 回答“这些 miss bursts 在实际发生的高度上吃掉了多少平均 finality budget”。
+   - 不要把 spread 视角、top-share hotspot 视角和 active-height budget 视角互相替代；三者一起读，才能避免把 proposer fairness regression 误判成 benign drift。
+
+7. **Hot-object shape before calling a hotspot benign**
+   - 先看 coverage / pressure：
+     - `hot_object_active_heights`
+     - `hot_object_active_height_rate_ppm`
+     - `hot_object_active_observed_height_rate_ppm`
+     - `hot_object_active_height_share_ppm`
+   - 再看 shape：
+     - `hot_object_top_label_share_*`
+     - `hot_object_active_top_label_share_avg_ppm`
+     - `hot_object_tail_share_*`
+     - `hot_object_active_tail_share_avg_ppm`
+   - active-height coverage 回答 burst 实际铺开了多宽，top/tail split 回答热点是单一标签主导还是长尾同时升温；不要直接把 top share 高低当成 burst 严重度结论。
+
+8. **Commit coverage before declaring improvement**
    - 若 `bft_skipped_observed_height_rate_ppm` 上升，或 `bft_commit_observed_height_rate_ppm` 下降，则任何更好看的 committed-height 比率都必须先解释 denominator shift。
    - 否则很容易把“commit coverage 变差导致 committed heights 变少”误读成“jitter / rollback / wait 真变轻了”。
 - **比大部分“只有 read/write set 概念”的学术原型更成熟**：是
