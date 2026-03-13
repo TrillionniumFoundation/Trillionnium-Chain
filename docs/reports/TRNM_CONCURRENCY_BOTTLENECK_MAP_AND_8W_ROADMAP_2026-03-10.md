@@ -258,6 +258,50 @@ TRNM 当前不是“高 TPS 公链的仿制品”，而是：
 
 ### 2.3 对标结论
 - **比普通原型强**：是
+
+### 2.4 L04 一次性 closeout / triage 读数顺序（避免观测口径漂移）
+
+当 block-loop / fairness / rollback / preexec 指标出现“看起来变好或变坏”时，L04 建议按以下顺序读数，避免把 denominator shift、active-height burst 或兼容别名误当成真实改善：
+
+1. **Coverage before severity**
+   - 先比较 committed-budget 口径的 `*_active_height_rate_ppm` 与 observed-height 口径的 `*_active_observed_height_rate_ppm`。
+   - 尤其关注：
+     - `bft_round_change_active_height_rate_ppm` vs `bft_round_change_active_observed_height_rate_ppm`
+     - `bft_round_change_backoff_active_height_rate_ppm` vs `bft_round_change_backoff_active_observed_height_rate_ppm`
+     - `critical_wait_active_height_rate_ppm` vs `critical_wait_active_observed_height_rate_ppm`
+     - `hot_object_active_height_rate_ppm` vs `hot_object_active_observed_height_rate_ppm`
+     - `preexec_reject_active_height_rate_ppm` vs `preexec_reject_active_observed_height_rate_ppm`
+     - `rollback_active_height_rate_ppm` vs `rollback_active_observed_height_rate_ppm`
+     - `bft_leader_missed_active_height_rate_ppm` vs `bft_leader_missed_active_observed_height_rate_ppm`
+
+2. **Burst width before averages**
+   - 把 `*_active_heights` 与 density/share 指标放在一起看，先判断问题是少数高度上的 burst，还是广泛铺开。
+   - 尤其不要只看全局均值或 p50/p95，就把少量高度上的拥塞、回滚、抖动判成“整体稳定”。
+
+3. **Budget pressure before compatibility aliases**
+   - 对 round-change/backoff，优先读 `*_active_height_share_ppm` 这类 active-height budget pressure 指标。
+   - `bft_round_change_backoff_wall_share_ppm` 与兼容别名 `bft_round_change_backoff_share_ppm` 仅用于 wall-time context，不应替代 `bft_round_change_backoff_active_height_share_ppm`。
+
+4. **Guardrail cause before wall time**
+   - 对 preexec / rollback，先看原因占比，再看耗时：
+     - `preexec_reject_share_bps`
+     - `preexec_conflict_miss_share_bps`
+     - `apply_error_rollback_share_bps`
+   - 避免把 guardrail 在少数高度上的集中触发误判成“只是 scheduler 或 finality 轻微变慢”。
+
+5. **Fairness spread before hotspot severity**
+   - proposer fairness 不只看 `bft_leader_missed_top_share_ppm`。
+   - 还要同时看：
+     - `bft_leader_missed_active_validators`
+     - `bft_leader_missed_active_validator_share_ppm`
+     - `bft_leader_missed_active_heights`
+     - `bft_leader_missed_active_observed_height_rate_ppm`
+     - `bft_leader_missed_active_height_share_ppm`
+   - validator spread 回答“miss 扩散到了多少 proposer”，active-height share 回答“这些 burst 对平均 finality budget 施加了多大压力”。
+
+6. **Commit coverage before declaring improvement**
+   - 若 `bft_skipped_observed_height_rate_ppm` 上升，或 `bft_commit_observed_height_rate_ppm` 下降，则任何更好看的 committed-height 比率都必须先解释 denominator shift。
+   - 否则很容易把“commit coverage 变差导致 committed heights 变少”误读成“jitter / rollback / wait 真变轻了”。
 - **比大部分“只有 read/write set 概念”的学术原型更成熟**：是
 - **达到 Solana / Sui 生产级并发效率**：否
 
