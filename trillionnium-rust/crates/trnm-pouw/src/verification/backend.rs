@@ -321,6 +321,10 @@ impl VkRefRegistry {
             ("vk://trnm/dev/mock-plonk/v1", Some("plonk")),
             ("vk://trnm/dev/mock-plonk/valid", Some("plonk")),
             ("vk://trnm/dev/mock-plonk/invalid", Some("plonk")),
+            ("vk://trnm/dev/mock-halo2/v1", Some("halo2")),
+            ("vk://trnm/dev/mock-stark/v1", Some("stark")),
+            ("vk://trnm/dev/mock-risc0/v1", Some("risc0")),
+            ("vk://trnm/dev/mock-sp1/v1", Some("sp1")),
             ("vk://trnm/dev/mock-no-system/v1", None),
         ] {
             self.register(ResolvedVkRef {
@@ -1349,15 +1353,31 @@ mod tests {
 
     #[test]
     fn resolve_zk_vk_ref_returns_registered_system_metadata() {
-        let task = mock_task();
-        let payload = parse_zk_proof_payload(&task, br#"ZK:{"task_id":4242,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"plonk","backend_id":"plonk-demo","backend_version":"v1","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-plonk/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["4242","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#).unwrap();
         let resolver = VkRefRegistry::new();
 
-        let resolved = resolve_zk_vk_ref(&resolver, &payload).unwrap();
+        for (zk_system, backend_id, vk_ref) in [
+            ("plonk", "plonk-demo", "vk://trnm/dev/mock-plonk/v1"),
+            ("halo2", "halo2-demo", "vk://trnm/dev/mock-halo2/v1"),
+            ("stark", "stark-demo", "vk://trnm/dev/mock-stark/v1"),
+            ("risc0", "risc0-demo", "vk://trnm/dev/mock-risc0/v1"),
+            ("sp1", "sp1-demo", "vk://trnm/dev/mock-sp1/v1"),
+        ] {
+            let task = mock_task();
+            let payload = parse_zk_proof_payload(
+                &task,
+                format!(
+                    "ZK:{{\"task_id\":4242,\"worker\":\"worker-zk\",\"proof_type\":\"zk\",\"result_hash\":\"1111111111111111111111111111111111111111111111111111111111111111\",\"zk_system\":\"{zk_system}\",\"backend_id\":\"{backend_id}\",\"backend_version\":\"v1\",\"schema_version\":\"trnm.zk.payload.v0\",\"vk_ref\":\"{vk_ref}\",\"proof_encoding\":\"hex\",\"proof\":\"01020304\",\"public_inputs\":{{\"order\":[\"task_id\",\"proof_type\",\"worker\",\"result_hash\"],\"values\":[\"4242\",\"zk\",\"worker-zk\",\"1111111111111111111111111111111111111111111111111111111111111111\"]}}}}"
+                )
+                .as_bytes(),
+            )
+            .unwrap();
 
-        assert_eq!(resolved.vk_ref, "vk://trnm/dev/mock-plonk/v1");
-        assert_eq!(resolved.scope, "dev");
-        assert_eq!(resolved.zk_system.as_deref(), Some("plonk"));
+            let resolved = resolve_zk_vk_ref(&resolver, &payload).unwrap();
+
+            assert_eq!(resolved.vk_ref, vk_ref);
+            assert_eq!(resolved.scope, "dev");
+            assert_eq!(resolved.zk_system.as_deref(), Some(zk_system));
+        }
     }
 
     #[test]
