@@ -1,8 +1,9 @@
 use std::sync::Arc;
 
 use crate::verification::backend::{
-    backend_token_family_hint, backend_token_zk_system_hints, normalize_backend_token,
-    normalize_zk_system, parse_zk_proof_payload, resolve_zk_vk_ref, BackendExecutionError,
+    backend_token_family_hint, backend_token_zk_system_hints,
+    contains_forbidden_opaque_token_chars, normalize_backend_token, normalize_zk_system,
+    parse_zk_proof_payload, resolve_zk_vk_ref, BackendExecutionError,
     BackendVerificationRequest, VerificationBackendConfig, VerificationBackendError,
     VerificationBackendFamily, VkRefRegistry, ZkBackendKind, ZkBackendRegistry,
 };
@@ -70,7 +71,7 @@ impl ZkVerifier {
             .into());
         }
 
-        if raw.chars().any(|ch| ch.is_whitespace() || ch.is_control()) {
+        if contains_forbidden_opaque_token_chars(raw) {
             return Err(BackendExecutionError::MalformedProof {
                 backend: "zk:payload".to_string(),
                 reason: format!(
@@ -1683,6 +1684,29 @@ mod tests {
 
         let mut config = router_config();
         config.zk_backend = ZkBackendKind::Custom("groth16-demo\u{2003}alt".into());
+        let verifier = ZkVerifier::from_config(&config, Arc::new(backends));
+        let task = mock_task();
+        let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["99","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#;
+
+        assert!(matches!(
+            verifier.verify_proof(&task, payload),
+            VerificationResult::Invalid(msg)
+                if msg.contains("malformed:")
+                    && msg.contains("single opaque token")
+                    && msg.contains("embedded whitespace or control characters")
+        ));
+    }
+
+    #[test]
+    fn zk_verifier_rejects_selected_backend_with_embedded_zero_width_format_char() {
+        let mut backends = ZkBackendRegistry::new();
+        backends.register(Arc::new(MockSystemSuccessBackend {
+            backend_id: "groth16 demo",
+            expected_system: "groth16",
+        }));
+
+        let mut config = router_config();
+        config.zk_backend = ZkBackendKind::Custom("groth16-demo\u{200b}alt".into());
         let verifier = ZkVerifier::from_config(&config, Arc::new(backends));
         let task = mock_task();
         let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["99","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#;

@@ -566,6 +566,10 @@ fn is_forbidden_opaque_token_char(ch: char) -> bool {
         )
 }
 
+pub fn contains_forbidden_opaque_token_chars(raw: &str) -> bool {
+    raw.chars().any(is_forbidden_opaque_token_char)
+}
+
 pub fn parse_zk_proof_payload(
     task: &TaskObject,
     proof_data: &[u8],
