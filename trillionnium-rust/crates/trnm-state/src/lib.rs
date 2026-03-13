@@ -81,6 +81,8 @@ pub struct MonetaryState {
     pub net_issuance: i128,
 }
 
+pub type MonetaryStateSnapshot = MonetaryState;
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PolicyTickEvent {
     pub block_height: u64,
@@ -236,6 +238,15 @@ fn check_sensitive_rate_limit(key: &str, old: u64, new: u64) -> Result<(), Strin
     }
     Ok(())
 }
+fn hash_len_prefixed_bytes(hasher: &mut Sha256, bytes: &[u8]) {
+    hasher.update((bytes.len() as u64).to_le_bytes());
+    hasher.update(bytes);
+}
+
+fn hash_len_prefixed_str(hasher: &mut Sha256, value: &str) {
+    hash_len_prefixed_bytes(hasher, value.as_bytes());
+}
+
 fn parse_u64_in_range(key: &str, value: &str, min: u64, max: u64) -> Result<u64, String> {
     let parsed = value.parse::<u64>().map_err(|_| {
         format!(
@@ -608,6 +619,7 @@ impl StateStore {
 
     pub fn restore_task(&mut self, id: u64, snapshot: Option<TaskObject>) {
         self.invalidate_state_root_cache();
+        self.remove_gov_param_key_index_for_id(id);
         match snapshot {
             Some(task) => {
                 self.objects.insert(
@@ -624,14 +636,45 @@ impl StateStore {
         }
     }
 
+    pub fn restore_gov_param(&mut self, key_id: u64, snapshot: Option<GovParamObject>) {
+        self.invalidate_state_root_cache();
+        self.remove_gov_param_key_index_for_id(key_id);
+        match snapshot {
+            Some(snapshot) => {
+                if snapshot.key_id != key_id {
+                    self.objects.remove(&key_id);
+                    return;
+                }
+                if let Some(existing_id) = self.gov_param_key_index.get(&snapshot.key).copied() {
+                    if existing_id != key_id {
+                        self.objects.remove(&key_id);
+                        return;
+                    }
+                }
+                self.gov_param_key_index
+                    .insert(snapshot.key.clone(), snapshot.key_id);
+                self.objects.insert(
+                    key_id,
+                    VersionedObject {
+                        version: snapshot.version,
+                        value: ObjectValue::GovParam(snapshot),
+                    },
+                );
+            }
+            None => {
+                self.objects.remove(&key_id);
+            }
+        }
+    }
+
     pub fn restore_balance(&mut self, address: &str, snapshot: Option<u128>) {
         self.invalidate_state_root_cache();
         match snapshot {
+            Some(0) | None => {
+                self.balances.remove(address);
+            }
             Some(amount) => {
                 self.balances.insert(address.to_string(), amount);
-            }
-            None => {
-                self.balances.remove(address);
             }
         }
     }
@@ -671,11 +714,16 @@ impl StateStore {
             .take();
     }
 
-    pub fn put_task_new(&mut self, task: TaskObject) -> Result<ObjectRef, String> {
+    fn remove_gov_param_key_index_for_id(&mut self, id: u64) {
+        self.gov_param_key_index.retain(|_, mapped_id| *mapped_id != id);
+    }
+
+    pub fn put_task_new(&mut self, mut task: TaskObject) -> Result<ObjectRef, String> {
         if self.objects.contains_key(&task.task_id) {
             return Err("task already exists".into());
         }
         let id = task.task_id;
+        task.version = 1;
         self.invalidate_state_root_cache();
         self.objects.insert(
             id,
@@ -715,11 +763,12 @@ impl StateStore {
         })
     }
 
-    pub fn put_proposal_new(&mut self, proposal: GovProposalObject) -> Result<ObjectRef, String> {
+    pub fn put_proposal_new(&mut self, mut proposal: GovProposalObject) -> Result<ObjectRef, String> {
         if self.objects.contains_key(&proposal.proposal_id) {
             return Err("proposal already exists".into());
         }
         let id = proposal.proposal_id;
+        proposal.version = 1;
         self.invalidate_state_root_cache();
         self.objects.insert(
             id,
@@ -1120,6 +1169,26 @@ impl StateStore {
         self.pending_gov_updates.get(key).cloned()
     }
 
+    pub fn restore_pending_gov_update(
+        &mut self,
+        key: &str,
+        snapshot: Option<PendingGovParamUpdate>,
+    ) {
+        self.invalidate_state_root_cache();
+        match snapshot {
+            Some(snapshot) => {
+                if snapshot.key != key {
+                    self.pending_gov_updates.remove(key);
+                    return;
+                }
+                self.pending_gov_updates.insert(snapshot.key.clone(), snapshot);
+            }
+            None => {
+                self.pending_gov_updates.remove(key);
+            }
+        }
+    }
+
     fn gov_param_value(&self, key: &str) -> Option<&str> {
         let id = self.gov_param_key_index.get(key)?;
         let object = self.objects.get(id)?;
@@ -1189,6 +1258,15 @@ impl StateStore {
 
     pub fn monetary_state(&self) -> &MonetaryState {
         &self.monetary_state
+    }
+
+    pub fn monetary_state_snapshot(&self) -> MonetaryStateSnapshot {
+        self.monetary_state.clone()
+    }
+
+    pub fn restore_monetary_state(&mut self, snapshot: MonetaryStateSnapshot) {
+        self.invalidate_state_root_cache();
+        self.monetary_state = snapshot;
     }
 
     pub fn should_trigger_policy_tick(&self, block_height: u64) -> bool {
@@ -1264,7 +1342,12 @@ impl StateStore {
 
     pub fn set_balance(&mut self, address: impl Into<String>, amount: u128) {
         self.invalidate_state_root_cache();
-        self.balances.insert(address.into(), amount);
+        let address = address.into();
+        if amount == 0 {
+            self.balances.remove(&address);
+        } else {
+            self.balances.insert(address, amount);
+        }
     }
 
     pub fn balance_of(&self, address: &str) -> u128 {
@@ -1280,7 +1363,12 @@ impl StateStore {
             ));
         }
         self.invalidate_state_root_cache();
-        self.balances.insert(address.to_string(), cur - amount);
+        let next = cur - amount;
+        if next == 0 {
+            self.balances.remove(address);
+        } else {
+            self.balances.insert(address.to_string(), next);
+        }
         Ok(())
     }
 
@@ -1293,7 +1381,11 @@ impl StateStore {
             )
         })?;
         self.invalidate_state_root_cache();
-        self.balances.insert(address.to_string(), next);
+        if next == 0 {
+            self.balances.remove(address);
+        } else {
+            self.balances.insert(address.to_string(), next);
+        }
         Ok(())
     }
 
@@ -1323,14 +1415,108 @@ impl StateStore {
                 ObjectValue::Task(t) => {
                     hasher.update(b"task");
                     hasher.update(t.task_id.to_le_bytes());
-                    hasher.update(t.creator.as_bytes());
+                    hash_len_prefixed_str(&mut hasher, &t.creator);
                     hasher.update(t.bounty.to_le_bytes());
                     hasher.update((t.status as u8).to_le_bytes());
+                    hasher.update((t.proof_type as u8).to_le_bytes());
+
+                    match &t.metadata {
+                        Some(metadata) => {
+                            hasher.update([1]);
+                            match &metadata.note {
+                                Some(note) => {
+                                    hasher.update([1]);
+                                    hash_len_prefixed_str(&mut hasher, note);
+                                }
+                                None => hasher.update([0]),
+                            }
+                            match &metadata.task_type {
+                                Some(task_type) => {
+                                    hasher.update([1]);
+                                    hash_len_prefixed_str(&mut hasher, task_type);
+                                }
+                                None => hasher.update([0]),
+                            }
+                            match &metadata.input_hash {
+                                Some(input_hash) => {
+                                    hasher.update([1]);
+                                    hash_len_prefixed_str(&mut hasher, input_hash);
+                                }
+                                None => hasher.update([0]),
+                            }
+                            match &metadata.model {
+                                Some(model) => {
+                                    hasher.update([1]);
+                                    match &model.model_id {
+                                        Some(model_id) => {
+                                            hasher.update([1]);
+                                            hash_len_prefixed_str(&mut hasher, model_id);
+                                        }
+                                        None => hasher.update([0]),
+                                    }
+                                    match &model.model_digest {
+                                        Some(model_digest) => {
+                                            hasher.update([1]);
+                                            hash_len_prefixed_str(&mut hasher, model_digest);
+                                        }
+                                        None => hasher.update([0]),
+                                    }
+                                    match &model.version {
+                                        Some(version) => {
+                                            hasher.update([1]);
+                                            hash_len_prefixed_str(&mut hasher, version);
+                                        }
+                                        None => hasher.update([0]),
+                                    }
+                                }
+                                None => hasher.update([0]),
+                            }
+                            match &metadata.provenance {
+                                Some(provenance) => {
+                                    hasher.update([1]);
+                                    match &provenance.producer_did {
+                                        Some(producer_did) => {
+                                            hasher.update([1]);
+                                            hash_len_prefixed_str(&mut hasher, producer_did);
+                                        }
+                                        None => hasher.update([0]),
+                                    }
+                                    match &provenance.produced_at {
+                                        Some(produced_at) => {
+                                            hasher.update([1]);
+                                            hash_len_prefixed_str(&mut hasher, produced_at);
+                                        }
+                                        None => hasher.update([0]),
+                                    }
+                                    match &provenance.provenance_index {
+                                        Some(provenance_index) => {
+                                            hasher.update([1]);
+                                            hash_len_prefixed_str(&mut hasher, provenance_index);
+                                        }
+                                        None => hasher.update([0]),
+                                    }
+                                    match &provenance.privacy_tier {
+                                        Some(privacy_tier) => {
+                                            hasher.update([1]);
+                                            hasher.update(match privacy_tier {
+                                                trnm_types::PrivacyTier::Public => b"public".as_slice(),
+                                                trnm_types::PrivacyTier::Internal => b"internal".as_slice(),
+                                                trnm_types::PrivacyTier::Restricted => b"restricted".as_slice(),
+                                            });
+                                        }
+                                        None => hasher.update([0]),
+                                    }
+                                }
+                                None => hasher.update([0]),
+                            }
+                        }
+                        None => hasher.update([0]),
+                    }
 
                     match &t.worker {
                         Some(worker) => {
                             hasher.update([1]);
-                            hasher.update(worker.as_bytes());
+                            hash_len_prefixed_str(&mut hasher, worker);
                         }
                         None => hasher.update([0]),
                     }
@@ -1408,7 +1594,7 @@ impl StateStore {
                     match &t.challenger {
                         Some(challenger) => {
                             hasher.update([1]);
-                            hasher.update(challenger.as_bytes());
+                            hash_len_prefixed_str(&mut hasher, challenger);
                         }
                         None => hasher.update([0]),
                     }
@@ -1424,29 +1610,36 @@ impl StateStore {
                 ObjectValue::GovProposal(p) => {
                     hasher.update(b"gov_proposal");
                     hasher.update(p.proposal_id.to_le_bytes());
-                    hasher.update(p.title.as_bytes());
-                    hasher.update(p.proposer.as_bytes());
+                    hash_len_prefixed_str(&mut hasher, &p.title);
+                    hash_len_prefixed_str(&mut hasher, &p.proposer);
                     hasher.update((p.status as u8).to_le_bytes());
                     hasher.update(p.version.to_le_bytes());
                 }
                 ObjectValue::GovParam(p) => {
                     hasher.update(b"gov_param");
-                    hasher.update(p.key.as_bytes());
-                    hasher.update(p.value.as_bytes());
+                    hasher.update(p.key_id.to_le_bytes());
+                    hash_len_prefixed_str(&mut hasher, &p.key);
+                    hash_len_prefixed_str(&mut hasher, &p.value);
                     hasher.update(p.version.to_le_bytes());
                 }
             }
         }
         for (addr, bal) in &self.balances {
             hasher.update(b"balance");
-            hasher.update(addr.as_bytes());
+            hash_len_prefixed_str(&mut hasher, addr);
             hasher.update(bal.to_le_bytes());
+        }
+        for (key, key_id) in &self.gov_param_key_index {
+            hasher.update(b"gov_param_key_index");
+            hash_len_prefixed_str(&mut hasher, key);
+            hasher.update(key_id.to_le_bytes());
         }
         for (key, pending) in &self.pending_gov_updates {
             hasher.update(b"gov_pending");
-            hasher.update(key.as_bytes());
+            hash_len_prefixed_str(&mut hasher, key);
             hasher.update(pending.key_id.to_le_bytes());
-            hasher.update(pending.value.as_bytes());
+            hash_len_prefixed_str(&mut hasher, &pending.key);
+            hash_len_prefixed_str(&mut hasher, &pending.value);
             hasher.update(pending.activate_at_height.to_le_bytes());
         }
         for (task_id, pending) in &self.pending_resolve_approvals {
@@ -1454,8 +1647,8 @@ impl StateStore {
             hasher.update(task_id.to_le_bytes());
             hasher.update([pending.slash_worker as u8]);
             hasher.update([pending.confirmations]);
-            hasher.update(pending.first_approver.as_bytes());
-            hasher.update(pending.authority_set.as_bytes());
+            hash_len_prefixed_str(&mut hasher, &pending.first_approver);
+            hash_len_prefixed_str(&mut hasher, &pending.authority_set);
             hasher.update(pending.task_version.to_le_bytes());
         }
         hasher.update(b"monetary_state");
@@ -4223,6 +4416,125 @@ mod tests {
             st_a.state_root(),
             st_b.state_root(),
             "pending resolve authority set must contribute to state root"
+        );
+    }
+
+    #[test]
+    fn state_root_changes_when_embedded_gov_param_key_id_changes() {
+        let mut st_a = StateStore::new();
+        st_a.objects.insert(
+            7001,
+            VersionedObject {
+                version: 1,
+                value: ObjectValue::GovParam(GovParamObject {
+                    key_id: 7001,
+                    key: "challenge_min_bond".into(),
+                    value: "5000".into(),
+                    version: 1,
+                }),
+            },
+        );
+
+        let mut st_b = StateStore::new();
+        st_b.objects.insert(
+            7001,
+            VersionedObject {
+                version: 1,
+                value: ObjectValue::GovParam(GovParamObject {
+                    key_id: 7002,
+                    key: "challenge_min_bond".into(),
+                    value: "5000".into(),
+                    version: 1,
+                }),
+            },
+        );
+
+        assert_ne!(
+            st_a.state_root(),
+            st_b.state_root(),
+            "embedded governance key_id must contribute to state_root so corrupt/mismatched governance snapshots cannot hash identically"
+        );
+    }
+
+    #[test]
+    fn state_root_changes_when_gov_param_key_index_mapping_changes() {
+        let mut st_a = StateStore::new();
+        st_a.objects.insert(
+            7001,
+            VersionedObject {
+                version: 1,
+                value: ObjectValue::GovParam(GovParamObject {
+                    key_id: 7001,
+                    key: "monetary_base_issuance_per_tick".into(),
+                    value: "7".into(),
+                    version: 1,
+                }),
+            },
+        );
+        st_a.gov_param_key_index
+            .insert("monetary_base_issuance_per_tick".into(), 7001);
+
+        let mut st_b = StateStore::new();
+        st_b.objects.insert(
+            7001,
+            VersionedObject {
+                version: 1,
+                value: ObjectValue::GovParam(GovParamObject {
+                    key_id: 7001,
+                    key: "monetary_base_issuance_per_tick".into(),
+                    value: "7".into(),
+                    version: 1,
+                }),
+            },
+        );
+        st_b.gov_param_key_index
+            .insert("monetary_base_issuance_per_tick".into(), 7999);
+
+        assert_ne!(
+            st_a.state_root(),
+            st_b.state_root(),
+            "governance key-index mapping must contribute to state_root so restore/rollback snapshots with different effective monetary routing cannot hash identically"
+        );
+    }
+
+    #[test]
+    fn state_root_changes_when_gov_param_key_index_key_changes() {
+        let mut st_a = StateStore::new();
+        st_a.objects.insert(
+            7001,
+            VersionedObject {
+                version: 1,
+                value: ObjectValue::GovParam(GovParamObject {
+                    key_id: 7001,
+                    key: "monetary_base_issuance_per_tick".into(),
+                    value: "7".into(),
+                    version: 1,
+                }),
+            },
+        );
+        st_a.gov_param_key_index
+            .insert("monetary_base_issuance_per_tick".into(), 7001);
+
+        let mut st_b = StateStore::new();
+        st_b.objects.insert(
+            7001,
+            VersionedObject {
+                version: 1,
+                value: ObjectValue::GovParam(GovParamObject {
+                    key_id: 7001,
+                    key: "monetary_base_issuance_per_tick".into(),
+                    value: "7".into(),
+                    version: 1,
+                }),
+            },
+        );
+        st_b.gov_param_key_index
+            .insert("monetary_base_burn_per_tick".into(), 7001);
+
+        assert_ne!(
+            st_a.state_root(),
+            st_b.state_root(),
+            "governance key-index key strings must contribute to state_root so mismatched restore/rollback routing aliases cannot hash identically even when key_id stays constant"
         );
     }
 
