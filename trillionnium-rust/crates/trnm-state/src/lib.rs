@@ -5345,6 +5345,46 @@ mod tests {
     }
 
     #[test]
+    fn wal_checkpoint_verification_rejects_later_committed_checkpoint_after_uncommitted_genesis() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: false,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let e1_hash = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "p2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(e1_hash),
+        };
+
+        let checkpoints = vec![
+            CheckpointMeta {
+                height: 1,
+                state_root_hex: "r1".into(),
+                wal_entry_hash_hex: e1.content_hash_hex(),
+            },
+            CheckpointMeta {
+                height: 2,
+                state_root_hex: "r2".into(),
+                wal_entry_hash_hex: e2.content_hash_hex(),
+            },
+        ];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2]).unwrap();
+        assert!(
+            got.is_none(),
+            "an uncommitted genesis WAL entry must fail closed instead of allowing later committed checkpoint metadata to claim recoverable application state"
+        );
+    }
+
+    #[test]
     fn policy_tick_triggers_on_interval_and_updates_monetary_state() {
         let mut st = StateStore::new();
         st.set_gov_param_unchecked(
