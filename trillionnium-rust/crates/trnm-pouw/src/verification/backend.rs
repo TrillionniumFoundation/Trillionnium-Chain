@@ -509,6 +509,11 @@ pub trait VerificationBackend: Send + Sync {
     ) -> Result<BackendVerificationSuccess, BackendExecutionError>;
 }
 
+/// Family-scoped backend shim for TEE call sites and tests. This reuses the
+/// same runtime contract as the shared verification backend registry while
+/// avoiding ZK-oriented naming at attestation-specific integration points.
+pub use VerificationBackend as TeeBackend;
+
 /// Back-compat shim: existing tests and local mock backends still import
 /// `ZkBackend`, but the registry is now family-agnostic.
 pub trait ZkBackend: Send + Sync {

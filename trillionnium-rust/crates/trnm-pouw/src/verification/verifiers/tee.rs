@@ -253,7 +253,7 @@ impl ProofVerifier for TeeVerifier {
 mod tests {
     use super::*;
     use crate::verification::backend::{
-        BackendExecutionError, BackendVerificationSuccess, ZkBackend,
+        BackendExecutionError, BackendVerificationSuccess, TeeBackend,
     };
     use trnm_types::{ProofType, TaskObject, TaskStatus};
 
@@ -283,7 +283,7 @@ mod tests {
     }
 
     struct MockTeeSuccessBackend;
-    impl ZkBackend for MockTeeSuccessBackend {
+    impl TeeBackend for MockTeeSuccessBackend {
         fn backend_id(&self) -> &str {
             "mock-tee"
         }
@@ -302,7 +302,7 @@ mod tests {
     }
 
     struct MockTeeInvalidBackend;
-    impl ZkBackend for MockTeeInvalidBackend {
+    impl TeeBackend for MockTeeInvalidBackend {
         fn backend_id(&self) -> &str {
             "mock-tee-invalid"
         }
@@ -320,7 +320,7 @@ mod tests {
     }
 
     struct MockTeeUnavailableBackend;
-    impl ZkBackend for MockTeeUnavailableBackend {
+    impl TeeBackend for MockTeeUnavailableBackend {
         fn backend_id(&self) -> &str {
             "mock-tee-unavailable"
         }
@@ -338,7 +338,7 @@ mod tests {
     }
 
     struct MockTeeMalformedBackend;
-    impl ZkBackend for MockTeeMalformedBackend {
+    impl TeeBackend for MockTeeMalformedBackend {
         fn backend_id(&self) -> &str {
             "mock-tee-malformed"
         }
@@ -356,7 +356,7 @@ mod tests {
     }
 
     struct MockTeeInternalBackend;
-    impl ZkBackend for MockTeeInternalBackend {
+    impl TeeBackend for MockTeeInternalBackend {
         fn backend_id(&self) -> &str {
             "mock-tee-internal"
         }
