@@ -1,7 +1,7 @@
 use sha2::{Digest, Sha256};
 use thiserror::Error;
 use trnm_state::StateStore;
-use trnm_types::{Hash32, ObjectRef, ProofType, TaskMetadata, TaskObject, TaskStatus};
+use trnm_types::{Hash32, ObjectRef, ProofType, TaskMetadata, TaskMeteringSnapshot, TaskObject, TaskStatus};
 
 pub mod metering;
 pub mod verification;
@@ -89,6 +89,10 @@ fn map_state_err(err: String) -> PouwError {
 const DEFAULT_ASSIGNMENT_WINDOW_BLOCKS: u64 = 20;
 const DEFAULT_REVEAL_WINDOW_BLOCKS: u64 = 20;
 const DEFAULT_CHALLENGE_WINDOW_BLOCKS: u64 = 100;
+const DEFAULT_LLM_METER_PROMPT_TOKEN_WEIGHT: u128 = 1;
+const DEFAULT_LLM_METER_GENERATED_TOKEN_WEIGHT: u128 = 1;
+const DEFAULT_LLM_METER_DECODE_STEP_WEIGHT: u128 = 1;
+const DEFAULT_LLM_METER_KV_BYTE_WEIGHT: u128 = 0;
 const DEFAULT_CHALLENGE_MIN_BOND: u128 = 10;
 const DEFAULT_CHALLENGE_MIN_BOND_BOUNTY_BPS: u128 = 500;
 const DEFAULT_CHALLENGE_MIN_BOND_WORKER_STAKE_BPS: u128 = 0;
@@ -179,13 +183,100 @@ fn normalize_hex_string(raw: &str) -> String {
         .to_ascii_lowercase()
 }
 
+fn effective_llm_token_meter_coefficients(
+    st: &StateStore,
+) -> LlmTokenMeterV1WorkUnitCoefficients {
+    LlmTokenMeterV1WorkUnitCoefficients {
+        prompt_tokens: st
+            .gov_param_u128("llm_meter_prompt_token_weight")
+            .unwrap_or(DEFAULT_LLM_METER_PROMPT_TOKEN_WEIGHT),
+        generated_tokens: st
+            .gov_param_u128("llm_meter_generated_token_weight")
+            .unwrap_or(DEFAULT_LLM_METER_GENERATED_TOKEN_WEIGHT),
+        decode_steps: st
+            .gov_param_u128("llm_meter_decode_step_weight")
+            .unwrap_or(DEFAULT_LLM_METER_DECODE_STEP_WEIGHT),
+        kv_bytes_moved: st
+            .gov_param_u128("llm_meter_kv_byte_weight")
+            .unwrap_or(DEFAULT_LLM_METER_KV_BYTE_WEIGHT),
+    }
+}
+
+fn build_task_metering_snapshot(
+    receipt: &LlmTokenMeterV1Receipt,
+    coefficients: &LlmTokenMeterV1WorkUnitCoefficients,
+) -> TaskMeteringSnapshot {
+    TaskMeteringSnapshot {
+        workload_class: receipt.workload_class.clone(),
+        metering_schema: receipt.metering_schema.clone(),
+        receipt_hash: receipt.receipt_hash.clone(),
+        prompt_tokens: receipt.prompt_tokens,
+        generated_tokens: receipt.generated_tokens,
+        decode_steps: receipt.decode_steps,
+        kv_bytes_moved: receipt.kv_bytes_moved,
+        normalized_work_units: receipt.normalized_work_units(coefficients),
+        prompt_token_weight: coefficients.prompt_tokens,
+        generated_token_weight: coefficients.generated_tokens,
+        decode_step_weight: coefficients.decode_steps,
+        kv_byte_weight: coefficients.kv_bytes_moved,
+    }
+}
+
+fn validate_task_metering_snapshot(task: &TaskObject) -> Result<Option<TaskMeteringSnapshot>, PouwError> {
+    let Some(metadata) = task.metadata.as_ref() else {
+        return Ok(None);
+    };
+    let Some(snapshot) = metadata.metering.as_ref() else {
+        return Ok(None);
+    };
+
+    if snapshot.workload_class != LLM_INFERENCE_WORKLOAD_CLASS {
+        return Err(PouwError::State(format!(
+            "invalid task metering workload_class: {}",
+            snapshot.workload_class
+        )));
+    }
+    if snapshot.metering_schema != LLM_TOKEN_METER_V1_SCHEMA {
+        return Err(PouwError::State(format!(
+            "invalid task metering schema: {}",
+            snapshot.metering_schema
+        )));
+    }
+    if snapshot.receipt_hash.trim().is_empty() {
+        return Err(PouwError::State(
+            "task metering snapshot missing receipt_hash".into(),
+        ));
+    }
+
+    let coefficients = LlmTokenMeterV1WorkUnitCoefficients {
+        prompt_tokens: snapshot.prompt_token_weight,
+        generated_tokens: snapshot.generated_token_weight,
+        decode_steps: snapshot.decode_step_weight,
+        kv_bytes_moved: snapshot.kv_byte_weight,
+    };
+    let recomputed = coefficients
+        .prompt_tokens
+        .saturating_mul(snapshot.prompt_tokens as u128)
+        .saturating_add(coefficients.generated_tokens.saturating_mul(snapshot.generated_tokens as u128))
+        .saturating_add(coefficients.decode_steps.saturating_mul(snapshot.decode_steps as u128))
+        .saturating_add(coefficients.kv_bytes_moved.saturating_mul(snapshot.kv_bytes_moved as u128));
+    if recomputed != snapshot.normalized_work_units {
+        return Err(PouwError::State(format!(
+            "task metering snapshot normalized_work_units mismatch: expected {}, got {}",
+            recomputed, snapshot.normalized_work_units
+        )));
+    }
+
+    Ok(Some(snapshot.clone()))
+}
+
 fn validate_llm_token_meter_receipt_for_reveal(
     proof_type: ProofType,
     task_id: u64,
     worker: &str,
     result_hash: &Hash32,
     proof_payload: &[u8],
-) -> Result<(), PouwError> {
+) -> Result<LlmTokenMeterV1Receipt, PouwError> {
     let payload = std::str::from_utf8(proof_payload)
         .map(|payload| payload.trim_matches(is_ignorable_proof_payload_char))
         .map_err(|_| {
@@ -231,7 +322,7 @@ fn validate_llm_token_meter_receipt_for_reveal(
         )));
     }
 
-    Ok(())
+    Ok(receipt)
 }
 
 fn actor_id_has_hidden_or_zero_width_chars(token: &str) -> bool {
@@ -946,13 +1037,17 @@ pub fn apply_reveal_result_at_height(
                     task.proof_type
                 )));
             }
-            validate_llm_token_meter_receipt_for_reveal(
+            let receipt = validate_llm_token_meter_receipt_for_reveal(
                 task.proof_type,
                 task.task_id,
                 &worker,
                 &result_hash,
                 proof_payload,
             )?;
+            let coefficients = effective_llm_token_meter_coefficients(st);
+            let snapshot = build_task_metering_snapshot(&receipt, &coefficients);
+            let metadata = task.metadata.get_or_insert_with(TaskMetadata::default);
+            metadata.metering = Some(snapshot);
         }
     }
     if matches!(task.proof_type, ProofType::Tee | ProofType::Zk) {
@@ -1062,6 +1157,7 @@ pub fn apply_challenge_at_height(
         return Err(PouwError::InvalidTransition);
     }
     validate_challenge_accounting_invariants(&task)?;
+    let _ = validate_task_metering_snapshot(&task)?;
     // Safety boundary: emergency pause must also freeze new challenged-state
     // entry because it immediately debits challenger funds into escrow.
     if st.is_emergency_paused() {
@@ -1159,6 +1255,7 @@ pub fn apply_resolve_at_height(
         return Err(PouwError::InvalidTransition);
     }
     validate_challenge_accounting_invariants(&task)?;
+    let _ = validate_task_metering_snapshot(&task)?;
     let resolve_authority = resolve_authority_account(st);
     // Authorization is bound to authenticated signer context; payload resolver
     // is retained only for backward-compatible event fields.
@@ -3538,6 +3635,180 @@ mod tests {
         assert_eq!(task_after.status, TaskStatus::Committed);
         assert!(task_after.result_hash.is_none());
         assert!(task_after.reveal_salt.is_none());
+    }
+
+    #[test]
+    fn reveal_persists_llm_token_metering_snapshot_on_task_metadata() {
+        let mut st = seeded_state();
+        let task_id = 78_906;
+        let r1 = apply_create_task(&mut st, task_id, "alice".into(), 10).unwrap();
+        let result_hash = [2u8; 32];
+        let reveal_salt = [3u8; 32];
+        let worker = "worker1".to_string();
+        let committed = compute_commitment(task_id, &result_hash, &reveal_salt, &worker);
+
+        let r2 = apply_accept_task(&mut st, r1, worker.clone()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, worker.clone(), committed).unwrap();
+        let proof = sample_llm_token_meter_receipt_json(task_id, &worker, result_hash);
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, Some(proof)).unwrap();
+
+        let task = st.get_task(r4.id).unwrap();
+        let snapshot = task.metadata.unwrap().metering.unwrap();
+        assert_eq!(snapshot.workload_class, LLM_INFERENCE_WORKLOAD_CLASS);
+        assert_eq!(snapshot.metering_schema, LLM_TOKEN_METER_V1_SCHEMA);
+        assert_eq!(snapshot.prompt_tokens, 128);
+        assert_eq!(snapshot.generated_tokens, 32);
+        assert_eq!(snapshot.decode_steps, 32);
+        assert_eq!(snapshot.kv_bytes_moved, 4096);
+        assert_eq!(snapshot.prompt_token_weight, 1);
+        assert_eq!(snapshot.generated_token_weight, 1);
+        assert_eq!(snapshot.decode_step_weight, 1);
+        assert_eq!(snapshot.kv_byte_weight, 0);
+        assert_eq!(snapshot.normalized_work_units, 192);
+    }
+
+    #[test]
+    fn reveal_snapshots_llm_token_meter_governance_coefficients() {
+        let mut st = seeded_state();
+        st.set_gov_param_bootstrap_unchecked(
+            9_960,
+            "llm_meter_prompt_token_weight".into(),
+            "2".into(),
+        )
+        .unwrap();
+        st.set_gov_param_bootstrap_unchecked(
+            9_961,
+            "llm_meter_generated_token_weight".into(),
+            "3".into(),
+        )
+        .unwrap();
+        st.set_gov_param_bootstrap_unchecked(
+            9_962,
+            "llm_meter_decode_step_weight".into(),
+            "5".into(),
+        )
+        .unwrap();
+        st.set_gov_param_bootstrap_unchecked(
+            9_963,
+            "llm_meter_kv_byte_weight".into(),
+            "7".into(),
+        )
+        .unwrap();
+
+        let task_id = 78_907;
+        let r1 = apply_create_task(&mut st, task_id, "alice".into(), 10).unwrap();
+        let result_hash = [2u8; 32];
+        let reveal_salt = [3u8; 32];
+        let worker = "worker1".to_string();
+        let committed = compute_commitment(task_id, &result_hash, &reveal_salt, &worker);
+
+        let r2 = apply_accept_task(&mut st, r1, worker.clone()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, worker.clone(), committed).unwrap();
+        let proof = sample_llm_token_meter_receipt_json(task_id, &worker, result_hash);
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, Some(proof)).unwrap();
+
+        let task = st.get_task(r4.id).unwrap();
+        let snapshot = task.metadata.unwrap().metering.unwrap();
+        assert_eq!(snapshot.prompt_token_weight, 2);
+        assert_eq!(snapshot.generated_token_weight, 3);
+        assert_eq!(snapshot.decode_step_weight, 5);
+        assert_eq!(snapshot.kv_byte_weight, 7);
+        assert_eq!(snapshot.normalized_work_units, 2 * 128 + 3 * 32 + 5 * 32 + 7 * 4096);
+    }
+
+    #[test]
+    fn challenge_rejects_tampered_llm_metering_snapshot_fail_closed() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 1000);
+        let task_id = 78_908;
+        let r1 = apply_create_task(&mut st, task_id, "alice".into(), 10).unwrap();
+        let result_hash = [2u8; 32];
+        let reveal_salt = [3u8; 32];
+        let worker = "worker1".to_string();
+        let committed = compute_commitment(task_id, &result_hash, &reveal_salt, &worker);
+
+        let r2 = apply_accept_task(&mut st, r1, worker.clone()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, worker.clone(), committed).unwrap();
+        let proof = sample_llm_token_meter_receipt_json(task_id, &worker, result_hash);
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, Some(proof)).unwrap();
+
+        let mut tampered = st.get_task(r4.id).unwrap();
+        tampered
+            .metadata
+            .as_mut()
+            .unwrap()
+            .metering
+            .as_mut()
+            .unwrap()
+            .normalized_work_units += 1;
+        let r4_bad = st.update_task(r4, tampered).unwrap();
+
+        let err = apply_challenge(
+            &mut st,
+            r4_bad.clone(),
+            "challenger".into(),
+            10,
+            "challenger".into(),
+        )
+        .unwrap_err();
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("normalized_work_units mismatch")));
+
+        let task_after = st.get_task(r4_bad.id).unwrap();
+        assert_eq!(task_after.status, TaskStatus::Revealed);
+        assert!(task_after.challenger.is_none());
+        assert!(task_after.challenge_bond.is_none());
+    }
+
+    #[test]
+    fn resolve_rejects_tampered_llm_metering_snapshot_fail_closed() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 1000);
+        let task_id = 78_909;
+        let r1 = apply_create_task(&mut st, task_id, "alice".into(), 10).unwrap();
+        let result_hash = [2u8; 32];
+        let reveal_salt = [3u8; 32];
+        let worker = "worker1".to_string();
+        let committed = compute_commitment(task_id, &result_hash, &reveal_salt, &worker);
+
+        let r2 = apply_accept_task(&mut st, r1, worker.clone()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, worker.clone(), committed).unwrap();
+        let proof = sample_llm_token_meter_receipt_json(task_id, &worker, result_hash);
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, Some(proof)).unwrap();
+        let r5 = apply_challenge(
+            &mut st,
+            r4,
+            "challenger".into(),
+            10,
+            "challenger".into(),
+        )
+        .unwrap();
+
+        let mut tampered = st.get_task(r5.id).unwrap();
+        tampered
+            .metadata
+            .as_mut()
+            .unwrap()
+            .metering
+            .as_mut()
+            .unwrap()
+            .normalized_work_units += 1;
+        let r5_bad = st.update_task(r5, tampered).unwrap();
+        set_resolve_authority(&mut st, "authority,authority2");
+
+        let err = apply_resolve(
+            &mut st,
+            r5_bad.clone(),
+            false,
+            "authority".into(),
+            "authority".into(),
+        )
+        .unwrap_err();
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("normalized_work_units mismatch")));
+
+        let task_after = st.get_task(r5_bad.id).unwrap();
+        assert_eq!(task_after.status, TaskStatus::Challenged);
+        assert_eq!(task_after.challenge_bond, Some(10));
+        assert_eq!(task_after.challenger.as_deref(), Some("challenger"));
     }
 
     #[test]

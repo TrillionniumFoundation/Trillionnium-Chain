@@ -176,6 +176,10 @@ const GOV_ALLOWED_KEYS: &[&str] = &[
     "challenge_min_bond_worker_stake_bps",
     "challenge_window_blocks",
     "challenge_success_bounty",
+    "llm_meter_prompt_token_weight",
+    "llm_meter_generated_token_weight",
+    "llm_meter_decode_step_weight",
+    "llm_meter_kv_byte_weight",
     "resolve_authority",
     "emergency_pause",
     "monetary_policy_tick_interval_blocks",
@@ -187,6 +191,10 @@ const GOV_SENSITIVE_KEYS: &[&str] = &[
     "challenge_window_blocks",
     "challenge_min_bond",
     "challenge_success_bounty",
+    "llm_meter_prompt_token_weight",
+    "llm_meter_generated_token_weight",
+    "llm_meter_decode_step_weight",
+    "llm_meter_kv_byte_weight",
     "min_worker_stake",
     "challenge_min_bond_bounty_bps",
     "challenge_min_bond_worker_stake_bps",
@@ -264,6 +272,13 @@ fn validate_gov_param_value(key: &str, value: &str) -> Result<(), String> {
             Ok(())
         }
         "challenge_success_bounty" => {
+            let _ = parse_u64_in_range(key, value, 0, 1_000_000_000_000)?;
+            Ok(())
+        }
+        "llm_meter_prompt_token_weight"
+        | "llm_meter_generated_token_weight"
+        | "llm_meter_decode_step_weight"
+        | "llm_meter_kv_byte_weight" => {
             let _ = parse_u64_in_range(key, value, 0, 1_000_000_000_000)?;
             Ok(())
         }
@@ -3700,6 +3715,10 @@ mod tests {
             ("challenge_window_blocks", true),
             ("challenge_min_bond", true),
             ("challenge_success_bounty", true),
+            ("llm_meter_prompt_token_weight", true),
+            ("llm_meter_generated_token_weight", true),
+            ("llm_meter_decode_step_weight", true),
+            ("llm_meter_kv_byte_weight", true),
             ("min_worker_stake", true),
             ("challenge_min_bond_bounty_bps", true),
             ("challenge_min_bond_worker_stake_bps", true),
@@ -3764,6 +3783,10 @@ mod tests {
             ("challenge_min_bond_worker_stake_bps", "100001"),
             ("challenge_window_blocks", "99"),
             ("challenge_success_bounty", "-1"),
+            ("llm_meter_prompt_token_weight", "-1"),
+            ("llm_meter_generated_token_weight", "-1"),
+            ("llm_meter_decode_step_weight", "-1"),
+            ("llm_meter_kv_byte_weight", "-1"),
             ("resolve_authority", "   "),
             ("emergency_pause", "TRUE"),
             ("monetary_policy_tick_interval_blocks", "0"),

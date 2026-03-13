@@ -85,6 +85,22 @@ pub struct TaskProvenanceMetadata {
     pub privacy_tier: Option<PrivacyTier>,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct TaskMeteringSnapshot {
+    pub workload_class: String,
+    pub metering_schema: String,
+    pub receipt_hash: String,
+    pub prompt_tokens: u64,
+    pub generated_tokens: u64,
+    pub decode_steps: u64,
+    pub kv_bytes_moved: u64,
+    pub normalized_work_units: u128,
+    pub prompt_token_weight: u128,
+    pub generated_token_weight: u128,
+    pub decode_step_weight: u128,
+    pub kv_byte_weight: u128,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
 pub struct TaskMetadata {
     #[serde(default)]
@@ -97,6 +113,8 @@ pub struct TaskMetadata {
     pub model: Option<TaskModelMetadata>,
     #[serde(default)]
     pub provenance: Option<TaskProvenanceMetadata>,
+    #[serde(default)]
+    pub metering: Option<TaskMeteringSnapshot>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -191,6 +209,7 @@ mod tests {
         assert!(metadata.input_hash.is_none());
         assert!(metadata.model.is_none());
         assert!(metadata.provenance.is_none());
+        assert!(metadata.metering.is_none());
     }
 
     #[test]
@@ -209,6 +228,20 @@ mod tests {
                 produced_at: Some("2026-03-01T01:00:00Z".into()),
                 provenance_index: Some("prov:lane-dae:task-20260301-0001".into()),
                 privacy_tier: Some(PrivacyTier::Internal),
+            }),
+            metering: Some(TaskMeteringSnapshot {
+                workload_class: "llm_inference".into(),
+                metering_schema: "llm_token_meter_v1".into(),
+                receipt_hash: "abc123".into(),
+                prompt_tokens: 10,
+                generated_tokens: 20,
+                decode_steps: 20,
+                kv_bytes_moved: 4096,
+                normalized_work_units: 30,
+                prompt_token_weight: 1,
+                generated_token_weight: 1,
+                decode_step_weight: 1,
+                kv_byte_weight: 0,
             }),
         };
 
