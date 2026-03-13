@@ -152,6 +152,21 @@ mod tests {
     }
 
     #[test]
+    fn fraud_verifier_rejects_zero_width_worker_binding_spoof_fail_closed() {
+        let verifier = FraudVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                "FRAUD:{\"task_id\":7,\"worker\":\"worke\u{200b}r-fraud\",\"proof_type\":\"fraud\"}"
+                    .as_bytes()
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("missing worker binding")
+        ));
+    }
+
+    #[test]
     fn fraud_verifier_rejects_unexpected_worker_binding_without_worker_context_fail_closed() {
         let verifier = FraudVerifier;
         let mut task = mock_task();
