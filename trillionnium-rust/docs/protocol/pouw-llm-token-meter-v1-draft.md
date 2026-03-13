@@ -353,15 +353,17 @@ The Rust scaffold now includes:
 - reveal-side validation on the non-verifiable/Fraud path, where a supplied `llm_token_meter_v1` JSON receipt is accepted only if it validates and matches the canonical `task_id` / `worker_id` / `result_hash` binding
 - reveal-side persistence of a metering snapshot onto task metadata (`receipt_hash`, counters, coefficient snapshot, `normalized_work_units`)
 - challenge/resolve-side reading of that persisted snapshot with fail-closed validation: malformed or internally inconsistent `normalized_work_units` snapshots are rejected before state transition
-- governance allowlist + schema validation for the four coefficient keys:
+- resolve-side governance adjudication gate: when `slash_worker = false`, an LLM-metered task must satisfy `normalized_work_units >= llm_meter_min_accept_work_units`; otherwise resolve is rejected fail-closed
+- governance allowlist + schema validation for the coefficient/adjudication keys:
   - `llm_meter_prompt_token_weight`
   - `llm_meter_generated_token_weight`
   - `llm_meter_decode_step_weight`
   - `llm_meter_kv_byte_weight`
+  - `llm_meter_min_accept_work_units`
 
 Still pending:
 
-- challenge/resolve settlement integration that changes slashing / payout outcomes based on `normalized_work_units`
+- settlement integration that changes bounty / slash accounting magnitudes based on `normalized_work_units`
 - TEE-side attested receipt generation
 
 ---

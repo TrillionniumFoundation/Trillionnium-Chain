@@ -93,6 +93,7 @@ const DEFAULT_LLM_METER_PROMPT_TOKEN_WEIGHT: u128 = 1;
 const DEFAULT_LLM_METER_GENERATED_TOKEN_WEIGHT: u128 = 1;
 const DEFAULT_LLM_METER_DECODE_STEP_WEIGHT: u128 = 1;
 const DEFAULT_LLM_METER_KV_BYTE_WEIGHT: u128 = 0;
+const DEFAULT_LLM_METER_MIN_ACCEPT_WORK_UNITS: u128 = 0;
 const DEFAULT_CHALLENGE_MIN_BOND: u128 = 10;
 const DEFAULT_CHALLENGE_MIN_BOND_BOUNTY_BPS: u128 = 500;
 const DEFAULT_CHALLENGE_MIN_BOND_WORKER_STAKE_BPS: u128 = 0;
@@ -268,6 +269,29 @@ fn validate_task_metering_snapshot(task: &TaskObject) -> Result<Option<TaskMeter
     }
 
     Ok(Some(snapshot.clone()))
+}
+
+fn enforce_llm_meter_resolve_acceptance_floor(
+    st: &StateStore,
+    metering_snapshot: Option<&TaskMeteringSnapshot>,
+    slash_worker: bool,
+) -> Result<(), PouwError> {
+    if slash_worker {
+        return Ok(());
+    }
+    let Some(snapshot) = metering_snapshot else {
+        return Ok(());
+    };
+    let min_accept_work_units = st
+        .gov_param_u128("llm_meter_min_accept_work_units")
+        .unwrap_or(DEFAULT_LLM_METER_MIN_ACCEPT_WORK_UNITS);
+    if snapshot.normalized_work_units < min_accept_work_units {
+        return Err(PouwError::State(format!(
+            "llm token meter normalized_work_units {} below governance minimum {}",
+            snapshot.normalized_work_units, min_accept_work_units
+        )));
+    }
+    Ok(())
 }
 
 fn validate_llm_token_meter_receipt_for_reveal(
@@ -1255,7 +1279,8 @@ pub fn apply_resolve_at_height(
         return Err(PouwError::InvalidTransition);
     }
     validate_challenge_accounting_invariants(&task)?;
-    let _ = validate_task_metering_snapshot(&task)?;
+    let metering_snapshot = validate_task_metering_snapshot(&task)?;
+    enforce_llm_meter_resolve_acceptance_floor(st, metering_snapshot.as_ref(), slash_worker)?;
     let resolve_authority = resolve_authority_account(st);
     // Authorization is bound to authenticated signer context; payload resolver
     // is retained only for backward-compatible event fields.
@@ -3809,6 +3834,104 @@ mod tests {
         assert_eq!(task_after.status, TaskStatus::Challenged);
         assert_eq!(task_after.challenge_bond, Some(10));
         assert_eq!(task_after.challenger.as_deref(), Some("challenger"));
+    }
+
+    #[test]
+    fn resolve_rejects_accepting_llm_meter_below_governance_min_work_units() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 1000);
+        st.set_gov_param_bootstrap_unchecked(
+            9_964,
+            "llm_meter_min_accept_work_units".into(),
+            "193".into(),
+        )
+        .unwrap();
+        let task_id = 78_910;
+        let r1 = apply_create_task(&mut st, task_id, "alice".into(), 10).unwrap();
+        let result_hash = [2u8; 32];
+        let reveal_salt = [3u8; 32];
+        let worker = "worker1".to_string();
+        let committed = compute_commitment(task_id, &result_hash, &reveal_salt, &worker);
+
+        let r2 = apply_accept_task(&mut st, r1, worker.clone()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, worker.clone(), committed).unwrap();
+        let proof = sample_llm_token_meter_receipt_json(task_id, &worker, result_hash);
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, Some(proof)).unwrap();
+        let r5 = apply_challenge(
+            &mut st,
+            r4,
+            "challenger".into(),
+            10,
+            "challenger".into(),
+        )
+        .unwrap();
+        set_resolve_authority(&mut st, "authority,authority2");
+
+        let err = apply_resolve(
+            &mut st,
+            r5.clone(),
+            false,
+            "authority".into(),
+            "authority".into(),
+        )
+        .unwrap_err();
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("below governance minimum 193")));
+
+        let task_after = st.get_task(r5.id).unwrap();
+        assert_eq!(task_after.status, TaskStatus::Challenged);
+        assert_eq!(task_after.challenge_bond, Some(10));
+    }
+
+    #[test]
+    fn resolve_allows_slashing_llm_meter_below_governance_min_work_units() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 1000);
+        st.set_gov_param_bootstrap_unchecked(
+            9_965,
+            "llm_meter_min_accept_work_units".into(),
+            "193".into(),
+        )
+        .unwrap();
+        let task_id = 78_911;
+        let r1 = apply_create_task(&mut st, task_id, "alice".into(), 10).unwrap();
+        let result_hash = [2u8; 32];
+        let reveal_salt = [3u8; 32];
+        let worker = "worker1".to_string();
+        let committed = compute_commitment(task_id, &result_hash, &reveal_salt, &worker);
+
+        let r2 = apply_accept_task(&mut st, r1, worker.clone()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, worker.clone(), committed).unwrap();
+        let proof = sample_llm_token_meter_receipt_json(task_id, &worker, result_hash);
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, Some(proof)).unwrap();
+        let r5 = apply_challenge(
+            &mut st,
+            r4,
+            "challenger".into(),
+            10,
+            "challenger".into(),
+        )
+        .unwrap();
+        set_resolve_authority(&mut st, "authority,authority2");
+        let staged = apply_resolve(
+            &mut st,
+            r5.clone(),
+            true,
+            "authority".into(),
+            "authority".into(),
+        )
+        .unwrap_err();
+        assert!(matches!(staged, PouwError::ResolveApprovalStaged));
+        let r6 = apply_resolve(
+            &mut st,
+            r5,
+            true,
+            "authority2".into(),
+            "authority2".into(),
+        )
+        .unwrap();
+
+        let task_after = st.get_task(r6.id).unwrap();
+        assert_eq!(task_after.status, TaskStatus::Slashed);
     }
 
     #[test]
