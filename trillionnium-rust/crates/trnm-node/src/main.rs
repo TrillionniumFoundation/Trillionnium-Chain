@@ -3726,6 +3726,51 @@ mod tests {
     }
 
     #[test]
+    fn consensus_bursty_review_bundles_keep_absolute_skipped_height_width_next_to_observed_coverage_rates() {
+        let review_bundles: &[&[&str]] = &[
+            &[
+                "hot_object_active_height_rate_ppm",
+                "hot_object_active_observed_height_rate_ppm",
+                "bft_commit_observed_height_rate_ppm",
+                "bft_skipped_height_total",
+                "bft_skipped_observed_height_rate_ppm",
+            ],
+            &[
+                "bft_round_change_active_height_rate_ppm",
+                "bft_round_change_active_observed_height_rate_ppm",
+                "bft_commit_observed_height_rate_ppm",
+                "bft_skipped_height_total",
+                "bft_skipped_observed_height_rate_ppm",
+            ],
+            &[
+                "bft_round_change_backoff_active_height_rate_ppm",
+                "bft_round_change_backoff_active_observed_height_rate_ppm",
+                "bft_commit_observed_height_rate_ppm",
+                "bft_skipped_height_total",
+                "bft_skipped_observed_height_rate_ppm",
+            ],
+            &[
+                "bft_leader_missed_active_height_rate_ppm",
+                "bft_leader_missed_active_observed_height_rate_ppm",
+                "bft_commit_observed_height_rate_ppm",
+                "bft_skipped_height_total",
+                "bft_skipped_observed_height_rate_ppm",
+            ],
+        ];
+
+        assert_eq!(review_bundles.len(), 4);
+        for bundle in review_bundles {
+            assert!(bundle[0].ends_with("_active_height_rate_ppm"));
+            assert!(bundle[1].ends_with("_active_observed_height_rate_ppm"));
+            assert_eq!(bundle[2], "bft_commit_observed_height_rate_ppm");
+            assert_eq!(bundle[3], "bft_skipped_height_total");
+            assert_eq!(bundle[4], "bft_skipped_observed_height_rate_ppm");
+            assert_ne!(bundle[0], bundle[1]);
+            assert_ne!(bundle[2], bundle[4]);
+        }
+    }
+
+    #[test]
     fn round_change_backoff_wall_share_metric_name_stays_ppm_based() {
         let field_name = "bft_round_change_backoff_wall_share_ppm";
         assert!(field_name.ends_with("_share_ppm"));
