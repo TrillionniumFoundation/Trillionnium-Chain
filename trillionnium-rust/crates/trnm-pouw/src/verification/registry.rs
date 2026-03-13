@@ -45,6 +45,16 @@ impl VerifierRegistry {
         config: VerificationBackendConfig,
         backends: Arc<ZkBackendRegistry>,
     ) -> Self {
+        #[cfg(feature = "real-zk-backend")]
+        let mut backends = backends;
+        #[cfg(not(feature = "real-zk-backend"))]
+        let backends = backends;
+
+        #[cfg(feature = "real-zk-backend")]
+        if let Some(registry) = Arc::get_mut(&mut backends) {
+            registry.register(Arc::new(crate::verification::real_zk_backend::RealZkBackend::default()));
+        }
+
         let mut registry = Self::new();
 
         // Fraud is intentionally kept as the platform's built-in semantic verifier.
