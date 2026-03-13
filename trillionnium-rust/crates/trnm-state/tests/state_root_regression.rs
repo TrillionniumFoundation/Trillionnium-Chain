@@ -255,6 +255,32 @@ fn applied_gov_param_string_field_boundaries_should_affect_state_root() {
 }
 
 #[test]
+fn insertion_order_of_applied_gov_params_keeps_state_root_deterministic() {
+    let mut state_a = StateStore::new();
+    let mut state_b = StateStore::new();
+
+    state_a
+        .set_gov_param(0, 7_001, "max_block_ms".into(), "250".into())
+        .expect("first applied governance param should succeed");
+    state_a
+        .set_gov_param(0, 7_002, "max_parallel_workers".into(), "16".into())
+        .expect("second applied governance param should succeed");
+
+    state_b
+        .set_gov_param(0, 7_002, "max_parallel_workers".into(), "16".into())
+        .expect("same applied governance params should succeed in reverse order");
+    state_b
+        .set_gov_param(0, 7_001, "max_block_ms".into(), "250".into())
+        .expect("reverse-order insertion should preserve canonical applied governance state");
+
+    assert_eq!(
+        state_a.state_root(),
+        state_b.state_root(),
+        "state_root should be deterministic for equivalent applied governance params and key-index mappings regardless of insertion order"
+    );
+}
+
+#[test]
 fn applied_gov_param_version_must_affect_state_root_even_when_key_and_value_match() {
     let mut state_a = StateStore::new();
     let mut state_b = StateStore::new();
