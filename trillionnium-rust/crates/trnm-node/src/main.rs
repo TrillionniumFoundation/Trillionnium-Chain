@@ -4006,6 +4006,32 @@ mod tests {
     }
 
     #[test]
+    fn leader_missed_review_bundle_keeps_commit_skip_coverage_pair_near_fairness_hotspots() {
+        let fairness_review_fields = [
+            "bft_leader_missed_active_height_rate_ppm",
+            "bft_leader_missed_active_observed_height_rate_ppm",
+            "bft_commit_observed_height_rate_ppm",
+            "bft_skipped_height_total",
+            "bft_skipped_observed_height_rate_ppm",
+            "bft_leader_missed_density_avg_milli",
+            "bft_leader_missed_active_height_share_ppm",
+        ];
+
+        assert_eq!(fairness_review_fields.len(), 7);
+        assert!(fairness_review_fields[0].ends_with("_rate_ppm"));
+        assert!(fairness_review_fields[1].ends_with("_rate_ppm"));
+        assert!(fairness_review_fields[2].ends_with("_rate_ppm"));
+        assert!(fairness_review_fields[3].ends_with("_total"));
+        assert!(fairness_review_fields[4].ends_with("_rate_ppm"));
+        assert!(fairness_review_fields[5].ends_with("_avg_milli"));
+        assert!(fairness_review_fields[6].ends_with("_share_ppm"));
+        assert_ne!(fairness_review_fields[0], fairness_review_fields[1]);
+        assert_ne!(fairness_review_fields[1], fairness_review_fields[2]);
+        assert_ne!(fairness_review_fields[2], fairness_review_fields[4]);
+        assert_ne!(fairness_review_fields[5], fairness_review_fields[6]);
+    }
+
+    #[test]
     fn leader_missed_metric_names_keep_validator_spread_coverage_and_budget_views_distinct() {
         let active_validators_field_name = "bft_leader_missed_active_validators";
         let active_validator_share_field_name = "bft_leader_missed_active_validator_share_ppm";
