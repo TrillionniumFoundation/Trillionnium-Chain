@@ -140,7 +140,7 @@ TRNM 当前已经具备：
    - 因此 block-loop closeout 应优先看 `bft_round_change_density_avg_milli`、`bft_round_change_backoff_density_avg_milli`，并结合 `bft_round_change_active_height_share_ppm` / `bft_round_change_backoff_active_height_share_ppm` 判断它们占平均 finality budget 的比例。
    - 对 sustained backoff burst，不要只看 wall-share 兼容口径：`bft_round_change_backoff_wall_share_ppm`（及兼容别名 `bft_round_change_backoff_share_ppm`）表示每个 committed height 摊到的总 backoff wall time，而不是 active-height budget pressure；判断严重度时应把它与 `bft_round_change_backoff_active_height_share_ppm`、`bft_round_change_backoff_active_heights` 放在一起读，避免把少数高度上集中的 backoff burst 误判成温和均摊现象。
    - 若存在 skipped / no-commit heights，还要把 committed-budget 视角的 `bft_round_change_active_height_rate_ppm` 与 coverage 视角的 `bft_round_change_active_observed_height_rate_ppm` 一起看，并同步核对 `bft_commit_observed_height_rate_ppm` / `bft_skipped_observed_height_rate_ppm`，避免 jitter 因只按 committed heights 摊薄，或因为 commit coverage 自身下降而被误判为“抖动变轻”；对 backoff 也应同步比较 `bft_round_change_backoff_active_height_rate_ppm` 与 `bft_round_change_backoff_active_observed_height_rate_ppm`，确认是 denominator shift 还是实际 burst 扩散。
-   - proposer fairness 也要把 validator 分布视角与 active-height 预算视角拆开看：`bft_leader_missed_active_validator_share_ppm` 反映 miss 是否已扩散到多数 proposer，`bft_leader_missed_active_observed_height_rate_ppm` 反映覆盖多少观察高度，而 `bft_leader_missed_active_height_share_ppm` 则衡量这些 bursts 对平均 finality budget 的压力； closeout 时还应把 `bft_leader_missed_active_heights` 放在旁边，避免只看 share/rate 却看不见 burst width。这几者不能互相替代。
+   - proposer fairness 也要把 validator 分布视角与 active-height 预算视角拆开看：`bft_leader_missed_active_validator_share_ppm` 反映 miss 是否已扩散到多数 proposer，`bft_leader_missed_active_observed_height_rate_ppm` 反映覆盖多少观察高度，而 `bft_leader_missed_active_height_share_ppm` 则衡量这些 bursts 对平均 finality budget 的压力； closeout 时还应把 `bft_leader_missed_active_heights`、`bft_commit_observed_height_rate_ppm`、`bft_skipped_height_total` 与 `bft_skipped_observed_height_rate_ppm` 放在旁边，避免只看 share/rate 却看不见 burst width，或把 proposer fairness hotspot 误读成只是 committed-height 分母变小导致的比例漂移。这几者不能互相替代。
    - proposer fairness 还要补上 hotspot 视角：把 `bft_leader_missed_top_share_ppm` 与上面的 spread / active-height 指标一起读。`top_share_ppm` 回答“是否由单个 proposer 主导”，`active_validator_share_ppm` 回答“是否已扩散到更多 proposer”，`active_height_share_ppm` 回答“这些 miss bursts 对平均 finality budget 压了多大面积”。三者缺一都会让 closeout 结论偏乐观：只看 top share 会漏掉广泛但稀薄的扩散，只看 spread 会漏掉单点 proposer hotspot 的严重度，只看 active-height budget pressure 会漏掉问题是集中在单个 proposer 还是已经开始系统性蔓延。
    - scheduler fairness stall 不应只看 `critical_wait_blocks_avg` 或全局 `critical_wait_density_ppm`：还要把 `critical_wait_active_heights`、`critical_wait_active_height_rate_ppm`、`critical_wait_active_observed_height_rate_ppm` 与 `critical_wait_density_avg_milli`、`critical_wait_peak_density_ppm`、`critical_wait_active_height_share_ppm` 一起读，避免把只发生在少数高度的 queueing burst 误判成“整体只是轻度等待”。
 
@@ -369,14 +369,14 @@ TRNM 当前不是“高 TPS 公链的仿制品”，而是：
    - 目的：先确认本轮是否因为 no-commit heights 变多，导致后面的 committed-height coverage 看起来被“改善”或“恶化”。
 
 2. **再看 burst 覆盖面**
-   - jitter：`bft_round_change_active_height_rate_ppm` vs `bft_round_change_active_observed_height_rate_ppm`
-   - backoff：`bft_round_change_backoff_active_height_rate_ppm` vs `bft_round_change_backoff_active_observed_height_rate_ppm`
-   - fairness：`bft_leader_missed_active_height_rate_ppm` vs `bft_leader_missed_active_observed_height_rate_ppm`
-   - stall：`critical_wait_active_height_rate_ppm` vs `critical_wait_active_observed_height_rate_ppm`
-   - hotspot：`hot_object_active_height_rate_ppm` vs `hot_object_active_observed_height_rate_ppm`
-   - rollback：`rollback_active_height_rate_ppm` vs `rollback_active_observed_height_rate_ppm`
-   - preexec reject：`preexec_reject_active_height_rate_ppm` vs `preexec_reject_active_observed_height_rate_ppm`
-   - 目的：先分清“只是在 committed heights 上看起来很集中”与“在所有 observed heights 上其实已经扩散”。
+   - jitter：`bft_round_change_active_height_rate_ppm` vs `bft_round_change_active_observed_height_rate_ppm`（旁边保留 `bft_round_change_active_heights`）
+   - backoff：`bft_round_change_backoff_active_height_rate_ppm` vs `bft_round_change_backoff_active_observed_height_rate_ppm`（旁边保留 `bft_round_change_backoff_active_heights`）
+   - fairness：`bft_leader_missed_active_height_rate_ppm` vs `bft_leader_missed_active_observed_height_rate_ppm`（旁边保留 `bft_leader_missed_active_heights`）
+   - stall：`critical_wait_active_height_rate_ppm` vs `critical_wait_active_observed_height_rate_ppm`（旁边保留 `critical_wait_active_heights`）
+   - hotspot：`hot_object_active_height_rate_ppm` vs `hot_object_active_observed_height_rate_ppm`（旁边保留 `hot_object_active_heights`）
+   - rollback：`rollback_active_height_rate_ppm` vs `rollback_active_observed_height_rate_ppm`（旁边保留 `rollback_active_heights`）
+   - preexec reject：`preexec_reject_active_height_rate_ppm` vs `preexec_reject_active_observed_height_rate_ppm`（旁边保留 `preexec_reject_active_heights`）
+   - 目的：先分清“只是在 committed heights 上看起来很集中”与“在所有 observed heights 上其实已经扩散”，同时保留 burst 的绝对高度宽度，避免只靠 rate pair 就把少量高度上的尖峰误判成广泛退化，或把更宽但更稀的回归误判成轻微波动。
 
 3. **最后看密度 / budget / wall-share 严重度**
    - jitter / backoff：`bft_round_change_density_avg_milli`、`bft_round_change_backoff_density_avg_milli`、`bft_round_change_active_height_share_ppm`、`bft_round_change_backoff_active_height_share_ppm`、`bft_round_change_backoff_wall_share_ppm`
