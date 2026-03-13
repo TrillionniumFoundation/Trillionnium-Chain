@@ -5,6 +5,7 @@ mod transfer;
 
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
+use trnm_oracle::{OracleValidationMetrics, OracleValidationObservation, OracleValidationReport};
 use trnm_types::{GovProposalStatus, TaskStatus};
 
 pub use relay::*;
@@ -81,6 +82,68 @@ pub struct GovParamQueryResponse {
     pub key: String,
     pub value: String,
     pub version: u64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct OracleValidateSnapshotResponse {
+    pub ok: bool,
+    pub now_ts_ms: u64,
+    pub observation: OracleValidationObservation,
+    pub metrics: OracleValidationMetrics,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub error: Option<String>,
+}
+
+impl OracleValidateSnapshotResponse {
+    pub fn classified_reject_total(&self) -> u32 {
+        self.metrics.classified_reject_total()
+    }
+
+    pub fn classified_outcome_total(&self) -> u32 {
+        self.metrics.classified_outcome_total()
+    }
+
+    pub fn classified_outcome_conserves_sample_count(&self) -> bool {
+        self.metrics.classified_outcome_conserves_sample_count()
+    }
+
+    pub fn observation_classified_reject_total(&self) -> u32 {
+        self.observation.classified_reject_total()
+    }
+
+    pub fn observation_classified_outcome_total(&self) -> u32 {
+        self.observation.classified_outcome_total()
+    }
+
+    pub fn observation_classified_outcome_conserves_sample_count(&self) -> bool {
+        self.observation
+            .classified_outcome_conserves_sample_count(self.metrics.sample_count)
+    }
+
+    pub fn observation_matches_metrics(&self) -> bool {
+        self.observation.stale_reject_total == self.metrics.oracle_stale_reject_total
+            && self.observation.quorum_reject_total == self.metrics.oracle_quorum_reject_total
+            && self.observation.drift_reject_total == self.metrics.oracle_drift_reject_total
+            && self.observation.accepted_total == self.metrics.accepted_total
+    }
+
+    pub fn bridge_contract_consistent(&self) -> bool {
+        self.observation_matches_metrics()
+            && self.classified_outcome_conserves_sample_count()
+            && self.observation_classified_outcome_conserves_sample_count()
+    }
+}
+
+impl From<OracleValidationReport> for OracleValidateSnapshotResponse {
+    fn from(report: OracleValidationReport) -> Self {
+        Self {
+            ok: report.ok,
+            now_ts_ms: report.now_ts_ms,
+            observation: report.observation,
+            metrics: report.metrics,
+            error: report.error,
+        }
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -376,6 +439,380 @@ mod tests {
     }
 
     #[test]
+    fn oracle_validate_snapshot_response_schema_smoke_stable() {
+        let out = OracleValidateSnapshotResponse {
+            ok: true,
+            now_ts_ms: 123,
+            observation: OracleValidationObservation {
+                stale_reject_total: 0,
+                quorum_reject_total: 0,
+                drift_reject_total: 0,
+                accepted_total: 1,
+            },
+            metrics: OracleValidationMetrics {
+                oracle_stale_reject_total: 0,
+                oracle_quorum_reject_total: 0,
+                oracle_drift_reject_total: 0,
+                oracle_source_cardinality: 2,
+                accepted_total: 1,
+                sample_count: 1,
+            },
+            error: None,
+        };
+        let v = serde_json::to_value(out).unwrap();
+        let obj = v.as_object().unwrap();
+        for k in ["ok", "now_ts_ms", "observation", "metrics"] {
+            assert!(obj.contains_key(k), "missing key: {}", k);
+        }
+        assert!(!obj.contains_key("error"));
+    }
+
+    #[test]
+    fn oracle_validate_snapshot_response_nested_metric_keys_remain_stable() {
+        let out = OracleValidateSnapshotResponse {
+            ok: false,
+            now_ts_ms: 456,
+            observation: OracleValidationObservation {
+                stale_reject_total: 1,
+                quorum_reject_total: 0,
+                drift_reject_total: 0,
+                accepted_total: 0,
+            },
+            metrics: OracleValidationMetrics {
+                oracle_stale_reject_total: 1,
+                oracle_quorum_reject_total: 0,
+                oracle_drift_reject_total: 0,
+                oracle_source_cardinality: 2,
+                accepted_total: 0,
+                sample_count: 1,
+            },
+            error: Some("stale".into()),
+        };
+
+        let v = serde_json::to_value(out).unwrap();
+        let observation = v["observation"].as_object().unwrap();
+        let metrics = v["metrics"].as_object().unwrap();
+
+        let mut observation_keys = observation.keys().map(String::as_str).collect::<Vec<_>>();
+        observation_keys.sort_unstable();
+        let mut metrics_keys = metrics.keys().map(String::as_str).collect::<Vec<_>>();
+        metrics_keys.sort_unstable();
+
+        assert_eq!(
+            observation_keys,
+            vec![
+                "accepted_total",
+                "drift_reject_total",
+                "quorum_reject_total",
+                "stale_reject_total",
+            ]
+        );
+        assert_eq!(
+            metrics_keys,
+            vec![
+                "accepted_total",
+                "oracle_drift_reject_total",
+                "oracle_quorum_reject_total",
+                "oracle_source_cardinality",
+                "oracle_stale_reject_total",
+                "sample_count",
+            ]
+        );
+    }
+
+    #[test]
+    fn oracle_validation_report_into_rpc_response_preserves_contract_shape() {
+        let report = OracleValidationReport {
+            ok: false,
+            now_ts_ms: 456,
+            observation: OracleValidationObservation {
+                stale_reject_total: 1,
+                quorum_reject_total: 0,
+                drift_reject_total: 0,
+                accepted_total: 0,
+            },
+            metrics: OracleValidationMetrics {
+                oracle_stale_reject_total: 1,
+                oracle_quorum_reject_total: 0,
+                oracle_drift_reject_total: 0,
+                oracle_source_cardinality: 2,
+                accepted_total: 0,
+                sample_count: 1,
+            },
+            error: Some("stale".into()),
+        };
+
+        let out: OracleValidateSnapshotResponse = report.clone().into();
+        assert_eq!(out.ok, report.ok);
+        assert_eq!(out.now_ts_ms, report.now_ts_ms);
+        assert_eq!(out.observation, report.observation);
+        assert_eq!(out.metrics, report.metrics);
+        assert_eq!(out.error, report.error);
+
+        let v = serde_json::to_value(out).unwrap();
+        assert_eq!(v["error"], "stale");
+        assert_eq!(v["metrics"]["sample_count"], 1);
+        assert_eq!(v["metrics"]["oracle_stale_reject_total"], 1);
+    }
+
+    #[test]
+    fn oracle_validation_report_into_rpc_response_omits_success_error_field() {
+        let report = OracleValidationReport {
+            ok: true,
+            now_ts_ms: 457,
+            observation: OracleValidationObservation {
+                stale_reject_total: 0,
+                quorum_reject_total: 0,
+                drift_reject_total: 0,
+                accepted_total: 1,
+            },
+            metrics: OracleValidationMetrics {
+                oracle_stale_reject_total: 0,
+                oracle_quorum_reject_total: 0,
+                oracle_drift_reject_total: 0,
+                oracle_source_cardinality: 2,
+                accepted_total: 1,
+                sample_count: 1,
+            },
+            error: None,
+        };
+
+        let out: OracleValidateSnapshotResponse = report.clone().into();
+        assert_eq!(out.ok, report.ok);
+        assert_eq!(out.now_ts_ms, report.now_ts_ms);
+        assert_eq!(out.observation, report.observation);
+        assert_eq!(out.metrics, report.metrics);
+        assert_eq!(out.error, None);
+
+        let v = serde_json::to_value(out).unwrap();
+        let obj = v.as_object().unwrap();
+        assert!(!obj.contains_key("error"));
+        assert_eq!(v["observation"]["accepted_total"], 1);
+        assert_eq!(v["metrics"]["accepted_total"], 1);
+    }
+
+    #[test]
+    fn oracle_validation_report_into_rpc_response_preserves_quorum_and_drift_labels() {
+        let quorum_report = OracleValidationReport {
+            ok: false,
+            now_ts_ms: 788,
+            observation: OracleValidationObservation {
+                stale_reject_total: 0,
+                quorum_reject_total: 1,
+                drift_reject_total: 0,
+                accepted_total: 0,
+            },
+            metrics: OracleValidationMetrics {
+                oracle_stale_reject_total: 0,
+                oracle_quorum_reject_total: 1,
+                oracle_drift_reject_total: 0,
+                oracle_source_cardinality: 1,
+                accepted_total: 0,
+                sample_count: 1,
+            },
+            error: Some("quorum".into()),
+        };
+        let drift_report = OracleValidationReport {
+            ok: false,
+            now_ts_ms: 789,
+            observation: OracleValidationObservation {
+                stale_reject_total: 0,
+                quorum_reject_total: 0,
+                drift_reject_total: 1,
+                accepted_total: 0,
+            },
+            metrics: OracleValidationMetrics {
+                oracle_stale_reject_total: 0,
+                oracle_quorum_reject_total: 0,
+                oracle_drift_reject_total: 1,
+                oracle_source_cardinality: 2,
+                accepted_total: 0,
+                sample_count: 1,
+            },
+            error: Some("drift".into()),
+        };
+
+        let quorum_out: OracleValidateSnapshotResponse = quorum_report.into();
+        let drift_out: OracleValidateSnapshotResponse = drift_report.into();
+
+        assert_eq!(quorum_out.classified_reject_total(), 1);
+        assert_eq!(quorum_out.classified_outcome_total(), 1);
+        assert!(quorum_out.classified_outcome_conserves_sample_count());
+        let quorum_json = serde_json::to_value(quorum_out).unwrap();
+        assert_eq!(quorum_json["error"], "quorum");
+        assert_eq!(quorum_json["metrics"]["oracle_quorum_reject_total"], 1);
+        assert_eq!(quorum_json["metrics"]["oracle_source_cardinality"], 1);
+
+        assert_eq!(drift_out.classified_reject_total(), 1);
+        assert_eq!(drift_out.classified_outcome_total(), 1);
+        assert!(drift_out.classified_outcome_conserves_sample_count());
+        let drift_json = serde_json::to_value(drift_out).unwrap();
+        assert_eq!(drift_json["error"], "drift");
+        assert_eq!(drift_json["metrics"]["oracle_drift_reject_total"], 1);
+        assert_eq!(drift_json["metrics"]["oracle_source_cardinality"], 2);
+    }
+
+    #[test]
+    fn oracle_validation_report_into_rpc_response_preserves_rate_error_label() {
+        let report = OracleValidationReport {
+            ok: false,
+            now_ts_ms: 789,
+            observation: OracleValidationObservation {
+                stale_reject_total: 0,
+                quorum_reject_total: 0,
+                drift_reject_total: 0,
+                accepted_total: 0,
+            },
+            metrics: OracleValidationMetrics {
+                oracle_stale_reject_total: 0,
+                oracle_quorum_reject_total: 0,
+                oracle_drift_reject_total: 0,
+                oracle_source_cardinality: 2,
+                accepted_total: 0,
+                sample_count: 1,
+            },
+            error: Some("rate".into()),
+        };
+
+        let out: OracleValidateSnapshotResponse = report.into();
+        assert_eq!(out.classified_reject_total(), 0);
+        assert_eq!(out.classified_outcome_total(), 0);
+        assert!(!out.classified_outcome_conserves_sample_count());
+        let v = serde_json::to_value(out).unwrap();
+        assert_eq!(v["error"], "rate");
+        assert_eq!(v["metrics"]["sample_count"], 1);
+        assert_eq!(v["metrics"]["oracle_source_cardinality"], 2);
+    }
+
+    #[test]
+    fn oracle_validation_report_into_rpc_response_preserves_unmapped_error_string() {
+        let report = OracleValidationReport {
+            ok: false,
+            now_ts_ms: 790,
+            observation: OracleValidationObservation {
+                stale_reject_total: 0,
+                quorum_reject_total: 0,
+                drift_reject_total: 0,
+                accepted_total: 0,
+            },
+            metrics: OracleValidationMetrics {
+                oracle_stale_reject_total: 0,
+                oracle_quorum_reject_total: 0,
+                oracle_drift_reject_total: 0,
+                oracle_source_cardinality: 2,
+                accepted_total: 0,
+                sample_count: 1,
+            },
+            error: Some("snapshot hash mismatch: expected=abc, actual=def".into()),
+        };
+
+        let out: OracleValidateSnapshotResponse = report.into();
+        assert_eq!(out.classified_reject_total(), 0);
+        assert_eq!(out.classified_outcome_total(), 0);
+        assert!(!out.classified_outcome_conserves_sample_count());
+        let v = serde_json::to_value(out).unwrap();
+        assert_eq!(
+            v["error"],
+            "snapshot hash mismatch: expected=abc, actual=def"
+        );
+        assert_eq!(v["metrics"]["sample_count"], 1);
+        assert_eq!(v["metrics"]["oracle_source_cardinality"], 2);
+    }
+
+    #[test]
+    fn oracle_validation_report_into_rpc_response_keeps_single_snapshot_cardinality_on_unclassified_error(
+    ) {
+        let report = OracleValidationReport {
+            ok: false,
+            now_ts_ms: 791,
+            observation: OracleValidationObservation {
+                stale_reject_total: 0,
+                quorum_reject_total: 0,
+                drift_reject_total: 0,
+                accepted_total: 0,
+            },
+            metrics: OracleValidationMetrics {
+                oracle_stale_reject_total: 0,
+                oracle_quorum_reject_total: 0,
+                oracle_drift_reject_total: 0,
+                oracle_source_cardinality: 3,
+                accepted_total: 0,
+                sample_count: 1,
+            },
+            error: Some("invalid policy: max_deviation_bps must be <= 10000".into()),
+        };
+
+        let out: OracleValidateSnapshotResponse = report.into();
+        let v = serde_json::to_value(out).unwrap();
+        assert_eq!(
+            v["error"],
+            "invalid policy: max_deviation_bps must be <= 10000"
+        );
+        assert_eq!(v["metrics"]["accepted_total"], 0);
+        assert_eq!(v["metrics"]["oracle_source_cardinality"], 3);
+        assert_eq!(v["metrics"]["sample_count"], 1);
+    }
+
+    #[test]
+    fn oracle_validation_report_into_rpc_response_preserves_classified_sample_count_invariant() {
+        let ok_report = OracleValidationReport {
+            ok: true,
+            now_ts_ms: 123,
+            observation: OracleValidationObservation {
+                stale_reject_total: 0,
+                quorum_reject_total: 0,
+                drift_reject_total: 0,
+                accepted_total: 1,
+            },
+            metrics: OracleValidationMetrics {
+                oracle_stale_reject_total: 0,
+                oracle_quorum_reject_total: 0,
+                oracle_drift_reject_total: 0,
+                oracle_source_cardinality: 2,
+                accepted_total: 1,
+                sample_count: 1,
+            },
+            error: None,
+        };
+        let stale_report = OracleValidationReport {
+            ok: false,
+            now_ts_ms: 124,
+            observation: OracleValidationObservation {
+                stale_reject_total: 1,
+                quorum_reject_total: 0,
+                drift_reject_total: 0,
+                accepted_total: 0,
+            },
+            metrics: OracleValidationMetrics {
+                oracle_stale_reject_total: 1,
+                oracle_quorum_reject_total: 0,
+                oracle_drift_reject_total: 0,
+                oracle_source_cardinality: 2,
+                accepted_total: 0,
+                sample_count: 1,
+            },
+            error: Some("stale".into()),
+        };
+
+        let ok_out: OracleValidateSnapshotResponse = ok_report.into();
+        let stale_out: OracleValidateSnapshotResponse = stale_report.into();
+
+        assert_eq!(ok_out.classified_reject_total(), 0);
+        assert_eq!(ok_out.observation_classified_reject_total(), 0);
+        assert_eq!(ok_out.classified_outcome_total(), 1);
+        assert_eq!(ok_out.observation_classified_outcome_total(), 1);
+        assert!(ok_out.classified_outcome_conserves_sample_count());
+        assert!(ok_out.observation_classified_outcome_conserves_sample_count());
+
+        assert_eq!(stale_out.classified_reject_total(), 1);
+        assert_eq!(stale_out.observation_classified_reject_total(), 1);
+        assert_eq!(stale_out.classified_outcome_total(), 1);
+        assert_eq!(stale_out.observation_classified_outcome_total(), 1);
+        assert!(stale_out.classified_outcome_conserves_sample_count());
+        assert!(stale_out.observation_classified_outcome_conserves_sample_count());
+    }
+
+    #[test]
     fn rpc_schema_smoke_event_fields_stable() {
         let evt = EventQueryResponse {
             event_type: "commit".into(),
@@ -477,5 +914,253 @@ mod tests {
             query_account_state(&accounts, &long).unwrap_err().code(),
             "INVALID_ADDRESS"
         );
+    }
+
+    #[test]
+    fn oracle_validation_response_preserves_canonical_source_cardinality_value() {
+        let report = OracleValidationReport {
+            ok: false,
+            now_ts_ms: 791,
+            observation: OracleValidationObservation {
+                stale_reject_total: 0,
+                quorum_reject_total: 1,
+                drift_reject_total: 0,
+                accepted_total: 0,
+            },
+            metrics: OracleValidationMetrics {
+                oracle_stale_reject_total: 0,
+                oracle_quorum_reject_total: 1,
+                oracle_drift_reject_total: 0,
+                oracle_source_cardinality: 2,
+                accepted_total: 0,
+                sample_count: 1,
+            },
+            error: Some("quorum".into()),
+        };
+
+        let out: OracleValidateSnapshotResponse = report.into();
+        assert_eq!(out.metrics.oracle_source_cardinality, 2);
+        let v = serde_json::to_value(out).unwrap();
+        assert_eq!(v["metrics"]["oracle_source_cardinality"], 2);
+    }
+
+    #[test]
+    fn oracle_validation_response_observation_helpers_keep_unclassified_errors_out_of_classified_totals(
+    ) {
+        let report = OracleValidationReport {
+            ok: false,
+            now_ts_ms: 792,
+            observation: OracleValidationObservation {
+                stale_reject_total: 0,
+                quorum_reject_total: 0,
+                drift_reject_total: 0,
+                accepted_total: 0,
+            },
+            metrics: OracleValidationMetrics {
+                oracle_stale_reject_total: 0,
+                oracle_quorum_reject_total: 0,
+                oracle_drift_reject_total: 0,
+                oracle_source_cardinality: 3,
+                accepted_total: 0,
+                sample_count: 1,
+            },
+            error: Some("rate".into()),
+        };
+
+        let out: OracleValidateSnapshotResponse = report.into();
+        assert_eq!(out.classified_reject_total(), 0);
+        assert_eq!(out.observation_classified_reject_total(), 0);
+        assert_eq!(out.classified_outcome_total(), 0);
+        assert_eq!(out.observation_classified_outcome_total(), 0);
+        assert!(!out.classified_outcome_conserves_sample_count());
+        assert!(!out.observation_classified_outcome_conserves_sample_count());
+    }
+
+    #[test]
+    fn oracle_validation_response_bridge_contract_consistent_for_classified_outcomes() {
+        let reports = [
+            OracleValidationReport {
+                ok: true,
+                now_ts_ms: 790,
+                observation: OracleValidationObservation {
+                    stale_reject_total: 0,
+                    quorum_reject_total: 0,
+                    drift_reject_total: 0,
+                    accepted_total: 1,
+                },
+                metrics: OracleValidationMetrics {
+                    oracle_stale_reject_total: 0,
+                    oracle_quorum_reject_total: 0,
+                    oracle_drift_reject_total: 0,
+                    oracle_source_cardinality: 2,
+                    accepted_total: 1,
+                    sample_count: 1,
+                },
+                error: None,
+            },
+            OracleValidationReport {
+                ok: false,
+                now_ts_ms: 791,
+                observation: OracleValidationObservation {
+                    stale_reject_total: 1,
+                    quorum_reject_total: 0,
+                    drift_reject_total: 0,
+                    accepted_total: 0,
+                },
+                metrics: OracleValidationMetrics {
+                    oracle_stale_reject_total: 1,
+                    oracle_quorum_reject_total: 0,
+                    oracle_drift_reject_total: 0,
+                    oracle_source_cardinality: 2,
+                    accepted_total: 0,
+                    sample_count: 1,
+                },
+                error: Some("stale".into()),
+            },
+            OracleValidationReport {
+                ok: false,
+                now_ts_ms: 792,
+                observation: OracleValidationObservation {
+                    stale_reject_total: 0,
+                    quorum_reject_total: 1,
+                    drift_reject_total: 0,
+                    accepted_total: 0,
+                },
+                metrics: OracleValidationMetrics {
+                    oracle_stale_reject_total: 0,
+                    oracle_quorum_reject_total: 1,
+                    oracle_drift_reject_total: 0,
+                    oracle_source_cardinality: 1,
+                    accepted_total: 0,
+                    sample_count: 1,
+                },
+                error: Some("quorum".into()),
+            },
+            OracleValidationReport {
+                ok: false,
+                now_ts_ms: 793,
+                observation: OracleValidationObservation {
+                    stale_reject_total: 0,
+                    quorum_reject_total: 0,
+                    drift_reject_total: 1,
+                    accepted_total: 0,
+                },
+                metrics: OracleValidationMetrics {
+                    oracle_stale_reject_total: 0,
+                    oracle_quorum_reject_total: 0,
+                    oracle_drift_reject_total: 1,
+                    oracle_source_cardinality: 2,
+                    accepted_total: 0,
+                    sample_count: 1,
+                },
+                error: Some("drift".into()),
+            },
+        ];
+
+        for report in reports {
+            let out: OracleValidateSnapshotResponse = report.into();
+            assert!(out.observation_matches_metrics());
+            assert!(out.bridge_contract_consistent());
+        }
+    }
+
+    #[test]
+    fn oracle_validation_response_bridge_contract_consistent_rejects_counter_mismatch() {
+        let report = OracleValidationReport {
+            ok: false,
+            now_ts_ms: 794,
+            observation: OracleValidationObservation {
+                stale_reject_total: 1,
+                quorum_reject_total: 0,
+                drift_reject_total: 0,
+                accepted_total: 0,
+            },
+            metrics: OracleValidationMetrics {
+                oracle_stale_reject_total: 0,
+                oracle_quorum_reject_total: 1,
+                oracle_drift_reject_total: 0,
+                oracle_source_cardinality: 2,
+                accepted_total: 0,
+                sample_count: 1,
+            },
+            error: Some("stale".into()),
+        };
+
+        let out: OracleValidateSnapshotResponse = report.into();
+
+        assert!(!out.observation_matches_metrics());
+        assert_eq!(out.classified_outcome_total(), 1);
+        assert_eq!(out.observation_classified_outcome_total(), 1);
+        assert!(out.classified_outcome_conserves_sample_count());
+        assert!(out.observation_classified_outcome_conserves_sample_count());
+        assert!(!out.bridge_contract_consistent());
+    }
+
+    #[test]
+    fn oracle_validation_response_bridge_contract_consistent_rejects_accepted_total_mismatch() {
+        let report = OracleValidationReport {
+            ok: true,
+            now_ts_ms: 795,
+            observation: OracleValidationObservation {
+                stale_reject_total: 0,
+                quorum_reject_total: 0,
+                drift_reject_total: 0,
+                accepted_total: 1,
+            },
+            metrics: OracleValidationMetrics {
+                oracle_stale_reject_total: 0,
+                oracle_quorum_reject_total: 0,
+                oracle_drift_reject_total: 0,
+                oracle_source_cardinality: 3,
+                accepted_total: 0,
+                sample_count: 0,
+            },
+            error: None,
+        };
+
+        let out: OracleValidateSnapshotResponse = report.into();
+
+        assert!(!out.observation_matches_metrics());
+        assert_eq!(out.classified_outcome_total(), 0);
+        assert_eq!(out.observation_classified_outcome_total(), 1);
+        assert!(out.classified_outcome_conserves_sample_count());
+        assert!(!out.observation_classified_outcome_conserves_sample_count());
+        assert!(!out.bridge_contract_consistent());
+    }
+
+    #[test]
+    fn oracle_validate_snapshot_response_deserializes_canonical_bridge_payload_without_error_field()
+    {
+        let payload = json!({
+            "ok": true,
+            "now_ts_ms": 1_710_000_000_123u64,
+            "observation": {
+                "stale_reject_total": 0,
+                "quorum_reject_total": 0,
+                "drift_reject_total": 0,
+                "accepted_total": 1
+            },
+            "metrics": {
+                "oracle_stale_reject_total": 0,
+                "oracle_quorum_reject_total": 0,
+                "oracle_drift_reject_total": 0,
+                "oracle_source_cardinality": 3,
+                "accepted_total": 1,
+                "sample_count": 1
+            }
+        });
+
+        let out: OracleValidateSnapshotResponse = serde_json::from_value(payload).unwrap();
+
+        assert!(out.ok);
+        assert_eq!(out.now_ts_ms, 1_710_000_000_123u64);
+        assert_eq!(out.error, None);
+        assert_eq!(out.observation.accepted_total, 1);
+        assert_eq!(out.metrics.oracle_source_cardinality, 3);
+        assert_eq!(out.metrics.sample_count, 1);
+        assert_eq!(out.classified_reject_total(), 0);
+        assert_eq!(out.observation_classified_reject_total(), 0);
+        assert!(out.classified_outcome_conserves_sample_count());
+        assert!(out.observation_classified_outcome_conserves_sample_count());
     }
 }
