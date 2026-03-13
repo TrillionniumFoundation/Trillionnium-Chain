@@ -62,6 +62,43 @@ impl ZkVerifier {
             .into());
         }
 
+        match backend_token_family_hint(raw) {
+            Some(VerificationBackendFamily::Tee) => {
+                return Err(BackendExecutionError::InvalidProof {
+                    backend: "zk:payload".to_string(),
+                    reason: format!(
+                        "invalid zk payload: backend '{}' declares tee family and does not match zk router semantics",
+                        raw
+                    ),
+                }
+                .into())
+            }
+            Some(VerificationBackendFamily::Zk)
+                if backend_token_zk_system_hints(raw).is_empty() =>
+            {
+                return Err(BackendExecutionError::MalformedProof {
+                    backend: "zk:payload".to_string(),
+                    reason: format!(
+                        "invalid zk payload: backend '{}' must not be a family-only zk router token without a canonical zk_system hint",
+                        raw
+                    ),
+                }
+                .into())
+            }
+            _ => {}
+        }
+
+        if backend_token_zk_system_hints(raw).len() > 1 {
+            return Err(BackendExecutionError::InvalidProof {
+                backend: "zk:payload".to_string(),
+                reason: format!(
+                    "invalid zk payload: backend '{}' carries multiple zk_system hints and does not match fail-closed zk router semantics",
+                    raw
+                ),
+            }
+            .into());
+        }
+
         Ok(())
     }
 
@@ -1069,7 +1106,7 @@ mod tests {
             VerificationResult::Invalid(msg)
                 if msg.contains("backend 'tee-groth16-demo'")
                     && msg.contains("declares tee family")
-                    && msg.contains("does not match zk vk_ref")
+                    && msg.contains("zk router semantics")
         ));
     }
 
@@ -1091,7 +1128,7 @@ mod tests {
             VerificationResult::Invalid(msg)
                 if msg.contains("backend 'tee'")
                     && msg.contains("declares tee family")
-                    && msg.contains("does not match zk vk_ref")
+                    && msg.contains("zk router semantics")
         ));
     }
 
@@ -1113,7 +1150,7 @@ mod tests {
             VerificationResult::Invalid(msg)
                 if msg.contains("backend 'TEE'")
                     && msg.contains("declares tee family")
-                    && msg.contains("does not match zk vk_ref")
+                    && msg.contains("zk router semantics")
         ));
     }
 
@@ -1171,6 +1208,75 @@ mod tests {
                 if msg.contains("malformed:")
                     && msg.contains("backend 'ZK'")
                     && msg.contains("family-only zk router token")
+        ));
+    }
+
+    #[test]
+    fn zk_verifier_rejects_selected_tee_family_backend_even_without_json_payload() {
+        let mut backends = ZkBackendRegistry::new();
+        backends.register(Arc::new(MockSystemSuccessBackend {
+            backend_id: "tee-groth16-demo",
+            expected_system: "groth16",
+        }));
+
+        let mut config = router_config();
+        config.zk_backend = ZkBackendKind::Custom("tee-groth16-demo".into());
+        config.zk_features.zk_payload_v0_envelope = false;
+        let verifier = ZkVerifier::from_config(&config, Arc::new(backends));
+        let task = mock_task();
+        let legacy_payload = b"ZK:task_id=99;worker=worker-zk;result_hash=1111111111111111111111111111111111111111111111111111111111111111;proof_type=zk;receipt=legacy";
+
+        assert!(matches!(
+            verifier.verify_proof(&task, legacy_payload),
+            VerificationResult::Invalid(msg)
+                if msg.contains("backend 'tee-groth16-demo'")
+                    && msg.contains("declares tee family")
+                    && msg.contains("zk router semantics")
+        ));
+    }
+
+    #[test]
+    fn zk_verifier_rejects_family_only_selected_backend_even_without_json_payload() {
+        let mut backends = ZkBackendRegistry::new();
+        backends.register(Arc::new(MockSuccessBackend));
+
+        let mut config = router_config();
+        config.zk_backend = ZkBackendKind::Custom("zk-demo".into());
+        config.zk_features.zk_payload_v0_envelope = false;
+        let verifier = ZkVerifier::from_config(&config, Arc::new(backends));
+        let task = mock_task();
+        let legacy_payload = b"ZK:task_id=99;worker=worker-zk;result_hash=1111111111111111111111111111111111111111111111111111111111111111;proof_type=zk;receipt=legacy";
+
+        assert!(matches!(
+            verifier.verify_proof(&task, legacy_payload),
+            VerificationResult::Invalid(msg)
+                if msg.contains("malformed:")
+                    && msg.contains("backend 'zk-demo'")
+                    && msg.contains("family-only zk router token")
+        ));
+    }
+
+    #[test]
+    fn zk_verifier_rejects_multi_hint_selected_backend_even_without_json_payload() {
+        let mut backends = ZkBackendRegistry::new();
+        backends.register(Arc::new(MockSystemSuccessBackend {
+            backend_id: "groth16 plonk demo",
+            expected_system: "groth16",
+        }));
+
+        let mut config = router_config();
+        config.zk_backend = ZkBackendKind::Custom("groth16-plonk-demo".into());
+        config.zk_features.zk_payload_v0_envelope = false;
+        let verifier = ZkVerifier::from_config(&config, Arc::new(backends));
+        let task = mock_task();
+        let legacy_payload = b"ZK:task_id=99;worker=worker-zk;result_hash=1111111111111111111111111111111111111111111111111111111111111111;proof_type=zk;receipt=legacy";
+
+        assert!(matches!(
+            verifier.verify_proof(&task, legacy_payload),
+            VerificationResult::Invalid(msg)
+                if msg.contains("backend 'groth16-plonk-demo'")
+                    && msg.contains("multiple zk_system hints")
+                    && msg.contains("fail-closed zk router semantics")
         ));
     }
 
