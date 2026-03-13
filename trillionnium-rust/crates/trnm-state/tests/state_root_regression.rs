@@ -921,6 +921,76 @@ fn treasury_balance_address_boundaries_should_affect_state_root() {
 }
 
 #[test]
+fn insertion_order_of_balances_pending_and_monetary_snapshots_keeps_state_root_deterministic() {
+    let mut state_a = StateStore::new();
+    let mut state_b = StateStore::new();
+
+    state_a.set_balance("treasury.challenge_forfeits", 11);
+    state_a.set_balance("treasury.worker_slashes", 7);
+    state_a.restore_pending_gov_update(
+        "challenge_min_bond",
+        Some(PendingGovParamUpdate {
+            key_id: 301,
+            key: "challenge_min_bond".into(),
+            value: "120".into(),
+            activate_at_height: 250,
+        }),
+    );
+    state_a.restore_pending_resolve_approval(
+        4_200,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "authority.alpha".into(),
+            authority_set: "authority.alpha,authority.beta".into(),
+            task_version: 3,
+        }),
+    );
+    state_a.restore_monetary_state(MonetaryState {
+        last_tick_height: 90,
+        tick_count: 4,
+        total_minted: 21,
+        total_burned: 5,
+        net_issuance: 16,
+    });
+
+    state_b.restore_monetary_state(MonetaryState {
+        last_tick_height: 90,
+        tick_count: 4,
+        total_minted: 21,
+        total_burned: 5,
+        net_issuance: 16,
+    });
+    state_b.restore_pending_resolve_approval(
+        4_200,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "authority.alpha".into(),
+            authority_set: "authority.alpha,authority.beta".into(),
+            task_version: 3,
+        }),
+    );
+    state_b.restore_pending_gov_update(
+        "challenge_min_bond",
+        Some(PendingGovParamUpdate {
+            key_id: 301,
+            key: "challenge_min_bond".into(),
+            value: "120".into(),
+            activate_at_height: 250,
+        }),
+    );
+    state_b.set_balance("treasury.worker_slashes", 7);
+    state_b.set_balance("treasury.challenge_forfeits", 11);
+
+    assert_eq!(
+        state_a.state_root(),
+        state_b.state_root(),
+        "state_root should be deterministic for equivalent pending/treasury/monetary state regardless of mutation order"
+    );
+}
+
+#[test]
 fn treasury_balances_and_monetary_counters_should_affect_state_root_even_when_net_issuance_matches() {
     let mut st1 = StateStore::new();
     let mut st2 = StateStore::new();
