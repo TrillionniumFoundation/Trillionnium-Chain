@@ -623,6 +623,35 @@ mod tests {
     }
 
     #[test]
+    fn fraud_verifier_rejects_fullwidth_underscore_worker_identifier_spoof_fail_closed() {
+        let verifier = FraudVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"FRAUD:{\"task_id\":7,\"worker\xef\xbc\xbf\":\"worker-fraud\",\"proof_type\":\"fraud\"}"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("missing worker binding")
+        ));
+    }
+
+    #[test]
+    fn fraud_verifier_rejects_fullwidth_underscore_result_hash_identifier_spoof_fail_closed() {
+        let verifier = FraudVerifier;
+        let mut task = mock_task();
+        task.result_hash = Some([9u8; 32]);
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"FRAUD:{\"task_id\":7,\"worker\":\"worker-fraud\",\"proof_type\":\"fraud\",\"result\xef\xbc\xbfhash\":\"0909090909090909090909090909090909090909090909090909090909090909\"}"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("missing result_hash binding")
+        ));
+    }
+
+    #[test]
     fn fraud_verifier_rejects_fullwidth_equals_then_ascii_proof_type_binding_fail_closed() {
         let verifier = FraudVerifier;
         let task = mock_task();
