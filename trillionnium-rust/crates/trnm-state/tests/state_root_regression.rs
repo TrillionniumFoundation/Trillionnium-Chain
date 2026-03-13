@@ -3210,6 +3210,56 @@ fn restore_pending_gov_update_key_mismatch_fails_closed_without_aliasing_foreign
 }
 
 #[test]
+fn insertion_order_of_pending_gov_updates_keeps_state_root_deterministic() {
+    let mut state_a = StateStore::new();
+    let mut state_b = StateStore::new();
+
+    state_a.restore_pending_gov_update(
+        "challenge_min_bond",
+        Some(PendingGovParamUpdate {
+            key_id: 7_201,
+            key: "challenge_min_bond".to_string(),
+            value: "6000".to_string(),
+            activate_at_height: 1_020,
+        }),
+    );
+    state_a.restore_pending_gov_update(
+        "min_worker_stake",
+        Some(PendingGovParamUpdate {
+            key_id: 7_202,
+            key: "min_worker_stake".to_string(),
+            value: "9000".to_string(),
+            activate_at_height: 1_040,
+        }),
+    );
+
+    state_b.restore_pending_gov_update(
+        "min_worker_stake",
+        Some(PendingGovParamUpdate {
+            key_id: 7_202,
+            key: "min_worker_stake".to_string(),
+            value: "9000".to_string(),
+            activate_at_height: 1_040,
+        }),
+    );
+    state_b.restore_pending_gov_update(
+        "challenge_min_bond",
+        Some(PendingGovParamUpdate {
+            key_id: 7_201,
+            key: "challenge_min_bond".to_string(),
+            value: "6000".to_string(),
+            activate_at_height: 1_020,
+        }),
+    );
+
+    assert_eq!(
+        state_a.state_root(),
+        state_b.state_root(),
+        "state_root should be deterministic for equivalent pending governance queues regardless of restore/insertion order"
+    );
+}
+
+#[test]
 fn pending_gov_update_key_id_changes_must_affect_state_root() {
     let mut state_a = StateStore::new();
     let mut state_b = StateStore::new();
