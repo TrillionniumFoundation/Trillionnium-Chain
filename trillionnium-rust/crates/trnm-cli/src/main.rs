@@ -351,13 +351,36 @@ fn scalar_summary(value: Option<&serde_json::Value>) -> Option<String> {
     }
 }
 
+fn scalar_summary_u128(value: Option<&serde_json::Value>) -> Option<u128> {
+    let value = value?;
+    match value {
+        serde_json::Value::Number(n) => n.as_u64().map(|v| v as u128),
+        serde_json::Value::String(s) => s.parse::<u128>().ok(),
+        _ => None,
+    }
+}
+
+fn ceil_mul_div_u128(value: u128, numerator: u128, denominator: u128) -> Option<u128> {
+    if denominator == 0 {
+        return None;
+    }
+    if value == 0 || numerator == 0 {
+        return Some(0);
+    }
+    let product = value.checked_mul(numerator)?;
+    let adjusted = product.checked_add(denominator.checked_sub(1)?)?;
+    Some(adjusted / denominator)
+}
+
 fn push_metering_summary_lines(
     lines: &mut Vec<String>,
     indent: &str,
     metering: &serde_json::Value,
+    event: Option<&serde_json::Value>,
 ) {
-    let normalized_work_units =
+    let normalized_work_units_str =
         scalar_summary(metering.get("normalized_work_units")).unwrap_or_else(|| "-".into());
+    let normalized_work_units = scalar_summary_u128(metering.get("normalized_work_units"));
     let workload_class =
         scalar_summary(metering.get("workload_class")).unwrap_or_else(|| "-".into());
     let metering_schema =
@@ -366,23 +389,91 @@ fn push_metering_summary_lines(
         scalar_summary(metering.get("receipt_hash")).unwrap_or_else(|| "-".into());
     lines.push(format!(
         "{}metering work_units={} class={} schema={} receipt_hash={}",
-        indent, normalized_work_units, workload_class, metering_schema, receipt_hash
+        indent, normalized_work_units_str, workload_class, metering_schema, receipt_hash
     ));
 
     if let Some(policy) = metering.get("policy") {
+        let floor_str = scalar_summary(policy.get("min_accept_work_units")).unwrap_or_else(|| "-".into());
+        let floor = scalar_summary_u128(policy.get("min_accept_work_units"));
+        let bounty_base_str = scalar_summary(policy.get("challenge_success_bounty_base")).unwrap_or_else(|| "-".into());
+        let bounty_base = scalar_summary_u128(policy.get("challenge_success_bounty_base"));
+        let chall_num_str = scalar_summary(policy.get("challenge_success_bounty_per_work_unit_num")).unwrap_or_else(|| "-".into());
+        let chall_den_str = scalar_summary(policy.get("challenge_success_bounty_per_work_unit_den")).unwrap_or_else(|| "-".into());
+        let chall_num = scalar_summary_u128(policy.get("challenge_success_bounty_per_work_unit_num"));
+        let chall_den = scalar_summary_u128(policy.get("challenge_success_bounty_per_work_unit_den"));
+        let worker_bonus_num_str = scalar_summary(policy.get("worker_completion_bonus_per_work_unit_num")).unwrap_or_else(|| "-".into());
+        let worker_bonus_den_str = scalar_summary(policy.get("worker_completion_bonus_per_work_unit_den")).unwrap_or_else(|| "-".into());
+        let worker_bonus_num = scalar_summary_u128(policy.get("worker_completion_bonus_per_work_unit_num"));
+        let worker_bonus_den = scalar_summary_u128(policy.get("worker_completion_bonus_per_work_unit_den"));
+        let worker_rebate_num_str = scalar_summary(policy.get("worker_slash_rebate_per_work_unit_num")).unwrap_or_else(|| "-".into());
+        let worker_rebate_den_str = scalar_summary(policy.get("worker_slash_rebate_per_work_unit_den")).unwrap_or_else(|| "-".into());
+        let worker_rebate_num = scalar_summary_u128(policy.get("worker_slash_rebate_per_work_unit_num"));
+        let worker_rebate_den = scalar_summary_u128(policy.get("worker_slash_rebate_per_work_unit_den"));
+
         lines.push(format!(
             "{}policy snapshot={} floor={} bounty_base={} chall_bonus={}/{} worker_bonus={}/{} worker_rebate={}/{}",
             indent,
             scalar_summary(policy.get("snapshot_version")).unwrap_or_else(|| "-".into()),
-            scalar_summary(policy.get("min_accept_work_units")).unwrap_or_else(|| "-".into()),
-            scalar_summary(policy.get("challenge_success_bounty_base")).unwrap_or_else(|| "-".into()),
-            scalar_summary(policy.get("challenge_success_bounty_per_work_unit_num")).unwrap_or_else(|| "-".into()),
-            scalar_summary(policy.get("challenge_success_bounty_per_work_unit_den")).unwrap_or_else(|| "-".into()),
-            scalar_summary(policy.get("worker_completion_bonus_per_work_unit_num")).unwrap_or_else(|| "-".into()),
-            scalar_summary(policy.get("worker_completion_bonus_per_work_unit_den")).unwrap_or_else(|| "-".into()),
-            scalar_summary(policy.get("worker_slash_rebate_per_work_unit_num")).unwrap_or_else(|| "-".into()),
-            scalar_summary(policy.get("worker_slash_rebate_per_work_unit_den")).unwrap_or_else(|| "-".into()),
+            floor_str,
+            bounty_base_str,
+            chall_num_str,
+            chall_den_str,
+            worker_bonus_num_str,
+            worker_bonus_den_str,
+            worker_rebate_num_str,
+            worker_rebate_den_str,
         ));
+
+        if let Some(work_units) = normalized_work_units {
+            let accept_floor_status = match floor {
+                Some(floor) => {
+                    if work_units >= floor {
+                        format!("pass({}>={})", work_units, floor)
+                    } else {
+                        format!("fail({}<{})", work_units, floor)
+                    }
+                }
+                None => "-".into(),
+            };
+            let challenge_metered_bonus = match (chall_num, chall_den) {
+                (Some(num), Some(den)) => ceil_mul_div_u128(work_units, num, den)
+                    .map(|v| v.to_string())
+                    .unwrap_or_else(|| "-".into()),
+                _ => "-".into(),
+            };
+            let challenge_total = match (bounty_base, chall_num, chall_den) {
+                (Some(base), Some(num), Some(den)) => ceil_mul_div_u128(work_units, num, den)
+                    .and_then(|bonus| base.checked_add(bonus))
+                    .map(|v| v.to_string())
+                    .unwrap_or_else(|| "-".into()),
+                _ => "-".into(),
+            };
+            let worker_completion_bonus = match (worker_bonus_num, worker_bonus_den) {
+                (Some(num), Some(den)) => ceil_mul_div_u128(work_units, num, den)
+                    .map(|v| v.to_string())
+                    .unwrap_or_else(|| "-".into()),
+                _ => "-".into(),
+            };
+            let worker_slash_rebate = match (worker_rebate_num, worker_rebate_den) {
+                (Some(num), Some(den)) => ceil_mul_div_u128(work_units, num, den)
+                    .map(|v| v.to_string())
+                    .unwrap_or_else(|| "-".into()),
+                _ => "-".into(),
+            };
+            let path = event
+                .and_then(|e| scalar_summary(e.get("to_status")))
+                .unwrap_or_else(|| "-".into());
+            lines.push(format!(
+                "{}derived path={} accept_floor={} challenge_bonus_total={} (metered={}) worker_completion_bonus={} worker_slash_rebate={}",
+                indent,
+                path,
+                accept_floor_status,
+                challenge_total,
+                challenge_metered_bonus,
+                worker_completion_bonus,
+                worker_slash_rebate,
+            ));
+        }
     }
 }
 
@@ -405,7 +496,7 @@ fn render_events_query_summary(parsed: &serde_json::Value) -> Result<String> {
             scalar_summary(event.get("bond_disposition")).unwrap_or_else(|| "-".into()),
         ));
         if let Some(metering) = event.get("metering") {
-            push_metering_summary_lines(&mut lines, "  ", metering);
+            push_metering_summary_lines(&mut lines, "  ", metering, Some(event));
         }
     }
     Ok(lines.join("
@@ -454,7 +545,7 @@ fn render_request_full_query_summary(parsed: &serde_json::Value) -> Result<Strin
             scalar_summary(event.get("bond_disposition")).unwrap_or_else(|| "-".into()),
         ));
         if let Some(metering) = event.get("metering") {
-            push_metering_summary_lines(&mut lines, "  ", metering);
+            push_metering_summary_lines(&mut lines, "  ", metering, Some(event));
         }
     }
     Ok(lines.join("
@@ -1423,6 +1514,7 @@ mod tests {
         assert!(summary.contains("events_total=1"));
         assert!(summary.contains("work_units=192"));
         assert!(summary.contains("policy snapshot=1 floor=100 bounty_base=1 chall_bonus=1/192 worker_bonus=1/256 worker_rebate=1/384"));
+        assert!(summary.contains("derived path=Completed accept_floor=pass(192>=100) challenge_bonus_total=2 (metered=1) worker_completion_bonus=1 worker_slash_rebate=1"));
     }
 
     #[test]
@@ -1473,6 +1565,7 @@ mod tests {
         assert!(summary.contains("task_id=42"));
         assert!(summary.contains("commit_tx_hash=0x1 reveal_tx_hash=0x2 result_hash=abcd"));
         assert!(summary.contains("work_units=192"));
+        assert!(summary.contains("derived path=Completed accept_floor=pass(192>=100) challenge_bonus_total=2 (metered=1) worker_completion_bonus=1 worker_slash_rebate=1"));
     }
 
     #[test]
