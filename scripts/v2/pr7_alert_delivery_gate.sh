@@ -259,7 +259,7 @@ import sys
 from pathlib import Path
 
 audit = Path(sys.argv[1])
-report = sys.argv[2]
+report = Path(sys.argv[2]).resolve()
 summary = None
 for line in audit.read_text(encoding='utf-8', errors='ignore').splitlines():
     line = line.strip()
@@ -269,7 +269,11 @@ for line in audit.read_text(encoding='utf-8', errors='ignore').splitlines():
         item = json.loads(line)
     except json.JSONDecodeError:
         continue
-    if item.get('record_type') == 'delivery_summary' and item.get('report_path') == report:
+    try:
+        item_report = Path(str(item.get('report_path', ''))).resolve()
+    except Exception:
+        continue
+    if item.get('record_type') == 'delivery_summary' and item_report == report:
         summary = item
 if summary is None:
     print('{}')
@@ -293,7 +297,7 @@ import sys
 from pathlib import Path
 
 audit = Path(sys.argv[1])
-report = sys.argv[2]
+report = Path(sys.argv[2]).resolve()
 rows = []
 for line in audit.read_text(encoding='utf-8', errors='ignore').splitlines():
     line = line.strip()
@@ -305,7 +309,11 @@ for line in audit.read_text(encoding='utf-8', errors='ignore').splitlines():
         continue
     if item.get('record_type') == 'delivery_summary':
         continue
-    if item.get('report_path') != report:
+    try:
+        item_report = Path(str(item.get('report_path', ''))).resolve()
+    except Exception:
+        continue
+    if item_report != report:
         continue
     ch = str(item.get('channel','')).strip()
     if not ch:
