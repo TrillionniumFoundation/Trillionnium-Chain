@@ -352,9 +352,11 @@ The Rust scaffold now includes:
 - `work_units` calculation for `prompt_tokens + generated_tokens + decode_steps + kv_bytes_moved`
 - reveal-side validation on the non-verifiable/Fraud path, where a supplied `llm_token_meter_v1` JSON receipt is accepted only if it validates and matches the canonical `task_id` / `worker_id` / `result_hash` binding
 - reveal-side persistence of a metering snapshot onto task metadata (`receipt_hash`, counters, coefficient snapshot, `normalized_work_units`)
+- reveal-side persistence also freezes the **metering policy snapshot** used for later adjudication / payouts (policy snapshot version + floor / ratio parameters)
 - challenge/resolve-side reading of that persisted snapshot with fail-closed validation: malformed or internally inconsistent `normalized_work_units` snapshots are rejected before state transition
-- resolve-side governance adjudication gate: when `slash_worker = false`, an LLM-metered task must satisfy `normalized_work_units >= llm_meter_min_accept_work_units`; otherwise resolve is rejected fail-closed
+- resolve-side governance adjudication gate: when `slash_worker = false`, an LLM-metered task must satisfy the **snapshotted** `min_accept_work_units`; later governance drift must not retroactively reinterpret already-revealed metered tasks
 - slash-path payout integration: challenge-success bounty can now include a metered bonus derived from `normalized_work_units`, using governance ratio keys `llm_meter_challenge_success_bounty_per_work_unit_num` / `llm_meter_challenge_success_bounty_per_work_unit_den`
+- for metered tasks, that challenge-success bounty policy is read from the **snapshotted reveal-time policy**, not re-read from live governance at resolve time
 - worker-side terminal accounting integration:
   - completed-path worker bonus can be paid from `CHALLENGE_FORFEIT_TREASURY_ACCOUNT`, using `llm_meter_worker_completion_bonus_per_work_unit_num` / `llm_meter_worker_completion_bonus_per_work_unit_den`
   - slashed-path worker rebate can return a metered share of locked worker stake back to the worker before the remainder is sent to `WORKER_SLASH_TREASURY_ACCOUNT`, using `llm_meter_worker_slash_rebate_per_work_unit_num` / `llm_meter_worker_slash_rebate_per_work_unit_den`

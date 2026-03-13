@@ -85,10 +85,20 @@ pub struct TaskProvenanceMetadata {
     pub privacy_tier: Option<PrivacyTier>,
 }
 
+fn default_task_metering_policy_snapshot_version() -> u8 {
+    0
+}
+
+fn default_task_metering_ratio_denominator() -> u128 {
+    1
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct TaskMeteringSnapshot {
     pub workload_class: String,
     pub metering_schema: String,
+    #[serde(default = "default_task_metering_policy_snapshot_version")]
+    pub policy_snapshot_version: u8,
     pub receipt_hash: String,
     pub prompt_tokens: u64,
     pub generated_tokens: u64,
@@ -99,6 +109,22 @@ pub struct TaskMeteringSnapshot {
     pub generated_token_weight: u128,
     pub decode_step_weight: u128,
     pub kv_byte_weight: u128,
+    #[serde(default)]
+    pub min_accept_work_units: u128,
+    #[serde(default)]
+    pub challenge_success_bounty_base: u128,
+    #[serde(default)]
+    pub challenge_success_bounty_per_work_unit_num: u128,
+    #[serde(default = "default_task_metering_ratio_denominator")]
+    pub challenge_success_bounty_per_work_unit_den: u128,
+    #[serde(default)]
+    pub worker_completion_bonus_per_work_unit_num: u128,
+    #[serde(default = "default_task_metering_ratio_denominator")]
+    pub worker_completion_bonus_per_work_unit_den: u128,
+    #[serde(default)]
+    pub worker_slash_rebate_per_work_unit_num: u128,
+    #[serde(default = "default_task_metering_ratio_denominator")]
+    pub worker_slash_rebate_per_work_unit_den: u128,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
@@ -232,6 +258,7 @@ mod tests {
             metering: Some(TaskMeteringSnapshot {
                 workload_class: "llm_inference".into(),
                 metering_schema: "llm_token_meter_v1".into(),
+                policy_snapshot_version: 1,
                 receipt_hash: "abc123".into(),
                 prompt_tokens: 10,
                 generated_tokens: 20,
@@ -242,6 +269,14 @@ mod tests {
                 generated_token_weight: 1,
                 decode_step_weight: 1,
                 kv_byte_weight: 0,
+                min_accept_work_units: 5,
+                challenge_success_bounty_base: 1,
+                challenge_success_bounty_per_work_unit_num: 1,
+                challenge_success_bounty_per_work_unit_den: 192,
+                worker_completion_bonus_per_work_unit_num: 1,
+                worker_completion_bonus_per_work_unit_den: 256,
+                worker_slash_rebate_per_work_unit_num: 1,
+                worker_slash_rebate_per_work_unit_den: 384,
             }),
         };
 

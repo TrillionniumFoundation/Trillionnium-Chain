@@ -100,6 +100,7 @@ const DEFAULT_LLM_METER_WORKER_COMPLETION_BONUS_PER_WORK_UNIT_NUM: u128 = 0;
 const DEFAULT_LLM_METER_WORKER_COMPLETION_BONUS_PER_WORK_UNIT_DEN: u128 = 1;
 const DEFAULT_LLM_METER_WORKER_SLASH_REBATE_PER_WORK_UNIT_NUM: u128 = 0;
 const DEFAULT_LLM_METER_WORKER_SLASH_REBATE_PER_WORK_UNIT_DEN: u128 = 1;
+const CURRENT_LLM_METER_POLICY_SNAPSHOT_VERSION: u8 = 1;
 const DEFAULT_CHALLENGE_MIN_BOND: u128 = 10;
 const DEFAULT_CHALLENGE_MIN_BOND_BOUNTY_BPS: u128 = 500;
 const DEFAULT_CHALLENGE_MIN_BOND_WORKER_STAKE_BPS: u128 = 0;
@@ -190,42 +191,220 @@ fn normalize_hex_string(raw: &str) -> String {
         .to_ascii_lowercase()
 }
 
-fn effective_llm_token_meter_coefficients(
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+struct LlmTokenMeterPolicy {
+    coefficients: LlmTokenMeterV1WorkUnitCoefficients,
+    min_accept_work_units: u128,
+    challenge_success_bounty_base: u128,
+    challenge_success_bounty_per_work_unit_num: u128,
+    challenge_success_bounty_per_work_unit_den: u128,
+    worker_completion_bonus_per_work_unit_num: u128,
+    worker_completion_bonus_per_work_unit_den: u128,
+    worker_slash_rebate_per_work_unit_num: u128,
+    worker_slash_rebate_per_work_unit_den: u128,
+}
+
+impl LlmTokenMeterPolicy {
+    fn from_state(st: &StateStore) -> Result<Self, PouwError> {
+        let policy = Self {
+            coefficients: LlmTokenMeterV1WorkUnitCoefficients {
+                prompt_tokens: st
+                    .gov_param_u128("llm_meter_prompt_token_weight")
+                    .unwrap_or(DEFAULT_LLM_METER_PROMPT_TOKEN_WEIGHT),
+                generated_tokens: st
+                    .gov_param_u128("llm_meter_generated_token_weight")
+                    .unwrap_or(DEFAULT_LLM_METER_GENERATED_TOKEN_WEIGHT),
+                decode_steps: st
+                    .gov_param_u128("llm_meter_decode_step_weight")
+                    .unwrap_or(DEFAULT_LLM_METER_DECODE_STEP_WEIGHT),
+                kv_bytes_moved: st
+                    .gov_param_u128("llm_meter_kv_byte_weight")
+                    .unwrap_or(DEFAULT_LLM_METER_KV_BYTE_WEIGHT),
+            },
+            min_accept_work_units: st
+                .gov_param_u128("llm_meter_min_accept_work_units")
+                .unwrap_or(DEFAULT_LLM_METER_MIN_ACCEPT_WORK_UNITS),
+            challenge_success_bounty_base: st
+                .gov_param_u128("challenge_success_bounty")
+                .unwrap_or(DEFAULT_CHALLENGE_SUCCESS_BOUNTY),
+            challenge_success_bounty_per_work_unit_num: st
+                .gov_param_u128("llm_meter_challenge_success_bounty_per_work_unit_num")
+                .unwrap_or(DEFAULT_LLM_METER_CHALLENGE_SUCCESS_BOUNTY_PER_WORK_UNIT_NUM),
+            challenge_success_bounty_per_work_unit_den: st
+                .gov_param_u128("llm_meter_challenge_success_bounty_per_work_unit_den")
+                .unwrap_or(DEFAULT_LLM_METER_CHALLENGE_SUCCESS_BOUNTY_PER_WORK_UNIT_DEN),
+            worker_completion_bonus_per_work_unit_num: st
+                .gov_param_u128("llm_meter_worker_completion_bonus_per_work_unit_num")
+                .unwrap_or(DEFAULT_LLM_METER_WORKER_COMPLETION_BONUS_PER_WORK_UNIT_NUM),
+            worker_completion_bonus_per_work_unit_den: st
+                .gov_param_u128("llm_meter_worker_completion_bonus_per_work_unit_den")
+                .unwrap_or(DEFAULT_LLM_METER_WORKER_COMPLETION_BONUS_PER_WORK_UNIT_DEN),
+            worker_slash_rebate_per_work_unit_num: st
+                .gov_param_u128("llm_meter_worker_slash_rebate_per_work_unit_num")
+                .unwrap_or(DEFAULT_LLM_METER_WORKER_SLASH_REBATE_PER_WORK_UNIT_NUM),
+            worker_slash_rebate_per_work_unit_den: st
+                .gov_param_u128("llm_meter_worker_slash_rebate_per_work_unit_den")
+                .unwrap_or(DEFAULT_LLM_METER_WORKER_SLASH_REBATE_PER_WORK_UNIT_DEN),
+        };
+        policy.validate()?;
+        Ok(policy)
+    }
+
+    fn from_snapshot(snapshot: &TaskMeteringSnapshot) -> Result<Self, PouwError> {
+        let policy = Self {
+            coefficients: LlmTokenMeterV1WorkUnitCoefficients {
+                prompt_tokens: snapshot.prompt_token_weight,
+                generated_tokens: snapshot.generated_token_weight,
+                decode_steps: snapshot.decode_step_weight,
+                kv_bytes_moved: snapshot.kv_byte_weight,
+            },
+            min_accept_work_units: snapshot.min_accept_work_units,
+            challenge_success_bounty_base: snapshot.challenge_success_bounty_base,
+            challenge_success_bounty_per_work_unit_num: snapshot.challenge_success_bounty_per_work_unit_num,
+            challenge_success_bounty_per_work_unit_den: snapshot.challenge_success_bounty_per_work_unit_den,
+            worker_completion_bonus_per_work_unit_num: snapshot.worker_completion_bonus_per_work_unit_num,
+            worker_completion_bonus_per_work_unit_den: snapshot.worker_completion_bonus_per_work_unit_den,
+            worker_slash_rebate_per_work_unit_num: snapshot.worker_slash_rebate_per_work_unit_num,
+            worker_slash_rebate_per_work_unit_den: snapshot.worker_slash_rebate_per_work_unit_den,
+        };
+        policy.validate()?;
+        Ok(policy)
+    }
+
+    fn validate(&self) -> Result<(), PouwError> {
+        if self.challenge_success_bounty_per_work_unit_den == 0 {
+            return Err(PouwError::State(
+                "llm meter challenge success bounty denominator cannot be zero".into(),
+            ));
+        }
+        if self.worker_completion_bonus_per_work_unit_den == 0 {
+            return Err(PouwError::State(
+                "llm meter worker completion bonus denominator cannot be zero".into(),
+            ));
+        }
+        if self.worker_slash_rebate_per_work_unit_den == 0 {
+            return Err(PouwError::State(
+                "llm meter worker slash rebate denominator cannot be zero".into(),
+            ));
+        }
+        Ok(())
+    }
+
+    fn normalized_work_units_for_receipt(&self, receipt: &LlmTokenMeterV1Receipt) -> u128 {
+        receipt.normalized_work_units(&self.coefficients)
+    }
+
+    fn normalized_work_units_for_snapshot(&self, snapshot: &TaskMeteringSnapshot) -> u128 {
+        self.coefficients
+            .prompt_tokens
+            .saturating_mul(snapshot.prompt_tokens as u128)
+            .saturating_add(
+                self.coefficients
+                    .generated_tokens
+                    .saturating_mul(snapshot.generated_tokens as u128),
+            )
+            .saturating_add(
+                self.coefficients
+                    .decode_steps
+                    .saturating_mul(snapshot.decode_steps as u128),
+            )
+            .saturating_add(
+                self.coefficients
+                    .kv_bytes_moved
+                    .saturating_mul(snapshot.kv_bytes_moved as u128),
+            )
+    }
+
+    fn challenge_success_bounty_bonus(&self, normalized_work_units: u128) -> u128 {
+        ceil_mul_div(
+            normalized_work_units,
+            self.challenge_success_bounty_per_work_unit_num,
+            self.challenge_success_bounty_per_work_unit_den,
+        )
+    }
+
+    fn effective_challenge_success_bounty(&self, normalized_work_units: u128) -> u128 {
+        self.challenge_success_bounty_base
+            .saturating_add(self.challenge_success_bounty_bonus(normalized_work_units))
+    }
+
+    fn worker_completion_bonus(&self, normalized_work_units: u128) -> u128 {
+        ceil_mul_div(
+            normalized_work_units,
+            self.worker_completion_bonus_per_work_unit_num,
+            self.worker_completion_bonus_per_work_unit_den,
+        )
+    }
+
+    fn worker_slash_rebate(&self, normalized_work_units: u128, locked: u128) -> u128 {
+        ceil_mul_div(
+            normalized_work_units,
+            self.worker_slash_rebate_per_work_unit_num,
+            self.worker_slash_rebate_per_work_unit_den,
+        )
+        .min(locked)
+    }
+}
+
+fn effective_llm_token_meter_policy(st: &StateStore) -> Result<LlmTokenMeterPolicy, PouwError> {
+    LlmTokenMeterPolicy::from_state(st)
+}
+
+fn llm_token_meter_policy_from_snapshot(
+    snapshot: &TaskMeteringSnapshot,
+) -> Result<Option<LlmTokenMeterPolicy>, PouwError> {
+    match snapshot.policy_snapshot_version {
+        0 => Ok(None),
+        CURRENT_LLM_METER_POLICY_SNAPSHOT_VERSION => {
+            Ok(Some(LlmTokenMeterPolicy::from_snapshot(snapshot)?))
+        }
+        other => Err(PouwError::State(format!(
+            "unsupported llm meter policy snapshot version: {}",
+            other
+        ))),
+    }
+}
+
+fn llm_token_meter_policy_for_snapshot_or_state(
     st: &StateStore,
-) -> LlmTokenMeterV1WorkUnitCoefficients {
-    LlmTokenMeterV1WorkUnitCoefficients {
-        prompt_tokens: st
-            .gov_param_u128("llm_meter_prompt_token_weight")
-            .unwrap_or(DEFAULT_LLM_METER_PROMPT_TOKEN_WEIGHT),
-        generated_tokens: st
-            .gov_param_u128("llm_meter_generated_token_weight")
-            .unwrap_or(DEFAULT_LLM_METER_GENERATED_TOKEN_WEIGHT),
-        decode_steps: st
-            .gov_param_u128("llm_meter_decode_step_weight")
-            .unwrap_or(DEFAULT_LLM_METER_DECODE_STEP_WEIGHT),
-        kv_bytes_moved: st
-            .gov_param_u128("llm_meter_kv_byte_weight")
-            .unwrap_or(DEFAULT_LLM_METER_KV_BYTE_WEIGHT),
+    snapshot: Option<&TaskMeteringSnapshot>,
+) -> Result<Option<LlmTokenMeterPolicy>, PouwError> {
+    let Some(snapshot) = snapshot else {
+        return Ok(None);
+    };
+    if let Some(policy) = llm_token_meter_policy_from_snapshot(snapshot)? {
+        Ok(Some(policy))
+    } else {
+        Ok(Some(effective_llm_token_meter_policy(st)?))
     }
 }
 
 fn build_task_metering_snapshot(
     receipt: &LlmTokenMeterV1Receipt,
-    coefficients: &LlmTokenMeterV1WorkUnitCoefficients,
+    policy: &LlmTokenMeterPolicy,
 ) -> TaskMeteringSnapshot {
     TaskMeteringSnapshot {
         workload_class: receipt.workload_class.clone(),
         metering_schema: receipt.metering_schema.clone(),
+        policy_snapshot_version: CURRENT_LLM_METER_POLICY_SNAPSHOT_VERSION,
         receipt_hash: receipt.receipt_hash.clone(),
         prompt_tokens: receipt.prompt_tokens,
         generated_tokens: receipt.generated_tokens,
         decode_steps: receipt.decode_steps,
         kv_bytes_moved: receipt.kv_bytes_moved,
-        normalized_work_units: receipt.normalized_work_units(coefficients),
-        prompt_token_weight: coefficients.prompt_tokens,
-        generated_token_weight: coefficients.generated_tokens,
-        decode_step_weight: coefficients.decode_steps,
-        kv_byte_weight: coefficients.kv_bytes_moved,
+        normalized_work_units: policy.normalized_work_units_for_receipt(receipt),
+        prompt_token_weight: policy.coefficients.prompt_tokens,
+        generated_token_weight: policy.coefficients.generated_tokens,
+        decode_step_weight: policy.coefficients.decode_steps,
+        kv_byte_weight: policy.coefficients.kv_bytes_moved,
+        min_accept_work_units: policy.min_accept_work_units,
+        challenge_success_bounty_base: policy.challenge_success_bounty_base,
+        challenge_success_bounty_per_work_unit_num: policy.challenge_success_bounty_per_work_unit_num,
+        challenge_success_bounty_per_work_unit_den: policy.challenge_success_bounty_per_work_unit_den,
+        worker_completion_bonus_per_work_unit_num: policy.worker_completion_bonus_per_work_unit_num,
+        worker_completion_bonus_per_work_unit_den: policy.worker_completion_bonus_per_work_unit_den,
+        worker_slash_rebate_per_work_unit_num: policy.worker_slash_rebate_per_work_unit_num,
+        worker_slash_rebate_per_work_unit_den: policy.worker_slash_rebate_per_work_unit_den,
     }
 }
 
@@ -255,23 +434,45 @@ fn validate_task_metering_snapshot(task: &TaskObject) -> Result<Option<TaskMeter
         ));
     }
 
-    let coefficients = LlmTokenMeterV1WorkUnitCoefficients {
-        prompt_tokens: snapshot.prompt_token_weight,
-        generated_tokens: snapshot.generated_token_weight,
-        decode_steps: snapshot.decode_step_weight,
-        kv_bytes_moved: snapshot.kv_byte_weight,
-    };
-    let recomputed = coefficients
-        .prompt_tokens
-        .saturating_mul(snapshot.prompt_tokens as u128)
-        .saturating_add(coefficients.generated_tokens.saturating_mul(snapshot.generated_tokens as u128))
-        .saturating_add(coefficients.decode_steps.saturating_mul(snapshot.decode_steps as u128))
-        .saturating_add(coefficients.kv_bytes_moved.saturating_mul(snapshot.kv_bytes_moved as u128));
-    if recomputed != snapshot.normalized_work_units {
-        return Err(PouwError::State(format!(
-            "task metering snapshot normalized_work_units mismatch: expected {}, got {}",
-            recomputed, snapshot.normalized_work_units
-        )));
+    if let Some(policy) = llm_token_meter_policy_from_snapshot(snapshot)? {
+        let recomputed = policy.normalized_work_units_for_snapshot(snapshot);
+        if recomputed != snapshot.normalized_work_units {
+            return Err(PouwError::State(format!(
+                "task metering snapshot normalized_work_units mismatch: expected {}, got {}",
+                recomputed, snapshot.normalized_work_units
+            )));
+        }
+    } else {
+        let coefficients = LlmTokenMeterV1WorkUnitCoefficients {
+            prompt_tokens: snapshot.prompt_token_weight,
+            generated_tokens: snapshot.generated_token_weight,
+            decode_steps: snapshot.decode_step_weight,
+            kv_bytes_moved: snapshot.kv_byte_weight,
+        };
+        let recomputed = coefficients
+            .prompt_tokens
+            .saturating_mul(snapshot.prompt_tokens as u128)
+            .saturating_add(
+                coefficients
+                    .generated_tokens
+                    .saturating_mul(snapshot.generated_tokens as u128),
+            )
+            .saturating_add(
+                coefficients
+                    .decode_steps
+                    .saturating_mul(snapshot.decode_steps as u128),
+            )
+            .saturating_add(
+                coefficients
+                    .kv_bytes_moved
+                    .saturating_mul(snapshot.kv_bytes_moved as u128),
+            );
+        if recomputed != snapshot.normalized_work_units {
+            return Err(PouwError::State(format!(
+                "task metering snapshot normalized_work_units mismatch: expected {}, got {}",
+                recomputed, snapshot.normalized_work_units
+            )));
+        }
     }
 
     Ok(Some(snapshot.clone()))
@@ -288,13 +489,13 @@ fn enforce_llm_meter_resolve_acceptance_floor(
     let Some(snapshot) = metering_snapshot else {
         return Ok(());
     };
-    let min_accept_work_units = st
-        .gov_param_u128("llm_meter_min_accept_work_units")
-        .unwrap_or(DEFAULT_LLM_METER_MIN_ACCEPT_WORK_UNITS);
-    if snapshot.normalized_work_units < min_accept_work_units {
+    let Some(policy) = llm_token_meter_policy_for_snapshot_or_state(st, Some(snapshot))? else {
+        return Ok(());
+    };
+    if snapshot.normalized_work_units < policy.min_accept_work_units {
         return Err(PouwError::State(format!(
             "llm token meter normalized_work_units {} below governance minimum {}",
-            snapshot.normalized_work_units, min_accept_work_units
+            snapshot.normalized_work_units, policy.min_accept_work_units
         )));
     }
     Ok(())
@@ -948,30 +1149,15 @@ fn llm_meter_worker_completion_bonus(
     if task.status != TaskStatus::Completed {
         return Ok(0);
     }
-    let Some(snapshot) = validate_task_metering_snapshot(task)? else {
+    let snapshot = validate_task_metering_snapshot(task)?;
+    let Some(snapshot_ref) = snapshot.as_ref() else {
+        return Ok(0);
+    };
+    let Some(policy) = llm_token_meter_policy_for_snapshot_or_state(st, Some(snapshot_ref))? else {
         return Ok(0);
     };
 
-    let numerator = st
-        .gov_param_u128("llm_meter_worker_completion_bonus_per_work_unit_num")
-        .unwrap_or(DEFAULT_LLM_METER_WORKER_COMPLETION_BONUS_PER_WORK_UNIT_NUM);
-    if numerator == 0 {
-        return Ok(0);
-    }
-    let denominator = st
-        .gov_param_u128("llm_meter_worker_completion_bonus_per_work_unit_den")
-        .unwrap_or(DEFAULT_LLM_METER_WORKER_COMPLETION_BONUS_PER_WORK_UNIT_DEN);
-    if denominator == 0 {
-        return Err(PouwError::State(
-            "llm meter worker completion bonus denominator cannot be zero".into(),
-        ));
-    }
-
-    Ok(ceil_mul_div(
-        snapshot.normalized_work_units,
-        numerator,
-        denominator,
-    ))
+    Ok(policy.worker_completion_bonus(snapshot_ref.normalized_work_units))
 }
 
 fn llm_meter_worker_slash_rebate(
@@ -982,75 +1168,31 @@ fn llm_meter_worker_slash_rebate(
     if task.status != TaskStatus::Slashed || locked == 0 {
         return Ok(0);
     }
-    let Some(snapshot) = validate_task_metering_snapshot(task)? else {
+    let snapshot = validate_task_metering_snapshot(task)?;
+    let Some(snapshot_ref) = snapshot.as_ref() else {
+        return Ok(0);
+    };
+    let Some(policy) = llm_token_meter_policy_for_snapshot_or_state(st, Some(snapshot_ref))? else {
         return Ok(0);
     };
 
-    let numerator = st
-        .gov_param_u128("llm_meter_worker_slash_rebate_per_work_unit_num")
-        .unwrap_or(DEFAULT_LLM_METER_WORKER_SLASH_REBATE_PER_WORK_UNIT_NUM);
-    if numerator == 0 {
-        return Ok(0);
-    }
-    let denominator = st
-        .gov_param_u128("llm_meter_worker_slash_rebate_per_work_unit_den")
-        .unwrap_or(DEFAULT_LLM_METER_WORKER_SLASH_REBATE_PER_WORK_UNIT_DEN);
-    if denominator == 0 {
-        return Err(PouwError::State(
-            "llm meter worker slash rebate denominator cannot be zero".into(),
-        ));
-    }
-
-    Ok(ceil_mul_div(
-        snapshot.normalized_work_units,
-        numerator,
-        denominator,
-    )
-    .min(locked))
-}
-
-fn llm_meter_challenge_success_bounty_bonus(
-    st: &StateStore,
-    task: &TaskObject,
-) -> Result<u128, PouwError> {
-    if task.status != TaskStatus::Slashed {
-        return Ok(0);
-    }
-    let Some(snapshot) = validate_task_metering_snapshot(task)? else {
-        return Ok(0);
-    };
-
-    let numerator = st
-        .gov_param_u128("llm_meter_challenge_success_bounty_per_work_unit_num")
-        .unwrap_or(DEFAULT_LLM_METER_CHALLENGE_SUCCESS_BOUNTY_PER_WORK_UNIT_NUM);
-    if numerator == 0 {
-        return Ok(0);
-    }
-    let denominator = st
-        .gov_param_u128("llm_meter_challenge_success_bounty_per_work_unit_den")
-        .unwrap_or(DEFAULT_LLM_METER_CHALLENGE_SUCCESS_BOUNTY_PER_WORK_UNIT_DEN);
-    if denominator == 0 {
-        return Err(PouwError::State(
-            "llm meter challenge success bounty denominator cannot be zero".into(),
-        ));
-    }
-
-    Ok(ceil_mul_div(
-        snapshot.normalized_work_units,
-        numerator,
-        denominator,
-    ))
+    Ok(policy.worker_slash_rebate(snapshot_ref.normalized_work_units, locked))
 }
 
 fn effective_challenge_success_bounty(
     st: &StateStore,
     task: &TaskObject,
 ) -> Result<u128, PouwError> {
-    let base_bounty = st
+    let snapshot = validate_task_metering_snapshot(task)?;
+    if let Some(snapshot_ref) = snapshot.as_ref() {
+        if let Some(policy) = llm_token_meter_policy_for_snapshot_or_state(st, Some(snapshot_ref))? {
+            return Ok(policy.effective_challenge_success_bounty(snapshot_ref.normalized_work_units));
+        }
+    }
+
+    Ok(st
         .gov_param_u128("challenge_success_bounty")
-        .unwrap_or(DEFAULT_CHALLENGE_SUCCESS_BOUNTY);
-    let metered_bonus = llm_meter_challenge_success_bounty_bonus(st, task)?;
-    Ok(base_bounty.saturating_add(metered_bonus))
+        .unwrap_or(DEFAULT_CHALLENGE_SUCCESS_BOUNTY))
 }
 
 fn maybe_pay_challenge_success_bounty(
@@ -1220,8 +1362,8 @@ pub fn apply_reveal_result_at_height(
                 &result_hash,
                 proof_payload,
             )?;
-            let coefficients = effective_llm_token_meter_coefficients(st);
-            let snapshot = build_task_metering_snapshot(&receipt, &coefficients);
+            let policy = effective_llm_token_meter_policy(st)?;
+            let snapshot = build_task_metering_snapshot(&receipt, &policy);
             let metadata = task.metadata.get_or_insert_with(TaskMetadata::default);
             metadata.metering = Some(snapshot);
         }
@@ -3845,7 +3987,7 @@ mod tests {
     }
 
     #[test]
-    fn reveal_snapshots_llm_token_meter_governance_coefficients() {
+    fn reveal_snapshots_llm_token_meter_governance_policy() {
         let mut st = seeded_state();
         st.set_gov_param_bootstrap_unchecked(
             9_960,
@@ -3871,6 +4013,50 @@ mod tests {
             "7".into(),
         )
         .unwrap();
+        st.set_gov_param_bootstrap_unchecked(
+            9_964,
+            "llm_meter_min_accept_work_units".into(),
+            "13".into(),
+        )
+        .unwrap();
+        st.set_gov_param_bootstrap_unchecked(9_965, "challenge_success_bounty".into(), "11".into())
+            .unwrap();
+        st.set_gov_param_bootstrap_unchecked(
+            9_966,
+            "llm_meter_challenge_success_bounty_per_work_unit_num".into(),
+            "17".into(),
+        )
+        .unwrap();
+        st.set_gov_param_bootstrap_unchecked(
+            9_967,
+            "llm_meter_challenge_success_bounty_per_work_unit_den".into(),
+            "19".into(),
+        )
+        .unwrap();
+        st.set_gov_param_bootstrap_unchecked(
+            9_968,
+            "llm_meter_worker_completion_bonus_per_work_unit_num".into(),
+            "23".into(),
+        )
+        .unwrap();
+        st.set_gov_param_bootstrap_unchecked(
+            9_969,
+            "llm_meter_worker_completion_bonus_per_work_unit_den".into(),
+            "29".into(),
+        )
+        .unwrap();
+        st.set_gov_param_bootstrap_unchecked(
+            9_970,
+            "llm_meter_worker_slash_rebate_per_work_unit_num".into(),
+            "31".into(),
+        )
+        .unwrap();
+        st.set_gov_param_bootstrap_unchecked(
+            9_971,
+            "llm_meter_worker_slash_rebate_per_work_unit_den".into(),
+            "37".into(),
+        )
+        .unwrap();
 
         let task_id = 78_907;
         let r1 = apply_create_task(&mut st, task_id, "alice".into(), 10).unwrap();
@@ -3886,10 +4072,19 @@ mod tests {
 
         let task = st.get_task(r4.id).unwrap();
         let snapshot = task.metadata.unwrap().metering.unwrap();
+        assert_eq!(snapshot.policy_snapshot_version, CURRENT_LLM_METER_POLICY_SNAPSHOT_VERSION);
         assert_eq!(snapshot.prompt_token_weight, 2);
         assert_eq!(snapshot.generated_token_weight, 3);
         assert_eq!(snapshot.decode_step_weight, 5);
         assert_eq!(snapshot.kv_byte_weight, 7);
+        assert_eq!(snapshot.min_accept_work_units, 13);
+        assert_eq!(snapshot.challenge_success_bounty_base, 11);
+        assert_eq!(snapshot.challenge_success_bounty_per_work_unit_num, 17);
+        assert_eq!(snapshot.challenge_success_bounty_per_work_unit_den, 19);
+        assert_eq!(snapshot.worker_completion_bonus_per_work_unit_num, 23);
+        assert_eq!(snapshot.worker_completion_bonus_per_work_unit_den, 29);
+        assert_eq!(snapshot.worker_slash_rebate_per_work_unit_num, 31);
+        assert_eq!(snapshot.worker_slash_rebate_per_work_unit_den, 37);
         assert_eq!(snapshot.normalized_work_units, 2 * 128 + 3 * 32 + 5 * 32 + 7 * 4096);
     }
 
@@ -8041,6 +8236,190 @@ mod tests {
         assert_eq!(st.balance_of("worker1"), 1);
         assert_eq!(st.balance_of(&worker_stake_lock_account(task_id)), 0);
         assert_eq!(st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT), 38);
+    }
+
+    #[test]
+    fn resolve_accept_uses_snapshotted_llm_meter_min_work_units_despite_governance_drift() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 1000);
+        st.set_gov_param_bootstrap_unchecked(
+            9_982,
+            "llm_meter_min_accept_work_units".into(),
+            "0".into(),
+        )
+        .unwrap();
+        set_resolve_authority(&mut st, "authority,authority2");
+
+        let task_id = 78_912;
+        let r1 = apply_create_task(&mut st, task_id, "alice".into(), 10).unwrap();
+        let result_hash = [2u8; 32];
+        let reveal_salt = [3u8; 32];
+        let worker = "worker1".to_string();
+        let committed = compute_commitment(task_id, &result_hash, &reveal_salt, &worker);
+
+        let r2 = apply_accept_task(&mut st, r1, worker.clone()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, worker.clone(), committed).unwrap();
+        let proof = sample_llm_token_meter_receipt_json(task_id, &worker, result_hash);
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, Some(proof)).unwrap();
+        st.set_gov_param_bootstrap_unchecked(
+            9_982,
+            "llm_meter_min_accept_work_units".into(),
+            "193".into(),
+        )
+        .unwrap();
+        let r5 = apply_challenge(
+            &mut st,
+            r4,
+            "challenger".into(),
+            10,
+            "challenger".into(),
+        )
+        .unwrap();
+
+        let staged = apply_resolve(
+            &mut st,
+            r5.clone(),
+            false,
+            "authority".into(),
+            "authority".into(),
+        )
+        .unwrap_err();
+        assert!(matches!(staged, PouwError::ResolveApprovalStaged));
+        let r6 = apply_resolve(
+            &mut st,
+            r5,
+            false,
+            "authority2".into(),
+            "authority2".into(),
+        )
+        .unwrap();
+
+        let resolved = st.get_task(r6.id).unwrap();
+        assert_eq!(resolved.status, TaskStatus::Completed);
+    }
+
+    #[test]
+    fn resolve_slashed_uses_snapshotted_llm_meter_bounty_policy_despite_governance_drift() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        st.set_gov_param_bootstrap_unchecked(9_983, "min_worker_stake".into(), "40".into())
+            .unwrap();
+        st.set_gov_param_bootstrap_unchecked(9_984, "challenge_success_bounty".into(), "1".into())
+            .unwrap();
+        st.set_gov_param_bootstrap_unchecked(
+            9_985,
+            "llm_meter_challenge_success_bounty_per_work_unit_num".into(),
+            "1".into(),
+        )
+        .unwrap();
+        st.set_gov_param_bootstrap_unchecked(
+            9_986,
+            "llm_meter_challenge_success_bounty_per_work_unit_den".into(),
+            "192".into(),
+        )
+        .unwrap();
+        st.set_balance("worker1", 40);
+        set_resolve_authority(&mut st, "authority,authority2");
+
+        let task_id = 29_816u64;
+        let r1 = apply_create_task(&mut st, task_id, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(task_id, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let proof = sample_llm_token_meter_receipt_json(task_id, "worker1", result_hash);
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, Some(proof)).unwrap();
+        st.set_gov_param_bootstrap_unchecked(9_984, "challenge_success_bounty".into(), "0".into())
+            .unwrap();
+        st.set_gov_param_bootstrap_unchecked(
+            9_985,
+            "llm_meter_challenge_success_bounty_per_work_unit_num".into(),
+            "0".into(),
+        )
+        .unwrap();
+        let r5 =
+            apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
+
+        let staged = apply_resolve(
+            &mut st,
+            r5.clone(),
+            true,
+            "authority".into(),
+            "authority".into(),
+        )
+        .unwrap_err();
+        assert!(matches!(staged, PouwError::ResolveApprovalStaged));
+        let r6 =
+            apply_resolve(&mut st, r5, true, "authority2".into(), "authority2".into()).unwrap();
+
+        let resolved = st.get_task(r6.id).unwrap();
+        assert_eq!(resolved.status, TaskStatus::Slashed);
+        assert_eq!(st.balance_of("challenger"), 102);
+    }
+
+    #[test]
+    fn resolve_completed_uses_snapshotted_worker_bonus_policy_despite_governance_drift() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        st.set_gov_param_bootstrap_unchecked(9_987, "min_worker_stake".into(), "40".into())
+            .unwrap();
+        st.set_gov_param_bootstrap_unchecked(
+            9_988,
+            "llm_meter_worker_completion_bonus_per_work_unit_num".into(),
+            "1".into(),
+        )
+        .unwrap();
+        st.set_gov_param_bootstrap_unchecked(
+            9_989,
+            "llm_meter_worker_completion_bonus_per_work_unit_den".into(),
+            "192".into(),
+        )
+        .unwrap();
+        st.set_balance("worker1", 40);
+        set_resolve_authority(&mut st, "authority,authority2");
+
+        let task_id = 29_817u64;
+        let r1 = apply_create_task(&mut st, task_id, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(task_id, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let proof = sample_llm_token_meter_receipt_json(task_id, "worker1", result_hash);
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, Some(proof)).unwrap();
+        st.set_gov_param_bootstrap_unchecked(
+            9_988,
+            "llm_meter_worker_completion_bonus_per_work_unit_num".into(),
+            "0".into(),
+        )
+        .unwrap();
+        let r5 =
+            apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
+
+        let staged = apply_resolve(
+            &mut st,
+            r5.clone(),
+            false,
+            "authority".into(),
+            "authority".into(),
+        )
+        .unwrap_err();
+        assert!(matches!(staged, PouwError::ResolveApprovalStaged));
+        let r6 = apply_resolve(
+            &mut st,
+            r5,
+            false,
+            "authority2".into(),
+            "authority2".into(),
+        )
+        .unwrap();
+
+        let resolved = st.get_task(r6.id).unwrap();
+        assert_eq!(resolved.status, TaskStatus::Completed);
+        assert_eq!(st.balance_of("worker1"), 41);
     }
 
     #[test]
