@@ -119,6 +119,7 @@ impl VerifierRegistry {
                     || ch == '∙'
                     || ch == '⋅'
                     || ch == '='
+                    || ch == '＝'
                     || ch == '@'
                     || ch == '#'
                     || ch == '`'
@@ -830,6 +831,7 @@ mod tests {
 report",
             "tee:remote_attestation/claims",
             "TEE（attestation）claims",
+            "TEE＝remote attestation quote",
         ] {
             assert_eq!(
                 VerifierRegistry::normalize_key(alias).as_deref(),
