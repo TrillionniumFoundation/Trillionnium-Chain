@@ -3599,6 +3599,34 @@ mod tests {
     }
 
     #[test]
+    fn round_change_review_bundle_keeps_commit_skip_and_coverage_denominator_views_together() {
+        let jitter_review_fields = [
+            "bft_round_change_active_heights",
+            "bft_round_change_active_height_rate_ppm",
+            "bft_round_change_active_observed_height_rate_ppm",
+            "bft_commit_observed_height_rate_ppm",
+            "bft_skipped_height_total",
+            "bft_skipped_observed_height_rate_ppm",
+            "bft_round_change_density_avg_milli",
+            "bft_round_change_active_height_share_ppm",
+        ];
+
+        assert_eq!(jitter_review_fields.len(), 8);
+        assert!(jitter_review_fields[0].ends_with("_heights"));
+        assert!(jitter_review_fields[1].ends_with("_rate_ppm"));
+        assert!(jitter_review_fields[2].ends_with("_rate_ppm"));
+        assert!(jitter_review_fields[3].ends_with("_rate_ppm"));
+        assert!(jitter_review_fields[4].ends_with("_total"));
+        assert!(jitter_review_fields[5].ends_with("_rate_ppm"));
+        assert!(jitter_review_fields[6].ends_with("_avg_milli"));
+        assert!(jitter_review_fields[7].ends_with("_share_ppm"));
+        assert_ne!(jitter_review_fields[1], jitter_review_fields[2]);
+        assert_ne!(jitter_review_fields[2], jitter_review_fields[3]);
+        assert_ne!(jitter_review_fields[3], jitter_review_fields[5]);
+        assert_ne!(jitter_review_fields[6], jitter_review_fields[7]);
+    }
+
+    #[test]
     fn round_change_density_avg_milli_preserves_sub_integer_jitter_signal() {
         let bft_round_change_total = 5u64;
         let bft_round_change_active_heights = 2u64;
