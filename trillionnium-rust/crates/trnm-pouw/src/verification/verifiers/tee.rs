@@ -1452,6 +1452,31 @@ mod tests {
     }
 
     #[test]
+    fn tee_verifier_backend_internal_quote_report_attestation_payload_prefers_combined_claims_surface_without_zk_payload_leakage(
+    ) {
+        let result = TeeVerifier::classify_execution_err(BackendExecutionError::Internal {
+            backend: "tee:mock-tee-internal".to_string(),
+            reason: "quote/report attestation payload verifier crashed".to_string(),
+        });
+
+        assert!(
+            matches!(result, VerificationResult::Indeterminate(_)),
+            "unexpected result: {result:?}"
+        );
+        let VerificationResult::Indeterminate(msg) = result else {
+            unreachable!()
+        };
+        assert!(msg.contains("backend_error:"), "message: {msg}");
+        assert!(msg.contains("quote/report claims"), "message: {msg}");
+        assert!(!msg.contains("quote/report evidence"), "message: {msg}");
+        assert!(!msg.contains("payload/claims"), "message: {msg}");
+        assert!(
+            msg.contains("legacy: failed while verifying TEE attestation quote/report claims"),
+            "message: {msg}"
+        );
+    }
+
+    #[test]
     fn tee_verifier_backend_unavailable_quote_report_attestation_certificates_without_claims_or_payload_stays_on_combined_evidence_surface(
     ) {
         let result = TeeVerifier::classify_execution_err(BackendExecutionError::Unavailable {
