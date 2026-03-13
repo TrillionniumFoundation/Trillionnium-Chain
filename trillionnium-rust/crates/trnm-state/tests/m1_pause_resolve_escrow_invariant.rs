@@ -144,6 +144,78 @@ fn resolve_authority_same_value_replace_preserves_pending_timelock_and_staged_qu
 }
 
 #[test]
+fn paused_resolve_authority_same_value_replace_preserves_pending_timelock_and_staged_quorum() {
+    // L03 paused-boundary idempotence: replaying the exact same pre-activation
+    // resolve_authority replacement while emergency_pause is active must not extend the
+    // timelock or scrub quorum already staged against the pending authority set.
+    let mut st = StateStore::new();
+
+    st.set_gov_param(98_300, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
+        .expect("bootstrap resolve_authority write should succeed");
+    st.set_gov_param(98_320, 7_310, "resolve_authority".into(), "authority-a,authority-b".into())
+        .expect("bootstrap resolve_authority should apply after timelock");
+
+    let activate_at_height = match st
+        .set_gov_param_with_action(
+            98_340,
+            7_310,
+            "resolve_authority".into(),
+            "authority-c,authority-d".into(),
+            GovPendingUpdateAction::Replace,
+        )
+        .expect("replacement resolve_authority update should schedule while unpaused")
+    {
+        GovParamUpdateOutcome::Scheduled { activate_at_height } => activate_at_height,
+        other => panic!("expected scheduled outcome, got {:?}", other),
+    };
+
+    st.set_gov_param(98_341, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    st.stage_or_confirm_resolve_approval(9_984, 1, true, "authority-c", "authority-c,authority-d")
+        .expect("pending replacement authority should stage approval while paused");
+
+    let pending_before = st
+        .pending_resolve_approval_snapshot(9_984)
+        .expect("staged resolve approval should exist before paused idempotent replay");
+    let root_with_pending = st.state_root();
+
+    let replay = st
+        .set_gov_param_with_action(
+            98_342,
+            7_310,
+            "resolve_authority".into(),
+            "authority-c,authority-d".into(),
+            GovPendingUpdateAction::Replace,
+        )
+        .expect("replaying identical paused replacement must be idempotent");
+
+    match replay {
+        GovParamUpdateOutcome::Scheduled { activate_at_height: replay_height } => {
+            assert_eq!(
+                replay_height, activate_at_height,
+                "paused idempotent replay must not extend resolve_authority timelock"
+            );
+        }
+        other => panic!("expected scheduled outcome, got {:?}", other),
+    }
+
+    let pending = st
+        .pending_gov_update("resolve_authority")
+        .expect("pending resolve_authority timelock should remain staged while paused");
+    assert_eq!(pending.value, "authority-c,authority-d");
+    assert_eq!(pending.activate_at_height, activate_at_height);
+    assert_eq!(st.pending_resolve_approval_snapshot(9_984), Some(pending_before));
+    assert!(st.is_emergency_paused());
+    assert_eq!(
+        st.state_root(),
+        root_with_pending,
+        "paused idempotent replay must not invalidate cached state root when no boundary changes"
+    );
+}
+
+#[test]
 fn paused_resolve_authority_activation_scrubs_pending_resolve_approvals() {
     // L03 boundary hardening: once a timelocked resolve_authority update activates under
     // emergency_pause, any quorum staged against the pending authority set must be scrubbed so
