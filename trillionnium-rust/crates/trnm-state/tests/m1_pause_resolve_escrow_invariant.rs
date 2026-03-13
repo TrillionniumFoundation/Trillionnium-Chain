@@ -2510,6 +2510,78 @@ fn paused_state_rejects_exact_emergency_pause_placeholder_member_without_side_ef
 }
 
 #[test]
+fn paused_state_rejects_exact_emergency_pause_placeholder_second_approver_without_clearing_staged_quorum(
+) {
+    // L03 boundary hardening: once one paused resolve approval is already staged, the exact
+    // emergency_pause placeholder must still be rejected as the second approver without
+    // clearing the valid staged quorum or perturbing custody balances.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 9_931);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 994);
+    st.set_balance(WORKER_SLASH_TREASURY_ACCOUNT, 554);
+
+    st.set_gov_param(98_213, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    st.stage_or_confirm_resolve_approval(9_921, 1, true, "authority-a", "authority-a,authority-b")
+        .expect("first paused approval should stage quorum before malformed second approver");
+    assert_eq!(st.pending_resolve_approval(9_921), Some((true, 1)));
+    assert_eq!(
+        st.pending_resolve_first_approver(9_921).as_deref(),
+        Some("authority-a")
+    );
+
+    let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+    let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+    let worker_slash_before = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
+    let root_before = st.state_root();
+
+    let err = st
+        .stage_or_confirm_resolve_approval(
+            9_921,
+            1,
+            true,
+            "governance.emergency_pause",
+            "authority-a,authority-b",
+        )
+        .expect_err(
+            "exact emergency_pause placeholder second approver must be rejected while paused",
+        );
+    assert!(err.contains("explicit non-system authority") || err.contains("approver"));
+
+    assert_eq!(
+        st.pending_resolve_approval(9_921),
+        Some((true, 1)),
+        "rejecting malformed second approver must preserve staged quorum"
+    );
+    assert_eq!(
+        st.pending_resolve_first_approver(9_921).as_deref(),
+        Some("authority-a"),
+        "rejecting malformed second approver must preserve first-approver audit trail"
+    );
+    assert_eq!(
+        st.pending_resolve_approval_snapshot(9_921)
+            .expect("staged quorum must remain after malformed second approver rejection")
+            .second_approver,
+        None,
+        "rejecting malformed second approver must not fabricate a finalized quorum"
+    );
+    assert_eq!(st.state_root(), root_before);
+    assert_eq!(st.pending_gov_update("resolve_authority"), None);
+    assert!(st.is_emergency_paused());
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
+    assert_eq!(
+        st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
+        worker_slash_before
+    );
+}
+
+#[test]
 fn paused_state_rejects_case_variant_emergency_pause_placeholder_member_without_side_effects() {
     // M1 micro-hardening: resolve quorum parsing must keep the emergency pause placeholder
     // reserved under case drift, so paused mode cannot smuggle control-plane aliases into
