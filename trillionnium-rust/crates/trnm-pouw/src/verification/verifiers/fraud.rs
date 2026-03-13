@@ -167,6 +167,21 @@ mod tests {
     }
 
     #[test]
+    fn fraud_verifier_rejects_noncanonical_worker_binding_context_fail_closed() {
+        let verifier = FraudVerifier;
+        let mut task = mock_task();
+        task.worker = Some(" worker-fraud ".into());
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"FRAUD:{\"task_id\":7,\"worker\":\"worker-fraud\",\"proof_type\":\"fraud\"}"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("non-canonical worker binding context")
+        ));
+    }
+
+    #[test]
     fn fraud_verifier_rejects_unexpected_worker_binding_without_worker_context_fail_closed() {
         let verifier = FraudVerifier;
         let mut task = mock_task();
