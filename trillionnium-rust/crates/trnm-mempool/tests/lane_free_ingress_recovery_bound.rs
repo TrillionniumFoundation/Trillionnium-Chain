@@ -94,3 +94,22 @@ fn reserve_only_backpressured_critical_id_stays_fresh_across_cross_class_retries
     assert!(g.pop_ready().is_some());
     assert_eq!(g.admit(123, IngressClass::Normal), AdmitOutcome::Accepted);
 }
+
+
+#[test]
+fn reserve_only_backpressured_normal_id_stays_fresh_across_cross_class_retries_until_drain() {
+    let mut g = LaneAdmissionGate::new(2, 2);
+
+    // Reserve-only split: fill borrowed critical headroom with mixed queued work.
+    assert_eq!(g.admit(1, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+
+    // Fresh normal ingress under saturation must remain Backpressured even when
+    // retried across classes before any dequeue occurs.
+    assert_eq!(g.admit(124, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(g.admit(124, IngressClass::Critical), AdmitOutcome::Backpressured);
+
+    // After one dequeue, the previously backpressured id must still admit as fresh.
+    assert!(g.pop_ready().is_some());
+    assert_eq!(g.admit(124, IngressClass::Critical), AdmitOutcome::Accepted);
+}

@@ -170,3 +170,37 @@ fn full_drain_resets_fairness_streak_so_next_critical_is_not_delayed() {
     );
     assert_eq!(gate.pop_ready(), Some(200));
 }
+
+
+
+#[test]
+fn fairness_warmup_serves_oldest_normal_first_under_active_critical_backlog() {
+    let mut gate = LaneAdmissionGate::new(8, 3);
+
+    // Build active critical pressure first.
+    assert_eq!(
+        gate.admit(100, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
+    assert_eq!(
+        gate.admit(101, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
+    assert_eq!(
+        gate.admit(102, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
+    assert_eq!(gate.pop_ready(), Some(100));
+
+    // Two normals arrive while critical backlog remains active.
+    assert_eq!(gate.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(103, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
+
+    // Warm fairness must not skip the older normal entry when granting the
+    // anti-starvation turn.
+    assert_eq!(gate.pop_ready(), Some(1));
+}
