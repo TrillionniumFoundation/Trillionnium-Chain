@@ -781,6 +781,34 @@ mod tests {
     }
 
     #[test]
+    fn fraud_verifier_rejects_semicolon_delimited_duplicate_proof_type_binding_fail_closed() {
+        let verifier = FraudVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"FRAUD:{\"task_id\":7;\"worker\":\"worker-fraud\";\"proof_type\":\"fraud\";\"proof_type\":\"fraud\"}"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("duplicate proof_type binding")
+        ));
+    }
+
+    #[test]
+    fn fraud_verifier_rejects_comma_delimited_duplicate_proof_type_binding_fail_closed() {
+        let verifier = FraudVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"FRAUD:{\"task_id\":7,\"worker\":\"worker-fraud\",\"proof_type\":\"fraud\",\"proof_type\":\"fraud\"}"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("duplicate proof_type binding")
+        ));
+    }
+
+    #[test]
     fn fraud_verifier_rejects_fullwidth_comma_delimited_duplicate_result_hash_binding_fail_closed() {
         let verifier = FraudVerifier;
         let mut task = mock_task();
