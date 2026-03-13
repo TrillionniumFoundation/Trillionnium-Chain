@@ -2352,6 +2352,48 @@ fn monetary_last_tick_height_should_affect_state_root_even_when_other_counters_m
 }
 
 #[test]
+fn monetary_tick_count_should_affect_state_root_even_when_other_counters_match() {
+    let mut state_a = StateStore::new();
+    let mut state_b = StateStore::new();
+
+    state_a.restore_monetary_state(MonetaryState {
+        last_tick_height: 10,
+        tick_count: 3,
+        total_minted: 9,
+        total_burned: 4,
+        net_issuance: 5,
+    });
+    state_b.restore_monetary_state(MonetaryState {
+        last_tick_height: 10,
+        tick_count: 4,
+        total_minted: 9,
+        total_burned: 4,
+        net_issuance: 5,
+    });
+
+    let root_a = state_a.state_root();
+    let root_b = state_b.state_root();
+    assert_ne!(
+        root_a, root_b,
+        "state_root must include tick_count so same tick anchor and issuance totals at different monetary progression stages cannot hash identically"
+    );
+
+    state_b.restore_monetary_state(MonetaryState {
+        last_tick_height: 10,
+        tick_count: 3,
+        total_minted: 9,
+        total_burned: 4,
+        net_issuance: 5,
+    });
+
+    assert_eq!(
+        state_b.state_root(),
+        root_a,
+        "restoring the original tick_count should rewind the deterministic root exactly"
+    );
+}
+
+#[test]
 fn restore_monetary_state_rewinds_state_root_after_zero_net_tick_roundtrip() {
     let mut state = StateStore::new();
     state
