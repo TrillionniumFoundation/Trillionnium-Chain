@@ -110,6 +110,7 @@ jobs:
 
       - name: Install shellcheck
         run: |
+          set -euo pipefail
           retry() {
             local attempts="$1"; shift
             local n=1
@@ -138,9 +139,113 @@ jobs:
           WORKFLOW_SCRIPT_REF_SUMMARY_PATH=run/quick-gate/workflow-script-refs-summary.json \
           ./scripts/validate_workflow_script_refs.sh
 
+      - name: Workflow script refs summary path guard regression
+        run: |
+          ./scripts/v2/workflow_script_refs_summary_path_guard_test.sh
+
+      - name: Workflow script refs non-directory root guard regression
+        run: |
+          ./scripts/v2/workflow_script_refs_non_directory_root_guard_test.sh
+
+      - name: Workflow script-ref strict invocation guard regression
+        run: |
+          ./scripts/v2/trnm_gate_quick_check_workflow_script_ref_strict_invocation_guard_test.sh
+
+      - name: Workflow script refs umask guard regression
+        run: |
+          ./scripts/v2/workflow_script_refs_umask_env_guard_test.sh
+
+      - name: Workflow script refs invalid umask guard regression
+        run: |
+          ./scripts/v2/workflow_script_refs_invalid_umask_guard_test.sh
+
+      - name: Workflow script refs locale env guard regression
+        run: |
+          ./scripts/v2/workflow_script_refs_locale_env_guard_test.sh
+
+      - name: Workflow trigger path glob exemption guard regression
+        run: |
+          ./scripts/v2/workflow_script_refs_trigger_paths_exempt_from_non_dot_guard_test.sh
+
+      - name: Workflow script refs duplicate-count accounting guard regression
+        run: |
+          ./scripts/v2/workflow_script_refs_duplicate_count_guard_test.sh
+
+      - name: Workflow script refs total-count summary guard regression
+        run: |
+          ./scripts/v2/workflow_script_refs_total_count_summary_guard_test.sh
+
+      - name: Workflow script refs workflow-file-count summary guard regression
+        run: |
+          ./scripts/v2/workflow_script_refs_workflow_file_count_summary_guard_test.sh
+
+      - name: Workflow script refs workflow-root log guard regression
+        run: |
+          ./scripts/v2/workflow_script_refs_workflow_root_log_guard_test.sh
+
+      - name: Workflow script refs empty warning guard regression
+        run: |
+          ./scripts/v2/workflow_script_refs_empty_warning_guard_test.sh
+
+      - name: Workflow script refs empty strict-mode fail-closed regression
+        run: |
+          ./scripts/v2/workflow_script_refs_empty_strict_mode_guard_test.sh
+
+      - name: Workflow script refs summary JSON escape guard regression
+        run: |
+          ./scripts/v2/workflow_script_refs_summary_json_escape_guard_test.sh
+
       - name: Quick gate summary path guard regression
         run: |
           ./scripts/v2/quick_gate_summary_path_guard_test.sh
+
+      - name: Quick gate non-directory target guard regression
+        run: |
+          ./scripts/v2/quick_gate_non_directory_target_guard_test.sh
+
+      - name: Quick gate shellcheck install deterministic apt guard regression
+        run: |
+          ./scripts/v2/trnm_gate_quick_check_shellcheck_install_deterministic_apt_guard_test.sh
+
+      - name: Quick gate invocation guard regression
+        run: |
+          ./scripts/v2/trnm_gate_quick_check_quick_gate_invocation_guard_test.sh
+
+      - name: Quick gate pipefail guard regression
+        run: |
+          ./scripts/v2/trnm_gate_quick_check_pipefail_guard_test.sh
+
+      - name: Quick gate CI shellcheck required guard regression
+        run: |
+          ./scripts/v2/quick_gate_ci_shellcheck_required_guard_test.sh
+
+      - name: Quick gate local shellcheck fallback regression
+        run: |
+          ./scripts/v2/quick_gate_shellcheck_missing_local_fallback_test.sh
+
+      - name: Quick gate explicit skip-shellcheck summary regression
+        run: |
+          ./scripts/v2/quick_gate_explicit_skip_shellcheck_summary_test.sh
+
+      - name: Quick gate target-dir normalization summary regression
+        run: |
+          ./scripts/v2/quick_gate_target_dirs_normalized_summary_guard_test.sh
+
+      - name: Quick gate umask guard regression
+        run: |
+          ./scripts/v2/quick_gate_umask_env_guard_test.sh
+
+      - name: Quick gate invalid umask guard regression
+        run: |
+          ./scripts/v2/quick_gate_invalid_umask_guard_test.sh
+
+      - name: Quick gate locale env guard regression
+        run: |
+          ./scripts/v2/quick_gate_locale_env_guard_test.sh
+
+      - name: Quick gate skip-shellcheck input guard regression
+        run: |
+          ./scripts/v2/quick_gate_skip_shellcheck_guard_test.sh
 
       - name: Nightly health deterministic env guard regression
         run: |
@@ -158,6 +263,10 @@ jobs:
         run: |
           ./scripts/v2/agent_user_phasea_gate_deterministic_env_guard_test.sh
 
+      - name: Web4 frontend CI deterministic env guard regression
+        run: |
+          ./scripts/v2/web4_frontend_ci_deterministic_env_guard_test.sh
+
       - name: P1 rust sidecar deterministic env guard regression
         run: |
           ./scripts/v2/p1_rust_sidecar_deterministic_env_guard_test.sh
@@ -169,6 +278,10 @@ jobs:
       - name: Quick gate summary JSON escape regression
         run: |
           ./scripts/v2/quick_gate_summary_json_escape_test.sh
+
+      - name: Quick gate target-dir normalization regression
+        run: |
+          ./scripts/v2/quick_gate_target_dir_normalization_guard_test.sh
 
       - name: PR6 missing event log guard regression
         run: |
@@ -634,9 +747,45 @@ jobs:
         run: |
           ./scripts/v2/trnm_gate_quick_check_deterministic_env_guard_test.sh
 
+      - name: Auto regression: workflow-script-refs-python-coverage-guard-test
+        run: |
+          ./scripts/v2/workflow_script_refs_python_coverage_guard_test.sh
+
+      - name: Auto regression: workflow-script-refs-trillionnium-rust-coverage-guard-test
+        run: |
+          ./scripts/v2/workflow_script_refs_trillionnium_rust_coverage_guard_test.sh
+
+      - name: Auto regression: workflow-script-refs-relative-scripts-coverage-guard-test
+        run: |
+          ./scripts/v2/workflow_script_refs_relative_scripts_coverage_guard_test.sh
+
+      - name: Auto regression: workflow-script-refs-yaml-coverage-guard-test
+        run: |
+          ./scripts/v2/workflow_script_refs_yaml_coverage_guard_test.sh
+
+      - name: Auto regression: workflow-script-refs-summary-path-guard-test
+        run: |
+          ./scripts/v2/workflow_script_refs_summary_path_guard_test.sh
+
+      - name: Auto regression: workflow-script-refs-missing-workflow-root-guard-test
+        run: |
+          ./scripts/v2/workflow_script_refs_missing_workflow_root_guard_test.sh
+
+      - name: Auto regression: workflow-script-refs-invalid-strict-mode-guard-test
+        run: |
+          ./scripts/v2/workflow_script_refs_invalid_strict_mode_guard_test.sh
+
+      - name: Auto regression: workflow-script-refs-non-exec-strict-mode-guard-test
+        run: |
+          ./scripts/v2/workflow_script_refs_non_exec_strict_mode_guard_test.sh
+
       - name: Auto regression: trnm-merge-gates-deterministic-env-guard-test
         run: |
           ./scripts/v2/trnm_merge_gates_deterministic_env_guard_test.sh
+
+      - name: Auto regression: trnm-merge-gates-paths-coverage-guard-test
+        run: |
+          ./scripts/v2/trnm_merge_gates_paths_coverage_guard_test.sh
 
       - name: Auto regression: run-local-release-evidence-deterministic-entry-test
         run: |

@@ -95,41 +95,56 @@ const MAX_FAILURE_REASON_CHARS: usize = 160;
 fn is_disallowed_invisible_char(ch: char) -> bool {
     matches!(
         ch,
-        '\u{00AD}'
+        '\u{00A0}'
+            | '\u{00AD}'
+            | '\u{034F}'
             | '\u{061C}'
             | '\u{180E}'
+            | '\u{2007}'
             | '\u{200B}'
             | '\u{200C}'
             | '\u{200D}'
             | '\u{200E}'
             | '\u{200F}'
+            | '\u{2028}'
+            | '\u{2029}'
             | '\u{202A}'
             | '\u{202B}'
             | '\u{202C}'
             | '\u{202D}'
             | '\u{202E}'
+            | '\u{202F}'
             | '\u{2060}'
+            | '\u{2061}'
+            | '\u{2062}'
+            | '\u{2063}'
+            | '\u{2064}'
             | '\u{2066}'
             | '\u{2067}'
             | '\u{2068}'
             | '\u{2069}'
+            | '\u{206A}'
+            | '\u{206B}'
+            | '\u{206C}'
+            | '\u{206D}'
+            | '\u{206E}'
+            | '\u{206F}'
             | '\u{FEFF}'
     )
+        || ('\u{FE00}'..='\u{FE0F}').contains(&ch)
+        || ('\u{E0100}'..='\u{E01EF}').contains(&ch)
 }
 
 fn normalize_failure_reason(reason: &str) -> String {
     let sanitized: String = reason
         .chars()
         .map(|ch| {
-            if ch.is_whitespace() {
+            if ch.is_whitespace() || ch.is_control() || is_disallowed_invisible_char(ch) {
                 ' '
-            } else if ch.is_control() || is_disallowed_invisible_char(ch) {
-                '\0'
             } else {
                 ch
             }
         })
-        .filter(|ch| *ch != '\0')
         .collect();
     let collapsed = sanitized.split_whitespace().collect::<Vec<_>>().join(" ");
     if collapsed.is_empty() {
@@ -145,4 +160,30 @@ fn normalize_failure_reason(reason: &str) -> String {
         normalized.push(ch);
     }
     normalized
+}
+
+#[cfg(test)]
+mod tests {
+    use super::normalize_failure_reason;
+
+    #[test]
+    fn normalize_failure_reason_strips_cgj_for_replay_stability() {
+        let raw = "target\u{034F} relay timeout";
+        let normalized = normalize_failure_reason(raw);
+        assert_eq!(normalized, "target relay timeout");
+    }
+
+    #[test]
+    fn normalize_failure_reason_collapses_nbsp_family_for_replay_stability() {
+        let raw = "target\u{00A0}relay\u{2007}timeout\u{202F}signal";
+        let normalized = normalize_failure_reason(raw);
+        assert_eq!(normalized, "target relay timeout signal");
+    }
+
+    #[test]
+    fn normalize_failure_reason_strips_soft_hyphen_for_replay_stability() {
+        let raw = "target\u{00AD}relay timeout";
+        let normalized = normalize_failure_reason(raw);
+        assert_eq!(normalized, "target relay timeout");
+    }
 }

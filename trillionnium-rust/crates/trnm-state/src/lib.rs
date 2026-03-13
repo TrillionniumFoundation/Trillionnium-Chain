@@ -1480,12 +1480,17 @@ pub fn verify_wal_and_find_checkpoint(
 
     for e in wal_entries {
         if let Some(last_height) = prev_height {
-            // Fail closed on non-monotonic WAL heights. Replayed or out-of-order
-            // entries should not be treated as a valid continuation during
-            // restart recovery.
-            if e.height <= last_height {
+            // Fail closed on any WAL height discontinuity. Replayed, out-of-order,
+            // or gap-skipping entries must not be treated as a valid continuation
+            // during restart recovery.
+            if e.height != last_height.saturating_add(1) {
                 return Ok(best_checkpoint);
             }
+        } else if e.height != 1 {
+            // Until StateStore snapshot restore/replay exists, a checkpointed WAL chain
+            // that starts above genesis height is metadata-only and must not be used to
+            // claim safe application-state recovery.
+            return Ok(best_checkpoint);
         }
         if e.prev_hash_hex != prev_hash {
             return Ok(best_checkpoint);
@@ -1584,6 +1589,47 @@ mod tests {
         let _ = st.update_task(r1.clone(), t.clone()).unwrap();
         let err = st.update_task(r1, t).unwrap_err();
         assert!(err.contains("version conflict"));
+    }
+
+    #[test]
+    fn verify_wal_rejects_forged_checkpoint_on_uncommitted_tail() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "h1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "h2-uncommitted".into(),
+            committed: false,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1.clone()),
+        };
+
+        let best = verify_wal_and_find_checkpoint(
+            &[
+                CheckpointMeta {
+                    height: 1,
+                    state_root_hex: "r1".into(),
+                    wal_entry_hash_hex: h1.clone(),
+                },
+                CheckpointMeta {
+                    height: 2,
+                    state_root_hex: "r2".into(),
+                    wal_entry_hash_hex: e2.content_hash_hex(),
+                },
+            ],
+            &[e1, e2],
+        )
+        .expect("verifier should fail closed instead of accepting uncommitted tail metadata");
+
+        assert_eq!(best.as_ref().map(|cp| cp.height), Some(1));
+        assert_eq!(best.as_ref().map(|cp| cp.state_root_hex.as_str()), Some("r1"));
     }
 
     #[test]
@@ -4086,6 +4132,43 @@ mod tests {
     }
 
     #[test]
+    fn state_root_changes_when_pending_resolve_confirmation_count_changes() {
+        let mut st_a = StateStore::new();
+        st_a.stage_or_confirm_resolve_approval(
+            501,
+            1,
+            true,
+            "authority-a",
+            "authority-a,authority-b,authority-c",
+        )
+        .unwrap();
+
+        let mut st_b = StateStore::new();
+        st_b.stage_or_confirm_resolve_approval(
+            501,
+            1,
+            true,
+            "authority-a",
+            "authority-a,authority-b,authority-c",
+        )
+        .unwrap();
+        st_b.stage_or_confirm_resolve_approval(
+            501,
+            1,
+            true,
+            "authority-b",
+            "authority-a,authority-b,authority-c",
+        )
+        .unwrap();
+
+        assert_ne!(
+            st_a.state_root(),
+            st_b.state_root(),
+            "pending resolve confirmation count must contribute to state root"
+        );
+    }
+
+    #[test]
     fn state_root_changes_when_pending_resolve_task_version_changes() {
         let mut st_a = StateStore::new();
         st_a.stage_or_confirm_resolve_approval(
@@ -4223,6 +4306,52 @@ mod tests {
     }
 
     #[test]
+    fn wal_checkpoint_verification_rejects_checkpointed_chain_without_genesis_base() {
+        let e1 = WalMeta {
+            height: 10,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let checkpoints = vec![CheckpointMeta {
+            height: 10,
+            state_root_hex: "r1".into(),
+            wal_entry_hash_hex: e1.content_hash_hex(),
+        }];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1]).unwrap();
+        assert!(
+            got.is_none(),
+            "checkpoint-only recovery must fail closed when WAL metadata does not start at genesis height"
+        );
+    }
+
+    #[test]
+    fn wal_checkpoint_verification_rejects_forged_genesis_prev_hash() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: Some("forged-prev".into()),
+        };
+        let checkpoints = vec![CheckpointMeta {
+            height: 1,
+            state_root_hex: "r1".into(),
+            wal_entry_hash_hex: e1.content_hash_hex(),
+        }];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1]).unwrap();
+        assert!(
+            got.is_none(),
+            "genesis WAL metadata with a forged prev hash must fail closed instead of claiming checkpoint recovery"
+        );
+    }
+
+    #[test]
     fn wal_checkpoint_verification_falls_back_on_non_monotonic_height() {
         let e1 = WalMeta {
             height: 10,
@@ -4256,10 +4385,201 @@ mod tests {
             },
         ];
 
-        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2])
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2]).unwrap();
+        assert!(
+            got.is_none(),
+            "non-genesis WAL bases must not be accepted during checkpoint-only recovery"
+        );
+    }
+
+    #[test]
+    fn wal_checkpoint_verification_falls_back_when_height_regresses() {
+        let e1 = WalMeta {
+            height: 10,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: 9,
+            round: 1,
+            proposal_hash: "p2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1.clone()),
+        };
+
+        let checkpoints = vec![
+            CheckpointMeta {
+                height: 10,
+                state_root_hex: "r1".into(),
+                wal_entry_hash_hex: h1,
+            },
+            CheckpointMeta {
+                height: 9,
+                state_root_hex: "r2".into(),
+                wal_entry_hash_hex: e2.content_hash_hex(),
+            },
+        ];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2]).unwrap();
+        assert!(
+            got.is_none(),
+            "regressing non-genesis WAL chains must fail closed instead of falling back to a checkpoint"
+        );
+    }
+
+    #[test]
+    fn wal_checkpoint_verification_rejects_replayed_duplicate_height_tail() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "p2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1.clone()),
+        };
+        let h2 = e2.content_hash_hex();
+        let replayed_e2 = WalMeta {
+            height: 2,
+            round: 1,
+            proposal_hash: "p2-replay".into(),
+            committed: true,
+            state_root_hex: "r2-replay".into(),
+            prev_hash_hex: Some(h2.clone()),
+        };
+
+        let checkpoints = vec![
+            CheckpointMeta {
+                height: 1,
+                state_root_hex: "r1".into(),
+                wal_entry_hash_hex: h1,
+            },
+            CheckpointMeta {
+                height: 2,
+                state_root_hex: "r2".into(),
+                wal_entry_hash_hex: h2,
+            },
+            CheckpointMeta {
+                height: 2,
+                state_root_hex: "r2-replay".into(),
+                wal_entry_hash_hex: replayed_e2.content_hash_hex(),
+            },
+        ];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2, replayed_e2])
             .unwrap()
             .expect("checkpoint");
-        assert_eq!(got.state_root_hex, "r1");
+        assert_eq!(got.height, 2);
+        assert_eq!(got.state_root_hex, "r2");
+    }
+
+    #[test]
+    fn wal_checkpoint_verification_rejects_identical_duplicate_height_tail() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "p2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1.clone()),
+        };
+        let h2 = e2.content_hash_hex();
+        let duplicated_e2 = e2.clone();
+
+        let checkpoints = vec![
+            CheckpointMeta {
+                height: 1,
+                state_root_hex: "r1".into(),
+                wal_entry_hash_hex: h1,
+            },
+            CheckpointMeta {
+                height: 2,
+                state_root_hex: "r2".into(),
+                wal_entry_hash_hex: h2,
+            },
+        ];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2, duplicated_e2])
+            .unwrap()
+            .expect("checkpoint");
+        assert_eq!(got.height, 2);
+        assert_eq!(got.state_root_hex, "r2");
+    }
+
+    #[test]
+    fn wal_checkpoint_verification_rejects_uncommitted_duplicate_height_tail() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "p2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1.clone()),
+        };
+        let h2 = e2.content_hash_hex();
+        let replayed_uncommitted_e2 = WalMeta {
+            height: 2,
+            round: 1,
+            proposal_hash: "p2-replay".into(),
+            committed: false,
+            state_root_hex: "r2-replay".into(),
+            prev_hash_hex: Some(h2.clone()),
+        };
+
+        let checkpoints = vec![
+            CheckpointMeta {
+                height: 1,
+                state_root_hex: "r1".into(),
+                wal_entry_hash_hex: h1,
+            },
+            CheckpointMeta {
+                height: 2,
+                state_root_hex: "r2".into(),
+                wal_entry_hash_hex: h2,
+            },
+            CheckpointMeta {
+                height: 2,
+                state_root_hex: "r2-replay".into(),
+                wal_entry_hash_hex: replayed_uncommitted_e2.content_hash_hex(),
+            },
+        ];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2, replayed_uncommitted_e2])
+            .unwrap()
+            .expect("checkpoint");
+        assert_eq!(got.height, 2);
+        assert_eq!(got.state_root_hex, "r2");
     }
 
     #[test]
@@ -4305,6 +4625,326 @@ mod tests {
     }
 
     #[test]
+    fn wal_checkpoint_verification_ignores_stale_duplicate_checkpoint_at_same_height() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "p2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1),
+        };
+        let h2 = e2.content_hash_hex();
+
+        let checkpoints = vec![
+            CheckpointMeta {
+                height: 1,
+                state_root_hex: "r1".into(),
+                wal_entry_hash_hex: e1.content_hash_hex(),
+            },
+            CheckpointMeta {
+                height: 2,
+                state_root_hex: "stale-r2".into(),
+                wal_entry_hash_hex: "stale-h2".into(),
+            },
+            CheckpointMeta {
+                height: 2,
+                state_root_hex: "r2".into(),
+                wal_entry_hash_hex: h2.clone(),
+            },
+        ];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2])
+            .unwrap()
+            .expect("checkpoint");
+        assert_eq!(got.height, 2);
+        assert_eq!(got.state_root_hex, "r2");
+        assert_eq!(got.wal_entry_hash_hex, h2);
+    }
+
+    #[test]
+    fn wal_checkpoint_verification_accepts_identical_duplicate_checkpoint_at_same_height() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "p2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1),
+        };
+        let h2 = e2.content_hash_hex();
+
+        let checkpoints = vec![
+            CheckpointMeta {
+                height: 2,
+                state_root_hex: "r2".into(),
+                wal_entry_hash_hex: h2.clone(),
+            },
+            CheckpointMeta {
+                height: 1,
+                state_root_hex: "r1".into(),
+                wal_entry_hash_hex: e1.content_hash_hex(),
+            },
+            CheckpointMeta {
+                height: 2,
+                state_root_hex: "r2".into(),
+                wal_entry_hash_hex: h2.clone(),
+            },
+        ];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2])
+            .unwrap()
+            .expect("checkpoint");
+        assert_eq!(got.height, 2);
+        assert_eq!(got.state_root_hex, "r2");
+        assert_eq!(got.wal_entry_hash_hex, h2);
+    }
+
+    #[test]
+    fn wal_checkpoint_verification_falls_back_on_gap_skipping_committed_tail() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e3 = WalMeta {
+            height: 3,
+            round: 0,
+            proposal_hash: "p3".into(),
+            committed: true,
+            state_root_hex: "r3".into(),
+            prev_hash_hex: Some(h1.clone()),
+        };
+
+        let checkpoints = vec![
+            CheckpointMeta {
+                height: 1,
+                state_root_hex: "r1".into(),
+                wal_entry_hash_hex: h1.clone(),
+            },
+            CheckpointMeta {
+                height: 3,
+                state_root_hex: "r3".into(),
+                wal_entry_hash_hex: e3.content_hash_hex(),
+            },
+        ];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e3])
+            .unwrap()
+            .expect("checkpoint");
+        assert_eq!(got.height, 1);
+        assert_eq!(got.state_root_hex, "r1");
+        assert_eq!(got.wal_entry_hash_hex, h1);
+    }
+
+    #[test]
+    fn wal_checkpoint_verification_rejects_metadata_only_tail_after_checkpoint() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "p2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1.clone()),
+        };
+        let h2 = e2.content_hash_hex();
+        let e3 = WalMeta {
+            height: 3,
+            round: 0,
+            proposal_hash: "p3".into(),
+            committed: false,
+            state_root_hex: "r3".into(),
+            prev_hash_hex: Some(h2.clone()),
+        };
+
+        let checkpoints = vec![
+            CheckpointMeta {
+                height: 1,
+                state_root_hex: "r1".into(),
+                wal_entry_hash_hex: h1,
+            },
+            CheckpointMeta {
+                height: 2,
+                state_root_hex: "r2".into(),
+                wal_entry_hash_hex: h2,
+            },
+            CheckpointMeta {
+                height: 3,
+                state_root_hex: "r3".into(),
+                wal_entry_hash_hex: e3.content_hash_hex(),
+            },
+        ];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2, e3])
+            .unwrap()
+            .expect("checkpoint");
+        assert_eq!(got.height, 2);
+        assert_eq!(got.state_root_hex, "r2");
+    }
+
+    #[test]
+    fn wal_checkpoint_verification_does_not_accept_future_checkpoint_without_matching_wal_height() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "p2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1.clone()),
+        };
+
+        let checkpoints = vec![
+            CheckpointMeta {
+                height: 2,
+                state_root_hex: "r2".into(),
+                wal_entry_hash_hex: e2.content_hash_hex(),
+            },
+            CheckpointMeta {
+                height: 3,
+                state_root_hex: "r3".into(),
+                wal_entry_hash_hex: "future-wal-hash".into(),
+            },
+        ];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2])
+            .unwrap()
+            .expect("checkpoint");
+        assert_eq!(got.height, 2);
+        assert_eq!(got.state_root_hex, "r2");
+    }
+
+    #[test]
+    fn wal_checkpoint_verification_ignores_unsorted_stale_and_future_checkpoints() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "p2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: Some(h1.clone()),
+        };
+        let h2 = e2.content_hash_hex();
+
+        let checkpoints = vec![
+            CheckpointMeta {
+                height: 4,
+                state_root_hex: "r4".into(),
+                wal_entry_hash_hex: "future-wal-hash".into(),
+            },
+            CheckpointMeta {
+                height: 2,
+                state_root_hex: "stale-r2".into(),
+                wal_entry_hash_hex: "stale-h2".into(),
+            },
+            CheckpointMeta {
+                height: 1,
+                state_root_hex: "r1".into(),
+                wal_entry_hash_hex: h1,
+            },
+            CheckpointMeta {
+                height: 2,
+                state_root_hex: "r2".into(),
+                wal_entry_hash_hex: h2,
+            },
+        ];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2])
+            .unwrap()
+            .expect("checkpoint");
+        assert_eq!(got.height, 2);
+        assert_eq!(got.state_root_hex, "r2");
+    }
+
+    #[test]
+    fn wal_checkpoint_verification_rejects_gap_skipping_tail() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        let e3 = WalMeta {
+            height: 3,
+            round: 0,
+            proposal_hash: "p3".into(),
+            committed: true,
+            state_root_hex: "r3".into(),
+            prev_hash_hex: Some(h1.clone()),
+        };
+
+        let checkpoints = vec![
+            CheckpointMeta {
+                height: 1,
+                state_root_hex: "r1".into(),
+                wal_entry_hash_hex: h1,
+            },
+            CheckpointMeta {
+                height: 3,
+                state_root_hex: "r3".into(),
+                wal_entry_hash_hex: e3.content_hash_hex(),
+            },
+        ];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e3])
+            .unwrap()
+            .expect("checkpoint");
+        assert_eq!(got.height, 1);
+        assert_eq!(got.state_root_hex, "r1");
+    }
+
+    #[test]
     fn wal_checkpoint_verification_stops_before_uncommitted_tail() {
         let e1 = WalMeta {
             height: 1,
@@ -4342,6 +4982,54 @@ mod tests {
             .expect("checkpoint");
         assert_eq!(got.height, 1);
         assert_eq!(got.state_root_hex, "r1");
+    }
+
+    #[test]
+    fn wal_checkpoint_verification_rejects_uncommitted_genesis_entry_even_with_checkpoint() {
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "p1".into(),
+            committed: false,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+
+        let checkpoints = vec![CheckpointMeta {
+            height: 1,
+            state_root_hex: "r1".into(),
+            wal_entry_hash_hex: e1.content_hash_hex(),
+        }];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1]).unwrap();
+        assert!(
+            got.is_none(),
+            "an uncommitted genesis WAL entry must not be accepted as a recoverable checkpoint"
+        );
+    }
+
+    #[test]
+    fn wal_checkpoint_verification_rejects_chain_that_starts_above_genesis_height() {
+        let e2 = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "p2".into(),
+            committed: true,
+            state_root_hex: "r2".into(),
+            prev_hash_hex: None,
+        };
+
+        let checkpoints = vec![CheckpointMeta {
+            height: 2,
+            state_root_hex: "r2".into(),
+            wal_entry_hash_hex: e2.content_hash_hex(),
+        }];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e2]).unwrap();
+        assert!(
+            got.is_none(),
+            "checkpointed WAL that starts above genesis must not be treated as recoverable application state"
+        );
     }
 
     #[test]

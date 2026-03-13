@@ -1,5 +1,7 @@
 use clap::Parser;
-use std::time::Instant;
+use std::fs;
+use std::path::PathBuf;
+use std::time::{Instant, SystemTime, UNIX_EPOCH};
 use trnm_executor::{
     auto_adaptive_decision, build_parallel_groups_profile_with_strategy, GroupingStrategy,
 };
@@ -47,6 +49,10 @@ struct Args {
     #[arg(long, default_value_t = 20_000)]
     txs: usize,
 
+    /// Persist profile output under run/bench (enabled by default when --profile is set)
+    #[arg(long, default_value_t = true)]
+    persist_profile: bool,
+
     /// Number of hot keys (smaller = higher conflict)
     #[arg(long, default_value_t = 2_000)]
     keys: usize,
@@ -87,6 +93,13 @@ fn main() {
         }
     };
 
+    let capture_started_at = SystemTime::now();
+    let capture_started_at_epoch = capture_started_at
+        .duration_since(UNIX_EPOCH)
+        .unwrap_or_default()
+        .as_secs();
+    let capture_started_at_iso = chrono_like_iso(capture_started_at);
+
     let t0 = Instant::now();
     let (groups, profile) = build_parallel_groups_profile_with_strategy(&txs, args.strategy.into());
     let dt = t0.elapsed();
@@ -94,63 +107,204 @@ fn main() {
     let grouped: usize = groups.iter().map(|g| g.len()).sum();
     let conflict_rate = 1.0f64 - (keys as f64 / n as f64).min(1.0);
 
-    println!("bench_parallel_grouping");
-    println!("workload={:?}", args.workload);
-    println!("strategy={:?}", args.strategy);
-    println!("txs={}", n);
-    println!("keys={}", keys);
-    println!("estimated_conflict_rate={:.4}", conflict_rate);
-    println!("groups={}", groups.len());
-    println!("grouped={}", grouped);
-    println!("elapsed_ms={}", dt.as_millis());
+    let mut lines = vec![
+        "bench_parallel_grouping".to_string(),
+        format!("workload={:?}", args.workload),
+        format!("strategy={:?}", args.strategy),
+        format!("txs={}", n),
+        format!("keys={}", keys),
+        format!("read_fanout={}", args.read_fanout.max(1)),
+        format!("write_every={}", args.write_every.max(1)),
+        format!("persist_profile={}", args.persist_profile),
+        format!("estimated_conflict_rate={:.4}", conflict_rate),
+        format!("groups={}", groups.len()),
+        format!("grouped={}", grouped),
+        format!("elapsed_ms={}", dt.as_millis()),
+    ];
 
     if args.profile {
-        println!("profile.tx_count={}", profile.tx_count);
-        println!("profile.group_count={}", profile.group_count);
-        println!("profile.grouped_count={}", profile.grouped_count);
-        println!("profile.max_group_size={}", profile.max_group_size);
-        println!("profile.min_group_size={}", profile.min_group_size);
-        println!("profile.avg_group_size={:.4}", profile.avg_group_size);
-        println!("profile.hot_object_share={:.4}", profile.hot_object_share);
-        println!("profile.conflict_checks={}", profile.conflict_checks);
-        println!("profile.conflict_hits={}", profile.conflict_hits);
-        println!(
-            "profile.candidate_groups_scanned={}",
-            profile.candidate_groups_scanned
+        let coverage_ratio = grouped as f64 / n as f64;
+        let ungrouped_count = n.saturating_sub(grouped);
+        let grouping_complete = ungrouped_count == 0;
+        let groups_per_1k_txs = groups.len() as f64 * 1000.0 / n as f64;
+        let grouping_efficiency = if groups.is_empty() {
+            0.0
+        } else {
+            grouped as f64 / groups.len() as f64
+        };
+        let effective_read_fanout = match args.workload {
+            Workload::Classic => 1,
+            Workload::Mixed | Workload::HotStreak => args.read_fanout.max(1),
+        };
+        let effective_write_ratio = match args.workload {
+            Workload::Classic => 1.0,
+            Workload::Mixed | Workload::HotStreak => 1.0 / args.write_every.max(1) as f64,
+        };
+        let workload_signature = format!(
+            "{:?}/txs={}/keys={}/reads={}/write_ratio={:.4}/strategy={:?}",
+            args.workload,
+            n,
+            keys,
+            effective_read_fanout,
+            effective_write_ratio,
+            args.strategy
         );
-        println!("profile.stage_ww_checks={}", profile.stage_ww_checks);
-        println!("profile.stage_ww_hits={}", profile.stage_ww_hits);
-        println!("profile.stage_wr_checks={}", profile.stage_wr_checks);
-        println!("profile.stage_wr_hits={}", profile.stage_wr_hits);
-        println!("profile.stage_rw_checks={}", profile.stage_rw_checks);
-        println!("profile.stage_rw_hits={}", profile.stage_rw_hits);
+        lines.extend([
+            format!("profile.report.workload={:?}", args.workload),
+            format!("profile.report.strategy={:?}", args.strategy),
+            format!("profile.report.txs={}", n),
+            format!("profile.report.keys={}", keys),
+            format!("profile.report.read_fanout={}", args.read_fanout.max(1)),
+            format!("profile.report.write_every={}", args.write_every.max(1)),
+            format!("profile.report.effective_read_fanout={}", effective_read_fanout),
+            format!("profile.report.effective_write_ratio={:.4}", effective_write_ratio),
+            format!("profile.report.workload_signature={}", workload_signature),
+            format!("profile.report.persist_profile={}", args.persist_profile),
+            format!(
+                "profile.report.capture_started_at_epoch={}",
+                capture_started_at_epoch
+            ),
+            format!(
+                "profile.report.capture_started_at_iso={}",
+                capture_started_at_iso
+            ),
+            "profile.report.capture_stamp_family=epoch".to_string(),
+            format!("profile.report.capture_stamp={}", capture_started_at_epoch),
+            format!(
+                "profile.report.capture_stamp_epoch={}",
+                capture_started_at_epoch
+            ),
+            format!("profile.report.elapsed_ms={}", dt.as_millis()),
+            format!(
+                "profile.report.estimated_conflict_rate={:.4}",
+                conflict_rate
+            ),
+            format!("profile.report.coverage_ratio={:.4}", coverage_ratio),
+            format!("profile.report.ungrouped_count={}", ungrouped_count),
+            format!("profile.report.grouping_complete={}", grouping_complete),
+            format!("profile.report.groups_per_1k_txs={:.4}", groups_per_1k_txs),
+            format!(
+                "profile.report.grouping_efficiency={:.4}",
+                grouping_efficiency
+            ),
+            "profile.report.autopilot_hint=persisted_profile_capture".to_string(),
+            format!("profile.tx_count={}", profile.tx_count),
+            format!("profile.group_count={}", profile.group_count),
+            format!("profile.grouped_count={}", profile.grouped_count),
+            format!("profile.max_group_size={}", profile.max_group_size),
+            format!("profile.min_group_size={}", profile.min_group_size),
+            format!("profile.avg_group_size={:.4}", profile.avg_group_size),
+            format!("profile.hot_object_share={:.4}", profile.hot_object_share),
+            format!("profile.conflict_checks={}", profile.conflict_checks),
+            format!("profile.conflict_hits={}", profile.conflict_hits),
+            format!(
+                "profile.candidate_groups_scanned={}",
+                profile.candidate_groups_scanned
+            ),
+            format!("profile.stage_ww_checks={}", profile.stage_ww_checks),
+            format!("profile.stage_ww_hits={}", profile.stage_ww_hits),
+            format!("profile.stage_wr_checks={}", profile.stage_wr_checks),
+            format!("profile.stage_wr_hits={}", profile.stage_wr_hits),
+            format!("profile.stage_rw_checks={}", profile.stage_rw_checks),
+            format!("profile.stage_rw_hits={}", profile.stage_rw_hits),
+        ]);
         let hit_rate = if profile.conflict_checks == 0 {
             0.0
         } else {
             profile.conflict_hits as f64 / profile.conflict_checks as f64
         };
-        println!("profile.conflict_hit_rate={:.4}", hit_rate);
+        lines.push(format!("profile.conflict_hit_rate={:.4}", hit_rate));
 
         if matches!(args.strategy, StrategyArg::AutoAdaptive) {
             let d = auto_adaptive_decision(&txs);
-            println!("profile.auto.use_hot_bucket={}", d.use_hot_bucket);
-            println!("profile.auto.reason={}", d.reason);
-            println!("profile.auto.sample_len={}", d.sample_len);
-            println!("profile.auto.streak_ratio={:.4}", d.streak_ratio);
-            println!("profile.auto.streak_threshold={:.4}", d.streak_threshold);
-            println!("profile.auto.min_margin={:.4}", d.min_margin);
-            println!("profile.auto.hot_key_share={:.4}", d.hot_key_share);
-            println!("profile.auto.min_hot_key_share={:.4}", d.min_hot_key_share);
-            println!(
-                "profile.auto.expected_gain_score={:.4}",
-                d.expected_gain_score
-            );
-            println!(
-                "profile.auto.min_expected_gain_score={:.4}",
-                d.min_expected_gain_score
-            );
+            lines.extend([
+                format!("profile.auto.use_hot_bucket={}", d.use_hot_bucket),
+                format!("profile.auto.reason={}", d.reason),
+                format!("profile.auto.sample_len={}", d.sample_len),
+                format!("profile.auto.streak_ratio={:.4}", d.streak_ratio),
+                format!("profile.auto.streak_threshold={:.4}", d.streak_threshold),
+                format!("profile.auto.min_margin={:.4}", d.min_margin),
+                format!("profile.auto.hot_key_share={:.4}", d.hot_key_share),
+                format!("profile.auto.min_hot_key_share={:.4}", d.min_hot_key_share),
+                format!(
+                    "profile.auto.expected_gain_score={:.4}",
+                    d.expected_gain_score
+                ),
+                format!(
+                    "profile.auto.min_expected_gain_score={:.4}",
+                    d.min_expected_gain_score
+                ),
+            ]);
+        }
+
+        if args.persist_profile {
+            match persist_profile_report(&mut lines, capture_started_at_epoch) {
+                Ok(_) => {}
+                Err(err) => lines.push(format!("profile.report.persist_error={err}")),
+            }
         }
     }
+
+    for line in lines {
+        println!("{line}");
+    }
+}
+
+fn persist_profile_report(
+    lines: &mut Vec<String>,
+    capture_started_at_epoch: u64,
+) -> std::io::Result<PathBuf> {
+    let out_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("..")
+        .join("..")
+        .join("run")
+        .join("bench");
+    fs::create_dir_all(&out_dir)?;
+    let out_path = out_dir.join(format!(
+        "executor-profile-summary-{capture_started_at_epoch}.txt"
+    ));
+    let resolved_path = fs::canonicalize(&out_dir)
+        .unwrap_or_else(|_| out_dir.clone())
+        .join(
+            out_path
+                .file_name()
+                .map(|name| name.to_os_string())
+                .unwrap_or_default(),
+        );
+    let basename = out_path
+        .file_name()
+        .map(|name| name.to_string_lossy().into_owned())
+        .unwrap_or_else(|| out_path.display().to_string());
+    lines.push(format!("profile.report.path={}", resolved_path.display()));
+    lines.push(format!("profile.report.artifact_basename={basename}"));
+    fs::write(&out_path, format!("{}\n", lines.join("\n")))?;
+    fs::canonicalize(&out_path).or(Ok(out_path))
+}
+
+fn chrono_like_iso(ts: SystemTime) -> String {
+    let total_seconds = ts.duration_since(UNIX_EPOCH).unwrap_or_default().as_secs() as i64;
+    let days = total_seconds.div_euclid(86_400);
+    let seconds_of_day = total_seconds.rem_euclid(86_400);
+    let (year, month, day) = civil_from_days(days);
+    let hour = seconds_of_day / 3_600;
+    let minute = (seconds_of_day % 3_600) / 60;
+    let second = seconds_of_day % 60;
+    format!("{year:04}-{month:02}-{day:02}T{hour:02}:{minute:02}:{second:02}Z")
+}
+
+fn civil_from_days(days_since_unix_epoch: i64) -> (i64, i64, i64) {
+    let z = days_since_unix_epoch + 719_468;
+    let era = if z >= 0 { z } else { z - 146_096 }.div_euclid(146_097);
+    let doe = z - era * 146_097;
+    let yoe = (doe - doe.div_euclid(1_460) + doe.div_euclid(36_524) - doe.div_euclid(146_096))
+        .div_euclid(365);
+    let mut year = yoe + era * 400;
+    let doy = doe - (365 * yoe + yoe.div_euclid(4) - yoe.div_euclid(100));
+    let mp = (5 * doy + 2).div_euclid(153);
+    let day = doy - (153 * mp + 2).div_euclid(5) + 1;
+    let month = mp + if mp < 10 { 3 } else { -9 };
+    year += if month <= 2 { 1 } else { 0 };
+    (year, month, day)
 }
 
 fn build_classic_txs(n: usize, keys: usize) -> Vec<Tx> {
