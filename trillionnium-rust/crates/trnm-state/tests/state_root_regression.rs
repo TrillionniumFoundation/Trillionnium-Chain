@@ -255,6 +255,54 @@ fn applied_gov_param_string_field_boundaries_should_affect_state_root() {
 }
 
 #[test]
+fn applied_gov_param_version_must_affect_state_root_even_when_key_and_value_match() {
+    let mut state_a = StateStore::new();
+    let mut state_b = StateStore::new();
+
+    state_a.restore_gov_param(
+        114,
+        Some(GovParamObject {
+            key_id: 114,
+            key: "max_parallel_workers".into(),
+            value: "8".into(),
+            version: 1,
+        }),
+    );
+    state_b.restore_gov_param(
+        114,
+        Some(GovParamObject {
+            key_id: 114,
+            key: "max_parallel_workers".into(),
+            value: "8".into(),
+            version: 2,
+        }),
+    );
+
+    let root_a = state_a.state_root();
+    let root_b = state_b.state_root();
+    assert_ne!(
+        root_a, root_b,
+        "applied governance param version must contribute to state_root so identical key/value payloads at different canonical object versions cannot hash identically"
+    );
+
+    state_b.restore_gov_param(
+        114,
+        Some(GovParamObject {
+            key_id: 114,
+            key: "max_parallel_workers".into(),
+            value: "8".into(),
+            version: 1,
+        }),
+    );
+
+    assert_eq!(
+        state_b.state_root(),
+        root_a,
+        "restoring the original applied governance param version should rewind the deterministic root exactly"
+    );
+}
+
+#[test]
 fn restore_pending_gov_update_rewinds_state_root_after_value_mutation() {
     let mut state = StateStore::new();
 
