@@ -110,7 +110,7 @@ fn main() {
     let auto_profile_applied = auto_profile_applied(args.strategy, effective_strategy);
 
     let grouped: usize = groups.iter().map(|g| g.len()).sum();
-    let conflict_rate = 1.0f64 - (keys as f64 / n as f64).min(1.0);
+    let key_reuse_rate = estimated_key_reuse_rate(n, keys);
 
     println!("bench_parallel_grouping");
     println!("workload={:?}", args.workload);
@@ -118,7 +118,11 @@ fn main() {
     println!("effective_strategy={:?}", effective_strategy);
     println!("txs={}", n);
     println!("keys={}", keys);
-    println!("estimated_conflict_rate={:.4}", conflict_rate);
+    println!("estimated_key_reuse_rate={:.4}", key_reuse_rate);
+    println!(
+        "observed_conflict_hit_rate={:.4}",
+        conflict_hit_rate(&profile)
+    );
     println!("groups={}", groups.len());
     println!("grouped={}", grouped);
     println!("elapsed_ms={}", dt.as_millis());
@@ -222,6 +226,13 @@ fn effective_strategy_for(strategy: StrategyArg, txs: &[Tx]) -> GroupingStrategy
 fn auto_profile_applied(strategy: StrategyArg, effective_strategy: GroupingStrategy) -> bool {
     matches!(strategy, StrategyArg::AutoAdaptive)
         && !matches!(effective_strategy, GroupingStrategy::Original)
+}
+
+fn estimated_key_reuse_rate(txs: usize, keys: usize) -> f64 {
+    if txs == 0 || keys == 0 {
+        return 0.0;
+    }
+    1.0f64 - (keys as f64 / txs as f64).min(1.0)
 }
 
 fn conflict_hit_rate(profile: &trnm_executor::GroupingProfile) -> f64 {
@@ -1014,6 +1025,20 @@ mod tests {
             effective_strategy_for(StrategyArg::AutoAdaptive, &hot_streak),
             GroupingStrategy::HotBucketInterleave
         ));
+    }
+
+    #[test]
+    fn estimated_key_reuse_rate_fails_closed_for_empty_or_overprovisioned_domains() {
+        assert_eq!(estimated_key_reuse_rate(0, 10), 0.0);
+        assert_eq!(estimated_key_reuse_rate(10, 0), 0.0);
+        assert_eq!(estimated_key_reuse_rate(10, 10), 0.0);
+        assert_eq!(estimated_key_reuse_rate(10, 20), 0.0);
+    }
+
+    #[test]
+    fn estimated_key_reuse_rate_reports_expected_reuse_pressure_for_dense_key_reuse() {
+        assert!((estimated_key_reuse_rate(20_000, 2_000) - 0.9).abs() < f64::EPSILON);
+        assert!((estimated_key_reuse_rate(64, 1) - 0.984375).abs() < f64::EPSILON);
     }
 
     #[test]
