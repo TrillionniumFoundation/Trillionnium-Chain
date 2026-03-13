@@ -371,7 +371,7 @@ TRNM 当前不是“高 TPS 公链的仿制品”，而是：
 2. **再看 burst 覆盖面**
    - jitter：`bft_round_change_active_height_rate_ppm` vs `bft_round_change_active_observed_height_rate_ppm`（旁边保留 `bft_round_change_active_heights`）
    - backoff：`bft_round_change_backoff_active_height_rate_ppm` vs `bft_round_change_backoff_active_observed_height_rate_ppm`（旁边保留 `bft_round_change_backoff_active_heights`）
-   - fairness：`bft_leader_missed_active_height_rate_ppm` vs `bft_leader_missed_active_observed_height_rate_ppm`（旁边保留 `bft_leader_missed_active_heights`）
+   - fairness：`bft_leader_missed_active_height_rate_ppm` vs `bft_leader_missed_active_observed_height_rate_ppm`（旁边保留 `bft_leader_missed_active_heights`，并同步带上 `bft_leader_missed_active_validators`、`bft_leader_missed_active_validator_share_ppm`、`bft_leader_missed_top_share_ppm`，避免只看高度覆盖却看不见 proposer 扩散面或单点 hotspot）
    - stall：`critical_wait_active_height_rate_ppm` vs `critical_wait_active_observed_height_rate_ppm`（旁边保留 `critical_wait_active_heights`）
    - hotspot：`hot_object_active_height_rate_ppm` vs `hot_object_active_observed_height_rate_ppm`（旁边保留 `hot_object_active_heights`）
    - rollback：`rollback_active_height_rate_ppm` vs `rollback_active_observed_height_rate_ppm`（旁边保留 `rollback_active_heights`）
