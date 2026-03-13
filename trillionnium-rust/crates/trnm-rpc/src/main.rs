@@ -312,6 +312,7 @@ struct NodeEventRecord {
     treasury_delta: Option<i128>,
     challenger_delta: Option<i128>,
     bond_disposition: Option<String>,
+    metering: Option<TaskMeteringQueryResponse>,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -529,6 +530,88 @@ fn parse_i128_kv_value(raw: &str) -> Option<i128> {
     trim_wrapped_log_numeric(raw).parse::<i128>().ok()
 }
 
+fn normalize_opt_kv(kv: &BTreeMap<String, String>, key: &str) -> Option<String> {
+    kv.get(key).and_then(|v| {
+        if v.is_empty() || v == "-" {
+            None
+        } else {
+            Some(v.clone())
+        }
+    })
+}
+
+fn parse_event_metering_query_response(
+    kv: &BTreeMap<String, String>,
+) -> Option<TaskMeteringQueryResponse> {
+    let workload_class = normalize_opt_kv(kv, "metering_workload_class")?;
+    let metering_schema = normalize_opt_kv(kv, "metering_schema")?;
+    let receipt_hash = normalize_opt_kv(kv, "metering_receipt_hash")?;
+    let policy_snapshot_version = kv
+        .get("metering_policy_snapshot_version")
+        .and_then(|v| parse_u128_kv_value(v))
+        .and_then(|v| u8::try_from(v).ok())?;
+
+    Some(TaskMeteringQueryResponse {
+        workload_class,
+        metering_schema,
+        receipt_hash,
+        prompt_tokens: kv
+            .get("metering_prompt_tokens")
+            .and_then(|v| parse_u128_kv_value(v))? as u64,
+        generated_tokens: kv
+            .get("metering_generated_tokens")
+            .and_then(|v| parse_u128_kv_value(v))? as u64,
+        decode_steps: kv
+            .get("metering_decode_steps")
+            .and_then(|v| parse_u128_kv_value(v))? as u64,
+        kv_bytes_moved: kv
+            .get("metering_kv_bytes_moved")
+            .and_then(|v| parse_u128_kv_value(v))? as u64,
+        normalized_work_units: kv
+            .get("metering_normalized_work_units")
+            .and_then(|v| parse_u128_kv_value(v))?,
+        prompt_token_weight: kv
+            .get("metering_prompt_token_weight")
+            .and_then(|v| parse_u128_kv_value(v))?,
+        generated_token_weight: kv
+            .get("metering_generated_token_weight")
+            .and_then(|v| parse_u128_kv_value(v))?,
+        decode_step_weight: kv
+            .get("metering_decode_step_weight")
+            .and_then(|v| parse_u128_kv_value(v))?,
+        kv_byte_weight: kv
+            .get("metering_kv_byte_weight")
+            .and_then(|v| parse_u128_kv_value(v))?,
+        policy: TaskMeteringPolicyQueryResponse {
+            snapshot_version: policy_snapshot_version,
+            min_accept_work_units: kv
+                .get("metering_min_accept_work_units")
+                .and_then(|v| parse_u128_kv_value(v))?,
+            challenge_success_bounty_base: kv
+                .get("metering_challenge_success_bounty_base")
+                .and_then(|v| parse_u128_kv_value(v))?,
+            challenge_success_bounty_per_work_unit_num: kv
+                .get("metering_challenge_success_bounty_per_work_unit_num")
+                .and_then(|v| parse_u128_kv_value(v))?,
+            challenge_success_bounty_per_work_unit_den: kv
+                .get("metering_challenge_success_bounty_per_work_unit_den")
+                .and_then(|v| parse_u128_kv_value(v))?,
+            worker_completion_bonus_per_work_unit_num: kv
+                .get("metering_worker_completion_bonus_per_work_unit_num")
+                .and_then(|v| parse_u128_kv_value(v))?,
+            worker_completion_bonus_per_work_unit_den: kv
+                .get("metering_worker_completion_bonus_per_work_unit_den")
+                .and_then(|v| parse_u128_kv_value(v))?,
+            worker_slash_rebate_per_work_unit_num: kv
+                .get("metering_worker_slash_rebate_per_work_unit_num")
+                .and_then(|v| parse_u128_kv_value(v))?,
+            worker_slash_rebate_per_work_unit_den: kv
+                .get("metering_worker_slash_rebate_per_work_unit_den")
+                .and_then(|v| parse_u128_kv_value(v))?,
+        },
+    })
+}
+
 fn parse_event_log_kv(line: &str) -> BTreeMap<String, String> {
     let mut kv = BTreeMap::<String, String>::new();
     let mut i = 0usize;
@@ -723,15 +806,7 @@ fn load_node_events_from_root(root: &Path, mode: NodeEventScanMode) -> LoadedNod
             .and_then(|s| parse_u128_kv_value(s))
             .unwrap_or(0);
 
-        let normalize_opt = |k: &str| {
-            kv.get(k).and_then(|v| {
-                if v.is_empty() || v == "-" {
-                    None
-                } else {
-                    Some(v.clone())
-                }
-            })
-        };
+        let normalize_opt = |k: &str| normalize_opt_kv(&kv, k);
 
         out.push(NodeEventRecord {
             event_type: kv
@@ -766,6 +841,7 @@ fn load_node_events_from_root(root: &Path, mode: NodeEventScanMode) -> LoadedNod
                 .get("challenger_delta")
                 .and_then(|v| parse_i128_kv_value(v)),
             bond_disposition: normalize_opt("bond_disposition"),
+            metering: parse_event_metering_query_response(&kv),
         });
     }
     LoadedNodeEvents {
@@ -2650,6 +2726,7 @@ fn query_events_response(
             treasury_delta: e.treasury_delta,
             challenger_delta: e.challenger_delta,
             bond_disposition: e.bond_disposition.clone(),
+            metering: e.metering.clone(),
         });
     }
 
@@ -2701,6 +2778,7 @@ fn query_events_response(
                 treasury_delta: None,
                 challenger_delta: None,
                 bond_disposition: None,
+                metering: None,
             });
             if kind == "commit" {
                 has_commit = true;
@@ -3142,6 +3220,7 @@ fn main() -> Result<()> {
                     treasury_delta: e.treasury_delta,
                     challenger_delta: e.challenger_delta,
                     bond_disposition: e.bond_disposition.clone(),
+                    metering: e.metering.clone(),
                 });
             }
 
@@ -4965,6 +5044,7 @@ mod tests {
                 treasury_delta: Some(0),
                 challenger_delta: Some(-10),
                 bond_disposition: Some("posted".into()),
+                metering: None,
             },
             NodeEventRecord {
                 event_type: "resolve".into(),
@@ -4983,6 +5063,7 @@ mod tests {
                 treasury_delta: Some(0),
                 challenger_delta: Some(0),
                 bond_disposition: Some("forfeited".into()),
+                metering: None,
             },
             NodeEventRecord {
                 event_type: "challenge".into(),
@@ -5001,6 +5082,7 @@ mod tests {
                 treasury_delta: Some(0),
                 challenger_delta: Some(-7),
                 bond_disposition: Some("posted".into()),
+                metering: None,
             },
             NodeEventRecord {
                 event_type: "resolve".into(),
@@ -5019,6 +5101,7 @@ mod tests {
                 treasury_delta: Some(0),
                 challenger_delta: Some(7),
                 bond_disposition: Some("refunded".into()),
+                metering: None,
             },
         ];
 
@@ -5058,6 +5141,7 @@ mod tests {
                 treasury_delta: Some(0),
                 challenger_delta: Some(-10),
                 bond_disposition: Some("posted".into()),
+                metering: None,
             },
             NodeEventRecord {
                 event_type: "timeout".into(),
@@ -5076,6 +5160,7 @@ mod tests {
                 treasury_delta: Some(0),
                 challenger_delta: Some(10),
                 bond_disposition: Some("refunded".into()),
+                metering: None,
             },
         ];
 
@@ -5118,6 +5203,7 @@ mod tests {
                 treasury_delta: Some(0),
                 challenger_delta: Some(-3),
                 bond_disposition: Some("posted".into()),
+                metering: None,
             },
             NodeEventRecord {
                 event_type: "challenge".into(),
@@ -5136,6 +5222,7 @@ mod tests {
                 treasury_delta: Some(0),
                 challenger_delta: Some(-4),
                 bond_disposition: Some("posted".into()),
+                metering: None,
             },
         ];
 
@@ -5169,6 +5256,7 @@ mod tests {
                 treasury_delta: Some(0),
                 challenger_delta: Some(-5),
                 bond_disposition: Some("posted".into()),
+                metering: None,
             },
             NodeEventRecord {
                 event_type: "resolve".into(),
@@ -5187,6 +5275,7 @@ mod tests {
                 treasury_delta: Some(0),
                 challenger_delta: Some(0),
                 bond_disposition: Some("refunded".into()),
+                metering: None,
             },
             NodeEventRecord {
                 event_type: "challenge".into(),
@@ -5205,6 +5294,7 @@ mod tests {
                 treasury_delta: Some(0),
                 challenger_delta: Some(-8),
                 bond_disposition: Some("posted".into()),
+                metering: None,
             },
             NodeEventRecord {
                 event_type: "resolve".into(),
@@ -5223,6 +5313,7 @@ mod tests {
                 treasury_delta: Some(0),
                 challenger_delta: Some(0),
                 bond_disposition: Some("forfeited".into()),
+                metering: None,
             },
         ];
 
@@ -5261,6 +5352,7 @@ mod tests {
             treasury_delta: Some(0),
             challenger_delta: Some(10),
             bond_disposition: Some("posted".into()),
+            metering: None,
         }];
 
         let out = summarize_challenge_treasury(
@@ -5301,6 +5393,7 @@ mod tests {
             treasury_delta: Some(0),
             challenger_delta: Some(0),
             bond_disposition: Some("forfeited".into()),
+            metering: None,
         }];
 
         let out = summarize_challenge_treasury(
@@ -5343,6 +5436,7 @@ mod tests {
                 treasury_delta: Some(0),
                 challenger_delta: Some(-9),
                 bond_disposition: Some("posted".into()),
+                metering: None,
             },
             NodeEventRecord {
                 event_type: "challenge".into(),
@@ -5361,6 +5455,7 @@ mod tests {
                 treasury_delta: Some(0),
                 challenger_delta: Some(-4),
                 bond_disposition: Some("posted".into()),
+                metering: None,
             },
             NodeEventRecord {
                 event_type: "resolve".into(),
@@ -5379,6 +5474,7 @@ mod tests {
                 treasury_delta: Some(0),
                 challenger_delta: Some(0),
                 bond_disposition: Some("forfeited".into()),
+                metering: None,
             },
         ];
 
@@ -5422,6 +5518,7 @@ mod tests {
                 treasury_delta: Some(0),
                 challenger_delta: Some(-6),
                 bond_disposition: Some("posted".into()),
+                metering: None,
             },
             NodeEventRecord {
                 event_type: "resolve".into(),
@@ -5440,6 +5537,7 @@ mod tests {
                 treasury_delta: Some(0),
                 challenger_delta: Some(0),
                 bond_disposition: Some("forfeited".into()),
+                metering: None,
             },
             NodeEventRecord {
                 event_type: "resolve".into(),
@@ -5458,6 +5556,7 @@ mod tests {
                 treasury_delta: Some(0),
                 challenger_delta: Some(0),
                 bond_disposition: Some("forfeited".into()),
+                metering: None,
             },
         ];
 
@@ -5500,6 +5599,7 @@ mod tests {
                 treasury_delta: Some(0),
                 challenger_delta: Some(-8),
                 bond_disposition: Some("posted".into()),
+                metering: None,
             },
             NodeEventRecord {
                 event_type: "resolve".into(),
@@ -5518,6 +5618,7 @@ mod tests {
                 treasury_delta: Some(0),
                 challenger_delta: Some(0),
                 bond_disposition: Some("posted".into()),
+                metering: None,
             },
             NodeEventRecord {
                 event_type: "resolve".into(),
@@ -5536,6 +5637,7 @@ mod tests {
                 treasury_delta: Some(0),
                 challenger_delta: Some(0),
                 bond_disposition: Some("forfeited".into()),
+                metering: None,
             },
         ];
 
@@ -5672,6 +5774,7 @@ mod tests {
                 treasury_delta: None,
                 challenger_delta: None,
                 bond_disposition: None,
+                metering: None,
             },
             NodeEventRecord {
                 event_type: "commit".into(),
@@ -5690,6 +5793,7 @@ mod tests {
                 treasury_delta: None,
                 challenger_delta: None,
                 bond_disposition: None,
+                metering: None,
             },
             NodeEventRecord {
                 event_type: "challenge".into(),
@@ -5708,6 +5812,7 @@ mod tests {
                 treasury_delta: None,
                 challenger_delta: None,
                 bond_disposition: None,
+                metering: None,
             },
         ];
 
@@ -5801,6 +5906,7 @@ mod tests {
             treasury_delta: None,
             challenger_delta: None,
             bond_disposition: None,
+            metering: None,
         }];
 
         assert!(query_task_from_node_events(999, &events).is_none());
@@ -5826,6 +5932,7 @@ mod tests {
                 treasury_delta: None,
                 challenger_delta: None,
                 bond_disposition: None,
+                metering: None,
             },
             NodeEventRecord {
                 event_type: "mystery".into(),
@@ -5844,6 +5951,7 @@ mod tests {
                 treasury_delta: None,
                 challenger_delta: None,
                 bond_disposition: None,
+                metering: None,
             },
         ];
 
@@ -5872,6 +5980,7 @@ mod tests {
                 treasury_delta: None,
                 challenger_delta: None,
                 bond_disposition: None,
+                metering: None,
             },
             NodeEventRecord {
                 event_type: "commit".into(),
@@ -5890,6 +5999,7 @@ mod tests {
                 treasury_delta: None,
                 challenger_delta: None,
                 bond_disposition: None,
+                metering: None,
             },
         ];
 
@@ -5916,6 +6026,7 @@ mod tests {
                 treasury_delta: Some(0),
                 challenger_delta: Some(-5),
                 bond_disposition: Some("posted".into()),
+                metering: None,
             },
             NodeEventRecord {
                 event_type: "resolve".into(),
@@ -5934,6 +6045,7 @@ mod tests {
                 treasury_delta: Some(0),
                 challenger_delta: Some(0),
                 bond_disposition: Some("forfeited".into()),
+                metering: None,
             },
         ];
 
@@ -5962,6 +6074,7 @@ mod tests {
                 treasury_delta: None,
                 challenger_delta: None,
                 bond_disposition: None,
+                metering: None,
             },
             NodeEventRecord {
                 event_type: "commit".into(),
@@ -5980,6 +6093,7 @@ mod tests {
                 treasury_delta: None,
                 challenger_delta: None,
                 bond_disposition: None,
+                metering: None,
             },
             NodeEventRecord {
                 event_type: "reveal".into(),
@@ -5998,6 +6112,7 @@ mod tests {
                 treasury_delta: None,
                 challenger_delta: None,
                 bond_disposition: None,
+                metering: None,
             },
         ];
 
@@ -6020,6 +6135,24 @@ mod tests {
             kv.get("bond_disposition").map(String::as_str),
             Some("forfeit all")
         );
+    }
+
+    #[test]
+    fn load_node_events_parses_llm_metering_audit_block() {
+        let root = tempfile::tempdir().expect("tempdir");
+        let run = root.path().join("run");
+        fs::create_dir_all(&run).expect("create run dir");
+        let line = "2026-03-03T20:10:12Z INFO node [event] event_schema=v1 event_type=resolve task_id=7 from_status=Challenged to_status=Completed actor=authority signer=authority challenger=challenger-a tx_hash=0x123 tx_id=2 block_height=2 state_root=s2 ts_unix_ms=2000 resolution_code=completed treasury_delta=0 challenger_delta=0 bond_disposition=forfeited metering_workload_class=llm_inference metering_schema=llm_token_meter_v1 metering_receipt_hash=deadbeef metering_policy_snapshot_version=1 metering_prompt_tokens=128 metering_generated_tokens=32 metering_decode_steps=32 metering_kv_bytes_moved=4096 metering_normalized_work_units=192 metering_prompt_token_weight=1 metering_generated_token_weight=1 metering_decode_step_weight=1 metering_kv_byte_weight=0 metering_min_accept_work_units=100 metering_challenge_success_bounty_base=1 metering_challenge_success_bounty_per_work_unit_num=1 metering_challenge_success_bounty_per_work_unit_den=192 metering_worker_completion_bonus_per_work_unit_num=1 metering_worker_completion_bonus_per_work_unit_den=256 metering_worker_slash_rebate_per_work_unit_num=1 metering_worker_slash_rebate_per_work_unit_den=384
+";
+        fs::write(run.join("node1.log"), line).expect("write log");
+
+        let loaded = load_node_events_from_root(root.path(), NodeEventScanMode::Authoritative);
+        assert_eq!(loaded.events.len(), 1);
+        let metering = loaded.events[0].metering.as_ref().expect("metering expected");
+        assert_eq!(metering.normalized_work_units, 192);
+        assert_eq!(metering.policy.snapshot_version, 1);
+        assert_eq!(metering.policy.min_accept_work_units, 100);
+        assert_eq!(metering.policy.challenge_success_bounty_per_work_unit_den, 192);
     }
 
     #[test]

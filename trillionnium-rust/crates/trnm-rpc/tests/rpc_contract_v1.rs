@@ -1,7 +1,8 @@
 use serde_json::json;
 use trnm_rpc::{
     AccountBalanceQueryResponse, AccountNonceQueryResponse, EventQueryResponse, GetTxResponse,
-    RpcErrorResponse, SendTxResponse, TxStatus,
+    RpcErrorResponse, SendTxResponse, TaskMeteringPolicyQueryResponse, TaskMeteringQueryResponse,
+    TxStatus,
 };
 
 #[test]
@@ -69,6 +70,7 @@ fn contract_event_shape_backward_compatible_when_audit_fields_absent() {
         treasury_delta: None,
         challenger_delta: None,
         bond_disposition: None,
+        metering: None,
     })
     .unwrap();
     assert_eq!(
@@ -106,6 +108,7 @@ fn contract_event_shape_includes_audit_fields_when_present() {
         treasury_delta: Some(0),
         challenger_delta: Some(0),
         bond_disposition: Some("forfeited".into()),
+        metering: None,
     })
     .unwrap();
     assert_eq!(
@@ -129,6 +132,56 @@ fn contract_event_shape_includes_audit_fields_when_present() {
             "bond_disposition":"forfeited"
         })
     );
+}
+
+#[test]
+fn contract_event_shape_includes_metering_when_present() {
+    let v = serde_json::to_value(EventQueryResponse {
+        event_type: "resolve".into(),
+        task_id: 7,
+        from_status: "Challenged".into(),
+        to_status: "Resolved".into(),
+        actor: "authority".into(),
+        tx_id: 12,
+        block_height: 4,
+        state_root: "0xdef".into(),
+        ts_unix_ms: 124,
+        signer: Some("authority".into()),
+        challenger: Some("challenger-a".into()),
+        tx_hash: Some("0x123".into()),
+        resolution_code: Some("completed".into()),
+        treasury_delta: Some(0),
+        challenger_delta: Some(0),
+        bond_disposition: Some("forfeited".into()),
+        metering: Some(TaskMeteringQueryResponse {
+            workload_class: "llm_inference".into(),
+            metering_schema: "llm_token_meter_v1".into(),
+            receipt_hash: "deadbeef".into(),
+            prompt_tokens: 128,
+            generated_tokens: 32,
+            decode_steps: 32,
+            kv_bytes_moved: 4096,
+            normalized_work_units: 192,
+            prompt_token_weight: 1,
+            generated_token_weight: 1,
+            decode_step_weight: 1,
+            kv_byte_weight: 0,
+            policy: TaskMeteringPolicyQueryResponse {
+                snapshot_version: 1,
+                min_accept_work_units: 100,
+                challenge_success_bounty_base: 1,
+                challenge_success_bounty_per_work_unit_num: 1,
+                challenge_success_bounty_per_work_unit_den: 192,
+                worker_completion_bonus_per_work_unit_num: 1,
+                worker_completion_bonus_per_work_unit_den: 256,
+                worker_slash_rebate_per_work_unit_num: 1,
+                worker_slash_rebate_per_work_unit_den: 384,
+            },
+        }),
+    })
+    .unwrap();
+    assert_eq!(v["metering"]["normalized_work_units"], json!(192));
+    assert_eq!(v["metering"]["policy"]["snapshot_version"], json!(1));
 }
 
 #[test]

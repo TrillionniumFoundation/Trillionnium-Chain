@@ -21,7 +21,7 @@ use trnm_state::{
     verify_wal_and_find_checkpoint, CheckpointMeta, PendingResolveApprovalSnapshot, StateStore,
     WalMeta,
 };
-use trnm_types::{Hash32, ObjectRef, TaskStatus, Tx};
+use trnm_types::{Hash32, ObjectRef, TaskMeteringSnapshot, TaskStatus, Tx};
 
 #[derive(Debug, Parser)]
 #[command(
@@ -1631,6 +1631,41 @@ fn balance_deltas_for_transition(
     (treasury_delta, challenger_delta)
 }
 
+fn format_task_metering_event_fields(snapshot: &TaskMeteringSnapshot) -> String {
+    format!(
+        " metering_workload_class={} metering_schema={} metering_receipt_hash={} metering_policy_snapshot_version={} metering_prompt_tokens={} metering_generated_tokens={} metering_decode_steps={} metering_kv_bytes_moved={} metering_normalized_work_units={} metering_prompt_token_weight={} metering_generated_token_weight={} metering_decode_step_weight={} metering_kv_byte_weight={} metering_min_accept_work_units={} metering_challenge_success_bounty_base={} metering_challenge_success_bounty_per_work_unit_num={} metering_challenge_success_bounty_per_work_unit_den={} metering_worker_completion_bonus_per_work_unit_num={} metering_worker_completion_bonus_per_work_unit_den={} metering_worker_slash_rebate_per_work_unit_num={} metering_worker_slash_rebate_per_work_unit_den={}",
+        snapshot.workload_class,
+        snapshot.metering_schema,
+        snapshot.receipt_hash,
+        snapshot.policy_snapshot_version,
+        snapshot.prompt_tokens,
+        snapshot.generated_tokens,
+        snapshot.decode_steps,
+        snapshot.kv_bytes_moved,
+        snapshot.normalized_work_units,
+        snapshot.prompt_token_weight,
+        snapshot.generated_token_weight,
+        snapshot.decode_step_weight,
+        snapshot.kv_byte_weight,
+        snapshot.min_accept_work_units,
+        snapshot.challenge_success_bounty_base,
+        snapshot.challenge_success_bounty_per_work_unit_num,
+        snapshot.challenge_success_bounty_per_work_unit_den,
+        snapshot.worker_completion_bonus_per_work_unit_num,
+        snapshot.worker_completion_bonus_per_work_unit_den,
+        snapshot.worker_slash_rebate_per_work_unit_num,
+        snapshot.worker_slash_rebate_per_work_unit_den,
+    )
+}
+
+fn task_metering_event_suffix(st: &StateStore, task_id: u64) -> String {
+    st.get_task(task_id)
+        .and_then(|task| task.metadata)
+        .and_then(|metadata| metadata.metering)
+        .map(|snapshot| format_task_metering_event_fields(&snapshot))
+        .unwrap_or_default()
+}
+
 fn emit_event(
     st: &StateStore,
     tx: &MockTx,
@@ -1673,6 +1708,10 @@ fn emit_event(
     };
     let challenger_delta_str = challenger_delta.map(|d| d.text.as_str()).unwrap_or("-");
     let bond_disposition_str = bond_disposition.unwrap_or("-");
+    let metering_suffix = match tx {
+        MockTx::Reveal { .. } | MockTx::Resolve { .. } => task_metering_event_suffix(st, task_id),
+        _ => String::new(),
+    };
 
     match tx {
         MockTx::Resolve { slash_worker, .. } => {
@@ -1682,7 +1721,7 @@ fn emit_event(
                 "completed"
             };
             println!(
-                "[event] event_schema=v1 event_type={} task_id={} from_status={} to_status={} actor={} signer={} challenger={} tx_hash={} tx_id={} block_height={} state_root={} ts_unix_ms={} slash_worker={} resolution_code={} treasury_delta={} challenger_delta={} bond_disposition={}",
+                "[event] event_schema=v1 event_type={} task_id={} from_status={} to_status={} actor={} signer={} challenger={} tx_hash={} tx_id={} block_height={} state_root={} ts_unix_ms={} slash_worker={} resolution_code={} treasury_delta={} challenger_delta={} bond_disposition={}{}",
                 event_type,
                 task_id,
                 from_status,
@@ -1700,11 +1739,12 @@ fn emit_event(
                 treasury_delta_str,
                 challenger_delta_str,
                 bond_disposition_str,
+                metering_suffix,
             );
         }
         _ => {
             println!(
-                "[event] event_schema=v1 event_type={} task_id={} from_status={} to_status={} actor={} signer={} challenger={} tx_hash={} tx_id={} block_height={} state_root={} ts_unix_ms={} treasury_delta={} challenger_delta={} bond_disposition={}",
+                "[event] event_schema=v1 event_type={} task_id={} from_status={} to_status={} actor={} signer={} challenger={} tx_hash={} tx_id={} block_height={} state_root={} ts_unix_ms={} treasury_delta={} challenger_delta={} bond_disposition={}{}",
                 event_type,
                 task_id,
                 from_status,
@@ -1720,12 +1760,14 @@ fn emit_event(
                 treasury_delta_str,
                 challenger_delta_str,
                 bond_disposition_str,
+                metering_suffix,
             );
         }
     }
 }
 
 fn emit_timeout_event(
+    st: &StateStore,
     task_id: u64,
     tx_id: u64,
     block_height: u64,
@@ -1742,6 +1784,7 @@ fn emit_timeout_event(
     let treasury_delta_str = treasury_delta.text.as_str();
     let challenger_delta_str = challenger_delta.map(|d| d.text.as_str()).unwrap_or("-");
     let bond_disposition_str = bond_disposition.unwrap_or("-");
+    let metering_suffix = task_metering_event_suffix(st, task_id);
     let resolution_code = if to_status == "Slashed" {
         "slashed"
     } else {
@@ -1749,7 +1792,7 @@ fn emit_timeout_event(
     };
 
     println!(
-        "[event] event_schema=v1 event_type=timeout task_id={} from_status={} to_status={} actor=system signer=system challenger={} tx_hash={} tx_id={} block_height={} state_root={} ts_unix_ms={} resolution_code={} treasury_delta={} challenger_delta={} bond_disposition={}",
+        "[event] event_schema=v1 event_type=timeout task_id={} from_status={} to_status={} actor=system signer=system challenger={} tx_hash={} tx_id={} block_height={} state_root={} ts_unix_ms={} resolution_code={} treasury_delta={} challenger_delta={} bond_disposition={}{}",
         task_id,
         from_status,
         to_status,
@@ -1763,6 +1806,7 @@ fn emit_timeout_event(
         treasury_delta_str,
         challenger_delta_str,
         bond_disposition_str,
+        metering_suffix,
     );
 }
 
@@ -1982,6 +2026,7 @@ fn scan_and_apply_timeouts(
                 None
             };
             emit_timeout_event(
+                st,
                 task_id,
                 tx_id_seed.saturating_add(migrated),
                 current_height,
@@ -4605,6 +4650,39 @@ mod tests {
             st.get_task(8103).and_then(|t| t.challenge_bond_forfeited),
             Some(false)
         );
+    }
+
+    #[test]
+    fn format_task_metering_event_fields_includes_normalized_work_units_and_policy_summary() {
+        let snapshot = TaskMeteringSnapshot {
+            workload_class: "llm_inference".into(),
+            metering_schema: "llm_token_meter_v1".into(),
+            policy_snapshot_version: 1,
+            receipt_hash: "deadbeef".into(),
+            prompt_tokens: 128,
+            generated_tokens: 32,
+            decode_steps: 32,
+            kv_bytes_moved: 4096,
+            normalized_work_units: 192,
+            prompt_token_weight: 1,
+            generated_token_weight: 1,
+            decode_step_weight: 1,
+            kv_byte_weight: 0,
+            min_accept_work_units: 100,
+            challenge_success_bounty_base: 1,
+            challenge_success_bounty_per_work_unit_num: 1,
+            challenge_success_bounty_per_work_unit_den: 192,
+            worker_completion_bonus_per_work_unit_num: 1,
+            worker_completion_bonus_per_work_unit_den: 256,
+            worker_slash_rebate_per_work_unit_num: 1,
+            worker_slash_rebate_per_work_unit_den: 384,
+        };
+        let line = format_task_metering_event_fields(&snapshot);
+        assert!(line.contains("metering_schema=llm_token_meter_v1"));
+        assert!(line.contains("metering_normalized_work_units=192"));
+        assert!(line.contains("metering_policy_snapshot_version=1"));
+        assert!(line.contains("metering_min_accept_work_units=100"));
+        assert!(line.contains("metering_worker_slash_rebate_per_work_unit_den=384"));
     }
 
     #[test]

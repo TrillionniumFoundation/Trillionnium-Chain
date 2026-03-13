@@ -97,6 +97,8 @@ pub struct EventQueryResponse {
     pub challenger_delta: Option<i128>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub bond_disposition: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub metering: Option<TaskMeteringQueryResponse>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -328,6 +330,31 @@ mod tests {
     }
 
     #[test]
+    fn rpc_event_query_omits_metering_when_absent() {
+        let event = EventQueryResponse {
+            event_type: "commit".into(),
+            task_id: 1,
+            from_status: "Accepted".into(),
+            to_status: "Committed".into(),
+            actor: "worker-a".into(),
+            tx_id: 10,
+            block_height: 3,
+            state_root: "abc".into(),
+            ts_unix_ms: 123,
+            signer: None,
+            challenger: None,
+            tx_hash: None,
+            resolution_code: None,
+            treasury_delta: None,
+            challenger_delta: None,
+            bond_disposition: None,
+            metering: None,
+        };
+        let v = serde_json::to_value(event).unwrap();
+        assert!(v.get("metering").is_none());
+    }
+
+    #[test]
     fn rpc_schema_smoke_event_fields_stable() {
         let evt = EventQueryResponse {
             event_type: "commit".into(),
@@ -346,6 +373,7 @@ mod tests {
             treasury_delta: None,
             challenger_delta: None,
             bond_disposition: None,
+            metering: None,
         };
         let v = serde_json::to_value(evt).unwrap();
         assert_eq!(

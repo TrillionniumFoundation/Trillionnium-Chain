@@ -357,7 +357,8 @@ The Rust scaffold now includes:
 - resolve-side governance adjudication gate: when `slash_worker = false`, an LLM-metered task must satisfy the **snapshotted** `min_accept_work_units`; later governance drift must not retroactively reinterpret already-revealed metered tasks
 - slash-path payout integration: challenge-success bounty can now include a metered bonus derived from `normalized_work_units`, using governance ratio keys `llm_meter_challenge_success_bounty_per_work_unit_num` / `llm_meter_challenge_success_bounty_per_work_unit_den`
 - for metered tasks, that challenge-success bounty policy is read from the **snapshotted reveal-time policy**, not re-read from live governance at resolve time
-- RPC audit visibility: when `trnm-rpc` is configured with a task-state snapshot source, `query-task` can now expose the persisted metering snapshot (`normalized_work_units`, counters, weights, and frozen payout/floor policy) as a nested audit block
+- node event audit visibility: reveal / resolve / timeout event lines can now emit `metering_*` flat key-value fields carrying `normalized_work_units`, counters, weights, and frozen payout/floor policy summary
+- RPC audit visibility: `trnm-rpc` now parses those `metering_*` event fields back into a nested `metering` audit block for event-oriented queries, and `query-task` can also expose the persisted metering snapshot when configured with a task-state snapshot source
 - CLI audit visibility: `trnm-cli query task <task_id>` now pretty-prints the same nested metering audit block when the underlying RPC response includes it
 - worker-side terminal accounting integration:
   - completed-path worker bonus can be paid from `CHALLENGE_FORFEIT_TREASURY_ACCOUNT`, using `llm_meter_worker_completion_bonus_per_work_unit_num` / `llm_meter_worker_completion_bonus_per_work_unit_den`
