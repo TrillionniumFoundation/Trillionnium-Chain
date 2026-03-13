@@ -3799,6 +3799,57 @@ fn paused_state_rejects_zero_task_id_resolve_approval_without_side_effects() {
 }
 
 #[test]
+fn paused_state_restore_pending_resolve_snapshot_scrubs_zero_task_id_boundary() {
+    // M1 micro-hardening: paused rollback/restore must also fail closed on task-id zero so
+    // malformed snapshots cannot revive pending resolve quorum outside a real challenged task.
+    let mut st = StateStore::new();
+    st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 10_043);
+    st.set_balance(CHALLENGE_FORFEIT_TREASURY_ACCOUNT, 1_010);
+    st.set_balance(WORKER_SLASH_TREASURY_ACCOUNT, 510);
+
+    st.set_gov_param(98_223, 7_999, "emergency_pause".into(), "true".into())
+        .expect("pause toggle must apply immediately");
+    assert!(st.is_emergency_paused());
+
+    let escrow_before = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+    let forfeits_before = st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT);
+    let worker_slash_before = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
+    let root_before = st.state_root();
+
+    st.restore_pending_resolve_approval(
+        0,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "authority-a".into(),
+            second_approver: None,
+            authority_set: "authority-a,authority-b".into(),
+            task_version: 1,
+        }),
+    );
+
+    assert_eq!(st.pending_resolve_approval(0), None);
+    assert_eq!(st.pending_resolve_first_approver(0), None);
+    assert_eq!(st.pending_resolve_approval_snapshot(0), None);
+    assert_eq!(st.pending_gov_update("resolve_authority"), None);
+    assert!(st.is_emergency_paused());
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), escrow_before);
+    assert_eq!(
+        st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+        forfeits_before
+    );
+    assert_eq!(
+        st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
+        worker_slash_before
+    );
+    assert_eq!(
+        st.state_root(),
+        root_before,
+        "scrubbing zero-task restore input must not perturb paused custody or quorum state"
+    );
+}
+
+#[test]
 fn paused_state_rejects_oversized_resolve_approver_without_side_effects() {
     // M1 micro-hardening: paused live resolve approval must enforce a canonical approver-id
     // length boundary so oversized actor ids cannot stage quorum or perturb custody balances.
