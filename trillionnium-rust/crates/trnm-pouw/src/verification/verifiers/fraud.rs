@@ -80,6 +80,34 @@ mod tests {
     }
 
     #[test]
+    fn fraud_verifier_accepts_case_insensitive_prefix_when_bindings_match() {
+        let verifier = FraudVerifier;
+        let task = mock_task();
+
+        assert_eq!(
+            verifier.verify_proof(
+                &task,
+                b"fRaUd:{\"task_id\":7,\"worker\":\"worker-fraud\",\"proof_type\":\"fraud\"}"
+            ),
+            VerificationResult::Valid
+        );
+    }
+
+    #[test]
+    fn fraud_verifier_accepts_utf8_bom_prefixed_payload_when_bindings_match() {
+        let verifier = FraudVerifier;
+        let task = mock_task();
+
+        assert_eq!(
+            verifier.verify_proof(
+                &task,
+                b"\xef\xbb\xbfFRAUD:{\"task_id\":7,\"worker\":\"worker-fraud\",\"proof_type\":\"fraud\"}"
+            ),
+            VerificationResult::Valid
+        );
+    }
+
+    #[test]
     fn fraud_verifier_rejects_task_id_mismatch() {
         let verifier = FraudVerifier;
         let task = mock_task();
