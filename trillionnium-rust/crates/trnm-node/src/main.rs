@@ -2129,6 +2129,16 @@ fn hot_object_tail_share_ppm(summary: &HotObjectSummary) -> u128 {
     )
 }
 
+fn missed_proposals_added_since(previous: &[u64], current: &[u64]) -> u64 {
+    current
+        .iter()
+        .enumerate()
+        .map(|(idx, current_count)| {
+            current_count.saturating_sub(previous.get(idx).copied().unwrap_or(0))
+        })
+        .sum()
+}
+
 fn read_write_decl(st: &StateStore, tx: &MockTx, tx_id: u64) -> Tx {
     let task_id = match tx {
         MockTx::CreateTask { task_id, .. }
@@ -4146,6 +4156,37 @@ mod tests {
         assert_eq!(bft_leader_missed_active_heights, 3);
         assert_eq!(bft_leader_missed_active_height_rate_ppm, 750_000);
         assert_eq!(bft_leader_missed_active_observed_height_rate_ppm, 500_000);
+    }
+
+    #[test]
+    fn leader_missed_active_heights_count_only_new_miss_bursts() {
+        let mut active_heights = 0u64;
+        let mut previous_snapshot = vec![0u64, 0u64, 0u64, 0u64];
+        let snapshots = [
+            vec![0u64, 1u64, 0u64, 0u64],
+            vec![0u64, 1u64, 0u64, 0u64],
+            vec![0u64, 1u64, 0u64, 1u64],
+        ];
+
+        for snapshot in snapshots {
+            if missed_proposals_added_since(&previous_snapshot, &snapshot) > 0 {
+                active_heights += 1;
+            }
+            previous_snapshot = snapshot;
+        }
+
+        assert_eq!(active_heights, 2);
+    }
+
+    #[test]
+    fn leader_missed_added_since_ignores_repeated_cumulative_snapshots() {
+        let previous_snapshot = vec![0u64, 2u64, 1u64, 0u64];
+        let repeated_snapshot = vec![0u64, 2u64, 1u64, 0u64];
+
+        assert_eq!(
+            missed_proposals_added_since(&previous_snapshot, &repeated_snapshot),
+            0
+        );
     }
 
     #[test]
@@ -6912,6 +6953,7 @@ fn main() -> Result<()> {
     let mut bft_round_change_backoff_total_ms: u64 = 0;
     let mut bft_round_change_backoff_max_ms: u64 = 0;
     let mut bft_leader_missed_active_heights: u64 = 0;
+    let mut bft_leader_missed_previous_snapshot: Vec<u64> = vec![0; args.validators.max(1)];
     let mut wal_entries = load_wal_meta_entries(&wal_dir)?;
     let mut checkpoints = load_checkpoint_meta(&wal_dir)?;
     let mut bft_jitter = BftJitterControl {
@@ -6954,9 +6996,14 @@ fn main() -> Result<()> {
             }
             bft_round_change_backoff_max_ms =
                 bft_round_change_backoff_max_ms.max(bft.round_change_backoff_max_ms);
-            if bft.leader_missed_snapshot.iter().any(|missed| *missed > 0) {
+            let leader_missed_added = missed_proposals_added_since(
+                &bft_leader_missed_previous_snapshot,
+                &bft.leader_missed_snapshot,
+            );
+            if leader_missed_added > 0 {
                 bft_leader_missed_active_heights += 1;
             }
+            bft_leader_missed_previous_snapshot = bft.leader_missed_snapshot.clone();
             println!(
                 "[block] node={} height={} skipped reason=bft_no_commit proposal_hash={} prevote={} precommit={} rounds={} round_backoff_ms={} leader_missed={:?}",
                 cfg.node_id,
@@ -7009,9 +7056,14 @@ fn main() -> Result<()> {
         }
         bft_round_change_backoff_max_ms =
             bft_round_change_backoff_max_ms.max(bft.round_change_backoff_max_ms);
-        if bft.leader_missed_snapshot.iter().any(|missed| *missed > 0) {
+        let leader_missed_added = missed_proposals_added_since(
+            &bft_leader_missed_previous_snapshot,
+            &bft.leader_missed_snapshot,
+        );
+        if leader_missed_added > 0 {
             bft_leader_missed_active_heights += 1;
         }
+        bft_leader_missed_previous_snapshot = bft.leader_missed_snapshot.clone();
         println!(
             "[bft] height={} committed_round={} prevote={} precommit={} round_changes={} round_backoff_ms={} leader_missed={:?} double_vote_events={} auth_reject_bad_sig={} auth_reject_replay={} auth_reject_stale_nonce={}",
             height,
