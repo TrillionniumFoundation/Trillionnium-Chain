@@ -1034,6 +1034,10 @@ mod tests {
             ("intel attestation evidence sgx", "sgx"),
             ("amd remote attestation report snp", "snp"),
             ("amd attestation evidence snp", "snp"),
+            ("intel attestation certificate claims sgx", "sgx"),
+            ("amd attestation certificates payload snp", "snp"),
+            ("intel remote attestation receipt claims tdx", "tdx"),
+            ("amd remote attestation certificates claims snp", "snp"),
         ] {
             assert_eq!(backend_system_hint(raw), Some(expected.into()), "raw={raw}");
         }
