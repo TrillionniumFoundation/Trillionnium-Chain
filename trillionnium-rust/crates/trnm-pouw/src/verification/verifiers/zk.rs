@@ -51,7 +51,15 @@ impl ZkVerifier {
             .into());
         }
 
-        if normalize_backend_token(raw).is_none() && !raw.eq_ignore_ascii_case("noop") {
+        if raw.eq_ignore_ascii_case("noop") {
+            if raw != "noop" {
+                return Err(BackendExecutionError::MalformedProof {
+                    backend: "zk:payload".to_string(),
+                    reason: "invalid zk payload: legacy no-backend selector must use canonical lowercase token 'noop'".to_string(),
+                }
+                .into());
+            }
+        } else if normalize_backend_token(raw).is_none() {
             return Err(BackendExecutionError::MalformedProof {
                 backend: "zk:payload".to_string(),
                 reason: format!(
@@ -909,6 +917,21 @@ mod tests {
     }
 
     #[test]
+    fn zk_verifier_rejects_non_canonical_noop_backend_id_case() {
+        let mut config = router_config();
+        config.zk_features.zk_explicit_backend_required = true;
+        let verifier = ZkVerifier::from_config(&config, Arc::new(ZkBackendRegistry::new()));
+        let task = mock_task();
+        let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"NOOP","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["99","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#;
+
+        assert!(matches!(
+            verifier.verify_proof(&task, payload),
+            VerificationResult::Invalid(msg)
+                if msg.contains("canonical lowercase token 'noop'")
+        ));
+    }
+
+    #[test]
     fn zk_verifier_treats_noop_backend_id_with_backend_version_as_malformed_for_backend_selection() {
         let mut backends = ZkBackendRegistry::new();
         backends.register(Arc::new(MockSuccessBackend));
@@ -1569,6 +1592,21 @@ mod tests {
             VerificationResult::Invalid(msg)
                 if msg.contains("malformed:")
                     && msg.contains("backend must not be empty")
+        ));
+    }
+
+    #[test]
+    fn zk_verifier_rejects_selected_backend_with_non_canonical_noop_case() {
+        let mut config = router_config();
+        config.zk_backend = ZkBackendKind::Custom("NOOP".into());
+        let verifier = ZkVerifier::from_config(&config, Arc::new(ZkBackendRegistry::new()));
+        let task = mock_task();
+        let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["99","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#;
+
+        assert!(matches!(
+            verifier.verify_proof(&task, payload),
+            VerificationResult::Invalid(msg)
+                if msg.contains("canonical lowercase token 'noop'")
         ));
     }
 
