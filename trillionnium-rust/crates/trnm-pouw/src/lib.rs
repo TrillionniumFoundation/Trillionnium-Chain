@@ -3,7 +3,19 @@ use thiserror::Error;
 use trnm_state::StateStore;
 use trnm_types::{Hash32, ObjectRef, ProofType, TaskMetadata, TaskObject, TaskStatus};
 
+pub mod metering;
 pub mod verification;
+pub use metering::{
+    parse_and_validate_llm_token_meter_v1_receipt_json,
+    parse_llm_token_meter_v1_receipt_json,
+    LlmTokenMeterError,
+    LlmTokenMeterV1Receipt,
+    LlmTokenMeterV1WorkUnitCoefficients,
+    TeeAttestationEnvelope,
+    DEFAULT_LLM_TOKEN_METER_JITTER_BUDGET_MS,
+    LLM_INFERENCE_WORKLOAD_CLASS,
+    LLM_TOKEN_METER_V1_SCHEMA,
+};
 use verification::registry::VerifierRegistry;
 use verification::{emit_proof_verification_observation, VerificationResult};
 

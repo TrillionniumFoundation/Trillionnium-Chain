@@ -15,8 +15,9 @@ This proposal explicitly avoids using `tokens/sec` as the consensus workload met
 Instead, it standardizes an attested receipt around:
 
 - `prompt_tokens`
-- `generated_tokens`
+- `generated_tokens` (canonical output-token field; JSON alias: `completion_tokens`)
 - `decode_steps`
+- `kv_bytes_moved`
 - `prefill_ms`
 - `decode_ms`
 - attested execution timestamps
@@ -74,8 +75,9 @@ Workers still follow the existing lifecycle:
 ### 4.1 Required counters
 
 - `prompt_tokens: u64`
-- `generated_tokens: u64`
+- `generated_tokens: u64` (canonical output-token field; JSON alias: `completion_tokens`)
 - `decode_steps: u64`
+- `kv_bytes_moved: u64` (canonicalized byte-movement counter; may be `0` when a backend does not meter KV movement yet)
 - `prefill_ms: u64`
 - `decode_ms: u64`
 
@@ -136,6 +138,7 @@ Suggested reveal payload:
   "prompt_tokens": 1824,
   "generated_tokens": 512,
   "decode_steps": 512,
+  "kv_bytes_moved": 4096,
   "prefill_ms": 147,
   "decode_ms": 923,
   "attested_started_at_unix_ms": 1760000000123,
@@ -197,12 +200,12 @@ work_units =
     a * prompt_tokens
   + b * generated_tokens
   + c * decode_steps
+  + d * kv_bytes_moved
 ```
 
 Optional additive terms may be introduced later, for example:
 
 ```text
-  + d * memory_io_units
   + e * verifier_penalty_units
 ```
 
@@ -215,14 +218,16 @@ work_units =
     a * prompt_tokens
   + b * generated_tokens
   + c * decode_steps
+  + d * kv_bytes_moved
 ```
 
 Where:
 
-- `a`, `b`, `c` are governance-controlled parameters
+- `a`, `b`, `c`, `d` are governance-controlled parameters (or published via a governance-approved Oracle path)
 - `decode_steps` allows explicit accounting for iterative generation
-- `generated_tokens` covers output volume
+- `generated_tokens` is the canonical output-token field (`completion_tokens` is accepted as a JSON alias)
 - `prompt_tokens` covers prefill work
+- `kv_bytes_moved` covers explicit KV-cache / state-movement accounting when the backend can attest it; otherwise it remains `0`
 
 ### Important
 
@@ -303,6 +308,7 @@ Recommended additional reveal / resolve event fields:
 - `prompt_tokens`
 - `generated_tokens`
 - `decode_steps`
+- `kv_bytes_moved`
 - `prefill_ms`
 - `decode_ms`
 - `device_profile_id`
@@ -360,6 +366,7 @@ pub struct LlmTokenMeterV1Receipt {
     pub prompt_tokens: u64,
     pub generated_tokens: u64,
     pub decode_steps: u64,
+    pub kv_bytes_moved: u64,
     pub prefill_ms: u64,
     pub decode_ms: u64,
 
